@@ -18,10 +18,7 @@
 #include <deque>
 
 #include "vtkMRMLApplicationLogic.h"
-#include "vtkMRMLDisplayableNode.h"
-#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLSliceDisplayNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 
@@ -30,24 +27,14 @@
 #include "vtkPolyDataMapper2D.h"
 #include "vtkPlane.h"
 #include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkSphereSource.h"
 #include "vtkActor2D.h"
 #include "vtkObjectFactory.h"
 #include "vtkProperty2D.h"
-#include "vtkAssemblyPath.h"
 #include "vtkMath.h"
-#include "vtkInteractorObserver.h"
+#include "vtkMatrix3x3.h"
+#include "vtkMatrix4x4.h"
 #include "vtkLine.h"
 #include "vtkLineSource.h"
-#include "vtkCoordinate.h"
-#include "vtkGlyph2D.h"
-#include "vtkCursor2D.h"
-#include "vtkPolyDataAlgorithm.h"
-#include "vtkPoints.h"
-#include "vtkCellArray.h"
-#include "vtkLeaderActor2D.h"
-#include "vtkTransform.h"
 #include "vtkActor2D.h"
 #include "vtkWindow.h"
 
@@ -70,9 +57,29 @@ public:
     this->Actor = vtkSmartPointer<vtkActor2D>::New();
     this->Actor->SetVisibility(false); // invisible until slice node is set
 
+    this->ThickSlabLine1LineSource = vtkSmartPointer<vtkLineSource>::New();
+    this->ThickSlabLine1Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+    this->ThickSlabLine1Property = vtkSmartPointer<vtkProperty2D>::New();
+    this->ThickSlabLine1Actor = vtkSmartPointer<vtkActor2D>::New();
+    this->ThickSlabLine1Actor->SetVisibility(false); // invisible until slice node is set
+
+    this->ThickSlabLine2LineSource = vtkSmartPointer<vtkLineSource>::New();
+    this->ThickSlabLine2Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+    this->ThickSlabLine2Property = vtkSmartPointer<vtkProperty2D>::New();
+    this->ThickSlabLine2Actor = vtkSmartPointer<vtkActor2D>::New();
+    this->ThickSlabLine2Actor->SetVisibility(false); // invisible until slice node is set
+
     this->Mapper->SetInputConnection(this->LineSource->GetOutputPort());
     this->Actor->SetMapper(this->Mapper);
     this->Actor->SetProperty(this->Property);
+
+    this->ThickSlabLine1Mapper->SetInputConnection(this->ThickSlabLine1LineSource->GetOutputPort());
+    this->ThickSlabLine1Actor->SetMapper(this->ThickSlabLine1Mapper);
+    this->ThickSlabLine1Actor->SetProperty(this->ThickSlabLine1Property);
+
+    this->ThickSlabLine2Mapper->SetInputConnection(this->ThickSlabLine2LineSource->GetOutputPort());
+    this->ThickSlabLine2Actor->SetMapper(this->ThickSlabLine2Mapper);
+    this->ThickSlabLine2Actor->SetProperty(this->ThickSlabLine2Property);
   }
 
   //----------------------------------------------------------------------
@@ -105,6 +112,8 @@ public:
   void GetActors2D(vtkPropCollection *pc)
   {
     pc->AddItem(this->Actor);
+    pc->AddItem(this->ThickSlabLine1Actor);
+    pc->AddItem(this->ThickSlabLine2Actor);
   }
 
   //----------------------------------------------------------------------
@@ -115,12 +124,16 @@ public:
       return;
       }
     renderer->AddViewProp(this->Actor);
+    renderer->AddViewProp(this->ThickSlabLine1Actor);
+    renderer->AddViewProp(this->ThickSlabLine2Actor);
   }
 
   //----------------------------------------------------------------------
   void ReleaseGraphicsResources(vtkWindow *win)
   {
     this->Actor->ReleaseGraphicsResources(win);
+    this->ThickSlabLine1Actor->ReleaseGraphicsResources(win);
+    this->ThickSlabLine2Actor->ReleaseGraphicsResources(win);
   }
 
   //----------------------------------------------------------------------
@@ -130,6 +143,14 @@ public:
     if (this->Actor->GetVisibility())
       {
       count += this->Actor->RenderOverlay(viewport);
+      }
+    if (this->ThickSlabLine1Actor->GetVisibility())
+      {
+      count += this->ThickSlabLine1Actor->RenderOverlay(viewport);
+      }
+    if (this->ThickSlabLine2Actor->GetVisibility())
+      {
+      count += this->ThickSlabLine2Actor->RenderOverlay(viewport);
       }
     return count;
   }
@@ -143,6 +164,8 @@ public:
       return;
       }
     renderer->RemoveViewProp(this->Actor);
+    renderer->RemoveViewProp(this->ThickSlabLine1Actor);
+    renderer->RemoveViewProp(this->ThickSlabLine2Actor);
   }
 
   //----------------------------------------------------------------------
@@ -152,15 +175,40 @@ public:
   }
 
   //----------------------------------------------------------------------
+  void SetThickSlabVisibility(bool visibility)
+  {
+    this->ThickSlabLine1Actor->SetVisibility(visibility);
+    this->ThickSlabLine2Actor->SetVisibility(visibility);
+  }
+
+  //----------------------------------------------------------------------
   bool GetIntersectionVisibility()
   {
     return this->Actor->GetVisibility();
+  }
+
+  //----------------------------------------------------------------------
+  bool GetThickSlabVisibility()
+  {
+    // Note: Assumes the first and second actors visibilities are equal
+    return this->ThickSlabLine1Actor->GetVisibility();
   }
 
   vtkSmartPointer<vtkLineSource> LineSource;
   vtkSmartPointer<vtkPolyDataMapper2D> Mapper;
   vtkSmartPointer<vtkProperty2D> Property;
   vtkSmartPointer<vtkActor2D> Actor;
+
+  vtkSmartPointer<vtkLineSource> ThickSlabLine1LineSource;
+  vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine1Mapper;
+  vtkSmartPointer<vtkProperty2D> ThickSlabLine1Property;
+  vtkSmartPointer<vtkActor2D> ThickSlabLine1Actor;
+
+  vtkSmartPointer<vtkLineSource> ThickSlabLine2LineSource;
+  vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine2Mapper;
+  vtkSmartPointer<vtkProperty2D> ThickSlabLine2Property;
+  vtkSmartPointer<vtkActor2D> ThickSlabLine2Actor;
+
   vtkWeakPointer<vtkMRMLSliceLogic> SliceLogic;
   vtkWeakPointer<vtkCallbackCommand> Callback;
 };
@@ -405,6 +453,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     || !intersectingSliceNode->IsMappedInLayout())
     {
     pipeline->SetIntersectionVisibility(false);
+    pipeline->SetThickSlabVisibility(false);
     return;
     }
 
@@ -419,19 +468,21 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     {
     displayNode = sliceLogic->GetSliceDisplayNode();
     }
-  if (displayNode)
+  if (!displayNode)
     {
-    bool showNonInteractiveSliceIntersection = (displayNode->GetIntersectingSlicesVisibility()
-      && !displayNode->GetIntersectingSlicesInteractive());
-    if (!showNonInteractiveSliceIntersection)
-      {
-      pipeline->SetIntersectionVisibility(false);
-      return;
-      }
-    pipeline->Property->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->SetIntersectionVisibility(false);
+    pipeline->SetThickSlabVisibility(false);
+    return;
     }
+  bool showThickSlabIntersectionLines = displayNode->GetIntersectingThickSlabVisibility();
+  bool showSliceIntersectionLines = displayNode->GetIntersectingSlicesVisibility();
 
-  pipeline->Property->SetColor(intersectingSliceNode->GetLayoutColor());
+  if (!(showSliceIntersectionLines || showThickSlabIntersectionLines))
+    {
+    pipeline->SetIntersectionVisibility(false);
+    pipeline->SetThickSlabVisibility(false);
+    return;
+    }
 
   vtkMatrix4x4* intersectingXYToRAS = intersectingSliceNode->GetXYToRAS();
   vtkMatrix4x4* xyToRAS = this->Internal->SliceNode->GetXYToRAS();
@@ -461,13 +512,96 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
   if (!intersectionFound)
     {
     pipeline->SetIntersectionVisibility(false);
+    pipeline->SetThickSlabVisibility(false);
     return;
     }
 
-  pipeline->LineSource->SetPoint1(intersectionPoint1);
-  pipeline->LineSource->SetPoint2(intersectionPoint2);
+  // Intersection line
+  if (showSliceIntersectionLines)
+    {
+    pipeline->Property->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->Property->SetColor(intersectingSliceNode->GetLayoutColor());
+    pipeline->LineSource->SetPoint1(intersectionPoint1);
+    pipeline->LineSource->SetPoint2(intersectionPoint2);
+    pipeline->SetIntersectionVisibility(true);
+    }
+  else
+    {
+    pipeline->SetIntersectionVisibility(false);
+    }
 
-  pipeline->SetIntersectionVisibility(true);
+  if (showThickSlabIntersectionLines)
+    {
+    double thickSlabLine1Point1[4] = { intersectionPoint1[0], intersectionPoint1[1], intersectionPoint1[2], intersectionPoint1[3] };
+    double thickSlabLine1Point2[4] = { intersectionPoint2[0], intersectionPoint2[1], intersectionPoint2[2], intersectionPoint2[3] };
+    double thickSlabLine2Point1[4] = { intersectionPoint1[0], intersectionPoint1[1], intersectionPoint1[2], intersectionPoint1[3] };
+    double thickSlabLine2Point2[4] = { intersectionPoint2[0], intersectionPoint2[1], intersectionPoint2[2], intersectionPoint2[3] };
+    double slabThickness = intersectingSliceNode->GetSlabReconstructionThickness() / 2;
+
+    // Find the angle of the intersection line
+    double ydiff = intersectionPoint1[1] - intersectionPoint2[1];
+    double xdiff = intersectionPoint1[0] - intersectionPoint2[0];
+    double angle = atan2(ydiff, xdiff); // In radians
+
+    // Find line normal to the slice intersection line in XY coords
+    double normalAngle = angle + M_PI_2;
+    double offsetUnitVector_XY[3] = {cos(normalAngle), sin(normalAngle), 0};
+
+    // Find that offset vector in RAS space
+    vtkNew<vtkMatrix3x3> xyToRas3x3;
+    xyToRas3x3->Identity();
+    for (int i=0; i<3; i++)
+      {
+      for (int j=0; j<3; j++)
+        {
+        double val = xyToRAS->GetElement(i, j);
+        xyToRas3x3->SetElement(i, j, val);
+        }
+      }
+
+    double offsetVectorRas[3] = {0, 0, 0};
+    xyToRas3x3->MultiplyPoint(offsetUnitVector_XY, offsetVectorRas);
+
+    // Normalize
+    vtkMath::Normalize(offsetVectorRas);
+
+    // Scale by the thickness
+    offsetVectorRas[0] *= slabThickness;
+    offsetVectorRas[1] *= slabThickness;
+    offsetVectorRas[2] *= slabThickness;
+
+    // Now map back to XY
+    double offsetVector_XY[3] = {0, 0, 0};
+    vtkNew<vtkMatrix3x3> rasToXY3x3;
+    vtkMatrix3x3::Invert(xyToRas3x3, rasToXY3x3);
+    rasToXY3x3->MultiplyPoint(offsetVectorRas, offsetVector_XY);
+
+    // Translate the lines along the normal vector
+    thickSlabLine1Point1[0] += offsetVector_XY[0];
+    thickSlabLine1Point1[1] += offsetVector_XY[1];
+    thickSlabLine1Point2[0] += offsetVector_XY[0];
+    thickSlabLine1Point2[1] += offsetVector_XY[1];
+    thickSlabLine2Point1[0] -= offsetVector_XY[0];
+    thickSlabLine2Point1[1] -= offsetVector_XY[1];
+    thickSlabLine2Point2[0] -= offsetVector_XY[0];
+    thickSlabLine2Point2[1] -= offsetVector_XY[1];
+
+    pipeline->ThickSlabLine1Property->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->ThickSlabLine1Property->SetColor(intersectingSliceNode->GetLayoutColor());
+    pipeline->ThickSlabLine2Property->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->ThickSlabLine2Property->SetColor(intersectingSliceNode->GetLayoutColor());
+
+    pipeline->ThickSlabLine1LineSource->SetPoint1(thickSlabLine1Point1);
+    pipeline->ThickSlabLine1LineSource->SetPoint2(thickSlabLine1Point2);
+    pipeline->ThickSlabLine2LineSource->SetPoint1(thickSlabLine2Point1);
+    pipeline->ThickSlabLine2LineSource->SetPoint2(thickSlabLine2Point2);
+
+    pipeline->SetThickSlabVisibility(true);
+    }
+  else
+    {
+    pipeline->SetThickSlabVisibility(false);
+    }
 }
 
 //----------------------------------------------------------------------

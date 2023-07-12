@@ -56,6 +56,7 @@
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceDisplayNode.h>
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLUnitNode.h>
 
@@ -2384,11 +2385,22 @@ void qMRMLSliceControllerWidget::showSlabReconstructionWidget(bool show)
     }
   vtkMRMLSliceNode* node = nullptr;
   vtkCollectionSimpleIterator it;
+  vtkMRMLApplicationLogic* applicationLogic =
+    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
     {
     if (node == this->mrmlSliceNode() || this->isLinked())
       {
-      node->SetSlabReconstructionEnabled(show);
+      vtkMRMLSliceLogic* sliceLogic = applicationLogic->GetSliceLogic(node);
+      if (sliceLogic)
+        {
+        vtkMRMLSliceDisplayNode* displayNode = sliceLogic->GetSliceDisplayNode();
+        if (displayNode)
+          {
+          displayNode->SetIntersectingThickSlabVisibility(show);
+          node->SetSlabReconstructionEnabled(show);
+          }
+        }
       }
     }
 }

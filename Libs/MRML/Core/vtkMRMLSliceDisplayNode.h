@@ -55,6 +55,13 @@ public:
   //@}
 
   //@{
+  /// Toggles visibility of thick slabs of other slices in the slice viewer
+  vtkGetMacro(IntersectingThickSlabVisibility, bool);
+  vtkSetMacro(IntersectingThickSlabVisibility, bool);
+  vtkBooleanMacro(IntersectingThickSlabVisibility, bool);
+  //@}
+
+  //@{
   /// Toggles interaction with slice intersections
   vtkGetMacro(IntersectingSlicesInteractive, bool);
   vtkSetMacro(IntersectingSlicesInteractive, bool);
@@ -206,6 +213,7 @@ protected:
   bool IntersectingSlicesInteractive{ false };
   bool IntersectingSlicesTranslationEnabled{ true };
   bool IntersectingSlicesRotationEnabled{ true };
+  bool IntersectingThickSlabVisibility{ false };
 
   int IntersectingSlicesInteractiveHandlesVisibilityMode{ NeverVisible };
 
