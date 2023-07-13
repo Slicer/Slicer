@@ -354,7 +354,9 @@ endif()
 # -------------------------------------------------------------------------
 if(CPACK_GENERATOR STREQUAL "NSIS")
 
-  set(Slicer_CPACK_NSIS_INSTALL_SUBDIRECTORY "")
+  if(NOT DEFINED Slicer_CPACK_NSIS_INSTALL_SUBDIRECTORY)
+    set(Slicer_CPACK_NSIS_INSTALL_SUBDIRECTORY "")
+  endif()
   slicer_cpack_set("CPACK_NSIS_INSTALL_SUBDIRECTORY")
 
   set(_nsis_install_root "${Slicer_CPACK_NSIS_INSTALL_ROOT}")
