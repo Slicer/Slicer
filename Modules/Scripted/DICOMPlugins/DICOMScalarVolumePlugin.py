@@ -380,7 +380,10 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         if grayscale:
             reader = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
         else:
-            reader = vtkITK.vtkITKArchetypeImageSeriesVectorReaderFile()
+            if len(files) > 1:
+                reader = vtkITK.vtkITKArchetypeImageSeriesVectorReaderSeries()
+            else:
+                reader = vtkITK.vtkITKArchetypeImageSeriesVectorReaderFile()
         reader.SetArchetype(files[0])
         for f in files:
             reader.AddFileName(f)
