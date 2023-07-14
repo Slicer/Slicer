@@ -70,7 +70,9 @@ class SliceAnnotations(VTKObservationMixin):
             '4-Model': {'text': '', 'category': 'C'},
             '5-Patient-Position': {'text': '', 'category': 'A'},
             '6-TR': {'text': '', 'category': 'A'},
-            '7-TE': {'text': '', 'category': 'A'}
+            '7-TE': {'text': '', 'category': 'A'},
+            '8-SlabReconstructionThickness': {'text': '', 'category': 'A'},
+            '9-SlabReconstructionType': {'text': '', 'category': 'A'}
         })
 
         self.annotationsDisplayAmount = 0
@@ -448,6 +450,17 @@ class SliceAnnotations(VTKObservationMixin):
                     self.dicomVolumeNode = 1
                 else:
                     self.dicomVolumeNode = 0
+
+            # Slab reconstruction is applied to both foreground and background
+            if self.topRight and sliceNode.GetSlabReconstructionEnabled():
+                unitNode = slicer.app.applicationLogic().GetSelectionNode().GetUnitNode("length")
+                self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = 'Thickness: ' + str(
+                    sliceNode.GetSlabReconstructionThickness()) + ' ' + unitNode.GetSuffix()
+                self.cornerTexts[3]['9-SlabReconstructionType']['text'] = 'Type: ' + sliceNode.GetSlabReconstructionTypeAsString(
+                    sliceNode.GetSlabReconstructionType())
+            else:
+                self.cornerTexts[3]['8-SlabReconstructionThickness']['text'] = ''
+                self.cornerTexts[3]['9-SlabReconstructionType']['text'] = ''
 
             if (labelVolume is not None) and self.bottomLeft:
                 labelOpacity = sliceCompositeNode.GetLabelOpacity()

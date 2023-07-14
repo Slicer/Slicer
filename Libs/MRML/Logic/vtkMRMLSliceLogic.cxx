@@ -466,6 +466,10 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
       sliceDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       sliceDisplayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
       }
+
+    vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetBackgroundLayer());
+    vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetForegroundLayer());
+
     }
   else if (node == this->SliceCompositeNode)
     {
@@ -968,6 +972,42 @@ bool vtkMRMLSliceLogic::UpdateFractions(vtkImageMathematics* fraction, double op
   return modified;
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, vtkMRMLSliceLayerLogic* sliceLayerLogic)
+{
+  if (!sliceLogic || !sliceLayerLogic || !sliceLogic->GetSliceNode())
+    {
+    return;
+    }
+
+  vtkImageReslice* reslice = sliceLayerLogic->GetReslice();
+  vtkMRMLSliceNode* sliceNode = sliceLayerLogic->GetSliceNode();
+
+  double sliceSpacing;
+  if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
+    {
+    sliceSpacing = sliceNode->GetPrescribedSliceSpacing()[2];
+    }
+  else
+    {
+    sliceSpacing = sliceLogic->GetLowestVolumeSliceSpacing()[2];
+    }
+
+  int slabNumberOfSlices = 1;
+  if (sliceNode->GetSlabReconstructionEnabled()
+      && sliceSpacing > 0
+      && sliceNode->GetSlabReconstructionThickness() > sliceSpacing
+      )
+    {
+    slabNumberOfSlices = static_cast<int>(sliceNode->GetSlabReconstructionThickness() / sliceSpacing);
+    }
+  reslice->SetSlabNumberOfSlices(slabNumberOfSlices);
+
+  reslice->SetSlabMode(sliceNode->GetSlabReconstructionType());
+
+  double slabSliceSpacingFraction = sliceSpacing / sliceNode->GetSlabReconstructionOversamplingFactor();
+  reslice->SetSlabSliceSpacingFraction(slabSliceSpacingFraction);
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdatePipeline()

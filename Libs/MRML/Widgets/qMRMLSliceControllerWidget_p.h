@@ -91,6 +91,7 @@ public:
   void setupMoreOptionsMenu();
   void setupOrientationMarkerMenu();
   void setupRulerMenu();
+  void setupSlabReconstructionMenu();
 
   vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);
 
@@ -188,11 +189,13 @@ public:
   QMenu*                              LabelMapMenu;
   QMenu*                              OrientationMarkerMenu;
   QMenu*                              RulerMenu;
+  QMenu*                              SlabReconstructionMenu;
 
   ctkDoubleSpinBox*                   SliceSpacingSpinBox;
   ctkDoubleSpinBox*                   SliceFOVSpinBox;
   QSpinBox*                           LightBoxRowsSpinBox;
   QSpinBox*                           LightBoxColumnsSpinBox;
+  ctkDoubleSpinBox*                   SlabReconstructionThicknessSpinBox;
 
   ctkDoubleSpinBox*                   SliceModelFOVXSpinBox;
   ctkDoubleSpinBox*                   SliceModelFOVYSpinBox;
@@ -210,6 +213,8 @@ public:
 
   ctkSignalMapper*                    RulerTypesMapper;
   ctkSignalMapper*                    RulerColorMapper;
+
+  ctkSignalMapper*                    SlabReconstructionTypesMapper;
 
   bool                                ShowSliceOffsetSlider{true};
 };

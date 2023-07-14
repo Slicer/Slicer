@@ -63,6 +63,7 @@
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkStringArray.h>
+#include <vtkImageReslice.h>
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods
@@ -92,6 +93,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->LabelMapMenu = nullptr;
   this->OrientationMarkerMenu = nullptr;
   this->RulerMenu = nullptr;
+  this->SlabReconstructionMenu = nullptr;
 
   this->SliceSpacingSpinBox = nullptr;
   this->SliceFOVSpinBox = nullptr;
@@ -235,6 +237,10 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(setLightboxTo3x3()));
   QObject::connect(this->actionLightbox6x6_view, SIGNAL(triggered()),
                    q, SLOT(setLightboxTo6x6()));
+
+  QObject::connect(this->actionShow_slab_reconstruction_widget, SIGNAL(toggled(bool)),
+                   q, SLOT(showSlabReconstructionWidget(bool)));
+
   this->setupLightboxMenu();
   this->setupCompositingMenu();
   this->setupSliceSpacingMenu();
@@ -243,6 +249,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->setupLabelMapMenu();
   this->setupOrientationMarkerMenu();
   this->setupRulerMenu();
+  this->setupSlabReconstructionMenu();
 
   // Visibility column
   this->connect(this->actionSegmentationVisibility, SIGNAL(triggered(bool)),
@@ -334,6 +341,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->LightBoxToolButton->setMenu(this->LightboxMenu);
   this->ShowReformatWidgetToolButton->setDefaultAction(this->actionShow_reformat_widget);
 
+  this->ShowSlabReconstructionButton->setMenu(this->SlabReconstructionMenu);
   this->SliceCompositeButton->setMenu(this->CompositingMenu);
   this->SliceSpacingButton->setMenu(this->SliceSpacingMenu);
   this->SliceVisibilityButton->setMenu(this->SliceModelMenu);
@@ -907,6 +915,10 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->actionShow_reformat_widget->setChecked(showReformat);
   this->actionShow_reformat_widget->setText(
     showReformat ? tr("Hide reformat widget"): tr("Show reformat widget"));
+  // Reconstruction
+  bool showSlabReconstruction = sliceNode->GetSlabReconstructionEnabled();
+  this->actionShow_slab_reconstruction_widget->setChecked(showSlabReconstruction);
+  this->SlabReconstructionThicknessSpinBox->setValue(sliceNode->GetSlabReconstructionThickness());
   // Slice spacing mode
   this->SliceSpacingButton->setIcon(
     sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode ?
@@ -1001,6 +1013,13 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 
   // Ruler Color (check the selected option)
   action = qobject_cast<QAction*>(this->RulerColorMapper->mapping(sliceNode->GetRulerColor()));
+  if (action)
+    {
+    action->setChecked(true);
+    }
+
+  // Slab reconstruction type (check the selected option)
+  action = qobject_cast<QAction*>(this->SlabReconstructionTypesMapper->mapping(sliceNode->GetSlabReconstructionType()));
   if (action)
     {
     action->setChecked(true);
@@ -1101,6 +1120,14 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromUnitNode()
 {
   Q_Q(qMRMLSliceControllerWidget);
   q->setSliceOffsetResolution(q->sliceOffsetResolution());
+  if (this->SelectionNode && q->mrmlScene())
+    {
+    vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(q->mrmlScene()->GetNodeByID(this->SelectionNode->GetUnitNodeID("length")));
+    if (unitNode)
+      {
+      this->SlabReconstructionThicknessSpinBox->setSuffix(unitNode->GetSuffix());
+      }
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -1546,6 +1573,48 @@ void qMRMLSliceControllerWidgetPrivate::setupRulerMenu()
   rulerMenu->addActions(rulerTypesActions->actions());
   rulerMenu->addSeparator();
   rulerMenu->addActions(rulerColorActions->actions());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setupSlabReconstructionMenu()
+{
+  Q_Q(qMRMLSliceControllerWidget);// Menu
+  this->SlabReconstructionMenu = new QMenu(tr("Slab Reconstruction"), this->ShowSlabReconstructionButton);
+  this->SlabReconstructionMenu->addAction(this->actionShow_slab_reconstruction_widget);
+  this->SlabReconstructionMenu->setObjectName("slabMenu");
+
+  // Slab Reconstruction Thickness
+  QMenu* slabReconstructionThickness = new QMenu(tr("Slab Thickness"), this->ShowSlabReconstructionButton);
+  slabReconstructionThickness->setObjectName("slicerSpacingManualMode");
+  this->SlabReconstructionThicknessSpinBox = new ctkDoubleSpinBox(slabReconstructionThickness);
+  this->SliceSpacingSpinBox->setDecimals(3);
+  this->SlabReconstructionThicknessSpinBox->setRange(1., VTK_FLOAT_MAX);
+  this->SlabReconstructionThicknessSpinBox->setSingleStep(0.1);
+  this->SlabReconstructionThicknessSpinBox->setValue(1.);
+  QObject::connect(this->SlabReconstructionThicknessSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setSlabReconstructionThickness(double)));
+  QWidgetAction* slabReconstructionThicknessAction = new QWidgetAction(slabReconstructionThickness);
+  slabReconstructionThicknessAction->setDefaultWidget(this->SlabReconstructionThicknessSpinBox);
+  slabReconstructionThickness->addAction(slabReconstructionThicknessAction);
+  this->SlabReconstructionMenu->addMenu(slabReconstructionThickness);
+
+  // Slab Reconstruction Type
+  this->SlabReconstructionTypesMapper = new ctkSignalMapper(this->SlabReconstructionMenu);
+  this->SlabReconstructionTypesMapper->setMapping(this->actionSlabReconstructionMax, VTK_IMAGE_SLAB_MAX);
+  this->SlabReconstructionTypesMapper->setMapping(this->actionSlabReconstructionMin, VTK_IMAGE_SLAB_MIN);
+  this->SlabReconstructionTypesMapper->setMapping(this->actionSlabReconstructionMean, VTK_IMAGE_SLAB_MEAN);
+  this->SlabReconstructionTypesMapper->setMapping(this->actionSlabReconstructionSum, VTK_IMAGE_SLAB_SUM);
+  QActionGroup* slabReconstructionTypesActions = new QActionGroup(this->SlabReconstructionMenu);
+  slabReconstructionTypesActions->setExclusive(true);
+  slabReconstructionTypesActions->addAction(this->actionSlabReconstructionMax);
+  slabReconstructionTypesActions->addAction(this->actionSlabReconstructionMin);
+  slabReconstructionTypesActions->addAction(this->actionSlabReconstructionMean);
+  slabReconstructionTypesActions->addAction(this->actionSlabReconstructionSum);
+  QObject::connect(this->SlabReconstructionTypesMapper, SIGNAL(mapped(int)),q, SLOT(setSlabReconstructionType(int)));
+  QObject::connect(slabReconstructionTypesActions, SIGNAL(triggered(QAction*)),this->SlabReconstructionTypesMapper, SLOT(map(QAction*)));
+
+  this->SlabReconstructionMenu->addActions(slabReconstructionTypesActions->actions());
+  this->SlabReconstructionMenu->addSeparator();
 }
 
 // --------------------------------------------------------------------------
@@ -2307,6 +2376,27 @@ void qMRMLSliceControllerWidget::showReformatWidget(bool show)
 }
 
 //---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::showSlabReconstructionWidget(bool show)
+{
+  Q_D(qMRMLSliceControllerWidget);
+
+  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLSliceNode* node = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+    {
+    if (node == this->mrmlSliceNode() || this->isLinked())
+      {
+      node->SetSlabReconstructionEnabled(show);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::lockReformatWidgetToCamera(bool lock)
 {
   Q_D(qMRMLSliceControllerWidget);
@@ -2783,6 +2873,46 @@ void qMRMLSliceControllerWidget::setRulerColor(int newRulerColor)
     if (node == this->mrmlSliceNode() || this->isLinked())
       {
       node->SetRulerColor(newRulerColor);
+      }
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSlabReconstructionType(int newSlabReconstructionType)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLSliceNode* node = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+    {
+    if (node == this->mrmlSliceNode() || this->isLinked())
+      {
+      node->SetSlabReconstructionType(newSlabReconstructionType);
+      }
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSlabReconstructionThickness(double thickness)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLSliceNode* node = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
+    {
+    if (node == this->mrmlSliceNode() || this->isLinked())
+      {
+      node->SetSlabReconstructionThickness(thickness);
       }
     }
 }

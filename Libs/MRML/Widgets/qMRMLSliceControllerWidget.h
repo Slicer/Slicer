@@ -233,6 +233,8 @@ public slots:
   /// Reformat widget
   void showReformatWidget(bool show);
   void lockReformatWidgetToCamera(bool lock);
+  /// Reconstruction widget
+  void showSlabReconstructionWidget(bool show);
   /// Compositing
   void setCompositing(int mode);
   void setCompositingToAlphaBlend();
@@ -271,6 +273,10 @@ public slots:
   // Ruler
   void setRulerType(int type);
   void setRulerColor(int color);
+
+  // Slab Reconstruction
+  void setSlabReconstructionType(int type);
+  void setSlabReconstructionThickness(double thickness);
 
   // Lightbox
   void setLightbox(int rows, int columns);

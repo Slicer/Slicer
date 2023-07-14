@@ -627,6 +627,23 @@
          </widget>
         </item>
         <item>
+         <widget class="QToolButton" name="ShowSlabReconstructionButton">
+          <property name="toolTip">
+           <string>Show slab reconstruction</string>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../qMRMLWidgets.qrc">
+            <normaloff>:/Icons/SlabReconstruction.png</normaloff>:/Icons/SlabReconstruction.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QToolButton" name="SliceMoreOptionButton">
           <property name="toolTip">
            <string>Advanced options</string>
@@ -752,6 +769,14 @@
    </property>
    <property name="text">
     <string>Show reformat widget</string>
+   </property>
+  </action>
+  <action name="actionShow_slab_reconstruction_widget">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Slab Reconstruction</string>
    </property>
   </action>
   <action name="actionOrientationMarkerTypeCube">
@@ -1166,6 +1191,50 @@
    </property>
    <property name="text">
     <string>Yellow ruler</string>
+   </property>
+  </action>
+  <action name="actionSlabReconstructionMax">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Max</string>
+   </property>
+   <property name="toolTip">
+    <string>Set slab reconstruction type to Max</string>
+   </property>
+  </action>
+  <action name="actionSlabReconstructionMin">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Min</string>
+   </property>
+   <property name="toolTip">
+    <string>Set slab reconstruction type to Min</string>
+   </property>
+  </action>
+  <action name="actionSlabReconstructionMean">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Mean</string>
+   </property>
+   <property name="toolTip">
+    <string>Set slab reconstruction type to Mean</string>
+   </property>
+  </action>
+  <action name="actionSlabReconstructionSum">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Sum</string>
+   </property>
+   <property name="toolTip">
+    <string>Set slab reconstruction type to Sum</string>
    </property>
   </action>
   <action name="actionSegmentationOutlineFill">
@@ -1711,6 +1780,12 @@
      <y>1</y>
     </hint>
    </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ShowSlabReconstructionButton</receiver>
+   <slot>setVisible(bool)</slot>
   </connection>
  </connections>
 </ui>

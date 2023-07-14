@@ -32,6 +32,9 @@ int GetSliceOrientationPresetTest();
 int GetSliceOrientationPresetNameTest();
 int SetOrientationTest();
 int InitializeDefaultMatrixTest();
+int SlabReconstructionEnabledTest();
+int SlabReconstructionTypeTest();
+int SlabReconstructionThicknessTest();
 
 //----------------------------------------------------------------------------
 int vtkMRMLSliceNodeTest1(int , char * [] )
@@ -48,6 +51,9 @@ int vtkMRMLSliceNodeTest1(int , char * [] )
   CHECK_EXIT_SUCCESS(GetSliceOrientationPresetNameTest());
   CHECK_EXIT_SUCCESS(SetOrientationTest());
   CHECK_EXIT_SUCCESS(InitializeDefaultMatrixTest());
+  CHECK_EXIT_SUCCESS(SlabReconstructionEnabledTest());
+  CHECK_EXIT_SUCCESS(SlabReconstructionTypeTest());
+  CHECK_EXIT_SUCCESS(SlabReconstructionThicknessTest());
 
   return EXIT_SUCCESS;
 }
@@ -423,6 +429,90 @@ int InitializeDefaultMatrixTest()
   vtkNew<vtkMatrix3x3> sagittal;
   vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(sagittal.GetPointer());
   CHECK_NOT_NULL(sagittal.GetPointer());
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int SlabReconstructionEnabledTest()
+{
+  vtkNew<vtkMRMLSliceNode> sliceNode;
+
+  CHECK_BOOL(sliceNode->GetSlabReconstructionEnabled(), false);
+
+  // Set using set macro
+  {
+    sliceNode->SetSlabReconstructionEnabled(true);
+    CHECK_BOOL(sliceNode->GetSlabReconstructionEnabled(), true);
+  }
+
+  // Set using on/off macro
+  {
+    sliceNode->SlabReconstructionEnabledOn();
+    CHECK_BOOL(sliceNode->GetSlabReconstructionEnabled(), true);
+    sliceNode->SlabReconstructionEnabledOff();
+    CHECK_BOOL(sliceNode->GetSlabReconstructionEnabled(), false);
+  }
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int SlabReconstructionTypeTest()
+{
+  vtkNew<vtkMRMLSliceNode> sliceNode;
+
+  CHECK_INT(sliceNode->GetSlabReconstructionType(), VTK_IMAGE_SLAB_MAX);
+
+  // Set to min
+  {
+    sliceNode->SetSlabReconstructionType(VTK_IMAGE_SLAB_MIN);
+    CHECK_INT(sliceNode->GetSlabReconstructionType(), VTK_IMAGE_SLAB_MIN);
+  }
+
+  // Set to mean
+  {
+    sliceNode->SetSlabReconstructionType(VTK_IMAGE_SLAB_MEAN);
+    CHECK_INT(sliceNode->GetSlabReconstructionType(), VTK_IMAGE_SLAB_MEAN);
+  }
+
+  // Set to sum
+  {
+    sliceNode->SetSlabReconstructionType(VTK_IMAGE_SLAB_SUM);
+    CHECK_INT(sliceNode->GetSlabReconstructionType(), VTK_IMAGE_SLAB_SUM);
+  }
+
+  // Check GetSlabReconstructionTypeAsString
+  {
+    CHECK_STRING(sliceNode->GetSlabReconstructionTypeAsString(VTK_IMAGE_SLAB_MAX), "Max");
+    CHECK_STRING(sliceNode->GetSlabReconstructionTypeAsString(VTK_IMAGE_SLAB_MIN), "Min");
+    CHECK_STRING(sliceNode->GetSlabReconstructionTypeAsString(VTK_IMAGE_SLAB_MEAN), "Mean");
+    CHECK_STRING(sliceNode->GetSlabReconstructionTypeAsString(VTK_IMAGE_SLAB_SUM), "Sum");
+  }
+
+  // Check GetSlabReconstructionTypeFromString
+  {
+    CHECK_INT(sliceNode->GetSlabReconstructionTypeFromString("Max"), VTK_IMAGE_SLAB_MAX);
+    CHECK_INT(sliceNode->GetSlabReconstructionTypeFromString("Min"), VTK_IMAGE_SLAB_MIN);
+    CHECK_INT(sliceNode->GetSlabReconstructionTypeFromString("Mean"), VTK_IMAGE_SLAB_MEAN);
+    CHECK_INT(sliceNode->GetSlabReconstructionTypeFromString("Sum"), VTK_IMAGE_SLAB_SUM);
+  }
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int SlabReconstructionThicknessTest()
+{
+  vtkNew<vtkMRMLSliceNode> sliceNode;
+
+  CHECK_DOUBLE(sliceNode->GetSlabReconstructionThickness(), 1.);
+
+  // Set using set macro
+  {
+    sliceNode->SetSlabReconstructionThickness(99.5);
+    CHECK_DOUBLE(sliceNode->GetSlabReconstructionThickness(), 99.5);
+  }
 
   return EXIT_SUCCESS;
 }

@@ -430,6 +430,9 @@ protected:
   /// Helper to update foreground opacity when adding/subtracting the background layer
   bool UpdateFractions(vtkImageMathematics* fraction, double opacity);
 
+  /// Helper to update reconstruction slab settings for a given layer.
+  static void UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, vtkMRMLSliceLayerLogic* sliceLayerLogic);
+
   /// Returns true if position is inside the selected layer volume.
   /// Use background flag to choose between foreground/background layer.
   bool IsEventInsideVolume(bool background, double worldPos[3]);
