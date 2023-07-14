@@ -276,6 +276,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         [spacingX, spacingY, frameTimeMsec] = imageData.GetSpacing()
         imageData.SetSpacing(1.0, 1.0, 1.0)
         tempFrameVolume.SetSpacing(spacingX, spacingY, 1.0)
+        tempFrameVolume.SetAttribute('DICOM.instanceUIDs', slicer.dicomDatabase.instanceForFile(filePath))
 
         # Create new sequence
         outputSequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode")
