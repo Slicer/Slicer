@@ -120,6 +120,14 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
 
   this->FileWidget->setItemDelegateForColumn(
     FileNameColumn, new qSlicerFileNameItemDelegate(this));
+  this->FileWidget->setStyleSheet(QStringLiteral(
+    "QAbstractItemView::indicator:unchecked {\n"
+    "   background-color: palette(alternate-base);\n"
+    "}\n"
+    "QCheckBox::indicator:unchecked {\n"
+    "   background-color: palette(alternate-base);\n"
+    "};"
+  ));
   this->FileWidget->verticalHeader()->setVisible(false);
 
   // Checkable headers.
