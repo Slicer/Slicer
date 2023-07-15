@@ -485,7 +485,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::maximizeView()
     }
   else
     {
-    d->LayoutNode->RemoveMaximizedViewNode(nullptr);
+    d->LayoutNode->RemoveMaximizedViewNode(d->ViewNode);
     }
 }
 //---------------------------------------------------------------------------
