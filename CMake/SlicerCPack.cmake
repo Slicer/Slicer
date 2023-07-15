@@ -354,6 +354,9 @@ endif()
 # -------------------------------------------------------------------------
 if(CPACK_GENERATOR STREQUAL "NSIS")
 
+  # Conditionally set the variable so that a different value
+  # can be passed to the inner build (usually done by a custom
+  # application).
   if(NOT DEFINED Slicer_CPACK_NSIS_INSTALL_SUBDIRECTORY)
     set(Slicer_CPACK_NSIS_INSTALL_SUBDIRECTORY "")
   endif()
