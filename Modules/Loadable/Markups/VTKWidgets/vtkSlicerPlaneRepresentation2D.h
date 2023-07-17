@@ -39,9 +39,9 @@
 
 class vtkAppendPolyData;
 class vtkClipPolyData;
-class vtkCompositeDataGeometryFilter;
 class vtkDiscretizableColorTransferFunction;
 class vtkFeatureEdges;
+class vtkGeometryFilter;
 class vtkMRMLInteractionEventData;
 class vtkPlaneCutter;
 class vtkPlaneSource;
@@ -105,7 +105,7 @@ protected:
   vtkNew<vtkClipPolyData> PlaneClipperStartFadeFar;
   vtkNew<vtkClipPolyData> PlaneClipperEndFadeFar;
 
-  vtkNew<vtkCompositeDataGeometryFilter> PlaneCompositeFilter;
+  vtkNew<vtkGeometryFilter> PlaneGeometryFilter;
   vtkNew<vtkAppendPolyData> PlaneAppend;
   vtkNew<vtkTransformPolyDataFilter> PlaneWorldToSliceTransformer;
   vtkNew<vtkPolyDataMapper2D> PlaneFillMapper;
