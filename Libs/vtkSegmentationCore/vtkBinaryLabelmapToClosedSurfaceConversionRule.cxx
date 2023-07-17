@@ -25,7 +25,6 @@
 #include "vtkOrientedImageData.h"
 
 // VTK includes
-#include <vtkCompositeDataGeometryFilter.h>
 #include <vtkCompositeDataIterator.h>
 #include <vtkDecimatePro.h>
 #include <vtkDiscreteFlyingEdges3D.h>

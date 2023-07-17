@@ -24,10 +24,10 @@
 #include <vtkAppendPolyData.h>
 #include <vtkCellLocator.h>
 #include <vtkClipPolyData.h>
-#include <vtkCompositeDataGeometryFilter.h>
 #include <vtkDiscretizableColorTransferFunction.h>
 #include <vtkDoubleArray.h>
 #include <vtkFeatureEdges.h>
+#include <vtkGeometryFilter.h>
 #include <vtkGlyph2D.h>
 #include <vtkLine.h>
 #include <vtkMath.h>
@@ -65,7 +65,7 @@ vtkSlicerPlaneRepresentation2D::vtkSlicerPlaneRepresentation2D()
   this->PlaneCutter->SetInputConnection(this->PlaneFilter->GetOutputPort());
   this->PlaneCutter->SetPlane(this->SlicePlane);
 
-  this->PlaneCompositeFilter->SetInputConnection(this->PlaneCutter->GetOutputPort());
+  this->PlaneGeometryFilter->SetInputConnection(this->PlaneCutter->GetOutputPort());
 
   this->PlaneClipperSlicePlane->SetInputConnection(this->PlaneFilter->GetOutputPort());
   this->PlaneClipperSlicePlane->SetClipFunction(this->SlicePlane);
@@ -93,7 +93,7 @@ vtkSlicerPlaneRepresentation2D::vtkSlicerPlaneRepresentation2D()
   this->PlaneAppend->AddInputConnection(this->PlaneClipperStartFadeFar->GetOutputPort(0));
   this->PlaneAppend->AddInputConnection(this->PlaneClipperEndFadeFar->GetOutputPort(0));
   this->PlaneAppend->AddInputConnection(this->PlaneClipperEndFadeFar->GetOutputPort(1));
-  this->PlaneAppend->AddInputConnection(this->PlaneCompositeFilter->GetOutputPort());
+  this->PlaneAppend->AddInputConnection(this->PlaneGeometryFilter->GetOutputPort());
 
   this->PlaneSliceDistance->SetImplicitFunction(this->SlicePlane);
   this->PlaneSliceDistance->SetInputConnection(this->PlaneAppend->GetOutputPort());
@@ -111,7 +111,7 @@ vtkSlicerPlaneRepresentation2D::vtkSlicerPlaneRepresentation2D()
   this->PlaneOutlineFilter->SetInputConnection(this->PlaneFilter->GetOutputPort());
 
   this->PlanePickingAppend->AddInputConnection(this->PlaneOutlineFilter->GetOutputPort());
-  this->PlanePickingAppend->AddInputConnection(this->PlaneCompositeFilter->GetOutputPort());
+  this->PlanePickingAppend->AddInputConnection(this->PlaneGeometryFilter->GetOutputPort());
 
   this->PlaneOutlineWorldToSliceTransformer->SetTransform(this->WorldToSliceTransform);
   this->PlaneOutlineWorldToSliceTransformer->SetInputConnection(this->PlaneOutlineFilter->GetOutputPort());

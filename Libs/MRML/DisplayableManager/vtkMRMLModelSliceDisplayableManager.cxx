@@ -58,7 +58,7 @@
 #include <vtkWeakPointer.h>
 
 // VTK includes: customization
-#include <vtkCompositeDataGeometryFilter.h>
+#include <vtkGeometryFilter.h>
 #include <vtkPlaneCutter.h>
 #include <vtkSampleImplicitFunctionFilter.h>
 
@@ -84,7 +84,7 @@ public:
     vtkSmartPointer<vtkTransformFilter> ModelWarper;
     vtkSmartPointer<vtkPlane> Plane;
     vtkSmartPointer<vtkPlaneCutter> Cutter;
-    vtkSmartPointer<vtkCompositeDataGeometryFilter> GeometryFilter; // appends multiple cut pieces into a single polydata
+    vtkSmartPointer<vtkGeometryFilter> GeometryFilter;
     vtkSmartPointer<vtkSampleImplicitFunctionFilter> SliceDistance;
     vtkSmartPointer<vtkProp> Actor;
     };
@@ -311,7 +311,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   Pipeline* pipeline = new Pipeline();
   pipeline->Actor = actor.GetPointer();
   pipeline->Cutter = vtkSmartPointer<vtkPlaneCutter>::New();
-  pipeline->GeometryFilter = vtkSmartPointer<vtkCompositeDataGeometryFilter>::New();
+  pipeline->GeometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
   pipeline->SliceDistance = vtkSmartPointer<vtkSampleImplicitFunctionFilter>::New();
   pipeline->TransformToSlice = vtkSmartPointer<vtkTransform>::New();
   pipeline->NodeToWorld = vtkSmartPointer<vtkGeneralTransform>::New();
