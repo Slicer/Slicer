@@ -27,7 +27,6 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkCollection.h>
-#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkTimerLog.h>
