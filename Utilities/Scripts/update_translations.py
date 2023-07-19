@@ -158,8 +158,10 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
 
     ts_file_filter = f"{translations_dir}/{ts_filename_filter}"
     ts_file_paths = glob.glob(ts_file_filter)
+    create_new_component = False
     if not ts_file_paths:
-        raise ValueError(f"No .ts files were found at {ts_file_filter}")
+        logging.warning(f"No .ts files were found at {ts_file_filter}. A new translation source file will be created for {component} in en-US language.")
+        create_new_component = True
 
     # Get list of translatable files based on file extension
 
@@ -217,8 +219,6 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
 
     ts_file_filter = f"{translations_dir}/{ts_filename_filter}"
     ts_file_paths = glob.glob(ts_file_filter)
-    if not ts_file_paths:
-        raise ValueError(f"No .ts files were found at {ts_file_filter}")
 
     # Patch Python files to replace Pythonic `_(message)` translation function by Qt-style `translate(context, message)`
     # to allow lupdate to translate. Original files are backed up before any modification
@@ -227,12 +227,16 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
 
     # Run lupdate for each language
 
+    if create_new_component:
+        ts_file_paths = [f"{translations_dir}/{component}_en-US.ts"]
+
     for ts_file_index, ts_file_path in enumerate(ts_file_paths):
         logging.debug(f"Updating {ts_file_path} ({ts_file_index+1}/{len(ts_file_paths)})")
 
         # We need to temporarily copy the .ts file to the source folder because paths in the .ts file are relative to the .ts file location
         ts_file_path_in_source_tree = os.path.join(source_code_dir, os.path.basename(ts_file_path))
-        shutil.copy(ts_file_path, ts_file_path_in_source_tree)
+        if not create_new_component:
+            shutil.copy(ts_file_path, ts_file_path_in_source_tree)
 
         # Use "." as lupdate source path (and set the current working directory to source_code_dir),
         # because if we use an absolute path then lupdate misses tr() functions in some .h files
