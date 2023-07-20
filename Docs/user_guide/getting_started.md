@@ -123,6 +123,15 @@ The included libcrypto.so.1.1 in the Slicer installation is incompatible with th
 
     $SLICER_ROOT/lib/Slicer-4.xx/libcrypto.*
 
+If you double-clicked on the app and it doesn't launch, you can try this (in order):
+- verify execution rights of the app (Right click on the app > properties > executable as a program checked) or in terminal, in the app folder:
+    
+    chmod +x Slicer
+- launch the app from terminal :
+    
+    ./Slicer
+- if you get the "error: Failed to obtain launcher executable name !" message : move the app in your Software Home folder and double click on the app, it should launch.
+
 ## Using Slicer
 
 3D Slicer offers lots of features and gives users great flexibility in how to use them. As a result, new users may be overwhelmed with the number of options and have difficulty figuring out how to perform even simple operations. This is normal and many users successfully crossed this difficult stage by investing some time into learning how to use this software.
