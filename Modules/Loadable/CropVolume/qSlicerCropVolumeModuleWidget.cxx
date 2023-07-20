@@ -2,9 +2,6 @@
 #include <QDebug>
 #include <QMessageBox>
 
-// CTK includes
-#include <ctkFlowLayout.h>
-
 // VTK includes
 #include <vtkNew.h>
 #include <vtkMatrix4x4.h>
