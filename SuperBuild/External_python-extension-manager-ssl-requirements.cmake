@@ -53,8 +53,10 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                        --hash=sha256:b4ceb5324b998ce2003bc17d519080b4ec8d5b7b70794cbd2836101406a9be31 \
                        --hash=sha256:1fee5aacc7367487b4e22484d3c7e547992ed726d14864ee33c0176ae43b0d7c
   # [/cryptography]
+  # Specifying "[crypto]" is required since PyGithub 1.58.1
+  # See https://github.com/Slicer/Slicer/issues/7112
   # [PyJWT]
-  PyJWT==2.7.0 --hash=sha256:ba2b425b15ad5ef12f200dc67dd56af4e26de2331f965c5439994dad075876e1
+  PyJWT[crypto]==2.7.0 --hash=sha256:ba2b425b15ad5ef12f200dc67dd56af4e26de2331f965c5439994dad075876e1
   # [/PyJWT]
   # [wrapt]
   # Hashes correspond to the following packages:
