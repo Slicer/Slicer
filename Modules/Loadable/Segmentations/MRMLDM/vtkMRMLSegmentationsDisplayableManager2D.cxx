@@ -42,7 +42,7 @@
 #include <vtkActor2D.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCellArray.h>
-#include <vtkCompositeDataGeometryFilter.h>
+#include <vtkGeometryFilter.h>
 #include <vtkPlaneCutter.h>
 #include <vtkCleanPolyData.h>
 #include <vtkContourTriangulator.h>
@@ -154,7 +154,7 @@ public:
       this->Cutter->SetPlane(this->Plane);
       this->Cutter->BuildTreeOff(); // the cutter crashes for complex geometries if build tree is enabled
       vtkSmartPointer<vtkTransformPolyDataFilter> polyDataOutlineTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-      vtkNew<vtkCompositeDataGeometryFilter> geometryFilter; // merge multi-piece output of vtkPlaneCutter
+      vtkNew<vtkGeometryFilter> geometryFilter;
       geometryFilter->SetInputConnection(this->Cutter->GetOutputPort());
       polyDataOutlineTransformer->SetInputConnection(geometryFilter->GetOutputPort());
       polyDataOutlineTransformer->SetTransform(this->WorldToSliceTransform);
