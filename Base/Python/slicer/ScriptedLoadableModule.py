@@ -131,8 +131,13 @@ class ScriptedLoadableModuleWidget:
         """
         if moduleName == self.moduleName:
             self.cleanup()
-            settings = qt.QSettings()
-            settings.setValue(f'{self.moduleName}/_ReloadAndTest', self.reloadTestMenuButton.defaultAction().objectName)
+
+            if self.developerMode:
+                settings = qt.QSettings()
+                settings.setValue(
+                    f"{self.moduleName}/_ReloadAndTest",
+                    self.reloadTestMenuButton.defaultAction().objectName)
+
             slicer.app.moduleManager().disconnect(
                 'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
 
