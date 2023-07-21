@@ -135,7 +135,7 @@ class ScriptedLoadableModuleWidget:
             if self.developerMode:
                 settings = qt.QSettings()
                 settings.setValue(
-                    f"{self.moduleName}/_ReloadAndTest",
+                    f"{self.moduleName}/PreferredReloadAndTestAction",
                     self.reloadTestMenuButton.defaultAction().objectName)
 
             slicer.app.moduleManager().disconnect(
@@ -191,7 +191,7 @@ class ScriptedLoadableModuleWidget:
         # Restore Last used action for this module
         defaultAction = self.reloadTestAction
         actions = [self.reloadTestAction, self.testAction]
-        defaultActionName = qt.QSettings().value(f"{self.moduleName}/_ReloadAndTest", defaultAction.objectName)
+        defaultActionName = qt.QSettings().value(f"{self.moduleName}/PreferredReloadAndTestAction", defaultAction.objectName)
         for action in actions:
             if action.objectName == defaultActionName:
                 defaultAction = action
