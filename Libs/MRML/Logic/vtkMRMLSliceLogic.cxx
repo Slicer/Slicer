@@ -975,7 +975,7 @@ bool vtkMRMLSliceLogic::UpdateFractions(vtkImageMathematics* fraction, double op
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, vtkMRMLSliceLayerLogic* sliceLayerLogic)
 {
-  if (!sliceLogic || !sliceLayerLogic || !sliceLogic->GetSliceNode())
+  if (!sliceLogic || !sliceLayerLogic || !sliceLogic->GetSliceNode() || !sliceLayerLogic->GetSliceNode())
     {
     return;
     }
