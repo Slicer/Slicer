@@ -38,7 +38,7 @@ Most frequently used for these scenarios:
 
 - **Input ROI:** The region of interest driving the cropping process. ROIs have a box-like shape in which the interior of the box is the region to preserve and the exterior is the region to exclude. This combobox widget will allow the user to select an already existing ROI or create a new one (in addition, this widget will provide additional options such as rename or edit an existing ROI).
 
-  - **Display ROI:** Turn on/off the display of the ROI representation. If this is on, a representation of the ROI will be visible in the Slice views (2D) or in the 3D view. The resulting ROI can be manipulated interactively in any of the the Slice views (2D) or the 3D view.
+  - **Display ROI:** Turn on/off the display of the ROI representation. If this is on, a representation of the ROI will be visible in the Slice views (2D) or in the 3D view. The resulting ROI can be manipulated interactively in any of the Slice views (2D) or the 3D view.
 
   - **Fit to Volume:** This will resize the ROI to fit the extent of the Input volume specified.
 

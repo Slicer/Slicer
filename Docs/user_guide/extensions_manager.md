@@ -99,7 +99,7 @@ Extensions can be downloaded from the Extensions Catalog website and can be inst
 
 - Open Extensions manager using menu: View / Extensions manager.
 - Click the "Install from file..." button.
-- Select the the previously downloaded extension package(s). Multiple extension packages can be selected at once.
+- Select the previously downloaded extension package(s). Multiple extension packages can be selected at once.
 - Wait for the installations to complete.
 - Click "Restart" button to restart the application.
 
@@ -107,7 +107,7 @@ Extensions can be downloaded from the Extensions Catalog website and can be inst
 
 ### Extensions manager takes very long time to start
 
-When starting the extensions manager, the "Extensions manager is starting, please wait..." message is displayed immediately and normally list of extensions should show up within 10-20 seconds. If startup takes longer (several minutes) then most likely the the Slicer Extensions Catalog server is temporarily overloaded. Retry in an hour. If the problem persists after 6 hours then report it on the [Slicer forum](https://discourse.slicer.org).
+When starting the extensions manager, the "Extensions manager is starting, please wait..." message is displayed immediately and normally list of extensions should show up within 10-20 seconds. If startup takes longer (several minutes) then most likely the Slicer Extensions Catalog server is temporarily overloaded. Retry in an hour. If the problem persists after 6 hours then report it on the [Slicer forum](https://discourse.slicer.org).
 
 ### Extensions manager does not show any extensions
 
