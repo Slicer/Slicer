@@ -187,7 +187,8 @@ While developing code, enable VTK_DEBUG_LEAKS (ON by default) in your vtk build 
 
 ## Coordinate Systems
 
-- World space for 3D Views is in RAS (Right Anterior Superior) space. See [[Coordinate systems]].
+- World space for 3D Views is in RAS (Right Anterior Superior) space. See the
+  [Coordinate systems](../user_guide/coordinate_systems.md) page for details.
 - All units are expressed in millimeters (mm)
 
 ## String encoding: UTF-8 everywhere

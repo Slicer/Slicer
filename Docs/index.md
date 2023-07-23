@@ -10,6 +10,7 @@ user_guide/getting_started
 user_guide/get_help
 
 user_guide/user_interface
+user_guide/coordinate_systems
 user_guide/data_loading_and_saving
 user_guide/image_segmentation
 user_guide/registration
