@@ -53,13 +53,19 @@ autodoc_mock_imports = [
 ]
 
 myst_enable_extensions = [
+    "attrs_inline",  # Enable parsing of inline attributes (see https://myst-parser.readthedocs.io/en/latest/syntax/optional.html#inline-attributes)
     "colon_fence",  # Allow code fence using ::: (see https://myst-parser.readthedocs.io/en/latest/using/syntax-optional.html#syntax-colon-fence)
+    "dollarmath",  # Support syntax for inline and block math using `$...$` and `$$...$$`
+    # (see https://myst-parser.readthedocs.io/en/latest/syntax/optional.html#dollar-delimited-math)
     "linkify",  # Allow automatic creation of links from URLs (it is sufficient to write https://google.com instead of <https://google.com>)
 ]
 
 # Auto-generate header anchors up to level 6, so that it can be referenced like [](file.md#header-anchor).
 # (see https://myst-parser.readthedocs.io/en/latest/using/syntax-optional.html#auto-generated-header-anchors)
 myst_heading_anchors = 6
+
+# Allow display (block) math with equation label syntax
+myst_dmath_allow_labels = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
