@@ -31,7 +31,7 @@ More information about DICOM standard:
 
 To organize the data and allow faster access, Slicer keeps a local DICOM Database containing copies of (or links to) DICOM files, and basic information about content of each file. You can have multiple databases on your computer at a time, and switch between them if, for example, they include data from different research projects.  Each database is simply a directory on your local disk that has a few [SQLite](https://sqlite.org/) files and subdirectories to store image data.  Do not manually modify the contents of these directories. DICOM data can enter the database either through file import or via a DICOM network transfer. Slicer modules may also populate the DICOM database with computation results.
 
-Note that the DICOM standard does not specify how files will be organized on disk, so if you have DICOM data from a CDROM or otherwise transferred from a scanner, you cannot in general tell anything about the contents from the file or directory names. However once the data is imported to the database, it will be organized according the the DICOM standard Patient/Study/Series hierarchy.
+Note that the DICOM standard does not specify how files will be organized on disk, so if you have DICOM data from a CDROM or otherwise transferred from a scanner, you cannot in general tell anything about the contents from the file or directory names. However once the data is imported to the database, it will be organized according to the DICOM standard Patient/Study/Series hierarchy.
 
 ### DICOM plugins
 

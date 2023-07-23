@@ -96,7 +96,7 @@ modules/webserver.html
 
 Settings are stored in *.ini files. If the settings file is found in application home directory (within organization name or domain subfolder) then that .ini file is used. This can be used for creating a portable application that contains all software and settings in a relocatable folder. Relative paths in settings files are resolved using the application home directory, and therefore are portable along with the application.
 
-If .ini file is not found in the the application home directory then it is searched in user profile:
+If .ini file is not found in the application home directory then it is searched in user profile:
 
 -  Windows: `%USERPROFILE%\AppData\Roaming\slicer.org\` (typically `C:\Users\<your_user_name>\AppData\Roaming\slicer.org\`)
 -  Linux: `~/.config/slicer.org/`
