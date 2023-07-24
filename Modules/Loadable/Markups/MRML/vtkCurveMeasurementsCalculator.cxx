@@ -423,8 +423,14 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   // Get values for first point
   double* binormal = binormals->GetTuple3(linePoints->GetId(1));
   double binormalNorm = sqrt(binormal[0]*binormal[0] + binormal[1]*binormal[1] + binormal[2]*binormal[2]);
-  double normBinormal[3] = {0.0, 0.0, 0.0};
-  double prevNormBinormal[3] = {binormal[0]/binormalNorm, binormal[1]/binormalNorm, binormal[2]/binormalNorm};
+  double prevNormBinormal[3] = { 0.0, 0.0, 0.0 };
+  if (binormalNorm > 0)
+    {
+    prevNormBinormal[0] = binormal[0] / binormalNorm;
+    prevNormBinormal[1] = binormal[1] / binormalNorm;
+    prevNormBinormal[2] = binormal[2] / binormalNorm;
+    }
+  double normBinormal[3] = { 0.0, 0.0, 0.0 };
   double torsion = 0.0;
   double *tangent = nullptr;
   double currentLength = 0.0;
@@ -437,16 +443,19 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
     {
     binormal = binormals->GetTuple3(linePoints->GetId(idx+1));
     binormalNorm = sqrt(binormal[0]*binormal[0] + binormal[1]*binormal[1] + binormal[2]*binormal[2]);
+    torsion = 0.0;
+    if (binormalNorm > 0.0)
+      {
+      normBinormal[0] = binormal[0] / binormalNorm;
+      normBinormal[1] = binormal[1] / binormalNorm;
+      normBinormal[2] = binormal[2] / binormalNorm;
 
-    normBinormal[0] = binormal[0] / binormalNorm;
-    normBinormal[1] = binormal[1] / binormalNorm;
-    normBinormal[2] = binormal[2] / binormalNorm;
-
-    // Local torsion
-    torsion = sqrt( (normBinormal[0]-prevNormBinormal[0])*(normBinormal[0]-prevNormBinormal[0])
-                  + (normBinormal[1]-prevNormBinormal[1])*(normBinormal[1]-prevNormBinormal[1])
-                  + (normBinormal[2]-prevNormBinormal[2])*(normBinormal[2]-prevNormBinormal[2]) )
-              / binormalNorm;
+      // Local torsion
+      torsion = sqrt( (normBinormal[0]-prevNormBinormal[0])*(normBinormal[0]-prevNormBinormal[0])
+                    + (normBinormal[1]-prevNormBinormal[1])*(normBinormal[1]-prevNormBinormal[1])
+                    + (normBinormal[2]-prevNormBinormal[2])*(normBinormal[2]-prevNormBinormal[2]) )
+                / binormalNorm;
+      }
     torsionArray->InsertValue(linePoints->GetId(idx), torsion);
 
     // Statistics
