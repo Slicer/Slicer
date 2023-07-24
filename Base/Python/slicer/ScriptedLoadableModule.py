@@ -131,6 +131,13 @@ class ScriptedLoadableModuleWidget:
         """
         if moduleName == self.moduleName:
             self.cleanup()
+
+            if self.developerMode:
+                settings = qt.QSettings()
+                settings.setValue(
+                    f"{self.moduleName}/PreferredReloadAndTestAction",
+                    self.reloadTestMenuButton.defaultAction().objectName)
+
             slicer.app.moduleManager().disconnect(
                 'moduleAboutToBeUnloaded(QString)', self._onModuleAboutToBeUnloaded)
 
@@ -160,10 +167,37 @@ class ScriptedLoadableModuleWidget:
         self.reloadButton.name = "ScriptedLoadableModuleTemplate Reload"
         self.reloadButton.connect('clicked()', self.onReload)
 
-        # reload and test button
-        self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-        self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-        self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
+        # Toolbutton with either Test or Reload and Test
+        self.reloadTestMenu = qt.QMenu(self)
+        self.testAction = qt.QAction("Test", self.reloadTestMenu)
+        self.testAction.setStatusTip("Test the current module")
+        self.testAction.setObjectName("TestAction")
+        self.testAction.triggered.connect(self.onTest)
+        self.reloadTestMenu.addAction(self.testAction)
+
+        self.reloadTestAction = qt.QAction("Reload and Test", self.reloadTestMenu)
+        self.reloadTestAction.setStatusTip("Reload and test the current module")
+        self.reloadTestAction.setObjectName("ReloadTestAction")
+        self.reloadTestAction.triggered.connect(self.onReloadAndTest)
+        self.reloadTestMenu.addAction(self.reloadTestAction)
+
+        self.reloadTestMenuButton = qt.QToolButton()
+        toolbuttonSizePolicy = qt.QSizePolicy(qt.QSizePolicy.Preferred, qt.QSizePolicy.Preferred)
+        self.reloadTestMenuButton.setSizePolicy(toolbuttonSizePolicy)
+        self.reloadTestMenuButton.toolTip = "Test or Reload & Test"
+        self.reloadTestMenuButton.name = "ScriptedLoadableModuleTemplate Testing"
+        self.reloadTestMenuButton.setMenu(self.reloadTestMenu)
+
+        # Restore Last used action for this module
+        defaultAction = self.reloadTestAction
+        actions = [self.reloadTestAction, self.testAction]
+        defaultActionName = qt.QSettings().value(f"{self.moduleName}/PreferredReloadAndTestAction", defaultAction.objectName)
+        for action in actions:
+            if action.objectName == defaultActionName:
+                defaultAction = action
+                break
+
+        self.reloadTestMenuButton.setDefaultAction(defaultAction)
 
         # edit python source code
         self.editSourceButton = qt.QPushButton("Edit")
@@ -190,10 +224,10 @@ class ScriptedLoadableModuleWidget:
 
         if self.editModuleUiButton:
             # There are many buttons, distribute them in two rows
-            reloadFormLayout.addRow(createHLayout([self.reloadButton, self.reloadAndTestButton, self.restartButton]))
+            reloadFormLayout.addRow(createHLayout([self.reloadButton, self.reloadTestMenuButton, self.restartButton]))
             reloadFormLayout.addRow(createHLayout([self.editSourceButton, self.editModuleUiButton]))
         else:
-            reloadFormLayout.addRow(createHLayout([self.reloadButton, self.reloadAndTestButton, self.editSourceButton, self.restartButton]))
+            reloadFormLayout.addRow(createHLayout([self.reloadButton, self.reloadTestMenuButton, self.editSourceButton, self.restartButton]))
 
     def setup(self):
         # Instantiate and connect default widgets ...
@@ -215,10 +249,20 @@ class ScriptedLoadableModuleWidget:
 
         slicer.util.reloadScriptedModule(self.moduleName)
 
+    def onTest(self, **kwargs):
+        """Tests scripted module widget, can be used when reload and test doesn't work, calls
+        :func:`ScriptedLoadableModuleTest.runTest()` passing ``kwargs``.
+        """
+        self.reloadTestMenuButton.setDefaultAction(self.testAction)
+        with slicer.util.tryWithErrorDisplay("Test failed."):
+            test = slicer.selfTests[self.moduleName]
+            test(msec=int(slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay")), **kwargs)
+
     def onReloadAndTest(self, **kwargs):
         """Reload scripted module widget representation and call :func:`ScriptedLoadableModuleTest.runTest()`
         passing ``kwargs``.
         """
+        self.reloadTestMenuButton.setDefaultAction(self.reloadTestAction)
         with slicer.util.tryWithErrorDisplay("Reload and Test failed."):
             self.onReload()
             test = slicer.selfTests[self.moduleName]
