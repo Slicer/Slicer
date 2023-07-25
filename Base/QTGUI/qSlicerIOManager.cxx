@@ -98,7 +98,7 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
   this->ProgressDialog->setWindowTitle(qSlicerIOManager::tr("Loading ..."));
   if (steps == 1)
     {
-    // We only support cancelling a load action if we can have control over it
+    // We only support canceling a load action if we can have control over it
     this->ProgressDialog->setCancelButton(nullptr);
     }
   this->ProgressDialog->setWindowModality(Qt::WindowModal);

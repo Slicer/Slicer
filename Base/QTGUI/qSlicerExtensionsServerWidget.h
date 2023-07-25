@@ -59,7 +59,7 @@ public slots:
 
   void onExtensionScheduledForUninstall(const QString& extensionName);
 
-  void onExtensionCancelledScheduleForUninstall(const QString& extensionName);
+  void onExtensionCanceledScheduleForUninstall(const QString& extensionName);
 
   void onSlicerRequirementsChanged();
 

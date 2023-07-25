@@ -735,8 +735,8 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
             pluginInstances[pluginClassName] = slicer.modules.dicomPlugins[pluginClassName]()
         plugin = pluginInstances[pluginClassName]
         if progressCallback:
-            cancelled = progressCallback(pluginClassName, step * 100 / len(pluginClassNames))
-            if cancelled:
+            canceled = progressCallback(pluginClassName, step * 100 / len(pluginClassNames))
+            if canceled:
                 break
         try:
             if detailedLogging:
@@ -782,8 +782,8 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
 
     for step, (loadable, plugin) in enumerate(selectedLoadables.items(), start=1):
         if progressCallback:
-            cancelled = progressCallback(loadable.name, step * 100 / len(selectedLoadables))
-            if cancelled:
+            canceled = progressCallback(loadable.name, step * 100 / len(selectedLoadables))
+            if canceled:
                 break
 
         try:
@@ -797,21 +797,21 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
         if (not loadSuccess) and (messages is not None):
             messages.append(f'Could not load: {loadable.name} as a {plugin.loadType}')
 
-        cancelled = False
+        canceled = False
         try:
             # DICOM reader plugins (for example, in PETDICOM extension) may generate additional DICOM files
             # during loading. These must be added to the database.
             for derivedItem in loadable.derivedItems:
                 indexer = ctk.ctkDICOMIndexer()
                 if progressCallback:
-                    cancelled = progressCallback(f"{loadable.name} ({derivedItem})", step * 100 / len(selectedLoadables))
-                    if cancelled:
+                    canceled = progressCallback(f"{loadable.name} ({derivedItem})", step * 100 / len(selectedLoadables))
+                    if canceled:
                         break
                 indexer.addFile(slicer.dicomDatabase, derivedItem)
         except AttributeError:
             # no derived items or some other attribute error
             pass
-        if cancelled:
+        if canceled:
             break
 
     slicer.mrmlScene.RemoveObserver(sceneObserverTag)
@@ -877,7 +877,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
         clientLogger.setLevel(logging.WARNING)
 
         fileNumber = 0
-        cancelled = False
+        canceled = False
         for seriesIndex, currentSeriesInstanceUID in enumerate(seriesInstanceUIDs):
             progressDialog.labelText = f'Retrieving series {seriesIndex+1} of {len(seriesInstanceUIDs)}...'
             slicer.app.processEvents()
@@ -906,8 +906,8 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
                         series_instance_uid=currentSeriesInstanceUID)
 
                 slicer.app.processEvents()
-                cancelled = progressDialog.wasCanceled
-                if cancelled:
+                canceled = progressDialog.wasCanceled
+                if canceled:
                     break
 
                 outputDirectoryBase = slicer.dicomDatabase.databaseDirectory + "/DICOMweb"
@@ -925,14 +925,14 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
                         instance = client.retrieve_instance(studyInstanceUID, currentSeriesInstanceUID, sopInstanceUID)
                     progressDialog.setValue(int(100 * instanceIndex / numberOfInstances))
                     slicer.app.processEvents()
-                    cancelled = progressDialog.wasCanceled
-                    if cancelled:
+                    canceled = progressDialog.wasCanceled
+                    if canceled:
                         break
                     filename = outputDirectoryPath + "/" + str(fileNumber) + ".dcm"
                     instance.save_as(filename)
                     fileNumber += 1
 
-                if cancelled:
+                if canceled:
                     # cancel was requested in instance retrieve loop,
                     # stop the entire import process
                     break
@@ -954,7 +954,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
 
     if errors:
         slicer.util.errorDisplay(f"Errors occurred during DICOMweb import of {len(errors)} series.", detailedText="\n\n".join(errors))
-    elif cancelled and (len(seriesImported) < len(seriesInstanceUIDs)):
+    elif canceled and (len(seriesImported) < len(seriesInstanceUIDs)):
         slicer.util.infoDisplay(f"DICOMweb import has been interrupted after completing {len(seriesImported)} out of {len(seriesInstanceUIDs)} series.")
 
     return seriesImported

@@ -682,7 +682,7 @@ def loadNodeFromFile(filename, filetype=None, properties={}, returnNode=False):
                      If not specified then the reader with the highest confidence is used.
     :param properties: map containing additional parameters for the loading.
     :param returnNode: Deprecated. If set to true then the method returns status flag and node
-      instead of signalling error by throwing an exception.
+      instead of signaling error by throwing an exception.
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     :raises RuntimeError: in case of failure

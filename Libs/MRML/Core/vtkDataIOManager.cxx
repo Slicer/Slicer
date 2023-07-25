@@ -386,7 +386,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     //---
     //--- WJPtest
     //--- Test for space to download the file. If no space,
-    //--- then mark the node's read state as cancelled and
+    //--- then mark the node's read state as canceled and
     //--- Then,  check for InsufficientFreeBufferNotificationFlag.
     //--- If it's already set, the user has already been notified, so do nothing.
     //--- If not yet set, send an event, that will cause GUI to post
@@ -402,12 +402,12 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
       //--- No space left in cache. Don't trigger logic to download;
       //--- by invoking a RemoteReadEvent.
       //--- And trigger GUI to post a pop-up dialog to inform user.
-      //--- Mark the node cancelled.
+      //--- Mark the node canceled.
       if ( cm->GetInsufficientFreeBufferNotificationFlag() == 0 )
         {
         cm->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
         cm->SetInsufficientFreeBufferNotificationFlag(1);
-        dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCancelled();
+        dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCanceled();
         }
       }
     else

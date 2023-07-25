@@ -138,7 +138,7 @@ public:
   // add display node if not already present
   void CreateAnnotationPointDisplayNode();
 
-  /// flags to determine how the next fiducial added to the list is labelled
+  /// flags to determine how the next fiducial added to the list is labeled
   enum NumberingSchemes
   {
       SchemeMin = 0,

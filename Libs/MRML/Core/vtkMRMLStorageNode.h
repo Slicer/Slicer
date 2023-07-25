@@ -119,7 +119,7 @@ public:
   /// Scheduled: the data is remote, and is scheduled for download
   /// Transferring: data is remote, and the transfer is working to completion
   /// TransferDone: the data is on disk and ready to be read
-  /// Cancelled: the user cancelled the remote data transfer
+  /// Canceled: the user canceled the remote data transfer
   /// SkippedNoData: writing or reading was skipped due to data not present.
   ///                This is a valid state used if and only if the data node
   ///                is empty and there is nothing to be written or read.
@@ -130,7 +130,7 @@ public:
     Scheduled,
     Transferring,
     TransferDone,
-    Cancelled,
+    Canceled,
     SkippedNoData
   };
 
@@ -142,7 +142,7 @@ public:
   void SetReadStateScheduled() { this->SetReadState(this->Scheduled); };
   void SetReadStateTransferring() { this->SetReadState(this->Transferring); };
   void SetReadStateTransferDone() { this->SetReadState(this->TransferDone); };
-  void SetReadStateCancelled() { this->SetReadState(this->Cancelled); };
+  void SetReadStateCanceled() { this->SetReadState(this->Canceled); };
   void SetReadStateSkippedNoData() { this->SetReadState(this->SkippedNoData); };
   const char *GetStateAsString(int state);
   const char *GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
@@ -156,7 +156,7 @@ public:
   void SetWriteStateScheduled() { this->SetWriteState(this->Scheduled); };
   void SetWriteStateTransferring() { this->SetWriteState(this->Transferring); };
   void SetWriteStateTransferDone() { this->SetWriteState(this->TransferDone); };
-  void SetWriteStateCancelled() { this->SetWriteState(this->Cancelled); };
+  void SetWriteStateCanceled() { this->SetWriteState(this->Canceled); };
   void SetWriteStateSkippedNoData() { this->SetWriteState(this->SkippedNoData); };
   const char *GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
 

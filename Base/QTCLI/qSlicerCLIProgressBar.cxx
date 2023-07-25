@@ -372,7 +372,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
   QString statusLabelFormat = tr("%1 (%2s)");
   switch (node->GetStatus())
     {
-    case vtkMRMLCommandLineModuleNode::Cancelled:
+    case vtkMRMLCommandLineModuleNode::Canceled:
       d->ProgressBar->setMaximum(0);
       break;
     case vtkMRMLCommandLineModuleNode::Scheduled:

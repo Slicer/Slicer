@@ -484,7 +484,7 @@ class DICOMSender(DICOMProcess):
             try:
                 for file in self.files:
                     if not self.progressCallback(f"Sending {file} to {self.destinationUrl.toString()} using {self.protocol}"):
-                        raise UserWarning("Sending was cancelled, upload is incomplete.")
+                        raise UserWarning("Sending was canceled, upload is incomplete.")
                     import pydicom
                     dataset = pydicom.dcmread(file)
                     client.store_instances(datasets=[dataset])
@@ -496,7 +496,7 @@ class DICOMSender(DICOMProcess):
             for file in self.files:
                 self.start(file)
                 if not self.progressCallback(f"Sent {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"):
-                    raise UserWarning("Sending was cancelled, upload is incomplete.")
+                    raise UserWarning("Sending was canceled, upload is incomplete.")
 
     def dicomSend(self, file, config=None, config_profile='Default'):
         """Send DICOM file to the specified modality."""

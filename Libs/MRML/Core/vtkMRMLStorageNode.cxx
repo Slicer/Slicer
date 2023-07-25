@@ -548,7 +548,7 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
 //    this->Scene->InvokeEvent (vtkMRMLScene::SaveProgressFeedbackEvent );
     }
 
-  if (this->WriteState == Cancelled || this->WriteState == SkippedNoData)
+  if (this->WriteState == Canceled || this->WriteState == SkippedNoData)
     {
     return;
     }
@@ -634,9 +634,9 @@ const char * vtkMRMLStorageNode::GetStateAsString(int state)
     {
     return "TransferDone";
     }
-  if (state == this->Cancelled)
+  if (state == this->Canceled)
     {
-    return "Cancelled";
+    return "Canceled";
     }
   if (state == this->SkippedNoData)
     {

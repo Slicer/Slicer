@@ -183,7 +183,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
 
     # Testing a the status event when canceling
     def test_CLIStatusEventTestCancel(self):
-        self.delayDisplay('Testing status events when cancelling the execution of a CLI')
+        self.delayDisplay('Testing status events when canceling the execution of a CLI')
 
         tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX")
         self.assertTrue(tempFile.open())
@@ -207,8 +207,8 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
 
         expectedEvents = [
             cli.Scheduled,
-            cli.Cancelling,
-            cli.Cancelled,
+            cli.Canceling,
+            cli.Canceled,
         ]
 
         # Ignore cli.Running event (it may or may not be fired)
@@ -216,7 +216,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
             logic.StatusEvents.remove(cli.Running)
 
         self.assertEqual(logic.StatusEvents, expectedEvents)
-        self.delayDisplay('Testing cancelled execution Passed')
+        self.delayDisplay('Testing canceled execution Passed')
 
     def test_SubjectHierarchyReference(self):
         self.delayDisplay('Test that output node moved to referenced node location in subject hierarchy')

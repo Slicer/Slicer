@@ -321,7 +321,7 @@ void qSlicerSettingsModulesPanel::onAddModulesAdditionalPathClicked()
   QString path = QFileDialog::getExistingDirectory(
         this, tr("Select folder"),
         mostRecentPath);
-  // An empty directory means that the user cancelled the dialog.
+  // An empty directory means that the user canceled the dialog.
   if (path.isEmpty())
     {
     return;

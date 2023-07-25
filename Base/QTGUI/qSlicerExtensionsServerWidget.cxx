@@ -239,8 +239,8 @@ void qSlicerExtensionsServerWidget::setExtensionsManagerModel(qSlicerExtensionsM
     QObject::connect(model, SIGNAL(extensionScheduledForUninstall(QString)),
                      this, SLOT(onExtensionScheduledForUninstall(QString)));
 
-    QObject::connect(model, SIGNAL(extensionCancelledScheduleForUninstall(QString)),
-                     this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
+    QObject::connect(model, SIGNAL(extensionCanceledScheduleForUninstall(QString)),
+                     this, SLOT(onExtensionCanceledScheduleForUninstall(QString)));
 
     QObject::connect(model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
                      this, SLOT(onSlicerRequirementsChanged()));
@@ -314,7 +314,7 @@ void qSlicerExtensionsServerWidget::onExtensionScheduledForUninstall(const QStri
 }
 
 // -------------------------------------------------------------------------
-void qSlicerExtensionsServerWidget::onExtensionCancelledScheduleForUninstall(const QString& extensionName)
+void qSlicerExtensionsServerWidget::onExtensionCanceledScheduleForUninstall(const QString& extensionName)
 {
   this->onExtensionInstalled(extensionName);
 }

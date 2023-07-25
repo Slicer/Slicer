@@ -550,7 +550,7 @@ void vtkMRMLCommandLineModuleNode::SetStatus(int status, bool modify)
       case vtkMRMLCommandLineModuleNode::Running:
         this->Internal->LastRunTime.Modified();
         break;
-      case vtkMRMLCommandLineModuleNode::Cancelling:
+      case vtkMRMLCommandLineModuleNode::Canceling:
         this->AbortProcess();
         break;
       default:
@@ -662,8 +662,8 @@ const char* vtkMRMLCommandLineModuleNode::GetStatusString() const
     case Idle: return "Idle";
     case Scheduled: return "Scheduled";
     case Running: return "Running";
-    case Cancelling: return "Cancelling";
-    case Cancelled: return "Cancelled";
+    case Canceling: return "Canceling";
+    case Canceled: return "Canceled";
     case Completing: return "Completing";
     case Completed: return "Completed";
     case CompletedWithErrors: return "Completed with errors";
@@ -678,7 +678,7 @@ void vtkMRMLCommandLineModuleNode::Cancel()
 {
   if (this->IsBusy())
     {
-    this->SetStatus(vtkMRMLCommandLineModuleNode::Cancelling);
+    this->SetStatus(vtkMRMLCommandLineModuleNode::Canceling);
     }
 }
 

@@ -167,7 +167,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             segment = segmentation.GetSegment(segmentID)
             if not segment:
                 # selected segment was deleted, cancel segmentation
-                logging.debug("Segmentation cancelled because an input segment was deleted")
+                logging.debug("Segmentation canceled because an input segment was deleted")
                 self.onCancel()
                 return
             segmentLabelmap = segment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())

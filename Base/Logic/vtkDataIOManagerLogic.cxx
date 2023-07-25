@@ -327,8 +327,8 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
       }
     else
       {
-      //--- Mark the node's read state as cancelled.
-      dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCancelled();
+      //--- Mark the node's read state as canceled.
+      dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCanceled();
       }
     //--- Invoke an event that will trigger GUI to post
     //--- a message box telling if one hasn't been posted already
@@ -378,9 +378,9 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   if ( retval == 0)
     {
     //--- no permission fields were completed.
-    //--- Transfer should be cancelled -- how do we do this?
-    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCancelled();
-    vtkDebugMacro("QueueRead: cancelling data transfer.");
+    //--- Transfer should be canceled -- how do we do this?
+    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCanceled();
+    vtkDebugMacro("QueueRead: canceling data transfer.");
     return 0;
     }
 

@@ -77,7 +77,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   void QueueWrite ( vtkMRMLNode *node );
 
   ///
-  /// Set the status of a data transfer (Idle, Scheduled, Cancelled Running,
+  /// Set the status of a data transfer (Idle, Scheduled, Canceled Running,
   /// Completed).  The "modify" parameter indicates whether the object
   /// can be modified by the call.
   void SetTransferStatus(vtkDataTransfer *transfer, int status);

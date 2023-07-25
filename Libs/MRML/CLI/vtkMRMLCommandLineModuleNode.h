@@ -82,12 +82,12 @@ public:
     Scheduled=0x01,
     /// State when the CLI is being executed.
     Running=0x02,
-    /// State when the CLI has been requested to be cancelled.
-    Cancelling=0x04,
+    /// State when the CLI has been requested to be canceled.
+    Canceling=0x04,
     /// State when the CLI is no longer being executed because
-    /// Cancelling has been requested.
+    /// Canceling has been requested.
     /// Do not set manually, use Cancel() instead.
-    Cancelled=0x08,
+    Canceled=0x08,
     /// State when the CLI has been successfully executed and is in a finishing
     /// state that loads the outputs into the scene.
     Completing=0x10,
@@ -99,7 +99,7 @@ public:
     /// State when the CLI has been executed with errors
     CompletedWithErrors= Completed | ErrorsMask,
     /// Mask used to know if the CLI is in pending mode.
-    BusyMask = Scheduled | Running | Cancelling | Completing
+    BusyMask = Scheduled | Running | Canceling | Completing
     };
 
   /// Set the status of the node (Idle, Scheduled, Running,
@@ -150,7 +150,7 @@ public:
   //@}
 
   /// Return true if the module is in a busy state: Scheduled, Running,
-  /// Cancelling, Completing.
+  /// Canceling, Completing.
   /// \sa SetStatus(), GetStatus(), BusyMask, Cancel()
   bool IsBusy()const;
 
@@ -158,7 +158,7 @@ public:
 
   /// Set a request to stop the processing of the CLI.
   /// Do nothing if the module is not "busy".
-  /// \sa IsBusy(), Cancelling, Cancelled
+  /// \sa IsBusy(), Canceling, Canceled
   void Cancel();
 
   /// This enum type controls when the CLI should be run automatically.
@@ -167,7 +167,7 @@ public:
   {
     /// Triggering a new autorun cancels the processing of the current CLI if
     /// any.
-    /// \sa SetStatus(), Cancelling
+    /// \sa SetStatus(), Canceling
     AutoRunCancelsRunningProcess = 0x01,
     /// When set, it triggers autorun requests when a parameter is modified
     /// when calling SetParameterAsXXX().

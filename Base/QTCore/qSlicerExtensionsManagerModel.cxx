@@ -2491,7 +2491,7 @@ bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUpdate(
     }
   d->removeExtensionFromScheduledForUpdateList(extensionName);
 
-  emit this->extensionCancelledScheduleForUpdate(extensionName);
+  emit this->extensionCanceledScheduleForUpdate(extensionName);
 
   return true;
 }
@@ -2623,7 +2623,7 @@ bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUninstall(const Q
     }
   d->removeExtensionFromScheduledForUninstallList(extensionName);
   d->addExtensionSettings(extensionName);
-  emit this->extensionCancelledScheduleForUninstall(extensionName);
+  emit this->extensionCanceledScheduleForUninstall(extensionName);
 
   return true;
 }

@@ -411,8 +411,8 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
                 slicer.app.processEvents()
                 progressDialog.setValue(progressValue)
                 slicer.app.processEvents()
-                cancelled = progressDialog.wasCanceled
-                return cancelled
+                canceled = progressDialog.wasCanceled
+                return canceled
 
             loadablesByPlugin, loadEnabled = DICOMLib.getLoadablesFromFileLists(fileLists, selectedPlugins, messages,
                                                                                 lambda progressLabel, progressValue, progressDialog=progressDialog: progressCallback(progressDialog, progressLabel, progressValue),
@@ -536,8 +536,8 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             slicer.app.processEvents()
             progressDialog.setValue(progressValue)
             slicer.app.processEvents()
-            cancelled = progressDialog.wasCanceled
-            return cancelled
+            canceled = progressDialog.wasCanceled
+            return canceled
 
         qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
 

@@ -1081,10 +1081,10 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
 
   {
     QFETCH(QStringList, extensionNamesToCancelScheduledForUninstall);
-    QFETCH(int, expectedSpyExtensionCancelledScheduleForUninstallCount);
+    QFETCH(int, expectedSpyExtensionCanceledScheduleForUninstallCount);
     qSlicerExtensionsManagerModel model;
     model.setExtensionsSettingsFilePath(QSettings().fileName());
-    QSignalSpy spyExtensionCancelledScheduleForUninstall(&model, SIGNAL(extensionCancelledScheduleForUninstall(QString)));
+    QSignalSpy spyExtensionCanceledScheduleForUninstall(&model, SIGNAL(extensionCanceledScheduleForUninstall(QString)));
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
@@ -1092,7 +1092,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
       {
       model.cancelExtensionScheduledForUninstall(extensionNameToCancelScheduledForUninstall);
       }
-    QCOMPARE(spyExtensionCancelledScheduleForUninstall.count(), expectedSpyExtensionCancelledScheduleForUninstallCount);
+    QCOMPARE(spyExtensionCanceledScheduleForUninstall.count(), expectedSpyExtensionCanceledScheduleForUninstallCount);
   }
 
   {
@@ -1116,7 +1116,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
   QTest::addColumn<QList<int> >("extensionIdsToInstall");
   QTest::addColumn<QStringList>("extensionNamesToScheduleForUninstall");
   QTest::addColumn<QStringList>("extensionNamesToCancelScheduledForUninstall");
-  QTest::addColumn<int>("expectedSpyExtensionCancelledScheduleForUninstallCount");
+  QTest::addColumn<int>("expectedSpyExtensionCanceledScheduleForUninstallCount");
   QTest::addColumn<QStringList>("expectedExtensionNamesScheduledForUninstall");
 
   QString slicerRevision("30987");

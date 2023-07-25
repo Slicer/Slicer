@@ -833,13 +833,13 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // release it when it goes out of scope
   node0.TakeReference(reinterpret_cast<vtkMRMLCommandLineModuleNode*>(clientdata));
 
-  // Check to see if this node/task has been cancelled
-  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling ||
-      node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)
+  // Check to see if this node/task has been canceled
+  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Canceling ||
+      node0->GetStatus() == vtkMRMLCommandLineModuleNode::Canceled)
     {
     node0->SetOutputText("", false);
     node0->SetErrorText("", false);
-    node0->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled, false);
+    node0->SetStatus(vtkMRMLCommandLineModuleNode::Canceled, false);
     this->GetApplicationLogic()->RequestModified( node0 );
     return;
     }
@@ -1809,7 +1809,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       // reset the timeout value
       timeout = timeoutlimit;
 
-      // Check to see if the plugin was cancelled
+      // Check to see if the plugin was canceled
       if (node0->GetModuleDescription().GetProcessInformation()->Abort)
         {
         itksysProcess_Kill(process);
@@ -1925,9 +1925,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     node0->SetErrorText(stderrbuffer, false);
 
     // check the exit state / error state of the process
-    if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling)
+    if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Canceling)
       {
-      node0->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled, false);
+      node0->SetStatus(vtkMRMLCommandLineModuleNode::Canceled, false);
       this->GetApplicationLogic()->RequestModified(node0);
       }
     else
@@ -2052,9 +2052,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
     catch (itk::ExceptionObject& exc)
       {
-      if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling)
+      if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Canceling)
         {
-        vtkInfoMacro(<< node0->GetModuleDescription().GetTitle() << " cancelled.");
+        vtkInfoMacro(<< node0->GetModuleDescription().GetTitle() << " canceled.");
         }
       else
         {
@@ -2075,9 +2075,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       std::cout.rdbuf( origcoutrdbuf );
       std::cerr.rdbuf( origcerrrdbuf );
       }
-    if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling)
+    if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Canceling)
       {
-      node0->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled, false);
+      node0->SetStatus(vtkMRMLCommandLineModuleNode::Canceled, false);
       this->GetApplicationLogic()->RequestModified( node0 );
       }
     // Check the return status of the module
@@ -2092,12 +2092,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
     }
 
-  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling)
+  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Canceling)
     {
-    node0->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled, false);
+    node0->SetStatus(vtkMRMLCommandLineModuleNode::Canceled, false);
     this->GetApplicationLogic()->RequestModified( node0 );
     }
-  else if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled
+  else if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Canceled
            && node0->GetStatus() != vtkMRMLCommandLineModuleNode::CompletedWithErrors)
     {
     node0->SetStatus(vtkMRMLCommandLineModuleNode::Completing, false);
@@ -2171,7 +2171,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // if there was a miniscene that needs loading, request it
   if (miniscene->GetNumberOfNodes() > 0)
     {
-    // don't load the mini scene if errors were found or the cli was cancelled.
+    // don't load the mini scene if errors were found or the cli was canceled.
     if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Completing)
       {
       bool displayData = this->IsCommandLineModuleNodeUpdatingDisplay(node0);
@@ -2613,9 +2613,9 @@ void vtkSlicerCLIModuleLogic
       {
       return;
       }
-    if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelling)
+    if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Canceling)
       {
-      // request the module execution to be cancelled.
+      // request the module execution to be canceled.
       node->Cancel();
       // Wait until the module is stopped
       extraDelay = 100;

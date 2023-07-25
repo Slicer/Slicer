@@ -572,7 +572,7 @@ bool vtkMRMLWindowLevelWidget::ProcessSetWindowLevelFromRegionEnd(vtkMRMLInterac
     }
   else
     {
-    // cancelled
+    // canceled
     return true;
     }
 }

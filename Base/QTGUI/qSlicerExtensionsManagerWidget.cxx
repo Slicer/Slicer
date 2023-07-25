@@ -351,7 +351,7 @@ void qSlicerExtensionsManagerWidget::setExtensionsManagerModel(qSlicerExtensions
     connect(model, SIGNAL(extensionInstalled(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionUninstalled(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionScheduledForUpdate(QString)), this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(extensionCancelledScheduleForUpdate(QString)), this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionCanceledScheduleForUpdate(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionBookmarkedChanged(QString,bool)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionUpdateAvailable(QString)), this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(autoUpdateSettingsChanged()), this, SLOT(updateAutoUpdateWidgetsFromModel()));

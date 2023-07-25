@@ -205,7 +205,7 @@ void qSlicerSegmentationsSettingsPanel::onEditDefaultTerminologyEntry()
   d->TerminologiesLogic->DeserializeTerminologyEntry(terminologyStdStr, entry);
   if (!qSlicerTerminologySelectorDialog::getTerminology(entry, this))
     {
-    // user cancelled
+    // user canceled
     return;
     }
   this->setDefaultTerminologyEntry(vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(entry).c_str());

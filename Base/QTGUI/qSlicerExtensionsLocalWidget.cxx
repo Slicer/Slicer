@@ -860,7 +860,7 @@ void qSlicerExtensionsLocalWidget::setExtensionsManagerModel(qSlicerExtensionsMa
   disconnect(this, SLOT(onExtensionUninstalled(QString)));
   disconnect(this, SLOT(onExtensionMetadataUpdated(QString)));
   disconnect(this, SLOT(onExtensionScheduledForUninstall(QString)));
-  disconnect(this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
+  disconnect(this, SLOT(onExtensionCanceledScheduleForUninstall(QString)));
   disconnect(this, SLOT(onModelExtensionEnabledChanged(QString,bool)));
   disconnect(this, SLOT(onExtensionBookmarkedChanged(QString,bool)));
   disconnect(this, SLOT(setExtensionUpdateDownloadProgress(QString,qint64,qint64)));
@@ -877,11 +877,11 @@ void qSlicerExtensionsLocalWidget::setExtensionsManagerModel(qSlicerExtensionsMa
     connect(d->ExtensionsManagerModel, SIGNAL(extensionMetadataUpdated(QString)), this, SLOT(onExtensionMetadataUpdated(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionBookmarkedChanged(QString, bool)), this, SLOT(onExtensionBookmarkedChanged(QString,bool)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionScheduledForUninstall(QString)), this, SLOT(onExtensionScheduledForUninstall(QString)));
-    connect(d->ExtensionsManagerModel, SIGNAL(extensionCancelledScheduleForUninstall(QString)), this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
+    connect(d->ExtensionsManagerModel, SIGNAL(extensionCanceledScheduleForUninstall(QString)), this, SLOT(onExtensionCanceledScheduleForUninstall(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionEnabledChanged(QString,bool)), this, SLOT(onModelExtensionEnabledChanged(QString,bool)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionUpdateAvailable(QString)), this, SLOT(setExtensionUpdateAvailable(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionScheduledForUpdate(QString)), this, SLOT(setExtensionUpdateScheduled(QString)));
-    connect(d->ExtensionsManagerModel, SIGNAL(extensionCancelledScheduleForUpdate(QString)), this, SLOT(setExtensionUpdateCanceled(QString)));
+    connect(d->ExtensionsManagerModel, SIGNAL(extensionCanceledScheduleForUpdate(QString)), this, SLOT(setExtensionUpdateCanceled(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(updateDownloadProgress(QString,qint64,qint64)),
       this, SLOT(setExtensionUpdateDownloadProgress(QString,qint64,qint64)));
     connect(d->ExtensionsManagerModel, SIGNAL(installDownloadProgress(QString, qint64, qint64)),
@@ -1014,7 +1014,7 @@ void qSlicerExtensionsLocalWidget::onExtensionScheduledForUninstall(const QStrin
 }
 
 // -------------------------------------------------------------------------
-void qSlicerExtensionsLocalWidget::onExtensionCancelledScheduleForUninstall(const QString& extensionName)
+void qSlicerExtensionsLocalWidget::onExtensionCanceledScheduleForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsLocalWidget);
   d->updateExtensionItem(extensionName);

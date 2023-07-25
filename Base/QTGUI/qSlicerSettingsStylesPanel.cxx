@@ -251,7 +251,7 @@ void qSlicerSettingsStylesPanel::onAddStyleAdditionalPathClicked()
   QString path = QFileDialog::getExistingDirectory(
       this, tr("Select a path containing a \"styles\" plugin directory"),
       extensionInstallPath);
-  // An empty directory means that the user cancelled the dialog.
+  // An empty directory means that the user canceled the dialog.
   if (path.isEmpty())
     {
     return;

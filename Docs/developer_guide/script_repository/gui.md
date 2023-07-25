@@ -193,7 +193,7 @@ class MyModuleFileDialog ():
   def execDialog(self):
     # Implement custom scene save operation here.
     # Return True if saving completed successfully,
-    # return False if saving was cancelled.
+    # return False if saving was canceled.
     ...
     return saved
 ```

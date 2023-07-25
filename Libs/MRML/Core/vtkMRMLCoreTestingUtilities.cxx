@@ -427,9 +427,9 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   node->SetReadStateTransferDone();
   rstate = node->GetReadStateAsString();
   std::cout << "Read state, TransfrerDone = " << rstate << std::endl;
-  node->SetReadStateCancelled();
+  node->SetReadStateCanceled();
   rstate = node->GetReadStateAsString();
-  std::cout << "Read state, Cancelled = " << rstate << std::endl;
+  std::cout << "Read state, Canceled = " << rstate << std::endl;
 
   TEST_SET_GET_INT_RANGE(node, WriteState, 0, 5);
   const char *wstate = node->GetWriteStateAsString();
@@ -449,9 +449,9 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   node->SetWriteStateTransferDone();
   wstate = node->GetWriteStateAsString();
   std::cout << "Write state, TransfrerDone = " << wstate << std::endl;
-  node->SetWriteStateCancelled();
+  node->SetWriteStateCanceled();
   wstate = node->GetWriteStateAsString();
-  std::cout << "Write state, Cancelled = " << wstate << std::endl;
+  std::cout << "Write state, Canceled = " << wstate << std::endl;
 
   std::string fullName = node->GetFullNameFromFileName();
   std::cout << "fullName = " << fullName.c_str() << std::endl;

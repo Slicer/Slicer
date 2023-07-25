@@ -81,7 +81,7 @@ protected slots:
   void onExtensionMetadataUpdated(const QString& extensionName);
   void onExtensionBookmarkedChanged(const QString& extensionName, bool bookmarked);
   void onExtensionScheduledForUninstall(const QString& extensionName);
-  void onExtensionCancelledScheduleForUninstall(const QString& extensionName);
+  void onExtensionCanceledScheduleForUninstall(const QString& extensionName);
   void setExtensionUpdateScheduled(const QString& extensionName);
   void setExtensionUpdateCanceled(const QString& extensionName);
   void setExtensionUpdateDownloadProgress(

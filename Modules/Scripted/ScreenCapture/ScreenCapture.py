@@ -836,7 +836,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         self.watermarkImagePath = None
 
     def requestCancel(self):
-        logging.info("User requested cancelling of capture")
+        logging.info("User requested canceling of capture")
         self.cancelRequested = True
 
     def addLog(self, text):

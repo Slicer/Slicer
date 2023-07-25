@@ -517,7 +517,7 @@ Function DownloadFile
 
     Pop $1
     StrCmp $1 "success" success
-    StrCmp $1 "Cancelled" cancel
+    StrCmp $1 "Canceled" cancel
     MessageBox MB_OK "Download failed: $1"
   cancel:
     Return

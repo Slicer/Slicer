@@ -1264,7 +1264,7 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
     }
   else
     {
-    // Request is cancelled, application will not be closed
+    // Request is canceled, application will not be closed
     event->ignore();
     d->IsClosing = false;
     }

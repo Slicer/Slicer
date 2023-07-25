@@ -534,11 +534,11 @@ signals:
 
   void extensionScheduledForUninstall(const QString& extensionName);
 
-  void extensionCancelledScheduleForUninstall(const QString& extensionName);
+  void extensionCanceledScheduleForUninstall(const QString& extensionName);
 
   void extensionScheduledForUpdate(const QString& extensionName);
 
-  void extensionCancelledScheduleForUpdate(const QString& extensionName);
+  void extensionCanceledScheduleForUpdate(const QString& extensionName);
 
   void extensionUninstalled(const QString& extensionName);
 
