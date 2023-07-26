@@ -37,6 +37,8 @@
 #include <vtkSlicerSegmentationsModuleLogic.h>
 #include <vtkSlicerTerminologiesModuleLogic.h>
 
+#include <vtkMRMLSegmentEditorNode.h>
+
 // --------------------------------------------------------------------------
 // qSlicerSegmentationsSettingsPanelPrivate
 
@@ -103,6 +105,12 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   q->registerProperty("Segmentations/ConfirmEditHiddenSegment", this->AllowEditingHiddenSegmentComboBox,
     "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
 
+  this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Overwrite all"), QString(/*no tr*/"OverwriteAllSegments"));
+  this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Overwrite visible"), QString(/*no tr*/"OverwriteVisibleSegments"));
+  this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Allow overlap"), QString(/*no tr*/"OverwriteNone"));
+  q->registerProperty("Segmentations/DefaultOverwriteMode", this->DefaultOverwriteModeComboBox,
+    "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
+
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->AutoOpacitiesCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setAutoOpacities(bool)));
@@ -110,10 +118,15 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
                    q, SLOT(setDefaultSurfaceSmoothing(bool)));
   QObject::connect(this->EditDefaultTerminologyEntryPushButton, SIGNAL(clicked()),
                    q, SLOT(onEditDefaultTerminologyEntry()));
+  QObject::connect(this->DefaultOverwriteModeComboBox, SIGNAL(currentIndexChanged(QString)),
+                   q, SIGNAL(setDefaultOverwriteMode(QString)));
 
   // Update default segmentation node from settings when startup completed.
   QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()),
     q, SLOT(updateDefaultSegmentationNodeFromWidget()));
+  // Update default overwrite mode from settings when startup completed.
+  QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()),
+    q, SLOT(updateDefaultOverwriteModeFromWidget()));
 }
 
 // --------------------------------------------------------------------------
@@ -159,6 +172,17 @@ void qSlicerSegmentationsSettingsPanel::setDefaultSurfaceSmoothing(bool on)
     {
     this->segmentationsLogic()->SetDefaultSurfaceSmoothingEnabled(on);
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode(QString mode)
+{
+  Q_UNUSED(mode);
+  if (this->segmentationsLogic())
+    {
+    this->segmentationsLogic()->SetDefaultOverwriteMode(
+      vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(mode.toStdString().c_str()));
+    } 
 }
 
 // --------------------------------------------------------------------------
@@ -217,4 +241,11 @@ void qSlicerSegmentationsSettingsPanel::updateDefaultSegmentationNodeFromWidget(
 {
   Q_D(qSlicerSegmentationsSettingsPanel);
   this->setDefaultSurfaceSmoothing(d->SurfaceSmoothingCheckBox->isChecked());
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSegmentationsSettingsPanel::updateDefaultOverwriteModeFromWidget()
+{
+  Q_D(qSlicerSegmentationsSettingsPanel);
+  this->setDefaultOverwriteMode(d->DefaultOverwriteModeComboBox->currentData().toString());
 }
