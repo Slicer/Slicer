@@ -61,6 +61,8 @@ protected slots:
   void onEditDefaultTerminologyEntry();
   void setDefaultTerminologyEntry(QString);
   void updateDefaultSegmentationNodeFromWidget();
+  void setDefaultOverwriteMode(QString);
+  void updateDefaultOverwriteModeFromWidget();
 
 signals:
   void defaultTerminologyEntryChanged(QString terminologyStr);

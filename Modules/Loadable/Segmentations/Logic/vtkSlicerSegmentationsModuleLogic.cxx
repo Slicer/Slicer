@@ -2452,6 +2452,56 @@ void vtkSlicerSegmentationsModuleLogic::SetDefaultSurfaceSmoothingEnabled(bool e
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLSegmentEditorNode* vtkSlicerSegmentationsModuleLogic::GetDefaultSegmentEditorNode()
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    return nullptr;
+    }
+  vtkSmartPointer<vtkMRMLSegmentEditorNode> defaultNode = vtkMRMLSegmentEditorNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSegmentEditorNode"));
+  if (defaultNode)
+    {
+    return defaultNode;
+    }
+  defaultNode.TakeReference(vtkMRMLSegmentEditorNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLSegmentEditorNode")));
+  if (!defaultNode)
+    {
+    return nullptr;
+    }
+  scene->AddDefaultNode(defaultNode);
+  return defaultNode;
+}
+
+//-----------------------------------------------------------------------------
+int vtkSlicerSegmentationsModuleLogic::GetDefaultOverwriteMode()
+{
+  vtkMRMLSegmentEditorNode* defaultSegmentEditorNode = this->GetDefaultSegmentEditorNode();
+  if (!defaultSegmentEditorNode)
+    {
+    return -1;
+    }
+  return defaultSegmentEditorNode->GetOverwriteMode();
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerSegmentationsModuleLogic::SetDefaultOverwriteMode(int mode)
+{
+  if (mode >= vtkMRMLSegmentEditorNode::Overwrite_Last || mode < 0)
+    {
+    vtkErrorMacro("vtkSlicerSegmentationsModuleLogic::SetOverwriteMode failed: invalid value for mode parameter");
+    return;
+    }
+  vtkMRMLSegmentEditorNode* defaultSegmentEditorNode = this->GetDefaultSegmentEditorNode();
+  if (!defaultSegmentEditorNode)
+    {
+    vtkErrorMacro("vtkSlicerSegmentationsModuleLogic::SetOverwriteMode failed: could not create default segment editor node");
+    return;
+    }
+  defaultSegmentEditorNode->SetOverwriteMode(mode);
+}
+
+//-----------------------------------------------------------------------------
 std::string vtkSlicerSegmentationsModuleLogic::GetSafeFileName(std::string originalName)
 {
   // Remove characters from node name that cannot be used in file names

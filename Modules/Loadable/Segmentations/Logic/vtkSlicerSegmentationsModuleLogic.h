@@ -40,6 +40,7 @@ class vtkDataObject;
 class vtkGeneralTransform;
 
 class vtkMRMLSegmentationStorageNode;
+class vtkMRMLSegmentEditorNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLLabelMapVolumeNode;
 class vtkMRMLVolumeNode;
@@ -381,6 +382,13 @@ public:
   /// Get/Set default closed surface smoothing enabled flag for new segmentation nodes.
   bool GetDefaultSurfaceSmoothingEnabled();
   void SetDefaultSurfaceSmoothingEnabled(bool enabled);
+
+  /// Get node that is used for initializing each new Segment Editor node.
+  vtkMRMLSegmentEditorNode* GetDefaultSegmentEditorNode();
+
+  /// Get/Set default segmentation overwrite mode for masking options.
+  int GetDefaultOverwriteMode();
+  void SetDefaultOverwriteMode(int mode);
 
   enum SegmentStatus
   {
