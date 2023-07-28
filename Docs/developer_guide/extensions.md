@@ -27,18 +27,20 @@ Similarly to the building of Slicer core, multi-configuration builds are not sup
 Assuming that the source code of your extension is located in folder `MyExtension`, an extension can be built by the following steps.
 
 :::{tip}
-For testing purpose, it is possible to force the Slicer revision associated with the extension build by setting the `Slicer_REVISION`
-environment variable before configuring the project::
+For testing purposes, it is possible to force the Slicer revision associated with the extension build by setting the `Slicer_REVISION`
+environment variable before configuring the project:
 
-  $ cd MyExtension-debug
-  $ export Slicer_REVISION=31806
-  $ cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DSlicer_DIR:PATH=/path/to/Slicer-SuperBuild-Debug/Slicer-build ../MyExtension
-  [...]
-  -- SlicerConfig: Forcing Slicer_REVISION to '31806'
-  [...]
-  -- Configuring done
-  -- Generating done
-  -- Build files have been written to: /path/to/MyExtension-debug
+```bash
+$ cd MyExtension-debug
+$ export Slicer_REVISION=31806
+$ cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DSlicer_DIR:PATH=/path/to/Slicer-SuperBuild-Debug/Slicer-build ../MyExtension
+[...]
+-- SlicerConfig: Forcing Slicer_REVISION to '31806'
+[...]
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /path/to/MyExtension-debug
+```
 :::
 
 ### Linux and macOS
