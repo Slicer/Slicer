@@ -4,7 +4,9 @@ See examples of using Segment editor effects from Python scripts in the [script 
 
 ## Effect parameters
 
-Common parameters must be set using `setCommonParameter` method (others can be set using `setParameter` method). Both common and effect-specific parameters can be retrieved using
+Setting/getting effect parameters:
+- Numeric or string parameter values: Common parameters must be set using `setCommonParameter(parameterName, parameterValue)` method, while effect-specific parameters can be set using `setParameter(parameterName, parameterValue)` method of the effect. Both common and effect-specific parameters can be retrieved using `parameter(parameterName)` method (for `string` or `enum` type), `integerParameter(parameterName)` (for `int` type), `doubleParameter(parameterName)` (for `float` type).
+- Node reference (`noderef` type) parameter: It holds a reference to a node object, therefore it must be get/set by calling `GetNodeReference(referenceName)` and `SetNodeReferenceID(referenceName, nodeId)` methods of the parameter set node. For common parameters (shared between multiple effects) `referenceName` equals to the parameter name. For effect-specific parameters `referenceName` is constructed as `(effectName).(parameterName)`, for example `Mask volume.InputVolume`.
 
 ### Fill between slices
 
