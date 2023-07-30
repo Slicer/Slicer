@@ -92,14 +92,17 @@ endif()
 #.rst:
 # .. cmake:variable:: EP_GIT_PROTOCOL
 #
-# The value of this variable is controlled by the option ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL``
-# automatically defined by including this CMake module. Setting this option allows to update the value of
-# ``EP_GIT_PROTOCOL`` variable.
+# The value of this variable is always set to ``https``.
 #
-# If enabled, the variable ``EP_GIT_PROTOCOL`` is set to ``git``. Otherwise, it is set to ``https``.
-# Since GitHub removed unauthenticated access through the git protocol
-# (see https://github.blog/2021-09-01-improving-git-protocol-security-github/ ),
-# and most projects are hosted on GitHub the option is disabled (https is used) by default.
+# Following the removal of git protocol by GitHub, the option
+# ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL`` is obsolete.
+# It allowed to toggle between ``git`` and ``https``.
+# If this option is enabled, a warning is reported and the option is forced to ``OFF``.
+#
+# Similarly, if the variable ``EP_GIT_PROTOCOL`` is already set to ``git``, a warning is reported
+# and the value is forced to ``https``.
+#
+# See details at https://github.blog/2021-09-01-improving-git-protocol-security-github
 #
 # The variable ``EP_GIT_PROTOCOL`` can be used when adding external project. For example:
 #
@@ -111,10 +114,23 @@ endif()
 #     [...]
 #     )
 #
-option(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL "Turn off if using GitHub or behind a firewall." OFF)
-set(EP_GIT_PROTOCOL "https")
-if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
-  set(EP_GIT_PROTOCOL "git")
+if(DEFINED ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL AND ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
+  message(WARNING "Forcing ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL to OFF (Already set to ON in current scope)")
+  set(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL OFF CACHE BOOL "" FORCE)
+endif()
+if(DEFINED EP_GIT_PROTOCOL)
+  if("${EP_GIT_PROTOCOL}" STREQUAL "git")
+    get_property(_value_set_in_cache CACHE EP_GIT_PROTOCOL PROPERTY VALUE SET)
+    if(_value_set_in_cache)
+      message(WARNING "Forcing EP_GIT_PROTOCOL cache variable to 'https' (Already set to '${EP_GIT_PROTOCOL}' in current scope)")
+      set(EP_GIT_PROTOCOL "https" CACHE STRING "" FORCE)
+    else()
+      message(WARNING "Forcing EP_GIT_PROTOCOL variable to 'https' (Already set to '${EP_GIT_PROTOCOL}' in current scope)")
+      set(EP_GIT_PROTOCOL "https")
+    endif()
+  endif()
+else()
+  set(EP_GIT_PROTOCOL "https")
 endif()
 
 # Compute -G arg for configuring external projects with the same CMake generator:
@@ -449,16 +465,37 @@ function(_sb_get_external_project_arguments proj varname)
 
   set(_ep_arguments "")
 
-  # Automatically propagate CMake options
-  foreach(_cmake_option IN ITEMS
-    CMAKE_EXPORT_COMPILE_COMMANDS
-    CMAKE_JOB_POOL_COMPILE
-    CMAKE_JOB_POOL_LINK
-    CMAKE_JOB_POOLS
+  # Option CMAKE_FIND_USE_PACKAGE_REGISTRY was introduced in CMake 3.16
+  if(NOT CMAKE_VERSION VERSION_LESS "3.16")
+    if(NOT DEFINED CMAKE_FIND_USE_PACKAGE_REGISTRY)
+      set(CMAKE_FIND_USE_PACKAGE_REGISTRY OFF)
+    endif()
+  else()
+    if(NOT DEFINED CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY)
+      set(CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY ON)
+    endif()
+  endif()
+
+  # Set list of CMake options to propagate
+  set(_options
+    CMAKE_EXPORT_COMPILE_COMMANDS:BOOL
+    CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY:BOOL
+    CMAKE_JOB_POOL_COMPILE:STRING
+    CMAKE_JOB_POOL_LINK:STRING
+    CMAKE_JOB_POOLS:STRING
     )
+  if(NOT CMAKE_VERSION VERSION_LESS "3.16")
+    list(APPEND _options
+      CMAKE_FIND_USE_PACKAGE_REGISTRY:BOOL
+      )
+  endif()
+
+  # Automatically propagate CMake options
+  foreach(_cmake_option_and_type IN LISTS _options)
+    _sb_extract_varname_and_vartype(${_cmake_option_and_type} _cmake_option _cmake_option_type)
     if(DEFINED ${_cmake_option})
       list(APPEND _ep_arguments CMAKE_CACHE_ARGS
-        -D${_cmake_option}:BOOL=${${_cmake_option}}
+        -D${_cmake_option}:${_cmake_option_type}=${${_cmake_option}}
         )
     endif()
   endforeach()
@@ -487,6 +524,10 @@ function(_sb_get_external_project_arguments proj varname)
         USES_TERMINAL_${step} 1
         )
     endforeach()
+  endif()
+  if(CMAKE_VERSION VERSION_EQUAL "3.24" OR CMAKE_VERSION VERSION_GREATER "3.24")
+    # See https://cmake.org/cmake/help/latest/policy/CMP0135.html
+    list(APPEND _ep_arguments DOWNLOAD_EXTRACT_TIMESTAMP 1)
   endif()
   set(${varname} ${_ep_arguments} PARENT_SCOPE)
 endfunction()
@@ -760,6 +801,11 @@ macro(ExternalProject_Include_Dependencies project_name)
     #message("[${project_name}] Setting _sb_SB_VAR with default value '${_sb_SB_VAR}'")
   endif()
 
+  # Try to detect if superbuild variable was improperly passed
+  if("${_sb_SB_VAR}" STREQUAL "_SUPERBUILD")
+    message(FATAL_ERROR "SUPERBUILD_VAR value is incorrectly set to '_SUPERBUILD'")
+  endif()
+
   # Set local variables
   set(_sb_DEPENDS ${${_sb_DEPENDS_VAR}})
   set(_sb_USE_SYSTEM ${${_sb_USE_SYSTEM_VAR}})
@@ -1019,13 +1065,16 @@ endfunction()
 #
 #  ExternalProject_SetIfNotDefined(<var> <defaultvalue> [OBFUSCATE] [QUIET])
 #
-# The default value is set with:
-#  (1) if set, the value environment variable <var>.
-#  (2) if set, the value of local variable variable <var>.
-#  (3) if none of the above, the value passed as a parameter.
+# If *NOT* already defined, the variable <var> is set with:
+#  (1) the value of the environment variable <var>, if defined.
+#  (2) the value of the local variable variable <var>, if defined.
+#  (3) if none of the above is defined, the <defaultvalue> passed as a parameter.
 #
-# Setting the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
-# Setting the optional parameter 'QUIET' will not display any message.
+# Passing the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
+# Passing the optional parameter 'QUIET' will not display any message.
+#
+# For convenience, the value of the cache variable named <var> will
+# be displayed if it was set and if QUIET has not been passed.
 macro(ExternalProject_SetIfNotDefined var defaultvalue)
   set(_obfuscate FALSE)
   set(_quiet FALSE)
@@ -1056,6 +1105,14 @@ macro(ExternalProject_SetIfNotDefined var defaultvalue)
       message(STATUS "Setting '${var}' variable with default value '${_value}'")
     endif()
     set(${var} "${defaultvalue}")
+  endif()
+  get_property(_is_set CACHE ${var} PROPERTY VALUE SET)
+  if(_is_set AND NOT _quiet)
+    set(_value "${${var}}")
+    if(_obfuscate)
+      set(_value "OBFUSCATED")
+    endif()
+    message(STATUS "Cache variable '${var}' set to '${_value}'")
   endif()
 endmacro()
 
