@@ -47,6 +47,10 @@ class SlicerScriptedFileReaderWriterTestFileReader:
         if not slicer.app.testingEnabled():
             return False
 
+        # Check first if loadable based on file extension
+        if not self.parent.supportedNameFilters(filePath):
+            return False
+
         firstLine = ''
         with open(filePath) as f:
             firstLine = f.readline()
