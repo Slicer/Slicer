@@ -41,6 +41,10 @@ class ImportItkSnapLabelFileReader:
         return ['ITK-Snap label description file (*.label)', 'ITK-Snap label description file (*.txt)']
 
     def canLoadFile(self, filePath):
+        # Check first if loadable based on file extension
+        if not self.parent.supportedNameFilters(filePath):
+            return False
+
         try:
             colors = ImportItkSnapLabelFileReader.parseLabelFile(filePath)
             if not colors:
