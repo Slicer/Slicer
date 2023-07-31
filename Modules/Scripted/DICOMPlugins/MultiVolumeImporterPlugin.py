@@ -89,7 +89,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     formLayout = qt.QFormLayout(parent)
     importFormatsComboBox = ctk.ctkComboBox()
     importFormatsComboBox.toolTip = "Preferred format for imported volume sequences. It determines what MRML node type volume sequences will be loaded into."
-    importFormatsComboBox.addItem("default (multi-volume)", "default")
+    importFormatsComboBox.addItem("default (volume sequence)", "default")
     importFormatsComboBox.addItem("volume sequence", "sequence")
     importFormatsComboBox.addItem("multi-volume", "multivolume")
     importFormatsComboBox.currentIndex = 0
@@ -155,7 +155,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       # therefore we need to prepend loadables if sequence format is preferred.
       # Determine from settings loading into sequence node should have higher confidence (selected by default).
       settings = qt.QSettings()
-      sequenceFormatPreferred = (settings.value("DICOM/PreferredMultiVolumeImportFormat", "default") == "sequence")
+      sequenceFormatPreferred = (settings.value("DICOM/PreferredMultiVolumeImportFormat", "default") != "multivolume")
       if sequenceFormatPreferred:
        # prepend
        loadables[0:0] = seqLoadables
