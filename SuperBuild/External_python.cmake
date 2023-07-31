@@ -54,7 +54,15 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   set(_download_3.9.10_url "https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz")
   set(_download_3.9.10_md5 "1440acb71471e2394befdb30b1a958d1")
 
+  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
+  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24")
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      DOWNLOAD_EXTRACT_TIMESTAMP 1
+      )
+  endif()
+
   ExternalProject_Add(python-source
+    ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     URL ${_download_${Slicer_REQUIRED_PYTHON_VERSION}_url}
     URL_MD5 ${_download_${Slicer_REQUIRED_PYTHON_VERSION}_md5}
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
