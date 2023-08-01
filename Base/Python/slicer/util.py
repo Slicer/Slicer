@@ -2245,7 +2245,16 @@ def updateVolumeFromArray(volumeNode, narray):
     """
 
     vshape = tuple(reversed(narray.shape))
-    if len(vshape) == 2:
+    if len(vshape) == 1:
+        # Line of pixels
+        vcomponents = 1
+        # Put the slice into a single-slice 3D volume
+        import numpy as np
+        narray3d = np.zeros([1, 1, narray.shape[0]])
+        narray3d[0, 0, :] = narray
+        narray = narray3d
+        vshape = tuple(reversed(narray.shape))
+    elif len(vshape) == 2:
         # Scalar 2D volume
         vcomponents = 1
         # Put the slice into a single-slice 3D volume
