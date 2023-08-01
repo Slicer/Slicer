@@ -85,9 +85,10 @@ class SlicerScriptedFileReaderWriterTestFileReader:
             # self.parent.userMessages().AddMessage(vtk.vtkCommand.WarningEvent, "This is a warning message")
 
         except Exception as e:
-            logging.error('Failed to load file: ' + str(e))
             import traceback
             traceback.print_exc()
+            errorMessage = f"Failed to read file: {str(e)}"
+            self.parent.userMessages().AddMessage(vtk.vtkCommand.ErrorEvent, errorMessage)
             return False
 
         self.parent.loadedNodes = [loadedNode.GetID()]
@@ -128,9 +129,10 @@ class SlicerScriptedFileReaderWriterTestFileWriter:
                 myfile.write(node.GetText())
 
         except Exception as e:
-            logging.error('Failed to write file: ' + str(e))
             import traceback
             traceback.print_exc()
+            errorMessage = f"Failed to write file: {str(e)}"
+            self.parent.userMessages().AddMessage(vtk.vtkCommand.ErrorEvent, errorMessage)
             return False
 
         self.parent.writtenNodes = [node.GetID()]
