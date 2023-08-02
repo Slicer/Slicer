@@ -1723,28 +1723,7 @@ void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& ex
     return;
     }
 
-  // Save & restore extension manager model "interactive" property when exiting
-  struct InteractivePropertyContextManager
-  {
-    InteractivePropertyContextManager(qSlicerExtensionsManagerModel* model) : Model(model)
-    {
-      this->WasInteractive = this->Model->interactive();
-    }
-    ~InteractivePropertyContextManager()
-    {
-      this->Model->setInteractive(this->WasInteractive);
-    }
-    qSlicerExtensionsManagerModel* Model{nullptr};
-    bool WasInteractive{false};
-  } interactvePropertyContextManager(this);
-
   bool isTestingEnabled = qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
-
-  // Prevent extensions manager model from displaying popups during startup (don't ask for confirmation)
-  if (isTestingEnabled)
-    {
-    this->setInteractive(false);
-    }
 
   // Handle installation confirmation
   bool installationConfirmed = false;
@@ -1775,11 +1754,20 @@ void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& ex
     return;
     }
 
+  // Install extension and its dependencies
+  bool wasInteractive = this->interactive();
+  if (isTestingEnabled || !confirm)
+    {
+    // Prevent extensions manager model from displaying popups during installation
+    this->setInteractive(false);
+    }
   if (!this->downloadAndInstallExtensionByName(extensionName, /* installDependencies= */ true, /* waitForCompletion= */ true))
     {
     d->critical(tr("Failed to install %1 extension").arg(extensionName));
+    this->setInteractive(wasInteractive);
     return;
     }
+  this->setInteractive(wasInteractive);
 
   if (!restart)
     {
