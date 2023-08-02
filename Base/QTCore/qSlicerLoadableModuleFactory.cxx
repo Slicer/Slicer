@@ -37,18 +37,20 @@
 //-----------------------------------------------------------------------------
 qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem() = default;
 
+#ifdef Slicer_USE_PYTHONQT
 #include "qSlicerCorePythonManager.h"
+#endif
 namespace
 {
 
 //-----------------------------------------------------------------------------
+#ifdef Slicer_USE_PYTHONQT
 bool importModulePythonExtensions(
     qSlicerCorePythonManager * pythonManager,
     const QString& intDir,const QString& modulePath,
     bool isEmbedded)
 {
   Q_UNUSED(intDir);
-#ifdef Slicer_USE_PYTHONQT
   if(!pythonManager)
     {
     return false;
@@ -81,13 +83,8 @@ bool importModulePythonExtensions(
         "importQtClassesFromDirectory(%1, 'slicer', filematch='qSlicer*PythonQt.*');"
         ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
   return !pythonManager->pythonErrorOccured();
-#else
-  Q_UNUSED(isEmbedded);
-  Q_UNUSED(modulePath);
-  Q_UNUSED(pythonManager);
-  return false;
-#endif
 }
+#endif
 }
 
 //-----------------------------------------------------------------------------
