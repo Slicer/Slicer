@@ -1223,15 +1223,19 @@ On some systems, *shell=True* must be specified as well.
 
 ### Download and install extension
 
+:::{versionadded} 5.4
+Slicer introduces {func}`slicer.app.installExtensionFromServer()`, which
+simplifies the process of downloading and installing extensions. The updated
+approach is as follows:
+:::
+
 ```python
 extensionName = 'SlicerIGT'
 em = slicer.app.extensionsManagerModel()
-if not em.isExtensionInstalled(extensionName):
-  em.interactive = False  # prevent display of popups
-  em.updateExtensionsMetadataFromServer(True, True)  # update extension metadata from server now
-  if not em.downloadAndInstallExtensionByName(extensionName, True, True):  # install dependencies, wait for installation to finish
-    raise ValueError(f"Failed to install {extensionName} extension")
-  slicer.util.restart()
+em.interactive = False  # prevent display of popups
+restart = True
+if not em.installExtensionFromServer(extensionName, restart):
+  raise ValueError(f"Failed to install {extensionName} extension")
 ```
 
 ### Install a module directly from a git repository
