@@ -401,10 +401,12 @@ public slots:
   /// \param extensionName The name of the extension to be installed.
   /// \param restart Set to false to prevent automatic application restart (default: true).
   ///
+  /// \return \c true if the extension is successfully installed or already installed.
+  ///
   /// \sa setInteractive
   /// \sa isExtensionInstalled, installExtension, updateExtensionsMetadataFromServer, downloadAndInstallExtensionByName
   /// \sa qSlicerCoreApplication::testAttribute, qSlicerCoreApplication::AA_EnableTesting, qSlicerCoreApplication::restart
-  void installExtensionFromServer(const QString& extensionName, bool restart = true);
+  bool installExtensionFromServer(const QString& extensionName, bool restart = true);
 
   /// \brief Schedule \a extensionName of uninstall
   /// Tell the application to uninstall \a extensionName when it will restart
