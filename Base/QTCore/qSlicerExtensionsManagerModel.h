@@ -391,20 +391,20 @@ public slots:
   /// and its dependencies without any confirmation dialogs. In this case,
   /// the application is not automatically restarted.
   ///
-  /// If testing mode is not already enabled, you can set the \a confirm
-  /// parameter to false to skip the confirmation dialogs during installation.
+  /// If you wish to skip the confirmation dialogs during installation
+  /// without enabling testing mode, you can call setInteractive(false) on
+  /// the extensions manager model before invoking this function.
   ///
-  /// Similarly, by setting the \a restart parameter to false, you can prevent
-  /// the application from automatically restarting after the installation is
-  /// completed.
+  /// To prevent the application from automatically restarting after the
+  /// installation is completed, set the \a restart parameter to false.
   ///
   /// \param extensionName The name of the extension to be installed.
-  /// \param confirm Set to false to skip confirmation dialogs (default: true).
   /// \param restart Set to false to prevent automatic application restart (default: true).
   ///
+  /// \sa setInteractive
   /// \sa isExtensionInstalled, installExtension, updateExtensionsMetadataFromServer, downloadAndInstallExtensionByName
-  /// \sa qSlicerCoreApplication::restart
-  void installExtensionFromServer(const QString& extensionName, bool confirm = true, bool restart = true);
+  /// \sa qSlicerCoreApplication::testAttribute, qSlicerCoreApplication::AA_EnableTesting, qSlicerCoreApplication::restart
+  void installExtensionFromServer(const QString& extensionName, bool restart = true);
 
   /// \brief Schedule \a extensionName of uninstall
   /// Tell the application to uninstall \a extensionName when it will restart

@@ -1714,7 +1714,7 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtensionByName(const QStr
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& extensionName, bool confirm, bool restart)
+void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& extensionName, bool restart)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
@@ -1732,10 +1732,10 @@ void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& ex
     installationConfirmed = true;
     qDebug() << "Installing the extension(s) without asking for confirmation (testing mode is enabled)";
     }
-  else if (!confirm)
+  else if (!this->interactive())
     {
     installationConfirmed = true;
-    qDebug() << "Installing the extension(s) without asking for confirmation";
+    qDebug() << "Installing the extension(s) without asking for confirmation (interactive mode is disabled)";
     }
   else
     {
@@ -1755,19 +1755,11 @@ void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& ex
     }
 
   // Install extension and its dependencies
-  bool wasInteractive = this->interactive();
-  if (isTestingEnabled || !confirm)
-    {
-    // Prevent extensions manager model from displaying popups during installation
-    this->setInteractive(false);
-    }
   if (!this->downloadAndInstallExtensionByName(extensionName, /* installDependencies= */ true, /* waitForCompletion= */ true))
     {
     d->critical(tr("Failed to install %1 extension").arg(extensionName));
-    this->setInteractive(wasInteractive);
     return;
     }
-  this->setInteractive(wasInteractive);
 
   if (!restart)
     {
@@ -1781,10 +1773,10 @@ void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& ex
     restartConfirmed = false;
     qDebug() << "Skipping application restart (testing mode is enabled)";
     }
-  else if (!confirm)
+  else if (!this->interactive())
     {
     restartConfirmed = true;
-    qDebug() << "Restarting the application without asking for confirmation";
+    qDebug() << "Restarting the application without asking for confirmation (interactive mode is disabled)";
     }
   else
     {
