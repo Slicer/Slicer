@@ -1714,13 +1714,14 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtensionByName(const QStr
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& extensionName, bool restart)
+bool qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& extensionName, bool restart)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
   if (this->isExtensionInstalled(extensionName))
     {
-    return;
+    // Already installed; nothing to do
+    return true;
     }
 
   bool isTestingEnabled = qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
@@ -1745,25 +1746,25 @@ void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& ex
     }
   if (!installationConfirmed)
     {
-    return;
+    return false;
     }
 
   // Ensure extension metadata is retrieved from the server or cache.
   if (!this->updateExtensionsMetadataFromServer(/* force= */ true, /* waitForCompletion= */ true))
     {
-    return;
+    return false;
     }
 
   // Install extension and its dependencies
   if (!this->downloadAndInstallExtensionByName(extensionName, /* installDependencies= */ true, /* waitForCompletion= */ true))
     {
     d->critical(tr("Failed to install %1 extension").arg(extensionName));
-    return;
+    return false;
     }
 
   if (!restart)
     {
-    return;
+    return true;
     }
 
   // Handle restart confirmation
@@ -1790,6 +1791,7 @@ void qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& ex
     {
     qSlicerCoreApplication::application()->restart();
     }
+  return true;
 }
 
 // --------------------------------------------------------------------------
