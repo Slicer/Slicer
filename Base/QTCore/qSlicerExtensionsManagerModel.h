@@ -380,6 +380,32 @@ public slots:
   /// \sa installExtension, scheduleExtensionForUninstall, uninstallScheduledExtensions
   bool downloadAndInstallExtensionByName(const QString& extensionName, bool installDependencies = true, bool waitForCompletion = false);
 
+  /// \brief Download and install an extension from the extensions server.
+  ///
+  /// This function allows the user to download and install an extension
+  /// along with its dependencies from the extensions server. By default,
+  /// it will prompt the user to confirm the installation and restart of
+  /// the application after installation.
+  ///
+  /// When the testing mode is enabled, the function installs the extension
+  /// and its dependencies without any confirmation dialogs. In this case,
+  /// the application is not automatically restarted.
+  ///
+  /// If you wish to skip the confirmation dialogs during installation
+  /// without enabling testing mode, you can call setInteractive(false) on
+  /// the extensions manager model before invoking this function.
+  ///
+  /// To prevent the application from automatically restarting after the
+  /// installation is completed, set the \a restart parameter to false.
+  ///
+  /// \param extensionName The name of the extension to be installed.
+  /// \param restart Set to false to prevent automatic application restart (default: true).
+  ///
+  /// \sa setInteractive
+  /// \sa isExtensionInstalled, installExtension, updateExtensionsMetadataFromServer, downloadAndInstallExtensionByName
+  /// \sa qSlicerCoreApplication::testAttribute, qSlicerCoreApplication::AA_EnableTesting, qSlicerCoreApplication::restart
+  void installExtensionFromServer(const QString& extensionName, bool restart = true);
+
   /// \brief Schedule \a extensionName of uninstall
   /// Tell the application to uninstall \a extensionName when it will restart
   /// An extension scheduled for uninstall can be effectively uninstalled by calling
