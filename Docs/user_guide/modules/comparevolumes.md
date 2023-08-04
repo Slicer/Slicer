@@ -5,11 +5,11 @@
 
 The Compare Volumes module manages the layout and linking of multiple volumes for you and gives other options. It is meant for comparing registration results but is also good for looking at multiple MR contrasts.
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_compare-volumes-3-over-3.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_compare-volumes-3-over-3.jpeg)
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_compare-volumes-side-by-side.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_compare-volumes-side-by-side.jpeg)
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_compare-volumes-reveal-cursor.png)
+![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_compare-volumes-reveal-cursor.jpeg)
 
 
 ## Use Cases
