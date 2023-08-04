@@ -1714,13 +1714,35 @@ bool qSlicerExtensionsManagerModel::downloadAndInstallExtensionByName(const QStr
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& extensionName, bool restart)
+bool qSlicerExtensionsManagerModel::installExtensionFromServer(const QString& extensionName, bool restart, bool update)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
   if (this->isExtensionInstalled(extensionName))
     {
-    // Already installed; nothing to do
+    if (update)
+      {
+      // Ensure extension metadata is retrieved from the server or cache.
+      if (!this->updateExtensionsMetadataFromServer(/* force= */ true, /* waitForCompletion= */ true))
+        {
+        return false;
+        }
+      this->checkForExtensionsUpdates();
+      this->scheduleExtensionForUpdate(extensionName);
+
+      // wait for pending downloadAndInstallExtensionByName() completions
+      this->waitForAllTasksCompletion();
+
+      QStringList updatedExtensions;
+      if (!this->updateScheduledExtensions(updatedExtensions))
+        {
+        return false;
+        }
+      foreach(const QString& extensionName, updatedExtensions)
+        {
+        qDebug() << "Successfully updated extension" << extensionName;
+        }
+      }
     return true;
     }
 

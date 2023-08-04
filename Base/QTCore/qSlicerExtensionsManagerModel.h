@@ -398,15 +398,22 @@ public slots:
   /// To prevent the application from automatically restarting after the
   /// installation is completed, set the \a restart parameter to false.
   ///
+  /// To schedule the update of the extension and its dependencies to
+  /// the latest version available if already installed, set the \a update
+  /// parameter to true.
+  /// The update will take effect during the next application restart.
+  ///
   /// \param extensionName The name of the extension to be installed.
   /// \param restart Set to false to prevent automatic application restart (default: true).
+  /// \param update Set to true to schedule the extension for an update on the next application restart (default: false).
   ///
   /// \return \c true if the extension is successfully installed or already installed.
   ///
   /// \sa setInteractive
   /// \sa isExtensionInstalled, installExtension, updateExtensionsMetadataFromServer, downloadAndInstallExtensionByName
+  /// \sa scheduleExtensionForUpdate
   /// \sa qSlicerCoreApplication::testAttribute, qSlicerCoreApplication::AA_EnableTesting, qSlicerCoreApplication::restart
-  bool installExtensionFromServer(const QString& extensionName, bool restart = true);
+  bool installExtensionFromServer(const QString& extensionName, bool restart = true, bool update = false);
 
   /// \brief Schedule \a extensionName of uninstall
   /// Tell the application to uninstall \a extensionName when it will restart
