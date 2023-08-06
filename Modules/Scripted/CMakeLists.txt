@@ -25,6 +25,7 @@ endif()
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND modules
     DICOM
+    DICOMDirectReader
     DICOMLib
     DICOMPlugins
     DICOMPatcher
