@@ -898,7 +898,7 @@ class DICOMFileReader:
         self.parent = parent
 
     def description(self):
-        return 'DICOM import'
+        return _('DICOM import')
 
     def fileType(self):
         return 'DICOMFileImport'

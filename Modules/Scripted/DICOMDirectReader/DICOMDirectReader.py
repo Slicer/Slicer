@@ -30,7 +30,7 @@ class DICOMDirectReaderFileReader:
         self.parent = parent
 
     def description(self):
-        return 'DICOM direct load'
+        return _('DICOM direct load')
 
     def fileType(self):
         return 'DICOMDirectLoad'
