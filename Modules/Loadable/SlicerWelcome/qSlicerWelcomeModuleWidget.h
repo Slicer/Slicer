@@ -54,6 +54,13 @@ public slots:
   void setApplicationUpdateAvailable(bool updateAvailable);
   void checkForUpdates();
 
+  void onDownloadButtonClicked();
+  void onDocumentationButtonClicked();
+  void onDevelopersButtonClicked();
+  void onTrainingButtonClicked();
+  void onForumButtonClicked();
+  void onAcknowledgementButtonClicked();
+
 protected:
   void setup() override;
 

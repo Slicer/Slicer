@@ -48,9 +48,6 @@
 #include "qSlicerApplicationUpdateManager.h"
 #endif
 
-// CTK includes
-#include "ctkButtonGroup.h"
-
 // qMRML includes
 #include "qMRMLWidget.h"
 
@@ -107,35 +104,16 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->CheckingForUpdatesText = qSlicerWelcomeModuleWidget::tr("Checking for updates...");
   this->NoUpdatesWereFoundText = qSlicerWelcomeModuleWidget::tr("No updates were found.");
 
-  // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
-  ctkButtonGroup * group = new ctkButtonGroup(widget);
-
-  // Add all collabsibleWidgetButton to a button group
-  QList<ctkCollapsibleButton*> collapsibles = widget->findChildren<ctkCollapsibleButton*>();
-  foreach(ctkCollapsibleButton* collapsible, collapsibles)
-    {
-    group->addButton(collapsible);
-    }
-
   // Update occurrences of documentation URLs
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  foreach(QWidget* widget, QWidgetList()
-          << this->FeedbackCollapsibleWidget
-          << this->WelcomeAndAboutCollapsibleWidget
-          << this->OtherUsefulHintsCollapsibleWidget
-          << this->AcknowledgmentCollapsibleWidget
-          )
-    {
-    QTextBrowser* textBrowser = widget->findChild<QTextBrowser*>();
-    if (!textBrowser)
-      {
-      continue;
-      }
+  QList<QTextBrowser*> textBrowsers = widget->findChildren<QTextBrowser*>();
+  foreach(QTextBrowser* textBrowser, textBrowsers)
+  {
     QString html = textBrowser->toHtml();
     qSlicerUtils::replaceDocumentationUrlVersion(html,
-      QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
+        QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
     textBrowser->setHtml(html);
-    }
+  }
 }
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
@@ -221,6 +199,19 @@ void qSlicerWelcomeModuleWidget::setup()
   connect(d->ExploreLoadedDataPushButton, SIGNAL(clicked()),
           this, SLOT (exploreLoadedData()));
 
+  connect(d->downloadButton, SIGNAL(clicked()),
+          this, SLOT (onDownloadButtonClicked()));
+  connect(d->documentationButton, SIGNAL(clicked()),
+          this, SLOT (onDocumentationButtonClicked()));
+  connect(d->developersButton, SIGNAL(clicked()),
+          this, SLOT (onDevelopersButtonClicked()));
+  connect(d->trainingButton, SIGNAL(clicked()),
+          this, SLOT (onTrainingButtonClicked()));
+  connect(d->forumButton, SIGNAL(clicked()),
+          this, SLOT (onForumButtonClicked()));
+  connect(d->acknowledgementButton, SIGNAL(clicked()),
+          this, SLOT (onAcknowledgementButtonClicked()));
+
 #ifndef Slicer_BUILD_DICOM_SUPPORT
   d->LoadDicomDataButton->hide();
 #endif
@@ -305,7 +296,6 @@ void qSlicerWelcomeModuleWidget::setup()
 
   this->Superclass::setup();
 
-  d->FeedbackCollapsibleWidget->setCollapsed(false);
 }
 
 
@@ -536,4 +526,44 @@ void qSlicerWelcomeModuleWidget::onAutoUpdateSettingsChanged()
     {
     d->CheckForUpdatesAutomaticallyCheckBox->setCheckState(Qt::PartiallyChecked);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::onDownloadButtonClicked()
+{
+  #ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
+  QDesktopServices::openUrl(QUrl(QSettings().value("ApplicationUpdate/ServerUrl").toString()));
+  #else
+  QDesktopServices::openUrl(QUrl("https://download.slicer.org"));
+  #endif
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::onDocumentationButtonClicked()
+{
+  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl()));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::onDevelopersButtonClicked()
+{
+  QDesktopServices::openUrl(QUrl("https://github.com/Slicer/Slicer"));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::onTrainingButtonClicked()
+{
+  QDesktopServices::openUrl(QUrl("https://www.slicer.org/wiki/Documentation/Nightly/Training"));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::onForumButtonClicked()
+{
+  QDesktopServices::openUrl(QUrl("https://discourse.slicer.org/"));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::onAcknowledgementButtonClicked()
+{
+  QDesktopServices::openUrl(QUrl("https://slicer.readthedocs.io/en/latest/user_guide/about.html#acknowledgments"));
 }

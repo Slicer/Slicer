@@ -1,6 +1,12 @@
 <RCC>
   <qresource>
     <file>Icons/Chat.png</file> <!-- Adapted from https://openclipart.org/detail/170274/chat-button-by-scyg -->
+    <file>Icons/download_FILL1_wght400_GRAD0_opsz48.svg</file>
+    <file>Icons/forum_FILL1_wght400_GRAD0_opsz48.svg</file>
+    <file>Icons/github.svg</file>
+    <file>Icons/group_FILL1_wght400_GRAD0_opsz48.svg</file>
+    <file>Icons/library_books_FILL1_wght400_GRAD0_opsz48.svg</file>
+    <file>Icons/school_FILL1_wght400_GRAD0_opsz48.svg</file>
     <file>Icons/SlicerWelcome.png</file>
   </qresource>
   <qresource>
