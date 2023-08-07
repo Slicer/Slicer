@@ -21,7 +21,6 @@
 // Qt includes
 #include <QDir>
 #include <QFileInfo>
-#include <QFileInfo>
 #include <QNetworkCookie>
 #include <QSettings>
 #include <QStringList>
