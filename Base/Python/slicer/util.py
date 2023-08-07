@@ -1977,10 +1977,11 @@ def updateTransformMatrixFromArray(transformNode, narray, toWorld=False):
         transformNode.SetMatrixTransformToParent(vmatrix)
 
 
-# Adapted from TorchIO
-# https://github.com/fepegar/torchio/blob/4c1b3d83a7962699a15afe76ae6f39db1aae7a99/src/torchio/data/io.py#L278-L285
-def getRotationAndSpacingFromAffine(affine):
-    """This is a helper function not meant to be used directly."""
+def _getRotationAndSpacingFromAffine(affine):
+    """
+    Adapted from TorchIO. See:
+    https://github.com/fepegar/torchio/blob/4c1b3d83a7962699a15afe76ae6f39db1aae7a99/src/torchio/data/io.py#L278-L285
+    """
     # From https://github.com/nipy/nibabel/blob/master/nibabel/orientations.py
     import numpy as np
     rotation_zoom = affine[:3, :3]
@@ -1988,12 +1989,14 @@ def getRotationAndSpacingFromAffine(affine):
     rotation = rotation_zoom / spacing
     return rotation, spacing
 
-# Adapted from TorchIO
-# https://github.com/fepegar/torchio/blob/4c1b3d83a7962699a15afe76ae6f39db1aae7a99/src/torchio/data/io.py#L384-L412
-def getITKMetadataFromRASAffine(affine, is_2d: bool=False, lps: bool = True):
-    """This is a helper function not meant to be used directly."""
+
+def _getITKMetadataFromRASAffine(affine, is_2d: bool = False, lps: bool = True):
+    """
+    Adapted from TorchIO. See:
+    https://github.com/fepegar/torchio/blob/4c1b3d83a7962699a15afe76ae6f39db1aae7a99/src/torchio/data/io.py#L384-L412
+    """
     import numpy as np
-    direction_ras, spacing_array = getRotationAndSpacingFromAffine(affine)
+    direction_ras, spacing_array = _getRotationAndSpacingFromAffine(affine)
     origin_ras = affine[:3, 3]
     FLIPXY_33 = np.diag([-1, -1, 1])  # Matrix used to switch between LPS and RAS
     origin_lps = np.dot(FLIPXY_33, origin_ras)
@@ -2018,7 +2021,8 @@ def getITKMetadataFromRASAffine(affine, is_2d: bool=False, lps: bool = True):
     spacing = sx, sy, sz
     return origin, spacing, direction
 
-def getITKImageFromVolumeNode(volumeNode):
+
+def itkImageFromVolumeNode(volumeNode):
     """Return ITK image from volume node."""
     import itk
     import vtk
@@ -2029,7 +2033,7 @@ def getITKImageFromVolumeNode(volumeNode):
     volumeNode.GetIJKToRASMatrix(ijkToRAS)
     rasAffine = arrayFromVTKMatrix(ijkToRAS)
 
-    origin, spacing, directionTuple = getITKMetadataFromRASAffine(rasAffine)
+    origin, spacing, directionTuple = _getITKMetadataFromRASAffine(rasAffine)
     itkImage.SetOrigin(origin)
     itkImage.SetSpacing(spacing)
     directionMatrix = np.asarray(directionTuple).reshape((itkImage.ndim, itkImage.ndim))
@@ -2037,10 +2041,12 @@ def getITKImageFromVolumeNode(volumeNode):
 
     return itkImage
 
-# Adapted from TorchIO
-# https://github.com/fepegar/torchio/blob/4c1b3d83a7962699a15afe76ae6f39db1aae7a99/src/torchio/data/io.py#L356-L381
-def getRASAffineFromITK(itkImage):
-    """This is a helper function not meant to be used directly."""
+
+def _getRASAffineFromITK(itkImage):
+    """
+    Adapted from TorchIO. See:
+    https://github.com/fepegar/torchio/blob/4c1b3d83a7962699a15afe76ae6f39db1aae7a99/src/torchio/data/io.py#L356-L381
+    """
     import numpy as np
     spacing = np.array(itkImage.GetSpacing())
     direction_lps = np.array(itkImage.GetDirection())
@@ -2068,11 +2074,19 @@ def getRASAffineFromITK(itkImage):
     affine[:3, 3] = translation_ras
     return affine
 
-def setITKImageToVolumeNode(itkImage, outputVolumeNode):
+
+def volumeNodeFromITKImage(itkImage):
+    """Create a new Scalar Volume node from this itkImage and display it."""
+    volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
+    updateVolumeNodeFromITKImage(volumeNode, itkImage)
+    return volumeNode
+
+
+def updateVolumeNodeFromITKImage(volumeNode, itkImage):
     """Set ITK image to volume node and display it."""
     import itk
     import numpy as np
-    rasAffine = getRASAffineFromITK(itkImage)
+    rasAffine = _getRASAffineFromITK(itkImage)
     ijkToRAS = vtkMatrixFromArray(rasAffine)
     vtkImage = itk.vtk_image_from_image(itkImage)
     # set identity metadata on the vtkImageData for the volume node
@@ -2081,13 +2095,10 @@ def setITKImageToVolumeNode(itkImage, outputVolumeNode):
     vtkImage.SetSpacing([1.0] * itkImage.ndim)
     vtkImage.SetOrigin([0.0] * itkImage.ndim)
     vtkImage.SetDirectionMatrix(np.eye(itkImage.ndim).flatten())
-    outputVolumeNode.SetAndObserveImageData(vtkImage)
-    outputVolumeNode.SetIJKToRASMatrix(ijkToRAS)
-    setSliceViewerLayers(
-        background=outputVolumeNode,
-        fit=True,
-        rotateToVolumePlane=True,
-        )
+    volumeNode.SetAndObserveImageData(vtkImage)
+    volumeNode.SetIJKToRASMatrix(ijkToRAS)
+    setSliceViewerLayers(background=volumeNode, fit=True, rotateToVolumePlane=True)
+
 
 def arrayFromGridTransformModified(gridTransformNode):
     """Indicate that modification of a numpy array returned by :py:meth:`arrayFromGridTransform` has been completed."""
