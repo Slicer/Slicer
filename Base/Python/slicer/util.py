@@ -2085,9 +2085,16 @@ def _getRASAffineArrayFromITKImage(itkImage):
     return affine
 
 
-def addVolumeFromITKImage(itkImage):
-    """Create a new Scalar Volume node from this itkImage and display it."""
-    volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
+def addVolumeFromITKImage(itkImage, name=None):
+    """Create a new volume node from content of an ITK image and add it to the scene.
+
+    :param itkImage: ITK image containing volume voxels.
+    :param name: volume node name
+    :return: created new volume node
+    """
+    if name is None:
+        name = ""
+    volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode", name)
     updateVolumeFromITKImage(volumeNode, itkImage)
     return volumeNode
 
