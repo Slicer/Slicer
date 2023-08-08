@@ -2036,7 +2036,7 @@ def itkImageFromVolumeNode(volumeNode):
     origin, spacing, directionTuple = _getITKMetadataFromRASAffine(rasAffine)
     itkImage.SetOrigin(origin)
     itkImage.SetSpacing(spacing)
-    directionMatrix = np.asarray(directionTuple).reshape((itkImage.ndim, itkImage.ndim))
+    directionMatrix = np.asarray(directionTuple).reshape((3, 3))
     itkImage.SetDirection(itk.matrix_from_array(directionMatrix))
 
     return itkImage
