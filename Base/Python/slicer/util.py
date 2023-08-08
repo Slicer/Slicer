@@ -1982,6 +1982,7 @@ def _getRotationAndSpacingFromAffine(affine):
     Adapted from TorchIO. See:
     https://github.com/fepegar/torchio/blob/4c1b3d83a7962699a15afe76ae6f39db1aae7a99/src/torchio/data/io.py#L278-L285
     """
+
     # From https://github.com/nipy/nibabel/blob/master/nibabel/orientations.py
     import numpy as np
     rotation_zoom = affine[:3, :3]
@@ -1990,12 +1991,14 @@ def _getRotationAndSpacingFromAffine(affine):
     return rotation, spacing
 
 
-def _getITKMetadataFromRASAffine(affine, is_2d: bool = False, lps: bool = True):
+def _getITKMetadataFromRASAffineArray(affine, is_2d: bool=False, lps: bool=True):
     """
     Adapted from TorchIO. See:
     https://github.com/fepegar/torchio/blob/4c1b3d83a7962699a15afe76ae6f39db1aae7a99/src/torchio/data/io.py#L384-L412
     """
+
     import numpy as np
+
     direction_ras, spacing_array = _getRotationAndSpacingFromAffine(affine)
     origin_ras = affine[:3, 3]
     FLIPXY_33 = np.diag([-1, -1, 1])  # Matrix used to switch between LPS and RAS
@@ -2007,6 +2010,7 @@ def _getITKMetadataFromRASAffine(affine, is_2d: bool = False, lps: bool = True):
     origin_array = origin_lps if lps else origin_ras
     direction_array = direction_lps if lps else direction_ras
     direction_array = direction_array.flatten()
+
     # The following are to comply with mypy
     # (although there must be prettier ways to do this)
     ox, oy, oz = origin_array
@@ -2019,10 +2023,11 @@ def _getITKMetadataFromRASAffine(affine, is_2d: bool = False, lps: bool = True):
         direction = d1, d2, d3, d4, d5, d6, d7, d8, d9
     origin = ox, oy, oz
     spacing = sx, sy, sz
+
     return origin, spacing, direction
 
 
-def itkImageFromVolumeNode(volumeNode):
+def itkImageFromVolume(volumeNode):
     """Return ITK image from volume node."""
     import itk
     import vtk
@@ -2033,7 +2038,7 @@ def itkImageFromVolumeNode(volumeNode):
     volumeNode.GetIJKToRASMatrix(ijkToRAS)
     rasAffine = arrayFromVTKMatrix(ijkToRAS)
 
-    origin, spacing, directionTuple = _getITKMetadataFromRASAffine(rasAffine)
+    origin, spacing, directionTuple = _getITKMetadataFromRASAffineArray(rasAffine)
     itkImage.SetOrigin(origin)
     itkImage.SetSpacing(spacing)
     directionMatrix = np.asarray(directionTuple).reshape((3, 3))
@@ -2042,24 +2047,29 @@ def itkImageFromVolumeNode(volumeNode):
     return itkImage
 
 
-def _getRASAffineFromITK(itkImage):
+def _getRASAffineArrayFromITKImage(itkImage):
     """
     Adapted from TorchIO. See:
     https://github.com/fepegar/torchio/blob/4c1b3d83a7962699a15afe76ae6f39db1aae7a99/src/torchio/data/io.py#L356-L381
     """
+
     import numpy as np
+
     spacing = np.array(itkImage.GetSpacing())
     direction_lps = np.array(itkImage.GetDirection())
     origin_lps = np.array(itkImage.GetOrigin())
     direction_length = len(direction_lps)
+
     if itkImage.ndim == 3:
         rotation_lps = direction_lps.reshape(3, 3)
+
     elif itkImage.ndim == 2:  # ignore last dimension if 2D (1, W, H, 1)
         rotation_lps_2d = direction_lps.reshape(2, 2)
         rotation_lps = np.eye(3)
         rotation_lps[:2, :2] = rotation_lps_2d
         spacing = np.append(spacing, 1)
         origin_lps = np.append(origin_lps, 0)
+
     elif itkImage.ndim == 4:  # probably a bad NIfTI. Let's try to fix it
         rotation_lps = direction_lps.reshape(4, 4)[:3, :3]
         spacing = spacing[:-1]
@@ -2075,20 +2085,21 @@ def _getRASAffineFromITK(itkImage):
     return affine
 
 
-def volumeNodeFromITKImage(itkImage):
+def addVolumeFromITKImage(itkImage):
     """Create a new Scalar Volume node from this itkImage and display it."""
     volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
-    updateVolumeNodeFromITKImage(volumeNode, itkImage)
+    updateVolumeFromITKImage(volumeNode, itkImage)
     return volumeNode
 
 
-def updateVolumeNodeFromITKImage(volumeNode, itkImage):
+def updateVolumeFromITKImage(volumeNode, itkImage):
     """Set ITK image to volume node and display it."""
     import itk
     import numpy as np
-    rasAffine = _getRASAffineFromITK(itkImage)
+    rasAffine = _getRASAffineArrayFromITKImage(itkImage)
     ijkToRAS = vtkMatrixFromArray(rasAffine)
     vtkImage = itk.vtk_image_from_image(itkImage)
+
     # set identity metadata on the vtkImageData for the volume node
     # otherwise display properties are bugged, see:
     # https://github.com/Slicer/Slicer/issues/6911
@@ -2097,7 +2108,12 @@ def updateVolumeNodeFromITKImage(volumeNode, itkImage):
     vtkImage.SetDirectionMatrix(np.eye(itkImage.ndim).flatten())
     volumeNode.SetAndObserveImageData(vtkImage)
     volumeNode.SetIJKToRASMatrix(ijkToRAS)
-    setSliceViewerLayers(background=volumeNode, fit=True, rotateToVolumePlane=True)
+
+    setSliceViewerLayers(
+        background=volumeNode,
+        fit=True,
+        rotateToVolumePlane=True,
+        )
 
 
 def arrayFromGridTransformModified(gridTransformNode):
