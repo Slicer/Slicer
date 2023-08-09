@@ -117,7 +117,7 @@ class SliceIntersectionInteractionDisplayPipeline
     //----------------------------------------------------------------------
     SliceIntersectionInteractionDisplayPipeline()
     {
-      // Intersection line 1
+      // Intersection line 1 (first half)
       this->IntersectionLine1 = vtkSmartPointer<vtkLineSource>::New();
       this->IntersectionLine1->SetResolution(INTERSECTION_LINE_RESOLUTION);
       this->IntersectionLine1->Update();
@@ -129,7 +129,7 @@ class SliceIntersectionInteractionDisplayPipeline
       this->IntersectionLine1Actor->SetMapper(this->IntersectionLine1Mapper);
       this->IntersectionLine1Actor->SetProperty(this->IntersectionLine1Property);
 
-      // Intersection line 2
+      // Intersection line 2 (second half)
       this->IntersectionLine2 = vtkSmartPointer<vtkLineSource>::New();
       this->IntersectionLine2->SetResolution(INTERSECTION_LINE_RESOLUTION);
       this->IntersectionLine2->Update();
@@ -170,7 +170,7 @@ class SliceIntersectionInteractionDisplayPipeline
       // Initialize handles
       this->CreateRotationHandles();
       this->CreateSliceOffsetHandles();
-      this->SetHandlesVisibility(false);
+      this->SetIntersectionHandlesVisibility(false);
       this->NeedToRender = true;
 
       // Handle points
@@ -735,8 +735,8 @@ class SliceIntersectionInteractionDisplayPipeline
       }
 
     //----------------------------------------------------------------------
-    void SetHandlesVisibility(bool visibility)
-      {
+    void SetIntersectionHandlesVisibility(bool visibility)
+    {
       bool rotationHandle1Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
         && this->RotationHandlesVisible && this->RotationHandle1Displayable;
       bool rotationHandle2Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
@@ -763,7 +763,7 @@ class SliceIntersectionInteractionDisplayPipeline
       this->SliceOffsetHandle2Actor->SetVisibility(sliceOffsetHandle2Visible);
       this->TranslationOuterHandleActor->SetVisibility(translationHandleVisible);
       this->TranslationInnerHandleActor->SetVisibility(translationHandleVisible);
-      }
+    }
 
     //----------------------------------------------------------------------
     void SetHandlesOpacity(double opacity)
@@ -777,7 +777,7 @@ class SliceIntersectionInteractionDisplayPipeline
       }
 
     //----------------------------------------------------------------------
-    bool GetVisibility()
+    bool GetIntersectionVisibility()
     {
       return this->IntersectionLine1Actor->GetVisibility();
     }
@@ -1037,7 +1037,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
     || !intersectingSliceNode->IsMappedInLayout())
     {
     pipeline->SetIntersectionsVisibility(false);
-    pipeline->SetHandlesVisibility(false);
+    pipeline->SetIntersectionHandlesVisibility(false);
     if (pipeline->NeedToRender)
       {
       this->NeedToRenderOn();
@@ -1054,7 +1054,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
     if (!sliceInteractionHandlesInteractive)
       {
       pipeline->SetIntersectionsVisibility(false);
-      pipeline->SetHandlesVisibility(false);
+      pipeline->SetIntersectionHandlesVisibility(false);
       if (pipeline->NeedToRender)
         {
         this->NeedToRenderOn();
@@ -1104,7 +1104,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   if (!intersectionFound) // Pipelines not visible if no intersection is found
     {
     pipeline->SetIntersectionsVisibility(false);
-    pipeline->SetHandlesVisibility(false);
+    pipeline->SetIntersectionHandlesVisibility(false);
     if (pipeline->NeedToRender)
       {
       this->NeedToRenderOn();
@@ -1202,9 +1202,9 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
         cosineValue = 1.0;
         }
       if (cosineValue < -1.0)
-      {
+        {
         cosineValue = -1.0;
-      }
+        }
       double angleDeg = acos(cosineValue) * (180.0 / M_PI);
       if (angleDeg < 90.0) // Avoid parallel line segments oriented in the same direction
         {
@@ -1487,7 +1487,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
 
   // Visibility
   pipeline->SetIntersectionsVisibility(true);
-  pipeline->SetHandlesVisibility(true);
+  pipeline->SetIntersectionHandlesVisibility(true);
   this->NeedToRenderOn();
 }
 
@@ -1677,7 +1677,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::ComputeSliceIntersection
   // Get intersection point
   for (size_t slice1Index = 0; slice1Index < numberOfIntersections - 1; slice1Index++)
     {
-    if (!this->Internal->SliceIntersectionInteractionDisplayPipelines[slice1Index]->GetVisibility())
+    if (!this->Internal->SliceIntersectionInteractionDisplayPipelines[slice1Index]->GetIntersectionVisibility())
       {
       continue;
       }
@@ -1705,7 +1705,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::ComputeSliceIntersection
 
     for (size_t slice2Index = slice1Index + 1; slice2Index < numberOfIntersections; slice2Index++)
       {
-      if (!this->Internal->SliceIntersectionInteractionDisplayPipelines[slice2Index]->GetVisibility())
+      if (!this->Internal->SliceIntersectionInteractionDisplayPipelines[slice2Index]->GetIntersectionVisibility())
         {
         continue;
         }
@@ -1775,7 +1775,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::TransformIntersectingSli
     sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
     {
     if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetVisibility())
+      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
       {
       continue;
       }
@@ -1794,7 +1794,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::TransformIntersectingSli
     sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
     {
     if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetVisibility())
+      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
       {
       continue;
       }
@@ -1851,7 +1851,7 @@ std::string vtkMRMLSliceIntersectionInteractionRepresentation::CanInteract(vtkMR
     sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
     {
     if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetVisibility())
+      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
       {
       continue;
       }
@@ -2109,7 +2109,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SetPipelinesHandlesVisib
       {
       visible = false;
       }
-    (*sliceIntersectionIt)->SetHandlesVisibility(visible);
+    (*sliceIntersectionIt)->SetIntersectionHandlesVisibility(visible);
     if ((*sliceIntersectionIt)->NeedToRender)
       {
       this->NeedToRenderOn();

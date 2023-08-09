@@ -146,13 +146,13 @@ public:
   }
 
   //----------------------------------------------------------------------
-  void SetVisibility(bool visibility)
+  void SetIntersectionVisibility(bool visibility)
   {
     this->Actor->SetVisibility(visibility);
   }
 
   //----------------------------------------------------------------------
-  bool GetVisibility()
+  bool GetIntersectionVisibility()
   {
     return this->Actor->GetVisibility();
   }
@@ -404,7 +404,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     || this->Internal->SliceNode->GetViewGroup() != intersectingSliceNode->GetViewGroup()
     || !intersectingSliceNode->IsMappedInLayout())
     {
-    pipeline->SetVisibility(false);
+    pipeline->SetIntersectionVisibility(false);
     return;
     }
 
@@ -425,7 +425,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
       && !displayNode->GetIntersectingSlicesInteractive());
     if (!showNonInteractiveSliceIntersection)
       {
-      pipeline->SetVisibility(false);
+      pipeline->SetIntersectionVisibility(false);
       return;
       }
     pipeline->Property->SetLineWidth(displayNode->GetLineWidth());
@@ -460,14 +460,14 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     intersectionPoint1, intersectionPoint2);
   if (!intersectionFound)
     {
-    pipeline->SetVisibility(false);
+    pipeline->SetIntersectionVisibility(false);
     return;
     }
 
   pipeline->LineSource->SetPoint1(intersectionPoint1);
   pipeline->LineSource->SetPoint2(intersectionPoint2);
 
-  pipeline->SetVisibility(true);
+  pipeline->SetIntersectionVisibility(true);
 }
 
 //----------------------------------------------------------------------
@@ -594,7 +594,7 @@ double* vtkMRMLSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
     }
   for (size_t slice1Index = 0; slice1Index < numberOfIntersections - 1; slice1Index++)
     {
-    if (!this->Internal->SliceIntersectionDisplayPipelines[slice1Index]->GetVisibility())
+    if (!this->Internal->SliceIntersectionDisplayPipelines[slice1Index]->GetIntersectionVisibility())
       {
       continue;
       }
@@ -603,7 +603,7 @@ double* vtkMRMLSliceIntersectionRepresentation2D::GetSliceIntersectionPoint()
     double* line1Point2 = line1->GetPoint2();
     for (size_t slice2Index = slice1Index + 1; slice2Index < numberOfIntersections; slice2Index++)
       {
-      if (!this->Internal->SliceIntersectionDisplayPipelines[slice2Index]->GetVisibility())
+      if (!this->Internal->SliceIntersectionDisplayPipelines[slice2Index]->GetIntersectionVisibility())
         {
         continue;
         }
@@ -661,7 +661,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::TransformIntersectingSlices(vtkMa
     sliceIntersectionIt != this->Internal->SliceIntersectionDisplayPipelines.end(); ++sliceIntersectionIt)
     {
     if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetVisibility())
+      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
       {
       continue;
       }
@@ -679,7 +679,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::TransformIntersectingSlices(vtkMa
     sliceIntersectionIt != this->Internal->SliceIntersectionDisplayPipelines.end(); ++sliceIntersectionIt)
     {
     if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetVisibility())
+      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
       {
       continue;
       }
