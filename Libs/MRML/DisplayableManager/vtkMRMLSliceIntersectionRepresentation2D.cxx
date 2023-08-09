@@ -476,8 +476,9 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     }
   bool showThickSlabIntersectionLines = displayNode->GetIntersectingThickSlabVisibility();
   bool showSliceIntersectionLines = displayNode->GetIntersectingSlicesVisibility();
+  bool isInteractive = displayNode->GetIntersectingSlicesInteractive() || displayNode->GetIntersectingThickSlabInteractive();
 
-  if (!(showSliceIntersectionLines || showThickSlabIntersectionLines))
+  if (!(showSliceIntersectionLines || showThickSlabIntersectionLines) || isInteractive)
     {
     pipeline->SetIntersectionVisibility(false);
     pipeline->SetThickSlabVisibility(false);

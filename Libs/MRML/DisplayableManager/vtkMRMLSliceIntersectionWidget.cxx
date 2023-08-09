@@ -79,6 +79,18 @@ vtkMRMLSliceIntersectionWidget::vtkMRMLSliceIntersectionWidget()
   this->CurrentTranslationPoint_RAS[1] = 0.0;
   this->CurrentTranslationPoint_RAS[2] = 0.0;
 
+  // Thick Slab interaction widget
+  this->StartThickSlabTranslationPoint[0] = 0.0;
+  this->StartThickSlabTranslationPoint[1] = 0.0;
+
+  this->StartThickSlabTranslationPoint_RAS[0] = 0.0;
+  this->StartThickSlabTranslationPoint_RAS[1] = 0.0;
+  this->StartThickSlabTranslationPoint_RAS[2] = 0.0;
+
+  this->CurrentThickSlabTranslationPoint_RAS[0] = 0.0;
+  this->CurrentThickSlabTranslationPoint_RAS[1] = 0.0;
+  this->CurrentThickSlabTranslationPoint_RAS[2] = 0.0;
+
   this->StartActionFOV[0] = 0.;
   this->StartActionFOV[1] = 0.;
   this->StartActionFOV[2] = 0.;
@@ -231,7 +243,13 @@ void vtkMRMLSliceIntersectionWidget::UpdateInteractionEventMapping()
   this->SetEventTranslation(WidgetStateOnRotateIntersectingSlicesHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnTranslateSingleIntersectingSliceHandle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateOnTranslateSingleIntersectingSliceHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnTranslateIntersectingThickSlabHandle, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(WidgetStateOnTranslateIntersectingThickSlabHandle, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
 
+  // Thick slab reconstruction lines
+  this->SetEventTranslationClickAndDrag(WidgetStateOnTranslateIntersectingThickSlabHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
+                                        WidgetStateTranslateIntersectingThickSlabHandle,
+                                        WidgetEventTranslateIntersectingThickSlabHandleStart, WidgetEventTranslateIntersectingThickSlabHandleEnd);
   if (this->GetActionEnabled(ActionRotateSliceIntersection))
     {
     this->SetEventTranslationClickAndDrag(WidgetStateOnRotateIntersectingSlicesHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
@@ -265,7 +283,7 @@ void vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation()
     return;
     }
 
-  if (this->IsSliceIntersectionInteractive())
+  if (this->IsSliceIntersectionInteractive() || this->IsThickSlabInteractive())
     {
     vtkNew<vtkMRMLSliceIntersectionInteractionRepresentation> newRepInteraction;
     newRepInteraction->SetMRMLApplicationLogic(mrmlAppLogic);
@@ -336,6 +354,7 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
     || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle
     || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
     || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
+    || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle
     )
     {
     distance2 = 0.0;
@@ -359,7 +378,8 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
     // Currently interacting
     if (this->WidgetState == WidgetStateTranslate
       || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
-      || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle)
+      || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
+      || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
       {
       distance2 = 0.0;
       return true;
@@ -601,6 +621,12 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
     case WidgetEventTranslateSingleIntersectingSliceHandleEnd:
       processedEvent = this->ProcessEndMouseDrag(eventData);
       break;
+    case WidgetEventTranslateIntersectingThickSlabHandleStart:
+      processedEvent = this->ProcessTranslateIntersectingThickSlabHandleStart(eventData);
+      break;
+    case WidgetEventTranslateIntersectingThickSlabHandleEnd:
+      processedEvent = this->ProcessEndMouseDrag(eventData);
+      break;
 
     default:
       processedEvent = false;
@@ -625,7 +651,8 @@ void vtkMRMLSliceIntersectionWidget::Leave(vtkMRMLInteractionEventData* eventDat
     || this->WidgetState == WidgetStateRotateIntersectingSlices
     || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle
     || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
-    || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle)
+    || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
+    || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
     {
     this->ProcessEndMouseDrag(eventData);
     }
@@ -679,6 +706,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
     case WidgetStateOnWidget:
     case WidgetStateOnTranslateIntersectingSlicesHandle:
     case WidgetStateOnRotateIntersectingSlicesHandle:
+    case WidgetStateOnTranslateIntersectingThickSlabHandle:
     case WidgetStateOnTranslateSingleIntersectingSliceHandle:
       if (interactiveRep)
         {
@@ -708,6 +736,10 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
           {
           this->SetWidgetState(WidgetStateOnTranslateSingleIntersectingSliceHandle);
           }
+        else if (foundComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingThickSlabHandle)
+          {
+          this->SetWidgetState(WidgetStateOnTranslateIntersectingThickSlabHandle);
+          }
         else
           {
           this->SetWidgetState(WidgetStateOnWidget);
@@ -728,6 +760,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
         break;
     case WidgetStateTranslateIntersectingSlicesHandle:
     case WidgetStateTranslateSingleIntersectingSliceHandle:
+    case WidgetStateTranslateIntersectingThickSlabHandle:
     case WidgetStateRotateIntersectingSlicesHandle:
       {
       // Process the motion
@@ -763,6 +796,13 @@ bool vtkMRMLSliceIntersectionWidget::ProcessMouseMove(vtkMRMLInteractionEventDat
         if (inSliceView) // Stop interaction if mouse cursor is outside of the slice view
           {
           this->ProcessTranslateSingleIntersectingSliceHandle(eventData);
+          }
+        }
+      else if (this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
+        {
+        if (inSliceView) // Stop interaction if mouse cursor is outside of the slice view
+          {
+          this->ProcessTranslateIntersectingThickSlabHandle(eventData);
           }
         }
       else if (this->WidgetState == WidgetStateRotateIntersectingSlicesHandle)
@@ -987,7 +1027,7 @@ void vtkMRMLSliceIntersectionWidget::SliceModifiedCallback(vtkObject* vtkNotUsed
   bool needToUpdateRepresentation = false;
 
 
-  if (self->IsSliceIntersectionInteractive())
+  if (self->IsSliceIntersectionInteractive() || self->IsThickSlabInteractive())
     {
     needToUpdateRepresentation = !vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(self->WidgetRep);
     }
@@ -1636,6 +1676,8 @@ int vtkMRMLSliceIntersectionWidget::GetMouseCursor()
     }
     case WidgetStateOnRotateIntersectingSlicesHandle:
       return VTK_CURSOR_HAND;
+    case WidgetStateOnTranslateIntersectingThickSlabHandle:
+      return VTK_CURSOR_HAND; // TODO: Just for now
     default:
       return VTK_CURSOR_DEFAULT;
     }
@@ -1755,6 +1797,99 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSingleIntersectingSliceHand
   this->StartTranslationPoint_RAS[2] = displayPosDouble_RAS[2];
 
   return this->ProcessStartMouseDrag(eventData);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingThickSlabHandleStart(vtkMRMLInteractionEventData* eventData)
+{
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->WidgetRep);
+  if (!rep)
+    {
+    return false;
+    }
+
+  this->SetWidgetState(WidgetStateTranslateIntersectingThickSlabHandle);
+
+  // Save start translation point XY
+  const int* displayPos = eventData->GetDisplayPosition();
+  double displayPosDouble[2] = { static_cast<double>(displayPos[0]), static_cast<double>(displayPos[1]) };
+  this->StartThickSlabTranslationPoint[0] = displayPosDouble[0];
+  this->StartThickSlabTranslationPoint[1] = displayPosDouble[1];
+
+  // Save start translation point RAS
+  vtkMatrix4x4* xyToRAS = this->GetSliceNode()->GetXYToRAS();
+  double displayPosDouble_XY[4] = { displayPosDouble[0], displayPosDouble[1], 0.0, 1.0 };
+  double displayPosDouble_RAS[4] = { 0.0, 0.0, 0.0, 1.0 };
+  xyToRAS->MultiplyPoint(displayPosDouble_XY, displayPosDouble_RAS);
+  this->StartThickSlabTranslationPoint_RAS[0] = displayPosDouble_RAS[0];
+  this->StartThickSlabTranslationPoint_RAS[1] = displayPosDouble_RAS[1];
+  this->StartThickSlabTranslationPoint_RAS[2] = displayPosDouble_RAS[2];
+
+  return this->ProcessStartMouseDrag(eventData);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionWidget::ProcessTranslateIntersectingThickSlabHandle(vtkMRMLInteractionEventData* eventData)
+{
+  // Get current slice node and scene
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLScene* scene = sliceNode->GetScene();
+
+  // Get event position
+  const int* eventPosition = eventData->GetDisplayPosition();
+  double displayPosDouble[2] = { static_cast<double>(eventPosition[0]), static_cast<double>(eventPosition[1]) };
+
+  // Get event position RAS
+  vtkMatrix4x4* xyToRAS = this->GetSliceNode()->GetXYToRAS();
+  double eventPos_XY[4] = { displayPosDouble[0], displayPosDouble[1], 0, 1 };
+  double eventPos_RAS[4] = { 0.0, 0.0, 0.0, 1.0 };
+  xyToRAS->MultiplyPoint(eventPos_XY, eventPos_RAS);
+  this->CurrentThickSlabTranslationPoint_RAS[0] = eventPos_RAS[0];
+  this->CurrentThickSlabTranslationPoint_RAS[1] = eventPos_RAS[1];
+  this->CurrentThickSlabTranslationPoint_RAS[2] = eventPos_RAS[2];
+
+  vtkMRMLSliceIntersectionInteractionRepresentation* rep = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast(this->GetRepresentation());
+  if (!rep)
+    {
+    return false;
+    }
+
+  // Get intersecting slice node
+  vtkMRMLSliceNode* intersectingSliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNodeByID(this->LastIntersectingSliceNodeID));
+  if (!intersectingSliceNode)
+    {
+    return false;
+    }
+
+  // Get translation offset
+  double translationOffset[3] = { this->CurrentThickSlabTranslationPoint_RAS[0] - this->StartThickSlabTranslationPoint_RAS[0],
+                                  this->CurrentThickSlabTranslationPoint_RAS[1] - this->StartThickSlabTranslationPoint_RAS[1],
+                                  this->CurrentThickSlabTranslationPoint_RAS[2] - this->StartThickSlabTranslationPoint_RAS[2] };
+
+  double translationOffsetNorm = vtkMath::Norm(translationOffset);
+  double epsilon = 1e-5;
+  if (translationOffsetNorm <= epsilon) // to avoid translation when no mouse dragging was done
+    {
+    return false;
+    }
+
+  // Find the new distance between the translation point and the intersecting slice,
+  // this will be half our new slab thickness
+  double distance;
+  bool calculatedDistance = rep->DistanceFromSliceIntersectionToPoint(intersectingSliceNode, this->CurrentThickSlabTranslationPoint_RAS, distance);
+  if (!calculatedDistance)
+    {
+    return false;
+    }
+
+  // Jump slice in intersecting slice node
+  intersectingSliceNode->SetSlabReconstructionThickness(2 * distance);
+
+  // Store previous event position
+  this->PreviousEventPosition[0] = eventPosition[0];
+  this->PreviousEventPosition[1] = eventPosition[1];
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -1926,4 +2061,15 @@ bool vtkMRMLSliceIntersectionWidget::IsSliceIntersectionInteractive()
     return false;
     }
   return mrmlAppLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesInteractive);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionWidget::IsThickSlabInteractive()
+{
+  vtkMRMLApplicationLogic* mrmlAppLogic = this->GetMRMLApplicationLogic();
+  if (!mrmlAppLogic)
+    {
+    return false;
+    }
+  return mrmlAppLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive);
 }

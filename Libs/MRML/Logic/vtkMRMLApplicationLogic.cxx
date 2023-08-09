@@ -963,13 +963,23 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled(
     for (sliceDisplayNodes->InitTraversal(it);
       (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
       {
+      bool wasModified = false;
       switch (operation)
         {
         case vtkMRMLApplicationLogic::IntersectingSlicesVisibility:
           sliceDisplayNode->SetIntersectingSlicesVisibility(enabled);
           break;
+        case vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive:
+          [[fallthrough]];
         case vtkMRMLApplicationLogic::IntersectingSlicesInteractive:
+          // Since the vtkMRMLSliceIntersectionWidget uses the same interactive representation
+          // for either slice intersection of slice thick slab offset interactive updates, until
+          // a dedicated widget is implemented to handle thick slab offset, we enable/disable
+          // both consistently.
+          wasModified = sliceDisplayNode->StartModify();
           sliceDisplayNode->SetIntersectingSlicesInteractive(enabled);
+          sliceDisplayNode->SetIntersectingThickSlabInteractive(enabled);
+          sliceDisplayNode->EndModify(wasModified);
           break;
         case vtkMRMLApplicationLogic::IntersectingSlicesTranslation:
           sliceDisplayNode->SetIntersectingSlicesTranslationEnabled(enabled);
@@ -1039,6 +1049,8 @@ bool vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled(
       return sliceDisplayNode->GetIntersectingSlicesTranslationEnabled();
     case vtkMRMLApplicationLogic::IntersectingSlicesRotation:
       return sliceDisplayNode->GetIntersectingSlicesRotationEnabled();
+    case vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive:
+      return sliceDisplayNode->GetIntersectingThickSlabInteractive();
     }
 
   return false;

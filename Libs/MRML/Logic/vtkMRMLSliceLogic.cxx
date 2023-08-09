@@ -1338,10 +1338,13 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
     if (appLogic)
       {
+      // Intersection
       sliceDisplayNode->SetIntersectingSlicesVisibility(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesVisibility));
       sliceDisplayNode->SetIntersectingSlicesInteractive(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesInteractive));
       sliceDisplayNode->SetIntersectingSlicesTranslationEnabled(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesTranslation));
       sliceDisplayNode->SetIntersectingSlicesRotationEnabled(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesRotation));
+      // ThickSlab
+      sliceDisplayNode->SetIntersectingThickSlabInteractive(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive));
       }
 
     std::string displayName = "Slice Display";
