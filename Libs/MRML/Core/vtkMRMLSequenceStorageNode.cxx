@@ -36,8 +36,6 @@ limitations under the License.
 #include <QMessageBox>
 #include <QPixmap>
 
-#include <vtksys/SystemTools.hxx>
-
 static const char NODE_BASE_NAME_SEPARATOR[] = "-";
 
 //----------------------------------------------------------------------------
