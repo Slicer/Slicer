@@ -69,6 +69,13 @@ public:
   //@}
 
   //@{
+  /// Toggles interaction with thick slab intersections
+  vtkGetMacro(IntersectingThickSlabInteractive, bool);
+  vtkSetMacro(IntersectingThickSlabInteractive, bool);
+  vtkBooleanMacro(IntersectingThickSlabInteractive, bool);
+  //@}
+
+  //@{
   /// Enable/disable interaction handles
   vtkGetMacro(IntersectingSlicesTranslationEnabled, bool);
   vtkSetMacro(IntersectingSlicesTranslationEnabled, bool);
@@ -165,6 +172,7 @@ public:
     ComponentRotateIntersectingSlicesHandle, ///< mouse is near the end of the slice intersection (rotation section)
     ComponentTranslateSingleIntersectingSliceHandle, ///< mouse is near the middle of the slice intersection (translation section)
     ComponentSliceIntersection, ///< slice intersection is active (not any handle), e.g., because user is interacting with the widget
+    ComponentTranslateIntersectingThickSlabHandle, ///< mouse is near the handle for adjusting a thick slab
     Component_Last
   };
 
@@ -213,6 +221,7 @@ protected:
   bool IntersectingSlicesInteractive{ false };
   bool IntersectingSlicesTranslationEnabled{ true };
   bool IntersectingSlicesRotationEnabled{ true };
+  bool IntersectingThickSlabInteractive{ false };
   bool IntersectingThickSlabVisibility{ false };
 
   int IntersectingSlicesInteractiveHandlesVisibilityMode{ NeverVisible };

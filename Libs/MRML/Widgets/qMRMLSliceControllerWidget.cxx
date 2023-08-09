@@ -237,6 +237,8 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
 
   QObject::connect(this->actionShow_slab_reconstruction_widget, SIGNAL(toggled(bool)),
                    q, SLOT(showSlabReconstructionWidget(bool)));
+  QObject::connect(this->actionSlabReconstructionInteractive, SIGNAL(toggled(bool)),
+                   q, SLOT(toggleSlabReconstructionInteractive(bool)));
 
   this->setupLightboxMenu();
   this->setupCompositingMenu();
@@ -913,10 +915,16 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->actionShow_reformat_widget->setChecked(showReformat);
   this->actionShow_reformat_widget->setText(
     showReformat ? tr("Hide reformat widget"): tr("Show reformat widget"));
+
   // Reconstruction
   bool showSlabReconstruction = sliceNode->GetSlabReconstructionEnabled();
+  vtkMRMLSliceDisplayNode* displayNode = this->SliceLogic->GetSliceDisplayNode();
+  bool slabReconstructionInteractive = displayNode ? displayNode->GetIntersectingThickSlabInteractive() : false;
+
   this->actionShow_slab_reconstruction_widget->setChecked(showSlabReconstruction);
+  this->actionSlabReconstructionInteractive->setChecked(slabReconstructionInteractive);
   this->SlabReconstructionThicknessSpinBox->setValue(sliceNode->GetSlabReconstructionThickness());
+
   // Slice spacing mode
   this->SliceSpacingButton->setIcon(
     sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode ?
@@ -1580,6 +1588,9 @@ void qMRMLSliceControllerWidgetPrivate::setupSlabReconstructionMenu()
   this->SlabReconstructionMenu = new QMenu(tr("Slab Reconstruction"), this->ShowSlabReconstructionButton);
   this->SlabReconstructionMenu->addAction(this->actionShow_slab_reconstruction_widget);
   this->SlabReconstructionMenu->setObjectName("slabMenu");
+
+  // Make thick slab lines interactive
+  this->SlabReconstructionMenu->addAction(this->actionSlabReconstructionInteractive);
 
   // Slab Reconstruction Thickness
   QMenu* slabReconstructionThickness = new QMenu(tr("Slab Thickness"), this->ShowSlabReconstructionButton);
@@ -2402,6 +2413,17 @@ void qMRMLSliceControllerWidget::showSlabReconstructionWidget(bool show)
           }
         }
       }
+    }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::toggleSlabReconstructionInteractive(bool interactive)
+{
+  vtkMRMLApplicationLogic* applicationLogic =
+    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
+  if (applicationLogic)
+    {
+    applicationLogic->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive, interactive);
     }
 }
 

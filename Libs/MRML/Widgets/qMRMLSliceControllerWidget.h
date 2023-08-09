@@ -235,6 +235,7 @@ public slots:
   void lockReformatWidgetToCamera(bool lock);
   /// Reconstruction widget
   void showSlabReconstructionWidget(bool show);
+  void toggleSlabReconstructionInteractive(bool interactive);
   /// Compositing
   void setCompositing(int mode);
   void setCompositingToAlphaBlend();

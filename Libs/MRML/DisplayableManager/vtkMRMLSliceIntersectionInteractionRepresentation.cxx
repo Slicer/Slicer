@@ -25,10 +25,7 @@
 #include <math.h>
 
 #include "vtkMRMLApplicationLogic.h"
-#include "vtkMRMLDisplayableNode.h"
-#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLScene.h"
 #include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
@@ -37,18 +34,10 @@
 #include "vtkActor2D.h"
 #include "vtkArcSource.h"
 #include "vtkAppendPolyData.h"
-#include "vtkAssemblyPath.h"
 #include "vtkCallbackCommand.h"
 #include "vtkCamera.h"
-#include "vtkCellArray.h"
 #include "vtkCommand.h"
 #include "vtkConeSource.h"
-#include "vtkCoordinate.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkGlyph2D.h"
-#include "vtkInteractorObserver.h"
-#include "vtkLeaderActor2D.h"
 #include "vtkLine.h"
 #include "vtkLineSource.h"
 #include "vtkMath.h"
@@ -59,7 +48,6 @@
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkPolyDataMapper2D.h"
 #include "vtkProperty2D.h"
-#include "vtkPlane.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkSphereSource.h"
@@ -85,9 +73,13 @@ static const double FOV_HANDLES_MARGIN = 0.03; // 3% margin
 static const double HIDE_INTERSECTION_GAP_SIZE = 0.05; // 5.0% of the slice view width
 static const double INTERACTION_SIZE_PIXELS = 20.0;
 static const double HANDLES_MIN_LINE_LENGTH = 50.0;
+static const double THICK_SLAB_HANDLES_MIN_LINE_LENGTH = 50.0;
 
 // Intersection line
 static const double INTERSECTION_LINE_RESOLUTION = 50; // default = 8
+
+// Thick slab line
+static const double THICK_SLAB_LINE_RESOLUTION = 50; // default = 8
 
 // Handles
 static const double HANDLES_CIRCLE_THETA_RESOLUTION = 100; // default = 8
@@ -98,6 +90,11 @@ static const double SLICEOFFSET_HANDLE_CIRCLE_RADIUS = 7.0;
 static const double SLICEOFFSET_HANDLE_ARROW_RADIUS = 3.0;
 static const double SLICEOFFSET_HANDLE_ARROW_LENGTH = 60.0;
 static const double SLICEOFFSET_HANDLE_ARROW_TIP_ANGLE = 27; // degrees
+static const double THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_POSITION[3] = { 0.0,0.0,0.0 };
+static const double THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_ORIENTATION[3] = { 0.0,1.0,0.0 };
+static const double THICK_SLAB_TRANSLATION_HANDLE_ARROW_RADIUS = 3.0;
+static const double THICK_SLAB_TRANSLATION_HANDLE_ARROW_LENGTH = 60.0;
+static const double THICK_SLAB_TRANSLATION_HANDLE_ARROW_TIP_ANGLE = 27; // degrees
 static const double ROTATION_HANDLE_DEFAULT_POSITION[3] = { 0.0,0.0,0.0 };
 static const double ROTATION_HANDLE_DEFAULT_ORIENTATION[3] = { 0.0,1.0,0.0 };
 static const double ROTATION_HANDLE_CIRCLE_RADIUS = 10.0;
@@ -141,6 +138,54 @@ class SliceIntersectionInteractionDisplayPipeline
       this->IntersectionLine2Actor->SetMapper(this->IntersectionLine2Mapper);
       this->IntersectionLine2Actor->SetProperty(this->IntersectionLine2Property);
 
+      // First half of the first thick slab line
+      this->ThickSlabLine1FirstHalf = vtkSmartPointer<vtkLineSource>::New();
+      this->ThickSlabLine1FirstHalf->SetResolution(THICK_SLAB_LINE_RESOLUTION);
+      this->ThickSlabLine1FirstHalf->Update();
+      this->ThickSlabLine1FirstHalfMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine1FirstHalfProperty = vtkSmartPointer<vtkProperty2D>::New();
+      this->ThickSlabLine1FirstHalfActor = vtkSmartPointer<vtkActor2D>::New();
+      this->ThickSlabLine1FirstHalfActor->SetVisibility(false); // invisible until slice node is set
+      this->ThickSlabLine1FirstHalfMapper->SetInputConnection(this->ThickSlabLine1FirstHalf->GetOutputPort());
+      this->ThickSlabLine1FirstHalfActor->SetMapper(this->ThickSlabLine1FirstHalfMapper);
+      this->ThickSlabLine1FirstHalfActor->SetProperty(this->ThickSlabLine1FirstHalfProperty);
+
+      // Second half of the first thick slab line
+      this->ThickSlabLine1SecondHalf = vtkSmartPointer<vtkLineSource>::New();
+      this->ThickSlabLine1SecondHalf->SetResolution(THICK_SLAB_LINE_RESOLUTION);
+      this->ThickSlabLine1SecondHalf->Update();
+      this->ThickSlabLine1SecondHalfMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine1SecondHalfProperty = vtkSmartPointer<vtkProperty2D>::New();
+      this->ThickSlabLine1SecondHalfActor = vtkSmartPointer<vtkActor2D>::New();
+      this->ThickSlabLine1SecondHalfActor->SetVisibility(false); // invisible until slice node is set
+      this->ThickSlabLine1SecondHalfMapper->SetInputConnection(this->ThickSlabLine1SecondHalf->GetOutputPort());
+      this->ThickSlabLine1SecondHalfActor->SetMapper(this->ThickSlabLine1SecondHalfMapper);
+      this->ThickSlabLine1SecondHalfActor->SetProperty(this->ThickSlabLine1SecondHalfProperty);
+
+      // First half of the second thick slab line
+      this->ThickSlabLine2FirstHalf = vtkSmartPointer<vtkLineSource>::New();
+      this->ThickSlabLine2FirstHalf->SetResolution(THICK_SLAB_LINE_RESOLUTION);
+      this->ThickSlabLine2FirstHalf->Update();
+      this->ThickSlabLine2FirstHalfMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine2FirstHalfProperty = vtkSmartPointer<vtkProperty2D>::New();
+      this->ThickSlabLine2FirstHalfActor = vtkSmartPointer<vtkActor2D>::New();
+      this->ThickSlabLine2FirstHalfActor->SetVisibility(false); // invisible until slice node is set
+      this->ThickSlabLine2FirstHalfMapper->SetInputConnection(this->ThickSlabLine2FirstHalf->GetOutputPort());
+      this->ThickSlabLine2FirstHalfActor->SetMapper(this->ThickSlabLine2FirstHalfMapper);
+      this->ThickSlabLine2FirstHalfActor->SetProperty(this->ThickSlabLine2FirstHalfProperty);
+
+      // Second half of the second thick slab line
+      this->ThickSlabLine2SecondHalf = vtkSmartPointer<vtkLineSource>::New();
+      this->ThickSlabLine2SecondHalf->SetResolution(THICK_SLAB_LINE_RESOLUTION);
+      this->ThickSlabLine2SecondHalf->Update();
+      this->ThickSlabLine2SecondHalfMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine2SecondHalfProperty = vtkSmartPointer<vtkProperty2D>::New();
+      this->ThickSlabLine2SecondHalfActor = vtkSmartPointer<vtkActor2D>::New();
+      this->ThickSlabLine2SecondHalfActor->SetVisibility(false); // invisible until slice node is set
+      this->ThickSlabLine2SecondHalfMapper->SetInputConnection(this->ThickSlabLine2SecondHalf->GetOutputPort());
+      this->ThickSlabLine2SecondHalfActor->SetMapper(this->ThickSlabLine2SecondHalfMapper);
+      this->ThickSlabLine2SecondHalfActor->SetProperty(this->ThickSlabLine2SecondHalfProperty);
+
       // Center sphere
       this->TranslationOuterHandle = vtkSmartPointer<vtkSphereSource>::New();
       this->TranslationOuterHandle->SetRadius(TRANSLATION_HANDLE_OUTER_RADIUS);
@@ -170,13 +215,16 @@ class SliceIntersectionInteractionDisplayPipeline
       // Initialize handles
       this->CreateRotationHandles();
       this->CreateSliceOffsetHandles();
+      this->CreateThickSlabTranslationHandles();
       this->SetIntersectionHandlesVisibility(false);
+      this->SetThickSlabHandlesVisibility(false);
       this->NeedToRender = true;
 
       // Handle points
       this->RotationHandlePoints = vtkSmartPointer<vtkPolyData>::New();
       this->TranslationHandlePoints = vtkSmartPointer<vtkPolyData>::New();
       this->SliceOffsetHandlePoints = vtkSmartPointer<vtkPolyData>::New();
+      this->ThickSlabHandlePoints = vtkSmartPointer<vtkPolyData>::New();
     }
 
     //----------------------------------------------------------------------
@@ -604,6 +652,240 @@ class SliceIntersectionInteractionDisplayPipeline
     }
 
     //----------------------------------------------------------------------
+    void CreateThickSlabTranslationHandles()
+    {
+      // Create list of points to store position of handles
+      this->ThickSlabLine1Handle1Points = vtkSmartPointer<vtkPoints>::New();
+      this->ThickSlabLine1Handle2Points = vtkSmartPointer<vtkPoints>::New();
+      this->ThickSlabLine2Handle1Points = vtkSmartPointer<vtkPoints>::New();
+      this->ThickSlabLine2Handle2Points = vtkSmartPointer<vtkPoints>::New();
+
+      // We don't know if there is enough space, will set it later.
+      this->ThickSlabLine1Handle1Displayable = false;
+      this->ThickSlabLine1Handle2Displayable = false;
+      this->ThickSlabLine2Handle1Displayable = false;
+      this->ThickSlabLine2Handle2Displayable = false;
+
+      // Handle default position and orientation
+      double handleOriginDefault[3] = { THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_POSITION[0],
+                                        THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_POSITION[1],
+                                        THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_POSITION[2] };
+      double handleOrientationDefault[3] = { THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_ORIENTATION[0],
+                                             THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_ORIENTATION[1],
+                                             THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_ORIENTATION[2] };
+      double handleOrientationDefaultInv[3] = { -THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_ORIENTATION[0],
+                                                -THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_ORIENTATION[1],
+                                                -THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_ORIENTATION[2] };
+
+      // Define cone size
+      double coneAngleRad = (THICK_SLAB_TRANSLATION_HANDLE_ARROW_TIP_ANGLE * M_PI) / 180.0;
+      double coneRadius = 2 * THICK_SLAB_TRANSLATION_HANDLE_ARROW_RADIUS;
+      double coneLength = coneRadius / tan(coneAngleRad);
+
+      // Define cylinder size
+      double cylinderLength = THICK_SLAB_TRANSLATION_HANDLE_ARROW_LENGTH - coneLength * 2;
+
+      // Define cone positions to construct arrows
+      double coneCenterR[3] = { handleOrientationDefault[0], handleOrientationDefault[1], handleOrientationDefault[2] };
+      vtkMath::MultiplyScalar(coneCenterR, cylinderLength / 2 + coneLength / 2);
+      double coneTipR[3] = { handleOrientationDefault[0], handleOrientationDefault[1], handleOrientationDefault[2] };
+      vtkMath::MultiplyScalar(coneTipR, cylinderLength / 2 + coneLength);
+      double coneBaseR[3] = { handleOrientationDefault[0], handleOrientationDefault[1], handleOrientationDefault[2] };
+      vtkMath::MultiplyScalar(coneBaseR, cylinderLength / 2);
+      double coneCenterL[3] = { handleOrientationDefaultInv[0], handleOrientationDefaultInv[1], handleOrientationDefaultInv[2] };
+      vtkMath::MultiplyScalar(coneCenterL, cylinderLength / 2 + coneLength / 2);
+      double coneTipL[3] = { handleOrientationDefaultInv[0], handleOrientationDefaultInv[1], handleOrientationDefaultInv[2] };
+      vtkMath::MultiplyScalar(coneTipL, cylinderLength / 2 + coneLength);
+      double coneBaseL[3] = { handleOrientationDefaultInv[0], handleOrientationDefaultInv[1], handleOrientationDefaultInv[2] };
+      vtkMath::MultiplyScalar(coneBaseL, cylinderLength / 2);
+
+      // Translation line 1 first handle
+      vtkNew<vtkLineSource> thickSlabLine1Handle1LineSource;
+      thickSlabLine1Handle1LineSource->SetResolution(50);
+      thickSlabLine1Handle1LineSource->SetPoint1(coneBaseR);
+      thickSlabLine1Handle1LineSource->SetPoint2(coneBaseL);
+      vtkNew<vtkTubeFilter> thickSlabLine1Handle1LineTubeFilter;
+      thickSlabLine1Handle1LineTubeFilter->SetInputConnection(thickSlabLine1Handle1LineSource->GetOutputPort());
+      thickSlabLine1Handle1LineTubeFilter->SetRadius(THICK_SLAB_TRANSLATION_HANDLE_ARROW_RADIUS);
+      thickSlabLine1Handle1LineTubeFilter->SetNumberOfSides(16);
+      thickSlabLine1Handle1LineTubeFilter->SetCapping(true);
+      vtkNew<vtkConeSource> thickSlabLine1Handle1RightConeSource;
+      thickSlabLine1Handle1RightConeSource->SetResolution(50);
+      thickSlabLine1Handle1RightConeSource->SetRadius(coneRadius);
+      thickSlabLine1Handle1RightConeSource->SetDirection(handleOrientationDefault);
+      thickSlabLine1Handle1RightConeSource->SetHeight(coneLength);
+      thickSlabLine1Handle1RightConeSource->SetCenter(coneCenterR);
+      vtkNew<vtkConeSource> thickSlabLine1Handle1LeftConeSource;
+      thickSlabLine1Handle1LeftConeSource->SetResolution(50);
+      thickSlabLine1Handle1LeftConeSource->SetRadius(coneRadius);
+      thickSlabLine1Handle1LeftConeSource->SetDirection(handleOrientationDefaultInv);
+      thickSlabLine1Handle1LeftConeSource->SetHeight(coneLength);
+      thickSlabLine1Handle1LeftConeSource->SetCenter(coneCenterL);
+      this->ThickSlabLine1Handle1 = vtkSmartPointer<vtkAppendPolyData>::New();
+      this->ThickSlabLine1Handle1->AddInputConnection(thickSlabLine1Handle1LineTubeFilter->GetOutputPort());
+      this->ThickSlabLine1Handle1->AddInputConnection(thickSlabLine1Handle1RightConeSource->GetOutputPort());
+      this->ThickSlabLine1Handle1->AddInputConnection(thickSlabLine1Handle1LeftConeSource->GetOutputPort());
+      this->ThickSlabLine1Handle1ToWorldTransform = vtkSmartPointer<vtkTransform>::New();
+      this->ThickSlabLine1Handle1TransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      this->ThickSlabLine1Handle1TransformFilter->SetInputConnection(this->ThickSlabLine1Handle1->GetOutputPort());
+      this->ThickSlabLine1Handle1TransformFilter->SetTransform(this->ThickSlabLine1Handle1ToWorldTransform);
+      this->ThickSlabLine1Handle1Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine1Handle1Property = vtkSmartPointer<vtkProperty2D>::New();
+      this->ThickSlabLine1Handle1Actor = vtkSmartPointer<vtkActor2D>::New();
+      this->ThickSlabLine1Handle1Actor->SetVisibility(false); // invisible until slice node is set
+      this->ThickSlabLine1Handle1Mapper->SetInputConnection(this->ThickSlabLine1Handle1TransformFilter->GetOutputPort());
+      this->ThickSlabLine1Handle1Actor->SetMapper(this->ThickSlabLine1Handle1Mapper);
+      this->ThickSlabLine1Handle1Actor->SetProperty(this->ThickSlabLine1Handle1Property);
+
+      // Translation line 1 second handle
+      vtkNew<vtkLineSource> thickSlabLine1Handle2LineSource;
+      thickSlabLine1Handle2LineSource->SetResolution(50);
+      thickSlabLine1Handle2LineSource->SetPoint1(coneBaseR);
+      thickSlabLine1Handle2LineSource->SetPoint2(coneBaseL);
+      vtkNew<vtkTubeFilter> thickSlabLine1Handle2LineTubeFilter;
+      thickSlabLine1Handle2LineTubeFilter->SetInputConnection(thickSlabLine1Handle2LineSource->GetOutputPort());
+      thickSlabLine1Handle2LineTubeFilter->SetRadius(THICK_SLAB_TRANSLATION_HANDLE_ARROW_RADIUS);
+      thickSlabLine1Handle2LineTubeFilter->SetNumberOfSides(16);
+      thickSlabLine1Handle2LineTubeFilter->SetCapping(true);
+      vtkNew<vtkConeSource> thickSlabLine1Handle2RightConeSource;
+      thickSlabLine1Handle2RightConeSource->SetResolution(50);
+      thickSlabLine1Handle2RightConeSource->SetRadius(coneRadius);
+      thickSlabLine1Handle2RightConeSource->SetDirection(handleOrientationDefault);
+      thickSlabLine1Handle2RightConeSource->SetHeight(coneLength);
+      thickSlabLine1Handle2RightConeSource->SetCenter(coneCenterR);
+      vtkNew<vtkConeSource> thickSlabLine1Handle2LeftConeSource;
+      thickSlabLine1Handle2LeftConeSource->SetResolution(50);
+      thickSlabLine1Handle2LeftConeSource->SetRadius(coneRadius);
+      thickSlabLine1Handle2LeftConeSource->SetDirection(handleOrientationDefaultInv);
+      thickSlabLine1Handle2LeftConeSource->SetHeight(coneLength);
+      thickSlabLine1Handle2LeftConeSource->SetCenter(coneCenterL);
+      this->ThickSlabLine1Handle2 = vtkSmartPointer<vtkAppendPolyData>::New();
+      this->ThickSlabLine1Handle2->AddInputConnection(thickSlabLine1Handle2LineTubeFilter->GetOutputPort());
+      this->ThickSlabLine1Handle2->AddInputConnection(thickSlabLine1Handle2RightConeSource->GetOutputPort());
+      this->ThickSlabLine1Handle2->AddInputConnection(thickSlabLine1Handle2LeftConeSource->GetOutputPort());
+      this->ThickSlabLine1Handle2ToWorldTransform = vtkSmartPointer<vtkTransform>::New();
+      this->ThickSlabLine1Handle2TransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      this->ThickSlabLine1Handle2TransformFilter->SetInputConnection(this->ThickSlabLine1Handle2->GetOutputPort());
+      this->ThickSlabLine1Handle2TransformFilter->SetTransform(this->ThickSlabLine1Handle2ToWorldTransform);
+      this->ThickSlabLine1Handle2Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine1Handle2Property = vtkSmartPointer<vtkProperty2D>::New();
+      this->ThickSlabLine1Handle2Actor = vtkSmartPointer<vtkActor2D>::New();
+      this->ThickSlabLine1Handle2Actor->SetVisibility(false); // invisible until slice node is set
+      this->ThickSlabLine1Handle2Mapper->SetInputConnection(this->ThickSlabLine1Handle2TransformFilter->GetOutputPort());
+      this->ThickSlabLine1Handle2Actor->SetMapper(this->ThickSlabLine1Handle2Mapper);
+      this->ThickSlabLine1Handle2Actor->SetProperty(this->ThickSlabLine1Handle2Property);
+
+      // Translation line 1 first handle
+      vtkNew<vtkLineSource> thickSlabLine2Handle1LineSource;
+      thickSlabLine2Handle1LineSource->SetResolution(50);
+      thickSlabLine2Handle1LineSource->SetPoint1(coneBaseR);
+      thickSlabLine2Handle1LineSource->SetPoint2(coneBaseL);
+      vtkNew<vtkTubeFilter> thickSlabLine2Handle1LineTubeFilter;
+      thickSlabLine2Handle1LineTubeFilter->SetInputConnection(thickSlabLine2Handle1LineSource->GetOutputPort());
+      thickSlabLine2Handle1LineTubeFilter->SetRadius(THICK_SLAB_TRANSLATION_HANDLE_ARROW_RADIUS);
+      thickSlabLine2Handle1LineTubeFilter->SetNumberOfSides(16);
+      thickSlabLine2Handle1LineTubeFilter->SetCapping(true);
+      vtkNew<vtkConeSource> thickSlabLine2Handle1RightConeSource;
+      thickSlabLine2Handle1RightConeSource->SetResolution(50);
+      thickSlabLine2Handle1RightConeSource->SetRadius(coneRadius);
+      thickSlabLine2Handle1RightConeSource->SetDirection(handleOrientationDefault);
+      thickSlabLine2Handle1RightConeSource->SetHeight(coneLength);
+      thickSlabLine2Handle1RightConeSource->SetCenter(coneCenterR);
+      vtkNew<vtkConeSource> thickSlabLine2Handle1LeftConeSource;
+      thickSlabLine2Handle1LeftConeSource->SetResolution(50);
+      thickSlabLine2Handle1LeftConeSource->SetRadius(coneRadius);
+      thickSlabLine2Handle1LeftConeSource->SetDirection(handleOrientationDefaultInv);
+      thickSlabLine2Handle1LeftConeSource->SetHeight(coneLength);
+      thickSlabLine2Handle1LeftConeSource->SetCenter(coneCenterL);
+      this->ThickSlabLine2Handle1 = vtkSmartPointer<vtkAppendPolyData>::New();
+      this->ThickSlabLine2Handle1->AddInputConnection(thickSlabLine2Handle1LineTubeFilter->GetOutputPort());
+      this->ThickSlabLine2Handle1->AddInputConnection(thickSlabLine2Handle1RightConeSource->GetOutputPort());
+      this->ThickSlabLine2Handle1->AddInputConnection(thickSlabLine2Handle1LeftConeSource->GetOutputPort());
+      this->ThickSlabLine2Handle1ToWorldTransform = vtkSmartPointer<vtkTransform>::New();
+      this->ThickSlabLine2Handle1TransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      this->ThickSlabLine2Handle1TransformFilter->SetInputConnection(this->ThickSlabLine2Handle1->GetOutputPort());
+      this->ThickSlabLine2Handle1TransformFilter->SetTransform(this->ThickSlabLine2Handle1ToWorldTransform);
+      this->ThickSlabLine2Handle1Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine2Handle1Property = vtkSmartPointer<vtkProperty2D>::New();
+      this->ThickSlabLine2Handle1Actor = vtkSmartPointer<vtkActor2D>::New();
+      this->ThickSlabLine2Handle1Actor->SetVisibility(false); // invisible until slice node is set
+      this->ThickSlabLine2Handle1Mapper->SetInputConnection(this->ThickSlabLine2Handle1TransformFilter->GetOutputPort());
+      this->ThickSlabLine2Handle1Actor->SetMapper(this->ThickSlabLine2Handle1Mapper);
+      this->ThickSlabLine2Handle1Actor->SetProperty(this->ThickSlabLine2Handle1Property);
+
+      // Translation line 1 second handle
+      vtkNew<vtkLineSource> thickSlabLine2Handle2LineSource;
+      thickSlabLine2Handle2LineSource->SetResolution(50);
+      thickSlabLine2Handle2LineSource->SetPoint1(coneBaseR);
+      thickSlabLine2Handle2LineSource->SetPoint2(coneBaseL);
+      vtkNew<vtkTubeFilter> thickSlabLine2Handle2LineTubeFilter;
+      thickSlabLine2Handle2LineTubeFilter->SetInputConnection(thickSlabLine2Handle2LineSource->GetOutputPort());
+      thickSlabLine2Handle2LineTubeFilter->SetRadius(THICK_SLAB_TRANSLATION_HANDLE_ARROW_RADIUS);
+      thickSlabLine2Handle2LineTubeFilter->SetNumberOfSides(16);
+      thickSlabLine2Handle2LineTubeFilter->SetCapping(true);
+      vtkNew<vtkConeSource> thickSlabLine2Handle2RightConeSource;
+      thickSlabLine2Handle2RightConeSource->SetResolution(50);
+      thickSlabLine2Handle2RightConeSource->SetRadius(coneRadius);
+      thickSlabLine2Handle2RightConeSource->SetDirection(handleOrientationDefault);
+      thickSlabLine2Handle2RightConeSource->SetHeight(coneLength);
+      thickSlabLine2Handle2RightConeSource->SetCenter(coneCenterR);
+      vtkNew<vtkConeSource> thickSlabLine2Handle2LeftConeSource;
+      thickSlabLine2Handle2LeftConeSource->SetResolution(50);
+      thickSlabLine2Handle2LeftConeSource->SetRadius(coneRadius);
+      thickSlabLine2Handle2LeftConeSource->SetDirection(handleOrientationDefaultInv);
+      thickSlabLine2Handle2LeftConeSource->SetHeight(coneLength);
+      thickSlabLine2Handle2LeftConeSource->SetCenter(coneCenterL);
+      this->ThickSlabLine2Handle2 = vtkSmartPointer<vtkAppendPolyData>::New();
+      this->ThickSlabLine2Handle2->AddInputConnection(thickSlabLine2Handle2LineTubeFilter->GetOutputPort());
+      this->ThickSlabLine2Handle2->AddInputConnection(thickSlabLine2Handle2RightConeSource->GetOutputPort());
+      this->ThickSlabLine2Handle2->AddInputConnection(thickSlabLine2Handle2LeftConeSource->GetOutputPort());
+      this->ThickSlabLine2Handle2ToWorldTransform = vtkSmartPointer<vtkTransform>::New();
+      this->ThickSlabLine2Handle2TransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      this->ThickSlabLine2Handle2TransformFilter->SetInputConnection(this->ThickSlabLine2Handle2->GetOutputPort());
+      this->ThickSlabLine2Handle2TransformFilter->SetTransform(this->ThickSlabLine2Handle2ToWorldTransform);
+      this->ThickSlabLine2Handle2Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine2Handle2Property = vtkSmartPointer<vtkProperty2D>::New();
+      this->ThickSlabLine2Handle2Actor = vtkSmartPointer<vtkActor2D>::New();
+      this->ThickSlabLine2Handle2Actor->SetVisibility(false); // invisible until slice node is set
+      this->ThickSlabLine2Handle2Mapper->SetInputConnection(this->ThickSlabLine2Handle2TransformFilter->GetOutputPort());
+      this->ThickSlabLine2Handle2Actor->SetMapper(this->ThickSlabLine2Handle2Mapper);
+      this->ThickSlabLine2Handle2Actor->SetProperty(this->ThickSlabLine2Handle2Property);
+
+      // Handle points
+      this->ThickSlabLine1Handle1Points->InsertNextPoint(handleOriginDefault);
+      this->ThickSlabLine1Handle1Points->InsertNextPoint(coneTipR);
+      this->ThickSlabLine1Handle1Points->InsertNextPoint(coneCenterR);
+      this->ThickSlabLine1Handle1Points->InsertNextPoint(coneBaseR);
+      this->ThickSlabLine1Handle1Points->InsertNextPoint(coneTipL);
+      this->ThickSlabLine1Handle1Points->InsertNextPoint(coneCenterL);
+      this->ThickSlabLine1Handle1Points->InsertNextPoint(coneBaseL);
+
+      this->ThickSlabLine1Handle2Points->InsertNextPoint(handleOriginDefault);
+      this->ThickSlabLine1Handle2Points->InsertNextPoint(coneTipR);
+      this->ThickSlabLine1Handle2Points->InsertNextPoint(coneCenterR);
+      this->ThickSlabLine1Handle2Points->InsertNextPoint(coneBaseR);
+      this->ThickSlabLine1Handle2Points->InsertNextPoint(coneTipL);
+      this->ThickSlabLine1Handle2Points->InsertNextPoint(coneCenterL);
+      this->ThickSlabLine1Handle2Points->InsertNextPoint(coneBaseL);
+
+      this->ThickSlabLine2Handle1Points->InsertNextPoint(handleOriginDefault);
+      this->ThickSlabLine2Handle1Points->InsertNextPoint(coneTipR);
+      this->ThickSlabLine2Handle1Points->InsertNextPoint(coneCenterR);
+      this->ThickSlabLine2Handle1Points->InsertNextPoint(coneBaseR);
+      this->ThickSlabLine2Handle1Points->InsertNextPoint(coneTipL);
+      this->ThickSlabLine2Handle1Points->InsertNextPoint(coneCenterL);
+      this->ThickSlabLine2Handle1Points->InsertNextPoint(coneBaseL);
+
+      this->ThickSlabLine2Handle2Points->InsertNextPoint(handleOriginDefault);
+      this->ThickSlabLine2Handle2Points->InsertNextPoint(coneTipR);
+      this->ThickSlabLine2Handle2Points->InsertNextPoint(coneCenterR);
+      this->ThickSlabLine2Handle2Points->InsertNextPoint(coneBaseR);
+      this->ThickSlabLine2Handle2Points->InsertNextPoint(coneTipL);
+      this->ThickSlabLine2Handle2Points->InsertNextPoint(coneCenterL);
+      this->ThickSlabLine2Handle2Points->InsertNextPoint(coneBaseL);
+    }
+
+    //----------------------------------------------------------------------
     void SetAndObserveSliceLogic(vtkMRMLSliceLogic* sliceLogic, vtkCallbackCommand* callback)
     {
       if (sliceLogic != this->SliceLogic || callback != this->Callback)
@@ -627,12 +909,20 @@ class SliceIntersectionInteractionDisplayPipeline
     {
       pc->AddItem(this->IntersectionLine1Actor);
       pc->AddItem(this->IntersectionLine2Actor);
+      pc->AddItem(this->ThickSlabLine1FirstHalfActor);
+      pc->AddItem(this->ThickSlabLine1SecondHalfActor);
+      pc->AddItem(this->ThickSlabLine2FirstHalfActor);
+      pc->AddItem(this->ThickSlabLine2SecondHalfActor);
       pc->AddItem(this->TranslationOuterHandleActor);
       pc->AddItem(this->TranslationInnerHandleActor);
       pc->AddItem(this->RotationHandle1Actor);
       pc->AddItem(this->RotationHandle2Actor);
       pc->AddItem(this->SliceOffsetHandle1Actor);
       pc->AddItem(this->SliceOffsetHandle2Actor);
+      pc->AddItem(this->ThickSlabLine1Handle1Actor);
+      pc->AddItem(this->ThickSlabLine1Handle2Actor);
+      pc->AddItem(this->ThickSlabLine2Handle1Actor);
+      pc->AddItem(this->ThickSlabLine2Handle2Actor);
     }
 
     //----------------------------------------------------------------------
@@ -644,12 +934,20 @@ class SliceIntersectionInteractionDisplayPipeline
         }
       renderer->AddViewProp(this->IntersectionLine1Actor);
       renderer->AddViewProp(this->IntersectionLine2Actor);
+      renderer->AddViewProp(this->ThickSlabLine1FirstHalfActor);
+      renderer->AddViewProp(this->ThickSlabLine1SecondHalfActor);
+      renderer->AddViewProp(this->ThickSlabLine2FirstHalfActor);
+      renderer->AddViewProp(this->ThickSlabLine2SecondHalfActor);
       renderer->AddViewProp(this->TranslationOuterHandleActor);
       renderer->AddViewProp(this->TranslationInnerHandleActor);
       renderer->AddViewProp(this->RotationHandle1Actor);
       renderer->AddViewProp(this->RotationHandle2Actor);
       renderer->AddViewProp(this->SliceOffsetHandle1Actor);
       renderer->AddViewProp(this->SliceOffsetHandle2Actor);
+      renderer->AddViewProp(this->ThickSlabLine1Handle1Actor);
+      renderer->AddViewProp(this->ThickSlabLine1Handle2Actor);
+      renderer->AddViewProp(this->ThickSlabLine2Handle1Actor);
+      renderer->AddViewProp(this->ThickSlabLine2Handle2Actor);
     }
 
     //----------------------------------------------------------------------
@@ -657,12 +955,20 @@ class SliceIntersectionInteractionDisplayPipeline
     {
       this->IntersectionLine1Actor->ReleaseGraphicsResources(win);
       this->IntersectionLine2Actor->ReleaseGraphicsResources(win);
+      this->ThickSlabLine1FirstHalfActor->ReleaseGraphicsResources(win);
+      this->ThickSlabLine1SecondHalfActor->ReleaseGraphicsResources(win);
+      this->ThickSlabLine2FirstHalfActor->ReleaseGraphicsResources(win);
+      this->ThickSlabLine2SecondHalfActor->ReleaseGraphicsResources(win);
       this->TranslationOuterHandleActor->ReleaseGraphicsResources(win);
       this->TranslationInnerHandleActor->ReleaseGraphicsResources(win);
       this->RotationHandle1Actor->ReleaseGraphicsResources(win);
       this->RotationHandle2Actor->ReleaseGraphicsResources(win);
       this->SliceOffsetHandle1Actor->ReleaseGraphicsResources(win);
       this->SliceOffsetHandle2Actor->ReleaseGraphicsResources(win);
+      this->ThickSlabLine1Handle1Actor->ReleaseGraphicsResources(win);
+      this->ThickSlabLine1Handle2Actor->ReleaseGraphicsResources(win);
+      this->ThickSlabLine2Handle1Actor->ReleaseGraphicsResources(win);
+      this->ThickSlabLine2Handle2Actor->ReleaseGraphicsResources(win);
     }
 
     //----------------------------------------------------------------------
@@ -674,12 +980,20 @@ class SliceIntersectionInteractionDisplayPipeline
         }
       renderer->RemoveViewProp(this->IntersectionLine1Actor);
       renderer->RemoveViewProp(this->IntersectionLine2Actor);
+      renderer->RemoveViewProp(this->ThickSlabLine1FirstHalfActor);
+      renderer->RemoveViewProp(this->ThickSlabLine1SecondHalfActor);
+      renderer->RemoveViewProp(this->ThickSlabLine2FirstHalfActor);
+      renderer->RemoveViewProp(this->ThickSlabLine2SecondHalfActor);
       renderer->RemoveViewProp(this->TranslationOuterHandleActor);
       renderer->RemoveViewProp(this->TranslationInnerHandleActor);
       renderer->RemoveViewProp(this->RotationHandle1Actor);
       renderer->RemoveViewProp(this->RotationHandle2Actor);
       renderer->RemoveViewProp(this->SliceOffsetHandle1Actor);
       renderer->RemoveViewProp(this->SliceOffsetHandle2Actor);
+      renderer->RemoveViewProp(this->ThickSlabLine1Handle1Actor);
+      renderer->RemoveViewProp(this->ThickSlabLine1Handle2Actor);
+      renderer->RemoveViewProp(this->ThickSlabLine2Handle1Actor);
+      renderer->RemoveViewProp(this->ThickSlabLine2Handle2Actor);
     }
 
     //----------------------------------------------------------------------
@@ -693,6 +1007,22 @@ class SliceIntersectionInteractionDisplayPipeline
       if (this->IntersectionLine2Actor->GetVisibility())
         {
       this->IntersectionLine2Actor->RenderOverlay(viewport);
+        }
+      if (this->ThickSlabLine1FirstHalfActor->GetVisibility())
+        {
+        this->ThickSlabLine1FirstHalfActor->RenderOverlay(viewport);
+        }
+      if (this->ThickSlabLine1SecondHalfActor->GetVisibility())
+        {
+        this->ThickSlabLine1SecondHalfActor->RenderOverlay(viewport);
+        }
+      if (this->ThickSlabLine2FirstHalfActor->GetVisibility())
+        {
+        this->ThickSlabLine2FirstHalfActor->RenderOverlay(viewport);
+        }
+      if (this->ThickSlabLine2SecondHalfActor->GetVisibility())
+        {
+        this->ThickSlabLine2SecondHalfActor->RenderOverlay(viewport);
         }
       if (this->TranslationOuterHandleActor->GetVisibility())
         {
@@ -718,6 +1048,22 @@ class SliceIntersectionInteractionDisplayPipeline
         {
         this->SliceOffsetHandle2Actor->RenderOverlay(viewport);
         }
+      if (this->ThickSlabLine1Handle1Actor->GetVisibility())
+        {
+        this->ThickSlabLine1Handle1Actor->RenderOverlay(viewport);
+        }
+      if (this->ThickSlabLine1Handle2Actor->GetVisibility())
+        {
+        this->ThickSlabLine1Handle2Actor->RenderOverlay(viewport);
+        }
+      if (this->ThickSlabLine2Handle1Actor->GetVisibility())
+        {
+        this->ThickSlabLine2Handle1Actor->RenderOverlay(viewport);
+        }
+      if (this->ThickSlabLine2Handle2Actor->GetVisibility())
+        {
+        this->ThickSlabLine2Handle2Actor->RenderOverlay(viewport);
+        }
       this->NeedToRender = false;
       return count;
     }
@@ -733,6 +1079,23 @@ class SliceIntersectionInteractionDisplayPipeline
       this->IntersectionLine1Actor->SetVisibility(visibility);
       this->IntersectionLine2Actor->SetVisibility(visibility);
       }
+
+    //----------------------------------------------------------------------
+    void SetThicknessVisibility(bool visibility)
+    {
+      if (static_cast<bool>(this->ThickSlabLine1FirstHalfActor->GetVisibility()) != visibility
+          || static_cast<bool>(this->ThickSlabLine1SecondHalfActor->GetVisibility()) != visibility
+          || static_cast<bool>(this->ThickSlabLine2FirstHalfActor->GetVisibility()) != visibility
+          || static_cast<bool>(this->ThickSlabLine2SecondHalfActor->GetVisibility()) != visibility)
+        {
+        this->NeedToRender = true;
+        }
+
+      this->ThickSlabLine1FirstHalfActor->SetVisibility(visibility);
+      this->ThickSlabLine1SecondHalfActor->SetVisibility(visibility);
+      this->ThickSlabLine2FirstHalfActor->SetVisibility(visibility);
+      this->ThickSlabLine2SecondHalfActor->SetVisibility(visibility);
+    }
 
     //----------------------------------------------------------------------
     void SetIntersectionHandlesVisibility(bool visibility)
@@ -766,6 +1129,27 @@ class SliceIntersectionInteractionDisplayPipeline
     }
 
     //----------------------------------------------------------------------
+    void SetThickSlabHandlesVisibility(bool visibility)
+    {
+      bool thickSlabLine1Handle1Visible = visibility && this->ThickSlabHandlesVisible && this->ThickSlabLine1Handle1Displayable;
+      bool thickSlabLine1Handle2Visible = visibility && this->ThickSlabHandlesVisible && this->ThickSlabLine1Handle2Displayable;
+      bool thickSlabLine2Handle1Visible = visibility && this->ThickSlabHandlesVisible && this->ThickSlabLine2Handle1Displayable;
+      bool thickSlabLine2Handle2Visible = visibility && this->ThickSlabHandlesVisible && this->ThickSlabLine2Handle2Displayable;
+
+      if (static_cast<bool>(this->ThickSlabLine1Handle1Actor->GetVisibility()) != thickSlabLine1Handle1Visible
+          || static_cast<bool>(this->ThickSlabLine1Handle2Actor->GetVisibility()) != thickSlabLine1Handle2Visible
+          || static_cast<bool>(this->ThickSlabLine2Handle1Actor->GetVisibility()) != thickSlabLine2Handle1Visible
+          || static_cast<bool>(this->ThickSlabLine2Handle2Actor->GetVisibility()) != thickSlabLine2Handle2Visible)
+        {
+        this->NeedToRender = true;
+        }
+      this->ThickSlabLine1Handle1Actor->SetVisibility(thickSlabLine1Handle1Visible);
+      this->ThickSlabLine1Handle2Actor->SetVisibility(thickSlabLine1Handle2Visible);
+      this->ThickSlabLine2Handle1Actor->SetVisibility(thickSlabLine2Handle1Visible);
+      this->ThickSlabLine2Handle2Actor->SetVisibility(thickSlabLine2Handle2Visible);
+    }
+
+    //----------------------------------------------------------------------
     void SetHandlesOpacity(double opacity)
       {
       this->TranslationOuterHandleProperty->SetOpacity(opacity);
@@ -782,6 +1166,18 @@ class SliceIntersectionInteractionDisplayPipeline
       return this->IntersectionLine1Actor->GetVisibility();
     }
 
+    //----------------------------------------------------------------------
+    bool GetThickSlabVisibility()
+    {
+      return this->ThickSlabLine1FirstHalfActor->GetVisibility();
+    }
+
+    //----------------------------------------------------------------------
+    bool GetVisibility()
+    {
+      return this->GetIntersectionVisibility() || this->GetThickSlabVisibility();
+    }
+
     vtkSmartPointer<vtkLineSource> IntersectionLine1;
     vtkSmartPointer<vtkPolyDataMapper2D> IntersectionLine1Mapper;
     vtkSmartPointer<vtkProperty2D> IntersectionLine1Property;
@@ -791,6 +1187,28 @@ class SliceIntersectionInteractionDisplayPipeline
     vtkSmartPointer<vtkPolyDataMapper2D> IntersectionLine2Mapper;
     vtkSmartPointer<vtkProperty2D> IntersectionLine2Property;
     vtkSmartPointer<vtkActor2D> IntersectionLine2Actor;
+
+    // Thick Slab line 1 first and second halves
+    vtkSmartPointer<vtkLineSource> ThickSlabLine1FirstHalf;
+    vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine1FirstHalfMapper;
+    vtkSmartPointer<vtkProperty2D> ThickSlabLine1FirstHalfProperty;
+    vtkSmartPointer<vtkActor2D> ThickSlabLine1FirstHalfActor;
+
+    vtkSmartPointer<vtkLineSource> ThickSlabLine1SecondHalf;
+    vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine1SecondHalfMapper;
+    vtkSmartPointer<vtkProperty2D> ThickSlabLine1SecondHalfProperty;
+    vtkSmartPointer<vtkActor2D> ThickSlabLine1SecondHalfActor;
+
+    // Thick Slab line 2 first and second halves
+    vtkSmartPointer<vtkLineSource> ThickSlabLine2FirstHalf;
+    vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine2FirstHalfMapper;
+    vtkSmartPointer<vtkProperty2D> ThickSlabLine2FirstHalfProperty;
+    vtkSmartPointer<vtkActor2D> ThickSlabLine2FirstHalfActor;
+
+    vtkSmartPointer<vtkLineSource> ThickSlabLine2SecondHalf;
+    vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine2SecondHalfMapper;
+    vtkSmartPointer<vtkProperty2D> ThickSlabLine2SecondHalfProperty;
+    vtkSmartPointer<vtkActor2D> ThickSlabLine2SecondHalfActor;
 
     vtkSmartPointer<vtkSphereSource> TranslationOuterHandle;
     vtkSmartPointer<vtkPolyDataMapper2D> TranslationOuterHandleMapper;
@@ -829,24 +1247,64 @@ class SliceIntersectionInteractionDisplayPipeline
     vtkSmartPointer<vtkProperty2D> SliceOffsetHandle2Property;
     vtkSmartPointer<vtkActor2D> SliceOffsetHandle2Actor;
 
+    vtkSmartPointer<vtkAppendPolyData> ThickSlabLine1Handle1;
+    vtkSmartPointer<vtkTransform> ThickSlabLine1Handle1ToWorldTransform;
+    vtkSmartPointer<vtkTransformPolyDataFilter> ThickSlabLine1Handle1TransformFilter;
+    vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine1Handle1Mapper;
+    vtkSmartPointer<vtkProperty2D> ThickSlabLine1Handle1Property;
+    vtkSmartPointer<vtkActor2D> ThickSlabLine1Handle1Actor;
+
+    vtkSmartPointer<vtkAppendPolyData> ThickSlabLine1Handle2;
+    vtkSmartPointer<vtkTransform> ThickSlabLine1Handle2ToWorldTransform;
+    vtkSmartPointer<vtkTransformPolyDataFilter> ThickSlabLine1Handle2TransformFilter;
+    vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine1Handle2Mapper;
+    vtkSmartPointer<vtkProperty2D> ThickSlabLine1Handle2Property;
+    vtkSmartPointer<vtkActor2D> ThickSlabLine1Handle2Actor;
+
+    vtkSmartPointer<vtkAppendPolyData> ThickSlabLine2Handle1;
+    vtkSmartPointer<vtkTransform> ThickSlabLine2Handle1ToWorldTransform;
+    vtkSmartPointer<vtkTransformPolyDataFilter> ThickSlabLine2Handle1TransformFilter;
+    vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine2Handle1Mapper;
+    vtkSmartPointer<vtkProperty2D> ThickSlabLine2Handle1Property;
+    vtkSmartPointer<vtkActor2D> ThickSlabLine2Handle1Actor;
+
+    vtkSmartPointer<vtkAppendPolyData> ThickSlabLine2Handle2;
+    vtkSmartPointer<vtkTransform> ThickSlabLine2Handle2ToWorldTransform;
+    vtkSmartPointer<vtkTransformPolyDataFilter> ThickSlabLine2Handle2TransformFilter;
+    vtkSmartPointer<vtkPolyDataMapper2D> ThickSlabLine2Handle2Mapper;
+    vtkSmartPointer<vtkProperty2D> ThickSlabLine2Handle2Property;
+    vtkSmartPointer<vtkActor2D> ThickSlabLine2Handle2Actor;
+
+
     vtkWeakPointer<vtkMRMLSliceLogic> SliceLogic;
     vtkWeakPointer<vtkCallbackCommand> Callback;
 
     vtkSmartPointer<vtkPolyData> RotationHandlePoints;
     vtkSmartPointer<vtkPolyData> TranslationHandlePoints;
     vtkSmartPointer<vtkPolyData> SliceOffsetHandlePoints;
+    vtkSmartPointer<vtkPolyData> ThickSlabHandlePoints;
 
     vtkSmartPointer<vtkPoints> SliceOffsetHandle1Points;
     vtkSmartPointer<vtkPoints> SliceOffsetHandle2Points;
     vtkSmartPointer<vtkPoints> RotationHandle1Points;
     vtkSmartPointer<vtkPoints> RotationHandle2Points;
+    vtkSmartPointer<vtkPoints> ThickSlabLine1Handle1Points;
+    vtkSmartPointer<vtkPoints> ThickSlabLine1Handle2Points;
+    vtkSmartPointer<vtkPoints> ThickSlabLine2Handle1Points;
+    vtkSmartPointer<vtkPoints> ThickSlabLine2Handle2Points;
+
 
     bool SliceOffsetHandle1Displayable = false;
     bool SliceOffsetHandle2Displayable = false;
     bool RotationHandle1Displayable = false;
     bool RotationHandle2Displayable = false;
+    bool ThickSlabLine1Handle1Displayable = false;
+    bool ThickSlabLine1Handle2Displayable = false;
+    bool ThickSlabLine2Handle1Displayable = false;
+    bool ThickSlabLine2Handle2Displayable = false;
     bool RotationHandlesVisible = false;
     bool TranslationHandlesVisible = false;
+    bool ThickSlabHandlesVisible = false;
     int  HandlesVisibilityMode = vtkMRMLSliceDisplayNode::NeverVisible;
     int  SliceIntersectionMode = vtkMRMLSliceDisplayNode::SkipLineCrossings;
     // Indicates that this representation has changed and thus re-rendering is needed
@@ -1036,7 +1494,9 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
     || !intersectingSliceNode->IsMappedInLayout())
     {
     pipeline->SetIntersectionsVisibility(false);
+    pipeline->SetThicknessVisibility(false);
     pipeline->SetIntersectionHandlesVisibility(false);
+    pipeline->SetThickSlabHandlesVisibility(false);
     if (pipeline->NeedToRender)
       {
       this->NeedToRenderOn();
@@ -1046,43 +1506,41 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
 
   // Set properties of slice intersection lines
   vtkMRMLSliceDisplayNode* displayNode = this->GetSliceDisplayNode(intersectingSliceNode);
-  if (displayNode)
+  if (!displayNode)
     {
-    bool sliceInteractionHandlesInteractive =
-      (displayNode->GetIntersectingSlicesVisibility() && displayNode->GetIntersectingSlicesInteractive());
-    if (!sliceInteractionHandlesInteractive)
+    pipeline->SetIntersectionsVisibility(false);
+    pipeline->SetThicknessVisibility(false);
+    pipeline->SetIntersectionHandlesVisibility(false);
+    pipeline->SetThickSlabHandlesVisibility(false);
+    if (pipeline->NeedToRender)
       {
-      pipeline->SetIntersectionsVisibility(false);
-      pipeline->SetIntersectionHandlesVisibility(false);
-      if (pipeline->NeedToRender)
-        {
-        this->NeedToRenderOn();
-        }
-      return;
+      this->NeedToRenderOn();
       }
-    pipeline->TranslationHandlesVisible = displayNode->GetIntersectingSlicesTranslationEnabled();
-    pipeline->RotationHandlesVisible = displayNode->GetIntersectingSlicesRotationEnabled();
-
-    pipeline->HandlesVisibilityMode = displayNode->GetIntersectingSlicesInteractiveHandlesVisibilityMode();
-
-    pipeline->SliceIntersectionMode = displayNode->GetIntersectingSlicesIntersectionMode();
-
-    pipeline->IntersectionLine1Property->SetLineWidth(
-      this->GetLineThicknessFromMode(displayNode->GetIntersectingSlicesLineThicknessMode()));
-    pipeline->IntersectionLine2Property->SetLineWidth(
-      this->GetLineThicknessFromMode(displayNode->GetIntersectingSlicesLineThicknessMode()));
+    return;
     }
 
-  // Set color of handles
-  pipeline->IntersectionLine1Property->SetColor(intersectingSliceNode->GetLayoutColor());
-  pipeline->IntersectionLine2Property->SetColor(intersectingSliceNode->GetLayoutColor());
-  pipeline->TranslationOuterHandleProperty->SetColor(0, 0, 0); // black color
-  pipeline->TranslationInnerHandleProperty->SetColor(255, 255, 255); // white color
-  pipeline->RotationHandle1Property->SetColor(intersectingSliceNode->GetLayoutColor());
-  pipeline->RotationHandle2Property->SetColor(intersectingSliceNode->GetLayoutColor());
-  pipeline->SliceOffsetHandle1Property->SetColor(intersectingSliceNode->GetLayoutColor());
-  pipeline->SliceOffsetHandle2Property->SetColor(intersectingSliceNode->GetLayoutColor());
+  bool showThickSlabLines = displayNode->GetIntersectingThickSlabVisibility();
+  bool showThickSlabHandles = showThickSlabLines && displayNode->GetIntersectingThickSlabInteractive();
 
+  bool showInteractiveSliceIntersectionLines = displayNode->GetIntersectingSlicesVisibility();
+  bool showInteractiveSliceHandles = showInteractiveSliceIntersectionLines && displayNode->GetIntersectingSlicesInteractive();
+
+  bool isInteractive = displayNode->GetIntersectingThickSlabInteractive() || displayNode->GetIntersectingSlicesInteractive();
+  if (!((showThickSlabLines || showInteractiveSliceIntersectionLines) && isInteractive))
+    {
+    // Nothing to do
+    pipeline->SetIntersectionsVisibility(false);
+    pipeline->SetThicknessVisibility(false);
+    pipeline->SetIntersectionHandlesVisibility(false);
+    pipeline->SetThickSlabHandlesVisibility(false);
+    if (pipeline->NeedToRender)
+      {
+      this->NeedToRenderOn();
+      }
+    return;
+    }
+
+  // We know that we need the slice intersection points, find them
   // Get slice node transforms
   vtkMatrix4x4* xyToRAS = this->Internal->SliceNode->GetXYToRAS();
   vtkNew<vtkMatrix4x4> rasToXY;
@@ -1246,250 +1704,527 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
         {
         this->NeedToRenderOn();
         }
-      return;
       }
     }
 
-  // Define intersection lines
+  double sliceOffsetHandleOrientation2D[2] = { intersectionOuterLineTip2[1] - intersectionOuterLineTip1[1],
+                                                intersectionOuterLineTip1[0] - intersectionOuterLineTip2[0] }; // perpendicular to intersection line
+
+  // Define intersection lines, regardless of the visibility
   pipeline->IntersectionLine1->SetPoint1(intersectionLineTip1);
   pipeline->IntersectionLine1->SetPoint2(intersectionInnerLineTip1);
   pipeline->IntersectionLine2->SetPoint1(intersectionLineTip2);
   pipeline->IntersectionLine2->SetPoint2(intersectionInnerLineTip2);
 
-  // Determine visibility of handles according to line spacing
-  double line1Vector[2] = { intersectionOuterLineTip1[0] - intersectionInnerLineTip1[0],
-                            intersectionOuterLineTip1[1] - intersectionInnerLineTip1[1]};
-  double line1VectorNorm = vtkMath::Norm2D(line1Vector);
-  double line2Vector[2] = { intersectionOuterLineTip2[0] - intersectionInnerLineTip2[0],
-                            intersectionOuterLineTip2[1] - intersectionInnerLineTip2[1]};
-  double line2VectorNorm = vtkMath::Norm2D(line2Vector);
-  vtkMath::Normalize2D(line1Vector);
-  vtkMath::Normalize2D(line2Vector);
-  double dotProduct = vtkMath::Dot2D(line1Vector, line2Vector);
-  if (line1VectorNorm > HANDLES_MIN_LINE_LENGTH)
+  if (showInteractiveSliceIntersectionLines)
     {
-    pipeline->RotationHandle1Displayable = true;
-    pipeline->SliceOffsetHandle1Displayable = true;
-    }
-  else // hide handles if there is no sufficient space in line
-    {
-    pipeline->RotationHandle1Displayable = false;
-    pipeline->SliceOffsetHandle1Displayable = false;
-    }
-  if (line2VectorNorm > HANDLES_MIN_LINE_LENGTH)
-    {
-    pipeline->RotationHandle2Displayable = true;
-    pipeline->SliceOffsetHandle2Displayable = true;
-    }
-  else // hide handles if there is no sufficient space in line
-    {
-    pipeline->RotationHandle2Displayable = false;
-    pipeline->SliceOffsetHandle2Displayable = false;
-    }
-  if (dotProduct > 0.0)
-  // this means vectors are oriented towards the same direction
-  // This may occur when using "SkipLineCrossings" intersection mode.
-    {
-    if (line1VectorNorm < line2VectorNorm)
-    // hide handles closer to intersection point
+    // Set line properties
+    pipeline->IntersectionLine1Property->SetLineWidth(
+      this->GetLineThicknessFromMode(displayNode->GetIntersectingSlicesLineThicknessMode()));
+    pipeline->IntersectionLine2Property->SetLineWidth(
+      this->GetLineThicknessFromMode(displayNode->GetIntersectingSlicesLineThicknessMode()));
+    pipeline->IntersectionLine1Property->SetColor(intersectingSliceNode->GetLayoutColor());
+    pipeline->IntersectionLine2Property->SetColor(intersectingSliceNode->GetLayoutColor());
+    if (showInteractiveSliceHandles)
       {
-      pipeline->RotationHandle1Displayable = false;
-      pipeline->SliceOffsetHandle1Displayable = false;
+      // set handle properties
+      pipeline->TranslationHandlesVisible = displayNode->GetIntersectingSlicesTranslationEnabled();
+      pipeline->RotationHandlesVisible = displayNode->GetIntersectingSlicesRotationEnabled();
+      pipeline->HandlesVisibilityMode = displayNode->GetIntersectingSlicesInteractiveHandlesVisibilityMode();
+      pipeline->SliceIntersectionMode = displayNode->GetIntersectingSlicesIntersectionMode();
+      pipeline->TranslationOuterHandleProperty->SetColor(0, 0, 0); // black color
+      pipeline->TranslationInnerHandleProperty->SetColor(255, 255, 255); // white color
+      pipeline->RotationHandle1Property->SetColor(intersectingSliceNode->GetLayoutColor());
+      pipeline->RotationHandle2Property->SetColor(intersectingSliceNode->GetLayoutColor());
+      pipeline->SliceOffsetHandle1Property->SetColor(intersectingSliceNode->GetLayoutColor());
+      pipeline->SliceOffsetHandle2Property->SetColor(intersectingSliceNode->GetLayoutColor());
+      // Determine visibility of handles according to line spacing
+      double line1Vector[2] = { intersectionOuterLineTip1[0] - intersectionInnerLineTip1[0],
+                                intersectionOuterLineTip1[1] - intersectionInnerLineTip1[1]};
+      double line1VectorNorm = vtkMath::Norm2D(line1Vector);
+      double line2Vector[2] = { intersectionOuterLineTip2[0] - intersectionInnerLineTip2[0],
+                                intersectionOuterLineTip2[1] - intersectionInnerLineTip2[1]};
+      double line2VectorNorm = vtkMath::Norm2D(line2Vector);
+      vtkMath::Normalize2D(line1Vector);
+      vtkMath::Normalize2D(line2Vector);
+      double dotProduct = vtkMath::Dot2D(line1Vector, line2Vector);
+      if (line1VectorNorm > HANDLES_MIN_LINE_LENGTH)
+        {
+        pipeline->RotationHandle1Displayable = true;
+        pipeline->SliceOffsetHandle1Displayable = true;
+        }
+      else // hide handles if there is no sufficient space in line
+        {
+        pipeline->RotationHandle1Displayable = false;
+        pipeline->SliceOffsetHandle1Displayable = false;
+        }
+      if (line2VectorNorm > HANDLES_MIN_LINE_LENGTH)
+        {
+        pipeline->RotationHandle2Displayable = true;
+        pipeline->SliceOffsetHandle2Displayable = true;
+        }
+      else // hide handles if there is no sufficient space in line
+        {
+        pipeline->RotationHandle2Displayable = false;
+        pipeline->SliceOffsetHandle2Displayable = false;
+        }
+      if (dotProduct > 0.0)
+      // this means vectors are oriented towards the same direction
+      // This may occur when using "SkipLineCrossings" intersection mode.
+        {
+        if (line1VectorNorm < line2VectorNorm)
+        // hide handles closer to intersection point
+          {
+          pipeline->RotationHandle1Displayable = false;
+          pipeline->SliceOffsetHandle1Displayable = false;
+          }
+        else
+        // hide handles closer to intersection point
+          {
+          pipeline->RotationHandle2Displayable = false;
+          pipeline->SliceOffsetHandle2Displayable = false;
+          }
+        }
+
+      // Set translation handle position
+      vtkNew<vtkPoints> translationHandlePoints;
+      double translationHandlePosition[3] = { sliceIntersectionPoint[0], sliceIntersectionPoint[1], 0.0 };
+      pipeline->TranslationOuterHandle->SetCenter(translationHandlePosition[0], translationHandlePosition[1], translationHandlePosition[2]);
+      pipeline->TranslationInnerHandle->SetCenter(translationHandlePosition[0], translationHandlePosition[1], translationHandlePosition[2]);
+      translationHandlePoints->InsertNextPoint(translationHandlePosition);
+      pipeline->TranslationHandlePoints->SetPoints(translationHandlePoints);
+
+      // Set position of rotation handles
+      double rotationHandle1Position[2] = { intersectionOuterLineTip1[0], intersectionOuterLineTip1[1] };
+      double rotationHandle2Position[2] = { intersectionOuterLineTip2[0], intersectionOuterLineTip2[1] };
+      double rotationHandle1Orientation[2] = { intersectionInnerLineTip1[1] - intersectionOuterLineTip1[1],
+                                              intersectionOuterLineTip1[0] - intersectionInnerLineTip1[0] }; // perpendicular to intersection line segment
+      double rotationHandle2Orientation[2] = { intersectionInnerLineTip2[1] - intersectionOuterLineTip2[1],
+                                              intersectionOuterLineTip2[0] - intersectionInnerLineTip2[0] }; // perpendicular to intersection line segment
+      vtkNew<vtkMatrix4x4> rotationHandle1ToWorldMatrix, rotationHandle2ToWorldMatrix; // Compute transformation matrix (rotation + translation)
+      this->Helper->ComputeHandleToWorldTransformMatrix(rotationHandle1Position, rotationHandle1Orientation, rotationHandle1ToWorldMatrix);
+      this->Helper->ComputeHandleToWorldTransformMatrix(rotationHandle2Position, rotationHandle2Orientation, rotationHandle2ToWorldMatrix);
+      pipeline->RotationHandle1ToWorldTransform->Identity();
+      pipeline->RotationHandle1ToWorldTransform->SetMatrix(rotationHandle1ToWorldMatrix); // Update handles to world transform
+      pipeline->RotationHandle2ToWorldTransform->Identity();
+      pipeline->RotationHandle2ToWorldTransform->SetMatrix(rotationHandle2ToWorldMatrix); // Update handles to world transform
+
+      // Update rotation handle interaction points
+      vtkNew<vtkPoints> rotationHandlePoints;
+      if (pipeline->RotationHandle1Displayable) // Handle 1
+        {
+        double rotationHandle1Point[3] = { 0.0, 0.0, 0.0 };
+        double rotationHandle1Point_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
+        for (int i = 0; i < pipeline->RotationHandle1Points->GetNumberOfPoints(); i++)
+          {
+          pipeline->RotationHandle1Points->GetPoint(i, rotationHandle1Point);
+          rotationHandle1Point_h[0] = rotationHandle1Point[0];
+          rotationHandle1Point_h[1] = rotationHandle1Point[1];
+          rotationHandle1Point_h[2] = rotationHandle1Point[2];
+          rotationHandle1ToWorldMatrix->MultiplyPoint(rotationHandle1Point_h, rotationHandle1Point_h);
+          rotationHandle1Point[0] = rotationHandle1Point_h[0];
+          rotationHandle1Point[1] = rotationHandle1Point_h[1];
+          rotationHandle1Point[2] = rotationHandle1Point_h[2];
+          rotationHandlePoints->InsertNextPoint(rotationHandle1Point);
+          }
+        }
+      if (pipeline->RotationHandle2Displayable) // Handle 2
+        {
+        double rotationHandle2Point[3] = { 0.0, 0.0, 0.0 };
+        double rotationHandle2Point_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
+        for (int j = 0; j < pipeline->RotationHandle2Points->GetNumberOfPoints(); j++)
+          {
+          pipeline->RotationHandle2Points->GetPoint(j, rotationHandle2Point);
+          rotationHandle2Point_h[0] = rotationHandle2Point[0];
+          rotationHandle2Point_h[1] = rotationHandle2Point[1];
+          rotationHandle2Point_h[2] = rotationHandle2Point[2];
+          rotationHandle2ToWorldMatrix->MultiplyPoint(rotationHandle2Point_h, rotationHandle2Point_h);
+          rotationHandle2Point[0] = rotationHandle2Point_h[0];
+          rotationHandle2Point[1] = rotationHandle2Point_h[1];
+          rotationHandle2Point[2] = rotationHandle2Point_h[2];
+          rotationHandlePoints->InsertNextPoint(rotationHandle2Point);
+          }
+        }
+
+      // Set position of slice offset handles
+      double sliceOffsetHandle1Position[2] = { (rotationHandle1Position[0] + sliceIntersectionPoint[0]) / 2 ,
+                                                (rotationHandle1Position[1] + sliceIntersectionPoint[1]) / 2 };
+      double sliceOffsetHandle2Position[2] = { (rotationHandle2Position[0] + sliceIntersectionPoint[0]) / 2 ,
+                                                (rotationHandle2Position[1] + sliceIntersectionPoint[1]) / 2 };
+      vtkNew<vtkMatrix4x4> sliceOffsetHandle1ToWorldMatrix, sliceOffsetHandle2ToWorldMatrix; // Compute transformation matrix (rotation + translation)
+      this->Helper->ComputeHandleToWorldTransformMatrix(sliceOffsetHandle1Position, sliceOffsetHandleOrientation2D, sliceOffsetHandle1ToWorldMatrix);
+      this->Helper->ComputeHandleToWorldTransformMatrix(sliceOffsetHandle2Position, sliceOffsetHandleOrientation2D, sliceOffsetHandle2ToWorldMatrix);
+      pipeline->SliceOffsetHandle1ToWorldTransform->Identity();
+      pipeline->SliceOffsetHandle1ToWorldTransform->SetMatrix(sliceOffsetHandle1ToWorldMatrix); // Update handles to world transform
+      pipeline->SliceOffsetHandle2ToWorldTransform->Identity();
+      pipeline->SliceOffsetHandle2ToWorldTransform->SetMatrix(sliceOffsetHandle2ToWorldMatrix); // Update handles to world transform
+
+      // Update slice offset handle interaction points
+      vtkNew<vtkPoints> sliceOffsetHandlePoints;
+      double sliceOffsetHandlePoint[3] = { 0.0, 0.0, 0.0 };
+      double sliceOffsetHandlePoint_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
+      if (pipeline->SliceOffsetHandle1Displayable) // Handle 1
+        {
+        for (int i = 0; i < pipeline->SliceOffsetHandle1Points->GetNumberOfPoints(); i++)
+          {
+          pipeline->SliceOffsetHandle1Points->GetPoint(i, sliceOffsetHandlePoint);
+          sliceOffsetHandlePoint_h[0] = sliceOffsetHandlePoint[0];
+          sliceOffsetHandlePoint_h[1] = sliceOffsetHandlePoint[1];
+          sliceOffsetHandlePoint_h[2] = sliceOffsetHandlePoint[2];
+          sliceOffsetHandle1ToWorldMatrix->MultiplyPoint(sliceOffsetHandlePoint_h, sliceOffsetHandlePoint_h);
+          sliceOffsetHandlePoint[0] = sliceOffsetHandlePoint_h[0];
+          sliceOffsetHandlePoint[1] = sliceOffsetHandlePoint_h[1];
+          sliceOffsetHandlePoint[2] = sliceOffsetHandlePoint_h[2];
+          sliceOffsetHandlePoints->InsertNextPoint(sliceOffsetHandlePoint);
+          }
+        }
+      if (pipeline->SliceOffsetHandle2Displayable) // Handle 2
+        {
+        for (int j = 0; j < pipeline->SliceOffsetHandle2Points->GetNumberOfPoints(); j++)
+          {
+          pipeline->SliceOffsetHandle2Points->GetPoint(j, sliceOffsetHandlePoint);
+          sliceOffsetHandlePoint_h[0] = sliceOffsetHandlePoint[0];
+          sliceOffsetHandlePoint_h[1] = sliceOffsetHandlePoint[1];
+          sliceOffsetHandlePoint_h[2] = sliceOffsetHandlePoint[2];
+          sliceOffsetHandle2ToWorldMatrix->MultiplyPoint(sliceOffsetHandlePoint_h, sliceOffsetHandlePoint_h);
+          sliceOffsetHandlePoint[0] = sliceOffsetHandlePoint_h[0];
+          sliceOffsetHandlePoint[1] = sliceOffsetHandlePoint_h[1];
+          sliceOffsetHandlePoint[2] = sliceOffsetHandlePoint_h[2];
+          sliceOffsetHandlePoints->InsertNextPoint(sliceOffsetHandlePoint);
+          }
+        }
+
+      // Define points along intersection lines for interaction
+      vtkPoints* line1PointsDefault;
+      vtkPoints* line2PointsDefault;
+      line1PointsDefault = pipeline->IntersectionLine1->GetOutput()->GetPoints();
+      line2PointsDefault = pipeline->IntersectionLine2->GetOutput()->GetPoints();
+
+      // Get closer handles to intersection line 1
+      vtkIdType numLinePoints;
+      double linePoint[3] = { 0.0, 0.0, 0.0 };
+      double linePointToRotationHandle1[2] = { 0.0, 0.0 };
+      double linePointToSliceOffsetHandle1[2] = { 0.0, 0.0 };
+      double linePointToRotationHandle1Distance;
+      double linePointToSliceOffsetHandle1Distance;
+      numLinePoints = line1PointsDefault->GetNumberOfPoints();
+      for (int i = 0; i < numLinePoints; i++)
+        {
+        // Get line point coordinates
+        line1PointsDefault->GetPoint(i, linePoint);
+        // Distance to rotation handle
+        linePointToRotationHandle1[0] = rotationHandle1Position[0] - linePoint[0];
+        linePointToRotationHandle1[1] = rotationHandle1Position[1] - linePoint[1];
+        linePointToRotationHandle1Distance = vtkMath::Norm2D(linePointToRotationHandle1);
+        // Distance to slice offset handle
+        linePointToSliceOffsetHandle1[0] = sliceOffsetHandle1Position[0] - linePoint[0];
+        linePointToSliceOffsetHandle1[1] = sliceOffsetHandle1Position[1] - linePoint[1];
+        linePointToSliceOffsetHandle1Distance = vtkMath::Norm2D(linePointToSliceOffsetHandle1);
+        // Determine closer handle and insert interaction points
+        if (linePointToRotationHandle1Distance < linePointToSliceOffsetHandle1Distance)
+          {
+          rotationHandlePoints->InsertNextPoint(linePoint);
+          }
+        else
+          {
+          sliceOffsetHandlePoints->InsertNextPoint(linePoint);
+          }
+        }
+
+      // Get closer handles to intersection line 2
+      double linePointToRotationHandle2[2] = { 0.0, 0.0 };
+      double linePointToSliceOffsetHandle2[2] = { 0.0, 0.0 };
+      double linePointToRotationHandle2Distance;
+      double linePointToSliceOffsetHandle2Distance;
+      numLinePoints = line2PointsDefault->GetNumberOfPoints();
+      for (int i = 0; i < numLinePoints; i++)
+        {
+        // Get line point coordinates
+        line2PointsDefault->GetPoint(i, linePoint);
+        // Distance to rotation handle
+        linePointToRotationHandle2[0] = rotationHandle2Position[0] - linePoint[0];
+        linePointToRotationHandle2[1] = rotationHandle2Position[1] - linePoint[1];
+        linePointToRotationHandle2Distance = vtkMath::Norm2D(linePointToRotationHandle2);
+        // Distance to slice offset handle
+        linePointToSliceOffsetHandle2[0] = sliceOffsetHandle2Position[0] - linePoint[0];
+        linePointToSliceOffsetHandle2[1] = sliceOffsetHandle2Position[1] - linePoint[1];
+        linePointToSliceOffsetHandle2Distance = vtkMath::Norm2D(linePointToSliceOffsetHandle2);
+        // Determine closer handle and insert interaction points
+        if (linePointToRotationHandle2Distance < linePointToSliceOffsetHandle2Distance)
+          {
+          rotationHandlePoints->InsertNextPoint(linePoint);
+          }
+        else
+          {
+          sliceOffsetHandlePoints->InsertNextPoint(linePoint);
+          }
+        }
+      // Set interaction points
+      pipeline->RotationHandlePoints->SetPoints(rotationHandlePoints);
+      pipeline->SliceOffsetHandlePoints->SetPoints(sliceOffsetHandlePoints);
+
+      // Visibility
+      pipeline->SetIntersectionHandlesVisibility(true);
+      }
+      else
+      {
+      pipeline->SetIntersectionHandlesVisibility(false);
+      }
+    pipeline->SetIntersectionsVisibility(true);
+    }
+  else
+    {
+    pipeline->SetIntersectionsVisibility(false);
+    pipeline->SetIntersectionHandlesVisibility(false);
+    }
+
+  if (showThickSlabLines)
+    {
+    double thickSlabLine1FirstHalfPoint1[4] = {intersectionLineTip1[0], intersectionLineTip1[1], intersectionLineTip1[2], 1};
+    double thickSlabLine1FirstHalfPoint2[4] = {sliceIntersectionPoint[0], sliceIntersectionPoint[1], sliceIntersectionPoint[2], 1};
+    double thickSlabLine1SecondHalfPoint1[4] = {intersectionLineTip2[0], intersectionLineTip2[1], intersectionLineTip2[2], 1};
+    double thickSlabLine1SecondHalfPoint2[4] = {sliceIntersectionPoint[0], sliceIntersectionPoint[1], sliceIntersectionPoint[2], 1};
+    double thickSlabLine2FirstHalfPoint1[4] = {intersectionLineTip1[0], intersectionLineTip1[1], intersectionLineTip1[2], 1};
+    double thickSlabLine2FirstHalfPoint2[4] = {sliceIntersectionPoint[0], sliceIntersectionPoint[1], sliceIntersectionPoint[2], 1};
+    double thickSlabLine2SecondHalfPoint1[4] = {intersectionLineTip2[0], intersectionLineTip2[1], intersectionLineTip2[2], 1};
+    double thickSlabLine2SecondHalfPoint2[4] = {sliceIntersectionPoint[0], sliceIntersectionPoint[1], sliceIntersectionPoint[2], 1};
+
+    double slabThickness = intersectingSliceNode->GetSlabReconstructionThickness() / 2;
+
+    // Find the angle of the intersection line
+    double ydiff = intersectionLineTip1[1] - intersectionLineTip2[1];
+    double xdiff = intersectionLineTip1[0] - intersectionLineTip2[0];
+    double angle = atan2(ydiff, xdiff); // In radians
+
+    // Find line normal to the slice intersection line in XY coords
+    double normalAngle = angle + M_PI_2;
+    double offsetUnitVector_XY[3] = {cos(normalAngle), sin(normalAngle), 0};
+
+    // Find that offset vector in RAS space
+    vtkSmartPointer<vtkMatrix3x3> xyToRas3x3 = vtkSmartPointer<vtkMatrix3x3>::New();
+    xyToRas3x3->Identity();
+    for (int i=0; i<3; i++)
+      {
+      for (int j=0; j<3; j++)
+        {
+        double val = xyToRAS->GetElement(i, j);
+        xyToRas3x3->SetElement(i, j, val);
+        }
+      }
+
+    double offsetVectorRas[3] = {0, 0, 0};
+    xyToRas3x3->MultiplyPoint(offsetUnitVector_XY, offsetVectorRas);
+
+    // Normalize
+    vtkMath::Normalize(offsetVectorRas);
+
+    // Scale by the thickness
+    offsetVectorRas[0] *= slabThickness;
+    offsetVectorRas[1] *= slabThickness;
+    offsetVectorRas[2] *= slabThickness;
+
+    // Now map back to XY
+    double offsetVector_XY[3] = {0, 0, 0};
+    vtkNew<vtkMatrix3x3> rasToXY3x3;
+    vtkMatrix3x3::Invert(xyToRas3x3, rasToXY3x3);
+    rasToXY3x3->MultiplyPoint(offsetVectorRas, offsetVector_XY);
+
+    // Translate the lines along the normal vector
+    // First half of first line
+    thickSlabLine1FirstHalfPoint1[0] += offsetVector_XY[0];
+    thickSlabLine1FirstHalfPoint1[1] += offsetVector_XY[1];
+    thickSlabLine1FirstHalfPoint2[0] += offsetVector_XY[0];
+    thickSlabLine1FirstHalfPoint2[1] += offsetVector_XY[1];
+    // Second half of first line
+    thickSlabLine1SecondHalfPoint1[0] += offsetVector_XY[0];
+    thickSlabLine1SecondHalfPoint1[1] += offsetVector_XY[1];
+    thickSlabLine1SecondHalfPoint2[0] += offsetVector_XY[0];
+    thickSlabLine1SecondHalfPoint2[1] += offsetVector_XY[1];
+    // First half of second line
+    thickSlabLine2FirstHalfPoint1[0] -= offsetVector_XY[0];
+    thickSlabLine2FirstHalfPoint1[1] -= offsetVector_XY[1];
+    thickSlabLine2FirstHalfPoint2[0] -= offsetVector_XY[0];
+    thickSlabLine2FirstHalfPoint2[1] -= offsetVector_XY[1];
+    // Second half of second line
+    thickSlabLine2SecondHalfPoint1[0] -= offsetVector_XY[0];
+    thickSlabLine2SecondHalfPoint1[1] -= offsetVector_XY[1];
+    thickSlabLine2SecondHalfPoint2[0] -= offsetVector_XY[0];
+    thickSlabLine2SecondHalfPoint2[1] -= offsetVector_XY[1];
+
+    // Now update the points
+    pipeline->ThickSlabLine1FirstHalf->SetPoint1(thickSlabLine1FirstHalfPoint1);
+    pipeline->ThickSlabLine1FirstHalf->SetPoint2(thickSlabLine1FirstHalfPoint2);
+    pipeline->ThickSlabLine1SecondHalf->SetPoint1(thickSlabLine1SecondHalfPoint1);
+    pipeline->ThickSlabLine1SecondHalf->SetPoint2(thickSlabLine1SecondHalfPoint2);
+    pipeline->ThickSlabLine2FirstHalf->SetPoint1(thickSlabLine2FirstHalfPoint1);
+    pipeline->ThickSlabLine2FirstHalf->SetPoint2(thickSlabLine2FirstHalfPoint2);
+    pipeline->ThickSlabLine2SecondHalf->SetPoint1(thickSlabLine2SecondHalfPoint1);
+    pipeline->ThickSlabLine2SecondHalf->SetPoint2(thickSlabLine2SecondHalfPoint2);
+
+    // Now the corresponding properties
+    pipeline->ThickSlabLine1FirstHalfProperty->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->ThickSlabLine1FirstHalfProperty->SetColor(intersectingSliceNode->GetLayoutColor());
+    pipeline->ThickSlabLine1SecondHalfProperty->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->ThickSlabLine1SecondHalfProperty->SetColor(intersectingSliceNode->GetLayoutColor());
+    pipeline->ThickSlabLine2FirstHalfProperty->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->ThickSlabLine2FirstHalfProperty->SetColor(intersectingSliceNode->GetLayoutColor());
+    pipeline->ThickSlabLine2SecondHalfProperty->SetLineWidth(displayNode->GetLineWidth());
+    pipeline->ThickSlabLine2SecondHalfProperty->SetColor(intersectingSliceNode->GetLayoutColor());
+
+    // First we'll need to find which handles are visible for each line segment
+    // Calculate the length of each line half for each thick slab line
+    if (showThickSlabHandles)
+      {
+      // First half of the first thick slab line
+      double thickSlabLine1FirstHalfVector[2] = { thickSlabLine1FirstHalfPoint1[0] - thickSlabLine1FirstHalfPoint2[0],
+                                                  thickSlabLine1FirstHalfPoint1[1] - thickSlabLine1FirstHalfPoint2[1]};
+      double thickSlabLine1FirstHalfVectorNorm = vtkMath::Norm2D(thickSlabLine1FirstHalfVector);
+      // Second half of the first thick slab line
+      double thickSlabLine1SecondHalfVector[2] = { thickSlabLine1SecondHalfPoint1[0] - thickSlabLine1SecondHalfPoint2[0],
+                                                   thickSlabLine1SecondHalfPoint1[1] - thickSlabLine1SecondHalfPoint2[1]};
+      double thickSlabLine1SecondHalfVectorNorm = vtkMath::Norm2D(thickSlabLine1SecondHalfVector);
+      // First half of the second thick slab line
+      double thickSlabLine2FirstHalfVector[2] = { thickSlabLine2FirstHalfPoint1[0] - thickSlabLine2FirstHalfPoint2[0],
+                                                  thickSlabLine2FirstHalfPoint1[1] - thickSlabLine2FirstHalfPoint2[1]};
+      double thickSlabLine2FirstHalfVectorNorm = vtkMath::Norm2D(thickSlabLine2FirstHalfVector);
+      // Second half of the first thick slab line
+      double thickSlabLine2SecondHalfVector[2] = { thickSlabLine2SecondHalfPoint1[0] - thickSlabLine2SecondHalfPoint2[0],
+                                                   thickSlabLine2SecondHalfPoint1[1] - thickSlabLine2SecondHalfPoint2[1]};
+      double thickSlabLine2SecondHalfVectorNorm = vtkMath::Norm2D(thickSlabLine2SecondHalfVector);
+
+      pipeline->ThickSlabLine1Handle1Displayable = (thickSlabLine1FirstHalfVectorNorm > THICK_SLAB_HANDLES_MIN_LINE_LENGTH);
+      pipeline->ThickSlabLine1Handle2Displayable = (thickSlabLine1SecondHalfVectorNorm > THICK_SLAB_HANDLES_MIN_LINE_LENGTH);
+      pipeline->ThickSlabLine2Handle1Displayable = (thickSlabLine2FirstHalfVectorNorm > THICK_SLAB_HANDLES_MIN_LINE_LENGTH);
+      pipeline->ThickSlabLine2Handle2Displayable = (thickSlabLine2SecondHalfVectorNorm > THICK_SLAB_HANDLES_MIN_LINE_LENGTH);
+
+      // Set position of thick slab offset handles
+      double thickSlabLine1Handle1Position[2] = {(thickSlabLine1FirstHalfPoint1[0] + thickSlabLine1FirstHalfPoint2[0]) / 2,
+                                                 (thickSlabLine1FirstHalfPoint1[1] + thickSlabLine1FirstHalfPoint2[1]) / 2};
+      double thickSlabLine1Handle2Position[2] = {(thickSlabLine1SecondHalfPoint1[0] + thickSlabLine1SecondHalfPoint2[0]) / 2,
+                                                 (thickSlabLine1SecondHalfPoint1[1] + thickSlabLine1SecondHalfPoint2[1]) / 2};
+      double thickSlabLine2Handle1Position[2] = {(thickSlabLine2FirstHalfPoint1[0] + thickSlabLine2FirstHalfPoint2[0]) / 2,
+                                                 (thickSlabLine2FirstHalfPoint1[1] + thickSlabLine2FirstHalfPoint2[1]) / 2};
+      double thickSlabLine2Handle2Position[2] = {(thickSlabLine2SecondHalfPoint1[0] + thickSlabLine2SecondHalfPoint2[0]) / 2,
+                                                 (thickSlabLine2SecondHalfPoint1[1] + thickSlabLine2SecondHalfPoint2[1]) / 2};
+      vtkNew<vtkMatrix4x4> thickSlabLine1Handle1ToWorldMatrix;
+      vtkNew<vtkMatrix4x4> thickSlabLine1Handle2ToWorldMatrix;
+      vtkNew<vtkMatrix4x4> thickSlabLine2Handle1ToWorldMatrix;
+      vtkNew<vtkMatrix4x4> thickSlabLine2Handle2ToWorldMatrix;
+      this->Helper->ComputeHandleToWorldTransformMatrix(thickSlabLine1Handle1Position, sliceOffsetHandleOrientation2D, thickSlabLine1Handle1ToWorldMatrix);
+      this->Helper->ComputeHandleToWorldTransformMatrix(thickSlabLine1Handle2Position, sliceOffsetHandleOrientation2D, thickSlabLine1Handle2ToWorldMatrix);
+      this->Helper->ComputeHandleToWorldTransformMatrix(thickSlabLine2Handle1Position, sliceOffsetHandleOrientation2D, thickSlabLine2Handle1ToWorldMatrix);
+      this->Helper->ComputeHandleToWorldTransformMatrix(thickSlabLine2Handle2Position, sliceOffsetHandleOrientation2D, thickSlabLine2Handle2ToWorldMatrix);
+      pipeline->ThickSlabLine1Handle1ToWorldTransform->Identity();
+      pipeline->ThickSlabLine1Handle1ToWorldTransform->SetMatrix(thickSlabLine1Handle1ToWorldMatrix);
+      pipeline->ThickSlabLine1Handle2ToWorldTransform->Identity();
+      pipeline->ThickSlabLine1Handle2ToWorldTransform->SetMatrix(thickSlabLine1Handle2ToWorldMatrix);
+      pipeline->ThickSlabLine2Handle1ToWorldTransform->Identity();
+      pipeline->ThickSlabLine2Handle1ToWorldTransform->SetMatrix(thickSlabLine2Handle1ToWorldMatrix);
+      pipeline->ThickSlabLine2Handle2ToWorldTransform->Identity();
+      pipeline->ThickSlabLine2Handle2ToWorldTransform->SetMatrix(thickSlabLine2Handle2ToWorldMatrix);
+      vtkNew<vtkPoints> thickSlabHandlePoints;
+      double thickSlabHandlePoint[3] = { 0.0, 0.0, 0.0 };
+      double thickSlabHandlePoint_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
+      if (pipeline->ThickSlabLine1Handle1Displayable)
+        {
+        for (int i = 0; i < pipeline->ThickSlabLine1Handle1Points->GetNumberOfPoints(); i++)
+          {
+          pipeline->ThickSlabLine1Handle1Points->GetPoint(i, thickSlabHandlePoint);
+          thickSlabHandlePoint_h[0] = thickSlabHandlePoint[0];
+          thickSlabHandlePoint_h[1] = thickSlabHandlePoint[1];
+          thickSlabHandlePoint_h[2] = thickSlabHandlePoint[2];
+          thickSlabLine1Handle1ToWorldMatrix->MultiplyPoint(thickSlabHandlePoint_h, thickSlabHandlePoint_h);
+          thickSlabHandlePoint[0] = thickSlabHandlePoint_h[0];
+          thickSlabHandlePoint[1] = thickSlabHandlePoint_h[1];
+          thickSlabHandlePoint[2] = thickSlabHandlePoint_h[2];
+          thickSlabHandlePoints->InsertNextPoint(thickSlabHandlePoint);
+          }
+        }
+      if (pipeline->ThickSlabLine1Handle2Displayable)
+        {
+        for (int i = 0; i < pipeline->ThickSlabLine1Handle2Points->GetNumberOfPoints(); i++)
+          {
+          pipeline->ThickSlabLine1Handle2Points->GetPoint(i, thickSlabHandlePoint);
+          thickSlabHandlePoint_h[0] = thickSlabHandlePoint[0];
+          thickSlabHandlePoint_h[1] = thickSlabHandlePoint[1];
+          thickSlabHandlePoint_h[2] = thickSlabHandlePoint[2];
+          thickSlabLine1Handle2ToWorldMatrix->MultiplyPoint(thickSlabHandlePoint_h, thickSlabHandlePoint_h);
+          thickSlabHandlePoint[0] = thickSlabHandlePoint_h[0];
+          thickSlabHandlePoint[1] = thickSlabHandlePoint_h[1];
+          thickSlabHandlePoint[2] = thickSlabHandlePoint_h[2];
+          thickSlabHandlePoints->InsertNextPoint(thickSlabHandlePoint);
+          }
+        }
+      if (pipeline->ThickSlabLine2Handle1Displayable)
+        {
+        for (int i = 0; i < pipeline->ThickSlabLine2Handle1Points->GetNumberOfPoints(); i++)
+          {
+          pipeline->ThickSlabLine2Handle1Points->GetPoint(i, thickSlabHandlePoint);
+          thickSlabHandlePoint_h[0] = thickSlabHandlePoint[0];
+          thickSlabHandlePoint_h[1] = thickSlabHandlePoint[1];
+          thickSlabHandlePoint_h[2] = thickSlabHandlePoint[2];
+          thickSlabLine2Handle1ToWorldMatrix->MultiplyPoint(thickSlabHandlePoint_h, thickSlabHandlePoint_h);
+          thickSlabHandlePoint[0] = thickSlabHandlePoint_h[0];
+          thickSlabHandlePoint[1] = thickSlabHandlePoint_h[1];
+          thickSlabHandlePoint[2] = thickSlabHandlePoint_h[2];
+          thickSlabHandlePoints->InsertNextPoint(thickSlabHandlePoint);
+          }
+        }
+      if (pipeline->ThickSlabLine2Handle2Displayable)
+        {
+        for (int i = 0; i < pipeline->ThickSlabLine2Handle2Points->GetNumberOfPoints(); i++)
+          {
+          pipeline->ThickSlabLine2Handle2Points->GetPoint(i, thickSlabHandlePoint);
+          thickSlabHandlePoint_h[0] = thickSlabHandlePoint[0];
+          thickSlabHandlePoint_h[1] = thickSlabHandlePoint[1];
+          thickSlabHandlePoint_h[2] = thickSlabHandlePoint[2];
+          thickSlabLine2Handle2ToWorldMatrix->MultiplyPoint(thickSlabHandlePoint_h, thickSlabHandlePoint_h);
+          thickSlabHandlePoint[0] = thickSlabHandlePoint_h[0];
+          thickSlabHandlePoint[1] = thickSlabHandlePoint_h[1];
+          thickSlabHandlePoint[2] = thickSlabHandlePoint_h[2];
+          thickSlabHandlePoints->InsertNextPoint(thickSlabHandlePoint);
+          }
+        }
+
+      // Define points along thick slab lines for interaction
+      std::vector<vtkPoints*> thickSlabLinePointData = {
+        pipeline->ThickSlabLine1FirstHalf->GetOutput()->GetPoints(),
+        pipeline->ThickSlabLine1SecondHalf->GetOutput()->GetPoints(),
+        pipeline->ThickSlabLine2FirstHalf->GetOutput()->GetPoints(),
+        pipeline->ThickSlabLine2SecondHalf->GetOutput()->GetPoints()
+      };
+
+      for (vtkPoints* p : thickSlabLinePointData)
+        {
+        vtkIdType numLinePoints;
+        double linePoint[3] = { 0.0, 0.0, 0.0 };
+        numLinePoints = p->GetNumberOfPoints();
+        for (int i = 0; i < numLinePoints; i++)
+          {
+          // Get line point coordinates
+          p->GetPoint(i, linePoint);
+          thickSlabHandlePoints->InsertNextPoint(linePoint);
+          }
+        }
+      pipeline->ThickSlabHandlePoints->SetPoints(thickSlabHandlePoints);
+      pipeline->SetThickSlabHandlesVisibility(true);
+      pipeline->ThickSlabHandlesVisible = true;
       }
     else
-    // hide handles closer to intersection point
       {
-      pipeline->RotationHandle2Displayable = false;
-      pipeline->SliceOffsetHandle2Displayable = false;
+      pipeline->SetThickSlabHandlesVisibility(false);
+      pipeline->ThickSlabHandlesVisible = false;
       }
+    pipeline->SetThicknessVisibility(true);
     }
-
-  // Set translation handle position
-  vtkNew<vtkPoints> translationHandlePoints;
-  double translationHandlePosition[3] = { sliceIntersectionPoint[0], sliceIntersectionPoint[1], 0.0 };
-  pipeline->TranslationOuterHandle->SetCenter(translationHandlePosition[0], translationHandlePosition[1], translationHandlePosition[2]);
-  pipeline->TranslationInnerHandle->SetCenter(translationHandlePosition[0], translationHandlePosition[1], translationHandlePosition[2]);
-  translationHandlePoints->InsertNextPoint(translationHandlePosition);
-  pipeline->TranslationHandlePoints->SetPoints(translationHandlePoints);
-
-  // Set position of rotation handles
-  double rotationHandle1Position[2] = { intersectionOuterLineTip1[0], intersectionOuterLineTip1[1] };
-  double rotationHandle2Position[2] = { intersectionOuterLineTip2[0], intersectionOuterLineTip2[1] };
-  double rotationHandle1Orientation[2] = { intersectionInnerLineTip1[1] - intersectionOuterLineTip1[1],
-                                           intersectionOuterLineTip1[0] - intersectionInnerLineTip1[0] }; // perpendicular to intersection line segment
-  double rotationHandle2Orientation[2] = { intersectionInnerLineTip2[1] - intersectionOuterLineTip2[1],
-                                           intersectionOuterLineTip2[0] - intersectionInnerLineTip2[0] }; // perpendicular to intersection line segment
-  vtkNew<vtkMatrix4x4> rotationHandle1ToWorldMatrix, rotationHandle2ToWorldMatrix; // Compute transformation matrix (rotation + translation)
-  this->Helper->ComputeHandleToWorldTransformMatrix(rotationHandle1Position, rotationHandle1Orientation, rotationHandle1ToWorldMatrix);
-  this->Helper->ComputeHandleToWorldTransformMatrix(rotationHandle2Position, rotationHandle2Orientation, rotationHandle2ToWorldMatrix);
-  pipeline->RotationHandle1ToWorldTransform->Identity();
-  pipeline->RotationHandle1ToWorldTransform->SetMatrix(rotationHandle1ToWorldMatrix); // Update handles to world transform
-  pipeline->RotationHandle2ToWorldTransform->Identity();
-  pipeline->RotationHandle2ToWorldTransform->SetMatrix(rotationHandle2ToWorldMatrix); // Update handles to world transform
-
-  // Update rotation handle interaction points
-  vtkNew<vtkPoints> rotationHandlePoints;
-  if (pipeline->RotationHandle1Displayable) // Handle 1
+  else
     {
-    double rotationHandle1Point[3] = { 0.0, 0.0, 0.0 };
-    double rotationHandle1Point_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
-    for (int i = 0; i < pipeline->RotationHandle1Points->GetNumberOfPoints(); i++)
-      {
-      pipeline->RotationHandle1Points->GetPoint(i, rotationHandle1Point);
-      rotationHandle1Point_h[0] = rotationHandle1Point[0];
-      rotationHandle1Point_h[1] = rotationHandle1Point[1];
-      rotationHandle1Point_h[2] = rotationHandle1Point[2];
-      rotationHandle1ToWorldMatrix->MultiplyPoint(rotationHandle1Point_h, rotationHandle1Point_h);
-      rotationHandle1Point[0] = rotationHandle1Point_h[0];
-      rotationHandle1Point[1] = rotationHandle1Point_h[1];
-      rotationHandle1Point[2] = rotationHandle1Point_h[2];
-      rotationHandlePoints->InsertNextPoint(rotationHandle1Point);
-      }
+    pipeline->ThickSlabHandlesVisible = false;
+    pipeline->SetThickSlabHandlesVisibility(false);
+    pipeline->SetThicknessVisibility(false);
     }
-  if (pipeline->RotationHandle2Displayable) // Handle 2
-    {
-    double rotationHandle2Point[3] = { 0.0, 0.0, 0.0 };
-    double rotationHandle2Point_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
-    for (int j = 0; j < pipeline->RotationHandle2Points->GetNumberOfPoints(); j++)
-      {
-      pipeline->RotationHandle2Points->GetPoint(j, rotationHandle2Point);
-      rotationHandle2Point_h[0] = rotationHandle2Point[0];
-      rotationHandle2Point_h[1] = rotationHandle2Point[1];
-      rotationHandle2Point_h[2] = rotationHandle2Point[2];
-      rotationHandle2ToWorldMatrix->MultiplyPoint(rotationHandle2Point_h, rotationHandle2Point_h);
-      rotationHandle2Point[0] = rotationHandle2Point_h[0];
-      rotationHandle2Point[1] = rotationHandle2Point_h[1];
-      rotationHandle2Point[2] = rotationHandle2Point_h[2];
-      rotationHandlePoints->InsertNextPoint(rotationHandle2Point);
-      }
-    }
-
-  // Set position of slice offset handles
-  double sliceOffsetHandle1Position[2] = { (rotationHandle1Position[0] + sliceIntersectionPoint[0]) / 2 ,
-                                             (rotationHandle1Position[1] + sliceIntersectionPoint[1]) / 2 };
-  double sliceOffsetHandle2Position[2] = { (rotationHandle2Position[0] + sliceIntersectionPoint[0]) / 2 ,
-                                             (rotationHandle2Position[1] + sliceIntersectionPoint[1]) / 2 };
-  double sliceOffsetHandleOrientation2D[2] = { intersectionOuterLineTip2[1] - intersectionOuterLineTip1[1],
-                                               intersectionOuterLineTip1[0] - intersectionOuterLineTip2[0] }; // perpendicular to intersection line
-  vtkNew<vtkMatrix4x4> sliceOffsetHandle1ToWorldMatrix, sliceOffsetHandle2ToWorldMatrix; // Compute transformation matrix (rotation + translation)
-  this->Helper->ComputeHandleToWorldTransformMatrix(sliceOffsetHandle1Position, sliceOffsetHandleOrientation2D, sliceOffsetHandle1ToWorldMatrix);
-  this->Helper->ComputeHandleToWorldTransformMatrix(sliceOffsetHandle2Position, sliceOffsetHandleOrientation2D, sliceOffsetHandle2ToWorldMatrix);
-  pipeline->SliceOffsetHandle1ToWorldTransform->Identity();
-  pipeline->SliceOffsetHandle1ToWorldTransform->SetMatrix(sliceOffsetHandle1ToWorldMatrix); // Update handles to world transform
-  pipeline->SliceOffsetHandle2ToWorldTransform->Identity();
-  pipeline->SliceOffsetHandle2ToWorldTransform->SetMatrix(sliceOffsetHandle2ToWorldMatrix); // Update handles to world transform
-
-  // Update slice offset handle interaction points
-  vtkNew<vtkPoints> sliceOffsetHandlePoints;
-  double sliceOffsetHandlePoint[3] = { 0.0, 0.0, 0.0 };
-  double sliceOffsetHandlePoint_h[4] = { 0.0, 0.0, 0.0, 1.0 }; //homogeneous coordinates
-  if (pipeline->SliceOffsetHandle1Displayable) // Handle 1
-    {
-    for (int i = 0; i < pipeline->SliceOffsetHandle1Points->GetNumberOfPoints(); i++)
-      {
-      pipeline->SliceOffsetHandle1Points->GetPoint(i, sliceOffsetHandlePoint);
-      sliceOffsetHandlePoint_h[0] = sliceOffsetHandlePoint[0];
-      sliceOffsetHandlePoint_h[1] = sliceOffsetHandlePoint[1];
-      sliceOffsetHandlePoint_h[2] = sliceOffsetHandlePoint[2];
-      sliceOffsetHandle1ToWorldMatrix->MultiplyPoint(sliceOffsetHandlePoint_h, sliceOffsetHandlePoint_h);
-      sliceOffsetHandlePoint[0] = sliceOffsetHandlePoint_h[0];
-      sliceOffsetHandlePoint[1] = sliceOffsetHandlePoint_h[1];
-      sliceOffsetHandlePoint[2] = sliceOffsetHandlePoint_h[2];
-      sliceOffsetHandlePoints->InsertNextPoint(sliceOffsetHandlePoint);
-      }
-    }
-  if (pipeline->SliceOffsetHandle2Displayable) // Handle 2
-    {
-    for (int j = 0; j < pipeline->SliceOffsetHandle2Points->GetNumberOfPoints(); j++)
-      {
-      pipeline->SliceOffsetHandle2Points->GetPoint(j, sliceOffsetHandlePoint);
-      sliceOffsetHandlePoint_h[0] = sliceOffsetHandlePoint[0];
-      sliceOffsetHandlePoint_h[1] = sliceOffsetHandlePoint[1];
-      sliceOffsetHandlePoint_h[2] = sliceOffsetHandlePoint[2];
-      sliceOffsetHandle2ToWorldMatrix->MultiplyPoint(sliceOffsetHandlePoint_h, sliceOffsetHandlePoint_h);
-      sliceOffsetHandlePoint[0] = sliceOffsetHandlePoint_h[0];
-      sliceOffsetHandlePoint[1] = sliceOffsetHandlePoint_h[1];
-      sliceOffsetHandlePoint[2] = sliceOffsetHandlePoint_h[2];
-      sliceOffsetHandlePoints->InsertNextPoint(sliceOffsetHandlePoint);
-      }
-    }
-
-  // Define points along intersection lines for interaction
-  vtkPoints* line1PointsDefault;
-  vtkPoints* line2PointsDefault;
-  line1PointsDefault = pipeline->IntersectionLine1->GetOutput()->GetPoints();
-  line2PointsDefault = pipeline->IntersectionLine2->GetOutput()->GetPoints();
-
-  // Get closer handles to intersection line 1
-  vtkIdType numLinePoints;
-  double linePoint[3] = { 0.0, 0.0, 0.0 };
-  double linePointToRotationHandle1[2] = { 0.0, 0.0 };
-  double linePointToSliceOffsetHandle1[2] = { 0.0, 0.0 };
-  double linePointToRotationHandle1Distance;
-  double linePointToSliceOffsetHandle1Distance;
-  numLinePoints = line1PointsDefault->GetNumberOfPoints();
-  for (int i = 0; i < numLinePoints; i++)
-    {
-    // Get line point coordinates
-    line1PointsDefault->GetPoint(i, linePoint);
-    // Distance to rotation handle
-    linePointToRotationHandle1[0] = rotationHandle1Position[0] - linePoint[0];
-    linePointToRotationHandle1[1] = rotationHandle1Position[1] - linePoint[1];
-    linePointToRotationHandle1Distance = vtkMath::Norm2D(linePointToRotationHandle1);
-    // Distance to slice offset handle
-    linePointToSliceOffsetHandle1[0] = sliceOffsetHandle1Position[0] - linePoint[0];
-    linePointToSliceOffsetHandle1[1] = sliceOffsetHandle1Position[1] - linePoint[1];
-    linePointToSliceOffsetHandle1Distance = vtkMath::Norm2D(linePointToSliceOffsetHandle1);
-    // Determine closer handle and insert interaction points
-    if (linePointToRotationHandle1Distance < linePointToSliceOffsetHandle1Distance)
-      {
-      rotationHandlePoints->InsertNextPoint(linePoint);
-      }
-    else
-      {
-      sliceOffsetHandlePoints->InsertNextPoint(linePoint);
-      }
-    }
-
-  // Get closer handles to intersection line 2
-  double linePointToRotationHandle2[2] = { 0.0, 0.0 };
-  double linePointToSliceOffsetHandle2[2] = { 0.0, 0.0 };
-  double linePointToRotationHandle2Distance;
-  double linePointToSliceOffsetHandle2Distance;
-  numLinePoints = line2PointsDefault->GetNumberOfPoints();
-  for (int i = 0; i < numLinePoints; i++)
-    {
-    // Get line point coordinates
-    line2PointsDefault->GetPoint(i, linePoint);
-    // Distance to rotation handle
-    linePointToRotationHandle2[0] = rotationHandle2Position[0] - linePoint[0];
-    linePointToRotationHandle2[1] = rotationHandle2Position[1] - linePoint[1];
-    linePointToRotationHandle2Distance = vtkMath::Norm2D(linePointToRotationHandle2);
-    // Distance to slice offset handle
-    linePointToSliceOffsetHandle2[0] = sliceOffsetHandle2Position[0] - linePoint[0];
-    linePointToSliceOffsetHandle2[1] = sliceOffsetHandle2Position[1] - linePoint[1];
-    linePointToSliceOffsetHandle2Distance = vtkMath::Norm2D(linePointToSliceOffsetHandle2);
-    // Determine closer handle and insert interaction points
-    if (linePointToRotationHandle2Distance < linePointToSliceOffsetHandle2Distance)
-      {
-      rotationHandlePoints->InsertNextPoint(linePoint);
-      }
-    else
-      {
-      sliceOffsetHandlePoints->InsertNextPoint(linePoint);
-      }
-    }
-
-  // Set interaction points
-  pipeline->RotationHandlePoints->SetPoints(rotationHandlePoints);
-  pipeline->SliceOffsetHandlePoints->SetPoints(sliceOffsetHandlePoints);
-
-  // Visibility
-  pipeline->SetIntersectionsVisibility(true);
-  pipeline->SetIntersectionHandlesVisibility(true);
   this->NeedToRenderOn();
 }
-
 
 //----------------------------------------------------------------------
 vtkMRMLSliceDisplayNode* vtkMRMLSliceIntersectionInteractionRepresentation::GetSliceDisplayNode()
@@ -1562,6 +2297,51 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SetSliceDisplayNode(vtkM
     }
   this->Internal->SliceDisplayNode = sliceDisplayNode;
   this->UpdateIntersectingSliceNodes();
+}
+
+
+//----------------------------------------------------------------------
+bool vtkMRMLSliceIntersectionInteractionRepresentation::DistanceFromSliceIntersectionToPoint(vtkMRMLSliceNode* intersectingSlice, double point_RAS[3], double& distance)
+{
+  // First we need to find the representation for the intersecting slice node
+  if (!intersectingSlice)
+    {
+    return false;
+    }
+  for (std::deque<SliceIntersectionInteractionDisplayPipeline*>::iterator
+    sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
+    sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
+    {
+    if (!(*sliceIntersectionIt)->SliceLogic)
+      {
+      continue;
+      }
+    if (intersectingSlice == (*sliceIntersectionIt)->SliceLogic->GetSliceNode())
+      {
+      // First get the points defining the slice intersection line
+      double point1_XY[3] ={0};
+      double point2_XY[3]= {0};
+      (*sliceIntersectionIt)->IntersectionLine1->GetPoint1(point1_XY);
+      (*sliceIntersectionIt)->IntersectionLine1->GetPoint2(point2_XY);
+
+      // Set homogeneous coords
+      double point1_XY_h[4] = {point1_XY[0], point1_XY[1], point1_XY[2], 1};
+      double point2_XY_h[4] = {point2_XY[0], point2_XY[1], point2_XY[2], 1};
+
+      // Now convert to RAS coordinates
+      vtkMatrix4x4* XYtoRAS = this->Internal->SliceNode->GetXYToRAS();
+      double point1_RAS[4] = {0, 0, 0, 1};
+      double point2_RAS[4] = {0, 0, 0, 1};
+      XYtoRAS->MultiplyPoint(point1_XY_h, point1_RAS);
+      XYtoRAS->MultiplyPoint(point2_XY_h, point2_RAS);
+
+      // Set the distance
+      double distance2 = vtkLine::DistanceToLine(point_RAS, point1_RAS, point2_RAS);
+      distance = sqrt(distance2);
+      return true;
+      }
+    }
+  return false;
 }
 
 //----------------------------------------------------------------------
@@ -1676,7 +2456,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::ComputeSliceIntersection
   // Get intersection point
   for (size_t slice1Index = 0; slice1Index < numberOfIntersections - 1; slice1Index++)
     {
-    if (!this->Internal->SliceIntersectionInteractionDisplayPipelines[slice1Index]->GetIntersectionVisibility())
+    if (!this->Internal->SliceIntersectionInteractionDisplayPipelines[slice1Index]->GetVisibility())
       {
       continue;
       }
@@ -1704,7 +2484,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::ComputeSliceIntersection
 
     for (size_t slice2Index = slice1Index + 1; slice2Index < numberOfIntersections; slice2Index++)
       {
-      if (!this->Internal->SliceIntersectionInteractionDisplayPipelines[slice2Index]->GetIntersectionVisibility())
+      if (!this->Internal->SliceIntersectionInteractionDisplayPipelines[slice2Index]->GetVisibility())
         {
         continue;
         }
@@ -1849,8 +2629,7 @@ std::string vtkMRMLSliceIntersectionInteractionRepresentation::CanInteract(vtkMR
     sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
     {
-    if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
+    if (!(*sliceIntersectionIt))
       {
       continue;
       }
@@ -1862,23 +2641,37 @@ std::string vtkMRMLSliceIntersectionInteractionRepresentation::CanInteract(vtkMR
       vtkNew<vtkMatrix4x4> rasToxyMatrix;
       vtkMatrix4x4::Invert(sliceNode->GetXYToRAS(), rasToxyMatrix);
 
+      vtkMRMLSliceDisplayNode* displayNode = this->GetSliceDisplayNode();
+      vtkMRMLSliceNode* intersectingSliceNode = (*sliceIntersectionIt)->SliceLogic->GetSliceNode();
+      vtkMRMLSliceDisplayNode* intersectingDisplayNode = this->GetSliceDisplayNode(intersectingSliceNode);
+      bool thickSlabInteractionEnabled = intersectingDisplayNode->GetIntersectingThickSlabInteractive();
       double opacity = 0.0;
       HandleInfoList handleInfoList = this->GetHandleInfoList((*sliceIntersectionIt));
       for (HandleInfo handleInfo : handleInfoList)
         {
 
         // Ignore handle if the corresponding interaction mode is disabled
-        if (!intersectingSlicesTranslationEnabled
-          && (handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle
-            || handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateSingleIntersectingSliceHandle))
+        bool intersectionLineVisible = (*sliceIntersectionIt)->GetIntersectionVisibility();
+        bool intersectionInteractive = displayNode->GetIntersectingSlicesInteractive();
+        bool thickSlabLineVisible = (*sliceIntersectionIt)->GetThickSlabVisibility();
+        bool isTranslationHandle = (handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle
+            || handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateSingleIntersectingSliceHandle);
+        bool isRotationHandle = handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentRotateIntersectingSlicesHandle;
+        bool isThickSlabHandle = handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingThickSlabHandle;
+
+        if (isTranslationHandle && !(intersectingSlicesTranslationEnabled && intersectionLineVisible && intersectionInteractive))
           {
           // translation is disabled and this is a translation handle
           continue;
           }
-        if (!intersectingSlicesRotationEnabled
-          && handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentRotateIntersectingSlicesHandle)
+        if (isRotationHandle && !(intersectingSlicesRotationEnabled && intersectionLineVisible && intersectionInteractive))
           {
-          // rotation is disabled and this is a translation handle
+          // rotation is disabled and this is a rotation handle
+          continue;
+          }
+        if (isThickSlabHandle && !(thickSlabLineVisible && thickSlabInteractionEnabled))
+          {
+          // thick slab translation is disabled and this is a thick slab handle
           continue;
           }
 
@@ -2032,6 +2825,25 @@ vtkMRMLSliceIntersectionInteractionRepresentation::GetHandleInfoList(SliceInters
     handleInfoList.push_back(info);
     }
 
+  for (int i = 0; i < pipeline->ThickSlabHandlePoints->GetNumberOfPoints(); ++i)
+    {
+    double handlePositionLocal[3] = { 0 };
+    double handlePositionLocal_h[4] = { 0.0,0.0,0.0,1.0 };
+    double handlePositionWorld[3] = { 0 };
+    double handlePositionWorld_h[4] = { 0.0,0.0,0.0,1.0 };
+    pipeline->ThickSlabHandlePoints->GetPoint(i, handlePositionLocal);
+    handlePositionLocal_h[0] = handlePositionLocal[0];
+    handlePositionLocal_h[1] = handlePositionLocal[1];
+    handlePositionLocal_h[2] = handlePositionLocal[2];
+    currentXYToRAS->MultiplyPoint(handlePositionLocal_h, handlePositionWorld_h);
+    handlePositionWorld[0] = handlePositionWorld_h[0];
+    handlePositionWorld[1] = handlePositionWorld_h[1];
+    handlePositionWorld[2] = handlePositionWorld_h[2];
+    HandleInfo info(i, vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingThickSlabHandle,
+      intersectingSliceNodeID, handlePositionWorld, handlePositionLocal);
+    handleInfoList.push_back(info);
+    }
+
   return handleInfoList;
 }
 
@@ -2109,6 +2921,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SetPipelinesHandlesVisib
       visible = false;
       }
     (*sliceIntersectionIt)->SetIntersectionHandlesVisibility(visible);
+    (*sliceIntersectionIt)->SetThickSlabHandlesVisibility(visible);
     if ((*sliceIntersectionIt)->NeedToRender)
       {
       this->NeedToRenderOn();

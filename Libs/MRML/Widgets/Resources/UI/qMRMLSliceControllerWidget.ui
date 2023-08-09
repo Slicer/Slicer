@@ -779,6 +779,14 @@
     <string>Show Slab Reconstruction</string>
    </property>
   </action>
+  <action name="actionSlabReconstructionInteractive">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Interactive</string>
+   </property>
+  </action>
   <action name="actionOrientationMarkerTypeCube">
    <property name="checkable">
     <bool>true</bool>

@@ -96,6 +96,9 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
     /// Compute slice intersection point between red, green and yellow slice nodes
     void ComputeSliceIntersectionPoint();
 
+    /// Compute distance between a point and a slice intersection
+    bool DistanceFromSliceIntersectionToPoint(vtkMRMLSliceNode* intersectingSlice, double point_RAS[3], double& distance);
+
     /// Get slice intersection point between red, green and yellow slice nodes
     double* GetSliceIntersectionPoint() VTK_SIZEHINT(3);
 
