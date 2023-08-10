@@ -2100,7 +2100,7 @@ def addVolumeFromITKImage(itkImage, name=None):
 
 
 def updateVolumeFromITKImage(volumeNode, itkImage):
-    """Set ITK image to volume node and display it."""
+    """Set voxels of a volume node from an ITK image."""
     import itk
     import numpy as np
     rasAffine = _getRASAffineArrayFromITKImage(itkImage)
@@ -2115,12 +2115,6 @@ def updateVolumeFromITKImage(volumeNode, itkImage):
     vtkImage.SetDirectionMatrix(np.eye(itkImage.ndim).flatten())
     volumeNode.SetAndObserveImageData(vtkImage)
     volumeNode.SetIJKToRASMatrix(ijkToRAS)
-
-    setSliceViewerLayers(
-        background=volumeNode,
-        fit=True,
-        rotateToVolumePlane=True,
-        )
 
 
 def arrayFromGridTransformModified(gridTransformNode):
