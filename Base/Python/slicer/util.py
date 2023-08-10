@@ -2011,6 +2011,21 @@ def itkImageFromVolume(volumeNode):
     return itk.image_from_vtk_image(vtkImage)
 
 
+def itkImageFromVolumeModified(volumeNode):
+    """Indicate that modification of a ITK image returned by :py:meth:`itkImageFromVolume` (or
+    associated with a volume node using :py:meth:`updateVolumeFromITKImage`) has been completed."""
+    imageData = volumeNode.GetImageData()
+    pointData = imageData.GetPointData() if imageData else None
+    if pointData:
+        if pointData.GetScalars():
+            pointData.GetScalars().Modified()
+        if pointData.GetTensors():
+            pointData.GetTensors().Modified()
+        if pointData.GetVectors():
+            pointData.GetVectors().Modified()
+    volumeNode.Modified()
+
+
 def addVolumeFromITKImage(itkImage, name=None, nodeClassName=None):
     """Create a new volume node from content of an ITK image and add it to the scene.
 
