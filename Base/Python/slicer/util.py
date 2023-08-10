@@ -1987,22 +1987,26 @@ def itkImageFromVolume(volumeNode):
             for j_idx in range(3):
                 matrix3x3.SetElement(i_idx, j_idx, matrix4x4.GetElement(i_idx, j_idx))
 
-    # Create VTK image data with expected metadata
-    vtkImage = vtk.vtkImageData()
-    vtkImage.ShallowCopy(volumeNode.GetImageData())
-
-    # Origin
-    vtkImage.SetOrigin(volumeNode.GetOrigin())
-
-    # Spacing
-    vtkImage.SetSpacing(volumeNode.GetSpacing())
-
-    # Direction
+    # Get direction from volume node
     directionMatrix4x4 = vtk.vtkMatrix4x4()
     volumeNode.GetIJKToRASDirectionMatrix(directionMatrix4x4)
     directionMatrix3x3 = vtk.vtkMatrix3x3()
     _updateMatrix3x3From4x4(directionMatrix3x3, directionMatrix4x4)
+
+    # Transfrom from RAS (used in Slicer) to LPS (used in ITK)
+    rasToLps = vtk.vtkMatrix3x3()
+    rasToLps.SetElement(0, 0, -1);
+    rasToLps.SetElement(1, 1, -1);
+    vtk.vtkMatrix3x3.Multiply3x3(rasToLps, directionMatrix3x3, directionMatrix3x3);
+
+    # Create VTK image data
+    vtkImage = vtk.vtkImageData()
+    vtkImage.ShallowCopy(volumeNode.GetImageData())
+
+    # Update VTK image direction/origin/spacing
     vtkImage.SetDirectionMatrix(directionMatrix3x3)
+    vtkImage.SetOrigin(volumeNode.GetOrigin())
+    vtkImage.SetSpacing(volumeNode.GetSpacing())
 
     return itk.image_from_vtk_image(vtkImage)
 
@@ -2040,9 +2044,17 @@ def updateVolumeFromITKImage(volumeNode, itkImage):
     # Convert ITK image to VTK image
     vtkImage = itk.vtk_image_from_image(itkImage)
 
-    # Update output node based on the output VTK image direction/origin/spacing
+    # Get direction from VTK image
     ijkToRASMatrix = vtk.vtkMatrix4x4()
     vtkAddon.vtkAddonMathUtilities.SetOrientationMatrix(vtkImage.GetDirectionMatrix(), ijkToRASMatrix)
+
+    # Transfrom from LPS (used in ITK) to RAS (used in Slicer)
+    lpsToRas = vtk.vtkMatrix4x4()
+    lpsToRas.SetElement(0, 0, -1);
+    lpsToRas.SetElement(1, 1, -1);
+    vtk.vtkMatrix4x4.Multiply4x4(lpsToRas, ijkToRASMatrix, ijkToRASMatrix);
+
+    # Update output node direction/origin/spacing
     volumeNode.SetIJKToRASMatrix(ijkToRASMatrix)
     volumeNode.SetOrigin(*vtkImage.GetOrigin())
     volumeNode.SetSpacing(*vtkImage.GetSpacing())
