@@ -2004,7 +2004,7 @@ def itkImageFromVolume(volumeNode):
     _updateMatrix3x3From4x4(directionMatrix3x3, directionMatrix4x4)
     vtkImage.SetDirectionMatrix(directionMatrix3x3)
 
-    return itk.image_from_vtk_image(volumeNode.GetImageData())
+    return itk.image_from_vtk_image(vtkImage)
 
 
 def addVolumeFromITKImage(itkImage, name=None, nodeClassName=None):
