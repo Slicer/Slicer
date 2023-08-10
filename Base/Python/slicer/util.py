@@ -2102,6 +2102,7 @@ def addVolumeFromITKImage(itkImage, name=None, nodeClassName=None):
 
     volumeNode = slicer.mrmlScene.AddNewNodeByClass(nodeClassName, name)
     updateVolumeFromITKImage(volumeNode, itkImage)
+    volumeNode.CreateDefaultDisplayNodes()
     return volumeNode
 
 
