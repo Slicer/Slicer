@@ -2004,9 +2004,9 @@ def itkImageFromVolume(volumeNode):
 
     # Transform from RAS (used in Slicer) to LPS (used in ITK)
     rasToLps = vtk.vtkMatrix3x3()
-    rasToLps.SetElement(0, 0, -1);
-    rasToLps.SetElement(1, 1, -1);
-    vtk.vtkMatrix3x3.Multiply3x3(rasToLps, directionMatrix3x3, directionMatrix3x3);
+    rasToLps.SetElement(0, 0, -1)
+    rasToLps.SetElement(1, 1, -1)
+    vtk.vtkMatrix3x3.Multiply3x3(rasToLps, directionMatrix3x3, directionMatrix3x3)
 
     # Create VTK image data
     vtkImage = vtk.vtkImageData()
@@ -2084,9 +2084,9 @@ def updateVolumeFromITKImage(volumeNode, itkImage):
 
     # Transform from LPS (used in ITK) to RAS (used in Slicer)
     lpsToRas = vtk.vtkMatrix4x4()
-    lpsToRas.SetElement(0, 0, -1);
-    lpsToRas.SetElement(1, 1, -1);
-    vtk.vtkMatrix4x4.Multiply4x4(lpsToRas, ijkToRASMatrix, ijkToRASMatrix);
+    lpsToRas.SetElement(0, 0, -1)
+    lpsToRas.SetElement(1, 1, -1)
+    vtk.vtkMatrix4x4.Multiply4x4(lpsToRas, ijkToRASMatrix, ijkToRASMatrix)
 
     # Update output node direction/origin/spacing
     volumeNode.SetIJKToRASMatrix(ijkToRASMatrix)
