@@ -846,6 +846,7 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
 def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
     """Load each DICOM loadable item.
     Returns loaded node IDs.
+    `loadSuccess` attribute of each loadable is set to True if the load was successful, to False if loading failed.
     """
 
     # Find a plugin for each loadable that will load it
@@ -873,15 +874,20 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
                 break
 
         try:
-            loadSuccess = plugin.load(loadable)
+            loadedNode = plugin.load(loadable)
         except:
-            loadSuccess = False
+            loadedNode = None
             import traceback
             logging.error("DICOM plugin failed to load '"
                           + loadable.name + "' as a '" + plugin.loadType + "'.\n"
                           + traceback.format_exc())
-        if (not loadSuccess) and (messages is not None):
+
+        # Save loading result into message list
+        if (not loadedNode) and (messages is not None):
             messages.append(f"Could not load: {loadable.name} as a {plugin.loadType}")
+
+        # Save loading result into the loadable
+        loadable.loadSuccess = bool(loadedNode)
 
         cancelled = False
         try:
