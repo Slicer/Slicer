@@ -795,7 +795,8 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
                           + loadable.name + "' as a '" + plugin.loadType + "'.\n"
                           + traceback.format_exc())
         if (not loadSuccess) and (messages is not None):
-            messages.append(f'Could not load: {loadable.name} as a {plugin.loadType}')
+            loadable.warning = f'Could not load: {loadable.name} as a {plugin.loadType}'
+            messages.append(loadable.warning)
 
         cancelled = False
         try:
