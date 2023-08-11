@@ -400,7 +400,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         messages = []
         if missingFileCount > 0:
             messages.append(
-                _("Warning: {missing_file_count} of {total_file_count} selected files listed in the database cannot be found on disk.").format(
+                _("{missing_file_count} of {total_file_count} selected files listed in the database cannot be found on disk.").format(
                     missing_file_count=missingFileCount, total_file_count=allFileCount))
 
         if missingFileCount < allFileCount:
