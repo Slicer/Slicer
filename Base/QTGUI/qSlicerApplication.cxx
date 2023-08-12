@@ -308,6 +308,16 @@ void qSlicerApplicationPrivate::init()
       << "slicer.mrmlScene"
       << "qt.QPushButton";
     q->pythonConsole()->completer()->setAutocompletePreferenceList(autocompletePreferenceList);
+    foreach(QAction* action, q->pythonConsole()->actions())
+      {
+      if (action->shortcut() == QKeySequence("Ctrl+H"))
+        {
+        // Remove action as "Ctrl+H" is reserved for going to the "Home" module
+        q->pythonConsole()->removeAction(action);
+        action->setParent(nullptr);
+        break;
+        }
+      }
     }
 #endif
 
