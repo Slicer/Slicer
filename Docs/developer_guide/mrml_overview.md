@@ -2,14 +2,14 @@
 
 ## Introduction
 
-Medical Reality Modeling Language (MRML) is a data model developed to represent all data sets that may be used in medical software applications.
+Medical Reality Modeling Language (MRML, pronounced "MURml") is a data model developed to represent all data sets that may be used in medical software applications.
 
-- MRML software library: An open-source software library that implements MRML data in-memory representation, reading/writing files, visualization, processing framework, and GUI widgets for viewing and editing. The library is based on the VTK toolkit, uses ITK for reading/writing some file formats, and has a few additional optional dependencies, such as Qt for GUI widgets. The library is kept fully independent from 3D&nbsp;Slicer and so it can be used in any other medical applications, but 3D&nbsp;Slicer is the only major application that uses it and therefore MRML library source code is maintained in 3D&nbsp;Slicer's source code repository.
-- MRML file: When MRML data is saved to file, an XML document is created (with an .mrml file extension), which contains an index of all data sets and it may refer to other data files for bulk data storage. A variant of this file format is the MRML bundle file, which contains the .mrml file and all referenced data files in a single zip file (with .mrb extension).
+- MRML software library: An open-source software library that implements MRML data in-memory representation, reading/writing files, visualization, processing framework, and GUI widgets for viewing and editing. The library is based on the VTK toolkit, uses ITK for reading/writing some file formats, and has a few additional optional dependencies, such as Qt for GUI widgets. The library is kept fully independent from 3D Slicer and so it can be used in any other medical applications, but 3D Slicer is the only major application that uses it and therefore MRML library source code is maintained in 3D Slicer's source code repository.
+- MRML file: When MRML data is saved to file, an XML document is created (with a .mrml file extension), which contains an index of all data sets and it may refer to other data files for bulk data storage. A variant of this file format is the MRML bundle file, which contains the .mrml file and all referenced data files in a single zip file (with .mrb extension).
 
 ## MRML Scene
 
-- All data is stored in an *MRML scene*, which contains a list of *MRML nodes*.
+- All data is stored in a *MRML scene*, which contains a list of *MRML nodes*.
 - Each MRML node has a unique ID in the scene, has a name, custom attributes (key:value pairs), and a number of additional properties to store information specific to its data type. Node types include image volume, surface mesh, point set, transformation, etc.
 - Nodes can keep *references* (links) to each other.
 - Nodes can *invoke events* when their contents or internal state change. The most common event is a "Modified" event, which is invoked whenever the node content is changed. Other nodes, [application logic objects](https://www.slicer.org/wiki/Documentation/Nightly/Developers/Logics), or user interface widgets may add *observers*, which are callback functions that are executed whenever the corresponding event is invoked.
@@ -18,19 +18,19 @@ Medical Reality Modeling Language (MRML) is a data model developed to represent 
 
 ### Basic MRML node types
 
-- **Data nodes** store basic properties of a data set. Because the same data set can be displayed in different ways (even within the same application, you may want to show the same data set differently in each view), display properties are not stored in the data node. Similarly, the same data set can be stored in various file formats, therefore file storage properties are not stored in a data node. Data nodes are typically thin wrappers over VTK objects, such as vtkPolyData, vtkImageData, vtkTable. The most important 3D&nbsp;Slicer core data nodes are the following:
+- **Data nodes** store basic properties of a data set. Because the same data set can be displayed in different ways (even within the same application, you may want to show the same data set differently in each view), display properties are not stored in the data node. Similarly, the same data set can be stored in various file formats, therefore file storage properties are not stored in a data node. Data nodes are typically thin wrappers over VTK objects, such as vtkPolyData, vtkImageData, vtkTable. The most important 3D Slicer core data nodes are the following:
   - **Volume** ([vtkMRMLVolume](https://apidocs.slicer.org/main/classvtkMRMLVolumeNode.html) and its subclasses): stores a 3D image. Each voxel of a volume may be a scalar (to store images with continuous grayscale values, such as a CT image), label (to store discrete labels, such as a segmentation result), vector (for storing displacement fields or RGB color images), or tensor (MRI diffusion images). 2D image volumes are represented as single-slice 3D volumes. 4D volumes are stored in sequence nodes (vtkMRMLSequenceNode).
   - **Model** ([vtkMRMLModelNode](https://apidocs.slicer.org/main/classvtkMRMLModelNode.html)): stores a surface mesh (polygonal elements, points, lines, etc.) or a volumetric mesh (tetrahedral, wedge elements, unstructured grid, etc.).
-  - **Segmentation** ([vtkMRMLSegmentationNode](https://apidocs.slicer.org/main/classvtkMRMLSegmentationNode.html)): complex data node that can store a image segmentation (also known as contouring, labeling). It can store multiple representations internally; for example it can store both a binary labelmap image and a closed surface mesh.
+  - **Segmentation** ([vtkMRMLSegmentationNode](https://apidocs.slicer.org/main/classvtkMRMLSegmentationNode.html)): complex data node that can store an image segmentation (also known as contouring, labeling). It can store multiple representations internally; for example it can store both a binary labelmap image and a closed surface mesh.
   - **Markups** ([vtkMRMLMarkupsNode](https://apidocs.slicer.org/main/classvtkMRMLMarkupsNode.html) and subclasses): stores simple geometrical objects, such as point lists (formerly called "fiducial lists"), lines, angles, curves, planes for annotation and measurements.
   - **Transform** ([vtkMRMLTransformNode](https://apidocs.slicer.org/main/classvtkMRMLTransformNode.html)): stores a geometrical transformation that can be applied to any [transformable nodes](https://apidocs.slicer.org/main/classvtkMRMLTransformableNode.html). A transformation can contain any number of linear or non-linear (warping) transforms chained together. In general, it is recommended to use vtkMRMLTransformNode. Child types (vtkMRMLLinearTransformNode, vtkMRMLBSplineTransformNode, vtkMRMLGridTransformNode) are kept for backward compatibility and to allow filtering for specific transformation types in user interface widgets.
   - **Text** ([vtkMRMLTextNode](https://apidocs.slicer.org/main/classvtkMRMLTextNode.html)): stores text data, such as configuration files, descriptive text, etc.
   - **Table** ([vtkMRMLTableNode](https://apidocs.slicer.org/main/classvtkMRMLTableNode.html)): stores tabular data (multiple scalar or vector arrays), used mainly for showing quantitative results in tables and plots
 - **Display nodes** ([vtkMRMLDisplayNode](https://apidocs.slicer.org/main/classvtkMRMLDisplayNode.html) and its subclasses) specify properties for displaying data nodes. For example, a model node's color is stored in a display node associated with a model node.
-  - Multiple display nodes may be added for a single data node, each specifying different display properties and view nodes. Built-in 3D&nbsp;Slicer modules typically show and allow editing of only the *first* display node associated with a data node.
+  - Multiple display nodes may be added for a single data node, each specifying different display properties and view nodes. Built-in 3D Slicer modules typically show and allow editing of only the *first* display node associated with a data node.
   - If a display node specifies a list of view nodes then the associated data node is displayed in only those views.
   - Display nodes may refer to *color nodes* to specify a list of colors or color look-up-tables.
-  - When a data node is created, a default display node can be added by calling its `CreateDefaultDisplayNodes()` method. In some cases, 3D&nbsp;Slicer detects if the display and storage node are missing and tries to create default nodes, but developers should not rely on this error-recovery mechanism.
+  - When a data node is created, a default display node can be added by calling its `CreateDefaultDisplayNodes()` method. In some cases, 3D Slicer detects if the display and storage node are missing and tries to create default nodes, but developers should not rely on this error-recovery mechanism.
 - **Storage nodes** ([vtkMRMLStorageNode](https://apidocs.slicer.org/main/classvtkMRMLStorageNode.html) and its subclasses) specify how to store a data node in a file. It can store one or more file names, compression options, coordinate system information, etc.
   - A default storage node may be created for a data node by calling its `CreateDefaultStorageNode()` method.
 - **View nodes** ([vtkMRMLAbstractViewNode](https://apidocs.slicer.org/v4.8/classvtkMRMLAbstractViewNode.html) and subclasses) specify view layout and appearance of views, such as background color. Additional nodes related to view nodes include:
@@ -68,9 +68,9 @@ For more details, see [this page](https://www.slicer.org/wiki/Documentation/Nigh
 - `vtkSetMacro()` automatically invokes ModifiedEvent. Additional events can be invoked using the `InvokeEvent()` method.
 - Using the `AddObserver()`/`RemoveObserver()` methods is tedious and error-prone, therefore it is recommended to instead use [EventBroker](https://www.slicer.org/wiki/Slicer3:EventBroker) and the vtkObserverManager helper class, macros, and callback methods.
   - MRML observer macros are defined in Libs/MRML/vtkMRMLNode.h
-  - vtkSetMRMLObjectMacro - registers an MRML node with another VTK object (another MRML node, Logic or GUI). No observers are added.
-  - vtkSetAndObserveMRMLObjectMacro - registers an MRML node and adds an observer for vtkCommand::ModifyEvent.
-  - vtkSetAndObserveMRMLObjectEventsMacro - registers an MRML node and adds an observer for a specified set of events.
+  - vtkSetMRMLObjectMacro - registers a MRML node with another VTK object (another MRML node, Logic or GUI). No observers are added.
+  - vtkSetAndObserveMRMLObjectMacro - registers a MRML node and adds an observer for vtkCommand::ModifyEvent.
+  - vtkSetAndObserveMRMLObjectEventsMacro - registers a MRML node and adds an observer for a specified set of events.
   - The `SetAndObserveMRMLScene()` and `SetAndObserveMRMLSceneEvents()` methods are used in GUI and Logic objects to observe Modify, NewScene, NodeAdded, etc. events.
   - The `ProcessMRMLEvents()` method should be implemented in MRML nodes, Logic, and GUI classes in order to process events from the observed nodes.
 
@@ -86,7 +86,7 @@ MRML Scene provides an Undo/Redo mechanism that restores a previous state of the
 
 Basic mechanism:
 - Undo/redo is based on saving and restoring the state of MRML nodes in the Scene.
-- An MRML scene can save a snapshot of all nodes into special Undo and Redo stacks.
+- A MRML scene can save a snapshot of all nodes into special Undo and Redo stacks.
 - The Undo and Redo stacks store copies of nodes that have changed from the previous snapshot. The nodes that have not changed are stored by a reference (pointer).
 - When an Undo is called on the scene, the current state of the Undo stack is copied into the current scene and also into the Redo stack.
 - All Undoable operations must store their data as MRML nodes
@@ -104,7 +104,7 @@ The following methods on the MRML scene are used to manage Undo/Redo stacks:
 
 ### Creating Custom MRML Node Classes
 
-If you are adding new functionality to 3D&nbsp;Slicer either via extensions, or even updates to the core, most of the time the existing MRML nodes will be sufficient. Many powerful C++ and Python extensions simply use and combine the existing node types to create new functionality. Instead of creating new MRML nodes from scratch, other extensions subclass from existing nodes and add just a few methods to get the needed functionality. That said, if existing MRML nodes do not offer enough (or almost enough) functionality to enable what needs to be done, it is possible to create custom MRML node classes with a little bit of effort.
+If you are adding new functionality to 3D Slicer either via extensions, or even updates to the core, most of the time the existing MRML nodes will be sufficient. Many powerful C++ and Python extensions simply use and combine the existing node types to create new functionality. Instead of creating new MRML nodes from scratch, other extensions subclass from existing nodes and add just a few methods to get the needed functionality. That said, if existing MRML nodes do not offer enough (or almost enough) functionality to enable what needs to be done, it is possible to create custom MRML node classes with a little bit of effort.
 
 There are a number of different MRML nodes and helper classes that can be implemented to enable new MRML data type functionality. Here is the not-so-short list. We will go over each of these in detail.
 
@@ -126,12 +126,12 @@ While technically not all of these need to be implemented for a new MRML type to
 MRML nodes are implemented in C++.
 
 
-MRML nodes can be implemented in a 3D&nbsp;Slicer extension.
+MRML nodes can be implemented in a 3D Slicer extension.
 :::
 
 :::{note}
 
-All links to API class and function documentation redirecting to `https://apidocs.slicer.org` correspond to documentation generated from the latest commit of the `main` branch of 3D&nbsp;Slicer. This means that versions of this documentation associated with an older version of 3D&nbsp;Slicer may be out of sync with the linked API.
+All links to API class and function documentation redirecting to `https://apidocs.slicer.org` correspond to documentation generated from the latest commit of the `main` branch of 3D Slicer. This means that versions of this documentation associated with an older version of 3D Slicer may be out of sync with the linked API.
 
 :::
 
@@ -327,7 +327,7 @@ It is common for a data node’s storage node to also write relevant values out 
 
 :::{note}
 
-The storage node is not sufficient in itself to allow the new data node to be saved/loaded from the normal 3D&nbsp;Slicer save/load facilities; the [reader](#the-reader) and [writer](#the-writer) will help with that.
+The storage node is not sufficient in itself to allow the new data node to be saved/loaded from the normal 3D Slicer save/load facilities; the [reader](#the-reader) and [writer](#the-writer) will help with that.
 
 :::
 
@@ -372,7 +372,7 @@ It is recommended to have your extension be `.<something>.json` where the `<some
 
 #### The reader
 
-The recommended way to read a file into a MRML node is through the storage node. The reader, on the other hand, exists to interface with the loading facilities of 3D&nbsp;Slicer (drag and drop, as well as the button to load data into the scene). As such, the reader uses the storage node in its implementation.
+The recommended way to read a file into a MRML node is through the storage node. The reader, on the other hand, exists to interface with the loading facilities of 3D Slicer (drag and drop, as well as the button to load data into the scene). As such, the reader uses the storage node in its implementation.
 
 
 Files:
@@ -410,7 +410,7 @@ The reader is not a VTK object, like the previous objects discussed. It is actua
 
 #### The writer
 
-The writer is the companion to the reader, so, similar to the reader, it does not implement the actual writing of files, but rather it uses the storage node. Its existence is necessary to use 3D&nbsp;Slicer’s built in saving facilities, such as the save button.
+The writer is the companion to the reader, so, similar to the reader, it does not implement the actual writing of files, but rather it uses the storage node. Its existence is necessary to use 3D Slicer’s built in saving facilities, such as the save button.
 
 Files:
 
@@ -432,7 +432,7 @@ Key points:
 
 #### The subject hierarchy plugin
 
-A convenient module in 3D&nbsp;Slicer is the Data module. It brings all the different data types together under one roof and offers operations such as cloning, deleting, and renaming nodes that work regardless of the node type. The Data module uses the Subject Hierarchy, which is what we need to plug into so our new node type can be seen in and modified by the Data module.
+A convenient module in 3D Slicer is the Data module. It brings all the different data types together under one roof and offers operations such as cloning, deleting, and renaming nodes that work regardless of the node type. The Data module uses the Subject Hierarchy, which is what we need to plug into so our new node type can be seen in and modified by the Data module.
 
 Files:
 
@@ -461,9 +461,9 @@ Key Points:
 
 #### The module (aka putting it all together)
 
-If you have used 3D&nbsp;Slicer for any length of time, you have probably noticed that for each type of node (or set of types as in something like markups) there is a dedicated module that is used solely for interacting with the single node type (or set of types). Examples would be the Models, Volumes, and Markups modules. These modules are useful from a user perspective and also necessary to get your new node registered everywhere it needs to be.
+If you have used 3D Slicer for any length of time, you have probably noticed that for each type of node (or set of types as in something like markups) there is a dedicated module that is used solely for interacting with the single node type (or set of types). Examples would be the Models, Volumes, and Markups modules. These modules are useful from a user perspective and also necessary to get your new node registered everywhere it needs to be.
 
-As these are normal 3D&nbsp;Slicer modules, they come in three main parts, the module, the logic, and the module widget. The recommended way to create a new module is through the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard).
+As these are normal 3D Slicer modules, they come in three main parts, the module, the logic, and the module widget. The recommended way to create a new module is through the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard).
 
 Files:
 
