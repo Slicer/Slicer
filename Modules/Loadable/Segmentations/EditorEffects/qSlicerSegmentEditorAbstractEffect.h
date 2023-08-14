@@ -38,6 +38,7 @@ class qSlicerSegmentEditorAbstractEffectPrivate;
 
 class vtkActor2D;
 class vtkMRMLInteractionNode;
+class vtkMRMLNode;
 class vtkMRMLScene;
 class vtkMRMLSegmentEditorNode;
 class vtkMRMLAbstractViewNode;
@@ -288,14 +289,17 @@ public:
 
 // Effect parameter functions
 public:
-  /// Get effect or common parameter from effect parameter set node
+  /// Get effect-specific or common string type parameter from effect parameter set node.
   Q_INVOKABLE QString parameter(QString name);
 
-  /// Convenience function to get integer parameter
+  /// Get effect-specific or common integer type parameter from effect parameter set node.
   Q_INVOKABLE int integerParameter(QString name);
 
-  /// Convenience function to get double parameter
+  /// Get effect-specific or common double type parameter from effect parameter set node.
   Q_INVOKABLE double doubleParameter(QString name);
+
+  /// Get effect-specific or common node reference type parameter from effect parameter set node.
+  Q_INVOKABLE vtkMRMLNode* nodeReference(QString name);
 
   /// Set effect parameter in effect parameter set node. This function is called by both convenience functions.
   /// \param name Parameter name string
@@ -340,6 +344,13 @@ public:
   /// Set parameter only if it is not defined already.
   /// \sa setCommonParameter
   Q_INVOKABLE void setCommonParameterDefault(QString name, double value);
+
+  /// Convenience function to set double parameter
+  /// \param name Parameter name string
+  /// \param value Parameter value double
+  Q_INVOKABLE void setNodeReference(QString name, vtkMRMLNode* node);
+  /// Convenience function to set double common parameter \sa setCommonParameter
+  Q_INVOKABLE void setCommonNodeReference(QString name, vtkMRMLNode* node);
 
 // Utility functions
 public:

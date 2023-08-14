@@ -969,6 +969,26 @@ double qSlicerSegmentEditorAbstractEffect::doubleParameter(QString name)
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLNode* qSlicerSegmentEditorAbstractEffect::nodeReference(QString name)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (!d->ParameterSetNode)
+    {
+    return nullptr;
+    }
+
+  // Get effect-specific prefixed parameter first
+  QString attributeName = QString("%1.%2").arg(this->name()).arg(name);
+  vtkMRMLNode* node = d->ParameterSetNode->GetNodeReference(attributeName.toUtf8().constData());
+  // Look for common parameter if effect-specific one is not found
+  if (!node)
+    {
+    node = d->ParameterSetNode->GetNodeReference(name.toUtf8().constData());
+    }
+  return node;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setParameter(QString name, QString value)
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
@@ -1224,6 +1244,47 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameterDefault(QString name,
     return;
     }
   this->setCommonParameter(name, value);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setNodeReference(QString name, vtkMRMLNode* node)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (!d->ParameterSetNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node set to effect " << this->name();
+    return;
+    }
+
+  // Set parameter as attribute
+  QString attributeName = QString("%1.%2").arg(this->name()).arg(name);
+  this->setCommonNodeReference(attributeName, node);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setCommonNodeReference(QString name, vtkMRMLNode* node)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (!d->ParameterSetNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment editor parameter set node set to effect " << this->name();
+    return;
+    }
+
+  vtkMRMLNode* oldNode = d->ParameterSetNode->GetNodeReference(name.toUtf8().constData());
+  if (node == oldNode)
+    {
+    // no change
+    return;
+    }
+
+  // Set parameter as attribute
+  d->ParameterSetNode->SetNodeReferenceID(name.toUtf8().constData(), node ? node->GetID() : nullptr);
+
+  // Emit parameter modified event
+  // Don't pass parameter name as char pointer, as custom modified events may be compressed and invoked after EndModify()
+  // and by that time the pointer may not be valid anymore.
+  d->ParameterSetNode->InvokeCustomModifiedEvent(vtkMRMLSegmentEditorNode::EffectParameterModified);
 }
 
 //-----------------------------------------------------------------------------

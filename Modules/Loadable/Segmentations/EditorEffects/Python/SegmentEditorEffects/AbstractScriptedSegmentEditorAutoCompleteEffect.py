@@ -232,7 +232,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
                 self.segmentationNodeObserverTags.append(self.observedSegmentation.AddObserver(eventId, self.onSegmentationModified))
 
     def getPreviewNode(self):
-        previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+        previewNode = self.scriptedEffect.nodeReference(ResultPreviewNodeReferenceRole)
         if (previewNode
                 and self.scriptedEffect.parameterDefined("SegmentationResultPreviewOwnerEffect")
                 and self.scriptedEffect.parameter("SegmentationResultPreviewOwnerEffect") != self.scriptedEffect.name):
@@ -293,9 +293,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
     def reset(self):
         self.delayedAutoUpdateTimer.stop()
         self.observeSegmentation(False)
-        previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+        previewNode = self.scriptedEffect.nodeReference(ResultPreviewNodeReferenceRole)
         if previewNode:
-            self.scriptedEffect.parameterSetNode().SetNodeReferenceID(ResultPreviewNodeReferenceRole, None)
+            self.scriptedEffect.setCommonNodeReference(ResultPreviewNodeReferenceRole, None)
             slicer.mrmlScene.RemoveNode(previewNode)
             self.scriptedEffect.setCommonParameter("SegmentationResultPreviewOwnerEffect", "")
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
@@ -499,7 +499,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             previewNode.GetDisplayNode().SetVisibility2DOutline(False)
             if segmentationNode.GetParentTransformNode():
                 previewNode.SetAndObserveTransformNodeID(segmentationNode.GetParentTransformNode().GetID())
-            self.scriptedEffect.parameterSetNode().SetNodeReferenceID(ResultPreviewNodeReferenceRole, previewNode.GetID())
+            self.scriptedEffect.setCommonNodeReference(ResultPreviewNodeReferenceRole, previewNode)
             self.scriptedEffect.setCommonParameter("SegmentationResultPreviewOwnerEffect", self.scriptedEffect.name)
             self.setPreviewOpacity(0.6)
 

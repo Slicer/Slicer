@@ -6,7 +6,7 @@ See examples of using Segment editor effects from Python scripts in the [script 
 
 Setting/getting effect parameters:
 - Numeric or string parameter values: Common parameters must be set using `setCommonParameter(parameterName, parameterValue)` method, while effect-specific parameters can be set using `setParameter(parameterName, parameterValue)` method of the effect. Both common and effect-specific parameters can be retrieved using `parameter(parameterName)` method (for `string` or `enum` type), `integerParameter(parameterName)` (for `int` type), `doubleParameter(parameterName)` (for `float` type).
-- Node reference (`noderef` type) parameter: It holds a reference to a node object, therefore it must be get/set by calling `GetNodeReference(referenceName)` and `SetNodeReferenceID(referenceName, nodeId)` methods of the parameter set node. For common parameters (shared between multiple effects) `referenceName` equals to the parameter name. For effect-specific parameters `referenceName` is constructed as `(effectName).(parameterName)`, for example `Mask volume.InputVolume`.
+- Node reference (`noderef` type) parameter: It holds a reference to a node object, therefore it must be get/set by calling `nodeReference(parameterName)` and `setNodeReference(parameterName, node)` or `setCommonNodeReference(parameterName, node)` methods of the parameter set node.
 
 ### Fill between slices
 
@@ -60,8 +60,8 @@ Setting/getting effect parameters:
 | BinaryMaskFillValueInside  | float   | no     | 1       | any                        |
 | Operation                  | enum    | no     | FILL_OUTSIDE | FILL_INSIDE, FILL_OUTSIDE, FILL_INSIDE_AND_OUTSIDE |
 | SoftEdgeMm                 | float   | no     | 0.0     | >=0.0                      |
-| Mask volume.InputVolume    | noderef | no     | none    | reference to volume node   |
-| Mask volume.OutputVolume   | noderef | no     | none    | reference to volume node   |
+| InputVolume                | noderef | no     | none    | reference to volume node   |
+| OutputVolume               | noderef | no     | none    | reference to volume node   |
 
 ### Paint effect and Erase effect
 

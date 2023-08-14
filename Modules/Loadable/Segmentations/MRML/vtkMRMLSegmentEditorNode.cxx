@@ -131,7 +131,7 @@ void vtkMRMLSegmentEditorNode::ReadXMLAttributes(const char** atts)
   // For future compatibility (when masterVolumeRef will be replaced by sourceVolumeRef)
   if (this->GetNodeReferenceID("sourceVolumeRef"))
     {
-		this->SetNodeReferenceID(SOURCE_VOLUME_REFERENCE_ROLE, this->GetNodeReferenceID("sourceVolumeRef"));
+    this->SetNodeReferenceID(SOURCE_VOLUME_REFERENCE_ROLE, this->GetNodeReferenceID("sourceVolumeRef"));
     }
 
   this->EndModify(disabledModify);

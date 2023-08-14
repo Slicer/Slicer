@@ -210,9 +210,9 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         self.softEdgeMmSpinBox.setValue(float(self.scriptedEffect.parameter("SoftEdgeMm"))
                                         if self.scriptedEffect.parameter("SoftEdgeMm") else 0)
 
-        inputVolume = self.scriptedEffect.parameterSetNode().GetNodeReference("Mask volume.InputVolume")
+        inputVolume = self.scriptedEffect.nodeReference("InputVolume")
         self.inputVolumeSelector.setCurrentNode(inputVolume)
-        outputVolume = self.scriptedEffect.parameterSetNode().GetNodeReference("Mask volume.OutputVolume")
+        outputVolume = self.scriptedEffect.nodeReference("OutputVolume")
         self.outputVolumeSelector.setCurrentNode(outputVolume)
 
         sourceVolume = self.scriptedEffect.parameterSetNode().GetSourceVolumeNode()
@@ -245,8 +245,8 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         self.scriptedEffect.setParameter("FillValue", self.fillValueEdit.value)
         self.scriptedEffect.setParameter("BinaryMaskFillValueInside", self.binaryMaskFillInsideEdit.value)
         self.scriptedEffect.setParameter("BinaryMaskFillValueOutside", self.binaryMaskFillOutsideEdit.value)
-        self.scriptedEffect.parameterSetNode().SetNodeReferenceID("Mask volume.InputVolume", self.inputVolumeSelector.currentNodeID)
-        self.scriptedEffect.parameterSetNode().SetNodeReferenceID("Mask volume.OutputVolume", self.outputVolumeSelector.currentNodeID)
+        self.scriptedEffect.setNodeReference("InputVolume", self.inputVolumeSelector.currentNode)
+        self.scriptedEffect.setNodeReference("OutputVolume", self.outputVolumeSelector.currentNode)
         self.scriptedEffect.setParameter("SoftEdgeMm", self.softEdgeMmSpinBox.value)
 
     def activate(self):
@@ -272,7 +272,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         return inputVolume
 
     def onInputVisibilityButtonClicked(self):
-        inputVolume = self.scriptedEffect.parameterSetNode().GetNodeReference("Mask volume.InputVolume")
+        inputVolume = self.scriptedEffect.nodeReference("InputVolume")
         sourceVolume = self.scriptedEffect.parameterSetNode().GetSourceVolumeNode()
         if inputVolume is None:
             inputVolume = sourceVolume
@@ -281,17 +281,17 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
             self.updateGUIFromMRML()
 
     def onOutputVisibilityButtonClicked(self):
-        outputVolume = self.scriptedEffect.parameterSetNode().GetNodeReference("Mask volume.OutputVolume")
+        outputVolume = self.scriptedEffect.nodeReference("OutputVolume")
         if outputVolume:
             slicer.util.setSliceViewerLayers(background=outputVolume)
             self.updateGUIFromMRML()
 
     def onInputVolumeChanged(self):
-        self.scriptedEffect.parameterSetNode().SetNodeReferenceID("Mask volume.InputVolume", self.inputVolumeSelector.currentNodeID)
+        self.scriptedEffect.setNodeReference("InputVolume", self.inputVolumeSelector.currentNode)
         self.updateGUIFromMRML()  # node reference changes are not observed, update GUI manually
 
     def onOutputVolumeChanged(self):
-        self.scriptedEffect.parameterSetNode().SetNodeReferenceID("Mask volume.OutputVolume", self.outputVolumeSelector.currentNodeID)
+        self.scriptedEffect.setNodeReference("OutputVolume", self.outputVolumeSelector.currentNode)
         self.updateGUIFromMRML()  # node reference changes are not observed, update GUI manually
 
     def fillValueChanged(self):
