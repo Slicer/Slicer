@@ -2513,8 +2513,8 @@ def itkImageFromVolume(volumeNode):
     After all modifications has been completed, call :py:meth:`itkImageFromVolumeModified`.
 
     .. warning:: Important: Memory area of the returned ITK image is managed by VTK (through the
-      ``vtkImageData`` container associated with the MRML volume node), therefore values in the
-      ITK image may be changed, but the ITK image must not be reallocated.
+      ``vtkImageData`` object stored in the MRML volume node), therefore values in the
+      Voxel values in the ITK image may be changed, but the ITK image must not be reallocated.
     """
     import itk
     import vtk
@@ -2593,7 +2593,7 @@ def updateVolumeFromITKImage(volumeNode, itkImage):
     """Set voxels of a volume node from an ITK image.
 
     .. warning:: Important: Memory area is shared between the ITK image and the ``vtkImageData``
-      container associated with the MRML volume node, therefore modifying the ITK image values
+      object in the MRML volume node, therefore modifying the ITK image values
       requires to call :py:meth:`itkImageFromVolumeModified`.
 
       If the ITK image is reallocated, calling this function is required.
