@@ -2414,6 +2414,10 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
     return tableNode
 
 
+#
+# MRML-pandas
+#
+
 def dataframeFromTable(tableNode):
     """Convert table node content to pandas dataframe.
 
@@ -2495,6 +2499,148 @@ def dataframeFromMarkups(markupsNode):
         'visible': visible,
         'description': description})
     return dataframe
+
+
+#
+# MRML-ITKImage
+#
+
+def itkImageFromVolume(volumeNode):
+    """Return ITK image from volume node.
+
+    Voxels values are not copied. Voxel values in the volume node can be modified
+    by changing values in the ITK image.
+    After all modifications has been completed, call :py:meth:`itkImageFromVolumeModified`.
+
+    .. warning:: Important: Memory area of the returned ITK image is managed by VTK (through the
+      ``vtkImageData`` object stored in the MRML volume node), therefore values in the
+      Voxel values in the ITK image may be changed, but the ITK image must not be reallocated.
+    """
+    import itk
+    import vtk
+
+    def _updateMatrix3x3From4x4(matrix3x3, matrix4x4):
+        for i_idx in range(3):
+            for j_idx in range(3):
+                matrix3x3.SetElement(i_idx, j_idx, matrix4x4.GetElement(i_idx, j_idx))
+
+    # Get direction from volume node
+    directionMatrix4x4 = vtk.vtkMatrix4x4()
+    volumeNode.GetIJKToRASDirectionMatrix(directionMatrix4x4)
+    directionMatrix3x3 = vtk.vtkMatrix3x3()
+    _updateMatrix3x3From4x4(directionMatrix3x3, directionMatrix4x4)
+
+    # Transform from RAS (used in Slicer) to LPS (used in ITK)
+    rasToLps = vtk.vtkMatrix3x3()
+    rasToLps.SetElement(0, 0, -1)
+    rasToLps.SetElement(1, 1, -1)
+    vtk.vtkMatrix3x3.Multiply3x3(rasToLps, directionMatrix3x3, directionMatrix3x3)
+
+    # Create VTK image data
+    vtkImage = vtk.vtkImageData()
+    vtkImage.ShallowCopy(volumeNode.GetImageData())
+
+    # Update VTK image direction/origin/spacing
+    vtkImage.SetDirectionMatrix(directionMatrix3x3)
+    vtkImage.SetOrigin(volumeNode.GetOrigin())
+    vtkImage.SetSpacing(volumeNode.GetSpacing())
+
+    return itk.image_from_vtk_image(vtkImage)
+
+
+def itkImageFromVolumeModified(volumeNode):
+    """Indicate that modification of a ITK image returned by :py:meth:`itkImageFromVolume` (or
+    associated with a volume node using :py:meth:`updateVolumeFromITKImage`) has been completed."""
+    imageData = volumeNode.GetImageData()
+    pointData = imageData.GetPointData() if imageData else None
+    if pointData:
+        if pointData.GetScalars():
+            pointData.GetScalars().Modified()
+        if pointData.GetTensors():
+            pointData.GetTensors().Modified()
+        if pointData.GetVectors():
+            pointData.GetVectors().Modified()
+    volumeNode.Modified()
+
+
+def addVolumeFromITKImage(itkImage, name=None, nodeClassName=None, deepCopy=True):
+    """Create a new volume node from content of an ITK image and add it to the scene.
+
+    By default, voxels values are deep-copied, therefore if the ITK image is modified
+    after calling this method, voxel values in the volume node will not change.
+
+    See :py:meth:`updateVolumeFromITKImage` to understand memory ownership.
+
+    :param itkImage: ITK image containing volume voxels.
+    :param name: volume node name
+    :param nodeClassName: type of created volume, default: ``vtkMRMLScalarVolumeNode``.
+      Use ``vtkMRMLLabelMapVolumeNode`` for labelmap volume, ``vtkMRMLVectorVolumeNode`` for vector volume.
+    :param deepCopy: Whether voxels values are deep-copied or not.
+
+    :return: created new volume node
+    """
+    import slicer
+
+    if name is None:
+        name = ""
+    if nodeClassName is None:
+        nodeClassName = "vtkMRMLScalarVolumeNode"
+
+    volumeNode = slicer.mrmlScene.AddNewNodeByClass(nodeClassName, name)
+    updateVolumeFromITKImage(volumeNode, itkImage, deepCopy)
+    volumeNode.CreateDefaultDisplayNodes()
+
+    return volumeNode
+
+
+def updateVolumeFromITKImage(volumeNode, itkImage, deepCopy=True):
+    """Set voxels of a volume node from an ITK image.
+
+    By default, voxels values are deep-copied, therefore if the ITK image is modified
+    after calling this method, voxel values in the volume node will not change.
+
+    .. warning:: Important: Setting `deepCopy` to False means that the memory area is
+      shared between the ITK image and the ``vtkImageData`` object in the MRML volume node,
+      therefore modifying the ITK image values requires to call :py:meth:`itkImageFromVolumeModified`.
+
+      If the ITK image is reallocated, calling this function is required.
+    """
+    import itk
+    import vtk
+    import vtkAddon
+
+    # Convert ITK image to VTK image
+    vtkImage = itk.vtk_image_from_image(itkImage)
+
+    # Get direction from VTK image
+    ijkToRASMatrix = vtk.vtkMatrix4x4()
+    vtkAddon.vtkAddonMathUtilities.SetOrientationMatrix(vtkImage.GetDirectionMatrix(), ijkToRASMatrix)
+
+    # Transform from LPS (used in ITK) to RAS (used in Slicer)
+    lpsToRas = vtk.vtkMatrix4x4()
+    lpsToRas.SetElement(0, 0, -1)
+    lpsToRas.SetElement(1, 1, -1)
+    vtk.vtkMatrix4x4.Multiply4x4(lpsToRas, ijkToRASMatrix, ijkToRASMatrix)
+
+    # Update output node direction/origin/spacing
+    volumeNode.SetIJKToRASMatrix(ijkToRASMatrix)
+    volumeNode.SetOrigin(*vtkImage.GetOrigin())
+    volumeNode.SetSpacing(*vtkImage.GetSpacing())
+
+    # Reset direction/origin/spacing of the VTK output image.
+    # See https://github.com/Slicer/Slicer/issues/6911
+    identidyMatrix = vtk.vtkMatrix3x3()
+    vtkImage.SetDirectionMatrix(identidyMatrix)
+    vtkImage.SetOrigin((0, 0, 0))
+    vtkImage.SetSpacing((1., 1., 1.))
+
+    # Update output node setting VTK image data
+    if deepCopy:
+        vtkImageCopy = vtk.vtkImageData()
+        vtkImageCopy.DeepCopy(vtkImage)
+        volumeNode.SetAndObserveImageData(vtkImageCopy)
+    else:
+        volumeNode.SetAndObserveImageData(vtkImage)
 
 
 #
