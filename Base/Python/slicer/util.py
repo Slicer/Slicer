@@ -2563,8 +2563,11 @@ def itkImageFromVolumeModified(volumeNode):
     volumeNode.Modified()
 
 
-def addVolumeFromITKImage(itkImage, name=None, nodeClassName=None):
+def addVolumeFromITKImage(itkImage, name=None, nodeClassName=None, deepCopy=True):
     """Create a new volume node from content of an ITK image and add it to the scene.
+
+    By default, voxels values are deep-copied, therefore if the ITK image is modified
+    after calling this method, voxel values in the volume node will not change.
 
     See :py:meth:`updateVolumeFromITKImage` to understand memory ownership.
 
@@ -2572,6 +2575,7 @@ def addVolumeFromITKImage(itkImage, name=None, nodeClassName=None):
     :param name: volume node name
     :param nodeClassName: type of created volume, default: ``vtkMRMLScalarVolumeNode``.
       Use ``vtkMRMLLabelMapVolumeNode`` for labelmap volume, ``vtkMRMLVectorVolumeNode`` for vector volume.
+    :param deepCopy: Whether voxels values are deep-copied or not.
 
     :return: created new volume node
     """
@@ -2583,18 +2587,21 @@ def addVolumeFromITKImage(itkImage, name=None, nodeClassName=None):
         nodeClassName = "vtkMRMLScalarVolumeNode"
 
     volumeNode = slicer.mrmlScene.AddNewNodeByClass(nodeClassName, name)
-    updateVolumeFromITKImage(volumeNode, itkImage)
+    updateVolumeFromITKImage(volumeNode, itkImage, deepCopy)
     volumeNode.CreateDefaultDisplayNodes()
 
     return volumeNode
 
 
-def updateVolumeFromITKImage(volumeNode, itkImage):
+def updateVolumeFromITKImage(volumeNode, itkImage, deepCopy=True):
     """Set voxels of a volume node from an ITK image.
 
-    .. warning:: Important: Memory area is shared between the ITK image and the ``vtkImageData``
-      object in the MRML volume node, therefore modifying the ITK image values
-      requires to call :py:meth:`itkImageFromVolumeModified`.
+    By default, voxels values are deep-copied, therefore if the ITK image is modified
+    after calling this method, voxel values in the volume node will not change.
+
+    .. warning:: Important: Setting `deepCopy` to False means that the memory area is
+      shared between the ITK image and the ``vtkImageData`` object in the MRML volume node,
+      therefore modifying the ITK image values requires to call :py:meth:`itkImageFromVolumeModified`.
 
       If the ITK image is reallocated, calling this function is required.
     """
@@ -2628,7 +2635,12 @@ def updateVolumeFromITKImage(volumeNode, itkImage):
     vtkImage.SetSpacing((1., 1., 1.))
 
     # Update output node setting VTK image data
-    volumeNode.SetAndObserveImageData(vtkImage)
+    if deepCopy:
+        vtkImageCopy = vtk.vtkImageData()
+        vtkImageCopy.DeepCopy(vtkImage)
+        volumeNode.SetAndObserveImageData(vtkImageCopy)
+    else:
+        volumeNode.SetAndObserveImageData(vtkImage)
 
 
 #
