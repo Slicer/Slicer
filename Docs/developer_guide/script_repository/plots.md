@@ -72,7 +72,7 @@ Matplotlib may be used from within Slicer, but the default Tk backend locks up a
 try:
   import matplotlib
 except ModuleNotFoundError:
-  pip_install("matplotlib")
+  slicer.util.pip_install("matplotlib")
   import matplotlib
 
 matplotlib.use("Agg")
@@ -102,6 +102,10 @@ imageWidget.setPixmap(pm)
 imageWidget.setScaledContents(True)
 imageWidget.show()
 ```
+
+:::{tip}
+To learn how to use {func}`slicer.util.pip_install` within a Slicer module, refer to the [](/developer_guide/script_repository.md#install-a-python-package) example in the Script Repository.
+:::
 
 ![Matplotlib example](https://www.slicer.org/w/img_auth.php/a/ab/MatplotlibExample.png)
 
@@ -176,5 +180,9 @@ ax.grid(True)
 ax.set_ylim((0, 4e5))
 plt.show(block=False)
 ```
+
+:::{tip}
+To learn how to use {func}`slicer.util.pip_install` within a Slicer module, refer to the [](/developer_guide/script_repository.md#install-a-python-package) example in the Script Repository.
+:::
 
 ![Interactive Matplotlib Example](https://www.slicer.org/w/img_auth.php/d/d2/InteractiveMatplotlibExample.png)

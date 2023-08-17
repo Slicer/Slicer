@@ -1249,7 +1249,7 @@ Python packages that are optional or would be impractical to bundle into the ext
 ```python
 try:
   import flywheel
-except ModuleNotFoundError as e:
+except ModuleNotFoundError:
   if slicer.util.confirmOkCancelDisplay("This module requires 'flywheel-sdk' Python package. Click OK to install it now."):
     slicer.util.pip_install("flywheel-sdk")
     import flywheel
