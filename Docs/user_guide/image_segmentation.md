@@ -33,7 +33,7 @@ Each segment stored in multiple `representations`. One representation is designa
 
 Binary labelmap representation is probably the most commonly used representation because this representation is the easiest to edit. Most software that use this representation, store all segments in a single 3D array, therefore each voxel can belong to a single segment: segments cannot overlap. In 3D Slicer, overlapping between segments is allowed. To store overlapping segments in binary labelmaps, segments are organized into `layers`. Each layer is stored internally as a separate 3D volume, and one volume may be shared between many non-overlapping segments to conserve memory.
 
-In a segmentation with binary labelmap representation, each layer is allowed to have different geometry (origin, spacing, axis directions, extents) temporarily - to allow moving segments between segmentations without unnecessary quality loss (each resampling of a binary labelmap can lead to slight changes). All layers are forced to have the same geometry during certain editing operations and when the segmentation is saved to file.
+In a segmentation with its source representation set to binary labelmap, each layer is allowed to have different geometry (origin, spacing, axis directions, extents) temporarily - to allow moving segments between segmentations without unnecessary quality loss (each resampling of a binary labelmap can lead to slight changes). All layers are forced to have the same geometry during certain editing operations and when the segmentation is saved to file.
 
 ## Segmentation modules
 
