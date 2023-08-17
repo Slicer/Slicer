@@ -348,8 +348,21 @@ In our example:
 
 ## Can I use any Python package in a Slicer module
 
-Any Python packages can be installed in Slicer's built-in Python environment. A convenience function `slicer.util.pip_install` can be used as shown in the [example in the Script Repository](script_repository.md#install-a-python-package).
+You can install any Python package within Slicer's built-in Python environment.
 
-Important: Do not install any packages in the global scope (outside of all classes and functions) or in the module class constructor, as it can very significantly slow down the application startup and it may even prevent the module from loading.
+The convenience function {func}`slicer.util.pip_install` can be used to install packages into your Slicer module. To understand its usage, examine the [Install a Python package](/developer_guide/script_repository.md#install-a-python-package) example within the Script Repository.
 
-In addition, since installing packages can have side effects to other extensions or to the main application, always include a confirmation dialog indicating that the installation will happen.
+:::{warning}
+Since installing packages can have side effects on other extensions or the main application, here are some best practices to adhere to:
+
+**DO:**
+* ✅ Always include a confirmation dialog that clearly communicates the installation process, mirroring the approach in the linked example.
+* ✅ Document the dependencies your module relies upon.
+* ✅ Consider specifying version requirements using `>=X.Y` to avoid incompatible versions.
+* ✅ Verify that all Python packages are distributed as Python wheels. This is particularly important for dependencies including compiled code, as installing a wheel eliminates the need for users to install a compiler.
+
+**DON'T:**
+* ❌ Do not install any packages in the global scope (outside of all classes and functions) or in the module class constructor. This can significantly slow down application startup, and it may even prevent the module from loading.
+* ❌ Do not pin to a specific version of the package, as this may generate conflicts with other package versions, leading to unexpected environment modifications. Pinning dependencies should be considered only in the context of custom applications where the deployment environment is tightly controlled.
+:::
+
