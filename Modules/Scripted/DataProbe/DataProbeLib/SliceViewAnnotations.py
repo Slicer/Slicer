@@ -111,6 +111,10 @@ class SliceAnnotations(VTKObservationMixin):
 
         self.maximumTextLength = 35
 
+        # Support forcing display of top right corner annotations if slab reconstruction is enabled
+        # See https://github.com/Slicer/Slicer/issues/7092
+        self.allowForcingTopRightVisibility = True
+
         self.create()
 
         if self.sliceViewAnnotationsEnabled:
@@ -472,6 +476,18 @@ class SliceAnnotations(VTKObservationMixin):
                     self.dicomVolumeNode = 1
                 else:
                     self.dicomVolumeNode = 0
+
+            # Ensure visibility of top-right corner annotations if slab reconstruction is enabled
+            # See https://github.com/Slicer/Slicer/issues/7092
+            if sliceNode.GetSlabReconstructionEnabled() and self.allowForcingTopRightVisibility:
+                self.topRight = 1
+                self.topRightCheckBox.checked = True
+
+                # Disable automatic enforcement to allow user-controlled visibility toggling.
+                self.allowForcingTopRightVisibility = False
+
+                # Omit saving the value in the settings because the top-right corner annotations
+                # visibility was not expliitly toggled by the user.
 
             # Slab reconstruction is applied to both foreground and background
             if self.topRight and sliceNode.GetSlabReconstructionEnabled():
