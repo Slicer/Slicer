@@ -14,6 +14,16 @@ class SliceAnnotations(VTKObservationMixin):
     """Implement the Qt window showing settings for Slice View Annotations
     """
 
+    DEFAULTS = {
+        'enabled': 1,
+        'topLeft': 0,
+        'topRight': 0,
+        'bottomLeft': 1,
+        'fontFamily': 'Times',
+        'fontSize': 14,
+        'bgDICOMAnnotationsPersistence': 0,
+    }
+
     def __init__(self, layoutManager=None):
         VTKObservationMixin.__init__(self)
 
@@ -82,15 +92,19 @@ class SliceAnnotations(VTKObservationMixin):
         self.sliceViews = {}
 
         # If there are no user settings load defaults
-        self.sliceViewAnnotationsEnabled = settingsValue('DataProbe/sliceViewAnnotations.enabled', 1, converter=int)
+        def _defaultValue(key, **kwargs):
+            settingsKey = f"DataProbe/sliceViewAnnotations.{key}"
+            return settingsValue(settingsKey, SliceAnnotations.DEFAULTS[key], **kwargs)
 
-        self.bottomLeft = settingsValue('DataProbe/sliceViewAnnotations.bottomLeft', 1, converter=int)
-        self.topLeft = settingsValue('DataProbe/sliceViewAnnotations.topLeft', 0, converter=int)
-        self.topRight = settingsValue('DataProbe/sliceViewAnnotations.topRight', 0, converter=int)
-        self.fontFamily = settingsValue('DataProbe/sliceViewAnnotations.fontFamily', 'Times')
-        self.fontSize = settingsValue('DataProbe/sliceViewAnnotations.fontSize', 14, converter=int)
-        self.backgroundDICOMAnnotationsPersistence = settingsValue(
-            'DataProbe/sliceViewAnnotations.bgDICOMAnnotationsPersistence', 0, converter=int)
+        self.sliceViewAnnotationsEnabled = _defaultValue('enabled', converter=int)
+
+        self.topLeft = _defaultValue('topLeft', converter=int)
+        self.topRight = _defaultValue('topRight', converter=int)
+        self.bottomLeft = _defaultValue('bottomLeft', converter=int)
+        self.fontFamily = _defaultValue('fontFamily')
+        self.fontSize = _defaultValue('fontSize', converter=int)
+        self.backgroundDICOMAnnotationsPersistence = _defaultValue('bgDICOMAnnotationsPersistence', converter=int)
+
         self.sliceViewAnnotationsEnabledparameter = 'sliceViewAnnotationsEnabled'
         self.parameterNode = self.dataProbeUtil.getParameterNode()
         self.addObserver(self.parameterNode, vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
@@ -228,17 +242,25 @@ class SliceAnnotations(VTKObservationMixin):
         self.updateSliceViewFromGUI()
 
     def restoreDefaultValues(self):
-        self.topLeftCheckBox.checked = True
-        self.topLeft = 1
-        self.topRightCheckBox.checked = True
-        self.topRight = 1
-        self.bottomLeftCheckBox.checked = True
-        self.bottomLeft = 1
-        self.fontSizeSpinBox.value = 14
-        self.timesFontRadioButton.checked = True
-        self.fontFamily = 'Times'
-        self.backgroundDICOMAnnotationsPersistence = 0
-        self.backgroundPersistenceCheckBox.checked = False
+
+        def _defaultValue(key):
+            return SliceAnnotations.DEFAULTS[key]
+
+        self.topLeftCheckBox.checked = _defaultValue("topLeft")
+        self.topLeft = _defaultValue("topLeft")
+
+        self.topRightCheckBox.checked = _defaultValue("topRight")
+        self.topRight = _defaultValue("topRight")
+
+        self.bottomLeftCheckBox.checked = _defaultValue("bottomLeft")
+        self.bottomLeft = _defaultValue("bottomLeft")
+
+        self.fontSizeSpinBox.value = _defaultValue("fontSize")
+        self.timesFontRadioButton.checked = _defaultValue("fontFamily") == "Times"
+        self.fontFamily = _defaultValue("fontFamily")
+
+        self.backgroundDICOMAnnotationsPersistence = _defaultValue("bgDICOMAnnotationsPersistence")
+        self.backgroundPersistenceCheckBox.checked = _defaultValue("bgDICOMAnnotationsPersistence")
 
         settings = qt.QSettings()
         settings.setValue('DataProbe/sliceViewAnnotations.enabled', self.sliceViewAnnotationsEnabled)
