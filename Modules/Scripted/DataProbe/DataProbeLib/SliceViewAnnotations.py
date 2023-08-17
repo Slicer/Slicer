@@ -193,10 +193,7 @@ class SliceAnnotations(VTKObservationMixin):
             self.layoutManager.connect("destroyed()", self.onLayoutManagerDestroyed)
 
     def onSliceViewAnnotationsCheckBox(self):
-        if self.sliceViewAnnotationsCheckBox.checked:
-            self.sliceViewAnnotationsEnabled = 1
-        else:
-            self.sliceViewAnnotationsEnabled = 0
+        self.sliceViewAnnotationsEnabled = int(self.sliceViewAnnotationsCheckBox.checked)
 
         settings = qt.QSettings()
         settings.setValue('DataProbe/sliceViewAnnotations.enabled', self.sliceViewAnnotationsEnabled)
@@ -219,10 +216,7 @@ class SliceAnnotations(VTKObservationMixin):
         self.updateSliceViewFromGUI()
 
     def onBackgroundLayerPersistenceCheckBox(self):
-        if self.backgroundPersistenceCheckBox.checked:
-            self.backgroundDICOMAnnotationsPersistence = 1
-        else:
-            self.backgroundDICOMAnnotationsPersistence = 0
+        self.backgroundDICOMAnnotationsPersistence = int(self.backgroundPersistenceCheckBox.checked)
         settings = qt.QSettings()
         settings.setValue('DataProbe/sliceViewAnnotations.bgDICOMAnnotationsPersistence',
                           self.backgroundDICOMAnnotationsPersistence)
@@ -265,6 +259,10 @@ class SliceAnnotations(VTKObservationMixin):
 
         def _defaultValue(key):
             return SliceAnnotations.DEFAULTS[key]
+
+        self.sliceViewAnnotationsCheckBox.checked = _defaultValue("enabled")
+        self.sliceViewAnnotationsEnabled = _defaultValue("enabled")
+        self.updateEnabledButtons()
 
         radioButtons = [self.level1RadioButton, self.level2RadioButton, self.level3RadioButton]
         radioButtons[_defaultValue("displayLevel")].checked = True
@@ -312,7 +310,6 @@ class SliceAnnotations(VTKObservationMixin):
         self.activateCornersGroupBox.enabled = enabled
         self.fontPropertiesGroupBox.enabled = enabled
         self.annotationsAmountGroupBox.enabled = enabled
-        self.restoreDefaultsButton.enabled = enabled
 
     def updateSliceViewFromGUI(self):
         if not self.sliceViewAnnotationsEnabled:
