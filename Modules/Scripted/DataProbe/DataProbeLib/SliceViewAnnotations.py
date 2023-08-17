@@ -16,6 +16,7 @@ class SliceAnnotations(VTKObservationMixin):
 
     DEFAULTS = {
         'enabled': 1,
+        'displayLevel': 0,
         'topLeft': 0,
         'topRight': 0,
         'bottomLeft': 1,
@@ -85,8 +86,6 @@ class SliceAnnotations(VTKObservationMixin):
             '9-SlabReconstructionType': {'text': '', 'category': 'A'}
         })
 
-        self.annotationsDisplayAmount = 0
-
         #
         self.scene = slicer.mrmlScene
         self.sliceViews = {}
@@ -98,6 +97,7 @@ class SliceAnnotations(VTKObservationMixin):
 
         self.sliceViewAnnotationsEnabled = _defaultValue('enabled', converter=int)
 
+        self.annotationsDisplayAmount = _defaultValue('displayLevel', converter=int)
         self.topLeft = _defaultValue('topLeft', converter=int)
         self.topRight = _defaultValue('topRight', converter=int)
         self.bottomLeft = _defaultValue('bottomLeft', converter=int)
@@ -146,6 +146,8 @@ class SliceAnnotations(VTKObservationMixin):
         self.level1RadioButton = find(window, 'level1RadioButton')[0]
         self.level2RadioButton = find(window, 'level2RadioButton')[0]
         self.level3RadioButton = find(window, 'level3RadioButton')[0]
+        radioButtons = [self.level1RadioButton, self.level2RadioButton, self.level3RadioButton]
+        radioButtons[self.annotationsDisplayAmount].checked = True
 
         self.fontPropertiesGroupBox = find(window, 'fontPropertiesGroupBox')[0]
         self.timesFontRadioButton = find(window, 'timesFontRadioButton')[0]
@@ -177,9 +179,9 @@ class SliceAnnotations(VTKObservationMixin):
         self.arialFontRadioButton.connect('clicked()', self.onFontFamilyRadioButton)
         self.fontSizeSpinBox.connect('valueChanged(int)', self.onFontSizeSpinBox)
 
-        self.level1RadioButton.connect('clicked()', self.updateSliceViewFromGUI)
-        self.level2RadioButton.connect('clicked()', self.updateSliceViewFromGUI)
-        self.level3RadioButton.connect('clicked()', self.updateSliceViewFromGUI)
+        self.level1RadioButton.connect('clicked()', self.onDisplayDisplayLevelRadioButton)
+        self.level2RadioButton.connect('clicked()', self.onDisplayDisplayLevelRadioButton)
+        self.level3RadioButton.connect('clicked()', self.onDisplayDisplayLevelRadioButton)
 
         self.backgroundPersistenceCheckBox.connect('clicked()', self.onBackgroundLayerPersistenceCheckBox)
 
@@ -200,6 +202,20 @@ class SliceAnnotations(VTKObservationMixin):
         settings.setValue('DataProbe/sliceViewAnnotations.enabled', self.sliceViewAnnotationsEnabled)
 
         self.updateEnabledButtons()
+        self.updateSliceViewFromGUI()
+
+    def onDisplayDisplayLevelRadioButton(self):
+        if self.level1RadioButton.checked:
+            self.annotationsDisplayAmount = 0
+        elif self.level2RadioButton.checked:
+            self.annotationsDisplayAmount = 1
+        elif self.level3RadioButton.checked:
+            self.annotationsDisplayAmount = 2
+
+        settings = qt.QSettings()
+        settings.setValue('DataProbe/sliceViewAnnotations.displayLevel',
+                          self.annotationsDisplayAmount)
+
         self.updateSliceViewFromGUI()
 
     def onBackgroundLayerPersistenceCheckBox(self):
@@ -249,6 +265,10 @@ class SliceAnnotations(VTKObservationMixin):
 
         def _defaultValue(key):
             return SliceAnnotations.DEFAULTS[key]
+
+        radioButtons = [self.level1RadioButton, self.level2RadioButton, self.level3RadioButton]
+        radioButtons[_defaultValue("displayLevel")].checked = True
+        self.annotationsDisplayAmount = _defaultValue("displayLevel")
 
         self.topLeftCheckBox.checked = _defaultValue("topLeft")
         self.topLeft = _defaultValue("topLeft")
@@ -303,14 +323,6 @@ class SliceAnnotations(VTKObservationMixin):
         # Create corner annotations if have not created already
         if len(self.sliceViewNames) == 0:
             self.createCornerAnnotations()
-
-        # Updating Annotations Amount
-        if self.level1RadioButton.checked:
-            self.annotationsDisplayAmount = 0
-        elif self.level2RadioButton.checked:
-            self.annotationsDisplayAmount = 1
-        elif self.level3RadioButton.checked:
-            self.annotationsDisplayAmount = 2
 
         for sliceViewName in self.sliceViewNames:
             sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
