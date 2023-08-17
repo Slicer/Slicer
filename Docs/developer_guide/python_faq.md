@@ -303,7 +303,7 @@ If `Developer mode` is enabled in the application settings then the `Reload and 
 :::{tip}
 On Windows, VS Code text editor is installed by default at:
 
-```txt
+```
 C:/Users/YourUserName/AppData/Local/Programs/Microsoft VS Code/Code.exe
 ```
 :::
