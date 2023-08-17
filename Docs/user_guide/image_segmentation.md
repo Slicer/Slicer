@@ -9,9 +9,13 @@ It is a very common procedure in medical image computing, as it is required for 
 
 Segmentation may be performed manually, for example by iterating through all the slices of an image and drawing a contour at the boundary; but often semi-automatic or fully automatic methods are used. [Segment Editor](modules/segmenteditor.md) module offers a wide range of segmentation methods.
 
+### Segmentation and segment
+
 Result of a segmentation is stored in `segmentation` node in 3D Slicer. A segmentation node consists of multiple segments.
 
 A `segment` specifies region for a single structure. Each segment has a number of properties, such as name, preferred display color, content description (capable of storing standard DICOM coded entries), and custom properties. Segments may overlap each other in space.
+
+### Representations
 
 A region can be represented in different ways, for example as a binary labelmap (value of each voxel specifies if that voxel is inside or outside the region) or a closed surface (surface mesh defines the boundary of the region). There is no one single representation that works well for everything: each representation has its own advantages and disadvantages and used accordingly.
 
@@ -25,11 +29,15 @@ Each segment stored in multiple `representations`. One representation is designa
 
 ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/image_segmentation_representations.png)
 
+### Binary labelmap representation
+
 Binary labelmap representation is probably the most commonly used representation because this representation is the easiest to edit. Most software that use this representation, store all segments in a single 3D array, therefore each voxel can belong to a single segment: segments cannot overlap. In 3D Slicer, overlapping between segments is allowed. To store overlapping segments in binary labelmaps, segments are organized into `layers`. Each layer is stored internally as a separate 3D volume, and one volume may be shared between many non-overlapping segments to conserve memory.
 
-There are many modules in 3D Slicer for manipulating segmentations. Overview of the most important is provided below.
+In a segmentation with its source representation set to binary labelmap, each layer is allowed to have different geometry (origin, spacing, axis directions, extents) temporarily - to allow moving segments between segmentations without unnecessary quality loss (each resampling of a binary labelmap can lead to slight changes). All layers are forced to have the same geometry during certain editing operations and when the segmentation is saved to file.
 
 ## Segmentation modules
+
+There are many modules in 3D Slicer for manipulating segmentations. Overview of the most important is provided below.
 
 Segmentation modules in Slicer core:
 - [Segmentations](modules/segmentations.md): Adjust display options, manage segment representations and layers, copy/move segments between segmentations, convert between segmentation and models and labelmap volumes, export to files.
