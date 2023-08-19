@@ -356,7 +356,7 @@ set(_commit_count_offsets
   )
 list(JOIN _commit_count_offsets "+" _commit_count_offsets_expr)
 math(EXPR _commit_count_offset "${_commit_count_offsets_expr}")
-set(Slicer_WC_COMMIT_COUNT_OFFSET "${_commit_count_offset}" CACHE STRING
+set(Slicer_WC_COMMIT_COUNT_OFFSET "${_commit_count_offset}" CACHE INTERNAL
   "This value is added to commit count to compute Slicer_COMMIT_COUNT (that may be used to set Slicer_REVISION).")
 mark_as_advanced(Slicer_WC_COMMIT_COUNT_OFFSET)
 mark_as_superbuild(Slicer_WC_COMMIT_COUNT_OFFSET)
