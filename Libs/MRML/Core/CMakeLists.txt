@@ -139,6 +139,8 @@ set(MRMLCore_SRCS
   vtkCodedEntry.cxx
   vtkEventBroker.cxx
   vtkDataFileFormatHelper.cxx
+  vtkMRMLI18N.cxx
+  vtkMRMLI18N.h
   vtkMRMLMeasurement.cxx
   vtkMRMLStaticMeasurement.cxx
   vtkMRMLLogic.cxx
@@ -221,6 +223,7 @@ set(MRMLCore_SRCS
   vtkMRMLTransformStorageNode.cxx
   vtkMRMLTransformDisplayNode.cxx
   vtkMRMLTransformableNode.cxx
+  vtkMRMLTranslator.h
   vtkMRMLUnitNode.cxx
   vtkMRMLVectorVolumeDisplayNode.cxx
   vtkMRMLViewNode.cxx
