@@ -85,6 +85,7 @@
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerUtils.h"
+#include "qMRMLTranslator.h"
 
 // SlicerLogic includes
 #include "vtkDataIOManagerLogic.h"
@@ -351,6 +352,12 @@ void qSlicerCoreApplicationPrivate::init()
     modifiedRequestCallback->SetClientData(this->AppLogic);
     modifiedRequestCallback->SetCallback(vtkSlicerApplicationLogic::RequestModifiedCallback);
     vtkEventBroker::GetInstance()->SetRequestModifiedCallback(modifiedRequestCallback);
+  }
+
+  // Create the translation object used for string translation in logic classes
+  if (!this->AppLogic->GetTranslatorInstance())
+  {
+    this->AppLogic->SetTranslatorInstance(new qMRMLTranslator());
   }
 
   // Ensure that temporary folder is writable

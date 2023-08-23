@@ -1254,3 +1254,32 @@ std::string vtkMRMLApplicationLogic::GetFontsDirectory()
   std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
   return fullPath;
 }
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLApplicationLogic::Translate(const char *context, const char *sourceText, const char *disambiguation, int n)
+{
+  if (vtkMRMLApplicationLogic::TranslatorInstance)
+  {
+    return vtkMRMLApplicationLogic::TranslatorInstance->Translate(context, sourceText, disambiguation, n);
+  }
+  else
+  {
+    return sourceText;
+  }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLTranslator* vtkMRMLApplicationLogic::GetTranslatorInstance()
+{
+  return vtkMRMLApplicationLogic::TranslatorInstance;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetTranslatorInstance(vtkMRMLTranslator* translatorInstance)
+{
+  if (vtkMRMLApplicationLogic::TranslatorInstance == translatorInstance)
+  {
+    return;
+  }
+  vtkMRMLApplicationLogic::TranslatorInstance = translatorInstance;
+}

@@ -27,6 +27,8 @@
 #include "vtkMRMLLogicExport.h"
 #include "vtkMRMLSliceCompositeNode.h"
 
+#include "vtkMRMLTranslator.h"
+
 class vtkMRMLColorLogic;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLSliceNode;
@@ -289,6 +291,15 @@ public:
   /// Font file path is set to the one specified in FontFileName property in this object.
   void UseCustomFontFile(vtkTextProperty* textProperty);
 
+  /// Translation function for logic classes
+  std::string Translate(const char *context, const char *sourceText, const char *disambiguation = nullptr, int n = -1);
+
+  /// @{
+  /// Set the object used for string translation in logic classes
+  static void SetTranslatorInstance(vtkMRMLTranslator* translatorInstance);
+  static vtkMRMLTranslator* GetTranslatorInstance();
+  /// @}
+
 protected:
 
   vtkMRMLApplicationLogic();
@@ -315,6 +326,8 @@ private:
 
   class vtkInternal;
   vtkInternal* Internal;
+
+  static vtkMRMLTranslator* TranslatorInstance;
 
 };
 
