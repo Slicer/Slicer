@@ -348,7 +348,7 @@ void vtkMRMLSequenceBrowserNode::Copy(vtkMRMLNode *anode)
     return;
     }
 
-  int wasModified = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   Superclass::Copy(anode);
 
   // Note: node references are copied by the superclass
@@ -369,8 +369,6 @@ void vtkMRMLSequenceBrowserNode::Copy(vtkMRMLNode *anode)
   this->SetRecordingActive(node->GetRecordingActive());
 
   this->SetSelectedItemNumber(node->GetSelectedItemNumber());
-
-  this->EndModify(wasModified);
 }
 
 //----------------------------------------------------------------------------
@@ -483,16 +481,15 @@ std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const 
   std::string masterPostfix = this->GetSynchronizationPostfixFromSequenceID(sequenceNodeID);
   if (masterPostfix.empty() || this->GetMasterSequenceNode() == nullptr)
     {
-    bool oldModify = this->StartModify();
+    MRMLNodeModifyBlocker blocker(this);
     // Master is not among the browsed nodes, or it is an empty browser node.
     this->RemoveAllSequenceNodes();
     // Master is the first element in the postfixes vector.
     std::string rolePostfix = this->AddSynchronizedSequenceNodeID(sequenceNodeID);
     this->SetSelectedItemNumber(0);
-    this->EndModify(oldModify);
     return rolePostfix;
     }
-  bool oldModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   // Get the currently selected index value (so that we can restore the closest value with the new master)
   std::string lastSelectedIndexValue = this->GetMasterSequenceNode()->GetNthIndexValue(this->GetSelectedItemNumber());
   // Move the new master's postfix to the front of the list
@@ -513,7 +510,6 @@ std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const 
     // We don't know what items are in this new master node
     this->SetSelectedItemNumber(0);
     }
-  this->EndModify(oldModify);
   return rolePostfix;
 }
 
@@ -532,19 +528,18 @@ vtkMRMLSequenceNode* vtkMRMLSequenceBrowserNode::GetMasterSequenceNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::RemoveAllProxyNodes()
 {
-  bool oldModify=this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   for (std::vector< std::string >::iterator rolePostfixIt=this->SynchronizationPostfixes.begin();
     rolePostfixIt!=this->SynchronizationPostfixes.end(); ++rolePostfixIt)
     {
     this->RemoveProxyNode(*rolePostfixIt);
     }
-  this->EndModify(oldModify);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::RemoveAllSequenceNodes()
 {
-  bool oldModify=this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   // need to make a copy as this->VirtualNodePostfixes changes as we remove nodes
   std::vector< std::string > synchronizationPostfixes=this->SynchronizationPostfixes;
   // start from the end to delete the master sequence node last
@@ -567,7 +562,6 @@ void vtkMRMLSequenceBrowserNode::RemoveAllSequenceNodes()
     this->RemoveSynchronizedSequenceNode(node->GetID());
     }
   this->SetSelectedItemNumber(-1);
-  this->EndModify(oldModify);
 }
 
 //----------------------------------------------------------------------------
@@ -647,7 +641,7 @@ vtkMRMLNode* vtkMRMLSequenceBrowserNode::AddProxyNode(vtkMRMLNode* sourceProxyNo
     return nullptr;
     }
 
-  bool oldModify=this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
 
   std::string rolePostfix=this->GetSynchronizationPostfixFromSequence(sequenceNode);
   if (rolePostfix.empty())
@@ -691,7 +685,6 @@ vtkMRMLNode* vtkMRMLSequenceBrowserNode::AddProxyNode(vtkMRMLNode* sourceProxyNo
     this->SetAndObserveNodeReferenceID(proxyNodeRef.c_str(), proxyNode->GetID(), proxyNode->GetContentModifiedEvents());
     }
 
-  this->EndModify(oldModify);
   return proxyNode;
 }
 
@@ -754,7 +747,7 @@ bool vtkMRMLSequenceBrowserNode::IsProxyNodeID(const char* nodeId)
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::RemoveProxyNode(const std::string& postfix)
 {
-  bool oldModify=this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   std::string proxyNodeRef=PROXY_NODE_REFERENCE_ROLE_BASE+postfix;
   vtkMRMLNode* proxyNode=this->GetNodeReference(proxyNodeRef.c_str());
   if (proxyNode!=nullptr)
@@ -765,7 +758,6 @@ void vtkMRMLSequenceBrowserNode::RemoveProxyNode(const std::string& postfix)
       }
     this->RemoveNodeReferenceIDs(proxyNodeRef.c_str());
     }
-  this->EndModify(oldModify);
 }
 
 //----------------------------------------------------------------------------
@@ -835,7 +827,7 @@ std::string vtkMRMLSequenceBrowserNode::AddSynchronizedSequenceNode(const char* 
 //----------------------------------------------------------------------------
 std::string vtkMRMLSequenceBrowserNode::AddSynchronizedSequenceNodeID(const char* synchronizedSequenceNodeId)
 {
-  bool oldModify = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   std::string rolePostfix = this->GetSynchronizationPostfixFromSequenceID(synchronizedSequenceNodeId);
   if (!rolePostfix.empty())
     {
@@ -852,7 +844,6 @@ std::string vtkMRMLSequenceBrowserNode::AddSynchronizedSequenceNodeID(const char
   std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + rolePostfix;
   this->SetAndObserveNodeReferenceID(sequenceNodeReferenceRole.c_str(), synchronizedSequenceNodeId);
   this->SynchronizationPropertiesMap[ rolePostfix ] = new SynchronizationProperties();
-  this->EndModify(oldModify);
   return rolePostfix;
 }
 
@@ -886,11 +877,10 @@ void vtkMRMLSequenceBrowserNode::RemoveSynchronizedSequenceNode(const char* node
       this->SetRecordingActive(false);
       // the iterator will become invalid, so make a copy of its content
       std::string rolePostfix=(*rolePostfixIt);
-      bool oldModify=this->StartModify();
+      MRMLNodeModifyBlocker blocker(this);
       this->SynchronizationPostfixes.erase(rolePostfixIt);
       this->RemoveNodeReferenceIDs(sequenceNodeRef.c_str());
       this->RemoveProxyNode(rolePostfix);
-      this->EndModify(oldModify);
       return;
       }
     }
@@ -1001,7 +991,7 @@ int vtkMRMLSequenceBrowserNode::SelectNextItem(int selectionIncrement/*=1*/)
     return -1;
     }
   int selectedItemNumber=this->GetSelectedItemNumber();
-  int browserNodeModify=this->StartModify(); // invoke modification event once all the modifications has been completed
+  MRMLNodeModifyBlocker blocker(this); // invoke modification event once all the modifications has been completed
   if (selectedItemNumber<0)
     {
     selectedItemNumber=0;
@@ -1037,7 +1027,6 @@ int vtkMRMLSequenceBrowserNode::SelectNextItem(int selectionIncrement/*=1*/)
       }
     }
   this->SetSelectedItemNumber(selectedItemNumber);
-  this->EndModify(browserNodeModify);
   return selectedItemNumber;
 }
 
@@ -1106,7 +1095,7 @@ void vtkMRMLSequenceBrowserNode::SaveProxyNodesState()
     }
 
   // Record into each sequence
-  int wasModified = this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   std::vector< vtkMRMLSequenceNode* > sequenceNodes;
   this->GetSynchronizedSequenceNodes(sequenceNodes, true);
   bool snapshotAdded = false;
@@ -1124,7 +1113,6 @@ void vtkMRMLSequenceBrowserNode::SaveProxyNodesState()
     this->Modified();
     this->SelectLastItem();
     }
-  this->EndModify(wasModified);
 }
 
 //---------------------------------------------------------------------------
@@ -1163,7 +1151,7 @@ void vtkMRMLSequenceBrowserNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* no
 //---------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::FixSequenceNodeReferenceRoleName()
 {
-  bool oldModify=this->StartModify();
+  MRMLNodeModifyBlocker blocker(this);
   for (std::vector< std::string >::iterator rolePostfixIt=this->SynchronizationPostfixes.begin();
     rolePostfixIt!=this->SynchronizationPostfixes.end(); ++rolePostfixIt)
     {
@@ -1178,7 +1166,6 @@ void vtkMRMLSequenceBrowserNode::FixSequenceNodeReferenceRoleName()
       this->SetNodeReferenceID(obsoleteSequenceNodeReferenceRole.c_str(), nullptr);
       }
     }
-  this->EndModify(oldModify);
 }
 
 //---------------------------------------------------------------------------
