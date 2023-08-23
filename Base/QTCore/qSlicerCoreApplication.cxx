@@ -103,7 +103,9 @@
 #ifdef Slicer_BUILD_CLI_SUPPORT
 # include <vtkMRMLCommandLineModuleNode.h>
 #endif
+#include <vtkMRMLI18N.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLTranslator.h>
 
 // CTK includes
 #include <ctkUtils.h>
@@ -152,6 +154,30 @@
 #undef HAVE_INT64_T
 #include <ctkDICOMDatabase.h>
 #endif
+
+//-----------------------------------------------------------------------------
+// Adapter class for translation in MRML classes using Qt translation infrastructure
+
+class vtkQtTranslator: public vtkMRMLTranslator
+{
+public:
+  static vtkQtTranslator* New();
+  vtkTypeMacro(vtkQtTranslator, vtkMRMLTranslator);
+
+  /// Translation function for logic classes
+  std::string Translate(const char *context, const char *sourceText, const char *disambiguation = nullptr, int n = -1) override
+    {
+    return QCoreApplication::translate(context, sourceText, disambiguation, n).toStdString();
+    }
+
+protected:
+  vtkQtTranslator() = default;
+  ~vtkQtTranslator() override = default;
+  vtkQtTranslator(const vtkQtTranslator&) = delete;
+  void operator=(const vtkQtTranslator&) = delete;
+};
+
+vtkStandardNewMacro(vtkQtTranslator);
 
 //-----------------------------------------------------------------------------
 // Helper function
@@ -352,6 +378,10 @@ void qSlicerCoreApplicationPrivate::init()
     modifiedRequestCallback->SetCallback(vtkSlicerApplicationLogic::RequestModifiedCallback);
     vtkEventBroker::GetInstance()->SetRequestModifiedCallback(modifiedRequestCallback);
   }
+
+  // Set up translation in MRML classes using Qt translator
+  vtkNew<vtkQtTranslator> mrmlTranslator;
+  vtkMRMLI18N::GetInstance()->SetTranslator(mrmlTranslator);
 
   // Ensure that temporary folder is writable
   {

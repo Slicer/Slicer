@@ -31,6 +31,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLGridTransformNodeTest1.cxx
   vtkMRMLHierarchyNodeTest1.cxx
   vtkMRMLHierarchyNodeTest3.cxx
+  vtkMRMLI18NTest1.cxx
   vtkMRMLInteractionNodeTest1.cxx
   vtkMRMLLabelMapVolumeDisplayNodeTest1.cxx
   vtkMRMLLayoutNodeTest1.cxx
