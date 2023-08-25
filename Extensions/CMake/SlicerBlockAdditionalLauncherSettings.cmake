@@ -91,7 +91,9 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
 
   # External projects - library paths
   foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_LIBRARY_PATHS_LAUNCHER_BUILD)
-    list(APPEND EXTENSION_LIBRARY_PATHS_BUILD ${${varname}})
+    set(value ${${varname}})
+    string(REPLACE "<CMAKE_CFG_INTDIR>" "\${CMAKE_CFG_INTDIR}" value ${value})
+    list(APPEND EXTENSION_LIBRARY_PATHS_BUILD ${value})
   endforeach()
 
   # Extension dependencies - library paths
@@ -117,7 +119,9 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
 
   # External projects - paths
   foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_PATHS_LAUNCHER_BUILD)
-    list(APPEND EXTENSION_PATHS_BUILD ${${varname}})
+    set(value ${${varname}})
+    string(REPLACE "<CMAKE_CFG_INTDIR>" "\${CMAKE_CFG_INTDIR}" value ${value})
+    list(APPEND EXTENSION_PATHS_BUILD ${value})
   endforeach()
 
   # Extension dependencies - paths
@@ -134,7 +138,9 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
 
   # External projects - environment variables
   foreach(varname IN LISTS ${SUPERBUILD_TOPLEVEL_PROJECT}_EP_LABEL_ENVVARS_LAUNCHER_BUILD)
-    list(APPEND EXTENSION_LAUNCHER_SETTINGS_ENVVARS ${${varname}})
+    set(value ${${varname}})
+    string(REPLACE "<CMAKE_CFG_INTDIR>" "\${CMAKE_CFG_INTDIR}" value ${value})
+    list(APPEND EXTENSION_LAUNCHER_SETTINGS_ENVVARS ${value})
   endforeach()
 
   # Extension dependencies - environment variables
