@@ -486,7 +486,7 @@ void qSlicerSubjectHierarchyPluginHandler::setCurrentItem(vtkIdType itemID)
 }
 
 //-----------------------------------------------------------------------------
-vtkIdType qSlicerSubjectHierarchyPluginHandler::currentItem()
+vtkIdType qSlicerSubjectHierarchyPluginHandler::currentItem()const
 {
   if (this->m_CurrentItems.size() != 1)
     {
@@ -502,13 +502,13 @@ void qSlicerSubjectHierarchyPluginHandler::setCurrentItems(QList<vtkIdType> item
 }
 
 //-----------------------------------------------------------------------------
-QList<vtkIdType> qSlicerSubjectHierarchyPluginHandler::currentItems()
+QList<vtkIdType> qSlicerSubjectHierarchyPluginHandler::currentItems()const
 {
   return this->m_CurrentItems;
 }
 
 //------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginHandler::currentItems(vtkIdList* selectedItems)
+void qSlicerSubjectHierarchyPluginHandler::currentItems(vtkIdList* selectedItems)const
 {
   if (!selectedItems)
     {
@@ -520,6 +520,18 @@ void qSlicerSubjectHierarchyPluginHandler::currentItems(vtkIdList* selectedItems
     {
     selectedItems->InsertNextId(item);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::setCurrentTreeView(qMRMLSubjectHierarchyTreeView* treeView)
+{
+  this->m_CurrentTreeView = treeView;
+}
+
+//-----------------------------------------------------------------------------
+qMRMLSubjectHierarchyTreeView* qSlicerSubjectHierarchyPluginHandler::currentTreeView()const
+{
+  return this->m_CurrentTreeView;
 }
 
 //-----------------------------------------------------------------------------

@@ -31,6 +31,7 @@
 // CTK includes
 #include <ctkVTKObject.h>
 
+class qMRMLSubjectHierarchyTreeView;
 class qSlicerSubjectHierarchyFolderPluginPrivate;
 
 class vtkMRMLDisplayNode;
@@ -149,6 +150,10 @@ public:
   /// node, then create a display node associated to that. Otherwise create display node for folder item
   vtkMRMLDisplayNode* createDisplayNodeForItem(vtkIdType itemID);
 
+  /// Add tree view to the list of view from which empty folders have been created.
+  /// This function is called from the DICOM plugin, which can create patient and study items (which are special folders).
+  void emptyFolderCreatedFromTreeView(qMRMLSubjectHierarchyTreeView* treeView);
+
 protected slots:
   /// Create folder node under the scene
   void createFolderUnderScene();
@@ -158,6 +163,9 @@ protected slots:
 
   /// Toggle apply color to branch
   void onApplyColorToBranchToggled(bool);
+
+  /// Toggle empty folder visibility (\sa showEmptyHierarchyItems) in the sort filter proxy model of the current tree view.
+  void onShowEmptyFoldersToggled(bool);
 
 protected:
   /// Retrieve model display node for given item. If the folder item has an associated model display
@@ -169,6 +177,10 @@ protected:
   bool isApplyColorToBranchEnabledForItem(vtkIdType itemID)const;
   /// Determine if apply color to branch option is enabled to a given item or not
   void setApplyColorToBranchEnabledForItem(vtkIdType itemID, bool enabled);
+
+  /// Update show empty folders context menu item visibility and checked state.
+  /// The update needs to happen in more than one place, which is handled by this method.
+  void updateShowEmptyFoldersAction();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyFolderPluginPrivate> d_ptr;

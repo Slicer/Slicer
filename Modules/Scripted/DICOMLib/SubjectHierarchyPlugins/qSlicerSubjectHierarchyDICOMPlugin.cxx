@@ -23,10 +23,13 @@
 // SubjectHierarchy MRML includes
 #include "vtkMRMLSubjectHierarchyNode.h"
 
-// SubjectHierarchy Plugins includes
+// SubjectHierarchy Widgets includes
+#include "qMRMLSortFilterSubjectHierarchyProxyModel.h"
+#include "qMRMLSubjectHierarchyTreeView.h"
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyDICOMPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
+#include "qSlicerSubjectHierarchyFolderPlugin.h"
 
 // DICOMLib includes
 #include "qSlicerDICOMExportDialog.h"
@@ -63,6 +66,7 @@ public:
   qSlicerSubjectHierarchyDICOMPluginPrivate(qSlicerSubjectHierarchyDICOMPlugin& object);
   ~qSlicerSubjectHierarchyDICOMPluginPrivate() override;
   void init();
+  void onHierarchyItemCreated();
 public:
   QIcon PatientIcon;
   QIcon StudyIcon;
@@ -130,6 +134,21 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDICOMPluginPrivate::~qSlicerSubjectHierarchyDICOMPluginPrivate() = default;
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDICOMPluginPrivate::onHierarchyItemCreated()
+{
+  // Make sure empty folders are shown in the tree view it was created in
+  qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
+  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder"));
+  if (currentTreeView && folderPlugin)
+    {
+    qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = currentTreeView->sortFilterProxyModel();
+    sortFilterProxyModel->setShowEmptyHierarchyItems(true);
+    folderPlugin->emptyFolderCreatedFromTreeView(currentTreeView);
+    }
+}
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyDICOMPlugin methods
@@ -363,6 +382,8 @@ void qSlicerSubjectHierarchyDICOMPlugin::editProperties(vtkIdType itemID)
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDICOMPlugin::createSubjectItem()
 {
+  Q_D(qSlicerSubjectHierarchyDICOMPlugin);
+
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
@@ -378,11 +399,16 @@ void qSlicerSubjectHierarchyDICOMPlugin::createSubjectItem()
   vtkIdType patientItemID = shNode->CreateSubjectItem(shNode->GetSceneItemID(), name);
 
   emit requestExpandItem(patientItemID);
+
+  // Make sure empty folders are shown in the tree view it was created in
+  d->onHierarchyItemCreated();
 }
 
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDICOMPlugin::createChildStudyUnderCurrentItem()
 {
+  Q_D(qSlicerSubjectHierarchyDICOMPlugin);
+
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
     {
@@ -403,6 +429,9 @@ void qSlicerSubjectHierarchyDICOMPlugin::createChildStudyUnderCurrentItem()
   vtkIdType studyItemID = shNode->CreateStudyItem(currentItemID, name);
 
   emit requestExpandItem(studyItemID);
+
+  // Make sure empty folders are shown in the tree view it was created in
+  d->onHierarchyItemCreated();
 }
 
 //---------------------------------------------------------------------------
