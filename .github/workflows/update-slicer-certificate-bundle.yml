@@ -6,6 +6,9 @@ on:
     - cron: "30 11 * * 2"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   update-slicer-certificate-bundle:
     name: Update Slicer.crt certificate bundle
