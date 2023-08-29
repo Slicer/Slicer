@@ -24,7 +24,9 @@
 #include "vtkMRMLSubjectHierarchyConstants.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 
-// SubjectHierarchy Plugins includes
+// SubjectHierarchy Widgets includes
+#include "qMRMLSortFilterSubjectHierarchyProxyModel.h"
+#include "qMRMLSubjectHierarchyTreeView.h"
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyFolderPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
@@ -63,8 +65,10 @@ public:
   QAction* CreateFolderUnderSceneAction;
   QAction* CreateFolderUnderNodeAction;
   QAction* ApplyColorToBranchAction;
+  QAction* ShowEmptyFoldersAction;
 
   QString AddedByFolderPluginAttributeName;
+  QList<qMRMLSubjectHierarchyTreeView*> TreeViewsToShowEmptyFolderAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -79,6 +83,7 @@ qSlicerSubjectHierarchyFolderPluginPrivate::qSlicerSubjectHierarchyFolderPluginP
   this->CreateFolderUnderSceneAction = nullptr;
   this->CreateFolderUnderNodeAction = nullptr;
   this->ApplyColorToBranchAction = nullptr;
+  this->ShowEmptyFoldersAction = nullptr;
 
   std::string addedByFolderPluginAttributeNameStr =
       vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix()
@@ -108,6 +113,14 @@ void qSlicerSubjectHierarchyFolderPluginPrivate::init()
     qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 7);
   QObject::connect(this->ApplyColorToBranchAction, SIGNAL(toggled(bool)), q, SLOT(onApplyColorToBranchToggled(bool)));
   this->ApplyColorToBranchAction->setCheckable(true);
+
+  this->ShowEmptyFoldersAction = new QAction(qSlicerSubjectHierarchyFolderPlugin::tr("Show empty folders"), q);
+  this->ShowEmptyFoldersAction->setToolTip(
+    qSlicerSubjectHierarchyFolderPlugin::tr("If on, then folders that do not contain nodes (allowed by any filter) are shown, otherwise not"));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ShowEmptyFoldersAction,
+    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 8);
+  QObject::connect(this->ShowEmptyFoldersAction, SIGNAL(toggled(bool)), q, SLOT(onShowEmptyFoldersToggled(bool)));
+  this->ShowEmptyFoldersAction->setCheckable(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -384,7 +397,7 @@ QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::itemContextMenuActions()con
   Q_D(const qSlicerSubjectHierarchyFolderPlugin);
 
   QList<QAction*> actions;
-  actions << d->CreateFolderUnderNodeAction;
+  actions << d->CreateFolderUnderNodeAction << d->ShowEmptyFoldersAction;
   return actions;
 }
 
@@ -394,7 +407,7 @@ QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::sceneContextMenuActions()co
   Q_D(const qSlicerSubjectHierarchyFolderPlugin);
 
   QList<QAction*> actions;
-  actions << d->CreateFolderUnderSceneAction << d->ApplyColorToBranchAction;
+  actions << d->CreateFolderUnderSceneAction << d->ApplyColorToBranchAction << d->ShowEmptyFoldersAction;
   return actions;
 }
 
@@ -414,13 +427,20 @@ void qSlicerSubjectHierarchyFolderPlugin::showContextMenuActionsForItem(vtkIdTyp
   if (itemID == shNode->GetSceneItemID())
     {
     d->CreateFolderUnderSceneAction->setVisible(true);
+
+    // Show the Show empty folder action if the current tree view has created a folder before. Update checked state if visible.
+    this->updateShowEmptyFoldersAction();
+
     return;
     }
 
-  // Folder can be created under any node
   if (itemID)
     {
+    // Folder can be created under any node
     d->CreateFolderUnderNodeAction->setVisible(true);
+
+    // Show the Show empty folder action if the current tree view has created a folder before. Update checked state if visible.
+    this->updateShowEmptyFoldersAction();
     }
 
   // Folder
@@ -432,6 +452,26 @@ void qSlicerSubjectHierarchyFolderPlugin::showContextMenuActionsForItem(vtkIdTyp
     d->ApplyColorToBranchAction->setChecked(applyColorToBranch);
     d->ApplyColorToBranchAction->blockSignals(false);
     d->ApplyColorToBranchAction->setVisible(true);
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyFolderPlugin::updateShowEmptyFoldersAction()
+{
+  Q_D(const qSlicerSubjectHierarchyFolderPlugin);
+
+  qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
+  if (currentTreeView)
+    {
+    qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = currentTreeView->sortFilterProxyModel();
+    d->ShowEmptyFoldersAction->blockSignals(true);
+    d->ShowEmptyFoldersAction->setChecked(sortFilterProxyModel->showEmptyHierarchyItems());
+    d->ShowEmptyFoldersAction->blockSignals(false);
+    d->ShowEmptyFoldersAction->setVisible(d->TreeViewsToShowEmptyFolderAction.contains(currentTreeView));
+    }
+  else
+    {
+    d->ShowEmptyFoldersAction->setVisible(false);
     }
 }
 
@@ -482,6 +522,7 @@ void qSlicerSubjectHierarchyFolderPlugin::editProperties(vtkIdType itemID)
 //---------------------------------------------------------------------------
 vtkIdType qSlicerSubjectHierarchyFolderPlugin::createFolderUnderItem(vtkIdType parentItemID)
 {
+  Q_D(qSlicerSubjectHierarchyFolderPlugin);
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
     {
@@ -501,6 +542,15 @@ vtkIdType qSlicerSubjectHierarchyFolderPlugin::createFolderUnderItem(vtkIdType p
   name = shNode->GenerateUniqueItemName(name);
   vtkIdType childItemID = shNode->CreateFolderItem(parentItemID, name);
   emit requestExpandItem(childItemID);
+
+  // Make sure empty folders are shown in the tree view it was created in
+  qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
+  if (currentTreeView)
+    {
+    qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = currentTreeView->sortFilterProxyModel();
+    sortFilterProxyModel->setShowEmptyHierarchyItems(true);
+    this->emptyFolderCreatedFromTreeView(currentTreeView);
+    }
 
   return childItemID;
 }
@@ -548,6 +598,20 @@ void qSlicerSubjectHierarchyFolderPlugin::onApplyColorToBranchToggled(bool on)
     }
 
   this->setApplyColorToBranchEnabledForItem(currentItemID, on);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyFolderPlugin::onShowEmptyFoldersToggled(bool on)
+{
+  qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
+  if (!currentTreeView)
+    {
+    qCritical() << Q_FUNC_INFO << ": Failed to access current subject hierarchy tree view";
+    return;
+    }
+
+  qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = currentTreeView->sortFilterProxyModel();
+  sortFilterProxyModel->setShowEmptyHierarchyItems(on);
 }
 
 //-----------------------------------------------------------------------------
@@ -662,4 +726,16 @@ void qSlicerSubjectHierarchyFolderPlugin::setApplyColorToBranchEnabledForItem(vt
     }
 
   folderDisplayNode->SetApplyDisplayPropertiesOnBranch(enabled);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyFolderPlugin::emptyFolderCreatedFromTreeView(qMRMLSubjectHierarchyTreeView* treeView)
+{
+  Q_D(qSlicerSubjectHierarchyFolderPlugin);
+
+  if (!d->TreeViewsToShowEmptyFolderAction.contains(treeView))
+    {
+    // Only add the tree view in the list if not already there
+    d->TreeViewsToShowEmptyFolderAction.push_back(treeView);
+    }
 }

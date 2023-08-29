@@ -2633,6 +2633,9 @@ void qMRMLSubjectHierarchyTreeView::onCustomContextMenu(const QPoint& point)
       }
     }
 
+  // Save tree view for the plugins to access if needed
+  qSlicerSubjectHierarchyPluginHandler::instance()->setCurrentTreeView(this);
+
   // Get subject hierarchy item at mouse click position
   vtkIdType itemID = this->sortFilterProxyModel()->subjectHierarchyItemFromIndex(index);
   // Populate context menu for the current item

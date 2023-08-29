@@ -42,6 +42,7 @@
 
 class vtkMRMLScene;
 class vtkCallbackCommand;
+class qMRMLSubjectHierarchyTreeView;
 class qSlicerSubjectHierarchyPluginLogic;
 class qSlicerSubjectHierarchyAbstractPlugin;
 class qSlicerSubjectHierarchyDefaultPlugin;
@@ -106,7 +107,7 @@ public:
   /// IMPORTANT NOTE: This function is solely used for plugin-provided context menus. This is NOT to be used for getting the
   ///                 selected item of individual widgets (tree views, comboboxes).
   /// \return Current item if only one is selected, otherwise INVALID_ITEM_ID
-  Q_INVOKABLE vtkIdType currentItem();
+  Q_INVOKABLE vtkIdType currentItem()const;
 
   /// Set current subject hierarchy items in case of multi-selection
   /// IMPORTANT NOTE: This function will not change the selection in individual widgets (tree views, comboboxes). This is
@@ -116,8 +117,14 @@ public:
   /// Get current subject hierarchy items in case of multi-selection
   /// IMPORTANT NOTE: This function is solely used for plugin-provided context menus. This is NOT to be used for getting the
   ///                 selected items of individual widgets (tree views, comboboxes).
-  Q_INVOKABLE QList<vtkIdType> currentItems();
-  Q_INVOKABLE void currentItems(vtkIdList* selectedItems);
+  Q_INVOKABLE QList<vtkIdType> currentItems()const;
+  Q_INVOKABLE void currentItems(vtkIdList* selectedItems)const;
+
+  /// Set current tree view. The tree view where context menu was requested sets this.
+  /// It allows accessing the tree view the user is using.
+  Q_INVOKABLE void setCurrentTreeView(qMRMLSubjectHierarchyTreeView* treeView);
+  /// Get current tree view.
+  Q_INVOKABLE qMRMLSubjectHierarchyTreeView* currentTreeView()const;
 
   Q_INVOKABLE bool autoDeleteSubjectHierarchyChildren()const;
   Q_INVOKABLE void setAutoDeleteSubjectHierarchyChildren(bool flag);
@@ -216,6 +223,9 @@ protected:
   /// Current subject hierarchy item(s)
   /// (selected items in the tree view e.g. for context menu request)
   QList<vtkIdType> m_CurrentItems;
+
+  /// Most recently right-clicked subject hierarchy tree view
+  qMRMLSubjectHierarchyTreeView* m_CurrentTreeView{nullptr};
 
   /// MRML scene (to get new subject hierarchy node if the stored one is deleted)
   vtkWeakPointer<vtkMRMLScene> m_MRMLScene;

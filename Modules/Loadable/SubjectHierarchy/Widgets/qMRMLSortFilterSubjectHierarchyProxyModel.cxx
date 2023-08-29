@@ -1001,10 +1001,19 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
       }
     }
 
-  // Hide hierarchy item if none of its children are accepted and the corresponding filter is turned on
-  if (!d->ShowEmptyHierarchyItems && (!dataNode || dataNode->IsA("vtkMRMLFolderDisplayNode")))
+  if (!dataNode || dataNode->IsA("vtkMRMLFolderDisplayNode"))
     {
-    onlyAcceptIfAnyChildIsAccepted = true;
+    if (d->ShowEmptyHierarchyItems)
+      {
+      // Reset this flag if item is a hierarchy item and it should be shown even if empty.
+      // (The flag may have been set before if node type filter was set, which did not include the folder display node)
+      onlyAcceptIfAnyChildIsAccepted = false;
+      }
+    else
+      {
+      // Hide hierarchy item if none of its children are accepted and the corresponding filter is turned on
+      onlyAcceptIfAnyChildIsAccepted = true;
+      }
     }
 
   // If the visibility of an item depends on whether any of its children are shown, then evaluate that condition
