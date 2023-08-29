@@ -18,11 +18,14 @@ We prefer all communications to be in English.
 
 You can access the most up-to-date Slicer packages through the official [Slicer download](https://download.slicer.org/) website.
 
+This table summarizes our general policy for updates to our binary distributions.
+
 | Version | Support Status     | Update frequency                          |
 | ------- | ------------------ | ----------------------------------------- |
 | Preview | :white_check_mark: | Continual integration of features & fixes |
 | Stable  | :white_check_mark: | Essential security fixes                  |
 
+In general older releases are not updated.
 
 > [!NOTE]
 > There is no restriction on use, but Slicer is NOT approved for clinical use and the distributed application is intended for research use. Permissions and compliance with applicable rules are the responsibility of the user. For details on the license see [here](https://slicer.readthedocs.io/en/latest/user_guide/about.html#license).
