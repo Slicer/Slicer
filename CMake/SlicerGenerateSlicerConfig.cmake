@@ -33,7 +33,7 @@ set(Slicer_LAUNCH_COMMAND_CONFIG ${Slicer_LAUNCH_COMMAND})
 
 # License and Readme file
 set(Slicer_LICENSE_FILE_CONFIG ${Slicer_SOURCE_DIR}/License.txt)
-set(Slicer_README_FILE_CONFIG ${Slicer_SOURCE_DIR}/README.txt)
+set(Slicer_README_FILE_CONFIG ${Slicer_SOURCE_DIR}/README.md)
 
 # Test templates directory
 set(Slicer_CXX_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_CXX_MODULE_TEST_TEMPLATES_DIR})
