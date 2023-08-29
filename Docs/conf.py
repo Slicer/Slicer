@@ -38,6 +38,7 @@ extensions = [
     'myst_parser',
     'sphinx_markdown_tables',
     'notfound.extension',  # Show a better 404 page when an invalid address is entered
+    'sphinx_rtd_theme',
 ]
 
 suppress_warnings = [
@@ -136,7 +137,7 @@ html_logo = '_static/images/3D-Slicer-Mark.png'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'default'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -213,17 +214,6 @@ texinfo_documents = [
      author, '3DSlicer', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-# -- Read The Docs -----------------------------------------------------
-
-# on_rtd is whether we are on readthedocs.io
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-
-if not on_rtd:  # only import and set the theme if we're building docs locally
-    import sphinx_rtd_theme
-    html_theme = 'sphinx_rtd_theme'
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # -- Convert CLI module descriptions into markdown files ----------------
 
