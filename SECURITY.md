@@ -29,3 +29,16 @@ In general older releases are not updated.
 
 > [!NOTE]
 > There is no restriction on use, but Slicer is NOT approved for clinical use and the distributed application is intended for research use. Permissions and compliance with applicable rules are the responsibility of the user. For details on the license see [here](https://slicer.readthedocs.io/en/latest/user_guide/about.html#license).
+
+## Scope
+
+Reports may pertain to various aspects of the Slicer ecosystem, including:
+
+- Slicer applications, modules and extensions
+- Websites associated with Slicer
+
+> [!NOTE]
+> It's important to acknowledge that our impact on extension developers may be limited, and consequently, we disclaim responsibility for their actions. However, we are committed to forwarding reports to the best of our abilities.
+
+> [!IMPORTANT]
+> While we may not be able to offer legally binding commitments, we will do our best in addressing any reported security concerns.
