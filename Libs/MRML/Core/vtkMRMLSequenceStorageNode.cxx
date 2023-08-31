@@ -17,6 +17,7 @@ limitations under the License.
 
 #include "vtkMRMLSequenceStorageNode.h"
 
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLScene.h"
@@ -204,15 +205,15 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Sequence Bundle (.seq.mrb)");
-  this->SupportedReadFileTypes->InsertNextValue("Medical Reality Bundle (.mrb)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.seq.mrb)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.mrb)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("Sequence Bundle (.seq.mrb)");
-  this->SupportedWriteFileTypes->InsertNextValue("Medical Reality Bundle (.mrb)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.seq.mrb)");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.mrb)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
@@ -220,8 +221,6 @@ const char* vtkMRMLSequenceStorageNode::GetDefaultWriteFileExtension()
 {
   return "seq.mrb";
 }
-
-
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLSequenceStorageNode::GetSequenceBaseName(const std::string& fileNameName, const std::string& itemName)

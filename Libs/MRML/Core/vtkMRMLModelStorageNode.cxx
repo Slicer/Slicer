@@ -15,6 +15,7 @@
 #include "vtkMRMLModelStorageNode.h"
 
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
@@ -742,17 +743,17 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Poly Data (.vtk)");
-  this->SupportedReadFileTypes->InsertNextValue("XML Poly Data (.vtp)");
-  this->SupportedReadFileTypes->InsertNextValue("Unstructured Grid (.vtk)");
-  this->SupportedReadFileTypes->InsertNextValue("XML Unstructured Grid (.vtu)");
-  this->SupportedReadFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
-  this->SupportedReadFileTypes->InsertNextValue("BYU (.byu)");
-  this->SupportedReadFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
-  this->SupportedReadFileTypes->InsertNextValue("STL (.stl)");
-  this->SupportedReadFileTypes->InsertNextValue("PLY (.ply)");
-  this->SupportedReadFileTypes->InsertNextValue("UCD (.ucd)");
-  this->SupportedReadFileTypes->InsertNextValue("Wavefront OBJ (.obj)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK Polygon Mesh") + " (.vtk)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK XML Polygon Mesh") + " (.vtp)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK Unstructured Grid") + " (.vtk)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK XML Unstructured Grid") + " (.vtu)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Movie.BYU Mesh") + " (.g)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Movie.BYU Mesh") + " (.byu)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "MetaIO Mesh") + " (.meta)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Stereolithography Mesh") + " (.stl)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Stanford Polygon Mesh") + " (.ply)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "AVS Unstructured Grid") + " (.ucd)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Wavefront Mesh") + " (.obj)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
@@ -761,20 +762,20 @@ void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
   vtkMRMLModelNode* modelNode = this->GetAssociatedDataNode();
   if (!modelNode || modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
     {
-    this->SupportedWriteFileTypes->InsertNextValue("Poly Data (.vtk)");
-    this->SupportedWriteFileTypes->InsertNextValue("XML Poly Data (.vtp)");
+    this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK Polygon Mesh") + " (.vtk)");  //: file format name
+    this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK XML Polygon Mesh") + " (.vtp)");  //: file format name
     // Look at WriteData(), .g and .meta are not being written even though
     // SupportedFileType() says they are supported
-    //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
-    //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
-    this->SupportedWriteFileTypes->InsertNextValue("STL (.stl)");
-    this->SupportedWriteFileTypes->InsertNextValue("PLY (.ply)");
-    this->SupportedWriteFileTypes->InsertNextValue("Wavefront OBJ (.obj)");
+    //this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Movie.BYU Mesh") + " (.g)");  //: file format name
+    //this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Movie.BYU Mesh") + " (.meta)");  //: file format name
+    this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Stereolithography Mesh") + " (.stl)");  //: file format name
+    this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Stanford Polygon Mesh") + " (.ply)");  //: file format name
+    this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Wavefront Mesh") + " (.obj)");  //: file format name
     }
   if (!modelNode || modelNode->GetMeshType() == vtkMRMLModelNode::UnstructuredGridMeshType)
     {
-    this->SupportedWriteFileTypes->InsertNextValue("Unstructured Grid (.vtk)");
-    this->SupportedWriteFileTypes->InsertNextValue("XML Unstructured Grid (.vtu)");
+    this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK Unstructured Grid") + " (.vtk)");  //: file format name
+    this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK XML Unstructured Grid") + " (.vtu)");  //: file format name
     }
 }
 

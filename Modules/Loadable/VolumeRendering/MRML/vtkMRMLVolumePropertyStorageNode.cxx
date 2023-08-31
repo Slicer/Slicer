@@ -14,6 +14,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkMRMLVolumePropertyNode.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLScene.h"
 
 #include <vtkColorTransferFunction.h>
@@ -215,13 +216,12 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("VolumeProperty (.vp)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.vp)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("VolumeProperty (.vp)");
-  this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
-  this->SupportedWriteFileTypes->InsertNextValue("VolumeProperty (.*)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.vp)");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.txt)");  //: file format name
 }

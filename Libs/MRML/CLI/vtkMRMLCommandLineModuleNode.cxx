@@ -16,6 +16,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLCommandLineModuleNode.h"
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 
 /// SlicerExecutionModel includes
 #include <ModuleDescription.h>
@@ -671,6 +672,25 @@ const char* vtkMRMLCommandLineModuleNode::GetStatusString() const
       break;
     }
   return "Unknown";
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLCommandLineModuleNode::GetDisplayableStatusString() const
+{
+  switch (this->Internal->Status)
+  {
+  case Idle: return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Idle");
+  case Scheduled: return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Scheduled");
+  case Running: return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Running");
+  case Cancelling: return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Cancelling");
+  case Cancelled: return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Cancelled");
+  case Completing: return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Completing");
+  case Completed: return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Completed");
+  case CompletedWithErrors: return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Completed with errors");
+  default:
+    break;
+  }
+  return vtkMRMLTr("vtkMRMLCommandLineModuleNode", "Unknown");
 }
 
 //----------------------------------------------------------------------------

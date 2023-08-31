@@ -25,6 +25,7 @@
 #include "vtkMRMLStaticMeasurement.h"
 #include "vtkMRMLUnitNode.h"
 
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkDoubleArray.h"
@@ -341,15 +342,15 @@ int vtkMRMLMarkupsJsonStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsJsonStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Markups JSON (.mrk.json)");
-  this->SupportedReadFileTypes->InsertNextValue("Markups JSON (.json)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.mrk.json)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.json)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsJsonStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("Markups JSON (.mrk.json)");
-  this->SupportedWriteFileTypes->InsertNextValue("Markups JSON (.json)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.mrk.json)");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.json)");  //: file format name
 }
 
 //---------------------------------------------------------------------------

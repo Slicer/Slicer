@@ -364,7 +364,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
     }
 
   // Update progress
-  d->StatusLabel->setText(node->GetStatusString());
+  d->StatusLabel->setText(QString::fromStdString(node->GetDisplayableStatusString()));
   d->NameLabel->setText(node->GetName());
 
   // Update Progress
@@ -383,7 +383,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
       d->ProgressBar->setValue(info->Progress * 100.);
       if (info->ElapsedTime != 0.)
         {
-        d->StatusLabel->setText(statusLabelFormat.arg(node->GetStatusString()).arg(info->ElapsedTime, 0, 'f', 1));
+        d->StatusLabel->setText(statusLabelFormat.arg(QString::fromStdString(node->GetDisplayableStatusString())).arg(info->ElapsedTime, 0, 'f', 1));
         }
       // We keep StageProgressBar maximum at 100, because if it was set to 0
       // then the progress message would not be displayed.
@@ -395,7 +395,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
     case vtkMRMLCommandLineModuleNode::CompletedWithErrors:
       if (info->ElapsedTime != 0.)
         {
-        d->StatusLabel->setText(statusLabelFormat.arg(node->GetStatusString()).arg(info->ElapsedTime, 0, 'f', 1));
+        d->StatusLabel->setText(statusLabelFormat.arg(QString::fromStdString(node->GetDisplayableStatusString())).arg(info->ElapsedTime, 0, 'f', 1));
         }
       d->ProgressBar->setMaximum(100);
       d->ProgressBar->setValue(100);

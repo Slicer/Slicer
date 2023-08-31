@@ -21,6 +21,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLTableSQLiteStorageNode.h"
 #include "vtkMRMLTableNode.h"
 #include "vtkMRMLScene.h"
@@ -302,17 +303,19 @@ int vtkMRMLTableSQLiteStorageNode::DropTable(char *tableName, vtkSQLiteDatabase*
 //----------------------------------------------------------------------------
 void vtkMRMLTableSQLiteStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("SQLight database (.db)");
-  this->SupportedReadFileTypes->InsertNextValue("SQLight database (.db3)");
-  this->SupportedReadFileTypes->InsertNextValue("SQLight database (.sqlite)");
-  this->SupportedReadFileTypes->InsertNextValue("SQLight database (.sqlite3)");
+  std::string dbStr = vtkMRMLTr("vtkMRMLTableSQLiteStorageNode", "SQLight database");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(dbStr + " (.db)");
+  this->SupportedReadFileTypes->InsertNextValue(dbStr + " (.db3)");
+  this->SupportedReadFileTypes->InsertNextValue(dbStr + " (.sqlite)");
+  this->SupportedReadFileTypes->InsertNextValue(dbStr + " (.sqlite3)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTableSQLiteStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("SQLight database (.db)");
-  this->SupportedWriteFileTypes->InsertNextValue("SQLight database (.db3)");
-  this->SupportedWriteFileTypes->InsertNextValue("SQLight database (.sqlite)");
-  this->SupportedWriteFileTypes->InsertNextValue("SQLight database (.sqlite3)");
+  std::string dbStr = vtkMRMLTr("vtkMRMLTableSQLiteStorageNode", "SQLight database");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(dbStr + " (.db)");
+  this->SupportedWriteFileTypes->InsertNextValue(dbStr + " (.db3)");
+  this->SupportedWriteFileTypes->InsertNextValue(dbStr + " (.sqlite)");
+  this->SupportedWriteFileTypes->InsertNextValue(dbStr + " (.sqlite3)");
 }

@@ -23,6 +23,7 @@
 #include "vtkMRMLShaderPropertyStorageNode.h"
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
@@ -485,12 +486,11 @@ int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLShaderPropertyStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Shader Property (.sp)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property") + " (.sp)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLShaderPropertyStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("Shader Property (.sp)");
-  this->SupportedWriteFileTypes->InsertNextValue("Shader Property (.*)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property") + " (.sp)");  //: file format name
 }

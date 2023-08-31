@@ -18,6 +18,7 @@
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkSlicerVersionConfigureMinimal.h"
@@ -784,14 +785,14 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Markups Fiducial CSV (.fcsv)");
-  this->SupportedReadFileTypes->InsertNextValue("Annotation Fiducial CSV (.acsv)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV") + " (.fcsv)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Annotation Fiducial CSV") + " (.acsv)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("Markups Fiducial CSV (.fcsv)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV") + " (.fcsv)");  //: file format name
 }
 
 //---------------------------------------------------------------------------
