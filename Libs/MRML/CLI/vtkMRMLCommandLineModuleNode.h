@@ -113,9 +113,13 @@ public:
   /// \sa SetStatus(), GetStatusString(), IsBusy()
   int GetStatus() const;
 
-  /// Return current status as a string for display.
-  /// \sa GetStatus(), IsBusy()
+  /// Return current status as a string. Not translated.
+  /// \sa GetStatus(), IsBusy(), GetDisplayableStatusString()
   const char* GetStatusString() const;
+
+  /// Return current status as a string for display (translated to current language).
+  /// \sa GetStatusString()
+  std::string GetDisplayableStatusString() const;
 
   //@{
   /// Start/stop continuous updating of output and error texts during execution.

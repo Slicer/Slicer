@@ -26,6 +26,7 @@
 #include "vtkOrientedImageDataResample.h"
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMessageCollection.h"
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScene.h>
@@ -142,14 +143,15 @@ void vtkMRMLSegmentationStorageNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.seg.nrrd)");
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.seg.nhdr)");
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.seg.vtm)");
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.nrrd)");
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.vtm)");
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.nii.gz)");
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.hdr)");
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.nii)");
+  std::string fileType = vtkMRMLTr("vtkMRMLSegmentationStorageNode", "Segmentation");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seg.nrrd)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seg.nhdr)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seg.vtm)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nrrd)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.vtm)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nii.gz)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.hdr)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nii)");
 }
 
 //----------------------------------------------------------------------------
@@ -171,17 +173,18 @@ void vtkMRMLSegmentationStorageNode::InitializeSupportedWriteFileTypes()
       masterIsPolyData = true;
       }
     }
+  std::string fileType = vtkMRMLTr("vtkMRMLSegmentationStorageNode", "Segmentation");  //: file format name
   if (masterIsImage)
     {
-    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.seg.nrrd)");
-    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.seg.nhdr)");
-    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.nrrd)");
-    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.nhdr)");
+    this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seg.nrrd)");
+    this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seg.nhdr)");
+    this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nrrd)");
+    this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nhdr)");
     }
   if (masterIsPolyData)
     {
-    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.seg.vtm)");
-    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.vtm)");
+    this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seg.vtm)");
+    this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.vtm)");
     }
 }
 

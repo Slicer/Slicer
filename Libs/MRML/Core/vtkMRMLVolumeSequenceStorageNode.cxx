@@ -11,6 +11,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 #include <vtkAddonMathUtilities.h>
 
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLVolumeSequenceStorageNode.h"
 
@@ -587,19 +588,21 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Volume sequence (.seq.nrrd)");
-  this->SupportedReadFileTypes->InsertNextValue("Volume sequence (.seq.nhdr)");
-  this->SupportedReadFileTypes->InsertNextValue("Volume sequence (.nrrd)");
-  this->SupportedReadFileTypes->InsertNextValue("Volume sequence (.nhdr)");
+  std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.nrrd)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nrrd)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nhdr)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("Volume sequence (.seq.nrrd)");
-  this->SupportedWriteFileTypes->InsertNextValue("Volume sequence (.seq.nhdr)");
-  this->SupportedWriteFileTypes->InsertNextValue("Volume sequence (.nrrd)");
-  this->SupportedWriteFileTypes->InsertNextValue("Volume sequence (.nhdr)");
+  std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.nrrd)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nrrd)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nhdr)");
 }
 
 //----------------------------------------------------------------------------

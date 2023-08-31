@@ -27,6 +27,7 @@
 #include "vtkMRMLTextStorageNode.h"
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
@@ -149,17 +150,17 @@ int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLTextStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Text file (.txt)");
-  this->SupportedReadFileTypes->InsertNextValue("XML document (.xml)");
-  this->SupportedReadFileTypes->InsertNextValue("JSON document (.json)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file") + " (.txt)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "XML document") + " (.xml)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "JSON document") + " (.json)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTextStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("Text file (.txt)");
-  this->SupportedWriteFileTypes->InsertNextValue("XML document (.xml)");
-  this->SupportedWriteFileTypes->InsertNextValue("JSON document (.json)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file") + " (.txt)");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "XML document") + " (.xml)");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "JSON document") + " (.json)");  //: file format name
 }
 
 //----------------------------------------------------------------------------

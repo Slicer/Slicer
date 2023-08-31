@@ -21,6 +21,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLTableStorageNode.h"
 #include "vtkMRMLTableNode.h"
@@ -224,17 +225,17 @@ int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLTableStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Tab-separated values (.tsv)");
-  this->SupportedReadFileTypes->InsertNextValue("Comma-separated values (.csv)");
-  this->SupportedReadFileTypes->InsertNextValue("Text (.txt)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.tsv)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Comma-separated values") + " (.csv)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.txt)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTableStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("Tab-separated values (.tsv)");
-  this->SupportedWriteFileTypes->InsertNextValue("Comma-separated values (.csv)");
-  this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.tsv)");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Comma-separated values") + " (.csv)");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.txt)");  //: file format name
 }
 
 //----------------------------------------------------------------------------

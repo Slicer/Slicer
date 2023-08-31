@@ -15,6 +15,7 @@ Version:   $Revision: 1.6 $
 // MRML include
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLScene.h"
 
 // VTK include
@@ -315,13 +316,13 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Color Table (.ctbl)");
-  this->SupportedReadFileTypes->InsertNextValue("Text (.txt)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.ctbl)");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.txt)");  //: file format name
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("Color Table (.ctbl)");
-  this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.ctbl)");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.txt)");  //: file format name
 }

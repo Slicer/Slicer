@@ -11,6 +11,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include <algorithm>
 #include <sstream>
 
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLLinearTransformSequenceStorageNode.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLSequenceStorageNode.h"
@@ -598,19 +599,21 @@ int vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode *re
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformSequenceStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Linear transform sequence (.seq.mhd)");
-  this->SupportedReadFileTypes->InsertNextValue("Linear transform sequence (.seq.mha)");
-  this->SupportedReadFileTypes->InsertNextValue("Linear transform sequence (.mha)");
-  this->SupportedReadFileTypes->InsertNextValue("Linear transform sequence (.mhd)");
+  std::string fileType = vtkMRMLTr("vtkMRMLLinearTransformSequenceStorageNode", "Linear transform sequence");  //: file format name
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.mhd)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.mha)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.mha)");
+  this->SupportedReadFileTypes->InsertNextValue(fileType + " (.mhd)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformSequenceStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("Linear transform sequence (.seq.mhd)");
-  this->SupportedWriteFileTypes->InsertNextValue("Linear transform sequence (.seq.mha)");
-  this->SupportedWriteFileTypes->InsertNextValue("Linear transform sequence (.mhd)");
-  this->SupportedWriteFileTypes->InsertNextValue("Linear transform sequence (.mha)");
+  std::string fileType = vtkMRMLTr("vtkMRMLLinearTransformSequenceStorageNode", "Linear transform sequence");  //: file format name
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.mhd)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.mha)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.mhd)");
+  this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.mha)");
 }
 
 //----------------------------------------------------------------------------
