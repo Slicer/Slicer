@@ -134,13 +134,19 @@ The included libcrypto.so.1.1 in the Slicer installation is incompatible with th
 :::
 
 If you double-clicked on the app and it doesn't launch, you can try this (in order):
-- verify execution rights of the app (Right click on the app > properties > executable as a program checked) or in terminal, in the app folder:
-    
+- verify execution rights of the app (Right click on the app > properties > executable as a program checked) or in terminal with :
+
+    ls -la
+
+You should have something like "-rwx-r-xr-x" at the begining of the line of the executable. Sometimes certain unrar/unzip applications requires you to decompress the archive in sudo mode (in order to restore the rights scheme on the files of the archive). If you do not have execution rights you can add them with this command in a terminal
+
     chmod +x Slicer
-- launch the app from terminal :
+
+- then, launch the app from terminal :
     
     ./Slicer
-- if you get the "error: Failed to obtain launcher executable name !" message : move the app in your Software Home folder and double click on the app, it should launch.
+
+- if you still get the "error: Failed to obtain launcher executable name !" message, try to move the executable in your Software Home folder and double click on the app, it should launch.
 
 ## Using Slicer
 
