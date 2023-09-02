@@ -45,6 +45,7 @@
 #include <vtkCellPicker.h>
 #include <vtkCollection.h>
 #include <vtkCommand.h>
+#include <vtkCallbackCommand.h>
 #include <vtkGlyph2D.h>
 #include <vtkGlyph3D.h>
 #include <vtkIdList.h>
@@ -153,6 +154,15 @@ public:
     feedbackActorProperty->SetOpacity(0.5);
     this->FeedbackActor->SetMapper(this->FeedbackMapper);
     this->FeedbackActor->VisibilityOff();
+
+    // If there is no input or if the input has no points, the vtkTransformPolyDataFilter will display an error message
+    // on every update: "No input data", polluting the log and slowing down the application.
+    // To prevent logging the error, an error callback command is set that discards the message.
+    // Ideally, vtkTransformPolyDataFilter should be updated to not log this unnecessary error message.
+    this->ErrorSinkCallbackCommand = vtkSmartPointer<vtkCallbackCommand>::New();
+    this->BrushWorldToSliceTransformer->AddObserver(vtkCommand::ErrorEvent, this->ErrorSinkCallbackCommand);
+    this->FeedbackWorldToSliceTransformer->AddObserver(vtkCommand::ErrorEvent, this->ErrorSinkCallbackCommand);
+
     };
   ~BrushPipeline2D() override = default;
 
@@ -177,6 +187,7 @@ public:
   vtkSmartPointer<vtkTransformPolyDataFilter> BrushWorldToSliceTransformer;
   vtkSmartPointer<vtkCutter> FeedbackCutter;
   vtkSmartPointer<vtkTransformPolyDataFilter> FeedbackWorldToSliceTransformer;
+  vtkSmartPointer<vtkCallbackCommand> ErrorSinkCallbackCommand;
 };
 
 class BrushPipeline3D : public BrushPipeline
