@@ -49,6 +49,8 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyVisibilityPlugin.h
   qSlicerSubjectHierarchyExportPlugin.cxx
   qSlicerSubjectHierarchyExportPlugin.h
+  qSlicerSubjectHierarchyExpandToDepthPlugin.cxx
+  qSlicerSubjectHierarchyExpandToDepthPlugin.h
   )
 if(Slicer_USE_PYTHONQT)
   list(APPEND ${KIT}_SRCS
@@ -74,6 +76,7 @@ set(${KIT}_MOC_SRCS
   qMRMLSubjectHierarchyModel.h
   qMRMLSortFilterSubjectHierarchyProxyModel.h
   qSlicerSubjectHierarchyExportPlugin.h
+  qSlicerSubjectHierarchyExpandToDepthPlugin.h
   )
 if(Slicer_USE_PYTHONQT)
   list(APPEND ${KIT}_MOC_SRCS

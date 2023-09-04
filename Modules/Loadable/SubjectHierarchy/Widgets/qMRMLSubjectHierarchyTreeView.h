@@ -323,9 +323,6 @@ protected slots:
   /// Updates subject hierarchy item expanded property when item is collapsed
   virtual void onItemCollapsed(const QModelIndex &collapsedItemIndex);
 
-  /// Expand tree to depth specified by the clicked context menu action
-  virtual void expandToDepthFromContextMenu();
-
   /// Update root item to restore view
   /// (e.g. after tree was updated in the model from the subject hierarchy)
   virtual void updateRootItem();
