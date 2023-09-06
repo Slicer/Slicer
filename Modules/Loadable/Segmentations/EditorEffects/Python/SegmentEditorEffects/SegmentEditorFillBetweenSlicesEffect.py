@@ -3,6 +3,8 @@ import os
 import qt
 import vtk
 
+from slicer.i18n import tr as _
+
 from SegmentEditorEffects import *
 
 
@@ -14,7 +16,8 @@ class SegmentEditorFillBetweenSlicesEffect(AbstractScriptedSegmentEditorAutoComp
 
     def __init__(self, scriptedEffect):
         AbstractScriptedSegmentEditorAutoCompleteEffect.__init__(self, scriptedEffect)
-        scriptedEffect.name = 'Fill between slices'
+        scriptedEffect.name = 'Fill between slices'  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _('Fill between slices')
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
@@ -29,17 +32,17 @@ class SegmentEditorFillBetweenSlicesEffect(AbstractScriptedSegmentEditorAutoComp
         return qt.QIcon()
 
     def helpText(self):
-        return """<html>Interpolate segmentation between slices<br>. Instructions:
+        return "<html>" + _("""Interpolate segmentation between slices<br>. Instructions:
 <p><ul>
 <li>Create complete segmentation on selected slices using any editor effect.
 Segmentation will only expanded if a slice is segmented but none of the direct neighbors are segmented, therefore
-do not use sphere brush with Paint effect and always leave at least one empty slice between segmented slices.</li>
-<li>All visible segments will be interpolated, not just the selected segment.</li>
-<li>The complete segmentation will be created by interpolating segmentations in empty slices.</li>
+do not use sphere brush with Paint effect and always leave at least one empty slice between segmented slices.
+<li>All visible segments will be interpolated, not just the selected segment.
+<li>The complete segmentation will be created by interpolating segmentations in empty slices.
 </ul><p>
 Masking settings are ignored. If segments overlap, segment higher in the segments table will have priority.
 The effect uses  <a href="https://insight-journal.org/browse/publication/977">morphological contour interpolation method</a>.
-<p></html>"""
+<p>""")
 
     def computePreviewLabelmap(self, mergedImage, outputLabelmap):
         import vtkITK

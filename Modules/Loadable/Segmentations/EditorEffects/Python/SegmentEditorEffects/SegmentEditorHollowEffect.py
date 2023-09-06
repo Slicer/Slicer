@@ -6,6 +6,7 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 
 from SegmentEditorEffects import *
 
@@ -14,7 +15,8 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     """This effect makes a segment hollow by replacing it with a shell at the segment boundary"""
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Hollow'
+        scriptedEffect.name = 'Hollow'  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _('Hollow')
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
     def clone(self):
@@ -30,47 +32,48 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
         return qt.QIcon()
 
     def helpText(self):
-        return """Make the selected segment hollow by replacing the segment with a uniform-thickness shell defined by the segment boundary."""
+        return _("""Make the selected segment hollow by replacing the segment with a uniform-thickness shell defined by the segment boundary.""")
 
     def setupOptionsFrame(self):
 
         operationLayout = qt.QVBoxLayout()
 
-        self.insideSurfaceOptionRadioButton = qt.QRadioButton("inside surface")
-        self.medialSurfaceOptionRadioButton = qt.QRadioButton("medial surface")
-        self.outsideSurfaceOptionRadioButton = qt.QRadioButton("outside surface")
+        self.insideSurfaceOptionRadioButton = qt.QRadioButton(_("inside surface"))
+        self.medialSurfaceOptionRadioButton = qt.QRadioButton(_("medial surface"))
+        self.outsideSurfaceOptionRadioButton = qt.QRadioButton(_("outside surface"))
         operationLayout.addWidget(self.insideSurfaceOptionRadioButton)
         operationLayout.addWidget(self.medialSurfaceOptionRadioButton)
         operationLayout.addWidget(self.outsideSurfaceOptionRadioButton)
         self.insideSurfaceOptionRadioButton.setChecked(True)
 
-        self.scriptedEffect.addLabeledOptionsWidget("Use current segment as:", operationLayout)
+        self.scriptedEffect.addLabeledOptionsWidget(_("Use current segment as:"), operationLayout)
 
         self.shellThicknessMMSpinBox = slicer.qMRMLSpinBox()
         self.shellThicknessMMSpinBox.setMRMLScene(slicer.mrmlScene)
-        self.shellThicknessMMSpinBox.setToolTip("Thickness of the hollow shell.")
+        self.shellThicknessMMSpinBox.setToolTip(_("Thickness of the hollow shell."))
         self.shellThicknessMMSpinBox.quantity = "length"
         self.shellThicknessMMSpinBox.minimum = 0.0
         self.shellThicknessMMSpinBox.value = 3.0
         self.shellThicknessMMSpinBox.singleStep = 1.0
 
         self.shellThicknessLabel = qt.QLabel()
-        self.shellThicknessLabel.setToolTip("Closest achievable thickness. Constrained by the segmentation's binary labelmap representation spacing.")
+        self.shellThicknessLabel.setToolTip(_("Closest achievable thickness. Constrained by the segmentation's binary labelmap representation spacing."))
 
         shellThicknessFrame = qt.QHBoxLayout()
         shellThicknessFrame.addWidget(self.shellThicknessMMSpinBox)
-        self.shellThicknessMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Shell thickness:", shellThicknessFrame)
+        self.shellThicknessMMLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Shell thickness:"), shellThicknessFrame)
         self.scriptedEffect.addLabeledOptionsWidget("", self.shellThicknessLabel)
 
         self.applyToAllVisibleSegmentsCheckBox = qt.QCheckBox()
-        self.applyToAllVisibleSegmentsCheckBox.setToolTip("Apply hollow effect to all visible segments in this segmentation node. \
-                                                      This operation may take a while.")
+        self.applyToAllVisibleSegmentsCheckBox.setToolTip(
+            _("Apply hollow effect to all visible segments in this segmentation node. This operation may take a while."))
         self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
-        self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget("Apply to visible segments:", self.applyToAllVisibleSegmentsCheckBox)
+        self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget(
+            _("Apply to visible segments:"), self.applyToAllVisibleSegmentsCheckBox)
 
-        self.applyButton = qt.QPushButton("Apply")
+        self.applyButton = qt.QPushButton(_("Apply"))
         self.applyButton.objectName = self.__class__.__name__ + 'Apply'
-        self.applyButton.setToolTip("Makes the segment hollow by replacing it with a thick shell at the segment boundary.")
+        self.applyButton.setToolTip(_("Makes the segment hollow by replacing it with a thick shell at the segment boundary."))
         self.scriptedEffect.addOptionsWidget(self.applyButton)
 
         self.applyButton.connect('clicked()', self.onApply)
@@ -124,14 +127,14 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
             selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
             shellThicknessPixel = self.getShellThicknessPixel()
             if shellThicknessPixel[0] < 1 or shellThicknessPixel[1] < 1 or shellThicknessPixel[2] < 1:
-                self.shellThicknessLabel.text = "Not feasible at current resolution."
+                self.shellThicknessLabel.text = _("Not feasible at current resolution.")
                 self.applyButton.setEnabled(False)
             else:
                 thicknessMM = self.getShellThicknessMM()
-                self.shellThicknessLabel.text = "Actual: {} x {} x {} mm ({}x{}x{} pixel)".format(*thicknessMM, *shellThicknessPixel)
+                self.shellThicknessLabel.text = _("Actual:") + " {} x {} x {} mm ({}x{}x{} pixel)".format(*thicknessMM, *shellThicknessPixel)
                 self.applyButton.setEnabled(True)
         else:
-            self.shellThicknessLabel.text = "Empty segment"
+            self.shellThicknessLabel.text = _("Empty segment")
 
         self.setWidgetMinMaxStepFromImageSpacing(self.shellThicknessMMSpinBox, self.scriptedEffect.selectedSegmentLabelmap())
 
@@ -242,7 +245,8 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
                 # select input segments one by one, process
                 for index in range(inputSegmentIDs.GetNumberOfValues()):
                     segmentID = inputSegmentIDs.GetValue(index)
-                    self.showStatusMessage(f'Processing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
+                    self.showStatusMessage(_('Processing {segmentName}...')
+                                           .format(segmentName=segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()))
                     self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(segmentID)
                     self.processHollowing()
                 # restore segment selection

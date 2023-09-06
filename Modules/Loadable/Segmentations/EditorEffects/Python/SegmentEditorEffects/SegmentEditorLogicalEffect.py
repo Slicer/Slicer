@@ -5,6 +5,7 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 
 from SegmentEditorEffects import *
 
@@ -14,7 +15,8 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Logical operators'
+        scriptedEffect.name = 'Logical operators'  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _('Logical operators')
         self.operationsRequireModifierSegment = [LOGICAL_COPY, LOGICAL_UNION, LOGICAL_SUBTRACT, LOGICAL_INTERSECT]
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
@@ -31,45 +33,46 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
         return qt.QIcon()
 
     def helpText(self):
-        return """<html>Apply logical operators or combine segments<br>. Available operations:<p>
+        return "<html>" + _("""Apply logical operators or combine segments<br>. Available operations:<p>
 <ul style="margin: 0">
-<li><b>Copy:</b> replace the selected segment by the modifier segment.</li>
-<li><b>Add:</b> add modifier segment to current segment.</li>
-<li><b>Subtract:</b> subtract region of modifier segment from the selected segment.</li>
-<li><b>Intersect:</b> only keeps those regions in the select segment that are common with the modifier segment.</li>
-<li><b>Invert:</b> inverts selected segment.</li>
-<li><b>Clear:</b> clears selected segment.</li>
-<li><b>Fill:</b> completely fills selected segment.</li>
+<li><b>Copy:</b> replace the selected segment by the modifier segment.
+<li><b>Add:</b> add modifier segment to current segment.
+<li><b>Subtract:</b> subtract region of modifier segment from the selected segment.
+<li><b>Intersect:</b> only keeps those regions in the select segment that are common with the modifier segment.
+<li><b>Invert:</b> inverts selected segment.
+<li><b>Clear:</b> clears selected segment.
+<li><b>Fill:</b> completely fills selected segment.
 </ul><p>
-<b>Selected segment:</b> segment selected in the segment list - above. <b>Modifier segment:</b> segment chosen in segment list in effect options - below.
-<p></html>"""
+<b>Selected segment:</b> segment selected in the segment list - above. <b>Modifier segment:</b> segment chosen in
+segment list in effect options - below.
+<p>""")
 
     def setupOptionsFrame(self):
 
         self.methodSelectorComboBox = qt.QComboBox()
-        self.methodSelectorComboBox.addItem("Copy", LOGICAL_COPY)
-        self.methodSelectorComboBox.addItem("Add", LOGICAL_UNION)
-        self.methodSelectorComboBox.addItem("Subtract", LOGICAL_SUBTRACT)
-        self.methodSelectorComboBox.addItem("Intersect", LOGICAL_INTERSECT)
-        self.methodSelectorComboBox.addItem("Invert", LOGICAL_INVERT)
-        self.methodSelectorComboBox.addItem("Clear", LOGICAL_CLEAR)
-        self.methodSelectorComboBox.addItem("Fill", LOGICAL_FILL)
-        self.methodSelectorComboBox.setToolTip('Click <dfn>Show details</dfn> link above for description of operations.')
+        self.methodSelectorComboBox.addItem(_("Copy"), LOGICAL_COPY)
+        self.methodSelectorComboBox.addItem(_("Add"), LOGICAL_UNION)
+        self.methodSelectorComboBox.addItem(_("Subtract"), LOGICAL_SUBTRACT)
+        self.methodSelectorComboBox.addItem(_("Intersect"), LOGICAL_INTERSECT)
+        self.methodSelectorComboBox.addItem(_("Invert"), LOGICAL_INVERT)
+        self.methodSelectorComboBox.addItem(_("Clear"), LOGICAL_CLEAR)
+        self.methodSelectorComboBox.addItem(_("Fill"), LOGICAL_FILL)
+        self.methodSelectorComboBox.setToolTip(_('Click <dfn>Show details</dfn> link above for description of operations.'))
 
-        self.bypassMaskingCheckBox = qt.QCheckBox("Bypass masking")
-        self.bypassMaskingCheckBox.setToolTip("Ignore all masking options and only modify the selected segment.")
+        self.bypassMaskingCheckBox = qt.QCheckBox(_("Bypass masking"))
+        self.bypassMaskingCheckBox.setToolTip(_("Ignore all masking options and only modify the selected segment."))
         self.bypassMaskingCheckBox.objectName = self.__class__.__name__ + 'BypassMasking'
 
-        self.applyButton = qt.QPushButton("Apply")
+        self.applyButton = qt.QPushButton(_("Apply"))
         self.applyButton.objectName = self.__class__.__name__ + 'Apply'
 
         operationFrame = qt.QHBoxLayout()
         operationFrame.addWidget(self.methodSelectorComboBox)
         operationFrame.addWidget(self.applyButton)
         operationFrame.addWidget(self.bypassMaskingCheckBox)
-        self.marginSizeMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Operation:", operationFrame)
+        self.marginSizeMmLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Operation:"), operationFrame)
 
-        self.modifierSegmentSelectorLabel = qt.QLabel("Modifier segment:")
+        self.modifierSegmentSelectorLabel = qt.QLabel(_("Modifier segment:"))
         self.scriptedEffect.addOptionsWidget(self.modifierSegmentSelectorLabel)
 
         self.modifierSegmentSelector = slicer.qMRMLSegmentsTableView()
@@ -79,7 +82,8 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
         self.modifierSegmentSelector.opacityColumnVisible = False
 
         self.modifierSegmentSelector.setMRMLScene(slicer.mrmlScene)
-        self.modifierSegmentSelector.setToolTip('Contents of this segment will be used for modifying the selected segment. This segment itself will not be changed.')
+        self.modifierSegmentSelector.setToolTip(_('Contents of this segment will be used for modifying the selected segment. '
+                                                  'This segment itself will not be changed.'))
         self.scriptedEffect.addOptionsWidget(self.modifierSegmentSelector)
 
         self.applyButton.connect('clicked()', self.onApply)
@@ -127,18 +131,18 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
         self.modifierSegmentSelector.setVisible(modifierSegmentRequired)
 
         if operation == LOGICAL_COPY:
-            self.modifierSegmentSelectorLabel.text = "Copy from segment:"
+            self.modifierSegmentSelectorLabel.text = _("Copy from segment:")
         elif operation == LOGICAL_UNION:
-            self.modifierSegmentSelectorLabel.text = "Add segment:"
+            self.modifierSegmentSelectorLabel.text = _("Add segment:")
         elif operation == LOGICAL_SUBTRACT:
-            self.modifierSegmentSelectorLabel.text = "Subtract segment:"
+            self.modifierSegmentSelectorLabel.text = _("Subtract segment:")
         elif operation == LOGICAL_INTERSECT:
-            self.modifierSegmentSelectorLabel.text = "Intersect with segment:"
+            self.modifierSegmentSelectorLabel.text = _("Intersect with segment:")
         else:
-            self.modifierSegmentSelectorLabel.text = "Modifier segment:"
+            self.modifierSegmentSelectorLabel.text = _("Modifier segment:")
 
         if modifierSegmentRequired and not modifierSegmentID:
-            self.applyButton.setToolTip("Please select a modifier segment in the list below.")
+            self.applyButton.setToolTip(_("Please select a modifier segment in the list below."))
             self.applyButton.enabled = False
         else:
             self.applyButton.setToolTip("")
@@ -263,7 +267,8 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
 
         elif operation == LOGICAL_CLEAR or operation == LOGICAL_FILL:
             selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
-            vtkSegmentationCore.vtkOrientedImageDataResample.FillImage(selectedSegmentLabelmap, 1 if operation == LOGICAL_FILL else 0, selectedSegmentLabelmap.GetExtent())
+            vtkSegmentationCore.vtkOrientedImageDataResample.FillImage(
+                selectedSegmentLabelmap, 1 if operation == LOGICAL_FILL else 0, selectedSegmentLabelmap.GetExtent())
             self.scriptedEffect.modifySelectedSegmentByLabelmap(
                 selectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, bypassMasking)
 

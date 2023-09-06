@@ -1078,8 +1078,8 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setCheckable(true);
     effectButton->setToolButtonStyle(d->EffectButtonStyle);
     effectButton->setIcon(effect->icon());
-    effectButton->setText(effect->name());
-    effectButton->setToolTip(effect->name());
+    effectButton->setText(effect->title());
+    effectButton->setToolTip(effect->title());
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
     effectButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);  // make all effect buttons the same width
     d->EffectButtonGroup.addButton(effectButton);
@@ -1689,7 +1689,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
     // Activate newly selected effect
     activeEffect->activate();
     d->OptionsGroupBox->show();
-    d->OptionsGroupBox->setTitle(activeEffect->name());
+    d->OptionsGroupBox->setTitle(activeEffect->title());
     d->EffectHelpBrowser->setCollapsibleText(activeEffect->helpText());
     d->MaskingGroupBox->show();
     }

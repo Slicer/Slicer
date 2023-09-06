@@ -70,6 +70,10 @@ public:
   /// \sa name(), \sa setName()
   Q_PROPERTY(QString name READ name WRITE setName)
 
+  /// This property stores the title of the effect
+  /// \sa title(), \sa setTitle()
+  Q_PROPERTY(QString title READ title WRITE setTitle)
+
   /// This property stores the flag indicating whether effect operates on individual segments (true)
   /// or the whole segmentation (false).
   /// True by default.
@@ -237,11 +241,20 @@ public:
   Q_INVOKABLE QWidget* addLabeledOptionsWidget(QString label, QWidget* newOptionsWidget);
   Q_INVOKABLE QWidget* addLabeledOptionsWidget(QString label, QLayout* newOptionsWidget);
 
-  /// Get name of effect
+  /// Get name of effect.
+  /// This name is used by various modules for accessing an effect.
+  /// This string is not displayed on the user interface and must not be translated.
   virtual QString name()const;
-  /// Set the name of the effect
+  /// Set the name of the effect.
   /// NOTE: name must be defined in constructor in C++ effects, this can only be used in python scripted ones
   virtual void setName(QString name);
+
+  /// Get title of effect.
+  /// This string is displayed on the application GUI and it is translated.
+  /// Returns the effect's name when the title is empty.
+  virtual QString title()const;
+  /// Set the title of the effect
+  virtual void setTitle(QString title);
 
   /// Get flag indicating whether effect operates on segments (true) or the whole segmentation (false).
   virtual bool perSegment()const;
@@ -416,9 +429,9 @@ public:
   Q_INVOKABLE bool segmentationDisplayableInView(vtkMRMLAbstractViewNode* viewNode);
 
 protected:
-  /// Name of the effect
   QString m_Name;
   bool m_Active{false};
+  QString m_Title;
 
   /// Flag indicating whether effect operates on individual segments (true) or the whole segmentation (false).
   /// If the selected effect works on whole segmentation, selection of the segments does not trigger creation

@@ -94,7 +94,7 @@ QString qSlicerModelsModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerModelsModule::acknowledgementText()const
 {
-  return "This work was partially funded by NIH grants 3P41RR013218-12S1 and R01CA184354.";
+  return tr("This work was partially funded by NIH grants 3P41RR013218-12S1 and R01CA184354.");
 }
 
 //-----------------------------------------------------------------------------
