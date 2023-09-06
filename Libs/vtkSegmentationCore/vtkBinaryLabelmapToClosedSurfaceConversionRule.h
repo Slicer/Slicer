@@ -43,6 +43,12 @@ public:
   static const std::string GetDecimationFactorParameterName() { return "Decimation factor"; };
   /// Conversion parameter: smoothing factor
   static const std::string GetSmoothingFactorParameterName() { return "Smoothing factor"; };
+  /// Conversion parameter: Conversion method (flying edges or surface nets)
+  static const std::string GetConversionMethodParameterName() { return "Conversion method"; };
+  /// Conversion parameter: SurfaceNets smoothing
+  /// If SurfaceNets smoothing is enabled, the smoothing available within the SurfaceNets
+  /// filter and based of vtkConstrainedSmoothingFilter is used.
+  static const std::string GetSurfaceNetInternalSmoothingParameterName() { return "SurfaceNets smoothing"; };
   /// Conversion parameter: compute surface normals
   static const std::string GetComputeSurfaceNormalsParameterName() { return "Compute surface normals"; };
   /// Conversion parameter: joint smoothing

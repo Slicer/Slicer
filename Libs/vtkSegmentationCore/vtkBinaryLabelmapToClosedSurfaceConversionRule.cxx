@@ -53,7 +53,7 @@
 #include <vtkReverseSense.h>
 #include <vtkStringToNumeric.h>
 #include <vtkStringArray.h>
-
+#include <vtkSurfaceNets3D.h>
 #include <vtkSelection.h>
 #include <vtkSelectionNode.h>
 #include <vtkFloatArray.h>
@@ -75,7 +75,13 @@ vtkBinaryLabelmapToClosedSurfaceConversionRule::vtkBinaryLabelmapToClosedSurface
     "Smoothing factor. Range: 0.0 (no smoothing) to 1.0 (strong smoothing).");
   this->ConversionParameters->SetParameter(GetComputeSurfaceNormalsParameterName(), "1",
     "Compute surface normals. 1 (default) = surface normals are computed. "
-    "0 = surface normals are not computed (slightly faster but produces less smooth surface display).");
+    "0 = surface normals are not computed (slightly faster but produces less smooth surface display, not used if vtkSurfaceNets3D is used).");
+  this->ConversionParameters->SetParameter(GetConversionMethodParameterName(), "0",
+    "Conversion method. 0 (default) = vtkDiscreteFlyingEdges3D is used to generate closed surface."
+    "1 = vtkSurfaceNets3D (more performant than flying edges).");
+  this->ConversionParameters->SetParameter(GetSurfaceNetInternalSmoothingParameterName(), "0",
+    "SurfaceNets smoothing. 0 (default) = Smoothing done by vtkWindowedSincPolyDataFilter"
+    "1 = Smoothing done in surface nets filter.");
   this->ConversionParameters->SetParameter(GetJointSmoothingParameterName(), "0",
     "Perform joint smoothing.");
 }
@@ -288,24 +294,91 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   double smoothingFactor = this->ConversionParameters->GetValueAsDouble(GetSmoothingFactorParameterName());
   int computeSurfaceNormals = this->ConversionParameters->GetValueAsInt(GetComputeSurfaceNormalsParameterName());
 
-  vtkNew<vtkDiscreteFlyingEdges3D> marchingCubes;
-  marchingCubes->SetInputData(binaryLabelmapWithIdentityGeometry);
-  marchingCubes->ComputeGradientsOff();
-  marchingCubes->ComputeNormalsOff(); // While computing normals is faster using the flying edges filter,
-  // it results in incorrect normals in meshes from shared labelmaps marchingCubes->ComputeScalarsOn();
+  // Conversion method
+  // 0 = flying edges (vtkDiscreteFlyingEdges3D)
+  // 1 = surface nets (vtkSurfaceNets3D)
+  int conversionMethod = this->ConversionParameters->GetValueAsInt(GetConversionMethodParameterName());
 
-  int valueIndex = 0;
-  for (vtkIdType labelValue : labelValues)
+  // SurfaceNetInternalSmoothing
+  // 0 = use vtkWindowedSincPolyDataFilter
+  // 1 = use surface nets internal smoothing filter (vtkConstrainedSmoothingFilter)
+  int surfaceNetsSmoothing = this->ConversionParameters->GetValueAsInt(GetSurfaceNetInternalSmoothingParameterName());
+
+  vtkSmartPointer<vtkPolyData> processingResult = vtkSmartPointer<vtkPolyData>::New();
+
+  if (conversionMethod == 0)
     {
-    marchingCubes->SetValue(valueIndex, labelValue);
-    ++valueIndex;
+    vtkNew<vtkDiscreteFlyingEdges3D> flyingEdges;
+    flyingEdges->SetInputData(binaryLabelmapWithIdentityGeometry);
+    flyingEdges->ComputeGradientsOff();
+    flyingEdges->ComputeNormalsOff(); // While computing normals is faster using the flying edges filter,
+    // it results in incorrect normals in meshes from shared labelmaps marchingCubes->ComputeScalarsOn();
+
+    int valueIndex = 0;
+    for (vtkIdType labelValue : labelValues)
+      {
+      flyingEdges->SetValue(valueIndex, labelValue);
+      ++valueIndex;
+      }
+    try
+      {
+      flyingEdges->Update();
+      }
+    catch (...)
+      {
+      vtkErrorMacro("Convert: Error while running flying edges!");
+      return false;
+      }
+    processingResult = flyingEdges->GetOutput();
+    }
+  else if (conversionMethod == 1)
+    {
+    vtkNew<vtkSurfaceNets3D> surfaceNets;
+    surfaceNets->SetInputData(binaryLabelmapWithIdentityGeometry);
+
+    // Disable internal smoothing, and use vtkWindowedSincPolyDataFilter for smoothing as needed
+    surfaceNets->SmoothingOff();
+
+    if (surfaceNetsSmoothing == 1)
+      {
+      surfaceNets->SmoothingOn();
+
+      // This formula maps (input) -> (iteration count)
+      // 0.0  ->  0   (almost no smoothing)
+      // 0.2  ->  2   (little smoothing)
+      // 0.5  ->  8   (average smoothing)
+      // 0.7  ->  14  (strong smoothing)
+      // 1.0  ->  24  (very strong smoothing)
+      double fCount = 15.0 * smoothingFactor * smoothingFactor + 9.0 * smoothingFactor;
+      int iterationCount = floor(fCount);
+      surfaceNets->SetNumberOfIterations(iterationCount);
+      }
+
+    int valueIndex = 0;
+    for (vtkIdType labelValue : labelValues)
+      {
+      surfaceNets->SetValue(valueIndex, labelValue);
+      ++valueIndex;
+      }
+
+    try
+      {
+      surfaceNets->Update();
+      }
+    catch (...)
+      {
+      vtkErrorMacro("Convert: Error while running surface nets!");
+      return false;
+      }
+    processingResult = surfaceNets->GetOutput();
+    }
+  else
+    {
+    vtkErrorMacro("Conversion Rule: Unknown surface generation method");
     }
 
   vtkSmartPointer<vtkPolyData> convertedSegment = vtkSmartPointer<vtkPolyData>::New();
 
-  // Run marching cubes
-  marchingCubes->Update();
-  vtkSmartPointer<vtkPolyData> processingResult = marchingCubes->GetOutput();
   if (processingResult->GetNumberOfPolys() == 0)
     {
     vtkDebugMacro("Convert: No polygons can be created, probably all voxels are empty");
@@ -332,7 +405,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     processingResult = decimator->GetOutput();
     }
 
-  if (smoothingFactor > 0)
+  if (smoothingFactor > 0 && surfaceNetsSmoothing == 0)
     {
     vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
     smoother->SetInputData(processingResult);
@@ -362,7 +435,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
 
-  if (computeSurfaceNormals > 0)
+  if (computeSurfaceNormals > 0 && conversionMethod == 0)
     {
     vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
