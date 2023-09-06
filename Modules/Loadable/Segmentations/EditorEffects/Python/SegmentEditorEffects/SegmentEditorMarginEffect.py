@@ -6,6 +6,7 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 
 from SegmentEditorEffects import *
 
@@ -15,7 +16,8 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Margin'
+        scriptedEffect.name = 'Margin'  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _('Margin')
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
     def clone(self):
@@ -31,44 +33,46 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
         return qt.QIcon()
 
     def helpText(self):
-        return "Grow or shrink selected segment by specified margin size."
+        return _("Grow or shrink selected segment by specified margin size.")
 
     def setupOptionsFrame(self):
 
         operationLayout = qt.QVBoxLayout()
 
-        self.shrinkOptionRadioButton = qt.QRadioButton("Shrink")
-        self.growOptionRadioButton = qt.QRadioButton("Grow")
+        self.shrinkOptionRadioButton = qt.QRadioButton(_("Shrink"))
+        self.growOptionRadioButton = qt.QRadioButton(_("Grow"))
         operationLayout.addWidget(self.shrinkOptionRadioButton)
         operationLayout.addWidget(self.growOptionRadioButton)
         self.growOptionRadioButton.setChecked(True)
 
-        self.scriptedEffect.addLabeledOptionsWidget("Operation:", operationLayout)
+        self.scriptedEffect.addLabeledOptionsWidget(_("Operation:"), operationLayout)
 
         self.marginSizeMMSpinBox = slicer.qMRMLSpinBox()
         self.marginSizeMMSpinBox.setMRMLScene(slicer.mrmlScene)
-        self.marginSizeMMSpinBox.setToolTip("Segment boundaries will be shifted by this distance. Positive value means the segments will grow, negative value means segment will shrink.")
+        self.marginSizeMMSpinBox.setToolTip(_("Segment boundaries will be shifted by this distance. "
+                                              "Positive value means the segments will grow, negative value means segment will shrink."))
         self.marginSizeMMSpinBox.quantity = "length"
         self.marginSizeMMSpinBox.value = 3.0
         self.marginSizeMMSpinBox.singleStep = 1.0
 
         self.marginSizeLabel = qt.QLabel()
-        self.marginSizeLabel.setToolTip("Size change in pixel. Computed from the segment's spacing and the specified margin size.")
+        self.marginSizeLabel.setToolTip(_("Size change in pixel. Computed from the segment's spacing and the specified margin size."))
 
         marginSizeFrame = qt.QHBoxLayout()
         marginSizeFrame.addWidget(self.marginSizeMMSpinBox)
-        self.marginSizeMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Margin size:", marginSizeFrame)
+        self.marginSizeMMLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Margin size:"), marginSizeFrame)
         self.scriptedEffect.addLabeledOptionsWidget("", self.marginSizeLabel)
 
         self.applyToAllVisibleSegmentsCheckBox = qt.QCheckBox()
-        self.applyToAllVisibleSegmentsCheckBox.setToolTip("Grow or shrink all visible segments in this segmentation node. \
-                                                      This operation may take a while.")
+        self.applyToAllVisibleSegmentsCheckBox.setToolTip(
+            _("Grow or shrink all visible segments in this segmentation node. This operation may take a while."))
         self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
-        self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget("Apply to visible segments:", self.applyToAllVisibleSegmentsCheckBox)
+        self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Apply to visible segments:"),
+                                                                                          self.applyToAllVisibleSegmentsCheckBox)
 
-        self.applyButton = qt.QPushButton("Apply")
+        self.applyButton = qt.QPushButton(_("Apply"))
         self.applyButton.objectName = self.__class__.__name__ + 'Apply'
-        self.applyButton.setToolTip("Grows or shrinks selected segment /default) or all segments (checkbox) by the specified margin.")
+        self.applyButton.setToolTip(_("Grows or shrinks selected segment /default) or all segments (checkbox) by the specified margin."))
         self.scriptedEffect.addOptionsWidget(self.applyButton)
 
         self.applyButton.connect('clicked()', self.onApply)
@@ -115,14 +119,14 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
             selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
             marginSizePixel = self.getMarginSizePixel()
             if marginSizePixel[0] < 1 or marginSizePixel[1] < 1 or marginSizePixel[2] < 1:
-                self.marginSizeLabel.text = "Not feasible at current resolution."
+                self.marginSizeLabel.text = _("Not feasible at current resolution.")
                 self.applyButton.setEnabled(False)
             else:
                 marginSizeMM = self.getMarginSizeMM()
-                self.marginSizeLabel.text = "Actual: {} x {} x {} mm ({}x{}x{} pixel)".format(*marginSizeMM, *marginSizePixel)
+                self.marginSizeLabel.text = _("Actual:") + " {} x {} x {} mm ({}x{}x{} pixel)".format(*marginSizeMM, *marginSizePixel)
                 self.applyButton.setEnabled(True)
         else:
-            self.marginSizeLabel.text = "Empty segment"
+            self.marginSizeLabel.text = _("Empty segment")
 
         applyToAllVisibleSegments = qt.Qt.Unchecked if self.scriptedEffect.integerParameter("ApplyToAllVisibleSegments") == 0 else qt.Qt.Checked
         wasBlocked = self.applyToAllVisibleSegmentsCheckBox.blockSignals(True)
@@ -234,7 +238,8 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
                 # select input segments one by one, process
                 for index in range(inputSegmentIDs.GetNumberOfValues()):
                     segmentID = inputSegmentIDs.GetValue(index)
-                    self.showStatusMessage(f'Processing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
+                    self.showStatusMessage(_('Processing {segmentName}...')
+                                           .format(segmentName=segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()))
                     self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(segmentID)
                     self.processMargin()
                 # restore segment selection

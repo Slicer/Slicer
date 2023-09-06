@@ -6,6 +6,7 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 
 from SegmentEditorEffects import *
 
@@ -15,7 +16,8 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorPaintEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Smoothing'
+        scriptedEffect.name = 'Smoothing'  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _('Smoothing')
         AbstractScriptedSegmentEditorPaintEffect.__init__(self, scriptedEffect)
 
     def clone(self):
@@ -31,69 +33,72 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorPaintEffect):
         return qt.QIcon()
 
     def helpText(self):
-        return """<html>Make segment boundaries smoother<br> by removing extrusions and filling small holes. The effect can be either applied locally
+        return "<html>" + _("""Make segment boundaries smoother<br> by removing extrusions and filling small holes. The effect can be either applied locally
 (by painting in viewers) or to the whole segment (by clicking Apply button). Available methods:<p>
 <ul style="margin: 0">
-<li><b>Median:</b> removes small details while keeps smooth contours mostly unchanged. Applied to selected segment only.</li>
-<li><b>Opening:</b> removes extrusions smaller than the specified kernel size. Applied to selected segment only.</li>
-<li><b>Closing:</b> fills sharp corners and holes smaller than the specified kernel size. Applied to selected segment only.</li>
-<li><b>Gaussian:</b> smoothes all contours, tends to shrink the segment. Applied to selected segment only.</li>
+<li><b>Median:</b> removes small details while keeps smooth contours mostly unchanged. Applied to selected segment only.
+<li><b>Opening:</b> removes extrusions smaller than the specified kernel size. Applied to selected segment only.
+<li><b>Closing:</b> fills sharp corners and holes smaller than the specified kernel size. Applied to selected segment only.
+<li><b>Gaussian:</b> smoothes all contours, tends to shrink the segment. Applied to selected segment only.
 <li><b>Joint smoothing:</b> smoothes multiple segments at once, preserving watertight interface between them. Masking settings are bypassed.
-If segments overlap, segment higher in the segments table will have priority. <b>Applied to all visible segments.</b></li>
-</ul><p></html>"""
+If segments overlap, segment higher in the segments table will have priority. <b>Applied to all visible segments.</b>
+</ul><p>""")
 
     def setupOptionsFrame(self):
 
         self.methodSelectorComboBox = qt.QComboBox()
-        self.methodSelectorComboBox.addItem("Median", MEDIAN)
-        self.methodSelectorComboBox.addItem("Opening (remove extrusions)", MORPHOLOGICAL_OPENING)
-        self.methodSelectorComboBox.addItem("Closing (fill holes)", MORPHOLOGICAL_CLOSING)
-        self.methodSelectorComboBox.addItem("Gaussian", GAUSSIAN)
-        self.methodSelectorComboBox.addItem("Joint smoothing", JOINT_TAUBIN)
-        self.scriptedEffect.addLabeledOptionsWidget("Smoothing method:", self.methodSelectorComboBox)
+        self.methodSelectorComboBox.addItem(_("Median"), MEDIAN)
+        self.methodSelectorComboBox.addItem(_("Opening (remove extrusions)"), MORPHOLOGICAL_OPENING)
+        self.methodSelectorComboBox.addItem(_("Closing (fill holes)"), MORPHOLOGICAL_CLOSING)
+        self.methodSelectorComboBox.addItem(_("Gaussian"), GAUSSIAN)
+        self.methodSelectorComboBox.addItem(_("Joint smoothing"), JOINT_TAUBIN)
+        self.scriptedEffect.addLabeledOptionsWidget(_("Smoothing method:"), self.methodSelectorComboBox)
 
         self.kernelSizeMMSpinBox = slicer.qMRMLSpinBox()
         self.kernelSizeMMSpinBox.setMRMLScene(slicer.mrmlScene)
-        self.kernelSizeMMSpinBox.setToolTip("Diameter of the neighborhood that will be considered around each voxel. Higher value makes smoothing stronger (more details are suppressed).")
+        self.kernelSizeMMSpinBox.setToolTip(_("Diameter of the neighborhood that will be considered around each voxel. "
+                                              "Higher value makes smoothing stronger (more details are suppressed)."))
         self.kernelSizeMMSpinBox.quantity = "length"
         self.kernelSizeMMSpinBox.minimum = 0.0
         self.kernelSizeMMSpinBox.value = 3.0
         self.kernelSizeMMSpinBox.singleStep = 1.0
 
         self.kernelSizePixel = qt.QLabel()
-        self.kernelSizePixel.setToolTip("Diameter of the neighborhood in pixel. Computed from the segment's spacing and the specified kernel size.")
+        self.kernelSizePixel.setToolTip(_("Diameter of the neighborhood in pixel. Computed from the segment's spacing and the specified kernel size."))
 
         kernelSizeFrame = qt.QHBoxLayout()
         kernelSizeFrame.addWidget(self.kernelSizeMMSpinBox)
         kernelSizeFrame.addWidget(self.kernelSizePixel)
-        self.kernelSizeMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Kernel size:", kernelSizeFrame)
+        self.kernelSizeMMLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Kernel size:"), kernelSizeFrame)
 
         self.gaussianStandardDeviationMMSpinBox = slicer.qMRMLSpinBox()
         self.gaussianStandardDeviationMMSpinBox.setMRMLScene(slicer.mrmlScene)
-        self.gaussianStandardDeviationMMSpinBox.setToolTip("Standard deviation of the Gaussian smoothing filter coefficients. Higher value makes smoothing stronger (more details are suppressed).")
+        self.gaussianStandardDeviationMMSpinBox.setToolTip(_("Standard deviation of the Gaussian smoothing filter coefficients. "
+                                                             "Higher value makes smoothing stronger (more details are suppressed)."))
         self.gaussianStandardDeviationMMSpinBox.quantity = "length"
         self.gaussianStandardDeviationMMSpinBox.value = 3.0
         self.gaussianStandardDeviationMMSpinBox.singleStep = 1.0
-        self.gaussianStandardDeviationMMLabel = self.scriptedEffect.addLabeledOptionsWidget("Standard deviation:", self.gaussianStandardDeviationMMSpinBox)
+        self.gaussianStandardDeviationMMLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Standard deviation:"), self.gaussianStandardDeviationMMSpinBox)
 
         self.jointTaubinSmoothingFactorSlider = ctk.ctkSliderWidget()
-        self.jointTaubinSmoothingFactorSlider.setToolTip("Higher value means stronger smoothing.")
+        self.jointTaubinSmoothingFactorSlider.setToolTip(_("Higher value means stronger smoothing."))
         self.jointTaubinSmoothingFactorSlider.minimum = 0.01
         self.jointTaubinSmoothingFactorSlider.maximum = 1.0
         self.jointTaubinSmoothingFactorSlider.value = 0.5
         self.jointTaubinSmoothingFactorSlider.singleStep = 0.01
         self.jointTaubinSmoothingFactorSlider.pageStep = 0.1
-        self.jointTaubinSmoothingFactorLabel = self.scriptedEffect.addLabeledOptionsWidget("Smoothing factor:", self.jointTaubinSmoothingFactorSlider)
+        self.jointTaubinSmoothingFactorLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Smoothing factor:"), self.jointTaubinSmoothingFactorSlider)
 
         self.applyToAllVisibleSegmentsCheckBox = qt.QCheckBox()
-        self.applyToAllVisibleSegmentsCheckBox.setToolTip("Apply smoothing effect to all visible segments in this segmentation node. \
-                                                      This operation may take a while.")
+        self.applyToAllVisibleSegmentsCheckBox.setToolTip(
+            _("Apply smoothing effect to all visible segments in this segmentation node. This operation may take a while."))
         self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
-        self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget("Apply to visible segments:", self.applyToAllVisibleSegmentsCheckBox)
+        self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Apply to visible segments:"),
+                                                                                          self.applyToAllVisibleSegmentsCheckBox)
 
-        self.applyButton = qt.QPushButton("Apply")
+        self.applyButton = qt.QPushButton(_("Apply"))
         self.applyButton.objectName = self.__class__.__name__ + 'Apply'
-        self.applyButton.setToolTip("Apply smoothing to selected segment")
+        self.applyButton.setToolTip(_("Apply smoothing to selected segment"))
         self.scriptedEffect.addOptionsWidget(self.applyButton)
 
         self.methodSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
@@ -106,7 +111,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
         # Customize smoothing brush
         self.scriptedEffect.setColorSmudgeCheckboxVisible(False)
         self.paintOptionsGroupBox = ctk.ctkCollapsibleGroupBox()
-        self.paintOptionsGroupBox.setTitle("Smoothing brush options")
+        self.paintOptionsGroupBox.setTitle(_("Smoothing brush options"))
         self.paintOptionsGroupBox.setLayout(qt.QVBoxLayout())
         self.paintOptionsGroupBox.layout().addWidget(self.scriptedEffect.paintOptionsFrame())
         self.paintOptionsGroupBox.collapsed = True
@@ -224,7 +229,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
                     return
                 for index in range(inputSegmentIDs.GetNumberOfValues()):
                     segmentID = inputSegmentIDs.GetValue(index)
-                    self.showStatusMessage(f'Smoothing {segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()}...')
+                    self.showStatusMessage(_('Smoothing {segmentName}...').format(segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()))
                     self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(segmentID)
                     self.smoothSelectedSegment(maskImage, maskExtent)
                 # restore segment selection
@@ -365,7 +370,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
     def smoothMultipleSegments(self, maskImage=None, maskExtent=None):
         import vtkSegmentationCorePython as vtkSegmentationCore
 
-        self.showStatusMessage(f'Joint smoothing ...')
+        self.showStatusMessage(_('Joint smoothing ...'))
         # Generate merged labelmap of all visible segments
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
         visibleSegmentIds = vtk.vtkStringArray()
@@ -449,8 +454,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
         mergedImage.GetImageToWorldMatrix(imageToWorldMatrix)
 
         # TODO: Temporarily setting the overwrite mode to OverwriteVisibleSegments is an approach that should be change once additional
-        # layer control options have been implemented. Users may wish to keep segments on separate layers, and not allow them to be separated/merged automatically.
-        # This effect could leverage those options once they have been implemented.
+        # layer control options have been implemented. Users may wish to keep segments on separate layers, and not allow them to be
+        # separated/merged automatically. This effect could leverage those options once they have been implemented.
         oldOverwriteMode = self.scriptedEffect.parameterSetNode().GetOverwriteMode()
         self.scriptedEffect.parameterSetNode().SetOverwriteMode(slicer.vtkMRMLSegmentEditorNode.OverwriteVisibleSegments)
         for segmentId, labelValue in segmentLabelValues:
@@ -472,7 +477,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
         if smoothingMethod == JOINT_TAUBIN:
             self.scriptedEffect.clearBrushes()
             self.scriptedEffect.forceRender(viewWidget)
-            slicer.util.messageBox("Smoothing brush is not available for 'joint smoothing' method.")
+            slicer.util.messageBox(_("Smoothing brush is not available for 'joint smoothing' method."))
             return
 
         modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()

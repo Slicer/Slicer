@@ -1160,6 +1160,7 @@ qSlicerSegmentEditorScissorsEffect::qSlicerSegmentEditorScissorsEffect(QObject* 
  , d_ptr( new qSlicerSegmentEditorScissorsEffectPrivate(*this) )
 {
   this->m_Name = QString(/*no tr*/"Scissors");
+  this->m_Title = tr("Scissors");
   this->m_ShowEffectCursorInThreeDView = true;
 }
 
@@ -1177,13 +1178,13 @@ QIcon qSlicerSegmentEditorScissorsEffect::icon()
 //---------------------------------------------------------------------------
 QString const qSlicerSegmentEditorScissorsEffect::helpText()const
 {
-  return tr("<html>Cut through the entire segment from the current viewpoint<br>."
+  return QString("<html>") + tr("Cut through the entire segment from the current viewpoint<br>."
     "<p><ul style=\"margin: 0\">"
-    "<li><b>Left-button drag-and-drop:</b> sweep out an outline.</li>"
-    "<li><b>Esc:</b> cancel.</li>"
+    "<li><b>Left-button drag-and-drop:</b> sweep out an outline."
+    "<li><b>Esc:</b> cancel."
     "</ul><p>"
     "Editing is available both in slice and 3D views. In slice view cutting will be applied to all slices."
-    "<p></html>");
+    "<p>");
 }
 
 //-----------------------------------------------------------------------------

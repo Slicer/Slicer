@@ -6,6 +6,7 @@ import vtk
 import vtkITK
 
 import slicer
+from slicer.i18n import tr as _
 
 from SegmentEditorEffects import *
 
@@ -15,7 +16,8 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Islands'
+        scriptedEffect.name = 'Islands'  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _('Islands')
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
         self.widgetToOperationNameMap = {}
 
@@ -32,46 +34,46 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
         return qt.QIcon()
 
     def helpText(self):
-        return """<html>Edit islands (connected components) in a segment<br>. To get more information
-about each operation, hover the mouse over the option and wait for the tooltip to appear.</html>"""
+        return "<html>" + _("""Edit islands (connected components) in a segment<br>. To get more information
+about each operation, hover the mouse over the option and wait for the tooltip to appear.""")
 
     def setupOptionsFrame(self):
         self.operationRadioButtons = []
 
-        self.keepLargestOptionRadioButton = qt.QRadioButton("Keep largest island")
+        self.keepLargestOptionRadioButton = qt.QRadioButton(_("Keep largest island"))
         self.keepLargestOptionRadioButton.setToolTip(
-            "Keep only the largest island in selected segment, remove all other islands in the segment.")
+            _("Keep only the largest island in selected segment, remove all other islands in the segment."))
         self.operationRadioButtons.append(self.keepLargestOptionRadioButton)
         self.widgetToOperationNameMap[self.keepLargestOptionRadioButton] = KEEP_LARGEST_ISLAND
 
-        self.keepSelectedOptionRadioButton = qt.QRadioButton("Keep selected island")
+        self.keepSelectedOptionRadioButton = qt.QRadioButton(_("Keep selected island"))
         self.keepSelectedOptionRadioButton.setToolTip(
-            "Click on an island in a slice view to keep that island and remove all other islands in selected segment.")
+            _("Click on an island in a slice view to keep that island and remove all other islands in selected segment."))
         self.operationRadioButtons.append(self.keepSelectedOptionRadioButton)
         self.widgetToOperationNameMap[self.keepSelectedOptionRadioButton] = KEEP_SELECTED_ISLAND
 
-        self.removeSmallOptionRadioButton = qt.QRadioButton("Remove small islands")
+        self.removeSmallOptionRadioButton = qt.QRadioButton(_("Remove small islands"))
         self.removeSmallOptionRadioButton.setToolTip(
-            "Remove all islands from the selected segment that are smaller than the specified minimum size.")
+            _("Remove all islands from the selected segment that are smaller than the specified minimum size."))
         self.operationRadioButtons.append(self.removeSmallOptionRadioButton)
         self.widgetToOperationNameMap[self.removeSmallOptionRadioButton] = REMOVE_SMALL_ISLANDS
 
-        self.removeSelectedOptionRadioButton = qt.QRadioButton("Remove selected island")
+        self.removeSelectedOptionRadioButton = qt.QRadioButton(_("Remove selected island"))
         self.removeSelectedOptionRadioButton.setToolTip(
-            "Click on an island in a slice view to remove it from selected segment.")
+            _("Click on an island in a slice view to remove it from selected segment."))
         self.operationRadioButtons.append(self.removeSelectedOptionRadioButton)
         self.widgetToOperationNameMap[self.removeSelectedOptionRadioButton] = REMOVE_SELECTED_ISLAND
 
-        self.addSelectedOptionRadioButton = qt.QRadioButton("Add selected island")
+        self.addSelectedOptionRadioButton = qt.QRadioButton(_("Add selected island"))
         self.addSelectedOptionRadioButton.setToolTip(
-            "Click on a region in a slice view to add it to selected segment.")
+            _("Click on a region in a slice view to add it to selected segment."))
         self.operationRadioButtons.append(self.addSelectedOptionRadioButton)
         self.widgetToOperationNameMap[self.addSelectedOptionRadioButton] = ADD_SELECTED_ISLAND
 
-        self.splitAllOptionRadioButton = qt.QRadioButton("Split islands to segments")
+        self.splitAllOptionRadioButton = qt.QRadioButton(_("Split islands to segments"))
         self.splitAllOptionRadioButton.setToolTip(
-            "Create a new segment for each island of selected segment. Islands smaller than minimum size will be removed. " +
-            "Segments will be ordered by island size.")
+            _("Create a new segment for each island of selected segment. Islands smaller than minimum size will be removed. "
+              "Segments will be ordered by island size."))
         self.operationRadioButtons.append(self.splitAllOptionRadioButton)
         self.widgetToOperationNameMap[self.splitAllOptionRadioButton] = SPLIT_ISLANDS_TO_SEGMENTS
 
@@ -87,20 +89,21 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         self.scriptedEffect.addOptionsWidget(operationLayout)
 
         self.minimumSizeSpinBox = qt.QSpinBox()
-        self.minimumSizeSpinBox.setToolTip("Islands consisting of less voxels than this minimum size, will be deleted.")
+        self.minimumSizeSpinBox.setToolTip(_("Islands consisting of less voxels than this minimum size, will be deleted."))
         self.minimumSizeSpinBox.setMinimum(0)
         self.minimumSizeSpinBox.setMaximum(vtk.VTK_INT_MAX)
         self.minimumSizeSpinBox.setValue(1000)
-        self.minimumSizeSpinBox.suffix = " voxels"
-        self.minimumSizeLabel = self.scriptedEffect.addLabeledOptionsWidget("Minimum size:", self.minimumSizeSpinBox)
+        self.minimumSizeSpinBox.suffix = _(" voxels")
+        self.minimumSizeLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Minimum size:"), self.minimumSizeSpinBox)
 
-        self.applyButton = qt.QPushButton("Apply")
+        self.applyButton = qt.QPushButton(_("Apply"))
         self.applyButton.objectName = self.__class__.__name__ + 'Apply'
         self.scriptedEffect.addOptionsWidget(self.applyButton)
 
         for operationRadioButton in self.operationRadioButtons:
-            operationRadioButton.connect('toggled(bool)',
-                                         lambda toggle, widget=self.widgetToOperationNameMap[operationRadioButton]: self.onOperationSelectionChanged(widget, toggle))
+            operationRadioButton.connect(
+                'toggled(bool)',
+                lambda toggle, widget=self.widgetToOperationNameMap[operationRadioButton]: self.onOperationSelectionChanged(widget, toggle))
 
         self.minimumSizeSpinBox.connect('valueChanged(int)', self.updateMRMLFromGUI)
 
@@ -204,8 +207,9 @@ about each operation, hover the mouse over the option and wait for the tooltip t
                     segment = slicer.vtkSegment()
                     name = baseSegmentName + "_" + str(i + 1)
                     segment.SetName(name)
-                    segment.AddRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName(),
-                                              selectedSegment.GetRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()))
+                    segment.AddRepresentation(
+                        slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName(),
+                        selectedSegment.GetRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()))
                     segmentation.AddSegment(segment)
                     segmentID = segmentation.GetSegmentIdBySegment(segment)
                     segment.SetLabelValue(segmentation.GetUniqueLabelValueForSharedLabelmap(selectedSegmentID))
@@ -384,7 +388,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         segmentSelectionRequired = self.currentOperationRequiresSegmentSelection()
         self.applyButton.setEnabled(not segmentSelectionRequired)
         if segmentSelectionRequired:
-            self.applyButton.setToolTip("Click in a slice view to select an island.")
+            self.applyButton.setToolTip(_("Click in a slice view to select an island."))
         else:
             self.applyButton.setToolTip("")
 

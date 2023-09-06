@@ -970,6 +970,7 @@ qSlicerSegmentEditorPaintEffect::qSlicerSegmentEditorPaintEffect(QObject* parent
  , d_ptr( new qSlicerSegmentEditorPaintEffectPrivate(*this) )
 {
   this->m_Name = QString(/*no tr*/"Paint");
+  this->m_Title = tr("Paint");
   this->m_AlwaysErase = false;
   this->m_Erase = false;
   this->m_ShowEffectCursorInThreeDView = true;
@@ -989,14 +990,14 @@ QIcon qSlicerSegmentEditorPaintEffect::icon()
 //---------------------------------------------------------------------------
 QString const qSlicerSegmentEditorPaintEffect::helpText()const
 {
-  return tr("<html>Paint with a round brush<br>."
+  return QString("<html>") + tr("Paint with a round brush<br>."
     "<p><ul style=\"margin: 0\">"
-    "<li><b>Left-button drag-and-drop:</b> paint strokes.</li>"
-    "<li><b>Shift + mouse wheel</b> or <b>+/- keys:</b> adjust brush size.</li>"
-    "<li><b>Ctrl + mouse wheel:</b> slice view zoom in/out.</li>"
+    "<li><b>Left-button drag-and-drop:</b> paint strokes."
+    "<li><b>Shift + mouse wheel</b> or <b>+/- keys:</b> adjust brush size."
+    "<li><b>Ctrl + mouse wheel:</b> slice view zoom in/out."
     "</ul><p>"
     "Editing is available both in slice and 3D views."
-    "<p></html>");
+    "<p>");
 }
 
 //-----------------------------------------------------------------------------

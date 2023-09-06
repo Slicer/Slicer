@@ -143,6 +143,30 @@ void qSlicerSegmentEditorAbstractEffect::setName(QString name)
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerSegmentEditorAbstractEffect::title()const
+{
+  if (!this->m_Title.isEmpty())
+    {
+    return this->m_Title;
+    }
+  else if (!this->m_Name.isEmpty())
+    {
+    return this->m_Name;
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << ": Empty effect title!";
+    return QString();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setTitle(QString title)
+{
+  this->m_Title = title;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerSegmentEditorAbstractEffect::perSegment()const
 {
   return this->m_PerSegment;

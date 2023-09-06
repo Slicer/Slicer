@@ -5,6 +5,7 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 
 from SegmentEditorEffects import *
 
@@ -15,7 +16,8 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Draw'
+        scriptedEffect.name = 'Draw'  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _('Draw')
         self.drawPipelines = {}
         AbstractScriptedSegmentEditorLabelEffect.__init__(self, scriptedEffect)
 
@@ -32,13 +34,13 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
         return qt.QIcon()
 
     def helpText(self):
-        return """<html>Draw segment outline in slice viewers<br>.
+        return "<html>" + _("""Draw segment outline in slice viewers<br>.
 <p><ul style="margin: 0">
-<li><b>Left-click:</b> add point.</li>
-<li><b>Left-button drag-and-drop:</b> add multiple points.</li>
-<li><b>x:</b> delete last point.</li>
-<li><b>Double-left-click</b> or <b>right-click</b> or <b>a</b> or <b>enter</b>: apply outline.</li>
-</ul><p></html>"""
+<li><b>Left-click:</b> add point.
+<li><b>Left-button drag-and-drop:</b> add multiple points.
+<li><b>x:</b> delete last point.
+<li><b>Double-left-click</b> or <b>right-click</b> or <b>a</b> or <b>enter</b>: apply outline.
+</ul><p>""")
 
     def deactivate(self):
         # Clear draw pipelines
@@ -92,7 +94,8 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
             sliceNode = viewWidget.sliceLogic().GetSliceNode()
             pipeline.lastInsertSliceNodeMTime = sliceNode.GetMTime()
             abortEvent = True
-        elif (eventId == vtk.vtkCommand.RightButtonReleaseEvent and pipeline.actionState == "finishing") or (eventId == vtk.vtkCommand.LeftButtonDoubleClickEvent and not anyModifierKeyPressed):
+        elif ((eventId == vtk.vtkCommand.RightButtonReleaseEvent and pipeline.actionState == "finishing")
+              or (eventId == vtk.vtkCommand.LeftButtonDoubleClickEvent and not anyModifierKeyPressed)):
             abortEvent = (pipeline.rasPoints.GetNumberOfPoints() > 1)
             sliceNode = viewWidget.sliceLogic().GetSliceNode()
             if abs(pipeline.lastInsertSliceNodeMTime - sliceNode.GetMTime()) < 2:

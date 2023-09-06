@@ -6,6 +6,7 @@ import vtk
 import vtkITK
 
 import slicer
+from slicer.i18n import tr as _
 
 from SegmentEditorEffects import *
 
@@ -16,7 +17,8 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Level tracing'
+        scriptedEffect.name = 'Level tracing'  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _('Level tracing')
         AbstractScriptedSegmentEditorLabelEffect.__init__(self, scriptedEffect)
 
         # Effect-specific members
@@ -36,12 +38,12 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
         return qt.QIcon()
 
     def helpText(self):
-        return """<html>Add uniform intensity region to selected segment<br>.
-<p><ul style="margin: 0">
-<li><b>Mouse move:</b> current background voxel is used to find a closed path that
-follows the same intensity value back to the starting point within the current slice.</li>
-<li><b>Left-click:</b> add the previewed region to the current segment.</li>
-</ul><p></html>"""
+        return "<html>" + _("""Add uniform intensity region to selected segment<br>.
+        <p><ul style="margin: 0">
+        <li><b>Mouse move:</b> current background voxel is used to find a closed path that
+        follows the same intensity value back to the starting point within the current slice.
+        <li><b>Left-click:</b> add the previewed region to the current segment.
+        </ul><p>""")
 
     def setupOptionsFrame(self):
         self.sliceRotatedErrorLabel = qt.QLabel()
@@ -99,9 +101,10 @@ follows the same intensity value back to the starting point within the current s
                 if pipeline.preview(xy):
                     self.sliceRotatedErrorLabel.text = ""
                 else:
-                    self.sliceRotatedErrorLabel.text = ("<b><font color=\"red\">"
-                                                        + "Slice view is not aligned with segmentation axis.<br>To use this effect, click the 'Slice views orientation' warning button."
-                                                        + "</font></b>")
+                    self.sliceRotatedErrorLabel.text = (
+                        '<b><font color="red">'
+                        + _("Slice view is not aligned with segmentation axis.<br>To use this effect, click the 'Slice views orientation' warning button.")
+                        + '</font></b>')
                 abortEvent = True
                 self.lastXY = xy
         elif eventId == vtk.vtkCommand.EnterEvent:

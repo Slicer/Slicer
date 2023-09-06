@@ -5,6 +5,7 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 
 from .AbstractScriptedSegmentEditorEffect import *
 
@@ -86,14 +87,14 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         return False
 
     def setupOptionsFrame(self):
-        self.autoUpdateCheckBox = qt.QCheckBox("Auto-update")
-        self.autoUpdateCheckBox.setToolTip("Auto-update results preview when input segments change.")
+        self.autoUpdateCheckBox = qt.QCheckBox(_("Auto-update"))
+        self.autoUpdateCheckBox.setToolTip(_("Auto-update results preview when input segments change."))
         self.autoUpdateCheckBox.setChecked(True)
         self.autoUpdateCheckBox.setEnabled(False)
 
-        self.previewButton = qt.QPushButton("Initialize")
+        self.previewButton = qt.QPushButton(_("Initialize"))
         self.previewButton.objectName = self.__class__.__name__ + 'Preview'
-        self.previewButton.setToolTip("Preview complete segmentation")
+        self.previewButton.setToolTip(_("Preview complete segmentation"))
         # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
         # fails on some systems, therefore set the policies using separate method calls
         qSize = qt.QSizePolicy()
@@ -103,10 +104,10 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         previewFrame = qt.QHBoxLayout()
         previewFrame.addWidget(self.autoUpdateCheckBox)
         previewFrame.addWidget(self.previewButton)
-        self.scriptedEffect.addLabeledOptionsWidget("Preview:", previewFrame)
+        self.scriptedEffect.addLabeledOptionsWidget(_("Preview:"), previewFrame)
 
         self.previewOpacitySlider = ctk.ctkSliderWidget()
-        self.previewOpacitySlider.setToolTip("Adjust visibility of results preview.")
+        self.previewOpacitySlider.setToolTip(_("Adjust visibility of results preview."))
         self.previewOpacitySlider.minimum = 0
         self.previewOpacitySlider.maximum = 1.0
         self.previewOpacitySlider.value = 0.0
@@ -114,24 +115,24 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         self.previewOpacitySlider.pageStep = 0.1
         self.previewOpacitySlider.spinBoxVisible = False
 
-        self.previewShow3DButton = qt.QPushButton("Show 3D")
-        self.previewShow3DButton.setToolTip("Preview results in 3D.")
+        self.previewShow3DButton = qt.QPushButton(_("Show 3D"))
+        self.previewShow3DButton.setToolTip(_("Preview results in 3D."))
         self.previewShow3DButton.setCheckable(True)
 
         displayFrame = qt.QHBoxLayout()
-        displayFrame.addWidget(qt.QLabel("inputs"))
+        displayFrame.addWidget(qt.QLabel(_("inputs")))
         displayFrame.addWidget(self.previewOpacitySlider)
-        displayFrame.addWidget(qt.QLabel("results"))
+        displayFrame.addWidget(qt.QLabel(_("results")))
         displayFrame.addWidget(self.previewShow3DButton)
-        self.scriptedEffect.addLabeledOptionsWidget("Display:", displayFrame)
+        self.scriptedEffect.addLabeledOptionsWidget(_("Display:"), displayFrame)
 
-        self.cancelButton = qt.QPushButton("Cancel")
+        self.cancelButton = qt.QPushButton(_("Cancel"))
         self.cancelButton.objectName = self.__class__.__name__ + 'Cancel'
-        self.cancelButton.setToolTip("Clear preview and cancel auto-complete")
+        self.cancelButton.setToolTip(_("Clear preview and cancel auto-complete"))
 
-        self.applyButton = qt.QPushButton("Apply")
+        self.applyButton = qt.QPushButton(_("Apply"))
         self.applyButton.objectName = self.__class__.__name__ + 'Apply'
-        self.applyButton.setToolTip("Replace segments by previewed result")
+        self.applyButton.setToolTip(_("Replace segments by previewed result"))
 
         finishFrame = qt.QHBoxLayout()
         finishFrame.addWidget(self.cancelButton)
@@ -244,13 +245,13 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             wasBlocked = self.previewOpacitySlider.blockSignals(True)
             self.previewOpacitySlider.value = self.getPreviewOpacity()
             self.previewOpacitySlider.blockSignals(wasBlocked)
-            self.previewButton.text = "Update"
+            self.previewButton.text = _("Update")
             self.previewShow3DButton.setEnabled(True)
             self.previewShow3DButton.setChecked(self.getPreviewShow3D())
             self.autoUpdateCheckBox.setEnabled(True)
             self.observeSegmentation(self.autoUpdateCheckBox.isChecked())
         else:
-            self.previewButton.text = "Initialize"
+            self.previewButton.text = _("Initialize")
             self.autoUpdateCheckBox.setEnabled(False)
             self.previewShow3DButton.setEnabled(False)
             self.delayedAutoUpdateTimer.stop()
@@ -276,7 +277,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             return
         self.previewComputationInProgress = True
 
-        slicer.util.showStatusMessage(f"Running {self.scriptedEffect.name} auto-complete...", 2000)
+        slicer.util.showStatusMessage(_("Running {effectName} auto-complete...").format(effectName=self.scriptedEffect.name), 2000)
         try:
             # This can be a long operation - indicate it to the user
             qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
@@ -404,7 +405,8 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         # Current extent used for auto-complete preview
         currentLabelExtent = self.mergedLabelmapGeometryImage.GetExtent()
 
-        # Determine if the current merged labelmap extent has less than a 3 voxel margin around the effective segment extent (limited by the master image extent)
+        # Determine if the current merged labelmap extent has less than a 3 voxel margin around the effective segment extent
+        # (limited by the source image extent)
         return ((masterImageExtent[0] != currentLabelExtent[0] and currentLabelExtent[0] > effectiveLabelExtent[0] - self.minimumExtentMargin) or
                 (masterImageExtent[1] != currentLabelExtent[1] and currentLabelExtent[1] < effectiveLabelExtent[1] + self.minimumExtentMargin) or
                 (masterImageExtent[2] != currentLabelExtent[2] and currentLabelExtent[2] > effectiveLabelExtent[2] - self.minimumExtentMargin) or
@@ -522,8 +524,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         # as the closed surfaces will be converted as necessary by the segmentation logic.
 
         mergedImage = slicer.vtkOrientedImageData()
-        segmentationNode.GenerateMergedLabelmapForAllSegments(mergedImage,
-                                                              vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, self.mergedLabelmapGeometryImage, self.selectedSegmentIds)
+        segmentationNode.GenerateMergedLabelmapForAllSegments(
+            mergedImage,
+            vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, self.mergedLabelmapGeometryImage, self.selectedSegmentIds)
 
         outputLabelmap = slicer.vtkOrientedImageData()
         self.computePreviewLabelmap(mergedImage, outputLabelmap)
