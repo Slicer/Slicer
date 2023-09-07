@@ -305,15 +305,24 @@ double vtkMRMLMarkupsCurveNode::GetCurveLength(vtkPoints* curvePoints, bool clos
     {
     return 0.0;
     }
+  // In case of closed curve we allow one more point beyond the curve points
+  // (corresponding to the closing segment).
+  if (startCurvePointIndex >= curvePoints->GetNumberOfPoints() + (closedCurve ? 1 : 0))
+    {
+    // Starts after the last segment
+    return 0.0;
+    }
   if (startCurvePointIndex < 0)
     {
     vtkGenericWarningMacro("Invalid startCurvePointIndex=" << startCurvePointIndex << ", using 0 instead");
     startCurvePointIndex = 0;
     }
-  vtkIdType lastCurvePointIndex = curvePoints->GetNumberOfPoints()-1;
-  if (numberOfCurvePoints >= 0 && startCurvePointIndex + numberOfCurvePoints - 1 < lastCurvePointIndex)
+  vtkIdType lastCurvePointIndex = curvePoints->GetNumberOfPoints() - 1;
+  bool addClosingSegment = closedCurve;
+  if (numberOfCurvePoints >= 0 && startCurvePointIndex + numberOfCurvePoints - 1 <= lastCurvePointIndex)
     {
     lastCurvePointIndex = startCurvePointIndex + numberOfCurvePoints - 1;
+    addClosingSegment = false;
     }
 
   double length = 0.0;
@@ -329,7 +338,7 @@ double vtkMRMLMarkupsCurveNode::GetCurveLength(vtkPoints* curvePoints, bool clos
     previousPoint[2] = nextPoint[2];
     }
   // Add length of closing segment
-  if (closedCurve && (numberOfCurvePoints < 0 || numberOfCurvePoints >= curvePoints->GetNumberOfPoints()))
+  if (addClosingSegment)
     {
     curvePoints->GetPoint(0, nextPoint);
     length += sqrt(vtkMath::Distance2BetweenPoints(previousPoint, nextPoint));
