@@ -305,7 +305,9 @@ double vtkMRMLMarkupsCurveNode::GetCurveLength(vtkPoints* curvePoints, bool clos
     {
     return 0.0;
     }
-  if (startCurvePointIndex >= curvePoints->GetNumberOfPoints() + closedCurve)
+  // In case of closed curve we allow one more point beyond the curve points
+  // (corresponding to the closing segment).
+  if (startCurvePointIndex >= curvePoints->GetNumberOfPoints() + (closedCurve ? 1 : 0))
     {
     // Starts after the last segment
     return 0.0;
