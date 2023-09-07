@@ -113,7 +113,7 @@ void qMRMLPlotViewControllerWidgetPrivate::init()
   this->FitToWindowToolButton = new QToolButton(q);
   this->FitToWindowToolButton->setAutoRaise(true);
   this->FitToWindowToolButton->setDefaultAction(this->actionFit_to_window);
-  this->FitToWindowToolButton->setFixedSize(15, 15);
+  this->FitToWindowToolButton->setIconSize(QSize(12, 12));
   this->BarLayout->insertWidget(2, this->FitToWindowToolButton);
 }
 

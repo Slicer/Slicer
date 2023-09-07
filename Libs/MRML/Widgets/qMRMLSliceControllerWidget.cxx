@@ -390,7 +390,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
   //this->FitToWindowToolButton->setIcon(fitToWindowIcon);
   this->FitToWindowToolButton->setAutoRaise(true);
   this->FitToWindowToolButton->setDefaultAction(this->actionFit_to_window);
-  this->FitToWindowToolButton->setFixedSize(15, 15);
+  this->FitToWindowToolButton->setIconSize(QSize(12, 12));
   this->BarLayout->insertWidget(2, this->FitToWindowToolButton);
 
   this->SliderSpacer = new ctkDynamicSpacer(q);
