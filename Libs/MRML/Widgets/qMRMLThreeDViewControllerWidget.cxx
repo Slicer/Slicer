@@ -273,7 +273,6 @@ void qMRMLThreeDViewControllerWidgetPrivate::init()
   this->CenterToolButton = new QToolButton(q);
   this->CenterToolButton->setAutoRaise(true);
   this->CenterToolButton->setDefaultAction(this->actionCenter);
-  this->CenterToolButton->setIconSize(QSize(12, 12));
   this->CenterToolButton->setObjectName("CenterButton_Header");
   this->BarLayout->insertWidget(2, this->CenterToolButton);
 

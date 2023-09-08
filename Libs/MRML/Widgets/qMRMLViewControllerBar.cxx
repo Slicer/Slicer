@@ -103,7 +103,6 @@ void qMRMLViewControllerBarPrivate::init()
   this->PinButton->setObjectName("PinButton");
   this->PinButton->setCheckable(true);
   this->PinButton->setAutoRaise(true);
-  this->PinButton->setIconSize(QSize(12, 12));
   QIcon pushPinIcon;
   pushPinIcon.addFile(":/Icons/PushPinIn.png", QSize(), QIcon::Normal, QIcon::On);
   pushPinIcon.addFile(":/Icons/PushPinOut.png", QSize(), QIcon::Normal, QIcon::Off);
@@ -130,7 +129,6 @@ void qMRMLViewControllerBarPrivate::init()
   this->MaximizeViewButton->setObjectName("MaximizeViewButton");
   this->MaximizeViewButton->setToolTip(tr("Maximize/restore view"));
   this->MaximizeViewButton->setAutoRaise(true);
-  this->MaximizeViewButton->setIconSize(QSize(12, 12));
   this->MaximizeViewButton->setIcon(this->ViewMaximizeIcon);
   this->BarLayout->addWidget(this->MaximizeViewButton);
   QObject::connect(this->MaximizeViewButton, SIGNAL(clicked()), q, SLOT(maximizeView()));
