@@ -117,11 +117,8 @@ qMRMLSliceControllerWidgetPrivate::~qMRMLSliceControllerWidgetPrivate() = defaul
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setColor(QColor barColor)
 {
-  //this->SliceOffsetSlider->spinBox()->setAutoFillBackground(true);
   this->Superclass::setColor(barColor);
-  QPalette spinBoxPalette( this->SliceOffsetSlider->spinBox()->palette());
-  spinBoxPalette.setColor(QPalette::Base, barColor.lighter(130));
-  this->SliceOffsetSlider->spinBox()->setPalette(spinBoxPalette);
+  this->SliceOffsetSlider->spinBox()->setStyleSheet("background-color: transparent");
 }
 
 //---------------------------------------------------------------------------

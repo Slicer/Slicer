@@ -121,7 +121,6 @@ void qMRMLViewControllerBarPrivate::init()
 #else
   this->ViewLabel->setMinimumWidth(this->ViewLabel->fontMetrics().width("XX"));
 #endif
-  this->ViewLabel->setAutoFillBackground(true);
   this->BarLayout->addWidget(this->ViewLabel);
 
   this->ViewMaximizeIcon = QIcon(":Icons/ViewMaximize.png");
