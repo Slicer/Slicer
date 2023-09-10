@@ -45,6 +45,7 @@ ScreenCapture.ScreenCaptureLogic().captureSliceSweep(getNode("vtkMRMLSliceNodeRe
 view = slicer.app.layoutManager().threeDWidget(0).threeDView()
 view.mrmlViewNode().SetBackgroundColor(0,0,0)
 view.mrmlViewNode().SetBackgroundColor2(0,0,0)
+view.forceRender()
 # Capture RGBA image
 renderWindow = view.renderWindow()
 renderWindow.SetAlphaBitPlanes(1)
