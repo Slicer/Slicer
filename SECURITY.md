@@ -44,4 +44,4 @@ Reports may pertain to various aspects of the Slicer ecosystem, including:
 > While we may not be able to offer legally binding commitments, we will do our best in addressing any reported security concerns.
 
 > [!WARNING]
-> While we greatly appreciate contributions to make Slicer more secure, please be aware that Slicer is **NOT** part of an official bug bounty program, and no financial compensation is offered for such contributions.
+> While we greatly appreciate contributions to make Slicer more secure, please be aware that the Slicer community does not run a bug bounty program, and no financial compensation is offered for such contributions.
