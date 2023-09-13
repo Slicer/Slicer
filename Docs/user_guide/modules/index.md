@@ -23,6 +23,11 @@ viewcontrollers.md
 volumerendering.md
 volumes.md
 ```
+## Wizards
+```{toctree}
+:maxdepth: 1
+comparevolumes.md
+```
 
 ## Informatics
 ```{toctree}
@@ -35,7 +40,6 @@ terminologies.md
 texts.md
 dataprobe.md
 ```
-%comparevolumes.md
 
 ## Registration
 ```{toctree}
