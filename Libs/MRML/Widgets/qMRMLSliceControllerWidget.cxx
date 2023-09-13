@@ -2898,20 +2898,13 @@ void qMRMLSliceControllerWidget::setSlabReconstructionType(int newSlabReconstruc
 void qMRMLSliceControllerWidget::setSlabReconstructionThickness(double thickness)
 {
   Q_D(qMRMLSliceControllerWidget);
-  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
-  if (!nodes.GetPointer())
+  if (!this->mrmlSliceNode() || !d->MRMLSliceCompositeNode)
     {
     return;
     }
-  vtkMRMLSliceNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(nodes->GetNextItemAsObject(it)));)
-    {
-    if (node == this->mrmlSliceNode() || this->isLinked())
-      {
-      node->SetSlabReconstructionThickness(thickness);
-      }
-    }
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::UpdateSlabReconstructionThicknessFlag);
+  this->mrmlSliceNode()->SetSlabReconstructionThickness(thickness);
+  d->SliceLogic->EndSliceNodeInteraction();
 }
 
 // --------------------------------------------------------------------------
