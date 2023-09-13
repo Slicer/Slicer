@@ -468,6 +468,7 @@ public:
   ///    LabelOutlineFlag - broadcast outlining the labelmaps
   ///    SliceVisibleFlag = broadcast display of slice in 3D
   ///    ResetOrientationFlag = broadcast a reset to default orientation to all linked viewers
+  ///    UpdateSlabReconstructionThicknessFlag = broadcast updating the slab reconstruction thickness
   enum InteractionFlagType
   {
     None = 0,
@@ -481,7 +482,8 @@ public:
     SliceVisibleFlag = 128,
     SliceSpacingFlag = 256,
     ResetOrientationFlag = 512,
-    RotateToBackgroundVolumePlaneFlag = 1024
+    RotateToBackgroundVolumePlaneFlag = 1024,
+    UpdateSlabReconstructionThicknessFlag = 2048,
   };
 
   /// Get/Set a flag indicating what parameters are being manipulated

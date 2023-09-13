@@ -513,6 +513,13 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           sNode->SetSliceSpacingMode( sliceNode->GetSliceSpacingMode() );
           sNode->SetPrescribedSliceSpacing( sliceNode->GetPrescribedSliceSpacing() );
           }
+
+        // Setting the slab reconstruction thickness
+        if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+          & vtkMRMLSliceNode::UpdateSlabReconstructionThicknessFlag)
+          {
+          sNode->SetSlabReconstructionThickness(sliceNode->GetSlabReconstructionThickness());
+          }
       //
       // End of the block for broadcasting parameters and commands
       // that do not require the orientation to match
