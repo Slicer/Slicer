@@ -1552,34 +1552,49 @@ void vtkSegmentation::SeparateSegmentLabelmap(std::string segmentId)
 
   vtkOrientedImageData* labelmap = vtkOrientedImageData::SafeDownCast(
     segment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()));
-  if (labelmap)
+  if (!labelmap)
     {
-    vtkNew<vtkImageThreshold> threshold;
-    threshold->SetInputData(labelmap);
-    threshold->ThresholdBetween(segment->GetLabelValue(), segment->GetLabelValue());
-    threshold->SetOutValue(0);
-    threshold->SetInValue(DEFAULT_LABEL_VALUE);
-    threshold->Update();
-
-    vtkSmartPointer<vtkOrientedImageData> tempImage = vtkSmartPointer<vtkOrientedImageData>::New();
-    tempImage->ShallowCopy(threshold->GetOutput());
-    tempImage->CopyDirections(labelmap);
-
-    segment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), tempImage);
-
-    vtkNew<vtkImageThreshold> thresholdErase;
-    thresholdErase->SetInputData(labelmap);
-    thresholdErase->ThresholdBetween(segment->GetLabelValue(), segment->GetLabelValue());
-    thresholdErase->SetInValue(0);
-    thresholdErase->ReplaceOutOff();
-    thresholdErase->Update();
-    labelmap->ShallowCopy(thresholdErase->GetOutput());
+    return;
     }
+
+  vtkNew<vtkImageThreshold> threshold;
+  threshold->SetInputData(labelmap);
+  threshold->ThresholdBetween(segment->GetLabelValue(), segment->GetLabelValue());
+  threshold->SetOutValue(0);
+  threshold->SetInValue(DEFAULT_LABEL_VALUE);
+  threshold->Update();
+
+  vtkSmartPointer<vtkOrientedImageData> tempImage = vtkSmartPointer<vtkOrientedImageData>::New();
+  tempImage->ShallowCopy(threshold->GetOutput());
+  tempImage->CopyDirections(labelmap);
+
+  segment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), tempImage);
+
+  vtkNew<vtkImageThreshold> thresholdErase;
+  thresholdErase->SetInputData(labelmap);
+  thresholdErase->ThresholdBetween(segment->GetLabelValue(), segment->GetLabelValue());
+  thresholdErase->SetInValue(0);
+  thresholdErase->ReplaceOutOff();
+  thresholdErase->Update();
+
+  // Although the source labelmap will be modified, vtkSegmentation::onSourceRepresentationModified would unnecessarily invalidate the non-source
+  // representations (because separating a labelmap into a new layer does not change the segment's shape).
+  // This prevents vtkSegmentation::onSourceRepresentationModified from being called. We will later invoke events to let observers know about the change.
+  bool wasSourceRepresentationModifiedEnabled = this->SetSourceRepresentationModifiedEnabled(false);
+  labelmap->ShallowCopy(thresholdErase->GetOutput());
+  this->SetSourceRepresentationModifiedEnabled(wasSourceRepresentationModifiedEnabled);
+
   segment->SetLabelValue(DEFAULT_LABEL_VALUE);
 
+  std::string sourceRepresentationName = this->GetSourceRepresentationName();
+  if (strcmp(sourceRepresentationName.c_str(), vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()) == 0)
+    {
+    // We were blocking onSourceRepresentationModified, however the source labelmap was modified so we need to manually invoke the event.
+    this->InvokeEvent(vtkSegmentation::SourceRepresentationModified, labelmap);
+    }
+  this->InvokeEvent(vtkSegmentation::RepresentationModified, (void*)segmentId.c_str());
+
   this->Modified();
-  this->InvokeEvent(vtkSegmentation::SourceRepresentationModified, this);
-  this->InvokeEvent(vtkSegmentation::ContainedRepresentationNamesModified);
 }
 
 //---------------------------------------------------------------------------
