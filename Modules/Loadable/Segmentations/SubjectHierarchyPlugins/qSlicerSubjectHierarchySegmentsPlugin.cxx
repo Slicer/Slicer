@@ -345,6 +345,14 @@ QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkIdType itemID)const
     return tooltipString;
     }
 
+  // Get segmentation node and segment
+  vtkMRMLSegmentationNode* segmentationNode =
+    vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(itemID, scene);
+  if (!segmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Unable to find segmentation node for segment subject hierarchy item " << shNode->GetItemName(itemID).c_str();
+    return tooltipString;
+    }
   vtkSegment* segment = vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyItem(itemID, scene);
   if (!segment)
     {
@@ -395,7 +403,8 @@ QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkIdType itemID)const
       tags.append(QString::fromStdString(tagIt->first) + ": " + QString::fromStdString(tagIt->second));
       }
     }
-  tooltipString.append(tr("Segment - Representations: %1, Color: (%2, %3, %4)\nTags: %5")
+  tooltipString.append(tr("Segment - ID: %1, Representations: %2, Color: (%3, %4, %5)\nTags: %6")
+    .arg(QString::fromStdString(segmentationNode->GetSegmentation()->GetSegmentIdBySegment(segment)))
     .arg(representations)
     .arg((int)(color[0]*255)).arg((int)(color[1]*255)).arg((int)(color[2]*255))
     .arg(tags));
