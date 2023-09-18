@@ -118,7 +118,6 @@ qMRMLSliceControllerWidgetPrivate::~qMRMLSliceControllerWidgetPrivate() = defaul
 void qMRMLSliceControllerWidgetPrivate::setColor(QColor barColor)
 {
   this->Superclass::setColor(barColor);
-  this->SliceOffsetSlider->spinBox()->setStyleSheet("background-color: transparent");
 }
 
 //---------------------------------------------------------------------------
@@ -409,6 +408,8 @@ void qMRMLSliceControllerWidgetPrivate::init()
     ctkDoubleSpinBox::DecimalsByShortcuts |
     ctkDoubleSpinBox::DecimalsByKey |
     ctkDoubleSpinBox::DecimalsAsMin );
+  // Slice controller background color is independent from the color palette, therefore the color of text and controls are hardcoded to black
+  this->SliceOffsetSlider->spinBox()->setStyleSheet("color: black; background-color: transparent;");
 
   //this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
   ctkDoubleSpinBox* spinBox = this->SliceOffsetSlider->spinBox();
