@@ -210,7 +210,7 @@ XML elements and their attributes:
   </item>
  </layout>
  <!--second dockable viewport-->
- <layout type="horizontal"  label="Views+" dockable="true" dockPosition="bottom">>
+ <layout name="views+" type="horizontal" label="Views+" dockable="true" dockPosition="bottom">>
   <item>
    <view class="vtkMRMLSliceNode" singletontag="Red+">
     <property name="orientation" action="default">Axial</property>
