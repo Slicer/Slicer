@@ -224,31 +224,6 @@ Instead of `cmake`, one can use `ccmake`, which provides a text-based interface,
 
 :::
 
-:::{admonition} Tip -- Speed up 3D Slicer build with `ccache`
-
-`ccache` is a compiler cache that can speed up subsequent builds of 3D Slicer. This can be useful if 3D Slicer is built often and there are no large divergences between subsequent builds. This requires `ccache` installed on the system (e.g., `sudo apt install ccache`).
-
-The first time `ccache` is used, the compilation time can marginally increase as it includes the first caching. After the first build, subsequent build times will decrease significantly.
-
-`ccache` is not detected as a valid compiler by the 3D Slicer building process. You can generate local symbolic links to disguise the use of `ccache` as valid compilers:
-
-```console
-ln -s /usr/bin/ccache ~/.local/bin/c++
-ln -s /usr/bin/ccache ~/.local/bin/cc
-```
-
-Then, the Slicer build can be configured to use these compilers:
-
-```console
-cmake \
-  -DCMAKE_BUILD_TYPE:STRING=Release \
-  -DCMAKE_CXX_COMPILER:STRING=$HOME/.local/bin/c++ \
-  -DCMAKE_C_COMPILER:STRING=$HOME/.local/bin/cc \
-  ../Slicer
-```
-
-:::
-
 ## Build Slicer
 
 Once the Slicer build project files have been generated, the Slicer project can
@@ -273,6 +248,12 @@ Increasing the number of parallel builds generally increases the memory required
 :::{admonition} Tip -- Error detection during parallel build
 
 Using parallel builds makes finding compilation errors difficult due to the fact that all parallel build processes use the same screen output, as opposed to sequential builds, where the compilation process will stop at the error. A common technique to have parallel builds and easily find errors is to launch a parallel build followed by a sequential build. For the parallel build, it is advised to run `make -j<N> -k` to have the parallel build keep going as far as possible before doing the sequential build with `make`.
+
+:::
+
+:::{admonition} Tip -- Speed up build
+
+Build and rebuild can be accelerated thanks to tips which are given in the [advanced section](#advanced).
 
 :::
 
@@ -309,3 +290,53 @@ make package
 ## Common errors
 
 See a list of issues common to all operating systems on the [Common errors](common_errors.md) page.
+
+## Advanced
+
+:::{admonition} Tip -- Speed up 3D Slicer build with `ccache`
+
+`ccache` is a compiler cache that can speed up subsequent builds of 3D Slicer. This can be useful if 3D Slicer is built often and there are no large divergences between subsequent builds. This requires `ccache` installed on the system (e.g., `sudo apt install ccache`).
+
+The first time `ccache` is used, the compilation time can marginally increase as it includes the first caching. After the first build, subsequent build times will decrease significantly.
+
+`ccache` is not detected as a valid compiler by the 3D Slicer building process. You can generate local symbolic links to disguise the use of `ccache` as valid compilers:
+
+```console
+ln -s /usr/bin/ccache ~/.local/bin/c++
+ln -s /usr/bin/ccache ~/.local/bin/cc
+```
+
+Then, the Slicer build can be configured to use these compilers:
+
+```console
+cmake \
+  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DCMAKE_CXX_COMPILER:STRING=$HOME/.local/bin/c++ \
+  -DCMAKE_C_COMPILER:STRING=$HOME/.local/bin/cc \
+  ../Slicer
+```
+
+:::{admonition} Tip -- Reduce linking time with `gold`
+
+Gold linker is faster than the default linux linker (bfd).
+Moreover it avoids warnings like /path/to/libQt5WebEngineCore.so: .dynsym local symbol at index X (>= sh_info of X)
+
+Open a terminal and launch the following commands to use Gold linker.
+
+- On Debian or Ubuntu
+
+```bash
+# Install ld alternatives and set gold as default program for ld
+sudo update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.gold" 20
+sudo update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10
+```
+
+- On CentOS:
+
+Select ld.gold as default linker using this command:
+
+```bash
+# Set ld.gold as default linker
+sudo update-alternatives --config ld
+```
+:::
