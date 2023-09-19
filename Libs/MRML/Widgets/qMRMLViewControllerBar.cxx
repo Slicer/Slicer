@@ -115,6 +115,8 @@ void qMRMLViewControllerBarPrivate::init()
   this->ViewLabel = new QLabel(q);
   this->ViewLabel->setObjectName("ViewLabel");
   this->ViewLabel->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
+  // Slice controller background color is independent from the color palette, therefore the color of text and controls are hardcoded to black
+  this->ViewLabel->setStyleSheet("color: black; background-color: transparent;");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
   this->ViewLabel->setMinimumWidth(this->ViewLabel->fontMetrics().horizontalAdvance("XX"));
 #else
@@ -195,9 +197,6 @@ void qMRMLViewControllerBarPrivate::setColor(QColor barColor)
   palette.setBrush(QPalette::Window, gradient);
   palette.setBrush(QPalette::Text, Qt::black);
   this->BarWidget->setPalette(palette);
-
-  QPalette labelPalette(barColor.lighter(130));
-  this->ViewLabel->setPalette(labelPalette);
 }
 
 //---------------------------------------------------------------------------
