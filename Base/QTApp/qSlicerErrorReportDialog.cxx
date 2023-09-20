@@ -17,7 +17,6 @@
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
-
 // Qt includes
 #include <QClipboard>
 #include <QDesktopServices>
@@ -25,10 +24,13 @@
 #include <QTextStream>
 #include <QUrl>
 #include <QFileInfo>
+#include <QStyle>
+#include <QDateTime>
 
 // SlicerApp includes
 #include "qSlicerErrorReportDialog.h"
 #include "qSlicerApplication.h"
+#include "qSlicerCoreApplication.h"
 #include "ui_qSlicerErrorReportDialog.h"
 
 //-----------------------------------------------------------------------------
@@ -57,16 +59,72 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
   instructionsText.replace(QString("[appname-version-platform]"), QUrl::toPercentEncoding(appNameVersionPlatform));
   d->InstructionsLabel->setText(instructionsText);
 
+  QStringList headers;
+  headers << "App Name" << "Version" << "Revision" << "Date" << "Time" << "File Path";
+  d->RecentLogFilesComboBox->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  d->RecentLogFilesComboBox->setColumnCount(6);
+  d->RecentLogFilesComboBox->setHorizontalHeaderLabels(headers);
+  for (int i = 0; i < d->RecentLogFilesComboBox->columnCount(); i++) {
+      d->RecentLogFilesComboBox->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+  }
+  QLocale locale = qSlicerCoreApplication::application()->applicationLocale();
   QStringList logFilePaths = qSlicerApplication::application()->recentLogFiles();
-  d->RecentLogFilesComboBox->addPaths(logFilePaths);
-  if (d->RecentLogFilesComboBox->count() > 0)
+  foreach(const QString& path, logFilePaths)
+  {
+    QTableWidgetItem* itemApp = new QTableWidgetItem(path);
+    QTableWidgetItem* itemVersion = new QTableWidgetItem(path);
+    QTableWidgetItem* itemRevision = new QTableWidgetItem(path);
+    QTableWidgetItem* itemDate = new QTableWidgetItem(path);
+    QTableWidgetItem* itemTime = new QTableWidgetItem(path);
+    QTableWidgetItem* itemPath = new QTableWidgetItem(path);
+
+    QVariant fileString(path);
+    QFileInfo fi(path);
+    QString fileName = fi.fileName();
+    QStringList stringList = fileName.split("_", QString::SkipEmptyParts);
+    itemApp->setText(stringList.at(0));
+    itemApp->setData(Qt::UserRole, fileString);
+    itemVersion->setText(qSlicerApplication::application()->applicationVersion());
+    itemRevision->setText(qSlicerApplication::application()->revision());
+    if (stringList.size() >= 6) // compatibility for log files with and without app version in filename
+      {
+      QDateTime dt = QDateTime::fromString(QString(stringList.at(3)), "yyyyMMdd");
+      QDateTime tm = QDateTime::fromString(QString(stringList.at(4)), "hhmmss");
+      itemDate->setText(locale.toString(dt, "ddd yyyy-MM-dd"));
+      itemTime->setText(locale.toString(tm, "hh:mm:ss"));
+      }
+    else
+      {
+      QDateTime dt = QDateTime::fromString(QString(stringList.at(2)), "yyyyMMdd");
+      QDateTime tm = QDateTime::fromString(QString(stringList.at(3)), "hhmmss");
+      itemDate->setText(locale.toString(dt, "ddd yyyy-MM-dd"));
+      itemTime->setText(locale.toString(tm, "hh:mm:ss"));
+      }
+    itemPath->setText(path);
+    itemRevision->setToolTip(path);
+    itemDate->setToolTip(path);
+    itemTime->setToolTip(path);
+    itemApp->setToolTip(path);
+    itemVersion->setToolTip(path);
+
+    // Create a new entry
+    int row = d->RecentLogFilesComboBox->rowCount();
+    d->RecentLogFilesComboBox->insertRow(row);
+    d->RecentLogFilesComboBox->setItem(row, 0, itemApp);
+    d->RecentLogFilesComboBox->setItem(row, 1, itemVersion);
+    d->RecentLogFilesComboBox->setItem(row, 2, itemRevision);
+    d->RecentLogFilesComboBox->setItem(row, 3, itemDate);
+    d->RecentLogFilesComboBox->setItem(row, 4, itemTime);
+    d->RecentLogFilesComboBox->setItem(row, 5, itemPath);
+  }
+  if (d->RecentLogFilesComboBox->rowCount() > 0)
     {
     d->RecentLogFilesComboBox->setCurrentIndex(d->RecentLogFilesComboBox->model()->index(0, 0));
     }
 
 
   //QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onLogFileSelectionChanged()));
-  QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentPathChanged(QString,QString)), this, SLOT(onLogFileSelectionChanged()));
+  QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentItemChanged(QTableWidgetItem*,QTableWidgetItem*)), this, SLOT(onLogFileSelectionChanged()));
   QObject::connect(d->LogCopyToClipboardPushButton, SIGNAL(clicked()), this, SLOT(onLogCopy()));
   QObject::connect(d->LogOpenFileLocationPushButton, SIGNAL(clicked()), this, SLOT(onLogFileLocationOpen()));
   QObject::connect(d->LogFileOpenPushButton, SIGNAL(clicked()), this, SLOT(onLogFileOpen()));
@@ -92,7 +150,9 @@ void qSlicerErrorReportDialog::onLogCopy()
 void qSlicerErrorReportDialog::onLogFileSelectionChanged()
 {
   Q_D(qSlicerErrorReportDialog);
-  QFile f(d->RecentLogFilesComboBox->currentPath());
+  int row = d->RecentLogFilesComboBox->currentRow();
+  QTableWidgetItem* eventItem = d->RecentLogFilesComboBox->item(row, 0);
+  QFile f(eventItem->data(Qt::UserRole).toString());
   if (f.open(QFile::ReadOnly | QFile::Text))
     {
     QTextStream in(&f);
@@ -109,7 +169,9 @@ void qSlicerErrorReportDialog::onLogFileSelectionChanged()
 void qSlicerErrorReportDialog::onLogFileLocationOpen()
 {
   Q_D(qSlicerErrorReportDialog);
-  QFileInfo fileInfo(d->RecentLogFilesComboBox->currentPath());
+  int row = d->RecentLogFilesComboBox->currentRow();
+  QTableWidgetItem* eventItem = d->RecentLogFilesComboBox->item(row, 0);
+  QFileInfo fileInfo(eventItem->data(Qt::UserRole).toString());
   QDesktopServices::openUrl(QUrl(fileInfo.absolutePath(), QUrl::TolerantMode));
 }
 
@@ -117,7 +179,10 @@ void qSlicerErrorReportDialog::onLogFileLocationOpen()
 void qSlicerErrorReportDialog::onLogFileOpen()
 {
   Q_D(qSlicerErrorReportDialog);
-  QDesktopServices::openUrl(QUrl("file:///"+d->RecentLogFilesComboBox->currentPath(), QUrl::TolerantMode));
+  int row = d->RecentLogFilesComboBox->currentRow();
+  QTableWidgetItem* eventItem = d->RecentLogFilesComboBox->item(row, 0);
+  QString f(eventItem->data(Qt::UserRole).toString());
+  QDesktopServices::openUrl(QUrl::fromLocalFile(f));
 }
 
 // --------------------------------------------------------------------------

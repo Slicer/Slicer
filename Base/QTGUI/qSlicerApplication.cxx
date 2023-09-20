@@ -1017,9 +1017,10 @@ void qSlicerApplication::setupFileLogging()
 
   // Add new log file path for the current session
   QString tempDir = this->temporaryPath();
-  QString currentLogFilePath = QString("%1/%2_%3_%4_%5.log")
+  QString currentLogFilePath = QString("%1/%2_%3_%4_%5_%6.log")
     .arg(tempDir)
     .arg(this->applicationName())
+    .arg(qSlicerApplication::application()->applicationVersion())
     .arg(this->revision())
     .arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"))
     .arg(QRandomGenerator::global()->generate() % 1000, 3, 10, QLatin1Char('0'));
