@@ -84,12 +84,12 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
     QStringList stringList = fileName.split("_", QString::SkipEmptyParts);
     itemApp->setText(stringList.at(0));
     itemApp->setData(Qt::UserRole, fileString);
-    itemVersion->setText(qSlicerApplication::application()->applicationVersion());
-    itemRevision->setText(qSlicerApplication::application()->revision());
     if (stringList.size() >= 6) // compatibility for log files with and without app version in filename
       {
       QDateTime dt = QDateTime::fromString(QString(stringList.at(3)), "yyyyMMdd");
       QDateTime tm = QDateTime::fromString(QString(stringList.at(4)), "hhmmss");
+      itemVersion->setText(stringList.at(1));
+      itemRevision->setText(stringList.at(2));
       itemDate->setText(locale.toString(dt, "ddd yyyy-MM-dd"));
       itemTime->setText(locale.toString(tm, "hh:mm:ss"));
       }
@@ -97,6 +97,8 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
       {
       QDateTime dt = QDateTime::fromString(QString(stringList.at(2)), "yyyyMMdd");
       QDateTime tm = QDateTime::fromString(QString(stringList.at(3)), "hhmmss");
+      itemVersion->setText(QString("unknown"));
+      itemRevision->setText(stringList.at(1));
       itemDate->setText(locale.toString(dt, "ddd yyyy-MM-dd"));
       itemTime->setText(locale.toString(tm, "hh:mm:ss"));
       }
