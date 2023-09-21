@@ -1021,7 +1021,7 @@ void qSlicerApplication::setupFileLogging()
     .arg(tempDir)
     .arg(this->applicationName())
     .arg(qSlicerApplication::application()->applicationVersion())
-    .arg(this->revision())
+    .arg(qSlicerApplication::application()->mainApplicationRevision())
     .arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"))
     .arg(QRandomGenerator::global()->generate() % 1000, 3, 10, QLatin1Char('0'));
   logFilePaths.prepend(currentLogFilePath);
