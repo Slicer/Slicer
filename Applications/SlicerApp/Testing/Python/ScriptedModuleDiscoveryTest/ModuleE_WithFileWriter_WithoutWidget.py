@@ -1,3 +1,4 @@
+from slicer.i18n import tr as _
 from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = 'E'
@@ -26,7 +27,7 @@ class ModuleE_WithFileWriter_WithoutWidgetFileWriter:
         self.parent = parent
 
     def description(self):
-        return 'My writer file type'
+        return _('My writer file type')
 
     def fileType(self):
         return 'MyWriterFileType'

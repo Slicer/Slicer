@@ -1,6 +1,7 @@
 import os
 import logging
 import slicer
+from slicer.i18n import tr as _
 from slicer.ScriptedLoadableModule import *
 
 
@@ -32,7 +33,7 @@ class ImportItkSnapLabelFileReader:
         self.parent = parent
 
     def description(self):
-        return 'ITK-Snap Label Description'
+        return _('ITK-Snap Label Description')
 
     def fileType(self):
         return 'ItkSnapLabel'

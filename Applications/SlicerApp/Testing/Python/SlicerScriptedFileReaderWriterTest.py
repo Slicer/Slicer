@@ -2,6 +2,7 @@ import logging
 import os
 
 import slicer
+from slicer.i18n import tr as _
 from slicer.ScriptedLoadableModule import *
 
 
@@ -34,7 +35,7 @@ class SlicerScriptedFileReaderWriterTestFileReader:
         self.parent = parent
 
     def description(self):
-        return 'My file type'
+        return _('My file type')
 
     def fileType(self):
         return 'MyFileType'
@@ -101,7 +102,7 @@ class SlicerScriptedFileReaderWriterTestFileWriter:
         self.parent = parent
 
     def description(self):
-        return 'My file type'
+        return _('My file type')
 
     def fileType(self):
         return 'MyFileType'

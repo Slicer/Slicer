@@ -1,3 +1,4 @@
+from slicer.i18n import tr as _
 from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = 'F'
@@ -26,7 +27,7 @@ class ModuleF_WithFileReader_WithoutWidgetFileReader:
         self.parent = parent
 
     def description(self):
-        return 'My reader file type'
+        return _('My reader file type')
 
     def fileType(self):
         return 'MyReaderFileType'
