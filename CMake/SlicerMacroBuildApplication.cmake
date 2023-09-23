@@ -494,7 +494,7 @@ macro(slicerMacroBuildApplication)
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${PYTHON_LIBRARY_PATH}/${_python_library_name_we}.dll
-                ${_slicerapp_output_dir}/${CMAKE_CFG_INTDIR}
+                ${_slicerapp_output_dir}/$<CONFIG>
         COMMENT "Copy '${_python_library_name_we}.dll' along side '${slicerapp_target}' executable. See Slicer issue #1180"
         )
     endif()
