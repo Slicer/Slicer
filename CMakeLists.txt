@@ -739,7 +739,7 @@ include(CTest)
 set(__conf_types "")
 if(CMAKE_CONFIGURATION_TYPES)
   # We need to pass the configuration type on the test command line.
-  set(__conf_types -C "${CMAKE_CFG_INTDIR}")
+  set(__conf_types -C "$<CONFIG>")
 endif()
 add_custom_target(Experimental ${CMAKE_CTEST_COMMAND} ${__conf_types} -D Experimental)
 
