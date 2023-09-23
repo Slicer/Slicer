@@ -129,18 +129,8 @@ if(CTEST_EXTRA_VERBOSE)
 endif()
 
 #-----------------------------------------------------------------------------
-# Set CTEST_BUILD_CONFIGURATION here
-# See https://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:CMAKE_CFG_INTDIR
-if(CMAKE_CONFIGURATION_TYPES)
-  set(CTEST_BUILD_CONFIGURATION ${CMAKE_CFG_INTDIR})
-else()
-  set(CTEST_BUILD_CONFIGURATION ${CMAKE_BUILD_TYPE})
-endif()
-set(EXTENSION_COMMAND_BUILD_CONF_ARG_LIST
-  -C ${CTEST_BUILD_CONFIGURATION}
-  -DCTEST_BUILD_CONFIGURATION:STRING=${CTEST_BUILD_CONFIGURATION}
-  )
-set(dollar "$")
+# The CTEST_BUILD_CONFIGURATION variable associated with the upload and test commands
+# defined below is set in the extension dashboard script.
 set(EXTENSION_COMMAND_BUILD_CONF_WRAPPER_ARG_LIST
   -C ${dollar}{CTEST_BUILD_CONFIGURATION}
   -DCTEST_BUILD_CONFIGURATION:STRING=${dollar}{CTEST_BUILD_CONFIGURATION}
