@@ -318,7 +318,7 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
     set(OpenSSL_DIR ${EP_SOURCE_DIR})
     set(_openssl_base_dir ${OpenSSL_DIR})
     if(DEFINED CMAKE_CONFIGURATION_TYPES)
-      set(OpenSSL_DIR ${OpenSSL_DIR}/${CMAKE_CFG_INTDIR})
+      set(OpenSSL_DIR ${OpenSSL_DIR}/$<CONFIG>)
       set(_copy_release_directory 1)
     else()
       set(OpenSSL_DIR ${OpenSSL_DIR}/${CMAKE_BUILD_TYPE})
