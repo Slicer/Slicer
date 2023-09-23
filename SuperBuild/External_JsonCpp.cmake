@@ -75,7 +75,12 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     set(lib_prefix "lib")
     set(lib_ext "so")
   endif()
-  set(${proj}_LIBRARY ${${proj}_DIR}/src/lib_json/${CMAKE_CFG_INTDIR}/${lib_prefix}jsoncpp.${lib_ext})
+  if(DEFINED CMAKE_CONFIGURATION_TYPES)
+    set(lib_cfg_dir "$<CONFIG>")
+  else()
+    set(lib_cfg_dir ".")
+  endif()
+  set(${proj}_LIBRARY ${${proj}_DIR}/src/lib_json/${lib_cfg_dir}/${lib_prefix}jsoncpp.${lib_ext})
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
