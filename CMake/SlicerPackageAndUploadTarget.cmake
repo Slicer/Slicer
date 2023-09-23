@@ -130,7 +130,7 @@ set(${varname} \"${${varname}}\")")
     COMMAND ${CMAKE_COMMAND} -E echo "CPack log: ${_cpack_output_file}"
     COMMAND ${CMAKE_COMMAND}
       -DPACKAGEUPLOAD:BOOL=1
-      -DCONFIG:STRING=${CMAKE_CFG_INTDIR}
+      -DCONFIG:STRING=$<CONFIG>
       -DCPACK_OUTPUT_FILE:FILEPATH=${_cpack_output_file}
       -DSCRIPT_ARGS_FILE:FILEPATH=${script_args_file}
       -P ${CMAKE_CURRENT_LIST_FILE}
