@@ -1,8 +1,9 @@
 import os
-
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 
 
@@ -13,14 +14,14 @@ class SegmentEditorTemplateKey(ScriptedLoadableModule):
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "SegmentEditorTemplateKey"
-        self.parent.categories = ["Segmentation"]
+        self.parent.title = _("SegmentEditorTemplateKey")
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Segmentation")]
         self.parent.dependencies = ["Segmentations"]
         self.parent.contributors = ["Andras Lasso (PerkLab)"]
         self.parent.hidden = True
-        self.parent.helpText = "This hidden module registers the segment editor effect"
+        self.parent.helpText = _("This hidden module registers the segment editor effect")
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
-        self.parent.acknowledgementText = "Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www.slicer.org for details."
+        self.parent.acknowledgementText = _("Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www.slicer.org for details.")
         slicer.app.connect("startupCompleted()", self.registerEditorEffect)
 
     def registerEditorEffect(self):

@@ -4,6 +4,8 @@ import ctk
 import qt
 
 import slicer
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 
 #
@@ -27,17 +29,17 @@ class SelfTests(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = "SelfTests"
-        self.parent.categories = ["Testing"]
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Testing")]
         self.parent.contributors = ["Steve Pieper (Isomics)"]
-        self.parent.helpText = """
+        self.parent.helpText = _("""
 The SelfTests module allows developers to provide built-in self-tests (BIST) for slicer so that users can tell
 if their installed version of slicer are running as designed.
-"""
+""")
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
-        self.parent.acknowledgementText = """
+        self.parent.acknowledgementText = _("""
 This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program
 and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).
-"""
+""")
 
         #
         # slicer.selfTests is a dictionary of tests that are registered

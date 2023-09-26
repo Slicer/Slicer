@@ -1,9 +1,12 @@
 import ctk
+import logging
 import qt
 import vtk
 import vtk.util.numpy_support
 
 import slicer
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 
 
@@ -18,11 +21,11 @@ class Endoscopy(ScriptedLoadableModule):
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Endoscopy"
-        self.parent.categories = ["Endoscopy"]
+        self.parent.title = _("Endoscopy")
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Endoscopy")]
         self.parent.dependencies = []
         self.parent.contributors = ["Steve Pieper (Isomics)"]
-        self.parent.helpText = """
+        self.parent.helpText = _("""
 Create a path model as a spline interpolation of a set of fiducial points.
 Pick the Camera to be modified by the path and the Fiducial List defining the control points.
 Clicking "Create path" will make a path model and enable the flythrough panel.
@@ -30,13 +33,13 @@ You can manually scroll through the path with the Frame slider. The Play/Pause b
 The Frame Skip slider speeds up the animation by skipping points on the path.
 The Frame Delay slider slows down the animation by adding more time between frames.
 The View Angle provides is used to approximate the optics of an endoscopy system.
-"""
+""")
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
-        self.parent.acknowledgementText = """
+        self.parent.acknowledgementText = _("""
 This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy
 (See <a>https://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>)
 NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
-"""
+""")
 
 
 #
@@ -67,7 +70,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         # Path collapsible button
         pathCollapsibleButton = ctk.ctkCollapsibleButton()
-        pathCollapsibleButton.text = "Path"
+        pathCollapsibleButton.text = _("Path")
         self.layout.addWidget(pathCollapsibleButton)
 
         # Layout within the path collapsible button
@@ -76,7 +79,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         # Camera node selector
         cameraNodeSelector = slicer.qMRMLNodeComboBox()
         cameraNodeSelector.objectName = 'cameraNodeSelector'
-        cameraNodeSelector.toolTip = "Select a camera that will fly along this path."
+        cameraNodeSelector.toolTip = _("Select a camera that will fly along this path.")
         cameraNodeSelector.nodeTypes = ['vtkMRMLCameraNode']
         cameraNodeSelector.noneEnabled = False
         cameraNodeSelector.addEnabled = False
@@ -88,36 +91,36 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         # Input fiducials node selector
         inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
         inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
-        inputFiducialsNodeSelector.toolTip = "Select a fiducial list to define control points for the path."
+        inputFiducialsNodeSelector.toolTip = _("Select a fiducial list to define control points for the path.")
         inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLMarkupsCurveNode']
         inputFiducialsNodeSelector.noneEnabled = False
         inputFiducialsNodeSelector.addEnabled = False
         inputFiducialsNodeSelector.removeEnabled = False
         inputFiducialsNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
-        pathFormLayout.addRow("Input Fiducials:", inputFiducialsNodeSelector)
+        pathFormLayout.addRow(_("Input Fiducials:"), inputFiducialsNodeSelector)
 
         # Output path node selector
         outputPathNodeSelector = slicer.qMRMLNodeComboBox()
         outputPathNodeSelector.objectName = 'outputPathNodeSelector'
-        outputPathNodeSelector.toolTip = "Select a fiducial list to define control points for the path."
+        outputPathNodeSelector.toolTip = _("Select a fiducial list to define control points for the path.")
         outputPathNodeSelector.nodeTypes = ['vtkMRMLModelNode']
         outputPathNodeSelector.noneEnabled = False
         outputPathNodeSelector.addEnabled = True
         outputPathNodeSelector.removeEnabled = True
         outputPathNodeSelector.renameEnabled = True
         outputPathNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
-        pathFormLayout.addRow("Output Path:", outputPathNodeSelector)
+        pathFormLayout.addRow(_("Output Path:"), outputPathNodeSelector)
 
         # CreatePath button
-        createPathButton = qt.QPushButton("Create path")
-        createPathButton.toolTip = "Create the path."
+        createPathButton = qt.QPushButton(_("Create path"))
+        createPathButton.toolTip = _("Create the path.")
         createPathButton.enabled = False
         pathFormLayout.addRow(createPathButton)
         createPathButton.connect('clicked()', self.onCreatePathButtonClicked)
 
         # Flythrough collapsible button
         flythroughCollapsibleButton = ctk.ctkCollapsibleButton()
-        flythroughCollapsibleButton.text = "Flythrough"
+        flythroughCollapsibleButton.text = _("Flythrough")
         flythroughCollapsibleButton.enabled = False
         self.layout.addWidget(flythroughCollapsibleButton)
 
@@ -128,7 +131,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         frameSlider = ctk.ctkSliderWidget()
         frameSlider.connect('valueChanged(double)', self.frameSliderValueChanged)
         frameSlider.decimals = 0
-        flythroughFormLayout.addRow("Frame:", frameSlider)
+        flythroughFormLayout.addRow(_("Frame:"), frameSlider)
 
         # Frame skip slider
         frameSkipSlider = ctk.ctkSliderWidget()
@@ -136,7 +139,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         frameSkipSlider.decimals = 0
         frameSkipSlider.minimum = 0
         frameSkipSlider.maximum = 50
-        flythroughFormLayout.addRow("Frame skip:", frameSkipSlider)
+        flythroughFormLayout.addRow(_("Frame skip:"), frameSkipSlider)
 
         # Frame delay slider
         frameDelaySlider = ctk.ctkSliderWidget()
@@ -146,7 +149,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         frameDelaySlider.maximum = 100
         frameDelaySlider.suffix = " ms"
         frameDelaySlider.value = 20
-        flythroughFormLayout.addRow("Frame delay:", frameDelaySlider)
+        flythroughFormLayout.addRow(_("Frame delay:"), frameDelaySlider)
 
         # View angle slider
         viewAngleSlider = ctk.ctkSliderWidget()
@@ -154,11 +157,11 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         viewAngleSlider.decimals = 0
         viewAngleSlider.minimum = 30
         viewAngleSlider.maximum = 180
-        flythroughFormLayout.addRow("View Angle:", viewAngleSlider)
+        flythroughFormLayout.addRow(_("View Angle:"), viewAngleSlider)
 
         # Play button
-        playButton = qt.QPushButton("Play")
-        playButton.toolTip = "Fly through path."
+        playButton = qt.QPushButton(_("Play"))
+        playButton.toolTip = _("Fly through path.")
         playButton.checkable = True
         flythroughFormLayout.addRow(playButton)
         playButton.connect('toggled(bool)', self.onPlayButtonToggled)
@@ -230,13 +233,13 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         fiducialsNode = self.inputFiducialsNodeSelector.currentNode()
         outputPathNode = self.outputPathNodeSelector.currentNode()
-        print("Calculating Path...")
+        logging.debug("Calculating Path...")
         result = EndoscopyComputePath(fiducialsNode)
-        print("-> Computed path contains %d elements" % len(result.path))
+        logging.debug("-> Computed path contains %d elements" % len(result.path))
 
-        print("Create Model...")
+        logging.debug("Create Model...")
         model = EndoscopyPathModel(result.path, fiducialsNode, outputPathNode)
-        print("-> Model created")
+        logging.debug("-> Model created")
 
         # Update frame slider range
         self.frameSlider.maximum = len(result.path) - 2
@@ -251,21 +254,17 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.flythroughCollapsibleButton.enabled = len(result.path) > 0
 
     def frameSliderValueChanged(self, newValue):
-        # print "frameSliderValueChanged:", newValue
         self.flyTo(newValue)
 
     def frameSkipSliderValueChanged(self, newValue):
-        # print "frameSkipSliderValueChanged:", newValue
         self.skip = int(newValue)
 
     def frameDelaySliderValueChanged(self, newValue):
-        # print "frameDelaySliderValueChanged:", newValue
         self.timer.interval = newValue
 
     def viewAngleSliderValueChanged(self, newValue):
         if not self.cameraNode:
             return
-        # print "viewAngleSliderValueChanged:", newValue
         self.cameraNode.GetCamera().SetViewAngle(newValue)
 
     def onPlayButtonToggled(self, checked):
@@ -339,7 +338,7 @@ class EndoscopyComputePath:
 
     Example:
       result = EndoscopyComputePath(fiducialListNode)
-      print "computer path has %d elements" % len(result.path)
+      print(f"computed path has {result.path} elements")
 
     """
 

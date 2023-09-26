@@ -71,7 +71,7 @@ qSlicerModelsModule::~qSlicerModelsModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerModelsModule::helpText()const
 {
-  QString help =
+  QString help = tr(
     "The Models Module loads and adjusts display parameters of models such as Color, Transparency, and Clipping.<br>"
     "Save models via the File menu, Save button.<br>"
     "The Add 3D model or a model directory button will allow you to load any "
@@ -86,7 +86,7 @@ QString qSlicerModelsModule::helpText()const
     "Clipping is turned on for a model in the Display pane, and the slice "
     "planes that will clip the model are selected in the Clipping pane.<br>"
     "The Model Hierarchy pane allows you to group models together and set the "
-    "group's properties.";
+    "group's properties.");
   help += this->defaultDocumentationLink();
   return help;
 }

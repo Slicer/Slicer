@@ -5,6 +5,8 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 
 
@@ -20,14 +22,14 @@ class CropVolumeSequence(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = "Crop volume sequence"
-        self.parent.categories = ["Sequences"]
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Sequences")]
         self.parent.dependencies = []
         self.parent.contributors = ["Andras Lasso (PerkLab, Queen's University)"]
-        self.parent.helpText = """This module can crop and resample a volume sequence to reduce its size for faster rendering and processing."""
+        self.parent.helpText = _("""This module can crop and resample a volume sequence to reduce its size for faster rendering and processing.""")
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
-        self.parent.acknowledgementText = """
+        self.parent.acknowledgementText = _("""
 This file was originally developed by Andras Lasso
-"""
+""")
 
 
 #
@@ -48,7 +50,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         # Parameters Area
         #
         parametersCollapsibleButton = ctk.ctkCollapsibleButton()
-        parametersCollapsibleButton.text = "Parameters"
+        parametersCollapsibleButton.text = _("Parameters")
         self.layout.addWidget(parametersCollapsibleButton)
 
         # Layout within the dummy collapsible button
@@ -65,8 +67,8 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         self.inputSelector.showHidden = False
         self.inputSelector.showChildNodeTypes = False
         self.inputSelector.setMRMLScene(slicer.mrmlScene)
-        self.inputSelector.setToolTip("Pick a sequence node of volumes that will be cropped and resampled.")
-        parametersFormLayout.addRow("Input volume sequence: ", self.inputSelector)
+        self.inputSelector.setToolTip(_("Pick a sequence node of volumes that will be cropped and resampled."))
+        parametersFormLayout.addRow(_("Input volume sequence: "), self.inputSelector)
 
         #
         # output volume selector
@@ -77,12 +79,12 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         self.outputSelector.addEnabled = True
         self.outputSelector.removeEnabled = True
         self.outputSelector.noneEnabled = True
-        self.outputSelector.noneDisplay = "(Overwrite input)"
+        self.outputSelector.noneDisplay = _("(Overwrite input)")
         self.outputSelector.showHidden = False
         self.outputSelector.showChildNodeTypes = False
         self.outputSelector.setMRMLScene(slicer.mrmlScene)
-        self.outputSelector.setToolTip("Pick a sequence node where the cropped and resampled volumes will be stored.")
-        parametersFormLayout.addRow("Output volume sequence: ", self.outputSelector)
+        self.outputSelector.setToolTip(_("Pick a sequence node where the cropped and resampled volumes will be stored."))
+        parametersFormLayout.addRow(_("Output volume sequence: "), self.outputSelector)
 
         #
         # Crop parameters selector
@@ -97,23 +99,23 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         self.cropParametersSelector.showHidden = True
         self.cropParametersSelector.showChildNodeTypes = False
         self.cropParametersSelector.setMRMLScene(slicer.mrmlScene)
-        self.cropParametersSelector.setToolTip("Select a crop volumes parameters.")
+        self.cropParametersSelector.setToolTip(_("Select a crop volumes parameters."))
 
         self.editCropParametersButton = qt.QPushButton()
         self.editCropParametersButton.setIcon(qt.QIcon(':Icons/Go.png'))
         # self.editCropParametersButton.setMaximumWidth(60)
         self.editCropParametersButton.enabled = True
-        self.editCropParametersButton.toolTip = "Go to Crop Volume module to edit cropping parameters."
+        self.editCropParametersButton.toolTip = _("Go to Crop Volume module to edit cropping parameters.")
         hbox = qt.QHBoxLayout()
         hbox.addWidget(self.cropParametersSelector)
         hbox.addWidget(self.editCropParametersButton)
-        parametersFormLayout.addRow("Crop volume settings: ", hbox)
+        parametersFormLayout.addRow(_("Crop volume settings: "), hbox)
 
         #
         # Apply Button
         #
-        self.applyButton = qt.QPushButton("Apply")
-        self.applyButton.toolTip = "Run the algorithm."
+        self.applyButton = qt.QPushButton(_("Apply"))
+        self.applyButton.toolTip = _("Run the algorithm.")
         self.applyButton.enabled = False
         parametersFormLayout.addRow(self.applyButton)
 

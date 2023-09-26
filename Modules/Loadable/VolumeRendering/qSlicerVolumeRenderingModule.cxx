@@ -93,15 +93,15 @@ QString qSlicerVolumeRenderingModule::helpText()const
 QString qSlicerVolumeRenderingModule::acknowledgementText()const
 {
   QString acknowledgement =
-    tr("<center><table border=\"0\"><tr>"
+    "<center><table border=\"0\"><tr>"
     "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
     "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
     "</tr><tr>"
     "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
     "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
     "</tr></table></center>"
-    "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community."
-    "Some of the transfer functions were contributed by Kitware Inc. (VolView)");
+    + tr("This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community."
+      " Some of the transfer functions were contributed by Kitware Inc. (VolView)");
   return acknowledgement;
 }
 
