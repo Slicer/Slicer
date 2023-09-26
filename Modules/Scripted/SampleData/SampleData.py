@@ -9,6 +9,8 @@ import vtk
 import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import computeChecksum, extractAlgoAndDigest, TESTING_DATA_URL
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 
 
 #
@@ -68,27 +70,30 @@ class SampleData(ScriptedLoadableModule):
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Sample Data"
-        self.parent.categories = ["Informatics"]
+        self.parent.title = _("Sample Data")
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Informatics")]
         self.parent.dependencies = []
         self.parent.contributors = ["Steve Pieper (Isomics), Benjamin Long (Kitware), Jean-Christophe Fillion-Robin (Kitware)"]
-        self.parent.helpText = """
+        self.parent.helpText = _("""
 This module provides data sets that can be used for testing 3D Slicer.
-"""
+""")
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
-        self.parent.acknowledgementText = """
-<p>This work was was funded in part by Cancer Care Ontario
-and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)</p>
+        self.parent.acknowledgementText = ("""
+<p>""" + _('''This work was was funded in part by Cancer Care Ontario
+and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)''') + '''</p>
 
-<p>MRHead, CBCT-MR Head, and CT-MR Brain data sets were donated to 3D Slicer project by the persons visible in the images, to be used without any restrictions.</p>
+<p>''' + _("MRHead, CBCT-MR Head, and CT-MR Brain data sets were donated to 3D Slicer project by the persons visible in the images, "
+           "to be used without any restrictions.") + '''</p>
 
-<p>CTLiver dataset comes from <a href="http://medicaldecathlon.com/">Medical Decathlon project</a> (imagesTr/liver_100.nii.gz in Task03_Liver collection)
-with a permissive copyright-license (<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA 4.0</a>), allowing for data to be shared, distributed and improved upon.</p>
+<p>''' + _('''CTLiver dataset comes from <a href="http://medicaldecathlon.com/">Medical Decathlon project</a> '''
+           '''(imagesTr/liver_100.nii.gz in Task03_Liver collection)
+with a permissive copyright-license ({licenseLink}), allowing for data to be shared, distributed and improved upon.''') + '''</p>
 
-<p>CTA abdomen (Panoramix) dataset comes from <a href="https://www.osirix-viewer.com/resources/dicom-image-library/">Osirix DICOM image library</a>
+<p>''' + _('''CTA abdomen (Panoramix) dataset comes from {datasetProviderName}
 and is exclusively available for research and teaching. You are not authorized to redistribute or sell it, or
-use it for commercial purposes.</p>
-"""
+use it for commercial purposes.''') + """</p>
+""").format(licenseLink=f'<a href="https://creativecommons.org/licenses/by-sa/4.0/">{_("CC-BY-SA 4.0")}</a>',
+            datasetProviderName=f'<a href="https://www.osirix-viewer.com/resources/dicom-image-library/">{_("Osirix DICOM image library")}</a>')
 
         if slicer.mrmlScene.GetTagByClassName("vtkMRMLScriptedModuleNode") != 'ScriptedModule':
             slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
@@ -105,8 +110,8 @@ use it for commercial purposes.</p>
             slicer.modules.sampleDataSources = {}
 
     def addMenu(self):
-        a = qt.QAction('Download Sample Data', slicer.util.mainWindow())
-        a.setToolTip('Go to the SampleData module to download data from the network')
+        a = qt.QAction(_('Download Sample Data'), slicer.util.mainWindow())
+        a.setToolTip(_('Go to the SampleData module to download data from the network'))
         a.connect('triggered()', self.select)
 
         fileMenu = slicer.util.lookupTopLevelWidget('FileMenu')
@@ -270,7 +275,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         self.log = qt.QTextEdit()
         self.log.readOnly = True
         self.layout.addWidget(self.log)
-        self.logMessage('<p>Status: <i>Idle</i></p>')
+        self.logMessage(f'<p>{_("Status:")} <i>{_("Idle")}</i></p>')
 
         # Add spacer to layout
         self.layout.addStretch(1)
@@ -423,7 +428,7 @@ class SampleDataLogic:
     """
 
     @staticmethod
-    def registerCustomSampleDataSource(category='Custom',
+    def registerCustomSampleDataSource(category=_('Custom'),
                                        sampleName=None, uris=None, fileNames=None, nodeNames=None,
                                        customDownloader=None, thumbnailFileName=None,
                                        loadFileType='VolumeFile', loadFiles=None, loadFileProperties={},
@@ -501,8 +506,8 @@ class SampleDataLogic:
     def __init__(self, logMessage=None):
         if logMessage:
             self.logMessage = logMessage
-        self.builtInCategoryName = 'BuiltIn'
-        self.developmentCategoryName = 'Development'
+        self.builtInCategoryName = _('BuiltIn')
+        self.developmentCategoryName = _('Development')
         self.registerBuiltInSampleDataSources()
         self.registerDevelopmentSampleDataSources()
         if slicer.app.testingEnabled():
@@ -545,7 +550,7 @@ class SampleDataLogic:
              ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi'),
              ('SHA256:cf03fd53583dc05120d3314d0a82bdf5946799b1f72f2a7f08963f3fd24ca692',
               'SHA256:7666d83bc205382e418444ea60ab7df6dba6a0bd684933df8809da6b476b0fed')),
-            ('CTAAbdomenPanoramix', 'CTA abdomen\n(Panoramix)', TESTING_DATA_URL + 'SHA256/146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433',
+            ('CTAAbdomenPanoramix', _('CTA abdomen\n(Panoramix)'), TESTING_DATA_URL + 'SHA256/146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433',
              'Panoramix-cropped.nrrd', 'Panoramix-cropped', 'SHA256:146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433'),
             ('CBCTDentalSurgery', None,
              (TESTING_DATA_URL + 'SHA256/7bfa16945629c319a439f414cfb7edddd2a97ba97753e12eede3b56a0eb09968',
@@ -553,13 +558,13 @@ class SampleDataLogic:
              ('PreDentalSurgery.gipl.gz', 'PostDentalSurgery.gipl.gz'), ('PreDentalSurgery', 'PostDentalSurgery'),
              ('SHA256:7bfa16945629c319a439f414cfb7edddd2a97ba97753e12eede3b56a0eb09968',
               'SHA256:4cdc3dc35519bb57daeef4e5df89c00849750e778809e94971d3876f95cc7bbd')),
-            ('MRUSProstate', 'MR-US Prostate',
+            ('MRUSProstate', _('MR-US Prostate'),
              (TESTING_DATA_URL + 'SHA256/4843cdc9ea5d7bcce61650d1492ce01035727c892019339dca726380496896aa',
               TESTING_DATA_URL + 'SHA256/34decf58b1e6794069acbe947b460252262fe95b6858c5e320aeab03bc82ebb2',),
              ('Case10-MR.nrrd', 'case10_US_resampled.nrrd'), ('MRProstate', 'USProstate'),
              ('SHA256:4843cdc9ea5d7bcce61650d1492ce01035727c892019339dca726380496896aa',
               'SHA256:34decf58b1e6794069acbe947b460252262fe95b6858c5e320aeab03bc82ebb2')),
-            ('CTMRBrain', 'CT-MR Brain',
+            ('CTMRBrain', _('CT-MR Brain'),
              (TESTING_DATA_URL + 'SHA256/6a5b6caccb76576a863beb095e3bfb910c50ca78f4c9bf043aa42f976cfa53d1',
               TESTING_DATA_URL + 'SHA256/2da3f655ed20356ee8cdf32aa0f8f9420385de4b6e407d28e67f9974d7ce1593',
               TESTING_DATA_URL + 'SHA256/fa1fe5910a69182f2b03c0150d8151ac6c75df986449fb5a6c5ae67141e0f5e7',),
@@ -568,7 +573,7 @@ class SampleDataLogic:
              ('SHA256:6a5b6caccb76576a863beb095e3bfb910c50ca78f4c9bf043aa42f976cfa53d1',
               'SHA256:2da3f655ed20356ee8cdf32aa0f8f9420385de4b6e407d28e67f9974d7ce1593',
               'SHA256:fa1fe5910a69182f2b03c0150d8151ac6c75df986449fb5a6c5ae67141e0f5e7')),
-            ('CBCTMRHead', 'CBCT-MR Head',
+            ('CBCTMRHead', _('CBCT-MR Head'),
              (TESTING_DATA_URL + 'SHA256/4ce7aa75278b5a7b757ed0c8d7a6b3caccfc3e2973b020532456dbc8f3def7db',
               TESTING_DATA_URL + 'SHA256/b5e9f8afac58d6eb0e0d63d059616c25a98e0beb80f3108410b15260a6817842',),
              ('DZ-CBCT.nrrd', 'DZ-MR.nrrd'),
@@ -577,12 +582,12 @@ class SampleDataLogic:
               'SHA256:b5e9f8afac58d6eb0e0d63d059616c25a98e0beb80f3108410b15260a6817842')),
             ('CTLiver', None, TESTING_DATA_URL + 'SHA256/e16eae0ae6fefa858c5c11e58f0f1bb81834d81b7102e021571056324ef6f37e',
              'CTLiver.nrrd', 'CTLiver', 'SHA256:e16eae0ae6fefa858c5c11e58f0f1bb81834d81b7102e021571056324ef6f37e'),
-            ('CTPCardioSeq', "CTP Cardio Sequence",
+            ('CTPCardioSeq', _("CTP Cardio Sequence"),
              'https://github.com/Slicer/SlicerDataStore/releases/download/SHA256/7fbb6ad0aed9c00820d66e143c2f037568025ed63db0a8db05ae7f26affeb1c2',
              'CTP-cardio.seq.nrrd', 'CTPCardioSeq',
              'SHA256:7fbb6ad0aed9c00820d66e143c2f037568025ed63db0a8db05ae7f26affeb1c2',
              None, None, None, "SequenceFile"),
-            ('CTCardioSeq', "CT Cardio Sequence",
+            ('CTCardioSeq', _("CT Cardio Sequence"),
              'https://github.com/Slicer/SlicerDataStore/releases/download/SHA256/d1a1119969acead6c39c7c3ec69223fa2957edc561bc5bf384a203e2284dbc93',
              'CT-cardio.seq.nrrd', 'CTCardioSeq',
              'SHA256:d1a1119969acead6c39c7c3ec69223fa2957edc561bc5bf384a203e2284dbc93',
@@ -624,9 +629,11 @@ class SampleDataLogic:
             try:
                 os.makedirs(destFolderPath, exist_ok=True)
             except:
-                self.logMessage('<b>Failed to create cache folder %s</b>' % destFolderPath, logging.ERROR)
+                errorMessage = '<b>' + _('Failed to create cache folder {folderPath}').format(folderPath=destFolderPath) + '</b>'
+                self.logMessage(errorMessage, logging.ERROR)
             if not os.access(destFolderPath, os.W_OK):
-                self.logMessage('<b>Cache folder %s is not writable</b>' % destFolderPath, logging.ERROR)
+                errorMessage = '<b>' + _('Cache folder {folderPath} is not writable').format(folderPath=destFolderPath) + '</b>'
+                self.logMessage(errorMessage, logging.ERROR)
         return self.downloadFile(uri, destFolderPath, name, checksum)
 
     def downloadSourceIntoCache(self, source):
@@ -670,7 +677,8 @@ class SampleDataLogic:
                 try:
                     filePath = self.downloadFileIntoCache(uri, fileName, checksum)
                 except ValueError:
-                    self.logMessage('<b>Download failed (attempt %d of %d)...</b>' % (attemptsCount + 1, maximumAttemptsCount), logging.ERROR)
+                    errorMessage = '<b>' + _('Download failed (attempt {count} of {maxCount})...') + '</b>'
+                    self.logMessage(errorMessage.format(count=attemptsCount + 1, maxCount=maximumAttemptsCount), logging.ERROR)
                     continue
                 resultFilePaths.append(filePath)
 
@@ -708,11 +716,12 @@ class SampleDataLogic:
                 # Failed. Clean up downloaded file (it might have been a partial download)
                 file = qt.QFile(filePath)
                 if file.exists() and not file.remove():
-                    self.logMessage('<b>Load failed (attempt %d of %d). Unable to delete and try again loading %s</b>'
-                                    % (attemptsCount + 1, maximumAttemptsCount, filePath), logging.ERROR)
+                    errorMessage = '<b>' + _('Load failed (attempt {count} of {maxCount}). Unable to delete and try again loading {filePath}') + '</b>'
+                    self.logMessage(errorMessage.format(count=attemptsCount + 1, maxCount=maximumAttemptsCount, filePath=filePath), logging.ERROR)
                     resultNodes.append(loadedNode)
                     break
-                self.logMessage('<b>Load failed (attempt %d of %d)...</b>' % (attemptsCount + 1, maximumAttemptsCount), logging.ERROR)
+                errorMessage = '<b>' + _('Load failed (attempt {count} of {maxCount})...') + '</b>'
+                self.logMessage(errorMessage.format(count=attemptsCount + 1, maxCount=maximumAttemptsCount), logging.ERROR)
 
         if resultNodes:
             return resultNodes
@@ -828,11 +837,11 @@ class SampleDataLogic:
 
     def humanFormatSize(self, size):
         """ from https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
-        for x in ['bytes', 'KB', 'MB', 'GB']:
+        for x in [_('bytes'), _('KB'), _('MB'), _('GB')]:
             if size < 1024.0 and size > -1024.0:
                 return f"{size:3.1f} {x}"
             size /= 1024.0
-        return "{:3.1f} {}".format(size, 'TB')
+        return "{:3.1f} {}".format(size, _('TB'))
 
     def reportHook(self, blocksSoFar, blockSize, totalSize):
         # we clamp to 100% because the blockSize might be larger than the file itself
@@ -841,7 +850,8 @@ class SampleDataLogic:
             # we clamp to totalSize when blockSize is larger than totalSize
             humanSizeSoFar = self.humanFormatSize(min(blocksSoFar * blockSize, totalSize))
             humanSizeTotal = self.humanFormatSize(totalSize)
-            self.logMessage('<i>Downloaded %s (%d%% of %s)...</i>' % (humanSizeSoFar, percent, humanSizeTotal))
+            errorMessage = '<i>' + _('Downloaded {size} ({percent}% of {totalSize})...') + '</i>'
+            self.logMessage(errorMessage.format(size=humanSizeSoFar, percent=percent, totalSize=humanSizeTotal))
             self.downloadPercent = percent
 
     def downloadFile(self, uri, destFolderPath, name, checksum=None):
@@ -856,51 +866,56 @@ class SampleDataLogic:
         (algo, digest) = extractAlgoAndDigest(checksum)
         if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
             import urllib.request, urllib.parse, urllib.error
-            self.logMessage(f'<b>Requesting download</b> <i>{name}</i> from {uri} ...')
+            errorMessage = '<b>' + _('Requesting download {name} from {uri} ...').format(name=f'</b><i>{name}</i>', uri=uri)
+            self.logMessage(errorMessage)
             try:
                 urllib.request.urlretrieve(uri, filePath, self.reportHook)
-                self.logMessage('<b>Download finished</b>')
+                self.logMessage('<b>' + _('Download finished') + '</b>')
             except OSError as e:
-                self.logMessage('<b>\tDownload failed: %s</b>' % e, logging.ERROR)
+                errorMessage = '<b>\t' + _('Download failed: {errorMessage}') + '</b>'
+                self.logMessage(errorMessage.format(e), logging.ERROR)
                 raise ValueError(f"Failed to download {uri} to {filePath}")
 
             if algo is not None:
-                self.logMessage('<b>Verifying checksum</b>')
+                self.logMessage('<b>' + _('Verifying checksum') + '</b>')
                 current_digest = computeChecksum(algo, filePath)
                 if current_digest != digest:
-                    self.logMessage(f'<b>Checksum verification failed. Computed checksum {current_digest} different from expected checksum {digest}</b>')
+                    errorMessage = '<b>' + _('Checksum verification failed. '
+                                             'Computed checksum {current_digest} different from expected checksum {digest}') + '</b>'
+                    self.logMessage(errorMessage.format(current_digest=current_digest, digest=digest))
                     qt.QFile(filePath).remove()
                 else:
                     self.downloadPercent = 100
-                    self.logMessage('<b>Checksum OK</b>')
+                    self.logMessage('<b>' + _('Checksum OK') + '</b>')
         else:
             if algo is not None:
-                self.logMessage('<b>Verifying checksum</b>')
+                self.logMessage('<b>' + _('Verifying checksum') + '</b>')
                 current_digest = computeChecksum(algo, filePath)
                 if current_digest != digest:
-                    self.logMessage('<b>File already exists in cache but checksum is different - re-downloading it.</b>')
+                    self.logMessage('<b>' + _('File already exists in cache but checksum is different - re-downloading it.') + '</b>')
                     qt.QFile(filePath).remove()
                     return self.downloadFile(uri, destFolderPath, name, checksum)
                 else:
                     self.downloadPercent = 100
-                    self.logMessage('<b>File already exists and checksum is OK - reusing it.</b>')
+                    self.logMessage('<b>' + _('File already exists and checksum is OK - reusing it.') + '</b>')
             else:
                 self.downloadPercent = 100
-                self.logMessage('<b>File already exists in cache - reusing it.</b>')
+                self.logMessage('<b>' + _('File already exists in cache - reusing it.') + '</b>')
         return filePath
 
     def loadScene(self, uri, fileProperties={}):
-        self.logMessage('<b>Requesting load</b> %s ...' % uri)
-        fileProperties['fileName'] = uri
+        errorMessage = '<b>' + _('Requesting load {uri} ...').format(uri=f'</b>{uri}')
+        self.logMessage(errorMessage)
         success = slicer.app.coreIOManager().loadNodes('SceneFile', fileProperties)
         if not success:
-            self.logMessage('<b>\tLoad failed!</b>', logging.ERROR)
+            self.logMessage('<b>\t' + _('Load failed!') + '</b>', logging.ERROR)
             return False
-        self.logMessage('<b>Load finished</b>')
+        self.logMessage('<b>' + _('Load finished') + '</b>')
         return True
 
     def loadNode(self, uri, name, fileType='VolumeFile', fileProperties={}):
-        self.logMessage(f'<b>Requesting load</b> <i>{name}</i> from {uri} ...')
+        errorMessage = '<b>' + _('Requesting load {name} from {uri} ...').format(name=f'</b><i>{name}</i>', uri=uri)
+        self.logMessage(errorMessage)
 
         fileProperties['fileName'] = uri
         fileProperties['name'] = name
@@ -909,10 +924,10 @@ class SampleDataLogic:
         success = slicer.app.coreIOManager().loadNodes(fileType, fileProperties, loadedNodes)
 
         if not success or loadedNodes.GetNumberOfItems() < 1:
-            self.logMessage('<b>\tLoad failed!</b>', logging.ERROR)
+            self.logMessage('<b>\t' + _('Load failed!') + '</b>', logging.ERROR)
             return None
 
-        self.logMessage('<b>Load finished</b>')
+        self.logMessage('<b>' + _('Load finished') + '</b>')
 
         # since nodes were read from a temp directory remove the storage nodes
         for i in range(loadedNodes.GetNumberOfItems()):
