@@ -1,6 +1,8 @@
 import os
 import logging
 import slicer
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 
 
@@ -11,11 +13,11 @@ from slicer.ScriptedLoadableModule import *
 class ImportItkSnapLabel(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "ImportItkSnapLabel"
-        self.parent.categories = ["Informatics"]
+        self.parent.title = _("Import ITK-Snap label description")
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Informatics")]
         self.parent.dependencies = []
         self.parent.contributors = ["Andras Lasso (PerkLab)"]
-        self.parent.helpText = """Load ITK-Snap label description file (.label or .txt)."""
+        self.parent.helpText = _("""Load ITK-Snap label description file (.label or .txt).""")
         self.parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab."""
         # don't show this module - it is only for registering a reader
         parent.hidden = True
@@ -38,7 +40,7 @@ class ImportItkSnapLabelFileReader:
         return 'ItkSnapLabel'
 
     def extensions(self):
-        return ['ITK-Snap label description file (*.label)', 'ITK-Snap label description file (*.txt)']
+        return [_('ITK-Snap label description file') + ' (*.label)', _('ITK-Snap label description file') + ' (*.txt)']
 
     def canLoadFile(self, filePath):
         # Check first if loadable based on file extension
@@ -67,7 +69,7 @@ class ImportItkSnapLabelFileReader:
             colorNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLColorTableNode")
             colorNode.UnRegister(None)  # to prevent memory leaks
             colorNode.SetName(name)
-            colorNode.SetAttribute("Category", "Segmentation")
+            colorNode.SetAttribute("Category", _("Segmentation"))
             colorNode.SetTypeToUser()
             colorNode.SetNumberOfColors(maxColorIndex + 1)
             # The color node is a procedural color node, which is saved using a storage node.
@@ -82,7 +84,7 @@ class ImportItkSnapLabelFileReader:
             slicer.mrmlScene.AddNode(colorNode)
 
         except Exception as e:
-            logging.error('Failed to load file: ' + str(e))
+            logging.error(_('Failed to load file: ') + str(e))
             import traceback
             traceback.print_exc()
             return False
@@ -134,7 +136,7 @@ class ImportItkSnapLabelFileReader:
                              'name': fields[7]}
                     colors.append(color)
                     continue
-                raise ValueError(f"Syntax error in line {lineIndex}")
+                raise ValueError(_("Syntax error in line {line}").format(lineIndex))
 
         return colors
 

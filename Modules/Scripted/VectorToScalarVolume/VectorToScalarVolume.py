@@ -6,6 +6,8 @@ import vtk
 import enum
 
 import slicer
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 from slicer.parameterNodeWrapper import parameterNodeWrapper
@@ -52,13 +54,13 @@ class VectorToScalarVolume(ScriptedLoadableModule):
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Vector to Scalar Volume"
-        self.parent.categories = ["Converters"]
+        self.parent.title = _("Vector to Scalar Volume")
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Converters")]
         self.parent.dependencies = []
         self.parent.contributors = ["Steve Pieper (Isomics)",
                                     "Pablo Hernandez-Cerdan (Kitware)",
                                     "Jean-Christophe Fillion-Robin (Kitware)", ]
-        self.parent.helpText = """
+        self.parent.helpText = _("""
     <p>Make a scalar (1 component) volume from a vector volume.</p>
 
     <p>It provides multiple conversion modes:</p>
@@ -68,12 +70,12 @@ class VectorToScalarVolume(ScriptedLoadableModule):
     <li>convert RGB images to scalar using luminance as implemented in vtkImageLuminance (scalar = 0.30*R + 0.59*G + 0.11*B).</li>
     <li>computes the mean of all the components.</li>
     </ul>
-    """
-        self.parent.acknowledgementText = """
+    """)
+        self.parent.acknowledgementText = _("""
 Developed by Steve Pieper, Isomics, Inc.,
 partially funded by NIH grant 3P41RR013218-12S1 (NAC) and is part of the National Alliance
 for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the
-NIH Roadmap for Medical Research, Grant U54 EB005149."""
+NIH Roadmap for Medical Research, Grant U54 EB005149.""")
 
 
 #
@@ -82,16 +84,16 @@ NIH Roadmap for Medical Research, Grant U54 EB005149."""
 
 class ConversionMethods(enum.Enum):
     LUMINANCE = (
-        "Luminance",
-        "(RGB,RGBA) Luminance from first three components: 0.30*R + 0.59*G + 0.11*B + 0.0*A)",
+        _("Luminance"),
+        _("(RGB,RGBA) Luminance from first three components: 0.30*R + 0.59*G + 0.11*B + 0.0*A)"),
     )
     AVERAGE = (
-        "Average",
-        "Average all the components.",
+        _("Average"),
+        _("Average all the components."),
     )
     SINGLE_COMPONENT = (
-        "Single Component Extraction",
-        "Extract single component",
+        _("Single Component Extraction"),
+        _("Extract single component"),
     )
 
 
@@ -265,11 +267,11 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
         # Update apply button state and tooltip
         applyErrorMessage = ""
         if not self._parameterNode.InputVolume:
-            applyErrorMessage = "Please select Input Vector Volume"
+            applyErrorMessage = _("Please select Input Vector Volume")
         elif not self._parameterNode.OutputVolume:
-            applyErrorMessage = "Please select Output Scalar Volume"
+            applyErrorMessage = _("Please select Output Scalar Volume")
         elif isMethodSingleComponent and self._parameterNode.ComponentToExtract < 0:
-            applyErrorMessage = "Please select a component to extract"
+            applyErrorMessage = _("Please select a component to extract")
         self.ui.applyButton.enabled = (not applyErrorMessage)
         self.ui.applyButton.toolTip = applyErrorMessage
 
@@ -296,7 +298,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
         """
         Run processing when user clicks "Apply" button.
         """
-        with slicer.util.tryWithErrorDisplay("Failed to compute results.", waitCursor=True):
+        with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
 
             # Compute output
             self.logic.run(self._parameterNode)
@@ -333,16 +335,16 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         # Checking input/output consistency.
         #
         if not inputVolumeNode:
-            msg = 'no input volume node defined'
+            msg = _('no input volume node defined')
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
         if not outputVolumeNode:
-            msg = 'no output volume node defined'
+            msg = _('no output volume node defined')
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
         if inputVolumeNode.GetID() == outputVolumeNode.GetID():
-            msg = 'input and output volume is the same. ' \
-                  'Create a new volume for output to avoid this error.'
+            msg = _('input and output volume is the same. '
+                    'Create a new volume for output to avoid this error.')
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
 
@@ -361,16 +363,16 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         if conversionMethod is ConversionMethods.SINGLE_COMPONENT:
             # componentToExtract is an index with valid values in the range: [0, numberOfComponents-1]
             if not 0 <= componentToExtract < numberOfComponents:
-                msg = 'componentToExtract %d is invalid. Image has only %d components.' % (
-                    componentToExtract, numberOfComponents)
+                msg = _('component to extract ({componentSelected}) is invalid. Image has only {componentsTotal} components.').format(
+                    componentSelected=componentToExtract, componentsTotal=numberOfComponents)
                 logging.debug("isValidInputOutputData failed: %s" % msg)
                 return False, msg
 
         # LUMINANCE: Check that input vector has at least three components.
         if conversionMethod is ConversionMethods.LUMINANCE:
             if numberOfComponents < 3:
-                msg = 'input has only %d components but requires ' \
-                      'at least 3 components for luminance conversion.' % numberOfComponents
+                msg = _('input has only {componentsTotal} components but requires '
+                        'at least 3 components for luminance conversion.').format(componentsTotal=numberOfComponents)
                 logging.debug("isValidInputOutputData failed: %s" % msg)
                 return False, msg
 
@@ -381,7 +383,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         Run the conversion with given parameterNode.
         """
         if parameterNode is None:
-            raise ValueError('Invalid Parameter Node: None')
+            raise ValueError(_t('Invalid Parameter Node: None'))
 
         # allow non wrapped parameter node for backwards compatibility
         if isinstance(parameterNode, slicer.vtkMRMLScriptedModuleNode):

@@ -7,6 +7,7 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 from slicer.ScriptedLoadableModule import *
 from slicer.util import computeChecksum, extractAlgoAndDigest, TESTING_DATA_URL
 
@@ -72,11 +73,11 @@ class SampleData(ScriptedLoadableModule):
         self.parent.categories = ["Informatics"]
         self.parent.dependencies = []
         self.parent.contributors = ["Steve Pieper (Isomics), Benjamin Long (Kitware), Jean-Christophe Fillion-Robin (Kitware)"]
-        self.parent.helpText = """
+        self.parent.helpText = _("""
 This module provides data sets that can be used for testing 3D Slicer.
-"""
+""")
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
-        self.parent.acknowledgementText = """
+        self.parent.acknowledgementText = _("""
 <p>This work was was funded in part by Cancer Care Ontario
 and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)</p>
 
@@ -88,7 +89,7 @@ with a permissive copyright-license (<a href="https://creativecommons.org/licens
 <p>CTA abdomen (Panoramix) dataset comes from <a href="https://www.osirix-viewer.com/resources/dicom-image-library/">Osirix DICOM image library</a>
 and is exclusively available for research and teaching. You are not authorized to redistribute or sell it, or
 use it for commercial purposes.</p>
-"""
+""")
 
         if slicer.mrmlScene.GetTagByClassName("vtkMRMLScriptedModuleNode") != 'ScriptedModule':
             slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
@@ -105,8 +106,8 @@ use it for commercial purposes.</p>
             slicer.modules.sampleDataSources = {}
 
     def addMenu(self):
-        a = qt.QAction('Download Sample Data', slicer.util.mainWindow())
-        a.setToolTip('Go to the SampleData module to download data from the network')
+        a = qt.QAction(_('Download Sample Data'), slicer.util.mainWindow())
+        a.setToolTip(_('Go to the SampleData module to download data from the network'))
         a.connect('triggered()', self.select)
 
         fileMenu = slicer.util.lookupTopLevelWidget('FileMenu')
@@ -270,7 +271,6 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         self.log = qt.QTextEdit()
         self.log.readOnly = True
         self.layout.addWidget(self.log)
-        self.logMessage('<p>Status: <i>Idle</i></p>')
 
         # Add spacer to layout
         self.layout.addStretch(1)
@@ -368,21 +368,25 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
                     b.connect('clicked()', lambda s=source: logic.downloadFromSource(s))
 
     def logMessage(self, message, logLevel=logging.DEBUG):
-        # Set text color based on log level
+
+        # Format based on log level
         if logLevel >= logging.ERROR:
-            message = '<font color="red">' + message + '</font>'
+            message = '<b><font color="red">' + message + '</font></b>'
         elif logLevel >= logging.WARNING:
-            message = '<font color="orange">' + message + '</font>'
+            message = '<b><font color="orange">' + message + '</font></b>'
+
         # Show message in status bar
         doc = qt.QTextDocument()
         doc.setHtml(message)
         slicer.util.showStatusMessage(doc.toPlainText(), 3000)
+        logging.log(logLevel, doc.toPlainText())
+
         # Show message in log window at the bottom of the module widget
         self.log.insertHtml(message)
         self.log.insertPlainText('\n')
         self.log.ensureCursorVisible()
         self.log.repaint()
-        logging.log(logLevel, message)
+
         slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
 
     def isCategoryVisible(self, category):
@@ -501,8 +505,8 @@ class SampleDataLogic:
     def __init__(self, logMessage=None):
         if logMessage:
             self.logMessage = logMessage
-        self.builtInCategoryName = 'BuiltIn'
-        self.developmentCategoryName = 'Development'
+        self.builtInCategoryName = _('General')
+        self.developmentCategoryName = _('Development')
         self.registerBuiltInSampleDataSources()
         self.registerDevelopmentSampleDataSources()
         if slicer.app.testingEnabled():
@@ -624,9 +628,9 @@ class SampleDataLogic:
             try:
                 os.makedirs(destFolderPath, exist_ok=True)
             except:
-                self.logMessage('<b>Failed to create cache folder %s</b>' % destFolderPath, logging.ERROR)
+                self.logMessage(_('Failed to create cache folder {path}').format(path=destFolderPath), logging.ERROR)
             if not os.access(destFolderPath, os.W_OK):
-                self.logMessage('<b>Cache folder %s is not writable</b>' % destFolderPath, logging.ERROR)
+                self.logMessage(_('Cache folder {path} is not writable').format(path=destFolderPath), logging.ERROR)
         return self.downloadFile(uri, destFolderPath, name, checksum)
 
     def downloadSourceIntoCache(self, source):
@@ -670,7 +674,8 @@ class SampleDataLogic:
                 try:
                     filePath = self.downloadFileIntoCache(uri, fileName, checksum)
                 except ValueError:
-                    self.logMessage('<b>Download failed (attempt %d of %d)...</b>' % (attemptsCount + 1, maximumAttemptsCount), logging.ERROR)
+                    self.logMessage(_('Download failed (attempt {current} of {total})...').format(
+                        current=attemptsCount + 1, total=maximumAttemptsCount), logging.ERROR)
                     continue
                 resultFilePaths.append(filePath)
 
@@ -708,11 +713,12 @@ class SampleDataLogic:
                 # Failed. Clean up downloaded file (it might have been a partial download)
                 file = qt.QFile(filePath)
                 if file.exists() and not file.remove():
-                    self.logMessage('<b>Load failed (attempt %d of %d). Unable to delete and try again loading %s</b>'
-                                    % (attemptsCount + 1, maximumAttemptsCount, filePath), logging.ERROR)
+                    self.logMessage(_('Load failed (attempt {current} of {total}). Unable to delete and try again loading {path}').format(
+                        current=attemptsCount + 1, total=maximumAttemptsCount, path=filePath), logging.ERROR)
                     resultNodes.append(loadedNode)
                     break
-                self.logMessage('<b>Load failed (attempt %d of %d)...</b>' % (attemptsCount + 1, maximumAttemptsCount), logging.ERROR)
+                self.logMessage(_('Load failed (attempt {current} of {total})...').format(
+                    current=attemptsCount + 1, total=maximumAttemptsCount), logging.ERROR)
 
         if resultNodes:
             return resultNodes
@@ -841,7 +847,8 @@ class SampleDataLogic:
             # we clamp to totalSize when blockSize is larger than totalSize
             humanSizeSoFar = self.humanFormatSize(min(blocksSoFar * blockSize, totalSize))
             humanSizeTotal = self.humanFormatSize(totalSize)
-            self.logMessage('<i>Downloaded %s (%d%% of %s)...</i>' % (humanSizeSoFar, percent, humanSizeTotal))
+            self.logMessage('<i>' + _('Downloaded {sizeCompleted} ({percentCompleted}% of {sizeTotal})...').format(
+                            sizeCompleted=humanSizeSoFar, percentCompleted=percent, sizeTotal=humanSizeTotal) + '</i>')
             self.downloadPercent = percent
 
     def downloadFile(self, uri, destFolderPath, name, checksum=None):
@@ -856,51 +863,53 @@ class SampleDataLogic:
         (algo, digest) = extractAlgoAndDigest(checksum)
         if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
             import urllib.request, urllib.parse, urllib.error
-            self.logMessage(f'<b>Requesting download</b> <i>{name}</i> from {uri} ...')
+            self.logMessage(_('Requesting download {name} from {uri} ...').format(name=name, uri=uri))
             try:
                 urllib.request.urlretrieve(uri, filePath, self.reportHook)
-                self.logMessage('<b>Download finished</b>')
+                self.logMessage(_('Download finished'))
             except OSError as e:
-                self.logMessage('<b>\tDownload failed: %s</b>' % e, logging.ERROR)
-                raise ValueError(f"Failed to download {uri} to {filePath}")
+                self.logMessage('\t' + _('Download failed: {errorMessage}').format(errorMessage=e), logging.ERROR)
+                raise ValueError(_('Failed to download {uri} to {filePath}').format(uri=uri, filePath=filePath))
 
             if algo is not None:
-                self.logMessage('<b>Verifying checksum</b>')
+                self.logMessage(_('Verifying checksum'))
                 current_digest = computeChecksum(algo, filePath)
                 if current_digest != digest:
-                    self.logMessage(f'<b>Checksum verification failed. Computed checksum {current_digest} different from expected checksum {digest}</b>')
+                    self.logMessage(
+                        _('Checksum verification failed. Computed checksum {currentChecksum} different from expected checksum {expectedChecksum}').format(
+                            currentChecksum=current_digest, expectedChecksum=digest))
                     qt.QFile(filePath).remove()
                 else:
                     self.downloadPercent = 100
-                    self.logMessage('<b>Checksum OK</b>')
+                    self.logMessage(_('Checksum OK'))
         else:
             if algo is not None:
-                self.logMessage('<b>Verifying checksum</b>')
+                self.logMessage(_('Verifying checksum'))
                 current_digest = computeChecksum(algo, filePath)
                 if current_digest != digest:
-                    self.logMessage('<b>File already exists in cache but checksum is different - re-downloading it.</b>')
+                    self.logMessage(_('File already exists in cache but checksum is different - re-downloading it.'))
                     qt.QFile(filePath).remove()
                     return self.downloadFile(uri, destFolderPath, name, checksum)
                 else:
                     self.downloadPercent = 100
-                    self.logMessage('<b>File already exists and checksum is OK - reusing it.</b>')
+                    self.logMessage(_('File already exists and checksum is OK - reusing it.'))
             else:
                 self.downloadPercent = 100
-                self.logMessage('<b>File already exists in cache - reusing it.</b>')
+                self.logMessage(_('File already exists in cache - reusing it.'))
         return filePath
 
     def loadScene(self, uri, fileProperties={}):
-        self.logMessage('<b>Requesting load</b> %s ...' % uri)
+        self.logMessage('<b>' + _('Requesting load {uri}').format(uri=uri) + '</b>')
         fileProperties['fileName'] = uri
         success = slicer.app.coreIOManager().loadNodes('SceneFile', fileProperties)
         if not success:
-            self.logMessage('<b>\tLoad failed!</b>', logging.ERROR)
+            self.logMessage('\t' + _('Load failed!'), logging.ERROR)
             return False
-        self.logMessage('<b>Load finished</b>')
+        self.logMessage('<b>' + _('Load finished'), '</b><p></p>')
         return True
 
     def loadNode(self, uri, name, fileType='VolumeFile', fileProperties={}):
-        self.logMessage(f'<b>Requesting load</b> <i>{name}</i> from {uri} ...')
+        self.logMessage('<b>' + _('Requesting load {name} from {uri} ...').format(name=name, uri=uri) + '</b>')
 
         fileProperties['fileName'] = uri
         fileProperties['name'] = name
@@ -909,10 +918,10 @@ class SampleDataLogic:
         success = slicer.app.coreIOManager().loadNodes(fileType, fileProperties, loadedNodes)
 
         if not success or loadedNodes.GetNumberOfItems() < 1:
-            self.logMessage('<b>\tLoad failed!</b>', logging.ERROR)
+            self.logMessage('\t' + _('Load failed!'), logging.ERROR)
             return None
 
-        self.logMessage('<b>Load finished</b>')
+        self.logMessage('<b>' + _('Load finished') + '</b><p></p>')
 
         # since nodes were read from a temp directory remove the storage nodes
         for i in range(loadedNodes.GetNumberOfItems()):

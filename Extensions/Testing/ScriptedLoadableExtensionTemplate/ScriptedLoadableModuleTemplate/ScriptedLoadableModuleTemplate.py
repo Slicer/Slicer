@@ -4,6 +4,8 @@ import ctk
 import qt
 
 import slicer
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
@@ -19,19 +21,20 @@ class ScriptedLoadableModuleTemplate(ScriptedLoadableModule):
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "ScriptedLoadableModuleTemplate"  # TODO make this more human readable by adding spaces
-        self.parent.categories = ["Examples"]
+        self.parent.title = _("ScriptedLoadableModuleTemplate")  # TODO make this more human readable by adding spaces
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Examples")]
         self.parent.dependencies = []
         self.parent.contributors = ["John Doe (AnyWare Corp.)"]  # replace with "Firstname Lastname (Organization)"
-        self.parent.helpText = """
+        # _() function marks text as translatable to other languages
+        self.parent.helpText = _("""
 This is an example of scripted loadable module bundled in an extension.
 It performs a simple thresholding on the input volume and optionally captures a screenshot.
-"""
+""")
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
-        self.parent.acknowledgementText = """
+        self.parent.acknowledgementText = _("""
 This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
 and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
-"""  # replace with organization, grant and thanks.
+""")  # replace with organization, grant and thanks.
 
 #
 # ScriptedLoadableModuleTemplateWidget
@@ -70,8 +73,8 @@ class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
         self.inputSelector.showHidden = False
         self.inputSelector.showChildNodeTypes = False
         self.inputSelector.setMRMLScene(slicer.mrmlScene)
-        self.inputSelector.setToolTip("Pick the input to the algorithm.")
-        parametersFormLayout.addRow("Input Volume: ", self.inputSelector)
+        self.inputSelector.setToolTip(_("Pick the input to the algorithm."))
+        parametersFormLayout.addRow(_("Input Volume: "), self.inputSelector)
 
         #
         # output volume selector
@@ -85,8 +88,8 @@ class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
         self.outputSelector.showHidden = False
         self.outputSelector.showChildNodeTypes = False
         self.outputSelector.setMRMLScene(slicer.mrmlScene)
-        self.outputSelector.setToolTip("Pick the output to the algorithm.")
-        parametersFormLayout.addRow("Output Volume: ", self.outputSelector)
+        self.outputSelector.setToolTip(_("Pick the output to the algorithm."))
+        parametersFormLayout.addRow(_("Output Volume: "), self.outputSelector)
 
         #
         # threshold value
@@ -96,22 +99,23 @@ class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
         self.imageThresholdSliderWidget.minimum = -100
         self.imageThresholdSliderWidget.maximum = 100
         self.imageThresholdSliderWidget.value = 0.5
-        self.imageThresholdSliderWidget.setToolTip("Set threshold value for computing the output image. Voxels that have intensities lower than this value will set to zero.")
-        parametersFormLayout.addRow("Image threshold", self.imageThresholdSliderWidget)
+        self.imageThresholdSliderWidget.setToolTip(
+            _("Set threshold value for computing the output image. Voxels that have intensities lower than this value will set to zero."))
+        parametersFormLayout.addRow(_("Image threshold"), self.imageThresholdSliderWidget)
 
         #
         # check box to trigger taking screen shots for later use in tutorials
         #
         self.enableScreenshotsFlagCheckBox = qt.QCheckBox()
         self.enableScreenshotsFlagCheckBox.checked = 0
-        self.enableScreenshotsFlagCheckBox.setToolTip("If checked, take screen shots for tutorials. Use Save Data to write them to disk.")
-        parametersFormLayout.addRow("Enable Screenshots", self.enableScreenshotsFlagCheckBox)
+        self.enableScreenshotsFlagCheckBox.setToolTip(_("If checked, take screen shots for tutorials. Use Save Data to write them to disk."))
+        parametersFormLayout.addRow(_("Enable Screenshots"), self.enableScreenshotsFlagCheckBox)
 
         #
         # Apply Button
         #
-        self.applyButton = qt.QPushButton("Apply")
-        self.applyButton.toolTip = "Run the algorithm."
+        self.applyButton = qt.QPushButton(_("Apply"))
+        self.applyButton.toolTip = _("Run the algorithm.")
         self.applyButton.enabled = False
         parametersFormLayout.addRow(self.applyButton)
 
@@ -186,7 +190,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
         """
 
         if not self.isValidInputOutputData(inputVolume, outputVolume):
-            slicer.util.errorDisplay('Input volume is the same as output volume. Choose a different output volume.')
+            slicer.util.errorDisplay(_('Input volume is the same as output volume. Choose a different output volume.'))
             return False
 
         logging.info('Processing started')
