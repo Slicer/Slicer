@@ -303,7 +303,8 @@ int vtkMRMLTableSQLiteStorageNode::DropTable(char *tableName, vtkSQLiteDatabase*
 //----------------------------------------------------------------------------
 void vtkMRMLTableSQLiteStorageNode::InitializeSupportedReadFileTypes()
 {
-  std::string dbStr = vtkMRMLTr("vtkMRMLTableSQLiteStorageNode", "SQLight database");  //: file format name
+  //: File format name
+  std::string dbStr = vtkMRMLTr("vtkMRMLTableSQLiteStorageNode", "SQLight database");
   this->SupportedReadFileTypes->InsertNextValue(dbStr + " (.db)");
   this->SupportedReadFileTypes->InsertNextValue(dbStr + " (.db3)");
   this->SupportedReadFileTypes->InsertNextValue(dbStr + " (.sqlite)");
@@ -313,7 +314,8 @@ void vtkMRMLTableSQLiteStorageNode::InitializeSupportedReadFileTypes()
 //----------------------------------------------------------------------------
 void vtkMRMLTableSQLiteStorageNode::InitializeSupportedWriteFileTypes()
 {
-  std::string dbStr = vtkMRMLTr("vtkMRMLTableSQLiteStorageNode", "SQLight database");  //: file format name
+  //: File format name
+  std::string dbStr = vtkMRMLTr("vtkMRMLTableSQLiteStorageNode", "SQLight database");
   this->SupportedWriteFileTypes->InsertNextValue(dbStr + " (.db)");
   this->SupportedWriteFileTypes->InsertNextValue(dbStr + " (.db3)");
   this->SupportedWriteFileTypes->InsertNextValue(dbStr + " (.sqlite)");

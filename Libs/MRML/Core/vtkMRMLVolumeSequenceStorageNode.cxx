@@ -588,7 +588,8 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedReadFileTypes()
 {
-  std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");  //: file format name
+  //: File format name
+  std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.nrrd)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.nrrd)");
@@ -598,7 +599,8 @@ void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedReadFileTypes()
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeSequenceStorageNode::InitializeSupportedWriteFileTypes()
 {
-  std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");  //: file format name
+  //: File format name
+  std::string fileType = vtkMRMLTr("vtkMRMLVolumeSequenceStorageNode", "Volume Sequence");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.nrrd)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.nhdr)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.nrrd)");

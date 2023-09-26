@@ -599,7 +599,8 @@ int vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode *re
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformSequenceStorageNode::InitializeSupportedReadFileTypes()
 {
-  std::string fileType = vtkMRMLTr("vtkMRMLLinearTransformSequenceStorageNode", "Linear transform sequence");  //: file format name
+  //: File format name
+  std::string fileType = vtkMRMLTr("vtkMRMLLinearTransformSequenceStorageNode", "Linear transform sequence");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.mhd)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seq.mha)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.mha)");
@@ -609,7 +610,8 @@ void vtkMRMLLinearTransformSequenceStorageNode::InitializeSupportedReadFileTypes
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformSequenceStorageNode::InitializeSupportedWriteFileTypes()
 {
-  std::string fileType = vtkMRMLTr("vtkMRMLLinearTransformSequenceStorageNode", "Linear transform sequence");  //: file format name
+  //: File format name
+  std::string fileType = vtkMRMLTr("vtkMRMLLinearTransformSequenceStorageNode", "Linear transform sequence");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.mhd)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seq.mha)");
   this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.mhd)");

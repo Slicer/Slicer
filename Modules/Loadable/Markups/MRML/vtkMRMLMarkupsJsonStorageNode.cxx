@@ -342,15 +342,19 @@ int vtkMRMLMarkupsJsonStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsJsonStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.mrk.json)");  //: file format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.json)");  //: file format name
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.mrk.json)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.json)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsJsonStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.mrk.json)");  //: file format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.json)");  //: file format name
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.mrk.json)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsJsonStorageNode", "Markups JSON") + " (.json)");
 }
 
 //---------------------------------------------------------------------------

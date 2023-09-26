@@ -486,11 +486,13 @@ int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLShaderPropertyStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property") + " (.sp)");  //: file format name
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property") + " (.sp)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLShaderPropertyStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property") + " (.sp)");  //: file format name
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property") + " (.sp)");
 }

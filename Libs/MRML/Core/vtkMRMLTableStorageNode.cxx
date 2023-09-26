@@ -225,17 +225,23 @@ int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLTableStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.tsv)");  //: file format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Comma-separated values") + " (.csv)");  //: file format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.txt)");  //: file format name
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.tsv)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Comma-separated values") + " (.csv)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.txt)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTableStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.tsv)");  //: file format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Comma-separated values") + " (.csv)");  //: file format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.txt)");  //: file format name
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.tsv)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Comma-separated values") + " (.csv)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTableStorageNode", "Tab-separated values") + " (.txt)");
 }
 
 //----------------------------------------------------------------------------

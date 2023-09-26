@@ -216,12 +216,15 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.vp)");  //: file format name
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.vp)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.vp)");  //: file format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.txt)");  //: file format name
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.vp)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.txt)");
 }

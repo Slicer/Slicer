@@ -205,15 +205,19 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.seq.mrb)");  //: file format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.mrb)");  //: file format name
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.seq.mrb)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.mrb)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.seq.mrb)");  //: file format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.mrb)");  //: file format name
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.seq.mrb)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLSequenceStorageNode", "MRML Sequence Bundle") + " (.mrb)");
 }
 
 //----------------------------------------------------------------------------

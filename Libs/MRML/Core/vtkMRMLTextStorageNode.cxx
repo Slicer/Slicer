@@ -150,17 +150,23 @@ int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLTextStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file") + " (.txt)");  //: file format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "XML document") + " (.xml)");  //: file format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "JSON document") + " (.json)");  //: file format name
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file") + " (.txt)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "XML document") + " (.xml)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "JSON document") + " (.json)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTextStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file") + " (.txt)");  //: file format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "XML document") + " (.xml)");  //: file format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "JSON document") + " (.json)");  //: file format name
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file") + " (.txt)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "XML document") + " (.xml)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLTextStorageNode", "JSON document") + " (.json)");
 }
 
 //----------------------------------------------------------------------------

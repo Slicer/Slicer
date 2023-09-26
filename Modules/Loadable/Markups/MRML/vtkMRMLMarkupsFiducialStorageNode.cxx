@@ -785,14 +785,17 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV") + " (.fcsv)");  //: file format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Annotation Fiducial CSV") + " (.acsv)");  //: file format name
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV") + " (.fcsv)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Annotation Fiducial CSV") + " (.acsv)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV") + " (.fcsv)");  //: file format name
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV") + " (.fcsv)");
 }
 
 //---------------------------------------------------------------------------

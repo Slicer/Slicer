@@ -218,13 +218,17 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLProceduralColorStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLProceduralColorStorageNode", "MRML Color Function") + " (.cxml)");   //: file format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLProceduralColorStorageNode", "MRML Color Function") + " (.txt)");  //: file format name
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLProceduralColorStorageNode", "MRML Color Function") + " (.cxml)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLProceduralColorStorageNode", "MRML Color Function") + " (.txt)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLProceduralColorStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLProceduralColorStorageNode", "MRML Color Function") + " (.cxml)");  //: file format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLProceduralColorStorageNode", "MRML Color Function") + " (.txt)");  //: file format name
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLProceduralColorStorageNode", "MRML Color Function") + " (.cxml)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLProceduralColorStorageNode", "MRML Color Function") + " (.txt)");
 }

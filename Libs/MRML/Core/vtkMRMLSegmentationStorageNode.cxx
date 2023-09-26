@@ -143,7 +143,8 @@ void vtkMRMLSegmentationStorageNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::InitializeSupportedReadFileTypes()
 {
-  std::string fileType = vtkMRMLTr("vtkMRMLSegmentationStorageNode", "Segmentation");  //: file format name
+  //: File format name
+  std::string fileType = vtkMRMLTr("vtkMRMLSegmentationStorageNode", "Segmentation");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seg.nrrd)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seg.nhdr)");
   this->SupportedReadFileTypes->InsertNextValue(fileType + " (.seg.vtm)");
@@ -173,7 +174,8 @@ void vtkMRMLSegmentationStorageNode::InitializeSupportedWriteFileTypes()
       masterIsPolyData = true;
       }
     }
-  std::string fileType = vtkMRMLTr("vtkMRMLSegmentationStorageNode", "Segmentation");  //: file format name
+  //: File format name
+  std::string fileType = vtkMRMLTr("vtkMRMLSegmentationStorageNode", "Segmentation");
   if (masterIsImage)
     {
     this->SupportedWriteFileTypes->InsertNextValue(fileType + " (.seg.nrrd)");
