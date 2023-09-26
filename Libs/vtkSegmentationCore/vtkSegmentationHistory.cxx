@@ -220,6 +220,8 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
 {
   this->RestoreStateInProgress = true;
 
+  bool containedRepresentationNamesModified = false;
+
   SegmentationState restoredState = this->SegmentationStates[stateIndex];
 
   std::set<std::string> segmentIDsToKeep;
@@ -236,12 +238,17 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
       this->Segmentation->AddSegment(segment, restoredSegmentsIt->first);
       }
 
-    vtkSegmentation::CopySegment(segment, segmentToRestore, nullptr, restoredRepresentations);
-
     std::vector<std::string> restoredRepresentationNames;
     segmentToRestore->GetContainedRepresentationNames(restoredRepresentationNames);
     std::vector<std::string> currentRepresentationNames;
     segment->GetContainedRepresentationNames(currentRepresentationNames);
+    if (restoredRepresentationNames != currentRepresentationNames)
+      {
+      containedRepresentationNamesModified = true;
+      }
+
+    vtkSegmentation::CopySegment(segment, segmentToRestore, nullptr, restoredRepresentations);
+
     // Remove representations that are not in the restoring segment
     for (std::string representationName : currentRepresentationNames)
       {
@@ -270,6 +277,10 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
   this->LastRestoredState = stateIndex;
 
   this->RestoreStateInProgress = false;
+  if (containedRepresentationNamesModified)
+    {
+    this->Segmentation->InvokeEvent(vtkSegmentation::ContainedRepresentationNamesModified);
+    }
   this->Modified();
   return true;
 }
