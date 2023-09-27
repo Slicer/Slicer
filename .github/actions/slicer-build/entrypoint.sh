@@ -15,4 +15,4 @@ mv ${package_filepath} $GITHUB_WORKSPACE/
 package=$(basename $package_filepath)
 echo "package [${package}]"
 
-echo "::set-output name=package::$package"
+echo "package=$package" >> $GITHUB_OUTPUT
