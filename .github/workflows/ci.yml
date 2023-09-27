@@ -38,6 +38,7 @@ jobs:
               - "CMakeLists.txt"
 
       - name: 'Build Slicer'
+        id: slicer-build
         if: steps.changes.outputs.paths-to-include == 'true'
         uses: ./.github/actions/slicer-build
 
