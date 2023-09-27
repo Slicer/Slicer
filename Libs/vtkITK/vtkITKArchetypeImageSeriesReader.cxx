@@ -325,6 +325,14 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return nullptr;
     }
+  catch (const std::string& err)
+    {
+    // GDCM can throw std::string exception if some verification fail
+    vtkDebugMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+      << "Error: " << err);
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
+    return nullptr;
+    }
 
   return imageIO;
 }
@@ -518,6 +526,14 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return 0;
     }
+  catch (const std::string& err)
+    {
+    // GDCM can throw std::string exception if some verification fail
+    vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+      << "Error: " << err);
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
+    return 0;
+    }
 
   // figure out the index of Archetype in AllFileNames
   // Collapsing of path is necessary to normalize filenames (path separator, capitalization of drive
@@ -562,7 +578,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     }
   this->RasToIjkMatrix = vtkMatrix4x4::New();
 
-  vtkMatrix4x4* IjkToLpsMatrix = vtkMatrix4x4::New();
+  vtkNew<vtkMatrix4x4> IjkToLpsMatrix;
 
   this->RasToIjkMatrix->Identity();
   IjkToLpsMatrix->Identity();
@@ -703,7 +719,6 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     }
   catch (itk::ExceptionObject& e)
     {
-    IjkToLpsMatrix->Delete();
     vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
       << "ITK exception info: error in " << e.GetLocation() << ": "<< e.GetDescription());
     this->SetErrorCode(vtkErrorCode::FileFormatError);
@@ -764,8 +779,6 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   // so probably it would be better to remove it.
   this->RasToIjkMatrix->SetElement(3,3,1.0);
 
-  IjkToLpsMatrix->Delete();
-
   if ( !this->GetUseOrientationFromFile() )
     {
     this->RasToIjkMatrix->Identity();
@@ -777,188 +790,209 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
   outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent, 6);
   int scalarType = this->OutputScalarType;
-  if (this->UseNativeScalarType)
+
+  try
     {
-    // If there is only one file in the series
-    if (this->FileNames.size() == 1)
+    if (this->UseNativeScalarType)
       {
-      if (imageIO.GetPointer() == nullptr)
+      // If there is only one file in the series
+      if (this->FileNames.size() == 1)
         {
-        scalarType = VTK_SHORT; // TODO - figure out why multi-file series doesn't have an imageIO
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::UCHAR)
-        {
-        scalarType = VTK_UNSIGNED_CHAR;
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::CHAR)
-        {
-        scalarType = VTK_CHAR;
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::USHORT)
-        {
-        scalarType = VTK_UNSIGNED_SHORT;
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::SHORT)
-        {
-        scalarType = VTK_SHORT;
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::UINT)
-        {
-        scalarType = VTK_UNSIGNED_INT;
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::INT)
-        {
-        scalarType = VTK_INT;
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::ULONG)
-        {
-        scalarType = VTK_UNSIGNED_LONG;
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::LONG)
-        {
-        scalarType = VTK_LONG;
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::FLOAT)
-        {
-        scalarType = VTK_FLOAT;
-        }
-      else if (imageIO->GetComponentType() == itk::ImageIOBase::DOUBLE)
-        {
-        scalarType = VTK_DOUBLE;
-        }
-      }
-    else
-      {
-      double min = 0, max = 0;
-
-      for( unsigned int f = 0; f < this->FileNames.size(); f++ )
-        {
-        imageIO->SetFileName( this->FileNames[f] );
-        imageIO->ReadImageInformation();
-
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::UCHAR )
+        if (imageIO.GetPointer() == nullptr)
           {
-          min = std::numeric_limits<uint8_t>::min() < min ? std::numeric_limits<uint8_t>::min() : min;
-          max = std::numeric_limits<uint8_t>::max() > max ? std::numeric_limits<uint8_t>::max() : max;
+          scalarType = VTK_SHORT; // TODO - figure out why multi-file series doesn't have an imageIO
           }
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::CHAR )
-          {
-          min = std::numeric_limits<int8_t>::min() < min ? std::numeric_limits<int8_t>::min() : min;
-          max = std::numeric_limits<int8_t>::max() > max ? std::numeric_limits<int8_t>::max() : max;
-          }
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::USHORT )
-          {
-          min = std::numeric_limits<uint16_t>::min() < min ? std::numeric_limits<uint16_t>::min() : min;
-          max = std::numeric_limits<uint16_t>::max() > max ? std::numeric_limits<uint16_t>::max() : max;
-          }
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::SHORT )
-          {
-          min = std::numeric_limits<int16_t>::min() < min ? std::numeric_limits<int16_t>::min() : min;
-          max = std::numeric_limits<int16_t>::max() > max ? std::numeric_limits<int16_t>::max() : max;
-          }
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::UINT )
-          {
-          min = std::numeric_limits<uint32_t>::min() < min ? std::numeric_limits<uint32_t>::min() : min;
-          max = std::numeric_limits<uint32_t>::max() > max ? std::numeric_limits<uint32_t>::max() : max;
-          }
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::INT )
-          {
-          min = static_cast<double>(std::numeric_limits<int32_t>::min() < min ? std::numeric_limits<int32_t>::min() : min);
-          max = static_cast<double>(std::numeric_limits<int32_t>::max() > max ? std::numeric_limits<int32_t>::max() : max);
-          }
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::ULONG )
-          { // note that on windows ULONG is only 32 bit
-          min = static_cast<double>(std::numeric_limits<uint64_t>::min() < min ? std::numeric_limits<uint64_t>::min() : min);
-          max = static_cast<double>(std::numeric_limits<uint64_t>::max() > max ? std::numeric_limits<uint64_t>::max() : max);
-          }
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::LONG )
-          { // note that on windows LONG is only 32 bit
-          min = static_cast<double>(std::numeric_limits<int64_t>::min() < min ? std::numeric_limits<int64_t>::min() : min);
-          max = static_cast<double>(std::numeric_limits<int64_t>::max() > max ? std::numeric_limits<int64_t>::max() : max);
-          }
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::FLOAT )
-          {
-          // use -max() as min() for both float and double as temp workaround
-          // should switch to lowest() function in C++ 11 in the future
-          min = -std::numeric_limits<float>::max() < min ? -std::numeric_limits<float>::max() : min;
-          max = std::numeric_limits<float>::max() > max ? std::numeric_limits<float>::max() : max;
-          }
-        if ( imageIO->GetComponentType() == itk::ImageIOBase::DOUBLE )
-          {
-          min = -std::numeric_limits<double>::max() < min ? -std::numeric_limits<double>::max() : min;
-          max = std::numeric_limits<double>::max() > max ? std::numeric_limits<double>::max() : max;
-          }
-        }
-      assert( min <= max );
-      if( min >= 0 ) // unsigned
-        {
-        if( max <= std::numeric_limits<uint8_t>::max() )
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::UCHAR)
           {
           scalarType = VTK_UNSIGNED_CHAR;
           }
-        else if( max <= std::numeric_limits<uint16_t>::max() )
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::CHAR)
+          {
+          scalarType = VTK_CHAR;
+          }
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::USHORT)
           {
           scalarType = VTK_UNSIGNED_SHORT;
           }
-        else if( max <= std::numeric_limits<uint32_t>::max() )
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::SHORT)
+          {
+          scalarType = VTK_SHORT;
+          }
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::UINT)
           {
           scalarType = VTK_UNSIGNED_INT;
           }
-        else if( max <= static_cast<double>(std::numeric_limits<uint64_t>::max()) )
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::INT)
+          {
+          scalarType = VTK_INT;
+          }
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::ULONG)
           {
           scalarType = VTK_UNSIGNED_LONG;
           }
-        else if( max <= std::numeric_limits<float>::max() )
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::LONG)
+          {
+          scalarType = VTK_LONG;
+          }
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::FLOAT)
           {
           scalarType = VTK_FLOAT;
           }
-        else if( max <= std::numeric_limits<double>::max() )
+        else if (imageIO->GetComponentType() == itk::ImageIOBase::DOUBLE)
           {
           scalarType = VTK_DOUBLE;
-          }
-        else
-          {
-          assert(0);
           }
         }
       else
         {
-        if( max <= std::numeric_limits<int8_t>::max()
-          && min >= std::numeric_limits<int8_t>::min() )
+        double min = 0, max = 0;
+        for( unsigned int f = 0; f < this->FileNames.size(); f++ )
           {
-          scalarType = VTK_CHAR;
+          imageIO->SetFileName( this->FileNames[f] );
+          imageIO->ReadImageInformation();
+
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::UCHAR )
+            {
+            min = std::numeric_limits<uint8_t>::min() < min ? std::numeric_limits<uint8_t>::min() : min;
+            max = std::numeric_limits<uint8_t>::max() > max ? std::numeric_limits<uint8_t>::max() : max;
+            }
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::CHAR )
+            {
+            min = std::numeric_limits<int8_t>::min() < min ? std::numeric_limits<int8_t>::min() : min;
+            max = std::numeric_limits<int8_t>::max() > max ? std::numeric_limits<int8_t>::max() : max;
+            }
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::USHORT )
+            {
+            min = std::numeric_limits<uint16_t>::min() < min ? std::numeric_limits<uint16_t>::min() : min;
+            max = std::numeric_limits<uint16_t>::max() > max ? std::numeric_limits<uint16_t>::max() : max;
+            }
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::SHORT )
+            {
+            min = std::numeric_limits<int16_t>::min() < min ? std::numeric_limits<int16_t>::min() : min;
+            max = std::numeric_limits<int16_t>::max() > max ? std::numeric_limits<int16_t>::max() : max;
+            }
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::UINT )
+            {
+            min = std::numeric_limits<uint32_t>::min() < min ? std::numeric_limits<uint32_t>::min() : min;
+            max = std::numeric_limits<uint32_t>::max() > max ? std::numeric_limits<uint32_t>::max() : max;
+            }
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::INT )
+            {
+            min = static_cast<double>(std::numeric_limits<int32_t>::min() < min ? std::numeric_limits<int32_t>::min() : min);
+            max = static_cast<double>(std::numeric_limits<int32_t>::max() > max ? std::numeric_limits<int32_t>::max() : max);
+            }
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::ULONG )
+            { // note that on windows ULONG is only 32 bit
+            min = static_cast<double>(std::numeric_limits<uint64_t>::min() < min ? std::numeric_limits<uint64_t>::min() : min);
+            max = static_cast<double>(std::numeric_limits<uint64_t>::max() > max ? std::numeric_limits<uint64_t>::max() : max);
+            }
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::LONG )
+            { // note that on windows LONG is only 32 bit
+            min = static_cast<double>(std::numeric_limits<int64_t>::min() < min ? std::numeric_limits<int64_t>::min() : min);
+            max = static_cast<double>(std::numeric_limits<int64_t>::max() > max ? std::numeric_limits<int64_t>::max() : max);
+            }
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::FLOAT )
+            {
+            // use -max() as min() for both float and double as temp workaround
+            // should switch to lowest() function in C++ 11 in the future
+            min = -std::numeric_limits<float>::max() < min ? -std::numeric_limits<float>::max() : min;
+            max = std::numeric_limits<float>::max() > max ? std::numeric_limits<float>::max() : max;
+            }
+          if ( imageIO->GetComponentType() == itk::ImageIOBase::DOUBLE )
+            {
+            min = -std::numeric_limits<double>::max() < min ? -std::numeric_limits<double>::max() : min;
+            max = std::numeric_limits<double>::max() > max ? std::numeric_limits<double>::max() : max;
+            }
           }
-        else if( max <= std::numeric_limits<int16_t>::max()
-          && min >= std::numeric_limits<int16_t>::min() )
+        if (!(min <= max))
           {
-          scalarType = VTK_SHORT;
+          throw std::string("Invalid voxel value range");
           }
-        else if( max <= std::numeric_limits<int32_t>::max()
-          && min >= std::numeric_limits<int32_t>::min() )
+        if( min >= 0 ) // unsigned
           {
-          scalarType = VTK_INT;
-          }
-        else if( max <= std::numeric_limits<int64_t>::max()
-          && min >= std::numeric_limits<int64_t>::min() )
-          {
-          scalarType = VTK_LONG;
-          }
-        else if ( max <= std::numeric_limits<float>::max()
-          && min >= -std::numeric_limits<float>::max() )
-          {
-          scalarType = VTK_FLOAT;
-          }
-        else if( max <= std::numeric_limits<double>::max()
-          && min >= -std::numeric_limits<double>::max() )
-          {
-          scalarType = VTK_DOUBLE;
+          if( max <= std::numeric_limits<uint8_t>::max() )
+            {
+            scalarType = VTK_UNSIGNED_CHAR;
+            }
+          else if( max <= std::numeric_limits<uint16_t>::max() )
+            {
+            scalarType = VTK_UNSIGNED_SHORT;
+            }
+          else if( max <= std::numeric_limits<uint32_t>::max() )
+            {
+            scalarType = VTK_UNSIGNED_INT;
+            }
+          else if( max <= static_cast<double>(std::numeric_limits<uint64_t>::max()) )
+            {
+            scalarType = VTK_UNSIGNED_LONG;
+            }
+          else if( max <= std::numeric_limits<float>::max() )
+            {
+            scalarType = VTK_FLOAT;
+            }
+          else if( max <= std::numeric_limits<double>::max() )
+            {
+            scalarType = VTK_DOUBLE;
+            }
+          else
+            {
+            throw std::string("Cannot find suitable scalar type for value range");
+            }
           }
         else
           {
-          assert(0);
+          if( max <= std::numeric_limits<int8_t>::max()
+            && min >= std::numeric_limits<int8_t>::min() )
+            {
+            scalarType = VTK_CHAR;
+            }
+          else if( max <= std::numeric_limits<int16_t>::max()
+            && min >= std::numeric_limits<int16_t>::min() )
+            {
+            scalarType = VTK_SHORT;
+            }
+          else if( max <= std::numeric_limits<int32_t>::max()
+            && min >= std::numeric_limits<int32_t>::min() )
+            {
+            scalarType = VTK_INT;
+            }
+          else if( max <= std::numeric_limits<int64_t>::max()
+            && min >= std::numeric_limits<int64_t>::min() )
+            {
+            scalarType = VTK_LONG;
+            }
+          else if ( max <= std::numeric_limits<float>::max()
+            && min >= -std::numeric_limits<float>::max() )
+            {
+            scalarType = VTK_FLOAT;
+            }
+          else if( max <= std::numeric_limits<double>::max()
+            && min >= -std::numeric_limits<double>::max() )
+            {
+            scalarType = VTK_DOUBLE;
+            }
+          else
+            {
+            throw std::string("Cannot find suitable scalar type for value range");
+            }
           }
         }
       }
+    }
+  catch (itk::ExceptionObject& e)
+    {
+    vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+      << "ITK exception info: error in " << e.GetLocation() << ": "<< e.GetDescription());
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
+    return 0;
+    }
+  catch (const std::string& err)
+    {
+    // GDCM can throw std::string exception if some verification fail
+    vtkDebugMacro("vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+      << "Error: " << err);
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
+    return 0;
     }
 
   int numberOfComponents = 1;
