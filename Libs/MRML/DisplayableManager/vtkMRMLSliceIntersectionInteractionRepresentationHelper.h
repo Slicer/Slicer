@@ -17,10 +17,7 @@
 
 /**
  * @class   vtkMRMLSliceIntersectionInteractionRepresentationHelper
- * @brief   represent intersections of other slice views in the current slice view
- *
- * @sa
- * vtkSliceIntersectionWidget vtkWidgetRepresentation vtkAbstractWidget
+ * @brief   utility class to compute slice intersection interactions
 */
 
 #ifndef vtkMRMLSliceIntersectionInteractionRepresentationHelper_h
@@ -29,12 +26,12 @@
 #include "vtkMRMLDisplayableManagerExport.h" // For export macro
 
 // VTK includes
-#include <vtkMRMLAbstractWidgetRepresentation.h>
+#include <vtkObject.h>
 class vtkPoints;
 class vtkMatrix4x4;
 class vtkMRMLSliceNode;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepresentationHelper : public vtkMRMLAbstractWidgetRepresentation
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepresentationHelper : public vtkObject
 {
   public:
     /**
@@ -46,7 +43,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
     /**
      * Standard methods for instances of this class.
      */
-    vtkTypeMacro(vtkMRMLSliceIntersectionInteractionRepresentationHelper, vtkMRMLAbstractWidgetRepresentation);
+    vtkTypeMacro(vtkMRMLSliceIntersectionInteractionRepresentationHelper, vtkObject);
     void PrintSelf(ostream& os, vtkIndent indent) override;
     //@}
 
