@@ -189,7 +189,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
     class vtkInternal;
     vtkInternal* Internal;
 
-    vtkMRMLSliceIntersectionInteractionRepresentationHelper* Helper;
+    vtkSmartPointer<vtkMRMLSliceIntersectionInteractionRepresentationHelper> Helper;
 
   private:
     vtkMRMLSliceIntersectionInteractionRepresentation(const vtkMRMLSliceIntersectionInteractionRepresentation&) = delete;
