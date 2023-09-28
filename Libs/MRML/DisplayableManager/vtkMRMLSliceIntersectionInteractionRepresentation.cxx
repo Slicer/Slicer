@@ -901,8 +901,7 @@ vtkMRMLSliceIntersectionInteractionRepresentation::vtkMRMLSliceIntersectionInter
   this->InteractionSize = INTERACTION_SIZE_PIXELS;
 
   // Helper
-  vtkNew<vtkMRMLSliceIntersectionInteractionRepresentationHelper> helper;
-  this->Helper = helper;
+  this->Helper = vtkSmartPointer<vtkMRMLSliceIntersectionInteractionRepresentationHelper>::New();
 }
 
 //----------------------------------------------------------------------
