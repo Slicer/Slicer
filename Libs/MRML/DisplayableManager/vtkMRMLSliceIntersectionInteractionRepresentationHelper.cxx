@@ -17,56 +17,20 @@
 
 #include "vtkMRMLSliceIntersectionInteractionRepresentationHelper.h"
 
-
-#include <deque>
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-#include "vtkMRMLApplicationLogic.h"
-#include "vtkMRMLDisplayableNode.h"
-#include "vtkMRMLInteractionNode.h"
-#include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLSliceLogic.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLSliceCompositeNode.h"
-
-#include "vtkActor2D.h"
-#include "vtkArcSource.h"
-#include "vtkAppendPolyData.h"
-#include "vtkAssemblyPath.h"
-#include "vtkCallbackCommand.h"
-#include "vtkCamera.h"
-#include "vtkCellArray.h"
-#include "vtkCommand.h"
-#include "vtkConeSource.h"
-#include "vtkCoordinate.h"
-#include "vtkCursor2D.h"
-#include "vtkCylinderSource.h"
-#include "vtkGlyph2D.h"
-#include "vtkInteractorObserver.h"
-#include "vtkLeaderActor2D.h"
-#include "vtkLine.h"
-#include "vtkLineSource.h"
-#include "vtkMath.h"
-#include "vtkMatrix3x3.h"
-#include "vtkMatrix4x4.h"
-#include "vtkObjectFactory.h"
-#include "vtkPoints.h"
-#include "vtkPolyDataAlgorithm.h"
-#include "vtkPolyDataMapper2D.h"
-#include "vtkProperty2D.h"
-#include "vtkPlane.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkSphereSource.h"
-#include "vtkTransform.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTubeFilter.h"
-#include "vtkWindow.h"
+// VTK includes
+#include <vtkMath.h>
+#include <vtkMatrix3x3.h>
+#include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
+#include <vtkPlane.h>
+#include <vtkTransform.h>
 
 // MRML includes
 #include <vtkMRMLInteractionEventData.h>
+#include <vtkMRMLSliceNode.h>
+
+// STD includes
+#include <deque>
 
 // Handles
 static const double SLICEOFFSET_HANDLE_DEFAULT_POSITION[3] = { 0.0,0.0,0.0 };
@@ -87,7 +51,6 @@ vtkMRMLSliceIntersectionInteractionRepresentationHelper::~vtkMRMLSliceIntersecti
 //----------------------------------------------------------------------
 void vtkMRMLSliceIntersectionInteractionRepresentationHelper::PrintSelf(ostream & os, vtkIndent indent)
 {
-  //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
 }
 

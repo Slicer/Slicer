@@ -27,26 +27,12 @@
 #define vtkMRMLSliceIntersectionInteractionRepresentationHelper_h
 
 #include "vtkMRMLDisplayableManagerExport.h" // For export macro
-#include "vtkMRMLAbstractWidgetRepresentation.h"
 
-#include "vtkMRMLSliceNode.h"
-
-class vtkMRMLApplicationLogic;
-class vtkMRMLModelDisplayNode;
-class vtkMRMLSliceLogic;
-
-class vtkProperty2D;
-class vtkActor2D;
-class vtkPolyDataMapper2D;
-class vtkPolyData;
+// VTK includes
+#include <vtkMRMLAbstractWidgetRepresentation.h>
 class vtkPoints;
-class vtkCellArray;
-class vtkTextProperty;
-class vtkLeaderActor2D;
-class vtkTextMapper;
-class vtkTransform;
-class vtkActor2D;
-class vtkMRMLInteractionEventData;
+class vtkMatrix4x4;
+class vtkMRMLSliceNode;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepresentationHelper : public vtkMRMLAbstractWidgetRepresentation
 {
