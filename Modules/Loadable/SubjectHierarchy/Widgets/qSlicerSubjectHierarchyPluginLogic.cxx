@@ -327,6 +327,8 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
   vtkIdType itemID = shNode->GetItemByDataNode(dataNode);
   if (itemID)
     {
+    // Block render to avoid unnecessary view updates.
+    SlicerRenderBlocker renderBlocker;
     shNode->RemoveItem(itemID, false, false);
     }
 }
