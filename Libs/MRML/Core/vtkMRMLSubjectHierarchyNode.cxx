@@ -1245,6 +1245,10 @@ void vtkSubjectHierarchyItem::ReparentChildrenToParent()
 //---------------------------------------------------------------------------
 void vtkSubjectHierarchyItem::RemoveAllChildren()
 {
+  // If the item has many children, then it may invoke a large number of events.
+  // To avoid this, block Modified events on the data node until all of the children are removed.
+  MRMLNodeModifyBlocker blocker(this->DataNode);
+
   std::vector<vtkIdType> childIDs;
   this->GetAllChildren(childIDs);
   while (childIDs.size())
