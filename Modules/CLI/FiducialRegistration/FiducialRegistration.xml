@@ -42,6 +42,7 @@
       <element>Translation</element>
       <element>Rigid</element>
       <element>Similarity</element>
+      <element>Affine</element>
       <default>Rigid</default>
     </string-enumeration>
 	  <double>
