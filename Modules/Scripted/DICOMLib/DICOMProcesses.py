@@ -65,19 +65,23 @@ class DICOMProcess:
     def __del__(self):
         self.stop()
 
-    def start(self, cmd, args):
+    def start(self, cmd: str, args: list[str]) -> qt.QProcess:
+        """Run the given command as a standalone process."""
         if self.process is not None:
             self.stop()
         self.cmd = cmd
         self.args = args
 
-        # start the server!
+        # start the process!
         self.process = qt.QProcess()
         self.process.connect('stateChanged(QProcess::ProcessState)', self.onStateChanged)
         logging.debug(("Starting %s with " % cmd, args))
         self.process.start(cmd, args)
+        return self.process
 
     def onStateChanged(self, newState):
+        """Callback to indicate that the process state has changed
+        and is now either starting, running, or not running."""
         logging.debug(f"Process {self.cmd} now in state {self.QProcessState[newState]}")
         if newState == 0 and self.process:
             stdout = self.process.readAllStandardOutput()
@@ -88,14 +92,14 @@ class DICOMProcess:
             return stdout, stderr
         return None, None
 
-    def stop(self):
-        if hasattr(self, 'process'):
-            if self.process:
-                logging.debug("stopping DICOM process")
-                self.process.kill()
-                # Wait up to 3 seconds for the process to stop
-                self.process.waitForFinished(3000)
-                self.process = None
+    def stop(self) -> None:
+        """Stop the running standalone process."""
+        if hasattr(self, "process") and self.process:
+            logging.debug("stopping DICOM process")
+            self.process.kill()
+            # Wait up to 3 seconds for the process to stop
+            self.process.waitForFinished(3000)
+            self.process = None
 
 
 class DICOMCommand(DICOMProcess):
@@ -108,14 +112,16 @@ class DICOMCommand(DICOMProcess):
         self.executable = self.exeDir + '/' + cmd + self.exeExtension
         self.args = args
 
-    def __del__(self):
-        super().__del__()
+    def start(self) -> qt.QByteArray:
+        """
+        Run the DICOM process and block until return.
 
-    def start(self):
-        # run the process!
-        self.process = qt.QProcess()
-        logging.debug(('DICOM process running: ', self.executable, self.args))
-        self.process.start(self.executable, self.args)
+        :return: A qt.QByteArray representing standard output (stdout) \
+            from the DICOM process. \
+            https://doc.qt.io/qt-5/qprocess.html#readAllStandardOutput
+        """
+        super().start(self.executable, self.args)
+        logging.debug(("DICOM process running: ", self.executable, self.args))
         self.process.waitForFinished()
         if self.process.exitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
             stdout = self.process.readAllStandardOutput()
