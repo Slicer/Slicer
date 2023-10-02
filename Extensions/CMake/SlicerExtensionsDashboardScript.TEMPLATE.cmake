@@ -26,6 +26,9 @@ dashboard_set(CTEST_BUILD_FLAGS     "")               # Use multiple CPU cores t
 # By default, CMake auto-discovers the compilers
 #dashboard_set(CMAKE_C_COMPILER      "/path/to/c/compiler")
 #dashboard_set(CMAKE_CXX_COMPILER    "/path/to/cxx/compiler")
+#dashboard_set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_LINKER> <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+#dashboard_set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_LINKER> <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+#dashboard_set(CMAKE_LINKER      "/path/to/linker")
 dashboard_set(CTEST_BUILD_CONFIGURATION "Release")
 dashboard_set(EXTENSIONS_BUILDSYSTEM_TESTING FALSE)   # If enabled, build <Slicer_SOURCE_DIR>/Extensions/*.s4ext
 

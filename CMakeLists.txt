@@ -23,6 +23,30 @@ if(NOT CMAKE_CXX_STANDARD MATCHES "^(17|20)$")
   message(FATAL_ERROR "CMAKE_CXX_STANDARD must be set to 17 or 20")
 endif()
 
+#-----------------------------------------------------------------------------
+# Setting C/CXX Linker rule for added flexibility in choosing a linker
+#-----------------------------------------------------------------------------
+# By default, CMake uses the compiler for linking, not CMAKE_LINKER[5†source].
+# These settings override the default to use the specified CMAKE_LINKER.
+
+set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_LINKER> <FLAGS> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_LINKER> <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+
+#-----------------------------------------------------------------------------
+# Setting C/CXX Shared Library rule for added flexibility in choosing a linker
+#-----------------------------------------------------------------------------
+# Similar to executables, override the default rules for creating shared libraries with the specified CMAKE_LINKER.
+
+set(CMAKE_C_CREATE_SHARED_LIBRARY "<CMAKE_LINKER> <FLAGS> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+set(CMAKE_CXX_CREATE_SHARED_LIBRARY "<CMAKE_LINKER> <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+
+# References:
+# [1] https://stackoverflow.com/questions/1867745/cmake-use-a-custom-linker
+# [2] https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_LINK_EXECUTABLE.html
+# [3] https://cmake.org/pipermail/cmake/2011-March/043519.html
+# [4] https://discourse.cmake.org/t/using-lld-link-with-msvc-compiler-on-windows/2278
+# [5] https://stackoverflow.com/questions/46159191/how-to-force-cmake-to-use-linker-instead-of-compiler-during-linking
+
 # Prevent unnecessary re-linking on Linux
 #
 # See https://discourse.slicer.org/t/build-when-git-commit-is-changed/29607/12
@@ -85,7 +109,7 @@ project(Slicer VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
+seT(CMAKE_MODULE_PATH
   ${Slicer_SOURCE_DIR}/Extensions/CMake
   ${CMAKE_MODULE_PATH}
   )

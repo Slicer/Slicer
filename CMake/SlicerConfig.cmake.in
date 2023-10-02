@@ -440,6 +440,7 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES "@SlicerExecutionMode
 # Compilation Commands
 set(Slicer_CMAKE_CXX_COMPILER "@Slicer_CMAKE_CXX_COMPILER_CONFIG@")
 set(Slicer_CMAKE_C_COMPILER   "@Slicer_CMAKE_C_COMPILER_CONFIG@")
+set(Slicer_CMAKE_LINKER   "@Slicer_CMAKE_LINKER_CONFIG@")
 
 # With the help of SuperBuild, Slicer has been configured with specific compiler
 #
@@ -450,6 +451,7 @@ set(Slicer_CMAKE_C_COMPILER   "@Slicer_CMAKE_C_COMPILER_CONFIG@")
 # A typical use of this macro is illustrated below:
 #    slicer_config_set_compiler_ep("CMAKE_C_COMPILER", "@Slicer_CMAKE_C_COMPILER@")
 #    slicer_config_set_compiler_ep("CMAKE_CXX_COMPILER", "@Slicer_CMAKE_CXX_COMPILER@")
+#    slicer_config_set_compiler_ep("CMAKE_LINKER", "@Slicer_CMAKE_LINKER@")
 #
 macro(slicer_config_set_compiler_ep var value)
   if(NOT "${value}" STREQUAL "")
