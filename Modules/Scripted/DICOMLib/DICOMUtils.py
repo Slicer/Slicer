@@ -1,5 +1,7 @@
 import logging
 import os
+import requests
+from typing import Optional
 
 import ctk
 import qt
@@ -819,7 +821,25 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
     return loadedNodeIDs
 
 
-def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=None, accessToken=None, bulkRetrieve=True):
+GLOBAL_DICOMWEB_USER_KEY = "GLOBAL_DICOMWEB_USER_KEY"
+GLOBAL_DICOMWEB_PASSWORD_KEY = "GLOBAL_DICOMWEB_PASSWORD_KEY"
+
+
+def getGlobalDICOMAuth() -> Optional[requests.auth.HTTPBasicAuth]:
+    """Get the global authentication settings for DICOM networking, if initialized."""
+    user = slicer.util.settingsValue(GLOBAL_DICOMWEB_USER_KEY, "")
+    pwd = slicer.util.settingsValue(GLOBAL_DICOMWEB_PASSWORD_KEY, "")
+    return requests.auth.HTTPBasicAuth(user, pwd) if user or pwd else None
+
+
+def importFromDICOMWeb(
+    dicomWebEndpoint,
+    studyInstanceUID,
+    seriesInstanceUID=None,
+    accessToken=None,
+    auth: requests.auth.AuthBase = None,
+    bulkRetrieve=True,
+):
     """
     Downloads and imports DICOM series from a DICOMweb instance.
     Progress is displayed and if errors occur then they are displayed in a popup window in the end.
@@ -829,6 +849,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
     :param studyInstanceUID: UID for the study to be downloaded
     :param seriesInstanceUID: UID for the series to be downloaded. If not specified, all series will be downloaded from the study
     :param accessToken: Optional access token for the query
+    :param auth: AuthBase object for the query, alternative to accessToken
     :param bulkRetrieve: If enabled then all instances of a series is retrieved with one query. Some servers (including Slicer
         DICOMweb server) may not support bulk retrieve and require query of each instance.
     :return: List of imported study UIDs
@@ -842,22 +863,40 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
                                                studyInstanceUID="2.16.840.1.113669.632.20.1211.10000509338")
                                                accessToken="YOUR_ACCESS_TOKEN")
 
-    """
+    .. code-block:: python
 
+      from DICOMLib import DICOMUtils
+      auth = requests.auth.HTTPBasicAuth('user','password')
+      loadedUIDs = DICOMUtils.importFromDICOMWeb(dicomWebEndpoint="https://yourdicomweburl/dicomWebEndpoint",
+                                               studyInstanceUID="2.16.840.1.113669.632.20.1211.10000509338")
+                                               auth=auth)
+
+    """
     from dicomweb_client.api import DICOMwebClient
+    from dicomweb_client.session_utils import create_session_from_auth
 
     seriesImported = []
     errors = []
     clientLogger = logging.getLogger('dicomweb_client')
     originalClientLogLevel = clientLogger.level
 
-    progressDialog = slicer.util.createProgressDialog(parent=slicer.util.mainWindow(), value=0, maximum=100)
+    if auth and accessToken:
+        clientLogger.warning(
+            f"Received both AuthBase and accessToken for DICOM fetch, defaulting to AuthBase"
+        )
+
+    progressDialog = slicer.util.createProgressDialog(
+        parent=slicer.util.mainWindow(), value=0, maximum=100
+    )
     try:
         progressDialog.labelText = f'Retrieving series list...'
         slicer.app.processEvents()
 
-        if accessToken is None:
+        if not auth and accessToken is None:
             client = DICOMwebClient(url=dicomWebEndpoint)
+        elif auth:
+            session = create_session_from_auth(auth)
+            client = DICOMwebClient(url=dicomWebEndpoint, session=session)
         else:
             client = DICOMwebClient(
                 url=dicomWebEndpoint,
