@@ -174,9 +174,9 @@ Measurements section below)
   - Move Down: Move a highlighted control point down one spot in the list.
   - Add Control Point: Add a new unplaced control point to the selected list, creating it with an undefined position.
   - Naming:
-    - Name Format: Format for creating names of new control points, using sprintf format style. %N is replaced by the list name, %d by an integer.
-    - Apply: Rename all control points in this list according to the current name format, trying to preserve numbers. A quick way to re-number all the control points according to their index is to use a name format with no number in it, rename, then add the number format specifier %d to the format and rename one more time.
-    - Reset: Reset the name format field to the default value, %N-%d.
+    - Name Format: Format for creating names of new control points, using sprintf format style. `%N` is replaced by the list name, `%d` by an integer.
+    - Apply: Rename all control points in this list according to the current name format, trying to preserve numbers. A quick way to re-number all the control points according to their index is to use a name format with no number in it, rename, then add the number format specifier %d to the format and rename one more time. Note that if the control point label contains multiple numbers then the first number is assumed to be part of the name and the second number is used as the control point number.
+    - Reset: Reset the name format field to the default value, `%N-%d`.
   - Convert annotation fiducials: Uses annotation fiducial hierarchies to convert them to markups. Removes the annotation nodes once completed.
 
 ### Measurements section
