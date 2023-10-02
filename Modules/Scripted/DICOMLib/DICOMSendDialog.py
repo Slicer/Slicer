@@ -86,7 +86,12 @@ class DICOMSendDialog(qt.QDialog):
 
         with slicer.util.tryWithErrorDisplay("DICOM sending failed."):
             okButton.enabled = False
-            DICOMLib.DICOMSender(self.files, address, protocol, aeTitle=aeTitle, progressCallback=self.onProgress)
+            DICOMLib.DICOMSender(self.files,
+                                 address,
+                                 protocol,
+                                 aeTitle=aeTitle,
+                                 progressCallback=self.onProgress,
+                                 auth=DICOMLib.DICOMUtils.getGlobalDICOMAuth())
             logging.debug("DICOM sending of %s files succeeded" % len(self.files))
             self.close()
 

@@ -49,6 +49,28 @@ DICOMUtils.importFromDICOMWeb(
   accessToken="TfYXwbKAW7JYbAgZ7MyISf")
 ```
 
+Alternatively, you can use a basic username/password combination:
+```python
+DICOMUtils.importFromDICOMWeb(
+  dicomWebEndpoint="https://demo.kheops.online/api",
+  studyInstanceUID="1.3.6.1.4.1.14519.5.2.1.8421.4009.985792766370191766692237040819",
+  auth=requests.HTTPBasicAuth('<user>','<password>'))
+```
+
+### Set global DICOM Server Credentials
+
+You can set a username and password to persist across DICOMweb requests and Slicer sessions:
+
+```python
+qt.QSettings().setValue(DICOMUtils.GLOBAL_DICOMWEB_USER_KEY, '<user>')
+qt.QSettings().setValue(DICOMUtils.GLOBAL_DICOMWEB_PASSWORD_KEY, '<pwd>')
+DICOMUtils.importFromDICOMWeb(
+  dicomWebEndpoint="https://remote-url/",
+  studyInstanceUID="1.3.6.1.4.1.14519.5.2.1.8421.4009.985792766370191766692237040819",
+  auth=DICOMUtils.getGlobalDICOMAuth()
+)
+```
+
 ### Access top level tags of DICOM images imported into Slicer
 
 For example, to print the first patient's first study's first series' "0020,0032" field:
