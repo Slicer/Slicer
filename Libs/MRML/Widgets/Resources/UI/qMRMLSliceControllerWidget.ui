@@ -627,9 +627,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="ShowSlabReconstructionButton">
+         <widget class="QToolButton" name="EnableSlabReconstructionButton">
           <property name="toolTip">
-           <string>Show slab reconstruction</string>
+           <string>Enable Thick Slab Reconstruction (TSR). TSR is used to merge contiguous slices within a certain range.</string>
           </property>
           <property name="popupMode">
            <enum>QToolButton::InstantPopup</enum>
@@ -771,12 +771,12 @@
     <string>Show reformat widget</string>
    </property>
   </action>
-  <action name="actionShow_slab_reconstruction_widget">
+  <action name="actionEnable_slab_reconstruction_widget">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Slab Reconstruction</string>
+    <string>Enable Thick Slab Reconstruction</string>
    </property>
   </action>
   <action name="actionSlabReconstructionInteractive">
@@ -1792,7 +1792,7 @@
   <connection>
    <sender>MoreButton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>ShowSlabReconstructionButton</receiver>
+   <receiver>EnableSlabReconstructionButton</receiver>
    <slot>setVisible(bool)</slot>
   </connection>
  </connections>

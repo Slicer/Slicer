@@ -235,7 +235,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   QObject::connect(this->actionLightbox6x6_view, SIGNAL(triggered()),
                    q, SLOT(setLightboxTo6x6()));
 
-  QObject::connect(this->actionShow_slab_reconstruction_widget, SIGNAL(toggled(bool)),
+  QObject::connect(this->actionEnable_slab_reconstruction_widget, SIGNAL(toggled(bool)),
                    q, SLOT(showSlabReconstructionWidget(bool)));
   QObject::connect(this->actionSlabReconstructionInteractive, SIGNAL(toggled(bool)),
                    q, SLOT(toggleSlabReconstructionInteractive(bool)));
@@ -340,7 +340,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->LightBoxToolButton->setMenu(this->LightboxMenu);
   this->ShowReformatWidgetToolButton->setDefaultAction(this->actionShow_reformat_widget);
 
-  this->ShowSlabReconstructionButton->setMenu(this->SlabReconstructionMenu);
+  this->EnableSlabReconstructionButton->setMenu(this->SlabReconstructionMenu);
   this->SliceCompositeButton->setMenu(this->CompositingMenu);
   this->SliceSpacingButton->setMenu(this->SliceSpacingMenu);
   this->SliceVisibilityButton->setMenu(this->SliceModelMenu);
@@ -916,14 +916,19 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->actionShow_reformat_widget->setText(
     showReformat ? tr("Hide reformat widget"): tr("Show reformat widget"));
 
-  // Reconstruction
-  bool showSlabReconstruction = sliceNode->GetSlabReconstructionEnabled();
+  // Slab Reconstruction
+  this->actionEnable_slab_reconstruction_widget->setChecked(sliceNode->GetSlabReconstructionEnabled());
+  // Interactive
+  this->actionSlabReconstructionInteractive->setEnabled(sliceNode->GetSlabReconstructionEnabled());
   vtkMRMLSliceDisplayNode* displayNode = this->SliceLogic->GetSliceDisplayNode();
   bool slabReconstructionInteractive = displayNode ? displayNode->GetIntersectingThickSlabInteractive() : false;
-
-  this->actionShow_slab_reconstruction_widget->setChecked(showSlabReconstruction);
   this->actionSlabReconstructionInteractive->setChecked(slabReconstructionInteractive);
+  // Thickness
+  this->SlabReconstructionThicknessMenu->setEnabled(sliceNode->GetSlabReconstructionEnabled());
+  this->SlabReconstructionThicknessSpinBox->setEnabled(sliceNode->GetSlabReconstructionEnabled());
   this->SlabReconstructionThicknessSpinBox->setValue(sliceNode->GetSlabReconstructionThickness());
+  // Type
+  this->SlabReconstructionTypesActions->setEnabled(sliceNode->GetSlabReconstructionEnabled());
 
   // Slice spacing mode
   this->SliceSpacingButton->setIcon(
@@ -1585,27 +1590,30 @@ void qMRMLSliceControllerWidgetPrivate::setupRulerMenu()
 void qMRMLSliceControllerWidgetPrivate::setupSlabReconstructionMenu()
 {
   Q_Q(qMRMLSliceControllerWidget);// Menu
-  this->SlabReconstructionMenu = new QMenu(tr("Slab Reconstruction"), this->ShowSlabReconstructionButton);
-  this->SlabReconstructionMenu->addAction(this->actionShow_slab_reconstruction_widget);
-  this->SlabReconstructionMenu->setObjectName("slabMenu");
+  this->SlabReconstructionMenu = new QMenu(tr("Thick slab reconstruction"), this->EnableSlabReconstructionButton);
+  this->SlabReconstructionMenu->addAction(this->actionEnable_slab_reconstruction_widget);
+  this->SlabReconstructionMenu->setObjectName("slabReconstructionMenu");
 
   // Make thick slab lines interactive
   this->SlabReconstructionMenu->addAction(this->actionSlabReconstructionInteractive);
 
+  this->SlabReconstructionMenu->addSeparator();
+
   // Slab Reconstruction Thickness
-  QMenu* slabReconstructionThickness = new QMenu(tr("Slab Thickness"), this->ShowSlabReconstructionButton);
-  slabReconstructionThickness->setObjectName("slicerSpacingManualMode");
-  this->SlabReconstructionThicknessSpinBox = new ctkDoubleSpinBox(slabReconstructionThickness);
+  QMenu* slabReconstructionThicknessMenu = new QMenu(tr("Slab thickness"), this->EnableSlabReconstructionButton);
+  slabReconstructionThicknessMenu->setObjectName("slicerSpacingManualMode");
+  this->SlabReconstructionThicknessSpinBox = new ctkDoubleSpinBox(slabReconstructionThicknessMenu);
   this->SliceSpacingSpinBox->setDecimals(3);
   this->SlabReconstructionThicknessSpinBox->setRange(1., VTK_FLOAT_MAX);
   this->SlabReconstructionThicknessSpinBox->setSingleStep(0.1);
   this->SlabReconstructionThicknessSpinBox->setValue(1.);
   QObject::connect(this->SlabReconstructionThicknessSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setSlabReconstructionThickness(double)));
-  QWidgetAction* slabReconstructionThicknessAction = new QWidgetAction(slabReconstructionThickness);
+  QWidgetAction* slabReconstructionThicknessAction = new QWidgetAction(slabReconstructionThicknessMenu);
   slabReconstructionThicknessAction->setDefaultWidget(this->SlabReconstructionThicknessSpinBox);
-  slabReconstructionThickness->addAction(slabReconstructionThicknessAction);
-  this->SlabReconstructionMenu->addMenu(slabReconstructionThickness);
+  slabReconstructionThicknessMenu->addAction(slabReconstructionThicknessAction);
+  this->SlabReconstructionMenu->addMenu(slabReconstructionThicknessMenu);
+  this->SlabReconstructionThicknessMenu = slabReconstructionThicknessMenu;
 
   // Slab Reconstruction Type
   this->SlabReconstructionTypesMapper = new ctkSignalMapper(this->SlabReconstructionMenu);
@@ -1621,9 +1629,11 @@ void qMRMLSliceControllerWidgetPrivate::setupSlabReconstructionMenu()
   slabReconstructionTypesActions->addAction(this->actionSlabReconstructionSum);
   QObject::connect(this->SlabReconstructionTypesMapper, SIGNAL(mapped(int)),q, SLOT(setSlabReconstructionType(int)));
   QObject::connect(slabReconstructionTypesActions, SIGNAL(triggered(QAction*)),this->SlabReconstructionTypesMapper, SLOT(map(QAction*)));
+  this->SlabReconstructionTypesActions = slabReconstructionTypesActions;
+
+  this->SlabReconstructionMenu->addSeparator();
 
   this->SlabReconstructionMenu->addActions(slabReconstructionTypesActions->actions());
-  this->SlabReconstructionMenu->addSeparator();
 }
 
 // --------------------------------------------------------------------------
