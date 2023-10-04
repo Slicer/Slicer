@@ -88,6 +88,9 @@ public:
   QAction* IntersectingSlicesVisibilityAction = nullptr;
   QAction* IntersectingSlicesInteractiveAction = nullptr;
 
+  QAction* EnableSlabReconstructionAction = nullptr;
+  QAction* SlabReconstructionInteractiveAction = nullptr;
+
   vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;
   vtkWeakPointer<vtkMRMLLayoutNode> LayoutNode;
@@ -208,14 +211,15 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 20); // set to 20 to make it the last item in the action group
   QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
 
+  int sliceSection = qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 5; // set section to +5 to allow placing other sections above
+
   // Slice intersections
   this->IntersectingSlicesVisibilityAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Slice intersections"), q);
   this->IntersectingSlicesVisibilityAction->setObjectName("IntersectingSlicesAction");
   this->IntersectingSlicesVisibilityAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show how the "
                                                         "other slice planes intersect each slice plane."));
   this->IntersectingSlicesVisibilityAction->setCheckable(true);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->IntersectingSlicesVisibilityAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 5); // set section to +5 to allow placing other sections above
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->IntersectingSlicesVisibilityAction, sliceSection);
   QObject::connect(this->IntersectingSlicesVisibilityAction, SIGNAL(triggered(bool)),
     q, SLOT(setIntersectingSlicesVisible(bool)));
 
@@ -225,10 +229,33 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->IntersectingSlicesInteractiveAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show handles for slice interaction."));
   this->IntersectingSlicesInteractiveAction->setCheckable(true);
   this->IntersectingSlicesInteractiveAction->setEnabled(false);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->IntersectingSlicesInteractiveAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault+5); // set section to +5 to allow placing other sections above
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->IntersectingSlicesInteractiveAction, sliceSection, 1);
   QObject::connect(this->IntersectingSlicesInteractiveAction, SIGNAL(triggered(bool)),
     q, SLOT(setIntersectingSlicesHandlesVisible(bool)));
+
+  int thickSlabSection = sliceSection + 5; // set section to +5 to allow placing other sections above
+
+  // Thick slab reconstruction
+  this->EnableSlabReconstructionAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Thick slab reconstruction"), q);
+  this->EnableSlabReconstructionAction->setObjectName("EnableSlabReconstructionAction");
+  this->EnableSlabReconstructionAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr(
+                                                     "Enable Thick Slab Reconstruction (TSR). "
+                                                     "TSR is used to merge contiguous slices within a certain range."));
+  this->EnableSlabReconstructionAction->setCheckable(true);
+  this->EnableSlabReconstructionAction->setEnabled(false);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->EnableSlabReconstructionAction, thickSlabSection);
+  QObject::connect(this->EnableSlabReconstructionAction, SIGNAL(triggered(bool)),
+    q, SLOT(setSlabReconstructionEnabled(bool)));
+
+  this->SlabReconstructionInteractiveAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Interactive"), q);
+  this->SlabReconstructionInteractiveAction->setObjectName("SlabReconstructionInteractiveAction");
+  this->SlabReconstructionInteractiveAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr(
+                                                          "Show handles for interactively adjusting slab reconstruction thickness."));
+  this->SlabReconstructionInteractiveAction->setCheckable(true);
+  this->SlabReconstructionInteractiveAction->setEnabled(false);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->SlabReconstructionInteractiveAction, thickSlabSection, 1);
+  QObject::connect(this->SlabReconstructionInteractiveAction, SIGNAL(triggered(bool)),
+    q, SLOT(setSlabReconstructionInteractive(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -268,7 +295,9 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
     << d->ToggleTiltLockAction
     << d->ConfigureSliceViewAnnotationsAction
     << d->IntersectingSlicesVisibilityAction
-    << d->IntersectingSlicesInteractiveAction;
+    << d->IntersectingSlicesInteractiveAction
+    << d->EnableSlabReconstructionAction
+    << d->SlabReconstructionInteractiveAction;
   return actions;
 }
 
@@ -350,7 +379,8 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   d->ViewNode = viewNode;
 
   // Check tilt lock in camera widget and set menu item accordingly
-  bool isSliceViewNode = (vtkMRMLSliceNode::SafeDownCast(viewNode) != nullptr);
+  vtkMRMLSliceNode* sliceViewNode = vtkMRMLSliceNode::SafeDownCast(d->ViewNode);
+  bool isSliceViewNode = (sliceViewNode != nullptr);
   d->ConfigureSliceViewAnnotationsAction->setVisible(isSliceViewNode);
   d->FitSliceViewAction->setVisible(isSliceViewNode);
   d->RefocusAllCamerasAction->setVisible(isSliceViewNode);
@@ -372,6 +402,22 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
     {
     d->IntersectingSlicesVisibilityAction->setVisible(false);
     d->IntersectingSlicesInteractiveAction->setVisible(false);
+    }
+
+  if (sliceViewNode && appLogic)
+    {
+    d->EnableSlabReconstructionAction->setVisible(true);
+    d->EnableSlabReconstructionAction->setEnabled(true);
+    d->EnableSlabReconstructionAction->setChecked(sliceViewNode->GetSlabReconstructionEnabled());
+
+    d->SlabReconstructionInteractiveAction->setVisible(true);
+    d->SlabReconstructionInteractiveAction->setEnabled(d->EnableSlabReconstructionAction->isChecked());
+    d->SlabReconstructionInteractiveAction->setChecked(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive));
+    }
+  else
+    {
+    d->EnableSlabReconstructionAction->setVisible(false);
+    d->SlabReconstructionInteractiveAction->setVisible(false);
     }
 
   d->ToggleTiltLockAction->setVisible(!isSliceViewNode);
@@ -620,7 +666,6 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::toggleTiltLock()
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyViewContextMenuPlugin::setIntersectingSlicesVisible(bool visible)
 {
-  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
   vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
   if (!appLogic)
     {
@@ -633,7 +678,6 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::setIntersectingSlicesVisible(
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyViewContextMenuPlugin::setIntersectingSlicesHandlesVisible(bool interaction)
 {
-  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
   vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
   if (!appLogic)
     {
@@ -641,4 +685,29 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::setIntersectingSlicesHandlesV
     return;
     }
   appLogic->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesInteractive, interaction);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::setSlabReconstructionEnabled(bool enabled)
+{
+  Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+  vtkMRMLSliceNode* sliceViewNode = vtkMRMLSliceNode::SafeDownCast(d->ViewNode);
+  if (!sliceViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: cannot get slide node";
+    return;
+    }
+  sliceViewNode->SetSlabReconstructionEnabled(enabled);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::setSlabReconstructionInteractive(bool interactive)
+{
+  vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
+  if (!appLogic)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: cannot get application logic";
+    return;
+    }
+  appLogic->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive, interactive);
 }
