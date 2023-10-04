@@ -215,6 +215,8 @@ public:
   ctkSignalMapper*                    RulerColorMapper;
 
   ctkSignalMapper*                    SlabReconstructionTypesMapper;
+  QMenu*                              SlabReconstructionThicknessMenu{nullptr};
+  QActionGroup*                       SlabReconstructionTypesActions{nullptr};
 
   bool                                ShowSliceOffsetSlider{true};
 };
