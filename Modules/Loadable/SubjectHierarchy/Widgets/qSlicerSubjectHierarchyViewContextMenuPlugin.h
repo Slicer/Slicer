@@ -71,6 +71,8 @@ protected slots:
   void toggleTiltLock();
   void setIntersectingSlicesVisible(bool);
   void setIntersectingSlicesHandlesVisible(bool);
+  void setSlabReconstructionEnabled(bool);
+  void setSlabReconstructionInteractive(bool);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyViewContextMenuPluginPrivate> d_ptr;
