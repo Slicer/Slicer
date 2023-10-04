@@ -32,9 +32,22 @@ dicomBrowser.waitForImportFinished()
 
 ### Import DICOM files using DICOMweb
 
-Download and import DICOM data set using DICOMweb from [Kheops](https://kheops.online/), Google Health API, etc.
+Download and import DICOM data set using DICOMweb from a Picture Archiving and Communications System (PACS) such as [Kheops](https://kheops.online/), Google Health API, [Orthanc](https://www.orthanc-server.com/index.php), [DCM4CHE](https://www.dcm4che.org/), etc.
 
-How to obtain accessToken:
+```python
+slicer.util.selectModule("DICOM")  # ensure DICOM database is initialized
+slicer.app.processEvents()
+from DICOMLib import DICOMUtils
+DICOMUtils.importFromDICOMWeb(
+  dicomWebEndpoint="https://demo.kheops.online/api",
+  studyInstanceUID="1.3.6.1.4.1.14519.5.2.1.8421.4009.985792766370191766692237040819")
+```
+
+#### Authenticate with an Access Token
+
+Several PACS solutions support remote access authentication with an access token.
+
+How to obtain your access token:
 
 - Google Cloud: Execute `gcloud auth print-access-token` once you have logged in
 - Kheops: create an album, create a sharing link (something like `https://demo.kheops.online/view/TfYXwbKAW7JYbAgZ7MyISf`), the token is the string after the last slash (`TfYXwbKAW7JYbAgZ7MyISf`).
@@ -49,7 +62,14 @@ DICOMUtils.importFromDICOMWeb(
   accessToken="TfYXwbKAW7JYbAgZ7MyISf")
 ```
 
-Alternatively, you can use a basic username/password combination:
+#### Alternate Authentication Approaches
+
+You can provide expanded authentication information to use in the DICOMweb request.
+Authentication types extending the Python `requests.auth.AuthBase` are accepted.
+
+In the example below we provide a basic username and password as a `requests.HTTPBasicAuth`
+instance with the DICOMweb import request.
+
 ```python
 DICOMUtils.importFromDICOMWeb(
   dicomWebEndpoint="https://demo.kheops.online/api",
@@ -57,9 +77,15 @@ DICOMUtils.importFromDICOMWeb(
   auth=requests.HTTPBasicAuth('<user>','<password>'))
 ```
 
-### Set global DICOM Server Credentials
+See the [Python `requests` Authentication documentation](https://requests.readthedocs.io/en/latest/user/authentication/#authentication)
+for more information.
 
-You can set a username and password to persist across DICOMweb requests and Slicer sessions:
+#### Configure a Global DICOMweb Authentication
+
+You can set a global username and password combination in your local Slicer application
+to be remembered across application sessions. `DICOMUtils.getGlobalDICOMAuth` provides
+a convenient way to create a `HTTPBasicAuth` instance from the global configuration
+with each call.
 
 ```python
 qt.QSettings().setValue(DICOMUtils.GLOBAL_DICOMWEB_USER_KEY, '<user>')
@@ -332,6 +358,52 @@ for study, series in dicomQuery.studyAndSeriesInstanceUIDQueried:
 slicer.dicomDatabase.updateDisplayedFields()
 ```
 
+### Send data to a PACS using classic DIMSE DICOM networking
+
+```python
+from DICOMLib import DICOMSender
+sender = DICOMSender(
+  files=['path/to/0.dcm','path/to/1.dcm'],
+  address='dicomserver.co.uk:9999'
+  protocol="DIMSE",
+  delayed=True
+)
+sender.send()
+```
+
+### Send data to a PACS using DICOMweb networking
+
+```python
+from DICOMLib import DICOMSender
+sender = DICOMSender(
+  files=['path/to/0.dcm','path/to/1.dcm'],
+  address='dicomserver.co.uk:9999'
+  protocol="DICOMweb",
+  auth=DICOMUtils.getGlobalDICOMAuth(),
+  delayed=True
+)
+sender.send()
+```
+
 ### Convert RT structure set to labelmap NRRD files
 
 [SlicerRT batch processing](https://github.com/SlicerRt/SlicerRT/tree/master/BatchProcessing) to batch convert RT structure sets to labelmap NRRD files.
+
+### Run a DCMTK Command Line Tool
+
+The example below runs the DCMTK `img2dcm` tool to convert a PNG input image to
+an output DICOM file on disk. `img2dcm` runs in a separate process and Slicer
+waits until it completes before continuing.
+
+See [DCMTK documentation](https://support.dcmtk.org/docs/pages.html) for descriptions of
+other DCMTK command line application tools.
+
+```python
+from DICOMLib import DICOMCommand
+command = DICOMCommand('img2dcm',['image.png','output.dcm'])
+stdout = command.start() # run synchronously, block until img2dcm returns
+```
+
+### Additional Notes
+
+See the DICOMLib scripted module for additional DICOM utilities.
