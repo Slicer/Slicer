@@ -84,19 +84,22 @@ class DICOMSendDialog(qt.QDialog):
         self.cancelRequested = False
         okButton = self.bbox.button(self.bbox.Ok)
 
-        with slicer.util.tryWithErrorDisplay("DICOM sending failed."):
-            okButton.enabled = False
-            DICOMLib.DICOMSender(self.files,
-                                 address,
-                                 protocol,
-                                 aeTitle=aeTitle,
-                                 progressCallback=self.onProgress,
-                                 auth=DICOMLib.DICOMUtils.getGlobalDICOMAuth())
-            logging.debug("DICOM sending of %s files succeeded" % len(self.files))
-            self.close()
-
-        okButton.enabled = True
-        self.sendingIsInProgress = False
+        try:
+            with slicer.util.tryWithErrorDisplay("DICOM sending failed."):
+                okButton.enabled = False
+                DICOMLib.DICOMSender(self.files,
+                                     address,
+                                     protocol,
+                                     aeTitle=aeTitle,
+                                     progressCallback=self.onProgress,
+                                     auth=DICOMLib.DICOMUtils.getGlobalDICOMAuth())
+                logging.debug("DICOM sending of %s files succeeded" % len(self.files))
+                self.close()
+        except Exception:
+            self.progressBar.hide()
+        finally:
+            okButton.enabled = True
+            self.sendingIsInProgress = False
 
     def onCancel(self):
         if self.sendingIsInProgress:
