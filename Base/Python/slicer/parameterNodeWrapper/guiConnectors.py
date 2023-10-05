@@ -268,7 +268,7 @@ class QSliderOrSpinBoxToIntConnector(GuiConnector):
         isBounded = withinRange is not None or minimum is not None and maximum is not None
 
         if isinstance(widget, qt.QSlider) and not isBounded:
-            raise RuntimeError("Cannot have a connection to ctkSliderWidget where the float types is unbounded.")
+            raise RuntimeError("Cannot have a connection to QSlider where the int type is unbounded.")
 
         if withinRange is not None:
             self._widget.setRange(withinRange.minimum, withinRange.maximum)
@@ -305,7 +305,7 @@ class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
     @staticmethod
     def canRepresent(widget, datatype) -> bool:
         return unannotatedType(datatype) == float and type(widget) in (
-            qt.QDoubleSpinBox, ctk.ctkSliderWidget
+            qt.QDoubleSpinBox, ctk.ctkSliderWidget, slicer.qMRMLSliderWidget
         )
 
     @staticmethod
@@ -333,7 +333,7 @@ class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
 
         isBounded = withinRange is not None or minimum is not None and maximum is not None
 
-        if isinstance(widget, ctk.ctkSliderWidget) and not isBounded:
+        if (isinstance(widget, ctk.ctkSliderWidget) or isinstance(widget, slicer.qMRMLSliderWidget)) and not isBounded:
             raise RuntimeError("Cannot have a connection to ctkSliderWidget where the float types is unbounded.")
 
         if withinRange is not None:
@@ -731,7 +731,7 @@ class WidgetChildrenToParameterPackConnector(GuiConnector):
         if not pack.isParameterPack(datatype):
             return False
 
-        # This can support it if the widget children have appropriately nested 
+        # This can support it if the widget children have appropriately nested
         # SlicerParameterPackPropertyNames. Not disallowing extra parameter names in the widget
         # in case for some reason one widget is meant to support multiple packs. If that is the case
         # the user will need to ensure there are no name clashes between the two packs.
