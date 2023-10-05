@@ -545,7 +545,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     double angle = atan2(ydiff, xdiff); // In radians
 
     // Find line normal to the slice intersection line in XY coords
-    double normalAngle = angle + M_PI_2;
+    double normalAngle = angle + vtkMath::Pi() / 2;
     double offsetUnitVector_XY[3] = {cos(normalAngle), sin(normalAngle), 0};
 
     // Find that offset vector in RAS space

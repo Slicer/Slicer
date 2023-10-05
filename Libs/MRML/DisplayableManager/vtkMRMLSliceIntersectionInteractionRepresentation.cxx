@@ -21,8 +21,6 @@
 #include "vtkMRMLSliceIntersectionInteractionRepresentationHelper.h"
 
 #include <deque>
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -261,7 +259,7 @@ class SliceIntersectionInteractionDisplayPipeline
       if (HANDLES_TYPE == Arrows)
         {
         // Define cone size
-        double coneAngleRad = (ROTATION_HANDLE_ARROW_TIP_ANGLE * M_PI) / 180.0;
+        double coneAngleRad = (ROTATION_HANDLE_ARROW_TIP_ANGLE * vtkMath::Pi()) / 180.0;
         double coneRadius = 2 * ROTATION_HANDLE_ARROW_RADIUS;
         double coneLength = coneRadius / tan(coneAngleRad);
 
@@ -488,7 +486,7 @@ class SliceIntersectionInteractionDisplayPipeline
       if (HANDLES_TYPE == Arrows)
         {
         // Define cone size
-        double coneAngleRad = (SLICEOFFSET_HANDLE_ARROW_TIP_ANGLE * M_PI) / 180.0;
+        double coneAngleRad = (SLICEOFFSET_HANDLE_ARROW_TIP_ANGLE * vtkMath::Pi()) / 180.0;
         double coneRadius = 2 * SLICEOFFSET_HANDLE_ARROW_RADIUS;
         double coneLength = coneRadius / tan(coneAngleRad);
 
@@ -678,7 +676,7 @@ class SliceIntersectionInteractionDisplayPipeline
                                                 -THICK_SLAB_TRANSLATION_HANDLE_DEFAULT_ORIENTATION[2] };
 
       // Define cone size
-      double coneAngleRad = (THICK_SLAB_TRANSLATION_HANDLE_ARROW_TIP_ANGLE * M_PI) / 180.0;
+      double coneAngleRad = (THICK_SLAB_TRANSLATION_HANDLE_ARROW_TIP_ANGLE * vtkMath::Pi()) / 180.0;
       double coneRadius = 2 * THICK_SLAB_TRANSLATION_HANDLE_ARROW_RADIUS;
       double coneLength = coneRadius / tan(coneAngleRad);
 
@@ -1662,7 +1660,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
         {
         cosineValue = -1.0;
         }
-      double angleDeg = acos(cosineValue) * (180.0 / M_PI);
+      double angleDeg = acos(cosineValue) * (180.0 / vtkMath::Pi());
       if (angleDeg < 90.0) // Avoid parallel line segments oriented in the same direction
         {
         // Define inner line tips in segment center
@@ -1997,7 +1995,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
     double angle = atan2(ydiff, xdiff); // In radians
 
     // Find line normal to the slice intersection line in XY coords
-    double normalAngle = angle + M_PI_2;
+    double normalAngle = angle + vtkMath::Pi() / 2;
     double offsetUnitVector_XY[3] = {cos(normalAngle), sin(normalAngle), 0};
 
     // Find that offset vector in RAS space
