@@ -752,7 +752,7 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
             traceback.print_exc()
             logging.error("DICOM Plugin failed: %s" % str(e))
             if messages:
-                messages.append("Plugin failed: %s." % pluginClass)
+                messages.append("Plugin failed: %s." % pluginClassName)
 
     return loadablesByPlugin, loadEnabled
 
