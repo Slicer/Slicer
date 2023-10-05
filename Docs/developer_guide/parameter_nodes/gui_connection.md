@@ -10,7 +10,7 @@ There are two ways to declare which GUI widget elements connect to which paramet
 
 Qt Designer has the ability to set Dynamic Properties. These can be used to inform the parameter node wrapper infrastructure which parameters to connect to which widgets. This is the preferred way of connection from the `.ui` file of a scripted module to its parameter node wrapper.
 
-Simply set a dynamic string property named "SlicerParameterName" to the parameter name it should bind with.
+Simply set a dynamic string property named "SlicerParameterName" to the parameter name it should bind with. If the property does not exist yet then add it by clicking the `+` button above the property list.
 
 ![Qt Dynamic Property](https://github.com/Slicer/Slicer/releases/download/docs-resources/parameter_node_gui_connection_QtDynamicProperty.png)
 
