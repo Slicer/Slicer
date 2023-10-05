@@ -1040,6 +1040,8 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setIcon(QIcon(":Icons/NullEffect.png"));
     effectButton->setText(tr("None"));
     effectButton->setToolTip(tr("No editing"));
+    // Without this, screen readers (Microsoft Narrator, macOS Spoken Content, ...) cannot read anything from the button
+    effectButton->setAccessibleName(effectButton->toolTip());
     effectButton->setToolButtonStyle(d->EffectButtonStyle);
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(nullptr));
     effectButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred); // make all effect buttons the same width
@@ -1080,6 +1082,8 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->setIcon(effect->icon());
     effectButton->setText(effect->title());
     effectButton->setToolTip(effect->title());
+    // Without this, screen readers (Microsoft Narrator, macOS Spoken Content, ...) cannot read anything from the button
+    effectButton->setAccessibleName(effectButton->toolTip());
     effectButton->setProperty("Effect", QVariant::fromValue<QObject*>(effect));
     effectButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);  // make all effect buttons the same width
     d->EffectButtonGroup.addButton(effectButton);
