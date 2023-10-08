@@ -177,7 +177,7 @@ class DataProbeInfoWidget:
 
         # default - non label scalar volume
         numberOfComponents = imageData.GetNumberOfScalarComponents()
-        if numberOfComponents > 3:
+        if numberOfComponents > 4:
             return _("{numberOfComponents} components").format(numberOfComponents=numberOfComponents)
         for c in range(numberOfComponents):
             component = imageData.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], c)
