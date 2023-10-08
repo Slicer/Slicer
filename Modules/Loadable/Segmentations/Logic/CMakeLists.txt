@@ -17,6 +17,8 @@ set(${KIT}_SRCS
   vtkSlicerSegmentationGeometryLogic.h
   vtkImageGrowCutSegment.cxx
   vtkImageGrowCutSegment.h
+  vtkImageLabelDilate3D.cxx
+  vtkImageLabelDilate3D.h
   FibHeap.cxx
   )
 
