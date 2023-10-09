@@ -2,7 +2,13 @@
 
 ## Overview
 
-Scene views are a convenience tool for organizing multiple 'live views' of the data in your scene.\n\nYou can create any number of views and control parameters such as the 3D view, model visibility, window layout, and other parameters.\n\nThis can be used to set up a series of predefined starting points for looking at portions of your data in detail.\n\nFor example, you may have one overview scene which shows an external view of the body along with interior views with the skin surface turned off and slice planes visible to highlight a tumor location.
+Scene views are a convenience tool for organizing multiple 'live views' of the data in your scene.
+
+You can create any number of views and control parameters such as the 3D view, model visibility, window layout, and other parameters.
+
+This can be used to set up a series of predefined starting points for looking at portions of your data in detail.
+
+For example, you may have one overview scene which shows an external view of the body along with interior views with the skin surface turned off and slice planes visible to highlight a tumor location.
 
 ## Panels and their use
 
