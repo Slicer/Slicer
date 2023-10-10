@@ -152,9 +152,9 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
                         language=None, remove_obsolete_strings=False, source_file_regex=None, keep_temporary_files=False):
 
     if language is None:
-        ts_filename_filter = f"{component}*.ts"
+        ts_filename_filter = f"{component}_*.ts"
     else:
-        ts_filename_filter = f"{component}*_{language}.ts"
+        ts_filename_filter = f"{component}_{language}.ts"
 
     ts_file_filter = f"{translations_dir}/{ts_filename_filter}"
     ts_file_paths = glob.glob(ts_file_filter)
@@ -293,10 +293,19 @@ def _generate_translation_header_from_cli_xml(cli_xml_filename):
         return result
 
     import xml.etree.ElementTree as ET
-    tree = ET.parse(cli_xml_filename)
+    try:
+        tree = ET.parse(cli_xml_filename)
+    except ET.ParseError:
+        # Not a CLI module descriptor XML file
+        return False
+
     root = tree.getroot()
 
     translation_context = "CLI_" + os.path.splitext(os.path.basename(cli_xml_filename))[0]
+
+    if not root.find('executable') or not root.find('title'):
+        # Not a CLI module descriptor XML file
+        return False
 
     cpp_header_str = f"// Generated automatically by update_translations.py from {os.path.basename(cli_xml_filename)}\n\n"
 
@@ -396,6 +405,8 @@ def main(argv):
             'DiffusionTensorTest.xml',
         ]
         extract_translatable_from_cli_modules(cli_input_paths, cli_exclude_names)
+    else:
+        extract_translatable_from_cli_modules([args.source_code_dir])
 
     update_translations(args.component, args.source_code_dir, args.translations_dir, args.lupdate_path,
                         args.language, args.remove_obsolete_strings, args.source_filter_regex, args.keep_temporary_files)
