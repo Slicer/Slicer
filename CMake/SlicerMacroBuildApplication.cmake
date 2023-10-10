@@ -467,7 +467,7 @@ macro(slicerMacroBuildApplication)
       )
     if("${Slicer_RELEASE_TYPE}" STREQUAL "Stable")
       set_target_properties(${slicerapp_target} PROPERTIES
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${Slicer_MAIN_PROJECT_VERSION_MAJOR}.${Slicer_MAIN_PROJECT_VERSION_MINOR}.${Slicer_MAIN_PROJECT_VERSION_PATCH}"
         )
     endif()
   endif()
