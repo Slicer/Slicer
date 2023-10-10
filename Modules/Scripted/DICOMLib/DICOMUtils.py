@@ -22,7 +22,7 @@ comment = """
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByUID(patientUID):
+def loadPatientByUID(patientUID, *args, **kwargs):
     """ Load patient by patient UID from DICOM database.
     Returns list of loaded node ids.
 
@@ -76,7 +76,7 @@ def loadPatientByUID(patientUID):
     if len(seriesUIDs) == 0:
         raise OSError('No series found in patient with DICOM database UID ' + patientUIDstr)
 
-    return loadSeriesByUID(seriesUIDs)
+    return loadSeriesByUID(seriesUIDs, *args, **kwargs)
 
 
 # ------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ def loadPatient(uid=None, name=None, patientID=None):
 
 
 # ------------------------------------------------------------------------------
-def loadSeriesByUID(seriesUIDs):
+def loadSeriesByUID(seriesUIDs, *args, **kwargs):
     """ Load multiple series by UID from DICOM database.
     Returns list of loaded node ids.
     """
@@ -179,7 +179,7 @@ def loadSeriesByUID(seriesUIDs):
 
     loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
     selectHighestConfidenceLoadables(loadablesByPlugin)
-    return loadLoadables(loadablesByPlugin)
+    return loadLoadables(loadablesByPlugin, *args, **kwargs)
 
 
 def selectHighestConfidenceLoadables(loadablesByPlugin):
@@ -219,7 +219,7 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
 
 
 # ------------------------------------------------------------------------------
-def loadByInstanceUID(instanceUID):
+def loadByInstanceUID(instanceUID, *args, **kwargs):
     """ Load with the most confident loadable that contains the instanceUID from DICOM database.
     This helps in the case where an instance is part of a series which may offer multiple
     loadables, such as when a series has multiple time points where
@@ -260,7 +260,7 @@ def loadByInstanceUID(instanceUID):
     filteredLoadablesByPlugin = {}
     filteredLoadablesByPlugin[highestConfidence['plugin']] = [highestConfidence['loadable'], ]
     # load the results
-    return loadLoadables(filteredLoadablesByPlugin)
+    return loadLoadables(filteredLoadablesByPlugin, *args, **kwargs)
 
 
 # ------------------------------------------------------------------------------
@@ -455,7 +455,7 @@ def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
 
 
 # ------------------------------------------------------------------------------
-def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expectedLoadedNodes=None):
+def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expectedLoadedNodes=None, *args, **kwargs):
     """ Load series by UID, and verify loadable selection and loaded nodes.
 
     ``selectedPlugins`` example: { 'Scalar Volume':1, 'RT':2 }
@@ -508,7 +508,7 @@ def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expecte
             actualLoadedNodes[nodeType] = nodeCollection.GetNumberOfItems()
 
     # Load selected data
-    loadedNodeIDs = loadLoadables(loadablesByPlugin)
+    loadedNodeIDs = loadLoadables(loadablesByPlugin, *args, **kwargs)
 
     if expectedLoadedNodes is not None:
         for nodeType in expectedLoadedNodes.keys():
