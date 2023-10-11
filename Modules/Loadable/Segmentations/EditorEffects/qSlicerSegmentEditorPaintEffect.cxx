@@ -35,6 +35,7 @@
 #include <QLabel>
 #include <QToolButton>
 #include <QVBoxLayout>
+#include <QFormLayout>
 
 // VTK includes
 #include <vtkActor.h>
@@ -87,7 +88,7 @@
 // Slicer includes
 #include "qMRMLSliceView.h"
 #include "qMRMLSliceWidget.h"
-#include "qMRMLSpinBox.h"
+#include "qMRMLSliderWidget.h"
 #include "qMRMLThreeDView.h"
 #include "qMRMLThreeDWidget.h"
 #include "qSlicerLayoutManager.h"
@@ -234,9 +235,9 @@ qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(q
   , ActiveViewWidget(nullptr)
   , PaintOptionsFrame(nullptr)
   , BrushDiameterFrame(nullptr)
-  , BrushDiameterSpinBox(nullptr)
-  , BrushDiameterSlider(nullptr)
-  , BrushDiameterRelativeToggle(nullptr)
+  , BrushDiameterSliderWidget(nullptr)
+  , BrushDiameterSizeFrame(nullptr)
+  , BrushDiameterIsAbsoluteButton(nullptr)
   , BrushSphereCheckbox(nullptr)
   , EditIn3DViewsCheckbox(nullptr)
   , ColorSmudgeCheckbox(nullptr)
@@ -618,20 +619,6 @@ void qSlicerSegmentEditorPaintEffectPrivate::onDiameterUnitsClicked()
   {
     q->setCommonParameter("BrushDiameterIsRelative", 0);
   }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSegmentEditorPaintEffectPrivate::onQuickDiameterButtonClicked()
-{
-  QToolButton* senderButton = dynamic_cast<QToolButton*>(sender());
-  if (!senderButton)
-  {
-    qWarning() << Q_FUNC_INFO << " failed: invalid sender button";
-    return;
-  }
-  int diameter = senderButton->property("BrushDiameter").toInt();
-
-  this->onDiameterValueChanged(diameter);
 }
 
 //-----------------------------------------------------------------------------
@@ -1416,39 +1403,32 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
 
   // Create options frame for this effect
   d->BrushDiameterFrame = new QFrame();
-  d->BrushDiameterFrame->setLayout(new QHBoxLayout());
+  QFormLayout* brushFormLayout = new QFormLayout();
+  brushFormLayout->setContentsMargins(0, 0, 0, 0);
+  d->BrushDiameterFrame->setLayout(brushFormLayout);
   paintOptionsLayout->addWidget(d->BrushDiameterFrame);
 
+  d->BrushDiameterSizeFrame = new QFrame();
+  d->BrushDiameterSizeFrame->setLayout(new QHBoxLayout());
+  paintOptionsLayout->addWidget(d->BrushDiameterSizeFrame);
+
   QLabel* diameterLabel = new QLabel(tr("Diameter:"), d->BrushDiameterFrame);
-  diameterLabel->setToolTip(tr("Set the paint brush size as percentage of screen size or as fixed length"));
-  d->BrushDiameterFrame->layout()->addWidget(diameterLabel);
+  diameterLabel->setAlignment(Qt::AlignCenter);
+  diameterLabel->setToolTip(tr("Set the paint brush size as a percentage of screen height or physical size"));
 
-  d->BrushDiameterSpinBox = new qMRMLSpinBox(d->BrushDiameterFrame);
-  d->BrushDiameterSpinBox->setToolTip(tr("Set the paint brush size as percentage of screen size or as fixed length"));
-  d->BrushDiameterFrame->layout()->addWidget(d->BrushDiameterSpinBox);
+  d->BrushDiameterIsAbsoluteButton = new QToolButton(d->BrushDiameterSizeFrame);
+  d->BrushDiameterIsAbsoluteButton->setCheckable(true);
+  d->BrushDiameterIsAbsoluteButton->setText("absolute");
+  d->BrushDiameterIsAbsoluteButton->setChecked(false);
+  d->BrushDiameterIsAbsoluteButton->setToolTip(tr("Set the paint brush size as a percentage of screen height or physical size"));
 
-  QList<int> quickDiameters;
-  quickDiameters << 1 << 3 << 5 << 10 << 20 << 40;
-  foreach (int diameter, quickDiameters)
-  {
-    // QToolbutton is used instead of a regular push button to make the button smaller
-    QToolButton* quickDiameterButton = new QToolButton();
-    quickDiameterButton->setText(QString::number(diameter));
-    quickDiameterButton->setProperty("BrushDiameter", QVariant(diameter));
-    quickDiameterButton->setToolTip(tr("Set the paint brush size as percentage of screen size or as fixed length"));
+  d->BrushDiameterSliderWidget = new qMRMLSliderWidget(d->BrushDiameterSizeFrame);
+  d->BrushDiameterSliderWidget->setToolTip(tr("Set the paint brush size as a percentage of screen height or physical size"));
 
-    d->BrushDiameterFrame->layout()->addWidget(quickDiameterButton);
-    QObject::connect(quickDiameterButton, SIGNAL(clicked()), d, SLOT(onQuickDiameterButtonClicked()));
-  }
-
-  d->BrushDiameterRelativeToggle = new QToolButton();
-  d->BrushDiameterRelativeToggle->setText("%");
-  d->BrushDiameterRelativeToggle->setToolTip(tr("Toggle diameter quick set buttons between percentage of window size / absolute size in millimeters"));
-  d->BrushDiameterFrame->layout()->addWidget(d->BrushDiameterRelativeToggle);
-
-  d->BrushDiameterSlider = new ctkDoubleSlider();
-  d->BrushDiameterSlider->setOrientation(Qt::Horizontal);
-  paintOptionsLayout->addWidget(d->BrushDiameterSlider);
+  d->BrushDiameterSizeFrame->layout()->setContentsMargins(0, 0, 0, 0);
+  d->BrushDiameterSizeFrame->layout()->addWidget(d->BrushDiameterIsAbsoluteButton);
+  d->BrushDiameterSizeFrame->layout()->addWidget(d->BrushDiameterSliderWidget);
+  brushFormLayout->addRow(diameterLabel, d->BrushDiameterSizeFrame);
 
   // Create options frame for this effect
   QHBoxLayout* hbox = new QHBoxLayout();
@@ -1485,14 +1465,13 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
 
   paintOptionsLayout->addLayout(hbox);
 
-  QObject::connect(d->BrushDiameterRelativeToggle, SIGNAL(clicked()), d, SLOT(onDiameterUnitsClicked()));
+  QObject::connect(d->BrushDiameterIsAbsoluteButton, SIGNAL(clicked()), d, SLOT(onDiameterUnitsClicked()));
   QObject::connect(d->BrushSphereCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
   QObject::connect(d->EditIn3DViewsCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
   QObject::connect(d->ColorSmudgeCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
   QObject::connect(d->EraseAllSegmentsCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
   QObject::connect(d->BrushPixelModeCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
-  QObject::connect(d->BrushDiameterSlider, SIGNAL(valueChanged(double)), d, SLOT(onDiameterValueChanged(double)));
-  QObject::connect(d->BrushDiameterSpinBox, SIGNAL(valueChanged(double)), d, SLOT(onDiameterValueChanged(double)));
+  QObject::connect(d->BrushDiameterSliderWidget, SIGNAL(valueChanged(double)), d, SLOT(onDiameterValueChanged(double)));
 }
 
 //-----------------------------------------------------------------------------
@@ -1557,50 +1536,41 @@ void qSlicerSegmentEditorPaintEffect::updateGUIFromMRML()
 
   bool brushDiameterIsRelative = this->integerParameter("BrushDiameterIsRelative");
 
-  d->BrushDiameterRelativeToggle->blockSignals(true);
-  d->BrushDiameterRelativeToggle->setText(brushDiameterIsRelative ? "%" : tr("mm"));
-  d->BrushDiameterRelativeToggle->blockSignals(false);
+  d->BrushDiameterIsAbsoluteButton->blockSignals(true);
+  d->BrushDiameterIsAbsoluteButton->setChecked(!brushDiameterIsRelative);
+  d->BrushDiameterIsAbsoluteButton->blockSignals(false);
 
-  d->BrushDiameterSlider->blockSignals(true);
+  d->BrushDiameterSliderWidget->blockSignals(true);
   if (brushDiameterIsRelative)
   {
-    d->BrushDiameterSlider->setMinimum(1);
-    d->BrushDiameterSlider->setMaximum(25);
-    d->BrushDiameterSlider->setValue(this->doubleParameter("BrushRelativeDiameter"));
-    d->BrushDiameterSlider->setSingleStep(1);
+    d->BrushDiameterSliderWidget->setRange(1, 25);
+    d->BrushDiameterSliderWidget->setValue(this->doubleParameter("BrushRelativeDiameter"));
+    d->BrushDiameterSliderWidget->setSingleStep(1);
   }
   else
   {
-    d->BrushDiameterSlider->setMinimum(this->doubleParameter("BrushMinimumAbsoluteDiameter"));
-    d->BrushDiameterSlider->setMaximum(this->doubleParameter("BrushMaximumAbsoluteDiameter"));
-    d->BrushDiameterSlider->setValue(this->doubleParameter("BrushAbsoluteDiameter"));
-    d->BrushDiameterSlider->setSingleStep(this->doubleParameter("BrushMinimumAbsoluteDiameter"));
+    d->BrushDiameterSliderWidget->setRange(this->doubleParameter("BrushMinimumAbsoluteDiameter"), this->doubleParameter("BrushMaximumAbsoluteDiameter"));
+    d->BrushDiameterSliderWidget->setValue(this->doubleParameter("BrushAbsoluteDiameter"));
+    d->BrushDiameterSliderWidget->setSingleStep(this->doubleParameter("BrushMinimumAbsoluteDiameter"));
   }
-  d->BrushDiameterSlider->blockSignals(false);
-
-
-  d->BrushDiameterSpinBox->blockSignals(true);
-  d->BrushDiameterSpinBox->setMRMLScene(this->scene());
-  d->BrushDiameterSpinBox->setMinimum(d->BrushDiameterSlider->minimum());
-  d->BrushDiameterSpinBox->setMaximum(d->BrushDiameterSlider->maximum());
-  d->BrushDiameterSpinBox->setValue(d->BrushDiameterSlider->value());
   if (brushDiameterIsRelative)
   {
-    d->BrushDiameterSpinBox->setQuantity("");
-    d->BrushDiameterSpinBox->setSuffix("%");
-    d->BrushDiameterSpinBox->setDecimals(0);
+    d->BrushDiameterSliderWidget->setQuantity("");
+    d->BrushDiameterSliderWidget->setSuffix("%");
+    d->BrushDiameterSliderWidget->setDecimals(0);
   }
   else
   {
-    d->BrushDiameterSpinBox->setQuantity("length");
-    d->BrushDiameterSpinBox->setUnitAwareProperties(qMRMLSpinBox::Prefix | qMRMLSpinBox::Suffix);
-    int decimals = (int)(log10(d->BrushDiameterSlider->minimum()));
+    d->BrushDiameterSliderWidget->setQuantity("length");
+    d->BrushDiameterSliderWidget->setSuffix(tr("mm"));
+    d->BrushDiameterSliderWidget->setUnitAwareProperties(qMRMLSliderWidget::Prefix | qMRMLSliderWidget::Suffix);
+    int decimals = (int)(log10(d->BrushDiameterSliderWidget->minimum()));
     if (decimals < 0)
     {
-      d->BrushDiameterSpinBox->setDecimals(-decimals * 2);
+      d->BrushDiameterSliderWidget->setDecimals(-decimals * 2);
     }
   }
-  d->BrushDiameterSpinBox->blockSignals(false);
+  d->BrushDiameterSliderWidget->blockSignals(false);
 
   // Update brushes
   d->updateBrushes();
@@ -1629,15 +1599,15 @@ void qSlicerSegmentEditorPaintEffect::updateMRMLFromGUI()
   bool pixelModeChanged = (pixelMode != (bool)this->integerParameter("BrushPixelMode"));
   this->setCommonParameter("BrushPixelMode", (int)pixelMode);
 
-  bool isBrushDiameterRelative = (d->BrushDiameterRelativeToggle->text() == "%");
+  bool isBrushDiameterRelative = !d->BrushDiameterIsAbsoluteButton->isChecked();
   this->setCommonParameter("BrushDiameterIsRelative", isBrushDiameterRelative ? 1 : 0);
   if (isBrushDiameterRelative)
   {
-    this->setCommonParameter("BrushRelativeDiameter", d->BrushDiameterSlider->value());
+    this->setCommonParameter("BrushRelativeDiameter", d->BrushDiameterSliderWidget->value());
   }
   else
   {
-    this->setCommonParameter("BrushAbsoluteDiameter", d->BrushDiameterSlider->value());
+    this->setCommonParameter("BrushAbsoluteDiameter", d->BrushDiameterSliderWidget->value());
   }
 
   // If pixel mode changed, then other GUI changes are due
