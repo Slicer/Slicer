@@ -27,34 +27,34 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [certifi]
-  certifi==2023.5.7 --hash=sha256:c6c2e98f5c7869efca1f8916fed228dd91539f9f1b444c314c06eef02980c716
+  certifi==2023.7.22 --hash=sha256:92d6037539857d8206b8f6ae472e8b77db8058fec5937a1ef3f54304089edbb9
   # [/certifi]
   # [idna]
   idna==3.4 --hash=sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2
   # [/idna]
   # [charset-normalizer]
   # Hashes correspond to the following packages:
-  #  - charset_normalizer-3.2.0-cp39-cp39-macosx_10_9_universal2.whl
-  #  - charset_normalizer-3.2.0-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - charset_normalizer-3.2.0-cp39-cp39-macosx_11_0_arm64.whl
-  #  - charset_normalizer-3.2.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - charset_normalizer-3.2.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - charset_normalizer-3.2.0-cp39-cp39-musllinux_1_1_aarch64.whl
-  #  - charset_normalizer-3.2.0-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - charset_normalizer-3.2.0-cp39-cp39-win_amd64.whl
-  #  - charset_normalizer-3.2.0-py3-none-any.whl
-  charset-normalizer==3.2.0 --hash=sha256:855eafa5d5a2034b4621c74925d89c5efef61418570e5ef9b37717d9c796419c \
-                            --hash=sha256:203f0c8871d5a7987be20c72442488a0b8cfd0f43b7973771640fc593f56321f \
-                            --hash=sha256:e857a2232ba53ae940d3456f7533ce6ca98b81917d47adc3c7fd55dad8fab858 \
-                            --hash=sha256:5e86d77b090dbddbe78867a0275cb4df08ea195e660f1f7f13435a4649e954e5 \
-                            --hash=sha256:8700f06d0ce6f128de3ccdbc1acaea1ee264d2caa9ca05daaf492fde7c2a7200 \
-                            --hash=sha256:c1c76a1743432b4b60ab3358c937a3fe1341c828ae6194108a94c69028247f22 \
-                            --hash=sha256:1249cbbf3d3b04902ff081ffbb33ce3377fa6e4c7356f759f3cd076cc138d020 \
-                            --hash=sha256:7095f6fbfaa55defb6b733cfeb14efaae7a29f0b59d8cf213be4e7ca0b857b80 \
-                            --hash=sha256:8e098148dd37b4ce3baca71fb394c81dc5d9c7728c95df695d2dca218edf40e6
+  #  - charset_normalizer-3.3.0-cp39-cp39-macosx_10_9_universal2.whl
+  #  - charset_normalizer-3.3.0-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - charset_normalizer-3.3.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - charset_normalizer-3.3.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - charset_normalizer-3.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - charset_normalizer-3.3.0-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - charset_normalizer-3.3.0-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - charset_normalizer-3.3.0-cp39-cp39-win_amd64.whl
+  #  - charset_normalizer-3.3.0-py3-none-any.whl
+  charset-normalizer==3.3.0 --hash=sha256:e0fc42822278451bc13a2e8626cf2218ba570f27856b536e00cfa53099724828 \
+                            --hash=sha256:09c77f964f351a7369cc343911e0df63e762e42bac24cd7d18525961c81754f4 \
+                            --hash=sha256:12ebea541c44fdc88ccb794a13fe861cc5e35d64ed689513a5c03d05b53b7c82 \
+                            --hash=sha256:805dfea4ca10411a5296bcc75638017215a93ffb584c9e344731eef0dcfb026a \
+                            --hash=sha256:619d1c96099be5823db34fe89e2582b336b5b074a7f47f819d6b3a57ff7bdb86 \
+                            --hash=sha256:93aa7eef6ee71c629b51ef873991d6911b906d7312c6e8e99790c0f33c576f89 \
+                            --hash=sha256:153e7b6e724761741e0974fc4dcd406d35ba70b92bfe3fedcb497226c93b9da7 \
+                            --hash=sha256:d97d85fa63f315a8bdaba2af9a6a686e0eceab77b3089af45133252618e70884 \
+                            --hash=sha256:e46cd37076971c1040fc8c41273a8b3e2c624ce4f2be3f5dfcb7a430c1d3acc2
   # [/charset-normalizer]
   # [urllib3]
-  urllib3==2.0.3 --hash=sha256:48e7fafa40319d358848e1bc6809b208340fafe2096f1725d05d67443d0483d1
+  urllib3==2.0.6 --hash=sha256:7a7c7003b000adf9e7ca2a377c9688bbc54ed41b985789ed576570342a375cd2
   # [/urllib3]
   # [requests]
   requests==2.31.0 --hash=sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f
