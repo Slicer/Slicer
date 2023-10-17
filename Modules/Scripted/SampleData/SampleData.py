@@ -905,7 +905,7 @@ class SampleDataLogic:
         if not success:
             self.logMessage('\t' + _('Load failed!'), logging.ERROR)
             return False
-        self.logMessage('<b>' + _('Load finished'), '</b><p></p>')
+        self.logMessage('<b>' + _('Load finished') + '</b><p></p>')
         return True
 
     def loadNode(self, uri, name, fileType='VolumeFile', fileProperties={}):
