@@ -1120,16 +1120,16 @@ class SampleDataTest(ScriptedLoadableModuleTest):
 
     def test_sampleDataSourcesByCategory(self):
         self.assertTrue(len(SampleDataLogic.sampleDataSourcesByCategory()) > 0)
-        self.assertTrue(len(SampleDataLogic.sampleDataSourcesByCategory('BuiltIn')) > 0)
+        self.assertTrue(len(SampleDataLogic.sampleDataSourcesByCategory('General')) > 0)
         self.assertTrue(len(SampleDataLogic.sampleDataSourcesByCategory('Not_A_Registered_Category')) == 0)
 
     def test_categoryVisibility(self):
         slicer.util.selectModule("SampleData")
         widget = slicer.modules.SampleDataWidget
-        widget.setCategoryVisible('BuiltIn', False)
-        self.assertFalse(widget.isCategoryVisible('BuiltIn'))
-        widget.setCategoryVisible('BuiltIn', True)
-        self.assertTrue(widget.isCategoryVisible('BuiltIn'))
+        widget.setCategoryVisible('General', False)
+        self.assertFalse(widget.isCategoryVisible('General'))
+        widget.setCategoryVisible('General', True)
+        self.assertTrue(widget.isCategoryVisible('General'))
 
     def test_setCategoriesFromSampleDataSources(self):
         slicer.util.selectModule("SampleData")
