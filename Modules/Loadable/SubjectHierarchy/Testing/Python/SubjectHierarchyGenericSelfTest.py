@@ -473,49 +473,50 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
         shProxyModel = shTreeView.sortFilterProxyModel()
 
-        def testAttributeFilters(filteredObject, proxyModel):
+        def testAttributeFilters(filteredObject, proxyModel, showEmptyHierarchyItems=True):
+
+            expectedEmptyHierarchyItemCount = 1 if showEmptyHierarchyItems else 0
+
             # Check include node attribute name filter
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             filteredObject.includeNodeAttributeNamesFilter = ['Markups.MovingInSliceView']
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5 + expectedEmptyHierarchyItemCount)
             filteredObject.addNodeAttributeFilter('Sajt')
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check attribute value filter
             filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', 3)
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', '3')
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
             # Check exclude node attribute name filter (overrides include node attribute name filter)
             filteredObject.excludeNodeAttributeNamesFilter = ['Markups.MovingInSliceView']
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4 + expectedEmptyHierarchyItemCount)
             filteredObject.excludeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check if exclude indeed overrides include node attribute name filter
             filteredObject.includeNodeAttributeNamesFilter = ['Markups.MovingMarkupIndex']
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             filteredObject.excludeNodeAttributeNamesFilter = ['Markups.MovingInSliceView']
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             filteredObject.excludeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
             # Check include item attribute name filter
             filteredObject.includeItemAttributeNamesFilter = ['ItemAttribute1']
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2 + expectedEmptyHierarchyItemCount)
             filteredObject.includeItemAttributeNamesFilter = ['ItemAttribute1', 'FolderAttribute1']
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2 + expectedEmptyHierarchyItemCount)
             filteredObject.addItemAttributeFilter('ItemAttribute2')
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
             filteredObject.includeItemAttributeNamesFilter = ['ItemAttribute1', 'ItemAttribute2']
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
             filteredObject.includeItemAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
@@ -523,7 +524,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
             # Check legacy (item) attribute value filter
             filteredObject.attributeNameFilter = 'ItemAttribute1'
             filteredObject.attributeValueFilter = '1'
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2 + expectedEmptyHierarchyItemCount)
             filteredObject.attributeNameFilter = ''
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
@@ -534,9 +535,10 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check if exclude indeed overrides include item attribute filter
             filteredObject.includeItemAttributeNamesFilter = ['ItemAttribute1']
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2 + expectedEmptyHierarchyItemCount)
             filteredObject.excludeItemAttributeNamesFilter = ['ItemAttribute1']
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 0)
+            expectedEmptyHierarchyItemCountAferExclude = 2 if showEmptyHierarchyItems else 0
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 0 + expectedEmptyHierarchyItemCountAferExclude)
             filteredObject.includeItemAttributeNamesFilter = []
             filteredObject.excludeItemAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
@@ -548,7 +550,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
             # Check attribute filtering with class name and attribute value
             filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', 3, True, 'vtkMRMLMarkupsCurveNode')
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3 + expectedEmptyHierarchyItemCount)
             filteredObject.addNodeAttributeFilter('ParentAttribute', '', True, 'vtkMRMLMarkupsAngleNode')
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
             filteredObject.addNodeAttributeFilter('ChildAttribute', '', True, 'vtkMRMLMarkupsAngleNode')
@@ -557,14 +559,21 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check with empty attribute value
             filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', '', True, 'vtkMRMLMarkupsCurveNode')
-            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
+            self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
-        logging.info('Test attribute filters on proxy model directly')
+        logging.info('Test attribute filters on proxy model directly (showEmptyHierarchyItems=True)')
         testAttributeFilters(shProxyModel, shProxyModel)
-        logging.info('Test attribute filters on tree view')
+        logging.info('Test attribute filters on tree view (showEmptyHierarchyItems=True)')
         testAttributeFilters(shTreeView, shProxyModel)
+
+        shProxyModel.showEmptyHierarchyItems = False
+
+        logging.info('Test attribute filters on proxy model directly (showEmptyHierarchyItems=False)')
+        testAttributeFilters(shProxyModel, shProxyModel, showEmptyHierarchyItems=False)
+        logging.info('Test attribute filters on tree view (showEmptyHierarchyItems=False)')
+        testAttributeFilters(shTreeView, shProxyModel, showEmptyHierarchyItems=False)
 
     # ------------------------------------------------------------------------------
     def section_ComboboxFeatures(self):
