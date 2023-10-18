@@ -18,6 +18,7 @@
 #include <deque>
 
 #include "vtkMRMLApplicationLogic.h"
+#include "vtkMRMLOpenGLLineStippleMapper2D.h"
 #include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
@@ -58,13 +59,13 @@ public:
     this->Actor->SetVisibility(false); // invisible until slice node is set
 
     this->ThickSlabLine1LineSource = vtkSmartPointer<vtkLineSource>::New();
-    this->ThickSlabLine1Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+    this->ThickSlabLine1Mapper = vtkSmartPointer<vtkMRMLOpenGLLineStippleMapper2D>::New();
     this->ThickSlabLine1Property = vtkSmartPointer<vtkProperty2D>::New();
     this->ThickSlabLine1Actor = vtkSmartPointer<vtkActor2D>::New();
     this->ThickSlabLine1Actor->SetVisibility(false); // invisible until slice node is set
 
     this->ThickSlabLine2LineSource = vtkSmartPointer<vtkLineSource>::New();
-    this->ThickSlabLine2Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+    this->ThickSlabLine2Mapper = vtkSmartPointer<vtkMRMLOpenGLLineStippleMapper2D>::New();
     this->ThickSlabLine2Property = vtkSmartPointer<vtkProperty2D>::New();
     this->ThickSlabLine2Actor = vtkSmartPointer<vtkActor2D>::New();
     this->ThickSlabLine2Actor->SetVisibility(false); // invisible until slice node is set
