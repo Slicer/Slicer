@@ -653,9 +653,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
 
   vtkImageData *imageData = this->VolumeNode->GetImageData();
   if (imageData != nullptr &&
-      (imageData->GetScalarType() == VTK_LONG ||
-       imageData->GetScalarType() == VTK_UNSIGNED_LONG ||
-       imageData->GetScalarType() == VTK_LONG_LONG ||
+      (imageData->GetScalarType() == VTK_LONG_LONG ||
        imageData->GetScalarType() == VTK_UNSIGNED_LONG_LONG))
     {
     vtkErrorMacro("Reslicing can only be done on types representable as double.  Node " <<
