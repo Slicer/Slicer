@@ -1,5 +1,18 @@
 cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
 
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_VERSION_MAJOR)
+  set(Slicer_VERSION_MAJOR "5")
+endif()
+if(NOT DEFINED Slicer_VERSION_MINOR)
+  set(Slicer_VERSION_MINOR "5")
+endif()
+if(NOT DEFINED Slicer_VERSION_PATCH)
+  set(Slicer_VERSION_PATCH "0")
+endif()
+project(Slicer VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}")
+
+#-----------------------------------------------------------------------------
 if("${CMAKE_VERSION}" VERSION_EQUAL "3.21.0")
   message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake==3.21.0 is not supported.\nSee https://gitlab.kitware.com/cmake/cmake/-/issues/22476")
 endif()
@@ -7,6 +20,12 @@ endif()
 if("${CMAKE_VERSION}" VERSION_GREATER_EQUAL "3.25.0" AND "${CMAKE_VERSION}" VERSION_LESS_EQUAL "3.25.2")
   message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake >=3.25.0,<=3.25.2 is not supported.\nSee https://gitlab.kitware.com/cmake/cmake/-/issues/24567")
 endif()
+
+
+#-----------------------------------------------------------------------------
+# Setting the CMake module path
+#-----------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
 # Setting C++ Standard
@@ -72,7 +91,6 @@ if(NOT DEFINED CMAKE_LINK_DEPENDS_NO_SHARED AND UNIX AND NOT APPLE)
 endif()
 
 #-----------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 set(SUPERBUILD_TOPLEVEL_PROJECT Slicer)
 list(APPEND EXTERNAL_PROJECT_ADDITIONAL_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild)
 include(ExternalProject)
@@ -94,17 +112,6 @@ if(APPLE)
   mark_as_superbuild(VARS CMAKE_MACOSX_RPATH:BOOL ALL_PROJECTS)
 endif()
 
-#-----------------------------------------------------------------------------
-if(NOT DEFINED Slicer_VERSION_MAJOR)
-  set(Slicer_VERSION_MAJOR "5")
-endif()
-if(NOT DEFINED Slicer_VERSION_MINOR)
-  set(Slicer_VERSION_MINOR "5")
-endif()
-if(NOT DEFINED Slicer_VERSION_PATCH)
-  set(Slicer_VERSION_PATCH "0")
-endif()
-project(Slicer VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}")
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
