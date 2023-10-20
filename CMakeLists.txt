@@ -43,13 +43,26 @@ if(NOT CMAKE_CXX_STANDARD MATCHES "^(17|20)$")
 endif()
 
 #-----------------------------------------------------------------------------
+# Check if the C++ compiler is GNU and find necessary GCC libraries
+#-----------------------------------------------------------------------------
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+    # Include the custom FindGccLibs module
+    find_package(GccLibs REQUIRED)
+
+    # Add the found libraries to CMAKE_CXX_LINK_FLAGS
+    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} ${GccLibs_LIBRARIES}")
+
+endif()
+
+#-----------------------------------------------------------------------------
 # Setting C/CXX Linker rule for added flexibility in choosing a linker
 #-----------------------------------------------------------------------------
 # By default, CMake uses the compiler for linking, not CMAKE_LINKER[5†source].
 # These settings override the default to use the specified CMAKE_LINKER.
 
-set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_LINKER> <FLAGS> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
-set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_LINKER> <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_LINKER> <OBJECTS> /usr/lib/crt1.o /usr/lib/crti.o -dynamic-linker /usr/lib/ld-linux-x86-64.so.2 -o <TARGET> <LINK_LIBRARIES> -lc /usr/lib/crtn.o")
+set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_LINKER> --library-path=${GCC_LIB_PATH} <OBJECTS> /usr/lib/crt1.o /usr/lib/crti.o ${GCC_LIB_PATH}/crtbegin.o  ${GCC_LIB_PATH}/crtend.o -o <TARGET> -lgcc -lgcc_s -lstdc++ -lm -lc")
 
 #-----------------------------------------------------------------------------
 # Setting C/CXX Shared Library rule for added flexibility in choosing a linker
@@ -66,6 +79,7 @@ set(CMAKE_CXX_CREATE_SHARED_LIBRARY "<CMAKE_LINKER> <FLAGS> <CMAKE_CXX_LINK_FLAG
 # [4] https://discourse.cmake.org/t/using-lld-link-with-msvc-compiler-on-windows/2278
 # [5] https://stackoverflow.com/questions/46159191/how-to-force-cmake-to-use-linker-instead-of-compiler-during-linking
 
+#-----------------------------------------------------------------------------
 # Prevent unnecessary re-linking on Linux
 #
 # See https://discourse.slicer.org/t/build-when-git-commit-is-changed/29607/12
