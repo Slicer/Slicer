@@ -45,7 +45,7 @@ public:
   bool setSurfaceSmoothingFactor(double smoothingFactor);
 
   /// Updates the method used to generate the surface representation
-  bool setConversionMethod(int conversionMethod);
+  bool setConversionMethod(const std::string& conversionMethod);
 
   /// This property holds whether smoothing internal to surface nets filter is used
   bool setInternalSmoothing(int internalSmoothing);
@@ -158,7 +158,7 @@ bool qMRMLSegmentationShow3DButtonPrivate::setSurfaceSmoothingFactor(double smoo
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSegmentationShow3DButtonPrivate::setConversionMethod(int conversionMethod)
+bool qMRMLSegmentationShow3DButtonPrivate::setConversionMethod(const std::string& conversionMethod)
 {
   if (!this->SegmentationNode || !this->SegmentationNode->GetSegmentation())
     {
@@ -169,7 +169,7 @@ bool qMRMLSegmentationShow3DButtonPrivate::setConversionMethod(int conversionMet
 
   this->SegmentationNode->GetSegmentation()->SetConversionParameter(
     vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName(),
-    QVariant(conversionMethod).toString().toUtf8().constData());
+    conversionMethod);
 
   bool closedSurfacePresent = this->SegmentationNode->GetSegmentation()->ContainsRepresentation(
     vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
@@ -283,14 +283,15 @@ void qMRMLSegmentationShow3DButton::updateWidgetFromMRML()
   d->SurfaceSmoothingSlider->blockSignals(wasBlocked);
 
   // Conversion method
-  int conversionMethod = 0;
+  std::string conversionMethod = vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES;
   if (d->SegmentationNode && d->SegmentationNode->GetSegmentation())
     {
-    conversionMethod = QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(
-      vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName()).c_str()).toInt();
+    conversionMethod = d->SegmentationNode->GetSegmentation()->GetConversionParameter(
+      vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName());
     }
   wasBlocked = d->SurfaceNetsEnableAction->blockSignals(true);
-  d->SurfaceNetsEnableAction->setChecked(conversionMethod == 1);
+  d->SurfaceNetsEnableAction->setChecked(
+        conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS);
   d->SurfaceNetsEnableAction->blockSignals(wasBlocked);
 
   // SurfaceNets smoothing
@@ -302,7 +303,9 @@ void qMRMLSegmentationShow3DButton::updateWidgetFromMRML()
     }
   wasBlocked = d->SurfaceNetsSmoothingEnableAction->blockSignals(true);
   d->SurfaceNetsSmoothingEnableAction->setChecked(surfaceNetinternalSmoothing == 1);
-  d->SurfaceNetsSmoothingEnableAction->setEnabled(surfaceSmoothingFactor >= 0.0 && conversionMethod == 1);
+  d->SurfaceNetsSmoothingEnableAction->setEnabled(
+        surfaceSmoothingFactor >= 0.0
+        && conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS);
   d->SurfaceNetsSmoothingEnableAction->blockSignals(wasBlocked);
 }
 
@@ -411,14 +414,12 @@ void qMRMLSegmentationShow3DButton::onEnableSurfaceNetsToggled(bool surfaceNetsE
     }
 
   // Get current conversion method
-  // 0 = flying edges
-  // 1 = Surface nets
-  int originalMethod = QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(
-    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName()).c_str()).toInt();
-  int newMethod = 0;
+  std::string originalMethod = d->SegmentationNode->GetSegmentation()->GetConversionParameter(
+    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName());
+  std::string newMethod = vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES;
   if (surfaceNetsEnabled)
     {
-    newMethod = 1;
+    newMethod = vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS;
     }
 
   // Set conversion method
