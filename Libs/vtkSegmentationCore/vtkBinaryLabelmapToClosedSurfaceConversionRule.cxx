@@ -63,6 +63,10 @@
 #include <vtkSelectionSource.h>
 
 //----------------------------------------------------------------------------
+const std::string vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES = std::string("0");
+const std::string vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS = std::string("1");
+
+//----------------------------------------------------------------------------
 vtkSegmentationConverterRuleNewMacro(vtkBinaryLabelmapToClosedSurfaceConversionRule);
 
 //----------------------------------------------------------------------------
@@ -76,7 +80,7 @@ vtkBinaryLabelmapToClosedSurfaceConversionRule::vtkBinaryLabelmapToClosedSurface
   this->ConversionParameters->SetParameter(GetComputeSurfaceNormalsParameterName(), "1",
     "Compute surface normals. 1 (default) = surface normals are computed. "
     "0 = surface normals are not computed (slightly faster but produces less smooth surface display, not used if vtkSurfaceNets3D is used).");
-  this->ConversionParameters->SetParameter(GetConversionMethodParameterName(), "0",
+  this->ConversionParameters->SetParameter(GetConversionMethodParameterName(), CONVERSION_METHOD_FLYING_EDGES,
     "Conversion method. 0 (default) = vtkDiscreteFlyingEdges3D is used to generate closed surface."
     "1 = vtkSurfaceNets3D (more performant than flying edges).");
   this->ConversionParameters->SetParameter(GetSurfaceNetInternalSmoothingParameterName(), "0",
@@ -295,9 +299,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   int computeSurfaceNormals = this->ConversionParameters->GetValueAsInt(GetComputeSurfaceNormalsParameterName());
 
   // Conversion method
-  // 0 = flying edges (vtkDiscreteFlyingEdges3D)
-  // 1 = surface nets (vtkSurfaceNets3D)
-  int conversionMethod = this->ConversionParameters->GetValueAsInt(GetConversionMethodParameterName());
+  std::string conversionMethod = this->ConversionParameters->GetValue(GetConversionMethodParameterName());
 
   // SurfaceNetInternalSmoothing
   // 0 = use vtkWindowedSincPolyDataFilter
@@ -306,7 +308,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
 
   vtkSmartPointer<vtkPolyData> processingResult = vtkSmartPointer<vtkPolyData>::New();
 
-  if (conversionMethod == 0)
+  if (conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES)
     {
     vtkNew<vtkDiscreteFlyingEdges3D> flyingEdges;
     flyingEdges->SetInputData(binaryLabelmapWithIdentityGeometry);
@@ -331,7 +333,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
       }
     processingResult = flyingEdges->GetOutput();
     }
-  else if (conversionMethod == 1)
+  else if (conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS)
     {
     vtkNew<vtkSurfaceNets3D> surfaceNets;
     surfaceNets->SetInputData(binaryLabelmapWithIdentityGeometry);
@@ -435,7 +437,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
 
-  if (computeSurfaceNormals > 0 && conversionMethod == 0)
+  if (computeSurfaceNormals > 0 && conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES)
     {
     vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());

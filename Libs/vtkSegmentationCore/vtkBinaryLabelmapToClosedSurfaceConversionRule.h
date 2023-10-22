@@ -56,6 +56,10 @@ public:
   /// Joint smoothing converts all segments in shared labelmap together, reducing smoothing artifacts.
   static const std::string GetJointSmoothingParameterName() { return "Joint smoothing"; };
 
+  // Conversion methods
+  static const std::string CONVERSION_METHOD_FLYING_EDGES;
+  static const std::string CONVERSION_METHOD_SURFACE_NETS;
+
 public:
   static vtkBinaryLabelmapToClosedSurfaceConversionRule* New();
   vtkTypeMacro(vtkBinaryLabelmapToClosedSurfaceConversionRule, vtkSegmentationConverterRule);
