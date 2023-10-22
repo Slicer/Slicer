@@ -123,6 +123,13 @@ set(ENV{LibraryPaths} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS  "-DCMAKE_CXX_VISIBILITY_PRESET:BOOL=default")
   endif()
 
+  # To enable the use of gold linker if enabled in Slicer
+  if(Slicer_COMPILER_SUPPORTS_GOLD_LINKER)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DUSE_GOLD_LINKER:BOOL=${Slicer_USE_GOLD_LINKER}
+      )
+  endif()
+
   # install step - the working path must be set to the location of the SimpleITK.py
   # file so that it will be picked up by distuils setup, and installed
   set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
