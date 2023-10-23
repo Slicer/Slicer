@@ -101,15 +101,34 @@ class DICOMProcess:
         logging.debug(f"Process {self.cmd} now in state {self.PROCESS_STATE_NAMES[newState]}")
         stdout = None
         stderr = None
-        if newState == 0 and self.process:
+        if newState == qt.QProcess.NotRunning and self.process:
             stdout = self.process.readAllStandardOutput()
             stderr = self.process.readAllStandardError()
 
-            logging.debug(f"DICOM process exit status is: {self.process.exitStatus()}")
-            logging.debug(f"DICOM process exit code is: {self.process.exitCode()}")
-            logging.debug(f"DICOM process error is: {self.process.error()}")
+            exitStatusAsString = "NormalExit"
+            if self.process.exitStatus() == qt.QProcess.CrashExit:
+                exitStatusAsString = "CrashExit"
+
+            logging.debug(f"DICOM process exit status is: {exitStatusAsString}")
+
+            if self.process.exitStatus() == qt.QProcess.NormalExit:
+                # exitCode is not valid unless exitStatus() returns NormalExit
+                logging.debug(f"DICOM process exit code is: {self.process.exitCode()}")
+
+            if self.process.exitStatus() == qt.QProcess.CrashExit:
+                processError = {
+                    qt.QProcess.FailedToStart: "FailedToStart",
+                    qt.QProcess.Crashed: "Crashed",
+                    qt.QProcess.Timedout: "Timedout",
+                    qt.QProcess.WriteError: "WriteError",
+                    qt.QProcess.ReadError: "ReadError",
+                    qt.QProcess.UnknownError: "UnknownError",
+                }.get(self.process.error())
+                logging.debug(f"DICOM process error is: {processError}")
+
             logging.debug(f"DICOM process standard out is: {stdout}")
             logging.debug(f"DICOM process standard error is: {stderr}")
+
         self.stdout = stdout
         self.stderr = stderr
         return self.stdout, self.stderr
