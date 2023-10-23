@@ -2066,6 +2066,10 @@ void qSlicerCoreApplication::onAboutToQuit()
     {
     d->ReturnCode = qSlicerCoreApplication::ExitFailure;
     }
+  // Ensure that all events have been processed. This ensures that any pending
+  // messages logged from Python scripts are properly reported and written to
+  // log files before the application exits.
+  this->processEvents();
 #endif
 }
 
