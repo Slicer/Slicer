@@ -75,6 +75,8 @@ class DICOMProcess:
         self.connections = {}
         self.exeDir = self.getDCMTKToolsPath()
         self.exeExtension = ".exe" if os.name == "nt" else ""
+        self.stdout = None
+        self.stderr = None
 
     def __del__(self):
         self.stop()
@@ -97,14 +99,20 @@ class DICOMProcess:
         """Callback to indicate that the process state has changed
         and is now either starting, running, or not running."""
         logging.debug(f"Process {self.cmd} now in state {self.PROCESS_STATE_NAMES[newState]}")
+        stdout = None
+        stderr = None
         if newState == 0 and self.process:
             stdout = self.process.readAllStandardOutput()
             stderr = self.process.readAllStandardError()
-            logging.debug('DICOM process error code is: %d' % self.process.error())
-            logging.debug('DICOM process standard out is: %s' % stdout)
-            logging.debug('DICOM process standard error is: %s' % stderr)
-            return stdout, stderr
-        return None, None
+
+            logging.debug(f"DICOM process exit status is: {self.process.exitStatus()}")
+            logging.debug(f"DICOM process exit code is: {self.process.exitCode()}")
+            logging.debug(f"DICOM process error is: {self.process.error()}")
+            logging.debug(f"DICOM process standard out is: {stdout}")
+            logging.debug(f"DICOM process standard error is: {stderr}")
+        self.stdout = stdout
+        self.stderr = stderr
+        return self.stdout, self.stderr
 
     def stop(self) -> None:
         """Stop the running standalone process."""
@@ -138,16 +146,8 @@ class DICOMCommand(DICOMProcess):
         logging.debug(("DICOM process running: ", self.executable, self.args))
         self.process.waitForFinished()
         if self.process.exitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
-            stdout = self.process.readAllStandardOutput()
-            stderr = self.process.readAllStandardError()
-            logging.debug('DICOM process exit status is: %d' % self.process.exitStatus())
-            logging.debug('DICOM process exit code is: %d' % self.process.exitCode())
-            logging.debug('DICOM process error is: %d' % self.process.error())
-            logging.debug('DICOM process standard out is: %s' % stdout)
-            logging.debug('DICOM process standard error is: %s' % stderr)
             raise UserWarning(f"Could not run {self.executable} with {self.args}")
-        stdout = self.process.readAllStandardOutput()
-        return stdout
+        return self.stdout
 
 
 class DICOMStoreSCPProcess(DICOMProcess):
@@ -565,12 +565,6 @@ class DICOMSender:
             # success
             return True
 
-        stdout = self.process.readAllStandardOutput()
-        stderr = self.process.readAllStandardError()
-        logging.debug('DICOM send using standard configuration failed: process error code is %d' % self.process.error())
-        logging.debug('DICOM send process standard out is: %s' % stdout)
-        logging.debug('DICOM send process standard error is: %s' % stderr)
-
         # Retry transfer with alternative configuration with presentation contexts which support SEG/SR.
         # A common cause of failure is an incomplete set of dcmtk/DCMSCU presentation context UIDS.
         # Refer to https://book.orthanc-server.com/faq/dcmtk-tricks.html#id2 for additional detail.
@@ -582,12 +576,6 @@ class DICOMSender:
         ):
             # success
             return True
-
-        stdout = self.process.readAllStandardOutput()
-        stderr = self.process.readAllStandardError()
-        logging.debug('DICOM send using extended configuration failed: process error code is %d' % self.process.error())
-        logging.debug('DICOM send process standard out is: %s' % stdout)
-        logging.debug('DICOM send process standard error is: %s' % stderr)
 
         userMsg = f"Could not send {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"
         raise UserWarning(userMsg)
