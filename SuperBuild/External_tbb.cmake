@@ -23,6 +23,18 @@ else ()
   set(tbb_sha256 "74861b1586d6936b620cdab6775175de46ad8b0b36fa6438135ecfb8fb5bdf98")
 endif ()
 
+# When updating the version of tbb, consider also
+# updating the soversion numbers hard-coded below in the
+# "fix_rpath" macOS external project step.
+#
+# To find out if the soversion number should be updated,
+# inspect the installed libraries and/or review the value
+# associated with
+# (1) __TBB_BINARY_VERSION in include/oneapi/tbb/version.h
+#     for libtbb
+# (2) TBBMALLOC_BINARY_VERSION variable in the top-level
+#     CMakeLists.txt for libtbbmalloc
+
 if(APPLE)
   set(tbb_cmake_osx_required_deployment_target "10.15") # See https://github.com/oneapi-src/oneTBB/blob/master/SYSTEM_REQUIREMENTS.md
 
@@ -82,6 +94,36 @@ else ()
   set(tbb_bindir "${tbb_libdir}")
 endif ()
 
+if(APPLE)
+  ExternalProject_Add_Step(${proj} fix_rpath
+    # libtbb
+    COMMAND install_name_tool
+      -id ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbb.12.dylib
+          ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbb.12.dylib
+    COMMAND install_name_tool
+      -id ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbb_debug.12.dylib
+          ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbb_debug.12.dylib
+    # libtbbmalloc
+    COMMAND install_name_tool
+      -id ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc.2.dylib
+          ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc.2.dylib
+    COMMAND install_name_tool
+      -id ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc_debug.2.dylib
+          ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc_debug.2.dylib
+    # libtbbmalloc_proxy
+    COMMAND install_name_tool
+      -id ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc_proxy.2.dylib
+          ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc_proxy.2.dylib
+      -change @rpath/libtbbmalloc.2.dylib
+              ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc.2.dylib
+    COMMAND install_name_tool
+      -id ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc_proxy_debug.2.dylib
+          ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc_proxy_debug.2.dylib
+      -change @rpath/libtbbmalloc_debug.2.dylib
+              ${TBB_INSTALL_DIR}/${tbb_libdir}/libtbbmalloc_debug.2.dylib
+    DEPENDEES install
+    )
+endif()
 
 #------------------------------------------------------------------------------
 
