@@ -75,8 +75,8 @@ class DICOMProcess:
         self.connections = {}
         self.exeDir = self.getDCMTKToolsPath()
         self.exeExtension = ".exe" if os.name == "nt" else ""
-        self.stdout = None
-        self.stderr = None
+        self._stdout = None
+        self._stderr = None
 
     def __del__(self):
         self.stop()
@@ -129,9 +129,9 @@ class DICOMProcess:
             logging.debug(f"DICOM process standard out is: {stdout}")
             logging.debug(f"DICOM process standard error is: {stderr}")
 
-        self.stdout = stdout
-        self.stderr = stderr
-        return self.stdout, self.stderr
+        self._stdout = stdout
+        self._stderr = stderr
+        return self._stdout, self._stderr
 
     def stop(self) -> None:
         """Stop the running standalone process."""
@@ -166,7 +166,7 @@ class DICOMCommand(DICOMProcess):
         self.process.waitForFinished()
         if self.process.exitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
             raise UserWarning(f"Could not run {self.executable} with {self.args}")
-        return self.stdout
+        return self._stdout
 
 
 class DICOMStoreSCPProcess(DICOMProcess):
