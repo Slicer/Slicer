@@ -1,6 +1,7 @@
 import copy
 import logging
 import os
+from urllib.parse import urlparse
 
 import qt
 
@@ -390,12 +391,14 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
             for pluginClass in slicer.modules.dicomPlugins:
                 selectedPlugins.append(pluginClass)
 
+        # check if local file paths are missing, but ignore urls
         allFileCount = missingFileCount = 0
         for fileList in fileLists:
             for filePath in fileList:
                 allFileCount += 1
-                if not os.path.exists(filePath):
-                    missingFileCount += 1
+                if urlparse(filePath).scheme is None:
+                    if not os.path.exists(filePath):
+                        missingFileCount += 1
 
         messages = []
         if missingFileCount > 0:

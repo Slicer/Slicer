@@ -1,5 +1,6 @@
 import logging
 from functools import cmp_to_key
+from urllib.parse import urlparse
 
 import ctk
 import numpy
@@ -54,6 +55,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         self.tags['windowWidth'] = "0028,1051"
         self.tags['rows'] = "0028,0010"
         self.tags['columns'] = "0028,0011"
+        self.tags['spacing'] = "0028,0030"
+        self.tags['bitsAllocated'] = "0028,0100"
+        self.tags['pixelRepresentation'] = "0028,0103"
 
     @staticmethod
     def readerApproaches():
@@ -515,27 +519,113 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     def load(self, loadable, readerApproach=None):
         """Load the select as a scalar volume using desired approach
         """
-        # first, determine which reader approach the user prefers
-        if not readerApproach:
-            readerIndex = slicer.util.settingsValue('DICOM/ScalarVolume/ReaderApproach', 0, converter=int)
-            readerApproach = DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
-        # second, try to load with the selected approach
-        if readerApproach == "Archetype":
-            volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name)
-        elif readerApproach == "GDCM with DCMTK fallback":
-            volumeNode = self.loadFilesWithSeriesReader("GDCM", loadable.files, loadable.name, loadable.grayscale)
-            if not volumeNode:
-                volumeNode = self.loadFilesWithSeriesReader("DCMTK", loadable.files, loadable.name, loadable.grayscale)
+        # first, determine if the files are actually URLs
+        firstFile = loadable.files[0]
+        print(firstFile)
+        if urlparse(firstFile).scheme != "":
+            # - data comes from a URL, so parse metadata from dicom to slicer conventions
+            # - create a placeholder volumeNode that can be populated by the downloader
+            # - rely on files having already been sorted during examine step
+            # TODO: should factor out this code to DICOMUtils
+            forDegging = """
+class self:
+    tags = {}
+self.tags['sopClassUID'] = "0008,0016"
+self.tags['photometricInterpretation'] = "0028,0004"
+self.tags['seriesDescription'] = "0008,103e"
+self.tags['seriesUID'] = "0020,000E"
+self.tags['seriesNumber'] = "0020,0011"
+self.tags['position'] = "0020,0032"
+self.tags['orientation'] = "0020,0037"
+self.tags['pixelData'] = "7fe0,0010"
+self.tags['seriesInstanceUID'] = "0020,000E"
+self.tags['acquisitionNumber'] = "0020,0012"
+self.tags['imageType'] = "0008,0008"
+self.tags['contentTime'] = "0008,0033"
+self.tags['triggerTime'] = "0018,1060"
+self.tags['diffusionGradientOrientation'] = "0018,9089"
+self.tags['imageOrientationPatient'] = "0020,0037"
+self.tags['numberOfFrames'] = "0028,0008"
+self.tags['instanceUID'] = "0008,0018"
+self.tags['windowCenter'] = "0028,1050"
+self.tags['windowWidth'] = "0028,1051"
+self.tags['rows'] = "0028,0010"
+self.tags['columns'] = "0028,0011"
+self.tags['spacing'] = "0028,0030"
+self.tags['bitsAllocated'] = "0028,0100"
+self.tags['pixelRepresentation'] = "0028,0103"
+
+class loadable: 
+    name = "proxy"
+    files = []
+firstFile = "https://testing-proxy.canceridc.dev/current/viewer-only-no-downloads-see-tinyurl-dot-com-slash-3j3d9jyp/dicomWeb/studies/1.2.840.113654.2.55.238037307348300099339353751199131526205/series/1.2.840.113654.2.55.273848107084880007349037443178434483790/instances/1.2.840.113654.2.55.313761472808358980146581412001573331364/frames/1"
+loadable.files.append(firstFile)
+"""
+
+            print("creating proxy")
+            bitsAllocated = slicer.dicomDatabase.fileValue(firstFile, self.tags['bitsAllocated'])
+            pixelRepresentation = slicer.dicomDatabase.fileValue(firstFile, self.tags['pixelRepresentation'])
+            positionString = slicer.dicomDatabase.fileValue(firstFile, self.tags['position'])
+            position = numpy.array(list(map(float, positionString.split('\\'))))
+            orientationString = slicer.dicomDatabase.fileValue(firstFile, self.tags['orientation'])
+            orientation = list(map(float, orientationString.split('\\')))
+            spacingString = slicer.dicomDatabase.fileValue(firstFile, self.tags['spacing'])
+            spacing = numpy.array(list(map(float, spacingString.split('\\'))))
+            rows = int(slicer.dicomDatabase.fileValue(firstFile, self.tags['rows']))
+            columns = int(slicer.dicomDatabase.fileValue(firstFile, self.tags['columns']))
+            slices = len(loadable.files)
+            rowOrientation = numpy.array(orientation[:3])
+            columnOrientation = numpy.array(orientation[3:])
+            # map from LPS to RAS
+            lpsToRAS = numpy.array([-1, -1, 1])
+            position *= lpsToRAS
+            rowOrientation *= lpsToRAS
+            columnOrientation *= lpsToRAS
+            # make ijkToRAS
+            rowVector = spacing[1] * rowOrientation  # dicom PixelSpacing is between rows first, then columns
+            columnVector = spacing[0] * columnOrientation
+            lastFile = loadable.files[-1]
+            lastPositionString = slicer.dicomDatabase.fileValue(lastFile, self.tags['position'])
+            lastPosition = numpy.array(list(map(float, lastPositionString.split('\\'))))
+            lastPosition *= lpsToRAS
+            sliceSpacing = numpy.linalg.norm(lastPosition - position)
+            if len(loadable.files) > 1:
+                sliceSpacing /= (len(loadable.files)-1)
+            else:
+                sliceSpacing = 1
+            sliceVector = sliceSpacing * numpy.cross(rowOrientation, columnOrientation)
+            ijkToRASArray = numpy.eye(4)
+            ijkToRASArray[0][:3] = rowVector
+            ijkToRASArray[1][:3] = columnVector
+            ijkToRASArray[2][:3] = sliceVector
+            ijkToRASArray[3][:3] = position
+            ijkToRAS = slicer.util.vtkMatrixFromArray(ijkToRASArray.T)
+            dtype = "int16" # always use short for the image
+            pixelArray = numpy.array(1000 * numpy.random.random([slices, rows, columns]), dtype=dtype)
+            volumeNode = slicer.util.addVolumeFromArray(pixelArray, ijkToRAS=ijkToRAS, name=loadable.name)
+
         else:
-            volumeNode = self.loadFilesWithSeriesReader(readerApproach, loadable.files, loadable.name, loadable.grayscale)
-        # third, transfer data from the dicom instances into the appropriate Slicer data containers
+            # first, determine which reader approach the user prefers
+            if not readerApproach:
+                readerIndex = slicer.util.settingsValue('DICOM/ScalarVolume/ReaderApproach', 0, converter=int)
+                readerApproach = DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
+            # second, try to load with the selected approach
+            if readerApproach == "Archetype":
+                volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name)
+            elif readerApproach == "GDCM with DCMTK fallback":
+                volumeNode = self.loadFilesWithSeriesReader("GDCM", loadable.files, loadable.name, loadable.grayscale)
+                if not volumeNode:
+                    volumeNode = self.loadFilesWithSeriesReader("DCMTK", loadable.files, loadable.name, loadable.grayscale)
+            else:
+                volumeNode = self.loadFilesWithSeriesReader(readerApproach, loadable.files, loadable.name, loadable.grayscale)
+
+        # transfer data from the dicom instances into the appropriate Slicer data containers
         self.setVolumeNodeProperties(volumeNode, loadable)
 
         # examine the loaded volume and if needed create a new transform
         # that makes the loaded volume match the DICOM coordinates of
         # the individual frames.  Save the class instance so external
         # code such as the DICOMReaders test can introspect to validate.
-
         if volumeNode:
             self.acquisitionModeling = self.AcquisitionModeling()
             self.acquisitionModeling.createAcquisitionTransform(volumeNode,
