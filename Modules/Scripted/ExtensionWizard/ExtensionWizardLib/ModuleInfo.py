@@ -37,12 +37,15 @@ class ModuleInfo:
         result = []
         if os.path.isfile(path):
             entries = [path]
-        else:
+        elif os.path.isdir(path):
             entries = [os.path.join(path, entry) for entry in os.listdir(path)]
             # If the folder contains __init__.py, it means that this folder
             # is not a Slicer module but an embedded Python library that a module will load.
             if any(entry.endswith('__init__.py') for entry in entries):
                 entries = []
+        else:
+            # not a file or folder
+            return result
 
         if depth > 0:
             for entry in filter(os.path.isdir, entries):
@@ -53,7 +56,7 @@ class ModuleInfo:
                 continue
 
             # Criteria for a Slicer module to have a module class
-            # that has the same name as the filename.
+            # that has the same name as the filename and its base class is ScriptedLoadableModule.
 
             try:
                 # Find all class definitions
@@ -66,10 +69,17 @@ class ModuleInfo:
                 expectedClassName = os.path.splitext(filename)[0]
                 for cls in classes:
                     if cls.name == expectedClassName:
-                        result.append(ModuleInfo(entry))
+                        # Found a class name that matches the filename
+                        if "ScriptedLoadableModule" in [base.id for base in cls.bases]:
+                            # Its base class is ScriptedLoadableModule
+                            result.append(ModuleInfo(entry))
             except:
                 # Error while processing the file (e.g., syntax error),
                 # it cannot be a Slicer module.
                 pass
+
+            # We could also detect scripted CLI modules (e.g., by checking for presence of a suitable
+            # module descriptor XML file), but this module type is quite rare, so it was not seem
+            # worth the implementation effort.
 
         return result
