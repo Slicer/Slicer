@@ -3,6 +3,7 @@
 import logging
 import typing
 from typing import Optional
+import weakref
 
 import qt
 
@@ -84,8 +85,16 @@ class _CachedParameterWrapper(_ParameterWrapper):
     def __init__(self, parameter: _Parameter, parameterNode):
         super().__init__(parameter, parameterNode)
         self._value = self.parameter.read(self.parameterNode)
-        self._observerTag: int = parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self._onModified)
+        # Important: We don't want to increase the reference to self here by including it in the AddObserver callback.
+        # This would prevent the object from being garbage collected, and the observers from being removed when the object goes out of scope.
+        # Instead, we create a weakref to self and use it in a lambda function.
+        _selfWeakRef = weakref.ref(self)
+        self._observerTag: int = parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent,
+                                                           lambda caller, event: _selfWeakRef()._onModified(caller, event))
         self._currentlyWriting: bool = False
+
+    def __del__(self):
+        self.parameterNode.RemoveObserver(self._observerTag)
 
     def _onModified(self, caller, event):
         if not self._currentlyWriting:
