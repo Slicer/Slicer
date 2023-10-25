@@ -78,8 +78,8 @@ class ModuleInfo:
                 # it cannot be a Slicer module.
                 pass
 
-            # We could also detect scripted CLI modules (e.g., by checking for presence of a suitable
-            # module descriptor XML file), but this module type is quite rare, so it was not seem
-            # worth the implementation effort.
+            # We have the option to identify scripted CLI modules, such as by examining the existence of a
+            # compatible module descriptor XML file. However, this type of module is relatively uncommon, so
+            # the decision was made not to invest in implementing this feature.
 
         return result
