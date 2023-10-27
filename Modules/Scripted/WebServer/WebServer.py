@@ -10,6 +10,8 @@ import ctk
 import qt
 
 import slicer
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 from slicer.util import settingsValue, toBool
 
@@ -25,15 +27,12 @@ logger = logging.getLogger(__name__)
 class WebServer(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "Web Server"
-        parent.categories = ["Servers"]
+        parent.title = _("Web Server")
+        parent.categories = [translate("qSlicerAbstractCoreModule", "Servers")]
         parent.dependencies = []
         parent.contributors = ["Steve Pieper (Isomics)", "Andras Lasso (PerkLab Queen's University)"]
-        parent.helpText = """Provides an embedded web server for slicer that provides a web services API for interacting with slicer.
-    """
-        parent.acknowledgementText = """
-This work was partially funded by NIH grant 3P41RR013218.
-"""
+        parent.helpText = _("""Provides an embedded web server in Slicer that allows control of the application via web services API (HTTP requests).""")
+        parent.acknowledgementText = _("""This work was partially funded by NIH grant 3P41RR013218.""")
 
 
 #
@@ -63,25 +62,25 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         ScriptedLoadableModuleWidget.setup(self)
 
         # start button
-        self.startServerButton = qt.QPushButton("Start server")
+        self.startServerButton = qt.QPushButton(_("Start server"))
         self.startServerButton.name = "StartWebServer"
-        self.startServerButton.toolTip = "Start web server with the selected options."
+        self.startServerButton.toolTip = _("Start web server with the selected options.")
         self.layout.addWidget(self.startServerButton)
 
         # stop button
-        self.stopServerButton = qt.QPushButton("Stop server")
+        self.stopServerButton = qt.QPushButton(_("Stop server"))
         self.stopServerButton.name = "StopWebServer"
-        self.stopServerButton.toolTip = "Start web server with the selected options."
+        self.stopServerButton.toolTip = _("Stop the web server.")
         self.layout.addWidget(self.stopServerButton)
 
         # open browser page
-        self.localConnectionButton = qt.QPushButton("Open static pages in external browser")
-        self.localConnectionButton.toolTip = "Open a connection to the server on the local machine with your system browser."
+        self.localConnectionButton = qt.QPushButton(_("Open static pages in external browser"))
+        self.localConnectionButton.toolTip = _("Open a connection to the server on the local machine with your system browser.")
         self.layout.addWidget(self.localConnectionButton)
 
         # open slicer widget
-        self.localQtConnectionButton = qt.QPushButton("Open static pages in internal browser")
-        self.localQtConnectionButton.toolTip = "Open a connection with Qt to the server on the local machine."
+        self.localQtConnectionButton = qt.QPushButton(_("Open static pages in internal browser"))
+        self.localQtConnectionButton.toolTip = _("Open a connection with Qt to the server on the local machine.")
         self.layout.addWidget(self.localQtConnectionButton)
 
         # log window
@@ -92,8 +91,8 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         self.logMessage("<p>Status: <i>Idle</i>\n")
 
         # clear log button
-        self.clearLogButton = qt.QPushButton("Clear Log")
-        self.clearLogButton.toolTip = "Clear the log window."
+        self.clearLogButton = qt.QPushButton(_("Clear Log"))
+        self.clearLogButton.toolTip = _("Clear the log window.")
         self.layout.addWidget(self.clearLogButton)
 
         # TODO: warning dialog on first connect
@@ -102,7 +101,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         # TODO: config option for certfile (https)
 
         self.advancedCollapsibleButton = ctk.ctkCollapsibleButton()
-        self.advancedCollapsibleButton.text = "Advanced"
+        self.advancedCollapsibleButton.text = _("Advanced")
         self.layout.addWidget(self.advancedCollapsibleButton)
         advancedFormLayout = qt.QFormLayout(self.advancedCollapsibleButton)
         self.advancedCollapsibleButton.collapsed = True
@@ -110,35 +109,37 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         # handlers
 
         self.enableCORSCheck = qt.QCheckBox()
-        self.enableCORSCheck.toolTip = "Enable Cross Origin Resource Sharing (stop server to change option).  Warning: this option allows any web page to access the server."
-        advancedFormLayout.addRow("Enable CORS: ", self.enableCORSCheck)
+        self.enableCORSCheck.toolTip = _("Enable Cross Origin Resource Sharing (stop server to change option)."
+                                         " Warning: this option allows any web page to access the server.")
+        advancedFormLayout.addRow(_("Enable CORS: "), self.enableCORSCheck)
 
         self.enableSlicerHandler = qt.QCheckBox()
-        self.enableSlicerHandler.toolTip = "Enable remote control of Slicer application (stop server to change option)"
-        advancedFormLayout.addRow("Slicer API: ", self.enableSlicerHandler)
+        self.enableSlicerHandler.toolTip = _("Enable remote control of Slicer application (stop server to change option)")
+        advancedFormLayout.addRow(_("Slicer API: "), self.enableSlicerHandler)
 
         self.enableSlicerHandlerExec = qt.QCheckBox()
-        self.enableSlicerHandlerExec.toolTip = "Enable execution of arbitrary Python command using Slicer API. It only has effect if Slicer API is enabled, too (stop server to change option)."
-        advancedFormLayout.addRow("Slicer API exec: ", self.enableSlicerHandlerExec)
+        self.enableSlicerHandlerExec.toolTip = _("Enable execution of arbitrary Python command using Slicer API."
+                                                 " It only has effect if Slicer API is enabled, too (stop server to change option).")
+        advancedFormLayout.addRow(_("Slicer API exec: "), self.enableSlicerHandlerExec)
 
         self.enableDICOMHandler = qt.QCheckBox()
-        self.enableDICOMHandler.toolTip = "Enable serving Slicer DICOM database content via DICOMweb (stop server to change option)"
+        self.enableDICOMHandler.toolTip = _("Enable serving Slicer DICOM database content via DICOMweb (stop server to change option)")
         if hasattr(slicer.modules, "dicom"):
-            advancedFormLayout.addRow("DICOMweb API: ", self.enableDICOMHandler)
+            advancedFormLayout.addRow(_("DICOMweb API: "), self.enableDICOMHandler)
 
         self.enableStaticPagesHandler = qt.QCheckBox()
-        self.enableStaticPagesHandler.toolTip = "Enable serving static pages (stop server to change option)"
-        advancedFormLayout.addRow("Static pages: ", self.enableStaticPagesHandler)
+        self.enableStaticPagesHandler.toolTip = _("Enable serving static pages (stop server to change option)")
+        advancedFormLayout.addRow(_("Static pages: "), self.enableStaticPagesHandler)
 
         # log to console
         self.logToConsole = qt.QCheckBox()
-        self.logToConsole.toolTip = "Copy log messages to the python console and parent terminal (disable to improve performance)"
-        advancedFormLayout.addRow("Log to Console: ", self.logToConsole)
+        self.logToConsole.toolTip = _("Copy log messages to the python console and parent terminal (disable to improve performance)")
+        advancedFormLayout.addRow(_("Log to Console: "), self.logToConsole)
 
         # log to GUI
         self.logToGUI = qt.QCheckBox()
-        self.logToGUI.toolTip = "Copy log messages to the log widget (disable to improve performance)"
-        advancedFormLayout.addRow("Log to GUI: ", self.logToGUI)
+        self.logToGUI.toolTip = _("Copy log messages to the log widget (disable to improve performance)")
+        advancedFormLayout.addRow(_("Log to GUI: "), self.logToGUI)
 
         # Initialize GUI
         self.updateGUIFromSettings()

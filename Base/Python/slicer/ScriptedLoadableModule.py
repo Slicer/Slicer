@@ -8,6 +8,7 @@ import qt
 import vtk
 
 import slicer
+from slicer.i18n import tr as _
 
 
 __all__ = ["ScriptedLoadableModule", "ScriptedLoadableModuleWidget", "ScriptedLoadableModuleLogic", "ScriptedLoadableModuleTest"]
@@ -23,14 +24,14 @@ class ScriptedLoadableModule:
         parent.categories = []
         parent.dependencies = []
         parent.contributors = ["Andras Lasso (PerkLab, Queen's University), Steve Pieper (Isomics)"]
-        parent.helpText = """
+        parent.helpText = _("""
 This module was created from a template and the help section has not yet been updated.
-"""
+""")
 
-        parent.acknowledgementText = """
-This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>https://www.slicer.org</a> for details.
-This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a href=https://www.slicer.org>https://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>).
-"""
+        parent.acknowledgementText = _("""
+This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See {link} for details.
+This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy.
+""").format(link="<a href=\"https://www.slicer.org\">https://www.slicer.org</a>")
 
         # Set module icon from Resources/Icons/<ModuleName>.png
         moduleDir = os.path.dirname(self.parent.path)
@@ -64,7 +65,8 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
             url = slicer.app.documentationBaseUrl + docPage
         else:
             url = slicer.app.moduleDocumentationUrl(self.moduleName)
-        linkText = f'<p>For more information see the <a href="{url}">online documentation</a>.</p>'
+        linkText = ("<p>" + _("For more information, see the {url_start}online documentation{url_end}.")
+                    .format(url_start=f'<a href="{url}">', url_end="</a>") + "</p>")
         return linkText
 
     def runTest(self, msec=100, **kwargs):

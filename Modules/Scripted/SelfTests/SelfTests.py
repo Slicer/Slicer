@@ -27,7 +27,7 @@ class ExampleSelfTests:
 class SelfTests(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "SelfTests"
+        self.parent.title = _("SelfTests")
         self.parent.categories = [translate("qSlicerAbstractCoreModule", "Testing")]
         self.parent.contributors = ["Steve Pieper (Isomics)"]
         self.parent.helpText = _("""
