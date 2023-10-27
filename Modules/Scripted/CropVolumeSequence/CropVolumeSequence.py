@@ -22,7 +22,7 @@ class CropVolumeSequence(ScriptedLoadableModule):
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Crop volume sequence"
+        self.parent.title = _("Crop volume sequence")
         self.parent.categories = [translate("qSlicerAbstractCoreModule", "Sequences")]
         self.parent.dependencies = []
         self.parent.contributors = ["Andras Lasso (PerkLab, Queen's University)"]

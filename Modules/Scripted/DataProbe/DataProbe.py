@@ -21,7 +21,7 @@ class DataProbe(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
 
-        parent.title = "DataProbe"
+        parent.title = _("Data Probe")
         parent.categories = [translate("qSlicerAbstractCoreModule", "Quantification")]
         parent.contributors = ["Steve Pieper (Isomics)"]
         parent.helpText = _("""

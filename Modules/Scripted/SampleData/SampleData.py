@@ -8,6 +8,7 @@ import vtk
 
 import slicer
 from slicer.i18n import tr as _
+from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 from slicer.util import computeChecksum, extractAlgoAndDigest, TESTING_DATA_URL
 
@@ -72,8 +73,8 @@ class SampleData(ScriptedLoadableModule):
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Sample Data"
-        self.parent.categories = ["Informatics"]
+        self.parent.title = _("Sample Data")
+        self.parent.categories = [translate("qSlicerAbstractCoreModule", "Informatics")]
         self.parent.dependencies = []
         self.parent.contributors = ["Steve Pieper (Isomics), Benjamin Long (Kitware), Jean-Christophe Fillion-Robin (Kitware)"]
         self.parent.helpText = _("""
