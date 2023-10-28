@@ -168,8 +168,6 @@ protected:
   vtkMRMLModelDisplayableManager();
   ~vtkMRMLModelDisplayableManager() override;
 
-  friend class vtkMRMLThreeDViewInteractorStyle; // Access to RequestRender();
-
 private:
   vtkMRMLModelDisplayableManager(const vtkMRMLModelDisplayableManager&) = delete;
   void operator=(const vtkMRMLModelDisplayableManager&) = delete;
