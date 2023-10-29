@@ -34,6 +34,7 @@
 
 // CTK includes
 #include <ctkVTKObject.h>
+#include <ctkVTKSliceView_p.h>
 
 // qMRML includes
 #include "qMRMLSliceView.h"
@@ -52,18 +53,16 @@ class vtkMRMLCameraNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLSliceViewPrivate: public QObject
+class qMRMLSliceViewPrivate: public ctkVTKSliceViewPrivate
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLSliceView);
-protected:
-  qMRMLSliceView* const q_ptr;
 public:
   qMRMLSliceViewPrivate(qMRMLSliceView& object);
   ~qMRMLSliceViewPrivate() override;
 
-  virtual void init();
+  void init() override;
 
   void setMRMLScene(vtkMRMLScene* scene);
 

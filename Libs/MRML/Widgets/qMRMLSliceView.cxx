@@ -128,7 +128,7 @@ void qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::SetLightBox
 
 //---------------------------------------------------------------------------
 qMRMLSliceViewPrivate::qMRMLSliceViewPrivate(qMRMLSliceView& object)
-  : q_ptr(&object)
+  : ctkVTKSliceViewPrivate(object)
 {
   this->DisplayableManagerGroup = nullptr;
   this->MRMLScene = nullptr;
@@ -154,6 +154,8 @@ qMRMLSliceViewPrivate::~qMRMLSliceViewPrivate()
 void qMRMLSliceViewPrivate::init()
 {
   Q_Q(qMRMLSliceView);
+
+  this->ctkVTKSliceViewPrivate::init();
 
   // Highlight first RenderWindowItem
   q->setHighlightedBoxColor(this->InactiveBoxColor);
@@ -269,8 +271,8 @@ void qMRMLSliceViewPrivate::updateWidgetFromMRML()
 // qMRMLSliceView methods
 
 // --------------------------------------------------------------------------
-qMRMLSliceView::qMRMLSliceView(QWidget* _parent) : Superclass(_parent)
-  , d_ptr(new qMRMLSliceViewPrivate(*this))
+qMRMLSliceView::qMRMLSliceView(QWidget* _parent)
+  : Superclass(new qMRMLSliceViewPrivate(*this), _parent)
 {
   Q_D(qMRMLSliceView);
   d->init();

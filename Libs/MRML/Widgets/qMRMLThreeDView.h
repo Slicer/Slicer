@@ -118,9 +118,6 @@ public slots:
   /// account when computing the boundaries
   virtual void resetFocalPoint();
 
-protected:
-  QScopedPointer<qMRMLThreeDViewPrivate> d_ptr;
-
 private:
   Q_DECLARE_PRIVATE(qMRMLThreeDView);
   Q_DISABLE_COPY(qMRMLThreeDView);

@@ -63,7 +63,7 @@
 
 //---------------------------------------------------------------------------
 qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate(qMRMLThreeDView& object)
-  : q_ptr(&object)
+  : ctkVTKRenderViewPrivate(object)
 {
   this->DisplayableManagerGroup = nullptr;
   this->MRMLScene = nullptr;
@@ -83,6 +83,9 @@ qMRMLThreeDViewPrivate::~qMRMLThreeDViewPrivate()
 void qMRMLThreeDViewPrivate::init()
 {
   Q_Q(qMRMLThreeDView);
+
+  this->ctkVTKRenderViewPrivate::init();
+
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
   vtkNew<vtkMRMLThreeDViewInteractorStyle> interactorStyle;
@@ -246,8 +249,8 @@ void ClickCallbackFunction (
 }
 
 // --------------------------------------------------------------------------
-qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
-  , d_ptr(new qMRMLThreeDViewPrivate(*this))
+qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent)
+  : Superclass(new qMRMLThreeDViewPrivate(*this), _parent)
 {
   Q_D(qMRMLThreeDView);
   d->init();
