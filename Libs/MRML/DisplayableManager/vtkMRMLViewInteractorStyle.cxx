@@ -41,8 +41,6 @@ vtkMRMLViewInteractorStyle::vtkMRMLViewInteractorStyle()
 
   this->FocusedDisplayableManager = nullptr;
   this->MouseMovedSinceButtonDown = false;
-  this->NumberOfClicks = 0;
-  this->DoubleClickIntervalTimeSec = 0.5;
 }
 
 //----------------------------------------------------------------------------

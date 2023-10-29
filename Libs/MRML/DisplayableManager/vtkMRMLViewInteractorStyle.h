@@ -20,7 +20,6 @@
 
 // VTK includes
 #include "vtkInteractorStyle3D.h"
-#include "vtkSmartPointer.h"
 #include "vtkWeakPointer.h"
 
 // MRML includes
@@ -107,11 +106,6 @@ protected:
   void SetMouseCursor(int cursor);
 
   bool MouseMovedSinceButtonDown;
-
-  /// Measures time elapsed since first button press.
-  vtkSmartPointer<vtkTimerLog> ClickTimer;
-  int NumberOfClicks;
-  double DoubleClickIntervalTimeSec;
 
   vtkWeakPointer<vtkMRMLDisplayableManagerGroup> DisplayableManagers;
   vtkMRMLAbstractDisplayableManager* FocusedDisplayableManager;
