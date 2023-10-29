@@ -83,6 +83,7 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
   // Get display and world position
   int* displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
+  this->SetCurrentRenderer(pokedRenderer);
   if (!pokedRenderer || !inputEventData)
     {
     // can happen during application shutdown
@@ -114,7 +115,7 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
     }
   ed->SetMouseMovedSinceButtonDown(this->MouseMovedSinceButtonDown);
   ed->SetAccuratePicker(this->AccuratePicker);
-  ed->SetRenderer(this->CurrentRenderer);
+  ed->SetRenderer(pokedRenderer);
 
   ed->SetAttributesFromInteractor(this->GetInteractor());
 
@@ -136,14 +137,15 @@ void vtkMRMLThreeDViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *
 //---------------------------------------------------------------------------
 bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[3])
 {
-  this->FindPokedRenderer(x, y);
-  if (this->CurrentRenderer == nullptr)
+  vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x, y);
+  this->SetCurrentRenderer(pokedRenderer);
+  if (pokedRenderer == nullptr)
   {
     vtkDebugMacro("Pick: couldn't find the poked renderer at event position " << x << ", " << y);
     return false;
   }
 
-  bool quickPicked = (this->QuickPicker->Pick(x, y, 0, this->CurrentRenderer) > 0);
+  bool quickPicked = (this->QuickPicker->Pick(x, y, 0, pokedRenderer) > 0);
   this->QuickPicker->GetPickPosition(pickPoint);
 
   // QuickPicker ignores volume-rendered images, do a volume picking, too.
@@ -152,11 +154,11 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
     // Set picklist to volume actors to restrict the volume picker to only pick volumes
     // (otherwise it would also perform cell picking on meshes, which can take a long time).
     vtkPropCollection* pickList = this->QuickVolumePicker->GetPickList();
-    // We could get the volumes using this->CurrentRenderer->GetVolumes()
+    // We could get the volumes using pokedRenderer->GetVolumes()
     // but then we would need to copy the collection and this is a hot loop
     // (run each time the mouse moves over a 3D view).
     pickList->RemoveAllItems();
-    vtkPropCollection* props = this->CurrentRenderer->GetViewProps();
+    vtkPropCollection* props = pokedRenderer->GetViewProps();
     vtkCollectionSimpleIterator pit;
     vtkProp* aProp = nullptr;
     for (props->InitTraversal(pit); (aProp = props->GetNextProp(pit));)
@@ -165,7 +167,7 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
       }
 
     if (pickList->GetNumberOfItems() > 0
-      && this->QuickVolumePicker->Pick(x, y, 0, this->CurrentRenderer))
+      && this->QuickVolumePicker->Pick(x, y, 0, pokedRenderer))
       {
       double volumePickPoint[3] = { 0.0, 0.0, 0.0 };
       this->QuickVolumePicker->GetPickPosition(volumePickPoint);
