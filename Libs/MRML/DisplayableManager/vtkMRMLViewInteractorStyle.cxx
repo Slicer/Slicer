@@ -38,12 +38,29 @@ vtkMRMLViewInteractorStyle::vtkMRMLViewInteractorStyle()
 {
   this->EventCallbackCommand->SetCallback(vtkMRMLViewInteractorStyle::CustomProcessEvents);
 
+  this->DisplayableManagerCallbackCommand = vtkCallbackCommand::New();
+  this->DisplayableManagerCallbackCommand->SetClientData(this);
+  this->DisplayableManagerCallbackCommand->SetCallback(vtkMRMLViewInteractorStyle::DisplayableManagerCallback);
+
   this->FocusedDisplayableManager = nullptr;
   this->MouseMovedSinceButtonDown = false;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLViewInteractorStyle::~vtkMRMLViewInteractorStyle() = default;
+vtkMRMLViewInteractorStyle::~vtkMRMLViewInteractorStyle()
+{
+  if (this->DisplayableManagers)
+    {
+    int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
+    for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
+      {
+      vtkMRMLAbstractDisplayableManager* displayableManager =
+          this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex);
+      displayableManager->RemoveObserver(this->DisplayableManagerCallbackCommand);
+      }
+    }
+  this->DisplayableManagerCallbackCommand->Delete();
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
@@ -459,4 +476,18 @@ void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
 void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *interactor)
 {
   this->Superclass::SetInteractor(interactor);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::DisplayableManagerCallback(vtkObject *object, unsigned long event, void *clientData, void *callData)
+{
+  vtkMRMLViewInteractorStyle* self = reinterpret_cast<vtkMRMLViewInteractorStyle *>(clientData);
+  assert(!object->IsA("vtkMRMLAbstractDisplayableManager"));
+  self->ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager::SafeDownCast(object), event, callData);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::ProcessDisplayableManagerEvents(
+    vtkMRMLAbstractDisplayableManager * vtkNotUsed(displayableManager), unsigned long vtkNotUsed(event), void *vtkNotUsed(callData))
+{
 }

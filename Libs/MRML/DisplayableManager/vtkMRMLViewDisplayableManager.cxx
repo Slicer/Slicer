@@ -649,9 +649,12 @@ void vtkMRMLViewDisplayableManager::Create()
               "vtkMRMLCameraDisplayableManager"));
   assert(cameraDisplayableManager);
 
-  // Listen for ActiveCameraChangedEvent
-  // \tbd active camera should be set to view node instead and only observing
-  //  view node should be necessary.
+  // Listen for ActiveCameraChangedEvent to detect when the camera displayable manager
+  // sets its camera node.
+  // See vtkMRMLViewDisplayableManager::ProcessWidgetsEvents for details on how the event
+  // is handled.
+  // A simpler approach would be to directly store a reference to the camera in the view node.
+  // See https://github.com/Slicer/Slicer/issues/7333
   cameraDisplayableManager->AddObserver(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent,
                                         this->GetWidgetsCallbackCommand());
 
