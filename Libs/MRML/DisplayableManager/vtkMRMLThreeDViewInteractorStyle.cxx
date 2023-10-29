@@ -15,12 +15,15 @@
 #include "vtkMRMLThreeDViewInteractorStyle.h"
 
 // MRML includes
+#include "vtkMRMLCameraDisplayableManager.h"
 #include "vtkMRMLCrosshairDisplayableManager.h"
 #include "vtkMRMLCrosshairNode.h"
+#include "vtkMRMLDisplayableManagerGroup.h"
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
 #include <vtkCellPicker.h>
 #include <vtkEvent.h>
@@ -56,6 +59,33 @@ vtkMRMLThreeDViewInteractorStyle::~vtkMRMLThreeDViewInteractorStyle()
 void vtkMRMLThreeDViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLThreeDViewInteractorStyle::SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers)
+{
+  if (displayableManagers == this->DisplayableManagers)
+    {
+    return;
+    }
+
+  this->Superclass::SetDisplayableManagers(displayableManagers);
+
+  // Observe ActiveCameraChangedEvent
+  vtkMRMLAbstractDisplayableManager* cameraDisplayableManager =
+      this->DisplayableManagers->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager");
+  if (cameraDisplayableManager)
+    {
+    // Listen for ActiveCameraChangedEvent to detect when the camera displayable manager
+    // sets its camera node.
+    // See vtkMRMLThreeDViewInteractorStyle::ProcessDisplayableManagerEvents for details on how the event
+    // is handled.
+    // A simpler approach would be to directly store a reference to the camera in the view node.
+    // See https://github.com/Slicer/Slicer/issues/7333
+    cameraDisplayableManager->AddObserver(
+          vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent,
+          this->DisplayableManagerCallbackCommand);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -183,4 +213,21 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
     }
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLThreeDViewInteractorStyle::ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager * displayableManager,
+                                     unsigned long event, void *callData)
+{
+  this->Superclass::ProcessDisplayableManagerEvents(displayableManager, event, callData);
+
+  if (vtkMRMLCameraDisplayableManager::SafeDownCast(displayableManager))
+    {
+    vtkMRMLCameraDisplayableManager* cameraDisplayableManager =
+      vtkMRMLCameraDisplayableManager::SafeDownCast(displayableManager);
+    if (event == vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent)
+      {
+      this->SetCameraNode(cameraDisplayableManager->GetCameraNode());
+      }
+    }
 }

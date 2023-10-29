@@ -56,6 +56,8 @@ public:
   vtkTypeMacro(vtkMRMLThreeDViewInteractorStyle, vtkMRMLViewInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers) override;
+
   ///
   /// Event bindings controlling the effects of pressing mouse buttons
   /// or moving the mouse.
@@ -80,6 +82,9 @@ protected:
   ~vtkMRMLThreeDViewInteractorStyle() override;
 
   bool QuickPick(int x, int y, double pickPoint[3]);
+
+  void ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager * displayableManager,
+                                       unsigned long event, void *callData) override;
 
   vtkMRMLCameraNode *CameraNode;
 
