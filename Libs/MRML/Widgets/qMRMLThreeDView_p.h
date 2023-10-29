@@ -33,6 +33,7 @@
 //
 
 // CTK includes
+#include <ctkVTKRenderView_p.h>
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
@@ -45,18 +46,16 @@ class vtkMRMLCameraNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLThreeDViewPrivate: public QObject
+class qMRMLThreeDViewPrivate: public ctkVTKRenderViewPrivate
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLThreeDView);
-protected:
-  qMRMLThreeDView* const q_ptr;
 public:
   qMRMLThreeDViewPrivate(qMRMLThreeDView& object);
   ~qMRMLThreeDViewPrivate() override;
 
-  virtual void init();
+  void init() override;
 
   void setMRMLScene(vtkMRMLScene* scene);
 
