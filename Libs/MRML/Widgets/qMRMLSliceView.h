@@ -51,6 +51,12 @@ public:
   explicit qMRMLSliceView(QWidget* parent = nullptr);
   ~qMRMLSliceView() override;
 
+  /// Sets the interactor of the view
+  void setInteractor(vtkRenderWindowInteractor* interactor) override;
+
+  /// Returns the interactor observer of the view
+  Q_INVOKABLE vtkMRMLSliceViewInteractorStyle* interactorObserver()const;
+
   /// Add a displayable manager to the view,
   /// the displayable manager is proper to the 2D view and is not shared
   /// with other views.
@@ -72,7 +78,8 @@ public:
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
 
-  /// Returns the interactor style of the view
+  /// Returns the interactor observer of the view
+  /// \deprecated Use interactorObserver()
   Q_INVOKABLE vtkMRMLSliceViewInteractorStyle* sliceViewInteractorStyle()const;
 
   /// Convert device coordinates to XYZ coordinates. The x and y

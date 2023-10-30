@@ -27,6 +27,7 @@
 #include <vtkCamera.h>
 #include <vtkCellPicker.h>
 #include <vtkEvent.h>
+#include <vtkInteractorStyle.h>
 #include <vtkMath.h>
 #include <vtkObjectFactory.h>
 #include <vtkPoints.h>
@@ -110,7 +111,8 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
   // Get display and world position
   int* displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
-  this->SetCurrentRenderer(pokedRenderer);
+  vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(this->GetInteractor()->GetInteractorStyle());
+  interactorStyle->SetCurrentRenderer(pokedRenderer);
   if (!pokedRenderer || !inputEventData)
     {
     // can happen during application shutdown
@@ -165,7 +167,8 @@ void vtkMRMLThreeDViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *
 bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[3])
 {
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x, y);
-  this->SetCurrentRenderer(pokedRenderer);
+  vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(this->GetInteractor()->GetInteractorStyle());
+  interactorStyle->SetCurrentRenderer(pokedRenderer);
   if (pokedRenderer == nullptr)
   {
     vtkDebugMacro("Pick: couldn't find the poked renderer at event position " << x << ", " << y);

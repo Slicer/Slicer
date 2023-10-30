@@ -43,6 +43,7 @@
 class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLViewNode;
 class vtkMRMLCameraNode;
+class vtkMRMLThreeDViewInteractorStyle;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
@@ -70,6 +71,7 @@ protected:
   void initDisplayableManagers();
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
+  vtkMRMLThreeDViewInteractorStyle*  InteractorObserver;
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLViewNode*                   MRMLViewNode;
 };

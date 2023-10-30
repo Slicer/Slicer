@@ -53,6 +53,7 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
+#include <vtkInteractorStyle3D.h>
 #include <vtkNew.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
@@ -66,6 +67,7 @@ qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate(qMRMLThreeDView& object)
   : ctkVTKRenderViewPrivate(object)
 {
   this->DisplayableManagerGroup = nullptr;
+  this->InteractorObserver = vtkMRMLThreeDViewInteractorStyle::New();
   this->MRMLScene = nullptr;
   this->MRMLViewNode = nullptr;
 }
@@ -76,6 +78,10 @@ qMRMLThreeDViewPrivate::~qMRMLThreeDViewPrivate()
   if (this->DisplayableManagerGroup)
     {
     this->DisplayableManagerGroup->Delete();
+    }
+  if (this->InteractorObserver)
+    {
+    this->InteractorObserver->Delete();
     }
 }
 
@@ -88,7 +94,7 @@ void qMRMLThreeDViewPrivate::init()
 
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
-  vtkNew<vtkMRMLThreeDViewInteractorStyle> interactorStyle;
+  vtkNew<vtkInteractorStyle3D> interactorStyle;
   q->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
 
   // Set default background color
@@ -109,7 +115,6 @@ void qMRMLThreeDViewPrivate::init()
   q->setYawDirection(ctkVTKRenderView::YawLeft);
 
   this->initDisplayableManagers();
-  interactorStyle->SetDisplayableManagers(this->DisplayableManagerGroup);
 }
 
 //---------------------------------------------------------------------------
@@ -137,6 +142,7 @@ void qMRMLThreeDViewPrivate::initDisplayableManagers()
 
   this->DisplayableManagerGroup
     = factory->InstantiateDisplayableManagers(q->renderer());
+  this->InteractorObserver->SetDisplayableManagers(this->DisplayableManagerGroup);
   // Observe displayable manager group to catch RequestRender events
   this->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                     q, SLOT(scheduleRender()));
@@ -271,6 +277,21 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qMRMLThreeDView::~qMRMLThreeDView() = default;
+
+//------------------------------------------------------------------------------
+void qMRMLThreeDView::setInteractor(vtkRenderWindowInteractor* interactor)
+{
+  Q_D(qMRMLThreeDView);
+  this->Superclass::setInteractor(interactor);
+  d->InteractorObserver->SetInteractor(interactor);
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLThreeDViewInteractorStyle* qMRMLThreeDView::interactorObserver()const
+{
+  Q_D(const qMRMLThreeDView);
+  return d->InteractorObserver;
+}
 
 //------------------------------------------------------------------------------
 void qMRMLThreeDView::addDisplayableManager(const QString& displayableManagerName)

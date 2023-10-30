@@ -33,6 +33,7 @@
 // VTK includes
 #include <vtkErrorCode.h>
 #include <vtkInteractorEventRecorder.h>
+#include <vtkInteractorStyle3D.h>
 #include <vtkNew.h>
 #include <vtkPNGWriter.h>
 #include <vtkRegressionTestImage.h>
@@ -504,7 +505,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkMRMLThreeDViewInteractorStyle> iStyle;
+  vtkNew<vtkInteractorStyle3D> iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // MRML scene
@@ -581,6 +582,10 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
+  vtkNew<vtkMRMLThreeDViewInteractorStyle> iObserver;
+  iObserver->SetDisplayableManagers(displayableManagerGroup);
+  iObserver->SetInteractor(ri);
+
   // Check if GetDisplayableManagerCount returns 2
   if (displayableManagerGroup->GetDisplayableManagerCount() != 2)
     {
@@ -610,9 +615,9 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 
   // Interactor style should be vtkMRMLThreeDViewInteractorStyle
   vtkInteractorObserver * currentInteractoryStyle = ri->GetInteractorStyle();
-  if (!vtkMRMLThreeDViewInteractorStyle::SafeDownCast(currentInteractoryStyle))
+  if (!vtkInteractorStyle3D::SafeDownCast(currentInteractoryStyle))
     {
-    std::cerr << "Expected interactorStyle: vtkMRMLThreeDViewInteractorStyle" << std::endl;
+    std::cerr << "Expected interactorStyle: vtkInteractorStyle3D" << std::endl;
     std::cerr << "Current RenderWindowInteractor: "
       << (currentInteractoryStyle ? currentInteractoryStyle->GetClassName() : "Null") << std::endl;
     return EXIT_FAILURE;

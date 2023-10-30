@@ -18,6 +18,7 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkInteractorStyle3D.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
@@ -100,7 +101,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkMRMLThreeDViewInteractorStyle> iStyle;
+  vtkNew<vtkInteractorStyle3D> iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // ThreeD - Instantiate displayable managers

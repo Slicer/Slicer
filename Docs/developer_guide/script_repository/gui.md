@@ -1162,8 +1162,8 @@ w.SetEventTranslationClickAndDrag(w.WidgetStateIdle,
 For example, disable slice browsing using mouse wheel and keyboard shortcuts in the red slice viewer:
 
 ```python
-interactorStyle = slicer.app.layoutManager().sliceWidget("Red").sliceView().sliceViewInteractorStyle()
-interactorStyle.SetActionEnabled(interactorStyle.BrowseSlice, False)
+interactorObserver = slicer.app.layoutManager().sliceWidget("Red").sliceView().interactorObserver()
+interactorObserver.SetActionEnabled(interactorStyle.BrowseSlice, False)
 ```
 
 Hide all slice view controllers:
