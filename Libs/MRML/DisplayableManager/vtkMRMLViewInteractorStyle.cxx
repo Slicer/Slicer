@@ -422,9 +422,9 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
 //----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::SetMouseCursor(int cursor)
 {
-  if (this->GetCurrentRenderer() && this->GetCurrentRenderer()->GetRenderWindow())
+  if (this->GetInteractor() && this->GetInteractor()->GetRenderWindow())
     {
-    this->GetCurrentRenderer()->GetRenderWindow()->SetCurrentCursor(cursor);
+    this->GetInteractor()->GetRenderWindow()->SetCurrentCursor(cursor);
     }
 }
 
