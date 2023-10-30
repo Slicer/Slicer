@@ -263,18 +263,6 @@ protected:
   /// \sa AddInteractorObservableEvent RemoveInteractorObservableEvent
   virtual void OnInteractorEvent(int eventid);
 
-  /// Set the Abort flag on the InteractorStyle event callback
-  void SetInteractorStyleAbortFlag(int f);
-  int GetInteractorStyleAbortFlag();
-  void InteractorStyleAbortFlagOn();
-  void InteractorStyleAbortFlagOff();
-
-  /// Set the Abort flag on the Interactor event callback
-  void SetInteractorAbortFlag(int f);
-  int GetInteractorAbortFlag();
-  void InteractorAbortFlagOn();
-  void InteractorAbortFlagOff();
-
 private:
 
   vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&) = delete;
