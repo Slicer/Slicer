@@ -485,6 +485,8 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeNameFilter(QString f
     this->addItemAttributeFilter(filter);
     }
   this->invalidateFilter();
+  qWarning() << "qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeNameFilter is deprecated, "
+                "use addItemAttributeFilter or removeItemAttributeFilter instead";
 }
 
 //-----------------------------------------------------------------------------
@@ -510,6 +512,8 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeValueFilter(QString 
 
   d->ItemAttributeFilters[0].AttributeValue = filter;
   this->invalidateFilter();
+  qWarning() << "qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeValueFilter is deprecated,"
+                " use addItemAttributeFilter or removeItemAttributeFilter instead";
 }
 
 //-----------------------------------------------------------------------------
