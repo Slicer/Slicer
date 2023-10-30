@@ -488,13 +488,6 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSliceNodeModifiedEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayableManager::OnInteractorStyleEvent(int eventid)
-{
-  Superclass::OnInteractorStyleEvent(eventid);
-
-}
-
-//---------------------------------------------------------------------------
 vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidget(vtkMRMLMarkupsDisplayNode * node)
 {
   return this->Helper->GetWidget(node);
