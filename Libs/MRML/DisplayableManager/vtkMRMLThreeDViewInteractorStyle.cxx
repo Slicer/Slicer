@@ -18,10 +18,7 @@
 #include "vtkMRMLCrosshairDisplayableManager.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionEventData.h"
-#include "vtkMRMLInteractionNode.h"
-#include "vtkMRMLModelDisplayableManager.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLSliceNode.h"
 
 // VTK includes
 #include <vtkCamera.h>

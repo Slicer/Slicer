@@ -17,7 +17,6 @@
 #define __vtkMRMLSliceViewInteractorStyle_h
 
 // VTK includes
-#include "vtkWeakPointer.h"
 
 // MRML includes
 #include "vtkMRMLDisplayableManagerExport.h"
