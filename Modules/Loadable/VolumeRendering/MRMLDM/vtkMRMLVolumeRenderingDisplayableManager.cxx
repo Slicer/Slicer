@@ -1648,21 +1648,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
   this->Internal->RemoveOrphanPipelines();
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::OnInteractorStyleEvent(int eventID)
-{
-  switch (eventID)
-    {
-    case vtkCommand::EndInteractionEvent:
-    case vtkCommand::StartInteractionEvent:
-      this->Internal->UpdatePipelineTransforms(nullptr);
-      break;
-    default:
-      break;
-    }
-  this->Superclass::OnInteractorStyleEvent(eventID);
-}
-
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML()
 {
