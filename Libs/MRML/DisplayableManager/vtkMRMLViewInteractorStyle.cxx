@@ -18,7 +18,7 @@
 #include "vtkMRMLViewInteractorStyle.h"
 
 // MRML includes
-#include "vtkMRMLAbstractSliceViewDisplayableManager.h"
+#include "vtkMRMLAbstractDisplayableManager.h"
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
 #include "vtkMRMLInteractionEventData.h"
@@ -29,7 +29,6 @@
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
-#include "vtkVersionMacros.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLViewInteractorStyle);
