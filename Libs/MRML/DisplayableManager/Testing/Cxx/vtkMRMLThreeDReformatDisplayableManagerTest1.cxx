@@ -37,6 +37,7 @@
 #include <vtkCamera.h>
 #include <vtkErrorCode.h>
 #include <vtkInteractorEventRecorder.h>
+#include <vtkInteractorStyle3D.h>
 #include <vtkNew.h>
 #include <vtkPNGWriter.h>
 #include <vtkRegressionTestImage.h>
@@ -916,7 +917,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   renderWindow->SetInteractor(renderWindowInteractor.GetPointer());
 
   // Set Interactor Style
-  vtkNew<vtkMRMLThreeDViewInteractorStyle> iStyle;
+  vtkNew<vtkInteractorStyle3D> iStyle;
   renderWindowInteractor->SetInteractorStyle(iStyle.GetPointer());
 
   renderWindow->Render();
@@ -940,7 +941,9 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   renderCallback->RenderWindow = renderWindow;
   displayableManagerGroup->AddObserver(vtkCommand::UpdateEvent, renderCallback);
 
-  iStyle->SetDisplayableManagers(displayableManagerGroup);
+  vtkNew<vtkMRMLThreeDViewInteractorStyle> iObserver;
+  iObserver->SetDisplayableManagers(displayableManagerGroup);
+  iObserver->SetInteractor(renderWindowInteractor);
 
   vtkNew<vtkMRMLThreeDReformatDisplayableManager> reformatDisplayableManager;
   reformatDisplayableManager->SetMRMLApplicationLogic(applicationLogic);

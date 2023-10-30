@@ -19,16 +19,19 @@
 #define __vtkMRMLViewInteractorStyle_h
 
 // VTK includes
-#include "vtkInteractorStyle3D.h"
+#include "vtkObject.h"
 #include "vtkWeakPointer.h"
 
 // MRML includes
 #include "vtkMRMLDisplayableManagerExport.h"
 
+class vtkCallbackCommand;
+class vtkEventData;
+class vtkInteractorStyle;
 class vtkMRMLAbstractDisplayableManager;
 class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLInteractionEventData;
-class vtkTimerLog;
+class vtkRenderWindowInteractor;
 
 /// \brief Common base class for processing interaction events in MRML views
 ///
@@ -37,43 +40,44 @@ class vtkTimerLog;
 /// Some additional high-level events (such as click and double-click)
 /// are generated here.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewInteractorStyle :
-  public vtkInteractorStyle3D
+  public vtkObject
 {
 public:
   static vtkMRMLViewInteractorStyle *New();
-  vtkTypeMacro(vtkMRMLViewInteractorStyle,vtkInteractorStyle3D);
+  vtkTypeMacro(vtkMRMLViewInteractorStyle,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  void OnMouseMove() override;
-  void OnEnter() override;
-  void OnLeave() override;
-  void OnLeftButtonDown() override;
-  void OnLeftButtonUp() override;
-  void OnMiddleButtonDown() override;
-  void OnMiddleButtonUp() override;
-  void OnRightButtonDown() override;
-  void OnRightButtonUp() override;
-  void OnMouseWheelForward() override;
-  void OnMouseWheelBackward() override;
+  /// Mouse functions
+  virtual void OnMouseMove();
+  virtual void OnEnter();
+  virtual void OnLeave();
+  virtual void OnLeftButtonDown();
+  virtual void OnLeftButtonUp();
+  virtual void OnMiddleButtonDown();
+  virtual void OnMiddleButtonUp();
+  virtual void OnRightButtonDown();
+  virtual void OnRightButtonUp();
+  virtual void OnMouseWheelForward();
+  virtual void OnMouseWheelBackward();
 
   // Touch gesture interaction events
-  void OnPinch() override;
-  void OnRotate() override;
-  void OnPan() override;
-  void OnTap() override;
-  void OnLongTap() override;
+  virtual void OnPinch();
+  virtual void OnRotate();
+  virtual void OnPan();
+  virtual void OnTap();
+  virtual void OnLongTap();
 
   /// Keyboard functions
-  void OnChar() override;
-  void OnKeyPress() override;
-  void OnKeyRelease() override;
+  virtual void OnChar();
+  virtual void OnKeyPress();
+  virtual void OnKeyRelease();
 
   /// 3D event bindings
-  void OnButton3D(vtkEventData* eventData) override;
-  void OnMove3D(vtkEventData* eventData) override;
+  virtual void OnButton3D(vtkEventData* eventData);
+  virtual void OnMove3D(vtkEventData* eventData);
 
-  void OnExpose() override;
-  void OnConfigure() override;
+  virtual void OnExpose();
+  virtual void OnConfigure();
 
   virtual void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers);
 
@@ -93,15 +97,19 @@ public:
   /// Return true if the event is processed.
   virtual bool DelegateInteractionEventDataToDisplayableManagers(vtkMRMLInteractionEventData* eventData);
 
-  ///
-  /// Reimplemented to set additional observers
-  void SetInteractor(vtkRenderWindowInteractor *interactor) override;
+  vtkGetObjectMacro(Interactor, vtkRenderWindowInteractor);
+  virtual void SetInteractor(vtkRenderWindowInteractor *interactor);
 
 protected:
   vtkMRMLViewInteractorStyle();
   ~vtkMRMLViewInteractorStyle() override;
 
+  vtkRenderWindowInteractor* Interactor{nullptr};
+  vtkInteractorStyle* GetInteractorStyle();
+
+  vtkCallbackCommand* EventCallbackCommand;
   static void CustomProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata);
+  static void ProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata);
 
   vtkCallbackCommand* DisplayableManagerCallbackCommand;
   static void DisplayableManagerCallback(vtkObject *object, unsigned long event, void *clientData, void *callData);

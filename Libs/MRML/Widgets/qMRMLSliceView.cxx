@@ -62,6 +62,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkInteractorStyleUser.h>
 #include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------
@@ -131,6 +132,7 @@ qMRMLSliceViewPrivate::qMRMLSliceViewPrivate(qMRMLSliceView& object)
   : ctkVTKSliceViewPrivate(object)
 {
   this->DisplayableManagerGroup = nullptr;
+  this->InteractorObserver = vtkMRMLSliceViewInteractorStyle::New();
   this->MRMLScene = nullptr;
   this->MRMLSliceNode = nullptr;
   this->InactiveBoxColor = QColor(95, 95, 113);
@@ -143,6 +145,10 @@ qMRMLSliceViewPrivate::~qMRMLSliceViewPrivate()
   if (this->DisplayableManagerGroup)
     {
     this->DisplayableManagerGroup->Delete();
+    }
+  if (this->InteractorObserver)
+    {
+    this->InteractorObserver->Delete();
     }
   if (this->LightBoxRendererManagerProxy)
     {
@@ -162,13 +168,13 @@ void qMRMLSliceViewPrivate::init()
 
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
-  vtkNew<vtkMRMLSliceViewInteractorStyle> interactorStyle;
+  vtkNew<vtkInteractorStyleUser> interactorStyle;
+
   q->interactor()->SetInteractorStyle(interactorStyle.GetPointer());
 
   this->LightBoxRendererManagerProxy->SetLightBoxRendererManager(
     q->lightBoxRendererManager());
   this->initDisplayableManagers();
-  interactorStyle->SetDisplayableManagers(this->DisplayableManagerGroup);
 
   // Force an initial render to ensure that the render window creates an OpenGL
   // context. If operations that require a context--such as hardware
@@ -205,6 +211,8 @@ void qMRMLSliceViewPrivate::initDisplayableManagers()
   this->DisplayableManagerGroup
     = factory->InstantiateDisplayableManagers(
       q->lightBoxRendererManager()->GetRenderer(0));
+
+  this->InteractorObserver->SetDisplayableManagers(this->DisplayableManagerGroup);
   // Observe displayable manager group to catch RequestRender events
   q->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                  q, SLOT(scheduleRender()));
@@ -281,6 +289,21 @@ qMRMLSliceView::qMRMLSliceView(QWidget* _parent)
 
 // --------------------------------------------------------------------------
 qMRMLSliceView::~qMRMLSliceView() = default;
+
+//------------------------------------------------------------------------------
+void qMRMLSliceView::setInteractor(vtkRenderWindowInteractor* interactor)
+{
+  Q_D(qMRMLSliceView);
+  this->Superclass::setInteractor(interactor);
+  d->InteractorObserver->SetInteractor(interactor);
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLSliceViewInteractorStyle* qMRMLSliceView::interactorObserver()const
+{
+  Q_D(const qMRMLSliceView);
+  return d->InteractorObserver;
+}
 
 //------------------------------------------------------------------------------
 void qMRMLSliceView::addDisplayableManager(const QString& displayableManagerName)
@@ -361,7 +384,8 @@ vtkMRMLSliceNode* qMRMLSliceView::mrmlSliceNode()const
 //---------------------------------------------------------------------------
 vtkMRMLSliceViewInteractorStyle* qMRMLSliceView::sliceViewInteractorStyle()const
 {
-  return vtkMRMLSliceViewInteractorStyle::SafeDownCast(this->interactorStyle());
+  qWarning("qMRMLSliceView::sliceViewInteractorStyle is deprecated. Use interactorObserver instead.");
+  return this->interactorObserver();
 }
 
 // --------------------------------------------------------------------------

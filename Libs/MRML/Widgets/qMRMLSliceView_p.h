@@ -50,6 +50,7 @@
 class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLSliceNode;
 class vtkMRMLCameraNode;
+class vtkMRMLSliceViewInteractorStyle;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
@@ -77,6 +78,7 @@ protected:
   void initDisplayableManagers();
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
+  vtkMRMLSliceViewInteractorStyle*   InteractorObserver;
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLSliceNode*                  MRMLSliceNode;
   QColor                             InactiveBoxColor;

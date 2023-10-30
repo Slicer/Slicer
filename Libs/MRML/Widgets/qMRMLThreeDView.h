@@ -32,6 +32,7 @@ class qMRMLThreeDViewPrivate;
 class vtkMRMLAbstractDisplayableManager;
 class vtkMRMLCameraNode;
 class vtkMRMLScene;
+class vtkMRMLThreeDViewInteractorStyle;
 class vtkMRMLViewNode;
 class vtkCollection;
 
@@ -50,6 +51,12 @@ public:
   explicit qMRMLThreeDView(QWidget* parent = nullptr);
   ~qMRMLThreeDView() override;
 
+  /// Sets the interactor of the view
+  void setInteractor(vtkRenderWindowInteractor* interactor) override;
+
+  /// Returns the interactor observer of the view
+  Q_INVOKABLE vtkMRMLThreeDViewInteractorStyle* interactorObserver()const;
+
   /// Add a displayable manager to the view,
   /// the displayable manager is proper to the 3D view and is not shared
   /// with other views.
@@ -67,9 +74,6 @@ public:
 
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode()const;
-
-  /// Returns the interactor style of the view
-  //vtkInteractorObserver* interactorStyle()const;
 
   /// Methods to rotate/reset the camera,
   /// Can defined a view axis by its index (from 0 to 5)
