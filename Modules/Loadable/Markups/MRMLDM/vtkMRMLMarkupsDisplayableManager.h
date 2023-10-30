@@ -139,9 +139,6 @@ protected:
   /// \sa IsManageable(vtkMRMLNode*), IsCorrectDisplayableManager()
   virtual bool IsManageable(const char* nodeClassName);
 
-  /// Respond to interactor style events
-  void OnInteractorStyleEvent(int eventid) override;
-
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);
 
