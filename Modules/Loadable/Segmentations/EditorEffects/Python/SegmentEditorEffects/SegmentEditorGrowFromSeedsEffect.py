@@ -22,6 +22,7 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
         scriptedEffect.name = 'Grow from seeds'  # no tr (don't translate it because modules find effects by name)
         scriptedEffect.title = _('Grow from seeds')
         self.minimumNumberOfSegments = 2
+        self.minimumNumberOfSegmentsWithEditableArea = 1  # if mask is specified then one input segment is sufficient
         self.clippedMasterImageDataRequired = True  # source volume intensities are used by this effect
         self.clippedMaskImageDataRequired = True  # masking is used
         self.growCutFilter = None
