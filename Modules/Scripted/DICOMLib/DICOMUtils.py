@@ -24,7 +24,7 @@ comment = """
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByUID(patientUID):
+def loadPatientByUID(patientUID, messages=None, progressCallback=None):
     """ Load patient by patient UID from DICOM database.
     Returns list of loaded node ids.
 
@@ -78,7 +78,7 @@ def loadPatientByUID(patientUID):
     if len(seriesUIDs) == 0:
         raise OSError('No series found in patient with DICOM database UID ' + patientUIDstr)
 
-    return loadSeriesByUID(seriesUIDs)
+    return loadSeriesByUID(seriesUIDs, messages, progressCallback)
 
 
 # ------------------------------------------------------------------------------
@@ -97,14 +97,14 @@ def getDatabasePatientUIDByPatientName(name):
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByName(patientName):
+def loadPatientByName(patientName, messages=None, progressCallback=None):
     """ Load patient by patient name from DICOM database.
     Returns list of loaded node ids.
     """
     patientUID = getDatabasePatientUIDByPatientName(patientName)
     if patientUID is None:
         raise OSError('Patient not found by name %s' % patientName)
-    return loadPatientByUID(patientUID)
+    return loadPatientByUID(patientUID, messages, progressCallback)
 
 
 # ------------------------------------------------------------------------------
@@ -134,33 +134,33 @@ def getDatabasePatientUIDByPatientID(patientID):
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByPatientID(patientID):
+def loadPatientByPatientID(patientID, messages=None, progressCallback=None):
     """ Load patient from DICOM database by DICOM PatientID.
     Returns list of loaded node ids.
     """
     patientUID = getDatabasePatientUIDByPatientID(patientID)
     if patientUID is None:
         raise OSError('Patient not found by PatientID %s' % patientID)
-    return loadPatientByUID(patientUID)
+    return loadPatientByUID(patientUID, messages, progressCallback)
 
 
 # ------------------------------------------------------------------------------
-def loadPatient(uid=None, name=None, patientID=None):
+def loadPatient(uid=None, name=None, patientID=None, messages=None, progressCallback=None):
     """ Load patient from DICOM database fr uid, name, or patient ID.
     Returns list of loaded node ids.
     """
     if uid is not None:
-        return loadPatientByUID(uid)
+        return loadPatientByUID(uid, messages, progressCallback)
     elif name is not None:
-        return loadPatientByName(name)
+        return loadPatientByName(name, messages, progressCallback)
     elif patientID is not None:
-        return loadPatientByPatientID(patientID)
+        return loadPatientByPatientID(patientID, messages, progressCallback)
 
     raise ValueError('One of the following arguments needs to be specified: uid, name, patientID')
 
 
 # ------------------------------------------------------------------------------
-def loadSeriesByUID(seriesUIDs):
+def loadSeriesByUID(seriesUIDs, messages=None, progressCallback=None):
     """ Load multiple series by UID from DICOM database.
     Returns list of loaded node ids.
     """
@@ -179,7 +179,11 @@ def loadSeriesByUID(seriesUIDs):
         # No files found for DICOM series list
         return []
 
-    loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
+    loadablesByPlugin, _ = getLoadablesFromFileLists(
+        fileLists,
+        messages=messages,
+        progressCallback=progressCallback,
+    )
     selectHighestConfidenceLoadables(loadablesByPlugin)
     return loadLoadables(loadablesByPlugin)
 
@@ -221,7 +225,7 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
 
 
 # ------------------------------------------------------------------------------
-def loadByInstanceUID(instanceUID):
+def loadByInstanceUID(instanceUID, messages=None, progressCallback=None):
     """ Load with the most confident loadable that contains the instanceUID from DICOM database.
     This helps in the case where an instance is part of a series which may offer multiple
     loadables, such as when a series has multiple time points where
@@ -241,7 +245,11 @@ def loadByInstanceUID(instanceUID):
     filePath = slicer.dicomDatabase.fileForInstance(instanceUID)
     seriesUID = slicer.dicomDatabase.seriesForFile(filePath)
     fileList = slicer.dicomDatabase.filesForSeries(seriesUID)
-    loadablesByPlugin, loadEnabled = getLoadablesFromFileLists([fileList])
+    loadablesByPlugin, _ = getLoadablesFromFileLists(
+        [fileList],
+        messages=messages,
+        progressCallback=progressCallback,
+    )
     # keep only the loadables that include this instance's file and is highest confidence
     highestConfidence = {
         'confidence': 0,
@@ -249,7 +257,6 @@ def loadByInstanceUID(instanceUID):
         'loadable': None
     }
     for plugin in loadablesByPlugin.keys():
-        loadablesWithInstance = []
         for loadable in loadablesByPlugin[plugin]:
             if filePath in loadable.files:
                 if loadable.confidence > highestConfidence['confidence']:
@@ -457,7 +464,13 @@ def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
 
 
 # ------------------------------------------------------------------------------
-def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expectedLoadedNodes=None):
+def loadSeriesWithVerification(
+    seriesUIDs,
+    expectedSelectedPlugins=None,
+    expectedLoadedNodes=None,
+    messages=None,
+    progressCallback=None,
+):
     """ Load series by UID, and verify loadable selection and loaded nodes.
 
     ``selectedPlugins`` example: { 'Scalar Volume':1, 'RT':2 }
@@ -478,7 +491,11 @@ def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expecte
         logging.error('No files found for DICOM series list')
         return False
 
-    loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
+    loadablesByPlugin, _ = getLoadablesFromFileLists(
+        fileLists,
+        messages=messages,
+        progressCallback=progressCallback,
+    )
     success = True
 
     # Verify loadables if baseline is given
@@ -510,7 +527,7 @@ def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expecte
             actualLoadedNodes[nodeType] = nodeCollection.GetNumberOfItems()
 
     # Load selected data
-    loadedNodeIDs = loadLoadables(loadablesByPlugin)
+    loadLoadables(loadablesByPlugin)
 
     if expectedLoadedNodes is not None:
         for nodeType in expectedLoadedNodes.keys():
