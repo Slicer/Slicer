@@ -422,7 +422,7 @@ class TypedParameterNodeTest(unittest.TestCase):
             nonlocal count
             count += 1
             return count - 1
-        
+
         @parameterNodeWrapper
         class ParameterNodeType:
             x: Annotated[int, Default(generator=nextCount)]

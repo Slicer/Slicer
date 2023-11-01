@@ -34,7 +34,7 @@ class CustomClass:
     y: int
     z: int
 
-# The Serializer class is used to read and write the values to the underlying 
+# The Serializer class is used to read and write the values to the underlying
 # vtkMRMLScriptedModuleNode. There are built-in serializers for each of the support built-in types.
 # Adding a new serializer involves deriving from Serializer and implementing the following methods.
 # The @parameterNodeSerializer decorator registers the serializer so it can be found by a

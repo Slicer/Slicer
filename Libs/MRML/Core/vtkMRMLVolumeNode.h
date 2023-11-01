@@ -98,8 +98,8 @@ public:
   static const char* ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *IJKToRAS);
 
   void SetIJKToRASDirections(double dirs[3][3]);
-  void SetIJKToRASDirections(double ir, double jr, double kr, 
-                             double ia, double ja, double ka, 
+  void SetIJKToRASDirections(double ir, double jr, double kr,
+                             double ia, double ja, double ka,
                              double is, double js, double ks);
   void SetIToRASDirection(double ir, double ia, double is);
   void SetJToRASDirection(double jr, double ja, double js);

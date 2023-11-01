@@ -112,7 +112,7 @@ To select a MRML node as the "active" or "edited" node in a module the module wi
 ### Purpose of Remote Modules
 
 * Keep the Slicer core lean.
-* Allow individuals or organizations to work on their own private modules and optionally make these modules available to the Slicer users without the need to use the extensions manager. 
+* Allow individuals or organizations to work on their own private modules and optionally make these modules available to the Slicer users without the need to use the extensions manager.
 
 ### Policy for Adding Remote Modules
 
@@ -121,7 +121,7 @@ To select a MRML node as the "active" or "edited" node in a module the module wi
 * Module is documented on the wiki.
 * Module names must be unique.
 * At no time in the future should a module in the main Slicer repository depend on Remote module.
-* Remote modules MUST define a specific **unique** revision (i.e. git hash). It is important for debugging and scientific reproducibility that there be a unique set of code associated with each slicer revision. 
+* Remote modules MUST define a specific **unique** revision (i.e. git hash). It is important for debugging and scientific reproducibility that there be a unique set of code associated with each slicer revision.
 
 ### Procedure for Adding a Remote Module
 

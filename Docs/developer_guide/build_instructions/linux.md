@@ -35,7 +35,7 @@ part of the *superbuild*:
   - Private
 - libXt
 
-### Debian 12 Bookworm (Stable) and Bullseye 11 (OldStable) 
+### Debian 12 Bookworm (Stable) and Bullseye 11 (OldStable)
 
 Install the development tools and the support libraries:
 

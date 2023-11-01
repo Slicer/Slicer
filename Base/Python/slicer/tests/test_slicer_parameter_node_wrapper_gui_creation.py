@@ -165,7 +165,7 @@ class ParameterNodeWrapperGuiCreationTest(unittest.TestCase):
             f: Annotated[float, Label("THE FLOAT")]
             s: str
         gui = createGui(ParameterNodeWrapper)
-        
+
         # Overall is a qSlicerWidget
         self.assertIsInstance(gui, slicer.qSlicerWidget)
 

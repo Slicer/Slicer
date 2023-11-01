@@ -217,7 +217,7 @@ class FloatRangeGuiCreator(GuiCreator):
         if unannotatedType(datatype) == FloatRange:
             return CanRepresentWithMinMax
         return CannotRepresent
-    
+
     @staticmethod
     def create(datatype):
         return ctk.ctkRangeWidget()

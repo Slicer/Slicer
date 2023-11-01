@@ -289,7 +289,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         class ModelInfo:
             model: vtkMRMLModelNode
             treatSpecial: bool
-        
+
         @parameterNodeWrapper
         class ParameterNodeType:
             nodes: list[ModelInfo]
