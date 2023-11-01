@@ -7,6 +7,8 @@ repos:
   - id: check-case-conflict
   - id: check-merge-conflict
   - id: check-symlinks
+  - id: trailing-whitespace
+    exclude: "\\.(svg|vtk|vtp)$"
 
 - repo: https://github.com/PyCQA/flake8
   rev: "6.0.0"
