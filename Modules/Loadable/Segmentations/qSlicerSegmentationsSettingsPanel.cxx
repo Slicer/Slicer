@@ -182,7 +182,7 @@ void qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode(QString mode)
     {
     this->segmentationsLogic()->SetDefaultOverwriteMode(
       vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(mode.toStdString().c_str()));
-    } 
+    }
 }
 
 // --------------------------------------------------------------------------

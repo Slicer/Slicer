@@ -16,7 +16,7 @@
  fixedLandmarks="" movingLandmarks="" rigidMaxIterations="100"
  rigidSamplingRatio="0.01" affineMaxIterations="50"
  affineSamplingRatio="0.02" bsplineMaxIterations="20"
- bsplineSamplingRatio="0.1" controlPointSpacing="40" ></CommandLineModule> 
+ bsplineSamplingRatio="0.1" controlPointSpacing="40" ></CommandLineModule>
 <CommandLineModule
  id="vtkMRMLCommandLineModuleNode2" name="Fast Sampling"
  hideFromEditors="true" selectable="true" selected="false"

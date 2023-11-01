@@ -7,7 +7,7 @@ The Extension Wizard modules provides a graphical interface within Slicer to aid
 ## Panels and their use
 
 - **Extension Tools**:
-  - **Create Extension**: Create a new extension from a specified template, given a name and destination. The newly created template is automatically selected for editing. 
+  - **Create Extension**: Create a new extension from a specified template, given a name and destination. The newly created template is automatically selected for editing.
   - **Select Extension**: Choose an existing extension to edit. If the extension provides scripted modules that are not already loaded, an option to load such modules is provided.
 
 - **Extension Editor**:

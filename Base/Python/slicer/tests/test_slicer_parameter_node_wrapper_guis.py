@@ -358,7 +358,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
             A = 'A'
             B = 'B'
             C = 'C'
-        
+
         class TestIntEnum(enum.IntEnum):
             X = 1
             Y = 3

@@ -216,7 +216,7 @@ def _processParameterPack(classtype):
 
         setattr(classtype, parameter.basename, _makeConcreteProperty(parameter.basename))
         setattr(classtype, _serializerName(parameter.basename), serializer)
-    
+
     # give default methods if not already specified
     if "__init__" not in classtype.__dict__:
         setattr(classtype, "__init__", _initMethod)
