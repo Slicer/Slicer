@@ -695,7 +695,8 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
         dist1 = distances[file1]
         spacing0 = dist1 - dist0
         n = 1
-        for fileN in files[1:]:
+        for n in range(1, len(files)):
+            fileN = files[n]
             fileNminus1 = files[n - 1]
             distN = distances[fileN]
             distNminus1 = distances[fileNminus1]
@@ -703,14 +704,13 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
             spaceError = spacingN - spacing0
             if abs(spaceError) > epsilon:
                 spaceWarnings += 1
-                warningText += f"Images are not equally spaced (a difference of {spaceError:g} vs {spacing0:g} in spacings was detected)."
+                warningText += f"Image slices are not equally spaced ({spacing0:g} spacing was expected, {spacingN:g} spacing was found between files {fileN} and {fileNminus1})."
                 if acquisitionGeometryRegularizationEnabled:
                     warningText += "  Slicer will apply a transform to this series trying to regularize the volume. Please use caution.\n"
                 else:
                     warningText += ("  If loaded image appears distorted, enable 'Acquisition geometry regularization'"
                                     " in Application settings / DICOM / DICOMScalarVolumePlugin. Please use caution.\n")
                 break
-            n += 1
 
     if spaceWarnings != 0:
         logging.warning("Geometric issues were found with %d of the series. Please use caution.\n" % spaceWarnings)
