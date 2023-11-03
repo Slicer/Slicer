@@ -382,10 +382,10 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
     d->LockTableButton->setToolTip(tr("Click to lock this table to prevent modification of the values in the user interface"));
     }
 
-  if (tableNode->GetUseColumnNameAsColumnHeader() != d->LockFirstRowButton->isChecked())
+  if (tableNode->GetUseColumnTitleAsColumnHeader() != d->LockFirstRowButton->isChecked())
     {
     bool wasBlocked = d->LockFirstRowButton->blockSignals(true);
-    d->LockFirstRowButton->setChecked(tableNode->GetUseColumnNameAsColumnHeader());
+    d->LockFirstRowButton->setChecked(tableNode->GetUseColumnTitleAsColumnHeader());
     d->LockFirstRowButton->blockSignals(wasBlocked);
     }
 

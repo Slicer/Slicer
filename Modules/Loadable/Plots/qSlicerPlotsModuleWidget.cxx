@@ -169,10 +169,10 @@ void qSlicerPlotsModuleWidget::onMRMLPlotChartNodeModified(vtkObject* caller)
     d->LockPlotButton->setToolTip(QString("Click to lock this table to prevent modification of the values in the user interface"));
     }
 
-  if (d->MRMLPlotChartNode->GetUseColumnNameAsColumnHeader() != d->LockFirstRowButton->isChecked())
+  if (d->MRMLPlotChartNode->GetGetUseColumnTitleAsColumnHeader() != d->LockFirstRowButton->isChecked())
     {
     bool wasBlocked = d->LockFirstRowButton->blockSignals(true);
-    d->LockFirstRowButton->setChecked(d->MRMLPlotChartNode->GetUseColumnNameAsColumnHeader());
+    d->LockFirstRowButton->setChecked(d->MRMLPlotChartNode->GetGetUseColumnTitleAsColumnHeader());
     d->LockFirstRowButton->blockSignals(wasBlocked);
     }
 

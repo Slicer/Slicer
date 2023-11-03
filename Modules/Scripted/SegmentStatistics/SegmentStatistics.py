@@ -221,7 +221,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         self.pluginEnabledCheckboxes = {}
         self.parametersLayout.addRow(qt.QLabel(_("Enabled segment statistics plugins:")))
         for plugin in self.logic.plugins:
-            checkbox = qt.QCheckBox(_("{pluginName} Statistics").format(pluginName=plugin.name))
+            checkbox = qt.QCheckBox(_("{pluginName} Statistics").format(pluginName=plugin.title))
             checkbox.checked = True
             checkbox.connect("stateChanged(int)", self.updateParameterNodeFromGui)
             optionButton = qt.QPushButton(_("Options"))
@@ -346,7 +346,7 @@ class SegmentStatisticsParameterEditorDialog(qt.QDialog):
         else:
             for plugin in self.logic.plugins:
                 pluginOptionsCollapsibleButton = ctk.ctkCollapsibleGroupBox(self.parametersWidget)
-                pluginOptionsCollapsibleButton.setTitle(plugin.name)
+                pluginOptionsCollapsibleButton.setTitle(plugin.title)
                 pluginOptionsFormLayout = qt.QFormLayout(pluginOptionsCollapsibleButton)
                 pluginOptionsFormLayout.addRow(plugin.optionsWidget)
                 self.parametersLayout.addRow(pluginOptionsCollapsibleButton)
@@ -363,6 +363,9 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
 
     registeredPlugins = [LabelmapSegmentStatisticsPlugin, ScalarVolumeSegmentStatisticsPlugin,
                          ClosedSurfaceSegmentStatisticsPlugin]
+
+    segmentColumnName = "Segment"
+    segmentColumnTitle = _("Segment")
 
     @staticmethod
     def registerPlugin(plugin):
@@ -386,7 +389,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         self.isSingletonParameterNode = False
         self.parameterNode = None
 
-        self.keys = ["Segment"]
+        self.keys = [SegmentStatisticsLogic.segmentColumnName]
         self.notAvailableValueString = ""
         self.reset()
 
@@ -421,7 +424,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
 
     def reset(self):
         """Clear all computation results"""
-        self.keys = ["Segment"]
+        self.keys = [SegmentStatisticsLogic.segmentColumnName]
         for plugin in self.plugins:
             self.keys += [plugin.toLongKey(k) for k in plugin.keys]
         params = self.getParameterNode()
@@ -479,7 +482,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         statistics = self.getStatistics()
         if segmentID not in statistics["SegmentIDs"]:
             statistics["SegmentIDs"].append(segmentID)
-        statistics[segmentID, "Segment"] = segment.GetName()
+        statistics[segmentID, SegmentStatisticsLogic.segmentColumnName] = segment.GetName()
 
         # apply all enabled plugins
         for plugin in self.plugins:
@@ -526,51 +529,121 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
                     break
         return nonEmptyKeys
 
-    def getHeaderNames(self, nonEmptyKeysOnly=True):
-        # Derive column header names based on: (a) DICOM information if present,
-        # (b) measurement info name if present (c) measurement key as fallback.
-        # Duplicate names get a postfix [1][2]... to make them unique
-        # Initial and unique column header names are returned
+    @staticmethod
+    def makeUnique(names, suffixes, differentiators=None):
+        # Add suffix to name if name+differentiator is not unique in the list
+        if differentiators:
+            fullNames = [f"{name} & {differentiator}" for name, differentiator in zip(names, differentiators)]
+        else:
+            fullNames = names
+        uniqueNames = []
+        for i in range(len(names)):
+            isUnique = fullNames.count(fullNames[i]) == 1
+            if isUnique:
+                uniqueNames.append(names[i])
+            else:
+                uniqueNames.append(names[i]+suffixes[i])
+        return uniqueNames
+
+    def getColumnNamesTitles(self, nonEmptyKeysOnly=True):
+        """Get unique column header names and titles for each measurement.
+        Two maps are returned, from measurement key to column name or title.
+        Name is for machine processing, not translated, based on measurement name
+        (or terminology entries).
+        Title is for display, translatable. It comes from measurement title and units.
+        Duplicate names get a suffix (acronym of the measurement plugin) to make them unique.
+        """
         keys = self.getNonEmptyKeys() if nonEmptyKeysOnly else self.keys
+        # keys = ['Segment', 'LabelmapSegmentStatisticsPlugin.voxel_count',
+        # 'LabelmapSegmentStatisticsPlugin.volume_mm3', 'LabelmapSegmentStatisticsPlugin.volume_cm3',
+        # 'ScalarVolumeSegmentStatisticsPlugin.voxel_count', 'ScalarVolumeSegmentStatisticsPlugin.volume_mm3',
+        # 'ScalarVolumeSegmentStatisticsPlugin.volume_cm3', 'ScalarVolumeSegmentStatisticsPlugin.min',...
+
         statistics = self.getStatistics()
-        headerNames = []
+        # statistics = { 'SegmentIDs': ['Segment_1', 'Segment_2', 'Segment_3'],
+        # 'MeasurementInfo': {
+        #     'LabelmapSegmentStatisticsPlugin.volume_mm3': {
+        #         'name': 'Volume mm3',
+        #         'title': 'Terfogat',
+        #         'description': 'Terfogat cimketerkep reprezentaciobol szamolva',
+        #         'units': 'mm3',
+        #         'DICOM.QuantityCode': 'CodeValue:118565006|CodingSchemeDesignator:SCT|CodeMeaning:Volume',
+        #         'DICOM.UnitsCode': 'CodeValue:mm3|CodingSchemeDesignator:UCUM|CodeMeaning:mm3'},
+        #     'LabelmapSegmentStatisticsPlugin.volume_cm3': {
+        #         'name': 'Volume cm3'...
+
+        columnNames = []
+        columnTitles = []
+        unitsTitles = []
+        pluginNameSuffixes = []
+        pluginTitleSuffixes = []
         for key in keys:
             name = key
+            title = ""
+            unitsTitle = ""
             info = statistics["MeasurementInfo"][key] if key in statistics["MeasurementInfo"] else {}
-            entry = slicer.vtkCodedEntry()
-            dicomBasedName = False
             if info:
-                if "DICOM.DerivationCode" in info and info["DICOM.DerivationCode"]:
-                    entry.SetFromString(info["DICOM.DerivationCode"])
-                    name = entry.GetCodeMeaning()
-                    dicomBasedName = True
-                elif "DICOM.QuantityCode" in info and info["DICOM.QuantityCode"]:
-                    entry.SetFromString(info["DICOM.QuantityCode"])
-                    name = entry.GetCodeMeaning()
-                    dicomBasedName = True
-                elif "name" in info and info["name"]:
+                # Units
+                if "units" in info and info["units"]:
+                    unitsTitle = info["units"]
+
+                # Column name
+                if "name" in info and info["name"]:
                     name = info["name"]
-                if dicomBasedName and "DICOM.UnitsCode" in info and info["DICOM.UnitsCode"]:
-                    entry.SetFromString(info["DICOM.UnitsCode"])
-                    units = entry.GetCodeValue()
-                    if len(units) > 0 and units[0] == "[" and units[-1] == "]":
-                        units = units[1:-1]
-                    if len(units) > 0:
-                        name += " [" + units + "]"
-                elif "units" in info and info["units"] and len(info["units"]) > 0:
-                    units = info["units"]
-                    name += " [" + units + "]"
-            headerNames.append(name)
-        uniqueHeaderNames = list(headerNames)
-        for duplicateName in {name for name in uniqueHeaderNames if uniqueHeaderNames.count(name) > 1}:
-            j = 1
-            for i in range(len(uniqueHeaderNames)):
-                if uniqueHeaderNames[i] == duplicateName:
-                    uniqueHeaderNames[i] = duplicateName + " (" + str(j) + ")"
-                    j += 1
-        headerNames = {keys[i]: headerNames[i] for i in range(len(keys))}
-        uniqueHeaderNames = {keys[i]: uniqueHeaderNames[i] for i in range(len(keys))}
-        return headerNames, uniqueHeaderNames
+                else:
+                    if "DICOM.DerivationCode" in info and info["DICOM.DerivationCode"]:
+                        entry = slicer.vtkCodedEntry()
+                        entry.SetFromString(info["DICOM.DerivationCode"])
+                        name = entry.GetCodeMeaning()
+                    elif "DICOM.QuantityCode" in info and info["DICOM.QuantityCode"]:
+                        entry = slicer.vtkCodedEntry()
+                        entry.SetFromString(info["DICOM.QuantityCode"])
+                        name = entry.GetCodeMeaning()
+                    # Append unit to name (use unitsName if present, fall back to unitsTitle)
+                    units = ""
+                    if "DICOM.UnitsCode" in info and info["DICOM.UnitsCode"]:
+                        entry = slicer.vtkCodedEntry()
+                        entry.SetFromString(info["DICOM.UnitsCode"])
+                        units = entry.GetCodeValue()
+                        if len(units) > 0 and units[0] == "[" and units[-1] == "]":
+                            units = units[1:-1]
+                    if (not units) and unitsTitle:
+                        units = unitsTitle  # fall back to use displayable units
+                    if units:
+                        name += " " + units
+
+                # Column title (translatable)
+                if "title" in info and info["title"]:
+                    title = info["title"]
+
+            elif key == SegmentStatisticsLogic.segmentColumnName:
+                title = SegmentStatisticsLogic.segmentColumnTitle
+
+            columnNames.append(name)
+            columnTitles.append(title)
+            unitsTitles.append(unitsTitle)
+
+            # Save suffix generated from acronym of the plugin name (Scalar Volume => SV)
+            # that is added to the column name if the column name is not unique within the table.
+            plugin = self.getPluginByKey(key)
+            if plugin and plugin.name:
+                pluginAcronym = "".join(word[0].upper() for word in plugin.name.split())
+                pluginNameSuffixes.append(f" ({pluginAcronym})")
+            else:
+                pluginNameSuffixes.append("")
+            if plugin and plugin.title:
+                pluginAcronym = "".join(word[0].upper() for word in plugin.title.split())
+                pluginTitleSuffixes.append(f" ({pluginAcronym})")
+            else:
+                pluginTitleSuffixes.append("")
+
+        # Make unique
+        columnNames = SegmentStatisticsLogic.makeUnique(columnNames, pluginNameSuffixes)
+        columnTitles = SegmentStatisticsLogic.makeUnique(columnTitles, pluginTitleSuffixes, unitsTitles)
+        # Make a map from key
+        columnNames = {keys[i]: columnNames[i] for i in range(len(keys))}
+        columnTitles = {keys[i]: columnTitles[i] for i in range(len(keys))}
+        return columnNames, columnTitles
 
     def exportToTable(self, table, nonEmptyKeysOnly=True):
         """Export statistics to table node"""
@@ -578,7 +651,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         table.RemoveAllColumns()
 
         keys = self.getNonEmptyKeys() if nonEmptyKeysOnly else self.keys
-        columnHeaderNames, uniqueColumnHeaderNames = self.getHeaderNames(nonEmptyKeysOnly)
+        columnNames, columnTitles = self.getColumnNamesTitles(nonEmptyKeysOnly)
 
         # Define table columns
         statistics = self.getStatistics()
@@ -611,13 +684,12 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
             else:  # default
                 col = table.AddColumn()
             plugin = self.getPluginByKey(key)
-            columnName = uniqueColumnHeaderNames[key]
-            longColumnName = columnHeaderNames[key]
+            columnName = columnNames[key]
+            columnTitle = columnTitles[key]
             col.SetName(columnName)
+            table.SetColumnTitle(columnName, columnTitle)
             if plugin:
                 table.SetColumnProperty(columnName, "Plugin", plugin.name)
-                longColumnName += "<br>" + _("Computed by {pluginName} Statistics plugin").format(pluginName=plugin.name)
-            table.SetColumnLongName(columnName, longColumnName)
             measurementInfo = statistics["MeasurementInfo"][key] if key in statistics["MeasurementInfo"] else {}
             if measurementInfo:
                 for mik, miv in measurementInfo.items():
@@ -632,7 +704,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
                         for componentName in miv:
                             array.SetComponentName(componentIndex, componentName)
                             componentIndex += 1
-                    else:
+                    elif mik not in ["name", "title"]:  # name and title are set already
                         table.SetColumnProperty(columnName, str(mik), str(miv))
 
         # Fill columns
@@ -641,7 +713,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
             columnIndex = 0
             for key in keys:
                 value = statistics[segmentID, key] if (segmentID, key) in statistics else None
-                if value is None and key != "Segment":
+                if value is None and key != SegmentStatisticsLogic.segmentColumnName:
                     value = float("nan")
                 if isinstance(value, list):
                     for i in range(len(value)):
@@ -659,6 +731,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         layoutWithTable = slicer.modules.tables.logic().GetLayoutWithTable(currentLayout)
         slicer.app.layoutManager().setLayout(layoutWithTable)
         slicer.app.applicationLogic().GetSelectionNode().SetActiveTableID(table.GetID())
+        table.SetUseColumnTitleAsColumnHeader(True)  # Make column titles visible (instead of column names)
         slicer.app.applicationLogic().PropagateTableSelection()
 
     def exportToString(self, nonEmptyKeysOnly=True):
@@ -855,9 +928,8 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertFalse("Number of voxels [voxels] (1)" in columnHeaders)
-        self.assertTrue("Volume [mm3] (1)" in columnHeaders)
-        self.assertFalse("Volume [cm3] (3)" in columnHeaders)
+        self.assertEqual(columnHeaders, ["Segment", "Volume mm3 (LM)", "Voxel count", "Volume mm3 (SV)", "Volume cm3 (SV)",
+            "Minimum", "Maximum", "Mean", "Median", "Standard deviation", "Surface mm2", "Volume mm3 (CS)", "Volume cm3 (CS)"])
 
         self.delayDisplay("Test re-enabling of individual measurements")
         segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.voxel_count.enabled", str(True))
@@ -866,9 +938,9 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertTrue("Number of voxels [voxels] (1)" in columnHeaders)
-        self.assertTrue("Volume [mm3] (1)" in columnHeaders)
-        self.assertTrue("Volume [cm3] (1)" in columnHeaders)
+        self.assertTrue("Voxel count (LM)" in columnHeaders)
+        self.assertTrue("Volume mm3 (LM)" in columnHeaders)
+        self.assertTrue("Volume cm3 (LM)" in columnHeaders)
 
         # test enabling/disabling of individual plugins
         self.delayDisplay("Test disabling of plugin")
@@ -877,9 +949,9 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertFalse("Number of voxels [voxels] (3)" in columnHeaders)
-        self.assertFalse("Volume [mm3] (3)" in columnHeaders)
-        self.assertTrue("Volume [mm3] (2)" in columnHeaders)
+        self.assertFalse("Voxel count (LM)" in columnHeaders)
+        self.assertFalse("Volume mm3 (LM)" in columnHeaders)
+        self.assertTrue("Volume mm3 (SV)" in columnHeaders)
 
         self.delayDisplay("Test re-enabling of plugin")
         segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.enabled", str(True))
@@ -887,8 +959,8 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertTrue("Number of voxels [voxels] (2)" in columnHeaders)
-        self.assertTrue("Volume [mm3] (3)" in columnHeaders)
+        self.assertTrue("Voxel count (LM)" in columnHeaders)
+        self.assertTrue("Volume mm3 (LM)" in columnHeaders)
 
         # test unregistering/registering of plugins
         self.delayDisplay("Test of removing all registered plugins")
@@ -914,9 +986,9 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertTrue("Number of voxels [voxels] (1)" in columnHeaders)
-        self.assertTrue("Number of voxels [voxels] (2)" in columnHeaders)
-        self.assertTrue("Surface area [mm2]" in columnHeaders)
+        self.assertTrue("Voxel count (LM)" in columnHeaders)
+        self.assertTrue("Voxel count (SV)" in columnHeaders)
+        self.assertTrue("Surface mm2" in columnHeaders)
 
         self.delayDisplay("test_SegmentStatisticsPlugins passed!")
 

@@ -69,6 +69,13 @@ public:
   vtkGetMacro(AutoFindSchema, bool);
   vtkBooleanMacro(AutoFindSchema, bool);
 
+  /// Load legacy "longName" property as "title".
+  /// Enable for loading an old table file that used "longName" property to store column title.
+  /// Disabled by default, as "longName" is often too long to be used as title.
+  vtkSetMacro(ReadLongNameAsTitle, bool);
+  vtkGetMacro(ReadLongNameAsTitle, bool);
+  vtkBooleanMacro(ReadLongNameAsTitle, bool);
+
 protected:
   vtkMRMLTableStorageNode();
   ~vtkMRMLTableStorageNode() override;
@@ -121,6 +128,7 @@ protected:
   bool WriteSchema(std::string filename, vtkMRMLTableNode* tableNode);
 
   bool AutoFindSchema;
+  bool ReadLongNameAsTitle;
 };
 
 #endif

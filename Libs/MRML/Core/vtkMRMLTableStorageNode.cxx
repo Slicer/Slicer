@@ -82,6 +82,7 @@ vtkMRMLTableStorageNode::vtkMRMLTableStorageNode()
 {
   this->DefaultWriteFileExtension = "tsv";
   this->AutoFindSchema = true;
+  this->ReadLongNameAsTitle = false;
 }
 
 //----------------------------------------------------------------------------
@@ -676,6 +677,26 @@ bool vtkMRMLTableStorageNode::ReadSchema(std::string filename, vtkMRMLTableNode*
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::ReadSchema",
       "Failed to read table schema from file: " << filename <<". Required 'columnName' column is not found in schema.");
     return false;
+    }
+
+  if (this->ReadLongNameAsTitle)
+    {
+    // Update old tables that stored column title in "longName" property instead of "title"
+    vtkStringArray* longNameArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("longName"));
+    if (longNameArray)
+      {
+      vtkStringArray* titleArray = vtkStringArray::SafeDownCast(schemaTable->GetColumnByName("title"));
+      if (titleArray)
+        {
+        vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::ReadSchema",
+          "Schema file " << filename << " has both `longName` and 'title' properties defined, only content of 'title' property will be used.");
+        }
+      else
+        {
+        // Rename deprecated "longName" column property to "title"
+        longNameArray->SetName("title");
+        }
+      }
     }
 
   tableNode->SetAndObserveSchema(schemaTable);
