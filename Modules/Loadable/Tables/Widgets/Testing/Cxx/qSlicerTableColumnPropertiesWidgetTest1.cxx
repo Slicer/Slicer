@@ -71,21 +71,21 @@ int qSlicerTableColumnPropertiesWidgetTest1( int argc, char * argv [] )
   vtkNew<vtkMRMLTableNode> tableNode;
   tableNode->SetAndObserveTable(table.GetPointer());
 
-  tableNode->SetColumnNullValue("X Axis", "-5000");
-  tableNode->SetColumnDescription("X Axis", "this is the x column");
-  tableNode->SetColumnLongName("X Axis", "full name of x column");
-  tableNode->SetColumnUnitLabel("X Axis", "HU");
-  tableNode->SetColumnProperty("X Axis", "unitCodeValue", "[hnsf'U]");
-  tableNode->SetColumnProperty("X Axis", "unitCodingSchemeDesignator", "UCUM");
-  tableNode->SetColumnProperty("X Axis", "unitCodeMeaning", "Hounsfield unit");
+  tableNode->SetColumnNullValue("xaxis", "-5000");
+  tableNode->SetColumnDescription("xaxis", "this is the x column");
+  tableNode->SetColumnTitle("xaxis", "X axis");
+  tableNode->SetColumnUnitLabel("xaxis", "HU");
+  tableNode->SetColumnProperty("xaxis", "unitCodeValue", "[hnsf'U]");
+  tableNode->SetColumnProperty("xaxis", "unitCodingSchemeDesignator", "UCUM");
+  tableNode->SetColumnProperty("xaxis", "unitCodeMeaning", "Hounsfield unit");
 
-  tableNode->SetColumnNullValue("Y Axis", "0.0");
-  tableNode->SetColumnDescription("Y Axis", "this is the y column");
-  tableNode->SetColumnLongName("Y Axis", "full name of y column");
-  tableNode->SetColumnUnitLabel("Y Axis", "mm");
-  tableNode->SetColumnProperty("Y Axis", "unitCodeValue", "1");
-  tableNode->SetColumnProperty("Y Axis", "unitCodingSchemeDesignator", "UCUM");
-  tableNode->SetColumnProperty("Y Axis", "unitCodeMeaning", "no units");
+  tableNode->SetColumnNullValue("yaxis", "0.0");
+  tableNode->SetColumnDescription("yaxis", "this is the y column");
+  tableNode->SetColumnTitle("yaxis", "Y column");
+  tableNode->SetColumnUnitLabel("yaxis", "mm");
+  tableNode->SetColumnProperty("yaxis", "unitCodeValue", "1");
+  tableNode->SetColumnProperty("yaxis", "unitCodingSchemeDesignator", "UCUM");
+  tableNode->SetColumnProperty("yaxis", "unitCodeMeaning", "no units");
 
   //
   // Create a simple gui with non-tranposed and transposed table view

@@ -32,10 +32,11 @@
 #include <vtkMRMLTableNode.h>
 
 // VTK includes
+#include <vtkBitArray.h>
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 #include <vtkTable.h>
-#include <vtkBitArray.h>
 
 static int UserRoleValueType = Qt::UserRole + 1;
 
@@ -113,29 +114,61 @@ QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
     return QString();
     }
 
-  std::string columnName = tableNode->GetColumnName(tableCol);
-  QString longName = QString(tableNode->GetColumnLongName(columnName).c_str());
-  QString description = QString(tableNode->GetColumnDescription(columnName).c_str());
-  QString unitLabel = QString(tableNode->GetColumnUnitLabel(columnName).c_str());
+  std::string columnNameStd = tableNode->GetColumnName(tableCol);
+  QString columnName = QString::fromStdString(columnNameStd);
+  QString title = QString::fromStdString(tableNode->GetColumnTitle(columnNameStd));
+  QString description = QString::fromStdString(tableNode->GetColumnDescription(columnNameStd));
+  QString unitLabel = QString::fromStdString(tableNode->GetColumnUnitLabel(columnNameStd));
 
   QStringList textLines;
 
-  // Long name
-  if (!longName.isEmpty())
+  // Column name & title
+  if (title == columnName || title.isEmpty())
     {
-    textLines << QString("<b>") + longName + QString("</b>");
+    textLines << QString("<b>%1</b>").arg(columnName);
+    }
+  else
+    {
+    textLines << QString("<b>%1</b> <code>&lt;%2&gt;</code>").arg(title).arg(columnName);
     }
 
   // Unit
   if (!unitLabel.isEmpty())
-    {
-    textLines << QString("Unit: ") + unitLabel;
-    }
+  {
+    textLines << qMRMLTableModel::tr("Unit: %1").arg(unitLabel);
+  }
 
   // Description
   if (!description.isEmpty())
     {
     textLines << description;
+    }
+
+  // Custom properties (as bullet-point list)
+  QString customProperties;
+  vtkNew<vtkStringArray> propertyNames;
+  tableNode->GetAllColumnPropertyNames(propertyNames);
+  vtkIdType numberOfProperties = propertyNames->GetNumberOfValues();
+  for (vtkIdType i = 0; i < numberOfProperties; ++i)
+    {
+    std::string propertyName = propertyNames->GetValue(i);
+    if (propertyName.empty()
+      || propertyName == /*no tr*/"title"
+      || propertyName == /*no tr*/"description"
+      || propertyName == /*no tr*/"unitLabel")
+      {
+      continue;
+      }
+    std::string propertyValue = tableNode->GetColumnProperty(columnNameStd, propertyName);
+    if (propertyValue.empty())
+      {
+      continue;
+      }
+    customProperties += QString("<li>%1: %2</li>").arg(QString::fromStdString(propertyName)).arg(QString::fromStdString(propertyValue));
+    }
+  if (!customProperties.isEmpty())
+    {
+    textLines << qMRMLTableModel::tr("Properties:") + "<ul>" + customProperties + "</ul>";
     }
 
   return textLines.join("<p>");
@@ -209,13 +242,13 @@ void qMRMLTableModel::updateModelFromMRML()
 
   bool tableLocked = tableNode->GetLocked();
   bool labelInFirstTableColumn = tableNode->GetUseFirstColumnAsRowHeader();
-  bool useColumnNameAsColumnHeader = tableNode->GetUseColumnNameAsColumnHeader();
+  bool useColumnTitleAsColumnHeader = tableNode->GetUseColumnTitleAsColumnHeader();
 
   vtkIdType numberOfTableColumns = table->GetNumberOfColumns();
   vtkIdType numberOfTableRows = table->GetNumberOfRows();
   // offset: modelIndex = mrmlIndex - offset
   vtkIdType tableColOffset = labelInFirstTableColumn ? 1 : 0;
-  vtkIdType tableRowOffset = useColumnNameAsColumnHeader ? 0 : -1;
+  vtkIdType tableRowOffset = useColumnTitleAsColumnHeader ? 0 : -1;
   if (d->Transposed)
     {
     setRowCount(static_cast<int>(numberOfTableColumns-tableColOffset));
@@ -235,9 +268,21 @@ void qMRMLTableModel::updateModelFromMRML()
     QString columnName(table->GetColumnName(tableCol));
     vtkAbstractArray* columnArray = table->GetColumn(tableCol);
 
-    if (useColumnNameAsColumnHeader)
+    // If column title is used as header then the column title is shown in the header,
+    // otherwise the column name is shown in the editable first row of the table.
+    if (useColumnTitleAsColumnHeader)
       {
-      setHeaderData(modelCol, d->Transposed ? Qt::Vertical : Qt::Horizontal, columnName);
+      QString headerText = QString::fromStdString(tableNode->GetColumnTitle(columnName.toStdString()));
+      if (headerText.isEmpty())
+        {
+        headerText = columnName;
+        }
+      QString units = QString::fromStdString(tableNode->GetColumnUnitLabel(columnName.toStdString()));
+      if (!units.isEmpty())
+        {
+        headerText += " [" + units + "]";
+        }
+      setHeaderData(modelCol, d->Transposed ? Qt::Vertical : Qt::Horizontal, headerText);
       }
     else
       {
@@ -599,11 +644,11 @@ int qMRMLTableModel::mrmlTableRowIndex(QModelIndex modelIndex)const
     }
   if (d->Transposed)
     {
-    return d->MRMLTableNode->GetUseColumnNameAsColumnHeader() ? modelIndex.column() : modelIndex.column()-1;
+    return d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() ? modelIndex.column() : modelIndex.column()-1;
     }
   else
     {
-    return d->MRMLTableNode->GetUseColumnNameAsColumnHeader() ? modelIndex.row() : modelIndex.row()-1;
+    return d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() ? modelIndex.row() : modelIndex.row()-1;
     }
 }
 
