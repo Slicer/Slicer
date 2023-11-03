@@ -84,40 +84,53 @@ public:
   virtual void SetAndObserveTable(vtkTable* table);
   vtkGetObjectMacro(Table, vtkTable);
 
-  ///
+  ///@{
   /// Set schema table
   ///
   /// Each row of the schema table contains description of a data table column. Columns of the schema table:
   /// - columnName: name of the data table column that properties are defined for  (required)
+  ///   This name is used by modules to look up columns in a table, therefore it must not be translated.
   ///   Column name \<default\> is reserved for defining default properties for new columns.
   /// - type: data type of the column. Supported types: string, double, float, int, unsigned int, bit,
   ///   short, unsigned short, long, unsigned long, char, signed char, unsigned char, long long, unsigned long long, idtype.
   ///   Default: string.
   /// - nullValue: value to be used when a value is not specified (new table row is added, blank string is entered, etc)
-  /// - longName: full human-readable name of the column
-  /// - description: human-readable detailed description of the column
-  /// - unitLabel: simple unit label
+  /// - title: human-readable name of the column (translatable)
+  ///   The property name was formerly called "longName".
+  /// - description: detailed description of the column (translatable)
+  /// - unitLabel: unit label displayed along with the title (translatable)
   /// - unitCodeMeaning: standard unit definition. Example: Standardized Uptake Value body weight.
+  ///   Should not be translated, as in the future translation of standard terms will be implemented based on code value and scheme.
   /// - unitCodeValue: standard unit definition. Example: {SUVbw}g/ml.
   /// - unitCodingSchemeDesignator: standard unit definition. Example: UCUM.
   virtual void SetAndObserveSchema(vtkTable* schema);
   vtkGetObjectMacro(Schema, vtkTable);
+  ///@}
 
-  ///
+  ///@{
   /// Table contents cannot be edited through the user interface
   vtkGetMacro(Locked, bool);
   vtkSetMacro(Locked, bool);
+  ///@}
 
+  ///@{
   /// First column should be treated as row label
   vtkGetMacro(UseFirstColumnAsRowHeader, bool);
   vtkSetMacro(UseFirstColumnAsRowHeader, bool);
+  ///@}
 
-  ///
-  /// Column name should be treated as column label
-  vtkGetMacro(UseColumnNameAsColumnHeader, bool);
-  vtkSetMacro(UseColumnNameAsColumnHeader, bool);
+  ///@{
+  /// Column title should be displayed as column label
+  vtkGetMacro(UseColumnTitleAsColumnHeader, bool);
+  vtkSetMacro(UseColumnTitleAsColumnHeader, bool);
+  ///@}
 
-  ///
+  ///@{
+  /// Deprecated. Use GetUseColumnTitleAsColumnHeader/SetUseColumnTitleAsColumnHeader instead.
+  bool GetUseColumnNameAsColumnHeader();
+  void SetUseColumnNameAsColumnHeader(bool useColumnTitle);
+  ///@}
+
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
@@ -171,13 +184,13 @@ public:
   /// GetTable() method and manipulate that directly.
   bool SetCellText(int rowIndex, int columnIndex, const char* text);
 
-  ///
+  ///@{
   /// Get column index of the first column by the specified name.
   /// Returns -1 if no such column is found.
   int GetColumnIndex(const char* columnName);
   int GetColumnIndex(const std::string &columnName);
+  ///@}
 
-  ///
   /// Get column index from column pointer.
   /// Returns -1 if column is not found.
   int GetColumnIndex(vtkAbstractArray* column);
@@ -191,51 +204,65 @@ public:
   /// Convenience method for getting number of rows in the table.
   int GetNumberOfRows();
 
-  ///
   /// Convenience method for getting number of columns in the table.
   int GetNumberOfColumns();
 
-  ///
+  ///@{
   /// Set null value for blank rows and missing values.
   void SetColumnNullValue(const std::string& columnName, const std::string& nullValue);
   std::string GetColumnNullValue(const std::string& columnName);
+  ///@}
 
-  ///
+  ///@{
   /// Set a full human-readable name of a column.
-  /// When there is no space constraints, the full name of the column may` displayed
-  /// instead/in addition to columnName to identify a column.
+  /// This used to be a field for storing a displayable title that was longer than the column name.
+  /// It is now deprecated. Use ColumnTitle instead for storing displayable name.
   void SetColumnLongName(const std::string& columnName, const std::string& description);
   std::string GetColumnLongName(const std::string& columnName);
+  ///@}
 
-  ///
+  ///@{
+  /// Set a title of a column that is displayed on the user interface.
+  /// It is stored in the application's current language.
+  void SetColumnTitle(const std::string& columnName, const std::string& description);
+  std::string GetColumnTitle(const std::string& columnName);
+  ///@}
+
+  ///@{
   /// Set human-readable description of a column.
+  /// It is stored in the application's current language.
   void SetColumnDescription(const std::string& columnName, const std::string& description);
   std::string GetColumnDescription(const std::string& columnName);
+  ///@}
 
-  ///
-  /// Set measurement unit for the data stored in the selected column.
+  ///@{
+  /// Set displayed measurement unit for the data stored in the selected column.
+  /// It is stored in the application's current language.
+  /// For computations and unit conversions, it is recommended to store unit as coded entry in custom column properties.
   void SetColumnUnitLabel(const std::string& columnName, const std::string& unitLabel);
   std::string GetColumnUnitLabel(const std::string& columnName);
+  ///@}
 
-  ///
+  ///@{
   /// Get a column property.
   /// Property name "columnName" is reserved for internal use.
   /// \sa SetAndObserveSchema, GetColumnValueTypeFromSchema
   std::string GetColumnProperty(const std::string& columnName, const std::string& propertyName);
   std::string GetColumnProperty(int columnIndex, const std::string& propertyName);
+  ///@}
 
-  ///
   /// Get list of all column property names.
   /// \sa SetAndObserveSchema
   void GetAllColumnPropertyNames(vtkStringArray* propertyNames);
 
-  ///
+  ///@{
   /// Set a column property value.
   /// Property name "columnName" is reserved for internal use.
   /// Property name "type" converts existing values in the column.
   /// \sa SetAndObserveSchema
   void SetColumnProperty(const std::string& columnName, const std::string& propertyName, const std::string& propertyValue);
   void SetColumnProperty(int columnIndex, const std::string& propertyName, const std::string& propertyValue);
+  ///@}
 
   ///
   /// Set a column property value.
@@ -246,12 +273,12 @@ public:
   ///
   /// Copy all properties from one column to another.
   void CopyAllColumnProperties(const std::string& sourceColumnName, const std::string& targetColumnName);
-
-  ///
+  ///@{
   /// Remove all properties defined for the specified column.
   /// To remove all properties for all columns, use SetAndObserveScheme(nullptr).
   void RemoveAllColumnProperties(const std::string& columnName);
   void RemoveAllColumnProperties(int columnIndex);
+  ///@}
 
   /// Get column type stored in the schema as VTK type ID. It should only be used during reading/writing of the node,
   /// because once the table column is created, the actual column type is the type of the associated VTK data array.
@@ -335,7 +362,7 @@ public:
 
   vtkTable* Table;
   bool Locked;
-  bool UseColumnNameAsColumnHeader;
+  bool UseColumnTitleAsColumnHeader;
   bool UseFirstColumnAsRowHeader;
 
   vtkTable* Schema;

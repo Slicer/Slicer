@@ -478,7 +478,7 @@ void qMRMLTableView::plotSelection()
       vtkAbstractArray* column = tableNode->GetTable()->GetColumn(columnIndex);
       if (!column || !column->GetName())
         {
-        QString message = QString("Column %1 is invalid. Failed to generate a plot").arg(columnIndex);
+        QString message = tr("Column %1 is invalid. Failed to generate a plot").arg(columnIndex);
         qCritical() << Q_FUNC_INFO << ": " << message;
         QMessageBox::warning(nullptr, tr("Failed to create Plot"), message);
         return;
@@ -486,7 +486,7 @@ void qMRMLTableView::plotSelection()
       int columnDataType = column->GetDataType();
       if (columnDataType == VTK_BIT)
         {
-        QString message = QString("Type of column %1 is 'bit'. Plotting of these types are currently not supported."
+        QString message = tr("Type of column %1 is 'bit'. Plotting of these types are currently not supported."
           " Please convert the data type of this column to numeric using Table module's Column properties section,"
           " or select different columns for plotting.").arg(column->GetName());
         qCritical() << Q_FUNC_INFO << ": " << message;
@@ -502,7 +502,7 @@ void qMRMLTableView::plotSelection()
           }
         else
           {
-          QString message = QString("Multiple 'string' type of columns are selected for plotting (%1, %2) but only one is allowed."
+          QString message = tr("Multiple 'string' type of columns are selected for plotting (%1, %2) but only one is allowed."
             " Please change selection or convert data type of this column to numeric using Table module's 'Column properties' section."
             ).arg(tableNode->GetColumnName(stringColumnIndex).c_str(), column->GetName());
           qCritical() << Q_FUNC_INFO << ": " << message;
@@ -518,7 +518,7 @@ void qMRMLTableView::plotSelection()
     }
   if (columnIndices.size() == 0)
     {
-    QString message = QString("A single 'string' type column is selected."
+    QString message = tr("A single 'string' type column is selected."
       " Please change selection or convert data type of this column to numeric using Table module's 'Column properties' section.");
     qCritical() << Q_FUNC_INFO << ": " << message;
     QMessageBox::warning(nullptr, tr("Failed to plot data"), message);
@@ -713,7 +713,7 @@ bool qMRMLTableView::firstRowLocked()const
     }
   else
     {
-    return mrmlTableNode()->GetUseColumnNameAsColumnHeader();
+    return mrmlTableNode()->GetUseColumnTitleAsColumnHeader();
     }
 }
 
@@ -734,12 +734,12 @@ void qMRMLTableView::setFirstRowLocked(bool locked)
     }
   else
     {
-    if (mrmlTableNode()->GetUseColumnNameAsColumnHeader()==locked)
+    if (mrmlTableNode()->GetUseColumnTitleAsColumnHeader()==locked)
       {
       //no change
       return;
       }
-    mrmlTableNode()->SetUseColumnNameAsColumnHeader(locked);
+    mrmlTableNode()->SetUseColumnTitleAsColumnHeader(locked);
     }
   this->resizeColumnsToContents();
 }
@@ -751,7 +751,7 @@ bool qMRMLTableView::firstColumnLocked()const
   CTK_CHECK_AND_RETURN_FALSE_IF_FAIL(d->verifyTableModelAndNode)
   if (tableModel()->transposed())
     {
-    return mrmlTableNode()->GetUseColumnNameAsColumnHeader();
+    return mrmlTableNode()->GetUseColumnTitleAsColumnHeader();
     }
   else
     {
@@ -766,12 +766,12 @@ void qMRMLTableView::setFirstColumnLocked(bool locked)
   CTK_CHECK_AND_RETURN_IF_FAIL(d->verifyTableModelAndNode)
   if (tableModel()->transposed())
     {
-    if (mrmlTableNode()->GetUseColumnNameAsColumnHeader()==locked)
+    if (mrmlTableNode()->GetUseColumnTitleAsColumnHeader()==locked)
       {
       //no change
       return;
       }
-    mrmlTableNode()->SetUseColumnNameAsColumnHeader(locked);
+    mrmlTableNode()->SetUseColumnTitleAsColumnHeader(locked);
     }
   else
     {

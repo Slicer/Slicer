@@ -6,7 +6,7 @@ from slicer.i18n import tr as _
 
 class SegmentStatisticsPluginBase:
     """Base class for statistics plugins operating on segments.
-    Derived classes should specify: self.name, self.keys, self.defaultKeys
+    Derived classes should specify: self.name, self.title, self.keys, self.defaultKeys
     and implement: computeStatistics, getMeasurementInfo
     """
 
@@ -18,29 +18,43 @@ class SegmentStatisticsPluginBase:
         return entry if not returnAsString else entry.GetAsString()
 
     @staticmethod
-    def createMeasurementInfo(name, description, units, quantityDicomCode=None, unitsDicomCode=None,
+    def isValidCodedEntry(codedEntryStr):
+        if not codedEntryStr:
+            return False
+        entry = slicer.vtkCodedEntry()
+        entry.SetFromString(codedEntryStr)
+        return entry.GetCodeValue() or entry.GetCodingSchemeDesignator() or entry.GetCodeMeaning()
+
+    @staticmethod
+    def createMeasurementInfo(name, title, description, units, quantityDicomCode=None, unitsDicomCode=None,
                               measurementMethodDicomCode=None, derivationDicomCode=None, componentNames=None):
-        """Utility method to create measurement information"""
+        """Utility method to create measurement information.
+        Name is a machine-readable name of the measurement and it is independent of the application language.
+        Title is the name of the measurement displayed on the user interface and it is translated to the application language.
+        """
         info = {
             "name": name,
-            "description": description,
-            "units": units,
+            "title": title,  # translated
+            "description": description,  # translated
+            "units": units,  # translated
         }
         if componentNames:
             info["componentNames"] = componentNames
-        if quantityDicomCode:
+        if SegmentStatisticsPluginBase.isValidCodedEntry(quantityDicomCode):
             info["DICOM.QuantityCode"] = quantityDicomCode
-        if unitsDicomCode:
+        if SegmentStatisticsPluginBase.isValidCodedEntry(unitsDicomCode):
             info["DICOM.UnitsCode"] = unitsDicomCode
-        if measurementMethodDicomCode:
+        if SegmentStatisticsPluginBase.isValidCodedEntry(measurementMethodDicomCode):
             info["DICOM.MeasurementMethodCode"] = measurementMethodDicomCode
-        if derivationDicomCode:
+        if SegmentStatisticsPluginBase.isValidCodedEntry(derivationDicomCode):
             info["DICOM.DerivationCode"] = derivationDicomCode
         return info
 
     def __init__(self):
-        #: name of the statistics plugin
+        #: name of the statistics plugin (must not be translated)
         self.name = ""
+        #: title of the statistics plugin that appears on screen(must be translated)
+        self.title = ""
         #: keys for all supported measurements
         self.keys = []
         #: measurements that will be calculated by default
@@ -119,7 +133,7 @@ class SegmentStatisticsPluginBase:
         form = qt.QFormLayout(self.optionsWidget)
 
         # checkbox to enable/disable plugin
-        self.pluginCheckbox = qt.QCheckBox(_("{pluginName} plugin enabled").format(pluginName=self.name))
+        self.pluginCheckbox = qt.QCheckBox(_("{pluginName} plugin enabled").format(pluginName=self.title))
         self.pluginCheckbox.checked = True
         self.pluginCheckbox.connect("stateChanged(int)", self.updateParameterNodeFromGui)
         form.addRow(self.pluginCheckbox)

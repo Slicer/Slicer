@@ -212,10 +212,10 @@ void qSlicerTablesModuleWidget::onMRMLTableNodeModified(vtkObject* caller)
     d->LockTableButton->setToolTip(tr("Click to lock this table to prevent modification of the values in the user interface"));
     }
 
-  if (d->MRMLTableNode->GetUseColumnNameAsColumnHeader() != d->LockFirstRowButton->isChecked())
+  if (d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() != d->LockFirstRowButton->isChecked())
     {
     bool wasBlocked = d->LockFirstRowButton->blockSignals(true);
-    d->LockFirstRowButton->setChecked(d->MRMLTableNode->GetUseColumnNameAsColumnHeader());
+    d->LockFirstRowButton->setChecked(d->MRMLTableNode->GetUseColumnTitleAsColumnHeader());
     d->LockFirstRowButton->blockSignals(wasBlocked);
     }
 

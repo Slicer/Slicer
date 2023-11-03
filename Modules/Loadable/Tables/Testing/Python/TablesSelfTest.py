@@ -107,7 +107,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
         tableNode = slicer.util.getNode(self.sampleTableName)
 
-        tableNode.SetColumnLongName("Column 1", "First column")
+        tableNode.SetColumnTitle("Column 1", "First column")
         tableNode.SetColumnUnitLabel("Column 1", "mm")
         tableNode.SetColumnDescription("Column 1", "This a long description of the first column")
 
