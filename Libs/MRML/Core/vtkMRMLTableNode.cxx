@@ -48,7 +48,7 @@
 static const char SCHEMA_COLUMN_NAME[] = "columnName";
 static const char SCHEMA_COLUMN_TYPE[] = "type";
 static const char SCHEMA_COLUMN_NULL_VALUE[] = "nullValue";
-static const char SCHEMA_COLUMN_LONG_NAME[] = "longName";
+static const char SCHEMA_COLUMN_TITLE[] = "title";
 static const char SCHEMA_COLUMN_DESCRIPTION[] = "description";
 static const char SCHEMA_COLUMN_UNIT_LABEL[] = "unitLabel";
 static const char SCHEMA_COMPONENT_NAMES[] = "componentNames";
@@ -66,7 +66,7 @@ vtkMRMLTableNode::vtkMRMLTableNode()
   this->Table = nullptr;
   this->Schema = nullptr;
   this->Locked = false;
-  this->UseColumnNameAsColumnHeader = false;
+  this->UseColumnTitleAsColumnHeader = false;
   this->UseFirstColumnAsRowHeader = false;
   this->HideFromEditorsOff();
 
@@ -96,7 +96,7 @@ void vtkMRMLTableNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   of << " locked=\"" << (this->GetLocked() ? "true" : "false") << "\"";
   of << " useFirstColumnAsRowHeader=\"" << (this->GetUseFirstColumnAsRowHeader() ? "true" : "false") << "\"";
-  of << " useColumnNameAsColumnHeader=\"" << (this->GetUseColumnNameAsColumnHeader() ? "true" : "false") << "\"";
+  of << " useColumnTitleAsColumnHeader=\"" << (this->GetUseColumnTitleAsColumnHeader() ? "true" : "false") << "\"";
 }
 
 
@@ -117,9 +117,10 @@ void vtkMRMLTableNode::ReadXMLAttributes(const char** atts)
       {
       this->SetLocked(strcmp(attValue,"true")?false:true);
       }
-    else if (!strcmp(attName, "useColumnNameAsColumnHeader"))
+    else if (!strcmp(attName, "useColumnTitleAsColumnHeader")
+      || !strcmp(attName, "useColumnNameAsColumnHeader")) // in legacy scenes
       {
-      this->SetUseColumnNameAsColumnHeader(strcmp(attValue,"true")?false:true);
+      this->SetUseColumnTitleAsColumnHeader(strcmp(attValue,"true")?false:true);
       }
     else if (!strcmp(attName, "useFirstColumnAsRowHeader"))
       {
@@ -176,7 +177,7 @@ void vtkMRMLTableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
     this->Table->Modified();
     }
   this->SetLocked(node->GetLocked());
-  this->SetUseColumnNameAsColumnHeader(node->GetUseColumnNameAsColumnHeader());
+  this->SetUseColumnTitleAsColumnHeader(node->GetUseColumnTitleAsColumnHeader());
   this->SetUseFirstColumnAsRowHeader(node->GetUseFirstColumnAsRowHeader());
 }
 
@@ -206,7 +207,7 @@ void vtkMRMLTableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "\nLocked: " << this->GetLocked();
-  os << indent << "\nUseColumnNameAsColumnHeader: " << this->GetUseColumnNameAsColumnHeader();
+  os << indent << "\nUseColumnTitleAsColumnHeader: " << this->GetUseColumnTitleAsColumnHeader();
   os << indent << "\nUseFirstColumnAsRowHeader: " << this->GetUseFirstColumnAsRowHeader();
   os << indent << "\nColumns:";
   vtkTable* table = this->GetTable();
@@ -981,13 +982,27 @@ int vtkMRMLTableNode::GetColumnValueTypeFromSchema(const std::string& columnName
 //----------------------------------------------------------------------------
 void vtkMRMLTableNode::SetColumnLongName(const std::string& columnName, const std::string& longName)
 {
-  this->SetColumnProperty(columnName, SCHEMA_COLUMN_LONG_NAME, longName);
+  vtkWarningMacro("vtkMRMLTableNode::SetColumnLongName is deprecated, use vtkMRMLSequenceBrowserNode::SetColumnTitle method instead");
+  this->SetColumnTitle(columnName, longName);
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLTableNode::GetColumnLongName(const std::string& columnName)
 {
-  return this->GetColumnProperty(columnName, SCHEMA_COLUMN_LONG_NAME);
+  vtkWarningMacro("vtkMRMLTableNode::GetColumnLongName is deprecated, use vtkMRMLSequenceBrowserNode::GetColumnTitle method instead");
+  return this->GetColumnTitle(columnName);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTableNode::SetColumnTitle(const std::string& columnName, const std::string& title)
+{
+  this->SetColumnProperty(columnName, SCHEMA_COLUMN_TITLE, title);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLTableNode::GetColumnTitle(const std::string& columnName)
+{
+  return this->GetColumnProperty(columnName, SCHEMA_COLUMN_TITLE);
 }
 
 //----------------------------------------------------------------------------
@@ -1353,4 +1368,20 @@ std::vector<std::string> vtkMRMLTableNode::GetComponentNamesFromArray(vtkAbstrac
     componentNames.push_back(componentName);
     }
   return componentNames;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTableNode::SetUseColumnNameAsColumnHeader(bool useColumnTitle)
+{
+  vtkWarningMacro("vtkMRMLTableNode::SetUseColumnNameAsColumnHeader is deprecated."
+    " Use vtkMRMLSequenceBrowserNode::SetUseColumnTitleAsColumnHeader method instead");
+  this->SetUseColumnTitleAsColumnHeader(useColumnTitle);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTableNode::GetUseColumnNameAsColumnHeader()
+{
+  vtkWarningMacro("vtkMRMLTableNode::GetUseColumnNameAsColumnHeader is deprecated."
+    " Use vtkMRMLSequenceBrowserNode::GetUseColumnTitleAsColumnHeader method instead");
+  return this->GetUseColumnTitleAsColumnHeader();
 }

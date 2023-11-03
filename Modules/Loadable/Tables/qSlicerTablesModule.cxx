@@ -72,7 +72,7 @@ QIcon qSlicerTablesModule::icon()const
 QString qSlicerTablesModule::helpText()const
 {
   QString help =
-    "The Tables module allows displaying and editing of spreadsheets.<br>";
+    tr("The Tables module allows displaying and editing of spreadsheets.") + "<br>";
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -80,7 +80,10 @@ QString qSlicerTablesModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerTablesModule::acknowledgementText()const
 {
-  return "This work was was partially funded by OCAIRO, the Applied Cancer Research Unit program of Cancer Care Ontario, and Department of Anesthesia and Critical Care Medicine, Children's Hospital of Philadelphia.";
+  return tr("This work was was partially funded by OCAIRO, the Applied"
+   " Cancer Research Unit program of Cancer Care Ontario, and Department of"
+   " Anesthesia and Critical Care Medicine,"
+   " Children's Hospital of Philadelphia.");
 }
 
 //-----------------------------------------------------------------------------
