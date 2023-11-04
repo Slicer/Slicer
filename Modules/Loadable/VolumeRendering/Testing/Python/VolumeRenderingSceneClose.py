@@ -97,7 +97,7 @@ class VolumeRenderingSceneCloseLogic(ScriptedLoadableModuleLogic):
         layoutManager = slicer.app.layoutManager()
         layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
 
-        slicer.util.delayDisplay('Running the aglorithm')
+        slicer.util.delayDisplay('Running the algorithm')
 
         import SampleData
         ctVolume = SampleData.downloadSample('CTChest')
