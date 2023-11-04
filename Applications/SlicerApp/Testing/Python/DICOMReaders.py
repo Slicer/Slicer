@@ -79,8 +79,8 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
              # GDCM rejects loading.
              # DCMTK reads it but then ITK rejects loading the image with 0 spacing.
              "expectedFailures": ["GDCM", "Archetype", "DCMTK", "GDCM with DCMTK fallback"],
-             "voxelValueQuantity": "(110852, DCM, \"MR signal intensity\")",
-             "voxelValueUnits": "(1, UCUM, \"no units\")"
+             "voxelValueQuantity": '(110852, DCM, "MR signal intensity")',
+             "voxelValueUnits": '(1, UCUM, "no units")'
              },
             {"url": TESTING_DATA_URL + "SHA256/899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
                 "checksum": "SHA256:899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
@@ -88,8 +88,8 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
                 "name": "deidentifiedMRHead-dcm-one-series",
                 "seriesUID": "1.3.6.1.4.1.5962.99.1.3814087073.479799962.1489872804257.270.0",
                 "expectedFailures": [],
-                "voxelValueQuantity": "(110852, DCM, \"MR signal intensity\")",
-                "voxelValueUnits": "(1, UCUM, \"no units\")"
+                "voxelValueQuantity": '(110852, DCM, "MR signal intensity")',
+                "voxelValueUnits": '(1, UCUM, "no units")'
              }
         ]
 

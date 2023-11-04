@@ -25,13 +25,13 @@ def writeFile(path, content):
 # -----------------------------------------------------------------------------
 def addFile(path):
     name = os.path.basename(path)
-    return [f"    <file alias=\"{name}\">{path}</file>"]
+    return [f'    <file alias="{name}">{path}</file>']
 
 
 # -----------------------------------------------------------------------------
 def buildContent(root, path):
     dirs = []
-    out = ["  <qresource prefix=\"%s\">" % path]
+    out = ['  <qresource prefix="%s">' % path]
 
     for entry in os.listdir(os.path.join(root, path)):
         full_entry = os.path.join(root, path, entry)
@@ -75,7 +75,7 @@ def main(argv):
          "Documentation/Nightly/Developers/Build_system/Qt_resource_files"),
         "-->",
         "",
-        "<RCC version=\"1.0\">",
+        '<RCC version="1.0">',
         ""]
 
     for path in args.resource_directories:

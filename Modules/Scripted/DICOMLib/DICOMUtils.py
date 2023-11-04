@@ -1028,7 +1028,7 @@ def registerSlicerURLHandler():
         reg = qt.QSettings(f"HKEY_CURRENT_USER\\Software\\Classes", qt.QSettings.NativeFormat)
         reg.setValue(f"{slicer.app.applicationName}/.", f"{slicer.app.applicationName} supported file")
         reg.setValue(f"{slicer.app.applicationName}/URL protocol", "")
-        reg.setValue(f"{slicer.app.applicationName}/shell/open/command/.", f"\"{launcherPath}\" \"%1\"")
+        reg.setValue(f"{slicer.app.applicationName}/shell/open/command/.", f'"{launcherPath}" "%1"')
         reg.setValue(f"{slicer.app.applicationName}/DefaultIcon/.", f"{slicer.app.applicationName}.exe,0")
         for ext in ["mrml", "mrb"]:
             reg.setValue(f".{ext}/.", f"{slicer.app.applicationName}")

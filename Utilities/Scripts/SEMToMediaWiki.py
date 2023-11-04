@@ -43,7 +43,7 @@ def getLongFlagDefinition(currentNode):
     labelNodeList = currentNode.getElementsByTagName("longflag")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
-        return "{}{}{}".format("[<span style=\"color:orange\">--",
+        return "{}{}{}".format('[<span style="color:orange">--',
                                getTextValuesFromNode(labelNode.childNodes), "</span>]")
     return ""
 
@@ -55,7 +55,7 @@ def getFlagDefinition(currentNode):
     labelNodeList = currentNode.getElementsByTagName("flag")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
-        return "{}{}{}".format("[<span style=\"color:pink\">-",
+        return "{}{}{}".format('[<span style="color:pink">-',
                                getTextValuesFromNode(labelNode.childNodes), "</span>]")
     return ""
 

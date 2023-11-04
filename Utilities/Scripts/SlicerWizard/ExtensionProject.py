@@ -308,13 +308,13 @@ class ExtensionProject:
                t.arguments[0].text == name:
                 if len(t.arguments) < 2:
                     t.arguments.append(CMakeParser.String(text=value, indent=" ",
-                                                          prefix="\"", suffix="\""))
+                                                          prefix='"', suffix='"'))
 
                 else:
                     varg = t.arguments[1]
                     varg.text = value
-                    varg.prefix = "\""
-                    varg.suffix = "\""
+                    varg.prefix = '"'
+                    varg.suffix = '"'
 
                 return
 
