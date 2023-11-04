@@ -109,7 +109,7 @@ def main(argv):
         usage()
         exit()
 
-    print(f"\nWill copy \n\t{template} \nto \n\t{target} \nreplacing \"{templateKey}\" with \"{moduleName}\"\n")
+    print(f'\nWill copy \n\t{template} \nto \n\t{target} \nreplacing "{templateKey}" with "{moduleName}"\n')
     sources = findSource(template)
     print(sources)
 
