@@ -170,7 +170,7 @@ def importModuleObjects(from_module_name, dest_module_name, type_info):
     """Import object of type 'type_info' (str or type) from module identified
     by 'from_module_name' into the module identified by 'dest_module_name'."""
 
-    # Obtain a reference to the module identifed by 'dest_module_name'
+    # Obtain a reference to the module identified by 'dest_module_name'
     import sys
     dest_module = sys.modules[dest_module_name]
 

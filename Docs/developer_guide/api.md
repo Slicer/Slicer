@@ -40,7 +40,7 @@ This documentation is generated using the Doxygen tool, which uses C++ syntax. T
 
 - Public member functions: They can be accessed as `objectName.memberFunctionName(arguments)` for example a method of the `slicer.mrmlScene` object can be called as: `slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLTransformNode')`. In Qt classes, only methods that have `Q_INVOKABLE` keyword next to them are available from Python. `virtual` and `override` specifiers can be ignored (they just indicate that the method can be or is  overridden in a child class).
   - `className` (for Qt classes): constructor, shows the arguments that can be passed when an object is created. Qt objects can be instantiated using `qt.QSomeObject()`. For example `myObj = qt.QComboBox()`.
-  - `New` (for VTK classes): constructor, never needs an argument. VTK objects can be instatiated using `vtk.vtkSomeObject()`. For example `myObj = vtk.vtkPolyData()`.
+  - `New` (for VTK classes): constructor, never needs an argument. VTK objects can be instantiated using `vtk.vtkSomeObject()`. For example `myObj = vtk.vtkPolyData()`.
   - `~className`: destructor, can be ignored, Python calls it automatically when needed (when there are no more references to an object). If a variable holds the last reference to an object then it can be deleted by calling `del` or setting the variable to a new value. For example: `del(myObj)` or `myObj = None`.
   - `SafeDownCast` (for VTK classes): not needed for Python, as type conversions are automatic.
 - Static Public Member Functions: can be accessed as `slicer.className.memberFunctionName(arguments)` for example: `slicer.vtkMRMLModelDisplayNode.GetSliceDisplayModeAsString(0)`.

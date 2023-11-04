@@ -139,7 +139,7 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
     }
   nodeSelectorEmpty.show();
 
-  // a node selctor without a value for the filtering attribute, two volumes
+  // a node selector without a value for the filtering attribute, two volumes
   // should match (empty string and valid string)
   qMRMLNodeComboBox nodeSelectorNull;
   nodeSelectorNull.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));

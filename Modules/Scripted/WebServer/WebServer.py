@@ -262,7 +262,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
 class SlicerHTTPServer(HTTPServer):
     """
     This web server is configured to integrate with the Qt main loop
-    by listenting activity on the fileno of the servers socket.
+    by listening activity on the fileno of the servers socket.
     """
     # TODO: set header so client knows that image refreshes are needed (avoid
     # using the &time=xxx trick)

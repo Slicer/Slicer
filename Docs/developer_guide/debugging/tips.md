@@ -67,7 +67,7 @@ Remaining instance of object 'vtkCallbackCommand' was allocated at:
 - Add a breakpoint in RenderOpaqueGeometry() check if it is called. If not, then:
   - Check its vtkProp::Visibility value.
     - For vtkWidgets, it is the visibility of the representation.
-  - Check its GetBounds() method. If they are outside the camera frustrum, the object won't be rendered.
+  - Check its GetBounds() method. If they are outside the camera frustum, the object won't be rendered.
     - For vtkWidgets, it is the bounds of the representation.
 
 ## Debugging Slicer application startup issues

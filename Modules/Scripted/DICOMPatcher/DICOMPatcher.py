@@ -533,7 +533,7 @@ class Anonymize(DICOMPatcherRule):
         ds.StudyID = ""
         ds.PatientName = _("Unspecified Patient")
 
-        # replace ids with random values - re-use if we have seen them before
+        # replace ids with random values - reuse if we have seen them before
         if ds.PatientID not in self.patientIDToRandomIDMap:
             self.patientIDToRandomIDMap[ds.PatientID] = pydicom.uid.generate_uid(None)
         ds.PatientID = self.patientIDToRandomIDMap[ds.PatientID]

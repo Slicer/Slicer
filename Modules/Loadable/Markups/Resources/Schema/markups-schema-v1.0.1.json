@@ -316,7 +316,7 @@
                                             "$id": "#display/sliceProjectionUseFiducialColor",
                                             "type": "boolean",
                                             "title": "Use fiducial color for slice projection",
-                                            "description": "Choose between projetion color or fiducial color for projections.",
+                                            "description": "Choose between projection color or fiducial color for projections.",
                                             "default": true
                                         },
                                         "sliceProjectionOutlinedBehindSlicePlane": {

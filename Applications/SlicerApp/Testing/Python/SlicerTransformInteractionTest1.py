@@ -511,7 +511,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         # self.delayDisplay('test_3D_parentTransform passed!')
 
     def test_3D_interactionSerialization(self):
-        """ Test that the serialzation the interaction properties.
+        """ Test that the serialization the interaction properties.
         """
         logic = SlicerTransformInteractionTest1Logic()
 

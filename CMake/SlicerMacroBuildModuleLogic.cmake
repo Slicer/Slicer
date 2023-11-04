@@ -64,7 +64,7 @@ macro(SlicerMacroBuildModuleLogic)
 
     # Note: Linking against qSlicerBaseQTCLI provides logic with
     #       access to the core application modulemanager. Using the module manager
-    #       a module logic can then use the services provided by registrered
+    #       a module logic can then use the services provided by registered
     #       command line module (CLI).
 
     list(APPEND MODULELOGIC_TARGET_LIBRARIES
