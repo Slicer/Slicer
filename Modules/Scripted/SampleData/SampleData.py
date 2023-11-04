@@ -312,7 +312,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 
         categories = sorted(dataSources.keys())
 
-        # Ensure "builtIn" catergory is always first
+        # Ensure "builtIn" category is always first
         if logic.builtInCategoryName in categories:
             categories.remove(logic.builtInCategoryName)
             categories.insert(0, logic.builtInCategoryName)

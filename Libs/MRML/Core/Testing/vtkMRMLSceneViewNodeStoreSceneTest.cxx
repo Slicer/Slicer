@@ -108,7 +108,7 @@ int storeAndRestore()
   sceneViewNode->RestoreScene();
 
   vtkMRMLNode* restoredVolumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
-  // Restoring the volume should re-use the same node.
+  // Restoring the volume should reuse the same node.
   CHECK_POINTER(restoredVolumeNode, volumeNode);
 
   return EXIT_SUCCESS;

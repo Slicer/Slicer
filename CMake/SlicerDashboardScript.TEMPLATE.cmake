@@ -11,7 +11,7 @@ macro(dashboard_set var value)
 endmacro()
 
 dashboard_set(DASHBOARDS_DIR        "$ENV{HOME}/Dashboards/")
-dashboard_set(ORGANIZATION          "Kitware")        # One word, no ponctuation
+dashboard_set(ORGANIZATION          "Kitware")        # One word, no punctuation
 dashboard_set(HOSTNAME              "karakoram")
 dashboard_set(OPERATING_SYSTEM      "Linux")
 dashboard_set(SCRIPT_MODE           "Experimental")   # Experimental, Continuous or Nightly

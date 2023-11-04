@@ -40,7 +40,7 @@ def loadPatientByUID(patientUID, messages=None, progressCallback=None):
         for patientUID in patientUIDs:
           loadedNodeIDs.extend(DICOMUtils.loadPatientByUID(patientUID))
 
-      This method expecs a patientUID in the form returned by
+      This method expects a patientUID in the form returned by
       db.patients(), which are (integer) strings unique for the current database.
       The actual contents of these strings are implementation specific
       and should not be relied on (may be changed).

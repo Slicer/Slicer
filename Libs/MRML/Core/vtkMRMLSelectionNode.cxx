@@ -381,7 +381,7 @@ void vtkMRMLSelectionNode::SetUnitNodeID(const char* quantity, const char* id)
   // \todo a bit too much hackish...
   if (this->GetMTime() > mTime)
     {
-    // Node changed, propaged unit modified event
+    // Node changed, propagated unit modified event
     this->InvokeEvent(vtkMRMLSelectionNode::UnitModifiedEvent, &safeQuantity);
     }
 }
