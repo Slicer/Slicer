@@ -643,7 +643,7 @@ endfunction()
 #
 # .. code-block:: cmake
 #
-#  DEPENDS  List of additional dependencies to associat with `<project_name>`.
+#  DEPENDS  List of additional dependencies to associate with `<project_name>`.
 #
 macro(ExternalProject_Add_Dependencies project_name)
   set(options)
