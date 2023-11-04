@@ -12,12 +12,12 @@ class SlicerScriptedFileReaderWriterTest(ScriptedLoadableModule):
         parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Andras Lasso (PerkLab, Queen's)"]
-        parent.helpText = '''
+        parent.helpText = """
     This module is used to test qSlicerScriptedFileReader and qSlicerScriptedFileWriter classes.
-    '''
-        parent.acknowledgementText = '''
+    """
+        parent.acknowledgementText = """
     This file was originally developed by Andras Lasso, PerkLab.
-    '''
+    """
         self.parent = parent
 
 

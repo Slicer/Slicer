@@ -8,12 +8,12 @@ import vtkSegmentationCore
 import slicer
 from slicer.util import TESTING_DATA_URL
 
-'''
+"""
 This class tests the shared labelmap behavior.
 Edting segments with overwrite should keep all segments on the same labelmap.
 Editing segments with overlap should split segments to separate layers.
 Shared segment modification behavior is controlled through qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap().
-'''
+"""
 
 
 class SegmentationsModuleTest2(unittest.TestCase):
