@@ -86,7 +86,6 @@ extend-ignore = [
   "PLW0603", # Using the global statement to update {name} is discouraged
   "PLW2901", # Outer {outer_kind} variable {name} overwritten by inner {inner_kind} target
 
-  "Q002",    # Single quote docstring found but double quotes preferred
   "Q003",    # Change outer quotes to avoid escaping inner quotes
 
   "RET501", # Do not explicitly return None in function if it is the only possible return value
