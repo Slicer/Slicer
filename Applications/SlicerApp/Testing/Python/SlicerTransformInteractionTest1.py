@@ -66,7 +66,7 @@ class SlicerTransformInteractionTest1Logic(ScriptedLoadableModuleLogic):
         threeDViewWidget.getDisplayableManagers(managers)
         for i in range(managers.GetNumberOfItems()):
             obj = managers.GetItemAsObject(i)
-            if obj.IsA('vtkMRMLLinearTransformsDisplayableManager3D'):
+            if obj.IsA("vtkMRMLLinearTransformsDisplayableManager3D"):
                 return obj
         return None
 
@@ -143,7 +143,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         logic = SlicerTransformInteractionTest1Logic()
 
         import SampleData
-        volume = SampleData.downloadSample('CTAAbdomenPanoramix')
+        volume = SampleData.downloadSample("CTAAbdomenPanoramix")
 
         # self.delayDisplay("Starting test_3D_interactionVolume")
         logic = SlicerTransformInteractionTest1Logic()
@@ -519,7 +519,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         # Setup
         tNode, tdNode = logic.addTransform()
         tNode.SetMatrixTransformToParent(vtk.vtkMatrix4x4())
-        tNode.SetName('Transform')
+        tNode.SetName("Transform")
 
         slicer.app.layoutManager().layout = slicer.vtkMRMLLayoutNode.SlicerLayoutOneUp3DView
         manager = logic.getModel3DDisplayableManager()
@@ -530,8 +530,8 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         self.assertTrue(widget.GetEnabled())
 
         # Save and clear scene
-        tempSceneDir = tempfile.mkdtemp('', 'InteractionSerialization', slicer.app.temporaryPath)
-        sceneFile = os.path.join(tempSceneDir, 'scene.mrb')
+        tempSceneDir = tempfile.mkdtemp("", "InteractionSerialization", slicer.app.temporaryPath)
+        sceneFile = os.path.join(tempSceneDir, "scene.mrb")
         slicer.util.saveScene(sceneFile)
         slicer.mrmlScene.RemoveNode(tNode)
         slicer.mrmlScene.RemoveNode(tdNode)
@@ -539,7 +539,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
 
         # Re-load scene and check values
         slicer.util.loadScene(sceneFile)
-        tNode = slicer.util.getNode('Transform')
+        tNode = slicer.util.getNode("Transform")
         self.assertIsNotNone(tNode)
 
         tdNode = tNode.GetDisplayNode()

@@ -34,13 +34,13 @@ class ImportItkSnapLabelFileReader:
         self.parent = parent
 
     def description(self):
-        return 'ITK-Snap Label Description'
+        return "ITK-Snap Label Description"
 
     def fileType(self):
-        return 'ItkSnapLabel'
+        return "ItkSnapLabel"
 
     def extensions(self):
-        return [_('ITK-Snap label description file') + ' (*.label)', _('ITK-Snap label description file') + ' (*.txt)']
+        return [_("ITK-Snap label description file") + " (*.label)", _("ITK-Snap label description file") + " (*.txt)"]
 
     def canLoadFile(self, filePath):
         # Check first if loadable based on file extension
@@ -57,12 +57,12 @@ class ImportItkSnapLabelFileReader:
 
     def load(self, properties):
         try:
-            filePath = properties['fileName']
+            filePath = properties["fileName"]
             colors = ImportItkSnapLabelFileReader.parseLabelFile(filePath)
 
             maxColorIndex = -1
             for color in colors:
-                maxColorIndex = max(maxColorIndex, color['index'])
+                maxColorIndex = max(maxColorIndex, color["index"])
 
             filenameWithoutExtension = os.path.splitext(os.path.basename(filePath))[0]
             name = slicer.mrmlScene.GenerateUniqueName(filenameWithoutExtension)
@@ -79,12 +79,12 @@ class ImportItkSnapLabelFileReader:
 
             colorNode.SetNamesInitialised(True)  # prevent automatic color name generation
             for color in colors:
-                colorNode.SetColor(color['index'], color['name'], color['r'], color['g'], color['b'], color['a'])
+                colorNode.SetColor(color["index"], color["name"], color["r"], color["g"], color["b"], color["a"])
 
             slicer.mrmlScene.AddNode(colorNode)
 
         except Exception as e:
-            logging.error(_('Failed to load file: ') + str(e))
+            logging.error(_("Failed to load file: ") + str(e))
             import traceback
             traceback.print_exc()
             return False
@@ -113,7 +113,7 @@ class ImportItkSnapLabelFileReader:
         """
 
         import re
-        commentLineRegex = re.compile(r'^\s*#(.*)')
+        commentLineRegex = re.compile(r"^\s*#(.*)")
         # Color line: index, r, g, b, a, label visibility, mesh visibility, description
         # Example:
         #     1   255    0    0        1  1  1    "Label 1"
@@ -130,10 +130,10 @@ class ImportItkSnapLabelFileReader:
                 colorLine = colorLineRegex.search(line)
                 if colorLine:
                     fields = colorLine.groups()
-                    color = {'index': int(fields[0]),
-                             'r': int(fields[1]) / 255.0, 'g': int(fields[2]) / 255.0, 'b': int(fields[3]) / 255.0, 'a': float(fields[4]),
-                             'labelVis': int(fields[5]) != 0, 'meshVis': int(fields[6]) != 0,
-                             'name': fields[7]}
+                    color = {"index": int(fields[0]),
+                             "r": int(fields[1]) / 255.0, "g": int(fields[2]) / 255.0, "b": int(fields[3]) / 255.0, "a": float(fields[4]),
+                             "labelVis": int(fields[5]) != 0, "meshVis": int(fields[6]) != 0,
+                             "name": fields[7]}
                     colors.append(color)
                     continue
                 raise ValueError(_("Syntax error in line {line}").format(lineIndex))
@@ -157,12 +157,12 @@ class ImportItkSnapLabelTest(ScriptedLoadableModuleTest):
     def test_ImportItkSnapLabel1(self):
 
         self.delayDisplay("Loading test image as label")
-        testDataPath = os.path.join(os.path.dirname(__file__), 'Resources')
-        labelFilePath = os.path.join(testDataPath, 'Untitled.label')
-        node = slicer.util.loadNodeFromFile(labelFilePath, 'ItkSnapLabel')
+        testDataPath = os.path.join(os.path.dirname(__file__), "Resources")
+        labelFilePath = os.path.join(testDataPath, "Untitled.label")
+        node = slicer.util.loadNodeFromFile(labelFilePath, "ItkSnapLabel")
         self.assertIsNotNone(node)
 
-        self.delayDisplay('Checking loaded label')
+        self.delayDisplay("Checking loaded label")
         self.assertEqual(node.GetNumberOfColors(), 7)
 
-        self.delayDisplay('Test passed')
+        self.delayDisplay("Test passed")

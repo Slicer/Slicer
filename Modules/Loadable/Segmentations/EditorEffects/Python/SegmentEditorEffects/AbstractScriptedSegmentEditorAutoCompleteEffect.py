@@ -9,7 +9,7 @@ from slicer.i18n import tr as _
 
 from .AbstractScriptedSegmentEditorEffect import *
 
-__all__ = ['AbstractScriptedSegmentEditorAutoCompleteEffect']
+__all__ = ["AbstractScriptedSegmentEditorAutoCompleteEffect"]
 
 
 #
@@ -54,7 +54,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         self.delayedAutoUpdateTimer = qt.QTimer()
         self.delayedAutoUpdateTimer.setSingleShot(True)
         self.delayedAutoUpdateTimer.interval = autoUpdateDelaySec * 1000
-        self.delayedAutoUpdateTimer.connect('timeout()', self.onPreview)
+        self.delayedAutoUpdateTimer.connect("timeout()", self.onPreview)
 
         self.extentGrowthRatio = 0.1  # extent of seed region will be grown outside by this much
         self.minimumExtentMargin = 3
@@ -96,7 +96,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         self.autoUpdateCheckBox.setEnabled(False)
 
         self.previewButton = qt.QPushButton(_("Initialize"))
-        self.previewButton.objectName = self.__class__.__name__ + 'Preview'
+        self.previewButton.objectName = self.__class__.__name__ + "Preview"
         self.previewButton.setToolTip(_("Preview complete segmentation"))
         # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
         # fails on some systems, therefore set the policies using separate method calls
@@ -130,11 +130,11 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         self.scriptedEffect.addLabeledOptionsWidget(_("Display:"), displayFrame)
 
         self.cancelButton = qt.QPushButton(_("Cancel"))
-        self.cancelButton.objectName = self.__class__.__name__ + 'Cancel'
+        self.cancelButton.objectName = self.__class__.__name__ + "Cancel"
         self.cancelButton.setToolTip(_("Clear preview and cancel auto-complete"))
 
         self.applyButton = qt.QPushButton(_("Apply"))
-        self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+        self.applyButton.objectName = self.__class__.__name__ + "Apply"
         self.applyButton.setToolTip(_("Replace segments by previewed result"))
 
         finishFrame = qt.QHBoxLayout()
@@ -142,9 +142,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         finishFrame.addWidget(self.applyButton)
         self.scriptedEffect.addOptionsWidget(finishFrame)
 
-        self.previewButton.connect('clicked()', self.onPreview)
-        self.cancelButton.connect('clicked()', self.onCancel)
-        self.applyButton.connect('clicked()', self.onApply)
+        self.previewButton.connect("clicked()", self.onPreview)
+        self.cancelButton.connect("clicked()", self.onCancel)
+        self.applyButton.connect("clicked()", self.onApply)
         self.previewOpacitySlider.connect("valueChanged(double)", self.updateMRMLFromGUI)
         self.previewShow3DButton.connect("toggled(bool)", self.updateMRMLFromGUI)
         self.autoUpdateCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)

@@ -133,7 +133,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
 
         # Load widget from .ui file (created by Qt Designer).
         # Additional widgets can be instantiated manually and added to self.layout.
-        uiWidget = slicer.util.loadUI(self.resourcePath('UI/VectorToScalarVolume.ui'))
+        uiWidget = slicer.util.loadUI(self.resourcePath("UI/VectorToScalarVolume.ui"))
         self.layout.addWidget(uiWidget)
         self.ui = slicer.util.childWidgetVariables(uiWidget)
 
@@ -162,11 +162,11 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
         # (in the selected parameter node).
         self.ui.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
         self.ui.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-        self.ui.methodSelectorComboBox.connect('currentIndexChanged(int)', self.updateParameterNodeFromGUI)
-        self.ui.componentsSpinBox.connect('valueChanged(int)', self.updateParameterNodeFromGUI)
+        self.ui.methodSelectorComboBox.connect("currentIndexChanged(int)", self.updateParameterNodeFromGUI)
+        self.ui.componentsSpinBox.connect("valueChanged(int)", self.updateParameterNodeFromGUI)
 
         # Buttons
-        self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.ui.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Make sure parameter node is initialized (needed for module reload)
         self.initializeParameterNode()
@@ -335,16 +335,16 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         # Checking input/output consistency.
         #
         if not inputVolumeNode:
-            msg = _('no input volume node defined')
+            msg = _("no input volume node defined")
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
         if not outputVolumeNode:
-            msg = _('no output volume node defined')
+            msg = _("no output volume node defined")
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
         if inputVolumeNode.GetID() == outputVolumeNode.GetID():
-            msg = _('input and output volume is the same. '
-                    'Create a new volume for output to avoid this error.')
+            msg = _("input and output volume is the same. "
+                    "Create a new volume for output to avoid this error.")
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
 
@@ -352,7 +352,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         # Checking based on method selected
         #
         if not isinstance(conversionMethod, ConversionMethods):
-            msg = 'conversionMethod %s unrecognized.' % conversionMethod
+            msg = "conversionMethod %s unrecognized." % conversionMethod
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
 
@@ -363,7 +363,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         if conversionMethod is ConversionMethods.SINGLE_COMPONENT:
             # componentToExtract is an index with valid values in the range: [0, numberOfComponents-1]
             if not 0 <= componentToExtract < numberOfComponents:
-                msg = _('component to extract ({componentSelected}) is invalid. Image has only {componentsTotal} components.').format(
+                msg = _("component to extract ({componentSelected}) is invalid. Image has only {componentsTotal} components.").format(
                     componentSelected=componentToExtract, componentsTotal=numberOfComponents)
                 logging.debug("isValidInputOutputData failed: %s" % msg)
                 return False, msg
@@ -371,8 +371,8 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         # LUMINANCE: Check that input vector has at least three components.
         if conversionMethod is ConversionMethods.LUMINANCE:
             if numberOfComponents < 3:
-                msg = _('input has only {componentsTotal} components but requires '
-                        'at least 3 components for luminance conversion.').format(componentsTotal=numberOfComponents)
+                msg = _("input has only {componentsTotal} components but requires "
+                        "at least 3 components for luminance conversion.").format(componentsTotal=numberOfComponents)
                 logging.debug("isValidInputOutputData failed: %s" % msg)
                 return False, msg
 
@@ -383,7 +383,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         Run the conversion with given parameterNode.
         """
         if parameterNode is None:
-            raise ValueError(_t('Invalid Parameter Node: None'))
+            raise ValueError(_t("Invalid Parameter Node: None"))
 
         # allow non wrapped parameter node for backwards compatibility
         if isinstance(parameterNode, slicer.vtkMRMLScriptedModuleNode):
@@ -399,8 +399,8 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         if not valid:
             raise ValueError(msg)
 
-        logging.debug('Conversion mode is %s' % conversionMethod)
-        logging.debug('ComponentToExtract is %s' % componentToExtract)
+        logging.debug("Conversion mode is %s" % conversionMethod)
+        logging.debug("ComponentToExtract is %s" % componentToExtract)
 
         if conversionMethod is ConversionMethods.SINGLE_COMPONENT:
             self.runConversionMethodSingleComponent(inputVolumeNode, outputVolumeNode,
@@ -536,7 +536,7 @@ class VectorToScalarVolumeTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Create input data")
 
         import numpy as np
-        inputVolume = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLVectorVolumeNode')
+        inputVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLVectorVolumeNode")
         voxels = np.zeros([7, 8, 9, 3], np.uint8)
         voxels[:, :, :, 0] = 30
         voxels[:, :, :, 1] = 50
@@ -575,4 +575,4 @@ class VectorToScalarVolumeTest(ScriptedLoadableModuleTest):
         self.assertEqual(outputScalarRange[0], 60)
         self.assertEqual(outputScalarRange[1], 60)
 
-        self.delayDisplay('Test passed')
+        self.delayDisplay("Test passed")

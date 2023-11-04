@@ -15,18 +15,18 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
     """This effect makes a segment hollow by replacing it with a shell at the segment boundary"""
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Hollow'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Hollow')
+        scriptedEffect.name = "Hollow"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Hollow")
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/Hollow.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/Hollow.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -67,16 +67,16 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
         self.applyToAllVisibleSegmentsCheckBox = qt.QCheckBox()
         self.applyToAllVisibleSegmentsCheckBox.setToolTip(
             _("Apply hollow effect to all visible segments in this segmentation node. This operation may take a while."))
-        self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
+        self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + "ApplyToAllVisibleSegments"
         self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget(
             _("Apply to visible segments:"), self.applyToAllVisibleSegmentsCheckBox)
 
         self.applyButton = qt.QPushButton(_("Apply"))
-        self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+        self.applyButton.objectName = self.__class__.__name__ + "Apply"
         self.applyButton.setToolTip(_("Makes the segment hollow by replacing it with a thick shell at the segment boundary."))
         self.scriptedEffect.addOptionsWidget(self.applyButton)
 
-        self.applyButton.connect('clicked()', self.onApply)
+        self.applyButton.connect("clicked()", self.onApply)
         self.shellThicknessMMSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
         self.insideSurfaceOptionRadioButton.connect("toggled(bool)", self.insideSurfaceModeToggled)
         self.medialSurfaceOptionRadioButton.connect("toggled(bool)", self.medialSurfaceModeToggled)
@@ -245,7 +245,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
                 # select input segments one by one, process
                 for index in range(inputSegmentIDs.GetNumberOfValues()):
                     segmentID = inputSegmentIDs.GetValue(index)
-                    self.showStatusMessage(_('Processing {segmentName}...')
+                    self.showStatusMessage(_("Processing {segmentName}...")
                                            .format(segmentName=segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()))
                     self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(segmentID)
                     self.processHollowing()
@@ -258,6 +258,6 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
             qt.QApplication.restoreOverrideCursor()
 
 
-INSIDE_SURFACE = 'INSIDE_SURFACE'
-MEDIAL_SURFACE = 'MEDIAL_SURFACE'
-OUTSIDE_SURFACE = 'OUTSIDE_SURFACE'
+INSIDE_SURFACE = "INSIDE_SURFACE"
+MEDIAL_SURFACE = "MEDIAL_SURFACE"
+OUTSIDE_SURFACE = "OUTSIDE_SURFACE"

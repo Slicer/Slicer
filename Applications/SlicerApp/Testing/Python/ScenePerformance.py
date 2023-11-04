@@ -34,9 +34,9 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
-        moduleName = 'ScenePerformance'
+        moduleName = "ScenePerformance"
         scriptedModulesPath = os.path.dirname(slicer.util.modulePath(moduleName))
-        path = os.path.join(scriptedModulesPath, 'Resources', 'UI', 'ScenePerformance.ui')
+        path = os.path.join(scriptedModulesPath, "Resources", "UI", "ScenePerformance.ui")
         widget = slicer.util.loadUI(path)
         self.layout = self.parent.layout()
         self.layout.addWidget(widget)
@@ -45,24 +45,24 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
         self.runTestsButton.toolTip = "Run all the tests."
         self.runTestsButton.name = "Run tests"
         self.layout.addWidget(self.runTestsButton)
-        self.runTestsButton.connect('clicked()', self.runTests)
+        self.runTestsButton.connect("clicked()", self.runTests)
 
-        self.TimePushButton = self.findWidget(self.parent, 'TimePushButton')
-        self.ActionComboBox = self.findWidget(self.parent, 'ActionComboBox')
-        self.ActionPathLineEdit = self.findWidget(self.parent, 'ActionPathLineEdit')
-        self.ResultsTextEdit = self.findWidget(self.parent, 'ResultsTextEdit')
-        self.URLLineEdit = self.findWidget(self.parent, 'URLLineEdit')
-        self.URLFileNameLineEdit = self.findWidget(self.parent, 'URLFileNameLineEdit')
-        self.SceneViewSpinBox = self.findWidget(self.parent, 'SceneViewSpinBox')
-        self.LayoutSpinBox = self.findWidget(self.parent, 'LayoutSpinBox')
-        self.MRMLNodeComboBox = self.findWidget(self.parent, 'MRMLNodeComboBox')
-        self.RepeatSpinBox = self.findWidget(self.parent, 'RepeatSpinBox')
+        self.TimePushButton = self.findWidget(self.parent, "TimePushButton")
+        self.ActionComboBox = self.findWidget(self.parent, "ActionComboBox")
+        self.ActionPathLineEdit = self.findWidget(self.parent, "ActionPathLineEdit")
+        self.ResultsTextEdit = self.findWidget(self.parent, "ResultsTextEdit")
+        self.URLLineEdit = self.findWidget(self.parent, "URLLineEdit")
+        self.URLFileNameLineEdit = self.findWidget(self.parent, "URLFileNameLineEdit")
+        self.SceneViewSpinBox = self.findWidget(self.parent, "SceneViewSpinBox")
+        self.LayoutSpinBox = self.findWidget(self.parent, "LayoutSpinBox")
+        self.MRMLNodeComboBox = self.findWidget(self.parent, "MRMLNodeComboBox")
+        self.RepeatSpinBox = self.findWidget(self.parent, "RepeatSpinBox")
 
         widget.setMRMLScene(slicer.mrmlScene)
         # self.MRMLNodeComboBox.setMRMLScene(slicer.mrmlScene)
 
-        self.TimePushButton.connect('clicked()', self.timeAction)
-        self.ActionComboBox.connect('currentIndexChanged(int)', self.updateActionProperties)
+        self.TimePushButton.connect("clicked()", self.timeAction)
+        self.ActionComboBox.connect("currentIndexChanged(int)", self.updateActionProperties)
         self.updateActionProperties()
 
     def runTests(self):
@@ -74,7 +74,7 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
         tester.setUp()
         tester.setRepeat(self.RepeatSpinBox.value)
         if self.ActionComboBox.currentIndex == 0:  # Add Data
-            if (self.URLLineEdit.text == ''):
+            if (self.URLLineEdit.text == ""):
                 file = self.ActionPathLineEdit.currentPath
             else:
                 logic = ScenePerformanceLogic()
@@ -150,18 +150,18 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
     def testAll(self):
         self.setUp()
 
-        self.addURLData(TESTING_DATA_URL + 'SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1',
-                        'BrainAtlas2012.mrb', 'SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1')
-        self.modifyNodeByID('vtkMRMLScalarVolumeNode1')
-        self.modifyNodeByID('vtkMRMLScalarVolumeNode2')
-        self.modifyNodeByID('vtkMRMLScalarVolumeNode3')
-        self.modifyNodeByID('vtkMRMLScalarVolumeDisplayNode2')
+        self.addURLData(TESTING_DATA_URL + "SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1",
+                        "BrainAtlas2012.mrb", "SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1")
+        self.modifyNodeByID("vtkMRMLScalarVolumeNode1")
+        self.modifyNodeByID("vtkMRMLScalarVolumeNode2")
+        self.modifyNodeByID("vtkMRMLScalarVolumeNode3")
+        self.modifyNodeByID("vtkMRMLScalarVolumeDisplayNode2")
         # self.modifyNodeByID('vtkMRMLModelHierarchyNode2')
-        self.modifyNodeByID('vtkMRMLModelNode4')
-        self.modifyNodeByID('vtkMRMLModelDisplayNode5')
+        self.modifyNodeByID("vtkMRMLModelNode4")
+        self.modifyNodeByID("vtkMRMLModelDisplayNode5")
         # self.modifyNodeByID('vtkMRMLModelHierarchyNode3')
-        self.modifyNodeByID('vtkMRMLModelStorageNode1')
-        self.addNodeByID('vtkMRMLModelNode302')
+        self.modifyNodeByID("vtkMRMLModelStorageNode1")
+        self.addNodeByID("vtkMRMLModelNode302")
         self.setLayout(3)
         self.setLayout(2)
         self.setLayout(4)
@@ -179,7 +179,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
         return message
 
     def displayPerformance(self, action, property, time):
-        message = f'{action} ({property}) took {time} msecs '
+        message = f"{action} ({property}) took {time} msecs "
         self.delayDisplay(message)
         return message
 
@@ -197,10 +197,10 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
             ioManager = slicer.app.ioManager()
             ioManager.loadFile(file)
             time = logic.stopTiming()
-            self.displayPerformance('AddData', file, time)
+            self.displayPerformance("AddData", file, time)
             averageTime = averageTime + time
         averageTime = averageTime / self.Repeat
-        return self.reportPerformance('AddData', os.path.basename(file), averageTime)
+        return self.reportPerformance("AddData", os.path.basename(file), averageTime)
 
     def closeScene(self):
         self.delayDisplay("Starting the Close Scene test")
@@ -210,13 +210,13 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
             logic.startTiming()
             slicer.mrmlScene.Clear(0)
             time = logic.stopTiming()
-            self.displayPerformance('CloseScene', '', time)
+            self.displayPerformance("CloseScene", "", time)
             averageTime = averageTime + time
         averageTime = averageTime / self.Repeat
-        return self.reportPerformance('CloseScene', '', averageTime)
+        return self.reportPerformance("CloseScene", "", averageTime)
 
     def restoreSceneView(self, sceneViewIndex):
-        node = slicer.mrmlScene.GetNthNodeByClass(sceneViewIndex, 'vtkMRMLSceneViewNode')
+        node = slicer.mrmlScene.GetNthNodeByClass(sceneViewIndex, "vtkMRMLSceneViewNode")
         return self.restoreSceneViewNode(node)
 
     def restoreSceneViewNode(self, node):
@@ -227,10 +227,10 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
             logic.startTiming()
             node.RestoreScene()
             time = logic.stopTiming()
-            self.displayPerformance('RestoreSceneView', node.GetID(), time)
+            self.displayPerformance("RestoreSceneView", node.GetID(), time)
             averageTime = averageTime + time
         averageTime = averageTime / self.Repeat
-        return self.reportPerformance('RestoreSceneView', node.GetID(), averageTime)
+        return self.reportPerformance("RestoreSceneView", node.GetID(), averageTime)
 
     def setLayout(self, layoutIndex):
         self.delayDisplay("Starting the layout test")
@@ -241,10 +241,10 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
             layoutManager = slicer.app.layoutManager()
             layoutManager.setLayout(layoutIndex)
             time = logic.stopTiming()
-            self.displayPerformance('Layout', layoutIndex, time)
+            self.displayPerformance("Layout", layoutIndex, time)
             averageTime = averageTime + time
         averageTime = averageTime / self.Repeat
-        return self.reportPerformance('Layout', layoutIndex, averageTime)
+        return self.reportPerformance("Layout", layoutIndex, averageTime)
 
     def addNodeByID(self, nodeID):
         node = slicer.mrmlScene.GetNodeByID(nodeID)
@@ -261,10 +261,10 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
             logic.startTiming()
             slicer.mrmlScene.AddNode(newNode)
             time = logic.stopTiming()
-            self.displayPerformance('AddNode', node.GetID(), time)
+            self.displayPerformance("AddNode", node.GetID(), time)
             averageTime = averageTime + time
         averageTime = averageTime / self.Repeat
-        return self.reportPerformance('AddNode', node.GetID(), averageTime)
+        return self.reportPerformance("AddNode", node.GetID(), averageTime)
 
     def modifyNodeByID(self, nodeID):
         node = slicer.mrmlScene.GetNodeByID(nodeID)
@@ -278,7 +278,7 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
             logic.startTiming()
             node.Modified()
             time = logic.stopTiming()
-            self.displayPerformance('ModifyNode', node.GetID(), time)
+            self.displayPerformance("ModifyNode", node.GetID(), time)
             averageTime = averageTime + time
         averageTime = averageTime / self.Repeat
-        return self.reportPerformance('ModifyNode', node.GetID(), averageTime)
+        return self.reportPerformance("ModifyNode", node.GetID(), averageTime)

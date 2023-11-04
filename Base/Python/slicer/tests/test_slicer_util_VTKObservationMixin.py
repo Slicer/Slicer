@@ -53,7 +53,7 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
         self.assertEqual(foo.modifiedEventCount(object2), 0)
 
         foo.ModifiedEventCount = {}
-        foo.addObserver(object, event, callback, group='a')
+        foo.addObserver(object, event, callback, group="a")
         object.Modified()
         self.assertEqual(len(foo.Observations), 1)
         self.assertEqual(foo.modifiedEventCount(object), 1)
@@ -114,7 +114,7 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
         event = vtk.vtkCommand.ModifiedEvent
         callback = foo.onObjectModified
 
-        group = 'a'
+        group = "a"
         priority = 42.0
 
         foo.addObserver(obj, event, callback, group=group, priority=priority)

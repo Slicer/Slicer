@@ -97,20 +97,20 @@ class SlicerRestoreSceneViewCrashIssue3445Test(ScriptedLoadableModuleTest):
         #
         import SampleData
         filePath = SampleData.downloadFromURL(
-            fileNames='BrainAtlas2012.mrb',
+            fileNames="BrainAtlas2012.mrb",
             loadFiles=True,
-            uris=TESTING_DATA_URL + 'SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1',
-            checksums='SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1')[0]
+            uris=TESTING_DATA_URL + "SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1",
+            checksums="SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1")[0]
 
-        self.delayDisplay('Finished with download')
+        self.delayDisplay("Finished with download")
 
         ioManager = slicer.app.ioManager()
 
         ioManager.loadFile(filePath)
 
         slicer.mrmlScene.Clear(0)
-        slicer.util.selectModule('Data')
-        slicer.util.selectModule('Models')
+        slicer.util.selectModule("Data")
+        slicer.util.selectModule("Models")
 
         ioManager.loadFile(filePath)
         slicer.mrmlScene.Clear(0)
@@ -118,9 +118,9 @@ class SlicerRestoreSceneViewCrashIssue3445Test(ScriptedLoadableModuleTest):
         ioManager.loadFile(filePath)
         ioManager.loadFile(filePath)
 
-        sceneViewNode = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLSceneViewNode')
+        sceneViewNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSceneViewNode")
         sceneViewNode.RestoreScene()
 
         # If test reach this point without crashing it is a success
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

@@ -21,7 +21,7 @@ class StaticPagesRequestHandler:
 
         self.uriRewriteRules = []
         self.docroot = docroot
-        self.logMessage('docroot: %s' % self.docroot)
+        self.logMessage("docroot: %s" % self.docroot)
 
     def logMessage(self, *args):
         logging.debug(args)
@@ -45,18 +45,18 @@ class StaticPagesRequestHandler:
                 uri = replace.format(*matched.groups()).encode()
                 self.logMessage(f"Path rewritten to: {uri}")
 
-        contentType = b'text/plain'
+        contentType = b"text/plain"
         responseBody = None
-        if uri.startswith(b'/'):
+        if uri.startswith(b"/"):
             uri = uri[1:]
         path = os.path.join(self.docroot, uri)
-        self.logMessage('docroot: %s' % self.docroot)
+        self.logMessage("docroot: %s" % self.docroot)
         if os.path.isdir(path):
             for index in b"index.html", b"index.htm":
                 index = os.path.join(path, index)
                 if os.path.exists(index):
                     path = index
-        self.logMessage(b'Serving: %s' % path)
+        self.logMessage(b"Serving: %s" % path)
         if os.path.isdir(path):
             contentType = b"text/html"
             responseBody = b"<ul>"
@@ -68,7 +68,7 @@ class StaticPagesRequestHandler:
             if ext in mimetypes.types_map:
                 contentType = mimetypes.types_map[ext].encode()
             try:
-                fp = open(path, 'rb')
+                fp = open(path, "rb")
                 responseBody = fp.read()
                 fp.close()
             except OSError:

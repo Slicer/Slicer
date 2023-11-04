@@ -47,32 +47,32 @@ def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
       * avoid deleting the created temporary directory
     """
 
-    temporaryModuleDirPath = tempfile.mkdtemp().replace('\\', '/')
+    temporaryModuleDirPath = tempfile.mkdtemp().replace("\\", "/")
     try:
         # Copy helper module that creates a file when startup completed event is received
-        currentDirPath = os.path.dirname(__file__).replace('\\', '/')
+        currentDirPath = os.path.dirname(__file__).replace("\\", "/")
         from shutil import copyfile
-        copyfile(currentDirPath + '/ScriptedModuleCleanupTestHelperModule.py',
-                 temporaryModuleDirPath + '/ModuleCleanup.py')
+        copyfile(currentDirPath + "/ScriptedModuleCleanupTestHelperModule.py",
+                 temporaryModuleDirPath + "/ModuleCleanup.py")
 
         common_arguments = [
-            '--no-splash',
-            '--disable-builtin-modules',
-            '--additional-module-path', temporaryModuleDirPath,
-            '--python-code', 'slicer.util.selectModule("ModuleCleanup")'
+            "--no-splash",
+            "--disable-builtin-modules",
+            "--additional-module-path", temporaryModuleDirPath,
+            "--python-code", 'slicer.util.selectModule("ModuleCleanup")'
         ]
 
         test_output_file = temporaryModuleDirPath + "/ModuleCleanupTest.out"
-        os.environ['SLICER_MODULE_CLEANUP_TEST_OUTPUT'] = test_output_file
+        os.environ["SLICER_MODULE_CLEANUP_TEST_OUTPUT"] = test_output_file
         if debug:
             print("SLICER_MODULE_CLEANUP_TEST_OUTPUT=%s" % test_output_file)
 
         # Test
         args = list(common_arguments)
         if testing_enabled:
-            args.append('--testing')
+            args.append("--testing")
         else:
-            args.append('--exit-after-startup')
+            args.append("--exit-after-startup")
         (returnCode, stdout, stderr) = run(slicer_executable, args)
 
         assert os.path.isfile(test_output_file)
@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("/path/to/Slicer")
-    parser.add_argument('--with-testing', dest='testing_enabled', action='store_true')
+    parser.add_argument("--with-testing", dest="testing_enabled", action="store_true")
     args = parser.parse_args()
 
     slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))

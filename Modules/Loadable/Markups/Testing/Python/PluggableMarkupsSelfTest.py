@@ -56,7 +56,7 @@ class PluggableMarkupsSelfTestWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -235,14 +235,14 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
         """
         Run the tests
         """
-        slicer.util.delayDisplay('Running integration tests for Pluggable Markups')
+        slicer.util.delayDisplay("Running integration tests for Pluggable Markups")
 
         self.test_unregister_existing_markups()
         self.test_register_markups()
         # self.test_unregister_additional_options_widgets()
         self.test_register_additional_options_widgets()
 
-        logging.info('Process completed')
+        logging.info("Process completed")
 
 
 class PluggableMarkupsSelfTestTest(ScriptedLoadableModuleTest):
@@ -263,10 +263,10 @@ class PluggableMarkupsSelfTestTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Starting the Pluggable Markups Test")
 
         # Open the markups module
-        slicer.util.mainWindow().moduleSelector().selectModule('Markups')
-        self.delayDisplay('In Markups module')
+        slicer.util.mainWindow().moduleSelector().selectModule("Markups")
+        self.delayDisplay("In Markups module")
 
         logic = PluggableMarkupsSelfTestLogic()
         logic.run()
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

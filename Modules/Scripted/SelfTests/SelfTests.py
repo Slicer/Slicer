@@ -55,8 +55,8 @@ and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
             slicer.selfTests = {}
 
         # register the example tests
-        slicer.selfTests['MRMLSceneExists'] = lambda: slicer.app.mrmlScene
-        slicer.selfTests['CloseScene'] = ExampleSelfTests.closeScene
+        slicer.selfTests["MRMLSceneExists"] = lambda: slicer.app.mrmlScene
+        slicer.selfTests["CloseScene"] = ExampleSelfTests.closeScene
 
 #
 # SelfTests widget
@@ -80,7 +80,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
 
         self.logic = SelfTestsLogic(slicer.selfTests)
 
-        globals()['selfTests'] = self
+        globals()["selfTests"] = self
 
         #
         # test list
@@ -94,29 +94,29 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
 
         self.runAll = qt.QPushButton("Run All")
         self.testList.layout().addWidget(self.runAll)
-        self.runAll.connect('clicked()', self.onRunAll)
+        self.runAll.connect("clicked()", self.onRunAll)
 
         self.testButtons = {}
         self.testMapper = qt.QSignalMapper()
-        self.testMapper.connect('mapped(const QString&)', self.onRun)
+        self.testMapper.connect("mapped(const QString&)", self.onRun)
         testKeys = sorted(slicer.selfTests.keys())
         for test in testKeys:
             self.testButtons[test] = qt.QPushButton(test)
             self.testButtons[test].setToolTip(slicer.selfTests[test].__doc__)
             self.testList.layout().addWidget(self.testButtons[test])
             self.testMapper.setMapping(self.testButtons[test], test)
-            self.testButtons[test].connect('clicked()', self.testMapper, 'map()')
+            self.testButtons[test].connect("clicked()", self.testMapper, "map()")
 
         # Add spacer to layout
         self.layout.addStretch(1)
 
     def onRunAll(self):
         self.logic.run(continueCheck=self.continueCheck)
-        slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
+        slicer.util.infoDisplay(self.logic, windowTitle="SelfTests")
 
     def onRun(self, test):
         self.logic.run([test, ], continueCheck=self.continueCheck)
-        slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
+        slicer.util.infoDisplay(self.logic, windowTitle="SelfTests")
 
     def continueCheck(self, logic):
         slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
@@ -163,7 +163,7 @@ class SelfTestsLogic:
 
 
 def SelfTestsTest():
-    if hasattr(slicer, 'selfTests'):
+    if hasattr(slicer, "selfTests"):
         logic = SelfTestsLogic(list(slicer.selfTests.keys()))
         logic.run()
     print(logic.results)
@@ -177,11 +177,11 @@ def SelfTestsDemo():
 
 if __name__ == "__main__":
     import sys
-    if '--test' in sys.argv:
+    if "--test" in sys.argv:
         if SelfTestsTest():
             exit(0)
         exit(1)
-    if '--demo' in sys.argv:
+    if "--demo" in sys.argv:
         SelfTestsDemo()
         exit()
     # TODO - 'exit()' returns so this code gets run

@@ -16,19 +16,19 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Draw'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Draw')
+        scriptedEffect.name = "Draw"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Draw")
         self.drawPipelines = {}
         AbstractScriptedSegmentEditorLabelEffect.__init__(self, scriptedEffect)
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedLabelEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/Draw.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/Draw.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -109,10 +109,10 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
                 abortEvent = True
         elif eventId == vtk.vtkCommand.KeyPressEvent:
             key = callerInteractor.GetKeySym()
-            if key == 'a' or key == 'Return':
+            if key == "a" or key == "Return":
                 pipeline.apply()
                 abortEvent = True
-            if key == 'x':
+            if key == "x":
                 pipeline.deleteLastPoint()
                 abortEvent = True
         else:
@@ -122,11 +122,11 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
         return abortEvent
 
     def processViewNodeEvents(self, callerViewNode, eventId, viewWidget):
-        if callerViewNode and callerViewNode.IsA('vtkMRMLSliceNode'):
+        if callerViewNode and callerViewNode.IsA("vtkMRMLSliceNode"):
             # Get draw pipeline for current slice
             pipeline = self.pipelineForWidget(viewWidget)
             if pipeline is None:
-                logging.error('processViewNodeEvents: Invalid pipeline')
+                logging.error("processViewNodeEvents: Invalid pipeline")
                 return
 
             # Make sure all points are on the current slice plane.

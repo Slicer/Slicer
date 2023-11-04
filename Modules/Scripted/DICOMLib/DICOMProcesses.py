@@ -32,7 +32,7 @@ also be used as a logic helper in other code
 
 # Module paths: root folder for DICOMLib, Resources Root
 MODULE_ROOT = os.path.abspath(os.path.dirname(__file__))
-RESOURCE_ROOT = os.path.join(MODULE_ROOT, 'Resources')
+RESOURCE_ROOT = os.path.join(MODULE_ROOT, "Resources")
 
 
 class DICOMProcess:
@@ -41,15 +41,15 @@ class DICOMProcess:
     """
 
     POSSIBLE_DCMTK_PATHS = [
-        '/../DCMTK-build/bin/Debug',
-        '/../DCMTK-build/bin/Release',
-        '/../DCMTK-build/bin/RelWithDebInfo',
-        '/../DCMTK-build/bin/MinSizeRel',
-        '/../DCMTK-build/bin',
-        '/../CTK-build/CMakeExternals/Install/bin',
-        '/bin'
+        "/../DCMTK-build/bin/Debug",
+        "/../DCMTK-build/bin/Release",
+        "/../DCMTK-build/bin/RelWithDebInfo",
+        "/../DCMTK-build/bin/MinSizeRel",
+        "/../DCMTK-build/bin",
+        "/../CTK-build/CMakeExternals/Install/bin",
+        "/bin"
     ]
-    PROCESS_STATE_NAMES = {0: 'NotRunning', 1: 'Starting', 2: 'Running', }
+    PROCESS_STATE_NAMES = {0: "NotRunning", 1: "Starting", 2: "Running", }
 
     @classmethod
     def getDCMTKToolsPath(
@@ -64,7 +64,7 @@ class DICOMProcess:
         relSearchPaths.extend(additionalPaths)
 
         try:
-            absSearchPaths = (f'{slicer.app.slicerHome}{path}' for path in relSearchPaths)
+            absSearchPaths = (f"{slicer.app.slicerHome}{path}" for path in relSearchPaths)
             return next(path for path in absSearchPaths
                         if os.path.exists(path))
         except StopIteration:
@@ -90,7 +90,7 @@ class DICOMProcess:
 
         # start the process!
         self.process = qt.QProcess()
-        self.process.connect('stateChanged(QProcess::ProcessState)', self.onStateChanged)
+        self.process.connect("stateChanged(QProcess::ProcessState)", self.onStateChanged)
         logging.debug(("Starting %s with " % cmd, args))
         self.process.start(cmd, args)
         return self.process
@@ -150,7 +150,7 @@ class DICOMCommand(DICOMProcess):
 
     def __init__(self, cmd: str, args: list[str]):
         super().__init__()
-        self.executable = self.exeDir + '/' + cmd + self.exeExtension
+        self.executable = self.exeDir + "/" + cmd + self.exeExtension
         self.args = args
 
     def start(self) -> qt.QByteArray:
@@ -190,13 +190,13 @@ class DICOMStoreSCPProcess(DICOMProcess):
             self.port = str(incomingPort)
         else:
             settings = qt.QSettings()
-            self.port = settings.value('StoragePort')
+            self.port = settings.value("StoragePort")
             if not self.port:
-                settings.setValue('StoragePort', '11112')
-                self.port = settings.value('StoragePort')
+                settings.setValue("StoragePort", "11112")
+                self.port = settings.value("StoragePort")
 
         self.storescpExecutable = os.path.join(self.exeDir, self.STORESCP_PROCESS_FILE_NAME + self.exeExtension)
-        self.dcmdumpExecutable = os.path.join(self.exeDir, 'dcmdump' + self.exeExtension)
+        self.dcmdumpExecutable = os.path.join(self.exeDir, "dcmdump" + self.exeExtension)
 
     def __del__(self):
         super().__del__()
@@ -214,22 +214,22 @@ class DICOMStoreSCPProcess(DICOMProcess):
         self.killStoreSCPProcesses()
         onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' \
                               % (self.dcmdumpExecutable, self.incomingDataDir)
-        args = [str(self.port), '--accept-all', '--output-directory', self.incomingDataDir, '--exec-sync',
-                '--exec-on-reception', onReceptionCallback]
+        args = [str(self.port), "--accept-all", "--output-directory", self.incomingDataDir, "--exec-sync",
+                "--exec-on-reception", onReceptionCallback]
         logging.debug("Starting storescp process")
         super().start(self.storescpExecutable, args)
-        self.process.connect('readyReadStandardOutput()', self.readFromStandardOutput)
+        self.process.connect("readyReadStandardOutput()", self.readFromStandardOutput)
 
     def killStoreSCPProcesses(self):
         uniqueListener = True
-        if os.name == 'nt':
+        if os.name == "nt":
             uniqueListener = self.killStoreSCPProcessesNT(uniqueListener)
-        elif os.name == 'posix':
+        elif os.name == "posix":
             uniqueListener = self.killStoreSCPProcessesPosix(uniqueListener)
         return uniqueListener
 
     def killStoreSCPProcessesPosix(self, uniqueListener):
-        p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+        p = subprocess.Popen(["ps", "-A"], stdout=subprocess.PIPE)
         out, err = p.communicate()
         for line in out.splitlines():
             line = line.decode()
@@ -247,13 +247,13 @@ class DICOMStoreSCPProcess(DICOMProcess):
         import ctypes.wintypes
         import os.path
 
-        psapi = ctypes.WinDLL('Psapi.dll')
+        psapi = ctypes.WinDLL("Psapi.dll")
         enum_processes = psapi.EnumProcesses
         enum_processes.restype = ctypes.wintypes.BOOL
         get_process_image_file_name = psapi.GetProcessImageFileNameA
         get_process_image_file_name.restype = ctypes.wintypes.DWORD
 
-        kernel32 = ctypes.WinDLL('kernel32.dll')
+        kernel32 = ctypes.WinDLL("kernel32.dll")
         open_process = kernel32.OpenProcess
         open_process.restype = ctypes.wintypes.HANDLE
         terminate_process = kernel32.TerminateProcess
@@ -318,7 +318,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
         if readLineCallback:
             for line in lines:
                 # Remove stray newline and single-quote characters
-                clearLine = line.replace('\\r', '').replace('\\n', '').replace('\'', '').strip()
+                clearLine = line.replace("\\r", "").replace("\\n", "").replace("\'", "").strip()
                 readLineCallback(clearLine)
         self.readFromStandardError()
 
@@ -328,8 +328,8 @@ class DICOMStoreSCPProcess(DICOMProcess):
             logging.debug(f"Error output from {self.__class__.__name__}: {stdErr}")
 
     def notifyUserAboutRunningStoreSCP(self, pid=None):
-        if slicer.util.confirmYesNoDisplay('There are other DICOM listeners running.\n Do you want to end them?'):
-            if os.name == 'nt':
+        if slicer.util.confirmYesNoDisplay("There are other DICOM listeners running.\n Do you want to end them?"):
+            if os.name == "nt":
                 self.findAndKillProcessNT(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension, True)
                 # Killing processes can take a while, so we retry a couple of times until we confirm that there
                 # are no more listeners.
@@ -339,7 +339,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
                         break
                     retryAttempts -= 1
                     time.sleep(1)
-            elif os.name == 'posix':
+            elif os.name == "posix":
                 import signal
                 os.kill(pid, signal.SIGKILL)
             return True
@@ -369,7 +369,7 @@ class DICOMListener(DICOMStoreSCPProcess):
         self.delayedAutoUpdateTimer = qt.QTimer()
         self.delayedAutoUpdateTimer.setSingleShot(True)
         self.delayedAutoUpdateTimer.interval = autoUpdateDelaySec * 1000
-        self.delayedAutoUpdateTimer.connect('timeout()', self.completeIncomingFilesIndexing)
+        self.delayedAutoUpdateTimer.connect("timeout()", self.completeIncomingFilesIndexing)
 
         # List of received files that are being indexed
         self.incomingFiles = []
@@ -383,7 +383,7 @@ class DICOMListener(DICOMStoreSCPProcess):
 
         databaseDirectory = self.dicomDatabase.databaseDirectory
         if not databaseDirectory:
-            raise UserWarning('Database directory not set: cannot start DICOMListener')
+            raise UserWarning("Database directory not set: cannot start DICOMListener")
         if not os.path.exists(databaseDirectory):
             os.mkdir(databaseDirectory)
         incomingDir = databaseDirectory + "/incoming"
@@ -405,7 +405,7 @@ class DICOMListener(DICOMStoreSCPProcess):
         self.incomingFiles = []
 
     def processStdoutLine(self, line):
-        searchTag = '# dcmdump (1/1): '
+        searchTag = "# dcmdump (1/1): "
         tagStart = line.find(searchTag)
         if tagStart != -1:
             dicomFilePath = line[tagStart + len(searchTag):].strip()
@@ -557,7 +557,7 @@ class DICOMSender:
 
         # Utilize custom configuration
         if config and os.path.exists(config):
-            args.extend(('-xf', config, config_profile))
+            args.extend(("-xf", config, config_profile))
 
         # Core arguments: hostname, port, AEC, file
         args.extend((self.destinationUrl.host(), str(self.destinationUrl.port()), "-aec", self.aeTitle, file))
@@ -587,7 +587,7 @@ class DICOMSender:
         # Retry transfer with alternative configuration with presentation contexts which support SEG/SR.
         # A common cause of failure is an incomplete set of dcmtk/DCMSCU presentation context UIDS.
         # Refer to https://book.orthanc-server.com/faq/dcmtk-tricks.html#id2 for additional detail.
-        logging.info('Retry transfer with alternative dicomscu configuration: %s' % self.extended_dicom_config_path)
+        logging.info("Retry transfer with alternative dicomscu configuration: %s" % self.extended_dicom_config_path)
 
         # Terminate transfer and notify user of failure
         if self._dicomSendSCU(
@@ -663,8 +663,8 @@ class DICOMTestingQRServer:
         if self.qrRunning():
             self.stop()
 
-        self.dcmqrscpExecutable = self.exeDir + '/dcmqrdb/apps/dcmqrscp'
-        self.storeSCUExecutable = self.exeDir + '/dcmnet/apps/storescu'
+        self.dcmqrscpExecutable = self.exeDir + "/dcmqrdb/apps/dcmqrscp"
+        self.storeSCUExecutable = self.exeDir + "/dcmnet/apps/storescu"
 
         # make the config file
         cfg = self.tmpDir + "/dcmqrscp.cfg"
@@ -673,8 +673,8 @@ class DICOMTestingQRServer:
         # start the server!
         cmdLine = [self.dcmqrscpExecutable]
         if verbose:
-            cmdLine.append('--verbose')
-        cmdLine.append('--config')
+            cmdLine.append("--verbose")
+        cmdLine.append("--config")
         cmdLine.append(cfg)
         self.qrProcess = subprocess.Popen(cmdLine)
         # TODO: handle output
@@ -686,13 +686,13 @@ class DICOMTestingQRServer:
         if initialFiles:
             cmdLine = [self.storeSCUExecutable]
             if verbose:
-                cmdLine.append('--verbose')
-            cmdLine.append('-aec')
-            cmdLine.append('CTK_AE')
-            cmdLine.append('-aet')
-            cmdLine.append('CTK_AE')
-            cmdLine.append('localhost')
-            cmdLine.append('11112')
+                cmdLine.append("--verbose")
+            cmdLine.append("-aec")
+            cmdLine.append("CTK_AE")
+            cmdLine.append("-aet")
+            cmdLine.append("CTK_AE")
+            cmdLine.append("localhost")
+            cmdLine.append("11112")
             cmdLine += initialFiles
             p = subprocess.Popen(cmdLine)
             p.wait()
@@ -703,7 +703,7 @@ class DICOMTestingQRServer:
         self.qrProcess.wait()
         self.qrProcess = None
 
-    def makeConfigFile(self, configFile, storageDirectory='.'):
+    def makeConfigFile(self, configFile, storageDirectory="."):
         """ make a config file for the local instance with just
         the parts we need (comments and examples removed).
         For examples and the full syntax
@@ -734,6 +734,6 @@ AETable END
 """
         config = template % storageDirectory
 
-        fp = open(configFile, 'w')
+        fp = open(configFile, "w")
         fp.write(config)
         fp.close()

@@ -31,7 +31,7 @@ class SlicerRequestHandler:
         parsedURL = urllib.parse.urlparse(uri)
         pathParts = os.path.split(parsedURL.path)  # path is like /slicer/timeimage
         route = pathParts[0]
-        return 0.5 if route.startswith(b'/slicer') else 0.0
+        return 0.5 if route.startswith(b"/slicer") else 0.0
 
     def handleRequest(self, method, uri, requestBody):
         """Handle a slicer api request.
@@ -42,56 +42,56 @@ class SlicerRequestHandler:
         """
         parsedURL = urllib.parse.urlparse(uri)
         request = parsedURL.path
-        request = request[len(b'/slicer'):]
+        request = request[len(b"/slicer"):]
         if parsedURL.query != b"":
-            request += b'?' + parsedURL.query
-        self.logMessage(' request is: %s' % request)
+            request += b"?" + parsedURL.query
+        self.logMessage(" request is: %s" % request)
 
         responseBody = None
-        contentType = b'text/plain'
-        if self.enableExec and request.find(b'/exec') == 0:
+        contentType = b"text/plain"
+        if self.enableExec and request.find(b"/exec") == 0:
             responseBody, contentType = self.exec(request, requestBody)
-        elif request.find(b'/timeimage') == 0:
+        elif request.find(b"/timeimage") == 0:
             responseBody, contentType = self.timeimage(request)
-        elif request.find(b'/system') == 0:
+        elif request.find(b"/system") == 0:
             responseBody, contentType = self.system(method, request)
-        elif request.find(b'/gui') == 0:
+        elif request.find(b"/gui") == 0:
             responseBody, contentType = self.gui(method, request)
-        elif request.find(b'/screenshot') == 0:
+        elif request.find(b"/screenshot") == 0:
             responseBody, contentType = self.screenshot(request)
-        elif request.find(b'/slice') == 0:
+        elif request.find(b"/slice") == 0:
             responseBody, contentType = self.slice(request)
-        elif request.find(b'/threeDGraphics') == 0:
+        elif request.find(b"/threeDGraphics") == 0:
             responseBody, contentType = self.threeDGraphics(request)
-        elif request.find(b'/threeD') == 0:
+        elif request.find(b"/threeD") == 0:
             responseBody, contentType = self.threeD(request)
-        elif request.find(b'/mrml') == 0:
+        elif request.find(b"/mrml") == 0:
             responseBody, contentType = self.mrml(method, request)
-        elif request.find(b'/tracking') == 0:
+        elif request.find(b"/tracking") == 0:
             responseBody, contentType = self.tracking(request)
-        elif request.find(b'/sampledata') == 0:
+        elif request.find(b"/sampledata") == 0:
             responseBody, contentType = self.sampleData(request)
-        elif request.find(b'/volumeSelection') == 0:
+        elif request.find(b"/volumeSelection") == 0:
             responseBody, contentType = self.volumeSelection(request)
-        elif request.find(b'/volumes') == 0:
+        elif request.find(b"/volumes") == 0:
             responseBody, contentType = self.volumes(request, requestBody)
-        elif request.find(b'/volume') == 0:
+        elif request.find(b"/volume") == 0:
             responseBody, contentType = self.volume(request, requestBody)
-        elif request.find(b'/gridTransforms') == 0:
+        elif request.find(b"/gridTransforms") == 0:
             responseBody, contentType = self.gridTransforms(request, requestBody)
-        elif request.find(b'/gridTransform') == 0:
+        elif request.find(b"/gridTransform") == 0:
             responseBody, contentType = self.gridTransform(request, requestBody)
             print("responseBody", len(responseBody))
-        elif request.find(b'/fiducials') == 0:
+        elif request.find(b"/fiducials") == 0:
             responseBody, contentType = self.fiducials(request, requestBody)
-        elif request.find(b'/fiducial') == 0:
+        elif request.find(b"/fiducial") == 0:
             responseBody, contentType = self.fiducial(request, requestBody)
-        elif request.find(b'/segmentations') == 0:
+        elif request.find(b"/segmentations") == 0:
             responseBody, contentType = self.segmentations(request, requestBody)
-        elif request.find(b'/segmentation') == 0:
+        elif request.find(b"/segmentation") == 0:
             responseBody, contentType = self.segmentation(request, requestBody)
             print("responseBody", len(responseBody))
-        elif request.find(b'/accessDICOMwebStudy') == 0:
+        elif request.find(b"/accessDICOMwebStudy") == 0:
             responseBody, contentType = self.accessDICOMwebStudy(request, requestBody)
         else:
             raise RuntimeError(f'unknown command "{request}"')
@@ -101,23 +101,23 @@ class SlicerRequestHandler:
         """
         Handle requests with path: /exec
         """
-        self.logMessage('exec with body %s' % requestBody)
+        self.logMessage("exec with body %s" % requestBody)
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         if requestBody:
             source = requestBody
         else:
             try:
-                source = urllib.parse.unquote(q['source'][0])
+                source = urllib.parse.unquote(q["source"][0])
             except KeyError:
-                self.logMessage('need to supply source code to run')
-                return "", b'text/plain'
-        self.logMessage('will run %s' % source)
+                self.logMessage("need to supply source code to run")
+                return "", b"text/plain"
+        self.logMessage("will run %s" % source)
         exec("__execResult = {}", globals())
         exec(source, globals())
         result = json.dumps(eval("__execResult", globals())).encode()
-        self.logMessage('result: %s' % result)
-        return result, b'application/json'
+        self.logMessage("result: %s" % result)
+        return result, b"application/json"
 
     def setupMRMLTracking(self):
         """
@@ -126,10 +126,10 @@ class SlicerRequestHandler:
         """
         if not hasattr(self, "trackingDevice"):
             """ set up the mrml parts or use existing """
-            nodes = slicer.mrmlScene.GetNodesByName('trackingDevice')
+            nodes = slicer.mrmlScene.GetNodesByName("trackingDevice")
             if nodes.GetNumberOfItems() > 0:
                 self.trackingDevice = nodes.GetItemAsObject(0)
-                nodes = slicer.mrmlScene.GetNodesByName('tracker')
+                nodes = slicer.mrmlScene.GetNodesByName("tracker")
                 self.tracker = nodes.GetItemAsObject(0)
             else:
                 # trackingDevice cursor
@@ -152,7 +152,7 @@ class SlicerRequestHandler:
                 slicer.mrmlScene.AddNode(self.trackingDevice)
                 # tracker
                 self.tracker = slicer.vtkMRMLLinearTransformNode()
-                self.tracker.SetName('tracker')
+                self.tracker.SetName("tracker")
                 slicer.mrmlScene.AddNode(self.tracker)
                 self.trackingDevice.SetAndObserveTransformNodeID(self.tracker.GetID())
 
@@ -164,15 +164,15 @@ class SlicerRequestHandler:
         q = urllib.parse.parse_qs(p.query)
         self.logMessage(q)
         try:
-            transformMatrix = list(map(float, q['m'][0].split(',')))
+            transformMatrix = list(map(float, q["m"][0].split(",")))
         except KeyError:
             transformMatrix = None
         try:
-            quaternion = list(map(float, q['q'][0].split(',')))
+            quaternion = list(map(float, q["q"][0].split(",")))
         except KeyError:
             quaternion = None
         try:
-            position = list(map(float, q['p'][0].split(',')))
+            position = list(map(float, q["p"][0].split(",")))
         except KeyError:
             position = None
 
@@ -193,7 +193,7 @@ class SlicerRequestHandler:
                 m.SetElement(row, 3, position[row])
 
         if quaternion:
-            qu = vtk.vtkQuaternion['float64']()
+            qu = vtk.vtkQuaternion["float64"]()
             qu.SetW(quaternion[0])
             qu.SetX(quaternion[1])
             qu.SetY(quaternion[2])
@@ -206,7 +206,7 @@ class SlicerRequestHandler:
 
         self.tracker.SetMatrixTransformToParent(m)
 
-        return (f"Set matrix".encode()), b'text/plain'
+        return (f"Set matrix".encode()), b"text/plain"
 
     def sampleData(self, request):
         """
@@ -216,7 +216,7 @@ class SlicerRequestHandler:
         q = urllib.parse.parse_qs(p.query)
         self.logMessage(f"SampleData request: {repr(request)}")
         try:
-            name = q['name'][0].strip()
+            name = q["name"][0].strip()
         except KeyError:
             name = None
         if not name:
@@ -226,7 +226,7 @@ class SlicerRequestHandler:
             SampleData.downloadSample(name)
         except IndexError:
             raise RuntimeError(f"sampledata {name} was not found")
-        return (f"Sample data {name} loaded".encode()), b'text/plain'
+        return (f"Sample data {name} loaded".encode()), b"text/plain"
 
     def volumeSelection(self, request):
         """
@@ -236,28 +236,28 @@ class SlicerRequestHandler:
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         try:
-            cmd = q['cmd'][0].strip().lower()
+            cmd = q["cmd"][0].strip().lower()
         except KeyError:
-            cmd = 'next'
-        options = ['next', 'previous']
+            cmd = "next"
+        options = ["next", "previous"]
         if cmd not in options:
-            cmd = 'next'
+            cmd = "next"
 
         applicationLogic = slicer.app.applicationLogic()
         selectionNode = applicationLogic.GetSelectionNode()
         currentNodeID = selectionNode.GetActiveVolumeID()
         currentIndex = 0
         if currentNodeID:
-            nodes = slicer.util.getNodes('vtkMRML*VolumeNode*')
+            nodes = slicer.util.getNodes("vtkMRML*VolumeNode*")
             for nodeName in nodes:
                 if nodes[nodeName].GetID() == currentNodeID:
                     break
                 currentIndex += 1
         if currentIndex >= len(nodes):
             currentIndex = 0
-        if cmd == 'next':
+        if cmd == "next":
             newIndex = currentIndex + 1
-        elif cmd == 'previous':
+        elif cmd == "previous":
             newIndex = currentIndex - 1
         if newIndex >= len(nodes):
             newIndex = 0
@@ -266,7 +266,7 @@ class SlicerRequestHandler:
         volumeNode = nodes[nodes.keys()[newIndex]]
         selectionNode.SetReferenceActiveVolumeID(volumeNode.GetID())
         applicationLogic.PropagateVolumeSelection(0)
-        return (f"Volume selected".encode()), b'text/plain'
+        return (f"Volume selected".encode()), b"text/plain"
 
     def volumes(self, request, requestBody):
         """
@@ -274,12 +274,12 @@ class SlicerRequestHandler:
         Returns a json list of mrml volume names and ids.
         """
         volumes = []
-        mrmlVolumes = slicer.util.getNodes('vtkMRMLScalarVolumeNode*')
-        mrmlVolumes.update(slicer.util.getNodes('vtkMRMLLabelMapVolumeNode*'))
+        mrmlVolumes = slicer.util.getNodes("vtkMRMLScalarVolumeNode*")
+        mrmlVolumes.update(slicer.util.getNodes("vtkMRMLLabelMapVolumeNode*"))
         for id_ in mrmlVolumes.keys():
             volumeNode = mrmlVolumes[id_]
             volumes.append({"name": volumeNode.GetName(), "id": volumeNode.GetID()})
-        return (json.dumps(volumes).encode()), b'application/json'
+        return (json.dumps(volumes).encode()), b"application/json"
 
     def volume(self, request, requestBody):
         """
@@ -293,9 +293,9 @@ class SlicerRequestHandler:
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         try:
-            volumeID = q['id'][0].strip()
+            volumeID = q["id"][0].strip()
         except KeyError:
-            volumeID = 'vtkMRMLScalarVolumeNode*'
+            volumeID = "vtkMRMLScalarVolumeNode*"
 
         if requestBody:
             return self.postNRRD(volumeID, requestBody)
@@ -308,11 +308,11 @@ class SlicerRequestHandler:
         Returns a list of names and ids of grid transforms in the scene.
         """
         gridTransforms = []
-        mrmlGridTransforms = slicer.util.getNodes('vtkMRMLGridTransformNode*')
+        mrmlGridTransforms = slicer.util.getNodes("vtkMRMLGridTransformNode*")
         for id_ in mrmlGridTransforms.keys():
             gridTransform = mrmlGridTransforms[id_]
             gridTransforms.append({"name": gridTransform.GetName(), "id": gridTransform.GetID()})
-        return (json.dumps(gridTransforms).encode()), b'application/json'
+        return (json.dumps(gridTransforms).encode()), b"application/json"
 
     def gridTransform(self, request, requestBody):
         """
@@ -324,9 +324,9 @@ class SlicerRequestHandler:
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         try:
-            transformID = q['id'][0].strip()
+            transformID = q["id"][0].strip()
         except KeyError:
-            transformID = 'vtkMRMLGridTransformNode*'
+            transformID = "vtkMRMLGridTransformNode*"
 
         if requestBody:
             # TODO: implement this method:
@@ -344,42 +344,42 @@ class SlicerRequestHandler:
         """
 
         if requestBody[:4] != b"NRRD":
-            raise RuntimeError('Cannot load non-nrrd file (magic is %s)' % requestBody[:4])
+            raise RuntimeError("Cannot load non-nrrd file (magic is %s)" % requestBody[:4])
 
         fields = {}
-        endOfHeader = requestBody.find(b'\n\n')  # TODO: could be \r\n
+        endOfHeader = requestBody.find(b"\n\n")  # TODO: could be \r\n
         header = requestBody[:endOfHeader]
         self.logMessage(header)
-        for line in header.split(b'\n'):
-            colonIndex = line.find(b':')
-            if line[0] != '#' and colonIndex != -1:
+        for line in header.split(b"\n"):
+            colonIndex = line.find(b":")
+            if line[0] != "#" and colonIndex != -1:
                 key = line[:colonIndex]
                 value = line[colonIndex + 2:]
                 fields[key] = value
 
-        if fields[b'type'] != b'short':
-            raise RuntimeError('Can only read short volumes')
-        if fields[b'dimension'] != b'3':
-            raise RuntimeError('Can only read 3D, 1 component volumes')
-        if fields[b'endian'] != b'little':
-            raise RuntimeError('Can only read little endian')
-        if fields[b'encoding'] != b'raw':
-            raise RuntimeError('Can only read raw encoding')
-        if fields[b'space'] != b'left-posterior-superior':
-            raise RuntimeError('Can only read space in LPS')
+        if fields[b"type"] != b"short":
+            raise RuntimeError("Can only read short volumes")
+        if fields[b"dimension"] != b"3":
+            raise RuntimeError("Can only read 3D, 1 component volumes")
+        if fields[b"endian"] != b"little":
+            raise RuntimeError("Can only read little endian")
+        if fields[b"encoding"] != b"raw":
+            raise RuntimeError("Can only read raw encoding")
+        if fields[b"space"] != b"left-posterior-superior":
+            raise RuntimeError("Can only read space in LPS")
 
         imageData = vtk.vtkImageData()
-        imageData.SetDimensions(list(map(int, fields[b'sizes'].split(b' '))))
+        imageData.SetDimensions(list(map(int, fields[b"sizes"].split(b" "))))
         imageData.AllocateScalars(vtk.VTK_SHORT, 1)
 
-        origin = list(map(float, fields[b'space origin'].replace(b'(', b'').replace(b')', b'').split(b',')))
+        origin = list(map(float, fields[b"space origin"].replace(b"(", b"").replace(b")", b"").split(b",")))
         origin[0] *= -1
         origin[1] *= -1
 
         directions = []
-        directionParts = fields[b'space directions'].split(b')')[:3]
+        directionParts = fields[b"space directions"].split(b")")[:3]
         for directionPart in directionParts:
-            part = directionPart.replace(b'(', b'').replace(b')', b'').split(b',')
+            part = directionPart.replace(b"(", b"").replace(b")", b"").split(b",")
             directions.append(list(map(float, part)))
 
         ijkToRAS = vtk.vtkMatrix4x4()
@@ -404,7 +404,7 @@ class SlicerRequestHandler:
         node.SetAndObserveImageData(imageData)
         node.SetIJKToRASMatrix(ijkToRAS)
 
-        pixels = numpy.frombuffer(requestBody[endOfHeader + 2:], dtype=numpy.dtype('int16'))
+        pixels = numpy.frombuffer(requestBody[endOfHeader + 2:], dtype=numpy.dtype("int16"))
         array = slicer.util.array(node.GetID())
         array[:] = pixels.reshape(array.shape)
         imageData.GetPointData().GetScalars().Modified()
@@ -415,7 +415,7 @@ class SlicerRequestHandler:
         slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveVolumeID(node.GetID())
         slicer.app.applicationLogic().PropagateVolumeSelection()
 
-        return b"{'status': 'success'}", b'application/json'
+        return b"{'status': 'success'}", b"application/json"
 
     def getNRRD(self, volumeID):
         """Return a nrrd binary blob with contents of the volume node
@@ -425,11 +425,11 @@ class SlicerRequestHandler:
         volumeArray = slicer.util.array(volumeID)
 
         if volumeNode is None or volumeArray is None:
-            self.logMessage('Could not find requested volume')
+            self.logMessage("Could not find requested volume")
             return None
         supportedNodes = ["vtkMRMLScalarVolumeNode", "vtkMRMLLabelMapVolumeNode"]
         if not volumeNode.GetClassName() in supportedNodes:
-            self.logMessage('Can only get scalar volumes')
+            self.logMessage("Can only get scalar volumes")
             return None
 
         imageData = volumeNode.GetImageData()
@@ -437,10 +437,10 @@ class SlicerRequestHandler:
         supportedScalarTypes = ["short", "double"]
         scalarType = imageData.GetScalarTypeAsString()
         if scalarType not in supportedScalarTypes:
-            self.logMessage(f'Can only get volumes of types {str(supportedScalarTypes)}, not {scalarType}')
-            self.logMessage('Converting to short, but may cause data loss.')
-            volumeArray = numpy.array(volumeArray, dtype='int16')
-            scalarType = 'short'
+            self.logMessage(f"Can only get volumes of types {str(supportedScalarTypes)}, not {scalarType}")
+            self.logMessage("Converting to short, but may cause data loss.")
+            volumeArray = numpy.array(volumeArray, dtype="int16")
+            scalarType = "short"
 
         sizes = imageData.GetDimensions()
         sizes = " ".join(list(map(str, sizes)))
@@ -458,10 +458,10 @@ class SlicerRequestHandler:
                 directionLists[column][row] = element
         originList[0] *= -1
         originList[1] *= -1
-        origin = '(' + ','.join(list(map(str, originList))) + ')'
+        origin = "(" + ",".join(list(map(str, originList))) + ")"
         directions = ""
         for directionList in directionLists:
-            direction = '(' + ','.join(list(map(str, directionList))) + ')'
+            direction = "(" + ",".join(list(map(str, directionList))) + ")"
             directions += direction + " "
         directions = directions[:-1]
 
@@ -485,7 +485,7 @@ space origin: %%origin%%
 """.replace("%%scalarType%%", scalarType).replace("%%sizes%%", sizes).replace("%%directions%%", directions).replace("%%origin%%", origin)
 
         nrrdData = nrrdHeader.encode() + volumeArray.tobytes()
-        return nrrdData, b'application/octet-stream'
+        return nrrdData, b"application/octet-stream"
 
     def getTransformNRRD(self, transformID):
         """Return a nrrd binary blob with contents of the transform node
@@ -494,11 +494,11 @@ space origin: %%origin%%
         transformArray = slicer.util.array(transformID)
 
         if transformNode is None or transformArray is None:
-            self.logMessage('Could not find requested transform')
+            self.logMessage("Could not find requested transform")
             return None
         supportedNodes = ["vtkMRMLGridTransformNode", ]
         if not transformNode.GetClassName() in supportedNodes:
-            self.logMessage('Can only get grid transforms')
+            self.logMessage("Can only get grid transforms")
             return None
 
         # map the vectors to be in the LPS measurement frame
@@ -519,12 +519,12 @@ space origin: %%origin%%
         spacing = list(imageData.GetSpacing())
         spacing[0] *= -1  # RAS to LPS
         spacing[1] *= -1  # RAS to LPS
-        directions = '(%g,0,0) (0,%g,0) (0,0,%g)' % tuple(spacing)
+        directions = "(%g,0,0) (0,%g,0) (0,0,%g)" % tuple(spacing)
 
         origin = list(imageData.GetOrigin())
         origin[0] *= -1  # RAS to LPS
         origin[1] *= -1  # RAS to LPS
-        origin = '(%g,%g,%g)' % tuple(origin)
+        origin = "(%g,%g,%g)" % tuple(origin)
 
         # should look like:
         # space directions: (0,1,0) (0,0,-1) (-1.2999954223632812,0,0)
@@ -546,7 +546,7 @@ space origin: %%origin%%
 """.replace("%%sizes%%", sizes).replace("%%directions%%", directions).replace("%%origin%%", origin)
 
         nrrdData = nrrdHeader.encode() + lpsArray.tobytes()
-        return nrrdData, b'application/octet-stream'
+        return nrrdData, b"application/octet-stream"
 
     def fiducials(self, request, requestBody):
         """
@@ -554,23 +554,23 @@ space origin: %%origin%%
         Return basic properties of fiducials in an ad hoc json structure.
         """
         fiducials = {}
-        for markupsNode in slicer.util.getNodesByClass('vtkMRMLMarkupsFiducialNode'):
+        for markupsNode in slicer.util.getNodesByClass("vtkMRMLMarkupsFiducialNode"):
             displayNode = markupsNode.GetDisplayNode()
             node = {}
-            node['name'] = markupsNode.GetName()
-            node['color'] = displayNode.GetSelectedColor()
-            node['scale'] = displayNode.GetGlyphScale()
-            node['markups'] = []
+            node["name"] = markupsNode.GetName()
+            node["color"] = displayNode.GetSelectedColor()
+            node["scale"] = displayNode.GetGlyphScale()
+            node["markups"] = []
             for markupIndex in range(markupsNode.GetNumberOfControlPoints()):
                 position = [0, ] * 3
                 markupsNode.GetNthControlPointPosition(markupIndex, position)
                 position
-                node['markups'].append({
-                    'label': markupsNode.GetNthControlPointLabel(markupIndex),
-                    'position': position
+                node["markups"].append({
+                    "label": markupsNode.GetNthControlPointLabel(markupIndex),
+                    "position": position
                 })
             fiducials[markupsNode.GetID()] = node
-        return (json.dumps(fiducials).encode()), b'application/json'
+        return (json.dumps(fiducials).encode()), b"application/json"
 
     def fiducial(self, request, requestBody):
         """
@@ -580,29 +580,29 @@ space origin: %%origin%%
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         try:
-            fiducialID = q['id'][0].strip()
+            fiducialID = q["id"][0].strip()
         except KeyError:
-            fiducialID = 'vtkMRMLMarkupsFiducialNode*'
+            fiducialID = "vtkMRMLMarkupsFiducialNode*"
         try:
-            index = q['index'][0].strip()
+            index = q["index"][0].strip()
         except KeyError:
             index = 0
         try:
-            r = q['r'][0].strip()
+            r = q["r"][0].strip()
         except KeyError:
             r = 0
         try:
-            a = q['a'][0].strip()
+            a = q["a"][0].strip()
         except KeyError:
             a = 0
         try:
-            s = q['s'][0].strip()
+            s = q["s"][0].strip()
         except KeyError:
             s = 0
 
         fiducialNode = slicer.util.getNode(fiducialID)
         fiducialNode.SetNthControlPointPosition(index, float(r), float(a), float(s))
-        return b'{"success": true}', b'application/json'
+        return b'{"success": true}', b"application/json"
 
     def segmentations(self, request, requestBody):
         """
@@ -610,13 +610,13 @@ space origin: %%origin%%
         Return basic properties of segmentations in an ad hoc json structure.
         """
         segmentations = {}
-        for segmentationNode in slicer.util.getNodesByClass('vtkMRMLSegmentationNode'):
+        for segmentationNode in slicer.util.getNodesByClass("vtkMRMLSegmentationNode"):
             displayNode = segmentationNode.GetDisplayNode()
             node = {}
-            node['name'] = segmentationNode.GetName()
-            node['segmentIDs'] = segmentationNode.GetSegmentation().GetSegmentIDs()
+            node["name"] = segmentationNode.GetName()
+            node["segmentIDs"] = segmentationNode.GetSegmentation().GetSegmentIDs()
             segmentations[segmentationNode.GetID()] = node
-        return (json.dumps(segmentations).encode()), b'application/json'
+        return (json.dumps(segmentations).encode()), b"application/json"
 
     def segmentation(self, request, requestBody):
         """
@@ -626,21 +626,21 @@ space origin: %%origin%%
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         try:
-            segmentationID = q['segmentationID'][0].strip()
+            segmentationID = q["segmentationID"][0].strip()
         except KeyError:
-            segmentationID = 'vtkMRMLSegmentationNode*'
+            segmentationID = "vtkMRMLSegmentationNode*"
         try:
-            segmentID = q['segmentationID'][0].strip()
+            segmentID = q["segmentationID"][0].strip()
         except KeyError:
-            segmentID = 'Segment_1'
+            segmentID = "Segment_1"
         try:
-            format = q['format'][0].strip()
+            format = q["format"][0].strip()
         except KeyError:
             format = "glTF"
 
         segmentationNode = slicer.util.getNode(segmentationID)
 
-        return b'{"result": "not implemented yet"}', b'application/json'
+        return b'{"result": "not implemented yet"}', b"application/json"
 
     def accessDICOMwebStudy(self, request, requestBody):
         """
@@ -651,16 +651,16 @@ space origin: %%origin%%
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
 
-        request = json.loads(requestBody), b'application/json'
+        request = json.loads(requestBody), b"application/json"
 
-        dicomWebEndpoint = request['dicomWEBPrefix'] + '/' + request['dicomWEBStore']
+        dicomWebEndpoint = request["dicomWEBPrefix"] + "/" + request["dicomWEBStore"]
         print(f"Loading from {dicomWebEndpoint}")
 
         from DICOMLib import DICOMUtils
         loadedUIDs = DICOMUtils.importFromDICOMWeb(
-            dicomWebEndpoint=request['dicomWEBPrefix'] + '/' + request['dicomWEBStore'],
-            studyInstanceUID=request['studyUID'],
-            accessToken=request['accessToken'])
+            dicomWebEndpoint=request["dicomWEBPrefix"] + "/" + request["dicomWEBStore"],
+            studyInstanceUID=request["studyUID"],
+            accessToken=request["accessToken"])
 
         files = []
         for studyUID in loadedUIDs:
@@ -672,28 +672,28 @@ space origin: %%origin%%
 
         print(f"Loaded {loadedUIDs}, and {loadedNodes}")
 
-        return b'{"success": true}', b'application/json'
+        return b'{"success": true}', b"application/json"
 
     def getNodesFilteredByQuery(self, queryParams):
         q = queryParams
 
         # Get by node ID
         if "id" in q:
-            id = q['id'][0].strip()
+            id = q["id"][0].strip()
             node = slicer.mrmlScene.GetNodeByID(id)
             if not node:
                 return []
             return [node]
 
         # Filter by node class
-        className = 'vtkMRMLNode'
+        className = "vtkMRMLNode"
         if "class" in q:
-            className = q['class'][0].strip()
+            className = q["class"][0].strip()
         nodes = slicer.util.getNodesByClass(className)
 
         # Filter by node name
         if "name" in q:
-            nodeName = q['name'][0].strip()
+            nodeName = q["name"][0].strip()
             nodes = list(filter(lambda node, requiredName=nodeName: node.GetName() == requiredName, nodes))
 
         return nodes
@@ -708,23 +708,23 @@ space origin: %%origin%%
 
         if method == "GET":
             nodes = self.getNodesFilteredByQuery(q)
-            if p.path == '/mrml' or p.path == '/mrml/names':
+            if p.path == "/mrml" or p.path == "/mrml/names":
                 # return node names
-                return (json.dumps([node.GetName() for node in nodes]).encode()), b'application/json'
+                return (json.dumps([node.GetName() for node in nodes]).encode()), b"application/json"
             elif p.path == "/mrml/ids":
-                return (json.dumps([node.GetID() for node in nodes]).encode()), b'application/json'
+                return (json.dumps([node.GetID() for node in nodes]).encode()), b"application/json"
             elif p.path == "/mrml/properties":
                 nodesProperties = {}
                 if len(nodes) == 0:
                     raise RuntimeError("No nodes matched the filter criteria")
                 for node in nodes:
                     nodesProperties[node.GetID()] = self.nodeProperties(node)
-                return (json.dumps(nodesProperties).encode()), b'application/json'
+                return (json.dumps(nodesProperties).encode()), b"application/json"
             elif p.path == "/mrml/file":
                 if len(nodes) == 0:
                     raise RuntimeError("No nodes matched the filter criteria")
                 if len(nodes) > 1:
-                    raise RuntimeError('/mrml/file can only be used for a single node')
+                    raise RuntimeError("/mrml/file can only be used for a single node")
                 return self.saveFromScene(nodes[0], q)
             else:
                 raise RuntimeError(f"Invalid path: {p.path}")
@@ -739,7 +739,7 @@ space origin: %%origin%%
                 raise RuntimeError("No nodes matched the filter criteria")
             reloadedNodeIds = []
             for node in nodes:
-                if not hasattr(node, 'GetStorageNode'):
+                if not hasattr(node, "GetStorageNode"):
                     # Only storable nodes can be updated
                     continue
                 storageNode = node.GetStorageNode()
@@ -751,11 +751,11 @@ space origin: %%origin%%
                     reloadedNodeIds.append(node.GetID())
 
             if not reloadedNodeIds:
-                return b'{"success": false}', b'application/json'
+                return b'{"success": false}', b"application/json"
 
-            response = {'success': True, 'reloadedNodeIDs': reloadedNodeIds}
+            response = {"success": True, "reloadedNodeIDs": reloadedNodeIds}
             import json
-            return json.dumps(response).encode(), b'application/json'
+            return json.dumps(response).encode(), b"application/json"
 
         elif method == "DELETE":
             if "class" in q or "name" in q or "id" in q:
@@ -766,7 +766,7 @@ space origin: %%origin%%
                     slicer.mrmlScene.RemoveNode(node)
             else:
                 slicer.mrmlScene.Clear()
-            return b'{"success": true}', b'application/json'
+            return b'{"success": true}', b"application/json"
 
     def system(self, method, request):
         """
@@ -778,32 +778,32 @@ space origin: %%origin%%
         if method == "DELETE":
             # exit the application 1 second after submitting the response
             qt.QTimer.singleShot(1000, slicer.util.exit)
-            return b'{"success": true}', b'application/json'
+            return b'{"success": true}', b"application/json"
 
-        if p.path == '/system/version':
+        if p.path == "/system/version":
             response = {
-                'applicationName': slicer.app.applicationName,
-                'applicationDisplayName': slicer.app.applicationDisplayName,
-                'applicationVersion': slicer.app.applicationVersion,
-                'releaseType': slicer.app.releaseType,
-                'repositoryUrl': slicer.app.repositoryUrl,
-                'repositoryBranch': slicer.app.repositoryBranch,
-                'revision': slicer.app.revision,
-                'majorVersion': slicer.app.majorVersion,
-                'minorVersion': slicer.app.minorVersion,
-                'arch': slicer.app.arch,
-                'os': slicer.app.os,
-                'isCustomMainApplication': slicer.app.isCustomMainApplication,
-                'mainApplicationName': slicer.app.mainApplicationName,
-                'mainApplicationRepositoryUrl': slicer.app.mainApplicationRepositoryUrl,
-                'mainApplicationRepositoryRevision': slicer.app.mainApplicationRepositoryRevision,
-                'mainApplicationRevision': slicer.app.mainApplicationRevision,
-                'mainApplicationMajorVersion': slicer.app.mainApplicationMajorVersion,
-                'mainApplicationMinorVersion': slicer.app.mainApplicationMinorVersion,
-                'mainApplicationPatchVersion': slicer.app.mainApplicationPatchVersion,
+                "applicationName": slicer.app.applicationName,
+                "applicationDisplayName": slicer.app.applicationDisplayName,
+                "applicationVersion": slicer.app.applicationVersion,
+                "releaseType": slicer.app.releaseType,
+                "repositoryUrl": slicer.app.repositoryUrl,
+                "repositoryBranch": slicer.app.repositoryBranch,
+                "revision": slicer.app.revision,
+                "majorVersion": slicer.app.majorVersion,
+                "minorVersion": slicer.app.minorVersion,
+                "arch": slicer.app.arch,
+                "os": slicer.app.os,
+                "isCustomMainApplication": slicer.app.isCustomMainApplication,
+                "mainApplicationName": slicer.app.mainApplicationName,
+                "mainApplicationRepositoryUrl": slicer.app.mainApplicationRepositoryUrl,
+                "mainApplicationRepositoryRevision": slicer.app.mainApplicationRepositoryRevision,
+                "mainApplicationRevision": slicer.app.mainApplicationRevision,
+                "mainApplicationMajorVersion": slicer.app.mainApplicationMajorVersion,
+                "mainApplicationMinorVersion": slicer.app.mainApplicationMinorVersion,
+                "mainApplicationPatchVersion": slicer.app.mainApplicationPatchVersion,
             }
             import json
-            return json.dumps(response).encode(), b'application/json'
+            return json.dumps(response).encode(), b"application/json"
 
     def screenshot(self, request):
         """
@@ -817,8 +817,8 @@ space origin: %%origin%%
         buffer.open(qt.QIODevice.WriteOnly)
         screenshot.save(buffer, "PNG")
         pngData = bArray.data()
-        self.logMessage('returning an image of %d length' % len(pngData))
-        return pngData, b'image/png'
+        self.logMessage("returning an image of %d length" % len(pngData))
+        return pngData, b"image/png"
 
     @staticmethod
     def setViewersLayout(layoutName):
@@ -840,7 +840,7 @@ space origin: %%origin%%
         q = urllib.parse.parse_qs(p.query)
 
         try:
-            contents = q['contents'][0].strip().lower()
+            contents = q["contents"][0].strip().lower()
         except KeyError:
             contents = None
         if contents == "viewers":
@@ -858,13 +858,13 @@ space origin: %%origin%%
                 raise RuntimeError("contents must be 'viewers' or 'full'")
 
         try:
-            viewersLayout = q['viewersLayout'][0].strip().lower()
+            viewersLayout = q["viewersLayout"][0].strip().lower()
         except KeyError:
             viewersLayout = None
         if viewersLayout is not None:
             SlicerRequestHandler.setViewersLayout(viewersLayout)
 
-        return b'{"success": true}', b'application/json'
+        return b'{"success": true}', b"application/json"
 
     def slice(self, request):
         """
@@ -875,40 +875,40 @@ space origin: %%origin%%
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         try:
-            view = q['view'][0].strip().lower()
+            view = q["view"][0].strip().lower()
         except KeyError:
-            view = 'red'
-        options = ['red', 'yellow', 'green']
+            view = "red"
+        options = ["red", "yellow", "green"]
         if view not in options:
-            view = 'red'
+            view = "red"
         layoutManager = slicer.app.layoutManager()
         sliceLogic = layoutManager.sliceWidget(view.capitalize()).sliceLogic()
         try:
-            mode = str(q['mode'][0].strip())
+            mode = str(q["mode"][0].strip())
         except (KeyError, ValueError):
             mode = None
         try:
-            offset = float(q['offset'][0].strip())
+            offset = float(q["offset"][0].strip())
         except (KeyError, ValueError):
             offset = None
         try:
-            copySliceGeometryFrom = q['copySliceGeometryFrom'][0].strip()
+            copySliceGeometryFrom = q["copySliceGeometryFrom"][0].strip()
         except (KeyError, ValueError):
             copySliceGeometryFrom = None
         try:
-            scrollTo = float(q['scrollTo'][0].strip())
+            scrollTo = float(q["scrollTo"][0].strip())
         except (KeyError, ValueError):
             scrollTo = None
         try:
-            size = int(q['size'][0].strip())
+            size = int(q["size"][0].strip())
         except (KeyError, ValueError):
             size = None
         try:
-            orientation = q['orientation'][0].strip()
+            orientation = q["orientation"][0].strip()
         except (KeyError, ValueError):
             orientation = None
 
-        offsetKey = 'offset.' + view
+        offsetKey = "offset." + view
         # if mode == 'start' or not self.interactionState.has_key(offsetKey):
         #     self.interactionState[offsetKey] = sliceLogic.GetSliceOffset()
 
@@ -936,11 +936,11 @@ space origin: %%origin%%
         if orientation:
             sliceNode = sliceLogic.GetSliceNode()
             previousOrientation = sliceNode.GetOrientationString().lower()
-            if orientation.lower() == 'axial':
+            if orientation.lower() == "axial":
                 sliceNode.SetOrientationToAxial()
-            if orientation.lower() == 'sagittal':
+            if orientation.lower() == "sagittal":
                 sliceNode.SetOrientationToSagittal()
-            if orientation.lower() == 'coronal':
+            if orientation.lower() == "coronal":
                 sliceNode.SetOrientationToCoronal()
             if orientation.lower() != previousOrientation:
                 sliceLogic.FitSliceToAll()
@@ -950,8 +950,8 @@ space origin: %%origin%%
         pngData = []
         if imageData:
             pngData = self.vtkImageDataToPNG(imageData)
-        self.logMessage('returning an image of %d length' % len(pngData))
-        return pngData, b'image/png'
+        self.logMessage("returning an image of %d length" % len(pngData))
+        return pngData, b"image/png"
 
     def threeDGraphics(self, request):
         """
@@ -963,22 +963,22 @@ space origin: %%origin%%
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         try:
-            widgetIndex = int(q['widgetIndex'][0].strip().lower())
+            widgetIndex = int(q["widgetIndex"][0].strip().lower())
         except KeyError:
             widgetIndex = 0
         try:
-            boxVisible = q['boxVisible'][0].strip().lower()
+            boxVisible = q["boxVisible"][0].strip().lower()
         except KeyError:
-            boxVisible = 'false'
+            boxVisible = "false"
         try:
-            format = q['format'][0].strip().lower()
+            format = q["format"][0].strip().lower()
         except KeyError:
-            format = 'glTF'
+            format = "glTF"
 
-        if format == 'glTF':
+        if format == "glTF":
             lm = slicer.app.layoutManager()
             boxWasVisible = lm.threeDWidget(widgetIndex).mrmlViewNode().GetBoxVisible()
-            lm.threeDWidget(widgetIndex).mrmlViewNode().SetBoxVisible(boxVisible != 'false')
+            lm.threeDWidget(widgetIndex).mrmlViewNode().SetBoxVisible(boxVisible != "false")
             renderWindow = lm.threeDWidget(widgetIndex).threeDView().renderWindow()
             exporter = vtk.vtkGLTFExporter()
             exporter.SetInlineData(True)
@@ -989,7 +989,7 @@ space origin: %%origin%%
         else:
             raise RuntimeError(f"format {format} not supported")
 
-        return result.encode(), b'application/json'
+        return result.encode(), b"application/json"
 
     def threeD(self, request):
         """
@@ -1000,39 +1000,39 @@ space origin: %%origin%%
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         try:
-            view = q['view'][0].strip().lower()
+            view = q["view"][0].strip().lower()
         except KeyError:
-            view = '1'
+            view = "1"
         try:
-            lookFromAxis = q['lookFromAxis'][0].strip().lower()
+            lookFromAxis = q["lookFromAxis"][0].strip().lower()
         except KeyError:
             lookFromAxis = None
         try:
-            size = int(q['size'][0].strip())
+            size = int(q["size"][0].strip())
         except (KeyError, ValueError):
             size = None
         try:
-            mode = str(q['mode'][0].strip())
+            mode = str(q["mode"][0].strip())
         except (KeyError, ValueError):
             mode = None
         try:
-            roll = float(q['roll'][0].strip())
+            roll = float(q["roll"][0].strip())
         except (KeyError, ValueError):
             roll = None
         try:
-            panX = float(q['panX'][0].strip())
+            panX = float(q["panX"][0].strip())
         except (KeyError, ValueError):
             panX = None
         try:
-            panY = float(q['panY'][0].strip())
+            panY = float(q["panY"][0].strip())
         except (KeyError, ValueError):
             panY = None
         try:
-            orbitX = float(q['orbitX'][0].strip())
+            orbitX = float(q["orbitX"][0].strip())
         except (KeyError, ValueError):
             orbitX = None
         try:
-            orbitY = float(q['orbitY'][0].strip())
+            orbitY = float(q["orbitY"][0].strip())
         except (KeyError, ValueError):
             orbitY = None
 
@@ -1041,7 +1041,7 @@ space origin: %%origin%%
         view.renderEnabled = False
 
         if lookFromAxis:
-            axes = ['None', 'r', 'l', 's', 'i', 'a', 'p']
+            axes = ["None", "r", "l", "s", "i", "a", "p"]
             try:
                 axis = axes.index(lookFromAxis[0].lower())
                 view.lookFromAxis(axis)
@@ -1058,10 +1058,10 @@ space origin: %%origin%%
         imageData = w2i.GetOutput()
 
         pngData = self.vtkImageDataToPNG(imageData)
-        self.logMessage('threeD returning an image of %d length' % len(pngData))
-        return pngData, b'image/png'
+        self.logMessage("threeD returning an image of %d length" % len(pngData))
+        return pngData, b"image/png"
 
-    def timeimage(self, request=''):
+    def timeimage(self, request=""):
         """
         Handle requests with path: /timeimage
         For timing and debugging - return an image with the current time
@@ -1072,7 +1072,7 @@ space origin: %%origin%%
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         try:
-            color = "#" + q['color'][0].strip().lower()
+            color = "#" + q["color"][0].strip().lower()
         except KeyError:
             color = "#330"
 
@@ -1110,7 +1110,7 @@ space origin: %%origin%%
         vtkTimeImage = vtk.vtkImageData()
         slicer.qMRMLUtils().qImageToVtkImageData(timeImage, vtkTimeImage)
         pngData = self.vtkImageDataToPNG(vtkTimeImage)
-        return pngData, b'image/png'
+        return pngData, b"image/png"
 
     def vtkImageDataToPNG(self, imageData):
         """Return a buffer of png data using the data
@@ -1179,30 +1179,30 @@ space origin: %%origin%%
         # Write all extra query parameters into file open properties
         loadFileProperties = {}
         for queryParam in q:
-            if queryParam == 'url' or queryParam == 'localfile':
+            if queryParam == "url" or queryParam == "localfile":
                 continue
             loadFileProperties[queryParam] = q[queryParam][0].strip()
-        if 'url' in q:
+        if "url" in q:
             # Open from URL
-            downloadUrl = q['url'][0].strip()
+            downloadUrl = q["url"][0].strip()
             p = urllib.parse.urlparse(downloadUrl)
-            if p.scheme == 'slicer':
+            if p.scheme == "slicer":
                 # `slicer` URL - pass it to the application as is
                 slicer.app.openUrl(downloadUrl)
-                return b'{"status": "success"}', b'application/json'
-            elif p.scheme == 'file':
+                return b'{"status": "success"}', b"application/json"
+            elif p.scheme == "file":
                 # Open from local file
                 localFile = urllib.request.url2pathname(p.path)
             else:
                 # Open from remote location
                 localFile = self.downloadFromUrl(downloadUrl)[0]
-        elif 'localfile' in q:
+        elif "localfile" in q:
             # Open from local file
-            localFile = q['localfile'][0].strip()
+            localFile = q["localfile"][0].strip()
         else:
             raise RuntimeError("Required `url` or `localfile` query parameter is missing in `mrml` request")
 
-        fileType = loadFileProperties['filetype']
+        fileType = loadFileProperties["filetype"]
 
         loadedNodes = slicer.util.loadNodeFromFile(localFile, fileType, loadFileProperties)
 
@@ -1213,7 +1213,7 @@ space origin: %%origin%%
 
         import json
         responseJson = json.dumps({"success": True, "loadedNodeIDs": [node.GetID() for node in loadedNodes]})
-        return responseJson.encode(), b'application/json'
+        return responseJson.encode(), b"application/json"
 
     def saveFromScene(self, node, parsedQuery):
         """
@@ -1226,20 +1226,20 @@ space origin: %%origin%%
         saveFileProperties = {}
         applyTransforms = False
         for queryParam in q:
-            if queryParam == 'url' or queryParam == 'localfile':
+            if queryParam == "url" or queryParam == "localfile":
                 continue
-            if queryParam == 'applytransforms':
+            if queryParam == "applytransforms":
                 applyTransforms = slicer.util.toBool(q[queryParam][0].strip())
                 continue
             saveFileProperties[queryParam] = q[queryParam][0].strip()
 
-        if 'url' in q:
+        if "url" in q:
             # Get localpath from URL
-            downloadUrl = q['url'][0].strip()
+            downloadUrl = q["url"][0].strip()
             p = urllib.parse.urlparse(downloadUrl)
             localFile = urllib.request.url2pathname(p.path)
-        elif 'localfile' in q:
-            localFile = q['localfile'][0].strip()
+        elif "localfile" in q:
+            localFile = q["localfile"][0].strip()
         else:
             raise RuntimeError("Required `url` or `localfile` query parameter is missing in `mrml` request")
 
@@ -1247,7 +1247,7 @@ space origin: %%origin%%
 
         import json
         responseJson = json.dumps({"success": success})
-        return responseJson.encode(), b'application/json'
+        return responseJson.encode(), b"application/json"
 
     def nodeProperties(self, node):
         """Get properties of the node as a dict."""
@@ -1303,16 +1303,16 @@ space origin: %%origin%%
             # Other
             return s
 
-        lines = node.__str__().split('\n')
+        lines = node.__str__().split("\n")
         keys = []
-        key = ''
-        value = ''
+        key = ""
+        value = ""
         content = {}
         previousIndentLevel = 2  # level 0 is the object pointer
         indentLevels = [0, 2]
         for line in lines:
             try:
-                if line.lstrip() == '':
+                if line.lstrip() == "":
                     continue
                 currentIndentLevel = len(line) - len(line.lstrip())  # how many leading spaces
                 if currentIndentLevel == 0:
@@ -1332,7 +1332,7 @@ space origin: %%origin%%
                         keys.pop()
                     previousIndentLevel = currentIndentLevel
                 if ":" in line:
-                    [key, value] = line.split(':', maxsplit=1)
+                    [key, value] = line.split(":", maxsplit=1)
                     key = key.lstrip()
                     value = value.lstrip()
                     currentObject = content

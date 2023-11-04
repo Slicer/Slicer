@@ -46,21 +46,21 @@ class SegmentationsModuleTest2(unittest.TestCase):
         self.TestSection_MarginEffects()
         self.TestSection_MaskingSettings()
         self.TestSection_GrowFromSeedsEffect()
-        logging.info('Test finished')
+        logging.info("Test finished")
 
     # ------------------------------------------------------------------------------
     def TestSection_SetupPathsAndNames(self):
         # Set up paths used for this test
-        self.segmentationsModuleTestDir = slicer.app.temporaryPath + '/SegmentationsModuleTest'
+        self.segmentationsModuleTestDir = slicer.app.temporaryPath + "/SegmentationsModuleTest"
         if not os.access(self.segmentationsModuleTestDir, os.F_OK):
             os.mkdir(self.segmentationsModuleTestDir)
 
-        self.dataDir = self.segmentationsModuleTestDir + '/TinyPatient_Seg'
+        self.dataDir = self.segmentationsModuleTestDir + "/TinyPatient_Seg"
         if not os.access(self.dataDir, os.F_OK):
             os.mkdir(self.dataDir)
-        self.dataSegDir = self.dataDir + '/TinyPatient_Structures.seg'
+        self.dataSegDir = self.dataDir + "/TinyPatient_Structures.seg"
 
-        self.dataZipFilePath = self.segmentationsModuleTestDir + '/TinyPatient_Seg.zip'
+        self.dataZipFilePath = self.segmentationsModuleTestDir + "/TinyPatient_Seg.zip"
 
         # Define variables
         self.expectedNumOfFilesInDataDir = 4
@@ -72,20 +72,20 @@ class SegmentationsModuleTest2(unittest.TestCase):
     def TestSection_RetrieveInputData(self):
         try:
             slicer.util.downloadAndExtractArchive(
-                TESTING_DATA_URL + 'SHA256/b902f635ef2059cd3b4ba854c000b388e4a9e817a651f28be05c22511a317ec7',
+                TESTING_DATA_URL + "SHA256/b902f635ef2059cd3b4ba854c000b388e4a9e817a651f28be05c22511a317ec7",
                 self.dataZipFilePath, self.segmentationsModuleTestDir,
-                checksum='SHA256:b902f635ef2059cd3b4ba854c000b388e4a9e817a651f28be05c22511a317ec7')
+                checksum="SHA256:b902f635ef2059cd3b4ba854c000b388e4a9e817a651f28be05c22511a317ec7")
 
-            numOfFilesInDataDirTest = len([name for name in os.listdir(self.dataDir) if os.path.isfile(self.dataDir + '/' + name)])
+            numOfFilesInDataDirTest = len([name for name in os.listdir(self.dataDir) if os.path.isfile(self.dataDir + "/" + name)])
             self.assertEqual(numOfFilesInDataDirTest, self.expectedNumOfFilesInDataDir)
             self.assertTrue(os.access(self.dataSegDir, os.F_OK))
-            numOfFilesInDataSegDirTest = len([name for name in os.listdir(self.dataSegDir) if os.path.isfile(self.dataSegDir + '/' + name)])
+            numOfFilesInDataSegDirTest = len([name for name in os.listdir(self.dataSegDir) if os.path.isfile(self.dataSegDir + "/" + name)])
             self.assertEqual(numOfFilesInDataSegDirTest, self.expectedNumOfFilesInDataSegDir)
 
         except Exception as e:
             import traceback
             traceback.print_exc()
-            logging.error('Test caused exception!\n' + str(e))
+            logging.error("Test caused exception!\n" + str(e))
 
     # ------------------------------------------------------------------------------
     def TestSection_SetupScene(self):
@@ -101,7 +101,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
         self.assertIsNotNone(self.segmentationNode)
         self.segmentEditorNode.SetAndObserveSegmentationNode(self.segmentationNode)
 
-        self.sourceVolumeNode = slicer.util.loadVolume(self.dataDir + '/TinyPatient_CT.nrrd')
+        self.sourceVolumeNode = slicer.util.loadVolume(self.dataDir + "/TinyPatient_CT.nrrd")
         self.assertIsNotNone(self.sourceVolumeNode)
         self.segmentEditorNode.SetAndObserveSourceVolumeNode(self.sourceVolumeNode)
 
@@ -143,7 +143,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
         self.assertEqual(layerCount, 2)
 
         self.segmentEditorNode.SetOverwriteMode(oldOverwriteMode)
-        logging.info('Multiple layer editing successful')
+        logging.info("Multiple layer editing successful")
 
     # ------------------------------------------------------------------------------
     def TestSection_IslandEffects(self):
@@ -152,8 +152,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
         minimumSize = 3
         self.resetIslandSegments(islandSizes)
-        self.islandEffect.setParameter('MinimumSize', minimumSize)
-        self.islandEffect.setParameter('Operation', 'KEEP_LARGEST_ISLAND')
+        self.islandEffect.setParameter("MinimumSize", minimumSize)
+        self.islandEffect.setParameter("Operation", "KEEP_LARGEST_ISLAND")
         self.islandEffect.self().onApply()
         layerCount = self.segmentation.GetNumberOfLayers()
         self.assertEqual(layerCount, 1)
@@ -167,8 +167,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
         minimumSize = 7
         self.resetIslandSegments(islandSizes)
-        self.islandEffect.setParameter('MinimumSize', minimumSize)
-        self.islandEffect.setParameter('Operation', 'REMOVE_SMALL_ISLANDS')
+        self.islandEffect.setParameter("MinimumSize", minimumSize)
+        self.islandEffect.setParameter("Operation", "REMOVE_SMALL_ISLANDS")
         self.islandEffect.self().onApply()
         layerCount = self.segmentation.GetNumberOfLayers()
         self.assertEqual(layerCount, 1)
@@ -182,8 +182,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
         self.resetIslandSegments(islandSizes)
         minimumSize = 3
-        self.islandEffect.setParameter('MinimumSize', minimumSize)
-        self.islandEffect.setParameter('Operation', 'SPLIT_ISLANDS_TO_SEGMENTS')
+        self.islandEffect.setParameter("MinimumSize", minimumSize)
+        self.islandEffect.setParameter("Operation", "SPLIT_ISLANDS_TO_SEGMENTS")
         self.islandEffect.self().onApply()
         layerCount = self.segmentation.GetNumberOfLayers()
         self.assertEqual(layerCount, 1)
@@ -497,8 +497,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
         # Test that no masking works as expected
         minimumSize = 3
-        self.islandEffect.setParameter('MinimumSize', minimumSize)
-        self.islandEffect.setParameter('Operation', 'KEEP_LARGEST_ISLAND')
+        self.islandEffect.setParameter("MinimumSize", minimumSize)
+        self.islandEffect.setParameter("Operation", "KEEP_LARGEST_ISLAND")
         self.islandEffect.self().onApply()
         self.checkSegmentVoxelCount(3, 64)  # Segment_4
 

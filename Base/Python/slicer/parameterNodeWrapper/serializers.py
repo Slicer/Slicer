@@ -1012,7 +1012,7 @@ class EnumSerializer(Serializer):
         self.enum = enum_
 
         if len(self.enum) == 0:
-            raise ValueError('Cannot serialize empty Enum.')
+            raise ValueError("Cannot serialize empty Enum.")
 
     def default(self):
         # There is no idiomatic way to get a default value of an arbitrary enum,
@@ -1033,7 +1033,7 @@ class EnumSerializer(Serializer):
             return self.enum[key]
         except KeyError as ex:
             raise ValueError(
-                f'Found {key!r} in parameter node but it is not a name in {self.enum!r}'
+                f"Found {key!r} in parameter node but it is not a name in {self.enum!r}"
             ) from ex
 
     def remove(self, parameterNode, name: str) -> None:

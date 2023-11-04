@@ -76,8 +76,8 @@ class MarkupsWidgetsSelfTestTest(ScriptedLoadableModuleTest):
     # ------------------------------------------------------------------------------
     def section_SetupPathsAndNames(self):
         # Set constants
-        self.sampleMarkupsNodeName1 = 'SampleMarkups1'
-        self.sampleMarkupsNodeName2 = 'SampleMarkups2'
+        self.sampleMarkupsNodeName1 = "SampleMarkups1"
+        self.sampleMarkupsNodeName2 = "SampleMarkups2"
 
     # ------------------------------------------------------------------------------
     def section_CreateMarkups(self):

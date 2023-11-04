@@ -53,7 +53,7 @@ class ViewControllersSliceInterpolationBug1926Widget(ScriptedLoadableModuleWidge
         helloWorldButton = qt.QPushButton("Hello world")
         helloWorldButton.toolTip = "Print 'Hello world' in standard output."
         dummyFormLayout.addWidget(helloWorldButton)
-        helloWorldButton.connect('clicked(bool)', self.onHelloWorldButtonClicked)
+        helloWorldButton.connect("clicked(bool)", self.onHelloWorldButtonClicked)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -102,34 +102,34 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
         self.delayDisplay("Getting Data")
         import SampleData
         head = SampleData.downloadSample("MRHead")
-        tumor = SampleData.downloadSample('MRBrainTumor1')
+        tumor = SampleData.downloadSample("MRBrainTumor1")
 
         # Change to a CompareView
-        ln = slicer.util.getNode(pattern='vtkMRMLLayoutNode*')
+        ln = slicer.util.getNode(pattern="vtkMRMLLayoutNode*")
         ln.SetNumberOfCompareViewRows(2)
         ln.SetNumberOfCompareViewLightboxColumns(4)
         ln.SetViewArrangement(12)
-        self.delayDisplay('Compare View')
+        self.delayDisplay("Compare View")
 
         # Get the slice logic, slice node and slice composite node for the
         # first compare viewer
-        logic = slicer.app.layoutManager().sliceWidget('Compare1').sliceLogic()
+        logic = slicer.app.layoutManager().sliceWidget("Compare1").sliceLogic()
         compareNode = logic.GetSliceNode()
         compareCNode = logic.GetSliceCompositeNode()
 
         # Link the viewers
         compareCNode.SetLinkedControl(1)
-        self.delayDisplay('Linked the viewers (first Compare View)')
+        self.delayDisplay("Linked the viewers (first Compare View)")
 
         # Set the data to be same on all viewers
         logic.StartSliceCompositeNodeInteraction(2)  # BackgroundVolumeFlag
         compareCNode.SetBackgroundVolumeID(tumor.GetID())
         logic.EndSliceCompositeNodeInteraction()
         self.assertEqual(compareCNode.GetBackgroundVolumeID(), tumor.GetID())
-        self.delayDisplay('Compare views configured')
+        self.delayDisplay("Compare views configured")
 
         # Get handles to the Red viewer
-        redLogic = slicer.app.layoutManager().sliceWidget('Red').sliceLogic()
+        redLogic = slicer.app.layoutManager().sliceWidget("Red").sliceLogic()
         redNode = redLogic.GetSliceNode()
         redCNode = redLogic.GetSliceCompositeNode()
 
@@ -139,31 +139,31 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
         redCNode.SetBackgroundVolumeID(head.GetID())
         redLogic.EndSliceCompositeNodeInteraction()
         redCNode.SetLinkedControl(1)
-        self.delayDisplay('Red viewer configured')
+        self.delayDisplay("Red viewer configured")
 
         # Get handles to the second compare view
-        compareNode2 = slicer.util.getNode('vtkMRMLSliceNodeCompare2')
-        compareCNode2 = slicer.util.getNode('vtkMRMLSliceCompositeNodeCompare2')
+        compareNode2 = slicer.util.getNode("vtkMRMLSliceNodeCompare2")
+        compareCNode2 = slicer.util.getNode("vtkMRMLSliceCompositeNodeCompare2")
 
         # Check whether the viewers have the proper data initially
         self.assertEqual(redCNode.GetBackgroundVolumeID(), head.GetID())
         self.assertEqual(compareCNode.GetBackgroundVolumeID(), tumor.GetID())
         self.assertEqual(compareCNode2.GetBackgroundVolumeID(), tumor.GetID())
-        self.delayDisplay('All viewers configured properly')
+        self.delayDisplay("All viewers configured properly")
 
         # Switch to the View Controllers module
         m = slicer.util.mainWindow()
-        m.moduleSelector().selectModule('ViewControllers')
+        m.moduleSelector().selectModule("ViewControllers")
         self.delayDisplay("Entered View Controllers module")
 
         # Check the volume selectors
         self.assertTrue(redCNode.GetBackgroundVolumeID() == head.GetID())
         self.assertTrue(compareCNode.GetBackgroundVolumeID() == tumor.GetID())
         self.assertTrue(compareCNode2.GetBackgroundVolumeID() == tumor.GetID())
-        self.delayDisplay('All viewers still configured properly')
+        self.delayDisplay("All viewers still configured properly")
 
         # Check whether we can change the interpolation (needs to check gui)
-        redWidget = slicer.app.layoutManager().sliceWidget('Red')
+        redWidget = slicer.app.layoutManager().sliceWidget("Red")
         redController = redWidget.sliceController()
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

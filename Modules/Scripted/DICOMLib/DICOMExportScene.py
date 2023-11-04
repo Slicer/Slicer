@@ -80,10 +80,10 @@ class DICOMExportScene:
 
         # set up temp directories and files
         if self.saveDirectoryPath is None:
-            saveDirectoryPath = tempfile.mkdtemp('', 'dicomExport', slicer.app.temporaryPath)
+            saveDirectoryPath = tempfile.mkdtemp("", "dicomExport", slicer.app.temporaryPath)
         else:
             saveDirectoryPath = self.saveDirectoryPath
-        saveDirectoryPath = saveDirectoryPath.replace('\\', '/')
+        saveDirectoryPath = saveDirectoryPath.replace("\\", "/")
         zipFile = os.path.join(saveDirectoryPath, "scene.zip")
         dumpFile = os.path.join(saveDirectoryPath, "dump.dcm")
         templateFile = os.path.join(saveDirectoryPath, "template.dcm")
@@ -91,33 +91,33 @@ class DICOMExportScene:
 
         # get the screen image if not specified
         if self.imageFile is None:
-            self.progress('Saving Image...')
+            self.progress("Saving Image...")
             imageFile = os.path.join(saveDirectoryPath, "scene.jpg")
             image = ctk.ctkWidgetsUtils.grabWidget(slicer.util.mainWindow())
             image.save(imageFile)
         else:
             imageFile = self.imageFile
-        imageFile = imageFile.replace('\\', '/')
+        imageFile = imageFile.replace("\\", "/")
         imageReader = vtk.vtkJPEGReader()
         imageReader.SetFileName(imageFile)
         imageReader.Update()
 
         # save the scene to the temp dir
-        self.progress('Saving scene into MRB...')
+        self.progress("Saving scene into MRB...")
         if not slicer.mrmlScene.WriteToMRB(zipFile, imageReader.GetOutput()):
-            logging.error('Failed to save scene into MRB file: ' + zipFile)
+            logging.error("Failed to save scene into MRB file: " + zipFile)
             return False
 
         zipSize = os.path.getsize(zipFile)
 
         # Get or create template DICOM dump
-        self.progress('Making dicom reference file...')
+        self.progress("Making dicom reference file...")
         if self.referenceFile:
             # A reference file is created, use that as template
-            logging.info('Using reference file ' + str(self.referenceFile))
-            args = ['--print-all', '--write-pixel', saveDirectoryPath, self.referenceFile]
-            dumpByteArray = DICOMLib.DICOMCommand('dcmdump', args).start()
-            dump = str(dumpByteArray.data(), encoding='utf-8')
+            logging.info("Using reference file " + str(self.referenceFile))
+            args = ["--print-all", "--write-pixel", saveDirectoryPath, self.referenceFile]
+            dumpByteArray = DICOMLib.DICOMCommand("dcmdump", args).start()
+            dump = str(dumpByteArray.data(), encoding="utf-8")
         else:
             # Create a new template from the specified tags
             dump = self.dumpFromTags(self.optionalTags)
@@ -134,39 +134,39 @@ class DICOMExportScene:
         dump = dump + candygram
 
         # Write dump to file
-        logging.debug('dumping to: %s' % dumpFile)
-        fp = open(dumpFile, 'w')
+        logging.debug("dumping to: %s" % dumpFile)
+        fp = open(dumpFile, "w")
         fp.write(dump)
         fp.close()
 
         # Create DICOM template file from dump, embedding the scene mrb file
-        self.progress('Encapsulating scene in DICOM dump...')
-        args = [dumpFile, templateFile, '--generate-new-uids', '--overwrite-uids', '--ignore-errors']
-        DICOMLib.DICOMCommand('dump2dcm', args).start()
+        self.progress("Encapsulating scene in DICOM dump...")
+        args = [dumpFile, templateFile, "--generate-new-uids", "--overwrite-uids", "--ignore-errors"]
+        DICOMLib.DICOMCommand("dump2dcm", args).start()
 
         # Create the Secondary Capture data set by adding a screenshot and some more custom fields
         # cmd = "img2dcm -k 'SeriesDescription=Slicer Data Bundle' -df %s/template.dcm %s %s" % (saveDirectoryPath, imageFile, self.sdbFile)
-        seriesDescription = 'Slicer Data Bundle' if self.seriesDescription is None else str(self.seriesDescription)
+        seriesDescription = "Slicer Data Bundle" if self.seriesDescription is None else str(self.seriesDescription)
         args = [
-            '-k', f'SeriesDescription={seriesDescription}',
-            '--no-latin1']  # With this option the UTF8 encoding of the reference file is preserved, otherwise the character set would be forced to Latin1
+            "-k", f"SeriesDescription={seriesDescription}",
+            "--no-latin1"]  # With this option the UTF8 encoding of the reference file is preserved, otherwise the character set would be forced to Latin1
         # TODO: It could be safer to pass these fields through the reference file instead of using command-line arguments (from character set point of view)
         for key, value in self.optionalTags.items():
             # series description comes from this class, not from the additional tags
-            if key == 'SeriesDescription':
+            if key == "SeriesDescription":
                 continue
             # ignore undefined fields
-            if str(value) == '':
+            if str(value) == "":
                 continue
-            args += ['-k', f'{str(key)}={str(value)}']
+            args += ["-k", f"{str(key)}={str(value)}"]
         args += [
-            '--dataset-from', templateFile,  # input DICOM file (generated by dump2dcm, already contains the MRB)
+            "--dataset-from", templateFile,  # input DICOM file (generated by dump2dcm, already contains the MRB)
             imageFile,  # thumbnail
             self.sdbFile]  # output file
-        self.progress('Creating DICOM binary file...')
-        DICOMLib.DICOMCommand('img2dcm', args).start()
+        self.progress("Creating DICOM binary file...")
+        DICOMLib.DICOMCommand("img2dcm", args).start()
 
-        self.progress('Deleting temporary files...')
+        self.progress("Deleting temporary files...")
         os.remove(zipFile)
         os.remove(dumpFile)
         os.remove(templateFile)
@@ -174,7 +174,7 @@ class DICOMExportScene:
             # Temporary imageFile was created automatically
             os.remove(imageFile)
 
-        self.progress('Done')
+        self.progress("Done")
         return True
 
     def dumpFromTags(self, tags):

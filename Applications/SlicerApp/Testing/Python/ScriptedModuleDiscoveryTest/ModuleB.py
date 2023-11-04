@@ -1,6 +1,6 @@
 from slicer.ScriptedLoadableModule import *
 
-SOMEVAR = 'B'
+SOMEVAR = "B"
 
 
 class ModuleB(ScriptedLoadableModule):

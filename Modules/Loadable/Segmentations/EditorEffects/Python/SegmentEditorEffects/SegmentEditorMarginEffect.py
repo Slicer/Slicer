@@ -16,18 +16,18 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Margin'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Margin')
+        scriptedEffect.name = "Margin"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Margin")
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/Margin.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/Margin.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -66,16 +66,16 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
         self.applyToAllVisibleSegmentsCheckBox = qt.QCheckBox()
         self.applyToAllVisibleSegmentsCheckBox.setToolTip(
             _("Grow or shrink all visible segments in this segmentation node. This operation may take a while."))
-        self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
+        self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + "ApplyToAllVisibleSegments"
         self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Apply to visible segments:"),
                                                                                           self.applyToAllVisibleSegmentsCheckBox)
 
         self.applyButton = qt.QPushButton(_("Apply"))
-        self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+        self.applyButton.objectName = self.__class__.__name__ + "Apply"
         self.applyButton.setToolTip(_("Grows or shrinks selected segment /default) or all segments (checkbox) by the specified margin."))
         self.scriptedEffect.addOptionsWidget(self.applyButton)
 
-        self.applyButton.connect('clicked()', self.onApply)
+        self.applyButton.connect("clicked()", self.onApply)
         self.marginSizeMMSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
         self.growOptionRadioButton.connect("toggled(bool)", self.growOperationToggled)
         self.shrinkOptionRadioButton.connect("toggled(bool)", self.shrinkOperationToggled)
@@ -238,7 +238,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
                 # select input segments one by one, process
                 for index in range(inputSegmentIDs.GetNumberOfValues()):
                     segmentID = inputSegmentIDs.GetValue(index)
-                    self.showStatusMessage(_('Processing {segmentName}...')
+                    self.showStatusMessage(_("Processing {segmentName}...")
                                            .format(segmentName=segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()))
                     self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(segmentID)
                     self.processMargin()

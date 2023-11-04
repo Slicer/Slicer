@@ -25,14 +25,14 @@ def getContext(sourceFile):
     """
     if os.path.isfile(sourceFile):
         parentFolder = os.path.dirname(sourceFile)
-        init_file_path = parentFolder + os.path.sep + '__init__.py'
+        init_file_path = parentFolder + os.path.sep + "__init__.py"
 
         if os.path.isfile(init_file_path):
             context_name = os.path.basename(parentFolder)
-            context_name += '.' + os.path.basename(sourceFile).replace('.py', '')
+            context_name += "." + os.path.basename(sourceFile).replace(".py", "")
             return context_name
         else:
-            return os.path.basename(sourceFile).replace('.py', '')
+            return os.path.basename(sourceFile).replace(".py", "")
     else:
         return os.path.basename(sourceFile)
 

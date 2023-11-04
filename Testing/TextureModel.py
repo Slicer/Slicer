@@ -24,7 +24,7 @@ def newPlane():
 
     # transform node
     transformNode = Slicer.slicer.vtkMRMLLinearTransformNode()
-    transformNode.SetName('PlaneToWorld')
+    transformNode.SetName("PlaneToWorld")
     Slicer.slicer.MRMLScene.AddNode(transformNode)
 
     # set up model node
@@ -74,4 +74,4 @@ def texturedPlane():
     endTime = time.time()
     elapsed = endTime - startTime
     hertz = int(steps / elapsed)
-    print('ran %d iterations in %g seconds (%g hertz)' % (steps, elapsed, hertz))
+    print("ran %d iterations in %g seconds (%g hertz)" % (steps, elapsed, hertz))

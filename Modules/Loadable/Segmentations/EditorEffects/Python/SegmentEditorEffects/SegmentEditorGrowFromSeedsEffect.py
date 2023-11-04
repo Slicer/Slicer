@@ -19,8 +19,8 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
 
     def __init__(self, scriptedEffect):
         AbstractScriptedSegmentEditorAutoCompleteEffect.__init__(self, scriptedEffect)
-        scriptedEffect.name = 'Grow from seeds'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Grow from seeds')
+        scriptedEffect.name = "Grow from seeds"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Grow from seeds")
         self.minimumNumberOfSegments = 2
         self.minimumNumberOfSegmentsWithEditableArea = 1  # if mask is specified then one input segment is sufficient
         self.clippedMasterImageDataRequired = True  # source volume intensities are used by this effect
@@ -30,11 +30,11 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/GrowFromSeeds.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/GrowFromSeeds.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -77,7 +77,7 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
                                                    ' thereby reducing leaks, but requires seed regions to be more evenly distributed in the image.'
                                                    ' The value is specified as an additional "intensity level difference" per "unit distance."'))
         self.scriptedEffect.addLabeledOptionsWidget(_("Seed locality:"), self.seedLocalityFactorSlider)
-        self.seedLocalityFactorSlider.connect('valueChanged(double)', self.updateAlgorithmParameterFromGUI)
+        self.seedLocalityFactorSlider.connect("valueChanged(double)", self.updateAlgorithmParameterFromGUI)
 
     def setMRMLDefaults(self):
         AbstractScriptedSegmentEditorAutoCompleteEffect.setMRMLDefaults(self)
@@ -129,7 +129,7 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
         self.growCutFilter.SetSeedLabelVolume(mergedImage)
         startTime = time.time()
         self.growCutFilter.Update()
-        logging.info('Grow-cut operation on volume of {}x{}x{} voxels was completed in {:3.1f} seconds.'.format(
+        logging.info("Grow-cut operation on volume of {}x{}x{} voxels was completed in {:3.1f} seconds.".format(
             self.clippedMasterImageData.GetDimensions()[0],
             self.clippedMasterImageData.GetDimensions()[1],
             self.clippedMasterImageData.GetDimensions()[2],

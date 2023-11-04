@@ -16,19 +16,19 @@ class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Islands'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Islands')
+        scriptedEffect.name = "Islands"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Islands")
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
         self.widgetToOperationNameMap = {}
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/Islands.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/Islands.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -97,17 +97,17 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         self.minimumSizeLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Minimum size:"), self.minimumSizeSpinBox)
 
         self.applyButton = qt.QPushButton(_("Apply"))
-        self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+        self.applyButton.objectName = self.__class__.__name__ + "Apply"
         self.scriptedEffect.addOptionsWidget(self.applyButton)
 
         for operationRadioButton in self.operationRadioButtons:
             operationRadioButton.connect(
-                'toggled(bool)',
+                "toggled(bool)",
                 lambda toggle, widget=self.widgetToOperationNameMap[operationRadioButton]: self.onOperationSelectionChanged(widget, toggle))
 
-        self.minimumSizeSpinBox.connect('valueChanged(int)', self.updateMRMLFromGUI)
+        self.minimumSizeSpinBox.connect("valueChanged(int)", self.updateMRMLFromGUI)
 
-        self.applyButton.connect('clicked()', self.onApply)
+        self.applyButton.connect("clicked()", self.onApply)
 
     def onOperationSelectionChanged(self, operationName, toggle):
         if not toggle:
@@ -299,7 +299,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
             if not segmentationNode.GenerateMergedLabelmapForAllSegments(inputLabelImage,
                                                                          vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_SEGMENTS_PADDED,
                                                                          None, visibleSegmentIds):
-                logging.error('Failed to apply island operation: cannot get list of visible segments')
+                logging.error("Failed to apply island operation: cannot get list of visible segments")
                 qt.QApplication.restoreOverrideCursor()
                 return abortEvent
         else:
@@ -363,7 +363,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
                     self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeRemove)
 
         except IndexError:
-            logging.error('Island processing failed')
+            logging.error("Island processing failed")
         finally:
             qt.QApplication.restoreOverrideCursor()
 
@@ -409,9 +409,9 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         self.scriptedEffect.setParameter("MinimumSize", self.minimumSizeSpinBox.value)
 
 
-KEEP_LARGEST_ISLAND = 'KEEP_LARGEST_ISLAND'
-KEEP_SELECTED_ISLAND = 'KEEP_SELECTED_ISLAND'
-REMOVE_SMALL_ISLANDS = 'REMOVE_SMALL_ISLANDS'
-REMOVE_SELECTED_ISLAND = 'REMOVE_SELECTED_ISLAND'
-ADD_SELECTED_ISLAND = 'ADD_SELECTED_ISLAND'
-SPLIT_ISLANDS_TO_SEGMENTS = 'SPLIT_ISLANDS_TO_SEGMENTS'
+KEEP_LARGEST_ISLAND = "KEEP_LARGEST_ISLAND"
+KEEP_SELECTED_ISLAND = "KEEP_SELECTED_ISLAND"
+REMOVE_SMALL_ISLANDS = "REMOVE_SMALL_ISLANDS"
+REMOVE_SELECTED_ISLAND = "REMOVE_SELECTED_ISLAND"
+ADD_SELECTED_ISLAND = "ADD_SELECTED_ISLAND"
+SPLIT_ISLANDS_TO_SEGMENTS = "SPLIT_ISLANDS_TO_SEGMENTS"

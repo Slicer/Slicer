@@ -8,8 +8,8 @@ from slicer.ScriptedLoadableModule import *
 class SlicerScriptedFileReaderWriterTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = 'SlicerScriptedFileReaderWriterTest'
-        parent.categories = ['Testing.TestCases']
+        parent.title = "SlicerScriptedFileReaderWriterTest"
+        parent.categories = ["Testing.TestCases"]
         parent.dependencies = []
         parent.contributors = ["Andras Lasso (PerkLab, Queen's)"]
         parent.helpText = '''
@@ -34,13 +34,13 @@ class SlicerScriptedFileReaderWriterTestFileReader:
         self.parent = parent
 
     def description(self):
-        return 'My file type'
+        return "My file type"
 
     def fileType(self):
-        return 'MyFileType'
+        return "MyFileType"
 
     def extensions(self):
-        return ['My file type (*.mft)']
+        return ["My file type (*.mft)"]
 
     def canLoadFile(self, filePath):
         # Only enable this reader in testing mode
@@ -51,19 +51,19 @@ class SlicerScriptedFileReaderWriterTestFileReader:
         if not self.parent.supportedNameFilters(filePath):
             return False
 
-        firstLine = ''
+        firstLine = ""
         with open(filePath) as f:
             firstLine = f.readline()
-        validFile = 'magic' in firstLine
+        validFile = "magic" in firstLine
         return validFile
 
     def load(self, properties):
         try:
-            filePath = properties['fileName']
+            filePath = properties["fileName"]
 
             # Get node base name from filename
-            if 'name' in properties.keys():
-                baseName = properties['name']
+            if "name" in properties.keys():
+                baseName = properties["name"]
             else:
                 baseName = os.path.splitext(os.path.basename(filePath))[0]
                 baseName = slicer.mrmlScene.GenerateUniqueName(baseName)
@@ -74,12 +74,12 @@ class SlicerScriptedFileReaderWriterTestFileReader:
 
             # Check if file is valid
             firstLine = data[0].rstrip()
-            if firstLine != 'magic':
-                raise ValueError('Cannot read file, it is expected to start with magic')
+            if firstLine != "magic":
+                raise ValueError("Cannot read file, it is expected to start with magic")
 
             # Load content into new node
-            loadedNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLTextNode', baseName)
-            loadedNode.SetText(''.join(data[1:]))
+            loadedNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode", baseName)
+            loadedNode.SetText("".join(data[1:]))
 
             # Uncomment the next line to display a warning message to the user.
             # self.parent.userMessages().AddMessage(vtk.vtkCommand.WarningEvent, "This is a warning message")
@@ -101,13 +101,13 @@ class SlicerScriptedFileReaderWriterTestFileWriter:
         self.parent = parent
 
     def description(self):
-        return 'My file type'
+        return "My file type"
 
     def fileType(self):
-        return 'MyFileType'
+        return "MyFileType"
 
     def extensions(self, obj):
-        return ['My file type (*.mft)']
+        return ["My file type (*.mft)"]
 
     def canWriteObject(self, obj):
         # Only enable this writer in testing mode
@@ -123,8 +123,8 @@ class SlicerScriptedFileReaderWriterTestFileWriter:
             node = slicer.mrmlScene.GetNodeByID(properties["nodeID"])
 
             # Write node content to file
-            filePath = properties['fileName']
-            with open(filePath, 'w') as myfile:
+            filePath = properties["fileName"]
+            with open(filePath, "w") as myfile:
                 myfile.write("magic\n")
                 myfile.write(node.GetText())
 
@@ -147,7 +147,7 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
         self.test_Writer()
         self.test_Reader()
         self.tearDown()
-        self.delayDisplay('Testing complete')
+        self.delayDisplay("Testing complete")
 
     def setUp(self):
         self.tempDir = slicer.util.tempDirectory()
@@ -165,15 +165,15 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
         # Writer and reader tests are put in the same function to ensure
         # that writing is done before reading (it generates input data for reading).
 
-        self.delayDisplay('Testing node writer')
+        self.delayDisplay("Testing node writer")
         slicer.mrmlScene.Clear()
-        textNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLTextNode')
+        textNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
         textNode.SetText(self.textInNode)
-        self.assertTrue(slicer.util.saveNode(textNode, self.validFilename, {'fileType': 'MyFileType'}))
+        self.assertTrue(slicer.util.saveNode(textNode, self.validFilename, {"fileType": "MyFileType"}))
 
-        self.delayDisplay('Testing node reader')
+        self.delayDisplay("Testing node reader")
         slicer.mrmlScene.Clear()
-        loadedNode = slicer.util.loadNodeFromFile(self.validFilename, 'MyFileType')
+        loadedNode = slicer.util.loadNodeFromFile(self.validFilename, "MyFileType")
         self.assertIsNotNone(loadedNode)
-        self.assertTrue(loadedNode.IsA('vtkMRMLTextNode'))
+        self.assertTrue(loadedNode.IsA("vtkMRMLTextNode"))
         self.assertEqual(loadedNode.GetText(), self.textInNode)

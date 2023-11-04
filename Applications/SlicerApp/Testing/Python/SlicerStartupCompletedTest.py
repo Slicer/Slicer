@@ -34,7 +34,7 @@ Usage:
     SlicerOptionIgnoreSlicerRCTest.py /path/to/Slicer
 """
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     debug = False
     # Set to True to:
@@ -45,27 +45,27 @@ if __name__ == '__main__':
         print(os.path.basename(sys.argv[0]) + " /path/to/Slicer")
         exit(EXIT_FAILURE)
 
-    temporaryModuleDirPath = tempfile.mkdtemp().replace('\\', '/')
+    temporaryModuleDirPath = tempfile.mkdtemp().replace("\\", "/")
     try:
 
         # Copy helper module that creates a file when startup completed event is received
-        currentDirPath = os.path.dirname(__file__).replace('\\', '/')
+        currentDirPath = os.path.dirname(__file__).replace("\\", "/")
         from shutil import copyfile
-        copyfile(currentDirPath + '/SlicerStartupCompletedTestHelperModule.py',
-                 temporaryModuleDirPath + '/SlicerStartupCompletedTestHelperModule.py')
+        copyfile(currentDirPath + "/SlicerStartupCompletedTestHelperModule.py",
+                 temporaryModuleDirPath + "/SlicerStartupCompletedTestHelperModule.py")
 
         slicer_executable = os.path.expanduser(sys.argv[1])
         common_args = [
-            '--testing',
-            '--no-splash',
-            '--disable-builtin-cli-modules',
-            '--disable-builtin-loadable-modules',
-            '--disable-builtin-scripted-loadable-modules',
-            '--additional-module-path', temporaryModuleDirPath,
+            "--testing",
+            "--no-splash",
+            "--disable-builtin-cli-modules",
+            "--disable-builtin-loadable-modules",
+            "--disable-builtin-scripted-loadable-modules",
+            "--additional-module-path", temporaryModuleDirPath,
         ]
 
         test_output_file = temporaryModuleDirPath + "/StartupCompletedTest.out"
-        os.environ['SLICER_STARTUP_COMPLETED_TEST_OUTPUT'] = test_output_file
+        os.environ["SLICER_STARTUP_COMPLETED_TEST_OUTPUT"] = test_output_file
         if debug:
             print("SLICER_STARTUP_COMPLETED_TEST_OUTPUT=%s" % test_output_file)
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
         # Test startupCompleted without main window
         args = list(common_args)
-        args.extend(['--no-main-window'])
+        args.extend(["--no-main-window"])
         (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, args)
         assert os.path.isfile(test_output_file)
         assert returnCode == EXIT_SUCCESS

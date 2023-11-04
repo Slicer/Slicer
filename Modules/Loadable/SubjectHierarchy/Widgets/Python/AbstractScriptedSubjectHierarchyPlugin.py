@@ -35,4 +35,4 @@ class AbstractScriptedSubjectHierarchyPlugin:
     def register(self):
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
         pluginHandlerSingleton.registerPlugin(self.scriptedPlugin)
-        logging.debug('Scripted subject hierarchy plugin registered: ' + self.scriptedPlugin.name)
+        logging.debug("Scripted subject hierarchy plugin registered: " + self.scriptedPlugin.name)

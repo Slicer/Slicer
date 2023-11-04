@@ -37,7 +37,7 @@ class CLISerializationTest:
         self.SlicerExecutable = None
 
     def _runCLI(self, cli_name, option, json_file_path, parameters=[]):
-        args = ['--launch',
+        args = ["--launch",
                 cli_name,
                 option, json_file_path,
                 ]
@@ -45,15 +45,15 @@ class CLISerializationTest:
         return run(self.SlicerExecutable, args)
 
     def serializeCLI(self, cli_name, json_file_path, parameters=[]):
-        return self._runCLI(cli_name, '--serialize', json_file_path, parameters)
+        return self._runCLI(cli_name, "--serialize", json_file_path, parameters)
 
     def deserializeCLI(self, cli_name, json_file_path, parameters=[]):
-        return self._runCLI(cli_name, '--deserialize', json_file_path, parameters)
+        return self._runCLI(cli_name, "--deserialize", json_file_path, parameters)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Test command line CLIs serialization/deserialization.')
+    parser = argparse.ArgumentParser(description="Test command line CLIs serialization/deserialization.")
     # Common options
     parser.add_argument("/path/to/Slicer")
     parser.add_argument("/path/to/data_dir")
@@ -70,35 +70,35 @@ if __name__ == '__main__':
     temp_dir = os.path.expanduser(getattr(args, "/path/to/temp_dir"))
 
     # Create input/output
-    serializeSeedsOutFile = f'{temp_dir}/SeedsSerialized.acsv'
-    deserializeSeedsOutFile = f'{temp_dir}/SeedsDeSerialized.acsv'
-    json_file = f'{temp_dir}/ExecutionModelTourSerialized.json'
+    serializeSeedsOutFile = f"{temp_dir}/SeedsSerialized.acsv"
+    deserializeSeedsOutFile = f"{temp_dir}/SeedsDeSerialized.acsv"
+    json_file = f"{temp_dir}/ExecutionModelTourSerialized.json"
 
     # Copy .mrml file to prevent modification of source tree
-    mrml_source_path = os.path.join(data_dir, 'ExecutionModelTourTest.mrml')
-    mrml_dest_path = os.path.join(temp_dir, 'ExecutionModelTourTestPython.mrml')
+    mrml_source_path = os.path.join(data_dir, "ExecutionModelTourTest.mrml")
+    mrml_dest_path = os.path.join(temp_dir, "ExecutionModelTourTestPython.mrml")
     shutil.copyfile(mrml_source_path, mrml_dest_path)
 
     # -- Test ExecutionModelTour --
     EMTSerializer = CLISerializationTest()
     EMTSerializer.SlicerExecutable = slicer_executable
-    CLIName = 'ExecutionModelTour'
+    CLIName = "ExecutionModelTour"
     required_inputs = [
-        '--transform1', '%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode1' % (temp_dir),
-        '--transform2', '%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode2' % (temp_dir),
+        "--transform1", "%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode1" % (temp_dir),
+        "--transform2", "%s/ExecutionModelTourTestPython.mrml#vtkMRMLLinearTransformNode2" % (temp_dir),
         mrHeadResampled,
         ctHeadAxial,
     ]
     serialize_options = [
-        '--integer', '30',
-        '--double', '30',
-        '-f', '1.3,2,-14',
-        '--files', '1.does,2.not,3.matter',
-        '--string_vector', 'foo,bar,foobar',
-        '--enumeration', 'Bill',
-        '--boolean1',
-        '--seed', '1.0,0.0,-1.0',
-        '--seedsOutFile', serializeSeedsOutFile
+        "--integer", "30",
+        "--double", "30",
+        "-f", "1.3,2,-14",
+        "--files", "1.does,2.not,3.matter",
+        "--string_vector", "foo,bar,foobar",
+        "--enumeration", "Bill",
+        "--boolean1",
+        "--seed", "1.0,0.0,-1.0",
+        "--seedsOutFile", serializeSeedsOutFile
     ]
     parameters = serialize_options
     parameters.extend(required_inputs)
@@ -197,23 +197,23 @@ if __name__ == '__main__':
         }
     }
 
-    with open(json_file, encoding='utf8') as file:
+    with open(json_file, encoding="utf8") as file:
         data = json.load(file)
         if data != expected_json:
-            print('Json comparison failed !')
-            expected_json_filename = temp_dir + '/ExecutionModelTourSerializedBaseline.json'
+            print("Json comparison failed !")
+            expected_json_filename = temp_dir + "/ExecutionModelTourSerializedBaseline.json"
             print("Expected json: " + expected_json_filename)
-            with open(expected_json_filename, 'w', encoding='utf8') as outfile:
+            with open(expected_json_filename, "w", encoding="utf8") as outfile:
                 json.dump(expected_json, outfile, indent="\t", ensure_ascii=False)
-            actual_json_filename = temp_dir + '/ExecutionModelTourSerializedActual.json'
+            actual_json_filename = temp_dir + "/ExecutionModelTourSerializedActual.json"
             print("Actual json: " + actual_json_filename)
-            with open(actual_json_filename, 'w', encoding='utf8') as outfile:
+            with open(actual_json_filename, "w", encoding="utf8") as outfile:
                 json.dump(data, outfile, indent="\t", ensure_ascii=False)
             exit(EXIT_FAILURE)
 
     # Now try to deserialize the CLI.
     parameters = [
-        '--seedsOutFile', deserializeSeedsOutFile
+        "--seedsOutFile", deserializeSeedsOutFile
     ]
     (returncode, deserializeErr, deserializeOut) = EMTSerializer.deserializeCLI(CLIName, json_file, parameters)
     if returncode != EXIT_SUCCESS:
@@ -228,14 +228,14 @@ if __name__ == '__main__':
         serializedRows = list(in_reader)
         deserializedRows = list(out_reader)
         if len(serializedRows) != len(deserializedRows):
-            print('Seeds comparison failed, files have different number of rows !')
+            print("Seeds comparison failed, files have different number of rows !")
             exit(EXIT_FAILURE)
 
         for i in range(len(serializedRows)):
             if serializedRows[i] != deserializedRows[i]:
-                print('Row #%s comparison failed:' % i)
-                print('Serialize row: %s' % serializedRows[i])
-                print('Deserialize row: %s' % deserializedRows[i])
+                print("Row #%s comparison failed:" % i)
+                print("Serialize row: %s" % serializedRows[i])
+                print("Deserialize row: %s" % deserializedRows[i])
                 exit(EXIT_FAILURE)
 
     try:

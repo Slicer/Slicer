@@ -36,7 +36,7 @@ class SlicerApplicationLogHandler(logging.Handler):
 
     def __init__(self):
         logging.Handler.__init__(self)
-        if hasattr(ctk, 'ctkErrorLogLevel'):
+        if hasattr(ctk, "ctkErrorLogLevel"):
             self.pythonToCtkLevelConverter = {
                 logging.DEBUG: ctk.ctkErrorLogLevel.Debug,
                 logging.INFO: ctk.ctkErrorLogLevel.Info,
@@ -76,7 +76,7 @@ def initLogging(logger):
     # We could filter out messages at INFO level or above (as they will be printed on the console anyway) by adding
     # applicationLogHandler.addFilter(_LogReverseLevelFilter(logging.INFO))
     # but then we would not log file name and line number of info, warning, and error level messages.
-    slicer.pythonApplicationLogHandler.setFormatter(logging.Formatter('%(message)s'))
+    slicer.pythonApplicationLogHandler.setFormatter(logging.Formatter("%(message)s"))
     logger.addHandler(slicer.pythonApplicationLogHandler)
 
     # Log debug messages from scripts by default, as they are useful for troubleshooting with users
@@ -103,11 +103,11 @@ def getSlicerRCFileName():
     import os
     rcfile = os.path.join(slicer.app.slicerHome, ".slicerrc.py")
     if not os.path.exists(rcfile):
-        if 'SLICERRC' in os.environ:
-            rcfile = os.environ['SLICERRC']
+        if "SLICERRC" in os.environ:
+            rcfile = os.environ["SLICERRC"]
         else:
-            rcfile = os.path.expanduser('~/.slicerrc.py')
-    rcfile = rcfile.replace('\\', '/')  # make slashed consistent on Windows
+            rcfile = os.path.expanduser("~/.slicerrc.py")
+    rcfile = rcfile.replace("\\", "/")  # make slashed consistent on Windows
     return rcfile
 
 
@@ -122,7 +122,7 @@ def loadSlicerRCFile():
     import os
     rcfile = getSlicerRCFileName()
     if os.path.isfile(rcfile):
-        print('Loading Slicer RC file [%s]' % (rcfile))
+        print("Loading Slicer RC file [%s]" % (rcfile))
         exec(open(rcfile).read(), globals())
 
 
@@ -136,7 +136,7 @@ class _Internal:
     def __init__(self):
 
         # Set attribute 'slicer.app'
-        setattr(slicer, 'app', _qSlicerCoreApplicationInstance)
+        setattr(slicer, "app", _qSlicerCoreApplicationInstance)
 
         # Listen factory and module manager to update slicer.{modules, moduleNames} when appropriate
         moduleManager = slicer.app.moduleManager()
@@ -146,14 +146,14 @@ class _Internal:
         # This would be the case if, for example, a commandline module wants to
         # use qSlicerApplication for tcl access but without all the managers.
         # Note: This is not the default behavior.
-        if hasattr(moduleManager, 'factoryManager'):
+        if hasattr(moduleManager, "factoryManager"):
             factoryManager = moduleManager.factoryManager()
-            factoryManager.connect('modulesRegistered(QStringList)', self.setSlicerModuleNames)
-            moduleManager.connect('moduleLoaded(QString)', self.setSlicerModules)
-            moduleManager.connect('moduleAboutToBeUnloaded(QString)', self.unsetSlicerModule)
+            factoryManager.connect("modulesRegistered(QStringList)", self.setSlicerModuleNames)
+            moduleManager.connect("moduleLoaded(QString)", self.setSlicerModules)
+            moduleManager.connect("moduleAboutToBeUnloaded(QString)", self.unsetSlicerModule)
 
         # Retrieve current instance of the scene and set 'slicer.mrmlScene'
-        setattr(slicer, 'mrmlScene', slicer.app.mrmlScene())
+        setattr(slicer, "mrmlScene", slicer.app.mrmlScene())
 
         # HACK - Since qt.QTimer.singleShot is both a property and a static method, the property
         # is wrapped in python and prevent the call to the convenient static method having
@@ -179,16 +179,16 @@ class _Internal:
         for name in moduleNames:
             setattr(slicer.moduleNames, name, name)
             # HACK For backward compatibility with ITKv3, map "dwiconvert" module name to "dicomtonrrdconverter"
-            if name == 'DWIConvert':
-                setattr(slicer.moduleNames, 'DicomToNrrdConverter', name)
+            if name == "DWIConvert":
+                setattr(slicer.moduleNames, "DicomToNrrdConverter", name)
 
     def setSlicerModules(self, moduleName):
         """Add modules as attributes of module slicer.modules"""
         moduleManager = slicer.app.moduleManager()
         setattr(slicer.modules, moduleName.lower(), moduleManager.module(moduleName))
         # HACK For backward compatibility with ITKv3, map "dicomtonrrdconverter" module to "dwiconvert"
-        if moduleName == 'DWIConvert':
-            setattr(slicer.modules, 'dicomtonrrdconverter', moduleManager.module(moduleName))
+        if moduleName == "DWIConvert":
+            setattr(slicer.modules, "dicomtonrrdconverter", moduleManager.module(moduleName))
 
     def unsetSlicerModule(self, moduleName):
         """Remove attribute from ``slicer.modules``

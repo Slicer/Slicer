@@ -1,6 +1,6 @@
 from slicer.ScriptedLoadableModule import *
 
-SOMEVAR = 'E'
+SOMEVAR = "E"
 
 
 class ModuleE_WithFileWriter_WithoutWidget(ScriptedLoadableModule):
@@ -26,14 +26,14 @@ class ModuleE_WithFileWriter_WithoutWidgetFileWriter:
         self.parent = parent
 
     def description(self):
-        return 'My writer file type'
+        return "My writer file type"
 
     def fileType(self):
-        return 'MyWriterFileType'
+        return "MyWriterFileType"
 
     def extensions(self, obj):
         print(obj)
-        return ['My writer file type (*.mwft)']
+        return ["My writer file type (*.mwft)"]
 
     def canWriteObject(self, obj):
         return False

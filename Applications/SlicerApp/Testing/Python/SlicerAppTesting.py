@@ -34,7 +34,7 @@ import subprocess
 import sys
 import time
 
-__all__ = ['EXIT_FAILURE', 'EXIT_SUCCESS', 'run', 'runSlicer', 'runSlicerAndExit', 'timecall']
+__all__ = ["EXIT_FAILURE", "EXIT_SUCCESS", "run", "runSlicer", "runSlicerAndExit", "timecall"]
 
 EXIT_FAILURE = 1
 EXIT_SUCCESS = 0
@@ -42,7 +42,7 @@ EXIT_SUCCESS = 0
 
 def dropcache():
     if sys.platform in ["linux", "linux2"]:
-        run('/usr/bin/sudo', ['sysctl', 'vm.drop_caches=1'], drop_cache=False)
+        run("/usr/bin/sudo", ["sysctl", "vm.drop_caches=1"], drop_cache=False)
     else:
         # XXX Implement other platform (Windows: EmptyStandbyList ?, macOS: Purge ?)
         raise Exception("--drop-cache is not supported on %s" % sys.platform)
@@ -63,7 +63,7 @@ def run(executable, arguments=[], verbose=True, shell=False, drop_cache=False):
     stdout, stderr = p.communicate()
 
     if p.returncode != EXIT_SUCCESS:
-        print('STDERR: ' + stderr.decode(), file=sys.stderr)
+        print("STDERR: " + stderr.decode(), file=sys.stderr)
 
     return (p.returncode, stdout.decode(), stderr.decode())
 
@@ -71,7 +71,7 @@ def run(executable, arguments=[], verbose=True, shell=False, drop_cache=False):
 def runSlicer(slicer_executable, arguments=[], verbose=True, **kwargs):
     """Run ``slicer_executable`` with provided ``arguments``.
     """
-    args = ['--no-splash']
+    args = ["--no-splash"]
     args.extend(arguments)
     return run(slicer_executable, args, verbose, **kwargs)
 
@@ -79,7 +79,7 @@ def runSlicer(slicer_executable, arguments=[], verbose=True, **kwargs):
 def runSlicerAndExit(slicer_executable, arguments=[], verbose=True, **kwargs):
     """Run ``slicer_executable`` with provided ``arguments`` and exit.
     """
-    args = ['--exit-after-startup']
+    args = ["--exit-after-startup"]
     args.extend(arguments)
     return runSlicer(slicer_executable, args, verbose, **kwargs)
 
@@ -88,8 +88,8 @@ def timecall(method, **kwargs):
     """Wrap ``method`` and return its execution time.
     """
     repeat = 1
-    if 'repeat' in kwargs:
-        repeat = kwargs['repeat']
+    if "repeat" in kwargs:
+        repeat = kwargs["repeat"]
 
     def wrapper(*args, **kwargs):
         durations = []

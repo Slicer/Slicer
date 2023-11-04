@@ -28,7 +28,7 @@ class CLIEventTest(ScriptedLoadableModule):
             slicer.selfTests
         except AttributeError:
             slicer.selfTests = {}
-        slicer.selfTests['CLIEventTest'] = self.runTest
+        slicer.selfTests["CLIEventTest"] = self.runTest
 
     def runTest(self):
         tester = CLIEventTestTest()
@@ -105,7 +105,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         self._testCLIStatusEventTest(False)
 
     def _testCLIStatusEventTest(self, wait_for_completion):
-        self.delayDisplay('Testing status events for a normal execution of a CLI')
+        self.delayDisplay("Testing status events for a normal execution of a CLI")
 
         tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX")
         self.assertTrue(tempFile.open())
@@ -114,7 +114,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         parameters = {}
         parameters["InputValue1"] = 1
         parameters["InputValue2"] = 2
-        parameters["OperationType"] = 'Addition'
+        parameters["OperationType"] = "Addition"
         parameters["OutputFile"] = tempFile.fileName()
 
         cliModule = slicer.modules.cli4test
@@ -124,7 +124,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         logic.runCLI(cliModule, cli, parameters, wait_for_completion)
 
         while not logic.ExecutionFinished:
-            self.delayDisplay('Waiting for module to complete...')
+            self.delayDisplay("Waiting for module to complete...")
 
         cli = slicer.vtkMRMLCommandLineModuleNode()
         expectedEvents = []
@@ -137,7 +137,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
             logic.StatusEvents.remove(cli.Running)
 
         self.assertEqual(logic.StatusEvents, expectedEvents)
-        self.delayDisplay('Testing normal execution Passed')
+        self.delayDisplay("Testing normal execution Passed")
 
     # Testing the status event on a bad execution
     def test_CLIStatusEventOnErrorTestSynchronous(self):
@@ -147,7 +147,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         self._testCLIStatusEventOnErrorTest(False)
 
     def _testCLIStatusEventOnErrorTest(self, wait_for_completion):
-        self.delayDisplay('Testing status events for a bad execution of a CLI')
+        self.delayDisplay("Testing status events for a bad execution of a CLI")
 
         tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX")
         self.assertTrue(tempFile.open())
@@ -156,7 +156,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         parameters = {}
         parameters["InputValue1"] = 1
         parameters["InputValue2"] = 2
-        parameters["OperationType"] = 'Fail'
+        parameters["OperationType"] = "Fail"
         parameters["OutputFile"] = tempFile.fileName()
 
         cliModule = slicer.modules.cli4test
@@ -166,7 +166,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         logic.runCLI(cliModule, cli, parameters, wait_for_completion)
 
         while not logic.ExecutionFinished:
-            self.delayDisplay('Waiting for module to complete...')
+            self.delayDisplay("Waiting for module to complete...")
 
         cli = slicer.vtkMRMLCommandLineModuleNode()
         expectedEvents = []
@@ -179,11 +179,11 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
             logic.StatusEvents.remove(cli.Running)
 
         self.assertEqual(logic.StatusEvents, expectedEvents)
-        self.delayDisplay('Testing bad execution Passed')
+        self.delayDisplay("Testing bad execution Passed")
 
     # Testing a the status event when canceling
     def test_CLIStatusEventTestCancel(self):
-        self.delayDisplay('Testing status events when cancelling the execution of a CLI')
+        self.delayDisplay("Testing status events when cancelling the execution of a CLI")
 
         tempFile = qt.QTemporaryFile("CLIEventTest-outputFile-XXXXXX")
         self.assertTrue(tempFile.open())
@@ -192,7 +192,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         parameters = {}
         parameters["InputValue1"] = 1
         parameters["InputValue2"] = 2
-        parameters["OperationType"] = 'Addition'
+        parameters["OperationType"] = "Addition"
         parameters["OutputFile"] = tempFile.fileName()
 
         cliModule = slicer.modules.cli4test
@@ -203,7 +203,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         cli.Cancel()
 
         while not logic.ExecutionFinished:
-            self.delayDisplay('Waiting for module to complete...')
+            self.delayDisplay("Waiting for module to complete...")
 
         expectedEvents = [
             cli.Scheduled,
@@ -216,16 +216,16 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
             logic.StatusEvents.remove(cli.Running)
 
         self.assertEqual(logic.StatusEvents, expectedEvents)
-        self.delayDisplay('Testing cancelled execution Passed')
+        self.delayDisplay("Testing cancelled execution Passed")
 
     def test_SubjectHierarchyReference(self):
-        self.delayDisplay('Test that output node moved to referenced node location in subject hierarchy')
+        self.delayDisplay("Test that output node moved to referenced node location in subject hierarchy")
 
-        self.delayDisplay('Load input volume')
+        self.delayDisplay("Load input volume")
         import SampleData
         inputVolume = SampleData.downloadSample("MRHead")
 
-        self.delayDisplay('Create subject hierarchy of input volume')
+        self.delayDisplay("Create subject hierarchy of input volume")
         shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
         self.patientItemID = shNode.CreateSubjectItem(shNode.GetSceneItemID(), "John Doe")
         self.studyItemID = shNode.CreateStudyItem(self.patientItemID, "Some study")
@@ -236,8 +236,8 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         # New node is expected to be created in the subject hierarchy root
         self.assertEqual(shNode.GetItemParent(shNode.GetItemByDataNode(outputVolume)), shNode.GetSceneItemID())
 
-        self.delayDisplay('Run CLI module')
-        cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue': 100, 'ThresholdType': 'Above'}
+        self.delayDisplay("Run CLI module")
+        cliParams = {"InputVolume": inputVolume.GetID(), "OutputVolume": outputVolume.GetID(), "ThresholdValue": 100, "ThresholdType": "Above"}
         cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True)
 
         # After CLI execution is completed, output volume must be in the same folder as the referenced node

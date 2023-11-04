@@ -41,7 +41,7 @@ class ModuleInfo:
             entries = [os.path.join(path, entry) for entry in os.listdir(path)]
             # If the folder contains __init__.py, it means that this folder
             # is not a Slicer module but an embedded Python library that a module will load.
-            if any(entry.endswith('__init__.py') for entry in entries):
+            if any(entry.endswith("__init__.py") for entry in entries):
                 entries = []
         else:
             # not a file or folder

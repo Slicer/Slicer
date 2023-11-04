@@ -22,14 +22,14 @@ from sphinx.ext import autodoc
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
+sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
 
 # %%% Site extensions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 # ===============================================================================
 class WikidocRole:
-    wiki_root = 'https://wiki.slicer.org/slicerWiki/index.php'
+    wiki_root = "https://wiki.slicer.org/slicerWiki/index.php"
 
     # -----------------------------------------------------------------------------
     def __call__(self, role, rawtext, text, lineno, inliner,
@@ -37,8 +37,8 @@ class WikidocRole:
 
         roles.set_classes(options)
 
-        parts = utils.unescape(text).split(' ', 1)
-        uri = '{}/Documentation/{}/{}'.format(self.wiki_root, self.wiki_doc_version,
+        parts = utils.unescape(text).split(" ", 1)
+        uri = "{}/Documentation/{}/{}".format(self.wiki_root, self.wiki_doc_version,
                                               parts[0])
         text = parts[1]
 
@@ -51,10 +51,10 @@ class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
     # -----------------------------------------------------------------------------
     def resolve_name(self, *args):
         module, attrs = super().resolve_name(*args)
-        module = module.split('.')
+        module = module.split(".")
         if module[-1] == attrs[0]:
             del module[-1]
-        return '.'.join(module), attrs
+        return ".".join(module), attrs
 
 # %%% Site customizations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -62,22 +62,22 @@ class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
 # -------------------------------------------------------------------------------
 def setup(app):
     app.add_autodocumenter(ClassModuleClassDocumenter)
-    app.add_role('wikidoc', WikidocRole())
+    app.add_role("wikidoc", WikidocRole())
 
 
 # -------------------------------------------------------------------------------
-autoclass_content = 'both'
-autodoc_member_order = 'groupwise'
+autoclass_content = "both"
+autodoc_member_order = "groupwise"
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-D", dest='defs', action="append", default=[])
+parser.add_argument("-D", dest="defs", action="append", default=[])
 
 args, pargs = parser.parse_known_args()
 
 for d in args.defs:
-    setattr(args, *d.split('=', 1))
+    setattr(args, *d.split("=", 1))
 
-setattr(WikidocRole, 'wiki_doc_version', args.wikidoc_version)
+setattr(WikidocRole, "wiki_doc_version", args.wikidoc_version)
 
 # %%% General configuration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -86,32 +86,32 @@ setattr(WikidocRole, 'wiki_doc_version', args.wikidoc_version)
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.intersphinx']
+extensions = ["sphinx.ext.autodoc", "sphinx.ext.viewcode", "sphinx.ext.intersphinx"]
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/%i.%i' % sys.version_info[:2], None),
-    'github': ('http://jacquev6.github.io/PyGithub/v1', None),
+    "python": ("https://docs.python.org/%i.%i" % sys.version_info[:2], None),
+    "github": ("http://jacquev6.github.io/PyGithub/v1", None),
 }
 
 try:
     import git
-    intersphinx_mapping['git'] = ('https://pythonhosted.org/GitPython/%s' % git.__version__.split(' ')[0], None)
+    intersphinx_mapping["git"] = ("https://pythonhosted.org/GitPython/%s" % git.__version__.split(" ")[0], None)
 except:
     pass
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = 'SlicerWizard'
-author = 'Kitware'
-copyright = '2014, Kitware'
+project = "SlicerWizard"
+author = "Kitware"
+copyright = "2014, Kitware"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -134,7 +134,7 @@ release = args.version  # FIXME?
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ["_build"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -151,7 +151,7 @@ exclude_patterns = ['_build']
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -161,7 +161,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = "default"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -234,7 +234,7 @@ html_theme = 'default'
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'SlicerWizarddoc'
+htmlhelp_basename = "SlicerWizarddoc"
 
 
 # %%% Options for LaTeX output %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -253,8 +253,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'SlicerWizard.tex', 'SlicerWizard Documentation',
-     author, 'manual'),
+    ("index", "SlicerWizard.tex", "SlicerWizard Documentation",
+     author, "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -283,7 +283,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'slicerwizard', 'SlicerWizard Documentation',
+    ("index", "slicerwizard", "SlicerWizard Documentation",
      [author], 1)
 ]
 
@@ -297,9 +297,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'SlicerWizard', 'SlicerWizard Documentation',
-     author, 'SlicerWizard', 'One line description of project.',
-     'Miscellaneous'),
+    ("index", "SlicerWizard", "SlicerWizard Documentation",
+     author, "SlicerWizard", "One line description of project.",
+     "Miscellaneous"),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -315,7 +315,7 @@ texinfo_documents = [
 # %%% Options for Epub output %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # Bibliographic Dublin Core info.
-epub_title = 'SlicerWizard'
+epub_title = "SlicerWizard"
 epub_author = author
 epub_publisher = author
 epub_copyright = copyright

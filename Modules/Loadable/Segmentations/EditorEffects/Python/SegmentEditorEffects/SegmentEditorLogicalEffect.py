@@ -15,19 +15,19 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Logical operators'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Logical operators')
+        scriptedEffect.name = "Logical operators"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Logical operators")
         self.operationsRequireModifierSegment = [LOGICAL_COPY, LOGICAL_UNION, LOGICAL_SUBTRACT, LOGICAL_INTERSECT]
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/Logical.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/Logical.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -57,14 +57,14 @@ segment list in effect options - below.
         self.methodSelectorComboBox.addItem(_("Invert"), LOGICAL_INVERT)
         self.methodSelectorComboBox.addItem(_("Clear"), LOGICAL_CLEAR)
         self.methodSelectorComboBox.addItem(_("Fill"), LOGICAL_FILL)
-        self.methodSelectorComboBox.setToolTip(_('Click <dfn>Show details</dfn> link above for description of operations.'))
+        self.methodSelectorComboBox.setToolTip(_("Click <dfn>Show details</dfn> link above for description of operations."))
 
         self.bypassMaskingCheckBox = qt.QCheckBox(_("Bypass masking"))
         self.bypassMaskingCheckBox.setToolTip(_("Ignore all masking options and only modify the selected segment."))
-        self.bypassMaskingCheckBox.objectName = self.__class__.__name__ + 'BypassMasking'
+        self.bypassMaskingCheckBox.objectName = self.__class__.__name__ + "BypassMasking"
 
         self.applyButton = qt.QPushButton(_("Apply"))
-        self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+        self.applyButton.objectName = self.__class__.__name__ + "Apply"
 
         operationFrame = qt.QHBoxLayout()
         operationFrame.addWidget(self.methodSelectorComboBox)
@@ -82,11 +82,11 @@ segment list in effect options - below.
         self.modifierSegmentSelector.opacityColumnVisible = False
 
         self.modifierSegmentSelector.setMRMLScene(slicer.mrmlScene)
-        self.modifierSegmentSelector.setToolTip(_('Contents of this segment will be used for modifying the selected segment. '
-                                                  'This segment itself will not be changed.'))
+        self.modifierSegmentSelector.setToolTip(_("Contents of this segment will be used for modifying the selected segment. "
+                                                  "This segment itself will not be changed."))
         self.scriptedEffect.addOptionsWidget(self.modifierSegmentSelector)
 
-        self.applyButton.connect('clicked()', self.onApply)
+        self.applyButton.connect("clicked()", self.onApply)
         self.methodSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
         self.modifierSegmentSelector.connect("selectionChanged(QItemSelection, QItemSelection)", self.updateMRMLFromGUI)
         self.bypassMaskingCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
@@ -107,7 +107,7 @@ segment list in effect options - below.
         if not self.scriptedEffect.parameterDefined("ModifierSegmentID"):
             # Avoid logging warning
             return ""
-        modifierSegmentIDs = self.scriptedEffect.parameter("ModifierSegmentID").split(';')
+        modifierSegmentIDs = self.scriptedEffect.parameter("ModifierSegmentID").split(";")
         if not modifierSegmentIDs:
             return ""
         return modifierSegmentIDs[0]
@@ -161,7 +161,7 @@ segment list in effect options - below.
         bypassMasking = 1 if self.bypassMaskingCheckBox.isChecked() else 0
         self.scriptedEffect.setParameter("BypassMasking", bypassMasking)
 
-        modifierSegmentIDs = ';'.join(self.modifierSegmentSelector.selectedSegmentIDs())  # semicolon-separated list of segment IDs
+        modifierSegmentIDs = ";".join(self.modifierSegmentSelector.selectedSegmentIDs())  # semicolon-separated list of segment IDs
         self.scriptedEffect.setParameter("ModifierSegmentID", modifierSegmentIDs)
 
     def getInvertedBinaryLabelmap(self, modifierLabelmap):
@@ -276,10 +276,10 @@ segment list in effect options - below.
             logging.error(f"Unknown operation: {operation}")
 
 
-LOGICAL_COPY = 'COPY'
-LOGICAL_UNION = 'UNION'
-LOGICAL_INTERSECT = 'INTERSECT'
-LOGICAL_SUBTRACT = 'SUBTRACT'
-LOGICAL_INVERT = 'INVERT'
-LOGICAL_CLEAR = 'CLEAR'
-LOGICAL_FILL = 'FILL'
+LOGICAL_COPY = "COPY"
+LOGICAL_UNION = "UNION"
+LOGICAL_INTERSECT = "INTERSECT"
+LOGICAL_SUBTRACT = "SUBTRACT"
+LOGICAL_INVERT = "INVERT"
+LOGICAL_CLEAR = "CLEAR"
+LOGICAL_FILL = "FILL"

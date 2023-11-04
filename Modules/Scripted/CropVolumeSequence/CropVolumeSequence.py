@@ -102,7 +102,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         self.cropParametersSelector.setToolTip(_("Select a crop volumes parameters."))
 
         self.editCropParametersButton = qt.QPushButton()
-        self.editCropParametersButton.setIcon(qt.QIcon(':Icons/Go.png'))
+        self.editCropParametersButton.setIcon(qt.QIcon(":Icons/Go.png"))
         # self.editCropParametersButton.setMaximumWidth(60)
         self.editCropParametersButton.enabled = True
         self.editCropParametersButton.toolTip = _("Go to Crop Volume module to edit cropping parameters.")
@@ -120,7 +120,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
         self.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
         self.cropParametersSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
         self.editCropParametersButton.connect("clicked()", self.onEditCropParameters)
@@ -182,7 +182,7 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
         Run the actual algorithm
         """
 
-        logging.info('Processing started')
+        logging.info("Processing started")
 
         # Get original parent transform, if any (before creating the new sequence browser)
         inputVolTransformNodeID = self.transformForSequence(inputVolSeq)
@@ -284,7 +284,7 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
                 seqBrowser = slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(inputVolSeq)
                 slicer.modules.sequences.logic().UpdateProxyNodesFromSequences(seqBrowser)
 
-        logging.info('Processing completed')
+        logging.info("Processing completed")
 
 
 class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
@@ -311,18 +311,18 @@ class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
 
         # Load volume sequence
         import SampleData
-        sequenceNode = SampleData.downloadSample('CTCardioSeq')
+        sequenceNode = SampleData.downloadSample("CTCardioSeq")
         sequenceBrowserNode = slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(sequenceNode)
 
         # Set cropping parameters
-        croppedSequenceNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSequenceNode')
-        cropVolumeNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLCropVolumeParametersNode')
+        croppedSequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode")
+        cropVolumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLCropVolumeParametersNode")
         cropVolumeNode.SetIsotropicResampling(True)
         cropVolumeNode.SetSpacingScalingConst(3.0)
         volumeNode = sequenceBrowserNode.GetProxyNode(sequenceNode)
 
         # Set cropping region
-        roiNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsROINode')
+        roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode")
         cropVolumeNode.SetROINodeID(roiNode.GetID())
         cropVolumeNode.SetInputVolumeNodeID(volumeNode.GetID())
         slicer.modules.cropvolume.logic().FitROIToInputVolume(cropVolumeNode)
@@ -343,4 +343,4 @@ class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
         self.assertEqual(volumeNode.GetImageData().GetExtent(), (0, 127, 0, 103, 0, 71))
         self.assertEqual(cropVolumeNode.GetImageData().GetExtent(), (0, 41, 0, 33, 0, 40))
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

@@ -27,8 +27,8 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplate(ScriptedLoadableMod
     def registerEditorEffect(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as qSlicerSegmentationsEditorEffects
         instance = qSlicerSegmentationsEditorEffects.qSlicerSegmentEditorScriptedEffect(None)
-        effectFilename = os.path.join(os.path.dirname(__file__), self.__class__.__name__ + 'Lib/SegmentEditorEffect.py')
-        instance.setPythonSource(effectFilename.replace('\\', '/'))
+        effectFilename = os.path.join(os.path.dirname(__file__), self.__class__.__name__ + "Lib/SegmentEditorEffect.py")
+        instance.setPythonSource(effectFilename.replace("\\", "/"))
         instance.self().register()
 
 
@@ -68,20 +68,20 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplateTest(ScriptedLoadabl
         ##################################
         self.delayDisplay("Load source volume")
 
-        sourceVolumeNode = SampleData.downloadSample('MRBrainTumor1')
+        sourceVolumeNode = SampleData.downloadSample("MRBrainTumor1")
 
         ##################################
         self.delayDisplay("Create segmentation containing a few spheres")
 
-        segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
+        segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
         segmentationNode.CreateDefaultDisplayNodes()
         segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(sourceVolumeNode)
 
         # Segments are defined by a list of: name and a list of sphere [radius, posX, posY, posZ]
         segmentGeometries = [
-            ['Tumor', [[10, -6, 30, 28]]],
-            ['Background', [[10, 0, 65, 22], [15, 1, -14, 30], [12, 0, 28, -7], [5, 0, 30, 54], [12, 31, 33, 27], [17, -42, 30, 27], [6, -2, -17, 71]]],
-            ['Air', [[10, 76, 73, 0], [15, -70, 74, 0]]]]
+            ["Tumor", [[10, -6, 30, 28]]],
+            ["Background", [[10, 0, 65, 22], [15, 1, -14, 30], [12, 0, 28, -7], [5, 0, 30, 54], [12, 31, 33, 27], [17, -42, 30, 27], [6, -2, -17, 71]]],
+            ["Air", [[10, 76, 73, 0], [15, -70, 74, 0]]]]
         for segmentGeometry in segmentGeometries:
             segmentName = segmentGeometry[0]
             appender = vtk.vtkAppendPolyData()
@@ -137,4 +137,4 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplateTest(ScriptedLoadabl
         self.assertEqual(round(segStatLogic.statistics["Tumor", "LM volume cc"]), 16)
         self.assertEqual(round(segStatLogic.statistics["Background", "LM volume cc"]), 3010)
 
-        self.delayDisplay('test_ScriptedSegmentEditorEffectModuleTemplate1 passed')
+        self.delayDisplay("test_ScriptedSegmentEditorEffectModuleTemplate1 passed")

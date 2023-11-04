@@ -55,7 +55,7 @@ def createCoordinateSystemsModel(curve, axisLength=5):
     # Create model appender that assembles the model that contains all the coordinate systems
     coordinateSystemAppender = vtk.vtkAppendPolyData()
     # model = slicer.modules.models.logic().AddModel(coordinateSystemAppender.GetOutputPort())
-    model = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+    model = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
     model.CreateDefaultDisplayNodes()
     # prevent picking by markups so that the control points can be moved without sticking to the generated model
     model.SetSelectable(False)
@@ -80,8 +80,8 @@ def removeCoordinateSystemUpdaters(curveObservations):
 # Set up tests
 #
 
-curveMeasurementsTestDir = slicer.app.temporaryPath + '/curveMeasurementsTest'
-print('Test directory: ', curveMeasurementsTestDir)
+curveMeasurementsTestDir = slicer.app.temporaryPath + "/curveMeasurementsTest"
+print("Test directory: ", curveMeasurementsTestDir)
 if not os.access(curveMeasurementsTestDir, os.F_OK):
     os.mkdir(curveMeasurementsTestDir)
 
@@ -93,13 +93,13 @@ curveObservations = []
 # Test1. Test free-form curve with 6 control points, all points in one plane
 #
 
-testSceneFilePath = curveMeasurementsTestDir + '/MarkupsCurvatureTestScene.mrb'
+testSceneFilePath = curveMeasurementsTestDir + "/MarkupsCurvatureTestScene.mrb"
 slicer.util.downloadFile(
-    TESTING_DATA_URL + 'SHA256/5b1f39e28ad8611790152fdc092ec9b3ee14254aad4897377db9576139c88e32',
+    TESTING_DATA_URL + "SHA256/5b1f39e28ad8611790152fdc092ec9b3ee14254aad4897377db9576139c88e32",
     testSceneFilePath,
-    checksum='SHA256:5b1f39e28ad8611790152fdc092ec9b3ee14254aad4897377db9576139c88e32')
+    checksum="SHA256:5b1f39e28ad8611790152fdc092ec9b3ee14254aad4897377db9576139c88e32")
 slicer.util.loadScene(testSceneFilePath)
-planarCurveNode = slicer.util.getNode('C')
+planarCurveNode = slicer.util.getNode("C")
 
 # Visualize
 
@@ -125,7 +125,7 @@ if not np.isclose(curvePointToWorldMatrix, expectedCurvePointToWorldMatrix).all(
 # Test2. Test free-form closed curve with 6 control points, all points in one plane
 #
 
-closedCurveNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsClosedCurveNode')
+closedCurveNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode")
 pos = np.zeros(3)
 for i in range(planarCurveNode.GetNumberOfControlPoints()):
     planarCurveNode.GetNthControlPointPosition(i, pos)
@@ -158,24 +158,24 @@ if not np.isclose(curvePointToWorldMatrix, expectedCurvePointToWorldMatrix).all(
 # of a model using the ExtractCenterline module in the SlicerVMTK extension.
 #
 
-testSceneFilePath = curveMeasurementsTestDir + '/MarkupsControlPointMeasurementInterpolationTestScene.mrb'
+testSceneFilePath = curveMeasurementsTestDir + "/MarkupsControlPointMeasurementInterpolationTestScene.mrb"
 
 slicer.util.downloadFile(
-    TESTING_DATA_URL + 'SHA256/b636ecfc1be54504c2c9843e1ff53242ee6b951228490ae99a89e06c8890e344',
+    TESTING_DATA_URL + "SHA256/b636ecfc1be54504c2c9843e1ff53242ee6b951228490ae99a89e06c8890e344",
     testSceneFilePath,
-    checksum='SHA256:b636ecfc1be54504c2c9843e1ff53242ee6b951228490ae99a89e06c8890e344')
+    checksum="SHA256:b636ecfc1be54504c2c9843e1ff53242ee6b951228490ae99a89e06c8890e344")
 
 # Import test scene
 slicer.util.loadScene(testSceneFilePath)
 
-centerlineModel = slicer.util.getNode('Centerline model')
+centerlineModel = slicer.util.getNode("Centerline model")
 centerlinePolyData = centerlineModel.GetPolyData()
 
 # Create curve node from centerline model
 # (markups curve with radius array output is not yet available in SlicerVMTK)
-centerlineCurve = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsCurveNode')
+centerlineCurve = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsCurveNode")
 
-centerlineCurve.SetName('CenterlineCurve')
+centerlineCurve.SetName("CenterlineCurve")
 for i in range(centerlinePolyData.GetNumberOfPoints()):
     pointIndex = centerlineCurve.AddControlPoint(vtk.vtkVector3d(centerlinePolyData.GetPoint(i)))
 
@@ -245,4 +245,4 @@ if not np.isclose(curvePointToWorldMatrix, expectedCurvePointToWorldMatrix).all(
 # Uncomment the next line to remove observations (stop automatic update of coordinate system spikes)
 # removeCoordinateSystemUpdaters(curveObservations)
 
-print('Test completed')
+print("Test completed")

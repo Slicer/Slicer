@@ -23,7 +23,7 @@ class ModuleCleanupWidget(ScriptedLoadableModuleWidget):
     def __init__(self, parent=None):
         ScriptedLoadableModuleWidget.__init__(self, parent)
 
-        self.testOutputFileName = os.environ['SLICER_MODULE_CLEANUP_TEST_OUTPUT']
+        self.testOutputFileName = os.environ["SLICER_MODULE_CLEANUP_TEST_OUTPUT"]
         if os.path.isfile(self.testOutputFileName):
             os.remove(self.testOutputFileName)
 
@@ -33,5 +33,5 @@ class ModuleCleanupWidget(ScriptedLoadableModuleWidget):
 
     def cleanup(self):
         with open(self.testOutputFileName, "w") as fd:
-            fd.write('ModuleCleanup generated this file when application exited')
+            fd.write("ModuleCleanup generated this file when application exited")
         raise RuntimeError("ModuleCleanupWidget error")

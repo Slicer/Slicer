@@ -498,10 +498,10 @@ class ExtensionWizard:
             # Determine if this is an addition or update to the index
             xdf = name + ".s4ext"
             if xdf in xiBase.commit.tree:
-                branch = f'update-{name}-{args.target}'
+                branch = f"update-{name}-{args.target}"
                 update = True
             else:
-                branch = f'add-{name}-{args.target}'
+                branch = f"add-{name}-{args.target}"
                 update = False
 
             logging.debug("create index branch %s", branch)
@@ -609,7 +609,7 @@ class ExtensionWizard:
         parser = argparse.ArgumentParser(description="Slicer Wizard",
                                          formatter_class=WizardHelpFormatter)
 
-        parser.add_argument('--version', action='version',
+        parser.add_argument("--version", action="version",
                             version=__version__)
 
         parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
@@ -772,7 +772,7 @@ class ExtensionWizard:
         """
 
         # Get values for non-CLI-argument named arguments
-        exit = kwargs.pop('exit', True)
+        exit = kwargs.pop("exit", True)
 
         # Convert other named arguments to CLI arguments
         args = buildProcessArgs(*args, **kwargs)
