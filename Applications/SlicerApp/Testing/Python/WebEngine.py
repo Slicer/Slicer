@@ -214,7 +214,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
         if iteration >= 3:
             raise RuntimeError("Couldn't get python value back from JS")
 
-        self.delayDisplay('Value of %d received via javascipt' % slicer.modules.slicerPythonValueFromJS)
+        self.delayDisplay('Value of %d received via javascript' % slicer.modules.slicerPythonValueFromJS)
 
         del slicer.modules.slicerPythonValueFromJS
 
