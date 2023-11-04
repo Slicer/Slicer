@@ -34,18 +34,18 @@ except ImportError:
     _haveCharDet = False
 
 __all__ = [
-    'warn',
-    'die',
-    'inquire',
-    'initLogging',
-    'detectEncoding',
-    'buildProcessArgs',
-    'createEmptyRepo',
-    'SourceTreeDirectory',
-    'getRepo',
-    'getRemote',
-    'localRoot',
-    'vcsPrivateDirectory',
+    "warn",
+    "die",
+    "inquire",
+    "initLogging",
+    "detectEncoding",
+    "buildProcessArgs",
+    "createEmptyRepo",
+    "SourceTreeDirectory",
+    "getRepo",
+    "getRemote",
+    "localRoot",
+    "vcsPrivateDirectory",
 ]
 
 _yesno = {
@@ -62,7 +62,7 @@ class _LogWrapFormatter(logging.Formatter):
     def __init__(self):
         super().__init__()
         try:
-            self._width = int(os.environ['COLUMNS']) - 1
+            self._width = int(os.environ["COLUMNS"]) - 1
         except:
             self._width = 79
 
@@ -253,7 +253,7 @@ def detectEncoding(data):
         return result["encoding"], result["confidence"]
 
     else:
-        chars = ''.join(map(chr, list(range(7, 14)) + list(range(32, 128))))
+        chars = "".join(map(chr, list(range(7, 14)) + list(range(32, 128))))
         if len(data.translate(None, chars)):
             return None, 0.0
 

@@ -6,8 +6,8 @@ import subprocess
 from .Utilities import *
 
 __all__ = [
-    'Client',
-    'Repository',
+    "Client",
+    "Repository",
 ]
 
 

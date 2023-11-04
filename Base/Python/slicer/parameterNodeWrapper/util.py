@@ -48,8 +48,8 @@ def splitPossiblyDottedName(possiblyDottedName):
       "x" -> ("x", None)
       "x.y.z" -> ("x", "y.z")
     """
-    if '.' in possiblyDottedName:
-        split = possiblyDottedName.split('.', maxsplit=1)
+    if "." in possiblyDottedName:
+        split = possiblyDottedName.split(".", maxsplit=1)
         return split[0], split[1]
     else:
         return possiblyDottedName, None

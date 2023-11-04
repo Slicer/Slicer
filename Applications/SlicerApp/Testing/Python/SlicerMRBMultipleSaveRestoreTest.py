@@ -49,7 +49,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
-    def __init__(self, methodName='runTest', uniqueDirectory=True, strict=False):
+    def __init__(self, methodName="runTest", uniqueDirectory=True, strict=False):
         """
         Tests the use of mrml and mrb save formats with volumes and markups points lists.
         Checks that scene views are saved and restored as expected.
@@ -98,28 +98,28 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
         fidIndexEye = pointListNode.AddControlPoint(eye)
         fidIndexNose = pointListNode.AddControlPoint(nose)
 
-        self.delayDisplay('Finished with download and placing markups points\n')
+        self.delayDisplay("Finished with download and placing markups points\n")
 
         # confirm that MRHead is in the background of the Red slice
-        redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
-        mrHead = slicer.util.getNode('MRHead')
+        redComposite = slicer.util.getNode("vtkMRMLSliceCompositeNodeRed")
+        mrHead = slicer.util.getNode("MRHead")
         self.assertEqual(redComposite.GetBackgroundVolumeID(), mrHead.GetID())
-        self.delayDisplay('The MRHead volume is in the background of the Red viewer')
+        self.delayDisplay("The MRHead volume is in the background of the Red viewer")
 
         # turn off visibility save scene view
         pointListNode.SetDisplayVisibility(0)
-        self.delayDisplay('Not showing markup points')
-        self.storeSceneView('Invisible-view', "Not showing markup points")
+        self.delayDisplay("Not showing markup points")
+        self.storeSceneView("Invisible-view", "Not showing markup points")
         pointListNode.SetDisplayVisibility(1)
-        self.delayDisplay('Showing markup points')
-        self.storeSceneView('Visible-view', "Showing markup points")
+        self.delayDisplay("Showing markup points")
+        self.storeSceneView("Visible-view", "Showing markup points")
 
         #
         # save the mrml scene to a temp directory, then zip it
         #
         applicationLogic = slicer.app.applicationLogic()
-        sceneSaveDirectory = slicer.util.tempDirectory('__scene__')
-        mrbFilePath = slicer.util.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestore-1.mrb'
+        sceneSaveDirectory = slicer.util.tempDirectory("__scene__")
+        mrbFilePath = slicer.util.tempDirectory("__mrb__") + "/SlicerMRBMultipleSaveRestore-1.mrb"
         self.delayDisplay("Saving scene to: %s\n" % sceneSaveDirectory + "Saving mrb to: %s" % mrbFilePath)
         self.assertTrue(
             applicationLogic.SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None)
@@ -135,42 +135,42 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
         # reload the mrb and restore a scene view
         #
         slicer.mrmlScene.Clear(0)
-        mrbExtractPath = slicer.util.tempDirectory('__mrb_extract__')
-        self.delayDisplay('Now, reload the saved MRB')
+        mrbExtractPath = slicer.util.tempDirectory("__mrb_extract__")
+        self.delayDisplay("Now, reload the saved MRB")
         mrbLoaded = applicationLogic.OpenSlicerDataBundle(mrbFilePath, mrbExtractPath)
         # load can return false even though it succeeded - only fail if in strict mode
         self.assertTrue(not self.strict or mrbLoaded)
         slicer.app.processEvents()
 
         # confirm again that MRHead is in the background of the Red slice
-        self.delayDisplay('Is the MHRead volume AGAIN in the background of the Red viewer?')
-        redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
-        mrHead = slicer.util.getNode('MRHead')
+        self.delayDisplay("Is the MHRead volume AGAIN in the background of the Red viewer?")
+        redComposite = slicer.util.getNode("vtkMRMLSliceCompositeNodeRed")
+        mrHead = slicer.util.getNode("MRHead")
         self.assertEqual(redComposite.GetBackgroundVolumeID(), mrHead.GetID())
-        self.delayDisplay('The MRHead volume is AGAIN in the background of the Red viewer')
+        self.delayDisplay("The MRHead volume is AGAIN in the background of the Red viewer")
 
         # confirm that the point list exists with two points
-        self.delayDisplay('Does the point list have 2 points in it?')
-        pointListNode = slicer.util.getNode('F')
+        self.delayDisplay("Does the point list have 2 points in it?")
+        pointListNode = slicer.util.getNode("F")
         self.assertEqual(pointListNode.GetNumberOfControlPoints(), 2)
-        self.delayDisplay('The point list has 2 points in it')
+        self.delayDisplay("The point list has 2 points in it")
 
         # Restore the invisible scene view
-        self.delayDisplay('About to restore Invisible-view scene')
-        sceneView = slicer.util.getNode('Invisible-view')
+        self.delayDisplay("About to restore Invisible-view scene")
+        sceneView = slicer.util.getNode("Invisible-view")
         sceneView.RestoreScene()
-        pointListNode = slicer.util.getNode('F')
+        pointListNode = slicer.util.getNode("F")
         self.assertEqual(pointListNode.GetDisplayVisibility(), 0)
         self.delayDisplay("NOT seeing the points")
-        self.delayDisplay('Does the point list still have 2 points in it after restoring a scenen view?')
+        self.delayDisplay("Does the point list still have 2 points in it after restoring a scenen view?")
         self.assertEqual(pointListNode.GetNumberOfControlPoints(), 2)
-        self.delayDisplay('The point list has 2 points in it after scene view restore')
+        self.delayDisplay("The point list has 2 points in it after scene view restore")
 
         #
         # Save it again
         #
-        sceneSaveDirectory = slicer.util.tempDirectory('__scene2__')
-        mrbFilePath = slicer.util.tempDirectory('__mrb__') + '/SlicerMRBMultipleSaveRestore-2.mrb'
+        sceneSaveDirectory = slicer.util.tempDirectory("__scene2__")
+        mrbFilePath = slicer.util.tempDirectory("__mrb__") + "/SlicerMRBMultipleSaveRestore-2.mrb"
         self.delayDisplay("Saving scene to: %s\n" % sceneSaveDirectory + "Saving mrb to: %s" % mrbFilePath)
         self.assertTrue(
             applicationLogic.SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None)
@@ -187,24 +187,24 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
         # reload the second mrb and test
         #
         slicer.mrmlScene.Clear(0)
-        mrbExtractPath = slicer.util.tempDirectory('__mrb_extract2__')
-        self.delayDisplay('Now, reload the second saved MRB %s' % mrbFilePath)
+        mrbExtractPath = slicer.util.tempDirectory("__mrb_extract2__")
+        self.delayDisplay("Now, reload the second saved MRB %s" % mrbFilePath)
         mrbLoaded = applicationLogic.OpenSlicerDataBundle(mrbFilePath, mrbExtractPath)
         # load can return false even though it succeeded - only fail if in strict mode
         self.assertTrue(not self.strict or mrbLoaded)
         slicer.app.processEvents()
 
         # confirm that MRHead is in the background of the Red slice after mrb reload
-        self.delayDisplay('MRHead volume is the background of the Red viewer after mrb reload?')
-        redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
-        fa = slicer.util.getNode('MRHead')
+        self.delayDisplay("MRHead volume is the background of the Red viewer after mrb reload?")
+        redComposite = slicer.util.getNode("vtkMRMLSliceCompositeNodeRed")
+        fa = slicer.util.getNode("MRHead")
         self.assertEqual(redComposite.GetBackgroundVolumeID(), mrHead.GetID())
-        self.delayDisplay('Yes, the MRHead volume is back in the background of the Red viewer')
+        self.delayDisplay("Yes, the MRHead volume is back in the background of the Red viewer")
 
         # confirm that the point list exists with two points
-        pointListNode = slicer.util.getNode('F')
+        pointListNode = slicer.util.getNode("F")
         self.assertEqual(pointListNode.GetNumberOfControlPoints(), 2)
-        self.delayDisplay('The point list has 2 points in it after scene view restore, save and MRB reload')
+        self.delayDisplay("The point list has 2 points in it after scene view restore, save and MRB reload")
         self.assertEqual(pointListNode.GetDisplayVisibility(), 0)
         self.delayDisplay("NOT seeing the points")
 

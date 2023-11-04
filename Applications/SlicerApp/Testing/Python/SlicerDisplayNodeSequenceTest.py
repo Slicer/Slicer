@@ -57,7 +57,7 @@ class SlicerDisplayNodeSequenceTestTest(ScriptedLoadableModuleTest):
         """
         self.setUp()
         self.test_ScalarVolumeDisplayNodeSequence()
-        self.delayDisplay('Test completed.')
+        self.delayDisplay("Test completed.")
 
     def test_ScalarVolumeDisplayNodeSequence(self):
         # Load first volume and apply custom display

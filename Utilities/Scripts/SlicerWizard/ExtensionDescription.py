@@ -173,7 +173,7 @@ class ExtensionDescription:
     @staticmethod
     def _gitSvnInfo(repo, remote):
         result = {}
-        for line in repo.git.svn('info', R=remote).split("\n"):
+        for line in repo.git.svn("info", R=remote).split("\n"):
             if len(line):
                 key, value = line.split(":", 1)
                 result[key] = value.strip()
@@ -277,10 +277,10 @@ class ExtensionDescription:
                     variables = self._findOccurences(line, "$")
                     temp = line
                     for variable in variables:
-                        if line[variable] == '$' and line[variable + 1] == '{':
+                        if line[variable] == "$" and line[variable + 1] == "{":
                             var = ""
                             i = variable + 2
-                            while line[i] != '}':
+                            while line[i] != "}":
                                 var += line[i]
                                 i += 1
                             temp = temp.replace("${" + var + "}", dictio[var])

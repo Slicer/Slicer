@@ -11,8 +11,8 @@ class SegmentEditorMaskVolumeEffect(AbstractScriptedSegmentEditorEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Mask volume'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Mask volume')
+        scriptedEffect.name = "Mask volume"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Mask volume")
         scriptedEffect.perSegment = True  # this effect operates on a single selected segment
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
@@ -23,12 +23,12 @@ class SegmentEditorMaskVolumeEffect(AbstractScriptedSegmentEditorEffect):
         # It should not be necessary to modify this method
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
         # It should not be necessary to modify this method
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/MaskVolume.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/MaskVolume.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -48,16 +48,16 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         # Fill operation buttons
         self.fillInsideButton = qt.QRadioButton(_("Fill inside"))
         self.operationRadioButtons.append(self.fillInsideButton)
-        self.buttonToOperationNameMap[self.fillInsideButton] = 'FILL_INSIDE'
+        self.buttonToOperationNameMap[self.fillInsideButton] = "FILL_INSIDE"
 
         self.fillOutsideButton = qt.QRadioButton(_("Fill outside"))
         self.operationRadioButtons.append(self.fillOutsideButton)
-        self.buttonToOperationNameMap[self.fillOutsideButton] = 'FILL_OUTSIDE'
+        self.buttonToOperationNameMap[self.fillOutsideButton] = "FILL_OUTSIDE"
 
         self.binaryMaskFillButton = qt.QRadioButton(_("Fill inside and outside"))
         self.binaryMaskFillButton.setToolTip(_("Create a labelmap volume with specified inside and outside fill values."))
         self.operationRadioButtons.append(self.binaryMaskFillButton)
-        self.buttonToOperationNameMap[self.binaryMaskFillButton] = 'FILL_INSIDE_AND_OUTSIDE'
+        self.buttonToOperationNameMap[self.binaryMaskFillButton] = "FILL_INSIDE_AND_OUTSIDE"
 
         # Operation buttons layout
         operationLayout = qt.QGridLayout()
@@ -132,7 +132,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
 
         self.inputVisibilityButton = qt.QToolButton()
         self.inputVisibilityButton.setIcon(self.invisibleIcon)
-        self.inputVisibilityButton.connect('clicked()', self.onInputVisibilityButtonClicked)
+        self.inputVisibilityButton.connect("clicked()", self.onInputVisibilityButtonClicked)
         inputLayout = qt.QHBoxLayout()
         inputLayout.addWidget(self.inputVisibilityButton)
         inputLayout.addWidget(self.inputVolumeSelector)
@@ -154,7 +154,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
 
         self.outputVisibilityButton = qt.QToolButton()
         self.outputVisibilityButton.setIcon(self.invisibleIcon)
-        self.outputVisibilityButton.connect('clicked()', self.onOutputVisibilityButtonClicked)
+        self.outputVisibilityButton.connect("clicked()", self.onOutputVisibilityButtonClicked)
         outputLayout = qt.QHBoxLayout()
         outputLayout.addWidget(self.outputVisibilityButton)
         outputLayout.addWidget(self.outputVolumeSelector)
@@ -162,13 +162,13 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
 
         # Apply button
         self.applyButton = qt.QPushButton(_("Apply"))
-        self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+        self.applyButton.objectName = self.__class__.__name__ + "Apply"
         self.applyButton.setToolTip(_("Apply segment as volume mask. No undo operation available once applied."))
         self.scriptedEffect.addOptionsWidget(self.applyButton)
-        self.applyButton.connect('clicked()', self.onApply)
+        self.applyButton.connect("clicked()", self.onApply)
 
         for button in self.operationRadioButtons:
-            button.connect('toggled(bool)',
+            button.connect("toggled(bool)",
                            lambda toggle, widget=self.buttonToOperationNameMap[button]: self.onOperationSelectionChanged(widget, toggle))
 
     def createCursor(self, widget):

@@ -35,7 +35,7 @@ class ShaderPropertiesWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
-        moduleName = 'ShaderProperties'
+        moduleName = "ShaderProperties"
 
         self.sphereTestButton = qt.QPushButton()
         self.sphereTestButton.text = "Sphere test"
@@ -77,33 +77,33 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Starting...")
         self.setUp()
 
-        fileURL = TESTING_DATA_URL + 'SHA256/19ad4f794de8dcdabbe3290c40fa18072cf5e05b6b2466fcc508ea7a42aae71e'
-        filePath = os.path.join(slicer.util.tempDirectory(), 'MRRobot-Shoulder-MR.nrrd')
+        fileURL = TESTING_DATA_URL + "SHA256/19ad4f794de8dcdabbe3290c40fa18072cf5e05b6b2466fcc508ea7a42aae71e"
+        filePath = os.path.join(slicer.util.tempDirectory(), "MRRobot-Shoulder-MR.nrrd")
         slicer.util.downloadFile(fileURL, filePath)
         shoulder = slicer.util.loadVolume(filePath)
 
         self.delayDisplay("Shoulder downloaded...")
 
-        slicer.util.mainWindow().moduleSelector().selectModule('VolumeRendering')
+        slicer.util.mainWindow().moduleSelector().selectModule("VolumeRendering")
         volumeRenderingWidgetRep = slicer.modules.volumerendering.widgetRepresentation()
         volumeRenderingWidgetRep.setMRMLVolumeNode(shoulder)
 
-        volumeRenderingNode = slicer.mrmlScene.GetFirstNodeByName('VolumeRendering')
+        volumeRenderingNode = slicer.mrmlScene.GetFirstNodeByName("VolumeRendering")
         volumeRenderingNode.SetVisibility(1)
 
-        self.delayDisplay('Volume rendering on')
+        self.delayDisplay("Volume rendering on")
 
-        methodComboBox = slicer.util.findChildren(name='RenderingMethodComboBox')[0]
-        methodComboBox.currentIndex = methodComboBox.findText('VTK GPU Ray Casting')
+        methodComboBox = slicer.util.findChildren(name="RenderingMethodComboBox")[0]
+        methodComboBox.currentIndex = methodComboBox.findText("VTK GPU Ray Casting")
 
-        self.delayDisplay('GPU Ray Casting on')
+        self.delayDisplay("GPU Ray Casting on")
 
         endpoints = [[-162.94, 2.32192, -30.1792], [-144.842, 96.867, -36.8726]]
         markupNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLMarkupsLineNode())
         for endpoint in endpoints:
             markupNode.AddControlPoint(vtk.vtkVector3d(endpoint))
 
-        self.delayDisplay('Line added')
+        self.delayDisplay("Line added")
 
         # ------------------------------------------------------
         # Utility functions to get the position of the first
@@ -111,7 +111,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
         # node
         # ------------------------------------------------------
         def GetLineEndpoints():
-            fn = slicer.util.getNode('vtkMRMLMarkupsLineNode1')
+            fn = slicer.util.getNode("vtkMRMLMarkupsLineNode1")
             endpoints = []
             for n in range(2):
                 endpoints.append([0, ] * 3)
@@ -119,14 +119,14 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
             return endpoints
 
         def GetShaderPropertyNode():
-            return slicer.util.getNode('vtkMRMLShaderPropertyNode1')
+            return slicer.util.getNode("vtkMRMLShaderPropertyNode1")
 
         # ------------------------------------------------------
         # Get the shader property node which contains every custom
         # shader modifications for every mapper associated with
         # the first volume rendering display node
         # ------------------------------------------------------
-        displayNode = slicer.util.getNodesByClass('vtkMRMLGPURayCastVolumeRenderingDisplayNode')[0]
+        displayNode = slicer.util.getNodesByClass("vtkMRMLGPURayCastVolumeRenderingDisplayNode")[0]
         shaderPropNode = displayNode.GetOrCreateShaderPropertyNode(slicer.mrmlScene)
         shaderProp = shaderPropNode.GetShaderProperty()
 
@@ -172,7 +172,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
             propNode.GetFragmentUniforms().SetUniform3f("endpoint0", endpoints[0])
             propNode.GetFragmentUniforms().SetUniform3f("endpoint1", endpoints[1])
 
-        fn = slicer.util.getNode('vtkMRMLMarkupsLineNode1')
+        fn = slicer.util.getNode("vtkMRMLMarkupsLineNode1")
         fn.AddObserver(fn.PointModifiedEvent, lambda caller, event: onControlPointMoved())
 
         self.delayDisplay("Should be a carved out shoulder now")
@@ -183,28 +183,28 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
         self.setUp()
 
         import SampleData
-        mrHead = SampleData.downloadSample('MRHead')
+        mrHead = SampleData.downloadSample("MRHead")
 
         self.delayDisplay("Head downloaded...")
 
-        slicer.util.mainWindow().moduleSelector().selectModule('VolumeRendering')
+        slicer.util.mainWindow().moduleSelector().selectModule("VolumeRendering")
         volumeRenderingWidgetRep = slicer.modules.volumerendering.widgetRepresentation()
         volumeRenderingWidgetRep.setMRMLVolumeNode(mrHead)
 
-        volumeRenderingNode = slicer.mrmlScene.GetFirstNodeByName('VolumeRendering')
+        volumeRenderingNode = slicer.mrmlScene.GetFirstNodeByName("VolumeRendering")
         volumeRenderingNode.SetVisibility(1)
 
-        self.delayDisplay('Volume rendering on')
+        self.delayDisplay("Volume rendering on")
 
-        methodComboBox = slicer.util.findChildren(name='RenderingMethodComboBox')[0]
-        methodComboBox.currentIndex = methodComboBox.findText('VTK GPU Ray Casting')
+        methodComboBox = slicer.util.findChildren(name="RenderingMethodComboBox")[0]
+        methodComboBox.currentIndex = methodComboBox.findText("VTK GPU Ray Casting")
 
-        self.delayDisplay('GPU Ray Casting on')
+        self.delayDisplay("GPU Ray Casting on")
 
         markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
         markupNode.AddControlPoint([0.0, 100.0, 0.0])
 
-        self.delayDisplay('Point list added')
+        self.delayDisplay("Point list added")
 
         # ------------------------------------------------------
         # Utility functions to get the position of the first
@@ -212,20 +212,20 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
         # node
         # ------------------------------------------------------
         def GetPointPosition():
-            fn = slicer.util.getNode('vtkMRMLMarkupsFiducialNode1')
+            fn = slicer.util.getNode("vtkMRMLMarkupsFiducialNode1")
             p = [0.0, 0.0, 0.0]
             fn.GetNthControlPointPosition(0, p)
             return p
 
         def GetShaderPropertyNode():
-            return slicer.util.getNode('vtkMRMLShaderPropertyNode1')
+            return slicer.util.getNode("vtkMRMLShaderPropertyNode1")
 
         # ------------------------------------------------------
         # Get the shader property node which contains every custom
         # shader modifications for every mapper associated with
         # the first volume rendering display node
         # ------------------------------------------------------
-        displayNode = slicer.util.getNodesByClass('vtkMRMLGPURayCastVolumeRenderingDisplayNode')[0]
+        displayNode = slicer.util.getNodesByClass("vtkMRMLGPURayCastVolumeRenderingDisplayNode")[0]
         shaderPropNode = displayNode.GetOrCreateShaderPropertyNode(slicer.mrmlScene)
         shaderProp = shaderPropNode.GetShaderProperty()
 
@@ -265,7 +265,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
             propNode = GetShaderPropertyNode()
             propNode.GetFragmentUniforms().SetUniform3f("center", p)
 
-        fn = slicer.util.getNode('vtkMRMLMarkupsFiducialNode1')
+        fn = slicer.util.getNode("vtkMRMLMarkupsFiducialNode1")
         fn.AddObserver(fn.PointModifiedEvent, lambda caller, event: onPointMoved())
 
         self.delayDisplay("Should be a carved out nose now")

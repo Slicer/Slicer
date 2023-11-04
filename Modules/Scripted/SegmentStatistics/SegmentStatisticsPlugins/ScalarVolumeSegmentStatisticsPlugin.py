@@ -193,6 +193,6 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                                        units=scalarVolumeUnits.GetCodeMeaning(),
                                        quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                        unitsDicomCode=scalarVolumeUnits.GetAsString(),
-                                       derivationDicomCode=self.createCodedEntry('386136009', 'SCT', _('Standard Deviation'), True))
+                                       derivationDicomCode=self.createCodedEntry("386136009", "SCT", _("Standard Deviation"), True))
 
         return info[key] if key in info else None

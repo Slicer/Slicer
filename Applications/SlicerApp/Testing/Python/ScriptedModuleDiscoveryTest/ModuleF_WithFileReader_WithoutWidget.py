@@ -1,6 +1,6 @@
 from slicer.ScriptedLoadableModule import *
 
-SOMEVAR = 'F'
+SOMEVAR = "F"
 
 
 class ModuleF_WithFileReader_WithoutWidget(ScriptedLoadableModule):
@@ -26,13 +26,13 @@ class ModuleF_WithFileReader_WithoutWidgetFileReader:
         self.parent = parent
 
     def description(self):
-        return 'My reader file type'
+        return "My reader file type"
 
     def fileType(self):
-        return 'MyReaderFileType'
+        return "MyReaderFileType"
 
     def extensions(self):
-        return ['My reader file type (*.mrft)']
+        return ["My reader file type (*.mrft)"]
 
     def canLoadFile(self, filePath):
         print(filePath)

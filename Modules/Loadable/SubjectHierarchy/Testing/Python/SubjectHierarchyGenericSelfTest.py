@@ -36,7 +36,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
             slicer.selfTests
         except AttributeError:
             slicer.selfTests = {}
-        slicer.selfTests['SubjectHierarchyGenericSelfTest'] = self.runTest
+        slicer.selfTests["SubjectHierarchyGenericSelfTest"] = self.runTest
 
     def runTest(self, msec=100, **kwargs):
         tester = SubjectHierarchyGenericSelfTestTest()
@@ -98,7 +98,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         self.assertIsNotNone(slicer.modules.subjecthierarchy)
 
         # Switch to subject hierarchy module so that the changes can be seen as the test goes
-        slicer.util.selectModule('SubjectHierarchy')
+        slicer.util.selectModule("SubjectHierarchy")
 
         self.section_SetupPathsAndNames()
         self.section_ClearScene()
@@ -113,56 +113,56 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         self.section_AttributeFilters()
         self.section_ComboboxFeatures()
 
-        logging.info('Test finished')
+        logging.info("Test finished")
 
     # ------------------------------------------------------------------------------
     def section_SetupPathsAndNames(self):
         # Set constants
-        subjectHierarchyGenericSelfTestDir = slicer.app.temporaryPath + '/SubjectHierarchyGenericSelfTest'
-        print('Test directory: ' + subjectHierarchyGenericSelfTestDir)
+        subjectHierarchyGenericSelfTestDir = slicer.app.temporaryPath + "/SubjectHierarchyGenericSelfTest"
+        print("Test directory: " + subjectHierarchyGenericSelfTestDir)
         if not os.access(subjectHierarchyGenericSelfTestDir, os.F_OK):
             os.mkdir(subjectHierarchyGenericSelfTestDir)
 
-        self.dicomDataDir = subjectHierarchyGenericSelfTestDir + '/DicomData'
+        self.dicomDataDir = subjectHierarchyGenericSelfTestDir + "/DicomData"
         if not os.access(self.dicomDataDir, os.F_OK):
             os.mkdir(self.dicomDataDir)
 
-        self.dicomDatabaseDir = subjectHierarchyGenericSelfTestDir + '/CtkDicomDatabase'
-        self.dicomZipFileUrl = TESTING_DATA_URL + 'SHA256/1aa0bb177bbf6471ca5f2192340a6cecdedb81b33506b03ff316c6b5f624e863'
-        self.dicomZipChecksum = 'SHA256:1aa0bb177bbf6471ca5f2192340a6cecdedb81b33506b03ff316c6b5f624e863'
-        self.dicomZipFilePath = subjectHierarchyGenericSelfTestDir + '/TestDicomCT.zip'
+        self.dicomDatabaseDir = subjectHierarchyGenericSelfTestDir + "/CtkDicomDatabase"
+        self.dicomZipFileUrl = TESTING_DATA_URL + "SHA256/1aa0bb177bbf6471ca5f2192340a6cecdedb81b33506b03ff316c6b5f624e863"
+        self.dicomZipChecksum = "SHA256:1aa0bb177bbf6471ca5f2192340a6cecdedb81b33506b03ff316c6b5f624e863"
+        self.dicomZipFilePath = subjectHierarchyGenericSelfTestDir + "/TestDicomCT.zip"
         self.expectedNumOfFilesInDicomDataDir = 10
-        self.tempDir = subjectHierarchyGenericSelfTestDir + '/Temp'
-        self.genericTestSceneFileName = self.tempDir + '/SubjectHierarchyGenericSelfTestScene.mrml'
+        self.tempDir = subjectHierarchyGenericSelfTestDir + "/Temp"
+        self.genericTestSceneFileName = self.tempDir + "/SubjectHierarchyGenericSelfTestScene.mrml"
 
-        self.attributeFilterTestSceneFileUrl = TESTING_DATA_URL + 'SHA256/83e0df42d178405dccaf5a87d0661dd4bad71b535c6f15457344a71c4c0b7984'
-        self.attributeFilterTestSceneChecksum = 'SHA256:83e0df42d178405dccaf5a87d0661dd4bad71b535c6f15457344a71c4c0b7984'
-        self.attributeFilterTestSceneFileName = 'SubjectHierarchyAttributeFilterTestScene.mrb'
+        self.attributeFilterTestSceneFileUrl = TESTING_DATA_URL + "SHA256/83e0df42d178405dccaf5a87d0661dd4bad71b535c6f15457344a71c4c0b7984"
+        self.attributeFilterTestSceneChecksum = "SHA256:83e0df42d178405dccaf5a87d0661dd4bad71b535c6f15457344a71c4c0b7984"
+        self.attributeFilterTestSceneFileName = "SubjectHierarchyAttributeFilterTestScene.mrb"
 
         self.invalidItemID = slicer.vtkMRMLSubjectHierarchyNode.GetInvalidItemID()
 
-        self.loadedDicomStudyName = 'No study description (20110101)'
-        self.loadedDicomVolumeName = '303: Unnamed Series'
+        self.loadedDicomStudyName = "No study description (20110101)"
+        self.loadedDicomVolumeName = "303: Unnamed Series"
         self.patientItemID = self.invalidItemID  # To be filled in after adding
-        self.patientOriginalName = ''
-        self.patientNewName = 'TestPatient_1'
+        self.patientOriginalName = ""
+        self.patientNewName = "TestPatient_1"
         self.studyItemID = self.invalidItemID
-        self.studyOriginalName = ''
-        self.studyNewName = 'No study description (20170107)'
+        self.studyOriginalName = ""
+        self.studyNewName = "No study description (20170107)"
         self.ctVolumeShItemID = self.invalidItemID
-        self.ctVolumeOriginalName = ''
-        self.ctVolumeNewName = '404: Unnamed Series'
-        self.sampleLabelmapName = 'SampleLabelmap'
+        self.ctVolumeOriginalName = ""
+        self.ctVolumeNewName = "404: Unnamed Series"
+        self.sampleLabelmapName = "SampleLabelmap"
         self.sampleLabelmapNode = None
         self.sampleLabelmapShItemID = self.invalidItemID
-        self.sampleModelName = 'SampleModel'
+        self.sampleModelName = "SampleModel"
         self.sampleModelNode = None
         self.sampleModelShItemID = self.invalidItemID
-        self.patient2Name = 'Patient2'
+        self.patient2Name = "Patient2"
         self.patient2ItemID = self.invalidItemID
-        self.study2Name = 'Study2'
+        self.study2Name = "Study2"
         self.study2ItemID = self.invalidItemID
-        self.folderName = 'Folder'
+        self.folderName = "Folder"
         self.folderItemID = self.invalidItemID
 
     # ------------------------------------------------------------------------------
@@ -173,7 +173,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         slicer.mrmlScene.Clear()
 
         # Make sure there is only one subject hierarchy node after closing the scene
-        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSubjectHierarchyNode'), 1)
+        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSubjectHierarchyNode"), 1)
 
         shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
         self.assertIsNotNone(shNode)
@@ -183,7 +183,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         try:
             # Open Data module so that a subject hierarchy scene model is active
             # (which caused problems with batch processing)
-            slicer.util.selectModule('Data')
+            slicer.util.selectModule("Data")
 
             # Open test database and empty it
             with DICOMUtils.TemporaryDICOMDatabase(self.dicomDatabaseDir) as db:
@@ -193,7 +193,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
                 slicer.mrmlScene.StartState(slicer.vtkMRMLScene.BatchProcessState)
 
                 # Download, unzip, import, and load data. Verify loaded nodes.
-                loadedNodes = {'vtkMRMLScalarVolumeNode': 1}
+                loadedNodes = {"vtkMRMLScalarVolumeNode": 1}
                 with DICOMUtils.LoadDICOMFilesToDatabase( \
                         self.dicomZipFileUrl, self.dicomZipFilePath, \
                         self.dicomDataDir, self.expectedNumOfFilesInDicomDataDir, \
@@ -202,7 +202,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
                 slicer.mrmlScene.EndState(slicer.vtkMRMLScene.BatchProcessState)
 
-            self.assertEqual(len(slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*')), 1)
+            self.assertEqual(len(slicer.util.getNodes("vtkMRMLSubjectHierarchyNode*")), 1)
 
             shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
             self.assertIsNotNone(shNode)
@@ -213,7 +213,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         except Exception as e:
             import traceback
             traceback.print_exc()
-            self.delayDisplay('Test caused exception!\n' + str(e), self.delayMs * 2)
+            self.delayDisplay("Test caused exception!\n" + str(e), self.delayMs * 2)
 
     # ------------------------------------------------------------------------------
     def section_SaveScene(self):
@@ -227,7 +227,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
         # Save MRML scene into file
         slicer.mrmlScene.Commit(self.genericTestSceneFileName)
-        logging.info('Scene saved into ' + self.genericTestSceneFileName)
+        logging.info("Scene saved into " + self.genericTestSceneFileName)
 
         readable = os.access(self.genericTestSceneFileName, os.R_OK)
         self.assertTrue(readable)
@@ -237,7 +237,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Add node to subject hierarchy", self.delayMs)
 
         # Get volume previously loaded from DICOM
-        volumeNodes = list(slicer.util.getNodes('vtkMRMLScalarVolumeNode*').values())
+        volumeNodes = list(slicer.util.getNodes("vtkMRMLScalarVolumeNode*").values())
         ctVolumeNode = volumeNodes[len(volumeNodes) - 1]
         self.assertIsNotNone(ctVolumeNode)
 
@@ -249,7 +249,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         # Get subject hierarchy scene model and node
         dataWidget = slicer.modules.data.widgetRepresentation()
         self.assertIsNotNone(dataWidget)
-        shTreeView = slicer.util.findChild(dataWidget, name='SubjectHierarchyTreeView')
+        shTreeView = slicer.util.findChild(dataWidget, name="SubjectHierarchyTreeView")
         self.assertIsNotNone(shTreeView)
         shModel = shTreeView.model()
         self.assertIsNotNone(shModel)
@@ -263,11 +263,11 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
         self.sampleLabelmapShItemID = shNode.GetItemByDataNode(self.sampleLabelmapNode)
         self.assertIsNotNone(self.sampleLabelmapShItemID)
-        self.assertEqual(shNode.GetItemOwnerPluginName(self.sampleLabelmapShItemID), 'LabelMaps')
+        self.assertEqual(shNode.GetItemOwnerPluginName(self.sampleLabelmapShItemID), "LabelMaps")
 
         self.sampleModelShItemID = shNode.GetItemByDataNode(self.sampleModelNode)
         self.assertIsNotNone(self.sampleModelShItemID)
-        self.assertEqual(shNode.GetItemOwnerPluginName(self.sampleModelShItemID), 'Models')
+        self.assertEqual(shNode.GetItemOwnerPluginName(self.sampleModelShItemID), "Models")
 
         # Save item IDs for scene load testing
         self.studyItemID = shNode.GetItemParent(self.ctVolumeShItemID)
@@ -303,12 +303,12 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
         # Create output volume
         resampledVolumeNode = slicer.vtkMRMLScalarVolumeNode()
-        resampledVolumeNode.SetName(ctVolumeNode.GetName() + '_Resampled_10x10x10mm')
+        resampledVolumeNode.SetName(ctVolumeNode.GetName() + "_Resampled_10x10x10mm")
         slicer.mrmlScene.AddNode(resampledVolumeNode)
 
         # Resample
-        resampleParameters = {'outputPixelSpacing': '24.5,24.5,11.5', 'interpolationType': 'lanczos',
-                              'InputVolume': ctVolumeNode.GetID(), 'OutputVolume': resampledVolumeNode.GetID()}
+        resampleParameters = {"outputPixelSpacing": "24.5,24.5,11.5", "interpolationType": "lanczos",
+                              "InputVolume": ctVolumeNode.GetID(), "OutputVolume": resampledVolumeNode.GetID()}
         slicer.cli.run(slicer.modules.resamplescalarvolume, None, resampleParameters, wait_for_completion=True)
         self.delayDisplay("Wait for CLI logic to add result to same branch", self.delayMs)
 
@@ -344,7 +344,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         # Get subject hierarchy scene model
         dataWidget = slicer.modules.data.widgetRepresentation()
         self.assertIsNotNone(dataWidget)
-        shTreeView = slicer.util.findChild(dataWidget, name='SubjectHierarchyTreeView')
+        shTreeView = slicer.util.findChild(dataWidget, name="SubjectHierarchyTreeView")
         self.assertIsNotNone(shTreeView)
         shModel = shTreeView.model()
         self.assertIsNotNone(shModel)
@@ -352,17 +352,17 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         # Reparent using the item model
         shModel.reparent(self.sampleLabelmapShItemID, self.studyItemID)
         self.assertEqual(shNode.GetItemParent(self.sampleLabelmapShItemID), self.studyItemID)
-        self.assertEqual(shNode.GetItemOwnerPluginName(self.sampleLabelmapShItemID), 'LabelMaps')
+        self.assertEqual(shNode.GetItemOwnerPluginName(self.sampleLabelmapShItemID), "LabelMaps")
 
         # Reparent using the node's set parent function
         shNode.SetItemParent(self.ctVolumeShItemID, self.study2ItemID)
         self.assertEqual(shNode.GetItemParent(self.ctVolumeShItemID), self.study2ItemID)
-        self.assertEqual(shNode.GetItemOwnerPluginName(self.ctVolumeShItemID), 'Volumes')
+        self.assertEqual(shNode.GetItemOwnerPluginName(self.ctVolumeShItemID), "Volumes")
 
         # Reparent using the node's create item function
         shNode.CreateItem(self.folderItemID, self.sampleModelNode)
         self.assertEqual(shNode.GetItemParent(self.sampleModelShItemID), self.folderItemID)
-        self.assertEqual(shNode.GetItemOwnerPluginName(self.sampleModelShItemID), 'Models')
+        self.assertEqual(shNode.GetItemOwnerPluginName(self.sampleModelShItemID), "Models")
 
     # ------------------------------------------------------------------------------
     def section_LoadScene(self):
@@ -380,9 +380,9 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         slicer.util.loadScene(self.genericTestSceneFileName)
 
         # Check number of nodes in the scene
-        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLScalarVolumeNode'), 4)
-        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelNode'), 4)  # Including the three slice view models
-        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSubjectHierarchyNode'), 1)
+        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScalarVolumeNode"), 4)
+        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelNode"), 4)  # Including the three slice view models
+        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSubjectHierarchyNode"), 1)
 
         # Check if the items are in the right hierarchy with the right names
         self.assertEqual(shNode.GetItemChildWithName(shNode.GetSceneItemID(), self.patientNewName), self.patientItemID)
@@ -430,7 +430,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
             # loadFiles=True,
             checksums=self.attributeFilterTestSceneChecksum)[0]
         if not os.path.exists(sceneFile):
-            logging.error('Failed to download attribute filter test scene to path ' + str(sceneFile))
+            logging.error("Failed to download attribute filter test scene to path " + str(sceneFile))
         self.assertTrue(os.path.exists(sceneFile))
 
         slicer.mrmlScene.Clear()
@@ -464,7 +464,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
         # Check scene validity
         self.assertEqual(9, shNode.GetNumberOfItems())
-        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsNode'), 7)
+        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLMarkupsNode"), 7)
 
         # Create test SH tree view
         shTreeView = slicer.qMRMLSubjectHierarchyTreeView()
@@ -479,100 +479,100 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
             # Check include node attribute name filter
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
-            filteredObject.includeNodeAttributeNamesFilter = ['Markups.MovingInSliceView']
+            filteredObject.includeNodeAttributeNamesFilter = ["Markups.MovingInSliceView"]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5 + expectedEmptyHierarchyItemCount)
-            filteredObject.addNodeAttributeFilter('Sajt')
+            filteredObject.addNodeAttributeFilter("Sajt")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check attribute value filter
-            filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', 3)
+            filteredObject.addNodeAttributeFilter("Markups.MovingMarkupIndex", 3)
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
-            filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', '3')
+            filteredObject.addNodeAttributeFilter("Markups.MovingMarkupIndex", "3")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
             # Check exclude node attribute name filter (overrides include node attribute name filter)
-            filteredObject.excludeNodeAttributeNamesFilter = ['Markups.MovingInSliceView']
+            filteredObject.excludeNodeAttributeNamesFilter = ["Markups.MovingInSliceView"]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4 + expectedEmptyHierarchyItemCount)
             filteredObject.excludeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check if exclude indeed overrides include node attribute name filter
-            filteredObject.includeNodeAttributeNamesFilter = ['Markups.MovingMarkupIndex']
+            filteredObject.includeNodeAttributeNamesFilter = ["Markups.MovingMarkupIndex"]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
-            filteredObject.excludeNodeAttributeNamesFilter = ['Markups.MovingInSliceView']
+            filteredObject.excludeNodeAttributeNamesFilter = ["Markups.MovingInSliceView"]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             filteredObject.excludeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
             # Check include item attribute name filter
-            filteredObject.includeItemAttributeNamesFilter = ['ItemAttribute1']
+            filteredObject.includeItemAttributeNamesFilter = ["ItemAttribute1"]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2 + expectedEmptyHierarchyItemCount)
-            filteredObject.includeItemAttributeNamesFilter = ['ItemAttribute1', 'FolderAttribute1']
+            filteredObject.includeItemAttributeNamesFilter = ["ItemAttribute1", "FolderAttribute1"]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2 + expectedEmptyHierarchyItemCount)
-            filteredObject.addItemAttributeFilter('ItemAttribute2')
+            filteredObject.addItemAttributeFilter("ItemAttribute2")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
-            filteredObject.includeItemAttributeNamesFilter = ['ItemAttribute1', 'ItemAttribute2']
+            filteredObject.includeItemAttributeNamesFilter = ["ItemAttribute1", "ItemAttribute2"]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4)
             filteredObject.includeItemAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
             # Check legacy (item) attribute value filter
-            filteredObject.attributeNameFilter = 'ItemAttribute1'
-            filteredObject.attributeValueFilter = '1'
+            filteredObject.attributeNameFilter = "ItemAttribute1"
+            filteredObject.attributeValueFilter = "1"
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2 + expectedEmptyHierarchyItemCount)
-            filteredObject.attributeNameFilter = ''
+            filteredObject.attributeNameFilter = ""
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
             # Check exclude item attribute name filter (overrides include item attribute filter)
-            filteredObject.excludeItemAttributeNamesFilter = ['ItemAttribute1']
+            filteredObject.excludeItemAttributeNamesFilter = ["ItemAttribute1"]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 8)
             filteredObject.excludeItemAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check if exclude indeed overrides include item attribute filter
-            filteredObject.includeItemAttributeNamesFilter = ['ItemAttribute1']
+            filteredObject.includeItemAttributeNamesFilter = ["ItemAttribute1"]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 2 + expectedEmptyHierarchyItemCount)
-            filteredObject.excludeItemAttributeNamesFilter = ['ItemAttribute1']
+            filteredObject.excludeItemAttributeNamesFilter = ["ItemAttribute1"]
             expectedEmptyHierarchyItemCountAferExclude = 2 if showEmptyHierarchyItems else 0
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 0 + expectedEmptyHierarchyItemCountAferExclude)
             filteredObject.includeItemAttributeNamesFilter = []
             filteredObject.excludeItemAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
-            filteredObject.excludeItemAttributeNamesFilter = ['FolderAttribute1']
+            filteredObject.excludeItemAttributeNamesFilter = ["FolderAttribute1"]
             # Note: Shown only 6 because accepted children of rejected parents are not shown
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 8)
             filteredObject.excludeItemAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
             # Check attribute filtering with class name and attribute value
-            filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', 3, True, 'vtkMRMLMarkupsCurveNode')
+            filteredObject.addNodeAttributeFilter("Markups.MovingMarkupIndex", 3, True, "vtkMRMLMarkupsCurveNode")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3 + expectedEmptyHierarchyItemCount)
-            filteredObject.addNodeAttributeFilter('ParentAttribute', '', True, 'vtkMRMLMarkupsAngleNode')
+            filteredObject.addNodeAttributeFilter("ParentAttribute", "", True, "vtkMRMLMarkupsAngleNode")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
-            filteredObject.addNodeAttributeFilter('ChildAttribute', '', True, 'vtkMRMLMarkupsAngleNode')
+            filteredObject.addNodeAttributeFilter("ChildAttribute", "", True, "vtkMRMLMarkupsAngleNode")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 6)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check with empty attribute value
-            filteredObject.addNodeAttributeFilter('Markups.MovingMarkupIndex', '', True, 'vtkMRMLMarkupsCurveNode')
+            filteredObject.addNodeAttributeFilter("Markups.MovingMarkupIndex", "", True, "vtkMRMLMarkupsCurveNode")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
-        logging.info('Test attribute filters on proxy model directly (showEmptyHierarchyItems=True)')
+        logging.info("Test attribute filters on proxy model directly (showEmptyHierarchyItems=True)")
         testAttributeFilters(shProxyModel, shProxyModel)
-        logging.info('Test attribute filters on tree view (showEmptyHierarchyItems=True)')
+        logging.info("Test attribute filters on tree view (showEmptyHierarchyItems=True)")
         testAttributeFilters(shTreeView, shProxyModel)
 
         shProxyModel.showEmptyHierarchyItems = False
 
-        logging.info('Test attribute filters on proxy model directly (showEmptyHierarchyItems=False)')
+        logging.info("Test attribute filters on proxy model directly (showEmptyHierarchyItems=False)")
         testAttributeFilters(shProxyModel, shProxyModel, showEmptyHierarchyItems=False)
-        logging.info('Test attribute filters on tree view (showEmptyHierarchyItems=False)')
+        logging.info("Test attribute filters on tree view (showEmptyHierarchyItems=False)")
         testAttributeFilters(shTreeView, shProxyModel, showEmptyHierarchyItems=False)
 
     # ------------------------------------------------------------------------------
@@ -591,12 +591,12 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         self.assertEqual(comboBox.sortFilterProxyModel().acceptedItemCount(shNode.GetSceneItemID()), 9)
 
         # Default text
-        self.assertEqual(comboBox.defaultText, 'Select subject hierarchy item')
+        self.assertEqual(comboBox.defaultText, "Select subject hierarchy item")
 
         # Select node, include parent names in current item text (when collapsed)
-        markupsCurve1ItemID = shNode.GetItemByName('MarkupsCurve_1')
+        markupsCurve1ItemID = shNode.GetItemByName("MarkupsCurve_1")
         comboBox.setCurrentItem(markupsCurve1ItemID)
-        self.assertEqual(comboBox.defaultText, 'NewFolder_1 / MarkupsCurve_1')
+        self.assertEqual(comboBox.defaultText, "NewFolder_1 / MarkupsCurve_1")
 
         # Select None item
         comboBox.setCurrentItem(0)
@@ -605,10 +605,10 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         # Do not show parent names in current item text
         comboBox.showCurrentItemParents = False
         comboBox.setCurrentItem(markupsCurve1ItemID)
-        self.assertEqual(comboBox.defaultText, 'MarkupsCurve_1')
+        self.assertEqual(comboBox.defaultText, "MarkupsCurve_1")
 
         # Change None item name
-        comboBox.noneDisplay = 'No selection'
+        comboBox.noneDisplay = "No selection"
         comboBox.setCurrentItem(0)
         self.assertEqual(comboBox.defaultText, comboBox.noneDisplay)
 
@@ -619,7 +619,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     # Create sample labelmap with same geometry as input volume
     def createSampleLabelmapVolumeNode(self, volumeNode, name, label, colorNode=None):
         self.assertIsNotNone(volumeNode)
-        self.assertTrue(volumeNode.IsA('vtkMRMLScalarVolumeNode'))
+        self.assertTrue(volumeNode.IsA("vtkMRMLScalarVolumeNode"))
         self.assertTrue(label > 0)
 
         sampleLabelmapNode = slicer.vtkMRMLLabelMapVolumeNode()
@@ -642,7 +642,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         labelmapVolumeDisplayNode = slicer.vtkMRMLLabelMapVolumeDisplayNode()
         slicer.mrmlScene.AddNode(labelmapVolumeDisplayNode)
         if colorNode is None:
-            colorNode = slicer.util.getNode('GenericAnatomyColors')
+            colorNode = slicer.util.getNode("GenericAnatomyColors")
             self.assertIsNotNone(colorNode)
         labelmapVolumeDisplayNode.SetAndObserveColorNodeID(colorNode.GetID())
         labelmapVolumeDisplayNode.VisibilityOn()
@@ -656,7 +656,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     # Create sphere model at the centre of an input volume
     def createSampleModelNode(self, name, color, volumeNode=None):
         if volumeNode:
-            self.assertTrue(volumeNode.IsA('vtkMRMLScalarVolumeNode'))
+            self.assertTrue(volumeNode.IsA("vtkMRMLScalarVolumeNode"))
             bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             volumeNode.GetRASBounds(bounds)
             x = (bounds[0] + bounds[1]) / 2

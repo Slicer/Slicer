@@ -26,8 +26,8 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
         # get the volumes logic and print out default epsilon and precision
         #
         volumesLogic = slicer.modules.volumes.logic()
-        print('Compare volume geometry epsilon: ', volumesLogic.GetCompareVolumeGeometryEpsilon())
-        print('Compare volume geometry precision: ', volumesLogic.GetCompareVolumeGeometryPrecision())
+        print("Compare volume geometry epsilon: ", volumesLogic.GetCompareVolumeGeometryEpsilon())
+        print("Compare volume geometry precision: ", volumesLogic.GetCompareVolumeGeometryPrecision())
         self.assertAlmostEqual(volumesLogic.GetCompareVolumeGeometryEpsilon(), 1e-6)
         self.assertEqual(volumesLogic.GetCompareVolumeGeometryPrecision(), 6)
 
@@ -37,11 +37,11 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
         #
         warningString = volumesLogic.CompareVolumeGeometry(head, head)
         if len(warningString) != 0:
-            print('Error in checking MRHead geometry against itself')
+            print("Error in checking MRHead geometry against itself")
             print(warningString)
             return False
         else:
-            print('Success in comparing MRHead vs itself with epsilon', volumesLogic.GetCompareVolumeGeometryEpsilon())
+            print("Success in comparing MRHead vs itself with epsilon", volumesLogic.GetCompareVolumeGeometryEpsilon())
 
         #
         # see if you can get it to fail with a tighter epsilon
@@ -49,29 +49,29 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
         volumesLogic.SetCompareVolumeGeometryEpsilon(1e-10)
         precision = volumesLogic.GetCompareVolumeGeometryPrecision()
         if precision != 10:
-            print('Error in calculating precision from epsilon of ', volumesLogic.GetCompareVolumeGeometryEpsilon(), ', expected 10, got ', precision)
+            print("Error in calculating precision from epsilon of ", volumesLogic.GetCompareVolumeGeometryEpsilon(), ", expected 10, got ", precision)
             return False
         warningString = volumesLogic.CompareVolumeGeometry(head, head)
         if len(warningString) != 0:
-            print('Error in checking MRHead geometry against itself with strict epsilon')
+            print("Error in checking MRHead geometry against itself with strict epsilon")
             print(warningString)
             return False
         else:
-            print('Success in comparing MRHead vs itself with epsilon', volumesLogic.GetCompareVolumeGeometryEpsilon())
+            print("Success in comparing MRHead vs itself with epsilon", volumesLogic.GetCompareVolumeGeometryEpsilon())
 
         #
         # clone the volume so can test for mismatches in geometry with
         # that operation
         #
-        head2 = volumesLogic.CloneVolume(head, 'head2')
+        head2 = volumesLogic.CloneVolume(head, "head2")
 
         warningString = volumesLogic.CompareVolumeGeometry(head, head2)
         if len(warningString) != 0:
-            print('Error in checking MRHead geometry against itself with epsilon ', volumesLogic.GetCompareVolumeGeometryEpsilon())
+            print("Error in checking MRHead geometry against itself with epsilon ", volumesLogic.GetCompareVolumeGeometryEpsilon())
             print(warningString)
             return False
         else:
-            print('Success in comparing MRHead vs clone with epsilon', volumesLogic.GetCompareVolumeGeometryEpsilon())
+            print("Success in comparing MRHead vs clone with epsilon", volumesLogic.GetCompareVolumeGeometryEpsilon())
 
         #
         # now try with a label map volume
@@ -79,11 +79,11 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
         headLabel = volumesLogic.CreateAndAddLabelVolume(head, "label vol")
         warningString = volumesLogic.CompareVolumeGeometry(head, headLabel)
         if len(warningString) != 0:
-            print('Error in comparing MRHead geometry against a label map of itself with epsilon', volumesLogic.GetCompareVolumeGeometryEpsilon())
+            print("Error in comparing MRHead geometry against a label map of itself with epsilon", volumesLogic.GetCompareVolumeGeometryEpsilon())
             print(warningString)
             return False
         else:
-            print('Success in comparing MRHead vs label map with epsilon', volumesLogic.GetCompareVolumeGeometryEpsilon())
+            print("Success in comparing MRHead vs label map with epsilon", volumesLogic.GetCompareVolumeGeometryEpsilon())
 
         #
         # adjust the geometry and make it fail
@@ -97,10 +97,10 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
 
         warningString = volumesLogic.CompareVolumeGeometry(head, head2)
         if len(warningString) == 0:
-            print('Error in comparing MRHead geometry against an updated clone, with epsilon', volumesLogic.GetCompareVolumeGeometryEpsilon())
+            print("Error in comparing MRHead geometry against an updated clone, with epsilon", volumesLogic.GetCompareVolumeGeometryEpsilon())
             return False
         else:
-            print('Success in making the comparison fail, with with epsilon', volumesLogic.GetCompareVolumeGeometryEpsilon())
+            print("Success in making the comparison fail, with with epsilon", volumesLogic.GetCompareVolumeGeometryEpsilon())
             print(warningString)
 
         #
@@ -109,15 +109,15 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
         volumesLogic.SetCompareVolumeGeometryEpsilon(-0.01)
         epsilon = volumesLogic.GetCompareVolumeGeometryEpsilon()
         if epsilon != 0.01:
-            print('Failed to use the absolute value for an epsilon of -0.01: ', epsilon)
+            print("Failed to use the absolute value for an epsilon of -0.01: ", epsilon)
             return False
         precision = volumesLogic.GetCompareVolumeGeometryPrecision()
         if precision != 2:
-            print('Failed to set the precision to 2: ', precision)
+            print("Failed to set the precision to 2: ", precision)
             return False
         warningString = volumesLogic.CompareVolumeGeometry(head, head2)
         print(warningString)
 
-        self.delayDisplay('Test passed')
+        self.delayDisplay("Test passed")
 
         return True

@@ -13,4 +13,4 @@ class qSlicerScriptedLoadableModuleNewStyleTest:
         self.parent = parent
 
     def setup(self):
-        self.parent.setProperty('setup_called_within_Python', True)
+        self.parent.setProperty("setup_called_within_Python", True)

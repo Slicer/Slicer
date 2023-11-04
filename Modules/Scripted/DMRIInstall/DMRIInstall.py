@@ -100,7 +100,7 @@ class DMRIInstallWidget(ScriptedLoadableModuleWidget):
         self.applyButton.toolTip = _('Installs the "SlicerDMRI" extension from the Diffusion category.')
         self.applyButton.icon = qt.QIcon(":/Icons/ExtensionDefaultIcon.png")
         self.applyButton.enabled = True
-        self.applyButton.connect('clicked()', self.onApply)
+        self.applyButton.connect("clicked()", self.onApply)
         self.parent.layout().addWidget(self.applyButton)
 
         self.parent.layout().addStretch(1)
@@ -118,7 +118,7 @@ class DMRIInstallWidget(ScriptedLoadableModuleWidget):
             self.applyButton.enabled = False
             return
 
-        extensionName = 'SlicerDMRI'
+        extensionName = "SlicerDMRI"
         emm.interactive = False  # prevent display of popups
         emm.updateExtensionsMetadataFromServer(True, True)  # update extension metadata from server now
         if not emm.downloadAndInstallExtensionByName(extensionName, True, True):  # install dependencies, wait for installation to finish

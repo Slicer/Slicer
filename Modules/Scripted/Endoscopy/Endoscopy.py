@@ -63,7 +63,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.skip = 0
         self.timer = qt.QTimer()
         self.timer.setInterval(20)
-        self.timer.connect('timeout()', self.flyToNext)
+        self.timer.connect("timeout()", self.flyToNext)
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -78,37 +78,37 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         # Camera node selector
         cameraNodeSelector = slicer.qMRMLNodeComboBox()
-        cameraNodeSelector.objectName = 'cameraNodeSelector'
+        cameraNodeSelector.objectName = "cameraNodeSelector"
         cameraNodeSelector.toolTip = _("Select a camera that will fly along this path.")
-        cameraNodeSelector.nodeTypes = ['vtkMRMLCameraNode']
+        cameraNodeSelector.nodeTypes = ["vtkMRMLCameraNode"]
         cameraNodeSelector.noneEnabled = False
         cameraNodeSelector.addEnabled = False
         cameraNodeSelector.removeEnabled = False
-        cameraNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
-        cameraNodeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.setCameraNode)
+        cameraNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
+        cameraNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.setCameraNode)
         pathFormLayout.addRow("Camera:", cameraNodeSelector)
 
         # Input fiducials node selector
         inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
-        inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
+        inputFiducialsNodeSelector.objectName = "inputFiducialsNodeSelector"
         inputFiducialsNodeSelector.toolTip = _("Select a fiducial list to define control points for the path.")
-        inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLMarkupsCurveNode']
+        inputFiducialsNodeSelector.nodeTypes = ["vtkMRMLMarkupsFiducialNode", "vtkMRMLMarkupsCurveNode"]
         inputFiducialsNodeSelector.noneEnabled = False
         inputFiducialsNodeSelector.addEnabled = False
         inputFiducialsNodeSelector.removeEnabled = False
-        inputFiducialsNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
+        inputFiducialsNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
         pathFormLayout.addRow(_("Input Fiducials:"), inputFiducialsNodeSelector)
 
         # Output path node selector
         outputPathNodeSelector = slicer.qMRMLNodeComboBox()
-        outputPathNodeSelector.objectName = 'outputPathNodeSelector'
+        outputPathNodeSelector.objectName = "outputPathNodeSelector"
         outputPathNodeSelector.toolTip = _("Select a fiducial list to define control points for the path.")
-        outputPathNodeSelector.nodeTypes = ['vtkMRMLModelNode']
+        outputPathNodeSelector.nodeTypes = ["vtkMRMLModelNode"]
         outputPathNodeSelector.noneEnabled = False
         outputPathNodeSelector.addEnabled = True
         outputPathNodeSelector.removeEnabled = True
         outputPathNodeSelector.renameEnabled = True
-        outputPathNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
+        outputPathNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
         pathFormLayout.addRow(_("Output Path:"), outputPathNodeSelector)
 
         # CreatePath button
@@ -116,7 +116,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         createPathButton.toolTip = _("Create the path.")
         createPathButton.enabled = False
         pathFormLayout.addRow(createPathButton)
-        createPathButton.connect('clicked()', self.onCreatePathButtonClicked)
+        createPathButton.connect("clicked()", self.onCreatePathButtonClicked)
 
         # Flythrough collapsible button
         flythroughCollapsibleButton = ctk.ctkCollapsibleButton()
@@ -129,13 +129,13 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         # Frame slider
         frameSlider = ctk.ctkSliderWidget()
-        frameSlider.connect('valueChanged(double)', self.frameSliderValueChanged)
+        frameSlider.connect("valueChanged(double)", self.frameSliderValueChanged)
         frameSlider.decimals = 0
         flythroughFormLayout.addRow(_("Frame:"), frameSlider)
 
         # Frame skip slider
         frameSkipSlider = ctk.ctkSliderWidget()
-        frameSkipSlider.connect('valueChanged(double)', self.frameSkipSliderValueChanged)
+        frameSkipSlider.connect("valueChanged(double)", self.frameSkipSliderValueChanged)
         frameSkipSlider.decimals = 0
         frameSkipSlider.minimum = 0
         frameSkipSlider.maximum = 50
@@ -143,7 +143,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         # Frame delay slider
         frameDelaySlider = ctk.ctkSliderWidget()
-        frameDelaySlider.connect('valueChanged(double)', self.frameDelaySliderValueChanged)
+        frameDelaySlider.connect("valueChanged(double)", self.frameDelaySliderValueChanged)
         frameDelaySlider.decimals = 0
         frameDelaySlider.minimum = 5
         frameDelaySlider.maximum = 100
@@ -153,7 +153,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         # View angle slider
         viewAngleSlider = ctk.ctkSliderWidget()
-        viewAngleSlider.connect('valueChanged(double)', self.viewAngleSliderValueChanged)
+        viewAngleSlider.connect("valueChanged(double)", self.viewAngleSliderValueChanged)
         viewAngleSlider.decimals = 0
         viewAngleSlider.minimum = 30
         viewAngleSlider.maximum = 180
@@ -164,7 +164,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         playButton.toolTip = _("Fly through path.")
         playButton.checkable = True
         flythroughFormLayout.addRow(playButton)
-        playButton.connect('toggled(bool)', self.onPlayButtonToggled)
+        playButton.connect("toggled(bool)", self.onPlayButtonToggled)
 
         # Add vertical spacer
         self.layout.addStretch(1)

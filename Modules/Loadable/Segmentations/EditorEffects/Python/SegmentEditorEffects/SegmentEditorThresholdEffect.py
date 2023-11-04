@@ -22,8 +22,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     def __init__(self, scriptedEffect):
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
-        scriptedEffect.name = 'Threshold'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Threshold')
+        scriptedEffect.name = "Threshold"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Threshold")
 
         self.segment2DFillOpacity = None
         self.segment2DOutlineOpacity = None
@@ -37,7 +37,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         self.previewState = 0
         self.previewStep = 1
         self.previewSteps = 5
-        self.timer.connect('timeout()', self.preview)
+        self.timer.connect("timeout()", self.preview)
 
         self.previewPipelines = {}
         self.histogramPipeline = None
@@ -65,11 +65,11 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/Threshold.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/Threshold.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -384,18 +384,18 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         self.scriptedEffect.addOptionsWidget(self.useForPaintButton)
 
         self.applyButton = qt.QPushButton(_("Apply"))
-        self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+        self.applyButton.objectName = self.__class__.__name__ + "Apply"
         self.applyButton.setToolTip(_("Fill selected segment in regions that are in the specified intensity range."))
         self.scriptedEffect.addOptionsWidget(self.applyButton)
 
-        self.useForPaintButton.connect('clicked()', self.onUseForPaint)
-        self.thresholdSlider.connect('valuesChanged(double,double)', self.onThresholdValuesChanged)
+        self.useForPaintButton.connect("clicked()", self.onUseForPaint)
+        self.thresholdSlider.connect("valuesChanged(double,double)", self.onThresholdValuesChanged)
         self.autoThresholdMethodSelectorComboBox.connect("activated(int)", self.onSelectedAutoThresholdMethod)
         self.autoThresholdModeSelectorComboBox.connect("activated(int)", self.onSelectedAutoThresholdMethod)
-        self.selectPreviousAutoThresholdButton.connect('clicked()', self.onSelectPreviousAutoThresholdMethod)
-        self.selectNextAutoThresholdButton.connect('clicked()', self.onSelectNextAutoThresholdMethod)
-        self.setAutoThresholdButton.connect('clicked()', self.onAutoThreshold)
-        self.applyButton.connect('clicked()', self.onApply)
+        self.selectPreviousAutoThresholdButton.connect("clicked()", self.onSelectPreviousAutoThresholdMethod)
+        self.selectNextAutoThresholdButton.connect("clicked()", self.onSelectNextAutoThresholdMethod)
+        self.setAutoThresholdButton.connect("clicked()", self.onAutoThreshold)
+        self.applyButton.connect("clicked()", self.onApply)
 
     def sourceVolumeNodeChanged(self):
         # Set scalar range of source volume image data to threshold slider
@@ -618,7 +618,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             thresh.Update()
             modifierLabelmap.DeepCopy(thresh.GetOutput())
         except IndexError:
-            logging.error('apply: Failed to threshold source volume!')
+            logging.error("apply: Failed to threshold source volume!")
             pass
 
         # Apply changes
@@ -1212,40 +1212,40 @@ class HistogramPipeline:
 
 HISTOGRAM_BRUSH_TYPE_PARAMETER_NAME = "BrushType"
 
-HISTOGRAM_BRUSH_TYPE_BOX = 'BOX'
-HISTOGRAM_BRUSH_TYPE_CIRCLE = 'CIRCLE'
-HISTOGRAM_BRUSH_TYPE_DRAW = 'DRAW'
-HISTOGRAM_BRUSH_TYPE_LINE = 'LINE'
+HISTOGRAM_BRUSH_TYPE_BOX = "BOX"
+HISTOGRAM_BRUSH_TYPE_CIRCLE = "CIRCLE"
+HISTOGRAM_BRUSH_TYPE_DRAW = "DRAW"
+HISTOGRAM_BRUSH_TYPE_LINE = "LINE"
 
-HISTOGRAM_STATE_OFF = 'OFF'
-HISTOGRAM_STATE_MOVING = 'MOVING'
-HISTOGRAM_STATE_PLACED = 'PLACED'
+HISTOGRAM_STATE_OFF = "OFF"
+HISTOGRAM_STATE_MOVING = "MOVING"
+HISTOGRAM_STATE_PLACED = "PLACED"
 
-HISTOGRAM_SET_LOWER_PARAMETER_NAME = 'HistogramSetLower'
-HISTOGRAM_SET_UPPER_PARAMETER_NAME = 'HistogramSetUpper'
+HISTOGRAM_SET_LOWER_PARAMETER_NAME = "HistogramSetLower"
+HISTOGRAM_SET_UPPER_PARAMETER_NAME = "HistogramSetUpper"
 
-HISTOGRAM_SET_MINIMUM = 'MINIMUM'
-HISTOGRAM_SET_LOWER = 'LOWER'
-HISTOGRAM_SET_AVERAGE = 'AVERAGE'
-HISTOGRAM_SET_UPPER = 'UPPER'
-HISTOGRAM_SET_MAXIMUM = 'MAXIMUM'
+HISTOGRAM_SET_MINIMUM = "MINIMUM"
+HISTOGRAM_SET_LOWER = "LOWER"
+HISTOGRAM_SET_AVERAGE = "AVERAGE"
+HISTOGRAM_SET_UPPER = "UPPER"
+HISTOGRAM_SET_MAXIMUM = "MAXIMUM"
 
 ###
 
-METHOD_HUANG = 'HUANG'
-METHOD_INTERMODES = 'INTERMODES'
-METHOD_ISO_DATA = 'ISO_DATA'
-METHOD_KITTLER_ILLINGWORTH = 'KITTLER_ILLINGWORTH'
-METHOD_LI = 'LI'
-METHOD_MAXIMUM_ENTROPY = 'MAXIMUM_ENTROPY'
-METHOD_MOMENTS = 'MOMENTS'
-METHOD_OTSU = 'OTSU'
-METHOD_RENYI_ENTROPY = 'RENYI_ENTROPY'
-METHOD_SHANBHAG = 'SHANBHAG'
-METHOD_TRIANGLE = 'TRIANGLE'
-METHOD_YEN = 'YEN'
+METHOD_HUANG = "HUANG"
+METHOD_INTERMODES = "INTERMODES"
+METHOD_ISO_DATA = "ISO_DATA"
+METHOD_KITTLER_ILLINGWORTH = "KITTLER_ILLINGWORTH"
+METHOD_LI = "LI"
+METHOD_MAXIMUM_ENTROPY = "MAXIMUM_ENTROPY"
+METHOD_MOMENTS = "MOMENTS"
+METHOD_OTSU = "OTSU"
+METHOD_RENYI_ENTROPY = "RENYI_ENTROPY"
+METHOD_SHANBHAG = "SHANBHAG"
+METHOD_TRIANGLE = "TRIANGLE"
+METHOD_YEN = "YEN"
 
-MODE_SET_UPPER = 'SET_UPPER'
-MODE_SET_LOWER = 'SET_LOWER'
-MODE_SET_MIN_UPPER = 'SET_MIN_UPPER'
-MODE_SET_LOWER_MAX = 'SET_LOWER_MAX'
+MODE_SET_UPPER = "SET_UPPER"
+MODE_SET_LOWER = "SET_LOWER"
+MODE_SET_MIN_UPPER = "SET_MIN_UPPER"
+MODE_SET_LOWER_MAX = "SET_LOWER_MAX"

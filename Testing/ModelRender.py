@@ -3,7 +3,7 @@ import time
 import random
 
 
-def newSphere(name=''):
+def newSphere(name=""):
     if name == "":
         name = "sphere-%g" % time.time()
 

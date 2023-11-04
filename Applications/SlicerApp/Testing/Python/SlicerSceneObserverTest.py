@@ -8,7 +8,7 @@ class testClass:
     """
 
     def callback(self, caller, event):
-        print(f'Got {event} from {caller}')
+        print(f"Got {event} from {caller}")
 
     def setUp(self):
         print("Adding observer to the scene")

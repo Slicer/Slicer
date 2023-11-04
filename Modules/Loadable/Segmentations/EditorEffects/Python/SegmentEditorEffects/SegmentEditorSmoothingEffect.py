@@ -16,18 +16,18 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorPaintEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Smoothing'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Smoothing')
+        scriptedEffect.name = "Smoothing"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Smoothing")
         AbstractScriptedSegmentEditorPaintEffect.__init__(self, scriptedEffect)
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedPaintEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/Smoothing.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/Smoothing.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -92,12 +92,12 @@ If segments overlap, segment higher in the segments table will have priority. <b
         self.applyToAllVisibleSegmentsCheckBox = qt.QCheckBox()
         self.applyToAllVisibleSegmentsCheckBox.setToolTip(
             _("Apply smoothing effect to all visible segments in this segmentation node. This operation may take a while."))
-        self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + 'ApplyToAllVisibleSegments'
+        self.applyToAllVisibleSegmentsCheckBox.objectName = self.__class__.__name__ + "ApplyToAllVisibleSegments"
         self.applyToAllVisibleSegmentsLabel = self.scriptedEffect.addLabeledOptionsWidget(_("Apply to visible segments:"),
                                                                                           self.applyToAllVisibleSegmentsCheckBox)
 
         self.applyButton = qt.QPushButton(_("Apply"))
-        self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+        self.applyButton.objectName = self.__class__.__name__ + "Apply"
         self.applyButton.setToolTip(_("Apply smoothing to selected segment"))
         self.scriptedEffect.addOptionsWidget(self.applyButton)
 
@@ -106,7 +106,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
         self.gaussianStandardDeviationMMSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
         self.jointTaubinSmoothingFactorSlider.connect("valueChanged(double)", self.updateMRMLFromGUI)
         self.applyToAllVisibleSegmentsCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
-        self.applyButton.connect('clicked()', self.onApply)
+        self.applyButton.connect("clicked()", self.onApply)
 
         # Customize smoothing brush
         self.scriptedEffect.setColorSmudgeCheckboxVisible(False)
@@ -229,7 +229,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
                     return
                 for index in range(inputSegmentIDs.GetNumberOfValues()):
                     segmentID = inputSegmentIDs.GetValue(index)
-                    self.showStatusMessage(_('Smoothing {segmentName}...').format(segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()))
+                    self.showStatusMessage(_("Smoothing {segmentName}...").format(segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()))
                     self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(segmentID)
                     self.smoothSelectedSegment(maskImage, maskExtent)
                 # restore segment selection
@@ -365,12 +365,12 @@ If segments overlap, segment higher in the segments table will have priority. <b
                 self.modifySelectedSegmentByLabelmap(smoothingFilter.GetOutput(), selectedSegmentLabelmap, modifierLabelmap, maskImage, maskExtent)
 
         except IndexError:
-            logging.error('apply: Failed to apply smoothing')
+            logging.error("apply: Failed to apply smoothing")
 
     def smoothMultipleSegments(self, maskImage=None, maskExtent=None):
         import vtkSegmentationCorePython as vtkSegmentationCore
 
-        self.showStatusMessage(_('Joint smoothing ...'))
+        self.showStatusMessage(_("Joint smoothing ..."))
         # Generate merged labelmap of all visible segments
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
         visibleSegmentIds = vtk.vtkStringArray()
@@ -383,7 +383,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
         if not segmentationNode.GenerateMergedLabelmapForAllSegments(mergedImage,
                                                                      vtkSegmentationCore.vtkSegmentation.EXTENT_UNION_OF_SEGMENTS_PADDED,
                                                                      None, visibleSegmentIds):
-            logging.error('Failed to apply smoothing: cannot get list of visible segments')
+            logging.error("Failed to apply smoothing: cannot get list of visible segments")
             return
 
         segmentLabelValues = []  # list of [segmentId, labelValue]
@@ -493,8 +493,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
         self.onApply(maskImage, maskExtent)
 
 
-MEDIAN = 'MEDIAN'
-GAUSSIAN = 'GAUSSIAN'
-MORPHOLOGICAL_OPENING = 'MORPHOLOGICAL_OPENING'
-MORPHOLOGICAL_CLOSING = 'MORPHOLOGICAL_CLOSING'
-JOINT_TAUBIN = 'JOINT_TAUBIN'
+MEDIAN = "MEDIAN"
+GAUSSIAN = "GAUSSIAN"
+MORPHOLOGICAL_OPENING = "MORPHOLOGICAL_OPENING"
+MORPHOLOGICAL_CLOSING = "MORPHOLOGICAL_CLOSING"
+JOINT_TAUBIN = "JOINT_TAUBIN"

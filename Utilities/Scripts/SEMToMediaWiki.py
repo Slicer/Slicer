@@ -20,7 +20,7 @@ def getTextValuesFromNode(nodelist):
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
             rc.append(node.data)
-    return ''.join(rc)
+    return "".join(rc)
 
 
 def getThisNodesInfoAsText(currentNode, label):
@@ -162,20 +162,20 @@ Examples of the module in use:
 """
 
     stringDict = dict({})
-    stringDict['executableTitle'] = getThisNodesInfoAsText(
+    stringDict["executableTitle"] = getThisNodesInfoAsText(
         executableNode, "title")
-    stringDict['executableCategory'] = getThisNodesInfoAsText(
+    stringDict["executableCategory"] = getThisNodesInfoAsText(
         executableNode, "category")
-    stringDict['executableAuthor'] = getThisNodesInfoAsText(
+    stringDict["executableAuthor"] = getThisNodesInfoAsText(
         executableNode, "contributor")
-    stringDict['executableDescription'] = getThisNodesInfoAsText(
+    stringDict["executableDescription"] = getThisNodesInfoAsText(
         executableNode, "description")
-    stringDict['executableVersion'] = getThisNodesInfoAsText(
+    stringDict["executableVersion"] = getThisNodesInfoAsText(
         executableNode, "version")
-    stringDict['executableDocumentationURL'] = getThisNodesInfoAsText(
+    stringDict["executableDocumentationURL"] = getThisNodesInfoAsText(
         executableNode, "documentation-url")
-    stringDict['tblStart'] = "{|"  # To avoid subs the entire table as var
-    stringDict['tblStop'] = "|}"   # To avoid subs the entire table as var
+    stringDict["tblStart"] = "{|"  # To avoid subs the entire table as var
+    stringDict["tblStop"] = "|}"   # To avoid subs the entire table as var
 
     outRegion = outputRegionTemplate.format(**stringDict)
     return outRegion
@@ -276,7 +276,7 @@ Publications related to this module go here. Links to pdfs would be useful.
 """
 
     stringDict = dict({})
-    stringDict['executableAcknowledgment'] = getThisNodesInfoAsText(executableNode, "acknowledgements")
+    stringDict["executableAcknowledgment"] = getThisNodesInfoAsText(executableNode, "acknowledgements")
     outRegion = outRegionTemplate.format(**stringDict)
     return outRegion
 
@@ -320,12 +320,12 @@ def SEMToMediaWikiProg():
                     stage))
 
     if options.xmlfilename is not None:
-        outfile = open(options.outfilename, 'w')
+        outfile = open(options.outfilename, "w")
         outfile.write(docString)
         outfile.close()
     else:
         sys.stdout.write(docString)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     SEMToMediaWikiProg()

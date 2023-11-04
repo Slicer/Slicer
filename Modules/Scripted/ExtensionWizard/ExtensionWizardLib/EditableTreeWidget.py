@@ -13,7 +13,7 @@ def _makeAction(parent, text, icon=None, shortcut=None, slot=None):
         action.shortcutContext = qt.Qt.WidgetWithChildrenShortcut
 
     if slot is not None:
-        action.connect('triggered(bool)', slot)
+        action.connect("triggered(bool)", slot)
 
     parent.addAction(action)
 
@@ -64,8 +64,8 @@ class EditableTreeWidget(qt.QTreeWidget):
         self.contextMenuPolicy = qt.Qt.ActionsContextMenu
 
         # Connect internal slots
-        self.connect('itemChanged(QTreeWidgetItem*,int)', self.updateItemData)
-        self.connect('itemSelectionChanged()', self.updateActions)
+        self.connect("itemChanged(QTreeWidgetItem*,int)", self.updateItemData)
+        self.connect("itemSelectionChanged()", self.updateActions)
 
     # ---------------------------------------------------------------------------
     def addItem(self, item, placeholder=False):

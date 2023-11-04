@@ -23,28 +23,28 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         super().__init__()
         self.loadType = _("Volume Sequence")
 
-        self.tags['studyID'] = '0020,0010'
-        self.tags['seriesDescription'] = "0008,103e"
-        self.tags['seriesUID'] = "0020,000E"
-        self.tags['seriesNumber'] = "0020,0011"
-        self.tags['seriesDate'] = "0008,0021"
-        self.tags['seriesTime'] = "0020,0031"
-        self.tags['position'] = "0020,0032"
-        self.tags['orientation'] = "0020,0037"
-        self.tags['pixelData'] = "7fe0,0010"
-        self.tags['seriesInstanceUID'] = "0020,000E"
-        self.tags['contentTime'] = "0008,0033"
-        self.tags['triggerTime'] = "0018,1060"
-        self.tags['diffusionGradientOrientation'] = "0018,9089"
-        self.tags['imageOrientationPatient'] = "0020,0037"
-        self.tags['numberOfFrames'] = "0028,0008"
-        self.tags['instanceUID'] = "0008,0018"
-        self.tags['windowCenter'] = "0028,1050"
-        self.tags['windowWidth'] = "0028,1051"
-        self.tags['classUID'] = "0008,0016"
+        self.tags["studyID"] = "0020,0010"
+        self.tags["seriesDescription"] = "0008,103e"
+        self.tags["seriesUID"] = "0020,000E"
+        self.tags["seriesNumber"] = "0020,0011"
+        self.tags["seriesDate"] = "0008,0021"
+        self.tags["seriesTime"] = "0020,0031"
+        self.tags["position"] = "0020,0032"
+        self.tags["orientation"] = "0020,0037"
+        self.tags["pixelData"] = "7fe0,0010"
+        self.tags["seriesInstanceUID"] = "0020,000E"
+        self.tags["contentTime"] = "0008,0033"
+        self.tags["triggerTime"] = "0018,1060"
+        self.tags["diffusionGradientOrientation"] = "0018,9089"
+        self.tags["imageOrientationPatient"] = "0020,0037"
+        self.tags["numberOfFrames"] = "0028,0008"
+        self.tags["instanceUID"] = "0008,0018"
+        self.tags["windowCenter"] = "0028,1050"
+        self.tags["windowWidth"] = "0028,1051"
+        self.tags["classUID"] = "0008,0016"
 
     def getSequenceBrowserNodeForMasterOutputNode(self, masterOutputNode):
-        browserNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLSequenceBrowserNode')
+        browserNodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLSequenceBrowserNode")
         browserNodes.UnRegister(None)
         for itemIndex in range(browserNodes.GetNumberOfItems()):
             sequenceBrowserNode = browserNodes.GetItemAsObject(itemIndex)
@@ -74,7 +74,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         # cannot export if there is no data node or the data node is not a volume
         shn = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
         dataNode = shn.GetItemDataNode(subjectHierarchyItemID)
-        if dataNode is None or not dataNode.IsA('vtkMRMLScalarVolumeNode'):
+        if dataNode is None or not dataNode.IsA("vtkMRMLScalarVolumeNode"):
             # not a volume node
             return []
 
@@ -98,14 +98,14 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         exportable.confidence = 0.6  # Simple volume has confidence of 0.5, use a slightly higher value here
 
         # Define required tags and default values
-        exportable.setTag('SeriesDescription', _('Volume sequence of {count} frames').format(count=sequenceItemCount))
-        exportable.setTag('Modality', _('CT'))
-        exportable.setTag('Manufacturer', _('Unknown manufacturer'))
-        exportable.setTag('Model', _('Unknown model'))
-        exportable.setTag('StudyID', '1')
-        exportable.setTag('SeriesNumber', '301')
-        exportable.setTag('SeriesDate', '')
-        exportable.setTag('SeriesTime', '')
+        exportable.setTag("SeriesDescription", _("Volume sequence of {count} frames").format(count=sequenceItemCount))
+        exportable.setTag("Modality", _("CT"))
+        exportable.setTag("Manufacturer", _("Unknown manufacturer"))
+        exportable.setTag("Model", _("Unknown model"))
+        exportable.setTag("StudyID", "1")
+        exportable.setTag("SeriesNumber", "301")
+        exportable.setTag("SeriesDate", "")
+        exportable.setTag("SeriesTime", "")
 
         return [exportable]
 
@@ -126,11 +126,11 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
         microsecond = 0
         if len(tm) >= 6:
             try:
-                hhmmss = str.split(tm, '.')[0]
+                hhmmss = str.split(tm, ".")[0]
             except:
                 hhmmss = tm
             try:
-                microsecond = int(float('0.' + str.split(tm, '.')[1]) * 1e6)
+                microsecond = int(float("0." + str.split(tm, ".")[1]) * 1e6)
             except:
                 microsecond = 0
             if len(hhmmss) == 6:  # HHMMSS
@@ -157,7 +157,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
                 logging.error(error)
                 return error
             volumeNode = shNode.GetItemDataNode(exportable.subjectHierarchyItemID)
-            if volumeNode is None or not volumeNode.IsA('vtkMRMLScalarVolumeNode'):
+            if volumeNode is None or not volumeNode.IsA("vtkMRMLScalarVolumeNode"):
                 error = _("Series '{itemName}' cannot be exported as volume sequence").format(itemName=shNode.GetItemName(exportable.subjectHierarchyItemID))
                 logging.error(error)
                 return error
@@ -189,28 +189,28 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
             # Assemble tags dictionary for volume export
 
             tags = {}
-            tags['Patient Name'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameTagName())
-            tags['Patient ID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDTagName())
-            tags['Patient Comments'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
-            tags['Study Instance UID'] = pydicom.uid.generate_uid()
-            tags['Patient Birth Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateTagName())
-            tags['Patient Sex'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexTagName())
-            tags['Study ID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName())
-            tags['Study Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
-            tags['Study Time'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeTagName())
-            tags['Study Description'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
-            tags['Modality'] = exportable.tag('Modality')
-            tags['Manufacturer'] = exportable.tag('Manufacturer')
-            tags['Model'] = exportable.tag('Model')
-            tags['Series Description'] = exportable.tag('SeriesDescription')
-            tags['Series Number'] = exportable.tag('SeriesNumber')
-            tags['Series Date'] = exportable.tag("SeriesDate")
-            tags['Series Time'] = exportable.tag("SeriesTime")
-            tags['Series Instance UID'] = pydicom.uid.generate_uid()
-            tags['Frame of Reference UID'] = pydicom.uid.generate_uid()
+            tags["Patient Name"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameTagName())
+            tags["Patient ID"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDTagName())
+            tags["Patient Comments"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
+            tags["Study Instance UID"] = pydicom.uid.generate_uid()
+            tags["Patient Birth Date"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateTagName())
+            tags["Patient Sex"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexTagName())
+            tags["Study ID"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName())
+            tags["Study Date"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
+            tags["Study Time"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeTagName())
+            tags["Study Description"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
+            tags["Modality"] = exportable.tag("Modality")
+            tags["Manufacturer"] = exportable.tag("Manufacturer")
+            tags["Model"] = exportable.tag("Model")
+            tags["Series Description"] = exportable.tag("SeriesDescription")
+            tags["Series Number"] = exportable.tag("SeriesNumber")
+            tags["Series Date"] = exportable.tag("SeriesDate")
+            tags["Series Time"] = exportable.tag("SeriesTime")
+            tags["Series Instance UID"] = pydicom.uid.generate_uid()
+            tags["Frame of Reference UID"] = pydicom.uid.generate_uid()
 
             # Validate tags
-            if tags['Modality'] == "":
+            if tags["Modality"] == "":
                 error = _("Empty modality for series '{volumeName}'").format(volumeName=volumeNode.GetName())
                 logging.error(error)
                 return error
@@ -234,7 +234,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
             # Get output directory and create a subdirectory. This is necessary
             # to avoid overwriting the files in case of multiple exportables, as
             # naming of the DICOM files is static
-            directoryName = 'VolumeSequence_' + str(exportable.subjectHierarchyItemID)
+            directoryName = "VolumeSequence_" + str(exportable.subjectHierarchyItemID)
             directoryDir = qt.QDir(exportable.directory)
             directoryDir.mkdir(directoryName)
             directoryDir.cd(directoryName)
@@ -250,11 +250,11 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
                 # TODO: verify that unit in sequence node is "second" (and convert to seconds if not)
                 timeOffsetSec = float(masterVolumeNode.GetNthIndexValue(sequenceItemIndex)) - float(masterVolumeNode.GetNthIndexValue(0))
                 contentDatetime = contentStartDatetime + datetime.timedelta(seconds=timeOffsetSec)
-                tags['Content Date'] = contentDatetime.strftime("%Y%m%d")
-                tags['Content Time'] = contentDatetime.strftime("%H%M%S.%f")
+                tags["Content Date"] = contentDatetime.strftime("%Y%m%d")
+                tags["Content Time"] = contentDatetime.strftime("%H%M%S.%f")
                 # Perform export
                 filenamePrefix = f"IMG_{sequenceItemIndex:04d}_"
-                exporter = DICOMExportScalarVolume(tags['Study ID'], volumeNode, tags, directory, filenamePrefix)
+                exporter = DICOMExportScalarVolume(tags["Study ID"], volumeNode, tags, directory, filenamePrefix)
                 exporter.export()
 
         # Success
@@ -294,4 +294,4 @@ class DICOMVolumeSequencePlugin:
             slicer.modules.dicomPlugins
         except AttributeError:
             slicer.modules.dicomPlugins = {}
-        slicer.modules.dicomPlugins['DICOMVolumeSequencePlugin'] = DICOMVolumeSequencePluginClass
+        slicer.modules.dicomPlugins["DICOMVolumeSequencePlugin"] = DICOMVolumeSequencePluginClass

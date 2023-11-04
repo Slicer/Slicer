@@ -91,8 +91,8 @@ def main(argv):
 
     if template == "":
         template = "Extensions/Testing/LoadableExtensionTemplate/"
-    if template[-1] != '/':
-        template += '/'
+    if template[-1] != "/":
+        template += "/"
 
     if templateKey == "":
         templateKey = os.path.split(template[:-1])[-1]
@@ -116,7 +116,7 @@ def main(argv):
     for file in sources:
         copyAndReplace(file, template, target, templateKey, moduleName)
 
-    print('\nModule %s created!' % moduleName)
+    print("\nModule %s created!" % moduleName)
 
 
 if __name__ == "__main__":

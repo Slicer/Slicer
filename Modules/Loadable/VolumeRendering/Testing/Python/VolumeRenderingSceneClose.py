@@ -61,7 +61,7 @@ class VolumeRenderingSceneCloseWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -97,27 +97,27 @@ class VolumeRenderingSceneCloseLogic(ScriptedLoadableModuleLogic):
         layoutManager = slicer.app.layoutManager()
         layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
 
-        slicer.util.delayDisplay('Running the algorithm')
+        slicer.util.delayDisplay("Running the algorithm")
 
         import SampleData
-        ctVolume = SampleData.downloadSample('CTChest')
-        slicer.util.delayDisplay('Downloaded CT sample data')
+        ctVolume = SampleData.downloadSample("CTChest")
+        slicer.util.delayDisplay("Downloaded CT sample data")
 
         # go to the volume rendering module
-        slicer.util.mainWindow().moduleSelector().selectModule('VolumeRendering')
-        slicer.util.delayDisplay('Volume Rendering module')
+        slicer.util.mainWindow().moduleSelector().selectModule("VolumeRendering")
+        slicer.util.delayDisplay("Volume Rendering module")
 
         # turn it on
         volumeRenderingWidgetRep = slicer.modules.volumerendering.widgetRepresentation()
         volumeRenderingWidgetRep.setMRMLVolumeNode(ctVolume)
-        volumeRenderingNode = slicer.mrmlScene.GetFirstNodeByName('VolumeRendering')
+        volumeRenderingNode = slicer.mrmlScene.GetFirstNodeByName("VolumeRendering")
         volumeRenderingNode.SetVisibility(1)
-        slicer.util.delayDisplay('Volume Rendering')
+        slicer.util.delayDisplay("Volume Rendering")
 
         # set up a cropping ROI
         volumeRenderingNode.SetCroppingEnabled(1)
-        markupsROI = slicer.mrmlScene.GetFirstNodeByClass('vtkMRMLMarkupsROINode')
-        slicer.util.delayDisplay('Cropping')
+        markupsROI = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLMarkupsROINode")
+        slicer.util.delayDisplay("Cropping")
 
         # close the scene
         slicer.mrmlScene.Clear(0)
@@ -150,4 +150,4 @@ class VolumeRenderingSceneCloseTest(ScriptedLoadableModuleTest):
         logic = VolumeRenderingSceneCloseLogic()
         logic.run()
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

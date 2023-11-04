@@ -1,6 +1,6 @@
 from .AbstractScriptedSegmentEditorEffect import *
 
-__all__ = ['AbstractScriptedSegmentEditorLabelEffect']
+__all__ = ["AbstractScriptedSegmentEditorLabelEffect"]
 
 
 #

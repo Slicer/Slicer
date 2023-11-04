@@ -69,20 +69,20 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
 
         import SampleData
         SampleData.downloadFromURL(
-            fileNames='RSNA2012ProstateDemo.mrb',
+            fileNames="RSNA2012ProstateDemo.mrb",
             loadFiles=True,
-            uris=TESTING_DATA_URL + 'SHA256/2627388ee213564f8783d0242993212ba01189f4c6640d57c4cde4e28fc5f97b',
-            checksums='SHA256:2627388ee213564f8783d0242993212ba01189f4c6640d57c4cde4e28fc5f97b')
+            uris=TESTING_DATA_URL + "SHA256/2627388ee213564f8783d0242993212ba01189f4c6640d57c4cde4e28fc5f97b",
+            checksums="SHA256:2627388ee213564f8783d0242993212ba01189f4c6640d57c4cde4e28fc5f97b")
 
         # get all scene view nodes and test switching
-        svns = slicer.util.getNodes('vtkMRMLSceneViewNode*')
+        svns = slicer.util.getNodes("vtkMRMLSceneViewNode*")
 
         for reps in range(5):
             for svname, svnode in svns.items():
-                self.delayDisplay('Restoring scene view %s ...' % svname)
+                self.delayDisplay("Restoring scene view %s ..." % svname)
                 svnode.RestoreScene()
-                self.delayDisplay('OK')
+                self.delayDisplay("OK")
 
-        self.delayDisplay('Done testing scene views, will clear the scene')
+        self.delayDisplay("Done testing scene views, will clear the scene")
         slicer.mrmlScene.Clear(0)
-        self.delayDisplay('Test passed')
+        self.delayDisplay("Test passed")

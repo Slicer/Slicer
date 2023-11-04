@@ -22,7 +22,7 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
     filePath = __file__
 
     def __init__(self, scriptedPlugin):
-        scriptedPlugin.name = 'SegmentEditor'
+        scriptedPlugin.name = "SegmentEditor"
         AbstractScriptedSubjectHierarchyPlugin.__init__(self, scriptedPlugin)
 
         self.segmentEditorAction = qt.QAction(_("Segment this..."), scriptedPlugin)
@@ -73,11 +73,11 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
 
     def visibilityIcon(self, visible):
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        return pluginHandlerSingleton.pluginByName('Default').visibilityIcon(visible)
+        return pluginHandlerSingleton.pluginByName("Default").visibilityIcon(visible)
 
     def editProperties(self, itemID):
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        pluginHandlerSingleton.pluginByName('Default').editProperties(itemID)
+        pluginHandlerSingleton.pluginByName("Default").editProperties(itemID)
 
     def itemContextMenuActions(self):
         return [self.segmentEditorAction]
@@ -93,17 +93,17 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
         volumeNode = shNode.GetItemDataNode(currentItemID)
 
         # Switch to Segment Editor module
-        pluginHandlerSingleton.pluginByName('Default').switchToModule('SegmentEditor')
+        pluginHandlerSingleton.pluginByName("Default").switchToModule("SegmentEditor")
         editorWidget = slicer.modules.segmenteditor.widgetRepresentation().self()
 
         # Create new segmentation only if there is no segmentation node, or the current segmentation is not empty
         # (switching to the module will create an empty segmentation if there is none in the scene, but not otherwise)
         segmentationNode = editorWidget.parameterSetNode.GetSegmentationNode()
         if segmentationNode is None or segmentationNode.GetSegmentation().GetNumberOfSegments() > 0:
-            segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
+            segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
             editorWidget.parameterSetNode.SetAndObserveSegmentationNode(segmentationNode)
         # Name segmentation node based on the volume
-        segmentationNode.SetName(volumeNode.GetName() + _('_Segmentation'))
+        segmentationNode.SetName(volumeNode.GetName() + _("_Segmentation"))
 
         # Set source volume
         editorWidget.parameterSetNode.SetAndObserveSourceVolumeNode(volumeNode)
@@ -123,8 +123,8 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
 
         # Volume but not LabelMap
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        if (pluginHandlerSingleton.pluginByName('Volumes').canOwnSubjectHierarchyItem(itemID)
-                and not pluginHandlerSingleton.pluginByName('LabelMaps').canOwnSubjectHierarchyItem(itemID)):
+        if (pluginHandlerSingleton.pluginByName("Volumes").canOwnSubjectHierarchyItem(itemID)
+                and not pluginHandlerSingleton.pluginByName("LabelMaps").canOwnSubjectHierarchyItem(itemID)):
             # Get current item
             currentItemID = pluginHandlerSingleton.currentItem()
             if not currentItemID:
@@ -138,8 +138,8 @@ class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin
 
     def setDisplayVisibility(self, itemID, visible):
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        pluginHandlerSingleton.pluginByName('Default').setDisplayVisibility(itemID, visible)
+        pluginHandlerSingleton.pluginByName("Default").setDisplayVisibility(itemID, visible)
 
     def getDisplayVisibility(self, itemID):
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        return pluginHandlerSingleton.pluginByName('Default').getDisplayVisibility(itemID)
+        return pluginHandlerSingleton.pluginByName("Default").getDisplayVisibility(itemID)

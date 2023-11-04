@@ -375,7 +375,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertFalse(isParameterPack(int))  # class
         self.assertFalse(isParameterPack(int()))  # object
         self.assertFalse(isParameterPack(str))  # class
-        self.assertFalse(isParameterPack(''))  # object
+        self.assertFalse(isParameterPack(""))  # object
 
     def test_parameter_pack_getSetValue(self):
         @parameterPack

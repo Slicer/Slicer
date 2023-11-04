@@ -32,14 +32,14 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         super().__init__()
         self.loadType = _("Image sequence")
 
-        self.tags['sopClassUID'] = "0008,0016"
-        self.tags['seriesNumber'] = "0020,0011"
-        self.tags['seriesDescription'] = "0008,103E"
-        self.tags['instanceNumber'] = "0020,0013"
-        self.tags['triggerTime'] = "0018,1060"
-        self.tags['modality'] = "0008,0060"
-        self.tags['photometricInterpretation'] = "0028,0004"
-        self.tags['orientation'] = "0020,0037"
+        self.tags["sopClassUID"] = "0008,0016"
+        self.tags["seriesNumber"] = "0020,0011"
+        self.tags["seriesDescription"] = "0008,103E"
+        self.tags["instanceNumber"] = "0020,0013"
+        self.tags["triggerTime"] = "0018,1060"
+        self.tags["modality"] = "0008,0060"
+        self.tags["photometricInterpretation"] = "0028,0004"
+        self.tags["orientation"] = "0020,0037"
 
         self.detailedLogging = False
 
@@ -60,19 +60,19 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         files parameter.
         """
 
-        self.detailedLogging = slicer.util.settingsValue('DICOM/detailedLogging', False, converter=slicer.util.toBool)
+        self.detailedLogging = slicer.util.settingsValue("DICOM/detailedLogging", False, converter=slicer.util.toBool)
 
         supportedSOPClassUIDs = [
-            '1.2.840.10008.5.1.4.1.1.12.1',  # X-Ray Angiographic Image Storage
-            '1.2.840.10008.5.1.4.1.1.12.2',  # X-Ray Fluoroscopy Image Storage
-            '1.2.840.10008.5.1.4.1.1.3.1',  # Ultrasound Multiframe Image Storage
-            '1.2.840.10008.5.1.4.1.1.6.1',  # Ultrasound Image Storage
-            '1.2.840.10008.5.1.4.1.1.7',  # Secondary Capture Image Storage (only accepted for modalities that typically acquire 2D image sequences)
-            '1.2.840.10008.5.1.4.1.1.4',  # MR Image Storage (will be only accepted if cine-MRI)
+            "1.2.840.10008.5.1.4.1.1.12.1",  # X-Ray Angiographic Image Storage
+            "1.2.840.10008.5.1.4.1.1.12.2",  # X-Ray Fluoroscopy Image Storage
+            "1.2.840.10008.5.1.4.1.1.3.1",  # Ultrasound Multiframe Image Storage
+            "1.2.840.10008.5.1.4.1.1.6.1",  # Ultrasound Image Storage
+            "1.2.840.10008.5.1.4.1.1.7",  # Secondary Capture Image Storage (only accepted for modalities that typically acquire 2D image sequences)
+            "1.2.840.10008.5.1.4.1.1.4",  # MR Image Storage (will be only accepted if cine-MRI)
         ]
 
         # Modalities that typically acquire 2D image sequences:
-        suppportedSecondaryCaptureModalities = ['US', 'XA', 'RF', 'ES']
+        suppportedSecondaryCaptureModalities = ["US", "XA", "RF", "ES"]
 
         # Each instance will be a loadable, that will result in one sequence browser node
         # and usually one sequence (except simultaneous biplane acquisition, which will
@@ -94,15 +94,15 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         for filePath in files:
             # Quick check of SOP class UID without parsing the file...
             try:
-                sopClassUID = slicer.dicomDatabase.fileValue(filePath, self.tags['sopClassUID'])
+                sopClassUID = slicer.dicomDatabase.fileValue(filePath, self.tags["sopClassUID"])
                 if not (sopClassUID in supportedSOPClassUIDs):
                     # Unsupported class
                     continue
 
                 # Only accept MRI if it looks like cine-MRI
-                if sopClassUID != '1.2.840.10008.5.1.4.1.1.4':  # MR Image Storage (will be only accepted if cine-MRI)
+                if sopClassUID != "1.2.840.10008.5.1.4.1.1.4":  # MR Image Storage (will be only accepted if cine-MRI)
                     canBeCineMri = False
-                if not canBeCineMri and sopClassUID == '1.2.840.10008.5.1.4.1.1.4':  # MR Image Storage
+                if not canBeCineMri and sopClassUID == "1.2.840.10008.5.1.4.1.1.4":  # MR Image Storage
                     continue
 
             except Exception as e:
@@ -110,8 +110,8 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                 # No problem, we'll try to parse the file and check the SOP class UID then.
                 pass
 
-            instanceNumber = slicer.dicomDatabase.fileValue(filePath, self.tags['instanceNumber'])
-            if canBeCineMri and sopClassUID == '1.2.840.10008.5.1.4.1.1.4':  # MR Image Storage
+            instanceNumber = slicer.dicomDatabase.fileValue(filePath, self.tags["instanceNumber"])
+            if canBeCineMri and sopClassUID == "1.2.840.10008.5.1.4.1.1.4":  # MR Image Storage
                 if not instanceNumber:
                     # no instance number, probably not cine-MRI
                     canBeCineMri = False
@@ -119,12 +119,12 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                         logging.debug("No instance number attribute found, the series will not be considered as a cine MRI")
                     continue
                 cineMriInstanceNumberToFilenameIndex[int(instanceNumber)] = filePath
-                cineMriTriggerTimes.add(slicer.dicomDatabase.fileValue(filePath, self.tags['triggerTime']))
-                cineMriImageOrientations.add(slicer.dicomDatabase.fileValue(filePath, self.tags['orientation']))
+                cineMriTriggerTimes.add(slicer.dicomDatabase.fileValue(filePath, self.tags["triggerTime"]))
+                cineMriImageOrientations.add(slicer.dicomDatabase.fileValue(filePath, self.tags["orientation"]))
 
             else:
-                modality = slicer.dicomDatabase.fileValue(filePath, self.tags['modality'])
-                if sopClassUID == '1.2.840.10008.5.1.4.1.1.7':  # Secondary Capture Image Storage
+                modality = slicer.dicomDatabase.fileValue(filePath, self.tags["modality"])
+                if sopClassUID == "1.2.840.10008.5.1.4.1.1.7":  # Secondary Capture Image Storage
                     if modality not in suppportedSecondaryCaptureModalities:
                         # practice of dumping secondary capture images into the same series
                         # is only prevalent in US and XA/RF modalities
@@ -132,18 +132,18 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
                 if not (instanceNumber in instanceNumberToLoadableIndex.keys()):
                     # new instance number
-                    seriesNumber = slicer.dicomDatabase.fileValue(filePath, self.tags['seriesNumber'])
-                    seriesDescription = slicer.dicomDatabase.fileValue(filePath, self.tags['seriesDescription'])
-                    photometricInterpretation = slicer.dicomDatabase.fileValue(filePath, self.tags['photometricInterpretation'])
-                    name = ''
+                    seriesNumber = slicer.dicomDatabase.fileValue(filePath, self.tags["seriesNumber"])
+                    seriesDescription = slicer.dicomDatabase.fileValue(filePath, self.tags["seriesDescription"])
+                    photometricInterpretation = slicer.dicomDatabase.fileValue(filePath, self.tags["photometricInterpretation"])
+                    name = ""
                     if seriesNumber:
-                        name = f'{seriesNumber}:'
+                        name = f"{seriesNumber}:"
                     if modality:
-                        name = f'{name} {modality}'
+                        name = f"{name} {modality}"
                     if seriesDescription:
-                        name = f'{name} {seriesDescription}'
+                        name = f"{name} {seriesDescription}"
                     if instanceNumber:
-                        name = f'{name} [{instanceNumber}]'
+                        name = f"{name} [{instanceNumber}]"
 
                     loadable = DICOMLoadable()
                     loadable.singleSequence = False  # put each instance in a separate sequence
@@ -155,7 +155,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                     # Confidence is slightly larger than default scalar volume plugin's (0.5)
                     # but still leaving room for more specialized plugins.
                     loadable.confidence = 0.7
-                    loadable.grayscale = ('MONOCHROME' in photometricInterpretation)
+                    loadable.grayscale = ("MONOCHROME" in photometricInterpretation)
 
                     # Add to loadables list
                     loadables.append(loadable)
@@ -170,13 +170,13 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         if canBeCineMri and len(cineMriInstanceNumberToFilenameIndex) > 1:
             # Get description from first
             ds = dicom.read_file(cineMriInstanceNumberToFilenameIndex[next(iter(cineMriInstanceNumberToFilenameIndex))], stop_before_pixels=True)
-            name = ''
-            if hasattr(ds, 'SeriesNumber') and ds.SeriesNumber:
-                name = f'{ds.SeriesNumber}:'
-            if hasattr(ds, 'Modality') and ds.Modality:
-                name = f'{name} {ds.Modality}'
-            if hasattr(ds, 'SeriesDescription') and ds.SeriesDescription:
-                name = f'{name} {ds.SeriesDescription}'
+            name = ""
+            if hasattr(ds, "SeriesNumber") and ds.SeriesNumber:
+                name = f"{ds.SeriesNumber}:"
+            if hasattr(ds, "Modality") and ds.Modality:
+                name = f"{name} {ds.Modality}"
+            if hasattr(ds, "SeriesDescription") and ds.SeriesDescription:
+                name = f"{name} {ds.SeriesDescription}"
 
             loadable = DICOMLoadable()
             loadable.singleSequence = True  # put all instances in a single sequence
@@ -204,7 +204,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                 if self.detailedLogging:
                     logging.debug("Only one or few different trigger times found (" + repr(cineMriTriggerTimes) + ") - assuming this series is not a cine MRI")
                 loadable.confidence = 0.4
-            loadable.grayscale = ('MONOCHROME' in ds.PhotometricInterpretation)
+            loadable.grayscale = ("MONOCHROME" in ds.PhotometricInterpretation)
 
             # Add to loadables list
             loadables.append(loadable)
@@ -240,7 +240,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
     def addSequenceBrowserNode(self, name, outputSequenceNodes, playbackRateFps, loadable):
         # Add a browser node and show the volume in the slice viewer for user convenience
         outputSequenceBrowserNode = slicer.vtkMRMLSequenceBrowserNode()
-        outputSequenceBrowserNode.SetName(slicer.mrmlScene.GenerateUniqueName(name + ' browser'))
+        outputSequenceBrowserNode.SetName(slicer.mrmlScene.GenerateUniqueName(name + " browser"))
         outputSequenceBrowserNode.SetPlaybackRateFps(playbackRateFps)
         slicer.mrmlScene.AddNode(outputSequenceBrowserNode)
 
@@ -276,7 +276,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         [spacingX, spacingY, frameTimeMsec] = imageData.GetSpacing()
         imageData.SetSpacing(1.0, 1.0, 1.0)
         tempFrameVolume.SetSpacing(spacingX, spacingY, 1.0)
-        tempFrameVolume.SetAttribute('DICOM.instanceUIDs', slicer.dicomDatabase.instanceForFile(filePath))
+        tempFrameVolume.SetAttribute("DICOM.instanceUIDs", slicer.dicomDatabase.instanceForFile(filePath))
 
         # Create new sequence
         outputSequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode")
@@ -286,8 +286,8 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
             outputSequenceNode.SetName(name)
         else:
             ds = dicom.read_file(filePath, stop_before_pixels=True)
-            if hasattr(ds, 'PositionerPrimaryAngle') and hasattr(ds, 'PositionerSecondaryAngle'):
-                outputSequenceNode.SetName(f'{name} ({ds.PositionerPrimaryAngle}/{ds.PositionerSecondaryAngle})')
+            if hasattr(ds, "PositionerPrimaryAngle") and hasattr(ds, "PositionerSecondaryAngle"):
+                outputSequenceNode.SetName(f"{name} ({ds.PositionerPrimaryAngle}/{ds.PositionerSecondaryAngle})")
             else:
                 outputSequenceNode.SetName(name)
 
@@ -363,11 +363,11 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                 tempFrameVolume.SetAndObserveImageData(imageData)
                 instanceNumber = loadable.instanceNumbers[fileIndex]
                 # Save DICOM SOP instance UID into the sequence so DICOM metadata can be retrieved later if needed
-                tempFrameVolume.SetAttribute('DICOM.instanceUIDs', slicer.dicomDatabase.instanceForFile(filePath))
+                tempFrameVolume.SetAttribute("DICOM.instanceUIDs", slicer.dicomDatabase.instanceForFile(filePath))
                 # Save trigger time, because it may be needed for 4D cine-MRI volume reconstruction
-                triggerTime = slicer.dicomDatabase.fileValue(filePath, self.tags['triggerTime'])
+                triggerTime = slicer.dicomDatabase.fileValue(filePath, self.tags["triggerTime"])
                 if triggerTime:
-                    tempFrameVolume.SetAttribute('DICOM.triggerTime', triggerTime)
+                    tempFrameVolume.SetAttribute("DICOM.triggerTime", triggerTime)
                 outputSequenceNode.SetDataNodeAtValue(tempFrameVolume, str(instanceNumber))
             else:
                 # each file is a new sequence
@@ -378,7 +378,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         # Delete temporary volume node
         slicer.mrmlScene.RemoveNode(tempFrameVolume)
 
-        if not hasattr(loadable, 'createBrowserNode') or loadable.createBrowserNode:
+        if not hasattr(loadable, "createBrowserNode") or loadable.createBrowserNode:
             self.addSequenceBrowserNode(loadable.name, outputSequenceNodes, playbackRateFps, loadable)
 
         # Return the last loaded sequence node (that is the one currently displayed in slice views)
@@ -418,4 +418,4 @@ class DICOMImageSequencePlugin:
             slicer.modules.dicomPlugins
         except AttributeError:
             slicer.modules.dicomPlugins = {}
-        slicer.modules.dicomPlugins['DICOMImageSequencePlugin'] = DICOMImageSequencePluginClass
+        slicer.modules.dicomPlugins["DICOMImageSequencePlugin"] = DICOMImageSequencePluginClass

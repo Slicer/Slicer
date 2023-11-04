@@ -53,7 +53,7 @@ class MarkupsInCompareViewersSelfTestWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -76,7 +76,7 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
         """
         Run the actual algorithm
         """
-        print('Running test of the markups in compare viewers')
+        print("Running test of the markups in compare viewers")
 
         #
         # first load the data
@@ -88,7 +88,7 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
         #
         # link the viewers
         #
-        sliceLogic = slicer.app.layoutManager().sliceWidget('Red').sliceLogic()
+        sliceLogic = slicer.app.layoutManager().sliceWidget("Red").sliceLogic()
         compositeNode = sliceLogic.GetSliceCompositeNode()
         compositeNode.SetLinkedControl(1)
 
@@ -139,7 +139,7 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
         #
         # get compare slice composite node
         #
-        compareLogic1 = slicer.app.layoutManager().sliceWidget('Compare1').sliceLogic()
+        compareLogic1 = slicer.app.layoutManager().sliceWidget("Compare1").sliceLogic()
         compareCompositeNode1 = compareLogic1.GetSliceCompositeNode()
 
         # set MRHead in the background
@@ -204,9 +204,9 @@ class MarkupsInCompareViewersSelfTestTest(ScriptedLoadableModuleTest):
 
         # start in the welcome module
         m = slicer.util.mainWindow()
-        m.moduleSelector().selectModule('Welcome')
+        m.moduleSelector().selectModule("Welcome")
 
         logic = MarkupsInCompareViewersSelfTestLogic()
         logic.run()
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

@@ -17,8 +17,8 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
     """
 
     def __init__(self, scriptedEffect):
-        scriptedEffect.name = 'Level tracing'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Level tracing')
+        scriptedEffect.name = "Level tracing"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Level tracing")
         AbstractScriptedSegmentEditorLabelEffect.__init__(self, scriptedEffect)
 
         # Effect-specific members
@@ -28,11 +28,11 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedLabelEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/LevelTracing.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/LevelTracing.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()
@@ -96,7 +96,7 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
             self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd)
 
         elif eventId == vtk.vtkCommand.MouseMoveEvent:
-            if pipeline.actionState == '':
+            if pipeline.actionState == "":
                 xy = callerInteractor.GetEventPosition()
                 if pipeline.preview(xy):
                     self.sliceRotatedErrorLabel.text = ""
@@ -104,7 +104,7 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
                     self.sliceRotatedErrorLabel.text = (
                         '<b><font color="red">'
                         + _("Slice view is not aligned with segmentation axis.<br>To use this effect, click the 'Slice views orientation' warning button.")
-                        + '</font></b>')
+                        + "</font></b>")
                 abortEvent = True
                 self.lastXY = xy
         elif eventId == vtk.vtkCommand.EnterEvent:
@@ -118,15 +118,15 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
         return abortEvent
 
     def processViewNodeEvents(self, callerViewNode, eventId, viewWidget):
-        if callerViewNode and callerViewNode.IsA('vtkMRMLSliceNode'):
+        if callerViewNode and callerViewNode.IsA("vtkMRMLSliceNode"):
             # Get draw pipeline for current slice
             pipeline = self.pipelineForWidget(viewWidget)
             if pipeline is None:
-                logging.error('processViewNodeEvents: Invalid pipeline')
+                logging.error("processViewNodeEvents: Invalid pipeline")
                 return
 
             # Update the preview to the new slice
-            if pipeline.actionState == '' and self.lastXY:
+            if pipeline.actionState == "" and self.lastXY:
                 pipeline.preview(self.lastXY)
 
     def pipelineForWidget(self, sliceWidget):
@@ -157,7 +157,7 @@ class LevelTracingPipeline:
     def __init__(self, effect, sliceWidget):
         self.effect = effect
         self.sliceWidget = sliceWidget
-        self.actionState = ''
+        self.actionState = ""
 
         self.xyPoints = vtk.vtkPoints()
         self.rasPoints = vtk.vtkPoints()

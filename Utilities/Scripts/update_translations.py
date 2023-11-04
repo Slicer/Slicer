@@ -27,19 +27,19 @@ import sys
 def get_python_context(source_file):
     if os.path.isfile(source_file):
         parent_folder = os.path.dirname(source_file)
-        init_file_path = parent_folder + os.path.sep + '__init__.py'
+        init_file_path = parent_folder + os.path.sep + "__init__.py"
 
         if os.path.isfile(init_file_path):
             context_name = os.path.basename(parent_folder)
-            context_name += '.' + os.path.basename(source_file).replace('.py', '')
+            context_name += "." + os.path.basename(source_file).replace(".py", "")
             return context_name
         else:
-            return os.path.basename(source_file).replace('.py', '')
+            return os.path.basename(source_file).replace(".py", "")
     else:
         return os.path.basename(source_file)
 
 
-def patch_python_source(source_code, context_name, tr_function_name='translate'):
+def patch_python_source(source_code, context_name, tr_function_name="translate"):
     """
     Search in the source code any occurrence of the translation function call pattern and replace
     it with the transformed translation function call.
@@ -62,7 +62,7 @@ def patch_python_source(source_code, context_name, tr_function_name='translate')
 
     # \1 refers to any character that comes before the _(...), except _
     # \2 refers to the translation function parameter, like Y in _(Y)
-    transformed_function_text = r'\1' + tr_function_name + '("' + context_name + '", ' + r'\2' + ')'
+    transformed_function_text = r"\1" + tr_function_name + '("' + context_name + '", ' + r"\2" + ")"
 
     source_code = source_code.decode()
 
@@ -85,7 +85,7 @@ def patch_python_files(source_files, root_dir):
 
     for source_file in source_files:
         # Skip non-Python files
-        if not str(source_file).endswith('.py'):
+        if not str(source_file).endswith(".py"):
             continue
 
         source_file = os.path.join(root_dir, source_file)
@@ -94,13 +94,13 @@ def patch_python_files(source_files, root_dir):
         if os.path.isfile(original_source_file):
             # Original file already exists, probably remained from a previous abrupted
             # patching process, so use that.
-            with open(original_source_file, 'rb') as file_object:
+            with open(original_source_file, "rb") as file_object:
                 original_source_code = file_object.read()
-            with open(source_file, 'wb') as file_object:
+            with open(source_file, "wb") as file_object:
                 file_object.write(original_source_code)
         else:
             # Original file content is in the source file
-            with open(source_file, 'rb') as file_object:
+            with open(source_file, "rb") as file_object:
                 original_source_code = file_object.read()
 
         context_name = get_python_context(source_file)
@@ -111,9 +111,9 @@ def patch_python_files(source_files, root_dir):
                 os.remove(original_source_file)
         else:
             # The file was patched, save original file content so that we can later restore it
-            with open(original_source_file, 'wb') as file_object:
+            with open(original_source_file, "wb") as file_object:
                 file_object.write(original_source_code)
-            with open(source_file, 'wb') as file_object:
+            with open(source_file, "wb") as file_object:
                 file_object.write(patched_source_code)
 
 
@@ -126,16 +126,16 @@ def restore_patched_python_files(source_files, root_dir):
 
     for source_file in source_files:
         # Skip non-Python files
-        if not str(source_file).endswith('.py'):
+        if not str(source_file).endswith(".py"):
             continue
 
         source_file = os.path.join(root_dir, source_file)
         original_source_file = os.path.splitext(source_file)[0] + ".pyTrSource"
         if os.path.isfile(original_source_file):
             # Restore Python file from source
-            with open(original_source_file, 'rb') as file_object:
+            with open(original_source_file, "rb") as file_object:
                 source_code = file_object.read()
-            with open(source_file, 'wb') as file_object:
+            with open(source_file, "wb") as file_object:
                 file_object.write(source_code)
             os.remove(original_source_file)
 
@@ -165,7 +165,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
 
     # Get list of translatable files based on file extension
 
-    translatableFilesListPath = source_code_dir + '/TranslatableFilesList.txt'
+    translatableFilesListPath = source_code_dir + "/TranslatableFilesList.txt"
     logging.debug(f"Discovering translatable files, writing to {translatableFilesListPath}")
 
     extensions = ["java", "jui", "ui", "c", "c++", "cc", "cpp", "cxx", "ch", "h", "h++", "hh", "hpp", "hxx", "js", "qs", "qml", "qrc"]  # defaults from Qt-6.3
@@ -184,7 +184,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
     from pathlib import Path
     source_files = []
     for ext in extensions:
-        source_files.extend(Path(source_code_dir).rglob('*.' + ext))
+        source_files.extend(Path(source_code_dir).rglob("*." + ext))
 
     # Remove grouping based on file extension (sort based on folder structure)
     source_files.sort()
@@ -192,7 +192,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
     # Create final file list using filtering and write out paths to translatableFilesList file
     source_files_filtered = []
     logging.debug(f"Filter source files with regex: {source_file_regex}")
-    with open(translatableFilesListPath, 'w') as f:
+    with open(translatableFilesListPath, "w") as f:
         for source_file in source_files:
             relative_path = str(source_file.relative_to(Path(source_code_dir)))
 
@@ -203,7 +203,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
                     continue
 
             # Skip Python file if internationalization is explicitly disabled in it
-            if str(source_file).endswith('.py'):
+            if str(source_file).endswith(".py"):
                 with open(source_file) as file_object:
                     source_code = file_object.read()
                 if "-*- i18n: disabled -*-" in source_code:
@@ -287,7 +287,7 @@ def _generate_translation_header_from_cli_xml(cli_xml_filename):
                 element_text = text_item
             if element_text is None:
                 continue
-            element_text = element_text.replace('\n', '\\n')
+            element_text = element_text.replace("\n", "\\n")
             element_text = element_text.replace('\"', '\\"')
             result += f'QT_TRANSLATE_NOOP("{translation_context}", "{element_text}")\n'
         return result
@@ -303,35 +303,35 @@ def _generate_translation_header_from_cli_xml(cli_xml_filename):
 
     translation_context = "CLI_" + os.path.splitext(os.path.basename(cli_xml_filename))[0]
 
-    if not root.find('executable') or not root.find('title'):
+    if not root.find("executable") or not root.find("title"):
         # Not a CLI module descriptor XML file
         return False
 
     cpp_header_str = f"// Generated automatically by update_translations.py from {os.path.basename(cli_xml_filename)}\n\n"
 
     # Module information
-    cpp_header_str += to_translation_header("qSlicerAbstractCoreModule", root.find('category').text.split('.'))
-    cpp_header_str += to_translation_header(translation_context, root.find('title'))
-    cpp_header_str += to_translation_header(translation_context, root.find('description'))
-    cpp_header_str += to_translation_header(translation_context, root.find('acknowledgements'))
+    cpp_header_str += to_translation_header("qSlicerAbstractCoreModule", root.find("category").text.split("."))
+    cpp_header_str += to_translation_header(translation_context, root.find("title"))
+    cpp_header_str += to_translation_header(translation_context, root.find("description"))
+    cpp_header_str += to_translation_header(translation_context, root.find("acknowledgements"))
 
     # Parameters
-    for parameter in root.findall('parameters'):
-        cpp_header_str += to_translation_header(translation_context, parameter.find('label'))
-        cpp_header_str += to_translation_header(translation_context, parameter.find('description'))
-        for elem in parameter.findall('./*/label'):
+    for parameter in root.findall("parameters"):
+        cpp_header_str += to_translation_header(translation_context, parameter.find("label"))
+        cpp_header_str += to_translation_header(translation_context, parameter.find("description"))
+        for elem in parameter.findall("./*/label"):
             cpp_header_str += to_translation_header(translation_context, elem)
-        for elem in parameter.findall('./*/description'):
+        for elem in parameter.findall("./*/description"):
             cpp_header_str += to_translation_header(translation_context, elem)
-        for elem in parameter.findall('./string-enumeration/default'):
+        for elem in parameter.findall("./string-enumeration/default"):
             cpp_header_str += to_translation_header(translation_context, elem)
-        for elem in parameter.findall('./string-enumeration/element'):
+        for elem in parameter.findall("./string-enumeration/element"):
             cpp_header_str += to_translation_header(translation_context, elem)
 
     # Write to file
     cpp_header_path = os.path.splitext(cli_xml_filename)[0] + "_tr.h"
     logging.info("Writing output file: " + cpp_header_path)
-    with open(cpp_header_path, 'w', encoding='utf8') as cpp_header_file:
+    with open(cpp_header_path, "w", encoding="utf8") as cpp_header_file:
         cpp_header_file.write(cpp_header_str)
 
 
@@ -372,16 +372,16 @@ def main(argv):
                              " (translations folder of https://github.com/Slicer/SlicerLanguageTranslations)")
     parser.add_argument("-l", "--language", default=None, dest="language",
                         help="choose specific ts file to update by language (e.g., use en-US to update only US English translation file)")
-    parser.add_argument("-r", "--remove-obsolete-strings", default=False, dest="remove_obsolete_strings", action='store_true',
+    parser.add_argument("-r", "--remove-obsolete-strings", default=False, dest="remove_obsolete_strings", action="store_true",
                         help="removes obsolete source strings (by calling lupdate with -noobsolete argument)")
-    parser.add_argument("-v", "--verbose", default=False, dest="verbose", action='store_true',
+    parser.add_argument("-v", "--verbose", default=False, dest="verbose", action="store_true",
                         help="show more progress information")
-    parser.add_argument("-k", "--keep-temporary-files", default=False, dest="keep_temporary_files", action='store_true',
+    parser.add_argument("-k", "--keep-temporary-files", default=False, dest="keep_temporary_files", action="store_true",
                         help="keep temporary files (for debugging the translation process)")
     args = parser.parse_args(argv)
 
     if args.verbose:
-        logging.basicConfig(format='%(message)s', level=logging.DEBUG)
+        logging.basicConfig(format="%(message)s", level=logging.DEBUG)
 
     # Component-specific defaults and additional operations
     if args.component == "Slicer":
@@ -389,7 +389,7 @@ def main(argv):
         # In Slicer, by default, only translate Python files that are in the Modules folder
         # (some complicated Python files that are outside the Modules folder make lupdate crash)
         if not args.source_filter_regex:
-            args.source_filter_regex = '|'.join([
+            args.source_filter_regex = "|".join([
                 r"^(?!.*\.py$).*$",  # non-Python files
                 r"^Modules\\.+\.py$",  # Python files in the Modules folder
             ])
@@ -400,9 +400,9 @@ def main(argv):
             os.path.join(args.source_code_dir, "Docs", "_extracli"),
         ]
         cli_exclude_names = [
-            'CLIROITest.xml',
-            'TestGridTransformRegistration.xml',
-            'DiffusionTensorTest.xml',
+            "CLIROITest.xml",
+            "TestGridTransformRegistration.xml",
+            "DiffusionTensorTest.xml",
         ]
         extract_translatable_from_cli_modules(cli_input_paths, cli_exclude_names)
     else:

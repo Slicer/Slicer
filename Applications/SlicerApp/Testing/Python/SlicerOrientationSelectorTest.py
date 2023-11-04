@@ -62,10 +62,10 @@ class SlicerOrientationSelectorTestLogic(ScriptedLoadableModuleLogic):
         node has valid image data
         """
         if not volumeNode:
-            logging.debug('hasImageData failed: no volume node')
+            logging.debug("hasImageData failed: no volume node")
             return False
         if volumeNode.GetImageData() is None:
-            logging.debug('hasImageData failed: no image data in volume node')
+            logging.debug("hasImageData failed: no image data in volume node")
             return False
         return True
 
@@ -106,7 +106,7 @@ class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
         import SampleData
         mrHeadVolume = SampleData.downloadSample("MRHead")
 
-        slicer.util.selectModule('Reformat')
+        slicer.util.selectModule("Reformat")
 
         # Select Red slice
         widget = slicer.modules.reformat.widgetRepresentation()
@@ -124,8 +124,8 @@ class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
 
         # Check orientations associated with orientations selector
         orientations = [sliceOrientationSelector.itemText(idx) for idx in range(sliceOrientationSelector.count)]
-        expectedOrientations = ['Axial', 'Sagittal', 'Coronal', 'Reformat']
+        expectedOrientations = ["Axial", "Sagittal", "Coronal", "Reformat"]
         if orientations != expectedOrientations:
-            raise Exception(f'Problem with orientation selector\norientations: {orientations}\nexpectedOrientations: {expectedOrientations}')
+            raise Exception(f"Problem with orientation selector\norientations: {orientations}\nexpectedOrientations: {expectedOrientations}")
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

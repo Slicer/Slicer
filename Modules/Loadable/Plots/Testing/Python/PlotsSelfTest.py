@@ -75,10 +75,10 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
     # ------------------------------------------------------------------------------
     def section_SetupPathsAndNames(self):
         # Set constants
-        self.tableName = 'SampleTable'
-        self.xColumnName = 'x'
-        self.y1ColumnName = 'cos'
-        self.y2ColumnName = 'sin'
+        self.tableName = "SampleTable"
+        self.xColumnName = "x"
+        self.y1ColumnName = "cos"
+        self.y2ColumnName = "sin"
 
         self.series1Name = "Cosine"
         self.series2Name = "Sine"
@@ -143,9 +143,9 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
         plotChartNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotChartNode", self.chartName)
         plotChartNode.AddAndObservePlotSeriesNodeID(plotSeriesNode1.GetID())
         plotChartNode.AddAndObservePlotSeriesNodeID(plotSeriesNode2.GetID())
-        plotChartNode.SetTitle('A simple plot with 2 curves')
-        plotChartNode.SetXAxisTitle('A simple plot with 2 curves')
-        plotChartNode.SetYAxisTitle('This is the Y axis')
+        plotChartNode.SetTitle("A simple plot with 2 curves")
+        plotChartNode.SetXAxisTitle("A simple plot with 2 curves")
+        plotChartNode.SetYAxisTitle("This is the Y axis")
 
     # ------------------------------------------------------------------------------
     def section_TestPlotView(self):

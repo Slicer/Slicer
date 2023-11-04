@@ -64,10 +64,10 @@ class BRAINSFitRigidRegistrationCrashIssue4139Logic(ScriptedLoadableModuleLogic)
         node has valid image data
         """
         if not volumeNode:
-            logging.debug('hasImageData failed: no volume node')
+            logging.debug("hasImageData failed: no volume node")
             return False
         if volumeNode.GetImageData() is None:
-            logging.debug('hasImageData failed: no image data in volume node')
+            logging.debug("hasImageData failed: no image data in volume node")
             return False
         return True
 
@@ -108,13 +108,13 @@ class BRAINSFitRigidRegistrationCrashIssue4139Test(ScriptedLoadableModuleTest):
 
         import SampleData
 
-        fixed = SampleData.downloadSample('MRBrainTumor1')
+        fixed = SampleData.downloadSample("MRBrainTumor1")
         self.assertIsNotNone(logic.hasImageData(fixed))
 
-        moving = SampleData.downloadSample('MRBrainTumor2')
+        moving = SampleData.downloadSample("MRBrainTumor2")
         self.assertIsNotNone(logic.hasImageData(moving))
 
-        self.delayDisplay('Finished with download and loading')
+        self.delayDisplay("Finished with download and loading")
 
         outputTransform = slicer.vtkMRMLLinearTransformNode()
         slicer.mrmlScene.AddNode(outputTransform)
@@ -123,15 +123,15 @@ class BRAINSFitRigidRegistrationCrashIssue4139Test(ScriptedLoadableModuleTest):
         slicer.mrmlScene.AddNode(outputVolume)
 
         parameters = {
-            'fixedVolume': fixed,
-            'movingVolume': moving,
-            'linearTransform': outputTransform,
-            'outputVolume': outputVolume,
-            'useRigid': True
+            "fixedVolume": fixed,
+            "movingVolume": moving,
+            "linearTransform": outputTransform,
+            "outputVolume": outputVolume,
+            "useRigid": True
         }
         cmdLineNode = slicer.cli.runSync(slicer.modules.brainsfit, parameters=parameters)
         self.assertIsNotNone(cmdLineNode)
 
         # If test reach this point without crashing it is a success
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

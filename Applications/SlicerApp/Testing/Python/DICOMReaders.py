@@ -111,16 +111,16 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
             try:
                 import SampleData
                 dicomFilesDirectory = SampleData.downloadFromURL(
-                    fileNames=dataset['fileName'], uris=dataset['url'], checksums=dataset['checksum'])[0]
-                self.delayDisplay('Finished with download')
+                    fileNames=dataset["fileName"], uris=dataset["url"], checksums=dataset["checksum"])[0]
+                self.delayDisplay("Finished with download")
 
                 #
                 # insert the data into the database
                 #
                 self.delayDisplay("Switching to temp database directory")
-                originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase('tempDICOMDatabase')
+                originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase("tempDICOMDatabase")
 
-                self.delayDisplay('Importing DICOM')
+                self.delayDisplay("Importing DICOM")
                 slicer.util.selectModule("DICOM")
 
                 browserWidget = slicer.modules.DICOMWidget.browserWidget
@@ -132,7 +132,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
                 # select the series
                 #
 
-                browserWidget.onSeriesSelected([dataset['seriesUID']])
+                browserWidget.onSeriesSelected([dataset["seriesUID"]])
                 # load the data by series UID
                 browserWidget.examineForLoading()
                 # Get first selected loadable
@@ -146,26 +146,26 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
                 # try loading using each of the selected readers, fail
                 # on enexpected load issue
                 #
-                scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+                scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
                 readerApproaches = scalarVolumePlugin.readerApproaches()
                 basename = loadable.name
                 volumesByApproach = {}
                 for readerApproach in readerApproaches:
-                    self.delayDisplay('Loading Selection with approach: %s' % readerApproach)
+                    self.delayDisplay("Loading Selection with approach: %s" % readerApproach)
                     loadable.name = basename + "-" + readerApproach
                     volumeNode = scalarVolumePlugin.load(loadable, readerApproach)
-                    if not volumeNode and readerApproach not in dataset['expectedFailures']:
+                    if not volumeNode and readerApproach not in dataset["expectedFailures"]:
                         raise Exception("Expected to be able to read with %s, but couldn't" % readerApproach)
-                    if volumeNode and readerApproach in dataset['expectedFailures']:
+                    if volumeNode and readerApproach in dataset["expectedFailures"]:
                         raise Exception("Expected to NOT be able to read with %s, but could!" % readerApproach)
                     if volumeNode:
                         volumesByApproach[readerApproach] = volumeNode
 
-                        self.delayDisplay('Test quantity and unit')
-                        if 'voxelValueQuantity' in dataset.keys():
-                            self.assertEqual(volumeNode.GetVoxelValueQuantity().GetAsPrintableString(), dataset['voxelValueQuantity'])
-                        if 'voxelValueUnits' in dataset.keys():
-                            self.assertEqual(volumeNode.GetVoxelValueUnits().GetAsPrintableString(), dataset['voxelValueUnits'])
+                        self.delayDisplay("Test quantity and unit")
+                        if "voxelValueQuantity" in dataset.keys():
+                            self.assertEqual(volumeNode.GetVoxelValueQuantity().GetAsPrintableString(), dataset["voxelValueQuantity"])
+                        if "voxelValueUnits" in dataset.keys():
+                            self.assertEqual(volumeNode.GetVoxelValueUnits().GetAsPrintableString(), dataset["voxelValueUnits"])
 
                 #
                 # for each approach that loaded as expected, compare the volumes
@@ -173,33 +173,33 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
                 #
                 failedComparisons = {}
                 approachesThatLoaded = list(volumesByApproach.keys())
-                print('approachesThatLoaded %s' % approachesThatLoaded)
+                print("approachesThatLoaded %s" % approachesThatLoaded)
                 for approachIndex in range(len(approachesThatLoaded)):
                     firstApproach = approachesThatLoaded[approachIndex]
                     firstVolume = volumesByApproach[firstApproach]
                     for secondApproachIndex in range(approachIndex + 1, len(approachesThatLoaded)):
                         secondApproach = approachesThatLoaded[secondApproachIndex]
                         secondVolume = volumesByApproach[secondApproach]
-                        print(f'comparing  {firstApproach},{secondApproach}')
-                        comparison = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin'].compareVolumeNodes(firstVolume, secondVolume)
+                        print(f"comparing  {firstApproach},{secondApproach}")
+                        comparison = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"].compareVolumeNodes(firstVolume, secondVolume)
                         if comparison != "":
-                            print(('failed: %s', comparison))
+                            print(("failed: %s", comparison))
                             failedComparisons[firstApproach, secondApproach] = comparison
 
                 if len(failedComparisons.keys()) > 0:
                     raise Exception("Loaded volumes don't match: %s" % failedComparisons)
 
-                self.delayDisplay('%s Test passed!' % dataset['name'])
+                self.delayDisplay("%s Test passed!" % dataset["name"])
 
             except Exception as e:
                 import traceback
                 traceback.print_exc()
-                self.delayDisplay('%s Test caused exception!\n' % dataset['name'] + str(e))
+                self.delayDisplay("%s Test caused exception!\n" % dataset["name"] + str(e))
                 testPass = False
 
         self.delayDisplay("Restoring original database directory")
         DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
-        slicer.util.selectModule('DICOMReaders')
+        slicer.util.selectModule("DICOMReaders")
 
         logging.info(loadingResult)
 
@@ -222,10 +222,10 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
         import SampleData
         dicomFilesDirectory = SampleData.downloadFromURL(
-            fileNames='deidentifiedMRHead-dcm-one-series.zip',
-            uris=TESTING_DATA_URL + 'SHA256/899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928',
-            checksums='SHA256:899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928')[0]
-        self.delayDisplay('Finished with download\n')
+            fileNames="deidentifiedMRHead-dcm-one-series.zip",
+            uris=TESTING_DATA_URL + "SHA256/899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
+            checksums="SHA256:899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928")[0]
+        self.delayDisplay("Finished with download\n")
 
         seriesUID = "1.3.6.1.4.1.5962.99.1.3814087073.479799962.1489872804257.270.0"
         seriesRASBounds = [-87.29489517211913, 81.70450973510744,
@@ -255,7 +255,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
         try:
 
-            print('Removing %d files from the middle of the series' % len(filesToRemove))
+            print("Removing %d files from the middle of the series" % len(filesToRemove))
             for file in filesToRemove:
                 filePath = os.path.join(dicomFilesDirectory, seriesDirectory, file)
                 os.remove(filePath)
@@ -264,9 +264,9 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
             # insert the data into the database
             #
             self.delayDisplay("Switching to temp database directory")
-            originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase('tempDICOMDatabase')
+            originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase("tempDICOMDatabase")
 
-            self.delayDisplay('Importing DICOM')
+            self.delayDisplay("Importing DICOM")
             slicer.util.selectModule("DICOM")
 
             browserWidget = slicer.modules.DICOMWidget.browserWidget
@@ -293,22 +293,22 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
             #
             # load and correct for acquisition then check the geometry
             #
-            scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+            scalarVolumePlugin = slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"]()
             volumeNode = scalarVolumePlugin.load(loadable)
 
             if not numpy.allclose(scalarVolumePlugin.acquisitionModeling.fixedCorners[-1], lastSliceCorners):
                 raise Exception("Acquisition transform didn't fix slice corners!")
 
-            self.delayDisplay('test_MissingSlices passed!')
+            self.delayDisplay("test_MissingSlices passed!")
 
         except Exception as e:
             import traceback
             traceback.print_exc()
-            self.delayDisplay('Missing Slices Test caused exception!\n' + str(e))
+            self.delayDisplay("Missing Slices Test caused exception!\n" + str(e))
             testPass = False
 
         self.delayDisplay("Restoring original database directory")
         DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
-        slicer.util.selectModule('')
+        slicer.util.selectModule("")
 
         return testPass

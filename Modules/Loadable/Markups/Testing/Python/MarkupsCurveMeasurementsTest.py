@@ -24,21 +24,21 @@ def verifyArrays(pointData, arrayNames):
 #
 
 # Download test scene
-curveMeasurementsTestDir = slicer.app.temporaryPath + '/curveMeasurementsTest'
-print('Test directory: ', curveMeasurementsTestDir)
+curveMeasurementsTestDir = slicer.app.temporaryPath + "/curveMeasurementsTest"
+print("Test directory: ", curveMeasurementsTestDir)
 if not os.access(curveMeasurementsTestDir, os.F_OK):
     os.mkdir(curveMeasurementsTestDir)
 
-testSceneFilePath = curveMeasurementsTestDir + '/MarkupsCurvatureTestScene.mrb'
+testSceneFilePath = curveMeasurementsTestDir + "/MarkupsCurvatureTestScene.mrb"
 
 slicer.util.downloadFile(
-    TESTING_DATA_URL + 'SHA256/5b1f39e28ad8611790152fdc092ec9b3ee14254aad4897377db9576139c88e32',
+    TESTING_DATA_URL + "SHA256/5b1f39e28ad8611790152fdc092ec9b3ee14254aad4897377db9576139c88e32",
     testSceneFilePath,
-    checksum='SHA256:5b1f39e28ad8611790152fdc092ec9b3ee14254aad4897377db9576139c88e32')
+    checksum="SHA256:5b1f39e28ad8611790152fdc092ec9b3ee14254aad4897377db9576139c88e32")
 
 # Import test scene
 slicer.util.loadScene(testSceneFilePath)
-curveNode = slicer.util.getNode('C')
+curveNode = slicer.util.getNode("C")
 
 # Check number of arrays in the curve node
 curvePointData = curveNode.GetCurveWorld().GetPointData()
@@ -68,13 +68,13 @@ curveNode.GetMeasurement("curvature max").SetEnabled(False)
 curvePointData = curveNode.GetCurveWorld().GetPointData()
 verifyArrays(curvePointData, ["PedigreeIDs", "Tangents", "Normals", "Binormals"])
 
-print('Open curve curvature test finished successfully')
+print("Open curve curvature test finished successfully")
 
 #
 # Test closed curve curvature computation
 #
 
-closedCurveNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsClosedCurveNode')
+closedCurveNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode")
 pos = np.zeros(3)
 for i in range(curveNode.GetNumberOfControlPoints()):
     curveNode.GetNthControlPointPosition(i, pos)
@@ -96,7 +96,7 @@ if abs(curvatureArray.GetRange()[1] - 0.26402460470400924) > 0.0001:
     exceptionMessage = "Unexpected maximum in curvature data array: " + str(curvatureArray.GetRange()[1])
     raise Exception(exceptionMessage)
 
-print('Closed curve curvature test finished successfully')
+print("Closed curve curvature test finished successfully")
 
 #
 # Test interpolation of control point measurements
@@ -107,32 +107,32 @@ print('Closed curve curvature test finished successfully')
 
 slicer.mrmlScene.Clear()
 
-testSceneFilePath = curveMeasurementsTestDir + '/MarkupsControlPointMeasurementInterpolationTestScene.mrb'
+testSceneFilePath = curveMeasurementsTestDir + "/MarkupsControlPointMeasurementInterpolationTestScene.mrb"
 
 slicer.util.downloadFile(
-    TESTING_DATA_URL + 'SHA256/b636ecfc1be54504c2c9843e1ff53242ee6b951228490ae99a89e06c8890e344',
+    TESTING_DATA_URL + "SHA256/b636ecfc1be54504c2c9843e1ff53242ee6b951228490ae99a89e06c8890e344",
     testSceneFilePath,
-    checksum='SHA256:b636ecfc1be54504c2c9843e1ff53242ee6b951228490ae99a89e06c8890e344')
+    checksum="SHA256:b636ecfc1be54504c2c9843e1ff53242ee6b951228490ae99a89e06c8890e344")
 
 # Import test scene
 slicer.util.loadScene(testSceneFilePath)
 
-centerlineModel = slicer.util.getNode('Centerline model')
+centerlineModel = slicer.util.getNode("Centerline model")
 centerlinePolyData = centerlineModel.GetPolyData()
 
 # Create curve node from centerline model
 # (markups curve with radius array output is not yet available in SlicerVMTK)
-centerlineCurve = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsCurveNode')
-centerlineCurve.SetName('CenterlineCurve')
+centerlineCurve = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsCurveNode")
+centerlineCurve.SetName("CenterlineCurve")
 for i in range(centerlinePolyData.GetNumberOfPoints()):
     centerlineCurve.AddControlPoint(vtk.vtkVector3d(centerlinePolyData.GetPoint(i)))
 
 # Add radius data to centerline curve as measurement
 radiusMeasurement = slicer.vtkMRMLStaticMeasurement()
-radiusMeasurement.SetName('Radius')
-radiusMeasurement.SetUnits('mm')
-radiusMeasurement.SetPrintFormat('')  # Prevent from showing up in SH Description
-radiusMeasurement.SetControlPointValues(centerlinePolyData.GetPointData().GetArray('Radius'))
+radiusMeasurement.SetName("Radius")
+radiusMeasurement.SetUnits("mm")
+radiusMeasurement.SetPrintFormat("")  # Prevent from showing up in SH Description
+radiusMeasurement.SetControlPointValues(centerlinePolyData.GetPointData().GetArray("Radius"))
 centerlineCurve.AddMeasurement(radiusMeasurement)
 
 centerlineCurvePointData = centerlineCurve.GetCurveWorld().GetPointData()
@@ -164,7 +164,7 @@ if abs(interpolatedRadiusArray.GetValue(570) - 12.765926543271583) > 0.0001:
     exceptionMessage = "Unexpected maximum in curvature data array: " + str(interpolatedRadiusArray.GetValue(570))
     raise Exception(exceptionMessage)
 
-print('Control point measurement interpolation test finished successfully')
+print("Control point measurement interpolation test finished successfully")
 
 #
 # Test curvature computation for a circle-shaped closed curve
@@ -185,8 +185,8 @@ for controlPointIndex in range(numberOfControlPoints):
     customStaticMeasurementArray.InsertNextValue(1 if controlPointIndex % 3 else 0)
 
 customStaticMeasurement = slicer.vtkMRMLStaticMeasurement()
-customStaticMeasurement.SetName('CustomStaticMeasurement')
-customStaticMeasurement.SetUnits('')
+customStaticMeasurement.SetName("CustomStaticMeasurement")
+customStaticMeasurement.SetUnits("")
 customStaticMeasurement.SetPrintFormat("")
 customStaticMeasurement.SetControlPointValues(customStaticMeasurementArray)
 closedCurveNode.AddMeasurement(customStaticMeasurement)
@@ -197,7 +197,7 @@ verifyArrays(closedCurvePointData, ["PedigreeIDs", "Tangents", "Normals", "Binor
 # Turn on curvature calculation in curve node
 closedCurveNode.GetMeasurement("curvature mean").SetEnabled(True)
 closedCurveNode.GetMeasurement("curvature max").SetEnabled(True)
-curvatureArray = closedCurveNode.GetCurveWorld().GetPointData().GetArray('Curvature')
+curvatureArray = closedCurveNode.GetCurveWorld().GetPointData().GetArray("Curvature")
 if curvatureArray.GetNumberOfValues() < 10:
     exceptionMessage = "Many values are expected in the curvature array, instead found just %d" % curvatureArray.GetNumberOfValues()
     raise Exception(exceptionMessage)
@@ -221,12 +221,12 @@ if abs(closedCurveNode.GetMeasurement("curvature max").GetValue() - 1 / radius) 
 # Check length and area
 
 closedCurveNode.GetMeasurement("length").SetEnabled(True)
-if closedCurveNode.GetMeasurement("length").GetValueWithUnitsAsPrintableString() != '219.9mm':
+if closedCurveNode.GetMeasurement("length").GetValueWithUnitsAsPrintableString() != "219.9mm":
     exceptionMessage = "Unexpected curve length value: " + closedCurveNode.GetMeasurement("length").GetValueWithUnitsAsPrintableString()
     raise Exception(exceptionMessage)
 
 closedCurveNode.GetMeasurement("area").SetEnabled(True)
-if closedCurveNode.GetMeasurement("area").GetValueWithUnitsAsPrintableString() != '38.48cm2':
+if closedCurveNode.GetMeasurement("area").GetValueWithUnitsAsPrintableString() != "38.48cm2":
     exceptionMessage = "Unexpected curve area value: " + closedCurveNode.GetMeasurement("area").GetValueWithUnitsAsPrintableString()
     raise Exception(exceptionMessage)
 
@@ -238,4 +238,4 @@ areaMeasurement.SetEnabled(True)
 areaModelNode = slicer.modules.models.logic().AddModel(areaMeasurement.GetMeshValue())
 areaModelNode.GetDisplayNode().SetEdgeVisibility(True)
 
-print('Radius of curvature computation is verified successfully')
+print("Radius of curvature computation is verified successfully")

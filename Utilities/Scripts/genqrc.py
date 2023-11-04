@@ -79,7 +79,7 @@ def main(argv):
         ""]
 
     for path in args.resource_directories:
-        path = os.path.dirname(os.path.join(path, '.'))  # remove trailing '/'
+        path = os.path.dirname(os.path.join(path, "."))  # remove trailing '/'
         qrc_content += buildContent(os.path.dirname(path), os.path.basename(path))
 
     qrc_content += ["</RCC>"]

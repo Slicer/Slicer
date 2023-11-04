@@ -55,7 +55,7 @@ class sceneImport2428Widget(ScriptedLoadableModuleWidget):
         helloWorldButton = qt.QPushButton("Hello world")
         helloWorldButton.toolTip = "Print 'Hello world' in standard output."
         dummyFormLayout.addWidget(helloWorldButton)
-        helloWorldButton.connect('clicked(bool)', self.onHelloWorldButtonClicked)
+        helloWorldButton.connect("clicked(bool)", self.onHelloWorldButtonClicked)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -125,7 +125,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
             segmentationNode.AddSegmentFromClosedSurfaceRepresentation(seed.GetOutput(), name, color)
 
         # Export to labelmap volume
-        headLabel = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode')
+        headLabel = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
         slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(segmentationNode, headLabel, head)
 
         selectionNode = slicer.app.applicationLogic().GetSelectionNode()

@@ -5,7 +5,7 @@ import slicer
 __sitk__MRMLIDImageIO_Registered__ = False
 
 
-def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className='vtkMRMLScalarVolumeNode'):
+def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className="vtkMRMLScalarVolumeNode"):
     """ Given a SimpleITK image, push it back to slicer for viewing
 
     :param targetNode: Target node that will store the image. If None then a new node will be created.
@@ -42,16 +42,16 @@ def GetSlicerITKReadWriteAddress(nodeObjectOrName):
             so that the image can be read directly from the MRML scene
     """
     myNode = nodeObjectOrName if isinstance(nodeObjectOrName, slicer.vtkMRMLNode) else slicer.util.getNode(nodeObjectOrName)
-    myNodeSceneAddress = myNode.GetScene().GetAddressAsString("").replace('Addr=', '')
+    myNodeSceneAddress = myNode.GetScene().GetAddressAsString("").replace("Addr=", "")
     myNodeSceneID = myNode.GetID()
-    myNodeFullITKAddress = 'slicer:' + myNodeSceneAddress + '#' + myNodeSceneID
+    myNodeFullITKAddress = "slicer:" + myNodeSceneAddress + "#" + myNodeSceneID
     return myNodeFullITKAddress
 
 
 def EnsureRegistration():
     """Make sure MRMLIDImageIO reader is registered.
     """
-    if 'MRMLIDImageIO' in sitk.ImageFileReader().GetRegisteredImageIOs():
+    if "MRMLIDImageIO" in sitk.ImageFileReader().GetRegisteredImageIOs():
         # already registered
         return
 
@@ -63,5 +63,5 @@ def EnsureRegistration():
     if __sitk__MRMLIDImageIO_Registered__:
         return
     vl = slicer.modules.volumes.logic()
-    volumeNode = vl.AddArchetypeVolume('_DUMMY_DOES_NOT_EXIST__', 'invalidRead')
+    volumeNode = vl.AddArchetypeVolume("_DUMMY_DOES_NOT_EXIST__", "invalidRead")
     __sitk__MRMLIDImageIO_Registered__ = True

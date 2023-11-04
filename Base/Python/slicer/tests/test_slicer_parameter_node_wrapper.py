@@ -57,7 +57,7 @@ class CustomClassSerializer(Serializer):
 
     def read(self, parameterNode, name: str):
         val = parameterNode.GetParameter(name)
-        vals = val.split(',')
+        vals = val.split(",")
         return CustomClass(int(vals[0]), int(vals[1]), int(vals[2]))
 
     def remove(self, parameterNode, name: str) -> None:
@@ -99,7 +99,7 @@ class AnotherCustomClassSerializer(Serializer):
         if val == "None":
             return None
         else:
-            vals = val.split(',')
+            vals = val.split(",")
             return AnotherCustomClass(int(vals[0]), int(vals[1]), int(vals[2]))
 
     def remove(self, parameterNode, name: str) -> None:
@@ -759,19 +759,19 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertTrue(param.isCached("inputs"))
         self.assertTrue(param.isCached("output"))
 
-        inputs = [slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode') for _ in range(5)]
+        inputs = [slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode") for _ in range(5)]
         param.inputs = inputs
         self.assertEqual(param.inputs, inputs)
 
         self.assertIsInstance(param.inputs[0], vtkMRMLModelNode)
 
-        output = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+        output = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
         param.output = output
         self.assertEqual(param.output, output)
 
         # cannot set a model to a markup
         with self.assertRaises(TypeError):
-            param.output = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScalarVolumeNode')
+            param.output = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
 
         param.output = None
         self.assertIsNone(param.output)
@@ -784,9 +784,9 @@ class TypedParameterNodeTest(unittest.TestCase):
         param = ParameterNodeType(newParameterNode())
         self.assertTrue(param.isCached("node"))
 
-        param.node = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+        param.node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
         self.assertIsInstance(param.node, vtkMRMLModelNode)
-        param.node = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScalarVolumeNode')
+        param.node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
         self.assertIsInstance(param.node, vtkMRMLScalarVolumeNode)
 
         with self.assertRaises(TypeError):
@@ -856,9 +856,9 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         self.assertIsNone(param.value)
 
-        model = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
-        labelMapVolume = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode')
-        scalarVolume = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScalarVolumeNode')
+        model = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+        labelMapVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
+        scalarVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
 
         param.value = model
         self.assertIs(param.value, model)
@@ -998,16 +998,16 @@ class TypedParameterNodeTest(unittest.TestCase):
         self.assertEqual(1, callback.called)
 
         obs = param.s
-        obs += ('string1', 'string2')
+        obs += ("string1", "string2")
         self.assertEqual(2, callback.called)
 
-        list(param.s).append('Should not cause an event')
+        list(param.s).append("Should not cause an event")
         self.assertEqual(2, callback.called)
 
-        param.s = ['a', 'b', 'c']
+        param.s = ["a", "b", "c"]
         self.assertEqual(3, callback.called)
 
-        param.n = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+        param.n = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
         self.assertEqual(4, callback.called)
 
         param.n = None
@@ -1018,7 +1018,7 @@ class TypedParameterNodeTest(unittest.TestCase):
             self.assertEqual(param.i, 9)
             param.s = []
             self.assertEqual(param.s, [])
-            node = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode')
+            node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
             param.n = node
             self.assertEqual(param.n, node)
 
@@ -1034,8 +1034,8 @@ class TypedParameterNodeTest(unittest.TestCase):
             min0: Annotated[int, Minimum(0)]
             max0: Annotated[int, Maximum(0)]
             within0_10: Annotated[float, WithinRange(0, 10)]
-            choiceStr: Annotated[str, Choice(['a', 'b', 'c']), Default('a')]
-            excludeStr: Annotated[str, Exclude(['a', 'b', 'c'])]
+            choiceStr: Annotated[str, Choice(["a", "b", "c"]), Default("a")]
+            excludeStr: Annotated[str, Exclude(["a", "b", "c"])]
 
         param = ParameterNodeType(newParameterNode())
 
@@ -1060,21 +1060,21 @@ class TypedParameterNodeTest(unittest.TestCase):
             param.within0_10 = -1
         self.assertEqual(param.within0_10, 5)
 
-        param.choiceStr = 'a'
-        param.choiceStr = 'b'
-        param.choiceStr = 'c'
+        param.choiceStr = "a"
+        param.choiceStr = "b"
+        param.choiceStr = "c"
         with self.assertRaises(ValueError):
-            param.choiceStr = 'd'
+            param.choiceStr = "d"
 
-        param.excludeStr = 'd'
-        param.excludeStr = ''
-        param.excludeStr = 'e'
+        param.excludeStr = "d"
+        param.excludeStr = ""
+        param.excludeStr = "e"
         with self.assertRaises(ValueError):
-            param.excludeStr = 'a'
+            param.excludeStr = "a"
         with self.assertRaises(ValueError):
-            param.excludeStr = 'b'
+            param.excludeStr = "b"
         with self.assertRaises(ValueError):
-            param.excludeStr = 'c'
+            param.excludeStr = "c"
 
     def test_overlapping_members(self):
         @parameterNodeWrapper
