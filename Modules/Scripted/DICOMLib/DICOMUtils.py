@@ -1,4 +1,5 @@
 import logging
+import numpy as np
 import os
 
 import ctk
@@ -629,7 +630,6 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
         ref[tag] = value
 
     # Determine out-of-plane direction for first slice
-    import numpy as np
     sliceAxes = [float(zz) for zz in ref[tags['orientation']].split('\\')]
     x = np.array(sliceAxes[:3])
     y = np.array(sliceAxes[3:])
@@ -698,6 +698,67 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
 
     return files, distances, warningText
 
+# ------------------------------------------------------------------------------
+def pixelArrayFromFiles(filePaths):
+    """ Return an empty pixel array of the size needed to store the
+    files indicated by the filePaths.  Assumes they have been sorted
+    using getSortedImageFiles first.
+    Uses values from the dicomDatabase.
+    """
+    tags = {}
+    tags['rows'] = "0028,0010"
+    tags['columns'] = "0028,0011"
+    firstFile = filePaths[0]
+    rows = int(slicer.dicomDatabase.fileValue(firstFile, tags['rows']))
+    columns = int(slicer.dicomDatabase.fileValue(firstFile, tags['columns']))
+    slices = len(filePaths)
+    dtype = "int16" # always use short for the image
+    pixelArray = np.empty([slices, rows, columns], dtype=dtype)
+    return pixelArray
+
+# ------------------------------------------------------------------------------
+def ijkToRASFromFiles(filePaths):
+    """ Return an IJKToRAS matrix based on the headers of the passed paths
+    using the values from the dicomDatabase
+    """
+    firstFile = filePaths[0]
+    lastFile = filePaths[-1]
+    tags = {}
+    tags['position'] = "0020,0032"
+    tags['orientation'] = "0020,0037"
+    tags['spacing'] = "0028,0030"
+    positionString = slicer.dicomDatabase.fileValue(firstFile, tags['position'])
+    position = np.array(list(map(float, positionString.split('\\'))))
+    orientationString = slicer.dicomDatabase.fileValue(firstFile, tags['orientation'])
+    orientation = list(map(float, orientationString.split('\\')))
+    spacingString = slicer.dicomDatabase.fileValue(firstFile, tags['spacing'])
+    spacing = np.array(list(map(float, spacingString.split('\\'))))
+    rowOrientation = np.array(orientation[:3])
+    columnOrientation = np.array(orientation[3:])
+    # map from LPS to RAS
+    lpsToRAS = np.array([-1, -1, 1])
+    position *= lpsToRAS
+    rowOrientation *= lpsToRAS
+    columnOrientation *= lpsToRAS
+    # make ijkToRAS
+    rowVector = spacing[1] * rowOrientation  # dicom PixelSpacing is between rows first, then columns
+    columnVector = spacing[0] * columnOrientation
+    lastPositionString = slicer.dicomDatabase.fileValue(lastFile, tags['position'])
+    lastPosition = np.array(list(map(float, lastPositionString.split('\\'))))
+    lastPosition *= lpsToRAS
+    sliceSpacing = np.linalg.norm(lastPosition - position)
+    if len(filePaths) > 1:
+        sliceSpacing /= (len(filePaths)-1)
+    else:
+        sliceSpacing = 1
+    sliceVector = sliceSpacing * np.cross(rowOrientation, columnOrientation)
+    ijkToRASArray = np.eye(4)
+    ijkToRASArray[0][:3] = rowVector
+    ijkToRASArray[1][:3] = columnVector
+    ijkToRASArray[2][:3] = sliceVector
+    ijkToRASArray[3][:3] = position
+    ijkToRAS = slicer.util.vtkMatrixFromArray(ijkToRASArray.T)
+    return ijkToRAS
 
 # ------------------------------------------------------------------------------
 def refreshDICOMWidget():
@@ -713,7 +774,7 @@ def refreshDICOMWidget():
         return False
     return True
 
-
+# ------------------------------------------------------------------------------
 def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, progressCallback=None, pluginInstances=None):
     """Take list of file lists, return loadables by plugin dictionary
     """
