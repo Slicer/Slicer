@@ -38,3 +38,27 @@ a1335408963ecfc5e96b35ee8d55fea0801c2291
 9390be6bf76e048e6fd384d8bfd607eba2857b5a
 # STYLE: Update python code with statement fixes
 34696fbccdd6efea5f94f5d628dbb902d60a046d
+# STYLE: Fix lint findings in ImportItkSnapLabel.py
+295e37183079f95764ebfab08e243b0a632bdf5b
+# STYLE: Fix missing whitespace after keyword
+415aee60cdb6b23dad60ddf874216139c499453d
+# STYLE: Fix tabbing
+b2eccaaa8cfa6808f647ba0ae630bc9f8717dc59
+# STYLE: Update markdown document line-endings from CRLF to LF
+6c67bc6b8f637c5c31ec5aadf404778ce774f4bb
+# STYLE: Fix Python lint errors
+02887a6256d174a9e9533e062788e350e8b35652
+# STYLE: Trim trailing whitespace in sequences document
+24581a132a53ef48c62327516dcdb448da992596
+# STYLE: Fix brace indentation
+b913a84ea880ded91ec75cf6869b8b6204c42134
+# STYLE: Trim trailing whitespaces
+b1f4a3ac8e3ff2dccd54645f8e42e5dbab87fa7a
+# STYLE: Trim trailing whitespaces in issue template
+9897c876e645ce7c69c388f49a95602a9028a7dc
+# STYLE: Update python scripts to use double quotes in strings
+52586f748a28f52e1c3e01e76e7a005840eb8cf7
+# STYLE: Update python scripts to use double quotes in multiline strings
+88aab174820d9f0811639237f89b914f47c9dcbd
+# STYLE: Update python scripts to avoid escaping inner quotes in strings
+e66f1e29001cea56d2a0851b4286e339fccdd338
