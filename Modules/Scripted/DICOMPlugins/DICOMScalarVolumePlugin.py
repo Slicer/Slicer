@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 import ctk
 import numpy
 import qt
+import time
 import vtk
 import vtkITK
 from slicer.i18n import tr as _
@@ -33,6 +34,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         self.epsilon = epsilon
         self.acquisitionModeling = None
         self.defaultStudyID = 'SLICER10001'  # TODO: What should be the new study ID?
+        self.urlHandlerInterval = 300 # ms
+        self.urlHandlerTimeout = 120 # seconds
 
         self.tags['sopClassUID'] = "0008,0016"
         self.tags['photometricInterpretation'] = "0028,0004"
@@ -58,6 +61,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         self.tags['spacing'] = "0028,0030"
         self.tags['bitsAllocated'] = "0028,0100"
         self.tags['pixelRepresentation'] = "0028,0103"
+        self.tags['rescaleIntercept'] = "0028,1052"
+        self.tags['rescaleSlope'] = "0028,1053"
 
     @staticmethod
     def readerApproaches():
@@ -516,96 +521,69 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
         return volumeNode
 
+    def _processURLHandler(self, urlHandler, volumeNode, urls):
+        """
+        Get the downloaded and uncompressed frames from the urlHandler
+        and put them into the volume node.
+        """
+        framesByURL = urlHandler.getFrames()
+        volumeArray = slicer.util.arrayFromVolume(volumeNode)
+        elapsedTime = time.time() - self._urlHandlerStartTime
+        msg = _("{framesThisLoad} of {frames} in {elapsedTime:.3g}").format(framesThisLoad=len(framesByURL), frames=volumeArray.shape[0], elapsedTime=elapsedTime)
+        print(msg) # TODO
+        logging.info(msg)
+        if len(framesByURL) > 0:
+            for url,frame in framesByURL.items():
+                rescaleInterceptValue = slicer.dicomDatabase.fileValue(url, self.tags['rescaleIntercept'])
+                rescaleSlopeValue = slicer.dicomDatabase.fileValue(url, self.tags['rescaleSlope'])
+                rescaleIntercept = float(rescaleInterceptValue) if rescaleInterceptValue != "" else 0.
+                rescaleSlope = float(rescaleSlopeValue) if rescaleSlopeValue != "" else 1.
+                sliceIndex = urls.index(url)
+                volumeArray[sliceIndex] = rescaleIntercept + rescaleSlope * frame
+            slicer.util.arrayFromVolumeModified(volumeNode)
+        if not urlHandler.requestFinished():
+            if elapsedTime > self.urlHandlerTimeout:
+                logging.error("Download timeout")
+            else:
+                callback = lambda urlHandler=urlHandler, volumeNode=volumeNode, urls=urls: \
+                                    self._processURLHandler(urlHandler, volumeNode, urls)
+                qt.QTimer.singleShot(self.urlHandlerInterval, callback)
+        else:
+            rate = (volumeArray.size * volumeArray.itemsize) / elapsedTime / 1024. / 1024.
+            logging.info(f"Download time {elapsedTime:.3g} at {rate:.2g} mebibytes/second") # TODO i18n
+            print(f"Download time {elapsedTime:.3g} at {rate:.2g} mebibytes/second")
+
     def load(self, loadable, readerApproach=None):
         """Load the select as a scalar volume using desired approach
         """
+        volumeNode = None
         # first, determine if the files are actually URLs
         firstFile = loadable.files[0]
-        print(firstFile)
-        if urlparse(firstFile).scheme != "":
+        urlScheme = urlparse(firstFile).scheme
+        if urlScheme != "":
             # - data comes from a URL, so parse metadata from dicom to slicer conventions
             # - create a placeholder volumeNode that can be populated by the downloader
             # - rely on files having already been sorted during examine step
-            # TODO: should factor out this code to DICOMUtils
-            forDegging = """
-class self:
-    tags = {}
-self.tags['sopClassUID'] = "0008,0016"
-self.tags['photometricInterpretation'] = "0028,0004"
-self.tags['seriesDescription'] = "0008,103e"
-self.tags['seriesUID'] = "0020,000E"
-self.tags['seriesNumber'] = "0020,0011"
-self.tags['position'] = "0020,0032"
-self.tags['orientation'] = "0020,0037"
-self.tags['pixelData'] = "7fe0,0010"
-self.tags['seriesInstanceUID'] = "0020,000E"
-self.tags['acquisitionNumber'] = "0020,0012"
-self.tags['imageType'] = "0008,0008"
-self.tags['contentTime'] = "0008,0033"
-self.tags['triggerTime'] = "0018,1060"
-self.tags['diffusionGradientOrientation'] = "0018,9089"
-self.tags['imageOrientationPatient'] = "0020,0037"
-self.tags['numberOfFrames'] = "0028,0008"
-self.tags['instanceUID'] = "0008,0018"
-self.tags['windowCenter'] = "0028,1050"
-self.tags['windowWidth'] = "0028,1051"
-self.tags['rows'] = "0028,0010"
-self.tags['columns'] = "0028,0011"
-self.tags['spacing'] = "0028,0030"
-self.tags['bitsAllocated'] = "0028,0100"
-self.tags['pixelRepresentation'] = "0028,0103"
-
-class loadable: 
-    name = "proxy"
-    files = []
-firstFile = "https://testing-proxy.canceridc.dev/current/viewer-only-no-downloads-see-tinyurl-dot-com-slash-3j3d9jyp/dicomWeb/studies/1.2.840.113654.2.55.238037307348300099339353751199131526205/series/1.2.840.113654.2.55.273848107084880007349037443178434483790/instances/1.2.840.113654.2.55.313761472808358980146581412001573331364/frames/1"
-loadable.files.append(firstFile)
-"""
-
-            print("creating proxy")
-            bitsAllocated = slicer.dicomDatabase.fileValue(firstFile, self.tags['bitsAllocated'])
-            pixelRepresentation = slicer.dicomDatabase.fileValue(firstFile, self.tags['pixelRepresentation'])
-            positionString = slicer.dicomDatabase.fileValue(firstFile, self.tags['position'])
-            position = numpy.array(list(map(float, positionString.split('\\'))))
-            orientationString = slicer.dicomDatabase.fileValue(firstFile, self.tags['orientation'])
-            orientation = list(map(float, orientationString.split('\\')))
-            spacingString = slicer.dicomDatabase.fileValue(firstFile, self.tags['spacing'])
-            spacing = numpy.array(list(map(float, spacingString.split('\\'))))
-            rows = int(slicer.dicomDatabase.fileValue(firstFile, self.tags['rows']))
-            columns = int(slicer.dicomDatabase.fileValue(firstFile, self.tags['columns']))
-            slices = len(loadable.files)
-            rowOrientation = numpy.array(orientation[:3])
-            columnOrientation = numpy.array(orientation[3:])
-            # map from LPS to RAS
-            lpsToRAS = numpy.array([-1, -1, 1])
-            position *= lpsToRAS
-            rowOrientation *= lpsToRAS
-            columnOrientation *= lpsToRAS
-            # make ijkToRAS
-            rowVector = spacing[1] * rowOrientation  # dicom PixelSpacing is between rows first, then columns
-            columnVector = spacing[0] * columnOrientation
-            lastFile = loadable.files[-1]
-            lastPositionString = slicer.dicomDatabase.fileValue(lastFile, self.tags['position'])
-            lastPosition = numpy.array(list(map(float, lastPositionString.split('\\'))))
-            lastPosition *= lpsToRAS
-            sliceSpacing = numpy.linalg.norm(lastPosition - position)
-            if len(loadable.files) > 1:
-                sliceSpacing /= (len(loadable.files)-1)
+            if urlScheme in slicer.modules.dicomURLHandlers:
+                # first, initiate the request
+                urlHandler = slicer.modules.dicomURLHandlers[urlScheme]
+                self._urlHandlerStartTime = time.time()
+                urlHandler.startRequest(loadable.files)
+                # then while the frames are loading calculate the ijkToRAS and pixel array
+                ijkToRAS = DICOMUtils.ijkToRASFromFiles(loadable.files)
+                pixelArray = DICOMUtils.pixelArrayFromFiles(loadable.files)
+                volumeNode = slicer.util.addVolumeFromArray(pixelArray, ijkToRAS=ijkToRAS, name=loadable.name)
+                volumeArray = slicer.util.arrayFromVolume(volumeNode)
+                # fill with random data so user sees something
+                volumeArray[:] = 1000 * numpy.random.random(pixelArray.shape)
+                slicer.util.arrayFromVolumeModified(volumeNode)
+                # start trying to populate the volume with downloaded frames
+                self._processURLHandler(urlHandler, volumeNode, loadable.files)
             else:
-                sliceSpacing = 1
-            sliceVector = sliceSpacing * numpy.cross(rowOrientation, columnOrientation)
-            ijkToRASArray = numpy.eye(4)
-            ijkToRASArray[0][:3] = rowVector
-            ijkToRASArray[1][:3] = columnVector
-            ijkToRASArray[2][:3] = sliceVector
-            ijkToRASArray[3][:3] = position
-            ijkToRAS = slicer.util.vtkMatrixFromArray(ijkToRASArray.T)
-            dtype = "int16" # always use short for the image
-            pixelArray = numpy.array(1000 * numpy.random.random([slices, rows, columns]), dtype=dtype)
-            volumeNode = slicer.util.addVolumeFromArray(pixelArray, ijkToRAS=ijkToRAS, name=loadable.name)
-
+                error = _("No handler for url scheme '{urlScheme}'").format(urlScheme=urlScheme)
+                logging.error(error)
         else:
-            # first, determine which reader approach the user prefers
+            # files, so first, determine which reader approach the user prefers
             if not readerApproach:
                 readerIndex = slicer.util.settingsValue('DICOM/ScalarVolume/ReaderApproach', 0, converter=int)
                 readerApproach = DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
