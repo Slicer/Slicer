@@ -4,6 +4,7 @@ import sys
 import socket
 import urllib
 from http.server import HTTPServer
+from typing import Callable, Optional
 
 import ctk
 import qt
@@ -11,6 +12,10 @@ import qt
 import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import settingsValue, toBool
+
+from WebServerLib.BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
+
+logger = logging.getLogger(__name__)
 
 #
 # WebServer
@@ -266,22 +271,24 @@ class SlicerHTTPServer(HTTPServer):
     """
     # TODO: set header so client knows that image refreshes are needed (avoid
     # using the &time=xxx trick)
-    def __init__(self, server_address=("", 2016), requestHandlers=None, docroot=".", logMessage=None, certfile=None, enableCORS=False):
+    def __init__(self,
+                 server_address:tuple[str,int]=("", 2016),
+                 requestHandlers:list[BaseRequestHandler]=None,
+                 docroot:str=".",
+                 logMessage:Callable=None,
+                 certfile:str=None,
+                 enableCORS:bool=False):
         """
         :param server_address: passed to parent class (default ("", 8070))
-        :param requestHandlers: request handler objects; if not specified then Slicer, DICOM, and StaticPages handlers are registered
+        :param requestHandlers: request handler objects;
+                if not specified then Slicer, DICOM, and StaticPages handlers are registered
         :param docroot: used to serve static pages content
         :param logMessage: a callable for messages
         :param certfile: path to a file with an ssl certificate (.pem file)
         """
         HTTPServer.__init__(self, server_address, SlicerHTTPServer.DummyRequestHandler)
 
-        self.requestHandlers = []
-
-        if requestHandlers is not None:
-            for requestHandler in requestHandlers:
-                self.requestHandlers.append(requestHandler)
-
+        self.requestHandlers = requestHandlers or []
         self.docroot = docroot
         self.timeout = 1.
         if certfile:
@@ -307,7 +314,12 @@ class SlicerHTTPServer(HTTPServer):
         This class handles event driven chunking of the communication.
         .. note:: this is an internal class of the web server
         """
-        def __init__(self, connectionSocket, requestHandlers, docroot, logMessage, enableCORS):
+        def __init__(self,
+                     connectionSocket:socket.socket,
+                     requestHandlers:list[BaseRequestHandler],
+                     docroot:str,
+                     logMessage:BaseRequestLoggingFunction,
+                     enableCORS:bool):
             """
             :param connectionSocket: socket for this request
             :param docroot: for handling static pages content
@@ -328,7 +340,7 @@ class SlicerHTTPServer(HTTPServer):
             self.readNotifier.connect("activated(int)", self.onReadable)
             self.logMessage("Waiting on %d..." % fileno)
 
-        def registerRequestHandler(self, handler):
+        def registerRequestHandler(self, handler:BaseRequestHandler):
             self.requestHandlers.append(handler)
             handler.logMessage = self.logMessage
 
@@ -413,7 +425,7 @@ class SlicerHTTPServer(HTTPServer):
                 highestConfidenceHandler = None
                 highestConfidence = 0.0
                 for handler in self.requestHandlers:
-                    confidence = handler.canHandleRequest(method, uri, requestBody)
+                    confidence = handler.canHandleRequest(method=method, uri=uri, requestBody=requestBody)
                     if confidence > highestConfidence:
                         highestConfidenceHandler = handler
                         highestConfidence = confidence
@@ -421,7 +433,7 @@ class SlicerHTTPServer(HTTPServer):
                 httpStatus = "200 OK"
                 if highestConfidenceHandler is not None and highestConfidence > 0.0:
                     try:
-                        contentType, responseBody = highestConfidenceHandler.handleRequest(method, uri, requestBody)
+                        contentType, responseBody = highestConfidenceHandler.handleRequest(method=method, uri=uri, requestBody=requestBody)
                     except Exception as e:
                         etype, value, tb = sys.exc_info()
                         import traceback
@@ -542,18 +554,20 @@ class WebServerLogic:
     that speaks slicer.
     If requestHandlers is not specified then default request handlers are added,
     controlled by enableSlicer, enableDICOM, enableStaticPages arguments (all True by default).
-    Exec interface is enabled it enableExec and enableSlicer are both set to True
+    Exec interface is enabled if enableExec and enableSlicer are both set to True
     (enableExec is set to False by default for improved security).
     """
-    def __init__(self, port=None, enableSlicer=True, enableExec=False, enableDICOM=True, enableStaticPages=True, requestHandlers=None, logMessage=None, enableCORS=False):
-        if logMessage:
-            self.logMessage = logMessage
-
-        if port:
-            self.port = port
-        else:
-            self.port = 2016
-
+    def __init__(self,
+                 port:Optional[int]=None,
+                 enableSlicer:bool=True,
+                 enableExec:bool=False,
+                 enableDICOM:bool=True,
+                 enableStaticPages:bool=True,
+                 requestHandlers:list[BaseRequestHandler]=None,
+                 logMessage:Optional[BaseRequestLoggingFunction]=None,
+                 enableCORS:bool=False):
+        self.logMessage = logMessage or self.defaultLogMessage
+        self.port = port or 2016
         self.enableCORS = enableCORS
 
         self.server = None
@@ -587,8 +601,10 @@ class WebServerLogic:
             staticHandler.uriRewriteRules.append(("([\\/\\\\])browse.*", "{0}browse.html"))
             self.requestHandlers.append(staticHandler)
 
-    def logMessage(self, *args):
-        logging.debug(args)
+    @staticmethod
+    def defaultLogMessage(*args):
+        """Default logging implementation."""
+        logger.debug(args)
 
     def start(self):
         """Set up the server"""
