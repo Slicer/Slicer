@@ -177,6 +177,18 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerScriptedLoadableModuleWidget::reload()
+{
+  Q_D(qSlicerScriptedLoadableModuleWidget);
+  if (!QFileInfo::exists(d->PythonSourceFilePath))
+    {
+    return;
+    }
+  this->setPythonSource(this->pythonSource());
+  this->setup();
+}
+
+//-----------------------------------------------------------------------------
 PyObject* qSlicerScriptedLoadableModuleWidget::self() const
 {
   Q_D(const qSlicerScriptedLoadableModuleWidget);
