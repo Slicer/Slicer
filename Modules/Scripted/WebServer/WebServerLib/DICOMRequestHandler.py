@@ -1,37 +1,57 @@
 import logging
 import pydicom
 import urllib
+from typing import Optional
 
 import slicer
+from .BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
+
+logger = logging.getLogger(__name__)
 
 
-class DICOMRequestHandler:
+class DICOMRequestHandler(BaseRequestHandler):
     """
     Implements the mapping between DICOMweb endpoints
     and ctkDICOMDatabase api calls.
     TODO: only a subset of api calls supported, but enough to server a viewer app (ohif)
     """
 
-    def __init__(self):
+    @staticmethod
+    def defaultLogMessage(*args):
         """
-        :param logMessage: callable to log messages
+        Default implementation method to route messages to log.
+        Emits with reference to `DICOMRequestHandler` file source.
         """
+        logger.debug(*args)
+
+    def __init__(self,
+                 logMessage:Optional[BaseRequestLoggingFunction]=None):
+        """
+        Initialize a new request handler instance.
+        :param logMessage: An optional external handle for message logging.
+        """
+        self.logMessage = logMessage or self.defaultLogMessage
         self.retrieveURLTag = pydicom.tag.Tag(0x00080190)
         self.numberOfStudyRelatedSeriesTag = pydicom.tag.Tag(0x00200206)
         self.numberOfStudyRelatedInstancesTag = pydicom.tag.Tag(0x00200208)
 
-    def logMessage(self, *args):
-        logging.debug(args)
-
-    def canHandleRequest(self, method, uri, requestBody):
+    def canHandleRequest(self, uri: bytes, **_kwargs) -> float:
+        """
+        Whether the given request is a DICOM request.
+        :param uri: The request URI to parse.
+        :return: 0.5 confidence if the request is a DICOM request, else 0.0
+        """
         parsedURL = urllib.parse.urlparse(uri)
         return 0.5 if parsedURL.path.startswith(b"/dicom") else 0.0
 
-    def handleRequest(self, method, uri, requestBody):
+    def handleRequest(
+        self, uri: bytes, requestBody: bytes, **_kwargs
+    ) -> tuple[bytes, bytes]:
         """
         Dispatches various dicom requests
-        :param parsedURL: the REST path and arguments
+        :param uri: The request URI to parse.
         :param requestBody: the binary that came with the request
+        :return: tuple of content type (based on file ext) and request body binary (contents of file)
         """
         parsedURL = urllib.parse.urlparse(uri)
         contentType = b"text/plain"
@@ -51,7 +71,7 @@ class DICOMRequestHandler:
             contentType, responseBody = self.handleWADOURI(parsedURL, requestBody)
         return contentType, responseBody
 
-    def handleStudies(self, parsedURL, requestBody):
+    def handleStudies(self, parsedURL, _requestBody):
         """
         Handle study requests by returning json
         :param parsedURL: the REST path and arguments
@@ -180,7 +200,7 @@ class DICOMRequestHandler:
             responseBody += b"]"
         return contentType, responseBody
 
-    def handleInstances(self, parsedURL, requestBody):
+    def handleInstances(self, parsedURL, _requestBody):
         """
         Handle series requests by returning json
         :param parsedURL: the REST path and arguments
@@ -238,7 +258,7 @@ class DICOMRequestHandler:
             responseBody = b"[" + jsonDataset.encode() + b"]"
         return contentType, responseBody
 
-    def handleSeries(self, parsedURL, requestBody):
+    def handleSeries(self, parsedURL, _requestBody):
         """
         Handle series requests by returning json
         :param parsedURL: the REST path and arguments
@@ -306,7 +326,7 @@ class DICOMRequestHandler:
             responseBody += b"]"
         return contentType, responseBody
 
-    def handleWADOURI(self, parsedURL, requestBody):
+    def handleWADOURI(self, parsedURL, _requestBody):
         """
         Handle wado uri by returning the binary part10 contents of the dicom file
         :param parsedURL: the REST path and arguments
