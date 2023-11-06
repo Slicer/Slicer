@@ -61,7 +61,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSource;
+  QString    PythonSourceFilePath;
 };
 
 //-----------------------------------------------------------------------------
@@ -99,7 +99,7 @@ qSlicerScriptedLoadableModule::~qSlicerScriptedLoadableModule() = default;
 QString qSlicerScriptedLoadableModule::pythonSource()const
 {
   Q_D(const qSlicerScriptedLoadableModule);
-  return d->PythonSource;
+  return d->PythonSourceFilePath;
 }
 
 //-----------------------------------------------------------------------------
@@ -168,7 +168,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
     return false;
     }
 
-  d->PythonSource = filePath;
+  d->PythonSourceFilePath = filePath;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer.modules", moduleName + "Instance", self))
@@ -222,7 +222,7 @@ void qSlicerScriptedLoadableModule::registerFileDialog()
 {
   Q_D(qSlicerScriptedLoadableModule);
   QScopedPointer<qSlicerScriptedFileDialog> fileDialog(new qSlicerScriptedFileDialog(this));
-  bool ret = fileDialog->setPythonSource(d->PythonSource);
+  bool ret = fileDialog->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
     {
     return;
@@ -236,13 +236,13 @@ void qSlicerScriptedLoadableModule::registerIO()
 {
   Q_D(qSlicerScriptedLoadableModule);
   QScopedPointer<qSlicerScriptedFileWriter> fileWriter(new qSlicerScriptedFileWriter(this));
-  bool ret = fileWriter->setPythonSource(d->PythonSource);
+  bool ret = fileWriter->setPythonSource(d->PythonSourceFilePath);
   if (ret)
     {
     qSlicerApplication::application()->ioManager()->registerIO(fileWriter.take());
     }
   QScopedPointer<qSlicerScriptedFileReader> fileReader(new qSlicerScriptedFileReader(this));
-  ret = fileReader->setPythonSource(d->PythonSource);
+  ret = fileReader->setPythonSource(d->PythonSourceFilePath);
   if (ret)
     {
     qSlicerApplication::application()->ioManager()->registerIO(fileReader.take());
@@ -260,7 +260,7 @@ qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidget
     }
 
   QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
-  bool ret = widget->setPythonSource(d->PythonSource);
+  bool ret = widget->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
     {
     return nullptr;

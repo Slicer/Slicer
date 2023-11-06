@@ -52,7 +52,7 @@ public:
 //  static int          APIMethodCount;
 //  static const char * APIMethodNames[2];
 
-  std::string  PythonSource;
+  std::string  PythonSourceFilePath;
   PyObject *   PythonSelf;
 //  PyObject *   PythonAPIMethods[2];
 };
@@ -255,7 +255,7 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
 
   //std::cout << "self (" << className << ", instance:" << self << ")" << std::endl;
 
-  this->Internal->PythonSource = filePath;
+  this->Internal->PythonSourceFilePath = filePath;
   this->Internal->PythonSelf = self;
 
   return true;
