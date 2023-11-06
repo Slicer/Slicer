@@ -1414,10 +1414,10 @@ def reloadScriptedModule(moduleName):
     for item in items:
         parent.layout().removeItem(item)
 
-    # create new widget inside existing parent
-    widget = eval("reloaded_module.%s(parent)" % widgetName)
-    widget.setup()
-    setattr(slicer.modules, widgetName, widget)
+    # Creates new widget at slicer.modules.{widgetName}.
+    # Also ensures that qSlicerScriptedLoadableModuleWidget has references to updated enter/exit/setup methods.
+    # See https://github.com/Slicer/Slicer/issues/7424
+    widget.parent.reload()
 
     return reloaded_module
 
