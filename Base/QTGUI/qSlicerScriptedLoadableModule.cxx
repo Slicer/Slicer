@@ -103,7 +103,7 @@ QString qSlicerScriptedLoadableModule::pythonSource()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSource)
+bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
 {
   Q_D(qSlicerScriptedLoadableModule);
 
@@ -112,13 +112,13 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     return false;
     }
 
-  if (!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+  if (!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
     {
     return false;
     }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
+  QString moduleName = QFileInfo(filePath).baseName();
   this->setName(moduleName);
   QString className = moduleName;
 
@@ -139,7 +139,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     {
     PythonQtObjectPtr local_dict;
     local_dict.setNewRef(PyDict_New());
-    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, newPythonSource, global_dict, local_dict))
+    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, filePath, global_dict, local_dict))
       {
       return false;
       }
@@ -155,7 +155,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModule::setPythonSource - "
                             "Failed to load scripted loadable module: "
-                            "class %1 was not found in file %2").arg(className).arg(newPythonSource).toLatin1());
+                            "class %1 was not found in file %2").arg(className).arg(filePath).toLatin1());
     PythonQt::self()->handleError();
     return false;
     }
@@ -168,7 +168,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     return false;
     }
 
-  d->PythonSource = newPythonSource;
+  d->PythonSource = filePath;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer.modules", moduleName + "Instance", self))

@@ -94,7 +94,7 @@ QString qSlicerScriptedFileReader::pythonSource()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileReader::setPythonSource(const QString& newPythonSource, const QString& _className, bool missingClassIsExpected)
+bool qSlicerScriptedFileReader::setPythonSource(const QString& filePath, const QString& _className, bool missingClassIsExpected)
 {
   Q_D(qSlicerScriptedFileReader);
 
@@ -103,13 +103,13 @@ bool qSlicerScriptedFileReader::setPythonSource(const QString& newPythonSource, 
     return false;
     }
 
-  if(!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+  if(!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
     {
     return false;
     }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
+  QString moduleName = QFileInfo(filePath).baseName();
 
   QString className = _className;
   if (className.isEmpty())
@@ -144,7 +144,7 @@ bool qSlicerScriptedFileReader::setPythonSource(const QString& newPythonSource, 
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedFileReader::setPythonSource - "
                             "Failed to load scripted file Reader: "
-                            "class %1 was not found in file %2").arg(className).arg(newPythonSource).toUtf8());
+                            "class %1 was not found in file %2").arg(className).arg(filePath).toUtf8());
     return false;
     }
 
@@ -154,7 +154,7 @@ bool qSlicerScriptedFileReader::setPythonSource(const QString& newPythonSource, 
     return false;
     }
 
-  d->PythonSource = newPythonSource;
+  d->PythonSource = filePath;
 
   return true;
 }

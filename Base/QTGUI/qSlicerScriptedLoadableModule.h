@@ -55,7 +55,7 @@ public:
   ~qSlicerScriptedLoadableModule() override;
 
   QString pythonSource()const;
-  bool setPythonSource(const QString& newPythonSource);
+  bool setPythonSource(const QString& filePath);
 
   QString title()const override ;
   void setTitle(const QString& newTitle);

@@ -35,31 +35,31 @@
 
 //-----------------------------------------------------------------------------
 bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
-                                       const QString& fileName,
+                                       const QString& filePath,
                                        PyObject * global_dict,
                                        PyObject * local_dict)
 {
   PyObject* pyRes = nullptr;
-  if (fileName.endsWith(".py"))
+  if (filePath.endsWith(".py"))
     {
     pyRes = PyRun_String(
           QString("import imp;imp.load_source(%2, %1);del imp;")
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(fileName))
+          .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toUtf8(),
           Py_file_input, global_dict, local_dict);
     }
-  else if (fileName.endsWith(".pyc"))
+  else if (filePath.endsWith(".pyc"))
     {
     pyRes = PyRun_String(
           QString("with open(%1, 'rb') as f:import imp;imp.load_module(%2, f, %1, ('.pyc', 'rb', 2));del imp")
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(fileName))
+          .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toUtf8(),
           Py_file_input, global_dict, local_dict);
     }
   if (!pyRes)
     {
     PythonQt::self()->handleError();
-    qCritical() << "loadSourceAsModule - Failed to load file" << fileName
+    qCritical() << "loadSourceAsModule - Failed to load file" << filePath
                 << " as module" << moduleName << "!";
     return false;
     }
