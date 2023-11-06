@@ -56,7 +56,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedUtils
 public:
   typedef qSlicerScriptedUtils Self;
 
-  static bool loadSourceAsModule(const QString& moduleName, const QString& fileName, PyObject * global_dict, PyObject *local_dict);
+  static bool loadSourceAsModule(const QString& moduleName, const QString& filePath, PyObject * global_dict, PyObject *local_dict);
 
   /// \brief Set the value of the attribute named \a attributeName, for module
   /// named \a moduleName, to the value \a attributeValue.

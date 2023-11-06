@@ -274,16 +274,16 @@ void vtkMRMLScriptedDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkOb
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pythonSource)
+void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& filePath)
 {
-  if(pythonSource.find(".py") == std::string::npos &&
-     pythonSource.find(".pyc") == std::string::npos)
+  if(filePath.find(".py") == std::string::npos &&
+     filePath.find(".pyc") == std::string::npos)
     {
     return;
     }
 
   // Extract filename - It should match the associated python class
-  std::string className = vtksys::SystemTools::GetFilenameWithoutExtension(pythonSource);
+  std::string className = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
   //std::cout << "SetPythonSource - className:" << className << std::endl;
 
   // Get a reference to the main module and global dictionary
@@ -295,16 +295,16 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   if (!classToInstantiate)
     {
     PyObject * pyRes = nullptr;
-    if (pythonSource.find(".py") != std::string::npos)
+    if (filePath.find(".py") != std::string::npos)
       {
-      std::string pyRunStr = std::string("exec(open('") + pythonSource + std::string("').read())");
+      std::string pyRunStr = std::string("exec(open('") + filePath + std::string("').read())");
       pyRes = PyRun_String(pyRunStr.c_str(),
                            Py_file_input, global_dict, global_dict);
       }
-    else if (pythonSource.find(".pyc") != std::string::npos)
+    else if (filePath.find(".pyc") != std::string::npos)
       {
-      std::string pyRunStr = std::string("with open('") + pythonSource +
-          std::string("', 'rb') as f:import imp;imp.load_module('__main__', f, '") + pythonSource +
+      std::string pyRunStr = std::string("with open('") + filePath +
+          std::string("', 'rb') as f:import imp;imp.load_module('__main__', f, '") + filePath +
           std::string("', ('.pyc', 'rb', 2))");
       pyRes = PyRun_String(
             pyRunStr.c_str(),
@@ -312,7 +312,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
       }
     if (!pyRes)
       {
-      vtkErrorMacro(<< "setPythonSource - Failed to execute file" << pythonSource << "!");
+      vtkErrorMacro(<< "setPythonSource - Failed to execute file" << filePath << "!");
       return;
       }
     Py_DECREF(pyRes);
@@ -321,7 +321,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   if (!classToInstantiate)
     {
     vtkErrorMacro(<< "SetPythonSource - Failed to load displayable manager class definition from "
-                  << pythonSource);
+                  << filePath);
     return;
     }
 
@@ -355,6 +355,6 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
 
   //std::cout << "self (" << className << ", instance:" << self << ")" << std::endl;
 
-  this->Internal->PythonSource = pythonSource;
+  this->Internal->PythonSource = filePath;
   this->Internal->PythonSelf = self;
 }

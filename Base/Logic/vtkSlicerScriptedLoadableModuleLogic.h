@@ -38,7 +38,7 @@ public:
   vtkTypeMacro(vtkSlicerScriptedLoadableModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  bool SetPythonSource(const std::string& pythonSource);
+  bool SetPythonSource(const std::string& filePath);
 
 protected:
 

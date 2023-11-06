@@ -128,7 +128,7 @@ QString qSlicerSubjectHierarchyScriptedPlugin::pythonSource()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString newPythonSource)
+bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePath)
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
 
@@ -137,13 +137,13 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString newPyt
     return false;
     }
 
-  if (!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+  if (!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
     {
     return false;
     }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
+  QString moduleName = QFileInfo(filePath).baseName();
 
   // In case the plugin is within the main module file
   QString className = moduleName;
@@ -169,7 +169,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString newPyt
     {
     PythonQtObjectPtr local_dict;
     local_dict.setNewRef(PyDict_New());
-    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, newPythonSource, global_dict, local_dict))
+    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, filePath, global_dict, local_dict))
       {
       return false;
       }
@@ -185,7 +185,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString newPyt
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSubjectHierarchyScriptedPlugin::setPythonSource - "
                             "Failed to load subject hierarchy scripted plugin: "
-                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toUtf8());
+                            "class %1 was not found in %2").arg(className).arg(filePath).toUtf8());
     PythonQt::self()->handleError();
     return false;
     }
@@ -198,7 +198,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString newPyt
     return false;
     }
 
-  d->PythonSource = newPythonSource;
+  d->PythonSource = filePath;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer", className, self))

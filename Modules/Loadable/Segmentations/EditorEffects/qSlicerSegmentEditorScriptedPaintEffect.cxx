@@ -116,7 +116,7 @@ QString qSlicerSegmentEditorScriptedPaintEffect::pythonSource()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newPythonSource)
+bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString filePath)
 {
   Q_D(qSlicerSegmentEditorScriptedPaintEffect);
 
@@ -125,13 +125,13 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newP
     return false;
     }
 
-  if (!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+  if (!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
     {
     return false;
     }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
+  QString moduleName = QFileInfo(filePath).baseName();
 
   // In case the effect is within the main module file
   QString className = moduleName;
@@ -157,7 +157,7 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newP
     {
     PythonQtObjectPtr local_dict;
     local_dict.setNewRef(PyDict_New());
-    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, newPythonSource, global_dict, local_dict))
+    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, filePath, global_dict, local_dict))
       {
       return false;
       }
@@ -173,7 +173,7 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newP
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSegmentEditorScriptedPaintEffect::setPythonSource - "
                             "Failed to load segment editor scripted effect: "
-                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toUtf8());
+                            "class %1 was not found in %2").arg(className).arg(filePath).toUtf8());
     PythonQt::self()->handleError();
     return false;
     }
@@ -186,7 +186,7 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newP
     return false;
     }
 
-  d->PythonSource = newPythonSource;
+  d->PythonSource = filePath;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer", className, self))

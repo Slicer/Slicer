@@ -97,7 +97,7 @@ QString qSlicerScriptedFileDialog::pythonSource()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, const QString& _className, bool missingClassIsExpected)
+bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const QString& _className, bool missingClassIsExpected)
 {
   Q_D(qSlicerScriptedFileDialog);
 
@@ -106,13 +106,13 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
     return false;
     }
 
-  if(!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+  if(!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
     {
     return false;
     }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
+  QString moduleName = QFileInfo(filePath).baseName();
 
   QString className = _className;
   if (className.isEmpty())
@@ -191,7 +191,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
     return false;
     }
 
-  d->PythonSource = newPythonSource;
+  d->PythonSource = filePath;
 
   return true;
 }
