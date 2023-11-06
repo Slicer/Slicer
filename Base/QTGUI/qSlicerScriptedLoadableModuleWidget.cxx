@@ -52,7 +52,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSource;
+  QString    PythonSourceFilePath;
 };
 
 //-----------------------------------------------------------------------------
@@ -88,7 +88,7 @@ qSlicerScriptedLoadableModuleWidget::~qSlicerScriptedLoadableModuleWidget() = de
 QString qSlicerScriptedLoadableModuleWidget::pythonSource()const
 {
   Q_D(const qSlicerScriptedLoadableModuleWidget);
-  return d->PythonSource;
+  return d->PythonSourceFilePath;
 }
 
 //-----------------------------------------------------------------------------
@@ -165,7 +165,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
     return false;
     }
 
-  d->PythonSource = filePath;
+  d->PythonSourceFilePath = filePath;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer.modules", className, self))
@@ -228,7 +228,7 @@ bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node,
   // Parse result
   if (!PyBool_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerScriptedLoadableModuleWidget: Function 'setEditedNode' is expected to return a boolean";
+    qWarning() << d->PythonSourceFilePath << ": qSlicerScriptedLoadableModuleWidget: Function 'setEditedNode' is expected to return a boolean";
     return false;
     }
 
@@ -252,7 +252,7 @@ double qSlicerScriptedLoadableModuleWidget::nodeEditable(vtkMRMLNode* node)
   // Parse result
   if (!PyFloat_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerScriptedLoadableModuleWidget: Function 'nodeEditable' is expected to return a floating point number!";
+    qWarning() << d->PythonSourceFilePath << ": qSlicerScriptedLoadableModuleWidget: Function 'nodeEditable' is expected to return a floating point number!";
     return 0.0;
     }
 

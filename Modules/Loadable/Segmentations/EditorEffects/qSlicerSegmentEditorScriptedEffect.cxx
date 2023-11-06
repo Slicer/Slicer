@@ -73,7 +73,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString PythonSource;
+  QString PythonSourceFilePath;
 };
 
 //-----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ qSlicerSegmentEditorScriptedEffect::~qSlicerSegmentEditorScriptedEffect() = defa
 QString qSlicerSegmentEditorScriptedEffect::pythonSource()const
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
-  return d->PythonSource;
+  return d->PythonSourceFilePath;
 }
 
 //-----------------------------------------------------------------------------
@@ -198,7 +198,7 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
     return false;
     }
 
-  d->PythonSource = newPythonSource;
+  d->PythonSourceFilePath = newPythonSource;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer", moduleName, self))
@@ -268,7 +268,7 @@ const QString qSlicerSegmentEditorScriptedEffect::helpText()const
   // Parse result
   if (!PyUnicode_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSegmentEditorScriptedEffect: Function 'helpText' is expected to return a string!";
+    qWarning() << d->PythonSourceFilePath << ": qSlicerSegmentEditorScriptedEffect: Function 'helpText' is expected to return a string!";
     return this->Superclass::helpText();
     }
 
@@ -283,7 +283,7 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedEffect::clone()
   PyObject* result = d->PythonCppAPI.callMethod(d->CloneMethod);
   if (!result)
     {
-    qCritical() << d->PythonSource << ": clone: Failed to call mandatory clone method! If it is implemented, please see python output for errors.";
+    qCritical() << d->PythonSourceFilePath << ": clone: Failed to call mandatory clone method! If it is implemented, please see python output for errors.";
     return nullptr;
     }
 
@@ -293,7 +293,7 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedEffect::clone()
     resultVariant.value<QObject*>() );
   if (!clonedEffect)
     {
-    qCritical() << d->PythonSource << ": clone: Invalid cloned effect object returned from python!";
+    qCritical() << d->PythonSourceFilePath << ": clone: Invalid cloned effect object returned from python!";
     return nullptr;
     }
   return clonedEffect;
@@ -365,7 +365,7 @@ bool qSlicerSegmentEditorScriptedEffect::processInteractionEvents(vtkRenderWindo
     }
   if (!PyBool_Check(result))
     {
-    qWarning() << d->PythonSource
+    qWarning() << d->PythonSourceFilePath
                << " - function 'processInteractionEvents' "
                << "is expected to return a boolean";
     return false;

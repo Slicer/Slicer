@@ -65,7 +65,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString PythonSource;
+  QString PythonSourceFilePath;
 };
 
 //-----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ qSlicerSegmentEditorScriptedPaintEffect::~qSlicerSegmentEditorScriptedPaintEffec
 QString qSlicerSegmentEditorScriptedPaintEffect::pythonSource()const
 {
   Q_D(const qSlicerSegmentEditorScriptedPaintEffect);
-  return d->PythonSource;
+  return d->PythonSourceFilePath;
 }
 
 //-----------------------------------------------------------------------------
@@ -186,7 +186,7 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString file
     return false;
     }
 
-  d->PythonSource = filePath;
+  d->PythonSourceFilePath = filePath;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer", className, self))
@@ -244,7 +244,7 @@ const QString qSlicerSegmentEditorScriptedPaintEffect::helpText()const
   // Parse result
   if (!PyUnicode_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSegmentEditorScriptedPaintEffect: Function 'helpText' is expected to return a string!";
+    qWarning() << d->PythonSourceFilePath << ": qSlicerSegmentEditorScriptedPaintEffect: Function 'helpText' is expected to return a string!";
     return this->Superclass::helpText();
     }
 
@@ -259,7 +259,7 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedPaintEffect::clo
   PyObject* result = d->PythonCppAPI.callMethod(d->CloneMethod);
   if (!result)
     {
-    qCritical() << d->PythonSource << ": clone: Failed to call mandatory clone method! If it is implemented, please see python output for errors.";
+    qCritical() << d->PythonSourceFilePath << ": clone: Failed to call mandatory clone method! If it is implemented, please see python output for errors.";
     return nullptr;
     }
 
@@ -269,7 +269,7 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedPaintEffect::clo
     resultVariant.value<QObject*>() );
   if (!clonedEffect)
     {
-    qCritical() << d->PythonSource << ": clone: Invalid cloned effect object returned from python!";
+    qCritical() << d->PythonSourceFilePath << ": clone: Invalid cloned effect object returned from python!";
     return nullptr;
     }
   return clonedEffect;

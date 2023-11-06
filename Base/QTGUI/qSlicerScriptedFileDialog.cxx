@@ -53,7 +53,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSource;
+  QString    PythonSourceFilePath;
   QString    PythonClassName;
 };
 
@@ -93,7 +93,7 @@ qSlicerScriptedFileDialog::~qSlicerScriptedFileDialog() = default;
 QString qSlicerScriptedFileDialog::pythonSource()const
 {
   Q_D(const qSlicerScriptedFileDialog);
-  return d->PythonSource;
+  return d->PythonSourceFilePath;
 }
 
 //-----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
     return false;
     }
 
-  d->PythonSource = filePath;
+  d->PythonSourceFilePath = filePath;
 
   return true;
 }
@@ -215,7 +215,7 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     }
   if (!PyBool_Check(result))
     {
-    qWarning() << d->PythonSource
+    qWarning() << d->PythonSourceFilePath
                << " - In" << d->PythonClassName << "class, function 'execDialog' "
                << "is expected to return a boolean";
     return false;

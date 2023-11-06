@@ -61,7 +61,7 @@ public:
   static int          APIMethodCount;
   static const char * APIMethodNames[8];
 
-  std::string  PythonSource;
+  std::string  PythonSourceFilePath;
   PyObject *   PythonSelf;
   PyObject *   PythonAPIMethods[8];
 };
@@ -355,6 +355,6 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
 
   //std::cout << "self (" << className << ", instance:" << self << ")" << std::endl;
 
-  this->Internal->PythonSource = filePath;
+  this->Internal->PythonSourceFilePath = filePath;
   this->Internal->PythonSelf = self;
 }
