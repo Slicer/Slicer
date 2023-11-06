@@ -404,7 +404,7 @@ class ExtensionWizardWidget:
                     text = ("The module factory manager reported an error. "
                             "One or more of the requested module(s) and/or "
                             "dependencies thereof may not have been loaded.")
-                    slicer.util.errorDisplay(text, parent, windowTitle="Error loading module(s)",
+                    slicer.util.errorDisplay(text, parent=parent, windowTitle="Error loading module(s)",
                                              standardButtons=qt.QMessageBox.Close)
 
     # ---------------------------------------------------------------------------
