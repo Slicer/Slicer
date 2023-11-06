@@ -10,30 +10,52 @@ import numpy
 import os
 import time
 import urllib
+from typing import Optional
 
 import qt
 import vtk.util.numpy_support
 
 import slicer
+from .BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
+
+logger = logging.getLogger(__name__)
 
 
-class SlicerRequestHandler:
+class SlicerRequestHandler(BaseRequestHandler):
     """Implements the Slicer REST api"""
 
-    def __init__(self, enableExec=False):
+    @staticmethod
+    def defaultLogMessage(*args):
+        """
+        Default implementation method to route messages to log.
+        Emits with reference to `SlicerRequestHandler` file source.
+        """
+        logger.debug(*args)
+
+    def __init__(self, enableExec=False, logMessage:Optional[BaseRequestLoggingFunction]=None):
+        """
+        Initialize a new request handler instance.
+        :param enableExec: Whether this instance is permitted to execute arbitrary code.
+        :param logMessage: An optional external handle for message logging.
+        """
         self.enableExec = enableExec
         self.sampleDataLogic = None  # used for progress reporting during download
+        self.logMessage = logMessage or self.defaultLogMessage
 
-    def logMessage(self, *args):
-        logging.debug(args)
-
-    def canHandleRequest(self, method, uri, requestBody):
+    def canHandleRequest(self, uri: bytes, **kwargs) -> float:
+        """
+        Whether the we can handle the request as part of the Slicer REST API.
+        :param uri: The request URI to parse.
+        :return: 0.5 confidence if the request is a Slicer web request, else 0.0
+        """
         parsedURL = urllib.parse.urlparse(uri)
         pathParts = os.path.split(parsedURL.path)  # path is like /slicer/timeimage
         route = pathParts[0]
         return 0.5 if route.startswith(b"/slicer") else 0.0
 
-    def handleRequest(self, method, uri, requestBody):
+    def handleRequest(
+        self, method: str, uri: bytes, requestBody: bytes
+    ) -> tuple[bytes, bytes]:
         """Handle a slicer api request.
         TODO: better routing (add routing plugins)
         :param request: request portion of the URL
