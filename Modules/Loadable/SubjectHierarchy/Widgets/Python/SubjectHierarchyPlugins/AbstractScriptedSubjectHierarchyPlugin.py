@@ -24,7 +24,8 @@ class AbstractScriptedSubjectHierarchyPlugin:
     scriptedPlugin.setPythonSource(VolumeClipSubjectHierarchyPlugin.filePath)
     ...
 
-    Example can be found here: https://slicer.readthedocs.io/en/latest/developer_guide/script_repository.html#subject-hierarchy-plugin-offering-view-context-menu-action
+    Example can be found here:
+    https://slicer.readthedocs.io/en/latest/developer_guide/script_repository.html#subject-hierarchy-plugin-offering-view-context-menu-action
     """
 
     def __init__(self, scriptedPlugin):
