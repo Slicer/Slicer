@@ -113,6 +113,41 @@ int vtkMRMLSequenceNodeTest1( int, char * [] )
   seqNode->UpdateIndexValue("96", "32");
   CHECK_BOOL(SequenceSortedByIndex(seqNode.GetPointer()), true);
 
+  // Check if nodes are correctly removed from the internal sequence scene.
+  seqNode->RemoveAllDataNodes();
+  vtkMRMLScene* scene = seqNode->GetSequenceScene();
+  CHECK_NOT_NULL(scene);
+  CHECK_INT(scene->GetNumberOfNodes(), 0);
+  CHECK_INT(seqNode->GetNumberOfDataNodes(), 0);
+
+  // Check if number of data nodes == number of nodes in the sequence scene after adding.
+  for (int i = 0; i < numberOfDataNodes; ++i)
+    {
+    std::ostringstream valueStr;
+    valueStr << i;
+    seqNode->SetDataNodeAtValue(dataNode, valueStr.str());
+    }
+  CHECK_INT(scene->GetNumberOfNodes(), numberOfDataNodes);
+  CHECK_INT(seqNode->GetNumberOfDataNodes(), numberOfDataNodes);
+
+  // Check if nodes are correctly removed from the internal sequence scene.
+  for (int i = 0; i < numberOfDataNodes; ++i)
+    {
+    std::ostringstream valueStr;
+    valueStr << i;
+    seqNode->RemoveDataNodeAtValue(valueStr.str());
+    }
+  CHECK_INT(scene->GetNumberOfNodes(), 0);
+  CHECK_INT(seqNode->GetNumberOfDataNodes(), 0);
+
+  // Check if only one node is added to the sequence scene if the same value is added multiple times.
+  for (int i = 0; i < 10; ++i)
+    {
+    seqNode->SetDataNodeAtValue(dataNode, "0");
+    }
+  CHECK_INT(scene->GetNumberOfNodes(), 1);
+  CHECK_INT(seqNode->GetNumberOfDataNodes(), 1);
+
   /*
   bool res = true;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
