@@ -25,9 +25,9 @@ jobs:
         run: |
           sha=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ env.CERTDATA_OWNER }}/${{ env.CERTDATA_REPO }}/commits?path=${{ env.CERTDATA_PATH }}&sha=master&per_page=1" | jq ".[0] | .sha" -r)
-          echo "::set-output name=sha::${sha}"
+          echo "sha=${sha}" >> $GITHUB_OUTPUT
           download_url="https://github.com/${{ env.CERTDATA_OWNER }}/${{ env.CERTDATA_REPO }}/blob/${sha}/${{ env.CERTDATA_PATH }}?raw=true"
-          echo "::set-output name=download_url::${download_url}"
+          echo "download_url=${download_url}" >> $GITHUB_OUTPUT
 
       - name: Download certdata.txt from https://github.com/mozilla/gecko-dev
         run: |
@@ -48,7 +48,7 @@ jobs:
         id: head_branch
         run: |
           sha=$(git rev-parse ${{ github.ref }})
-          echo "::set-output name=sha::${sha}"
+          echo "sha=${sha}" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
         id: cpr
