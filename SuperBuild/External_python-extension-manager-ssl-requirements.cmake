@@ -120,6 +120,9 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [python-dateutil]
   python-dateutil==2.8.2 --hash=sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9
   # [/python-dateutil]
+  # [six]
+  six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
+  # [/six]
   # [typing-extensions]
   typing-extensions==4.8.0 --hash=sha256:8f92fc8806f9a6b641eaa5318da32b44d401efaac0f6678c9bc448ba3605faa0
   # [/typing-extensions]
