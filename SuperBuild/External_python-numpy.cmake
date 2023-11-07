@@ -59,10 +59,6 @@ if(NOT Slicer_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
 
-  ExternalProject_GenerateProjectDescription_Step(${proj}
-    VERSION ${_version}
-    )
-
   #-----------------------------------------------------------------------------
   # Sanity checks
 
