@@ -728,10 +728,14 @@ def ijkToRASFromFiles(filePaths):
     tags['orientation'] = "0020,0037"
     tags['spacing'] = "0028,0030"
     positionString = slicer.dicomDatabase.fileValue(firstFile, tags['position'])
-    position = np.array(list(map(float, positionString.split('\\'))))
     orientationString = slicer.dicomDatabase.fileValue(firstFile, tags['orientation'])
-    orientation = list(map(float, orientationString.split('\\')))
     spacingString = slicer.dicomDatabase.fileValue(firstFile, tags['spacing'])
+    if positionString == "" or orientationString == "" or spacingString == "":
+        logging.warning("Geometry information missing - defaulting to identity matrix")
+        ijkToRAS = slicer.util.vtkMatrixFromArray(np.eye(4))
+        return ijkToRAS
+    position = np.array(list(map(float, positionString.split('\\'))))
+    orientation = list(map(float, orientationString.split('\\')))
     spacing = np.array(list(map(float, spacingString.split('\\'))))
     rowOrientation = np.array(orientation[:3])
     columnOrientation = np.array(orientation[3:])
@@ -744,6 +748,10 @@ def ijkToRASFromFiles(filePaths):
     rowVector = spacing[1] * rowOrientation  # dicom PixelSpacing is between rows first, then columns
     columnVector = spacing[0] * columnOrientation
     lastPositionString = slicer.dicomDatabase.fileValue(lastFile, tags['position'])
+    if lastPositionString == "":
+        logging.warning("Geometry information missing - defaulting to identity matrix")
+        ijkToRAS = slicer.util.vtkMatrixFromArray(np.eye(4))
+        return ijkToRAS
     lastPosition = np.array(list(map(float, lastPositionString.split('\\'))))
     lastPosition *= lpsToRAS
     sliceSpacing = np.linalg.norm(lastPosition - position)
