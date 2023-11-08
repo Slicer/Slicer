@@ -35,7 +35,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         self.acquisitionModeling = None
         self.defaultStudyID = 'SLICER10001'  # TODO: What should be the new study ID?
         self.urlHandlerInterval = 300 # ms
-        self.urlHandlerTimeout = 120 # seconds
+        self.urlHandlerTimeout = 60 # seconds
 
         self.tags['sopClassUID'] = "0008,0016"
         self.tags['photometricInterpretation'] = "0028,0004"
@@ -409,7 +409,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         logging.info("Loading with imageIOName: %s" % imageIOName)
         reader.Update()
 
-        slicer.modules.reader = reader
         if reader.GetErrorCode() != vtk.vtkErrorCode.NoError:
             errorStrings = (imageIOName, vtk.vtkErrorCode.GetStringFromErrorCode(reader.GetErrorCode()))
             logging.error("Could not read scalar volume using %s approach.  Error is: %s" % errorStrings)
@@ -430,9 +429,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         slicer.vtkMRMLVolumeArchetypeStorageNode.SetMetaDataDictionaryFromReader(volumeNode, reader)
         volumeNode.SetRASToIJKMatrix(reader.GetRasToIjkMatrix())
         volumeNode.CreateDefaultDisplayNodes()
-
-        slicer.modules.DICOMInstance.reader = reader
-        slicer.modules.DICOMInstance.imageChangeInformation = imageChangeInformation
 
         return volumeNode
 
@@ -529,8 +525,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         framesByURL = urlHandler.getFrames()
         volumeArray = slicer.util.arrayFromVolume(volumeNode)
         elapsedTime = time.time() - self._urlHandlerStartTime
-        msg = _("{framesThisLoad} of {frames} in {elapsedTime:.3g}").format(framesThisLoad=len(framesByURL), frames=volumeArray.shape[0], elapsedTime=elapsedTime)
-        print(msg) # TODO
+        msg = _("{framesThisLoad} of {frames} in {elapsedTime:.3f}").format(framesThisLoad=len(framesByURL), frames=volumeArray.shape[0], elapsedTime=elapsedTime)
         logging.info(msg)
         if len(framesByURL) > 0:
             for url,frame in framesByURL.items():
@@ -539,8 +534,20 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 rescaleIntercept = float(rescaleInterceptValue) if rescaleInterceptValue != "" else 0.
                 rescaleSlope = float(rescaleSlopeValue) if rescaleSlopeValue != "" else 1.
                 sliceIndex = urls.index(url)
-                volumeArray[sliceIndex] = rescaleIntercept + rescaleSlope * frame
+                try:
+                    volumeArray[sliceIndex] = rescaleIntercept + rescaleSlope * frame.reshape(volumeArray[sliceIndex].shape)
+                except ValueError:
+                    logging.error(f"Incorrect frame size {frame.shape} not {volumeArray[sliceIndex].shape}")
+                    logging.error(f"retrying {url}")
+                    urlHandler.startRequest([url])
             slicer.util.arrayFromVolumeModified(volumeNode)
+            displayNode = volumeNode.GetDisplayNode()
+            if displayNode.GetNumberOfWindowLevelPresets() > 0:
+                displayNode.SetWindowLevelFromPreset(0)
+            else:
+                displayNode.AutoWindowLevelOff()
+                displayNode.AutoWindowLevelOn()
+
         if not urlHandler.requestFinished():
             if elapsedTime > self.urlHandlerTimeout:
                 logging.error("Download timeout")
@@ -550,8 +557,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 qt.QTimer.singleShot(self.urlHandlerInterval, callback)
         else:
             rate = (volumeArray.size * volumeArray.itemsize) / elapsedTime / 1024. / 1024.
-            logging.info(f"Download time {elapsedTime:.3g} at {rate:.2g} mebibytes/second") # TODO i18n
-            print(f"Download time {elapsedTime:.3g} at {rate:.2g} mebibytes/second")
+            msg = "Download time {elapsedTime:.2f} at {rate:.2f} mebibytes/second".format(elapsedTime=elapsedTime, rate=rate)
+            logging.info(msg)
 
     def load(self, loadable, readerApproach=None):
         """Load the select as a scalar volume using desired approach
@@ -564,6 +571,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # - data comes from a URL, so parse metadata from dicom to slicer conventions
             # - create a placeholder volumeNode that can be populated by the downloader
             # - rely on files having already been sorted during examine step
+            if not hasattr(slicer.modules, "dicomURLHandlers"):
+                slicer.modules.dicomURLHandlers = {}
             if urlScheme in slicer.modules.dicomURLHandlers:
                 # first, initiate the request
                 urlHandler = slicer.modules.dicomURLHandlers[urlScheme]
