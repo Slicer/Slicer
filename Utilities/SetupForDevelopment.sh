@@ -44,7 +44,14 @@ echo "Suggesting git tips..."
 ./GitTips.sh || exit 1
 echo
 
-# Record the version of this setup so the developer can be notified that
-# this script and/or hooks have been modified.
+# Record the setup version to notify developers of script and hook modifications.
+#
+# The version is automatically updated by a GitHub Actions workflow using
+# the following heuristics:
+#
+#   - scripts_revision_count: Revisions related to this file and associated scripts.
+#   - hooks_rev_count: Revisions associated with the "hooks" branch.
+#   - SetupForDevelopment_VERSION: The sum of scripts_revision_count and hooks_rev_count.
+#
 SetupForDevelopment_VERSION=9
 git config hooks.SetupForDevelopment ${SetupForDevelopment_VERSION}
