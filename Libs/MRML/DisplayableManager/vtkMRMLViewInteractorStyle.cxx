@@ -482,7 +482,7 @@ void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *intera
 void vtkMRMLViewInteractorStyle::DisplayableManagerCallback(vtkObject *object, unsigned long event, void *clientData, void *callData)
 {
   vtkMRMLViewInteractorStyle* self = reinterpret_cast<vtkMRMLViewInteractorStyle *>(clientData);
-  assert(!object->IsA("vtkMRMLAbstractDisplayableManager"));
+  assert(object->IsA("vtkMRMLAbstractDisplayableManager"));
   self->ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager::SafeDownCast(object), event, callData);
 }
 
