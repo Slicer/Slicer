@@ -183,7 +183,7 @@ DICOM module settings:
         - Load referenced series will give you the option of easily loading, for example, the source volume of a segmentation when you open the segmentation.  This can also be made to happen automatically.
     - DICOMScalarVolumePlugin settings:
         - You can choose what back-end library to use (currently GDCM, DCMTK, or GDCM with DCMTK fallback with the last option being the default.  This is provided in case some data is unsupported by one library or the other.
-        - Acquisition geometry regularization option supports the creation of a nonlinear transform that corrects for things like missing slices or gantry tilt in the acquisition.  See more information [here](https://github.com/Slicer/Slicer/commit/3328b81211cb2e9ae16a0b49097744171c8c71c0)
+        - Acquisition geometry regularization option supports the creation of a nonlinear transform that corrects for things like missing slices or gantry tilt in the acquisition. The regularization transformation can also be hardened to the volume. See more information [here](https://github.com/Slicer/Slicer/commit/3328b81211cb2e9ae16a0b49097744171c8c71c0)
         - Autoloading subseries by time is an option break up some 4D acquisitions into individual volume, but is optional since some volumes are also acquired in time unites and should not be split.
 
 ## Troubleshooting
