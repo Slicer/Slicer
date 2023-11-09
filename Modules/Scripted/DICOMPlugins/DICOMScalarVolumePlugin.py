@@ -226,7 +226,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 value = value.replace(",", "_")  # remove commas so it can be used as an index
                 if tag not in subseriesValues:
                     subseriesValues[tag] = []
-                if not subseriesValues[tag].__contains__(value):
+                if value not in subseriesValues[tag]:
                     subseriesValues[tag].append(value)
                 if (tag, value) not in subseriesFiles:
                     subseriesFiles[tag, value] = []
