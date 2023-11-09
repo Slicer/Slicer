@@ -7,10 +7,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 =========================================================================auto=*/
 
-#include <algorithm>
-
-#include <vtkAddonMathUtilities.h>
-
+// MRML includes
 #include "vtkMRMLI18N.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLVolumeSequenceStorageNode.h"
@@ -19,15 +16,27 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSequenceNode.h"
 
-#include "vtkTeemNRRDReader.h"
-#include "vtkTeemNRRDWriter.h"
-#include "vtkObjectFactory.h"
-#include "vtkImageData.h"
+// vtkAddon includes
+#include <vtkAddonMathUtilities.h>
+
+// vtkITK includes
+#include "vtkITKImageSequenceWriter.h"
+
+// VTK includes
 #include "vtkImageAppendComponents.h"
+#include "vtkImageData.h"
 #include "vtkImageExtractComponents.h"
 #include "vtkNew.h"
+#include "vtkObjectFactory.h"
 #include "vtkStringArray.h"
+#include "vtkTeemNRRDReader.h"
+#include "vtkTeemNRRDWriter.h"
+
+// VTKsys includes
 #include "vtksys/SystemTools.hxx"
+
+// STD includes
+#include <algorithm>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLVolumeSequenceStorageNode);
@@ -222,15 +231,15 @@ bool vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *re
     firstFrameVolume->GetImageData()->GetExtent(firstFrameVolumeExtent);
     firstFrameVolumeScalarType = firstFrameVolume->GetImageData()->GetScalarType();
     firstFrameVolumeNumberOfComponents = firstFrameVolume->GetImageData()->GetNumberOfScalarComponents();
-    // VTK NRRD writer only supports 4D volumes (writing a 3D color volume sequence would require 5D)
-    if (firstFrameVolumeNumberOfComponents != 1)
-    {
-      this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only single scalar component volumes can be written in this format."));
-      return false;
+    //// VTK NRRD writer only supports 4D volumes (writing a 3D color volume sequence would require 5D)
+    //if (firstFrameVolumeNumberOfComponents != 1)
+    //  {
+    //  this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only single scalar component volumes can be written in this format."));
+    //  return false;
+    //  }
     }
-  }
-  vtkNew<vtkMatrix4x4> firstVolumeIjkToRas;
-  firstFrameVolume->GetIJKToRASMatrix(firstVolumeIjkToRas.GetPointer());
+  vtkNew<vtkMatrix4x4> firstVolumeRasToIjk;
+  firstFrameVolume->GetRASToIJKMatrix(firstVolumeRasToIjk.GetPointer());
 
   int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
   for (int frameIndex = 1; frameIndex<numberOfFrameVolumes; frameIndex++)
@@ -242,13 +251,13 @@ bool vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *re
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only volumes can be written in this format."));
       return false;
     }
-    vtkNew<vtkMatrix4x4> currentVolumeIjkToRas;
-    currentFrameVolume->GetIJKToRASMatrix(currentVolumeIjkToRas.GetPointer());
-    if (!vtkAddonMathUtilities::MatrixAreEqual(currentVolumeIjkToRas, firstVolumeIjkToRas))
+    vtkNew<vtkMatrix4x4> currentVolumeRasToIjk;
+    currentFrameVolume->GetRASToIJKMatrix(currentVolumeRasToIjk.GetPointer());
+    if (!vtkAddonMathUtilities::MatrixAreEqual(currentVolumeRasToIjk, firstVolumeRasToIjk))
     {
       vtkDebugMacro("vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode: IJK to RAS matrix is not the same in all frames"
-        << " (first frame: " << vtkAddonMathUtilities::ToString(firstVolumeIjkToRas)
-        << ", frame "<<frameIndex<<": " << vtkAddonMathUtilities::ToString(firstVolumeIjkToRas) << ")");
+        << " (first frame: " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk)
+        << ", frame "<<frameIndex<<": " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk) << ")");
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Geometry of all volumes in the sequence must be the same."));
       return false;
     }
@@ -288,7 +297,7 @@ bool vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *re
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLSequenceNode* volSequenceNode = vtkMRMLSequenceNode::SafeDownCast(refNode);
   if (volSequenceNode == nullptr)
@@ -298,9 +307,10 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  vtkNew<vtkMatrix4x4> firstVolumeIjkToRas;
+  vtkNew<vtkMatrix4x4> firstVolumeRasToIjk;
   int frameVolumeDimensions[3] = {0};
   int frameVolumeScalarType = VTK_VOID;
+  int frameVolumeNumberOfComponents = 0;
   int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
   if (numberOfFrameVolumes > 0)
   {
@@ -310,11 +320,13 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only volume sequence can be written in this format."));
       return 0;
     }
-    frameVolume->GetIJKToRASMatrix(firstVolumeIjkToRas.GetPointer());
+    frameVolume->GetRASToIJKMatrix(firstVolumeRasToIjk.GetPointer());
     if (frameVolume->GetImageData())
     {
       frameVolume->GetImageData()->GetDimensions(frameVolumeDimensions);
       frameVolumeScalarType = frameVolume->GetImageData()->GetScalarType();
+      frameVolumeNumberOfComponents = frameVolume->GetImageData()->GetNumberOfScalarComponents();
+      }
     }
   }
 
@@ -328,13 +340,13 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only volume sequence can be written in this format."));
       return 0;
     }
-    vtkNew<vtkMatrix4x4> currentVolumeIjkToRas;
-    frameVolume->GetIJKToRASMatrix(currentVolumeIjkToRas.GetPointer());
-    if (!vtkAddonMathUtilities::MatrixAreEqual(currentVolumeIjkToRas, firstVolumeIjkToRas))
+    vtkNew<vtkMatrix4x4> currentVolumeRasToIjk;
+    frameVolume->GetRASToIJKMatrix(currentVolumeRasToIjk.GetPointer());
+    if (!vtkAddonMathUtilities::MatrixAreEqual(currentVolumeRasToIjk, firstVolumeRasToIjk))
     {
       vtkDebugMacro("vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode: IJK to RAS matrix is not the same in all frames"
-        << " (first frame: " << vtkAddonMathUtilities::ToString(firstVolumeIjkToRas)
-        << ", frame " << frameIndex << ": " << vtkAddonMathUtilities::ToString(firstVolumeIjkToRas) << ")");
+        << " (first frame: " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk)
+        << ", frame " << frameIndex << ": " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk) << ")");
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Geometry of all volumes in the sequence must be the same."));
       return 0;
     }
@@ -374,6 +386,10 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("File name not specified."));
     return 0;
   }
+
+
+
+  /*
   // Use here the NRRD Writer
   vtkNew<vtkTeemNRRDWriter> writer;
   // ForceRangeAxis needs to be enabled for the writer to correctly write image sequences that contain only a single frame.
@@ -430,7 +446,6 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     writer->SetAttribute(attributeName, volSequenceNode->GetAttribute(attributeName.c_str()));
   }
 
-
   appender->Update();
   writer->SetInputConnection(appender->GetOutputPort());
 
@@ -442,10 +457,46 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to write NRRD file."));
     writeFlag = 0;
   }
+  */
+
+  vtkNew<vtkITKImageSequenceWriter> writer;
+  writer->SetFileName(fullName.c_str());
+  //TODO: Anything to do about ForceRangeAxis (an option in vtkTeemNRRDWriter)? It was enabled in the previous implementation.
+  writer->SetUseCompression(this->GetUseCompression());
+
+  writer->SetRasToIJKMatrix(firstVolumeRasToIjk.GetPointer());
+
+  //TODO: Axis types
+
+  appender->Update();
+  writer->SetInputConnection(appender->GetOutputPort());
+
+  writer->Write();
+  int writeFlag = 1;
+  if (writer->GetErrorCode())
+    {
+    vtkDebugMacro("ERROR writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to write NRRD file."));
+    writeFlag = 0;
+    }
+
+  /*
+  //TODO:!!!!!!!!!!!
+  using PixelType = itk::RGBAPixel<unsigned short>;
+  constexpr unsigned int Dimension = 4;
+
+  using ImageType = itk::Image< PixelType, Dimension >;
+
+  using WriterType = itk::ImageFileWriter< ImageType >;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName("d:/ith5DWriteTest.nrrd");
+  writer->SetInput(image);
+  writer->Update();
+  */
 
   this->StageWriteData(refNode);
 
-  vtkDebugMacro(<< " vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: sequence successfully written. ");
+  vtkDebugMacro("vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: sequence successfully written.");
   return writeFlag;
 }
 
