@@ -132,7 +132,7 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
       {
       // Legacy, was replaced by active tag, try to set ActiveTag instead
       // to link to the main viewer
-      if (!this->GetActiveTag() && this->Scene)
+      if (!this->GetLayoutName() && this->Scene)
         {
         vtkMRMLViewNode* vnode = vtkMRMLViewNode::SafeDownCast(
           this->Scene->GetFirstNodeByClass("vtkMRMLViewNode"));
