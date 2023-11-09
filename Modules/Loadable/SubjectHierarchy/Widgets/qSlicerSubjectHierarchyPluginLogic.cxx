@@ -133,16 +133,17 @@ qSlicerSubjectHierarchyPluginLogic::~qSlicerSubjectHierarchyPluginLogic() = defa
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()
 {
+  // QScala
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyViewContextMenuPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyFolderPlugin());
+  //qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+  //  new qSlicerSubjectHierarchyFolderPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyParseLocalDataPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyCloneNodePlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyRegisterPlugin());
+  //qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+  //  new qSlicerSubjectHierarchyCloneNodePlugin());
+  //qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+  //  new qSlicerSubjectHierarchyRegisterPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyOpacityPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(

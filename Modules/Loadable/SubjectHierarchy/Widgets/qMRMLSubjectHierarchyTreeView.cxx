@@ -339,9 +339,9 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupActions()
   QList< QAction* > visibilityMenuActions;
 
   // Add default node actions
-  nodeMenuActions.append(this->RenameAction);
-  nodeMenuActions.append(this->DeleteAction);
-  nodeMenuActions.append(this->EditAction);
+  //nodeMenuActions.append(this->RenameAction);
+  //nodeMenuActions.append(this->DeleteAction);
+  //nodeMenuActions.append(this->EditAction);
   nodeMenuActions.append(this->ToggleVisibilityAction);
 
   // Set up expand to level action and its menu
