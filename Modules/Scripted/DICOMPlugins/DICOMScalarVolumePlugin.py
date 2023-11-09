@@ -26,10 +26,16 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     """ ScalarVolume specific interpretation code
     """
 
-    def __init__(self, epsilon=0.01):
+    def __init__(self, spacingEpsilon=1e-2, orientationEpsilon=1e-6):
+        """
+        :param spacingEpsilon: Tolerance for numeric comparisons for spacing vectors. Defaults to 1.e-2.
+        :param orientationEpsilon: Tolerance for numeric comparisons for orientation vectors. Defaults to 1.e-6, following ITK numeric comparison logic.
+        """
+
         super().__init__()
         self.loadType = _("Scalar Volume")
-        self.epsilon = epsilon
+        self.spacingEpsilon = spacingEpsilon
+        self.orientationEpsilon = orientationEpsilon
         self.acquisitionModeling = None
         self.defaultStudyID = "SLICER10001"  # TODO: What should be the new study ID?
 
@@ -90,7 +96,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         importFormatsComboBox.addItem(_("default (apply regularization transform)"), "default")
         importFormatsComboBox.addItem(_("none"), "none")
         importFormatsComboBox.addItem(_("apply regularization transform"), "transform")
-        # In the future additional option, such as "resample" (harden the applied transform) may be added.
+        importFormatsComboBox.addItem(_("harden regularization transform"), "hardenTransform")
 
         importFormatsComboBox.currentIndex = 0
         formLayout.addRow(_("Acquisition geometry regularization:"), importFormatsComboBox)
@@ -134,6 +140,10 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             comparison += _("Pixel data mismatch") + "\n"
         return comparison
 
+    def hardenAcquisitionGeometryRegularization(self):
+        settings = qt.QSettings()
+        return (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") == "hardenTransform")
+
     def acquisitionGeometryRegularizationEnabled(self):
         settings = qt.QSettings()
         return (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") != "none")
@@ -170,6 +180,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         cleanValue = cleanValue.replace("*", "(star)")
         cleanValue = cleanValue.replace("\\", "-")
         return cleanValue
+
+    def tagValueToVector(self, value):
+        return numpy.array([float(element) for element in value.split("\\")])
 
     def examineFiles(self, files):
         """ Returns a list of DICOMLoadable instances
@@ -212,6 +225,16 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             "diffusionGradientOrientation",
         ]
 
+        # Subset of the tags specified in the `subseriesTags` list
+        # that should be compared numerically (rather than using the
+        # built-in string comparison). This is done when checking if
+        # the associated value has already been appended to the
+        # `subseriesValues[tag]` list.
+        vectorTags = [
+            "imageOrientationPatient",
+            "diffusionGradientOrientation",
+        ]
+
         #
         # first, look for subseries within this series
         # - build a list of files for each unique value
@@ -224,9 +247,31 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             for tag in subseriesTags:
                 value = slicer.dicomDatabase.fileValue(file, self.tags[tag])
                 value = value.replace(",", "_")  # remove commas so it can be used as an index
+
                 if tag not in subseriesValues:
                     subseriesValues[tag] = []
-                if value not in subseriesValues[tag]:
+
+                if tag in vectorTags:
+                    if value != "":
+                        vector = self.tagValueToVector(value)
+
+                        found = False
+                        for subseriesValue in subseriesValues[tag]:
+                            subseriesVector = self.tagValueToVector(subseriesValue)
+                            # vector numerical comparison by absolute difference as the ITK logic.
+                            # Reference:
+                            #   Class: ITK/Modules/Numerics/Optimizersv4/include/itkObjectToObjectMetric.hxx
+                            #   Method: VerifyDisplacementFieldSizeAndPhysicalSpace
+                            #   URL: https://github.com/InsightSoftwareConsortium/ITK/blob/v5.4rc02/Modules/Numerics/Optimizersv4/include/itkObjectToObjectMetric.hxx#L507-L510.
+
+                            if numpy.allclose(vector, subseriesVector, rtol=0., atol=self.orientationEpsilon):
+                                found = True
+                                value = subseriesValue
+                                break
+
+                        if not found:
+                            subseriesValues[tag].append(value)
+                elif value not in subseriesValues[tag]:
                     subseriesValues[tag].append(value)
                 if (tag, value) not in subseriesFiles:
                     subseriesFiles[tag, value] = []
@@ -307,7 +352,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         # then adjust confidence values based on warnings
         #
         for loadable in loadables:
-            loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.epsilon)
+            loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.spacingEpsilon)
 
         loadablesBetterThanAllFiles = []
         if allFilesLoadable.warning != "":
@@ -539,7 +584,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         if volumeNode:
             self.acquisitionModeling = self.AcquisitionModeling()
             self.acquisitionModeling.createAcquisitionTransform(volumeNode,
-                                                                addAcquisitionTransformIfNeeded=self.acquisitionGeometryRegularizationEnabled())
+                                                                addAcquisitionTransformIfNeeded=self.acquisitionGeometryRegularizationEnabled(),
+                                                                hardenAcquisitionTransform=self.hardenAcquisitionGeometryRegularization())
 
         return volumeNode
 
@@ -827,7 +873,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                         volumeNode.TransformPointToWorld(corners[slice, row, column], worldCorners[slice, row, column])
             return worldCorners
 
-        def createAcquisitionTransform(self, volumeNode, addAcquisitionTransformIfNeeded=True):
+        def createAcquisitionTransform(self, volumeNode, addAcquisitionTransformIfNeeded=True, hardenAcquisitionTransform=False):
             """Creates the actual transform if needed.
             Slice corners are cached for inspection by tests
             """
@@ -846,6 +892,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                     self.fixedCorners = self.cornersToWorld(volumeNode, self.originalCorners)
                     if not numpy.allclose(self.fixedCorners, self.targetCorners):
                         raise Exception("Acquisition transform didn't fix slice corners!")
+                    if hardenAcquisitionTransform:
+                        volumeNode.HardenTransform()
                 else:
                     logging.warning(warningText + "  Regularization transform is not added, as the option is disabled.")
             elif maxError > 0 and maxError > self.zeroEpsilon:
