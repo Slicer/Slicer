@@ -126,6 +126,7 @@ set(vtkITK_SRCS
   vtkITKIslandMath.cxx
   vtkITKImageMargin.cxx
   vtkITKMorphologicalContourInterpolator.cxx
+  vtkITKImageSequenceWriter.cxx
   )
 
 # these types are never instantiated, so they don't
