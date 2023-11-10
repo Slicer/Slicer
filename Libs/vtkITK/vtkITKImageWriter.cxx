@@ -189,8 +189,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
             {
               tagvalue[i][j] = measurementFrameMatrix->GetElement(i, j);
             }
-            entryvalue->SetMetaDataObjectValue(tagvalue);
-          }
+          entryvalue->SetMetaDataObjectValue(tagvalue);
         }
         ++itr;
       }
@@ -263,10 +262,8 @@ void vtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "FileName: " <<
-    (this->FileName ? this->FileName : "(none)") << "\n";
-  os << indent << "ImageIOClassName: " <<
-    (this->ImageIOClassName ? this->ImageIOClassName : "(none)") << "\n";
+  os << indent << "FileName: " << (this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "ImageIOClassName: " << (this->ImageIOClassName ? this->ImageIOClassName : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -315,10 +312,8 @@ void vtkITKImageWriter::Write()
   this->UpdateInformation();
   if (this->GetOutputInformation(0))
   {
-    this->GetOutputInformation(0)->Set(
-      vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
-      this->GetOutputInformation(0)->Get(
-        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+    this->GetOutputInformation(0)->Set(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+      this->GetOutputInformation(0)->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
   }
   int inputDataType =
     pointData->GetScalars() ? pointData->GetScalars()->GetDataType() :
