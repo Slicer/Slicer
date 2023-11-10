@@ -42,13 +42,13 @@
 vtkStandardNewMacro(vtkITKImageSequenceWriter);
 
 // helper function
-template <class  TPixelType, int Dimension>
+template <class TPixelType, int Dimension>
 void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage, char *fileName,
-                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* MeasurementFrameMatrix=nullptr) {
+                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
+{
+  typedef itk::Image<TPixelType, Dimension> ImageType;
 
-  typedef  itk::Image<TPixelType, Dimension> ImageType;
-
-  vtkMatrix4x4 *ijkToRasMatrix = vtkMatrix4x4::New();
+  vtkMatrix4x4* ijkToRasMatrix = vtkMatrix4x4::New();
 
   if (rasToIjkMatrix == nullptr)
     {
@@ -64,15 +64,15 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
   typename ImageType::PointType origin;
   direction.SetIdentity();
 
-  double mag[3];
-  int i;
+  double mag[3] = {0.0};
+  int i = 0;
   for (i=0; i<3; i++)
     {
     // normalize vectors
     mag[i] = 0;
     for (int j=0; j<3; j++)
       {
-      mag[i] += ijkToRasMatrix->GetElement(i,j)* ijkToRasMatrix->GetElement(i,j);
+      mag[i] += ijkToRasMatrix->GetElement(i,j) * ijkToRasMatrix->GetElement(i,j);
       }
     if (mag[i] == 0.0)
       {
@@ -81,15 +81,13 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
     mag[i] = sqrt(mag[i]);
     }
 
-  for ( i=0; i<3; i++)
+  for (i=0; i<3; i++)
     {
-    int j;
-    for (j=0; j<3; j++)
+    for (int j=0; j<3; j++)
       {
-      ijkToRasMatrix->SetElement(i, j, ijkToRasMatrix->GetElement(i,j)/mag[i]);
+      ijkToRasMatrix->SetElement(i, j, ijkToRasMatrix->GetElement(i,j) / mag[i]);
       }
     }
-
 
   // ITK image direction are in LPS space
   // convert from ijkToRas to ijkToLps
@@ -101,11 +99,10 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
   vtkMatrix4x4* ijkToLpsMatrix = vtkMatrix4x4::New();
   vtkMatrix4x4::Multiply4x4(ijkToRasMatrix, rasToLpsMatrix, ijkToLpsMatrix);
 
-  for ( i=0; i<Dimension; i++)
+  for (i=0; i<Dimension; i++)
     {
     origin[i] =  ijkToRasMatrix->GetElement(3,i);
-    int j;
-    for (j=0; j<Dimension; j++)
+    for (int j=0; j<Dimension; j++)
       {
       if (Dimension == 2)
         {
@@ -129,15 +126,14 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
   typedef typename itk::VTKImageImport<ImageType> ImageImportType;
   typename ImageImportType::Pointer itkImporter = ImageImportType::New();
 
-  // vtk export for  vtk image
+  // vtk export for vtk image
   vtkNew<vtkImageExport> vtkExporter;
-  vtkNew<vtkImageFlip> vtkFlip;
 
   // writer
   typedef typename itk::ImageFileWriter<ImageType> ImageWriterType;
-  typename ImageWriterType::Pointer   itkImageWriter =  ImageWriterType::New();
+  typename ImageWriterType::Pointer itkImageWriter = ImageWriterType::New();
 
-  if ( self->GetUseCompression() )
+  if (self->GetUseCompression())
     {
     itkImageWriter->UseCompressionOn();
     }
@@ -146,59 +142,53 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
     itkImageWriter->UseCompressionOff();
     }
 
-
   // set pipeline for the image
-  vtkFlip->SetInputData( inputImage );
-  vtkExporter->SetInputData ( inputImage );
-  vtkFlip->SetFilteredAxis(1);
-  vtkFlip->FlipAboutOriginOn();
+  vtkExporter->SetInputData(inputImage);
 
   ConnectPipelines(vtkExporter.GetPointer(), itkImporter);
 
   // write image
-  if(self->GetImageIOClassName())
+  if (self->GetImageIOClassName())
     {
-    itk::LightObject::Pointer objectType =
-      itk::ObjectFactoryBase::CreateInstance(self->GetImageIOClassName());
-    itk::ImageIOBase* imageIOType = dynamic_cast< itk::ImageIOBase * >(
-      objectType.GetPointer());
-    if(imageIOType){
+    itk::LightObject::Pointer objectType = itk::ObjectFactoryBase::CreateInstance(self->GetImageIOClassName());
+    itk::ImageIOBase* imageIOType = dynamic_cast<itk::ImageIOBase*>(objectType.GetPointer());
+    if(imageIOType)
+      {
       itkImageWriter->SetImageIO(imageIOType);
       }
     }
   itkImageWriter->SetInput(itkImporter->GetOutput());
 
-  if (MeasurementFrameMatrix != nullptr)
+  if (measurementFrameMatrix != nullptr)
     {
-    typedef std::vector<std::vector<double> >    DoubleVectorType;
-    typedef itk::MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
-    const itk::MetaDataDictionary &        dictionary = itkImageWriter->GetMetaDataDictionary();
+    typedef std::vector<std::vector<double> > DoubleVectorType;
+    typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
+    const itk::MetaDataDictionary &dictionary = itkImageWriter->GetMetaDataDictionary();
 
     itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
     itk::MetaDataDictionary::ConstIterator end = dictionary.End();
 
-    while( itr != end )
+    while (itr != end)
       {
       // Get Measurement Frame
-      itk::MetaDataObjectBase::Pointer  entry = itr->second;
-      MetaDataDoubleVectorType::Pointer entryvalue
-        = dynamic_cast<MetaDataDoubleVectorType *>( entry.GetPointer() );
-      if( entryvalue )
+      itk::MetaDataObjectBase::Pointer entry = itr->second;
+      MetaDataDoubleVectorType::Pointer entryvalue = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
+      if (entryvalue)
         {
-        int pos = itr->first.find( "NRRD_measurement frame" );
-        if( pos != -1 )
+        int pos = itr->first.find("NRRD_measurement frame");
+        if (pos != -1)
           {
           DoubleVectorType tagvalue;
-          tagvalue.resize( 3 );
-          for( int i = 0; i < 3; i++ )
+          tagvalue.resize(3);
+          for (int i = 0; i < 3; i++)
             {
             tagvalue[i].resize( 3 );
-            for( int j = 0; j < 3; j++ )
+            for (int j = 0; j < 3; j++)
               {
-              tagvalue[i][j] = MeasurementFrameMatrix->GetElement(i, j);
+              tagvalue[i][j] = measurementFrameMatrix->GetElement(i, j);
               }
             }
-          entryvalue->SetMetaDataObjectValue( tagvalue );
+          entryvalue->SetMetaDataObjectValue(tagvalue);
           }
         }
         ++itr;
@@ -222,7 +212,7 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
 }
 
 //----------------------------------------------------------------------------
-template <class  TPixelType>
+template <class TPixelType>
 void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage, char *fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {
@@ -234,7 +224,7 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
     }
   else // 3D
     {
-    ITKWriteVTKImage<TPixelType, 3>(self, inputImage, fileName, rasToIjkMatrix, measurementFrameMatrix);
+    ITKWriteVTKImage<TPixelType, 4>(self, inputImage, fileName, rasToIjkMatrix, measurementFrameMatrix);
     }
 }
 
@@ -248,7 +238,6 @@ vtkITKImageSequenceWriter::vtkITKImageSequenceWriter()
   this->ImageIOClassName = nullptr;
   this->VoxelVectorType = vtkITKImageSequenceWriter::VoxelVectorTypeUndefined;
 }
-
 
 //----------------------------------------------------------------------------
 vtkITKImageSequenceWriter::~vtkITKImageSequenceWriter()
@@ -267,18 +256,14 @@ vtkITKImageSequenceWriter::~vtkITKImageSequenceWriter()
     }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkITKImageSequenceWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "FileName: " <<
-    (this->FileName ? this->FileName : "(none)") << "\n";
-  os << indent << "ImageIOClassName: " <<
-    (this->ImageIOClassName ? this->ImageIOClassName : "(none)") << "\n";
+  os << indent << "FileName: " << (this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "ImageIOClassName: " << (this->ImageIOClassName ? this->ImageIOClassName : "(none)") << "\n";
 }
-
 
 //----------------------------------------------------------------------------
 // This function sets the name of the file.
@@ -317,7 +302,7 @@ void vtkITKImageSequenceWriter::Write()
     vtkErrorMacro(<<"vtkITKImageSequenceWriter: No image to write");
     return;
     }
-  if ( ! this->FileName )
+  if (!this->FileName)
     {
     vtkErrorMacro(<<"vtkITKImageSequenceWriter: Please specify a FileName");
     return;
@@ -326,10 +311,8 @@ void vtkITKImageSequenceWriter::Write()
   this->UpdateInformation();
   if (this->GetOutputInformation(0))
     {
-    this->GetOutputInformation(0)->Set(
-      vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
-      this->GetOutputInformation(0)->Get(
-        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+    this->GetOutputInformation(0)->Set(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+      this->GetOutputInformation(0)->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
     }
   int inputDataType =
     pointData->GetScalars() ? pointData->GetScalars()->GetDataType() :
