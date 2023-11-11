@@ -328,7 +328,6 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeIndexFromID(const char *plotSeriesNod
     if (id && !strcmp(plotSeriesNodeID, id))
       {
       return plotIndex;
-      break;
       }
     }
 
