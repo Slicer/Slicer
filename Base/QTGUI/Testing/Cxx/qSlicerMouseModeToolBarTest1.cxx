@@ -41,7 +41,6 @@ QString activePlaceActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
     if (action->objectName() == QString("PlaceWidgetAction"))
       {
       return action->text();
-      break;
       }
     }
   return QString();
@@ -55,7 +54,6 @@ QString getActiveActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
     if (action->isChecked())
       {
       return action->text();
-      break;
       }
 
     }
