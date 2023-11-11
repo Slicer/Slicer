@@ -10,6 +10,7 @@ from slicer.util import TESTING_DATA_URL
 # SliceLinkLogic
 #
 
+
 class SliceLinkLogic(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -32,6 +33,7 @@ class SliceLinkLogic(ScriptedLoadableModule):
 #
 # qSliceLinkLogicWidget
 #
+
 
 class SliceLinkLogicWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -69,6 +71,7 @@ class SliceLinkLogicWidget(ScriptedLoadableModuleWidget):
 #
 # SliceLinkLogicLogic
 #
+
 
 class SliceLinkLogicLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

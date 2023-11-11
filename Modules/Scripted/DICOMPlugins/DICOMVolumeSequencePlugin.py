@@ -15,6 +15,7 @@ from DICOMLib import DICOMExportScalarVolume
 # to DICOM, using DICOM module's plugin infrastructure.
 #
 
+
 class DICOMVolumeSequencePluginClass(DICOMPlugin):
     """Volume sequence export plugin"""
 
@@ -241,7 +242,6 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
             logging.info("Export scalar volume '" + volumeNode.GetName() + "' to directory " + directory)
 
             for sequenceItemIndex in range(sequenceItemCount):
-
                 # Switch to next item in the series
                 sequenceBrowserNode.SetSelectedItemNumber(sequenceItemIndex)
                 slicer.app.processEvents()
@@ -263,6 +263,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
 #
 # DICOMVolumeSequencePlugin
 #
+
 
 class DICOMVolumeSequencePlugin:
     """

@@ -15,6 +15,7 @@ from slicer.ScriptedLoadableModule import *
 # ScreenCapture
 #
 
+
 class ScreenCapture(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -526,7 +527,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         pass
 
     def updateViewOptions(self):
-
         sequencesModuleAvailable = hasattr(slicer.modules, "sequences")
 
         if self.viewNodeType != self.currentViewNodeType():
@@ -634,7 +634,6 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.outputCollapsibleButton.setEnabled(enable)
 
     def onCaptureButton(self):
-
         # Disable capture button to prevent multiple clicks
         self.captureButton.setEnabled(False)
         self.enableInputOutputWidgets(False)
@@ -809,6 +808,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 # ScreenCaptureLogic
 #
 
+
 class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
@@ -944,7 +944,6 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
 
         for url in urls:
-
             success = True
             try:
                 logging.info("Requesting download ffmpeg from %s..." % url)
@@ -1146,7 +1145,6 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             raise ValueError(_("Unsupported image format based on file name {filename}").format(filename=filename))
 
     def addWatermark(self, capturedImage):
-
         if self.watermarkPosition < 0:
             # no watermark
             return capturedImage

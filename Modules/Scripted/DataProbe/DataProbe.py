@@ -16,6 +16,7 @@ import DataProbeLib
 # DataProbe
 #
 
+
 class DataProbe(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -66,7 +67,6 @@ indicated by the mouse position.
 
 
 class DataProbeInfoWidget:
-
     def __init__(self, parent=None):
         self.nameSize = 24
 
@@ -296,7 +296,6 @@ class DataProbeInfoWidget:
                 self.frame.parent().text = _("Data Probe")
 
     def generateViewDescription(self, xyz, ras, sliceNode, sliceLogic):
-
         # Note that 'xyz' is unused in the Slicer implementation but could
         # be used when customizing the behavior of this function in extension.
 
@@ -336,7 +335,6 @@ class DataProbeInfoWidget:
         return "<b>%s</b>" % self.getPixelString(volumeNode, ijk) if volumeNode else ""
 
     def _createMagnifiedPixmap(self, xyz, inputImageDataConnection, outputSize, crosshairColor, imageZoom=10):
-
         # Use existing instance of objects to avoid instantiating one at each event.
         imageCrop = self.imageCrop
         painter = self.painter
@@ -457,6 +455,7 @@ class DataProbeInfoWidget:
             font.setFamily(family)
             widget.font = font
             widget.wordWrap = True
+
         _setFixedFontFamily(self.viewInfo)
 
         # the grid - things about the layers

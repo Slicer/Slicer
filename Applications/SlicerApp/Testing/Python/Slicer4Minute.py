@@ -10,6 +10,7 @@ from slicer.util import TESTING_DATA_URL
 # Slicer4Minute
 #
 
+
 class Slicer4Minute(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -32,6 +33,7 @@ class Slicer4Minute(ScriptedLoadableModule):
 #
 # qSlicer4MinuteWidget
 #
+
 
 class Slicer4MinuteWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -69,6 +71,7 @@ class Slicer4MinuteWidget(ScriptedLoadableModuleWidget):
 #
 # Slicer4MinuteLogic
 #
+
 
 class Slicer4MinuteLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

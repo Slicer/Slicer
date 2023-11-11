@@ -186,6 +186,7 @@ def _processSerializer(classtype):
 
 def parameterNodeSerializer(classtype=None):
     """Class decorator to register a new parameter node serializer"""
+
     def wrap(cls):
         return _processSerializer(cls)
 
@@ -573,6 +574,7 @@ class ListSerializer(Serializer):
     def write(self, parameterNode, name: str, values) -> None:
         def paramName(index):
             return self._paramName(name, index)
+
         with slicer.util.NodeModify(parameterNode):
             oldValues = self.read(parameterNode, name) if self.isIn(parameterNode, name) else None
             oldLen = self._len(parameterNode, name)
@@ -604,8 +606,10 @@ class ListSerializer(Serializer):
 
     def remove(self, parameterNode, name: str) -> None:
         """Removes this parameter from the node if it exists."""
+
         def paramName(index):
             return self._paramName(name, index)
+
         with slicer.util.NodeModify(parameterNode):
             for index in range(self._len(parameterNode, name)):
                 self._elementSerializer.remove(parameterNode, paramName(index))

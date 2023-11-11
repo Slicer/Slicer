@@ -32,7 +32,6 @@ class PluggableMarkupsSelfTest(ScriptedLoadableModule):
 # PluggableMarkupsSelfTestWidget
 #
 class PluggableMarkupsSelfTestWidget(ScriptedLoadableModuleWidget):
-
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -71,7 +70,6 @@ class PluggableMarkupsSelfTestWidget(ScriptedLoadableModuleWidget):
 
 
 class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
-
     def __init__(self):
         ScriptedLoadableModuleLogic.__init__(self)
 
@@ -190,7 +188,6 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
 
         additionalOptionsWidgetsFactory = slicer.qMRMLMarkupsOptionsWidgetsFactory().instance()
         for additionalOptionsWidget in self.additionalOptionsWidgets():
-
             # Check the widget exists
             if not self.__checkWidgetExists(markupsWidget, additionalOptionsWidget.objectName):
                 raise Exception("%s does not exist" % additionalOptionsWidget.objectName)
@@ -247,7 +244,6 @@ class PluggableMarkupsSelfTestTest(ScriptedLoadableModuleTest):
         self.test_PluggableMarkupsSelfTest1()
 
     def test_PluggableMarkupsSelfTest1(self):
-
         self.delayDisplay("Starting the Pluggable Markups Test")
 
         # Open the markups module

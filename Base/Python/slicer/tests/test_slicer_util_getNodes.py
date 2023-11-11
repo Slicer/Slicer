@@ -5,7 +5,6 @@ import vtk
 
 
 class SlicerUtilGetNodeTest(unittest.TestCase):
-
     def setUp(self):
         slicer.mrmlScene.Clear(0)
         self.nodes = self._configure_scene(slicer.mrmlScene)
@@ -25,7 +24,6 @@ class SlicerUtilGetNodeTest(unittest.TestCase):
         self.assertEqual(slicer.util.getFirstNodeByName("Volume", "vtkMRMLScalarVolumeNode").GetName(), "Volume1")
 
     def test_getNode(self):
-
         # Test handling of requesting non-existing node
         with self.assertRaises(slicer.util.MRMLNodeNotFoundException):
             slicer.util.getNode("")
@@ -54,7 +52,6 @@ class SlicerUtilGetNodeTest(unittest.TestCase):
         self.assertEqual(list(slicer.util.getNodes("Volume*").keys()), ["Volume1", "Volume2", "Volume"])
 
     def test_getNodesMultipleNodesSharingName(self):
-
         self.assertIn("Volume", slicer.util.getNodes("Volume"))
         self.assertIn("Volume", slicer.util.getNodes("Volume", useLists=True))
 

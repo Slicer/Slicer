@@ -592,6 +592,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         @parameterNodeWrapper
         class ParameterNodeType:
             p: list[list[int]]
+
         param = ParameterNodeType(newParameterNode())
         self.assertTrue(param.isCached("p"))
 
@@ -980,6 +981,7 @@ class TypedParameterNodeTest(unittest.TestCase):
 
             def call(self, caller, event):
                 self.called += 1
+
         callback = _Callback()
 
         @parameterNodeWrapper
@@ -1138,6 +1140,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         Can be used to test the speed of different MakeTypedParameterNode
         implementations.
         """
+
         @parameterNodeWrapper
         class ParameterNodeType:
             i: int

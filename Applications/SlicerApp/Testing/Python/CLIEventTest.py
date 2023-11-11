@@ -9,6 +9,7 @@ from slicer.ScriptedLoadableModule import *
 # CLIEventTest
 #
 
+
 class CLIEventTest(ScriptedLoadableModule):
     def __init__(self, parent):
         parent.title = "CLIEventTest"  # TODO make this more human readable by adding spaces
@@ -39,8 +40,8 @@ class CLIEventTest(ScriptedLoadableModule):
 # CLIEventTestWidget
 #
 
-class CLIEventTestWidget(ScriptedLoadableModuleWidget):
 
+class CLIEventTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -48,6 +49,7 @@ class CLIEventTestWidget(ScriptedLoadableModuleWidget):
 #
 # CLIEventTestLogic
 #
+
 
 class CLIEventTestLogic(VTKObservationMixin):
     def __init__(self):
@@ -80,8 +82,8 @@ class CLIEventTestLogic(VTKObservationMixin):
 # CLIEventTestLogic
 #
 
-class CLIEventTestTest(ScriptedLoadableModuleTest):
 
+class CLIEventTestTest(ScriptedLoadableModuleTest):
     def setUp(self):
         """Reset the state for testing."""
 
@@ -221,6 +223,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Load input volume")
         import SampleData
+
         inputVolume = SampleData.downloadSample("MRHead")
 
         self.delayDisplay("Create subject hierarchy of input volume")

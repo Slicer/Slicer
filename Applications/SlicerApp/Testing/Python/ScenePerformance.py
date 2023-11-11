@@ -11,6 +11,7 @@ from slicer.util import TESTING_DATA_URL
 # ScenePerformance
 #
 
+
 class ScenePerformance(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -30,7 +31,6 @@ class ScenePerformance(ScriptedLoadableModule):
 # ScenePerformanceWidget
 #
 class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
-
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -133,7 +133,6 @@ class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
 
 
 class ScenePerformanceTest(ScriptedLoadableModuleTest):
-
     def setUp(self):
         self.Repeat = 1
         self.delayDisplay("Setup")

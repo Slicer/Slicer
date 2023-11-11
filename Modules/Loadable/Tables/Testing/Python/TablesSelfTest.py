@@ -9,6 +9,7 @@ from slicer.ScriptedLoadableModule import *
 # TablesSelfTest
 #
 
+
 class TablesSelfTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -24,6 +25,7 @@ class TablesSelfTest(ScriptedLoadableModule):
 # TablesSelfTestWidget
 #
 
+
 class TablesSelfTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -32,6 +34,7 @@ class TablesSelfTestWidget(ScriptedLoadableModuleWidget):
 #
 # TablesSelfTestLogic
 #
+
 
 class TablesSelfTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

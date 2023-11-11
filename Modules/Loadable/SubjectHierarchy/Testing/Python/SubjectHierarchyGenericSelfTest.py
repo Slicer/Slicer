@@ -14,6 +14,7 @@ from slicer.util import TESTING_DATA_URL
 # SubjectHierarchyGenericSelfTest
 #
 
+
 class SubjectHierarchyGenericSelfTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -47,6 +48,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
 # SubjectHierarchyGenericSelfTestWidget
 #
 
+
 class SubjectHierarchyGenericSelfTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -55,6 +57,7 @@ class SubjectHierarchyGenericSelfTestWidget(ScriptedLoadableModuleWidget):
 #
 # SubjectHierarchyGenericSelfTestLogic
 #
+
 
 class SubjectHierarchyGenericSelfTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
@@ -470,7 +473,6 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         shProxyModel = shTreeView.sortFilterProxyModel()
 
         def testAttributeFilters(filteredObject, proxyModel, showEmptyHierarchyItems=True):
-
             expectedEmptyHierarchyItemCount = 1 if showEmptyHierarchyItems else 0
 
             # Check include node attribute name filter

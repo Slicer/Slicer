@@ -39,7 +39,6 @@ To segment a single object, create a segment and paint inside and create another
 """
 
     def setupOptionsFrame(self):
-
         # Object scale slider
         self.objectScaleMmSlider = slicer.qMRMLSliderWidget()
         self.objectScaleMmSlider.setMRMLScene(slicer.mrmlScene)
@@ -75,7 +74,6 @@ To segment a single object, create a segment and paint inside and create another
         self.scriptedEffect.setParameter("ObjectScaleMm", self.objectScaleMmSlider.value)
 
     def onApply(self):
-
         # Get list of visible segment IDs, as the effect ignores hidden segments.
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
         visibleSegmentIds = vtk.vtkStringArray()

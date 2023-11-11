@@ -21,7 +21,6 @@ class ModuleE_WithFileWriter_WithoutWidget(ScriptedLoadableModule):
 
 
 class ModuleE_WithFileWriter_WithoutWidgetFileWriter:
-
     def __init__(self, parent):
         self.parent = parent
 

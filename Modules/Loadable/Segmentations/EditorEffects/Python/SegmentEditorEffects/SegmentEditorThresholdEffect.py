@@ -665,7 +665,6 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             self.scriptedEffect.addActor2D(sliceWidget, pipeline.actor)
 
     def preview(self):
-
         opacity = 0.5 + self.previewState / (2. * self.previewSteps)
         min = self.scriptedEffect.doubleParameter("MinimumThreshold")
         max = self.scriptedEffect.doubleParameter("MaximumThreshold")
@@ -863,7 +862,6 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
         # If there is a selection, then set the threshold based on that
         if self.selectionStartPosition is not None and self.selectionEndPosition is not None:
-
             # Clamp selection based on scalar range
             startX = min(scalarRange[1], max(scalarRange[0], self.selectionStartPosition[0]))
             endX = min(scalarRange[1], max(scalarRange[0], self.selectionEndPosition[0]))
@@ -1008,7 +1006,6 @@ class HistogramEventFilter(qt.QObject):
 
 
 class HistogramPipeline:
-
     def __init__(self, thresholdEffect, scriptedEffect, sliceWidget, brushMode):
         self.thresholdEffect = thresholdEffect
         self.scriptedEffect = scriptedEffect

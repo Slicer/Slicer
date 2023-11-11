@@ -23,7 +23,6 @@ def newSphere(name=""):
 
 
 def sphereMovie(dir="."):
-
     for i in range(20):
         newSphere()
         Slicer.TkCall("update")

@@ -35,7 +35,6 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
         return _("""Make the selected segment hollow by replacing the segment with a uniform-thickness shell defined by the segment boundary.""")
 
     def setupOptionsFrame(self):
-
         operationLayout = qt.QVBoxLayout()
 
         self.insideSurfaceOptionRadioButton = qt.QRadioButton(_("inside surface"))

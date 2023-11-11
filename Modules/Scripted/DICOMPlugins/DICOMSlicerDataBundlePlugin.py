@@ -16,6 +16,7 @@ from DICOMLib import DICOMExportScene
 # It follows the DICOM module's plugin architecture.
 #
 
+
 class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     """DICOM import/export plugin for Slicer Scene Bundle
     (MRML scene file embedded in private tag of a DICOM file)
@@ -241,6 +242,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
 # DICOMSlicerDataBundlePlugin
 #
 
+
 class DICOMSlicerDataBundlePlugin:
     """
     This class is the 'hook' for slicer to detect and recognize the plugin
@@ -279,6 +281,7 @@ and was partially funded by NIH grant 3P41RR013218.
 #
 # DICOMSlicerDataBundleWidget
 #
+
 
 class DICOMSlicerDataBundleWidget:
     def __init__(self, parent=None):

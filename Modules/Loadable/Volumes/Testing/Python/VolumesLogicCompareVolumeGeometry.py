@@ -5,7 +5,6 @@ from slicer.ScriptedLoadableModule import *
 
 
 class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
-
     def setUp(self):
         pass
 

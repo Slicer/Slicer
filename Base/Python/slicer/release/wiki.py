@@ -113,7 +113,6 @@ log = logging.getLogger(__name__)
 
 
 class Wiki:
-
     def __init__(self, username="UpdateBot", password=None):
         log.info("connecting")
         self.doc = mwdoc.Documentation("www.slicer.org", "/w/")
@@ -315,7 +314,6 @@ class Wiki:
 
 
 def handle_query(wiki, args):
-
     def display_version_info():
         print("Version info:")
         for page_short_name, page_name in Wiki.VERSION_INFO_PAGES.items():

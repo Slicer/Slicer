@@ -34,6 +34,7 @@ class Validator(abc.ABC):
 
 def extractValidators(annotations):
     """Given a list of annotations, separates the annotations that are Validators from the ones that are not."""
+
     def isValidator(x) -> None:
         return isinstance(x, Validator) or (isinstance(x, type) and issubclass(x, Validator))
 

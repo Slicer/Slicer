@@ -7,6 +7,7 @@ import slicer
 # Abstract class of python scripted subject hierarchy plugins
 #
 
+
 class AbstractScriptedSubjectHierarchyPlugin:
     """Abstract scripted subject hierarchy plugin for python scripted plugins
 

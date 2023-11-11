@@ -14,6 +14,7 @@ from slicer.i18n import translate
 # DICOMPatcher
 #
 
+
 class DICOMPatcher(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -33,6 +34,7 @@ class DICOMPatcher(ScriptedLoadableModule):
 #
 # DICOMPatcherWidget
 #
+
 
 class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -204,6 +206,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
 # Patcher rules
 #
 
+
 class DICOMPatcherRule:
     def __init__(self, parameters=None):
         self.logCallback = None
@@ -233,6 +236,7 @@ class DICOMPatcherRule:
 #
 #
 #
+
 
 class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
     def __init__(self, parameters=None):
@@ -343,6 +347,7 @@ class GenerateMissingIDs(DICOMPatcherRule):
 #
 #
 
+
 class RemoveDICOMDIR(DICOMPatcherRule):
     def skipFile(self, filepath):
         if os.path.basename(filepath) != "DICOMDIR":
@@ -354,6 +359,7 @@ class RemoveDICOMDIR(DICOMPatcherRule):
 #
 #
 #
+
 
 class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
     def processDataSet(self, ds):
@@ -374,6 +380,7 @@ class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
 #
 #
 #
+
 
 class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
     """Add missing slice spacing info to multiframe files"""
@@ -402,7 +409,6 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
         pixelSpacing = ds.PixelSpacing if hasattr(ds, "PixelSpacing") else [1.0, 1.0]
 
         if not (pydicom.tag.Tag(0x5200, 0x9229) in ds):
-
             # (5200,9229) SQ (Sequence with undefined length #=1)     # u/l, 1 SharedFunctionalGroupsSequence
             #   (0020,9116) SQ (Sequence with undefined length #=1)     # u/l, 1 PlaneOrientationSequence
             #       (0020,0037) DS [1.00000\0.00000\0.00000\0.00000\1.00000\0.00000] #  48, 6 ImageOrientationPatient
@@ -459,6 +465,7 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
 #
 #
 
+
 class FixExposureFiasco(DICOMPatcherRule):
     """Partial fix the exposure fiasco.
     See more information at http://dclunie.blogspot.com/2008/11/dicom-exposure-attribute-fiasco.html
@@ -478,6 +485,7 @@ class FixExposureFiasco(DICOMPatcherRule):
 #
 #
 
+
 class UseCharacterSet(DICOMPatcherRule):
     """Fix data sets that use non-ASCII character set but not storing that encoding information
     in CharacterSet DICOM tag. This rule decodes the data set using the specified character set
@@ -496,6 +504,7 @@ class UseCharacterSet(DICOMPatcherRule):
 #
 #
 #
+
 
 class Anonymize(DICOMPatcherRule):
     def __init__(self, parameters=None):
@@ -548,6 +557,7 @@ class Anonymize(DICOMPatcherRule):
 #
 #
 
+
 class NormalizeFileNames(DICOMPatcherRule):
     def processStart(self, inputRootDir, outputRootDir):
         self.inputRootDir = inputRootDir
@@ -583,6 +593,7 @@ class NormalizeFileNames(DICOMPatcherRule):
 #
 # DICOMPatcherLogic
 #
+
 
 class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
@@ -641,7 +652,6 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
             rule.processStart(inputDirPath, outputDirPath)
 
         for root, subFolders, files in os.walk(inputDirPath):
-
             currentSubDir = os.path.relpath(root, inputDirPath)
             rootOutput = os.path.join(outputDirPath, currentSubDir)
 
@@ -701,6 +711,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
 #
 # Test
 #
+
 
 class DICOMPatcherTest(ScriptedLoadableModuleTest):
     """

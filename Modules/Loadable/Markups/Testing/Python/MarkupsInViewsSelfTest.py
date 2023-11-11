@@ -10,6 +10,7 @@ from slicer.ScriptedLoadableModule import *
 # MarkupsInViewsSelfTest
 #
 
+
 class MarkupsInViewsSelfTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -29,8 +30,8 @@ class MarkupsInViewsSelfTest(ScriptedLoadableModule):
 # qMarkupsInViewsSelfTestWidget
 #
 
-class MarkupsInViewsSelfTestWidget(ScriptedLoadableModuleWidget):
 
+class MarkupsInViewsSelfTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -73,8 +74,8 @@ class MarkupsInViewsSelfTestWidget(ScriptedLoadableModuleWidget):
 # MarkupsInViewsSelfTestLogic
 #
 
-class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
+class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     def controlPointVisible3D(self, fidNode, viewNodeID, controlPointIndex):
         lm = slicer.app.layoutManager()
         for v in range(lm.threeDViewCount):
@@ -325,7 +326,6 @@ class MarkupsInViewsSelfTestTest(ScriptedLoadableModuleTest):
         self.test_MarkupsInViewsSelfTest1()
 
     def test_MarkupsInViewsSelfTest1(self):
-
         self.delayDisplay("Starting the Markups in viewers test")
 
         # start in the Markups module

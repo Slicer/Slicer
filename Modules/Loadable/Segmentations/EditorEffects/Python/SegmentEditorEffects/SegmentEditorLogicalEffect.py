@@ -47,7 +47,6 @@ segment list in effect options - below.
 <p>""")
 
     def setupOptionsFrame(self):
-
         self.methodSelectorComboBox = qt.QComboBox()
         self.methodSelectorComboBox.addItem(_("Copy"), LOGICAL_COPY)
         self.methodSelectorComboBox.addItem(_("Add"), LOGICAL_UNION)
@@ -202,7 +201,6 @@ segment list in effect options - below.
         segmentation = segmentationNode.GetSegmentation()
 
         if operation in self.operationsRequireModifierSegment:
-
             # Get modifier segment
             modifierSegmentID = self.modifierSegmentID()
             if not modifierSegmentID:

@@ -17,7 +17,6 @@ comment = """
 
 
 class DataProbeUtil:
-
     def getParameterNode(self):
         """Get the DataProbe parameter node - a singleton in the scene"""
         node = self._findParameterNodeInScene()

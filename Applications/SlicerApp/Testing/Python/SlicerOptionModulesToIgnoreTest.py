@@ -31,7 +31,6 @@ Usage:
 """
 
 if __name__ == "__main__":
-
     debug = False
     # Set to True to:
     #  * display the path of the created extension_dir
@@ -69,7 +68,6 @@ if __name__ == "__main__":
     print("=> ok\n")
 
     try:
-
         # Check that the modules are loaded
         args = list(common_args)
         args.extend(["--python-code", 'assert len([module for module in dir(slicer.moduleNames) if module in ["A", "B", "C", "D"]]) == 4, "Failed to load modules"'])

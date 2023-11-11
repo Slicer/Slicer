@@ -5,7 +5,6 @@ import shutil
 
 
 class SlicerUtilSaveTests(unittest.TestCase):
-
     def setUp(self):
         for extension in ["nrrd", "mrml", "mrb"]:
             try:

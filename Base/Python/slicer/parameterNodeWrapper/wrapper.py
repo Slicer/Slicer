@@ -174,6 +174,7 @@ def _makeGuiToParamCallback(self, paramName, connector):
         with slicer.util.NodeModify(self):
             if not self._updatingGUIFromParameterNode:
                 self.setValue(paramName, connector.read())
+
     return callback
 
 
@@ -292,6 +293,7 @@ def _makeDataTypeFunc(classvar):
                 return unannotatedType(param.unalteredType).dataType(subname)
         else:
             raise RuntimeError(f"Name '{membername}' appeared to exist but can't find it in allParameters")
+
     return dataType
 
 
@@ -355,6 +357,7 @@ def isParameterNodeWrapper(classOrObj):
 
 def parameterNodeWrapper(classtype=None):
     """Class decorator to make a parameter node wrapper that supports typed property access and GUI binding."""
+
     def wrap(cls):
         return _processClass(cls)
 

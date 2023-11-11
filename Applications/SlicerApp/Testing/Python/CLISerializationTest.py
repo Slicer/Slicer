@@ -52,7 +52,6 @@ class CLISerializationTest:
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="Test command line CLIs serialization/deserialization.")
     # Common options
     parser.add_argument("/path/to/Slicer")

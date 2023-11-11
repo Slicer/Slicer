@@ -22,8 +22,8 @@ from slicer.i18n import translate
 # for data exchange and running servers.
 #
 
-class DICOM(ScriptedLoadableModule):
 
+class DICOM(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
 
@@ -211,7 +211,6 @@ class DICOM(ScriptedLoadableModule):
                 slicer.dicomDatabase.closeDatabase()
 
     def startListener(self):
-
         if not slicer.dicomDatabase.isOpen:
             logging.error("Failed to start DICOM listener. DICOM database is not open.")
             return False
@@ -535,6 +534,7 @@ class DICOMFileDialog:
 #
 # DICOM widget
 #
+
 
 class DICOMWidget(ScriptedLoadableModuleWidget):
     """Slicer module that creates the Qt GUI for interacting with DICOM"""
@@ -914,7 +914,6 @@ class DICOMFileReader:
             return 0.0
 
     def load(self, properties):
-
         filePath = properties["fileName"]
         dicomFilesDirectory = os.path.dirname(os.path.abspath(filePath))
 

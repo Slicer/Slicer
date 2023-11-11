@@ -469,7 +469,6 @@ If segments overlap, segment higher in the segments table will have priority. <b
         self.scriptedEffect.parameterSetNode().SetOverwriteMode(oldOverwriteMode)
 
     def paintApply(self, viewWidget):
-
         # Current limitation: smoothing brush is not implemented for joint smoothing
         smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
         if smoothingMethod == JOINT_TAUBIN:

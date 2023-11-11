@@ -654,6 +654,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         interfaces are just different enough (especially in Python) to make it difficult. In the places where
         the interfaces differ, a function was added to abstract that away.
         """
+
         @parameterNodeWrapper
         class ParameterNodeWrapper:
             alpha: vtkMRMLModelNode
@@ -842,7 +843,6 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
     # and running the sets/gets were factored out, so the only thing the test functions do
     # differently is how they connect the guis to the wrapper.
     def impl_parameterPacks_make_parameter_node_wrapper(self):
-
         @parameterPack
         class SubPack:
             iterations: Annotated[int, WithinRange(1, 33), Default(15)]

@@ -17,7 +17,6 @@ class testClass:
 
 
 class SlicerSceneObserverTest(unittest.TestCase):
-
     def setUp(self):
         pass
 

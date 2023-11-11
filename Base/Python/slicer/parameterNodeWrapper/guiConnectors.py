@@ -39,6 +39,7 @@ __all__ = [
 
 # Extra annotations for use
 
+
 @dataclasses.dataclass
 class Decimals:
     """Annotation for Qt's setDecimals methods for spinboxes and sliders."""
@@ -139,6 +140,7 @@ def createGuiConnector(widget, datatype) -> GuiConnector:
 
 def parameterNodeGuiConnector(classtype=None):
     """Class decorator to register a new parameter node gui connector."""
+
     def wrap(cls):
         return _processGuiConnector(cls)
 

@@ -64,6 +64,7 @@ def downloadSamples(sampleName):
 # SampleData
 #
 
+
 class SampleData(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -247,6 +248,7 @@ class SampleDataSource:
 # SampleData widget
 #
 
+
 class SampleDataWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -369,7 +371,6 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
                     b.connect("clicked()", lambda s=source: logic.downloadFromSource(s))
 
     def logMessage(self, message, logLevel=logging.DEBUG):
-
         # Format based on log level
         if logLevel >= logging.ERROR:
             message = '<b><font color="red">' + message + "</font></b>"
@@ -413,6 +414,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 #
 # SampleData logic
 #
+
 
 class SampleDataLogic:
     """Manage the slicer.modules.sampleDataSources dictionary.

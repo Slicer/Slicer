@@ -12,6 +12,7 @@ from slicer.ScriptedLoadableModule import *
 # NeurosurgicalPlanningTutorialMarkupsSelfTest
 #
 
+
 class NeurosurgicalPlanningTutorialMarkupsSelfTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -29,6 +30,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTest(ScriptedLoadableModule):
 #
 # qNeurosurgicalPlanningTutorialMarkupsSelfTestWidget
 #
+
 
 class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
@@ -93,6 +95,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget(ScriptedLoadableModuleW
 # NeurosurgicalPlanningTutorialMarkupsSelfTestLogic
 #
 
+
 class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
@@ -143,7 +146,6 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         self.test_NeurosurgicalPlanningTutorialMarkupsSelfTest1()
 
     def test_NeurosurgicalPlanningTutorialMarkupsSelfTest1(self):
-
         self.delayDisplay("Starting the Neurosurgical Planning Tutorial Markups test")
 
         # start in the welcome module

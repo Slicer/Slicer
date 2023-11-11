@@ -25,7 +25,6 @@ class Foo(VTKObservationMixin):
 
 
 class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
-
     def setUp(self):
         pass
 

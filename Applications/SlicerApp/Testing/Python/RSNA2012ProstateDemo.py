@@ -7,6 +7,7 @@ from slicer.util import TESTING_DATA_URL
 # RSNA2012ProstateDemo
 #
 
+
 class RSNA2012ProstateDemo(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -29,6 +30,7 @@ class RSNA2012ProstateDemo(ScriptedLoadableModule):
 #
 # qRSNA2012ProstateDemoWidget
 #
+
 
 class RSNA2012ProstateDemoWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:

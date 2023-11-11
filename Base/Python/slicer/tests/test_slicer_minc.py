@@ -5,7 +5,6 @@ import shutil
 
 
 class SlicerUtilLoadSaveMINCTests(unittest.TestCase):
-
     def setUp(self):
         for MINCFileNames in ["MINC_pd_z-_float_xyz.mnc"]:
             try:

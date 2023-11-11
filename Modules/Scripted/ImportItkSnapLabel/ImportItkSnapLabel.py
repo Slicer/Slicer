@@ -10,6 +10,7 @@ from slicer.ScriptedLoadableModule import *
 # ImportItkSnapLabel
 #
 
+
 class ImportItkSnapLabel(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -28,8 +29,8 @@ class ImportItkSnapLabel(ScriptedLoadableModule):
 # (identified by its special name <moduleName>FileReader)
 #
 
-class ImportItkSnapLabelFileReader:
 
+class ImportItkSnapLabelFileReader:
     def __init__(self, parent):
         self.parent = parent
 
@@ -145,8 +146,8 @@ class ImportItkSnapLabelFileReader:
 # ImportItkSnapLabelTest
 #
 
-class ImportItkSnapLabelTest(ScriptedLoadableModuleTest):
 
+class ImportItkSnapLabelTest(ScriptedLoadableModuleTest):
     def setUp(self):
         slicer.mrmlScene.Clear()
 
@@ -155,7 +156,6 @@ class ImportItkSnapLabelTest(ScriptedLoadableModuleTest):
         self.test_ImportItkSnapLabel1()
 
     def test_ImportItkSnapLabel1(self):
-
         self.delayDisplay("Loading test image as label")
         testDataPath = os.path.join(os.path.dirname(__file__), "Resources")
         labelFilePath = os.path.join(testDataPath, "Untitled.label")

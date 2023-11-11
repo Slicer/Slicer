@@ -59,7 +59,6 @@ def collect_startup_times_normal(output_file, drop_cache=False, display_output=F
 
 
 def collect_startup_times_overall(output_file, drop_cache=False, display_output=False):
-
     results = {}
 
     test = ["--help"]
@@ -224,7 +223,6 @@ def collect_startup_times_modules_to_load(output_file, modules_to_load, module_l
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="Measure startup times.")
     # Experiments
     parser.add_argument("--normal", action="store_true")

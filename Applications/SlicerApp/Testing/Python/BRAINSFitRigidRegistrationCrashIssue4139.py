@@ -8,6 +8,7 @@ from slicer.ScriptedLoadableModule import *
 # BRAINSFitRigidRegistrationCrashIssue4139
 #
 
+
 class BRAINSFitRigidRegistrationCrashIssue4139(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -35,6 +36,7 @@ class BRAINSFitRigidRegistrationCrashIssue4139(ScriptedLoadableModule):
 # BRAINSFitRigidRegistrationCrashIssue4139Widget
 #
 
+
 class BRAINSFitRigidRegistrationCrashIssue4139Widget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -47,6 +49,7 @@ class BRAINSFitRigidRegistrationCrashIssue4139Widget(ScriptedLoadableModuleWidge
 #
 # BRAINSFitRigidRegistrationCrashIssue4139Logic
 #
+
 
 class BRAINSFitRigidRegistrationCrashIssue4139Logic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

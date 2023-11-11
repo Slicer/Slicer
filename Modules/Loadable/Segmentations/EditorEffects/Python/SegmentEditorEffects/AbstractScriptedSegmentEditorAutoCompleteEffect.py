@@ -19,6 +19,7 @@ __all__ = ["AbstractScriptedSegmentEditorAutoCompleteEffect"]
 # and refinement of segmentation results before accepting them.
 #
 
+
 class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
     """AutoCompleteEffect is an effect that can create a full segmentation
     from a partial segmentation (not all slices are segmented or only
@@ -239,7 +240,6 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         return previewNode
 
     def updateGUIFromMRML(self):
-
         previewNode = self.getPreviewNode()
 
         self.cancelButton.setEnabled(previewNode is not None)

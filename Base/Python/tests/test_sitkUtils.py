@@ -5,7 +5,6 @@ import unittest
 
 
 class SitkUtilsTests(unittest.TestCase):
-
     def setUp(self):
         pass
 

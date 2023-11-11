@@ -9,6 +9,7 @@ from slicer.ScriptedLoadableModule import *
 # VolumeRenderingSceneClose
 #
 
+
 class VolumeRenderingSceneClose(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -32,6 +33,7 @@ class VolumeRenderingSceneClose(ScriptedLoadableModule):
 #
 # qVolumeRenderingSceneCloseWidget
 #
+
 
 class VolumeRenderingSceneCloseWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -78,6 +80,7 @@ class VolumeRenderingSceneCloseWidget(ScriptedLoadableModuleWidget):
 #
 # VolumeRenderingSceneCloseLogic
 #
+
 
 class VolumeRenderingSceneCloseLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
@@ -140,7 +143,6 @@ class VolumeRenderingSceneCloseTest(ScriptedLoadableModuleTest):
         self.test_VolumeRenderingSceneClose1()
 
     def test_VolumeRenderingSceneClose1(self):
-
         self.delayDisplay("Starting the test")
 
         logic = VolumeRenderingSceneCloseLogic()

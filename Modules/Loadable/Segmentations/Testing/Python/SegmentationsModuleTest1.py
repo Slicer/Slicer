@@ -11,7 +11,6 @@ from slicer.util import TESTING_DATA_URL
 
 
 class SegmentationsModuleTest1(unittest.TestCase):
-
     def setUp(self):
         """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)

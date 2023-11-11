@@ -8,6 +8,7 @@ from slicer.ScriptedLoadableModule import *
 # MarkupsWidgetsSelfTest
 #
 
+
 class MarkupsWidgetsSelfTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -23,6 +24,7 @@ class MarkupsWidgetsSelfTest(ScriptedLoadableModule):
 # MarkupsWidgetsSelfTestWidget
 #
 
+
 class MarkupsWidgetsSelfTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -31,6 +33,7 @@ class MarkupsWidgetsSelfTestWidget(ScriptedLoadableModuleWidget):
 #
 # MarkupsWidgetsSelfTestLogic
 #
+
 
 class MarkupsWidgetsSelfTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

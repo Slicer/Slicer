@@ -11,6 +11,7 @@ from slicer.ScriptedLoadableModule import *
 # AddStorableDataAfterSceneViewTest
 #
 
+
 class AddStorableDataAfterSceneViewTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -36,6 +37,7 @@ class AddStorableDataAfterSceneViewTest(ScriptedLoadableModule):
 #
 # qAddStorableDataAfterSceneViewTestWidget
 #
+
 
 class AddStorableDataAfterSceneViewTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -92,6 +94,7 @@ class AddStorableDataAfterSceneViewTestWidget(ScriptedLoadableModuleWidget):
 # AddStorableDataAfterSceneViewTestLogic
 #
 
+
 class AddStorableDataAfterSceneViewTestLogic(ScriptedLoadableModuleLogic):
     """
     Uses ScriptedLoadableModuleLogic base class, available at:
@@ -135,7 +138,6 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
         self.test_AddStorableDataAfterSceneViewTest1()
 
     def test_AddStorableDataAfterSceneViewTest1(self):
-
         slicer.util.delayDisplay("Starting the test")
 
         #

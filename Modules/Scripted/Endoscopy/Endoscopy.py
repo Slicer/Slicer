@@ -14,6 +14,7 @@ from slicer.ScriptedLoadableModule import *
 # Endoscopy
 #
 
+
 class Endoscopy(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -45,6 +46,7 @@ NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 #
 # qSlicerPythonModuleExampleWidget
 #
+
 
 class EndoscopyWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -526,7 +528,6 @@ class EndoscopyPathModel:
         # Camera cursor
         cursor = model.GetNodeReference("CameraCursor")
         if not cursor:
-
             if self.cursorType == "markups":
                 # Markups cursor
                 cursor = scene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))

@@ -14,6 +14,7 @@ from slicer.util import TESTING_DATA_URL
 # DICOMReaders
 #
 
+
 class DICOMReaders(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -33,8 +34,8 @@ class DICOMReaders(ScriptedLoadableModule):
 # qDICOMReadersWidget
 #
 
-class DICOMReadersWidget(ScriptedLoadableModuleWidget):
 
+class DICOMReadersWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         # Instantiate and connect widgets ...
         ScriptedLoadableModuleWidget.setup(self)
@@ -249,7 +250,6 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         ]
 
         try:
-
             print("Removing %d files from the middle of the series" % len(filesToRemove))
             for file in filesToRemove:
                 filePath = os.path.join(dicomFilesDirectory, seriesDirectory, file)

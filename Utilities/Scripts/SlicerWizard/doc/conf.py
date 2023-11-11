@@ -56,6 +56,7 @@ class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
             del module[-1]
         return ".".join(module), attrs
 
+
 # %%% Site customizations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -242,10 +243,8 @@ htmlhelp_basename = "SlicerWizarddoc"
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
 }

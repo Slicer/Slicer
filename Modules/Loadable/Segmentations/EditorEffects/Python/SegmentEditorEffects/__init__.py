@@ -20,6 +20,7 @@ from SegmentEditorEffects import *
 import logging
 import importlib
 import traceback
+
 editorEffectNames = [
     "SegmentEditorDrawEffect",
     "SegmentEditorFillBetweenSlicesEffect",

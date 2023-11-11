@@ -89,7 +89,6 @@ def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument("/path/to/Slicer")
     parser.add_argument("--with-testing", dest="testing_enabled", action="store_true")

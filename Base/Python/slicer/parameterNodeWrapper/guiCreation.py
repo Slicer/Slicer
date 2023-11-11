@@ -94,6 +94,7 @@ def createGui(datatype) -> qt.QWidget:
 
 def parameterNodeGuiCreator(classtype=None):
     """Class decorator to register a new parameter node gui creator."""
+
     def wrap(cls):
         return _processGuiCreator(cls)
 

@@ -65,6 +65,7 @@ def _initMethod(self, *args, **kwargs) -> None:
     def setImpl(name, value):
         _writeValue(self, name, value)
         parameters[name] = None
+
     # positional args
     parametersValues = list(parameters.values())
     for index, arg in enumerate(args):
@@ -169,6 +170,7 @@ def _makeDataTypeFunc(classvar):
             return datatype
         else:
             return unannotatedType(datatype).dataType(subname)
+
     return dataType
 
 
@@ -218,6 +220,7 @@ def _processParameterPack(classtype):
             # start by defaulting all the items
             _initMethod(self)
             self._init_specified(*args, **kwargs)
+
         setattr(classtype, "__init__", initit)
 
     if "__eq__" not in classtype.__dict__:
@@ -258,6 +261,7 @@ def nestedParameterNames(parameterPackClassOrInstance) -> list[str]:
 
 def parameterPack(classtype=None):
     """Class decorator to make an parameterPack."""
+
     def wrap(cls):
         return _processParameterPack(cls)
 

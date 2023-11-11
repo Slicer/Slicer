@@ -35,7 +35,6 @@ Usage:
 """
 
 if __name__ == "__main__":
-
     debug = False
     # Set to True to:
     #  * display the path of the expected test output file
@@ -47,7 +46,6 @@ if __name__ == "__main__":
 
     temporaryModuleDirPath = tempfile.mkdtemp().replace("\\", "/")
     try:
-
         # Copy helper module that creates a file when startup completed event is received
         currentDirPath = os.path.dirname(__file__).replace("\\", "/")
         from shutil import copyfile

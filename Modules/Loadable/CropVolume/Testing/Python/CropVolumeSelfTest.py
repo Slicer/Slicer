@@ -24,6 +24,7 @@ class CropVolumeSelfTest(ScriptedLoadableModule):
 # qCropVolumeSelfTestWidget
 #
 
+
 class CropVolumeSelfTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py

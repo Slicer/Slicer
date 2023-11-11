@@ -12,6 +12,7 @@ from slicer.i18n import tr as _
 # to import volumes from Enhanced US Volume Storage DICOM files.
 #
 
+
 class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
     """3D ultrasound loader plugin.
     Limitation: ultrasound calibrated regions are not supported (each calibrated region
@@ -158,7 +159,6 @@ class DICOMEnhancedUSVolumePlugin:
     """
 
     def __init__(self, parent):
-
         # no tr (these strings are not translated because they are only visible for developers)
         parent.title = "DICOM Enhanced US volume Plugin"
         parent.categories = ["Developer Tools.DICOM Plugins"]
