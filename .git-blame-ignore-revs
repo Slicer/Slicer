@@ -10,6 +10,256 @@
 # $ git config blame.ignoreRevsFile .git-blame-ignore-revs
 #
 # Ignore changes introduced when doing global file format changes
+
+# STYLE: added a space
+ddab837c3366d2b48cd6d100c7d5d223dc9a9d80
+# STYLE: indent fixes
+6c91ebbdc1e5c9b07feb2a0737c8aae0abbdba6c
+# STYLE: fixed indents
+ada03d6d98ef4b81aff2df12bb709abd130df474
+# STYLE: indent/spacing
+462cd5dff93e9aa6223c349109a4d8e4a6ef170a
+# STYLE: white space change
+eff718d7058ad34551d5d3b7931309d01aff9c96
+# STYLE: changed indents
+02d7be6854efe9e8df45e50687ff38e51435cfed
+# STYLE: changed to vtk style format
+9ac0e1c0d01b304f2547cc4f0367a1b24ac5d7fc
+# STYLE: changed indent style
+0507076f2ab1d058dcbf3111260c1b2a23d9a45d
+# STYLE: fixed indentation
+783c057ef558e9264b639a7584f43119de3ed968
+# STYLE: quieting style problems given by "KWStyle -xml VTK.kws.xml"
+2eae489c3e12b131141bcac6c3b2f89bcba6daa6
+# STYLE: fixed indentation
+a745484e986b77a497dbf3c4967d98e701e3a764
+# STYLE: fixing indentation
+7ed218ac67472422dc136ad87249f8ca62c6db69
+# STYLE: fix indentation issues
+2f27d8d4953b279ad86a0c616fe913326b6b73cb
+# STYLE: spacing/alignment
+64db3e56ab37b1adf5e8362d0ae9d4027c107064
+# STYLE: indentation fix
+a01347d4072a0ae6a13a805de05be50cde0c4d2c
+# STYLE: fix indentation
+7b643f162ced172ef6eeddb4293010c1d3140df9
+# STYLE: indentation
+abc17743c208748bb8c801be1e0970d0dcacf8d0
+# STYLE: fix indentation
+940302a7a9b65bd8c18a51f5a6557dcd14a8eb91
+# STYLE: fix line wrapping for readability
+9bb3f6b441b80799200af928fd18190a01648b5e
+# STYLE: indentation
+bc0173bae54597b85de4613fede1fa8cab88c3af
+# STYLE: fix indent
+8a14b67ffff558f136959d00b767186e41fc615f
+# STYLE: fix indents
+6adc3773d1b99512ad985420b2446a9f092dd1fe
+# STYLE: fix indents
+b146ccf3ac5696bdbff50e08abfa3ecff4040771
+# STYLE: indentation fixes
+7ff49e365accab01c39ee5824e946ab6274ba141
+# STYLE: fix indent issue
+727c778a6b4fada028cc21491950291148433787
+# STYLE: formatting
+b09378932bffba136920718c99918e67dfd9eb6c
+# STYLE: changing indent
+079be70b7cfbb9c40dbbcecf876ccca0c0c7a152
+# STYLE: fix indent
+03e89dd4090fbb3b4332b3feb51ef26c6e38444e
+# STYLE: Fixing indentation of return.
+ba750a537e79c02979c1c0a24828be7978a88104
+# STYLE: convert to c++ slashes for doxygen
+41d7af4e270ff6140bc52e0393e5be52bd56a34f
+# STYLE: converting to c++ 3 slashes for doxygen
+b55968657e202c3b4b2e43981aafb0be7b7504a0
+# STYLE: converting to c++ style triple slashes for doxygen
+b85420914d5de1e4669953ba0ca69b796b687443
+9b845136cac8c43547c8bfcf5f6cc8eeab14e93b
+a959f8b2f9ebf7293dd45b68b7c06536deb2162e
+6e7a75819f169430c36f0dfb8b8dd9737ed24685
+f8b67ffd4c984900d10afda34bd131f6822ff1f0
+f6e76f61816265d5722c9b74aad91dbc05a11b63
+d9875f52c0ee1e5e6f798873796f4b25605eea6d
+ff69ab51d3481f5495a2ecdeccb9dff9626aab1d
+062bc22aba60075b653173653019375f7d2ddedc
+67dd0647f5ce48f8276069dd13bc3ada7889d7ef
+360642bbb60ae2d514367495598191908219ea58
+09edc870d192bbf0b5226207a6a0047a2d78aea6
+e3ad7b132dbe55605c2b8b09b7d00644b32f5174
+723b2c58302f12e2886adf5b11c40a49df8c6c0d
+# STYLE: Applying the script toThreeSlashes to script already having partially the correct comment style caused problems.
+8e46fa9a35da96b0435db0bfb16a4606d6202cc1
+# STYLE: SlicerQT - Update documentation comments of few class located in QTCore and QTBase
+9a3dc4fa0c824527ae038146f27ad414106a827e
+# STYLE: SlicerQT - Reformat TractographyFiducialSeeding code
+e8cf68a97cea71e952580b1fd22f75d1058b28a7
+# STYLE: change to triples slashes for doxygen commenting
+305786f9de52d530589591d17f70e5244b7dce2b
+# STYLE: In ModuleDescriptionParser ... added separator between function.
+4fa7211ff9aaf1289131696be06cbdc247083084
+# STYLE: fix indentations
+535a1828d478175697dc4d89e3bb285844f84b14
+# STYLE: Fix indent in QTModules/miAnnotation/Testing/CMakeLists.txt
+f73686c65eaf7d44c0dda3c58cd01e37162075de
+# STYLE: SuperBuild/External_Python26.cmake - Fix indent and remove extra spaces
+383577977133c68d162d23b384e924bc68aeeb2f
+# STYLE: Added comment line, remove extra doxygen comments, removed extra header includes
+24cdef737bb39324b3c59cf0ac9efa642e830bbe
+# STYLE: vtkSlicerSliceLogic - Fix indentation
+c27ddc3e0a84cca8af97f1498753d65d61901434
+# STYLE: qSlicerApplication - Fix indentation
+32f47acffc89e2d92c4440fafcd43cac5ac1923e
+# STYLE:  Updated code to be nearly KWSTYLE compliant.
+aab5758dbabd23e269b99ee0c1f3855b8ec7a8b6
+# STYLE: Fix indent in qSlicerCamerasModuleWidget
+160690686639cd1ae9c7f9e48f37b7afb5558ddc
+# STYLE: Fix indent and remove extra header in qMRMLThreeDView
+b3534b24c90624cd9d5eefae420d3e67b34a5748
+# STYLE: qMRMLSlicesControllerToolBar - Fix indent
+0932094f185d2268c050500f3bfa813da0dce123
+# STYLE: Fix indent and style in UseGenerateCLP
+8fdf3170773a6ceae7e2adfc3cda6ccfbf901fe3
+# STYLE: Fix indent, remove extra code in Slicer Libs CMakeLists.txt
+962051656039aa96e2068e288d082843a10fd570
+# STYLE: qSlicerCoreApplication - Fix indent
+a5e73e8f370677d59dc80e89fb8c42ce9ea5c4a2
+# STYLE: Fix indent and remove extra comment
+5f622f02671e592a2191195d0ed25307a75f755d
+# STYLE: Fix indent
+e11e2b7f0e1e786ad4576298a5b07118c79fbab2
+# STYLE: Remove commented code, remove extra empty lines and fix indent
+017c609baaeb4da0fa3d4674a68589c82ee85792
+# STYLE: SlicerDashboardDriverScript/Template - Fix indent, Comment shoud start with upper case letter
+ccb56bb8195ab18245e43ecffa1201ed9ffe9aee
+# STYLE: vtkSlicerModuleLogic - Fix indent
+dd601c9be762789497e969bf0173aab547b5414c
+# STYLE: CMakeLists.txt - Fix indent
+e3a6611042111c50c93c9c8b5f01450d9fe12a2e
+# STYLE: Fix indent
+8dd6c586b461dab8ec064e9abc46a1eb576401a1
+# STYLE: Remove end-of-line space, remove extra/unused code, fix indent
+ebe4d6714a18b2d473817824b37b30d4b51b5751
+# STYLE: qSlicerWelcomeModuleWidget - Fix indent and remove extra comment
+53f1200ed5a01b6edfd3ed9e7e9b8148b04595e9
+# STYLE: fixing indentation
+4b947257a94ccb5c53c8d1a7319f7c16b391f209
+# STYLE: Remove trailing whitespace in qSlicerExport.h.in
+1001172126eb717b30db371ee37262079346b3ab
+# STYLE: Remove end of lines spaces
+389ef645dc0513bc925b24acd687a4c106a3cb53
+# STYLE: Fix indentation in qSlicerTractographyFiducialSeedingModuleWidget
+ce709b37a74cb7d613166423460a29ce6605013d
+# STYLE: Update doxygen comment of vtkSlicerVolumesLogic to new style
+f671d5116ff1d6f6e6bf8b88fe9a76986e968cf3
+# STYLE: Fix indent and remove extra unused CMake code
+36d409a8309ca079c6ba8903af0543e1b083b818
+# STYLE: Fix style and indent in external project definition
+671c4df8f964ce2072769ed4546832dd212041d4
+# STYLE: Cleanup qSlicerLoadableExtensionTemplateModule
+9a7f6ee234940acda658793d5c3e2ace34407d29
+# STYLE: fix indentation
+d8d08258e7278a7b7a5b7a7ded69a134fc1ec165
+# STYLE: Fix style in Libs/MGHImageIO/itkMGHImageIO.h.
+26d0733fc6dba895e81cd39203dce86993645d96
+# STYLE: Fix indent in SlicerConfig.cmake.in
+2ecb2475049623fa1ac9c64fa44433080caec45a
+# STYLE: improve indentation of GrowCut code
+6fb8019dbc2131ad75f10ac60013a7d0bff57024
+# STYLE: Fix indent in CMakeLists.txt
+8879d35da77826ec4f4127ebc7324143e7f45eb0
+# STYLE: fix coding style to match superclass (VTK)
+926aa635257d5e920f2c4f63c4e612269a5f5aa0
+# STYLE: Fix indent
+6f039eddea5608ddf20993269100c1f420cabb0f
+# STYLE: Fix casing of CMake macro add_subdirectory
+3915557952e08e23a3a43fd009792242b9264801
+# STYLE: Remove extra space in CMakeLists.txt
+b88daab2569f2a1245168ee623f63fa3121d2a3c
+# STYLE: Fix indent in SimpleITK and teem external project
+5006a3467af25d75d23e36dc9a0fc72c5c243ea1
+# STYLE: remove some trailing spaces
+ff8d1667f8acf3f62e3ab02509c5412dec1eb613
+# STYLE: Remove trailing white space from vtkImageResliceMask files
+fd8be2ecff8acd67e7459fef86435b1c7c1e0e46
+# STYLE: Fix indentation in SlicerWizard.py
+78e63fa58f01bd0419f114aa5a3f6a456fbe52e4
+# STYLE: fix indent
+ca89efe9cd9da8730becf84b4499d5a750ff6a0d
+# STYLE: Remove end of line spaces
+9333532d5d1b0cc09ef4dd43b6c32f3a6b9df148
+# STYLE: Fix 80 char limit in vtkMRMLDiffusionTensorVolumeDisplayNode
+e4d029f3004542d34fd88c5eddc42908c0b82523
+# STYLE: Fix indent and provide clarification related to previous commit.
+12d11bd915a817e6c2f18e2518bbd912e4d4289a
+# STYLE: Fix indentation in vtkSlicerApplicationLogic
+e5ed9584dcf03e7ea53d64e71f03fe17a476f067
+# STYLE: Fix indent in qSlicerApplication
+61b1eabfab53f4cf74b2ea978033175e409262ae
+# STYLE: Indentation fixes
+83e0a7fba5928ca58a8203a7f87e7d9eddfcc0df
+# STYLE: Fix style in TemplateManager.py
+b293f1ae6b4ba5850b1835a7426528b982c64e1b
+# STYLE: Fix doxygen in vtkMRMLUnitNode.h
+e044d538f1351335cbfc8508723646571db7ee8e
+# STYLE: Fix doxygen in vtkSlicerUnitsLogic
+31911717ee9d350250d4178392767f374ff4a1b8
+# STYLE: Fix indentation in SlicerBlockInstallCMakeProjects.cmake
+53d6242073f950ee4b17516b9120191a3b64a5f5
+# STYLE: GenerateExtensionDescription: Fix indent
+4995cad38733d827740ec6c22a80e190795de9fb
+# STYLE: Indentation related changes
+b519872d965dc4d7788bcd74d8ef45951bb46093
+# STYLE: Fix indent in qSlicerExtensionsInstallWidget
+8010c273646cd8450ba4c32d02a6cd7c5527c21e
+# STYLE: Fix indents and improve docstrings
+c645bcaa50150f122950b9bad2bf31b996dd731c
+# STYLE: fix coding formatting
+d8d864ea6281ab88273505f5eea5ce66514d61e3
+# STYLE: Replace VTK_OVERRIDE with override
+f2f68d9bd6432b5c157503b5bed5b92768cbd766
+# STYLE: Replace ITK_OVERRIDE with override
+c33381e852ad7cc87770f1699b00e29766c7b565
+# STYLE: Replace ITK_NULLPTR with nullptr
+015d346b907febc17eb677eccdde5342af6f832c
+# STYLE: Replace 0 and NULL with nullptr using clang-tidy
+42d76fdf1ddcb3842f0e631d7905ff71ae31551b
+# STYLE: Replace NULL with nullptr in comments, headers and conditionally compiled code
+a3a09456be0e690ce081610351e667082b22425f
+# STYLE: Modernize sources using override instead of virtual keyword
+8ed70d7ad052c2dc9a15442648a9952693b77c55
+# STYLE: Modernize: use delete for not implemented functions
+1822b8a51f709cce5b6a4349625d9a111999cd4c
+# STYLE: Modernize: use default for empty constructors
+a8dff515c90b2bf466aba85f959ba607523bdf2f
+# STYLE: Update python scripts to use print function for python 3.x
+7df896e839dc03e1c2f3b5458590ea16e80fcbba
+# STYLE: Fix indent, remove extra spaces and semi-colon, order includes in vtkMRMLScene
+42ba94847ecad44a7c1847b927d3ed88d098d4e0
+# STYLE: Convert CMake-language commands to lower case
+90ef9b31c26dde4b5057194085b99b84be514302
+# STYLE: Replace integer literals which are cast to bool.
+d9e654c9ceafee32b271ec0ec54220d145d0988a
+# STYLE: Use override statements for C++11
+0c78d50f8f872b7d49748c0e5bbbc3f76406498a
+# STYLE: Prefer C++11 override to VTK_OVERRIDE.
+ebca954c9e5ec0d7673c6cf4f87c700789366cac
+# STYLE: Remove unnecessary semicolons from util.py
+a16a17648b7d199b0fc8a3ab0f5f3e5ba8f1ec31
+# STYLE: Update cpp classes to prefer = default to explicitly trivial implementations
+4476737329a366189ba1992e6e58e9bc2fc8807b
+# STYLE: Use override statements for C++11
+6ad0e8ac1f0c1a8ad5be7b5c3c19ccf640825a33
+839a1de54835b610cd5589eea1eca7547400deb2
+# STYLE: Prefer = default to explicitly trivial implementations
+49ca2c0206a58d54669cdc6a7c8a50778b85b309
+46345e8a3dba3d591a7f06767aff83a2beefad6a
+# STYLE: Fix indent in vtkMRMLCameraNode::ReadXMLAttributes
+aa5ba6f03b1f6b58558e54c9f82ae49c72b3753f
+# STYLE: Remove unnecessary trailing semicolon in python code
+98ab60ad0ee0e341dbceb7860e238cbb1f4dac1a
+# STYLE: Fix indenting in various markups files
+477a8e6278ac5fb44eb649390528b9b2d69045fa
 # STYLE: Trim trailing whitespace
 d1a182641c58b385921ee305bb327e0374482fd2
 # STYLE: Update Slicer website links to https versions
