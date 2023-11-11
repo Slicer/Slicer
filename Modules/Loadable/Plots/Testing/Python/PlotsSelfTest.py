@@ -8,6 +8,7 @@ from slicer.ScriptedLoadableModule import *
 # PlotsSelfTest
 #
 
+
 class PlotsSelfTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -24,6 +25,7 @@ and was supported through Canada CANARIE's Research Software Program."""
 # PlotsSelfTestWidget
 #
 
+
 class PlotsSelfTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -32,6 +34,7 @@ class PlotsSelfTestWidget(ScriptedLoadableModuleWidget):
 #
 # PlotsSelfTestLogic
 #
+
 
 class PlotsSelfTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

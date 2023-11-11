@@ -10,6 +10,7 @@ from slicer.util import TESTING_DATA_URL
 # RSNAQuantTutorial
 #
 
+
 class RSNAQuantTutorial(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -32,6 +33,7 @@ class RSNAQuantTutorial(ScriptedLoadableModule):
 #
 # qRSNAQuantTutorialWidget
 #
+
 
 class RSNAQuantTutorialWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -116,6 +118,7 @@ class RSNAQuantTutorialWidget(ScriptedLoadableModuleWidget):
 #
 # RSNAQuantTutorialLogic
 #
+
 
 class RSNAQuantTutorialLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

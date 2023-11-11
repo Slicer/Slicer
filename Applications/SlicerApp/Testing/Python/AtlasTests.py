@@ -10,6 +10,7 @@ from slicer.util import TESTING_DATA_URL
 # AtlasTests
 #
 
+
 class AtlasTests(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -39,6 +40,7 @@ class AtlasTests(ScriptedLoadableModule):
 #
 # qAtlasTestsWidget
 #
+
 
 class AtlasTestsWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -94,6 +96,7 @@ class AtlasTestsWidget(ScriptedLoadableModuleWidget):
 #
 # AtlasTestsLogic
 #
+
 
 class AtlasTestsLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

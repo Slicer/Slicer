@@ -13,6 +13,7 @@ from slicer.util import TESTING_DATA_URL
 # JRC2013Vis
 #
 
+
 class JRC2013Vis(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -32,8 +33,8 @@ class JRC2013Vis(ScriptedLoadableModule):
 # qJRC2013VisWidget
 #
 
-class JRC2013VisWidget(ScriptedLoadableModuleWidget):
 
+class JRC2013VisWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
         # Instantiate and connect widgets ...
@@ -138,6 +139,7 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
 #
 # JRC2013VisLogic
 #
+
 
 class JRC2013VisLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

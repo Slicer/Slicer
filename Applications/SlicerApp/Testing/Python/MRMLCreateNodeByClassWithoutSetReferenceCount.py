@@ -2,7 +2,6 @@ import slicer
 
 
 def testMRMLCreateNodeByClassWithoutSetReferenceCount():
-
     # Always run this test as if CTest ran it.
     # It is necessary because without this the test on Windows
     # would report leaks in a popup window that has to be closed manually

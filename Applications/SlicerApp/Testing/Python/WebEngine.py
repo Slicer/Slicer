@@ -9,6 +9,7 @@ from slicer.ScriptedLoadableModule import *
 # WebEngine
 #
 
+
 class WebEngine(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -31,6 +32,7 @@ class WebEngine(ScriptedLoadableModule):
 #
 # qWebEngineWidget
 #
+
 
 class WebEngineWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:

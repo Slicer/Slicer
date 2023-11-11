@@ -35,7 +35,6 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
         return _("Grow or shrink selected segment by specified margin size.")
 
     def setupOptionsFrame(self):
-
         operationLayout = qt.QVBoxLayout()
 
         self.shrinkOptionRadioButton = qt.QRadioButton(_("Shrink"))

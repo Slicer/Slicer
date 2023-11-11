@@ -21,6 +21,7 @@ comment = """
 # DICOMLoadable
 #
 
+
 class DICOMLoadable:
     """Container class for things that can be
     loaded from dicom files into slicer.
@@ -67,6 +68,7 @@ class DICOMLoadable:
 #
 # DICOMPlugin
 #
+
 
 class DICOMPlugin:
     """Base class for DICOM plugins"""
@@ -385,7 +387,6 @@ class DICOMPlugin:
             return None
 
     def mapSOPClassUIDToDICOMQuantityAndUnits(self, sopClassUID):
-
         quantity = None
         units = None
 

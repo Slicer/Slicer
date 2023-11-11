@@ -117,6 +117,7 @@ def getSlicerRCFileName():
 # the global dictionary of the main context is passed to exec().
 #
 
+
 def loadSlicerRCFile():
     """If it exists, execute slicer resource script"""
     import os
@@ -131,10 +132,9 @@ def loadSlicerRCFile():
 # Internal
 #
 
+
 class _Internal:
-
     def __init__(self):
-
         # Set attribute 'slicer.app'
         setattr(slicer, "app", _qSlicerCoreApplicationInstance)
 

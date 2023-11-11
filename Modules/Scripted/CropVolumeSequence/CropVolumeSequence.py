@@ -14,6 +14,7 @@ from slicer.ScriptedLoadableModule import *
 # CropVolumeSequence
 #
 
+
 class CropVolumeSequence(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -35,6 +36,7 @@ This file was originally developed by Andras Lasso
 #
 # CropVolumeSequenceWidget
 #
+
 
 class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -158,6 +160,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
 # CropVolumeSequenceLogic
 #
 
+
 class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
@@ -254,7 +257,6 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
             # Move output sequence node in the same browser node as the input volume sequence
             # if not in a sequence browser node already.
             if outputVolSeq:
-
                 if slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(outputVolSeq) is None:
                     # Add output sequence to a sequence browser
                     seqBrowser = slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(inputVolSeq)
@@ -302,7 +304,6 @@ class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
         self.test_CropVolumeSequence1()
 
     def test_CropVolumeSequence1(self):
-
         self.delayDisplay("Starting the test")
 
         # Load volume sequence

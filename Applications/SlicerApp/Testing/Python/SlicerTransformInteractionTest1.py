@@ -29,6 +29,7 @@ class SlicerTransformInteractionTest1(ScriptedLoadableModule):
     This file was originally developed by Johan Andruejol, Kitware Inc.
     """
 
+
 #
 # SlicerTransformInteractionTest1Widget
 #
@@ -40,6 +41,7 @@ class SlicerTransformInteractionTest1Widget(ScriptedLoadableModuleWidget):
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
+
 
 #
 # SlicerTransformInteractionTest1Logic

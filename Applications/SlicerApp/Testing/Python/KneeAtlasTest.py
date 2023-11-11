@@ -13,7 +13,6 @@ class testClass:
 
 
 class KneeAtlasTest(unittest.TestCase):
-
     def setUp(self):
         pass
 

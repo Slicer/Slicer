@@ -17,7 +17,6 @@ Shared segment modification behavior is controlled through qSlicerSegmentEditorA
 
 
 class SegmentationsModuleTest2(unittest.TestCase):
-
     # ------------------------------------------------------------------------------
     def setUp(self):
         """Do whatever is needed to reset the state - typically a scene clear will be enough."""

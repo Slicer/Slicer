@@ -5,7 +5,6 @@ from slicer.ScriptedLoadableModule import *
 
 
 class SlicerStartupCompletedTestHelperModule(ScriptedLoadableModule):
-
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = "SlicerStartupCompletedTest"

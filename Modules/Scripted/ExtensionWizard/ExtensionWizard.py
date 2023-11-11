@@ -215,7 +215,6 @@ class ExtensionWizardWidget:
         dlg.setTemplates(self.templateManager.templates("extensions"))
 
         while dlg.exec_() == qt.QDialog.Accepted:
-
             # If the selected destination is in a repository then use the root of that repository
             # as destination
             try:
@@ -384,7 +383,6 @@ class ExtensionWizardWidget:
                         failed.append(module)
 
                 if len(failed):
-
                     if len(failed) > 1:
                         text = "The following modules could not be registered:"
                     else:

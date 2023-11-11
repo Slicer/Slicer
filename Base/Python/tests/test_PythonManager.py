@@ -4,7 +4,6 @@ import unittest
 
 
 class PythonManagerTests(unittest.TestCase):
-
     def setUp(self):
         pass
 

@@ -8,6 +8,7 @@ from slicer.ScriptedLoadableModule import *
 # PerformanceTests
 #
 
+
 class PerformanceTests(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -27,6 +28,7 @@ and others.  This work was partially funded by NIH grant 3P41RR013218-12S1.
 #
 # qPerformanceTestsWidget
 #
+
 
 class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     def setup(self):

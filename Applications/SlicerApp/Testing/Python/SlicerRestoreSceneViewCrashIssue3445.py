@@ -7,6 +7,7 @@ from slicer.util import TESTING_DATA_URL
 # SlicerRestoreSceneViewCrashIssue3445
 #
 
+
 class SlicerRestoreSceneViewCrashIssue3445(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -33,6 +34,7 @@ class SlicerRestoreSceneViewCrashIssue3445(ScriptedLoadableModule):
 # SlicerRestoreSceneViewCrashIssue3445Widget
 #
 
+
 class SlicerRestoreSceneViewCrashIssue3445Widget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -45,6 +47,7 @@ class SlicerRestoreSceneViewCrashIssue3445Widget(ScriptedLoadableModuleWidget):
 #
 # SlicerRestoreSceneViewCrashIssue3445Logic
 #
+
 
 class SlicerRestoreSceneViewCrashIssue3445Logic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

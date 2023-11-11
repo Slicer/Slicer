@@ -34,6 +34,7 @@ class RSNAVisTutorial(ScriptedLoadableModule):
 # qRSNAVisTutorialWidget
 #
 
+
 class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -137,6 +138,7 @@ class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
 #
 # RSNAVisTutorialLogic
 #
+
 
 class RSNAVisTutorialLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

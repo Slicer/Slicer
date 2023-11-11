@@ -4,7 +4,6 @@ import unittest
 
 
 class SlicerEnvironmentTests(unittest.TestCase):
-
     def setUp(self):
         pass
 

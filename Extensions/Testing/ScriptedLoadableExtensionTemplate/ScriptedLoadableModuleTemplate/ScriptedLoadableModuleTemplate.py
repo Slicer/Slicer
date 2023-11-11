@@ -142,6 +142,7 @@ class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
         imageThreshold = self.imageThresholdSliderWidget.value
         logic.run(self.inputSelector.currentNode(), self.outputSelector.currentNode(), imageThreshold, enableScreenshotsFlag)
 
+
 #
 # ScriptedLoadableModuleTemplateLogic
 #

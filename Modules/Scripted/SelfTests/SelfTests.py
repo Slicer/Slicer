@@ -18,7 +18,6 @@ from slicer.ScriptedLoadableModule import *
 
 
 class ExampleSelfTests:
-
     @staticmethod
     def closeScene():
         """Close the scene"""
@@ -57,6 +56,7 @@ and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
         # register the example tests
         slicer.selfTests["MRMLSceneExists"] = lambda: slicer.app.mrmlScene
         slicer.selfTests["CloseScene"] = ExampleSelfTests.closeScene
+
 
 #
 # SelfTests widget

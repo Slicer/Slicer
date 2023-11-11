@@ -91,7 +91,6 @@ def checkKeepTemporarySettingsWithoutDisableSettingsDisplayWarning(slicer_execut
 
 
 if __name__ == "__main__":
-
     if len(sys.argv) != 2:
         print(os.path.basename(sys.argv[0]) + " /path/to/Slicer")
         exit(EXIT_FAILURE)

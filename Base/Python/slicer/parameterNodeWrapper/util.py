@@ -69,6 +69,7 @@ def isNodeOrUnionOfNodes(datatype) -> bool:
 
         def validType(type_):
             return isinstance(None, type_) or issubclass(type_, slicer.vtkMRMLNode) if type(type_) == type else False
+
         return all([validType(t) for t in underlyingArgTypes])
     else:
         return False

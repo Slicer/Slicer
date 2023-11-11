@@ -11,6 +11,7 @@ from slicer.ScriptedLoadableModule import *
 # FiducialLayoutSwitchBug1914
 #
 
+
 class FiducialLayoutSwitchBug1914(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -30,8 +31,8 @@ class FiducialLayoutSwitchBug1914(ScriptedLoadableModule):
 # qFiducialLayoutSwitchBug1914Widget
 #
 
-class FiducialLayoutSwitchBug1914Widget(ScriptedLoadableModuleWidget):
 
+class FiducialLayoutSwitchBug1914Widget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -39,6 +40,7 @@ class FiducialLayoutSwitchBug1914Widget(ScriptedLoadableModuleWidget):
 #
 # FiducialLayoutSwitchBug1914Logic
 #
+
 
 class FiducialLayoutSwitchBug1914Logic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

@@ -39,7 +39,6 @@ To segment a single object, create a segment and paint inside and create another
 """
 
     def setupOptionsFrame(self):
-
         # Object scale slider
         self.objectScaleMmSlider = slicer.qMRMLSliderWidget()
         self.objectScaleMmSlider.setMRMLScene(slicer.mrmlScene)
@@ -75,7 +74,6 @@ To segment a single object, create a segment and paint inside and create another
         self.scriptedEffect.setParameter("ObjectScaleMm", self.objectScaleMmSlider.value)
 
     def onApply(self):
-
         # Make sure the user wants to do the operation, even if the segment is not visible
         if not self.scriptedEffect.confirmCurrentSegmentVisible():
             return

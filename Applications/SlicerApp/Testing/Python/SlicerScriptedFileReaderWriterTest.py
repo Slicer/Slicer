@@ -29,7 +29,6 @@ class SlicerScriptedFileReaderWriterTestWidget(ScriptedLoadableModuleWidget):
 
 
 class SlicerScriptedFileReaderWriterTestFileReader:
-
     def __init__(self, parent):
         self.parent = parent
 
@@ -96,7 +95,6 @@ class SlicerScriptedFileReaderWriterTestFileReader:
 
 
 class SlicerScriptedFileReaderWriterTestFileWriter:
-
     def __init__(self, parent):
         self.parent = parent
 
@@ -118,7 +116,6 @@ class SlicerScriptedFileReaderWriterTestFileWriter:
 
     def write(self, properties):
         try:
-
             # Get node
             node = slicer.mrmlScene.GetNodeByID(properties["nodeID"])
 

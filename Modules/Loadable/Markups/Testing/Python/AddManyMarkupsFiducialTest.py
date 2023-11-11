@@ -12,6 +12,7 @@ from slicer.ScriptedLoadableModule import *
 # AddManyMarkupsFiducialTest
 #
 
+
 class AddManyMarkupsFiducialTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -30,6 +31,7 @@ class AddManyMarkupsFiducialTest(ScriptedLoadableModule):
 #
 # qAddManyMarkupsFiducialTestWidget
 #
+
 
 class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -143,8 +145,8 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
 # AddManyMarkupsFiducialTestLogic
 #
 
-class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
 
+class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
     def run(self, nodeType, numberOfNodes=10, numberOfControlPoints=10, rOffset=0, usefewerModifyCalls=False, locked=False, labelsHidden=False):
         """Run the actual algorithm"""
         print(f"Running test to add {numberOfNodes} nodes markups with {numberOfControlPoints} control points")
@@ -169,7 +171,6 @@ class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
             slicer.app.pauseRender()
 
         for nodeIndex in range(numberOfNodes):
-
             markupsNode = slicer.mrmlScene.AddNewNodeByClass(nodeType)
             markupsNode.CreateDefaultDisplayNodes()
             if locked:
@@ -227,7 +228,6 @@ class AddManyMarkupsFiducialTestTest(ScriptedLoadableModuleTest):
         self.test_AddManyMarkupsFiducialTest1()
 
     def test_AddManyMarkupsFiducialTest1(self):
-
         self.delayDisplay("Starting the add many Markups fiducials test")
 
         # start in the welcome module

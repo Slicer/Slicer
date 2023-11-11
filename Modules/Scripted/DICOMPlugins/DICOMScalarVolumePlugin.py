@@ -22,6 +22,7 @@ from DICOMLib import DICOMExportScalarVolume
 # plugin architecture.
 #
 
+
 class DICOMScalarVolumePluginClass(DICOMPlugin):
     """ScalarVolume specific interpretation code"""
 
@@ -901,6 +902,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 #
 # DICOMScalarVolumePlugin
 #
+
 
 class DICOMScalarVolumePlugin:
     """

@@ -21,6 +21,7 @@ from slicer import vtkMRMLScalarVolumeNode
 # TemplateKey
 #
 
+
 class TemplateKey(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -52,6 +53,7 @@ and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR0132
 #
 # Register sample data sets in Sample Data module
 #
+
 
 def registerSampleData():
     """Add data sets to Sample Data module."""
@@ -101,6 +103,7 @@ def registerSampleData():
 # TemplateKeyParameterNode
 #
 
+
 @parameterNodeWrapper
 class TemplateKeyParameterNode:
     """
@@ -123,6 +126,7 @@ class TemplateKeyParameterNode:
 #
 # TemplateKeyWidget
 #
+
 
 class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -253,6 +257,7 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 # TemplateKeyLogic
 #
 
+
 class TemplateKeyLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
@@ -311,6 +316,7 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
 #
 # TemplateKeyTest
 #
+
 
 class TemplateKeyTest(ScriptedLoadableModuleTest):
     """

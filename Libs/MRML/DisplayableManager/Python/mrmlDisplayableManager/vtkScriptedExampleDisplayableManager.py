@@ -48,8 +48,8 @@
 #     - The list of logic internally used by the qSlicerLayoutManager should be removed and
 #     the list from the MRMLApplicationLogic used instead.
 
-class vtkScriptedExampleDisplayableManager:
 
+class vtkScriptedExampleDisplayableManager:
     def __init__(self, parent):
         self.Parent = parent
         print("vtkScriptedExampleDisplayableManager - __init__")

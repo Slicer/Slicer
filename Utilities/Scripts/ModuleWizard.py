@@ -62,7 +62,6 @@ def usage():
 
 
 def main(argv):
-
     template = ""
     templateKey = ""
     target = ""

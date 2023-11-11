@@ -5,7 +5,6 @@ import shutil
 
 
 class SlicerUtilLoadSaveMGHTests(unittest.TestCase):
-
     def setUp(self):
         for MGHFileNames in ["MGH_T1.mgz", "MGH_T1_longname.mgh.gz", "MGH_T1_uncompressed.mgz"]:
             try:

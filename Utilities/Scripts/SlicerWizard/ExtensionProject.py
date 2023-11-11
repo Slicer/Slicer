@@ -171,7 +171,6 @@ class ExtensionProject:
     # ---------------------------------------------------------------------------
     @project.setter
     def project(self, value):
-
         for t in self._scriptContents.tokens:
             if _isCommand(t, "project"):
                 if len(t.arguments):

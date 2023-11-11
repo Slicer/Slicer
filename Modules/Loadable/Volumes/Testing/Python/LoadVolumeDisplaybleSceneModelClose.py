@@ -3,7 +3,6 @@ from slicer.ScriptedLoadableModule import *
 
 
 class VolumesLoadSceneCloseTesting(ScriptedLoadableModuleTest):
-
     def setUp(self):
         pass
 

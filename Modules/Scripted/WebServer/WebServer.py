@@ -35,6 +35,7 @@ class WebServer(ScriptedLoadableModule):
 This work was partially funded by NIH grant 3P41RR013218.
 """
 
+
 #
 # WebServer widget
 #
@@ -258,6 +259,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
             self.log.insertPlainText("\n")
             self.log.ensureCursorVisible()
             self.log.repaint()
+
 
 #
 # SlicerHTTPServer
@@ -550,6 +552,7 @@ class SlicerHTTPServer(HTTPServer):
 #
 # WebServer logic
 #
+
 
 class WebServerLogic:
     """Include a concrete subclass of SimpleHTTPServer

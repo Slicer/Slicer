@@ -8,6 +8,7 @@ from slicer.ScriptedLoadableModule import *
 # SlicerMRBMultipleSaveRestoreLoopTest
 #
 
+
 class SlicerMRBMultipleSaveRestoreLoopTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -32,6 +33,7 @@ class SlicerMRBMultipleSaveRestoreLoopTest(ScriptedLoadableModule):
 #
 # SlicerMRBMultipleSaveRestoreLoopTestWidget
 #
+
 
 class SlicerMRBMultipleSaveRestoreLoopTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -105,7 +107,6 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
         widget = slicer.app.layoutManager().viewport()
         self.pointPosition = fid1
         for i in range(self.numberOfIterations):
-
             print("\n\nIteration %s" % i)
             #
             # save the mrml scene to an mrb

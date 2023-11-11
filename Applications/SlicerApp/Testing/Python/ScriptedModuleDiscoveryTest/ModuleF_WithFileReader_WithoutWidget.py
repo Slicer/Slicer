@@ -21,7 +21,6 @@ class ModuleF_WithFileReader_WithoutWidget(ScriptedLoadableModule):
 
 
 class ModuleF_WithFileReader_WithoutWidgetFileReader:
-
     def __init__(self, parent):
         self.parent = parent
 

@@ -25,13 +25,13 @@ class ColorLegendSelfTest(ScriptedLoadableModule):
     This file was originally developed by Kevin Wang, PMH and was funded by CCO and OCAIRO.
 """  # replace with organization, grant and thanks.
 
+
 #
 # ColorLegendSelfTestWidget
 #
 
 
 class ColorLegendSelfTestWidget(ScriptedLoadableModuleWidget):
-
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -84,7 +84,6 @@ class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
         self.test_ColorLegendSelfTest1()
 
     def test_ColorLegendSelfTest1(self):
-
         self.delayDisplay("Starting test_ColorLegendSelfTest1")
 
         self.delayDisplay("Load CTChest sample volume")

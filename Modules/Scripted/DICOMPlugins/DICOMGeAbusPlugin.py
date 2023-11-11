@@ -19,6 +19,7 @@ from DICOMLib import DICOMLoadable
 # plugin architecture.
 #
 
+
 class DICOMGeAbusPluginClass(DICOMPlugin):
     """Image loader plugin for GE Invenia
     ABUS (automated breast ultrasound) images.
@@ -229,7 +230,6 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         return volumeNode
 
     def createAcquisitionTransform(self, volumeNode, metadata):
-
         # Creates transform that applies scan conversion transform
         probeRadius = metadata["CurvatureRadiusProbe"]
         trackRadius = metadata["CurvatureRadiusTrack"]
@@ -304,6 +304,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 #
 # DICOMGeAbusPlugin
 #
+
 
 class DICOMGeAbusPlugin:
     """

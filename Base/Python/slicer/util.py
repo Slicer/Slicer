@@ -127,6 +127,7 @@ def startupEnvironment():
 # Custom Import
 #
 
+
 def importVTKClassesFromDirectory(directory, dest_module_name, filematch="*"):
     from vtk import vtkObjectBase
     importClassesFromDirectory(directory, dest_module_name, vtkObjectBase, filematch)
@@ -186,7 +187,6 @@ def importModuleObjects(from_module_name, dest_module_name, type_info):
 
     # Loop over content of the python module associated with the given python library
     for item_name in dir(module):
-
         # Obtain a reference associated with the current object
         item = getattr(module, item_name)
 
@@ -207,6 +207,7 @@ def importModuleObjects(from_module_name, dest_module_name, type_info):
 #
 # UI
 #
+
 
 def lookupTopLevelWidget(objectName):
     """Loop over all top level widget associated with 'slicer.app' and
@@ -671,6 +672,7 @@ def forceRenderAllViews():
 #
 # IO
 #
+
 
 def loadNodeFromFile(filename, filetype=None, properties={}, returnNode=False):
     """Load node into the scene from a file.
@@ -1145,6 +1147,7 @@ def exportNode(node, filename, properties={}, world=False):
 
     return success
 
+
 #
 # Module
 #
@@ -1452,6 +1455,7 @@ def setDataProbeVisible(visible):
 # Layout
 #
 
+
 def resetThreeDViews():
     """Reset focal view around volumes"""
     import slicer
@@ -1467,6 +1471,7 @@ def resetSliceViews():
 #
 # MRML
 #
+
 
 class MRMLNodeNotFoundException(Exception):
     """Exception raised when a requested MRML node was not found."""
@@ -1621,6 +1626,7 @@ def getSubjectHierarchyItemChildren(parentItem=None, recursive=False):
 #
 # MRML-numpy
 #
+
 
 def array(pattern="", index=0):
     """Return the array you are "most likely to want" from the indexth
@@ -2417,6 +2423,7 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
 # MRML-pandas
 #
 
+
 def dataframeFromTable(tableNode):
     """Convert table node content to pandas dataframe.
 
@@ -2503,6 +2510,7 @@ def dataframeFromMarkups(markupsNode):
 #
 # MRML-ITKImage
 #
+
 
 def itkImageFromVolume(volumeNode):
     """Return ITK image from volume node.
@@ -2647,6 +2655,7 @@ def updateVolumeFromITKImage(volumeNode, itkImage, deepCopy=True):
 # VTK
 #
 
+
 class VTKObservationMixin:
     def __init__(self):
         super().__init__()
@@ -2749,6 +2758,7 @@ def toLatin1String(text):
 #
 # File Utilities
 #
+
 
 def tempDirectory(key="__SlicerTemp__", tempDir=None, includeDateTime=True):
     """Come up with a unique directory name in the temp dir and make it and return it

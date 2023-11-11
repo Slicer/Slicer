@@ -6,7 +6,6 @@ import slicer.util
 
 
 class SlicerUtilWithoutModulesTest(unittest.TestCase):
-
     def setUp(self):
         pass
 
@@ -15,7 +14,6 @@ class SlicerUtilWithoutModulesTest(unittest.TestCase):
             slicer.util.computeChecksum("SHA256", "compute-checksum-nonexistent.txt")
 
         with tempfile.TemporaryDirectory() as tmpdirname:
-
             input_file = os.path.join(tmpdirname, "compute-checksum.txt")
             with open(input_file, "w", newline="\n") as content:
                 content.write("This is a text file!\n")

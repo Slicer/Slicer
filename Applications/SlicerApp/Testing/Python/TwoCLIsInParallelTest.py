@@ -8,6 +8,7 @@ from slicer.ScriptedLoadableModule import *
 # TwoCLIsInParallelTest
 #
 
+
 class TwoCLIsInParallelTest(ScriptedLoadableModule):
     def __init__(self, parent):
         parent.title = "TwoCLIsInParallelTest"  # TODO make this more human readable by adding spaces
@@ -38,8 +39,8 @@ class TwoCLIsInParallelTest(ScriptedLoadableModule):
 # TwoCLIsInParallelTestWidget
 #
 
-class TwoCLIsInParallelTestWidget(ScriptedLoadableModuleWidget):
 
+class TwoCLIsInParallelTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -47,6 +48,7 @@ class TwoCLIsInParallelTestWidget(ScriptedLoadableModuleWidget):
 #
 # TwoCLIsInParallelTestLogic
 #
+
 
 class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
     def __init__(self):
@@ -99,8 +101,8 @@ class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
 # TwoCLIsInParallelTestLogic
 #
 
-class TwoCLIsInParallelTestTest(ScriptedLoadableModuleTest):
 
+class TwoCLIsInParallelTestTest(ScriptedLoadableModuleTest):
     def setUp(self):
         """Reset the state for testing."""
         pass

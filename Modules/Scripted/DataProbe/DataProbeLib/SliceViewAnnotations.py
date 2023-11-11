@@ -376,7 +376,6 @@ class SliceAnnotations(VTKObservationMixin):
         self.makeAnnotationText(caller)
 
     def updateCornerAnnotation(self, sliceLogic):
-
         sliceNode = sliceLogic.GetBackgroundLayer().GetSliceNode()
         sliceViewName = sliceNode.GetLayoutName()
 
@@ -676,7 +675,6 @@ class SliceAnnotations(VTKObservationMixin):
                 self.cornerTexts[i][key]["text"] = ""
 
     def extractDICOMValues(self, uid):
-
         # Used cached tags, if found.
         # DICOM objects are not allowed to be changed,
         # so if the UID matches then the content has to match as well

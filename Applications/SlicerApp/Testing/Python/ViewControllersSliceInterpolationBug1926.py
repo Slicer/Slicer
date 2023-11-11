@@ -9,6 +9,7 @@ from slicer.ScriptedLoadableModule import *
 # ViewControllersSliceInterpolationBug1926
 #
 
+
 class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -31,6 +32,7 @@ class ViewControllersSliceInterpolationBug1926(ScriptedLoadableModule):
 #
 # qViewControllersSliceInterpolationBug1926Widget
 #
+
 
 class ViewControllersSliceInterpolationBug1926Widget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:

@@ -8,6 +8,7 @@ from slicer.ScriptedLoadableModule import *
 # SubjectHierarchyCorePluginsSelfTest
 #
 
+
 class SubjectHierarchyCorePluginsSelfTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -41,6 +42,7 @@ This file was originally developed by Csaba Pinter, PerkLab, Queen's University 
 # SubjectHierarchyCorePluginsSelfTestWidget
 #
 
+
 class SubjectHierarchyCorePluginsSelfTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -49,6 +51,7 @@ class SubjectHierarchyCorePluginsSelfTestWidget(ScriptedLoadableModuleWidget):
 #
 # SubjectHierarchyCorePluginsSelfTestLogic
 #
+
 
 class SubjectHierarchyCorePluginsSelfTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

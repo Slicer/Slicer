@@ -76,6 +76,7 @@ class ParameterNodeWrapperGuiCreationTest(unittest.TestCase):
             x: Annotated[int, Label("Xxx")]
             y: int
             z: int
+
         gui = createGui(Pack)
 
         # Overall is a qSlicerWidget
@@ -164,6 +165,7 @@ class ParameterNodeWrapperGuiCreationTest(unittest.TestCase):
             i: Annotated[int, Default(77)]
             f: Annotated[float, Label("THE FLOAT")]
             s: str
+
         gui = createGui(ParameterNodeWrapper)
 
         # Overall is a qSlicerWidget

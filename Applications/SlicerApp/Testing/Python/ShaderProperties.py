@@ -12,6 +12,7 @@ from slicer.util import TESTING_DATA_URL
 # ShaderProperties
 #
 
+
 class ShaderProperties(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -31,7 +32,6 @@ class ShaderProperties(ScriptedLoadableModule):
 # ShaderPropertiesWidget
 #
 class ShaderPropertiesWidget(ScriptedLoadableModuleWidget):
-
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -59,8 +59,8 @@ class ShaderPropertiesWidget(ScriptedLoadableModuleWidget):
 # ShaderPropertiesTest
 #
 
-class ShaderPropertiesTest(ScriptedLoadableModuleTest):
 
+class ShaderPropertiesTest(ScriptedLoadableModuleTest):
     def setUp(self):
         self.delayDisplay("Setup")
         layoutManager = slicer.app.layoutManager()
@@ -73,7 +73,6 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
         self.testWedgeCut()
 
     def testWedgeCut(self):
-
         self.delayDisplay("Starting...")
         self.setUp()
 
@@ -178,7 +177,6 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Should be a carved out shoulder now")
 
     def testSphereCut(self):
-
         self.delayDisplay("Starting...")
         self.setUp()
 

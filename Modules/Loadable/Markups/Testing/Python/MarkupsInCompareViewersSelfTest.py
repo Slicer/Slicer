@@ -9,6 +9,7 @@ from slicer.ScriptedLoadableModule import *
 # MarkupsInCompareViewersSelfTest
 #
 
+
 class MarkupsInCompareViewersSelfTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -28,8 +29,8 @@ class MarkupsInCompareViewersSelfTest(ScriptedLoadableModule):
 # qMarkupsInCompareViewersSelfTestWidget
 #
 
-class MarkupsInCompareViewersSelfTestWidget(ScriptedLoadableModuleWidget):
 
+class MarkupsInCompareViewersSelfTestWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -70,8 +71,8 @@ class MarkupsInCompareViewersSelfTestWidget(ScriptedLoadableModuleWidget):
 # MarkupsInCompareViewersSelfTestLogic
 #
 
-class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
 
+class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
     def run(self):
         """Run the actual algorithm"""
         print("Running test of the markups in compare viewers")
@@ -193,7 +194,6 @@ class MarkupsInCompareViewersSelfTestTest(ScriptedLoadableModuleTest):
         self.test_MarkupsInCompareViewersSelfTest1()
 
     def test_MarkupsInCompareViewersSelfTest1(self):
-
         self.delayDisplay("Starting the Markups in compare viewers test")
 
         # start in the welcome module

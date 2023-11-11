@@ -11,6 +11,7 @@ from slicer.ScriptedLoadableModule import *
 # UtilTest
 #
 
+
 class UtilTest(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
@@ -27,6 +28,7 @@ class UtilTest(ScriptedLoadableModule):
 #
 # UtilTestWidget
 #
+
 
 class UtilTestWidget(ScriptedLoadableModuleWidget):
     def __init__(self, parent=None):
@@ -48,6 +50,7 @@ class UtilTestWidget(ScriptedLoadableModuleWidget):
 # UtilTestLogic
 #
 
+
 class UtilTestLogic(ScriptedLoadableModuleLogic):
     def __init__(self):
         ScriptedLoadableModuleLogic.__init__(self)
@@ -57,8 +60,8 @@ class UtilTestLogic(ScriptedLoadableModuleLogic):
 # UtilTestLogic
 #
 
-class UtilTestTest(ScriptedLoadableModuleTest):
 
+class UtilTestTest(ScriptedLoadableModuleTest):
     def setUp(self):
         """Reset the state for testing."""
         slicer.mrmlScene.Clear(0)

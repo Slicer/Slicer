@@ -3,7 +3,6 @@ import time
 
 
 def newPlane():
-
     # create a plane polydata
     plane = Slicer.slicer.vtkPlaneSource()
     plane.SetOrigin(0., 0., 0.)
@@ -46,7 +45,6 @@ def newPlane():
 
 
 def texturedPlane():
-
     # create the plane and modify the texture and transform
     # every iteration.  Call Modified on the PolyData so the
     # viewer will know to update.  Call Tk's "update" to flush

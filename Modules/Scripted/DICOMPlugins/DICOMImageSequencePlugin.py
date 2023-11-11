@@ -17,6 +17,7 @@ from DICOMLib import DICOMLoadable
 # plugin architecture.
 #
 
+
 class DICOMImageSequencePluginClass(DICOMPlugin):
     """2D image sequence loader plugin.
     It supports X-ray angiography and ultrasound images.
@@ -266,7 +267,6 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         slicer.modules.sequences.showSequenceBrowser(outputSequenceBrowserNode)
 
     def addSequenceFromImageData(self, imageData, tempFrameVolume, filePath, name, singleFileInLoadable):
-
         # Rotate 180deg, otherwise the image would appear upside down
         ijkToRas = vtk.vtkMatrix4x4()
         ijkToRas.SetElement(0, 0, -1.0)
@@ -387,6 +387,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 #
 # DICOMImageSequencePlugin
 #
+
 
 class DICOMImageSequencePlugin:
     """

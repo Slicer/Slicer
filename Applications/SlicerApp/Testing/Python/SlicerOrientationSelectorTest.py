@@ -8,6 +8,7 @@ from slicer.ScriptedLoadableModule import *
 # SlicerOrientationSelectorTest
 #
 
+
 class SlicerOrientationSelectorTest(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -33,6 +34,7 @@ class SlicerOrientationSelectorTest(ScriptedLoadableModule):
 # SlicerOrientationSelectorTestWidget
 #
 
+
 class SlicerOrientationSelectorTestWidget(ScriptedLoadableModuleWidget):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -45,6 +47,7 @@ class SlicerOrientationSelectorTestWidget(ScriptedLoadableModuleWidget):
 #
 # SlicerOrientationSelectorTestLogic
 #
+
 
 class SlicerOrientationSelectorTestLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual

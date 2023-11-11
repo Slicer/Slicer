@@ -47,6 +47,7 @@ def MyObjectsBlockSignals(*qobjects):
 # VectorToScalarVolume
 #
 
+
 class VectorToScalarVolume(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
@@ -81,6 +82,7 @@ NIH Roadmap for Medical Research, Grant U54 EB005149.""")
 #
 # VectorToScalarVolumeParameterNode
 #
+
 
 class ConversionMethods(enum.Enum):
     LUMINANCE = (
@@ -281,7 +283,6 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     def onApplyButton(self):
         """Run processing when user clicks "Apply" button."""
         with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
-
             # Compute output
             self.logic.run(self._parameterNode)
 
@@ -294,6 +295,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
 #
 # VectorToScalarVolumeLogic
 #
+
 
 class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
     """
@@ -476,6 +478,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
 #
 # VectorToScalarVolumeTest
 #
+
 
 class VectorToScalarVolumeTest(ScriptedLoadableModuleTest):
     """
