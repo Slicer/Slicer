@@ -91,6 +91,13 @@ public:
     ToggleVisibility
   };
 
+  enum LockAction
+  {
+    Lock,
+    Unlock,
+    ToggleLock
+  };
+
   qMRMLSubjectHierarchyTreeViewPrivate(qMRMLSubjectHierarchyTreeView& object);
 
   virtual void init();
@@ -110,6 +117,8 @@ public:
 
   /// Set visibility of selected subject hierarchy items
   void setVisibilityOfSelectedItems(VisibilityAction visibilityAction);
+
+  void setSubjectHierarchyItemLocked(vtkIdType itemID, LockAction lockAction);
 
   void updateColors();
 
@@ -177,6 +186,7 @@ public:
   QHash<QString, QString> NodeTypeLabels;
 
   void setupVisibilityButton(const QModelIndex& proxyIndex);
+  void setupLockButton(const QModelIndex& proxyIndex);
   void setupColorButton(const QModelIndex& proxyIndex);
   void setupAllButtons();
   void setupRowsRecursively(const QModelIndex& parent);
@@ -220,6 +230,10 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   if (this->Model->descriptionColumn() >= 0)
   {
     q->setColumnHidden(this->Model->descriptionColumn(), true);
+  }
+  if (this->Model->lockColumn() >= 0)
+  {
+    q->setColumnHidden(this->Model->lockColumn(), true);
   }
 
   // Set generic MRML item delegate
@@ -343,6 +357,45 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupVisibilityButton(const QModelInd
 }
 
 //--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::setupLockButton(const QModelIndex& proxyIndex)
+{
+  Q_Q(qMRMLSubjectHierarchyTreeView);
+  if (!proxyIndex.isValid())
+  {
+    return;
+  }
+  vtkIdType itemID = this->SortFilterModel->subjectHierarchyItemFromIndex(proxyIndex);
+  if (!itemID)
+  {
+    return;
+  }
+
+  QIcon lockIcon = proxyIndex.data(qMRMLSubjectHierarchyModel::LockIconRole).value<QIcon>();
+  if (lockIcon.isNull())
+  {
+    // Locking is not applicable to this item, so the cell stays empty
+    q->setIndexWidget(proxyIndex, nullptr);
+    return;
+  }
+
+  auto* button = new QToolButton();
+  button->setAutoRaise(true);
+  button->setFocusPolicy(Qt::NoFocus);
+  int iconSize = button->style()->pixelMetric(QStyle::PM_SmallIconSize);
+  button->setIconSize(QSize(iconSize, iconSize));
+  button->setStyleSheet("QToolButton { padding: 0px; }");
+  button->setIcon(lockIcon);
+  button->setProperty("itemID", QVariant::fromValue(itemID));
+
+  QObject::connect(button, &QToolButton::clicked, q, &qMRMLSubjectHierarchyTreeView::onLockButtonClicked);
+
+  button->setContextMenuPolicy(Qt::CustomContextMenu);
+  QObject::connect(button, &QWidget::customContextMenuRequested, q, &qMRMLSubjectHierarchyTreeView::onButtonContextMenuRequested);
+
+  q->setIndexWidget(proxyIndex, button);
+}
+
+//--------------------------------------------------------------------------
 QIcon qMRMLSubjectHierarchyTreeViewPrivate::colorIcon(const QColor& color)
 {
   // Shared across all qMRMLSubjectHierarchyTreeView instances: the same anatomical/segmentation
@@ -405,10 +458,12 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupAllButtons()
 void qMRMLSubjectHierarchyTreeViewPrivate::setupRowsRecursively(const QModelIndex& parent)
 {
   int visCol = this->Model->visibilityColumn();
+  int lockCol = this->Model->lockColumn();
   int colorCol = this->Model->colorColumn();
   for (int row = 0; row < this->SortFilterModel->rowCount(parent); ++row)
   {
     this->setupVisibilityButton(this->SortFilterModel->index(row, visCol, parent));
+    this->setupLockButton(this->SortFilterModel->index(row, lockCol, parent));
     this->setupColorButton(this->SortFilterModel->index(row, colorCol, parent));
     this->setupRowsRecursively(this->SortFilterModel->index(row, 0, parent));
   }
@@ -420,6 +475,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::onDataChanged(const QModelIndex& topL
   Q_Q(qMRMLSubjectHierarchyTreeView);
   QModelIndex parent = topLeft.parent();
   int visCol = this->Model->visibilityColumn();
+  int lockCol = this->Model->lockColumn();
   int colorCol = this->Model->colorColumn();
   for (int row = topLeft.row(); row <= bottomRight.row(); ++row)
   {
@@ -431,6 +487,23 @@ void qMRMLSubjectHierarchyTreeViewPrivate::onDataChanged(const QModelIndex& topL
       {
         button->setIcon(index.data(qMRMLSubjectHierarchyModel::VisibilityIconRole).value<QIcon>());
       }
+    }
+    if (topLeft.column() <= lockCol && lockCol <= bottomRight.column())
+    {
+      QModelIndex index = this->SortFilterModel->index(row, lockCol, parent);
+      QIcon lockIcon = index.data(qMRMLSubjectHierarchyModel::LockIconRole).value<QIcon>();
+      auto* button = qobject_cast<QToolButton*>(q->indexWidget(index));
+      if (button && !lockIcon.isNull())
+      {
+        // Button already exists and locking is still applicable: just update the icon.
+        button->setIcon(lockIcon);
+      }
+      else if (button || !lockIcon.isNull())
+      {
+        // Button needs to be created (locking became applicable) or removed (it no longer is).
+        this->setupLockButton(index);
+      }
+      // No button and no icon: nothing to do.
     }
     if (topLeft.column() <= colorCol && colorCol <= bottomRight.column())
     {
@@ -581,6 +654,10 @@ void qMRMLSubjectHierarchyTreeView::resetColumnSizesToDefault()
   if (d->Model->visibilityColumn() >= 0)
   {
     this->header()->setSectionResizeMode(d->Model->visibilityColumn(), QHeaderView::ResizeToContents);
+  }
+  if (d->Model->lockColumn() >= 0)
+  {
+    this->header()->setSectionResizeMode(d->Model->lockColumn(), QHeaderView::ResizeToContents);
   }
   if (d->Model->colorColumn() >= 0)
   {
@@ -846,6 +923,45 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setSubjectHierarchyItemVisibility(vtk
   {
     this->SubjectHierarchyNode->GetScene()->EndState(vtkMRMLScene::BatchProcessState);
   }
+
+  // Trigger view update for the modified item
+  this->SubjectHierarchyNode->ItemModified(itemID);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::setSubjectHierarchyItemLocked(vtkIdType itemID, LockAction lockAction)
+{
+  if (!this->SubjectHierarchyNode)
+  {
+    return;
+  }
+  if (!itemID)
+  {
+    return;
+  }
+  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(itemID);
+  if (!ownerPlugin)
+  {
+    qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << itemID << " (named " << this->SubjectHierarchyNode->GetItemName(itemID).c_str() << ") is not owned by any plugin";
+    return;
+  }
+
+  int currentLocked = ownerPlugin->getDisplayLocked(itemID);
+  if (currentLocked < 0)
+  {
+    // Locking is not applicable to this item
+    return;
+  }
+
+  bool locked = true;
+  switch (lockAction)
+  {
+    case qMRMLSubjectHierarchyTreeViewPrivate::Unlock: locked = false; break;
+    case qMRMLSubjectHierarchyTreeViewPrivate::Lock: locked = true; break;
+    case qMRMLSubjectHierarchyTreeViewPrivate::ToggleLock: locked = !currentLocked; break;
+    default: break;
+  }
+  ownerPlugin->setDisplayLocked(itemID, locked);
 
   // Trigger view update for the modified item
   this->SubjectHierarchyNode->ItemModified(itemID);
@@ -1568,6 +1684,18 @@ bool qMRMLSubjectHierarchyTreeView::visibilityColumnVisible()
 }
 
 //--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setLockColumnVisible(bool visible)
+{
+  this->setColumnHidden(this->model()->lockColumn(), !visible);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::lockColumnVisible()
+{
+  return !this->isColumnHidden(this->model()->lockColumn());
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setIdColumnVisible(bool visible)
 {
   this->setColumnHidden(this->model()->idColumn(), !visible);
@@ -1658,6 +1786,24 @@ bool qMRMLSubjectHierarchyTreeView::clickDecoration(QMouseEvent* e)
     {
       // Toggle simple visibility
       d->setSubjectHierarchyItemVisibility(itemID, qMRMLSubjectHierarchyTreeViewPrivate::ToggleVisibility);
+    }
+
+    return true;
+  }
+
+  // Lock column
+  if (sourceIndex.column() == this->model()->lockColumn())
+  {
+    vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(index);
+    if (!itemID)
+    {
+      // Valid item is needed for lock actions
+      return false;
+    }
+
+    if (e->button() == Qt::LeftButton)
+    {
+      d->setSubjectHierarchyItemLocked(itemID, qMRMLSubjectHierarchyTreeViewPrivate::ToggleLock);
     }
 
     return true;
@@ -2627,6 +2773,23 @@ void qMRMLSubjectHierarchyTreeView::onVisibilityButtonClicked()
     return;
   }
   d->setSubjectHierarchyItemVisibility(itemID, qMRMLSubjectHierarchyTreeViewPrivate::ToggleVisibility);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::onLockButtonClicked()
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  auto* button = qobject_cast<QToolButton*>(sender());
+  if (!button)
+  {
+    return;
+  }
+  vtkIdType itemID = button->property("itemID").value<vtkIdType>();
+  if (!itemID)
+  {
+    return;
+  }
+  d->setSubjectHierarchyItemLocked(itemID, qMRMLSubjectHierarchyTreeViewPrivate::ToggleLock);
 }
 
 //------------------------------------------------------------------------------

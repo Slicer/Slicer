@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>276</width>
-    <height>294</height>
+    <width>350</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,9 +23,20 @@
    <item>
     <layout class="QVBoxLayout" name="markupsModuleVerticalLayout">
      <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QLabel" name="createMarkupLabel">
+         <property name="text">
+          <string>Create Markups:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <widget class="QGroupBox" name="createMarkupsGroupBox">
        <property name="title">
-        <string>Create Markups:</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -752,10 +763,29 @@
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
          <widget class="QLabel" name="measurementsLabel">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
           <property name="text">
            <string>No measurement</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>5</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <widget class="ctkCollapsibleGroupBox" name="MeasurementSettingsCollapsibleGroupBox">
@@ -778,7 +808,7 @@
            <item>
             <widget class="QTableWidget" name="measurementSettingsTableWidget">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -787,7 +817,7 @@
               <enum>QFrame::NoFrame</enum>
              </property>
              <property name="sizeAdjustPolicy">
-              <enum>QAbstractScrollArea::AdjustToContents</enum>
+              <enum>QAbstractScrollArea::AdjustIgnored</enum>
              </property>
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
@@ -804,7 +834,13 @@
              <attribute name="horizontalHeaderHighlightSections">
               <bool>false</bool>
              </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
              <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
               <bool>false</bool>
              </attribute>
              <column/>
@@ -813,6 +849,22 @@
            </item>
           </layout>
          </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>10</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>

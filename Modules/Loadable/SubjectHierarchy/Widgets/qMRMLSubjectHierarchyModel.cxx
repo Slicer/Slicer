@@ -63,6 +63,7 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   , NameColumn(-1)
   , IDColumn(-1)
   , VisibilityColumn(-1)
+  , LockColumn(-1)
   , ColorColumn(-1)
   , TransformColumn(-1)
   , DescriptionColumn(-1)
@@ -118,14 +119,16 @@ void qMRMLSubjectHierarchyModelPrivate::init()
   q->setNameColumn(0);
   q->setDescriptionColumn(1);
   q->setVisibilityColumn(2);
-  q->setColorColumn(3);
-  q->setTransformColumn(4);
-  q->setIDColumn(5);
+  q->setLockColumn(3);
+  q->setColorColumn(4);
+  q->setTransformColumn(5);
+  q->setIDColumn(6);
 
   q->setHorizontalHeaderLabels(QStringList()                                    //
                                << qMRMLSubjectHierarchyModel::tr("Node")        //
                                << qMRMLSubjectHierarchyModel::tr("Description") //
                                << ""                                            // visibility
+                               << ""                                            // lock
                                << ""                                            // color
                                << ""                                            // transform
                                << qMRMLSubjectHierarchyModel::tr("IDs"));
@@ -133,11 +136,13 @@ void qMRMLSubjectHierarchyModelPrivate::init()
   q->horizontalHeaderItem(q->nameColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node name and type"));
   q->horizontalHeaderItem(q->descriptionColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node description"));
   q->horizontalHeaderItem(q->visibilityColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Show/hide branch or node"));
+  q->horizontalHeaderItem(q->lockColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Lock/unlock node"));
   q->horizontalHeaderItem(q->colorColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node color"));
   q->horizontalHeaderItem(q->transformColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Applied transform"));
   q->horizontalHeaderItem(q->idColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node ID"));
 
   q->horizontalHeaderItem(q->visibilityColumn())->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
+  q->horizontalHeaderItem(q->lockColumn())->setIcon(QIcon(":/Icons/Small/SlicerLockUnlock.png"));
   q->horizontalHeaderItem(q->colorColumn())->setIcon(QIcon(":/Icons/Colors.png"));
   q->horizontalHeaderItem(q->transformColumn())->setIcon(QIcon(":/Icons/Transform.png"));
 
@@ -1198,6 +1203,24 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
       }
     }
   }
+  // Lock column
+  if (column == this->lockColumn())
+  {
+    // Have owner plugin give the lock state and icon
+    int locked = ownerPlugin->getDisplayLocked(shItemID);
+    QIcon lockIcon = ownerPlugin->lockIcon(locked);
+
+    // It should be fine to set the icon even if it is the same, but due
+    // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
+    // it would fire a superfluous itemChanged() signal.
+    if (item->data(LockedRole).isNull() || item->data(LockedRole).toInt() != locked)
+    {
+      item->setData(locked, LockedRole);
+      // A null icon is stored for items that do not support locking, so that the view removes
+      // the cell's button
+      item->setData(lockIcon, LockIconRole);
+    }
+  }
   // Color column
   if (column == this->colorColumn())
   {
@@ -1408,6 +1431,16 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
     {
       // Have owner plugin set the display visibility
       ownerPlugin->setDisplayVisibility(shItemID, visible);
+    }
+  }
+  // Lock column
+  if (item->column() == this->lockColumn() && !item->data(LockedRole).isNull())
+  {
+    int locked = item->data(LockedRole).toInt();
+    if (locked > -1 && locked != ownerPlugin->getDisplayLocked(shItemID))
+    {
+      // Have owner plugin set the lock state
+      ownerPlugin->setDisplayLocked(shItemID, locked);
     }
   }
   // Color column
@@ -2080,6 +2113,21 @@ void qMRMLSubjectHierarchyModel::setVisibilityColumn(int column)
 }
 
 //------------------------------------------------------------------------------
+int qMRMLSubjectHierarchyModel::lockColumn() const
+{
+  Q_D(const qMRMLSubjectHierarchyModel);
+  return d->LockColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModel::setLockColumn(int column)
+{
+  Q_D(qMRMLSubjectHierarchyModel);
+  d->LockColumn = column;
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
 int qMRMLSubjectHierarchyModel::colorColumn() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
@@ -2210,6 +2258,7 @@ int qMRMLSubjectHierarchyModel::maxColumnId() const
   maxId = qMax(maxId, d->DescriptionColumn);
   maxId = qMax(maxId, d->IDColumn);
   maxId = qMax(maxId, d->VisibilityColumn);
+  maxId = qMax(maxId, d->LockColumn);
   maxId = qMax(maxId, d->ColorColumn);
   maxId = qMax(maxId, d->TransformColumn);
   return maxId;

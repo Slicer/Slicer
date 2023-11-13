@@ -107,6 +107,7 @@ public:
   int NameColumn;
   int IDColumn;
   int VisibilityColumn;
+  int LockColumn;
   int ColorColumn;
   int TransformColumn;
   int DescriptionColumn;
