@@ -202,11 +202,7 @@ void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(
-#ifndef NDEBUG
- vtkMRMLNode* node)
-#else
   vtkMRMLNode* vtkNotUsed(node))
-#endif
 {
   this->RequestRender();
 }
