@@ -21,7 +21,6 @@
 #include "vtkMRMLI18N.h"
 #include "vtkCurveGenerator.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLMarkupsStorageNode.h"
 #include "vtkMRMLStaticMeasurement.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLTransformNode.h"
@@ -37,6 +36,7 @@
 #include <vtkBoundingBox.h>
 #include <vtkCellLocator.h>
 #include <vtkCollection.h>
+#include <vtkCollectionIterator.h>
 #include <vtkParallelTransportFrame.h>
 #include <vtkGeneralTransform.h>
 #include <vtkMatrix3x3.h>
@@ -93,6 +93,7 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
 
   this->Measurements = vtkCollection::New();
   vtkObserveMRMLObjectMacro(this->Measurements);
+  this->DefaultMeasurements = vtkSmartPointer<vtkStringArray>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -235,8 +236,8 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy /*=true
     {
       continue;
     }
-    vtkSmartPointer<vtkMRMLMeasurement> measurement = this->GetMeasurement(sourceMeasurement->GetName().c_str());
-    measurement = vtkSmartPointer<vtkMRMLMeasurement>::Take(sourceMeasurement->CreateInstance());
+
+    vtkSmartPointer<vtkMRMLMeasurement> measurement = vtkSmartPointer<vtkMRMLMeasurement>::Take(sourceMeasurement->CreateInstance());
     measurement->Copy(sourceMeasurement);
     measurement->SetInputMRMLNode(this);
     this->AddMeasurement(measurement);
@@ -989,6 +990,26 @@ void vtkMRMLMarkupsNode::SwapControlPoints(int m1, int m2)
   this->StorableModifiedTime.Modified();
   if (!this->GetDisableModifiedEvent())
   {
+    this->UpdateAllMeasurements();
+  }
+}
+
+//-----------------------------------------------------------
+void vtkMRMLMarkupsNode::ReverseControlPoints()
+{
+  int wasDisabled = this->GetDisableModifiedEvent();
+  this->SetDisableModifiedEvent(true);
+
+  for (int controlPointIndex = 0; controlPointIndex < this->GetNumberOfControlPoints() / 2; controlPointIndex++)
+  {
+    this->SwapControlPoints(controlPointIndex, this->GetNumberOfControlPoints() - 1 - controlPointIndex);
+  }
+
+  this->SetDisableModifiedEvent(wasDisabled);
+  if (!this->GetDisableModifiedEvent())
+  {
+    this->UpdateCurvePolyFromControlPoints();
+    this->UpdateInteractionHandleToWorldMatrix();
     this->UpdateAllMeasurements();
   }
 }
@@ -2605,6 +2626,23 @@ int vtkMRMLMarkupsNode::GetNumberOfEnabledMeasurements()
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetNumberOfEnabledAndDefinedMeasurements()
+{
+  int numberOfEnabledAndDefinedMeasurements = 0;
+  vtkMRMLMeasurement* currentMeasurement = nullptr;
+  vtkCollectionSimpleIterator it;
+  for (this->Measurements->InitTraversal(it); (currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetNextItemAsObject(it)));)
+  {
+    if (currentMeasurement->GetEnabled() && currentMeasurement->GetValueDefined())
+    {
+      numberOfEnabledAndDefinedMeasurements++;
+    }
+  }
+
+  return numberOfEnabledAndDefinedMeasurements;
+}
+
+//---------------------------------------------------------------------------
 vtkMRMLMeasurement* vtkMRMLMarkupsNode::GetNthMeasurement(int id)
 {
   if (id < 0 || id >= this->GetNumberOfMeasurements())
@@ -2649,12 +2687,62 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id, vtkMRMLMeasurement* measureme
   {
     this->Measurements->ReplaceItem(id, measurement);
   }
+
+  this->UpdateMeasurementsInternal();
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MeasurementsCollectionModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::AddMeasurement(vtkMRMLMeasurement* measurement)
 {
   this->Measurements->AddItem(measurement);
+  this->UpdateMeasurementsInternal();
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MeasurementsCollectionModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLMarkupsNode::GetMeasurementNameFromIndex(int id)
+{
+  vtkMRMLMeasurement* measurement = this->GetNthMeasurement(id);
+  if (!measurement)
+  {
+    return "";
+  }
+
+  return measurement->GetName();
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetMeasurementIndexFromName(const char* name)
+{
+  if (name == nullptr)
+  {
+    // invalid name
+    return -1;
+  }
+
+  vtkMRMLMeasurement* selectedMeasurement = this->GetMeasurement(name);
+  if (!selectedMeasurement)
+  {
+    return -1;
+  }
+
+  int index = -1;
+  for (int measurementIndex = 0; measurementIndex < this->Measurements->GetNumberOfItems(); ++measurementIndex)
+  {
+    vtkMRMLMeasurement* measurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(measurementIndex));
+    if (!measurement)
+    {
+      continue;
+    }
+
+    if (measurement == selectedMeasurement)
+    {
+      return index;
+    }
+  }
+
+  return index;
 }
 
 //---------------------------------------------------------------------------
@@ -2700,6 +2788,22 @@ void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
   measurement->SetDerivationCode(derivationCode);
   measurement->SetUnitsCode(unitsCode);
   measurement->SetMethodCode(methodCode);
+
+  this->UpdateMeasurementsInternal();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::RemoveMeasurement(const char* name)
+{
+  vtkMRMLMeasurement* measurement = this->GetMeasurement(name);
+  if (!measurement)
+  {
+    return;
+  }
+
+  this->Measurements->RemoveItem(measurement);
+  this->UpdateMeasurementsInternal();
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MeasurementsCollectionModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -2709,13 +2813,73 @@ void vtkMRMLMarkupsNode::RemoveNthMeasurement(int id)
   {
     vtkErrorMacro("vtkMRMLMarkupsNode::RemoveNthMeasurement failed: id out of range");
   }
-  this->Measurements->RemoveItem(id);
+  std::string name = this->GetMeasurementNameFromIndex(id);
+  this->RemoveMeasurement(name.c_str());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::EnableAllMeasurements()
+{
+  vtkCollectionIterator* iter = this->Measurements->NewIterator();
+  for (iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
+  {
+    vtkMRMLMeasurement* measurement = vtkMRMLMeasurement::SafeDownCast(iter->GetCurrentObject());
+    if (!measurement)
+    {
+      continue;
+    }
+
+    measurement->EnabledOn();
+  }
+  iter->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::EnableMeasurement(const char* name)
+{
+  vtkMRMLMeasurement* measurement = this->GetMeasurement(name);
+  if (!measurement)
+  {
+    return;
+  }
+
+  measurement->EnabledOn();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::DisableAllMeasurements()
+{
+  vtkCollectionIterator* iter = this->Measurements->NewIterator();
+  for (iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
+  {
+    vtkMRMLMeasurement* measurement = vtkMRMLMeasurement::SafeDownCast(iter->GetCurrentObject());
+    if (!measurement)
+    {
+      continue;
+    }
+
+    measurement->EnabledOff();
+  }
+  iter->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::DisableMeasurement(const char* name)
+{
+  vtkMRMLMeasurement* measurement = this->GetMeasurement(name);
+  if (!measurement)
+  {
+    return;
+  }
+
+  measurement->EnabledOff();
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::RemoveAllMeasurements()
 {
   this->Measurements->RemoveAllItems();
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MeasurementsCollectionModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -2729,6 +2893,20 @@ void vtkMRMLMarkupsNode::ClearValueForAllMeasurements()
       currentMeasurement->ClearValue();
     }
   }
+
+  this->WriteMeasurementsToDescription();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::SetDefaultMeasurements(vtkStringArray* defaultMeasurements)
+{
+  this->DefaultMeasurements->DeepCopy(defaultMeasurements);
+}
+
+//---------------------------------------------------------------------------
+vtkStringArray* vtkMRMLMarkupsNode::GetDefaultMeasurements()
+{
+  return this->DefaultMeasurements;
 }
 
 //---------------------------------------------------------------------------
@@ -2843,14 +3021,11 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
     }
   }
 
-  bool wasModify = this->StartModify();
-  this->SetDescription(description.c_str());
   if (properties != this->PropertiesLabelText)
   {
     this->PropertiesLabelText = properties;
     this->Modified();
   }
-  this->EndModify(wasModify);
 }
 
 //---------------------------------------------------------------------------
