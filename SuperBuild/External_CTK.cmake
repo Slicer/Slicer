@@ -41,8 +41,6 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
       )
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      # Required by CTK SuperBuild to conditionally pass Python3_* variables
-      -DVTK_PYTHON_VERSION:STRING=3
       # Required by FindPython3 CMake module used by VTK
       -DPython3_ROOT_DIR:PATH=${Python3_ROOT_DIR}
       -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
