@@ -8,6 +8,7 @@ select = [
   "B",           # flake8-bugbear
   "C4",          # flake8-comprehensions
   "E", "F", "W", # flake8
+  "D",           # pydocstyle
 #  "EXE",         # flake8-executable
 #  "G",           # flake8-logging-format
   "ICN",         # flake8-import-conventions
@@ -43,6 +44,18 @@ extend-ignore = [
   "C408",    # Unnecessary `dict` call (rewrite as a literal)
   "C418",    # Unnecessary `dict` literal passed to `dict()` (remove the outer call to `dict()`)
   "C419",    # Unnecessary list comprehension.
+
+  "D10",     # undocumented-public-*
+  "D200",    # One-line docstring should fit on one line
+  "D202",    # No blank lines allowed after function docstring"
+  "D204",    # 1 blank line required after class docstring
+  "D205",    # 1 blank line required between summary line and description
+  "D207",    # Docstring is under-indented
+  "D208",    # Docstring is over-indented
+  "D209",    # Multi-line docstring closing quotes should be on a separate line
+  "D210",    # No whitespaces allowed surrounding docstring text
+  "D301",    # escape-sequence-in-docstring
+  "D4",
 
   "E401",    # Multiple imports on one line
   "E714",    # Test for object identity should be `is not`
@@ -110,6 +123,9 @@ extend-ignore = [
   "UP031",   # Use format specifiers instead of percent format
   "UP032",   # Use f-string instead of `format` call
 ]
+
+[lint.pydocstyle]
+convention = "pep257"
 
 [per-file-ignores]
 # Module imported but unused
