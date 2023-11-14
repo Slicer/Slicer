@@ -16,7 +16,7 @@ from DICOMLib import DICOMExportScalarVolume
 #
 
 class DICOMVolumeSequencePluginClass(DICOMPlugin):
-    """ Volume sequence export plugin
+    """Volume sequence export plugin
     """
 
     def __init__(self):

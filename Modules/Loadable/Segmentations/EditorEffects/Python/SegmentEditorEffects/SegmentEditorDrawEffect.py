@@ -11,7 +11,7 @@ from SegmentEditorEffects import *
 
 
 class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
-    """ DrawEffect is a LabelEffect implementing the interactive draw
+    """DrawEffect is a LabelEffect implementing the interactive draw
     tool in the segment editor
     """
 
@@ -163,7 +163,7 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
 # DrawPipeline
 #
 class DrawPipeline:
-    """ Visualization objects and pipeline for each slice view for drawing
+    """Visualization objects and pipeline for each slice view for drawing
     """
 
     def __init__(self, scriptedEffect, sliceWidget):

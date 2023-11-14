@@ -419,7 +419,7 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
         slicer.util.delayDisplay(message, msec)
 
     def takeScreenshot(self, name, description, type=-1):
-        """ Take a screenshot of the selected viewport and store as and
+        """Take a screenshot of the selected viewport and store as and
         annotation snapshot node. Convenience method for automated testing.
 
         If self.enableScreenshots is False then only a message is displayed but screenshot

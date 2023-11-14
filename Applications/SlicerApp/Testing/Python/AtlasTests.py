@@ -127,7 +127,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+        """Do whatever is needed to reset the state - typically a scene clear will be enough.
         """
         slicer.mrmlScene.Clear(0)
 
@@ -184,7 +184,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         self.perform_AtlasTest(downloads, "I")
 
     def perform_AtlasTest(self, downloads, testVolumePattern):
-        """ Perform the actual atlas test.
+        """Perform the actual atlas test.
         This includes: download and load the given data, touch all
         model hierarchies, and restore all scene views.
         downloads : dictionary of URIs and fileNames

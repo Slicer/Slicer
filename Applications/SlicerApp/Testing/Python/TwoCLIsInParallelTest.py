@@ -102,7 +102,7 @@ class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
 class TwoCLIsInParallelTestTest(ScriptedLoadableModuleTest):
 
     def setUp(self):
-        """ Reset the state for testing.
+        """Reset the state for testing.
         """
         pass
 

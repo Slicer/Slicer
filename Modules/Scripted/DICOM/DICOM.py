@@ -777,7 +777,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         self.onListenerStateChanged()
 
     def onListenerStateChanged(self, newState=None):
-        """ Called when the indexer process state changes
+        """Called when the indexer process state changes
         so we can provide feedback to the user
         """
         if hasattr(slicer, "dicomListener") and slicer.dicomListener.process is not None:
@@ -803,7 +803,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
             self.ui.toggleListener.checked = True
 
     def onListenerToAddFile(self):
-        """ Called when the indexer is about to add a file to the database.
+        """Called when the indexer is about to add a file to the database.
         Works around issue where ctkDICOMModel has open queries that keep the
         database locked.
         """

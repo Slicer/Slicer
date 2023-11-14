@@ -833,7 +833,7 @@ class SampleDataLogic:
         return self.downloadSamples("MRUSProstate")
 
     def humanFormatSize(self, size):
-        """ from https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
+        """from https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
         for x in ["bytes", "KB", "MB", "GB"]:
             if size < 1024.0 and size > -1024.0:
                 return f"{size:3.1f} {x}"

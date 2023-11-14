@@ -260,7 +260,7 @@ def showStatusMessage(message, duration=0):
 
 
 def findChildren(widget=None, name="", text="", title="", className=""):
-    """ Return a list of child widgets that meet all the given criteria.
+    """Return a list of child widgets that meet all the given criteria.
 
     If no criteria are provided, the function will return all widgets descendants.
     If no widget is provided, slicer.util.mainWindow() is used.
@@ -328,7 +328,7 @@ def findChild(widget, name):
 
 
 def loadUI(path):
-    """ Load UI file ``path`` and return the corresponding widget.
+    """Load UI file ``path`` and return the corresponding widget.
 
     :raises RuntimeError: if the UI file is not found or if no
      widget was instantiated.
@@ -348,7 +348,7 @@ def loadUI(path):
 
 
 def startQtDesigner(args=None):
-    """ Start Qt Designer application to allow editing UI files.
+    """Start Qt Designer application to allow editing UI files.
     """
     import slicer
     cmdLineArguments = []
@@ -361,7 +361,7 @@ def startQtDesigner(args=None):
 
 
 def childWidgetVariables(widget):
-    """ Get child widgets as attributes of an object.
+    """Get child widgets as attributes of an object.
 
     Each named child widget is accessible as an attribute of the returned object,
     with the attribute name matching the child widget name.
@@ -384,7 +384,7 @@ def childWidgetVariables(widget):
 
 
 def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeFromGUI):
-    """ Add connections to get notification of a widget change.
+    """Add connections to get notification of a widget change.
 
     The function is useful for calling updateParameterNodeFromGUI method in scripted module widgets.
 
@@ -435,7 +435,7 @@ def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeF
 
 
 def removeParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeFromGUI):
-    """ Remove connections created by :py:meth:`addParameterEditWidgetConnections`.
+    """Remove connections created by :py:meth:`addParameterEditWidgetConnections`.
     """
 
     for (widget, parameterName) in parameterEditWidgets:
@@ -453,7 +453,7 @@ def removeParameterEditWidgetConnections(parameterEditWidgets, updateParameterNo
 
 
 def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
-    """ Update widgets from values stored in a vtkMRMLScriptedModuleNode.
+    """Update widgets from values stored in a vtkMRMLScriptedModuleNode.
 
     The function is useful for implementing updateGUIFromParameterNode.
 
@@ -487,7 +487,7 @@ def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
 
 
 def updateNodeFromParameterEditWidgets(parameterEditWidgets, parameterNode):
-    """ Update vtkMRMLScriptedModuleNode from widgets.
+    """Update vtkMRMLScriptedModuleNode from widgets.
 
     The function is useful for implementing updateParameterNodeFromGUI.
 
@@ -513,7 +513,7 @@ def updateNodeFromParameterEditWidgets(parameterEditWidgets, parameterNode):
 
 def setSliceViewerLayers(background="keep-current", foreground="keep-current", label="keep-current",
                          foregroundOpacity=None, labelOpacity=None, fit=False, rotateToVolumePlane=False):
-    """ Set the slice views with the given nodes.
+    """Set the slice views with the given nodes.
 
     If node ID is not specified (or value is 'keep-current') then the layer will not be modified.
 
@@ -3315,7 +3315,7 @@ def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid
 
 
 def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=None):
-    """ Extract file ``archiveFilePath`` into folder ``outputDir``.
+    """Extract file ``archiveFilePath`` into folder ``outputDir``.
 
     Number of expected files unzipped may be specified in ``expectedNumberOfExtractedFiles``.
     If folder contains the same number of files as expected (if specified), then it will be
@@ -3398,7 +3398,7 @@ def extractAlgoAndDigest(checksum):
 
 def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
                               expectedNumberOfExtractedFiles=None, numberOfTrials=3, checksum=None):
-    """ Downloads an archive from ``url`` as ``archiveFilePath``, and extracts it to ``outputDir``.
+    """Downloads an archive from ``url`` as ``archiveFilePath``, and extracts it to ``outputDir``.
 
     This combined function tests the success of the download by the extraction step,
     and re-downloads if extraction failed.

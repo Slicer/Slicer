@@ -211,7 +211,7 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
         self.delayDisplay("Test Finished")
 
     def storeSceneView(self, name, description=""):
-        """  Store a scene view into the current scene.
+        """Store a scene view into the current scene.
         TODO: this might move to slicer.util
         """
         layoutManager = slicer.app.layoutManager()

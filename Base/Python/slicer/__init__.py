@@ -1,4 +1,4 @@
-""" This module sets up root logging and loads the Slicer library modules into its namespace.
+"""This module sets up root logging and loads the Slicer library modules into its namespace.
 
 
 .. warning::

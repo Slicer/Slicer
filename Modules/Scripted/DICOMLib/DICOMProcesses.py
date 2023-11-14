@@ -705,7 +705,7 @@ class DICOMTestingQRServer:
         self.qrProcess = None
 
     def makeConfigFile(self, configFile, storageDirectory="."):
-        """ make a config file for the local instance with just
+        """make a config file for the local instance with just
         the parts we need (comments and examples removed).
         For examples and the full syntax
         see dcmqrdb/etc/dcmqrscp.cfg and

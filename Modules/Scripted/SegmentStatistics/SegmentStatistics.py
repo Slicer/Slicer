@@ -696,7 +696,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+        """Do whatever is needed to reset the state - typically a scene clear will be enough.
         """
         slicer.mrmlScene.Clear(0)
 
@@ -963,7 +963,7 @@ class Slicelet:
 
 
 class SegmentStatisticsSlicelet(Slicelet):
-    """ Creates the interface when module is run as a stand alone gui app.
+    """Creates the interface when module is run as a stand alone gui app.
     """
 
     def __init__(self):

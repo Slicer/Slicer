@@ -13,7 +13,7 @@ from slicer.i18n import tr as _
 #
 
 class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
-    """ 3D ultrasound loader plugin.
+    """3D ultrasound loader plugin.
     Limitation: ultrasound calibrated regions are not supported (each calibrated region
     would need to be split out to its own volume sequence).
     """
@@ -32,7 +32,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
         self.detailedLogging = False
 
     def examine(self, fileLists):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         fileLists parameter.
         """
@@ -43,7 +43,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
         return loadables
 
     def examineFiles(self, files):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         files parameter.
         """

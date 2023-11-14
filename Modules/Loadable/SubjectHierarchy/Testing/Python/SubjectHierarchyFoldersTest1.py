@@ -11,7 +11,7 @@ from slicer.util import DATA_STORE_URL
 class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+        """Do whatever is needed to reset the state - typically a scene clear will be enough.
         """
         slicer.mrmlScene.Clear(0)
 

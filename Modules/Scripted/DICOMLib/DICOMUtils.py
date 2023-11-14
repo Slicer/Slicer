@@ -25,7 +25,7 @@ comment = """
 
 # ------------------------------------------------------------------------------
 def loadPatientByUID(patientUID, messages=None, progressCallback=None):
-    """ Load patient by patient UID from DICOM database.
+    """Load patient by patient UID from DICOM database.
     Returns list of loaded node ids.
 
     Example: load all data from a DICOM folder (using a temporary DICOM database)
@@ -83,7 +83,7 @@ def loadPatientByUID(patientUID, messages=None, progressCallback=None):
 
 # ------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientName(name):
-    """ Get patient UID by patient name for easy loading of a patient
+    """Get patient UID by patient name for easy loading of a patient
     """
     if not slicer.dicomDatabase.isOpen:
         raise OSError("DICOM module or database cannot be accessed")
@@ -98,7 +98,7 @@ def getDatabasePatientUIDByPatientName(name):
 
 # ------------------------------------------------------------------------------
 def loadPatientByName(patientName, messages=None, progressCallback=None):
-    """ Load patient by patient name from DICOM database.
+    """Load patient by patient name from DICOM database.
     Returns list of loaded node ids.
     """
     patientUID = getDatabasePatientUIDByPatientName(patientName)
@@ -109,7 +109,7 @@ def loadPatientByName(patientName, messages=None, progressCallback=None):
 
 # ------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientID(patientID):
-    """ Get database patient UID by DICOM patient ID for easy loading of a patient
+    """Get database patient UID by DICOM patient ID for easy loading of a patient
     """
     if not slicer.dicomDatabase.isOpen:
         raise OSError("DICOM module or database cannot be accessed")
@@ -135,7 +135,7 @@ def getDatabasePatientUIDByPatientID(patientID):
 
 # ------------------------------------------------------------------------------
 def loadPatientByPatientID(patientID, messages=None, progressCallback=None):
-    """ Load patient from DICOM database by DICOM PatientID.
+    """Load patient from DICOM database by DICOM PatientID.
     Returns list of loaded node ids.
     """
     patientUID = getDatabasePatientUIDByPatientID(patientID)
@@ -146,7 +146,7 @@ def loadPatientByPatientID(patientID, messages=None, progressCallback=None):
 
 # ------------------------------------------------------------------------------
 def loadPatient(uid=None, name=None, patientID=None, messages=None, progressCallback=None):
-    """ Load patient from DICOM database fr uid, name, or patient ID.
+    """Load patient from DICOM database fr uid, name, or patient ID.
     Returns list of loaded node ids.
     """
     if uid is not None:
@@ -161,7 +161,7 @@ def loadPatient(uid=None, name=None, patientID=None, messages=None, progressCall
 
 # ------------------------------------------------------------------------------
 def loadSeriesByUID(seriesUIDs, messages=None, progressCallback=None):
-    """ Load multiple series by UID from DICOM database.
+    """Load multiple series by UID from DICOM database.
     Returns list of loaded node ids.
     """
     if not isinstance(seriesUIDs, list):
@@ -226,7 +226,7 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
 
 # ------------------------------------------------------------------------------
 def loadByInstanceUID(instanceUID, messages=None, progressCallback=None):
-    """ Load with the most confident loadable that contains the instanceUID from DICOM database.
+    """Load with the most confident loadable that contains the instanceUID from DICOM database.
     This helps in the case where an instance is part of a series which may offer multiple
     loadables, such as when a series has multiple time points where
     each corresponds to a scalar volume and you only want to load the correct one.
@@ -312,7 +312,7 @@ def removeEmptyDirs(path):
 
 # ------------------------------------------------------------------------------
 def openTemporaryDatabase(directory=None):
-    """ Temporarily change the main DICOM database folder location,
+    """Temporarily change the main DICOM database folder location,
     return current database directory. Useful for tests and demos.
     Call closeTemporaryDatabase to restore the original database folder.
     """
@@ -343,7 +343,7 @@ def openTemporaryDatabase(directory=None):
 
 # ------------------------------------------------------------------------------
 def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
-    """ Close temporary DICOM database and remove its directory if requested
+    """Close temporary DICOM database and remove its directory if requested
     """
     if slicer.dicomDatabase.isOpen:
         if cleanup:
@@ -380,7 +380,7 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
 
 # ------------------------------------------------------------------------------
 def createTemporaryDatabase(directory=None):
-    """ Open temporary DICOM database, return new database object
+    """Open temporary DICOM database, return new database object
     """
     # Specify temporary directory
     if not directory or directory == "":
@@ -409,7 +409,7 @@ def createTemporaryDatabase(directory=None):
 
 # ------------------------------------------------------------------------------
 def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
-    """ Close temporary DICOM database and remove its directory if requested
+    """Close temporary DICOM database and remove its directory if requested
     """
     dicomDatabase.closeDatabase()
 
@@ -446,7 +446,7 @@ class TemporaryDICOMDatabase:
 
 # ------------------------------------------------------------------------------
 def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
-    """ Import DICOM files from folder into Slicer database
+    """Import DICOM files from folder into Slicer database
     """
     try:
         indexer = ctk.ctkDICOMIndexer()
@@ -471,7 +471,7 @@ def loadSeriesWithVerification(
     messages=None,
     progressCallback=None,
 ):
-    """ Load series by UID, and verify loadable selection and loaded nodes.
+    """Load series by UID, and verify loadable selection and loaded nodes.
 
     ``selectedPlugins`` example: { 'Scalar Volume':1, 'RT':2 }
     ``expectedLoadedNodes`` example: { 'vtkMRMLScalarVolumeNode':2, 'vtkMRMLSegmentationNode':1 }
@@ -544,7 +544,7 @@ def loadSeriesWithVerification(
 
 # ------------------------------------------------------------------------------
 def allSeriesUIDsInDatabase(database=None):
-    """ Collect all series instance UIDs in a DICOM database (the Slicer one by default)
+    """Collect all series instance UIDs in a DICOM database (the Slicer one by default)
 
     Useful to get list of just imported series UIDs, for example:
     newSeriesUIDs = [x for x in seriesUIDsAfter if x not in seriesUIDsBefore]
@@ -563,7 +563,7 @@ def allSeriesUIDsInDatabase(database=None):
 
 # ------------------------------------------------------------------------------
 def seriesUIDsForFiles(files):
-    """ Collect series instance UIDs belonging to a list of files
+    """Collect series instance UIDs belonging to a list of files
     """
     seriesUIDs = set()
     for file in files:
@@ -724,7 +724,7 @@ def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list
 
 # ------------------------------------------------------------------------------
 def refreshDICOMWidget():
-    """ Refresh DICOM browser from database.
+    """Refresh DICOM browser from database.
     It is useful when the database is changed via a database object that is
     different from the one stored in the DICOM browser. There may be multiple
     database connection (through different database objects) in the same process.

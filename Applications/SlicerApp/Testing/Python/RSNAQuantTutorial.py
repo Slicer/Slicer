@@ -136,7 +136,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+        """Do whatever is needed to reset the state - typically a scene clear will be enough.
         """
         self.delayDisplay("Closing the scene")
         layoutManager = slicer.app.layoutManager()
@@ -154,7 +154,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
         self.test_Part3PETCT()
 
     def test_Part1Ruler(self, enableScreenshotsFlag=0, screenshotScaleFactor=1):
-        """ Test using rulers
+        """Test using rulers
         """
         self.enableScreenshots = enableScreenshotsFlag
         self.screenshotScaleFactor = screenshotScaleFactor
@@ -208,7 +208,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test caused exception!\n" + str(e))
 
     def test_Part3PETCT(self, enableScreenshotsFlag=0, screenshotScaleFactor=1):
-        """ Test using the PETCT module
+        """Test using the PETCT module
         """
         self.enableScreenshots = enableScreenshotsFlag
         self.screenshotScaleFactor = screenshotScaleFactor
@@ -304,7 +304,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test caused exception!\n" + str(e))
 
     def test_Part2ChangeTracker(self, enableScreenshotsFlag=0, screenshotScaleFactor=1):
-        """ Test the ChangeTracker module
+        """Test the ChangeTracker module
         """
         self.enableScreenshots = enableScreenshotsFlag
         self.screenshotScaleFactor = screenshotScaleFactor

@@ -12,7 +12,7 @@ from SegmentEditorEffects import *
 
 
 class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
-    """ LevelTracingEffect is a LabelEffect implementing level tracing fill
+    """LevelTracingEffect is a LabelEffect implementing level tracing fill
     using intensity-based isolines
     """
 
@@ -151,7 +151,7 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
 # LevelTracingPipeline
 #
 class LevelTracingPipeline:
-    """ Visualization objects and pipeline for each slice view for level tracing
+    """Visualization objects and pipeline for each slice view for level tracing
     """
 
     def __init__(self, effect, sliceWidget):

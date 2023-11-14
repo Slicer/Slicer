@@ -12,7 +12,7 @@ from slicer.i18n import tr as _
 
 
 class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
-    """ ThresholdEffect is an Effect implementing the global threshold
+    """ThresholdEffect is an Effect implementing the global threshold
     operation in the segment editor
 
     This is also an example for scripted effects, and some methods have no
@@ -938,7 +938,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 # PreviewPipeline
 #
 class PreviewPipeline:
-    """ Visualization objects and pipeline for each slice view for threshold preview
+    """Visualization objects and pipeline for each slice view for threshold preview
     """
 
     def __init__(self):

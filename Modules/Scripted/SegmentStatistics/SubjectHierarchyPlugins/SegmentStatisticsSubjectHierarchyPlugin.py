@@ -9,7 +9,7 @@ from AbstractScriptedSubjectHierarchyPlugin import *
 
 
 class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
-    """ Scripted subject hierarchy plugin for the Segment Statistics module.
+    """Scripted subject hierarchy plugin for the Segment Statistics module.
 
     This is also an example for scripted plugins, so includes all possible methods.
     The methods that are not needed (i.e. the default implementation in

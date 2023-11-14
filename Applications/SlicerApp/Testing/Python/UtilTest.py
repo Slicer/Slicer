@@ -60,7 +60,7 @@ class UtilTestLogic(ScriptedLoadableModuleLogic):
 class UtilTestTest(ScriptedLoadableModuleTest):
 
     def setUp(self):
-        """ Reset the state for testing.
+        """Reset the state for testing.
         """
         slicer.mrmlScene.Clear(0)
 

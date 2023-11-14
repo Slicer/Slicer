@@ -18,7 +18,7 @@ from DICOMLib import DICOMLoadable
 #
 
 class DICOMImageSequencePluginClass(DICOMPlugin):
-    """ 2D image sequence loader plugin.
+    """2D image sequence loader plugin.
     It supports X-ray angiography and ultrasound images.
     The main difference compared to plain scalar volume plugin is that it
     loads frames as a single-slice-volume sequence (and not as a 3D volume),
@@ -44,7 +44,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         self.detailedLogging = False
 
     def examine(self, fileLists):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         fileLists parameter.
         """
@@ -55,7 +55,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         return loadables
 
     def examineFiles(self, files):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         files parameter.
         """

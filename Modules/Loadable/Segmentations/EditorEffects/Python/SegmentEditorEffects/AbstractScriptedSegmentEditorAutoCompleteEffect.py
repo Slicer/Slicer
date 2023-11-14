@@ -20,7 +20,7 @@ __all__ = ["AbstractScriptedSegmentEditorAutoCompleteEffect"]
 #
 
 class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
-    """ AutoCompleteEffect is an effect that can create a full segmentation
+    """AutoCompleteEffect is an effect that can create a full segmentation
     from a partial segmentation (not all slices are segmented or only
     part of the target structures are painted).
     """

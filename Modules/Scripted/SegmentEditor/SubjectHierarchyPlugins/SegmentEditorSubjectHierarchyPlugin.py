@@ -10,7 +10,7 @@ from AbstractScriptedSubjectHierarchyPlugin import *
 
 
 class SegmentEditorSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
-    """ Scripted subject hierarchy plugin for the Segment Editor module.
+    """Scripted subject hierarchy plugin for the Segment Editor module.
 
     This is also an example for scripted plugins, so includes all possible methods.
     The methods that are not needed (i.e. the default implementation in
