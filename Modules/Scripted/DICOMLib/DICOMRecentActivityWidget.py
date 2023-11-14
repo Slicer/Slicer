@@ -8,12 +8,17 @@ import slicer
 
 class DICOMRecentActivityWidget(qt.QWidget):
     """Display the recent activity of the slicer DICOM database
-       Example:
-         slicer.util.selectModule('DICOM')
-         import DICOMLib
-         w = DICOMLib.DICOMRecentActivityWidget(None, slicer.dicomDatabase, slicer.modules.DICOMInstance.browserWidget)
-         w.update()
-         w.show()
+
+    Example:
+
+    .. code-block:: python
+
+      slicer.util.selectModule("DICOM")
+
+      import DICOMLib
+      w = DICOMLib.DICOMRecentActivityWidget(None, slicer.dicomDatabase, slicer.modules.DICOMInstance.browserWidget)
+      w.update()
+      w.show()
     """
 
     def __init__(self, parent, dicomDatabase=None, browserWidget=None):
