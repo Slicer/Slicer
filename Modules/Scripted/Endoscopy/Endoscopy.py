@@ -228,8 +228,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     def onCreatePathButtonClicked(self):
         """Connected to 'create path' button. It allows to:
-          - compute the path
-          - create the associated model"""
+        - compute the path
+        - create the associated model"""
 
         fiducialsNode = self.inputFiducialsNodeSelector.currentNode()
         outputPathNode = self.outputPathNodeSelector.currentNode()
@@ -435,11 +435,11 @@ class EndoscopyComputePath:
 
     def step(self, segment, t, dl):
         """ Take a step of dl and return the path point and new t
-          return:
-          t = new parametric coordinate after step
-          p = point after step
-          remainder = if step results in parametric coordinate > 1.0, then
-            this is the amount of world space not covered by step
+        return:
+        t = new parametric coordinate after step
+        p = point after step
+        remainder = if step results in parametric coordinate > 1.0, then
+        this is the amount of world space not covered by step
         """
         import numpy.linalg
         p0 = self.path[self.path.__len__() - 1]  # last element in path
@@ -467,18 +467,18 @@ class EndoscopyComputePath:
 
 class EndoscopyPathModel:
     """Create a vtkPolyData for a polyline:
-         - Add one point per path point.
-         - Add a single polyline
+    - Add one point per path point.
+    - Add a single polyline
     """
 
     def __init__(self, path, fiducialListNode, outputPathNode=None, cursorType=None):
         """
-          :param path: path points as numpy array.
-          :param fiducialListNode: input node, just used for naming the output node.
-          :param outputPathNode: output model node that stores the path points.
-          :param cursorType: can be 'markups' or 'model'. Markups has a number of advantages (radius it is easier to change the size,
-            can jump to views by clicking on it, has more visualization options, can be scaled to fixed display size),
-            but if some applications relied on having a model node as cursor then this argument can be used to achieve that.
+        :param path: path points as numpy array.
+        :param fiducialListNode: input node, just used for naming the output node.
+        :param outputPathNode: output model node that stores the path points.
+        :param cursorType: can be 'markups' or 'model'. Markups has a number of advantages (radius it is easier to change the size,
+        can jump to views by clicking on it, has more visualization options, can be scaled to fixed display size),
+        but if some applications relied on having a model node as cursor then this argument can be used to achieve that.
         """
 
         fids = fiducialListNode

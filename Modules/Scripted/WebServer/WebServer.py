@@ -269,6 +269,7 @@ class SlicerHTTPServer(HTTPServer):
     This web server is configured to integrate with the Qt main loop
     by listening activity on the fileno of the servers socket.
     """
+
     # TODO: set header so client knows that image refreshes are needed (avoid
     # using the &time=xxx trick)
     def __init__(self,
@@ -314,6 +315,7 @@ class SlicerHTTPServer(HTTPServer):
         This class handles event driven chunking of the communication.
         .. note:: this is an internal class of the web server
         """
+
         def __init__(self,
                      connectionSocket:socket.socket,
                      requestHandlers:list[BaseRequestHandler],
@@ -557,6 +559,7 @@ class WebServerLogic:
     Exec interface is enabled if enableExec and enableSlicer are both set to True
     (enableExec is set to False by default for improved security).
     """
+
     def __init__(self,
                  port:Optional[int]=None,
                  enableSlicer:bool=True,

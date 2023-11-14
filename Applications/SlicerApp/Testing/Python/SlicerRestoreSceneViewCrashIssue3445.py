@@ -55,6 +55,7 @@ class SlicerRestoreSceneViewCrashIssue3445Logic(ScriptedLoadableModuleLogic):
     Uses ScriptedLoadableModuleLogic base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
+
     pass
 
 

@@ -359,6 +359,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     Uses ScriptedLoadableModuleLogic base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
+
     registeredPlugins = [LabelmapSegmentStatisticsPlugin, ScalarVolumeSegmentStatisticsPlugin,
                          ClosedSurfaceSegmentStatisticsPlugin]
 
@@ -936,6 +937,7 @@ class Slicelet:
     implemented as a python class.
     This class provides common wrapper functionality used by all slicer modlets.
     """
+
     # TODO: put this in a SliceletLib
     # TODO: parse command line args
 

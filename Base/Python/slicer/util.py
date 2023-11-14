@@ -1472,6 +1472,7 @@ def resetSliceViews():
 
 class MRMLNodeNotFoundException(Exception):
     """Exception raised when a requested MRML node was not found."""
+
     pass
 
 
@@ -1584,7 +1585,7 @@ class RenderBlocker:
       with slicer.util.RenderBlocker():
         # Do things
 
-  """
+    """
 
     def __enter__(self):
         import slicer
@@ -3456,6 +3457,7 @@ class chdir:
 
       Available in CTK as ``ctkScopedCurrentDir`` C++ class
     """
+
     def __init__(self, path):
         self.path = path
         self._old_cwd = []

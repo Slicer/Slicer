@@ -13,11 +13,11 @@ from slicer.i18n import tr as _
 
 class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     """ ThresholdEffect is an Effect implementing the global threshold
-        operation in the segment editor
+    operation in the segment editor
 
-        This is also an example for scripted effects, and some methods have no
-        function. The methods that are not needed (i.e. the default implementation in
-        qSlicerSegmentEditorAbstractEffect is satisfactory) can simply be omitted.
+    This is also an example for scripted effects, and some methods have no
+    function. The methods that are not needed (i.e. the default implementation in
+    qSlicerSegmentEditorAbstractEffect is satisfactory) can simply be omitted.
     """
 
     def __init__(self, scriptedEffect):

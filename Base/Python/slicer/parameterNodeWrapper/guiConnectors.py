@@ -43,6 +43,7 @@ class Decimals:
     """
     Annotation for Qt's setDecimals methods for spinboxes and sliders.
     """
+
     value: int
 
 
@@ -51,6 +52,7 @@ class SingleStep:
     """
     Annotation for Qt's setSingleStep methods for spinboxes and sliders.
     """
+
     value: Union[float, int]
 
 
@@ -726,6 +728,7 @@ class WidgetChildrenToParameterPackConnector(GuiConnector):
     This is useful when generating widgets for the parameterPack though, as it supports a more
     nested structure where the interior widgets don't need to know anything about the their parents.
     """
+
     @staticmethod
     def canRepresent(widget, datatype) -> bool:
         if not pack.isParameterPack(datatype):

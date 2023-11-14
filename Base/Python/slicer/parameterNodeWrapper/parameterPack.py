@@ -380,6 +380,7 @@ class _ParameterPackInstanceValidator(Validator):
     Validates that a value is either a particular type or an ObservedParameterPack that is observing
     that type.
     """
+
     def __init__(self, type_):
         self.type = type_
 
@@ -393,6 +394,7 @@ class ParameterPackSerializer(Serializer):
     """
     Serializer for any parameterPack.
     """
+
     @staticmethod
     def canSerialize(type_) -> bool:
         return hasattr(type_, "_is_parameterPack") and getattr(type_, "_is_parameterPack")

@@ -12,7 +12,7 @@ from SegmentEditorEffects import *
 
 class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
     """ DrawEffect is a LabelEffect implementing the interactive draw
-        tool in the segment editor
+    tool in the segment editor
     """
 
     def __init__(self, scriptedEffect):

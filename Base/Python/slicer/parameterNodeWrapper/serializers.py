@@ -896,6 +896,7 @@ class UnionSerializer(Serializer):
     Serializer for multiple types. This supports typing.Union[A, B] as well as
     typing.Optional[A]
     """
+
     @staticmethod
     def canSerialize(type_) -> bool:
         return typing.get_origin(type_) == typing.Union

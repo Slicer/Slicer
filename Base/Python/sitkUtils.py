@@ -29,7 +29,7 @@ def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className="vtkMRML
 
 def PullVolumeFromSlicer(nodeObjectOrName):
     """ Given a slicer MRML image node or name, return the SimpleITK
-        image object.
+    image object.
     """
     EnsureRegistration()
     myNodeFullITKAddress = GetSlicerITKReadWriteAddress(nodeObjectOrName)
@@ -39,7 +39,7 @@ def PullVolumeFromSlicer(nodeObjectOrName):
 
 def GetSlicerITKReadWriteAddress(nodeObjectOrName):
     """ This function will return the ITK FileIO formatted text address
-            so that the image can be read directly from the MRML scene
+    so that the image can be read directly from the MRML scene
     """
     myNode = nodeObjectOrName if isinstance(nodeObjectOrName, slicer.vtkMRMLNode) else slicer.util.getNode(nodeObjectOrName)
     myNodeSceneAddress = myNode.GetScene().GetAddressAsString("").replace("Addr=", "")

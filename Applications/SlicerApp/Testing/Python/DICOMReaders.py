@@ -210,7 +210,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
         To edit and run this test from the python console, paste this below:
 
-    reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders.DICOMReadersTest(); tester.setUp(); tester.test_MissingSlices()
+        reloadScriptedModule('DICOMReaders'); import DICOMReaders; tester = DICOMReaders.DICOMReadersTest(); tester.setUp(); tester.test_MissingSlices()
 
         """
         testPass = True

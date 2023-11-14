@@ -52,8 +52,8 @@ class SlicerTransformInteractionTest1Logic(ScriptedLoadableModuleLogic):
 
     def addTransform(self):
         """Create and add a transform node with a display node to the
-           mrmlScene.
-           Returns the transform node and its display node
+        mrmlScene.
+        Returns the transform node and its display node
         """
         transformNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLTransformNode())
         transformDisplayNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLTransformDisplayNode())

@@ -428,8 +428,8 @@ def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
 # ------------------------------------------------------------------------------
 class TemporaryDICOMDatabase:
     """Context manager to conveniently use temporary DICOM database.
-       It creates a new DICOM database and temporarily sets it as the main
-       DICOM database in the application (slicer.dicomDatabase).
+    It creates a new DICOM database and temporarily sets it as the main
+    DICOM database in the application (slicer.dicomDatabase).
     """
 
     def __init__(self, directory=None):
@@ -577,6 +577,7 @@ def seriesUIDsForFiles(files):
 class LoadDICOMFilesToDatabase:
     """Context manager to conveniently load DICOM files downloaded zipped from the internet
     """
+
     def __init__(self, url, archiveFilePath=None, dicomDataDir=None, \
                  expectedNumberOfFiles=None, selectedPlugins=None, loadedNodes=None, checksum=None):
         from time import gmtime, strftime
