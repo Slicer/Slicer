@@ -50,8 +50,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
         slicer.selfTests[self.moduleName] = self.runTest
 
     def resourcePath(self, filename):
-        """Return the absolute path of the module ``Resources`` directory.
-        """
+        """Return the absolute path of the module ``Resources`` directory."""
         scriptedModulesPath = os.path.dirname(self.parent.path)
         return os.path.join(scriptedModulesPath, "Resources", filename)
 
@@ -69,9 +68,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
         return linkText
 
     def runTest(self, msec=100, **kwargs):
-        """
-        :param msec: delay to associate with :func:`ScriptedLoadableModuleTest.delayDisplay()`.
-        """
+        """:param msec: delay to associate with :func:`ScriptedLoadableModuleTest.delayDisplay()`."""
         # Name of the test case class is expected to be <ModuleName>Test
         module = importlib.import_module(self.__module__)
         className = self.moduleName + "Test"
@@ -111,8 +108,7 @@ class ScriptedLoadableModuleWidget:
             "moduleAboutToBeUnloaded(QString)", self._onModuleAboutToBeUnloaded)
 
     def resourcePath(self, filename):
-        """Return the absolute path of the module ``Resources`` directory.
-        """
+        """Return the absolute path of the module ``Resources`` directory."""
         scriptedModulesPath = os.path.dirname(slicer.util.modulePath(self.moduleName))
         return os.path.join(scriptedModulesPath, "Resources", filename)
 
@@ -234,9 +230,7 @@ class ScriptedLoadableModuleWidget:
         self.setupDeveloperSection()
 
     def onReload(self):
-        """
-        Reload scripted module widget representation.
-        """
+        """Reload scripted module widget representation."""
 
         # Print a clearly visible separator to make it easier
         # to distinguish new error messages (during/after reload)
@@ -472,7 +466,5 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
         annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
 
     def runTest(self):
-        """
-        Run a default selection of tests here.
-        """
+        """Run a default selection of tests here."""
         logging.warning("No test is defined in " + self.__class__.__name__)

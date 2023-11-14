@@ -33,9 +33,7 @@ def unannotatedType(possiblyAnnotatedType):
 
 
 def findFirstAnnotation(annotationsList, annotationType):
-    """
-    Given a list of annotations, returns the first one of the given type
-    """
+    """Given a list of annotations, returns the first one of the given type"""
     extracted = [annotation for annotation in annotationsList if isinstance(annotation, annotationType)]
     return extracted[0] if extracted else None
 

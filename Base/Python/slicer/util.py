@@ -250,8 +250,7 @@ def pythonShell():
 
 
 def showStatusMessage(message, duration=0):
-    """Display ``message`` in the status bar.
-    """
+    """Display ``message`` in the status bar."""
     mw = mainWindow()
     if not mw or not mw.statusBar():
         return False
@@ -348,8 +347,7 @@ def loadUI(path):
 
 
 def startQtDesigner(args=None):
-    """Start Qt Designer application to allow editing UI files.
-    """
+    """Start Qt Designer application to allow editing UI files."""
     import slicer
     cmdLineArguments = []
     if args is not None:
@@ -435,8 +433,7 @@ def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeF
 
 
 def removeParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeFromGUI):
-    """Remove connections created by :py:meth:`addParameterEditWidgetConnections`.
-    """
+    """Remove connections created by :py:meth:`addParameterEditWidgetConnections`."""
 
     for (widget, parameterName) in parameterEditWidgets:
         widgetClassName = widget.className()

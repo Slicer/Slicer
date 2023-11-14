@@ -938,8 +938,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 # PreviewPipeline
 #
 class PreviewPipeline:
-    """Visualization objects and pipeline for each slice view for threshold preview
-    """
+    """Visualization objects and pipeline for each slice view for threshold preview"""
 
     def __init__(self):
         self.lookupTable = vtk.vtkLookupTable()

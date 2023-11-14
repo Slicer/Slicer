@@ -146,9 +146,7 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
 class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
 
     def run(self, nodeType, numberOfNodes=10, numberOfControlPoints=10, rOffset=0, usefewerModifyCalls=False, locked=False, labelsHidden=False):
-        """
-        Run the actual algorithm
-        """
+        """Run the actual algorithm"""
         print(f"Running test to add {numberOfNodes} nodes markups with {numberOfControlPoints} control points")
         print("Index\tTime to add fid\tDelta between adds")
         print("%(index)04s\t" % {"index": "i"}, "t\tdt'")
@@ -220,13 +218,11 @@ class AddManyMarkupsFiducialTestTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_AddManyMarkupsFiducialTest1()
 

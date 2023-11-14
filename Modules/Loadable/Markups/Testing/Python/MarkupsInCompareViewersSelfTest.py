@@ -73,9 +73,7 @@ class MarkupsInCompareViewersSelfTestWidget(ScriptedLoadableModuleWidget):
 class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
 
     def run(self):
-        """
-        Run the actual algorithm
-        """
+        """Run the actual algorithm"""
         print("Running test of the markups in compare viewers")
 
         #
@@ -183,18 +181,14 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
 
 
 class MarkupsInCompareViewersSelfTestTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    """
+    """This is the test case for your scripted module."""
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_MarkupsInCompareViewersSelfTest1()
 

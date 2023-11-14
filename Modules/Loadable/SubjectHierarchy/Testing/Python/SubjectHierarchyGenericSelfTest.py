@@ -69,13 +69,10 @@ class SubjectHierarchyGenericSelfTestLogic(ScriptedLoadableModuleLogic):
 
 
 class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    """
+    """This is the test case for your scripted module."""
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear()
 
         self.delayMs = 700
@@ -87,8 +84,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         # logFile.close()
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_SubjectHierarchyGenericSelfTest_FullTest1()
 

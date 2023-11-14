@@ -592,13 +592,11 @@ class DataProbeTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         pass
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_DataProbe1()
 

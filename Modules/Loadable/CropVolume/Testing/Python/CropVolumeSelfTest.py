@@ -38,9 +38,7 @@ class CropVolumeSelfTestWidget(ScriptedLoadableModuleWidget):
 
 
 class CropVolumeSelfTestTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    """
+    """This is the test case for your scripted module."""
 
     def setUp(self):
         slicer.mrmlScene.Clear(0)
@@ -50,9 +48,7 @@ class CropVolumeSelfTestTest(ScriptedLoadableModuleTest):
         self.test_CropVolumeSelfTest()
 
     def test_CropVolumeSelfTest(self):
-        """
-        Replicate the crashe in issue 3117
-        """
+        """Replicate the crashe in issue 3117"""
 
         print("Running CropVolumeSelfTest Test case:")
 

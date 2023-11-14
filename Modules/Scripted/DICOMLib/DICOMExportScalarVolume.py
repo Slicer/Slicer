@@ -24,9 +24,7 @@ class DICOMExportScalarVolume:
     """
 
     def __init__(self, studyUID, volumeNode, tags, directory, filenamePrefix=None):
-        """
-        studyUID parameter is not used (studyUID is retrieved from tags).
-        """
+        """studyUID parameter is not used (studyUID is retrieved from tags)."""
         self.studyUID = studyUID
         self.volumeNode = volumeNode
         self.tags = tags

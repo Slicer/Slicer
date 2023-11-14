@@ -1,6 +1,4 @@
-"""
-Base interface(s) for the Slicer WebServer module.
-"""
+"""Base interface(s) for the Slicer WebServer module."""
 
 import abc
 from typing import Callable, Optional

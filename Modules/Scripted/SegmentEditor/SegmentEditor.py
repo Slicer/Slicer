@@ -110,8 +110,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         return firstForegroundVolumeID
 
     def enter(self):
-        """Runs whenever the module is reopened
-        """
+        """Runs whenever the module is reopened"""
         if self.editor.turnOffLightboxes():
             slicer.util.warningDisplay(_("Segment Editor is not compatible with slice viewers in light box mode."
                                          "Views are being reset."), windowTitle=_("Segment Editor"))
@@ -159,23 +158,18 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
 
 class SegmentEditorTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    """
+    """This is the test case for your scripted module."""
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Currently no testing functionality.
-        """
+        """Currently no testing functionality."""
         self.setUp()
         self.test_SegmentEditor1()
 
     def test_SegmentEditor1(self):
-        """Add test here later.
-        """
+        """Add test here later."""
         self.delayDisplay("Starting the test")
         self.delayDisplay("Test passed!")

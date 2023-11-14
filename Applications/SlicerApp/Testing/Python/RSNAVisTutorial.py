@@ -159,16 +159,14 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         self.delayDisplay("Closing the scene")
         layoutManager = slicer.app.layoutManager()
         layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_Part1DICOM()
         self.setUp()
@@ -179,8 +177,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
         self.test_Part4Lung()
 
     def test_Part1DICOM(self, enableScreenshotsFlag=0, screenshotScaleFactor=1):
-        """Test the DICOM part of the test using the head atlas
-        """
+        """Test the DICOM part of the test using the head atlas"""
         self.enableScreenshots = enableScreenshotsFlag
         self.screenshotScaleFactor = screenshotScaleFactor
 
@@ -297,8 +294,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
         DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
 
     def test_Part2Head(self, enableScreenshotsFlag=0, screenshotScaleFactor=1):
-        """Test using the head atlas - may not be needed - Slicer4Minute is already tested
-        """
+        """Test using the head atlas - may not be needed - Slicer4Minute is already tested"""
         self.enableScreenshots = enableScreenshotsFlag
         self.screenshotScaleFactor = screenshotScaleFactor
 
@@ -396,8 +392,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test caused exception!\n" + str(e))
 
     def test_Part3Liver(self, enableScreenshotsFlag=0, screenshotScaleFactor=1):
-        """Test using the liver example data
-        """
+        """Test using the liver example data"""
         self.enableScreenshots = enableScreenshotsFlag
         self.screenshotScaleFactor = screenshotScaleFactor
 
@@ -468,8 +463,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test caused exception!\n" + str(e))
 
     def test_Part4Lung(self, enableScreenshotsFlag=0, screenshotScaleFactor=1):
-        """Test using the lung data
-        """
+        """Test using the lung data"""
         self.enableScreenshots = enableScreenshotsFlag
         self.screenshotScaleFactor = screenshotScaleFactor
 

@@ -165,8 +165,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         self.onParameterSetSelected()
 
     def enter(self):
-        """Runs whenever the module is reopened
-        """
+        """Runs whenever the module is reopened"""
         if self.parameterNodeSelector.currentNode() is None:
             parameterNode = self.logic.getParameterNode()
             slicer.mrmlScene.AddNode(parameterNode)
@@ -186,8 +185,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
             self.outputTableSelector.baseName = self.segmentationSelector.currentNode().GetName() + " statistics"
 
     def onApply(self):
-        """Calculate the label statistics
-        """
+        """Calculate the label statistics"""
 
         with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
             if not self.outputTableSelector.currentNode():
@@ -572,9 +570,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         return headerNames, uniqueHeaderNames
 
     def exportToTable(self, table, nonEmptyKeysOnly=True):
-        """
-        Export statistics to table node
-        """
+        """Export statistics to table node"""
         tableWasModified = table.StartModify()
         table.RemoveAllColumns()
 
@@ -655,9 +651,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         table.EndModify(tableWasModified)
 
     def showTable(self, table):
-        """
-        Switch to a layout where tables are visible and show the selected table
-        """
+        """Switch to a layout where tables are visible and show the selected table"""
         currentLayout = slicer.app.layoutManager().layout
         layoutWithTable = slicer.modules.tables.logic().GetLayoutWithTable(currentLayout)
         slicer.app.layoutManager().setLayout(layoutWithTable)
@@ -665,9 +659,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         slicer.app.applicationLogic().PropagateTableSelection()
 
     def exportToString(self, nonEmptyKeysOnly=True):
-        """
-        Returns string with comma separated values, with header keys in quotes.
-        """
+        """Returns string with comma separated values, with header keys in quotes."""
         keys = self.getNonEmptyKeys() if nonEmptyKeysOnly else self.keys
         # Header
         csv = '"' + '","'.join(keys) + '"'
@@ -696,13 +688,11 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self, scenario=None):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_SegmentStatisticsBasic()
 
@@ -710,9 +700,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         self.test_SegmentStatisticsPlugins()
 
     def test_SegmentStatisticsBasic(self):
-        """
-        This tests some aspects of the label statistics
-        """
+        """This tests some aspects of the label statistics"""
 
         self.delayDisplay("Starting test_SegmentStatisticsBasic")
 
@@ -767,9 +755,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         self.delayDisplay("test_SegmentStatisticsBasic passed!")
 
     def test_SegmentStatisticsPlugins(self):
-        """
-        This tests some aspects of the segment statistics plugins
-        """
+        """This tests some aspects of the segment statistics plugins"""
 
         self.delayDisplay("Starting test_SegmentStatisticsPlugins")
 
@@ -963,8 +949,7 @@ class Slicelet:
 
 
 class SegmentStatisticsSlicelet(Slicelet):
-    """Creates the interface when module is run as a stand alone gui app.
-    """
+    """Creates the interface when module is run as a stand alone gui app."""
 
     def __init__(self):
         super().__init__(SegmentStatisticsWidget)

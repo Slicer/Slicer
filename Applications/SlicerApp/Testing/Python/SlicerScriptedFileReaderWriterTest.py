@@ -141,8 +141,7 @@ class SlicerScriptedFileReaderWriterTestFileWriter:
 
 class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_Writer()
         self.test_Reader()

@@ -141,9 +141,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
         ]
 
     def test_unregister_existing_markups(self):
-        """
-        This unregisters existing registered markups
-        """
+        """This unregisters existing registered markups"""
 
         markupsWidget = slicer.modules.markups.widgetRepresentation()
         if markupsWidget is None:
@@ -166,9 +164,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
                 raise Exception("Create PushButton for %s is present after unregistration" % markupNode.GetMarkupType())
 
     def test_register_markups(self):
-        """
-        This registers all known markups
-        """
+        """This registers all known markups"""
         markupsWidget = slicer.modules.markups.widgetRepresentation()
         if markupsWidget is None:
             raise Exception("Couldn't get the Markups module widget")
@@ -187,9 +183,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
                 raise Exception("Create PushButton for %s is not present" % markupNode.GetMarkupType())
 
     def test_unregister_additional_options_widgets(self):
-        """
-        This unregisters all the additional options widgets
-        """
+        """This unregisters all the additional options widgets"""
         markupsWidget = slicer.modules.markups.widgetRepresentation()
         if markupsWidget is None:
             raise Exception("Couldn't get the Markups module widget")
@@ -212,9 +206,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
                 raise Exception("%s does still exist" % objectName)
 
     def test_register_additional_options_widgets(self):
-        """
-        This reigisters additional options widgets
-        """
+        """This reigisters additional options widgets"""
 
         additionalOptionsWidgetsFactory = slicer.qMRMLMarkupsOptionsWidgetsFactory().instance()
 
@@ -232,9 +224,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
                 raise Exception("%s does not exist" % additionalOptionsWidget.objectName)
 
     def run(self):
-        """
-        Run the tests
-        """
+        """Run the tests"""
         slicer.util.delayDisplay("Running integration tests for Pluggable Markups")
 
         self.test_unregister_existing_markups()
@@ -246,9 +236,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
 
 
 class PluggableMarkupsSelfTestTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case
-    """
+    """This is the test case"""
 
     def setUp(self):
         logic = PluggableMarkupsSelfTestLogic()

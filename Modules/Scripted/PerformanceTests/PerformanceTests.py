@@ -86,8 +86,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
         self.log.repaint()
 
     def reslicing(self, iters=100):
-        """go into a loop that stresses the reslice performance
-        """
+        """go into a loop that stresses the reslice performance"""
         import time
         import math
         import numpy as np
@@ -125,8 +124,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
         self.log.repaint()
 
     def crosshairJump(self, iters=15):
-        """go into a loop that stresses jumping to slices by moving crosshair
-        """
+        """go into a loop that stresses jumping to slices by moving crosshair"""
         import time
         sliceNode = slicer.util.getNode("vtkMRMLSliceNodeRed")
         dims = sliceNode.GetDimensions()

@@ -17,9 +17,7 @@ except:
 
 # -----------------------------------------------------------------------------
 class _LogReverseLevelFilter(logging.Filter):
-    """
-    Rejects log records that are at or above the specified level
-    """
+    """Rejects log records that are at or above the specified level"""
 
     def __init__(self, levelLimit):
         self._levelLimit = levelLimit
@@ -30,9 +28,7 @@ class _LogReverseLevelFilter(logging.Filter):
 
 # -----------------------------------------------------------------------------
 class SlicerApplicationLogHandler(logging.Handler):
-    """
-    Writes logging records to Slicer application log.
-    """
+    """Writes logging records to Slicer application log."""
 
     def __init__(self):
         logging.Handler.__init__(self)
@@ -64,9 +60,7 @@ class SlicerApplicationLogHandler(logging.Handler):
 
 # -----------------------------------------------------------------------------
 def initLogging(logger):
-    """
-    Initialize logging by creating log handlers and setting default log level.
-    """
+    """Initialize logging by creating log handlers and setting default log level."""
 
     # Prints debug messages to Slicer application log.
     # Only debug level messages are logged this way, as higher level messages are printed on console
@@ -191,8 +185,7 @@ class _Internal:
             setattr(slicer.modules, "dicomtonrrdconverter", moduleManager.module(moduleName))
 
     def unsetSlicerModule(self, moduleName):
-        """Remove attribute from ``slicer.modules``
-        """
+        """Remove attribute from ``slicer.modules``"""
         if hasattr(slicer.modules, moduleName + "Instance"):
             delattr(slicer.modules, moduleName + "Instance")
         if hasattr(slicer.modules, moduleName + "Widget"):

@@ -163,8 +163,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         return fieldValues
 
     def load(self, loadable):
-        """Load the selection
-        """
+        """Load the selection"""
 
         filePath = loadable.files[0]
         metadata = self.getMetadata(filePath)

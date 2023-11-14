@@ -13,9 +13,7 @@ import xml.dom.minidom
 
 
 def getTextValuesFromNode(nodelist):
-    r"""
-    Get this nodes text information.
-    """
+    r"""Get this nodes text information."""
     rc = []
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
@@ -24,9 +22,7 @@ def getTextValuesFromNode(nodelist):
 
 
 def getThisNodesInfoAsText(currentNode, label):
-    r"""
-    Only get the text info for the matching label at this level of the tree
-    """
+    r"""Only get the text info for the matching label at this level of the tree"""
     labelNodeList = [node for node in
                      currentNode.childNodes if node.nodeName == label]
 
@@ -37,9 +33,7 @@ def getThisNodesInfoAsText(currentNode, label):
 
 
 def getLongFlagDefinition(currentNode):
-    r"""
-    Extract the long flag, and color the text string
-    """
+    r"""Extract the long flag, and color the text string"""
     labelNodeList = currentNode.getElementsByTagName("longflag")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
@@ -49,9 +43,7 @@ def getLongFlagDefinition(currentNode):
 
 
 def getFlagDefinition(currentNode):
-    r"""
-    Extract the (short) flag, and color the text string
-    """
+    r"""Extract the (short) flag, and color the text string"""
     labelNodeList = currentNode.getElementsByTagName("flag")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
@@ -61,9 +53,7 @@ def getFlagDefinition(currentNode):
 
 
 def getLabelDefinition(currentNode):
-    r"""
-    Extract the nodes label, and color the text string
-    """
+    r"""Extract the nodes label, and color the text string"""
     labelNodeList = currentNode.getElementsByTagName("label")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
@@ -73,9 +63,7 @@ def getLabelDefinition(currentNode):
 
 
 def getDefaultValueDefinition(currentNode):
-    r"""
-    Extract the default value
-    """
+    r"""Extract the default value"""
     labelNodeList = currentNode.getElementsByTagName("default")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
@@ -97,9 +85,7 @@ def GetSEMDoc(filename):
 
 
 def DumpSEMMediaWikiHeader(executableNode):
-    r"""
-    Just dump the header section of the MediaWikiPage
-    """
+    r"""Just dump the header section of the MediaWikiPage"""
 
     outputRegionTemplate = """
 __NOTOC__

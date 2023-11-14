@@ -2,8 +2,7 @@ import unittest
 
 
 class SlicerPythonLzmaTests(unittest.TestCase):
-    """This test verifies that Python is build with lzma enabled.
-    """
+    """This test verifies that Python is build with lzma enabled."""
 
     def setUp(self):
         pass

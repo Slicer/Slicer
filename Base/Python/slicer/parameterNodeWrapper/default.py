@@ -2,9 +2,7 @@ __all__ = ["Default"]
 
 
 class Default:
-    """
-    Annotation to denote the default value for a parameter.
-    """
+    """Annotation to denote the default value for a parameter."""
 
     def __init__(self, value=None, *, generator=None):
         """
@@ -33,9 +31,7 @@ class Default:
 
 
 def extractDefault(annotations):
-    """
-    Given a list of annotations, returns the first Default annotation, if any
-    """
+    """Given a list of annotations, returns the first Default annotation, if any"""
     defaults = [x for x in annotations if isinstance(x, Default)]
     nonDefaults = [x for x in annotations if not isinstance(x, Default)]
     if len(defaults) > 1:

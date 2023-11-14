@@ -120,9 +120,7 @@ class SlicerRequestHandler(BaseRequestHandler):
         return contentType, responseBody
 
     def exec(self, request, requestBody):
-        """
-        Handle requests with path: /exec
-        """
+        """Handle requests with path: /exec"""
         self.logMessage("exec with body %s" % requestBody)
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
@@ -179,9 +177,7 @@ class SlicerRequestHandler(BaseRequestHandler):
                 self.trackingDevice.SetAndObserveTransformNodeID(self.tracker.GetID())
 
     def tracking(self, request):
-        """
-        Handle requests with path: /tracking
-        """
+        """Handle requests with path: /tracking"""
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         self.logMessage(q)
@@ -231,9 +227,7 @@ class SlicerRequestHandler(BaseRequestHandler):
         return (f"Set matrix".encode()), b"text/plain"
 
     def sampleData(self, request):
-        """
-        Handle requests with path: /sampledata
-        """
+        """Handle requests with path: /sampledata"""
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
         self.logMessage(f"SampleData request: {repr(request)}")
@@ -510,8 +504,7 @@ space origin: %%origin%%
         return nrrdData, b"application/octet-stream"
 
     def getTransformNRRD(self, transformID):
-        """Return a nrrd binary blob with contents of the transform node
-        """
+        """Return a nrrd binary blob with contents of the transform node"""
         transformNode = slicer.util.getNode(transformID)
         transformArray = slicer.util.array(transformID)
 
@@ -721,9 +714,7 @@ space origin: %%origin%%
         return nodes
 
     def mrml(self, method, request):
-        """
-        Handle requests with path: /mrml
-        """
+        """Handle requests with path: /mrml"""
         import json
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
@@ -791,9 +782,7 @@ space origin: %%origin%%
             return b'{"success": true}', b"application/json"
 
     def system(self, method, request):
-        """
-        Handle requests with path: /system
-        """
+        """Handle requests with path: /system"""
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
 
@@ -828,9 +817,7 @@ space origin: %%origin%%
             return json.dumps(response).encode(), b"application/json"
 
     def screenshot(self, request):
-        """
-        Returns screenshot of the application main window.
-        """
+        """Returns screenshot of the application main window."""
         slicer.app.processEvents()
         slicer.util.forceRenderAllViews()
         screenshot = slicer.util.mainWindow().grab()
@@ -854,9 +841,7 @@ space origin: %%origin%%
         raise RuntimeError("Unknown layout name: " + layoutName)
 
     def gui(self, method, request):
-        """
-        Handle requests with path: /gui
-        """
+        """Handle requests with path: /gui"""
 
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)

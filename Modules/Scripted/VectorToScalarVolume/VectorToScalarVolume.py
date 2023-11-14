@@ -116,9 +116,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     _parameterNode: Optional[VectorToScalarVolumeParameterNode]
 
     def __init__(self, parent=None):
-        """
-        Called when the user opens the module the first time and the widget is initialized.
-        """
+        """Called when the user opens the module the first time and the widget is initialized."""
         ScriptedLoadableModuleWidget.__init__(self, parent)
         VTKObservationMixin.__init__(self)  # needed for parameter node observation
         self.logic = None
@@ -126,9 +124,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
         self._updatingGUIFromParameterNode = False
 
     def setup(self):
-        """
-        Called when the user opens the module the first time and the widget is initialized.
-        """
+        """Called when the user opens the module the first time and the widget is initialized."""
         ScriptedLoadableModuleWidget.setup(self)
 
         # Load widget from .ui file (created by Qt Designer).
@@ -172,44 +168,32 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
         self.initializeParameterNode()
 
     def cleanup(self):
-        """
-        Called when the application closes and the module widget is destroyed.
-        """
+        """Called when the application closes and the module widget is destroyed."""
         self.removeObservers()
 
     def enter(self):
-        """
-        Called each time the user opens this module.
-        """
+        """Called each time the user opens this module."""
         # Make sure parameter node exists and observed
         self.initializeParameterNode()
 
     def exit(self):
-        """
-        Called each time the user opens a different module.
-        """
+        """Called each time the user opens a different module."""
         # Do not react to parameter node changes (GUI wlil be updated when the user enters into the module)
         self.removeObserver(self._parameterNode, vtk.vtkCommand.ModifiedEvent, self.updateGUIFromParameterNode)
 
     def onSceneStartClose(self, caller, event):
-        """
-        Called just before the scene is closed.
-        """
+        """Called just before the scene is closed."""
         # Parameter node will be reset, do not use it anymore
         self.setParameterNode(None)
 
     def onSceneEndClose(self, caller, event):
-        """
-        Called just after the scene is closed.
-        """
+        """Called just after the scene is closed."""
         # If this module is shown while the scene is closed then recreate a new parameter node immediately
         if self.parent.isEntered:
             self.initializeParameterNode()
 
     def initializeParameterNode(self):
-        """
-        Ensure parameter node exists and observed.
-        """
+        """Ensure parameter node exists and observed."""
         # Parameter node stores all user choices in parameter values, node selections, etc.
         # so that when the scene is saved and reloaded, these settings are restored.
 
@@ -295,9 +279,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
             self._parameterNode.ComponentToExtract = self.ui.componentsSpinBox.value
 
     def onApplyButton(self):
-        """
-        Run processing when user clicks "Apply" button.
-        """
+        """Run processing when user clicks "Apply" button."""
         with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
 
             # Compute output
@@ -320,9 +302,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
     """
 
     def __init__(self):
-        """
-        Called when the logic class is instantiated. Can be used for initializing member variables.
-        """
+        """Called when the logic class is instantiated. Can be used for initializing member variables."""
         ScriptedLoadableModuleLogic.__init__(self)
 
     @staticmethod
@@ -379,9 +359,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         return True, None
 
     def run(self, parameterNode):
-        """
-        Run the conversion with given parameterNode.
-        """
+        """Run the conversion with given parameterNode."""
         if parameterNode is None:
             raise ValueError(_t("Invalid Parameter Node: None"))
 
@@ -507,13 +485,11 @@ class VectorToScalarVolumeTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear()
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_VectorToScalarVolume1()
 

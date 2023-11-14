@@ -280,8 +280,7 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 
     @staticmethod
     def removeCategories(categoryLayout):
-        """Remove all categories from the given category layout.
-        """
+        """Remove all categories from the given category layout."""
         while categoryLayout.count() > 0:
             frame = categoryLayout.itemAt(0).widget()
             frame.visible = False
@@ -490,8 +489,7 @@ class SampleDataLogic:
 
     @staticmethod
     def isSampleDataSourceRegistered(category, sampleDataSource):
-        """Returns True if the sampleDataSource is registered with the category.
-        """
+        """Returns True if the sampleDataSource is registered with the category."""
         try:
             slicer.modules.sampleDataSources
         except AttributeError:
@@ -735,8 +733,7 @@ class SampleDataLogic:
         return None
 
     def categoryForSource(self, a_source):
-        """For a given SampleDataSource return the associated category name.
-        """
+        """For a given SampleDataSource return the associated category name."""
         for category in slicer.modules.sampleDataSources.keys():
             for source in slicer.modules.sampleDataSources[category]:
                 if a_source == source:

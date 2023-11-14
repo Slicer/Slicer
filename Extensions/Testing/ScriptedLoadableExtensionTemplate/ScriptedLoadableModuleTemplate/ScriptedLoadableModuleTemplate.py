@@ -171,8 +171,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
         return True
 
     def isValidInputOutputData(self, inputVolumeNode, outputVolumeNode):
-        """Validates if the output is not the same as input
-        """
+        """Validates if the output is not the same as input"""
         if not inputVolumeNode:
             logging.debug("isValidInputOutputData failed: no input volume node defined")
             return False
@@ -185,9 +184,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
         return True
 
     def run(self, inputVolume, outputVolume, imageThreshold):
-        """
-        Run the actual algorithm
-        """
+        """Run the actual algorithm"""
 
         if not self.isValidInputOutputData(inputVolume, outputVolume):
             slicer.util.errorDisplay(_("Input volume is the same as output volume. Choose a different output volume."))
@@ -212,13 +209,11 @@ class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_ScriptedLoadableModuleTemplate1()
 

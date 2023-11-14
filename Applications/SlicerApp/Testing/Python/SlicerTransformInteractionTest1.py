@@ -76,8 +76,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def assertTransform(self, t, expected):
@@ -89,8 +88,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
                 self.assertAlmostEqual(m.GetElement(i, j), expected[i][j])
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_3D_interactionDefaults()
         self.test_3D_interactionVolume()
@@ -100,8 +98,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         self.test_3D_boundsUpdateROI()
 
     def test_3D_interactionDefaults(self):
-        """Test that the interaction widget exists in the 3D view.
-        """
+        """Test that the interaction widget exists in the 3D view."""
         logic = SlicerTransformInteractionTest1Logic()
 
         # self.delayDisplay("Starting test_3D_interactionDefaults")
@@ -138,8 +135,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         # self.delayDisplay('test_3D_interactionDefaults passed!')
 
     def test_3D_interactionVolume(self):
-        """Test that the interaction widget interacts correctly in the 3D view.
-        """
+        """Test that the interaction widget interacts correctly in the 3D view."""
         logic = SlicerTransformInteractionTest1Logic()
 
         import SampleData
@@ -299,8 +295,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         # self.delayDisplay('test_3D_interactionVolume passed!')
 
     def test_3D_interaction2Models(self):
-        """Test that the interaction widget works with multiple models.
-        """
+        """Test that the interaction widget works with multiple models."""
         # self.delayDisplay("Starting test_3D_interaction2Models")
         #
         # Setup:
@@ -419,8 +414,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         # self.delayDisplay('test_3D_interaction2Models passed!')
 
     def test_3D_parentTransform(self):
-        """Test that the interaction widget works with a parent transform.
-        """
+        """Test that the interaction widget works with a parent transform."""
         # self.delayDisplay('Starting test_3D_parentTransform')
         #
         # Setup:
@@ -511,8 +505,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         # self.delayDisplay('test_3D_parentTransform passed!')
 
     def test_3D_interactionSerialization(self):
-        """Test that the serialization the interaction properties.
-        """
+        """Test that the serialization the interaction properties."""
         logic = SlicerTransformInteractionTest1Logic()
 
         # self.delayDisplay("Starting test_3D_interactionSerialization")
@@ -552,8 +545,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         self.assertTrue(widget.GetEnabled())
 
     def test_3D_boundsUpdateROI(self):
-        """Test that the bounds update with an ROI.
-        """
+        """Test that the bounds update with an ROI."""
         logic = SlicerTransformInteractionTest1Logic()
 
         # self.delayDisplay("Starting test_3D_boundsUpdateROI")

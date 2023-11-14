@@ -61,9 +61,7 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
         self.test_RSNA2012ProstateDemo()
 
     def test_RSNA2012ProstateDemo(self):
-        """
-        Replicate one of the crashes in issue 2512
-        """
+        """Replicate one of the crashes in issue 2512"""
 
         print("Running RSNA2012ProstateDemo Test case:")
 

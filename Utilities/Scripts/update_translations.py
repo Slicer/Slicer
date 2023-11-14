@@ -141,8 +141,7 @@ def restore_patched_python_files(source_files, root_dir):
 
 
 def get_lupdate_version(lupdate_path):
-    """Get version of lupdate. There are significant differences between lupdate capabilities in Qt5 and Qt6.
-    """
+    """Get version of lupdate. There are significant differences between lupdate capabilities in Qt5 and Qt6."""
     output = subprocess.check_output([lupdate_path, "-version"]).decode()  # returns 'lupdate version 5.15.2\r'
     m = re.match(r"lupdate version ([0-9]+)\.([0-9]+)\.([0-9]+).*", output)
     return [int(m.groups()[0]), int(m.groups()[1]), int(m.groups()[2])]

@@ -12,8 +12,7 @@ from SegmentEditorEffects import *
 
 
 class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorPaintEffect):
-    """SmoothingEffect is an Effect that smoothes a selected segment
-    """
+    """SmoothingEffect is an Effect that smoothes a selected segment"""
 
     def __init__(self, scriptedEffect):
         scriptedEffect.name = "Smoothing"  # no tr (don't translate it because modules find effects by name)
@@ -199,8 +198,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
         slicer.app.processEvents()
 
     def onApply(self, maskImage=None, maskExtent=None):
-        """maskImage: contains nonzero where smoothing will be applied
-        """
+        """maskImage: contains nonzero where smoothing will be applied"""
         smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
         applyToAllVisibleSegments = int(self.scriptedEffect.parameter("ApplyToAllVisibleSegments")) != 0 \
             if self.scriptedEffect.parameter("ApplyToAllVisibleSegments") else False

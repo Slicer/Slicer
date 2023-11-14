@@ -7,8 +7,7 @@ import DICOMLib
 
 
 class DICOMSendDialog(qt.QDialog):
-    """Implement the Qt dialog for doing a DICOM Send (storage SCU)
-    """
+    """Implement the Qt dialog for doing a DICOM Send (storage SCU)"""
 
     def __init__(self, files, parent="mainWindow"):
         super().__init__(slicer.util.mainWindow() if parent == "mainWindow" else parent)

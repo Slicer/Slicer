@@ -195,8 +195,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
         self.logic.importDicomDir(self.outputDirSelector.currentPath)
 
     def addLog(self, text):
-        """Append text to log window
-        """
+        """Append text to log window"""
         self.statusLabel.appendPlainText(text)
         slicer.app.processEvents()  # force update
 
@@ -692,9 +691,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
         self.addLog(f"DICOM patching completed. Patched files are written to:\n{outputDirPath}")
 
     def importDicomDir(self, outputDirPath):
-        """
-        Utility function to import DICOM files from a directory
-        """
+        """Utility function to import DICOM files from a directory"""
         self.addLog("Initiate DICOM importing from folder " + outputDirPath)
         slicer.util.selectModule("DICOM")
         dicomBrowser = slicer.modules.dicom.widgetRepresentation().self().browserWidget.dicomBrowser
@@ -713,13 +710,11 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_DICOMPatcher1()
 

@@ -102,13 +102,11 @@ class TwoCLIsInParallelTestLogic(ScriptedLoadableModuleLogic):
 class TwoCLIsInParallelTestTest(ScriptedLoadableModuleTest):
 
     def setUp(self):
-        """Reset the state for testing.
-        """
+        """Reset the state for testing."""
         pass
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_TwoCLIsInParallelTest()
 

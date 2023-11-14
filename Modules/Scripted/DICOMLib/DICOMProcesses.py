@@ -144,9 +144,7 @@ class DICOMProcess:
 
 
 class DICOMCommand(DICOMProcess):
-    """
-    Run a generic dcmtk command and return the stdout
-    """
+    """Run a generic dcmtk command and return the stdout"""
 
     def __init__(self, cmd: str, args: list[str]):
         super().__init__()
@@ -487,9 +485,7 @@ class DICOMSender:
         return True
 
     def send(self) -> None:
-        """
-        Sends DICOM files to a remote server. Called on instance initialization.
-        """
+        """Sends DICOM files to a remote server. Called on instance initialization."""
         self.progressCallback(
             f"Starting send to {self.destinationUrl.toString()} using {self.protocol} protocol"
         )

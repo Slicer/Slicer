@@ -43,29 +43,24 @@ class DICOMReadersWidget(ScriptedLoadableModuleWidget):
 
 
 class DICOMReadersTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case
-    """
+    """This is the test case"""
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         self.delayDisplay("Closing the scene")
         layoutManager = slicer.app.layoutManager()
         layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_AlternateReaders()
         self.setUp()
         self.test_MissingSlices()
 
     def test_AlternateReaders(self):
-        """Test the DICOM loading of sample testing data
-        """
+        """Test the DICOM loading of sample testing data"""
         testPass = True
 
         self.delayDisplay("Starting the DICOM test")

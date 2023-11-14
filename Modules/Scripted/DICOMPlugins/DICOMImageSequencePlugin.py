@@ -334,8 +334,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         return outputSequenceNode, playbackRateFps
 
     def load(self, loadable):
-        """Load the selection
-        """
+        """Load the selection"""
 
         outputSequenceNodes = []
 

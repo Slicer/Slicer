@@ -65,9 +65,7 @@ class _ParameterWrapper:
         return self.parameter.isIn(self.parameterNode)
 
     def read(self):
-        """
-        Gets the value of this parameter in the given parameter node.
-        """
+        """Gets the value of this parameter in the given parameter node."""
         return self.parameter.read(self.parameterNode)
 
     def write(self, value) -> None:
@@ -289,9 +287,7 @@ def _makeDataTypeFunc(classvar):
 
 
 def _processClass(classtype):
-    """
-    Takes a parameterNodeWrapper class description and creates the full parameterNodeWrapper class.
-    """
+    """Takes a parameterNodeWrapper class description and creates the full parameterNodeWrapper class."""
     members = typing.get_type_hints(classtype, include_extras=True)
     allParameters: dict[str, ParameterInfo] = dict()
     for name, nametype in members.items():
@@ -349,9 +345,7 @@ def isParameterNodeWrapper(classOrObj):
 
 
 def parameterNodeWrapper(classtype=None):
-    """
-    Class decorator to make a parameter node wrapper that supports typed property access and GUI binding.
-    """
+    """Class decorator to make a parameter node wrapper that supports typed property access and GUI binding."""
     def wrap(cls):
         return _processClass(cls)
 
