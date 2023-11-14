@@ -1,4 +1,5 @@
 """This module loads all the classes from the vtkSegmentationCore library into its
-namespace."""
+namespace.
+"""
 
 from vtkSegmentationCorePython import *

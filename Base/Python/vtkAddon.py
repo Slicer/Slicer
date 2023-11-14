@@ -1,4 +1,5 @@
 """This module loads all the classes from the vtkAddon library into its
-namespace."""
+namespace.
+"""
 
 from vtkAddonPython import *

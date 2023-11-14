@@ -191,7 +191,8 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     def onDirectoryImported(self):
         """The dicom browser will emit multiple directoryImported
         signals during the same operation, so we collapse them
-        into a single check for compatible extensions."""
+        into a single check for compatible extensions.
+        """
         if not hasattr(slicer.app, "extensionsManagerModel"):
             # Slicer may not be built with extensions manager support
             return
@@ -355,7 +356,8 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
     def examineForLoading(self):
         """For selected plugins, give user the option
-        of what to load"""
+        of what to load
+        """
 
         (self.loadablesByPlugin, loadEnabled) = self.getLoadablesFromFileLists(self.fileLists)
         DICOMLib.selectHighestConfidenceLoadables(self.loadablesByPlugin)
@@ -460,7 +462,8 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
     def loadCheckedLoadables(self):
         """Invoke the load method on each plugin for the loadable
-        (DICOMLoadable or qSlicerDICOMLoadable) instances that are selected"""
+        (DICOMLoadable or qSlicerDICOMLoadable) instances that are selected
+        """
         if self.advancedViewButton.checkState() == 0:
             self.examineForLoading()
 
