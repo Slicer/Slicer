@@ -3797,10 +3797,10 @@ def pip_uninstall(requirements):
 
 
 def longPath(path):
-    """Make long paths work on Windows, where the maximum path length is 260 characters.
+    r"""Make long paths work on Windows, where the maximum path length is 260 characters.
 
     For example, the files in the DICOM database may have paths longer than this limit.
-    Accessing these can be made safe by prefixing it with the UNC prefix ('\\?\').
+    Accessing these can be made safe by prefixing it with the UNC prefix ('\\\\?\\').
 
     :param string path: Path to be made safe if too long
 
