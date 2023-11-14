@@ -143,7 +143,8 @@ class Wiki:
 
     def version_pages(self, release_version):
         """Copy ``Documentation/Nightly`` and ``Template:Documentation/Nightly``
-        pages into ``release_version`` namespace."""
+        pages into ``release_version`` namespace.
+        """
         self.doc.versionPages(
             "Nightly", release_version,
             ["Documentation", "Template:Documentation"])

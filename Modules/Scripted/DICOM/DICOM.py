@@ -241,7 +241,8 @@ class DICOM(ScriptedLoadableModule):
         the DICOM module by selecting the module.  Note that
         once the module is constructed (below in setup) another
         connection is made that will also cause the instance-created
-        DICOM browser to be raised by this menu action"""
+        DICOM browser to be raised by this menu action
+        """
         a = self.parent.action()
         a.setText(_("Add DICOM Data"))
         fileMenu = slicer.util.lookupTopLevelWidget("FileMenu")
@@ -426,7 +427,8 @@ class DICOMFileDialog:
 
     def isMimeDataAccepted(self):
         """Checks the dropped data and returns true if it is one or
-        more directories"""
+        more directories
+        """
         self.directoriesToAdd, _ = DICOMFileDialog.pathsFromMimeData(self.qSlicerFileDialog.mimeData())
         self.qSlicerFileDialog.acceptMimeData(len(self.directoriesToAdd) != 0)
 

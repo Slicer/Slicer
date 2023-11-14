@@ -192,7 +192,8 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
     to want are listed at the top of the table and are selected
     by default. Only offer one pre-selected loadable per series
     unless both plugins mark it as selected and they have equal
-    confidence."""
+    confidence.
+    """
 
     # first, get all loadables corresponding to a series
     seriesUIDTag = "0020,000E"

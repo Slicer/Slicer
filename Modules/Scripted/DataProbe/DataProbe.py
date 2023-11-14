@@ -125,7 +125,8 @@ class DataProbeInfoWidget:
 
     def getPixelString(self, volumeNode, ijk):
         """Given a volume node, create a human readable
-        string describing the contents"""
+        string describing the contents
+        """
         # TODO: the volume nodes should have a way to generate
         # these strings in a generic way
         if not volumeNode:
@@ -400,7 +401,8 @@ class DataProbeInfoWidget:
 
     def _createSmall(self):
         """Make the internals of the widget to display in the
-        Data Probe frame (lower left of slicer main window by default)"""
+        Data Probe frame (lower left of slicer main window by default)
+        """
 
         # this method makes SliceView Annotation
         self.sliceAnnotations = DataProbeLib.SliceAnnotations()

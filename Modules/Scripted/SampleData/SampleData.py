@@ -48,13 +48,15 @@ def downloadFromURL(uris=None, fileNames=None, nodeNames=None, checksums=None, l
 
 def downloadSample(sampleName):
     """For a given sample name this will search the available sources
-    and load it if it is available.  Returns the first loaded node."""
+    and load it if it is available.  Returns the first loaded node.
+    """
     return SampleDataLogic().downloadSamples(sampleName)[0]
 
 
 def downloadSamples(sampleName):
     """For a given sample name this will search the available sources
-    and load it if it is available.  Returns the loaded nodes."""
+    and load it if it is available.  Returns the loaded nodes.
+    """
     return SampleDataLogic().downloadSamples(sampleName)
 
 
@@ -619,7 +621,8 @@ class SampleDataLogic:
 
     def downloadFileIntoCache(self, uri, name, checksum=None):
         """Given a uri and and a filename, download the data into
-        a file of the given name in the scene's cache"""
+        a file of the given name in the scene's cache
+        """
         destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
 
         if not os.access(destFolderPath, os.W_OK):
@@ -633,7 +636,8 @@ class SampleDataLogic:
 
     def downloadSourceIntoCache(self, source):
         """Download all files for the given source and return a
-        list of file paths for the results"""
+        list of file paths for the results
+        """
         filePaths = []
         for uri, fileName, checksum in zip(source.uris, source.fileNames, source.checksums):
             filePaths.append(self.downloadFileIntoCache(uri, fileName, checksum))
@@ -725,7 +729,8 @@ class SampleDataLogic:
 
     def sourceForSampleName(self, sampleName):
         """For a given sample name this will search the available sources.
-        Returns SampleDataSource instance."""
+        Returns SampleDataSource instance.
+        """
         for category in slicer.modules.sampleDataSources.keys():
             for source in slicer.modules.sampleDataSources[category]:
                 if sampleName == source.sampleName:
@@ -774,12 +779,14 @@ class SampleDataLogic:
 
     def downloadSample(self, sampleName):
         """For a given sample name this will search the available sources
-        and load it if it is available.  Returns the first loaded node."""
+        and load it if it is available.  Returns the first loaded node.
+        """
         return self.downloadSamples(sampleName)[0]
 
     def downloadSamples(self, sampleName):
         """For a given sample name this will search the available sources
-        and load it if it is available.  Returns the loaded nodes."""
+        and load it if it is available.  Returns the loaded nodes.
+        """
         source = self.sourceForSampleName(sampleName)
         nodes = []
         if source:

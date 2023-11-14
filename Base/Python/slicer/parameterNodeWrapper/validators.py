@@ -1,5 +1,6 @@
 """The validators module is responsible for defining classes that can be used to place invariants on single parameters
-of a parameterPack or parameterNodeWrapper."""
+of a parameterPack or parameterNodeWrapper.
+"""
 
 import abc
 

@@ -93,7 +93,8 @@ def getSlicerRCFileName():
     If a .slicerrc.py file is found in slicer.app.slicerHome folder then that will be used.
     If that is not found then the path defined in SLICERRC environment variable will be used.
     If that environment variable is not specified then .slicerrc.py in the user's home folder
-    will be used ('~/.slicerrc.py')."""
+    will be used ('~/.slicerrc.py').
+    """
     import os
     rcfile = os.path.join(slicer.app.slicerHome, ".slicerrc.py")
     if not os.path.exists(rcfile):

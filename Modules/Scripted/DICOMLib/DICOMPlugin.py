@@ -126,7 +126,8 @@ class DICOMPlugin:
 
     def getCachedLoadables(self, files):
         """Helper method to access the results of a previous
-        examination of a list of files"""
+        examination of a list of files
+        """
         key = self.hashFiles(files)
         if key in self.loadableCache:
             return self.loadableCache[key]
@@ -134,7 +135,8 @@ class DICOMPlugin:
 
     def cacheLoadables(self, files, loadables):
         """Helper method to store the results of examining a list
-        of files for later quick access"""
+        of files for later quick access
+        """
         key = self.hashFiles(files)
         self.loadableCache[key] = loadables
 
@@ -175,7 +177,8 @@ class DICOMPlugin:
 
     def defaultSeriesNodeName(self, seriesUID):
         """Generate a name suitable for use as a mrml node name based
-        on the series level data in the database"""
+        on the series level data in the database
+        """
         instanceFilePaths = slicer.dicomDatabase.filesForSeries(seriesUID, 1)
         if len(instanceFilePaths) == 0:
             return "Unnamed Series"

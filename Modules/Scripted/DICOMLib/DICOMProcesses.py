@@ -97,7 +97,8 @@ class DICOMProcess:
 
     def onStateChanged(self, newState: int):
         """Callback to indicate that the process state has changed
-        and is now either starting, running, or not running."""
+        and is now either starting, running, or not running.
+        """
         logging.debug(f"Process {self.cmd} now in state {self.PROCESS_STATE_NAMES[newState]}")
         stdout = None
         stderr = None

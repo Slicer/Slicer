@@ -185,7 +185,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     def setCameraNode(self, newCameraNode):
         """Allow to set the current camera node.
-        Connected to signal 'currentNodeChanged()' emitted by camera node selector."""
+        Connected to signal 'currentNodeChanged()' emitted by camera node selector.
+        """
 
         #  Remove previous observer
         if self.cameraNode and self.cameraNodeObserverTag:
@@ -221,7 +222,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     def enableOrDisableCreateButton(self):
         """Connected to both the fiducial and camera node selector. It allows to
-        enable or disable the 'create path' button."""
+        enable or disable the 'create path' button.
+        """
         self.createPathButton.enabled = (self.cameraNodeSelector.currentNode() is not None
                                          and self.inputFiducialsNodeSelector.currentNode() is not None
                                          and self.outputPathNodeSelector.currentNode() is not None)
@@ -229,7 +231,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
     def onCreatePathButtonClicked(self):
         """Connected to 'create path' button. It allows to:
         - compute the path
-        - create the associated model"""
+        - create the associated model
+        """
 
         fiducialsNode = self.inputFiducialsNodeSelector.currentNode()
         outputPathNode = self.outputPathNodeSelector.currentNode()

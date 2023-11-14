@@ -168,7 +168,8 @@ def importClassesFromDirectory(directory, dest_module_name, type_info, filematch
 
 def importModuleObjects(from_module_name, dest_module_name, type_info):
     """Import object of type 'type_info' (str or type) from module identified
-    by 'from_module_name' into the module identified by 'dest_module_name'."""
+    by 'from_module_name' into the module identified by 'dest_module_name'.
+    """
 
     # Obtain a reference to the module identified by 'dest_module_name'
     import sys
@@ -2548,7 +2549,8 @@ def itkImageFromVolume(volumeNode):
 
 def itkImageFromVolumeModified(volumeNode):
     """Indicate that modification of a ITK image returned by :py:meth:`itkImageFromVolume` (or
-    associated with a volume node using :py:meth:`updateVolumeFromITKImage`) has been completed."""
+    associated with a volume node using :py:meth:`updateVolumeFromITKImage`) has been completed.
+    """
     imageData = volumeNode.GetImageData()
     pointData = imageData.GetPointData() if imageData else None
     if pointData:

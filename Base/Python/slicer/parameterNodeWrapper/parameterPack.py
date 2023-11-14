@@ -1,5 +1,6 @@
 """The parameterPack module allows creation of aggregate objects that can be used in a
-parameterNodeWrapper."""
+parameterNodeWrapper.
+"""
 
 import copy
 import dataclasses

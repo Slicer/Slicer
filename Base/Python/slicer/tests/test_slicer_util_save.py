@@ -16,7 +16,8 @@ class SlicerUtilSaveTests(unittest.TestCase):
 
     def test_saveNode(self):
         """Test that nodes are saved correctly and that they are loaded correctly with the default reader
-        even if they are saved with generic (.nrrd) and not composite (.seg.nrrd) file extension."""
+        even if they are saved with generic (.nrrd) and not composite (.seg.nrrd) file extension.
+        """
 
         # Volume node
         volumeNode = slicer.util.getNode("MR-head")

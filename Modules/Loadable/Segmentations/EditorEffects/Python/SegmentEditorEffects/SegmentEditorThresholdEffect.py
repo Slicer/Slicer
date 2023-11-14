@@ -133,7 +133,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     def restorePreviewedSegmentTransparency(self):
         """Restore previewed segment's opacity that was temporarily
-        made transparen by calling setCurrentSegmentTransparent()."""
+        made transparen by calling setCurrentSegmentTransparent().
+        """
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
         if not segmentationNode:
             return

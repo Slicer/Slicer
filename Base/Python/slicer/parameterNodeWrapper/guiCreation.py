@@ -1,6 +1,7 @@
 """The guiCreation module is responsible for creating widgets for given datatypes.
 This module is extensible such that users can add new widgets and datatypes from within
-other slicer modules."""
+other slicer modules.
+"""
 
 import abc
 import dataclasses
