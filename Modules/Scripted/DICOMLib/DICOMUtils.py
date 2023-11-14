@@ -613,14 +613,17 @@ class LoadDICOMFilesToDatabase:
 # TODO: more consistency checks:
 # - is there gantry tilt?
 # - are the orientations the same for all slices?
-def getSortedImageFiles(filePaths, epsilon=0.01):
-    """ Sort DICOM image files in increasing slice order (IS direction) corresponding to a series
+def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list[str], dict[str, str], str]:
+    """Sort DICOM image files in increasing slice order (IS direction) corresponding to a series
 
-        Use the first file to get the ImageOrientationPatient for the
-        series and calculate the scan direction (assumed to be perpendicular
-        to the acquisition plane)
+    Use the first file to get the ImageOrientationPatient for the
+    series and calculate the scan direction (assumed to be perpendicular
+    to the acquisition plane)
 
-        epsilon: Maximum difference in distance between slices to consider spacing uniform
+    :param filePaths : Paths of the local DICOM files to sort.
+    :param epsilon: Maximum difference in distance between slices to consider spacing uniform.
+
+    :return: Tuple of (files, distances, warningText)
     """
     warningText = ""
     if len(filePaths) == 0:
