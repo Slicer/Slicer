@@ -129,7 +129,6 @@ class ExtensionProject:
         the project instance was created. If the encoding cannot be determined, the
         property will have the value ``None``.
 
-        .. 'note' directive needs '\' to span multiple lines!
         .. note:: If ``encoding`` is ``None``, the project information is stored \
                   as raw bytes using :class:`str`. In such case, passing a \
                   non-ASCII :class:`unicode` to  any method or property \
@@ -261,8 +260,8 @@ class ExtensionProject:
         .. note::
 
           Variables set using a nested reference are not supported.
-          For example, if the underlying CMake code is ``set(foo \"world\")``
-          and ``set(hello_${foo} \"earth\")``. Occurrences of
+          For example, if the underlying CMake code is ``set(foo "world")``
+          and ``set(hello_${foo} "earth")``. Occurrences of
           '``${hello_${foo}}``' will be replaced by '``hello_world-NOTFOUND``'
 
         .. seealso:: :func:`.substituteVariableReferences`

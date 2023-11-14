@@ -3,7 +3,6 @@
 This package provides a suite of tools to help automate certain tasks that are
 often performed when developing code and extensions for Slicer.
 
-.. 'note' directive needs '\' to span multiple lines!
 .. note:: This documentation is intended for developers working \
           on such tools. Users of the same should refer to the \
           :wikidoc:`Developers/ExtensionWizard Extension Wizard` \
