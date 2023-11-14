@@ -62,7 +62,6 @@ class ExtensionWizard:
     Interaction with `GitHub <https://github.com>`_ uses
     :func:`.GithubHelper.logIn` to authenticate.
 
-    .. 'note' directive needs '\' to span multiple lines!
     .. note:: Most methods will signal the application to exit if \
               something goes wrong. This behavior is hidden by the \
               :meth:`~ExtensionWizard.execute` method when  passing \
