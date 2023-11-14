@@ -177,17 +177,20 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
         """Return True if the models have unique polydata and have the
         same polydata as their display nodes have.
 
-    # paste this in the slicer console for testing/verifying any scene
-    def verifyModels():
-      nn = getNodes('*ModelNode*')
-      for n in nn:
-        mpd = nn[n].GetPolyData()
-        mdpd = nn[n].GetDisplayNode().GetInputPolyData()
-        if mpd != mdpd:
-          print(nn[n].GetName())
-          print(mpd,mdpd)
+        Paste this in the Slicer console for testing/verifying any scene
 
-    verifyModels()
+        .. code-block:: python
+
+          def verifyModels():
+              nn = getNodes("*ModelNode*")
+              for n in nn:
+              mpd = nn[n].GetPolyData()
+              mdpd = nn[n].GetDisplayNode().GetInputPolyData()
+              if mpd != mdpd:
+                  print(nn[n].GetName())
+                  print(mpd, mdpd)
+
+          verifyModels()
         """
 
         #
