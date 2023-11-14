@@ -624,7 +624,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
     """
     warningText = ""
     if len(filePaths) == 0:
-        return filePaths, [], warningText
+        return filePaths, {}, warningText
 
     # Define DICOM tags used in this function
     tags = {}
@@ -644,7 +644,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
         value = slicer.dicomDatabase.fileValue(filePaths[0], tag)
         if not value or value == "":
             warningText += "Reference image in series does not contain geometry information. Please use caution.\n"
-            return filePaths, [], warningText
+            return filePaths, {}, warningText
         ref[tag] = value
 
     # Determine out-of-plane direction for first slice
@@ -671,7 +671,7 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
 
     if missingGeometry:
         warningText += "One or more images is missing geometry information in series. Please use caution.\n"
-        return filePaths, [], warningText
+        return filePaths, {}, warningText
 
     # Sort files names by distance from reference slice
     sortedFiles = sorted(sortList, key=lambda x: x[1])
