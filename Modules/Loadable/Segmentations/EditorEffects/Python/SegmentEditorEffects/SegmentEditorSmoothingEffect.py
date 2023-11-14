@@ -12,7 +12,7 @@ from SegmentEditorEffects import *
 
 
 class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorPaintEffect):
-    """ SmoothingEffect is an Effect that smoothes a selected segment
+    """SmoothingEffect is an Effect that smoothes a selected segment
     """
 
     def __init__(self, scriptedEffect):

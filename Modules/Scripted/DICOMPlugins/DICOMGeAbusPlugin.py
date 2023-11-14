@@ -20,7 +20,7 @@ from DICOMLib import DICOMLoadable
 #
 
 class DICOMGeAbusPluginClass(DICOMPlugin):
-    """ Image loader plugin for GE Invenia
+    """Image loader plugin for GE Invenia
     ABUS (automated breast ultrasound) images.
     """
 
@@ -38,7 +38,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         self.privateCreators = ["U-Systems", "General Electric Company 01"]
 
     def examine(self, fileLists):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         fileLists parameter.
         """
@@ -49,7 +49,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         return loadables
 
     def examineFiles(self, files):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         files parameter.
         """

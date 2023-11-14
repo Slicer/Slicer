@@ -6,7 +6,7 @@ __sitk__MRMLIDImageIO_Registered__ = False
 
 
 def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className="vtkMRMLScalarVolumeNode"):
-    """ Given a SimpleITK image, push it back to slicer for viewing
+    """Given a SimpleITK image, push it back to slicer for viewing
 
     :param targetNode: Target node that will store the image. If None then a new node will be created.
     :param className: if a new target node is created then this parameter determines node class. For label volumes, set it to vtkMRMLLabelMapVolumeNode.
@@ -28,7 +28,7 @@ def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className="vtkMRML
 
 
 def PullVolumeFromSlicer(nodeObjectOrName):
-    """ Given a slicer MRML image node or name, return the SimpleITK
+    """Given a slicer MRML image node or name, return the SimpleITK
     image object.
     """
     EnsureRegistration()
@@ -38,7 +38,7 @@ def PullVolumeFromSlicer(nodeObjectOrName):
 
 
 def GetSlicerITKReadWriteAddress(nodeObjectOrName):
-    """ This function will return the ITK FileIO formatted text address
+    """This function will return the ITK FileIO formatted text address
     so that the image can be read directly from the MRML scene
     """
     myNode = nodeObjectOrName if isinstance(nodeObjectOrName, slicer.vtkMRMLNode) else slicer.util.getNode(nodeObjectOrName)

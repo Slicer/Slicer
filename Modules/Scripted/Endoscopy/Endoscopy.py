@@ -283,7 +283,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.frameSlider.value = nextStep
 
     def flyTo(self, pathPointIndex):
-        """ Apply the pathPointIndex-th step in the path to the global camera"""
+        """Apply the pathPointIndex-th step in the path to the global camera"""
 
         if self.path is None:
             return
@@ -407,7 +407,7 @@ class EndoscopyComputePath:
         self.calculatePath()
 
     def calculatePath(self):
-        """ Generate a flight path for of steps of length dl """
+        """Generate a flight path for of steps of length dl"""
         #
         # calculate the actual path
         # - take steps of self.dl in world space
@@ -434,7 +434,7 @@ class EndoscopyComputePath:
                 self.h11(t) * self.m[segment + 1])
 
     def step(self, segment, t, dl):
-        """ Take a step of dl and return the path point and new t
+        """Take a step of dl and return the path point and new t
         return:
         t = new parametric coordinate after step
         p = point after step

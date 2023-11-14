@@ -50,7 +50,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+        """Do whatever is needed to reset the state - typically a scene clear will be enough.
         """
         slicer.mrmlScene.Clear(0)
 
@@ -70,7 +70,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Test completed.")
 
     def test_Volume(self):
-        """ Test the GetRASBounds & GetBounds method on a volume.
+        """Test the GetRASBounds & GetBounds method on a volume.
         """
         # self.delayDisplay("Starting test_Volume")
         import SampleData
@@ -101,7 +101,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
         # self.delayDisplay('test_Volume passed!')
 
     def test_Model(self):
-        """ Test the GetRASBounds & GetBounds method on a model.
+        """Test the GetRASBounds & GetBounds method on a model.
         """
         # self.delayDisplay("Starting test_Model")
         # Setup
@@ -149,7 +149,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
         # self.delayDisplay('test_Model passed!')
 
     def test_Segmentation(self):
-        """ Test the GetRASBounds & GetBounds method on a segmentation.
+        """Test the GetRASBounds & GetBounds method on a segmentation.
         """
         # self.delayDisplay("Starting test_Segmentation")
         cubeSource = vtk.vtkCubeSource()
@@ -201,7 +201,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
         # self.delayDisplay('test_Segmentation passed!')
 
     def test_Markup(self):
-        """ Test the GetRASBounds & GetBounds method on a markup.
+        """Test the GetRASBounds & GetBounds method on a markup.
         """
         # self.delayDisplay("Starting test_Markup")
         markupNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
@@ -235,7 +235,7 @@ class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
         # self.delayDisplay('test_Markup passed!')
 
     def test_ROI(self):
-        """ Test the GetRASBounds & GetBounds method on a ROI.
+        """Test the GetRASBounds & GetBounds method on a ROI.
         """
         # self.delayDisplay("Starting test_ROI")
         roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode")

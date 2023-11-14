@@ -1,4 +1,4 @@
-""" The parameter node wrapper allows wrapping around a ``vtkMRMLScriptedModuleNode`` parameter node with typed member
+"""The parameter node wrapper allows wrapping around a ``vtkMRMLScriptedModuleNode`` parameter node with typed member
 access."""
 
 from .default import *

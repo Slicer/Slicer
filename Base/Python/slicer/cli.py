@@ -1,4 +1,4 @@
-""" This module is a place holder for convenient functions allowing to interact with CLI."""
+"""This module is a place holder for convenient functions allowing to interact with CLI."""
 
 
 def createNode(cliModule, parameters=None):

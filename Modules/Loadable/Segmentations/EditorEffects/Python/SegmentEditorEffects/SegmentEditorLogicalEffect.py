@@ -11,7 +11,7 @@ from SegmentEditorEffects import *
 
 
 class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
-    """ LogicalEffect is an MorphologyEffect to erode a layer of pixels from a segment
+    """LogicalEffect is an MorphologyEffect to erode a layer of pixels from a segment
     """
 
     def __init__(self, scriptedEffect):

@@ -23,7 +23,7 @@ from DICOMLib import DICOMExportScalarVolume
 #
 
 class DICOMScalarVolumePluginClass(DICOMPlugin):
-    """ ScalarVolume specific interpretation code
+    """ScalarVolume specific interpretation code
     """
 
     def __init__(self, spacingEpsilon=1e-2, orientationEpsilon=1e-6):
@@ -153,7 +153,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         return (int(settings.value("DICOM/ScalarVolume/AllowLoadingByTime", "0")) != 0)
 
     def examineForImport(self, fileLists):
-        """ Returns a sorted list of DICOMLoadable instances
+        """Returns a sorted list of DICOMLoadable instances
         corresponding to ways of interpreting the
         fileLists parameter (list of file lists).
         """
@@ -185,7 +185,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         return numpy.array([float(element) for element in value.split("\\")])
 
     def examineFiles(self, files):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         files parameter.
         """
@@ -382,7 +382,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         return loadables
 
     def seriesSorter(self, x, y):
-        """ returns -1, 0, 1 for sorting of strings like: "400: series description"
+        """
+        Returns -1, 0, 1 for sorting of strings like: "400: series description"
+
         Works for DICOMLoadable or other objects with name attribute
         """
         if not (hasattr(x, "name") and hasattr(y, "name")):
@@ -419,7 +421,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         return volumesLogic.AddArchetypeScalarVolume(files[0], name, 0, fileList)
 
     def loadFilesWithSeriesReader(self, imageIOName, files, name, grayscale=True):
-        """ Explicitly use the named imageIO to perform the loading
+        """Explicitly use the named imageIO to perform the loading
         """
 
         if grayscale:

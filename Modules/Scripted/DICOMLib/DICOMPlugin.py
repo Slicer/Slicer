@@ -69,7 +69,7 @@ class DICOMLoadable:
 #
 
 class DICOMPlugin:
-    """ Base class for DICOM plugins
+    """Base class for DICOM plugins
     """
 
     def __init__(self):
@@ -126,7 +126,7 @@ class DICOMPlugin:
         return m.digest()
 
     def getCachedLoadables(self, files):
-        """ Helper method to access the results of a previous
+        """Helper method to access the results of a previous
         examination of a list of files"""
         key = self.hashFiles(files)
         if key in self.loadableCache:
@@ -134,7 +134,7 @@ class DICOMPlugin:
         return None
 
     def cacheLoadables(self, files, loadables):
-        """ Helper method to store the results of examining a list
+        """Helper method to store the results of examining a list
         of files for later quick access"""
         key = self.hashFiles(files)
         self.loadableCache[key] = loadables

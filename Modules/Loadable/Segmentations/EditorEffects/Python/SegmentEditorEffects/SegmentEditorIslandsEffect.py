@@ -12,7 +12,7 @@ from SegmentEditorEffects import *
 
 
 class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
-    """ Operate on connected components (islands) within a segment
+    """Operate on connected components (islands) within a segment
     """
 
     def __init__(self, scriptedEffect):

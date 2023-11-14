@@ -48,7 +48,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+        """Do whatever is needed to reset the state - typically a scene clear will be enough.
         """
         self.delayDisplay("Closing the scene")
         layoutManager = slicer.app.layoutManager()
@@ -64,7 +64,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         self.test_MissingSlices()
 
     def test_AlternateReaders(self):
-        """ Test the DICOM loading of sample testing data
+        """Test the DICOM loading of sample testing data
         """
         testPass = True
 
@@ -206,7 +206,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         return testPass
 
     def test_MissingSlices(self):
-        """ Test behavior of the readers when slices are missing
+        """Test behavior of the readers when slices are missing
 
         To edit and run this test from the python console, paste this below:
 

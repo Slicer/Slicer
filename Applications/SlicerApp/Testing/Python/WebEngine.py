@@ -114,7 +114,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+        """Do whatever is needed to reset the state - typically a scene clear will be enough.
         """
         self.gotResponse = False
         self.gotCorrectResponse = False
@@ -137,7 +137,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
             print((js, result))
 
     def test_WebEngine1(self):
-        """ Testing WebEngine
+        """Testing WebEngine
         """
 
         self.delayDisplay("Starting the test")

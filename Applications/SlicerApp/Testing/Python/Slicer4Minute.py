@@ -102,7 +102,7 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+        """Do whatever is needed to reset the state - typically a scene clear will be enough.
         """
         slicer.mrmlScene.Clear(0)
 
@@ -113,7 +113,7 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
         self.test_Slicer4Minute1()
 
     def test_Slicer4Minute1(self):
-        """ Tests parts of the Slicer4Minute tutorial.
+        """Tests parts of the Slicer4Minute tutorial.
 
         Currently testing 'Part 2' which covers volumes, models, visibility and clipping.
         """

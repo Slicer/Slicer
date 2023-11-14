@@ -17,7 +17,7 @@ from DICOMLib import DICOMExportScene
 #
 
 class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
-    """ DICOM import/export plugin for Slicer Scene Bundle
+    """DICOM import/export plugin for Slicer Scene Bundle
     (MRML scene file embedded in private tag of a DICOM file)
     """
 
@@ -30,7 +30,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
         self.tags["zipData"] = "cadb,1010"
 
     def examineForImport(self, fileLists):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         fileLists parameter.
         """
@@ -46,7 +46,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
         return loadables
 
     def examineFiles(self, files):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         files parameter.
         Look for the special private creator tags that indicate
