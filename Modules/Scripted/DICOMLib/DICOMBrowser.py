@@ -327,24 +327,37 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.fileLists = self.getFileListsForRole(seriesUIDList, "SeriesUIDList")
         self.updateButtonStates()
 
+    def getFilesOrURLsForSeries(self, uid):
+        # This reuses the fileList parameter to
+        seriesFiles = slicer.dicomDatabase.filesForSeries(uid)
+        hasFiles = False
+        for seriesFile in seriesFiles:
+            hasFiles = hasFiles or seriesFile != ""
+            if hasFiles:
+                break
+        if not hasFiles:
+            seriesFiles = slicer.dicomDatabase.urlsForSeries(uid)
+        return seriesFiles
+
+
     def getFileListsForRole(self, uidArgument, role):
         fileLists = []
         if role == "Series":
-            fileLists.append(slicer.dicomDatabase.filesForSeries(uidArgument))
+            fileLists.append(self.getFilesOrURLsForSeries(uidArgument))
         if role == "SeriesUIDList":
             for uid in uidArgument:
                 uid = uid.replace("'", "")
-                fileLists.append(slicer.dicomDatabase.filesForSeries(uid))
+                fileLists.append(self.getFilesOrURLsForSeries(uid))
         if role == "Study":
             series = slicer.dicomDatabase.seriesForStudy(uidArgument)
             for serie in series:
-                fileLists.append(slicer.dicomDatabase.filesForSeries(serie))
+                fileLists.append(self.getFilesOrURLsForSeries(serie))
         if role == "Patient":
             studies = slicer.dicomDatabase.studiesForPatient(uidArgument)
             for study in studies:
                 series = slicer.dicomDatabase.seriesForStudy(study)
                 for serie in series:
-                    fileList = slicer.dicomDatabase.filesForSeries(serie)
+                    fileList = self.getFilesOrURLsForSeries(serie)
                     fileLists.append(fileList)
         return fileLists
 

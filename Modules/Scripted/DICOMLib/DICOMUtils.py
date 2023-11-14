@@ -173,7 +173,15 @@ def loadSeriesByUID(seriesUIDs):
 
     fileLists = []
     for seriesUID in seriesUIDs:
-        fileLists.append(slicer.dicomDatabase.filesForSeries(seriesUID))
+        seriesFiles = slicer.dicomDatabase.filesForSeries(seriesUID)
+        hasFiles = False
+        for seriesFile in seriesFiles:
+            hasFiles = hasFiles or seriesFile != ""
+            if hasFiles:
+                break
+        if not hasFiles:
+            seriesFiles = slicer.dicomDatabase.urlsForSeries(seriesUID)
+        fileLists.append(seriesFiles)
     if len(fileLists) == 0:
         # No files found for DICOM series list
         return []
