@@ -74,9 +74,7 @@ _registeredGuiCreators = []
 
 
 def _processGuiCreator(classtype):
-    """
-    Registers a GuiCreator so it can be used by createGui.
-    """
+    """Registers a GuiCreator so it can be used by createGui."""
     if not issubclass(classtype, GuiCreator):
         raise TypeError("Must be a GuiCreator subclass")
     global _registeredGuiCreators
@@ -85,9 +83,7 @@ def _processGuiCreator(classtype):
 
 
 def createGui(datatype) -> qt.QWidget:
-    """
-    Creates the most appropriate widget to represent the given, possibly annotated, data type.
-    """
+    """Creates the most appropriate widget to represent the given, possibly annotated, data type."""
     values = [(creator.representationValue(datatype), creator) for creator in _registeredGuiCreators]
     best = max(values, key=lambda v: v[0])
     if best[0] > 0:
@@ -96,9 +92,7 @@ def createGui(datatype) -> qt.QWidget:
 
 
 def parameterNodeGuiCreator(classtype=None):
-    """
-    Class decorator to register a new parameter node gui creator.
-    """
+    """Class decorator to register a new parameter node gui creator."""
     def wrap(cls):
         return _processGuiCreator(cls)
 

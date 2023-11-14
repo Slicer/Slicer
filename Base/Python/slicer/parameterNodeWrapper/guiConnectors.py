@@ -40,26 +40,20 @@ __all__ = [
 
 @dataclasses.dataclass
 class Decimals:
-    """
-    Annotation for Qt's setDecimals methods for spinboxes and sliders.
-    """
+    """Annotation for Qt's setDecimals methods for spinboxes and sliders."""
 
     value: int
 
 
 @dataclasses.dataclass
 class SingleStep:
-    """
-    Annotation for Qt's setSingleStep methods for spinboxes and sliders.
-    """
+    """Annotation for Qt's setSingleStep methods for spinboxes and sliders."""
 
     value: Union[float, int]
 
 
 class GuiConnector(abc.ABC):
-    """
-    Base class for converting from widgets to a datatype.
-    """
+    """Base class for converting from widgets to a datatype."""
 
     @staticmethod
     @abc.abstractmethod
@@ -73,9 +67,7 @@ class GuiConnector(abc.ABC):
     @staticmethod
     @abc.abstractmethod
     def create(widget, datatype):
-        """
-        Creates a new connector adapting the given widget object to the given (possibly annotated) datatype.
-        """
+        """Creates a new connector adapting the given widget object to the given (possibly annotated) datatype."""
         raise NotImplementedError("Must implement create")
 
     def __init__(self):
@@ -97,37 +89,27 @@ class GuiConnector(abc.ABC):
 
     @abc.abstractmethod
     def _connect(self):
-        """
-        Make the necessary connection(s) to the widget.
-        """
+        """Make the necessary connection(s) to the widget."""
         raise NotImplementedError("Must implement _connect")
 
     @abc.abstractmethod
     def _disconnect(self):
-        """
-        Make the necessary disconnection(s) to the widget.
-        """
+        """Make the necessary disconnection(s) to the widget."""
         raise NotImplementedError("Must implement _disconnect")
 
     @abc.abstractmethod
     def widget(self):
-        """
-        Returns the underlying widget.
-        """
+        """Returns the underlying widget."""
         raise NotImplementedError("Must implement widget")
 
     @abc.abstractmethod
     def read(self):
-        """
-        Returns the value from the widget as the given datatype.
-        """
+        """Returns the value from the widget as the given datatype."""
         raise NotImplementedError("Must implement read")
 
     @abc.abstractmethod
     def write(self, value) -> None:
-        """
-        Writes the given value to the widget.
-        """
+        """Writes the given value to the widget."""
         raise NotImplementedError("Must implement write")
 
 
@@ -135,9 +117,7 @@ _registeredGuiConnectors = []
 
 
 def _processGuiConnector(classtype):
-    """
-    Registers a GuiConnector for use by createGuiConnector.
-    """
+    """Registers a GuiConnector for use by createGuiConnector."""
     if not issubclass(classtype, GuiConnector):
         raise TypeError("Must be a GuiConnector subclass")
     global _registeredGuiConnectors
@@ -157,9 +137,7 @@ def createGuiConnector(widget, datatype) -> GuiConnector:
 
 
 def parameterNodeGuiConnector(classtype=None):
-    """
-    Class decorator to register a new parameter node gui connector.
-    """
+    """Class decorator to register a new parameter node gui connector."""
     def wrap(cls):
         return _processGuiConnector(cls)
 
@@ -710,9 +688,7 @@ def _getDottedParameterName(parentStack):
 
 
 def _getPackNameToWidgetMap(widget):
-    """
-    Returns the dotted parameter names as keys and the widgets that represents that name as values
-    """
+    """Returns the dotted parameter names as keys and the widgets that represents that name as values"""
     parentStacks = _extractCorrectWidgets(widget)
     return {_getDottedParameterName(p): p[-1] for p in parentStacks}
 

@@ -60,13 +60,11 @@ class UtilTestLogic(ScriptedLoadableModuleLogic):
 class UtilTestTest(ScriptedLoadableModuleTest):
 
     def setUp(self):
-        """Reset the state for testing.
-        """
+        """Reset the state for testing."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_setSliceViewerLayers()
         self.test_loadUI()

@@ -7,8 +7,7 @@ from slicer.i18n import tr as _
 
 
 class SegmentEditorMaskVolumeEffect(AbstractScriptedSegmentEditorEffect):
-    """This effect fills a selected volume node inside and/or outside a segment with a chosen value.
-    """
+    """This effect fills a selected volume node inside and/or outside a segment with a chosen value."""
 
     def __init__(self, scriptedEffect):
         scriptedEffect.name = "Mask volume"  # no tr (don't translate it because modules find effects by name)

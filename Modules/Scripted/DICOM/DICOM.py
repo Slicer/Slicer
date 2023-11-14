@@ -448,8 +448,7 @@ class DICOMFileDialog:
 
     @staticmethod
     def isAscii(s):
-        """Return True if string only contains ASCII characters.
-        """
+        """Return True if string only contains ASCII characters."""
         if isinstance(s, str):
             try:
                 s.encode("ascii")
@@ -536,9 +535,7 @@ class DICOMFileDialog:
 #
 
 class DICOMWidget(ScriptedLoadableModuleWidget):
-    """
-    Slicer module that creates the Qt GUI for interacting with DICOM
-    """
+    """Slicer module that creates the Qt GUI for interacting with DICOM"""
 
     # sets up the widget
     def setup(self):
@@ -891,8 +888,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
 
 
 class DICOMFileReader:
-    """This reader claims DICOM files with higher-than default confidence
-    """
+    """This reader claims DICOM files with higher-than default confidence"""
 
     def __init__(self, parent):
         self.parent = parent

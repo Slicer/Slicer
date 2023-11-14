@@ -49,8 +49,7 @@ def GetSlicerITKReadWriteAddress(nodeObjectOrName):
 
 
 def EnsureRegistration():
-    """Make sure MRMLIDImageIO reader is registered.
-    """
+    """Make sure MRMLIDImageIO reader is registered."""
     if "MRMLIDImageIO" in sitk.ImageFileReader().GetRegisteredImageIOs():
         # already registered
         return

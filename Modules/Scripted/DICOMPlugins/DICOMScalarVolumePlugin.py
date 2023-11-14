@@ -23,8 +23,7 @@ from DICOMLib import DICOMExportScalarVolume
 #
 
 class DICOMScalarVolumePluginClass(DICOMPlugin):
-    """ScalarVolume specific interpretation code
-    """
+    """ScalarVolume specific interpretation code"""
 
     def __init__(self, spacingEpsilon=1e-2, orientationEpsilon=1e-6):
         """
@@ -421,8 +420,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         return volumesLogic.AddArchetypeScalarVolume(files[0], name, 0, fileList)
 
     def loadFilesWithSeriesReader(self, imageIOName, files, name, grayscale=True):
-        """Explicitly use the named imageIO to perform the loading
-        """
+        """Explicitly use the named imageIO to perform the loading"""
 
         if grayscale:
             reader = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
@@ -548,8 +546,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 volumeNode.SetVoxelValueUnits(units)
 
     def loadWithMultipleLoaders(self, loadable):
-        """Load using multiple paths (for testing)
-        """
+        """Load using multiple paths (for testing)"""
         volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name + "-archetype")
         self.setVolumeNodeProperties(volumeNode, loadable)
         volumeNode = self.loadFilesWithSeriesReader("GDCM", loadable.files, loadable.name + "-gdcm", loadable.grayscale)
@@ -560,8 +557,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         return volumeNode
 
     def load(self, loadable, readerApproach=None):
-        """Load the select as a scalar volume using desired approach
-        """
+        """Load the select as a scalar volume using desired approach"""
         # first, determine which reader approach the user prefers
         if not readerApproach:
             readerIndex = slicer.util.settingsValue("DICOM/ScalarVolume/ReaderApproach", 0, converter=int)
@@ -753,8 +749,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             self.zeroEpsilon = zeroEpsilon
 
         def gridTransformFromCorners(self, volumeNode, sourceCorners, targetCorners):
-            """Create a grid transform that maps between the current and the desired corners.
-            """
+            """Create a grid transform that maps between the current and the desired corners."""
             # sanity check
             columns, rows, slices = volumeNode.GetImageData().GetDimensions()
             cornerShape = (slices, 2, 2, 3)

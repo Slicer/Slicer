@@ -151,21 +151,17 @@ class JRC2013VisLogic(ScriptedLoadableModuleLogic):
 
 
 class JRC2013VisTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    """
+    """This is the test case for your scripted module."""
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         self.delayDisplay("Closing the scene")
         layoutManager = slicer.app.layoutManager()
         layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_Part1DICOM()
         self.setUp()
@@ -176,8 +172,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
         self.test_Part4Lung()
 
     def test_Part1DICOM(self):
-        """Test the DICOM part of the test using the head atlas
-        """
+        """Test the DICOM part of the test using the head atlas"""
         import os
         self.delayDisplay("Starting the DICOM test")
         #
@@ -306,8 +301,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
         DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
 
     def test_Part2Head(self):
-        """Test using the head atlas - may not be needed - Slicer4Minute is already tested
-        """
+        """Test using the head atlas - may not be needed - Slicer4Minute is already tested"""
         self.delayDisplay("Starting the test")
         #
         # first, get some data
@@ -382,8 +376,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test caused exception!\n" + str(e))
 
     def test_Part3Liver(self):
-        """Test using the liver example data
-        """
+        """Test using the liver example data"""
         self.delayDisplay("Starting the test")
         #
         # first, get some data
@@ -450,8 +443,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test caused exception!\n" + str(e))
 
     def test_Part4Lung(self):
-        """Test using the lung data
-        """
+        """Test using the lung data"""
 
         self.delayDisplay("Starting the test")
         #

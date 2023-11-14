@@ -12,8 +12,7 @@ from SegmentEditorEffects import *
 
 
 class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
-    """MaringEffect grows or shrinks the segment by a specified margin
-    """
+    """MaringEffect grows or shrinks the segment by a specified margin"""
 
     def __init__(self, scriptedEffect):
         scriptedEffect.name = "Margin"  # no tr (don't translate it because modules find effects by name)

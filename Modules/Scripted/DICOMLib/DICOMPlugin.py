@@ -69,8 +69,7 @@ class DICOMLoadable:
 #
 
 class DICOMPlugin:
-    """Base class for DICOM plugins
-    """
+    """Base class for DICOM plugins"""
 
     def __init__(self):
         # displayed for the user as the plugin handling the load

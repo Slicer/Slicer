@@ -101,8 +101,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
         return loadables
 
     def load(self, loadable):
-        """Load the selection
-        """
+        """Load the selection"""
 
         if loadable.grayscale:
             volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode", loadable.name)

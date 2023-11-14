@@ -112,8 +112,7 @@ class DICOMRecentActivityWidget(qt.QWidget):
         return recentSeries
 
     def update(self):
-        """Load the table widget with header values for the file
-        """
+        """Load the table widget with header values for the file"""
         self.listWidget.clear()
         secondsPerHour = 60 * 60
         insertsPastHour = 0

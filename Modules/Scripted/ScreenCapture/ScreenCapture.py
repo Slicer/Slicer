@@ -508,8 +508,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
             return None
 
     def addLog(self, text):
-        """Append text to log window
-        """
+        """Append text to log window"""
         self.statusLabel.appendPlainText(text)
         self.statusLabel.ensureCursorVisible()
         slicer.app.processEvents()  # force update
@@ -1282,9 +1281,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     def capture3dViewRotation(self, viewNode, startRotation, endRotation, numberOfImages, rotationAxis,
                               outputDir, outputFilenamePattern, captureAllViews=None, transparentBackground=False):
-        """
-        Acquire a set of screenshots of the 3D view while rotating it.
-        """
+        """Acquire a set of screenshots of the 3D view while rotating it."""
 
         self.cancelRequested = False
 
@@ -1344,9 +1341,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     def captureSequence(self, viewNode, sequenceBrowserNode, sequenceStartIndex,
                         sequenceEndIndex, numberOfImages, outputDir, outputFilenamePattern,
                         captureAllViews=None, transparentBackground=False):
-        """
-        Acquire a set of screenshots of a view while iterating through a sequence.
-        """
+        """Acquire a set of screenshots of a view while iterating through a sequence."""
 
         self.cancelRequested = False
 
@@ -1450,9 +1445,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             logging.debug("ffmpeg error output: " + stderr.decode())
 
     def deleteTemporaryFiles(self, outputDir, imageFileNamePattern, numberOfImages):
-        """
-        Delete files after a video has been created from them.
-        """
+        """Delete files after a video has been created from them."""
         import os
         filePathPattern = os.path.join(outputDir, imageFileNamePattern)
         for imageIndex in range(numberOfImages):
@@ -1461,9 +1454,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             os.remove(filename)
 
     def getNextAvailableFileName(self, outputDir, outputFilenamePattern, snapshotIndex):
-        """
-        Find a file index that does not overwrite any existing file.
-        """
+        """Find a file index that does not overwrite any existing file."""
         if not os.path.exists(outputDir):
             os.makedirs(outputDir)
         filePathPattern = os.path.join(outputDir, outputFilenamePattern)
@@ -1485,8 +1476,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
         import SampleData
         self.image1 = SampleData.downloadSample("MRBrainTumor1")
@@ -1522,8 +1512,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
             self.assertFalse(os.path.exists(filename))
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_SliceSweep()
         self.test_SliceFade()

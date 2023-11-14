@@ -163,8 +163,7 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
 # DrawPipeline
 #
 class DrawPipeline:
-    """Visualization objects and pipeline for each slice view for drawing
-    """
+    """Visualization objects and pipeline for each slice view for drawing"""
 
     def __init__(self, scriptedEffect, sliceWidget):
         self.scriptedEffect = scriptedEffect

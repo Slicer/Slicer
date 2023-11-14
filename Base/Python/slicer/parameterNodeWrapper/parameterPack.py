@@ -108,9 +108,7 @@ def _strMethod(self) -> str:
 
 
 def isParameterPack(obj):
-    """
-    Returns true if the given object is a parameterPack, false otherwise.
-    """
+    """Returns true if the given object is a parameterPack, false otherwise."""
     return getattr(obj, "_is_parameterPack", False)
 
 
@@ -138,9 +136,7 @@ def _checkMember(packObjectOrClass, membername: str):
 
 
 def _getValue(self, membername: str):
-    """
-    Gets a value in a parameterPack from the parameter's name, as a string.
-    """
+    """Gets a value in a parameterPack from the parameter's name, as a string."""
     _checkTopMember(self, membername)
     topname, subname = splitPossiblyDottedName(membername)
     topnameValue = getattr(self, topname)
@@ -151,9 +147,7 @@ def _getValue(self, membername: str):
 
 
 def _setValue(self, membername: str, value):
-    """
-    Sets a value in a parameterPack given the parameter's name, as a string.
-    """
+    """Sets a value in a parameterPack given the parameter's name, as a string."""
     _checkTopMember(self, membername)
     topname, subname = splitPossiblyDottedName(membername)
     if subname is None:
@@ -166,9 +160,7 @@ def _setValue(self, membername: str, value):
 def _makeDataTypeFunc(classvar):
     @staticmethod
     def dataType(membername):
-        """
-        Returns the annotated data type of a parameter in a parameterPack, given the parameter's name as a string.
-        """
+        """Returns the annotated data type of a parameter in a parameterPack, given the parameter's name as a string."""
         _checkTopMember(classvar, membername)
         topname, subname = splitPossiblyDottedName(membername)
         datatype = classvar.allParameters[topname].unalteredType
@@ -180,9 +172,7 @@ def _makeDataTypeFunc(classvar):
 
 
 def _processParameterPack(classtype):
-    """
-    Takes a parameterPack class description and creates the full parameterPack class.
-    """
+    """Takes a parameterPack class description and creates the full parameterPack class."""
     members = typing.get_type_hints(classtype, include_extras=True)
     if len(members) == 0:
         raise ValueError("Unable to find any members in parameterPack")
@@ -266,9 +256,7 @@ def nestedParameterNames(parameterPackClassOrInstance) -> list[str]:
 
 
 def parameterPack(classtype=None):
-    """
-    Class decorator to make an parameterPack.
-    """
+    """Class decorator to make an parameterPack."""
     def wrap(cls):
         return _processParameterPack(cls)
 
@@ -391,9 +379,7 @@ class _ParameterPackInstanceValidator(Validator):
 
 @parameterNodeSerializer
 class ParameterPackSerializer(Serializer):
-    """
-    Serializer for any parameterPack.
-    """
+    """Serializer for any parameterPack."""
 
     @staticmethod
     def canSerialize(type_) -> bool:

@@ -178,9 +178,7 @@ class CropVolumeSequenceLogic(ScriptedLoadableModuleLogic):
         return proxyVolume.GetTransformNodeID()
 
     def run(self, inputVolSeq, outputVolSeq, cropParameters):
-        """
-        Run the actual algorithm
-        """
+        """Run the actual algorithm"""
 
         logging.info("Processing started")
 
@@ -295,13 +293,11 @@ class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_CropVolumeSequence1()
 

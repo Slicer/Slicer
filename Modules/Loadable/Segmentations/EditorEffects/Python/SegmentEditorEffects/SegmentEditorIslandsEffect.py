@@ -12,8 +12,7 @@ from SegmentEditorEffects import *
 
 
 class SegmentEditorIslandsEffect(AbstractScriptedSegmentEditorEffect):
-    """Operate on connected components (islands) within a segment
-    """
+    """Operate on connected components (islands) within a segment"""
 
     def __init__(self, scriptedEffect):
         scriptedEffect.name = "Islands"  # no tr (don't translate it because modules find effects by name)

@@ -363,8 +363,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.updateButtonStates()
 
     def getLoadablesFromFileLists(self, fileLists):
-        """Take list of file lists, return loadables by plugin dictionary
-        """
+        """Take list of file lists, return loadables by plugin dictionary"""
 
         loadablesByPlugin = {}
         loadEnabled = False

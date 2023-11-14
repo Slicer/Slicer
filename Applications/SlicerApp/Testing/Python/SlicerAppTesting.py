@@ -49,8 +49,7 @@ def dropcache():
 
 
 def run(executable, arguments=[], verbose=True, shell=False, drop_cache=False):
-    """Run ``executable`` with provided ``arguments``.
-    """
+    """Run ``executable`` with provided ``arguments``."""
     if drop_cache:
         dropcache()
     if verbose:
@@ -69,24 +68,21 @@ def run(executable, arguments=[], verbose=True, shell=False, drop_cache=False):
 
 
 def runSlicer(slicer_executable, arguments=[], verbose=True, **kwargs):
-    """Run ``slicer_executable`` with provided ``arguments``.
-    """
+    """Run ``slicer_executable`` with provided ``arguments``."""
     args = ["--no-splash"]
     args.extend(arguments)
     return run(slicer_executable, args, verbose, **kwargs)
 
 
 def runSlicerAndExit(slicer_executable, arguments=[], verbose=True, **kwargs):
-    """Run ``slicer_executable`` with provided ``arguments`` and exit.
-    """
+    """Run ``slicer_executable`` with provided ``arguments`` and exit."""
     args = ["--exit-after-startup"]
     args.extend(arguments)
     return runSlicer(slicer_executable, args, verbose, **kwargs)
 
 
 def timecall(method, **kwargs):
-    """Wrap ``method`` and return its execution time.
-    """
+    """Wrap ``method`` and return its execution time."""
     repeat = 1
     if "repeat" in kwargs:
         repeat = kwargs["repeat"]

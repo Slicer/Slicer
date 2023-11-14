@@ -151,8 +151,7 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
 # LevelTracingPipeline
 #
 class LevelTracingPipeline:
-    """Visualization objects and pipeline for each slice view for level tracing
-    """
+    """Visualization objects and pipeline for each slice view for level tracing"""
 
     def __init__(self, effect, sliceWidget):
         self.effect = effect

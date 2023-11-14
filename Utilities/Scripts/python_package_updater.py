@@ -48,16 +48,14 @@ def parse_pip_list_output(packages_to_update):
 
 
 def external_project_filepaths(directory):
-    """Yield a generator of external project filepaths found in ``directory``.
-    """
+    """Yield a generator of external project filepaths found in ``directory``."""
     for dirpath, _, filenames, in os.walk(directory):
         for filename in filenames:
             yield os.path.join(dirpath, filename)
 
 
 def hint_validation_mismatch_summary(mismatches):
-    """Format list of hint validation mismatches for display purpose.
-    """
+    """Format list of hint validation mismatches for display purpose."""
     return "\n".join([f"{filepath}\n  {first} != {second}" for filepath, first, second in mismatches])
 
 

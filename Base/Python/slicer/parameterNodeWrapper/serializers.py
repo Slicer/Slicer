@@ -67,9 +67,7 @@ class Serializer(abc.ABC):
 
     @abc.abstractmethod
     def default(self):
-        """
-        The default value to use if another default is not specified.
-        """
+        """The default value to use if another default is not specified."""
         raise NotImplementedError("default is not implemented")
 
     @abc.abstractmethod
@@ -92,16 +90,12 @@ class Serializer(abc.ABC):
 
     @abc.abstractmethod
     def read(self, parameterNode, name: str):
-        """
-        Reads and returns the value with the given name from the parameterNode.
-        """
+        """Reads and returns the value with the given name from the parameterNode."""
         raise NotImplementedError("read is not implemented")
 
     @abc.abstractmethod
     def remove(self, parameterNode, name: str) -> None:
-        """
-        Removes the value of the given name from the parameterNode.
-        """
+        """Removes the value of the given name from the parameterNode."""
         raise NotImplementedError("remove is not implemented")
 
     @staticmethod
@@ -181,9 +175,7 @@ _registeredSerializers = []
 
 
 def _processSerializer(classtype):
-    """
-    Registers a Serializer so it can be used by createSerializer.
-    """
+    """Registers a Serializer so it can be used by createSerializer."""
 
     if not issubclass(classtype, Serializer):
         raise Exception("Must be a serializer type.")
@@ -193,9 +185,7 @@ def _processSerializer(classtype):
 
 
 def parameterNodeSerializer(classtype=None):
-    """
-    Class decorator to register a new parameter node serializer
-    """
+    """Class decorator to register a new parameter node serializer"""
     def wrap(cls):
         return _processSerializer(cls)
 
@@ -241,9 +231,7 @@ def createSerializerFromAnnotatedType(annotatedType):
 
 @parameterNodeSerializer
 class NumberSerializer(Serializer):
-    """
-    Serializer for numeric types (e.g. int, float).
-    """
+    """Serializer for numeric types (e.g. int, float)."""
 
     @staticmethod
     def canSerialize(type_) -> bool:
@@ -257,9 +245,7 @@ class NumberSerializer(Serializer):
         return None
 
     def __init__(self, type):
-        """
-        Constructs a serializer for the given numeric type.
-        """
+        """Constructs a serializer for the given numeric type."""
         self.type = type
 
     def default(self):
@@ -321,9 +307,7 @@ class StringSerializer(Serializer):
 
 @parameterNodeSerializer
 class PathSerializer(Serializer):
-    """
-    Serializer for pathlib types (Path, PosixPath, WindowsPath, PurePath, PurePosixPath, PureWindowsPath).
-    """
+    """Serializer for pathlib types (Path, PosixPath, WindowsPath, PurePath, PurePosixPath, PureWindowsPath)."""
 
     @staticmethod
     def canSerialize(type_) -> bool:
@@ -338,9 +322,7 @@ class PathSerializer(Serializer):
         return None
 
     def __init__(self, pathtype):
-        """
-        Constructs a serializer for the given pathlib type.
-        """
+        """Constructs a serializer for the given pathlib type."""
         self.type = pathtype
 
     def default(self):
@@ -364,9 +346,7 @@ class PathSerializer(Serializer):
 
 @parameterNodeSerializer
 class BoolSerializer(Serializer):
-    """
-    Serializer for bool.
-    """
+    """Serializer for bool."""
 
     @staticmethod
     def canSerialize(type_) -> bool:
@@ -400,9 +380,7 @@ class BoolSerializer(Serializer):
 
 @parameterNodeSerializer
 class NodeSerializer(Serializer):
-    """
-    Serializer for any instance (including subclasses) of slicer.vtkMRMLNode.
-    """
+    """Serializer for any instance (including subclasses) of slicer.vtkMRMLNode."""
 
     @staticmethod
     def canSerialize(type_) -> bool:
@@ -546,9 +524,7 @@ class ObservedList(collections.abc.MutableSequence):
 
 @parameterNodeSerializer
 class ListSerializer(Serializer):
-    """
-    Serializer for lists of a type.
-    """
+    """Serializer for lists of a type."""
 
     @staticmethod
     def canSerialize(type_) -> bool:
@@ -711,9 +687,7 @@ class TupleSerializer(Serializer):
 
 
 class ObservedDict(collections.abc.MutableMapping):
-    """
-    A dict-like class that will write values to a parameter node on change.
-    """
+    """A dict-like class that will write values to a parameter node on change."""
 
     def __init__(self, parameterNode, dictSerializer, name, startingValue):
         self._parameterNode = parameterNode

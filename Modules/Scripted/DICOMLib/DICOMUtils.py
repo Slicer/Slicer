@@ -83,8 +83,7 @@ def loadPatientByUID(patientUID, messages=None, progressCallback=None):
 
 # ------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientName(name):
-    """Get patient UID by patient name for easy loading of a patient
-    """
+    """Get patient UID by patient name for easy loading of a patient"""
     if not slicer.dicomDatabase.isOpen:
         raise OSError("DICOM module or database cannot be accessed")
 
@@ -109,8 +108,7 @@ def loadPatientByName(patientName, messages=None, progressCallback=None):
 
 # ------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientID(patientID):
-    """Get database patient UID by DICOM patient ID for easy loading of a patient
-    """
+    """Get database patient UID by DICOM patient ID for easy loading of a patient"""
     if not slicer.dicomDatabase.isOpen:
         raise OSError("DICOM module or database cannot be accessed")
 
@@ -343,8 +341,7 @@ def openTemporaryDatabase(directory=None):
 
 # ------------------------------------------------------------------------------
 def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
-    """Close temporary DICOM database and remove its directory if requested
-    """
+    """Close temporary DICOM database and remove its directory if requested"""
     if slicer.dicomDatabase.isOpen:
         if cleanup:
             slicer.dicomDatabase.initializeDatabase()
@@ -380,8 +377,7 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
 
 # ------------------------------------------------------------------------------
 def createTemporaryDatabase(directory=None):
-    """Open temporary DICOM database, return new database object
-    """
+    """Open temporary DICOM database, return new database object"""
     # Specify temporary directory
     if not directory or directory == "":
         from time import gmtime, strftime
@@ -409,8 +405,7 @@ def createTemporaryDatabase(directory=None):
 
 # ------------------------------------------------------------------------------
 def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
-    """Close temporary DICOM database and remove its directory if requested
-    """
+    """Close temporary DICOM database and remove its directory if requested"""
     dicomDatabase.closeDatabase()
 
     if cleanup:
@@ -446,8 +441,7 @@ class TemporaryDICOMDatabase:
 
 # ------------------------------------------------------------------------------
 def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
-    """Import DICOM files from folder into Slicer database
-    """
+    """Import DICOM files from folder into Slicer database"""
     try:
         indexer = ctk.ctkDICOMIndexer()
         assert indexer is not None
@@ -563,8 +557,7 @@ def allSeriesUIDsInDatabase(database=None):
 
 # ------------------------------------------------------------------------------
 def seriesUIDsForFiles(files):
-    """Collect series instance UIDs belonging to a list of files
-    """
+    """Collect series instance UIDs belonging to a list of files"""
     seriesUIDs = set()
     for file in files:
         seriesUID = slicer.dicomDatabase.seriesForFile(file)
@@ -575,8 +568,7 @@ def seriesUIDsForFiles(files):
 
 # ------------------------------------------------------------------------------
 class LoadDICOMFilesToDatabase:
-    """Context manager to conveniently load DICOM files downloaded zipped from the internet
-    """
+    """Context manager to conveniently load DICOM files downloaded zipped from the internet"""
 
     def __init__(self, url, archiveFilePath=None, dicomDataDir=None, \
                  expectedNumberOfFiles=None, selectedPlugins=None, loadedNodes=None, checksum=None):
@@ -738,8 +730,7 @@ def refreshDICOMWidget():
 
 
 def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, progressCallback=None, pluginInstances=None):
-    """Take list of file lists, return loadables by plugin dictionary
-    """
+    """Take list of file lists, return loadables by plugin dictionary"""
     detailedLogging = slicer.util.settingsValue("DICOM/detailedLogging", False, converter=slicer.util.toBool)
     loadablesByPlugin = {}
     loadEnabled = False
