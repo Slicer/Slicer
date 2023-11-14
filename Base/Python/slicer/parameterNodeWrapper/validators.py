@@ -21,6 +21,7 @@ class Validator(abc.ABC):
     Base class from which all parameterNodeWrapper validators derive.
     Validators must derive from this class to be used.
     """
+
     @abc.abstractmethod
     def validate(self, value) -> None:
         """

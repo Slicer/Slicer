@@ -114,6 +114,7 @@ class CustomIntSerializer(Serializer):
     Stores ints as their negative.
     Used to test being able to use a specific serializer.
     """
+
     @staticmethod
     def canSerialize(type_) -> bool:
         return type_ == int

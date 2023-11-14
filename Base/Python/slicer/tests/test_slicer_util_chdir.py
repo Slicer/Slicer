@@ -7,6 +7,7 @@ class SlicerUtilChdirTests(unittest.TestCase):
     """Available in Python 3.11 as ``TestChdir`` found in ``Lib/test/test_contextlib.py``
     and adapted from https://github.com/python/cpython/pull/28271
     """
+
     def test_simple(self):
         old_cwd = os.getcwd()
         target = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../slicer"))

@@ -646,6 +646,7 @@ class DICOMTestingQRServer:
     TODO: it might make sense to refactor this as a generic tool
     for interacting with DCMTK
     """
+
     # TODO: make this use DICOMProcess superclass
 
     def __init__(self, exeDir=".", tmpDir="./DICOM"):

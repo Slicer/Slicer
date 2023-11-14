@@ -124,6 +124,7 @@ class RSNAQuantTutorialLogic(ScriptedLoadableModuleLogic):
     this class and make use of the functionality without
     requiring an instance of the Widget
     """
+
     pass
 
 

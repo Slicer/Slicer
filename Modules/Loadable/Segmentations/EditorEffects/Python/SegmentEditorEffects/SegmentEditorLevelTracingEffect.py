@@ -13,7 +13,7 @@ from SegmentEditorEffects import *
 
 class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
     """ LevelTracingEffect is a LabelEffect implementing level tracing fill
-        using intensity-based isolines
+    using intensity-based isolines
     """
 
     def __init__(self, scriptedEffect):

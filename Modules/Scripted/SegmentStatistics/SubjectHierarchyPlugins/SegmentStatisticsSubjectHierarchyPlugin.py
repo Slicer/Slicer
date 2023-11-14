@@ -11,10 +11,10 @@ from AbstractScriptedSubjectHierarchyPlugin import *
 class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
     """ Scripted subject hierarchy plugin for the Segment Statistics module.
 
-        This is also an example for scripted plugins, so includes all possible methods.
-        The methods that are not needed (i.e. the default implementation in
-        qSlicerSubjectHierarchyAbstractPlugin is satisfactory) can simply be
-        omitted in plugins created based on this one.
+    This is also an example for scripted plugins, so includes all possible methods.
+    The methods that are not needed (i.e. the default implementation in
+    qSlicerSubjectHierarchyAbstractPlugin is satisfactory) can simply be
+    omitted in plugins created based on this one.
     """
 
     # Necessary static member to be able to set python source to scripted subject hierarchy plugin
