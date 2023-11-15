@@ -86,7 +86,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.viewNodeSelector.showChildNodeTypes = False
         self.viewNodeSelector.setMRMLScene(slicer.mrmlScene)
         self.viewNodeSelector.setToolTip(_("This slice or 3D view will be updated during capture."
-                                         "Only this view will be captured unless 'Capture of all views' option in output section is enabled."))
+                                         "Only this view will be captured unless 'Capture all views' option is enabled."))
         inputFormLayout.addRow(_("Main view: "), self.viewNodeSelector)
 
         self.captureAllViewsCheckBox = qt.QCheckBox(" ")
@@ -96,8 +96,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
         # Mode
         self.animationModeWidget = qt.QComboBox()
-        self.animationModeWidget.setToolTip(_("Select the property that will be adjusted"))
-        inputFormLayout.addRow(_("Animation mode:"), self.animationModeWidget)
+        self.animationModeWidget.setToolTip(_("Specify how the main view will be modified during capture."))
+        inputFormLayout.addRow(_("Capture mode:"), self.animationModeWidget)
 
         # Slice start offset position
         self.sliceStartOffsetLabel = qt.QLabel(_("Start sweep offset:"))
@@ -470,7 +470,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     def updateOutputType(self, selectionIndex=0):
         outputType = self.outputTypeWidget.currentData
         forceSingleImage = False
-        if self.animationModeWidget.currentData == "NONE":
+        if self.animationModeWidget.currentData == "SINGLE_FRAME":
             outputType = "IMAGE_SERIES"
             forceSingleImage = True
 
@@ -534,11 +534,11 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
             self.animationModeWidget.clear()
             if self.viewNodeType == VIEW_SLICE:
-                self.animationModeWidget.addItem(_("none"), "NONE")
+                self.animationModeWidget.addItem(_("single frame"), "SINGLE_FRAME")
                 self.animationModeWidget.addItem(_("slice sweep"), "SLICE_SWEEP")
                 self.animationModeWidget.addItem(_("slice fade"), "SLICE_FADE")
             if self.viewNodeType == VIEW_3D:
-                self.animationModeWidget.addItem(_("none"), "NONE")
+                self.animationModeWidget.addItem(_("single frame"), "SINGLE_FRAME")
                 self.animationModeWidget.addItem(_("3D rotation"), "3D_ROTATION")
             if sequencesModuleAvailable:
                 self.animationModeWidget.addItem(_("sequence"), "SEQUENCE")
@@ -668,7 +668,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         videoOutputRequested = (self.outputTypeWidget.currentData == "VIDEO")
         viewNode = self.viewNodeSelector.currentNode()
         numberOfSteps = int(self.numberOfStepsSliderWidget.value)
-        if self.animationModeWidget.currentData == "NONE":
+        if self.animationModeWidget.currentData == "SINGLE_FRAME":
             numberOfSteps = 1
         if numberOfSteps < 2:
             # If a single image is selected

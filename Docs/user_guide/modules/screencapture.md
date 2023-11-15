@@ -8,9 +8,10 @@ This module is for creating videos, image sequences, or lightbox image from 3D a
 
 ### Input
 
-- **Main view:** This view will be changed during the animation (rotated, sweeped, etc.).
-- **Capture all views:** If enabled then all the view in the view layout will be captured. If disabled then only the main view will be captured. By capturing all views, it is possible to see the animated view (such as a moving slice) in 3D and in other slice views.
-- **Animation mode:** specifies how the main view will be modified during capture.
+- **Main view:** This view is used for capturing (rotated, sweeped, etc.).
+- **Capture all views:** When enabled, all views in the layout will be captured. Otherwise, only the main view is captured. By capturing all views, it is possible to see the animated view (such as a moving slice) in 3D and in other slice views.
+- **Capture mode:** specifies how the main view will be modified during capture.
+  - **single frame:** Acquire a single frame of selected main view or all views if "Capture all views" is enabled.
   - **3D rotation:** Acquire video of a rotating 3D view. For smooth repeated display of a 360-degree rotation it is recommended to choose 31 or 61 as "Number of images".
   - **slice sweep:** Acquire video while going through selected range of image frames (for slice viewer only).
   - **slice fade:** Acquire video while fading between the foreground and background image (for slice viewer only).).
@@ -39,7 +40,7 @@ This module is for creating videos, image sequences, or lightbox image from 3D a
 
     ![lightbox image](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_screencapture_lightbox.png)
 
-- **Number of images:** Defines how many frames are generated in the specified range. Higher number results in smoother animation but larger video file. If **single** option is enabled then a single image is captured (and counter in the filename is automatically incremented, therefore it can be used to acquire many screenshots manually).
+- **Number of images:** Defines how many frames are generated in the specified range. Higher number results in smoother animation but larger video file. If **single frame** capture mode is selected then a single image is captured (and counter in the filename is automatically incremented, therefore it can be used to acquire many screenshots manually).
 - **Output directory:** Output image or video will be saved in this directory.
 - **Output file name:** Output file name for video and lightbox.
 - **Video format:**
@@ -67,7 +68,7 @@ This module is for creating videos, image sequences, or lightbox image from 3D a
 - **Image file name pattern:** Defines image file naming pattern. `%05d` will be replaced by the image number (5 numbers, padded with zeros). This is only used if image series output is selected.
 - **Lightbox image columns:** Number of columns in the generated lighbox image.
 - **Maximum number of images:** Specifies the maximum range of the "number of images" slider. Useful for creating very long animations.
-- **Output volume node:** If a single image output is selected then the output can be saved into the selected volume node.
+- **Output volume node:** If "single frame" capture mode is selected then the output can be saved into the selected volume node.
 - **View controllers:** Show view controllers. If unchecked then view controllers will be temporarily hidden during screen capture.
 - **Transparent background:** If checked then images will be captured with transparent background.
 - **Watermark image:** Adds a watermark image to the captured images.
