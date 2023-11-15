@@ -86,13 +86,14 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
   /// Overrides \sa includeNodeAttributeNamesFilter
   Q_PROPERTY(QStringList excludeNodeAttributeNamesFilter READ excludeNodeAttributeNamesFilter WRITE setExcludeNodeAttributeNamesFilter)
 
-  /// Filter to show only items that contain an attribute with this name. Empty by default
-  /// Note: Deprecated, kept only for backwards compatibility. Sets and returns the first attribute in \sa includeNodeAttributeNamesFilter
+  /// Filter to show only items that contain an item attribute with this name. Empty by default.
+  /// Sets and returns the first attribute in \sa includeItemAttributeNamesFilter.
+  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter() instead.
   Q_PROPERTY(QString attributeNameFilter READ attributeNameFilter WRITE setAttributeNameFilter)
-  /// Filter to show only items that contain any attribute given in \sa includeItemAttributeNamesFilter with the value.
+  /// Filter to show only items that contain any item attribute given in \sa includeItemAttributeNamesFilter with the value.
   /// If empty, then existence of the attributes is enough to show.
-  /// Exact match is required. Empty by default
-  /// Note: Deprecated, kept only for backwards compatibility. Works consistently with the previous operation.
+  /// Exact match is required. Empty by default.
+  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter() instead.
   Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
 
 public:
