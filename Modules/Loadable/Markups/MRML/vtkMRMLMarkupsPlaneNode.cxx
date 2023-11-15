@@ -1449,7 +1449,7 @@ bool vtkMRMLMarkupsPlaneNode::GetClosestFitPlaneFromControlPoints(vtkMatrix4x4* 
   // The orientation of the coordinate system is adjusted so that the z axis aligns with the normal of the
   // best fit plane defined by the control points.
 
-  int numberOfControlPoints = this->GetNumberOfMarkups();
+  int numberOfControlPoints = this->GetNumberOfControlPoints();
   vtkNew<vtkPoints> controlPoints_Node;
   for (int i = 0; i < numberOfControlPoints; ++i)
     {
