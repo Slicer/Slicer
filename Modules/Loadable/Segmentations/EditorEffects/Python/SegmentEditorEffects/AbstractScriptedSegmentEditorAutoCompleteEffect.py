@@ -61,8 +61,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
         self.previewComputationInProgress = False
 
-    def __del__(self, scriptedEffect):
-        super(SegmentEditorAutoCompleteEffect, self).__del__()
+    def __del__(self):
         self.delayedAutoUpdateTimer.stop()
         self.observeSegmentation(False)
 
