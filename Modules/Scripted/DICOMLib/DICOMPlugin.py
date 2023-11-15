@@ -139,6 +139,34 @@ class DICOMPlugin:
         key = self.hashFiles(files)
         self.loadableCache[key] = loadables
 
+    def cleanNodeName(self, value):
+        cleanValue = value
+        cleanValue = cleanValue.replace("|", "-")
+        cleanValue = cleanValue.replace("/", "-")
+        cleanValue = cleanValue.replace("\\", "-")
+        cleanValue = cleanValue.replace("*", "(star)")
+        cleanValue = cleanValue.replace("\\", "-")
+        return cleanValue
+
+    def seriesSorter(self, x, y):
+        """ returns -1, 0, 1 for sorting of strings like: "400: series description"
+        Works for DICOMLoadable or other objects with name attribute
+        Use like:
+            from functools import cmp_to_key
+            loadables.sort(key=cmp_to_key(lambda x, y: self.seriesSorter(x, y)))
+        """
+        if not (hasattr(x, 'name') and hasattr(y, 'name')):
+            return 0
+        xName = x.name
+        yName = y.name
+        try:
+            xNumber = int(xName[:xName.index(':')])
+            yNumber = int(yName[:yName.index(':')])
+        except ValueError:
+            return 0
+        cmp = xNumber - yNumber
+        return cmp
+
     def examineForImport(self, fileList):
         """Look at the list of lists of filenames and return
         a list of DICOMLoadables that are options for loading
