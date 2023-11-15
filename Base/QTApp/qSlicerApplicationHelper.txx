@@ -80,6 +80,17 @@ int qSlicerApplicationHelper::postInitializeApplication(
     QScopedPointer<SlicerMainWindowType>& window
     )
 {
+
+#if defined(Q_CC_GNU) && Q_CC_GNU <= 703
+  // The lines below are needed for suppressing "-Wunused-function" warnings
+  // reported when using GCC<=7.3 to build translation units not making use
+  // of the "qSlicerApplicationHelper::postInitializeApplication" function.
+# ifdef Slicer_USE_QtTesting
+  (void)setEnableQtTesting; // Fix -Wunused-function warning
+# endif
+  (void)splashMessage; // Fix -Wunused-function warning
+#endif
+
   if (app.style())
     {
     app.installEventFilter(app.style());
