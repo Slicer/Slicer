@@ -60,7 +60,7 @@ Transforms are usually computed using [spatial registration tools](../registrati
 
 ### Save transform
 
-Traansforms are saved into [ITK](https://itk.org/) transform file format. ITK always saves transform "from parent", as this is the direction that is necessary for transforming images.
+Transforms are saved into [ITK](https://itk.org/) transform file format. ITK always saves transform "from parent", as this is the direction that is necessary for transforming images.
 
 If a transform node in Slicer has a transformation with "to parent" direction (e.g., it was computed like that or a "from parent" transform got inverted) then:
 - linear transforms: the transform is automatically converted to "from parent" direction.
