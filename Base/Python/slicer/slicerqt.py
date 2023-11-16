@@ -1,7 +1,12 @@
 import logging
 
+# Importing ctk, qt, vtk, and slicer is necessary for subsequent use and to accommodate
+# legacy code in Slicer extensions relying on "from __main__ import vtk, qt, ctk, slicer".
 import ctk
 import qt
+
+# The vtk import is retained due to legacy code in Slicer extensions
+# that relies on "from __main__ import vtk, qt, ctk, slicer".
 import vtk  # noqa: F401
 
 import slicer
