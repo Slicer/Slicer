@@ -156,13 +156,13 @@ class DICOMPlugin:
             from functools import cmp_to_key
             loadables.sort(key=cmp_to_key(lambda x, y: self.seriesSorter(x, y)))
         """
-        if not (hasattr(x, 'name') and hasattr(y, 'name')):
+        if not (hasattr(x, "name") and hasattr(y, "name")):
             return 0
         xName = x.name
         yName = y.name
         try:
-            xNumber = int(xName[:xName.index(':')])
-            yNumber = int(yName[:yName.index(':')])
+            xNumber = int(xName[:xName.index(":")])
+            yNumber = int(yName[:yName.index(":")])
         except ValueError:
             return 0
         cmp = xNumber - yNumber
