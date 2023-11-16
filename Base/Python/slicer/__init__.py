@@ -154,6 +154,26 @@ For more details, see the generated Slicer API documentation.
 """)
 
 # -----------------------------------------------------------------------------
+# Importing VTK is required for loading its Python modules and ensuring seamless instantiation
+# of VTK-based MRML or Slicer Python modules from code executed in both "PythonSlicer executable"
+# and the "Slicer Python Console" environments.
+#
+# For example, regardless of the order of the imports, the following is now supported in
+# both environments:
+#
+#   import slicer
+#   import vtk
+#   object = slicer.vtkMRMLScene()
+#   assert isinstance(object, vtk.vtkObject)
+#
+# This is needed because the wrapping of the MRML or Slicer VTK-based C++ classes is done
+# through the vtkMacroKitPythonWrap (from vtkAddon) and the generated "vtk*PythonInitImpl.cxx"
+# files do not include the names of the dependent VTK modules in the list used with
+# "vtkPythonUtil::ImportModule".
+
+import vtk  # noqa: F401
+
+# -----------------------------------------------------------------------------
 # Load modules: Add VTK and PythonQt python module attributes into slicer namespace
 
 try:
@@ -199,3 +219,4 @@ if not standalone_python:
 del _createModule
 del available_kits
 del standalone_python
+del vtk
