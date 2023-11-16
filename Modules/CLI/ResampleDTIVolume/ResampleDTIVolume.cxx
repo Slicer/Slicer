@@ -922,7 +922,7 @@ int Do( parameters list )
         }
       if( list.numberOfThread )
         {
-        transformDeformationFieldFilter->SetNumberOfThreads( list.numberOfThread );
+        transformDeformationFieldFilter->SetNumberOfWorkUnits( list.numberOfThread );
         }
       transformDeformationFieldFilter->SetInput( field );
       transformDeformationFieldFilter->SetTransform( transform->GetTransform() );
@@ -1000,7 +1000,7 @@ int Do( parameters list )
     resampler->SetInput( image );
     if( list.numberOfThread )
       {
-      resampler->SetNumberOfThreads( list.numberOfThread );
+      resampler->SetNumberOfWorkUnits( list.numberOfThread );
       }
     resampler->SetInterpolator( interpol );
     itk::Matrix<double, 3, 3> outputImageDirection ;
@@ -1030,7 +1030,7 @@ int Do( parameters list )
     zeroFilter->SetInput( image );
     if( list.numberOfThread )
       {
-      zeroFilter->SetNumberOfThreads( list.numberOfThread );
+      zeroFilter->SetNumberOfWorkUnits( list.numberOfThread );
       }
     zeroFilter->Update();
     image = zeroFilter->GetOutput();
@@ -1043,7 +1043,7 @@ int Do( parameters list )
     absFilter->SetInput( image );
     if( list.numberOfThread )
       {
-      absFilter->SetNumberOfThreads( list.numberOfThread );
+      absFilter->SetNumberOfWorkUnits( list.numberOfThread );
       }
     absFilter->Update();
     image = absFilter->GetOutput();
@@ -1056,7 +1056,7 @@ int Do( parameters list )
     nearestFilter->SetInput( image );
     if( list.numberOfThread )
       {
-      nearestFilter->SetNumberOfThreads( list.numberOfThread );
+      nearestFilter->SetNumberOfWorkUnits( list.numberOfThread );
       }
     nearestFilter->Update();
     image = nearestFilter->GetOutput();
