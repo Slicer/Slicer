@@ -48,16 +48,14 @@ class SlicerDisplayNodeSequenceTestTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_ScalarVolumeDisplayNodeSequence()
-        self.delayDisplay('Test completed.')
+        self.delayDisplay("Test completed.")
 
     def test_ScalarVolumeDisplayNodeSequence(self):
         # Load first volume and apply custom display

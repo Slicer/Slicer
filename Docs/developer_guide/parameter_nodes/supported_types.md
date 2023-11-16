@@ -115,40 +115,40 @@ The created `parameterPack` will have the following attributes:
 ```py
 >>> from typing import Annotated
 >>> from slicer.parameterNodeWrapper import *
->>> 
+>>>
 >>> @parameterPack
 >>> class ParameterPack:
 >>>     # if the type is Annotated, it will treat the annotations the same as @parameterNodeWrapper
 >>>     x: Annotated[float, WithinRange(0, 10)]
 >>>     option: Annotated[str, Choice(["a","b"])] = "b"
->>> 
+>>>
 >>> # with no arguments the constructor will use the given (or implied) defaults.
 >>> p1 = ParameterPack()  # == ParameterPack(x=0.0, option="b")
->>> 
+>>>
 >>> # positional arguments are accepted in the order the members are declared in
 >>> p2 = ParameterPack(3.0, "a")
->>> 
+>>>
 >>> # keyword arguments are accepted with the keyword being the member names
 >>> p3 = ParameterPack(option="a", x=3.0)
->>> 
+>>>
 >>> # unspecified arguments use their default
 >>> p4 = ParameterPack(4.5)  # == ParameterPack(x=4.5, option="b")
 >>> p5 = ParameterPack(option="a")  # == ParameterPack(x=0.0, option="a")
->>> 
+>>>
 >>> # validators are run on construction
 >>> p6 = ParameterPack(-1, "a")
 ValueError: Value must be within range [0, 10], is -1
->>> 
+>>>
 >>> # validators are run on set attribute
 >>> p4.option = "c"
 ParameterPack(x=4.5, option=b)
->>> 
+>>>
 >>> # the classes automatically have __eq__ added to them
 >>> p1 == p2
 False
 >>> p2 == p3
 True
->>> 
+>>>
 >>> # the classes are also given a __repr__ and a __str__ that describes their attributes
 >>> print(p4)
 ParameterPack(x=4.5, option="b")

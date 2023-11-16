@@ -6,6 +6,7 @@ set(MODULE_NAME WebServer)
 set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}.py
   ${MODULE_NAME}Lib/__init__
+  ${MODULE_NAME}Lib/BaseRequestHandler.py
   ${MODULE_NAME}Lib/DICOMRequestHandler.py
   ${MODULE_NAME}Lib/SlicerRequestHandler.py
   ${MODULE_NAME}Lib/StaticPagesRequestHandler.py

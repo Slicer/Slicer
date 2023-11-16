@@ -33,9 +33,7 @@ def unannotatedType(possiblyAnnotatedType):
 
 
 def findFirstAnnotation(annotationsList, annotationType):
-    """
-    Given a list of annotations, returns the first one of the given type
-    """
+    """Given a list of annotations, returns the first one of the given type"""
     extracted = [annotation for annotation in annotationsList if isinstance(annotation, annotationType)]
     return extracted[0] if extracted else None
 
@@ -48,8 +46,8 @@ def splitPossiblyDottedName(possiblyDottedName):
       "x" -> ("x", None)
       "x.y.z" -> ("x", "y.z")
     """
-    if '.' in possiblyDottedName:
-        split = possiblyDottedName.split('.', maxsplit=1)
+    if "." in possiblyDottedName:
+        split = possiblyDottedName.split(".", maxsplit=1)
         return split[0], split[1]
     else:
         return possiblyDottedName, None

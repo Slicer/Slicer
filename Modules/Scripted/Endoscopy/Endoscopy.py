@@ -63,7 +63,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.skip = 0
         self.timer = qt.QTimer()
         self.timer.setInterval(20)
-        self.timer.connect('timeout()', self.flyToNext)
+        self.timer.connect("timeout()", self.flyToNext)
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -78,37 +78,37 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         # Camera node selector
         cameraNodeSelector = slicer.qMRMLNodeComboBox()
-        cameraNodeSelector.objectName = 'cameraNodeSelector'
+        cameraNodeSelector.objectName = "cameraNodeSelector"
         cameraNodeSelector.toolTip = _("Select a camera that will fly along this path.")
-        cameraNodeSelector.nodeTypes = ['vtkMRMLCameraNode']
+        cameraNodeSelector.nodeTypes = ["vtkMRMLCameraNode"]
         cameraNodeSelector.noneEnabled = False
         cameraNodeSelector.addEnabled = False
         cameraNodeSelector.removeEnabled = False
-        cameraNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
-        cameraNodeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.setCameraNode)
+        cameraNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
+        cameraNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.setCameraNode)
         pathFormLayout.addRow("Camera:", cameraNodeSelector)
 
         # Input fiducials node selector
         inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
-        inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
+        inputFiducialsNodeSelector.objectName = "inputFiducialsNodeSelector"
         inputFiducialsNodeSelector.toolTip = _("Select a fiducial list to define control points for the path.")
-        inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLMarkupsCurveNode']
+        inputFiducialsNodeSelector.nodeTypes = ["vtkMRMLMarkupsFiducialNode", "vtkMRMLMarkupsCurveNode"]
         inputFiducialsNodeSelector.noneEnabled = False
         inputFiducialsNodeSelector.addEnabled = False
         inputFiducialsNodeSelector.removeEnabled = False
-        inputFiducialsNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
+        inputFiducialsNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
         pathFormLayout.addRow(_("Input Fiducials:"), inputFiducialsNodeSelector)
 
         # Output path node selector
         outputPathNodeSelector = slicer.qMRMLNodeComboBox()
-        outputPathNodeSelector.objectName = 'outputPathNodeSelector'
+        outputPathNodeSelector.objectName = "outputPathNodeSelector"
         outputPathNodeSelector.toolTip = _("Select a fiducial list to define control points for the path.")
-        outputPathNodeSelector.nodeTypes = ['vtkMRMLModelNode']
+        outputPathNodeSelector.nodeTypes = ["vtkMRMLModelNode"]
         outputPathNodeSelector.noneEnabled = False
         outputPathNodeSelector.addEnabled = True
         outputPathNodeSelector.removeEnabled = True
         outputPathNodeSelector.renameEnabled = True
-        outputPathNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
+        outputPathNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
         pathFormLayout.addRow(_("Output Path:"), outputPathNodeSelector)
 
         # CreatePath button
@@ -116,7 +116,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         createPathButton.toolTip = _("Create the path.")
         createPathButton.enabled = False
         pathFormLayout.addRow(createPathButton)
-        createPathButton.connect('clicked()', self.onCreatePathButtonClicked)
+        createPathButton.connect("clicked()", self.onCreatePathButtonClicked)
 
         # Flythrough collapsible button
         flythroughCollapsibleButton = ctk.ctkCollapsibleButton()
@@ -129,13 +129,13 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         # Frame slider
         frameSlider = ctk.ctkSliderWidget()
-        frameSlider.connect('valueChanged(double)', self.frameSliderValueChanged)
+        frameSlider.connect("valueChanged(double)", self.frameSliderValueChanged)
         frameSlider.decimals = 0
         flythroughFormLayout.addRow(_("Frame:"), frameSlider)
 
         # Frame skip slider
         frameSkipSlider = ctk.ctkSliderWidget()
-        frameSkipSlider.connect('valueChanged(double)', self.frameSkipSliderValueChanged)
+        frameSkipSlider.connect("valueChanged(double)", self.frameSkipSliderValueChanged)
         frameSkipSlider.decimals = 0
         frameSkipSlider.minimum = 0
         frameSkipSlider.maximum = 50
@@ -143,7 +143,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         # Frame delay slider
         frameDelaySlider = ctk.ctkSliderWidget()
-        frameDelaySlider.connect('valueChanged(double)', self.frameDelaySliderValueChanged)
+        frameDelaySlider.connect("valueChanged(double)", self.frameDelaySliderValueChanged)
         frameDelaySlider.decimals = 0
         frameDelaySlider.minimum = 5
         frameDelaySlider.maximum = 100
@@ -153,7 +153,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
         # View angle slider
         viewAngleSlider = ctk.ctkSliderWidget()
-        viewAngleSlider.connect('valueChanged(double)', self.viewAngleSliderValueChanged)
+        viewAngleSlider.connect("valueChanged(double)", self.viewAngleSliderValueChanged)
         viewAngleSlider.decimals = 0
         viewAngleSlider.minimum = 30
         viewAngleSlider.maximum = 180
@@ -164,7 +164,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         playButton.toolTip = _("Fly through path.")
         playButton.checkable = True
         flythroughFormLayout.addRow(playButton)
-        playButton.connect('toggled(bool)', self.onPlayButtonToggled)
+        playButton.connect("toggled(bool)", self.onPlayButtonToggled)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -185,7 +185,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     def setCameraNode(self, newCameraNode):
         """Allow to set the current camera node.
-        Connected to signal 'currentNodeChanged()' emitted by camera node selector."""
+        Connected to signal 'currentNodeChanged()' emitted by camera node selector.
+        """
 
         #  Remove previous observer
         if self.cameraNode and self.cameraNodeObserverTag:
@@ -221,15 +222,17 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     def enableOrDisableCreateButton(self):
         """Connected to both the fiducial and camera node selector. It allows to
-        enable or disable the 'create path' button."""
+        enable or disable the 'create path' button.
+        """
         self.createPathButton.enabled = (self.cameraNodeSelector.currentNode() is not None
                                          and self.inputFiducialsNodeSelector.currentNode() is not None
                                          and self.outputPathNodeSelector.currentNode() is not None)
 
     def onCreatePathButtonClicked(self):
         """Connected to 'create path' button. It allows to:
-          - compute the path
-          - create the associated model"""
+        - compute the path
+        - create the associated model
+        """
 
         fiducialsNode = self.inputFiducialsNodeSelector.currentNode()
         outputPathNode = self.outputPathNodeSelector.currentNode()
@@ -283,7 +286,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.frameSlider.value = nextStep
 
     def flyTo(self, pathPointIndex):
-        """ Apply the pathPointIndex-th step in the path to the global camera"""
+        """Apply the pathPointIndex-th step in the path to the global camera"""
 
         if self.path is None:
             return
@@ -407,7 +410,7 @@ class EndoscopyComputePath:
         self.calculatePath()
 
     def calculatePath(self):
-        """ Generate a flight path for of steps of length dl """
+        """Generate a flight path for of steps of length dl"""
         #
         # calculate the actual path
         # - take steps of self.dl in world space
@@ -434,12 +437,12 @@ class EndoscopyComputePath:
                 self.h11(t) * self.m[segment + 1])
 
     def step(self, segment, t, dl):
-        """ Take a step of dl and return the path point and new t
-          return:
-          t = new parametric coordinate after step
-          p = point after step
-          remainder = if step results in parametric coordinate > 1.0, then
-            this is the amount of world space not covered by step
+        """Take a step of dl and return the path point and new t
+        return:
+        t = new parametric coordinate after step
+        p = point after step
+        remainder = if step results in parametric coordinate > 1.0, then
+        this is the amount of world space not covered by step
         """
         import numpy.linalg
         p0 = self.path[self.path.__len__() - 1]  # last element in path
@@ -467,18 +470,18 @@ class EndoscopyComputePath:
 
 class EndoscopyPathModel:
     """Create a vtkPolyData for a polyline:
-         - Add one point per path point.
-         - Add a single polyline
+    - Add one point per path point.
+    - Add a single polyline
     """
 
     def __init__(self, path, fiducialListNode, outputPathNode=None, cursorType=None):
         """
-          :param path: path points as numpy array.
-          :param fiducialListNode: input node, just used for naming the output node.
-          :param outputPathNode: output model node that stores the path points.
-          :param cursorType: can be 'markups' or 'model'. Markups has a number of advantages (radius it is easier to change the size,
-            can jump to views by clicking on it, has more visualization options, can be scaled to fixed display size),
-            but if some applications relied on having a model node as cursor then this argument can be used to achieve that.
+        :param path: path points as numpy array.
+        :param fiducialListNode: input node, just used for naming the output node.
+        :param outputPathNode: output model node that stores the path points.
+        :param cursorType: can be 'markups' or 'model'. Markups has a number of advantages (radius it is easier to change the size,
+        can jump to views by clicking on it, has more visualization options, can be scaled to fixed display size),
+        but if some applications relied on having a model node as cursor then this argument can be used to achieve that.
         """
 
         fids = fiducialListNode

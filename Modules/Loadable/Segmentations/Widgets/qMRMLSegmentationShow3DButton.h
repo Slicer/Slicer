@@ -53,6 +53,8 @@ public slots:
 protected slots:
   void onToggled(bool toggled=true);
   void onEnableSurfaceSmoothingToggled(bool smoothingEnabled);
+  void onEnableSurfaceNetsToggled(bool surfaceNetsEnabled);
+  void onEnableSurfaceNetsSmoothingToggled(bool surfaceNetsSmoothingEnabled);
   void onSurfaceSmoothingFactorChanged(double newSmoothingFactor);
   void updateWidgetFromMRML();
 

@@ -119,7 +119,7 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   QObject::connect(this->EditDefaultTerminologyEntryPushButton, SIGNAL(clicked()),
                    q, SLOT(onEditDefaultTerminologyEntry()));
   QObject::connect(this->DefaultOverwriteModeComboBox, SIGNAL(currentIndexChanged(QString)),
-                   q, SIGNAL(setDefaultOverwriteMode(QString)));
+                   q, SLOT(setDefaultOverwriteMode(QString)));
 
   // Update default segmentation node from settings when startup completed.
   QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()),
@@ -182,7 +182,7 @@ void qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode(QString mode)
     {
     this->segmentationsLogic()->SetDefaultOverwriteMode(
       vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(mode.toStdString().c_str()));
-    } 
+    }
 }
 
 // --------------------------------------------------------------------------

@@ -126,10 +126,10 @@ class ExtensionWizardWidget:
         self.layout.addWidget(self.toolsCollapsibleButton)
 
         self.createExtensionButton = createToolButton("Create Extension")
-        self.createExtensionButton.connect('clicked(bool)', self.createExtension)
+        self.createExtensionButton.connect("clicked(bool)", self.createExtension)
 
         self.selectExtensionButton = createToolButton("Select Extension")
-        self.selectExtensionButton.connect('clicked(bool)', self.selectExtension)
+        self.selectExtensionButton.connect("clicked(bool)", self.selectExtension)
 
         toolsLayout = qt.QVBoxLayout(self.toolsCollapsibleButton)
         toolsLayout.addWidget(self.createExtensionButton)
@@ -155,11 +155,11 @@ class ExtensionWizardWidget:
         self.extensionContentsView.hideColumn(3)
 
         self.createExtensionModuleButton = createToolButton("Add Module to Extension")
-        self.createExtensionModuleButton.connect('clicked(bool)',
+        self.createExtensionModuleButton.connect("clicked(bool)",
                                                  self.createExtensionModule)
 
         self.editExtensionMetadataButton = createToolButton("Edit Extension Metadata")
-        self.editExtensionMetadataButton.connect('clicked(bool)',
+        self.editExtensionMetadataButton.connect("clicked(bool)",
                                                  self.editExtensionMetadata)
 
         editorLayout = qt.QFormLayout(self.editorCollapsibleButton)
@@ -373,7 +373,7 @@ class ExtensionWizardWidget:
 
                 # Enable developer mode (shows Reload&Test section, etc.), if requested
                 if dlg.enableDeveloperMode:
-                    qt.QSettings().setValue('Developer/DeveloperMode', 'true')
+                    qt.QSettings().setValue("Developer/DeveloperMode", "true")
 
                 # Register requested module(s)
                 failed = []
@@ -404,7 +404,7 @@ class ExtensionWizardWidget:
                     text = ("The module factory manager reported an error. "
                             "One or more of the requested module(s) and/or "
                             "dependencies thereof may not have been loaded.")
-                    slicer.util.errorDisplay(text, parent, windowTitle="Error loading module(s)",
+                    slicer.util.errorDisplay(text, parent=parent, windowTitle="Error loading module(s)",
                                              standardButtons=qt.QMessageBox.Close)
 
     # ---------------------------------------------------------------------------
@@ -507,7 +507,7 @@ class ExtensionWizardFileDialog:
     @staticmethod
     def findModulesFromMimeData(mimeData):
         allFoundModules = []
-        if mimeData.hasFormat('text/uri-list'):
+        if mimeData.hasFormat("text/uri-list"):
             urls = mimeData.urls()
             for url in urls:
                 localPath = url.toLocalFile()  # convert QUrl to local path

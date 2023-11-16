@@ -74,7 +74,7 @@ class AddStorableDataAfterSceneViewTestWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -99,14 +99,12 @@ class AddStorableDataAfterSceneViewTestLogic(ScriptedLoadableModuleLogic):
     """
 
     def run(self, enableScreenshots=0):
-        """
-        Run the test via GUI
-        """
+        """Run the test via GUI"""
 
-        logging.info('Processing started')
+        logging.info("Processing started")
 
         try:
-            evalString = 'AddStorableDataAfterSceneViewTestTest()'
+            evalString = "AddStorableDataAfterSceneViewTestTest()"
             tester = eval(evalString)
             tester.runTest()
         except Exception as e:
@@ -115,7 +113,7 @@ class AddStorableDataAfterSceneViewTestLogic(ScriptedLoadableModuleLogic):
             errorMessage = "Add storable data after scene view test: Exception!\n\n" + str(e) + "\n\nSee Python Console for Stack Trace"
             slicer.util.errorDisplay(errorMessage)
 
-        logging.info('Processing completed')
+        logging.info("Processing completed")
 
         return True
 
@@ -128,13 +126,11 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_AddStorableDataAfterSceneViewTest1()
 
@@ -146,7 +142,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
         # add a markups control point list
         #
 
-        pointList = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLMarkupsFiducialNode')
+        pointList = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
         pointList.AddControlPoint([10, 20, 15])
 
         #
@@ -176,7 +172,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
 
         # for now, the non scene view storable data is removed
         self.assertIsNone(restoredData)
-        slicer.util.delayDisplay('Success: extra storable node removed with scene view restore')
+        slicer.util.delayDisplay("Success: extra storable node removed with scene view restore")
 
         #
         # add new storable again
@@ -196,9 +192,9 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
 
         # in this case the non scene view storable data is kept' scene is not changed
         self.assertIsNotNone(restoredData)
-        slicer.util.delayDisplay('Success: extra storable node NOT removed with scene view restore')
+        slicer.util.delayDisplay("Success: extra storable node NOT removed with scene view restore")
 
-        print('Scene error code = ' + str(slicer.mrmlScene.GetErrorCode()))
-        print('\t' + slicer.mrmlScene.GetErrorMessage())
+        print("Scene error code = " + str(slicer.mrmlScene.GetErrorCode()))
+        print("\t" + slicer.mrmlScene.GetErrorMessage())
 
-        slicer.util.delayDisplay('Test passed!')
+        slicer.util.delayDisplay("Test passed!")

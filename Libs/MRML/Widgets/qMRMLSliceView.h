@@ -112,9 +112,6 @@ public slots:
   /// Set the current \a viewNode to observe
   void setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode);
 
-protected:
-  QScopedPointer<qMRMLSliceViewPrivate> d_ptr;
-
 private:
   Q_DECLARE_PRIVATE(qMRMLSliceView);
   Q_DISABLE_COPY(qMRMLSliceView);

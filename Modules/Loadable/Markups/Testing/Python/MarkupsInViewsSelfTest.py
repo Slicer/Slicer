@@ -54,7 +54,7 @@ class MarkupsInViewsSelfTestWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -107,7 +107,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
             sliceView.getDisplayableManagers(ms)
             for i in range(ms.GetNumberOfItems()):
                 m = ms.GetItemAsObject(i)
-                if m.GetClassName() == 'vtkMRMLMarkupsDisplayableManager':
+                if m.GetClassName() == "vtkMRMLMarkupsDisplayableManager":
                     markupsWidget = m.GetWidget(fidNode.GetDisplayNode())
                     return markupsWidget.GetMarkupsRepresentation().GetNthControlPointViewVisibility(controlPointIndex)
         return False
@@ -115,34 +115,32 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
     def printViewNodeIDs(self, displayNode):
         numIDs = displayNode.GetNumberOfViewNodeIDs()
         if numIDs == 0:
-            print('No view node ids for display node', displayNode.GetID())
+            print("No view node ids for display node", displayNode.GetID())
             return
-        print('View node ids for display node', displayNode.GetID())
+        print("View node ids for display node", displayNode.GetID())
         for i in range(numIDs):
             id = displayNode.GetNthViewNodeID(i)
             print(id)
 
     def printViewAndSliceNodes(self):
-        numViewNodes = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLViewNode')
-        print('Number of view nodes = ', numViewNodes)
+        numViewNodes = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLViewNode")
+        print("Number of view nodes = ", numViewNodes)
         for vn in range(numViewNodes):
-            viewNode = slicer.mrmlScene.GetNthNodeByClass(vn, 'vtkMRMLViewNode')
-            print('\t', viewNode.GetName(), "id =", viewNode.GetID())
+            viewNode = slicer.mrmlScene.GetNthNodeByClass(vn, "vtkMRMLViewNode")
+            print("\t", viewNode.GetName(), "id =", viewNode.GetID())
 
-        numSliceNodes = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
-        print('Number of slice nodes = ', numSliceNodes)
+        numSliceNodes = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSliceNode")
+        print("Number of slice nodes = ", numSliceNodes)
         for sn in range(numSliceNodes):
-            sliceNode = slicer.mrmlScene.GetNthNodeByClass(sn, 'vtkMRMLSliceNode')
-            print('\t', sliceNode.GetName(), "id =", sliceNode.GetID())
+            sliceNode = slicer.mrmlScene.GetNthNodeByClass(sn, "vtkMRMLSliceNode")
+            print("\t", sliceNode.GetName(), "id =", sliceNode.GetID())
 
     def onRecordNodeEvent(self, caller, event, eventId):
         self.nodeEvents.append(eventId)
 
     def run(self):
-        """
-        Run the actual algorithm
-        """
-        print('Running test of the markups in different views')
+        """Run the actual algorithm"""
+        print("Running test of the markups in different views")
 
         #
         # first load the data
@@ -154,7 +152,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
         #
         # link the viewers
         #
-        sliceLogic = slicer.app.layoutManager().sliceWidget('Red').sliceLogic()
+        sliceLogic = slicer.app.layoutManager().sliceWidget("Red").sliceLogic()
         compositeNode = sliceLogic.GetSliceCompositeNode()
         compositeNode.SetLinkedControl(1)
 
@@ -213,7 +211,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
         # self.printViewAndSliceNodes()
 
-        if not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex):
+        if not self.controlPointVisible3D(fidNode, "vtkMRMLViewNode1", controlPointIndex):
             slicer.util.delayDisplay("Test failed: widget is not visible in view 1")
             # self.printViewNodeIDs(displayNode)
             return False
@@ -229,8 +227,8 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
         slicer.modules.markups.logic().FocusCamerasOnNthPointInMarkup(fidNode.GetID(), controlPointIndex)
 
-        if (not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex)
-                or not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex)):
+        if (not self.controlPointVisible3D(fidNode, "vtkMRMLViewNode1", controlPointIndex)
+                or not self.controlPointVisible3D(fidNode, "vtkMRMLViewNode2", controlPointIndex)):
             slicer.util.delayDisplay("Test failed: widget is not visible in view 1 and 2")
             # self.printViewNodeIDs(displayNode)
             return False
@@ -240,11 +238,11 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
         #
         displayNode.AddViewNodeID("vtkMRMLViewNode2")
         slicer.util.delayDisplay("Showing only in view 2")
-        if self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex):
+        if self.controlPointVisible3D(fidNode, "vtkMRMLViewNode1", controlPointIndex):
             slicer.util.delayDisplay("Test failed: widget is not supposed to be visible in view 1")
             # self.printViewNodeIDs(displayNode)
             return False
-        if not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex):
+        if not self.controlPointVisible3D(fidNode, "vtkMRMLViewNode2", controlPointIndex):
             slicer.util.delayDisplay("Test failed: widget is not visible in view 2")
             # self.printViewNodeIDs(displayNode)
             return False
@@ -254,8 +252,8 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
         #
         displayNode.RemoveAllViewNodeIDs()
         slicer.util.delayDisplay("Showing in both views")
-        if (not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex)
-                or not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex)):
+        if (not self.controlPointVisible3D(fidNode, "vtkMRMLViewNode1", controlPointIndex)
+                or not self.controlPointVisible3D(fidNode, "vtkMRMLViewNode2", controlPointIndex)):
             slicer.util.delayDisplay("Test failed: widget is not visible in view 1 and 2")
             self.printViewNodeIDs(displayNode)
             return False
@@ -265,11 +263,11 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
         #
         displayNode.AddViewNodeID("vtkMRMLViewNode1")
         slicer.util.delayDisplay("Showing only in view 1")
-        if self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode2', controlPointIndex):
+        if self.controlPointVisible3D(fidNode, "vtkMRMLViewNode2", controlPointIndex):
             slicer.util.delayDisplay("Test failed: widget is not supposed to be visible in view 2")
             # self.printViewNodeIDs(displayNode)
             return False
-        if not self.controlPointVisible3D(fidNode, 'vtkMRMLViewNode1', controlPointIndex):
+        if not self.controlPointVisible3D(fidNode, "vtkMRMLViewNode1", controlPointIndex):
             slicer.util.delayDisplay("Test failed: widget is not visible in view 1")
             # self.printViewNodeIDs(displayNode)
             return False
@@ -288,9 +286,9 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
         slicer.modules.markups.logic().FocusCamerasOnNthPointInMarkup(fidNode.GetID(), controlPointIndex)
 
         # show only in red
-        displayNode.AddViewNodeID('vtkMRMLSliceNodeRed')
+        displayNode.AddViewNodeID("vtkMRMLSliceNodeRed")
         slicer.util.delayDisplay("Show only in red slice")
-        if not self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeRed', controlPointIndex):
+        if not self.controlPointVisibleSlice(fidNode, "vtkMRMLSliceNodeRed", controlPointIndex):
             slicer.util.delayDisplay("Test failed: widget not displayed on red slice")
             # self.printViewNodeIDs(displayNode)
             return False
@@ -301,13 +299,13 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
         displayNode.RemoveAllViewNodeIDs()
         # print 'after removed all'
         # self.printViewNodeIDs(displayNode)
-        displayNode.AddViewNodeID('vtkMRMLSliceNodeGreen')
-        slicer.util.delayDisplay('Show only in green slice')
-        if (self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeRed', controlPointIndex)
-                or not self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeGreen', controlPointIndex)):
+        displayNode.AddViewNodeID("vtkMRMLSliceNodeGreen")
+        slicer.util.delayDisplay("Show only in green slice")
+        if (self.controlPointVisibleSlice(fidNode, "vtkMRMLSliceNodeRed", controlPointIndex)
+                or not self.controlPointVisibleSlice(fidNode, "vtkMRMLSliceNodeGreen", controlPointIndex)):
             slicer.util.delayDisplay("Test failed: widget not displayed only on green slice")
-            print('\tred = ', self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeRed', controlPointIndex))
-            print('\tgreen =', self.controlPointVisibleSlice(fidNode, 'vtkMRMLSliceNodeGreen', controlPointIndex))
+            print("\tred = ", self.controlPointVisibleSlice(fidNode, "vtkMRMLSliceNodeRed", controlPointIndex))
+            print("\tgreen =", self.controlPointVisibleSlice(fidNode, "vtkMRMLSliceNodeGreen", controlPointIndex))
             self.printViewNodeIDs(displayNode)
             return False
 
@@ -315,18 +313,14 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
 
 class MarkupsInViewsSelfTestTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    """
+    """This is the test case for your scripted module."""
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_MarkupsInViewsSelfTest1()
 
@@ -336,12 +330,12 @@ class MarkupsInViewsSelfTestTest(ScriptedLoadableModuleTest):
 
         # start in the Markups module
         m = slicer.util.mainWindow()
-        m.moduleSelector().selectModule('Markups')
+        m.moduleSelector().selectModule("Markups")
 
         logic = MarkupsInViewsSelfTestLogic()
         retval = logic.run()
 
         if retval is True:
-            self.delayDisplay('Test passed!')
+            self.delayDisplay("Test passed!")
         else:
-            self.delayDisplay('Test failed!')
+            self.delayDisplay("Test failed!")

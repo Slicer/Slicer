@@ -26,7 +26,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [setuptools]
-  setuptools==68.0.0 --hash=sha256:11e52c67415a381d10d6b462ced9cfb97066179f0e871399e006c4ab101fc85f
+  setuptools==68.2.2 --hash=sha256:b454a35605876da60632df1a60f736524eb73cc47bbc9f3f1ef1b644de74fd2a
   # [/setuptools]
   ]===])
 
@@ -41,10 +41,6 @@ if(NOT Slicer_USE_SYSTEM_${proj})
     LOG_INSTALL 1
     DEPENDS
       ${${proj}_DEPENDENCIES}
-    )
-
-  ExternalProject_GenerateProjectDescription_Step(${proj}
-    VERSION ${_version}
     )
 
 else()

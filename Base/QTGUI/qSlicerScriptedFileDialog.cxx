@@ -53,7 +53,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSource;
+  QString    PythonSourceFilePath;
   QString    PythonClassName;
 };
 
@@ -93,11 +93,11 @@ qSlicerScriptedFileDialog::~qSlicerScriptedFileDialog() = default;
 QString qSlicerScriptedFileDialog::pythonSource()const
 {
   Q_D(const qSlicerScriptedFileDialog);
-  return d->PythonSource;
+  return d->PythonSourceFilePath;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, const QString& _className, bool missingClassIsExpected)
+bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const QString& _className, bool missingClassIsExpected)
 {
   Q_D(qSlicerScriptedFileDialog);
 
@@ -106,13 +106,13 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
     return false;
     }
 
-  if(!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+  if(!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
     {
     return false;
     }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
+  QString moduleName = QFileInfo(filePath).baseName();
 
   QString className = _className;
   if (className.isEmpty())
@@ -191,7 +191,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
     return false;
     }
 
-  d->PythonSource = newPythonSource;
+  d->PythonSourceFilePath = filePath;
 
   return true;
 }
@@ -215,7 +215,7 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     }
   if (!PyBool_Check(result))
     {
-    qWarning() << d->PythonSource
+    qWarning() << d->PythonSourceFilePath
                << " - In" << d->PythonClassName << "class, function 'execDialog' "
                << "is expected to return a boolean";
     return false;

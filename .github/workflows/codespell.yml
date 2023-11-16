@@ -12,8 +12,8 @@ jobs:
     name: Check for spelling errors
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
-      - uses: Slicer/actions-codespell@2cde61fa89ae8708e737c8204a7ed50de5b4c5b8
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: codespell-project/actions-codespell@94259cd8be02ad2903ba34a22d9c13de21a74461 # v2.0
         with:
           check_filenames: true
           skip: ".git,*.crt,*.svg,*.vtp,*DICOM-Master.json,*SlicerGeneralAnatomy.json,./CMakeLists.txt.user,./CMake/CTestCustom.cmake.in,./CMake/NSIS.template.in,./License.txt,./COPYRIGHT.txt,./Docs/_build/*,./Resources/*.h,./Base/Logic/vtkSlicerApplicationLogicRequests.h,./Base/QTCLI/vtkSlicerCLIModuleLogic.cxx,./Base/QTCore/Resources/Certs/README,./Libs/MRML/Core/vtkMRMLCoreTestingUtilities.cxx,./Libs/vtkITK/vtkITKGrowCutSegmentationImageFilter.cxx,./Libs/vtkITK/itkConstrainedValueMultiplicationImageFilter.h,./Libs/vtkITK/itkLevelTracingImageFilter.h,./Modules/CLI/ExtractSkeleton/tilg_iso_3D.cxx,./Modules/CLI/ResampleDTIVolume/itkDiffusionTensor3D*,./Modules/Loadable/Reformat/Resources/UI/qSlicerReformatModuleWidget.ui,./Utilities/Scripts/runCodespell.sh"

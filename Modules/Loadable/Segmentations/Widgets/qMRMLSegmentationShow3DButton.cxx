@@ -44,7 +44,15 @@ public:
   /// if it is enabled.
   bool setSurfaceSmoothingFactor(double smoothingFactor);
 
+  /// Updates the method used to generate the surface representation
+  bool setConversionMethod(const std::string& conversionMethod);
+
+  /// This property holds whether smoothing internal to surface nets filter is used
+  bool setInternalSmoothing(int internalSmoothing);
+
   QAction* SurfaceSmoothingEnabledAction{ nullptr };
+  QAction* SurfaceNetsEnableAction{ nullptr };
+  QAction* SurfaceNetsSmoothingEnableAction{ nullptr };
   ctkSliderWidget* SurfaceSmoothingSlider{ nullptr };
   bool Locked{ false };
   vtkWeakPointer<vtkMRMLSegmentationNode> SegmentationNode;
@@ -79,8 +87,27 @@ void qMRMLSegmentationShow3DButtonPrivate::init()
   QObject::connect(this->SurfaceSmoothingEnabledAction, SIGNAL(toggled(bool)), q, SLOT(onEnableSurfaceSmoothingToggled(bool)));
 
   QMenu* surfaceSmoothingFactorMenu = new QMenu(qMRMLSegmentationShow3DButton::tr("Smoothing factor"), show3DButtonMenu);
-  surfaceSmoothingFactorMenu->setObjectName("slicerSpacingManualMode");
-  surfaceSmoothingFactorMenu->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
+  surfaceSmoothingFactorMenu->setObjectName("surfaceSmoothingFactorMenu");
+
+  // Add menu for experimental features
+  QMenu* experimentalMenu = new QMenu(qMRMLSegmentationShow3DButton::tr("Experimental"), show3DButtonMenu);
+  experimentalMenu->setObjectName("show3DExperimentalMenu");
+
+  // Toggle for using surface nets instead of Flying Edges
+  this->SurfaceNetsEnableAction = new QAction(qMRMLSegmentationShow3DButton::tr("Use Surface Nets (fast)"), experimentalMenu);
+  this->SurfaceNetsEnableAction->setToolTip(
+    qMRMLSegmentationShow3DButton::tr("Create closed surface using surface nets. By default, flying edges is used. Surface nets are more performant."));
+  this->SurfaceNetsEnableAction->setCheckable(true);
+  experimentalMenu->addAction(this->SurfaceNetsEnableAction);
+  QObject::connect(this->SurfaceNetsEnableAction, SIGNAL(toggled(bool)), q, SLOT(onEnableSurfaceNetsToggled(bool)));
+
+  // Toggle for using surface nets internal smoothing algorithm instead of vtkWindowedSincPolyDataFilter
+  this->SurfaceNetsSmoothingEnableAction = new QAction(qMRMLSegmentationShow3DButton::tr("Use Surface Nets Smoothing (faster)"), experimentalMenu);
+  this->SurfaceNetsSmoothingEnableAction->setToolTip(
+    qMRMLSegmentationShow3DButton::tr("Use surface nets internal smoothing (more performant). vtkWindowedSincPolyDataFilter is used by default."));
+  this->SurfaceNetsSmoothingEnableAction->setCheckable(true);
+  experimentalMenu->addAction(this->SurfaceNetsSmoothingEnableAction);
+  QObject::connect(this->SurfaceNetsSmoothingEnableAction, SIGNAL(toggled(bool)), q, SLOT(onEnableSurfaceNetsSmoothingToggled(bool)));
 
   this->SurfaceSmoothingSlider = new ctkSliderWidget(surfaceSmoothingFactorMenu);
   this->SurfaceSmoothingSlider->setToolTip(
@@ -96,10 +123,10 @@ void qMRMLSegmentationShow3DButtonPrivate::init()
   smoothingFactorAction->setCheckable(true);
   smoothingFactorAction->setDefaultWidget(this->SurfaceSmoothingSlider);
   surfaceSmoothingFactorMenu->addAction(smoothingFactorAction);
+
   show3DButtonMenu->addMenu(surfaceSmoothingFactorMenu);
-
+  show3DButtonMenu->addMenu(experimentalMenu);
   q->setMenu(show3DButtonMenu);
-
   q->setEnabled(false);
 }
 
@@ -129,6 +156,61 @@ bool qMRMLSegmentationShow3DButtonPrivate::setSurfaceSmoothingFactor(double smoo
     }
   return true;
 }
+
+//-----------------------------------------------------------------------------
+bool qMRMLSegmentationShow3DButtonPrivate::setConversionMethod(const std::string& conversionMethod)
+{
+  if (!this->SegmentationNode || !this->SegmentationNode->GetSegmentation())
+    {
+    return false;
+    }
+
+  MRMLNodeModifyBlocker blocker(this->SegmentationNode);
+
+  this->SegmentationNode->GetSegmentation()->SetConversionParameter(
+    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName(),
+    conversionMethod);
+
+  bool closedSurfacePresent = this->SegmentationNode->GetSegmentation()->ContainsRepresentation(
+    vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  if (closedSurfacePresent)
+    {
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    this->SegmentationNode->GetSegmentation()->CreateRepresentation(
+      vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), true);
+    this->SegmentationNode->Modified();
+    QApplication::restoreOverrideCursor();
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLSegmentationShow3DButtonPrivate::setInternalSmoothing(int internalSmoothing)
+{
+  if (!this->SegmentationNode || !this->SegmentationNode->GetSegmentation())
+    {
+    return false;
+    }
+
+  MRMLNodeModifyBlocker blocker(this->SegmentationNode);
+
+  this->SegmentationNode->GetSegmentation()->SetConversionParameter(
+    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSurfaceNetInternalSmoothingParameterName(),
+    QVariant(internalSmoothing).toString().toUtf8().constData());
+
+  bool closedSurfacePresent = this->SegmentationNode->GetSegmentation()->ContainsRepresentation(
+    vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+  if (closedSurfacePresent)
+    {
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    this->SegmentationNode->GetSegmentation()->CreateRepresentation(
+      vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), true);
+    this->SegmentationNode->Modified();
+    QApplication::restoreOverrideCursor();
+    }
+  return true;
+}
+
 
 //-----------------------------------------------------------------------------
 vtkMRMLSegmentationNode* qMRMLSegmentationShow3DButton::segmentationNode() const
@@ -184,6 +266,7 @@ void qMRMLSegmentationShow3DButton::updateWidgetFromMRML()
     this->setEnabled(false);
     }
 
+  // Smoothing factor
   double surfaceSmoothingFactor = 0.5;
   if (d->SegmentationNode && d->SegmentationNode->GetSegmentation())
     {
@@ -198,6 +281,32 @@ void qMRMLSegmentationShow3DButton::updateWidgetFromMRML()
   d->SurfaceSmoothingSlider->setValue(surfaceSmoothingFactor);
   d->SurfaceSmoothingSlider->setEnabled(surfaceSmoothingFactor >= 0.0);
   d->SurfaceSmoothingSlider->blockSignals(wasBlocked);
+
+  // Conversion method
+  std::string conversionMethod = vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES;
+  if (d->SegmentationNode && d->SegmentationNode->GetSegmentation())
+    {
+    conversionMethod = d->SegmentationNode->GetSegmentation()->GetConversionParameter(
+      vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName());
+    }
+  wasBlocked = d->SurfaceNetsEnableAction->blockSignals(true);
+  d->SurfaceNetsEnableAction->setChecked(
+        conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS);
+  d->SurfaceNetsEnableAction->blockSignals(wasBlocked);
+
+  // SurfaceNets smoothing
+  int surfaceNetinternalSmoothing = 0;
+  if (d->SegmentationNode && d->SegmentationNode->GetSegmentation())
+    {
+    surfaceNetinternalSmoothing = QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(
+      vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSurfaceNetInternalSmoothingParameterName()).c_str()).toInt();
+    }
+  wasBlocked = d->SurfaceNetsSmoothingEnableAction->blockSignals(true);
+  d->SurfaceNetsSmoothingEnableAction->setChecked(surfaceNetinternalSmoothing == 1);
+  d->SurfaceNetsSmoothingEnableAction->setEnabled(
+        surfaceSmoothingFactor >= 0.0
+        && conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS);
+  d->SurfaceNetsSmoothingEnableAction->blockSignals(wasBlocked);
 }
 
 //-----------------------------------------------------------------------------
@@ -290,6 +399,62 @@ void qMRMLSegmentationShow3DButton::onEnableSurfaceSmoothingToggled(bool smoothi
   if (newSmoothingFactor != originalSmoothingFactor)
     {
     d->setSurfaceSmoothingFactor(newSmoothingFactor);
+    this->updateWidgetFromMRML();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentationShow3DButton::onEnableSurfaceNetsToggled(bool surfaceNetsEnabled)
+{
+  Q_D(qMRMLSegmentationShow3DButton);
+  if (!d->SegmentationNode || !d->SegmentationNode->GetSegmentation())
+    {
+    qCritical() << Q_FUNC_INFO << ": No segmentation selected in onEnableSurfaceNetsToggled";
+    return;
+    }
+
+  // Get current conversion method
+  std::string originalMethod = d->SegmentationNode->GetSegmentation()->GetConversionParameter(
+    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionMethodParameterName());
+  std::string newMethod = vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES;
+  if (surfaceNetsEnabled)
+    {
+    newMethod = vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS;
+    }
+
+  // Set conversion method
+  if (newMethod != originalMethod)
+    {
+    d->setConversionMethod(newMethod);
+    this->updateWidgetFromMRML();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentationShow3DButton::onEnableSurfaceNetsSmoothingToggled(bool surfaceNetsSmoothingEnabled)
+{
+  Q_D(qMRMLSegmentationShow3DButton);
+  if (!d->SegmentationNode || !d->SegmentationNode->GetSegmentation())
+    {
+    qCritical() << Q_FUNC_INFO << ": No segmentation selected in onEnableSurfaceNetsSmoothingToggled";
+    return;
+    }
+
+  // Get current conversion method
+  // 0 = use vtkWindowedSincPolyDataFilter for smoothing
+  // 1 = Use surface nets internal smoothing
+  int originalMethod = QString(d->SegmentationNode->GetSegmentation()->GetConversionParameter(
+    vtkBinaryLabelmapToClosedSurfaceConversionRule::GetSurfaceNetInternalSmoothingParameterName()).c_str()).toInt();
+  int newMethod = 0;
+  if (surfaceNetsSmoothingEnabled)
+    {
+    newMethod = 1;
+    }
+
+  // Set conversion method
+  if (newMethod != originalMethod)
+    {
+    d->setInternalSmoothing(newMethod);
     this->updateWidgetFromMRML();
     }
 }

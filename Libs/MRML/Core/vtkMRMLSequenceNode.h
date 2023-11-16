@@ -186,7 +186,7 @@ protected:
   struct IndexEntryType
     {
     std::string IndexValue;
-    vtkMRMLNode* DataNode;
+    vtkWeakPointer<vtkMRMLNode> DataNode;
     std::string DataNodeID; // only used temporarily, during scene load
     };
 

@@ -120,7 +120,7 @@ class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
         self.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
         self.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
 
@@ -163,43 +163,40 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
         node has valid image data
         """
         if not volumeNode:
-            logging.debug('hasImageData failed: no volume node')
+            logging.debug("hasImageData failed: no volume node")
             return False
         if volumeNode.GetImageData() is None:
-            logging.debug('hasImageData failed: no image data in volume node')
+            logging.debug("hasImageData failed: no image data in volume node")
             return False
         return True
 
     def isValidInputOutputData(self, inputVolumeNode, outputVolumeNode):
-        """Validates if the output is not the same as input
-        """
+        """Validates if the output is not the same as input"""
         if not inputVolumeNode:
-            logging.debug('isValidInputOutputData failed: no input volume node defined')
+            logging.debug("isValidInputOutputData failed: no input volume node defined")
             return False
         if not outputVolumeNode:
-            logging.debug('isValidInputOutputData failed: no output volume node defined')
+            logging.debug("isValidInputOutputData failed: no output volume node defined")
             return False
         if inputVolumeNode.GetID() == outputVolumeNode.GetID():
-            logging.debug('isValidInputOutputData failed: input and output volume is the same. Create a new volume for output to avoid this error.')
+            logging.debug("isValidInputOutputData failed: input and output volume is the same. Create a new volume for output to avoid this error.")
             return False
         return True
 
     def run(self, inputVolume, outputVolume, imageThreshold):
-        """
-        Run the actual algorithm
-        """
+        """Run the actual algorithm"""
 
         if not self.isValidInputOutputData(inputVolume, outputVolume):
-            slicer.util.errorDisplay(_('Input volume is the same as output volume. Choose a different output volume.'))
+            slicer.util.errorDisplay(_("Input volume is the same as output volume. Choose a different output volume."))
             return False
 
-        logging.info('Processing started')
+        logging.info("Processing started")
 
         # Compute the thresholded output volume using the Threshold Scalar Volume CLI module
-        cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue': imageThreshold, 'ThresholdType': 'Above'}
+        cliParams = {"InputVolume": inputVolume.GetID(), "OutputVolume": outputVolume.GetID(), "ThresholdValue": imageThreshold, "ThresholdType": "Above"}
         cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True)
 
-        logging.info('Processing completed')
+        logging.info("Processing completed")
 
         return True
 
@@ -212,18 +209,16 @@ class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_ScriptedLoadableModuleTemplate1()
 
     def test_ScriptedLoadableModuleTemplate1(self):
-        """ Ideally you should have several levels of tests.  At the lowest level
+        """Ideally you should have several levels of tests.  At the lowest level
         tests should exercise the functionality of the logic with different inputs
         (both valid and invalid).  At higher levels your tests should emulate the
         way the user would interact with your code and confirm that it still works
@@ -240,13 +235,13 @@ class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
         #
         import SampleData
         volumeNode = SampleData.downloadFromURL(
-            nodeNames='MRHead',
-            fileNames='MR-head.nrrd',
-            uris=TESTING_DATA_URL + 'SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93',
-            checksums='SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93')
-        self.delayDisplay('Finished with download and loading')
+            nodeNames="MRHead",
+            fileNames="MR-head.nrrd",
+            uris=TESTING_DATA_URL + "SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93",
+            checksums="SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93")
+        self.delayDisplay("Finished with download and loading")
 
         logic = ScriptedLoadableModuleTemplateLogic()
         self.assertIsNotNone(logic.hasImageData(volumeNode))
-        self.takeScreenshot('ScriptedLoadableModuleTemplateTest-Start', 'MyScreenshot', -1)
-        self.delayDisplay('Test passed!')
+        self.takeScreenshot("ScriptedLoadableModuleTemplateTest-Start", "MyScreenshot", -1)
+        self.delayDisplay("Test passed!")

@@ -69,8 +69,7 @@ class DICOMLoadable:
 #
 
 class DICOMPlugin:
-    """ Base class for DICOM plugins
-    """
+    """Base class for DICOM plugins"""
 
     def __init__(self):
         # displayed for the user as the plugin handling the load
@@ -85,9 +84,9 @@ class DICOMPlugin:
         # calls to the DICOM database so that any needed values
         # can be efficiently pre-fetched if possible.
         self.tags = {}
-        self.tags['seriesDescription'] = "0008,103E"
-        self.tags['seriesNumber'] = "0020,0011"
-        self.tags['frameOfReferenceUID'] = "0020,0052"
+        self.tags["seriesDescription"] = "0008,103E"
+        self.tags["seriesNumber"] = "0020,0011"
+        self.tags["frameOfReferenceUID"] = "0020,0052"
 
     def findPrivateTag(self, ds, group, element, privateCreator):
         """Helper function to get private tag from private creator name.
@@ -111,7 +110,7 @@ class DICOMPlugin:
         If enabled then the plugin can log as many details as it wants, even if it
         makes loading slower or adds lots of information to the application log.
         """
-        return slicer.util.settingsValue('DICOM/detailedLogging', False, converter=slicer.util.toBool)
+        return slicer.util.settingsValue("DICOM/detailedLogging", False, converter=slicer.util.toBool)
 
     def hashFiles(self, files):
         """Create a hash key for a list of files"""
@@ -122,20 +121,22 @@ class DICOMPlugin:
         m = hashlib.md5()
         for f in files:
             # Unicode-objects must be encoded before hashing
-            m.update(f.encode('UTF-8', 'ignore'))
+            m.update(f.encode("UTF-8", "ignore"))
         return m.digest()
 
     def getCachedLoadables(self, files):
-        """ Helper method to access the results of a previous
-        examination of a list of files"""
+        """Helper method to access the results of a previous
+        examination of a list of files
+        """
         key = self.hashFiles(files)
         if key in self.loadableCache:
             return self.loadableCache[key]
         return None
 
     def cacheLoadables(self, files, loadables):
-        """ Helper method to store the results of examining a list
-        of files for later quick access"""
+        """Helper method to store the results of examining a list
+        of files for later quick access
+        """
         key = self.hashFiles(files)
         self.loadableCache[key] = loadables
 
@@ -204,12 +205,13 @@ class DICOMPlugin:
 
     def defaultSeriesNodeName(self, seriesUID):
         """Generate a name suitable for use as a mrml node name based
-        on the series level data in the database"""
+        on the series level data in the database
+        """
         instanceFilePaths = slicer.dicomDatabase.filesForSeries(seriesUID, 1)
         if len(instanceFilePaths) == 0:
             return "Unnamed Series"
-        seriesDescription = slicer.dicomDatabase.fileValue(instanceFilePaths[0], self.tags['seriesDescription'])
-        seriesNumber = slicer.dicomDatabase.fileValue(instanceFilePaths[0], self.tags['seriesNumber'])
+        seriesDescription = slicer.dicomDatabase.fileValue(instanceFilePaths[0], self.tags["seriesDescription"])
+        seriesNumber = slicer.dicomDatabase.fileValue(instanceFilePaths[0], self.tags["seriesNumber"])
         name = seriesDescription
         if seriesDescription == "":
             name = "Unnamed Series"
@@ -227,41 +229,41 @@ class DICOMPlugin:
         each subclass of the DICOMPlugin class.
         """
         tags = {}
-        tags['seriesInstanceUID'] = "0020,000E"
-        tags['seriesModality'] = "0008,0060"
-        tags['seriesNumber'] = "0020,0011"
-        tags['seriesDescription'] = "0008,103E"
-        tags['seriesDate'] = "0008,0021"
-        tags['seriesTime'] = "0008,0031"
-        tags['contentDate'] = "0008,0023"
-        tags['contentTime'] = "0008,0033"
-        tags['manufacturer'] = "0008,0070"
-        tags['model'] = "0008,1090"
+        tags["seriesInstanceUID"] = "0020,000E"
+        tags["seriesModality"] = "0008,0060"
+        tags["seriesNumber"] = "0020,0011"
+        tags["seriesDescription"] = "0008,103E"
+        tags["seriesDate"] = "0008,0021"
+        tags["seriesTime"] = "0008,0031"
+        tags["contentDate"] = "0008,0023"
+        tags["contentTime"] = "0008,0033"
+        tags["manufacturer"] = "0008,0070"
+        tags["model"] = "0008,1090"
 
-        tags['frameOfReferenceUID'] = "0020,0052"
-        tags['studyInstanceUID'] = "0020,000D"
-        tags['studyID'] = "0020,0010"
-        tags['studyDescription'] = "0008,1030"
-        tags['studyDate'] = "0008,0020"
-        tags['studyTime'] = "0008,0030"
-        tags['patientID'] = "0010,0020"
-        tags['patientName'] = "0010,0010"
-        tags['patientSex'] = "0010,0040"
-        tags['patientBirthDate'] = "0010,0030"
-        tags['patientComments'] = "0010,4000"
-        tags['classUID'] = "0008,0016"
-        tags['instanceUID'] = "0008,0018"
+        tags["frameOfReferenceUID"] = "0020,0052"
+        tags["studyInstanceUID"] = "0020,000D"
+        tags["studyID"] = "0020,0010"
+        tags["studyDescription"] = "0008,1030"
+        tags["studyDate"] = "0008,0020"
+        tags["studyTime"] = "0008,0030"
+        tags["patientID"] = "0010,0020"
+        tags["patientName"] = "0010,0010"
+        tags["patientSex"] = "0010,0040"
+        tags["patientBirthDate"] = "0010,0030"
+        tags["patientComments"] = "0010,4000"
+        tags["classUID"] = "0008,0016"
+        tags["instanceUID"] = "0008,0018"
 
         # Import and check dependencies
         try:
             slicer.vtkSlicerSubjectHierarchyModuleLogic
         except AttributeError:
-            logging.error('Unable to create subject hierarchy: Subject Hierarchy module logic not found')
+            logging.error("Unable to create subject hierarchy: Subject Hierarchy module logic not found")
             return
 
         # Validate dataNode argument
-        if dataNode is None or not dataNode.IsA('vtkMRMLNode'):
-            logging.error('Unable to create subject hierarchy items: invalid data node provided')
+        if dataNode is None or not dataNode.IsA("vtkMRMLNode"):
+            logging.error("Unable to create subject hierarchy items: invalid data node provided")
             return
 
         # Get first file to access DICOM tags from it
@@ -276,20 +278,20 @@ class DICOMPlugin:
         seriesItemID = shn.CreateItem(sceneItemID, dataNode)
 
         # Specify details of series item
-        seriesInstanceUid = slicer.dicomDatabase.fileValue(firstFile, tags['seriesInstanceUID'])
+        seriesInstanceUid = slicer.dicomDatabase.fileValue(firstFile, tags["seriesInstanceUID"])
         shn.SetItemUID(seriesItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), seriesInstanceUid)
         # These series attributes are specified in DICOM export
         seriesAttributes = [
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesModalityAttributeName(), tags['seriesModality']],
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(), tags['seriesNumber']],
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMFrameOfReferenceUIDAttributeName(), tags['frameOfReferenceUID']],
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "SeriesDescription", tags['seriesDescription']],
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "SeriesDate", tags['seriesDate']],
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "SeriesTime", tags['seriesTime']],
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "ContentDate", tags['contentDate']],
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "ContentTime", tags['contentTime']],
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "Manufacturer", tags['manufacturer']],
-            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "Model", tags['model']],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesModalityAttributeName(), tags["seriesModality"]],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(), tags["seriesNumber"]],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMFrameOfReferenceUIDAttributeName(), tags["frameOfReferenceUID"]],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "SeriesDescription", tags["seriesDescription"]],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "SeriesDate", tags["seriesDate"]],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "SeriesTime", tags["seriesTime"]],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "ContentDate", tags["contentDate"]],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "ContentTime", tags["contentTime"]],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "Manufacturer", tags["manufacturer"]],
+            [slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMAttributePrefix() + "Model", tags["model"]],
         ]
         for attributeName, tag in seriesAttributes:
             shn.SetItemAttribute(seriesItemID, attributeName, slicer.dicomDatabase.fileValue(firstFile, tag))
@@ -297,7 +299,7 @@ class DICOMPlugin:
         # Set instance UIDs
         instanceUIDs = ""
         for file in loadable.files:
-            uid = slicer.dicomDatabase.fileValue(file, tags['instanceUID'])
+            uid = slicer.dicomDatabase.fileValue(file, tags["instanceUID"])
             if uid == "":
                 uid = "Unknown"
             instanceUIDs += uid + " "
@@ -306,7 +308,7 @@ class DICOMPlugin:
 
         # Set referenced instance UIDs from loadable to series
         referencedInstanceUIDs = ""
-        if hasattr(loadable, 'referencedInstanceUIDs'):
+        if hasattr(loadable, "referencedInstanceUIDs"):
             for instanceUID in loadable.referencedInstanceUIDs:
                 referencedInstanceUIDs += instanceUID + " "
         referencedInstanceUIDs = referencedInstanceUIDs[:-1]  # strip last space
@@ -314,8 +316,8 @@ class DICOMPlugin:
                              referencedInstanceUIDs)
 
         # Add series item to hierarchy under the right study and patient items. If they are present then used, if not, then created
-        studyInstanceUid = slicer.dicomDatabase.fileValue(firstFile, tags['studyInstanceUID'])
-        patientId = slicer.dicomDatabase.fileValue(firstFile, tags['patientID'])
+        studyInstanceUid = slicer.dicomDatabase.fileValue(firstFile, tags["studyInstanceUID"])
+        patientId = slicer.dicomDatabase.fileValue(firstFile, tags["patientID"])
         if not patientId:
             # Patient ID tag is required DICOM tag and it cannot be empty. Unfortunately, we may get DICOM files that do not follow
             # the standard (e.g., incorrectly anonymized) and have empty patient tag. We generate a unique ID from the study instance UID.
@@ -323,7 +325,7 @@ class DICOMPlugin:
             # then the DICOM UID of the patient and study tag would be the same, so we add a prefix ("Patient-").
             patientId = "Patient-" + studyInstanceUid
         patientItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
-        studyId = slicer.dicomDatabase.fileValue(firstFile, tags['studyID'])
+        studyId = slicer.dicomDatabase.fileValue(firstFile, tags["studyID"])
         studyItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
         slicer.vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(shn, patientId, studyInstanceUid, seriesInstanceUid)
 
@@ -331,40 +333,40 @@ class DICOMPlugin:
             patientItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
             if patientItemID:
                 # Add attributes for DICOM tags
-                patientName = slicer.dicomDatabase.fileValue(firstFile, tags['patientName'])
-                if patientName == '':
-                    patientName = 'No name'
+                patientName = slicer.dicomDatabase.fileValue(firstFile, tags["patientName"])
+                if patientName == "":
+                    patientName = "No name"
 
                 shn.SetItemAttribute(patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameAttributeName(),
                                      patientName)
                 shn.SetItemAttribute(patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDAttributeName(),
                                      patientId)
                 shn.SetItemAttribute(patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexAttributeName(),
-                                     slicer.dicomDatabase.fileValue(firstFile, tags['patientSex']))
-                patientBirthDate = slicer.dicomDatabase.fileValue(firstFile, tags['patientBirthDate'])
+                                     slicer.dicomDatabase.fileValue(firstFile, tags["patientSex"]))
+                patientBirthDate = slicer.dicomDatabase.fileValue(firstFile, tags["patientBirthDate"])
                 shn.SetItemAttribute(patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateAttributeName(),
                                      patientBirthDate)
                 shn.SetItemAttribute(patientItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsAttributeName(),
-                                     slicer.dicomDatabase.fileValue(firstFile, tags['patientComments']))
+                                     slicer.dicomDatabase.fileValue(firstFile, tags["patientComments"]))
                 # Set item name
                 patientItemName = patientName
                 if pluginHandlerSingleton.displayPatientIDInSubjectHierarchyItemName:
-                    patientItemName += ' (' + str(patientId) + ')'
-                if pluginHandlerSingleton.displayPatientBirthDateInSubjectHierarchyItemName and patientBirthDate != '':
-                    patientItemName += ' (' + str(patientBirthDate) + ')'
+                    patientItemName += " (" + str(patientId) + ")"
+                if pluginHandlerSingleton.displayPatientBirthDateInSubjectHierarchyItemName and patientBirthDate != "":
+                    patientItemName += " (" + str(patientBirthDate) + ")"
                 shn.SetItemName(patientItemID, patientItemName)
 
         if not studyItemID:
             studyItemID = shn.GetItemByUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
             if studyItemID:
                 # Add attributes for DICOM tags
-                studyDescription = slicer.dicomDatabase.fileValue(firstFile, tags['studyDescription'])
-                if studyDescription == '':
-                    studyDescription = 'No study description'
+                studyDescription = slicer.dicomDatabase.fileValue(firstFile, tags["studyDescription"])
+                if studyDescription == "":
+                    studyDescription = "No study description"
 
                 shn.SetItemAttribute(studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionAttributeName(),
                                      studyDescription)
-                studyDate = slicer.dicomDatabase.fileValue(firstFile, tags['studyDate'])
+                studyDate = slicer.dicomDatabase.fileValue(firstFile, tags["studyDate"])
                 shn.SetItemAttribute(studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDAttributeName(),
                                      studyInstanceUid)
                 shn.SetItemAttribute(studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDAttributeName(),
@@ -372,13 +374,13 @@ class DICOMPlugin:
                 shn.SetItemAttribute(studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateAttributeName(),
                                      studyDate)
                 shn.SetItemAttribute(studyItemID, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeAttributeName(),
-                                     slicer.dicomDatabase.fileValue(firstFile, tags['studyTime']))
+                                     slicer.dicomDatabase.fileValue(firstFile, tags["studyTime"]))
                 # Set item name
                 studyItemName = studyDescription
                 if pluginHandlerSingleton.displayStudyIDInSubjectHierarchyItemName:
-                    studyItemName += ' (' + str(studyId) + ')'
-                if pluginHandlerSingleton.displayStudyDateInSubjectHierarchyItemName and studyDate != '':
-                    studyItemName += ' (' + str(studyDate) + ')'
+                    studyItemName += " (" + str(studyId) + ")"
+                if pluginHandlerSingleton.displayStudyDateInSubjectHierarchyItemName and studyDate != "":
+                    studyItemName += " (" + str(studyDate) + ")"
                 shn.SetItemName(studyItemID, studyItemName)
 
     def mapSOPClassUIDToModality(self, sopClassUID):

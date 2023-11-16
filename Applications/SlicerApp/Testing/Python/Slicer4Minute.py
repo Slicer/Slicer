@@ -54,7 +54,7 @@ class Slicer4MinuteWidget(ScriptedLoadableModuleWidget):
         helloWorldButton = qt.QPushButton("Hello world")
         helloWorldButton.toolTip = "Print 'Hello world' in standard output."
         dummyFormLayout.addWidget(helloWorldButton)
-        helloWorldButton.connect('clicked(bool)', self.onHelloWorldButtonClicked)
+        helloWorldButton.connect("clicked(bool)", self.onHelloWorldButtonClicked)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -86,10 +86,10 @@ class Slicer4MinuteLogic(ScriptedLoadableModuleLogic):
         node has valid image data
         """
         if not volumeNode:
-            print('no volume node')
+            print("no volume node")
             return False
         if volumeNode.GetImageData() is None:
-            print('no image data')
+            print("no image data")
             return False
         return True
 
@@ -102,18 +102,16 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_Slicer4Minute1()
 
     def test_Slicer4Minute1(self):
-        """ Tests parts of the Slicer4Minute tutorial.
+        """Tests parts of the Slicer4Minute tutorial.
 
         Currently testing 'Part 2' which covers volumes, models, visibility and clipping.
         """
@@ -126,16 +124,16 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
         #
         import SampleData
         SampleData.downloadFromURL(
-            fileNames='slicer4minute.mrb',
+            fileNames="slicer4minute.mrb",
             loadFiles=True,
-            uris=TESTING_DATA_URL + 'SHA256/5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8',
-            checksums='SHA256:5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8')
-        self.delayDisplay('Finished with download and loading')
+            uris=TESTING_DATA_URL + "SHA256/5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8",
+            checksums="SHA256:5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8")
+        self.delayDisplay("Finished with download and loading")
 
         # Testing "Part 2" of Tutorial
         #
         #
-        self.delayDisplay('Testing Part 2 of the Tutorial')
+        self.delayDisplay("Testing Part 2 of the Tutorial")
 
         # check volume is loaded out of scene
         volumeNode = slicer.util.getNode(pattern="grayscale")
@@ -149,36 +147,36 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
         green.SetSliceVisible(1)
 
         # rotate a bit
-        cam = slicer.util.getNode(pattern='vtkMRMLCameraNode1')
+        cam = slicer.util.getNode(pattern="vtkMRMLCameraNode1")
         cam.GetCamera().Azimuth(90)
         cam.GetCamera().Elevation(20)
 
         # turn off skin and skull
-        skin = slicer.util.getNode(pattern='Skin')
+        skin = slicer.util.getNode(pattern="Skin")
         skin.GetDisplayNode().SetVisibility(0)
 
-        skull = slicer.util.getNode(pattern='skull_bone')
+        skull = slicer.util.getNode(pattern="skull_bone")
         skull.GetDisplayNode().SetVisibility(0)
 
         # clip the model hemispheric_white_matter.vtk
         m = slicer.util.mainWindow()
-        m.moduleSelector().selectModule('Models')
+        m.moduleSelector().selectModule("Models")
 
-        models = slicer.util.getModule('Models')
+        models = slicer.util.getModule("Models")
         logic = models.logic()
 
-        hemispheric_white_matter = slicer.util.getNode(pattern='hemispheric_white_matter')
+        hemispheric_white_matter = slicer.util.getNode(pattern="hemispheric_white_matter")
         hemispheric_white_matter.GetDisplayNode().SetClipping(1)
 
-        clip = slicer.util.getNode('ClipModelsParameters1')
+        clip = slicer.util.getNode("ClipModelsParameters1")
         clip.SetRedSliceClipState(0)
         clip.SetYellowSliceClipState(0)
         clip.SetGreenSliceClipState(2)
 
         # Can we make this more than just a Smoke Test?
-        self.delayDisplay('Optic chiasm should be visible. Front part of white matter should be clipped.')
+        self.delayDisplay("Optic chiasm should be visible. Front part of white matter should be clipped.")
 
         # Done
         #
         #
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

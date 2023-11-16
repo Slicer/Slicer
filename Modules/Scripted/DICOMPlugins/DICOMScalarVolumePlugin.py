@@ -25,44 +25,49 @@ from DICOMLib import DICOMExportScalarVolume
 #
 
 class DICOMScalarVolumePluginClass(DICOMPlugin):
-    """ ScalarVolume specific interpretation code
-    """
+    """ScalarVolume specific interpretation code"""
 
-    def __init__(self, epsilon=0.01):
+    def __init__(self, spacingEpsilon=1e-2, orientationEpsilon=1e-6):
+        """
+        :param spacingEpsilon: Tolerance for numeric comparisons for spacing vectors. Defaults to 1.e-2.
+        :param orientationEpsilon: Tolerance for numeric comparisons for orientation vectors. Defaults to 1.e-6, following ITK numeric comparison logic.
+        """
+
         super().__init__()
         self.loadType = _("Scalar Volume")
-        self.epsilon = epsilon
+        self.spacingEpsilon = spacingEpsilon
+        self.orientationEpsilon = orientationEpsilon
         self.acquisitionModeling = None
         self.defaultStudyID = 'SLICER10001'  # TODO: What should be the new study ID?
         self.urlHandlerInterval = 300 # ms
         self.urlHandlerTimeout = 60 # seconds
 
-        self.tags['sopClassUID'] = "0008,0016"
-        self.tags['photometricInterpretation'] = "0028,0004"
-        self.tags['seriesDescription'] = "0008,103e"
-        self.tags['seriesUID'] = "0020,000E"
-        self.tags['seriesNumber'] = "0020,0011"
-        self.tags['position'] = "0020,0032"
-        self.tags['orientation'] = "0020,0037"
-        self.tags['pixelData'] = "7fe0,0010"
-        self.tags['seriesInstanceUID'] = "0020,000E"
-        self.tags['acquisitionNumber'] = "0020,0012"
-        self.tags['imageType'] = "0008,0008"
-        self.tags['contentTime'] = "0008,0033"
-        self.tags['triggerTime'] = "0018,1060"
-        self.tags['diffusionGradientOrientation'] = "0018,9089"
-        self.tags['imageOrientationPatient'] = "0020,0037"
-        self.tags['numberOfFrames'] = "0028,0008"
-        self.tags['instanceUID'] = "0008,0018"
-        self.tags['windowCenter'] = "0028,1050"
-        self.tags['windowWidth'] = "0028,1051"
-        self.tags['rows'] = "0028,0010"
-        self.tags['columns'] = "0028,0011"
-        self.tags['spacing'] = "0028,0030"
-        self.tags['bitsAllocated'] = "0028,0100"
-        self.tags['pixelRepresentation'] = "0028,0103"
-        self.tags['rescaleIntercept'] = "0028,1052"
-        self.tags['rescaleSlope'] = "0028,1053"
+        self.tags["sopClassUID"] = "0008,0016"
+        self.tags["photometricInterpretation"] = "0028,0004"
+        self.tags["seriesDescription"] = "0008,103e"
+        self.tags["seriesUID"] = "0020,000E"
+        self.tags["seriesNumber"] = "0020,0011"
+        self.tags["position"] = "0020,0032"
+        self.tags["orientation"] = "0020,0037"
+        self.tags["pixelData"] = "7fe0,0010"
+        self.tags["seriesInstanceUID"] = "0020,000E"
+        self.tags["acquisitionNumber"] = "0020,0012"
+        self.tags["imageType"] = "0008,0008"
+        self.tags["contentTime"] = "0008,0033"
+        self.tags["triggerTime"] = "0018,1060"
+        self.tags["diffusionGradientOrientation"] = "0018,9089"
+        self.tags["imageOrientationPatient"] = "0020,0037"
+        self.tags["numberOfFrames"] = "0028,0008"
+        self.tags["instanceUID"] = "0008,0018"
+        self.tags["windowCenter"] = "0028,1050"
+        self.tags["windowWidth"] = "0028,1051"
+        self.tags["rows"] = "0028,0010"
+        self.tags["columns"] = "0028,0011"
+        self.tags["spacing"] = "0028,0030"
+        self.tags["bitsAllocated"] = "0028,0100"
+        self.tags["pixelRepresentation"] = "0028,0103"
+        self.tags["rescaleIntercept"] = "0028,1052"
+        self.tags["rescaleSlope"] = "0028,1053"
 
     @staticmethod
     def readerApproaches():
@@ -99,7 +104,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         importFormatsComboBox.addItem(_("default (apply regularization transform)"), "default")
         importFormatsComboBox.addItem(_("none"), "none")
         importFormatsComboBox.addItem(_("apply regularization transform"), "transform")
-        # In the future additional option, such as "resample" (harden the applied transform) may be added.
+        importFormatsComboBox.addItem(_("harden regularization transform"), "hardenTransform")
 
         importFormatsComboBox.currentIndex = 0
         formLayout.addRow(_("Acquisition geometry regularization:"), importFormatsComboBox)
@@ -143,6 +148,10 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             comparison += _("Pixel data mismatch") + "\n"
         return comparison
 
+    def hardenAcquisitionGeometryRegularization(self):
+        settings = qt.QSettings()
+        return (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") == "hardenTransform")
+
     def acquisitionGeometryRegularizationEnabled(self):
         settings = qt.QSettings()
         return (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") != "none")
@@ -152,7 +161,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         return (int(settings.value("DICOM/ScalarVolume/AllowLoadingByTime", "0")) != 0)
 
     def examineForImport(self, fileLists):
-        """ Returns a sorted list of DICOMLoadable instances
+        """Returns a sorted list of DICOMLoadable instances
         corresponding to ways of interpreting the
         fileLists parameter (list of file lists).
         """
@@ -172,12 +181,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         return loadables
 
     def examineFiles(self, files):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         files parameter.
         """
 
-        seriesUID = slicer.dicomDatabase.fileValue(files[0], self.tags['seriesUID'])
+        seriesUID = slicer.dicomDatabase.fileValue(files[0], self.tags["seriesUID"])
         seriesName = self.defaultSeriesNodeName(seriesUID)
 
         # default loadable includes all files for series
@@ -212,6 +221,16 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             "diffusionGradientOrientation",
         ]
 
+        # Subset of the tags specified in the `subseriesTags` list
+        # that should be compared numerically (rather than using the
+        # built-in string comparison). This is done when checking if
+        # the associated value has already been appended to the
+        # `subseriesValues[tag]` list.
+        vectorTags = [
+            "imageOrientationPatient",
+            "diffusionGradientOrientation",
+        ]
+
         #
         # first, look for subseries within this series
         # - build a list of files for each unique value
@@ -224,9 +243,31 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             for tag in subseriesTags:
                 value = slicer.dicomDatabase.fileValue(file, self.tags[tag])
                 value = value.replace(",", "_")  # remove commas so it can be used as an index
+
                 if tag not in subseriesValues:
                     subseriesValues[tag] = []
-                if not subseriesValues[tag].__contains__(value):
+
+                if tag in vectorTags:
+                    if value != "":
+                        vector = self.tagValueToVector(value)
+
+                        found = False
+                        for subseriesValue in subseriesValues[tag]:
+                            subseriesVector = self.tagValueToVector(subseriesValue)
+                            # vector numerical comparison by absolute difference as the ITK logic.
+                            # Reference:
+                            #   Class: ITK/Modules/Numerics/Optimizersv4/include/itkObjectToObjectMetric.hxx
+                            #   Method: VerifyDisplacementFieldSizeAndPhysicalSpace
+                            #   URL: https://github.com/InsightSoftwareConsortium/ITK/blob/v5.4rc02/Modules/Numerics/Optimizersv4/include/itkObjectToObjectMetric.hxx#L507-L510.
+
+                            if numpy.allclose(vector, subseriesVector, rtol=0., atol=self.orientationEpsilon):
+                                found = True
+                                value = subseriesValue
+                                break
+
+                        if not found:
+                            subseriesValues[tag].append(value)
+                elif value not in subseriesValues[tag]:
                     subseriesValues[tag].append(value)
                 if (tag, value) not in subseriesFiles:
                     subseriesFiles[tag, value] = []
@@ -275,19 +316,19 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             newFiles = []
             excludedLoadable = False
             for file in loadable.files:
-                if slicer.dicomDatabase.fileValueExists(file, self.tags['pixelData']):
+                if slicer.dicomDatabase.fileValueExists(file, self.tags["pixelData"]):
                     newFiles.append(file)
-                if slicer.dicomDatabase.fileValue(file, self.tags['sopClassUID']) == '1.2.840.10008.5.1.4.1.1.66.4':
+                if slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.66.4":
                     excludedLoadable = True
-                    if 'DICOMSegmentationPlugin' not in slicer.modules.dicomPlugins:
-                        logging.warning('Please install Quantitative Reporting extension to enable loading of DICOM Segmentation objects')
-                elif slicer.dicomDatabase.fileValue(file, self.tags['sopClassUID']) == '1.2.840.10008.5.1.4.1.1.481.3':
+                    if "DICOMSegmentationPlugin" not in slicer.modules.dicomPlugins:
+                        logging.warning("Please install Quantitative Reporting extension to enable loading of DICOM Segmentation objects")
+                elif slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.481.3":
                     excludedLoadable = True
-                    if 'DicomRtImportExportPlugin' not in slicer.modules.dicomPlugins:
-                        logging.warning('Please install SlicerRT extension to enable loading of DICOM RT Structure Set objects')
+                    if "DicomRtImportExportPlugin" not in slicer.modules.dicomPlugins:
+                        logging.warning("Please install SlicerRT extension to enable loading of DICOM RT Structure Set objects")
             if len(newFiles) > 0 and not excludedLoadable:
                 loadable.files = newFiles
-                loadable.grayscale = ('MONOCHROME' in slicer.dicomDatabase.fileValue(newFiles[0], self.tags['photometricInterpretation']))
+                loadable.grayscale = ("MONOCHROME" in slicer.dicomDatabase.fileValue(newFiles[0], self.tags["photometricInterpretation"]))
                 newLoadables.append(loadable)
             elif excludedLoadable:
                 continue
@@ -297,7 +338,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 # them through with a warning and low confidence
                 loadable.warning += _("There is no pixel data attribute for the DICOM objects, but they might be readable as secondary capture images.")
                 loadable.confidence = 0.2
-                loadable.grayscale = ('MONOCHROME' in slicer.dicomDatabase.fileValue(loadable.files[0], self.tags['photometricInterpretation']))
+                loadable.grayscale = ("MONOCHROME" in slicer.dicomDatabase.fileValue(loadable.files[0], self.tags["photometricInterpretation"]))
                 newLoadables.append(loadable)
         loadables = newLoadables
 
@@ -307,7 +348,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         # then adjust confidence values based on warnings
         #
         for loadable in loadables:
-            loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.epsilon)
+            loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.spacingEpsilon)
 
         loadablesBetterThanAllFiles = []
         if allFilesLoadable.warning != "":
@@ -358,8 +399,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         return volumesLogic.AddArchetypeScalarVolume(files[0], name, 0, fileList)
 
     def loadFilesWithSeriesReader(self, imageIOName, files, name, grayscale=True):
-        """ Explicitly use the named imageIO to perform the loading
-        """
+        """Explicitly use the named imageIO to perform the loading"""
 
         if grayscale:
             reader = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
@@ -423,7 +463,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             #
             instanceUIDs = ""
             for file in loadable.files:
-                uid = slicer.dicomDatabase.fileValue(file, self.tags['instanceUID'])
+                uid = slicer.dicomDatabase.fileValue(file, self.tags["instanceUID"])
                 if uid == "":
                     uid = "Unknown"
                 instanceUIDs += uid + " "
@@ -452,19 +492,19 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             #   [2] https://github.com/Slicer/Slicer/blob/3bfa2fc2b310d41c09b7a9e8f8f6c4f43d3bd1e2/Libs/MRML/Core/vtkMRMLScalarVolumeDisplayNode.h#L172
             #
             try:
-                windowCenter = float(slicer.dicomDatabase.fileValue(file, self.tags['windowCenter']))
-                windowWidth = float(slicer.dicomDatabase.fileValue(file, self.tags['windowWidth']))
+                windowCenter = float(slicer.dicomDatabase.fileValue(file, self.tags["windowCenter"]))
+                windowWidth = float(slicer.dicomDatabase.fileValue(file, self.tags["windowWidth"]))
                 displayNode = volumeNode.GetDisplayNode()
                 if displayNode:
-                    logging.info('Window/level found in DICOM tags (center=' + str(windowCenter) + ', width=' + str(windowWidth) + ') has been applied to volume ' + volumeNode.GetName())
+                    logging.info("Window/level found in DICOM tags (center=" + str(windowCenter) + ", width=" + str(windowWidth) + ") has been applied to volume " + volumeNode.GetName())
                     displayNode.AddWindowLevelPreset(windowWidth, windowCenter)
                     displayNode.SetWindowLevelFromPreset(0)
                 else:
-                    logging.info('No display node: cannot use window/level found in DICOM tags')
+                    logging.info("No display node: cannot use window/level found in DICOM tags")
             except ValueError:
                 pass  # DICOM tags cannot be parsed to floating point numbers
 
-            sopClassUID = slicer.dicomDatabase.fileValue(file, self.tags['sopClassUID'])
+            sopClassUID = slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"])
 
             # initialize color lookup table
             modality = self.mapSOPClassUIDToModality(sopClassUID)
@@ -481,8 +521,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 volumeNode.SetVoxelValueUnits(units)
 
     def loadWithMultipleLoaders(self, loadable):
-        """Load using multiple paths (for testing)
-        """
+        """Load using multiple paths (for testing)"""
         volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name + "-archetype")
         self.setVolumeNodeProperties(volumeNode, loadable)
         volumeNode = self.loadFilesWithSeriesReader("GDCM", loadable.files, loadable.name + "-gdcm", loadable.grayscale)
@@ -569,7 +608,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         else:
             # files, so first, determine which reader approach the user prefers
             if not readerApproach:
-                readerIndex = slicer.util.settingsValue('DICOM/ScalarVolume/ReaderApproach', 0, converter=int)
+                readerIndex = slicer.util.settingsValue("DICOM/ScalarVolume/ReaderApproach", 0, converter=int)
                 readerApproach = DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
             # second, try to load with the selected approach
             if readerApproach == "Archetype":
@@ -591,7 +630,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         if volumeNode:
             self.acquisitionModeling = self.AcquisitionModeling()
             self.acquisitionModeling.createAcquisitionTransform(volumeNode,
-                                                                addAcquisitionTransformIfNeeded=self.acquisitionGeometryRegularizationEnabled())
+                                                                addAcquisitionTransformIfNeeded=self.acquisitionGeometryRegularizationEnabled(),
+                                                                hardenAcquisitionTransform=self.hardenAcquisitionGeometryRegularization())
 
         return volumeNode
 
@@ -603,7 +643,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         # cannot export if there is no data node or the data node is not a volume
         shn = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
         dataNode = shn.GetItemDataNode(subjectHierarchyItemID)
-        if dataNode is None or not dataNode.IsA('vtkMRMLScalarVolumeNode'):
+        if dataNode is None or not dataNode.IsA("vtkMRMLScalarVolumeNode"):
             return []
 
         # Define basic properties of the exportable
@@ -615,20 +655,20 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         exportable.confidence = 0.5  # There could be more specialized volume types
 
         # Define required tags and default values
-        exportable.setTag('SeriesDescription', 'No series description')  # no_tr (all these are DICOM tag names, not displayed to user)
-        exportable.setTag('Modality', 'CT')
-        exportable.setTag('Manufacturer', 'Unknown manufacturer')
-        exportable.setTag('Model', 'Unknown model')
-        exportable.setTag('StudyDate', '')
-        exportable.setTag('StudyTime', '')
-        exportable.setTag('StudyInstanceUID', '')
-        exportable.setTag('SeriesDate', '')
-        exportable.setTag('SeriesTime', '')
-        exportable.setTag('ContentDate', '')
-        exportable.setTag('ContentTime', '')
-        exportable.setTag('SeriesNumber', '301')
-        exportable.setTag('SeriesInstanceUID', '')
-        exportable.setTag('FrameOfReferenceUID', '')
+        exportable.setTag("SeriesDescription", "No series description")  # no_tr (all these are DICOM tag names, not displayed to user)
+        exportable.setTag("Modality", "CT")
+        exportable.setTag("Manufacturer", "Unknown manufacturer")
+        exportable.setTag("Model", "Unknown model")
+        exportable.setTag("StudyDate", "")
+        exportable.setTag("StudyTime", "")
+        exportable.setTag("StudyInstanceUID", "")
+        exportable.setTag("SeriesDate", "")
+        exportable.setTag("SeriesTime", "")
+        exportable.setTag("ContentDate", "")
+        exportable.setTag("ContentTime", "")
+        exportable.setTag("SeriesNumber", "301")
+        exportable.setTag("SeriesInstanceUID", "")
+        exportable.setTag("FrameOfReferenceUID", "")
 
         return [exportable]
 
@@ -641,7 +681,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 logging.error(error)
                 return error
             volumeNode = shNode.GetItemDataNode(exportable.subjectHierarchyItemID)
-            if volumeNode is None or not volumeNode.IsA('vtkMRMLScalarVolumeNode'):
+            if volumeNode is None or not volumeNode.IsA("vtkMRMLScalarVolumeNode"):
                 error = _("Series '{itemName}' cannot be exported").format(itemName=shNode.GetItemName(exportable.subjectHierarchyItemID))
                 logging.error(error)
                 return error
@@ -649,7 +689,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # Get output directory and create a subdirectory. This is necessary
             # to avoid overwriting the files in case of multiple exportables, as
             # naming of the DICOM files is static
-            directoryName = 'ScalarVolume_' + str(exportable.subjectHierarchyItemID)
+            directoryName = "ScalarVolume_" + str(exportable.subjectHierarchyItemID)
             directoryDir = qt.QDir(exportable.directory)
             directoryDir.mkpath(directoryName)
             directoryDir.cd(directoryName)
@@ -670,51 +710,51 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
             # Assemble tags dictionary for volume export
             tags = {}
-            tags['Patient Name'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameTagName())
-            tags['Patient ID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDTagName())
-            tags['Patient Birth Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateTagName())
-            tags['Patient Sex'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexTagName())
-            tags['Patient Comments'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
-            tags['Study ID'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName())
-            tags['Study Date'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
-            tags['Study Time'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeTagName())
-            tags['Study Description'] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
-            tags['Modality'] = exportable.tag('Modality')
-            tags['Manufacturer'] = exportable.tag('Manufacturer')
-            tags['Model'] = exportable.tag('Model')
-            tags['Series Description'] = exportable.tag('SeriesDescription')
-            tags['Series Number'] = exportable.tag('SeriesNumber')
-            tags['Series Date'] = exportable.tag('SeriesDate')
-            tags['Series Time'] = exportable.tag('SeriesTime')
-            tags['Content Date'] = exportable.tag('ContentDate')
-            tags['Content Time'] = exportable.tag('ContentTime')
+            tags["Patient Name"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameTagName())
+            tags["Patient ID"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDTagName())
+            tags["Patient Birth Date"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateTagName())
+            tags["Patient Sex"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexTagName())
+            tags["Patient Comments"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
+            tags["Study ID"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName())
+            tags["Study Date"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
+            tags["Study Time"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeTagName())
+            tags["Study Description"] = exportable.tag(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
+            tags["Modality"] = exportable.tag("Modality")
+            tags["Manufacturer"] = exportable.tag("Manufacturer")
+            tags["Model"] = exportable.tag("Model")
+            tags["Series Description"] = exportable.tag("SeriesDescription")
+            tags["Series Number"] = exportable.tag("SeriesNumber")
+            tags["Series Date"] = exportable.tag("SeriesDate")
+            tags["Series Time"] = exportable.tag("SeriesTime")
+            tags["Content Date"] = exportable.tag("ContentDate")
+            tags["Content Time"] = exportable.tag("ContentTime")
 
-            tags['Study Instance UID'] = exportable.tag('StudyInstanceUID')
-            tags['Series Instance UID'] = exportable.tag('SeriesInstanceUID')
-            tags['Frame of Reference UID'] = exportable.tag('FrameOfReferenceUID')
+            tags["Study Instance UID"] = exportable.tag("StudyInstanceUID")
+            tags["Series Instance UID"] = exportable.tag("SeriesInstanceUID")
+            tags["Frame of Reference UID"] = exportable.tag("FrameOfReferenceUID")
 
             # Generate any missing but required UIDs
-            if not tags['Study Instance UID']:
+            if not tags["Study Instance UID"]:
                 import pydicom as dicom
-                tags['Study Instance UID'] = dicom.uid.generate_uid()
-            if not tags['Series Instance UID']:
+                tags["Study Instance UID"] = dicom.uid.generate_uid()
+            if not tags["Series Instance UID"]:
                 import pydicom as dicom
-                tags['Series Instance UID'] = dicom.uid.generate_uid()
-            if not tags['Frame of Reference UID']:
+                tags["Series Instance UID"] = dicom.uid.generate_uid()
+            if not tags["Frame of Reference UID"]:
                 import pydicom as dicom
-                tags['Frame of Reference UID'] = dicom.uid.generate_uid()
+                tags["Frame of Reference UID"] = dicom.uid.generate_uid()
 
             # Use the default Study ID if none is specified
-            if not tags['Study ID']:
-                tags['Study ID'] = self.defaultStudyID
+            if not tags["Study ID"]:
+                tags["Study ID"] = self.defaultStudyID
 
             # Validate tags
-            if tags['Modality'] == "":
+            if tags["Modality"] == "":
                 error = _("Empty modality for series '{volumeName}'").format(volumeNode.GetName())
                 logging.error(error)
                 return error
 
-            seriesInstanceUID = tags['Series Instance UID']
+            seriesInstanceUID = tags["Series Instance UID"]
             if seriesInstanceUID:
                 # Make sure we don't use a series instance UID that already exists (it would mix in more slices into an existing series,
                 # which is very unlikely that users would want).
@@ -731,7 +771,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # TODO: more tag checks
 
             # Perform export
-            exporter = DICOMExportScalarVolume(tags['Study ID'], volumeNode, tags, directory)
+            exporter = DICOMExportScalarVolume(tags["Study ID"], volumeNode, tags, directory)
             if not exporter.export():
                 return _("Creating DICOM files from scalar volume failed. See the application log for details.")
 
@@ -757,8 +797,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             self.zeroEpsilon = zeroEpsilon
 
         def gridTransformFromCorners(self, volumeNode, sourceCorners, targetCorners):
-            """Create a grid transform that maps between the current and the desired corners.
-            """
+            """Create a grid transform that maps between the current and the desired corners."""
             # sanity check
             columns, rows, slices = volumeNode.GetImageData().GetDimensions()
             cornerShape = (slices, 2, 2, 3)
@@ -768,7 +807,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
             # create the grid transform node
             gridTransform = slicer.vtkMRMLGridTransformNode()
-            gridTransform.SetName(slicer.mrmlScene.GenerateUniqueName(volumeNode.GetName() + ' acquisition transform'))
+            gridTransform.SetName(slicer.mrmlScene.GenerateUniqueName(volumeNode.GetName() + " acquisition transform"))
             slicer.mrmlScene.AddNode(gridTransform)
 
             # place grid transform in the same subject hierarchy folder as the volume node
@@ -815,7 +854,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
             columns, rows, slices = volumeNode.GetImageData().GetDimensions()
             corners = numpy.zeros(shape=[slices, 2, 2, 3])
-            instanceUIDsAttribute = volumeNode.GetAttribute('DICOM.instanceUIDs')
+            instanceUIDsAttribute = volumeNode.GetAttribute("DICOM.instanceUIDs")
             uids = instanceUIDsAttribute.split() if instanceUIDsAttribute else []
             if len(uids) != slices:
                 # There is no uid for each slice, so most likely all frames are in a single file
@@ -829,14 +868,14 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 orientationString = slicer.dicomDatabase.instanceValue(uid, orientationTag)
                 spacingString = slicer.dicomDatabase.instanceValue(uid, spacingTag)
                 if positionString == "" or orientationString == "" or spacingString == "":
-                    logging.warning('No geometry information available for DICOM data, skipping corner calculations')
+                    logging.warning("No geometry information available for DICOM data, skipping corner calculations")
                     return None
 
-                position = numpy.array(list(map(float, positionString.split('\\'))))
-                orientation = list(map(float, orientationString.split('\\')))
+                position = numpy.array(list(map(float, positionString.split("\\"))))
+                orientation = list(map(float, orientationString.split("\\")))
                 rowOrientation = numpy.array(orientation[:3])
                 columnOrientation = numpy.array(orientation[3:])
-                spacing = numpy.array(list(map(float, spacingString.split('\\'))))
+                spacing = numpy.array(list(map(float, spacingString.split("\\"))))
                 # map from LPS to RAS
                 lpsToRAS = numpy.array([-1, -1, 1])
                 position *= lpsToRAS
@@ -879,7 +918,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                         volumeNode.TransformPointToWorld(corners[slice, row, column], worldCorners[slice, row, column])
             return worldCorners
 
-        def createAcquisitionTransform(self, volumeNode, addAcquisitionTransformIfNeeded=True):
+        def createAcquisitionTransform(self, volumeNode, addAcquisitionTransformIfNeeded=True, hardenAcquisitionTransform=False):
             """Creates the actual transform if needed.
             Slice corners are cached for inspection by tests
             """
@@ -898,6 +937,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                     self.fixedCorners = self.cornersToWorld(volumeNode, self.originalCorners)
                     if not numpy.allclose(self.fixedCorners, self.targetCorners):
                         raise Exception("Acquisition transform didn't fix slice corners!")
+                    if hardenAcquisitionTransform:
+                        volumeNode.HardenTransform()
                 else:
                     logging.warning(warningText + "  Regularization transform is not added, as the option is disabled.")
             elif maxError > 0 and maxError > self.zeroEpsilon:
@@ -941,4 +982,4 @@ class DICOMScalarVolumePlugin:
             slicer.modules.dicomPlugins
         except AttributeError:
             slicer.modules.dicomPlugins = {}
-        slicer.modules.dicomPlugins['DICOMScalarVolumePlugin'] = DICOMScalarVolumePluginClass
+        slicer.modules.dicomPlugins["DICOMScalarVolumePlugin"] = DICOMScalarVolumePluginClass

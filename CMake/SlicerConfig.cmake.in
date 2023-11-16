@@ -400,7 +400,7 @@ set(Slicer_ExternalData_URL_TEMPLATES "@Slicer_ExternalData_URL_TEMPLATES@")
 # built as shared library, it's important to make sure that the project including
 # SlicerConfig.cmake (this file) is built against the same set of external projects if it applies.
 #
-# Let's consider the example of a project dependending on both VTK and Slicer. With the help of
+# Let's consider the example of a project depending on both VTK and Slicer. With the help of
 # the macro 'slicer_config_set_ep', the build system will check that the path of the already
 # defined VTK_DIR matches the VTK_DIR used to build Slicer.
 #

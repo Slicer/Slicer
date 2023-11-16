@@ -56,12 +56,12 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
 
         self.inputDirSelector = ctk.ctkPathLineEdit()
         self.inputDirSelector.filters = ctk.ctkPathLineEdit.Dirs
-        self.inputDirSelector.settingKey = 'DICOMPatcherInputDir'
+        self.inputDirSelector.settingKey = "DICOMPatcherInputDir"
         parametersFormLayout.addRow(_("Input DICOM directory:"), self.inputDirSelector)
 
         self.outputDirSelector = ctk.ctkPathLineEdit()
         self.outputDirSelector.filters = ctk.ctkPathLineEdit.Dirs
-        self.outputDirSelector.settingKey = 'DICOMPatcherOutputDir'
+        self.outputDirSelector.settingKey = "DICOMPatcherOutputDir"
         parametersFormLayout.addRow(_("Output DICOM directory:"), self.outputDirSelector)
 
         self.normalizeFileNamesCheckBox = qt.QCheckBox()
@@ -142,8 +142,8 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.importButton)
 
         # connections
-        self.patchButton.connect('clicked(bool)', self.onPatchButton)
-        self.importButton.connect('clicked(bool)', self.onImportButton)
+        self.patchButton.connect("clicked(bool)", self.onPatchButton)
+        self.importButton.connect("clicked(bool)", self.onImportButton)
 
         self.statusLabel = qt.QPlainTextEdit()
         self.statusLabel.setTextInteractionFlags(qt.Qt.TextSelectableByMouse)
@@ -167,7 +167,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
 
             self.inputDirSelector.addCurrentPathToHistory()
             self.outputDirSelector.addCurrentPathToHistory()
-            self.statusLabel.plainText = ''
+            self.statusLabel.plainText = ""
 
             self.logic.clearRules()
             if self.fixExposureFiascoCheckBox.checked:
@@ -195,8 +195,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
         self.logic.importDicomDir(self.outputDirSelector.currentPath)
 
     def addLog(self, text):
-        """Append text to log window
-        """
+        """Append text to log window"""
         self.statusLabel.appendPlainText(text)
         slicer.app.processEvents()  # force update
 
@@ -238,7 +237,7 @@ class DICOMPatcherRule:
 class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
     def __init__(self, parameters=None):
         super().__init__(parameters)
-        self.requiredTags = ['PatientName', 'PatientID']
+        self.requiredTags = ["PatientName", "PatientID"]
         self.eachFileIsSeparateSeries = False
 
     def processStart(self, inputRootDir, outputRootDir):
@@ -269,7 +268,7 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
 class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
     def __init__(self, parameters=None):
         super().__init__(parameters)
-        self.requiredTags = ['SeriesInstanceUID']
+        self.requiredTags = ["SeriesInstanceUID"]
 
     def processStart(self, inputRootDir, outputRootDir):
         self.seriesIndex = 0
@@ -291,7 +290,7 @@ class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
 class GenerateMissingIDs(DICOMPatcherRule):
     def __init__(self, parameters=None):
         super().__init__(parameters)
-        self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
+        self.requiredTags = ["PatientName", "PatientID", "StudyInstanceUID", "SeriesInstanceUID", "SeriesNumber"]
         self.eachFileIsSeparateSeries = False
 
     def processStart(self, inputRootDir, outputRootDir):
@@ -315,25 +314,25 @@ class GenerateMissingIDs(DICOMPatcherRule):
 
         for tag in self.requiredTags:
             if not hasattr(ds, tag):
-                setattr(ds, tag, '')
+                setattr(ds, tag, "")
 
         # Generate a new SOPInstanceUID to avoid different files having the same SOPInstanceUID
         ds.SOPInstanceUID = pydicom.uid.generate_uid(None)
 
-        if ds.PatientName == '':
+        if ds.PatientName == "":
             ds.PatientName = _("Unspecified Patient")
-        if ds.PatientID == '':
+        if ds.PatientID == "":
             ds.PatientID = self.randomPatientID
-        if ds.StudyInstanceUID == '':
+        if ds.StudyInstanceUID == "":
             ds.StudyInstanceUID = self.randomStudyUID
-        if ds.SeriesInstanceUID == '':
+        if ds.SeriesInstanceUID == "":
             if self.eachFileIsSeparateSeries:
                 ds.SeriesInstanceUID = pydicom.uid.generate_uid(None)
             else:
                 ds.SeriesInstanceUID = self.randomSeriesInstanceUID
 
         # Generate series number to make it easier to identify a sequence within a study
-        if ds.SeriesNumber == '':
+        if ds.SeriesNumber == "":
             if ds.StudyInstanceUID not in self.numberOfSeriesInStudyMap:
                 self.numberOfSeriesInStudyMap[ds.StudyInstanceUID] = 0
             self.numberOfSeriesInStudyMap[ds.StudyInstanceUID] = self.numberOfSeriesInStudyMap[ds.StudyInstanceUID] + 1
@@ -346,9 +345,9 @@ class GenerateMissingIDs(DICOMPatcherRule):
 
 class RemoveDICOMDIR(DICOMPatcherRule):
     def skipFile(self, filepath):
-        if os.path.basename(filepath) != 'DICOMDIR':
+        if os.path.basename(filepath) != "DICOMDIR":
             return False
-        self.addLog('DICOMDIR file is ignored (its contents may be inconsistent with the contents of the indexed DICOM files, therefore it is safer not to use it)')
+        self.addLog("DICOMDIR file is ignored (its contents may be inconsistent with the contents of the indexed DICOM files, therefore it is safer not to use it)")
         return True
 
 
@@ -364,11 +363,11 @@ class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
         # We could make things nicer by allowing the user to specify a modality.
         DCMTKPrivateMediaStorageSOPClassUID = "1.2.276.0.7230010.3.1.0.1"
         CTImageStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.2"
-        if not hasattr(ds.file_meta, 'MediaStorageSOPClassUID') or ds.file_meta.MediaStorageSOPClassUID == DCMTKPrivateMediaStorageSOPClassUID:
+        if not hasattr(ds.file_meta, "MediaStorageSOPClassUID") or ds.file_meta.MediaStorageSOPClassUID == DCMTKPrivateMediaStorageSOPClassUID:
             self.addLog("DCMTK private MediaStorageSOPClassUID found. Replace it with CT media storage SOP class UID.")
             ds.file_meta.MediaStorageSOPClassUID = CTImageStorageSOPClassUID
 
-        if hasattr(ds, 'SOPClassUID') and ds.SOPClassUID == DCMTKPrivateMediaStorageSOPClassUID:
+        if hasattr(ds, "SOPClassUID") and ds.SOPClassUID == DCMTKPrivateMediaStorageSOPClassUID:
             ds.SOPClassUID = CTImageStorageSOPClassUID
 
 
@@ -382,7 +381,7 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
     def processDataSet(self, ds):
         import pydicom
 
-        if not hasattr(ds, 'NumberOfFrames'):
+        if not hasattr(ds, "NumberOfFrames"):
             return
         numberOfFrames = ds.NumberOfFrames
         if numberOfFrames <= 1:
@@ -391,16 +390,16 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
         # Multi-frame sequence, we may need to add slice positions
 
         # Error in Dolphin 3D CBCT scanners, they store multiple frames but they keep using CTImageStorage as storage class
-        if ds.SOPClassUID == '1.2.840.10008.5.1.4.1.1.2':  # Computed Tomography Image IOD
-            ds.SOPClassUID = '1.2.840.10008.5.1.4.1.1.2.1'  # Enhanced CT Image IOD
+        if ds.SOPClassUID == "1.2.840.10008.5.1.4.1.1.2":  # Computed Tomography Image IOD
+            ds.SOPClassUID = "1.2.840.10008.5.1.4.1.1.2.1"  # Enhanced CT Image IOD
 
-        sliceStartPosition = ds.ImagePositionPatient if hasattr(ds, 'ImagePositionPatient') else [0, 0, 0]
-        sliceAxes = ds.ImageOrientationPatient if hasattr(ds, 'ImageOrientationPatient') else [1, 0, 0, 0, 1, 0]
+        sliceStartPosition = ds.ImagePositionPatient if hasattr(ds, "ImagePositionPatient") else [0, 0, 0]
+        sliceAxes = ds.ImageOrientationPatient if hasattr(ds, "ImageOrientationPatient") else [1, 0, 0, 0, 1, 0]
         x = sliceAxes[:3]
         y = sliceAxes[3:]
         z = [x[1] * y[2] - x[2] * y[1], x[2] * y[0] - x[0] * y[2], x[0] * y[1] - x[1] * y[0]]  # cross(x,y)
-        sliceSpacing = ds.SliceThickness if hasattr(ds, 'SliceThickness') else 1.0
-        pixelSpacing = ds.PixelSpacing if hasattr(ds, 'PixelSpacing') else [1.0, 1.0]
+        sliceSpacing = ds.SliceThickness if hasattr(ds, "SliceThickness") else 1.0
+        pixelSpacing = ds.PixelSpacing if hasattr(ds, "PixelSpacing") else [1.0, 1.0]
 
         if not (pydicom.tag.Tag(0x5200, 0x9229) in ds):
 
@@ -468,11 +467,11 @@ class FixExposureFiasco(DICOMPatcherRule):
 
     def processDataSet(self, ds):
         import pydicom
-        if ds.get_item('XRayTubeCurrent'):
-            val = ds.get_item('XRayTubeCurrent').value.decode()
-            if '.' in val:
-                del ds['XRayTubeCurrent']
-                ds['00188151'] = pydicom.DataElement(tag='00188151', VR='DS', value=str(float(val) * 1000))
+        if ds.get_item("XRayTubeCurrent"):
+            val = ds.get_item("XRayTubeCurrent").value.decode()
+            if "." in val:
+                del ds["XRayTubeCurrent"]
+                ds["00188151"] = pydicom.DataElement(tag="00188151", VR="DS", value=str(float(val) * 1000))
 
 
 #
@@ -488,7 +487,7 @@ class UseCharacterSet(DICOMPatcherRule):
     def processDataSet(self, ds):
         if not self.parameters["CharacterSet"]:
             raise RuntimeError("'CharacterSet' parameter must be specified")
-        if not hasattr(ds, 'SpecificCharacterSet'):
+        if not hasattr(ds, "SpecificCharacterSet"):
             ds.SpecificCharacterSet = self.parameters["CharacterSet"]
             ds.decode()
             ds.SpecificCharacterSet = "ISO_IR 192"
@@ -501,7 +500,7 @@ class UseCharacterSet(DICOMPatcherRule):
 class Anonymize(DICOMPatcherRule):
     def __init__(self, parameters=None):
         super().__init__(parameters)
-        self.requiredTags = ['PatientName', 'PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SeriesNumber']
+        self.requiredTags = ["PatientName", "PatientID", "StudyInstanceUID", "SeriesInstanceUID", "SeriesNumber"]
 
     def processStart(self, inputRootDir, outputRootDir):
         import pydicom
@@ -522,18 +521,18 @@ class Anonymize(DICOMPatcherRule):
     def processDataSet(self, ds):
         import pydicom
 
-        ds.StudyDate = ''
-        ds.StudyTime = ''
-        ds.ContentDate = ''
-        ds.ContentTime = ''
-        ds.AccessionNumber = ''
-        ds.ReferringPhysiciansName = ''
-        ds.PatientsBirthDate = ''
-        ds.PatientsSex = ''
-        ds.StudyID = ''
+        ds.StudyDate = ""
+        ds.StudyTime = ""
+        ds.ContentDate = ""
+        ds.ContentTime = ""
+        ds.AccessionNumber = ""
+        ds.ReferringPhysiciansName = ""
+        ds.PatientsBirthDate = ""
+        ds.PatientsSex = ""
+        ds.StudyID = ""
         ds.PatientName = _("Unspecified Patient")
 
-        # replace ids with random values - re-use if we have seen them before
+        # replace ids with random values - reuse if we have seen them before
         if ds.PatientID not in self.patientIDToRandomIDMap:
             self.patientIDToRandomIDMap[ds.PatientID] = pydicom.uid.generate_uid(None)
         ds.PatientID = self.patientIDToRandomIDMap[ds.PatientID]
@@ -576,7 +575,7 @@ class NormalizeFileNames(DICOMPatcherRule):
         if ds.SeriesInstanceUID not in self.seriesUIDToFolderMap:
             self.seriesUIDToFolderMap[ds.SeriesInstanceUID] = self.getNextItemName("se", folderName)
         folderName += "/" + self.seriesUIDToFolderMap[ds.SeriesInstanceUID]
-        prefix = ds.Modality.lower() if hasattr(ds, 'Modality') else ""
+        prefix = ds.Modality.lower() if hasattr(ds, "Modality") else ""
         filePath = self.outputRootDir + "/" + folderName + "/" + self.getNextItemName(prefix, folderName) + ".dcm"
         return filePath
 
@@ -633,9 +632,9 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
 
         import pydicom
 
-        self.addLog('DICOM patching started...')
-        logging.debug('DICOM patch input directory: ' + inputDirPath)
-        logging.debug('DICOM patch output directory: ' + outputDirPath)
+        self.addLog("DICOM patching started...")
+        logging.debug("DICOM patch input directory: " + inputDirPath)
+        logging.debug("DICOM patch output directory: " + outputDirPath)
 
         for rule in self.patchingRules:
             rule.logCallback = self.addLog
@@ -652,7 +651,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
 
             for file in files:
                 filePath = os.path.join(root, file)
-                self.addLog('Examining %s...' % os.path.join(currentSubDir, file))
+                self.addLog("Examining %s..." % os.path.join(currentSubDir, file))
 
                 skipFileRequestingRule = None
                 for rule in self.patchingRules:
@@ -660,16 +659,16 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
                         skipFileRequestingRule = rule
                         break
                 if skipFileRequestingRule:
-                    self.addLog('  Rule ' + rule.__class__.__name__ + ' requested to skip this file.')
+                    self.addLog("  Rule " + rule.__class__.__name__ + " requested to skip this file.")
                     continue
 
                 try:
                     ds = pydicom.read_file(filePath)
                 except (OSError, pydicom.filereader.InvalidDicomError):
-                    self.addLog('  Not DICOM file. Skipped.')
+                    self.addLog("  Not DICOM file. Skipped.")
                     continue
 
-                self.addLog('  Patching...')
+                self.addLog("  Patching...")
 
                 for rule in self.patchingRules:
                     rule.processDataSet(ds)
@@ -685,18 +684,16 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
                 if not os.path.exists(dirName):
                     os.makedirs(dirName)
 
-                self.addLog('  Writing DICOM...')
+                self.addLog("  Writing DICOM...")
                 pydicom.write_file(patchedFilePath, ds)
-                self.addLog('  Created DICOM file: %s' % patchedFilePath)
+                self.addLog("  Created DICOM file: %s" % patchedFilePath)
 
-        self.addLog(f'DICOM patching completed. Patched files are written to:\n{outputDirPath}')
+        self.addLog(f"DICOM patching completed. Patched files are written to:\n{outputDirPath}")
 
     def importDicomDir(self, outputDirPath):
-        """
-        Utility function to import DICOM files from a directory
-        """
-        self.addLog('Initiate DICOM importing from folder ' + outputDirPath)
-        slicer.util.selectModule('DICOM')
+        """Utility function to import DICOM files from a directory"""
+        self.addLog("Initiate DICOM importing from folder " + outputDirPath)
+        slicer.util.selectModule("DICOM")
         dicomBrowser = slicer.modules.dicom.widgetRepresentation().self().browserWidget.dicomBrowser
         dicomBrowser.importDirectory(outputDirPath)
 
@@ -713,18 +710,16 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_DICOMPatcher1()
 
     def test_DICOMPatcher1(self):
-        """ Ideally you should have several levels of tests.  At the lowest level
+        """Ideally you should have several levels of tests.  At the lowest level
         tests should exercise the functionality of the logic with different inputs
         (both valid and invalid).  At higher levels your tests should emulate the
         way the user would interact with your code and confirm that it still works
@@ -742,7 +737,7 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
         inputTestDir = testDir + "/input"
         os.makedirs(inputTestDir)
         outputTestDir = testDir + "/output"
-        self.delayDisplay('Created test directory: ' + testDir)
+        self.delayDisplay("Created test directory: " + testDir)
 
         self.delayDisplay("Generate test files")
 
@@ -751,10 +746,10 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
         testFileNonDICOM.close()
 
         testFileDICOMFilename = inputTestDir + "/DICOMFile.dcm"
-        self.delayDisplay('Writing test file: ' + testFileDICOMFilename)
+        self.delayDisplay("Writing test file: " + testFileDICOMFilename)
         import pydicom
         file_meta = pydicom.dataset.Dataset()
-        file_meta.MediaStorageSOPClassUID = '1.2.840.10008.5.1.4.1.1.2'  # CT Image Storage
+        file_meta.MediaStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.2"  # CT Image Storage
         file_meta.MediaStorageSOPInstanceUID = "1.2.3"  # !! Need valid UID here for real work
         file_meta.ImplementationClassUID = "1.2.3.4"  # !!! Need valid UIDs here
         ds = pydicom.dataset.FileDataset(testFileDICOMFilename, {}, file_meta=file_meta, preamble=b"\0" * 128)
@@ -781,10 +776,10 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Verify generated files")
 
         expectedWalk = []
-        expectedWalk.append([['pa000'], []])
-        expectedWalk.append([['st000'], []])
-        expectedWalk.append([['se000'], []])
-        expectedWalk.append([[], ['000.dcm']])
+        expectedWalk.append([["pa000"], []])
+        expectedWalk.append([["st000"], []])
+        expectedWalk.append([["se000"], []])
+        expectedWalk.append([[], ["000.dcm"]])
         step = 0
         for root, subFolders, files in os.walk(outputTestDir):
             self.assertEqual(subFolders, expectedWalk[step][0])

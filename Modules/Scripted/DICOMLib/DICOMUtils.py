@@ -1,6 +1,8 @@
 import logging
 import numpy as np
 import os
+import requests
+from typing import Optional
 
 import ctk
 import qt
@@ -23,8 +25,8 @@ comment = """
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByUID(patientUID):
-    """ Load patient by patient UID from DICOM database.
+def loadPatientByUID(patientUID, messages=None, progressCallback=None):
+    """Load patient by patient UID from DICOM database.
     Returns list of loaded node ids.
 
     Example: load all data from a DICOM folder (using a temporary DICOM database)
@@ -39,7 +41,7 @@ def loadPatientByUID(patientUID):
         for patientUID in patientUIDs:
           loadedNodeIDs.extend(DICOMUtils.loadPatientByUID(patientUID))
 
-      This method expecs a patientUID in the form returned by
+      This method expects a patientUID in the form returned by
       db.patients(), which are (integer) strings unique for the current database.
       The actual contents of these strings are implementation specific
       and should not be relied on (may be changed).
@@ -61,31 +63,30 @@ def loadPatientByUID(patientUID):
       rather than just copying an existing one).
     """
     if not slicer.dicomDatabase.isOpen:
-        raise OSError('DICOM module or database cannot be accessed')
+        raise OSError("DICOM module or database cannot be accessed")
 
     patientUIDstr = str(patientUID)
     if patientUIDstr not in slicer.dicomDatabase.patients():
-        raise OSError('No patient found with DICOM database UID %s' % patientUIDstr)
+        raise OSError("No patient found with DICOM database UID %s" % patientUIDstr)
 
     # Select all series in selected patient
     studies = slicer.dicomDatabase.studiesForPatient(patientUIDstr)
     if len(studies) == 0:
-        raise OSError('No studies found in patient with DICOM database UID ' + patientUIDstr)
+        raise OSError("No studies found in patient with DICOM database UID " + patientUIDstr)
 
     series = [slicer.dicomDatabase.seriesForStudy(study) for study in studies]
     seriesUIDs = [uid for uidList in series for uid in uidList]
     if len(seriesUIDs) == 0:
-        raise OSError('No series found in patient with DICOM database UID ' + patientUIDstr)
+        raise OSError("No series found in patient with DICOM database UID " + patientUIDstr)
 
-    return loadSeriesByUID(seriesUIDs)
+    return loadSeriesByUID(seriesUIDs, messages, progressCallback)
 
 
 # ------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientName(name):
-    """ Get patient UID by patient name for easy loading of a patient
-    """
+    """Get patient UID by patient name for easy loading of a patient"""
     if not slicer.dicomDatabase.isOpen:
-        raise OSError('DICOM module or database cannot be accessed')
+        raise OSError("DICOM module or database cannot be accessed")
 
     patients = slicer.dicomDatabase.patients()
     for patientUID in patients:
@@ -96,22 +97,21 @@ def getDatabasePatientUIDByPatientName(name):
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByName(patientName):
-    """ Load patient by patient name from DICOM database.
+def loadPatientByName(patientName, messages=None, progressCallback=None):
+    """Load patient by patient name from DICOM database.
     Returns list of loaded node ids.
     """
     patientUID = getDatabasePatientUIDByPatientName(patientName)
     if patientUID is None:
-        raise OSError('Patient not found by name %s' % patientName)
-    return loadPatientByUID(patientUID)
+        raise OSError("Patient not found by name %s" % patientName)
+    return loadPatientByUID(patientUID, messages, progressCallback)
 
 
 # ------------------------------------------------------------------------------
 def getDatabasePatientUIDByPatientID(patientID):
-    """ Get database patient UID by DICOM patient ID for easy loading of a patient
-    """
+    """Get database patient UID by DICOM patient ID for easy loading of a patient"""
     if not slicer.dicomDatabase.isOpen:
-        raise OSError('DICOM module or database cannot be accessed')
+        raise OSError("DICOM module or database cannot be accessed")
 
     patients = slicer.dicomDatabase.patients()
     for patientUID in patients:
@@ -133,43 +133,43 @@ def getDatabasePatientUIDByPatientID(patientID):
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByPatientID(patientID):
-    """ Load patient from DICOM database by DICOM PatientID.
+def loadPatientByPatientID(patientID, messages=None, progressCallback=None):
+    """Load patient from DICOM database by DICOM PatientID.
     Returns list of loaded node ids.
     """
     patientUID = getDatabasePatientUIDByPatientID(patientID)
     if patientUID is None:
-        raise OSError('Patient not found by PatientID %s' % patientID)
-    return loadPatientByUID(patientUID)
+        raise OSError("Patient not found by PatientID %s" % patientID)
+    return loadPatientByUID(patientUID, messages, progressCallback)
 
 
 # ------------------------------------------------------------------------------
-def loadPatient(uid=None, name=None, patientID=None):
-    """ Load patient from DICOM database fr uid, name, or patient ID.
+def loadPatient(uid=None, name=None, patientID=None, messages=None, progressCallback=None):
+    """Load patient from DICOM database fr uid, name, or patient ID.
     Returns list of loaded node ids.
     """
     if uid is not None:
-        return loadPatientByUID(uid)
+        return loadPatientByUID(uid, messages, progressCallback)
     elif name is not None:
-        return loadPatientByName(name)
+        return loadPatientByName(name, messages, progressCallback)
     elif patientID is not None:
-        return loadPatientByPatientID(patientID)
+        return loadPatientByPatientID(patientID, messages, progressCallback)
 
-    raise ValueError('One of the following arguments needs to be specified: uid, name, patientID')
+    raise ValueError("One of the following arguments needs to be specified: uid, name, patientID")
 
 
 # ------------------------------------------------------------------------------
-def loadSeriesByUID(seriesUIDs):
-    """ Load multiple series by UID from DICOM database.
+def loadSeriesByUID(seriesUIDs, messages=None, progressCallback=None):
+    """Load multiple series by UID from DICOM database.
     Returns list of loaded node ids.
     """
     if not isinstance(seriesUIDs, list):
-        raise ValueError('SeriesUIDs must contain a list')
+        raise ValueError("SeriesUIDs must contain a list")
     if seriesUIDs is None or len(seriesUIDs) == 0:
-        raise ValueError('No series UIDs given')
+        raise ValueError("No series UIDs given")
 
     if not slicer.dicomDatabase.isOpen:
-        raise OSError('DICOM module or database cannot be accessed')
+        raise OSError("DICOM module or database cannot be accessed")
 
     fileLists = []
     for seriesUID in seriesUIDs:
@@ -186,7 +186,11 @@ def loadSeriesByUID(seriesUIDs):
         # No files found for DICOM series list
         return []
 
-    loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
+    loadablesByPlugin, _ = getLoadablesFromFileLists(
+        fileLists,
+        messages=messages,
+        progressCallback=progressCallback,
+    )
     selectHighestConfidenceLoadables(loadablesByPlugin)
     return loadLoadables(loadablesByPlugin)
 
@@ -197,7 +201,8 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
     to want are listed at the top of the table and are selected
     by default. Only offer one pre-selected loadable per series
     unless both plugins mark it as selected and they have equal
-    confidence."""
+    confidence.
+    """
 
     # first, get all loadables corresponding to a series
     seriesUIDTag = "0020,000E"
@@ -228,8 +233,8 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
 
 
 # ------------------------------------------------------------------------------
-def loadByInstanceUID(instanceUID):
-    """ Load with the most confident loadable that contains the instanceUID from DICOM database.
+def loadByInstanceUID(instanceUID, messages=None, progressCallback=None):
+    """Load with the most confident loadable that contains the instanceUID from DICOM database.
     This helps in the case where an instance is part of a series which may offer multiple
     loadables, such as when a series has multiple time points where
     each corresponds to a scalar volume and you only want to load the correct one.
@@ -242,32 +247,35 @@ def loadByInstanceUID(instanceUID):
     """
 
     if not slicer.dicomDatabase.isOpen:
-        raise OSError('DICOM module or database cannot be accessed')
+        raise OSError("DICOM module or database cannot be accessed")
 
     # get the loadables corresponding to this instance's series
     filePath = slicer.dicomDatabase.fileForInstance(instanceUID)
     seriesUID = slicer.dicomDatabase.seriesForFile(filePath)
     fileList = slicer.dicomDatabase.filesForSeries(seriesUID)
-    loadablesByPlugin, loadEnabled = getLoadablesFromFileLists([fileList])
+    loadablesByPlugin, _ = getLoadablesFromFileLists(
+        [fileList],
+        messages=messages,
+        progressCallback=progressCallback,
+    )
     # keep only the loadables that include this instance's file and is highest confidence
     highestConfidence = {
-        'confidence': 0,
-        'plugin': None,
-        'loadable': None
+        "confidence": 0,
+        "plugin": None,
+        "loadable": None
     }
     for plugin in loadablesByPlugin.keys():
-        loadablesWithInstance = []
         for loadable in loadablesByPlugin[plugin]:
             if filePath in loadable.files:
-                if loadable.confidence > highestConfidence['confidence']:
+                if loadable.confidence > highestConfidence["confidence"]:
                     loadable.selected = True
                     highestConfidence = {
-                        'confidence': loadable.confidence,
-                        'plugin': plugin,
-                        'loadable': loadable
+                        "confidence": loadable.confidence,
+                        "plugin": plugin,
+                        "loadable": loadable
                     }
     filteredLoadablesByPlugin = {}
-    filteredLoadablesByPlugin[highestConfidence['plugin']] = [highestConfidence['loadable'], ]
+    filteredLoadablesByPlugin[highestConfidence["plugin"]] = [highestConfidence["loadable"], ]
     # load the results
     return loadLoadables(filteredLoadablesByPlugin)
 
@@ -276,12 +284,12 @@ def loadByInstanceUID(instanceUID):
 def openDatabase(databaseDir):
     """Open DICOM database in the specified folder"""
     if not os.access(databaseDir, os.F_OK):
-        logging.error('Specified database directory ' + repr(databaseDir) + ' cannot be found')
+        logging.error("Specified database directory " + repr(databaseDir) + " cannot be found")
         return False
     databaseFileName = databaseDir + "/ctkDICOM.sql"
     slicer.dicomDatabase.openDatabase(databaseFileName)
     if not slicer.dicomDatabase.isOpen:
-        logging.error('Unable to open DICOM database ' + databaseDir)
+        logging.error("Unable to open DICOM database " + databaseDir)
         return False
     return True
 
@@ -296,7 +304,7 @@ def clearDatabase(dicomDatabase=None):
     for patientId in patientIds:
         dicomDatabase.removePatient(patientId)
     # Delete empty folders remaining after removing copied files
-    removeEmptyDirs(dicomDatabase.databaseDirectory + '/dicom')
+    removeEmptyDirs(dicomDatabase.databaseDirectory + "/dicom")
     dicomDatabase.databaseChanged()
 
 
@@ -312,19 +320,19 @@ def removeEmptyDirs(path):
 
 # ------------------------------------------------------------------------------
 def openTemporaryDatabase(directory=None):
-    """ Temporarily change the main DICOM database folder location,
+    """Temporarily change the main DICOM database folder location,
     return current database directory. Useful for tests and demos.
     Call closeTemporaryDatabase to restore the original database folder.
     """
     # Specify temporary directory
-    if not directory or directory == '':
+    if not directory or directory == "":
         from time import gmtime, strftime
-        directory = strftime("%Y%m%d_%H%M%S_", gmtime()) + 'TempDICOMDatabase'
+        directory = strftime("%Y%m%d_%H%M%S_", gmtime()) + "TempDICOMDatabase"
     if os.path.isabs(directory):
         tempDatabaseDir = directory
     else:
-        tempDatabaseDir = slicer.app.temporaryPath + '/' + directory
-    logging.info('Switching to temporary DICOM database: ' + tempDatabaseDir)
+        tempDatabaseDir = slicer.app.temporaryPath + "/" + directory
+    logging.info("Switching to temporary DICOM database: " + tempDatabaseDir)
     if not os.access(tempDatabaseDir, os.F_OK):
         qt.QDir().mkpath(tempDatabaseDir)
 
@@ -343,8 +351,7 @@ def openTemporaryDatabase(directory=None):
 
 # ------------------------------------------------------------------------------
 def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
-    """ Close temporary DICOM database and remove its directory if requested
-    """
+    """Close temporary DICOM database and remove its directory if requested"""
     if slicer.dicomDatabase.isOpen:
         if cleanup:
             slicer.dicomDatabase.initializeDatabase()
@@ -357,12 +364,12 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
             #     logging.error('Failed to delete DICOM database ' + databaseDir)
         slicer.dicomDatabase.closeDatabase()
     else:
-        logging.error('Unable to close DICOM database ' + slicer.dicomDatabase.databaseFilename)
+        logging.error("Unable to close DICOM database " + slicer.dicomDatabase.databaseFilename)
 
     if originalDatabaseDir is None:
         # Only log debug if there was no original database, as it is a valid use case,
         # see openTemporaryDatabase
-        logging.debug('No original database directory was specified')
+        logging.debug("No original database directory was specified")
         return True
 
     settings = qt.QSettings()
@@ -372,7 +379,7 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
     if os.access(originalDatabaseDir, os.F_OK):
         success = openDatabase(originalDatabaseDir)
         if not success:
-            logging.error('Unable to open DICOM database ' + originalDatabaseDir)
+            logging.error("Unable to open DICOM database " + originalDatabaseDir)
             return False
 
     return True
@@ -380,17 +387,16 @@ def closeTemporaryDatabase(originalDatabaseDir, cleanup=True):
 
 # ------------------------------------------------------------------------------
 def createTemporaryDatabase(directory=None):
-    """ Open temporary DICOM database, return new database object
-    """
+    """Open temporary DICOM database, return new database object"""
     # Specify temporary directory
-    if not directory or directory == '':
+    if not directory or directory == "":
         from time import gmtime, strftime
-        directory = strftime("%Y%m%d_%H%M%S_", gmtime()) + 'TempDICOMDatabase'
+        directory = strftime("%Y%m%d_%H%M%S_", gmtime()) + "TempDICOMDatabase"
     if os.path.isabs(directory):
         tempDatabaseDir = directory
     else:
-        tempDatabaseDir = slicer.app.temporaryPath + '/' + directory
-    logging.info('Switching to temporary DICOM database: ' + tempDatabaseDir)
+        tempDatabaseDir = slicer.app.temporaryPath + "/" + directory
+    logging.info("Switching to temporary DICOM database: " + tempDatabaseDir)
     if not os.access(tempDatabaseDir, os.F_OK):
         qt.QDir().mkpath(tempDatabaseDir)
 
@@ -409,8 +415,7 @@ def createTemporaryDatabase(directory=None):
 
 # ------------------------------------------------------------------------------
 def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
-    """ Close temporary DICOM database and remove its directory if requested
-    """
+    """Close temporary DICOM database and remove its directory if requested"""
     dicomDatabase.closeDatabase()
 
     if cleanup:
@@ -418,7 +423,7 @@ def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
         databaseDir = os.path.split(dicomDatabase.databaseFilename)[0]
         shutil.rmtree(databaseDir)
         if os.access(databaseDir, os.F_OK):
-            logging.error('Failed to delete DICOM database ' + databaseDir)
+            logging.error("Failed to delete DICOM database " + databaseDir)
             # Database is still in use, at least clear its content
             dicomDatabase.initializeDatabase()
 
@@ -428,8 +433,8 @@ def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
 # ------------------------------------------------------------------------------
 class TemporaryDICOMDatabase:
     """Context manager to conveniently use temporary DICOM database.
-       It creates a new DICOM database and temporarily sets it as the main
-       DICOM database in the application (slicer.dicomDatabase).
+    It creates a new DICOM database and temporarily sets it as the main
+    DICOM database in the application (slicer.dicomDatabase).
     """
 
     def __init__(self, directory=None):
@@ -446,8 +451,7 @@ class TemporaryDICOMDatabase:
 
 # ------------------------------------------------------------------------------
 def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
-    """ Import DICOM files from folder into Slicer database
-    """
+    """Import DICOM files from folder into Slicer database"""
     try:
         indexer = ctk.ctkDICOMIndexer()
         assert indexer is not None
@@ -458,23 +462,29 @@ def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        logging.error('Failed to import DICOM folder ' + dicomDataDir)
+        logging.error("Failed to import DICOM folder " + dicomDataDir)
         return False
     return True
 
 
 # ------------------------------------------------------------------------------
-def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expectedLoadedNodes=None):
-    """ Load series by UID, and verify loadable selection and loaded nodes.
+def loadSeriesWithVerification(
+    seriesUIDs,
+    expectedSelectedPlugins=None,
+    expectedLoadedNodes=None,
+    messages=None,
+    progressCallback=None,
+):
+    """Load series by UID, and verify loadable selection and loaded nodes.
 
     ``selectedPlugins`` example: { 'Scalar Volume':1, 'RT':2 }
     ``expectedLoadedNodes`` example: { 'vtkMRMLScalarVolumeNode':2, 'vtkMRMLSegmentationNode':1 }
     """
     if not slicer.dicomDatabase.isOpen:
-        logging.error('DICOM module or database cannot be accessed')
+        logging.error("DICOM module or database cannot be accessed")
         return False
     if seriesUIDs is None or len(seriesUIDs) == 0:
-        logging.error('No series UIDs given')
+        logging.error("No series UIDs given")
         return False
 
     fileLists = []
@@ -482,10 +492,14 @@ def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expecte
         fileLists.append(slicer.dicomDatabase.filesForSeries(seriesUID))
 
     if len(fileLists) == 0:
-        logging.error('No files found for DICOM series list')
+        logging.error("No files found for DICOM series list")
         return False
 
-    loadablesByPlugin, loadEnabled = getLoadablesFromFileLists(fileLists)
+    loadablesByPlugin, _ = getLoadablesFromFileLists(
+        fileLists,
+        messages=messages,
+        progressCallback=progressCallback,
+    )
     success = True
 
     # Verify loadables if baseline is given
@@ -517,7 +531,7 @@ def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expecte
             actualLoadedNodes[nodeType] = nodeCollection.GetNumberOfItems()
 
     # Load selected data
-    loadedNodeIDs = loadLoadables(loadablesByPlugin)
+    loadLoadables(loadablesByPlugin)
 
     if expectedLoadedNodes is not None:
         for nodeType in expectedLoadedNodes.keys():
@@ -534,7 +548,7 @@ def loadSeriesWithVerification(seriesUIDs, expectedSelectedPlugins=None, expecte
 
 # ------------------------------------------------------------------------------
 def allSeriesUIDsInDatabase(database=None):
-    """ Collect all series instance UIDs in a DICOM database (the Slicer one by default)
+    """Collect all series instance UIDs in a DICOM database (the Slicer one by default)
 
     Useful to get list of just imported series UIDs, for example:
     newSeriesUIDs = [x for x in seriesUIDsAfter if x not in seriesUIDsBefore]
@@ -553,29 +567,28 @@ def allSeriesUIDsInDatabase(database=None):
 
 # ------------------------------------------------------------------------------
 def seriesUIDsForFiles(files):
-    """ Collect series instance UIDs belonging to a list of files
-    """
+    """Collect series instance UIDs belonging to a list of files"""
     seriesUIDs = set()
     for file in files:
         seriesUID = slicer.dicomDatabase.seriesForFile(file)
-        if seriesUID != '':
+        if seriesUID != "":
             seriesUIDs.add(seriesUID)
     return seriesUIDs
 
 
 # ------------------------------------------------------------------------------
 class LoadDICOMFilesToDatabase:
-    """Context manager to conveniently load DICOM files downloaded zipped from the internet
-    """
+    """Context manager to conveniently load DICOM files downloaded zipped from the internet"""
+
     def __init__(self, url, archiveFilePath=None, dicomDataDir=None, \
                  expectedNumberOfFiles=None, selectedPlugins=None, loadedNodes=None, checksum=None):
         from time import gmtime, strftime
         if archiveFilePath is None:
-            fileName = strftime("%Y%m%d_%H%M%S_", gmtime()) + 'LoadDICOMFilesToDatabase.zip'
-            archiveFilePath = slicer.app.temporaryPath + '/' + fileName
+            fileName = strftime("%Y%m%d_%H%M%S_", gmtime()) + "LoadDICOMFilesToDatabase.zip"
+            archiveFilePath = slicer.app.temporaryPath + "/" + fileName
         if dicomDataDir is None:
-            directoryName = strftime("%Y%m%d_%H%M%S_", gmtime()) + 'LoadDICOMFilesToDatabase'
-            dicomDataDir = slicer.app.temporaryPath + '/' + directoryName
+            directoryName = strftime("%Y%m%d_%H%M%S_", gmtime()) + "LoadDICOMFilesToDatabase"
+            dicomDataDir = slicer.app.temporaryPath + "/" + directoryName
 
         self.url = url
         self.checksum = checksum
@@ -603,64 +616,68 @@ class LoadDICOMFilesToDatabase:
 # TODO: more consistency checks:
 # - is there gantry tilt?
 # - are the orientations the same for all slices?
-def getSortedImageFiles(filePaths, epsilon=0.01):
-    """ Sort DICOM image files in increasing slice order (IS direction) corresponding to a series
+def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list[str], dict[str, str], str]:
+    """Sort DICOM image files in increasing slice order (IS direction) corresponding to a series
 
-        Use the first file to get the ImageOrientationPatient for the
-        series and calculate the scan direction (assumed to be perpendicular
-        to the acquisition plane)
+    Use the first file to get the ImageOrientationPatient for the
+    series and calculate the scan direction (assumed to be perpendicular
+    to the acquisition plane)
 
-        epsilon: Maximum difference in distance between slices to consider spacing uniform
+    :param filePaths : Paths of the local DICOM files to sort.
+    :param epsilon: Maximum difference in distance between slices to consider spacing uniform.
+
+    :return: Tuple of (files, distances, warningText)
     """
-    warningText = ''
+    warningText = ""
     if len(filePaths) == 0:
-        return filePaths, [], warningText
+        return filePaths, {}, warningText
 
     # Define DICOM tags used in this function
     tags = {}
-    tags['position'] = "0020,0032"
-    tags['orientation'] = "0020,0037"
-    tags['numberOfFrames'] = "0028,0008"
-    tags['seriesUID'] = "0020,000E"
+    tags["position"] = "0020,0032"
+    tags["orientation"] = "0020,0037"
+    tags["numberOfFrames"] = "0028,0008"
+    tags["seriesUID"] = "0020,000E"
 
-    seriesUID = slicer.dicomDatabase.fileValue(filePaths[0], tags['seriesUID'])
+    seriesUID = slicer.dicomDatabase.fileValue(filePaths[0], tags["seriesUID"])
 
-    if slicer.dicomDatabase.fileValue(filePaths[0], tags['numberOfFrames']) not in ["", "1"]:
+    if slicer.dicomDatabase.fileValue(filePaths[0], tags["numberOfFrames"]) not in ["", "1"]:
         warningText += "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution.\n"
 
     # Make sure first file contains valid geometry
     ref = {}
-    for tag in [tags['position'], tags['orientation']]:
+    for tag in [tags["position"], tags["orientation"]]:
         value = slicer.dicomDatabase.fileValue(filePaths[0], tag)
         if not value or value == "":
             warningText += "Reference image in series does not contain geometry information. Please use caution.\n"
-            return filePaths, [], warningText
+            return filePaths, {}, warningText
         ref[tag] = value
 
     # Determine out-of-plane direction for first slice
-    sliceAxes = [float(zz) for zz in ref[tags['orientation']].split('\\')]
+    import numpy as np
+    sliceAxes = [float(zz) for zz in ref[tags["orientation"]].split("\\")]
     x = np.array(sliceAxes[:3])
     y = np.array(sliceAxes[3:])
     scanAxis = np.cross(x, y)
-    scanOrigin = np.array([float(zz) for zz in ref[tags['position']].split('\\')])
+    scanOrigin = np.array([float(zz) for zz in ref[tags["position"]].split("\\")])
 
     # For each file in series, calculate the distance along the scan axis, sort files by this
     sortList = []
     missingGeometry = False
     for file in filePaths:
-        positionStr = slicer.dicomDatabase.fileValue(file, tags['position'])
-        orientationStr = slicer.dicomDatabase.fileValue(file, tags['orientation'])
+        positionStr = slicer.dicomDatabase.fileValue(file, tags["position"])
+        orientationStr = slicer.dicomDatabase.fileValue(file, tags["orientation"])
         if not positionStr or positionStr == "" or not orientationStr or orientationStr == "":
             missingGeometry = True
             break
-        position = np.array([float(zz) for zz in positionStr.split('\\')])
+        position = np.array([float(zz) for zz in positionStr.split("\\")])
         vec = position - scanOrigin
         dist = vec.dot(scanAxis)
         sortList.append((file, dist))
 
     if missingGeometry:
         warningText += "One or more images is missing geometry information in series. Please use caution.\n"
-        return filePaths, [], warningText
+        return filePaths, {}, warningText
 
     # Sort files names by distance from reference slice
     sortedFiles = sorted(sortList, key=lambda x: x[1])
@@ -684,7 +701,8 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
         dist1 = distances[file1]
         spacing0 = dist1 - dist0
         n = 1
-        for fileN in files[1:]:
+        for n in range(1, len(files)):
+            fileN = files[n]
             fileNminus1 = files[n - 1]
             distN = distances[fileN]
             distNminus1 = distances[fileNminus1]
@@ -692,14 +710,13 @@ def getSortedImageFiles(filePaths, epsilon=0.01):
             spaceError = spacingN - spacing0
             if abs(spaceError) > epsilon:
                 spaceWarnings += 1
-                warningText += f"Images are not equally spaced (a difference of {spaceError:g} vs {spacing0:g} in spacings was detected)."
+                warningText += f"Image slices are not equally spaced ({spacing0:g} spacing was expected, {spacingN:g} spacing was found between files {fileN} and {fileNminus1})."
                 if acquisitionGeometryRegularizationEnabled:
                     warningText += "  Slicer will apply a transform to this series trying to regularize the volume. Please use caution.\n"
                 else:
                     warningText += ("  If loaded image appears distorted, enable 'Acquisition geometry regularization'"
                                     " in Application settings / DICOM / DICOMScalarVolumePlugin. Please use caution.\n")
                 break
-            n += 1
 
     if spaceWarnings != 0:
         logging.warning("Geometric issues were found with %d of the series. Please use caution.\n" % spaceWarnings)
@@ -778,7 +795,7 @@ def ijkToRASFromFiles(filePaths):
 
 # ------------------------------------------------------------------------------
 def refreshDICOMWidget():
-    """ Refresh DICOM browser from database.
+    """Refresh DICOM browser from database.
     It is useful when the database is changed via a database object that is
     different from the one stored in the DICOM browser. There may be multiple
     database connection (through different database objects) in the same process.
@@ -786,19 +803,18 @@ def refreshDICOMWidget():
     try:
         slicer.modules.DICOMInstance.browserWidget.dicomBrowser.dicomTableManager().updateTableViews()
     except AttributeError:
-        logging.error('DICOM module or browser cannot be accessed')
+        logging.error("DICOM module or browser cannot be accessed")
         return False
     return True
 
 # ------------------------------------------------------------------------------
 def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, progressCallback=None, pluginInstances=None):
-    """Take list of file lists, return loadables by plugin dictionary
-    """
-    detailedLogging = slicer.util.settingsValue('DICOM/detailedLogging', False, converter=slicer.util.toBool)
+    """Take list of file lists, return loadables by plugin dictionary"""
+    detailedLogging = slicer.util.settingsValue("DICOM/detailedLogging", False, converter=slicer.util.toBool)
     loadablesByPlugin = {}
     loadEnabled = False
     if not isinstance(fileLists, list) or len(fileLists) == 0 or not type(fileLists[0]) in [tuple, list]:
-        logging.error('File lists must contain a non-empty list of tuples/lists')
+        logging.error("File lists must contain a non-empty list of tuples/lists")
         return loadablesByPlugin, loadEnabled
 
     if pluginClassNames is None:
@@ -872,7 +888,7 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
                           + loadable.name + "' as a '" + plugin.loadType + "'.\n"
                           + traceback.format_exc())
         if (not loadSuccess) and (messages is not None):
-            messages.append(f'Could not load: {loadable.name} as a {plugin.loadType}')
+            messages.append(f"Could not load: {loadable.name} as a {plugin.loadType}")
 
         cancelled = False
         try:
@@ -896,7 +912,25 @@ def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
     return loadedNodeIDs
 
 
-def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=None, accessToken=None, bulkRetrieve=True):
+GLOBAL_DICOMWEB_USER_KEY = "GLOBAL_DICOMWEB_USER_KEY"
+GLOBAL_DICOMWEB_PASSWORD_KEY = "GLOBAL_DICOMWEB_PASSWORD_KEY"
+
+
+def getGlobalDICOMAuth() -> Optional[requests.auth.HTTPBasicAuth]:
+    """Get the global authentication settings for DICOM networking, if initialized."""
+    user = slicer.util.settingsValue(GLOBAL_DICOMWEB_USER_KEY, "")
+    pwd = slicer.util.settingsValue(GLOBAL_DICOMWEB_PASSWORD_KEY, "")
+    return requests.auth.HTTPBasicAuth(user, pwd) if user or pwd else None
+
+
+def importFromDICOMWeb(
+    dicomWebEndpoint,
+    studyInstanceUID,
+    seriesInstanceUID=None,
+    accessToken=None,
+    auth: requests.auth.AuthBase = None,
+    bulkRetrieve=True,
+):
     """
     Downloads and imports DICOM series from a DICOMweb instance.
     Progress is displayed and if errors occur then they are displayed in a popup window in the end.
@@ -906,6 +940,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
     :param studyInstanceUID: UID for the study to be downloaded
     :param seriesInstanceUID: UID for the series to be downloaded. If not specified, all series will be downloaded from the study
     :param accessToken: Optional access token for the query
+    :param auth: AuthBase object for the query, alternative to accessToken
     :param bulkRetrieve: If enabled then all instances of a series is retrieved with one query. Some servers (including Slicer
         DICOMweb server) may not support bulk retrieve and require query of each instance.
     :return: List of imported study UIDs
@@ -919,22 +954,40 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
                                                studyInstanceUID="2.16.840.1.113669.632.20.1211.10000509338")
                                                accessToken="YOUR_ACCESS_TOKEN")
 
-    """
+    .. code-block:: python
 
+      from DICOMLib import DICOMUtils
+      auth = requests.auth.HTTPBasicAuth('user','password')
+      loadedUIDs = DICOMUtils.importFromDICOMWeb(dicomWebEndpoint="https://yourdicomweburl/dicomWebEndpoint",
+                                               studyInstanceUID="2.16.840.1.113669.632.20.1211.10000509338")
+                                               auth=auth)
+
+    """
     from dicomweb_client.api import DICOMwebClient
+    from dicomweb_client.session_utils import create_session_from_auth
 
     seriesImported = []
     errors = []
-    clientLogger = logging.getLogger('dicomweb_client')
+    clientLogger = logging.getLogger("dicomweb_client")
     originalClientLogLevel = clientLogger.level
 
-    progressDialog = slicer.util.createProgressDialog(parent=slicer.util.mainWindow(), value=0, maximum=100)
+    if auth and accessToken:
+        clientLogger.warning(
+            f"Received both AuthBase and accessToken for DICOM fetch, defaulting to AuthBase"
+        )
+
+    progressDialog = slicer.util.createProgressDialog(
+        parent=slicer.util.mainWindow(), value=0, maximum=100
+    )
     try:
-        progressDialog.labelText = f'Retrieving series list...'
+        progressDialog.labelText = f"Retrieving series list..."
         slicer.app.processEvents()
 
-        if accessToken is None:
+        if not auth and accessToken is None:
             client = DICOMwebClient(url=dicomWebEndpoint)
+        elif auth:
+            session = create_session_from_auth(auth)
+            client = DICOMwebClient(url=dicomWebEndpoint, session=session)
         else:
             client = DICOMwebClient(
                 url=dicomWebEndpoint,
@@ -947,7 +1000,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
             seriesInstanceUIDs = [seriesInstanceUID]
         else:
             for series in seriesList:
-                currentSeriesInstanceUID = series['0020000E']['Value'][0]
+                currentSeriesInstanceUID = series["0020000E"]["Value"][0]
                 seriesInstanceUIDs.append(currentSeriesInstanceUID)
 
         # Turn off detailed logging, because it would slow down the file transfer
@@ -956,7 +1009,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
         fileNumber = 0
         cancelled = False
         for seriesIndex, currentSeriesInstanceUID in enumerate(seriesInstanceUIDs):
-            progressDialog.labelText = f'Retrieving series {seriesIndex+1} of {len(seriesInstanceUIDs)}...'
+            progressDialog.labelText = f"Retrieving series {seriesIndex+1} of {len(seriesInstanceUIDs)}..."
             slicer.app.processEvents()
 
             try:
@@ -969,7 +1022,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
                 alreadyImportedInstances = slicer.dicomDatabase.instancesForSeries(currentSeriesInstanceUID)
                 seriesAlreadyImported = True
                 for instanceInfo in seriesInfo:
-                    sopInstanceUID = instanceInfo['00080018']['Value'][0]
+                    sopInstanceUID = instanceInfo["00080018"]["Value"][0]
                     if sopInstanceUID not in alreadyImportedInstances:
                         seriesAlreadyImported = False
                         break
@@ -998,7 +1051,7 @@ def importFromDICOMWeb(dicomWebEndpoint, studyInstanceUID, seriesInstanceUID=Non
                 for instanceIndex, instance in enumerate(instances if bulkRetrieve else seriesInfo):
                     if not bulkRetrieve:
                         # instance is just metadata, retrieve the dataset now
-                        sopInstanceUID = instance['00080018']['Value'][0]
+                        sopInstanceUID = instance["00080018"]["Value"][0]
                         instance = client.retrieve_instance(studyInstanceUID, currentSeriesInstanceUID, sopInstanceUID)
                     progressDialog.setValue(int(100 * instanceIndex / numberOfInstances))
                     slicer.app.processEvents()
@@ -1044,14 +1097,14 @@ def registerSlicerURLHandler():
     images selected in the web browser directly in Slicer.
     For now, only implemented on Windows.
     """
-    if os.name == 'nt':
+    if os.name == "nt":
         launcherPath = qt.QDir.toNativeSeparators(qt.QFileInfo(slicer.app.launcherExecutableFilePath).absoluteFilePath())
         reg = qt.QSettings(f"HKEY_CURRENT_USER\\Software\\Classes", qt.QSettings.NativeFormat)
         reg.setValue(f"{slicer.app.applicationName}/.", f"{slicer.app.applicationName} supported file")
         reg.setValue(f"{slicer.app.applicationName}/URL protocol", "")
-        reg.setValue(f"{slicer.app.applicationName}/shell/open/command/.", f"\"{launcherPath}\" \"%1\"")
+        reg.setValue(f"{slicer.app.applicationName}/shell/open/command/.", f'"{launcherPath}" "%1"')
         reg.setValue(f"{slicer.app.applicationName}/DefaultIcon/.", f"{slicer.app.applicationName}.exe,0")
-        for ext in ['mrml', 'mrb']:
+        for ext in ["mrml", "mrb"]:
             reg.setValue(f".{ext}/.", f"{slicer.app.applicationName}")
             reg.setValue(f".{ext}/Content Type", f"application/x-{ext}")
     else:

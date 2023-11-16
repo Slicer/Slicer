@@ -61,19 +61,19 @@ class AtlasTestsWidget(ScriptedLoadableModuleWidget):
         self.abdominalAtlas = qt.QPushButton("Run Abdominal Test")
         self.abdominalAtlas.toolTip = "Downloads abdominal atlas and loads it."
         dummyFormLayout.addWidget(self.abdominalAtlas)
-        self.abdominalAtlas.connect('clicked(bool)', self.onAbdominalAtlas)
+        self.abdominalAtlas.connect("clicked(bool)", self.onAbdominalAtlas)
 
         # run brain Test
         self.brainAtlas = qt.QPushButton("Run Brain Test")
         self.brainAtlas.toolTip = "Downloads brain atlas and loads it."
         dummyFormLayout.addWidget(self.brainAtlas)
-        self.brainAtlas.connect('clicked(bool)', self.onBrainAtlas)
+        self.brainAtlas.connect("clicked(bool)", self.onBrainAtlas)
 
         # run knee Test
         self.kneeAtlas = qt.QPushButton("Run Knee Test")
         self.kneeAtlas.toolTip = "Downloads knee atlas and loads it."
         dummyFormLayout.addWidget(self.kneeAtlas)
-        self.kneeAtlas.connect('clicked(bool)', self.onKneeAtlas)
+        self.kneeAtlas.connect("clicked(bool)", self.onKneeAtlas)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -111,10 +111,10 @@ class AtlasTestsLogic(ScriptedLoadableModuleLogic):
         node has valid image data
         """
         if not volumeNode:
-            print('no volume node')
+            print("no volume node")
             return False
         if volumeNode.GetImageData() is None:
-            print('no image data')
+            print("no image data")
             return False
         return True
 
@@ -127,13 +127,11 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_AbdominalAtlasTest()
         self.setUp()
@@ -154,37 +152,37 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         self.test_KneeAtlasTest()
 
     def test_AbdominalAtlasTest(self):
-        self.delayDisplay('Running Abdominal Atlas Test')
+        self.delayDisplay("Running Abdominal Atlas Test")
         downloads = {
-            'fileNames': 'Abdominal_Atlas_2012.mrb',
-            'loadFiles': True,
-            'uris': TESTING_DATA_URL + 'SHA256/5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea',
-            'checksums': 'SHA256:5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea',
+            "fileNames": "Abdominal_Atlas_2012.mrb",
+            "loadFiles": True,
+            "uris": TESTING_DATA_URL + "SHA256/5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea",
+            "checksums": "SHA256:5d315abf7d303326669c6075f9eea927eeda2e531a5b1662cfa505806cb498ea",
         }
-        self.perform_AtlasTest(downloads, 'I')
+        self.perform_AtlasTest(downloads, "I")
 
     def test_BrainAtlasTest(self):
-        self.delayDisplay('Running Brain Atlas Test')
+        self.delayDisplay("Running Brain Atlas Test")
         downloads = {
-            'fileNames': 'BrainAtlas2012.mrb',
-            'loadFiles': True,
-            'uris': TESTING_DATA_URL + 'SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1',
-            'checksums': 'SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1',
+            "fileNames": "BrainAtlas2012.mrb",
+            "loadFiles": True,
+            "uris": TESTING_DATA_URL + "SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1",
+            "checksums": "SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1",
         }
-        self.perform_AtlasTest(downloads, 'A1_grayT1')
+        self.perform_AtlasTest(downloads, "A1_grayT1")
 
     def test_KneeAtlasTest(self):
-        self.delayDisplay('Running Knee Atlas Test')
+        self.delayDisplay("Running Knee Atlas Test")
         downloads = {
-            'fileNames': 'KneeAtlas2012.mrb',
-            'loadFiles': True,
-            'uris': TESTING_DATA_URL + 'SHA256/5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33',
-            'checksums': 'SHA256:5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33',
+            "fileNames": "KneeAtlas2012.mrb",
+            "loadFiles": True,
+            "uris": TESTING_DATA_URL + "SHA256/5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33",
+            "checksums": "SHA256:5d5506c07c238918d0c892e7b04c26ad7f43684d89580780bb207d1d860b0b33",
         }
-        self.perform_AtlasTest(downloads, 'I')
+        self.perform_AtlasTest(downloads, "I")
 
     def perform_AtlasTest(self, downloads, testVolumePattern):
-        """ Perform the actual atlas test.
+        """Perform the actual atlas test.
         This includes: download and load the given data, touch all
         model hierarchies, and restore all scene views.
         downloads : dictionary of URIs and fileNames
@@ -197,7 +195,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         #
         import SampleData
         SampleData.downloadFromURL(**downloads)
-        self.delayDisplay('Finished with download and loading\n')
+        self.delayDisplay("Finished with download and loading\n")
 
         volumeNode = slicer.util.getNode(pattern=testVolumePattern)
         logic = AtlasTestsLogic()
@@ -206,7 +204,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         m = slicer.util.mainWindow()
 
         # go to the models module
-        m.moduleSelector().selectModule('Models')
+        m.moduleSelector().selectModule("Models")
         self.delayDisplay("Entered Models module")
 
         # get model hierarchy nodes that have children hierarchies
@@ -250,7 +248,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
                     mh.SetExpanded(hierarchyOriginalExpanded)
 
         # go to the scene views module
-        m.moduleSelector().selectModule('SceneViews')
+        m.moduleSelector().selectModule("SceneViews")
         self.delayDisplay("Entered Scene Views module")
 
         # iterate over the scene views and restore them
@@ -260,4 +258,4 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Restoring scene " + sv.GetName() + " (" + str(s + 1) + "/" + str(numSceneViews) + ")")
             sv.RestoreScene()
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

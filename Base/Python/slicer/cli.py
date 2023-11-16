@@ -1,9 +1,10 @@
-""" This module is a place holder for convenient functions allowing to interact with CLI."""
+"""This module is a place holder for convenient functions allowing to interact with CLI."""
 
 
 def createNode(cliModule, parameters=None):
     """Creates a new vtkMRMLCommandLineModuleNode for a specific module, with
-    optional parameters"""
+    optional parameters
+    """
     if not cliModule:
         return None
     cliLogic = cliModule.logic()

@@ -3,6 +3,7 @@
 import logging
 import typing
 from typing import Optional
+import weakref
 
 import qt
 
@@ -65,9 +66,7 @@ class _ParameterWrapper:
         return self.parameter.isIn(self.parameterNode)
 
     def read(self):
-        """
-        Gets the value of this parameter in the given parameter node.
-        """
+        """Gets the value of this parameter in the given parameter node."""
         return self.parameter.read(self.parameterNode)
 
     def write(self, value) -> None:
@@ -86,8 +85,16 @@ class _CachedParameterWrapper(_ParameterWrapper):
     def __init__(self, parameter: _Parameter, parameterNode):
         super().__init__(parameter, parameterNode)
         self._value = self.parameter.read(self.parameterNode)
-        self._observerTag: int = parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self._onModified)
+        # Important: We don't want to increase the reference to self here by including it in the AddObserver callback.
+        # This would prevent the object from being garbage collected, and the observers from being removed when the object goes out of scope.
+        # Instead, we create a weakref to self and use it in a lambda function.
+        _selfWeakRef = weakref.ref(self)
+        self._observerTag: int = parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent,
+                                                           lambda caller, event: _selfWeakRef()._onModified(caller, event))
         self._currentlyWriting: bool = False
+
+    def __del__(self):
+        self.parameterNode.RemoveObserver(self._observerTag)
 
     def _onModified(self, caller, event):
         if not self._currentlyWriting:
@@ -289,9 +296,7 @@ def _makeDataTypeFunc(classvar):
 
 
 def _processClass(classtype):
-    """
-    Takes a parameterNodeWrapper class description and creates the full parameterNodeWrapper class.
-    """
+    """Takes a parameterNodeWrapper class description and creates the full parameterNodeWrapper class."""
     members = typing.get_type_hints(classtype, include_extras=True)
     allParameters: dict[str, ParameterInfo] = dict()
     for name, nametype in members.items():
@@ -349,9 +354,7 @@ def isParameterNodeWrapper(classOrObj):
 
 
 def parameterNodeWrapper(classtype=None):
-    """
-    Class decorator to make a parameter node wrapper that supports typed property access and GUI binding.
-    """
+    """Class decorator to make a parameter node wrapper that supports typed property access and GUI binding."""
     def wrap(cls):
         return _processClass(cls)
 

@@ -37,6 +37,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractDisplayableManager.h>
+#include <vtkMRMLCameraDisplayableManager.h>
 #include <vtkMRMLCrosshairDisplayableManager.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
@@ -62,7 +63,7 @@
 
 //---------------------------------------------------------------------------
 qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate(qMRMLThreeDView& object)
-  : q_ptr(&object)
+  : ctkVTKRenderViewPrivate(object)
 {
   this->DisplayableManagerGroup = nullptr;
   this->MRMLScene = nullptr;
@@ -82,6 +83,9 @@ qMRMLThreeDViewPrivate::~qMRMLThreeDViewPrivate()
 void qMRMLThreeDViewPrivate::init()
 {
   Q_Q(qMRMLThreeDView);
+
+  this->ctkVTKRenderViewPrivate::init();
+
   q->setRenderEnabled(this->MRMLScene != nullptr);
 
   vtkNew<vtkMRMLThreeDViewInteractorStyle> interactorStyle;
@@ -205,23 +209,13 @@ void qMRMLThreeDViewPrivate::updateWidgetFromMRML()
 namespace
 {
 void ClickCallbackFunction (
-  vtkObject* caller,
+  vtkObject* vtkNotUsed(caller),
   long unsigned int eventId,
-  void* vtkNotUsed(clientData),
+  void* clientData,
   void* vtkNotUsed(callData) )
 {
-  vtkRenderWindowInteractor *iren =
-     static_cast<vtkRenderWindowInteractor*>(caller);
-
-  vtkMRMLThreeDViewInteractorStyle* style = vtkMRMLThreeDViewInteractorStyle::SafeDownCast
-    (iren ? iren->GetInteractorStyle() : nullptr);
-  if (!style)
-    {
-    qCritical() << "qMRMLThreeDView::mouseMoveEvent: no valid interactor style.";
-    return;
-    }
-
-  vtkMRMLCameraNode* cam = style->GetCameraNode();
+  qMRMLThreeDView* threeDView = reinterpret_cast<qMRMLThreeDView*>(clientData);
+  vtkMRMLCameraNode* cam = threeDView->cameraNode();
   if (!cam)
     {
     qCritical() << "qMRMLThreeDView::mouseMoveEvent: can not retrieve camera node.";
@@ -255,8 +249,8 @@ void ClickCallbackFunction (
 }
 
 // --------------------------------------------------------------------------
-qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
-  , d_ptr(new qMRMLThreeDViewPrivate(*this))
+qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent)
+  : Superclass(new qMRMLThreeDViewPrivate(*this), _parent)
 {
   Q_D(qMRMLThreeDView);
   d->init();
@@ -266,6 +260,7 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
 
   vtkSmartPointer<vtkCallbackCommand> clickCallback =
       vtkSmartPointer<vtkCallbackCommand>::New();
+  clickCallback->SetClientData(this);
   clickCallback->SetCallback(ClickCallbackFunction);
 
   renderWindowInteractor->AddObserver(vtkCommand::MouseWheelForwardEvent, clickCallback);
@@ -291,27 +286,21 @@ void qMRMLThreeDView::addDisplayableManager(const QString& displayableManagerNam
 //------------------------------------------------------------------------------
 vtkMRMLCameraNode* qMRMLThreeDView::cameraNode()
 {
-  vtkMRMLThreeDViewInteractorStyle* style = vtkMRMLThreeDViewInteractorStyle::SafeDownCast(this->interactorStyle());
-  if (!style)
+  vtkMRMLCameraDisplayableManager * cameraDM = vtkMRMLCameraDisplayableManager::SafeDownCast(
+        this->displayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
+  if (!cameraDM)
     {
     return nullptr;
     }
-  vtkMRMLCameraNode* cam = style->GetCameraNode();
+
+  vtkMRMLCameraNode* cam = cameraDM->GetCameraNode();
   return cam;
 }
 
 //------------------------------------------------------------------------------
 void qMRMLThreeDView::rotateToViewAxis(unsigned int axisId)
 {
-  vtkMRMLThreeDViewInteractorStyle* style =
-    vtkMRMLThreeDViewInteractorStyle::SafeDownCast(this->interactorStyle());
-  if (!style)
-    {
-    qCritical() << "qMRMLThreeDView::rotateToViewAxis: no valid interactor style.";
-    return;
-    }
-
-  vtkMRMLCameraNode* cam = style->GetCameraNode();
+  vtkMRMLCameraNode* cam = this->cameraNode();
   if (!cam)
     {
     qCritical() << "qMRMLThreeDView::rotateToViewAxis: can not retrieve camera node.";
@@ -372,15 +361,7 @@ void qMRMLThreeDView::rotateToViewAxis(const std::string& axisLabel)
 void qMRMLThreeDView
 ::resetCamera(bool resetRotation, bool resetTranslation, bool resetDistance)
 {
-  vtkMRMLThreeDViewInteractorStyle* style =
-    vtkMRMLThreeDViewInteractorStyle::SafeDownCast(this->interactorStyle());
-  if (!style)
-    {
-    qCritical() << "qMRMLThreeDView::resetCamera: no valid interactor style.";
-    return;
-    }
-
-  vtkMRMLCameraNode* cam = style->GetCameraNode();
+  vtkMRMLCameraNode* cam = this->cameraNode();
   if (!cam)
     {
     qCritical() << "qMRMLThreeDView::resetCamera: can not retrieve camera node.";

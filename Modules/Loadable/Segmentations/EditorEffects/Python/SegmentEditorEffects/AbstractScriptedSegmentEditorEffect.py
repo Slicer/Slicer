@@ -3,43 +3,47 @@ import qt
 import slicer
 
 
-#
-# Abstract class of python scripted segment editor effects
-#
-
 class AbstractScriptedSegmentEditorEffect:
-    """ Abstract scripted segment editor effects for effects implemented in python
+    """Abstract scripted segment editor effects for effects implemented in python.
 
-        USAGE:
-        1. Instantiation and registration
-          Instantiate segment editor effect adaptor class from
-          module (e.g. from setup function), and set python source:
-          > import qSlicerSegmentationsEditorEffectsPythonQt as effects
-          > scriptedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-          > scriptedEffect.setPythonSource(MyEffect.filePath)
-          > scriptedEffect.self().register()
-          If effect name is added to slicer.modules.segmenteditorscriptedeffectnames
-          list then the above instantiation and registration steps are not necessary,
-          as the SegmentEditor module do all these.
+    An example of generic effect is ``ThresholdEffect``.
 
-        2. Call host C++ implementation using
-          > self.scriptedEffect.functionName()
+    To use the effect, follow these steps:
 
-        2.a. Most frequently used such methods are:
-          Parameter get/set: parameter, integerParameter, doubleParameter, setParameter
-          Add options widget: addOptionsWidget
-          Coordinate transforms: rasToXy, xyzToRas, xyToRas, xyzToIjk, xyToIjk
-          Convenience getters: renderWindow, renderer, viewNode
+    1. Instantiation and registration
 
-        2.b. Always call API functions (the ones that are defined in the adaptor
-          class qSlicerSegmentEditorScriptedEffect) using the adaptor accessor:
-          > self.scriptedEffect.updateGUIFromMRML()
+      Instantiate segment editor effect adaptor class from
+      module (e.g. from setup function), and set python source::
 
-        3. To prevent deactivation of an effect by clicking place fiducial toolbar button,
-           override interactionNodeModified(self, interactionNode)
+        import qSlicerSegmentationsEditorEffectsPythonQt as effects
+        scriptedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
+        scriptedEffect.setPythonSource(MyEffect.filePath)
+        scriptedEffect.self().register()
 
-        An example for a generic effect is the ThresholdEffect
+      If effect name is added to ``slicer.modules.segmenteditorscriptedeffectnames``
+      list then the above instantiation and registration steps are not necessary,
+      as the `SegmentEditor` module do all these.
 
+    2. Call host C++ implementation using::
+
+        self.scriptedEffect.functionName()
+
+    2.a. Most frequently used methods are:
+
+      - Parameter get/set: ``parameter``, ``integerParameter``, ``doubleParameter``, ``setParameter``
+      - Add options widget: ``addOptionsWidget``
+      - Coordinate transforms: ``rasToXy``, ``xyzToRas``, ``xyToRas``, ``xyzToIjk``, ``xyToIjk``
+      - Convenience getters: ``renderWindow``, ``renderer``, ``viewNode``
+
+    2.b. Always call API functions (the ones that are defined in the adaptor \
+         class ``qSlicerSegmentEditorScriptedEffect``) using the adaptor accessor ``self.scriptedEffect``.
+
+      For example::
+
+        self.scriptedEffect.updateGUIFromMRML()
+
+    3. To prevent deactivation of an effect by clicking place fiducial toolbar button, \
+       override ``interactionNodeModified(self, interactionNode)``
     """
 
     def __init__(self, scriptedEffect):

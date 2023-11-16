@@ -24,11 +24,11 @@ class VolumesLoadSceneCloseTesting(ScriptedLoadableModuleTest):
         # enter the models module
         #
         mainWindow = slicer.util.mainWindow()
-        mainWindow.moduleSelector().selectModule('Models')
+        mainWindow.moduleSelector().selectModule("Models")
 
         #
         # close the scene
         #
         slicer.mrmlScene.Clear(0)
 
-        self.delayDisplay('Test passed')
+        self.delayDisplay("Test passed")

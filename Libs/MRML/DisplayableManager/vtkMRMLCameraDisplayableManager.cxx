@@ -202,11 +202,7 @@ void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(
-#ifndef NDEBUG
- vtkMRMLNode* node)
-#else
   vtkMRMLNode* vtkNotUsed(node))
-#endif
 {
   this->RequestRender();
 }
@@ -253,7 +249,6 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode 
     this->Internal->CameraNode, newCameraNode, cameraNodeEvents.GetPointer());
 
   this->SetCameraToRenderer();
-  this->SetCameraToInteractor();
   this->InvokeEvent(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent, newCameraNode);
   vtkMRMLViewNode *viewNode = this->GetMRMLViewNode();
   if (viewNode)
@@ -342,22 +337,6 @@ void vtkMRMLCameraDisplayableManager::SetCameraToRenderer()
     this->GetRenderer()->ResetCameraClippingRange();
     // Default to ParallelProjection Off
     //camera->ParallelProjectionOff();
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::SetCameraToInteractor()
-{
-  if (!this->GetInteractor())
-    {
-    return;
-    }
-  vtkInteractorObserver *iobs = this->GetInteractor()->GetInteractorStyle();
-  vtkMRMLThreeDViewInteractorStyle *istyle =
-    vtkMRMLThreeDViewInteractorStyle::SafeDownCast(iobs);
-  if (istyle)
-    {
-    istyle->SetCameraNode(this->Internal->CameraNode);
     }
 }
 

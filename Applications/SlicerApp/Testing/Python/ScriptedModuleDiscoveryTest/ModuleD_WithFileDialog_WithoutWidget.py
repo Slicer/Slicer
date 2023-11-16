@@ -1,7 +1,7 @@
 import slicer
 from slicer.ScriptedLoadableModule import *
 
-SOMEVAR = 'D'
+SOMEVAR = "D"
 
 
 class ModuleD_WithFileDialog_WithoutWidget(ScriptedLoadableModule):
@@ -25,8 +25,8 @@ class ModuleD_WithFileDialog_WithoutWidgetFileDialog:
 
     def __init__(self, qSlicerFileDialog):
         self.qSlicerFileDialog = qSlicerFileDialog
-        qSlicerFileDialog.fileType = 'Foo Directory'
-        qSlicerFileDialog.description = 'Do something awesome with Foo'
+        qSlicerFileDialog.fileType = "Foo Directory"
+        qSlicerFileDialog.description = "Do something awesome with Foo"
         qSlicerFileDialog.action = slicer.qSlicerFileDialog.Read
 
     def execDialog(self):

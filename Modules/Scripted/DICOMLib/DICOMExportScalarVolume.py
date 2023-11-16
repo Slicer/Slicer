@@ -24,9 +24,7 @@ class DICOMExportScalarVolume:
     """
 
     def __init__(self, studyUID, volumeNode, tags, directory, filenamePrefix=None):
-        """
-        studyUID parameter is not used (studyUID is retrieved from tags).
-        """
+        """studyUID parameter is not used (studyUID is retrieved from tags)."""
         self.studyUID = studyUID
         self.volumeNode = volumeNode
         self.tags = tags
@@ -107,57 +105,57 @@ class DICOMExportScalarVolume:
         """
         cliparameters = {}
         # Patient
-        cliparameters['patientName'] = self.tags['Patient Name']
-        cliparameters['patientID'] = self.tags['Patient ID']
-        cliparameters['patientBirthDate'] = self.tags['Patient Birth Date']
-        cliparameters['patientSex'] = self.tags['Patient Sex'] if self.tags['Patient Sex'] else "[unknown]"
-        cliparameters['patientComments'] = self.tags['Patient Comments']
+        cliparameters["patientName"] = self.tags["Patient Name"]
+        cliparameters["patientID"] = self.tags["Patient ID"]
+        cliparameters["patientBirthDate"] = self.tags["Patient Birth Date"]
+        cliparameters["patientSex"] = self.tags["Patient Sex"] if self.tags["Patient Sex"] else "[unknown]"
+        cliparameters["patientComments"] = self.tags["Patient Comments"]
         # Study
-        cliparameters['studyID'] = self.tags['Study ID']
-        cliparameters['studyDate'] = self.tags['Study Date']
-        cliparameters['studyTime'] = self.tags['Study Time']
-        cliparameters['studyDescription'] = self.tags['Study Description']
-        cliparameters['modality'] = self.tags['Modality']
-        cliparameters['manufacturer'] = self.tags['Manufacturer']
-        cliparameters['model'] = self.tags['Model']
+        cliparameters["studyID"] = self.tags["Study ID"]
+        cliparameters["studyDate"] = self.tags["Study Date"]
+        cliparameters["studyTime"] = self.tags["Study Time"]
+        cliparameters["studyDescription"] = self.tags["Study Description"]
+        cliparameters["modality"] = self.tags["Modality"]
+        cliparameters["manufacturer"] = self.tags["Manufacturer"]
+        cliparameters["model"] = self.tags["Model"]
         # Series
-        cliparameters['seriesDescription'] = self.tags['Series Description']
-        cliparameters['seriesNumber'] = self.tags['Series Number']
-        cliparameters['seriesDate'] = self.tags['Series Date']
-        cliparameters['seriesTime'] = self.tags['Series Time']
+        cliparameters["seriesDescription"] = self.tags["Series Description"]
+        cliparameters["seriesNumber"] = self.tags["Series Number"]
+        cliparameters["seriesDate"] = self.tags["Series Date"]
+        cliparameters["seriesTime"] = self.tags["Series Time"]
         # Image
         displayNode = self.volumeNode.GetDisplayNode()
         if displayNode:
-            if displayNode.IsA('vtkMRMLScalarVolumeDisplayNode'):
-                cliparameters['windowCenter'] = str(displayNode.GetLevel())
-                cliparameters['windowWidth'] = str(displayNode.GetWindow())
+            if displayNode.IsA("vtkMRMLScalarVolumeDisplayNode"):
+                cliparameters["windowCenter"] = str(displayNode.GetLevel())
+                cliparameters["windowWidth"] = str(displayNode.GetWindow())
             else:
                 # labelmap volume
                 scalarRange = displayNode.GetScalarRange()
-                cliparameters['windowCenter'] = str((scalarRange[0] + scalarRange[0]) / 2.0)
-                cliparameters['windowWidth'] = str(scalarRange[1] - scalarRange[0])
-        cliparameters['contentDate'] = self.tags['Content Date']
-        cliparameters['contentTime'] = self.tags['Content Time']
+                cliparameters["windowCenter"] = str((scalarRange[0] + scalarRange[0]) / 2.0)
+                cliparameters["windowWidth"] = str(scalarRange[1] - scalarRange[0])
+        cliparameters["contentDate"] = self.tags["Content Date"]
+        cliparameters["contentTime"] = self.tags["Content Time"]
 
         # UIDs
-        cliparameters['studyInstanceUID'] = self.tags['Study Instance UID']
-        cliparameters['seriesInstanceUID'] = self.tags['Series Instance UID']
-        if 'Frame of Reference UID' in self.tags:
-            cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
-        elif 'Frame of Reference Instance UID' in self.tags:
+        cliparameters["studyInstanceUID"] = self.tags["Study Instance UID"]
+        cliparameters["seriesInstanceUID"] = self.tags["Series Instance UID"]
+        if "Frame of Reference UID" in self.tags:
+            cliparameters["frameOfReferenceUID"] = self.tags["Frame of Reference UID"]
+        elif "Frame of Reference Instance UID" in self.tags:
             logging.warning('Usage of "Frame of Reference Instance UID" is deprecated, use "Frame of Reference UID" instead.')
-            cliparameters['frameOfReferenceUID'] = self.tags['Frame of Reference UID']
-        cliparameters['inputVolume'] = self.volumeNode.GetID()
+            cliparameters["frameOfReferenceUID"] = self.tags["Frame of Reference UID"]
+        cliparameters["inputVolume"] = self.volumeNode.GetID()
 
-        cliparameters['dicomDirectory'] = self.directory
-        cliparameters['dicomPrefix'] = self.filenamePrefix
+        cliparameters["dicomDirectory"] = self.directory
+        cliparameters["dicomPrefix"] = self.filenamePrefix
 
         #
         # run the task (in the background)
         # - use the GUI to provide progress feedback
         # - use the GUI's Logic to invoke the task
         #
-        if not hasattr(slicer.modules, 'createdicomseries'):
+        if not hasattr(slicer.modules, "createdicomseries"):
             logging.error("CreateDICOMSeries module is not found")
             return False
         dicomWrite = slicer.modules.createdicomseries

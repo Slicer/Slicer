@@ -35,7 +35,7 @@ public:
   vtkTypeMacro(vtkMRMLScriptedDisplayableManager,vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  void SetPythonSource(const std::string& pythonSource);
+  void SetPythonSource(const std::string& filePath);
 
 protected:
   vtkMRMLScriptedDisplayableManager();

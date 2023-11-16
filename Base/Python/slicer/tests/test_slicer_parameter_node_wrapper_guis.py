@@ -355,10 +355,10 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
 
     def test_QComboBoxToEnum(self):
         class TestEnum(enum.Enum):
-            A = 'A'
-            B = 'B'
-            C = 'C'
-        
+            A = "A"
+            B = "B"
+            C = "C"
+
         class TestIntEnum(enum.IntEnum):
             X = 1
             Y = 3
@@ -678,17 +678,17 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         # alpha
         self.assertIsNone(param.alpha)
         self.assertIsNone(currentNodeFunc(widgetAlpha))
-        self.assertEqual(widgetAlpha.nodeTypes, ('vtkMRMLModelNode', ))
+        self.assertEqual(widgetAlpha.nodeTypes, ("vtkMRMLModelNode", ))
         # bravo
         self.assertIsNone(param.bravo)
         self.assertIsNone(currentNodeFunc(widgetBravo))
         #    order is unimportant here
-        self.assertEqual(sorted(widgetBravo.nodeTypes), sorted(['vtkMRMLModelNode', 'vtkMRMLScalarVolumeNode']))
+        self.assertEqual(sorted(widgetBravo.nodeTypes), sorted(["vtkMRMLModelNode", "vtkMRMLScalarVolumeNode"]))
 
-        model1 = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode', "model1")
-        model2 = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelNode', "model2")
-        volume1 = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScalarVolumeNode', "volume1")
-        volume2 = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScalarVolumeNode', "volume2")
+        model1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode", "model1")
+        model2 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode", "model2")
+        volume1 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode", "volume1")
+        volume2 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode", "volume2")
 
         # should not auto add
         self.assertIsNone(param.alpha)
@@ -911,7 +911,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
 
         param = ParameterNodeWrapper(newParameterNode())
 
-        ui = type('', (), {})()  # empty object
+        ui = type("", (), {})()  # empty object
         ui.sub1Iterations = qt.QSpinBox()
         ui.sub1Iterations.deleteLater()
         ui.sub1Description = qt.QLineEdit()
@@ -944,7 +944,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         # Phase 0 - connect parameterNode to GUI
 
         # this is very similar to what slicer.util.childWidgetVariables does
-        ui = type('', (), {})()  # empty object
+        ui = type("", (), {})()  # empty object
 
         def addWidget(widget, paramName):
             if paramName:
@@ -976,7 +976,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
             widget.setProperty(SlicerPackParameterNamePropertyName, packParam)
             return widget
 
-        ui = type('', (), {})()  # empty object
+        ui = type("", (), {})()  # empty object
         ui.style = qt.QComboBox()
         ui.style.deleteLater()
 

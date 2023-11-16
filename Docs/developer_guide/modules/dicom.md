@@ -1,6 +1,15 @@
-# DICOM
+# DICOM (Digital Imaging and Communications in Medicine)
 
-The overall DICOM Implementation in 3D Slicer consists of two main bodies of code embedded within the application.  [CTK](https://commontk.org) code is responsible for the implementation of the DICOM database and networking layer. The CTK code is implemented C++ and follows the Qt style. The DICOM Module exposes this functionality to Slicer users, and provides hooks through which other module can register DICOM Plugins to handle the conversion of specific DICOM data objects into the corresponding MRML representation.  Once the data is in slicer, it can be operated on via the standard Slicer mechanisms.
+Refer to the [Slicer User Guide DICOM Section](../user_guide/modules/dicom.md) for a comprehensive overview of the DICOM standard and related features in Slicer.
+
+The overall DICOM Implementation in 3D Slicer consists of two main bodies of code embedded within the application.
+- [CTK](https://commontk.org) code is responsible for the implementation of the DICOM database and DIMSE networking layer. The CTK code is implemented in C++ and follows the Qt style.
+- The DICOM Module exposes CTK functionality to Slicer users, and provides hooks through which other modules can register DICOM Plugins to handle the conversion of specific DICOM data objects into the corresponding MRML representation.  Once the data is in slicer, it can be operated on via the standard Slicer mechanisms.
+
+Additional tools are available for Slicer Python scripted module development:
+- [DICOM Toolkit (DCMTK)](https://www.dcmtk.org/en/) command line application tools are installed with 3D Slicer and can be called synchronously within a Slicer scripted module.
+- The [DICOMweb Client (`dicomweb-client`)](https://github.com/ImagingDataCommons/dicomweb-client) Python module is available within 3D Slicer for DICOMweb networking.
+- Various Slicer-specific implementations for DICOM management and network are provided in the [DICOMLib scripted module](https://github.com/Slicer/Slicer/tree/main/Modules/Scripted/DICOMLib).
 
 ## Customize table columns in DICOM browser
 
@@ -21,6 +30,24 @@ The existing two rules can be used as examples: the [default](https://github.com
 ## Plugin architecture
 
 There are many different kind of DICOM information objects and import/export of all of them would not be feasible to implement in the Slicer core (see more information in the [DICOM module user manual](../../user_guide/modules/dicom.md#dicom-plugins)). Therefore, extensions can implement custom importer/exporter classes based on DICOMLib.DICOMPlugin class and add them to slicer.modules.dicomPlugins dictionary object. The DICOM module uses these plugins to determine list of loadable and exportable items.
+
+## DICOM Networking Development
+
+3D Slicer leverages CTK, DCMTK, and `dicomweb-client` to provide DICOM networking capabilities. Medical DICOM images stored on a remote Picture and Archiving Communication Systems (PACS) can be queried, fetched to Slicer, annotated, and then stored back to the PACS.
+
+We suggest that Slicer developers dealing with DICOM networking explore local test environment options to fit their needs.
+- DCMTK provides tools for testing DIMSE networking. You can use DCMTK's `storescp.exe` tool distributed with 3D Slicer to test asynchronous store requests with DIMSE.
+
+Run the following command from a shell prompt:
+```
+> "path/to/Slicer x.y.z\bin\storescp.exe" <port-number>
+```
+Then in Slicer, send DICOM data to the server at `localhost:<port-number`.
+
+- Several open source PACS platforms can be installed locally to support DICOMweb testing in an isolated environment, including:
+  - [Orthanc](https://www.orthanc-server.com/index.php)
+  - [DCM4CHE](https://www.dcm4che.org/)
+
 
 ## References
 

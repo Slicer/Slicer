@@ -32,7 +32,7 @@ Usage:
 def checkUserSettings(slicer_executable, common_args, keep_temporary_settings=False):
     # Add a user setting
     args = list(common_args)
-    args.extend(['--python-code',
+    args.extend(["--python-code",
                  'slicer.app.userSettings().setValue("foo", "bar"); print("foo: %s" % slicer.app.userSettings().value("foo"))'])
     assert runSlicerAndExit(slicer_executable, args)[0] == EXIT_SUCCESS
     print("=> ok\n")
@@ -41,13 +41,13 @@ def checkUserSettings(slicer_executable, common_args, keep_temporary_settings=Fa
     #  * NOT be set by default
     #  * be set if '--keep-temporary-settings' is provided
     args = list(common_args)
-    condition = 'is not None'
+    condition = "is not None"
     error = "Setting foo should NOT be set"
     if keep_temporary_settings:
-        args.append('--keep-temporary-settings')
+        args.append("--keep-temporary-settings")
         condition = '!= "bar"'
         error = "Setting foo should be set to bar"
-    args.extend(['--python-code',
+    args.extend(["--python-code",
                  'if slicer.app.userSettings().value("foo") ' + condition + ': raise Exception("' + error + '.")'])
     assert runSlicerAndExit(slicer_executable, args)[0] == EXIT_SUCCESS
     print("=> ok\n")
@@ -56,7 +56,7 @@ def checkUserSettings(slicer_executable, common_args, keep_temporary_settings=Fa
 def checkRevisionUserSettings(slicer_executable, common_args, keep_temporary_settings=False):
     # Add a user revision setting
     args = list(common_args)
-    args.extend(['--python-code',
+    args.extend(["--python-code",
                  'slicer.app.revisionUserSettings().setValue("foo", "bar"); print("foo: %s" % slicer.app.revisionUserSettings().value("foo"))'])
     assert runSlicerAndExit(slicer_executable, args)[0] == EXIT_SUCCESS
     print("=> ok\n")
@@ -65,13 +65,13 @@ def checkRevisionUserSettings(slicer_executable, common_args, keep_temporary_set
     #  * NOT be set by default
     #  * be set if '--keep-temporary-settings' is provided
     args = list(common_args)
-    condition = 'is not None'
+    condition = "is not None"
     error = "Setting foo should NOT be set"
     if keep_temporary_settings:
-        args.append('--keep-temporary-settings')
+        args.append("--keep-temporary-settings")
         condition = '!= "bar"'
         error = "Setting foo should be set to bar"
-    args.extend(['--python-code',
+    args.extend(["--python-code",
                  'if slicer.app.revisionUserSettings().value("foo") ' + condition + ': raise Exception("' + error + '.")'])
     assert runSlicerAndExit(slicer_executable, args)[0] == EXIT_SUCCESS
     print("=> ok\n")
@@ -79,8 +79,8 @@ def checkRevisionUserSettings(slicer_executable, common_args, keep_temporary_set
 
 def checkKeepTemporarySettingsWithoutDisableSettingsDisplayWarning(slicer_executable, common_args):
     args = list(common_args)
-    args.remove('--disable-settings')
-    args.extend(['--keep-temporary-settings'])
+    args.remove("--disable-settings")
+    args.extend(["--keep-temporary-settings"])
     (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, args)
     expectedMessage = "Argument '--keep-temporary-settings' requires '--settings-disabled' to be specified."
     if expectedMessage not in stderr:
@@ -90,14 +90,14 @@ def checkKeepTemporarySettingsWithoutDisableSettingsDisplayWarning(slicer_execut
     print("=> ok\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     if len(sys.argv) != 2:
         print(os.path.basename(sys.argv[0]) + " /path/to/Slicer")
         exit(EXIT_FAILURE)
 
     slicer_executable = os.path.expanduser(sys.argv[1])
-    common_args = ['--disable-settings', '--disable-modules', '--no-main-window']
+    common_args = ["--disable-settings", "--disable-modules", "--no-main-window"]
 
     checkUserSettings(slicer_executable, common_args)
     checkRevisionUserSettings(slicer_executable, common_args)

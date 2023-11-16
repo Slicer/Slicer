@@ -24,7 +24,7 @@ for i in range(numFidsInList2):
     coords[2] += 3.0
 
 # Create scene view
-numFidNodesBeforeStore = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode')
+numFidNodesBeforeStore = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialNode")
 sv = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSceneViewNode")
 sv.StoreScene()
 
@@ -42,7 +42,7 @@ for i in range(numFidsInList3):
 # Restore scene view
 sv.RestoreScene()
 
-numFidNodesAfterRestore = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode')
+numFidNodesAfterRestore = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialNode")
 if numFidNodesAfterRestore != numFidNodesBeforeStore:
     print("After restoring the scene, expected ", numFidNodesBeforeStore, " control points nodes, but have ", numFidNodesAfterRestore)
     exceptionMessage = "After restoring the scene, expected " + str(numFidNodesBeforeStore) + " control points nodes, but have " + str(numFidNodesAfterRestore)
@@ -71,7 +71,7 @@ lm = slicer.app.layoutManager()
 td = lm.threeDWidget(0)
 mfm = td.threeDView().displayableManagerByClassName("vtkMRMLMarkupsDisplayableManager")
 h = mfm.GetHelper()
-print('Helper = ', h)
+print("Helper = ", h)
 
 for markupsNode in [fid1AfterRestore, fid2AfterRestore]:
     markupsWidget = h.GetWidget(markupsNode)

@@ -62,10 +62,10 @@ class SlicerOrientationSelectorTestLogic(ScriptedLoadableModuleLogic):
         node has valid image data
         """
         if not volumeNode:
-            logging.debug('hasImageData failed: no volume node')
+            logging.debug("hasImageData failed: no volume node")
             return False
         if volumeNode.GetImageData() is None:
-            logging.debug('hasImageData failed: no image data in volume node')
+            logging.debug("hasImageData failed: no image data in volume node")
             return False
         return True
 
@@ -78,18 +78,16 @@ class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_SlicerOrientationSelectorTest()
 
     def test_SlicerOrientationSelectorTest(self):
-        """ Ideally you should have several levels of tests.  At the lowest level
+        """Ideally you should have several levels of tests.  At the lowest level
         tests should exercise the functionality of the logic with different inputs
         (both valid and invalid).  At higher levels your tests should emulate the
         way the user would interact with your code and confirm that it still works
@@ -106,7 +104,7 @@ class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
         import SampleData
         mrHeadVolume = SampleData.downloadSample("MRHead")
 
-        slicer.util.selectModule('Reformat')
+        slicer.util.selectModule("Reformat")
 
         # Select Red slice
         widget = slicer.modules.reformat.widgetRepresentation()
@@ -124,8 +122,8 @@ class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
 
         # Check orientations associated with orientations selector
         orientations = [sliceOrientationSelector.itemText(idx) for idx in range(sliceOrientationSelector.count)]
-        expectedOrientations = ['Axial', 'Sagittal', 'Coronal', 'Reformat']
+        expectedOrientations = ["Axial", "Sagittal", "Coronal", "Reformat"]
         if orientations != expectedOrientations:
-            raise Exception(f'Problem with orientation selector\norientations: {orientations}\nexpectedOrientations: {expectedOrientations}')
+            raise Exception(f"Problem with orientation selector\norientations: {orientations}\nexpectedOrientations: {expectedOrientations}")
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

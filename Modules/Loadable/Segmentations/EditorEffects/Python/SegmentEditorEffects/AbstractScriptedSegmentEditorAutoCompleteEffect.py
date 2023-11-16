@@ -9,7 +9,7 @@ from slicer.i18n import tr as _
 
 from .AbstractScriptedSegmentEditorEffect import *
 
-__all__ = ['AbstractScriptedSegmentEditorAutoCompleteEffect']
+__all__ = ["AbstractScriptedSegmentEditorAutoCompleteEffect"]
 
 
 #
@@ -20,9 +20,9 @@ __all__ = ['AbstractScriptedSegmentEditorAutoCompleteEffect']
 #
 
 class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
-    """ AutoCompleteEffect is an effect that can create a full segmentation
-        from a partial segmentation (not all slices are segmented or only
-        part of the target structures are painted).
+    """AutoCompleteEffect is an effect that can create a full segmentation
+    from a partial segmentation (not all slices are segmented or only
+    part of the target structures are painted).
     """
 
     def __init__(self, scriptedEffect):
@@ -31,7 +31,10 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         scriptedEffect.perSegment = False
         AbstractScriptedSegmentEditorEffect.__init__(self, scriptedEffect)
 
+        # Number of segments required when editable area is not specified
         self.minimumNumberOfSegments = 1
+        # Number of segments required when editable area is specified
+        self.minimumNumberOfSegmentsWithEditableArea = 1
         self.clippedMasterImageDataRequired = False
         self.clippedMaskImageDataRequired = False
 
@@ -51,15 +54,14 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         self.delayedAutoUpdateTimer = qt.QTimer()
         self.delayedAutoUpdateTimer.setSingleShot(True)
         self.delayedAutoUpdateTimer.interval = autoUpdateDelaySec * 1000
-        self.delayedAutoUpdateTimer.connect('timeout()', self.onPreview)
+        self.delayedAutoUpdateTimer.connect("timeout()", self.onPreview)
 
         self.extentGrowthRatio = 0.1  # extent of seed region will be grown outside by this much
         self.minimumExtentMargin = 3
 
         self.previewComputationInProgress = False
 
-    def __del__(self, scriptedEffect):
-        super(SegmentEditorAutoCompleteEffect, self).__del__()
+    def __del__(self):
         self.delayedAutoUpdateTimer.stop()
         self.observeSegmentation(False)
 
@@ -93,7 +95,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         self.autoUpdateCheckBox.setEnabled(False)
 
         self.previewButton = qt.QPushButton(_("Initialize"))
-        self.previewButton.objectName = self.__class__.__name__ + 'Preview'
+        self.previewButton.objectName = self.__class__.__name__ + "Preview"
         self.previewButton.setToolTip(_("Preview complete segmentation"))
         # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
         # fails on some systems, therefore set the policies using separate method calls
@@ -127,11 +129,11 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         self.scriptedEffect.addLabeledOptionsWidget(_("Display:"), displayFrame)
 
         self.cancelButton = qt.QPushButton(_("Cancel"))
-        self.cancelButton.objectName = self.__class__.__name__ + 'Cancel'
+        self.cancelButton.objectName = self.__class__.__name__ + "Cancel"
         self.cancelButton.setToolTip(_("Clear preview and cancel auto-complete"))
 
         self.applyButton = qt.QPushButton(_("Apply"))
-        self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+        self.applyButton.objectName = self.__class__.__name__ + "Apply"
         self.applyButton.setToolTip(_("Replace segments by previewed result"))
 
         finishFrame = qt.QHBoxLayout()
@@ -139,9 +141,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         finishFrame.addWidget(self.applyButton)
         self.scriptedEffect.addOptionsWidget(finishFrame)
 
-        self.previewButton.connect('clicked()', self.onPreview)
-        self.cancelButton.connect('clicked()', self.onCancel)
-        self.applyButton.connect('clicked()', self.onApply)
+        self.previewButton.connect("clicked()", self.onPreview)
+        self.cancelButton.connect("clicked()", self.onCancel)
+        self.applyButton.connect("clicked()", self.onApply)
         self.previewOpacitySlider.connect("valueChanged(double)", self.updateMRMLFromGUI)
         self.previewShow3DButton.connect("toggled(bool)", self.updateMRMLFromGUI)
         self.autoUpdateCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
@@ -168,8 +170,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             segment = segmentation.GetSegment(segmentID)
             if not segment:
                 # selected segment was deleted, cancel segmentation
-                logging.debug("Segmentation cancelled because an input segment was deleted")
+                logging.debug("Segmentation operation is cancelled because an input segment was deleted")
                 self.onCancel()
+                slicer.util.showStatusMessage(_("Segmentation operation is cancelled because an input segment was deleted."), 3000)
                 return
             segmentLabelmap = segment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
             if segmentID in self.selectedSegmentModifiedTimes \
@@ -228,7 +231,9 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
     def getPreviewNode(self):
         previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
-        if previewNode and self.scriptedEffect.parameter("SegmentationResultPreviewOwnerEffect") != self.scriptedEffect.name:
+        if (previewNode
+                and self.scriptedEffect.parameterDefined("SegmentationResultPreviewOwnerEffect")
+                and self.scriptedEffect.parameter("SegmentationResultPreviewOwnerEffect") != self.scriptedEffect.name):
             # another effect owns this preview node
             return None
         return previewNode
@@ -279,13 +284,10 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
         slicer.util.showStatusMessage(_("Running {effectName} auto-complete...").format(effectName=self.scriptedEffect.name), 2000)
         try:
-            # This can be a long operation - indicate it to the user
-            qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
-            self.preview()
+            with slicer.util.tryWithErrorDisplay(_("Segmentation operation failed:"), waitCursor=True):
+                self.preview()
         finally:
-            qt.QApplication.restoreOverrideCursor()
-
-        self.previewComputationInProgress = False
+            self.previewComputationInProgress = False
 
     def reset(self):
         self.delayedAutoUpdateTimer.stop()
@@ -436,10 +438,28 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             if self.selectedSegmentIds is None:
                 self.selectedSegmentIds = vtk.vtkStringArray()
                 segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(self.selectedSegmentIds)
-            if self.selectedSegmentIds.GetNumberOfValues() < self.minimumNumberOfSegments:
-                logging.error(f"Auto-complete operation skipped: at least {self.minimumNumberOfSegments} visible segments are required")
+
+            if self.minimumNumberOfSegments != self.minimumNumberOfSegmentsWithEditableArea:
+                editableAreaSpecified = (
+                    self.scriptedEffect.parameterSetNode().GetSourceVolumeIntensityMask()
+                    or self.scriptedEffect.parameterSetNode().GetMaskMode() != slicer.vtkMRMLSegmentationNode.EditAllowedEverywhere)
+                if editableAreaSpecified and self.selectedSegmentIds.GetNumberOfValues() < self.minimumNumberOfSegmentsWithEditableArea:
+                    logging.error(f"Auto-complete operation failed: at least {self.minimumNumberOfSegmentsWithEditableArea} visible segments are required when editable area is defined")
+                    raise RuntimeError(
+                        _("Minimum {minimumNumberOfSegments} visible segments are required.").format(
+                            minimumNumberOfSegments=self.minimumNumberOfSegmentsWithEditableArea))
+                elif (not editableAreaSpecified) and self.selectedSegmentIds.GetNumberOfValues() < self.minimumNumberOfSegments:
+                    logging.error(f"Auto-complete operation skipped: at least {self.minimumNumberOfSegmentsWithEditableArea} visible segments or setting of editable area is required")
+                    raise RuntimeError(
+                        _("Minimum {minimumNumberOfSegments} visible segments (or specification of editable area or intensity range) is required.").format(
+                            minimumNumberOfSegments=self.minimumNumberOfSegments))
+            elif self.selectedSegmentIds.GetNumberOfValues() < self.minimumNumberOfSegments:
+                # Same number of input segments required regardless of editable area
+                logging.error(f"Auto-complete operation failed: at least {self.minimumNumberOfSegments} visible segments are required")
                 self.selectedSegmentIds = None
-                return
+                raise RuntimeError(
+                    _("Minimum {minimumNumberOfSegments} visible segments are required.").format(
+                        minimumNumberOfSegments=self.minimumNumberOfSegments))
 
             # Compute merged labelmap extent (effective extent slightly expanded)
             if not self.mergedLabelmapGeometryImage:

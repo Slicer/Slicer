@@ -1,5 +1,6 @@
 """The validators module is responsible for defining classes that can be used to place invariants on single parameters
-of a parameterPack or parameterNodeWrapper."""
+of a parameterPack or parameterNodeWrapper.
+"""
 
 import abc
 
@@ -21,6 +22,7 @@ class Validator(abc.ABC):
     Base class from which all parameterNodeWrapper validators derive.
     Validators must derive from this class to be used.
     """
+
     @abc.abstractmethod
     def validate(self, value) -> None:
         """
@@ -31,9 +33,7 @@ class Validator(abc.ABC):
 
 
 def extractValidators(annotations):
-    """
-    Given a list of annotations, separates the annotations that are Validators from the ones that are not.
-    """
+    """Given a list of annotations, separates the annotations that are Validators from the ones that are not."""
     def isValidator(x) -> None:
         return isinstance(x, Validator) or (isinstance(x, type) and issubclass(x, Validator))
 
@@ -44,9 +44,7 @@ def extractValidators(annotations):
 
 
 class IsNone(Validator):
-    """
-    Validates that the input value is None.
-    """
+    """Validates that the input value is None."""
 
     def __repr__(self) -> str:
         return f"IsNone()"
@@ -57,9 +55,7 @@ class IsNone(Validator):
 
 
 class NotNone(Validator):
-    """
-    Validates that any input value is not None.
-    """
+    """Validates that any input value is not None."""
 
     def __repr__(self) -> str:
         return f"NotNone()"
@@ -70,9 +66,7 @@ class NotNone(Validator):
 
 
 class IsInstance(Validator):
-    """
-    Validates that any input value is an instance of a given type.
-    """
+    """Validates that any input value is an instance of a given type."""
 
     def __init__(self, classtype):
         self.classtype = classtype
@@ -86,9 +80,7 @@ class IsInstance(Validator):
 
 
 class WithinRange(Validator):
-    """
-    Validates that any input value is within the given range (inclusive).
-    """
+    """Validates that any input value is within the given range (inclusive)."""
 
     def __init__(self, minimum, maximum):
         self.minimum = minimum
@@ -103,9 +95,7 @@ class WithinRange(Validator):
 
 
 class Minimum(Validator):
-    """
-    Validates that any input value is greater than or equal to the given value.
-    """
+    """Validates that any input value is greater than or equal to the given value."""
 
     def __init__(self, minimum):
         self.minimum = minimum
@@ -119,9 +109,7 @@ class Minimum(Validator):
 
 
 class Maximum(Validator):
-    """
-    Validates that any input value is less than or equal to the given value.
-    """
+    """Validates that any input value is less than or equal to the given value."""
 
     def __init__(self, maximum):
         self.maximum = maximum
@@ -135,9 +123,7 @@ class Maximum(Validator):
 
 
 class Choice(Validator):
-    """
-    Validates that any input value is in the list of valid choices.
-    """
+    """Validates that any input value is in the list of valid choices."""
 
     def __init__(self, choices):
         self.choices = choices
@@ -151,9 +137,7 @@ class Choice(Validator):
 
 
 class Exclude(Validator):
-    """
-    Validates that any input value is not in the list of invalid choices.
-    """
+    """Validates that any input value is not in the list of invalid choices."""
 
     def __init__(self, excludedValues):
         self.excludedValues = excludedValues
@@ -167,9 +151,7 @@ class Exclude(Validator):
 
 
 class RangeBounds(Validator):
-    """
-    Validates that the values in a range are within the given overall bounds.
-    """
+    """Validates that the values in a range are within the given overall bounds."""
 
     def __init__(self, minimum, maximum):
         self.minimum = minimum

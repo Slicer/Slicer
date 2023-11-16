@@ -16,7 +16,7 @@ endif()
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
-  foreach(module_name IN ITEMS jwt wrapt deprecated pycparser cffi nacl)
+  foreach(module_name IN ITEMS jwt wrapt deprecated pycparser cffi nacl dateutil)
     ExternalProject_FindPythonPackage(
       MODULE_NAME "${module_name}"
       REQUIRED
@@ -34,29 +34,29 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   # [cryptography]
   # Hashes correspond to the following packages:
-  #  - cryptography-41.0.1-cp37-abi3-macosx_10_12_universal2.whl
-  #  - cryptography-41.0.1-cp37-abi3-macosx_10_12_x86_64.whl
-  #  - cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - cryptography-41.0.1-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - cryptography-41.0.1-cp37-abi3-manylinux_2_28_aarch64.whl
-  #  - cryptography-41.0.1-cp37-abi3-manylinux_2_28_x86_64.whl
-  #  - cryptography-41.0.1-cp37-abi3-musllinux_1_1_aarch64.whl
-  #  - cryptography-41.0.1-cp37-abi3-musllinux_1_1_x86_64.whl
-  #  - cryptography-41.0.1-cp37-abi3-win_amd64.whl
-  cryptography==41.0.1 --hash=sha256:f73bff05db2a3e5974a6fd248af2566134d8981fd7ab012e5dd4ddb1d9a70699 \
-                       --hash=sha256:1a5472d40c8f8e91ff7a3d8ac6dfa363d8e3138b961529c996f3e2df0c7a411a \
-                       --hash=sha256:7fa01527046ca5facdf973eef2535a27fec4cb651e4daec4d043ef63f6ecd4ca \
-                       --hash=sha256:b46e37db3cc267b4dea1f56da7346c9727e1209aa98487179ee8ebed09d21e43 \
-                       --hash=sha256:d198820aba55660b4d74f7b5fd1f17db3aa5eb3e6893b0a41b75e84e4f9e0e4b \
-                       --hash=sha256:948224d76c4b6457349d47c0c98657557f429b4e93057cf5a2f71d603e2fc3a3 \
-                       --hash=sha256:059e348f9a3c1950937e1b5d7ba1f8e968508ab181e75fc32b879452f08356db \
-                       --hash=sha256:b4ceb5324b998ce2003bc17d519080b4ec8d5b7b70794cbd2836101406a9be31 \
-                       --hash=sha256:1fee5aacc7367487b4e22484d3c7e547992ed726d14864ee33c0176ae43b0d7c
+  #  - cryptography-41.0.4-cp37-abi3-macosx_10_12_universal2.whl
+  #  - cryptography-41.0.4-cp37-abi3-macosx_10_12_x86_64.whl
+  #  - cryptography-41.0.4-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cryptography-41.0.4-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cryptography-41.0.4-cp37-abi3-manylinux_2_28_aarch64.whl
+  #  - cryptography-41.0.4-cp37-abi3-manylinux_2_28_x86_64.whl
+  #  - cryptography-41.0.4-cp37-abi3-musllinux_1_1_aarch64.whl
+  #  - cryptography-41.0.4-cp37-abi3-musllinux_1_1_x86_64.whl
+  #  - cryptography-41.0.4-cp37-abi3-win_amd64.whl
+  cryptography==41.0.4 --hash=sha256:80907d3faa55dc5434a16579952ac6da800935cd98d14dbd62f6f042c7f5e839 \
+                       --hash=sha256:35c00f637cd0b9d5b6c6bd11b6c3359194a8eba9c46d4e875a3660e3b400005f \
+                       --hash=sha256:cecfefa17042941f94ab54f769c8ce0fe14beff2694e9ac684176a2535bf9714 \
+                       --hash=sha256:e40211b4923ba5a6dc9769eab704bdb3fbb58d56c5b336d30996c24fcf12aadb \
+                       --hash=sha256:23a25c09dfd0d9f28da2352503b23e086f8e78096b9fd585d1d14eca01613e13 \
+                       --hash=sha256:2ed09183922d66c4ec5fdaa59b4d14e105c084dd0febd27452de8f6f74704143 \
+                       --hash=sha256:5a0f09cefded00e648a127048119f77bc2b2ec61e736660b5789e638f43cc397 \
+                       --hash=sha256:9eeb77214afae972a00dee47382d2591abe77bdae166bda672fb1e24702a3860 \
+                       --hash=sha256:c880eba5175f4307129784eca96f4e70b88e57aa3f680aeba3bab0e980b0f37d
   # [/cryptography]
   # Specifying "[crypto]" is required since PyGithub 1.58.1
   # See https://github.com/Slicer/Slicer/issues/7112
   # [PyJWT]
-  PyJWT[crypto]==2.7.0 --hash=sha256:ba2b425b15ad5ef12f200dc67dd56af4e26de2331f965c5439994dad075876e1
+  PyJWT[crypto]==2.8.0 --hash=sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320
   # [/PyJWT]
   # [wrapt]
   # Hashes correspond to the following packages:
@@ -85,18 +85,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/pycparser]
   # [cffi]
   # Hashes correspond to the following packages:
-  #  - cffi-1.15.1-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - cffi-1.15.1-cp39-cp39-macosx_11_0_arm64.whl
-  #  - cffi-1.15.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - cffi-1.15.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - cffi-1.15.1-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - cffi-1.15.1-cp39-cp39-win_amd64.whl
-  cffi==1.15.1 --hash=sha256:54a2db7b78338edd780e7ef7f9f6c442500fb0d41a5a4ea24fff1c929d5af585 \
-               --hash=sha256:fcd131dd944808b5bdb38e6f5b53013c5aa4f334c5cad0c72742f6eba4b73db0 \
-               --hash=sha256:6c9a799e985904922a4d207a94eae35c78ebae90e128f0c4e521ce339396be9d \
-               --hash=sha256:5d598b938678ebf3c67377cdd45e09d431369c3b1a5b331058c338e201f12b27 \
-               --hash=sha256:98d85c6a2bef81588d9227dde12db8a7f47f639f4a17c9ae08e773aa9c697bf3 \
-               --hash=sha256:70df4e3b545a17496c9b3f41f5115e69a4f2e77e94e1d2a8e1070bc0c38c8a3c
+  #  - cffi-1.16.0-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - cffi-1.16.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - cffi-1.16.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cffi-1.16.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cffi-1.16.0-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - cffi-1.16.0-cp39-cp39-win_amd64.whl
+  cffi==1.16.0 --hash=sha256:582215a0e9adbe0e379761260553ba11c58943e4bbe9c36430c4ca6ac74b15ed \
+               --hash=sha256:b29ebffcf550f9da55bec9e02ad430c992a87e5f512cd63388abb76f1036d8d2 \
+               --hash=sha256:9cb4a35b3642fc5c005a6755a5d17c6c8b6bcb6981baf81cea8bfbc8903e8ba8 \
+               --hash=sha256:8f8e709127c6c77446a8c0a8c8bf3c8ee706a06cd44b1e827c3e6a2ee6b8c098 \
+               --hash=sha256:8895613bcc094d4a1b2dbe179d88d7fb4a15cee43c052e8885783fac397d91fe \
+               --hash=sha256:3686dffb02459559c74dd3d81748269ffb0eb027c39a6fc99502de37d501faa8
   # [/cffi]
   # [PyNaCl]
   # Hashes correspond to the following packages:
@@ -117,8 +117,17 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                 --hash=sha256:61f642bf2378713e2c2e1de73444a3778e5f0a38be6fee0fe532fe30060282ff \
                 --hash=sha256:20f42270d27e1b6a29f54032090b972d97f0a1b0948cc52392041ef7831fee93
   # [/PyNaCl]
+  # [python-dateutil]
+  python-dateutil==2.8.2 --hash=sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9
+  # [/python-dateutil]
+  # [six]
+  six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
+  # [/six]
+  # [typing-extensions]
+  typing-extensions==4.8.0 --hash=sha256:8f92fc8806f9a6b641eaa5318da32b44d401efaac0f6678c9bc448ba3605faa0
+  # [/typing-extensions]
   # [PyGithub]
-  PyGithub==1.59.0 --hash=sha256:126bdbae72087d8d038b113aab6b059b4553cb59348e3024bb1a1cae406ace9e
+  PyGithub==2.1.1 --hash=sha256:4b528d5d6f35e991ea5fd3f942f58748f24938805cb7fcf24486546637917337
   # [/PyGithub]
   ]===])
 
@@ -133,10 +142,6 @@ if(NOT Slicer_USE_SYSTEM_${proj})
     LOG_INSTALL 1
     DEPENDS
       ${${proj}_DEPENDENCIES}
-    )
-
-  ExternalProject_GenerateProjectDescription_Step(${proj}
-    VERSION ${_version}
     )
 
 else()

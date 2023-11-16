@@ -80,12 +80,12 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
             button.toolTip = "Open %s" % site["url"]
             sitesFormLayout.addWidget(button)
             onClick = lambda click, site=site: self.onSiteButtonClicked(site)
-            button.connect('clicked(bool)', onClick)
+            button.connect("clicked(bool)", onClick)
             buttons.append(button)
 
         button = qt.QPushButton("Close All")
         button.toolTip = "Close all the web views"
-        button.connect('clicked(bool)', self.onCloseAll)
+        button.connect("clicked(bool)", self.onCloseAll)
         self.layout.addWidget(button)
 
         # Add vertical spacer
@@ -114,14 +114,12 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         self.gotResponse = False
         self.gotCorrectResponse = False
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_WebEngine1()
 
@@ -137,8 +135,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
             print((js, result))
 
     def test_WebEngine1(self):
-        """ Testing WebEngine
-        """
+        """Testing WebEngine"""
 
         self.delayDisplay("Starting the test")
 
@@ -146,21 +143,21 @@ class WebEngineTest(ScriptedLoadableModuleTest):
         webWidget.size = qt.QSize(1024, 512)
         webWidget.webView().url = qt.QUrl("")
         webWidget.show()
-        self.delayDisplay('Showing widget')
+        self.delayDisplay("Showing widget")
 
         webWidget.evalJS("""
         const paragraph = document.createElement('p');
         paragraph.innerText = 'Hello from Slicer!';
         document.body.appendChild(paragraph);
     """)
-        self.delayDisplay('Slicer should be saying hello!')
+        self.delayDisplay("Slicer should be saying hello!")
 
         #
         # Test javascript evaluation + use of "evalResult()" signal
         #
         webWidget.connect("evalResult(QString,QString)", self.onEvalResult)
 
-        self.delayDisplay('Slicer setting a javascript value')
+        self.delayDisplay("Slicer setting a javascript value")
 
         webWidget.evalJS("const valueFromSlicer = 42;")
         webWidget.evalJS("valueFromSlicer;")
@@ -169,7 +166,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
         while not self.gotResponse and iteration < 3:
             # Specify an explicit delay to ensure async execution by the
             # webengine has completed.
-            self.delayDisplay('Waiting for response...', msec=500)
+            self.delayDisplay("Waiting for response...", msec=500)
             iteration += 1
         webWidget.disconnect("evalResult(QString,QString)", self.onEvalResult)
 
@@ -182,7 +179,7 @@ class WebEngineTest(ScriptedLoadableModuleTest):
         #
         # Test python evaluation from javascript
         #
-        self.delayDisplay('Call a python method')
+        self.delayDisplay("Call a python method")
 
         slicer.app.settings().setValue("WebEngine/AllowPythonExecution", ctk.ctkMessageBox.AcceptRole)
 
@@ -195,9 +192,9 @@ class WebEngineTest(ScriptedLoadableModuleTest):
         window.slicerPython.evalPython(pythonCode);
     """)
 
-        self.delayDisplay('Test access to python via js', msec=500)
+        self.delayDisplay("Test access to python via js", msec=500)
 
-        if hasattr(slicer.modules, 'slicerPythonValueFromJS'):
+        if hasattr(slicer.modules, "slicerPythonValueFromJS"):
             del slicer.modules.slicerPythonValueFromJS
 
         webWidget.evalJS("""
@@ -205,17 +202,17 @@ class WebEngineTest(ScriptedLoadableModuleTest):
     """)
 
         iteration = 0
-        while iteration < 3 and not hasattr(slicer.modules, 'slicerPythonValueFromJS'):
+        while iteration < 3 and not hasattr(slicer.modules, "slicerPythonValueFromJS"):
             # Specify an explicit delay to ensure async execution by the
             # webengine has completed.
-            self.delayDisplay('Waiting for python value from JS...', msec=500)
+            self.delayDisplay("Waiting for python value from JS...", msec=500)
             iteration += 1
 
         if iteration >= 3:
             raise RuntimeError("Couldn't get python value back from JS")
 
-        self.delayDisplay('Value of %d received via javascipt' % slicer.modules.slicerPythonValueFromJS)
+        self.delayDisplay("Value of %d received via javascript" % slicer.modules.slicerPythonValueFromJS)
 
         del slicer.modules.slicerPythonValueFromJS
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

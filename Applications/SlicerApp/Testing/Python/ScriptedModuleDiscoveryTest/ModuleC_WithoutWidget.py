@@ -1,6 +1,6 @@
 from slicer.ScriptedLoadableModule import *
 
-SOMEVAR = 'C'
+SOMEVAR = "C"
 
 
 class ModuleC_WithoutWidget(ScriptedLoadableModule):

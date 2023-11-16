@@ -103,7 +103,7 @@ class ParameterNodeWrapperGuiCreationTest(unittest.TestCase):
 
         gui.setProperty(SlicerParameterNamePropertyName, "pack")
 
-        param = ParameterNodeWrapper(slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScriptedModuleNode'))
+        param = ParameterNodeWrapper(slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScriptedModuleNode"))
         param.connectParametersToGui({"pack": gui})
 
         self.assertEqual(param.pack, Pack(3, 4, 5))
@@ -165,7 +165,7 @@ class ParameterNodeWrapperGuiCreationTest(unittest.TestCase):
             f: Annotated[float, Label("THE FLOAT")]
             s: str
         gui = createGui(ParameterNodeWrapper)
-        
+
         # Overall is a qSlicerWidget
         self.assertIsInstance(gui, slicer.qSlicerWidget)
 
@@ -185,7 +185,7 @@ class ParameterNodeWrapperGuiCreationTest(unittest.TestCase):
         self.assertEqual(labels[1].text, "i")
         self.assertEqual(labels[2].text, "s")
 
-        param = ParameterNodeWrapper(slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScriptedModuleNode'))
+        param = ParameterNodeWrapper(slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScriptedModuleNode"))
 
         param.connectGui(gui)
 
@@ -239,7 +239,7 @@ class ParameterNodeWrapperGuiCreationTest(unittest.TestCase):
         gui = createGui(ParameterNodeWrapper)
         gui.setMRMLScene(slicer.mrmlScene)
 
-        param = ParameterNodeWrapper(slicer.mrmlScene.AddNewNodeByClass('vtkMRMLScriptedModuleNode'))
+        param = ParameterNodeWrapper(slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScriptedModuleNode"))
         param.connectGui(gui)
 
         reductionWidget = findChildWidgetForParameter(gui, "inputs.reduction")

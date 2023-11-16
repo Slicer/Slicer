@@ -15,7 +15,7 @@ from slicer.parameterNodeWrapper import parameterNodeWrapper
 
 @contextmanager
 def MyScopedQtPropertySetter(qobject, properties):
-    """ Context manager to set/reset properties"""
+    """Context manager to set/reset properties"""
     # TODO: Move it to slicer.utils and delete it here.
     previousValues = {}
     for propertyName, propertyValue in properties.items():
@@ -116,9 +116,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     _parameterNode: Optional[VectorToScalarVolumeParameterNode]
 
     def __init__(self, parent=None):
-        """
-        Called when the user opens the module the first time and the widget is initialized.
-        """
+        """Called when the user opens the module the first time and the widget is initialized."""
         ScriptedLoadableModuleWidget.__init__(self, parent)
         VTKObservationMixin.__init__(self)  # needed for parameter node observation
         self.logic = None
@@ -126,14 +124,12 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
         self._updatingGUIFromParameterNode = False
 
     def setup(self):
-        """
-        Called when the user opens the module the first time and the widget is initialized.
-        """
+        """Called when the user opens the module the first time and the widget is initialized."""
         ScriptedLoadableModuleWidget.setup(self)
 
         # Load widget from .ui file (created by Qt Designer).
         # Additional widgets can be instantiated manually and added to self.layout.
-        uiWidget = slicer.util.loadUI(self.resourcePath('UI/VectorToScalarVolume.ui'))
+        uiWidget = slicer.util.loadUI(self.resourcePath("UI/VectorToScalarVolume.ui"))
         self.layout.addWidget(uiWidget)
         self.ui = slicer.util.childWidgetVariables(uiWidget)
 
@@ -162,54 +158,42 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
         # (in the selected parameter node).
         self.ui.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
         self.ui.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-        self.ui.methodSelectorComboBox.connect('currentIndexChanged(int)', self.updateParameterNodeFromGUI)
-        self.ui.componentsSpinBox.connect('valueChanged(int)', self.updateParameterNodeFromGUI)
+        self.ui.methodSelectorComboBox.connect("currentIndexChanged(int)", self.updateParameterNodeFromGUI)
+        self.ui.componentsSpinBox.connect("valueChanged(int)", self.updateParameterNodeFromGUI)
 
         # Buttons
-        self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.ui.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Make sure parameter node is initialized (needed for module reload)
         self.initializeParameterNode()
 
     def cleanup(self):
-        """
-        Called when the application closes and the module widget is destroyed.
-        """
+        """Called when the application closes and the module widget is destroyed."""
         self.removeObservers()
 
     def enter(self):
-        """
-        Called each time the user opens this module.
-        """
+        """Called each time the user opens this module."""
         # Make sure parameter node exists and observed
         self.initializeParameterNode()
 
     def exit(self):
-        """
-        Called each time the user opens a different module.
-        """
+        """Called each time the user opens a different module."""
         # Do not react to parameter node changes (GUI wlil be updated when the user enters into the module)
         self.removeObserver(self._parameterNode, vtk.vtkCommand.ModifiedEvent, self.updateGUIFromParameterNode)
 
     def onSceneStartClose(self, caller, event):
-        """
-        Called just before the scene is closed.
-        """
+        """Called just before the scene is closed."""
         # Parameter node will be reset, do not use it anymore
         self.setParameterNode(None)
 
     def onSceneEndClose(self, caller, event):
-        """
-        Called just after the scene is closed.
-        """
+        """Called just after the scene is closed."""
         # If this module is shown while the scene is closed then recreate a new parameter node immediately
         if self.parent.isEntered:
             self.initializeParameterNode()
 
     def initializeParameterNode(self):
-        """
-        Ensure parameter node exists and observed.
-        """
+        """Ensure parameter node exists and observed."""
         # Parameter node stores all user choices in parameter values, node selections, etc.
         # so that when the scene is saved and reloaded, these settings are restored.
 
@@ -295,9 +279,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
             self._parameterNode.ComponentToExtract = self.ui.componentsSpinBox.value
 
     def onApplyButton(self):
-        """
-        Run processing when user clicks "Apply" button.
-        """
+        """Run processing when user clicks "Apply" button."""
         with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
 
             # Compute output
@@ -320,9 +302,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
     """
 
     def __init__(self):
-        """
-        Called when the logic class is instantiated. Can be used for initializing member variables.
-        """
+        """Called when the logic class is instantiated. Can be used for initializing member variables."""
         ScriptedLoadableModuleLogic.__init__(self)
 
     @staticmethod
@@ -335,16 +315,16 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         # Checking input/output consistency.
         #
         if not inputVolumeNode:
-            msg = _('no input volume node defined')
+            msg = _("no input volume node defined")
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
         if not outputVolumeNode:
-            msg = _('no output volume node defined')
+            msg = _("no output volume node defined")
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
         if inputVolumeNode.GetID() == outputVolumeNode.GetID():
-            msg = _('input and output volume is the same. '
-                    'Create a new volume for output to avoid this error.')
+            msg = _("input and output volume is the same. "
+                    "Create a new volume for output to avoid this error.")
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
 
@@ -352,7 +332,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         # Checking based on method selected
         #
         if not isinstance(conversionMethod, ConversionMethods):
-            msg = 'conversionMethod %s unrecognized.' % conversionMethod
+            msg = "conversionMethod %s unrecognized." % conversionMethod
             logging.debug("isValidInputOutputData failed: %s" % msg)
             return False, msg
 
@@ -363,7 +343,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         if conversionMethod is ConversionMethods.SINGLE_COMPONENT:
             # componentToExtract is an index with valid values in the range: [0, numberOfComponents-1]
             if not 0 <= componentToExtract < numberOfComponents:
-                msg = _('component to extract ({componentSelected}) is invalid. Image has only {componentsTotal} components.').format(
+                msg = _("component to extract ({componentSelected}) is invalid. Image has only {componentsTotal} components.").format(
                     componentSelected=componentToExtract, componentsTotal=numberOfComponents)
                 logging.debug("isValidInputOutputData failed: %s" % msg)
                 return False, msg
@@ -371,19 +351,17 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         # LUMINANCE: Check that input vector has at least three components.
         if conversionMethod is ConversionMethods.LUMINANCE:
             if numberOfComponents < 3:
-                msg = _('input has only {componentsTotal} components but requires '
-                        'at least 3 components for luminance conversion.').format(componentsTotal=numberOfComponents)
+                msg = _("input has only {componentsTotal} components but requires "
+                        "at least 3 components for luminance conversion.").format(componentsTotal=numberOfComponents)
                 logging.debug("isValidInputOutputData failed: %s" % msg)
                 return False, msg
 
         return True, None
 
     def run(self, parameterNode):
-        """
-        Run the conversion with given parameterNode.
-        """
+        """Run the conversion with given parameterNode."""
         if parameterNode is None:
-            raise ValueError(_t('Invalid Parameter Node: None'))
+            raise ValueError(_t("Invalid Parameter Node: None"))
 
         # allow non wrapped parameter node for backwards compatibility
         if isinstance(parameterNode, slicer.vtkMRMLScriptedModuleNode):
@@ -399,8 +377,8 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
         if not valid:
             raise ValueError(msg)
 
-        logging.debug('Conversion mode is %s' % conversionMethod)
-        logging.debug('ComponentToExtract is %s' % componentToExtract)
+        logging.debug("Conversion mode is %s" % conversionMethod)
+        logging.debug("ComponentToExtract is %s" % componentToExtract)
 
         if conversionMethod is ConversionMethods.SINGLE_COMPONENT:
             self.runConversionMethodSingleComponent(inputVolumeNode, outputVolumeNode,
@@ -413,7 +391,7 @@ class VectorToScalarVolumeLogic(ScriptedLoadableModuleLogic):
             self.runConversionMethodAverage(inputVolumeNode, outputVolumeNode)
 
     def runWithVariables(self, inputVolumeNode, outputVolumeNode, conversionMethod, componentToExtract=0):
-        """ Convenience method to run with variables, it creates a new parameterNode with these values. """
+        """Convenience method to run with variables, it creates a new parameterNode with these values."""
 
         parameterNode = VectorToScalarVolumeParameterNode(self.getParameterNode())
         parameterNode.InputVolume = inputVolumeNode
@@ -507,18 +485,16 @@ class VectorToScalarVolumeTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear()
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_VectorToScalarVolume1()
 
     def test_VectorToScalarVolume1(self):
-        """ Ideally you should have several levels of tests.  At the lowest level
+        """Ideally you should have several levels of tests.  At the lowest level
         tests should exercise the functionality of the logic with different inputs
         (both valid and invalid).  At higher levels your tests should emulate the
         way the user would interact with your code and confirm that it still works
@@ -536,7 +512,7 @@ class VectorToScalarVolumeTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Create input data")
 
         import numpy as np
-        inputVolume = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLVectorVolumeNode')
+        inputVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLVectorVolumeNode")
         voxels = np.zeros([7, 8, 9, 3], np.uint8)
         voxels[:, :, :, 0] = 30
         voxels[:, :, :, 1] = 50
@@ -575,4 +551,4 @@ class VectorToScalarVolumeTest(ScriptedLoadableModuleTest):
         self.assertEqual(outputScalarRange[0], 60)
         self.assertEqual(outputScalarRange[1], 60)
 
-        self.delayDisplay('Test passed')
+        self.delayDisplay("Test passed")

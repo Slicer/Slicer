@@ -35,7 +35,7 @@ part of the *superbuild*:
   - Private
 - libXt
 
-### Debian 12 Bookworm (Stable) and Bullseye 11 (OldStable) 
+### Debian 12 Bookworm (Stable) and Bullseye 11 (OldStable)
 
 Install the development tools and the support libraries:
 
@@ -48,6 +48,25 @@ sudo apt update && sudo apt install git subversion build-essential cmake cmake-c
 :::{note}
 The CMake version currently included in Debian 12 Bookworm (Stable) is not compatible with the current development version of Slicer.
 For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slicer/blob/98c092edb8f5a274277d2e486a4f7e584f58605e/CMakeLists.txt#L3-L5) file. On Debian 12 Bookworm (Stable), you will need to upgrade CMake manually by downloading CMake 3.25.3 or higher from the [CMake website](https://cmake.org/download/) and following the CMake installation instructions.
+:::
+
+### Ubuntu 23.04 (Lunar Lobster)
+
+Install the development tools and the support libraries:
+
+```console
+sudo apt update && sudo apt install git git-lfs subversion build-essential \
+  qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
+  qtbase5-private-dev libqt5x11extras5-dev libxt-dev
+```
+
+Install CMake manually by downloading CMake 3.25.3 or higher from the [CMake website](https://cmake.org/download/)
+and by following the CMake installation instructions.
+
+:::{note}
+The CMake version currently included in Ubuntu 23.04 is CMake 3.25.1 (see [here](https://packages.ubuntu.com/lunar/cmake))
+and is not compatible with the current development version of Slicer.
+For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slicer/blob/98c092edb8f5a274277d2e486a4f7e584f58605e/CMakeLists.txt#L3-L5) file.
 :::
 
 ### Ubuntu 21.10 (Impish Indri)

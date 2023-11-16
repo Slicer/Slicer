@@ -2,9 +2,14 @@ import logging
 import mimetypes
 import os
 import re
+from typing import Optional
+
+from .BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
+
+logger = logging.getLogger(__name__)
 
 
-class StaticPagesRequestHandler:
+class StaticPagesRequestHandler(BaseRequestHandler):
     """Serves static pages content (files) from the configured docroot
 
     uriRewriteRules member variable contain a list of string pairs. iI each pair,
@@ -13,23 +18,42 @@ class StaticPagesRequestHandler:
         `("(.*)/browse.*", "{0}/browse.html")`
     """
 
-    def __init__(self, docroot):
+    @staticmethod
+    def defaultLogMessage(*args):
         """
-        :param docroot: directory path of static pages content
-        :param logMessage: callable to log messages
+        Default implementation method to route messages to log.
+        Emits with reference to `StaticPagesRequestHandler` file source.
         """
+        logger.debug(*args)
 
+    def __init__(self, docroot, logMessage:Optional[BaseRequestLoggingFunction]=None):
+        """
+        Initialize a new request handler instance.
+        :param docroot: directory path of static pages content
+        :param logMessage: An optional external handle for message logging.
+        """
         self.uriRewriteRules = []
         self.docroot = docroot
-        self.logMessage('docroot: %s' % self.docroot)
+        self.logMessage = logMessage or self.defaultLogMessage
+        self.logMessage("docroot: %s" % self.docroot)
 
-    def logMessage(self, *args):
-        logging.debug(args)
+    def canHandleRequest(self, **_kwargs) -> float:
+        """
+        Whether we can handle the incoming request.
 
-    def canHandleRequest(self, method, uri, requestBody):
+        Work to determine content to serve is done in `handleRequest`,
+        so for now we indicate that we can handle any request with
+        a low confidence.
+
+        :return: 0.1 confidence, indicating that any request can be
+            potentially handled but other request handlers may be more
+            suitable for specific requests.
+        """
         return 0.1
 
-    def handleRequest(self, method, uri, requestBody):
+    def handleRequest(
+        self, method: str, uri: bytes, requestBody: bytes
+    ) -> tuple[bytes, bytes]:
         """Return directory listing or binary contents of files
         TODO: other header fields like modified time
 
@@ -45,18 +69,18 @@ class StaticPagesRequestHandler:
                 uri = replace.format(*matched.groups()).encode()
                 self.logMessage(f"Path rewritten to: {uri}")
 
-        contentType = b'text/plain'
+        contentType = b"text/plain"
         responseBody = None
-        if uri.startswith(b'/'):
+        if uri.startswith(b"/"):
             uri = uri[1:]
         path = os.path.join(self.docroot, uri)
-        self.logMessage('docroot: %s' % self.docroot)
+        self.logMessage("docroot: %s" % self.docroot)
         if os.path.isdir(path):
             for index in b"index.html", b"index.htm":
                 index = os.path.join(path, index)
                 if os.path.exists(index):
                     path = index
-        self.logMessage(b'Serving: %s' % path)
+        self.logMessage(b"Serving: %s" % path)
         if os.path.isdir(path):
             contentType = b"text/html"
             responseBody = b"<ul>"
@@ -68,7 +92,7 @@ class StaticPagesRequestHandler:
             if ext in mimetypes.types_map:
                 contentType = mimetypes.types_map[ext].encode()
             try:
-                fp = open(path, 'rb')
+                fp = open(path, "rb")
                 responseBody = fp.read()
                 fp.close()
             except OSError:

@@ -41,8 +41,8 @@ and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCA
 # ScreenCaptureWidget
 #
 
-VIEW_SLICE = 'slice'
-VIEW_3D = '3d'
+VIEW_SLICE = "slice"
+VIEW_3D = "3d"
 
 AXIS_YAW = 0
 AXIS_PITCH = 1
@@ -208,10 +208,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         # Output directory selector
         self.outputDirSelector = ctk.ctkPathLineEdit()
         self.outputDirSelector.filters = ctk.ctkPathLineEdit.Dirs
-        self.outputDirSelector.settingKey = 'ScreenCaptureOutputDir'
+        self.outputDirSelector.settingKey = "ScreenCaptureOutputDir"
         outputFormLayout.addRow(_("Output directory:"), self.outputDirSelector)
         if not self.outputDirSelector.currentPath:
-            defaultOutputPath = os.path.abspath(os.path.join(slicer.app.defaultScenePath, 'SlicerCapture'))
+            defaultOutputPath = os.path.abspath(os.path.join(slicer.app.defaultScenePath, "SlicerCapture"))
             self.outputDirSelector.setCurrentPath(defaultOutputPath)
 
         self.videoFileNameWidget = qt.QLineEdit()
@@ -294,14 +294,14 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.videoExportFfmpegWarning = qt.QLabel(_('<qt><b><font color="red">Set valid ffmpeg executable path! ' +
                                                     '<a href="https://slicer.readthedocs.io/en/latest/user_guide/modules/screencapture.html#setting-up-ffmpeg">'
                                                     'Help...</a></font></b></qt>'))
-        self.videoExportFfmpegWarning.connect('linkActivated(QString)', self.openURL)
+        self.videoExportFfmpegWarning.connect("linkActivated(QString)", self.openURL)
         self.videoExportFfmpegWarning.setVisible(False)
         advancedFormLayout.addRow("", self.videoExportFfmpegWarning)
 
         self.extraVideoOptionsWidget = qt.QLineEdit()
-        self.extraVideoOptionsWidget.setToolTip(_('Additional video conversion options passed to ffmpeg. Parameters -i (input files), -y'
-                                                  '(overwrite without asking), -r (frame rate), -start_number are specified by the module and therefore'
-                                                  'should not be included in this list.'))
+        self.extraVideoOptionsWidget.setToolTip(_("Additional video conversion options passed to ffmpeg. Parameters -i (input files), -y"
+                                                  "(overwrite without asking), -r (frame rate), -start_number are specified by the module and therefore"
+                                                  "should not be included in this list."))
         advancedFormLayout.addRow(_("Video extra options:"), self.extraVideoOptionsWidget)
 
         self.fileNamePatternWidget = qt.QLineEdit()
@@ -347,7 +347,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.transparentBackgroundCheckBox.setToolTip(_("If checked, images will be captured with transparent background."))
         advancedFormLayout.addRow(_("Transparent background:"), self.transparentBackgroundCheckBox)
 
-        watermarkEnabled = slicer.util.settingsValue('ScreenCapture/WatermarkEnabled', False, converter=slicer.util.toBool)
+        watermarkEnabled = slicer.util.settingsValue("ScreenCapture/WatermarkEnabled", False, converter=slicer.util.toBool)
 
         self.watermarkEnabledCheckBox = qt.QCheckBox(" ")
         self.watermarkEnabledCheckBox.checked = watermarkEnabled
@@ -360,7 +360,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         for watermarkPositionPreset in self.logic.watermarkPositionPresets:
             self.watermarkPositionWidget.addItem(watermarkPositionPreset["name"])
         self.watermarkPositionWidget.setCurrentText(
-            slicer.util.settingsValue('ScreenCapture/WatermarkPosition', self.logic.watermarkPositionPresets[0]["name"]))
+            slicer.util.settingsValue("ScreenCapture/WatermarkPosition", self.logic.watermarkPositionPresets[0]["name"]))
 
         self.watermarkSizeSliderWidget = qt.QSpinBox()
         self.watermarkSizeSliderWidget.enabled = watermarkEnabled
@@ -372,7 +372,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.watermarkSizeSliderWidget.suffix = "%"
         self.watermarkSizeSliderWidget.setToolTip(_("Size scaling applied to the watermark image. 100% is original size"))
         try:
-            self.watermarkSizeSliderWidget.value = int(slicer.util.settingsValue('ScreenCapture/WatermarkSize', 100))
+            self.watermarkSizeSliderWidget.value = int(slicer.util.settingsValue("ScreenCapture/WatermarkSize", 100))
         except:
             pass
 
@@ -386,13 +386,13 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.watermarkOpacitySliderWidget.suffix = "%"
         self.watermarkOpacitySliderWidget.setToolTip(_("Opacity of the watermark image. 100% is fully opaque."))
         try:
-            self.watermarkOpacitySliderWidget.value = int(slicer.util.settingsValue('ScreenCapture/WatermarkOpacity', 30))
+            self.watermarkOpacitySliderWidget.value = int(slicer.util.settingsValue("ScreenCapture/WatermarkOpacity", 30))
         except:
             pass
 
         self.watermarkPathSelector = ctk.ctkPathLineEdit()
         self.watermarkPathSelector.enabled = watermarkEnabled
-        self.watermarkPathSelector.settingKey = 'ScreenCaptureWatermarkImagePath'
+        self.watermarkPathSelector.settingKey = "ScreenCaptureWatermarkImagePath"
         self.watermarkPathSelector.nameFilters = ["*.png"]
         self.watermarkPathSelector.sizeAdjustPolicy = ctk.ctkPathLineEdit.AdjustToMinimumContentsLength
         self.watermarkPathSelector.setSizePolicy(qt.QSizePolicy.MinimumExpanding, qt.QSizePolicy.Preferred)
@@ -419,7 +419,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.captureButton = qt.QPushButton(self.captureButtonLabelCapture)
         self.captureButton.toolTip = _("Capture slice sweep to image sequence.")
         self.showCreatedOutputFileButton = qt.QPushButton()
-        self.showCreatedOutputFileButton.setIcon(qt.QIcon(':Icons/Go.png'))
+        self.showCreatedOutputFileButton.setIcon(qt.QIcon(":Icons/Go.png"))
         self.showCreatedOutputFileButton.setMaximumWidth(60)
         self.showCreatedOutputFileButton.enabled = False
         self.showCreatedOutputFileButton.toolTip = _("Show created output file.")
@@ -438,25 +438,25 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         # self.layout.addStretch(1)
 
         # connections
-        self.captureButton.connect('clicked(bool)', self.onCaptureButton)
-        self.showCreatedOutputFileButton.connect('clicked(bool)', self.onShowCreatedOutputFile)
+        self.captureButton.connect("clicked(bool)", self.onCaptureButton)
+        self.showCreatedOutputFileButton.connect("clicked(bool)", self.onShowCreatedOutputFile)
         self.viewNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateViewOptions)
         self.animationModeWidget.connect("currentIndexChanged(int)", self.updateViewOptions)
-        self.sliceStartOffsetSliderWidget.connect('valueChanged(double)', self.setSliceOffset)
-        self.sliceEndOffsetSliderWidget.connect('valueChanged(double)', self.setSliceOffset)
+        self.sliceStartOffsetSliderWidget.connect("valueChanged(double)", self.setSliceOffset)
+        self.sliceEndOffsetSliderWidget.connect("valueChanged(double)", self.setSliceOffset)
         self.sequenceBrowserNodeSelectorWidget.connect("currentNodeChanged(vtkMRMLNode*)", self.updateViewOptions)
-        self.sequenceStartItemIndexWidget.connect('valueChanged(double)', self.setSequenceItemIndex)
-        self.sequenceEndItemIndexWidget.connect('valueChanged(double)', self.setSequenceItemIndex)
-        self.outputTypeWidget.connect('currentIndexChanged(int)', self.updateOutputType)
+        self.sequenceStartItemIndexWidget.connect("valueChanged(double)", self.setSequenceItemIndex)
+        self.sequenceEndItemIndexWidget.connect("valueChanged(double)", self.setSequenceItemIndex)
+        self.outputTypeWidget.connect("currentIndexChanged(int)", self.updateOutputType)
         self.videoFormatWidget.connect("currentIndexChanged(int)", self.updateVideoFormat)
-        self.maxFramesWidget.connect('valueChanged(int)', self.maxFramesChanged)
-        self.videoLengthSliderWidget.connect('valueChanged(double)', self.setVideoLength)
-        self.videoFrameRateSliderWidget.connect('valueChanged(double)', self.setVideoFrameRate)
-        self.singleStepButton.connect('toggled(bool)', self.setForceSingleStep)
-        self.numberOfStepsSliderWidget.connect('valueChanged(double)', self.setNumberOfSteps)
-        self.watermarkEnabledCheckBox.connect('toggled(bool)', self.watermarkPositionWidget, 'setEnabled(bool)')
-        self.watermarkEnabledCheckBox.connect('toggled(bool)', self.watermarkSizeSliderWidget, 'setEnabled(bool)')
-        self.watermarkEnabledCheckBox.connect('toggled(bool)', self.watermarkPathSelector, 'setEnabled(bool)')
+        self.maxFramesWidget.connect("valueChanged(int)", self.maxFramesChanged)
+        self.videoLengthSliderWidget.connect("valueChanged(double)", self.setVideoLength)
+        self.videoFrameRateSliderWidget.connect("valueChanged(double)", self.setVideoFrameRate)
+        self.singleStepButton.connect("toggled(bool)", self.setForceSingleStep)
+        self.numberOfStepsSliderWidget.connect("valueChanged(double)", self.setNumberOfSteps)
+        self.watermarkEnabledCheckBox.connect("toggled(bool)", self.watermarkPositionWidget, "setEnabled(bool)")
+        self.watermarkEnabledCheckBox.connect("toggled(bool)", self.watermarkSizeSliderWidget, "setEnabled(bool)")
+        self.watermarkEnabledCheckBox.connect("toggled(bool)", self.watermarkPathSelector, "setEnabled(bool)")
 
         self.setVideoLength()  # update frame rate based on video length
         self.updateOutputType()
@@ -508,8 +508,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
             return None
 
     def addLog(self, text):
-        """Append text to log window
-        """
+        """Append text to log window"""
         self.statusLabel.appendPlainText(text)
         self.statusLabel.ensureCursorVisible()
         slicer.app.processEvents()  # force update
@@ -519,7 +518,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     def updateViewOptions(self):
 
-        sequencesModuleAvailable = hasattr(slicer.modules, 'sequences')
+        sequencesModuleAvailable = hasattr(slicer.modules, "sequences")
 
         if self.viewNodeType != self.currentViewNodeType():
             self.viewNodeType = self.currentViewNodeType()
@@ -644,24 +643,24 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
         self.logic.setFfmpegPath(self.ffmpegPathSelector.currentPath)
 
-        qt.QSettings().setValue('ScreenCapture/WatermarkEnabled', bool(self.watermarkEnabledCheckBox.checked))
-        qt.QSettings().setValue('ScreenCapture/WatermarkPosition', self.watermarkPositionWidget.currentText)
-        qt.QSettings().setValue('ScreenCapture/WatermarkOpacity', self.watermarkOpacitySliderWidget.value)
-        qt.QSettings().setValue('ScreenCapture/WatermarkSize', self.watermarkSizeSliderWidget.value)
+        qt.QSettings().setValue("ScreenCapture/WatermarkEnabled", bool(self.watermarkEnabledCheckBox.checked))
+        qt.QSettings().setValue("ScreenCapture/WatermarkPosition", self.watermarkPositionWidget.currentText)
+        qt.QSettings().setValue("ScreenCapture/WatermarkOpacity", self.watermarkOpacitySliderWidget.value)
+        qt.QSettings().setValue("ScreenCapture/WatermarkSize", self.watermarkSizeSliderWidget.value)
 
         if self.watermarkEnabledCheckBox.checked:
             if self.watermarkPathSelector.currentPath:
                 self.logic.setWatermarkImagePath(self.watermarkPathSelector.currentPath)
                 self.watermarkPathSelector.addCurrentPathToHistory()
             else:
-                self.logic.setWatermarkImagePath(self.resourcePath('SlicerWatermark.png'))
+                self.logic.setWatermarkImagePath(self.resourcePath("SlicerWatermark.png"))
             self.logic.setWatermarkPosition(self.watermarkPositionWidget.currentIndex)
             self.logic.setWatermarkSizePercent(self.watermarkSizeSliderWidget.value)
             self.logic.setWatermarkOpacityPercent(self.watermarkOpacitySliderWidget.value)
         else:
             self.logic.setWatermarkPosition(-1)
 
-        self.statusLabel.plainText = ''
+        self.statusLabel.plainText = ""
 
         videoOutputRequested = (self.outputTypeWidget.currentText == _("video"))
         viewNode = self.viewNodeSelector.currentNode()
@@ -679,12 +678,12 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
             if not self.logic.isFfmpegPathValid():
                 # ffmpeg not found, try to automatically find it at common locations
                 self.logic.findFfmpeg()
-            if not self.logic.isFfmpegPathValid() and os.name == 'nt':  # TODO: implement download for Linux/MacOS?
+            if not self.logic.isFfmpegPathValid() and os.name == "nt":  # TODO: implement download for Linux/MacOS?
                 # ffmpeg not found, offer downloading it
                 if slicer.util.confirmOkCancelDisplay(
-                    _('Video encoder not detected on your system. '
-                      'Download ffmpeg video encoder?'),
-                        windowTitle=_('Download confirmation')):
+                    _("Video encoder not detected on your system. "
+                      "Download ffmpeg video encoder?"),
+                        windowTitle=_("Download confirmation")):
                     if not self.logic.ffmpegDownload():
                         slicer.util.errorDisplay(_("ffmpeg download failed"))
             if not self.logic.isFfmpegPathValid():
@@ -745,7 +744,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
                                            numberOfSteps, outputDir, imageFileNamePattern,
                                            captureAllViews=captureAllViews, transparentBackground=transparentBackground)
             else:
-                raise ValueError('Unsupported view node type.')
+                raise ValueError("Unsupported view node type.")
 
             import shutil
 
@@ -859,7 +858,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         import string
         import random
         numberOfRandomChars = 5
-        randomString = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(numberOfRandomChars))
+        randomString = "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(numberOfRandomChars))
         filePathPattern = "tmp-" + randomString + "-%05d.png"
         return filePathPattern
 
@@ -869,19 +868,19 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         return os.path.isfile(ffmpegPath)
 
     def getDownloadedFfmpegDirectory(self):
-        return os.path.dirname(slicer.app.slicerUserSettingsFilePath) + '/ffmpeg'
+        return os.path.dirname(slicer.app.slicerUserSettingsFilePath) + "/ffmpeg"
 
     def getFfmpegExecutableFilename(self):
-        if os.name == 'nt':
-            return 'ffmpeg.exe'
+        if os.name == "nt":
+            return "ffmpeg.exe"
         else:
-            return 'ffmpeg'
+            return "ffmpeg"
 
     def findFfmpeg(self):
         # Try to find the executable at specific paths
         commonFfmpegPaths = [
-            '/usr/local/bin/ffmpeg',
-            '/usr/bin/ffmpeg'
+            "/usr/local/bin/ffmpeg",
+            "/usr/bin/ffmpeg"
         ]
         for ffmpegPath in commonFfmpegPaths:
             if os.path.isfile(ffmpegPath):
@@ -904,17 +903,17 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         for dirpath, dirnames, files in os.walk(ffmpegDir):
             for name in files:
                 if name == ffmpegExecutableFilename:
-                    ffmpegExecutablePath = (dirpath + '/' + name).replace('\\', '/')
+                    ffmpegExecutablePath = (dirpath + "/" + name).replace("\\", "/")
                     self.setFfmpegPath(ffmpegExecutablePath)
                     return True
         return False
 
     def unzipFfmpeg(self, filePath, ffmpegTargetDirectory):
         if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-            logging.info('ffmpeg package is not found at ' + filePath)
+            logging.info("ffmpeg package is not found at " + filePath)
             return False
 
-        logging.info('Unzipping ffmpeg package ' + filePath)
+        logging.info("Unzipping ffmpeg package " + filePath)
         qt.QDir().mkpath(ffmpegTargetDirectory)
         slicer.app.applicationLogic().Unzip(filePath, ffmpegTargetDirectory)
         success = self.findFfmpegInDirectory(ffmpegTargetDirectory)
@@ -924,7 +923,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         ffmpegTargetDirectory = self.getDownloadedFfmpegDirectory()
         # The number in the filePath can be incremented each time a significantly different ffmpeg version
         # is to be introduced (it prevents reusing a previously downloaded package).
-        filePath = slicer.app.temporaryPath + '/ffmpeg-package-slicer-01.zip'
+        filePath = slicer.app.temporaryPath + "/ffmpeg-package-slicer-01.zip"
         success = self.unzipFfmpeg(filePath, ffmpegTargetDirectory)
         if success:
             # there was a valid downloaded package already
@@ -932,8 +931,8 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
         # List of mirror sites to attempt download ffmpeg pre-built binaries from
         urls = []
-        if os.name == 'nt':
-            urls.append('https://github.com/Slicer/SlicerBinaryDependencies/releases/download/ffmpeg/ffmpeg-2021-05-16-win64.zip')
+        if os.name == "nt":
+            urls.append("https://github.com/Slicer/SlicerBinaryDependencies/releases/download/ffmpeg/ffmpeg-2021-05-16-win64.zip")
         else:
             # TODO: implement downloading for Linux/MacOS?
             pass
@@ -945,9 +944,9 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
             success = True
             try:
-                logging.info('Requesting download ffmpeg from %s...' % url)
+                logging.info("Requesting download ffmpeg from %s..." % url)
                 import urllib.request, urllib.error, urllib.parse
-                req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
                 data = urllib.request.urlopen(req).read()
                 with open(filePath, "wb") as f:
                     f.write(data)
@@ -964,17 +963,17 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     def getFfmpegPath(self):
         settings = qt.QSettings()
-        if settings.contains('General/ffmpegPath'):
-            return slicer.app.toSlicerHomeAbsolutePath(settings.value('General/ffmpegPath'))
-        return ''
+        if settings.contains("General/ffmpegPath"):
+            return slicer.app.toSlicerHomeAbsolutePath(settings.value("General/ffmpegPath"))
+        return ""
 
     def setFfmpegPath(self, ffmpegPath):
         # don't save it if already saved
         settings = qt.QSettings()
-        if settings.contains('General/ffmpegPath'):
-            if ffmpegPath == slicer.app.toSlicerHomeAbsolutePath(settings.value('General/ffmpegPath')):
+        if settings.contains("General/ffmpegPath"):
+            if ffmpegPath == slicer.app.toSlicerHomeAbsolutePath(settings.value("General/ffmpegPath")):
                 return
-        settings.setValue('General/ffmpegPath', slicer.app.toSlicerHomeRelativePath(ffmpegPath))
+        settings.setValue("General/ffmpegPath", slicer.app.toSlicerHomeRelativePath(ffmpegPath))
 
     def setWatermarkPosition(self, watermarkPosition):
         self.watermarkPosition = watermarkPosition
@@ -1054,7 +1053,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
             if imageSize.x() < 2 or imageSize.y() < 2:
                 # image is too small, most likely it is invalid
-                raise ValueError(_('Capture image from view failed'))
+                raise ValueError(_("Capture image from view failed"))
 
             img = ctk.ctkWidgetsUtils.grabWidget(slicer.util.mainWindow(), qt.QRect(topLeft.x(), topLeft.y(), imageSize.x(), imageSize.y()))
 
@@ -1089,7 +1088,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
         if imageSize[0] < 2 or imageSize[1] < 2:
             # image is too small, most likely it is invalid
-            raise ValueError(_('Capture image from view failed'))
+            raise ValueError(_("Capture image from view failed"))
 
         # Make sure image width and height is even, otherwise encoding may fail
         imageWidthOdd = (imageSize[0] & 1 == 1)
@@ -1127,21 +1126,21 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     def createImageWriter(self, filename):
         name, extension = os.path.splitext(filename)
-        if extension.lower() == '.png':
+        if extension.lower() == ".png":
             return vtk.vtkPNGWriter()
-        elif extension.lower() == '.jpg' or extension.lower() == '.jpeg':
+        elif extension.lower() == ".jpg" or extension.lower() == ".jpeg":
             return vtk.vtkJPEGWriter()
         else:
-            raise ValueError(_('Unsupported image format based on file name {filename}').format(filename=filename))
+            raise ValueError(_("Unsupported image format based on file name {filename}").format(filename=filename))
 
     def createImageReader(self, filename):
         name, extension = os.path.splitext(filename)
-        if extension.lower() == '.png':
+        if extension.lower() == ".png":
             return vtk.vtkPNGReader()
-        elif extension.lower() == '.jpg' or extension.lower() == '.jpeg':
+        elif extension.lower() == ".jpg" or extension.lower() == ".jpeg":
             return vtk.vtkJPEGReader()
         else:
-            raise ValueError(_('Unsupported image format based on file name {filename}').format(filename=filename))
+            raise ValueError(_("Unsupported image format based on file name {filename}").format(filename=filename))
 
     def addWatermark(self, capturedImage):
 
@@ -1191,7 +1190,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     def viewFromNode(self, viewNode):
         if not viewNode:
-            raise ValueError(_('Invalid view node.'))
+            raise ValueError(_("Invalid view node."))
         elif viewNode.IsA("vtkMRMLSliceNode"):
             return slicer.app.layoutManager().sliceWidget(viewNode.GetLayoutName()).sliceView()
         elif viewNode.IsA("vtkMRMLViewNode"):
@@ -1203,7 +1202,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
                     renderView = view
                     break
             if not renderView:
-                raise ValueError(_('Selected 3D view is not visible in the current layout.'))
+                raise ValueError(_("Selected 3D view is not visible in the current layout."))
             return renderView
         elif viewNode.IsA("vtkMRMLPlotViewNode"):
             renderView = None
@@ -1213,10 +1212,10 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
                     renderView = lm.plotWidget(viewIndex).plotView()
                     break
             if not renderView:
-                raise ValueError(_('Selected 3D view is not visible in the current layout.'))
+                raise ValueError(_("Selected 3D view is not visible in the current layout."))
             return renderView
         else:
-            raise ValueError(_('Invalid view node.'))
+            raise ValueError(_("Invalid view node."))
 
     def captureSliceSweep(self, sliceNode, startSliceOffset, endSliceOffset, numberOfImages,
                           outputDir, outputFilenamePattern, captureAllViews=None, transparentBackground=False):
@@ -1224,7 +1223,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         self.cancelRequested = False
 
         if not captureAllViews and not sliceNode.IsMappedInLayout():
-            raise ValueError(_('Selected slice view is not visible in the current layout.'))
+            raise ValueError(_("Selected slice view is not visible in the current layout."))
 
         if not os.path.exists(outputDir):
             os.makedirs(outputDir)
@@ -1246,7 +1245,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
         sliceLogic.SetSliceOffset(originalSliceOffset)
         if self.cancelRequested:
-            raise ValueError(_('User requested cancel.'))
+            raise ValueError(_("User requested cancel."))
 
     def captureSliceFade(self, sliceNode, numberOfImages, outputDir,
                          outputFilenamePattern, captureAllViews=None, transparentBackground=False):
@@ -1254,7 +1253,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         self.cancelRequested = False
 
         if not captureAllViews and not sliceNode.IsMappedInLayout():
-            raise ValueError(_('Selected slice view is not visible in the current layout.'))
+            raise ValueError(_("Selected slice view is not visible in the current layout."))
 
         if not os.path.exists(outputDir):
             os.makedirs(outputDir)
@@ -1278,13 +1277,11 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         compositeNode.SetForegroundOpacity(originalForegroundOpacity)
 
         if self.cancelRequested:
-            raise ValueError(_('User requested cancel.'))
+            raise ValueError(_("User requested cancel."))
 
     def capture3dViewRotation(self, viewNode, startRotation, endRotation, numberOfImages, rotationAxis,
                               outputDir, outputFilenamePattern, captureAllViews=None, transparentBackground=False):
-        """
-        Acquire a set of screenshots of the 3D view while rotating it.
-        """
+        """Acquire a set of screenshots of the 3D view while rotating it."""
 
         self.cancelRequested = False
 
@@ -1339,14 +1336,12 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             renderView.pitchDirection = originalDirection
 
         if self.cancelRequested:
-            raise ValueError(_('User requested cancel.'))
+            raise ValueError(_("User requested cancel."))
 
     def captureSequence(self, viewNode, sequenceBrowserNode, sequenceStartIndex,
                         sequenceEndIndex, numberOfImages, outputDir, outputFilenamePattern,
                         captureAllViews=None, transparentBackground=False):
-        """
-        Acquire a set of screenshots of a view while iterating through a sequence.
-        """
+        """Acquire a set of screenshots of a view while iterating through a sequence."""
 
         self.cancelRequested = False
 
@@ -1368,7 +1363,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
         sequenceBrowserNode.SetSelectedItemNumber(originalSelectedItemNumber)
         if self.cancelRequested:
-            raise ValueError(_('User requested cancel.'))
+            raise ValueError(_("User requested cancel."))
 
     def createLightboxImage(self, numberOfColumns, outputDir, imageFileNamePattern, numberOfImages, lightboxImageFilename):
         self.addLog(_("Export to lightbox image..."))
@@ -1433,10 +1428,10 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
                         "-r", str(frameRate),
                         "-start_number", "0",
                         "-i", str(filePathPattern)]
-        ffmpegParams += [_f for _f in extraOptions.split(' ') if _f]
+        ffmpegParams += [_f for _f in extraOptions.split(" ") if _f]
         ffmpegParams.append(outputVideoFilePath)
 
-        self.addLog(_('Start ffmpeg:') + '\n' + ' '.join(ffmpegParams))
+        self.addLog(_("Start ffmpeg:") + "\n" + " ".join(ffmpegParams))
 
         import subprocess
         p = subprocess.Popen(ffmpegParams, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=outputDir)
@@ -1450,9 +1445,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             logging.debug("ffmpeg error output: " + stderr.decode())
 
     def deleteTemporaryFiles(self, outputDir, imageFileNamePattern, numberOfImages):
-        """
-        Delete files after a video has been created from them.
-        """
+        """Delete files after a video has been created from them."""
         import os
         filePathPattern = os.path.join(outputDir, imageFileNamePattern)
         for imageIndex in range(numberOfImages):
@@ -1461,9 +1454,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             os.remove(filename)
 
     def getNextAvailableFileName(self, outputDir, outputFilenamePattern, snapshotIndex):
-        """
-        Find a file index that does not overwrite any existing file.
-        """
+        """Find a file index that does not overwrite any existing file."""
         if not os.path.exists(outputDir):
             os.makedirs(outputDir)
         filePathPattern = os.path.join(outputDir, outputFilenamePattern)
@@ -1485,12 +1476,11 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
         import SampleData
-        self.image1 = SampleData.downloadSample('MRBrainTumor1')
-        self.image2 = SampleData.downloadSample('MRBrainTumor2')
+        self.image1 = SampleData.downloadSample("MRBrainTumor1")
+        self.image2 = SampleData.downloadSample("MRBrainTumor2")
 
         # make the output volume appear in all the slice views
         selectionNode = slicer.app.applicationLogic().GetSelectionNode()
@@ -1501,10 +1491,10 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
         # Show slice and 3D views
         layoutManager = slicer.app.layoutManager()
         layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpView)
-        for sliceViewNodeId in ['vtkMRMLSliceNodeRed', 'vtkMRMLSliceNodeYellow', 'vtkMRMLSliceNodeGreen']:
+        for sliceViewNodeId in ["vtkMRMLSliceNodeRed", "vtkMRMLSliceNodeYellow", "vtkMRMLSliceNodeGreen"]:
             slicer.mrmlScene.GetNodeByID(sliceViewNodeId).SetSliceVisible(True)
 
-        self.tempDir = slicer.app.temporaryPath + '/ScreenCaptureTest'
+        self.tempDir = slicer.app.temporaryPath + "/ScreenCaptureTest"
         self.numberOfImages = 10
         self.imageFileNamePattern = "image_%05d.png"
 
@@ -1522,8 +1512,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
             self.assertFalse(os.path.exists(filename))
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_SliceSweep()
         self.test_SliceFade()
@@ -1532,27 +1521,27 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
 
     def test_SliceSweep(self):
         self.delayDisplay("Testing SliceSweep")
-        viewNode = slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed')
+        viewNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSliceNodeRed")
         self.assertIsNotNone(viewNode)
         self.logic.captureSliceSweep(viewNode, -125, 75, self.numberOfImages, self.tempDir, self.imageFileNamePattern)
         self.verifyAndDeleteWrittenFiles()
-        self.delayDisplay('Testing SliceSweep completed successfully')
+        self.delayDisplay("Testing SliceSweep completed successfully")
 
     def test_SliceFade(self):
         self.delayDisplay("Testing SliceFade")
-        viewNode = slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed')
+        viewNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSliceNodeRed")
         self.assertIsNotNone(viewNode)
         self.logic.captureSliceFade(viewNode, self.numberOfImages, self.tempDir, self.imageFileNamePattern)
         self.verifyAndDeleteWrittenFiles()
-        self.delayDisplay('Testing SliceFade completed successfully')
+        self.delayDisplay("Testing SliceFade completed successfully")
 
     def test_3dViewRotation(self):
         self.delayDisplay("Testing 3D view rotation")
-        viewNode = slicer.mrmlScene.GetNodeByID('vtkMRMLViewNode1')
+        viewNode = slicer.mrmlScene.GetNodeByID("vtkMRMLViewNode1")
         self.assertIsNotNone(viewNode)
         self.logic.capture3dViewRotation(viewNode, -180, 180, self.numberOfImages, AXIS_YAW, self.tempDir, self.imageFileNamePattern)
         self.verifyAndDeleteWrittenFiles()
-        self.delayDisplay('Testing 3D view rotation completed successfully')
+        self.delayDisplay("Testing 3D view rotation completed successfully")
 
     def test_VolumeNodeUpdate(self):
         self.delayDisplay("Testing VolumeNode update")
@@ -1562,4 +1551,4 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
         self.assertIsNone(volumeNode.GetImageData())
         self.logic.captureImageFromView(viewNode, volumeNode=volumeNode)
         self.assertIsNotNone(volumeNode.GetImageData())
-        self.delayDisplay('Testing VolumeNode update completed successfully')
+        self.delayDisplay("Testing VolumeNode update completed successfully")

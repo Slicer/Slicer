@@ -54,14 +54,12 @@ and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR0132
 #
 
 def registerSampleData():
-    """
-    Add data sets to Sample Data module.
-    """
+    """Add data sets to Sample Data module."""
     # It is always recommended to provide sample data for users to make it easy to try the module,
     # but if no sample data is available then this method (and associated startupCompeted signal connection) can be removed.
 
     import SampleData
-    iconsPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons')
+    iconsPath = os.path.join(os.path.dirname(__file__), "Resources/Icons")
 
     # To ensure that the source code repository remains small (can be downloaded and installed quickly)
     # it is recommended to store data sets that are larger than a few MB in a Github release.
@@ -69,33 +67,33 @@ def registerSampleData():
     # TemplateKey1
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
-        category='TemplateKey',
-        sampleName='TemplateKey1',
+        category="TemplateKey",
+        sampleName="TemplateKey1",
         # Thumbnail should have size of approximately 260x280 pixels and stored in Resources/Icons folder.
         # It can be created by Screen Capture module, "Capture all views" option enabled, "Number of images" set to "Single".
-        thumbnailFileName=os.path.join(iconsPath, 'TemplateKey1.png'),
+        thumbnailFileName=os.path.join(iconsPath, "TemplateKey1.png"),
         # Download URL and target file name
         uris="https://github.com/Slicer/SlicerTestingData/releases/download/SHA256/998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95",
-        fileNames='TemplateKey1.nrrd',
+        fileNames="TemplateKey1.nrrd",
         # Checksum to ensure file integrity. Can be computed by this command:
         #  import hashlib; print(hashlib.sha256(open(filename, "rb").read()).hexdigest())
-        checksums='SHA256:998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95',
+        checksums="SHA256:998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95",
         # This node name will be used when the data set is loaded
-        nodeNames='TemplateKey1'
+        nodeNames="TemplateKey1"
     )
 
     # TemplateKey2
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
-        category='TemplateKey',
-        sampleName='TemplateKey2',
-        thumbnailFileName=os.path.join(iconsPath, 'TemplateKey2.png'),
+        category="TemplateKey",
+        sampleName="TemplateKey2",
+        thumbnailFileName=os.path.join(iconsPath, "TemplateKey2.png"),
         # Download URL and target file name
         uris="https://github.com/Slicer/SlicerTestingData/releases/download/SHA256/1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97",
-        fileNames='TemplateKey2.nrrd',
-        checksums='SHA256:1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97',
+        fileNames="TemplateKey2.nrrd",
+        checksums="SHA256:1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97",
         # This node name will be used when the data set is loaded
-        nodeNames='TemplateKey2'
+        nodeNames="TemplateKey2"
     )
 
 
@@ -114,6 +112,7 @@ class TemplateKeyParameterNode:
     thresholdedVolume - The output volume that will contain the thresholded volume.
     invertedVolume - The output volume that will contain the inverted thresholded volume.
     """
+
     inputVolume: vtkMRMLScalarVolumeNode
     imageThreshold: Annotated[float, WithinRange(-100, 500)] = 100
     invertThreshold: bool = False
@@ -131,9 +130,7 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     """
 
     def __init__(self, parent=None) -> None:
-        """
-        Called when the user opens the module the first time and the widget is initialized.
-        """
+        """Called when the user opens the module the first time and the widget is initialized."""
         ScriptedLoadableModuleWidget.__init__(self, parent)
         VTKObservationMixin.__init__(self)  # needed for parameter node observation
         self.logic = None
@@ -141,14 +138,12 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self._parameterNodeGuiTag = None
 
     def setup(self) -> None:
-        """
-        Called when the user opens the module the first time and the widget is initialized.
-        """
+        """Called when the user opens the module the first time and the widget is initialized."""
         ScriptedLoadableModuleWidget.setup(self)
 
         # Load widget from .ui file (created by Qt Designer).
         # Additional widgets can be instantiated manually and added to self.layout.
-        uiWidget = slicer.util.loadUI(self.resourcePath('UI/TemplateKey.ui'))
+        uiWidget = slicer.util.loadUI(self.resourcePath("UI/TemplateKey.ui"))
         self.layout.addWidget(uiWidget)
         self.ui = slicer.util.childWidgetVariables(uiWidget)
 
@@ -168,28 +163,22 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.addObserver(slicer.mrmlScene, slicer.mrmlScene.EndCloseEvent, self.onSceneEndClose)
 
         # Buttons
-        self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.ui.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Make sure parameter node is initialized (needed for module reload)
         self.initializeParameterNode()
 
     def cleanup(self) -> None:
-        """
-        Called when the application closes and the module widget is destroyed.
-        """
+        """Called when the application closes and the module widget is destroyed."""
         self.removeObservers()
 
     def enter(self) -> None:
-        """
-        Called each time the user opens this module.
-        """
+        """Called each time the user opens this module."""
         # Make sure parameter node exists and observed
         self.initializeParameterNode()
 
     def exit(self) -> None:
-        """
-        Called each time the user opens a different module.
-        """
+        """Called each time the user opens a different module."""
         # Do not react to parameter node changes (GUI will be updated when the user enters into the module)
         if self._parameterNode:
             self._parameterNode.disconnectGui(self._parameterNodeGuiTag)
@@ -197,24 +186,18 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.removeObserver(self._parameterNode, vtk.vtkCommand.ModifiedEvent, self._checkCanApply)
 
     def onSceneStartClose(self, caller, event) -> None:
-        """
-        Called just before the scene is closed.
-        """
+        """Called just before the scene is closed."""
         # Parameter node will be reset, do not use it anymore
         self.setParameterNode(None)
 
     def onSceneEndClose(self, caller, event) -> None:
-        """
-        Called just after the scene is closed.
-        """
+        """Called just after the scene is closed."""
         # If this module is shown while the scene is closed then recreate a new parameter node immediately
         if self.parent.isEntered:
             self.initializeParameterNode()
 
     def initializeParameterNode(self) -> None:
-        """
-        Ensure parameter node exists and observed.
-        """
+        """Ensure parameter node exists and observed."""
         # Parameter node stores all user choices in parameter values, node selections, etc.
         # so that when the scene is saved and reloaded, these settings are restored.
 
@@ -252,9 +235,7 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.ui.applyButton.enabled = False
 
     def onApplyButton(self) -> None:
-        """
-        Run processing when user clicks "Apply" button.
-        """
+        """Run processing when user clicks "Apply" button."""
         with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
 
             # Compute output
@@ -283,9 +264,7 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
     """
 
     def __init__(self) -> None:
-        """
-        Called when the logic class is instantiated. Can be used for initializing member variables.
-        """
+        """Called when the logic class is instantiated. Can be used for initializing member variables."""
         ScriptedLoadableModuleLogic.__init__(self)
 
     def getParameterNode(self):
@@ -312,21 +291,21 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
 
         import time
         startTime = time.time()
-        logging.info('Processing started')
+        logging.info("Processing started")
 
         # Compute the thresholded output volume using the "Threshold Scalar Volume" CLI module
         cliParams = {
-            'InputVolume': inputVolume.GetID(),
-            'OutputVolume': outputVolume.GetID(),
-            'ThresholdValue': imageThreshold,
-            'ThresholdType': 'Above' if invert else 'Below'
+            "InputVolume": inputVolume.GetID(),
+            "OutputVolume": outputVolume.GetID(),
+            "ThresholdValue": imageThreshold,
+            "ThresholdType": "Above" if invert else "Below"
         }
         cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True, update_display=showResult)
         # We don't need the CLI module node anymore, remove it to not clutter the scene with it
         slicer.mrmlScene.RemoveNode(cliNode)
 
         stopTime = time.time()
-        logging.info(f'Processing completed in {stopTime-startTime:.2f} seconds')
+        logging.info(f"Processing completed in {stopTime-startTime:.2f} seconds")
 
 
 #
@@ -341,18 +320,16 @@ class TemplateKeyTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear()
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_TemplateKey1()
 
     def test_TemplateKey1(self):
-        """ Ideally you should have several levels of tests.  At the lowest level
+        """Ideally you should have several levels of tests.  At the lowest level
         tests should exercise the functionality of the logic with different inputs
         (both valid and invalid).  At higher levels your tests should emulate the
         way the user would interact with your code and confirm that it still works
@@ -369,8 +346,8 @@ class TemplateKeyTest(ScriptedLoadableModuleTest):
 
         import SampleData
         registerSampleData()
-        inputVolume = SampleData.downloadSample('TemplateKey1')
-        self.delayDisplay('Loaded test data set')
+        inputVolume = SampleData.downloadSample("TemplateKey1")
+        self.delayDisplay("Loaded test data set")
 
         inputScalarRange = inputVolume.GetImageData().GetScalarRange()
         self.assertEqual(inputScalarRange[0], 0)
@@ -395,4 +372,4 @@ class TemplateKeyTest(ScriptedLoadableModuleTest):
         self.assertEqual(outputScalarRange[0], inputScalarRange[0])
         self.assertEqual(outputScalarRange[1], inputScalarRange[1])
 
-        self.delayDisplay('Test passed')
+        self.delayDisplay("Test passed")

@@ -22,7 +22,7 @@ class FloatRange:
 
     def __str__(self) -> str:
         return f"FloatRange(minimum={self.minimum}, maximum={self.maximum})"
-    
+
     def __repr__(self) -> str:
         return self.__str__()
 

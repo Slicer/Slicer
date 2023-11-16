@@ -71,7 +71,7 @@ write operations.
 To learn more, see the [Coordinate systems](../user_guide/coordinate_systems.md)
 documentation, and the [Coordinate system convention in Slicer](../user_guide/coordinate_systems.md#coordinate-system-convention-in-slicer).
 
-::: 
+:::
 
 ### Images
 

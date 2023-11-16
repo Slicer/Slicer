@@ -1,12 +1,18 @@
 import logging
 import os
+import requests
 import subprocess
 import time
+from typing import Callable, Optional
+from requests.auth import HTTPBasicAuth
 
 import ctk
 import qt
 
+import dicomweb_client
 import slicer
+
+from DICOMLib.DICOMUtils import getGlobalDICOMAuth
 
 #########################################################
 #
@@ -26,7 +32,7 @@ also be used as a logic helper in other code
 
 # Module paths: root folder for DICOMLib, Resources Root
 MODULE_ROOT = os.path.abspath(os.path.dirname(__file__))
-RESOURCE_ROOT = os.path.join(MODULE_ROOT, 'Resources')
+RESOURCE_ROOT = os.path.join(MODULE_ROOT, "Resources")
 
 
 class DICOMProcess:
@@ -34,100 +40,132 @@ class DICOMProcess:
     Code here depends only on python and DCMTK executables
     """
 
+    POSSIBLE_DCMTK_PATHS = [
+        "/../DCMTK-build/bin/Debug",
+        "/../DCMTK-build/bin/Release",
+        "/../DCMTK-build/bin/RelWithDebInfo",
+        "/../DCMTK-build/bin/MinSizeRel",
+        "/../DCMTK-build/bin",
+        "/../CTK-build/CMakeExternals/Install/bin",
+        "/bin"
+    ]
+    PROCESS_STATE_NAMES = {0: "NotRunning", 1: "Starting", 2: "Running", }
+
+    @classmethod
+    def getDCMTKToolsPath(
+        cls,
+        additionalPaths: list[str] = []
+    ) -> str:
+        """
+        Get the first candidate directory that may contain DCMTK tools
+        that is available on the system.
+        """
+        relSearchPaths = cls.POSSIBLE_DCMTK_PATHS
+        relSearchPaths.extend(additionalPaths)
+
+        try:
+            absSearchPaths = (f"{slicer.app.slicerHome}{path}" for path in relSearchPaths)
+            return next(path for path in absSearchPaths
+                        if os.path.exists(path))
+        except StopIteration:
+            raise UserWarning("Could not find a valid path to DICOM helper applications")
+
     def __init__(self):
         self.process = None
         self.connections = {}
-        pathOptions = (
-            '/../DCMTK-build/bin/Debug',
-            '/../DCMTK-build/bin/Release',
-            '/../DCMTK-build/bin/RelWithDebInfo',
-            '/../DCMTK-build/bin/MinSizeRel',
-            '/../DCMTK-build/bin',
-            '/../CTK-build/CMakeExternals/Install/bin',
-            '/bin'
-        )
-
-        self.exeDir = None
-        for path in pathOptions:
-            testPath = slicer.app.slicerHome + path
-            if os.path.exists(testPath):
-                self.exeDir = testPath
-                break
-        if not self.exeDir:
-            raise UserWarning("Could not find a valid path to DICOM helper applications")
-
-        self.exeExtension = ""
-        if os.name == 'nt':
-            self.exeExtension = '.exe'
-
-        self.QProcessState = {0: 'NotRunning', 1: 'Starting', 2: 'Running', }
+        self.exeDir = self.getDCMTKToolsPath()
+        self.exeExtension = ".exe" if os.name == "nt" else ""
+        self._stdout = None
+        self._stderr = None
 
     def __del__(self):
         self.stop()
 
-    def start(self, cmd, args):
+    def start(self, cmd: str, args: list[str]) -> qt.QProcess:
+        """Run the given command as a standalone process."""
         if self.process is not None:
             self.stop()
         self.cmd = cmd
         self.args = args
 
-        # start the server!
+        # start the process!
         self.process = qt.QProcess()
-        self.process.connect('stateChanged(QProcess::ProcessState)', self.onStateChanged)
+        self.process.connect("stateChanged(QProcess::ProcessState)", self.onStateChanged)
         logging.debug(("Starting %s with " % cmd, args))
         self.process.start(cmd, args)
+        return self.process
 
-    def onStateChanged(self, newState):
-        logging.debug(f"Process {self.cmd} now in state {self.QProcessState[newState]}")
-        if newState == 0 and self.process:
+    def onStateChanged(self, newState: int):
+        """Callback to indicate that the process state has changed
+        and is now either starting, running, or not running.
+        """
+        logging.debug(f"Process {self.cmd} now in state {self.PROCESS_STATE_NAMES[newState]}")
+        stdout = None
+        stderr = None
+        if newState == qt.QProcess.NotRunning and self.process:
             stdout = self.process.readAllStandardOutput()
             stderr = self.process.readAllStandardError()
-            logging.debug('DICOM process error code is: %d' % self.process.error())
-            logging.debug('DICOM process standard out is: %s' % stdout)
-            logging.debug('DICOM process standard error is: %s' % stderr)
-            return stdout, stderr
-        return None, None
 
-    def stop(self):
-        if hasattr(self, 'process'):
-            if self.process:
-                logging.debug("stopping DICOM process")
-                self.process.kill()
-                # Wait up to 3 seconds for the process to stop
-                self.process.waitForFinished(3000)
-                self.process = None
+            exitStatusAsString = "NormalExit"
+            if self.process.exitStatus() == qt.QProcess.CrashExit:
+                exitStatusAsString = "CrashExit"
+
+            logging.debug(f"DICOM process exit status is: {exitStatusAsString}")
+
+            if self.process.exitStatus() == qt.QProcess.NormalExit:
+                # exitCode is not valid unless exitStatus() returns NormalExit
+                logging.debug(f"DICOM process exit code is: {self.process.exitCode()}")
+
+            if self.process.exitStatus() == qt.QProcess.CrashExit:
+                processError = {
+                    qt.QProcess.FailedToStart: "FailedToStart",
+                    qt.QProcess.Crashed: "Crashed",
+                    qt.QProcess.Timedout: "Timedout",
+                    qt.QProcess.WriteError: "WriteError",
+                    qt.QProcess.ReadError: "ReadError",
+                    qt.QProcess.UnknownError: "UnknownError",
+                }.get(self.process.error())
+                logging.debug(f"DICOM process error is: {processError}")
+
+            logging.debug(f"DICOM process standard out is: {stdout}")
+            logging.debug(f"DICOM process standard error is: {stderr}")
+
+        self._stdout = stdout
+        self._stderr = stderr
+        return self._stdout, self._stderr
+
+    def stop(self) -> None:
+        """Stop the running standalone process."""
+        if self.process:
+            logging.debug("stopping DICOM process")
+            self.process.kill()
+            # Wait up to 3 seconds for the process to stop
+            self.process.waitForFinished(3000)
+            self.process = None
 
 
 class DICOMCommand(DICOMProcess):
-    """
-    Run a generic dcmtk command and return the stdout
-    """
+    """Run a generic dcmtk command and return the stdout"""
 
-    def __init__(self, cmd, args):
+    def __init__(self, cmd: str, args: list[str]):
         super().__init__()
-        self.executable = self.exeDir + '/' + cmd + self.exeExtension
+        self.executable = self.exeDir + "/" + cmd + self.exeExtension
         self.args = args
 
-    def __del__(self):
-        super().__del__()
+    def start(self) -> qt.QByteArray:
+        """
+        Run the DICOM process and block until return.
 
-    def start(self):
-        # run the process!
-        self.process = qt.QProcess()
-        logging.debug(('DICOM process running: ', self.executable, self.args))
-        self.process.start(self.executable, self.args)
+        :return: A qt.QByteArray representing standard output (stdout) \
+            from the DICOM process. \
+            https://doc.qt.io/qt-5/qprocess.html#readAllStandardOutput
+        """
+        super().start(self.executable, self.args)
+        logging.debug(("DICOM process running: ", self.executable, self.args))
         self.process.waitForFinished()
         if self.process.exitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:
-            stdout = self.process.readAllStandardOutput()
-            stderr = self.process.readAllStandardError()
-            logging.debug('DICOM process exit status is: %d' % self.process.exitStatus())
-            logging.debug('DICOM process exit code is: %d' % self.process.exitCode())
-            logging.debug('DICOM process error is: %d' % self.process.error())
-            logging.debug('DICOM process standard out is: %s' % stdout)
-            logging.debug('DICOM process standard error is: %s' % stderr)
             raise UserWarning(f"Could not run {self.executable} with {self.args}")
-        stdout = self.process.readAllStandardOutput()
-        return stdout
+        return self._stdout
 
 
 class DICOMStoreSCPProcess(DICOMProcess):
@@ -151,13 +189,13 @@ class DICOMStoreSCPProcess(DICOMProcess):
             self.port = str(incomingPort)
         else:
             settings = qt.QSettings()
-            self.port = settings.value('StoragePort')
+            self.port = settings.value("StoragePort")
             if not self.port:
-                settings.setValue('StoragePort', '11112')
-                self.port = settings.value('StoragePort')
+                settings.setValue("StoragePort", "11112")
+                self.port = settings.value("StoragePort")
 
         self.storescpExecutable = os.path.join(self.exeDir, self.STORESCP_PROCESS_FILE_NAME + self.exeExtension)
-        self.dcmdumpExecutable = os.path.join(self.exeDir, 'dcmdump' + self.exeExtension)
+        self.dcmdumpExecutable = os.path.join(self.exeDir, "dcmdump" + self.exeExtension)
 
     def __del__(self):
         super().__del__()
@@ -175,22 +213,22 @@ class DICOMStoreSCPProcess(DICOMProcess):
         self.killStoreSCPProcesses()
         onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' \
                               % (self.dcmdumpExecutable, self.incomingDataDir)
-        args = [str(self.port), '--accept-all', '--output-directory', self.incomingDataDir, '--exec-sync',
-                '--exec-on-reception', onReceptionCallback]
+        args = [str(self.port), "--accept-all", "--output-directory", self.incomingDataDir, "--exec-sync",
+                "--exec-on-reception", onReceptionCallback]
         logging.debug("Starting storescp process")
         super().start(self.storescpExecutable, args)
-        self.process.connect('readyReadStandardOutput()', self.readFromStandardOutput)
+        self.process.connect("readyReadStandardOutput()", self.readFromStandardOutput)
 
     def killStoreSCPProcesses(self):
         uniqueListener = True
-        if os.name == 'nt':
+        if os.name == "nt":
             uniqueListener = self.killStoreSCPProcessesNT(uniqueListener)
-        elif os.name == 'posix':
+        elif os.name == "posix":
             uniqueListener = self.killStoreSCPProcessesPosix(uniqueListener)
         return uniqueListener
 
     def killStoreSCPProcessesPosix(self, uniqueListener):
-        p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+        p = subprocess.Popen(["ps", "-A"], stdout=subprocess.PIPE)
         out, err = p.communicate()
         for line in out.splitlines():
             line = line.decode()
@@ -208,13 +246,13 @@ class DICOMStoreSCPProcess(DICOMProcess):
         import ctypes.wintypes
         import os.path
 
-        psapi = ctypes.WinDLL('Psapi.dll')
+        psapi = ctypes.WinDLL("Psapi.dll")
         enum_processes = psapi.EnumProcesses
         enum_processes.restype = ctypes.wintypes.BOOL
         get_process_image_file_name = psapi.GetProcessImageFileNameA
         get_process_image_file_name.restype = ctypes.wintypes.DWORD
 
-        kernel32 = ctypes.WinDLL('kernel32.dll')
+        kernel32 = ctypes.WinDLL("kernel32.dll")
         open_process = kernel32.OpenProcess
         open_process.restype = ctypes.wintypes.HANDLE
         terminate_process = kernel32.TerminateProcess
@@ -279,7 +317,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
         if readLineCallback:
             for line in lines:
                 # Remove stray newline and single-quote characters
-                clearLine = line.replace('\\r', '').replace('\\n', '').replace('\'', '').strip()
+                clearLine = line.replace("\\r", "").replace("\\n", "").replace("\'", "").strip()
                 readLineCallback(clearLine)
         self.readFromStandardError()
 
@@ -289,8 +327,8 @@ class DICOMStoreSCPProcess(DICOMProcess):
             logging.debug(f"Error output from {self.__class__.__name__}: {stdErr}")
 
     def notifyUserAboutRunningStoreSCP(self, pid=None):
-        if slicer.util.confirmYesNoDisplay('There are other DICOM listeners running.\n Do you want to end them?'):
-            if os.name == 'nt':
+        if slicer.util.confirmYesNoDisplay("There are other DICOM listeners running.\n Do you want to end them?"):
+            if os.name == "nt":
                 self.findAndKillProcessNT(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension, True)
                 # Killing processes can take a while, so we retry a couple of times until we confirm that there
                 # are no more listeners.
@@ -300,7 +338,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
                         break
                     retryAttempts -= 1
                     time.sleep(1)
-            elif os.name == 'posix':
+            elif os.name == "posix":
                 import signal
                 os.kill(pid, signal.SIGKILL)
             return True
@@ -330,7 +368,7 @@ class DICOMListener(DICOMStoreSCPProcess):
         self.delayedAutoUpdateTimer = qt.QTimer()
         self.delayedAutoUpdateTimer.setSingleShot(True)
         self.delayedAutoUpdateTimer.interval = autoUpdateDelaySec * 1000
-        self.delayedAutoUpdateTimer.connect('timeout()', self.completeIncomingFilesIndexing)
+        self.delayedAutoUpdateTimer.connect("timeout()", self.completeIncomingFilesIndexing)
 
         # List of received files that are being indexed
         self.incomingFiles = []
@@ -344,7 +382,7 @@ class DICOMListener(DICOMStoreSCPProcess):
 
         databaseDirectory = self.dicomDatabase.databaseDirectory
         if not databaseDirectory:
-            raise UserWarning('Database directory not set: cannot start DICOMListener')
+            raise UserWarning("Database directory not set: cannot start DICOMListener")
         if not os.path.exists(databaseDirectory):
             os.mkdir(databaseDirectory)
         incomingDir = databaseDirectory + "/incoming"
@@ -366,7 +404,7 @@ class DICOMListener(DICOMStoreSCPProcess):
         self.incomingFiles = []
 
     def processStdoutLine(self, line):
-        searchTag = '# dcmdump (1/1): '
+        searchTag = "# dcmdump (1/1): "
         tagStart = line.find(searchTag)
         if tagStart != -1:
             dicomFilePath = line[tagStart + len(searchTag):].strip()
@@ -392,167 +430,211 @@ class DICOMListener(DICOMStoreSCPProcess):
                 logging.debug("no callback")
 
 
-class DICOMSender(DICOMProcess):
-    """ Code to send files to a remote host.
-        (Uses storescu from dcmtk.)
+class DICOMSender:
     """
-    extended_dicom_config_path = 'DICOM/dcmtk/storescu-seg.cfg'
+    Sends DICOM files to a remote host.
 
-    def __init__(self, files, address, protocol=None, progressCallback=None, aeTitle=None):
-        """protocol: can be DIMSE (default) or DICOMweb
-        port: optional (if not specified then address URL should contain it)
+    May use one of the following protocols
+    - [DICOMweb STOW-RS](https://www.dicomstandard.org/using/dicomweb/store-stow-rs)
+    - [DICOM Message Service Element (DIMSE)](https://dicom.nema.org/dicom/2013/output/chtml/part07/sect_7.5.html)
+
+    DIMSE protocol uses [`storescu`](https://support.dcmtk.org/docs/storescu.html) from DCTMTK.
+    """
+
+    extended_dicom_config_path = "DICOM/dcmtk/storescu-seg.cfg"
+
+    def __init__(
+        self,
+        files: list[str],
+        address: str,
+        protocol: str = None,
+        progressCallback: Callable[[str], bool] = None,
+        aeTitle: str = None,
+        auth: requests.auth.AuthBase = None,
+        delayed: bool = False,
+    ):
         """
-        super().__init__()
+        :param files: The local DICOM files to send to the remote server.
+        :param address: The remote server destination.
+        :param protocol: The DICOM protocol to use for transmission.
+            Can be "DIMSE" (default) or "DICOMweb".
+        :param progressCallback: Progress handler.
+            Accepts a progress message and returns `True` if sending should continue.
+        :param aeTitle:
+        :param auth: Authentication information for remote server access, if any.
+        :param delayed: Whether to delay DICOM file transmission.
+            Default behavior is to immediately attempt to store files
+            when DICOMSender is initialized.
+        """
         self.files = files
         self.destinationUrl = qt.QUrl().fromUserInput(address)
-        if aeTitle:
-            self.aeTitle = aeTitle
-        else:
-            self.aeTitle = "CTK"
-        self.protocol = protocol if protocol is not None else "DIMSE"
-        self.progressCallback = progressCallback
-        if not self.progressCallback:
-            self.progressCallback = self.defaultProgressCallback
-        self.send()
+        self.aeTitle = aeTitle or "CTK"
+        self.protocol = protocol or "DIMSE"
+        self.progressCallback = progressCallback or self._defaultProgressCallback
+        if self.protocol.upper() == "DIMSE" and auth:
+            logging.warning(
+                f"Authentication is not currently supported for {self.protocol} protocol."
+            )
+        self.auth = auth or getGlobalDICOMAuth()
 
-    def __del__(self):
-        super().__del__()
+        # Default behavior: immediately attempt to transmit files.
+        if not delayed:
+            self.send()
 
-    def defaultProgressCallback(self, s):
+    def _defaultProgressCallback(self, s):
         logging.debug(s)
         return True
 
-    def send(self):
-        self.progressCallback("Starting send to %s using self.protocol" % self.destinationUrl.toString())
+    def send(self) -> None:
+        """Sends DICOM files to a remote server. Called on instance initialization."""
+        self.progressCallback(
+            f"Starting send to {self.destinationUrl.toString()} using {self.protocol} protocol"
+        )
 
-        if self.protocol == "DICOMweb":
-            # DICOMweb
-            # Ensure that correct version of dicomweb-client Python package is installed
-            needRestart = False
-            needInstall = False
-            minimumDicomwebClientVersion = "0.51"
-            try:
-                import dicomweb_client
-                from packaging import version
-                if version.parse(dicomweb_client.__version__) < version.parse(minimumDicomwebClientVersion):
-                    if not slicer.util.confirmOkCancelDisplay(f"DICOMweb sending requires installation of dicomweb-client (version {minimumDicomwebClientVersion} or later).\nClick OK to upgrade dicomweb-client and restart the application."):
-                        self.showBrowserOnEnter = False
-                        return
-                    needRestart = True
-                    needInstall = True
-            except ModuleNotFoundError:
-                needInstall = True
-
-            if needInstall:
-                # pythonweb-client 0.50 was broken (https://github.com/MGHComputationalPathology/dicomweb-client/issues/41)
-                progressDialog = slicer.util.createProgressDialog(labelText='Upgrading dicomweb-client. This may take a minute...', maximum=0)
-                slicer.app.processEvents()
-                slicer.util.pip_install(f'dicomweb-client>={minimumDicomwebClientVersion}')
-                import dicomweb_client
-                progressDialog.close()
-            if needRestart:
-                slicer.util.restart()
-
-            # Establish connection
-            from dicomweb_client.api import DICOMwebClient
-            effectiveServerUrl = self.destinationUrl.toString()
-            session = None
-            headers = {}
-            # Setting up of the DICOMweb client from various server parameters can be done
-            # in plugins in the future, but for now just hardcode special initialization
-            # steps for a few server types.
-            if "kheops" in effectiveServerUrl:
-                # Kheops DICOMweb API endpoint from browser view URL
-                url = qt.QUrl(effectiveServerUrl)
-                if url.path().startswith('/view/'):
-                    # This is a Kheops viewer URL.
-                    # Retrieve the token from the viewer URL and use the Kheops API URL to connect to the server.
-                    token = url.path().replace('/view/', '')
-                    effectiveServerUrl = "https://demo.kheops.online/api"
-                    from requests.auth import HTTPBasicAuth
-                    from dicomweb_client.session_utils import create_session_from_auth
-                    auth = HTTPBasicAuth('token', token)
-                    session = create_session_from_auth(auth)
-
-            client = DICOMwebClient(url=effectiveServerUrl, session=session, headers=headers)
-
-            # Turn off detailed logging, because it would slow down the file transfer
-            clientLogger = logging.getLogger('dicomweb_client')
-            originalClientLogLevel = clientLogger.level
-            clientLogger.setLevel(logging.WARNING)
-
-            try:
-                for file in self.files:
-                    if not self.progressCallback(f"Sending {file} to {self.destinationUrl.toString()} using {self.protocol}"):
-                        raise UserWarning("Sending was cancelled, upload is incomplete.")
-                    import pydicom
-                    dataset = pydicom.dcmread(file)
-                    client.store_instances(datasets=[dataset])
-            finally:
-                clientLogger.setLevel(originalClientLogLevel)
-
+        if self.protocol.lower() == "dicomweb":
+            self._sendFilesWithDICOMWeb()
         else:
-            # DIMSE (traditional DICOM networking)
+            self._sendFilesWithDIMSE()
+
+    def _sendFilesWithDIMSE(self) -> None:
+        """
+        Initialize for DIMSE and send files to the remote server.
+
+        :raises UserWarning: if a transfer is cancelled.
+        """
+        # DIMSE (traditional DICOM networking)
+        for file in self.files:
+            self._sendOneFileWithDIMSE(file)
+            if not self.progressCallback(
+                f"Sent {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"
+            ):
+                raise UserWarning("Sending was cancelled, upload is incomplete.")
+
+    def _sendFilesWithDICOMWeb(self) -> None:
+        """
+        Initialize for DICOMweb and send files to the remote server.
+
+        :raises ModuleNotFoundError: if `dicomweb_client<0.51` and DICOMweb STOW-RS protocol is requested.
+        :raises UserWarning: if a transfer is cancelled.
+        """
+        # Setting up of the DICOMweb client from various server parameters can be done
+        # in plugins in the future, but for now just hardcode special initialization
+        # steps for a few server types.
+        kheopsInfo = self._parseKheopsView(self.destinationUrl)
+        destinationURL = kheopsInfo[0] if kheopsInfo else self.destinationUrl
+        auth = kheopsInfo[1] if kheopsInfo else self.auth
+
+        # Establish connection
+        from dicomweb_client.api import DICOMwebClient
+        from dicomweb_client.session_utils import create_session_from_auth
+
+        session = create_session_from_auth(auth)
+        client = DICOMwebClient(url=destinationURL.toString(), session=session)
+
+        # Turn off detailed logging, because it would slow down the file transfer
+        clientLogger = logging.getLogger("dicomweb_client")
+        originalClientLogLevel = clientLogger.level
+        clientLogger.setLevel(logging.WARNING)
+
+        try:
             for file in self.files:
-                self.start(file)
-                if not self.progressCallback(f"Sent {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"):
+                if not self.progressCallback(
+                    f"Sending {file} to {self.destinationUrl.toString()} using {self.protocol}"
+                ):
                     raise UserWarning("Sending was cancelled, upload is incomplete.")
+                self._sendOneFileWithDICOMWeb(file, client)
+        finally:
+            clientLogger.setLevel(originalClientLogLevel)
 
-    def dicomSend(self, file, config=None, config_profile='Default'):
-        """Send DICOM file to the specified modality."""
-        self.storeSCUExecutable = self.exeDir + '/storescu' + self.exeExtension
-
+    def _dicomSendSCU(self, file, config=None, config_profile="Default"):
+        """Send DICOM file to the specified modality and Service Class User (SCU)."""
         # TODO: maybe use dcmsend (is smarter about the compress/decompress)
-
+        STORESCU_COMMAND = "storescu"
         args = []
 
         # Utilize custom configuration
         if config and os.path.exists(config):
-            args.extend(('-xf', config, config_profile))
+            args.extend(("-xf", config, config_profile))
 
         # Core arguments: hostname, port, AEC, file
         args.extend((self.destinationUrl.host(), str(self.destinationUrl.port()), "-aec", self.aeTitle, file))
 
         # Execute SCU CLI program and wait for termination. Uses super().start() to access the
         # to initialize the background process and wait for completion of the transfer.
-        super().start(self.storeSCUExecutable, args)
-        self.process.waitForFinished()
-        return not (self.process.ExitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0)
+        storeCommand = DICOMCommand(STORESCU_COMMAND, args)
+        storeCommand.start()
+        return not (
+            storeCommand.process.ExitStatus() == qt.QProcess.CrashExit
+            or storeCommand.process.exitCode() != 0
+        )
 
-    def start(self, file):
-        """ Send DICOM file to the specified modality. If the transfer fails due to
-            an unsupported presentation context, attempt the transfer a second time using
-            a custom configuration that provides.
+    def _sendOneFileWithDIMSE(self, file: str) -> None:
+        """Send DICOM file to the specified modality with DIMSE.
+
+        If the transfer fails due to an unsupported presentation context,
+        attempt the transfer a second time using a custom configuration.
+
+        :param file: Path to the local DICOM file to transmit.
         """
 
-        if self.dicomSend(file):
+        if self._dicomSendSCU(file):
             # success
             return True
-
-        stdout = self.process.readAllStandardOutput()
-        stderr = self.process.readAllStandardError()
-        logging.debug('DICOM send using standard configuration failed: process error code is %d' % self.process.error())
-        logging.debug('DICOM send process standard out is: %s' % stdout)
-        logging.debug('DICOM send process standard error is: %s' % stderr)
 
         # Retry transfer with alternative configuration with presentation contexts which support SEG/SR.
         # A common cause of failure is an incomplete set of dcmtk/DCMSCU presentation context UIDS.
         # Refer to https://book.orthanc-server.com/faq/dcmtk-tricks.html#id2 for additional detail.
-        logging.info('Retry transfer with alternative dicomscu configuration: %s' % self.extended_dicom_config_path)
+        logging.info("Retry transfer with alternative dicomscu configuration: %s" % self.extended_dicom_config_path)
 
         # Terminate transfer and notify user of failure
-        if self.dicomSend(file, config=os.path.join(RESOURCE_ROOT, self.extended_dicom_config_path)):
+        if self._dicomSendSCU(
+            file, config=os.path.join(RESOURCE_ROOT, self.extended_dicom_config_path)
+        ):
             # success
             return True
 
-        stdout = self.process.readAllStandardOutput()
-        stderr = self.process.readAllStandardError()
-        logging.debug('DICOM send using extended configuration failed: process error code is %d' % self.process.error())
-        logging.debug('DICOM send process standard out is: %s' % stdout)
-        logging.debug('DICOM send process standard error is: %s' % stderr)
-
         userMsg = f"Could not send {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"
         raise UserWarning(userMsg)
+
+    def _sendOneFileWithDICOMWeb(
+        self, file: str, client: dicomweb_client.DICOMwebClient
+    ) -> None:
+        """
+        Do the actual work of transmitting one DICOM file to a remote server
+        via the DICOMweb STOW-RS protocol.
+
+        :param file: Path to the local DICOM file to stow
+        :param client: The DICOMweb client session to use.
+
+        :raises HTTPError: If the connection fails or is unauthorized
+        """
+        import pydicom
+
+        dataset = pydicom.dcmread(file)
+        client.store_instances(datasets=[dataset])
+
+    def _parseKheopsView(
+        self, destinationURL: qt.QUrl
+    ) -> Optional[tuple[qt.QUrl, HTTPBasicAuth]]:
+        """
+        Parse parameters for specific Kheops server implementation.
+
+        Setting up of the DICOMweb client from various server parameters can be done
+        in plugins in the future, but for now just hardcode special initialization
+        steps for a few server types.
+        """
+        if "kheops" not in destinationURL.toString():
+            return None
+        if not destinationURL.path().startswith("/view/"):
+            return None
+        # This is a Kheops viewer URL.
+        # Retrieve the token from the viewer URL and use the Kheops API URL
+        # to connect to the server.
+        token = destinationURL.path().replace("/view/", "")
+        return (
+            qt.QUrl("https://demo.kheops.online/api"),
+            HTTPBasicAuth("token", token),
+        )
 
 
 class DICOMTestingQRServer:
@@ -561,6 +643,7 @@ class DICOMTestingQRServer:
     TODO: it might make sense to refactor this as a generic tool
     for interacting with DCMTK
     """
+
     # TODO: make this use DICOMProcess superclass
 
     def __init__(self, exeDir=".", tmpDir="./DICOM"):
@@ -578,8 +661,8 @@ class DICOMTestingQRServer:
         if self.qrRunning():
             self.stop()
 
-        self.dcmqrscpExecutable = self.exeDir + '/dcmqrdb/apps/dcmqrscp'
-        self.storeSCUExecutable = self.exeDir + '/dcmnet/apps/storescu'
+        self.dcmqrscpExecutable = self.exeDir + "/dcmqrdb/apps/dcmqrscp"
+        self.storeSCUExecutable = self.exeDir + "/dcmnet/apps/storescu"
 
         # make the config file
         cfg = self.tmpDir + "/dcmqrscp.cfg"
@@ -588,8 +671,8 @@ class DICOMTestingQRServer:
         # start the server!
         cmdLine = [self.dcmqrscpExecutable]
         if verbose:
-            cmdLine.append('--verbose')
-        cmdLine.append('--config')
+            cmdLine.append("--verbose")
+        cmdLine.append("--config")
         cmdLine.append(cfg)
         self.qrProcess = subprocess.Popen(cmdLine)
         # TODO: handle output
@@ -601,13 +684,13 @@ class DICOMTestingQRServer:
         if initialFiles:
             cmdLine = [self.storeSCUExecutable]
             if verbose:
-                cmdLine.append('--verbose')
-            cmdLine.append('-aec')
-            cmdLine.append('CTK_AE')
-            cmdLine.append('-aet')
-            cmdLine.append('CTK_AE')
-            cmdLine.append('localhost')
-            cmdLine.append('11112')
+                cmdLine.append("--verbose")
+            cmdLine.append("-aec")
+            cmdLine.append("CTK_AE")
+            cmdLine.append("-aet")
+            cmdLine.append("CTK_AE")
+            cmdLine.append("localhost")
+            cmdLine.append("11112")
             cmdLine += initialFiles
             p = subprocess.Popen(cmdLine)
             p.wait()
@@ -618,8 +701,8 @@ class DICOMTestingQRServer:
         self.qrProcess.wait()
         self.qrProcess = None
 
-    def makeConfigFile(self, configFile, storageDirectory='.'):
-        """ make a config file for the local instance with just
+    def makeConfigFile(self, configFile, storageDirectory="."):
+        """make a config file for the local instance with just
         the parts we need (comments and examples removed).
         For examples and the full syntax
         see dcmqrdb/etc/dcmqrscp.cfg and
@@ -649,6 +732,6 @@ AETable END
 """
         config = template % storageDirectory
 
-        fp = open(configFile, 'w')
+        fp = open(configFile, "w")
         fp.write(config)
         fp.close()

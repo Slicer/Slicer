@@ -1,5 +1,6 @@
-""" This module loads all the classes from the MRML library into its
-namespace."""
+"""This module loads all the classes from the MRML library into its
+namespace.
+"""
 
 from MRMLCLIPython import *
 from MRMLCorePython import *

@@ -22,7 +22,7 @@ class SlicerUtilGetNodeTest(unittest.TestCase):
         return nodes
 
     def test_getFirstNodeByName(self):
-        self.assertEqual(slicer.util.getFirstNodeByName("Volume", 'vtkMRMLScalarVolumeNode').GetName(), "Volume1")
+        self.assertEqual(slicer.util.getFirstNodeByName("Volume", "vtkMRMLScalarVolumeNode").GetName(), "Volume1")
 
     def test_getNode(self):
 

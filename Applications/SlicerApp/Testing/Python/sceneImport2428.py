@@ -55,7 +55,7 @@ class sceneImport2428Widget(ScriptedLoadableModuleWidget):
         helloWorldButton = qt.QPushButton("Hello world")
         helloWorldButton.toolTip = "Print 'Hello world' in standard output."
         dummyFormLayout.addWidget(helloWorldButton)
-        helloWorldButton.connect('clicked(bool)', self.onHelloWorldButtonClicked)
+        helloWorldButton.connect("clicked(bool)", self.onHelloWorldButtonClicked)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -75,18 +75,16 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_sceneImport24281()
 
     def test_sceneImport24281(self):
-        """ Ideally you should have several levels of tests.  At the lowest level
+        """Ideally you should have several levels of tests.  At the lowest level
         tests should exercise the functionality of the logic with different inputs
         (both valid and invalid).  At higher levels your tests should emulate the
         way the user would interact with your code and confirm that it still works
@@ -125,7 +123,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
             segmentationNode.AddSegmentFromClosedSurfaceRepresentation(seed.GetOutput(), name, color)
 
         # Export to labelmap volume
-        headLabel = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode')
+        headLabel = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
         slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(segmentationNode, headLabel, head)
 
         selectionNode = slicer.app.applicationLogic().GetSelectionNode()
@@ -177,17 +175,20 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
         """Return True if the models have unique polydata and have the
         same polydata as their display nodes have.
 
-    # paste this in the slicer console for testing/verifying any scene
-    def verifyModels():
-      nn = getNodes('*ModelNode*')
-      for n in nn:
-        mpd = nn[n].GetPolyData()
-        mdpd = nn[n].GetDisplayNode().GetInputPolyData()
-        if mpd != mdpd:
-          print(nn[n].GetName())
-          print(mpd,mdpd)
+        Paste this in the Slicer console for testing/verifying any scene
 
-    verifyModels()
+        .. code-block:: python
+
+          def verifyModels():
+              nn = getNodes("*ModelNode*")
+              for n in nn:
+              mpd = nn[n].GetPolyData()
+              mdpd = nn[n].GetDisplayNode().GetInputPolyData()
+              if mpd != mdpd:
+                  print(nn[n].GetName())
+                  print(mpd, mdpd)
+
+          verifyModels()
         """
 
         #

@@ -46,18 +46,14 @@ class PlotsSelfTestLogic(ScriptedLoadableModuleLogic):
 
 
 class PlotsSelfTestTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    """
+    """This is the test case for your scripted module."""
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_PlotsSelfTest_FullTest1()
 
@@ -75,10 +71,10 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
     # ------------------------------------------------------------------------------
     def section_SetupPathsAndNames(self):
         # Set constants
-        self.tableName = 'SampleTable'
-        self.xColumnName = 'x'
-        self.y1ColumnName = 'cos'
-        self.y2ColumnName = 'sin'
+        self.tableName = "SampleTable"
+        self.xColumnName = "x"
+        self.y1ColumnName = "cos"
+        self.y2ColumnName = "sin"
 
         self.series1Name = "Cosine"
         self.series2Name = "Sine"
@@ -143,9 +139,9 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
         plotChartNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotChartNode", self.chartName)
         plotChartNode.AddAndObservePlotSeriesNodeID(plotSeriesNode1.GetID())
         plotChartNode.AddAndObservePlotSeriesNodeID(plotSeriesNode2.GetID())
-        plotChartNode.SetTitle('A simple plot with 2 curves')
-        plotChartNode.SetXAxisTitle('A simple plot with 2 curves')
-        plotChartNode.SetYAxisTitle('This is the Y axis')
+        plotChartNode.SetTitle("A simple plot with 2 curves")
+        plotChartNode.SetXAxisTitle("A simple plot with 2 curves")
+        plotChartNode.SetYAxisTitle("This is the Y axis")
 
     # ------------------------------------------------------------------------------
     def section_TestPlotView(self):

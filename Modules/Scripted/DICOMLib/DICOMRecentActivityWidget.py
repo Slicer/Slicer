@@ -8,12 +8,17 @@ import slicer
 
 class DICOMRecentActivityWidget(qt.QWidget):
     """Display the recent activity of the slicer DICOM database
-       Example:
-         slicer.util.selectModule('DICOM')
-         import DICOMLib
-         w = DICOMLib.DICOMRecentActivityWidget(None, slicer.dicomDatabase, slicer.modules.DICOMInstance.browserWidget)
-         w.update()
-         w.show()
+
+    Example:
+
+    .. code-block:: python
+
+      slicer.util.selectModule("DICOM")
+
+      import DICOMLib
+      w = DICOMLib.DICOMRecentActivityWidget(None, slicer.dicomDatabase, slicer.modules.DICOMInstance.browserWidget)
+      w.update()
+      w.show()
     """
 
     def __init__(self, parent, dicomDatabase=None, browserWidget=None):
@@ -27,30 +32,30 @@ class DICOMRecentActivityWidget(qt.QWidget):
             self.dicomDatabase = slicer.dicomDatabase
         self.browserWidget = browserWidget
         self.recentSeries = []
-        self.name = 'recentActivityWidget'
+        self.name = "recentActivityWidget"
         self.setLayout(qt.QVBoxLayout())
 
         self.statusLabel = qt.QLabel()
         self.layout().addWidget(self.statusLabel)
-        self.statusLabel.text = ''
+        self.statusLabel.text = ""
 
         self.scrollArea = qt.QScrollArea()
         self.layout().addWidget(self.scrollArea)
         self.listWidget = qt.QListWidget()
-        self.listWidget.name = 'recentActivityListWidget'
+        self.listWidget.name = "recentActivityListWidget"
         self.scrollArea.setWidget(self.listWidget)
         self.scrollArea.setWidgetResizable(True)
-        self.listWidget.setProperty('SH_ItemView_ActivateItemOnSingleClick', 1)
-        self.listWidget.connect('activated(QModelIndex)', self.onActivated)
+        self.listWidget.setProperty("SH_ItemView_ActivateItemOnSingleClick", 1)
+        self.listWidget.connect("activated(QModelIndex)", self.onActivated)
 
         self.refreshButton = qt.QPushButton()
         self.layout().addWidget(self.refreshButton)
-        self.refreshButton.text = 'Refresh'
-        self.refreshButton.connect('clicked()', self.update)
+        self.refreshButton.text = "Refresh"
+        self.refreshButton.connect("clicked()", self.update)
 
         self.tags = {}
-        self.tags['seriesDescription'] = "0008,103e"
-        self.tags['patientName'] = "0010,0010"
+        self.tags["seriesDescription"] = "0008,103e"
+        self.tags["patientName"] = "0010,0010"
 
     class seriesWithTime:
         """helper class to track series and time..."""
@@ -84,22 +89,22 @@ class DICOMRecentActivityWidget(qt.QWidget):
                         instance = self.dicomDatabase.instanceForFile(files[0])
                         seriesTime = self.dicomDatabase.insertDateTimeForInstance(instance)
                         try:
-                            patientName = self.dicomDatabase.instanceValue(instance, self.tags['patientName'])
+                            patientName = self.dicomDatabase.instanceValue(instance, self.tags["patientName"])
                         except RuntimeError:
                             # this indicates that the particular instance is no longer
                             # accessible to the dicom database, so we should ignore it here
                             continue
-                        seriesDescription = self.dicomDatabase.instanceValue(instance, self.tags['seriesDescription'])
+                        seriesDescription = self.dicomDatabase.instanceValue(instance, self.tags["seriesDescription"])
                         elapsed = seriesTime.secsTo(now)
                         secondsPerHour = 60 * 60
                         secondsPerDay = secondsPerHour * 24
                         timeNote = None
                         if elapsed < secondsPerDay:
-                            timeNote = 'Today'
+                            timeNote = "Today"
                         elif elapsed < 7 * secondsPerDay:
-                            timeNote = 'Past Week'
+                            timeNote = "Past Week"
                         elif elapsed < 30 * 7 * secondsPerDay:
-                            timeNote = 'Past Month'
+                            timeNote = "Past Month"
                         if timeNote:
                             text = f"{timeNote}: {seriesDescription} for {patientName}"
                             recentSeries.append(self.seriesWithTime(series, elapsed, seriesTime, text))
@@ -107,8 +112,7 @@ class DICOMRecentActivityWidget(qt.QWidget):
         return recentSeries
 
     def update(self):
-        """Load the table widget with header values for the file
-        """
+        """Load the table widget with header values for the file"""
         self.listWidget.clear()
         secondsPerHour = 60 * 60
         insertsPastHour = 0
@@ -117,13 +121,13 @@ class DICOMRecentActivityWidget(qt.QWidget):
             self.listWidget.addItem(series.text)
             if series.elapsedSinceInsert < secondsPerHour:
                 insertsPastHour += 1
-        self.statusLabel.text = '%d series added to database in the past hour' % insertsPastHour
+        self.statusLabel.text = "%d series added to database in the past hour" % insertsPastHour
         if len(self.recentSeries) > 0:
             statusMessage = "Most recent DICOM Database addition: %s" % self.recentSeries[0].insertDateTime.toString()
             slicer.util.showStatusMessage(statusMessage, 10000)
 
     def onActivated(self, modelIndex):
-        logging.debug('Recent activity widget selected row: %d (%s)' % (modelIndex.row(), self.recentSeries[modelIndex.row()].text))
+        logging.debug("Recent activity widget selected row: %d (%s)" % (modelIndex.row(), self.recentSeries[modelIndex.row()].text))
         if not self.browserWidget:
             return
         # Select series in the series table

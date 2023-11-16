@@ -153,20 +153,19 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         self.parent.layout().addStretch(1)
 
         # connections
-        self.applyButton.connect('clicked()', self.onApply)
-        self.scalarSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onNodeSelectionChanged)
-        self.segmentationSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onNodeSelectionChanged)
-        self.outputTableSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onNodeSelectionChanged)
-        self.parameterNodeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onNodeSelectionChanged)
-        self.parameterNodeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onParameterSetSelected)
+        self.applyButton.connect("clicked()", self.onApply)
+        self.scalarSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onNodeSelectionChanged)
+        self.segmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onNodeSelectionChanged)
+        self.outputTableSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onNodeSelectionChanged)
+        self.parameterNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onNodeSelectionChanged)
+        self.parameterNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onParameterSetSelected)
 
         self.parameterNodeSelector.setCurrentNode(self.logic.getParameterNode())
         self.onNodeSelectionChanged()
         self.onParameterSetSelected()
 
     def enter(self):
-        """Runs whenever the module is reopened
-        """
+        """Runs whenever the module is reopened"""
         if self.parameterNodeSelector.currentNode() is None:
             parameterNode = self.logic.getParameterNode()
             slicer.mrmlScene.AddNode(parameterNode)
@@ -183,11 +182,10 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         self.applyButton.enabled = (self.segmentationSelector.currentNode() is not None and
                                     self.parameterNodeSelector.currentNode() is not None)
         if self.segmentationSelector.currentNode():
-            self.outputTableSelector.baseName = self.segmentationSelector.currentNode().GetName() + ' statistics'
+            self.outputTableSelector.baseName = self.segmentationSelector.currentNode().GetName() + " statistics"
 
     def onApply(self):
-        """Calculate the label statistics
-        """
+        """Calculate the label statistics"""
 
         with slicer.util.tryWithErrorDisplay(_("Failed to compute results."), waitCursor=True):
             if not self.outputTableSelector.currentNode():
@@ -224,10 +222,10 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
         for plugin in self.logic.plugins:
             checkbox = qt.QCheckBox(_("{pluginName} Statistics").format(pluginName=plugin.name))
             checkbox.checked = True
-            checkbox.connect('stateChanged(int)', self.updateParameterNodeFromGui)
+            checkbox.connect("stateChanged(int)", self.updateParameterNodeFromGui)
             optionButton = qt.QPushButton(_("Options"))
             from functools import partial
-            optionButton.connect('clicked()', partial(self.onEditParameters, plugin.name))
+            optionButton.connect("clicked()", partial(self.onEditParameters, plugin.name))
             editWidget = qt.QWidget()
             editWidget.setLayout(qt.QHBoxLayout())
             editWidget.layout().margin = 0
@@ -259,9 +257,9 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
             return
         for plugin in self.logic.plugins:
             pluginName = plugin.__class__.__name__
-            parameter = pluginName + '.enabled'
+            parameter = pluginName + ".enabled"
             checkbox = self.pluginEnabledCheckboxes[plugin.name]
-            value = self.parameterNode.GetParameter(parameter) == 'True'
+            value = self.parameterNode.GetParameter(parameter) == "True"
             if checkbox.checked != value:
                 previousState = checkbox.blockSignals(True)
                 checkbox.checked = value
@@ -272,7 +270,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
             return
         for plugin in self.logic.plugins:
             pluginName = plugin.__class__.__name__
-            parameter = pluginName + '.enabled'
+            parameter = pluginName + ".enabled"
             checkbox = self.pluginEnabledCheckboxes[plugin.name]
             self.parameterNode.SetParameter(parameter, str(checkbox.checked))
 
@@ -331,7 +329,7 @@ class SegmentStatisticsParameterEditorDialog(qt.QDialog):
         self.layout().addWidget(self.descriptionLabel, 0)
         self.layout().addWidget(parametersScrollArea, 1)
         self.layout().addWidget(doneWidget, 0)
-        self.doneButton.connect('clicked()', lambda: self.done(1))
+        self.doneButton.connect("clicked()", lambda: self.done(1))
 
     def _addPluginOptionWidgets(self):
         description = _("Edit segment statistics plugin parameters:")
@@ -359,6 +357,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     Uses ScriptedLoadableModuleLogic base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
+
     registeredPlugins = [LabelmapSegmentStatisticsPlugin, ScalarVolumeSegmentStatisticsPlugin,
                          ClosedSurfaceSegmentStatisticsPlugin]
 
@@ -407,13 +406,13 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         """Set all plugins to enabled and all plugins' parameters to their default value"""
         for plugin in self.plugins:
             plugin.setDefaultParameters(parameterNode)
-        if not parameterNode.GetParameter('visibleSegmentsOnly'):
-            parameterNode.SetParameter('visibleSegmentsOnly', str(True))
+        if not parameterNode.GetParameter("visibleSegmentsOnly"):
+            parameterNode.SetParameter("visibleSegmentsOnly", str(True))
 
     def getStatistics(self):
         """Get the calculated statistical measurements"""
         params = self.getParameterNode()
-        if not hasattr(params, 'statistics'):
+        if not hasattr(params, "statistics"):
             params.statistics = {"SegmentIDs": [], "MeasurementInfo": {}}
         return params.statistics
 
@@ -444,7 +443,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
 
             # Get segment ID list
             visibleSegmentIds = vtk.vtkStringArray()
-            if self.getParameterNode().GetParameter('visibleSegmentsOnly') == 'True':
+            if self.getParameterNode().GetParameter("visibleSegmentsOnly") == "True":
                 segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(visibleSegmentIds)
             else:
                 segmentationNode.GetSegmentation().GetSegmentIDs(visibleSegmentIds)
@@ -482,11 +481,11 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         # apply all enabled plugins
         for plugin in self.plugins:
             pluginName = plugin.__class__.__name__
-            if self.getParameterNode().GetParameter(pluginName + '.enabled') == 'True':
+            if self.getParameterNode().GetParameter(pluginName + ".enabled") == "True":
                 stats = plugin.computeStatistics(segmentID)
                 for key in stats:
-                    statistics[segmentID, pluginName + '.' + key] = stats[key]
-                    statistics["MeasurementInfo"][pluginName + '.' + key] = plugin.getMeasurementInfo(key)
+                    statistics[segmentID, pluginName + "." + key] = stats[key]
+                    statistics["MeasurementInfo"][pluginName + "." + key] = plugin.getMeasurementInfo(key)
 
     def getPluginByKey(self, key):
         """Get plugin responsible for obtaining measurement value for given key"""
@@ -534,46 +533,44 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         headerNames = []
         for key in keys:
             name = key
-            info = statistics['MeasurementInfo'][key] if key in statistics['MeasurementInfo'] else {}
+            info = statistics["MeasurementInfo"][key] if key in statistics["MeasurementInfo"] else {}
             entry = slicer.vtkCodedEntry()
             dicomBasedName = False
             if info:
-                if 'DICOM.DerivationCode' in info and info['DICOM.DerivationCode']:
-                    entry.SetFromString(info['DICOM.DerivationCode'])
+                if "DICOM.DerivationCode" in info and info["DICOM.DerivationCode"]:
+                    entry.SetFromString(info["DICOM.DerivationCode"])
                     name = entry.GetCodeMeaning()
                     dicomBasedName = True
-                elif 'DICOM.QuantityCode' in info and info['DICOM.QuantityCode']:
-                    entry.SetFromString(info['DICOM.QuantityCode'])
+                elif "DICOM.QuantityCode" in info and info["DICOM.QuantityCode"]:
+                    entry.SetFromString(info["DICOM.QuantityCode"])
                     name = entry.GetCodeMeaning()
                     dicomBasedName = True
-                elif 'name' in info and info['name']:
-                    name = info['name']
-                if dicomBasedName and 'DICOM.UnitsCode' in info and info['DICOM.UnitsCode']:
-                    entry.SetFromString(info['DICOM.UnitsCode'])
+                elif "name" in info and info["name"]:
+                    name = info["name"]
+                if dicomBasedName and "DICOM.UnitsCode" in info and info["DICOM.UnitsCode"]:
+                    entry.SetFromString(info["DICOM.UnitsCode"])
                     units = entry.GetCodeValue()
-                    if len(units) > 0 and units[0] == '[' and units[-1] == ']':
+                    if len(units) > 0 and units[0] == "[" and units[-1] == "]":
                         units = units[1:-1]
                     if len(units) > 0:
-                        name += ' [' + units + ']'
-                elif 'units' in info and info['units'] and len(info['units']) > 0:
-                    units = info['units']
-                    name += ' [' + units + ']'
+                        name += " [" + units + "]"
+                elif "units" in info and info["units"] and len(info["units"]) > 0:
+                    units = info["units"]
+                    name += " [" + units + "]"
             headerNames.append(name)
         uniqueHeaderNames = list(headerNames)
         for duplicateName in {name for name in uniqueHeaderNames if uniqueHeaderNames.count(name) > 1}:
             j = 1
             for i in range(len(uniqueHeaderNames)):
                 if uniqueHeaderNames[i] == duplicateName:
-                    uniqueHeaderNames[i] = duplicateName + ' (' + str(j) + ')'
+                    uniqueHeaderNames[i] = duplicateName + " (" + str(j) + ")"
                     j += 1
         headerNames = {keys[i]: headerNames[i] for i in range(len(keys))}
         uniqueHeaderNames = {keys[i]: uniqueHeaderNames[i] for i in range(len(keys))}
         return headerNames, uniqueHeaderNames
 
     def exportToTable(self, table, nonEmptyKeysOnly=True):
-        """
-        Export statistics to table node
-        """
+        """Export statistics to table node"""
         tableWasModified = table.StartModify()
         table.RemoveAllColumns()
 
@@ -616,16 +613,16 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
             col.SetName(columnName)
             if plugin:
                 table.SetColumnProperty(columnName, "Plugin", plugin.name)
-                longColumnName += '<br>' + _('Computed by {pluginName} Statistics plugin').format(pluginName=plugin.name)
+                longColumnName += "<br>" + _("Computed by {pluginName} Statistics plugin").format(pluginName=plugin.name)
             table.SetColumnLongName(columnName, longColumnName)
             measurementInfo = statistics["MeasurementInfo"][key] if key in statistics["MeasurementInfo"] else {}
             if measurementInfo:
                 for mik, miv in measurementInfo.items():
-                    if mik == 'description':
+                    if mik == "description":
                         table.SetColumnDescription(columnName, str(miv))
-                    elif mik == 'units':
+                    elif mik == "units":
                         table.SetColumnUnitLabel(columnName, str(miv))
-                    elif mik == 'componentNames':
+                    elif mik == "componentNames":
                         componentNames = miv
                         array = table.GetTable().GetColumnByName(columnName)
                         componentIndex = 0
@@ -641,8 +638,8 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
             columnIndex = 0
             for key in keys:
                 value = statistics[segmentID, key] if (segmentID, key) in statistics else None
-                if value is None and key != 'Segment':
-                    value = float('nan')
+                if value is None and key != "Segment":
+                    value = float("nan")
                 if isinstance(value, list):
                     for i in range(len(value)):
                         table.GetTable().GetColumn(columnIndex).SetComponent(rowIndex, i, value[i])
@@ -654,9 +651,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         table.EndModify(tableWasModified)
 
     def showTable(self, table):
-        """
-        Switch to a layout where tables are visible and show the selected table
-        """
+        """Switch to a layout where tables are visible and show the selected table"""
         currentLayout = slicer.app.layoutManager().layout
         layoutWithTable = slicer.modules.tables.logic().GetLayoutWithTable(currentLayout)
         slicer.app.layoutManager().setLayout(layoutWithTable)
@@ -664,9 +659,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
         slicer.app.applicationLogic().PropagateTableSelection()
 
     def exportToString(self, nonEmptyKeysOnly=True):
-        """
-        Returns string with comma separated values, with header keys in quotes.
-        """
+        """Returns string with comma separated values, with header keys in quotes."""
         keys = self.getNonEmptyKeys() if nonEmptyKeysOnly else self.keys
         # Header
         csv = '"' + '","'.join(keys) + '"'
@@ -695,13 +688,11 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self, scenario=None):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_SegmentStatisticsBasic()
 
@@ -709,9 +700,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         self.test_SegmentStatisticsPlugins()
 
     def test_SegmentStatisticsBasic(self):
-        """
-        This tests some aspects of the label statistics
-        """
+        """This tests some aspects of the label statistics"""
 
         self.delayDisplay("Starting test_SegmentStatisticsBasic")
 
@@ -720,11 +709,11 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Load source volume")
 
-        sourceVolumeNode = SampleData.downloadSample('MRBrainTumor1')
+        sourceVolumeNode = SampleData.downloadSample("MRBrainTumor1")
 
         self.delayDisplay("Create segmentation containing a few spheres")
 
-        segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
+        segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
         segmentationNode.CreateDefaultDisplayNodes()
         segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(sourceVolumeNode)
 
@@ -759,16 +748,14 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Export results to string")
         logging.info(segStatLogic.exportToString())
 
-        outputFilename = slicer.app.temporaryPath + '/SegmentStatisticsTestOutput.csv'
+        outputFilename = slicer.app.temporaryPath + "/SegmentStatisticsTestOutput.csv"
         self.delayDisplay("Export results to CSV file: " + outputFilename)
         segStatLogic.exportToCSVFile(outputFilename)
 
-        self.delayDisplay('test_SegmentStatisticsBasic passed!')
+        self.delayDisplay("test_SegmentStatisticsBasic passed!")
 
     def test_SegmentStatisticsPlugins(self):
-        """
-        This tests some aspects of the segment statistics plugins
-        """
+        """This tests some aspects of the segment statistics plugins"""
 
         self.delayDisplay("Starting test_SegmentStatisticsPlugins")
 
@@ -778,11 +765,11 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Load source volume")
 
-        sourceVolumeNode = SampleData.downloadSample('MRBrainTumor1')
+        sourceVolumeNode = SampleData.downloadSample("MRBrainTumor1")
 
         self.delayDisplay("Create segmentation containing a few spheres")
 
-        segmentationNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLSegmentationNode')
+        segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
         segmentationNode.CreateDefaultDisplayNodes()
         segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(sourceVolumeNode)
 
@@ -803,7 +790,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic = SegmentStatisticsLogic()
         segStatLogic.getParameterNode().SetParameter("Segmentation", segmentationNode.GetID())
         segStatLogic.getParameterNode().SetParameter("ScalarVolume", sourceVolumeNode.GetID())
-        segStatLogic.updateStatisticsForSegment('Test_2')
+        segStatLogic.updateStatisticsForSegment("Test_2")
         resultsTableNode = slicer.vtkMRMLTableNode()
         slicer.mrmlScene.AddNode(resultsTableNode)
         segStatLogic.exportToTable(resultsTableNode)
@@ -812,7 +799,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         with self.assertRaises(KeyError):
             segStatLogic.getStatistics()["Test_4", "ScalarVolumeSegmentStatisticsPlugin.voxel count"]
         # assert there are no result for this segment
-        segStatLogic.updateStatisticsForSegment('Test_4')
+        segStatLogic.updateStatisticsForSegment("Test_4")
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         self.assertEqual(segStatLogic.getStatistics()["Test_2", "LabelmapSegmentStatisticsPlugin.voxel_count"], 9807)
@@ -847,10 +834,10 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segmentationNode.EndModify(wasModified)
         self.assertEqual(segStatLogic.getStatistics()["Test", "LabelmapSegmentStatisticsPlugin.voxel_count"], 2948)
         self.assertEqual(segStatLogic.getStatistics()["Test_1", "LabelmapSegmentStatisticsPlugin.voxel_count"], 23281)
-        segStatLogic.updateStatisticsForSegment('Test_1')
+        segStatLogic.updateStatisticsForSegment("Test_1")
         self.assertEqual(segStatLogic.getStatistics()["Test", "LabelmapSegmentStatisticsPlugin.voxel_count"], 2948)
         self.assertTrue(segStatLogic.getStatistics()["Test_1", "LabelmapSegmentStatisticsPlugin.voxel_count"] != 23281)
-        segStatLogic.updateStatisticsForSegment('Test')
+        segStatLogic.updateStatisticsForSegment("Test")
         self.assertTrue(segStatLogic.getStatistics()["Test", "LabelmapSegmentStatisticsPlugin.voxel_count"] != 2948)
         self.assertTrue(segStatLogic.getStatistics()["Test_1", "LabelmapSegmentStatisticsPlugin.voxel_count"] != 23281)
 
@@ -865,9 +852,9 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertFalse('Number of voxels [voxels] (1)' in columnHeaders)
-        self.assertTrue('Volume [mm3] (1)' in columnHeaders)
-        self.assertFalse('Volume [cm3] (3)' in columnHeaders)
+        self.assertFalse("Number of voxels [voxels] (1)" in columnHeaders)
+        self.assertTrue("Volume [mm3] (1)" in columnHeaders)
+        self.assertFalse("Volume [cm3] (3)" in columnHeaders)
 
         self.delayDisplay("Test re-enabling of individual measurements")
         segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.voxel_count.enabled", str(True))
@@ -876,9 +863,9 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertTrue('Number of voxels [voxels] (1)' in columnHeaders)
-        self.assertTrue('Volume [mm3] (1)' in columnHeaders)
-        self.assertTrue('Volume [cm3] (1)' in columnHeaders)
+        self.assertTrue("Number of voxels [voxels] (1)" in columnHeaders)
+        self.assertTrue("Volume [mm3] (1)" in columnHeaders)
+        self.assertTrue("Volume [cm3] (1)" in columnHeaders)
 
         # test enabling/disabling of individual plugins
         self.delayDisplay("Test disabling of plugin")
@@ -887,9 +874,9 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertFalse('Number of voxels [voxels] (3)' in columnHeaders)
-        self.assertFalse('Volume [mm3] (3)' in columnHeaders)
-        self.assertTrue('Volume [mm3] (2)' in columnHeaders)
+        self.assertFalse("Number of voxels [voxels] (3)" in columnHeaders)
+        self.assertFalse("Volume [mm3] (3)" in columnHeaders)
+        self.assertTrue("Volume [mm3] (2)" in columnHeaders)
 
         self.delayDisplay("Test re-enabling of plugin")
         segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.enabled", str(True))
@@ -897,8 +884,8 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertTrue('Number of voxels [voxels] (2)' in columnHeaders)
-        self.assertTrue('Volume [mm3] (3)' in columnHeaders)
+        self.assertTrue("Number of voxels [voxels] (2)" in columnHeaders)
+        self.assertTrue("Volume [mm3] (3)" in columnHeaders)
 
         # test unregistering/registering of plugins
         self.delayDisplay("Test of removing all registered plugins")
@@ -924,11 +911,11 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.exportToTable(resultsTableNode)
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
-        self.assertTrue('Number of voxels [voxels] (1)' in columnHeaders)
-        self.assertTrue('Number of voxels [voxels] (2)' in columnHeaders)
-        self.assertTrue('Surface area [mm2]' in columnHeaders)
+        self.assertTrue("Number of voxels [voxels] (1)" in columnHeaders)
+        self.assertTrue("Number of voxels [voxels] (2)" in columnHeaders)
+        self.assertTrue("Surface area [mm2]" in columnHeaders)
 
-        self.delayDisplay('test_SegmentStatisticsPlugins passed!')
+        self.delayDisplay("test_SegmentStatisticsPlugins passed!")
 
 
 class Slicelet:
@@ -936,6 +923,7 @@ class Slicelet:
     implemented as a python class.
     This class provides common wrapper functionality used by all slicer modlets.
     """
+
     # TODO: put this in a SliceletLib
     # TODO: parse command line args
 
@@ -961,8 +949,7 @@ class Slicelet:
 
 
 class SegmentStatisticsSlicelet(Slicelet):
-    """ Creates the interface when module is run as a stand alone gui app.
-    """
+    """Creates the interface when module is run as a stand alone gui app."""
 
     def __init__(self):
         super().__init__(SegmentStatisticsWidget)

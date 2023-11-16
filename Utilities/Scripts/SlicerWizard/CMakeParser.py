@@ -187,7 +187,7 @@ class CMakeScript:
     _reWhitespace = re.compile(r"\s")
     _reCommand = re.compile(r"([" + string.ascii_letters + r"]\w*)(\s*\()")
     _reComment = re.compile(r"#(\[=*\[)?")
-    _reQuote = re.compile("\"")
+    _reQuote = re.compile('"')
     _reBracketQuote = re.compile(r"\[=*\[")
     _reEscape = re.compile(r"\\[\\\"nrt$ ]")
 
@@ -286,7 +286,7 @@ class CMakeScript:
                 prefix = self._match.group(0)
                 self._content = self._content[len(prefix):]
 
-                if prefix == "\"":
+                if prefix == '"':
                     suffix = prefix
                     s = self._chompString(suffix, escapes=True)
 

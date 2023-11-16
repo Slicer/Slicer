@@ -86,7 +86,7 @@ class LoadModulesDialog:
             self.ui.addToSearchPaths.text = "Add selected modules to 'Additional module paths'"
 
         # If developer mode is already enabled then don't even show the option
-        developerModeAlreadyEnabled = slicer.util.settingsValue('Developer/DeveloperMode', False, converter=slicer.util.toBool)
+        developerModeAlreadyEnabled = slicer.util.settingsValue("Developer/DeveloperMode", False, converter=slicer.util.toBool)
         if developerModeAlreadyEnabled:
             self.ui.enableDeveloperMode.visible = False
             self.ui.enableDeveloperMode.checked = False

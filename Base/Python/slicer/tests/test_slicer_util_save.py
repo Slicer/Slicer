@@ -7,21 +7,22 @@ import shutil
 class SlicerUtilSaveTests(unittest.TestCase):
 
     def setUp(self):
-        for extension in ['nrrd', 'mrml', 'mrb']:
+        for extension in ["nrrd", "mrml", "mrb"]:
             try:
-                os.remove(slicer.app.temporaryPath + '/SlicerUtilSaveTests.' + extension)
+                os.remove(slicer.app.temporaryPath + "/SlicerUtilSaveTests." + extension)
             except OSError:
                 pass
-        shutil.rmtree(slicer.app.temporaryPath + '/SlicerUtilSaveTests', True)
+        shutil.rmtree(slicer.app.temporaryPath + "/SlicerUtilSaveTests", True)
 
     def test_saveNode(self):
         """Test that nodes are saved correctly and that they are loaded correctly with the default reader
-        even if they are saved with generic (.nrrd) and not composite (.seg.nrrd) file extension."""
+        even if they are saved with generic (.nrrd) and not composite (.seg.nrrd) file extension.
+        """
 
         # Volume node
-        volumeNode = slicer.util.getNode('MR-head')
+        volumeNode = slicer.util.getNode("MR-head")
         # Save
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTests.nrrd'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTests.nrrd"
         self.assertTrue(slicer.util.saveNode(volumeNode, filename))
         self.assertTrue(os.path.exists(filename))
         # Load
@@ -43,7 +44,7 @@ class SlicerUtilSaveTests(unittest.TestCase):
         segmentationNode.CreateBinaryLabelmapRepresentation()
         segmentationNode.SetSourceRepresentationToBinaryLabelmap()
         # Save
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTestsSegmentation.nrrd'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTestsSegmentation.nrrd"
         self.assertTrue(slicer.util.saveNode(segmentationNode, filename))
         self.assertTrue(os.path.exists(filename))
         # Load
@@ -58,7 +59,7 @@ class SlicerUtilSaveTests(unittest.TestCase):
         markupNode.AddControlPoint(10, 20, 30)
         markupNode.AddControlPoint(15, 22, 46)
         # Save
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTestsMarkup.json'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTestsMarkup.json"
         self.assertTrue(slicer.util.saveNode(markupNode, filename))
         self.assertTrue(os.path.exists(filename))
         # Load
@@ -72,7 +73,7 @@ class SlicerUtilSaveTests(unittest.TestCase):
         textNode.SetText("Some text is in here")
         textNode.SetForceCreateStorageNode(True)  # without this, short text would not be saved in file
         # Save
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTestsText.txt'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTestsText.txt"
         self.assertTrue(slicer.util.saveNode(textNode, filename))
         self.assertTrue(os.path.exists(filename))
         # Load
@@ -93,7 +94,7 @@ class SlicerUtilSaveTests(unittest.TestCase):
         colorTableNode.SetColor(1, "color", 0.3, 0.3, 0.6, 1.0)
         colorTableNode.SetColor(2, "here", 0.5, 0.4, 0.5, 1.0)
         # Save
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTestsColor.txt'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTestsColor.txt"
         self.assertTrue(slicer.util.saveNode(colorTableNode, filename))
         self.assertTrue(os.path.exists(filename))
         # Load
@@ -108,7 +109,7 @@ class SlicerUtilSaveTests(unittest.TestCase):
         sequenceNode.SetDataNodeAtValue(volumeNode, str(1))
         sequenceNode.SetDataNodeAtValue(volumeNode, str(2))
         # Save
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTestsVolumeSequence.nrrd'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTestsVolumeSequence.nrrd"
         self.assertTrue(slicer.util.saveNode(sequenceNode, filename))
         self.assertTrue(os.path.exists(filename))
         # Load
@@ -120,21 +121,21 @@ class SlicerUtilSaveTests(unittest.TestCase):
         # Terminology
         # There is no writer for terminology files, so we copy an existing terminology
         import shutil
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTestsTerminology.json'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTestsTerminology.json"
         shutil.copy(slicer.modules.terminologies.logic().GetModuleShareDirectory()
                     + "/SegmentationCategoryTypeModifier-SlicerGeneralAnatomy.term.json", filename)
         # Load
-        self.assertEqual(slicer.app.ioManager().fileType(filename), 'TerminologyFile')
+        self.assertEqual(slicer.app.ioManager().fileType(filename), "TerminologyFile")
         loadedTerminology = slicer.util.loadNodeFromFile(filename)
         self.assertIsNone(loadedTerminology)  # loadedTerminology will be empty, as terminology is not loaded as node
 
     def test_saveSceneAsMRMLFile(self):
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTests.mrml'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTests.mrml"
         self.assertTrue(slicer.util.saveScene(filename))
         self.assertTrue(os.path.exists(filename))
 
     def test_saveSceneAsMRB(self):
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTests.mrb'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTests.mrb"
         self.assertTrue(slicer.util.saveScene(filename))
         self.assertTrue(os.path.exists(filename))
 
@@ -142,8 +143,8 @@ class SlicerUtilSaveTests(unittest.TestCase):
         """Execution of 'test_saveNode' implies that the filename associated
         MR-head storage node is set to 'SlicerUtilSaveTests.nrrd'
         """
-        filename = slicer.app.temporaryPath + '/SlicerUtilSaveTests'
+        filename = slicer.app.temporaryPath + "/SlicerUtilSaveTests"
         self.assertTrue(slicer.util.saveScene(filename))
         self.assertTrue(os.path.exists(filename))
-        self.assertTrue(os.path.exists(filename + '/SlicerUtilSaveTests.mrml'))
-        self.assertTrue(os.path.exists(filename + '/Data/SlicerUtilSaveTests.nrrd'))
+        self.assertTrue(os.path.exists(filename + "/SlicerUtilSaveTests.mrml"))
+        self.assertTrue(os.path.exists(filename + "/Data/SlicerUtilSaveTests.nrrd"))

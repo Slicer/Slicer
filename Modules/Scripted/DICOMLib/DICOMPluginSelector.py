@@ -31,8 +31,8 @@ class DICOMPluginSelector(qt.QWidget):
         self.setLayout(scrollAreaBox)
         settings = qt.QSettings()
 
-        if settings.contains('DICOM/disabledPlugins/size'):
-            size = settings.beginReadArray('DICOM/disabledPlugins')
+        if settings.contains("DICOM/disabledPlugins/size"):
+            size = settings.beginReadArray("DICOM/disabledPlugins")
             disabledPlugins = []
 
             for i in range(size):

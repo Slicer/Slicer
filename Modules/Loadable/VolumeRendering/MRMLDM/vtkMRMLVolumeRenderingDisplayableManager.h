@@ -83,8 +83,6 @@ protected:
 
   void ProcessMRMLNodesEvents(vtkObject * caller, unsigned long event, void * callData) override;
 
-  void OnInteractorStyleEvent(int eventID) override;
-
 protected:
   vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic{nullptr};
 

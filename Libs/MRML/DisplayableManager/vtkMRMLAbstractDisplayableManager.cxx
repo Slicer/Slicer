@@ -886,54 +886,6 @@ void vtkMRMLAbstractDisplayableManager::OnInteractorEvent(int vtkNotUsed(eventid
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::SetInteractorStyleAbortFlag(int f)
-{
-  this->Internal->InteractorStyleCallBackCommand->SetAbortFlag(f);
-}
-
-//---------------------------------------------------------------------------
-int vtkMRMLAbstractDisplayableManager::GetInteractorStyleAbortFlag()
-{
-  return this->Internal->InteractorStyleCallBackCommand->GetAbortFlag();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::InteractorStyleAbortFlagOn()
-{
-  this->Internal->InteractorStyleCallBackCommand->AbortFlagOn();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::InteractorStyleAbortFlagOff()
-{
-  this->Internal->InteractorStyleCallBackCommand->AbortFlagOff();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::SetInteractorAbortFlag(int f)
-{
-  this->Internal->InteractorCallBackCommand->SetAbortFlag(f);
-}
-
-//---------------------------------------------------------------------------
-int vtkMRMLAbstractDisplayableManager::GetInteractorAbortFlag()
-{
-  return this->Internal->InteractorCallBackCommand->GetAbortFlag();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::InteractorAbortFlagOn()
-{
-  this->Internal->InteractorCallBackCommand->AbortFlagOn();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::InteractorAbortFlagOff()
-{
-  this->Internal->InteractorCallBackCommand->AbortFlagOff();
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy* mgr)
 {
   this->Internal->LightBoxRendererManagerProxy = mgr;

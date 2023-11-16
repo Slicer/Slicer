@@ -73,7 +73,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget(ScriptedLoadableModuleW
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -113,7 +113,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
 
         # get the slice node
         lm = slicer.app.layoutManager()
-        sliceWidget = lm.sliceWidget('Red')
+        sliceWidget = lm.sliceWidget("Red")
         sliceLogic = sliceWidget.sliceLogic()
         sliceNode = sliceLogic.GetSliceNode()
 
@@ -128,21 +128,17 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic(ScriptedLoadableModuleLo
 
 
 class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    """
+    """This is the test case for your scripted module."""
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
         # reset to conventional layout
         lm = slicer.app.layoutManager()
         lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_NeurosurgicalPlanningTutorialMarkupsSelfTest1()
 
@@ -152,10 +148,10 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
 
         # start in the welcome module
         m = slicer.util.mainWindow()
-        m.moduleSelector().selectModule('Welcome')
+        m.moduleSelector().selectModule("Welcome")
 
         logic = NeurosurgicalPlanningTutorialMarkupsSelfTestLogic()
-        self.delayDisplay('Running test of the Neurosurgical Planning tutorial')
+        self.delayDisplay("Running test of the Neurosurgical Planning tutorial")
 
         # conventional layout
         lm = slicer.app.layoutManager()
@@ -166,19 +162,19 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         #
         if self.enableScreenshots:
             # for the tutorial, do it through the welcome module
-            slicer.util.selectModule('Welcome')
+            slicer.util.selectModule("Welcome")
             self.delayDisplay("Screenshot")
-            self.takeScreenshot('NeurosurgicalPlanning-Welcome', 'Welcome module')
+            self.takeScreenshot("NeurosurgicalPlanning-Welcome", "Welcome module")
         else:
             # otherwise show the sample data module
-            slicer.util.selectModule('SampleData')
+            slicer.util.selectModule("SampleData")
 
         # use the sample data module logic to load data for the self test
         self.delayDisplay("Getting Baseline volume")
         import SampleData
-        baselineVolume = SampleData.downloadSample('BaselineVolume')
+        baselineVolume = SampleData.downloadSample("BaselineVolume")
 
-        self.takeScreenshot('NeurosurgicalPlanning-Loaded', 'Data loaded')
+        self.takeScreenshot("NeurosurgicalPlanning-Loaded", "Data loaded")
 
         #
         # link the viewers
@@ -190,10 +186,10 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
             popupWidget = sliceController.findChild("ctkPopupWidget")
             if popupWidget is not None:
                 popupWidget.pinPopup(1)
-                self.takeScreenshot('NeurosurgicalPlanning-Link', 'Link slice viewers')
+                self.takeScreenshot("NeurosurgicalPlanning-Link", "Link slice viewers")
                 popupWidget.pinPopup(0)
 
-        sliceLogic = slicer.app.layoutManager().sliceWidget('Red').sliceLogic()
+        sliceLogic = slicer.app.layoutManager().sliceWidget("Red").sliceLogic()
         compositeNode = sliceLogic.GetSliceCompositeNode()
         compositeNode.SetLinkedControl(1)
 
@@ -205,17 +201,17 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         slicer.app.processEvents()
         sliceLogic.FitSliceToAll()
         sliceLogic.EndSliceCompositeNodeInteraction()
-        self.takeScreenshot('NeurosurgicalPlanning-Baseline', 'Baseline in background')
+        self.takeScreenshot("NeurosurgicalPlanning-Baseline", "Baseline in background")
 
         #
         # adjust window level on baseline
         #
-        slicer.util.selectModule('Volumes')
+        slicer.util.selectModule("Volumes")
         baselineDisplay = baselineVolume.GetDisplayNode()
         baselineDisplay.SetAutoWindowLevel(0)
         baselineDisplay.SetWindow(2600)
         baselineDisplay.SetLevel(1206)
-        self.takeScreenshot('NeurosurgicalPlanning-WindowLevel', 'Set W/L on baseline')
+        self.takeScreenshot("NeurosurgicalPlanning-WindowLevel", "Set W/L on baseline")
 
         #
         # switch to red slice only
@@ -223,21 +219,21 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
         slicer.app.processEvents()
         sliceLogic.FitSliceToAll()
-        self.takeScreenshot('NeurosurgicalPlanning-RedSliceOnly', 'Set layout to Red Slice only')
+        self.takeScreenshot("NeurosurgicalPlanning-RedSliceOnly", "Set layout to Red Slice only")
 
         #
         # segmentation of tumor
         #
 
         # Create segmentation
-        segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode", baselineVolume.GetName() + '-segmentation')
+        segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode", baselineVolume.GetName() + "-segmentation")
         segmentationNode.CreateDefaultDisplayNodes()
         segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(baselineVolume)
 
         #
         # segment editor module
         #
-        slicer.util.selectModule('SegmentEditor')
+        slicer.util.selectModule("SegmentEditor")
         segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self().editor
         segmentEditorNode = segmentEditorWidget.mrmlSegmentEditorNode()
         segmentEditorNode.SetAndObserveSegmentationNode(segmentationNode)
@@ -252,7 +248,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         # Make segmentation results visible in 3D
         segmentationNode.CreateClosedSurfaceRepresentation()
 
-        self.takeScreenshot('NeurosurgicalPlanning-Editor', 'Showing Editor Module')
+        self.takeScreenshot("NeurosurgicalPlanning-Editor", "Showing Editor Module")
 
         # set the slice offset so drawing is right
         sliceNode = sliceLogic.GetSliceNode()
@@ -267,7 +263,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         paintEffect.setParameter("BrushDiameterIsRelative", 0)
         paintEffect.setParameter("BrushAbsoluteDiameter", 4.0)
 
-        self.takeScreenshot('NeurosurgicalPlanning-Paint', 'Paint tool in Editor Module')
+        self.takeScreenshot("NeurosurgicalPlanning-Paint", "Paint tool in Editor Module")
 
         #
         # paint in cystic part of tumor, using conversion from RAS coords to
@@ -281,21 +277,21 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
             [-12, 85, sliceOffset],
             [-13, 91, sliceOffset],
             [-15, 78, sliceOffset]]
-        sliceWidget = lm.sliceWidget('Red')
+        sliceWidget = lm.sliceWidget("Red")
         currentCoords = None
         for clickCoords in clickCoordsList:
             if currentCoords:
                 slicer.util.clickAndDrag(sliceWidget, start=logic.rasToDisplay(*currentCoords), end=logic.rasToDisplay(*clickCoords), steps=10)
             currentCoords = clickCoords
 
-        self.takeScreenshot('NeurosurgicalPlanning-PaintCystic', 'Paint cystic part of tumor')
+        self.takeScreenshot("NeurosurgicalPlanning-PaintCystic", "Paint cystic part of tumor")
 
         #
         # paint in solid part of tumor
         #
         segmentEditorNode.SetSelectedSegmentID(region2SegmentId)
         slicer.util.clickAndDrag(sliceWidget, start=logic.rasToDisplay(-0.5, 118.5, sliceOffset), end=logic.rasToDisplay(-7.4, 116, sliceOffset), steps=10)
-        self.takeScreenshot('NeurosurgicalPlanning-PaintSolid', 'Paint solid part of tumor')
+        self.takeScreenshot("NeurosurgicalPlanning-PaintSolid", "Paint solid part of tumor")
 
         #
         # paint around the tumor
@@ -307,13 +303,13 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
             [30, 145, sliceOffset],
             [-40, 145, sliceOffset],
             [-40, 50, sliceOffset]]
-        sliceWidget = lm.sliceWidget('Red')
+        sliceWidget = lm.sliceWidget("Red")
         currentCoords = None
         for clickCoords in clickCoordsList:
             if currentCoords:
                 slicer.util.clickAndDrag(sliceWidget, start=logic.rasToDisplay(*currentCoords), end=logic.rasToDisplay(*clickCoords), steps=30)
             currentCoords = clickCoords
-        self.takeScreenshot('NeurosurgicalPlanning-PaintAround', 'Paint around tumor')
+        self.takeScreenshot("NeurosurgicalPlanning-PaintAround", "Paint around tumor")
 
         #
         # Grow cut
@@ -322,21 +318,21 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         effect = segmentEditorWidget.activeEffect()
         effect.self().onPreview()
         effect.self().onApply()
-        self.takeScreenshot('NeurosurgicalPlanning-Growcut', 'Growcut')
+        self.takeScreenshot("NeurosurgicalPlanning-Growcut", "Growcut")
 
         # segmentationNode.RemoveSegment(backgroundSegmentId)
 
         #
         # go to the data module
         #
-        slicer.util.selectModule('Data')
-        self.takeScreenshot('NeurosurgicalPlanning-GrowCutData', 'GrowCut segmentation results in Data')
+        slicer.util.selectModule("Data")
+        self.takeScreenshot("NeurosurgicalPlanning-GrowCutData", "GrowCut segmentation results in Data")
 
         #
         # Ventricles Segmentation
         #
 
-        slicer.util.selectModule('SegmentEditor')
+        slicer.util.selectModule("SegmentEditor")
 
         segmentEditorNode.SetSelectedSegmentID(ventriclesSegmentId)
         segmentEditorNode.SetOverwriteMode(slicer.vtkMRMLSegmentEditorNode.OverwriteNone)
@@ -347,7 +343,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         effect.setParameter("MinimumThreshold", "1700")
         # effect.setParameter("MaximumThreshold","695")
         effect.self().onApply()
-        self.takeScreenshot('NeurosurgicalPlanning-Ventricles', 'Ventricles segmentation')
+        self.takeScreenshot("NeurosurgicalPlanning-Ventricles", "Ventricles segmentation")
 
         #
         # Save Islands
@@ -356,13 +352,13 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         effect = segmentEditorWidget.activeEffect()
         effect.setParameter("Operation", "KEEP_SELECTED_ISLAND")
         slicer.util.clickAndDrag(sliceWidget, start=logic.rasToDisplay(25.3, 5.8, sliceOffset), end=logic.rasToDisplay(25.3, 5.8, sliceOffset), steps=1)
-        self.takeScreenshot('NeurosurgicalPlanning-SaveIsland', 'Ventricles save island')
+        self.takeScreenshot("NeurosurgicalPlanning-SaveIsland", "Ventricles save island")
 
         #
         # switch to conventional layout
         #
         lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
-        self.takeScreenshot('NeurosurgicalPlanning-MergeAndBuild', 'Merged and built models')
+        self.takeScreenshot("NeurosurgicalPlanning-MergeAndBuild", "Merged and built models")
 
         #
         # Smoothing
@@ -373,7 +369,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         effect.setParameter("SmoothingMethod", "MEDIAN")
         effect.setParameter("KernelSizeMm", 5)
         effect.self().onApply()
-        self.takeScreenshot('NeurosurgicalPlanning-Smoothed', 'Smoothed cystic region')
+        self.takeScreenshot("NeurosurgicalPlanning-Smoothed", "Smoothed cystic region")
 
         #
         # Dilation
@@ -383,6 +379,6 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         effect = segmentEditorWidget.activeEffect()
         effect.setParameter("MarginSizeMm", 3.0)
         effect.self().onApply()
-        self.takeScreenshot('NeurosurgicalPlanning-Dilated', 'Dilated tumor')
+        self.takeScreenshot("NeurosurgicalPlanning-Dilated", "Dilated tumor")
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

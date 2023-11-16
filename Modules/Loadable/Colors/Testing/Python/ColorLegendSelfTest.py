@@ -55,7 +55,7 @@ class ColorLegendSelfTestWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -70,20 +70,16 @@ class ColorLegendSelfTestWidget(ScriptedLoadableModuleWidget):
 
 
 class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
-    """
-    This is the test case for your scripted module.
-    """
+    """This is the test case for your scripted module."""
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
         # Timeout delay
         self.delayMs = 700
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_ColorLegendSelfTest1()
 
@@ -91,81 +87,81 @@ class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Starting test_ColorLegendSelfTest1")
 
-        self.delayDisplay('Load CTChest sample volume')
+        self.delayDisplay("Load CTChest sample volume")
         import SampleData
         sampleDataLogic = SampleData.SampleDataLogic()
         ctVolumeNode = sampleDataLogic.downloadCTChest()
         self.assertIsNotNone(ctVolumeNode)
 
-        self.delayDisplay('Switch to Colors module')
+        self.delayDisplay("Switch to Colors module")
         m = slicer.util.mainWindow()
-        m.moduleSelector().selectModule('Colors')
+        m.moduleSelector().selectModule("Colors")
 
         # Get widgets for testing via GUI
         colorWidget = slicer.modules.colors.widgetRepresentation()
-        activeColorNodeSelector = slicer.util.findChildren(colorWidget, 'ColorTableComboBox')[0]
+        activeColorNodeSelector = slicer.util.findChildren(colorWidget, "ColorTableComboBox")[0]
         self.assertIsNotNone(activeColorNodeSelector)
-        activeDisplayableNodeSelector = slicer.util.findChildren(colorWidget, 'DisplayableNodeComboBox')[0]
+        activeDisplayableNodeSelector = slicer.util.findChildren(colorWidget, "DisplayableNodeComboBox")[0]
         self.assertIsNotNone(activeDisplayableNodeSelector)
-        createColorLegendButton = slicer.util.findChildren(colorWidget, 'CreateColorLegendButton')[0]
+        createColorLegendButton = slicer.util.findChildren(colorWidget, "CreateColorLegendButton")[0]
         self.assertIsNotNone(createColorLegendButton)
-        useCurrentColorsButton = slicer.util.findChildren(colorWidget, 'UseCurrentColorsButton')[0]
+        useCurrentColorsButton = slicer.util.findChildren(colorWidget, "UseCurrentColorsButton")[0]
         self.assertIsNotNone(useCurrentColorsButton)
-        colorLegendDisplayNodeWidget = slicer.util.findChildren(colorWidget, 'ColorLegendDisplayNodeWidget')[0]
+        colorLegendDisplayNodeWidget = slicer.util.findChildren(colorWidget, "ColorLegendDisplayNodeWidget")[0]
         self.assertIsNotNone(colorLegendDisplayNodeWidget)
-        colorLegendVisibilityCheckBox = slicer.util.findChildren(colorLegendDisplayNodeWidget, 'ColorLegendVisibilityCheckBox')[0]
+        colorLegendVisibilityCheckBox = slicer.util.findChildren(colorLegendDisplayNodeWidget, "ColorLegendVisibilityCheckBox")[0]
         self.assertIsNotNone(colorLegendVisibilityCheckBox)
 
-        self.delayDisplay('Show color legend on all views and slices', self.delayMs)
+        self.delayDisplay("Show color legend on all views and slices", self.delayMs)
         activeDisplayableNodeSelector.setCurrentNode(ctVolumeNode)
         createColorLegendButton.click()
         self.assertTrue(colorLegendVisibilityCheckBox.checked)
 
-        self.delayDisplay('Iterate over the color nodes and set each one active', self.delayMs)
+        self.delayDisplay("Iterate over the color nodes and set each one active", self.delayMs)
         shortDelayMs = 5
         # There are many color nodes, we don't test each to make the test complete faster
         testedColorNodeIndices = list(range(0, 60, 3))
         for ind, n in enumerate(testedColorNodeIndices):
-            colorNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLColorNode')
+            colorNode = slicer.mrmlScene.GetNthNodeByClass(n, "vtkMRMLColorNode")
             self.delayDisplay(f"Setting color node {colorNode.GetName()} ({ind}/{len(testedColorNodeIndices)}) for the displayable node", shortDelayMs)
             activeColorNodeSelector.setCurrentNodeID(colorNode.GetID())
             # use the delay display here to ensure a render
             useCurrentColorsButton.click()
 
-        self.delayDisplay('Test color legend visibility', self.delayMs)
+        self.delayDisplay("Test color legend visibility", self.delayMs)
         colorLegend = slicer.modules.colors.logic().GetColorLegendDisplayNode(ctVolumeNode)
         self.assertIsNotNone(colorLegend)
 
-        self.delayDisplay('Exercise color legend updates via MRML', self.delayMs)
+        self.delayDisplay("Exercise color legend updates via MRML", self.delayMs)
         # signal to displayable manager to show a created color legend
         colorLegend.SetMaxNumberOfColors(256)
         colorLegend.SetVisibility(True)
 
-        self.delayDisplay('Show color legend in Red slice and 3D views only', self.delayMs)
-        sliceNodeRed = slicer.app.layoutManager().sliceWidget('Red').mrmlSliceNode()
+        self.delayDisplay("Show color legend in Red slice and 3D views only", self.delayMs)
+        sliceNodeRed = slicer.app.layoutManager().sliceWidget("Red").mrmlSliceNode()
         self.assertIsNotNone(sliceNodeRed)
         threeDViewNode = slicer.app.layoutManager().threeDWidget(0).mrmlViewNode()
         self.assertIsNotNone(threeDViewNode)
         colorLegend.SetViewNodeIDs([sliceNodeRed.GetID(), threeDViewNode.GetID()])
 
-        self.delayDisplay('Show color legend in the 3D view only', self.delayMs)
+        self.delayDisplay("Show color legend in the 3D view only", self.delayMs)
         colorLegend.SetViewNodeIDs([threeDViewNode.GetID()])
-        self.delayDisplay('Test color legend on 3D view finished!', self.delayMs)
+        self.delayDisplay("Test color legend on 3D view finished!", self.delayMs)
 
         # Test showing color legend only in a single slice node
         sliceNameColor = {
-            'Red': [1., 0., 0.],
-            'Green': [0., 1., 0.],
-            'Yellow': [1., 1., 0.]
+            "Red": [1., 0., 0.],
+            "Green": [0., 1., 0.],
+            "Yellow": [1., 1., 0.]
         }
         for sliceName, titleColor in sliceNameColor.items():
-            self.delayDisplay('Test color legend on the ' + sliceName + ' slice view', self.delayMs)
+            self.delayDisplay("Test color legend on the " + sliceName + " slice view", self.delayMs)
             sliceNode = slicer.app.layoutManager().sliceWidget(sliceName).mrmlSliceNode()
             colorLegend.SetViewNodeIDs([sliceNode.GetID()])
             colorLegend.SetTitleText(sliceName)
             colorLegend.GetTitleTextProperty().SetColor(titleColor)
-            self.delayDisplay('Test color legend on the ' + sliceName + ' slice view finished!', self.delayMs * 2)
+            self.delayDisplay("Test color legend on the " + sliceName + " slice view finished!", self.delayMs * 2)
 
         colorLegend.SetVisibility(False)
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

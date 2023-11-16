@@ -92,7 +92,7 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
         #
         self.fewerModifyFlagCheckBox = qt.QCheckBox()
         self.fewerModifyFlagCheckBox.checked = 0
-        self.fewerModifyFlagCheckBox.toolTip = 'If checked, wrap adding points inside of a StartModify - EndModify block'
+        self.fewerModifyFlagCheckBox.toolTip = "If checked, wrap adding points inside of a StartModify - EndModify block"
         parametersFormLayout.addRow("Fewer modify events: ", self.fewerModifyFlagCheckBox)
 
         #
@@ -100,7 +100,7 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
         #
         self.lockedFlagCheckBox = qt.QCheckBox()
         self.lockedFlagCheckBox.checked = 0
-        self.lockedFlagCheckBox.toolTip = 'If checked, markups will be locked for editing'
+        self.lockedFlagCheckBox.toolTip = "If checked, markups will be locked for editing"
         parametersFormLayout.addRow("Locked nodes: ", self.lockedFlagCheckBox)
 
         #
@@ -108,7 +108,7 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
         #
         self.labelsHiddenFlagCheckBox = qt.QCheckBox()
         self.labelsHiddenFlagCheckBox.checked = 0
-        self.labelsHiddenFlagCheckBox.toolTip = 'If checked, markups labels will be forced to be hidden, regardless of default markups properties'
+        self.labelsHiddenFlagCheckBox.toolTip = "If checked, markups labels will be forced to be hidden, regardless of default markups properties"
         parametersFormLayout.addRow("Labels hidden: ", self.labelsHiddenFlagCheckBox)
 
         # Apply Button
@@ -119,7 +119,7 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
         parametersFormLayout.addRow(self.applyButton)
 
         # connections
-        self.applyButton.connect('clicked(bool)', self.onApplyButton)
+        self.applyButton.connect("clicked(bool)", self.onApplyButton)
 
         # Add vertical spacer
         self.layout.addStretch(1)
@@ -146,12 +146,10 @@ class AddManyMarkupsFiducialTestWidget(ScriptedLoadableModuleWidget):
 class AddManyMarkupsFiducialTestLogic(ScriptedLoadableModuleLogic):
 
     def run(self, nodeType, numberOfNodes=10, numberOfControlPoints=10, rOffset=0, usefewerModifyCalls=False, locked=False, labelsHidden=False):
-        """
-        Run the actual algorithm
-        """
-        print(f'Running test to add {numberOfNodes} nodes markups with {numberOfControlPoints} control points')
-        print('Index\tTime to add fid\tDelta between adds')
-        print("%(index)04s\t" % {'index': "i"}, "t\tdt'")
+        """Run the actual algorithm"""
+        print(f"Running test to add {numberOfNodes} nodes markups with {numberOfControlPoints} control points")
+        print("Index\tTime to add fid\tDelta between adds")
+        print("%(index)04s\t" % {"index": "i"}, "t\tdt'")
         r = rOffset
         a = 0
         s = 0
@@ -220,13 +218,11 @@ class AddManyMarkupsFiducialTestTest(ScriptedLoadableModuleTest):
     """
 
     def setUp(self):
-        """ Do whatever is needed to reset the state - typically a scene clear will be enough.
-        """
+        """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
 
     def runTest(self):
-        """Run as few or as many tests as needed here.
-        """
+        """Run as few or as many tests as needed here."""
         self.setUp()
         self.test_AddManyMarkupsFiducialTest1()
 
@@ -236,13 +232,13 @@ class AddManyMarkupsFiducialTestTest(ScriptedLoadableModuleTest):
 
         # start in the welcome module
         m = slicer.util.mainWindow()
-        m.moduleSelector().selectModule('Welcome')
+        m.moduleSelector().selectModule("Welcome")
 
         logic = AddManyMarkupsFiducialTestLogic()
-        logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes=1, numberOfControlPoints=100, rOffset=0)
+        logic.run("vtkMRMLMarkupsFiducialNode", numberOfNodes=1, numberOfControlPoints=100, rOffset=0)
 
         self.delayDisplay("Now running it while the Markups Module is open")
-        m.moduleSelector().selectModule('Markups')
-        logic.run('vtkMRMLMarkupsFiducialNode', numberOfNodes=1, numberOfControlPoints=100, rOffset=100)
+        m.moduleSelector().selectModule("Markups")
+        logic.run("vtkMRMLMarkupsFiducialNode", numberOfNodes=1, numberOfControlPoints=100, rOffset=100)
 
-        self.delayDisplay('Test passed!')
+        self.delayDisplay("Test passed!")

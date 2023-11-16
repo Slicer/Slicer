@@ -292,7 +292,7 @@ void vtkMRMLAnnotationNode::CreatePolyData()
     {
       vtkPolyData *poly = vtkPolyData::New();
       this->SetAndObservePolyData(poly);
-      // Releasing data for pipeline parallism.
+      // Releasing data for pipeline parallelism.
       // Filters will know it is empty.
       poly->ReleaseData();
       poly->Delete();

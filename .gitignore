@@ -1,11 +1,11 @@
 # Ignore all dotfiles...
 .*
 !.codespellignore
-!.flake8
 !.gitattributes
 !.git-blame-ignore-revs
 !.pre-commit-config.yaml
 !.readthedocs.yaml
+!.ruff.toml
 
 # Ignore all back-up files...
 *~

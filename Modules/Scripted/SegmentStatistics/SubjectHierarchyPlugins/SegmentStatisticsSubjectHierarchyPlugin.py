@@ -9,19 +9,19 @@ from AbstractScriptedSubjectHierarchyPlugin import *
 
 
 class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):
-    """ Scripted subject hierarchy plugin for the Segment Statistics module.
+    """Scripted subject hierarchy plugin for the Segment Statistics module.
 
-        This is also an example for scripted plugins, so includes all possible methods.
-        The methods that are not needed (i.e. the default implementation in
-        qSlicerSubjectHierarchyAbstractPlugin is satisfactory) can simply be
-        omitted in plugins created based on this one.
+    This is also an example for scripted plugins, so includes all possible methods.
+    The methods that are not needed (i.e. the default implementation in
+    qSlicerSubjectHierarchyAbstractPlugin is satisfactory) can simply be
+    omitted in plugins created based on this one.
     """
 
     # Necessary static member to be able to set python source to scripted subject hierarchy plugin
     filePath = __file__
 
     def __init__(self, scriptedPlugin):
-        scriptedPlugin.name = 'SegmentStatistics'
+        scriptedPlugin.name = "SegmentStatistics"
         AbstractScriptedSubjectHierarchyPlugin.__init__(self, scriptedPlugin)
 
         self.segmentStatisticsAction = qt.QAction(_("Calculate statistics..."), scriptedPlugin)
@@ -72,11 +72,11 @@ class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPl
 
     def visibilityIcon(self, visible):
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        return pluginHandlerSingleton.pluginByName('Default').visibilityIcon(visible)
+        return pluginHandlerSingleton.pluginByName("Default").visibilityIcon(visible)
 
     def editProperties(self, itemID):
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        pluginHandlerSingleton.pluginByName('Default').editProperties(itemID)
+        pluginHandlerSingleton.pluginByName("Default").editProperties(itemID)
 
     def itemContextMenuActions(self):
         return [self.segmentStatisticsAction]
@@ -91,7 +91,7 @@ class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPl
         segmentationNode = shNode.GetItemDataNode(currentItemID)
 
         # Select segmentation node in segment statistics
-        pluginHandlerSingleton.pluginByName('Default').switchToModule('SegmentStatistics')
+        pluginHandlerSingleton.pluginByName("Default").switchToModule("SegmentStatistics")
         statisticsWidget = slicer.modules.segmentstatistics.widgetRepresentation().self()
         statisticsWidget.segmentationSelector.setCurrentNode(segmentationNode)
 
@@ -111,7 +111,7 @@ class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPl
 
         # Volume but not LabelMap
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        if pluginHandlerSingleton.pluginByName('Segmentations').canOwnSubjectHierarchyItem(itemID):
+        if pluginHandlerSingleton.pluginByName("Segmentations").canOwnSubjectHierarchyItem(itemID):
             # Get current item
             currentItemID = pluginHandlerSingleton.currentItem()
             if not currentItemID:
@@ -125,8 +125,8 @@ class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPl
 
     def setDisplayVisibility(self, itemID, visible):
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        pluginHandlerSingleton.pluginByName('Default').setDisplayVisibility(itemID, visible)
+        pluginHandlerSingleton.pluginByName("Default").setDisplayVisibility(itemID, visible)
 
     def getDisplayVisibility(self, itemID):
         pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-        return pluginHandlerSingleton.pluginByName('Default').getDisplayVisibility(itemID)
+        return pluginHandlerSingleton.pluginByName("Default").getDisplayVisibility(itemID)

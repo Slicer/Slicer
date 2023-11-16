@@ -78,7 +78,6 @@ protected:
   void SetAndObserveCameraNode(vtkMRMLCameraNode * newCameraNode);
   void AdditionalInitializeStep() override;
   void SetCameraToRenderer();
-  void SetCameraToInteractor();
 
 private:
 

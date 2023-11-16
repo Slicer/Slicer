@@ -9,24 +9,24 @@ from SegmentEditorEffects import *
 
 
 class SegmentEditorFillBetweenSlicesEffect(AbstractScriptedSegmentEditorAutoCompleteEffect):
-    """ AutoCompleteEffect is an effect that can create a full segmentation
-        from a partial segmentation (not all slices are segmented or only
-        part of the target structures are painted).
+    """AutoCompleteEffect is an effect that can create a full segmentation
+    from a partial segmentation (not all slices are segmented or only
+    part of the target structures are painted).
     """
 
     def __init__(self, scriptedEffect):
         AbstractScriptedSegmentEditorAutoCompleteEffect.__init__(self, scriptedEffect)
-        scriptedEffect.name = 'Fill between slices'  # no tr (don't translate it because modules find effects by name)
-        scriptedEffect.title = _('Fill between slices')
+        scriptedEffect.name = "Fill between slices"  # no tr (don't translate it because modules find effects by name)
+        scriptedEffect.title = _("Fill between slices")
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
-        clonedEffect.setPythonSource(__file__.replace('\\', '/'))
+        clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
 
     def icon(self):
-        iconPath = os.path.join(os.path.dirname(__file__), 'Resources/Icons/FillBetweenSlices.png')
+        iconPath = os.path.join(os.path.dirname(__file__), "Resources/Icons/FillBetweenSlices.png")
         if os.path.exists(iconPath):
             return qt.QIcon(iconPath)
         return qt.QIcon()

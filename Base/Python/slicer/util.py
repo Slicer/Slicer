@@ -90,7 +90,7 @@ def sourceDir():
     contain a ``CMakeCache.txt`` (e.g. for an installed Slicer), the property
     will have the value ``None``.
     """
-    return _readCMakeCache('Slicer_SOURCE_DIR')
+    return _readCMakeCache("Slicer_SOURCE_DIR")
 
 
 def startupEnvironment():
@@ -115,7 +115,7 @@ def startupEnvironment():
     startupEnv = slicer.app.startupEnvironment()
     import os
     # "if varname" is added to reject empty key (it is invalid)
-    if os.name == 'nt':
+    if os.name == "nt":
         # On Windows, subprocess functions expect environment to contain strings
         # and Qt provide us unicode strings, so we need to convert them.
         return {str(varname): str(startupEnv.value(varname)) for varname in list(startupEnv.keys()) if varname}
@@ -127,13 +127,13 @@ def startupEnvironment():
 # Custom Import
 #
 
-def importVTKClassesFromDirectory(directory, dest_module_name, filematch='*'):
+def importVTKClassesFromDirectory(directory, dest_module_name, filematch="*"):
     from vtk import vtkObjectBase
     importClassesFromDirectory(directory, dest_module_name, vtkObjectBase, filematch)
 
 
-def importQtClassesFromDirectory(directory, dest_module_name, filematch='*'):
-    importClassesFromDirectory(directory, dest_module_name, 'PythonQtClassWrapper', filematch)
+def importQtClassesFromDirectory(directory, dest_module_name, filematch="*"):
+    importClassesFromDirectory(directory, dest_module_name, "PythonQtClassWrapper", filematch)
 
 
 # To avoid globbing multiple times the same directory, successful
@@ -144,7 +144,7 @@ def importQtClassesFromDirectory(directory, dest_module_name, filematch='*'):
 __import_classes_cache = set()
 
 
-def importClassesFromDirectory(directory, dest_module_name, type_info, filematch='*'):
+def importClassesFromDirectory(directory, dest_module_name, type_info, filematch="*"):
     # Create entry for __import_classes_cache
     cache_key = ",".join([str(arg) for arg in [directory, dest_module_name, type_info, filematch]])
     # Check if function has already been called with this set of parameters
@@ -168,9 +168,10 @@ def importClassesFromDirectory(directory, dest_module_name, type_info, filematch
 
 def importModuleObjects(from_module_name, dest_module_name, type_info):
     """Import object of type 'type_info' (str or type) from module identified
-    by 'from_module_name' into the module identified by 'dest_module_name'."""
+    by 'from_module_name' into the module identified by 'dest_module_name'.
+    """
 
-    # Obtain a reference to the module identifed by 'dest_module_name'
+    # Obtain a reference to the module identified by 'dest_module_name'
     import sys
     dest_module = sys.modules[dest_module_name]
 
@@ -215,7 +216,7 @@ def lookupTopLevelWidget(objectName):
     """
     from slicer import app
     for w in app.topLevelWidgets():
-        if hasattr(w, 'objectName'):
+        if hasattr(w, "objectName"):
             if w.objectName == objectName:
                 return w
     # not found
@@ -228,7 +229,7 @@ def mainWindow():
     :return: main window widget, or ``None`` if there is no main window
     """
     try:
-        mw = lookupTopLevelWidget('qSlicerMainWindow')
+        mw = lookupTopLevelWidget("qSlicerMainWindow")
     except RuntimeError:
         # main window not found, return None
         # Note: we do not raise an exception so that this function can be conveniently used
@@ -250,8 +251,7 @@ def pythonShell():
 
 
 def showStatusMessage(message, duration=0):
-    """Display ``message`` in the status bar.
-    """
+    """Display ``message`` in the status bar."""
     mw = mainWindow()
     if not mw or not mw.statusBar():
         return False
@@ -260,7 +260,7 @@ def showStatusMessage(message, duration=0):
 
 
 def findChildren(widget=None, name="", text="", title="", className=""):
-    """ Return a list of child widgets that meet all the given criteria.
+    """Return a list of child widgets that meet all the given criteria.
 
     If no criteria are provided, the function will return all widgets descendants.
     If no widget is provided, slicer.util.mainWindow() is used.
@@ -280,7 +280,7 @@ def findChildren(widget=None, name="", text="", title="", className=""):
         return []
     children = []
     parents = [widget]
-    kwargs = {'name': name, 'text': text, 'title': title, 'className': className}
+    kwargs = {"name": name, "text": text, "title": title, "className": className}
     expected_matches = []
     for kwarg in kwargs.keys():
         if kwargs[kwarg]:
@@ -290,14 +290,14 @@ def findChildren(widget=None, name="", text="", title="", className=""):
         # sometimes, p is null, f.e. when using --python-script or --python-code
         if not p:
             continue
-        if not hasattr(p, 'children'):
+        if not hasattr(p, "children"):
             continue
         parents += p.children()
         matched_filter_criteria = 0
         for attribute in expected_matches:
             if hasattr(p, attribute):
                 attr_name = getattr(p, attribute)
-                if attribute == 'className':
+                if attribute == "className":
                     # className is a method, not a direct attribute. Invoke the method
                     attr_name = attr_name()
                 # Objects may have text attributes with non-string value (for example,
@@ -328,7 +328,7 @@ def findChild(widget, name):
 
 
 def loadUI(path):
-    """ Load UI file ``path`` and return the corresponding widget.
+    """Load UI file ``path`` and return the corresponding widget.
 
     :raises RuntimeError: if the UI file is not found or if no
      widget was instantiated.
@@ -348,8 +348,7 @@ def loadUI(path):
 
 
 def startQtDesigner(args=None):
-    """ Start Qt Designer application to allow editing UI files.
-    """
+    """Start Qt Designer application to allow editing UI files."""
     import slicer
     cmdLineArguments = []
     if args is not None:
@@ -361,7 +360,7 @@ def startQtDesigner(args=None):
 
 
 def childWidgetVariables(widget):
-    """ Get child widgets as attributes of an object.
+    """Get child widgets as attributes of an object.
 
     Each named child widget is accessible as an attribute of the returned object,
     with the attribute name matching the child widget name.
@@ -375,7 +374,7 @@ def childWidgetVariables(widget):
       self.ui.outputSelector.setMRMLScene(slicer.mrmlScene)
 
     """
-    ui = type('', (), {})()  # empty object
+    ui = type("", (), {})()  # empty object
     childWidgets = findChildren(widget)
     for childWidget in childWidgets:
         if hasattr(childWidget, "name"):
@@ -384,7 +383,7 @@ def childWidgetVariables(widget):
 
 
 def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeFromGUI):
-    """ Add connections to get notification of a widget change.
+    """Add connections to get notification of a widget change.
 
     The function is useful for calling updateParameterNodeFromGUI method in scripted module widgets.
 
@@ -435,8 +434,7 @@ def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeF
 
 
 def removeParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeFromGUI):
-    """ Remove connections created by :py:meth:`addParameterEditWidgetConnections`.
-    """
+    """Remove connections created by :py:meth:`addParameterEditWidgetConnections`."""
 
     for (widget, parameterName) in parameterEditWidgets:
         widgetClassName = widget.className()
@@ -453,7 +451,7 @@ def removeParameterEditWidgetConnections(parameterEditWidgets, updateParameterNo
 
 
 def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
-    """ Update widgets from values stored in a vtkMRMLScriptedModuleNode.
+    """Update widgets from values stored in a vtkMRMLScriptedModuleNode.
 
     The function is useful for implementing updateGUIFromParameterNode.
 
@@ -487,7 +485,7 @@ def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
 
 
 def updateNodeFromParameterEditWidgets(parameterEditWidgets, parameterNode):
-    """ Update vtkMRMLScriptedModuleNode from widgets.
+    """Update vtkMRMLScriptedModuleNode from widgets.
 
     The function is useful for implementing updateParameterNodeFromGUI.
 
@@ -511,9 +509,9 @@ def updateNodeFromParameterEditWidgets(parameterEditWidgets, parameterNode):
             parameterNode.SetNodeReferenceID(parameterName, widget.currentNodeID)
 
 
-def setSliceViewerLayers(background='keep-current', foreground='keep-current', label='keep-current',
+def setSliceViewerLayers(background="keep-current", foreground="keep-current", label="keep-current",
                          foregroundOpacity=None, labelOpacity=None, fit=False, rotateToVolumePlane=False):
-    """ Set the slice views with the given nodes.
+    """Set the slice views with the given nodes.
 
     If node ID is not specified (or value is 'keep-current') then the layer will not be modified.
 
@@ -533,26 +531,26 @@ def setSliceViewerLayers(background='keep-current', foreground='keep-current', l
             nodeID = nodeOrID.GetID()
         return nodeID
 
-    num = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
+    num = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode")
     for i in range(num):
-        sliceViewer = slicer.mrmlScene.GetNthNodeByClass(i, 'vtkMRMLSliceCompositeNode')
-        if background != 'keep-current':
+        sliceViewer = slicer.mrmlScene.GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode")
+        if background != "keep-current":
             sliceViewer.SetBackgroundVolumeID(_nodeID(background))
-        if foreground != 'keep-current':
+        if foreground != "keep-current":
             sliceViewer.SetForegroundVolumeID(_nodeID(foreground))
         if foregroundOpacity is not None:
             sliceViewer.SetForegroundOpacity(foregroundOpacity)
-        if label != 'keep-current':
+        if label != "keep-current":
             sliceViewer.SetLabelVolumeID(_nodeID(label))
         if labelOpacity is not None:
             sliceViewer.SetLabelOpacity(labelOpacity)
 
     if rotateToVolumePlane:
-        if background != 'keep-current':
+        if background != "keep-current":
             volumeNode = slicer.mrmlScene.GetNodeByID(_nodeID(background))
-        elif foreground != 'keep-current':
+        elif foreground != "keep-current":
             volumeNode = slicer.mrmlScene.GetNodeByID(_nodeID(foreground))
-        elif label != 'keep-current':
+        elif label != "keep-current":
             volumeNode = slicer.mrmlScene.GetNodeByID(_nodeID(label))
         else:
             volumeNode = None
@@ -579,7 +577,7 @@ def setToolbarsVisible(visible, ignore=None):
     mw = mainWindow()
     if not mw:
         return
-    for toolbar in mainWindow().findChildren('QToolBar'):
+    for toolbar in mainWindow().findChildren("QToolBar"):
         if ignore is not None and toolbar in ignore:
             continue
         toolbar.setVisible(visible)
@@ -603,7 +601,7 @@ def setMenuBarsVisible(visible, ignore=None):
     mw = mainWindow()
     if not mw:
         return
-    for menubar in mw.findChildren('QMenuBar'):
+    for menubar in mw.findChildren("QMenuBar"):
         if ignore is not None and menubar in ignore:
             continue
         menubar.setVisible(visible)
@@ -691,7 +689,7 @@ def loadNodeFromFile(filename, filetype=None, properties={}, returnNode=False):
     from vtk import vtkCollection
 
     # We need to convert the path to string now, because Qt cannot convert a pathlib.Path object to string.
-    properties['fileName'] = str(filename)
+    properties["fileName"] = str(filename)
 
     if filetype is None:
         filetype = app.coreIOManager().fileType(filename)
@@ -734,7 +732,7 @@ def loadNodesFromFile(filename, filetype=None, properties={}, returnNode=False):
     from vtk import vtkCollection
 
     # We need to convert the path to string now, because Qt cannot convert a pathlib.Path object to string.
-    properties['fileName'] = str(filename)
+    properties["fileName"] = str(filename)
 
     loadedNodesCollection = vtkCollection()
     userMessages = vtkMRMLMessageCollection()
@@ -758,7 +756,7 @@ def loadColorTable(filename, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'ColorTableFile', {}, returnNode)
+    return loadNodeFromFile(filename, "ColorTableFile", {}, returnNode)
 
 
 def loadFiberBundle(filename, returnNode=False):
@@ -769,7 +767,7 @@ def loadFiberBundle(filename, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'FiberBundleFile', {}, returnNode)
+    return loadNodeFromFile(filename, "FiberBundleFile", {}, returnNode)
 
 
 def loadAnnotationFiducial(filename, returnNode=False):
@@ -780,7 +778,7 @@ def loadAnnotationFiducial(filename, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'AnnotationFile', {'fiducial': 1}, returnNode)
+    return loadNodeFromFile(filename, "AnnotationFile", {"fiducial": 1}, returnNode)
 
 
 def loadAnnotationRuler(filename, returnNode=False):
@@ -791,7 +789,7 @@ def loadAnnotationRuler(filename, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'AnnotationFile', {'ruler': 1}, returnNode)
+    return loadNodeFromFile(filename, "AnnotationFile", {"ruler": 1}, returnNode)
 
 
 def loadAnnotationROI(filename, returnNode=False):
@@ -802,7 +800,7 @@ def loadAnnotationROI(filename, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'AnnotationFile', {'roi': 1}, returnNode)
+    return loadNodeFromFile(filename, "AnnotationFile", {"roi": 1}, returnNode)
 
 
 def loadMarkupsFiducialList(filename, returnNode=False):
@@ -842,7 +840,7 @@ def loadMarkups(filename):
     :param filename: full path of the file to load.
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
     """
-    return loadNodeFromFile(filename, 'MarkupsFile')
+    return loadNodeFromFile(filename, "MarkupsFile")
 
 
 def loadModel(filename, returnNode=False):
@@ -853,7 +851,7 @@ def loadModel(filename, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'ModelFile', {}, returnNode)
+    return loadNodeFromFile(filename, "ModelFile", {}, returnNode)
 
 
 def loadScalarOverlay(filename, modelNodeID, returnNode=False):
@@ -864,7 +862,7 @@ def loadScalarOverlay(filename, modelNodeID, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'ScalarOverlayFile', {'modelNodeId': modelNodeID}, returnNode)
+    return loadNodeFromFile(filename, "ScalarOverlayFile", {"modelNodeId": modelNodeID}, returnNode)
 
 
 def loadSegmentation(filename, properties={}, returnNode=False):
@@ -882,7 +880,7 @@ def loadSegmentation(filename, properties={}, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'SegmentationFile', properties, returnNode)
+    return loadNodeFromFile(filename, "SegmentationFile", properties, returnNode)
 
 
 def loadTransform(filename, returnNode=False):
@@ -893,7 +891,7 @@ def loadTransform(filename, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'TransformFile', {}, returnNode)
+    return loadNodeFromFile(filename, "TransformFile", {}, returnNode)
 
 
 def loadTable(filename):
@@ -902,7 +900,7 @@ def loadTable(filename):
     :param filename: full path of the file to load.
     :return: loaded table node
     """
-    return loadNodeFromFile(filename, 'TableFile')
+    return loadNodeFromFile(filename, "TableFile")
 
 
 def loadLabelVolume(filename, properties={}, returnNode=False):
@@ -913,8 +911,8 @@ def loadLabelVolume(filename, properties={}, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    properties['labelmap'] = True
-    return loadNodeFromFile(filename, 'VolumeFile', properties, returnNode)
+    properties["labelmap"] = True
+    return loadNodeFromFile(filename, "VolumeFile", properties, returnNode)
 
 
 def loadShaderProperty(filename, returnNode=False):
@@ -925,7 +923,7 @@ def loadShaderProperty(filename, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    return loadNodeFromFile(filename, 'ShaderPropertyFile', {}, returnNode)
+    return loadNodeFromFile(filename, "ShaderPropertyFile", {}, returnNode)
 
 
 def loadText(filename):
@@ -934,7 +932,7 @@ def loadText(filename):
     :param filename: full path of the text file to load.
     :return: loaded text node.
     """
-    return loadNodeFromFile(filename, 'TextFile')
+    return loadNodeFromFile(filename, "TextFile")
 
 
 def loadVolume(filename, properties={}, returnNode=False):
@@ -955,7 +953,7 @@ def loadVolume(filename, properties={}, returnNode=False):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    filetype = 'VolumeFile'
+    filetype = "VolumeFile"
     return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 
@@ -969,7 +967,7 @@ def loadSequence(filename, properties={}):
       - colorNodeID: color node to set in the proxy nodes's display node
     :return: loaded sequence node.
     """
-    filetype = 'SequenceFile'
+    filetype = "SequenceFile"
     return loadNodeFromFile(filename, filetype, properties)
 
 
@@ -981,7 +979,7 @@ def loadScene(filename, properties={}):
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
-    filetype = 'SceneFile'
+    filetype = "SceneFile"
     return loadNodeFromFile(filename, filetype, properties, returnNode=False)
 
 
@@ -1007,7 +1005,7 @@ def openAddScalarOverlayDialog():
 
 def openAddSegmentationDialog():
     from slicer import app, qSlicerFileDialog
-    return app.coreIOManager().openDialog('SegmentationFile', qSlicerFileDialog.Read)
+    return app.coreIOManager().openDialog("SegmentationFile", qSlicerFileDialog.Read)
 
 
 def openAddTransformDialog():
@@ -1037,7 +1035,7 @@ def openAddFiberBundleDialog():
 
 def openAddShaderPropertyDialog():
     from slicer import app, qSlicerFileDialog
-    return app.coreIOManager().openDialog('ShaderPropertyFile', qSlicerFileDialog.Read)
+    return app.coreIOManager().openDialog("ShaderPropertyFile", qSlicerFileDialog.Read)
 
 
 def openSaveDataDialog():
@@ -1093,8 +1091,8 @@ def saveScene(filename, properties={}):
     will be created.
     """
     from slicer import app, vtkMRMLMessageCollection
-    filetype = 'SceneFile'
-    properties['fileName'] = filename
+    filetype = "SceneFile"
+    properties["fileName"] = filename
     userMessages = vtkMRMLMessageCollection()
     success = app.coreIOManager().saveNodes(filetype, properties, userMessages)
 
@@ -1311,7 +1309,7 @@ def modulePath(moduleName):
     :return: file path of the module
     """
     import slicer  # noqa: F401
-    return eval('slicer.modules.%s.path' % moduleName.lower())
+    return eval("slicer.modules.%s.path" % moduleName.lower())
 
 
 def reloadScriptedModule(moduleName):
@@ -1343,12 +1341,12 @@ def reloadScriptedModule(moduleName):
     if p not in sys.path:
         sys.path.insert(0, p)
 
-    with open(filePath, encoding='utf8') as fp:
+    with open(filePath, encoding="utf8") as fp:
         reloaded_module = imp.load_module(
-            moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
+            moduleName, fp, filePath, (".py", "r", imp.PY_SOURCE))
 
     # find and hide the existing widget
-    parent = eval('slicer.modules.%s.widgetRepresentation()' % moduleName.lower())
+    parent = eval("slicer.modules.%s.widgetRepresentation()" % moduleName.lower())
     for child in parent.children():
         try:
             child.hide()
@@ -1362,8 +1360,8 @@ def reloadScriptedModule(moduleName):
         widget = getattr(slicer.modules, widgetName)
         widget.cleanup()
 
-        if hasattr(widget, '_onModuleAboutToBeUnloaded'):
-            slicer.app.moduleManager().disconnect('moduleAboutToBeUnloaded(QString)', widget._onModuleAboutToBeUnloaded)
+        if hasattr(widget, "_onModuleAboutToBeUnloaded"):
+            slicer.app.moduleManager().disconnect("moduleAboutToBeUnloaded(QString)", widget._onModuleAboutToBeUnloaded)
 
     # remove layout items (remaining spacer items would add space above the widget)
     items = []
@@ -1373,7 +1371,7 @@ def reloadScriptedModule(moduleName):
         parent.layout().removeItem(item)
 
     # create new widget inside existing parent
-    widget = eval('reloaded_module.%s(parent)' % widgetName)
+    widget = eval("reloaded_module.%s(parent)" % widgetName)
     widget.setup()
     setattr(slicer.modules, widgetName, widget)
 
@@ -1391,7 +1389,7 @@ def setModulePanelTitleVisible(visible):
     mw = mainWindow()
     if mw is None:
         return
-    modulePanelDockWidget = mw.findChildren('QDockWidget', 'PanelDockWidget')[0]
+    modulePanelDockWidget = mw.findChildren("QDockWidget", "PanelDockWidget")[0]
     if visible:
         modulePanelDockWidget.setTitleBarWidget(None)
     else:
@@ -1472,6 +1470,7 @@ def resetSliceViews():
 
 class MRMLNodeNotFoundException(Exception):
     """Exception raised when a requested MRML node was not found."""
+
     pass
 
 
@@ -1584,7 +1583,7 @@ class RenderBlocker:
       with slicer.util.RenderBlocker():
         # Do things
 
-  """
+    """
 
     def __enter__(self):
         import slicer
@@ -1673,9 +1672,9 @@ def arrayFromVolume(volumeNode):
         2. Perform any computations using the copied array.
         3. Write results back to the image data using :py:meth:`updateVolumeFromArray`.
     """
-    scalarTypes = ['vtkMRMLScalarVolumeNode', 'vtkMRMLLabelMapVolumeNode']
-    vectorTypes = ['vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode', 'vtkMRMLDiffusionWeightedVolumeNode']
-    tensorTypes = ['vtkMRMLDiffusionTensorVolumeNode']
+    scalarTypes = ["vtkMRMLScalarVolumeNode", "vtkMRMLLabelMapVolumeNode"]
+    vectorTypes = ["vtkMRMLVectorVolumeNode", "vtkMRMLMultiVolumeNode", "vtkMRMLDiffusionWeightedVolumeNode"]
+    tensorTypes = ["vtkMRMLDiffusionTensorVolumeNode"]
     vimage = volumeNode.GetImageData()
     nshape = tuple(reversed(volumeNode.GetImageData().GetDimensions()))
     import vtk.util.numpy_support
@@ -1738,9 +1737,9 @@ def _vtkArrayFromModelData(modelNode, arrayName, location):
 
     :raises ValueError: in case of failure
     """
-    if location == 'point':
+    if location == "point":
         modelData = modelNode.GetMesh().GetPointData()
-    elif location == 'cell':
+    elif location == "cell":
         modelData = modelNode.GetMesh().GetCellData()
     else:
         raise ValueError("Location attribute must be set to 'point' or 'cell'")
@@ -1762,14 +1761,14 @@ def arrayFromModelPointData(modelNode, arrayName):
       See :py:meth:`arrayFromVolume` for details.
     """
     import vtk.util.numpy_support
-    arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, 'point')
+    arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, "point")
     narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
     return narray
 
 
 def arrayFromModelPointDataModified(modelNode, arrayName):
     """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelPointData` has been completed."""
-    arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, 'point')
+    arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, "point")
     arrayVtk.Modified()
 
 
@@ -1781,14 +1780,14 @@ def arrayFromModelCellData(modelNode, arrayName):
       See :py:meth:`arrayFromVolume` for details.
     """
     import vtk.util.numpy_support
-    arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, 'cell')
+    arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, "cell")
     narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
     return narray
 
 
 def arrayFromModelCellDataModified(modelNode, arrayName):
     """Indicate that modification of a numpy array returned by :py:meth:`arrayFromModelCellData` has been completed."""
-    arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, 'cell')
+    arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, "cell")
     arrayVtk.Modified()
 
 
@@ -2399,7 +2398,7 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
     elif isinstance(narrays, tuple) or isinstance(narrays, list):
         ncolumns = narrays
     else:
-        raise ValueError('Expected narrays is a numpy ndarray, or tuple or list of numpy ndarrays, got %s instead.' % (str(type(narrays))))
+        raise ValueError("Expected narrays is a numpy ndarray, or tuple or list of numpy ndarrays, got %s instead." % (str(type(narrays))))
     tableNode.RemoveAllColumns()
     # Convert single string to a single-element string list
     if columnNames is None:
@@ -2428,7 +2427,7 @@ def dataframeFromTable(tableNode):
         # Suppress "lzma compression not available" UserWarning when loading pandas
         import warnings
         with warnings.catch_warnings():
-            warnings.simplefilter(action='ignore', category=UserWarning)
+            warnings.simplefilter(action="ignore", category=UserWarning)
             import pandas as pd
     except ImportError:
         raise ImportError("Failed to convert to pandas dataframe. Please install pandas by running `slicer.util.pip_install('pandas')`")
@@ -2465,7 +2464,7 @@ def dataframeFromMarkups(markupsNode):
         # Suppress "lzma compression not available" UserWarning when loading pandas
         import warnings
         with warnings.catch_warnings():
-            warnings.simplefilter(action='ignore', category=UserWarning)
+            warnings.simplefilter(action="ignore", category=UserWarning)
             import pandas as pd
     except ImportError:
         raise ImportError("Failed to convert to pandas dataframe. Please install pandas by running `slicer.util.pip_install('pandas')`")
@@ -2491,13 +2490,13 @@ def dataframeFromMarkups(markupsNode):
         visible.append(markupsNode.GetNthControlPointVisibility(controlPointIndex) != 0)
 
     dataframe = pd.DataFrame({
-        'label': label,
-        'position.R': positionWorldR,
-        'position.A': positionWorldA,
-        'position.S': positionWorldS,
-        'selected': selected,
-        'visible': visible,
-        'description': description})
+        "label": label,
+        "position.R": positionWorldR,
+        "position.A": positionWorldA,
+        "position.S": positionWorldS,
+        "selected": selected,
+        "visible": visible,
+        "description": description})
     return dataframe
 
 
@@ -2550,7 +2549,8 @@ def itkImageFromVolume(volumeNode):
 
 def itkImageFromVolumeModified(volumeNode):
     """Indicate that modification of a ITK image returned by :py:meth:`itkImageFromVolume` (or
-    associated with a volume node using :py:meth:`updateVolumeFromITKImage`) has been completed."""
+    associated with a volume node using :py:meth:`updateVolumeFromITKImage`) has been completed.
+    """
     imageData = volumeNode.GetImageData()
     pointData = imageData.GetPointData() if imageData else None
     if pointData:
@@ -2675,14 +2675,14 @@ class VTKObservationMixin:
                         g, t, p = methods.pop(method)
                         obj.RemoveObserver(t)
 
-    def addObserver(self, obj, event, method, group='none', priority=0.0):
+    def addObserver(self, obj, event, method, group="none", priority=0.0):
         from warnings import warn
 
         events = self.__observations.setdefault(obj, {})
         methods = events.setdefault(event, {})
 
         if method in methods:
-            warn('already has observer')
+            warn("already has observer")
             return
 
         tag = obj.AddObserver(event, method, priority)
@@ -2697,7 +2697,7 @@ class VTKObservationMixin:
             group, tag, priority = methods.pop(method)
             obj.RemoveObserver(tag)
         except KeyError:
-            warn('does not have observer')
+            warn("does not have observer")
 
     def getObserver(self, obj, event, method, default=None):
         try:
@@ -2750,7 +2750,7 @@ def toLatin1String(text):
 # File Utilities
 #
 
-def tempDirectory(key='__SlicerTemp__', tempDir=None, includeDateTime=True):
+def tempDirectory(key="__SlicerTemp__", tempDir=None, includeDateTime=True):
     """Come up with a unique directory name in the temp dir and make it and return it
 
     .. note:: This directory is not automatically cleaned up.
@@ -2797,7 +2797,7 @@ def delayDisplay(message, autoCloseMsec=1000, parent=None, **kwargs):
     else:
         okButton = qt.QPushButton("OK")
         layout.addWidget(okButton)
-        okButton.connect('clicked()', messagePopup.close)
+        okButton.connect("clicked()", messagePopup.close)
     # Windows 10 peek feature in taskbar shows all hidden but not destroyed windows
     # (after creating and closing a messagebox, hovering over the mouse on Slicer icon, moving up the
     # mouse to the peek thumbnail would show it again).
@@ -2940,9 +2940,9 @@ def messageBox(text, parent=None, **kwargs):
 
     # if there is detailed text, make the dialog wider by making a long title
     if "detailedText" in kwargs:
-        windowTitle = kwargs['windowTitle'] if 'windowTitle' in kwargs else slicer.app.applicationName
+        windowTitle = kwargs["windowTitle"] if "windowTitle" in kwargs else slicer.app.applicationName
         padding = " " * ((150 - len(windowTitle)) // 2)  # to center the title
-        kwargs['windowTitle'] = padding + windowTitle + padding
+        kwargs["windowTitle"] = padding + windowTitle + padding
 
     import ctk
     mbox = ctk.ctkMessageBox(parent if parent else mainWindow())
@@ -3095,7 +3095,7 @@ class MessageDialog:
         if logLevel is None:
             logLevel = logging.INFO
         if not isinstance(logLevel, int):
-            raise ValueError(f'Invalid log level: {logLevel}')
+            raise ValueError(f"Invalid log level: {logLevel}")
 
         self.message = message
         self.show = show and not slicer.app.testingEnabled()
@@ -3152,7 +3152,7 @@ def tryWithErrorDisplay(message=None, show=True, waitCursor=False):
             slicer.app.restoreOverrideCursor()
         if show and not slicer.app.testingEnabled():
             if message is not None:
-                errorMessage = f'{message}\n\n{e}'
+                errorMessage = f"{message}\n\n{e}"
             else:
                 errorMessage = str(e)
             import traceback
@@ -3185,7 +3185,7 @@ def toBool(value):
     try:
         return bool(int(value))
     except (ValueError, TypeError):
-        return value.lower() in ['true'] if isinstance(value, str) else bool(value)
+        return value.lower() in ["true"] if isinstance(value, str) else bool(value)
 
 
 def settingsValue(key, default, converter=lambda v: v, settings=None):
@@ -3198,7 +3198,7 @@ def settingsValue(key, default, converter=lambda v: v, settings=None):
     return converter(settings.value(key)) if settings.contains(key) else default
 
 
-def clickAndDrag(widget, button='Left', start=(10, 10), end=(10, 40), steps=20, modifiers=[]):
+def clickAndDrag(widget, button="Left", start=(10, 10), end=(10, 40), steps=20, modifiers=[]):
     """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
 
     :param button: "Left", "Middle", "Right", or "None"
@@ -3223,23 +3223,23 @@ def clickAndDrag(widget, button='Left', start=(10, 10), end=(10, 40), steps=20, 
     """
     style = widget.interactorStyle()
     interactor = style.GetInteractor()
-    if button == 'Left':
+    if button == "Left":
         down = interactor.LeftButtonPressEvent
         up = interactor.LeftButtonReleaseEvent
-    elif button == 'Right':
+    elif button == "Right":
         down = interactor.RightButtonPressEvent
         up = interactor.RightButtonReleaseEvent
-    elif button == 'Middle':
+    elif button == "Middle":
         down = interactor.MiddleButtonPressEvent
         up = interactor.MiddleButtonReleaseEvent
-    elif button == 'None' or not button:
+    elif button == "None" or not button:
         down = lambda: None
         up = lambda: None
     else:
         raise RuntimeError("Bad button - should be Left or Right, not %s" % button)
-    if 'Shift' in modifiers:
+    if "Shift" in modifiers:
         interactor.SetShiftKey(1)
-    if 'Control' in modifiers:
+    if "Control" in modifiers:
         interactor.SetControlKey(1)
     interactor.SetEventPosition(*start)
     down()
@@ -3271,50 +3271,50 @@ def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid
     try:
         (algo, digest) = extractAlgoAndDigest(checksum)
     except ValueError as excinfo:
-        logging.error('Failed to parse checksum: ' + excinfo.message)
+        logging.error("Failed to parse checksum: " + excinfo.message)
         return False
     if not os.path.exists(targetFilePath) or os.stat(targetFilePath).st_size == 0:
-        logging.info(f'Downloading from\n  {url}\nas file\n  {targetFilePath}\nIt may take a few minutes...')
+        logging.info(f"Downloading from\n  {url}\nas file\n  {targetFilePath}\nIt may take a few minutes...")
         try:
             import urllib.request, urllib.parse, urllib.error
             urllib.request.urlretrieve(url, targetFilePath)
         except Exception as e:
             import traceback
             traceback.print_exc()
-            logging.error('Failed to download file from ' + url)
+            logging.error("Failed to download file from " + url)
             return False
         if algo is not None:
-            logging.info('Verifying checksum\n  %s' % targetFilePath)
+            logging.info("Verifying checksum\n  %s" % targetFilePath)
             current_digest = computeChecksum(algo, targetFilePath)
             if current_digest != digest:
-                logging.error('Downloaded file does not have expected checksum.'
-                              '\n   current checksum: %s'
-                              '\n  expected checksum: %s' % (current_digest, digest))
+                logging.error("Downloaded file does not have expected checksum."
+                              "\n   current checksum: %s"
+                              "\n  expected checksum: %s" % (current_digest, digest))
                 return False
             else:
-                logging.info('Checksum OK')
+                logging.info("Checksum OK")
     else:
         if algo is not None:
             current_digest = computeChecksum(algo, targetFilePath)
             if current_digest != digest:
                 if reDownloadIfChecksumInvalid:
-                    logging.info('Requested file has been found but its checksum is different: deleting and re-downloading')
+                    logging.info("Requested file has been found but its checksum is different: deleting and re-downloading")
                     os.remove(targetFilePath)
                     return downloadFile(url, targetFilePath, checksum, reDownloadIfChecksumInvalid=False)
                 else:
-                    logging.error('Requested file has been found but its checksum is different:'
-                                  '\n   current checksum: %s'
-                                  '\n  expected checksum: %s' % (current_digest, digest))
+                    logging.error("Requested file has been found but its checksum is different:"
+                                  "\n   current checksum: %s"
+                                  "\n  expected checksum: %s" % (current_digest, digest))
                     return False
             else:
-                logging.info('Requested file has been found and checksum is OK: ' + targetFilePath)
+                logging.info("Requested file has been found and checksum is OK: " + targetFilePath)
         else:
-            logging.info('Requested file has been found: ' + targetFilePath)
+            logging.info("Requested file has been found: " + targetFilePath)
     return True
 
 
 def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=None):
-    """ Extract file ``archiveFilePath`` into folder ``outputDir``.
+    """Extract file ``archiveFilePath`` into folder ``outputDir``.
 
     Number of expected files unzipped may be specified in ``expectedNumberOfExtractedFiles``.
     If folder contains the same number of files as expected (if specified), then it will be
@@ -3324,27 +3324,27 @@ def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=No
     import logging
     from slicer import app
     if not os.path.exists(archiveFilePath):
-        logging.error('Specified file %s does not exist' % (archiveFilePath))
+        logging.error("Specified file %s does not exist" % (archiveFilePath))
         return False
     fileName, fileExtension = os.path.splitext(archiveFilePath)
-    if fileExtension.lower() != '.zip':
+    if fileExtension.lower() != ".zip":
         # TODO: Support other archive types
-        logging.error('Only zip archives are supported now, got ' + fileExtension)
+        logging.error("Only zip archives are supported now, got " + fileExtension)
         return False
 
     numOfFilesInOutputDir = len(getFilesInDirectory(outputDir, False))
     if expectedNumberOfExtractedFiles is not None \
             and numOfFilesInOutputDir == expectedNumberOfExtractedFiles:
-        logging.info(f'File {archiveFilePath} already unzipped into {outputDir}')
+        logging.info(f"File {archiveFilePath} already unzipped into {outputDir}")
         return True
 
     extractSuccessful = app.applicationLogic().Unzip(archiveFilePath, outputDir)
     numOfFilesInOutputDirTest = len(getFilesInDirectory(outputDir, False))
     if extractSuccessful is False or (expectedNumberOfExtractedFiles is not None \
                                       and numOfFilesInOutputDirTest != expectedNumberOfExtractedFiles):
-        logging.error(f'Unzipping {archiveFilePath} into {outputDir} failed')
+        logging.error(f"Unzipping {archiveFilePath} into {outputDir} failed")
         return False
-    logging.info(f'Unzipping {archiveFilePath} into {outputDir} successful')
+    logging.info(f"Unzipping {archiveFilePath} into {outputDir} successful")
     return True
 
 
@@ -3360,10 +3360,10 @@ def computeChecksum(algo, filePath):
     """
     import hashlib
 
-    if algo not in ['SHA256', 'SHA512', 'MD5']:
+    if algo not in ["SHA256", "SHA512", "MD5"]:
         raise ValueError("unsupported hashing algorithm %s" % algo)
 
-    with open(filePath, 'rb') as content:
+    with open(filePath, "rb") as content:
         hash = hashlib.new(algo)
         while True:
             chunk = content.read(8192)
@@ -3383,13 +3383,13 @@ def extractAlgoAndDigest(checksum):
     """
     if checksum is None:
         return None, None
-    if len(checksum.split(':')) != 2:
+    if len(checksum.split(":")) != 2:
         raise ValueError("invalid checksum '%s'. Expected format is '<algo>:<digest>'." % checksum)
-    (algo, digest) = checksum.split(':')
-    expected_algos = ['SHA256', 'SHA512', 'MD5']
+    (algo, digest) = checksum.split(":")
+    expected_algos = ["SHA256", "SHA512", "MD5"]
     if algo not in expected_algos:
         raise ValueError("invalid algo '{}'. Algo must be one of {}".format(algo, ", ".join(expected_algos)))
-    expected_digest_length = {'SHA256': 64, 'SHA512': 128, 'MD5': 32}
+    expected_digest_length = {"SHA256": 64, "SHA512": 128, "MD5": 32}
     if len(digest) != expected_digest_length[algo]:
         raise ValueError("invalid digest length %d. Expected digest length for %s is %d" % (len(digest), algo, expected_digest_length[algo]))
     return algo, digest
@@ -3397,7 +3397,7 @@ def extractAlgoAndDigest(checksum):
 
 def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
                               expectedNumberOfExtractedFiles=None, numberOfTrials=3, checksum=None):
-    """ Downloads an archive from ``url`` as ``archiveFilePath``, and extracts it to ``outputDir``.
+    """Downloads an archive from ``url`` as ``archiveFilePath``, and extracts it to ``outputDir``.
 
     This combined function tests the success of the download by the extraction step,
     and re-downloads if extraction failed.
@@ -3413,7 +3413,7 @@ def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
 
     def _cleanup():
         # If there was a failure, delete downloaded file and empty output folder
-        logging.warning('Download and extract failed, removing archive and destination folder and retrying. Attempt #%d...' % (maxNumberOfTrials - numberOfTrials))
+        logging.warning("Download and extract failed, removing archive and destination folder and retrying. Attempt #%d..." % (maxNumberOfTrials - numberOfTrials))
         os.remove(archiveFilePath)
         shutil.rmtree(outputDir)
         os.mkdir(outputDir)
@@ -3440,7 +3440,7 @@ def getFilesInDirectory(directory, absolutePath=True):
     for root, subdirs, files in os.walk(directory):
         for fileName in files:
             if absolutePath:
-                fileAbsolutePath = os.path.abspath(os.path.join(root, fileName)).replace('\\', '/')
+                fileAbsolutePath = os.path.abspath(os.path.join(root, fileName)).replace("\\", "/")
                 allFiles.append(fileAbsolutePath)
             else:
                 allFiles.append(fileName)
@@ -3456,6 +3456,7 @@ class chdir:
 
       Available in CTK as ``ctkScopedCurrentDir`` C++ class
     """
+
     def __init__(self, path):
         self.path = path
         self._old_cwd = []
@@ -3530,19 +3531,19 @@ def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes
 
     # Retrieve nodes that must be reused
     if nodes is not None:
-        if 'chart' in nodes:
-            chartNode = nodes['chart']
-        if 'table' in nodes:
-            tableNode = nodes['table']
-        if 'series' in nodes:
-            seriesNodes = nodes['series']
+        if "chart" in nodes:
+            chartNode = nodes["chart"]
+        if "table" in nodes:
+            tableNode = nodes["table"]
+        if "series" in nodes:
+            seriesNodes = nodes["series"]
 
     # Create table node
     if tableNode is None:
         tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
 
     if title is not None:
-        tableNode.SetName(title + ' table')
+        tableNode.SetName(title + " table")
     updateTableFromArray(tableNode, narray)
     # Update column names
     numberOfColumns = tableNode.GetTable().GetNumberOfColumns()
@@ -3565,7 +3566,7 @@ def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes
     if chartNode is None:
         chartNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLPlotChartNode")
     if title is not None:
-        chartNode.SetName(title + ' chart')
+        chartNode.SetName(title + " chart")
         chartNode.SetTitle(title)
 
     # Create plot series node(s)
@@ -3608,9 +3609,9 @@ def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes
     chartNode.Modified()
 
     if nodes is not None:
-        nodes['table'] = tableNode
-        nodes['chart'] = chartNode
-        nodes['series'] = seriesNodes
+        nodes["table"] = tableNode
+        nodes["chart"] = chartNode
+        nodes["series"] = seriesNodes
 
     return chartNode
 
@@ -3646,7 +3647,7 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
             startupEnv.update(updateEnvironment)
         else:
             startupEnv = None
-    if os.name == 'nt':
+    if os.name == "nt":
         # Hide console window (only needed on Windows)
         info = subprocess.STARTUPINFO()
         info.dwFlags = 1
@@ -3705,7 +3706,7 @@ def _executePythonModule(module, args):
         # PythonSlicer is added to PATH environment variable in Slicer
         # therefore shutil.which will be able to find it.
         import shutil
-        pythonSlicerExecutablePath = shutil.which('PythonSlicer')
+        pythonSlicerExecutablePath = shutil.which("PythonSlicer")
         if not pythonSlicerExecutablePath:
             raise RuntimeError("PythonSlicer executable not found")
     except ImportError:
@@ -3713,7 +3714,7 @@ def _executePythonModule(module, args):
         import os
         import sys
         pythonSlicerExecutablePath = os.path.dirname(sys.executable) + "/PythonSlicer"
-        if os.name == 'nt':
+        if os.name == "nt":
             pythonSlicerExecutablePath += ".exe"
 
     commandLine = [pythonSlicerExecutablePath, "-m", module, *args]
@@ -3750,13 +3751,13 @@ def pip_install(requirements):
     if type(requirements) == str:
         # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
         import shlex
-        args = 'install', *(shlex.split(requirements))
+        args = "install", *(shlex.split(requirements))
     elif type(requirements) == list:
-        args = 'install', *requirements
+        args = "install", *requirements
     else:
         raise ValueError("pip_install requirement input must be string or list")
 
-    _executePythonModule('pip', args)
+    _executePythonModule("pip", args)
 
 
 def pip_uninstall(requirements):
@@ -3787,37 +3788,37 @@ def pip_uninstall(requirements):
     if type(requirements) == str:
         # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
         import shlex
-        args = 'uninstall', *(shlex.split(requirements)), '--yes'
+        args = "uninstall", *(shlex.split(requirements)), "--yes"
     elif type(requirements) == list:
-        args = 'uninstall', *requirements, '--yes'
+        args = "uninstall", *requirements, "--yes"
     else:
         raise ValueError("pip_uninstall requirement input must be string or list")
-    _executePythonModule('pip', args)
+    _executePythonModule("pip", args)
 
 
 def longPath(path):
-    """Make long paths work on Windows, where the maximum path length is 260 characters.
+    r"""Make long paths work on Windows, where the maximum path length is 260 characters.
 
     For example, the files in the DICOM database may have paths longer than this limit.
-    Accessing these can be made safe by prefixing it with the UNC prefix ('\\?\').
+    Accessing these can be made safe by prefixing it with the UNC prefix ('\\\\?\\').
 
     :param string path: Path to be made safe if too long
 
     :return string: Safe path
     """
     # Return path as is if conversion is disabled
-    longPathConversionEnabled = settingsValue('General/LongPathConversionEnabled', True, converter=toBool)
+    longPathConversionEnabled = settingsValue("General/LongPathConversionEnabled", True, converter=toBool)
     if not longPathConversionEnabled:
         return path
     # Return path as is on operating systems other than Windows
     import qt
     sysInfo = qt.QSysInfo()
-    if sysInfo.productType() != 'windows':
+    if sysInfo.productType() != "windows":
         return path
     # Skip prefixing relative paths as UNC prefix works only on absolute paths
     if not qt.QDir.isAbsolutePath(path):
         return path
     # Return path as is if UNC prefix is already applied
-    if path[:4] == '\\\\?\\':
+    if path[:4] == "\\\\?\\":
         return path
-    return "\\\\?\\" + path.replace('/', '\\')
+    return "\\\\?\\" + path.replace("/", "\\")

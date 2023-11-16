@@ -65,7 +65,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString PythonSource;
+  QString PythonSourceFilePath;
 };
 
 //-----------------------------------------------------------------------------
@@ -112,11 +112,11 @@ qSlicerSegmentEditorScriptedPaintEffect::~qSlicerSegmentEditorScriptedPaintEffec
 QString qSlicerSegmentEditorScriptedPaintEffect::pythonSource()const
 {
   Q_D(const qSlicerSegmentEditorScriptedPaintEffect);
-  return d->PythonSource;
+  return d->PythonSourceFilePath;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newPythonSource)
+bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString filePath)
 {
   Q_D(qSlicerSegmentEditorScriptedPaintEffect);
 
@@ -125,13 +125,13 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newP
     return false;
     }
 
-  if (!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+  if (!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
     {
     return false;
     }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
+  QString moduleName = QFileInfo(filePath).baseName();
 
   // In case the effect is within the main module file
   QString className = moduleName;
@@ -157,7 +157,7 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newP
     {
     PythonQtObjectPtr local_dict;
     local_dict.setNewRef(PyDict_New());
-    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, newPythonSource, global_dict, local_dict))
+    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, filePath, global_dict, local_dict))
       {
       return false;
       }
@@ -173,7 +173,7 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newP
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSegmentEditorScriptedPaintEffect::setPythonSource - "
                             "Failed to load segment editor scripted effect: "
-                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toUtf8());
+                            "class %1 was not found in %2").arg(className).arg(filePath).toUtf8());
     PythonQt::self()->handleError();
     return false;
     }
@@ -186,7 +186,7 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString newP
     return false;
     }
 
-  d->PythonSource = newPythonSource;
+  d->PythonSourceFilePath = filePath;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer", className, self))
@@ -244,7 +244,7 @@ const QString qSlicerSegmentEditorScriptedPaintEffect::helpText()const
   // Parse result
   if (!PyUnicode_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSegmentEditorScriptedPaintEffect: Function 'helpText' is expected to return a string!";
+    qWarning() << d->PythonSourceFilePath << ": qSlicerSegmentEditorScriptedPaintEffect: Function 'helpText' is expected to return a string!";
     return this->Superclass::helpText();
     }
 
@@ -259,7 +259,7 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedPaintEffect::clo
   PyObject* result = d->PythonCppAPI.callMethod(d->CloneMethod);
   if (!result)
     {
-    qCritical() << d->PythonSource << ": clone: Failed to call mandatory clone method! If it is implemented, please see python output for errors.";
+    qCritical() << d->PythonSourceFilePath << ": clone: Failed to call mandatory clone method! If it is implemented, please see python output for errors.";
     return nullptr;
     }
 
@@ -269,7 +269,7 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedPaintEffect::clo
     resultVariant.value<QObject*>() );
   if (!clonedEffect)
     {
-    qCritical() << d->PythonSource << ": clone: Invalid cloned effect object returned from python!";
+    qCritical() << d->PythonSourceFilePath << ": clone: Invalid cloned effect object returned from python!";
     return nullptr;
     }
   return clonedEffect;

@@ -61,7 +61,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSource;
+  QString    PythonSourceFilePath;
 };
 
 //-----------------------------------------------------------------------------
@@ -99,11 +99,11 @@ qSlicerScriptedLoadableModule::~qSlicerScriptedLoadableModule() = default;
 QString qSlicerScriptedLoadableModule::pythonSource()const
 {
   Q_D(const qSlicerScriptedLoadableModule);
-  return d->PythonSource;
+  return d->PythonSourceFilePath;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSource)
+bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
 {
   Q_D(qSlicerScriptedLoadableModule);
 
@@ -112,13 +112,13 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     return false;
     }
 
-  if (!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+  if (!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
     {
     return false;
     }
 
   // Extract moduleName from the provided filename
-  QString moduleName = QFileInfo(newPythonSource).baseName();
+  QString moduleName = QFileInfo(filePath).baseName();
   this->setName(moduleName);
   QString className = moduleName;
 
@@ -139,7 +139,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     {
     PythonQtObjectPtr local_dict;
     local_dict.setNewRef(PyDict_New());
-    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, newPythonSource, global_dict, local_dict))
+    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, filePath, global_dict, local_dict))
       {
       return false;
       }
@@ -155,7 +155,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModule::setPythonSource - "
                             "Failed to load scripted loadable module: "
-                            "class %1 was not found in file %2").arg(className).arg(newPythonSource).toLatin1());
+                            "class %1 was not found in file %2").arg(className).arg(filePath).toLatin1());
     PythonQt::self()->handleError();
     return false;
     }
@@ -168,7 +168,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     return false;
     }
 
-  d->PythonSource = newPythonSource;
+  d->PythonSourceFilePath = filePath;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer.modules", moduleName + "Instance", self))
@@ -222,7 +222,7 @@ void qSlicerScriptedLoadableModule::registerFileDialog()
 {
   Q_D(qSlicerScriptedLoadableModule);
   QScopedPointer<qSlicerScriptedFileDialog> fileDialog(new qSlicerScriptedFileDialog(this));
-  bool ret = fileDialog->setPythonSource(d->PythonSource);
+  bool ret = fileDialog->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
     {
     return;
@@ -236,13 +236,13 @@ void qSlicerScriptedLoadableModule::registerIO()
 {
   Q_D(qSlicerScriptedLoadableModule);
   QScopedPointer<qSlicerScriptedFileWriter> fileWriter(new qSlicerScriptedFileWriter(this));
-  bool ret = fileWriter->setPythonSource(d->PythonSource);
+  bool ret = fileWriter->setPythonSource(d->PythonSourceFilePath);
   if (ret)
     {
     qSlicerApplication::application()->ioManager()->registerIO(fileWriter.take());
     }
   QScopedPointer<qSlicerScriptedFileReader> fileReader(new qSlicerScriptedFileReader(this));
-  ret = fileReader->setPythonSource(d->PythonSource);
+  ret = fileReader->setPythonSource(d->PythonSourceFilePath);
   if (ret)
     {
     qSlicerApplication::application()->ioManager()->registerIO(fileReader.take());
@@ -260,7 +260,7 @@ qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidget
     }
 
   QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
-  bool ret = widget->setPythonSource(d->PythonSource);
+  bool ret = widget->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
     {
     return nullptr;

@@ -1,4 +1,4 @@
-""" This module sets up root logging and loads the Slicer library modules into its namespace.
+"""This module sets up root logging and loads the Slicer library modules into its namespace.
 
 
 .. warning::
@@ -130,7 +130,7 @@
 def _createModule(name, globals, docstring):
     import imp
     import sys
-    moduleName = name.split('.')[-1]
+    moduleName = name.split(".")[-1]
     module = imp.new_module(moduleName)
     module.__file__ = __file__
     module.__doc__ = docstring
@@ -141,13 +141,13 @@ def _createModule(name, globals, docstring):
 # -----------------------------------------------------------------------------
 # Create slicer.modules and slicer.moduleNames
 
-_createModule('slicer.modules', globals(),
+_createModule("slicer.modules", globals(),
               """This object provides an access to all instantiated Slicer modules.
 
 For more details, see the generated Slicer API documentation.
 """)
 
-_createModule('slicer.moduleNames', globals(),
+_createModule("slicer.moduleNames", globals(),
               """This object provides an access to all instantiated Slicer module names.
 
 For more details, see the generated Slicer API documentation.

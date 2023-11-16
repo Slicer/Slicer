@@ -3,8 +3,7 @@ import random
 
 
 class SlicerUnitTestTest(unittest.TestCase):
-    """ See https://docs.python.org/library/unittest.html#basic-example
-    """
+    """See https://docs.python.org/library/unittest.html#basic-example"""
 
     def setUp(self):
         self.seq = list(range(10))

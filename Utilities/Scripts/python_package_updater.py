@@ -48,16 +48,14 @@ def parse_pip_list_output(packages_to_update):
 
 
 def external_project_filepaths(directory):
-    """Yield a generator of external project filepaths found in ``directory``.
-    """
+    """Yield a generator of external project filepaths found in ``directory``."""
     for dirpath, _, filenames, in os.walk(directory):
         for filename in filenames:
             yield os.path.join(dirpath, filename)
 
 
 def hint_validation_mismatch_summary(mismatches):
-    """Format list of hint validation mismatches for display purpose.
-    """
+    """Format list of hint validation mismatches for display purpose."""
     return "\n".join([f"{filepath}\n  {first} != {second}" for filepath, first, second in mismatches])
 
 
@@ -193,11 +191,11 @@ def main(args):
         This script DOES NOT handle python package version incompatibilities or the
         addition/removal of other package dependencies for a given package.
     """
-    parser.add_argument('-s', '--search-directory', metavar="Path/To/Directory", required=False, help="Directory to search and replace python version info")
-    parser.add_argument('-c', '--cpython-tag', metavar="cp{Major}.{Minor}", required=False, help="CPython version of python packages to check for")
-    parser.add_argument('--from-installed-packages', action='store_true', required=False, help="Update external projects based on installed packages")
-    parser.add_argument('--validate', action='store_true', required=False, help="Search for external project files and check consistency of hints")
-    parser.add_argument('--path', metavar="Path/To/site-packages", required=False, help="Package installation path")
+    parser.add_argument("-s", "--search-directory", metavar="Path/To/Directory", required=False, help="Directory to search and replace python version info")
+    parser.add_argument("-c", "--cpython-tag", metavar="cp{Major}.{Minor}", required=False, help="CPython version of python packages to check for")
+    parser.add_argument("--from-installed-packages", action="store_true", required=False, help="Update external projects based on installed packages")
+    parser.add_argument("--validate", action="store_true", required=False, help="Search for external project files and check consistency of hints")
+    parser.add_argument("--path", metavar="Path/To/site-packages", required=False, help="Package installation path")
     args = parser.parse_args(args=args)
 
     search_directory = args.search_directory
@@ -235,5 +233,5 @@ def main(args):
     update_external_project_python_packages(packages_to_update, search_directory, cpython_tag)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(sys.argv[1:])

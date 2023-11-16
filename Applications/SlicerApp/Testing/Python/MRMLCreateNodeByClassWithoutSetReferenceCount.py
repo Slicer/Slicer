@@ -10,11 +10,11 @@ def testMRMLCreateNodeByClassWithoutSetReferenceCount():
     # building the RUN_TESTS project.
     slicer.app.setEnvironmentVariable("DASHBOARD_TEST_FROM_CTEST", "1")
 
-    n = slicer.mrmlScene.CreateNodeByClass('vtkMRMLViewNode')
+    n = slicer.mrmlScene.CreateNodeByClass("vtkMRMLViewNode")
     slicer.mrmlScene.AddNode(n)
     # This is expected to leak memory because CreateNodeByClass increments the reference count by one
     # and nothing decrements it.
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     testMRMLCreateNodeByClassWithoutSetReferenceCount()

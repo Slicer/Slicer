@@ -412,8 +412,13 @@ vtkMRMLNode* vtkMRMLSequenceNode::SetDataNodeAtValue(vtkMRMLNode* node, const st
   this->GetSequenceScene();
   // Add a copy of the node to the sequence's scene
   vtkMRMLNode* newNode = this->DeepCopyNodeToScene(node, this->SequenceScene);
+  vtkMRMLNode* oldNode = nullptr;
   int seqItemIndex = this->GetItemNumberFromIndexValue(indexValue);
-  if (seqItemIndex<0)
+  if (seqItemIndex >= 0)
+    {
+    oldNode = this->IndexEntries[seqItemIndex].DataNode;
+    }
+  else
     {
     // The sequence item doesn't exist yet
     seqItemIndex = GetInsertPosition(indexValue);
@@ -430,6 +435,13 @@ vtkMRMLNode* vtkMRMLSequenceNode::SetDataNodeAtValue(vtkMRMLNode* node, const st
     {
     this->SetAttribute("DataNodeClassName", this->GetDataNodeClassName().c_str());
     }
+
+  if (oldNode)
+    {
+    // Remove the old node from the scene
+    this->SequenceScene->RemoveNode(oldNode);
+    }
+
   this->Modified();
   this->StorableModifiedTime.Modified();
   return newNode;
@@ -450,7 +462,11 @@ void vtkMRMLSequenceNode::RemoveDataNodeAtValue(const std::string& indexValue)
     return;
     }
   // TODO: remove associated nodes as well (such as storage node)?
-  this->SequenceScene->RemoveNode(this->IndexEntries[seqItemIndex].DataNode);
+  vtkMRMLNode* dataNode = this->IndexEntries[seqItemIndex].DataNode;
+  if (dataNode)
+    {
+    this->SequenceScene->RemoveNode(dataNode);
+    }
   this->IndexEntries.erase(this->IndexEntries.begin()+seqItemIndex);
   this->Modified();
   this->StorableModifiedTime.Modified();
@@ -782,6 +798,7 @@ int vtkMRMLSequenceNode::GetIndexTypeFromString(const std::string& indexTypeStri
   return -1;
 }
 
+//-----------------------------------------------------------
 vtkMRMLNode* vtkMRMLSequenceNode::DeepCopyNodeToScene(vtkMRMLNode* source, vtkMRMLScene* scene)
 {
   if (source == nullptr)

@@ -20,7 +20,7 @@ from DICOMLib import DICOMLoadable
 #
 
 class DICOMGeAbusPluginClass(DICOMPlugin):
-    """ Image loader plugin for GE Invenia
+    """Image loader plugin for GE Invenia
     ABUS (automated breast ultrasound) images.
     """
 
@@ -28,17 +28,17 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         super().__init__()
         self.loadType = _("GE ABUS")
 
-        self.tags['sopClassUID'] = "0008,0016"
-        self.tags['seriesNumber'] = "0020,0011"
-        self.tags['seriesDescription'] = "0008,103E"
-        self.tags['instanceNumber'] = "0020,0013"
-        self.tags['manufacturerModelName'] = "0008,1090"
+        self.tags["sopClassUID"] = "0008,0016"
+        self.tags["seriesNumber"] = "0020,0011"
+        self.tags["seriesDescription"] = "0008,103E"
+        self.tags["instanceNumber"] = "0020,0013"
+        self.tags["manufacturerModelName"] = "0008,1090"
 
         # Accepted private creator identifications
         self.privateCreators = ["U-Systems", "General Electric Company 01"]
 
     def examine(self, fileLists):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         fileLists parameter.
         """
@@ -49,7 +49,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         return loadables
 
     def examineFiles(self, files):
-        """ Returns a list of DICOMLoadable instances
+        """Returns a list of DICOMLoadable instances
         corresponding to ways of interpreting the
         files parameter.
         """
@@ -57,7 +57,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         detailedLogging = self.isDetailedLogging()
 
         supportedSOPClassUIDs = [
-            '1.2.840.10008.5.1.4.1.1.3.1',  # Ultrasound Multiframe Image Storage
+            "1.2.840.10008.5.1.4.1.1.3.1",  # Ultrasound Multiframe Image Storage
         ]
 
         loadables = []
@@ -65,12 +65,12 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         for filePath in files:
             # Quick check of SOP class UID without parsing the file...
             try:
-                sopClassUID = slicer.dicomDatabase.fileValue(filePath, self.tags['sopClassUID'])
+                sopClassUID = slicer.dicomDatabase.fileValue(filePath, self.tags["sopClassUID"])
                 if not (sopClassUID in supportedSOPClassUIDs):
                     # Unsupported class
                     continue
 
-                manufacturerModelName = slicer.dicomDatabase.fileValue(filePath, self.tags['manufacturerModelName'])
+                manufacturerModelName = slicer.dicomDatabase.fileValue(filePath, self.tags["manufacturerModelName"])
                 if manufacturerModelName != "Invenia":
                     if detailedLogging:
                         logging.debug("ManufacturerModelName is not Invenia, the series will not be considered as an ABUS image")
@@ -99,15 +99,15 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
                     logging.debug("Probe curvature radius is not found, the series will not be considered as an ABUS image")
                 continue
 
-            name = ''
-            if hasattr(ds, 'SeriesNumber') and ds.SeriesNumber:
-                name = f'{ds.SeriesNumber}:'
-            if hasattr(ds, 'Modality') and ds.Modality:
-                name = f'{name} {ds.Modality}'
-            if hasattr(ds, 'SeriesDescription') and ds.SeriesDescription:
-                name = f'{name} {ds.SeriesDescription}'
-            if hasattr(ds, 'InstanceNumber') and ds.InstanceNumber:
-                name = f'{name} [{ds.InstanceNumber}]'
+            name = ""
+            if hasattr(ds, "SeriesNumber") and ds.SeriesNumber:
+                name = f"{ds.SeriesNumber}:"
+            if hasattr(ds, "Modality") and ds.Modality:
+                name = f"{name} {ds.Modality}"
+            if hasattr(ds, "SeriesDescription") and ds.SeriesDescription:
+                name = f"{name} {ds.SeriesDescription}"
+            if hasattr(ds, "InstanceNumber") and ds.InstanceNumber:
+                name = f"{name} [{ds.InstanceNumber}]"
 
             loadable = DICOMLoadable()
             loadable.files = [filePath]
@@ -129,33 +129,33 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
             raise ValueError(f"Failed to parse DICOM file: {str(e)}")
 
         fieldsInfo = {
-            'NipplePosition': {'group': 0x0021, 'element': 0x20, 'private': True, 'required': False},
-            'FirstElementPosition': {'group': 0x0021, 'element': 0x21, 'private': True, 'required': False},
-            'CurvatureRadiusProbe': {'group': 0x0021, 'element': 0x40, 'private': True, 'required': True},
-            'CurvatureRadiusTrack': {'group': 0x0021, 'element': 0x41, 'private': True, 'required': True},
-            'LineDensity': {'group': 0x0021, 'element': 0x62, 'private': True, 'required': False},
-            'ScanDepthCm': {'group': 0x0021, 'element': 0x63, 'private': True, 'required': True},
-            'SpacingBetweenSlices': {'group': 0x0018, 'element': 0x0088, 'private': False, 'required': True},
-            'PixelSpacing': {'group': 0x0028, 'element': 0x0030, 'private': False, 'required': True},
+            "NipplePosition": {"group": 0x0021, "element": 0x20, "private": True, "required": False},
+            "FirstElementPosition": {"group": 0x0021, "element": 0x21, "private": True, "required": False},
+            "CurvatureRadiusProbe": {"group": 0x0021, "element": 0x40, "private": True, "required": True},
+            "CurvatureRadiusTrack": {"group": 0x0021, "element": 0x41, "private": True, "required": True},
+            "LineDensity": {"group": 0x0021, "element": 0x62, "private": True, "required": False},
+            "ScanDepthCm": {"group": 0x0021, "element": 0x63, "private": True, "required": True},
+            "SpacingBetweenSlices": {"group": 0x0018, "element": 0x0088, "private": False, "required": True},
+            "PixelSpacing": {"group": 0x0028, "element": 0x0030, "private": False, "required": True},
         }
 
         fieldValues = {}
         for fieldName in fieldsInfo:
             fieldInfo = fieldsInfo[fieldName]
-            if fieldInfo['private']:
+            if fieldInfo["private"]:
                 for privateCreator in self.privateCreators:
-                    tag = self.findPrivateTag(ds, fieldInfo['group'], fieldInfo['element'], privateCreator)
+                    tag = self.findPrivateTag(ds, fieldInfo["group"], fieldInfo["element"], privateCreator)
                     if tag:
                         break
             else:
-                tag = dicom.tag.Tag(fieldInfo['group'], fieldInfo['element'])
+                tag = dicom.tag.Tag(fieldInfo["group"], fieldInfo["element"])
             if tag:
                 fieldValues[fieldName] = ds[tag].value
 
         # Make sure all mandatory fields are found
         for fieldName in fieldsInfo:
             fieldInfo = fieldsInfo[fieldName]
-            if not fieldInfo['required']:
+            if not fieldInfo["required"]:
                 continue
             if fieldName not in fieldValues:
                 raise ValueError(f"Mandatory field {fieldName} was not found")
@@ -163,8 +163,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         return fieldValues
 
     def load(self, loadable):
-        """Load the selection
-        """
+        """Load the selection"""
 
         filePath = loadable.files[0]
         metadata = self.getMetadata(filePath)
@@ -197,9 +196,9 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         # I axis: scanline index (lateralSpacing)
         # J axis: sound propagation (axialSpacing)
         # K axis: slice (sliceSpacing)
-        lateralSpacing = metadata['PixelSpacing'][1]
-        axialSpacing = metadata['PixelSpacing'][0]
-        sliceSpacing = metadata['SpacingBetweenSlices']
+        lateralSpacing = metadata["PixelSpacing"][1]
+        axialSpacing = metadata["PixelSpacing"][0]
+        sliceSpacing = metadata["SpacingBetweenSlices"]
 
         ijkToRas = vtk.vtkMatrix4x4()
         ijkToRas.SetElement(0, 0, -1)
@@ -232,8 +231,8 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
     def createAcquisitionTransform(self, volumeNode, metadata):
 
         # Creates transform that applies scan conversion transform
-        probeRadius = metadata['CurvatureRadiusProbe']
-        trackRadius = metadata['CurvatureRadiusTrack']
+        probeRadius = metadata["CurvatureRadiusProbe"]
+        trackRadius = metadata["CurvatureRadiusTrack"]
         if trackRadius != 0.0:
             raise ValueError(f"Curvature Radius (Track) is {trackRadius}. Currently, only volume with zero radius can be imported.")
 
@@ -267,7 +266,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
         # create the grid transform node
         gridTransform = slicer.vtkMRMLGridTransformNode()
-        gridTransform.SetName(slicer.mrmlScene.GenerateUniqueName(volumeNode.GetName() + ' acquisition transform'))
+        gridTransform.SetName(slicer.mrmlScene.GenerateUniqueName(volumeNode.GetName() + " acquisition transform"))
         slicer.mrmlScene.AddNode(gridTransform)
         gridTransform.SetAndObserveTransformToParent(transform)
 
@@ -335,4 +334,4 @@ class DICOMGeAbusPlugin:
             slicer.modules.dicomPlugins
         except AttributeError:
             slicer.modules.dicomPlugins = {}
-        slicer.modules.dicomPlugins['DICOMGeAbusPlugin'] = DICOMGeAbusPluginClass
+        slicer.modules.dicomPlugins["DICOMGeAbusPlugin"] = DICOMGeAbusPluginClass

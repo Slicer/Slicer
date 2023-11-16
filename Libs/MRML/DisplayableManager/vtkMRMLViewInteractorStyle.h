@@ -20,7 +20,6 @@
 
 // VTK includes
 #include "vtkInteractorStyle3D.h"
-#include "vtkSmartPointer.h"
 #include "vtkWeakPointer.h"
 
 // MRML includes
@@ -76,7 +75,7 @@ public:
   void OnExpose() override;
   void OnConfigure() override;
 
-  void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers);
+  virtual void SetDisplayableManagers(vtkMRMLDisplayableManagerGroup* displayableManagers);
 
   /// Give a chance to displayable managers to process the event.
   /// It just creates vtkMRMLInteractionEventData and calls
@@ -104,14 +103,14 @@ protected:
 
   static void CustomProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata);
 
+  vtkCallbackCommand* DisplayableManagerCallbackCommand;
+  static void DisplayableManagerCallback(vtkObject *object, unsigned long event, void *clientData, void *callData);
+  virtual void ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager * displayableManager,
+                                               unsigned long event, void *callData);
+
   void SetMouseCursor(int cursor);
 
   bool MouseMovedSinceButtonDown;
-
-  /// Measures time elapsed since first button press.
-  vtkSmartPointer<vtkTimerLog> ClickTimer;
-  int NumberOfClicks;
-  double DoubleClickIntervalTimeSec;
 
   vtkWeakPointer<vtkMRMLDisplayableManagerGroup> DisplayableManagers;
   vtkMRMLAbstractDisplayableManager* FocusedDisplayableManager;

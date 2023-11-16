@@ -2,7 +2,7 @@ import os
 
 from slicer.ScriptedLoadableModule import *
 
-SOMEVAR = 'A'
+SOMEVAR = "A"
 
 
 class ModuleA(ScriptedLoadableModule):

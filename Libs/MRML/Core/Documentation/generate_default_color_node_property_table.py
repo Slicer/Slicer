@@ -30,19 +30,19 @@ table = []
 for index in range(nodes.GetNumberOfItems()):
     n = nodes.GetItemAsObject(index)
     table.append({
-        'family': n.GetClassName().replace('vtkMRML', '').replace('Node', ''),
-        'category': n.GetAttribute("Category"),
-        '_type': n.GetTypeAsString(),
-        'node_name': n.GetName(),
-        'singleton_tag': n.GetSingletonTag(),
-        'node_id': n.GetID()})
+        "family": n.GetClassName().replace("vtkMRML", "").replace("Node", ""),
+        "category": n.GetAttribute("Category"),
+        "_type": n.GetTypeAsString(),
+        "node_name": n.GetName(),
+        "singleton_tag": n.GetSingletonTag(),
+        "node_id": n.GetID()})
 
-titles = {'family': 'Family',
-          'category': 'Category',
-          '_type': 'Type',
-          'node_name': 'Node name',
-          'singleton_tag': 'Singleton Tag',
-          'node_id': 'Node ID'}
+titles = {"family": "Family",
+          "category": "Category",
+          "_type": "Type",
+          "node_name": "Node name",
+          "singleton_tag": "Singleton Tag",
+          "node_id": "Node ID"}
 max_row_widths = {column_name: len(column_title) for (column_name, column_title) in titles.items()}
 
 for row in table:
@@ -59,7 +59,7 @@ for (column_name, column_width) in max_row_widths.items():
 print(template.format(**titles))
 
 # Print separator
-print(template.format(**{column_name: '-' * column_width for column_name, column_width in max_row_widths.items()}))
+print(template.format(**{column_name: "-" * column_width for column_name, column_width in max_row_widths.items()}))
 
 # Print content
 for row in table:

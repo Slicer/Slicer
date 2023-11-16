@@ -31,18 +31,18 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   # [numpy]
   # Hashes correspond to the following packages:
-  #  - numpy-1.25.1-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - numpy-1.25.1-cp39-cp39-macosx_11_0_arm64.whl
-  #  - numpy-1.25.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - numpy-1.25.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - numpy-1.25.1-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - numpy-1.25.1-cp39-cp39-win_amd64.whl
-  numpy==1.25.1 --hash=sha256:3d7abcdd85aea3e6cdddb59af2350c7ab1ed764397f8eec97a038ad244d2d105 \
-                --hash=sha256:1a180429394f81c7933634ae49b37b472d343cccb5bb0c4a575ac8bbc433722f \
-                --hash=sha256:d412c1697c3853c6fc3cb9751b4915859c7afe6a277c2bf00acf287d56c4e625 \
-                --hash=sha256:20e1266411120a4f16fad8efa8e0454d21d00b8c7cee5b5ccad7565d95eb42dd \
-                --hash=sha256:f76aebc3358ade9eacf9bc2bb8ae589863a4f911611694103af05346637df1b7 \
-                --hash=sha256:1d5d3c68e443c90b38fdf8ef40e60e2538a27548b39b12b73132456847f4b631
+  #  - numpy-1.26.1-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - numpy-1.26.1-cp39-cp39-macosx_11_0_arm64.whl
+  #  - numpy-1.26.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - numpy-1.26.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - numpy-1.26.1-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - numpy-1.26.1-cp39-cp39-win_amd64.whl
+  numpy==1.26.1 --hash=sha256:bb894accfd16b867d8643fc2ba6c8617c78ba2828051e9a69511644ce86ce83e \
+                --hash=sha256:e44ccb93f30c75dfc0c3aa3ce38f33486a75ec9abadabd4e59f114994a9c4617 \
+                --hash=sha256:9696aa2e35cc41e398a6d42d147cf326f8f9d81befcb399bc1ed7ffea339b64e \
+                --hash=sha256:a5b411040beead47a228bde3b2241100454a6abde9df139ed087bd73fc0a4908 \
+                --hash=sha256:1e11668d6f756ca5ef534b5be8653d16c5352cbb210a5c2a79ff288e937010d5 \
+                --hash=sha256:59227c981d43425ca5e5c01094d59eb14e8772ce6975d4b2fc1e106a833d5ae2
   # [/numpy]
   ]===])
 
@@ -57,10 +57,6 @@ if(NOT Slicer_USE_SYSTEM_${proj})
     LOG_INSTALL 1
     DEPENDS
       ${${proj}_DEPENDENCIES}
-    )
-
-  ExternalProject_GenerateProjectDescription_Step(${proj}
-    VERSION ${_version}
     )
 
   #-----------------------------------------------------------------------------
