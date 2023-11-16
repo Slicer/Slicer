@@ -38,7 +38,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         self.spacingEpsilon = spacingEpsilon
         self.orientationEpsilon = orientationEpsilon
         self.acquisitionModeling = None
-        self.defaultStudyID = 'SLICER10001'  # TODO: What should be the new study ID?
+        self.defaultStudyID = "SLICER10001"  # TODO: What should be the new study ID?
         self.urlHandlerInterval = 300 # ms
         self.urlHandlerTimeout = 60 # seconds
 
@@ -543,8 +543,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         logging.info(msg)
         if len(framesByURL) > 0:
             for url,frame in framesByURL.items():
-                rescaleInterceptValue = slicer.dicomDatabase.fileValue(url, self.tags['rescaleIntercept'])
-                rescaleSlopeValue = slicer.dicomDatabase.fileValue(url, self.tags['rescaleSlope'])
+                rescaleInterceptValue = slicer.dicomDatabase.fileValue(url, self.tags["rescaleIntercept"])
+                rescaleSlopeValue = slicer.dicomDatabase.fileValue(url, self.tags["rescaleSlope"])
                 rescaleIntercept = float(rescaleInterceptValue) if rescaleInterceptValue != "" else 0.
                 rescaleSlope = float(rescaleSlopeValue) if rescaleSlopeValue != "" else 1.
                 sliceIndex = urls.index(url)
@@ -571,12 +571,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 qt.QTimer.singleShot(self.urlHandlerInterval, callback)
         else:
             rate = (volumeArray.size * volumeArray.itemsize) / elapsedTime / 1024. / 1024.
-            msg = "Download time {elapsedTime:.2f} at {rate:.2f} mebibytes/second".format(elapsedTime=elapsedTime, rate=rate)
+            msg = _("Download time {elapsedTime:.2f} at {rate:.2f} mebibytes/second").format(elapsedTime=elapsedTime, rate=rate)
             logging.info(msg)
 
     def load(self, loadable, readerApproach=None):
-        """Load the select as a scalar volume using desired approach
-        """
+        """Load the select as a scalar volume using desired approach"""
         volumeNode = None
         # first, determine if the files are actually URLs
         firstFile = loadable.files[0]

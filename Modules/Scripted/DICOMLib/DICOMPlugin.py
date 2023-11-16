@@ -150,7 +150,7 @@ class DICOMPlugin:
         return cleanValue
 
     def seriesSorter(self, x, y):
-        """ returns -1, 0, 1 for sorting of strings like: "400: series description"
+        """Returns -1, 0, 1 for sorting of strings like: "400: series description"
         Works for DICOMLoadable or other objects with name attribute
         Use like:
             from functools import cmp_to_key

@@ -725,17 +725,17 @@ def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list
 
 # ------------------------------------------------------------------------------
 def pixelArrayFromFiles(filePaths):
-    """ Return an empty pixel array of the size needed to store the
+    """Return an empty pixel array of the size needed to store the
     files indicated by the filePaths.  Assumes they have been sorted
     using getSortedImageFiles first.
     Uses values from the dicomDatabase.
     """
     tags = {}
-    tags['rows'] = "0028,0010"
-    tags['columns'] = "0028,0011"
+    tags["rows"] = "0028,0010"
+    tags["columns"] = "0028,0011"
     firstFile = filePaths[0]
-    rows = int(slicer.dicomDatabase.fileValue(firstFile, tags['rows']))
-    columns = int(slicer.dicomDatabase.fileValue(firstFile, tags['columns']))
+    rows = int(slicer.dicomDatabase.fileValue(firstFile, tags["rows"]))
+    columns = int(slicer.dicomDatabase.fileValue(firstFile, tags["columns"]))
     slices = len(filePaths)
     dtype = "int16" # always use short for the image
     pixelArray = np.empty([slices, rows, columns], dtype=dtype)
@@ -743,25 +743,25 @@ def pixelArrayFromFiles(filePaths):
 
 # ------------------------------------------------------------------------------
 def ijkToRASFromFiles(filePaths):
-    """ Return an IJKToRAS matrix based on the headers of the passed paths
+    """Return an IJKToRAS matrix based on the headers of the passed paths
     using the values from the dicomDatabase
     """
     firstFile = filePaths[0]
     lastFile = filePaths[-1]
     tags = {}
-    tags['position'] = "0020,0032"
-    tags['orientation'] = "0020,0037"
-    tags['spacing'] = "0028,0030"
-    positionString = slicer.dicomDatabase.fileValue(firstFile, tags['position'])
-    orientationString = slicer.dicomDatabase.fileValue(firstFile, tags['orientation'])
-    spacingString = slicer.dicomDatabase.fileValue(firstFile, tags['spacing'])
+    tags[position] = "0020,0032"
+    tags[orientation] = "0020,0037"
+    tags[spacing] = "0028,0030"
+    positionString = slicer.dicomDatabase.fileValue(firstFile, tags["position"])
+    orientationString = slicer.dicomDatabase.fileValue(firstFile, tags["orientation"])
+    spacingString = slicer.dicomDatabase.fileValue(firstFile, tags["spacing"])
     if positionString == "" or orientationString == "" or spacingString == "":
         logging.warning("Geometry information missing - defaulting to identity matrix")
         ijkToRAS = slicer.util.vtkMatrixFromArray(np.eye(4))
         return ijkToRAS
-    position = np.array(list(map(float, positionString.split('\\'))))
-    orientation = list(map(float, orientationString.split('\\')))
-    spacing = np.array(list(map(float, spacingString.split('\\'))))
+    position = np.array(list(map(float, positionString.split("\\"))))
+    orientation = list(map(float, orientationString.split("\\")))
+    spacing = np.array(list(map(float, spacingString.split("\\"))))
     rowOrientation = np.array(orientation[:3])
     columnOrientation = np.array(orientation[3:])
     # map from LPS to RAS
@@ -772,12 +772,12 @@ def ijkToRASFromFiles(filePaths):
     # make ijkToRAS
     rowVector = spacing[1] * rowOrientation  # dicom PixelSpacing is between rows first, then columns
     columnVector = spacing[0] * columnOrientation
-    lastPositionString = slicer.dicomDatabase.fileValue(lastFile, tags['position'])
+    lastPositionString = slicer.dicomDatabase.fileValue(lastFile, tags["position"])
     if lastPositionString == "":
         logging.warning("Geometry information missing - defaulting to identity matrix")
         ijkToRAS = slicer.util.vtkMatrixFromArray(np.eye(4))
         return ijkToRAS
-    lastPosition = np.array(list(map(float, lastPositionString.split('\\'))))
+    lastPosition = np.array(list(map(float, lastPositionString.split("\\"))))
     lastPosition *= lpsToRAS
     sliceSpacing = np.linalg.norm(lastPosition - position)
     if len(filePaths) > 1:
