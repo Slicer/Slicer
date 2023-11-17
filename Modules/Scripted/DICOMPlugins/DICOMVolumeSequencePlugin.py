@@ -224,6 +224,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
             # initialize content datetime from series datetime
             contentStartDate = exportable.tag("SeriesDate")
             contentStartTime = exportable.tag("SeriesTime")
+
             import datetime
 
             datetimeNow = datetime.datetime.now()

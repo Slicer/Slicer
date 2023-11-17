@@ -344,6 +344,7 @@ def createEmptyRepo(path, tool=None):
         raise Exception("refusing to create repository in non-empty directory")
 
     os.makedirs(path)
+
     import git
 
     return git.Repo.init(path)

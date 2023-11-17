@@ -42,6 +42,7 @@ class SliceAnnotations(VTKObservationMixin):
         # We may have several different volumes shown in different slice views,
         # so we keep in the cache a number of items, not just 2.
         self.extractedDICOMValuesCacheSize = 12
+
         import collections
 
         self.extractedDICOMValuesCache = collections.OrderedDict()

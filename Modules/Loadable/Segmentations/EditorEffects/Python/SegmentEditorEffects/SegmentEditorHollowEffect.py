@@ -194,6 +194,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
 
         shellMode = self.scriptedEffect.parameter("ShellMode")
         shellThicknessMM = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
+
         import vtkITK
 
         margin = vtkITK.vtkITKImageMargin()

@@ -203,6 +203,7 @@ class ScriptedLoadableModuleWidget:
 
         self.editModuleUiButton = None
         moduleUiFileName = self.resourcePath("UI/%s.ui" % self.moduleName)
+
         import os.path
 
         if os.path.isfile(moduleUiFileName):

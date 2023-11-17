@@ -172,6 +172,7 @@ print("Control point measurement interpolation test finished successfully")
 
 radius = 35
 numberOfControlPoints = 40
+
 import math
 
 closedCurveNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode")

@@ -229,6 +229,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         submoduleNames = ["SlicerRequestHandler", "StaticPagesRequestHandler"]
         if hasattr(slicer.modules, "dicom"):
             submoduleNames.append("DICOMRequestHandler")
+
         import imp
 
         f, filename, description = imp.find_module(packageName)
@@ -441,11 +442,13 @@ class SlicerHTTPServer(HTTPServer):
                         contentType, responseBody = highestConfidenceHandler.handleRequest(method=method, uri=uri, requestBody=requestBody)
                     except Exception as e:
                         etype, value, tb = sys.exc_info()
+
                         import traceback
 
                         for frame in traceback.format_tb(tb):
                             self.logMessage(frame)
                         self.logMessage(etype, value)
+
                         import json
 
                         contentType = b"application/json"
@@ -530,6 +533,7 @@ class SlicerHTTPServer(HTTPServer):
         print("-" * 40)
         print("Exception happened during processing of request", request)
         print("From", client_address)
+
         import traceback
 
         traceback.print_exc()  # XXX But this goes to stderr!

@@ -22,6 +22,7 @@ class SlicerStartupCompletedTestHelperModule(ScriptedLoadableModule):
 
     def onStartupCompleted(self):
         print("StartupCompleted emitted")
+
         import os
 
         fd = os.open(self.testOutputFileName, os.O_RDWR | os.O_CREAT)

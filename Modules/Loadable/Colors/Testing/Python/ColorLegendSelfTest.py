@@ -87,6 +87,7 @@ class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Starting test_ColorLegendSelfTest1")
 
         self.delayDisplay("Load CTChest sample volume")
+
         import SampleData
 
         sampleDataLogic = SampleData.SampleDataLogic()
