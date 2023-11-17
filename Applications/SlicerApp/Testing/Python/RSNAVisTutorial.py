@@ -188,6 +188,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
         # first, get the data - a zip file of dicom data
         #
         import SampleData
+
         dicomFilesDirectory = SampleData.downloadFromURL(
             fileNames="dataset1_Thorax_Abdomen.zip",
             uris=TESTING_DATA_URL + "SHA256/17a4199aad03a373dab27dc17e5bfcf84fc194d0a30975b4073e5b595d43a56a",
@@ -289,6 +290,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))
 
@@ -305,6 +307,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         SampleData.downloadFromURL(
             fileNames="Head_Scene.mrb",
             loadFiles=True,
@@ -390,6 +393,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))
 
@@ -403,6 +407,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         SampleData.downloadFromURL(
             fileNames="LiverSegments_Scene.mrb",
             loadFiles=True,
@@ -461,6 +466,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))
 
@@ -474,6 +480,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         SampleData.downloadFromURL(
             fileNames="LungSegments_Scene.mrb",
             loadFiles=True,
@@ -533,5 +540,6 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))

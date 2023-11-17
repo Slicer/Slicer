@@ -81,6 +81,7 @@ class SegmentationsModuleTest2(unittest.TestCase):
 
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             logging.error("Test caused exception!\n" + str(e))
 

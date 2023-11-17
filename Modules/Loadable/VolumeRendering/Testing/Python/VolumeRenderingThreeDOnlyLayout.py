@@ -35,6 +35,7 @@ class VolumeRenderingThreeDOnlyLayout(ScriptedLoadableModuleTest):
 
         # Load MRHead volume
         import SampleData
+
         SampleData.downloadSample("MRHead")
 
         # Enter the volume rendering module

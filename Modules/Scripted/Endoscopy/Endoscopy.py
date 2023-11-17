@@ -314,6 +314,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         # This can be used for example to show a reformatted slice
         # using with SlicerIGT extension's VolumeResliceDriver module.
         import numpy as np
+
         zVec = (focalPointPosition - cameraPosition) / np.linalg.norm(focalPointPosition - cameraPosition)
         yVec = self.pathPlaneNormal
         xVec = np.cross(yVec, zVec)
@@ -349,6 +350,7 @@ class EndoscopyComputePath:
 
     def __init__(self, fiducialListNode, dl=0.5):
         import numpy
+
         self.dl = dl  # desired world space step size (in mm)
         self.dt = dl  # current guess of parametric stepsize
         self.fids = fiducialListNode
@@ -447,6 +449,7 @@ class EndoscopyComputePath:
         this is the amount of world space not covered by step
         """
         import numpy.linalg
+
         p0 = self.path[self.path.__len__() - 1]  # last element in path
         remainder = 0
         ratio = 100
@@ -571,6 +574,7 @@ class EndoscopyPathModel:
         """
         import numpy as np
         from numpy.linalg import svd
+
         points = np.reshape(points, (np.shape(points)[0], -1))  # Collapse trialing dimensions
         assert points.shape[0] <= points.shape[1], f"There are only {points.shape[1]} points in {points.shape[0]} dimensions."
         ctr = points.mean(axis=1)

@@ -19,6 +19,7 @@ note that from the 't' variable in the console you can access the readers and ot
 class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
     def setUp(self):
         from SampleData import SampleDataLogic
+
         brainSource = SampleDataLogic().sourceForSampleName("MRHead")
         self.file_name = SampleDataLogic().downloadSourceIntoCache(brainSource)[0]
 

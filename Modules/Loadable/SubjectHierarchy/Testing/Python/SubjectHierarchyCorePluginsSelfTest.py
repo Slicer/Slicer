@@ -192,6 +192,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
         self.assertIsNotNone(shNode)
 
         import SampleData
+
         mrHeadNode = SampleData.SampleDataLogic().downloadMRHead()
 
         # Make sure Data module is initialized because the use case tested below

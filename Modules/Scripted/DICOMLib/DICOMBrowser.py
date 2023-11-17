@@ -259,6 +259,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         # 1 - load json
         import logging, os, json
+
         logging.info("Imported a DICOM directory, checking for extensions")
         modulePath = os.path.dirname(slicer.modules.dicom.path)
         extensionDescriptorPath = os.path.join(modulePath, "DICOMExtensions.json")

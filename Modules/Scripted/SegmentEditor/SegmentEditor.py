@@ -29,6 +29,7 @@ and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
     def setup(self):
         # Register subject hierarchy plugin
         import SubjectHierarchyPlugins
+
         scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
         scriptedPlugin.setPythonSource(SubjectHierarchyPlugins.SegmentEditorSubjectHierarchyPlugin.filePath)
 
@@ -55,6 +56,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Segment editor widget
         #
         import qSlicerSegmentationsModuleWidgetsPythonQt
+
         self.editor = qSlicerSegmentationsModuleWidgetsPythonQt.qMRMLSegmentEditorWidget()
         self.editor.setMaximumNumberOfUndoStates(10)
         # Set parameter node first so that the automatic selections made when the scene is set are saved

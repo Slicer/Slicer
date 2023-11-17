@@ -17,6 +17,7 @@ class VolumesLoadSceneCloseTesting(ScriptedLoadableModuleTest):
         # first, get some sample data
         #
         import SampleData
+
         SampleData.downloadSample("MRHead")
 
         #

@@ -211,6 +211,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e), self.delayMs * 2)
 
@@ -423,6 +424,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Attribute filters", self.delayMs)
 
         import SampleData
+
         sceneFile = SampleData.downloadFromURL(
             fileNames=self.attributeFilterTestSceneFileName,
             uris=self.attributeFilterTestSceneFileUrl,

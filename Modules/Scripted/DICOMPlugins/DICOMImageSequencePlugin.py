@@ -214,6 +214,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
 
     def loadImageData(self, filePath, grayscale, volumeNode):
         import vtkITK
+
         if grayscale:
             reader = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
         else:

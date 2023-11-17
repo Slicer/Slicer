@@ -80,6 +80,7 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
         logging.info("Test section: Load NAC Brain Atlas 2015")
 
         import SampleData
+
         sceneFile = SampleData.downloadFromURL(
             fileNames="NACBrainAtlas2015.mrb",
             # Note: this data set is from SlicerDataStore (not from SlicerTestingData) repository

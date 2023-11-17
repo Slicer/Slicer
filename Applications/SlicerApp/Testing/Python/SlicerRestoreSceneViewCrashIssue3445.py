@@ -98,6 +98,7 @@ class SlicerRestoreSceneViewCrashIssue3445Test(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         filePath = SampleData.downloadFromURL(
             fileNames="BrainAtlas2012.mrb",
             loadFiles=True,

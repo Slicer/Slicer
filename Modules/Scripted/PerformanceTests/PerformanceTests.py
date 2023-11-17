@@ -57,6 +57,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
 
     def downloadMRHead(self):
         import SampleData
+
         self.log.insertHtml("<b>Requesting downloading MRHead")
         self.log.repaint()
         mrHeadVolume = SampleData.downloadSample("MRHead")
@@ -72,6 +73,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
 
     def timeSteps(self, iters, f):
         import time
+
         elapsedTime = 0
         for i in range(iters):
             startTime = time.time()
@@ -92,6 +94,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
         import time
         import math
         import numpy as np
+
         sliceNode = slicer.util.getNode("vtkMRMLSliceNodeRed")
         dims = sliceNode.GetDimensions()
         elapsedTime = 0
@@ -128,6 +131,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     def crosshairJump(self, iters=15):
         """go into a loop that stresses jumping to slices by moving crosshair"""
         import time
+
         sliceNode = slicer.util.getNode("vtkMRMLSliceNodeRed")
         dims = sliceNode.GetDimensions()
         layoutManager = slicer.app.layoutManager()

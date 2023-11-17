@@ -11,6 +11,7 @@ class SitkUtilsTests(unittest.TestCase):
     def test_SimpleITK_SlicerPushPull(self):
         """Download the MRHead node"""
         import SampleData
+
         SampleData.downloadSample("MRHead")
         volumeNode1 = slicer.util.getNode("MRHead")
         self.assertEqual(volumeNode1.GetName(), "MRHead")

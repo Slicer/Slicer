@@ -20,6 +20,7 @@ def haveGit():
     # If Python is not built with SSL support then do not even try to import
     # GithubHelper (it would throw missing attribute error for HTTPSConnection)
     import http.client
+
     if hasattr(http.client, "HTTPSConnection"):
         # SSL is available
         try:
@@ -27,6 +28,7 @@ def haveGit():
             import git  # noqa: F401
             from . import GithubHelper
             from .GithubHelper import NotSet
+
             _haveGit = True
         except ImportError:
             _haveGit = False
@@ -231,6 +233,7 @@ class ExtensionWizard:
         if r is None:
             # Create new git repository
             import git
+
             r = git.Repo.init(args.destination)
             createdRepo = True
 

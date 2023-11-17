@@ -87,6 +87,7 @@ class ImportItkSnapLabelFileReader:
         except Exception as e:
             logging.error(_("Failed to load file: ") + str(e))
             import traceback
+
             traceback.print_exc()
             return False
 
@@ -114,6 +115,7 @@ class ImportItkSnapLabelFileReader:
         """
 
         import re
+
         commentLineRegex = re.compile(r"^\s*#(.*)")
         # Color line: index, r, g, b, a, label visibility, mesh visibility, description
         # Example:

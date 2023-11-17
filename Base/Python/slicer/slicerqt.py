@@ -101,6 +101,7 @@ def getSlicerRCFileName():
     will be used ('~/.slicerrc.py').
     """
     import os
+
     rcfile = os.path.join(slicer.app.slicerHome, ".slicerrc.py")
     if not os.path.exists(rcfile):
         if "SLICERRC" in os.environ:
@@ -121,6 +122,7 @@ def getSlicerRCFileName():
 def loadSlicerRCFile():
     """If it exists, execute slicer resource script"""
     import os
+
     rcfile = getSlicerRCFileName()
     if os.path.isfile(rcfile):
         print("Loading Slicer RC file [%s]" % (rcfile))

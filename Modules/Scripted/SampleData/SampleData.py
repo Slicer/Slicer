@@ -869,6 +869,7 @@ class SampleDataLogic:
         (algo, digest) = extractAlgoAndDigest(checksum)
         if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
             import urllib.request, urllib.parse, urllib.error
+
             self.logMessage(_("Requesting download {name} from {uri} ...").format(name=name, uri=uri))
             try:
                 urllib.request.urlretrieve(uri, filePath, self.reportHook)

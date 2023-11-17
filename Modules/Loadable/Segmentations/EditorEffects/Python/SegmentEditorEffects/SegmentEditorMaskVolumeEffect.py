@@ -21,6 +21,7 @@ class SegmentEditorMaskVolumeEffect(AbstractScriptedSegmentEditorEffect):
     def clone(self):
         # It should not be necessary to modify this method
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
+
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
         clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
@@ -340,6 +341,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         """
 
         import vtk  # without this we get the error: UnboundLocalError: local variable 'vtk' referenced before assignment
+
         segmentIDs = vtk.vtkStringArray()
         segmentIDs.InsertNextValue(segmentID)
         maskVolumeNode = slicer.modules.volumes.logic().CreateAndAddLabelVolume(inputVolumeNode, "TemporaryVolumeMask")
@@ -358,6 +360,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
             img = slicer.modules.segmentations.logic().CreateOrientedImageDataFromVolumeNode(maskVolumeNode)
             img.UnRegister(None)
             import vtkSegmentationCorePython as vtkSegmentationCore
+
             vtkSegmentationCore.vtkOrientedImageDataResample.CalculateEffectiveExtent(img, maskExtent, 0)
 
         if softEdgeMm == 0:
@@ -414,6 +417,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
             gaussianFilter.Update()
 
             import vtk.util.numpy_support
+
             maskImage = gaussianFilter.GetOutput()
             nshape = tuple(reversed(maskImage.GetDimensions()))
             maskArray = vtk.util.numpy_support.vtk_to_numpy(maskImage.GetPointData().GetScalars()).reshape(nshape)

@@ -177,6 +177,7 @@ def SelfTestsDemo():
 
 if __name__ == "__main__":
     import sys
+
     if "--test" in sys.argv:
         if SelfTestsTest():
             exit(0)

@@ -86,4 +86,5 @@ if __name__ == "__main__":
     finally:
         if not debug:
             import shutil
+
             shutil.rmtree(temporaryModuleDirPath)

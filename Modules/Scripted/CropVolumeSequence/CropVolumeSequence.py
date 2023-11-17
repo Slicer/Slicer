@@ -308,6 +308,7 @@ class CropVolumeSequenceTest(ScriptedLoadableModuleTest):
 
         # Load volume sequence
         import SampleData
+
         sequenceNode = SampleData.downloadSample("CTCardioSeq")
         sequenceBrowserNode = slicer.modules.sequences.logic().GetFirstBrowserNodeForSequenceNode(sequenceNode)
 

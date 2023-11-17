@@ -18,6 +18,7 @@ def haveGit():
 
     try:
         import git  # noqa: F401
+
         _haveGit = True
 
     except ImportError:
@@ -28,6 +29,7 @@ def haveGit():
 
 try:
     from charset_normalizer import detect
+
     _haveCharDet = True
 
 except ImportError:
@@ -343,6 +345,7 @@ def createEmptyRepo(path, tool=None):
 
     os.makedirs(path)
     import git
+
     return git.Repo.init(path)
 
 
@@ -417,6 +420,7 @@ def getRepo(path, tool=None, create=False):
     if haveGit() and tool in (None, "git"):
         try:
             import git
+
             repo = git.Repo(path)
             return repo
 
@@ -440,6 +444,7 @@ def getRepo(path, tool=None, create=False):
 
         elif haveGit() and tool in (None, "git"):
             import git
+
             return git.Repo.init(path)
 
         else:

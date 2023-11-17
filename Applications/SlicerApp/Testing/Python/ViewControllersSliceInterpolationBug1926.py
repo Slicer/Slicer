@@ -101,6 +101,7 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
         #
         self.delayDisplay("Getting Data")
         import SampleData
+
         head = SampleData.downloadSample("MRHead")
         tumor = SampleData.downloadSample("MRBrainTumor1")
 

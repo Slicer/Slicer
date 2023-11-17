@@ -619,6 +619,7 @@ class DataProbeTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         SampleData.downloadFromURL(
             nodeNames="FA",
             fileNames="FA.nrrd",

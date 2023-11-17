@@ -235,6 +235,7 @@ class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         volumeNode = SampleData.downloadFromURL(
             nodeNames="MRHead",
             fileNames="MR-head.nrrd",

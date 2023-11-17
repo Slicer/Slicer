@@ -170,6 +170,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         metadata = self.getMetadata(filePath)
 
         import vtkITK
+
         reader = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
         reader.SetArchetype(filePath)
         reader.AddFileName(filePath)
@@ -253,6 +254,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         # create a grid transform with one vector at the corner of each slice
         # the transform is in the same space and orientation as the volume node
         import vtk
+
         gridImage = vtk.vtkImageData()
         gridImage.SetOrigin(*volumeNode.GetOrigin())
         gridImage.SetDimensions(samplingPoints_shape[:3])
@@ -279,6 +281,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
         # Get displacements
         from math import sin, cos
+
         ijkToRas = vtk.vtkMatrix4x4()
         volumeNode.GetIJKToRASMatrix(ijkToRas)
         spacing = volumeNode.GetSpacing()

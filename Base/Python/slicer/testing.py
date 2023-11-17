@@ -14,6 +14,7 @@ def exitFailure(message=""):
 def runUnitTest(path, testname):
     import sys
     import unittest
+
     if isinstance(path, str):
         sys.path.append(path)
     else:

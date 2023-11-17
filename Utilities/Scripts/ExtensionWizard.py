@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+
 sys.path.append("./SlicerWizard")
 
 from SlicerWizard import ExtensionWizard

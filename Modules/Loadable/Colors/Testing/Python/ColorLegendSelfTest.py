@@ -88,6 +88,7 @@ class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Load CTChest sample volume")
         import SampleData
+
         sampleDataLogic = SampleData.SampleDataLogic()
         ctVolumeNode = sampleDataLogic.downloadCTChest()
         self.assertIsNotNone(ctVolumeNode)

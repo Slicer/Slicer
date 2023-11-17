@@ -110,6 +110,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
             volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLVectorVolumeNode", loadable.name)
 
         import vtkITK
+
         if loadable.grayscale:
             reader = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
         else:

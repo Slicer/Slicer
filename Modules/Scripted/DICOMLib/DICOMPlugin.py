@@ -104,6 +104,7 @@ class DICOMPlugin:
                     data_element_value = data_element_value.decode()
                 if data_element_value.rstrip() == privateCreator:
                     import pydicom as dicom
+
                     return dicom.tag.Tag(group, (tag.element << 8) + element)
         return None
 

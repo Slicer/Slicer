@@ -197,6 +197,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         SampleData.downloadFromURL(**downloads)
         self.delayDisplay("Finished with download and loading\n")
 

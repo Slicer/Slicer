@@ -101,6 +101,7 @@ class VolumeRenderingSceneCloseLogic(ScriptedLoadableModuleLogic):
         slicer.util.delayDisplay("Running the algorithm")
 
         import SampleData
+
         ctVolume = SampleData.downloadSample("CTChest")
         slicer.util.delayDisplay("Downloaded CT sample data")
 

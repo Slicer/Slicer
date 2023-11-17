@@ -61,6 +61,7 @@ def registerSampleData():
     # but if no sample data is available then this method (and associated startupCompeted signal connection) can be removed.
 
     import SampleData
+
     iconsPath = os.path.join(os.path.dirname(__file__), "Resources/Icons")
 
     # To ensure that the source code repository remains small (can be downloaded and installed quickly)
@@ -295,6 +296,7 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
             raise ValueError("Input or output volume is invalid")
 
         import time
+
         startTime = time.time()
         logging.info("Processing started")
 
@@ -351,6 +353,7 @@ class TemplateKeyTest(ScriptedLoadableModuleTest):
         # Get/create input data
 
         import SampleData
+
         registerSampleData()
         inputVolume = SampleData.downloadSample("TemplateKey1")
         self.delayDisplay("Loaded test data set")

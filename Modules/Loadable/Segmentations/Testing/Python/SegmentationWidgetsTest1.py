@@ -42,6 +42,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
         # Create new segments
         import random
+
         for segmentName in ["first", "second", "third"]:
             sphereSegment = slicer.vtkSegment()
             sphereSegment.SetName(segmentName)
@@ -135,6 +136,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
             logging.error("Baseline lists need to contain 3 elements each, the directions 3 lists of 3")
             return False
         import numpy
+
         tolerance = 0.0001
         actualSpacing = orientedImageData.GetSpacing()
         actualOrigin = orientedImageData.GetOrigin()
@@ -173,6 +175,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
 
         # Use MRHead and Tinypatient for testing
         import SampleData
+
         mrVolumeNode = SampleData.downloadSample("MRHead")
         [tinyVolumeNode, tinySegmentationNode] = SampleData.downloadSamples("TinyPatient")
 

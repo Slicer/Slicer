@@ -318,6 +318,7 @@ def openTemporaryDatabase(directory=None):
     # Specify temporary directory
     if not directory or directory == "":
         from time import gmtime, strftime
+
         directory = strftime("%Y%m%d_%H%M%S_", gmtime()) + "TempDICOMDatabase"
     if os.path.isabs(directory):
         tempDatabaseDir = directory
@@ -382,6 +383,7 @@ def createTemporaryDatabase(directory=None):
     # Specify temporary directory
     if not directory or directory == "":
         from time import gmtime, strftime
+
         directory = strftime("%Y%m%d_%H%M%S_", gmtime()) + "TempDICOMDatabase"
     if os.path.isabs(directory):
         tempDatabaseDir = directory
@@ -411,6 +413,7 @@ def deleteTemporaryDatabase(dicomDatabase, cleanup=True):
 
     if cleanup:
         import shutil
+
         databaseDir = os.path.split(dicomDatabase.databaseFilename)[0]
         shutil.rmtree(databaseDir)
         if os.access(databaseDir, os.F_OK):
@@ -452,6 +455,7 @@ def importDicom(dicomDataDir, dicomDatabase=None, copyFiles=False):
         indexer.waitForImportFinished()
     except Exception as e:
         import traceback
+
         traceback.print_exc()
         logging.error("Failed to import DICOM folder " + dicomDataDir)
         return False
@@ -646,6 +650,7 @@ def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list
 
     # Determine out-of-plane direction for first slice
     import numpy as np
+
     sliceAxes = [float(zz) for zz in ref[tags["orientation"]].split("\\")]
     x = np.array(sliceAxes[:3])
     y = np.array(sliceAxes[3:])
@@ -764,6 +769,7 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
             loadEnabled = loadEnabled or loadablesByPlugin[plugin] != []
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             logging.error("DICOM Plugin failed: %s" % str(e))
             if messages:
@@ -994,10 +1000,12 @@ def importFromDICOMWeb(
 
             except Exception as e:
                 import traceback
+
                 errors.append(f"Error importing series {currentSeriesInstanceUID}: {str(e)} ({traceback.format_exc()})")
 
     except Exception as e:
         import traceback
+
         errors.append(f"{str(e)} ({traceback.format_exc()})")
 
     finally:

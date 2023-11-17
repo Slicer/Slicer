@@ -42,6 +42,7 @@ Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See https://www
     def setup(self):
         # Register subject hierarchy plugin
         import SubjectHierarchyPlugins
+
         scriptedPlugin = slicer.qSlicerSubjectHierarchyScriptedPlugin(None)
         scriptedPlugin.setPythonSource(SubjectHierarchyPlugins.SegmentStatisticsSubjectHierarchyPlugin.filePath)
 
@@ -225,6 +226,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
             checkbox.connect("stateChanged(int)", self.updateParameterNodeFromGui)
             optionButton = qt.QPushButton(_("Options"))
             from functools import partial
+
             optionButton.connect("clicked()", partial(self.onEditParameters, plugin.name))
             editWidget = qt.QWidget()
             editWidget.setLayout(qt.QHBoxLayout())
@@ -960,6 +962,7 @@ if __name__ == "__main__":
     # TODO: ideally command line args should handle --xml
 
     import sys
+
     print(sys.argv)
 
     slicelet = SegmentStatisticsSlicelet()

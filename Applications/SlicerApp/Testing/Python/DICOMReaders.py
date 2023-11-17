@@ -189,6 +189,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
             except Exception as e:
                 import traceback
+
                 traceback.print_exc()
                 self.delayDisplay("%s Test caused exception!\n" % dataset["name"] + str(e))
                 testPass = False
@@ -217,6 +218,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         settings.setValue("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "transform")
 
         import SampleData
+
         dicomFilesDirectory = SampleData.downloadFromURL(
             fileNames="deidentifiedMRHead-dcm-one-series.zip",
             uris=TESTING_DATA_URL + "SHA256/899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
@@ -298,6 +300,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Missing Slices Test caused exception!\n" + str(e))
             testPass = False

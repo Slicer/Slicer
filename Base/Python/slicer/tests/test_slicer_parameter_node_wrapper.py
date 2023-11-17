@@ -1165,6 +1165,7 @@ class TypedParameterNodeTest(unittest.TestCase):
             param.mf = [7.0] * 100
 
         import timeit
+
         print("get int              ", timeit.timeit(lambda: param.i, number=100_000))
         print("set int              ", timeit.timeit(seti, number=100_000))
         print("get float            ", timeit.timeit(lambda: param.f, number=100_000))

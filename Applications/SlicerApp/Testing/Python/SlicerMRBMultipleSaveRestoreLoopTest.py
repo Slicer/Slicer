@@ -93,6 +93,7 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
         #
         print("Getting MR Head Volume")
         import SampleData
+
         mrHeadVolume = SampleData.downloadSample("MRHead")
 
         # Place a control point

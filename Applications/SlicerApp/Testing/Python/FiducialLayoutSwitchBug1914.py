@@ -99,6 +99,7 @@ class FiducialLayoutSwitchBug1914Test(ScriptedLoadableModuleTest):
 
         # Download MRHead from sample data
         import SampleData
+
         mrHeadVolume = SampleData.downloadSample("MRHead")
 
         # Place a point on the red slice

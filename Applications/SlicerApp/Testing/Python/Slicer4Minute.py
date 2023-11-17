@@ -126,6 +126,7 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         SampleData.downloadFromURL(
             fileNames="slicer4minute.mrb",
             loadFiles=True,

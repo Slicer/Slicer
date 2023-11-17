@@ -160,6 +160,7 @@ class DICOM(ScriptedLoadableModule):
         slicer.util.selectModule("DICOM")
         slicer.app.processEvents()
         from DICOMLib import DICOMUtils
+
         importedSeriesInstanceUIDs = DICOMUtils.importFromDICOMWeb(
             dicomWebEndpoint=queryMap["dicomweb_endpoint"],
             studyInstanceUID=queryMap["studyUID"],
@@ -906,6 +907,7 @@ class DICOMFileReader:
 
     def canLoadFileConfidence(self, filePath):
         import pydicom
+
         if pydicom.misc.is_dicom(filePath):
             # This is a DICOM file, so we return higher confidence than the default 0.5
             # to import DICOM files using DICOM module.

@@ -109,6 +109,7 @@ class PlotsSelfTestTest(ScriptedLoadableModuleTest):
 
         # Fill in the table with some example values
         import math
+
         numPoints = 69
         inc = 7.5 / (numPoints - 1)
         table.SetNumberOfRows(numPoints)

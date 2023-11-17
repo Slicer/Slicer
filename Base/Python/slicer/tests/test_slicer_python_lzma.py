@@ -17,6 +17,7 @@ class SlicerPythonLzmaTests(unittest.TestCase):
 
         # Compress
         import lzma
+
         lzc = lzma.LZMACompressor()
         compressedData = lzc.compress(originalData) + lzc.flush()
 

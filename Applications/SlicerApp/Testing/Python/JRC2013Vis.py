@@ -98,12 +98,14 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
                 processCurrentPath = dicomFilesDirectory
             else:
                 import SampleData
+
                 SampleData.downloadFromURL(
                     fileNames="Dcmtk-db.zip",
                     uris=TESTING_DATA_URL + "MD5/6bfb01cf5ffb8e3af9b1c0c9556f0c6b45f0ec40305a9539ed7a9f0dcfe378e3",
                     checksums="SHA256:6bfb01cf5ffb8e3af9b1c0c9556f0c6b45f0ec40305a9539ed7a9f0dcfe378e3")[0]
 
             import subprocess
+
             dcmqrscpExeOptions = (
                 "/bin",
                 "/../CTK-build/CMakeExternals/Install/bin",
@@ -176,11 +178,13 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
     def test_Part1DICOM(self):
         """Test the DICOM part of the test using the head atlas"""
         import os
+
         self.delayDisplay("Starting the DICOM test")
         #
         # first, get the data - a zip file of dicom data
         #
         import SampleData
+
         dicomFilesDirectory = SampleData.downloadFromURL(
             fileNames="Dcmtk-db.zip",
             uris=TESTING_DATA_URL + "MD5/7a43d121a51a631ab0df02071e5ba6ed",
@@ -193,6 +197,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Start Local DICOM Q/R SCP")
             import subprocess
             import os
+
             configFilePath = dicomFilesDirectory + "/Dcmtk-db/dcmqrscp.cfg"
             processCurrentPath = dicomFilesDirectory + "/Dcmtk-db/"
             print("configFilePath: " + os.path.abspath(configFilePath))
@@ -296,6 +301,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))
 
@@ -312,6 +318,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
         #   It would be better to replace with a new scene.
         #
         import SampleData
+
         SampleData.downloadFromURL(
             fileNames="3DHeadData.mrb",
             loadFiles=True,
@@ -374,6 +381,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))
 
@@ -384,6 +392,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         SampleData.downloadFromURL(
             fileNames="LiverData.mrb",
             loadFiles=True,
@@ -441,6 +450,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))
 
@@ -452,6 +462,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         SampleData.downloadFromURL(
             fileNames="LungData.mrb",
             loadFiles=True,
@@ -508,5 +519,6 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))

@@ -45,6 +45,7 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
 
     def computeStatistics(self, segmentID):
         import vtkSegmentationCorePython as vtkSegmentationCore
+
         requestedKeys = self.getRequestedKeys()
 
         segmentationNode = slicer.mrmlScene.GetNodeByID(self.getParameterNode().GetParameter("Segmentation"))

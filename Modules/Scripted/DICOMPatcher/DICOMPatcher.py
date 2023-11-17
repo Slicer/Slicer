@@ -164,6 +164,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
         with slicer.util.tryWithErrorDisplay(_("Unexpected error."), waitCursor=True):
 
             import tempfile
+
             if not self.outputDirSelector.currentPath:
                 self.outputDirSelector.currentPath = tempfile.mkdtemp(prefix="DICOMPatcher-", dir=slicer.app.temporaryPath)
 
@@ -253,6 +254,7 @@ class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
 
     def processDataSet(self, ds):
         import pydicom
+
         if self.firstFileInDirectory:
             # Get patient name and ID for this folder and save it
             self.firstFileInDirectory = False
@@ -283,6 +285,7 @@ class ForceSameSeriesInstanceUidInEachDirectory(DICOMPatcherRule):
 
     def processDataSet(self, ds):
         import pydicom
+
         if self.firstFileInDirectory:
             # Get seriesInstanceUID for this folder and save it
             self.firstFileInDirectory = False
@@ -299,6 +302,7 @@ class GenerateMissingIDs(DICOMPatcherRule):
 
     def processStart(self, inputRootDir, outputRootDir):
         import pydicom
+
         self.patientIDToRandomIDMap = {}
         self.studyUIDToRandomUIDMap = {}
         self.seriesUIDToRandomUIDMap = {}
@@ -308,6 +312,7 @@ class GenerateMissingIDs(DICOMPatcherRule):
 
     def processDirectory(self, currentSubDir):
         import pydicom
+
         # Assume that all files in a directory belongs to the same study
         self.randomStudyUID = pydicom.uid.generate_uid(None)
         # Assume that all files in a directory belongs to the same series
@@ -474,6 +479,7 @@ class FixExposureFiasco(DICOMPatcherRule):
 
     def processDataSet(self, ds):
         import pydicom
+
         if ds.get_item("XRayTubeCurrent"):
             val = ds.get_item("XRayTubeCurrent").value.decode()
             if "." in val:
@@ -513,6 +519,7 @@ class Anonymize(DICOMPatcherRule):
 
     def processStart(self, inputRootDir, outputRootDir):
         import pydicom
+
         self.patientIDToRandomIDMap = {}
         self.studyUIDToRandomUIDMap = {}
         self.seriesUIDToRandomUIDMap = {}
@@ -522,6 +529,7 @@ class Anonymize(DICOMPatcherRule):
 
     def processDirectory(self, currentSubDir):
         import pydicom
+
         # Assume that all files in a directory belongs to the same study
         self.randomStudyUID = pydicom.uid.generate_uid(None)
         # Assume that all files in a directory belongs to the same series
@@ -615,6 +623,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
 
     def addRule(self, ruleName, parameters=None):
         import importlib
+
         ruleModule = importlib.import_module("DICOMPatcher")
         ruleClass = getattr(ruleModule, ruleName)
         ruleInstance = ruleClass(parameters)
@@ -742,6 +751,7 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
         """
 
         import tempfile
+
         testDir = tempfile.mkdtemp(prefix="DICOMPatcherTest-", dir=slicer.app.temporaryPath)
         self.assertTrue(os.path.isdir(testDir))
 
@@ -759,6 +769,7 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
         testFileDICOMFilename = inputTestDir + "/DICOMFile.dcm"
         self.delayDisplay("Writing test file: " + testFileDICOMFilename)
         import pydicom
+
         file_meta = pydicom.dataset.Dataset()
         file_meta.MediaStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.2"  # CT Image Storage
         file_meta.MediaStorageSOPInstanceUID = "1.2.3"  # !! Need valid UID here for real work
@@ -802,4 +813,5 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Clean up")
 
         import shutil
+
         shutil.rmtree(testDir)

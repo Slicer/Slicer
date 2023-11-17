@@ -68,6 +68,7 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
         print("Running RSNA2012ProstateDemo Test case:")
 
         import SampleData
+
         SampleData.downloadFromURL(
             fileNames="RSNA2012ProstateDemo.mrb",
             loadFiles=True,

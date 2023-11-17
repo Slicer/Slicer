@@ -197,6 +197,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Download sample data")
         import SampleData
+
         volumeNode = SampleData.downloadSample("MRHead")
 
         self.delayDisplay("Test voxel value read")
@@ -219,6 +220,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Download sample data")
         import SampleData
+
         volumeNode = SampleData.downloadSample("MRHead")
 
         import numpy as np
@@ -251,6 +253,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Download sample data")
         import SampleData
+
         volumeNode = SampleData.downloadSample("MRHead")
 
         self.delayDisplay("Compute histogram")
@@ -443,6 +446,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Test array with scalar image")
         import SampleData
+
         volumeNode = SampleData.downloadSample("MRHead")
         voxelPos = [120, 135, 89]
         voxelValueVtk = volumeNode.GetImageData().GetScalarComponentAsDouble(voxelPos[0], voxelPos[1], voxelPos[2], 0)

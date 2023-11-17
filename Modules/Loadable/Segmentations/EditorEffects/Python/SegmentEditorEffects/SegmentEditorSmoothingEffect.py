@@ -21,6 +21,7 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorPaintEffect):
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
+
         clonedEffect = effects.qSlicerSegmentEditorScriptedPaintEffect(None)
         clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
