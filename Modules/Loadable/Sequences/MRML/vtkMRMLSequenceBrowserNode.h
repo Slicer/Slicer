@@ -48,7 +48,8 @@ public:
   enum
   {
     ProxyNodeModifiedEvent = 21001,
-    IndexDisplayFormatModifiedEvent
+    IndexDisplayFormatModifiedEvent,
+    SequenceNodeModifiedEvent
   };
 
   /// Modes for determining recording frame rate.
@@ -59,6 +60,17 @@ public:
     SamplingAll = 0,
     SamplingLimitedToPlaybackFrameRate,
     NumberOfRecordingSamplingModes // this line must be the last one
+  };
+
+  /// Specify what happens when during sequence browsing if a sequence does not contain an item for the
+  /// current index.
+  enum MissingItemModeType
+  {
+    MissingItemInvalid = -1, ///< mode is invalid
+    MissingItemCreateFromPrevious = 0, ///< previous item is used for initializing the new item (this is the default mode)
+    MissingItemCreateFromDefault, ///< the new item is created from the default node (typically an empty node)
+    MissingItemSetToDefault, ///< the proxy node is set to the default (empty) node; new item is not created
+    NumberOfMissingItemModes // this line must be the last one
   };
 
   /// Modes displaying index for the user
@@ -105,9 +117,11 @@ public:
   /// Remove all sequence nodes (including the master sequence node)
   void RemoveAllSequenceNodes();
 
+  //@{
   /// Returns all synchronized sequence nodes (does not include the master sequence node)
   void GetSynchronizedSequenceNodes(std::vector< vtkMRMLSequenceNode* > &synchronizedDataNodes, bool includeMasterNode=false);
   void GetSynchronizedSequenceNodes(vtkCollection* synchronizedDataNodes, bool includeMasterNode=false);
+  //@}
 
   /// Returns number of synchronized sequence nodes
   int GetNumberOfSynchronizedSequenceNodes(bool includeMasterNode = false);
@@ -115,78 +129,111 @@ public:
   /// Deprecated. Use IsSynchronizedSequenceNodeID instead.
   bool IsSynchronizedSequenceNode(const char* sequenceNodeId, bool includeMasterNode = false);
 
+  //@{
   /// Returns true if the node is selected for synchronized browsing
   bool IsSynchronizedSequenceNodeID(const char* sequenceNodeId, bool includeMasterNode = false);
   bool IsSynchronizedSequenceNode(vtkMRMLSequenceNode* sequenceNode, bool includeMasterNode = false);
+  //@}
 
+  //@{
   /// Get/Set automatic playback (automatic continuous changing of selected sequence nodes)
   vtkGetMacro(PlaybackActive, bool);
   vtkSetMacro(PlaybackActive, bool);
   vtkBooleanMacro(PlaybackActive, bool);
+  //@}
 
+  //@{
   /// Get/Set playback rate in fps (frames per second)
   vtkGetMacro(PlaybackRateFps, double);
   vtkSetMacro(PlaybackRateFps, double);
+  //@}
 
+  //@{
   /// Skipping items if necessary to reach requested playback rate. Enabled by default.
   vtkGetMacro(PlaybackItemSkippingEnabled, bool);
   vtkSetMacro(PlaybackItemSkippingEnabled, bool);
   vtkBooleanMacro(PlaybackItemSkippingEnabled, bool);
+  //@}
 
+  //@{
   /// Get/Set playback looping (restart from the first sequence node when reached the last one)
   vtkGetMacro(PlaybackLooped, bool);
   vtkSetMacro(PlaybackLooped, bool);
   vtkBooleanMacro(PlaybackLooped, bool);
+  //@}
 
+  //@{
   /// Get/Set selected bundle index
   vtkGetMacro(SelectedItemNumber, int);
   vtkSetMacro(SelectedItemNumber, int);
+  //@}
 
+  /// Set selected item by index value.
+  /// If exact match is not required and index is numeric then the best matching data node is returned.
+  /// Returns true if the index value is found.
+  /// \sa GetItemNumberFromIndexValue
+  bool SetSelectedItemByIndexValue(const std::string& indexValue, bool exactMatchRequired = true);
+
+  //@{
   /// Get/set recording of proxy nodes
   vtkGetMacro(RecordingActive, bool);
   void SetRecordingActive(bool recording);
   vtkBooleanMacro(RecordingActive, bool);
+  //@}
 
+  //@{
   /// Get/set whether to only record when the master node is modified (or emits an observed event)
   vtkGetMacro(RecordMasterOnly, bool);
   vtkSetMacro(RecordMasterOnly, bool);
   vtkBooleanMacro(RecordMasterOnly, bool);
+  //@}
 
-  /// Set the recording sampling mode
+  //@{
+  /// Get/set the recording sampling mode
   vtkSetMacro(RecordingSamplingMode, int);
   void SetRecordingSamplingModeFromString(const char *recordingSamplingModeString);
-  /// Get the recording sampling mode
   vtkGetMacro(RecordingSamplingMode, int);
   virtual std::string GetRecordingSamplingModeAsString();
+  //@}
 
+  //@{
   /// Helper functions for converting between string and code representation of recording sampling modes
   static std::string GetRecordingSamplingModeAsString(int recordingSamplingMode);
   static int GetRecordingSamplingModeFromString(const std::string &recordingSamplingModeString);
+  //@}
 
-  /// Set index display mode
+  //@{
+  /// Helper functions for converting between string and code representation of recording sampling modes
+  static std::string GetMissingItemModeAsString(int missingItemMode);
+  static MissingItemModeType GetMissingItemModeFromString(const std::string& missingItemModeString);
+  //@}
+
+  //@{
+  /// Get/set index display mode
   vtkSetMacro(IndexDisplayMode, int);
   void SetIndexDisplayModeFromString(const char *indexDisplayModeString);
-  /// Get index display mode
   vtkGetMacro(IndexDisplayMode, int);
   virtual std::string GetIndexDisplayModeAsString();
+  //@}
 
-  /// Set format of index value display (used if index type is numeric)
+  //@{
+  /// Get/set format of index value display (used if index type is numeric)
   void SetIndexDisplayFormat(std::string displayFormat);
-  /// Get format of index value display (used if index type is numeric)
   vtkGetMacro(IndexDisplayFormat, std::string);
+  //@}
 
+  //@{
   /// Helper functions for converting between string and code representation of index display modes
   static std::string GetIndexDisplayModeAsString(int indexDisplayMode);
   static int GetIndexDisplayModeFromString(const std::string &indexDisplayModeString);
+  //@}
 
-  /// Selects the next sequence item for display, returns current selected item number
+  //@{
+  /// Selects a sequence item for display, returns current selected item number.
   int SelectNextItem(int selectionIncrement=1);
-
-  /// Selects first sequence item for display, returns current selected item number
   int SelectFirstItem();
-
-  /// Selects last sequence item for display, returns current selected item number
   int SelectLastItem();
+  //@}
 
   /// Returns number of items in the sequence (number of data nodes in master sequence node)
   int GetNumberOfItems();
@@ -240,7 +287,6 @@ public:
   void GetAllProxyNodes(std::vector< vtkMRMLNode* > &nodes);
   void GetAllProxyNodes(vtkCollection* nodes);
 
-
   /// Deprecated method!
   void GetAllVirtualOutputDataNodes(vtkCollection* nodes)
     {
@@ -268,23 +314,41 @@ public:
   /// Returns true if any of the sequence node is allowed to record
   bool IsAnySequenceNodeRecording();
 
-  /// Get the synchronization properties for the given sequence/proxy tuple
-  bool GetRecording(vtkMRMLSequenceNode* sequenceNode);
+  //@{
+  /// Update the proxy node with the content of the sequence.
   bool GetPlayback(vtkMRMLSequenceNode* sequenceNode);
-  /// Overwrite proxy node name with name automatically generated from sequence base name and current item index.
-  bool GetOverwriteProxyName(vtkMRMLSequenceNode* sequenceNode);
+  void SetPlayback(vtkMRMLSequenceNode* sequenceNode, bool playback);
+  //@}
+
+  //@{
+  /// Add new items to the sequence when sequence recording is activated.
+  bool GetRecording(vtkMRMLSequenceNode* sequenceNode);
+  void SetRecording(vtkMRMLSequenceNode* sequenceNode, bool recording);
+  //@}
+
+  //@{
   /// Enable saving of current proxy node state into the sequence.
   /// If saving is enabled then data is copied from the sequence to into the proxy node using shallow-copy,
   /// which is faster than deep-copy (that is used when save changes disabled).
   /// However, if save changes enabled, proxy node changes are stored in the sequence, therefore users
   /// may accidentally change sequence node content by modifying proxy nodes.
   bool GetSaveChanges(vtkMRMLSequenceNode* sequenceNode);
-
-  /// Set the synchronization properties for the given sequence/proxy tuple
-  void SetRecording(vtkMRMLSequenceNode* sequenceNode, bool recording);
-  void SetPlayback(vtkMRMLSequenceNode* sequenceNode, bool playback);
-  void SetOverwriteProxyName(vtkMRMLSequenceNode* sequenceNode, bool overwrite);
   void SetSaveChanges(vtkMRMLSequenceNode* sequenceNode, bool save);
+  //@}
+
+  //@{
+  /// Overwrite proxy node name with name automatically generated from sequence base name and current item index.
+  bool GetOverwriteProxyName(vtkMRMLSequenceNode* sequenceNode);
+  void SetOverwriteProxyName(vtkMRMLSequenceNode* sequenceNode, bool overwrite);
+  //@}
+
+  //@{
+  /// Specify what happens when during sequence browsing if a sequence does not contain an item for the
+  /// current index.
+  /// \sa MissingItemMode
+  MissingItemModeType GetMissingItemMode(vtkMRMLSequenceNode* sequenceNode);
+  void SetMissingItemMode(vtkMRMLSequenceNode* sequenceNode, MissingItemModeType missingItemMode);
+  //@}
 
   /// Process MRML node events for recording of the proxy nodes
   void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData ) override;
