@@ -234,7 +234,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
             defaultPlusMoveTransform[2],  # [0.0, 0.0, 100.0, 0.2]
             defaultPlusMoveTransform[0],  # [100.0, 0.0, 0.0, -42.0]
             defaultPlusMoveTransform[1],  # [0.0, 100.0, 0.0, 52.0]
-            defaultPlusMoveTransform[3]  # [0.0, 0.0, 0.0, 1.0],
+            defaultPlusMoveTransform[3],  # [0.0, 0.0, 0.0, 1.0],
         ]
         representation.GetTransform(transform)
         self.assertTransform(transform, defaultPlusMovePlusRotationTransform)
@@ -244,7 +244,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
             volumePlusMoveTransform[2],
             volumePlusMoveTransform[0],
             volumePlusMoveTransform[1],
-            volumePlusMoveTransform[3]
+            volumePlusMoveTransform[3],
         ]
 
         volume.SetAndObserveTransformNodeID(tNode.GetID())

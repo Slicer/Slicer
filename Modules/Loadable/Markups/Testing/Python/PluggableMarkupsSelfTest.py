@@ -128,7 +128,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
             slicer.vtkMRMLMarkupsLineNode(): slicer.vtkSlicerLineWidget(),
             slicer.vtkMRMLMarkupsPlaneNode(): slicer.vtkSlicerPlaneWidget(),
             slicer.vtkMRMLMarkupsROINode(): slicer.vtkSlicerROIWidget(),
-            slicer.vtkMRMLMarkupsTestLineNode(): slicer.vtkSlicerTestLineWidget()
+            slicer.vtkMRMLMarkupsTestLineNode(): slicer.vtkSlicerTestLineWidget(),
         }
 
     def additionalOptionsWidgets(self):
@@ -137,7 +137,7 @@ class PluggableMarkupsSelfTestLogic(ScriptedLoadableModuleLogic):
             slicer.qMRMLMarkupsAngleMeasurementsWidget(),
             slicer.qMRMLMarkupsPlaneWidget(),
             slicer.qMRMLMarkupsROIWidget(),
-            slicer.qMRMLMarkupsTestLineWidget()
+            slicer.qMRMLMarkupsTestLineWidget(),
         ]
 
     def test_unregister_existing_markups(self):

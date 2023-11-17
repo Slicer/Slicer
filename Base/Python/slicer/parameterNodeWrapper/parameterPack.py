@@ -55,7 +55,7 @@ def _writeValue(self, name: str, value) -> None:
 def _makeConcreteProperty(name: str):
     return property(
         lambda self: _readValue(self, name),
-        lambda self, value: _writeValue(self, name, value)
+        lambda self, value: _writeValue(self, name, value),
     )
 
 

@@ -39,7 +39,7 @@ class ExtensionProject:
     _referencedVariables = re.compile(r"\$\{([\w_\/\.\+\-]+)\}")
 
     # ---------------------------------------------------------------------------
-    def __init__(self, path, encoding=None, filename="CMakeLists.txt", ):
+    def __init__(self, path, encoding=None, filename="CMakeLists.txt" ):
         """
         :param path: Top level directory of the extension project.
         :type path: :class:`str`

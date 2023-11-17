@@ -59,7 +59,7 @@ def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
             "--no-splash",
             "--disable-builtin-modules",
             "--additional-module-path", temporaryModuleDirPath,
-            "--python-code", 'slicer.util.selectModule("ModuleCleanup")'
+            "--python-code", 'slicer.util.selectModule("ModuleCleanup")',
         ]
 
         test_output_file = temporaryModuleDirPath + "/ModuleCleanupTest.out"

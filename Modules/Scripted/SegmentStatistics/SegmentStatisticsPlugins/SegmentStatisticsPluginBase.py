@@ -24,7 +24,7 @@ class SegmentStatisticsPluginBase:
         info = {
             "name": name,
             "description": description,
-            "units": units
+            "units": units,
         }
         if componentNames:
             info["componentNames"] = componentNames

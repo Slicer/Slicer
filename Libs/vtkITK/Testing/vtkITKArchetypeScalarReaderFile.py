@@ -37,8 +37,8 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
         self.assertTrue(
             compare_vtk_matrix(
                 self.ritk.GetRasToIjkMatrix(),
-                self.rnrrd.GetRasToIjkMatrix()
-            )
+                self.rnrrd.GetRasToIjkMatrix(),
+            ),
         )
 
     def test_pointdata(self):

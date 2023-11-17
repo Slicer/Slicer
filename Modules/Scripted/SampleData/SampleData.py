@@ -172,12 +172,12 @@ class SampleDataSource:
             if checksums is None:
                 checksums = [None] * len(uris)
         elif isinstance(uris, str):
-            uris = [uris, ]
-            fileNames = [fileNames, ]
-            nodeNames = [nodeNames, ]
-            loadFiles = [loadFiles, ]
-            loadFileType = [loadFileType, ]
-            checksums = [checksums, ]
+            uris = [uris ]
+            fileNames = [fileNames ]
+            nodeNames = [nodeNames ]
+            loadFiles = [loadFiles ]
+            loadFileType = [loadFileType ]
+            checksums = [checksums ]
 
         updatedFileType = []
         for fileName, nodeName, fileType in zip(fileNames, nodeNames, loadFileType):
@@ -215,7 +215,7 @@ class SampleDataSource:
                 f"  len(nodeNames)       : {len(nodeNames)}\n"
                 f"  len(loadFiles)       : {len(loadFiles)}\n"
                 f"  len(updatedFileType) : {len(updatedFileType)}\n"
-                f"  len(checksums)       : {len(checksums)}\n"
+                f"  len(checksums)       : {len(checksums)}\n",
             )
 
     def __eq__(self, other):
@@ -228,7 +228,7 @@ class SampleDataSource:
             "thumbnailFileName : %s" % self.thumbnailFileName,
             "loadFileProperties: %s" % self.loadFileProperties,
             "customDownloader  : %s" % self.customDownloader,
-            ""
+            "",
         ]
         for fileName, uri, nodeName, loadFile, fileType, checksum in zip(self.fileNames, self.uris, self.nodeNames, self.loadFiles, self.loadFileType, self.checksums):
             output.extend([
@@ -238,7 +238,7 @@ class SampleDataSource:
                 " nodeName    : %s" % nodeName,
                 " loadFile    : %s" % loadFile,
                 " loadFileType: %s" % fileType,
-                ""
+                "",
             ])
         return "\n".join(output)
 
@@ -539,7 +539,7 @@ class SampleDataLogic:
              "BaselineVolume.nrrd", "BaselineVolume", "SHA256:dff28a7711d20b6e16d5416535f6010eb99fd0c8468aaa39be4e39da78e93ec2"),
             ("DTIVolume", None,
              (TESTING_DATA_URL + "SHA256/d785837276758ddd9d21d76a3694e7fd866505a05bc305793517774c117cb38d",
-              TESTING_DATA_URL + "SHA256/67564aa42c7e2eec5c3fd68afb5a910e9eab837b61da780933716a3b922e50fe", ),
+              TESTING_DATA_URL + "SHA256/67564aa42c7e2eec5c3fd68afb5a910e9eab837b61da780933716a3b922e50fe" ),
              ("DTIVolume.raw.gz", "DTIVolume.nhdr"), (None, "DTIVolume"),
              ("SHA256:d785837276758ddd9d21d76a3694e7fd866505a05bc305793517774c117cb38d",
               "SHA256:67564aa42c7e2eec5c3fd68afb5a910e9eab837b61da780933716a3b922e50fe")),
@@ -553,20 +553,20 @@ class SampleDataLogic:
              "Panoramix-cropped.nrrd", "Panoramix-cropped", "SHA256:146af87511520c500a3706b7b2bfb545f40d5d04dd180be3a7a2c6940e447433"),
             ("CBCTDentalSurgery", None,
              (TESTING_DATA_URL + "SHA256/7bfa16945629c319a439f414cfb7edddd2a97ba97753e12eede3b56a0eb09968",
-              TESTING_DATA_URL + "SHA256/4cdc3dc35519bb57daeef4e5df89c00849750e778809e94971d3876f95cc7bbd",),
+              TESTING_DATA_URL + "SHA256/4cdc3dc35519bb57daeef4e5df89c00849750e778809e94971d3876f95cc7bbd"),
              ("PreDentalSurgery.gipl.gz", "PostDentalSurgery.gipl.gz"), ("PreDentalSurgery", "PostDentalSurgery"),
              ("SHA256:7bfa16945629c319a439f414cfb7edddd2a97ba97753e12eede3b56a0eb09968",
               "SHA256:4cdc3dc35519bb57daeef4e5df89c00849750e778809e94971d3876f95cc7bbd")),
             ("MRUSProstate", "MR-US Prostate",
              (TESTING_DATA_URL + "SHA256/4843cdc9ea5d7bcce61650d1492ce01035727c892019339dca726380496896aa",
-              TESTING_DATA_URL + "SHA256/34decf58b1e6794069acbe947b460252262fe95b6858c5e320aeab03bc82ebb2",),
+              TESTING_DATA_URL + "SHA256/34decf58b1e6794069acbe947b460252262fe95b6858c5e320aeab03bc82ebb2"),
              ("Case10-MR.nrrd", "case10_US_resampled.nrrd"), ("MRProstate", "USProstate"),
              ("SHA256:4843cdc9ea5d7bcce61650d1492ce01035727c892019339dca726380496896aa",
               "SHA256:34decf58b1e6794069acbe947b460252262fe95b6858c5e320aeab03bc82ebb2")),
             ("CTMRBrain", "CT-MR Brain",
              (TESTING_DATA_URL + "SHA256/6a5b6caccb76576a863beb095e3bfb910c50ca78f4c9bf043aa42f976cfa53d1",
               TESTING_DATA_URL + "SHA256/2da3f655ed20356ee8cdf32aa0f8f9420385de4b6e407d28e67f9974d7ce1593",
-              TESTING_DATA_URL + "SHA256/fa1fe5910a69182f2b03c0150d8151ac6c75df986449fb5a6c5ae67141e0f5e7",),
+              TESTING_DATA_URL + "SHA256/fa1fe5910a69182f2b03c0150d8151ac6c75df986449fb5a6c5ae67141e0f5e7"),
              ("CT-brain.nrrd", "MR-brain-T1.nrrd", "MR-brain-T2.nrrd"),
              ("CTBrain", "MRBrainT1", "MRBrainT2"),
              ("SHA256:6a5b6caccb76576a863beb095e3bfb910c50ca78f4c9bf043aa42f976cfa53d1",
@@ -574,7 +574,7 @@ class SampleDataLogic:
               "SHA256:fa1fe5910a69182f2b03c0150d8151ac6c75df986449fb5a6c5ae67141e0f5e7")),
             ("CBCTMRHead", "CBCT-MR Head",
              (TESTING_DATA_URL + "SHA256/4ce7aa75278b5a7b757ed0c8d7a6b3caccfc3e2973b020532456dbc8f3def7db",
-              TESTING_DATA_URL + "SHA256/b5e9f8afac58d6eb0e0d63d059616c25a98e0beb80f3108410b15260a6817842",),
+              TESTING_DATA_URL + "SHA256/b5e9f8afac58d6eb0e0d63d059616c25a98e0beb80f3108410b15260a6817842"),
              ("DZ-CBCT.nrrd", "DZ-MR.nrrd"),
              ("DZ-CBCT", "DZ-MR"),
              ("SHA256:4ce7aa75278b5a7b757ed0c8d7a6b3caccfc3e2973b020532456dbc8f3def7db",
@@ -612,7 +612,7 @@ class SampleDataLogic:
             nodeNames=["TinyPatient_CT", "TinyPatient_Segments"],
             thumbnailFileName=os.path.join(iconPath, "TinyPatient.png"),
             loadFileType=["VolumeFile", "SegmentationFile"],
-            checksums=["SHA256:c0743772587e2dd4c97d4e894f5486f7a9a202049c8575e032114c0a5c935c3b", "SHA256:3243b62bde36b1db1cdbfe204785bd4bc1fbb772558d5f8cac964cda8385d470"]
+            checksums=["SHA256:c0743772587e2dd4c97d4e894f5486f7a9a202049c8575e032114c0a5c935c3b", "SHA256:3243b62bde36b1db1cdbfe204785bd4bc1fbb772558d5f8cac964cda8385d470"],
         )
 
     def registerTestingDataSources(self):
@@ -774,7 +774,7 @@ class SampleDataLogic:
         """
         return self.downloadFromSource(SampleDataSource(
             uris=uris, fileNames=fileNames, nodeNames=nodeNames, loadFiles=loadFiles,
-            loadFileType=loadFileTypes, loadFileProperties=loadFileProperties, checksums=checksums
+            loadFileType=loadFileTypes, loadFileProperties=loadFileProperties, checksums=checksums,
         ))
 
     def downloadSample(self, sampleName):
@@ -1169,7 +1169,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         "sampleName": "customDownloader",
         "uris": "http://down.load/test",
         "fileNames": "cust.om",
-        "customDownloader": CustomDownloader()
+        "customDownloader": CustomDownloader(),
     }
 
     def test_customDownloader(self):

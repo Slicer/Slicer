@@ -52,13 +52,13 @@ class SliceAnnotations(VTKObservationMixin):
         self.cornerTexts.append({
             "1-Label": {"text": "", "category": "A"},
             "2-Foreground": {"text": "", "category": "A"},
-            "3-Background": {"text": "", "category": "A"}
+            "3-Background": {"text": "", "category": "A"},
         })
         # Bottom Right Corner Text
         # Not used - orientation figure may be drawn there
         self.cornerTexts.append({
             "1-TR": {"text": "", "category": "A"},
-            "2-TE": {"text": "", "category": "A"}
+            "2-TE": {"text": "", "category": "A"},
         })
         # Top Left Corner Text
         self.cornerTexts.append({
@@ -70,7 +70,7 @@ class SliceAnnotations(VTKObservationMixin):
             "6-Bg-SeriesTime": {"text": "", "category": "C"},
             "7-Bg-SeriesTime": {"text": "", "category": "C"},
             "8-Bg-SeriesDescription": {"text": "", "category": "C"},
-            "9-Fg-SeriesDescription": {"text": "", "category": "C"}
+            "9-Fg-SeriesDescription": {"text": "", "category": "C"},
         })
         # Top Right Corner Text
         self.cornerTexts.append({
@@ -82,7 +82,7 @@ class SliceAnnotations(VTKObservationMixin):
             "6-TR": {"text": "", "category": "A"},
             "7-TE": {"text": "", "category": "A"},
             "8-SlabReconstructionThickness": {"text": "", "category": "A"},
-            "9-SlabReconstructionType": {"text": "", "category": "A"}
+            "9-SlabReconstructionType": {"text": "", "category": "A"},
         })
 
         #
@@ -700,7 +700,7 @@ class SliceAnnotations(VTKObservationMixin):
             "0010,1010": "Patient Age",
             "0018,5100": "Patient Position",
             "0018,0080": "Repetition Time",
-            "0018,0081": "Echo Time"
+            "0018,0081": "Echo Time",
         }
         for tag in tags.keys():
             value = slicer.dicomDatabase.instanceValue(uid, tag)

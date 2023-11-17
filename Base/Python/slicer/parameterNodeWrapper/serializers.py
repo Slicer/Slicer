@@ -509,7 +509,7 @@ class ObservedList(collections.abc.MutableSequence):
         self._saveList()
         return val
 
-    def clear(self, ) -> None:
+    def clear(self ) -> None:
         self._list.clear()
         self._saveList()
 
@@ -1008,7 +1008,7 @@ class EnumSerializer(Serializer):
             return self.enum[key]
         except KeyError as ex:
             raise ValueError(
-                f"Found {key!r} in parameter node but it is not a name in {self.enum!r}"
+                f"Found {key!r} in parameter node but it is not a name in {self.enum!r}",
             ) from ex
 
     def remove(self, parameterNode, name: str) -> None:

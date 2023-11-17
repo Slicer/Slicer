@@ -122,11 +122,11 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
         mrbFilePath = slicer.util.tempDirectory("__mrb__") + "/SlicerMRBMultipleSaveRestore-1.mrb"
         self.delayDisplay("Saving scene to: %s\n" % sceneSaveDirectory + "Saving mrb to: %s" % mrbFilePath)
         self.assertTrue(
-            applicationLogic.SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None)
+            applicationLogic.SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None),
         )
         self.delayDisplay("Finished saving scene")
         self.assertTrue(
-            applicationLogic.Zip(mrbFilePath, sceneSaveDirectory)
+            applicationLogic.Zip(mrbFilePath, sceneSaveDirectory),
         )
         self.delayDisplay("Finished saving MRB")
         self.delayDisplay("Slicer mrml scene root dir after first save = %s" % slicer.mrmlScene.GetRootDirectory())
@@ -173,11 +173,11 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
         mrbFilePath = slicer.util.tempDirectory("__mrb__") + "/SlicerMRBMultipleSaveRestore-2.mrb"
         self.delayDisplay("Saving scene to: %s\n" % sceneSaveDirectory + "Saving mrb to: %s" % mrbFilePath)
         self.assertTrue(
-            applicationLogic.SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None)
+            applicationLogic.SaveSceneToSlicerDataBundleDirectory(sceneSaveDirectory, None),
         )
         self.delayDisplay("Finished saving scene after restoring a scene view")
         self.assertTrue(
-            applicationLogic.Zip(mrbFilePath, sceneSaveDirectory)
+            applicationLogic.Zip(mrbFilePath, sceneSaveDirectory),
         )
         self.delayDisplay("Finished saving MRB after restoring a scene view")
 

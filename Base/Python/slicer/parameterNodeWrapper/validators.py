@@ -39,7 +39,7 @@ def extractValidators(annotations):
 
     return (
         [x for x in annotations if isValidator(x)],
-        [x for x in annotations if not isValidator(x)]
+        [x for x in annotations if not isValidator(x)],
     )
 
 

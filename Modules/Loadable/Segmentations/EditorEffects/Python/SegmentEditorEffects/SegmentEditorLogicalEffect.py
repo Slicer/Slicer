@@ -228,7 +228,7 @@ segment list in effect options - below.
                 vtkSegmentationCore.vtkOrientedImageDataResample.ResampleOrientedImageToReferenceOrientedImage(
                     modifierSegmentLabelmap, commonGeometryImage, modifierSegmentLabelmap_CommonGeometry,
                     False,  # nearest neighbor interpolation,
-                    True  # make sure resampled modifier segment is not cropped
+                    True,  # make sure resampled modifier segment is not cropped
                 )
                 modifierSegmentLabelmap = modifierSegmentLabelmap_CommonGeometry
 
