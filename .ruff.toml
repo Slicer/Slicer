@@ -7,6 +7,7 @@ select = [
 #  "ANN",         # flake8-annotations
   "B",           # flake8-bugbear
   "C4",          # flake8-comprehensions
+  "COM",         # flake8-commas
   "E", "F", "W", # flake8
   "D",           # pydocstyle
 #  "EXE",         # flake8-executable
