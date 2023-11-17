@@ -118,7 +118,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
             foreground=foregroundNode,
             label=labelmapNode,
             foregroundOpacity=0.5,
-            labelOpacity=0.1
+            labelOpacity=0.1,
         )
         self.assertEqual(redSliceCompositeNode.GetBackgroundVolumeID(), backgroundNode.GetID())
         self.assertEqual(redSliceCompositeNode.GetForegroundVolumeID(), foregroundNode.GetID())
@@ -139,7 +139,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
             foreground=otherForegroundNode.GetID(),
             label=otherLabelmapNode.GetID(),
             foregroundOpacity=0.0,
-            labelOpacity=1.0
+            labelOpacity=1.0,
         )
         self.assertEqual(redSliceCompositeNode.GetBackgroundVolumeID(), otherBackgroundNode.GetID())
         self.assertEqual(redSliceCompositeNode.GetForegroundVolumeID(), otherForegroundNode.GetID())

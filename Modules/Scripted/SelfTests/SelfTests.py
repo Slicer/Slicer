@@ -115,7 +115,7 @@ class SelfTestsWidget(ScriptedLoadableModuleWidget):
         slicer.util.infoDisplay(self.logic, windowTitle="SelfTests")
 
     def onRun(self, test):
-        self.logic.run([test, ], continueCheck=self.continueCheck)
+        self.logic.run([test ], continueCheck=self.continueCheck)
         slicer.util.infoDisplay(self.logic, windowTitle="SelfTests")
 
     def continueCheck(self, logic):

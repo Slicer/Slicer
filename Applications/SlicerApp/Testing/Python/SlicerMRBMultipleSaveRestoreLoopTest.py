@@ -115,7 +115,7 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
             self.delayDisplay("Saving mrb to: %s" % mrbFilePath)
             screenShot = ctk.ctkWidgetsUtils.grabWidget(widget)
             self.assertTrue(
-                ioManager.saveScene(mrbFilePath, screenShot)
+                ioManager.saveScene(mrbFilePath, screenShot),
             )
             self.delayDisplay("Finished saving MRB %s" % i)
 

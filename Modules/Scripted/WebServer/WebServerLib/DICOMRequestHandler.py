@@ -45,7 +45,7 @@ class DICOMRequestHandler(BaseRequestHandler):
         return 0.5 if parsedURL.path.startswith(b"/dicom") else 0.0
 
     def handleRequest(
-        self, uri: bytes, requestBody: bytes, **_kwargs
+        self, uri: bytes, requestBody: bytes, **_kwargs,
     ) -> tuple[bytes, bytes]:
         """
         Dispatches various dicom requests

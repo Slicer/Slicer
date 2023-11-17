@@ -57,22 +57,22 @@ class WebEngineWidget(ScriptedLoadableModuleWidget):
         buttons = []
         self.sites = [
             {
-                "label": "Web Console", "url": "http://localhost:1337"
+                "label": "Web Console", "url": "http://localhost:1337",
             },
             {
-                "label": "Crowds Cure Cancer", "url": "http://cancer.crowds-cure.org"
+                "label": "Crowds Cure Cancer", "url": "http://cancer.crowds-cure.org",
             },
             {
-                "label": "Slicer Home Page", "url": "https://slicer.org"
+                "label": "Slicer Home Page", "url": "https://slicer.org",
             },
             {
-                "label": "MorphoSource", "url": "https://www.morphosource.org"
+                "label": "MorphoSource", "url": "https://www.morphosource.org",
             },
             {
-                "label": "Slicer SampleData", "url": "https://www.slicer.org/wiki/SampleData"
+                "label": "Slicer SampleData", "url": "https://www.slicer.org/wiki/SampleData",
             },
             {
-                "label": "SlicerMorph", "url": "https://slicermorph.github.io"
+                "label": "SlicerMorph", "url": "https://slicermorph.github.io",
             },
         ]
         for site in self.sites:

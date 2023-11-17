@@ -286,7 +286,7 @@ class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
     @staticmethod
     def canRepresent(widget, datatype) -> bool:
         return unannotatedType(datatype) == float and type(widget) in (
-            qt.QDoubleSpinBox, ctk.ctkSliderWidget, slicer.qMRMLSliderWidget
+            qt.QDoubleSpinBox, ctk.ctkSliderWidget, slicer.qMRMLSliderWidget,
         )
 
     @staticmethod
@@ -351,7 +351,7 @@ class QComboBoxToStringableConnector(GuiConnector):
     @staticmethod
     def canRepresent(widget, datatype) -> bool:
         return type(widget) == qt.QComboBox and unannotatedType(datatype) in (
-            int, float, str, bool
+            int, float, str, bool,
         )
 
     @staticmethod

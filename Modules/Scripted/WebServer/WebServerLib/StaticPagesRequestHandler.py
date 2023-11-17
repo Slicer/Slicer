@@ -52,7 +52,7 @@ class StaticPagesRequestHandler(BaseRequestHandler):
         return 0.1
 
     def handleRequest(
-        self, method: str, uri: bytes, requestBody: bytes
+        self, method: str, uri: bytes, requestBody: bytes,
     ) -> tuple[bytes, bytes]:
         """Return directory listing or binary contents of files
         TODO: other header fields like modified time

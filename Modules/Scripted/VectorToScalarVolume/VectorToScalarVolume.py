@@ -59,7 +59,7 @@ class VectorToScalarVolume(ScriptedLoadableModule):
         self.parent.dependencies = []
         self.parent.contributors = ["Steve Pieper (Isomics)",
                                     "Pablo Hernandez-Cerdan (Kitware)",
-                                    "Jean-Christophe Fillion-Robin (Kitware)", ]
+                                    "Jean-Christophe Fillion-Robin (Kitware)" ]
         self.parent.helpText = _("""
     <p>Make a scalar (1 component) volume from a vector volume.</p>
 

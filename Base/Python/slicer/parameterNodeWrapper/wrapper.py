@@ -123,7 +123,7 @@ class _CachedParameterWrapper(_ParameterWrapper):
 def _makeProperty(name: str):
     return property(
         lambda self: getattr(self, f"_{name}_impl").read(),
-        lambda self, value: getattr(self, f"_{name}_impl").write(value)
+        lambda self, value: getattr(self, f"_{name}_impl").write(value),
     )
 
 

@@ -47,14 +47,14 @@ class DICOMProcess:
         "/../DCMTK-build/bin/MinSizeRel",
         "/../DCMTK-build/bin",
         "/../CTK-build/CMakeExternals/Install/bin",
-        "/bin"
+        "/bin",
     ]
-    PROCESS_STATE_NAMES = {0: "NotRunning", 1: "Starting", 2: "Running", }
+    PROCESS_STATE_NAMES = {0: "NotRunning", 1: "Starting", 2: "Running" }
 
     @classmethod
     def getDCMTKToolsPath(
         cls,
-        additionalPaths: list[str] = []
+        additionalPaths: list[str] = [],
     ) -> str:
         """
         Get the first candidate directory that may contain DCMTK tools
@@ -473,7 +473,7 @@ class DICOMSender:
         self.progressCallback = progressCallback or self._defaultProgressCallback
         if self.protocol.upper() == "DIMSE" and auth:
             logging.warning(
-                f"Authentication is not currently supported for {self.protocol} protocol."
+                f"Authentication is not currently supported for {self.protocol} protocol.",
             )
         self.auth = auth or getGlobalDICOMAuth()
 
@@ -488,7 +488,7 @@ class DICOMSender:
     def send(self) -> None:
         """Sends DICOM files to a remote server. Called on instance initialization."""
         self.progressCallback(
-            f"Starting send to {self.destinationUrl.toString()} using {self.protocol} protocol"
+            f"Starting send to {self.destinationUrl.toString()} using {self.protocol} protocol",
         )
 
         if self.protocol.lower() == "dicomweb":
@@ -506,7 +506,7 @@ class DICOMSender:
         for file in self.files:
             self._sendOneFileWithDIMSE(file)
             if not self.progressCallback(
-                f"Sent {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}"
+                f"Sent {file} to {self.destinationUrl.host()}:{self.destinationUrl.port()}",
             ):
                 raise UserWarning("Sending was cancelled, upload is incomplete.")
 
@@ -539,7 +539,7 @@ class DICOMSender:
         try:
             for file in self.files:
                 if not self.progressCallback(
-                    f"Sending {file} to {self.destinationUrl.toString()} using {self.protocol}"
+                    f"Sending {file} to {self.destinationUrl.toString()} using {self.protocol}",
                 ):
                     raise UserWarning("Sending was cancelled, upload is incomplete.")
                 self._sendOneFileWithDICOMWeb(file, client)
@@ -588,7 +588,7 @@ class DICOMSender:
 
         # Terminate transfer and notify user of failure
         if self._dicomSendSCU(
-            file, config=os.path.join(RESOURCE_ROOT, self.extended_dicom_config_path)
+            file, config=os.path.join(RESOURCE_ROOT, self.extended_dicom_config_path),
         ):
             # success
             return True
@@ -597,7 +597,7 @@ class DICOMSender:
         raise UserWarning(userMsg)
 
     def _sendOneFileWithDICOMWeb(
-        self, file: str, client: dicomweb_client.DICOMwebClient
+        self, file: str, client: dicomweb_client.DICOMwebClient,
     ) -> None:
         """
         Do the actual work of transmitting one DICOM file to a remote server
@@ -614,7 +614,7 @@ class DICOMSender:
         client.store_instances(datasets=[dataset])
 
     def _parseKheopsView(
-        self, destinationURL: qt.QUrl
+        self, destinationURL: qt.QUrl,
     ) -> Optional[tuple[qt.QUrl, HTTPBasicAuth]]:
         """
         Parse parameters for specific Kheops server implementation.

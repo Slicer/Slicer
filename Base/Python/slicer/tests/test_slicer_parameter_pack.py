@@ -298,11 +298,11 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         param.nodes.append(ModelInfo(
             slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode", "n1"),
-            True
+            True,
         ))
         param.nodes.append(ModelInfo(
             slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode", "n2"),
-            False
+            False,
         ))
 
         self.assertEqual(param.nodes[0].model.GetName(), "n1")

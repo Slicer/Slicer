@@ -362,17 +362,17 @@ class DICOMPlugin:
         MRname2UID = {
             "MR Image Storage": "1.2.840.10008.5.1.4.1.1.4",
             "Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.1",
-            "Legacy Converted Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.4"
+            "Legacy Converted Enhanced MR Image Storage": "1.2.840.10008.5.1.4.1.1.4.4",
         }
         CTname2UID = {
             "CT Image Storage": "1.2.840.10008.5.1.4.1.1.2",
             "Enhanced CT Image Storage": "1.2.840.10008.5.1.4.1.1.2.1",
-            "Legacy Converted Enhanced CT Image Storage": "1.2.840.10008.5.1.4.1.1.2.2"
+            "Legacy Converted Enhanced CT Image Storage": "1.2.840.10008.5.1.4.1.1.2.2",
         }
         PETname2UID = {
             "Positron Emission Tomography Image Storage": "1.2.840.10008.5.1.4.1.1.128",
             "Enhanced PET Image Storage": "1.2.840.10008.5.1.4.1.1.130",
-            "Legacy Converted Enhanced PET Image Storage": "1.2.840.10008.5.1.4.1.1.128.1"
+            "Legacy Converted Enhanced PET Image Storage": "1.2.840.10008.5.1.4.1.1.128.1",
         }
 
         if sopClassUID in MRname2UID.values():

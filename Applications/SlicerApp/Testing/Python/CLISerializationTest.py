@@ -98,7 +98,7 @@ if __name__ == "__main__":
         "--enumeration", "Bill",
         "--boolean1",
         "--seed", "1.0,0.0,-1.0",
-        "--seedsOutFile", serializeSeedsOutFile
+        "--seedsOutFile", serializeSeedsOutFile,
     ]
     parameters = serialize_options
     parameters.extend(required_inputs)
@@ -117,11 +117,11 @@ if __name__ == "__main__":
             {
                 "boolean1": True,
                 "boolean2": False,
-                "boolean3": False
+                "boolean3": False,
             },
             "Enumeration Parameters":
             {
-                "stringChoice": "Bill"
+                "stringChoice": "Bill",
             },
             "File, Directory and Image Parameters":
             {
@@ -130,28 +130,28 @@ if __name__ == "__main__":
                 "files": ["1.does", "2.not", "3.matter"],
                 "image1": "",
                 "image2": "",
-                "outputFile1": ""
+                "outputFile1": "",
             },
             "Generic Tables":
             {
                 "inputDT": "",
-                "outputDT": ""
+                "outputDT": "",
             },
             "Geometry Parameters":
             {
                 "InputModel": "",
                 "ModelSceneFile": [],
-                "OutputModel": ""
+                "OutputModel": "",
             },
             "Index Parameters":
             {
                 "arg0": mrHeadResampled,
-                "arg1": ctHeadAxial
+                "arg1": ctHeadAxial,
             },
             "Measurements":
             {
                 "inputFA": "",
-                "outputFA": ""
+                "outputFA": "",
             },
             "Point Parameters":
             {
@@ -161,12 +161,12 @@ if __name__ == "__main__":
             },
             "Regions of interest":
             {
-                "regions": []
+                "regions": [],
             },
             "Scalar Parameters (\u00e1rv\u00edzt\u0171r\u0151 t\u00fck\u00f6rf\u00far\u00f3g\u00e9p)":
             {
                 "doubleVariable": 30,
-                "integerVariable": 30
+                "integerVariable": 30,
             },
             "Simple return types":
             {
@@ -176,7 +176,7 @@ if __name__ == "__main__":
                 "anintegerreturn": 5,
                 "anintegervectorreturn": [],
                 "astringchoicereturn": "Bill",
-                "astringreturn": "Hello"
+                "astringreturn": "Hello",
             },
             "Transform Parameters":
             {
@@ -187,14 +187,14 @@ if __name__ == "__main__":
                 "transformInputNonlinear": "",
                 "transformOutput": "",
                 "transformOutputBspline": "",
-                "transformOutputNonlinear": ""
+                "transformOutputNonlinear": "",
             },
             "Vector Parameters":
             {
                 "floatVector": [1.2999999523162842, 2, -14],
-                "stringVector": ["foo", "bar", "foobar"]
-            }
-        }
+                "stringVector": ["foo", "bar", "foobar"],
+            },
+        },
     }
 
     with open(json_file, encoding="utf8") as file:
@@ -213,7 +213,7 @@ if __name__ == "__main__":
 
     # Now try to deserialize the CLI.
     parameters = [
-        "--seedsOutFile", deserializeSeedsOutFile
+        "--seedsOutFile", deserializeSeedsOutFile,
     ]
     (returncode, deserializeErr, deserializeOut) = EMTSerializer.deserializeCLI(CLIName, json_file, parameters)
     if returncode != EXIT_SUCCESS:

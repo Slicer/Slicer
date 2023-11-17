@@ -31,7 +31,7 @@ editorEffectNames = [
     "SegmentEditorMarginEffect",
     "SegmentEditorMaskVolumeEffect",
     "SegmentEditorSmoothingEffect",
-    "SegmentEditorThresholdEffect"
+    "SegmentEditorThresholdEffect",
 ]
 
 

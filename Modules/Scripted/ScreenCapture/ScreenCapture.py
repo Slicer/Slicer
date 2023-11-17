@@ -883,7 +883,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         # Try to find the executable at specific paths
         commonFfmpegPaths = [
             "/usr/local/bin/ffmpeg",
-            "/usr/bin/ffmpeg"
+            "/usr/bin/ffmpeg",
         ]
         for ffmpegPath in commonFfmpegPaths:
             if os.path.isfile(ffmpegPath):
@@ -892,7 +892,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
                 return True
         # Search for the executable in directories
         commonFfmpegDirs = [
-            self.getDownloadedFfmpegDirectory()
+            self.getDownloadedFfmpegDirectory(),
         ]
         for ffmpegDir in commonFfmpegDirs:
             if self.findFfmpegInDirectory(ffmpegDir):

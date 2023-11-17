@@ -52,7 +52,7 @@ class RSNAVisTutorialWidget(ScriptedLoadableModuleWidget):
         formLayout = qt.QFormLayout(testsCollapsibleButton)
 
         # test buttons
-        tests = (("Part 1: DICOM", self.onPart1DICOM), ("Part 2: Head", self.onPart2Head), ("Part 3: Liver", self.onPart3Liver), ("Part 4: Lung", self.onPart4Lung),)
+        tests = (("Part 1: DICOM", self.onPart1DICOM), ("Part 2: Head", self.onPart2Head), ("Part 3: Liver", self.onPart3Liver), ("Part 4: Lung", self.onPart4Lung))
         for text, slot in tests:
             testButton = qt.QPushButton(text)
             testButton.toolTip = "Run the test."
@@ -446,7 +446,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
             for modelNode in models.values():
                 modelNode.GetDisplayNode().SetVisibility(0)
 
-            transparentNodes = ("MiddleHepaticVein_and_Branches", "LiverSegment_IVb", "LiverSegmentV",)
+            transparentNodes = ("MiddleHepaticVein_and_Branches", "LiverSegment_IVb", "LiverSegmentV")
             for nodeName in transparentNodes:
                 modelNode = slicer.util.getNode(nodeName)
                 modelNode.GetDisplayNode().SetOpacity(0.5)

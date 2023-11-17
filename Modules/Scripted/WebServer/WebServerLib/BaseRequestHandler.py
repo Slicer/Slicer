@@ -50,7 +50,7 @@ class BaseRequestHandler(abc.ABC):
 
     @abc.abstractmethod
     def handleRequest(
-        self, method: str, uri: bytes, requestBody: bytes
+        self, method: str, uri: bytes, requestBody: bytes,
     ) -> tuple[bytes, bytes]:
         """
         Do the work of handling the incoming request.

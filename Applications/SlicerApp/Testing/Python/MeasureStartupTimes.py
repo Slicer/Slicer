@@ -72,7 +72,7 @@ def collect_startup_times_overall(output_file, drop_cache=False, display_output=
         ["--disable-builtin-loadable-modules"],
         ["--disable-builtin-scripted-loadable-modules"],
         ["--disable-builtin-cli-modules", "--disable-builtin-scripted-loadable-modules"],
-        ["--disable-modules"]
+        ["--disable-modules"],
     ]
 
     for test in tests:
@@ -141,7 +141,7 @@ with open("{0}", 'w') as output:
 def slicerRevision():
     (returnCode, stdout, stderr) = runSlicerAndExit(slicer_executable, [
         "--no-main-window", "--ignore-slicerrc", "--disable-modules",
-        "--python-code", "print(slicer.app.repositoryRevision)"
+        "--python-code", "print(slicer.app.repositoryRevision)",
     ])
     assert returnCode == EXIT_SUCCESS
     return stdout.split()[0]
@@ -258,7 +258,7 @@ if __name__ == "__main__":
 
     common_kwargs = {
         "display_output": args.display_slicer_output,
-        "drop_cache": args.drop_cache
+        "drop_cache": args.drop_cache,
     }
 
     # Since the "normal" experiment is included in the "overall" one,

@@ -202,7 +202,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
         mrbFilePath = slicer.util.tempDirectory("__mrb__") + "/SlicerMRBSaveRestoreCheckPaths-1.mrb"
         slicer.util.delayDisplay("\n\n\nSaving mrb to: %s" % mrbFilePath)
         self.assertTrue(
-            ioManager.saveScene(mrbFilePath, screenShot)
+            ioManager.saveScene(mrbFilePath, screenShot),
         )
         slicer.util.delayDisplay("Finished saving mrb\n\n\n")
 
@@ -232,7 +232,7 @@ class SlicerMRBSaveRestoreCheckPaths(ScriptedLoadableModuleTest):
         mrbFilePath = slicer.util.tempDirectory("__mrb__") + "/SlicerMRBSaveRestoreCheckPaths-2.mrb"
         slicer.util.delayDisplay("Saving second mrb to: %s\n\n\n\n" % mrbFilePath)
         self.assertTrue(
-            ioManager.saveScene(mrbFilePath, screenShot)
+            ioManager.saveScene(mrbFilePath, screenShot),
         )
         slicer.util.delayDisplay("\n\n\nFinished second saving mrb %s" % mrbFilePath)
 

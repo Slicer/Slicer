@@ -125,7 +125,7 @@ class BRAINSFitRigidRegistrationCrashIssue4139Test(ScriptedLoadableModuleTest):
             "movingVolume": moving,
             "linearTransform": outputTransform,
             "outputVolume": outputVolume,
-            "useRigid": True
+            "useRigid": True,
         }
         cmdLineNode = slicer.cli.runSync(slicer.modules.brainsfit, parameters=parameters)
         self.assertIsNotNone(cmdLineNode)

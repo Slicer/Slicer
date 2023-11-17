@@ -79,7 +79,7 @@ def registerSampleData():
         #  import hashlib; print(hashlib.sha256(open(filename, "rb").read()).hexdigest())
         checksums="SHA256:998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95",
         # This node name will be used when the data set is loaded
-        nodeNames="TemplateKey1"
+        nodeNames="TemplateKey1",
     )
 
     # TemplateKey2
@@ -93,7 +93,7 @@ def registerSampleData():
         fileNames="TemplateKey2.nrrd",
         checksums="SHA256:1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97",
         # This node name will be used when the data set is loaded
-        nodeNames="TemplateKey2"
+        nodeNames="TemplateKey2",
     )
 
 
@@ -298,7 +298,7 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
             "InputVolume": inputVolume.GetID(),
             "OutputVolume": outputVolume.GetID(),
             "ThresholdValue": imageThreshold,
-            "ThresholdType": "Above" if invert else "Below"
+            "ThresholdType": "Above" if invert else "Below",
         }
         cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True, update_display=showResult)
         # We don't need the CLI module node anymore, remove it to not clutter the scene with it

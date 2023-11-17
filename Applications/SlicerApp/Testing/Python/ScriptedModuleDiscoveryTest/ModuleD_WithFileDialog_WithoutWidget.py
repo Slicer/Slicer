@@ -8,7 +8,7 @@ class ModuleD_WithFileDialog_WithoutWidget(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = "Module D"
-        self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)", ]
+        self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)" ]
         self.parent.helpText = """
     This module allows to test the scripted module import.
     """

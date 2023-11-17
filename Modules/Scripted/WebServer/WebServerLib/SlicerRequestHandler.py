@@ -54,7 +54,7 @@ class SlicerRequestHandler(BaseRequestHandler):
         return 0.5 if route.startswith(b"/slicer") else 0.0
 
     def handleRequest(
-        self, method: str, uri: bytes, requestBody: bytes
+        self, method: str, uri: bytes, requestBody: bytes,
     ) -> tuple[bytes, bytes]:
         """Handle a slicer api request.
         TODO: better routing (add routing plugins)
@@ -461,8 +461,8 @@ class SlicerRequestHandler(BaseRequestHandler):
         sizes = imageData.GetDimensions()
         sizes = " ".join(list(map(str, sizes)))
 
-        originList = [0, ] * 3
-        directionLists = [[0, ] * 3, [0, ] * 3, [0, ] * 3]
+        originList = [0 ] * 3
+        directionLists = [[0 ] * 3, [0 ] * 3, [0 ] * 3]
         ijkToRAS = vtk.vtkMatrix4x4()
         volumeNode.GetIJKToRASMatrix(ijkToRAS)
         for row in range(3):
@@ -511,7 +511,7 @@ space origin: %%origin%%
         if transformNode is None or transformArray is None:
             self.logMessage("Could not find requested transform")
             return None
-        supportedNodes = ["vtkMRMLGridTransformNode", ]
+        supportedNodes = ["vtkMRMLGridTransformNode" ]
         if not transformNode.GetClassName() in supportedNodes:
             self.logMessage("Can only get grid transforms")
             return None
@@ -577,12 +577,12 @@ space origin: %%origin%%
             node["scale"] = displayNode.GetGlyphScale()
             node["markups"] = []
             for markupIndex in range(markupsNode.GetNumberOfControlPoints()):
-                position = [0, ] * 3
+                position = [0 ] * 3
                 markupsNode.GetNthControlPointPosition(markupIndex, position)
                 position
                 node["markups"].append({
                     "label": markupsNode.GetNthControlPointLabel(markupIndex),
-                    "position": position
+                    "position": position,
                 })
             fiducials[markupsNode.GetID()] = node
         return (json.dumps(fiducials).encode()), b"application/json"
@@ -921,7 +921,7 @@ space origin: %%origin%%
 
         if scrollTo:
             volumeNode = sliceLogic.GetBackgroundLayer().GetVolumeNode()
-            bounds = [0, ] * 6
+            bounds = [0 ] * 6
             sliceLogic.GetVolumeSliceBounds(volumeNode, bounds)
             sliceLogic.SetSliceOffset(bounds[4] + (scrollTo * (bounds[5] - bounds[4])))
         if offset:

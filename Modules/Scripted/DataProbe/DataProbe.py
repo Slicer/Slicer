@@ -320,7 +320,7 @@ class DataProbeInfoWidget:
                     ras_y=abs(ras[1]),
                     ras_z=abs(ras[2]),
                     orient=sliceNode.GetOrientationString(),
-                    spacing=spacing
+                    spacing=spacing,
                     )
 
     def generateLayerName(self, slicerLayerLogic):

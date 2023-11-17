@@ -114,7 +114,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
             fn = slicer.util.getNode("vtkMRMLMarkupsLineNode1")
             endpoints = []
             for n in range(2):
-                endpoints.append([0, ] * 3)
+                endpoints.append([0 ] * 3)
                 fn.GetNthControlPointPosition(n, endpoints[n])
             return endpoints
 

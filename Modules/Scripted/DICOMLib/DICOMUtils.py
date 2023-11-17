@@ -253,7 +253,7 @@ def loadByInstanceUID(instanceUID, messages=None, progressCallback=None):
     highestConfidence = {
         "confidence": 0,
         "plugin": None,
-        "loadable": None
+        "loadable": None,
     }
     for plugin in loadablesByPlugin.keys():
         for loadable in loadablesByPlugin[plugin]:
@@ -263,10 +263,10 @@ def loadByInstanceUID(instanceUID, messages=None, progressCallback=None):
                     highestConfidence = {
                         "confidence": loadable.confidence,
                         "plugin": plugin,
-                        "loadable": loadable
+                        "loadable": loadable,
                     }
     filteredLoadablesByPlugin = {}
-    filteredLoadablesByPlugin[highestConfidence["plugin"]] = [highestConfidence["loadable"], ]
+    filteredLoadablesByPlugin[highestConfidence["plugin"]] = [highestConfidence["loadable"] ]
     # load the results
     return loadLoadables(filteredLoadablesByPlugin)
 
@@ -895,11 +895,11 @@ def importFromDICOMWeb(
 
     if auth and accessToken:
         clientLogger.warning(
-            f"Received both AuthBase and accessToken for DICOM fetch, defaulting to AuthBase"
+            f"Received both AuthBase and accessToken for DICOM fetch, defaulting to AuthBase",
         )
 
     progressDialog = slicer.util.createProgressDialog(
-        parent=slicer.util.mainWindow(), value=0, maximum=100
+        parent=slicer.util.mainWindow(), value=0, maximum=100,
     )
     try:
         progressDialog.labelText = f"Retrieving series list..."
