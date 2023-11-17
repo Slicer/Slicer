@@ -196,6 +196,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         # Test if retrieving voxels as a numpy array works
 
         self.delayDisplay("Download sample data")
+
         import SampleData
 
         volumeNode = SampleData.downloadSample("MRHead")
@@ -219,6 +220,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         # Test if updating voxels from a numpy array works
 
         self.delayDisplay("Download sample data")
+
         import SampleData
 
         volumeNode = SampleData.downloadSample("MRHead")
@@ -252,6 +254,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         self.assertEqual(tableNode1.GetNumberOfRows(), 3)
 
         self.delayDisplay("Download sample data")
+
         import SampleData
 
         volumeNode = SampleData.downloadSample("MRHead")
@@ -445,6 +448,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         # Test if convenience function of getting numpy array from various nodes works
 
         self.delayDisplay("Test array with scalar image")
+
         import SampleData
 
         volumeNode = SampleData.downloadSample("MRHead")

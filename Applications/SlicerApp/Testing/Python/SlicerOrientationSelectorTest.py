@@ -104,6 +104,7 @@ class SlicerOrientationSelectorTestTest(ScriptedLoadableModuleTest):
         logic = SlicerOrientationSelectorTestLogic()
 
         self.delayDisplay("Starting the test")
+
         import SampleData
 
         mrHeadVolume = SampleData.downloadSample("MRHead")

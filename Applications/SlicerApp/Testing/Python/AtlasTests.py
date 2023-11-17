@@ -193,6 +193,7 @@ class AtlasTestsTest(ScriptedLoadableModuleTest):
         """
 
         self.delayDisplay("Starting the test")
+
         #
         # first, get some data
         #

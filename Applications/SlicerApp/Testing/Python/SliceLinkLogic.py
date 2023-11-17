@@ -126,6 +126,7 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
         """
 
         self.delayDisplay("Starting the test")
+
         #
         # first, get some data
         #

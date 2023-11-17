@@ -768,6 +768,7 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
 
         testFileDICOMFilename = inputTestDir + "/DICOMFile.dcm"
         self.delayDisplay("Writing test file: " + testFileDICOMFilename)
+
         import pydicom
 
         file_meta = pydicom.dataset.Dataset()

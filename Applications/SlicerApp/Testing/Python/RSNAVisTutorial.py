@@ -184,6 +184,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
         self.screenshotScaleFactor = screenshotScaleFactor
 
         self.delayDisplay("Starting the DICOM test")
+
         #
         # first, get the data - a zip file of dicom data
         #

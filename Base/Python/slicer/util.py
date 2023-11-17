@@ -3263,6 +3263,7 @@ def tryWithErrorDisplay(message=None, show=True, waitCursor=False):
                 errorMessage = f"{message}\n\n{e}"
             else:
                 errorMessage = str(e)
+
             import traceback
 
             errorDisplay(errorMessage, detailedText=traceback.format_exc())

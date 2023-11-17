@@ -793,6 +793,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
             self.showCreatedOutputFileButton.enabled = True
         except Exception as e:
             self.addLog(_("Error:") + str(e))
+
             import traceback
 
             traceback.print_exc()
@@ -951,6 +952,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             success = True
             try:
                 logging.info("Requesting download ffmpeg from %s..." % url)
+
                 import urllib.request, urllib.error, urllib.parse
 
                 req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -1374,6 +1376,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     def createLightboxImage(self, numberOfColumns, outputDir, imageFileNamePattern, numberOfImages, lightboxImageFilename):
         self.addLog(_("Export to lightbox image..."))
         filePathPattern = os.path.join(outputDir, imageFileNamePattern)
+
         import math
 
         numberOfRows = int(math.ceil(numberOfImages / numberOfColumns))
@@ -1488,6 +1491,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     def setUp(self):
         """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
+
         import SampleData
 
         self.image1 = SampleData.downloadSample("MRBrainTumor1")

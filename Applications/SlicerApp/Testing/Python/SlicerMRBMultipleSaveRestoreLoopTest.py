@@ -92,6 +92,7 @@ class SlicerMRBMultipleSaveRestoreLoop(ScriptedLoadableModuleTest):
         # first, get the data
         #
         print("Getting MR Head Volume")
+
         import SampleData
 
         mrHeadVolume = SampleData.downloadSample("MRHead")

@@ -34,6 +34,7 @@ class SlicerUtilSaveTests(unittest.TestCase):
         segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
         segmentationNode.CreateDefaultDisplayNodes()
         segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(volumeNode)
+
         import vtk
 
         tumorSeed = vtk.vtkSphereSource()

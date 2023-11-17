@@ -212,6 +212,7 @@ if not np.isclose(curvePointToWorldMatrix, expectedCurvePointToWorldMatrix).all(
 
 radius = 35
 numberOfControlPoints = 40
+
 import math
 
 circleCurveNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode")

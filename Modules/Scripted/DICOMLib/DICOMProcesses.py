@@ -398,6 +398,7 @@ class DICOMListener(DICOMStoreSCPProcess):
     def completeIncomingFilesIndexing(self):
         """Complete indexing of all incoming files and remove them from the incoming folder."""
         logging.debug(f"Complete indexing for indexing to complete for {len(self.incomingFiles)} files.")
+
         import os
 
         self.indexer.waitForImportFinished()

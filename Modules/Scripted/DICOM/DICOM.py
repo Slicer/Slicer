@@ -159,6 +159,7 @@ class DICOM(ScriptedLoadableModule):
 
         slicer.util.selectModule("DICOM")
         slicer.app.processEvents()
+
         from DICOMLib import DICOMUtils
 
         importedSeriesInstanceUIDs = DICOMUtils.importFromDICOMWeb(

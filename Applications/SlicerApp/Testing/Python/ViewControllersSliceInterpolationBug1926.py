@@ -96,10 +96,12 @@ class ViewControllersSliceInterpolationBug1926Test(ScriptedLoadableModuleTest):
         """
 
         self.delayDisplay("Starting the test")
+
         #
         # first, get some data
         #
         self.delayDisplay("Getting Data")
+
         import SampleData
 
         head = SampleData.downloadSample("MRHead")

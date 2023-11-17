@@ -237,6 +237,7 @@ class SlicerRequestHandler(BaseRequestHandler):
             name = None
         if not name:
             raise RuntimeError("sampledata name was not specified")
+
         import SampleData
 
         try:
@@ -770,6 +771,7 @@ space origin: %%origin%%
                 return b'{"success": false}', b"application/json"
 
             response = {"success": True, "reloadedNodeIDs": reloadedNodeIds}
+
             import json
 
             return json.dumps(response).encode(), b"application/json"
@@ -817,6 +819,7 @@ space origin: %%origin%%
                 "mainApplicationMinorVersion": slicer.app.mainApplicationMinorVersion,
                 "mainApplicationPatchVersion": slicer.app.mainApplicationPatchVersion,
             }
+
             import json
 
             return json.dumps(response).encode(), b"application/json"

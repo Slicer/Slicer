@@ -359,6 +359,7 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         if maskExtent:
             img = slicer.modules.segmentations.logic().CreateOrientedImageDataFromVolumeNode(maskVolumeNode)
             img.UnRegister(None)
+
             import vtkSegmentationCorePython as vtkSegmentationCore
 
             vtkSegmentationCore.vtkOrientedImageDataResample.CalculateEffectiveExtent(img, maskExtent, 0)

@@ -157,6 +157,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
         # add another storable node, a volume
         #
         slicer.util.delayDisplay("Adding a new storable node, after creating a scene view")
+
         import SampleData
 
         mrHeadVolume = SampleData.downloadSample("MRHead")

@@ -225,6 +225,7 @@ class SegmentStatisticsWidget(ScriptedLoadableModuleWidget):
             checkbox.checked = True
             checkbox.connect("stateChanged(int)", self.updateParameterNodeFromGui)
             optionButton = qt.QPushButton(_("Options"))
+
             from functools import partial
 
             optionButton.connect("clicked()", partial(self.onEditParameters, plugin.name))

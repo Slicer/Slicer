@@ -135,6 +135,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
                 or len(directions[0]) != 3 or len(directions[1]) != 3 or len(directions[2]) != 3:
             logging.error("Baseline lists need to contain 3 elements each, the directions 3 lists of 3")
             return False
+
         import numpy
 
         tolerance = 0.0001

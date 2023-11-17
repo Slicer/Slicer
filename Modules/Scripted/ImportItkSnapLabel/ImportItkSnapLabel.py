@@ -86,6 +86,7 @@ class ImportItkSnapLabelFileReader:
 
         except Exception as e:
             logging.error(_("Failed to load file: ") + str(e))
+
             import traceback
 
             traceback.print_exc()
