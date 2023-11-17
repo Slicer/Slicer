@@ -19,6 +19,7 @@ class VolumesLogicCompareVolumeGeometryTesting(ScriptedLoadableModuleTest):
         # first, get some sample data
         #
         import SampleData
+
         head = SampleData.downloadSample("MRHead")
 
         #

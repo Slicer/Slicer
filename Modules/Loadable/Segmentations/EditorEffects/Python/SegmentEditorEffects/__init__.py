@@ -40,8 +40,10 @@ def registerEffects():
     import SegmentEditorEffects
     import traceback
     import logging
+
     effectsPath = SegmentEditorEffects.__path__[0].replace("\\", "/")
     import qSlicerSegmentationsEditorEffectsPythonQt as qSlicerSegmentationsEditorEffects
+
     for editorEffectName in SegmentEditorEffects.editorEffectNames:
         try:
             instance = qSlicerSegmentationsEditorEffects.qSlicerSegmentEditorScriptedEffect(None)

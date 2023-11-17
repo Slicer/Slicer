@@ -6,6 +6,7 @@ print("Enabling CTEST_FULL_OUTPUT\n", file=sys.stderr)
 print("\nChecking NUMPY...", file=sys.stderr)
 try:
     import numpy
+
     print(numpy.__version__, file=sys.stderr)
     print("\t----> import numpy WORKS!", file=sys.stderr)
 

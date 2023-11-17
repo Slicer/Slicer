@@ -35,6 +35,7 @@ class SlicerUtilSaveTests(unittest.TestCase):
         segmentationNode.CreateDefaultDisplayNodes()
         segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(volumeNode)
         import vtk
+
         tumorSeed = vtk.vtkSphereSource()
         tumorSeed.SetCenter(-6, 30, 28)
         tumorSeed.SetRadius(10)
@@ -120,6 +121,7 @@ class SlicerUtilSaveTests(unittest.TestCase):
         # Terminology
         # There is no writer for terminology files, so we copy an existing terminology
         import shutil
+
         filename = slicer.app.temporaryPath + "/SlicerUtilSaveTestsTerminology.json"
         shutil.copy(slicer.modules.terminologies.logic().GetModuleShareDirectory()
                     + "/SegmentationCategoryTypeModifier-SlicerGeneralAnatomy.term.json", filename)

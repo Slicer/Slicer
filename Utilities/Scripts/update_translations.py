@@ -181,6 +181,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
 
     # Traverse the source code directory and collect all translatable files
     from pathlib import Path
+
     source_files = []
     for ext in extensions:
         source_files.extend(Path(source_code_dir).rglob("*." + ext))
@@ -292,6 +293,7 @@ def _generate_translation_header_from_cli_xml(cli_xml_filename):
         return result
 
     import xml.etree.ElementTree as ET
+
     try:
         tree = ET.parse(cli_xml_filename)
     except ET.ParseError:

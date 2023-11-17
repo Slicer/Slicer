@@ -46,6 +46,7 @@ def exit(status=EXIT_SUCCESS):
     """
 
     from slicer import app
+
     # Prevent automatic application exit (for example, triggered by starting Slicer
     # with "--testing" argument) from overwriting the exit code that we set now.
     app.commandOptions().runPythonAndExit = False
@@ -59,6 +60,7 @@ def restart():
     """
 
     from slicer import app
+
     app.restart()
 
 
@@ -112,8 +114,10 @@ def startupEnvironment():
       function.
     """
     import slicer
+
     startupEnv = slicer.app.startupEnvironment()
     import os
+
     # "if varname" is added to reject empty key (it is invalid)
     if os.name == "nt":
         # On Windows, subprocess functions expect environment to contain strings
@@ -130,6 +134,7 @@ def startupEnvironment():
 
 def importVTKClassesFromDirectory(directory, dest_module_name, filematch="*"):
     from vtk import vtkObjectBase
+
     importClassesFromDirectory(directory, dest_module_name, vtkObjectBase, filematch)
 
 
@@ -153,6 +158,7 @@ def importClassesFromDirectory(directory, dest_module_name, type_info, filematch
         return
 
     import glob, os, re, fnmatch
+
     re_filematch = re.compile(fnmatch.translate(filematch))
     for fname in glob.glob(os.path.join(directory, filematch)):
         if not re_filematch.match(os.path.basename(fname)):
@@ -162,6 +168,7 @@ def importClassesFromDirectory(directory, dest_module_name, type_info, filematch
             importModuleObjects(from_module_name, dest_module_name, type_info)
         except ImportError as detail:
             import sys
+
             print(detail, file=sys.stderr)
 
     __import_classes_cache.add(cache_key)
@@ -174,6 +181,7 @@ def importModuleObjects(from_module_name, dest_module_name, type_info):
 
     # Obtain a reference to the module identified by 'dest_module_name'
     import sys
+
     dest_module = sys.modules[dest_module_name]
 
     # Skip if module has already been loaded
@@ -182,6 +190,7 @@ def importModuleObjects(from_module_name, dest_module_name, type_info):
 
     # Obtain a reference to the module identified by 'from_module_name'
     import imp
+
     fp, pathname, description = imp.find_module(from_module_name)
     module = imp.load_module(from_module_name, fp, pathname, description)
 
@@ -216,6 +225,7 @@ def lookupTopLevelWidget(objectName):
     :raises RuntimeError: if no top-level widget is found by that name
     """
     from slicer import app
+
     for w in app.topLevelWidgets():
         if hasattr(w, "objectName"):
             if w.objectName == objectName:
@@ -245,6 +255,7 @@ def pythonShell():
     :raises RuntimeError: if not found
     """
     from slicer import app
+
     console = app.pythonConsole()
     if not console:
         raise RuntimeError("Failed to obtain reference to python shell")
@@ -275,6 +286,7 @@ def findChildren(widget=None, name="", text="", title="", className=""):
     """
     # TODO: figure out why the native QWidget.findChildren method does not seem to work from PythonQt
     import fnmatch
+
     if not widget:
         widget = mainWindow()
     if not widget:
@@ -335,6 +347,7 @@ def loadUI(path):
      widget was instantiated.
     """
     import qt
+
     qfile = qt.QFile(path)
     if not qfile.exists():
         errorMessage = "Could not load UI file: file not found " + str(path) + "\n\n"
@@ -351,6 +364,7 @@ def loadUI(path):
 def startQtDesigner(args=None):
     """Start Qt Designer application to allow editing UI files."""
     import slicer
+
     cmdLineArguments = []
     if args is not None:
         if isinstance(args, str):
@@ -588,6 +602,7 @@ def setToolbarsVisible(visible, ignore=None):
     # (put in try block because Sequence Browser module is not always installed)
     try:
         import slicer
+
         slicer.modules.sequences.autoShowToolBar = visible
     except:
         # Sequences module is not installed
@@ -644,6 +659,7 @@ def setStatusBarVisible(visible):
 def setViewControllersVisible(visible):
     """Show/hide view controller toolbar at the top of slice and 3D views"""
     import slicer
+
     lm = slicer.app.layoutManager()
     for viewIndex in range(lm.threeDViewCount):
         lm.threeDWidget(viewIndex).threeDController().setVisible(visible)
@@ -658,6 +674,7 @@ def setViewControllersVisible(visible):
 def forceRenderAllViews():
     """Force rendering of all views"""
     import slicer
+
     lm = slicer.app.layoutManager()
     for viewIndex in range(lm.threeDViewCount):
         lm.threeDWidget(viewIndex).threeDView().forceRender()
@@ -706,6 +723,7 @@ def loadNodeFromFile(filename, filetype=None, properties={}, returnNode=False):
         import logging
         logging.warning("loadNodeFromFile `returnNode` argument is deprecated. Loaded node is now returned directly if `returnNode` is not specified.")
         import traceback
+
         logging.debug("loadNodeFromFile was called from " + ("".join(traceback.format_stack())))
         return success, loadedNode
 
@@ -987,61 +1005,73 @@ def loadScene(filename, properties={}):
 
 def openAddDataDialog():
     from slicer import app
+
     return app.coreIOManager().openAddDataDialog()
 
 
 def openAddVolumeDialog():
     from slicer import app
+
     return app.coreIOManager().openAddVolumeDialog()
 
 
 def openAddModelDialog():
     from slicer import app
+
     return app.coreIOManager().openAddModelDialog()
 
 
 def openAddScalarOverlayDialog():
     from slicer import app
+
     return app.coreIOManager().openAddScalarOverlayDialog()
 
 
 def openAddSegmentationDialog():
     from slicer import app, qSlicerFileDialog
+
     return app.coreIOManager().openDialog("SegmentationFile", qSlicerFileDialog.Read)
 
 
 def openAddTransformDialog():
     from slicer import app
+
     return app.coreIOManager().openAddTransformDialog()
 
 
 def openAddColorTableDialog():
     from slicer import app
+
     return app.coreIOManager().openAddColorTableDialog()
 
 
 def openAddFiducialDialog():
     from slicer import app
+
     return app.coreIOManager().openAddFiducialDialog()
 
 
 def openAddMarkupsDialog():
     from slicer import app
+
     return app.coreIOManager().openAddMarkupsDialog()
 
 
 def openAddFiberBundleDialog():
     from slicer import app
+
     return app.coreIOManager().openAddFiberBundleDialog()
 
 
 def openAddShaderPropertyDialog():
     from slicer import app, qSlicerFileDialog
+
     return app.coreIOManager().openDialog("ShaderPropertyFile", qSlicerFileDialog.Read)
 
 
 def openSaveDataDialog():
     from slicer import app
+
     return app.coreIOManager().openSaveDataDialog()
 
 
@@ -1067,6 +1097,7 @@ def saveNode(node, filename, properties={}):
 
     if not success:
         import logging
+
         errorMessage = f"Failed to save node to file: {filename}"
         if userMessages.GetNumberOfMessages() > 0:
             errorMessage += "\n" + userMessages.GetAllMessagesAsString()
@@ -1093,6 +1124,7 @@ def saveScene(filename, properties={}):
     will be created.
     """
     from slicer import app, vtkMRMLMessageCollection
+
     filetype = "SceneFile"
     properties["fileName"] = filename
     userMessages = vtkMRMLMessageCollection()
@@ -1100,6 +1132,7 @@ def saveScene(filename, properties={}):
 
     if not success:
         import logging
+
         errorMessage = f"Failed to save scene to file: {filename}"
         if userMessages.GetNumberOfMessages() > 0:
             errorMessage += "\n" + userMessages.GetAllMessagesAsString()
@@ -1118,6 +1151,7 @@ def exportNode(node, filename, properties={}, world=False):
     and therefore does not change the filename or filetype that is used when saving the scene.
     """
     from slicer import app, vtkDataFileFormatHelper, vtkMRMLMessageCollection
+
     nodeIDs = [node.GetID()]
     fileNames = [filename]
     hardenTransform = world
@@ -1140,6 +1174,7 @@ def exportNode(node, filename, properties={}, world=False):
 
     if not success:
         import logging
+
         errorMessage = f"Failed to export node to file: {filename}"
         if userMessages.GetNumberOfMessages() > 0:
             errorMessage += "\n" + userMessages.GetAllMessagesAsString()
@@ -1200,6 +1235,7 @@ def moduleNames():
     :return: list of module names
     """
     from slicer import app
+
     return app.moduleManager().factoryManager().loadedModuleNames()
 
 
@@ -1210,6 +1246,7 @@ def getModule(moduleName):
     :raises RuntimeError: in case of failure (no such module).
     """
     from slicer import app
+
     module = app.moduleManager().module(moduleName)
     if not module:
         raise RuntimeError("Could not find module with name '%s'" % moduleName)
@@ -1242,6 +1279,7 @@ def getModuleWidget(module):
     :raises RuntimeError: if the module does not have widget.
     """
     import slicer
+
     if isinstance(module, str):
         module = getModule(module)
     widgetRepr = module.widgetRepresentation()
@@ -1267,6 +1305,7 @@ def getNewModuleWidget(module):
     :raises RuntimeError: if the module does not have widget.
     """
     import slicer
+
     if isinstance(module, str):
         module = getModule(module)
     widgetRepr = module.createNewWidgetRepresentation()
@@ -1290,6 +1329,7 @@ def getModuleLogic(module):
     :raises RuntimeError: if the module does not have widget.
     """
     import slicer
+
     if isinstance(module, str):
         module = getModule(module)
     if isinstance(module, slicer.qSlicerScriptedLoadableModule):
@@ -1312,6 +1352,7 @@ def modulePath(moduleName):
     :return: file path of the module
     """
     import slicer  # noqa: F401
+
     return eval("slicer.modules.%s.path" % moduleName.lower())
 
 
@@ -1397,6 +1438,7 @@ def setModulePanelTitleVisible(visible):
         modulePanelDockWidget.setTitleBarWidget(None)
     else:
         import qt
+
         modulePanelDockWidget.setTitleBarWidget(qt.QWidget(modulePanelDockWidget))
 
 
@@ -1418,6 +1460,7 @@ def setApplicationLogoVisible(visible=True, scaleFactor=None, icon=None):
     if icon is not None or scaleFactor is not None:
         if icon is None:
             import qt
+
             icon = qt.QIcon(":/ModulePanelLogo.png")
         if scaleFactor is None:
             scaleFactor = 1.0
@@ -1459,12 +1502,14 @@ def setDataProbeVisible(visible):
 def resetThreeDViews():
     """Reset focal view around volumes"""
     import slicer
+
     slicer.app.layoutManager().resetThreeDViews()
 
 
 def resetSliceViews():
     """Reset focal view around volumes"""
     import slicer
+
     manager = slicer.app.layoutManager().resetSliceViews()
 
 
@@ -1490,6 +1535,7 @@ def getNodes(pattern="*", scene=None, useLists=False):
     a dictionary of lists of nodes.
     """
     import slicer, collections, fnmatch
+
     nodes = collections.OrderedDict()
     if scene is None:
         scene = slicer.mrmlScene
@@ -1525,6 +1571,7 @@ def getNode(pattern="*", index=0, scene=None):
 def getNodesByClass(className, scene=None):
     """Return all nodes in the scene of the specified class."""
     import slicer
+
     if scene is None:
         scene = slicer.mrmlScene
     nodes = slicer.mrmlScene.GetNodesByClass(className)
@@ -1541,6 +1588,7 @@ def getNodesByClass(className, scene=None):
 def getFirstNodeByClassByName(className, name, scene=None):
     """Return the first node in the scene that matches the specified node name and node class."""
     import slicer
+
     if scene is None:
         scene = slicer.mrmlScene
     return scene.GetFirstNode(name, className)
@@ -1552,6 +1600,7 @@ def getFirstNodeByName(name, className=None):
     Optionally specify a classname that must also match.
     """
     import slicer
+
     scene = slicer.mrmlScene
     return scene.GetFirstNode(name, className, False, False)
 
@@ -1592,10 +1641,12 @@ class RenderBlocker:
 
     def __enter__(self):
         import slicer
+
         slicer.app.pauseRender()
 
     def __exit__(self, type, value, traceback):
         import slicer
+
         slicer.app.resumeRender()
 
 
@@ -1611,6 +1662,7 @@ def getSubjectHierarchyItemChildren(parentItem=None, recursive=False):
     :return: List of child item IDs
     """
     import slicer, vtk
+
     children = []
     shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
     # Use scene as parent item if not given
@@ -1645,6 +1697,7 @@ def array(pattern="", index=0):
     """
     node = getNode(pattern=pattern, index=index)
     import slicer
+
     if isinstance(node, slicer.vtkMRMLVolumeNode):
         return arrayFromVolume(node)
     elif isinstance(node, slicer.vtkMRMLModelNode):
@@ -1684,6 +1737,7 @@ def arrayFromVolume(volumeNode):
     vimage = volumeNode.GetImageData()
     nshape = tuple(reversed(volumeNode.GetImageData().GetDimensions()))
     import vtk.util.numpy_support
+
     narray = None
     if volumeNode.GetClassName() in scalarTypes:
         narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
@@ -1722,6 +1776,7 @@ def arrayFromModelPoints(modelNode):
       See :py:meth:`arrayFromVolume` for details.
     """
     import vtk.util.numpy_support
+
     pointData = modelNode.GetMesh().GetPoints().GetData()
     narray = vtk.util.numpy_support.vtk_to_numpy(pointData)
     return narray
@@ -1767,6 +1822,7 @@ def arrayFromModelPointData(modelNode, arrayName):
       See :py:meth:`arrayFromVolume` for details.
     """
     import vtk.util.numpy_support
+
     arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, "point")
     narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
     return narray
@@ -1786,6 +1842,7 @@ def arrayFromModelCellData(modelNode, arrayName):
       See :py:meth:`arrayFromVolume` for details.
     """
     import vtk.util.numpy_support
+
     arrayVtk = _vtkArrayFromModelData(modelNode, arrayName, "cell")
     narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
     return narray
@@ -1805,6 +1862,7 @@ def arrayFromMarkupsControlPointData(markupsNode, arrayName):
       See :py:meth:`arrayFromVolume` for details.
     """
     import vtk.util.numpy_support
+
     for measurementIndex in range(markupsNode.GetNumberOfMeasurements()):
         measurement = markupsNode.GetNthMeasurement(measurementIndex)
         doubleArrayVtk = measurement.GetControlPointValues()
@@ -1841,6 +1899,7 @@ def arrayFromModelPolyIds(modelNode):
       See :py:meth:`arrayFromVolume` for details.
     """
     import vtk.util.numpy_support
+
     arrayVtk = modelNode.GetPolyData().GetPolys().GetData()
     narray = vtk.util.numpy_support.vtk_to_numpy(arrayVtk)
     return narray
@@ -1861,6 +1920,7 @@ def arrayFromGridTransform(gridTransformNode):
     displacementGrid = transformGrid.GetDisplacementGrid()
     nshape = tuple(reversed(displacementGrid.GetDimensions()))
     import vtk.util.numpy_support
+
     nshape = nshape + (3,)
     narray = vtk.util.numpy_support.vtk_to_numpy(displacementGrid.GetPointData().GetScalars()).reshape(nshape)
     return narray
@@ -1878,6 +1938,7 @@ def arrayFromVTKMatrix(vmatrix):
     from vtk import vtkMatrix4x4
     from vtk import vtkMatrix3x3
     import numpy as np
+
     if isinstance(vmatrix, vtkMatrix4x4):
         matrixSize = 4
     elif isinstance(vmatrix, vtkMatrix3x3):
@@ -1900,6 +1961,7 @@ def vtkMatrixFromArray(narray):
     """
     from vtk import vtkMatrix4x4
     from vtk import vtkMatrix3x3
+
     narrayshape = narray.shape
     if narrayshape == (4, 4):
         vmatrix = vtkMatrix4x4()
@@ -1924,6 +1986,7 @@ def updateVTKMatrixFromArray(vmatrix, narray):
     """
     from vtk import vtkMatrix4x4
     from vtk import vtkMatrix3x3
+
     if isinstance(vmatrix, vtkMatrix4x4):
         matrixSize = 4
     elif isinstance(vmatrix, vtkMatrix3x3):
@@ -1948,6 +2011,7 @@ def arrayFromTransformMatrix(transformNode, toWorld=False):
     To set transformation matrix from a numpy array, use :py:meth:`updateTransformMatrixFromArray`.
     """
     from vtk import vtkMatrix4x4
+
     vmatrix = vtkMatrix4x4()
     if toWorld:
         success = transformNode.GetMatrixTransformToWorld(vmatrix)
@@ -1968,6 +2032,7 @@ def updateTransformMatrixFromArray(transformNode, narray, toWorld=False):
     """
     import numpy as np
     from vtk import vtkMatrix4x4
+
     narrayshape = narray.shape
     if narrayshape != (4, 4):
         raise RuntimeError("Unsupported numpy array shape: " + str(narrayshape) + " expected (4,4)")
@@ -2033,6 +2098,7 @@ def arrayFromSegmentInternalBinaryLabelmap(segmentationNode, segmentId):
     vimage = segmentationNode.GetBinaryLabelmapInternalRepresentation(segmentId)
     nshape = tuple(reversed(vimage.GetDimensions()))
     import vtk.util.numpy_support
+
     narray = vtk.util.numpy_support.vtk_to_numpy(vimage.GetPointData().GetScalars()).reshape(nshape)
     return narray
 
@@ -2114,6 +2180,7 @@ def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, re
         else:
             # need to normalize the data because the label value must be 1
             import numpy as np
+
             narrayNormalized = np.zeros(narray.shape, np.uint8)
             narrayNormalized[narray > 0] = 1
             updateVolumeFromArray(labelmapVolumeNode, narrayNormalized)
@@ -2137,6 +2204,7 @@ def arrayFromMarkupsControlPoints(markupsNode, world=False):
     """
     numberOfControlPoints = markupsNode.GetNumberOfControlPoints()
     import numpy as np
+
     narray = np.zeros([numberOfControlPoints, 3])
     for controlPointIndex in range(numberOfControlPoints):
         if world:
@@ -2194,6 +2262,7 @@ def arrayFromMarkupsCurvePoints(markupsNode, world=False):
     The returned array is just a copy and so any modification in the array will not affect the markup node.
     """
     import vtk.util.numpy_support
+
     if world:
         pointData = markupsNode.GetCurvePointsWorld().GetData()
     else:
@@ -2220,6 +2289,7 @@ def arrayFromMarkupsCurveData(markupsNode, arrayName, world=False):
         by measurement objects.
     """
     import vtk.util.numpy_support
+
     if world:
         curvePolyData = markupsNode.GetCurveWorld()
     else:
@@ -2255,6 +2325,7 @@ def updateVolumeFromArray(volumeNode, narray):
         vcomponents = 1
         # Put the slice into a single-slice 3D volume
         import numpy as np
+
         narray3d = np.zeros([1, 1, narray.shape[0]])
         narray3d[0, 0, :] = narray
         narray = narray3d
@@ -2264,6 +2335,7 @@ def updateVolumeFromArray(volumeNode, narray):
         vcomponents = 1
         # Put the slice into a single-slice 3D volume
         import numpy as np
+
         narray3d = np.zeros([1, narray.shape[0], narray.shape[1]])
         narray3d[0] = narray
         narray = narray3d
@@ -2282,9 +2354,11 @@ def updateVolumeFromArray(volumeNode, narray):
     vimage = volumeNode.GetImageData()
     if not vimage:
         import vtk
+
         vimage = vtk.vtkImageData()
         volumeNode.SetAndObserveImageData(vimage)
     import vtk.util.numpy_support
+
     vtype = vtk.util.numpy_support.get_vtk_array_type(narray.dtype)
 
     # Volumes with "long long" scalar type are not rendered correctly.
@@ -2301,6 +2375,7 @@ def updateVolumeFromArray(volumeNode, narray):
     # Notify the application that image data is changed
     # (same notifications as in vtkMRMLVolumeNode.SetImageDataConnection)
     import slicer
+
     volumeNode.StorableModified()
     volumeNode.Modified()
     volumeNode.InvokeEvent(slicer.vtkMRMLVolumeNode.ImageDataModifiedEvent, volumeNode)
@@ -2362,6 +2437,7 @@ def arrayFromTableColumn(tableNode, columnName):
       See :py:meth:`arrayFromVolume` for details.
     """
     import vtk.util.numpy_support
+
     columnData = tableNode.GetTable().GetColumnByName(columnName)
     narray = vtk.util.numpy_support.vtk_to_numpy(columnData)
     return narray
@@ -2433,6 +2509,7 @@ def dataframeFromTable(tableNode):
     try:
         # Suppress "lzma compression not available" UserWarning when loading pandas
         import warnings
+
         with warnings.catch_warnings():
             warnings.simplefilter(action="ignore", category=UserWarning)
             import pandas as pd
@@ -2470,6 +2547,7 @@ def dataframeFromMarkups(markupsNode):
     try:
         # Suppress "lzma compression not available" UserWarning when loading pandas
         import warnings
+
         with warnings.catch_warnings():
             warnings.simplefilter(action="ignore", category=UserWarning)
             import pandas as pd
@@ -2737,8 +2815,10 @@ def toVTKString(text):
       The method is only kept for backward compatibility and will be removed in the future.
     """
     import logging
+
     logging.warning("toVTKString is deprecated! Conversion is no longer necessary.")
     import traceback
+
     logging.debug("toVTKString was called from " + ("".join(traceback.format_stack())))
     return text
 
@@ -2767,6 +2847,7 @@ def tempDirectory(key="__SlicerTemp__", tempDir=None, includeDateTime=True):
     """
     # TODO: switch to QTemporaryDir in Qt5.
     import qt, slicer
+
     if not tempDir:
         tempDir = qt.QDir(slicer.app.temporaryPath)
     if includeDateTime:
@@ -2790,6 +2871,7 @@ def delayDisplay(message, autoCloseMsec=1000, parent=None, **kwargs):
     """
     import qt, slicer
     import logging
+
     logging.info(message)
     if 0 <= autoCloseMsec < 400:
         slicer.app.processEvents()
@@ -2825,6 +2907,7 @@ def infoDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwa
     then the text is only logged (at info level).
     """
     import qt, logging
+
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     _messageDisplay(logging.INFO, text, None, parent=parent, windowTitle=windowTitle, mainWindowNeeded=True,
                     icon=qt.QMessageBox.Information, standardButtons=standardButtons, **kwargs)
@@ -2837,6 +2920,7 @@ def warningDisplay(text, windowTitle=None, parent=None, standardButtons=None, **
     then the text is only logged (at warning level).
     """
     import qt, logging
+
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     _messageDisplay(logging.WARNING, text, None, parent=parent, windowTitle=windowTitle, mainWindowNeeded=True,
                     icon=qt.QMessageBox.Warning, standardButtons=standardButtons, **kwargs)
@@ -2849,6 +2933,7 @@ def errorDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kw
     then the text is only logged (at error level).
     """
     import qt, logging
+
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     _messageDisplay(logging.ERROR, text, None, parent=parent, windowTitle=windowTitle, mainWindowNeeded=True,
                     icon=qt.QMessageBox.Critical, standardButtons=standardButtons, **kwargs)
@@ -2861,6 +2946,7 @@ def confirmOkCancelDisplay(text, windowTitle=None, parent=None, **kwargs):
     the popup is skipped and True ("Ok") is returned, with a message being logged to indicate this.
     """
     import qt, slicer, logging
+
     if not windowTitle:
         windowTitle = slicer.app.applicationName + " confirmation"
     result = _messageDisplay(logging.INFO, text, True, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
@@ -2875,6 +2961,7 @@ def confirmYesNoDisplay(text, windowTitle=None, parent=None, **kwargs):
     the popup is skipped and True ("Yes") is returned, with a message being logged to indicate this.
     """
     import qt, slicer, logging
+
     if not windowTitle:
         windowTitle = slicer.app.applicationName + " confirmation"
     result = _messageDisplay(logging.INFO, text, True, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
@@ -2916,6 +3003,7 @@ def _messageDisplay(logLevel, text, testingReturnValue, mainWindowNeeded=False, 
       - Otherwise, if ``mainWindowNeeded`` is True and there is no main window, then None is returned.
     """
     import slicer, logging
+
     logging.log(logLevel, text)
     logLevelString = logging.getLevelName(logLevel).lower()  # e.g. this is "error" when logLevel is logging.ERROR
     if not windowTitle:
@@ -2942,6 +3030,7 @@ def messageBox(text, parent=None, **kwargs):
     is returned, with the text being logged to indicate this.
     """
     import logging, qt, slicer
+
     if slicer.app.testingEnabled():
         testingReturnValue = qt.QMessageBox.Ok
         logging.info(f"Testing mode is enabled: Returning {testingReturnValue} (qt.QMessageBox.Ok) and displaying an auto-closing message box [{text}].")
@@ -2955,6 +3044,7 @@ def messageBox(text, parent=None, **kwargs):
         kwargs["windowTitle"] = padding + windowTitle + padding
 
     import ctk
+
     mbox = ctk.ctkMessageBox(parent if parent else mainWindow())
     mbox.text = text
     for key, value in kwargs.items():
@@ -2988,6 +3078,7 @@ def createProgressDialog(parent=None, value=0, maximum=100, labelText="", window
       progressbar.labelText = "processing XYZ"
     """
     import qt
+
     progressIndicator = qt.QProgressDialog(parent if parent else mainWindow())
     progressIndicator.minimumDuration = 0
     progressIndicator.maximum = maximum
@@ -3021,6 +3112,7 @@ def displayPythonShell(display=True):
 
     def dockableWindowEnabled():
         import qt
+
         return toBool(qt.QSettings().value("Python/DockableWindow"))
 
     def getConsole():
@@ -3070,6 +3162,7 @@ class WaitCursor:
 
     def __enter__(self):
         import qt, slicer
+
         if self.show:
             qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
             slicer.app.processEvents()
@@ -3077,6 +3170,7 @@ class WaitCursor:
     def __exit__(self, type, value, traceback):
         if self.show:
             import qt
+
             qt.QApplication.restoreOverrideCursor()
 
 
@@ -3114,10 +3208,12 @@ class MessageDialog:
 
     def __enter__(self):
         import logging
+
         logging.log(self.logLevel, self.message)
 
         if self.show:
             import qt, slicer
+
             self.box = qt.QMessageBox()
             self.box.setStandardButtons(qt.QMessageBox.NoButton)
             self.box.setText(self.message)
@@ -3152,12 +3248,14 @@ def tryWithErrorDisplay(message=None, show=True, waitCursor=False):
     try:
         if waitCursor:
             import slicer, qt
+
             slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
         yield
         if waitCursor:
             slicer.app.restoreOverrideCursor()
     except Exception as e:
         import slicer
+
         if waitCursor:
             slicer.app.restoreOverrideCursor()
         if show and not slicer.app.testingEnabled():
@@ -3166,6 +3264,7 @@ def tryWithErrorDisplay(message=None, show=True, waitCursor=False):
             else:
                 errorMessage = str(e)
             import traceback
+
             errorDisplay(errorMessage, detailedText=traceback.format_exc())
         raise
 
@@ -3204,6 +3303,7 @@ def settingsValue(key, default, converter=lambda v: v, settings=None):
     ``settings`` parameter is expected to be a valid ``qt.Settings`` object.
     """
     import qt
+
     settings = qt.QSettings() if settings is None else settings
     return converter(settings.value(key)) if settings.contains(key) else default
 
@@ -3278,6 +3378,7 @@ def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid
     """
     import os
     import logging
+
     try:
         (algo, digest) = extractAlgoAndDigest(checksum)
     except ValueError as excinfo:
@@ -3287,9 +3388,11 @@ def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid
         logging.info(f"Downloading from\n  {url}\nas file\n  {targetFilePath}\nIt may take a few minutes...")
         try:
             import urllib.request, urllib.parse, urllib.error
+
             urllib.request.urlretrieve(url, targetFilePath)
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             logging.error("Failed to download file from " + url)
             return False
@@ -3333,6 +3436,7 @@ def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=No
     import os
     import logging
     from slicer import app
+
     if not os.path.exists(archiveFilePath):
         logging.error("Specified file %s does not exist" % (archiveFilePath))
         return False
@@ -3446,6 +3550,7 @@ def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
 def getFilesInDirectory(directory, absolutePath=True):
     """Collect all files in a directory and its subdirectories in a list."""
     import os
+
     allFiles = []
     for root, subdirs, files in os.walk(directory):
         for fileName in files:
@@ -3473,11 +3578,13 @@ class chdir:
 
     def __enter__(self):
         import os
+
         self._old_cwd.append(os.getcwd())
         os.chdir(self.path)
 
     def __exit__(self, *excinfo):
         import os
+
         os.chdir(self._old_cwd.pop())
 
 
@@ -3647,6 +3754,7 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
     """
     import subprocess
     import os
+
     if useStartupEnvironment:
         startupEnv = startupEnvironment()
         if updateEnvironment:
@@ -3674,8 +3782,10 @@ def logProcessOutput(proc):
     :param proc: process object.
     """
     from subprocess import CalledProcessError
+
     try:
         from slicer import app
+
         guiApp = app
     except ImportError:
         # Running from console
@@ -3711,11 +3821,13 @@ def _executePythonModule(module, args):
     # Determine pythonSlicerExecutablePath
     try:
         from slicer import app  # noqa: F401
+
         # If we get to this line then import from "app" is succeeded,
         # which means that we run this function from Slicer Python interpreter.
         # PythonSlicer is added to PATH environment variable in Slicer
         # therefore shutil.which will be able to find it.
         import shutil
+
         pythonSlicerExecutablePath = shutil.which("PythonSlicer")
         if not pythonSlicerExecutablePath:
             raise RuntimeError("PythonSlicer executable not found")
@@ -3723,6 +3835,7 @@ def _executePythonModule(module, args):
         # Running from console
         import os
         import sys
+
         pythonSlicerExecutablePath = os.path.dirname(sys.executable) + "/PythonSlicer"
         if os.name == "nt":
             pythonSlicerExecutablePath += ".exe"
@@ -3761,6 +3874,7 @@ def pip_install(requirements):
     if type(requirements) == str:
         # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
         import shlex
+
         args = "install", *(shlex.split(requirements))
     elif type(requirements) == list:
         args = "install", *requirements
@@ -3798,6 +3912,7 @@ def pip_uninstall(requirements):
     if type(requirements) == str:
         # shlex.split splits string the same way as the shell (keeping quoted string as a single argument)
         import shlex
+
         args = "uninstall", *(shlex.split(requirements)), "--yes"
     elif type(requirements) == list:
         args = "uninstall", *requirements, "--yes"
@@ -3822,6 +3937,7 @@ def longPath(path):
         return path
     # Return path as is on operating systems other than Windows
     import qt
+
     sysInfo = qt.QSysInfo()
     if sysInfo.productType() != "windows":
         return path

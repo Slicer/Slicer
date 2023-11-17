@@ -238,6 +238,7 @@ class SlicerRequestHandler(BaseRequestHandler):
         if not name:
             raise RuntimeError("sampledata name was not specified")
         import SampleData
+
         try:
             SampleData.downloadSample(name)
         except IndexError:
@@ -672,6 +673,7 @@ space origin: %%origin%%
         print(f"Loading from {dicomWebEndpoint}")
 
         from DICOMLib import DICOMUtils
+
         loadedUIDs = DICOMUtils.importFromDICOMWeb(
             dicomWebEndpoint=request["dicomWEBPrefix"] + "/" + request["dicomWEBStore"],
             studyInstanceUID=request["studyUID"],
@@ -716,6 +718,7 @@ space origin: %%origin%%
     def mrml(self, method, request):
         """Handle requests with path: /mrml"""
         import json
+
         p = urllib.parse.urlparse(request.decode())
         q = urllib.parse.parse_qs(p.query)
 
@@ -768,6 +771,7 @@ space origin: %%origin%%
 
             response = {"success": True, "reloadedNodeIDs": reloadedNodeIds}
             import json
+
             return json.dumps(response).encode(), b"application/json"
 
         elif method == "DELETE":
@@ -814,6 +818,7 @@ space origin: %%origin%%
                 "mainApplicationPatchVersion": slicer.app.mainApplicationPatchVersion,
             }
             import json
+
             return json.dumps(response).encode(), b"application/json"
 
     def screenshot(self, request):
@@ -1159,11 +1164,13 @@ space origin: %%origin%%
 
         # Generate random filename to avoid reusing/overwriting older downloaded files that may have the same name
         import uuid
+
         filename = f"{nodeName}-{uuid.uuid4().hex}{ext}"
 
         # Ensure sampleData logic is created
         if not self.sampleDataLogic:
             import SampleData
+
             self.sampleDataLogic = SampleData.SampleDataLogic()
 
         try:
@@ -1219,6 +1226,7 @@ space origin: %%origin%%
             loadedNodes = [loadedNodes]
 
         import json
+
         responseJson = json.dumps({"success": True, "loadedNodeIDs": [node.GetID() for node in loadedNodes]})
         return responseJson.encode(), b"application/json"
 
@@ -1253,6 +1261,7 @@ space origin: %%origin%%
         success = slicer.util.exportNode(node, localFile, saveFileProperties, applyTransforms)
 
         import json
+
         responseJson = json.dumps({"success": success})
         return responseJson.encode(), b"application/json"
 
@@ -1358,6 +1367,7 @@ space origin: %%origin%%
                     key = line.strip()
             except:
                 import traceback
+
                 traceback.print_exc()
 
         return content

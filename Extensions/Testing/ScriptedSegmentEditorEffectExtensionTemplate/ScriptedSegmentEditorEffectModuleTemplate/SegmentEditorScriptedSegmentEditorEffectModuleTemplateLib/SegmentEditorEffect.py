@@ -21,6 +21,7 @@ class SegmentEditorEffect(AbstractScriptedSegmentEditorEffect):
     def clone(self):
         # It should not be necessary to modify this method
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
+
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
         clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
@@ -103,6 +104,7 @@ To segment a single object, create a segment and paint inside and create another
         # Run segmentation algorithm
         import SimpleITK as sitk
         import sitkUtils
+
         # Read input data from Slicer into SimpleITK
         labelImage = sitk.ReadImage(sitkUtils.GetSlicerITKReadWriteAddress(mergedLabelmapNode.GetName()))
         backgroundImage = sitk.ReadImage(sitkUtils.GetSlicerITKReadWriteAddress(sourceVolumeNode.GetName()))

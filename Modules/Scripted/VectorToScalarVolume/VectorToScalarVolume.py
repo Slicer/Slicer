@@ -515,6 +515,7 @@ class VectorToScalarVolumeTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Create input data")
 
         import numpy as np
+
         inputVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLVectorVolumeNode")
         voxels = np.zeros([7, 8, 9, 3], np.uint8)
         voxels[:, :, :, 0] = 30

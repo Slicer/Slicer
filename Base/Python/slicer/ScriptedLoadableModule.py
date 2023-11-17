@@ -204,6 +204,7 @@ class ScriptedLoadableModuleWidget:
         self.editModuleUiButton = None
         moduleUiFileName = self.resourcePath("UI/%s.ui" % self.moduleName)
         import os.path
+
         if os.path.isfile(moduleUiFileName):
             # Module UI file exists
             self.editModuleUiButton = qt.QPushButton("Edit UI")
@@ -276,6 +277,7 @@ class ScriptedLoadableModuleWidget:
         if editor:
             # User specified a custom editor for .py files
             import subprocess
+
             try:
                 # Use the startup environment to avoid Python environment issues with text editors implemented in Python
                 subprocess.Popen([editor, filePath], env=slicer.util.startupEnvironment())

@@ -38,6 +38,7 @@ def compileResources(in_path, out_file, args):
         # file.
         if args.out_path == "-":
             import tempfile
+
             tmp_file, tmp_path = tempfile.mkstemp()
             os.close(tmp_file)
 

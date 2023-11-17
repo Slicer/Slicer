@@ -340,6 +340,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
                     time.sleep(1)
             elif os.name == "posix":
                 import signal
+
                 os.kill(pid, signal.SIGKILL)
             return True
         return False
@@ -398,6 +399,7 @@ class DICOMListener(DICOMStoreSCPProcess):
         """Complete indexing of all incoming files and remove them from the incoming folder."""
         logging.debug(f"Complete indexing for indexing to complete for {len(self.incomingFiles)} files.")
         import os
+
         self.indexer.waitForImportFinished()
         for dicomFilePath in self.incomingFiles:
             os.remove(dicomFilePath)

@@ -501,6 +501,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         videoFormatPreset = self.logic.videoFormatPresets[selectionIndex]
 
         import os
+
         filenameExt = os.path.splitext(self.videoFileNameWidget.text)
         self.videoFileNameWidget.text = filenameExt[0] + "." + videoFormatPreset["fileExtension"]
 
@@ -793,6 +794,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         except Exception as e:
             self.addLog(_("Error:") + str(e))
             import traceback
+
             traceback.print_exc()
             self.showCreatedOutputFileButton.enabled = False
             self.createdOutputFile = None
@@ -860,6 +862,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     def getRandomFilePattern(self):
         import string
         import random
+
         numberOfRandomChars = 5
         randomString = "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(numberOfRandomChars))
         filePathPattern = "tmp-" + randomString + "-%05d.png"
@@ -867,6 +870,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     def isFfmpegPathValid(self):
         import os
+
         ffmpegPath = self.getFfmpegPath()
         return os.path.isfile(ffmpegPath)
 
@@ -948,6 +952,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             try:
                 logging.info("Requesting download ffmpeg from %s..." % url)
                 import urllib.request, urllib.error, urllib.parse
+
                 req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
                 data = urllib.request.urlopen(req).read()
                 with open(filePath, "wb") as f:
@@ -1370,6 +1375,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         self.addLog(_("Export to lightbox image..."))
         filePathPattern = os.path.join(outputDir, imageFileNamePattern)
         import math
+
         numberOfRows = int(math.ceil(numberOfImages / numberOfColumns))
         imageMarginSizePixels = 5
         for row in range(numberOfRows):
@@ -1415,6 +1421,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
         # Get ffmpeg
         import os.path
+
         ffmpegPath = os.path.abspath(self.getFfmpegPath())
         if not ffmpegPath:
             raise ValueError(_("Video creation failed: ffmpeg executable path is not defined"))
@@ -1435,6 +1442,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         self.addLog(_("Start ffmpeg:") + "\n" + " ".join(ffmpegParams))
 
         import subprocess
+
         p = subprocess.Popen(ffmpegParams, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=outputDir)
         stdout, stderr = p.communicate()
         if p.returncode != 0:
@@ -1448,6 +1456,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     def deleteTemporaryFiles(self, outputDir, imageFileNamePattern, numberOfImages):
         """Delete files after a video has been created from them."""
         import os
+
         filePathPattern = os.path.join(outputDir, imageFileNamePattern)
         for imageIndex in range(numberOfImages):
             filename = filePathPattern % imageIndex
@@ -1480,6 +1489,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
         """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)
         import SampleData
+
         self.image1 = SampleData.downloadSample("MRBrainTumor1")
         self.image2 = SampleData.downloadSample("MRBrainTumor2")
 
@@ -1503,6 +1513,7 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
 
     def verifyAndDeleteWrittenFiles(self):
         import os
+
         filePathPattern = os.path.join(self.tempDir, self.imageFileNamePattern)
         for imageIndex in range(self.numberOfImages):
             filename = filePathPattern % imageIndex

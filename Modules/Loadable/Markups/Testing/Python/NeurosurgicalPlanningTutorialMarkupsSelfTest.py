@@ -174,6 +174,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         # use the sample data module logic to load data for the self test
         self.delayDisplay("Getting Baseline volume")
         import SampleData
+
         baselineVolume = SampleData.downloadSample("BaselineVolume")
 
         self.takeScreenshot("NeurosurgicalPlanning-Loaded", "Data loaded")

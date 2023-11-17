@@ -269,6 +269,7 @@ Publications related to this module go here. Links to pdfs would be useful.
 
 def SEMToMediaWikiProg():
     from optparse import OptionParser
+
     usage = "%prog -x XMLFILE -o MEDIWIKIFILE"
     version = "%prog v0.1"
     parser = OptionParser()

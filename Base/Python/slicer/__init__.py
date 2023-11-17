@@ -130,6 +130,7 @@
 def _createModule(name, globals, docstring):
     import imp
     import sys
+
     moduleName = name.split(".")[-1]
     module = imp.new_module(moduleName)
     module.__file__ = __file__
@@ -183,6 +184,7 @@ except ImportError as detail:
 
 import os
 import sys
+
 standalone_python = "python" in str.lower(os.path.split(sys.executable)[-1])
 
 for kit in available_kits:

@@ -213,6 +213,7 @@ if not np.isclose(curvePointToWorldMatrix, expectedCurvePointToWorldMatrix).all(
 radius = 35
 numberOfControlPoints = 40
 import math
+
 circleCurveNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsClosedCurveNode")
 for controlPointIndex in range(numberOfControlPoints):
     angle = 2.0 * math.pi * controlPointIndex / numberOfControlPoints

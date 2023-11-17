@@ -146,6 +146,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
                 raise OSError("Invalid DICOM time string: " + tm + " (failed to parse HHMMSS)")
 
         import datetime
+
         return datetime.datetime(year, month, day, hour, minute, second, microsecond)
 
     def export(self, exportables):
@@ -224,6 +225,7 @@ class DICOMVolumeSequencePluginClass(DICOMPlugin):
             contentStartDate = exportable.tag("SeriesDate")
             contentStartTime = exportable.tag("SeriesTime")
             import datetime
+
             datetimeNow = datetime.datetime.now()
             if not contentStartDate:
                 contentStartDate = datetimeNow.strftime("%Y%m%d")

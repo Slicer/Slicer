@@ -21,6 +21,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
+
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
         clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
@@ -194,6 +195,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
         shellMode = self.scriptedEffect.parameter("ShellMode")
         shellThicknessMM = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
         import vtkITK
+
         margin = vtkITK.vtkITKImageMargin()
         margin.SetInputConnection(thresh.GetOutputPort())
         margin.CalculateMarginInMMOn()

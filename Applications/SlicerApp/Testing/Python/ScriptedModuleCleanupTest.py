@@ -85,6 +85,7 @@ def check_exit_code(slicer_executable, testing_enabled=True, debug=False):
     finally:
         if not debug:
             import shutil
+
             shutil.rmtree(temporaryModuleDirPath)
 
 

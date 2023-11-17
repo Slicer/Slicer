@@ -165,6 +165,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         tumor = SampleData.downloadSample("MRBrainTumor1")
 
         try:
@@ -204,6 +205,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))
 
@@ -218,6 +220,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         extractPath = SampleData.downloadFromURL(
             fileNames="dataset3_PETCT.zip",
             uris=TESTING_DATA_URL + "SHA256/11e81af3462076f4ca371b632e03ed435240042915c2daf07f80059b3f78f88d",
@@ -299,6 +302,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))
 
@@ -317,6 +321,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
         # first, get some data
         #
         import SampleData
+
         SampleData.downloadFromURL(
             fileNames="ChangeTrackerScene.mrb",
             loadFiles=True,
@@ -421,5 +426,6 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Test passed!")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             self.delayDisplay("Test caused exception!\n" + str(e))

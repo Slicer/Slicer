@@ -21,6 +21,7 @@ class SegmentEditorFillBetweenSlicesEffect(AbstractScriptedSegmentEditorAutoComp
 
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
+
         clonedEffect = effects.qSlicerSegmentEditorScriptedEffect(None)
         clonedEffect.setPythonSource(__file__.replace("\\", "/"))
         return clonedEffect
@@ -46,6 +47,7 @@ The effect uses  <a href="https://insight-journal.org/browse/publication/977">mo
 
     def computePreviewLabelmap(self, mergedImage, outputLabelmap):
         import vtkITK
+
         interpolator = vtkITK.vtkITKMorphologicalContourInterpolator()
         interpolator.SetInputData(mergedImage)
         interpolator.Update()

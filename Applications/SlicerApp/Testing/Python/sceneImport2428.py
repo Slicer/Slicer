@@ -102,6 +102,7 @@ class sceneImport2428Test(ScriptedLoadableModuleTest):
         #
         self.delayDisplay("Getting Data")
         import SampleData
+
         head = SampleData.downloadSample("MRHead")
 
         # Create segmentation

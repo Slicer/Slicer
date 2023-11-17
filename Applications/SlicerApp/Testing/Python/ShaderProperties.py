@@ -181,6 +181,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
         self.setUp()
 
         import SampleData
+
         mrHead = SampleData.downloadSample("MRHead")
 
         self.delayDisplay("Head downloaded...")

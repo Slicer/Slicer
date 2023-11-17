@@ -25,6 +25,7 @@ def setNodeParameters(node, parameters):
     For images, geometry, points and regions, provide a vtkMRMLNode
     """
     import slicer
+
     if not node:
         return None
     if not parameters:

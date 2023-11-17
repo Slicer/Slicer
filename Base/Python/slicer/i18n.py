@@ -8,6 +8,7 @@ def translate(context, text):
     See example use in DICOM module.
     """
     from slicer import app
+
     return app.translate(context, text)
 
 

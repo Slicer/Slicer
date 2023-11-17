@@ -85,6 +85,7 @@ class SlicerScriptedFileReaderWriterTestFileReader:
 
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             errorMessage = f"Failed to read file: {str(e)}"
             self.parent.userMessages().AddMessage(vtk.vtkCommand.ErrorEvent, errorMessage)
@@ -127,6 +128,7 @@ class SlicerScriptedFileReaderWriterTestFileWriter:
 
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             errorMessage = f"Failed to write file: {str(e)}"
             self.parent.userMessages().AddMessage(vtk.vtkCommand.ErrorEvent, errorMessage)
@@ -155,6 +157,7 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
 
     def tearDown(self):
         import shutil
+
         shutil.rmtree(self.tempDir, True)
 
     def test_WriterReader(self):

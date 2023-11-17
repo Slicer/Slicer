@@ -230,6 +230,7 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         if hasattr(slicer.modules, "dicom"):
             submoduleNames.append("DICOMRequestHandler")
         import imp
+
         f, filename, description = imp.find_module(packageName)
         package = imp.load_module(packageName, f, filename, description)
         for submoduleName in submoduleNames:
@@ -441,10 +442,12 @@ class SlicerHTTPServer(HTTPServer):
                     except Exception as e:
                         etype, value, tb = sys.exc_info()
                         import traceback
+
                         for frame in traceback.format_tb(tb):
                             self.logMessage(frame)
                         self.logMessage(etype, value)
                         import json
+
                         contentType = b"application/json"
                         responseBody = json.dumps({"success": False, "message": "Server error: " + str(e)}).encode()
                         httpStatus = "500 Internal Server Error"
@@ -528,6 +531,7 @@ class SlicerHTTPServer(HTTPServer):
         print("Exception happened during processing of request", request)
         print("From", client_address)
         import traceback
+
         traceback.print_exc()  # XXX But this goes to stderr!
         print("-" * 40)
 
@@ -594,12 +598,15 @@ class WebServerLogic:
     def addDefaultRequestHandlers(self, enableSlicer=True, enableExec=False, enableDICOM=True, enableStaticPages=True):
         if enableSlicer:
             from WebServerLib import SlicerRequestHandler
+
             self.requestHandlers.append(SlicerRequestHandler(enableExec))
         if enableDICOM:
             from WebServerLib import DICOMRequestHandler
+
             self.requestHandlers.append(DICOMRequestHandler())
         if enableStaticPages:
             from WebServerLib import StaticPagesRequestHandler
+
             staticHandler = StaticPagesRequestHandler(self.docroot)
             # Rewrite all OHIF viewer URLs
             # Simplify so that the user does not have to provide .html (/browse will be /browse.html)

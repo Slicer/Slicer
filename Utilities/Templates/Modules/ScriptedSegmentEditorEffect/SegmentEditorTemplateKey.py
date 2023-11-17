@@ -26,6 +26,7 @@ class SegmentEditorTemplateKey(ScriptedLoadableModule):
 
     def registerEditorEffect(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as qSlicerSegmentationsEditorEffects
+
         instance = qSlicerSegmentationsEditorEffects.qSlicerSegmentEditorScriptedEffect(None)
         effectFilename = os.path.join(os.path.dirname(__file__), self.__class__.__name__ + "Lib/SegmentEditorEffect.py")
         instance.setPythonSource(effectFilename.replace("\\", "/"))

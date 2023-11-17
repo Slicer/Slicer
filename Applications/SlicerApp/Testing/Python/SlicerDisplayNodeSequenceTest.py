@@ -60,6 +60,7 @@ class SlicerDisplayNodeSequenceTestTest(ScriptedLoadableModuleTest):
     def test_ScalarVolumeDisplayNodeSequence(self):
         # Load first volume and apply custom display
         import SampleData
+
         sampleDataLogic = SampleData.SampleDataLogic()
         mrHead = sampleDataLogic.downloadMRHead()
         mrHead.GetDisplayNode().ApplyThresholdOn()

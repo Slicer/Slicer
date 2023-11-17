@@ -96,6 +96,7 @@ intersphinx_mapping = {
 
 try:
     import git
+
     intersphinx_mapping["git"] = ("https://pythonhosted.org/GitPython/%s" % git.__version__.split(" ")[0], None)
 except:
     pass

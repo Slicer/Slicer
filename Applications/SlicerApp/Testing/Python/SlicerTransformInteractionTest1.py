@@ -141,6 +141,7 @@ class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
         logic = SlicerTransformInteractionTest1Logic()
 
         import SampleData
+
         volume = SampleData.downloadSample("CTAAbdomenPanoramix")
 
         # self.delayDisplay("Starting test_3D_interactionVolume")
