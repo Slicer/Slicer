@@ -110,7 +110,7 @@ class EditExtensionMetadataDialog:
             try:
                 n = c.index("(")
                 item.setText(0, c[:n].strip())
-                item.setText(1, c[n + 1:-1].strip())
+                item.setText(1, c[n + 1 : -1].strip())
 
             except ValueError:
                 qt.qWarning("%r: badly formatted contributor" % c)

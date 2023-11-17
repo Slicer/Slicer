@@ -161,7 +161,7 @@ Examples of the module in use:
     stringDict["executableDocumentationURL"] = getThisNodesInfoAsText(
         executableNode, "documentation-url")
     stringDict["tblStart"] = "{|"  # To avoid subs the entire table as var
-    stringDict["tblStop"] = "|}"   # To avoid subs the entire table as var
+    stringDict["tblStop"] = "|}"  # To avoid subs the entire table as var
 
     outRegion = outputRegionTemplate.format(**stringDict)
     return outRegion
@@ -284,12 +284,12 @@ def SEMToMediaWikiProg():
                       action="store", type="string", default="hbf",
                       help="The parts to print out, h=Header,b=body,f=footer")
     parser.epilog = program_description
-#    print program_description
+    #    print program_description
     (options, args) = parser.parse_args()
 
-#    It may be desirable in the future to automatically push information to the
-#    WIKI page without having to copy and paste.
-#    http://python-wikitools.googlecode.com/svn/trunk/README
+    #    It may be desirable in the future to automatically push information to the
+    #    WIKI page without having to copy and paste.
+    #    http://python-wikitools.googlecode.com/svn/trunk/README
 
     ExecutableNode = GetSEMDoc(options.xmlfilename)
 

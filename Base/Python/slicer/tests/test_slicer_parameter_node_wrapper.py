@@ -633,18 +633,18 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         self.assertEqual(param.a, (0, ""))
         self.assertEqual(param.b, (44.0, False))
-        self.assertEqual(param.c, ([], ))
+        self.assertEqual(param.c, ([],))
 
         param.a = (1, "a")
         param.b = (4.4, False)
-        param.c = ([1, 4], )
+        param.c = ([1, 4],)
         param.c[0].append(7)
         c0 = param.c[0]
         c0.pop(0)
 
         self.assertEqual(param.a, (1, "a"))
         self.assertEqual(param.b, (4.4, False))
-        self.assertEqual(param.c, ([4, 7], ))
+        self.assertEqual(param.c, ([4, 7],))
 
         with self.assertRaises(ValueError):
             param.a = (-2, "hi")
@@ -653,7 +653,7 @@ class TypedParameterNodeTest(unittest.TestCase):
 
         self.assertEqual(param.a, (1, "a"))
         self.assertEqual(param.b, (4.4, False))
-        self.assertEqual(param.c, ([4, 7], ))
+        self.assertEqual(param.c, ([4, 7],))
 
     def test_tuple_of_custom(self):
         @parameterNodeWrapper

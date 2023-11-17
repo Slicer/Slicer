@@ -23,7 +23,7 @@ def findSource(dir):
                     fnmatch.fnmatch(file, "*.png") or \
                     fnmatch.fnmatch(file, "*.dox"):
                 file = os.path.join(root, file)
-                file = file[len(dir):]  # strip common dir
+                file = file[len(dir) :]  # strip common dir
                 fileList.append(file)
     return fileList
 

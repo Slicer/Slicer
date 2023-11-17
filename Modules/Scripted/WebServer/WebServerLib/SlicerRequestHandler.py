@@ -32,7 +32,7 @@ class SlicerRequestHandler(BaseRequestHandler):
         """
         logger.debug(*args)
 
-    def __init__(self, enableExec=False, logMessage:Optional[BaseRequestLoggingFunction]=None):
+    def __init__(self, enableExec=False, logMessage: Optional[BaseRequestLoggingFunction] = None):
         """
         Initialize a new request handler instance.
         :param enableExec: Whether this instance is permitted to execute arbitrary code.
@@ -64,7 +64,7 @@ class SlicerRequestHandler(BaseRequestHandler):
         """
         parsedURL = urllib.parse.urlparse(uri)
         request = parsedURL.path
-        request = request[len(b"/slicer"):]
+        request = request[len(b"/slicer") :]
         if parsedURL.query != b"":
             request += b"?" + parsedURL.query
         self.logMessage(" request is: %s" % request)
@@ -372,7 +372,7 @@ class SlicerRequestHandler(BaseRequestHandler):
             colonIndex = line.find(b":")
             if line[0] != "#" and colonIndex != -1:
                 key = line[:colonIndex]
-                value = line[colonIndex + 2:]
+                value = line[colonIndex + 2 :]
                 fields[key] = value
 
         if fields[b"type"] != b"short":
@@ -422,7 +422,7 @@ class SlicerRequestHandler(BaseRequestHandler):
         node.SetAndObserveImageData(imageData)
         node.SetIJKToRASMatrix(ijkToRAS)
 
-        pixels = numpy.frombuffer(requestBody[endOfHeader + 2:], dtype=numpy.dtype("int16"))
+        pixels = numpy.frombuffer(requestBody[endOfHeader + 2 :], dtype=numpy.dtype("int16"))
         array = slicer.util.array(node.GetID())
         array[:] = pixels.reshape(array.shape)
         imageData.GetPointData().GetScalars().Modified()
@@ -463,8 +463,8 @@ class SlicerRequestHandler(BaseRequestHandler):
         sizes = imageData.GetDimensions()
         sizes = " ".join(list(map(str, sizes)))
 
-        originList = [0 ] * 3
-        directionLists = [[0 ] * 3, [0 ] * 3, [0 ] * 3]
+        originList = [0] * 3
+        directionLists = [[0] * 3, [0] * 3, [0] * 3]
         ijkToRAS = vtk.vtkMatrix4x4()
         volumeNode.GetIJKToRASMatrix(ijkToRAS)
         for row in range(3):
@@ -513,7 +513,7 @@ space origin: %%origin%%
         if transformNode is None or transformArray is None:
             self.logMessage("Could not find requested transform")
             return None
-        supportedNodes = ["vtkMRMLGridTransformNode" ]
+        supportedNodes = ["vtkMRMLGridTransformNode"]
         if not transformNode.GetClassName() in supportedNodes:
             self.logMessage("Can only get grid transforms")
             return None
@@ -579,7 +579,7 @@ space origin: %%origin%%
             node["scale"] = displayNode.GetGlyphScale()
             node["markups"] = []
             for markupIndex in range(markupsNode.GetNumberOfControlPoints()):
-                position = [0 ] * 3
+                position = [0] * 3
                 markupsNode.GetNthControlPointPosition(markupIndex, position)
                 position
                 node["markups"].append({
@@ -929,7 +929,7 @@ space origin: %%origin%%
 
         if scrollTo:
             volumeNode = sliceLogic.GetBackgroundLayer().GetVolumeNode()
-            bounds = [0 ] * 6
+            bounds = [0] * 6
             sliceLogic.GetVolumeSliceBounds(volumeNode, bounds)
             sliceLogic.SetSliceOffset(bounds[4] + (scrollTo * (bounds[5] - bounds[4])))
         if offset:

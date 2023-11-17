@@ -173,12 +173,12 @@ class SampleDataSource:
             if checksums is None:
                 checksums = [None] * len(uris)
         elif isinstance(uris, str):
-            uris = [uris ]
-            fileNames = [fileNames ]
-            nodeNames = [nodeNames ]
-            loadFiles = [loadFiles ]
-            loadFileType = [loadFileType ]
-            checksums = [checksums ]
+            uris = [uris]
+            fileNames = [fileNames]
+            nodeNames = [nodeNames]
+            loadFiles = [loadFiles]
+            loadFileType = [loadFileType]
+            checksums = [checksums]
 
         updatedFileType = []
         for fileName, nodeName, fileType in zip(fileNames, nodeNames, loadFileType):

@@ -43,7 +43,7 @@ def parse_nhdr(path):
             kvdict[key] = val
 
             if key.startswith(dwmri_grad_keybase):
-                _gn = int(key[len(dwmri_grad_keybase):None])
+                _gn = int(key[len(dwmri_grad_keybase) : None])
                 # monotonic keys
                 assert _gn == grad_count  # offset
                 grad_count += 1

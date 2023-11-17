@@ -95,7 +95,7 @@ class SegmentStatisticsPluginBase:
     def toShortKey(self, key):
         # remove prefix used outside of plugin
         pluginName = self.__class__.__name__
-        return key[len(pluginName) + 1:] if key.startswith(pluginName + ".") else ""
+        return key[len(pluginName) + 1 :] if key.startswith(pluginName + ".") else ""
 
     def setParameterNode(self, parameterNode):
         if self.parameterNode == parameterNode:
