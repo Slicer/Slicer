@@ -26,7 +26,7 @@ class StaticPagesRequestHandler(BaseRequestHandler):
         """
         logger.debug(*args)
 
-    def __init__(self, docroot, logMessage:Optional[BaseRequestLoggingFunction]=None):
+    def __init__(self, docroot, logMessage: Optional[BaseRequestLoggingFunction] = None):
         """
         Initialize a new request handler instance.
         :param docroot: directory path of static pages content

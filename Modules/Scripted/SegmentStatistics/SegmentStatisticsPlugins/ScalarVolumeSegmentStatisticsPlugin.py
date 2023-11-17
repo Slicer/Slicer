@@ -72,7 +72,7 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         if (not grayscaleNode
             or not grayscaleNode.GetImageData()
             or not grayscaleNode.GetImageData().GetPointData()
-                or not grayscaleNode.GetImageData().GetPointData().GetScalars()):
+            or not grayscaleNode.GetImageData().GetPointData().GetScalars()):
             # Input grayscale node does not contain valid image data
             return None
 

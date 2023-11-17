@@ -266,7 +266,7 @@ def loadByInstanceUID(instanceUID, messages=None, progressCallback=None):
                         "loadable": loadable,
                     }
     filteredLoadablesByPlugin = {}
-    filteredLoadablesByPlugin[highestConfidence["plugin"]] = [highestConfidence["loadable"] ]
+    filteredLoadablesByPlugin[highestConfidence["plugin"]] = [highestConfidence["loadable"]]
     # load the results
     return loadLoadables(filteredLoadablesByPlugin)
 
@@ -611,7 +611,7 @@ class LoadDICOMFilesToDatabase:
 # TODO: more consistency checks:
 # - is there gantry tilt?
 # - are the orientations the same for all slices?
-def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list[str], dict[str, str], str]:
+def getSortedImageFiles(filePaths: list[str], epsilon: float = 0.01) -> tuple[list[str], dict[str, str], str]:
     """Sort DICOM image files in increasing slice order (IS direction) corresponding to a series
 
     Use the first file to get the ImageOrientationPatient for the

@@ -510,7 +510,7 @@ class ObservedList(collections.abc.MutableSequence):
         self._saveList()
         return val
 
-    def clear(self ) -> None:
+    def clear(self) -> None:
         self._list.clear()
         self._saveList()
 

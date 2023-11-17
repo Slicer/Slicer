@@ -43,7 +43,7 @@ def setNodeParameters(node, parameters):
             node.SetParameterAsNode(key, value)
         elif isinstance(value, list) or isinstance(value, tuple):
             commaSeparatedString = str(value)
-            commaSeparatedString = commaSeparatedString[1:len(commaSeparatedString) - 1]
+            commaSeparatedString = commaSeparatedString[1 : len(commaSeparatedString) - 1]
             node.SetParameterAsString(key, commaSeparatedString)
         # TODO: file support
         else:

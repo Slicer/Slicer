@@ -227,4 +227,4 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
 
         segmentationItem = shNode.GetItemByDataNode(segmentationNode)
         self.assertEqual(shNode.GetItemParent(segmentationItem), shNode.GetItemParent(mrHeadItem))
-        self.assertEqual(segmentationNode.GetName()[:len(mrHeadNode.GetName())], mrHeadNode.GetName())
+        self.assertEqual(segmentationNode.GetName()[: len(mrHeadNode.GetName())], mrHeadNode.GetName())

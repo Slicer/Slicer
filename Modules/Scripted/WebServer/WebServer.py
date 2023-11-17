@@ -346,7 +346,7 @@ class SlicerHTTPServer(HTTPServer):
             self.readNotifier.connect("activated(int)", self.onReadable)
             self.logMessage("Waiting on %d..." % fileno)
 
-        def registerRequestHandler(self, handler:BaseRequestHandler):
+        def registerRequestHandler(self, handler: BaseRequestHandler):
             self.requestHandlers.append(handler)
             handler.logMessage = self.logMessage
 
@@ -364,8 +364,8 @@ class SlicerHTTPServer(HTTPServer):
                 if self.expectedRequestSize > 0:
                     self.logMessage("received... %d of %d expected" % (len(self.requestSoFar), self.expectedRequestSize))
                     if len(self.requestSoFar) >= self.expectedRequestSize:
-                        requestHeader = self.requestSoFar[:endOfHeader + 2]
-                        requestBody = self.requestSoFar[4 + endOfHeader:]
+                        requestHeader = self.requestSoFar[: endOfHeader + 2]
+                        requestBody = self.requestSoFar[4 + endOfHeader :]
                         requestComplete = True
                 else:
                     if endOfHeader != -1:
@@ -379,8 +379,8 @@ class SlicerHTTPServer(HTTPServer):
                             self.expectedRequestSize = 4 + endOfHeader + contentLength
                             self.logMessage("Expecting a body of %d, total size %d" % (contentLength, self.expectedRequestSize))
                             if len(requestPart) == self.expectedRequestSize:
-                                requestHeader = requestPart[:endOfHeader + 2]
-                                requestBody = requestPart[4 + endOfHeader:]
+                                requestHeader = requestPart[: endOfHeader + 2]
+                                requestBody = requestPart[4 + endOfHeader :]
                                 requestComplete = True
                         else:
                             self.logMessage("Found end of header with no content, so body is empty")
@@ -481,7 +481,7 @@ class SlicerHTTPServer(HTTPServer):
             self.logMessage("Sending on %d..." % (fileno))
             sendError = False
             try:
-                sent = self.connectionSocket.send(self.response[:500 * self.bufferSize])
+                sent = self.connectionSocket.send(self.response[: 500 * self.bufferSize])
                 self.response = self.response[sent:]
                 self.sentSoFar += sent
                 self.logMessage("sent: %d (%d of %d, %f%%)" % (sent, self.sentSoFar, self.toSend, 100. * self.sentSoFar / self.toSend))

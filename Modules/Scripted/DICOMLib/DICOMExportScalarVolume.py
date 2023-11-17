@@ -34,60 +34,60 @@ class DICOMExportScalarVolume:
 
     # TODO: May come in use when appending to existing study
     # def parametersFromStudy(self,studyUID=None):
-        # """Return a dictionary of the required conversion parameters
-        # based on the studyUID found in the dicom dictionary (empty if
-        # not well defined"""
-        # if not studyUID:
-        #     studyUID = self.studyUID
+    # """Return a dictionary of the required conversion parameters
+    # based on the studyUID found in the dicom dictionary (empty if
+    # not well defined"""
+    # if not studyUID:
+    #     studyUID = self.studyUID
 
-        # # TODO: we should install dicom.dic with slicer and use it to
-        # # define the tag to name mapping
-        # tags = {
-        # "0010,0010": "Patient Name",
-        # "0010,0020": "Patient ID",
-        # "0010,4000": "Patient Comments",
-        # "0020,0010": "Study ID",
-        # "0008,0020": "Study Date",
-        # "0008,1030": "Study Description",
-        # "0008,0060": "Modality",
-        # "0008,0070": "Manufacturer",
-        # "0008,1090": "Model",
-        # }
-        # seriesNumbers = []
-        # p = {}
-        # if studyUID:
-        #     series = slicer.dicomDatabase.seriesForStudy(studyUID)
-        #     # first find a unique series number
-        #     for serie in series:
-        #         files = slicer.dicomDatabase.filesForSeries(serie, 1)
-        #         if len(files):
-        #             slicer.dicomDatabase.loadFileHeader(files[0])
-        #             dump = slicer.dicomDatabase.headerValue('0020,0011')
-        #             try:
-        #                 value = dump[dump.index('[')+1:dump.index(']')]
-        #                 seriesNumbers.append(int(value))
-        #             except ValueError:
-        #                 pass
-        #     for i in xrange(len(series)+1):
-        #         if not i in seriesNumbers:
-        #             p['Series Number'] = i
-        #             break
+    # # TODO: we should install dicom.dic with slicer and use it to
+    # # define the tag to name mapping
+    # tags = {
+    # "0010,0010": "Patient Name",
+    # "0010,0020": "Patient ID",
+    # "0010,4000": "Patient Comments",
+    # "0020,0010": "Study ID",
+    # "0008,0020": "Study Date",
+    # "0008,1030": "Study Description",
+    # "0008,0060": "Modality",
+    # "0008,0070": "Manufacturer",
+    # "0008,1090": "Model",
+    # }
+    # seriesNumbers = []
+    # p = {}
+    # if studyUID:
+    #     series = slicer.dicomDatabase.seriesForStudy(studyUID)
+    #     # first find a unique series number
+    #     for serie in series:
+    #         files = slicer.dicomDatabase.filesForSeries(serie, 1)
+    #         if len(files):
+    #             slicer.dicomDatabase.loadFileHeader(files[0])
+    #             dump = slicer.dicomDatabase.headerValue('0020,0011')
+    #             try:
+    #                 value = dump[dump.index('[')+1:dump.index(']')]
+    #                 seriesNumbers.append(int(value))
+    #             except ValueError:
+    #                 pass
+    #     for i in xrange(len(series)+1):
+    #         if not i in seriesNumbers:
+    #             p['Series Number'] = i
+    #             break
 
-        #     # now find the other values from any file (use first file in first series)
-        #     if len(series):
-        #         p['Series Number'] = str(len(series)+1) # doesn't need to be unique, but we try
-        #         files = slicer.dicomDatabase.filesForSeries(series[0], 1)
-        #         if len(files):
-        #             self.referenceFile = files[0]
-        #             slicer.dicomDatabase.loadFileHeader(self.referenceFile)
-        #             for tag in tags.keys():
-        #                 dump = slicer.dicomDatabase.headerValue(tag)
-        #                 try:
-        #                     value = dump[dump.index('[')+1:dump.index(']')]
-        #                 except ValueError:
-        #                     value = "Unknown"
-        #                 p[tags[tag]] = value
-        # return p
+    #     # now find the other values from any file (use first file in first series)
+    #     if len(series):
+    #         p['Series Number'] = str(len(series)+1) # doesn't need to be unique, but we try
+    #         files = slicer.dicomDatabase.filesForSeries(series[0], 1)
+    #         if len(files):
+    #             self.referenceFile = files[0]
+    #             slicer.dicomDatabase.loadFileHeader(self.referenceFile)
+    #             for tag in tags.keys():
+    #                 dump = slicer.dicomDatabase.headerValue(tag)
+    #                 try:
+    #                     value = dump[dump.index('[')+1:dump.index(']')]
+    #                 except ValueError:
+    #                     value = "Unknown"
+    #                 p[tags[tag]] = value
+    # return p
 
     def progress(self, string):
         # TODO: make this a callback for a gui progress dialog

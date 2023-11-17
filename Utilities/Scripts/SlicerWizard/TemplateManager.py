@@ -51,7 +51,7 @@ def _listSources(directory):
         for f in files:
             if _isSourceFile(f):
                 f = os.path.join(root, f)
-                yield f[len(directory) + 1:]  # strip common dir
+                yield f[len(directory) + 1 :]  # strip common dir
 
 
 # =============================================================================

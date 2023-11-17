@@ -49,7 +49,7 @@ class DICOMProcess:
         "/../CTK-build/CMakeExternals/Install/bin",
         "/bin",
     ]
-    PROCESS_STATE_NAMES = {0: "NotRunning", 1: "Starting", 2: "Running" }
+    PROCESS_STATE_NAMES = {0: "NotRunning", 1: "Starting", 2: "Running"}
 
     @classmethod
     def getDCMTKToolsPath(
@@ -410,7 +410,7 @@ class DICOMListener(DICOMStoreSCPProcess):
         searchTag = "# dcmdump (1/1): "
         tagStart = line.find(searchTag)
         if tagStart != -1:
-            dicomFilePath = line[tagStart + len(searchTag):].strip()
+            dicomFilePath = line[tagStart + len(searchTag) :].strip()
             slicer.dicomFilePath = dicomFilePath
             logging.debug("indexing: %s " % dicomFilePath)
             if self.fileToBeAddedCallback:

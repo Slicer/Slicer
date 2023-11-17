@@ -82,7 +82,7 @@ def getNodeTypes(datatype):
     # single node type case
     dataIsNode = issubclass(underlyingDataType, slicer.vtkMRMLNode) if type(underlyingDataType) == type else False
     if dataIsNode:
-        return (underlyingDataType().GetClassName(), )
+        return (underlyingDataType().GetClassName(),)
     # union case
     elif typing.get_origin(underlyingDataType) == typing.Union:
         nodeTypes = []

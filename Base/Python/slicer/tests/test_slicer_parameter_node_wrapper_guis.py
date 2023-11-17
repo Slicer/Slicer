@@ -679,7 +679,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         # alpha
         self.assertIsNone(param.alpha)
         self.assertIsNone(currentNodeFunc(widgetAlpha))
-        self.assertEqual(widgetAlpha.nodeTypes, ("vtkMRMLModelNode", ))
+        self.assertEqual(widgetAlpha.nodeTypes, ("vtkMRMLModelNode",))
         # bravo
         self.assertIsNone(param.bravo)
         self.assertIsNone(currentNodeFunc(widgetBravo))

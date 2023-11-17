@@ -392,8 +392,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         xName = x.name
         yName = y.name
         try:
-            xNumber = int(xName[:xName.index(":")])
-            yNumber = int(yName[:yName.index(":")])
+            xNumber = int(xName[: xName.index(":")])
+            yNumber = int(yName[: yName.index(":")])
         except ValueError:
             return 0
         cmp = xNumber - yNumber
