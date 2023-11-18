@@ -20,7 +20,6 @@ from .validators import (
 
 __all__ = [
     "parameterNodeSerializer",
-
     "Serializer",
     "ValidatedSerializer",
     "NumberSerializer",

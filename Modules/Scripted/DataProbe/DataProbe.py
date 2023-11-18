@@ -521,8 +521,8 @@ class DataProbeInfoWidget:
 # DataProbe widget
 #
 
-class DataProbeWidget(ScriptedLoadableModuleWidget):
 
+class DataProbeWidget(ScriptedLoadableModuleWidget):
     def enter(self):
         pass
 

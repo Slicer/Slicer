@@ -189,6 +189,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
             thresh.SetOutValue(backgroundValue)
 
         import vtkITK
+
         margin = vtkITK.vtkITKImageMargin()
         margin.SetInputConnection(thresh.GetOutputPort())
         margin.CalculateMarginInMMOn()

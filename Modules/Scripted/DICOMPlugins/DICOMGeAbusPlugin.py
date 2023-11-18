@@ -239,6 +239,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
         # Create a sampling grid for the transform
         import numpy as np
+
         spacing = np.array(volumeNode.GetSpacing())
         averageSpacing = (spacing[0] + spacing[1] + spacing[2]) / 3.0
         voxelsPerTransformControlPoint = 20  # the transform is changing smoothly, so we don't need to add too many control points

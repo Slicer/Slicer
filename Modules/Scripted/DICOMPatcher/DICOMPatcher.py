@@ -162,7 +162,6 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
 
     def onPatchButton(self):
         with slicer.util.tryWithErrorDisplay(_("Unexpected error."), waitCursor=True):
-
             import tempfile
 
             if not self.outputDirSelector.currentPath:
@@ -440,7 +439,6 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
             ds.SharedFunctionalGroupsSequence = sharedFunctionalGroupsSequence
 
         if not (pydicom.tag.Tag(0x5200, 0x9230) in ds):
-
             # (5200,9230) SQ (Sequence with undefined length #=54)    # u/l, 1 PerFrameFunctionalGroupsSequence
             #  (0020,9113) SQ (Sequence with undefined length #=1)     # u/l, 1 PlanePositionSequence
             #    (0020,0032) DS [-94.7012\-312.701\-806.500]             #  26, 3 ImagePositionPatient

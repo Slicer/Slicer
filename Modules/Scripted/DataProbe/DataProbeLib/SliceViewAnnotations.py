@@ -257,7 +257,6 @@ class SliceAnnotations(VTKObservationMixin):
         self.updateSliceViewFromGUI()
 
     def restoreDefaultValues(self):
-
         def _defaultValue(key):
             return SliceAnnotations.DEFAULTS[key]
 

@@ -30,7 +30,6 @@ __all__ = [
     "GuiCreator",
     "createGui",
     "parameterNodeGuiCreator",
-
     "Label",
 ]
 

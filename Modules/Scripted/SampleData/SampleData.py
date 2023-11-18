@@ -985,6 +985,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         Typically it prefixes the received path by file:// or file:///.
         """
         import urllib.parse, urllib.request, urllib.parse, urllib.error
+
         return urllib.parse.urljoin("file:", urllib.request.pathname2url(path))
 
     def test_downloadFromSource_downloadFiles(self):

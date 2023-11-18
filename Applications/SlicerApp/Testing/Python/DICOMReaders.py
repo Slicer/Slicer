@@ -106,6 +106,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         for dataset in referenceData:
             try:
                 import SampleData
+
                 dicomFilesDirectory = SampleData.downloadFromURL(
                     fileNames=dataset["fileName"], uris=dataset["url"], checksums=dataset["checksum"])[0]
                 self.delayDisplay("Finished with download")

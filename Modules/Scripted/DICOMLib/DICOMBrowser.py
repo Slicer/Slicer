@@ -583,7 +583,6 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
 
 class DICOMReferencesDialog(qt.QMessageBox):
-
     WINDOW_TITLE = _("Referenced datasets found")
     WINDOW_TEXT = _("The loaded DICOM objects contain references to other datasets you did not select for loading."
                     " Please select Yes if you would like to load the following referenced datasets, No if you only want to load the"

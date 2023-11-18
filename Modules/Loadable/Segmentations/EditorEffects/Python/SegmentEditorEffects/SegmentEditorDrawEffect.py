@@ -66,7 +66,6 @@ class SegmentEditorDrawEffect(AbstractScriptedSegmentEditorLabelEffect):
         anyModifierKeyPressed = callerInteractor.GetShiftKey() or callerInteractor.GetControlKey() or callerInteractor.GetAltKey()
 
         if eventId == vtk.vtkCommand.LeftButtonPressEvent and not anyModifierKeyPressed:
-
             # Make sure the user wants to do the operation, even if the segment is not visible
             confirmedEditingAllowed = self.scriptedEffect.confirmCurrentSegmentVisible()
             if confirmedEditingAllowed == self.scriptedEffect.NotConfirmed or confirmedEditingAllowed == self.scriptedEffect.ConfirmedWithDialog:

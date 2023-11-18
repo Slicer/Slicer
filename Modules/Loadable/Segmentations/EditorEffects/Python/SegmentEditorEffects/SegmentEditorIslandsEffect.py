@@ -316,6 +316,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
             thresh.Update()
             # Create oriented image data from output
             import vtkSegmentationCorePython as vtkSegmentationCore
+
             inputLabelImage = slicer.vtkOrientedImageData()
             inputLabelImage.ShallowCopy(thresh.GetOutput())
             selectedSegmentLabelmapImageToWorldMatrix = vtk.vtkMatrix4x4()
@@ -345,7 +346,6 @@ about each operation, hover the mouse over the option and wait for the tooltip t
                 self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd)
 
             elif pixelValue != 0:  # if clicked on empty part then there is nothing to remove or keep
-
                 if operationName == KEEP_SELECTED_ISLAND:
                     floodFillingFilter.SetInValue(1)
                     floodFillingFilter.SetOutValue(0)
