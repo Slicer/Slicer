@@ -142,15 +142,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     def hardenAcquisitionGeometryRegularization(self):
         settings = qt.QSettings()
-        return (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") == "hardenTransform")
+        return settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") == "hardenTransform"
 
     def acquisitionGeometryRegularizationEnabled(self):
         settings = qt.QSettings()
-        return (settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") != "none")
+        return settings.value("DICOM/ScalarVolume/AcquisitionGeometryRegularization", "default") != "none"
 
     def allowLoadingByTime(self):
         settings = qt.QSettings()
-        return (int(settings.value("DICOM/ScalarVolume/AllowLoadingByTime", "0")) != 0)
+        return int(settings.value("DICOM/ScalarVolume/AllowLoadingByTime", "0")) != 0
 
     def examineForImport(self, fileLists):
         """Returns a sorted list of DICOMLoadable instances

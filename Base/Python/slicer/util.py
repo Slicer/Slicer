@@ -432,7 +432,7 @@ def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeF
           self._parameterNode.EndModify(wasModified)
     """
 
-    for (widget, parameterName) in parameterEditWidgets:
+    for widget, parameterName in parameterEditWidgets:
         widgetClassName = widget.className()
         if widgetClassName == "QSpinBox":
             widget.connect("valueChanged(int)", updateParameterNodeFromGUI)
@@ -451,7 +451,7 @@ def addParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeF
 def removeParameterEditWidgetConnections(parameterEditWidgets, updateParameterNodeFromGUI):
     """Remove connections created by :py:meth:`addParameterEditWidgetConnections`."""
 
-    for (widget, parameterName) in parameterEditWidgets:
+    for widget, parameterName in parameterEditWidgets:
         widgetClassName = widget.className()
         if widgetClassName == "QSpinBox":
             widget.disconnect("valueChanged(int)", updateParameterNodeFromGUI)
@@ -478,7 +478,7 @@ def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
       Report any missing classes at https://discourse.slicer.org.
     """
 
-    for (widget, parameterName) in parameterEditWidgets:
+    for widget, parameterName in parameterEditWidgets:
         widgetClassName = widget.className()
         parameterValue = parameterNode.GetParameter(parameterName)
         if widgetClassName == "QSpinBox":
@@ -492,7 +492,7 @@ def updateParameterEditWidgetsFromNode(parameterEditWidgets, parameterNode):
             else:
                 widget.value = 0.0
         elif widgetClassName == "QCheckBox" or widgetClassName == "QPushButton":
-            widget.checked = (parameterValue == "true")
+            widget.checked = parameterValue == "true"
         elif widgetClassName == "QComboBox":
             widget.setCurrentText(parameterValue)
         elif widgetClassName == "qMRMLNodeComboBox":
@@ -512,7 +512,7 @@ def updateNodeFromParameterEditWidgets(parameterEditWidgets, parameterNode):
     See example in :py:meth:`addParameterEditWidgetConnections` documentation.
     """
 
-    for (widget, parameterName) in parameterEditWidgets:
+    for widget, parameterName in parameterEditWidgets:
         widgetClassName = widget.className()
         if widgetClassName == "QSpinBox" or widgetClassName == "ctkSliderWidget":
             parameterNode.SetParameter(parameterName, str(widget.value))
@@ -1544,8 +1544,7 @@ def getNodes(pattern="*", scene=None, useLists=False):
         node = scene.GetNthNode(idx)
         name = node.GetName()
         id = node.GetID()
-        if (fnmatch.fnmatchcase(name, pattern) or
-                fnmatch.fnmatchcase(id, pattern)):
+        if fnmatch.fnmatchcase(name, pattern) or fnmatch.fnmatchcase(id, pattern):
             if useLists:
                 nodes.setdefault(node.GetName(), []).append(node)
             else:
@@ -2829,7 +2828,7 @@ def toLatin1String(text):
     for c in text:
         try:
             cc = c.encode("latin1", "ignore").decode()
-        except (UnicodeDecodeError):
+        except UnicodeDecodeError:
             cc = "?"
         vtkStr = vtkStr + cc
     return vtkStr
@@ -3354,7 +3353,7 @@ def clickAndDrag(widget, button="Left", start=(10, 10), end=(10, 40), steps=20, 
         interactor.SetControlKey(1)
     interactor.SetEventPosition(*start)
     down()
-    if (steps < 2):
+    if steps < 2:
         interactor.SetEventPosition(end[0], end[1])
         interactor.MouseMoveEvent()
     else:

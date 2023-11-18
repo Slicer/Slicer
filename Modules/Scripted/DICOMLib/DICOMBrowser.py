@@ -736,6 +736,6 @@ class DICOMLoadableTable(qt.QTableWidget):
     def updateSelectedFromCheckstate(self):
         for row in range(self.rowCount):
             item = self.item(row, 0)
-            self.loadables[row].selected = (item.checkState() != 0)
+            self.loadables[row].selected = item.checkState() != 0
             # updating the names
             self.loadables[row].name = item.text()

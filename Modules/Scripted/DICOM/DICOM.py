@@ -132,7 +132,7 @@ class DICOM(ScriptedLoadableModule):
         """
 
         url = qt.QUrl(urlString)
-        if (url.authority().lower() != "viewer"):
+        if url.authority().lower() != "viewer":
             logging.debug("DICOM module ignores non-viewer URL: " + urlString)
             return
         query = qt.QUrlQuery(url)
@@ -574,7 +574,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         if layoutManager is not None:
             layoutManager.layoutChanged.connect(self.onLayoutChanged)
             viewArrangement = slicer.app.layoutManager().layoutLogic().GetLayoutNode().GetViewArrangement()
-            self.ui.showBrowserButton.checked = (viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
+            self.ui.showBrowserButton.checked = viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView
 
         # connect 'Import DICOM files' and 'Show DICOM Browser' button
         self.ui.showBrowserButton.connect("clicked()", self.toggleBrowserWidget)
@@ -719,7 +719,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         pass
 
     def onLayoutChanged(self, viewArrangement):
-        self.ui.showBrowserButton.checked = (viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView)
+        self.ui.showBrowserButton.checked = viewArrangement == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView
 
     def onCurrentItemChanged(self, id):
         plugin = slicer.qSlicerSubjectHierarchyPluginHandler.instance().getOwnerPluginForSubjectHierarchyItem(id)
@@ -740,8 +740,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
         if self.browserWidget is None:
             return
 
-        if (oldSubjectHierarchyCurrentVisibility != self.subjectHierarchyCurrentVisibility and
-                self.subjectHierarchyCurrentVisibility):
+        if oldSubjectHierarchyCurrentVisibility != self.subjectHierarchyCurrentVisibility and self.subjectHierarchyCurrentVisibility:
             self.browserWidget.close()
 
     def toggleBrowserWidget(self):
@@ -752,7 +751,7 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
                 self.browserWidget.close()
 
     def aboutToShowImportOptionsMenu(self):
-        self.copyOnImportAction.checked = (self.browserWidget.dicomBrowser.ImportDirectoryMode == ctk.ctkDICOMBrowser.ImportDirectoryCopy)
+        self.copyOnImportAction.checked = self.browserWidget.dicomBrowser.ImportDirectoryMode == ctk.ctkDICOMBrowser.ImportDirectoryCopy
 
     def copyOnImportToggled(self, copyOnImport):
         if self.copyOnImportAction.checked:

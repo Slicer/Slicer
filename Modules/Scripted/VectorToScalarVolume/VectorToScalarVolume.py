@@ -39,7 +39,7 @@ def MyObjectsBlockSignals(*qobjects):
         # blockedSignal returns the previous value of signalsBlocked()
         previousValues.append(qobject.blockSignals(True))
     yield
-    for (qobject, previousValue) in zip(qobjects, previousValues):
+    for qobject, previousValue in zip(qobjects, previousValues):
         qobject.blockSignals(previousValue)
 
 
@@ -258,7 +258,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
             applyErrorMessage = _("Please select Output Scalar Volume")
         elif isMethodSingleComponent and self._parameterNode.ComponentToExtract < 0:
             applyErrorMessage = _("Please select a component to extract")
-        self.ui.applyButton.enabled = (not applyErrorMessage)
+        self.ui.applyButton.enabled = not applyErrorMessage
         self.ui.applyButton.toolTip = applyErrorMessage
 
         # All the GUI updates are done

@@ -19,7 +19,7 @@ class _ui_SettingsPanel:
 
         self.builtinPath = qt.QLineEdit()
         builtinPath = builtinTemplatePath()
-        if (builtinPath):
+        if builtinPath:
             self.builtinPath.text = builtinPath
         else:
             self.builtinPath.text = "(Unavailable)"

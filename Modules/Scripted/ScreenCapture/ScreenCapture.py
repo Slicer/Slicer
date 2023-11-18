@@ -480,8 +480,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
         numberOfSteps = 1 if forceSingleImage else int(self.numberOfStepsSliderWidget.value)
 
-        self.forwardBackwardCheckBox.enabled = (numberOfSteps > 1)
-        self.repeatSliderWidget.enabled = (numberOfSteps > 1)
+        self.forwardBackwardCheckBox.enabled = numberOfSteps > 1
+        self.repeatSliderWidget.enabled = numberOfSteps > 1
         self.volumeNodeComboBox.setEnabled(numberOfSteps == 1)
 
         self.outputTypeLabel.setVisible(not forceSingleImage)
@@ -547,10 +547,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.animationMode = self.animationModeWidget.currentData
 
         # slice sweep
-        self.sliceStartOffsetLabel.visible = (self.animationMode == "SLICE_SWEEP")
-        self.sliceStartOffsetSliderWidget.visible = (self.animationMode == "SLICE_SWEEP")
-        self.sliceEndOffsetLabel.visible = (self.animationMode == "SLICE_SWEEP")
-        self.sliceEndOffsetSliderWidget.visible = (self.animationMode == "SLICE_SWEEP")
+        self.sliceStartOffsetLabel.visible = self.animationMode == "SLICE_SWEEP"
+        self.sliceStartOffsetSliderWidget.visible = self.animationMode == "SLICE_SWEEP"
+        self.sliceEndOffsetLabel.visible = self.animationMode == "SLICE_SWEEP"
+        self.sliceEndOffsetSliderWidget.visible = self.animationMode == "SLICE_SWEEP"
         if self.animationMode == "SLICE_SWEEP":
             offsetResolution = self.logic.getSliceOffsetResolution(self.viewNodeSelector.currentNode())
             sliceOffsetMin, sliceOffsetMax = self.logic.getSliceOffsetRange(self.viewNodeSelector.currentNode())
@@ -570,18 +570,18 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
             self.sliceEndOffsetSliderWidget.blockSignals(wasBlocked)
 
         # 3D rotation
-        self.rotationLabel.visible = (self.animationMode == "3D_ROTATION")
-        self.rotationSliderWidget.visible = (self.animationMode == "3D_ROTATION")
-        self.rotationAxisLabel.visible = (self.animationMode == "3D_ROTATION")
-        self.rotationAxisWidget.visible = (self.animationMode == "3D_ROTATION")
+        self.rotationLabel.visible = self.animationMode == "3D_ROTATION"
+        self.rotationSliderWidget.visible = self.animationMode == "3D_ROTATION"
+        self.rotationAxisLabel.visible = self.animationMode == "3D_ROTATION"
+        self.rotationAxisWidget.visible = self.animationMode == "3D_ROTATION"
 
         # Sequence
-        self.sequenceBrowserNodeSelectorLabel.visible = (self.animationMode == "SEQUENCE")
-        self.sequenceBrowserNodeSelectorWidget.visible = (self.animationMode == "SEQUENCE")
-        self.sequenceStartItemIndexLabel.visible = (self.animationMode == "SEQUENCE")
-        self.sequenceStartItemIndexWidget.visible = (self.animationMode == "SEQUENCE")
-        self.sequenceEndItemIndexLabel.visible = (self.animationMode == "SEQUENCE")
-        self.sequenceEndItemIndexWidget.visible = (self.animationMode == "SEQUENCE")
+        self.sequenceBrowserNodeSelectorLabel.visible = self.animationMode == "SEQUENCE"
+        self.sequenceBrowserNodeSelectorWidget.visible = self.animationMode == "SEQUENCE"
+        self.sequenceStartItemIndexLabel.visible = self.animationMode == "SEQUENCE"
+        self.sequenceStartItemIndexWidget.visible = self.animationMode == "SEQUENCE"
+        self.sequenceEndItemIndexLabel.visible = self.animationMode == "SEQUENCE"
+        self.sequenceEndItemIndexWidget.visible = self.animationMode == "SEQUENCE"
         if self.animationMode == "SEQUENCE":
             sequenceBrowserNode = self.sequenceBrowserNodeSelectorWidget.currentNode()
 
@@ -665,7 +665,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
         self.statusLabel.plainText = ""
 
-        videoOutputRequested = (self.outputTypeWidget.currentData == "VIDEO")
+        videoOutputRequested = self.outputTypeWidget.currentData == "VIDEO"
         viewNode = self.viewNodeSelector.currentNode()
         numberOfSteps = int(self.numberOfStepsSliderWidget.value)
         if self.animationModeWidget.currentData == "SINGLE_FRAME":
@@ -1100,8 +1100,8 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             raise ValueError(_("Capture image from view failed"))
 
         # Make sure image width and height is even, otherwise encoding may fail
-        imageWidthOdd = (imageSize[0] & 1 == 1)
-        imageHeightOdd = (imageSize[1] & 1 == 1)
+        imageWidthOdd = imageSize[0] & 1 == 1
+        imageHeightOdd = imageSize[1] & 1 == 1
         if imageWidthOdd or imageHeightOdd:
             imageClipper = vtk.vtkImageClip()
             imageClipper.SetClipData(True)

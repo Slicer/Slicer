@@ -441,20 +441,20 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         self.autoThresholdModeSelectorComboBox.blockSignals(wasBlocked)
 
         histogramBrushType = self.scriptedEffect.parameter(HISTOGRAM_BRUSH_TYPE_PARAMETER_NAME)
-        self.boxROIButton.checked = (histogramBrushType == HISTOGRAM_BRUSH_TYPE_BOX)
-        self.circleROIButton.checked = (histogramBrushType == HISTOGRAM_BRUSH_TYPE_CIRCLE)
-        self.drawROIButton.checked = (histogramBrushType == HISTOGRAM_BRUSH_TYPE_DRAW)
-        self.lineROIButton.checked = (histogramBrushType == HISTOGRAM_BRUSH_TYPE_LINE)
+        self.boxROIButton.checked = histogramBrushType == HISTOGRAM_BRUSH_TYPE_BOX
+        self.circleROIButton.checked = histogramBrushType == HISTOGRAM_BRUSH_TYPE_CIRCLE
+        self.drawROIButton.checked = histogramBrushType == HISTOGRAM_BRUSH_TYPE_DRAW
+        self.lineROIButton.checked = histogramBrushType == HISTOGRAM_BRUSH_TYPE_LINE
 
         histogramSetModeLower = self.scriptedEffect.parameter(HISTOGRAM_SET_LOWER_PARAMETER_NAME)
-        self.histogramLowerThresholdMinimumButton.checked = (histogramSetModeLower == HISTOGRAM_SET_MINIMUM)
-        self.histogramLowerThresholdLowerButton.checked = (histogramSetModeLower == HISTOGRAM_SET_LOWER)
-        self.histogramLowerThresholdAverageButton.checked = (histogramSetModeLower == HISTOGRAM_SET_AVERAGE)
+        self.histogramLowerThresholdMinimumButton.checked = histogramSetModeLower == HISTOGRAM_SET_MINIMUM
+        self.histogramLowerThresholdLowerButton.checked = histogramSetModeLower == HISTOGRAM_SET_LOWER
+        self.histogramLowerThresholdAverageButton.checked = histogramSetModeLower == HISTOGRAM_SET_AVERAGE
 
         histogramSetModeUpper = self.scriptedEffect.parameter(HISTOGRAM_SET_UPPER_PARAMETER_NAME)
-        self.histogramUpperThresholdAverageButton.checked = (histogramSetModeUpper == HISTOGRAM_SET_AVERAGE)
-        self.histogramUpperThresholdUpperButton.checked = (histogramSetModeUpper == HISTOGRAM_SET_UPPER)
-        self.histogramUpperThresholdMaximumButton.checked = (histogramSetModeUpper == HISTOGRAM_SET_MAXIMUM)
+        self.histogramUpperThresholdAverageButton.checked = histogramSetModeUpper == HISTOGRAM_SET_AVERAGE
+        self.histogramUpperThresholdUpperButton.checked = histogramSetModeUpper == HISTOGRAM_SET_UPPER
+        self.histogramUpperThresholdMaximumButton.checked = histogramSetModeUpper == HISTOGRAM_SET_MAXIMUM
 
         self.updateHistogramBackground()
 
@@ -760,7 +760,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     def onHistogramMouseClick(self, pos, button):
         self.selectionStartPosition = pos
         self.selectionEndPosition = pos
-        if (button == qt.Qt.RightButton):
+        if button == qt.Qt.RightButton:
             self.selectionStartPosition = None
             self.selectionEndPosition = None
             self.minMaxFunction.RemoveAllPoints()
@@ -769,13 +769,13 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
 
     def onHistogramMouseMove(self, pos, button):
         self.selectionEndPosition = pos
-        if (button == qt.Qt.RightButton):
+        if button == qt.Qt.RightButton:
             return
         self.updateHistogram()
 
     def onHistogramMouseRelease(self, pos, button):
         self.selectionEndPosition = pos
-        if (button == qt.Qt.RightButton):
+        if button == qt.Qt.RightButton:
             return
         self.updateHistogram()
 
@@ -1126,7 +1126,7 @@ class HistogramPipeline:
         if self.brushMode == HISTOGRAM_BRUSH_TYPE_DRAW:
             newPointIndex = self.rasPoints.InsertNextPoint(ras)
             previousPointIndex = newPointIndex - 1
-            if (previousPointIndex >= 0):
+            if previousPointIndex >= 0:
                 idList = vtk.vtkIdList()
                 idList.InsertNextId(previousPointIndex)
                 idList.InsertNextId(newPointIndex)

@@ -202,7 +202,7 @@ class DrawPipeline:
         i_dim = 0
         while i_dim < dimension:
             for i in range(0, 16):
-                mask = (1 << i)
+                mask = 1 << i
                 bit = (lineStipplePattern & mask) >> i
                 value = bit
                 if value == 0:

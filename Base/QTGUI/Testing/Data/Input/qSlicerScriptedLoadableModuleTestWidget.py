@@ -15,7 +15,7 @@ class qSlicerScriptedLoadableModuleTestWidget:
         self.parent.setProperty("editedNodeName", node.GetName() if node is not None else "")
         self.parent.setProperty("editedNodeRole", role)
         self.parent.setProperty("editedNodeContext", context)
-        return (node is not None)
+        return node is not None
 
     def nodeEditable(self, node):
         self.parent.setProperty("editableNodeName", node.GetName() if node is not None else "")

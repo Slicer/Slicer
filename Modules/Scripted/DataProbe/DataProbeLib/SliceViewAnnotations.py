@@ -431,7 +431,7 @@ class SliceAnnotations(VTKObservationMixin):
             # Update slice corner annotations
             #
             # Case I: Both background and foregraound
-            if (backgroundVolume is not None and foregroundVolume is not None):
+            if backgroundVolume is not None and foregroundVolume is not None:
                 if self.bottomLeft:
                     foregroundOpacity = sliceCompositeNode.GetForegroundOpacity()
                     backgroundVolumeName = backgroundVolume.GetName()
@@ -442,12 +442,12 @@ class SliceAnnotations(VTKObservationMixin):
 
                 bgUids = backgroundVolume.GetAttribute("DICOM.instanceUIDs")
                 fgUids = foregroundVolume.GetAttribute("DICOM.instanceUIDs")
-                if (bgUids and fgUids):
+                if bgUids and fgUids:
                     bgUid = bgUids.partition(" ")[0]
                     fgUid = fgUids.partition(" ")[0]
                     self.dicomVolumeNode = 1
                     self.makeDicomAnnotation(bgUid, fgUid, sliceViewName)
-                elif (bgUids and self.backgroundDICOMAnnotationsPersistence):
+                elif bgUids and self.backgroundDICOMAnnotationsPersistence:
                     uid = bgUids.partition(" ")[0]
                     self.dicomVolumeNode = 1
                     self.makeDicomAnnotation(uid, None, sliceViewName)
@@ -457,7 +457,7 @@ class SliceAnnotations(VTKObservationMixin):
                     self.dicomVolumeNode = 0
 
             # Case II: Only background
-            elif (backgroundVolume is not None):
+            elif backgroundVolume is not None:
                 backgroundVolumeName = backgroundVolume.GetName()
                 if self.bottomLeft:
                     self.cornerTexts[0]["3-Background"]["text"] = "B: " + backgroundVolumeName
@@ -471,7 +471,7 @@ class SliceAnnotations(VTKObservationMixin):
                     self.dicomVolumeNode = 0
 
             # Case III: Only foreground
-            elif (foregroundVolume is not None):
+            elif foregroundVolume is not None:
                 if self.bottomLeft:
                     foregroundVolumeName = foregroundVolume.GetName()
                     self.cornerTexts[0]["2-Foreground"]["text"] = "F: " + foregroundVolumeName
@@ -542,7 +542,7 @@ class SliceAnnotations(VTKObservationMixin):
                     if "3-PatientInfo" in self.cornerTexts[2]:
                         self.cornerTexts[2]["3-PatientInfo"]["text"] = self.makePatientInfo(backgroundDicomDic)
 
-                    if (backgroundDicomDic["Series Date"] != foregroundDicomDic["Series Date"]):
+                    if backgroundDicomDic["Series Date"] != foregroundDicomDic["Series Date"]:
                         if "4-Bg-SeriesDate" in self.cornerTexts[2]:
                             self.cornerTexts[2]["4-Bg-SeriesDate"]["text"] = "B: " + self.formatDICOMDate(backgroundDicomDic["Series Date"])
                         if "5-Fg-SeriesDate" in self.cornerTexts[2]:
@@ -551,7 +551,7 @@ class SliceAnnotations(VTKObservationMixin):
                         if "4-Bg-SeriesDate" in self.cornerTexts[2]:
                             self.cornerTexts[2]["4-Bg-SeriesDate"]["text"] = self.formatDICOMDate(backgroundDicomDic["Series Date"])
 
-                    if (backgroundDicomDic["Series Time"] != foregroundDicomDic["Series Time"]):
+                    if backgroundDicomDic["Series Time"] != foregroundDicomDic["Series Time"]:
                         if "6-Bg-SeriesTime" in self.cornerTexts[2]:
                             self.cornerTexts[2]["6-Bg-SeriesTime"]["text"] = "B: " + self.formatDICOMTime(backgroundDicomDic["Series Time"])
                         if "7-Fg-SeriesTime" in self.cornerTexts[2]:
@@ -560,7 +560,7 @@ class SliceAnnotations(VTKObservationMixin):
                         if "6-Bg-SeriesTime" in self.cornerTexts[2]:
                             self.cornerTexts[2]["6-Bg-SeriesTime"]["text"] = self.formatDICOMTime(backgroundDicomDic["Series Time"])
 
-                    if (backgroundDicomDic["Series Description"] != foregroundDicomDic["Series Description"]):
+                    if backgroundDicomDic["Series Description"] != foregroundDicomDic["Series Description"]:
                         if "8-Bg-SeriesDescription" in self.cornerTexts[2]:
                             self.cornerTexts[2]["8-Bg-SeriesDescription"]["text"] = "B: " + backgroundDicomDic["Series Description"]
                         if "9-Fg-SeriesDescription" in self.cornerTexts[2]:
@@ -584,7 +584,7 @@ class SliceAnnotations(VTKObservationMixin):
                 self.cornerTexts[2]["8-Bg-SeriesDescription"]["text"] = dicomDic["Series Description"]
 
             # top right corner annotation would be hidden if view height is less than 260 pixels
-            if (self.topRight):
+            if self.topRight:
                 self.cornerTexts[3]["1-Institution-Name"]["text"] = dicomDic["Institution Name"]
                 self.cornerTexts[3]["2-Referring-Phisycian"]["text"] = dicomDic["Referring Physician Name"].replace("^", ", ")
                 self.cornerTexts[3]["3-Manufacturer"]["text"] = dicomDic["Manufacturer"]
@@ -650,18 +650,18 @@ class SliceAnnotations(VTKObservationMixin):
             cornerAnnotation = ""
             for key in keys:
                 text = cornerText[key]["text"]
-                if (text != ""):
+                if text != "":
                     text = self.fitText(text, self.maximumTextLength)
                     # level 1: All categories will be displayed
                     if self.annotationsDisplayAmount == 0:
                         cornerAnnotation = cornerAnnotation + text + "\n"
                     # level 2: Category A and B will be displayed
                     elif self.annotationsDisplayAmount == 1:
-                        if (cornerText[key]["category"] != "C"):
+                        if cornerText[key]["category"] != "C":
                             cornerAnnotation = cornerAnnotation + text + "\n"
                     # level 3 only Category A will be displayed
                     elif self.annotationsDisplayAmount == 2:
-                        if (cornerText[key]["category"] == "A"):
+                        if cornerText[key]["category"] == "A":
                             cornerAnnotation = cornerAnnotation + text + "\n"
             sliceCornerAnnotation = self.sliceViews[sliceViewName].cornerAnnotation()
             sliceCornerAnnotation.SetText(i, cornerAnnotation)

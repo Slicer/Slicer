@@ -121,7 +121,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         # alpha
         self.assertEqual(param.alpha, 0)
         self.assertEqual(widgetAlpha.value, 0)
-        self.assertLessEqual(widgetAlpha.minimum, -2**31)
+        self.assertLessEqual(widgetAlpha.minimum, -(2**31))
         self.assertGreaterEqual(widgetAlpha.maximum, 2**31 - 1)
         # bravo
         self.assertEqual(param.bravo, 4)

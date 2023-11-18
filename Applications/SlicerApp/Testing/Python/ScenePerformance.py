@@ -74,7 +74,7 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
         tester.setUp()
         tester.setRepeat(self.RepeatSpinBox.value)
         if self.ActionComboBox.currentIndex == 0:  # Add Data
-            if (self.URLLineEdit.text == ""):
+            if self.URLLineEdit.text == "":
                 file = self.ActionPathLineEdit.currentPath
             else:
                 logic = ScenePerformanceLogic()

@@ -407,7 +407,7 @@ class ExtensionWizardWidget:
 
     # ---------------------------------------------------------------------------
     def createExtensionModule(self):
-        if (self.extensionLocation is None):
+        if self.extensionLocation is None:
             # Action shouldn't be enabled if no extension is selected, but guard
             # against that just in case...
             return

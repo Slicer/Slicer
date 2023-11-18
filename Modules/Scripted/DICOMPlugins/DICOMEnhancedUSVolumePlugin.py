@@ -96,7 +96,7 @@ class DICOMEnhancedUSVolumePluginClass(DICOMPlugin):
             # and DICOMVolumeSequencePlugin (0.7)
             # but still leaving room for more specialized plugins.
             loadable.confidence = 0.8
-            loadable.grayscale = ("MONOCHROME" in photometricInterpretation)
+            loadable.grayscale = "MONOCHROME" in photometricInterpretation
             loadables.append(loadable)
 
         return loadables

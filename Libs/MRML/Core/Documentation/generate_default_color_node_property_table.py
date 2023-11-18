@@ -52,7 +52,7 @@ for row in table:
             max_row_widths[column_name] = column_width
 
 # Update template with widths
-for (column_name, column_width) in max_row_widths.items():
+for column_name, column_width in max_row_widths.items():
     template = template.replace(column_name, column_name + ":%d" % column_width)
 
 # Print headers

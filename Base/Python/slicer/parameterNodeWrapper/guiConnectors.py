@@ -259,7 +259,7 @@ class QSliderOrSpinBoxToIntConnector(GuiConnector):
                 self._widget.setMinimum(minimum.minimum)
             else:
                 # was unable to set lower than this
-                self._widget.setMinimum(-2**31)
+                self._widget.setMinimum(-(2**31))
             if maximum is not None:
                 self._widget.setMaximum(maximum.maximum)
             else:

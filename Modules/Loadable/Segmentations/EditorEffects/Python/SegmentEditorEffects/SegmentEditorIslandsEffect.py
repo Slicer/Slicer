@@ -195,7 +195,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
                                                         slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
             for i in range(labelValues.GetNumberOfTuples()):
-                if (maxNumberOfSegments > 0 and i >= maxNumberOfSegments):
+                if maxNumberOfSegments > 0 and i >= maxNumberOfSegments:
                     # We only care about the segments up to maxNumberOfSegments.
                     # If we do not want to split segments, we only care about the first.
                     break
@@ -396,7 +396,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         # qSlicerSegmentEditorAbstractEffect should be improved so that it triggers a cursor update
         # self.scriptedEffect.showEffectCursorInSliceView = segmentSelectionRequired
 
-        showMinimumSizeOption = (operationName in [KEEP_LARGEST_ISLAND, REMOVE_SMALL_ISLANDS, SPLIT_ISLANDS_TO_SEGMENTS])
+        showMinimumSizeOption = operationName in [KEEP_LARGEST_ISLAND, REMOVE_SMALL_ISLANDS, SPLIT_ISLANDS_TO_SEGMENTS]
         self.minimumSizeSpinBox.setEnabled(showMinimumSizeOption)
         self.minimumSizeLabel.setEnabled(showMinimumSizeOption)
 

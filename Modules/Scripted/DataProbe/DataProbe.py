@@ -188,7 +188,7 @@ class DataProbeInfoWidget:
             # https://stackoverflow.com/questions/2440692/formatting-floats-in-python-without-superfluous-zeros
             # also set the default field width for each coordinate
             componentString = ("%4f" % component).rstrip("0").rstrip(".")
-            pixel += ("%s, " % componentString)
+            pixel += "%s, " % componentString
         return pixel[:-2]
 
     def processEvent(self, observee, event):
@@ -468,7 +468,7 @@ class DataProbeInfoWidget:
         self.layerNames = {}
         self.layerIJKs = {}
         self.layerValues = {}
-        for (row, layer) in enumerate(layers):
+        for row, layer in enumerate(layers):
             col = 0
             layout.addWidget(qt.QLabel(layer), row, col)
             col += 1
