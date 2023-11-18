@@ -386,7 +386,6 @@ def main(argv):
 
     # Component-specific defaults and additional operations
     if args.component == "Slicer":
-
         # In Slicer, by default, only translate Python files that are in the Modules folder
         # (some complicated Python files that are outside the Modules folder make lupdate crash)
         if not args.source_filter_regex:

@@ -689,12 +689,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # Generate any missing but required UIDs
             if not tags["Study Instance UID"]:
                 import pydicom as dicom
+
                 tags["Study Instance UID"] = dicom.uid.generate_uid()
             if not tags["Series Instance UID"]:
                 import pydicom as dicom
+
                 tags["Series Instance UID"] = dicom.uid.generate_uid()
             if not tags["Frame of Reference UID"]:
                 import pydicom as dicom
+
                 tags["Frame of Reference UID"] = dicom.uid.generate_uid()
 
             # Use the default Study ID if none is specified

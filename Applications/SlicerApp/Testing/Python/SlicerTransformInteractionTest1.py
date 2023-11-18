@@ -36,7 +36,6 @@ class SlicerTransformInteractionTest1(ScriptedLoadableModule):
 
 
 class SlicerTransformInteractionTest1Widget(ScriptedLoadableModuleWidget):
-
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
 
@@ -47,7 +46,6 @@ class SlicerTransformInteractionTest1Widget(ScriptedLoadableModuleWidget):
 
 
 class SlicerTransformInteractionTest1Logic(ScriptedLoadableModuleLogic):
-
     def addTransform(self):
         """Create and add a transform node with a display node to the
         mrmlScene.
@@ -70,7 +68,6 @@ class SlicerTransformInteractionTest1Logic(ScriptedLoadableModuleLogic):
 
 
 class SlicerTransformInteractionTest1Test(ScriptedLoadableModuleTest):
-
     def setUp(self):
         """Do whatever is needed to reset the state - typically a scene clear will be enough."""
         slicer.mrmlScene.Clear(0)

@@ -15,7 +15,6 @@ from slicer.ScriptedLoadableModule import *
 
 
 class DMRIInstall(ScriptedLoadableModule):
-
     helpText = textwrap.dedent(
         """
   The SlicerDMRI extension provides diffusion-related tools including:
@@ -57,7 +56,6 @@ class DMRIInstall(ScriptedLoadableModule):
               platform=slicer.app.platform)
 
     def __init__(self, parent):
-
         # Hide this module if SlicerDMRI is already installed
         model = slicer.app.extensionsManagerModel()
         if model.isExtensionInstalled("SlicerDMRI"):

@@ -116,7 +116,6 @@ class ScenePerformanceWidget(ScriptedLoadableModuleWidget):
 # ScenePerformanceLogic
 #
 class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
-
     def downloadFile(self, downloadURL, downloadFileName, downloadFileChecksum=None):
         import SampleData
         return SampleData.downloadFromURL(

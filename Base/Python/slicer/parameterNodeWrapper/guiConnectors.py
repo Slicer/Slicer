@@ -31,7 +31,6 @@ __all__ = [
     "parameterNodeGuiConnector",
     "GuiConnector",
     "SlicerPackParameterNamePropertyName",
-
     "Decimals",
     "SingleStep",
 ]

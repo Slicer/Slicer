@@ -45,7 +45,6 @@ If segments overlap, segment higher in the segments table will have priority. <b
 </ul><p>""")
 
     def setupOptionsFrame(self):
-
         self.methodSelectorComboBox = qt.QComboBox()
         self.methodSelectorComboBox.addItem(_("Median"), MEDIAN)
         self.methodSelectorComboBox.addItem(_("Opening (remove extrusions)"), MORPHOLOGICAL_OPENING)

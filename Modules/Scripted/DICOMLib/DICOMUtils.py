@@ -578,6 +578,7 @@ class LoadDICOMFilesToDatabase:
     def __init__(self, url, archiveFilePath=None, dicomDataDir=None, \
                  expectedNumberOfFiles=None, selectedPlugins=None, loadedNodes=None, checksum=None):
         from time import gmtime, strftime
+
         if archiveFilePath is None:
             fileName = strftime("%Y%m%d_%H%M%S_", gmtime()) + "LoadDICOMFilesToDatabase.zip"
             archiveFilePath = slicer.app.temporaryPath + "/" + fileName
