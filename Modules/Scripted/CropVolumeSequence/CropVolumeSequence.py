@@ -137,7 +137,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         pass
 
     def onSelect(self):
-        self.applyButton.enabled = (self.inputSelector.currentNode() and self.cropParametersSelector.currentNode())
+        self.applyButton.enabled = self.inputSelector.currentNode() and self.cropParametersSelector.currentNode()
 
     def onEditCropParameters(self):
         if not self.cropParametersSelector.currentNode():

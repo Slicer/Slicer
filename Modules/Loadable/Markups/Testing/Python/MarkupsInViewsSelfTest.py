@@ -180,7 +180,7 @@ class MarkupsInViewsSelfTestLogic(ScriptedLoadableModuleLogic):
 
         # make it active
         selectionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSelectionNodeSingleton")
-        if (selectionNode is not None):
+        if selectionNode is not None:
             selectionNode.SetReferenceActivePlaceNodeID(fidNode.GetID())
 
         fidNodeObserverTags = []

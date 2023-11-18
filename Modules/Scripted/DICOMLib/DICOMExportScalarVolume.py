@@ -160,6 +160,6 @@ class DICOMExportScalarVolume:
             return False
         dicomWrite = slicer.modules.createdicomseries
         cliNode = slicer.cli.run(dicomWrite, None, cliparameters, wait_for_completion=True)
-        success = (cliNode.GetStatus() == cliNode.Completed)
+        success = cliNode.GetStatus() == cliNode.Completed
         slicer.mrmlScene.RemoveNode(cliNode)
         return success

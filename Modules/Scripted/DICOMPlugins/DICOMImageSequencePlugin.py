@@ -156,7 +156,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                     # Confidence is slightly larger than default scalar volume plugin's (0.5)
                     # but still leaving room for more specialized plugins.
                     loadable.confidence = 0.7
-                    loadable.grayscale = ("MONOCHROME" in photometricInterpretation)
+                    loadable.grayscale = "MONOCHROME" in photometricInterpretation
 
                     # Add to loadables list
                     loadables.append(loadable)

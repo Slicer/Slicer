@@ -181,7 +181,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
         thresh.SetInValue(backgroundValue)
         thresh.SetOutValue(labelValue)
         thresh.SetOutputScalarType(selectedSegmentLabelmap.GetScalarType())
-        if (marginSizeMM < 0):
+        if marginSizeMM < 0:
             # The distance filter used in the margin filter starts at zero at the border voxels,
             # so if we need to shrink the margin, it is more accurate to invert the labelmap and
             # use positive distance when calculating the margin

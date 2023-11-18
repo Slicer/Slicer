@@ -121,7 +121,7 @@ class DICOMRequestHandler(BaseRequestHandler):
                                 # Use the first valid data set as representative series data
                                 representativeSeriesDataset = dataset
                                 # Skip this study if does not match requested patient
-                                if (patientID is not None and dataset.PatientID != patientID):
+                                if patientID is not None and dataset.PatientID != patientID:
                                     skipThisStudy = True
                                     break
                         except Exception as e:

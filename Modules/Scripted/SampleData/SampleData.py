@@ -163,7 +163,7 @@ class SampleDataSource:
         if sampleDescription is None:
             sampleDescription = sampleName
         self.sampleDescription = sampleDescription
-        if (isinstance(uris, list) or isinstance(uris, tuple)):
+        if isinstance(uris, list) or isinstance(uris, tuple):
             if isinstance(loadFileType, str) or loadFileType is None:
                 loadFileType = [loadFileType] * len(uris)
             if nodeNames is None:

@@ -125,7 +125,7 @@ segment list in effect options - below.
         self.modifierSegmentSelector.setSelectedSegmentIDs([modifierSegmentID])
         self.modifierSegmentSelector.blockSignals(wasBlocked)
 
-        modifierSegmentRequired = (operation in self.operationsRequireModifierSegment)
+        modifierSegmentRequired = operation in self.operationsRequireModifierSegment
         self.modifierSegmentSelectorLabel.setVisible(modifierSegmentRequired)
         self.modifierSegmentSelector.setVisible(modifierSegmentRequired)
 
@@ -194,7 +194,7 @@ segment list in effect options - below.
         # Get modifier labelmap and parameters
 
         operation = self.scriptedEffect.parameter("Operation")
-        bypassMasking = (self.scriptedEffect.integerParameter("BypassMasking") != 0)
+        bypassMasking = self.scriptedEffect.integerParameter("BypassMasking") != 0
 
         selectedSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
 

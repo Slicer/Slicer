@@ -80,7 +80,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
             f()
             slicer.app.processEvents()
             endTime = time.time()
-            elapsedTime += (endTime - startTime)
+            elapsedTime += endTime - startTime
         fps = int(iters / elapsedTime)
         result = f"fps = {fps:g} ({1000./fps:g} ms per frame)"
         print(result)
@@ -105,12 +105,12 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
         sampleIndex = 0
         startOffset = sliceNode.GetSliceOffset()
         for i in range(numerOfSweeps):
-            for offset in ([sliceOffset] * offsetSteps + [-sliceOffset] * offsetSteps):
+            for offset in [sliceOffset] * offsetSteps + [-sliceOffset] * offsetSteps:
                 startTime = time.time()
                 sliceNode.SetSliceOffset(sliceNode.GetSliceOffset() + offset)
                 slicer.app.processEvents()
                 endTime = time.time()
-                renderingTimesSec[sampleIndex] = (endTime - startTime)
+                renderingTimesSec[sampleIndex] = endTime - startTime
                 sampleIndex += 1
         sliceNode.SetSliceOffset(startOffset)
 
