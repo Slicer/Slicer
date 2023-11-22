@@ -523,15 +523,15 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
     errorMessage += tr("please save your work and restart.\n\n");
     errorMessage += tr("The application has run out of memory. ");
-    if (!QSysInfo::kernelType().compare(tr("winnt")))
+    if (!QSysInfo::kernelType().compare(/*no tr*/"winnt"))
       {
       errorMessage += tr("Increasing virtual memory size in system settings or adding more RAM may fix this issue.\n\n");
       }
-    else if (!QSysInfo::kernelType().compare(tr("linux")))
+    else if (!QSysInfo::kernelType().compare(/*no tr*/"linux"))
       {
       errorMessage += tr("Increasing swap size in system settings or adding more RAM may fix this issue.\n\n");
       }
-    else if (!QSysInfo::kernelType().compare(tr("darwin")))
+    else if (!QSysInfo::kernelType().compare(/*no tr*/"darwin"))
       {
       errorMessage += tr("Increasing free disk space or adding more RAM may fix this issue.\n\n");
       }
