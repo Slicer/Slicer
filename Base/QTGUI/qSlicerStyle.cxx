@@ -179,6 +179,7 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
             }
           }
         // </HACK>
+        Q_FALLTHROUGH();
 #endif // QT_NO_SLIDER
     default:
       rect = Superclass::subControlRect(control, option, subControl, widget);
@@ -289,6 +290,7 @@ int qSlicerStyle::styleHint(StyleHint hint, const QStyleOption *opt, const QWidg
         res = widget->property("SH_ItemView_ActivateItemOnSingleClick").toBool();
         break;
         }
+      Q_FALLTHROUGH();
     // Overload the SH_ComboBox_Popup option to prevent issue with checkable
     // combobox. For more details see: https://bugreports.qt.io/browse/QTBUG-19683
     case QStyle::SH_ComboBox_Popup:
