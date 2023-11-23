@@ -238,7 +238,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotation(vtkMRMLAnnotationC
 
   if (refNode == nullptr)
     {
-      vtkErrorMacro("ReadAnnotation: unable to cast input node " << refNode->GetID() << " to an annotation node");
+      vtkErrorMacro("ReadAnnotation: unable to cast input node (nullptr) to an annotation node");
       return 0;
     }
 
