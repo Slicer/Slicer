@@ -228,7 +228,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode
 
   if (refNode == nullptr)
     {
-      vtkErrorMacro("ReadAnnotation: unable to cast input node " << refNode->GetID() << " to a annotation node");
+      vtkErrorMacro("ReadAnnotation: unable to cast input node " << refNode->GetID() << " to an annotation node");
       return 0;
     }
 
@@ -312,7 +312,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (aNode == nullptr)
     {
-    vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a annotation control point node");
+    vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to an annotation control point node");
     return 0;
     }
 
