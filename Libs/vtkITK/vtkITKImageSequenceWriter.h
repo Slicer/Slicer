@@ -47,34 +47,42 @@ public:
   /// in multiple files.
   void SetFileName(const char *);
 
-  char *GetFileName() {
+  char* GetFileName()
+    {
     return FileName;
-  }
+    }
 
   ///
-  /// use compression if possible
-  vtkGetMacro (UseCompression, int);
-  vtkSetMacro (UseCompression, int);
+  /// Use compression if possible
+  vtkGetMacro(UseCompression, int);
+  vtkSetMacro(UseCompression, int);
   vtkBooleanMacro(UseCompression, int);
 
   ///
   /// Set/Get the ImageIO class name.
-  vtkGetStringMacro (ImageIOClassName);
-  vtkSetStringMacro (ImageIOClassName);
+  vtkGetStringMacro(ImageIOClassName);
+  vtkSetStringMacro(ImageIOClassName);
+
+  ///
+  /// Set/Get the number of data frames in the sequence to write.
+  vtkGetMacro(NumberOfSequenceFrames, int);
+  vtkSetMacro(NumberOfSequenceFrames, int);
 
   ///
   /// The main interface which triggers the writer to start.
   void Write();
 
   /// Set orientation matrix
-  void SetRasToIJKMatrix( vtkMatrix4x4* mat) {
+  void SetRasToIJKMatrix(vtkMatrix4x4* mat)
+    {
     RasToIJKMatrix = mat;
-  }
+    }
 
   /// Set orientation matrix
-  void SetMeasurementFrameMatrix( vtkMatrix4x4* mat) {
+  void SetMeasurementFrameMatrix(vtkMatrix4x4* mat)
+    {
     MeasurementFrameMatrix = mat;
-  }
+    }
 
   /// Defines how to interpret voxel components
   vtkSetMacro(VoxelVectorType, int);
@@ -89,13 +97,12 @@ protected:
   vtkMatrix4x4* MeasurementFrameMatrix;
   int UseCompression;
   char* ImageIOClassName;
+  int NumberOfSequenceFrames;
   int VoxelVectorType;
 
 private:
   vtkITKImageSequenceWriter(const vtkITKImageSequenceWriter&) = delete;
   void operator=(const vtkITKImageSequenceWriter&) = delete;
 };
-
-//vtkStandardNewMacro(vtkITKImageSequenceWriter)
 
 #endif
