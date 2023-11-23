@@ -44,7 +44,7 @@ namespace
 
 #define RADIUS 3
 
-// Structure of the command lign parameters
+// Structure of the command line parameters
 struct parameters
   {
   std::vector<double> outputImageSpacing;

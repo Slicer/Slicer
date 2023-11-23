@@ -462,7 +462,7 @@ int vtkMRMLAnnotationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (annotationNode == nullptr)
     {
-    vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a annotation node");
+    vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to an annotation node");
     return 0;
     }
 

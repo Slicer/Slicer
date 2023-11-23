@@ -1,7 +1,7 @@
 // .NAME vtkMRMLAnnotationLinesNode - MRML node to represent a fiber bundle from tractography in DTI data.
 // .SECTION Description
 // Annotation nodes contains control points, internally represented as vtkPolyData.
-// A Annotation node contains many control points  and forms the smallest logical unit of tractography
+// An Annotation node contains many control points  and forms the smallest logical unit of tractography
 // that MRML will manage/read/write. Each control point has accompanying data.
 // Visualization parameters for these nodes are controlled by the vtkMRMLAnnotationLineDisplayNode class.
 //
