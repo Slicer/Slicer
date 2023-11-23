@@ -46,7 +46,7 @@ template <class TPixelType, int Dimension>
 void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage, char *fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {
-  typedef itk::Image<TPixelType, Dimension> ImageType;
+  typedef itk::Image<TPixelType, Dimension * self->GetNumberOfSequenceFrames()> ImageType;
 
   vtkMatrix4x4* ijkToRasMatrix = vtkMatrix4x4::New();
 
@@ -99,19 +99,20 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
   vtkMatrix4x4* ijkToLpsMatrix = vtkMatrix4x4::New();
   vtkMatrix4x4::Multiply4x4(ijkToRasMatrix, rasToLpsMatrix, ijkToLpsMatrix);
 
-  for (i=0; i<Dimension; i++)
+  int spatialDimension = Dimension / self->GetNumberOfSequenceFrames();
+  for (i=0; i<spatialDimension; i++)
     {
     origin[i] =  ijkToRasMatrix->GetElement(3,i);
-    for (int j=0; j<Dimension; j++)
+    for (int j=0; j<spatialDimension; j++)
       {
-      if (Dimension == 2)
-        {
-        direction[j][i] = (i == j) ? 1. : 0;
-        }
-      else
-        {
+      //if (spatialDimension == 2)
+      //  {
+      //  direction[j][i] = (i == j) ? 1. : 0;
+      //  }
+      //else
+      //  {
         direction[j][i] =  ijkToLpsMatrix->GetElement(i,j);
-        }
+      //  }
       }
     }
 
@@ -152,7 +153,7 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
     {
     itk::LightObject::Pointer objectType = itk::ObjectFactoryBase::CreateInstance(self->GetImageIOClassName());
     itk::ImageIOBase* imageIOType = dynamic_cast<itk::ImageIOBase*>(objectType.GetPointer());
-    if(imageIOType)
+    if (imageIOType)
       {
       itkImageWriter->SetImageIO(imageIOType);
       }
@@ -216,16 +217,16 @@ template <class TPixelType>
 void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage, char *fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {
-  std::string fileExtension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(fileName) );
-  bool saveAsJPEG = (fileExtension == ".jpg") || (fileExtension == ".jpeg");
-  if (saveAsJPEG)
-    {
-    ITKWriteVTKImage<TPixelType, 2>(self, inputImage, fileName, rasToIjkMatrix);
-    }
-  else // 3D
-    {
+  //std::string fileExtension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(fileName) );
+  //bool saveAsJPEG = (fileExtension == ".jpg") || (fileExtension == ".jpeg");
+  //if (saveAsJPEG)
+  //  {
+  //  ITKWriteVTKImage<TPixelType, 2>(self, inputImage, fileName, rasToIjkMatrix);
+  //  }
+  //else // 3D
+  //  {
     ITKWriteVTKImage<TPixelType, 4>(self, inputImage, fileName, rasToIjkMatrix, measurementFrameMatrix);
-    }
+  //  }
 }
 
 //----------------------------------------------------------------------------
@@ -236,6 +237,7 @@ vtkITKImageSequenceWriter::vtkITKImageSequenceWriter()
   this->MeasurementFrameMatrix = nullptr;
   this->UseCompression = 0;
   this->ImageIOClassName = nullptr;
+  this->NumberOfSequenceFrames = 0;
   this->VoxelVectorType = vtkITKImageSequenceWriter::VoxelVectorTypeUndefined;
 }
 
@@ -326,6 +328,23 @@ void vtkITKImageSequenceWriter::Write()
     pointData->GetVectors() ? pointData->GetVectors()->GetNumberOfComponents() :
     pointData->GetNormals() ? pointData->GetNormals()->GetNumberOfComponents() :
     0;
+
+  if (this->NumberOfSequenceFrames < 1)
+  {
+    vtkErrorMacro(<< "Number of sequence frames need to be set");
+    return;
+  }
+
+  // Sanity test
+  if (inputNumberOfScalarComponents % this->NumberOfSequenceFrames != 0)
+  {
+    vtkErrorMacro(<< "Given number of sequence frames (" << this->NumberOfSequenceFrames
+      << ") is invalid for the number of scalar components in the sequence image (" << inputNumberOfScalarComponents << ").");
+    return;
+  }
+
+  // Get number of scalar components in each sequence frame
+  inputNumberOfScalarComponents /= this->NumberOfSequenceFrames;
 
   if (inputNumberOfScalarComponents == 1)
     {
@@ -558,46 +577,46 @@ void vtkITKImageSequenceWriter::Write()
         }
       }
     } // 4-vector
-  else if (inputNumberOfScalarComponents == 9)
-    {
-    // take into consideration the scalar type
-    switch (inputDataType)
-      {
-      case VTK_FLOAT:
-        {
-        typedef itk::DiffusionTensor3D<float> PixelType;
-        vtkNew<vtkImageData> outImage;
-        outImage->SetDimensions(inputImage->GetDimensions());
-        outImage->SetOrigin(0, 0, 0);
-        outImage->SetSpacing(1, 1, 1);
-        outImage->AllocateScalars(VTK_FLOAT, 6);
-        vtkFloatArray* out = vtkFloatArray::SafeDownCast(outImage->GetPointData()->GetScalars());
-        vtkFloatArray* in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
-        float inValue[9];
-        float outValue[6];
-        for(int i=0; i<out->GetNumberOfTuples(); i++)
-          {
-          in->GetTypedTuple(i, inValue);
-          //ITK expect tensors saved in upper-triangular format
-          outValue[0] = inValue[0];
-          outValue[1] = inValue[1];
-          outValue[2] = inValue[2];
-          outValue[3] = inValue[4];
-          outValue[4] = inValue[7];
-          outValue[5] = inValue[8];
-          out->SetTuple(i, outValue);
-          }
+  //else if (inputNumberOfScalarComponents == 9)
+  //  {
+  //  // take into consideration the scalar type
+  //  switch (inputDataType)
+  //    {
+  //    case VTK_FLOAT:
+  //      {
+  //      typedef itk::DiffusionTensor3D<float> PixelType;
+  //      vtkNew<vtkImageData> outImage;
+  //      outImage->SetDimensions(inputImage->GetDimensions());
+  //      outImage->SetOrigin(0, 0, 0);
+  //      outImage->SetSpacing(1, 1, 1);
+  //      outImage->AllocateScalars(VTK_FLOAT, 6);
+  //      vtkFloatArray* out = vtkFloatArray::SafeDownCast(outImage->GetPointData()->GetScalars());
+  //      vtkFloatArray* in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
+  //      float inValue[9];
+  //      float outValue[6];
+  //      for(int i=0; i<out->GetNumberOfTuples(); i++)
+  //        {
+  //        in->GetTypedTuple(i, inValue);
+  //        //ITK expect tensors saved in upper-triangular format
+  //        outValue[0] = inValue[0];
+  //        outValue[1] = inValue[1];
+  //        outValue[2] = inValue[2];
+  //        outValue[3] = inValue[4];
+  //        outValue[4] = inValue[7];
+  //        outValue[5] = inValue[8];
+  //        out->SetTuple(i, outValue);
+  //        }
 
-        ITKWriteVTKImage<PixelType>(this, outImage.GetPointer(),
-          this->GetFileName(), this->RasToIJKMatrix, this->MeasurementFrameMatrix);
-        }
-        inputImage->GetPointData()->SetScalars(nullptr);
-        break;
-      default:
-        vtkErrorMacro(<< "Execute: Unknown output ScalarType");
-        return;
-      }
-    }
+  //      ITKWriteVTKImage<PixelType>(this, outImage.GetPointer(),
+  //        this->GetFileName(), this->RasToIJKMatrix, this->MeasurementFrameMatrix);
+  //      }
+  //      inputImage->GetPointData()->SetScalars(nullptr);
+  //      break;
+  //    default:
+  //      vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+  //      return;
+  //    }
+  //  }
   else
     {
     vtkErrorMacro(<< "Can only export 1 or 3 component images, current image has " << inputNumberOfScalarComponents << " components");
