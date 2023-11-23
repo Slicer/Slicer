@@ -466,7 +466,12 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   writer->SetRasToIJKMatrix(firstVolumeRasToIjk.GetPointer());
 
+  // Set number of frames in the sequence
+  writer->SetNumberOfSequenceFrames(numberOfFrameVolumes);
+
   //TODO: Axis types
+
+  //TODO: Set VoxelVectorType based on MRML info (see ConvertVoxelVectorTypeMRMLToVTKITK in archetype storage node)
 
   appender->Update();
   writer->SetInputConnection(appender->GetOutputPort());
@@ -481,7 +486,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     }
 
   /*
-  //TODO:!!!!!!!!!!!
+  //TODO: Working test code from imageMath
   using PixelType = itk::RGBAPixel<unsigned short>;
   constexpr unsigned int Dimension = 4;
 
