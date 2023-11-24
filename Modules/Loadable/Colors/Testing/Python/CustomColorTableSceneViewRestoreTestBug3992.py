@@ -32,7 +32,7 @@ colorStorageNode.SetFileName(filePath)
 slicer.mrmlScene.AddNode(colorStorageNode)
 colorNode.SetAndObserveStorageNodeID(colorStorageNode.GetID())
 
-startCol2 = [0., 0., 0., 0.]
+startCol2 = [0.0, 0.0, 0.0, 0.0]
 colorNode.GetColor(2, startCol2)
 print("Starting color 2 =\n\t", startCol2)
 
@@ -63,7 +63,7 @@ slicer.mrmlScene.Connect()
 
 readColorNode = slicer.util.getFirstNodeByName("CustomTest")
 
-afterReadSceneCol2 = [0., 0., 0., 0.]
+afterReadSceneCol2 = [0.0, 0.0, 0.0, 0.0]
 readColorNode.GetColor(2, afterReadSceneCol2)
 print("After reading in the scene again, have color 2 =\n\t", afterReadSceneCol2)
 
@@ -85,7 +85,7 @@ if numColors != 3:
     exceptionMessage = "Color node doesn't have 3 colors, instead has " + str(numColors)
     raise Exception(exceptionMessage)
 
-afterRestoreSceneCol2 = [0., 0., 0., 0.0]
+afterRestoreSceneCol2 = [0.0, 0.0, 0.0, 0.0]
 colorNodeAfterRestore.GetColor(2, afterRestoreSceneCol2)
 print("After restoring the scene, color 2 =\n\t", afterRestoreSceneCol2)
 

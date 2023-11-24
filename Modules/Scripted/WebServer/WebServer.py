@@ -295,7 +295,7 @@ class SlicerHTTPServer(HTTPServer):
 
         self.requestHandlers = requestHandlers or []
         self.docroot = docroot
-        self.timeout = 1.
+        self.timeout = 1.0
         if certfile:
             # https://stackoverflow.com/questions/19705785/python-3-simple-https-server
             import ssl
@@ -303,7 +303,7 @@ class SlicerHTTPServer(HTTPServer):
                                           server_side=True,
                                           certfile=certfile,
                                           ssl_version=ssl.PROTOCOL_TLS)
-        self.socket.settimeout(5.)
+        self.socket.settimeout(5.0)
         if logMessage:
             self.logMessage = logMessage
         self.requestCommunicators = {}

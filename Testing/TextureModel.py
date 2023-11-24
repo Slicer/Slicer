@@ -5,9 +5,9 @@ import time
 def newPlane():
     # create a plane polydata
     plane = Slicer.slicer.vtkPlaneSource()
-    plane.SetOrigin(0., 0., 0.)
-    plane.SetPoint1(100., 0., 0.)
-    plane.SetPoint2(0., 0., 100.)
+    plane.SetOrigin(0.0, 0.0, 0.0)
+    plane.SetPoint1(100.0, 0.0, 0.0)
+    plane.SetPoint2(0.0, 0.0, 100.0)
     plane.GetOutput().Update()
 
     # create a simple texture image

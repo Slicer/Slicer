@@ -241,7 +241,7 @@ class ShaderPropertiesTest(ScriptedLoadableModuleTest):
         shaderUniforms.RemoveAllUniforms()
         pointPos = GetPointPosition()
         shaderUniforms.SetUniform3f("center", pointPos)
-        shaderUniforms.SetUniformf("radius", 50.)
+        shaderUniforms.SetUniformf("radius", 50.0)
 
         # ------------------------------------------------------
         # Replace the cropping implementation part of the

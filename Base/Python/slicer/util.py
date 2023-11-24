@@ -2717,7 +2717,7 @@ def updateVolumeFromITKImage(volumeNode, itkImage, deepCopy=True):
     identidyMatrix = vtk.vtkMatrix3x3()
     vtkImage.SetDirectionMatrix(identidyMatrix)
     vtkImage.SetOrigin((0, 0, 0))
-    vtkImage.SetSpacing((1., 1., 1.))
+    vtkImage.SetSpacing((1.0, 1.0, 1.0))
 
     # Update output node setting VTK image data
     if deepCopy:

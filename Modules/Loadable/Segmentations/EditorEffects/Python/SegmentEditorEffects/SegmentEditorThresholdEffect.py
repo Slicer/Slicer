@@ -416,7 +416,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         self.setupPreviewDisplay()
 
     def setMRMLDefaults(self):
-        self.scriptedEffect.setParameterDefault("MinimumThreshold", 0.)
+        self.scriptedEffect.setParameterDefault("MinimumThreshold", 0.0)
         self.scriptedEffect.setParameterDefault("MaximumThreshold", 0)
         self.scriptedEffect.setParameterDefault("AutoThresholdMethod", METHOD_OTSU)
         self.scriptedEffect.setParameterDefault("AutoThresholdMode", MODE_SET_LOWER_MAX)
@@ -667,7 +667,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             self.scriptedEffect.addActor2D(sliceWidget, pipeline.actor)
 
     def preview(self):
-        opacity = 0.5 + self.previewState / (2. * self.previewSteps)
+        opacity = 0.5 + self.previewState / (2.0 * self.previewSteps)
         min = self.scriptedEffect.doubleParameter("MinimumThreshold")
         max = self.scriptedEffect.doubleParameter("MaximumThreshold")
 
