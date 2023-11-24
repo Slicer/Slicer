@@ -113,7 +113,12 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
             self.growCutFilter.SetIntensityVolume(self.clippedMasterImageData)
             self.growCutFilter.SetMaskVolume(self.clippedMaskImageData)
             maskExtent = self.clippedMaskImageData.GetExtent() if self.clippedMaskImageData else None
-            if maskExtent is not None and maskExtent[0] <= maskExtent[1] and maskExtent[2] <= maskExtent[3] and maskExtent[4] <= maskExtent[5]:
+            if (
+                maskExtent is not None
+                and maskExtent[0] <= maskExtent[1]
+                and maskExtent[2] <= maskExtent[3]
+                and maskExtent[4] <= maskExtent[5]
+            ):
                 # Mask is used.
                 # Grow the extent more, as background segment does not surround region of interest.
                 self.extentGrowthRatio = 0.50

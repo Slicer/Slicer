@@ -262,12 +262,20 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         if viewWidget.className() != "qMRMLSliceWidget":
             return abortEvent
 
-        if eventId != vtk.vtkCommand.LeftButtonPressEvent or callerInteractor.GetShiftKey() or callerInteractor.GetControlKey() or callerInteractor.GetAltKey():
+        if (
+            eventId != vtk.vtkCommand.LeftButtonPressEvent
+            or callerInteractor.GetShiftKey()
+            or callerInteractor.GetControlKey()
+            or callerInteractor.GetAltKey()
+        ):
             return abortEvent
 
         # Make sure the user wants to do the operation, even if the segment is not visible
         confirmedEditingAllowed = self.scriptedEffect.confirmCurrentSegmentVisible()
-        if confirmedEditingAllowed == self.scriptedEffect.NotConfirmed or confirmedEditingAllowed == self.scriptedEffect.ConfirmedWithDialog:
+        if (
+            confirmedEditingAllowed == self.scriptedEffect.NotConfirmed
+            or confirmedEditingAllowed == self.scriptedEffect.ConfirmedWithDialog
+        ):
             # ConfirmedWithDialog cancels the operation because without seeing the segment, the island may have looked different
             # than what the user remembered/expected. The dialog is not displayed again for the same segment.
 

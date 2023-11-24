@@ -113,11 +113,11 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
             requestedOptions = requestedKeys
             statFilterOptions = self.shapeKeys
             calculateOBB = (
-                "obb_diameter_mm" in requestedKeys or
-                "obb_origin_ras" in requestedKeys or
-                "obb_direction_ras_x" in requestedKeys or
-                "obb_direction_ras_y" in requestedKeys or
-                "obb_direction_ras_z" in requestedKeys
+                "obb_diameter_mm" in requestedKeys
+                or "obb_origin_ras" in requestedKeys
+                or "obb_direction_ras_x" in requestedKeys
+                or "obb_direction_ras_y" in requestedKeys
+                or "obb_direction_ras_z" in requestedKeys
             )
 
             if calculateOBB:
@@ -136,9 +136,9 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                 requestedOptions.append("oriented_bounding_box")
 
             calculatePrincipalAxis = (
-                "principal_axis_x" in requestedKeys or
-                "principal_axis_y" in requestedKeys or
-                "principal_axis_z" in requestedKeys
+                "principal_axis_x" in requestedKeys
+                or "principal_axis_y" in requestedKeys
+                or "principal_axis_z" in requestedKeys
             )
             if calculatePrincipalAxis:
                 temp = statFilterOptions
