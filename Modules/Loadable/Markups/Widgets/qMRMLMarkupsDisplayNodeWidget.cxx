@@ -42,7 +42,6 @@
 #include <vtkTextProperty.h>
 
 //------------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Markupss
 class qMRMLMarkupsDisplayNodeWidgetPrivate: public QWidget, public Ui_qMRMLMarkupsDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLMarkupsDisplayNodeWidget);

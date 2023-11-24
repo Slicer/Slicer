@@ -31,7 +31,6 @@
 #include "ui_qSlicerSceneIOOptionsWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Scene
 class qSlicerSceneIOOptionsWidgetPrivate
   : public qSlicerIOOptionsPrivate
   , public Ui_qSlicerSceneIOOptionsWidget

@@ -31,7 +31,6 @@
 class vtkMRMLCameraNode;
 class vtkMRMLViewNode;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 ///
 /// Properties of the scene-to-import camera nodes are always
 /// copied into the existing nodes having the same name. This is done

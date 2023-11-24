@@ -66,7 +66,6 @@ class vtkPoints;
 class vtkPolyDataNormals;
 class vtkPolyDataToImageStencil;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 /// \brief Private implementation of the segment editor paint effect
 class qSlicerSegmentEditorPaintEffectPrivate: public QObject
 {

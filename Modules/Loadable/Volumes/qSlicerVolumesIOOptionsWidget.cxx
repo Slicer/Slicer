@@ -41,7 +41,6 @@
 #include "vtkSlicerApplicationLogic.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesIOOptionsWidgetPrivate
   : public qSlicerIOOptionsPrivate
   , public Ui_qSlicerVolumesIOOptionsWidget

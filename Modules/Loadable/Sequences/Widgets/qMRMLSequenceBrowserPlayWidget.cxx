@@ -28,7 +28,6 @@
 #include <QShortcut>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Markups
 class qMRMLSequenceBrowserPlayWidgetPrivate
 : public Ui_qMRMLSequenceBrowserPlayWidget
 {

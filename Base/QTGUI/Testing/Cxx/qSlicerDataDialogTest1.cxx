@@ -46,7 +46,6 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Dummy
 class qSlicerDummyIO: public qSlicerIO
 {
 public:

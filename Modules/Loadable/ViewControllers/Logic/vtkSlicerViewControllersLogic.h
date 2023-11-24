@@ -36,7 +36,6 @@ class vtkMRMLPlotViewNode;
 class vtkMRMLSliceNode;
 class vtkMRMLViewNode;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class VTK_SLICER_VIEWCONTROLLERS_MODULE_LOGIC_EXPORT vtkSlicerViewControllersLogic :
   public vtkSlicerModuleLogic
 {

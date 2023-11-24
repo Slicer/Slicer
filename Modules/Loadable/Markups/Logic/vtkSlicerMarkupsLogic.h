@@ -53,7 +53,6 @@ class vtkPoints;
 class vtkPolyData;
 class vtkSlicerMarkupsWidget;
 
-/// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_LOGIC_EXPORT vtkSlicerMarkupsLogic :
   public vtkSlicerModuleLogic
 {

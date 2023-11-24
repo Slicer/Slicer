@@ -23,7 +23,6 @@
 #include "ui_qSlicerSuperLoadableModuleTemplateModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate: public Ui_qSlicerSuperLoadableModuleTemplateModuleWidget
 {
 public:

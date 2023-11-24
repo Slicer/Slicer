@@ -28,7 +28,6 @@
 
 class qSlicerReformatModulePrivate;
 
-/// \ingroup Slicer_QtModules_Reformat
 class Q_SLICER_QTMODULES_REFORMAT_EXPORT
 qSlicerReformatModule : public qSlicerLoadableModule
 {

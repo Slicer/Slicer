@@ -37,7 +37,6 @@ class vtkMRMLNode;
 class vtkMRMLSegmentationNode;
 class qMRMLSegmentationGeometryWidgetPrivate;
 
-/// \ingroup Slicer_QtModules_Segmentations_Widgets
 class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationGeometryWidget : public qMRMLWidget
 {
   Q_OBJECT

@@ -31,7 +31,6 @@
 #include <QLineEdit>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerGPUMemoryComboBoxPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerGPUMemoryComboBox);

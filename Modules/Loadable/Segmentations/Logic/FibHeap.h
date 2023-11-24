@@ -125,7 +125,6 @@ public:
 // FibHeap class can then be used to Insert(), ExtractMin(), etc.,
 // instances of FibHeapNode class.
 
-/// \ingroup Slicer_QtModules_Segmentations
 
 class FibHeap
 {

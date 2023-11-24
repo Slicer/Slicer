@@ -33,7 +33,6 @@ class qSlicerModelsModuleWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLSelectionNode;
 
-/// \ingroup Slicer_QtModules_Models
 class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT

@@ -56,7 +56,6 @@
 #include "dcmtk/dcmdata/dcuid.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class qSlicerSubjectHierarchyDICOMPluginPrivate: public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDICOMPlugin);

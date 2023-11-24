@@ -30,7 +30,6 @@
 
 class vtkMRMLProceduralColorNode;
 
-/// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsFiducialDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:

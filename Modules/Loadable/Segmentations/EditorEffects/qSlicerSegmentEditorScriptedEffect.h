@@ -35,7 +35,6 @@ typedef _object PyObject;
 #endif
 class qSlicerSegmentEditorScriptedEffectPrivate;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 /// \brief Scripted abstract effect for implementing segment editor effects in python
 ///
 /// This class provides an interface to effects implemented in python.

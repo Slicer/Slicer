@@ -30,7 +30,6 @@
 #include <vtkMRMLMarkupsDisplayNode.h>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Markups
 class qMRMLMarkupsFiducialProjectionPropertyWidgetPrivate
   : public Ui_qMRMLMarkupsFiducialProjectionPropertyWidget
 {

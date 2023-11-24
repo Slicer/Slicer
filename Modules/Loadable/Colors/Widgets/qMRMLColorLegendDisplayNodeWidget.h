@@ -36,7 +36,6 @@ class vtkMRMLColorLegendDisplayNode;
 class qMRMLColorLegendDisplayNodeWidgetPrivate;
 class QAbstractButton;
 
-/// \ingroup Slicer_QtModules_Colors
 class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorLegendDisplayNodeWidget
   : public qMRMLWidget
 {

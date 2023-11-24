@@ -34,7 +34,6 @@
 #include <algorithm>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qSlicerDiffusionTensorVolumeDisplayWidgetPrivate
   : public Ui_qSlicerDiffusionTensorVolumeDisplayWidget
 {

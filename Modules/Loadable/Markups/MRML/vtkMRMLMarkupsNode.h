@@ -62,7 +62,6 @@ class vtkMRMLUnitNode;
 ///   - World: All parent transforms on node applied to local.
 ///
 /// \sa vtkMRMLMarkupsDisplayNode
-/// \ingroup Slicer_QtModules_Markups
 
 class vtkAlgorithmOutput;
 class vtkCollection;

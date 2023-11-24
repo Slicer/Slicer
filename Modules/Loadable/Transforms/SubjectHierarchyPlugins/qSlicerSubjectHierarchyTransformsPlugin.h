@@ -30,7 +30,6 @@
 
 class qSlicerSubjectHierarchyTransformsPluginPrivate;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class Q_SLICER_TRANSFORMS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyTransformsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:

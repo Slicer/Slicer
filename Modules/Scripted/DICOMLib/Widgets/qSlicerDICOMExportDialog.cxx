@@ -71,7 +71,6 @@
 #include "ctkDICOMIndexer.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class qSlicerDICOMExportDialogPrivate : public Ui_qSlicerDICOMExportDialog, public QDialog
 {
   Q_DECLARE_PUBLIC(qSlicerDICOMExportDialog);

@@ -42,7 +42,6 @@ enum
 static const char ROW_INDEX_PROPERTY[] = "RowIndex";
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SceneViews
 class qSlicerSceneViewsModuleWidgetPrivate: public Ui_qSlicerSceneViewsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerSceneViewsModuleWidget);

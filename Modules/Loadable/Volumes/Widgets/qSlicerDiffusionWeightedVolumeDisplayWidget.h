@@ -39,7 +39,6 @@ class vtkMRMLDiffusionWeightedSliceDisplayNode;
 class vtkMRMLGlyphableVolumeSliceDisplayNode;
 class qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate;
 
-/// \ingroup Slicer_QtModules_Volumes
 class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDiffusionWeightedVolumeDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT

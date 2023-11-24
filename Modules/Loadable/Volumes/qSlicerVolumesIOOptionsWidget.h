@@ -32,7 +32,6 @@
 
 class qSlicerVolumesIOOptionsWidgetPrivate;
 
-/// \ingroup Slicer_QtModules_Volumes
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesIOOptionsWidget :
   public qSlicerIOOptionsWidget
 {

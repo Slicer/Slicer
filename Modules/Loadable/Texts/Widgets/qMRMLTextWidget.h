@@ -32,7 +32,6 @@ class vtkMRMLTextNode;
 class qMRMLTextWidgetPrivate;
 class QTextEdit;
 
-/// \ingroup Slicer_QtModules_Texts
 class Q_SLICER_MODULE_TEXTS_WIDGETS_EXPORT qMRMLTextWidget : public qSlicerWidget
 {
   Q_OBJECT

@@ -16,7 +16,6 @@
 #include "qSlicerCropVolumeModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_CropVolume
 class qSlicerCropVolumeModulePrivate
 {
 public:

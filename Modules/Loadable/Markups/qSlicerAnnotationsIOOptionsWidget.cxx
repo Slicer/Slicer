@@ -32,7 +32,6 @@
 #include "ui_qSlicerAnnotationModuleIOOptionsWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Annotations
 class qSlicerAnnotationsIOOptionsWidgetPrivate
   : public qSlicerIOOptionsPrivate
   , public Ui_qSlicerAnnotationModuleIOOptionsWidget

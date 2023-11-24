@@ -64,7 +64,6 @@
 #include <QMessageBox>
 
 //-----------------------------------------------------------------------------
-/// \ingroup SlicerRt_QtModules_Segmentations
 class qSlicerSegmentationsModuleWidgetPrivate: public Ui_qSlicerSegmentationsModule
 {
   Q_DECLARE_PUBLIC(qSlicerSegmentationsModuleWidget);

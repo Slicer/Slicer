@@ -33,7 +33,6 @@
 class qSlicerSegmentEditorAbstractEffect;
 class qSlicerSegmentEditorEffectFactoryCleanup;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 /// \class qSlicerSegmentEditorEffectFactory
 /// \brief Singleton class managing segment editor effect plugins
 class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorEffectFactory : public QObject

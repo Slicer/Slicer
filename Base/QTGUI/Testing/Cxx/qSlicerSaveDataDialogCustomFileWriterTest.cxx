@@ -37,7 +37,6 @@
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Dummy
 class qSlicerDummyFileWriter: public qSlicerFileWriter
 {
 public:

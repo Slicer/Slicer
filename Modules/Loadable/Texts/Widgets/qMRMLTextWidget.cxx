@@ -32,7 +32,6 @@
 #include <QStyle>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_CreateModels
 class qMRMLTextWidgetPrivate
   : public Ui_qMRMLTextWidget
 {

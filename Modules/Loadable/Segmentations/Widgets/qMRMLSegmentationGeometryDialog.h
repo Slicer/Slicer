@@ -34,7 +34,6 @@ class vtkMRMLSegmentationNode;
 class qMRMLSegmentationGeometryDialogPrivate;
 
 /// \brief Qt dialog for changing segmentation labelmap geometry
-/// \ingroup Slicer_QtModules_Segmentations_Widgets
 class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationGeometryDialog : public QObject
 {
 public:

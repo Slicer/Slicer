@@ -33,7 +33,6 @@ class qSlicerTableColumnPropertiesWidgetPrivate;
 class vtkMRMLTableNode;
 class qMRMLTableView;
 
-/// \ingroup Slicer_QtModules_CreateModels
 class Q_SLICER_MODULE_TABLES_WIDGETS_EXPORT
 qSlicerTableColumnPropertiesWidget : public qSlicerWidget
 {

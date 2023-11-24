@@ -23,7 +23,6 @@
 #include "qSlicerLoadableModuleTemplateModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class qSlicerLoadableModuleTemplateModulePrivate
 {
 public:

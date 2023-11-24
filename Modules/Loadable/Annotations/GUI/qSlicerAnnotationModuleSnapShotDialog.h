@@ -5,7 +5,6 @@ class vtkSlicerAnnotationModuleLogic;
 
 #include "qMRMLScreenShotDialog.h"
 
-/// \ingroup Slicer_QtModules_Annotation
 class qSlicerAnnotationModuleSnapShotDialog : public qMRMLScreenShotDialog
 {
   Q_OBJECT

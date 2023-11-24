@@ -28,7 +28,6 @@
 #include "vtkMRMLViewNode.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate
   : public Ui_qSlicerCPURayCastVolumeRenderingPropertiesWidget
 {

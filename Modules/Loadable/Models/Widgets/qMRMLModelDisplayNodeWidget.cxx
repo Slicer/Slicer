@@ -51,7 +51,6 @@ static const int REPRESENTATION_WIREFRAME = 1;
 static const int REPRESENTATION_SURFACE = 2;
 
 //------------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Models
 class qMRMLModelDisplayNodeWidgetPrivate: public QWidget, public Ui_qMRMLModelDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLModelDisplayNodeWidget);

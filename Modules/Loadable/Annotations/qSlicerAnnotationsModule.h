@@ -12,7 +12,6 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerAnnotationsModulePrivate;
 
-/// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationsModule :
   public qSlicerLoadableModule
 {

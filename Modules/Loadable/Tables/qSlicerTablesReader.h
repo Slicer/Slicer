@@ -30,7 +30,6 @@ class qSlicerTablesReaderPrivate;
 class vtkSlicerTablesLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Tables
 class qSlicerTablesReader
   : public qSlicerFileReader
 {

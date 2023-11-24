@@ -31,7 +31,6 @@
 
 class qSlicerVolumeRenderingModulePrivate;
 
-/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModule :
   public qSlicerLoadableModule
 {

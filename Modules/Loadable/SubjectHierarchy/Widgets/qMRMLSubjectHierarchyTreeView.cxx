@@ -65,7 +65,6 @@
 #include <vtkIdList.h>
 
 //------------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class qMRMLSubjectHierarchyTreeViewPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLSubjectHierarchyTreeView);

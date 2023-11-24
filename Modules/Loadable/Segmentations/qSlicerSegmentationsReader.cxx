@@ -51,7 +51,6 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Segmentations
 qSlicerSegmentationsReader::qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerSegmentationsReaderPrivate)

@@ -29,7 +29,6 @@
 #include "vtkMRMLViewNode.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerMultiVolumeRenderingPropertiesWidgetPrivate
   : public Ui_qSlicerMultiVolumeRenderingPropertiesWidget
 {

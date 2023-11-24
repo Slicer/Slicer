@@ -44,7 +44,6 @@ class vtkVolumeProperty;
 #include <map>
 #include <vector>
 
-/// \ingroup Slicer_QtModules_VolumeRendering
 /// Collection of utility methods to control the Volume Rendering nodes.
 /// The fastest to volume render of vtkMRMLVolumeNode is to use
 /// \a CreateVolumeRenderingDisplayNode() and

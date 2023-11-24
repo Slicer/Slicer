@@ -33,7 +33,6 @@ class vtkMRMLMarkupsJsonWriter;
 class vtkMRMLMarkupsDisplayNode;
 class vtkMRMLMarkupsNode;
 
-/// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonStorageNode : public vtkMRMLMarkupsStorageNode
 {
 public:

@@ -29,7 +29,6 @@ class qSlicerSegmentationsReaderPrivate;
 class vtkSlicerSegmentationsModuleLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Segmentations
 class qSlicerSegmentationsReader
   : public qSlicerFileReader
 {

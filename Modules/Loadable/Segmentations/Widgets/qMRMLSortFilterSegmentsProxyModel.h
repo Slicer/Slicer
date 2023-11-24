@@ -36,7 +36,6 @@ class QStandardItem;
 class vtkMRMLSegmentationNode;
 class vtkMRMLScene;
 
-/// \ingroup Slicer_QtModules_Segmentations
 class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSortFilterSegmentsProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT

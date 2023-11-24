@@ -23,7 +23,6 @@
 #include "ui_qSlicerTemplateKeyFooBarWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_TemplateKey
 class qSlicerTemplateKeyFooBarWidgetPrivate
   : public Ui_qSlicerTemplateKeyFooBarWidget
 {

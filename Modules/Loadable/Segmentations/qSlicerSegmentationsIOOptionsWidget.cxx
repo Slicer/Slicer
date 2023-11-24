@@ -38,7 +38,6 @@
 #include "ui_qSlicerSegmentationsIOOptionsWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qSlicerSegmentationsIOOptionsWidgetPrivate
   : public qSlicerIOOptionsPrivate
   , public Ui_qSlicerSegmentationsIOOptionsWidget

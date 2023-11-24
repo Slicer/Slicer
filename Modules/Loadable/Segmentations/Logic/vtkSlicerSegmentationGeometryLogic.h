@@ -36,7 +36,6 @@
 // vtkSegmentationCore includes
 #include "vtkOrientedImageData.h"
 
-/// \ingroup Slicer_QtModules_Segmentations
 class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentationGeometryLogic : public vtkObject
 {
 public:

@@ -37,7 +37,6 @@
 class qSlicerSubjectHierarchyVolumesPluginPrivate;
 class vtkMRMLScalarVolumeNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class Q_SLICER_VOLUMES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyVolumesPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:

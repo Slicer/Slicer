@@ -85,7 +85,6 @@ class vtkTriangleFilter;
 ///                          |        +-----------------+                                                  |
 ///                          +-----------------------------------------------------------------------------+
 ///
-/// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsCurveNode : public vtkMRMLMarkupsNode
 {
 public:

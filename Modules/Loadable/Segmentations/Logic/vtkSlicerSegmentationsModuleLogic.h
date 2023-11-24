@@ -47,7 +47,6 @@ class vtkMRMLVolumeNode;
 class vtkMRMLModelNode;
 class vtkSlicerTerminologiesModuleLogic;
 
-/// \ingroup Slicer_QtModules_Segmentations
 class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentationsModuleLogic :
   public vtkSlicerModuleLogic
 {

@@ -18,7 +18,6 @@
 #include "vtkMRMLNRRDStorageNode.h"
 #include <string>
 
-/// \ingroup Slicer_QtModules_Sequences
 class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStorageNode
 {
   public:

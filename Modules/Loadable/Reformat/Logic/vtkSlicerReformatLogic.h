@@ -38,7 +38,6 @@
 #include "vtkSlicerReformatModuleLogicExport.h"
 
 
-/// \ingroup Slicer_QtModules_TransformsReformatWidget
 class VTK_SLICER_REFORMAT_MODULE_LOGIC_EXPORT
 vtkSlicerReformatLogic : public vtkSlicerModuleLogic
 {

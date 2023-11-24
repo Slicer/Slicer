@@ -25,7 +25,6 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
 /// \brief Measurement class calculating area of a plane or enclosed by a closed curve
-/// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMeasurementArea : public vtkMRMLMeasurement
 {
 public:

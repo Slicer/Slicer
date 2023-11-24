@@ -44,7 +44,6 @@
 static const char SCHEMA_PROPERTY_NAME[] = "SchemaPropertyName";
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_CreateModels
 class qSlicerTableColumnPropertiesWidgetPrivate
   : public Ui_qSlicerTableColumnPropertiesWidget
 {

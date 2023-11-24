@@ -27,7 +27,6 @@
 #include "qSlicerSubjectHierarchyPluginLogic.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class qSlicerSubjectHierarchyModuleWidgetPrivate: public Ui_qSlicerSubjectHierarchyModule
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyModuleWidget);

@@ -50,7 +50,6 @@ int CONTROL_POINT_COLUMNS = 4;
 
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_CreateModels
 class qSlicerSimpleMarkupsWidgetPrivate
   : public Ui_qSlicerSimpleMarkupsWidget
 {

@@ -32,7 +32,6 @@ class qSlicerSubjectHierarchySceneViewsPluginPrivate;
 class vtkMRMLNode;
 class vtkMRMLSubjectHierarchyNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class Q_SLICER_SCENEVIEWS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchySceneViewsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:

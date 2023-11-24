@@ -30,7 +30,6 @@
 
 class qSlicerSubjectHierarchyParseLocalDataPluginPrivate;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyParseLocalDataPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:

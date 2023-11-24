@@ -47,7 +47,6 @@ class vtkMRMLMarkupsDisplayableManager;
 class vtkMRMLMarkupsDisplayNode;
 class vtkMRMLInteractionNode;
 
-/// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsDisplayableManagerHelper :
     public vtkObject
 {

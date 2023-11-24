@@ -23,7 +23,6 @@
 #include "qSlicerWelcomeModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SlicerWelcome
 class qSlicerWelcomeModulePrivate
 {
 public:

@@ -24,7 +24,6 @@ class vtkCellArray;
 class vtkPoints;
 class vtkStringArray;
 
-/// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
 {
 public:

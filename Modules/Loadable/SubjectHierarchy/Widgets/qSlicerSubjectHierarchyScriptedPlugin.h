@@ -40,7 +40,6 @@ class QStandardItem;
 class QAction;
 class qSlicerAbstractModuleWidget;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 ///    In Widgets, not Plugins because the paths and libs need to be exported to extensions
 /// \brief Scripted abstract plugin for handling subject hierarchy items or providing actions for items
 ///

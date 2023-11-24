@@ -37,7 +37,6 @@ class qMRMLSortFilterSubjectHierarchyProxyModel;
 class qMRMLSubjectHierarchyModel;
 class vtkMRMLScene;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyComboBox : public ctkComboBox
 {
   Q_OBJECT

@@ -67,7 +67,6 @@ enum
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class qSlicerSequencesModuleWidgetPrivate: public Ui_qSlicerSequencesModuleWidget
 {
   Q_DECLARE_PUBLIC( qSlicerSequencesModuleWidget );

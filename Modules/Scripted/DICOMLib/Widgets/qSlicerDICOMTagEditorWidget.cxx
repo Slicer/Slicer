@@ -45,7 +45,6 @@
 #include <vtkMRMLScene.h>
 
 //------------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class qSlicerDICOMTagEditorWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerDICOMTagEditorWidget);

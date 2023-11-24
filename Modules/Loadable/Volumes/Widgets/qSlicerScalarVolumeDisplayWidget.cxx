@@ -38,7 +38,6 @@
 #include <limits>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qSlicerScalarVolumeDisplayWidgetPrivate
   : public Ui_qSlicerScalarVolumeDisplayWidget
 {

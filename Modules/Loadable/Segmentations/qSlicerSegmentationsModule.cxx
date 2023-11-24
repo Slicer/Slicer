@@ -68,7 +68,6 @@
 VTK_MODULE_INIT(vtkSlicerSegmentationsModuleMRMLDisplayableManager)
 
 //-----------------------------------------------------------------------------
-/// \ingroup SlicerRt_QtModules_Segmentations
 class qSlicerSegmentationsModulePrivate
 {
 public:

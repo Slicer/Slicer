@@ -30,7 +30,6 @@
 #include "vtkMRMLUnitNode.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class qMRMLUnitWidgetPrivate: public Ui_qMRMLUnitWidget
 {
   Q_DECLARE_PUBLIC(qMRMLUnitWidget);

@@ -30,7 +30,6 @@
 
 class qSlicerTablesModulePrivate;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class Q_SLICER_QTMODULES_TABLES_EXPORT qSlicerTablesModule :
   public qSlicerLoadableModule
 {

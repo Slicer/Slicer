@@ -25,7 +25,6 @@
 
 class qSlicerSuperLoadableModuleTemplateModulePrivate;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class Q_SLICER_QTMODULES_SUPERLOADABLEMODULETEMPLATE_EXPORT
 qSlicerSuperLoadableModuleTemplateModule
   : public qSlicerLoadableModule

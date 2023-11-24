@@ -28,7 +28,6 @@
 #include <QFontDatabase>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Markups
 class qMRMLSequenceBrowserSeekWidgetPrivate
   : public Ui_qMRMLSequenceBrowserSeekWidget
 {

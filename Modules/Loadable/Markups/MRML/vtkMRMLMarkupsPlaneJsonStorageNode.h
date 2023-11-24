@@ -35,7 +35,6 @@ class vtkMRMLMarkupsJsonElement;
 class vtkMRMLMarkupsJsonWriter;
 class vtkMRMLMarkupsNode;
 
-/// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneJsonStorageNode : public vtkMRMLMarkupsJsonStorageNode
 {
 public:

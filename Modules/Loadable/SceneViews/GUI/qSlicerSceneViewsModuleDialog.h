@@ -5,7 +5,6 @@
 
 #include "qMRMLScreenShotDialog.h"
 
-/// \ingroup Slicer_QtModules_SceneViews
 class qSlicerSceneViewsModuleDialog : public qMRMLScreenShotDialog
 {
   Q_OBJECT

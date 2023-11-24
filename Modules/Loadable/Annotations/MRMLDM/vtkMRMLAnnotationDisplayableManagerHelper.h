@@ -35,7 +35,6 @@ class vtkMRMLInteractionNode;
 #include <map>
 #include <vector>
 
-/// \ingroup Slicer_QtModules_Annotation
 class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
 vtkMRMLAnnotationDisplayableManagerHelper
   : public vtkObject

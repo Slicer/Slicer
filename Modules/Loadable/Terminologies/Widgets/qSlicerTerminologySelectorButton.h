@@ -33,7 +33,6 @@
 class qSlicerTerminologySelectorButtonPrivate;
 
 /// \brief Button that opens terminology selector dialog
-/// \ingroup SlicerRt_QtModules_Terminologies_Widgets
 class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorButton : public QPushButton
 {
   Q_OBJECT

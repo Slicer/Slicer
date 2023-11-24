@@ -31,7 +31,6 @@
 class qSlicerTerminologiesModuleWidgetPrivate;
 class vtkMRMLNode;
 
-/// \ingroup SlicerRt_QtModules_DicomRtImport
 class Q_SLICER_QTMODULES_TERMINOLOGIES_EXPORT qSlicerTerminologiesModuleWidget :
   public qSlicerAbstractModuleWidget
 {

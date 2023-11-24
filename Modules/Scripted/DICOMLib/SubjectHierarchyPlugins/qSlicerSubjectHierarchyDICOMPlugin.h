@@ -30,7 +30,6 @@
 
 class qSlicerSubjectHierarchyDICOMPluginPrivate;
 
-/// \ingroup Slicer_QtModules_DICOMLob_SubjectHierarchyPlugins
 ///
 /// The DICOM subject hierarchy plugin provides subject hierarchy items for
 /// Subject and Study, in addition to functions to convert folders to these

@@ -29,7 +29,6 @@ class qSlicerModelsReaderPrivate;
 class vtkSlicerModelsLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Models
 class qSlicerModelsReader
   : public qSlicerFileReader
 {

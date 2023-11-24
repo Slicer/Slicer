@@ -58,7 +58,6 @@
 #include "ctkDoubleSlider.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup SlicerRt_QtModules_Segmentations
 class qSlicerSubjectHierarchySegmentsPluginPrivate: public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchySegmentsPlugin);

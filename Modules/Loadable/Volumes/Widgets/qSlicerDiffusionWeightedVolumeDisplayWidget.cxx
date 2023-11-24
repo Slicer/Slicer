@@ -33,7 +33,6 @@
 // STD includes
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate
   : public Ui_qSlicerDiffusionWeightedVolumeDisplayWidget
 {

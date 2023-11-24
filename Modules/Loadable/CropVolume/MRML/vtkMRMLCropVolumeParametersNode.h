@@ -24,7 +24,6 @@ class vtkMRMLDisplayableNode;
 class vtkMRMLTransformNode;
 class vtkMRMLVolumeNode;
 
-/// \ingroup Slicer_QtModules_CropVolume
 class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode : public vtkMRMLNode
 {
 public:

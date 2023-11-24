@@ -43,7 +43,6 @@
 #include <vtkVolumeProperty.h>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingPresetComboBoxPrivate : public Ui_qSlicerVolumeRenderingPresetComboBox
 {
   Q_DECLARE_PUBLIC(qSlicerVolumeRenderingPresetComboBox);

@@ -31,7 +31,6 @@
 qSlicerSegmentEditorEffectFactory *qSlicerSegmentEditorEffectFactory::m_Instance = nullptr;
 
 //----------------------------------------------------------------------------
-/// \ingroup SlicerRt_QtModules_Segmentations
 class qSlicerSegmentEditorEffectFactoryCleanup
 {
 public:

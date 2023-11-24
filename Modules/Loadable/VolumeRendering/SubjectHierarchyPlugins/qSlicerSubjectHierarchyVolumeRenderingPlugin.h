@@ -33,7 +33,6 @@ class vtkMRMLViewNode;
 class vtkMRMLDisplayNode;
 class vtkSlicerVolumeRenderingLogic;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class Q_SLICER_VOLUMERENDERING_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyVolumeRenderingPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
