@@ -273,16 +273,34 @@ def SEMToMediaWikiProg():
     usage = "%prog -x XMLFILE -o MEDIWIKIFILE"
     version = "%prog v0.1"
     parser = OptionParser()
-    parser.add_option("-x", "--xmlfile", dest="xmlfilename",
-                      action="store", type="string",
-                      metavar="XMLFILE", help="The SEM formatted XMLFILE file")
-    parser.add_option("-o", "--outfile", dest="outfilename",
-                      action="store", type="string", default=None,
-                      metavar="MEDIAWIKIFILE",
-                      help="The MEDIAWIKIFILE ascii file with media-wiki formatted text.")
-    parser.add_option("-p", "--parts", dest="parts",
-                      action="store", type="string", default="hbf",
-                      help="The parts to print out, h=Header,b=body,f=footer")
+    parser.add_option(
+        "-x",
+        "--xmlfile",
+        dest="xmlfilename",
+        action="store",
+        type="string",
+        metavar="XMLFILE",
+        help="The SEM formatted XMLFILE file",
+    )
+    parser.add_option(
+        "-o",
+        "--outfile",
+        dest="outfilename",
+        action="store",
+        type="string",
+        default=None,
+        metavar="MEDIAWIKIFILE",
+        help="The MEDIAWIKIFILE ascii file with media-wiki formatted text.",
+    )
+    parser.add_option(
+        "-p",
+        "--parts",
+        dest="parts",
+        action="store",
+        type="string",
+        default="hbf",
+        help="The parts to print out, h=Header,b=body,f=footer",
+    )
     parser.epilog = program_description
     #    print program_description
     (options, args) = parser.parse_args()

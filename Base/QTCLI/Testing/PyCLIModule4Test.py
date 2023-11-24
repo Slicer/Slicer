@@ -10,15 +10,10 @@ def main():
     # TODO parse from XML (maybe commontk/ctk-cli)
 
     parser = argparse.ArgumentParser(description="A test Python CLI")
-    parser.add_argument("outputfile", metavar="<outputfile>", help="Output file",
-                        nargs="?")
-    parser.add_argument("--inputvalue1", metavar="N1", help="Input value 1",
-                        required=True, nargs="?", type=int)
-    parser.add_argument("--inputvalue2", metavar="N2", help="Input value 2",
-                        required=True, nargs="?", type=int)
-    parser.add_argument("--operationtype",
-                        choices=["Addition", "Multiplication", "Fail"],
-                        default="Addition")
+    parser.add_argument("outputfile", metavar="<outputfile>", help="Output file", nargs="?")
+    parser.add_argument("--inputvalue1", metavar="N1", help="Input value 1", required=True, nargs="?", type=int)
+    parser.add_argument("--inputvalue2", metavar="N2", help="Input value 2", required=True, nargs="?", type=int)
+    parser.add_argument("--operationtype", choices=["Addition", "Multiplication", "Fail"], default="Addition")
 
     args = parser.parse_args()
     operation = args.operationtype

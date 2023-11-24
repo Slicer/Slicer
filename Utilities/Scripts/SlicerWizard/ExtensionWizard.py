@@ -608,59 +608,82 @@ class ExtensionWizard:
     # ---------------------------------------------------------------------------
     def _execute(self, args):
         # Set up arguments
-        parser = argparse.ArgumentParser(description="Slicer Wizard",
-                                         formatter_class=WizardHelpFormatter)
+        parser = argparse.ArgumentParser(description="Slicer Wizard", formatter_class=WizardHelpFormatter)
 
-        parser.add_argument("--version", action="version",
-                            version=__version__)
+        parser.add_argument("--version", action="version", version=__version__)
 
         parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
         parser.add_argument("--test", action="store_true", help=argparse.SUPPRESS)
         parser.add_argument("--dryRun", action="store_true", help=argparse.SUPPRESS)
         parser.add_argument("--localExtensionsDir", help=argparse.SUPPRESS)
 
-        parser.add_argument("--create", metavar="<TYPE:>NAME",
-                            help="create TYPE extension NAME"
-                                 " under the destination directory;"
-                                 " any modules are added to the new extension"
-                                 " (default type: 'default')")
-        parser.add_argument("--addModule", metavar="TYPE:NAME", action="append",
-                            help="add new TYPE module NAME to an existing project"
-                                 " in the destination directory;"
-                                 " may use more than once")
+        parser.add_argument(
+            "--create",
+            metavar="<TYPE:>NAME",
+            help="create TYPE extension NAME"
+            " under the destination directory;"
+            " any modules are added to the new extension"
+            " (default type: 'default')",
+        )
+        parser.add_argument(
+            "--addModule",
+            metavar="TYPE:NAME",
+            action="append",
+            help="add new TYPE module NAME to an existing project"
+            " in the destination directory;"
+            " may use more than once",
+        )
         self._templateManager.addArguments(parser)
-        parser.add_argument("--listTemplates", action="store_true",
-                            help="show list of available templates"
-                                 " and associated substitution keys")
-        parser.add_argument("--describe", action="store_true",
-                            help="print the extension description (s4ext)"
-                                 " to standard output")
+        parser.add_argument(
+            "--listTemplates",
+            action="store_true",
+            help="show list of available templates and associated substitution keys",
+        )
+        parser.add_argument(
+            "--describe", action="store_true", help="print the extension description (s4ext) to standard output",
+        )
 
-        parser.add_argument("--name", metavar="NAME",
-                            help="name of the extension"
-                                 " (default: value associated with 'project()' statement)")
+        parser.add_argument(
+            "--name",
+            metavar="NAME",
+            help="name of the extension (default: value associated with 'project()' statement)",
+        )
 
-        parser.add_argument("--publish", action="store_true",
-                            help="publish the extension in the destination"
-                                 " directory to github (account required)")
-        parser.add_argument("--contribute", action="store_true",
-                            help="register or update a compiled extension with"
-                                 " the extension index (github account required)")
-        parser.add_argument("--target", metavar="VERSION", default="main",
-                            help="version of Slicer for which the extension"
-                                 " is intended (default='main')")
-        parser.add_argument("--index", metavar="PATH",
-                            help="location for the extension index clone"
-                                 " (default: private directory"
-                                 " in the extension clone)")
+        parser.add_argument(
+            "--publish",
+            action="store_true",
+            help="publish the extension in the destination directory to github (account required)",
+        )
+        parser.add_argument(
+            "--contribute",
+            action="store_true",
+            help="register or update a compiled extension with the extension index (github account required)",
+        )
+        parser.add_argument(
+            "--target",
+            metavar="VERSION",
+            default="main",
+            help="version of Slicer for which the extension is intended (default='main')",
+        )
+        parser.add_argument(
+            "--index",
+            metavar="PATH",
+            help="location for the extension index clone (default: private directory in the extension clone)",
+        )
 
-        parser.add_argument("destination", default=os.getcwd(), nargs="?",
-                            help="location of output files / extension source"
-                                 " (default: '.')")
+        parser.add_argument(
+            "destination",
+            default=os.getcwd(),
+            nargs="?",
+            help="location of output files / extension source (default: '.')",
+        )
 
-        parser.add_argument("cmakefile", default="CMakeLists.txt", nargs="?",
-                            help="name of the CMake file where EXTENSION_* CMake variables are set"
-                                 " (default: 'CMakeLists.txt')")
+        parser.add_argument(
+            "cmakefile",
+            default="CMakeLists.txt",
+            nargs="?",
+            help="name of the CMake file where EXTENSION_* CMake variables are set (default: 'CMakeLists.txt')",
+        )
 
         args = parser.parse_args(args)
         initLogging(logging.getLogger(), args)
