@@ -38,9 +38,6 @@ namespace itk
  * \sa TensorRelativeAnisotropyImageFilter
  * \sa TensorFractionalAnisotropyImageFilter
  * \sa DiffusionTensor3D
- *
- * \ingroup IntensityImageFilters  Multithreaded  TensorObjects
- *
  */
 template <typename TInputImage,
           typename TOutputImage = TInputImage>
