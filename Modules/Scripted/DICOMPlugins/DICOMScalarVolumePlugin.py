@@ -536,7 +536,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         Get the downloaded and uncompressed frames from the urlHandler
         and put them into the volume node.
         """
-        framesByURL = urlHandler.getFrames()
+        framesByURL = urlHandler.getFrames(urls)
         volumeArray = slicer.util.arrayFromVolume(volumeNode)
         elapsedTime = time.time() - self._urlHandlerStartTime
         msg = _("{framesThisLoad} of {frames} in {elapsedTime:.3f}").format(framesThisLoad=len(framesByURL), frames=volumeArray.shape[0], elapsedTime=elapsedTime)
