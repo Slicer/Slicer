@@ -34,7 +34,6 @@
 // STD includes
 #include <map>
 
-/// \ingroup Slicer_MRML_Core
 /// \brief Legacy subject hierarchy node to allow loading older MRML scenes
 ///
 ///   Older MRML scenes contain per-item subject hierarchy nodes, which are incompatible
