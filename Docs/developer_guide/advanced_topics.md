@@ -63,6 +63,12 @@ nodes = scene.GetNodesByClass("vtkMRMLModelNode")
 nodes.UnRegister(None) # GetNodesByClass method is NOT marked with VTK_NEWINSTANCE, manual unregistration is needed
 ```
 
+Here are the different naming conventions for such "factory" methods:
+* `GetXXX`: Return an existing object, reference count is not changed, the caller is not responsible for the object.
+* `NewXXX`: Solely instantiate an object (typically a factory method). The caller is responsible to decrement the reference count.
+* `CreateXXX`: Instantiate and configure an object. The caller is responsible to decrement the reference count. If `XXX` is a MRML node, it is NOT added into the scene.
+* `CreateAndAddXXX`: Instantiate, configure and add into the scene a MRML node. The caller is not responsible to decrement the reference count.
+
 #### VTK_NEWINSTANCE wrapper hint
 
 If a factory method is marked with the `VTK_NEWINSTANCE` hint then the ownership is transferred to Python where garbage collection takes care of deleting the object when it is no longer needed.
