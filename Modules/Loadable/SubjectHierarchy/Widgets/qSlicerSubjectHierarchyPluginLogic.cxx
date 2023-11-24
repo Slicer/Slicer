@@ -57,7 +57,6 @@
 #include <QVariantMap>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class qSlicerSubjectHierarchyPluginLogicPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyPluginLogic);

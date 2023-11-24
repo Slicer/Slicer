@@ -28,7 +28,6 @@ class vtkMRMLViewNode;
 class vtkMRMLVolumeNode;
 class vtkMRMLVolumePropertyNode;
 
-/// \ingroup Slicer_QtModules_VolumeRendering
 /// \name vtkMRMLVolumeRenderingDisplayNode
 /// \brief Abstract MRML node for storing information for Volume Rendering
 class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode

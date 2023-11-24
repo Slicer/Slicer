@@ -24,7 +24,6 @@
 // Volume Rendering includes
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 
-/// \ingroup Slicer_QtModules_VolumeRendering
 /// \name vtkMRMLCPURayCastCPURayCastVolumeRenderingDisplayNode
 /// \brief MRML node for storing information for CPU Raycast Volume Rendering
 class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLCPURayCastVolumeRenderingDisplayNode

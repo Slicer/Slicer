@@ -30,7 +30,6 @@ class vtkMRMLNode;
 class vtkMRMLSequenceNode;
 class vtkMRMLSequenceBrowserNode;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class Q_SLICER_QTMODULES_SEQUENCES_EXPORT qSlicerSequencesModuleWidget :
   public qSlicerAbstractModuleWidget
 {

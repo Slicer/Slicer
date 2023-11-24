@@ -36,7 +36,6 @@ class vtkObject;
 
 class qSlicerSequencesModulePrivate;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class Q_SLICER_QTMODULES_SEQUENCES_EXPORT
 qSlicerSequencesModule
   : public qSlicerLoadableModule

@@ -43,7 +43,6 @@ class QMenu;
 class qSlicerSubjectHierarchyPluginLogicPrivate;
 class qSlicerSubjectHierarchyAbstractPlugin;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 /// \brief Qt-based logic class to exercise Qt-related logic functions. The Subject
 ///   hierarchy plugin mechanism and those are Qt classes
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPluginLogic :

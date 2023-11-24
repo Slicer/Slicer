@@ -37,7 +37,6 @@ class qMRMLMarkupsFiducialProjectionPropertyWidgetPrivate;
 class vtkMRMLMarkupsDisplayNode;
 class vtkMRMLMarkupsNode;
 
-/// \ingroup Slicer_QtModules_Markups
 class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
 qMRMLMarkupsFiducialProjectionPropertyWidget
   : public qMRMLWidget

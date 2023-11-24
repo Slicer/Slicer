@@ -42,7 +42,6 @@
 #include "ui_qMRMLColorLegendDisplayNodeWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Colors
 class qMRMLColorLegendDisplayNodeWidgetPrivate : public QWidget, public Ui_qMRMLColorLegendDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLColorLegendDisplayNodeWidget);

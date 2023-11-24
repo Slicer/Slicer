@@ -48,7 +48,6 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Models
 qSlicerModelsReader::qSlicerModelsReader(vtkSlicerModelsLogic* _modelsLogic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerModelsReaderPrivate)

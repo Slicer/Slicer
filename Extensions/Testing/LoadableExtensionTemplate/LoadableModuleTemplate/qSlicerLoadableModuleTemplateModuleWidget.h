@@ -26,7 +26,6 @@
 class qSlicerLoadableModuleTemplateModuleWidgetPrivate;
 class vtkMRMLNode;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class Q_SLICER_QTMODULES_LOADABLEMODULETEMPLATE_EXPORT qSlicerLoadableModuleTemplateModuleWidget :
   public qSlicerAbstractModuleWidget
 {

@@ -29,7 +29,6 @@
 qMRMLMarkupsOptionsWidgetsFactory *qMRMLMarkupsOptionsWidgetsFactory::Instance = nullptr;
 
 //----------------------------------------------------------------------------
-/// \ingroup SlicerRt_QtModules_Segmentations
 class qMRMLMarkupsOptionsWidgetsFactoryCleanup
 {
 public:

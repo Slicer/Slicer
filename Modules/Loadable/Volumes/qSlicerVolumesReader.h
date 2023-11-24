@@ -27,7 +27,6 @@ class qSlicerVolumesReaderPrivate;
 class vtkSlicerVolumesLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesReader
   : public qSlicerFileReader
 {

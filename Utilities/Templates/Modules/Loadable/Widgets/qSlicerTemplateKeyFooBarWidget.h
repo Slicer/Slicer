@@ -29,7 +29,6 @@
 
 class qSlicerTemplateKeyFooBarWidgetPrivate;
 
-/// \ingroup Slicer_QtModules_TemplateKey
 class Q_SLICER_MODULE_TEMPLATEKEY_WIDGETS_EXPORT qSlicerTemplateKeyFooBarWidget
   : public QWidget
 {

@@ -29,7 +29,6 @@ class qSlicerVolumeRenderingReaderPrivate;
 class vtkSlicerVolumeRenderingLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingReader
   : public qSlicerFileReader
 {

@@ -43,7 +43,6 @@
 VTK_MODULE_INIT(vtkSlicerVolumeRenderingModuleMRMLDisplayableManager)
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingModulePrivate
 {
 public:

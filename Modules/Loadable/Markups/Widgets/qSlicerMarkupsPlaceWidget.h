@@ -36,7 +36,6 @@ class vtkMRMLMarkupsNode;
 class qSlicerMarkupsPlaceWidgetPrivate;
 class QToolButton;
 
-/// \ingroup Slicer_QtModules_CreateModels
 class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
 qSlicerMarkupsPlaceWidget : public qSlicerWidget
 {

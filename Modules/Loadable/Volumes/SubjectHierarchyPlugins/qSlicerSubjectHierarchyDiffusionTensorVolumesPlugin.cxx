@@ -55,7 +55,6 @@
 #include "qSlicerAbstractCoreModule.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate: public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);

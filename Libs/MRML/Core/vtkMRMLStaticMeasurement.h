@@ -26,7 +26,6 @@
 /// Typically all measurements calculate their own value from its input
 /// MRML node. This class is to be able to store constant measurements.
 ///
-/// \ingroup Slicer_QtModules_Markups
 class VTK_MRML_EXPORT vtkMRMLStaticMeasurement : public vtkMRMLMeasurement
 {
 public:

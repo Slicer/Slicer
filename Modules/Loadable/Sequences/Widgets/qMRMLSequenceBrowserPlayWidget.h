@@ -37,7 +37,6 @@ class qMRMLSequenceBrowserPlayWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLSequenceBrowserNode;
 
-/// \ingroup Slicer_QtModules_Markups
 class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserPlayWidget
 : public qMRMLWidget
 {

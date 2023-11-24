@@ -30,7 +30,6 @@ class qSlicerSubjectHierarchySegmentsPluginPrivate;
 class vtkMRMLNode;
 class vtkMRMLSubjectHierarchyNode;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 class Q_SLICER_SEGMENTATIONS_PLUGINS_EXPORT qSlicerSubjectHierarchySegmentsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:

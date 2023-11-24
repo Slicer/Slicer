@@ -44,7 +44,6 @@ class QCheckBox;
 class QLabel;
 class ctkRangeWidget;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 /// \brief Private implementation of the segment editor abstract label effect
 class qSlicerSegmentEditorAbstractLabelEffectPrivate: public QObject
 {

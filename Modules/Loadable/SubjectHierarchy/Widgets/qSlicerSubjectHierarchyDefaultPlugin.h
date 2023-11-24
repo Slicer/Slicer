@@ -34,7 +34,6 @@
 class qSlicerSubjectHierarchyDefaultPluginPrivate;
 class QIcon;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 /// \brief Default Subject Hierarchy plugin to exercise features of the abstract plugin.
 ///   This plugin must not be registered as this is the fall back plugin called when there is none found
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyDefaultPlugin : public qSlicerSubjectHierarchyAbstractPlugin

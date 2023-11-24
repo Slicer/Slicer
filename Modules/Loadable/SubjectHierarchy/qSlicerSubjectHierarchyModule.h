@@ -34,7 +34,6 @@
 class vtkObject;
 class qSlicerSubjectHierarchyModulePrivate;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModule :
   public qSlicerLoadableModule
 {

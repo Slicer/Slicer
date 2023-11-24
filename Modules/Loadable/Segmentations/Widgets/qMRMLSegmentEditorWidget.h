@@ -51,7 +51,6 @@ class qSlicerSegmentEditorAbstractEffect;
 class qSlicerAbstractModuleWidget;
 
 /// \brief Qt widget for editing a segment from a segmentation using Editor effects.
-/// \ingroup Slicer_QtModules_Segmentations_Widgets
 ///
 /// Widget for editing segmentations that can be re-used in any module.
 ///

@@ -41,7 +41,6 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Terminologies
 qSlicerTerminologiesReader::qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerTerminologiesReaderPrivate)

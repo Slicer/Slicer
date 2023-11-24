@@ -29,7 +29,6 @@
 class qSlicerSegmentEditorScissorsEffectPrivate;
 class vtkPolyData;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScissorsEffect :
   public qSlicerSegmentEditorAbstractLabelEffect
 {

@@ -35,7 +35,6 @@ class qSlicerMarkupsModulePrivate;
 class vtkMRMLMarkupsDisplayNode;
 class vtkObject;
 
-/// \ingroup Slicer_QtModules_Markups
 class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModule :
   public qSlicerLoadableModule
 {

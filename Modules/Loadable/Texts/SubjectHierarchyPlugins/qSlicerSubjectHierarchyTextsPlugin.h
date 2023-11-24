@@ -28,7 +28,6 @@
 
 class qSlicerSubjectHierarchyTextsPluginPrivate;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class Q_SLICER_TEXTS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyTextsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:

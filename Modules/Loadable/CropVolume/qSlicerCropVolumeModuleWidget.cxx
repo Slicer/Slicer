@@ -34,7 +34,6 @@
 #include <vtkMRMLVolumeNode.h>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_CropVolume
 class qSlicerCropVolumeModuleWidgetPrivate: public Ui_qSlicerCropVolumeModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerCropVolumeModuleWidget);

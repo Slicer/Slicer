@@ -27,7 +27,6 @@ enum SequenceFileType
   NRRD_SEQUENCE_FILE
   };
 
-/// \ingroup Slicer_QtModules_Sequences
 class VTK_MRML_EXPORT vtkMRMLLinearTransformSequenceStorageNode : public vtkMRMLNRRDStorageNode
 {
   public:

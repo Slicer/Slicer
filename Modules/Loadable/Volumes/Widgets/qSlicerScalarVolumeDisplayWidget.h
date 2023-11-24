@@ -17,7 +17,6 @@ class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLScalarVolumeNode;
 class qSlicerScalarVolumeDisplayWidgetPrivate;
 
-/// \ingroup Slicer_QtModules_Volumes
 class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerScalarVolumeDisplayWidget
   : public qSlicerWidget
 {

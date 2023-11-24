@@ -29,7 +29,6 @@
 
 class qSlicerSceneIOOptionsWidgetPrivate;
 
-/// \ingroup Slicer_QtModules_Scene
 class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneIOOptionsWidget
   : public qSlicerIOOptionsWidget
 {

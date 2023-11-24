@@ -33,7 +33,6 @@
 #include "qSlicerSubjectHierarchyPlotsPlugin.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class qSlicerPlotsModulePrivate
 {
 public:

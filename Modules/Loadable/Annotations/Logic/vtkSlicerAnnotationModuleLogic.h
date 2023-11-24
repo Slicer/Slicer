@@ -18,7 +18,6 @@ class vtkMRMLAnnotationTextDisplayNode;
 // STD includes
 #include <string>
 
-/// \ingroup Slicer_QtModules_Annotation
 class VTK_SLICER_ANNOTATIONS_MODULE_LOGIC_EXPORT vtkSlicerAnnotationModuleLogic
   :public vtkSlicerModuleLogic
 {

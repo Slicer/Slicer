@@ -38,7 +38,6 @@
 #include "ctkVTKScalarsToColorsView.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Transforms
 class qMRMLTransformDisplayNodeWidgetPrivate
   : public Ui_qMRMLTransformDisplayNodeWidget
 {

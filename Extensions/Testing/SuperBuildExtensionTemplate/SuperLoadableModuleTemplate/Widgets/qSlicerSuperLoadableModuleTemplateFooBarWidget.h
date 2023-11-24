@@ -29,7 +29,6 @@
 
 class qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate;
 
-/// \ingroup Slicer_QtModules_SuperLoadableModuleTemplate
 class Q_SLICER_MODULE_SUPERLOADABLEMODULETEMPLATE_WIDGETS_EXPORT qSlicerSuperLoadableModuleTemplateFooBarWidget
   : public QWidget
 {

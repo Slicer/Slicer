@@ -47,7 +47,6 @@ class qSlicerAnnotationsReaderPrivate
 
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Markups
 //-----------------------------------------------------------------------------
 qSlicerAnnotationsReader::qSlicerAnnotationsReader(QObject* _parent)
   : Superclass(_parent)

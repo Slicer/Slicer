@@ -37,7 +37,6 @@
 #include <qSlicerApplication.h>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class qSlicerTemplateKeyModulePrivate
 {
 public:

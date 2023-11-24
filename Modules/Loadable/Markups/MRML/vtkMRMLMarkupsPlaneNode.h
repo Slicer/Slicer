@@ -51,7 +51,6 @@
 ///   - Node: Coordinate system of the markup node. Coordinates of the control points are stored in this coordinate system.
 ///   - World: Patient coordinate system (RAS). Transform between Node and World.
 ///     coordinate systems are defined by the parent transform of the node.
-/// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneNode : public vtkMRMLMarkupsNode
 {
 public:

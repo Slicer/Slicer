@@ -25,7 +25,6 @@
 #include "ui_qSlicerTerminologiesModule.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Terminologies
 class qSlicerTerminologiesModuleWidgetPrivate: public Ui_qSlicerTerminologiesModule
 {
 public:

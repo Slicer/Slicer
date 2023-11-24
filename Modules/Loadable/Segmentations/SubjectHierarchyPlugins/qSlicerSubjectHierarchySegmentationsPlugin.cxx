@@ -51,7 +51,6 @@
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class qSlicerSubjectHierarchySegmentationsPluginPrivate: public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchySegmentationsPlugin);

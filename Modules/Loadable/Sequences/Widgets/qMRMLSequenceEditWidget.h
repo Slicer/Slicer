@@ -32,7 +32,6 @@ class qMRMLSequenceEditWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLSequenceNode;
 
-/// \ingroup Slicer_QtModules_Markups
 class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceEditWidget
 : public qMRMLWidget
 {

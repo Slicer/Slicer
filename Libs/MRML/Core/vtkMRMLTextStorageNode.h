@@ -24,7 +24,6 @@
 // MRML includes
 #include <vtkMRMLStorageNode.h>
 
-/// \ingroup Slicer_QtModules_Sequences
 class VTK_MRML_EXPORT vtkMRMLTextStorageNode : public vtkMRMLStorageNode
 {
 public:

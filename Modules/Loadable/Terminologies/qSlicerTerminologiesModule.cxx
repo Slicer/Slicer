@@ -36,7 +36,6 @@
 #include "qSlicerIOManager.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup SlicerRt_QtModules_Terminologies
 class qSlicerTerminologiesModulePrivate
 {
 public:

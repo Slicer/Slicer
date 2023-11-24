@@ -41,7 +41,6 @@ class vtkImageData;
 
 #include <string>
 
-/// \ingroup Slicer_QtModules_SceneViews
 class VTK_SLICER_SCENEVIEWS_MODULE_LOGIC_EXPORT vtkSlicerSceneViewsModuleLogic :
   public vtkSlicerModuleLogic
 {

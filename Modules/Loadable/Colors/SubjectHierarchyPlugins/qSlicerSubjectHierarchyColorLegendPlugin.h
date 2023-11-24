@@ -30,7 +30,6 @@ class vtkMRMLViewNode;
 class vtkMRMLAbstractViewNode;
 class vtkMRMLDisplayNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class Q_SLICER_COLORS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyColorLegendPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:

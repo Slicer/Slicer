@@ -34,7 +34,6 @@
 /// There is no specific limit for number of points that can be added to a list,
 /// but performance is optimal if there are less than 2000 points.
 ///
-/// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsFiducialNode : public vtkMRMLMarkupsNode
 {
 public:

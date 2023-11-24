@@ -30,7 +30,6 @@
 
 class qSlicerSubjectHierarchyModelsPluginPrivate;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class Q_SLICER_MODELS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyModelsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:

@@ -25,7 +25,6 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
 /// \brief Measurement class calculating Volume enclosed in a ROI
-/// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMeasurementVolume : public vtkMRMLMeasurement
 {
 public:

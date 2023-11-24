@@ -26,7 +26,6 @@
 #include "vtkMRMLVolumeNode.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingPropertiesWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerVolumeRenderingPropertiesWidget);

@@ -37,7 +37,6 @@ class QItemSelection;
 class qSlicerDICOMExportDialogPrivate;
 class vtkMRMLScene;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMExportDialog : public QObject
 {
 public:

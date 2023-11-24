@@ -15,7 +15,6 @@
 #endif
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Annotation
 class qSlicerAnnotationsModulePrivate
 {
   public:

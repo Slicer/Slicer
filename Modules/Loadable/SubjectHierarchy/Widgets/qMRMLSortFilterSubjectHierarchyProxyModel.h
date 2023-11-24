@@ -38,7 +38,6 @@ class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLScene;
 class QStandardItem;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHierarchyProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT

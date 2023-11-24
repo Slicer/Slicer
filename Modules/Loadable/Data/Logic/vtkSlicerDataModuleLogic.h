@@ -32,7 +32,6 @@
 
 #include "vtkSlicerDataModuleLogicExport.h"
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class VTK_SLICER_DATA_LOGIC_EXPORT vtkSlicerDataModuleLogic :
   public vtkSlicerModuleLogic
 {

@@ -58,7 +58,6 @@
 #include "qSlicerLayoutManager.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class qSlicerSubjectHierarchyTablesPluginPrivate: public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTablesPlugin);

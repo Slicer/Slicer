@@ -26,7 +26,6 @@
 class qSlicerTemplateKeyModuleWidgetPrivate;
 class vtkMRMLNode;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class Q_SLICER_QTMODULES_TEMPLATEKEY_EXPORT qSlicerTemplateKeyModuleWidget :
   public qSlicerAbstractModuleWidget
 {

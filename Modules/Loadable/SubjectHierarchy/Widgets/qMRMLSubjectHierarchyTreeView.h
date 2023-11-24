@@ -40,7 +40,6 @@ class vtkMRMLScene;
 class vtkMRMLSubjectHierarchyNode;
 class vtkIdList;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeView : public QTreeView
 {
   Q_OBJECT

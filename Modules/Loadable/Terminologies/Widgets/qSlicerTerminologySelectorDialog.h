@@ -35,7 +35,6 @@ class qSlicerTerminologySelectorDialogPrivate;
 class vtkSlicerTerminologyEntry;
 
 /// \brief Qt dialog for selecting a terminology entry
-/// \ingroup SlicerRt_QtModules_Terminologies_Widgets
 class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorDialog : public QObject
 {
 public:

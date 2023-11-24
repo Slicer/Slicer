@@ -11,7 +11,6 @@
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationFiducialNode;
 
-/// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStorageNode
   : public vtkMRMLAnnotationControlPointsStorageNode
 {

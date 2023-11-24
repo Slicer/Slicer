@@ -42,7 +42,6 @@
 #include "qSlicerSubjectHierarchyModelsPlugin.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Models
 class qSlicerModelsModulePrivate
 {
 public:

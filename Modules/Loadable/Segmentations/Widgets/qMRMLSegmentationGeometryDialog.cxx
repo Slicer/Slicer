@@ -43,7 +43,6 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Segmentations_Widgets
 class qMRMLSegmentationGeometryDialogPrivate : public QDialog
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationGeometryDialog);

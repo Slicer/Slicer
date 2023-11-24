@@ -59,7 +59,6 @@
 #include "ctkVTKWidgetsUtils.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class qSlicerSubjectHierarchyViewContextMenuPluginPrivate: public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyViewContextMenuPlugin);

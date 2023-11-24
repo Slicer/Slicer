@@ -33,7 +33,6 @@ class vtkMRMLNode;
 class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLTableViewNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
 class Q_SLICER_TABLES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyTablesPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:

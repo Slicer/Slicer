@@ -18,7 +18,6 @@ class vtkMRMLNode;
 
 class QUrl;
 
-/// \ingroup Slicer_QtModules_SceneViews
 class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qSlicerSceneViewsModuleWidget :
   public qSlicerAbstractModuleWidget
 {

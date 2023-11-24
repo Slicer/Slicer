@@ -76,7 +76,6 @@ virtual void SetAndPropagateSuper##name (type _arg) \
   }; \
 
 
-/// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : public vtkMRMLModelDisplayNode
 {
  public:

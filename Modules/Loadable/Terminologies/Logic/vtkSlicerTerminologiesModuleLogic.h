@@ -35,7 +35,6 @@ class vtkSlicerTerminologyEntry;
 class vtkSlicerTerminologyCategory;
 class vtkSlicerTerminologyType;
 
-/// \ingroup Slicer_QtModules_Terminologies
 class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologiesModuleLogic :
   public vtkSlicerModuleLogic
 {

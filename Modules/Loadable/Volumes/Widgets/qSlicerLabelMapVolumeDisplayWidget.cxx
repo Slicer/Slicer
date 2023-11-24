@@ -31,7 +31,6 @@
 // VTK includes
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qSlicerLabelMapVolumeDisplayWidgetPrivate:
                                           public Ui_qSlicerLabelMapVolumeDisplayWidget
 {

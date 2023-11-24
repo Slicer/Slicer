@@ -36,7 +36,6 @@ class vtkMRMLMarkupsNode;
 class vtkMRMLNode;
 class vtkSlicerMarkupsLogic;
 
-/// \ingroup Slicer_QtModules_Markups
 class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModuleWidget :
   public qSlicerAbstractModuleWidget
 {

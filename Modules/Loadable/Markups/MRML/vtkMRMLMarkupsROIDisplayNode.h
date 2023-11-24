@@ -28,7 +28,6 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
-/// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsROIDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:

@@ -46,7 +46,6 @@
 #include "vtkSlicerVolumesLogic.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesModuleWidgetPrivate: public Ui_qSlicerVolumesModuleWidget
 {
 public:

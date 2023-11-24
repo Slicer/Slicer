@@ -29,7 +29,6 @@ class qSlicerTerminologiesReaderPrivate;
 class vtkSlicerTerminologiesModuleLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Terminologies
 class qSlicerTerminologiesReader
   : public qSlicerFileReader
 {

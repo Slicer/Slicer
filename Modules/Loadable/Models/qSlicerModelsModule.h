@@ -31,7 +31,6 @@
 
 class qSlicerModelsModulePrivate;
 
-/// \ingroup Slicer_QtModules_Models
 class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModule :
   public qSlicerLoadableModule
 {

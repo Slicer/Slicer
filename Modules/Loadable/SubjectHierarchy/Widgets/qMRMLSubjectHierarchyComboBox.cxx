@@ -44,7 +44,6 @@
 #include <vtkMRMLScene.h>
 
 //------------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class qMRMLSubjectHierarchyComboBoxPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLSubjectHierarchyComboBox);

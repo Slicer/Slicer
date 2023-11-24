@@ -56,7 +56,6 @@ class QFormLayout;
 class QFrame;
 class QLayout;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 /// \brief Abstract class for segment editor effects
 class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorAbstractEffect : public QObject
 {

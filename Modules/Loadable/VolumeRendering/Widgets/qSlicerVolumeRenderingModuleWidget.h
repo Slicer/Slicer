@@ -38,7 +38,6 @@ class vtkMRMLVolumeNode;
 class vtkMRMLVolumePropertyNode;
 class vtkMRMLVolumeRenderingDisplayNode;
 
-/// \ingroup Slicer_QtModules_VolumeRendering
 class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingModuleWidget :
   public qSlicerAbstractModuleWidget
 {

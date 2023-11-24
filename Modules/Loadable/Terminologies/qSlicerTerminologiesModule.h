@@ -30,7 +30,6 @@
 
 class qSlicerTerminologiesModulePrivate;
 
-/// \ingroup SlicerRt_QtModules_DicomRtImport
 class Q_SLICER_QTMODULES_TERMINOLOGIES_EXPORT qSlicerTerminologiesModule :
   public qSlicerLoadableModule
 {

@@ -41,7 +41,6 @@ class QColor;
 class qSlicerAbstractModuleWidget;
 class vtkMRMLAbstractViewNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 ///    In Widgets, not Plugins because the paths and library paths need to be exported to extensions
 /// \brief Abstract plugin for handling Subject Hierarchy items
 ///

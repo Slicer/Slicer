@@ -57,7 +57,6 @@
 class qSlicerAppMainWindow;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SlicerWelcome
 class qSlicerWelcomeModuleWidgetPrivate: public Ui_qSlicerWelcomeModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerWelcomeModuleWidget);

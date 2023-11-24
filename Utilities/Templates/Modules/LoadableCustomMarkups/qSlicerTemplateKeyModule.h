@@ -26,7 +26,6 @@
 class qSlicerTemplateKeyModulePrivate;
 class vtkMRMLScene;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class Q_SLICER_QTMODULES_TEMPLATEKEY_EXPORT qSlicerTemplateKeyModule
   : public qSlicerLoadableModule
 {

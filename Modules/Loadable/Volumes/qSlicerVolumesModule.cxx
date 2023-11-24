@@ -46,7 +46,6 @@
 #include "qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesModulePrivate
 {
 public:

@@ -29,7 +29,6 @@
 #include "qSlicerReformatModuleWidget.h"
 
 //------------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Reformat
 class qSlicerReformatModulePrivate
 {
 public:

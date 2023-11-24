@@ -61,7 +61,6 @@ class vtkMRMLCropVolumeParametersNode;
 /// * If interpolation is disabled: input volume node cannot be under non-linear transform
 ///   and ROI node must be aligned with the input volume
 ///
-/// \ingroup Slicer_QtModules_CropVolume
 class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic
   : public vtkSlicerModuleLogic
 {

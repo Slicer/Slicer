@@ -13,7 +13,6 @@
 class vtkMRMLNode;
 class qSlicerVolumeDisplayWidgetPrivate;
 
-/// \ingroup Slicer_QtModules_Volumes
 class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerVolumeDisplayWidget : public qMRMLWidget
 {
   Q_OBJECT

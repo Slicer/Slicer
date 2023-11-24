@@ -32,7 +32,6 @@ class vtkMRMLNode;
 class vtkMRMLSequenceBrowserNode;
 class QSlider;
 
-/// \ingroup Slicer_QtModules_Markups
 class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserSeekWidget
 : public qMRMLWidget
 {

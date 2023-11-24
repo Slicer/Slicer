@@ -23,7 +23,6 @@
 #include "ui_qSlicerLoadableModuleTemplateFooBarWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_LoadableModuleTemplate
 class qSlicerLoadableModuleTemplateFooBarWidgetPrivate
   : public Ui_qSlicerLoadableModuleTemplateFooBarWidget
 {

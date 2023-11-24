@@ -31,7 +31,6 @@ class qSlicerSubjectHierarchyViewContextMenuPluginPrivate;
 
 class vtkMRMLDisplayNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 /// \brief Subject hierarchy view menu plugin
 ///
 /// Adds menu items to the view context menu (when the user right-clicks in a slice or 3D view

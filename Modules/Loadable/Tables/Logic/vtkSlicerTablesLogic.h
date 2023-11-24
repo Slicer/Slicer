@@ -35,7 +35,6 @@ class vtkAbstractArray;
 class vtkMRMLMessageCollection;
 class vtkMRMLTableNode;
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 /// \brief Slicer logic class for double array manipulation
 /// This class manages the logic associated with reading, saving,
 /// and changing propertied of the double array nodes

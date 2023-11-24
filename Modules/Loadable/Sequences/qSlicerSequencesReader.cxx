@@ -51,7 +51,6 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Sequences
 qSlicerSequencesReader::qSlicerSequencesReader(vtkSlicerSequencesLogic* sequencesLogic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerSequencesReaderPrivate)

@@ -43,7 +43,6 @@
 #include <QMenu>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_CreateModels
 class qSlicerMarkupsPlaceWidgetPrivate
   : public Ui_qSlicerMarkupsPlaceWidget
 {

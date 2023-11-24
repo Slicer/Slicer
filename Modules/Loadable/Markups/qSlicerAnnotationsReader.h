@@ -28,7 +28,6 @@ class qSlicerAnnotationsReaderPrivate;
 class vtkSlicerMarkupsLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Markups
 class qSlicerAnnotationsReader
   : public qSlicerFileReader
 {

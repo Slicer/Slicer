@@ -33,7 +33,6 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Terminologies_Widgets
 class qSlicerTerminologySelectorDialogPrivate : public QDialog
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologySelectorDialog);

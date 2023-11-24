@@ -36,7 +36,6 @@
 class qMRMLMarkupsAbstractOptionsWidget;
 class qMRMLMarkupsOptionsWidgetsFactoryCleanup;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 /// \class qMRMLMarkupsOptionsWidgetsFactory
 /// \brief Singleton class managing segment editor effect plugins
 class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsOptionsWidgetsFactory : public QObject

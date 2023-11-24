@@ -28,7 +28,6 @@
 
 class qSlicerSegmentEditorEraseEffectPrivate;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorEraseEffect :
   public qSlicerSegmentEditorPaintEffect
 {

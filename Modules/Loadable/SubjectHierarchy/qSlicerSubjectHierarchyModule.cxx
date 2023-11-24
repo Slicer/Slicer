@@ -37,7 +37,6 @@
 #include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class qSlicerSubjectHierarchyModulePrivate
 {
 public:

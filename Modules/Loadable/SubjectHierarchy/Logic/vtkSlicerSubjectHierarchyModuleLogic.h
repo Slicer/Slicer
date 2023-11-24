@@ -37,7 +37,6 @@
 class vtkMRMLSubjectHierarchyNode;
 class vtkMRMLTransformNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy
 class VTK_SLICER_SUBJECTHIERARCHY_LOGIC_EXPORT vtkSlicerSubjectHierarchyModuleLogic :
   public vtkSlicerModuleLogic
 {

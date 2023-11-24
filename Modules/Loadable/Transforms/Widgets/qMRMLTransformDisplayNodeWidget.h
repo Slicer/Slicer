@@ -37,7 +37,6 @@ class qMRMLTransformDisplayNodeWidgetPrivate;
 class vtkMRMLTransformNode;
 class vtkMRMLNode;
 
-/// \ingroup Slicer_QtModules_Transforms
 class Q_SLICER_MODULE_TRANSFORMS_WIDGETS_EXPORT
 qMRMLTransformDisplayNodeWidget
   : public qMRMLWidget

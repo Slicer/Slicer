@@ -49,7 +49,6 @@ class qSlicerSubjectHierarchyDefaultPlugin;
 class qSlicerSubjectHierarchyPluginHandlerCleanup;
 
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 ///    In Widgets, not Plugins because the paths and libs need to be exported to extensions
 /// \class qSlicerSubjectHierarchyPluginHandler
 /// \brief Singleton class managing Subject Hierarchy plugins

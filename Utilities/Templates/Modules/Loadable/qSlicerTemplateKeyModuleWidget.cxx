@@ -23,7 +23,6 @@
 #include "ui_qSlicerTemplateKeyModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class qSlicerTemplateKeyModuleWidgetPrivate: public Ui_qSlicerTemplateKeyModuleWidget
 {
 public:

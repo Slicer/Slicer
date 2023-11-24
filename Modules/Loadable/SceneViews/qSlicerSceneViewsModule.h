@@ -12,7 +12,6 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerSceneViewsModulePrivate;
 
-/// \ingroup Slicer_QtModules_SceneViews
 class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qSlicerSceneViewsModule :
   public qSlicerLoadableModule
 {

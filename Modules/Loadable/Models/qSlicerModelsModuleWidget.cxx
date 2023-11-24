@@ -58,7 +58,6 @@
 
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Models
 class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModuleWidget
 {
 public:

@@ -51,7 +51,6 @@ Q_EXPORT_PLUGIN2(qSlicerSequencesModule, qSlicerSequencesModule);
 #endif
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class qSlicerSequencesModulePrivate
 {
 public:

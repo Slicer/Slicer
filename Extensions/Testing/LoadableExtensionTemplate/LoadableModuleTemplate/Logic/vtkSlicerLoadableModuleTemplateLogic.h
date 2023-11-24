@@ -35,7 +35,6 @@
 #include "vtkSlicerLoadableModuleTemplateModuleLogicExport.h"
 
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
 class VTK_SLICER_LOADABLEMODULETEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerLoadableModuleTemplateLogic :
   public vtkSlicerModuleLogic
 {

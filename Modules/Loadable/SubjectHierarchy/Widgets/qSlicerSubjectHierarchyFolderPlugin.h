@@ -36,7 +36,6 @@ class qSlicerSubjectHierarchyFolderPluginPrivate;
 
 class vtkMRMLDisplayNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 /// \brief Subject hierarchy folder plugin
 ///
 /// Support folder items in subject hierarchy

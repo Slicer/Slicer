@@ -29,7 +29,6 @@ class qSlicerSequencesReaderPrivate;
 class vtkSlicerSequencesLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Sequences
 class qSlicerSequencesReader
   : public qSlicerFileReader
 {

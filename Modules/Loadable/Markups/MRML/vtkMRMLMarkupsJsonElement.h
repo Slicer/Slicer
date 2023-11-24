@@ -36,7 +36,6 @@ class vtkCodedEntry;
 
 /// \brief Represents a json object or list.
 ///
-/// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonElement : public vtkObject
 {
 public:
@@ -154,7 +153,6 @@ protected:
 
 /// \brief Reads a JSON file into a vtkMRMLMarkupsJsonElement
 ///
-/// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonReader : public vtkObject
 {
 public:
@@ -187,7 +185,6 @@ protected:
 
 /// \brief Writes properties into a JSON file
 ///
-/// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonWriter : public vtkObject
 {
 public:

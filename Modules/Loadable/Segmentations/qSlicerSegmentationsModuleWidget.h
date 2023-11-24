@@ -41,7 +41,6 @@ class vtkMRMLNode;
 class QItemSelection;
 class Ui_qSlicerSegmentationsModule;
 
-/// \ingroup SlicerRt_QtModules_Segmentations
 class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget :
   public qSlicerAbstractModuleWidget
 {

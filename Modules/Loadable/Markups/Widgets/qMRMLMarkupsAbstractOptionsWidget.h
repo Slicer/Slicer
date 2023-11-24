@@ -36,7 +36,6 @@ class vtkMRMLMarkupsNode;
 class vtkMRMLNode;
 
 //-------------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Markups
 /// \name qMRMLMarkupsAbstractOptionsWidget
 /// \brief qMRMLMarkupsAbstractOptionsWidget is a base class for the
 /// additional options widgets associated to some types of markups.

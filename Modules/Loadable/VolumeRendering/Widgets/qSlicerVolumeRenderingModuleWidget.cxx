@@ -49,7 +49,6 @@
 #include <QSettings>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingModuleWidgetPrivate
   : public Ui_qSlicerVolumeRenderingModuleWidget
 {

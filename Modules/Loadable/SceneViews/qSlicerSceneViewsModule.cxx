@@ -15,7 +15,6 @@
 #include "qSlicerSubjectHierarchySceneViewsPlugin.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SceneViews
 class qSlicerSceneViewsModulePrivate
 {
   public:

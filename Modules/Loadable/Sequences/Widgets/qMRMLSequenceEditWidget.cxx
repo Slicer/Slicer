@@ -40,7 +40,6 @@ enum
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Markups
 class qMRMLSequenceEditWidgetPrivate
 : public Ui_qMRMLSequenceEditWidget
 {

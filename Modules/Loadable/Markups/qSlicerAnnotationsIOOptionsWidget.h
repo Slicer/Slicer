@@ -29,7 +29,6 @@
 
 class qSlicerAnnotationsIOOptionsWidgetPrivate;
 class QButtonGroup;
-/// \ingroup Slicer_QtModules_Markups
 class qSlicerAnnotationsIOOptionsWidget :
   public qSlicerIOOptionsWidget
 {
