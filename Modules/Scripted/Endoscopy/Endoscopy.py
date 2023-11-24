@@ -406,7 +406,7 @@ class EndoscopyComputePath:
             fm[i] = self.p[i + 1] - self.p[i]
         self.m = numpy.zeros((n, 3))
         for i in range(1, n - 1):
-            self.m[i] = (fm[i - 1] + fm[i]) / 2.
+            self.m[i] = (fm[i - 1] + fm[i]) / 2.0
         self.m[0] = fm[0]
         self.m[n - 1] = fm[n - 2]
 
@@ -427,7 +427,7 @@ class EndoscopyComputePath:
         remainder = 0  # how much of dl isn't included in current step
         while segment < n - 1:
             t, p, remainder = self.step(segment, t, self.dl)
-            if remainder != 0 or t == 1.:
+            if remainder != 0 or t == 1.0:
                 segment += 1
                 t = 0
                 if segment < n - 1:
@@ -454,7 +454,7 @@ class EndoscopyComputePath:
         remainder = 0
         ratio = 100
         count = 0
-        while abs(1. - ratio) > 0.05:
+        while abs(1.0 - ratio) > 0.05:
             t1 = t + self.dt
             pguess = self.point(segment, t1)
             dist = numpy.linalg.norm(pguess - p0)
@@ -465,8 +465,8 @@ class EndoscopyComputePath:
             count += 1
             if count > 500:
                 return (t1, pguess, 0)
-        if t1 > 1.:
-            t1 = 1.
+        if t1 > 1.0:
+            t1 = 1.0
             p1 = self.point(segment, t1)
             remainder = numpy.linalg.norm(p1 - pguess)
             pguess = p1

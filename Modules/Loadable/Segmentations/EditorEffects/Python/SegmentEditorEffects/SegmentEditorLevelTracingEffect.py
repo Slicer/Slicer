@@ -169,7 +169,7 @@ class LevelTracingPipeline:
         self.mapper = vtk.vtkPolyDataMapper2D()
         self.actor = vtk.vtkActor2D()
         actorProperty = self.actor.GetProperty()
-        actorProperty.SetColor(107 / 255., 190 / 255., 99 / 255.)
+        actorProperty.SetColor(107 / 255.0, 190 / 255.0, 99 / 255.0)
         actorProperty.SetLineWidth(1)
         self.mapper.SetInputData(self.polyData)
         self.actor.SetMapper(self.mapper)

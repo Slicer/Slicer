@@ -151,9 +151,9 @@ class ColorLegendSelfTestTest(ScriptedLoadableModuleTest):
 
         # Test showing color legend only in a single slice node
         sliceNameColor = {
-            "Red": [1., 0., 0.],
-            "Green": [0., 1., 0.],
-            "Yellow": [1., 1., 0.],
+            "Red": [1.0, 0.0, 0.0],
+            "Green": [0.0, 1.0, 0.0],
+            "Yellow": [1.0, 1.0, 0.0],
         }
         for sliceName, titleColor in sliceNameColor.items():
             self.delayDisplay("Test color legend on the " + sliceName + " slice view", self.delayMs)

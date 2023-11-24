@@ -264,7 +264,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                             #   Method: VerifyDisplacementFieldSizeAndPhysicalSpace
                             #   URL: https://github.com/InsightSoftwareConsortium/ITK/blob/v5.4rc02/Modules/Numerics/Optimizersv4/include/itkObjectToObjectMetric.hxx#L507-L510.
 
-                            if numpy.allclose(vector, subseriesVector, rtol=0., atol=self.orientationEpsilon):
+                            if numpy.allclose(vector, subseriesVector, rtol=0.0, atol=self.orientationEpsilon):
                                 found = True
                                 value = subseriesValue
                                 break
@@ -376,8 +376,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 loadable.selected = True
             else:
                 loadable.selected = False
-                if loadable.confidence > .45:
-                    loadable.confidence = .45
+                if loadable.confidence > 0.45:
+                    loadable.confidence = 0.45
 
         return loadables
 

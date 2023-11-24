@@ -150,10 +150,10 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
             slicer.util.clickAndDrag(firstSliceWidget, button=None, modifiers=["Shift"], start=endPoint, end=startPoint, steps=2)
             slicer.app.processEvents()
             endTime2 = time.time()
-            delta = ((endTime1 - startTime) + (endTime2 - endTime1)) / 2.
+            delta = ((endTime1 - startTime) + (endTime2 - endTime1)) / 2.0
             elapsedTime += delta
         fps = int(iters / elapsedTime)
-        result = "number of slice views = %d, fps = %g (%g ms per frame)" % (len(sliceViewNames), fps, 1000. / fps)
+        result = "number of slice views = %d, fps = %g (%g ms per frame)" % (len(sliceViewNames), fps, 1000.0 / fps)
         print(result)
         self.log.insertHtml("<i>%s</i>" % result)
         self.log.insertPlainText("\n")
