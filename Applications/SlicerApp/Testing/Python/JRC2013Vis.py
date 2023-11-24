@@ -111,9 +111,9 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
                 "/../CTK-build/CMakeExternals/Install/bin",
                 "/../DCMTK-install/bin",
                 "/../DCMTK-build/bin",
-                "/../DCMTK-build/bin/Release"
-                "/../DCMTK-build/bin/Debug"
-                "/../DCMTK-build/bin/RelWithDebInfo"
+                "/../DCMTK-build/bin/Release",
+                "/../DCMTK-build/bin/Debug",
+                "/../DCMTK-build/bin/RelWithDebInfo",
                 "/../DCMTK-build/bin/MinSizeRel",
             )
 
@@ -210,7 +210,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
                 "/../DCMTK-build/bin",
                 "/../DCMTK-build/bin/Release",
                 "/../DCMTK-build/bin/Debug",
-                "/../DCMTK-build/bin/RelWithDebInfo"
+                "/../DCMTK-build/bin/RelWithDebInfo",
                 "/../DCMTK-build/bin/MinSizeRel",
             )
 
