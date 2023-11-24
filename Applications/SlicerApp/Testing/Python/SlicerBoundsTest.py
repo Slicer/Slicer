@@ -30,8 +30,6 @@ class SlicerBoundsTest(ScriptedLoadableModule):
 # SlicerBoundsTest
 #
 class SlicerBoundsTestWidget(ScriptedLoadableModuleWidget):
-    """
-    """
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -41,13 +39,10 @@ class SlicerBoundsTestWidget(ScriptedLoadableModuleWidget):
 # SlicerTransformInteractionTest1Logic
 #
 class SlicerBoundsTestLogic(ScriptedLoadableModuleLogic):
-    """
-    """
+    pass
 
 
 class SlicerBoundsTestTest(ScriptedLoadableModuleTest):
-    """
-    """
 
     def setUp(self):
         """Do whatever is needed to reset the state - typically a scene clear will be enough."""

@@ -28,8 +28,6 @@ class SlicerDisplayNodeSequenceTest(ScriptedLoadableModule):
 # SlicerDisplayNodeSequenceTestWidget
 #
 class SlicerDisplayNodeSequenceTestWidget(ScriptedLoadableModuleWidget):
-    """
-    """
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -39,13 +37,10 @@ class SlicerDisplayNodeSequenceTestWidget(ScriptedLoadableModuleWidget):
 # SlicerDisplayNodeSequenceTestLogic
 #
 class SlicerDisplayNodeSequenceTestLogic(ScriptedLoadableModuleLogic):
-    """
-    """
+    pass
 
 
 class SlicerDisplayNodeSequenceTestTest(ScriptedLoadableModuleTest):
-    """
-    """
 
     def setUp(self):
         """Do whatever is needed to reset the state - typically a scene clear will be enough."""

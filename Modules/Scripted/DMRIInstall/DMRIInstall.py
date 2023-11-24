@@ -15,8 +15,6 @@ from slicer.ScriptedLoadableModule import *
 
 
 class DMRIInstall(ScriptedLoadableModule):
-    """
-    """
 
     helpText = textwrap.dedent(
         """
