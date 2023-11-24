@@ -38,7 +38,6 @@ class vtkMRMLDisplayNode;
 class vtkMRMLTransformNode;
 class vtkMRMLAbstractViewNode;
 
-/// \ingroup Slicer_MRML_Core
 /// \brief MRML node to represent a complete subject hierarchy tree
 ///
 ///   There can be only one such node in the scene, as subject hierarchy is to contain all the supported

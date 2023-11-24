@@ -36,7 +36,6 @@
 // qMRMLSortFilterSegmentsProxyModelPrivate
 
 // -----------------------------------------------------------------------------
-/// \ingroup Slicer_MRMLWidgets
 class qMRMLSortFilterSegmentsProxyModelPrivate
 {
 public:

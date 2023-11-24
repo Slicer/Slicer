@@ -41,7 +41,6 @@
 // qMRMLSortFilterSubjectHierarchyProxyModelPrivate
 
 // -----------------------------------------------------------------------------
-/// \ingroup Slicer_MRMLWidgets
 class qMRMLSortFilterSubjectHierarchyProxyModelPrivate
 {
 public:
