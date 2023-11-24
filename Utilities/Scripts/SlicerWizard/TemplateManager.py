@@ -329,15 +329,21 @@ class TemplateManager:
         .. seealso:: :meth:`.parseArguments`
         """
 
-        parser.add_argument("--templatePath", metavar="<CATEGORY=>PATH",
-                            action="append",
-                            help="add additional template path for specified"
-                                 " template category; if no category, expect that"
-                                 " PATH contains subdirectories for one or more"
-                                 " possible categories")
-        parser.add_argument("--templateKey", metavar="TYPE=KEY", action="append",
-                            help="set template substitution key for specified"
-                                 " template (default key: 'TemplateKey')")
+        parser.add_argument(
+            "--templatePath",
+            metavar="<CATEGORY=>PATH",
+            action="append",
+            help="add additional template path for specified"
+            " template category; if no category, expect that"
+            " PATH contains subdirectories for one or more"
+            " possible categories",
+        )
+        parser.add_argument(
+            "--templateKey",
+            metavar="TYPE=KEY",
+            action="append",
+            help="set template substitution key for specified template (default key: 'TemplateKey')",
+        )
 
     # ---------------------------------------------------------------------------
     def parseArguments(self, args):
