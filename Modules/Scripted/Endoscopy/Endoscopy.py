@@ -226,9 +226,11 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         """Connected to both the fiducial and camera node selector. It allows to
         enable or disable the 'create path' button.
         """
-        self.createPathButton.enabled = (self.cameraNodeSelector.currentNode() is not None
-                                         and self.inputFiducialsNodeSelector.currentNode() is not None
-                                         and self.outputPathNodeSelector.currentNode() is not None)
+        self.createPathButton.enabled = (
+            self.cameraNodeSelector.currentNode() is not None
+            and self.inputFiducialsNodeSelector.currentNode() is not None
+            and self.outputPathNodeSelector.currentNode() is not None
+        )
 
     def onCreatePathButtonClicked(self):
         """Connected to 'create path' button. It allows to:
@@ -356,8 +358,10 @@ class EndoscopyComputePath:
         self.fids = fiducialListNode
 
         # Already a curve, just get the points, sampled at equal distances.
-        if (self.fids.GetClassName() == "vtkMRMLMarkupsCurveNode"
-                or self.fids.GetClassName() == "vtkMRMLMarkupsClosedCurveNode"):
+        if (
+            self.fids.GetClassName() == "vtkMRMLMarkupsCurveNode"
+            or self.fids.GetClassName() == "vtkMRMLMarkupsClosedCurveNode"
+        ):
             # Temporarily increase the number of points per segment, to get a very smooth curve
             pointsPerSegment = int(self.fids.GetCurveLengthWorld() / self.dl / self.fids.GetNumberOfControlPoints()) + 1
             originalPointsPerSegment = self.fids.GetNumberOfPointsPerInterpolatingSegment()

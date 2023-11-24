@@ -294,8 +294,10 @@ class DICOM(ScriptedLoadableModule):
         if viewArrangement == self.currentViewArrangement:
             return
 
-        if (self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutNone and
-                self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView):
+        if (
+            self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutNone
+            and self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView
+        ):
             self.previousViewArrangement = self.currentViewArrangement
         self.currentViewArrangement = viewArrangement
 
@@ -323,16 +325,20 @@ class DICOM(ScriptedLoadableModule):
                 self.dataProbeHasBeenTemporarilyHidden = False
 
     def onBrowserWidgetClosed(self):
-        if (self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView and
-                self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutNone):
+        if (
+            self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView
+            and self.currentViewArrangement != slicer.vtkMRMLLayoutNode.SlicerLayoutNone
+        ):
             # current layout is a valid layout that is not the DICOM browser view, so nothing to do
             return
 
         layoutId = self.previousViewArrangement
 
         # Use a default layout if this layout is not valid
-        if (layoutId == slicer.vtkMRMLLayoutNode.SlicerLayoutNone
-                or layoutId == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView):
+        if (
+            layoutId == slicer.vtkMRMLLayoutNode.SlicerLayoutNone
+            or layoutId == slicer.vtkMRMLLayoutNode.SlicerLayoutDicomBrowserView
+        ):
             layoutId = qt.QSettings().value("MainWindow/layout", slicer.vtkMRMLLayoutNode.SlicerLayoutInitialView)
 
         slicer.app.layoutManager().setLayout(layoutId)

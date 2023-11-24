@@ -985,9 +985,11 @@ class HistogramEventFilter(qt.QObject):
         if self.thresholdEffect is None:
             return
 
-        if (event.type() == qt.QEvent.GraphicsSceneMousePress or
-            event.type() == qt.QEvent.GraphicsSceneMouseMove or
-                event.type() == qt.QEvent.GraphicsSceneMouseRelease):
+        if (
+            event.type() == qt.QEvent.GraphicsSceneMousePress
+            or event.type() == qt.QEvent.GraphicsSceneMouseMove
+            or event.type() == qt.QEvent.GraphicsSceneMouseRelease
+        ):
             transferFunction = object.transferFunction()
             if transferFunction is None:
                 return

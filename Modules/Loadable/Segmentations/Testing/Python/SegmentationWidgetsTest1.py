@@ -126,13 +126,21 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
         if orientedImageData is None:
             logging.error("Invalid input oriented image data")
             return False
-        if (not isinstance(spacing, list) and not isinstance(spacing, tuple)) \
-                or (not isinstance(origin, list) and not isinstance(origin, tuple)) \
-                or not isinstance(directions, list):
+        if (
+            (not isinstance(spacing, list) and not isinstance(spacing, tuple))
+            or (not isinstance(origin, list) and not isinstance(origin, tuple))
+            or not isinstance(directions, list)
+        ):
             logging.error("Invalid baseline object types - need lists")
             return False
-        if len(spacing) != 3 or len(origin) != 3 or len(directions) != 3 \
-                or len(directions[0]) != 3 or len(directions[1]) != 3 or len(directions[2]) != 3:
+        if (
+            len(spacing) != 3
+            or len(origin) != 3
+            or len(directions) != 3
+            or len(directions[0]) != 3
+            or len(directions[1]) != 3
+            or len(directions[2]) != 3
+        ):
             logging.error("Baseline lists need to contain 3 elements each, the directions 3 lists of 3")
             return False
 

@@ -203,9 +203,11 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
                 displayNode = currentMidbrainModelNode.GetDisplayNode()
                 actor = self.modelDisplayableManager.GetActorByID(displayNode.GetID())
                 currentColor = actor.GetProperty().GetColor()
-                if (currentColor[0] == self.overrideColor[0] / 255 and
-                    currentColor[1] == self.overrideColor[1] / 255 and
-                        currentColor[2] == self.overrideColor[2] / 255):
+                if (
+                    currentColor[0] == self.overrideColor[0] / 255
+                    and currentColor[1] == self.overrideColor[1] / 255
+                    and currentColor[2] == self.overrideColor[2] / 255
+                ):
                     if currentMidbrainModelNode is self.testModelNode:
                         testModelNodeOverridden = True
                     numberOfOverriddenMidbrainModels += 1
@@ -248,9 +250,11 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
         testModelCurrentColor = testModelActor.GetProperty().GetColor()
         colorOverridden = False
-        if (testModelCurrentColor[0] == self.overrideColor[0] / 255 and
-            testModelCurrentColor[1] == self.overrideColor[1] / 255 and
-                testModelCurrentColor[2] == self.overrideColor[2] / 255):
+        if (
+            testModelCurrentColor[0] == self.overrideColor[0] / 255
+            and testModelCurrentColor[1] == self.overrideColor[1] / 255
+            and testModelCurrentColor[2] == self.overrideColor[2] / 255
+        ):
             colorOverridden = True
         self.assertFalse(colorOverridden)
 
