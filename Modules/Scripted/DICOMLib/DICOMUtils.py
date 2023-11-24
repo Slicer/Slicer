@@ -749,9 +749,9 @@ def ijkToRASFromFiles(filePaths):
     firstFile = filePaths[0]
     lastFile = filePaths[-1]
     tags = {}
-    tags[position] = "0020,0032"
-    tags[orientation] = "0020,0037"
-    tags[spacing] = "0028,0030"
+    tags["position"] = "0020,0032"
+    tags["orientation"] = "0020,0037"
+    tags["spacing"] = "0028,0030"
     positionString = slicer.dicomDatabase.fileValue(firstFile, tags["position"])
     orientationString = slicer.dicomDatabase.fileValue(firstFile, tags["orientation"])
     spacingString = slicer.dicomDatabase.fileValue(firstFile, tags["spacing"])
