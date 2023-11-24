@@ -1,4 +1,5 @@
 import logging
+import numpy
 
 import slicer
 
@@ -167,6 +168,9 @@ class DICOMPlugin:
             return 0
         cmp = xNumber - yNumber
         return cmp
+
+    def tagValueToVector(self, value):
+        return numpy.array([float(element) for element in value.split("\\")])
 
     def examineForImport(self, fileList):
         """Look at the list of lists of filenames and return
