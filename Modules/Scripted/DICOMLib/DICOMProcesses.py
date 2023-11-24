@@ -317,7 +317,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
         if readLineCallback:
             for line in lines:
                 # Remove stray newline and single-quote characters
-                clearLine = line.replace("\\r", "").replace("\\n", "").replace("\'", "").strip()
+                clearLine = line.replace("\\r", "").replace("\\n", "").replace("'", "").strip()
                 readLineCallback(clearLine)
         self.readFromStandardError()
 

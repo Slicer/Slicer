@@ -121,7 +121,7 @@ class ImportItkSnapLabelFileReader:
         # Color line: index, r, g, b, a, label visibility, mesh visibility, description
         # Example:
         #     1   255    0    0        1  1  1    "Label 1"
-        colorLineRegex = re.compile(r'^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([01]+)\s+([01]+)\s+([01]+)\s+\"([^\"]*)\"')
+        colorLineRegex = re.compile(r"^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([01]+)\s+([01]+)\s+([01]+)\s+\"([^\"]*)\"")
         colors = []
 
         lineIndex = 0

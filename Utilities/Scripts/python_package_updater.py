@@ -169,7 +169,7 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
             file_text = open_file.read()
 
         for package_name, updated_line in lines_to_write.items():
-            regex = fr"(# \[{package_name}\]).*?(# \[/{package_name}\])"
+            regex = rf"(# \[{package_name}\]).*?(# \[/{package_name}\])"
             updated_line = f"# [{package_name}]" + "\n" + updated_line + " " * indentation + f"# [/{package_name}]"
             file_text = re.sub(regex, updated_line, file_text, flags=re.DOTALL)  # but new lines in the unlimited match messing things up
             with open(filepath, "w") as open_file:
