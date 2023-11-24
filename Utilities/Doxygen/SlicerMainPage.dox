@@ -15,8 +15,3 @@
  * For more information on using Slicer browse to https://www.slicer.org
  *
  */
-
-/**
- * \defgroup Slicer_CLI Slicer Command Line Modules
- * \defgroup Slicer_QtModules Slicer Qt Loadable Modules
- */
