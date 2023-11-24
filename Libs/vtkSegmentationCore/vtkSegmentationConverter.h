@@ -44,7 +44,6 @@ class vtkMatrix4x4;
 class vtkImageData;
 class vtkOrientedImageData;
 
-/// \ingroup SegmentationCore
 /// \brief Class that can convert between different representations of a segment.
 class vtkSegmentationCore_EXPORT vtkSegmentationConverter : public vtkObject
 {

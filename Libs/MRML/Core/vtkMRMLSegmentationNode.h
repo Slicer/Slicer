@@ -41,7 +41,6 @@ class vtkMRMLScalarVolumeNode;
 class vtkPolyData;
 
 /// \brief MRML node containing segmentations
-/// \ingroup Segmentations
 ///
 /// Segmentation node stores a set of segments (also known as contours or segmented regions).
 /// Segments may overlap and may be stored in various representations (binary labelmap image,

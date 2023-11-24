@@ -33,7 +33,6 @@
 class vtkSegmentationConverterRule;
 class vtkDataObject;
 
-/// \ingroup SegmentationCore
 /// \brief Class that can create vtkSegmentationConverter instances.
 ///
 /// This singleton class is a repository of all segmentation converter rules.

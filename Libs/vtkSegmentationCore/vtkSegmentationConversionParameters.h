@@ -26,7 +26,6 @@
 // Segmentation includes
 #include "vtkSegmentationCoreConfigure.h"
 
-/// \ingroup SegmentationCore
 /// \brief Store a list of conversion parameters.
 /// \details
 /// Stores properties, such as name, description (that may be displayed

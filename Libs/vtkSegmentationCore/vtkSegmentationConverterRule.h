@@ -42,7 +42,6 @@ class vtkSegment;
     return newClass::New(); \
   }
 #endif
-/// \ingroup SegmentationCore
 /// \brief Abstract converter rule class. Subclasses perform conversions between specific
 ///   representation types. They define source and target type and provide ways to create those
 ///   types of objects.

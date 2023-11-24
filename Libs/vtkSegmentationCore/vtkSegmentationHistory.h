@@ -37,7 +37,6 @@ class vtkDataObject;
 class vtkSegment;
 class vtkSegmentation;
 
-/// \ingroup SegmentationCore
 class vtkSegmentationCore_EXPORT vtkSegmentationHistory : public vtkObject
 {
 public:

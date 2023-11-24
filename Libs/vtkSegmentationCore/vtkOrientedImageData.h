@@ -28,7 +28,6 @@
 
 class vtkMatrix4x4;
 
-/// \ingroup SegmentationCore
 /// \brief Image data containing orientation information
 ///
 /// This extends vtkImageData to arbitrary grid orientation.

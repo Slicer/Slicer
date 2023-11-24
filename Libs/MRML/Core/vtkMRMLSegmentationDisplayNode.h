@@ -33,7 +33,6 @@ class vtkStringArray;
 class vtkVector3d;
 
 
-/// \ingroup Segmentations
 /// \brief MRML node for representing segmentation display attributes.
 ///
 /// vtkMRMLSegmentationDisplayNode nodes describe how volume is displayed.

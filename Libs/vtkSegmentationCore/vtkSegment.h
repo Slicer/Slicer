@@ -33,7 +33,6 @@
 // Segmentation includes
 #include "vtkSegmentationCoreConfigure.h"
 
-/// \ingroup SegmentationCore
 /// \brief This class encapsulates a segment that is part of a segmentation
 /// \details
 ///   A \sa vtkSegmentation can contain multiple segments (this class) each of which represent

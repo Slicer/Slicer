@@ -30,7 +30,6 @@
 // VTK includes
 #include <vtkPolyData.h>
 
-/// \ingroup SegmentationCore
 /// \brief Convert binary labelmap representation (vtkOrientedImageData type) to
 ///   closed surface representation (vtkPolyData type). The conversion algorithm
 ///   performs a marching cubes operation on the image data followed by an optional
