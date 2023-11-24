@@ -36,8 +36,6 @@ namespace itk
  * adds the absolute value of the difference between the different components
  * of the diffusion tensor. It compares the sum to a threshold set by the
  * developer
- *
- * \ingroup IntensityImageFilters   Multithreaded
  */
 template <class TInputImage, class TOutputImage>
 class DifferenceDiffusionTensor3DImageFilter :
