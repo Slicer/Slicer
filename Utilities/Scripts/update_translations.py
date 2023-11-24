@@ -288,7 +288,7 @@ def _generate_translation_header_from_cli_xml(cli_xml_filename):
             if element_text is None:
                 continue
             element_text = element_text.replace("\n", "\\n")
-            element_text = element_text.replace('\"', '\\"')
+            element_text = element_text.replace('"', '\\"')
             result += f'QT_TRANSLATE_NOOP("{translation_context}", "{element_text}")\n'
         return result
 
