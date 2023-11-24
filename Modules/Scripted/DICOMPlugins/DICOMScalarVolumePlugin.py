@@ -1,9 +1,11 @@
 import logging
 from functools import cmp_to_key
+from urllib.parse import urlparse
 
 import ctk
 import numpy
 import qt
+import time
 import vtk
 import vtkITK
 from slicer.i18n import tr as _
@@ -38,6 +40,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         self.orientationEpsilon = orientationEpsilon
         self.acquisitionModeling = None
         self.defaultStudyID = "SLICER10001"  # TODO: What should be the new study ID?
+        self.urlHandlerInterval = 300 # ms
+        self.urlHandlerTimeout = 60 # seconds
 
         self.tags["sopClassUID"] = "0008,0016"
         self.tags["photometricInterpretation"] = "0028,0004"
@@ -60,6 +64,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         self.tags["windowWidth"] = "0028,1051"
         self.tags["rows"] = "0028,0010"
         self.tags["columns"] = "0028,0011"
+        self.tags["spacing"] = "0028,0030"
+        self.tags["bitsAllocated"] = "0028,0100"
+        self.tags["pixelRepresentation"] = "0028,0103"
+        self.tags["rescaleIntercept"] = "0028,1052"
+        self.tags["rescaleSlope"] = "0028,1053"
 
     @staticmethod
     def readerApproaches():
@@ -171,18 +180,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         loadables.sort(key=cmp_to_key(lambda x, y: self.seriesSorter(x, y)))
 
         return loadables
-
-    def cleanNodeName(self, value):
-        cleanValue = value
-        cleanValue = cleanValue.replace("|", "-")
-        cleanValue = cleanValue.replace("/", "-")
-        cleanValue = cleanValue.replace("\\", "-")
-        cleanValue = cleanValue.replace("*", "(star)")
-        cleanValue = cleanValue.replace("\\", "-")
-        return cleanValue
-
-    def tagValueToVector(self, value):
-        return numpy.array([float(element) for element in value.split("\\")])
 
     def examineFiles(self, files):
         """Returns a list of DICOMLoadable instances
@@ -381,24 +378,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
         return loadables
 
-    def seriesSorter(self, x, y):
-        """
-        Returns -1, 0, 1 for sorting of strings like: "400: series description"
-
-        Works for DICOMLoadable or other objects with name attribute
-        """
-        if not (hasattr(x, "name") and hasattr(y, "name")):
-            return 0
-        xName = x.name
-        yName = y.name
-        try:
-            xNumber = int(xName[:xName.index(":")])
-            yNumber = int(yName[:yName.index(":")])
-        except ValueError:
-            return 0
-        cmp = xNumber - yNumber
-        return cmp
-
     #
     # different ways to load a set of dicom files:
     # - Logic: relies on the same loading mechanism used
@@ -446,7 +425,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         logging.info("Loading with imageIOName: %s" % imageIOName)
         reader.Update()
 
-        slicer.modules.reader = reader
         if reader.GetErrorCode() != vtk.vtkErrorCode.NoError:
             errorStrings = (imageIOName, vtk.vtkErrorCode.GetStringFromErrorCode(reader.GetErrorCode()))
             logging.error("Could not read scalar volume using %s approach.  Error is: %s" % errorStrings)
@@ -467,9 +445,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         slicer.vtkMRMLVolumeArchetypeStorageNode.SetMetaDataDictionaryFromReader(volumeNode, reader)
         volumeNode.SetRASToIJKMatrix(reader.GetRasToIjkMatrix())
         volumeNode.CreateDefaultDisplayNodes()
-
-        slicer.modules.DICOMInstance.reader = reader
-        slicer.modules.DICOMInstance.imageChangeInformation = imageChangeInformation
 
         return volumeNode
 
@@ -557,29 +532,101 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
         return volumeNode
 
+    def _processURLHandler(self, urlHandler, volumeNode, urls):
+        """
+        Get the downloaded and uncompressed frames from the urlHandler
+        and put them into the volume node.
+        """
+        framesByURL = urlHandler.getFrames(urls)
+        volumeArray = slicer.util.arrayFromVolume(volumeNode)
+        elapsedTime = time.time() - self._urlHandlerStartTime
+        msg = _("{framesThisLoad} of {frames} in {elapsedTime:.3f}").format(framesThisLoad=len(framesByURL), frames=volumeArray.shape[0], elapsedTime=elapsedTime)
+        logging.info(msg)
+        if len(framesByURL) > 0:
+            for url,frame in framesByURL.items():
+                rescaleInterceptValue = slicer.dicomDatabase.fileValue(url, self.tags["rescaleIntercept"])
+                rescaleSlopeValue = slicer.dicomDatabase.fileValue(url, self.tags["rescaleSlope"])
+                rescaleIntercept = float(rescaleInterceptValue) if rescaleInterceptValue != "" else 0.
+                rescaleSlope = float(rescaleSlopeValue) if rescaleSlopeValue != "" else 1.
+                sliceIndex = urls.index(url)
+                try:
+                    volumeArray[sliceIndex] = rescaleIntercept + rescaleSlope * frame.reshape(volumeArray[sliceIndex].shape)
+                except ValueError:
+                    logging.error(f"Incorrect frame size {frame.shape} not {volumeArray[sliceIndex].shape}")
+                    logging.error(f"retrying {url}")
+                    urlHandler.startRequest([url])
+            slicer.util.arrayFromVolumeModified(volumeNode)
+            displayNode = volumeNode.GetDisplayNode()
+            if displayNode.GetNumberOfWindowLevelPresets() > 0:
+                displayNode.SetWindowLevelFromPreset(0)
+            else:
+                displayNode.AutoWindowLevelOff()
+                displayNode.AutoWindowLevelOn()
+
+        if not urlHandler.requestFinished():
+            if elapsedTime > self.urlHandlerTimeout:
+                logging.error("Download timeout")
+            else:
+                callback = lambda urlHandler=urlHandler, volumeNode=volumeNode, urls=urls: \
+                                    self._processURLHandler(urlHandler, volumeNode, urls)
+                qt.QTimer.singleShot(self.urlHandlerInterval, callback)
+        else:
+            rate = (volumeArray.size * volumeArray.itemsize) / elapsedTime / 1024. / 1024.
+            msg = _("Download time {elapsedTime:.2f} at {rate:.2f} mebibytes/second").format(elapsedTime=elapsedTime, rate=rate)
+            logging.info(msg)
+
     def load(self, loadable, readerApproach=None):
         """Load the select as a scalar volume using desired approach"""
-        # first, determine which reader approach the user prefers
-        if not readerApproach:
-            readerIndex = slicer.util.settingsValue("DICOM/ScalarVolume/ReaderApproach", 0, converter=int)
-            readerApproach = DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
-        # second, try to load with the selected approach
-        if readerApproach == "Archetype":
-            volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name)
-        elif readerApproach == "GDCM with DCMTK fallback":
-            volumeNode = self.loadFilesWithSeriesReader("GDCM", loadable.files, loadable.name, loadable.grayscale)
-            if not volumeNode:
-                volumeNode = self.loadFilesWithSeriesReader("DCMTK", loadable.files, loadable.name, loadable.grayscale)
+        volumeNode = None
+        # first, determine if the files are actually URLs
+        firstFile = loadable.files[0]
+        urlScheme = urlparse(firstFile).scheme
+        if urlScheme != "":
+            # - data comes from a URL, so parse metadata from dicom to slicer conventions
+            # - create a placeholder volumeNode that can be populated by the downloader
+            # - rely on files having already been sorted during examine step
+            if not hasattr(slicer.modules, "dicomURLHandlers"):
+                slicer.modules.dicomURLHandlers = {}
+            if urlScheme in slicer.modules.dicomURLHandlers:
+                # first, initiate the request
+                urlHandler = slicer.modules.dicomURLHandlers[urlScheme]
+                self._urlHandlerStartTime = time.time()
+                urlHandler.startRequest(loadable.files)
+                # then while the frames are loading calculate the ijkToRAS and pixel array
+                ijkToRAS = DICOMUtils.ijkToRASFromFiles(loadable.files)
+                pixelArray = DICOMUtils.pixelArrayFromFiles(loadable.files)
+                volumeNode = slicer.util.addVolumeFromArray(pixelArray, ijkToRAS=ijkToRAS, name=loadable.name)
+                volumeArray = slicer.util.arrayFromVolume(volumeNode)
+                # fill with random data so user sees something
+                volumeArray[:] = 1000 * numpy.random.random(pixelArray.shape)
+                slicer.util.arrayFromVolumeModified(volumeNode)
+                # start trying to populate the volume with downloaded frames
+                self._processURLHandler(urlHandler, volumeNode, loadable.files)
+            else:
+                error = _("No handler for url scheme '{urlScheme}'").format(urlScheme=urlScheme)
+                logging.error(error)
         else:
-            volumeNode = self.loadFilesWithSeriesReader(readerApproach, loadable.files, loadable.name, loadable.grayscale)
-        # third, transfer data from the dicom instances into the appropriate Slicer data containers
+            # files, so first, determine which reader approach the user prefers
+            if not readerApproach:
+                readerIndex = slicer.util.settingsValue("DICOM/ScalarVolume/ReaderApproach", 0, converter=int)
+                readerApproach = DICOMScalarVolumePluginClass.readerApproaches()[readerIndex]
+            # second, try to load with the selected approach
+            if readerApproach == "Archetype":
+                volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name)
+            elif readerApproach == "GDCM with DCMTK fallback":
+                volumeNode = self.loadFilesWithSeriesReader("GDCM", loadable.files, loadable.name, loadable.grayscale)
+                if not volumeNode:
+                    volumeNode = self.loadFilesWithSeriesReader("DCMTK", loadable.files, loadable.name, loadable.grayscale)
+            else:
+                volumeNode = self.loadFilesWithSeriesReader(readerApproach, loadable.files, loadable.name, loadable.grayscale)
+
+        # transfer data from the dicom instances into the appropriate Slicer data containers
         self.setVolumeNodeProperties(volumeNode, loadable)
 
         # examine the loaded volume and if needed create a new transform
         # that makes the loaded volume match the DICOM coordinates of
         # the individual frames.  Save the class instance so external
         # code such as the DICOMReaders test can introspect to validate.
-
         if volumeNode:
             self.acquisitionModeling = self.AcquisitionModeling()
             self.acquisitionModeling.createAcquisitionTransform(volumeNode,
