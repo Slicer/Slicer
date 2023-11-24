@@ -37,7 +37,6 @@ class vtkOrientedImageData;
 class vtkTransform;
 class vtkAbstractTransform;
 
-/// \ingroup SegmentationCore
 /// \brief Utility functions for resampling oriented image data
 class vtkSegmentationCore_EXPORT vtkOrientedImageDataResample : public vtkObject
 {

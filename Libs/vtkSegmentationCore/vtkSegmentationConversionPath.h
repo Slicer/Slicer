@@ -29,7 +29,6 @@
 
 class vtkSegmentationConverterRule;
 
-/// \ingroup SegmentationCore
 /// \brief Store a segmentation conversion path.
 /// \details
 /// Stores conversion path as a list of conversion rules and their parameters.
@@ -81,7 +80,6 @@ private:
 };
 
 
-/// \ingroup SegmentationCore
 /// \brief Store multiple segmentation conversion paths.
 /// \details
 /// Stores multiple conversion paths, each defined by a list of segmentation conversion rules.

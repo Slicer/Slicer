@@ -26,7 +26,6 @@
 #include "vtkSegmentationConverter.h"
 #include "vtkSegmentationCoreConfigure.h"
 
-/// \ingroup SegmentationCore
 /// \brief Convert Fractional labelmap representation (vtkOrientedImageData type) to
 ///   closed surface representation (vtkPolyData type). The conversion algorithm
 ///   performs a marching cubes operation on the image data followed by an optional

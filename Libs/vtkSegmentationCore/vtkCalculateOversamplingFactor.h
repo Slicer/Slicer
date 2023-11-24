@@ -36,7 +36,6 @@
 
 class vtkPiecewiseFunction;
 
-/// \ingroup SegmentationCore
 /// \brief Calculate oversampling factor based on model properties using fuzzy logics
 class vtkSegmentationCore_EXPORT vtkCalculateOversamplingFactor : public vtkObject
 {

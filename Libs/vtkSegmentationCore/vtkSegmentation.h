@@ -44,7 +44,6 @@ class vtkIntArray;
 class vtkSegmentationConversionPath;
 class vtkStringArray;
 
-/// \ingroup SegmentationCore
 /// \brief This class encapsulates a segmentation that can contain multiple segments and multiple representations for each segment
 /// \details
 ///   The primary purpose of this class is to serve as a container to store the segments (in labelmap analogy the "labels").

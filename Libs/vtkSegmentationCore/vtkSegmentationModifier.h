@@ -33,7 +33,6 @@
 class vtkOrientedImageData;
 class vtkSegmentation;
 
-/// \ingroup SegmentationCore
 /// \brief Utility functions for resampling oriented image data
 class vtkSegmentationCore_EXPORT vtkSegmentationModifier : public vtkObject
 {

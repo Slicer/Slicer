@@ -35,7 +35,6 @@
 class vtkMRMLScene;
 class vtkMRMLScalarVolumeNode;
 
-/// \ingroup Segmentations
 /// \brief Parameter set node for the segment editor widget
 ///
 /// Stores parameters for a segment editor widget (selected segmentation, segment, source volume),

@@ -35,7 +35,6 @@
 
 class vtkPolyData;
 
-/// \ingroup SegmentationCore
 /// \brief Convert closed surface representation (vtkPolyData type) to fractional
 ///   labelmap representation (vtkOrientedImageData type). The conversion algorithm
 ///   is based on image stencil.
