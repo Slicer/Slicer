@@ -21,7 +21,6 @@
 #! \sa https://www.cmake.org/cmake/help/cmake-2-8-docs.html#command:add_test
 #! \sa https://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:PROJECT_NAME
 #!
-#! \ingroup CMakeUtilities
 macro(simple_test testname)
   set(options
     )
