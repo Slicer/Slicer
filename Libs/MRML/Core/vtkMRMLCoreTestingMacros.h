@@ -325,36 +325,30 @@
 /// test a string variable on the object by calling Set/Get
 #define TEST_SET_GET_STRING( object, variable ) \
   { \
-  std::string tmpString = std::string(object->Get##variable()); \
-  const char * originalStringPointer = tmpString.c_str(); \
+  const char * originalStringPointer = object->Get##variable(); \
   std::string originalString; \
   if( originalStringPointer != nullptr ) \
     { \
     originalString = originalStringPointer; \
     } \
   object->Set##variable( "testing with a const char");                  \
-  tmpString = std::string(object->Get##variable());                     \
-  if( strcmp(tmpString.c_str(), "testing with a const char") != 0) \
+  if( strcmp(object->Get##variable(), "testing with a const char") != 0) \
     {                                                                   \
     std::cerr << "Error in Set/Get"#variable << " with a string literal" << std::endl; \
     return EXIT_FAILURE;                                                \
     }                                                                   \
   std::string string1 = "testingIsGood"; \
   object->Set##variable( string1.c_str() ); \
-  tmpString = std::string(object->Get##variable()); \
-  if( tmpString != string1 ) \
+  if( object->Get##variable() != string1 ) \
     {   \
-    std::cerr << "Error in Set/Get"#variable \
-      << ", tried to set to " << string1.c_str() << " but got " << (tmpString.c_str() ? tmpString.c_str() : "null") << std::endl; \
+    std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string1.c_str() << " but got " << (object->Get##variable() ? object->Get##variable() : "null") << std::endl; \
     return EXIT_FAILURE; \
     } \
   std::string string2 = "moreTestingIsBetter"; \
   object->Set##variable( string2.c_str() ); \
-  tmpString = std::string(object->Get##variable()); \
   if( object->Get##variable() != string2 ) \
     {   \
-    std::cerr << "Error in Set/Get"#variable \
-      << ", tried to set to " << string2.c_str() << " but got " << (tmpString.c_str() ? tmpString.c_str() : "null") << std::endl; \
+    std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string2.c_str() << " but got " << (object->Get##variable() ? object->Get##variable() : "null") << std::endl; \
     return EXIT_FAILURE; \
     } \
   if( originalStringPointer != nullptr ) \
