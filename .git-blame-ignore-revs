@@ -312,3 +312,33 @@ b1f4a3ac8e3ff2dccd54645f8e42e5dbab87fa7a
 88aab174820d9f0811639237f89b914f47c9dcbd
 # STYLE: Update python scripts to avoid escaping inner quotes in strings
 e66f1e29001cea56d2a0851b4286e339fccdd338
+# STYLE: Update Python docstrings fixing indent and adding after class blank line
+f2c8750feac06196b8f74387e4dcbf7882c98b46
+# STYLE: Update Python docstrings removing surrounding whitespaces.
+44a4750364797e236ecbd11087ef591b3cefbd4e
+# STYLE: Update Python fitting one-line docstrings on one line
+50fddcdc0fad2dbbcbb86f560cd8ed8b44c3c7f4
+# STYLE: Update Python docstrings adding newline after last paragraph
+c46988d1cdf89fd16dffca5adc23327395ad75e4
+# STYLE: Remove unnecessary raw string prefixes in SEMToMediaWiki script
+6aff851486d5e388b2e743e94bee6a7ab3087a57
+# STYLE: Update SlicerWizard version script adding missing trailing comma
+f465dd401288a8fa629c07dc859165767e8a56e0
+# STYLE: Update python scripts fixing trailing commas
+844969f5f4bc88ede8d7fa5b27e78ca6ac690a6b
+# STYLE: Align Python scripts with "ruff" formatting by adjusting empty lines
+4a3f1a479120f97954df150eb80cf065706083ca
+# STYLE: Improve script readability with empty line after inline imports
+93571906a5a62ac126d04b9dde9406e5e715aa04
+# STYLE: Improve script readability with empty line before inline imports
+aa4315f70feeeda696a017250b3e78cd46cdce1e
+# STYLE: Align Python scripts with "ruff" formatting by adjusting spaces
+8a4f609a24ea4e329893a4bc73496f92f8de49b9
+# STYLE: Align Python scripts with "ruff" formatting by adjusting empty lines
+db4bcddcaca1c9277dcb46e8a787043e43ad8b6e
+# STYLE: Align Python scripts with "ruff" formatting removing extra parentheses
+11e3c9094478afe9b7338300d7f6efcae52b66ab
+# STYLE: Align Python scripts with "ruff" formatting adding float trailing zero
+6a545c3917ae6c284570593d444136df8ac270f4
+# STYLE: Align Python scripts with "ruff" formatting adjusting quotes
+b19d02ac2119b7457c2341e995ad6353235bbbb4
