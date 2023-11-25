@@ -77,7 +77,6 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
     }
 
   int sel = 1, vis = 1;
-  std::string annotation;
 
   // Jump over type
   size_t  startPos =attValue.find("|",0) +1;
