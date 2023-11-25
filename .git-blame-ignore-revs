@@ -342,3 +342,7 @@ db4bcddcaca1c9277dcb46e8a787043e43ad8b6e
 6a545c3917ae6c284570593d444136df8ac270f4
 # STYLE: Align Python scripts with "ruff" formatting adjusting quotes
 b19d02ac2119b7457c2341e995ad6353235bbbb4
+# STYLE: Align Python scripts with "ruff" formatting updating argument parser
+90164ec63b891a0d9ee89b06af68ba8d9a29dfb6
+# STYLE: Align Python scripts with "ruff" formatting updating if expressions
+830c33a34ca6d33dc70a4004f674ed640337eee7
