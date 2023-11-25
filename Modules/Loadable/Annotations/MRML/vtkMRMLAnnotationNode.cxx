@@ -110,7 +110,6 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
 
     if (!strcmp(attName, "textList") && attValue.size())
       {
-    std::string tmpStr;
     size_t  startPos = 0;
     size_t  endPos =attValue.find("|",startPos);
     while (endPos != std::string::npos) {
