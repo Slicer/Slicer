@@ -37,8 +37,9 @@ class Endoscopy(ScriptedLoadableModule):
             "Jean-Christophe Fillion-Robin (Kitware)",
         ]
         self.parent.helpText = _("""
-Create a path model as a spline interpolation of a set of fiducial points.
-Pick the Camera to be modified by the path and the Fiducial List defining the control points.
+Create or import a markups curve.
+Pick the Camera to be modified by the path defined by the input curve.
+Select the Camera to use for playing the flythrough.
 Clicking "Create flythrough path" will make a flythrough curve and enable the flythrough panel.
 You can manually scroll through the path with the Frame slider.
 The Play/Pause button toggles animated flythrough.
@@ -120,7 +121,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         inputCurveSelector = slicer.qMRMLNodeComboBox()
         inputCurveSelector.objectName = "inputCurveSelector"
         inputCurveSelector.toolTip = _("Select a curve to define control points for the path.")
-        inputCurveSelector.nodeTypes = ["vtkMRMLMarkupsFiducialNode", "vtkMRMLMarkupsCurveNode"]
+        inputCurveSelector.nodeTypes = ["vtkMRMLMarkupsCurveNode"]
         inputCurveSelector.noneEnabled = False
         inputCurveSelector.addEnabled = False
         inputCurveSelector.removeEnabled = False
@@ -514,9 +515,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 class EndoscopyLogic:
     """Compute path given an input curve.
 
-    Path is stored in `resampledCurve` member variable as a numpy array.
-    If a point list is received then curve points are generated using Hermite spline interpolation.
-    See https://en.wikipedia.org/wiki/Cubic_Hermite_spline
+    Path is stored in `resampledCurve` member variable as a numpy array and resampled path
+    is generated using `vtkMRMLMarkupsCurveNode.ResamplePoints()`.
 
     Example:
       logic = EndoscopyLogic(inputCurve)
@@ -526,100 +526,29 @@ class EndoscopyLogic:
     def __init__(self, inputCurve, dl=0.5):
         self.cleanup()
         self.dl = dl  # desired world space step size (in mm)
-        self.dt = dl  # current guess of parametric stepsize
         self.inputCurve = inputCurve
 
-        # Already a curve, just get the points, sampled at equal distances.
-        if (
-            self.inputCurve.GetClassName() == "vtkMRMLMarkupsCurveNode"
-            or self.inputCurve.GetClassName() == "vtkMRMLMarkupsClosedCurveNode"
-        ):
-            # Temporarily increase the number of points per segment, to get a very smooth curve
-            pointsPerSegment = int(self.inputCurve.GetCurveLengthWorld() / self.dl / self.inputCurve.GetNumberOfControlPoints()) + 1
-            originalPointsPerSegment = self.inputCurve.GetNumberOfPointsPerInterpolatingSegment()
-            if originalPointsPerSegment < pointsPerSegment:
-                self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment)
-            # Get equidistant points
-            resampledPoints = vtk.vtkPoints()
-            slicer.vtkMRMLMarkupsCurveNode.ResamplePoints(self.inputCurve.GetCurvePointsWorld(), resampledPoints, self.dl, self.inputCurve.GetCurveClosed())
-            # Restore original number of pointsPerSegment
-            if originalPointsPerSegment < pointsPerSegment:
-                self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
-            # Get it as a numpy array as an independent copy
-            self.resampledCurve = vtk.util.numpy_support.vtk_to_numpy(resampledPoints.GetData())
-
-            self.planeNormal = EndoscopyLogic.calculatePlaneNormal(self.resampledCurve)
-            return
-
-        # hermite interpolation functions
-        self.h00 = lambda t: 2 * t**3 - 3 * t**2 + 1
-        self.h10 = lambda t: t**3 - 2 * t**2 + t
-        self.h01 = lambda t: -2 * t**3 + 3 * t**2
-        self.h11 = lambda t: t**3 - t**2
-
-        # n is the number of control points in the piecewise curve
-
-        if self.inputCurve.GetClassName() == "vtkMRMLMarkupsFiducialNode":
-            # slicer4 Markups node
-            self.n = self.inputCurve.GetNumberOfControlPoints()
-            n = self.n
-            if n == 0:
-                return
-            # get fiducial positions
-            # sets self.p
-            self.p = np.zeros((n, 3))
-            for i in range(n):
-                coord = [0.0, 0.0, 0.0]
-                self.inputCurve.GetNthControlPointPositionWorld(i, coord)
-                self.p[i] = coord
-
-        # calculate the tangent vectors
-        # - fm is forward difference
-        # - m is average of in and out vectors
-        # - first tangent is out vector, last is in vector
-        # - sets self.m
-        n = self.n
-        fm = np.zeros((n, 3))
-        for i in range(0, n - 1):
-            fm[i] = self.p[i + 1] - self.p[i]
-        self.m = np.zeros((n, 3))
-        for i in range(1, n - 1):
-            self.m[i] = (fm[i - 1] + fm[i]) / 2.0
-        self.m[0] = fm[0]
-        self.m[n - 1] = fm[n - 2]
-
-        self.resampledCurve = [self.p[0]]
-        self.calculatePath()
+        # Temporarily increase the number of points per segment, to get a very smooth curve
+        pointsPerSegment = int(self.inputCurve.GetCurveLengthWorld() / self.dl / self.inputCurve.GetNumberOfControlPoints()) + 1
+        originalPointsPerSegment = self.inputCurve.GetNumberOfPointsPerInterpolatingSegment()
+        if originalPointsPerSegment < pointsPerSegment:
+            self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment)
+        # Get equidistant points
+        resampledPoints = vtk.vtkPoints()
+        slicer.vtkMRMLMarkupsCurveNode.ResamplePoints(self.inputCurve.GetCurvePointsWorld(), resampledPoints, self.dl, self.inputCurve.GetCurveClosed())
+        # Restore original number of pointsPerSegment
+        if originalPointsPerSegment < pointsPerSegment:
+            self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
+        # Get it as a numpy array as an independent copy
+        self.resampledCurve = vtk.util.numpy_support.vtk_to_numpy(resampledPoints.GetData())
 
         self.planeNormal = EndoscopyLogic.calculatePlaneNormal(self.resampledCurve)
 
     def cleanup(self):
         # Whether we're about to construct or delete, free all resources and initialize class members to None.
         self.dl = None
-        self.dt = None
         self.inputCurve = None
         self.resampledCurve = None
-
-    def calculatePath(self):
-        """Generate a flight path for of steps of length dl"""
-        #
-        # calculate the actual path
-        # - take steps of self.dl in world space
-        # -- if dl steps into next segment, take a step of size "remainder" in the new segment
-        # - put resulting points into self.resampledCurve
-        #
-        n = self.n
-        segment = 0  # which first point of current segment
-        t = 0  # parametric current parametric increment
-        remainder = 0  # how much of dl isn't included in current step
-        while segment < n - 1:
-            t, p, remainder = self.step(segment, t, self.dl)
-            if remainder != 0 or t == 1.0:
-                segment += 1
-                t = 0
-                if segment < n - 1:
-                    t, p, remainder = self.step(segment, t, remainder)
-            self.resampledCurve.append(p)
 
     @staticmethod
     def calculatePlaneNormal(path):
@@ -630,42 +559,6 @@ class EndoscopyLogic:
         pointsArray = vtk.util.numpy_support.vtk_to_numpy(points.GetData())
         _, planeNormal = EndoscopyLogic.planeFit(pointsArray.T)
         return planeNormal
-
-    def point(self, segment, t):
-        return (self.h00(t) * self.p[segment] +
-                self.h10(t) * self.m[segment] +
-                self.h01(t) * self.p[segment + 1] +
-                self.h11(t) * self.m[segment + 1])
-
-    def step(self, segment, t, dl):
-        """Take a step of dl and return the path point and new t
-        return:
-        t = new parametric coordinate after step
-        p = point after step
-        remainder = if step results in parametric coordinate > 1.0, then
-          this is the amount of world space not covered by step
-        """
-        p0 = self.resampledCurve[self.resampledCurve.__len__() - 1]  # last element in path
-        remainder = 0
-        ratio = 100
-        count = 0
-        while abs(1.0 - ratio) > 0.05:
-            t1 = t + self.dt
-            pguess = self.point(segment, t1)
-            dist = np.linalg.norm(pguess - p0)
-            ratio = self.dl / dist
-            self.dt *= ratio
-            if self.dt < 0.00000001:
-                return
-            count += 1
-            if count > 500:
-                return (t1, pguess, 0)
-        if t1 > 1.0:
-            t1 = 1.0
-            p1 = self.point(segment, t1)
-            remainder = np.linalg.norm(p1 - pguess)
-            pguess = p1
-        return (t1, pguess, remainder)
 
     @staticmethod
     def planeFit(points):
