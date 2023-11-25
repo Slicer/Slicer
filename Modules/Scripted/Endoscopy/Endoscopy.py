@@ -1,5 +1,7 @@
-import ctk
 import logging
+
+import ctk
+import numpy as np
 import qt
 import vtk
 import vtk.util.numpy_support
@@ -7,7 +9,10 @@ import vtk.util.numpy_support
 import slicer
 from slicer.i18n import tr as _
 from slicer.i18n import translate
-from slicer.ScriptedLoadableModule import *
+from slicer.ScriptedLoadableModule import (
+    ScriptedLoadableModule,
+    ScriptedLoadableModuleWidget,
+)
 
 
 #
@@ -29,8 +34,9 @@ class Endoscopy(ScriptedLoadableModule):
         self.parent.helpText = _("""
 Create a path model as a spline interpolation of a set of fiducial points.
 Pick the Camera to be modified by the path and the Fiducial List defining the control points.
-Clicking "Create path" will make a path model and enable the flythrough panel.
-You can manually scroll through the path with the Frame slider. The Play/Pause button toggles animated flythrough.
+Clicking "Create path" will make a flythrough curve and enable the flythrough panel.
+You can manually scroll through the path with the Frame slider.
+The Play/Pause button toggles animated flythrough.
 The Frame Skip slider speeds up the animation by skipping points on the path.
 The Frame Delay slider slows down the animation by adding more time between frames.
 The View Angle provides is used to approximate the optics of an endoscopy system.
@@ -44,7 +50,7 @@ NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 
 
 #
-# qSlicerPythonModuleExampleWidget
+# EndoscopyWidget
 #
 
 
@@ -55,17 +61,18 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     def __init__(self, parent=None):
         ScriptedLoadableModuleWidget.__init__(self, parent)
-        self.cameraNode = None
-        self.cameraNodeObserverTag = None
-        self.cameraObserverTag = None
-        # Flythough variables
+
         self.transform = None
-        self.path = None
-        self.camera = None
+        self.resampledCurve = None
         self.skip = 0
         self.timer = qt.QTimer()
         self.timer.setInterval(20)
         self.timer.connect("timeout()", self.flyToNext)
+
+        self.cameraNode = None
+        self.cameraNodeObserverTag = None
+        self.camera = None
+        self.cameraObserverTag = None
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -88,18 +95,20 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         cameraNodeSelector.removeEnabled = False
         cameraNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
         cameraNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.setCameraNode)
-        pathFormLayout.addRow("Camera:", cameraNodeSelector)
+        pathFormLayout.addRow(_("Camera:"), cameraNodeSelector)
+        self.cameraNodeSelector = cameraNodeSelector
 
-        # Input fiducials node selector
-        inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
-        inputFiducialsNodeSelector.objectName = "inputFiducialsNodeSelector"
-        inputFiducialsNodeSelector.toolTip = _("Select a fiducial list to define control points for the path.")
-        inputFiducialsNodeSelector.nodeTypes = ["vtkMRMLMarkupsFiducialNode", "vtkMRMLMarkupsCurveNode"]
-        inputFiducialsNodeSelector.noneEnabled = False
-        inputFiducialsNodeSelector.addEnabled = False
-        inputFiducialsNodeSelector.removeEnabled = False
-        inputFiducialsNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
-        pathFormLayout.addRow(_("Input Fiducials:"), inputFiducialsNodeSelector)
+        # Input curve selector
+        inputCurveSelector = slicer.qMRMLNodeComboBox()
+        inputCurveSelector.objectName = "inputCurveSelector"
+        inputCurveSelector.toolTip = _("Select a curve to define control points for the path.")
+        inputCurveSelector.nodeTypes = ["vtkMRMLMarkupsFiducialNode", "vtkMRMLMarkupsCurveNode"]
+        inputCurveSelector.noneEnabled = False
+        inputCurveSelector.addEnabled = False
+        inputCurveSelector.removeEnabled = False
+        inputCurveSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
+        pathFormLayout.addRow(_("Curve to modify:"), inputCurveSelector)
+        self.inputCurveSelector = inputCurveSelector
 
         # Output path node selector
         outputPathNodeSelector = slicer.qMRMLNodeComboBox()
@@ -112,77 +121,73 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         outputPathNodeSelector.renameEnabled = True
         outputPathNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
         pathFormLayout.addRow(_("Output Path:"), outputPathNodeSelector)
+        self.outputPathNodeSelector = outputPathNodeSelector
 
         # CreatePath button
         createPathButton = qt.QPushButton(_("Create path"))
         createPathButton.toolTip = _("Create the path.")
         createPathButton.enabled = False
-        pathFormLayout.addRow(createPathButton)
         createPathButton.connect("clicked()", self.onCreatePathButtonClicked)
+        pathFormLayout.addRow(createPathButton)
+        self.createPathButton = createPathButton
 
         # Flythrough collapsible button
         flythroughCollapsibleButton = ctk.ctkCollapsibleButton()
         flythroughCollapsibleButton.text = _("Flythrough")
         flythroughCollapsibleButton.enabled = False
         self.layout.addWidget(flythroughCollapsibleButton)
+        self.flythroughCollapsibleButton = flythroughCollapsibleButton
 
         # Layout within the Flythrough collapsible button
         flythroughFormLayout = qt.QFormLayout(flythroughCollapsibleButton)
 
         # Frame slider
         frameSlider = ctk.ctkSliderWidget()
-        frameSlider.connect("valueChanged(double)", self.frameSliderValueChanged)
         frameSlider.decimals = 0
+        frameSlider.connect("valueChanged(double)", self.frameSliderValueChanged)
         flythroughFormLayout.addRow(_("Frame:"), frameSlider)
+        self.frameSlider = frameSlider
 
         # Frame skip slider
         frameSkipSlider = ctk.ctkSliderWidget()
-        frameSkipSlider.connect("valueChanged(double)", self.frameSkipSliderValueChanged)
         frameSkipSlider.decimals = 0
         frameSkipSlider.minimum = 0
         frameSkipSlider.maximum = 50
+        frameSkipSlider.connect("valueChanged(double)", self.frameSkipSliderValueChanged)
         flythroughFormLayout.addRow(_("Frame skip:"), frameSkipSlider)
 
         # Frame delay slider
         frameDelaySlider = ctk.ctkSliderWidget()
-        frameDelaySlider.connect("valueChanged(double)", self.frameDelaySliderValueChanged)
         frameDelaySlider.decimals = 0
         frameDelaySlider.minimum = 5
         frameDelaySlider.maximum = 100
         frameDelaySlider.suffix = " ms"
         frameDelaySlider.value = 20
+        frameDelaySlider.connect("valueChanged(double)", self.frameDelaySliderValueChanged)
         flythroughFormLayout.addRow(_("Frame delay:"), frameDelaySlider)
 
         # View angle slider
         viewAngleSlider = ctk.ctkSliderWidget()
-        viewAngleSlider.connect("valueChanged(double)", self.viewAngleSliderValueChanged)
         viewAngleSlider.decimals = 0
         viewAngleSlider.minimum = 30
         viewAngleSlider.maximum = 180
+        viewAngleSlider.connect("valueChanged(double)", self.viewAngleSliderValueChanged)
         flythroughFormLayout.addRow(_("View Angle:"), viewAngleSlider)
+        self.viewAngleSlider = viewAngleSlider
 
         # Play button
-        playButton = qt.QPushButton(_("Play"))
+        playButton = qt.QPushButton(_("Play flythrough"))
         playButton.toolTip = _("Fly through path.")
         playButton.checkable = True
-        flythroughFormLayout.addRow(playButton)
         playButton.connect("toggled(bool)", self.onPlayButtonToggled)
+        flythroughFormLayout.addRow(playButton)
+        self.playButton = playButton
 
         # Add vertical spacer
         self.layout.addStretch(1)
 
-        # Set local var as instance attribute
-        self.cameraNodeSelector = cameraNodeSelector
-        self.inputFiducialsNodeSelector = inputFiducialsNodeSelector
-        self.outputPathNodeSelector = outputPathNodeSelector
-        self.createPathButton = createPathButton
-        self.flythroughCollapsibleButton = flythroughCollapsibleButton
-        self.frameSlider = frameSlider
-        self.viewAngleSlider = viewAngleSlider
-        self.playButton = playButton
-
         cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
-        inputFiducialsNodeSelector.setMRMLScene(slicer.mrmlScene)
+        inputCurveSelector.setMRMLScene(slicer.mrmlScene)
         outputPathNodeSelector.setMRMLScene(slicer.mrmlScene)
 
     def setCameraNode(self, newCameraNode):
@@ -190,11 +195,13 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         Connected to signal 'currentNodeChanged()' emitted by camera node selector.
         """
 
-        #  Remove previous observer
+        # Remove previous observer
         if self.cameraNode and self.cameraNodeObserverTag:
             self.cameraNode.RemoveObserver(self.cameraNodeObserverTag)
+            self.cameraNodeObserverTag = None
         if self.camera and self.cameraObserverTag:
             self.camera.RemoveObserver(self.cameraObserverTag)
+            self.cameraObserverTag = None
 
         newCamera = None
         if newCameraNode:
@@ -223,12 +230,12 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.updateWidgetFromMRML()
 
     def enableOrDisableCreateButton(self):
-        """Connected to both the fiducial and camera node selector. It allows to
+        """Connected to both the input curve and camera node selector. It allows to
         enable or disable the 'create path' button.
         """
         self.createPathButton.enabled = (
             self.cameraNodeSelector.currentNode() is not None
-            and self.inputFiducialsNodeSelector.currentNode() is not None
+            and self.inputCurveSelector.currentNode() is not None
             and self.outputPathNodeSelector.currentNode() is not None
         )
 
@@ -238,27 +245,27 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         - create the associated model
         """
 
-        fiducialsNode = self.inputFiducialsNodeSelector.currentNode()
+        inputCurve = self.inputCurveSelector.currentNode()
         outputPathNode = self.outputPathNodeSelector.currentNode()
         logging.debug("Calculating Path...")
-        result = EndoscopyComputePath(fiducialsNode)
-        logging.debug("-> Computed path contains %d elements" % len(result.path))
+        result = EndoscopyLogic(inputCurve)
+        logging.debug("-> Computed path contains %d elements" % len(result.resampledCurve))
 
         logging.debug("Create Model...")
-        model = EndoscopyPathModel(result.path, fiducialsNode, outputPathNode)
+        model = EndoscopyPathModel(result.resampledCurve, inputCurve, outputPathNode)
         logging.debug("-> Model created")
 
         # Update frame slider range
-        self.frameSlider.maximum = len(result.path) - 2
+        self.frameSlider.maximum = len(result.resampledCurve) - 2
 
         # Update flythrough variables
         self.camera = self.camera
         self.transform = model.transform
         self.pathPlaneNormal = model.planeNormal
-        self.path = result.path
+        self.resampledCurve = result.resampledCurve
 
         # Enable / Disable flythrough button
-        self.flythroughCollapsibleButton.enabled = len(result.path) > 0
+        self.flythroughCollapsibleButton.enabled = len(result.resampledCurve) > 0
 
     def frameSliderValueChanged(self, newValue):
         self.flyTo(newValue)
@@ -276,31 +283,35 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
 
     def onPlayButtonToggled(self, checked):
         if checked:
+            # Start playback
             self.timer.start()
-            self.playButton.text = "Stop"
+            # Enable the user to stop playback
+            self.playButton.text = _("Stop flythrough")
         else:
+            # Stop playback
             self.timer.stop()
-            self.playButton.text = "Play"
+            # Enable the user to start playback
+            self.playButton.text = _("Play flythrough")
 
     def flyToNext(self):
         currentStep = self.frameSlider.value
         nextStep = currentStep + self.skip + 1
-        if nextStep > len(self.path) - 2:
+        if nextStep > len(self.resampledCurve) - 2:
             nextStep = 0
         self.frameSlider.value = nextStep
 
-    def flyTo(self, pathPointIndex):
-        """Apply the pathPointIndex-th step in the path to the global camera"""
+    def flyTo(self, resampledCurvePointIndex):
+        """Apply the resampledCurvePointIndex-th step in the path to the global camera"""
 
-        if self.path is None:
+        if self.resampledCurve is None:
             return
 
-        pathPointIndex = int(pathPointIndex)
-        cameraPosition = self.path[pathPointIndex]
+        resampledCurvePointIndex = int(resampledCurvePointIndex)
+        cameraPosition = self.resampledCurve[resampledCurvePointIndex]
         wasModified = self.cameraNode.StartModify()
 
         self.camera.SetPosition(cameraPosition)
-        focalPointPosition = self.path[pathPointIndex + 1]
+        focalPointPosition = self.resampledCurve[resampledCurvePointIndex + 1]
         self.camera.SetFocalPoint(*focalPointPosition)
         self.camera.OrthogonalizeViewUp()
 
@@ -315,8 +326,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         # Y vector is aligned with the curve's plane normal.
         # This can be used for example to show a reformatted slice
         # using with SlicerIGT extension's VolumeResliceDriver module.
-        import numpy as np
-
         zVec = (focalPointPosition - cameraPosition) / np.linalg.norm(focalPointPosition - cameraPosition)
         yVec = self.pathPlaneNormal
         xVec = np.cross(yVec, zVec)
@@ -338,43 +347,41 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.cameraNode.ResetClippingRange()
 
 
-class EndoscopyComputePath:
-    """Compute path given a list of fiducials.
-    Path is stored in 'path' member variable as a numpy array.
+class EndoscopyLogic:
+    """Compute path given an input curve.
+
+    Path is stored in `resampledCurve` member variable as a numpy array.
     If a point list is received then curve points are generated using Hermite spline interpolation.
     See https://en.wikipedia.org/wiki/Cubic_Hermite_spline
 
     Example:
-      result = EndoscopyComputePath(fiducialListNode)
-      print(f"computed path has {result.path} elements")
-
+      logic = EndoscopyLogic(inputCurve)
+      print(f"computed path has {logic.resampledCurve} elements")
     """
 
-    def __init__(self, fiducialListNode, dl=0.5):
-        import numpy
-
+    def __init__(self, inputCurve, dl=0.5):
         self.dl = dl  # desired world space step size (in mm)
         self.dt = dl  # current guess of parametric stepsize
-        self.fids = fiducialListNode
+        self.inputCurve = inputCurve
 
         # Already a curve, just get the points, sampled at equal distances.
         if (
-            self.fids.GetClassName() == "vtkMRMLMarkupsCurveNode"
-            or self.fids.GetClassName() == "vtkMRMLMarkupsClosedCurveNode"
+            self.inputCurve.GetClassName() == "vtkMRMLMarkupsCurveNode"
+            or self.inputCurve.GetClassName() == "vtkMRMLMarkupsClosedCurveNode"
         ):
             # Temporarily increase the number of points per segment, to get a very smooth curve
-            pointsPerSegment = int(self.fids.GetCurveLengthWorld() / self.dl / self.fids.GetNumberOfControlPoints()) + 1
-            originalPointsPerSegment = self.fids.GetNumberOfPointsPerInterpolatingSegment()
+            pointsPerSegment = int(self.inputCurve.GetCurveLengthWorld() / self.dl / self.inputCurve.GetNumberOfControlPoints()) + 1
+            originalPointsPerSegment = self.inputCurve.GetNumberOfPointsPerInterpolatingSegment()
             if originalPointsPerSegment < pointsPerSegment:
-                self.fids.SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment)
+                self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment)
             # Get equidistant points
             resampledPoints = vtk.vtkPoints()
-            slicer.vtkMRMLMarkupsCurveNode.ResamplePoints(self.fids.GetCurvePointsWorld(), resampledPoints, self.dl, self.fids.GetCurveClosed())
+            slicer.vtkMRMLMarkupsCurveNode.ResamplePoints(self.inputCurve.GetCurvePointsWorld(), resampledPoints, self.dl, self.inputCurve.GetCurveClosed())
             # Restore original number of pointsPerSegment
             if originalPointsPerSegment < pointsPerSegment:
-                self.fids.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
+                self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
             # Get it as a numpy array as an independent copy
-            self.path = vtk.util.numpy_support.vtk_to_numpy(resampledPoints.GetData())
+            self.resampledCurve = vtk.util.numpy_support.vtk_to_numpy(resampledPoints.GetData())
             return
 
         # hermite interpolation functions
@@ -385,18 +392,18 @@ class EndoscopyComputePath:
 
         # n is the number of control points in the piecewise curve
 
-        if self.fids.GetClassName() == "vtkMRMLMarkupsFiducialNode":
+        if self.inputCurve.GetClassName() == "vtkMRMLMarkupsFiducialNode":
             # slicer4 Markups node
-            self.n = self.fids.GetNumberOfControlPoints()
+            self.n = self.inputCurve.GetNumberOfControlPoints()
             n = self.n
             if n == 0:
                 return
             # get fiducial positions
             # sets self.p
-            self.p = numpy.zeros((n, 3))
+            self.p = np.zeros((n, 3))
             for i in range(n):
                 coord = [0.0, 0.0, 0.0]
-                self.fids.GetNthControlPointPositionWorld(i, coord)
+                self.inputCurve.GetNthControlPointPositionWorld(i, coord)
                 self.p[i] = coord
 
         # calculate the tangent vectors
@@ -405,16 +412,16 @@ class EndoscopyComputePath:
         # - first tangent is out vector, last is in vector
         # - sets self.m
         n = self.n
-        fm = numpy.zeros((n, 3))
+        fm = np.zeros((n, 3))
         for i in range(0, n - 1):
             fm[i] = self.p[i + 1] - self.p[i]
-        self.m = numpy.zeros((n, 3))
+        self.m = np.zeros((n, 3))
         for i in range(1, n - 1):
             self.m[i] = (fm[i - 1] + fm[i]) / 2.0
         self.m[0] = fm[0]
         self.m[n - 1] = fm[n - 2]
 
-        self.path = [self.p[0]]
+        self.resampledCurve = [self.p[0]]
         self.calculatePath()
 
     def calculatePath(self):
@@ -423,7 +430,7 @@ class EndoscopyComputePath:
         # calculate the actual path
         # - take steps of self.dl in world space
         # -- if dl steps into next segment, take a step of size "remainder" in the new segment
-        # - put resulting points into self.path
+        # - put resulting points into self.resampledCurve
         #
         n = self.n
         segment = 0  # which first point of current segment
@@ -436,7 +443,7 @@ class EndoscopyComputePath:
                 t = 0
                 if segment < n - 1:
                     t, p, remainder = self.step(segment, t, remainder)
-            self.path.append(p)
+            self.resampledCurve.append(p)
 
     def point(self, segment, t):
         return (self.h00(t) * self.p[segment] +
@@ -450,18 +457,16 @@ class EndoscopyComputePath:
         t = new parametric coordinate after step
         p = point after step
         remainder = if step results in parametric coordinate > 1.0, then
-        this is the amount of world space not covered by step
+          this is the amount of world space not covered by step
         """
-        import numpy.linalg
-
-        p0 = self.path[self.path.__len__() - 1]  # last element in path
+        p0 = self.resampledCurve[self.resampledCurve.__len__() - 1]  # last element in path
         remainder = 0
         ratio = 100
         count = 0
         while abs(1.0 - ratio) > 0.05:
             t1 = t + self.dt
             pguess = self.point(segment, t1)
-            dist = numpy.linalg.norm(pguess - p0)
+            dist = np.linalg.norm(pguess - p0)
             ratio = self.dl / dist
             self.dt *= ratio
             if self.dt < 0.00000001:
@@ -472,9 +477,30 @@ class EndoscopyComputePath:
         if t1 > 1.0:
             t1 = 1.0
             p1 = self.point(segment, t1)
-            remainder = numpy.linalg.norm(p1 - pguess)
+            remainder = np.linalg.norm(p1 - pguess)
             pguess = p1
         return (t1, pguess, remainder)
+
+    @staticmethod
+    def planeFit(points):
+        """
+        p, n = planeFit(points)
+
+        Given `points`, an array of shape (d, ...), representing points in d-dimensional (hyper)space, fit a
+        (d-1)-dimensional (hyper)plane to the points.
+
+        Return a point `p` on the plane (the point-cloud centroid), and the unit normal vector `n`.
+
+        Adapted from https://stackoverflow.com/questions/12299540/plane-fitting-to-4-or-more-xyz-points
+        """
+        points = points.reshape((points.shape[0], -1))  # Collapse trailing dimensions
+        assert points.shape[0] <= points.shape[1], f"There are only {points.shape[1]} points in {points.shape[0]} dimensions."
+        ctr = points.mean(axis=1)
+        x = points - ctr[:, np.newaxis]  # Recenter on the centroid
+        M = np.dot(x, x.T)  # Could also use np.cov(x) here.
+        n = np.linalg.svd(M)[0][:, -1]
+        p = ctr
+        return p, n
 
 
 class EndoscopyPathModel:
@@ -483,18 +509,16 @@ class EndoscopyPathModel:
     - Add a single polyline
     """
 
-    def __init__(self, path, fiducialListNode, outputPathNode=None, cursorType=None):
+    def __init__(self, resampledCurve, inputCurve, outputPathNode=None, cursorType=None):
         """
-        :param path: path points as numpy array.
-        :param fiducialListNode: input node, just used for naming the output node.
+        :param resampledCurve: resampledCurve generated by EndoscopyLogic.
+        :param inputCurve: input node, just used for naming the output node.
         :param outputPathNode: output model node that stores the path points.
-        :param cursorType: can be 'markups' or 'model'. Markups has a number of advantages (radius it is easier to change the size,
-        can jump to views by clicking on it, has more visualization options, can be scaled to fixed display size),
-        but if some applications relied on having a model node as cursor then this argument can be used to achieve that.
+        :param cursorType: can be 'markups' or 'model'. Markups has a number of advantages (radius it is easier
+          to change the size, can jump to views by clicking on it, has more visualization options, can be scaled
+          to fixed display size), but if some applications relied on having a model node as cursor then this
+          argument can be used to achieve that.
         """
-
-        fids = fiducialListNode
-        scene = slicer.mrmlScene
 
         self.cursorType = "markups" if cursorType is None else cursorType
 
@@ -514,19 +538,21 @@ class EndoscopyPathModel:
         idArray.Reset()
         idArray.InsertNextTuple1(0)
 
-        for point in path:
+        for point in resampledCurve:
             pointIndex = points.InsertNextPoint(*point)
             linesIDArray.InsertNextTuple1(pointIndex)
             linesIDArray.SetTuple1(0, linesIDArray.GetNumberOfTuples() - 1)
             lines.SetNumberOfCells(1)
 
         pointsArray = vtk.util.numpy_support.vtk_to_numpy(points.GetData())
-        self.planePosition, self.planeNormal = self.planeFit(pointsArray.T)
+        self.planePosition, self.planeNormal = EndoscopyLogic.planeFit(pointsArray.T)
 
         # Create model node
         model = outputPathNode
         if not model:
-            model = scene.AddNewNodeByClass("vtkMRMLModelNode", scene.GenerateUniqueName("Path-%s" % fids.GetName()))
+            model = slicer.mrmlScene.AddNewNodeByClass(
+                "vtkMRMLModelNode", slicer.mrmlScene.GenerateUniqueName(f"Path-{inputCurve.GetName()}"),
+            )
             model.CreateDefaultDisplayNodes()
             model.GetDisplayNode().SetColor(1, 1, 0)  # yellow
 
@@ -537,7 +563,10 @@ class EndoscopyPathModel:
         if not cursor:
             if self.cursorType == "markups":
                 # Markups cursor
-                cursor = scene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
+                cursor = slicer.mrmlScene.AddNewNodeByClass(
+                    "vtkMRMLMarkupsFiducialNode",
+                    slicer.mrmlScene.GenerateUniqueName(f"Cursor-{inputCurve.GetName()}"),
+                )
                 cursor.CreateDefaultDisplayNodes()
                 cursor.GetDisplayNode().SetSelectedColor(1, 0, 0)  # red
                 cursor.GetDisplayNode().SetSliceProjection(True)
@@ -545,7 +574,8 @@ class EndoscopyPathModel:
                 cursor.SetNthControlPointLocked(0, True)
             else:
                 # Model cursor
-                cursor = scene.AddNewNodeByClass("vtkMRMLMarkupsModelNode", scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
+                cursor = slicer.mrmlScene.AddNewNodeByClass(
+                    "vtkMRMLMarkupsModelNode", slicer.mrmlScene.GenerateUniqueName(f"Cursor-{inputCurve.GetName()}"))
                 cursor.CreateDefaultDisplayNodes()
                 cursor.GetDisplayNode().SetColor(1, 0, 0)  # red
                 cursor.GetDisplayNode().BackfaceCullingOn()  # so that the camera can see through the cursor from inside
@@ -559,29 +589,11 @@ class EndoscopyPathModel:
         # Transform node
         transform = model.GetNodeReference("CameraTransform")
         if not transform:
-            transform = scene.AddNewNodeByClass("vtkMRMLLinearTransformNode", scene.GenerateUniqueName("Transform-%s" % fids.GetName()))
+            transform = slicer.mrmlScene.AddNewNodeByClass(
+                "vtkMRMLLinearTransformNode",
+                slicer.mrmlScene.GenerateUniqueName(f"Transform-{inputCurve.GetName()}"),
+            )
             model.SetNodeReferenceID("CameraTransform", transform.GetID())
         cursor.SetAndObserveTransformNodeID(transform.GetID())
 
         self.transform = transform
-
-    # source: https://stackoverflow.com/questions/12299540/plane-fitting-to-4-or-more-xyz-points
-    def planeFit(self, points):
-        """
-        p, n = planeFit(points)
-
-        Given an array, points, of shape (d,...)
-        representing points in d-dimensional space,
-        fit an d-dimensional plane to the points.
-        Return a point, p, on the plane (the point-cloud centroid),
-        and the normal, n.
-        """
-        import numpy as np
-        from numpy.linalg import svd
-
-        points = np.reshape(points, (np.shape(points)[0], -1))  # Collapse trialing dimensions
-        assert points.shape[0] <= points.shape[1], f"There are only {points.shape[1]} points in {points.shape[0]} dimensions."
-        ctr = points.mean(axis=1)
-        x = points - ctr[:, np.newaxis]
-        M = np.dot(x, x.T)  # Could also use np.cov(x) here.
-        return ctr, svd(M)[0][:, -1]
