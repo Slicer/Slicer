@@ -31,11 +31,15 @@ class Endoscopy(ScriptedLoadableModule):
         self.parent.title = _("Endoscopy")
         self.parent.categories = [translate("qSlicerAbstractCoreModule", "Endoscopy")]
         self.parent.dependencies = []
-        self.parent.contributors = ["Steve Pieper (Isomics)"]
+        self.parent.contributors = [
+            "Steve Pieper (Isomics)",
+            "Lee Newberg (Kitware)",
+            "Jean-Christophe Fillion-Robin (Kitware)",
+        ]
         self.parent.helpText = _("""
 Create a path model as a spline interpolation of a set of fiducial points.
 Pick the Camera to be modified by the path and the Fiducial List defining the control points.
-Clicking "Create path" will make a flythrough curve and enable the flythrough panel.
+Clicking "Create flythrough path" will make a flythrough curve and enable the flythrough panel.
 You can manually scroll through the path with the Frame slider.
 The Play/Pause button toggles animated flythrough.
 The Frame Skip slider speeds up the animation by skipping points on the path.
@@ -64,17 +68,33 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         ScriptedLoadableModuleWidget.__init__(self, parent)
 
         self.transform = None
+        self.cursor = None
+        self.model = None
         self.resampledCurve = None
         self.skip = 0
+        self.logic = None
         self.timer = qt.QTimer()
         self.timer.setInterval(20)
         self.timer.connect("timeout()", self.flyToNext)
+        self.ignoreInputCurveModified = 0
 
         self.cameraNode = None
+        self.inputCurve = None
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
+        self.setupPathUI()
+        self.setupFlythroughUI()
+        self.setupAdvancedUI()
 
+        # Add vertical spacer
+        self.layout.addStretch(1)
+
+        self.cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
+        self.inputCurveSelector.setMRMLScene(slicer.mrmlScene)
+        self.outputPathNodeSelector.setMRMLScene(slicer.mrmlScene)
+
+    def setupPathUI(self):
         # Path collapsible button
         pathCollapsibleButton = ctk.ctkCollapsibleButton()
         pathCollapsibleButton.text = _("Path")
@@ -105,30 +125,19 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         inputCurveSelector.addEnabled = False
         inputCurveSelector.removeEnabled = False
         inputCurveSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
+        inputCurveSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.setInputCurve)
         pathFormLayout.addRow(_("Curve to modify:"), inputCurveSelector)
         self.inputCurveSelector = inputCurveSelector
 
-        # Output path node selector
-        outputPathNodeSelector = slicer.qMRMLNodeComboBox()
-        outputPathNodeSelector.objectName = "outputPathNodeSelector"
-        outputPathNodeSelector.toolTip = _("Select a fiducial list to define control points for the path.")
-        outputPathNodeSelector.nodeTypes = ["vtkMRMLModelNode"]
-        outputPathNodeSelector.noneEnabled = False
-        outputPathNodeSelector.addEnabled = True
-        outputPathNodeSelector.removeEnabled = True
-        outputPathNodeSelector.renameEnabled = True
-        outputPathNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
-        pathFormLayout.addRow(_("Output Path:"), outputPathNodeSelector)
-        self.outputPathNodeSelector = outputPathNodeSelector
-
         # CreatePath button
-        createPathButton = qt.QPushButton(_("Create path"))
-        createPathButton.toolTip = _("Create the path.")
+        createPathButton = qt.QPushButton(_("Create flythrough path"))
+        createPathButton.toolTip = _("Base the flythrough on the selected input curve.")
         createPathButton.enabled = False
         createPathButton.connect("clicked()", self.onCreatePathButtonClicked)
         pathFormLayout.addRow(createPathButton)
         self.createPathButton = createPathButton
 
+    def setupFlythroughUI(self):
         # Flythrough collapsible button
         flythroughCollapsibleButton = ctk.ctkCollapsibleButton()
         flythroughCollapsibleButton.text = _("Flythrough")
@@ -138,6 +147,14 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Layout within the Flythrough collapsible button
         flythroughFormLayout = qt.QFormLayout(flythroughCollapsibleButton)
+
+        # Play button
+        playButton = qt.QPushButton(_("Play flythrough"))
+        playButton.toolTip = _("Fly through path.")
+        playButton.checkable = True
+        playButton.connect("toggled(bool)", self.onPlayButtonToggled)
+        flythroughFormLayout.addRow(playButton)
+        self.playButton = playButton
 
         # Frame slider
         frameSlider = ctk.ctkSliderWidget()
@@ -173,24 +190,49 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         flythroughFormLayout.addRow(_("View Angle:"), viewAngleSlider)
         self.viewAngleSlider = viewAngleSlider
 
-        # Play button
-        playButton = qt.QPushButton(_("Play flythrough"))
-        playButton.toolTip = _("Fly through path.")
-        playButton.checkable = True
-        playButton.connect("toggled(bool)", self.onPlayButtonToggled)
-        flythroughFormLayout.addRow(playButton)
-        self.playButton = playButton
+    def setupAdvancedUI(self):
+        # Advanced collapsible button
+        advancedCollapsibleButton = ctk.ctkCollapsibleButton()
+        advancedCollapsibleButton.text = _("Advanced")
+        advancedCollapsibleButton.enabled = False
+        advancedCollapsibleButton.collapsed = True
+        self.layout.addWidget(advancedCollapsibleButton)
+        self.advancedCollapsibleButton = advancedCollapsibleButton
 
-        # Add vertical spacer
-        self.layout.addStretch(1)
+        # Layout within the Advanced collapsible button
+        advancedFormLayout = qt.QFormLayout(advancedCollapsibleButton)
 
-        cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
-        inputCurveSelector.setMRMLScene(slicer.mrmlScene)
-        outputPathNodeSelector.setMRMLScene(slicer.mrmlScene)
+        # Select name for output model
+        outputPathNodeSelector = slicer.qMRMLNodeComboBox()
+        outputPathNodeSelector.objectName = "outputPathNodeSelector"
+        outputPathNodeSelector.toolTip = _("Create a model node.")
+        outputPathNodeSelector.nodeTypes = ["vtkMRMLModelNode"]
+        outputPathNodeSelector.noneEnabled = False
+        outputPathNodeSelector.addEnabled = True
+        outputPathNodeSelector.removeEnabled = True
+        outputPathNodeSelector.renameEnabled = True
+        outputPathNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
+        advancedFormLayout.addRow(_("Output Model:"), outputPathNodeSelector)
+        self.outputPathNodeSelector = outputPathNodeSelector
+
+        # Button for exporting a model
+        saveExportModelButton = qt.QPushButton(_("Export as model"))
+        saveExportModelButton.toolTip = _("Export as model")
+        saveExportModelButton.enabled = False
+        saveExportModelButton.connect("clicked()", self.onSaveExportModelButtonClicked)
+        advancedFormLayout.addRow(saveExportModelButton)
+        self.saveExportModelButton = saveExportModelButton
 
     def cleanup(self):
         """Called when the application closes and the module widget is destroyed."""
         self.removeObservers()
+
+        if self.logic:
+            self.logic.cleanup()
+            self.logic = None
+
+        self.cameraNode = None
+        self.inputCurve = None
 
     def setCameraNode(self, newCameraNode):
         """Allow to set the current camera node.
@@ -209,8 +251,31 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Update UI
         self.updateWidgetFromMRML()
 
+    def setInputCurve(self, newInputCurve):
+        """Set and observe a curve node."""
+
+        if self.inputCurve is not None:
+            self.removeObserver(self.inputCurve, vtk.vtkCommand.ModifiedEvent, self.onInputCurveModified)
+
+        self.inputCurve = newInputCurve
+
+        if newInputCurve is not None:
+            self.addObserver(self.inputCurve, vtk.vtkCommand.ModifiedEvent, self.onInputCurveModified)
+
+        if self.logic is not None:
+            # We are going to have rebuild the EndoscopyLogic later
+            self.logic.cleanup()
+            self.logic = None
+
+        # Update UI
+        self.updateWidgetFromMRML()
+
     def updateWidgetFromMRML(self):
-        if self.camera:
+
+        self.flythroughCollapsibleButton.enabled = self.inputCurve is not None
+        self.advancedCollapsibleButton.enabled = self.inputCurve is not None
+
+        if self.cameraNode:
             self.viewAngleSlider.value = self.cameraNode.GetViewAngle()
 
     def onCameraNodeModified(self, observer, eventid):
@@ -218,44 +283,66 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def enableOrDisableCreateButton(self):
         """Connected to both the input curve and camera node selector. It allows to
-        enable or disable the 'create path' button.
+        enable or disable the 'createPath' and `saveExportModel` buttons.
         """
-        self.createPathButton.enabled = (
-            self.cameraNodeSelector.currentNode() is not None
-            and self.inputCurveSelector.currentNode() is not None
-            and self.outputPathNodeSelector.currentNode() is not None
-        )
+        enable = self.cameraNodeSelector.currentNode() and self.inputCurveSelector.currentNode()
+        self.createPathButton.enabled = enable
+        self.saveExportModelButton.enabled = enable
+
+    def onInputCurveModified(self, observer, eventid):
+        """If the input curve  was changed we need to repopulate the keyframe UI"""
+        if not self.ignoreInputCurveModified:
+            if self.logic:
+                # We are going to have rebuild the EndoscopyLogic later
+                self.logic.cleanup()
+                self.logic = None
 
     def onCreatePathButtonClicked(self):
-        """Connected to 'create path' button. It allows to:
+        """Connected to `createPath` button.  It allows to:
         - compute the path
-        - create the associated model
+        - create cursor
+        - ensure cursor, model and input curve are not visible in the endoscopy view
+        - go to start of the path
         """
+        self.ignoreInputCurveModified += 1
 
         inputCurve = self.inputCurveSelector.currentNode()
-        outputPathNode = self.outputPathNodeSelector.currentNode()
-        logging.debug("Calculating Path...")
-        result = EndoscopyLogic(inputCurve)
-        logging.debug("-> Computed path contains %d elements" % len(result.resampledCurve))
 
-        logging.debug("Create Model...")
-        model = EndoscopyPathModel(result.resampledCurve, inputCurve, outputPathNode)
-        logging.debug("-> Model created")
+        if self.logic:
+            self.logic.cleanup()
+        self.logic = EndoscopyLogic(inputCurve)
+
+        numberOfControlPoints = len(self.logic.resampledCurve)
 
         # Update frame slider range
-        self.frameSlider.maximum = len(result.resampledCurve) - 2
+        self.frameSlider.maximum = max(0, numberOfControlPoints - 2)
+
+        # Create a cursor so that the user can see where the fly through is progressing.
+        self.createCursor()
+
+        # Hide the cursor, model and inputCurve from the main 3D view
+        EndoscopyWidget._hideOnlyInView(
+            EndoscopyWidget._viewNodeIDFromCameraNode(self.cameraNode),
+            [self.cursor, self.model, self.inputCurve],
+        )
 
         # Update flythrough variables
-        self.camera = self.camera
-        self.transform = model.transform
-        self.pathPlaneNormal = model.planeNormal
-        self.resampledCurve = result.resampledCurve
+        self.transform = self.cursor.transform
+        self.pathPlaneNormal = self.logic.planeNormal
+        self.resampledCurve = self.logic.resampledCurve
 
         # Enable / Disable flythrough button
-        self.flythroughCollapsibleButton.enabled = len(result.resampledCurve) > 0
+        enable = numberOfControlPoints > 1
+        self.flythroughCollapsibleButton.enabled = enable
+        self.advancedCollapsibleButton.enabled = enable
+
+        self.ignoreInputCurveModified -= 1
+
+        # Initialize to the start of the path
+        self.flyTo(0)
 
     def frameSliderValueChanged(self, newValue):
-        self.flyTo(newValue)
+        self.flyTo(int(newValue))
 
     def frameSkipSliderValueChanged(self, newValue):
         self.skip = int(newValue)
@@ -280,8 +367,28 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             # Enable the user to start playback
             self.playButton.text = _("Play flythrough")
 
+    def onSaveExportModelButtonClicked(self):
+        logging.debug("Create Model...")
+        outputPathNode = self.outputPathNodeSelector.currentNode()
+        model = EndoscopyPathModel(self.logic.resampledCurve, self.inputCurve, outputPathNode)
+
+        if self.cursor:
+            model.model.SetNodeReferenceID("CameraCursor", self.cursor.GetID())
+
+        if self.transform:
+            model.model.SetNodeReferenceID("CameraTransform", self.transform.GetID())
+
+        self.model = model.model
+
+        # Hide the model from the main 3D view
+        EndoscopyWidget._hideOnlyInView(
+            EndoscopyWidget._viewNodeIDFromCameraNode(self.cameraNode),
+            [self.model],
+        )
+        logging.debug("-> Model created")
+
     def flyToNext(self):
-        currentStep = self.frameSlider.value
+        currentStep = int(self.frameSlider.value)
         nextStep = currentStep + self.skip + 1
         if nextStep > len(self.resampledCurve) - 2:
             nextStep = 0
@@ -334,6 +441,75 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.cameraNode.ResetClippingRange()
 
+    @staticmethod
+    def _viewNodeIDFromCameraNode(cameraNode):
+        if cameraNode is None:
+            return None
+        return slicer.mrmlScene.GetSingletonNode(cameraNode.GetLayoutName(), "vtkMRMLViewNode").GetID()
+
+    @staticmethod
+    def _allViewNodeIDs():
+        return [
+            slicer.mrmlScene.GetNthNodeByClass(nodeIndex, "vtkMRMLViewNode").GetID()
+            for nodeIndex in range(slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLViewNode"))
+        ] + [
+            slicer.mrmlScene.GetNthNodeByClass(nodeIndex, "vtkMRMLSliceNode").GetID()
+            for nodeIndex in range(slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSliceNode"))
+        ]
+
+    @staticmethod
+    def _hideOnlyInView(viewNodeID, displayableNodes):
+        """Hide the displayable nodes only in the specified view.
+
+        If the view node ID does not exist, this is a no-op.
+        """
+        allViewNodeIDs = EndoscopyWidget._allViewNodeIDs()
+        if viewNodeID not in allViewNodeIDs:
+            return
+        for displayableNode in displayableNodes:
+            if not displayableNode:
+                continue
+            for displayNodeIndex in range(displayableNode.GetNumberOfDisplayNodes()):
+                displayNode = displayableNode.GetNthDisplayNode(displayNodeIndex)
+                if not displayNode:
+                    continue
+                with slicer.util.NodeModify(displayNode):
+                    displayNode.SetViewNodeIDs(allViewNodeIDs)
+                    displayNode.RemoveViewNodeID(viewNodeID)
+
+    def createCursor(self):
+        cursor = self.inputCurve.GetNodeReference("CameraCursor")
+        if not cursor:
+            # Markups cursor: Markups has a number of advantages (radius is easy
+            # to change, can jump to views by clicking on it, has many visualization
+            # options, can be scaled to fixed display size)
+            cursor = slicer.mrmlScene.AddNewNodeByClass(
+                "vtkMRMLMarkupsFiducialNode",
+                slicer.mrmlScene.GenerateUniqueName(f"Cursor-{self.inputCurve.GetName()}"),
+            )
+            cursor.CreateDefaultDisplayNodes()
+            cursor.CreateDefaultDisplayNodes()
+            cursor.GetDisplayNode().SetSelectedColor(1, 0, 0)  # red
+            cursor.GetDisplayNode().SetSliceProjection(True)
+            cursor.AddControlPoint(vtk.vtkVector3d(0, 0, 0), " ")  # do not show any visible label
+            cursor.SetNthControlPointLocked(0, True)
+
+            self.inputCurve.SetNodeReferenceID("CameraCursor", cursor.GetID())
+
+        # Transform node
+        transform = cursor.GetNodeReference("CameraTransform")
+        if not transform:
+            transform = slicer.mrmlScene.AddNewNodeByClass(
+                "vtkMRMLLinearTransformNode",
+                slicer.mrmlScene.GenerateUniqueName(f"Transform-{self.inputCurve.GetName()}"),
+            )
+            cursor.SetNodeReferenceID("CameraTransform", transform.GetID())
+        cursor.SetAndObserveTransformNodeID(transform.GetID())
+
+        cursor.transform = transform
+
+        self.cursor = cursor
+
 
 class EndoscopyLogic:
     """Compute path given an input curve.
@@ -348,6 +524,7 @@ class EndoscopyLogic:
     """
 
     def __init__(self, inputCurve, dl=0.5):
+        self.cleanup()
         self.dl = dl  # desired world space step size (in mm)
         self.dt = dl  # current guess of parametric stepsize
         self.inputCurve = inputCurve
@@ -370,6 +547,8 @@ class EndoscopyLogic:
                 self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
             # Get it as a numpy array as an independent copy
             self.resampledCurve = vtk.util.numpy_support.vtk_to_numpy(resampledPoints.GetData())
+
+            self.planeNormal = EndoscopyLogic.calculatePlaneNormal(self.resampledCurve)
             return
 
         # hermite interpolation functions
@@ -412,6 +591,15 @@ class EndoscopyLogic:
         self.resampledCurve = [self.p[0]]
         self.calculatePath()
 
+        self.planeNormal = EndoscopyLogic.calculatePlaneNormal(self.resampledCurve)
+
+    def cleanup(self):
+        # Whether we're about to construct or delete, free all resources and initialize class members to None.
+        self.dl = None
+        self.dt = None
+        self.inputCurve = None
+        self.resampledCurve = None
+
     def calculatePath(self):
         """Generate a flight path for of steps of length dl"""
         #
@@ -432,6 +620,16 @@ class EndoscopyLogic:
                 if segment < n - 1:
                     t, p, remainder = self.step(segment, t, remainder)
             self.resampledCurve.append(p)
+
+    @staticmethod
+    def calculatePlaneNormal(path):
+        points = vtk.vtkPoints()
+        for point in path:
+            pointIndex = points.InsertNextPoint(*point)
+
+        pointsArray = vtk.util.numpy_support.vtk_to_numpy(points.GetData())
+        _, planeNormal = EndoscopyLogic.planeFit(pointsArray.T)
+        return planeNormal
 
     def point(self, segment, t):
         return (self.h00(t) * self.p[segment] +
@@ -526,9 +724,6 @@ class EndoscopyPathModel:
             linesIDArray.SetTuple1(0, linesIDArray.GetNumberOfTuples() - 1)
             lines.SetNumberOfCells(1)
 
-        pointsArray = vtk.util.numpy_support.vtk_to_numpy(points.GetData())
-        self.planePosition, self.planeNormal = EndoscopyLogic.planeFit(pointsArray.T)
-
         # Create model node
         model = outputPathNode
         if not model:
@@ -539,33 +734,4 @@ class EndoscopyPathModel:
             model.GetDisplayNode().SetColor(1, 1, 0)  # yellow
 
         model.SetAndObservePolyData(polyData)
-
-        # Camera cursor
-        cursor = model.GetNodeReference("CameraCursor")
-        if not cursor:
-            # Markups cursor: Markups has a number of advantages (radius is easy
-            # to change, can jump to views by clicking on it, has many visualization
-            # options, can be scaled to fixed display size)
-            cursor = slicer.mrmlScene.AddNewNodeByClass(
-                "vtkMRMLMarkupsFiducialNode",
-                slicer.mrmlScene.GenerateUniqueName(f"Cursor-{inputCurve.GetName()}"),
-            )
-            cursor.CreateDefaultDisplayNodes()
-            cursor.GetDisplayNode().SetSelectedColor(1, 0, 0)  # red
-            cursor.GetDisplayNode().SetSliceProjection(True)
-            cursor.AddControlPoint(vtk.vtkVector3d(0, 0, 0), " ")  # do not show any visible label
-            cursor.SetNthControlPointLocked(0, True)
-
-            model.SetNodeReferenceID("CameraCursor", cursor.GetID())
-
-        # Transform node
-        transform = model.GetNodeReference("CameraTransform")
-        if not transform:
-            transform = slicer.mrmlScene.AddNewNodeByClass(
-                "vtkMRMLLinearTransformNode",
-                slicer.mrmlScene.GenerateUniqueName(f"Transform-{inputCurve.GetName()}"),
-            )
-            model.SetNodeReferenceID("CameraTransform", transform.GetID())
-        cursor.SetAndObserveTransformNodeID(transform.GetID())
-
-        self.transform = transform
+        self.model = model
