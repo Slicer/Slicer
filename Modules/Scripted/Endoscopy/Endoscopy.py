@@ -13,6 +13,7 @@ from slicer.ScriptedLoadableModule import (
     ScriptedLoadableModule,
     ScriptedLoadableModuleWidget,
 )
+from slicer.util import VTKObservationMixin
 
 
 #
@@ -54,7 +55,7 @@ NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
 #
 
 
-class EndoscopyWidget(ScriptedLoadableModuleWidget):
+class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -70,9 +71,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         self.timer.connect("timeout()", self.flyToNext)
 
         self.cameraNode = None
-        self.cameraNodeObserverTag = None
         self.camera = None
-        self.cameraObserverTag = None
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -190,29 +189,29 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
         inputCurveSelector.setMRMLScene(slicer.mrmlScene)
         outputPathNodeSelector.setMRMLScene(slicer.mrmlScene)
 
+    def cleanup(self):
+        """Called when the application closes and the module widget is destroyed."""
+        self.removeObservers()
+
     def setCameraNode(self, newCameraNode):
         """Allow to set the current camera node.
         Connected to signal 'currentNodeChanged()' emitted by camera node selector.
         """
 
         # Remove previous observer
-        if self.cameraNode and self.cameraNodeObserverTag:
-            self.cameraNode.RemoveObserver(self.cameraNodeObserverTag)
-            self.cameraNodeObserverTag = None
-        if self.camera and self.cameraObserverTag:
-            self.camera.RemoveObserver(self.cameraObserverTag)
-            self.cameraObserverTag = None
-
-        newCamera = None
-        if newCameraNode:
-            newCamera = newCameraNode.GetCamera()
-            # Add CameraNode ModifiedEvent observer
-            self.cameraNodeObserverTag = newCameraNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
-            # Add Camera ModifiedEvent observer
-            self.cameraObserverTag = newCamera.AddObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
+        if self.cameraNode is not None:
+            self.removeObserver(self.cameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
+        if self.camera is not None:
+            self.removeObserver(self.camera, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
 
         self.cameraNode = newCameraNode
-        self.camera = newCamera
+        self.camera = newCameraNode.GetCamera() if newCameraNode is not None else None
+
+        if self.cameraNode is not None:
+            self.addObserver(self.cameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
+
+        if self.camera is not None:
+            self.addObserver(self.camera, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
 
         # Update UI
         self.updateWidgetFromMRML()
@@ -222,9 +221,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget):
             self.viewAngleSlider.value = self.camera.GetViewAngle()
         if self.cameraNode:
             pass
-
-    def onCameraModified(self, observer, eventid):
-        self.updateWidgetFromMRML()
 
     def onCameraNodeModified(self, observer, eventid):
         self.updateWidgetFromMRML()
