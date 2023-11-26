@@ -71,7 +71,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.timer.connect("timeout()", self.flyToNext)
 
         self.cameraNode = None
-        self.camera = None
 
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
@@ -201,26 +200,18 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Remove previous observer
         if self.cameraNode is not None:
             self.removeObserver(self.cameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
-        if self.camera is not None:
-            self.removeObserver(self.camera, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
 
         self.cameraNode = newCameraNode
-        self.camera = newCameraNode.GetCamera() if newCameraNode is not None else None
 
         if self.cameraNode is not None:
             self.addObserver(self.cameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
-
-        if self.camera is not None:
-            self.addObserver(self.camera, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
 
         # Update UI
         self.updateWidgetFromMRML()
 
     def updateWidgetFromMRML(self):
         if self.camera:
-            self.viewAngleSlider.value = self.camera.GetViewAngle()
-        if self.cameraNode:
-            pass
+            self.viewAngleSlider.value = self.cameraNode.GetViewAngle()
 
     def onCameraNodeModified(self, observer, eventid):
         self.updateWidgetFromMRML()
