@@ -295,12 +295,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         resampledCurvePointIndex = int(resampledCurvePointIndex)
         cameraPosition = self.resampledCurve[resampledCurvePointIndex]
-        wasModified = self.cameraNode.StartModify()
-
-        self.camera.SetPosition(cameraPosition)
         focalPointPosition = self.resampledCurve[resampledCurvePointIndex + 1]
-        self.camera.SetFocalPoint(*focalPointPosition)
-        self.camera.OrthogonalizeViewUp()
 
         toParent = vtk.vtkMatrix4x4()
         self.transform.GetMatrixTransformToParent(toParent)
@@ -328,9 +323,15 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         toParent.SetElement(1, 2, zVec[1])
         toParent.SetElement(2, 2, zVec[2])
 
+        # Set the cursor matrix
         self.transform.SetMatrixTransformToParent(toParent)
 
-        self.cameraNode.EndModify(wasModified)
+        # Set the camera & cameraNode
+        with slicer.util.NodeModify(self.cameraNode):
+            self.cameraNode.SetPosition(cameraPosition)
+            self.cameraNode.SetFocalPoint(*focalPointPosition)
+            self.cameraNode.GetCamera().OrthogonalizeViewUp()
+
         self.cameraNode.ResetClippingRange()
 
 
