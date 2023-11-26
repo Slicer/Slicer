@@ -1,3 +1,4 @@
+import json
 import logging
 
 import ctk
@@ -33,12 +34,13 @@ class Endoscopy(ScriptedLoadableModule):
         self.parent.dependencies = []
         self.parent.contributors = [
             "Steve Pieper (Isomics)",
+            "Harald Scheirich (Kitware)",
             "Lee Newberg (Kitware)",
             "Jean-Christophe Fillion-Robin (Kitware)",
         ]
         self.parent.helpText = _("""
 Create or import a markups curve.
-Pick the Camera to be modified by the path defined by the input curve.
+Pick the Camera to use for either playing the flythrough or editing associated keyframes.
 Select the Camera to use for playing the flythrough.
 Clicking "Create flythrough path" will make a flythrough curve and enable the flythrough panel.
 You can manually scroll through the path with the Frame slider.
@@ -46,6 +48,7 @@ The Play/Pause button toggles animated flythrough.
 The Frame Skip slider speeds up the animation by skipping points on the path.
 The Frame Delay slider slows down the animation by adding more time between frames.
 The View Angle provides is used to approximate the optics of an endoscopy system.
+You can save the camera position at any point by clicking "Save camera position".
 """)
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
         self.parent.acknowledgementText = _("""
@@ -189,6 +192,54 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         flythroughFormLayout.addRow(_("View Angle:"), viewAngleSlider)
         self.viewAngleSlider = viewAngleSlider
 
+        keyframeOrientationLayout = qt.QHBoxLayout()
+
+        # Button for saving the camera orientation of a location
+        saveOrientationButton = qt.QPushButton(_("Save Keyframe Orientation"))
+        saveOrientationButton.toolTip = _("Save the camera orientation for this frame")
+        saveOrientationButton.enabled = False
+        saveOrientationButton.connect("clicked()", self.onSaveOrientationButtonClicked)
+        keyframeOrientationLayout.addWidget(saveOrientationButton)
+        self.saveOrientationButton = saveOrientationButton
+
+        # Button for deleting the camera orientation of a location
+        deleteOrientationButton = qt.QPushButton(_("Delete Keyframe Orientation"))
+        deleteOrientationButton.toolTip = _("Delete the camera orientation for this frame")
+        deleteOrientationButton.enabled = False
+        deleteOrientationButton.connect("clicked()", self.onDeleteOrientationButtonClicked)
+        keyframeOrientationLayout.addWidget(deleteOrientationButton)
+        self.deleteOrientationButton = deleteOrientationButton
+
+        flythroughFormLayout.addRow(keyframeOrientationLayout)
+
+        flythroughOrientationLayout = qt.QHBoxLayout()
+
+        firstOrientationButton = qt.QPushButton(_("First"))
+        firstOrientationButton.toolTip = _("Go to the first user-supplied keyframe")
+        firstOrientationButton.enabled = True
+        firstOrientationButton.connect("clicked()", self.onFirstOrientationButtonClicked)
+        flythroughOrientationLayout.addWidget(firstOrientationButton)
+
+        backOrientationButton = qt.QPushButton(_("Back"))
+        backOrientationButton.toolTip = _("Go to the previous user-supplied keyframe")
+        backOrientationButton.enabled = True
+        backOrientationButton.connect("clicked()", self.onBackOrientationButtonClicked)
+        flythroughOrientationLayout.addWidget(backOrientationButton)
+
+        nextOrientationButton = qt.QPushButton(_("Next"))
+        nextOrientationButton.toolTip = _("Go to the next user-supplied keyframe")
+        nextOrientationButton.enabled = True
+        nextOrientationButton.connect("clicked()", self.onNextOrientationButtonClicked)
+        flythroughOrientationLayout.addWidget(nextOrientationButton)
+
+        lastOrientationButton = qt.QPushButton(_("Last"))
+        lastOrientationButton.toolTip = _("Go to the last user-supplied keyframe")
+        lastOrientationButton.enabled = True
+        lastOrientationButton.connect("clicked()", self.onLastOrientationButtonClicked)
+        flythroughOrientationLayout.addWidget(lastOrientationButton)
+
+        flythroughFormLayout.addRow(flythroughOrientationLayout)
+
     def setupAdvancedUI(self):
         # Advanced collapsible button
         advancedCollapsibleButton = ctk.ctkCollapsibleButton()
@@ -285,6 +336,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         enable = self.cameraNodeSelector.currentNode() and self.inputCurveSelector.currentNode()
         self.createPathButton.enabled = enable
+        self.saveOrientationButton.enabled = enable
         self.saveExportModelButton.enabled = enable
 
     def onInputCurveModified(self, observer, eventid):
@@ -349,11 +401,91 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.timer.start()
             # Enable the user to stop playback
             self.playButton.text = _("Stop flythrough")
+            # Cannot save camera orientation during flythrough.
+            self.saveOrientationButton.enabled = False
         else:
             # Stop playback
             self.timer.stop()
             # Enable the user to start playback
             self.playButton.text = _("Play flythrough")
+            # Once playback is stopped, saving the camera orientation is permitted.
+            self.saveOrientationButton.enabled = True
+
+    def onSaveOrientationButtonClicked(self):
+        # Compute new dictionary key and value
+        resampledCurve = self.logic.resampledCurve
+        resampledCurvePointIndex = int(self.frameSlider.value)
+        distanceAlongResampledCurve = EndoscopyLogic.distanceAlongCurveOfNthControlPoint(
+            resampledCurve, resampledCurvePointIndex,
+        )
+        cameraPosition = self.cameraNode.GetPosition()
+        focalPoint = self.cameraNode.GetFocalPoint()
+        viewUp = self.cameraNode.GetViewUp()
+        worldMatrix3x3 = EndoscopyLogic.buildCameraMatrix3x3(cameraPosition, focalPoint, viewUp)
+        worldOrientation = EndoscopyLogic.matrix3x3ToOrientation(worldMatrix3x3)
+
+        # Add new dictionary key-value pair
+        cameraOrientations = self.loadCameraOrientations()
+        cameraOrientations[distanceAlongResampledCurve] = worldOrientation
+        self.saveCameraOrientations(cameraOrientations)
+
+        if not self.logic:
+            # Create an entire EndoscopyLogic instance
+            self.logic = EndoscopyLogic(self.inputCurve)
+        else:
+            # Update only the interpolations
+            self.logic.interpolateOrientations()
+
+        self.flyTo(resampledCurvePointIndex)
+
+    def onDeleteOrientationButtonClicked(self):
+        resampledCurve = self.logic.resampledCurve
+        resampledCurvePointIndexToDelete = int(self.frameSlider.value)
+        # The inputCurve (and hence the resampledCurve) could have been modified since these distances were saved,
+        # meaning that computing a distance from an index may not now give the same distance value.  However, we can
+        # delete the entries associated with this resampledCurvePointIndexToDelete even in the case that its
+        # distance has changed.
+        cameraOrientations = self.loadCameraOrientations()
+        # We must freeze the cameraOrientations.keys() generator at the start (by converting it to a list) because we
+        # delete from the cameraOrientations Python dict in this loop.
+        for distanceAlongResampledCurve in list(cameraOrientations.keys()):
+            resampledCurvePointIndex = EndoscopyLogic.indexOfControlPointForDistanceAlongCurve(
+                resampledCurve, distanceAlongResampledCurve,
+            )
+            if resampledCurvePointIndex == resampledCurvePointIndexToDelete:
+                del cameraOrientations[distanceAlongResampledCurve]
+        self.saveCameraOrientations(cameraOrientations)
+
+        if not self.logic:
+            # Create an entire EndoscopyLogic instance
+            self.logic = EndoscopyLogic(self.inputCurve)
+        else:
+            # Update only the interpolations
+            self.logic.interpolateOrientations()
+
+        self.flyTo(resampledCurvePointIndex)
+
+    def onFirstOrientationButtonClicked(self):
+        allIndices = self.logic.cameraOrientationResampledCurveIndices
+        whereTo = min(allIndices, default=self.frameSlider.minimum)
+        self.frameSlider.value = whereTo
+
+    def onBackOrientationButtonClicked(self):
+        allIndices = self.logic.cameraOrientationResampledCurveIndices
+        allIndices = [x for x in allIndices if x < self.frameSlider.value]
+        whereTo = max(allIndices, default=self.frameSlider.minimum)
+        self.frameSlider.value = whereTo
+
+    def onNextOrientationButtonClicked(self):
+        allIndices = self.logic.cameraOrientationResampledCurveIndices
+        allIndices = [x for x in allIndices if x > self.frameSlider.value]
+        whereTo = min(allIndices, default=self.frameSlider.maximum)
+        self.frameSlider.value = whereTo
+
+    def onLastOrientationButtonClicked(self):
+        allIndices = self.logic.cameraOrientationResampledCurveIndices
+        whereTo = max(allIndices, default=self.frameSlider.maximum)
+        self.frameSlider.value = whereTo
 
     def onSaveExportModelButtonClicked(self):
         logging.debug("Create Model...")
@@ -374,6 +506,59 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             [self.model],
         )
         logging.debug("-> Model created")
+
+    def loadCameraOrientations(self):
+        cameraOrientationsString = self.inputCurve.GetAttribute(
+            EndoscopyLogic.NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME,
+        )
+        convertedCameraOrientations = (
+            dict() if cameraOrientationsString is None else json.loads(cameraOrientationsString)
+        )
+        if not self.cameraOrientationsIsCorrectType(convertedCameraOrientations):
+            raise ValueError(
+                "EndoscopyWidget.loadCameraOrientations:"
+                " Retrieved cameraOrientations is not of the correct type.",
+            )
+        # JSON turns the `keys` into strings and cannot handle `values` that are numpy arrays.
+        # So, let's convert back.
+        cameraOrientations = {float(k): np.array(v) for k, v in convertedCameraOrientations.items()}
+        if self.logic:
+            self.logic.cameraOrientations = cameraOrientations
+
+        return cameraOrientations
+
+    def saveCameraOrientations(self, cameraOrientations):
+        if cameraOrientations:
+            # JSON turns float `keys` into strings and cannot handle `values` that are numpy arrays.
+            # So, let's convert.
+            convertedCameraOrientations = {str(k): list(v) for k, v in cameraOrientations.items()}
+            if not self.cameraOrientationsIsCorrectType(convertedCameraOrientations):
+                raise ValueError(
+                    "EndoscopyWidget.saveCameraOrientations:"
+                    " supplied cameraOrientations is not of the correct type",
+                )
+            cameraOrientationsString = json.dumps(convertedCameraOrientations)
+        else:
+            # Rather than a length-zero or length-two string representing an empty dictionary, clear the string.
+            cameraOrientationsString = None
+
+        self.inputCurve.SetAttribute(
+            EndoscopyLogic.NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME, cameraOrientationsString,
+        )
+        if self.logic:
+            self.logic.cameraOrientations = cameraOrientations
+
+    def cameraOrientationsIsCorrectType(self, convertedCameraOrientations):
+        return (
+            isinstance(convertedCameraOrientations, dict)
+            and all([isinstance(k, (int, float, str)) for k in convertedCameraOrientations.keys()])
+            and all(
+                [
+                    isinstance(v, list) and len(v) == 4 and all([isinstance(e, (int, float)) for e in v])
+                    for v in convertedCameraOrientations.values()
+                ],
+            )
+        )
 
     def flyToNext(self):
         currentStep = int(self.frameSlider.value)
@@ -398,42 +583,32 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         focalPoint = np.zeros((3,))
         self.logic.resampledCurve.GetNthControlPointPositionWorld(resampledCurvePointIndex + 1, focalPoint)
 
-        toParent = vtk.vtkMatrix4x4()
-        self.transform.GetMatrixTransformToParent(toParent)
-        toParent.SetElement(0, 3, cameraPosition[0])
-        toParent.SetElement(1, 3, cameraPosition[1])
-        toParent.SetElement(2, 3, cameraPosition[2])
+        worldOrientation = np.zeros((4,))
+        self.logic.resampledCurve.GetNthControlPointOrientation(resampledCurvePointIndex, worldOrientation)
 
-        # Set up transform orientation component so that
-        # Z axis is aligned with view direction and
-        # Y vector is aligned with the curve's plane normal.
-        # This can be used for example to show a reformatted slice
-        # using with SlicerIGT extension's VolumeResliceDriver module.
-        zVec = (focalPoint - cameraPosition) / np.linalg.norm(focalPoint - cameraPosition)
-        yVec = self.logic.planeNormal
-        xVec = np.cross(yVec, zVec)
-        xVec /= np.linalg.norm(xVec)
-        yVec = np.cross(zVec, xVec)
-        toParent.SetElement(0, 0, xVec[0])
-        toParent.SetElement(1, 0, xVec[1])
-        toParent.SetElement(2, 0, xVec[2])
-        toParent.SetElement(0, 1, yVec[0])
-        toParent.SetElement(1, 1, yVec[1])
-        toParent.SetElement(2, 1, yVec[2])
-        toParent.SetElement(0, 2, zVec[0])
-        toParent.SetElement(1, 2, zVec[1])
-        toParent.SetElement(2, 2, zVec[2])
+        worldMatrix3x3 = EndoscopyLogic.orientationToMatrix3x3(worldOrientation)
+        worldMatrix4x4 = EndoscopyLogic.buildCameraMatrix4x4(cameraPosition, worldMatrix3x3)
+
+        adjustedFocalPoint = cameraPosition + worldMatrix3x3[:, 2] * (
+            np.linalg.norm(focalPoint - cameraPosition) / np.linalg.norm(worldMatrix3x3[:, 2])
+        )
 
         # Set the cursor matrix
-        self.transform.SetMatrixTransformToParent(toParent)
+        self.transform.SetMatrixTransformToParent(worldMatrix4x4)
 
         # Set the camera & cameraNode
         with slicer.util.NodeModify(self.cameraNode):
-            self.cameraNode.SetPosition(cameraPosition)
-            self.cameraNode.SetFocalPoint(*focalPoint)
-            self.cameraNode.GetCamera().OrthogonalizeViewUp()
+            self.cameraNode.SetPosition(*cameraPosition)
+            self.cameraNode.SetFocalPoint(*adjustedFocalPoint)
+            self.cameraNode.SetViewUp(*worldMatrix3x3[:, 1])
 
         self.cameraNode.ResetClippingRange()
+
+        deletable = resampledCurvePointIndex in self.logic.cameraOrientationResampledCurveIndices
+        self.deleteOrientationButton.enabled = deletable
+        self.saveOrientationButton.text = (
+            _("Update Keyframe Orientation") if deletable else _("Save Keyframe Orientation")
+        )
 
     @staticmethod
     def _viewNodeIDFromCameraNode(cameraNode):
@@ -515,7 +690,14 @@ class EndoscopyLogic:
       logic = EndoscopyLogic(inputCurve)
       print(f"computed path has {logic.resampledCurve.GetNumberOfControlPoints()} elements")
 
+    Notes:
+    * `orientation` = (angle, *axis), where angle is in radians and axis is the unit 3D-vector for the axis
+                      of rotation.
+    * `quaternion` = (cos(angle/2), *axis * sin(angle/2))
+    * `matrix` = matrix with columns x, y, and z, which are unit vectors for the rotated frame
     """
+
+    NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME = "Endoscopy.Path.CameraOrientations"
 
     def __init__(self, inputCurve, dl=0.5):
         self.cleanup()
@@ -528,6 +710,8 @@ class EndoscopyLogic:
         self.inputCurve = None
         self.resampledCurve = None
         self.planeNormal = None
+        self.cameraOrientations = None
+        self.cameraOrientationResampledCurveIndices = None
 
     def setControlPoints(self, inputCurve: slicer.vtkMRMLMarkupsCurveNode) -> bool:
         expectedType = slicer.vtkMRMLMarkupsCurveNode
@@ -543,8 +727,13 @@ class EndoscopyLogic:
         if self.inputCurve.GetNumberOfControlPoints() > 1:
 
             # Temporarily increase the number of points per segment, to get a very smooth curve
+            # We want at least as many points as 8.0 times the number of self.dl intervals that we expect
             pointsPerSegment = (
-                int(self.inputCurve.GetCurveLengthWorld() / self.dl / self.inputCurve.GetNumberOfControlPoints()) + 1
+                int(
+                    (self.inputCurve.GetCurveLengthWorld() / (self.dl / 8.0))
+                    / (self.inputCurve.GetNumberOfControlPoints() - 1)
+                    + 1,
+                )
             )
             originalPointsPerSegment = self.inputCurve.GetNumberOfPointsPerInterpolatingSegment()
             if originalPointsPerSegment < pointsPerSegment:
@@ -583,6 +772,190 @@ class EndoscopyLogic:
         # nonsensical if self.numberOfResampledCurveControlPoints < 3, but proceed anyway.
         _, self.planeNormal = EndoscopyLogic.planeFit(points.T)
 
+        # Interpolate the user-supplied orientations to compute (and assign) an orientation to every control point of
+        # the resampledCurve.
+        self.interpolateOrientations()
+
+    def interpolateOrientations(self):
+
+        # Configure a vtkQuaternionInterpolator using the user's supplied orientations.
+        # Note that all distances are as measured along resampledCurve rather than along inputCurve.
+
+        cameraOrientations = self.cameraOrientations
+        if not cameraOrientations:
+            # None supplied
+            cameraOrientations = dict()
+        quaternionInterpolator = vtk.vtkQuaternionInterpolator()
+        quaternionInterpolator.SetSearchMethod(0)  # binary search
+
+        # # Using a modified Kochanek basis
+        # quaternionInterpolator.SetInterpolationTypeToSpline()
+        # Using linear spherical interpolation
+        quaternionInterpolator.SetInterpolationTypeToLinear()
+
+        resampledCurveLength = self.resampledCurve.GetCurveLengthWorld()
+        distances = sorted({0.0} | set(cameraOrientations.keys()) | {resampledCurveLength})
+
+        self.cameraOrientationResampledCurveIndices = []
+        for distanceAlongResampledCurve in distances:
+            if distanceAlongResampledCurve in cameraOrientations.keys():
+                resampledCurvePointIndex = EndoscopyLogic.indexOfControlPointForDistanceAlongCurve(
+                    self.resampledCurve, distanceAlongResampledCurve,
+                )
+                self.cameraOrientationResampledCurveIndices.append(resampledCurvePointIndex)
+                worldOrientation = cameraOrientations[distanceAlongResampledCurve]
+                relativeOrientation = self.worldOrientationToRelative(
+                    self.resampledCurve, resampledCurvePointIndex, worldOrientation,
+                )
+                quaternion = EndoscopyLogic.orientationToQuaternion(relativeOrientation)
+            else:
+                # If not overridden by the user, the default relativeOrientation at the first and last is the identity.
+                quaternion = np.array([1.0, 0.0, 0.0, 0.0])
+
+            quaternionInterpolator.AddQuaternion(distanceAlongResampledCurve, quaternion)
+
+        # Use the configured vtkQuaternionInterpolator to pre-compute orientations for the resampledCurve.
+        with slicer.util.NodeModify(self.resampledCurve):
+            for resampledCurvePointIndex in range(self.resampledCurve.GetNumberOfControlPoints()):
+                distanceAlongResampledCurve = EndoscopyLogic.distanceAlongCurveOfNthControlPoint(
+                    self.resampledCurve, resampledCurvePointIndex,
+                )
+                quaternion = np.zeros((4,))
+                quaternionInterpolator.InterpolateQuaternion(distanceAlongResampledCurve, quaternion)
+                relativeOrientation = EndoscopyLogic.quaternionToOrientation(quaternion)
+                self.setRelativeOrientation(self.resampledCurve, resampledCurvePointIndex, relativeOrientation)
+
+    def getDefaultOrientation(self, curve, curveControlPointIndex, worldOrientation=None):
+        worldOrientation = worldOrientation if worldOrientation is not None else np.zeros((4,))
+        numberOfCurveControlPoints = curve.GetNumberOfControlPoints()
+        # If the curve is not closed then the last control point has the same orientation as its previous control point.
+        # Get its forward direction by looking at the previous control point.
+        lastPoint = (
+            curveControlPointIndex == numberOfCurveControlPoints - 1
+            and not curve.GetCurveClosed()
+        )
+        if lastPoint:
+            curveControlPointIndex -= 1
+        nextCurveControlPointIndex = (curveControlPointIndex + 1) % numberOfCurveControlPoints
+        cameraPosition = np.zeros((3,))
+        curve.GetNthControlPointPositionWorld(curveControlPointIndex, cameraPosition)
+        focalPoint = np.zeros((3,))
+        curve.GetNthControlPointPositionWorld(nextCurveControlPointIndex, focalPoint)
+
+        if lastPoint:
+            increment = focalPoint - cameraPosition
+            cameraPosition += increment
+            focalPoint += increment
+
+        matrix3x3 = EndoscopyLogic.buildCameraMatrix3x3(cameraPosition, focalPoint, self.planeNormal)
+        EndoscopyLogic.matrix3x3ToOrientation(matrix3x3, worldOrientation)
+
+        return worldOrientation
+
+    @staticmethod
+    def setWorldOrientation(curve, curveControlPointIndex, worldOrientation):
+        curve.SetNthControlPointOrientation(curveControlPointIndex, worldOrientation)
+
+    def getRelativeOrientation(self, curve, curveControlPointIndex, relativeOrientation=None):
+        relativeOrientation = relativeOrientation if relativeOrientation is not None else np.zeros((4,))
+
+        worldOrientation = np.zeros((4,))
+        curve.GetNthControlPointOrientation(curveControlPointIndex, worldOrientation)
+
+        self.worldOrientationToRelative(curve, curveControlPointIndex, worldOrientation, relativeOrientation)
+        return relativeOrientation
+
+    def setRelativeOrientation(self, curve, curveControlPointIndex, relativeOrientation):
+        worldOrientation = self.relativeOrientationToWorld(curve, curveControlPointIndex, relativeOrientation)
+        EndoscopyLogic.setWorldOrientation(curve, curveControlPointIndex, worldOrientation)
+
+    def relativeOrientationToWorld(self, curve, curveControlPointIndex, relativeOrientation, worldOrientation=None):
+        worldOrientation = worldOrientation if worldOrientation is not None else np.zeros((4,))
+        defaultOrientation = self.getDefaultOrientation(curve, curveControlPointIndex)
+        EndoscopyLogic.multiplyOrientations(relativeOrientation, defaultOrientation, worldOrientation)
+        return worldOrientation
+
+    def worldOrientationToRelative(self, curve, curveControlPointIndex, worldOrientation, relativeOrientation=None):
+        relativeOrientation = relativeOrientation if relativeOrientation is not None else np.zeros((4,))
+        inverseDefaultOrientation = self.getDefaultOrientation(curve, curveControlPointIndex)
+        # Convert defaultOrientation to its inverse by negating the angle of rotation
+        inverseDefaultOrientation[0] *= -1.0
+        EndoscopyLogic.multiplyOrientations(worldOrientation, inverseDefaultOrientation, relativeOrientation)
+        return relativeOrientation
+
+    @staticmethod
+    def distanceAlongCurveOfNthControlPoint(curve, indexOfControlPoint):
+        controlPointPositionWorld = curve.GetNthControlPointPositionWorld(indexOfControlPoint)
+        # There are self.curve.GetNumberOfPointsPerInterpolatingSegment() -- usually 10 -- of the "curve point" for each
+        # "control point".  There are index + 1 curve points in {0, ..., index}.  So, typically, we have
+        # numberOfCurvePoints = 10 * indexOfControlPoint + 1.
+        numberOfCurvePoints = curve.GetClosestCurvePointIndexToPositionWorld(controlPointPositionWorld) + 1
+        distance = curve.GetCurveLengthWorld(0, numberOfCurvePoints)
+        return distance
+
+    @staticmethod
+    def indexOfControlPointForDistanceAlongCurve(curve, distanceAlongInputCurve):
+        indexOfControlPoint = (
+            curve.GetCurvePointIndexAlongCurveWorld(0, distanceAlongInputCurve)
+            // curve.GetNumberOfPointsPerInterpolatingSegment()
+        )
+        return indexOfControlPoint
+
+    @staticmethod
+    def matrix3x3ToOrientation(matrix3x3, orientation=None):
+        orientation = orientation if orientation is not None else np.zeros((4,))
+        vtkQ = vtk.vtkQuaternion[np.float64]()
+        vtkQ.FromMatrix3x3(matrix3x3)
+        orientation[0] = vtkQ.GetRotationAngleAndAxis(orientation[1:4])
+        return orientation
+
+    @staticmethod
+    def matrix3x3ToQuaternion(matrix3x3, quaternion=None):
+        quaternion = quaternion if quaternion is not None else np.zeros((4,))
+        vtk.vtkMath.matrix3x3ToQuaternion(matrix3x3, quaternion)
+        return quaternion
+
+    @staticmethod
+    def orientationToMatrix3x3(orientation, matrix3x3=None):
+        matrix3x3 = matrix3x3 if matrix3x3 is not None else np.zeros((3, 3))
+        vtkQ = vtk.vtkQuaternion[np.float64]()
+        vtkQ.SetRotationAngleAndAxis(*orientation)
+        vtkQ.ToMatrix3x3(matrix3x3)
+        return matrix3x3
+
+    @staticmethod
+    def orientationToQuaternion(orientation, quaternion=None):
+        quaternion = quaternion if quaternion is not None else np.zeros((4,))
+        vtkQ = vtk.vtkQuaternion[np.float64]()
+        vtkQ.SetRotationAngleAndAxis(*orientation)
+        vtkQ.Get(quaternion)
+        return quaternion
+
+    @staticmethod
+    def quaternionToMatrix3x3(quaternion, matrix3x3=None):
+        matrix3x3 = matrix3x3 if matrix3x3 is not None else np.zeros((3, 3))
+        vtk.vtkMath.quaternionToMatrix3x3(quaternion, matrix3x3)
+        return matrix3x3
+
+    @staticmethod
+    def quaternionToOrientation(quaternion, orientation=None):
+        orientation = orientation if orientation is not None else np.zeros((4,))
+        vtkQ = vtk.vtkQuaternion[np.float64]()
+        vtkQ.Set(*quaternion)
+        orientation[0] = vtkQ.GetRotationAngleAndAxis(orientation[1:4])
+        return orientation
+
+    @staticmethod
+    def multiplyOrientations(leftOrientation, rightOrientation, resultOrientation=None):
+        resultOrientation = resultOrientation if resultOrientation is not None else np.zeros((4,))
+        return EndoscopyLogic.matrix3x3ToOrientation(
+            np.matmul(
+                EndoscopyLogic.orientationToMatrix3x3(leftOrientation),
+                EndoscopyLogic.orientationToMatrix3x3(rightOrientation),
+            ),
+            resultOrientation,
+        )
+
     @staticmethod
     def planeFit(points):
         """
@@ -596,15 +969,44 @@ class EndoscopyLogic:
         Adapted from https://stackoverflow.com/questions/12299540/plane-fitting-to-4-or-more-xyz-points
         """
         points = points.reshape((points.shape[0], -1))  # Collapse trailing dimensions
-        assert (
-            points.shape[0] <= points.shape[1]
-        ), f"There are only {points.shape[1]} points in {points.shape[0]} dimensions."
-        ctr = points.mean(axis=1)
+        ctr = points.mean(axis=1) if points.size else np.zeros((points.shape[0],))
         x = points - ctr[:, np.newaxis]  # Recenter on the centroid
         M = np.dot(x, x.T)  # Could also use np.cov(x) here.
         n = np.linalg.svd(M)[0][:, -1]
+        # Choose the normal to be in the direction of increasing coordinate value
+        primary_direction = np.abs(n).argmax()
+        if n[primary_direction] < 0.0:
+            n *= -1.0
         p = ctr
         return p, n
+
+    @staticmethod
+    def buildCameraMatrix3x3(cameraPosition, focalPoint, viewUp, outputMatrix3x3=None):
+        outputMatrix3x3 = outputMatrix3x3 if outputMatrix3x3 is not None else np.zeros((3, 3))
+        # Note that viewUp might be supplied as planeNormal, which might not be orthogonal to (focalPoint -
+        # cameraPosition), so this mathematics is careful to handle that case too.
+
+        # Camera forward
+        outputMatrix3x3[:, 2] = np.array(focalPoint) - np.array(cameraPosition)
+        outputMatrix3x3[:, 2] /= np.linalg.norm(outputMatrix3x3[:, 2])
+        # Camera left
+        outputMatrix3x3[:, 0] = np.cross(np.array(viewUp), outputMatrix3x3[:, 2])
+        outputMatrix3x3[:, 0] /= np.linalg.norm(outputMatrix3x3[:, 0])
+        # Camera up.  (No need to normalize because it is already normalized.)
+        outputMatrix3x3[:, 1] = np.cross(outputMatrix3x3[:, 2], outputMatrix3x3[:, 0])
+
+        return outputMatrix3x3
+
+    @staticmethod
+    def buildCameraMatrix4x4(cameraPosition, inputMatrix3x3, outputMatrix4x4=None):
+        outputMatrix4x4 = outputMatrix4x4 if outputMatrix4x4 is not None else vtk.vtkMatrix4x4()
+        outputMatrix4x4.SetElement(3, 3, 1.0)
+        for col in range(3):
+            for row in range(3):
+                outputMatrix4x4.SetElement(row, col, inputMatrix3x3[row, col])
+            outputMatrix4x4.SetElement(3, col, 0.0)
+            outputMatrix4x4.SetElement(col, 3, cameraPosition[col])
+        return outputMatrix4x4
 
 
 class EndoscopyPathModel:
