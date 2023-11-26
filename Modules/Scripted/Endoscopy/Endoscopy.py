@@ -71,13 +71,11 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.transform = None
         self.cursor = None
         self.model = None
-        self.resampledCurve = None
         self.skip = 0
         self.logic = None
         self.timer = qt.QTimer()
         self.timer.setInterval(20)
         self.timer.connect("timeout()", self.flyToNext)
-        self.ignoreInputCurveModified = 0
 
         self.cameraNode = None
         self.inputCurve = None
@@ -272,7 +270,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.updateWidgetFromMRML()
 
     def updateWidgetFromMRML(self):
-
         self.flythroughCollapsibleButton.enabled = self.inputCurve is not None
         self.advancedCollapsibleButton.enabled = self.inputCurve is not None
 
@@ -292,11 +289,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def onInputCurveModified(self, observer, eventid):
         """If the input curve  was changed we need to repopulate the keyframe UI"""
-        if not self.ignoreInputCurveModified:
-            if self.logic:
-                # We are going to have rebuild the EndoscopyLogic later
-                self.logic.cleanup()
-                self.logic = None
+        pass
 
     def onCreatePathButtonClicked(self):
         """Connected to `createPath` button.  It allows to:
@@ -305,8 +298,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         - ensure cursor, model and input curve are not visible in the endoscopy view
         - go to start of the path
         """
-        self.ignoreInputCurveModified += 1
-
         inputCurve = self.inputCurveSelector.currentNode()
 
         if self.logic:
@@ -329,15 +320,11 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Update flythrough variables
         self.transform = self.cursor.transform
-        self.pathPlaneNormal = self.logic.planeNormal
-        self.resampledCurve = self.logic.resampledCurve
 
         # Enable / Disable flythrough button
         enable = numberOfControlPoints > 1
         self.flythroughCollapsibleButton.enabled = enable
         self.advancedCollapsibleButton.enabled = enable
-
-        self.ignoreInputCurveModified -= 1
 
         # Initialize to the start of the path
         self.flyTo(0)
@@ -391,19 +378,23 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def flyToNext(self):
         currentStep = int(self.frameSlider.value)
         nextStep = currentStep + self.skip + 1
-        if nextStep > len(self.resampledCurve) - 2:
+        if nextStep > len(self.logic.resampledCurve) - 2:
             nextStep = 0
         self.frameSlider.value = nextStep
 
     def flyTo(self, resampledCurvePointIndex):
         """Apply the resampledCurvePointIndex-th step in the path to the global camera"""
 
-        if self.resampledCurve is None:
+        if (
+            self.logic is None
+            or self.logic.resampledCurve is None
+            or not 0 <= resampledCurvePointIndex < len(self.logic.resampledCurve)
+        ):
             return
 
         resampledCurvePointIndex = int(resampledCurvePointIndex)
-        cameraPosition = self.resampledCurve[resampledCurvePointIndex]
-        focalPointPosition = self.resampledCurve[resampledCurvePointIndex + 1]
+        cameraPosition = self.logic.resampledCurve[resampledCurvePointIndex]
+        focalPointPosition = self.logic.resampledCurve[resampledCurvePointIndex + 1]
 
         toParent = vtk.vtkMatrix4x4()
         self.transform.GetMatrixTransformToParent(toParent)
@@ -417,7 +408,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # This can be used for example to show a reformatted slice
         # using with SlicerIGT extension's VolumeResliceDriver module.
         zVec = (focalPointPosition - cameraPosition) / np.linalg.norm(focalPointPosition - cameraPosition)
-        yVec = self.pathPlaneNormal
+        yVec = self.logic.planeNormal
         xVec = np.cross(yVec, zVec)
         xVec /= np.linalg.norm(xVec)
         yVec = np.cross(zVec, xVec)
@@ -526,39 +517,55 @@ class EndoscopyLogic:
     def __init__(self, inputCurve, dl=0.5):
         self.cleanup()
         self.dl = dl  # desired world space step size (in mm)
-        self.inputCurve = inputCurve
-
-        # Temporarily increase the number of points per segment, to get a very smooth curve
-        pointsPerSegment = int(self.inputCurve.GetCurveLengthWorld() / self.dl / self.inputCurve.GetNumberOfControlPoints()) + 1
-        originalPointsPerSegment = self.inputCurve.GetNumberOfPointsPerInterpolatingSegment()
-        if originalPointsPerSegment < pointsPerSegment:
-            self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment)
-        # Get equidistant points
-        resampledPoints = vtk.vtkPoints()
-        slicer.vtkMRMLMarkupsCurveNode.ResamplePoints(self.inputCurve.GetCurvePointsWorld(), resampledPoints, self.dl, self.inputCurve.GetCurveClosed())
-        # Restore original number of pointsPerSegment
-        if originalPointsPerSegment < pointsPerSegment:
-            self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
-        # Get it as a numpy array as an independent copy
-        self.resampledCurve = vtk.util.numpy_support.vtk_to_numpy(resampledPoints.GetData())
-
-        self.planeNormal = EndoscopyLogic.calculatePlaneNormal(self.resampledCurve)
+        self.setControlPoints(inputCurve)
 
     def cleanup(self):
         # Whether we're about to construct or delete, free all resources and initialize class members to None.
         self.dl = None
         self.inputCurve = None
         self.resampledCurve = None
+        self.planeNormal = None
 
-    @staticmethod
-    def calculatePlaneNormal(path):
-        points = vtk.vtkPoints()
-        for point in path:
-            pointIndex = points.InsertNextPoint(*point)
+    def setControlPoints(self, inputCurve: slicer.vtkMRMLMarkupsCurveNode) -> bool:
+        expectedType = slicer.vtkMRMLMarkupsCurveNode
+        if not isinstance(inputCurve, expectedType):
+            raise TypeError(
+                f"inputCurve must be of type '{expectedType}', is type '{type(inputCurve)}' value '{inputCurve}'",
+            )
 
-        pointsArray = vtk.util.numpy_support.vtk_to_numpy(points.GetData())
-        _, planeNormal = EndoscopyLogic.planeFit(pointsArray.T)
-        return planeNormal
+        self.inputCurve = inputCurve
+
+        resampledPoints = vtk.vtkPoints()
+
+        if self.inputCurve.GetNumberOfControlPoints() > 1:
+
+            # Temporarily increase the number of points per segment, to get a very smooth curve
+            pointsPerSegment = (
+                int(self.inputCurve.GetCurveLengthWorld() / self.dl / self.inputCurve.GetNumberOfControlPoints()) + 1
+            )
+            originalPointsPerSegment = self.inputCurve.GetNumberOfPointsPerInterpolatingSegment()
+            if originalPointsPerSegment < pointsPerSegment:
+                self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment)
+
+            # Get equidistant points
+            slicer.vtkMRMLMarkupsCurveNode.ResamplePoints(
+                self.inputCurve.GetCurvePointsWorld(),
+                resampledPoints,
+                self.dl,
+                inputCurve.GetCurveClosed(),
+            )
+
+            # Restore original number of pointsPerSegment
+            if originalPointsPerSegment < pointsPerSegment:
+                self.inputCurve.SetNumberOfPointsPerInterpolatingSegment(originalPointsPerSegment)
+
+        # Get it as a numpy array as an independent copy
+        self.resampledCurve = vtk.util.numpy_support.vtk_to_numpy(resampledPoints.GetData())
+
+        # Find a plane that approximately includes the points of the resampled curve,
+        # so that we can use its normal to define the "up" direction. This is somewhat
+        # nonsensical if self.numberOfResampledCurveControlPoints < 3, but proceed anyway.
+        _, self.planeNormal = EndoscopyLogic.planeFit(self.resampledCurve.T)
 
     @staticmethod
     def planeFit(points):
@@ -573,7 +580,9 @@ class EndoscopyLogic:
         Adapted from https://stackoverflow.com/questions/12299540/plane-fitting-to-4-or-more-xyz-points
         """
         points = points.reshape((points.shape[0], -1))  # Collapse trailing dimensions
-        assert points.shape[0] <= points.shape[1], f"There are only {points.shape[1]} points in {points.shape[0]} dimensions."
+        assert (
+            points.shape[0] <= points.shape[1]
+        ), f"There are only {points.shape[1]} points in {points.shape[0]} dimensions."
         ctr = points.mean(axis=1)
         x = points - ctr[:, np.newaxis]  # Recenter on the centroid
         M = np.dot(x, x.T)  # Could also use np.cov(x) here.
@@ -621,7 +630,8 @@ class EndoscopyPathModel:
         model = outputPathNode
         if not model:
             model = slicer.mrmlScene.AddNewNodeByClass(
-                "vtkMRMLModelNode", slicer.mrmlScene.GenerateUniqueName(f"Path-{inputCurve.GetName()}"),
+                "vtkMRMLModelNode",
+                slicer.mrmlScene.GenerateUniqueName(f"Path-{inputCurve.GetName()}"),
             )
             model.CreateDefaultDisplayNodes()
             model.GetDisplayNode().SetColor(1, 1, 0)  # yellow
