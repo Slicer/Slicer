@@ -79,6 +79,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.timer = qt.QTimer()
         self.timer.setInterval(20)
         self.timer.connect("timeout()", self.flyToNext)
+        self.ignoreInputCurveModified = 0
 
         self.cameraNode = None
         self.inputCurve = None
@@ -341,7 +342,11 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def onInputCurveModified(self, observer, eventid):
         """If the input curve  was changed we need to repopulate the keyframe UI"""
-        pass
+        if not self.ignoreInputCurveModified:
+            if self.logic:
+                # We are going to have rebuild the EndoscopyLogic later
+                self.logic.cleanup()
+                self.logic = None
 
     def onCreatePathButtonClicked(self):
         """Connected to 'Use this curve'` button.  It allows to:
@@ -351,6 +356,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         - go to start of the path
         """
         inputCurve = self.inputCurveSelector.currentNode()
+        self.ignoreInputCurveModified += 1
 
         if self.logic:
             self.logic.cleanup()
@@ -361,7 +367,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Update frame slider range
         self.frameSlider.maximum = max(0, numberOfControlPoints - 2)
 
-        # Create a cursor so that the user can see where the fly through is progressing.
+        # Create a cursor so that the user can see where the flythrough is progressing.
         self.createCursor()
 
         # Hide the cursor, model and inputCurve from the main 3D view
@@ -377,6 +383,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         enable = numberOfControlPoints > 1
         self.flythroughCollapsibleButton.enabled = enable
         self.advancedCollapsibleButton.enabled = enable
+
+        self.ignoreInputCurveModified -= 1
 
         # Initialize to the start of the path
         self.flyTo(0)
@@ -542,9 +550,11 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             # Rather than a length-zero or length-two string representing an empty dictionary, clear the string.
             cameraOrientationsString = None
 
+        self.ignoreInputCurveModified += 1
         self.inputCurve.SetAttribute(
             EndoscopyLogic.NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME, cameraOrientationsString,
         )
+        self.ignoreInputCurveModified -= 1
         if self.logic:
             self.logic.cameraOrientations = cameraOrientations
 
@@ -561,6 +571,9 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         )
 
     def flyToNext(self):
+        if self.logic is None:
+            # We invalidated self.logic due to an intervening user modification of the input.  We need it now.
+            self.logic = EndoscopyLogic(self.inputCurve)
         currentStep = int(self.frameSlider.value)
         nextStep = currentStep + self.skip + 1
         if nextStep > self.logic.resampledCurve.GetNumberOfControlPoints() - 2:
@@ -570,9 +583,12 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def flyTo(self, resampledCurvePointIndex):
         """Apply the resampledCurvePointIndex-th step in the path to the global camera"""
 
+        if self.logic is None:
+            # We invalidated self.logic due to an intervening user modification of the input.  We need it now.
+            self.logic = EndoscopyLogic(self.inputCurve)
+
         if (
-            self.logic is None
-            or self.logic.resampledCurve is None
+            self.logic.resampledCurve is None
             or not 0 <= resampledCurvePointIndex < self.logic.resampledCurve.GetNumberOfControlPoints()
         ):
             return
@@ -769,7 +785,7 @@ class EndoscopyLogic:
 
         # Find a plane that approximately includes the points of the resampled curve,
         # so that we can use its normal to define the "up" direction. This is somewhat
-        # nonsensical if self.numberOfResampledCurveControlPoints < 3, but proceed anyway.
+        # nonsensical if self.resampledCurve.GetNumberOfControlPoints() < 3, but proceed anyway.
         _, self.planeNormal = EndoscopyLogic.planeFit(points.T)
 
         # Interpolate the user-supplied orientations to compute (and assign) an orientation to every control point of
