@@ -797,9 +797,9 @@ class EndoscopyLogic:
         quaternionInterpolator = vtk.vtkQuaternionInterpolator()
         quaternionInterpolator.SetSearchMethod(0)  # binary search
 
-        # # Using a modified Kochanek basis
-        # quaternionInterpolator.SetInterpolationTypeToSpline()
-        # Using linear spherical interpolation
+        # Use the "linear spherical interpolation" rather than the "cubic spline interpolation" (using a modified
+        # Kochanek basis) because the latter seems to use the supplied quaternions as guide points, but doesn't
+        # necessarily take a path through them.
         quaternionInterpolator.SetInterpolationTypeToLinear()
 
         resampledCurveLength = self.resampledCurve.GetCurveLengthWorld()
