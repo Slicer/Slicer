@@ -15,7 +15,7 @@ Selects the camera and curve to be manipulated.
 
 - **Camera**: The camera used for the flythrough.
 - **Curve to modify**: The curve defining the flythrough path control points.
-- **Create flythrough path**: Press to generate the flythrough path corresponding to the selected curve and camera.
+- **Use this curve**: Press to indicate that the camera and curve have been selected.
 
 ### Flythrough
 
@@ -28,7 +28,7 @@ Controls the animation.
 - **View Angle**: Field of view of the camera.  The default value of 30 degrees approximates normal camera lenses.  Larger numbers, such as 110 or 120 degrees approximate the wide angle lenses often used in endoscopy viewing systems.
 - **Save keyframe orientation** / **Update keyframe orientation**: Press to indicate that a flythrough frame is a keyframe and that you have selected your desired camera orientation for this keyframe in the first-person, 3D viewing pane.  If you wish to update the orientation for a keyframe, use the Frame, First, Back, Next, or Last buttons to go to the frame, adjust the camera orientation, and hit this button again.
 - **Delete keyframe orientation**: Discard the camera orientation associated with the selected keyframe.
-- **First**: PRess to go to the lowest-numbered keyframe.
+- **First**: Press to go to the lowest-numbered keyframe.
 - **Back**: Press to move backwards through the flythrough to the nearest keyframe.
 - **Next**: Press to move forwards through the flythrough to the nearest keyframe.
 - **Last**: Press to go to the highest-numbered keyframe
