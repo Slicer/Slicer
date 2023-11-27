@@ -74,18 +74,12 @@ msg_first() {
     printErrorAndExit 'The first line may not have leading or trailing space:
 ['"$line"']'
   fi
-  firstSixLetters=$(echo "$line" | cut -c1-6)
-  if [ "${firstSixLetters:0:4}" == "BUG:" -o \
-    "${firstSixLetters:0:4}" == "ENH:" -o \
-    "${firstSixLetters:0:4}" == "DOC:" -o \
-    "${firstSixLetters:0:5}" == "COMP:" -o \
-    "${firstSixLetters:0:5}" == "PERF:" -o \
-    "$firstSixLetters" == "STYLE:" ]; then
-  # first line okay
-  state=second
-else
-  # Print advice on commit message
-  printErrorAndExit '
+  if echo "$line" | egrep -qx '(BUG|COMP|DOC|ENH|PERF|STYLE): [A-Z].*'; then
+    # first line okay
+    state=second
+  else
+    # Print advice on commit message
+    printErrorAndExit '
 ------------------------------------------------------------------------------
 Git Commits to NA-MIC require commit type in the comment.
 Valid commit types are:
@@ -97,13 +91,15 @@ Valid commit types are:
   PERF:  - a performance improvement,
   STYLE: - a code change that does not impact the logic or execution of the code.
   (improve coding style, comments, documentation in source code).
+The colon must be followed by a space and a capital letter.
+The first line must be at least 8 characters and at most 78 characters.
 
-Also consider adding reference to related issue by adding "See #123" (without quotes,
+Also, consider adding reference to related issue by adding "See #123" (without quotes,
 replace 123 by the actual issue number) somewhere in the commit comment body.
 
 The Git command to commit the change is:
 
-  git commit -m '"BUG: fixed core dump when passed float data"'
+  git commit -m "BUG: Fixed core dump when passed float data"
 
 you can also use the syntax below which omits the -m flag. In this case
 git will start up an editor for you to enter a comment on why you made the change.
@@ -111,7 +107,7 @@ git will start up an editor for you to enter a comment on why you made the chang
   git commit
 ------------------------------------------------------------------------------
 '
-fi
+  fi
 }
 
 msg_second() {
