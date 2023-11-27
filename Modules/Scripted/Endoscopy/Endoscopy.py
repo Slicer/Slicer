@@ -825,8 +825,7 @@ class EndoscopyLogic:
                 relativeOrientation = EndoscopyLogic.quaternionToOrientation(quaternion)
                 self.setRelativeOrientation(self.resampledCurve, resampledCurvePointIndex, relativeOrientation)
 
-    def getDefaultOrientation(self, curve, curveControlPointIndex, worldOrientation=None):
-        worldOrientation = worldOrientation if worldOrientation is not None else np.zeros((4,))
+    def getDefaultOrientation(self, curve, curveControlPointIndex):
         numberOfCurveControlPoints = curve.GetNumberOfControlPoints()
         # If the curve is not closed then the last control point has the same orientation as its previous control point.
         # Get its forward direction by looking at the previous control point.
@@ -848,7 +847,7 @@ class EndoscopyLogic:
             focalPoint += increment
 
         matrix3x3 = EndoscopyLogic.buildCameraMatrix3x3(cameraPosition, focalPoint, self.planeNormal)
-        EndoscopyLogic.matrix3x3ToOrientation(matrix3x3, worldOrientation)
+        worldOrientation = EndoscopyLogic.matrix3x3ToOrientation(matrix3x3)
 
         return worldOrientation
 
@@ -856,32 +855,24 @@ class EndoscopyLogic:
     def setWorldOrientation(curve, curveControlPointIndex, worldOrientation):
         curve.SetNthControlPointOrientation(curveControlPointIndex, worldOrientation)
 
-    def getRelativeOrientation(self, curve, curveControlPointIndex, relativeOrientation=None):
-        relativeOrientation = relativeOrientation if relativeOrientation is not None else np.zeros((4,))
-
+    def getRelativeOrientation(self, curve, curveControlPointIndex):
         worldOrientation = np.zeros((4,))
         curve.GetNthControlPointOrientation(curveControlPointIndex, worldOrientation)
-
-        self.worldOrientationToRelative(curve, curveControlPointIndex, worldOrientation, relativeOrientation)
-        return relativeOrientation
+        return self.worldOrientationToRelative(curve, curveControlPointIndex, worldOrientation)
 
     def setRelativeOrientation(self, curve, curveControlPointIndex, relativeOrientation):
         worldOrientation = self.relativeOrientationToWorld(curve, curveControlPointIndex, relativeOrientation)
         EndoscopyLogic.setWorldOrientation(curve, curveControlPointIndex, worldOrientation)
 
-    def relativeOrientationToWorld(self, curve, curveControlPointIndex, relativeOrientation, worldOrientation=None):
-        worldOrientation = worldOrientation if worldOrientation is not None else np.zeros((4,))
+    def relativeOrientationToWorld(self, curve, curveControlPointIndex, relativeOrientation):
         defaultOrientation = self.getDefaultOrientation(curve, curveControlPointIndex)
-        EndoscopyLogic.multiplyOrientations(relativeOrientation, defaultOrientation, worldOrientation)
-        return worldOrientation
+        return EndoscopyLogic.multiplyOrientations(relativeOrientation, defaultOrientation)
 
-    def worldOrientationToRelative(self, curve, curveControlPointIndex, worldOrientation, relativeOrientation=None):
-        relativeOrientation = relativeOrientation if relativeOrientation is not None else np.zeros((4,))
+    def worldOrientationToRelative(self, curve, curveControlPointIndex, worldOrientation):
         inverseDefaultOrientation = self.getDefaultOrientation(curve, curveControlPointIndex)
         # Convert defaultOrientation to its inverse by negating the angle of rotation
         inverseDefaultOrientation[0] *= -1.0
-        EndoscopyLogic.multiplyOrientations(worldOrientation, inverseDefaultOrientation, relativeOrientation)
-        return relativeOrientation
+        return EndoscopyLogic.multiplyOrientations(worldOrientation, inverseDefaultOrientation)
 
     @staticmethod
     def distanceAlongCurveOfNthControlPoint(curve, indexOfControlPoint):
@@ -902,58 +893,56 @@ class EndoscopyLogic:
         return indexOfControlPoint
 
     @staticmethod
-    def matrix3x3ToOrientation(matrix3x3, orientation=None):
-        orientation = orientation if orientation is not None else np.zeros((4,))
+    def matrix3x3ToOrientation(matrix3x3):
+        orientation = np.zeros((4,))
         vtkQ = vtk.vtkQuaternion[np.float64]()
         vtkQ.FromMatrix3x3(matrix3x3)
         orientation[0] = vtkQ.GetRotationAngleAndAxis(orientation[1:4])
         return orientation
 
     @staticmethod
-    def matrix3x3ToQuaternion(matrix3x3, quaternion=None):
-        quaternion = quaternion if quaternion is not None else np.zeros((4,))
+    def matrix3x3ToQuaternion(matrix3x3):
+        quaternion = np.zeros((4,))
         vtk.vtkMath.matrix3x3ToQuaternion(matrix3x3, quaternion)
         return quaternion
 
     @staticmethod
-    def orientationToMatrix3x3(orientation, matrix3x3=None):
-        matrix3x3 = matrix3x3 if matrix3x3 is not None else np.zeros((3, 3))
+    def orientationToMatrix3x3(orientation):
+        matrix3x3 = np.zeros((3, 3))
         vtkQ = vtk.vtkQuaternion[np.float64]()
         vtkQ.SetRotationAngleAndAxis(*orientation)
         vtkQ.ToMatrix3x3(matrix3x3)
         return matrix3x3
 
     @staticmethod
-    def orientationToQuaternion(orientation, quaternion=None):
-        quaternion = quaternion if quaternion is not None else np.zeros((4,))
+    def orientationToQuaternion(orientation):
+        quaternion = np.zeros((4,))
         vtkQ = vtk.vtkQuaternion[np.float64]()
         vtkQ.SetRotationAngleAndAxis(*orientation)
         vtkQ.Get(quaternion)
         return quaternion
 
     @staticmethod
-    def quaternionToMatrix3x3(quaternion, matrix3x3=None):
-        matrix3x3 = matrix3x3 if matrix3x3 is not None else np.zeros((3, 3))
+    def quaternionToMatrix3x3(quaternion):
+        matrix3x3 = np.zeros((3, 3))
         vtk.vtkMath.quaternionToMatrix3x3(quaternion, matrix3x3)
         return matrix3x3
 
     @staticmethod
-    def quaternionToOrientation(quaternion, orientation=None):
-        orientation = orientation if orientation is not None else np.zeros((4,))
+    def quaternionToOrientation(quaternion):
+        orientation = np.zeros((4,))
         vtkQ = vtk.vtkQuaternion[np.float64]()
         vtkQ.Set(*quaternion)
         orientation[0] = vtkQ.GetRotationAngleAndAxis(orientation[1:4])
         return orientation
 
     @staticmethod
-    def multiplyOrientations(leftOrientation, rightOrientation, resultOrientation=None):
-        resultOrientation = resultOrientation if resultOrientation is not None else np.zeros((4,))
+    def multiplyOrientations(leftOrientation, rightOrientation):
         return EndoscopyLogic.matrix3x3ToOrientation(
             np.matmul(
                 EndoscopyLogic.orientationToMatrix3x3(leftOrientation),
                 EndoscopyLogic.orientationToMatrix3x3(rightOrientation),
             ),
-            resultOrientation,
         )
 
     @staticmethod
@@ -981,8 +970,8 @@ class EndoscopyLogic:
         return p, n
 
     @staticmethod
-    def buildCameraMatrix3x3(cameraPosition, focalPoint, viewUp, outputMatrix3x3=None):
-        outputMatrix3x3 = outputMatrix3x3 if outputMatrix3x3 is not None else np.zeros((3, 3))
+    def buildCameraMatrix3x3(cameraPosition, focalPoint, viewUp):
+        outputMatrix3x3 = np.zeros((3, 3))
         # Note that viewUp might be supplied as planeNormal, which might not be orthogonal to (focalPoint -
         # cameraPosition), so this mathematics is careful to handle that case too.
 
@@ -998,8 +987,8 @@ class EndoscopyLogic:
         return outputMatrix3x3
 
     @staticmethod
-    def buildCameraMatrix4x4(cameraPosition, inputMatrix3x3, outputMatrix4x4=None):
-        outputMatrix4x4 = outputMatrix4x4 if outputMatrix4x4 is not None else vtk.vtkMatrix4x4()
+    def buildCameraMatrix4x4(cameraPosition, inputMatrix3x3):
+        outputMatrix4x4 = vtk.vtkMatrix4x4()
         outputMatrix4x4.SetElement(3, 3, 1.0)
         for col in range(3):
             for row in range(3):
