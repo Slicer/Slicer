@@ -415,7 +415,12 @@ void qSlicerDICOMExportDialog::onExport()
     {
     // Save to temporary folder and store files in database directory when adding
     outputFolder.setPath(qSlicerApplication::application()->temporaryPath());
-    QString tempSubDirName = QString("DICOMExportTemp_%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"));
+
+    // Force using en-US locale, otherwise for example on a computer with
+    // Egyptian Arabic (ar-EG) locale, Arabic numerals may be used.
+    QLocale enUsLocale = QLocale(QLocale::English, QLocale::UnitedStates);
+    QString tempSubDirName = QString("DICOMExportTemp_%1").arg(enUsLocale.toString(QDateTime::currentDateTime(), "yyyyMMdd_hhmmss"));
+
     outputFolder.mkdir(tempSubDirName);
     outputFolder.cd(tempSubDirName);
     }

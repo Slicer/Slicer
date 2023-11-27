@@ -972,7 +972,10 @@ def importFromDICOMWeb(
                 outputDirectoryBase = slicer.dicomDatabase.databaseDirectory + "/DICOMweb"
                 if not os.access(outputDirectoryBase, os.F_OK):
                     os.makedirs(outputDirectoryBase)
-                outputDirectoryBase += "/" + qt.QDateTime.currentDateTime().toString("yyyyMMdd-hhmmss")
+                # Force using en-US locale, otherwise for example on a computer with
+                # Egyptian Arabic (ar-EG) locale, Arabic numerals may be used.
+                enUsLocale = qt.QLocale(qt.QLocale.English, qt.QLocale.UnitedStates)
+                outputDirectoryBase += "/" + enUsLocale.toString(qt.QDateTime.currentDateTime(), "yyyyMMdd-hhmmss")
                 outputDirectory = qt.QTemporaryDir(outputDirectoryBase)  # Add unique substring to directory
                 outputDirectory.setAutoRemove(False)
                 outputDirectoryPath = outputDirectory.path()
