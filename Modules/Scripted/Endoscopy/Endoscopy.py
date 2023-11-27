@@ -71,8 +71,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def __init__(self, parent=None):
         ScriptedLoadableModuleWidget.__init__(self, parent)
 
-        self.transform = None
-        self.cursor = None
         self.skip = 0
         self.logic = None
         self.timer = qt.QTimer()
@@ -388,16 +386,15 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.setInputCurve(inputCurve)
 
         # Create a cursor so that the user can see where the flythrough is progressing.
-        self.createCursor()
+        cursor = EndoscopyLogic.createCursorFromInputCurve(self.inputCurve)
+        transform= EndoscopyLogic.createTransformFromInputCurve(self.inputCurve)
+        cursor.SetAndObserveTransformNodeID(transform.GetID())
 
         # Hide the cursor, model and inputCurve from the main 3D view
         EndoscopyWidget._hideOnlyInView(
             EndoscopyWidget._viewNodeIDFromCameraNode(self.cameraNode),
-            [self.cursor, inputCurve],
+            [cursor, inputCurve],
         )
-
-        # Update flythrough variables
-        self.transform = self.cursor.transform
 
         self.ignoreInputCurveModified -= 1
 
@@ -484,11 +481,11 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         outputPathNode = self.outputPathNodeSelector.currentNode()
         model = EndoscopyPathModel(self.logic.resampledCurve, self.inputCurve, outputPathNode)
 
-        if self.cursor:
-            model.model.SetNodeReferenceID("CameraCursor", self.cursor.GetID())
+        cursor = EndoscopyLogic.getCursorFromInputCurve(self.inputCurve)
+        EndoscopyLogic.setInputCurveCursor(model.model, cursor)
 
-        if self.transform:
-            model.model.SetNodeReferenceID("CameraTransform", self.transform.GetID())
+        transform = EndoscopyLogic.getTransformFromInputCurve(self.inputCurve)
+        EndoscopyLogic.setInputCurveTransform(model.model, transform)
 
         # Hide the model from the main 3D view
         EndoscopyWidget._hideOnlyInView(
@@ -507,11 +504,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def flyTo(self, resampledCurvePointIndex):
         """Apply the resampledCurvePointIndex-th step in the path to the global camera"""
 
-        worldMatrix4x4 = self.logic.updateCameraFromOrientationAtIndex(resampledCurvePointIndex, self.cameraNode)
-
-        # Update the cursor transform
-        if self.transform:
-            self.transform.SetMatrixTransformToParent(worldMatrix4x4)
+        self.logic.updateCameraFromOrientationAtIndex(resampledCurvePointIndex, self.cameraNode)
 
     @staticmethod
     def _viewNodeIDFromCameraNode(cameraNode):
@@ -548,39 +541,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 with slicer.util.NodeModify(displayNode):
                     displayNode.SetViewNodeIDs(allViewNodeIDs)
                     displayNode.RemoveViewNodeID(viewNodeID)
-
-    def createCursor(self):
-        cursor = self.inputCurve.GetNodeReference("CameraCursor")
-        if not cursor:
-            # Markups cursor: Markups has a number of advantages (radius is easy
-            # to change, can jump to views by clicking on it, has many visualization
-            # options, can be scaled to fixed display size)
-            cursor = slicer.mrmlScene.AddNewNodeByClass(
-                "vtkMRMLMarkupsFiducialNode",
-                slicer.mrmlScene.GenerateUniqueName(f"Cursor-{self.inputCurve.GetName()}"),
-            )
-            cursor.CreateDefaultDisplayNodes()
-            cursor.CreateDefaultDisplayNodes()
-            cursor.GetDisplayNode().SetSelectedColor(1, 0, 0)  # red
-            cursor.GetDisplayNode().SetSliceProjection(True)
-            cursor.AddControlPoint(vtk.vtkVector3d(0, 0, 0), " ")  # do not show any visible label
-            cursor.SetNthControlPointLocked(0, True)
-
-            self.inputCurve.SetNodeReferenceID("CameraCursor", cursor.GetID())
-
-        # Transform node
-        transform = cursor.GetNodeReference("CameraTransform")
-        if not transform:
-            transform = slicer.mrmlScene.AddNewNodeByClass(
-                "vtkMRMLLinearTransformNode",
-                slicer.mrmlScene.GenerateUniqueName(f"Transform-{self.inputCurve.GetName()}"),
-            )
-            cursor.SetNodeReferenceID("CameraTransform", transform.GetID())
-        cursor.SetAndObserveTransformNodeID(transform.GetID())
-
-        cursor.transform = transform
-
-        self.cursor = cursor
 
 
 class EndoscopyLogic:
@@ -816,7 +776,71 @@ class EndoscopyLogic:
 
         cameraNode.ResetClippingRange()
 
+        # Update the cursor transform
+        transform = EndoscopyLogic.getTransformFromInputCurve(self.inputCurve)
+        if transform:
+            transform.SetMatrixTransformToParent(worldMatrix4x4)
+
         return worldMatrix4x4
+
+    @staticmethod
+    def createTransformFromInputCurve(inputCurve):
+        if not inputCurve:
+            return None
+
+        transform = EndoscopyLogic.getTransformFromInputCurve(inputCurve)
+        if not transform:
+            transform = slicer.mrmlScene.AddNewNodeByClass(
+                "vtkMRMLLinearTransformNode",
+                slicer.mrmlScene.GenerateUniqueName(f"Transform-{inputCurve.GetName()}"),
+            )
+            EndoscopyLogic.setInputCurveTransform(inputCurve, transform)
+
+        return transform
+
+    @staticmethod
+    def setInputCurveTransform(inputCurve, transform):
+        if not inputCurve:
+            return
+        inputCurve.SetNodeReferenceID("CameraTransform", transform.GetID() if transform else None)
+
+    @staticmethod
+    def getTransformFromInputCurve(inputCurve):
+        return inputCurve.GetNodeReference("CameraTransform")
+
+    @staticmethod
+    def createCursorFromInputCurve(inputCurve):
+        if not inputCurve:
+            return None
+
+        cursor = EndoscopyLogic.getCursorFromInputCurve(inputCurve)
+        if not cursor:
+            # Markups cursor: Markups has a number of advantages (radius is easy
+            # to change, can jump to views by clicking on it, has many visualization
+            # options, can be scaled to fixed display size)
+            cursor = slicer.mrmlScene.AddNewNodeByClass(
+                "vtkMRMLMarkupsFiducialNode",
+                slicer.mrmlScene.GenerateUniqueName(f"Cursor-{inputCurve.GetName()}"),
+            )
+            cursor.CreateDefaultDisplayNodes()
+            cursor.GetDisplayNode().SetSelectedColor(1, 0, 0)  # red
+            cursor.GetDisplayNode().SetSliceProjection(True)
+            cursor.AddControlPoint(vtk.vtkVector3d(0, 0, 0), " ")  # do not show any visible label
+            cursor.SetNthControlPointLocked(0, True)
+
+            EndoscopyLogic.setInputCurveCursor(inputCurve, cursor)
+
+        return cursor
+
+    @staticmethod
+    def setInputCurveCursor(inputCurve, cursor):
+        if not inputCurve:
+            return
+        inputCurve.SetNodeReferenceID("CameraCursor", cursor.GetID() if cursor else None)
+
+    @staticmethod
+    def getCursorFromInputCurve(inputCurve):
+        return inputCurve.GetNodeReference("CameraCursor")
 
     @staticmethod
     def getDefaultOrientation(curve, curveControlPointIndex, planeNormal):
