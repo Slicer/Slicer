@@ -1017,12 +1017,15 @@ void qSlicerApplication::setupFileLogging()
 
   // Add new log file path for the current session
   QString tempDir = this->temporaryPath();
+  // Force using en-US locale, otherwise for example on a computer with
+  // Egyptian Arabic (ar-EG) locale, Arabic numerals may be used.
+  QLocale enUsLocale = QLocale(QLocale::English, QLocale::UnitedStates);
   QString currentLogFilePath = QString("%1/%2_%3_%4_%5_%6.log")
     .arg(tempDir)
     .arg(this->applicationName())
     .arg(qSlicerApplication::application()->applicationVersion())
     .arg(qSlicerApplication::application()->mainApplicationRevision())
-    .arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"))
+    .arg(enUsLocale.toString(QDateTime::currentDateTime(), "yyyyMMdd_hhmmss"))
     .arg(QRandomGenerator::global()->generate() % 1000, 3, 10, QLatin1Char('0'));
   logFilePaths.prepend(currentLogFilePath);
 
@@ -1117,9 +1120,12 @@ void qSlicerApplication::logApplicationInformation() const
 
   int titleIndex = 0;
   // Session start time
+  // Force using en-US locale, otherwise for example on a computer with
+  // Egyptian Arabic (ar-EG) locale, Arabic numerals may be used.
+  QLocale enUsLocale = QLocale(QLocale::English, QLocale::UnitedStates);
   qDebug("%s: %s",
          qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-         qPrintable(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+         qPrintable(enUsLocale.toString(QDateTime::currentDateTime(), "yyyyMMdd_hhmmss")));
 
   // Slicer version
   qDebug("%s: %s (revision %s / %s) %s - %s %s",
