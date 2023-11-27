@@ -822,8 +822,12 @@ class EndoscopyLogic:
                 )
                 quaternion = np.zeros((4,))
                 quaternionInterpolator.InterpolateQuaternion(distanceAlongResampledCurve, quaternion)
+
                 relativeOrientation = EndoscopyLogic.quaternionToOrientation(quaternion)
-                self.setRelativeOrientation(self.resampledCurve, resampledCurvePointIndex, relativeOrientation)
+
+                worldOrientation = self.relativeOrientationToWorld(self.resampledCurve, resampledCurvePointIndex, relativeOrientation)
+
+                self.resampledCurve.SetNthControlPointOrientation(resampledCurvePointIndex, worldOrientation)
 
     def getDefaultOrientation(self, curve, curveControlPointIndex):
         numberOfCurveControlPoints = curve.GetNumberOfControlPoints()
@@ -850,19 +854,6 @@ class EndoscopyLogic:
         worldOrientation = EndoscopyLogic.matrix3x3ToOrientation(matrix3x3)
 
         return worldOrientation
-
-    @staticmethod
-    def setWorldOrientation(curve, curveControlPointIndex, worldOrientation):
-        curve.SetNthControlPointOrientation(curveControlPointIndex, worldOrientation)
-
-    def getRelativeOrientation(self, curve, curveControlPointIndex):
-        worldOrientation = np.zeros((4,))
-        curve.GetNthControlPointOrientation(curveControlPointIndex, worldOrientation)
-        return self.worldOrientationToRelative(curve, curveControlPointIndex, worldOrientation)
-
-    def setRelativeOrientation(self, curve, curveControlPointIndex, relativeOrientation):
-        worldOrientation = self.relativeOrientationToWorld(curve, curveControlPointIndex, relativeOrientation)
-        EndoscopyLogic.setWorldOrientation(curve, curveControlPointIndex, worldOrientation)
 
     def relativeOrientationToWorld(self, curve, curveControlPointIndex, relativeOrientation):
         defaultOrientation = self.getDefaultOrientation(curve, curveControlPointIndex)
