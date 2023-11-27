@@ -917,12 +917,6 @@ class EndoscopyLogic:
         return orientation
 
     @staticmethod
-    def matrix3x3ToQuaternion(matrix3x3):
-        quaternion = np.zeros((4,))
-        vtk.vtkMath.matrix3x3ToQuaternion(matrix3x3, quaternion)
-        return quaternion
-
-    @staticmethod
     def orientationToMatrix3x3(orientation):
         matrix3x3 = np.zeros((3, 3))
         vtkQ = vtk.vtkQuaternion[np.float64]()
@@ -937,12 +931,6 @@ class EndoscopyLogic:
         vtkQ.SetRotationAngleAndAxis(*orientation)
         vtkQ.Get(quaternion)
         return quaternion
-
-    @staticmethod
-    def quaternionToMatrix3x3(quaternion):
-        matrix3x3 = np.zeros((3, 3))
-        vtk.vtkMath.quaternionToMatrix3x3(quaternion, matrix3x3)
-        return matrix3x3
 
     @staticmethod
     def quaternionToOrientation(quaternion):
