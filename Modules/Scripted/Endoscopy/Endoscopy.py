@@ -813,8 +813,8 @@ class EndoscopyLogic:
                 )
                 self.cameraOrientationResampledCurveIndices.append(resampledCurvePointIndex)
                 worldOrientation = cameraOrientations[distanceAlongResampledCurve]
-                relativeOrientation = self.worldOrientationToRelative(
-                    self.resampledCurve, resampledCurvePointIndex, worldOrientation,
+                relativeOrientation = EndoscopyLogic.worldOrientationToRelative(
+                    self.resampledCurve, resampledCurvePointIndex, worldOrientation, self.planeNormal,
                 )
                 quaternion = EndoscopyLogic.orientationToQuaternion(relativeOrientation)
             else:
@@ -834,11 +834,14 @@ class EndoscopyLogic:
 
                 relativeOrientation = EndoscopyLogic.quaternionToOrientation(quaternion)
 
-                worldOrientation = self.relativeOrientationToWorld(self.resampledCurve, resampledCurvePointIndex, relativeOrientation)
+                worldOrientation = EndoscopyLogic.relativeOrientationToWorld(
+                    self.resampledCurve, resampledCurvePointIndex, relativeOrientation, self.planeNormal,
+                )
 
                 self.resampledCurve.SetNthControlPointOrientation(resampledCurvePointIndex, worldOrientation)
 
-    def getDefaultOrientation(self, curve, curveControlPointIndex):
+    @staticmethod
+    def getDefaultOrientation(curve, curveControlPointIndex, planeNormal):
         numberOfCurveControlPoints = curve.GetNumberOfControlPoints()
         # If the curve is not closed then the last control point has the same orientation as its previous control point.
         # Get its forward direction by looking at the previous control point.
@@ -859,17 +862,19 @@ class EndoscopyLogic:
             cameraPosition += increment
             focalPoint += increment
 
-        matrix3x3 = EndoscopyLogic.buildCameraMatrix3x3(cameraPosition, focalPoint, self.planeNormal)
+        matrix3x3 = EndoscopyLogic.buildCameraMatrix3x3(cameraPosition, focalPoint, planeNormal)
         worldOrientation = EndoscopyLogic.matrix3x3ToOrientation(matrix3x3)
 
         return worldOrientation
 
-    def relativeOrientationToWorld(self, curve, curveControlPointIndex, relativeOrientation):
-        defaultOrientation = self.getDefaultOrientation(curve, curveControlPointIndex)
+    @staticmethod
+    def relativeOrientationToWorld(curve, curveControlPointIndex, relativeOrientation, planeNormal):
+        defaultOrientation = EndoscopyLogic.getDefaultOrientation(curve, curveControlPointIndex, planeNormal)
         return EndoscopyLogic.multiplyOrientations(relativeOrientation, defaultOrientation)
 
-    def worldOrientationToRelative(self, curve, curveControlPointIndex, worldOrientation):
-        inverseDefaultOrientation = self.getDefaultOrientation(curve, curveControlPointIndex)
+    @staticmethod
+    def worldOrientationToRelative(curve, curveControlPointIndex, worldOrientation, planeNormal):
+        inverseDefaultOrientation = EndoscopyLogic.getDefaultOrientation(curve, curveControlPointIndex, planeNormal)
         # Convert defaultOrientation to its inverse by negating the angle of rotation
         inverseDefaultOrientation[0] *= -1.0
         return EndoscopyLogic.multiplyOrientations(worldOrientation, inverseDefaultOrientation)
