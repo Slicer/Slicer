@@ -2850,7 +2850,10 @@ def tempDirectory(key="__SlicerTemp__", tempDir=None, includeDateTime=True):
     if not tempDir:
         tempDir = qt.QDir(slicer.app.temporaryPath)
     if includeDateTime:
-        tempDirName = key + qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
+        # Force using en-US locale, otherwise for example on a computer with
+        # Egyptian Arabic (ar-EG) locale, Arabic numerals may be used.
+        enUsLocale = qt.QLocale(qt.QLocale.English, qt.QLocale.UnitedStates)
+        tempDirName = key + enUsLocale.toString(qt.QDateTime.currentDateTime(), "yyyy-MM-dd_hh+mm+ss.zzz")
     else:
         tempDirName = key
     fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
