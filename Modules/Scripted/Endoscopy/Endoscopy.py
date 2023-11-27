@@ -42,7 +42,7 @@ class Endoscopy(ScriptedLoadableModule):
 Create or import a markups curve.
 Pick the Camera to use for either playing the flythrough or editing associated keyframes.
 Select the Camera to use for playing the flythrough.
-Clicking "Create flythrough path" will make a flythrough curve and enable the flythrough panel.
+Clicking "Use this curve" will make a flythrough curve and enable the flythrough panel.
 You can manually scroll through the path with the Frame slider.
 The Play/Pause button toggles animated flythrough.
 The Frame Skip slider speeds up the animation by skipping points on the path.
@@ -132,7 +132,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.inputCurveSelector = inputCurveSelector
 
         # CreatePath button
-        createPathButton = qt.QPushButton(_("Create flythrough path"))
+        createPathButton = qt.QPushButton(_("Use this curve"))
         createPathButton.toolTip = _("Base the flythrough on the selected input curve.")
         createPathButton.enabled = False
         createPathButton.connect("clicked()", self.onCreatePathButtonClicked)
@@ -152,7 +152,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Play button
         playButton = qt.QPushButton(_("Play flythrough"))
-        playButton.toolTip = _("Fly through path.")
+        playButton.toolTip = _("Fly through curve.")
         playButton.checkable = True
         playButton.connect("toggled(bool)", self.onPlayButtonToggled)
         flythroughFormLayout.addRow(playButton)
@@ -344,7 +344,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         pass
 
     def onCreatePathButtonClicked(self):
-        """Connected to `createPath` button.  It allows to:
+        """Connected to 'Use this curve'` button.  It allows to:
         - compute the path
         - create cursor
         - ensure cursor, model and input curve are not visible in the endoscopy view
