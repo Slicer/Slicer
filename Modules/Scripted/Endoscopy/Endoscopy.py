@@ -193,6 +193,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         viewAngleSlider.decimals = 0
         viewAngleSlider.minimum = 30
         viewAngleSlider.maximum = 180
+        viewAngleSlider.suffix = " \N{DEGREE SIGN}"
         viewAngleSlider.connect("valueChanged(double)", self.viewAngleSliderValueChanged)
         flythroughFormLayout.addRow(_("View Angle:"), viewAngleSlider)
         self.viewAngleSlider = viewAngleSlider
