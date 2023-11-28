@@ -153,7 +153,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Play button
         playButton = qt.QPushButton(_("Play flythrough"))
-        playButton.toolTip = _("Fly through curve.")
+        playButton.toolTip = _("Start or stop the flythrough animation.")
         playButton.checkable = True
         playButton.connect("toggled(bool)", self.onPlayButtonToggled)
         flythroughFormLayout.addRow(playButton)
@@ -161,6 +161,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Frame slider
         frameSlider = ctk.ctkSliderWidget()
+        frameSlider.toolTip = _("The current frame along the path.")
         frameSlider.decimals = 0
         frameSlider.connect("valueChanged(double)", self.frameSliderValueChanged)
         flythroughFormLayout.addRow(_("Frame:"), frameSlider)
@@ -168,6 +169,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Frame skip slider
         frameSkipSlider = ctk.ctkSliderWidget()
+        frameSkipSlider.toolTip = _("Number of frames to skip.")
         frameSkipSlider.decimals = 0
         frameSkipSlider.minimum = 0
         frameSkipSlider.maximum = 50
@@ -176,6 +178,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Frame delay slider
         frameDelaySlider = ctk.ctkSliderWidget()
+        frameDelaySlider.toolTip = _("Time delay between animation frames.")
         frameDelaySlider.decimals = 0
         frameDelaySlider.minimum = 5
         frameDelaySlider.maximum = 100
@@ -186,6 +189,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # View angle slider
         viewAngleSlider = ctk.ctkSliderWidget()
+        viewAngleSlider.toolTip = _("Field of view of the camera in degrees.")
         viewAngleSlider.decimals = 0
         viewAngleSlider.minimum = 30
         viewAngleSlider.maximum = 180
@@ -197,7 +201,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Button for saving the camera orientation of a location
         saveOrientationButton = qt.QPushButton(_("Save Keyframe Orientation"))
-        saveOrientationButton.toolTip = _("Save the camera orientation for this frame")
+        saveOrientationButton.toolTip = _("Save the camera orientation for this frame.")
         saveOrientationButton.enabled = False
         saveOrientationButton.connect("clicked()", self.onSaveOrientationButtonClicked)
         keyframeOrientationLayout.addWidget(saveOrientationButton)
@@ -205,7 +209,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Button for deleting the camera orientation of a location
         deleteOrientationButton = qt.QPushButton(_("Delete Keyframe Orientation"))
-        deleteOrientationButton.toolTip = _("Delete the camera orientation for this frame")
+        deleteOrientationButton.toolTip = _("Delete the saved camera orientation for this frame.")
         deleteOrientationButton.enabled = False
         deleteOrientationButton.connect("clicked()", self.onDeleteOrientationButtonClicked)
         keyframeOrientationLayout.addWidget(deleteOrientationButton)
@@ -216,25 +220,25 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         flythroughOrientationLayout = qt.QHBoxLayout()
 
         firstOrientationButton = qt.QPushButton(_("First"))
-        firstOrientationButton.toolTip = _("Go to the first user-supplied keyframe")
+        firstOrientationButton.toolTip = _("Go to the first user-supplied keyframe.")
         firstOrientationButton.enabled = True
         firstOrientationButton.connect("clicked()", self.onFirstOrientationButtonClicked)
         flythroughOrientationLayout.addWidget(firstOrientationButton)
 
         backOrientationButton = qt.QPushButton(_("Back"))
-        backOrientationButton.toolTip = _("Go to the previous user-supplied keyframe")
+        backOrientationButton.toolTip = _("Go to the previous user-supplied keyframe.")
         backOrientationButton.enabled = True
         backOrientationButton.connect("clicked()", self.onBackOrientationButtonClicked)
         flythroughOrientationLayout.addWidget(backOrientationButton)
 
         nextOrientationButton = qt.QPushButton(_("Next"))
-        nextOrientationButton.toolTip = _("Go to the next user-supplied keyframe")
+        nextOrientationButton.toolTip = _("Go to the next user-supplied keyframe.")
         nextOrientationButton.enabled = True
         nextOrientationButton.connect("clicked()", self.onNextOrientationButtonClicked)
         flythroughOrientationLayout.addWidget(nextOrientationButton)
 
         lastOrientationButton = qt.QPushButton(_("Last"))
-        lastOrientationButton.toolTip = _("Go to the last user-supplied keyframe")
+        lastOrientationButton.toolTip = _("Go to the last user-supplied keyframe.")
         lastOrientationButton.enabled = True
         lastOrientationButton.connect("clicked()", self.onLastOrientationButtonClicked)
         flythroughOrientationLayout.addWidget(lastOrientationButton)
@@ -256,7 +260,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Select name for output model
         outputPathNodeSelector = slicer.qMRMLNodeComboBox()
         outputPathNodeSelector.objectName = "outputPathNodeSelector"
-        outputPathNodeSelector.toolTip = _("Create a model node.")
+        outputPathNodeSelector.toolTip = _("Select or create the destination model for exporting the flythrough path.")
         outputPathNodeSelector.nodeTypes = ["vtkMRMLModelNode"]
         outputPathNodeSelector.noneEnabled = False
         outputPathNodeSelector.addEnabled = True
@@ -268,7 +272,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Button for exporting a model
         saveExportModelButton = qt.QPushButton(_("Export as model"))
-        saveExportModelButton.toolTip = _("Export as model")
+        saveExportModelButton.toolTip = _("Export the current flythrough path as a model.")
         saveExportModelButton.enabled = False
         saveExportModelButton.connect("clicked()", self.onSaveExportModelButtonClicked)
         advancedFormLayout.addRow(saveExportModelButton)
