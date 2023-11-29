@@ -64,11 +64,6 @@ public:
   vtkSetStringMacro(ImageIOClassName);
 
   ///
-  /// Set/Get the number of data frames in the sequence to write.
-  vtkGetMacro(NumberOfSequenceFrames, int);
-  vtkSetMacro(NumberOfSequenceFrames, int);
-
-  ///
   /// The main interface which triggers the writer to start.
   void Write();
 
@@ -97,7 +92,6 @@ protected:
   vtkMatrix4x4* MeasurementFrameMatrix;
   int UseCompression;
   char* ImageIOClassName;
-  int NumberOfSequenceFrames;
   int VoxelVectorType;
 
 private:
