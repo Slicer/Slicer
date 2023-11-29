@@ -453,29 +453,16 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.flyTo(resampledCurvePointIndex)
 
     def onDeleteOrientationButtonClicked(self):
-        resampledCurve = self.logic.resampledCurve
+
         resampledCurvePointIndexToDelete = int(self.frameSlider.value)
-        # The inputCurve (and hence the resampledCurve) could have been modified since these distances were saved,
-        # meaning that computing a distance from an index may not now give the same distance value.  However, we can
-        # delete the entries associated with this resampledCurvePointIndexToDelete even in the case that its
-        # distance has changed.
-        cameraOrientations = EndoscopyLogic.getCameraOrientationsFromInputCurve(self.inputCurve)
-        # We must freeze the cameraOrientations.keys() generator at the start (by converting it to a list) because we
-        # delete from the cameraOrientations Python dict in this loop.
-        for distanceAlongResampledCurve in list(cameraOrientations.keys()):
-            resampledCurvePointIndex = EndoscopyLogic.indexOfControlPointForDistanceAlongCurve(
-                resampledCurve, distanceAlongResampledCurve,
-            )
-            if resampledCurvePointIndex == resampledCurvePointIndexToDelete:
-                del cameraOrientations[distanceAlongResampledCurve]
 
         self.ignoreInputCurveModified += 1
-        EndoscopyLogic.setInputCurveCameraOrientations(self.inputCurve, cameraOrientations)
+        cameraOrientations = self.logic.removeOrientationAtIndex(resampledCurvePointIndexToDelete)
         self.ignoreInputCurveModified -= 1
 
         self.logic.interpolateOrientations(cameraOrientations)
 
-        self.flyTo(resampledCurvePointIndex)
+        self.flyTo(resampledCurvePointIndexToDelete)
 
     def onFirstOrientationButtonClicked(self):
         allIndices = self.logic.cameraOrientationResampledCurveIndices
@@ -784,6 +771,31 @@ class EndoscopyLogic:
                 )
 
                 self.resampledCurve.SetNthControlPointOrientation(resampledCurvePointIndex, worldOrientation)
+
+    def removeOrientationAtIndex(self, resampledCurvePointIndexToDelete):
+        inputCurve = self.inputCurve
+        resampledCurve = self.resampledCurve
+
+        cameraOrientations = EndoscopyLogic.getCameraOrientationsFromInputCurve(inputCurve)
+
+        # The inputCurve (and hence the resampledCurve) could have been modified since these distances were saved,
+        # meaning that computing a distance from an index may not now give the same distance value.  However, we can
+        # delete the entries associated with this resampledCurvePointIndexToDelete even in the case that its
+        # distance has changed.
+
+        # We must freeze the cameraOrientations.keys() generator at the start (by converting it to a list) because we
+        # delete from the cameraOrientations Python dict in this loop.
+        for distanceAlongResampledCurve in list(cameraOrientations.keys()):
+            resampledCurvePointIndex = EndoscopyLogic.indexOfControlPointForDistanceAlongCurve(
+                resampledCurve, distanceAlongResampledCurve,
+            )
+            if resampledCurvePointIndex == resampledCurvePointIndexToDelete:
+                del cameraOrientations[distanceAlongResampledCurve]
+                break
+
+        EndoscopyLogic.setInputCurveCameraOrientations(inputCurve, cameraOrientations)
+
+        return cameraOrientations
 
     @staticmethod
     def getDefaultOrientation(curve, curveControlPointIndex, planeNormal):
