@@ -428,24 +428,10 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.saveOrientationButton.enabled = True
 
     def onSaveOrientationButtonClicked(self):
-        # Compute new dictionary key and value
-        resampledCurve = self.logic.resampledCurve
         resampledCurvePointIndex = int(self.frameSlider.value)
-        distanceAlongResampledCurve = EndoscopyLogic.distanceAlongCurveOfNthControlPoint(
-            resampledCurve, resampledCurvePointIndex,
-        )
-        cameraPosition = self.cameraNode.GetPosition()
-        focalPoint = self.cameraNode.GetFocalPoint()
-        viewUp = self.cameraNode.GetViewUp()
-        worldMatrix3x3 = EndoscopyLogic.buildCameraMatrix3x3(cameraPosition, focalPoint, viewUp)
-        worldOrientation = EndoscopyLogic.matrix3x3ToOrientation(worldMatrix3x3)
-
-        # Add new dictionary key-value pair
-        cameraOrientations = EndoscopyLogic.getCameraOrientationsFromInputCurve(self.inputCurve)
-        cameraOrientations[distanceAlongResampledCurve] = worldOrientation
 
         self.ignoreInputCurveModified += 1
-        EndoscopyLogic.setInputCurveCameraOrientations(self.inputCurve, cameraOrientations)
+        cameraOrientations = self.logic.saveOrientationAtIndex(resampledCurvePointIndex, self.cameraNode)
         self.ignoreInputCurveModified -= 1
 
         self.logic.interpolateOrientations(cameraOrientations)
@@ -771,6 +757,30 @@ class EndoscopyLogic:
                 )
 
                 self.resampledCurve.SetNthControlPointOrientation(resampledCurvePointIndex, worldOrientation)
+
+    def saveOrientationAtIndex(self, resampledCurvePointIndex, cameraNode):
+        inputCurve = self.inputCurve
+        resampledCurve = self.resampledCurve
+
+        # Compute CameraOrientations dictionary key
+        distanceAlongResampledCurve = EndoscopyLogic.distanceAlongCurveOfNthControlPoint(
+            resampledCurve, resampledCurvePointIndex,
+        )
+
+        # Compute CameraOrientations dictionary value
+        cameraPosition = cameraNode.GetPosition()
+        focalPoint = cameraNode.GetFocalPoint()
+        viewUp = cameraNode.GetViewUp()
+        worldMatrix3x3 = EndoscopyLogic.buildCameraMatrix3x3(cameraPosition, focalPoint, viewUp)
+        worldOrientation = EndoscopyLogic.matrix3x3ToOrientation(worldMatrix3x3)
+
+        # Add new dictionary key-value pair
+        cameraOrientations = EndoscopyLogic.getCameraOrientationsFromInputCurve(inputCurve)
+        cameraOrientations[distanceAlongResampledCurve] = worldOrientation
+
+        EndoscopyLogic.setInputCurveCameraOrientations(inputCurve, cameraOrientations)
+
+        return cameraOrientations
 
     def removeOrientationAtIndex(self, resampledCurvePointIndexToDelete):
         inputCurve = self.inputCurve
