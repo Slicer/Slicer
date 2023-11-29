@@ -370,7 +370,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.setInputCurve(inputCurve)
 
-        numberOfControlPoints = self.logic.resampledCurve.GetNumberOfControlPoints()
+        numberOfControlPoints = self.logic.getNumberOfControlPoints()
 
         # Update frame slider range
         self.frameSlider.maximum = max(0, numberOfControlPoints - 2)
@@ -495,7 +495,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def flyToNext(self):
         currentStep = int(self.frameSlider.value)
         nextStep = currentStep + self.skip + 1
-        if nextStep > self.logic.resampledCurve.GetNumberOfControlPoints() - 2:
+        if nextStep > self.logic.getNumberOfControlPoints() - 2:
             nextStep = 0
         self.frameSlider.value = nextStep
 
@@ -504,7 +504,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         if (
             self.logic.resampledCurve is None
-            or not 0 <= resampledCurvePointIndex < self.logic.resampledCurve.GetNumberOfControlPoints()
+            or not 0 <= resampledCurvePointIndex < self.logic.getNumberOfControlPoints()
         ):
             return
 
@@ -620,7 +620,7 @@ class EndoscopyLogic:
 
     Example:
       logic = EndoscopyLogic(inputCurve)
-      print(f"computed path has {logic.resampledCurve.GetNumberOfControlPoints()} elements")
+      print(f"computed path has {logic.getNumberOfControlPoints()} elements")
 
     Notes:
     * `orientation` = (angle, *axis), where angle is in radians and axis is the unit 3D-vector for the axis
@@ -643,6 +643,9 @@ class EndoscopyLogic:
         self.resampledCurve = None
         self.planeNormal = None
         self.cameraOrientationResampledCurveIndices = None
+
+    def getNumberOfControlPoints(self):
+        return self.resampledCurve.GetNumberOfControlPoints()
 
     def setControlPoints(self, inputCurve: slicer.vtkMRMLMarkupsCurveNode) -> None:
         expectedType = slicer.vtkMRMLMarkupsCurveNode
