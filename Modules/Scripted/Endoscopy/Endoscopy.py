@@ -502,39 +502,11 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def flyTo(self, resampledCurvePointIndex):
         """Apply the resampledCurvePointIndex-th step in the path to the global camera"""
 
-        if (
-            self.logic.resampledCurve is None
-            or not 0 <= resampledCurvePointIndex < self.logic.getNumberOfControlPoints()
-        ):
-            return
+        worldMatrix4x4 = self.logic.updateCameraFromOrientationAtIndex(resampledCurvePointIndex, self.cameraNode)
 
-        cameraPosition = np.zeros((3,))
-        self.logic.resampledCurve.GetNthControlPointPositionWorld(resampledCurvePointIndex, cameraPosition)
-
-        focalPoint = np.zeros((3,))
-        self.logic.resampledCurve.GetNthControlPointPositionWorld(resampledCurvePointIndex + 1, focalPoint)
-
-        worldOrientation = np.zeros((4,))
-        self.logic.resampledCurve.GetNthControlPointOrientation(resampledCurvePointIndex, worldOrientation)
-
-        worldMatrix3x3 = EndoscopyLogic.orientationToMatrix3x3(worldOrientation)
-        worldMatrix4x4 = EndoscopyLogic.buildCameraMatrix4x4(cameraPosition, worldMatrix3x3)
-
-        adjustedFocalPoint = cameraPosition + worldMatrix3x3[:, 2] * (
-            np.linalg.norm(focalPoint - cameraPosition) / np.linalg.norm(worldMatrix3x3[:, 2])
-        )
-
-        # Set the cursor matrix
+        # Update the cursor transform
         if self.transform:
             self.transform.SetMatrixTransformToParent(worldMatrix4x4)
-
-        # Set the camera & cameraNode
-        with slicer.util.NodeModify(self.cameraNode):
-            self.cameraNode.SetPosition(*cameraPosition)
-            self.cameraNode.SetFocalPoint(*adjustedFocalPoint)
-            self.cameraNode.SetViewUp(*worldMatrix3x3[:, 1])
-
-        self.cameraNode.ResetClippingRange()
 
         deletable = resampledCurvePointIndex in self.logic.cameraOrientationResampledCurveIndices
         self.deleteOrientationButton.enabled = deletable
@@ -809,6 +781,43 @@ class EndoscopyLogic:
         EndoscopyLogic.setInputCurveCameraOrientations(inputCurve, cameraOrientations)
 
         return cameraOrientations
+
+    def updateCameraFromOrientationAtIndex(self, resampledCurvePointIndex, cameraNode):
+        """Apply the resampledCurvePointIndex-th step in the path to the camera"""
+
+        resampledCurve = self.resampledCurve
+
+        if (
+            resampledCurve is None
+            or not 0 <= resampledCurvePointIndex < resampledCurve.GetNumberOfControlPoints()
+        ):
+            return
+
+        cameraPosition = np.zeros((3,))
+        resampledCurve.GetNthControlPointPositionWorld(resampledCurvePointIndex, cameraPosition)
+
+        focalPoint = np.zeros((3,))
+        resampledCurve.GetNthControlPointPositionWorld(resampledCurvePointIndex + 1, focalPoint)
+
+        worldOrientation = np.zeros((4,))
+        resampledCurve.GetNthControlPointOrientation(resampledCurvePointIndex, worldOrientation)
+
+        worldMatrix3x3 = EndoscopyLogic.orientationToMatrix3x3(worldOrientation)
+        worldMatrix4x4 = EndoscopyLogic.buildCameraMatrix4x4(cameraPosition, worldMatrix3x3)
+
+        adjustedFocalPoint = cameraPosition + worldMatrix3x3[:, 2] * (
+            np.linalg.norm(focalPoint - cameraPosition) / np.linalg.norm(worldMatrix3x3[:, 2])
+        )
+
+        # Update the camera
+        with slicer.util.NodeModify(cameraNode):
+            cameraNode.SetPosition(*cameraPosition)
+            cameraNode.SetFocalPoint(*adjustedFocalPoint)
+            cameraNode.SetViewUp(*worldMatrix3x3[:, 1])
+
+        cameraNode.ResetClippingRange()
+
+        return worldMatrix4x4
 
     @staticmethod
     def getDefaultOrientation(curve, curveControlPointIndex, planeNormal):
