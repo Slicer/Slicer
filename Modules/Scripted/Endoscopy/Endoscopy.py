@@ -318,8 +318,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if self.logic is not None:
             self.logic.cleanup()
             self.logic = None
-        cameraOrientations = self.loadCameraOrientations()
-        self.logic = EndoscopyLogic(self.inputCurve, cameraOrientations)
+
+        self.logic = EndoscopyLogic(self.inputCurve)
 
         # Update UI
         self.updateWidgetFromMRML()
@@ -441,11 +441,14 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         worldOrientation = EndoscopyLogic.matrix3x3ToOrientation(worldMatrix3x3)
 
         # Add new dictionary key-value pair
-        cameraOrientations = self.loadCameraOrientations()
+        cameraOrientations = EndoscopyLogic.getCameraOrientationsFromInputCurve(self.inputCurve)
         cameraOrientations[distanceAlongResampledCurve] = worldOrientation
-        self.saveCameraOrientations(cameraOrientations)
 
-        self.logic.interpolateOrientations()
+        self.ignoreInputCurveModified += 1
+        EndoscopyLogic.setInputCurveCameraOrientations(self.inputCurve, cameraOrientations)
+        self.ignoreInputCurveModified -= 1
+
+        self.logic.interpolateOrientations(cameraOrientations)
 
         self.flyTo(resampledCurvePointIndex)
 
@@ -456,7 +459,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # meaning that computing a distance from an index may not now give the same distance value.  However, we can
         # delete the entries associated with this resampledCurvePointIndexToDelete even in the case that its
         # distance has changed.
-        cameraOrientations = self.loadCameraOrientations()
+        cameraOrientations = EndoscopyLogic.getCameraOrientationsFromInputCurve(self.inputCurve)
         # We must freeze the cameraOrientations.keys() generator at the start (by converting it to a list) because we
         # delete from the cameraOrientations Python dict in this loop.
         for distanceAlongResampledCurve in list(cameraOrientations.keys()):
@@ -465,9 +468,12 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             )
             if resampledCurvePointIndex == resampledCurvePointIndexToDelete:
                 del cameraOrientations[distanceAlongResampledCurve]
-        self.saveCameraOrientations(cameraOrientations)
 
-        self.logic.interpolateOrientations()
+        self.ignoreInputCurveModified += 1
+        EndoscopyLogic.setInputCurveCameraOrientations(self.inputCurve, cameraOrientations)
+        self.ignoreInputCurveModified -= 1
+
+        self.logic.interpolateOrientations(cameraOrientations)
 
         self.flyTo(resampledCurvePointIndex)
 
@@ -512,61 +518,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             [self.model],
         )
         logging.debug("-> Model created")
-
-    def loadCameraOrientations(self):
-        cameraOrientationsString = self.inputCurve.GetAttribute(
-            EndoscopyLogic.NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME,
-        )
-        convertedCameraOrientations = (
-            dict() if cameraOrientationsString is None else json.loads(cameraOrientationsString)
-        )
-        if not self.cameraOrientationsIsCorrectType(convertedCameraOrientations):
-            raise ValueError(
-                "EndoscopyWidget.loadCameraOrientations:"
-                " Retrieved cameraOrientations is not of the correct type.",
-            )
-        # JSON turns the `keys` into strings and cannot handle `values` that are numpy arrays.
-        # So, let's convert back.
-        cameraOrientations = {float(k): np.array(v) for k, v in convertedCameraOrientations.items()}
-        if self.logic:
-            self.logic.cameraOrientations = cameraOrientations
-
-        return cameraOrientations
-
-    def saveCameraOrientations(self, cameraOrientations):
-        if cameraOrientations:
-            # JSON turns float `keys` into strings and cannot handle `values` that are numpy arrays.
-            # So, let's convert.
-            convertedCameraOrientations = {str(k): list(v) for k, v in cameraOrientations.items()}
-            if not self.cameraOrientationsIsCorrectType(convertedCameraOrientations):
-                raise ValueError(
-                    "EndoscopyWidget.saveCameraOrientations:"
-                    " supplied cameraOrientations is not of the correct type",
-                )
-            cameraOrientationsString = json.dumps(convertedCameraOrientations)
-        else:
-            # Rather than a length-zero or length-two string representing an empty dictionary, clear the string.
-            cameraOrientationsString = None
-
-        self.ignoreInputCurveModified += 1
-        self.inputCurve.SetAttribute(
-            EndoscopyLogic.NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME, cameraOrientationsString,
-        )
-        self.ignoreInputCurveModified -= 1
-        if self.logic:
-            self.logic.cameraOrientations = cameraOrientations
-
-    def cameraOrientationsIsCorrectType(self, convertedCameraOrientations):
-        return (
-            isinstance(convertedCameraOrientations, dict)
-            and all([isinstance(k, (int, float, str)) for k in convertedCameraOrientations.keys()])
-            and all(
-                [
-                    isinstance(v, list) and len(v) == 4 and all([isinstance(e, (int, float)) for e in v])
-                    for v in convertedCameraOrientations.values()
-                ],
-            )
-        )
 
     def flyToNext(self):
         currentStep = int(self.frameSlider.value)
@@ -707,9 +658,8 @@ class EndoscopyLogic:
 
     NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME = "Endoscopy.Path.CameraOrientations"
 
-    def __init__(self, inputCurve, cameraOrientations, dl=0.5):
+    def __init__(self, inputCurve, dl=0.5):
         self.cleanup()
-        self.cameraOrientations = cameraOrientations
         self.dl = dl  # desired world space step size (in mm)
         self.setControlPoints(inputCurve)
 
@@ -719,7 +669,6 @@ class EndoscopyLogic:
         self.inputCurve = None
         self.resampledCurve = None
         self.planeNormal = None
-        self.cameraOrientations = None
         self.cameraOrientationResampledCurveIndices = None
 
     def setControlPoints(self, inputCurve: slicer.vtkMRMLMarkupsCurveNode) -> None:
@@ -781,19 +730,15 @@ class EndoscopyLogic:
         # nonsensical if self.resampledCurve.GetNumberOfControlPoints() < 3, but proceed anyway.
         _, self.planeNormal = EndoscopyLogic.planeFit(points.T)
 
-        # Interpolate the user-supplied orientations to compute (and assign) an orientation to every control point of
-        # the resampledCurve.
-        self.interpolateOrientations()
+        cameraOrientations = EndoscopyLogic.getCameraOrientationsFromInputCurve(inputCurve)
 
-    def interpolateOrientations(self):
+        self.interpolateOrientations(cameraOrientations)
+
+    def interpolateOrientations(self, cameraOrientations):
 
         # Configure a vtkQuaternionInterpolator using the user's supplied orientations.
         # Note that all distances are as measured along resampledCurve rather than along inputCurve.
 
-        cameraOrientations = self.cameraOrientations
-        if not cameraOrientations:
-            # None supplied
-            cameraOrientations = dict()
         quaternionInterpolator = vtk.vtkQuaternionInterpolator()
         quaternionInterpolator.SetSearchMethod(0)  # binary search
 
@@ -988,6 +933,51 @@ class EndoscopyLogic:
             outputMatrix4x4.SetElement(3, col, 0.0)
             outputMatrix4x4.SetElement(col, 3, cameraPosition[col])
         return outputMatrix4x4
+
+    @staticmethod
+    def getCameraOrientationsFromInputCurve(inputCurve):
+        cameraOrientationsString = inputCurve.GetAttribute(
+            EndoscopyLogic.NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME,
+        )
+        convertedCameraOrientations = (
+            dict() if cameraOrientationsString is None else json.loads(cameraOrientationsString)
+        )
+        if not EndoscopyLogic.cameraOrientationsIsCorrectType(convertedCameraOrientations):
+            raise ValueError(f"cameraOrientations for curve {inputCurve.GetID()} is not of the correct type.")
+        # JSON turns the `keys` into strings and cannot handle `values` that are numpy arrays.
+        # So, let's convert back.
+        cameraOrientations = {float(k): np.array(v) for k, v in convertedCameraOrientations.items()}
+
+        return cameraOrientations
+
+    @staticmethod
+    def setInputCurveCameraOrientations(inputCurve, cameraOrientations):
+        if cameraOrientations:
+            # JSON turns float `keys` into strings and cannot handle `values` that are numpy arrays.
+            # So, let's convert.
+            convertedCameraOrientations = {str(k): list(v) for k, v in cameraOrientations.items()}
+            if not EndoscopyLogic.cameraOrientationsIsCorrectType(convertedCameraOrientations):
+                raise ValueError("cameraOrientations is not of the correct type")
+            cameraOrientationsString = json.dumps(convertedCameraOrientations)
+        else:
+            # Rather than a length-zero or length-two string representing an empty dictionary, clear the string.
+            cameraOrientationsString = None
+        inputCurve.SetAttribute(
+            EndoscopyLogic.NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME, cameraOrientationsString,
+        )
+
+    @staticmethod
+    def cameraOrientationsIsCorrectType(convertedCameraOrientations):
+        return (
+            isinstance(convertedCameraOrientations, dict)
+            and all([isinstance(k, (int, float, str)) for k in convertedCameraOrientations.keys()])
+            and all(
+                [
+                    isinstance(v, list) and len(v) == 4 and all([isinstance(e, (int, float)) for e in v])
+                    for v in convertedCameraOrientations.values()
+                ],
+            )
+        )
 
 
 class EndoscopyPathModel:
