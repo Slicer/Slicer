@@ -46,7 +46,7 @@ template <class TPixelType, int Dimension>
 void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage, char *fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {
-  typedef itk::Image<TPixelType, Dimension * self->GetNumberOfSequenceFrames()> ImageType;
+  typedef itk::Image<TPixelType, Dimension> ImageType;
 
   vtkMatrix4x4* ijkToRasMatrix = vtkMatrix4x4::New();
 
@@ -99,13 +99,12 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkImageData *inputImage,
   vtkMatrix4x4* ijkToLpsMatrix = vtkMatrix4x4::New();
   vtkMatrix4x4::Multiply4x4(ijkToRasMatrix, rasToLpsMatrix, ijkToLpsMatrix);
 
-  int spatialDimension = Dimension / self->GetNumberOfSequenceFrames();
-  for (i=0; i<spatialDimension; i++)
+  for (i=0; i<Dimension; i++)
     {
     origin[i] =  ijkToRasMatrix->GetElement(3,i);
-    for (int j=0; j<spatialDimension; j++)
+    for (int j=0; j<Dimension; j++)
       {
-      //if (spatialDimension == 2)
+      //if (Dimension == 2)
       //  {
       //  direction[j][i] = (i == j) ? 1. : 0;
       //  }
@@ -237,7 +236,6 @@ vtkITKImageSequenceWriter::vtkITKImageSequenceWriter()
   this->MeasurementFrameMatrix = nullptr;
   this->UseCompression = 0;
   this->ImageIOClassName = nullptr;
-  this->NumberOfSequenceFrames = 0;
   this->VoxelVectorType = vtkITKImageSequenceWriter::VoxelVectorTypeUndefined;
 }
 
@@ -328,23 +326,6 @@ void vtkITKImageSequenceWriter::Write()
     pointData->GetVectors() ? pointData->GetVectors()->GetNumberOfComponents() :
     pointData->GetNormals() ? pointData->GetNormals()->GetNumberOfComponents() :
     0;
-
-  if (this->NumberOfSequenceFrames < 1)
-  {
-    vtkErrorMacro(<< "Number of sequence frames need to be set");
-    return;
-  }
-
-  // Sanity test
-  if (inputNumberOfScalarComponents % this->NumberOfSequenceFrames != 0)
-  {
-    vtkErrorMacro(<< "Given number of sequence frames (" << this->NumberOfSequenceFrames
-      << ") is invalid for the number of scalar components in the sequence image (" << inputNumberOfScalarComponents << ").");
-    return;
-  }
-
-  // Get number of scalar components in each sequence frame
-  inputNumberOfScalarComponents /= this->NumberOfSequenceFrames;
 
   if (inputNumberOfScalarComponents == 1)
     {
