@@ -565,7 +565,7 @@ class EndoscopyLogic:
     def __init__(self, inputCurve, dl=0.5):
         self.cleanup()
         self.dl = dl  # desired world space step size (in mm)
-        self.setControlPoints(inputCurve)
+        self.setControlPointsByResamplingAndInterpolationFromInputCurve(inputCurve)
 
     def cleanup(self):
         # Whether we're about to construct or delete, free all resources and initialize class members to None.
@@ -578,7 +578,7 @@ class EndoscopyLogic:
     def getNumberOfControlPoints(self):
         return self.resampledCurve.GetNumberOfControlPoints()
 
-    def setControlPoints(self, inputCurve: slicer.vtkMRMLMarkupsCurveNode) -> None:
+    def setControlPointsByResamplingAndInterpolationFromInputCurve(self, inputCurve: slicer.vtkMRMLMarkupsCurveNode) -> None:
         expectedType = slicer.vtkMRMLMarkupsCurveNode
         if not isinstance(inputCurve, expectedType):
             raise TypeError(
