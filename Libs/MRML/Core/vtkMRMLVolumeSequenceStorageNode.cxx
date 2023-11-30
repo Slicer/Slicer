@@ -330,6 +330,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     }
   }
 
+  /*
   vtkNew<vtkImageAppendComponents> appender;
   for (int frameIndex=0; frameIndex<numberOfFrameVolumes; frameIndex++)
   {
@@ -379,6 +380,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       appender->AddInputData(frameVolume->GetImageData());
     }
   }
+  */
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
@@ -386,8 +388,6 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("File name not specified."));
     return 0;
   }
-
-
 
   /*
   // Use here the NRRD Writer
@@ -467,14 +467,63 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   writer->SetRasToIJKMatrix(firstVolumeRasToIjk.GetPointer());
 
   // Set number of frames in the sequence
-  writer->SetNumberOfSequenceFrames(numberOfFrameVolumes);
+  //writer->SetNumberOfSequenceFrames(numberOfFrameVolumes);
 
   //TODO: Axis types
 
   //TODO: Set VoxelVectorType based on MRML info (see ConvertVoxelVectorTypeMRMLToVTKITK in archetype storage node)
 
-  appender->Update();
-  writer->SetInputConnection(appender->GetOutputPort());
+  //appender->Update();
+  //writer->SetInputConnection(appender->GetOutputPort());
+
+  for (int frameIndex=0; frameIndex<numberOfFrameVolumes; frameIndex++)
+    {
+    vtkMRMLVolumeNode* frameVolume = vtkMRMLVolumeNode::SafeDownCast(volSequenceNode->GetNthDataNode(frameIndex));
+    if (frameVolume==nullptr)
+      {
+      vtkDebugMacro(<< "vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: Data node "<<frameIndex<<" is not a volume");
+      this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only volume sequence can be written in this format."));
+      return 0;
+      }
+    vtkNew<vtkMatrix4x4> currentVolumeRasToIjk;
+    frameVolume->GetRASToIJKMatrix(currentVolumeRasToIjk.GetPointer());
+    if (!vtkAddonMathUtilities::MatrixAreEqual(currentVolumeRasToIjk, firstVolumeRasToIjk))
+      {
+      vtkDebugMacro("vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode: IJK to RAS matrix is not the same in all frames"
+        << " (first frame: " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk)
+        << ", frame " << frameIndex << ": " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk) << ")");
+      this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Geometry of all volumes in the sequence must be the same."));
+      return 0;
+      }
+    int currentFrameVolumeDimensions[3] = {0};
+    int currentFrameVolumeScalarType = VTK_VOID;
+    if (frameVolume->GetImageData())
+      {
+      frameVolume->GetImageData()->GetDimensions(currentFrameVolumeDimensions);
+      currentFrameVolumeScalarType = frameVolume->GetImageData()->GetScalarType();
+      }
+    if (currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
+    || currentFrameVolumeDimensions[1] != frameVolumeDimensions[1]
+    || currentFrameVolumeDimensions[2] != frameVolumeDimensions[2]
+    || currentFrameVolumeScalarType != frameVolumeScalarType)
+      {
+      vtkDebugMacro(<< "vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: Data node "<<frameIndex<<" size or scalar type mismatch ("
+        << "got " << currentFrameVolumeDimensions[0]
+          << "x" << currentFrameVolumeDimensions[1]
+          << "x" <<currentFrameVolumeDimensions[2]
+          << " " <<vtkImageScalarTypeNameMacro(currentFrameVolumeScalarType) << ", "
+        << "expected " << frameVolumeDimensions[0]
+          << "x" << frameVolumeDimensions[1]
+          << "x" << frameVolumeDimensions[2]
+          << " " <<vtkImageScalarTypeNameMacro(frameVolumeScalarType) );
+      this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Size and scalar type of all volumes in the sequence must be the same."));
+      return 0;
+     }
+    if (frameVolume->GetImageData())
+      {
+      writer->AddInputConnection(frameVolume->GetImageDataConnection());
+      }
+    }
 
   writer->Write();
   int writeFlag = 1;
