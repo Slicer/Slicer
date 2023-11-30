@@ -438,7 +438,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         cameraOrientations = self.logic.saveOrientationAtIndex(resampledCurvePointIndex, self.cameraNode)
         self.ignoreInputCurveModified -= 1
 
-        self.logic.interpolateOrientations(cameraOrientations)
+        self.logic.interpolateOrientationsForControlPoints(cameraOrientations)
 
         self.flyTo(resampledCurvePointIndex)
 
@@ -450,7 +450,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         cameraOrientations = self.logic.removeOrientationAtIndex(resampledCurvePointIndexToDelete)
         self.ignoreInputCurveModified -= 1
 
-        self.logic.interpolateOrientations(cameraOrientations)
+        self.logic.interpolateOrientationsForControlPoints(cameraOrientations)
 
         self.flyTo(resampledCurvePointIndexToDelete)
 
@@ -639,9 +639,9 @@ class EndoscopyLogic:
 
         cameraOrientations = EndoscopyLogic.getCameraOrientationsFromInputCurve(inputCurve)
 
-        self.interpolateOrientations(cameraOrientations)
+        self.interpolateOrientationsForControlPoints(cameraOrientations)
 
-    def interpolateOrientations(self, cameraOrientations):
+    def interpolateOrientationsForControlPoints(self, cameraOrientations):
 
         # Configure a vtkQuaternionInterpolator using the user's supplied orientations.
         # Note that all distances are as measured along resampledCurve rather than along inputCurve.
