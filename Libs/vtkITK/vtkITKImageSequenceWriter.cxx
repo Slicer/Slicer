@@ -607,46 +607,6 @@ void vtkITKImageSequenceWriter::Write()
         }
       }
     } // 4-vector
-  //else if (inputNumberOfScalarComponents == 9)
-  //  {
-  //  // take into consideration the scalar type
-  //  switch (inputDataType)
-  //    {
-  //    case VTK_FLOAT:
-  //      {
-  //      typedef itk::DiffusionTensor3D<float> PixelType;
-  //      vtkNew<vtkImageData> outImage;
-  //      outImage->SetDimensions(inputImage->GetDimensions());
-  //      outImage->SetOrigin(0, 0, 0);
-  //      outImage->SetSpacing(1, 1, 1);
-  //      outImage->AllocateScalars(VTK_FLOAT, 6);
-  //      vtkFloatArray* out = vtkFloatArray::SafeDownCast(outImage->GetPointData()->GetScalars());
-  //      vtkFloatArray* in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
-  //      float inValue[9];
-  //      float outValue[6];
-  //      for(int i=0; i<out->GetNumberOfTuples(); i++)
-  //        {
-  //        in->GetTypedTuple(i, inValue);
-  //        //ITK expect tensors saved in upper-triangular format
-  //        outValue[0] = inValue[0];
-  //        outValue[1] = inValue[1];
-  //        outValue[2] = inValue[2];
-  //        outValue[3] = inValue[4];
-  //        outValue[4] = inValue[7];
-  //        outValue[5] = inValue[8];
-  //        out->SetTuple(i, outValue);
-  //        }
-
-  //      ITKWriteVTKImage<PixelType>(this, outImage.GetPointer(),
-  //        this->GetFileName(), this->RasToIJKMatrix, this->MeasurementFrameMatrix);
-  //      }
-  //      inputImage->GetPointData()->SetScalars(nullptr);
-  //      break;
-  //    default:
-  //      vtkErrorMacro(<< "Execute: Unknown output ScalarType");
-  //      return;
-  //    }
-  //  }
   else
     {
     vtkErrorMacro(<< "Can only export 1 or 3 component images, current image has " << inputNumberOfScalarComponents << " components");
