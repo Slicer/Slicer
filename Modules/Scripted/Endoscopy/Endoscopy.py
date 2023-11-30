@@ -73,7 +73,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.transform = None
         self.cursor = None
-        self.model = None
         self.skip = 0
         self.logic = None
         self.timer = qt.QTimer()
@@ -394,7 +393,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Hide the cursor, model and inputCurve from the main 3D view
         EndoscopyWidget._hideOnlyInView(
             EndoscopyWidget._viewNodeIDFromCameraNode(self.cameraNode),
-            [self.cursor, self.model, self.inputCurve],
+            [self.cursor, inputCurve],
         )
 
         # Update flythrough variables
@@ -491,12 +490,10 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if self.transform:
             model.model.SetNodeReferenceID("CameraTransform", self.transform.GetID())
 
-        self.model = model.model
-
         # Hide the model from the main 3D view
         EndoscopyWidget._hideOnlyInView(
             EndoscopyWidget._viewNodeIDFromCameraNode(self.cameraNode),
-            [self.model],
+            [model.model],
         )
         logging.debug("-> Model created")
 
