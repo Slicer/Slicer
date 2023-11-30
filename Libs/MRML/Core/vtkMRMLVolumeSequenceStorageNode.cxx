@@ -330,134 +330,12 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     }
   }
 
-  /*
-  vtkNew<vtkImageAppendComponents> appender;
-  for (int frameIndex=0; frameIndex<numberOfFrameVolumes; frameIndex++)
-  {
-    vtkMRMLVolumeNode* frameVolume = vtkMRMLVolumeNode::SafeDownCast(volSequenceNode->GetNthDataNode(frameIndex));
-    if (frameVolume==nullptr)
-    {
-      vtkDebugMacro(<< "vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: Data node "<<frameIndex<<" is not a volume");
-      this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only volume sequence can be written in this format."));
-      return 0;
-    }
-    vtkNew<vtkMatrix4x4> currentVolumeRasToIjk;
-    frameVolume->GetRASToIJKMatrix(currentVolumeRasToIjk.GetPointer());
-    if (!vtkAddonMathUtilities::MatrixAreEqual(currentVolumeRasToIjk, firstVolumeRasToIjk))
-    {
-      vtkDebugMacro("vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode: IJK to RAS matrix is not the same in all frames"
-        << " (first frame: " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk)
-        << ", frame " << frameIndex << ": " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk) << ")");
-      this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Geometry of all volumes in the sequence must be the same."));
-      return 0;
-    }
-    int currentFrameVolumeDimensions[3] = {0};
-    int currentFrameVolumeScalarType = VTK_VOID;
-    if (frameVolume->GetImageData())
-    {
-      frameVolume->GetImageData()->GetDimensions(currentFrameVolumeDimensions);
-      currentFrameVolumeScalarType = frameVolume->GetImageData()->GetScalarType();
-    }
-    if (currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
-    || currentFrameVolumeDimensions[1] != frameVolumeDimensions[1]
-    || currentFrameVolumeDimensions[2] != frameVolumeDimensions[2]
-    || currentFrameVolumeScalarType != frameVolumeScalarType)
-    {
-      vtkDebugMacro(<< "vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: Data node "<<frameIndex<<" size or scalar type mismatch ("
-        << "got " << currentFrameVolumeDimensions[0]
-          << "x" << currentFrameVolumeDimensions[1]
-          << "x" <<currentFrameVolumeDimensions[2]
-          << " " <<vtkImageScalarTypeNameMacro(currentFrameVolumeScalarType) << ", "
-        << "expected " << frameVolumeDimensions[0]
-          << "x" << frameVolumeDimensions[1]
-          << "x" << frameVolumeDimensions[2]
-          << " " <<vtkImageScalarTypeNameMacro(frameVolumeScalarType) );
-      this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Size and scalar type of all volumes in the sequence must be the same."));
-      return 0;
-    }
-    if (frameVolume->GetImageData())
-    {
-      appender->AddInputData(frameVolume->GetImageData());
-    }
-  }
-  */
-
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
   {
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("File name not specified."));
     return 0;
   }
-
-  /*
-  // Use here the NRRD Writer
-  vtkNew<vtkTeemNRRDWriter> writer;
-  // ForceRangeAxis needs to be enabled for the writer to correctly write image sequences that contain only a single frame.
-  // Without this option the range axis would be omitted for single frame sequences, causing the first axis to be a spatial dimension, rather than range.
-  // This would cause an error when attempting to set units on the first axis.
-  writer->SetForceRangeAxis(true);
-  writer->SetVectorAxisKind(nrrdKindList);
-  writer->SetFileName(fullName.c_str());
-  writer->SetUseCompression(this->GetUseCompression());
-
-  // Set volume attributes
-  writer->SetIJKToRASMatrix(firstVolumeIjkToRas.GetPointer());
-  //writer->SetMeasurementFrameMatrix(mf.GetPointer());
-
-  // Write index information
-  int axisIndex;
-  std::string axisType, axisValues;
-  axisIndex = 0;
-  axisType = "axis 0 index type";
-  axisValues = "axis 0 index values";
-
-  if (!volSequenceNode->GetIndexName().empty())
-  {
-    writer->SetAxisLabel(axisIndex, volSequenceNode->GetIndexName().c_str());
-  }
-  if (!volSequenceNode->GetIndexUnit().empty())
-  {
-    writer->SetAxisUnit(axisIndex, volSequenceNode->GetIndexUnit().c_str());
-  }
-  if (!volSequenceNode->GetIndexTypeAsString().empty())
-  {
-    writer->SetAttribute(axisType, volSequenceNode->GetIndexTypeAsString());
-  }
-  if (numberOfFrameVolumes > 0)
-  {
-    std::stringstream ssIndexValues;
-    for (int frameIndex = 0; frameIndex < numberOfFrameVolumes; frameIndex++)
-    {
-      if (frameIndex > 0)
-      {
-        ssIndexValues << " ";
-      }
-      // Encode string to make sure there are no spaces in the serialized index value (space is used as separator)
-      ssIndexValues << vtkMRMLNode::URLEncodeString(volSequenceNode->GetNthIndexValue(frameIndex).c_str());
-    }
-    writer->SetAttribute(axisValues, ssIndexValues.str());
-  }
-
-  // pass down all MRML attributes to NRRD, including "DataNodeClassName", which is used to determine the type of the data node
-  // when reading the sequence from file
-  std::vector<std::string> attributeNames = volSequenceNode->GetAttributeNames();
-  for (auto & attributeName : attributeNames)
-  {
-    writer->SetAttribute(attributeName, volSequenceNode->GetAttribute(attributeName.c_str()));
-  }
-
-  appender->Update();
-  writer->SetInputConnection(appender->GetOutputPort());
-
-  writer->Write();
-  int writeFlag = 1;
-  if (writer->GetWriteError())
-  {
-    vtkDebugMacro("ERROR writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
-    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to write NRRD file."));
-    writeFlag = 0;
-  }
-  */
 
   vtkNew<vtkITKImageSequenceWriter> writer;
   writer->SetFileName(fullName.c_str());
@@ -466,15 +344,9 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   writer->SetRasToIJKMatrix(firstVolumeRasToIjk.GetPointer());
 
-  // Set number of frames in the sequence
-  //writer->SetNumberOfSequenceFrames(numberOfFrameVolumes);
-
   //TODO: Axis types
 
   //TODO: Set VoxelVectorType based on MRML info (see ConvertVoxelVectorTypeMRMLToVTKITK in archetype storage node)
-
-  //appender->Update();
-  //writer->SetInputConnection(appender->GetOutputPort());
 
   for (int frameIndex=0; frameIndex<numberOfFrameVolumes; frameIndex++)
     {
@@ -533,20 +405,6 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to write NRRD file."));
     writeFlag = 0;
     }
-
-  /*
-  //TODO: Working test code from imageMath
-  using PixelType = itk::RGBAPixel<unsigned short>;
-  constexpr unsigned int Dimension = 4;
-
-  using ImageType = itk::Image< PixelType, Dimension >;
-
-  using WriterType = itk::ImageFileWriter< ImageType >;
-  WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName("d:/ith5DWriteTest.nrrd");
-  writer->SetInput(image);
-  writer->Update();
-  */
 
   this->StageWriteData(refNode);
 
