@@ -331,6 +331,24 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if self.cameraNode:
             self.viewAngleSlider.value = self.cameraNode.GetViewAngle()
 
+        if not self.logic:
+            return
+
+        numberOfControlPoints = self.logic.getNumberOfControlPoints()
+
+        enable = numberOfControlPoints > 1
+        self.flythroughCollapsibleButton.enabled = enable
+        self.advancedCollapsibleButton.enabled = enable
+
+        self.frameSlider.maximum = max(0, numberOfControlPoints - 2)
+
+        resampledCurvePointIndex = int(self.frameSlider.value)
+        deletable = resampledCurvePointIndex in self.logic.cameraOrientationResampledCurveIndices
+        self.deleteOrientationButton.enabled = deletable
+        self.saveOrientationButton.text = (
+            _("Update Keyframe Orientation") if deletable else _("Save Keyframe Orientation")
+        )
+
     def onCameraNodeModified(self, observer, eventid):
         self.updateWidgetFromMRML()
 
@@ -370,11 +388,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.setInputCurve(inputCurve)
 
-        numberOfControlPoints = self.logic.getNumberOfControlPoints()
-
-        # Update frame slider range
-        self.frameSlider.maximum = max(0, numberOfControlPoints - 2)
-
         # Create a cursor so that the user can see where the flythrough is progressing.
         self.createCursor()
 
@@ -386,11 +399,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Update flythrough variables
         self.transform = self.cursor.transform
-
-        # Enable / Disable flythrough button
-        enable = numberOfControlPoints > 1
-        self.flythroughCollapsibleButton.enabled = enable
-        self.advancedCollapsibleButton.enabled = enable
 
         self.ignoreInputCurveModified -= 1
 
@@ -507,12 +515,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Update the cursor transform
         if self.transform:
             self.transform.SetMatrixTransformToParent(worldMatrix4x4)
-
-        deletable = resampledCurvePointIndex in self.logic.cameraOrientationResampledCurveIndices
-        self.deleteOrientationButton.enabled = deletable
-        self.saveOrientationButton.text = (
-            _("Update Keyframe Orientation") if deletable else _("Save Keyframe Orientation")
-        )
 
     @staticmethod
     def _viewNodeIDFromCameraNode(cameraNode):
