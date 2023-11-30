@@ -76,7 +76,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.timer = qt.QTimer()
         self.timer.setInterval(20)
         self.timer.connect("timeout()", self.flyToNext)
-        self.ignoreInputCurveModified = 0
 
         self.inputCurve = None
 
@@ -86,12 +85,20 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.setupFlythroughUI()
         self.setupAdvancedUI()
 
+        # Create logic class. Logic implements all computations that should be possible to run
+        # in batch mode, without a graphical user interface.
+        self.logic = EndoscopyLogic()
+
         # Add vertical spacer
         self.layout.addStretch(1)
 
         self.cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
         self.inputCurveSelector.setMRMLScene(slicer.mrmlScene)
         self.outputPathNodeSelector.setMRMLScene(slicer.mrmlScene)
+
+        # Connections
+        self.addObserver(slicer.mrmlScene, slicer.mrmlScene.StartCloseEvent, self.onSceneStartClose)
+        self.addObserver(self.logic.resampledCurve, slicer.vtkMRMLMarkupsNode.PointModifiedEvent, self.updateWidgetFromMRML)
 
     def setupPathUI(self):
         # Path collapsible button
@@ -119,20 +126,12 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         inputCurveSelector.objectName = "inputCurveSelector"
         inputCurveSelector.toolTip = _("Select a curve to define control points for the path.")
         inputCurveSelector.nodeTypes = ["vtkMRMLMarkupsCurveNode"]
-        inputCurveSelector.noneEnabled = False
+        inputCurveSelector.noneEnabled = True
         inputCurveSelector.addEnabled = False
         inputCurveSelector.removeEnabled = False
-        inputCurveSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
+        inputCurveSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.setInputCurve)
         pathFormLayout.addRow(_("Curve to modify:"), inputCurveSelector)
         self.inputCurveSelector = inputCurveSelector
-
-        # CreatePath button
-        createPathButton = qt.QPushButton(_("Use this curve"))
-        createPathButton.toolTip = _("Base the flythrough on the selected input curve.")
-        createPathButton.enabled = False
-        createPathButton.connect("clicked()", self.onCreatePathButtonClicked)
-        pathFormLayout.addRow(createPathButton)
-        self.createPathButton = createPathButton
 
     def setupFlythroughUI(self):
         # Flythrough collapsible button
@@ -149,7 +148,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         playButton = qt.QPushButton(_("Play flythrough"))
         playButton.toolTip = _("Start or stop the flythrough animation.")
         playButton.checkable = True
-        playButton.connect("toggled(bool)", self.onPlayButtonToggled)
+        playButton.connect("toggled(bool)", self.setPlaybackEnabled)
         flythroughFormLayout.addRow(playButton)
         self.playButton = playButton
 
@@ -261,7 +260,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         outputPathNodeSelector.addEnabled = True
         outputPathNodeSelector.removeEnabled = True
         outputPathNodeSelector.renameEnabled = True
-        outputPathNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
+        outputPathNodeSelector.connect("currentNodeChanged(bool)", self.updateWidgetFromMRML)
         advancedFormLayout.addRow(_("Output Model:"), outputPathNodeSelector)
         self.outputPathNodeSelector = outputPathNodeSelector
 
@@ -275,33 +274,25 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def cleanup(self):
         """Called when the application closes and the module widget is destroyed."""
+        self.setInputCurve(None)
         self.removeObservers()
 
-        if self.logic:
-            self.logic.cleanup()
-            self.logic = None
-
-        self.inputCurve = None
+    def onSceneStartClose(self, caller, event) -> None:
+        """Called just before the scene is closed."""
+        self.setInputCurve(None)
 
     def setCameraNode(self, newCameraNode):
-        """Allow to set the current camera node.
-        Connected to signal 'currentNodeChanged()' emitted by camera node selector.
-        """
-
-        if not self.inputCurve:
-            return
+        """Allow to set the current camera node."""
 
         # Remove previous observer
         cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
         if cameraNode is not None:
-            self.removeObserver(cameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
+            self.removeObserver(cameraNode, vtk.vtkCommand.ModifiedEvent, self.updateWidgetFromMRML)
 
-        self.ignoreInputCurveModified += 1
         EndoscopyLogic.setInputCurveCamera(self.inputCurve, newCameraNode)
-        self.ignoreInputCurveModified -= 1
 
-        if cameraNode is not None:
-            self.addObserver(newCameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
+        if newCameraNode is not None:
+            self.addObserver(newCameraNode, vtk.vtkCommand.ModifiedEvent, self.updateWidgetFromMRML)
 
         # Update UI
         self.updateWidgetFromMRML()
@@ -310,31 +301,35 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """Set and observe a curve node."""
 
         if self.inputCurve is not None:
-            self.removeObserver(self.inputCurve, vtk.vtkCommand.ModifiedEvent, self.onInputCurveModified)
+            self.removeObserver(self.inputCurve, slicer.vtkMRMLMarkupsNode.PointModifiedEvent, self.onInputCurveControlPointModified)
+            self.removeObserver(self.inputCurve, slicer.vtkMRMLMarkupsNode.PointEndInteractionEvent, self.onInputCurveControlPointEndInteraction)
+
         self.inputCurve = newInputCurve
+
         if newInputCurve is not None:
-            self.addObserver(self.inputCurve, vtk.vtkCommand.ModifiedEvent, self.onInputCurveModified)
+            self.addObserver(self.inputCurve, slicer.vtkMRMLMarkupsNode.PointModifiedEvent, self.onInputCurveControlPointModified)
+            self.addObserver(self.inputCurve, slicer.vtkMRMLMarkupsNode.PointEndInteractionEvent, self.onInputCurveControlPointEndInteraction)
 
-        if self.logic is not None:
-            self.logic.cleanup()
-            self.logic = None
-
+        # Set input curve "Camera" reference if there is none
         cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
         if not cameraNode:
-            self.ignoreInputCurveModified += 1
             EndoscopyLogic.setInputCurveCamera(self.inputCurve, self.cameraNodeSelector.currentNode())
-            self.ignoreInputCurveModified -= 1
 
-        self.logic = EndoscopyLogic(self.inputCurve)
+        # Update Logic
+        self.logic.setControlPointsByResamplingAndInterpolationFromInputCurve(self.inputCurve)
 
         # Update UI
         self.updateWidgetFromMRML()
 
-    def updateWidgetFromMRML(self):
-        cursor = EndoscopyLogic.createCursorFromInputCurve(self.inputCurve)
+        # Initialize to the start of the path
+        self.flyTo(0)
 
-        self.flythroughCollapsibleButton.enabled = self.inputCurve is not None
-        self.advancedCollapsibleButton.enabled = self.inputCurve is not None
+    def updateWidgetFromMRML(self, *_unused):
+        # Create a cursor and associated transform so that the user can see where the flythrough is progressing.
+        cursor = EndoscopyLogic.createCursorFromInputCurve(self.inputCurve)
+        transform = EndoscopyLogic.createTransformFromInputCurve(self.inputCurve)
+        if cursor and transform:
+            cursor.SetAndObserveTransformNodeID(transform.GetID())
 
         # Hide the cursor and inputCurve from the main 3D view
         cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
@@ -349,14 +344,12 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if cameraNode:
             self.viewAngleSlider.value = cameraNode.GetViewAngle()
 
-        if not self.logic:
-            return
-
         numberOfControlPoints = self.logic.getNumberOfControlPoints()
 
-        enable = numberOfControlPoints > 1
+        enable = self.inputCurve is not None and numberOfControlPoints > 1
         self.flythroughCollapsibleButton.enabled = enable
         self.advancedCollapsibleButton.enabled = enable
+        self.saveExportModelButton.enabled = enable
 
         self.frameSlider.maximum = max(0, numberOfControlPoints - 2)
 
@@ -367,63 +360,23 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             _("Update Keyframe Orientation") if deletable else _("Save Keyframe Orientation")
         )
 
-    def onCameraNodeModified(self, observer, eventid):
-        self.updateWidgetFromMRML()
+        # If there is no input curve available (e.g scene close), stop playblack
+        if not self.inputCurve:
+            self.setPlaybackEnabled(False)
 
-    def enableOrDisableCreateButton(self):
-        """Connected to both the input curve and camera node selector. It allows to
-        enable or disable the 'createPath' and `saveExportModel` buttons.
-        """
-        enable = self.inputCurveSelector.currentNode()
-        self.createPathButton.enabled = enable
-        self.saveOrientationButton.enabled = enable
-        self.saveExportModelButton.enabled = enable
-
-    def onInputCurveModified(self, observer, eventid):
-        """If the input curve  was changed we need to repopulate the keyframe UI"""
-        if self.ignoreInputCurveModified:
+    def onInputCurveControlPointModified(self, *_unused):
+        if self.inputCurve.GetAttribute("Markups.MovingMarkupIndex"):
             return
-        self.ignoreInputCurveModified += 1
-        if self.logic:
-            self.logic.cleanup()
-            self.logic = None
-        cameraOrientations = self.loadCameraOrientations()
-        self.logic = EndoscopyLogic(self.inputCurve, cameraOrientations)
-        self.ignoreInputCurveModified -= 1
+        self.logic.setControlPointsByResamplingAndInterpolationFromInputCurve(self.inputCurve)
 
-    def onCreatePathButtonClicked(self):
-        """Connected to 'Use this curve'` button.  It allows to:
-        - compute the path
-        - create cursor
-        - ensure cursor, model and input curve are not visible in the endoscopy view
-        - go to start of the path
-        """
-        if self.ignoreInputCurveModified:
-            return
-        self.ignoreInputCurveModified += 1
+        resampledCurvePointIndex = int(self.frameSlider.value)
+        self.flyTo(resampledCurvePointIndex)
 
-        inputCurve = self.inputCurveSelector.currentNode()
+    def onInputCurveControlPointEndInteraction(self, *_unused):
+        self.logic.setControlPointsByResamplingAndInterpolationFromInputCurve(self.inputCurve)
 
-        self.setInputCurve(inputCurve)
-
-        # Create a cursor so that the user can see where the flythrough is progressing.
-        cursor = EndoscopyLogic.createCursorFromInputCurve(self.inputCurve)
-        transform= EndoscopyLogic.createTransformFromInputCurve(self.inputCurve)
-        cursor.SetAndObserveTransformNodeID(transform.GetID())
-
-        # Hide the cursor, model and inputCurve from the main 3D view
-        cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
-        EndoscopyWidget._hideOnlyInView(
-            EndoscopyWidget._viewNodeIDFromCameraNode(cameraNode),
-            [cursor, inputCurve],
-        )
-
-        self.cameraNodeSelector.setCurrentNode(cameraNode)
-
-        self.ignoreInputCurveModified -= 1
-
-        # Initialize to the start of the path
-        self.flyTo(0)
+        resampledCurvePointIndex = int(self.frameSlider.value)
+        self.flyTo(resampledCurvePointIndex)
 
     def frameSliderValueChanged(self, newValue):
         self.flyTo(int(newValue))
@@ -440,8 +393,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             return
         cameraNode.GetCamera().SetViewAngle(newValue)
 
-    def onPlayButtonToggled(self, checked):
-        if checked:
+    def setPlaybackEnabled(self, play):
+        if play:
             # Start playback
             self.timer.start()
             # Enable the user to stop playback
@@ -456,23 +409,16 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             # Once playback is stopped, saving the camera orientation is permitted.
             self.saveOrientationButton.enabled = True
 
+        self.playButton.checked = play
+
     def onSaveOrientationButtonClicked(self):
         resampledCurvePointIndex = int(self.frameSlider.value)
-
-        self.ignoreInputCurveModified += 1
         self.logic.saveOrientationAtIndex(resampledCurvePointIndex)
-        self.ignoreInputCurveModified -= 1
-
         self.flyTo(resampledCurvePointIndex)
 
     def onDeleteOrientationButtonClicked(self):
-
         resampledCurvePointIndexToDelete = int(self.frameSlider.value)
-
-        self.ignoreInputCurveModified += 1
         self.logic.removeOrientationAtIndex(resampledCurvePointIndexToDelete)
-        self.ignoreInputCurveModified -= 1
-
         self.flyTo(resampledCurvePointIndexToDelete)
 
     def onFirstOrientationButtonClicked(self):
@@ -525,7 +471,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def flyTo(self, resampledCurvePointIndex):
         """Apply the resampledCurvePointIndex-th step in the path to the global camera"""
-
         self.logic.updateCameraFromOrientationAtIndex(resampledCurvePointIndex)
 
     @staticmethod
@@ -572,7 +517,8 @@ class EndoscopyLogic:
     The points of the resampled path are generated using the `vtkMRMLMarkupsCurveNode.ResamplePoints()` method.
 
     Example:
-      logic = EndoscopyLogic(inputCurve)
+      logic = EndoscopyLogic()
+      logic.setControlPointsByResamplingAndInterpolationFromInputCurve(inputCurve)
       print(f"computed path has {logic.getNumberOfControlPoints()} elements")
 
     Notes:
@@ -584,29 +530,34 @@ class EndoscopyLogic:
 
     NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME = "Endoscopy.Path.CameraOrientations"
 
-    def __init__(self, inputCurve, dl=0.5):
-        self.cleanup()
+    def __init__(self, dl=0.5):
         self.dl = dl  # desired world space step size (in mm)
-        self.setControlPointsByResamplingAndInterpolationFromInputCurve(inputCurve)
-
-    def cleanup(self):
-        # Whether we're about to construct or delete, free all resources and initialize class members to None.
-        self.dl = None
         self.inputCurve = None
-        self.resampledCurve = None
+
         self.planeNormal = None
-        self.cameraOrientationResampledCurveIndices = None
+
+        self.resampledCurve = slicer.vtkMRMLMarkupsCurveNode()
+        self.cameraOrientationResampledCurveIndices = []
+
+        self.updatingControlPoints = False
 
     def getNumberOfControlPoints(self):
         return self.resampledCurve.GetNumberOfControlPoints()
 
-    def setControlPointsByResamplingAndInterpolationFromInputCurve(self, inputCurve: slicer.vtkMRMLMarkupsCurveNode) -> None:
+    def setControlPointsByResamplingAndInterpolationFromInputCurve(self, inputCurve) -> None:
+        if inputCurve is None:
+            return
+
+        if self.updatingControlPoints:
+            return
+
         expectedType = slicer.vtkMRMLMarkupsCurveNode
         if not isinstance(inputCurve, expectedType):
             raise TypeError(
                 f"inputCurve must be of type '{expectedType}', is type '{type(inputCurve)}' value '{inputCurve}'",
             )
 
+        self.updatingControlPoints = True
         self.inputCurve = inputCurve
 
         resampledPoints = vtk.vtkPoints()
@@ -641,8 +592,6 @@ class EndoscopyLogic:
         # Make a curve from these resampledPoints. We want all associated information from inputCurve, except its name
         # and control points.
 
-        self.resampledCurve = slicer.vtkMRMLMarkupsCurveNode()
-
         with slicer.util.NodeModify(self.resampledCurve):
             self.resampledCurve.Copy(self.inputCurve)
             self.resampledCurve.SetName(f"Resampled-{inputCurve.GetName()}")
@@ -663,7 +612,12 @@ class EndoscopyLogic:
 
         self.interpolateOrientationsForControlPoints(cameraOrientations)
 
+        self.updatingControlPoints = False
+
     def interpolateOrientationsForControlPoints(self, cameraOrientations):
+        """Interpolate the user-supplied orientations to compute (and assign) an orientation to every control point of
+        the resampledCurve.
+        """
 
         # Configure a vtkQuaternionInterpolator using the user's supplied orientations.
         # Note that all distances are as measured along resampledCurve rather than along inputCurve.

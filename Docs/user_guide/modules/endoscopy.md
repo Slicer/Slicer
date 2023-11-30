@@ -15,7 +15,6 @@ Selects the camera and curve to be manipulated.
 
 - **Camera**: The camera used for the flythrough.
 - **Curve to modify**: The curve defining the flythrough path control points.
-- **Use this curve**: Press to indicate that the camera and curve have been selected.
 
 ### Flythrough
 
