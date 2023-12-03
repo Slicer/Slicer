@@ -51,10 +51,13 @@ public:
   virtual void OnMouseMove();
   virtual void OnEnter();
   virtual void OnLeave();
+  virtual void OnLeftButtonDoubleClick();
   virtual void OnLeftButtonDown();
   virtual void OnLeftButtonUp();
+  virtual void OnMiddleButtonDoubleClick();
   virtual void OnMiddleButtonDown();
   virtual void OnMiddleButtonUp();
+  virtual void OnRightButtonDoubleClick();
   virtual void OnRightButtonDown();
   virtual void OnRightButtonUp();
   virtual void OnMouseWheelForward();
