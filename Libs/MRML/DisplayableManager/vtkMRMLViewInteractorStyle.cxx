@@ -101,6 +101,12 @@ void vtkMRMLViewInteractorStyle::OnMouseMove()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnRightButtonDoubleClick()
+{
+  this->GetInteractorStyle()->OnRightButtonDoubleClick();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::OnRightButtonDown()
 {
   this->MouseMovedSinceButtonDown = false;
@@ -114,6 +120,12 @@ void vtkMRMLViewInteractorStyle::OnRightButtonUp()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnMiddleButtonDoubleClick()
+{
+  this->GetInteractorStyle()->OnMiddleButtonDoubleClick();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::OnMiddleButtonDown()
 {
   this->MouseMovedSinceButtonDown = false;
@@ -124,6 +136,12 @@ void vtkMRMLViewInteractorStyle::OnMiddleButtonDown()
 void vtkMRMLViewInteractorStyle::OnMiddleButtonUp()
 {
   this->GetInteractorStyle()->OnMiddleButtonUp();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnLeftButtonDoubleClick()
+{
+  this->GetInteractorStyle()->OnLeftButtonDoubleClick();
 }
 
 //----------------------------------------------------------------------------
@@ -414,17 +432,26 @@ void vtkMRMLViewInteractorStyle::ProcessEvents(vtkObject* vtkNotUsed(object),
     case vtkCommand::MouseMoveEvent:
       self->OnMouseMove();
       break;
+    case vtkCommand::RightButtonDoubleClickEvent:
+      self->OnRightButtonDoubleClick();
+      break;
     case vtkCommand::RightButtonPressEvent:
       self->OnRightButtonDown();
       break;
     case vtkCommand::RightButtonReleaseEvent:
       self->OnRightButtonUp();
       break;
+    case vtkCommand::MiddleButtonDoubleClickEvent:
+      self->OnMiddleButtonDoubleClick();
+      break;
     case vtkCommand::MiddleButtonPressEvent:
       self->OnMiddleButtonDown();
       break;
     case vtkCommand::MiddleButtonReleaseEvent:
       self->OnMiddleButtonUp();
+      break;
+    case vtkCommand::LeftButtonDoubleClickEvent:
+      self->OnLeftButtonDoubleClick();
       break;
     case vtkCommand::LeftButtonPressEvent:
       self->OnLeftButtonDown();
@@ -513,10 +540,13 @@ void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *intera
 
     // Mouse
     interactor->AddObserver(vtkCommand::MouseMoveEvent, this->EventCallbackCommand, priority);
+    interactor->AddObserver(vtkCommand::RightButtonDoubleClickEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::RightButtonPressEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::RightButtonReleaseEvent, this->EventCallbackCommand, priority);
+    interactor->AddObserver(vtkCommand::MiddleButtonDoubleClickEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::MiddleButtonPressEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::MiddleButtonReleaseEvent, this->EventCallbackCommand, priority);
+    interactor->AddObserver(vtkCommand::LeftButtonDoubleClickEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::LeftButtonPressEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::LeftButtonReleaseEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::EnterEvent, this->EventCallbackCommand, priority);
