@@ -206,9 +206,27 @@ void vtkMRMLViewInteractorStyle::OnConfigure()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnStartPinch()
+{
+  this->GetInteractorStyle()->OnStartPinch();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::OnPinch()
 {
   this->GetInteractorStyle()->OnPinch();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnEndPinch()
+{
+  this->GetInteractorStyle()->OnEndPinch();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnStartRotate()
+{
+  this->GetInteractorStyle()->OnStartRotate();
 }
 
 //----------------------------------------------------------------------------
@@ -218,9 +236,27 @@ void vtkMRMLViewInteractorStyle::OnRotate()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnEndRotate()
+{
+  this->GetInteractorStyle()->OnEndRotate();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnStartPan()
+{
+  this->GetInteractorStyle()->OnStartPan();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::OnPan()
 {
   this->GetInteractorStyle()->OnPan();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLViewInteractorStyle::OnEndPan()
+{
+  this->GetInteractorStyle()->OnEndPan();
 }
 
 //----------------------------------------------------------------------------
@@ -473,14 +509,32 @@ void vtkMRMLViewInteractorStyle::ProcessEvents(vtkObject* vtkNotUsed(object),
       break;
 
     // Touch gesture interaction events
+    case vtkCommand::StartPinchEvent:
+      self->OnStartPinch();
+      break;
     case vtkCommand::PinchEvent:
       self->OnPinch();
+      break;
+    case vtkCommand::EndPinchEvent:
+      self->OnEndPinch();
+      break;
+    case vtkCommand::StartRotateEvent:
+      self->OnStartRotate();
       break;
     case vtkCommand::RotateEvent:
       self->OnRotate();
       break;
+    case vtkCommand::EndRotateEvent:
+      self->OnEndRotate();
+      break;
+    case vtkCommand::StartPanEvent:
+      self->OnStartPan();
+      break;
     case vtkCommand::PanEvent:
       self->OnPan();
+      break;
+    case vtkCommand::EndPanEvent:
+      self->OnEndPan();
       break;
     case vtkCommand::TapEvent:
       self->OnTap();
@@ -555,9 +609,15 @@ void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *intera
     interactor->AddObserver(vtkCommand::MouseWheelBackwardEvent, this->EventCallbackCommand, priority);
 
     // Touch gesture
+    interactor->AddObserver(vtkCommand::StartPinchEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::PinchEvent, this->EventCallbackCommand, priority);
+    interactor->AddObserver(vtkCommand::EndPinchEvent, this->EventCallbackCommand, priority);
+    interactor->AddObserver(vtkCommand::StartRotateEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::RotateEvent, this->EventCallbackCommand, priority);
+    interactor->AddObserver(vtkCommand::EndRotateEvent, this->EventCallbackCommand, priority);
+    interactor->AddObserver(vtkCommand::StartPanEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::PanEvent, this->EventCallbackCommand, priority);
+    interactor->AddObserver(vtkCommand::EndPanEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::TapEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::LongTapEvent, this->EventCallbackCommand, priority);
 
