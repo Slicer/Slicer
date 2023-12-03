@@ -69,9 +69,9 @@ For more details, see [this page](https://www.slicer.org/wiki/Documentation/Nigh
 - Using the `AddObserver()`/`RemoveObserver()` methods is tedious and error-prone, therefore it is recommended to instead use [EventBroker](https://www.slicer.org/wiki/Slicer3:EventBroker) and the vtkObserverManager helper class, macros, and callback methods.
   - MRML observer macros are defined in Libs/MRML/vtkMRMLNode.h
   - vtkSetMRMLObjectMacro - registers a MRML node with another VTK object (another MRML node, Logic or GUI). No observers are added.
-  - vtkSetAndObserveMRMLObjectMacro - registers a MRML node and adds an observer for vtkCommand::ModifyEvent.
+  - vtkSetAndObserveMRMLObjectMacro - registers a MRML node and adds an observer for vtkCommand::ModifiedEvent.
   - vtkSetAndObserveMRMLObjectEventsMacro - registers a MRML node and adds an observer for a specified set of events.
-  - The `SetAndObserveMRMLScene()` and `SetAndObserveMRMLSceneEvents()` methods are used in GUI and Logic objects to observe Modify, NewScene, NodeAdded, etc. events.
+  - The `SetAndObserveMRMLScene()` and `SetAndObserveMRMLSceneEvents()` methods are used in GUI and Logic objects to observe Modified, NewScene, NodeAdded, etc. events.
   - The `ProcessMRMLEvents()` method should be implemented in MRML nodes, Logic, and GUI classes in order to process events from the observed nodes.
 
 ## Advanced topics
