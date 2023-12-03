@@ -100,9 +100,17 @@ void vtkMRMLSequenceBrowserNode::SynchronizationProperties::FromString( std::str
         {
         this->SaveChanges=(!attValue.compare("true"));
         }
-      if (!attName.compare("saveChanges"))
+      if (!attName.compare("missingItemMode"))
         {
-        this->MissingItemMode = vtkMRMLSequenceBrowserNode::GetMissingItemModeFromString(attValue);
+        MissingItemModeType missingItemMode = vtkMRMLSequenceBrowserNode::GetMissingItemModeFromString(attValue);
+        if (this->MissingItemMode != MissingItemInvalid)
+          {
+          this->MissingItemMode = missingItemMode;
+          }
+        else
+          {
+          vtkGenericWarningMacro("Ignore unknown missingItemMode value: '" << attValue << "'");
+          }
         }
       }
     }
@@ -1528,7 +1536,7 @@ vtkMRMLSequenceBrowserNode::MissingItemModeType vtkMRMLSequenceBrowserNode::GetM
 {
   for (int i = 0; i<vtkMRMLSequenceBrowserNode::NumberOfMissingItemModes; i++)
     {
-    if (missingItemModeString == GetRecordingSamplingModeAsString(i))
+    if (missingItemModeString == GetMissingItemModeAsString(i))
       {
       // found it
       return MissingItemModeType(i);
