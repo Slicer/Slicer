@@ -64,9 +64,15 @@ public:
   virtual void OnMouseWheelBackward();
 
   // Touch gesture interaction events
+  virtual void OnStartPinch();
   virtual void OnPinch();
+  virtual void OnEndPinch();
+  virtual void OnStartRotate();
   virtual void OnRotate();
+  virtual void OnEndRotate();
+  virtual void OnStartPan();
   virtual void OnPan();
+  virtual void OnEndPan();
   virtual void OnTap();
   virtual void OnLongTap();
 
