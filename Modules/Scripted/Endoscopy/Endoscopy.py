@@ -435,10 +435,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         resampledCurvePointIndex = int(self.frameSlider.value)
 
         self.ignoreInputCurveModified += 1
-        cameraOrientations = self.logic.saveOrientationAtIndex(resampledCurvePointIndex, self.cameraNode)
+        self.logic.saveOrientationAtIndex(resampledCurvePointIndex, self.cameraNode)
         self.ignoreInputCurveModified -= 1
-
-        self.logic.interpolateOrientationsForControlPoints(cameraOrientations)
 
         self.flyTo(resampledCurvePointIndex)
 
@@ -447,10 +445,8 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         resampledCurvePointIndexToDelete = int(self.frameSlider.value)
 
         self.ignoreInputCurveModified += 1
-        cameraOrientations = self.logic.removeOrientationAtIndex(resampledCurvePointIndexToDelete)
+        self.logic.removeOrientationAtIndex(resampledCurvePointIndexToDelete)
         self.ignoreInputCurveModified -= 1
-
-        self.logic.interpolateOrientationsForControlPoints(cameraOrientations)
 
         self.flyTo(resampledCurvePointIndexToDelete)
 
@@ -713,6 +709,7 @@ class EndoscopyLogic:
         cameraOrientations[distanceAlongResampledCurve] = worldOrientation
 
         EndoscopyLogic.setInputCurveCameraOrientations(inputCurve, cameraOrientations)
+        self.interpolateOrientationsForControlPoints(cameraOrientations)
 
         return cameraOrientations
 
@@ -738,6 +735,7 @@ class EndoscopyLogic:
                 break
 
         EndoscopyLogic.setInputCurveCameraOrientations(inputCurve, cameraOrientations)
+        self.interpolateOrientationsForControlPoints(cameraOrientations)
 
         return cameraOrientations
 
