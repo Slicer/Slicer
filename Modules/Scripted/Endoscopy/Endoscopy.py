@@ -78,7 +78,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.timer.connect("timeout()", self.flyToNext)
         self.ignoreInputCurveModified = 0
 
-        self.cameraNode = None
         self.inputCurve = None
 
     def setup(self):
@@ -111,7 +110,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         cameraNodeSelector.noneEnabled = False
         cameraNodeSelector.addEnabled = False
         cameraNodeSelector.removeEnabled = False
-        cameraNodeSelector.connect("currentNodeChanged(bool)", self.enableOrDisableCreateButton)
         cameraNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.setCameraNode)
         pathFormLayout.addRow(_("Camera:"), cameraNodeSelector)
         self.cameraNodeSelector = cameraNodeSelector
@@ -283,7 +281,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.logic.cleanup()
             self.logic = None
 
-        self.cameraNode = None
         self.inputCurve = None
 
     def setCameraNode(self, newCameraNode):
@@ -291,14 +288,20 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Connected to signal 'currentNodeChanged()' emitted by camera node selector.
         """
 
+        if not self.inputCurve:
+            return
+
         # Remove previous observer
-        if self.cameraNode is not None:
-            self.removeObserver(self.cameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
+        cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
+        if cameraNode is not None:
+            self.removeObserver(cameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
 
-        self.cameraNode = newCameraNode
+        self.ignoreInputCurveModified += 1
+        EndoscopyLogic.setInputCurveCamera(self.inputCurve, newCameraNode)
+        self.ignoreInputCurveModified -= 1
 
-        if self.cameraNode is not None:
-            self.addObserver(self.cameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
+        if cameraNode is not None:
+            self.addObserver(newCameraNode, vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
 
         # Update UI
         self.updateWidgetFromMRML()
@@ -316,17 +319,35 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.logic.cleanup()
             self.logic = None
 
+        cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
+        if not cameraNode:
+            self.ignoreInputCurveModified += 1
+            EndoscopyLogic.setInputCurveCamera(self.inputCurve, self.cameraNodeSelector.currentNode())
+            self.ignoreInputCurveModified -= 1
+
         self.logic = EndoscopyLogic(self.inputCurve)
 
         # Update UI
         self.updateWidgetFromMRML()
 
     def updateWidgetFromMRML(self):
+        cursor = EndoscopyLogic.createCursorFromInputCurve(self.inputCurve)
+
         self.flythroughCollapsibleButton.enabled = self.inputCurve is not None
         self.advancedCollapsibleButton.enabled = self.inputCurve is not None
 
-        if self.cameraNode:
-            self.viewAngleSlider.value = self.cameraNode.GetViewAngle()
+        # Hide the cursor and inputCurve from the main 3D view
+        cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
+        EndoscopyWidget._hideOnlyInView(
+            EndoscopyWidget._viewNodeIDFromCameraNode(cameraNode),
+            [cursor, self.inputCurve],
+        )
+
+        if self.inputCurve:
+            self.cameraNodeSelector.setCurrentNode(cameraNode)
+
+        if cameraNode:
+            self.viewAngleSlider.value = cameraNode.GetViewAngle()
 
         if not self.logic:
             return
@@ -353,7 +374,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """Connected to both the input curve and camera node selector. It allows to
         enable or disable the 'createPath' and `saveExportModel` buttons.
         """
-        enable = self.cameraNodeSelector.currentNode() and self.inputCurveSelector.currentNode()
+        enable = self.inputCurveSelector.currentNode()
         self.createPathButton.enabled = enable
         self.saveOrientationButton.enabled = enable
         self.saveExportModelButton.enabled = enable
@@ -391,10 +412,13 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         cursor.SetAndObserveTransformNodeID(transform.GetID())
 
         # Hide the cursor, model and inputCurve from the main 3D view
+        cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
         EndoscopyWidget._hideOnlyInView(
-            EndoscopyWidget._viewNodeIDFromCameraNode(self.cameraNode),
+            EndoscopyWidget._viewNodeIDFromCameraNode(cameraNode),
             [cursor, inputCurve],
         )
+
+        self.cameraNodeSelector.setCurrentNode(cameraNode)
 
         self.ignoreInputCurveModified -= 1
 
@@ -411,9 +435,10 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.timer.interval = newValue
 
     def viewAngleSliderValueChanged(self, newValue):
-        if not self.cameraNode:
+        cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
+        if not cameraNode:
             return
-        self.cameraNode.GetCamera().SetViewAngle(newValue)
+        cameraNode.GetCamera().SetViewAngle(newValue)
 
     def onPlayButtonToggled(self, checked):
         if checked:
@@ -435,7 +460,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         resampledCurvePointIndex = int(self.frameSlider.value)
 
         self.ignoreInputCurveModified += 1
-        self.logic.saveOrientationAtIndex(resampledCurvePointIndex, self.cameraNode)
+        self.logic.saveOrientationAtIndex(resampledCurvePointIndex)
         self.ignoreInputCurveModified -= 1
 
         self.flyTo(resampledCurvePointIndex)
@@ -484,8 +509,9 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         EndoscopyLogic.setInputCurveTransform(model.model, transform)
 
         # Hide the model from the main 3D view
+        cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
         EndoscopyWidget._hideOnlyInView(
-            EndoscopyWidget._viewNodeIDFromCameraNode(self.cameraNode),
+            EndoscopyWidget._viewNodeIDFromCameraNode(cameraNode),
             [model.model],
         )
         logging.debug("-> Model created")
@@ -500,7 +526,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def flyTo(self, resampledCurvePointIndex):
         """Apply the resampledCurvePointIndex-th step in the path to the global camera"""
 
-        self.logic.updateCameraFromOrientationAtIndex(resampledCurvePointIndex, self.cameraNode)
+        self.logic.updateCameraFromOrientationAtIndex(resampledCurvePointIndex)
 
     @staticmethod
     def _viewNodeIDFromCameraNode(cameraNode):
@@ -688,7 +714,7 @@ class EndoscopyLogic:
 
                 self.resampledCurve.SetNthControlPointOrientation(resampledCurvePointIndex, worldOrientation)
 
-    def saveOrientationAtIndex(self, resampledCurvePointIndex, cameraNode):
+    def saveOrientationAtIndex(self, resampledCurvePointIndex):
         inputCurve = self.inputCurve
         resampledCurve = self.resampledCurve
 
@@ -698,6 +724,7 @@ class EndoscopyLogic:
         )
 
         # Compute CameraOrientations dictionary value
+        cameraNode = EndoscopyLogic.getCameraFromInputCurve(inputCurve)
         cameraPosition = cameraNode.GetPosition()
         focalPoint = cameraNode.GetFocalPoint()
         viewUp = cameraNode.GetViewUp()
@@ -739,9 +766,10 @@ class EndoscopyLogic:
 
         return cameraOrientations
 
-    def updateCameraFromOrientationAtIndex(self, resampledCurvePointIndex, cameraNode):
+    def updateCameraFromOrientationAtIndex(self, resampledCurvePointIndex):
         """Apply the resampledCurvePointIndex-th step in the path to the camera"""
 
+        inputCurve = self.inputCurve
         resampledCurve = self.resampledCurve
 
         if (
@@ -767,19 +795,33 @@ class EndoscopyLogic:
         )
 
         # Update the camera
-        with slicer.util.NodeModify(cameraNode):
-            cameraNode.SetPosition(*cameraPosition)
-            cameraNode.SetFocalPoint(*adjustedFocalPoint)
-            cameraNode.SetViewUp(*worldMatrix3x3[:, 1])
+        cameraNode = EndoscopyLogic.getCameraFromInputCurve(inputCurve)
+        if cameraNode:
+            with slicer.util.NodeModify(cameraNode):
+                cameraNode.SetPosition(*cameraPosition)
+                cameraNode.SetFocalPoint(*adjustedFocalPoint)
+                cameraNode.SetViewUp(*worldMatrix3x3[:, 1])
 
-        cameraNode.ResetClippingRange()
+            cameraNode.ResetClippingRange()
 
         # Update the cursor transform
-        transform = EndoscopyLogic.getTransformFromInputCurve(self.inputCurve)
+        transform = EndoscopyLogic.getTransformFromInputCurve(inputCurve)
         if transform:
             transform.SetMatrixTransformToParent(worldMatrix4x4)
 
         return worldMatrix4x4
+
+    @staticmethod
+    def setInputCurveCamera(inputCurve, cameraNode):
+        if not inputCurve:
+            return
+        inputCurve.SetNodeReferenceID("Camera", cameraNode.GetID() if cameraNode else None)
+
+    @staticmethod
+    def getCameraFromInputCurve(inputCurve):
+        if not inputCurve:
+            return None
+        return inputCurve.GetNodeReference("Camera")
 
     @staticmethod
     def createTransformFromInputCurve(inputCurve):
