@@ -511,21 +511,78 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
 
 class EndoscopyLogic:
-    """Compute a path based on an input curve.
+    """Compute a flytrough path based on an input curve.
 
-    The resulting path is stored in the `resampledCurve` member variable as a `slicer.vtkMRMLMarkupsCurveNode` object.
-    The points of the resampled path are generated using the `vtkMRMLMarkupsCurveNode.ResamplePoints()` method.
+    The `EndoscopyLogic` class orchestrates the computation of a resampled path and the interpolation of
+    orientations along an input curve. It is specifically designed for dynamically updating the position and
+    orientation of a camera associated with a first-person view.
+
+    To manage additional relative orientations (keyframes), use :func:`saveOrientationAtIndex` or
+    :func:`removeOrientationAtIndex`. After associating a camera with the input curve via
+    :func:`setInputCurveCamera`, invoking :func:`updateCameraFromOrientationAtIndex` will update both the camera's
+    position and orientation. The associated transform, accessible through :func:`getInputCurveTransform`, is
+    also updated.
+
+    At any point along the resampled curve, the orientation is pre-computed in
+    :func:`interpolateOrientationsForControlPoints` by interpolating all relative orientations. The result is
+    converted to a world orientation using :func:`relativeOrientationToWorld`, computed based on a plane normal
+    derived from the set of input control points using :func:`planeFit`.
+
+    Convention:
+
+    * Camera orientations are represented as axis-angle (4-tuple `(angle, *axis)`) where the angle is in
+      radians and the axis `(x, y, z)` is a unit 3D-vector for the axis of rotation.
+
+    * Internally, scalar-first quaternions `(wxyz)` are used for interpolation. These are defined as
+      `(cos(angle/2), *axis * sin(angle/2))` and applied in :func:`interpolateOrientationsForControlPoints` using
+      `vtk.vtkQuaternionInterpolator`.
+
+    * Conversion functions (:func:`orientationToQuaternion` and :func:`quaternionToOrientation`) convert
+      between camera orientations and quaternions.
+
+    * Orientation 3x3 matrices serve as an intermediate representation for conversion between camera position,
+      focal point, view up vector, and camera orientation during interpolation.
 
     Example:
-      logic = EndoscopyLogic()
-      logic.setControlPointsByResamplingAndInterpolationFromInputCurve(inputCurve)
-      print(f"computed path has {logic.getNumberOfControlPoints()} elements")
 
-    Notes:
-    * `orientation` = (angle, *axis), where angle is in radians and axis is the unit 3D-vector for the axis
-                      of rotation.
-    * `quaternion` = (cos(angle/2), *axis * sin(angle/2))
-    * `matrix` = matrix with columns x, y, and z, which are unit vectors for the rotated frame
+    .. code-block:: python
+
+        from Endoscopy import EndoscopyLogic, EndoscopyWidget
+
+        logic = EndoscopyLogic()
+
+        # Get the reference to an open-curve markups annotation called "OC"
+        inputCurve = slicer.util.getFirstNodeByName("OC")
+
+        logic.setControlPointsByResamplingAndInterpolationFromInputCurve(inputCurve)
+        print(f"computed path has {logic.getNumberOfControlPoints()} elements")
+
+        view = slicer.app.layoutManager().threeDWidget(0).mrmlViewNode()
+
+        cameraNode = slicer.app.layoutManager().threeDWidget(0).threeDView().cameraNode()
+        EndoscopyLogic.setInputCurveCamera(inputCurve, cameraNode)
+
+        # Hide curve to avoid occluding the first-person view
+        # The helper functions "_hideOnlyInView" and "_viewNodeIDFromCameraNode" are temporary
+        # and will be replaced by an improved display node API. See https://github.com/Slicer/Slicer/issues/7434
+        EndoscopyWidget._hideOnlyInView(EndoscopyWidget._viewNodeIDFromCameraNode(cameraNode), [inputCurve])
+
+        # Create a cursor and associated transform so that the user can see where the flythrough is progressing.
+        cursor = EndoscopyLogic.createCursorFromInputCurve(inputCurve)
+        transform = EndoscopyLogic.createTransformFromInputCurve(inputCurve)
+        cursor.SetAndObserveTransformNodeID(transform.GetID())
+
+        resampledCurvePointIndex = 0
+
+        def flyToNext():
+            global resampledCurvePointIndex
+            resampledCurvePointIndex = (resampledCurvePointIndex + 1) % logic.getNumberOfControlPoints()
+            logic.updateCameraFromOrientationAtIndex(resampledCurvePointIndex)
+
+        timer = qt.QTimer()
+        timer.setInterval(20)
+        timer.connect("timeout()", flyToNext)
+        timer.start()
     """
 
     NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME = "Endoscopy.Path.CameraOrientations"
