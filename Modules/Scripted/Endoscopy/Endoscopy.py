@@ -301,12 +301,14 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """Set and observe a curve node."""
 
         if self.inputCurve is not None:
+            self.removeObserver(self.inputCurve, vtk.vtkCommand.ModifiedEvent, self.updateWidgetFromMRML)
             self.removeObserver(self.inputCurve, slicer.vtkMRMLMarkupsNode.PointModifiedEvent, self.onInputCurveControlPointModified)
             self.removeObserver(self.inputCurve, slicer.vtkMRMLMarkupsNode.PointEndInteractionEvent, self.onInputCurveControlPointEndInteraction)
 
         self.inputCurve = newInputCurve
 
         if newInputCurve is not None:
+            self.addObserver(self.inputCurve, vtk.vtkCommand.ModifiedEvent, self.updateWidgetFromMRML)
             self.addObserver(self.inputCurve, slicer.vtkMRMLMarkupsNode.PointModifiedEvent, self.onInputCurveControlPointModified)
             self.addObserver(self.inputCurve, slicer.vtkMRMLMarkupsNode.PointEndInteractionEvent, self.onInputCurveControlPointEndInteraction)
 
@@ -342,7 +344,9 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.cameraNodeSelector.setCurrentNode(cameraNode)
 
         if cameraNode:
-            self.viewAngleSlider.value = cameraNode.GetViewAngle()
+            viewAngle = EndoscopyLogic.getCameraViewAngleFromInputCurve(self.inputCurve)
+            self.viewAngleSlider.value = viewAngle
+            cameraNode.GetCamera().SetViewAngle(viewAngle)
 
         numberOfControlPoints = self.logic.getNumberOfControlPoints()
 
@@ -388,10 +392,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.timer.interval = newValue
 
     def viewAngleSliderValueChanged(self, newValue):
-        cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
-        if not cameraNode:
-            return
-        cameraNode.GetCamera().SetViewAngle(newValue)
+        EndoscopyLogic.setInputCurveCameraViewAngle(self.inputCurve, newValue)
 
     def setPlaybackEnabled(self, play):
         if play:
@@ -586,6 +587,8 @@ class EndoscopyLogic:
     """
 
     NODE_PATH_CAMERA_ORIENTATIONS_ATTRIBUTE_NAME = "Endoscopy.Path.CameraOrientations"
+    NODE_PATH_VIEW_ANGLE_ATTRIBUTE_NAME = "Endoscopy.Path.ViewAngle"
+    DEFAULT_CAMERA_VIEW_ANGLE = 30.0
 
     def __init__(self, dl=0.5):
         self.dl = dl  # desired world space step size (in mm)
@@ -833,6 +836,19 @@ class EndoscopyLogic:
         if not inputCurve:
             return None
         return inputCurve.GetNodeReference("Camera")
+
+    @staticmethod
+    def setInputCurveCameraViewAngle(inputCurve, viewAngle):
+        if not inputCurve:
+            return
+        inputCurve.SetAttribute(EndoscopyLogic.NODE_PATH_VIEW_ANGLE_ATTRIBUTE_NAME, str(viewAngle))
+
+    @staticmethod
+    def getCameraViewAngleFromInputCurve(inputCurve):
+        if not inputCurve:
+            return
+        value = inputCurve.GetAttribute(EndoscopyLogic.NODE_PATH_VIEW_ANGLE_ATTRIBUTE_NAME)
+        return float(value if value is not None else EndoscopyLogic.DEFAULT_CAMERA_VIEW_ANGLE)
 
     @staticmethod
     def createTransformFromInputCurve(inputCurve):
