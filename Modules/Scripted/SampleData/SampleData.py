@@ -26,7 +26,7 @@ def downloadFromURL(uris=None, fileNames=None, nodeNames=None, checksums=None, l
     :param checksums: Checksum(s) formatted as ``<algo>:<digest>`` to verify the downloaded file(s). For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
     :param loadFiles: Boolean indicating if file(s) should be loaded. By default, the function decides.
     :param customDownloader: Custom function for downloading.
-    :param loadFileTypes: file format name(s) ('VolumeFile' by default).
+    :param loadFileTypes: file format name(s) (if not specified then the default file reader will be used).
     :param loadFileProperties: custom properties passed to the IO plugin.
 
     If the given ``fileNames`` are not found in the application cache directory, they
@@ -146,7 +146,8 @@ class SampleDataSource:
     def __init__(self, sampleName=None, sampleDescription=None, uris=None, fileNames=None, nodeNames=None,
                  checksums=None, loadFiles=None,
                  customDownloader=None, thumbnailFileName=None,
-                 loadFileType=None, loadFileProperties=None):
+                 loadFileTypes=None, loadFileProperties=None,
+                 loadFileType=None):
         """
         :param sampleName: Name identifying the data set.
         :param sampleDescription: Displayed name of data set in SampleData module GUI. (default is ``sampleName``)
@@ -157,16 +158,24 @@ class SampleDataSource:
         :param checksums: Checksum(s) formatted as ``<algo>:<digest>`` to verify the downloaded file(s). For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
         :param loadFiles: Boolean indicating if file(s) should be loaded.
         :param customDownloader: Custom function for downloading.
-        :param loadFileType: file format name(s) ('VolumeFile' by default if node name is specified).
+        :param loadFileTypes: file format name(s) (if not specified then the default file reader will be used).
         :param loadFileProperties: custom properties passed to the IO plugin.
+        :param loadFileType: deprecated, use ``loadFileTypes`` instead.
         """
+
+        # For backward compatibility (allow using "loadFileType" instead of "loadFileTypes")
+        if (loadFileType is not None) and (loadFileTypes is not None):
+            raise ValueError("loadFileType and loadFileTypes cannot be specified at the same time")
+        if (loadFileType is not None) and (loadFileTypes is None):
+            loadFileTypes = loadFileType
+
         self.sampleName = sampleName
         if sampleDescription is None:
             sampleDescription = sampleName
         self.sampleDescription = sampleDescription
         if isinstance(uris, list) or isinstance(uris, tuple):
-            if isinstance(loadFileType, str) or loadFileType is None:
-                loadFileType = [loadFileType] * len(uris)
+            if isinstance(loadFileTypes, str) or loadFileTypes is None:
+                loadFileTypes = [loadFileTypes] * len(uris)
             if nodeNames is None:
                 nodeNames = [None] * len(uris)
             if loadFiles is None:
@@ -178,23 +187,8 @@ class SampleDataSource:
             fileNames = [fileNames]
             nodeNames = [nodeNames]
             loadFiles = [loadFiles]
-            loadFileType = [loadFileType]
+            loadFileTypes = [loadFileTypes]
             checksums = [checksums]
-
-        updatedFileType = []
-        for fileName, nodeName, fileType in zip(fileNames, nodeNames, loadFileType):
-            # If not explicitly specified, attempt to guess fileType
-            if fileType is None:
-                if nodeName is not None:
-                    # TODO: Use method from Slicer IO logic ?
-                    fileType = "VolumeFile"
-                else:
-                    ext = os.path.splitext(fileName.lower())[1]
-                    if ext in [".mrml", ".mrb"]:
-                        fileType = "SceneFile"
-                    elif ext in [".zip"]:
-                        fileType = "ZipFile"
-            updatedFileType.append(fileType)
 
         if loadFileProperties is None:
             loadFileProperties = {}
@@ -205,10 +199,10 @@ class SampleDataSource:
         self.loadFiles = loadFiles
         self.customDownloader = customDownloader
         self.thumbnailFileName = thumbnailFileName
-        self.loadFileType = updatedFileType
+        self.loadFileTypes = loadFileTypes
         self.loadFileProperties = loadFileProperties
         self.checksums = checksums
-        if not len(uris) == len(fileNames) == len(nodeNames) == len(loadFiles) == len(updatedFileType) == len(checksums):
+        if not len(uris) == len(fileNames) == len(nodeNames) == len(loadFiles) == len(loadFileTypes) == len(checksums):
             raise ValueError(
                 f"All fields of sample data source must have the same length\n"
                 f"  uris                 : {uris}\n"
@@ -216,7 +210,7 @@ class SampleDataSource:
                 f"  len(fileNames)       : {len(fileNames)}\n"
                 f"  len(nodeNames)       : {len(nodeNames)}\n"
                 f"  len(loadFiles)       : {len(loadFiles)}\n"
-                f"  len(updatedFileType) : {len(updatedFileType)}\n"
+                f"  len(loadFileTypes)   : {len(loadFileTypes)}\n"
                 f"  len(checksums)       : {len(checksums)}\n",
             )
 
@@ -232,14 +226,16 @@ class SampleDataSource:
             "customDownloader  : %s" % self.customDownloader,
             "",
         ]
-        for fileName, uri, nodeName, loadFile, fileType, checksum in zip(self.fileNames, self.uris, self.nodeNames, self.loadFiles, self.loadFileType, self.checksums):
+        for fileName, uri, nodeName, loadFile, fileType, checksum in zip(
+            self.fileNames, self.uris, self.nodeNames, self.loadFiles, self.loadFileTypes, self.checksums):
+
             output.extend([
-                " fileName    : %s" % fileName,
-                " uri         : %s" % uri,
-                " checksum    : %s" % checksum,
-                " nodeName    : %s" % nodeName,
-                " loadFile    : %s" % loadFile,
-                " loadFileType: %s" % fileType,
+                " fileName     : %s" % fileName,
+                " uri          : %s" % uri,
+                " checksum     : %s" % checksum,
+                " nodeName     : %s" % nodeName,
+                " loadFile     : %s" % loadFile,
+                " loadFileType : %s" % fileType,
                 "",
             ])
         return "\n".join(output)
@@ -434,8 +430,9 @@ class SampleDataLogic:
     def registerCustomSampleDataSource(category="Custom",
                                        sampleName=None, uris=None, fileNames=None, nodeNames=None,
                                        customDownloader=None, thumbnailFileName=None,
-                                       loadFileType="VolumeFile", loadFiles=None, loadFileProperties={},
-                                       checksums=None):
+                                       loadFileTypes=None, loadFiles=None, loadFileProperties={},
+                                       checksums=None,
+                                       loadFileType=None):
         """Adds custom data sets to SampleData.
         :param category: Section title of data set in SampleData module GUI.
         :param sampleName: Displayed name of data set in SampleData module GUI.
@@ -444,11 +441,18 @@ class SampleDataLogic:
         :param fileNames: File name(s) that will be loaded.
         :param nodeNames: Node name(s) in the scene.
         :param customDownloader: Custom function for downloading.
-        :param loadFileType: file format name(s) ('VolumeFile' by default).
+        :param loadFileTypes: file format name(s) (if not specified then the default file reader will be used).
         :param loadFiles: Boolean indicating if file(s) should be loaded. By default, the function decides.
         :param loadFileProperties: custom properties passed to the IO plugin.
         :param checksums: Checksum(s) formatted as ``<algo>:<digest>`` to verify the downloaded file(s). For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
+        :param loadFileType: deprecated, use ``loadFileTypes`` instead.
         """
+
+        # For backward compatibility (allow using "loadFileType" instead of "loadFileTypes")
+        if (loadFileType is not None) and (loadFileTypes is not None):
+            raise ValueError("loadFileType and loadFileTypes cannot be specified at the same time")
+        if (loadFileType is not None) and (loadFileTypes is None):
+            loadFileTypes = loadFileType
 
         try:
             slicer.modules.sampleDataSources
@@ -464,7 +468,7 @@ class SampleDataLogic:
             fileNames=fileNames,
             nodeNames=nodeNames,
             thumbnailFileName=thumbnailFileName,
-            loadFileType=loadFileType,
+            loadFileTypes=loadFileTypes,
             loadFiles=loadFiles,
             loadFileProperties=loadFileProperties,
             checksums=checksums,
@@ -524,7 +528,7 @@ class SampleDataLogic:
         #     uris=None,
         #     fileNames=None, nodeNames=None,
         #     checksums=None,
-        #     loadFiles=None, customDownloader=None, thumbnailFileName=None, loadFileType=None, loadFileProperties=None
+        #     loadFiles=None, customDownloader=None, thumbnailFileName=None, loadFileTypes=None, loadFileProperties=None
         sourceArguments = (
             ("MRHead", None, TESTING_DATA_URL + "SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93",
              "MR-head.nrrd", "MRHead", "SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93"),
@@ -614,7 +618,7 @@ class SampleDataLogic:
             fileNames=["TinyPatient_CT.nrrd", "TinyPatient_Structures.seg.nrrd"],
             nodeNames=["TinyPatient_CT", "TinyPatient_Segments"],
             thumbnailFileName=os.path.join(iconPath, "TinyPatient.png"),
-            loadFileType=["VolumeFile", "SegmentationFile"],
+            loadFileTypes=["VolumeFile", "SegmentationFile"],
             checksums=["SHA256:c0743772587e2dd4c97d4e894f5486f7a9a202049c8575e032114c0a5c935c3b", "SHA256:3243b62bde36b1db1cdbfe204785bd4bc1fbb772558d5f8cac964cda8385d470"],
         )
 
@@ -669,9 +673,17 @@ class SampleDataLogic:
         resultNodes = []
         resultFilePaths = []
 
-        for uri, fileName, nodeName, checksum, loadFile, loadFileType in zip(source.uris, source.fileNames, source.nodeNames, source.checksums, source.loadFiles, source.loadFileType):
+        for uri, fileName, nodeName, checksum, loadFile, loadFileType in zip(
+            source.uris, source.fileNames, source.nodeNames, source.checksums, source.loadFiles, source.loadFileTypes):
 
-            current_source = SampleDataSource(uris=uri, fileNames=fileName, nodeNames=nodeName, checksums=checksum, loadFiles=loadFile, loadFileType=loadFileType, loadFileProperties=source.loadFileProperties)
+            current_source = SampleDataSource(
+                uris=uri,
+                fileNames=fileName,
+                nodeNames=nodeName,
+                checksums=checksum,
+                loadFiles=loadFile,
+                loadFileTypes=loadFileType,
+                loadFileProperties=source.loadFileProperties)
 
             for attemptsCount in range(maximumAttemptsCount):
 
@@ -683,6 +695,21 @@ class SampleDataLogic:
                         current=attemptsCount + 1, total=maximumAttemptsCount), logging.ERROR)
                     continue
                 resultFilePaths.append(filePath)
+
+                # Special behavior (how `loadFileType` is used and what is returned in `resultNodes` ) is implemented
+                # for scene and zip file loading, for preserving backward compatible behavior.
+                # - ZipFile: If `loadFile` is explicitly set to `False` then the zip file is just downloaded. Otherwise, the zip file is extracted.
+                #   By default `loadFile` is set to `None`, so by default the zip file is extracted.
+                #   Nodes are not loaded from the .zip file in either case. To load a scene from a .zip file, `loadFileType` has to be set explicitly to `SceneFile`.
+                #   Path is returned in `resultNodes`.
+                # - SceneFile: If `loadFile` is not explicitly set or it is set to `False` then the scene is just downloaded (not loaded).
+                #   Path is returned in `resultNodes`.
+                if (loadFileType is None) and (nodeName is None):
+                    ext = os.path.splitext(fileName.lower())[1]
+                    if ext in [".mrml", ".mrb"]:
+                        loadFileType = "SceneFile"
+                    elif ext in [".zip"]:
+                        loadFileType = "ZipFile"
 
                 if loadFileType == "ZipFile":
                     if loadFile is False:
@@ -758,7 +785,7 @@ class SampleDataLogic:
         :param checksums: Checksum(s) formatted as ``<algo>:<digest>`` to verify the downloaded file(s). For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
         :param loadFiles: Boolean indicating if file(s) should be loaded. By default, the function decides.
         :param customDownloader: Custom function for downloading.
-        :param loadFileTypes: file format name(s) ('VolumeFile' by default).
+        :param loadFileTypes: file format name(s) (if not specified then the default file reader will be used).
         :param loadFileProperties: custom properties passed to the IO plugin.
 
         If the given ``fileNames`` are not found in the application cache directory, they
@@ -766,10 +793,15 @@ class SampleDataLogic:
         See ``slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()``
 
         If not explicitly provided or if set to ``None``, the ``loadFileTypes`` are
-        guessed based on the corresponding filename extensions.
+        guessed based on the corresponding filename extensions and file content.
 
-        If a given fileName has the ``.mrb`` or ``.mrml`` extension, it will **not** be loaded
-        by default. To ensure the file is loaded, ``loadFiles`` must be set.
+        Special behavior for scene and archive files:
+        - If a ``fileName`` has the ``.mrb`` or ``.mrml`` extension, it will **not** be loaded
+          by default. To ensure the file is loaded, ``loadFiles`` must be set.
+        - If a ``fileName`` has the ``.zip`` extension and ``loadFiles`` is set to ``True`` (or left at default value)
+          then the archive is extracted and the folder that contains the files is returned.
+          If ``loadFiles`` is set to ``False`` then the archive is not extracted and the filepath of the downloaded
+          zip file is returned.
 
         The ``loadFileProperties`` are common for all files. If different properties
         need to be associated with files of different types, downloadFromURL must
@@ -777,7 +809,7 @@ class SampleDataLogic:
         """
         return self.downloadFromSource(SampleDataSource(
             uris=uris, fileNames=fileNames, nodeNames=nodeNames, loadFiles=loadFiles,
-            loadFileType=loadFileTypes, loadFileProperties=loadFileProperties, checksums=checksums,
+            loadFileTypes=loadFileTypes, loadFileProperties=loadFileProperties, checksums=checksums,
         ))
 
     def downloadSample(self, sampleName):
@@ -916,11 +948,13 @@ class SampleDataLogic:
         self.logMessage("<b>" + _("Load finished") + "</b><p></p>")
         return True
 
-    def loadNode(self, uri, name, fileType="VolumeFile", fileProperties={}):
+    def loadNode(self, uri, name, fileType=None, fileProperties={}):
         self.logMessage("<b>" + _("Requesting load {name} from {uri} ...").format(name=name, uri=uri) + "</b>")
 
         fileProperties["fileName"] = uri
         fileProperties["name"] = name
+        if not fileType:
+            fileType = slicer.app.coreIOManager().fileType(fileProperties["fileName"])
         firstLoadedNode = None
         loadedNodes = vtk.vtkCollection()
         success = slicer.app.coreIOManager().loadNodes(fileType, fileProperties, loadedNodes)
@@ -974,6 +1008,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
             self.test_categoryVisibility,
             self.test_setCategoriesFromSampleDataSources,
             self.test_isSampleDataSourceRegistered,
+            self.test_defaultFileType,
             self.test_customDownloader,
             self.test_categoryForSource,
         ]:
@@ -1158,12 +1193,38 @@ class SampleDataTest(ScriptedLoadableModuleTest):
             "sampleName": "isSampleDataSourceRegistered",
             "uris": "https://slicer.org",
             "fileNames": "volume.nrrd",
-            "loadFileType": "VolumeFile",
+            "loadFileTypes": "VolumeFile",
         }
         self.assertFalse(SampleDataLogic.isSampleDataSourceRegistered("Testing", SampleDataSource(**sourceArguments)))
         SampleDataLogic.registerCustomSampleDataSource(**sourceArguments, category="Testing")
         self.assertTrue(SampleDataLogic.isSampleDataSourceRegistered("Testing", SampleDataSource(**sourceArguments)))
         self.assertFalse(SampleDataLogic.isSampleDataSourceRegistered("Other", SampleDataSource(**sourceArguments)))
+
+    def test_defaultFileType(self):
+        """Test that file type is guessed correctly when not specified."""
+
+        logic = SampleDataLogic()
+
+        nodes = logic.downloadFromSource(SampleDataSource(
+            uris=[TESTING_DATA_URL + "MD5/958737f8621437b18e4d8ab16eb65ad7"],
+            fileNames=["brainMesh.vtk"],
+            nodeNames=["brainMesh"]))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].GetClassName(), "vtkMRMLModelNode")
+
+        nodes = logic.downloadFromSource(SampleDataSource(
+            uris=[TESTING_DATA_URL + "SHA256/3243b62bde36b1db1cdbfe204785bd4bc1fbb772558d5f8cac964cda8385d470"],
+            fileNames=["TinyPatient_Structures.seg.nrrd"],
+            nodeNames=["TinyPatient_Segments"]))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].GetClassName(), "vtkMRMLSegmentationNode")
+
+        nodes = logic.downloadFromSource(SampleDataSource(
+            uris=[TESTING_DATA_URL + "SHA256/72fbc8c8e0e4fc7c3f628d833e4a6fb7adbe15b0bac2f8669f296e052414578c"],
+            fileNames=["FastNonrigidBSplineregistrationTransform.tfm"],
+            nodeNames=["FastNonrigidBSplineregistrationTransform"]))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].GetClassName(), "vtkMRMLBSplineTransformNode")
 
     class CustomDownloader:
         def __call__(self, source):
