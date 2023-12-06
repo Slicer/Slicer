@@ -722,7 +722,7 @@ class EndoscopyLogic:
         self.cameraOrientations = None
         self.cameraOrientationResampledCurveIndices = None
 
-    def setControlPoints(self, inputCurve: slicer.vtkMRMLMarkupsCurveNode) -> bool:
+    def setControlPoints(self, inputCurve: slicer.vtkMRMLMarkupsCurveNode) -> None:
         expectedType = slicer.vtkMRMLMarkupsCurveNode
         if not isinstance(inputCurve, expectedType):
             raise TypeError(
