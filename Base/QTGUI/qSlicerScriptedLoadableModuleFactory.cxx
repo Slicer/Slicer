@@ -74,6 +74,30 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   module->setPath(this->path());
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  if (!app)
+    {
+    return nullptr;
+    }
+
+  // Set to /path/to/lib/Slicer-X.Y/qt-scripted-modules
+  QString modulePath = QFileInfo(this->path()).absolutePath();
+  // Set to /path/to/lib/Slicer-X.Y
+  modulePath = QFileInfo(modulePath).absolutePath();
+  // Set to /path/to/lib/Slicer-X.Y/qt-loadable-modules
+  modulePath = modulePath + "/" Slicer_QTLOADABLEMODULES_SUBDIR;
+  // Set to /path/to/lib/Slicer-X.Y/qt-loadable-modules/<intDir>
+  if (!app->intDir().isEmpty())
+    {
+    modulePath = modulePath + "/" + app->intDir();
+    }
+
+  if (!qSlicerLoadableModule::importModulePythonExtensions(
+        app->corePythonManager(), app->intDir(), modulePath,
+        app->isEmbeddedModule(this->path())))
+    {
+    qWarning() << "qSlicerScriptedLoadableModuleFactory - Failed to import module" << module->name() << "python extensions";
+    }
+
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
   module->setBuiltIn(qSlicerUtils::isPluginBuiltIn(this->path(), app->slicerHome(), app->revision()));
 
@@ -104,10 +128,15 @@ public:
 QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  Q_ASSERT(app);
-
-  // slicerHome shouldn't be empty
-  Q_ASSERT(!app->slicerHome().isEmpty());
+  if (!app)
+    {
+    return QStringList();
+    }
+  if (app->slicerHome().isEmpty())
+    {
+    qCritical() << Q_FUNC_INFO << ": Application home directory is expected to be set";
+    return QStringList();
+    }
 
   QStringList defaultQTModulePaths;
 
