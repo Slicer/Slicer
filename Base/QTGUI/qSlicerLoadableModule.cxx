@@ -57,10 +57,10 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
     const QString& intDir,const QString& modulePath,
     bool isEmbedded)
 {
-  Q_UNUSED(intDir);
 #ifdef Slicer_USE_PYTHONQT
   return qSlicerScriptedUtils::importModulePythonExtensions(pythonManager, intDir, modulePath, isEmbedded);
 #else
+  Q_UNUSED(intDir);
   Q_UNUSED(isEmbedded);
   Q_UNUSED(modulePath);
   Q_UNUSED(pythonManager);
