@@ -44,6 +44,30 @@ if(NOT Slicer_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
 
+  #-----------------------------------------------------------------------------
+  # Slicer Launcher setting specific to build tree
+
+  # environment variables
+  set(${proj}_ENVVARS_LAUNCHER_BUILD
+    "PIP_DISABLE_PIP_VERSION_CHECK=1"
+    )
+  mark_as_superbuild(
+    VARS ${proj}_ENVVARS_LAUNCHER_BUILD
+    LABELS "ENVVARS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Slicer Launcher setting specific to install tree
+
+  # environment variables
+  set(${proj}_ENVVARS_LAUNCHER_INSTALLED
+    "PIP_DISABLE_PIP_VERSION_CHECK=1"
+    )
+  mark_as_superbuild(
+    VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
+    LABELS "ENVVARS_LAUNCHER_INSTALLED"
+    )
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
