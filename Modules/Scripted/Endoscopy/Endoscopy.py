@@ -283,16 +283,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def setCameraNode(self, newCameraNode):
         """Allow to set the current camera node."""
-
-        # Remove previous observer
-        cameraNode = EndoscopyLogic.getCameraFromInputCurve(self.inputCurve)
-        if cameraNode is not None:
-            self.removeObserver(cameraNode, vtk.vtkCommand.ModifiedEvent, self.updateWidgetFromMRML)
-
         EndoscopyLogic.setInputCurveCamera(self.inputCurve, newCameraNode)
-
-        if newCameraNode is not None:
-            self.addObserver(newCameraNode, vtk.vtkCommand.ModifiedEvent, self.updateWidgetFromMRML)
 
         # Update UI
         self.updateWidgetFromMRML()
@@ -322,9 +313,6 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Update UI
         self.updateWidgetFromMRML()
-
-        # Initialize to the start of the path
-        self.flyTo(0)
 
     def updateWidgetFromMRML(self, *_unused):
         # Create a cursor and associated transform so that the user can see where the flythrough is progressing.
@@ -473,6 +461,9 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def flyTo(self, resampledCurvePointIndex):
         """Apply the resampledCurvePointIndex-th step in the path to the global camera"""
         self.logic.updateCameraFromOrientationAtIndex(resampledCurvePointIndex)
+
+        # Update UI
+        self.updateWidgetFromMRML()
 
     @staticmethod
     def _viewNodeIDFromCameraNode(cameraNode):
