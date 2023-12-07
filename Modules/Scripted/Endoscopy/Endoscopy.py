@@ -31,7 +31,7 @@ class Endoscopy(ScriptedLoadableModule):
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = _("Endoscopy")
         self.parent.categories = [translate("qSlicerAbstractCoreModule", "Endoscopy")]
-        self.parent.dependencies = []
+        self.parent.dependencies = ["Markups"]
         self.parent.contributors = [
             "Steve Pieper (Isomics)",
             "Harald Scheirich (Kitware)",
