@@ -380,8 +380,10 @@ void qSlicerCoreApplicationPrivate::init()
   }
 
   // Set up translation in MRML classes using Qt translator
-  vtkNew<vtkQtTranslator> mrmlTranslator;
-  vtkMRMLI18N::GetInstance()->SetTranslator(mrmlTranslator);
+  { // placed in a block to avoid memory leaks on quick exit at handlePreApplicationCommandLineArguments
+    vtkNew<vtkQtTranslator> mrmlTranslator;
+    vtkMRMLI18N::GetInstance()->SetTranslator(mrmlTranslator);
+  }
 
   // Ensure that temporary folder is writable
   {
@@ -600,6 +602,7 @@ void qSlicerCoreApplicationPrivate::quickExit(int exitCode)
   Q_Q(qSlicerCoreApplication);
 
   // Delete VTK objects to exit cleanly, without memory leaks
+  vtkMRMLI18N::GetInstance()->SetTranslator(nullptr);
   this->AppLogic = nullptr;
   this->MRMLRemoteIOLogic = nullptr;
   this->DataIOManagerLogic = nullptr;
