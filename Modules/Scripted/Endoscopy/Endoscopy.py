@@ -411,34 +411,16 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.flyTo(resampledCurvePointIndexToDelete)
 
     def onFirstOrientationButtonClicked(self):
-        allIndices = self.logic.cameraOrientationResampledCurveIndices
-        if not allIndices:
-            return
-        whereTo = min(allIndices, default=self.frameSlider.minimum)
-        self.frameSlider.value = whereTo
+        self.frameSlider.value = self.logic.getFirstControlPointIndex()
 
     def onBackOrientationButtonClicked(self):
-        allIndices = self.logic.cameraOrientationResampledCurveIndices
-        allIndices = [x for x in allIndices if x < self.frameSlider.value]
-        if not allIndices:
-            return
-        whereTo = max(allIndices)
-        self.frameSlider.value = whereTo
+        self.frameSlider.value = self.logic.getPreviousControlPointIndex(self.frameSlider.value)
 
     def onNextOrientationButtonClicked(self):
-        allIndices = self.logic.cameraOrientationResampledCurveIndices
-        allIndices = [x for x in allIndices if x > self.frameSlider.value]
-        if not allIndices:
-            return
-        whereTo = min(allIndices)
-        self.frameSlider.value = whereTo
+        self.frameSlider.value = self.logic.getNextControlPointIndex(self.frameSlider.value)
 
     def onLastOrientationButtonClicked(self):
-        allIndices = self.logic.cameraOrientationResampledCurveIndices
-        if not allIndices:
-            return
-        whereTo = max(allIndices)
-        self.frameSlider.value = whereTo
+        self.frameSlider.value = self.logic.getLastControlPointIndex()
 
     def onSaveExportModelButtonClicked(self):
         logging.debug("Create Model...")
@@ -602,6 +584,24 @@ class EndoscopyLogic:
 
     def getNumberOfControlPoints(self):
         return self.resampledCurve.GetNumberOfControlPoints()
+
+    def getFirstControlPointIndex(self):
+        allIndices = self.cameraOrientationResampledCurveIndices
+        return min(allIndices, default=None)
+
+    def getPreviousControlPointIndex(self, currentResampledCurvePointIndex):
+        allIndices = self.cameraOrientationResampledCurveIndices
+        allIndices = [x for x in allIndices if x < currentResampledCurvePointIndex]
+        return max(allIndices, default=None)
+
+    def getNextControlPointIndex(self, currentResampledCurvePointIndex):
+        allIndices = self.cameraOrientationResampledCurveIndices
+        allIndices = [x for x in allIndices if x > currentResampledCurvePointIndex]
+        return min(allIndices, default=None)
+
+    def getLastControlPointIndex(self):
+        allIndices = self.cameraOrientationResampledCurveIndices
+        return max(allIndices, default=None)
 
     def setControlPointsByResamplingAndInterpolationFromInputCurve(self, inputCurve) -> None:
         if inputCurve is None:
