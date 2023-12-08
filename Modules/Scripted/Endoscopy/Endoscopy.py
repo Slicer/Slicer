@@ -412,24 +412,32 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def onFirstOrientationButtonClicked(self):
         allIndices = self.logic.cameraOrientationResampledCurveIndices
+        if not allIndices:
+            return
         whereTo = min(allIndices, default=self.frameSlider.minimum)
         self.frameSlider.value = whereTo
 
     def onBackOrientationButtonClicked(self):
         allIndices = self.logic.cameraOrientationResampledCurveIndices
         allIndices = [x for x in allIndices if x < self.frameSlider.value]
-        whereTo = max(allIndices, default=self.frameSlider.minimum)
+        if not allIndices:
+            return
+        whereTo = max(allIndices)
         self.frameSlider.value = whereTo
 
     def onNextOrientationButtonClicked(self):
         allIndices = self.logic.cameraOrientationResampledCurveIndices
         allIndices = [x for x in allIndices if x > self.frameSlider.value]
-        whereTo = min(allIndices, default=self.frameSlider.maximum)
+        if not allIndices:
+            return
+        whereTo = min(allIndices)
         self.frameSlider.value = whereTo
 
     def onLastOrientationButtonClicked(self):
         allIndices = self.logic.cameraOrientationResampledCurveIndices
-        whereTo = max(allIndices, default=self.frameSlider.maximum)
+        if not allIndices:
+            return
+        whereTo = max(allIndices)
         self.frameSlider.value = whereTo
 
     def onSaveExportModelButtonClicked(self):
