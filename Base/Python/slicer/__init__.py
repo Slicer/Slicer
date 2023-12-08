@@ -212,6 +212,7 @@ if not standalone_python:
     try:
         import numpy  # noqa: F401
         import scipy  # noqa: F401
+        import scipy.linalg  # noqa: F401
     except ImportError as detail:
         print(detail)
 
