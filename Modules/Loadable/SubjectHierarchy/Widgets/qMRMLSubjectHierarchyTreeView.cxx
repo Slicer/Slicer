@@ -816,12 +816,34 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(QList<vtkIdType> items)
     return;
   }
 
-  this->clearSelection();
-
-  foreach (long itemID, items)
+  // Get requested selection
+  QSet<QModelIndex> requestedSelectedItems;
+  foreach (vtkIdType itemID, items)
   {
-    QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(vtkIdType(itemID));
+    QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(itemID);
     if (itemIndex.isValid())
+    {
+      requestedSelectedItems.insert(itemIndex);
+    }
+  }
+
+  // Get previous selection
+  const QModelIndexList previouslySelectedItemsList = this->selectionModel()->selectedRows();
+  QSet<QModelIndex> previouslySelectedItems(previouslySelectedItemsList.begin(), previouslySelectedItemsList.end());
+
+  // Deselect items that were previously selected but not requested anymore
+  foreach(QModelIndex itemIndex, previouslySelectedItems)
+  {
+    if (itemIndex.isValid() && !requestedSelectedItems.contains(itemIndex))
+    {
+      this->selectionModel()->select(itemIndex, QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
+    }
+  }
+
+  // Select items that are requested but have not been previously selected
+  foreach(QModelIndex itemIndex, requestedSelectedItems)
+  {
+    if (!previouslySelectedItems.contains(itemIndex))
     {
       this->selectionModel()->select(itemIndex, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
@@ -832,28 +854,19 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(QList<vtkIdType> items)
 void qMRMLSubjectHierarchyTreeView::setCurrentItems(vtkIdList* items)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  if (!d->SortFilterModel)
-  {
-    qCritical() << Q_FUNC_INFO << ": Invalid data model";
-    return;
-  }
-
   if (!items)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid item list";
     return;
   }
 
-  this->clearSelection();
-
+  QList<vtkIdType> itemsToSelect;
   for (int index=0; index<items->GetNumberOfIds(); ++index)
   {
-    QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(items->GetId(index));
-    if (itemIndex.isValid())
-    {
-      this->selectionModel()->select(itemIndex, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-    }
+    itemsToSelect.append(items->GetId(index));
   }
+
+  this->setCurrentItems(itemsToSelect);
 }
 
 //------------------------------------------------------------------------------
