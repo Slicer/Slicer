@@ -133,7 +133,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
       }
 
     splashScreen.reset(new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint));
-    splashMessage(splashScreen, "Initializing...");
+    splashMessage(splashScreen, qSlicerApplication::tr("Initializing..."));
     splashScreen->show();
     }
 
@@ -162,15 +162,23 @@ int qSlicerApplicationHelper::postInitializeApplication(
     }
 
   // Register and instantiate modules
-  splashMessage(splashScreen, "Registering modules...");
+  splashMessage(splashScreen, qSlicerApplication::tr("Registering modules..."));
   moduleFactoryManager->registerModules();
   if (app.commandOptions()->verboseModuleDiscovery())
     {
     qDebug() << "Number of registered modules:"
              << moduleFactoryManager->registeredModuleNames().count();
     }
-  splashMessage(splashScreen, "Instantiating modules...");
+
+  splashMessage(splashScreen, qSlicerApplication::tr("Instantiating modules..."));
+  // Show the name of each module that is being instantiated to make it easier to see if a module
+  // inappropriately performs some lengthy operations during instantiation.
+  QMetaObject::Connection moduleAboutToBeInstantiatedConnection = QObject::connect(
+    moduleFactoryManager, &qSlicerAbstractModuleFactoryManager::moduleAboutToBeInstantiated,
+    [&splashScreen](QString moduleName){splashMessage(splashScreen, qSlicerApplication::tr("Instantiating module \"%1\"...").arg(moduleName));});
   moduleFactoryManager->instantiateModules();
+  QObject::disconnect(moduleAboutToBeInstantiatedConnection);
+
   if (app.commandOptions()->verboseModuleDiscovery())
     {
     qDebug() << "Number of instantiated modules:"
@@ -195,7 +203,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
     }
 
   // Create main window
-  splashMessage(splashScreen, "Initializing user interface...");
+  splashMessage(splashScreen, qSlicerApplication::tr("Initializing user interface..."));
   if (enableMainWindow)
     {
     window.reset(new SlicerMainWindowType);
@@ -218,7 +226,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
   foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
     {
     Q_ASSERT(!name.isNull());
-    splashMessage(splashScreen, "Loading module \"" + name + "\"...");
+    splashMessage(splashScreen, qSlicerApplication::tr("Loading module \"%1\"...").arg(name));
     moduleFactoryManager->loadModule(name);
     }
   if (app.commandOptions()->verboseModuleDiscovery())

@@ -208,6 +208,7 @@ signals:
   void moduleIgnored(const QString& moduleName);
 
   void modulesInstantiated(const QStringList& moduleNames);
+  void moduleAboutToBeInstantiated(const QString& moduleName);
   void moduleInstantiated(const QString& moduleName);
 
   void modulesAboutToBeUninstantiated(const QStringList& moduleNames);

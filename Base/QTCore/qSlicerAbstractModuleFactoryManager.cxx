@@ -373,6 +373,7 @@ void qSlicerAbstractModuleFactoryManager::instantiateModules()
   Q_D(qSlicerAbstractModuleFactoryManager);
   foreach (const QString& moduleName, d->RegisteredModules.keys())
     {
+    emit moduleAboutToBeInstantiated(moduleName);
     this->instantiateModule(moduleName);
     }
 
