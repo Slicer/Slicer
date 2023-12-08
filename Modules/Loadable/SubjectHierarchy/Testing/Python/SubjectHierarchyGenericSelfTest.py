@@ -106,6 +106,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         self.section_AddNodeToSubjectHierarchy()
         self.section_CLI()
         self.section_CreateSecondBranch()
+        self.section_SetCurrentItems()
         self.section_ReparentNodeInSubjectHierarchy()
         self.section_LoadScene()
         self.section_TestCircularParenthood()
@@ -333,6 +334,72 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         self.assertEqual(shNode.GetItemParent(self.patient2ItemID), shNode.GetSceneItemID())
         self.assertEqual(shNode.GetItemParent(self.study2ItemID), self.patient2ItemID)
         self.assertEqual(shNode.GetItemParent(self.folderItemID), self.study2ItemID)
+
+    # ------------------------------------------------------------------------------
+    def section_SetCurrentItems(self):
+        self.delayDisplay("Set current items", self.delayMs)
+
+        # Get subject hierarchy scene model
+        dataWidget = slicer.modules.data.widgetRepresentation()
+        self.assertIsNotNone(dataWidget)
+        shTreeView = slicer.util.findChild(dataWidget, name="SubjectHierarchyTreeView")
+        self.assertIsNotNone(shTreeView)
+
+        # Ensure signal is received when selecting one item
+        currentItemChangedArguments = []
+        shTreeView.currentItemChanged.connect(lambda x: currentItemChangedArguments.append(x))
+        shTreeView.setCurrentItem(self.patientItemID)
+        self.assertEqual(currentItemChangedArguments, [self.patientItemID])
+
+        # Check that current items matched the selected item
+        self.assertEqual(shTreeView.currentItem(), self.patientItemID)
+
+        # Clear selection and select the same item but using a list
+        shTreeView.clearSelection()
+        currentItemChangedArguments.clear()
+        itemsToSelect = vtk.vtkIdList()
+        itemsToSelect.InsertNextId(self.patientItemID)
+        shTreeView.setCurrentItems(itemsToSelect)
+        self.assertEqual(currentItemChangedArguments, [self.patientItemID])
+
+        # Check that current items matched the selected item
+        selectedItems = vtk.vtkIdList()
+        shTreeView.currentItems(selectedItems)
+        self.assertEqual(itemsToSelect.GetNumberOfIds(), selectedItems.GetNumberOfIds())
+        for i in range(itemsToSelect.GetNumberOfIds()):
+          self.assertEqual(itemsToSelect.GetId(i), selectedItems.GetId(i))
+
+        # Select another item
+        currentItemChangedArguments.clear()
+        itemsToSelect.Reset()
+        itemsToSelect.InsertNextId(self.patient2ItemID)
+        shTreeView.setCurrentItems(itemsToSelect)
+        shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
+        # SceneItemID is received in currentItemChanged connected slot because previous item is first deselected.
+        self.assertEqual(currentItemChangedArguments, [shNode.GetSceneItemID(), self.patient2ItemID])
+
+        # Check that current items matched the selected item
+        selectedItems.Reset()
+        shTreeView.currentItems(selectedItems)
+        self.assertEqual(itemsToSelect.GetNumberOfIds(), selectedItems.GetNumberOfIds())
+        for i in range(itemsToSelect.GetNumberOfIds()):
+          self.assertEqual(itemsToSelect.GetId(i), selectedItems.GetId(i))
+
+        # Select the already selected item
+        currentItemChangedArguments.clear()
+        itemsToSelect.Reset()
+        itemsToSelect.InsertNextId(self.patient2ItemID)
+        shTreeView.setCurrentItems(itemsToSelect)
+        self.assertEqual(currentItemChangedArguments, [])
+
+        # Check that current items matched the selected item
+        selectedItems.Reset()
+        shTreeView.currentItems(selectedItems)
+        self.assertEqual(itemsToSelect.GetNumberOfIds(), selectedItems.GetNumberOfIds())
+        for i in range(itemsToSelect.GetNumberOfIds()):
+          self.assertEqual(itemsToSelect.GetId(i), selectedItems.GetId(i))
+
+        shTreeView.currentItemChanged.disconnect()
 
     # ------------------------------------------------------------------------------
     def section_ReparentNodeInSubjectHierarchy(self):
