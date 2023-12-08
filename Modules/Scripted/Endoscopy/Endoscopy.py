@@ -218,24 +218,28 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         firstOrientationButton.enabled = True
         firstOrientationButton.connect("clicked()", self.onFirstOrientationButtonClicked)
         flythroughOrientationLayout.addWidget(firstOrientationButton)
+        self.firstOrientationButton = firstOrientationButton
 
         backOrientationButton = qt.QPushButton(_("Back"))
         backOrientationButton.toolTip = _("Go to the previous user-supplied keyframe.")
         backOrientationButton.enabled = True
         backOrientationButton.connect("clicked()", self.onBackOrientationButtonClicked)
         flythroughOrientationLayout.addWidget(backOrientationButton)
+        self.backOrientationButton = backOrientationButton
 
         nextOrientationButton = qt.QPushButton(_("Next"))
         nextOrientationButton.toolTip = _("Go to the next user-supplied keyframe.")
         nextOrientationButton.enabled = True
         nextOrientationButton.connect("clicked()", self.onNextOrientationButtonClicked)
         flythroughOrientationLayout.addWidget(nextOrientationButton)
+        self.nextOrientationButton = nextOrientationButton
 
         lastOrientationButton = qt.QPushButton(_("Last"))
         lastOrientationButton.toolTip = _("Go to the last user-supplied keyframe.")
         lastOrientationButton.enabled = True
         lastOrientationButton.connect("clicked()", self.onLastOrientationButtonClicked)
         flythroughOrientationLayout.addWidget(lastOrientationButton)
+        self.lastOrientationButton = lastOrientationButton
 
         flythroughFormLayout.addRow(flythroughOrientationLayout)
 
@@ -350,6 +354,21 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.deleteOrientationButton.enabled = deletable
         self.saveOrientationButton.text = (
             _("Update Keyframe Orientation") if deletable else _("Save Keyframe Orientation")
+        )
+
+        # Update keyframe navigation buttons
+        firstResampledCurvePointIndex = self.logic.getFirstControlPointIndex()
+        lastResampledCurvePointIndex = self.logic.getLastControlPointIndex()
+        (
+            self.firstOrientationButton.enabled,
+            self.backOrientationButton.enabled,
+            self.nextOrientationButton.enabled,
+            self.lastOrientationButton.enabled,
+        ) = (
+            firstResampledCurvePointIndex is not None and firstResampledCurvePointIndex != resampledCurvePointIndex,
+            self.logic.getPreviousControlPointIndex(resampledCurvePointIndex) is not None,
+            self.logic.getNextControlPointIndex(resampledCurvePointIndex) is not None,
+            lastResampledCurvePointIndex is not None and lastResampledCurvePointIndex != resampledCurvePointIndex,
         )
 
         # If there is no input curve available (e.g scene close), stop playblack
