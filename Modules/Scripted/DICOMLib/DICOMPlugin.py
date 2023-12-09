@@ -1,5 +1,6 @@
 import logging
 import numpy
+from urllib.parse import urlparse
 
 import slicer
 
@@ -63,6 +64,9 @@ class DICOMLoadable:
                 self.files.append(file)
             self.selected = qLoadable.selected
             self.confidence = qLoadable.confidence
+        # each loadable can be associated with a dicomDatabase that
+        # should always be used by DICOM Plugins to access metadata
+        self.dicomDatabase = None
 
 
 #
@@ -172,6 +176,19 @@ class DICOMPlugin:
     def tagValueToVector(self, value):
         return numpy.array([float(element) for element in value.split("\\")])
 
+    def urlHandler(self, files):
+        firstFile = files[0]
+        urlScheme = urlparse(firstFile).scheme
+        if urlScheme != "":
+            if not hasattr(slicer.modules, "dicomURLHandlers"):
+                slicer.modules.dicomURLHandlers = {}
+            if urlScheme in slicer.modules.dicomURLHandlers:
+                return slicer.modules.dicomURLHandlers[urlScheme]
+            else:
+                error = _("No handler for url scheme '{urlScheme}'").format(urlScheme=urlScheme)
+                logging.error(error)
+        return None
+
     def examineForImport(self, fileList):
         """Look at the list of lists of filenames and return
         a list of DICOMLoadables that are options for loading
@@ -207,15 +224,19 @@ class DICOMPlugin:
         """
         return ""
 
-    def defaultSeriesNodeName(self, seriesUID):
+    def defaultSeriesNodeName(self, seriesUID, firstFile=None, dicomDatabase=None):
         """Generate a name suitable for use as a mrml node name based
         on the series level data in the database
         """
-        instanceFilePaths = slicer.dicomDatabase.filesForSeries(seriesUID, 1)
-        if len(instanceFilePaths) == 0:
-            return "Unnamed Series"
-        seriesDescription = slicer.dicomDatabase.fileValue(instanceFilePaths[0], self.tags["seriesDescription"])
-        seriesNumber = slicer.dicomDatabase.fileValue(instanceFilePaths[0], self.tags["seriesNumber"])
+        if not dicomDatabase:
+            dicomDatabase = slicer.dicomDatabase
+        if not firstFile:
+            instanceFilePaths = dicomDatabase.filesForSeries(seriesUID, 1)
+            if len(instanceFilePaths) == 0:
+                return "Unnamed Series"
+            firstFile = instanceFilePaths[0]
+        seriesDescription = dicomDatabase.fileValue(firstFile, self.tags["seriesDescription"])
+        seriesNumber = dicomDatabase.fileValue(firstFile, self.tags["seriesNumber"])
         name = seriesDescription
         if seriesDescription == "":
             name = "Unnamed Series"

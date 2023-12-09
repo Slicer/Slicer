@@ -1,6 +1,5 @@
 import logging
 from functools import cmp_to_key
-from urllib.parse import urlparse
 
 import ctk
 import numpy
@@ -186,8 +185,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         files parameter.
         """
 
-        seriesUID = slicer.dicomDatabase.fileValue(files[0], self.tags["seriesUID"])
-        seriesName = self.defaultSeriesNodeName(seriesUID)
+        urlHandler = self.urlHandler(files)
+        if urlHandler:
+            dicomDatabase = urlHandler
+        else:
+            dicomDatabase = slicer.dicomDatabase
+
+        firstFile = files[0]
+        seriesUID = dicomDatabase.fileValue(firstFile, self.tags["seriesUID"])
+        seriesName = self.defaultSeriesNodeName(seriesUID, firstFile, dicomDatabase)
 
         # default loadable includes all files for series
         allFilesLoadable = DICOMLoadable()
@@ -241,7 +247,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         for file in allFilesLoadable.files:
             # check for subseries values
             for tag in subseriesTags:
-                value = slicer.dicomDatabase.fileValue(file, self.tags[tag])
+                value = dicomDatabase.fileValue(file, self.tags[tag])
                 value = value.replace(",", "_")  # remove commas so it can be used as an index
 
                 if tag not in subseriesValues:
@@ -316,19 +322,19 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             newFiles = []
             excludedLoadable = False
             for file in loadable.files:
-                if slicer.dicomDatabase.fileValueExists(file, self.tags["pixelData"]):
+                if dicomDatabase.fileValueExists(file, self.tags["pixelData"]):
                     newFiles.append(file)
-                if slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.66.4":
+                if dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.66.4":
                     excludedLoadable = True
                     if "DICOMSegmentationPlugin" not in slicer.modules.dicomPlugins:
                         logging.warning("Please install Quantitative Reporting extension to enable loading of DICOM Segmentation objects")
-                elif slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.481.3":
+                elif dicomDatabase.fileValue(file, self.tags["sopClassUID"]) == "1.2.840.10008.5.1.4.1.1.481.3":
                     excludedLoadable = True
                     if "DicomRtImportExportPlugin" not in slicer.modules.dicomPlugins:
                         logging.warning("Please install SlicerRT extension to enable loading of DICOM RT Structure Set objects")
             if len(newFiles) > 0 and not excludedLoadable:
                 loadable.files = newFiles
-                loadable.grayscale = ("MONOCHROME" in slicer.dicomDatabase.fileValue(newFiles[0], self.tags["photometricInterpretation"]))
+                loadable.grayscale = ("MONOCHROME" in dicomDatabase.fileValue(newFiles[0], self.tags["photometricInterpretation"]))
                 newLoadables.append(loadable)
             elif excludedLoadable:
                 continue
@@ -338,7 +344,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 # them through with a warning and low confidence
                 loadable.warning += _("There is no pixel data attribute for the DICOM objects, but they might be readable as secondary capture images.")
                 loadable.confidence = 0.2
-                loadable.grayscale = ("MONOCHROME" in slicer.dicomDatabase.fileValue(loadable.files[0], self.tags["photometricInterpretation"]))
+                loadable.grayscale = ("MONOCHROME" in dicomDatabase.fileValue(loadable.files[0], self.tags["photometricInterpretation"]))
                 newLoadables.append(loadable)
         loadables = newLoadables
 
@@ -374,6 +380,10 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 loadable.selected = False
                 if loadable.confidence > .45:
                     loadable.confidence = .45
+
+        # store the dicomDatabase used for this loadable so it can be used later to access metadata
+        for loadable in loadables:
+            loadable.dicomDatabase = dicomDatabase
 
         return loadables
 
@@ -463,7 +473,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             #
             instanceUIDs = ""
             for file in loadable.files:
-                uid = slicer.dicomDatabase.fileValue(file, self.tags["instanceUID"])
+                uid = loadable.dicomDatabase.fileValue(file, self.tags["instanceUID"])
                 if uid == "":
                     uid = "Unknown"
                 instanceUIDs += uid + " "
@@ -492,8 +502,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             #   [2] https://github.com/Slicer/Slicer/blob/3bfa2fc2b310d41c09b7a9e8f8f6c4f43d3bd1e2/Libs/MRML/Core/vtkMRMLScalarVolumeDisplayNode.h#L172
             #
             try:
-                windowCenter = float(slicer.dicomDatabase.fileValue(file, self.tags["windowCenter"]))
-                windowWidth = float(slicer.dicomDatabase.fileValue(file, self.tags["windowWidth"]))
+                windowCenter = float(loadable.dicomDatabase.fileValue(file, self.tags["windowCenter"]))
+                windowWidth = float(loadable.dicomDatabase.fileValue(file, self.tags["windowWidth"]))
                 displayNode = volumeNode.GetDisplayNode()
                 if displayNode:
                     logging.info("Window/level found in DICOM tags (center=" + str(windowCenter) + ", width=" + str(windowWidth) + ") has been applied to volume " + volumeNode.GetName())
@@ -504,7 +514,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             except ValueError:
                 pass  # DICOM tags cannot be parsed to floating point numbers
 
-            sopClassUID = slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"])
+            sopClassUID = loadable.dicomDatabase.fileValue(file, self.tags["sopClassUID"])
 
             # initialize color lookup table
             modality = self.mapSOPClassUIDToModality(sopClassUID)
@@ -531,23 +541,23 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
         return volumeNode
 
-    def _processURLHandler(self, urlHandler, volumeNode, urls):
+    def _processURLHandler(self, urlHandler, volumeNode, loadable):
         """
         Get the downloaded and uncompressed frames from the urlHandler
         and put them into the volume node.
         """
-        framesByURL = urlHandler.getFrames(urls)
+        framesByURL = urlHandler.getFrames(loadable.files)
         volumeArray = slicer.util.arrayFromVolume(volumeNode)
         elapsedTime = time.time() - self._urlHandlerStartTime
         msg = _("{framesThisLoad} of {frames} in {elapsedTime:.3f}").format(framesThisLoad=len(framesByURL), frames=volumeArray.shape[0], elapsedTime=elapsedTime)
         logging.info(msg)
         if len(framesByURL) > 0:
             for url,frame in framesByURL.items():
-                rescaleInterceptValue = slicer.dicomDatabase.fileValue(url, self.tags["rescaleIntercept"])
-                rescaleSlopeValue = slicer.dicomDatabase.fileValue(url, self.tags["rescaleSlope"])
+                rescaleInterceptValue = loadable.dicomDatabase.fileValue(url, self.tags["rescaleIntercept"])
+                rescaleSlopeValue = loadable.dicomDatabase.fileValue(url, self.tags["rescaleSlope"])
                 rescaleIntercept = float(rescaleInterceptValue) if rescaleInterceptValue != "" else 0.
                 rescaleSlope = float(rescaleSlopeValue) if rescaleSlopeValue != "" else 1.
-                sliceIndex = urls.index(url)
+                sliceIndex = loadable.files.index(url)
                 try:
                     volumeArray[sliceIndex] = rescaleIntercept + rescaleSlope * frame.reshape(volumeArray[sliceIndex].shape)
                 except ValueError:
@@ -566,8 +576,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             if elapsedTime > self.urlHandlerTimeout:
                 logging.error("Download timeout")
             else:
-                callback = lambda urlHandler=urlHandler, volumeNode=volumeNode, urls=urls: \
-                                    self._processURLHandler(urlHandler, volumeNode, urls)
+                callback = lambda urlHandler=urlHandler, volumeNode=volumeNode, loadable=loadable: \
+                                    self._processURLHandler(urlHandler, volumeNode, loadable)
                 qt.QTimer.singleShot(self.urlHandlerInterval, callback)
         else:
             rate = (volumeArray.size * volumeArray.itemsize) / elapsedTime / 1024. / 1024.
@@ -578,32 +588,24 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         """Load the select as a scalar volume using desired approach"""
         volumeNode = None
         # first, determine if the files are actually URLs
-        firstFile = loadable.files[0]
-        urlScheme = urlparse(firstFile).scheme
-        if urlScheme != "":
+        urlHandler = self.urlHandler(loadable.files)
+        if urlHandler:
             # - data comes from a URL, so parse metadata from dicom to slicer conventions
             # - create a placeholder volumeNode that can be populated by the downloader
             # - rely on files having already been sorted during examine step
-            if not hasattr(slicer.modules, "dicomURLHandlers"):
-                slicer.modules.dicomURLHandlers = {}
-            if urlScheme in slicer.modules.dicomURLHandlers:
-                # first, initiate the request
-                urlHandler = slicer.modules.dicomURLHandlers[urlScheme]
-                self._urlHandlerStartTime = time.time()
-                urlHandler.startRequest(loadable.files)
-                # then while the frames are loading calculate the ijkToRAS and pixel array
-                ijkToRAS = DICOMUtils.ijkToRASFromFiles(loadable.files)
-                pixelArray = DICOMUtils.pixelArrayFromFiles(loadable.files)
-                volumeNode = slicer.util.addVolumeFromArray(pixelArray, ijkToRAS=ijkToRAS, name=loadable.name)
-                volumeArray = slicer.util.arrayFromVolume(volumeNode)
-                # fill with random data so user sees something
-                volumeArray[:] = 1000 * numpy.random.random(pixelArray.shape)
-                slicer.util.arrayFromVolumeModified(volumeNode)
-                # start trying to populate the volume with downloaded frames
-                self._processURLHandler(urlHandler, volumeNode, loadable.files)
-            else:
-                error = _("No handler for url scheme '{urlScheme}'").format(urlScheme=urlScheme)
-                logging.error(error)
+            # first, initiate the request
+            self._urlHandlerStartTime = time.time()
+            urlHandler.startRequest(loadable.files)
+            # then while the frames are loading calculate the ijkToRAS and pixel array
+            ijkToRAS = DICOMUtils.ijkToRASFromFiles(loadable.files)
+            pixelArray = DICOMUtils.pixelArrayFromFiles(loadable.files)
+            volumeNode = slicer.util.addVolumeFromArray(pixelArray, ijkToRAS=ijkToRAS, name=loadable.name)
+            volumeArray = slicer.util.arrayFromVolume(volumeNode)
+            # fill with random data so user sees something
+            volumeArray[:] = 1000 * numpy.random.random(pixelArray.shape)
+            slicer.util.arrayFromVolumeModified(volumeNode)
+            # start trying to populate the volume with downloaded frames
+            self._processURLHandler(urlHandler, volumeNode, loadable)
         else:
             # files, so first, determine which reader approach the user prefers
             if not readerApproach:
@@ -629,8 +631,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         if volumeNode:
             self.acquisitionModeling = self.AcquisitionModeling()
             self.acquisitionModeling.createAcquisitionTransform(volumeNode,
-                                                                addAcquisitionTransformIfNeeded=self.acquisitionGeometryRegularizationEnabled(),
-                                                                hardenAcquisitionTransform=self.hardenAcquisitionGeometryRegularization())
+                        addAcquisitionTransformIfNeeded=self.acquisitionGeometryRegularizationEnabled(),
+                        hardenAcquisitionTransform=self.hardenAcquisitionGeometryRegularization(),
+                        loadable=loadable)
 
         return volumeNode
 
@@ -838,7 +841,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                     for column in range(2):
                         displacements[sliceIndex][row][column] = targetCorners[sliceIndex][row][column] - sourceCorners[sliceIndex][row][column]
 
-        def sliceCornersFromDICOM(self, volumeNode):
+        def sliceCornersFromDICOM(self, volumeNode, loadable):
             """Calculate the RAS position of each of the four corners of each
             slice of a volume node based on the dicom headers
 
@@ -861,11 +864,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 logging.warning("Cannot get DICOM slice positions for volume " + volumeNode.GetName())
                 return None
             for sliceIndex in range(slices):
-                uid = uids[sliceIndex]
+                file = loadable.files[sliceIndex]
                 # get slice geometry from instance
-                positionString = slicer.dicomDatabase.instanceValue(uid, positionTag)
-                orientationString = slicer.dicomDatabase.instanceValue(uid, orientationTag)
-                spacingString = slicer.dicomDatabase.instanceValue(uid, spacingTag)
+                positionString = loadable.dicomDatabase.fileValue(file, positionTag)
+                orientationString = loadable.dicomDatabase.fileValue(file, orientationTag)
+                spacingString = loadable.dicomDatabase.fileValue(file, spacingTag)
                 if positionString == "" or orientationString == "" or spacingString == "":
                     logging.warning("No geometry information available for DICOM data, skipping corner calculations")
                     return None
@@ -917,12 +920,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                         volumeNode.TransformPointToWorld(corners[slice, row, column], worldCorners[slice, row, column])
             return worldCorners
 
-        def createAcquisitionTransform(self, volumeNode, addAcquisitionTransformIfNeeded=True, hardenAcquisitionTransform=False):
+        def createAcquisitionTransform(self, volumeNode, addAcquisitionTransformIfNeeded=True, hardenAcquisitionTransform=False, loadable=None):
             """Creates the actual transform if needed.
             Slice corners are cached for inspection by tests
             """
             self.originalCorners = self.sliceCornersFromIJKToRAS(volumeNode)
-            self.targetCorners = self.sliceCornersFromDICOM(volumeNode)
+            self.targetCorners = self.sliceCornersFromDICOM(volumeNode, loadable)
             if self.originalCorners is None or self.targetCorners is None:
                 # can't create transform without corner information
                 return
