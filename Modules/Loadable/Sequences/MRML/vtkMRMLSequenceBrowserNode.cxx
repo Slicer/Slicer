@@ -983,7 +983,7 @@ void vtkMRMLSequenceBrowserNode::SetRecordingActive(bool recording)
 //---------------------------------------------------------------------------
 int vtkMRMLSequenceBrowserNode::SelectFirstItem()
 {
-  int selectedItemNumber = (this->GetNumberOfItems() > 0)  ? 0 :- 1;
+  int selectedItemNumber = (this->GetNumberOfItems() > 0)  ? 0 : -1;
   this->SetSelectedItemNumber(selectedItemNumber);
   return selectedItemNumber;
 }
@@ -1005,11 +1005,11 @@ int vtkMRMLSequenceBrowserNode::SelectNextItem(int selectionIncrement/*=1*/)
     // nothing to replay
     return -1;
     }
-  int selectedItemNumber=this->GetSelectedItemNumber();
+  int selectedItemNumber = this->GetSelectedItemNumber();
   MRMLNodeModifyBlocker blocker(this); // invoke modification event once all the modifications has been completed
-  if (selectedItemNumber<0)
+  if (selectedItemNumber < 0)
     {
-    selectedItemNumber=0;
+    selectedItemNumber = 0;
     }
   else
     {
@@ -1023,8 +1023,10 @@ int vtkMRMLSequenceBrowserNode::SelectNextItem(int selectionIncrement/*=1*/)
         }
       else
         {
+        // auto-rewind to the first item and stop replay
+        // (this allows playing the sequence by one click)
         this->SetPlaybackActive(false);
-        selectedItemNumber=0;
+        selectedItemNumber = 0;
         }
       }
     else if (selectedItemNumber<0)
@@ -1032,10 +1034,13 @@ int vtkMRMLSequenceBrowserNode::SelectNextItem(int selectionIncrement/*=1*/)
       if (this->GetPlaybackLooped())
         {
         // wrap around and keep playback going
-        selectedItemNumber = (selectedItemNumber % numberOfItems) + numberOfItems;
+        // (need to compute the modulo twice: first to handle negative numbers, the second to actually compute the wraparound)
+        selectedItemNumber = ((selectedItemNumber % numberOfItems) + numberOfItems) % numberOfItems;
         }
       else
         {
+        // auto-rewind to the last item and stop replay
+        // (this allows playing the sequence in reverse direction by one click)
         this->SetPlaybackActive(false);
         selectedItemNumber = numberOfItems - 1;
         }
@@ -1089,8 +1094,8 @@ void vtkMRMLSequenceBrowserNode::ProcessMRMLEvents(vtkObject* caller, unsigned l
   else if (vtkMRMLSequenceNode::SafeDownCast(modifiedNode))
     {
     this->InvokeCustomModifiedEvent(SequenceNodeModifiedEvent, modifiedNode);
+      }
     }
-}
 
 //---------------------------------------------------------------------------
 void vtkMRMLSequenceBrowserNode::SaveProxyNodesState()
