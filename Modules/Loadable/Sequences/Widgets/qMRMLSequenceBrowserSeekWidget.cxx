@@ -90,6 +90,9 @@ void qMRMLSequenceBrowserSeekWidget::setMRMLSequenceBrowserNode(vtkMRMLSequenceB
     this, SLOT(onIndexDisplayFormatModified()));
   qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkCommand::ModifiedEvent,
     this, SLOT(updateWidgetFromMRML()));
+  // Update slider when a new item is added to a sequence
+  qvtkReconnect(d->SequenceBrowserNode, browserNode, vtkMRMLSequenceBrowserNode::SequenceNodeModifiedEvent,
+    this, SLOT(updateWidgetFromMRML()));
 
   d->SequenceBrowserNode = browserNode;
   this->onIndexDisplayFormatModified();
@@ -164,7 +167,7 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
   d->slider_IndexValue->blockSignals(sliderBlockSignals);
 
   int selectedItemNumber = d->SequenceBrowserNode->GetSelectedItemNumber();
-  if (selectedItemNumber > 0 && selectedItemNumber < numberOfDataNodes)
+  if (selectedItemNumber >= 0 && selectedItemNumber < numberOfDataNodes)
     {
     QString indexValue;
     QString indexUnit;
@@ -172,7 +175,7 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
     if (d->SequenceBrowserNode->GetIndexDisplayMode() == vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue)
       {
       // display as formatted index value (12.34sec)
-      indexValue = QString::fromStdString(d->SequenceBrowserNode->GetFormattedIndexValue(d->SequenceBrowserNode->GetSelectedItemNumber()));
+      indexValue = QString::fromStdString(d->SequenceBrowserNode->GetFormattedIndexValue(selectedItemNumber));
       indexUnit = QString::fromStdString(sequenceNode->GetIndexUnit());
       if (indexValue.length() == 0)
         {

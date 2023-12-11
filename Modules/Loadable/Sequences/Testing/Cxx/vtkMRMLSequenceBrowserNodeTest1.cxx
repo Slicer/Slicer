@@ -24,16 +24,20 @@
 #include "vtkMRMLSequenceNode.h"
 #include "vtkMRMLSequenceBrowserNode.h"
 #include "vtkMRMLTransformNode.h"
+#include "vtkSlicerSequencesLogic.h"
 
 // VTK includes
 #include <vtkNew.h>
+
+namespace
+{
 
 double valueForIndex(int i)
 {
   return i * 1234.567890;
 }
 
-int vtkMRMLSequenceBrowserNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
+int TestIndexFormatting()
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -102,5 +106,68 @@ int vtkMRMLSequenceBrowserNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)
     CHECK_STD_STRING(formattedIndexValue, expectedFormat);
     }
 
-  return 0;
+  return EXIT_SUCCESS;
+}
+
+int TestSelectNextItem()
+{
+  vtkNew<vtkMRMLScene> scene;
+
+  // Register vtkMRMLSequenceBrowserNode
+  vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
+  sequencesLogic->SetMRMLScene(scene.GetPointer());
+
+  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
+  CHECK_NOT_NULL(browserNode);
+  browserNode->SetAndObserveMasterSequenceNodeID(sequenceNode->GetID());
+
+  // Test empty sequence
+  CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
+  browserNode->SelectNextItem(1);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
+  browserNode->SelectNextItem(-1);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
+  browserNode->SelectNextItem(2);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
+  browserNode->SelectNextItem(-2);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
+
+  // Test with single-item sequence
+  vtkNew<vtkMRMLTransformNode> transform;
+  sequenceNode->SetDataNodeAtValue(transform, "1");
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 0);
+  browserNode->SelectNextItem(1);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 0);
+  browserNode->SelectNextItem(-1);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 0);
+  browserNode->SelectNextItem(2);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 0);
+  browserNode->SelectNextItem(-2);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 0);
+
+  // Test with two-item sequence
+  sequenceNode->SetDataNodeAtValue(transform, "2");
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 0);
+  browserNode->SelectNextItem(1);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 1);
+  browserNode->SelectNextItem(1);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 0);
+  browserNode->SelectNextItem(-1);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 1);
+  browserNode->SelectNextItem(2);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 1);
+  browserNode->SelectNextItem(-2);
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 1);
+
+  return EXIT_SUCCESS;
+}
+
+}  // end anonymous namespace
+
+int vtkMRMLSequenceBrowserNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
+{
+  CHECK_EXIT_SUCCESS(TestIndexFormatting());
+  CHECK_EXIT_SUCCESS(TestSelectNextItem());
+  return EXIT_SUCCESS;
 }
