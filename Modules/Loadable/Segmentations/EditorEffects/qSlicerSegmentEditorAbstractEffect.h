@@ -345,11 +345,11 @@ public:
   /// \sa setCommonParameter
   Q_INVOKABLE void setCommonParameterDefault(QString name, double value);
 
-  /// Convenience function to set double parameter
+  /// Convenience function to set node reference parameter
   /// \param name Parameter name string
-  /// \param value Parameter value double
+  /// \param value Parameter node reference
   Q_INVOKABLE void setNodeReference(QString name, vtkMRMLNode* node);
-  /// Convenience function to set double common parameter \sa setCommonParameter
+  /// Convenience function to set node reference common parameter \sa setCommonParameter
   Q_INVOKABLE void setCommonNodeReference(QString name, vtkMRMLNode* node);
 
 // Utility functions
