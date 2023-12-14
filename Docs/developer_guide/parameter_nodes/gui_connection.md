@@ -163,13 +163,20 @@ When connecting an `int` to a `QSpinBox`, if the `Minimum` annotation is used, i
 | Widget | Data type(s) | Notes |
 |---     | ---       |---    |
 | QCheckBox | bool | |
+| ctkCheckBox | bool | |
 | QPushButton | bool | The push button must be checkable. The bool is whether the button is checked. |
 | QSlider | int | Supports `Minimum`, `Maximum`, and `WithinRange` validators. Supports `SingleStep` annotation. |
 | QSpinBox | int | Supports `Minimum`, `Maximum`, and `WithinRange` validators. Supports `SingleStep` annotation. |
 | QDoubleSpinBox | float | Supports `Minimum`, `Maximum`, and `WithinRange` validators. Supports `Decimals` and `SingleStep` annotations. |
 | ctkSliderWidget | float | Supports `Minimum`, `Maximum`, and `WithinRange` validators. Supports `Decimals` and `SingleStep` annotations. |
+| ctkDoubleSlider | float | Supports `Minimum`, `Maximum`, and `WithinRange` validators, and `SingleStep` annotation. |
+| ctkDoubleSpinBox | float | Supports `Minimum`, `Maximum`, and `WithinRange` validators. Supports `Decimals` and `SingleStep` annotations. |
+| ctkRangeWidget| FloatRange | Supports `WithinRange` validators. Requires `Default` annotation, supports `Decimals` and `SingleStep` annotations. |
+| ctkDoubleRangeSlider | FloatRange | Supports `WithinRange` validators. Requires `Default` annotation, supports `SingleStep` annotation. |
 | QComboBox | int, float, str, bool | The `Choice` validator must be in use for the parameter. The choices will be used to fill the combo box automatically. |
+| ctkComboBox | int, float, str, bool | The `Choice` validator must be in use for the parameter. The choices will be used to fill the combo box automatically. |
 | QComboBox | enum.Enum | If a `def label(self):` function is present on the enum class, it will be used for generating the text in the combo box. |
+| ctkComboBox | enum.Enum | If a `def label(self):` function is present on the enum class, it will be used for generating the text in the combo box. |
 | QLineEdit | str | |
 | QTextEdit | str | The value of the parameter will be the plaintext version of what is in the text edit |
 | ctkPathLineEdit | pathlib.\[Path, PosixPath, WindowsPath,<br/>&emsp;PurePath, PurePosixPath, PureWindowsPath] | |

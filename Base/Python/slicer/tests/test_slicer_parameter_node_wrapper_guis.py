@@ -92,6 +92,9 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
     def test_QCheckBoxToBool(self):
         self.impl_ButtonToBool(qt.QCheckBox)
 
+    def test_CtkCheckBoxToBool(self):
+        self.impl_ButtonToBool(ctk.ctkCheckBox)
+
     def test_QPushButtonToBool(self):
         self.impl_ButtonToBool(qt.QPushButton)
 
@@ -210,7 +213,11 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(widgetCharlie.value, 0.2)
         self.assertEqual(widgetCharlie.minimum, 0.1)
         self.assertEqual(widgetCharlie.maximum, 9.5)
-        self.assertEqual(widgetCharlie.decimals, 2)
+
+        # Only ctkDoubleSlider does not have decimals
+        if not isinstance(widgetCharlie, ctk.ctkDoubleSlider):
+            self.assertEqual(widgetCharlie.decimals, 2)
+
         self.assertEqual(widgetCharlie.singleStep, 0.1)
 
         # Phase 1 - write to GUI
@@ -250,7 +257,16 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(ctk.ctkSliderWidget, ctk.ctkSliderWidget)
 
-    def test_QComboBoxToStringable(self):
+    def test_ctkDoubleSliderToFloat(self):
+        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(qt.QDoubleSpinBox, ctk.ctkDoubleSlider)
+
+        with self.assertRaises(RuntimeError):
+            self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(ctk.ctkSliderWidget, ctk.ctkDoubleSlider)
+
+    def test_ctkDoubleSpinBoxToFloat(self):
+        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(ctk.ctkDoubleSpinBox, ctk.ctkDoubleSpinBox)
+
+    def impl_ComboBoxToStringable(self, widgettype):
         @parameterNodeWrapper
         class ParameterNodeWrapper:
             alpha: Annotated[int, Choice([1, 2, 3]), Default(1)]
@@ -258,13 +274,13 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
             charlie: Annotated[str, Choice(["a", "b", "c", "d"]), Default("a")]
             delta: Annotated[bool, Choice([True, False]), Default(False)]
 
-        comboboxAlpha = qt.QComboBox()
+        comboboxAlpha = widgettype()
         comboboxAlpha.deleteLater()
-        comboboxBravo = qt.QComboBox()
+        comboboxBravo = widgettype()
         comboboxBravo.deleteLater()
-        comboboxCharlie = qt.QComboBox()
+        comboboxCharlie = widgettype()
         comboboxCharlie.deleteLater()
-        comboboxDelta = qt.QComboBox()
+        comboboxDelta = widgettype()
         comboboxDelta.deleteLater()
         param = ParameterNodeWrapper(newParameterNode())
 
@@ -353,7 +369,13 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(comboboxDelta.currentIndex, 1)
         self.assertEqual(comboboxDelta.currentText, "False")
 
-    def test_QComboBoxToEnum(self):
+    def test_QComboBoxToStringable(self):
+        self.impl_ComboBoxToStringable(qt.QComboBox)
+
+    def test_CtkComboBoxToStringable(self):
+        self.impl_ComboBoxToStringable(ctk.ctkComboBox)
+
+    def impl_ComboBoxToEnum(self, widgettype):
         class TestEnum(enum.Enum):
             A = "A"
             B = "B"
@@ -381,11 +403,11 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
             integer: Annotated[TestIntEnum, Default(TestIntEnum.Z)]
             labeled: TestLabeledEnum
 
-        comboboxNormal = qt.QComboBox()
+        comboboxNormal = widgettype()
         comboboxNormal.deleteLater()
-        comboboxInt = qt.QComboBox()
+        comboboxInt = widgettype()
         comboboxInt.deleteLater()
-        comboboxLabeled = qt.QComboBox()
+        comboboxLabeled = widgettype()
         comboboxLabeled.deleteLater()
         param = ParameterNodeWrapper(newParameterNode())
 
@@ -454,6 +476,12 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(param.labeled, TestLabeledEnum.TopLeft)
         self.assertEqual(comboboxLabeled.currentIndex, 0)
         self.assertEqual(comboboxLabeled.currentText, "Top left")
+
+    def test_QComboBoxToEnum(self):
+        self.impl_ComboBoxToEnum(qt.QComboBox)
+
+    def test_CtkComboBoxToEnum(self):
+        self.impl_ComboBoxToEnum(ctk.ctkComboBox)
 
     def test_QLineEditToStr(self):
         @parameterNodeWrapper
@@ -535,15 +563,15 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(param.bravo, "someval\nsomeval2")
         self.assertEqual(lineEditBravo.toPlainText(), "someval\nsomeval2")
 
-    def test_ctkRangeWidgetToRange(self):
+    def impl_RangeWidgetToRange(self, widgettype):
         @parameterNodeWrapper
         class ParameterNodeWrapper:
-            alpha: Annotated[FloatRange, RangeBounds(-10, 10)]
+            alpha: Annotated[FloatRange, RangeBounds(0, 10), Default(FloatRange(0, 0))]
             bravo: Annotated[FloatRange, RangeBounds(0, 20), Default(FloatRange(5, 10.5))]
 
-        rangeWidgetAlpha = ctk.ctkRangeWidget()
+        rangeWidgetAlpha = widgettype()
         rangeWidgetAlpha.deleteLater()
-        rangeWidgetBravo = ctk.ctkRangeWidget()
+        rangeWidgetBravo = widgettype()
         rangeWidgetBravo.deleteLater()
         param = ParameterNodeWrapper(newParameterNode())
 
@@ -557,22 +585,61 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(param.bravo, FloatRange(5, 10.5))
 
         # Phase 1 - write to GUI
+        rangeWidgetAlpha.maximumValue = 2
+        self.assertEqual(rangeWidgetAlpha.maximumValue, 2.0)
+        self.assertEqual(param.alpha, FloatRange(0, 2))
+        rangeWidgetBravo.minimumValue = 3
+        self.assertEqual(rangeWidgetBravo.minimumValue, 3)
+        self.assertEqual(param.bravo, FloatRange(3, 10.5))
+
+        # Phase 2 - write to parameterNode
+        param.alpha = FloatRange(0, 9)
+        self.assertEqual(param.alpha, FloatRange(0, 9))
+        self.assertEqual(rangeWidgetAlpha.minimumValue, 0)
+        self.assertEqual(rangeWidgetAlpha.maximumValue, 9)
+        param.bravo.maximum = 6
+        self.assertEqual(param.bravo, FloatRange(3, 6))
+        self.assertEqual(rangeWidgetBravo.minimumValue, 3)
+        self.assertEqual(rangeWidgetBravo.maximumValue, 6)
+
+    def impl_RangeWidgetWithNegativeValues(self, widgettype):
+        @parameterNodeWrapper
+        class ParameterNodeWrapper:
+            alpha: Annotated[FloatRange, RangeBounds(-10, 10), Default(FloatRange(0, 0))]
+
+        rangeWidgetAlpha = widgettype()
+        rangeWidgetAlpha.deleteLater()
+        param = ParameterNodeWrapper(newParameterNode())
+
+        # Phase 0 - connect parameterNode to GUI
+        mapping = {
+            "alpha": rangeWidgetAlpha,
+        }
+        param.connectParametersToGui(mapping)
+        #self.assertEqual(param.alpha, FloatRange(0, 0))
+
+        # Phase 1 - write to GUI
         rangeWidgetAlpha.minimumValue = -1
-        self.assertEqual(rangeWidgetAlpha.minimumValue, -1)
+        self.assertEqual(rangeWidgetAlpha.minimumValue, -1.0)
         self.assertEqual(param.alpha, FloatRange(-1, 0))
-        rangeWidgetBravo.maximumValue = 19
-        self.assertEqual(rangeWidgetBravo.maximumValue, 19)
-        self.assertEqual(param.bravo, FloatRange(5, 19))
 
         # Phase 2 - write to parameterNode
         param.alpha = FloatRange(-9, 9)
         self.assertEqual(param.alpha, FloatRange(-9, 9))
         self.assertEqual(rangeWidgetAlpha.minimumValue, -9)
         self.assertEqual(rangeWidgetAlpha.maximumValue, 9)
-        param.bravo.maximum = 6
-        self.assertEqual(param.bravo, FloatRange(5, 6))
-        self.assertEqual(rangeWidgetBravo.minimumValue, 5)
-        self.assertEqual(rangeWidgetBravo.maximumValue, 6)
+
+    def test_CtkRangeWidgetToRange(self):
+        self.impl_RangeWidgetToRange(ctk.ctkRangeWidget)
+
+    def test_CtkDoubleRangeSliderToRange(self):
+        self.impl_RangeWidgetToRange(ctk.ctkDoubleRangeSlider)
+
+    def test_CtkRangeWidgetToNegativeRange(self):
+        self.impl_RangeWidgetWithNegativeValues(ctk.ctkRangeWidget)
+
+    def test_CtkDoubleRangeSliderToRange(self):
+        self.impl_RangeWidgetWithNegativeValues(ctk.ctkDoubleRangeSlider)
 
     def test_ctkPathLineEditToPath(self):
         @parameterNodeWrapper
