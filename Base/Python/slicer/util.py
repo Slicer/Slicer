@@ -780,13 +780,34 @@ def loadColorTable(filename, returnNode=False):
 
 
 def loadFiberBundle(filename, returnNode=False):
-    """Load node from file.
+    """Load fiber bundle node from file.
+
+    .. warning::
+    To ensure the FiberBundleFile reader is registered, the ``SlicerDMRI``
+    extension needs to be installed.
 
     :param filename: full path of the file to load.
     :param returnNode: Deprecated.
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
     """
+
+    # Check if SlicerDMRI is installed
+    extension_name = "SlicerDMRI"
+    em = slicer.app.extensionsManagerModel()
+    if not em.isExtensionInstalled(extension_name):
+        errorMessage = f"{extension_name} not installed."
+        errorMessage += "\n" + f"Install the {extension_name} extension"
+
+    # Check if the appropriate reader is registered
+    if slicer.app.ioManager().registeredFileReaderCount("FiberBundleFile") == 0:
+        errorMessage += f"FiberBundleFile reader not registered: failed to read data from file: {filename}"
+        errorMessage += "\n" + f"Try reinstalling the {extension_name} extension"
+
+    if userMessages.GetNumberOfMessages() > 0:
+        errorMessage += "\n" + userMessages.GetAllMessagesAsString()
+        raise RuntimeError(errorMessage)
+
     return loadNodeFromFile(filename, "FiberBundleFile", {}, returnNode)
 
 
