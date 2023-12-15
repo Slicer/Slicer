@@ -3385,7 +3385,7 @@ def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid
     try:
         (algo, digest) = extractAlgoAndDigest(checksum)
     except ValueError as excinfo:
-        logging.error("Failed to parse checksum: " + excinfo.message)
+        logging.error(f"Failed to parse checksum: {excinfo}")
         return False
     if not os.path.exists(targetFilePath) or os.stat(targetFilePath).st_size == 0:
         logging.info(f"Downloading from\n  {url}\nas file\n  {targetFilePath}\nIt may take a few minutes...")
@@ -3423,9 +3423,9 @@ def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid
                                   "\n  expected checksum: %s" % (current_digest, digest))
                     return False
             else:
-                logging.info("Requested file has been found and checksum is OK: " + targetFilePath)
+                logging.info("Requested file has been found and checksum is OK: " + str(targetFilePath))
         else:
-            logging.info("Requested file has been found: " + targetFilePath)
+            logging.info(f"Requested file has been found: {targetFilePath}")
     return True
 
 
