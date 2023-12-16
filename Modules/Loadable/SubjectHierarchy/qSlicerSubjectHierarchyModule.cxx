@@ -20,8 +20,13 @@
 
 ==============================================================================*/
 
+#include <vtkSlicerConfigure.h> // For Slicer_USE_PYTHONQT
+
 // QtGUI includes
 #include <qSlicerApplication.h>
+#ifdef Slicer_USE_PYTHONQT
+#include <qSlicerPythonManager.h>
+#endif
 
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyModule.h"
@@ -116,10 +121,20 @@ void qSlicerSubjectHierarchyModule::setup()
 {
   this->Superclass::setup();
 
-  if (qSlicerApplication::application())
+  qSlicerApplication * app = qSlicerApplication::application();
+  if (app)
     {
+    // Register settings panel
     qSlicerSubjectHierarchySettingsPanel* panel = new qSlicerSubjectHierarchySettingsPanel();
-    qSlicerApplication::application()->settingsDialog()->addPanel("Subject hierarchy", panel);
+    app->settingsDialog()->addPanel("Subject hierarchy", panel);
+
+    // Register parameterNodeWrapper plugins
+#ifdef Slicer_USE_PYTHONQT
+    if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+      {
+      app->pythonManager()->executeString(QString("import SubjectHierarchyLib.parameterNodeWrapper"));
+      }
+#endif
     }
 }
 
