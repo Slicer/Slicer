@@ -227,7 +227,8 @@ If segments overlap, segment higher in the segments table will have priority. <b
                     return
                 for index in range(inputSegmentIDs.GetNumberOfValues()):
                     segmentID = inputSegmentIDs.GetValue(index)
-                    self.showStatusMessage(_("Smoothing {segmentName}...").format(segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()))
+                    self.showStatusMessage(_("Smoothing {segmentName}...").format(
+                        segmentName=segmentationNode.GetSegmentation().GetSegment(segmentID).GetName()))
                     self.scriptedEffect.parameterSetNode().SetSelectedSegmentID(segmentID)
                     self.smoothSelectedSegment(maskImage, maskExtent)
                 # restore segment selection
