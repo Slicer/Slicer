@@ -140,7 +140,7 @@ class ImportItkSnapLabelFileReader:
                              "name": fields[7]}
                     colors.append(color)
                     continue
-                raise ValueError(_("Syntax error in line {line}").format(lineIndex))
+                raise ValueError(_("Syntax error in line {line}").format(line=lineIndex))
 
         return colors
 

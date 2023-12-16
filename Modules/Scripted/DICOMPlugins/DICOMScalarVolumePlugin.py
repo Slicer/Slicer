@@ -706,7 +706,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
             # Validate tags
             if tags["Modality"] == "":
-                error = _("Empty modality for series '{volumeName}'").format(volumeNode.GetName())
+                error = _("Empty modality for series '{volumeName}'").format(volumeName=volumeNode.GetName())
                 logging.error(error)
                 return error
 
