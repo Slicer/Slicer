@@ -128,11 +128,11 @@ void qSlicerSubjectHierarchyModule::setup()
     qSlicerSubjectHierarchySettingsPanel* panel = new qSlicerSubjectHierarchySettingsPanel();
     app->settingsDialog()->addPanel("Subject hierarchy", panel);
 
-    // Register parameterNodeWrapper plugins
+    // Explicitly import associated python library to trigger registration of plugins
 #ifdef Slicer_USE_PYTHONQT
     if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
       {
-      app->pythonManager()->executeString(QString("import SubjectHierarchyLib.parameterNodeWrapper"));
+      app->pythonManager()->executeString(QString("import SubjectHierarchyLib"));
       }
 #endif
     }
