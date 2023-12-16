@@ -245,8 +245,8 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         self.scriptedEffect.setParameter("FillValue", self.fillValueEdit.value)
         self.scriptedEffect.setParameter("BinaryMaskFillValueInside", self.binaryMaskFillInsideEdit.value)
         self.scriptedEffect.setParameter("BinaryMaskFillValueOutside", self.binaryMaskFillOutsideEdit.value)
-        self.scriptedEffect.setNodeReference("InputVolume", self.inputVolumeSelector.currentNode)
-        self.scriptedEffect.setNodeReference("OutputVolume", self.outputVolumeSelector.currentNode)
+        self.scriptedEffect.setNodeReference("InputVolume", self.inputVolumeSelector.currentNode())
+        self.scriptedEffect.setNodeReference("OutputVolume", self.outputVolumeSelector.currentNode())
         self.scriptedEffect.setParameter("SoftEdgeMm", self.softEdgeMmSpinBox.value)
 
     def activate(self):
@@ -287,11 +287,11 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
             self.updateGUIFromMRML()
 
     def onInputVolumeChanged(self):
-        self.scriptedEffect.setNodeReference("InputVolume", self.inputVolumeSelector.currentNode)
+        self.scriptedEffect.setNodeReference("InputVolume", self.inputVolumeSelector.currentNode())
         self.updateGUIFromMRML()  # node reference changes are not observed, update GUI manually
 
     def onOutputVolumeChanged(self):
-        self.scriptedEffect.setNodeReference("OutputVolume", self.outputVolumeSelector.currentNode)
+        self.scriptedEffect.setNodeReference("OutputVolume", self.outputVolumeSelector.currentNode())
         self.updateGUIFromMRML()  # node reference changes are not observed, update GUI manually
 
     def fillValueChanged(self):
