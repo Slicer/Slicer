@@ -4,8 +4,6 @@
 set(SubjectHierarchyPlugins_PYTHON_SCRIPTS
   __init__
   AbstractScriptedSubjectHierarchyPlugin
-  parameterNodeWrapper/__init__
-  parameterNodeWrapper/guiConnectors
   )
 
 set(SubjectHierarchyPlugins_PYTHON_RESOURCES
