@@ -238,6 +238,7 @@ ${EXTENSION_LAUNCHER_SETTINGS_ADDITIONAL_PATH_ENVVARS}
   add_custom_command(
     DEPENDS
       ${CMAKE_CURRENT_LIST_FILE}
+      ${_additional_settings_configure_script}
     OUTPUT
       ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
     COMMAND ${CMAKE_COMMAND}
