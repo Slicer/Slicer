@@ -99,7 +99,7 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
   # Extension dependencies - library paths
   foreach(dep ${EXTENSION_DEPENDS})
     set(paths ${${dep}_LIBRARY_PATHS_LAUNCHER_BUILD})
-    list(TRANSFORM paths REPLACE "\$(Configuration)" "\${CMAKE_CFG_INTDIR}")
+    list(TRANSFORM paths REPLACE "\\$\\(Configuration\\)" "\${CMAKE_CFG_INTDIR}")
     list(APPEND EXTENSION_LIBRARY_PATHS_BUILD ${paths})
   endforeach()
 
@@ -128,7 +128,7 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
   # Extension dependencies - paths
   foreach(dep ${EXTENSION_DEPENDS})
     set(paths ${${dep}_PATHS_LAUNCHER_BUILD})
-    list(TRANSFORM paths REPLACE "\$(Configuration)" "\${CMAKE_CFG_INTDIR}")
+    list(TRANSFORM paths REPLACE "\\$\\(Configuration\\)" "\${CMAKE_CFG_INTDIR}")
     list(APPEND EXTENSION_PATHS_BUILD ${paths})
   endforeach()
 
@@ -148,7 +148,7 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
   # Extension dependencies - environment variables
   foreach(dep ${EXTENSION_DEPENDS})
     set(paths ${${dep}_ENVVARS_LAUNCHER_BUILD})
-    list(TRANSFORM paths REPLACE "\$(Configuration)" "\${CMAKE_CFG_INTDIR}")
+    list(TRANSFORM paths REPLACE "\\$\\(Configuration\\)" "\${CMAKE_CFG_INTDIR}")
     list(APPEND EXTENSION_LAUNCHER_SETTINGS_ENVVARS ${paths})
   endforeach()
 
@@ -178,7 +178,7 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings AND _configure_additional_laun
   # Extension dependencies - pythonpath
   foreach(dep ${EXTENSION_DEPENDS})
     set(paths ${${dep}_PYTHONPATH_LAUNCHER_BUILD})
-    list(TRANSFORM paths REPLACE "\$(Configuration)" "\${CMAKE_CFG_INTDIR}")
+    list(TRANSFORM paths REPLACE "\\$\\(Configuration\\)" "\${CMAKE_CFG_INTDIR}")
     list(APPEND EXTENSION_PYTHONPATH_BUILD ${paths})
   endforeach()
 
