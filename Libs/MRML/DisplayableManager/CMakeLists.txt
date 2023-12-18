@@ -273,6 +273,8 @@ if(MRMLDisplayableManager_USE_PYTHON)
   if(Slicer_USE_PYTHONQT)
     add_subdirectory(Python)
   endif()
+
+  SlicerRegisterMRMLWheelTarget(${lib_name}Python)
 endif()
 
 # --------------------------------------------------------------------------

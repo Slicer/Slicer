@@ -171,6 +171,8 @@ if(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
       set_target_properties(${PROJECT_NAME}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()
   endif()
+
+  SlicerRegisterMRMLWheelTarget(${PROJECT_NAME}Python)
 endif()
 
 # --------------------------------------------------------------------------
