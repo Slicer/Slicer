@@ -55,6 +55,7 @@ mark_as_advanced(MRML_USE_vtkTeem)
 set(${PROJECT_NAME}_ITK_COMPONENTS
   ITKCommon
   ITKIOImageBase
+  ITKIONRRD
   ITKIOSpatialObjects
   ITKIOTransformBase
   ITKMesh
@@ -375,9 +376,9 @@ if(VTK_WRAP_PYTHON)
 endif()
 
 # --------------------------------------------------------------------------
-# Testing (requires some of the examples)
+# Testing (requires some of the examples, Qt and CTK)
 # --------------------------------------------------------------------------
-if(BUILD_TESTING)
+if(BUILD_TESTING AND Slicer_BUILD_GUI)
   add_subdirectory(Testing)
 endif()
 
