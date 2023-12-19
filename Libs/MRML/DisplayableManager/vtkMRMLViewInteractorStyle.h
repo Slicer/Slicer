@@ -117,7 +117,16 @@ protected:
   vtkInteractorStyle* GetInteractorStyle();
 
   vtkCallbackCommand* EventCallbackCommand;
+
+  /// Main process event method.
+  ///
+  /// Set MouseMovedSinceButtonDown variable based on the mouse events.
+  ///
+  /// Then, if calling DelegateInteractionEventToDisplayableManagers() returns false or if the current motion flag
+  /// returned by vtkInteractorStyle::GetState() is VTKIS_NONE, call ProcessEvents().
   static void CustomProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata);
+
+  /// Process events not already delegated to displayable managers by CustomProcessEvents().
   static void ProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata);
 
   vtkCallbackCommand* DisplayableManagerCallbackCommand;
