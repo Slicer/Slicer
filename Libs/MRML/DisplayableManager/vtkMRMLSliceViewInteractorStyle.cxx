@@ -94,6 +94,11 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
   // Get display and world position
   int* displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
+  if (!pokedRenderer)
+    {
+    // can happen during application shutdown
+    return false;
+    }
   double displayPosition[4] =
     {
     static_cast<double>(displayPositionInt[0] - pokedRenderer->GetOrigin()[0]),

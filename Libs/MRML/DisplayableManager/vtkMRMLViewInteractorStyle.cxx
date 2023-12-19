@@ -294,8 +294,17 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(u
 //----------------------------------------------------------------------------
 bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData)
 {
+  if (!inputEventData)
+    {
+    return false;
+    }
   int* displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
+  if (!pokedRenderer)
+    {
+    // can happen during application shutdown
+    return false;
+    }
 
   vtkNew<vtkMRMLInteractionEventData> ed;
   ed->SetType(inputEventData ? inputEventData->GetType() : vtkCommand::NoEvent);
