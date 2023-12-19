@@ -108,12 +108,16 @@ void vtkMRMLThreeDViewInteractorStyle::OnLeave()
 //----------------------------------------------------------------------------
 bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData)
 {
+  if (!inputEventData)
+    {
+    return false;
+    }
   // Get display and world position
   int* displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
   vtkInteractorStyle* interactorStyle = vtkInteractorStyle::SafeDownCast(this->GetInteractor()->GetInteractorStyle());
   interactorStyle->SetCurrentRenderer(pokedRenderer);
-  if (!pokedRenderer || !inputEventData)
+  if (!pokedRenderer)
     {
     // can happen during application shutdown
     return false;
