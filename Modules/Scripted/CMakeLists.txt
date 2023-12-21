@@ -28,6 +28,7 @@ if(Slicer_BUILD_DICOM_SUPPORT)
     DICOMLib
     DICOMPlugins
     DICOMPatcher
+    DICOMToNRRD
     )
 endif()
 
