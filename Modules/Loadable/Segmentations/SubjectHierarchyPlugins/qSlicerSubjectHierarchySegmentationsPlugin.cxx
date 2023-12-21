@@ -28,6 +28,12 @@
 #include "vtkSlicerSegmentationsModuleLogic.h"
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
+#include "qSlicerCoreApplication.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerAbstractModuleRepresentation.h"
+#include "qMRMLSegmentEditorWidget.h"
+#include "qSlicerScriptedLoadableModuleWidget.h"
 
 // Qt includes
 #include <QDebug>
@@ -261,12 +267,24 @@ bool qSlicerSubjectHierarchySegmentationsPlugin::reparentItemInsideSubjectHierar
     return false;
     }
 
+  vtkSlicerSegmentationsModuleLogic* sgmentationsModuleLogic =
+    (qSlicerCoreApplication::application() ? vtkSlicerSegmentationsModuleLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleManager()->module("Segmentations")->logic()) : nullptr);
+
+  qSlicerScriptedLoadableModuleWidget* segmentEditorWidget = dynamic_cast<qSlicerScriptedLoadableModuleWidget*>(qSlicerCoreApplication::application() ?
+    qSlicerCoreApplication::application()->moduleManager()->module("SegmentEditor")->widgetRepresentation() : nullptr);
+
+  qMRMLSegmentEditorWidget* qSegmentEditorWidget =  segmentEditorWidget->findChild<qMRMLSegmentEditorWidget *>("qMRMLSegmentEditorWidget");
+  QString terminology = qSegmentEditorWidget->defaultTerminologyEntry();
+
+  terminology = terminology.mid(0, terminology.indexOf("~")); // Get default terminology root
+
   bool success = false;
   std::string importedRepresentationName("");
   if (labelmapNode)
     {
     importedRepresentationName = std::string(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
-    success = vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(labelmapNode, segmentationNode);
+    success = sgmentationsModuleLogic->ImportLabelmapToSegmentationNodeWithTerminology(labelmapNode, segmentationNode, terminology.toStdString());
     }
   else
     {
@@ -1127,7 +1145,19 @@ void qSlicerSubjectHierarchySegmentationsPlugin::convertLabelmapToSegmentation()
   std::string newSegmentationNodeName = std::string(labelmapNode->GetName()) + "-segmentation";
   newSegmentationNode->SetName(newSegmentationNodeName.c_str());
 
-  if (!vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(labelmapNode, newSegmentationNode))
+  vtkSlicerSegmentationsModuleLogic* sgmentationsModuleLogic =
+    (qSlicerCoreApplication::application() ? vtkSlicerSegmentationsModuleLogic::SafeDownCast(
+    qSlicerCoreApplication::application()->moduleManager()->module("Segmentations")->logic()) : nullptr);
+
+  qSlicerScriptedLoadableModuleWidget* segmentEditorWidget = dynamic_cast<qSlicerScriptedLoadableModuleWidget*>(qSlicerCoreApplication::application() ?
+    qSlicerCoreApplication::application()->moduleManager()->module("SegmentEditor")->widgetRepresentation() : nullptr);
+
+  qMRMLSegmentEditorWidget* qSegmentEditorWidget =  segmentEditorWidget->findChild<qMRMLSegmentEditorWidget *>("qMRMLSegmentEditorWidget");
+  QString terminology = qSegmentEditorWidget->defaultTerminologyEntry();
+
+  terminology = terminology.mid(0, terminology.indexOf("~")); // Get default terminology root
+
+  if (!sgmentationsModuleLogic->ImportLabelmapToSegmentationNodeWithTerminology(labelmapNode, newSegmentationNode, terminology.toStdString()))
     {
     qCritical() << Q_FUNC_INFO << ": Failed to import labelmap '" << labelmapNode->GetName() << "' to segmentation '" << newSegmentationNode->GetName() << "'";
     }
