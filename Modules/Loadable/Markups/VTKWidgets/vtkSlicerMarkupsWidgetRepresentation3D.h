@@ -114,6 +114,8 @@ protected:
 
     /// Orientation of the glyphs, represented as an array of quaternions
     vtkSmartPointer<vtkDoubleArray>   GlyphOrientationArray;
+    /// Glyph scale: scaling depends on orientation (that is why we can't simply use transform on SphereSource)
+    vtkSmartPointer<vtkDoubleArray>   GlyphScaleArray;
 
     vtkSmartPointer<vtkGlyph3DMapper> GlyphMapper;
 
@@ -143,6 +145,8 @@ protected:
   ControlPointsPipeline3D* GetControlPointsPipeline(int controlPointType);
 
   virtual void UpdateControlPointGlyphOrientation();
+
+  virtual void UpdateControlPointGlyphScale();
 
   virtual void UpdateNthPointAndLabelFromMRML(int n);
 
