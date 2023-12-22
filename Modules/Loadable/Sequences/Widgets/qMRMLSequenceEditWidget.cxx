@@ -65,6 +65,7 @@ public:
   vtkWeakPointer<vtkMRMLSequenceNode> SequenceNode;
   // data node class name that was used for populating the candidate node list
   QString DataNodeCandidatesClassName;
+  bool DataNodeCandidatesUpdateNeeded{true};
 };
 
 //-----------------------------------------------------------------------------
@@ -391,11 +392,16 @@ void qMRMLSequenceEditWidget::updateCandidateNodesWidgetFromMRML(bool forceUpdat
     {
     d->ListWidget_CandidateNodes->clear();
     d->DataNodeCandidatesClassName.clear();
+    d->DataNodeCandidatesUpdateNeeded = true;
     return;
     }
 
   QString newDataNodeCandidatesClassName(QString::fromStdString(d->SequenceNode->GetDataNodeClassName()));
-  if (!forceUpdate && d->DataNodeCandidatesClassName == newDataNodeCandidatesClassName)
+  if (d->DataNodeCandidatesClassName != newDataNodeCandidatesClassName)
+    {
+    d->DataNodeCandidatesUpdateNeeded = true;
+    }
+  if (!forceUpdate && !d->DataNodeCandidatesUpdateNeeded)
     {
     // already up-to-date
     return;
@@ -412,6 +418,7 @@ void qMRMLSequenceEditWidget::updateCandidateNodesWidgetFromMRML(bool forceUpdat
     {
     d->addNodeToCandidateNodes(currentCandidateNode);
     }
+  d->DataNodeCandidatesUpdateNeeded = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -459,8 +466,9 @@ void qMRMLSequenceEditWidget::onNodeAddedEvent(vtkObject* scene, vtkObject* aNod
 {
   Q_D(qMRMLSequenceEditWidget);
   Q_UNUSED(scene);
-  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
+  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing() || !this->isCandidateNodesSectionVisible())
     {
+    d->DataNodeCandidatesUpdateNeeded = true;
     return;
     }
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(aNode);
@@ -475,8 +483,9 @@ void qMRMLSequenceEditWidget::onNodeRemovedEvent(vtkObject* scene, vtkObject* aN
 {
   Q_D(qMRMLSequenceEditWidget);
   Q_UNUSED(scene);
-  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
+  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing() || !this->isCandidateNodesSectionVisible())
     {
+    d->DataNodeCandidatesUpdateNeeded = true;
     return;
     }
   // Remove single candidate node
@@ -639,22 +648,31 @@ QString qMRMLSequenceEditWidget::onAddCurrentCandidateNode()
   // Restore candidate node selection / auto-advance to the next node
   if (d->CheckBox_AutoAdvanceDataSelection->checkState() == Qt::Checked)
     {
-    if (d->ListWidget_CandidateNodes->currentRow() + 1 < d->ListWidget_CandidateNodes->count())
+    // Get row index of current node
+    QAbstractItemModel* candidateNodesModel = d->ListWidget_CandidateNodes->model();
+    QModelIndex start = candidateNodesModel->index(0, 0);
+    QModelIndexList moduleIndexes = candidateNodesModel->match(start, Qt::UserRole, currentCandidateNodeId, /* hits= */ 1, Qt::MatchExactly);
+    if (moduleIndexes.count() > 0)
       {
-      // not at the end of the list, so select the next item
-      d->ListWidget_CandidateNodes->setCurrentRow(d->ListWidget_CandidateNodes->currentRow() + 1);
-      // update index value from the upcoming node's name
-      if (d->SequenceNode->GetIndexType() != vtkMRMLSequenceNode::NumericIndex
-        && d->CheckBox_UseNodeNameAsIndexValue->isChecked())
+      // Found the current node index, move to the next one
+      int nextItemRowIndex = moduleIndexes.at(0).row() + 1;
+      if (nextItemRowIndex < d->ListWidget_CandidateNodes->count())
         {
-        this->candidateNodeItemClicked(d->ListWidget_CandidateNodes->currentItem());
+        // not at the end of the list, so select the next item
+        d->ListWidget_CandidateNodes->setCurrentRow(nextItemRowIndex);
+        // update index value from the upcoming node's name
+        if (d->SequenceNode->GetIndexType() != vtkMRMLSequenceNode::NumericIndex
+          && d->CheckBox_UseNodeNameAsIndexValue->isChecked())
+          {
+          this->candidateNodeItemClicked(d->ListWidget_CandidateNodes->currentItem());
+          }
         }
-      }
-    else
-      {
-      // we are at the end of the list (already added the last element),
-      // so unselect the item to prevent duplicate adding of the last element
-      d->ListWidget_CandidateNodes->setCurrentRow(-1);
+      else
+        {
+        // we are at the end of the list (already added the last element),
+        // so unselect the item to prevent duplicate adding of the last element
+        d->ListWidget_CandidateNodes->setCurrentRow(-1);
+        }
       }
     }
 
