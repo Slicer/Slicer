@@ -13,6 +13,7 @@ If you have developed a script or module that you would like to share with other
   - [build Slicer application](build_instructions/index.md).
   - [build your extension](#build-an-extension)
 
+(extension-build)=
 ## Build an extension
 
 :::{note}
