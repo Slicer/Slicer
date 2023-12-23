@@ -18,7 +18,7 @@ If you have developed a script or module that you would like to share with other
 :::{note}
 To compile extensions containing C++-implemented modules, it's essential to [build Slicer from source](build_instructions/index.md) on your local machine. These extensions cannot be compiled against a binary download. However, if your modules are solely developed in Python, there's no need to build the extension.
 
-Once your work is ready for sharing, refer to [](#extension-distribute) for distribution guidelines.
+Once your work is ready for sharing, refer to [](#extension-distribute) for guidelines.
 :::
 
 Similarly to the building of Slicer core, multi-configuration builds are not supported: one build tree can be only used for one build mode (Release or Debug or RelWithDebInfo or MinSizeRel). If a release and debug mode build are needed then the same source code folder can be used (e.g., `C:\D\SlicerHeart`) but a separate binary folder must be created for each build mode (e.g., `C:\D\SlicerHeart-R` and `C:\D\SlicerHeart-D` for release and debug modes).
@@ -141,7 +141,7 @@ Replace `Release` with the build mode of your extension build (`Debug`, `Release
 - Set the project as the StartUp Project (right-click -> Set As StartUp Project).
 - Start debugging (F5).
 
-=(extension-continuous-integration)
+(extension-continuous-integration)=
 ### Continuous integration
 
 If you shared your extension by using the ExtensionWizard, make sure you know about the Slicer testing dashboard:
