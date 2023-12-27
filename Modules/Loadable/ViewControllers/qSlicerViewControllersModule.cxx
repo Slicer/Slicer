@@ -172,6 +172,18 @@ void qSlicerViewControllersModule::readDefaultThreeDViewSettings(vtkMRMLViewNode
     {
     defaultViewNode->SetUseDepthPeeling(settings.value("UseDepthPeeling").toBool());
     }
+  if (settings.contains("ShadowsVisibility"))
+    {
+    defaultViewNode->SetShadowsVisibility(settings.value("ShadowsVisibility").toBool());
+    }
+  if (settings.contains("AmbientShadowsSizeScale"))
+    {
+    defaultViewNode->SetAmbientShadowsSizeScale(settings.value("AmbientShadowsSizeScale").toDouble());
+    }
+  if (settings.contains("AmbientShadowsVolumeOpacityThreshold"))
+    {
+    defaultViewNode->SetAmbientShadowsVolumeOpacityThreshold(settings.value("AmbientShadowsVolumeOpacityThreshold").toDouble());
+    }
   readCommonViewSettings(defaultViewNode, settings);
 }
 
@@ -189,6 +201,9 @@ void qSlicerViewControllersModule::writeDefaultThreeDViewSettings(vtkMRMLViewNod
   settings.setValue("AxisLabelsVisibility", bool(defaultViewNode->GetAxisLabelsVisible()));
   settings.setValue("UseOrthographicProjection", defaultViewNode->GetRenderMode()==vtkMRMLViewNode::Orthographic);
   settings.setValue("UseDepthPeeling", bool(defaultViewNode->GetUseDepthPeeling()));
+  settings.setValue("ShadowsVisibility", defaultViewNode->GetShadowsVisibility());
+  settings.setValue("AmbientShadowsSizeScale", defaultViewNode->GetAmbientShadowsSizeScale());
+  settings.setValue("AmbientShadowsVolumeOpacityThreshold", defaultViewNode->GetAmbientShadowsVolumeOpacityThreshold());
   writeCommonViewSettings(defaultViewNode, settings);
 }
 

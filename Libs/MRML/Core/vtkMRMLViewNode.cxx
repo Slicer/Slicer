@@ -111,6 +111,9 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLIntMacro(volumeRenderingSurfaceSmoothing, VolumeRenderingSurfaceSmoothing);
   vtkMRMLWriteXMLFloatMacro(volumeRenderingOversamplingFactor, VolumeRenderingOversamplingFactor);
   vtkMRMLWriteXMLIntMacro(linkedControl, LinkedControl);
+  vtkMRMLWriteXMLBooleanMacro(shadowsVisibility, ShadowsVisibility);
+  vtkMRMLWriteXMLFloatMacro(ambientShadowsSizeScale, AmbientShadowsSizeScale);
+  vtkMRMLWriteXMLFloatMacro(ambientShadowsVolumeOpacityThreshold, AmbientShadowsVolumeOpacityThreshold);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -148,6 +151,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(raycastTechnique, RaycastTechnique);
   vtkMRMLReadXMLIntMacro(volumeRenderingSurfaceSmoothing, VolumeRenderingSurfaceSmoothing);
   vtkMRMLReadXMLFloatMacro(volumeRenderingOversamplingFactor, VolumeRenderingOversamplingFactor);
+  vtkMRMLReadXMLBooleanMacro(shadowsVisibility, ShadowsVisibility);
+  vtkMRMLReadXMLFloatMacro(ambientShadowsSizeScale, AmbientShadowsSizeScale);
+  vtkMRMLReadXMLFloatMacro(ambientShadowsVolumeOpacityThreshold, AmbientShadowsVolumeOpacityThreshold);
   vtkMRMLReadXMLIntMacro(linkedControl, LinkedControl);
   vtkMRMLReadXMLEndMacro();
 
@@ -187,6 +193,9 @@ void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   vtkMRMLCopyIntMacro(RaycastTechnique);
   vtkMRMLCopyIntMacro(VolumeRenderingSurfaceSmoothing);
   vtkMRMLCopyFloatMacro(VolumeRenderingOversamplingFactor);
+  vtkMRMLCopyBooleanMacro(ShadowsVisibility);
+  vtkMRMLCopyFloatMacro(AmbientShadowsSizeScale);
+  vtkMRMLCopyFloatMacro(AmbientShadowsVolumeOpacityThreshold);
   vtkMRMLCopyIntMacro(LinkedControl);
   vtkMRMLCopyEndMacro();
 }
@@ -224,6 +233,9 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(VolumeRenderingSurfaceSmoothing);
   vtkMRMLPrintFloatMacro(VolumeRenderingOversamplingFactor);
   vtkMRMLPrintIntMacro(Interacting);
+  vtkMRMLPrintBooleanMacro(ShadowsVisibility);
+  vtkMRMLPrintFloatMacro(AmbientShadowsSizeScale);
+  vtkMRMLPrintFloatMacro(AmbientShadowsVolumeOpacityThreshold);
   vtkMRMLPrintIntMacro(LinkedControl);
   vtkMRMLPrintEndMacro();
 }

@@ -37,6 +37,11 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
+// VTK includes
+#include <vtkNew.h>
+#include <vtkRenderStepsPass.h>
+#include <vtkSSAOPass.h>
+
 // qMRML includes
 #include "qMRMLThreeDView.h"
 
@@ -74,6 +79,9 @@ protected:
   vtkMRMLThreeDViewInteractorStyle*  InteractorObserver;
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLViewNode*                   MRMLViewNode;
+
+  vtkNew<vtkSSAOPass> ShadowsRenderPass;
+  vtkNew<vtkRenderStepsPass> BasicRenderPass;
 };
 
 #endif

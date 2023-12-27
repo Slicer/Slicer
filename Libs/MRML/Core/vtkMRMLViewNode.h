@@ -299,6 +299,9 @@ public:
     RulerColorFlag,
     UseDepthPeelingFlag,
     FPSVisibleFlag,
+    ShadowsVisibilityFlag,
+    AmbientShadowsSizeScaleFlag,
+    AmbientShadowsVolumeOpacityThresholdFlag,
   };
 
   ///
@@ -314,6 +317,31 @@ public:
   /// flag. Does not cause a Modified().
   void SetInteractionFlags(unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);
+
+  //@{
+  /// Show shadows to improve depth perception.
+  /// Currently, only ambient shadows (screen-space ambient occlusion) method is supported and AmbientShadowsSizeScale and AmbientShadowsVolumeOpacityThreshold
+  /// parameters control its appearance.
+  vtkGetMacro(ShadowsVisibility, bool);
+  vtkSetMacro(ShadowsVisibility, bool);
+  vtkBooleanMacro(ShadowsVisibility, bool);
+  //@}
+
+  //@{
+  /// Ambient shadows size scale.
+  /// Specifies size of features to be emphasized by shadows.The scale is logarithmic, default (0.0) corresponds
+  /// to object size of about 100 (in scene physical units).
+  vtkGetMacro(AmbientShadowsSizeScale, double);
+  vtkSetMacro(AmbientShadowsSizeScale, double);
+  vtkBooleanMacro(AmbientShadowsSizeScale, double);
+  //@}
+
+  //@{
+  /// Volume rendering opacity above this value will cast shadows.
+  vtkGetMacro(AmbientShadowsVolumeOpacityThreshold, double);
+  vtkSetMacro(AmbientShadowsVolumeOpacityThreshold, double);
+  vtkBooleanMacro(AmbientShadowsVolumeOpacityThreshold, double);
+  //@}
 
 protected:
   vtkMRMLViewNode();
@@ -394,6 +422,10 @@ protected:
   /// factor.
   /// If \sa VolumeRenderingQuality is set to maximum quality, then a fix oversampling factor of 10 is used.
   double VolumeRenderingOversamplingFactor;
+
+  bool ShadowsVisibility{false};
+  double AmbientShadowsSizeScale{0.3};
+  double AmbientShadowsVolumeOpacityThreshold{0.25};
 
   int LinkedControl;
   int Interacting;

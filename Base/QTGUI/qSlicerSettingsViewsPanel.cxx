@@ -146,7 +146,15 @@ void qSlicerSettingsViewsPanelPrivate::init()
   q->registerProperty("Default3DView/UseOrthographicProjection", this->ThreeDUseOrthographicProjectionCheckBox,
                       /*no tr*/"checked", SIGNAL(toggled(bool)),
                       qSlicerSettingsViewsPanel::tr("Orthographic projection"));
-
+  q->registerProperty("Default3DView/ShadowsVisibility", this->ThreeDShadowsVisibilityCheckBox,
+                      /*no tr*/"checked", SIGNAL(toggled(bool)),
+                      qSlicerSettingsViewsPanel::tr("Shadows visibility"));
+  q->registerProperty("Default3DView/AmbientShadowsSizeScale", this->ThreeDAmbientShadowsSizeScaleSlider,
+                      /*no tr*/"value", SIGNAL(valueChanged(double)),
+                      qSlicerSettingsViewsPanel::tr("Ambient shadows size scale"));
+  q->registerProperty("Default3DView/AmbientShadowsVolumeOpacityThreshold", this->ThreeDAmbientShadowsVolumeOpacityThresholdSlider,
+                      /*no tr*/"value", SIGNAL(valueChanged(double)),
+                      qSlicerSettingsViewsPanel::tr("Ambient shadows volume opacity threshold"));
 }
 
 // --------------------------------------------------------------------------

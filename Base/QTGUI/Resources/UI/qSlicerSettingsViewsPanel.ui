@@ -217,6 +217,16 @@
             </item>
            </layout>
           </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Use orthographic projection:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="ctkCheckBox" name="ThreeDUseOrthographicProjectionCheckBox"/>
+          </item>
           <item row="4" column="0">
            <widget class="QLabel" name="ThreeDRulerTypeLabel">
             <property name="text">
@@ -266,15 +276,80 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label">
+          <item row="6" column="0">
+           <widget class="QLabel" name="ThreeDShadowsVisibilityLabel">
             <property name="text">
-             <string>Use orthographic projection:</string>
+             <string>Shadows visibility:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="ctkCheckBox" name="ThreeDUseOrthographicProjectionCheckBox"/>
+          <item row="6" column="1">
+           <widget class="ctkCheckBox" name="ThreeDShadowsVisibilityCheckBox">
+            <property name="toolTip">
+             <string>Show shadows by default to improve depth perception</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="ThreeDAmbientShadowsSizeScaleLabel">
+            <property name="text">
+             <string>Size scale:</string>
+            </property>
+            <property name="indent">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsSizeScaleSlider">
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="pageStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="minimum">
+             <double>-3.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>3.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="ThreeDAmbientShadowsVolumeOpacityThresholdLabel">
+            <property name="text">
+             <string>Volume opacity threshold:</string>
+            </property>
+            <property name="indent">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsVolumeOpacityThresholdSlider">
+            <property name="decimals">
+             <number>2</number>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="pageStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.250000000000000</double>
+            </property>
+            <property name="suffix">
+             <string/>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -352,6 +427,11 @@ p, li { white-space: pre-wrap; }
    <header>ctkSettingsPanel.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -362,12 +442,44 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>355</x>
+     <x>439</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>439</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ThreeDShadowsVisibilityCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ThreeDAmbientShadowsSizeScaleSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>189</x>
+     <y>289</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ThreeDShadowsVisibilityCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ThreeDAmbientShadowsVolumeOpacityThresholdSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>305</x>
      <y>292</y>
     </hint>
     <hint type="destinationlabel">
-     <x>355</x>
-     <y>326</y>
+     <x>314</x>
+     <y>336</y>
     </hint>
    </hints>
   </connection>

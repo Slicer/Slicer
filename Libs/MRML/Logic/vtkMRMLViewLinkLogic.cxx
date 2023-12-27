@@ -456,5 +456,17 @@ void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode)
       {
       vNode->SetFPSVisible(viewNode->GetFPSVisible());
       }
+    else if (viewNode->GetInteractionFlags() == vtkMRMLViewNode::ShadowsVisibilityFlag)
+      {
+      vNode->SetShadowsVisibility(viewNode->GetShadowsVisibility());
+      }
+    else if (viewNode->GetInteractionFlags() == vtkMRMLViewNode::AmbientShadowsSizeScaleFlag)
+      {
+      vNode->SetAmbientShadowsSizeScale(viewNode->GetAmbientShadowsSizeScale());
+      }
+    else if (viewNode->GetInteractionFlags() == vtkMRMLViewNode::AmbientShadowsVolumeOpacityThresholdFlag)
+      {
+      vNode->SetAmbientShadowsVolumeOpacityThreshold(viewNode->GetAmbientShadowsVolumeOpacityThreshold());
+      }
     }
 }
