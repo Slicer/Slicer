@@ -47,6 +47,7 @@
 class QAction;
 class ctkButtonGroup;
 class ctkSignalMapper;
+class ctkSliderWidget;
 class qMRMLSceneViewMenu;
 class vtkMRMLCameraNode;
 class vtkMRMLViewNode;
@@ -64,11 +65,18 @@ public:
   ~qMRMLThreeDViewControllerWidgetPrivate() override;
 
   void init() override;
+  void setupShadowsMenu();
 
   vtkMRMLViewLogic* viewNodeLogic(vtkMRMLViewNode* node);
 
   vtkWeakPointer<vtkMRMLCameraNode>   CameraNode;
   qMRMLThreeDView*                    ThreeDView;
+
+  QMenu* ShadowsMenu;
+  QMenu* AmbientShadowsSizeScaleMenu;
+  QMenu* AmbientShadowsVolumeOpacityThresholdMenu;
+  ctkSliderWidget* AmbientShadowsSizeScaleSlider;
+  ctkSliderWidget* AmbientShadowsVolumeOpacityThresholdPercentSlider;
 
   vtkSmartPointer<vtkMRMLViewLogic>   ViewLogic;
 

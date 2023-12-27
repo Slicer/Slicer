@@ -70,6 +70,10 @@ qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate(qMRMLThreeDView& object)
   this->InteractorObserver = vtkMRMLThreeDViewInteractorStyle::New();
   this->MRMLScene = nullptr;
   this->MRMLViewNode = nullptr;
+
+  // The depth format must be Fixed32 for the volume mapper to successfully copy the depth texture
+  this->ShadowsRenderPass->SetDepthFormat(vtkTextureObject::Fixed32);
+  this->ShadowsRenderPass->SetDelegatePass(BasicRenderPass);
 }
 
 //---------------------------------------------------------------------------
@@ -206,6 +210,10 @@ void qMRMLThreeDViewPrivate::updateWidgetFromMRML()
 
   q->setUseDepthPeeling(this->MRMLViewNode->GetUseDepthPeeling() != 0);
   q->setFPSVisible(this->MRMLViewNode->GetFPSVisible() != 0);
+
+  q->setShadowsVisibility(this->MRMLViewNode->GetShadowsVisibility());
+  q->setAmbientShadowsSizeScale(this->MRMLViewNode->GetAmbientShadowsSizeScale());
+  q->setAmbientShadowsVolumeOpacityThreshold(this->MRMLViewNode->GetAmbientShadowsVolumeOpacityThreshold());
 }
 
 // --------------------------------------------------------------------------
@@ -573,4 +581,75 @@ void qMRMLThreeDView::dropEvent(QDropEvent* event)
     return;
     }
   shNode->ShowItemsInView(shItemIdList, this->mrmlViewNode());
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLThreeDView::shadowsVisibility()const
+{
+  Q_D(const qMRMLThreeDView);
+  vtkRenderer* renderer = this->renderer();
+  if (!renderer)
+    {
+    return false;
+    }
+  return (renderer->GetPass() == d->ShadowsRenderPass);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLThreeDView::setShadowsVisibility(bool visibility)
+{
+  Q_D(const qMRMLThreeDView);
+  vtkRenderer* renderer = this->renderer();
+  if (!renderer)
+    {
+    return;
+    }
+  if (visibility)
+    {
+    renderer->SetPass(d->ShadowsRenderPass);
+    }
+  else
+    {
+    renderer->SetPass(nullptr);
+    }
+}
+
+//------------------------------------------------------------------------------
+double qMRMLThreeDView::ambientShadowsSizeScale()const
+{
+  Q_D(const qMRMLThreeDView);
+  // Compute sizeScale from bias by inverting computation implemented in setAmbientShadowsSizeScale.
+  double bias = d->ShadowsRenderPass->GetBias();
+  double sceneSize = bias / 0.001;
+  double sizeScale = log(sceneSize / 100.0);
+  return sizeScale;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLThreeDView::setAmbientShadowsSizeScale(double sizeScale)
+{
+  Q_D(const qMRMLThreeDView);
+  // SizeScale = 0.0 corresponds to 100mm scene size
+  double sceneSize = 100.0 * pow(10, sizeScale);
+  // Bias and radius are from example in https://blog.kitware.com/ssao/
+  // These values have been tested on different kind of meshes and volumes and found to work well.
+  d->ShadowsRenderPass->SetBias(0.001 * sceneSize); // how much distance difference will be made visible
+  d->ShadowsRenderPass->SetRadius(0.1 * sceneSize); // determines the spread of shadows cast by ambient occlusion
+  d->ShadowsRenderPass->SetBlur(true); // reduce noise
+  d->ShadowsRenderPass->SetKernelSize(320); // larger kernel size reduces noise pattern in the darkened region
+}
+
+//------------------------------------------------------------------------------
+double qMRMLThreeDView::ambientShadowsVolumeOpacityThreshold()const
+{
+  Q_D(const qMRMLThreeDView);
+  return d->ShadowsRenderPass->GetVolumeOpacityThreshold();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLThreeDView::setAmbientShadowsVolumeOpacityThreshold(double opacityThreshold)
+{
+  Q_D(const qMRMLThreeDView);
+
+  d->ShadowsRenderPass->SetVolumeOpacityThreshold(opacityThreshold);
 }

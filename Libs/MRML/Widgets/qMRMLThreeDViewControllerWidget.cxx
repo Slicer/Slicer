@@ -24,11 +24,13 @@
 #include <QInputDialog>
 #include <QLabel>
 #include <QMenu>
+#include <QWidgetAction>
 
 // CTK includes
 #include <ctkButtonGroup.h>
 #include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
+#include <ctkSliderWidget.h>
 
 // qMRML includes
 #include "qMRMLColors.h"
@@ -104,44 +106,6 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   QObject::connect(this->actionCenter, SIGNAL(triggered()),
                    q, SLOT(resetFocalPoint()));
 
-  // StereoType actions
-  this->StereoTypesMapper = new ctkSignalMapper(this->PopupWidget);
-  this->StereoTypesMapper->setMapping(this->actionNoStereo,
-                                      vtkMRMLViewNode::NoStereo);
-  this->StereoTypesMapper->setMapping(this->actionSwitchToAnaglyphStereo,
-                                      vtkMRMLViewNode::Anaglyph);
-  this->StereoTypesMapper->setMapping(this->actionSwitchToQuadBufferStereo,
-                                      vtkMRMLViewNode::QuadBuffer);
-  this->StereoTypesMapper->setMapping(this->actionSwitchToInterlacedStereo,
-                                      vtkMRMLViewNode::Interlaced);
-  this->StereoTypesMapper->setMapping(this->actionSwitchToRedBlueStereo,
-                                      vtkMRMLViewNode::RedBlue);
-  this->StereoTypesMapper->setMapping(this->actionSwitchToUserDefinedStereo_1,
-                                      vtkMRMLViewNode::UserDefined_1);
-  this->StereoTypesMapper->setMapping(this->actionSwitchToUserDefinedStereo_2,
-                                      vtkMRMLViewNode::UserDefined_2);
-  this->StereoTypesMapper->setMapping(this->actionSwitchToUserDefinedStereo_3,
-                                      vtkMRMLViewNode::UserDefined_3);
-  QActionGroup* stereoTypesActions = new QActionGroup(this->PopupWidget);
-  stereoTypesActions->setExclusive(true);
-  stereoTypesActions->addAction(this->actionNoStereo);
-  stereoTypesActions->addAction(this->actionSwitchToRedBlueStereo);
-  stereoTypesActions->addAction(this->actionSwitchToAnaglyphStereo);
-  stereoTypesActions->addAction(this->actionSwitchToInterlacedStereo);
-  stereoTypesActions->addAction(this->actionSwitchToQuadBufferStereo);
-  stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_1);
-  stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_2);
-  stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_3);
-  QMenu* stereoTypesMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Stereo Modes"), this->PopupWidget);
-  stereoTypesMenu->setObjectName("stereoTypesMenu");
-  stereoTypesMenu->addActions(stereoTypesActions->actions());
-  this->StereoButton->setMenu(stereoTypesMenu);
-  QObject::connect(this->StereoTypesMapper, SIGNAL(mapped(int)),
-                   q, SLOT(setStereoType(int)));
-  QObject::connect(stereoTypesActions, SIGNAL(triggered(QAction*)),
-                   this->StereoTypesMapper, SLOT(map(QAction*)));
-  this->actionSwitchToQuadBufferStereo->setEnabled(false); // Disabled by default
-
   QMenu* visibilityMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Visibility"), this->PopupWidget);
   visibilityMenu->setObjectName("visibilityMenu");
   this->VisibilityButton->setMenu(visibilityMenu);
@@ -153,6 +117,8 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(set3DAxisVisible(bool)));
   QObject::connect(this->actionSet3DAxisLabelVisible, SIGNAL(triggered(bool)),
                    q, SLOT(set3DAxisLabelVisible(bool)));
+
+  this->setupShadowsMenu();
 
   // OrientationMarker actions
   // Type
@@ -226,12 +192,51 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   // More controls
   QMenu* moreMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("More"), this->PopupWidget);
   moreMenu->addAction(this->actionUseDepthPeeling);
+  moreMenu->addAction(this->actionStereo);
   moreMenu->addAction(this->actionSetFPSVisible);
   this->MoreToolButton->setMenu(moreMenu);
 
   // Depth peeling
   QObject::connect(this->actionUseDepthPeeling, SIGNAL(toggled(bool)),
                    q, SLOT(setUseDepthPeeling(bool)));
+
+  // StereoType actions
+  this->StereoTypesMapper = new ctkSignalMapper(this->PopupWidget);
+  this->StereoTypesMapper->setMapping(this->actionNoStereo,
+    vtkMRMLViewNode::NoStereo);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToAnaglyphStereo,
+    vtkMRMLViewNode::Anaglyph);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToQuadBufferStereo,
+    vtkMRMLViewNode::QuadBuffer);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToInterlacedStereo,
+    vtkMRMLViewNode::Interlaced);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToRedBlueStereo,
+    vtkMRMLViewNode::RedBlue);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToUserDefinedStereo_1,
+    vtkMRMLViewNode::UserDefined_1);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToUserDefinedStereo_2,
+    vtkMRMLViewNode::UserDefined_2);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToUserDefinedStereo_3,
+    vtkMRMLViewNode::UserDefined_3);
+  QActionGroup* stereoTypesActions = new QActionGroup(this->PopupWidget);
+  stereoTypesActions->setExclusive(true);
+  stereoTypesActions->addAction(this->actionNoStereo);
+  stereoTypesActions->addAction(this->actionSwitchToRedBlueStereo);
+  stereoTypesActions->addAction(this->actionSwitchToAnaglyphStereo);
+  stereoTypesActions->addAction(this->actionSwitchToInterlacedStereo);
+  stereoTypesActions->addAction(this->actionSwitchToQuadBufferStereo);
+  stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_1);
+  stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_2);
+  stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_3);
+  QMenu* stereoTypesMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Stereo Modes"), this->PopupWidget);
+  stereoTypesMenu->setObjectName("stereoTypesMenu");
+  stereoTypesMenu->addActions(stereoTypesActions->actions());
+  this->actionStereo->setMenu(stereoTypesMenu);
+  QObject::connect(this->StereoTypesMapper, SIGNAL(mapped(int)),
+    q, SLOT(setStereoType(int)));
+  QObject::connect(stereoTypesActions, SIGNAL(triggered(QAction*)),
+    this->StereoTypesMapper, SLOT(map(QAction*)));
+  this->actionSwitchToQuadBufferStereo->setEnabled(false); // Disabled by default
 
   // FPS
   QObject::connect(this->actionSetFPSVisible, SIGNAL(toggled(bool)),
@@ -264,6 +269,59 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(rockView(bool)));
 }
 
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidgetPrivate::setupShadowsMenu()
+{
+  Q_Q(qMRMLThreeDViewControllerWidget);
+  this->ShadowsMenu = new QMenu(tr("Shadows"), this->ShadowsButton);
+  this->ShadowsMenu->setObjectName("shadowsMenu");
+
+  this->ShadowsMenu->addAction(this->actionShadowsVisibility);
+
+  QObject::connect(this->actionShadowsVisibility, SIGNAL(toggled(bool)),
+    q, SLOT(setShadowsVisibility(bool)));
+
+  // Size scale
+  QMenu* ambientShadowsSizeScaleMenu = new QMenu(tr("Size scale"), this->ShadowsButton);
+  ambientShadowsSizeScaleMenu->setObjectName("ambienShadowsSizeScale");
+  this->AmbientShadowsSizeScaleSlider = new ctkSliderWidget(ambientShadowsSizeScaleMenu);
+  this->AmbientShadowsSizeScaleSlider->setToolTip(tr("Size of features to be emphasized by shadows."
+    " The scale is logarithmic, default (0.0) corresponds to object size of about 100mm."));
+  this->AmbientShadowsSizeScaleSlider->setDecimals(2);
+  this->AmbientShadowsSizeScaleSlider->setRange(-3., 3.);
+  this->AmbientShadowsSizeScaleSlider->setSingleStep(0.01);
+  this->AmbientShadowsSizeScaleSlider->setPageStep(0.1);
+  this->AmbientShadowsSizeScaleSlider->setValue(0.);
+  QObject::connect(this->AmbientShadowsSizeScaleSlider, SIGNAL(valueChanged(double)),
+    q, SLOT(setAmbientShadowsSizeScale(double)));
+  this->connect(this->actionShadowsVisibility, SIGNAL(toggled(bool)),
+    this->AmbientShadowsSizeScaleSlider, SLOT(setEnabled(bool)));
+  QWidgetAction* ambientShadowsSizeScaleAction = new QWidgetAction(ambientShadowsSizeScaleMenu);
+  ambientShadowsSizeScaleAction->setDefaultWidget(this->AmbientShadowsSizeScaleSlider);
+  ambientShadowsSizeScaleMenu->addAction(ambientShadowsSizeScaleAction);
+  this->ShadowsMenu->addMenu(ambientShadowsSizeScaleMenu);
+
+  // Volume opacity threshold
+  QMenu* ambientShadowsVolumeOpacityThresholdMenu = new QMenu(tr("Volume opacity threshold"), this->ShadowsButton);
+  ambientShadowsVolumeOpacityThresholdMenu->setObjectName("ambienShadowsVolumeOpacityThreshold");
+  this->AmbientShadowsVolumeOpacityThresholdPercentSlider = new ctkSliderWidget(ambientShadowsVolumeOpacityThresholdMenu);
+  this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setToolTip(tr("Volume rendering opacity above this will cast shadows."));
+  this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setSuffix("%");
+  this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setDecimals(0);
+  this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setRange(0., 100.);
+  this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setSingleStep(1.);
+  this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setValue(0.);
+  QObject::connect(this->AmbientShadowsVolumeOpacityThresholdPercentSlider, SIGNAL(valueChanged(double)),
+    q, SLOT(setAmbientShadowsVolumeOpacityThresholdPercent(double)));
+  this->connect(this->actionShadowsVisibility, SIGNAL(toggled(bool)),
+    this->AmbientShadowsVolumeOpacityThresholdPercentSlider, SLOT(setEnabled(bool)));
+  QWidgetAction* ambientShadowsVolumeOpacityThresholdAction = new QWidgetAction(ambientShadowsVolumeOpacityThresholdMenu);
+  ambientShadowsVolumeOpacityThresholdAction->setDefaultWidget(this->AmbientShadowsVolumeOpacityThresholdPercentSlider);
+  ambientShadowsVolumeOpacityThresholdMenu->addAction(ambientShadowsVolumeOpacityThresholdAction);
+  this->ShadowsMenu->addMenu(ambientShadowsVolumeOpacityThresholdMenu);
+
+  this->ShadowsButton->setMenu(this->ShadowsMenu);
+}
 //---------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidgetPrivate::init()
 {
@@ -437,7 +495,7 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
   QList<QWidget*> widgets;
   widgets << d->AxesWidget
     << d->CenterButton << d->OrthoButton << d->VisibilityButton
-    << d->ZoomInButton << d->ZoomOutButton << d->StereoButton
+    << d->ZoomInButton << d->ZoomOutButton << d->ShadowsButton
     << d->RockButton << d->SpinButton << d->MoreToolButton
     << d->OrientationMarkerButton; // RulerButton enable state is not set here (it depends on render mode)
   foreach(QWidget* w, widgets)
@@ -520,6 +578,10 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
   double* layoutColorVtk = viewNode->GetLayoutColor();
   QColor layoutColor = QColor::fromRgbF(layoutColorVtk[0], layoutColorVtk[1], layoutColorVtk[2]);
   d->setColor(layoutColor);
+
+  d->actionShadowsVisibility->setChecked(viewNode->GetShadowsVisibility());
+  d->AmbientShadowsSizeScaleSlider->setValue(viewNode->GetAmbientShadowsSizeScale());
+  d->AmbientShadowsVolumeOpacityThresholdPercentSlider->setValue(viewNode->GetAmbientShadowsVolumeOpacityThreshold() * 100.0);
 }
 
 // --------------------------------------------------------------------------
@@ -922,5 +984,48 @@ void qMRMLThreeDViewControllerWidget::setRulerColor(int newRulerColor)
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::RulerColorFlag);
   this->mrmlThreeDViewNode()->SetRulerColor(newRulerColor);
+  d->ViewLogic->EndViewNodeInteraction();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setShadowsVisibility(bool shadows)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!this->mrmlThreeDViewNode())
+    {
+    return;
+    }
+
+  d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::ShadowsVisibilityFlag);
+  this->mrmlThreeDViewNode()->SetShadowsVisibility(shadows);
+  d->ViewLogic->EndViewNodeInteraction();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setAmbientShadowsSizeScale(double value)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!this->mrmlThreeDViewNode())
+    {
+    return;
+    }
+
+  d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::AmbientShadowsSizeScaleFlag);
+  this->mrmlThreeDViewNode()->SetAmbientShadowsSizeScale(value);
+  d->ViewLogic->EndViewNodeInteraction();
+}
+
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setAmbientShadowsVolumeOpacityThresholdPercent(double opacityPercent)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!this->mrmlThreeDViewNode())
+    {
+    return;
+    }
+
+  d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::AmbientShadowsVolumeOpacityThresholdFlag);
+  this->mrmlThreeDViewNode()->SetAmbientShadowsVolumeOpacityThreshold(opacityPercent * 0.01);
   d->ViewLogic->EndViewNodeInteraction();
 }
