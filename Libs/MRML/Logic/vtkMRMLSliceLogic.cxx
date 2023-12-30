@@ -767,7 +767,7 @@ void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic *labelLayer)
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic
-::SetWindowLevel(double newWindow, double newLevel, int layer)
+::SetWindowLevel(int layer, double newWindow, double newLevel)
 {
   vtkMRMLScalarVolumeNode* volumeNode =
     vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (layer) );
@@ -786,10 +786,32 @@ void vtkMRMLSliceLogic
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic
+::GetWindowLevelAndRange(int layer, double& window, double& level,
+  double& rangeLow, double& rangeHigh, bool& autoWindowLevel)
+{
+  vtkMRMLScalarVolumeNode* volumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(this->GetLayerVolumeNode(layer));
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode =
+    volumeNode ? volumeNode->GetScalarVolumeDisplayNode() : nullptr;
+  vtkImageData* imageData = (volumeDisplayNode && volumeNode) ? volumeNode->GetImageData() : nullptr;
+  if (imageData)
+    {
+    window = volumeDisplayNode->GetWindow();
+    level = volumeDisplayNode->GetLevel();
+    double range[2] = {0.0, 255.0};
+    imageData->GetScalarRange(range);
+    rangeLow = range[0];
+    rangeHigh = range[1];
+    autoWindowLevel = (volumeDisplayNode->GetAutoWindowLevel() != 0);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic
 ::SetBackgroundWindowLevel(double newWindow, double newLevel)
 {
   // 0 is background layer, defined in this::GetLayerVolumeNode
-  SetWindowLevel(newWindow, newLevel, 0);
+  SetWindowLevel(vtkMRMLSliceLogic::LayerBackground, newWindow, newLevel);
 }
 
 //----------------------------------------------------------------------------
@@ -797,7 +819,7 @@ void vtkMRMLSliceLogic
 ::SetForegroundWindowLevel(double newWindow, double newLevel)
 {
   // 1 is foreground layer, defined in this::GetLayerVolumeNode
-  SetWindowLevel(newWindow, newLevel, 1);
+  SetWindowLevel(vtkMRMLSliceLogic::LayerForeground, newWindow, newLevel);
 }
 
 //----------------------------------------------------------------------------
@@ -814,26 +836,7 @@ void vtkMRMLSliceLogic
 ::GetBackgroundWindowLevelAndRange(double& window, double& level,
                                          double& rangeLow, double& rangeHigh, bool& autoWindowLevel)
 {
-  vtkMRMLScalarVolumeNode* volumeNode =
-    vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) );
-    // 0 is background layer, defined in this::GetLayerVolumeNode
-  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = nullptr;
-  if (volumeNode)
-  {
-     volumeDisplayNode =
-      vtkMRMLScalarVolumeDisplayNode::SafeDownCast( volumeNode->GetVolumeDisplayNode() );
-  }
-  vtkImageData* imageData;
-  if (volumeDisplayNode && (imageData = volumeNode->GetImageData()) )
-  {
-    window = volumeDisplayNode->GetWindow();
-    level = volumeDisplayNode->GetLevel();
-    double range[2];
-    imageData->GetScalarRange(range);
-    rangeLow = range[0];
-    rangeHigh = range[1];
-    autoWindowLevel = (volumeDisplayNode->GetAutoWindowLevel() != 0);
-  }
+  this->GetWindowLevelAndRange(vtkMRMLSliceLogic::LayerBackground, window, level, rangeLow, rangeHigh, autoWindowLevel);
 }
 
 //----------------------------------------------------------------------------
@@ -850,26 +853,7 @@ void vtkMRMLSliceLogic
 ::GetForegroundWindowLevelAndRange(double& window, double& level,
                                          double& rangeLow, double& rangeHigh, bool& autoWindowLevel)
 {
-  vtkMRMLScalarVolumeNode* volumeNode =
-    vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (1) );
-    // 0 is background layer, defined in this::GetLayerVolumeNode
-  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = nullptr;
-  if (volumeNode)
-  {
-     volumeDisplayNode =
-      vtkMRMLScalarVolumeDisplayNode::SafeDownCast( volumeNode->GetVolumeDisplayNode() );
-  }
-  vtkImageData* imageData;
-  if (volumeDisplayNode && (imageData = volumeNode->GetImageData()) )
-  {
-    window = volumeDisplayNode->GetWindow();
-    level = volumeDisplayNode->GetLevel();
-    double range[2];
-    imageData->GetScalarRange(range);
-    rangeLow = range[0];
-    rangeHigh = range[1];
-    autoWindowLevel = (volumeDisplayNode->GetAutoWindowLevel() != 0);
-  }
+  this->GetWindowLevelAndRange(vtkMRMLSliceLogic::LayerForeground, window, level, rangeLow, rangeHigh, autoWindowLevel);
 }
 
 //----------------------------------------------------------------------------

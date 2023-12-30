@@ -648,7 +648,8 @@ bool vtkMRMLWindowLevelWidget::UpdateWindowLevelFromRectangle(int layer, int cor
   stats->SetInputConnection(clip->GetOutputPort());
   stats->Update();
 
-  vtkMRMLScalarVolumeDisplayNode* displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(volumeNode->GetVolumeDisplayNode());
+  vtkMRMLScalarVolumeNode* scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
+  vtkMRMLScalarVolumeDisplayNode* displayNode = scalarVolumeNode ? scalarVolumeNode->GetScalarVolumeDisplayNode() : nullptr;
   if (!displayNode)
   {
     return false;
