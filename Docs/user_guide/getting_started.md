@@ -112,7 +112,10 @@ or:
 :::
 
 #### ArchLinux
-ArchLinux runs the `strip` utility by default; this needs to be disabled in order to run Slicer binaries.  For more information see [this thread on the Slicer Forum](https://discourse.slicer.org/t/could-not-load-dicom-data/14211/5).
+There are user-contributed packages on [AUR](https://aur.archlinux.org/)
+- [3dslicer-bin](https://aur.archlinux.org/packages/3dslicer-bin): this package repacks the official binary for convenient. Note the official Slicer is build with `Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR=ON`, is installed to `/opt` where non-root user has no write permission, user will not be able to install extensions or update application settings.
+- [3dslicer](https://aur.archlinux.org/packages/3dslicer): you could build the package from the source using this `PKGBUILD` file, or just install it from an unofficial repository: [archlinuxcn repo](https://wiki.archlinux.org/title/Unofficial_user_repositories#archlinuxcn).
+- [3dslicer-git](https://aur.archlinux.org/packages/3dslicer-git): same as [3dslicer](https://aur.archlinux.org/packages/3dslicer) but using the latest source.
 
 #### Fedora
 Install the dependencies:

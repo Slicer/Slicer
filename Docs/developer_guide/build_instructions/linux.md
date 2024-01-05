@@ -98,15 +98,10 @@ sudo apt update && sudo apt install git subversion build-essential cmake cmake-c
 ### ArchLinux
 
 :::{warning}
-ArchLinux uses a rolling-release package distribution approach. This means that the versions of the packages will change over time and the following instructions might not be actual. **Last time tested: 2022-03-08.**
+ArchLinux uses a rolling-release package distribution approach. This means that the versions of the packages will change over time and the following instructions might not be actual. **Last time tested: 2024-01-01.**
 :::
 
-Install the development tools and the support libraries:
-
-```console
-sudo pacman -S git make patch subversion gcc cmake \
-  qt5-base qt5-multimedia qt5-tools qt5-xmlpatterns qt5-svg qt5-webengine qt5-script qt5-x11extras libxt
-```
+You could build Slicer using the `PKGBUILD` from AUR: [3dslicer](https://aur.archlinux.org/packages/3dslicer) and [3dslicer-git](https://aur.archlinux.org/packages/3dslicer-git).
 
 ### CentOS 7
 :::{note}
