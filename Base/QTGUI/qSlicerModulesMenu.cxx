@@ -327,7 +327,13 @@ QMenu* qSlicerModulesMenuPrivate::menu(QMenu* menu, QStringList subCategories, b
     {
     if (action->text() == category)
       {
-      return this->menu(action->menu(), subCategories);
+      QMenu* submenu = action->menu();
+      if (!submenu)
+        {
+        // This action is a module (it does not have a menu)
+        return nullptr;
+        }
+      return this->menu(submenu, subCategories);
       }
     }
   // if we are here that means the category has not been found, create it.
@@ -556,6 +562,11 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
   foreach(const QString& category, module->categories())
     {
     QMenu* menu = d->menu(this, category.split('.'), module->isBuiltIn());
+    if (!menu)
+      {
+      qWarning() << "Failed to add module" << module->name() << "to the menu" << category << "because this string is already used as module name.";
+      menu = this;
+      }
     d->addModuleAction(menu, moduleAction, true, module->isBuiltIn());
     }
 
