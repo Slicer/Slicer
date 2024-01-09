@@ -2,6 +2,7 @@ import copy
 import logging
 import os
 
+import ctk
 import qt
 
 import slicer
@@ -11,6 +12,7 @@ from slicer.util import settingsValue, toBool
 from slicer.i18n import tr as _
 
 import DICOMLib
+from DICOMLib import DICOMUtils
 
 
 #########################################################
@@ -51,6 +53,19 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         self.dicomBrowser = dicomBrowser if dicomBrowser is not None else slicer.app.createDICOMBrowserForMainDatabase()
 
+        # Add ctkVisualDICOMBrowser
+        self.visualBrowserWidget = ctk.ctkDICOMVisualBrowserWidget()
+        self.visualBrowserWidget.findChild(ctk.ctkCollapsibleGroupBox, "ActionsCollapsibleGroupBox").hide()
+        if settingsValue("DICOM/thumbnailsSize", False) == "large":
+            self.visualBrowserWidget.thumbnailSize = ctk.ctkDICOMStudyItemWidget.Large
+        elif settingsValue("DICOM/thumbnailsSize", False) == "medium":
+            self.visualBrowserWidget.thumbnailSize = ctk.ctkDICOMStudyItemWidget.Medium
+        elif settingsValue("DICOM/thumbnailsSize", False) == "small":
+            self.visualBrowserWidget.thumbnailSize = ctk.ctkDICOMStudyItemWidget.Small
+
+        if settingsValue("DICOM/detailedLogging", False, converter=toBool):
+            ctk.ctk.setDICOMLogLevel(ctk.ctkErrorLogLevel.Debug)
+
         self.browserPersistent = settingsValue("DICOM/BrowserPersistent", False, converter=toBool)
         self.advancedView = settingsValue("DICOM/advancedView", 0, converter=int)
         self.horizontalTables = settingsValue("DICOM/horizontalTables", 0, converter=int)
@@ -65,6 +80,18 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.dicomBrowser.dicomTableManager().connect("studiesDoubleClicked(QModelIndex)", self.patientStudySeriesDoubleClicked)
         self.dicomBrowser.dicomTableManager().connect("seriesDoubleClicked(QModelIndex)", self.patientStudySeriesDoubleClicked)
 
+        self.visualBrowserWidget.setDatabaseDirectory(self.dicomBrowser.databaseDirectory)
+        self.visualBrowserWidget.seriesRetrieved.connect(self.onSeriesRetrieved)
+        self.visualBrowserWidget.connect("sendRequested(QStringList)", self.onSend)
+
+    def onSeriesRetrieved(self, seriesInstanceUIDs):
+        seriesList = [str(seriesInstanceUID) for seriesInstanceUID in seriesInstanceUIDs]
+        if seriesList is None or not seriesList:
+            return
+        nodes = DICOMUtils.loadSeriesByUID(seriesList)
+        if len(nodes) > 0 and not settingsValue("DICOM/BrowserPersistent", False, converter=toBool):
+            self.close()
+
     def open(self):
         self.show()
 
@@ -75,6 +102,18 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
     def onSend(self, fileList):
         if len(fileList):
             sendDialog = DICOMLib.DICOMSendDialog(fileList, self)
+
+    def setDatabaseDirectory(self, databaseDirectory):
+        self.dicomBrowser.databaseDirectory = databaseDirectory
+        self.visualBrowserWidget.setDatabaseDirectory(databaseDirectory)
+
+    def toggleBrowsers(self, useExpertimentalVisualDICOMBrowser):
+        self.visualBrowserWidget.visible = useExpertimentalVisualDICOMBrowser
+        self.dicomBrowser.visible = not useExpertimentalVisualDICOMBrowser
+        self.loadableTableFrame.visible = not useExpertimentalVisualDICOMBrowser
+        self.actionButtonsFrame.visible = not useExpertimentalVisualDICOMBrowser
+        if useExpertimentalVisualDICOMBrowser:
+            self.visualBrowserWidget.onShowPatients()
 
     def setup(self, showPreview=False):
         """
@@ -94,6 +133,13 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         horizontal = self.settings.setValue("DICOM/horizontalTables", 0)
         self.dicomBrowser.dicomTableManager().tableOrientation = qt.Qt.Horizontal if horizontal else qt.Qt.Vertical
         self.layout().addWidget(self.dicomBrowser)
+
+        self.visualBrowserWidget.sendActionVisible = True
+        # Fix rendering groupbox
+        self.visualBrowserWidget.serverSettingsGroupBox().setChecked(True)
+        self.visualBrowserWidget.serverSettingsGroupBox().setChecked(False)
+        self.visualBrowserWidget.databaseDirectorySettingsKey = slicer.dicomDatabaseDirectorySettingsKey
+        self.layout().addWidget(self.visualBrowserWidget)
 
         self.userFrame = qt.QWidget()
         self.preview = qt.QWidget()

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>372</width>
+    <width>622</width>
     <height>663</height>
    </rect>
   </property>
@@ -46,9 +46,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="showBrowserButton">
+      <widget class="ctkMenuButton" name="showBrowserButton">
        <property name="toolTip">
-        <string>Show DICOM database browser window</string>
+        <string>Import files into DICOM database</string>
        </property>
        <property name="text">
         <string>    Show DICOM database</string>
@@ -59,7 +59,7 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
+         <width>64</width>
          <height>32</height>
         </size>
        </property>
