@@ -25,6 +25,7 @@
 #include <qSlicerApplication.h>
 
 // Qt includes
+#include <QMouseEvent>
 #include <QSettings>
 #include <QSplashScreen>
 #include <QTimer>
@@ -47,6 +48,58 @@
 
 namespace
 {
+
+/// Event filter that allows to move a widget by clicking anywhere on it.
+/// It also removes the WindowStaysOnTopHint so that the window is not forced to
+/// appear above all other applications.
+class DraggableWidgetEventFilter : public QObject
+{
+public:
+  void setWidget(QWidget* w)
+    {
+    this->Widget = w;
+    }
+protected:
+  bool eventFilter(QObject* obj, QEvent* event) override
+    {
+    if (event->type() == QEvent::MouseButtonPress && this->Widget)
+      {
+      QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+      this->PressPosition = mouseEvent->pos();
+      this->Dragging = true;
+      if (this->DisableTopMost)
+        {
+        this->Widget->setWindowFlags(this->Widget->windowFlags() & ~Qt::WindowStaysOnTopHint);
+        // After removing the WindowStaysOnTopHint hint, we need to show the window again
+        this->Widget->show();
+        this->DisableTopMost = false;
+        }
+      return true; // do not process the event further
+      }
+    else if (event->type() == QEvent::MouseMove && this->Dragging && this->Widget)
+      {
+      QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+      this->Widget->move(this->Widget->pos() + mouseEvent->pos() - this->PressPosition);
+      return true; // do not process the event further
+      }
+    else if (event->type() == QEvent::MouseButtonRelease)
+      {
+      this->Dragging = false;
+      return true; // do not process the event further
+      }
+    else if (event->type() == QEvent::Leave)
+      {
+      this->Dragging = false;
+      }
+    return QObject::eventFilter(obj, event);
+    }
+private:
+  bool DisableTopMost{true};
+  QWidget* Widget{nullptr};
+  QPoint PressPosition;
+  bool Dragging{false};
+};
+
 
 #ifdef Slicer_USE_QtTesting
 //-----------------------------------------------------------------------------
@@ -135,6 +188,13 @@ int qSlicerApplicationHelper::postInitializeApplication(
     splashScreen.reset(new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint));
     splashMessage(splashScreen, qSlicerApplication::tr("Initializing..."));
     splashScreen->show();
+    }
+
+  DraggableWidgetEventFilter draggable;
+  if (splashScreen)
+    {
+    draggable.setWidget(splashScreen.get());
+    splashScreen->installEventFilter(&draggable);
     }
 
   qSlicerModuleManager * moduleManager = app.moduleManager();
