@@ -273,7 +273,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
 void qMRMLThreeDViewControllerWidgetPrivate::setupShadowsMenu()
 {
   Q_Q(qMRMLThreeDViewControllerWidget);
-  this->ShadowsMenu = new QMenu(tr("Shadows"), this->ShadowsButton);
+  this->ShadowsMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Shadows"), this->ShadowsButton);
   this->ShadowsMenu->setObjectName("shadowsMenu");
 
   this->ShadowsMenu->addAction(this->actionShadowsVisibility);
@@ -282,10 +282,10 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupShadowsMenu()
     q, SLOT(setShadowsVisibility(bool)));
 
   // Size scale
-  QMenu* ambientShadowsSizeScaleMenu = new QMenu(tr("Size scale"), this->ShadowsButton);
+  QMenu* ambientShadowsSizeScaleMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Size scale"), this->ShadowsButton);
   ambientShadowsSizeScaleMenu->setObjectName("ambienShadowsSizeScale");
   this->AmbientShadowsSizeScaleSlider = new ctkSliderWidget(ambientShadowsSizeScaleMenu);
-  this->AmbientShadowsSizeScaleSlider->setToolTip(tr("Size of features to be emphasized by shadows."
+  this->AmbientShadowsSizeScaleSlider->setToolTip(qMRMLThreeDViewControllerWidget::tr("Size of features to be emphasized by shadows."
     " The scale is logarithmic, default (0.0) corresponds to object size of about 100mm."));
   this->AmbientShadowsSizeScaleSlider->setDecimals(2);
   this->AmbientShadowsSizeScaleSlider->setRange(-3., 3.);
@@ -302,10 +302,11 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupShadowsMenu()
   this->ShadowsMenu->addMenu(ambientShadowsSizeScaleMenu);
 
   // Volume opacity threshold
-  QMenu* ambientShadowsVolumeOpacityThresholdMenu = new QMenu(tr("Volume opacity threshold"), this->ShadowsButton);
+  QMenu* ambientShadowsVolumeOpacityThresholdMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Volume opacity threshold"), this->ShadowsButton);
   ambientShadowsVolumeOpacityThresholdMenu->setObjectName("ambienShadowsVolumeOpacityThreshold");
   this->AmbientShadowsVolumeOpacityThresholdPercentSlider = new ctkSliderWidget(ambientShadowsVolumeOpacityThresholdMenu);
-  this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setToolTip(tr("Volume rendering opacity above this will cast shadows."));
+  this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setToolTip(
+    qMRMLThreeDViewControllerWidget::tr("Volume rendering opacity above this will cast shadows."));
   this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setSuffix("%");
   this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setDecimals(0);
   this->AmbientShadowsVolumeOpacityThresholdPercentSlider->setRange(0., 100.);
