@@ -85,6 +85,14 @@ set(Slicer_INSTALL_LIBEXEC_DIR "${Slicer_INSTALL_ROOT}${Slicer_LIBEXEC_DIR}")
 set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 set(Slicer_INSTALL_QM_DIR "${Slicer_INSTALL_ROOT}${Slicer_QM_DIR}")
 
+# Strip "./" to workaround CMake issue #23312
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+foreach(varname IN ITEMS
+  Slicer_INSTALL_BIN_DIR
+  Slicer_INSTALL_LIB_DIR
+  )
+  string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Slicer CLI relative directories
@@ -105,6 +113,14 @@ set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES
 set(Slicer_INSTALL_CLIMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_LIB_DIR}")
 set(Slicer_INSTALL_CLIMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_SHARE_DIR}")
 
+# Strip "./" to workaround CMake issue #23312
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+foreach(varname IN ITEMS
+  Slicer_INSTALL_CLIMODULES_BIN_DIR
+  Slicer_INSTALL_CLIMODULES_LIB_DIR
+  )
+  string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules relative directories
@@ -129,6 +145,15 @@ set(Slicer_INSTALL_QTLOADABLEMODULES_PYTHON_LIB_DIR "${Slicer_INSTALL_ROOT}${Sli
 set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_INCLUDE_DIR}")
 set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTLOADABLEMODULES_SHARE_DIR}")
 
+# Strip "./" to workaround CMake issue #23312
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+foreach(varname IN ITEMS
+  Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR
+  Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
+  Slicer_INSTALL_QTLOADABLEMODULES_PYTHON_LIB_DIR
+  )
+  string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Scripted Modules relative directories
@@ -151,6 +176,14 @@ set(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTS
 set(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR}")
 set(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_QTSCRIPTEDMODULES_SHARE_DIR}")
 
+# Strip "./" to workaround CMake issue #23312
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+foreach(varname IN ITEMS
+  Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR
+  Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR
+  )
+  string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+endforeach()
 
 # --------------------------------------------------------------------------
 # ThirdParty: Used to superbuild projects built in Slicer extension.
@@ -171,3 +204,12 @@ set(Slicer_THIRDPARTY_SHARE_DIR ${Slicer_SHARE_DIR})
 set(Slicer_INSTALL_THIRDPARTY_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_THIRDPARTY_BIN_DIR}")
 set(Slicer_INSTALL_THIRDPARTY_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_THIRDPARTY_LIB_DIR}")
 set(Slicer_INSTALL_THIRDPARTY_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_THIRDPARTY_SHARE_DIR}")
+
+# Strip "./" to workaround CMake issue #23312
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+foreach(varname IN ITEMS
+  Slicer_INSTALL_THIRDPARTY_BIN_DIR
+  Slicer_INSTALL_THIRDPARTY_LIB_DIR
+  )
+  string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+endforeach()

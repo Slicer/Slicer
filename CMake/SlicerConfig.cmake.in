@@ -368,6 +368,15 @@ set(Slicer_INSTALL_THIRDPARTY_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXT
 set(Slicer_INSTALL_THIRDPARTY_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_THIRDPARTY_LIB_DIR}")
 set(Slicer_INSTALL_THIRDPARTY_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_THIRDPARTY_SHARE_DIR}")
 
+# Strip "./" to workaround CMake issue #23312
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+foreach(varname IN ITEMS
+  Slicer_INSTALL_THIRDPARTY_BIN_DIR
+  Slicer_INSTALL_THIRDPARTY_LIB_DIR
+  )
+  string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+endforeach()
+
 # The Slicer install prefix (*not* defined in the install tree)
 set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 

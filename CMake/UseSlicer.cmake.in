@@ -323,6 +323,15 @@ if(Slicer_BUILD_CLI_SUPPORT)
   set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_CLIMODULES_BIN_DIR}")
   set(Slicer_INSTALL_CLIMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_CLIMODULES_LIB_DIR}")
   set(Slicer_INSTALL_CLIMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_CLIMODULES_SHARE_DIR}")
+  # Strip "./" to workaround CMake issue #23312
+  # See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+  foreach(varname IN ITEMS
+    Slicer_INSTALL_CLIMODULES_BIN_DIR
+    Slicer_INSTALL_CLIMODULES_LIB_DIR
+    )
+    string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+  endforeach()
+
   if(APPLE)
     set(SlicerExecutionModel_DEFAULT_CLI_INSTALL_RUNTIME_DESTINATION "${Slicer_INSTALL_CLIMODULES_BIN_DIR}")
     set(SlicerExecutionModel_DEFAULT_CLI_INSTALL_LIBRARY_DESTINATION "${Slicer_INSTALL_CLIMODULES_LIB_DIR}")
@@ -339,12 +348,29 @@ set(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUN
 set(Slicer_INSTALL_QTLOADABLEMODULES_PYTHON_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
 set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTLOADABLEMODULES_INCLUDE_DIR}")
 set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTLOADABLEMODULES_SHARE_DIR}")
+# Strip "./" to workaround CMake issue #23312
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+foreach(varname IN ITEMS
+  Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR
+  Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
+  Slicer_INSTALL_QTLOADABLEMODULES_PYTHON_LIB_DIR
+  )
+  string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+endforeach()
 
 if(Slicer_USE_PYTHONQT)
   set(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTSCRIPTEDMODULES_BIN_DIR}")
   set(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTSCRIPTEDMODULES_LIB_DIR}")
   set(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR}")
   set(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTSCRIPTEDMODULES_SHARE_DIR}")
+  # Strip "./" to workaround CMake issue #23312
+  # See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+  foreach(varname IN ITEMS
+    Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR
+    Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR
+    )
+    string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+  endforeach()
 endif()
 
 # These variables can be used when configuring extension external projects in
@@ -355,6 +381,14 @@ endif()
 set(Slicer_INSTALL_THIRDPARTY_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_THIRDPARTY_BIN_DIR}")
 set(Slicer_INSTALL_THIRDPARTY_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_THIRDPARTY_LIB_DIR}")
 set(Slicer_INSTALL_THIRDPARTY_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_THIRDPARTY_SHARE_DIR}")
+# Strip "./" to workaround CMake issue #23312
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/23312
+foreach(varname IN ITEMS
+  Slicer_INSTALL_THIRDPARTY_BIN_DIR
+  Slicer_INSTALL_THIRDPARTY_LIB_DIR
+  )
+  string(REGEX REPLACE "^\.\/(.*)" "\\1" ${varname} ${${varname}})
+endforeach()
 
 set(Slicer_INSTALL_THIRDPARTY_EXECUTABLE_LINK_FLAGS "")
 set(Slicer_INSTALL_THIRDPARTY_LIBRARY_LINK_FLAGS "")
