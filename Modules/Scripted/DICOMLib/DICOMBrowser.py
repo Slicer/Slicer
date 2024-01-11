@@ -316,6 +316,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         self.loadableTable.setLoadables([])
         self.fileLists = self.getFileListsForRole(seriesUIDList, "SeriesUIDList")
         self.updateButtonStates()
+        self.fileLists = []
 
     def getFileListsForRole(self, uidArgument, role):
         fileLists = []
