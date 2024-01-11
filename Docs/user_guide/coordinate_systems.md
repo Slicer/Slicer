@@ -12,8 +12,8 @@ axes:
 
 ![coordinate_systems](https://github.com/Slicer/Slicer/releases/download/docs-resources/coordinate_systems.png){w=600px align=center}
 
-Each coordinate system serves one purpose and represents their data in
-different ways.
+Each coordinate system serves one purpose and represents its data in
+a particular way.
 
 Anatomy image based on an [image shared by the My MS organization](https://my-ms.org/mri_planes.htm).
 
@@ -36,8 +36,8 @@ human:
 - the *axial plane* is parallel to the ground and separates the head
   (Superior) from the feet (Inferior).
 - the *coronal plane* is perpendicular to the ground and separates the front
-  from (Anterior) the back (Posterior).
-- the *sagittal plane* separates the Left from the Right.
+  (Anterior) from the back (Posterior).
+- the *sagittal plane* is perpendicular to the ground and separates the Left from the Right.
 
 From these planes it follows that all axes have their notation in a positive
 direction (e.g. the negative Superior axis is represented by the Inferior axis).
