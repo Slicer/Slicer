@@ -67,7 +67,10 @@ if(APPLE)
     )
 
   set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE)
-  mark_as_superbuild(VARS CMAKE_INSTALL_NAME_TOOL:FILEPATH ALL_PROJECTS)
+  # Due to the possibility of external projects (e.g., LibFFI) enabling languages (e.g., ASM)
+  # that necessitate `install_name_tool` via the "CMakeFindBinUtils" module, we opt to clear
+  # CMAKE_INSTALL_NAME_TOOL on a per-project basis.
+  # mark_as_superbuild(VARS CMAKE_INSTALL_NAME_TOOL:FILEPATH ALL_PROJECTS)
 
   set(CMAKE_MACOSX_RPATH 0)
   mark_as_superbuild(VARS CMAKE_MACOSX_RPATH:BOOL ALL_PROJECTS)
