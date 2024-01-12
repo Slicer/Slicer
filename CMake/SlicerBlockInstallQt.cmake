@@ -57,12 +57,14 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       )
 
     # ICU libraries
+    if(Slicer_BUILD_WEBENGINE_SUPPORT)
     foreach(iculib IN ITEMS data i18n io le lx test tu uc)
       slicerInstallLibrary(FILE ${qt_root_dir}/lib/libicu${iculib}.so
         DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime
         STRIP
         )
     endforeach()
+    endif()
 
     # Qt designer plugin
     if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
@@ -123,10 +125,12 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
     endforeach()
 
     # Install resources directory
+    if(Slicer_BUILD_WEBENGINE_SUPPORT)
     set(resources_dir "${qt_root_dir}/resources")
     install(DIRECTORY ${resources_dir}
       DESTINATION ${Slicer_INSTALL_ROOT} COMPONENT Runtime
       )
+    endif()
 
     # Install webengine translations
     if("Qt5::WebEngine" IN_LIST QT_LIBRARIES)
