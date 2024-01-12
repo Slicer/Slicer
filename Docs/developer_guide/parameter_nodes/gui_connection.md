@@ -179,6 +179,7 @@ When connecting an `int` to a `QSpinBox`, if the `Minimum` annotation is used, i
 | ctkComboBox | enum.Enum | If a `def label(self):` function is present on the enum class, it will be used for generating the text in the combo box. |
 | QLineEdit | str | |
 | QTextEdit | str | The value of the parameter will be the plaintext version of what is in the text edit |
+| QLabel | str | This works only one way from the parameter to the Label |
 | ctkPathLineEdit | pathlib.\[Path, PosixPath, WindowsPath,<br/>&emsp;PurePath, PurePosixPath, PureWindowsPath] | |
 | ctkDirectoryButton | pathlib.\[Path, PosixPath, WindowsPath,<br/>&emsp;PurePath, PurePosixPath, PureWindowsPath] | Only directories can be represented |
 | qMRMLNodeComboBox | vtkMRMLNode<br/>&emsp;(including subclasses and a typing.Union of nodes) | To do a Union, need to do something like `typing.Union[vtkMRMLModelNode, vtkMRMLScalarVolumeNode, None]`.<br/>The `None` is necessary for the parameter node wrapper default node of None to work correctly. |

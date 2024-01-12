@@ -468,6 +468,38 @@ class QLineEditToStrConnector(GuiConnector):
     def write(self, value: str) -> None:
         self._widget.text = value
 
+@parameterNodeGuiConnector
+class QLabelToStrConnector(GuiConnector):
+    @staticmethod
+    def canRepresent(widget, datatype) -> bool:
+        return type(widget) == qt.QLabel and unannotatedType(datatype) == str
+
+    @staticmethod
+    def create(widget, datatype):
+        if QLabelToStrConnector.canRepresent(widget, datatype):
+            return QLabelToStrConnector(widget)
+        return None
+
+    def __init__(self, widget: qt.QLabel):
+        super().__init__()
+        self._widget: qt.QLabel = widget
+
+    def _connect(self):
+        # QLabel doesn't have a textChanged signal, so we can't connect to it
+        pass
+
+    def _disconnect(self):
+        # QLabel doesn't have a textChanged signal, so we can't disconnect from it
+        pass
+
+    def widget(self) -> qt.QLabel:
+        return self._widget
+
+    def read(self) -> str:
+        return self._widget.text
+
+    def write(self, value: str) -> None:
+        self._widget.text = value
 
 @parameterNodeGuiConnector
 class QTextEditPlainTextToStrConnector(GuiConnector):

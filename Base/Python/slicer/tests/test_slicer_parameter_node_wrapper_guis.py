@@ -520,6 +520,39 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(param.bravo, "someval")
         self.assertEqual(lineEditBravo.text, "someval")
 
+    def test_QLabelToStr(self):
+        @parameterNodeWrapper
+        class ParameterNodeWrapper:
+            alpha: str
+            bravo: Annotated[str, Default("someval")]
+
+        labelAlpha = qt.QLineEdit()
+        labelAlpha.deleteLater()
+        labelBravo = qt.QLineEdit()
+        labelBravo.deleteLater()
+        param = ParameterNodeWrapper(newParameterNode())
+
+        # Phase 0 - connect parameterNode to GUI
+        mapping = {
+            "alpha": labelAlpha,
+            "bravo": labelBravo,
+        }
+
+        param.connectParametersToGui(mapping)
+        self.assertEqual(param.alpha, "")
+        self.assertEqual(labelAlpha.text, "")
+        self.assertEqual(param.bravo, "someval")
+        self.assertEqual(labelBravo.text, "someval")
+
+        # GUI to parameterNode does not work, no test
+
+        # Phase 2 - write to parameterNode
+        param.alpha = "goodbye"
+        self.assertEqual(param.alpha, "goodbye")
+        self.assertEqual(labelAlpha.text, "goodbye")
+        self.assertEqual(param.bravo, "someval")
+        self.assertEqual(labelBravo.text, "someval")
+
     def test_QTextEditPlainTextToStr(self):
         @parameterNodeWrapper
         class ParameterNodeWrapper:
