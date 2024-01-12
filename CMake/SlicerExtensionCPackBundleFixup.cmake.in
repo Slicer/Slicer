@@ -58,6 +58,12 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     if(item MATCHES "libpython[^/]+\\.dylib$")
       set(path "@fixup_path@/lib/Python/lib")
     endif()
+    # VTK python modules
+    if(item MATCHES "@CMAKE_BINARY_DIR@/.+/vtkmodules/[^/]+\\.so$")
+      set(path "@fixup_path@/@Slicer_BUNDLE_EXTENSIONS_LOCATION@bin/Python/vtkmodules")
+    elseif(item MATCHES "vtkmodules/[^/]+\\.so$")
+      set(path "@fixup_path@/bin/Python/vtkmodules")
+    endif()
   endif()
 
   set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
