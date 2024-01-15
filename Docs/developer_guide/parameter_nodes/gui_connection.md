@@ -171,8 +171,10 @@ When connecting an `int` to a `QSpinBox`, if the `Minimum` annotation is used, i
 | ctkSliderWidget | float | Supports `Minimum`, `Maximum`, and `WithinRange` validators. Supports `Decimals` and `SingleStep` annotations. |
 | ctkDoubleSlider | float | Supports `Minimum`, `Maximum`, and `WithinRange` validators, and `SingleStep` annotation. |
 | ctkDoubleSpinBox | float | Supports `Minimum`, `Maximum`, and `WithinRange` validators. Supports `Decimals` and `SingleStep` annotations. |
+| qMRMLSpinBox | float | Supports `Minimum`, `Maximum`, and `WithinRange` validators. Supports `Decimals` and `SingleStep` annotations. |
 | ctkRangeWidget| FloatRange | Supports `WithinRange` validators. Requires `Default` annotation, supports `Decimals` and `SingleStep` annotations. |
 | ctkDoubleRangeSlider | FloatRange | Supports `WithinRange` validators. Requires `Default` annotation, supports `SingleStep` annotation. |
+| qMRMLRangeWidget | FloatRange | Supports `WithinRange` validators. Requires `Default` annotation, supports `SingleStep` annotation. |
 | QComboBox | int, float, str, bool | The `Choice` validator must be in use for the parameter. The choices will be used to fill the combo box automatically. |
 | ctkComboBox | int, float, str, bool | The `Choice` validator must be in use for the parameter. The choices will be used to fill the combo box automatically. |
 | QComboBox | enum.Enum | If a `def label(self):` function is present on the enum class, it will be used for generating the text in the combo box. |
@@ -184,6 +186,8 @@ When connecting an `int` to a `QSpinBox`, if the `Minimum` annotation is used, i
 | ctkDirectoryButton | pathlib.\[Path, PosixPath, WindowsPath,<br/>&emsp;PurePath, PurePosixPath, PureWindowsPath] | Only directories can be represented |
 | qMRMLNodeComboBox | vtkMRMLNode<br/>&emsp;(including subclasses and a typing.Union of nodes) | To do a Union, need to do something like `typing.Union[vtkMRMLModelNode, vtkMRMLScalarVolumeNode, None]`.<br/>The `None` is necessary for the parameter node wrapper default node of None to work correctly. |
 | qMRMLSubjectHierarchyTreeView | vtkMRMLNode<br/>&emsp;(including subclasses and a typing.Union of nodes) | See notes for qMRMLNodeComboBox. |
+
+For widgets that are not listed here see [Slicer Issue 7308](https://github.com/Slicer/Slicer/issues/7308) for discussion and progress.
 
 ## Extra annotatations
 

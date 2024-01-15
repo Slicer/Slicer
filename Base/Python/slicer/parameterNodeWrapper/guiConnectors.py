@@ -283,7 +283,7 @@ class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
     def canRepresent(widget, datatype) -> bool:
         return unannotatedType(datatype) == float and type(widget) in (
             qt.QDoubleSpinBox, ctk.ctkSliderWidget, slicer.qMRMLSliderWidget,
-            ctk.ctkDoubleSlider, ctk.ctkDoubleSpinBox,
+            ctk.ctkDoubleSlider, ctk.ctkDoubleSpinBox, slicer.qMRMLSpinBox,
         )
 
     @staticmethod
@@ -311,7 +311,7 @@ class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
 
         isBounded = withinRange is not None or minimum is not None and maximum is not None
 
-        if (isinstance(widget, ctk.ctkSliderWidget) or isinstance(widget, slicer.qMRMLSliderWidget)) and not isBounded:
+        if type(widget) in (ctk.ctkSliderWidget, slicer.qMRMLSliderWidget) and not isBounded:
             raise RuntimeError("Cannot have a connection to ctkSliderWidget where the float types is unbounded.")
 
         if withinRange is not None:
@@ -537,7 +537,7 @@ class QTextEditPlainTextToStrConnector(GuiConnector):
 class ctkRangeWidgetToRangeConnector(GuiConnector):
     @staticmethod
     def canRepresent(widget, datatype) -> bool:
-        return type(widget) in (ctk.ctkRangeWidget, ctk.ctkDoubleRangeSlider) and unannotatedType(datatype) == FloatRange
+        return type(widget) in (ctk.ctkRangeWidget, ctk.ctkDoubleRangeSlider, slicer.qMRMLRangeWidget) and unannotatedType(datatype) == FloatRange
 
     @staticmethod
     def create(widget, datatype):

@@ -175,26 +175,18 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
     def test_QSpinBoxToInt(self):
         self.impl_QSliderOrSpinBoxToIntConnector(qt.QSpinBox, qt.QSpinBox)
 
-    def impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(self, unboundedWidgetType, boundedWidgetType):
+    def impl_CheckFloatWidgetToUnboundedFloatParam(self, unboundedWidgetType):
         @parameterNodeWrapper
         class ParameterNodeWrapper:
             alpha: float
-            bravo: Annotated[float, Default(4.2), Minimum(2.1), Maximum(5.8)]
-            charlie: Annotated[float, WithinRange(0.1, 9.5), Default(0.2), Decimals(2), SingleStep(0.1)]
 
         widgetAlpha = unboundedWidgetType()
         widgetAlpha.deleteLater()
-        widgetBravo = boundedWidgetType()
-        widgetBravo.deleteLater()
-        widgetCharlie = boundedWidgetType()
-        widgetCharlie.deleteLater()
         param = ParameterNodeWrapper(newParameterNode())
 
         # Phase 0 - connect parameterNode to GUI
         mapping = {
             "alpha": widgetAlpha,
-            "bravo": widgetBravo,
-            "charlie": widgetCharlie,
         }
         param.connectParametersToGui(mapping)
 
@@ -203,6 +195,40 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(widgetAlpha.value, 0.0)
         self.assertEqual(widgetAlpha.minimum, float("-inf"))
         self.assertEqual(widgetAlpha.maximum, float("inf"))
+
+        # Phase 1 - write to GUI
+        widgetAlpha.value = 2.3e565
+
+        # alpha
+        self.assertEqual(param.alpha, 2.3e565)
+        self.assertEqual(widgetAlpha.value, 2.3e565)
+
+        # Phase 2 - write to parameterNode
+        param.alpha = -4444.4
+
+        # alpha
+        self.assertEqual(param.alpha, -4444.4)
+        self.assertEqual(widgetAlpha.value, -4444.4)
+
+    def impl_CheckFloatWidgetToBoundedFloatParam(self, boundedWidgetType, skipDecimals=False):
+        @parameterNodeWrapper
+        class ParameterNodeWrapper:
+            bravo: Annotated[float, Default(4.2), Minimum(2.1), Maximum(5.8)]
+            charlie: Annotated[float, WithinRange(0.1, 9.5), Default(0.2), Decimals(2), SingleStep(0.1)]
+
+        widgetBravo = boundedWidgetType()
+        widgetBravo.deleteLater()
+        widgetCharlie = boundedWidgetType()
+        widgetCharlie.deleteLater()
+        param = ParameterNodeWrapper(newParameterNode())
+
+        # Phase 0 - connect parameterNode to GUI
+        mapping = {
+            "bravo": widgetBravo,
+            "charlie": widgetCharlie,
+        }
+        param.connectParametersToGui(mapping)
+
         # bravo
         self.assertEqual(param.bravo, 4.2)
         self.assertEqual(widgetBravo.value, 4.2)
@@ -214,19 +240,15 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(widgetCharlie.minimum, 0.1)
         self.assertEqual(widgetCharlie.maximum, 9.5)
 
-        # Only ctkDoubleSlider does not have decimals
-        if not isinstance(widgetCharlie, ctk.ctkDoubleSlider):
+        if not skipDecimals:
             self.assertEqual(widgetCharlie.decimals, 2)
 
         self.assertEqual(widgetCharlie.singleStep, 0.1)
 
         # Phase 1 - write to GUI
-        widgetAlpha.value = 2.3e565
         widgetBravo.value = 4.4
         widgetCharlie.value = 9.5
-        # alpha
-        self.assertEqual(param.alpha, 2.3e565)
-        self.assertEqual(widgetAlpha.value, 2.3e565)
+
         # bravo
         self.assertEqual(param.bravo, 4.4)
         self.assertEqual(widgetBravo.value, 4.4)
@@ -235,12 +257,9 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(widgetCharlie.value, 9.5)
 
         # Phase 2 - write to parameterNode
-        param.alpha = -4444.4
         param.bravo = 2.1
         param.setValue("charlie", 0.1)
-        # alpha
-        self.assertEqual(param.alpha, -4444.4)
-        self.assertEqual(widgetAlpha.value, -4444.4)
+
         # bravo
         self.assertEqual(param.bravo, 2.1)
         self.assertEqual(widgetBravo.value, 2.1)
@@ -249,22 +268,32 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(widgetCharlie.value, 0.1)
 
     def test_QDoubleSpinBoxToFloat(self):
-        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(qt.QDoubleSpinBox, qt.QDoubleSpinBox)
+        self.impl_CheckFloatWidgetToUnboundedFloatParam(qt.QDoubleSpinBox)
+        self.impl_CheckFloatWidgetToBoundedFloatParam(qt.QDoubleSpinBox)
 
     def test_ctkSliderWidgetToFloat(self):
-        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(qt.QDoubleSpinBox, ctk.ctkSliderWidget)
+        self.impl_CheckFloatWidgetToBoundedFloatParam(ctk.ctkSliderWidget)
 
         with self.assertRaises(RuntimeError):
-            self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(ctk.ctkSliderWidget, ctk.ctkSliderWidget)
+            self.impl_CheckFloatWidgetToUnboundedFloatParam(ctk.ctkSliderWidget)
+
+    def test_qMRMLSliderWidgetToFloat(self):
+        self.impl_CheckFloatWidgetToBoundedFloatParam(slicer.qMRMLSliderWidget)
+
+        with self.assertRaises(RuntimeError):
+            self.impl_CheckFloatWidgetToUnboundedFloatParam(slicer.qMRMLSliderWidget)
 
     def test_ctkDoubleSliderToFloat(self):
-        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(qt.QDoubleSpinBox, ctk.ctkDoubleSlider)
-
-        with self.assertRaises(RuntimeError):
-            self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(ctk.ctkSliderWidget, ctk.ctkDoubleSlider)
+        self.impl_CheckFloatWidgetToBoundedFloatParam(ctk.ctkDoubleSlider, skipDecimals=True)
+        self.impl_CheckFloatWidgetToUnboundedFloatParam(ctk.ctkDoubleSlider)
 
     def test_ctkDoubleSpinBoxToFloat(self):
-        self.impl_QDoubleSpinBoxCtkSliderWidgetToFloatConnector(ctk.ctkDoubleSpinBox, ctk.ctkDoubleSpinBox)
+        self.impl_CheckFloatWidgetToUnboundedFloatParam(ctk.ctkDoubleSpinBox)
+        self.impl_CheckFloatWidgetToBoundedFloatParam(ctk.ctkDoubleSpinBox)
+
+    def test_qMRMLSpinBoxToFloat(self):
+        self.impl_CheckFloatWidgetToUnboundedFloatParam(slicer.qMRMLSpinBox)
+        self.impl_CheckFloatWidgetToBoundedFloatParam(slicer.qMRMLSpinBox)
 
     def impl_ComboBoxToStringable(self, widgettype):
         @parameterNodeWrapper
@@ -673,6 +702,9 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
 
     def test_CtkDoubleRangeSliderToRange(self):
         self.impl_RangeWidgetWithNegativeValues(ctk.ctkDoubleRangeSlider)
+
+    def test_qMRMLRangeSliderToRange(self):
+        self.impl_RangeWidgetWithNegativeValues(slicer.qMRMLRangeWidget)
 
     def test_ctkPathLineEditToPath(self):
         @parameterNodeWrapper
