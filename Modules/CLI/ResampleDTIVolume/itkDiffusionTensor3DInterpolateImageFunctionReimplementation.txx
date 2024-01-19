@@ -40,7 +40,7 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
   typedef SeparateComponentsOfADiffusionTensorImage<TData, TData> SeparateType;
   typename SeparateType::Pointer separateFilter = SeparateType::New();
   separateFilter->SetInput( inputImage );
-  separateFilter->SetNumberOfThreads( this->m_NumberOfThreads );
+  separateFilter->SetNumberOfWorkUnits( this->m_NumberOfThreads );
   separateFilter->Update();
   AllocateInterpolator();
   for( int i = 0; i < 6; i++ )

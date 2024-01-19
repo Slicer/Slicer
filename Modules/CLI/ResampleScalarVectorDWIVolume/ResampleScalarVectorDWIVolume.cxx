@@ -589,7 +589,7 @@ SetAllTransform( parameters & list,
         }
       if( list.numberOfThread )
         {
-        transformDeformationFieldFilter->SetNumberOfThreads( list.numberOfThread );
+        transformDeformationFieldFilter->SetNumberOfWorkUnits( list.numberOfThread );
         }
       transformDeformationFieldFilter->SetInput( field );
       transformDeformationFieldFilter->SetTransform( transform );

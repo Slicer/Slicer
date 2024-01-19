@@ -53,7 +53,7 @@ DiffusionTensor3DRead<TData>
     {
     m_Reader = FileReaderType::New();
     m_Reader->SetFileName( input );
-    m_Reader->SetNumberOfThreads(m_NumberOfThreads);
+    m_Reader->SetNumberOfWorkUnits(m_NumberOfThreads);
     m_Reader->Update();
     const DictionaryType &        dictionary = m_Reader->GetMetaDataDictionary();
     DictionaryType::ConstIterator itr = dictionary.Begin();

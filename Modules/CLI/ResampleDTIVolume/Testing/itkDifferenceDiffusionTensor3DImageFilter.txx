@@ -132,7 +132,7 @@ void
 DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
 ::BeforeThreadedGenerateData()
 {
-  int numberOfThreads = this->GetNumberOfThreads();
+  int numberOfThreads = this->GetNumberOfWorkUnits();
 
   // Initialize statistics about difference image.
   m_MeanDifference = NumericTraits<RealType>::ZeroValue();
@@ -325,7 +325,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
 ::AfterThreadedGenerateData()
 {
   // Set statistics about difference image.
-  int numberOfThreads = this->GetNumberOfThreads();
+  int numberOfThreads = this->GetNumberOfWorkUnits();
 
   for( int i = 0; i < numberOfThreads; ++i )
     {
