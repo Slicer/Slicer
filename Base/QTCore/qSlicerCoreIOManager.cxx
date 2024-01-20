@@ -211,6 +211,11 @@ qSlicerCoreIOManager::qSlicerCoreIOManager(QObject* _parent)
   :QObject(_parent)
   , d_ptr(new qSlicerCoreIOManagerPrivate)
 {
+  // To ensure that these types are known before any qSlicerIO instance is created,
+  // they are registered here. This complements the registration in the `qSlicerIO::qSlicerIO`
+  // constructor.
+  qRegisterMetaType<qSlicerIO::IOFileType>("qSlicerIO::IOFileType");
+  qRegisterMetaType<qSlicerIO::IOProperties>("qSlicerIO::IOProperties");
 }
 
 //-----------------------------------------------------------------------------
