@@ -56,7 +56,7 @@ public:
   Q_INVOKABLE virtual QString description()const = 0;
 
   /// Multiple readers can share the same file type
-  Q_INVOKABLE virtual IOFileType fileType()const = 0;
+  Q_INVOKABLE virtual qSlicerIO::IOFileType fileType()const = 0;
 
   /// Returns a list of options for the reader. qSlicerIOOptions can be
   /// derived and have a UI associated to it (i.e. qSlicerIOOptionsWidget).
