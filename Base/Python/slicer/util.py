@@ -779,7 +779,7 @@ def loadColorTable(filename, returnNode=False):
     return loadNodeFromFile(filename, "ColorTableFile", {}, returnNode)
 
 
-def loadFiberBundle(filename):
+def loadFiberBundle(filename, returnNode=False):
     """Load fiber bundle node from file.
 
     .. warning::
@@ -788,8 +788,10 @@ def loadFiberBundle(filename):
       extension may need to be installed.
 
     :param filename: full path of the file to load.
+    :param returnNode: Deprecated.
 
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
+      If returnNode is True then a status flag and loaded node are returned.
 
     :raises RuntimeError: in case of failure
     """
@@ -825,7 +827,7 @@ def loadFiberBundle(filename):
 
         raise RuntimeError(errorMessage)
 
-    return loadNodeFromFile(filename, readerType, {})
+    return loadNodeFromFile(filename, readerType, {}, returnNode)
 
 
 def loadAnnotationFiducial(filename, returnNode=False):
