@@ -9,16 +9,13 @@ import slicer
 class SlicerUtilLoadDataTests(unittest.TestCase):
 
     def setUp(self):
-
         pass
-
 
     def test_loadFiberBundle(self):
 
         def _load(fiberBundleFilePath):
 
-            success, node = slicer.util.loadFiberBundle(fiberBundleFilePath, returnNode=True)
-            self.assertTrue(success)
+            node = slicer.util.loadFiberBundle(fiberBundleFilePath)
             self.assertIsInstance(node, slicer.vtkMRMLFiberBundleNode)
             node = slicer.util.loadFiberBundle(fiberBundleFilePath)
             self.assertIsInstance(node, slicer.vtkMRMLFiberBundleNode)

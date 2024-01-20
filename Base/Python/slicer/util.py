@@ -779,36 +779,53 @@ def loadColorTable(filename, returnNode=False):
     return loadNodeFromFile(filename, "ColorTableFile", {}, returnNode)
 
 
-def loadFiberBundle(filename, returnNode=False):
+def loadFiberBundle(filename):
     """Load fiber bundle node from file.
 
     .. warning::
-    To ensure the FiberBundleFile reader is registered, the ``SlicerDMRI``
-    extension needs to be installed.
+
+      To ensure the FiberBundleFile reader is registered, the ``SlicerDMRI``
+      extension may need to be installed.
 
     :param filename: full path of the file to load.
-    :param returnNode: Deprecated.
-    :return: loaded node (if multiple nodes are loaded then a list of nodes).
-      If returnNode is True then a status flag and loaded node are returned.
-    """
 
-    # Check if SlicerDMRI is installed
-    extension_name = "SlicerDMRI"
-    em = slicer.app.extensionsManagerModel()
-    if not em.isExtensionInstalled(extension_name):
-        errorMessage = f"{extension_name} not installed."
-        errorMessage += "\n" + f"Install the {extension_name} extension"
+    :return: loaded node (if multiple nodes are loaded then a list of nodes).
+
+    :raises RuntimeError: in case of failure
+    """
+    from slicer import app
+
+    readerType = "FiberBundleFile"
 
     # Check if the appropriate reader is registered
-    if slicer.app.ioManager().registeredFileReaderCount("FiberBundleFile") == 0:
-        errorMessage += f"FiberBundleFile reader not registered: failed to read data from file: {filename}"
-        errorMessage += "\n" + f"Try reinstalling the {extension_name} extension"
+    if app.ioManager().registeredFileReaderCount(readerType) == 0:
+        errorMessage = f"{readerType} reader not registered: Failed to load node from file: {filename}"
 
-    if userMessages.GetNumberOfMessages() > 0:
-        errorMessage += "\n" + userMessages.GetAllMessagesAsString()
+        extensionName = "SlicerDMRI"
+        moduleName = "TractographyDisplay"
+        readerClassName = "qSlicerFiberBundleReader"
+
+        errorMessage += (
+            f"\n\n{readerType} reader is implemented in the {readerClassName} class expected to be "
+            f"registered by the {moduleName} module provided by the {extensionName} extension."
+            "\n\nStatus:"
+        )
+
+        if app.moduleManager().module(moduleName) is None:
+            errorMessage += f"\n- {moduleName} module: Not loaded."
+
+        if app.applicationName == "Slicer":
+            # Check if the extension is installed
+            em = app.extensionsManagerModel()
+            if not em.isExtensionInstalled(extensionName):
+                errorMessage += (
+                    f"\n- {extensionName} extension: Not installed."
+                    "\n\nPlease install the extension for proper functionality."
+                )
+
         raise RuntimeError(errorMessage)
 
-    return loadNodeFromFile(filename, "FiberBundleFile", {}, returnNode)
+    return loadNodeFromFile(filename, readerType, {})
 
 
 def loadAnnotationFiducial(filename, returnNode=False):
