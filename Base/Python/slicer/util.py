@@ -780,14 +780,54 @@ def loadColorTable(filename, returnNode=False):
 
 
 def loadFiberBundle(filename, returnNode=False):
-    """Load node from file.
+    """Load fiber bundle node from file.
+
+    .. warning::
+
+      To ensure the FiberBundleFile reader is registered, the ``SlicerDMRI``
+      extension may need to be installed.
 
     :param filename: full path of the file to load.
     :param returnNode: Deprecated.
+
     :return: loaded node (if multiple nodes are loaded then a list of nodes).
       If returnNode is True then a status flag and loaded node are returned.
+
+    :raises RuntimeError: in case of failure
     """
-    return loadNodeFromFile(filename, "FiberBundleFile", {}, returnNode)
+    from slicer import app
+
+    readerType = "FiberBundleFile"
+
+    # Check if the appropriate reader is registered
+    if app.ioManager().registeredFileReaderCount(readerType) == 0:
+        errorMessage = f"{readerType} reader not registered: Failed to load node from file: {filename}"
+
+        extensionName = "SlicerDMRI"
+        moduleName = "TractographyDisplay"
+        readerClassName = "qSlicerFiberBundleReader"
+
+        errorMessage += (
+            f"\n\n{readerType} reader is implemented in the {readerClassName} class expected to be "
+            f"registered by the {moduleName} module provided by the {extensionName} extension."
+            "\n\nStatus:"
+        )
+
+        if app.moduleManager().module(moduleName) is None:
+            errorMessage += f"\n- {moduleName} module: Not loaded."
+
+        if app.applicationName == "Slicer":
+            # Check if the extension is installed
+            em = app.extensionsManagerModel()
+            if not em.isExtensionInstalled(extensionName):
+                errorMessage += (
+                    f"\n- {extensionName} extension: Not installed."
+                    "\n\nPlease install the extension for proper functionality."
+                )
+
+        raise RuntimeError(errorMessage)
+
+    return loadNodeFromFile(filename, readerType, {}, returnNode)
 
 
 def loadAnnotationFiducial(filename, returnNode=False):
