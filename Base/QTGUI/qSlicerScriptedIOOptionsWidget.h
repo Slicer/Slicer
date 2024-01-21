@@ -36,6 +36,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedIOOptionsWidget
   : public qSlicerIOOptionsWidget
 {
   Q_OBJECT
+  Q_PROPERTY(qSlicerIO::IOProperties properties READ properties);
 
 public:
   typedef qSlicerIOOptionsWidget Superclass;

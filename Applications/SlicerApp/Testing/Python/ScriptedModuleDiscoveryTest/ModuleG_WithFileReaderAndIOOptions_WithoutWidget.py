@@ -2,6 +2,7 @@ import pathlib
 
 import qt
 
+from slicer import vtkMRMLStorageNode
 from slicer.ScriptedLoadableModule import *
 
 SOMEVAR = "G"
@@ -58,27 +59,21 @@ class ModuleG_WithFileReaderAndIOOptions_WithoutWidgetIOOptionsWidget:
 
     def setupUi(self):
         layout = qt.QHBoxLayout()
-        parent.setLayout(layout)
+        self.parent.setLayout(layout)
 
-        coordindateSystemlabel = qt.QLabel("Coordinate system:")
-        layout.addWidget(coordindateSystemlabel)
+        coordinateSystemLabel = qt.QLabel("Coordinate system:")
+        layout.addWidget(coordinateSystemLabel)
 
-        coordindateSystemlabelComboBox = qt.QComboBox()
-        coordindateSystemlabelComboBox.addItems(["Default", "LPS", "RAS"])
-        layout.addWidget(coordindateSystemlabelComboBox)
+        coordinateSystemComboBox = qt.QComboBox()
+        coordinateSystemComboBox.addItems(["Default", "LPS", "RAS"])
+        layout.addWidget(coordinateSystemComboBox)
 
-        self.coordindateSystemlabel = coordindateSystemlabel
-        self.coordindateSystemlabelComboBox = coordindateSystemlabelComboBox
+        self.coordindateSystemlabel = coordinateSystemLabel
+        self.coordinateSystemComboBox = coordinateSystemComboBox
 
     def updateGUI(self):
         pass
 
     def updateProperties(self):
-        # TODO: Add scripted specific API for updating "qSlicerIOOptionsPrivate::Properties".
-        # A new function "qSlicerScriptedIOOptionsWidget::setProperty(const QString& properyName, const QVariant& value)"
-        # could be added
-
-        #properties = {}
-        #properties["coordinateSystem"] = slicer.vtkMRMLStorageNode.GetCoordinateSystemTypeFromString(
-        #    self.coordinateSystemComboBox->currentText())
-        pass
+        self.parent.properties["coordinateSystem"] = vtkMRMLStorageNode.GetCoordinateSystemTypeFromString(
+            self.coordinateSystemComboBox.currentText)
