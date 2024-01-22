@@ -86,6 +86,7 @@ public:
   /// \sa qSlicerFileReader::write()
   bool load(const qSlicerIO::IOProperties& properties) override;
 
+  ///@{
   /// Reimplemented to support python methods and q_property
   /// Exposes setLoadedNodes, which is protected in superclass
   /// \sa qSlicerFileReader::loadedNodes()
@@ -96,6 +97,7 @@ public:
   void setLoadedNodes(const QStringList& nodes) override {
     Superclass::setLoadedNodes(nodes);
   };
+  ///@}
 
 protected:
   QScopedPointer<qSlicerScriptedFileReaderPrivate> d_ptr;

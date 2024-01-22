@@ -82,7 +82,7 @@ public:
 
   /// Implements the file list examination for the corresponding method in the core
   /// IO manager.
-  /// \sa qSlicerCoreIOManager
+  /// \sa qSlicerCoreIOManager::examineFileInfoList
   Q_INVOKABLE virtual bool examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const;
 
 protected:

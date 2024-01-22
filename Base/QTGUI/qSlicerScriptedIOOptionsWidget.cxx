@@ -26,11 +26,12 @@
 #include <PythonQtConversion.h>
 
 // Slicer includes
+#include "qSlicerIOOptions_p.h"
 #include "qSlicerScriptedIOOptionsWidget.h"
 #include "qSlicerScriptedUtils_p.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerScriptedIOOptionsWidgetPrivate
+class qSlicerScriptedIOOptionsWidgetPrivate : public qSlicerIOOptionsPrivate
 {
 public:
   typedef qSlicerScriptedIOOptionsWidgetPrivate Self;
@@ -52,6 +53,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedIOOptionsWidgetPrivate::qSlicerScriptedIOOptionsWidgetPrivate()
+  : qSlicerIOOptionsPrivate()
 {
   this->PythonCppAPI.declareMethod(Self::UpdateGUIMethod, "updateGUI");
 }
@@ -64,8 +66,7 @@ qSlicerScriptedIOOptionsWidgetPrivate::~qSlicerScriptedIOOptionsWidgetPrivate() 
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedIOOptionsWidget::qSlicerScriptedIOOptionsWidget(QWidget* parent)
-  : Superclass(parent)
-  , d_ptr(new qSlicerScriptedIOOptionsWidgetPrivate)
+  : Superclass(new qSlicerScriptedIOOptionsWidgetPrivate, parent)
 {
 }
 
@@ -166,4 +167,11 @@ void qSlicerScriptedIOOptionsWidget::updateGUI(const qSlicerIO::IOProperties& io
     // Method call failed (probably an omitted function), call default implementation
     this->Superclass::updateGUI(ioProperties);
     }
+}
+
+////-----------------------------------------------------------------------------
+void qSlicerScriptedIOOptionsWidget::setProperties(const qSlicerIO::IOProperties& ioProperties)
+{
+  Q_D(qSlicerScriptedIOOptionsWidget);
+  d->Properties = ioProperties;
 }

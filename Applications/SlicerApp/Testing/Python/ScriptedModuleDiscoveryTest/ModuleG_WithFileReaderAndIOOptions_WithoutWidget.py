@@ -75,5 +75,5 @@ class ModuleG_WithFileReaderAndIOOptions_WithoutWidgetIOOptionsWidget:
         pass
 
     def updateProperties(self):
-        self.parent.properties["coordinateSystem"] = vtkMRMLStorageNode.GetCoordinateSystemTypeFromString(
-            self.coordinateSystemComboBox.currentText)
+        self.parent.properties = self.parent.properties | {"coordinateSystem": vtkMRMLStorageNode.GetCoordinateSystemTypeFromString(
+            self.coordinateSystemComboBox.currentText)}

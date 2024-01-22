@@ -36,7 +36,9 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedIOOptionsWidget
   : public qSlicerIOOptionsWidget
 {
   Q_OBJECT
-  Q_PROPERTY(qSlicerIO::IOProperties properties READ properties);
+  /// This property allows the scripted class to access the properties
+  /// \sa qSlicerIOOptions::properties
+  Q_PROPERTY(qSlicerIO::IOProperties properties READ properties WRITE setProperties);
 
 public:
   typedef qSlicerIOOptionsWidget Superclass;
@@ -56,8 +58,7 @@ public:
   /// \sa qSlicerIO::updateGUI()
   void updateGUI(const qSlicerIO::IOProperties& ioProperties) override;
 
-protected:
-  QScopedPointer<qSlicerScriptedIOOptionsWidgetPrivate> d_ptr;
+  void setProperties(const qSlicerIO::IOProperties& ioProperties);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerScriptedIOOptionsWidget);
