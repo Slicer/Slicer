@@ -68,32 +68,10 @@ protected:
     {
     if (event->type() == QEvent::MouseButtonPress && this->Widget)
       {
-
       // Record the mouse press position for later reference during dragging.
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
       this->PressPosition = mouseEvent->pos();
       this->Dragging = true;
-
-      // Disable the WindowStaysOnTop hint to allow the window to move freely.
-      if (this->DisableTopMost)
-        {
-        this->DisableTopMost = false;
-        // Remove the topmost hint using a timer callback to ensure that
-        // the window is updated after processing of the click event is fully processed
-        // (because the window is reparented when the hint is removed, which would confuse
-        // the events).
-        QTimer* timer = new QTimer;
-        QObject::connect(timer, &QTimer::timeout, [this, timer] ()
-          {
-          // Remove WindowStaysOnTopHint to allow other windows to appear
-          this->Widget->setWindowFlags(this->Widget->windowFlags() & ~Qt::WindowStaysOnTopHint);
-          // After removing the WindowStaysOnTopHint hint, we need to show the window again
-          this->Widget->show();
-          timer->deleteLater();
-          });
-        timer->setSingleShot(true);
-        timer->start(0);
-        }
       return true; // do not process the event further
       }
     else if (event->type() == QEvent::MouseMove && this->Dragging && this->Widget)
@@ -107,11 +85,18 @@ protected:
       {
       // End the dragging process.
       this->Dragging = false;
+      // Disable the WindowStaysOnTop hint to allow other windows to be shown above it.
+      // Do it after the mouse button is released, because the widget may be reparented
+      // as a result of changing the window hint, and during reparenting some events
+      // might not arrive to the widget.
+      if (this->DisableTopMost)
+        {
+        this->DisableTopMost = false;
+        this->Widget->setWindowFlags(this->Widget->windowFlags() & ~Qt::WindowStaysOnTopHint);
+        // After removing the WindowStaysOnTopHint hint, we need to show the window again
+        this->Widget->show();
+        }
       return true; // do not process the event further
-      }
-    else if (event->type() == QEvent::Leave)
-      {
-      this->Dragging = false;
       }
     // If the event is not one of the specified types, pass it to the base class.
     return QObject::eventFilter(obj, event);
