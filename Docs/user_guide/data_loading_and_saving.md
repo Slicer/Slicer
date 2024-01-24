@@ -80,7 +80,7 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
 - [**DICOM**](https://www.dicomstandard.org/) (.dcm, or any other): Slicer core supports reading and writing of some data types, while extensions add support for additional ones. Coordinate system: LPS (as defined by DICOM standard).
   - Supported DICOM information objects:
     - Slicer core: CT, MRI, PET, X-ray, some ultrasound images; secondary capture with Slicer scene (MRB) in private tag
-    - [Quantitative Reporting extension](https://qiicr.gitbooks.io/quantitativereporting-guide): DICOM Segmentation objects, Structured reports
+    - [Quantitative Reporting extension](https://qiicr.gitbooks.io/quantitativereporting-guide): DICOM Segmentation objects (SEG modality), Parametric Maps, Encapsulated STL (M3D modality), certain flavors of Structured Reports that follow [TID 1500 Measurement report](https://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_A.html#sect_TID_1500) template
     - [SlicerRT extension](https://www.slicerrt.org/): DICOM RT Structure Set, RT Dose, RT Plan, RT Image
     - [SlicerHeart extension](https://github.com/SlicerHeart/SlicerHeart): 2D/3D/4D ultrasound (GE, Philips, Eigen Artemis, and other)
     - [SlicerDMRI](https://dmri.slicer.org) tractography storage
