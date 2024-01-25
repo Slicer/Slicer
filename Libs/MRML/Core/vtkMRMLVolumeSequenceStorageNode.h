@@ -31,6 +31,11 @@ class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStora
   /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override {return "VolumeSequenceStorage";};
 
+  /// Convert voxel vector type enum from VTKITK type to MRML type
+  int ConvertVoxelVectorTypeVTKITKToMRML(int vtkitkType);
+  /// Convert voxel vector type enum from MRML type to VTKITK type
+  int ConvertVoxelVectorTypeMRMLToVTKITK(int mrmlType);
+
   /// Return true if the node can be read in.
   bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
