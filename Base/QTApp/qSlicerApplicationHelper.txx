@@ -49,12 +49,16 @@
 namespace
 {
 
-/// Event filter that allows to move a widget by clicking anywhere on it.
-/// It also removes the WindowStaysOnTopHint so that the window is not forced to
-/// appear above all other applications.
+/// \brief Event filter for enabling draggable behavior on a widget.
+///
+/// This event filter allows the user to move a widget by clicking anywhere on it.
+/// It also removes the WindowStaysOnTopHint, preventing the window from staying
+/// above all other applications. The filter should be installed on and uninstalled
+/// from the application.
 class DraggableWidgetEventFilter : public QObject
 {
 public:
+  /// Set the widget that will become draggable.
   void setWidget(QWidget* w)
     {
     this->Widget = w;
@@ -64,33 +68,37 @@ protected:
     {
     if (event->type() == QEvent::MouseButtonPress && this->Widget)
       {
+      // Record the mouse press position for later reference during dragging.
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
       this->PressPosition = mouseEvent->pos();
       this->Dragging = true;
-      if (this->DisableTopMost)
-        {
-        this->Widget->setWindowFlags(this->Widget->windowFlags() & ~Qt::WindowStaysOnTopHint);
-        // After removing the WindowStaysOnTopHint hint, we need to show the window again
-        this->Widget->show();
-        this->DisableTopMost = false;
-        }
       return true; // do not process the event further
       }
     else if (event->type() == QEvent::MouseMove && this->Dragging && this->Widget)
       {
+      // Move the widget
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
       this->Widget->move(this->Widget->pos() + mouseEvent->pos() - this->PressPosition);
       return true; // do not process the event further
       }
     else if (event->type() == QEvent::MouseButtonRelease)
       {
+      // End the dragging process.
       this->Dragging = false;
+      // Disable the WindowStaysOnTop hint to allow other windows to be shown above it.
+      // Do it after the mouse button is released, because the widget may be reparented
+      // as a result of changing the window hint, and during reparenting some events
+      // might not arrive to the widget.
+      if (this->DisableTopMost)
+        {
+        this->DisableTopMost = false;
+        this->Widget->setWindowFlags(this->Widget->windowFlags() & ~Qt::WindowStaysOnTopHint);
+        // After removing the WindowStaysOnTopHint hint, we need to show the window again
+        this->Widget->show();
+        }
       return true; // do not process the event further
       }
-    else if (event->type() == QEvent::Leave)
-      {
-      this->Dragging = false;
-      }
+    // If the event is not one of the specified types, pass it to the base class.
     return QObject::eventFilter(obj, event);
     }
 private:
@@ -238,6 +246,11 @@ int qSlicerApplicationHelper::postInitializeApplication(
     [&splashScreen](QString moduleName){splashMessage(splashScreen, qSlicerApplication::tr("Instantiating module \"%1\"...").arg(moduleName));});
   moduleFactoryManager->instantiateModules();
   QObject::disconnect(moduleAboutToBeInstantiatedConnection);
+
+  if (splashScreen)
+    {
+    splashScreen->removeEventFilter(&draggable);
+    }
 
   if (app.commandOptions()->verboseModuleDiscovery())
     {
