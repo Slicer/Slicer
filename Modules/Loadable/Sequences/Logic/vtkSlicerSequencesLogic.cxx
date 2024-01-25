@@ -392,8 +392,10 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
         {
         // There are no data nodes in the sequence.
         // Insert a new node node in the sequence based on missingItemMode.
+        // Except if selectedItemNumber < 0, because that means that there is no timepoint in the sequence
+        // and we should not add one (because then we could never delete the last item in a sequence when recording is enabled).
         sourceDataNode = browserNode->GetProxyNode(synchronizedSequenceNode);
-        if (sourceDataNode)
+        if (sourceDataNode && selectedItemNumber >= 0)
           {
           if (missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemCreateFromPrevious)
             {
@@ -742,6 +744,8 @@ void vtkSlicerSequencesLogic::ProcessMRMLNodesEvents(vtkObject *caller, unsigned
       !this->GetMRMLScene()->IsRestoring())
       {
       // One of the proxy nodes changed, update the sequence as needed
+      // If we wanted to change behavior of "save changes" to create a new time point when the proxy node changes
+      // then we could add a flag to UpdateSequencesFromProxyNodes that would force creation of a new time point.
       this->UpdateSequencesFromProxyNodes(browserNode, vtkMRMLNode::SafeDownCast((vtkObject*)callData));
       }
     }
