@@ -84,7 +84,7 @@ macro(SlicerMacroExtractRepositoryInfo)
 
   if(NOT EXISTS ${MY_SOURCE_DIR}/.git)
 
-    message(AUTHOR_WARNING "Skipping repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT checkout")
+    message(AUTHOR_WARNING "Skipping ${MY_VAR_PREFIX} repository info extraction: directory [${MY_SOURCE_DIR}] is not a GIT checkout")
 
   else()
 
