@@ -69,6 +69,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
             "1.2.840.10008.5.1.4.1.1.3.1",  # Ultrasound Multiframe Image Storage
             "1.2.840.10008.5.1.4.1.1.6.1",  # Ultrasound Image Storage
             "1.2.840.10008.5.1.4.1.1.7",  # Secondary Capture Image Storage (only accepted for modalities that typically acquire 2D image sequences)
+            "1.2.840.10008.5.1.4.1.1.7.2", # Multi-frame Grayscale Byte Secondary Capture Image Storage
             "1.2.840.10008.5.1.4.1.1.4",  # MR Image Storage (will be only accepted if cine-MRI)
         ]
 
