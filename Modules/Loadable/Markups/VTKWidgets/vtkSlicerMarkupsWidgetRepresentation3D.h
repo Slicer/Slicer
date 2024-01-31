@@ -106,6 +106,13 @@ protected:
 
   void UpdateInteractionPipeline() override;
 
+  /// Calculate X, Y and Z display coordinate offsets from control point position
+  /// in relation to display dimensions and volume center coordinates
+  void GetLabelTextRASOffsets(double* backgroundVolumeCenterXY, double* slicePos, double* leadersLineOffset);
+
+  /// Get xy display center of background volume in slice node
+  void GetBackgroundVolumeRASCenter(double* centerPos);
+
   class ControlPointsPipeline3D : public ControlPointsPipeline
   {
   public:
@@ -122,6 +129,7 @@ protected:
     vtkSmartPointer<vtkProperty>     Property;
     vtkSmartPointer<vtkProperty>     OccludedProperty;
     vtkSmartPointer<vtkTextProperty> OccludedTextProperty;
+    vtkSmartPointer<vtkProperty>     LabelLeaderLinesProperty;
 
     vtkSmartPointer<vtkPolyData> VisiblePointsPolyData;
 
@@ -138,6 +146,14 @@ protected:
     vtkSmartPointer<vtkActor>   OccludedActor;
     vtkSmartPointer<vtkActor2D> LabelsActor;
     vtkSmartPointer<vtkActor2D> LabelsOccludedActor;
+
+    vtkSmartPointer<vtkPoints> LabelsLinePoints;
+    vtkSmartPointer<vtkCellArray> LabelsLineCells;
+    vtkSmartPointer<vtkPolyData> LabelsLinePolyData;
+    vtkSmartPointer<vtkTubeFilter> LabelsLineTubeFilter;
+
+    vtkSmartPointer<vtkPolyDataMapper> LabelsLineMapper;
+    vtkSmartPointer<vtkActor> LabelsLineActor;
   };
 
   ControlPointsPipeline3D* GetControlPointsPipeline(int controlPointType);

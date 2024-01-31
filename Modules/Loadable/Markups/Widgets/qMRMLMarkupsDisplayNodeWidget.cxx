@@ -40,6 +40,7 @@
 #include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 #include <vtkTextProperty.h>
+#include <vtkSlicerMarkupsWidgetRepresentation2D.h>
 
 //------------------------------------------------------------------------------
 class qMRMLMarkupsDisplayNodeWidgetPrivate: public QWidget, public Ui_qMRMLMarkupsDisplayNodeWidget
@@ -77,6 +78,8 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   // set up the display properties
   QObject::connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setVisibility(bool)));
+  QObject::connect(this->pointLabelsDistanceScaleSliderWidget, SIGNAL(valueChanged(double)),
+    q, SLOT(onPointLabelsDistanceScaleSliderWidgetChanged(double)));
   QObject::connect(this->selectedColorPickerButton, SIGNAL(colorChanged(QColor)),
     q, SLOT(onSelectedColorPickerButtonChanged(QColor)));
   QObject::connect(this->unselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
@@ -335,6 +338,14 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
 
   d->PropertiesLabelVisibilityCheckBox->setChecked(markupsDisplayNode->GetPropertiesLabelVisibility());
 
+  // point label line connector scale
+  double labelLeaderLinesScale = markupsDisplayNode->GetPointLabelsDistanceScale();
+  // make sure that the slider can accommodate this scale
+  if (labelLeaderLinesScale > d->pointLabelsDistanceScaleSliderWidget->maximum())
+    {
+    d->pointLabelsDistanceScaleSliderWidget->setMaximum(labelLeaderLinesScale);
+    }
+  d->pointLabelsDistanceScaleSliderWidget->setValue(labelLeaderLinesScale);
   d->PointLabelsVisibilityCheckBox->setChecked(markupsDisplayNode->GetPointLabelsVisibility());
 
   // text scale
@@ -615,6 +626,17 @@ void qMRMLMarkupsDisplayNodeWidget::onTextScaleSliderWidgetChanged(double value)
     return;
     }
   d->MarkupsDisplayNode->SetTextScale(value);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLMarkupsDisplayNodeWidget::onPointLabelsDistanceScaleSliderWidgetChanged(double value)
+{
+  Q_D(qMRMLMarkupsDisplayNodeWidget);
+  if (!d->MarkupsDisplayNode)
+    {
+    return;
+    }
+  d->MarkupsDisplayNode->SetPointLabelsDistanceScale(value);
 }
 
 //-----------------------------------------------------------------------------

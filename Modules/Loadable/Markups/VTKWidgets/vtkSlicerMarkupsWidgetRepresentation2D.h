@@ -143,6 +143,13 @@ protected:
   void GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates);
   void GetWorldToDisplayCoordinates(double * worldCoordinates, double * displayCoordinates);
 
+  /// Get xy display center of background volume in slice node
+  void GetBackgroundVolumeXYCenter(double * centerPos);
+
+  /// Calculate X and Y display coordinate offsets from control point position
+  /// in relation to display dimensions and volume center coordinates
+  void GetLabelTextXYOffsets(double * backgroundVolumeCenterXY, double * slicePos, double * leadersLineOffset);
+
   /// Check if the representation polydata intersects the slice
   bool IsRepresentationIntersectingSlice(vtkPolyData* representation, const char* arrayName);
 
@@ -157,9 +164,15 @@ protected:
     vtkSmartPointer<vtkGlyph2D> Glypher;
     vtkSmartPointer<vtkActor2D> LabelsActor;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsMapper;
+
+    vtkSmartPointer<vtkPolyData> LabelsLinePolyData;
+    vtkSmartPointer<vtkActor2D> LabelsLineActor;
+    vtkSmartPointer<vtkPolyDataMapper2D> LabelsLineMapper;
+
     // Properties used to control the appearance of selected objects and
     // the manipulator in general.
     vtkSmartPointer<vtkProperty2D> Property;
+    vtkSmartPointer<vtkProperty2D> LabelsLineProperty;
   };
 
   ControlPointsPipeline2D* GetControlPointsPipeline(int controlPointType);
