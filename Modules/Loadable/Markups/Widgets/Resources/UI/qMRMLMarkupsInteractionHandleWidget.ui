@@ -342,19 +342,26 @@
      </property>
     </spacer>
    </item>
+   <item row="3" column="8" alignment="Qt::AlignHCenter">
+    <widget class="QCheckBox" name="rotateViewPlaneCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
   <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -596,6 +603,22 @@
     <hint type="destinationlabel">
      <x>301</x>
      <y>12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreOptionsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>rotateViewPlaneCheckBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>335</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>255</x>
+     <y>59</y>
     </hint>
    </hints>
   </connection>

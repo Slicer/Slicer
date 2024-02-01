@@ -54,7 +54,7 @@
 // STD includes
 
 // Constants
-static const int RENDERER_LAYER = 1; // layer ID where the orientation marker will be displayed
+static const int RENDERER_LAYER = 2; // layer ID where the orientation marker will be displayed
 static const char ORIENTATION_MARKERS_DIR[] = "OrientationMarkers";
 static const char HUMAN_MODEL_VTP_FILENAME[] = "Human.vtp";
 

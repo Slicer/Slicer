@@ -134,7 +134,7 @@ void vtkMRMLMarkupsPlaneNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::ApplyTransform(vtkAbstractTransform* transform)
+void vtkMRMLMarkupsPlaneNode::ApplyTransform(vtkAbstractTransform* transform, bool applyToLockedControlPoints)
 {
   if (!transform)
     {
@@ -152,7 +152,7 @@ void vtkMRMLMarkupsPlaneNode::ApplyTransform(vtkAbstractTransform* transform)
   vtkNew<vtkMatrix4x4> oldBaseToNodeMatrix;
   oldBaseToNodeMatrix->DeepCopy(this->BaseToNodeMatrix);
 
-  Superclass::ApplyTransform(transform);
+  Superclass::ApplyTransform(transform, applyToLockedControlPoints);
 
   vtkNew<vtkMatrix4x4> newBaseToNodeMatrix;
   this->GenerateOrthogonalMatrix(oldBaseToNodeMatrix, newBaseToNodeMatrix, transform, false);

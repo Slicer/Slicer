@@ -595,6 +595,7 @@ public:
   /// Apply the passed transformation to all of the control points
   /// \sa CanApplyNonLinearTransforms
   void ApplyTransform(vtkAbstractTransform* transform) override;
+  virtual void ApplyTransform(vtkAbstractTransform* transform, bool applyToLockedControlPoints);
 
   ///@{
   /// Get/Set the ControlPointLabelFormat string that defines the control point names.

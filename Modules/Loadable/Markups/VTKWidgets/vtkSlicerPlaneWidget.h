@@ -90,15 +90,6 @@ protected:
   vtkSlicerPlaneWidget();
   ~vtkSlicerPlaneWidget() override;
 
-  void ScaleWidget(double eventPos[2]) override;
-  virtual void ScaleWidget(double eventPos[2], bool symmetricScale);
-  void RotateWidget(double eventPos[2]) override;
-
-  /// Flip the selected index across the specified axis.
-  /// Ex. Switch between L--R face.
-  /// Used when the user drags an ROI handle across the ROI origin.
-  void FlipPlaneHandles(bool flipLRHandle, bool flipAPHandle);
-
 private:
   vtkSlicerPlaneWidget(const vtkSlicerPlaneWidget&) = delete;
   void operator=(const vtkSlicerPlaneWidget&) = delete;

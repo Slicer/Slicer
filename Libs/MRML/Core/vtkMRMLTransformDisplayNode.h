@@ -126,7 +126,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   /// Returns an empty string if the index is unknown.
   static const char* ConvertGlyphTypeToString(int typeIndex);
   /// Convert glyph type string to an index that can be set in GlyphType.
-  /// Returns -1 if the string is unknown.
+  /// `Returns -1 if the string is unknown.
   static int ConvertGlyphTypeFromString(const char* typeString);
   // 3d parameters
   vtkSetMacro(GlyphTipLengthPercent, double);
@@ -198,6 +198,40 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   vtkColorTransferFunction* GetColorMap();
   void SetColorMap(vtkColorTransferFunction* newColorMap);
 
+  /// Absolute size of the intreaction handle widget in mm.
+  vtkSetMacro(InteractionSizeMm, double);
+  vtkGetMacro(InteractionSizeMm, double);
+
+  /// Relative size of the interaction handle widget as a percent of the view size.
+  vtkSetMacro(InteractionScalePercent, double);
+  vtkGetMacro(InteractionScalePercent, double);
+
+  /// If true, uses the absolute size for the interaction handle, otherwise uses the relative size.
+  vtkSetMacro(InteractionSizeAbsolute, bool);
+  vtkGetMacro(InteractionSizeAbsolute, bool);
+  vtkBooleanMacro(InteractionSizeAbsolute, bool);
+
+  /// The type of the active interaction handle.
+  vtkSetMacro(ActiveInteractionType, int);
+  vtkGetMacro(ActiveInteractionType, int);
+
+  /// The index of the active interaction handle.
+  vtkSetMacro(ActiveInteractionIndex, int);
+  vtkGetMacro(ActiveInteractionIndex, int);
+
+  //@{
+  /// Get/Set the visibility of the individual handle axes
+  /// The order of the vector is: [X, Y, Z, ViewPlane]
+  /// "ViewPlane" scale/translation allows transformations to take place along the active view plane.
+  /// (ex. center translation point and ROI corner scale handles.
+  vtkSetVector4Macro(RotationHandleComponentVisibility, bool);
+  vtkGetVector4Macro(RotationHandleComponentVisibility, bool);
+  vtkSetVector4Macro(ScaleHandleComponentVisibility, bool);
+  vtkGetVector4Macro(ScaleHandleComponentVisibility, bool);
+  vtkSetVector4Macro(TranslationHandleComponentVisibility, bool);
+  vtkGetVector4Macro(TranslationHandleComponentVisibility, bool);
+  //@}
+
 protected:
 
   static std::vector<double> StringToDoubleVector(const char* sourceStr);
@@ -240,6 +274,16 @@ protected:
   bool EditorTranslationEnabled;
   bool EditorRotationEnabled;
   bool EditorScalingEnabled;
+
+  int ActiveInteractionType{ -1 };
+  int ActiveInteractionIndex{ -1 };
+  bool InteractionSizeAbsolute{ false };
+  double InteractionSizeMm{ 5.0 };
+  double InteractionScalePercent{ 15.0 };
+
+  bool RotationHandleComponentVisibility[4];
+  bool ScaleHandleComponentVisibility[4];
+  bool TranslationHandleComponentVisibility[4];
 
  protected:
   vtkMRMLTransformDisplayNode ( );

@@ -338,6 +338,10 @@ else
   vtkSetAndObserveMRMLObjectMacro(this->TransformToParent, node->TransformToParent);
   vtkSetAndObserveMRMLObjectMacro(this->TransformFromParent, node->TransformFromParent);
   }
+
+  // copy the center of transformation
+  node->SetCenterOfTransformation(this->GetCenterOfTransformation());
+
   this->Modified();
   this->TransformModified();
 }
@@ -377,6 +381,11 @@ void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
       concatenatedTransform->PrintSelf(os, indent.GetNextIndent().GetNextIndent());
       }
     }
+
+  os << indent << "Center of transformation: "
+    << this->CenterOfTransformation[0] << ", "
+    << this->CenterOfTransformation[1] << ", "
+    << this->CenterOfTransformation[2] << "\n";
 }
 
 //----------------------------------------------------------------------------

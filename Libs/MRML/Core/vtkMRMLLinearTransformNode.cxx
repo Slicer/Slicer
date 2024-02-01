@@ -31,6 +31,10 @@ vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
 {
   vtkNew<vtkMatrix4x4> matrix;
   this->SetMatrixTransformToParent(matrix.GetPointer());
+
+  this->CenterOfTransformation[0] = 0.0;
+  this->CenterOfTransformation[1] = 0.0;
+  this->CenterOfTransformation[2] = 0.0;
 }
 
 //----------------------------------------------------------------------------

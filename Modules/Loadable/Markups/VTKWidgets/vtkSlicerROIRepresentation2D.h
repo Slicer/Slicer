@@ -77,16 +77,10 @@ public:
   void CanInteractWithROI(vtkMRMLInteractionEventData* interactionEventData,
     int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
 
-  // Update visibility of interaction handles for representation
-  void UpdateInteractionPipeline() override;
-
 protected:
 
   /// Update the cube source filter from the ROI node.
   virtual void UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINode* roiNode);
-
-  // Initialize interaction handle pipeline
-  void SetupInteractionPipeline() override;
 
 protected:
   vtkSlicerROIRepresentation2D();
@@ -110,18 +104,6 @@ protected:
   vtkSmartPointer<vtkPolyDataMapper2D> ROIOutlineMapper;
   vtkSmartPointer<vtkProperty2D>       ROIOutlineProperty;
   vtkSmartPointer<vtkActor2D>          ROIOutlineActor;
-
-  class MarkupsInteractionPipelineROI2D : public vtkSlicerROIRepresentation3D::MarkupsInteractionPipelineROI
-  {
-  public:
-    MarkupsInteractionPipelineROI2D(vtkSlicerMarkupsWidgetRepresentation* representation);
-    ~MarkupsInteractionPipelineROI2D() override = default;
-    void GetViewPlaneNormal(double viewPlaneNormal[3]) override;
-    void UpdateScaleHandles() override;
-    void AddScaleEdgeIntersection(int pointIndex, vtkIdTypeArray* visibilityArray, vtkPoints* scaleHandleArray,
-      double sliceNormal[3], double sliceOrigin[3], double edgePoint[3], double edgeVector[3]);
-    vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformFilter;
-  };
 
 private:
   vtkSlicerROIRepresentation2D(const vtkSlicerROIRepresentation2D&) = delete;

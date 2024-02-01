@@ -124,7 +124,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   this->HandlesInteractive = false;
   this->TranslationHandleVisibility = true;
   this->RotationHandleVisibility = true;
-  this->ScaleHandleVisibility = true;
+  this->ScaleHandleVisibility = false;
   this->InteractionHandleScale = 3.0; // size of the handles as percent in screen size
 
   // By default, all interaction handle axes are visible
@@ -134,8 +134,9 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
     this->ScaleHandleComponentVisibility[i] = true;
     this->TranslationHandleComponentVisibility[i] = true;
     }
+  this->RotationHandleComponentVisibility[3] = false; // Hide view plane rotation by default
 
-  this->CanDisplayScaleHandles = false;
+  this->CanDisplayScaleHandles = true;
 
   // Line color node
   vtkNew<vtkIntArray> events;
@@ -192,28 +193,9 @@ void vtkMRMLMarkupsDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLStdStringMacro(textProperty, TextPropertyAsString);
   vtkMRMLWriteXMLVectorMacro(activeColor, ActiveColor, double, 3);
 
-  // Only write the handle axes properties if any of them are different from the default (all enabled).
-  if (!this->TranslationHandleComponentVisibility[0] ||
-      !this->TranslationHandleComponentVisibility[1] ||
-      !this->TranslationHandleComponentVisibility[2] ||
-      !this->TranslationHandleComponentVisibility[3])
-    {
-    vtkMRMLWriteXMLVectorMacro(translationHandleAxes, TranslationHandleComponentVisibility, bool, 4);
-    }
-  if (!this->RotationHandleComponentVisibility[0] ||
-      !this->RotationHandleComponentVisibility[1] ||
-      !this->RotationHandleComponentVisibility[2] ||
-      !this->RotationHandleComponentVisibility[3])
-    {
-    vtkMRMLWriteXMLVectorMacro(rotationHandleAxes, RotationHandleComponentVisibility, bool, 4);
-    }
-  if (!this->ScaleHandleComponentVisibility[0] ||
-      !this->ScaleHandleComponentVisibility[1] ||
-      !this->ScaleHandleComponentVisibility[2] ||
-      !this->ScaleHandleComponentVisibility[3])
-    {
-    vtkMRMLWriteXMLVectorMacro(scaleHandleAxes, ScaleHandleComponentVisibility, bool, 4);
-    }
+  vtkMRMLWriteXMLVectorMacro(translationHandleAxes, TranslationHandleComponentVisibility, bool, 4);
+  vtkMRMLWriteXMLVectorMacro(rotationHandleAxes, RotationHandleComponentVisibility, bool, 4);
+  vtkMRMLWriteXMLVectorMacro(scaleHandleAxes, ScaleHandleComponentVisibility, bool, 4);
 
   vtkMRMLWriteXMLEndMacro();
 }

@@ -96,6 +96,14 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   this->EditorRotationEnabled = true;
   this->EditorScalingEnabled = false;
 
+  for (int i = 0; i < 4; ++i)
+    {
+    this->RotationHandleComponentVisibility[i] = true;
+    this->ScaleHandleComponentVisibility[i] = true;
+    this->TranslationHandleComponentVisibility[i] = true;
+    }
+  this->RotationHandleComponentVisibility[3] = false;
+
   vtkNew<vtkIntArray> regionModifiedEvents;
   regionModifiedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   regionModifiedEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
@@ -113,6 +121,8 @@ vtkMRMLTransformDisplayNode::~vtkMRMLTransformDisplayNode() = default;
 void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
+  vtkMRMLWriteXMLBeginMacro(of);
 
   of << " VisualizationMode=\""<< ConvertVisualizationModeToString(this->VisualizationMode) << "\"";
 
@@ -141,14 +151,23 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " EditorTranslationEnabled=\""<< this->EditorTranslationEnabled << "\"";
   of << " EditorRotationEnabled=\"" << this->EditorRotationEnabled << "\"";
   of << " EditorScalingEnabled=\""<< this->EditorScalingEnabled << "\"";
+
+  vtkMRMLWriteXMLFloatMacro(InteractionSizeAbsolute, InteractionSizeAbsolute);
+  vtkMRMLWriteXMLFloatMacro(InteractionSizeMm, InteractionSizeMm);
+  vtkMRMLWriteXMLFloatMacro(InteractionScalePercent, InteractionScalePercent);
+  vtkMRMLWriteXMLVectorMacro(TranslationHandleComponentVisibility, TranslationHandleComponentVisibility, bool, 4);
+  vtkMRMLWriteXMLVectorMacro(RotationHandleComponentVisibility, RotationHandleComponentVisibility, bool, 4)
+  vtkMRMLWriteXMLVectorMacro(ScaleHandleComponentVisibility, ScaleHandleComponentVisibility, bool, 4);
+
+  vtkMRMLWriteXMLEndMacro();
 }
 
 
 #define READ_FROM_ATT(varName)    \
-  if (!strcmp(attName,#varName))  \
+  if (!strcmp(xmlReadAttName,#varName))  \
     {                             \
     std::stringstream ss;         \
-    ss << attValue;               \
+    ss << xmlReadAttValue;               \
     ss >> this->varName;          \
     continue;                     \
     }
@@ -157,56 +176,56 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledModify = this->StartModify();
-
+  MRMLNodeModifyBlocker(this);
   Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != nullptr)
+  vtkMRMLReadXMLBeginMacro(atts);
+
+  if (!strcmp(xmlReadAttName,"VisualizationMode"))
     {
-    attName = *(atts++);
-    attValue = *(atts++);
-
-    if (!strcmp(attName,"VisualizationMode"))
-      {
-      this->VisualizationMode = ConvertVisualizationModeFromString(attValue);
-      continue;
-      }
-    READ_FROM_ATT(GlyphSpacingMm);
-    READ_FROM_ATT(GlyphScalePercent);
-    READ_FROM_ATT(GlyphDisplayRangeMaxMm);
-    READ_FROM_ATT(GlyphDisplayRangeMinMm);
-    if (!strcmp(attName,"GlyphType"))
-      {
-      this->GlyphType = ConvertGlyphTypeFromString(attValue);
-      continue;
-      }
-    READ_FROM_ATT(GlyphTipLengthPercent);
-    READ_FROM_ATT(GlyphDiameterMm);
-    READ_FROM_ATT(GlyphShaftDiameterPercent);
-    READ_FROM_ATT(GlyphResolution);
-    READ_FROM_ATT(GridScalePercent);
-    READ_FROM_ATT(GridSpacingMm);
-    READ_FROM_ATT(GridLineDiameterMm);
-    READ_FROM_ATT(GridResolutionMm);
-    READ_FROM_ATT(GridShowNonWarped);
-    READ_FROM_ATT(ContourResolutionMm);
-    READ_FROM_ATT(ContourOpacity);
-    if (!strcmp(attName,"ContourLevelsMm"))
-      {
-      SetContourLevelsMmFromString(attValue);
-      continue;
-      }
-    READ_FROM_ATT(EditorVisibility);
-    READ_FROM_ATT(EditorSliceIntersectionVisibility);
-    READ_FROM_ATT(EditorTranslationEnabled);
-    READ_FROM_ATT(EditorRotationEnabled);
-    READ_FROM_ATT(EditorScalingEnabled);
+    this->VisualizationMode = ConvertVisualizationModeFromString(xmlReadAttValue);
+    continue;
     }
+  READ_FROM_ATT(GlyphSpacingMm);
+  READ_FROM_ATT(GlyphScalePercent);
+  READ_FROM_ATT(GlyphDisplayRangeMaxMm);
+  READ_FROM_ATT(GlyphDisplayRangeMinMm);
+  if (!strcmp(xmlReadAttName,"GlyphType"))
+    {
+    this->GlyphType = ConvertGlyphTypeFromString(xmlReadAttValue);
+    continue;
+    }
+  READ_FROM_ATT(GlyphTipLengthPercent);
+  READ_FROM_ATT(GlyphDiameterMm);
+  READ_FROM_ATT(GlyphShaftDiameterPercent);
+  READ_FROM_ATT(GlyphResolution);
+  READ_FROM_ATT(GridScalePercent);
+  READ_FROM_ATT(GridSpacingMm);
+  READ_FROM_ATT(GridLineDiameterMm);
+  READ_FROM_ATT(GridResolutionMm);
+  READ_FROM_ATT(GridShowNonWarped);
+  READ_FROM_ATT(ContourResolutionMm);
+  READ_FROM_ATT(ContourOpacity);
+  if (!strcmp(xmlReadAttName,"ContourLevelsMm"))
+    {
+    SetContourLevelsMmFromString(xmlReadAttValue);
+    continue;
+    }
+  READ_FROM_ATT(EditorVisibility);
+  READ_FROM_ATT(EditorSliceIntersectionVisibility);
+  READ_FROM_ATT(EditorTranslationEnabled);
+  READ_FROM_ATT(EditorRotationEnabled);
+  READ_FROM_ATT(EditorScalingEnabled);
 
-  this->Modified();
-  this->EndModify(disabledModify);
+  vtkMRMLReadXMLFloatMacro(InteractionSizeAbsolute, InteractionSizeAbsolute);
+  vtkMRMLReadXMLFloatMacro(InteractionSizeMm, InteractionSizeMm);
+  vtkMRMLReadXMLFloatMacro(InteractionScalePercent, InteractionScalePercent);
+
+  vtkMRMLReadXMLVectorMacro(RotationHandleComponentVisibility, RotationHandleComponentVisibility, bool, 4);
+  vtkMRMLReadXMLVectorMacro(ScaleHandleComponentVisibility, ScaleHandleComponentVisibility, bool, 4);
+  vtkMRMLReadXMLVectorMacro(TranslationHandleComponentVisibility, TranslationHandleComponentVisibility, bool, 4);
+
+  vtkMRMLReadXMLEndMacro();
 }
 
 
@@ -220,6 +239,8 @@ void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/
     {
     return;
     }
+
+  vtkMRMLCopyBeginMacro(anode);
 
   this->VisualizationMode = node->VisualizationMode;
 
@@ -248,12 +269,20 @@ void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/
   this->EditorTranslationEnabled = node->EditorTranslationEnabled;
   this->EditorRotationEnabled = node->EditorRotationEnabled;
   this->EditorScalingEnabled = node->EditorScalingEnabled;
+
+  vtkMRMLCopyVectorMacro(RotationHandleComponentVisibility, bool, 4);
+  vtkMRMLCopyVectorMacro(ScaleHandleComponentVisibility, bool, 4);
+  vtkMRMLCopyVectorMacro(TranslationHandleComponentVisibility, bool, 4);
+
+  vtkMRMLCopyEndMacro();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+
+  vtkMRMLPrintBeginMacro(os, indent);
 
   os << indent << "VisualizationMode = "<< ConvertVisualizationModeToString(this->VisualizationMode) << "\n";
   os << indent << "GlyphScalePercent = "<< this->GlyphScalePercent << "\n";
@@ -280,6 +309,12 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << " EditorTranslationEnabled=\""<< this->EditorTranslationEnabled << "\n";
   os << indent << " EditorRotationEnabled=\"" << this->EditorRotationEnabled << "\n";
   os << indent << " EditorScalingEnabled=\""<< this->EditorScalingEnabled << "\n";
+
+  vtkMRMLPrintVectorMacro(RotationHandleComponentVisibility, bool, 4);
+  vtkMRMLPrintVectorMacro(ScaleHandleComponentVisibility, bool, 4);
+  vtkMRMLPrintVectorMacro(TranslationHandleComponentVisibility, bool, 4);
+
+  vtkMRMLPrintEndMacro();
 }
 
 //---------------------------------------------------------------------------

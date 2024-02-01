@@ -91,12 +91,6 @@ protected:
   vtkSlicerROIRepresentation3D();
   ~vtkSlicerROIRepresentation3D() override;
 
-  // Initialize interaction handle pipeline
-  void SetupInteractionPipeline() override;
-
-  // Update visibility of interaction handles for representation
-  void UpdateInteractionPipeline() override;
-
   void SetROISource(vtkPolyDataAlgorithm* roiSource);
 
   vtkSmartPointer<vtkPolyDataAlgorithm> ROISource;
@@ -125,31 +119,6 @@ protected:
   vtkSmartPointer<vtkPolyDataMapper>             ROIOutlineOccludedMapper;
   vtkSmartPointer<vtkProperty>                   ROIOutlineOccludedProperty;
   vtkSmartPointer<vtkActor>                      ROIOutlineOccludedActor;
-
-  class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT MarkupsInteractionPipelineROI : public MarkupsInteractionPipeline
-  {
-  public:
-    MarkupsInteractionPipelineROI(vtkSlicerMarkupsWidgetRepresentation* representation);
-    ~MarkupsInteractionPipelineROI() override = default;
-
-    // Initialize scale handles
-    void CreateScaleHandles() override;
-
-    // Update scale handle positions
-    virtual void UpdateScaleHandles();
-
-    // Update scale handle visibilities
-    void UpdateHandleVisibility() override;
-
-    // Get handle opacity
-    double GetHandleOpacity(int type, int index) override;
-
-
-    void GetHandleColor(int type, int index, double color[4]) override;
-    HandleInfoList GetHandleInfoList() override;
-    void GetInteractionHandleAxisWorld(int type, int index, double axis[3]) override;
-  };
-  friend class vtkSlicerROIRepresentation2D;
 
 private:
   vtkSlicerROIRepresentation3D(const vtkSlicerROIRepresentation3D&) = delete;

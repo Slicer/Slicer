@@ -372,15 +372,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system (phyisical in case of virtual reality renderer)
   foundComponentIndex = -1;
 
-  // We can interact with the handle if the mouse is hovering over one of the handles (translation or rotation), in display coordinates.
-  // If display coordinates for the interaction event are not valid, world coordinates will be checked instead.
-  this->CanInteractWithHandles(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
-  if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-    {
-    // if mouse is near a handle then select that (ignore the line + control points)
-    return;
-    }
-
   if (markupsNode->GetNumberOfControlPoints() > 2 && this->CurveClosed)
     {
     // Check if center is selected
@@ -510,136 +501,6 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     }
   return (this->GetActiveNode() >= 0);
   */
-}
-
-//----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithHandles(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
-{
-  if (!this->InteractionPipeline || !this->InteractionPipeline->Actor->GetVisibility())
-    {
-    return;
-    }
-
-  double displayPosition3[3] = { 0.0, 0.0, 0.0 };
-  // Display position is valid in case of desktop interactions. Otherwise it is a 3D only context such as
-  // virtual reality, and then we expect a valid world position in the absence of display position.
-  if (interactionEventData->IsDisplayPositionValid())
-    {
-    const int* displayPosition = interactionEventData->GetDisplayPosition();
-    displayPosition3[0] = static_cast<double>(displayPosition[0]);
-    displayPosition3[1] = static_cast<double>(displayPosition[1]);
-    }
-  else if (!interactionEventData->IsWorldPositionValid())
-    {
-    return;
-    }
-
-  bool handlePicked = false;
-  vtkSlicerMarkupsWidgetRepresentation::HandleInfoList handleInfoList = this->InteractionPipeline->GetHandleInfoList();
-  for (vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::HandleInfo handleInfo : handleInfoList)
-    {
-    if (!handleInfo.IsVisible())
-      {
-      continue;
-      }
-
-    double* handleWorldPos = handleInfo.PositionWorld;
-
-    double maxPickingDistanceFromInteractionHandle = this->InteractionPipeline->InteractionHandleSize / 2.0 +
-      this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
-    if (interactionEventData->IsDisplayPositionValid())
-      {
-      maxPickingDistanceFromInteractionHandle = this->InteractionPipeline->InteractionHandleSize / 2.0
-        / this->GetViewScaleFactorAtPosition(handleWorldPos, interactionEventData)
-        + this->PickingTolerance * this->ScreenScaleFactor;
-      }
-    double maxPickingDistanceFromInteractionHandle2 = maxPickingDistanceFromInteractionHandle * maxPickingDistanceFromInteractionHandle;
-
-    double handleDisplayPos[3] = { 0 };
-
-    if (interactionEventData->IsDisplayPositionValid())
-      {
-      interactionEventData->WorldToDisplay(handleWorldPos, handleDisplayPos);
-      double dist2 = vtkMath::Distance2BetweenPoints(handleDisplayPos, displayPosition3);
-      if (dist2 < maxPickingDistanceFromInteractionHandle2 && dist2 < closestDistance2)
-        {
-        closestDistance2 = dist2;
-        foundComponentType = handleInfo.ComponentType;
-        foundComponentIndex = handleInfo.Index;
-        handlePicked = true;
-        }
-      }
-    else
-      {
-      const double* worldPosition = interactionEventData->GetWorldPosition();
-      double dist2 = vtkMath::Distance2BetweenPoints(handleWorldPos, worldPosition);
-      if (dist2 < maxPickingDistanceFromInteractionHandle2 && dist2 < closestDistance2)
-        {
-        closestDistance2 = dist2;
-        foundComponentType = handleInfo.ComponentType;
-        foundComponentIndex = handleInfo.Index;
-        }
-      }
-    }
-
-  if (!handlePicked)
-    {
-    // Detect translation handle shaft
-    for (vtkSlicerMarkupsWidgetRepresentation::MarkupsInteractionPipeline::HandleInfo handleInfo : handleInfoList)
-      {
-      if (!handleInfo.IsVisible() || handleInfo.ComponentType != vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle)
-        {
-        continue;
-        }
-      double* handleWorldPos = handleInfo.PositionWorld;
-      double handleDisplayPos[3] = { 0 };
-
-      double maxPickingDistanceFromInteractionHandle = this->InteractionPipeline->InteractionHandleSize / 2.0 +
-        this->PickingTolerance / interactionEventData->GetWorldToPhysicalScale();
-      if (interactionEventData->IsDisplayPositionValid())
-        {
-        maxPickingDistanceFromInteractionHandle = this->InteractionPipeline->InteractionHandleSize / 2.0
-          / this->GetViewScaleFactorAtPosition(handleWorldPos, interactionEventData)
-          + this->PickingTolerance * this->ScreenScaleFactor;
-        }
-
-      if (interactionEventData->IsDisplayPositionValid())
-        {
-        interactionEventData->WorldToDisplay(handleWorldPos, handleDisplayPos);
-
-        double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
-        this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
-        double originDisplayPos[4] = { 0.0 };
-        interactionEventData->WorldToDisplay(originWorldPos, originDisplayPos);
-        originDisplayPos[2] = displayPosition3[2]; // Handles are always projected
-        double t = 0;
-        double lineDistance = vtkLine::DistanceToLine(displayPosition3, originDisplayPos, handleDisplayPos, t);
-        double lineDistance2 = lineDistance * lineDistance;
-        if (lineDistance < maxPickingDistanceFromInteractionHandle && lineDistance2 < closestDistance2)
-          {
-          closestDistance2 = lineDistance2;
-          foundComponentType = handleInfo.ComponentType;
-          foundComponentIndex = handleInfo.Index;
-          }
-        }
-      else
-        {
-        const double* worldPosition = interactionEventData->GetWorldPosition();
-        double originWorldPos[4] = { 0.0, 0.0, 0.0, 1.0 };
-        this->InteractionPipeline->GetInteractionHandleOriginWorld(originWorldPos);
-        double t;
-        double lineDistance = vtkLine::DistanceToLine(worldPosition, originWorldPos, handleWorldPos, t);
-        if (lineDistance < maxPickingDistanceFromInteractionHandle && lineDistance < closestDistance2)
-          {
-          closestDistance2 = lineDistance;
-          foundComponentType = handleInfo.ComponentType;
-          foundComponentIndex = handleInfo.Index;
-          }
-        }
-      }
-    }
 }
 
 //----------------------------------------------------------------------
@@ -1265,8 +1126,6 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double p
   return true;
 }
 
-
-
 //----------------------------------------------------------------------
 double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(double positionWorld[3], vtkMRMLInteractionEventData* interactionEventData)
 {
@@ -1419,19 +1278,6 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::GetNthControlPointViewVisibility(in
       }
     }
   return false;
-}
-
-//----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::UpdateInteractionPipeline()
-{
-  vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(this->ViewNode);
-  if (!viewNode)
-    {
-    this->InteractionPipeline->Actor->SetVisibility(false);
-    return;
-    }
-  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
-  Superclass::UpdateInteractionPipeline();
 }
 
 //-----------------------------------------------------------------------------

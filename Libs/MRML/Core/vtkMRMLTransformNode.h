@@ -370,6 +370,10 @@ public:
   /// Reference role name from the transform node to the moving volume or fiducial node that participated in registration
   static const char* GetFixedNodeReferenceRole() { return "spatialRegistrationFixed"; };
 
+  /// The transformation center (rotation/scaling) that is rotated/scaled around
+  vtkSetVector3Macro(CenterOfTransformation, double);
+  vtkGetVector3Macro(CenterOfTransformation, double);
+
 protected:
   vtkMRMLTransformNode();
   ~vtkMRMLTransformNode() override;
@@ -405,6 +409,8 @@ protected:
   /// GetMatrixTransformToParent and GetMatrixFromParent methods
   vtkMatrix4x4* CachedMatrixTransformToParent;
   vtkMatrix4x4* CachedMatrixTransformFromParent;
+
+  double CenterOfTransformation[3] { 0.0, 0.0, 0.0 };
 };
 
 #endif
