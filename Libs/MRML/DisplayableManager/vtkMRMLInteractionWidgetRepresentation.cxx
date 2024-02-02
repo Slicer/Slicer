@@ -1782,7 +1782,7 @@ vtkMRMLInteractionWidgetRepresentation::HandleInfo vtkMRMLInteractionWidgetRepre
 }
 
 //----------------------------------------------------------------------
-bool vtkMRMLInteractionWidgetRepresentation::GetApplyScaleToPosition(int type, int index)
+bool vtkMRMLInteractionWidgetRepresentation::GetApplyScaleToPosition(int vtkNotUsed(type), int vtkNotUsed(index))
 {
   return true;
 }
