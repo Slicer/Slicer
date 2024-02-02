@@ -757,29 +757,29 @@ bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::GetActors(vtkPropCollection* pc)
+void vtkSlicerMarkupsWidgetRepresentation::GetActors(vtkPropCollection* vtkNotUsed(pc))
 {
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::ReleaseGraphicsResources(vtkWindow* window)
+void vtkSlicerMarkupsWidgetRepresentation::ReleaseGraphicsResources(vtkWindow* vtkNotUsed(window))
 {
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerMarkupsWidgetRepresentation::RenderOverlay(vtkViewport* viewport)
-{
-  return 0;
-}
-
-//----------------------------------------------------------------------
-int vtkSlicerMarkupsWidgetRepresentation::RenderOpaqueGeometry(vtkViewport* viewport)
+int vtkSlicerMarkupsWidgetRepresentation::RenderOverlay(vtkViewport* vtkNotUsed(viewport))
 {
   return 0;
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerMarkupsWidgetRepresentation::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
+int vtkSlicerMarkupsWidgetRepresentation::RenderOpaqueGeometry(vtkViewport* vtkNotUsed(viewport))
+{
+  return 0;
+}
+
+//----------------------------------------------------------------------
+int vtkSlicerMarkupsWidgetRepresentation::RenderTranslucentPolygonalGeometry(vtkViewport* vtkNotUsed(viewport))
 {
   return 0;
 }
