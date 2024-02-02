@@ -303,7 +303,9 @@ void vtkMRMLInteractionWidgetRepresentation::CanInteractWithRingHandle(vtkMRMLIn
   plane->SetNormal(handleNormalWorld);
 
   const int* displayPosition = interactionEventData->GetDisplayPosition();
-  double displayPosition4[4] = { displayPosition[0], displayPosition[1], 0.0, 1.0 };
+  double displayPosition4[4] = { 0.0, 0.0, 0.0, 1.0 };
+  displayPosition4[0] = static_cast<double>(displayPosition[0]);
+  displayPosition4[1] = static_cast<double>(displayPosition[1]);
   double worldPosition4[4] = { 0.0, 0.0, 0.0, 0.0 };
 
   vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
