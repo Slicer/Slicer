@@ -300,7 +300,7 @@ class SlicerHTTPServer(HTTPServer):
         self.docroot = docroot
         self.timeout = 1.0
         if certfile and keyfile:
-            # https://stackoverflow.com/questions/19705785/python-3-simple-https-server
+            # https://docs.python.org/3/library/ssl.html#ssl.SSLContext.wrap_socket
             import ssl
             context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
             context.load_cert_chain(certfile, keyfile)
