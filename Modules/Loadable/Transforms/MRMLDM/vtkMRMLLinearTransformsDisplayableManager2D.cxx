@@ -233,7 +233,7 @@ void vtkMRMLLinearTransformsDisplayableManager2D::vtkInternal::RemoveTransformNo
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLLinearTransformsDisplayableManager2D::vtkInternal::UpdateDisplayableTransforms(vtkMRMLTransformNode* mNode)
+void vtkMRMLLinearTransformsDisplayableManager2D::vtkInternal::UpdateDisplayableTransforms(vtkMRMLTransformNode* vtkNotUsed(mNode))
 {
 }
 
