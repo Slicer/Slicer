@@ -37,7 +37,8 @@
 // MRML includes
 #include <vtkMRMLMarkupsDisplayNode.h>
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsInteractionWidgetRepresentation : public vtkMRMLInteractionWidgetRepresentation
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsInteractionWidgetRepresentation
+  : public vtkMRMLInteractionWidgetRepresentation
 {
 public:
   /**

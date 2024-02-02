@@ -43,7 +43,8 @@ class vtkPolyData;
 class vtkMRMLInteractionWidgetRepresentation;
 class vtkTransform;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidget : public vtkMRMLAbstractWidget
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidget
+  : public vtkMRMLAbstractWidget
 {
 public:
   ///@{

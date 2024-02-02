@@ -44,7 +44,8 @@ class vtkTransform;
 class vtkMRMLTransformDisplayNode;
 class vtkMRMLTransformNode;
 
-class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformHandleWidget : public vtkMRMLInteractionWidget
+class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformHandleWidget
+  : public vtkMRMLInteractionWidget
 {
 public:
   /// Instantiate this class.

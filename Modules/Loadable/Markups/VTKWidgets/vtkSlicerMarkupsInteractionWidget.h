@@ -43,7 +43,8 @@ class vtkTransform;
 class vtkMRMLMarkupsNode;
 class vtkMRMLMarkupsDisplayNode;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsInteractionWidget : public vtkMRMLInteractionWidget
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsInteractionWidget
+  : public vtkMRMLInteractionWidget
 {
 public:
   /// Instantiate this class.

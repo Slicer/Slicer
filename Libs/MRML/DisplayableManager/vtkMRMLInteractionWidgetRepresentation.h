@@ -75,7 +75,8 @@ class vtkMRMLInteractionEventData;
 class vtkMRMLDisplayNode;
 class vtkMRMLDisplayableNode;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidgetRepresentation
+  : public vtkMRMLAbstractWidgetRepresentation
 {
 public:
 
