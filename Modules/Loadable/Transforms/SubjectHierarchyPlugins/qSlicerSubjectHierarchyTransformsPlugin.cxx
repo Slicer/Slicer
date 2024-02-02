@@ -519,25 +519,25 @@ void qSlicerSubjectHierarchyTransformsPlugin::invertCurrentItem()
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-  {
+    {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-  }
+    }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-  {
+    {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
-  }
+    }
 
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(
     shNode->GetItemDataNode(currentItemID));
   if (transformNode)
-  {
+    {
     MRMLNodeModifyBlocker blocker(transformNode);
     transformNode->Inverse();
     transformNode->InverseName();
-  }
+    }
 }
 
 //---------------------------------------------------------------------------

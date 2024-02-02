@@ -659,7 +659,6 @@ void qMRMLTransformDisplayNodeWidget::setEditorVisibility2d(bool enabled)
   d->TransformDisplayNode->SetEditorSliceIntersectionVisibility(enabled);
 }
 
-
 //-----------------------------------------------------------------------------
 void qMRMLTransformDisplayNodeWidget::setEditorTranslationEnabled(bool enabled)
 {
@@ -801,9 +800,9 @@ void qMRMLTransformDisplayNodeWidget::updateTranslationComponentVisibility()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-   {
+    {
     return;
-   }
+    }
 
   bool componentVisibility[4] = {
     d->translateXCheckBox->isChecked(),
@@ -819,9 +818,9 @@ void qMRMLTransformDisplayNodeWidget::updateRotationComponentVisibility()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-  {
+    {
     return;
-  }
+    }
 
   bool componentVisibility[4] = {
     d->rotateXCheckBox->isChecked(),
@@ -837,9 +836,9 @@ void qMRMLTransformDisplayNodeWidget::updateScalingComponentVisibility()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-  {
+    {
     return;
-  }
+    }
 
   bool componentVisibility[4] = {
     d->scaleXCheckBox->isChecked(),
