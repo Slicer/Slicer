@@ -118,7 +118,7 @@ private:
   vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
   if (ret) \
     { \
-  return static_cast<type*>(ret); \
+    return static_cast<type*>(ret); \
     } \
 return new type;
 #endif

@@ -140,7 +140,6 @@ protected:
   double LastEventPosition[2];
   double StartEventOffsetPosition[2];
 
-
   bool ConvertDisplayPositionToWorld(const int displayPos[2],
     double worldPos[3], double worldOrientationMatrix[9], double* refWorldPos = nullptr);
 
@@ -148,9 +147,9 @@ private:
   vtkMRMLInteractionWidget(const vtkMRMLInteractionWidget&) = delete;
   void operator=(const vtkMRMLInteractionWidget&) = delete;
 
-  int TranslationHandleType{ InteractionTranslationHandle };
-  int RotationHandleType { InteractionRotationHandle };
-  int ScaleHandleType { InteractionScaleHandle };
+  int TranslationHandleType{InteractionTranslationHandle};
+  int RotationHandleType {InteractionRotationHandle};
+  int ScaleHandleType {InteractionScaleHandle};
 };
 
 #endif

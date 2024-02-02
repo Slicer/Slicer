@@ -107,9 +107,9 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetMenu(vtkMRMLInteractionEven
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetDisplayNode();
   if (!displayNode)
-  {
+    {
     return false;
-  }
+    }
 
   return this->ProcessWidgetMenuDisplayNodeTypeAndIndex(eventData, displayNode, displayNode->GetActiveComponentType(), displayNode->GetActiveComponentIndex());
 }
@@ -118,9 +118,9 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetMenu(vtkMRMLInteractionEven
 void vtkSlicerMarkupsInteractionWidget::ApplyTransform(vtkTransform* transform)
 {
   if (!this->GetMarkupsNode())
-  {
+    {
     return;
-  }
+    }
 
   MRMLNodeModifyBlocker blocker(this->GetMarkupsNode());
 
@@ -155,9 +155,9 @@ vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsInteractionWidget::GetDisplayNode()
 {
   vtkSlicerMarkupsInteractionWidgetRepresentation* widgetRep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
   if (!widgetRep)
-  {
+    {
     return nullptr;
-  }
+    }
   return widgetRep->GetDisplayNode();
 }
 
@@ -166,9 +166,9 @@ vtkMRMLMarkupsNode* vtkSlicerMarkupsInteractionWidget::GetMarkupsNode()
 {
   vtkSlicerMarkupsInteractionWidgetRepresentation* widgetRep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
   if (!widgetRep)
-  {
+    {
     return nullptr;
-  }
+    }
   return widgetRep->GetMarkupsNode();
 }
 

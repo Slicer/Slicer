@@ -583,7 +583,7 @@ bool vtkMRMLMarkupsDisplayableManager::IsManageable(const char* nodeClassName)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLAbstractWidget* vtkMRMLMarkupsDisplayableManager::FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2)
+vtkMRMLAbstractWidget* vtkMRMLMarkupsDisplayableManager::FindClosestWidget(vtkMRMLInteractionEventData* callData, double& closestDistance2)
 {
   vtkMRMLAbstractWidget* closestWidget = nullptr;
   closestDistance2 = VTK_DOUBLE_MAX;

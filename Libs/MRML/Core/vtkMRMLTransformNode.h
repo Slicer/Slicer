@@ -410,7 +410,7 @@ protected:
   vtkMatrix4x4* CachedMatrixTransformToParent;
   vtkMatrix4x4* CachedMatrixTransformFromParent;
 
-  double CenterOfTransformation[3] { 0.0, 0.0, 0.0 };
+  double CenterOfTransformation[3] {0.0, 0.0, 0.0};
 };
 
 #endif

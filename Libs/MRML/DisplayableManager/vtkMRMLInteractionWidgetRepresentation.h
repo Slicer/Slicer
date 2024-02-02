@@ -231,7 +231,7 @@ protected:
     double PositionLocal[4];
     double PositionWorld[4];
     double Color[4];
-    bool ApplyScaleToPosition{ true };
+    bool ApplyScaleToPosition{true};
     bool IsVisible()
       {
       double epsilon = 0.001;
@@ -321,11 +321,11 @@ protected:
   /// For slice views, renderer world coordinate system is the display coordinate system, so it is measured in pixels.
   /// For 3D views, renderer world coordinate system is the Slicer world coordinate system, so it is measured in the
   /// scene length unit (typically millimeters).
-  double InteractionSize{ 1.0 };
+  double InteractionSize{1.0};
 
-  double WidgetScale{ 1.0 };
+  double WidgetScale{1.0};
 
-  bool Interacting{ false };
+  bool Interacting{false};
 
   vtkSmartPointer<vtkPointPlacer> PointPlacer;
 

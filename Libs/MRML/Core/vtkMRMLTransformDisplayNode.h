@@ -275,11 +275,11 @@ protected:
   bool EditorRotationEnabled;
   bool EditorScalingEnabled;
 
-  int ActiveInteractionType{ -1 };
-  int ActiveInteractionIndex{ -1 };
-  bool InteractionSizeAbsolute{ false };
-  double InteractionSizeMm{ 5.0 };
-  double InteractionScalePercent{ 15.0 };
+  int ActiveInteractionType{-1};
+  int ActiveInteractionIndex{-1};
+  bool InteractionSizeAbsolute{false};
+  double InteractionSizeMm{5.0};
+  double InteractionScalePercent{15.0};
 
   bool RotationHandleComponentVisibility[4];
   bool ScaleHandleComponentVisibility[4];

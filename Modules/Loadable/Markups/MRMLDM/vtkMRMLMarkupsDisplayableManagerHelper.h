@@ -122,8 +122,6 @@ private:
 
   std::vector<unsigned long> ObservedMarkupNodeEvents;
 
-
-
   vtkMRMLMarkupsDisplayableManager* DisplayableManager;
 };
 

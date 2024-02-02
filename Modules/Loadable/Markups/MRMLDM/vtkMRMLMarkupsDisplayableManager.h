@@ -90,7 +90,7 @@ protected:
   vtkMRMLMarkupsDisplayableManager();
   ~vtkMRMLMarkupsDisplayableManager() override;
 
-  vtkMRMLAbstractWidget* FindClosestWidget(vtkMRMLInteractionEventData *callData, double &closestDistance2);
+  vtkMRMLAbstractWidget* FindClosestWidget(vtkMRMLInteractionEventData* callData, double& closestDistance2);
 
   void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
