@@ -1,0 +1,211 @@
+<!doctype html>
+<!--
+  Started from: https://raw.githubusercontent.com/immersive-web/webxr-samples/main/ar-barebones.html
+-->
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no'>
+    <meta name='mobile-web-app-capable' content='yes'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+    <link rel='icon' type='image/png' sizes='32x32' href='favicon-32x32.png'>
+    <link rel='icon' type='image/png' sizes='96x96' href='favicon-96x96.png'>
+    <link rel='stylesheet' href='./stylesheets/application.css'>
+
+    <title>Barebones AR</title>
+  </head>
+  <body>
+    <div id="overlay">
+      <header>
+        <details open>
+          <summary>Barebones WebXR DOM Overlay</summary>
+          <p>
+            This sample demonstrates extremely simple use of an "immersive-ar"
+            session with no library dependencies, with an optional DOM overlay.
+            It doesn't render anything exciting, just draws a rectangle with a
+            slowly changing color to prove it's working.
+            <a class="back" href="./index.html">Back</a>
+          </p>
+          <div id="session-info"></div>
+          <div id="pose"></div>
+          <div id="warning-zone"></div>
+          <button id="xr-button" class="barebones-button" disabled>XR not found</button>
+        </details>
+      </header>
+    </div>
+    <main style='text-align: center;'>
+      <p>Click 'Enter AR' to see content</p>
+    </main>
+    <script type="module">
+      // XR globals.
+      let xrButton = document.getElementById('xr-button');
+      let xrSession = null;
+      let xrRefSpace = null;
+      let currentPose = null;
+      let currentURL = "Nothing sent";
+
+      // WebGL scene globals.
+      let gl = null;
+
+      function checkSupportedState() {
+        navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+          if (supported) {
+            xrButton.innerHTML = 'Enter AR';
+          } else {
+            xrButton.innerHTML = 'AR not found';
+          }
+
+          xrButton.disabled = !supported;
+        });
+      }
+
+      function initXR() {
+        if (!window.isSecureContext) {
+          let message = "WebXR unavailable due to insecure context";
+          document.getElementById("warning-zone").innerText = message;
+        }
+
+        if (navigator.xr) {
+          xrButton.addEventListener('click', onButtonClicked);
+          navigator.xr.addEventListener('devicechange', checkSupportedState);
+          checkSupportedState();
+        }
+      }
+
+      function onButtonClicked() {
+        if (!xrSession) {
+            // Ask for an optional DOM Overlay, see https://immersive-web.github.io/dom-overlays/
+            navigator.xr.requestSession('immersive-ar', {
+                optionalFeatures: ['dom-overlay'],
+                domOverlay: {root: document.getElementById('overlay')}
+            }).then(onSessionStarted, onRequestSessionError);
+        } else {
+          xrSession.end();
+        }
+      }
+
+      function onSessionStarted(session) {
+        xrSession = session;
+        xrButton.innerHTML = 'Exit AR';
+
+        // Show which type of DOM Overlay got enabled (if any)
+        if (session.domOverlayState) {
+          document.getElementById('session-info').innerHTML = 'DOM Overlay type: ' + session.domOverlayState.type;
+        }
+
+        session.addEventListener('end', onSessionEnded);
+        let canvas = document.createElement('canvas');
+        gl = canvas.getContext('webgl', {
+          xrCompatible: true
+        });
+        session.updateRenderState({ baseLayer: new XRWebGLLayer(session, gl) });
+        session.requestReferenceSpace('local').then((refSpace) => {
+          xrRefSpace = refSpace;
+          session.requestAnimationFrame(onXRFrame);
+        });
+      }
+
+      function onRequestSessionError(ex) {
+        alert("Failed to start immersive AR session.");
+        console.error(ex.message);
+      }
+
+      function onEndSession(session) {
+        session.end();
+      }
+
+      function onSessionEnded(event) {
+        xrSession = null;
+        xrButton.innerHTML = 'Enter AR';
+        document.getElementById('session-info').innerHTML = '';
+        gl = null;
+      }
+
+      function onXRFrame(t, frame) {
+        let session = frame.session;
+        session.requestAnimationFrame(onXRFrame);
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
+
+        // Update the clear color so that we can observe the color in the
+        // headset changing over time. Use a scissor rectangle to keep the AR
+        // scene visible.
+        const width = session.renderState.baseLayer.framebufferWidth;
+        const height = session.renderState.baseLayer.framebufferHeight;
+        gl.enable(gl.SCISSOR_TEST);
+        gl.scissor(width / 4, height / 4, width / 2, height / 2);
+        let time = Date.now();
+        gl.clearColor(Math.cos(time / 2000), Math.cos(time / 4000), Math.cos(time / 6000), 0.5);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        let pose = frame.getViewerPose(xrRefSpace);
+        if (pose) {
+          const p = pose.transform.position;
+          const m = pose.transform.matrix;
+          document.getElementById('pose').innerText = "" +
+            "Position: " + 1000 * p.x.toFixed(3) + ", " + 1000* p.y.toFixed(3) + ", " + 1000 * p.z.toFixed(3) + "\n" +
+            "matrix:\n" +
+               m[0].toFixed(3) + ", " + m[4].toFixed(3) + ", " + m[8].toFixed(3) + ", " + m[12].toFixed(3) + "\n" +
+               m[1].toFixed(3) + ", " + m[5].toFixed(3) + ", " + m[9].toFixed(3) + ", " + m[13].toFixed(3) + "\n" +
+               m[2].toFixed(3) + ", " + m[6].toFixed(3) + ", " + m[10].toFixed(3) + ", " + m[14].toFixed(3) + "\n" +
+               m[3].toFixed(3) + ", " + m[7].toFixed(3) + ", " + m[11].toFixed(3) + ", " + m[15].toFixed(3) + "\n" + currentURL;
+
+          if (currentPose == null) {
+            currentPose = pose;
+            sendTracker();
+          }
+          currentPose = pose;
+
+        } else {
+          document.getElementById('pose').innerText = "Position: (null pose)";
+        }
+      }
+
+    function sendTracker() {
+      let putRequest = new XMLHttpRequest();
+      putRequest.onload = function (event) {
+        if (xrSession != null) {
+          sendTracker(); // trigger another round
+        }
+      };
+      putRequest.onerror = function () {
+        console.log(`Got a ${putRequest.status} with text ${putRequest.statusText}`);
+      };
+      let pose = currentPose;
+      if (pose) {
+          let putURL = "./slicer/tracking";
+          const p = pose.transform.position;
+          const o = pose.transform.orientation;
+          const m = pose.transform.matrix;
+
+          /*
+	  putURL += "?m=";
+          for (let row = 0; row < 4; row++) {
+            for (let column = 0; column < 4; column++) {
+              let value = m[row*4 + column];
+              if (row == column) {
+                value = 1;
+              } else if (column < 3) {
+                value = 0;
+              } else {
+                value = p[row];
+              }
+              putURL += `${value},`;
+            }
+          }
+	  putURL = putURL.slice(0,-1); // strip last comma
+	  */
+
+	  putURL += `?p=${1000*p.x},${1000*p.y},${1000*p.z}`;
+	  putURL += `&q=${o.w},${o.x},${o.y},${o.z}`;
+
+	  putRequest.open("PUT", putURL, true);
+	  putRequest.send();
+	  currentURL = putURL;
+      }
+    }
+
+      initXR();
+    </script>
+  </body>
+</html>

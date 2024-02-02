@@ -98,7 +98,6 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         # TODO: warning dialog on first connect
         # TODO: config option for port
         # TODO: config option for optional plugins
-        # TODO: config option for certfile (https)
 
         self.advancedCollapsibleButton = ctk.ctkCollapsibleButton()
         self.advancedCollapsibleButton.text = _("Advanced")
@@ -283,6 +282,7 @@ class SlicerHTTPServer(HTTPServer):
                  docroot:str=".",
                  logMessage:Callable=None,
                  certfile:str=None,
+                 keyfile:str=None,
                  enableCORS:bool=False):
         """
         :param server_address: passed to parent class (default ("", 8070))
@@ -291,19 +291,20 @@ class SlicerHTTPServer(HTTPServer):
         :param docroot: used to serve static pages content
         :param logMessage: a callable for messages
         :param certfile: path to a file with an ssl certificate (.pem file)
+        (something like: openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+        :param keyfile: path to a file with an ssl certificate key (.key file)
         """
         HTTPServer.__init__(self, server_address, SlicerHTTPServer.DummyRequestHandler)
 
         self.requestHandlers = requestHandlers or []
         self.docroot = docroot
         self.timeout = 1.0
-        if certfile:
+        if certfile and keyfile:
             # https://stackoverflow.com/questions/19705785/python-3-simple-https-server
             import ssl
-            self.socket = ssl.wrap_socket(self.socket,
-                                          server_side=True,
-                                          certfile=certfile,
-                                          ssl_version=ssl.PROTOCOL_TLS)
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(certfile, keyfile)
+            self.socket = context.wrap_socket(self.socket, server_side=True)
         self.socket.settimeout(5.0)
         if logMessage:
             self.logMessage = logMessage
@@ -631,12 +632,15 @@ class WebServerLogic:
         self.logMessage("Starting server on port %d" % self.port)
         self.logMessage("docroot: %s" % self.docroot)
         # example: certfile = '/Users/pieper/slicer/latest/SlicerWeb/localhost.pem'
+        # example: keyfile = '/Users/pieper/slicer/latest/SlicerWeb/localhost.key'
         certfile = None
+        keyfile = None
         self.server = SlicerHTTPServer(requestHandlers=self.requestHandlers,
                                        docroot=self.docroot,
                                        server_address=("", self.port),
                                        logMessage=self.logMessage,
                                        certfile=certfile,
+                                       keyfile=keyfile,
                                        enableCORS=self.enableCORS)
         self.server.start()
         self.serverStarted = True
