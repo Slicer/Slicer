@@ -1816,6 +1816,12 @@ bool vtkMRMLMarkupsNode::CanApplyNonLinearTransforms()const
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::ApplyTransform(vtkAbstractTransform* transform)
 {
+  this->ApplyTransform(transform, true);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::ApplyTransform(vtkAbstractTransform* transform, bool applyToLockedControlPoints)
+{
   MRMLNodeModifyBlocker blocker(this);
 
   vtkLinearTransform* linearTransform = vtkLinearTransform::SafeDownCast(transform);
@@ -1829,12 +1835,41 @@ void vtkMRMLMarkupsNode::ApplyTransform(vtkAbstractTransform* transform)
     handleToWorldTransform->Concatenate(linearTransform);
     this->InteractionHandleToWorldMatrix->DeepCopy(handleToWorldTransform->GetMatrix());
     }
+  else
+    {
+    // Apply transform to each axis of the interaction handle
+    double x[4] = { 1.0, 0.0, 0.0, 0.0 };
+    this->InteractionHandleToWorldMatrix->MultiplyPoint(x, x);
+    double y[4] = { 0.0, 1.0, 0.0, 0.0 };
+    this->InteractionHandleToWorldMatrix->MultiplyPoint(y, y);
+    double z[4] = { 0.0, 0.0, 1.0, 0.0 };
+    this->InteractionHandleToWorldMatrix->MultiplyPoint(z, z);
+    double origin[4] = { 0.0, 0.0, 0.0, 1.0 };
+    this->InteractionHandleToWorldMatrix->MultiplyPoint(origin, origin);
+
+    transform->TransformVectorAtPoint(origin, x, x);
+    transform->TransformVectorAtPoint(origin, y, y);
+    transform->TransformVectorAtPoint(origin, z, z);
+    transform->TransformPoint(origin);
+    for (int i = 0; i < 3; ++i)
+      {
+      this->InteractionHandleToWorldMatrix->SetElement(i, 0, x[i]);
+      this->InteractionHandleToWorldMatrix->SetElement(i, 1, y[i]);
+      this->InteractionHandleToWorldMatrix->SetElement(i, 2, z[i]);
+      this->InteractionHandleToWorldMatrix->SetElement(i, 3, origin[i]);
+      }
+    }
 
   int numControlPoints = this->GetNumberOfControlPoints();
   double xyzIn[3];
   double xyzOut[3];
   for (int controlPointIndex = 0; controlPointIndex < numControlPoints; controlPointIndex++)
     {
+    if (!applyToLockedControlPoints && this->GetNthControlPointLocked(controlPointIndex))
+      {
+      continue;
+      }
+
     this->GetNthControlPointPosition(controlPointIndex, xyzIn);
     transform->TransformPoint(xyzIn,xyzOut);
     int status = this->GetNthControlPointPositionStatus(controlPointIndex);

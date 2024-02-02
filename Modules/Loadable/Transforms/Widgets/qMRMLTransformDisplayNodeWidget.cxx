@@ -37,6 +37,9 @@
 // CTK includes
 #include "ctkVTKScalarsToColorsView.h"
 
+// Qt includes
+#include <QDebug>
+
 //-----------------------------------------------------------------------------
 class qMRMLTransformDisplayNodeWidgetPrivate
   : public Ui_qMRMLTransformDisplayNodeWidget
@@ -103,15 +106,29 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   q->qvtkConnect(this->ColorTransferFunction, vtkCommand::ModifiedEvent,
                     q, SLOT(onColorModifiedEvent()), 0., Qt::QueuedConnection);
 
-
   this->AdvancedParameters->setCollapsed(true);
 
   // Interaction panel
   QObject::connect(this->InteractionVisibleCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorVisibility(bool)));
+  QObject::connect(this->InteractionVisible2dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorVisibility2d(bool)));
   QObject::connect(this->InteractiveTranslationCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorTranslationEnabled(bool)));
   QObject::connect(this->InteractiveRotationCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorRotationEnabled(bool)));
   QObject::connect(this->InteractiveScalingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorScalingEnabled(bool)));
-  QObject::connect(this->UpdateBoundsPushButton, SIGNAL(clicked()), q, SLOT(updateEditorBounds()));
+
+  QObject::connect(this->translateXCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
+  QObject::connect(this->translateYCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
+  QObject::connect(this->translateZCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
+  QObject::connect(this->translateViewPlaneCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
+
+  QObject::connect(this->rotateXCheckBox, SIGNAL(clicked()), q, SLOT(updateRotationComponentVisibility()));
+  QObject::connect(this->rotateYCheckBox, SIGNAL(clicked()), q, SLOT(updateRotationComponentVisibility()));
+  QObject::connect(this->rotateZCheckBox, SIGNAL(clicked()), q, SLOT(updateRotationComponentVisibility()));
+  QObject::connect(this->rotateViewPlaneCheckBox, SIGNAL(clicked()), q, SLOT(updateRotationComponentVisibility()));
+
+  QObject::connect(this->scaleXCheckBox, SIGNAL(clicked()), q, SLOT(updateScalingComponentVisibility()));
+  QObject::connect(this->scaleYCheckBox, SIGNAL(clicked()), q, SLOT(updateScalingComponentVisibility()));
+  QObject::connect(this->scaleZCheckBox, SIGNAL(clicked()), q, SLOT(updateScalingComponentVisibility()));
+  QObject::connect(this->scaleViewPlaneCheckBox, SIGNAL(clicked()), q, SLOT(updateScalingComponentVisibility()));
 
   this->InteractiveAdvancedOptionsFrame->hide();
 
@@ -220,9 +237,57 @@ void qMRMLTransformDisplayNodeWidget
   // Interaction
 
   d->InteractionVisibleCheckBox->setChecked(d->TransformDisplayNode->GetEditorVisibility());
+  d->InteractionVisible2dCheckBox->setChecked(d->TransformDisplayNode->GetEditorSliceIntersectionVisibility());
   d->InteractiveTranslationCheckBox->setChecked(d->TransformDisplayNode->GetEditorTranslationEnabled());
   d->InteractiveRotationCheckBox->setChecked(d->TransformDisplayNode->GetEditorRotationEnabled());
   d->InteractiveScalingCheckBox->setChecked(d->TransformDisplayNode->GetEditorScalingEnabled());
+
+  bool wasBlocking = false;
+
+  bool translationComponentVisibility[4] = { false, false, false, false };
+  d->TransformDisplayNode->GetTranslationHandleComponentVisibility(translationComponentVisibility);
+  wasBlocking = d->translateXCheckBox->blockSignals(true);
+  d->translateXCheckBox->setChecked(translationComponentVisibility[0]);
+  d->translateXCheckBox->blockSignals(wasBlocking);
+  wasBlocking = d->translateYCheckBox->blockSignals(true);
+  d->translateYCheckBox->setChecked(translationComponentVisibility[1]);
+  d->translateYCheckBox->blockSignals(wasBlocking);
+  wasBlocking = d->translateZCheckBox->blockSignals(true);
+  d->translateZCheckBox->setChecked(translationComponentVisibility[2]);
+  d->translateZCheckBox->blockSignals(wasBlocking);
+  wasBlocking = d->translateViewPlaneCheckBox->blockSignals(true);
+  d->translateViewPlaneCheckBox->setChecked(translationComponentVisibility[3]);
+  d->translateViewPlaneCheckBox->blockSignals(wasBlocking);
+
+  bool rotationComponentVisibility[4] = { false, false, false, false };
+  d->TransformDisplayNode->GetRotationHandleComponentVisibility(rotationComponentVisibility);
+  wasBlocking = d->rotateXCheckBox->blockSignals(true);
+  d->rotateXCheckBox->setChecked(rotationComponentVisibility[0]);
+  d->rotateXCheckBox->blockSignals(wasBlocking);
+  wasBlocking = d->rotateYCheckBox->blockSignals(true);
+  d->rotateYCheckBox->setChecked(rotationComponentVisibility[1]);
+  d->rotateYCheckBox->blockSignals(wasBlocking);
+  wasBlocking = d->rotateZCheckBox->blockSignals(true);
+  d->rotateZCheckBox->setChecked(rotationComponentVisibility[2]);
+  d->rotateZCheckBox->blockSignals(wasBlocking);
+  wasBlocking = d->rotateViewPlaneCheckBox->blockSignals(true);
+  d->rotateViewPlaneCheckBox->setChecked(rotationComponentVisibility[3]);
+  d->rotateViewPlaneCheckBox->blockSignals(wasBlocking);
+
+  bool scalingComponentVisibility[4] = { false, false, false, false };
+  d->TransformDisplayNode->GetScaleHandleComponentVisibility(scalingComponentVisibility);
+  wasBlocking = d->scaleXCheckBox->blockSignals(true);
+  d->scaleXCheckBox->setChecked(scalingComponentVisibility[0]);
+  d->scaleXCheckBox->blockSignals(wasBlocking);
+  wasBlocking = d->scaleYCheckBox->blockSignals(true);
+  d->scaleYCheckBox->setChecked(scalingComponentVisibility[1]);
+  d->scaleYCheckBox->blockSignals(wasBlocking);
+  wasBlocking = d->scaleZCheckBox->blockSignals(true);
+  d->scaleZCheckBox->setChecked(scalingComponentVisibility[2]);
+  d->scaleZCheckBox->blockSignals(wasBlocking);
+  wasBlocking = d->scaleViewPlaneCheckBox->blockSignals(true);
+  d->scaleViewPlaneCheckBox->setChecked(scalingComponentVisibility[3]);
+  d->scaleViewPlaneCheckBox->blockSignals(wasBlocking);
 
   // Display
 
@@ -584,6 +649,17 @@ void qMRMLTransformDisplayNodeWidget::setEditorVisibility(bool enabled)
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::setEditorVisibility2d(bool enabled)
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+  d->TransformDisplayNode->SetEditorSliceIntersectionVisibility(enabled);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLTransformDisplayNodeWidget::setEditorTranslationEnabled(bool enabled)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
@@ -715,5 +791,60 @@ void qMRMLTransformDisplayNodeWidget::updateEditorBounds()
     {
     return;
     }
-  d->TransformDisplayNode->UpdateEditorBounds();
+
+  qWarning() << "qMRMLTransformDisplayNodeWidget::updateEditorBounds() is not implemented yet";
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::updateTranslationComponentVisibility()
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+
+  bool componentVisibility[4] = {
+    d->translateXCheckBox->isChecked(),
+    d->translateYCheckBox->isChecked(),
+    d->translateZCheckBox->isChecked(),
+    d->translateViewPlaneCheckBox->isChecked()
+  };
+  d->TransformDisplayNode->SetTranslationHandleComponentVisibility(componentVisibility);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::updateRotationComponentVisibility()
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+
+  bool componentVisibility[4] = {
+    d->rotateXCheckBox->isChecked(),
+    d->rotateYCheckBox->isChecked(),
+    d->rotateZCheckBox->isChecked(),
+    d->rotateViewPlaneCheckBox->isChecked()
+  };
+  d->TransformDisplayNode->SetRotationHandleComponentVisibility(componentVisibility);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::updateScalingComponentVisibility()
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+    {
+    return;
+    }
+
+  bool componentVisibility[4] = {
+    d->scaleXCheckBox->isChecked(),
+    d->scaleYCheckBox->isChecked(),
+    d->scaleZCheckBox->isChecked(),
+    d->scaleViewPlaneCheckBox->isChecked()
+  };
+  d->TransformDisplayNode->SetScaleHandleComponentVisibility(componentVisibility);
 }

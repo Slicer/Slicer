@@ -58,6 +58,10 @@ set(${KIT}_SRCS
   vtkSlicerROIRepresentation3D.h
   vtkSlicerROIWidget.cxx
   vtkSlicerROIWidget.h
+  vtkSlicerMarkupsInteractionWidget.cxx
+  vtkSlicerMarkupsInteractionWidget.h
+  vtkSlicerMarkupsInteractionWidgetRepresentation.cxx
+  vtkSlicerMarkupsInteractionWidgetRepresentation.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

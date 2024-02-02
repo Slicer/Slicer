@@ -83,12 +83,6 @@ public:
 
   void BuildPlane();
 
-  // Initialize interaction handle pipeline
-  void SetupInteractionPipeline() override;
-
-  // Update visibility of interaction handles for representation
-  void UpdateInteractionPipeline() override;
-
 protected:
   vtkSlicerPlaneRepresentation2D();
   ~vtkSlicerPlaneRepresentation2D() override;
@@ -127,18 +121,6 @@ protected:
   vtkNew<vtkDiscretizableColorTransferFunction> PlaneFillColorMap;
   vtkNew<vtkSampleImplicitFunctionFilter> PlaneSliceDistance;
   std::string LabelFormat;
-
-  class MarkupsInteractionPipelinePlane2D : public vtkSlicerPlaneRepresentation3D::MarkupsInteractionPipelinePlane
-  {
-  public:
-    MarkupsInteractionPipelinePlane2D(vtkSlicerMarkupsWidgetRepresentation* representation);
-    ~MarkupsInteractionPipelinePlane2D() override = default;;
-
-    void GetViewPlaneNormal(double viewPlaneNormal[3]) override;
-
-    vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformFilter;
-  };
-
 
 private:
   vtkSlicerPlaneRepresentation2D(const vtkSlicerPlaneRepresentation2D&) = delete;

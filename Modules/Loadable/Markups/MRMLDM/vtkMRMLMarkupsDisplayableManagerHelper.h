@@ -33,8 +33,11 @@
 // MarkupsModule/MRML includes
 #include <vtkMRMLMarkupsNode.h>
 
-// VTK includes
+// MarkupsModule/VTKWidgets includes
+#include <vtkSlicerMarkupsInteractionWidget.h>
 #include <vtkSlicerMarkupsWidget.h>
+
+// VTK includes
 #include <vtkSmartPointer.h>
 
 // MRML includes
@@ -67,6 +70,11 @@ public:
   /// Get first visible widget for this markup
   vtkSlicerMarkupsWidget * GetWidget(vtkMRMLMarkupsNode * markupsNode);
 
+  /// Get a vtkSlicerMarkupsWidget* given a node
+  vtkSlicerMarkupsInteractionWidget* GetInteractionWidget(vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
+  /// Get first visible widget for this markup
+  vtkSlicerMarkupsInteractionWidget* GetInteractionWidget(vtkMRMLMarkupsNode* markupsNode);
+
   /// Remove all widgets, intersection widgets, nodes
   void RemoveAllWidgetsAndNodes();
 
@@ -75,6 +83,10 @@ public:
   typedef std::map < vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsWidget* >::iterator DisplayNodeToWidgetIt;
   DisplayNodeToWidgetType MarkupsDisplayNodesToWidgets;  // display nodes with widgets assigned
 
+  typedef std::map<vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsInteractionWidget*> DisplayNodeToInteractionWidgetType;
+  typedef std::map<vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsInteractionWidget*>::iterator DisplayNodeToInteractionWidgetIt;
+  DisplayNodeToInteractionWidgetType MarkupsDisplayNodesToInteractionWidgets;  // display nodes with widgets assigned
+
   typedef std::set < vtkSmartPointer<vtkMRMLMarkupsNode> > MarkupsNodesType;
   typedef std::set < vtkSmartPointer<vtkMRMLMarkupsNode> >::iterator MarkupsNodesIt;
   MarkupsNodesType MarkupsNodes; // observed markups nodes
@@ -82,9 +94,12 @@ public:
   void AddMarkupsNode(vtkMRMLMarkupsNode* node);
   void RemoveMarkupsNode(vtkMRMLMarkupsNode* node);
   void AddDisplayNode(vtkMRMLMarkupsDisplayNode* displayNode);
+  void AddWidget(vtkMRMLMarkupsDisplayNode* displayNode);
+  void AddInteractionWidget(vtkMRMLMarkupsDisplayNode* displayNode);
   void RemoveDisplayNode(vtkMRMLMarkupsDisplayNode* displayNode);
 
   void DeleteWidget(vtkSlicerMarkupsWidget* widget);
+  void DeleteInteractionWidget(vtkSlicerMarkupsInteractionWidget* widget);
 
   void AddObservations(vtkMRMLMarkupsNode* node);
   void RemoveObservations(vtkMRMLMarkupsNode* node);

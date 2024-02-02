@@ -107,7 +107,8 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsPlaneNode);
 
   /// Apply the passed transformation to the ROI
-  void ApplyTransform(vtkAbstractTransform* transform) override;
+  using Superclass::ApplyTransform;
+  void ApplyTransform(vtkAbstractTransform* transform, bool applyToLockedControlPoints) override;
 
   //@{
   /// Method for calculating the size of the plane along the direction vectors.

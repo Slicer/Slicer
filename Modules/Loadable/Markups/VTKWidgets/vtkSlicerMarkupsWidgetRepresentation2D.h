@@ -57,10 +57,6 @@ public:
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
-  /// Check if interaction with the transformation handles is possible
-  virtual void CanInteractWithHandles(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
-
   /// Checks if interaction with straight line between visible points is possible.
   /// Can be used on the output of CanInteract, as if no better component is found then the input is returned.
   void CanInteractWithLine(vtkMRMLInteractionEventData* interactionEventData,
@@ -98,14 +94,9 @@ public:
   void GetSliceToWorldCoordinates(const double[2], double[3]);
   void GetWorldToSliceCoordinates(const double worldPos[3], double slicePos[2]);
 
-  void UpdateInteractionPipeline() override;
-
 protected:
   vtkSlicerMarkupsWidgetRepresentation2D();
   ~vtkSlicerMarkupsWidgetRepresentation2D() override;
-
-  /// Reimplemented for 2D specific mapper/actor settings
-  void SetupInteractionPipeline() override;
 
     /// Get MRML view node as slice view node
   vtkMRMLSliceNode *GetSliceNode();
@@ -118,9 +109,6 @@ protected:
   // Return squared distance of maximum distance for picking a control point,
   // in pixels.
   double GetMaximumControlPointPickingDistance2();
-  // Return squared distance of maximum distance for picking an interaction handle,
-  // in pixels.
-  double GetMaximumInteractionHandlePickingDistance2();
 
   bool GetAllControlPointsVisible() override;
 
@@ -174,17 +162,6 @@ protected:
   virtual void UpdateAllPointsAndLabelsFromMRML(double labelsOffset);
 
   double GetWidgetOpacity(int controlPointType);
-
-  class MarkupsInteractionPipeline2D : public MarkupsInteractionPipeline
-  {
-  public:
-    MarkupsInteractionPipeline2D(vtkSlicerMarkupsWidgetRepresentation* representation);
-    ~MarkupsInteractionPipeline2D() override = default;;
-
-    void GetViewPlaneNormal(double viewPlaneNormal[3]) override;
-
-    vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformFilter;
-  };
 
 private:
   vtkSlicerMarkupsWidgetRepresentation2D(const vtkSlicerMarkupsWidgetRepresentation2D&) = delete;

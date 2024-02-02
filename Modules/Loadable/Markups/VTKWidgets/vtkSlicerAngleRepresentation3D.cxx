@@ -419,16 +419,3 @@ void vtkSlicerAngleRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "Arc Visibility: (none)\n";
     }
 }
-
-//-----------------------------------------------------------------------------
-void vtkSlicerAngleRepresentation3D::UpdateInteractionPipeline()
-{
-  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) < 3)
-    {
-    this->InteractionPipeline->Actor->SetVisibility(false);
-    return;
-    }
-  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
-  Superclass::UpdateInteractionPipeline();
-}

@@ -176,7 +176,7 @@ void vtkMRMLMarkupsROINode::SetAndObserveObjectToNodeMatrix(vtkMatrix4x4* object
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsROINode::ApplyTransform(vtkAbstractTransform* transform)
+void vtkMRMLMarkupsROINode::ApplyTransform(vtkAbstractTransform* transform, bool applyToLockedControlPoints)
 {
   if (!transform)
     {
@@ -195,7 +195,7 @@ void vtkMRMLMarkupsROINode::ApplyTransform(vtkAbstractTransform* transform)
   vtkNew<vtkMatrix4x4> oldObjectToNodeMatrix;
   oldObjectToNodeMatrix->DeepCopy(this->ObjectToNodeMatrix);
 
-  Superclass::ApplyTransform(transform);
+  Superclass::ApplyTransform(transform, applyToLockedControlPoints);
 
   vtkNew<vtkMatrix4x4> newObjectToNodeMatrix;
   this->GenerateOrthogonalMatrix(oldObjectToNodeMatrix, newObjectToNodeMatrix, transform, false);

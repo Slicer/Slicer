@@ -81,9 +81,6 @@ protected:
 
   void BuildArc();
 
-  // Update visibility of interaction handles for representation
-  void UpdateInteractionPipeline() override;
-
   vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;
   vtkSmartPointer<vtkActor2D> LineActor;

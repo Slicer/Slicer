@@ -302,7 +302,7 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 template<typename T>
 vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::string& fullName,
-  vtkMRMLMessageCollection* userMessages)
+  vtkMRMLMessageCollection* userMessages, double center_RAS[3]=nullptr)
 {
   typedef itk::TransformFileReaderTemplate<T> TransformReaderType;
   typedef typename TransformReaderType::TransformListType TransformListType;
@@ -360,7 +360,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
     {
     // just a single transform
     transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(
-          vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, firstTransform));
+          vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, firstTransform, center_RAS));
     }
   else
     {
@@ -392,7 +392,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
       // there is only one single transform, so we create a specific VTK transform type instead of a general transform
       typename TransformType::Pointer transformComponentItk = const_cast< TransformType* >(transformList.front().GetPointer());
       transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(
-            vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, transformComponentItk));
+            vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, transformComponentItk, center_RAS));
       }
     else
       {
@@ -403,7 +403,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
         it != end; ++it )
         {
         typename TransformType::Pointer transformComponentItk = const_cast< TransformType* >(it->GetPointer());
-        vtkAbstractTransform* transformComponent = vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, transformComponentItk);
+        vtkAbstractTransform* transformComponent = vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, transformComponentItk, center_RAS);
         if (transformComponent!=nullptr)
           {
           generalTransform->Concatenate(transformComponent);
@@ -434,14 +434,15 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();
 
   vtkSmartPointer<vtkAbstractTransform> transformVtk;
+  double center_RAS[3] = {0.0, 0.0, 0.0};
 
   transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(
-        ::ReadFromTransformFile<double>(this, fullName, this->GetUserMessages()));
+        ::ReadFromTransformFile<double>(this, fullName, this->GetUserMessages(), center_RAS));
 
   if (transformVtk.GetPointer()==nullptr)
     {
     transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(
-          ::ReadFromTransformFile<float>(this, fullName, this->GetUserMessages()));
+          ::ReadFromTransformFile<float>(this, fullName, this->GetUserMessages(), center_RAS));
     }
 
   if (transformVtk.GetPointer()==nullptr)
@@ -462,6 +463,8 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode *refNode)
     }
 
   SetAndObserveTransformFromParentAutoInvert(transformNode, transformVtk.GetPointer());
+
+  transformNode->SetCenterOfTransformation(center_RAS);
 
   return 1;
 }
@@ -525,12 +528,15 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
     return 1;
     }
 
+  double center_RAS[3] = {0.0, 0.0, 0.0};
+  transformNode->GetCenterOfTransformation(center_RAS);
+
   // Convert VTK transform to ITK transform
   itk::Object::Pointer secondaryTransformItk; // only used for ITKv3 compatibility
   // ITK transform is created without initialization, because initialization may take a long time for certain transform types
   // which would slow down saving. Initialization is only needed for computing transformations, not necessary for file writing.
   itk::Object::Pointer transformItk = vtkITKTransformConverter::CreateITKTransformFromVTK(
-    this, transformVtk, secondaryTransformItk, this->PreferITKv3CompatibleTransforms, false);
+    this, transformVtk, secondaryTransformItk, this->PreferITKv3CompatibleTransforms, false, center_RAS);
   if (transformItk.IsNull())
     {
     vtkErrorMacro("WriteTransform failed: cannot convert VTK transform to ITK transform");

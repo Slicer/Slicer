@@ -47,6 +47,7 @@
 #include "vtkSlicerPlaneWidget.h"
 #include "vtkSlicerPointsWidget.h"
 #include "vtkSlicerROIWidget.h"
+#include "vtkSlicerMarkupsInteractionWidget.h"
 
 // Annotation MRML includes
 #include "vtkMRMLAnnotationLineDisplayNode.h"
@@ -122,6 +123,7 @@ public:
   struct MarkupEntry
     {
     vtkSmartPointer<vtkSlicerMarkupsWidget> MarkupsWidget;
+    vtkSmartPointer<vtkSlicerMarkupsInteractionWidget> MarkupsInteractionWidget;
     vtkSmartPointer<vtkMRMLMarkupsNode> MarkupsNode;
     bool CreatePushButton;
     };
@@ -2082,7 +2084,8 @@ vtkMRMLMarkupsJsonStorageNode* vtkSlicerMarkupsLogic::AddNewJsonStorageNodeForMa
 //---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::RegisterMarkupsNode(vtkMRMLMarkupsNode* markupsNode,
                                                 vtkSlicerMarkupsWidget* markupsWidget,
-                                                bool createPushButton)
+                                                bool createPushButton,
+                                                vtkSlicerMarkupsInteractionWidget* interactionWidget)
 {
   // Check for nullptr
   if (markupsNode == nullptr)
@@ -2118,8 +2121,16 @@ void vtkSlicerMarkupsLogic::RegisterMarkupsNode(vtkMRMLMarkupsNode* markupsNode,
     return;
     }
 
+  vtkSmartPointer<vtkSlicerMarkupsInteractionWidget> interactionWidgetToUse = interactionWidget;
+  if (!interactionWidgetToUse)
+    {
+    // Use default interaction widget.
+    interactionWidgetToUse = vtkSmartPointer< vtkSlicerMarkupsInteractionWidget>::New();
+    }
+
   vtkSlicerMarkupsLogic::vtkInternal::MarkupEntry markup;
   markup.MarkupsWidget = markupsWidget;
+  markup.MarkupsInteractionWidget = interactionWidgetToUse;
   markup.MarkupsNode = markupsNode;
   markup.CreatePushButton = createPushButton;
 
@@ -2189,6 +2200,24 @@ vtkSlicerMarkupsWidget* vtkSlicerMarkupsLogic::GetWidgetByMarkupsType(const char
     }
 
   return markupIt->second.MarkupsWidget;
+}
+
+//----------------------------------------------------------------------------
+vtkSlicerMarkupsInteractionWidget* vtkSlicerMarkupsLogic::GetInteractionWidgetByMarkupsType(const char* markupName) const
+{
+  if (!markupName)
+    {
+    vtkErrorMacro("GetWidgetByMarkupsType: Invalid node.");
+    return nullptr;
+    }
+
+  const auto& markupIt = this->Internal->MarkupTypeToMarkupEntry.find(markupName);
+  if (markupIt == this->Internal->MarkupTypeToMarkupEntry.end())
+    {
+    return nullptr;
+    }
+
+  return markupIt->second.MarkupsInteractionWidget;
 }
 
 //----------------------------------------------------------------------------

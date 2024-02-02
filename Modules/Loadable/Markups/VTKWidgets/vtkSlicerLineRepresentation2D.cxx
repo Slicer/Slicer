@@ -286,15 +286,3 @@ void vtkSlicerLineRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNo
     }
   this->Superclass::SetMarkupsNode(markupsNode);
 }
-
-//-----------------------------------------------------------------------------
-void vtkSlicerLineRepresentation2D::UpdateInteractionPipeline()
-{
-  if (!this->LineActor->GetVisibility())
-    {
-    this->InteractionPipeline->Actor->SetVisibility(false);
-    return;
-    }
-  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
-  Superclass::UpdateInteractionPipeline();
-}

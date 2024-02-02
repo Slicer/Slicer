@@ -266,15 +266,3 @@ void vtkSlicerLineRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "Line Visibility: (none)\n";
     }
 }
-
-//-----------------------------------------------------------------------------
-void vtkSlicerLineRepresentation3D::UpdateInteractionPipeline()
-{
-  if (!this->MarkupsNode || this->MarkupsNode->GetNumberOfDefinedControlPoints(true) < 2)
-    {
-    this->InteractionPipeline->Actor->SetVisibility(false);
-    return;
-    }
-  // Final visibility handled by superclass in vtkSlicerMarkupsWidgetRepresentation
-  Superclass::UpdateInteractionPipeline();
-}

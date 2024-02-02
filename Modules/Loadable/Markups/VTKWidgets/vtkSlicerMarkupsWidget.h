@@ -60,9 +60,6 @@ public:
   {
     WidgetStateDefine = WidgetStateUser, // click in empty area will place a new point
     WidgetStateTranslateControlPoint, // translating the active point by mouse move
-    WidgetStateOnTranslationHandle, // hovering over a translation interaction handle
-    WidgetStateOnRotationHandle, // hovering over a rotation interaction handle
-    WidgetStateOnScaleHandle, // hovering over a scale interaction handle
     WidgetStateMarkups_Last
   };
 
@@ -141,8 +138,6 @@ protected:
 
   virtual void TranslatePoint(double eventPos[2], bool snapToSlice = false);
   virtual void TranslateWidget(double eventPos[2]);
-  virtual void ScaleWidget(double eventPos[2]);
-  virtual void RotateWidget(double eventPos[2]);
 
   bool IsAnyControlPointLocked();
 
@@ -170,21 +165,11 @@ protected:
   virtual bool ProcessControlPointInsert(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessControlPointMoveStart(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetTranslateStart(vtkMRMLInteractionEventData* eventData);
-  virtual bool ProcessWidgetRotateStart(vtkMRMLInteractionEventData* eventData);
-  virtual bool ProcessWidgetScaleStart(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetReset(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetJumpCursor(vtkMRMLInteractionEventData* eventData);
 
-  // Get the closest point on the line defined by the interaction handle axis.
-  // Input coordinates are in display coordinates, while output are in world coordinates.
-  virtual bool GetClosestPointOnInteractionAxis(int type, int index, const double inputDisplay[2], double outputIntersectionWorld[3]);
-
-  // Get the closest point on the plane defined using the interaction handle axis as the plane normal.
-  // Input coordinates are in display coordinates, while output are in world coordinates
-  virtual bool GetIntersectionOnAxisPlane(int type, int index, const double inputDisplay[2], double outputIntersectionWorld[3]);
-
-  // Variables for translate/rotate/scale
+  // Variables for translate
   double LastEventPosition[2];
   double StartEventOffsetPosition[2];
 

@@ -71,10 +71,6 @@ public:
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
     int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
 
-  /// Check if interaction with the transformation handles is possible
-  virtual void CanInteractWithHandles(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
-
   /// Checks if interaction with straight line between visible points is possible.
   /// Can be used on the output of CanInteract, as if no better component is found then the input is returned.
   void CanInteractWithLine(vtkMRMLInteractionEventData* interactionEventData,
@@ -103,8 +99,6 @@ protected:
   void UpdateViewScaleFactor() override;
 
   void UpdateControlPointSize() override;
-
-  void UpdateInteractionPipeline() override;
 
   class ControlPointsPipeline3D : public ControlPointsPipeline
   {
