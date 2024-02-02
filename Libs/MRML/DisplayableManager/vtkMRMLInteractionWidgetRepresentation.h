@@ -308,9 +308,9 @@ protected:
     int& foundComponentType, int& foundComponentIndex, double& closestDistance2, HandleInfo& handleInfo);
 
   /// The angle between the camera and the interaction axis at which point the interaction handle starts to fade out.
-  double StartFadeAngleDegrees{10};
+  double StartFadeAngleDegrees{10.0};
   /// The angle between the camera and the interaction axis at which point the interaction handle is completely faded out.
-  double EndFadeAngleDegrees{8};
+  double EndFadeAngleDegrees{8.0};
 
   double ViewScaleFactorMmPerPixel;
   double ScreenSizePixel; // diagonal size of the screen
