@@ -55,13 +55,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
   ///@}
 
-  /// Widget events
-  //enum
-  //  {
-  //  WidgetEventJumpCursor = WidgetEventInteraction_Last,  // this events is only to prevent other widgets from processing an event
-  //  WidgetEventMarkupsInteraction_Last
-  //  };
-
   /// Create the default widget representation and initializes the widget and representation.
   virtual void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer);
 
