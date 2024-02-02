@@ -82,7 +82,6 @@ bool vtkMRMLTransformHandleWidget::CanProcessInteractionEvent(vtkMRMLInteraction
     {
     return false;
     }
-  int eventid = eventData->GetType();
 
   // Currently interacting
   if (this->WidgetState == WidgetStateTranslateTransformCenter)
