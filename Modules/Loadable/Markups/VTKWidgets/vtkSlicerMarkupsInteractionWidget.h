@@ -18,15 +18,12 @@
 
 ==============================================================================*/
 
-
-/**
- * @class   vtkSlicerMarkupsInteractionWidget
- * @brief   Process interaction events to update state of interaction widgets
- *
- * @sa
- * vtkMRMLAbstractWidget vtkSlicerWidgetRepresentation vtkSlicerWidgetEventTranslator
- *
-*/
+///
+/// \class   vtkSlicerMarkupsInteractionWidget
+/// \brief   Process interaction events to update state of interaction widgets
+///
+/// \sa vtkMRMLAbstractWidget vtkSlicerWidgetRepresentation vtkSlicerWidgetEventTranslator
+///
 
 #ifndef vtkSlicerMarkupsInteractionWidget_h
 #define vtkSlicerMarkupsInteractionWidget_h
@@ -50,18 +47,14 @@ class vtkMRMLMarkupsDisplayNode;
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsInteractionWidget : public vtkMRMLInteractionWidget
 {
 public:
-  /**
-   * Instantiate this class.
-   */
+  /// Instantiate this class.
   static vtkSlicerMarkupsInteractionWidget* New();
 
-  //@{
-  /**
-   * Standard VTK class macros.
-   */
+  ///@{
+  /// Standard VTK class macros.
   vtkTypeMacro(vtkSlicerMarkupsInteractionWidget, vtkMRMLInteractionWidget);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  //@}
+  ///@}
 
   /// Widget events
   //enum

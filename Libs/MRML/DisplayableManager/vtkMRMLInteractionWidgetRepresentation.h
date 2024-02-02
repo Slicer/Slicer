@@ -18,27 +18,26 @@
 
 ==============================================================================*/
 
-/**
- * @class   vtkMRMLInteractionWidgetRepresentation
- * @brief   Class for rendering interaction handles
- *
- * This class can display interaction handles in the scene.
- * It plays a similar role to vtkWidgetRepresentation, but it is
- * simplified and specialized for optimal use in Slicer.
- * It state is stored in the associated MRML display node to
- * avoid extra synchronization mechanisms.
- * The representation only observes MRML node changes,
- * it does not directly process any interaction events directly
- * (interaction events are processed by vtkMRMLAbstractWidget,
- * which then modifies MRML nodes).
- *
- * This class (and subclasses) are a type of
- * vtkProp; meaning that they can be associated with a vtkRenderer end
- * embedded in a scene like any other vtkActor.
-*
- * @sa
- * vtkMRMLInteractionWidgetRepresentation vtkMRMLAbstractWidget vtkPointPlacer
-*/
+///
+/// \class vtkMRMLInteractionWidgetRepresentation
+/// \brief Class for rendering interaction handles
+///
+/// This class can display interaction handles in the scene.
+/// It plays a similar role to vtkWidgetRepresentation, but it is
+/// simplified and specialized for optimal use in Slicer.
+/// It state is stored in the associated MRML display node to
+/// avoid extra synchronization mechanisms.
+/// The representation only observes MRML node changes,
+/// it does not directly process any interaction events directly
+/// (interaction events are processed by vtkMRMLAbstractWidget,
+/// which then modifies MRML nodes).
+///
+/// This class (and subclasses) are a type of vtkProp; meaning that
+/// they can be associated with a vtkRenderer and embedded in a scene
+/// like any other vtkActor.
+///
+/// \sa vtkMRMLInteractionWidgetRepresentation vtkMRMLAbstractWidget vtkPointPlacer
+///
 
 #ifndef vtkSlicerInteractionRepresentation_h
 #define vtkSlicerInteractionRepresentation_h
@@ -80,13 +79,11 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidgetRepresentation 
 {
 public:
 
-  //@{
-  /**
-   * Standard VTK class macros.
-   */
+  ///@{
+  /// Standard VTK class macros.
   vtkTypeMacro(vtkMRMLInteractionWidgetRepresentation, vtkMRMLAbstractWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  //@}
+  ///@}
 
   /// Update the representation from display node
   void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
@@ -113,13 +110,9 @@ public:
   /// Returns the actor for the interaction widget.
   vtkProp* GetInteractionActor();
 
-  //@{
-  /**
-  * Returns true if the representation is displayable in the current view.
-  * It takes into account current view node's display node and parent folder's visibility.
-  */
+  /// Returns true if the representation is displayable in the current view.
+  /// It takes into account current view node's display node and parent folder's visibility.
   virtual bool IsDisplayable() = 0;
-  //@}
 
   virtual vtkMRMLSliceNode* GetSliceNode();
   virtual void GetSliceToWorldCoordinates(const double slicePos[2], double worldPos[3]);
@@ -290,14 +283,16 @@ protected:
   /// Type is specified using vtkMRMLInteractionDisplayNode::ComponentType
   virtual void GetInteractionHandlePositionWorld(int type, int index, double position[3]);
 
+  ///@{
   /// Update HandleToWorldTransform. This controls the position and orientation of the interaction handles.
   virtual void UpdateHandleToWorldTransform();
   virtual void UpdateHandleToWorldTransform(vtkTransform* handleToWorldTransform) = 0;
+  ///@}
 
-  // Orthogonalize the transform axes. The Z-axis will not be changed.
+  /// Orthogonalize the transform axes. The Z-axis will not be changed.
   virtual void OrthoganalizeTransform(vtkTransform* transform);
 
-  // Calculate view size and scale factor
+  /// Calculate view size and scale factor
   virtual void UpdateViewScaleFactor();
 
   virtual void UpdateHandleSize();
@@ -312,20 +307,20 @@ protected:
   virtual void CanInteractWithRingHandle(vtkMRMLInteractionEventData* interactionEventData,
     int& foundComponentType, int& foundComponentIndex, double& closestDistance2, HandleInfo& handleInfo);
 
-  // The angle between the camera and the interaction axis at which point the interaction handle starts to fade out.
-  double StartFadeAngleDegrees{ 10 };
-  // The angle between the camera and the interaction axis at which point the interaction handle is completely faded out.
-  double EndFadeAngleDegrees{ 8 };
+  /// The angle between the camera and the interaction axis at which point the interaction handle starts to fade out.
+  double StartFadeAngleDegrees{10};
+  /// The angle between the camera and the interaction axis at which point the interaction handle is completely faded out.
+  double EndFadeAngleDegrees{8};
 
   double ViewScaleFactorMmPerPixel;
   double ScreenSizePixel; // diagonal size of the screen
 
   vtkSmartPointer<vtkPlane> SlicePlane{ nullptr };
 
-  // Handle size, specified in renderer world coordinate system.
-  // For slice views, renderer world coordinate system is the display coordinate system, so it is measured in pixels.
-  // For 3D views, renderer world coordinate system is the Slicer world coordinate system, so it is measured in the
-  // scene length unit (typically millimeters).
+  /// Handle size, specified in renderer world coordinate system.
+  /// For slice views, renderer world coordinate system is the display coordinate system, so it is measured in pixels.
+  /// For 3D views, renderer world coordinate system is the Slicer world coordinate system, so it is measured in the
+  /// scene length unit (typically millimeters).
   double InteractionSize{ 1.0 };
 
   double WidgetScale{ 1.0 };

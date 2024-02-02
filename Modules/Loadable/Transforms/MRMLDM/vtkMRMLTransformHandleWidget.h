@@ -19,14 +19,12 @@
 ==============================================================================*/
 
 
-/**
- * @class   vtkMRMLTransformHandleWidget
- * @brief   Process interaction events to update state of interaction widgets
- *
- * @sa
- * vtkMRMLAbstractWidget vtkSlicerWidgetRepresentation vtkSlicerWidgetEventTranslator
- *
-*/
+///
+/// \class vtkMRMLTransformHandleWidget
+/// \brief Process interaction events to update state of interaction widgets
+///
+/// \sa vtkMRMLAbstractWidget vtkSlicerWidgetRepresentation vtkSlicerWidgetEventTranslator
+///
 
 #ifndef vtkMRMLTransformHandleWidget_h
 #define vtkMRMLTransformHandleWidget_h
@@ -50,18 +48,14 @@ class vtkMRMLTransformNode;
 class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformHandleWidget : public vtkMRMLInteractionWidget
 {
 public:
-  /**
-   * Instantiate this class.
-   */
+  /// Instantiate this class.
   static vtkMRMLTransformHandleWidget* New();
 
-  //@{
-  /**
-   * Standard VTK class macros.
-   */
+  ///@{
+  /// Standard VTK class macros.
   vtkTypeMacro(vtkMRMLTransformHandleWidget, vtkMRMLInteractionWidget);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  //@}
+  ///@}
 
   /// The state of the widget
   enum

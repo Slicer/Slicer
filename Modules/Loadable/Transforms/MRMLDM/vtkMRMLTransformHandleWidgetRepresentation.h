@@ -18,13 +18,12 @@
 
 ==============================================================================*/
 
-/**
- * @class   vtkMRMLTransformHandleWidgetRepresentation
- * @brief   Abstract representation for the transform handle widgets
- *
- * @sa
- * vtkMRMLInteractionWidgetRepresentation
-*/
+///
+/// \class vtkMRMLTransformHandleWidgetRepresentation
+/// \brief Abstract representation for the transform handle widgets
+///
+/// \sa vtkMRMLInteractionWidgetRepresentation
+///
 
 #ifndef vtkMRMLTransformHandleWidgetRepresentation_h
 #define vtkMRMLTransformHandleWidgetRepresentation_h
@@ -44,18 +43,14 @@
 class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformHandleWidgetRepresentation : public vtkMRMLInteractionWidgetRepresentation
 {
 public:
-  /**
-   * Instantiate this class.
-   */
+  /// Instantiate this class.
   static vtkMRMLTransformHandleWidgetRepresentation* New();
 
-  //@{
-  /**
-   * Standard VTK class macros.
-   */
+  ///@{
+  /// Standard VTK class macros.
   vtkTypeMacro(vtkMRMLTransformHandleWidgetRepresentation, vtkMRMLInteractionWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  //@}
+  ///@}
 
   virtual int GetActiveComponentType() override;
   virtual void SetActiveComponentType(int type) override;
@@ -73,9 +68,9 @@ public:
 
   /// Size relative to screen
   double GetInteractionScalePercent() override;
-  // Size in mm
+  /// Size in mm
   double GetInteractionSizeMm() override;
-  // True -> size in mm; false -> relative to screen
+  /// True -> size in mm; false -> relative to screen
   bool GetInteractionSizeAbsolute() override;
 
   bool GetHandleVisibility(int type, int index) override;

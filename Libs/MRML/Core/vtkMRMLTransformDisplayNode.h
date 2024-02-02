@@ -126,7 +126,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   /// Returns an empty string if the index is unknown.
   static const char* ConvertGlyphTypeToString(int typeIndex);
   /// Convert glyph type string to an index that can be set in GlyphType.
-  /// `Returns -1 if the string is unknown.
+  /// Returns -1 if the string is unknown.
   static int ConvertGlyphTypeFromString(const char* typeString);
   // 3d parameters
   vtkSetMacro(GlyphTipLengthPercent, double);

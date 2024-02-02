@@ -18,15 +18,12 @@
 
 ==============================================================================*/
 
-
-/**
- * @class   vtkMRMLInteractionWidget
- * @brief   Process interaction events to update state of interaction widgets
- *
- * @sa
- * vtkMRMLAbstractWidget vtkSlicerWidgetRepresentation vtkSlicerWidgetEventTranslator
- *
-*/
+///
+/// \class vtkMRMLInteractionWidget
+/// \brief Process interaction events to update state of interaction widgets
+///
+/// \sa vtkMRMLAbstractWidget vtkSlicerWidgetRepresentation vtkSlicerWidgetEventTranslator
+///
 
 #ifndef vtkMRMLInteractionWidget_h
 #define vtkMRMLInteractionWidget_h
@@ -50,13 +47,11 @@ class vtkTransform;
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidget : public vtkMRMLAbstractWidget
 {
 public:
-  //@{
-  /**
-   * Standard VTK class macros.
-   */
+  ///@{
+  /// Standard VTK class macros.
   vtkTypeMacro(vtkMRMLInteractionWidget, vtkMRMLAbstractWidget);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  //@}
+  ///@}
 
   enum
   {
@@ -100,9 +95,9 @@ public:
   /// Called when the the widget loses the focus.
   void Leave(vtkMRMLInteractionEventData* eventData) override;
 
-  // Allows the widget to request interactive mode (faster updates)
+  /// Allows the widget to request interactive mode (faster updates)
   bool GetInteractive() override;
-  // Allows the widget to request a cursor shape
+  /// Allows the widget to request a cursor shape
   int GetMouseCursor() override;
 
 protected:
@@ -121,9 +116,9 @@ protected:
   /// If <0 it means that there is currently no point being previewed.
   int PreviewPointIndex;
 
-  // Callback interface to capture events when
-  // placing the widget.
-  // Return true if the event is processed.
+  /// Callback interface to capture events when
+  /// placing the widget.
+  /// Return true if the event is processed.
   virtual bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData) = 0;
   virtual bool ProcessWidgetMenuDisplayNodeTypeAndIndex(vtkMRMLInteractionEventData* eventData, vtkMRMLDisplayNode* displayNode, int type, int index);
@@ -133,15 +128,15 @@ protected:
   virtual bool ProcessWidgetUniformScaleStart(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData);
 
-  // Get the closest point on the line defined by the interaction handle axis.
-  // Input coordinates are in display coordinates, while output are in world coordinates.
+  /// Get the closest point on the line defined by the interaction handle axis.
+  /// Input coordinates are in display coordinates, while output are in world coordinates.
   virtual bool GetClosestPointOnInteractionAxis(int type, int index, const double inputDisplay[2], double outputIntersectionWorld[3]);
 
-  // Get the closest point on the plane defined using the interaction handle axis as the plane normal.
-  // Input coordinates are in display coordinates, while output are in world coordinates
+  /// Get the closest point on the plane defined using the interaction handle axis as the plane normal.
+  /// Input coordinates are in display coordinates, while output are in world coordinates
   virtual bool GetIntersectionOnAxisPlane(int type, int index, const double inputDisplay[2], double outputIntersectionWorld[3]);
 
-  // Variables for translate/rotate/scale
+  /// Variables for translate/rotate/scale
   double LastEventPosition[2];
   double StartEventOffsetPosition[2];
 
