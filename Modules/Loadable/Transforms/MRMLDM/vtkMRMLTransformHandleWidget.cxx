@@ -33,17 +33,12 @@
 
 // MRML includes
 #include <vtkMRMLDisplayNode.h>
-#include "vtkMRMLScene.h"
 #include <vtkMRMLSliceNode.h>
-#include "vtkMRMLTransformNode.h"
+#include <vtkMRMLTransformNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 
 // MRMLDM includes
-#include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLInteractionEventData.h"
-#include "vtkMRMLInteractionNode.h"
-#include "vtkMRMLSliceCompositeNode.h"
-#include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLTransformHandleWidgetRepresentation.h"
 #include "vtkMRMLTransformHandleWidget.h"
 

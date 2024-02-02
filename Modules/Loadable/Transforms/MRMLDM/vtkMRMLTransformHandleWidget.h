@@ -32,7 +32,6 @@
 #include "vtkSlicerTransformsModuleMRMLDisplayableManagerExport.h"
 
 #include "vtkMRMLInteractionWidget.h"
-#include "vtkWidgetCallbackMapper.h"
 
 class vtkMRMLAbstractViewNode;
 class vtkMRMLApplicationLogic;

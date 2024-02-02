@@ -21,8 +21,6 @@
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLSliceCompositeNode.h"
-#include "vtkMRMLSliceLogic.h"
 #include "vtkSlicerMarkupsWidgetRepresentation.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 #include "vtkSlicerMarkupsWidgetRepresentation3D.h"
@@ -40,7 +38,6 @@
 #include <vtkObjectFactory.h>
 
 // MRML includes
-#include "vtkMRMLTransformNode.h"
 #include <vtkMRMLApplicationLogic.h>
 
 //----------------------------------------------------------------------

@@ -25,8 +25,6 @@
 // Transform MRMLDM includes
 #include "vtkMRMLTransformHandleWidgetRepresentation.h"
 
-#include "vtkSlicerTransformLogic.h"
-
 // MRML includes
 #include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLInteractionEventData.h>

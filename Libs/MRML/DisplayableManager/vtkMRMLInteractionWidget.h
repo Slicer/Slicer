@@ -31,7 +31,6 @@
 #include "vtkMRMLDisplayableManagerExport.h"
 
 #include "vtkMRMLAbstractWidget.h"
-#include "vtkWidgetCallbackMapper.h"
 
 class vtkMRMLAbstractViewNode;
 class vtkMRMLApplicationLogic;

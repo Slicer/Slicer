@@ -22,12 +22,8 @@
 #include "vtkSlicerMarkupsInteractionWidget.h"
 #include "vtkSlicerMarkupsInteractionWidgetRepresentation.h"
 
-#include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLInteractionEventData.h"
-#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLSliceCompositeNode.h"
-#include "vtkMRMLSliceLogic.h"
 
 // VTK includes
 #include <vtkCamera.h>

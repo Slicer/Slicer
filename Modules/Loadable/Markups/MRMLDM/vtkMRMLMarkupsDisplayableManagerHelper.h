@@ -34,8 +34,8 @@
 #include <vtkMRMLMarkupsNode.h>
 
 // MarkupsModule/VTKWidgets includes
-#include <vtkSlicerMarkupsWidget.h>
 #include <vtkSlicerMarkupsInteractionWidget.h>
+#include <vtkSlicerMarkupsWidget.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
