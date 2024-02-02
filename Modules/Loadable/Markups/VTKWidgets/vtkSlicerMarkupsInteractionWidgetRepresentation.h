@@ -76,6 +76,7 @@ public:
   virtual void UpdateROIScaleHandles3D();
   virtual void UpdateROIScaleHandles2D();
 
+  using Superclass::UpdateHandleToWorldTransform;
   void UpdateHandleToWorldTransform(vtkTransform* handleToWorldTransform) override;
 
   double GetInteractionScalePercent() override; // Size relative to screen

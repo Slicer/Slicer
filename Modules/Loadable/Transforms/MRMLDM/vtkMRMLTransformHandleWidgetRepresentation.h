@@ -65,6 +65,7 @@ public:
 
   void UpdateInteractionPipeline() override;
 
+  using Superclass::UpdateHandleToWorldTransform;
   void UpdateHandleToWorldTransform(vtkTransform* handleToWorldTransform) override;
 
   /// Size relative to screen
