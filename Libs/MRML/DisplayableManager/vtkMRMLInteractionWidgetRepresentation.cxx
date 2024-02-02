@@ -223,8 +223,6 @@ void vtkMRMLInteractionWidgetRepresentation::CanInteractWithArrowHandle(vtkMRMLI
   // Check the arrow tip.
   this->CanInteractWithCircleHandle(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2, handleInfo);
 
-  double maxPickingDistanceFromControlPoint2 = this->GetMaximumHandlePickingDistance2();
-
   // Display position is valid in case of desktop interactions. Otherwise it is a 3D only context such as
   // virtual reality, and then we expect a valid world position in the absence of display position.
   const int* displayPosition = interactionEventData->GetDisplayPosition();

@@ -965,7 +965,6 @@ void vtkSlicerMarkupsWidget::TranslateWidget(double eventPos[2])
   double eventPos_World[3] = { 0.0 };
   double orientation_World[9] = { 0.0 };
 
-  vtkSlicerMarkupsWidgetRepresentation* rep = vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(this->WidgetRep);
   vtkSlicerMarkupsWidgetRepresentation2D* rep2d = vtkSlicerMarkupsWidgetRepresentation2D::SafeDownCast(this->WidgetRep);
   vtkSlicerMarkupsWidgetRepresentation3D* rep3d = vtkSlicerMarkupsWidgetRepresentation3D::SafeDownCast(this->WidgetRep);
   if (rep2d)
