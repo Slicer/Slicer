@@ -281,7 +281,7 @@ void vtkMRMLLinearTransformsDisplayableManager2D::vtkInternal::UpdateDisplayNode
     return;
     }
 
-  vtkSmartPointer<vtkMRMLTransformHandleWidget> widget = nullptr;
+  vtkSmartPointer<vtkMRMLTransformHandleWidget> widget;
   InteractionWidgetsCacheType::iterator pipelineIt;
   pipelineIt = this->InteractionWidgets.find(displayNode);
 

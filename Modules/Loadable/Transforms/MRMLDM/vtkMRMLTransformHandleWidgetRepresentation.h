@@ -81,7 +81,7 @@ protected:
   vtkMRMLTransformHandleWidgetRepresentation();
   ~vtkMRMLTransformHandleWidgetRepresentation() override;
 
-  vtkSmartPointer<vtkMRMLTransformDisplayNode> DisplayNode{ nullptr };
+  vtkSmartPointer<vtkMRMLTransformDisplayNode> DisplayNode;
 
 private:
   vtkMRMLTransformHandleWidgetRepresentation(const vtkMRMLTransformHandleWidgetRepresentation&) = delete;

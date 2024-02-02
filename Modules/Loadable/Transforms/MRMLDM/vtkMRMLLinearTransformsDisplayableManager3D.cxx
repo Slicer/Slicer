@@ -344,7 +344,7 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::UpdateInteraction
     return;
     }
 
-  vtkSmartPointer<vtkMRMLTransformHandleWidget> widget = nullptr;
+  vtkSmartPointer<vtkMRMLTransformHandleWidget> widget;
   InteractionPipelinesCacheType::iterator pipelineIt = this->InteractionPipelines.find(displayNode);
 
   bool visible = displayNode->GetEditorVisibility();

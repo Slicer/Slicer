@@ -315,7 +315,7 @@ protected:
   double ViewScaleFactorMmPerPixel;
   double ScreenSizePixel; // diagonal size of the screen
 
-  vtkSmartPointer<vtkPlane> SlicePlane{ nullptr };
+  vtkSmartPointer<vtkPlane> SlicePlane;
 
   /// Handle size, specified in renderer world coordinate system.
   /// For slice views, renderer world coordinate system is the display coordinate system, so it is measured in pixels.
