@@ -172,8 +172,33 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
 
     set(executable "${Slicer_MAIN_PROJECT_APPLICATION_NAME}App-real.exe")
 
+    # Setting the "WindowsSdkDir" env. variable before building the PACKAGE target ensures
+    # that the "windeployqt" tool can lookup the path of a recent version of the "d3dcompiler_47.dll"
+    # library in the directory "%WindowsSdkDir%/Redist/D3D/x64"
+
+    if(CMAKE_WINDOWS_KITS_10_DIR)
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION.html
+      # and https://cmake.org/cmake/help/latest/module/InstallRequiredSystemLibraries.html
+      set(windows_kits_dir "${CMAKE_WINDOWS_KITS_10_DIR}")
+    elseif(ENV{WindowsSdkDir})
+      # If building from an environments established by vcvarsall.bat or similar scripts.
+      set(windows_kits_dir "$ENV{WindowsSdkDir}")
+    else()
+      # Default to registry value
+      # Copied from CMake/Modules/InstallRequiredSystemLibraries.cmake
+      get_filename_component(windows_kits_dir
+        "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots;KitsRoot10]" ABSOLUTE)
+    endif()
+    if(NOT windows_kits_dir)
+      message(WARNING "Failed to lookup Windows SDK directory required to package Qt libraries")
+    endif()
     install(
       CODE "
+        set(windows_kits_dir \"${windows_kits_dir}\")
+        set(ENV{WindowsSdkDir} \${windows_kits_dir})
+        if(\"\$ENV{WindowsSdkDir}\" STREQUAL \"\")
+          message(FATAL_ERROR \"Setting WindowsSdkDir env. variable is required to ensure windeployqt can install the most recent version of d3dcompiler_47.dll\")
+        endif()
         set(ENV{PATH} \"${QT_BINARY_DIR};\$ENV{PATH}\")
         execute_process(COMMAND \"${windeployqt}\" ${_args} \"\${CMAKE_INSTALL_PREFIX}/bin/${executable}\")
       "
