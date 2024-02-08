@@ -163,11 +163,61 @@ int TestSelectNextItem()
   return EXIT_SUCCESS;
 }
 
+int TestRemoveItem()
+{
+  vtkNew<vtkMRMLScene> scene;
+
+  // Register vtkMRMLSequenceBrowserNode
+  vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
+  sequencesLogic->SetMRMLScene(scene.GetPointer());
+
+  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
+  CHECK_NOT_NULL(browserNode);
+  browserNode->SetAndObserveMasterSequenceNodeID(sequenceNode->GetID());
+
+  // Test with recording mode enabled
+  vtkNew<vtkMRMLTransformNode> transform;
+
+  browserNode->SetSaveChanges(sequenceNode, true);
+  sequenceNode->SetDataNodeAtValue(transform, "1");
+  sequenceNode->SetDataNodeAtValue(transform, "2");
+
+  // Check if a proxy node is created
+  sequencesLogic->UpdateAllProxyNodes();
+  vtkMRMLNode* proxyNode = browserNode->GetProxyNode(sequenceNode);
+  CHECK_NOT_NULL(proxyNode);
+
+  // Remove a data node from the sequence
+  sequenceNode->RemoveDataNodeAtValue("2");
+  CHECK_INT(browserNode->GetSelectedItemNumber(), 0);
+  CHECK_INT(sequenceNode->GetNumberOfDataNodes(), 1);
+
+  // Check if modifying a proxy does not create a new timepoint
+  proxyNode->Modified();
+  CHECK_INT(sequenceNode->GetNumberOfDataNodes(), 1);
+
+  // Remove the last data node from the sequence
+  sequenceNode->RemoveDataNodeAtValue("1");
+  CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
+  CHECK_INT(sequenceNode->GetNumberOfDataNodes(), 0);
+
+  // Check that modifying a proxy node does not create a new timepoint
+  // (enabling "save changes" does not create a new timepoint, it just updates the existing timepoint;
+  // "recording" creates a new timepoint each time there is a modification, if the browser is in recording mode).
+  proxyNode->Modified();
+  CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
+  CHECK_INT(sequenceNode->GetNumberOfDataNodes(), 0);
+
+  return EXIT_SUCCESS;
+}
+
 }  // end anonymous namespace
 
 int vtkMRMLSequenceBrowserNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   CHECK_EXIT_SUCCESS(TestIndexFormatting());
   CHECK_EXIT_SUCCESS(TestSelectNextItem());
+  CHECK_EXIT_SUCCESS(TestRemoveItem());
   return EXIT_SUCCESS;
 }
