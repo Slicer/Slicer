@@ -202,8 +202,8 @@ int TestRemoveItem()
   CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
   CHECK_INT(sequenceNode->GetNumberOfDataNodes(), 0);
 
-  // Check if modifying a proxy creates does not create a new timepoint
-  // ("save changes" enabled does not create a new timepoint, it just updates the existing timepoint;
+  // Check that modifying a proxy node does not create a new timepoint
+  // (enabling "save changes" does not create a new timepoint, it just updates the existing timepoint;
   // "recording" creates a new timepoint each time there is a modification, if the browser is in recording mode).
   proxyNode->Modified();
   CHECK_INT(browserNode->GetSelectedItemNumber(), -1);
