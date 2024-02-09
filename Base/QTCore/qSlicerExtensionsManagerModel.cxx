@@ -958,9 +958,16 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionPythonPaths(const QSt
     {
     return QStringList();
     }
+
+  // When an extension depends on another extension then a .pyd file may depend on .pyd file in the other extension.
+  // The .pyd file can only be loaded if it is in the PYTHONPATH folder list.
+  // Since .pyd files are in the Slicer_QTLOADABLEMODULES_LIB_DIR, this folder needs to be added to
+  // Python paths.
+
   QString path = q->extensionInstallPath(extensionName);
   return appendToPathList(QStringList(), QStringList()
                           << path + "/" + QString(Slicer_QTSCRIPTEDMODULES_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
+                          << path + "/" + QString(Slicer_QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
                           << path + "/" + QString(Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
                           << path + "/" + QString(PYTHON_SITE_PACKAGES_SUBDIR)
                           );
