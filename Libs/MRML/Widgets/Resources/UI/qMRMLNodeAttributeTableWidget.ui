@@ -14,75 +14,108 @@
    <string>qMRMLNodeAttributeTableWidget</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
     <number>4</number>
    </property>
    <item row="2" column="0">
-    <widget class="qMRMLNodeAttributeTableView" name="MRMLNodeAttributeTableView">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
+    <widget class="ctkCollapsibleGroupBox" name="NodeAttributesGroupBox">
+     <property name="title">
+      <string>Attributes</string>
      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
+      <item>
+       <widget class="qMRMLNodeAttributeTableView" name="MRMLNodeAttributeTableView">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="AddAttributeButton">
+          <property name="minimumSize">
+           <size>
+            <width>72</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Add blank row to the table. The attribute is added to the MRML node when the name and value is set</string>
+          </property>
+          <property name="text">
+           <string>Add</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="RemoveAttributeButton">
+          <property name="minimumSize">
+           <size>
+            <width>72</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Remove selected attribute(s)</string>
+          </property>
+          <property name="text">
+           <string>Remove</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="3" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="AddAttributeButton">
-       <property name="minimumSize">
-        <size>
-         <width>72</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Add blank row to the table. The attribute is added to the MRML node when the name and value is set</string>
-       </property>
-       <property name="text">
-        <string>Add</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="RemoveAttributeButton">
-       <property name="minimumSize">
-        <size>
-         <width>72</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Remove selected attribute(s)</string>
-       </property>
-       <property name="text">
-        <string>Remove</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="1" column="0">
-    <widget class="ctkCollapsibleGroupBox" name="NodeInformationGroupBox">
+    <widget class="ctkCollapsibleGroupBox" name="NodePropertiesGroupBox">
      <property name="title">
-      <string>Node information</string>
+      <string>Properties</string>
      </property>
      <property name="collapsed">
       <bool>true</bool>
@@ -91,13 +124,22 @@
       <property name="spacing">
        <number>0</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
        <number>4</number>
       </property>
       <item>
        <widget class="QLabel" name="MRMLNodeInfoLabel">
         <property name="text">
-         <string>No node information is available.</string>
+         <string/>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -114,15 +156,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLNodeAttributeTableView</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeAttributeTableView.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
    <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeAttributeTableView</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeAttributeTableView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
