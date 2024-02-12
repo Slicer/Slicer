@@ -289,7 +289,7 @@
              <string>Show shadows by default to improve depth perception</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -305,6 +305,9 @@
           </item>
           <item row="7" column="1">
            <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsSizeScaleSlider">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="singleStep">
              <double>0.010000000000000</double>
             </property>
@@ -331,6 +334,9 @@
           </item>
           <item row="8" column="1">
            <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsVolumeOpacityThresholdSlider">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="decimals">
              <number>2</number>
             </property>
