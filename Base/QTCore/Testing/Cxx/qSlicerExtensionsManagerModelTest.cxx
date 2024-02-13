@@ -1849,7 +1849,8 @@ void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated
             << this->Tmp.filePath("MarkupsToModel/" + lib_dir)
             << this->Tmp.filePath("MarkupsToModel/" + qtloadablemodules_lib_dir))
         << QStringList()
-        << QStringList();
+        << (QStringList()
+            << this->Tmp.filePath("MarkupsToModel/" + qtloadablemodules_lib_dir));
   }
 
 #ifdef Slicer_USE_PYTHONQT
