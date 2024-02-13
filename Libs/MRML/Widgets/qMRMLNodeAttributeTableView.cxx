@@ -22,6 +22,8 @@
 // Qt includes
 #include <QStringList>
 #include <QItemSelectionModel>
+#include <QTimer>
+#include <QToolTip>
 
 // qMRML includes
 #include "qMRMLNodeAttributeTableView.h"
@@ -43,16 +45,12 @@ public:
   qMRMLNodeAttributeTableViewPrivate(qMRMLNodeAttributeTableView& object);
   void init();
 
-  /// Sets table message and takes care of the visibility of the label
-  void setMessage(const QString& message)
-  {
-    this->AttributeTableMessageLabel->setVisible(!message.isEmpty());
-    this->AttributeTableMessageLabel->setText(message);
-  };
-
 public:
   /// MRML node to inspect
   vtkMRMLNode* InspectedNode;
+  QPoint MessagePosition;
+  QString MessageText;
+  QTimer MessageDisplayTimer;
 };
 
 // --------------------------------------------------------------------------
@@ -68,10 +66,12 @@ void qMRMLNodeAttributeTableViewPrivate::init()
   Q_Q(qMRMLNodeAttributeTableView);
   this->setupUi(q);
 
+  this->MessageDisplayTimer.setSingleShot(true);
+
   QObject::connect(this->NodeAttributesTable, SIGNAL(itemChanged(QTableWidgetItem*)),
           q, SLOT(onAttributeChanged(QTableWidgetItem*)));
 
-  this->setMessage(QString());
+  QObject::connect(&this->MessageDisplayTimer, SIGNAL(timeout()), q, SLOT(showMessage()));
 }
 
 // --------------------------------------------------------------------------
@@ -115,8 +115,6 @@ void qMRMLNodeAttributeTableView::populateAttributeTable()
 {
   Q_D(qMRMLNodeAttributeTableView);
 
-  d->setMessage(QString());
-
   // Block signals so that onAttributeChanged function is not called when populating
   bool wasBlocked = d->NodeAttributesTable->blockSignals(true);
 
@@ -130,7 +128,6 @@ void qMRMLNodeAttributeTableView::populateAttributeTable()
 
   if (!d->InspectedNode)
     {
-    d->setMessage(tr("No node is selected"));
     d->NodeAttributesTable->setRowCount(0);
     d->NodeAttributesTable->blockSignals(wasBlocked);
     return;
@@ -139,7 +136,6 @@ void qMRMLNodeAttributeTableView::populateAttributeTable()
   std::vector< std::string > attributeNames = d->InspectedNode->GetAttributeNames();
   if (attributeNames.size() == 0)
     {
-    d->setMessage(tr("Selected node has no attributes"));
     d->NodeAttributesTable->setRowCount(0);
     }
   else
@@ -173,8 +169,6 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
 {
   Q_D(qMRMLNodeAttributeTableView);
 
-  d->setMessage(QString());
-
   if (!changedItem || !d->InspectedNode)
     {
     return;
@@ -193,12 +187,18 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
     QString attributeNameBeforeEditing = changedItem->data(Qt::UserRole).toString();
     if (d->InspectedNode->GetAttribute(changedItem->text().toUtf8().constData()))
       {
-      // Don't set if there is another attribute with the same name (would overwrite it),
-      // revert to the original value.
-      d->setMessage(tr("There is already an attribute with the same name"));
       bool wasBlocked = d->NodeAttributesTable->blockSignals(true);
       changedItem->setText(attributeNameBeforeEditing);
       d->NodeAttributesTable->blockSignals(wasBlocked);
+
+      // Ensure the attribute name is unique; if not, avoid overwriting it by reverting
+      // to the original value and notify the user.
+      d->MessageText = tr("There is already an attribute with the same name");
+      QRect rect = d->NodeAttributesTable->visualItemRect(changedItem);
+      d->MessagePosition = d->NodeAttributesTable->mapToGlobal(rect.bottomLeft());
+      // Due to limitations in displaying the tooltip immediately within this callback,
+      // a timer is used to delay its appearance until after the attribute change is fully processed.
+      d->MessageDisplayTimer.start(0);
       }
     else
       {
@@ -251,11 +251,8 @@ void qMRMLNodeAttributeTableView::addAttribute()
 
   if (!d->InspectedNode)
     {
-    d->setMessage(tr("No node is selected"));
     return;
     }
-
-  d->setMessage(QString());
 
   bool wasBlocked = d->NodeAttributesTable->blockSignals(true);
   int rowCountBefore = d->NodeAttributesTable->rowCount();
@@ -280,11 +277,8 @@ void qMRMLNodeAttributeTableView::removeSelectedAttributes()
 
   if (!d->InspectedNode)
     {
-    d->setMessage(tr("No node is selected"));
     return;
     }
-
-  d->setMessage(QString());
 
   // Extract selected row indices out of the selected table widget items list
   // (there may be more items selected in a row)
@@ -421,4 +415,11 @@ QItemSelectionModel* qMRMLNodeAttributeTableView::selectionModel()
   Q_D(qMRMLNodeAttributeTableView);
 
   return d->NodeAttributesTable->selectionModel();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeAttributeTableView::showMessage()
+{
+  Q_D(qMRMLNodeAttributeTableView);
+  QToolTip::showText(d->MessagePosition, d->MessageText);
 }

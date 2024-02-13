@@ -98,6 +98,8 @@ protected slots:
   /// Handles changing of text in a cell (attribute name or value)
   void onAttributeChanged(QTableWidgetItem* changedItem);
 
+  void showMessage();
+
 protected:
   QScopedPointer<qMRMLNodeAttributeTableViewPrivate> d_ptr;
 
