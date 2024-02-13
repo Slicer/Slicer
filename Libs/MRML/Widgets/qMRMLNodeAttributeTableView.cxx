@@ -191,14 +191,13 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
       changedItem->setText(attributeNameBeforeEditing);
       d->NodeAttributesTable->blockSignals(wasBlocked);
 
-      // Don't set if there is another attribute with the same name (would overwrite it),
-      // revert to the original value and display a message.
+      // Ensure the attribute name is unique; if not, avoid overwriting it by reverting
+      // to the original value and notify the user.
       d->MessageText = tr("There is already an attribute with the same name");
       QRect rect = d->NodeAttributesTable->visualItemRect(changedItem);
       d->MessagePosition = d->NodeAttributesTable->mapToGlobal(rect.bottomLeft());
-      // If we directly show the tooltip in this callback function now then the tooltip
-      // does not appear, therefore we trigger a timer to display it once the attribute change
-      // is fully completed.
+      // Due to limitations in displaying the tooltip immediately within this callback,
+      // a timer is used to delay its appearance until after the attribute change is fully processed.
       d->MessageDisplayTimer.start(0);
       }
     else
