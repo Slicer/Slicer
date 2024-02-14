@@ -115,7 +115,7 @@ bool vtkMRMLTransformHandleWidgetRepresentation::IsDisplayable()
     return this->GetDisplayNode()->GetEditorSliceIntersectionVisibility();
     }
 
-  return true;
+  return this->GetDisplayNode()->GetEditorVisibility3D();
 }
 
 //----------------------------------------------------------------------
@@ -205,32 +205,40 @@ bool vtkMRMLTransformHandleWidgetRepresentation::GetHandleVisibility(int type, i
     return false;
     }
 
+  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
+
   bool visible = Superclass::GetHandleVisibility(type, index);
   if (type == InteractionRotationHandle)
     {
-    visible &= displayNode->GetEditorRotationEnabled();
+    visible &= sliceNode ? displayNode->GetEditorRotationSliceEnabled() : displayNode->GetEditorRotationEnabled();
     }
   else if (type == InteractionTranslationHandle)
     {
-    visible &= displayNode->GetEditorTranslationEnabled();
+    visible &= sliceNode ? displayNode->GetEditorTranslationSliceEnabled() : displayNode->GetEditorTranslationEnabled();
     }
   else if (type == InteractionScaleHandle)
     {
-    visible &= displayNode->GetEditorScalingEnabled();
+    visible &= sliceNode ? displayNode->GetEditorScalingSliceEnabled() : displayNode->GetEditorScalingEnabled();
     }
 
   bool handleVisibility[4] = { false, false, false, false };
   if (type == InteractionRotationHandle)
     {
-    this->GetDisplayNode()->GetRotationHandleComponentVisibility(handleVisibility);
+    sliceNode
+      ? this->GetDisplayNode()->GetRotationHandleComponentVisibilitySlice(handleVisibility)
+      : this->GetDisplayNode()->GetRotationHandleComponentVisibility3D(handleVisibility);
     }
   else if (type == InteractionScaleHandle)
     {
-    this->GetDisplayNode()->GetScaleHandleComponentVisibility(handleVisibility);
+    sliceNode
+      ? this->GetDisplayNode()->GetScaleHandleComponentVisibilitySlice(handleVisibility)
+      : this->GetDisplayNode()->GetScaleHandleComponentVisibility3D(handleVisibility);
     }
   else if (type == InteractionTranslationHandle)
     {
-    this->GetDisplayNode()->GetTranslationHandleComponentVisibility(handleVisibility);
+    sliceNode
+      ? this->GetDisplayNode()->GetTranslationHandleComponentVisibilitySlice(handleVisibility)
+      : this->GetDisplayNode()->GetTranslationHandleComponentVisibility3D(handleVisibility);
     }
 
   if (index >= 0 && index <= 3)

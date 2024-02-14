@@ -339,7 +339,7 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::UpdateInteraction
 void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::UpdateInteractionPipeline(
   vtkMRMLTransformNode* displayableNode, unsigned long event, vtkMRMLTransformDisplayNode* displayNode)
 {
-  if (!displayableNode || !displayNode)
+  if (!displayableNode || !displayNode || !displayableNode->IsLinear())
     {
     return;
     }
@@ -347,7 +347,7 @@ void vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::UpdateInteraction
   vtkSmartPointer<vtkMRMLTransformHandleWidget> widget;
   InteractionPipelinesCacheType::iterator pipelineIt = this->InteractionPipelines.find(displayNode);
 
-  bool visible = displayNode->GetEditorVisibility();
+  bool visible = displayNode->GetEditorVisibility() && displayNode->GetEditorVisibility3D();
   if (visible && pipelineIt == this->InteractionPipelines.end())
     {
     // No pipeline, yet interaction visibility is on, create a new one

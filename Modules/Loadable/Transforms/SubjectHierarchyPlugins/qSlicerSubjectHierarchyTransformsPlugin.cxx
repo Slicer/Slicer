@@ -121,12 +121,12 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
   this->ResetCenterOfTransformCurrentItemAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Reset center of transformation"), q);
   QObject::connect(this->ResetCenterOfTransformCurrentItemAction, SIGNAL(triggered()), q, SLOT(resetCenterOfTransformationCurrentItem()));
 
-  this->ToggleInteractionAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Interaction in 3D view"), q);
+  this->ToggleInteractionAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Interaction"), q);
   QObject::connect(this->ToggleInteractionAction, SIGNAL(toggled(bool)), q, SLOT(toggleInteractionBox(bool)));
   this->ToggleInteractionAction->setCheckable(true);
   this->ToggleInteractionAction->setChecked(false);
 
-  this->ToggleInteractionItemAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Interaction in 3D view"), q);
+  this->ToggleInteractionItemAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Interaction"), q);
   QObject::connect(this->ToggleInteractionItemAction, SIGNAL(toggled(bool)), q, SLOT(toggleInteractionBox(bool)));
   this->ToggleInteractionItemAction->setCheckable(true);
   this->ToggleInteractionItemAction->setChecked(false);
@@ -440,14 +440,10 @@ void qSlicerSubjectHierarchyTransformsPlugin::showVisibilityContextMenuActionsFo
       }
 
     vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-    if (transformNode)
+    if (!transformNode)
       {
-      // We only display this option for transformable nodes, not transform nodes where
-      // the option is controlled by regular visibility options.
-      return;
+      transformNode = transformableNode->GetParentTransformNode();
       }
-
-    transformNode = transformableNode->GetParentTransformNode();
 
     vtkMRMLTransformDisplayNode* displayNode = transformNode ? vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode()) : nullptr;
 
@@ -661,6 +657,8 @@ void qSlicerSubjectHierarchyTransformsPlugin::toggleInteractionBox(bool visible)
     qCritical() << Q_FUNC_INFO << ": Failed to get or create transform node";
     return;
     }
+  transformNode->CreateDefaultDisplayNodes();
+
   vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(
     transformNode->GetDisplayNode() );
   if (!displayNode)

@@ -170,18 +170,30 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   vtkGetMacro(EditorVisibility, bool);
   vtkSetMacro(EditorVisibility, bool);
   vtkBooleanMacro(EditorVisibility, bool);
+  vtkGetMacro(EditorVisibility3D, bool);
+  vtkSetMacro(EditorVisibility3D, bool);
+  vtkBooleanMacro(EditorVisibility3D, bool);
   vtkGetMacro(EditorSliceIntersectionVisibility, bool);
   vtkSetMacro(EditorSliceIntersectionVisibility, bool);
   vtkBooleanMacro(EditorSliceIntersectionVisibility, bool);
   vtkGetMacro(EditorTranslationEnabled, bool);
   vtkSetMacro(EditorTranslationEnabled, bool);
   vtkBooleanMacro(EditorTranslationEnabled, bool);
+  vtkGetMacro(EditorTranslationSliceEnabled, bool);
+  vtkSetMacro(EditorTranslationSliceEnabled, bool);
+  vtkBooleanMacro(EditorTranslationSliceEnabled, bool);
   vtkGetMacro(EditorRotationEnabled, bool);
   vtkSetMacro(EditorRotationEnabled, bool);
   vtkBooleanMacro(EditorRotationEnabled, bool);
+  vtkGetMacro(EditorRotationSliceEnabled, bool);
+  vtkSetMacro(EditorRotationSliceEnabled, bool);
+  vtkBooleanMacro(EditorRotationSliceEnabled, bool);
   vtkGetMacro(EditorScalingEnabled, bool);
   vtkSetMacro(EditorScalingEnabled, bool);
   vtkBooleanMacro(EditorScalingEnabled, bool);
+  vtkGetMacro(EditorScalingSliceEnabled, bool);
+  vtkSetMacro(EditorScalingSliceEnabled, bool);
+  vtkBooleanMacro(EditorScalingSliceEnabled, bool);
 
   /// Ask the editor to recompute its bounds by invoking the
   /// TransformUpdateEditorBoundsEvent event.
@@ -224,12 +236,18 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   /// The order of the vector is: [X, Y, Z, ViewPlane]
   /// "ViewPlane" scale/translation allows transformations to take place along the active view plane.
   /// (ex. center translation point and ROI corner scale handles.
-  vtkSetVector4Macro(RotationHandleComponentVisibility, bool);
-  vtkGetVector4Macro(RotationHandleComponentVisibility, bool);
-  vtkSetVector4Macro(ScaleHandleComponentVisibility, bool);
-  vtkGetVector4Macro(ScaleHandleComponentVisibility, bool);
-  vtkSetVector4Macro(TranslationHandleComponentVisibility, bool);
-  vtkGetVector4Macro(TranslationHandleComponentVisibility, bool);
+  vtkSetVector4Macro(RotationHandleComponentVisibility3D, bool);
+  vtkGetVector4Macro(RotationHandleComponentVisibility3D, bool);
+  vtkSetVector4Macro(ScaleHandleComponentVisibility3D, bool);
+  vtkGetVector4Macro(ScaleHandleComponentVisibility3D, bool);
+  vtkSetVector4Macro(TranslationHandleComponentVisibility3D, bool);
+  vtkGetVector4Macro(TranslationHandleComponentVisibility3D, bool);
+  vtkSetVector4Macro(RotationHandleComponentVisibilitySlice, bool);
+  vtkGetVector4Macro(RotationHandleComponentVisibilitySlice, bool);
+  vtkSetVector4Macro(ScaleHandleComponentVisibilitySlice, bool);
+  vtkGetVector4Macro(ScaleHandleComponentVisibilitySlice, bool);
+  vtkSetVector4Macro(TranslationHandleComponentVisibilitySlice, bool);
+  vtkGetVector4Macro(TranslationHandleComponentVisibilitySlice, bool);
   //@}
 
 protected:
@@ -270,10 +288,14 @@ protected:
 
   // Interaction Parameters
   bool EditorVisibility;
+  bool EditorVisibility3D;
   bool EditorSliceIntersectionVisibility;
   bool EditorTranslationEnabled;
+  bool EditorTranslationSliceEnabled;
   bool EditorRotationEnabled;
+  bool EditorRotationSliceEnabled;
   bool EditorScalingEnabled;
+  bool EditorScalingSliceEnabled;
 
   int ActiveInteractionType{-1};
   int ActiveInteractionIndex{-1};
@@ -281,9 +303,13 @@ protected:
   double InteractionSizeMm{5.0};
   double InteractionScalePercent{15.0};
 
-  bool RotationHandleComponentVisibility[4];
-  bool ScaleHandleComponentVisibility[4];
-  bool TranslationHandleComponentVisibility[4];
+  bool RotationHandleComponentVisibility3D[4];
+  bool ScaleHandleComponentVisibility3D[4];
+  bool TranslationHandleComponentVisibility3D[4];
+
+  bool RotationHandleComponentVisibilitySlice[4];
+  bool ScaleHandleComponentVisibilitySlice[4];
+  bool TranslationHandleComponentVisibilitySlice[4];
 
  protected:
   vtkMRMLTransformDisplayNode ( );

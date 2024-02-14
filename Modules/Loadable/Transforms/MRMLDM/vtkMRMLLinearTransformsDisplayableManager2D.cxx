@@ -246,7 +246,7 @@ void vtkMRMLLinearTransformsDisplayableManager2D::vtkInternal::RemoveDisplayNode
 //---------------------------------------------------------------------------
 void vtkMRMLLinearTransformsDisplayableManager2D::vtkInternal::AddDisplayNode(vtkMRMLTransformNode* mNode, vtkMRMLTransformDisplayNode* displayNode)
 {
-  if (!mNode || !displayNode)
+  if (!mNode || !displayNode || !mNode->IsLinear())
     {
     return;
     }
@@ -277,6 +277,12 @@ void vtkMRMLLinearTransformsDisplayableManager2D::vtkInternal::UpdateDisplayNode
   //   otherwise, add as new node
 
   if (!displayNode)
+    {
+    return;
+    }
+
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
+  if (!transformNode || !transformNode->IsLinear())
     {
     return;
     }
