@@ -88,10 +88,18 @@ public slots:
   void setContourOpacityPercent(double opacity);
 
   void setEditorVisibility(bool enabled);
+  void setEditorVisibility3d(bool enabled);
   void setEditorVisibility2d(bool enabled);
+
   void setEditorTranslationEnabled(bool enabled);
+  void setEditorTranslationSliceEnabled(bool enabled);
+
   void setEditorRotationEnabled(bool enabled);
+  void setEditorRotationSliceEnabled(bool enabled);
+
   void setEditorScalingEnabled(bool enabled);
+  void setEditorScalingSliceEnabled(bool enabled);
+
   void updateEditorBounds();
 
   void updateTranslationComponentVisibility();
@@ -106,6 +114,9 @@ public slots:
 
 protected slots:
   void updateWidgetFromDisplayNode();
+
+  void updateInteraction3DWidgetsFromDisplayNode();
+  void updateInteractionSliceWidgetsFromDisplayNode();
 
 protected:
   QScopedPointer<qMRMLTransformDisplayNodeWidgetPrivate> d_ptr;
