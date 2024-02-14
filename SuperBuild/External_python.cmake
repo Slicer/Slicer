@@ -278,6 +278,14 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   mark_as_superbuild(PYTHON_VALGRIND_SUPPRESSIONS_FILE:FILEPATH)
 
   #-----------------------------------------------------------------------------
+  # Directory where executable scripts associated with "project.scripts" or "project.gui-scripts"
+  # entry-points are generated
+  set(_scripts_subdir bin)
+  if(WIN32)
+    set(_scripts_subdir Scripts)
+  endif()
+
+  #-----------------------------------------------------------------------------
   # Slicer Launcher setting specific to build tree
 
   set(_lib_subdir lib)
@@ -293,7 +301,10 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     )
 
   # paths
-  set(${proj}_PATHS_LAUNCHER_BUILD ${python_DIR}/bin)
+  set(${proj}_PATHS_LAUNCHER_BUILD
+    ${python_DIR}/bin
+    ${python_DIR}/${_scripts_subdir}
+    )
   mark_as_superbuild(
     VARS ${proj}_PATHS_LAUNCHER_BUILD
     LABELS "PATHS_LAUNCHER_BUILD"
@@ -332,6 +343,15 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
       )
   endif()
+
+  # paths
+  set(${proj}_PATHS_LAUNCHER_INSTALLED
+    <APPLAUNCHER_SETTINGS_DIR>/../lib/Python/${_scripts_subdir}
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PATHS_LAUNCHER_INSTALLED
+    LABELS "PATHS_LAUNCHER_INSTALLED"
+    )
 
   # pythonpath
   set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED

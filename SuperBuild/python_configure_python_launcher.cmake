@@ -79,6 +79,13 @@ endforeach()
 
 find_package(CTKAppLauncher REQUIRED)
 
+# Directory where executable scripts associated with "project.scripts" or "project.gui-scripts"
+# entry-points are generated.
+set(_scripts_subdir bin)
+if(WIN32)
+  set(_scripts_subdir Scripts)
+endif()
+
 #
 # Settings specific to the build tree.
 #
@@ -129,6 +136,7 @@ slicer_dll_directories.add()
 # PATHS
 set(PYTHONLAUNCHER_PATHS_BUILD
   <APPLAUNCHER_DIR>
+  <APPLAUNCHER_DIR>/../${_scripts_subdir}
   )
 
 # LIBRARY_PATHS
@@ -184,6 +192,7 @@ set(PYTHONHOME "<APPLAUNCHER_DIR>/../lib/Python")
 # PATHS
 set(PYTHONLAUNCHER_PATHS_INSTALLED
   <APPLAUNCHER_DIR>
+  <APPLAUNCHER_DIR>/../lib/Python/${_scripts_subdir}
   )
 
 # LIBRARY_PATHS
