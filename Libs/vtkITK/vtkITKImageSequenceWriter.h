@@ -87,6 +87,14 @@ protected:
   vtkITKImageSequenceWriter();
   ~vtkITKImageSequenceWriter() override;
 
+  /**
+   * Fill the input port information objects for this algorithm.  This
+   * is invoked by the first call to GetInputPortInformation for each
+   * port so subclasses can specify what they can handle.
+   */
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+
+protected:
   char *FileName;
   vtkMatrix4x4* RasToIJKMatrix;
   vtkMatrix4x4* MeasurementFrameMatrix;

@@ -174,11 +174,12 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
     itkImageWriter->UseCompressionOff();
     }
 
-  // write image
+  // setup image writer
+  itk::ImageIOBase* imageIOType = nullptr;
   if (self->GetImageIOClassName())
     {
     itk::LightObject::Pointer objectType = itk::ObjectFactoryBase::CreateInstance(self->GetImageIOClassName());
-    itk::ImageIOBase* imageIOType = dynamic_cast<itk::ImageIOBase*>(objectType.GetPointer());
+    imageIOType = dynamic_cast<itk::ImageIOBase*>(objectType.GetPointer());
     if (imageIOType)
       {
       itkImageWriter->SetImageIO(imageIOType);
@@ -186,15 +187,14 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
     }
   itkImageWriter->SetInput(joinImageFilter->GetOutput());
 
+  // set measurement frame matrix in metadata object dictionary
   if (measurementFrameMatrix != nullptr)
     {
     typedef std::vector<std::vector<double> > DoubleVectorType;
     typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
-    const itk::MetaDataDictionary &dictionary = itkImageWriter->GetMetaDataDictionary();
-
-    itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
-    itk::MetaDataDictionary::ConstIterator end = dictionary.End();
-
+    const itk::MetaDataDictionary &constDictionary = itkImageWriter->GetMetaDataDictionary();
+    itk::MetaDataDictionary::ConstIterator itr = constDictionary.Begin();
+    itk::MetaDataDictionary::ConstIterator end = constDictionary.End();
     while (itr != end)
       {
       // Get Measurement Frame
@@ -202,14 +202,13 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
       MetaDataDoubleVectorType::Pointer entryvalue = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
       if (entryvalue)
         {
-        int pos = itr->first.find("NRRD_measurement frame");
-        if (pos != -1)
+        if (itr->first.find("NRRD_measurement frame") != -1)
           {
           DoubleVectorType tagvalue;
           tagvalue.resize(3);
           for (int i = 0; i < 3; i++)
             {
-            tagvalue[i].resize( 3 );
+            tagvalue[i].resize(3);
             for (int j = 0; j < 3; j++)
               {
               tagvalue[i][j] = measurementFrameMatrix->GetElement(i, j);
@@ -244,6 +243,7 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkCollection *inputImage
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {
   // Fix 4 dimensions: 3 spatial + 1 sequence. The fifth dimension for the scalar components is in the pixel type
+  //TODO: Here we specify SPATIAL dimensions. How to have the writer have: component + 3 spatial + sequence (time/list)?
   ITKWriteVTKImage<TPixelType, 4>(self, inputImageCollection, fileName, rasToIjkMatrix, measurementFrameMatrix);
 }
 
@@ -304,6 +304,13 @@ void vtkITKImageSequenceWriter::SetFileName(const char *name)
   this->FileName = new char[strlen(name) + 1];
   strcpy(this->FileName, name);
   this->Modified();
+}
+
+//------------------------------------------------------------------------------
+int vtkITKImageSequenceWriter::FillInputPortInformation(int port, vtkInformation* info)
+{
+  info->Set(vtkAlgorithm::INPUT_IS_REPEATABLE(), 1);
+  return this->Superclass::FillInputPortInformation(port, info);
 }
 
 //----------------------------------------------------------------------------

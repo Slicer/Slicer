@@ -123,8 +123,7 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     reader->SetUseNativeOriginOn();
   }
 
-  // Read the header to see if the NRRD file corresponds to the
-  // MRML Node
+  // Read the header to see if the NRRD file corresponds to the MRML Node
   reader->UpdateInformation();
 
   // Read index information and custom attributes
@@ -261,12 +260,6 @@ bool vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *re
     firstFrameVolumeScalarType = firstFrameVolume->GetImageData()->GetScalarType();
     firstFrameVolumeNumberOfComponents = firstFrameVolume->GetImageData()->GetNumberOfScalarComponents();
     firstFrameVolumeVoxelVectorType = firstFrameVolume->GetVoxelVectorType();
-    //// VTK NRRD writer only supports 4D volumes (writing a 3D color volume sequence would require 5D)
-    //if (firstFrameVolumeNumberOfComponents != 1)
-    //  {
-    //  this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only single scalar component volumes can be written in this format."));
-    //  return false;
-    //  }
     }
   vtkNew<vtkMatrix4x4> firstVolumeRasToIjk;
   firstFrameVolume->GetRASToIJKMatrix(firstVolumeRasToIjk.GetPointer());
@@ -379,15 +372,12 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   vtkNew<vtkITKImageSequenceWriter> writer;
   writer->SetFileName(fullName.c_str());
-  //TODO: Anything to do about ForceRangeAxis (an option in vtkTeemNRRDWriter)? It was enabled in the previous implementation.
   writer->SetUseCompression(this->GetUseCompression());
 
   writer->SetRasToIJKMatrix(firstVolumeRasToIjk.GetPointer());
 
   // Pass on voxel type to the writer (NRRD kind of first axis)
   writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(frameVolumeVoxelVectorType));
-
-  //TODO: Sequence axis type
 
   // Setup writer
   for (int frameIndex=0; frameIndex<numberOfFrameVolumes; frameIndex++)
