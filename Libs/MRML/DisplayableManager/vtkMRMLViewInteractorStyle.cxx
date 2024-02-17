@@ -454,10 +454,9 @@ void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
 
   // Displayable managers add interactor style observers and those observers
   // replace callback method calls. We make sure here that displayable managers
-  // get the chance to process the events first (except when we are in an
-  // interaction state - such as zooming, panning, etc).
+  // get the chance to process the events first.
 
-  if (/*self->GetInteractorStyle()->GetState() != VTKIS_NONE || */!self->DelegateInteractionEventToDisplayableManagers(event) || self->GetInteractorStyle()->GetState() != VTKIS_NONE)
+  if (!self->DelegateInteractionEventToDisplayableManagers(event))
     {
     // Displayable managers did not processed it
     vtkMRMLViewInteractorStyle::ProcessEvents(object, event, clientdata, calldata);
