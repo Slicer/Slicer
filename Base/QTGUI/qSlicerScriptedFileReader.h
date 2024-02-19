@@ -23,7 +23,7 @@
 
 // Slicer includes
 #include "qSlicerFileReader.h"
-#include "qSlicerBaseQTCoreExport.h"
+#include "qSlicerBaseQTGUIExport.h"
 
 // Forward Declare PyObject*
 #ifndef PyObject_HEAD
@@ -31,9 +31,10 @@ struct _object;
 typedef _object PyObject;
 #endif
 class qSlicerScriptedFileReaderPrivate;
+class qSlicerScriptedIOOptionsWidget;
 class vtkObject;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileReader
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedFileReader
   : public qSlicerFileReader
 {
   Q_OBJECT
@@ -67,6 +68,13 @@ public:
   /// \sa qSlicerFileReader::extensions()
   QStringList extensions()const override;
 
+  /// Reimplemented to return the registered IOIptions if any.
+  /// \sa registerIOOptions(qSlicerIOOptions*)
+  /// \sa qSlicerFileReader::options()
+  qSlicerIOOptions* options()const override;
+
+  void setOptions(qSlicerScriptedIOOptionsWidget* options);
+
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileReader::canLoadFile()
   bool canLoadFile(const QString& file)const override;
@@ -78,6 +86,7 @@ public:
   /// \sa qSlicerFileReader::write()
   bool load(const qSlicerIO::IOProperties& properties) override;
 
+  ///@{
   /// Reimplemented to support python methods and q_property
   /// Exposes setLoadedNodes, which is protected in superclass
   /// \sa qSlicerFileReader::loadedNodes()
@@ -88,6 +97,7 @@ public:
   void setLoadedNodes(const QStringList& nodes) override {
     Superclass::setLoadedNodes(nodes);
   };
+  ///@}
 
 protected:
   QScopedPointer<qSlicerScriptedFileReaderPrivate> d_ptr;

@@ -36,6 +36,10 @@ assert not slicer.app.ioManager().isDialogRegistered("Foo Directory", slicer.qSl
 # Check scripted IO registration
 assert slicer.app.ioManager().registeredFileWriterCount("MyWriterFileType") == 1
 assert slicer.app.ioManager().registeredFileReaderCount("MyReaderFileType") == 1
+assert slicer.app.ioManager().registeredFileReaderCount("MyReaderWithIOOptionsFileType") == 1
+
+# Check scripted IOOptionsWidget registration
+assert slicer.app.ioManager().fileOptions("My reader with IO options file type")
 
 import ModuleA
 import ModuleB
@@ -43,6 +47,7 @@ import ModuleC_WithoutWidget
 import ModuleD_WithFileDialog_WithoutWidget
 import ModuleE_WithFileWriter_WithoutWidget
 import ModuleF_WithFileReader_WithoutWidget
+import ModuleG_WithFileReaderAndIOOptions_WithoutWidget
 
 # Check module type
 assert isinstance(ModuleA, ModuleType)
@@ -51,6 +56,7 @@ assert isinstance(ModuleC_WithoutWidget, ModuleType)
 assert isinstance(ModuleD_WithFileDialog_WithoutWidget, ModuleType)
 assert isinstance(ModuleE_WithFileWriter_WithoutWidget, ModuleType)
 assert isinstance(ModuleF_WithFileReader_WithoutWidget, ModuleType)
+assert isinstance(ModuleG_WithFileReaderAndIOOptions_WithoutWidget, ModuleType)
 
 # Check module class type
 assert isinstance(ModuleA.ModuleA, type)
@@ -59,6 +65,7 @@ assert isinstance(ModuleC_WithoutWidget.ModuleC_WithoutWidget, type)
 assert isinstance(ModuleD_WithFileDialog_WithoutWidget.ModuleD_WithFileDialog_WithoutWidget, type)
 assert isinstance(ModuleE_WithFileWriter_WithoutWidget.ModuleE_WithFileWriter_WithoutWidget, type)
 assert isinstance(ModuleF_WithFileReader_WithoutWidget.ModuleF_WithFileReader_WithoutWidget, type)
+assert isinstance(ModuleG_WithFileReaderAndIOOptions_WithoutWidget.ModuleG_WithFileReaderAndIOOptions_WithoutWidget, type)
 
 # Check module widget class type
 assert isinstance(ModuleA.ModuleAWidget, type)
@@ -70,6 +77,10 @@ assert isinstance(ModuleD_WithFileDialog_WithoutWidget.ModuleD_WithFileDialog_Wi
 # Check IO class type
 assert isinstance(ModuleE_WithFileWriter_WithoutWidget.ModuleE_WithFileWriter_WithoutWidgetFileWriter, type)
 assert isinstance(ModuleF_WithFileReader_WithoutWidget.ModuleF_WithFileReader_WithoutWidgetFileReader, type)
+assert isinstance(ModuleG_WithFileReaderAndIOOptions_WithoutWidget.ModuleG_WithFileReaderAndIOOptions_WithoutWidgetFileReader, type)
+
+# Check IOOptionsWidget class type
+assert isinstance(ModuleG_WithFileReaderAndIOOptions_WithoutWidget.ModuleG_WithFileReaderAndIOOptions_WithoutWidgetIOOptionsWidget, type)
 
 # Check that module do not clobber each others. See issue #3549
 assert not hasattr(ModuleC_WithoutWidget, "ModuleC_WithoutWidgetWidget")
