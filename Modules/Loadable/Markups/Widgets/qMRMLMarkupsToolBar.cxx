@@ -39,10 +39,6 @@
 #include "qMRMLMarkupsToolBar.h"
 #include "qMRMLMarkupsToolBar_p.h"
 #include "qMRMLNodeComboBox.h"
-#include "qMRMLThreeDView.h"
-#include "qMRMLThreeDWidget.h"
-#include "qMRMLSliceView.h"
-#include "qMRMLSliceWidget.h"
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerModuleManager.h"
 
@@ -114,17 +110,18 @@ void qMRMLMarkupsToolBarPrivate::addSetModuleButton(vtkSlicerMarkupsLogic* marku
   Q_UNUSED(markupsLogic);
   Q_Q(qMRMLMarkupsToolBar);
 
-  QPushButton* moduleButton = new QPushButton();
-  moduleButton->setObjectName(QString(moduleName + " module shortcut"));
-  moduleButton->setToolTip("Open the " + moduleName + " module");
+  QAction* goToMarkupsAction = new QAction();
+  //QPushButton* moduleButton = new QPushButton();
+  goToMarkupsAction->setObjectName(QString(moduleName + " module shortcut"));
+  goToMarkupsAction->setToolTip("Open the " + moduleName + " module");
   QString iconName = ":/Icons/" + moduleName + ".png";
-  moduleButton->setIcon(QIcon(iconName));
-  QSignalMapper* mapper = new QSignalMapper(moduleButton);
-  QObject::connect(moduleButton, SIGNAL(clicked()), mapper, SLOT(map()));
-  mapper->setMapping(moduleButton, moduleName);
+  goToMarkupsAction->setIcon(QIcon(iconName));
+  QSignalMapper* mapper = new QSignalMapper(goToMarkupsAction);
+  QObject::connect(goToMarkupsAction, SIGNAL(triggered()), mapper, SLOT(map()));
+  mapper->setMapping(goToMarkupsAction, moduleName);
   QObject::connect(mapper, SIGNAL(mapped(const QString&)),
     this, SLOT(onSetModule(const QString&)));
-  q->addWidget(moduleButton);
+  q->addAction(goToMarkupsAction);
 }
 
 //-----------------------------------------------------------------------------
@@ -517,6 +514,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
       continue;
       }
     bool markupExists = false;
+
     for (const auto& markupName : markupsLogic->GetRegisteredMarkupsTypes())
       {
       if (QString::fromStdString(/*no tr*/"Create" + markupName + "PushButton") == buttonName)
@@ -566,7 +564,6 @@ void qMRMLMarkupsToolBar::onAddNewMarkupsNodeByClass(const QString& className)
 void qMRMLMarkupsToolBar::onMarkupsNodeChanged(vtkMRMLNode* markupsNode)
 {
   // called when the user selects a node on the toolbar
-  Q_D(qMRMLMarkupsToolBar);
   this->setActiveMarkupsNode(vtkMRMLMarkupsNode::SafeDownCast(markupsNode));
 }
 

@@ -128,8 +128,41 @@ int vtkCurveMeasurementsCalculator::RequestData(
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
   vtkPolyData* inputPolyData = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  if (!inputPolyData)
+  if (!this->InputMarkupsMRMLNode)
     {
+    return 1;
+    }
+
+  if (!inputPolyData ||
+      inputPolyData->GetNumberOfPoints() == 0 ||
+      inputPolyData->GetNumberOfLines() == 0)
+    {
+    // Clear values
+    for (int index = 0; index < this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
+      {
+      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->InputMarkupsMRMLNode->GetNthMeasurement(index));
+      if (!currentMeasurement || currentMeasurement->GetName().empty() || !currentMeasurement->GetEnabled())
+        {
+        continue;
+        }
+      if (currentMeasurement->GetName() == this->GetMeanCurvatureName())
+        {
+        currentMeasurement->ClearValue(vtkMRMLMeasurement::InsufficientInput);
+        }
+      else if (currentMeasurement->GetName() == this->GetMaxCurvatureName())
+        {
+        currentMeasurement->ClearValue(vtkMRMLMeasurement::InsufficientInput);
+        }
+      else if (currentMeasurement->GetName() == this->GetMeanTorsionName())
+        {
+        currentMeasurement->ClearValue(vtkMRMLMeasurement::InsufficientInput);
+        }
+      else if (currentMeasurement->GetName() == this->GetMaxTorsionName())
+        {
+        currentMeasurement->ClearValue(vtkMRMLMeasurement::InsufficientInput);
+        }
+      }
+
     return 1;
     }
 
@@ -184,6 +217,11 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
     }
   if (polyData->GetNumberOfPoints() == 0 || polyData->GetNumberOfLines() == 0)
     {
+    return false;
+    }
+  if (this->InputMarkupsMRMLNode == nullptr)
+    {
+    vtkErrorMacro("Failed to find input markups node");
     return false;
     }
 

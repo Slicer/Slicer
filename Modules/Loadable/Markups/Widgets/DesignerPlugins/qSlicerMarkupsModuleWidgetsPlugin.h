@@ -31,6 +31,7 @@
 #include "qMRMLMarkupsROIWidgetPlugin.h"
 #include "qSlicerMarkupsPlaceWidgetPlugin.h"
 #include "qSlicerSimpleMarkupsWidgetPlugin.h"
+#include "qSlicerMarkupsMeasurementsWidgetPlugin.h"
 
 // \class Group the plugins in one library
 class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT qSlicerMarkupsModuleWidgetsPlugin
@@ -51,7 +52,7 @@ public:
     plugins << new qMRMLMarkupsROIWidgetPlugin;
     plugins << new qSlicerMarkupsPlaceWidgetPlugin;
     plugins << new qSlicerSimpleMarkupsWidgetPlugin;
-    plugins << new qSlicerSimpleMarkupsWidgetPlugin;
+    plugins << new qSlicerMarkupsMeasurementsWidgetPlugin;
 
     return plugins;
     }
