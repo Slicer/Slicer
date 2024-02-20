@@ -72,11 +72,11 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* slidersParent)
   this->setTypeOfTransform(qMRMLTransformSliders::TRANSLATION);
 
   this->connect(d->LRSlider, SIGNAL(valueChanged(double)),
-                SLOT(onSliderPositionChanged(double)));
+                SLOT(onLRSliderPositionChanged(double)));
   this->connect(d->PASlider, SIGNAL(valueChanged(double)),
-                SLOT(onSliderPositionChanged(double)));
+                SLOT(onPASliderPositionChanged(double)));
   this->connect(d->ISSlider, SIGNAL(valueChanged(double)),
-                SLOT(onSliderPositionChanged(double)));
+                SLOT(onISSliderPositionChanged(double)));
 
   this->connect(d->MinValueSpinBox, SIGNAL(valueChanged(double)),
                 SLOT(onMinimumChanged(double)));
@@ -479,32 +479,9 @@ void qMRMLTransformSliders::resetUnactiveSliders()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::onSliderPositionChanged(double position)
+void qMRMLTransformSliders::onSliderPositionChanged(qMRMLLinearTransformSlider* slider, double position)
 {
   Q_D(qMRMLTransformSliders);
-  qMRMLLinearTransformSlider* slider =
-    qobject_cast<qMRMLLinearTransformSlider*>(this->sender());
-  Q_ASSERT(slider);
-  QWidget* focusWidget = this->focusWidget();
-
-  // If update initiated from spinbox, consider it active, too
-  // (when number of decimals are updated then it may change all the sliders
-  // one by one, but that should not reset the axis that is currently being changed)
-  if (focusWidget)
-    {
-    if (focusWidget->parent() == d->LRSlider->spinBox())
-      {
-      slider = d->LRSlider;
-      }
-    else if (focusWidget->parent() == d->PASlider->spinBox())
-      {
-      slider = d->PASlider;
-      }
-    else if (focusWidget->parent() == d->ISSlider->spinBox())
-      {
-      slider = d->ISSlider;
-      }
-    }
   d->ActiveSliders.insert(slider);
 
   if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
@@ -518,6 +495,27 @@ void qMRMLTransformSliders::onSliderPositionChanged(double position)
   emit this->valuesChanged();
 
   d->ActiveSliders.remove(slider);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::onLRSliderPositionChanged(double position)
+{
+  Q_D(qMRMLTransformSliders);
+  this->onSliderPositionChanged(d->LRSlider, position);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::onPASliderPositionChanged(double position)
+{
+  Q_D(qMRMLTransformSliders);
+  this->onSliderPositionChanged(d->PASlider, position);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::onISSliderPositionChanged(double position)
+{
+  Q_D(qMRMLTransformSliders);
+  this->onSliderPositionChanged(d->ISSlider, position);
 }
 
 //-----------------------------------------------------------------------------
