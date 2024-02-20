@@ -33,6 +33,7 @@
 class vtkMRMLNode;
 class vtkMRMLTransformNode;
 class vtkMatrix4x4;
+class qMRMLLinearTransformSlider;
 class qMRMLTransformSlidersPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public qMRMLWidget
@@ -155,7 +156,9 @@ public slots:
   void setDecimals(int newDecimals);
 
 protected slots:
-  void onSliderPositionChanged(double position);
+  void onLRSliderPositionChanged(double position);
+  void onPASliderPositionChanged(double position);
+  void onISSliderPositionChanged(double position);
 
   void onMinimumChanged(double min);
   void onMaximumChanged(double max);
@@ -166,6 +169,8 @@ protected slots:
 
 protected:
   QScopedPointer<qMRMLTransformSlidersPrivate> d_ptr;
+
+  void onSliderPositionChanged(qMRMLLinearTransformSlider* slider, double position);
 
   /// Extract the min/max values from the matrix and
   /// change the slider min/max values accordingly.
