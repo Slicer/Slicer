@@ -34,24 +34,48 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   file(WRITE ${requirements_file} [===[
   # [cryptography]
   # Hashes correspond to the following packages:
-  #  - cryptography-41.0.4-cp37-abi3-macosx_10_12_universal2.whl
-  #  - cryptography-41.0.4-cp37-abi3-macosx_10_12_x86_64.whl
-  #  - cryptography-41.0.4-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - cryptography-41.0.4-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - cryptography-41.0.4-cp37-abi3-manylinux_2_28_aarch64.whl
-  #  - cryptography-41.0.4-cp37-abi3-manylinux_2_28_x86_64.whl
-  #  - cryptography-41.0.4-cp37-abi3-musllinux_1_1_aarch64.whl
-  #  - cryptography-41.0.4-cp37-abi3-musllinux_1_1_x86_64.whl
-  #  - cryptography-41.0.4-cp37-abi3-win_amd64.whl
-  cryptography==41.0.4 --hash=sha256:80907d3faa55dc5434a16579952ac6da800935cd98d14dbd62f6f042c7f5e839 \
-                       --hash=sha256:35c00f637cd0b9d5b6c6bd11b6c3359194a8eba9c46d4e875a3660e3b400005f \
-                       --hash=sha256:cecfefa17042941f94ab54f769c8ce0fe14beff2694e9ac684176a2535bf9714 \
-                       --hash=sha256:e40211b4923ba5a6dc9769eab704bdb3fbb58d56c5b336d30996c24fcf12aadb \
-                       --hash=sha256:23a25c09dfd0d9f28da2352503b23e086f8e78096b9fd585d1d14eca01613e13 \
-                       --hash=sha256:2ed09183922d66c4ec5fdaa59b4d14e105c084dd0febd27452de8f6f74704143 \
-                       --hash=sha256:5a0f09cefded00e648a127048119f77bc2b2ec61e736660b5789e638f43cc397 \
-                       --hash=sha256:9eeb77214afae972a00dee47382d2591abe77bdae166bda672fb1e24702a3860 \
-                       --hash=sha256:c880eba5175f4307129784eca96f4e70b88e57aa3f680aeba3bab0e980b0f37d
+  #  - cryptography-42.0.3-cp37-abi3-macosx_10_12_universal2.whl
+  #  - cryptography-42.0.3-cp37-abi3-macosx_10_12_x86_64.whl
+  #  - cryptography-42.0.3-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cryptography-42.0.3-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cryptography-42.0.3-cp37-abi3-manylinux_2_28_aarch64.whl
+  #  - cryptography-42.0.3-cp37-abi3-manylinux_2_28_x86_64.whl
+  #  - cryptography-42.0.3-cp37-abi3-musllinux_1_1_aarch64.whl
+  #  - cryptography-42.0.3-cp37-abi3-musllinux_1_1_x86_64.whl
+  #  - cryptography-42.0.3-cp37-abi3-musllinux_1_2_aarch64.whl
+  #  - cryptography-42.0.3-cp37-abi3-musllinux_1_2_x86_64.whl
+  #  - cryptography-42.0.3-cp37-abi3-win_amd64.whl
+  #  - cryptography-42.0.3-cp39-abi3-macosx_10_12_universal2.whl
+  #  - cryptography-42.0.3-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cryptography-42.0.3-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cryptography-42.0.3-cp39-abi3-manylinux_2_28_aarch64.whl
+  #  - cryptography-42.0.3-cp39-abi3-manylinux_2_28_x86_64.whl
+  #  - cryptography-42.0.3-cp39-abi3-musllinux_1_1_aarch64.whl
+  #  - cryptography-42.0.3-cp39-abi3-musllinux_1_1_x86_64.whl
+  #  - cryptography-42.0.3-cp39-abi3-musllinux_1_2_aarch64.whl
+  #  - cryptography-42.0.3-cp39-abi3-musllinux_1_2_x86_64.whl
+  #  - cryptography-42.0.3-cp39-abi3-win_amd64.whl
+  cryptography==42.0.3 --hash=sha256:de5086cd475d67113ccb6f9fae6d8fe3ac54a4f9238fd08bfdb07b03d791ff0a \
+                       --hash=sha256:935cca25d35dda9e7bd46a24831dfd255307c55a07ff38fd1a92119cffc34857 \
+                       --hash=sha256:20100c22b298c9eaebe4f0b9032ea97186ac2555f426c3e70670f2517989543b \
+                       --hash=sha256:2eb6368d5327d6455f20327fb6159b97538820355ec00f8cc9464d617caecead \
+                       --hash=sha256:39d5c93e95bcbc4c06313fc6a500cee414ee39b616b55320c1904760ad686938 \
+                       --hash=sha256:3d96ea47ce6d0055d5b97e761d37b4e84195485cb5a38401be341fabf23bc32a \
+                       --hash=sha256:d1998e545081da0ab276bcb4b33cce85f775adb86a516e8f55b3dac87f469548 \
+                       --hash=sha256:93fbee08c48e63d5d1b39ab56fd3fdd02e6c2431c3da0f4edaf54954744c718f \
+                       --hash=sha256:90147dad8c22d64b2ff7331f8d4cddfdc3ee93e4879796f837bdbb2a0b141e0c \
+                       --hash=sha256:4dcab7c25e48fc09a73c3e463d09ac902a932a0f8d0c568238b3696d06bf377b \
+                       --hash=sha256:762f3771ae40e111d78d77cbe9c1035e886ac04a234d3ee0856bf4ecb3749d54 \
+                       --hash=sha256:0d3ec384058b642f7fb7e7bff9664030011ed1af8f852540c76a1317a9dd0d20 \
+                       --hash=sha256:35772a6cffd1f59b85cb670f12faba05513446f80352fe811689b4e439b5d89e \
+                       --hash=sha256:04859aa7f12c2b5f7e22d25198ddd537391f1695df7057c8700f71f26f47a129 \
+                       --hash=sha256:c3d1f5a1d403a8e640fa0887e9f7087331abb3f33b0f2207d2cc7f213e4a864c \
+                       --hash=sha256:df34312149b495d9d03492ce97471234fd9037aa5ba217c2a6ea890e9166f151 \
+                       --hash=sha256:de4ae486041878dc46e571a4c70ba337ed5233a1344c14a0790c4c4be4bbb8b4 \
+                       --hash=sha256:0fab2a5c479b360e5e0ea9f654bcebb535e3aa1e493a715b13244f4e07ea8eec \
+                       --hash=sha256:25b09b73db78facdfd7dd0fa77a3f19e94896197c86e9f6dc16bce7b37a96504 \
+                       --hash=sha256:d5cf11bc7f0b71fb71af26af396c83dfd3f6eed56d4b6ef95d57867bf1e4ba65 \
+                       --hash=sha256:2619487f37da18d6826e27854a7f9d4d013c51eafb066c80d09c63cf24505306
   # [/cryptography]
   # Specifying "[crypto]" is required since PyGithub 1.58.1
   # See https://github.com/Slicer/Slicer/issues/7112
@@ -60,22 +84,22 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/PyJWT]
   # [wrapt]
   # Hashes correspond to the following packages:
-  #  - wrapt-1.15.0-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - wrapt-1.15.0-cp39-cp39-macosx_11_0_arm64.whl
-  #  - wrapt-1.15.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - wrapt-1.15.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - wrapt-1.15.0-cp39-cp39-musllinux_1_1_aarch64.whl
-  #  - wrapt-1.15.0-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - wrapt-1.15.0-cp39-cp39-win_amd64.whl
-  #  - wrapt-1.15.0-py3-none-any.whl
-  wrapt==1.15.0 --hash=sha256:2e51de54d4fb8fb50d6ee8327f9828306a959ae394d3e01a1ba8b2f937747d86 \
-                --hash=sha256:0970ddb69bba00670e58955f8019bec4a42d1785db3faa043c33d81de2bf843c \
-                --hash=sha256:76407ab327158c510f44ded207e2f76b657303e17cb7a572ffe2f5a8a48aa04d \
-                --hash=sha256:9d37ac69edc5614b90516807de32d08cb8e7b12260a285ee330955604ed9dd29 \
-                --hash=sha256:078e2a1a86544e644a68422f881c48b84fef6d18f8c7a957ffd3f2e0a74a0d4a \
-                --hash=sha256:7dc0713bf81287a00516ef43137273b23ee414fe41a3c14be10dd95ed98a2df9 \
-                --hash=sha256:eef4d64c650f33347c1f9266fa5ae001440b232ad9b98f1f43dfe7a79435c0a6 \
-                --hash=sha256:64b1df0f83706b4ef4cfb4fb0e4c2669100fd7ecacfb59e091fad300d4e04640
+  #  - wrapt-1.16.0-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - wrapt-1.16.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - wrapt-1.16.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - wrapt-1.16.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - wrapt-1.16.0-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - wrapt-1.16.0-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - wrapt-1.16.0-cp39-cp39-win_amd64.whl
+  #  - wrapt-1.16.0-py3-none-any.whl
+  wrapt==1.16.0 --hash=sha256:9b201ae332c3637a42f02d1045e1d0cccfdc41f1f2f801dafbaa7e9b4797bfc2 \
+                --hash=sha256:2076fad65c6736184e77d7d4729b63a6d1ae0b70da4868adeec40989858eb3fb \
+                --hash=sha256:c5cd603b575ebceca7da5a3a251e69561bec509e0b46e4993e1cac402b7247b8 \
+                --hash=sha256:f8212564d49c50eb4565e502814f694e240c55551a5f1bc841d4fcaabb0a9b8a \
+                --hash=sha256:5f15814a33e42b04e3de432e573aa557f9f0f56458745c2074952f564c50e664 \
+                --hash=sha256:edfad1d29c73f9b863ebe7082ae9321374ccb10879eeabc84ba3b69f2579d537 \
+                --hash=sha256:eb1b046be06b0fce7249f1d025cd359b4b80fc1c3e24ad9eca33e0dcdb2e4a35 \
+                --hash=sha256:6906c4100a8fcbf2fa735f6059214bb13b97f75b1a61777fcf6432121ef12ef1
   # [/wrapt]
   # [Deprecated]
   Deprecated==1.2.14 --hash=sha256:6fac8b097794a90302bdbb17b9b815e732d3c4720583ff1b198499d78470466c
@@ -127,7 +151,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   typing-extensions==4.8.0 --hash=sha256:8f92fc8806f9a6b641eaa5318da32b44d401efaac0f6678c9bc448ba3605faa0
   # [/typing-extensions]
   # [PyGithub]
-  PyGithub==2.1.1 --hash=sha256:4b528d5d6f35e991ea5fd3f942f58748f24938805cb7fcf24486546637917337
+  PyGithub==2.2.0 --hash=sha256:41042ea53e4c372219db708c38d2ca1fd4fadab75475bac27d89d339596cfad1
   # [/PyGithub]
   ]===])
 
