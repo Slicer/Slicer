@@ -242,7 +242,10 @@ bool vtkMRMLTransformHandleWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventDa
     }
 
   this->EndWidgetInteraction();
-  return true;
+
+  // only claim this as processed if the mouse was moved (this allows the event to be interpreted as button click)
+  bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
+  return processedEvent;
 }
 
 //-------------------------------------------------------------------------
@@ -392,4 +395,22 @@ void vtkMRMLTransformHandleWidget::TranslateTransformCenter(double eventPos[2])
   this->GetTransformNode()->GetCenterOfTransformation(centerOfTransformation);
   vtkMath::Add(transform->TransformVectorAtPoint(origin_World, translationVector_World), centerOfTransformation, centerOfTransformation);
   this->GetTransformNode()->SetCenterOfTransformation(centerOfTransformation);
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLTransformHandleWidget::ProcessJumpCursor(vtkMRMLInteractionEventData* eventData)
+{
+  int type = this->GetActiveComponentType();
+  if (type != InteractionTranslationHandle)
+    {
+    return false;
+    }
+
+  int index = this->GetActiveComponentIndex();
+  if (index != 3)
+    {
+    return false;
+    }
+
+  return Superclass::ProcessJumpCursor(eventData);
 }

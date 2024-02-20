@@ -34,6 +34,7 @@
 
 // MRML includes
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 
 //----------------------------------------------------------------------
@@ -48,22 +49,25 @@ vtkMRMLInteractionWidget::vtkMRMLInteractionWidget()
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::AnyModifier, WidgetEventMouseMove);
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::Move3DEvent, vtkEvent::AnyModifier, WidgetEventMouseMove);
 
-  // Handle interactions
+  // Translation
   this->SetEventTranslationClickAndDrag(WidgetStateOnTranslationHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
 
+  // Rotation
   this->SetEventTranslationClickAndDrag(WidgetStateOnRotationHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
 
-  this->SetEventTranslationClickAndDrag(WidgetStateOnScaleHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateUniformScale, WidgetEventUniformScaleStart, WidgetEventUniformScaleEnd);
-
+  // Scale
   this->SetEventTranslationClickAndDrag(WidgetStateOnScaleHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
     WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
 
-  unsigned int interactionHandleStates[] = { WidgetStateOnTranslationHandle, WidgetStateOnRotationHandle, WidgetStateOnScaleHandle };
-  for (unsigned int interactionHandleState : interactionHandleStates)
+  // Uniform scale
+  this->SetEventTranslationClickAndDrag(WidgetStateOnScaleHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
+    WidgetStateUniformScale, WidgetEventUniformScaleStart, WidgetEventUniformScaleEnd);
+
+  for (unsigned int interactionHandleState = WidgetStateInteraction_First; interactionHandleState < WidgetStateInteraction_Last; ++interactionHandleState)
     {
+    // Jump slices
     this->SetEventTranslation(interactionHandleState, vtkMRMLInteractionEventData::LeftButtonClickEvent, vtkEvent::NoModifier, WidgetEventJumpCursor);
 
     // Context menu events
@@ -307,18 +311,17 @@ bool vtkMRMLInteractionWidget::ProcessWidgetMenuDisplayNodeTypeAndIndex(
 }
 
 //-------------------------------------------------------------------------
-bool vtkMRMLInteractionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+bool vtkMRMLInteractionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData)
 {
   if (!this->WidgetRep)
     {
     return false;
     }
 
-  if ((this->WidgetState != vtkMRMLInteractionWidget::WidgetStateTranslate
+  if ( this->WidgetState != vtkMRMLInteractionWidget::WidgetStateTranslate
     && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateScale
     && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateUniformScale
-    && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateRotate
-    ) || !this->WidgetRep)
+    && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateRotate)
     {
     return false;
     }
@@ -338,6 +341,48 @@ bool vtkMRMLInteractionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* 
     }
 
   this->EndWidgetInteraction();
+
+  // only claim this as processed if the mouse was moved (this allows the event to be interpreted as button click)
+  bool processedEvent = eventData->GetMouseMovedSinceButtonDown();
+  return processedEvent;
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLInteractionWidget::ProcessJumpCursor(vtkMRMLInteractionEventData* vtkNotUsed(eventData))
+{
+  int type = this->GetActiveComponentType();
+  int index = this->GetActiveComponentIndex();
+  return this->JumpToHandlePosition(type, index);
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLInteractionWidget::JumpToHandlePosition(int type, int index)
+{
+  vtkMRMLInteractionWidgetRepresentation* rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
+  if (!rep)
+    {
+    return false;
+    }
+
+  vtkMRMLAbstractViewNode* viewNode = rep->GetViewNode();
+  if (!viewNode)
+    {
+    return false;
+    }
+
+  vtkMRMLScene* scene = viewNode->GetScene();
+  if (!scene)
+    {
+    return false;
+    }
+
+  double jumpPosition_World[3] = { 0.0, 0.0, 0.0 };
+  rep->GetInteractionHandlePositionWorld(type, index, jumpPosition_World);
+
+  int viewGroup = rep->GetViewNode()->GetViewGroup();
+  vtkMRMLSliceNode::JumpAllSlices(scene, jumpPosition_World[0], jumpPosition_World[1], jumpPosition_World[2],
+    -1, viewGroup, vtkMRMLSliceNode::SafeDownCast(viewNode));
+
   return true;
 }
 
@@ -345,6 +390,11 @@ bool vtkMRMLInteractionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* 
 bool vtkMRMLInteractionWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
+
+  if (this->ApplicationLogic)
+    {
+    this->ApplicationLogic->PauseRender();
+    }
 
   bool processedEvent = false;
   switch (widgetEvent)
@@ -379,12 +429,23 @@ bool vtkMRMLInteractionWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
     case WidgetEventUniformScaleEnd:
       processedEvent = ProcessEndMouseDrag(eventData);
       break;
+    case WidgetEventJumpCursor:
+      processedEvent = ProcessJumpCursor(eventData);
+      break;
+    default:
+      break;
     }
 
   if (!processedEvent)
     {
     processedEvent = this->ProcessButtonClickEvent(eventData);
     }
+
+  if (this->ApplicationLogic)
+    {
+    this->ApplicationLogic->ResumeRender();
+    }
+
   return processedEvent;
 }
 

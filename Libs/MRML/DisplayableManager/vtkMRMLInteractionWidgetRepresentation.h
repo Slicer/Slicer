@@ -166,6 +166,30 @@ public:
   vtkGetMacro(Interacting, bool);
   vtkBooleanMacro(Interacting, bool);
 
+  /// Get the color of the specified handle
+  /// Type is specified using InteractionType enum
+  virtual void GetHandleColor(int type, int index, double color[4]);
+  /// Get the opacity of the specified handle
+  virtual double GetHandleOpacity(int type, int index);
+  /// Get the visibility of the specified handle
+  virtual bool GetHandleVisibility(int type, int index);
+  ///  Get the type of glyph (Arrow, Circle, Ring, etc.) of the specified handle.
+  virtual int GetHandleGlyphType(int type, int index);
+  /// Get if the view scaling should be applied to the position of the handle.
+  virtual bool GetApplyScaleToPosition(int type, int index);
+  /// Get the position of the interaction handle in local coordinates
+  /// Type is specified using vtkMRMLInteractionDisplayNode::ComponentType
+  virtual void GetInteractionHandlePositionLocal(int type, int index, double position[3]);
+  /// Get the position of the interaction handle in world coordinates
+  /// Type is specified using vtkMRMLInteractionDisplayNode::ComponentType
+  virtual void GetInteractionHandlePositionWorld(int type, int index, double position[3]);
+
+  ///@{
+  /// Update HandleToWorldTransform. This controls the position and orientation of the interaction handles.
+  virtual void UpdateHandleToWorldTransform();
+  virtual void UpdateHandleToWorldTransform(vtkTransform* handleToWorldTransform) = 0;
+  ///@}
+
 protected:
   vtkMRMLInteractionWidgetRepresentation();
   ~vtkMRMLInteractionWidgetRepresentation() override;
@@ -260,35 +284,10 @@ protected:
 
   /// Set the scale of the interaction handles in world coordinates
   virtual void SetWidgetScale(double scale);
-  /// Get the color of the specified handle
-  /// Type is specified using InteractionType enum
-  virtual void GetHandleColor(int type, int index, double color[4]);
-  /// Get the opacity of the specified handle
-  virtual double GetHandleOpacity(int type, int index);
-  /// Get the visibility of the specified handle
-  virtual bool GetHandleVisibility(int type, int index);
-  ///  Get the type of glyph (Arrow, Circle, Ring, etc.) of the specified handle.
-  virtual int GetHandleGlyphType(int type, int index);
-  /// Get if the view scaling should be applied to the position of the handle.
-  virtual bool GetApplyScaleToPosition(int type, int index);
 
   /// Get the vector from the interaction handle to the camera in world coordinates.
   /// In slice views and in 3D with parallel projection this is the same as the camera view direction.
   virtual void GetHandleToCameraVectorWorld(double handlePosition_World[3], double normal_World[3]);
-
-  /// Get the position of the interaction handle in local coordinates
-  /// Type is specified using vtkMRMLInteractionDisplayNode::ComponentType
-  virtual void GetInteractionHandlePositionLocal(int type, int index, double position[3]);
-
-  /// Get the position of the interaction handle in world coordinates
-  /// Type is specified using vtkMRMLInteractionDisplayNode::ComponentType
-  virtual void GetInteractionHandlePositionWorld(int type, int index, double position[3]);
-
-  ///@{
-  /// Update HandleToWorldTransform. This controls the position and orientation of the interaction handles.
-  virtual void UpdateHandleToWorldTransform();
-  virtual void UpdateHandleToWorldTransform(vtkTransform* handleToWorldTransform) = 0;
-  ///@}
 
   /// Orthogonalize the transform axes. The Z-axis will not be changed.
   virtual void OrthoganalizeTransform(vtkTransform* transform);

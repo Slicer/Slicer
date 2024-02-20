@@ -64,7 +64,8 @@ public:
   /// Widget states
   enum
   {
-    WidgetStateOnTranslationHandle = WidgetStateUser, // hovering over a translation interaction handle
+    WidgetStateInteraction_First = WidgetStateUser,
+    WidgetStateOnTranslationHandle = WidgetStateInteraction_First, // hovering over a translation interaction handle
     WidgetStateOnRotationHandle, // hovering over a rotation interaction handle
     WidgetStateOnScaleHandle, // hovering over a scale interaction handle
     WidgetStateInteraction_Last
@@ -127,6 +128,10 @@ protected:
   virtual bool ProcessWidgetScaleStart(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetUniformScaleStart(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData);
+  virtual bool ProcessJumpCursor(vtkMRMLInteractionEventData* eventData);
+
+  // Jump to the handle position for the given type and index. Returns true if successful.
+  virtual bool JumpToHandlePosition(int type, int index);
 
   /// Get the closest point on the line defined by the interaction handle axis.
   /// Input coordinates are in display coordinates, while output are in world coordinates.
@@ -146,10 +151,6 @@ protected:
 private:
   vtkMRMLInteractionWidget(const vtkMRMLInteractionWidget&) = delete;
   void operator=(const vtkMRMLInteractionWidget&) = delete;
-
-  int TranslationHandleType{InteractionTranslationHandle};
-  int RotationHandleType {InteractionRotationHandle};
-  int ScaleHandleType {InteractionScaleHandle};
 };
 
 #endif
