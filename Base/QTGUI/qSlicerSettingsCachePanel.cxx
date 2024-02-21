@@ -104,9 +104,9 @@ void qSlicerSettingsCachePanel::setCacheManager(vtkCacheManager* cacheManager)
 {
   Q_D(qSlicerSettingsCachePanel);
   if (d->CacheManager == cacheManager)
-    {
+  {
     return;
-    }
+  }
   qvtkReconnect(d->CacheManager, cacheManager, vtkCommand::ModifiedEvent,
                 this, SLOT(updateFromCacheManager()));
   d->CacheManager = cacheManager;
@@ -131,9 +131,9 @@ void qSlicerSettingsCachePanel::updateFromCacheManager()
   Q_D(qSlicerSettingsCachePanel);
   this->setEnabled(d->CacheManager != nullptr);
   if (d->CacheManager == nullptr)
-    {
+  {
     return;
-    }
+  }
   d->CachePathButton->setDirectory(
     QString(d->CacheManager->GetRemoteCacheDirectory()));
   d->CacheSizeSpinBox->setValue(
@@ -150,14 +150,14 @@ void qSlicerSettingsCachePanel::updateFromCacheManager()
   QPalette palette = this->palette();
   if (d->CacheManager->GetCurrentCacheSize() >
       d->CacheManager->GetRemoteCacheLimit())
-    {
+  {
     palette.setColor(d->UsedCacheSizeLabel->foregroundRole(), Qt::red);
-    }
+  }
   else if (d->CacheManager->GetFreeCacheSpaceRemaining() <
            d->CacheManager->GetRemoteCacheFreeBufferSize())
-    {
+  {
     palette.setColor(d->UsedCacheSizeLabel->foregroundRole(), QColor("orange"));
-    }
+  }
   d->UsedCacheSizeLabel->setPalette(palette);
   d->FreeCacheSizeLabel->setPalette(palette);
 
@@ -173,13 +173,13 @@ void qSlicerSettingsCachePanel::updateFromCacheManager()
   for (std::vector<std::string>::const_iterator it = cachedFiles.begin(),
        end = cachedFiles.end();
        it != end; ++it)
-    {
+  {
     QFileInfo file(it->c_str());
     QListWidgetItem* fileItem = new QListWidgetItem;
     fileItem->setText(file.fileName());
     //fileItem->setToolTip(it->first.c_str());
     d->FilesListWidget->addItem(fileItem);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------

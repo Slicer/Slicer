@@ -92,9 +92,9 @@ vtkSlicerTransformLogic::~vtkSlicerTransformLogic() = default;
 bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transformableNode)
 {
   if (!transformableNode)
-    {
+  {
     return false;
-    }
+  }
   return transformableNode->HardenTransform();
 }
 
@@ -105,31 +105,31 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
   vtkNew<vtkMRMLTransformStorageNode> storageNode;
 
   if (scene == nullptr)
-    {
+  {
     vtkErrorMacro("scene == nullptr in vtkSlicerTransformLogic::AddTransform");
     return nullptr;
-    }
+  }
 
   // check for local or remote files
   int useURI = 0; // false;
   if (scene->GetCacheManager() != nullptr)
-    {
+  {
     useURI = scene->GetCacheManager()->IsRemoteReference(filename);
-    }
+  }
 
   const char *localFile;
   if (useURI)
-    {
+  {
     vtkDebugMacro("AddTransforn: file name is remote: " << filename);
     storageNode->SetURI(filename);
     // reset filename to the local file name
     localFile = ((scene)->GetCacheManager())->GetFilenameFromURI(filename);
-    }
+  }
   else
-    {
+  {
     storageNode->SetFileName(filename);
     localFile = filename;
-    }
+  }
 
   const std::string fname(localFile);
   // the model name is based on the file name (itksys call should work even if
@@ -137,11 +137,11 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
   const std::string name = itksys::SystemTools::GetFilenameName(fname);
 
   if (!storageNode->SupportedFileType(name.c_str()))
-    {
+  {
     vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerTransformLogic::AddTransform",
       "Unsupported transform file format: " << filename);
     return nullptr;
-    }
+  }
 
   // check to see which node can read this type of file
   vtkSmartPointer<vtkMRMLTransformNode> tnode;
@@ -153,9 +153,9 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
   if (!storageNode->ReadData(generalTransform.GetPointer()))
   {
     if (userMessages)
-      {
+    {
       userMessages->AddMessages(storageNode->GetUserMessages());
-      }
+    }
     vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerTransformLogic::AddTransform",
       "Failed to read transform from file: " << filename);
     return nullptr;
@@ -189,9 +189,9 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
   }
 
   if (userMessages)
-    {
+  {
     userMessages->AddMessages(storageNode->GetUserMessages());
-    }
+  }
 
   const std::string basename(storageNode->GetFileNameWithoutExtension(fname.c_str()));
   const std::string uname(scene->GetUniqueNameByString(basename.c_str()));
@@ -233,18 +233,18 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
   double point_Grid[4] = { 0, 0, 0, 1 };
   int sampleIndex = 0;
   for (point_Grid[2] = 0; point_Grid[2]<gridSize[2]; point_Grid[2]++)
-    {
+  {
     for (point_Grid[1] = 0; point_Grid[1]<gridSize[1]; point_Grid[1]++)
-      {
+    {
       for (point_Grid[0] = 0; point_Grid[0]<gridSize[0]; point_Grid[0]++)
-        {
+      {
         gridToRAS->MultiplyPoint(point_Grid, point_RAS);
         inputTransform->TransformPoint(point_RAS, transformedPoint_RAS);
         samplePositions_RAS->SetPoint(sampleIndex, point_RAS[0], point_RAS[1], point_RAS[2]);
         sampleIndex++;
-        }
       }
-   }
+    }
+  }
 
   vtkSlicerTransformLogic::GetTransformedPointSamples(outputPointSet, inputTransformNode, samplePositions_RAS.GetPointer(), transformToWorld);
 }
@@ -255,9 +255,9 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
   bool transformToWorld /* = true */)
 {
   if (!inputTransformNode)
-    {
+  {
     return;
-    }
+  }
 
   //Will contain the corresponding vectors for outputPointSet
   int numOfSamples = samplePositions_RAS->GetNumberOfPoints();
@@ -269,18 +269,18 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
 
   vtkNew<vtkGeneralTransform> inputTransform;
   if (transformToWorld)
-    {
+  {
     inputTransformNode->GetTransformToWorld(inputTransform.GetPointer());
-    }
+  }
   else
-    {
+  {
     inputTransformNode->GetTransformFromWorld(inputTransform.GetPointer());
-    }
+  }
 
   double transformedPoint_RAS[4] = { 0, 0, 0, 1 };
   double pointDislocationVector_RAS[4] = { 0, 0, 0, 1 };
   for (int sampleIndex = 0; sampleIndex < numOfSamples; sampleIndex++)
-    {
+  {
     double* point_RAS = samplePositions_RAS->GetPoint(sampleIndex);
 
     inputTransform->TransformPoint(point_RAS, transformedPoint_RAS);
@@ -290,7 +290,7 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
     pointDislocationVector_RAS[2] = transformedPoint_RAS[2] - point_RAS[2];
 
     sampleVectors_RAS->SetTuple3(sampleIndex, pointDislocationVector_RAS[0], pointDislocationVector_RAS[1], pointDislocationVector_RAS[2]);
-    }
+  }
 
   outputPointSet->SetPoints(samplePositions_RAS);
   vtkPointData* pointData = outputPointSet->GetPointData();
@@ -315,7 +315,7 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* out
   double pointSpacing, int pointGroupSize/*=1*/, int* numGridPoints/*=0*/, vtkPoints* samplePositions_RAS /*=nullptr*/)
 {
   if (samplePositions_RAS)
-    {
+  {
     vtkNew<vtkMatrix4x4> rasToSlice;
     vtkMatrix4x4::Invert(sliceToRAS, rasToSlice.GetPointer());
     vtkNew<vtkPoints> samplePositionsOnSlice_RAS;
@@ -323,20 +323,20 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* out
     double markup_RAS[4] = { 0, 0, 0, 1 };
     double markup_Slice[4] = { 0, 0, 0, 1 };
     for (int sampleIndex = 0; sampleIndex < numberOfSamplePositions; sampleIndex++)
-      {
+    {
       // check if sample is on the slice
       samplePositions_RAS->GetPoint(sampleIndex, markup_RAS);
       rasToSlice->MultiplyPoint(markup_RAS, markup_Slice);
       double distanceToSlice = markup_Slice[2];
       if (-0.5 <= distanceToSlice && distanceToSlice < 0.5)
-        {
+      {
         samplePositionsOnSlice_RAS->InsertNextPoint(markup_RAS);
-        }
       }
-    GetTransformedPointSamples(outputPointSet, inputTransformNode, samplePositionsOnSlice_RAS.GetPointer());
     }
+    GetTransformedPointSamples(outputPointSet, inputTransformNode, samplePositionsOnSlice_RAS.GetPointer());
+  }
   else
-    {
+  {
     int numOfPointsX = floor(fieldOfViewSize[0] / (pointSpacing*pointGroupSize))*pointGroupSize;
     int numOfPointsY = floor(fieldOfViewSize[1] / (pointSpacing*pointGroupSize))*pointGroupSize;
     double xOfs = (fieldOfViewSize[0] - (numOfPointsX*pointSpacing)) / 2 - fieldOfViewSize[0] / 2 + fieldOfViewOrigin[0];
@@ -357,14 +357,14 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* out
     vtkMatrix4x4::Multiply4x4(gridToRAS.GetPointer(), gridScaling.GetPointer(), gridToRAS.GetPointer());
 
     if (numGridPoints)
-      {
+    {
       numGridPoints[0] = gridSize[0];
       numGridPoints[1] = gridSize[1];
       numGridPoints[2] = 1;
-      }
+    }
 
     GetTransformedPointSamples(outputPointSet, inputTransformNode, gridToRAS.GetPointer(), gridSize);
-    }
+  }
 
   float sliceNormal_RAS[3] = { 0, 0, 0 };
   sliceNormal_RAS[0] = sliceToRAS->GetElement(0, 2);
@@ -517,9 +517,9 @@ vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransfor
       vtkErrorMacro("vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform: non-linearly transformed reference volume is not supported." \
         " Harden or remove the transform from of the reference volume.");
       if (outputVolumeNode != existingOutputVolumeNode)
-        {
+      {
         scene->RemoveNode(outputVolumeNode);
-        }
+      }
       return nullptr;
     }
     outputVolumeNode->SetIJKToRASMatrix(ijkToRas.GetPointer());
@@ -637,9 +637,9 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
       vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform: non-linearly transformed reference volume" \
        " is not supported. Harden or remove the transform from of the reference volume.");
       if (outputGridTransformNode != existingOutputTransformNode)
-        {
+      {
         scene->RemoveNode(outputGridTransformNode);
-        }
+      }
       return nullptr;
     }
     double origin[3] = { 0, 0, 0 };
@@ -809,13 +809,13 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
   vtkNew<vtkUnstructuredGrid> pointSet;
   vtkMRMLTransformNode* inputTransformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
   if (samplePositions_RAS)
-    {
+  {
     GetTransformedPointSamples(pointSet.GetPointer(), inputTransformNode, samplePositions_RAS);
-    }
+  }
   else
-    {
+  {
     GetTransformedPointSamplesOnRoi(pointSet.GetPointer(), inputTransformNode, roiToRAS, roiSize, displayNode->GetGlyphSpacingMm());
-    }
+  }
 
   vtkNew<vtkTransformVisualizerGlyph3D> glyphFilter;
   glyphFilter->SetScaleFactor(displayNode->GetGlyphScalePercent()*0.01);
@@ -830,10 +830,10 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
   glyphFilter->SetMagnitudeThresholding(true);
 
   switch (displayNode->GetGlyphType())
-    {
+  {
     //Arrows
     case vtkMRMLTransformDisplayNode::GLYPH_TYPE_ARROW:
-      {
+    {
       vtkNew<vtkArrowSource> arrowSource;
       arrowSource->SetTipLength(displayNode->GetGlyphTipLengthPercent()*0.01);
       arrowSource->SetTipRadius(displayNode->GetGlyphDiameterMm()*0.5);
@@ -844,10 +844,10 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
       glyphFilter->SetScaleModeToScaleByVector();
       glyphFilter->SetSourceConnection(arrowSource->GetOutputPort());
       break;
-      }
+    }
     //Cones
     case vtkMRMLTransformDisplayNode::GLYPH_TYPE_CONE:
-      {
+    {
       vtkNew<vtkConeSource> coneSource;
       coneSource->SetHeight(1.0);
       coneSource->SetRadius(displayNode->GetGlyphDiameterMm()*0.5);
@@ -856,10 +856,10 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
       glyphFilter->SetScaleModeToScaleByVector();
       glyphFilter->SetSourceConnection(coneSource->GetOutputPort());
       break;
-      }
+    }
     //Spheres
     case vtkMRMLTransformDisplayNode::GLYPH_TYPE_SPHERE:
-      {
+    {
       vtkNew<vtkSphereSource> sphereSource;
       sphereSource->SetRadius(0.5);
       sphereSource->SetThetaResolution(displayNode->GetGlyphResolution());
@@ -868,8 +868,8 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
       glyphFilter->SetScaleModeToScaleByScalar();
       glyphFilter->SetSourceConnection(sphereSource->GetOutputPort());
       break;
-      }
     }
+  }
 
   glyphFilter->Update();
   output->ShallowCopy(glyphFilter->GetOutput());
@@ -892,7 +892,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
   vtkNew<vtkTransform> rotateArrow;
   vtkNew<vtkGlyphSource2D> glyph2DSource;
   switch (displayNode->GetGlyphType())
-    {
+  {
     case vtkMRMLTransformDisplayNode::GLYPH_TYPE_ARROW:
       glyph2DSource->SetGlyphTypeToArrow();
       glyphFilter->SetScaleModeToScaleByVector();
@@ -910,7 +910,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
       glyphFilter->SetScaleModeToScaleByScalar();
       break;
     default: glyph2DSource->SetGlyphTypeToNone();
-    }
+  }
 
   float sliceNormal_RAS[3] = { 0, 0, 0 };
   sliceNormal_RAS[0] = sliceToRAS->GetElement(0, 2);
@@ -919,7 +919,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
 
   bool useNewMethod = false;
   if (useNewMethod)
-    {
+  {
     // the arrow tips are oriented correctly, but it seems that the direction of the shaft is not always correct
     vtkNew<vtkMatrix4x4> glyphOrientation;
     glyphOrientation->DeepCopy(sliceToRAS);
@@ -928,13 +928,13 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
     glyphOrientation->Element[2][3] = 0;
     rotateArrow->SetMatrix(glyphOrientation.GetPointer());
     rotateArrow->Inverse();
-    }
+  }
   else
-    {
+  {
     // the arrow tips are note always oriented correctly, but the direction of the shaft looks correct
     // TODO: check this, it might not be correct for an arbitrarily oriented slice normal
     rotateArrow->RotateX(vtkMath::DegreesFromRadians(std::acos(std::abs(sliceNormal_RAS[2]))));
-    }
+  }
 
   glyph2DSource->SetScale(1);
   glyph2DSource->SetFilled(0);
@@ -1291,9 +1291,9 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
   vtkMRMLTransformDisplayNode* displayNode, vtkMRMLNode* regionNode, vtkMRMLMarkupsNode* glyphPointsNode/*=nullptr*/)
 {
   if (displayNode == nullptr || output == nullptr || regionNode == nullptr)
-    {
+  {
     return false;
-    }
+  }
 
   vtkNew<vtkMatrix4x4> ijkToRAS;
   int regionSize_IJK[3] = { 0 };
@@ -1302,7 +1302,7 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
   vtkMRMLMarkupsPlaneNode* markupsPlaneNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(regionNode);
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(regionNode);
   if (sliceNode != nullptr)
-    {
+  {
     double pointSpacing = displayNode->GetGlyphSpacingMm();
 
     vtkMatrix4x4* sliceToRAS = sliceNode->GetSliceToRAS();
@@ -1328,9 +1328,9 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
     regionSize_IJK[0] = numOfPointsX;
     regionSize_IJK[1] = numOfPointsY;
     regionSize_IJK[2] = 0;
-    }
+  }
   else if (markupsPlaneNode != nullptr)
-    {
+  {
     double roiDiameter_Object[3] = { 0.0, 0.0, 0.0 };
     markupsPlaneNode->GetSize(roiDiameter_Object);
     double planeBounds[4] = {0.0, 0.0, 0.0, 0.0};
@@ -1345,9 +1345,9 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
     regionSize_IJK[0] = roiDiameter_Object[0];
     regionSize_IJK[1] = roiDiameter_Object[1];
     regionSize_IJK[2] = roiDiameter_Object[2];
-    }
+  }
   else if (markupsRoiNode != nullptr)
-    {
+  {
     double roiDiameter_Object[3] = { 0.0, 0.0, 0.0 };
     markupsRoiNode->GetSize(roiDiameter_Object);
     double roiCorner_Object[4] = { -roiDiameter_Object[0] / 2.0, -roiDiameter_Object[1] / 2.0, -roiDiameter_Object[2] / 2.0, 1.0 };
@@ -1360,9 +1360,9 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
     regionSize_IJK[0] = roiDiameter_Object[0];
     regionSize_IJK[1] = roiDiameter_Object[1];
     regionSize_IJK[2] = roiDiameter_Object[2];
-    }
+  }
   else if (displayableNode != nullptr)
-    {
+  {
     double bounds_RAS[6] = { 0 };
     displayableNode->GetRASBounds(bounds_RAS);
     ijkToRAS->SetElement(0, 3, bounds_RAS[0]);
@@ -1371,18 +1371,18 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
     regionSize_IJK[0] = floor(bounds_RAS[1] - bounds_RAS[0]);
     regionSize_IJK[1] = floor(bounds_RAS[3] - bounds_RAS[2]);
     regionSize_IJK[2] = floor(bounds_RAS[5] - bounds_RAS[4]);
-    }
+  }
   else
-    {
+  {
     vtkWarningWithObjectMacro(displayNode, "Failed to get transform visualization in 3D: unsupported ROI type");
     return false;
-    }
+  }
   vtkSmartPointer<vtkPoints> samplePoints_RAS;
   if (glyphPointsNode != nullptr)
-    {
+  {
     samplePoints_RAS = vtkSmartPointer<vtkPoints>::New();
     vtkSlicerTransformLogic::GetMarkupsAsPoints(glyphPointsNode, samplePoints_RAS);
-    }
+  }
   vtkSlicerTransformLogic::GetVisualization3d(output, displayNode, ijkToRAS.GetPointer(), regionSize_IJK, samplePoints_RAS);
   return true;
 }
@@ -1503,23 +1503,23 @@ vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind
 void vtkSlicerTransformLogic::GetMarkupsAsPoints(vtkMRMLMarkupsNode* markupsNode, vtkPoints* samplePoints_RAS)
 {
   if (samplePoints_RAS == nullptr)
-    {
+  {
     vtkGenericWarningMacro("vtkSlicerTransformLogic::GetMarkupsAsPoints failed: invalid samplePoints_RAS");
     return;
-    }
+  }
   samplePoints_RAS->Initialize();
   if (!markupsNode)
-    {
+  {
     return;
-    }
+  }
   int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
   samplePoints_RAS->SetNumberOfPoints(numberOfControlPoints);
   for (int controlPointIndex = 0; controlPointIndex < numberOfControlPoints; controlPointIndex++)
-    {
+  {
     double controlPointPosition_RAS[4] = { 0, 0, 0, 1 };
     markupsNode->GetNthControlPointPositionWorld(controlPointIndex, controlPointPosition_RAS);
     samplePoints_RAS->SetPoint(controlPointIndex, controlPointPosition_RAS);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1529,30 +1529,30 @@ void vtkSlicerTransformLogic::GetTransformedNodes(
   bool recursive)
 {
   if (!scene || !transformNode || !transformNode->GetID())
-    {
+  {
     return;
-    }
+  }
 
   std::vector<vtkMRMLNode*> nodes;
   scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
   for (size_t i = 0; i < nodes.size(); ++i)
-    {
+  {
     vtkMRMLDisplayableNode* node =
       vtkMRMLDisplayableNode::SafeDownCast(nodes[i]);
     if (node->GetTransformNodeID() &&
       strcmp(transformNode->GetID(), node->GetTransformNodeID()) == 0)
-      {
+    {
       transformedNodes.push_back(node);
 
       vtkMRMLTransformNode* childTransformNode =
         vtkMRMLTransformNode::SafeDownCast(node);
       if (recursive && childTransformNode)
-        {
+      {
         vtkSlicerTransformLogic::GetTransformedNodes(
           scene, childTransformNode, transformedNodes, recursive);
-        }
       }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1562,16 +1562,16 @@ void vtkSlicerTransformLogic::GetNodesRASBounds(
 {
   vtkBoundingBox box;
   for (size_t i = 0; i < nodes.size(); ++i)
-    {
+  {
     double nodeBounds[6];
     nodes[i]->GetRASBounds(nodeBounds);
     if (nodeBounds[0] <= nodeBounds[1] ||
         nodeBounds[2] <= nodeBounds[3] ||
         nodeBounds[4] <= nodeBounds[5])
-      {
+    {
       box.AddBounds(nodeBounds);
-      }
     }
+  }
   box.GetBounds(bounds);
 }
 
@@ -1582,15 +1582,15 @@ void vtkSlicerTransformLogic::GetNodesBounds(
 {
   vtkBoundingBox box;
   for (size_t i = 0; i < nodes.size(); ++i)
-    {
+  {
     double nodeBounds[6];
     nodes[i]->GetBounds(nodeBounds);
     if (nodeBounds[0] <= nodeBounds[1] ||
         nodeBounds[2] <= nodeBounds[3] ||
         nodeBounds[4] <= nodeBounds[5])
-      {
+    {
       box.AddBounds(nodeBounds);
-      }
     }
+  }
   box.GetBounds(bounds);
 }

@@ -70,10 +70,10 @@ int vtkMRMLDisplayableHierarchyNodeDisplayPropertiesTest(int vtkNotUsed(argc),
                                                          char * vtkNotUsed(argv)[] )
 {
   if (!TestExpand())
-    {
+  {
     std::cerr << "'TestExpand' call not successful." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }
 
@@ -104,7 +104,7 @@ void PopulateScene(vtkMRMLScene* scene, int numberOfLevels)
   // the parent of the next level.
   vtkMRMLDisplayableHierarchyNode* parentHierarchy = nullptr;
   for (int level = 0; level < numberOfLevels; ++level)
-    {
+  {
     // Model
     vtkNew<vtkMRMLModelNode> modelNode;
     std::stringstream smn;
@@ -144,12 +144,12 @@ void PopulateScene(vtkMRMLScene* scene, int numberOfLevels)
     hierarchyNode->SetAndObserveDisplayNodeID(hierarchyDisplayNode->GetID());
     hierarchyDisplayNode->SetColor(DEFAULT_HIERARCHY_COLORS[level]);
     if (parentHierarchy)
-      {
+    {
       modelHierarchyNode->SetParentNodeID(parentHierarchy->GetID());
       hierarchyNode->SetParentNodeID(parentHierarchy->GetID());
-      }
-    parentHierarchy = hierarchyNode.GetPointer();
     }
+    parentHierarchy = hierarchyNode.GetPointer();
+  }
   assert(scene->GetNumberOfNodes() == numberOfLevels*5);
 }
 
@@ -178,35 +178,35 @@ vtkMRMLDisplayableHierarchyNode* GetModelHierarchyNode(vtkMRMLScene* scene, int 
 bool TestExpand()
 {
   if (!TestDefaults())
-    {
+  {
     std::cerr << "'TestDefaults' call not successful." << std::endl;
     return false;
-    }
+  }
   if (!TestSetVisibilityLevel0())
-    {
+  {
     std::cerr << "'TestSetVisibilityLevel0' call not successful." << std::endl;
     return false;
-    }
+  }
   if (!TestSetVisibilityLevel1())
-    {
+  {
     std::cerr << "'TestSetVisibilityLevel0' call not successful." << std::endl;
     return false;
-    }
+  }
   if (!TestCollapseLevel0())
-    {
+  {
     std::cerr << "'TestCollapseLevel0' call not successful." << std::endl;
     return false;
-    }
+  }
   if (!TestCollapseLevel1())
-    {
+  {
     std::cerr << "'TestCollapseLevel1' call not successful." << std::endl;
     return false;
-    }
+  }
   if (!TestCollapseLevels0And1())
-    {
+  {
     std::cerr << "'TestCollapseLevels0And1' call not successful." << std::endl;
     return false;
-    }
+  }
   return true;
 }
 
@@ -268,21 +268,21 @@ bool TestCollapseLevel0()
   res = TestColors(scene.GetPointer(), DEFAULT_MODEL_COLORS, DEFAULT_HIERARCHY_COLORS) && res;
   res = TestVisibility(scene.GetPointer(), DEFAULT_MODEL_VISIBILITY, DEFAULT_HIERARCHY_VISIBILITY) && res;
   if (!res)
-    {
+  {
     std::cout << "Color or visibility is wrong" << std::endl;
-    }
+  }
 
   if (GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() != nullptr ||
       GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() != hierarchyNode ||
       GetModelHierarchyNode(scene.GetPointer(), 2)->GetCollapsedParentNode() != hierarchyNode)
-    {
+  {
     std::cout << "CollapsedParentNode is wrong (hierarchy node at level 0 collapsed):" << std::endl
               << GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() << " (expected 0), "
               << GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() << " (expected " << hierarchyNode << "), "
               << GetModelHierarchyNode(scene.GetPointer(), 2)->GetCollapsedParentNode() << " (expected  " << hierarchyNode << ")"
               << std::endl;
     res = false;
-    }
+  }
 
   return res;
 }
@@ -300,21 +300,21 @@ bool TestCollapseLevel1()
   res = TestColors(scene.GetPointer(), DEFAULT_MODEL_COLORS, DEFAULT_HIERARCHY_COLORS) && res;
   res = TestVisibility(scene.GetPointer(), DEFAULT_MODEL_VISIBILITY, DEFAULT_HIERARCHY_VISIBILITY) && res;
   if (!res)
-    {
+  {
     std::cout << "Color or visibility is wrong" << std::endl;
-    }
+  }
 
   if (GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() != nullptr ||
       GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() != nullptr ||
       GetModelHierarchyNode(scene.GetPointer(), 2)->GetCollapsedParentNode() != hierarchyNode)
-    {
+  {
     std::cout << "CollapsedParentNode is wrong (hierarchyNode at level 1 collapsed):" << std::endl
               << GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() << " (expected 0), "
               << GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() << " (expected 0), "
               << GetModelHierarchyNode(scene.GetPointer(), 2)->GetCollapsedParentNode() << " (expected " << hierarchyNode << ")"
               << std::endl;
     res = false;
-    }
+  }
 
   return res;
 }
@@ -334,21 +334,21 @@ bool TestCollapseLevels0And1()
   res = TestColors(scene.GetPointer(), DEFAULT_MODEL_COLORS, DEFAULT_HIERARCHY_COLORS) && res;
   res = TestVisibility(scene.GetPointer(), DEFAULT_MODEL_VISIBILITY, DEFAULT_HIERARCHY_VISIBILITY) && res;
   if (!res)
-    {
+  {
     std::cout << "Color or visibility is wrong" << std::endl;
-    }
+  }
 
   if (GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() != nullptr ||
       GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() != hierarchyNode ||
       GetModelHierarchyNode(scene.GetPointer(), 2)->GetCollapsedParentNode() != hierarchyNode)
-    {
+  {
     std::cout << "CollapsedParentNode is wrong (hierarchies at levels 0 and 1 collapsed):" << std::endl
               << GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() << " (expected 0), "
               << GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() << " (expected " << hierarchyNode << "), "
               << GetModelHierarchyNode(scene.GetPointer(), 2)->GetCollapsedParentNode() << " (expected " << hierarchyNode << ")"
               << std::endl;
     res = false;
-    }
+  }
 
   return res;
 }
@@ -359,34 +359,34 @@ bool TestColors(vtkMRMLScene* scene,
                 double (*hierarchyColors)[3])
 {
   for (int level = 0; level < LEVEL_COUNT; ++level)
-    {
+  {
     // Model
     vtkMRMLModelNode* modelNode = GetModelNode(scene, level);
     if (modelNode == nullptr)
-      {
+    {
       return true;
-      }
+    }
     vtkMRMLDisplayNode* modelDisplayNode = modelNode->GetDisplayNode();
     if (modelDisplayNode->GetColor()[0] != modelColors[level][0] ||
         modelDisplayNode->GetColor()[1] != modelColors[level][1] ||
         modelDisplayNode->GetColor()[2] != modelColors[level][2])
-      {
+    {
       std::cout << "Wrong color for node \"" << modelDisplayNode->GetName()
                 << "\" at level " << level << std::endl;
       return false;
-      }
+    }
     vtkMRMLDisplayableHierarchyNode* hierarchyNode = GetHierarchyNode(scene, level);
     assert(hierarchyNode != nullptr);
     vtkMRMLDisplayNode* hierarchyDisplayNode = hierarchyNode->GetDisplayNode();
     if (hierarchyDisplayNode->GetColor()[0] != hierarchyColors[level][0] ||
         hierarchyDisplayNode->GetColor()[1] != hierarchyColors[level][1] ||
         hierarchyDisplayNode->GetColor()[2] != hierarchyColors[level][2])
-      {
+    {
       std::cout << "Wrong color for node \"" << hierarchyDisplayNode->GetName()
                 << "\" at level " << level << std::endl;
       return false;
-      }
     }
+  }
   return true;
 }
 
@@ -396,30 +396,30 @@ bool TestVisibility(vtkMRMLScene* scene,
                     int* hierarchyVisibility)
 {
   for (int level = 0; level < LEVEL_COUNT; ++level)
-    {
+  {
     // Model
     vtkMRMLModelNode* modelNode = GetModelNode(scene, level);
     if (modelNode == nullptr)
-      {
+    {
       return true;
-      }
+    }
     vtkMRMLDisplayNode* modelDisplayNode = modelNode->GetDisplayNode();
     if (modelDisplayNode->GetVisibility() != modelVisibility[level])
-      {
+    {
       std::cout << "Wrong visibility for node \"" << modelDisplayNode->GetName()
                 << "\" at level " << level << std::endl;
       return false;
-      }
+    }
     vtkMRMLDisplayableHierarchyNode* hierarchyNode = GetHierarchyNode(scene, level);
     assert(hierarchyNode != nullptr);
     vtkMRMLDisplayNode* hierarchyDisplayNode = hierarchyNode->GetDisplayNode();
     if (hierarchyDisplayNode->GetVisibility() != hierarchyVisibility[level])
-      {
+    {
       std::cout << "Wrong visibility for node \"" << hierarchyDisplayNode->GetName()
                 << "\" at level " << level << std::endl;
       return false;
-      }
     }
+  }
   return true;
 }
 

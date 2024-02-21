@@ -48,14 +48,14 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT qSlicerSequenceBrowserMod
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLSequenceBrowserPlayWidgetPlugin;
     plugins << new qMRMLSequenceBrowserSeekWidgetPlugin;
     plugins << new qMRMLSequenceBrowserToolBarPlugin;
     plugins << new qMRMLSequenceEditWidgetPlugin;
     return plugins;
-    }
+  }
 };
 
 #endif

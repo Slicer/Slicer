@@ -47,9 +47,9 @@ int qSlicerVolumeRenderingModuleWidgetTest1( int argc, char * argv[] )
   moduleWidget->show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, qApp, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

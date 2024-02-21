@@ -49,9 +49,9 @@ bool qSlicerFileWriter::canWriteObject(vtkObject* object)const
 double qSlicerFileWriter::canWriteObjectConfidence(vtkObject* object)const
 {
   if (!this->canWriteObject(object))
-    {
+  {
     return 0.0;
-    }
+  }
   return 0.5;
 }
 

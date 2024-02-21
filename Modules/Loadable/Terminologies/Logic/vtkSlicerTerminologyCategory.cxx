@@ -73,9 +73,9 @@ void vtkSlicerTerminologyCategory::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerTerminologyCategory::Copy(vtkCodedEntry* aCategory)
 {
   if (!aCategory)
-    {
+  {
     return;
-    }
+  }
 
   this->Superclass::Copy(aCategory);
 

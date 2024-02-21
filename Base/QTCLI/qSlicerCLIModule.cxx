@@ -95,14 +95,14 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
   QSettings settings;
   bool developerModeEnabled = settings.value("Developer/PreserveCLIModuleDataFiles", false).toBool();
   if (developerModeEnabled)
-    {
+  {
     logic->DeleteTemporaryFilesOff();
-    }
+  }
 
   if (d->Desc.GetParameterValue("AllowInMemoryTransfer") == "false")
-    {
+  {
     logic->SetAllowInMemoryTransfer(0);
-    }
+  }
 
   return logic;
 }
@@ -131,15 +131,15 @@ QStringList qSlicerCLIModule::categories()const
   QStringList translatedCategoryList;
   QStringList categoryList = QString::fromStdString(d->Desc.GetCategory()).split(';');
   foreach(const QString & category, categoryList)
-    {
+  {
     QStringList translatedCategoryComponentList;
     QStringList categoryComponentList = category.split('.');
     foreach(const QString & categoryComponent, categoryComponentList)
-      {
+    {
       translatedCategoryComponentList << QCoreApplication::translate("qSlicerAbstractCoreModule", categoryComponent.toStdString().c_str());
-      }
-    translatedCategoryList << translatedCategoryComponentList.join('.');
     }
+    translatedCategoryList << translatedCategoryComponentList.join('.');
+  }
   return translatedCategoryList;
 }
 
@@ -179,7 +179,7 @@ QString qSlicerCLIModule::helpText()const
   Q_D(const qSlicerCLIModule);
   QString help = this->translate(d->Desc.GetDescription());
   if (!d->Desc.GetDocumentationURL().empty())
-    {
+  {
     // Translate "For more information, see the online documentation" text
     // so that translators don't need to deal with any HTML tags.
     QString onlineDocLink = QString("<a href=\"%1\">%2</a>")
@@ -187,7 +187,7 @@ QString qSlicerCLIModule::helpText()const
       .arg(tr("online documentation"));
     help += QString("<p>%1</p>")
       .arg(tr("For more information see the %1.").arg(onlineDocLink));
-    }
+  }
   return help;
 }
 
@@ -233,11 +233,11 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
   // Parse module description
   ModuleDescriptionParser parser;
   if (parser.Parse(xmlModuleDescription.toStdString(), d->Desc) != 0)
-    {
+  {
     qWarning() << "Failed to parse xml module description:\n"
                << xmlModuleDescription;
     return;
-    }
+  }
 
   // Set properties
 
@@ -263,9 +263,9 @@ void qSlicerCLIModule::setLogo(const ModuleLogo& logo)
 QImage qSlicerCLIModule::moduleLogoToImage(const ModuleLogo& logo)
 {
   if (logo.GetBufferLength() == 0)
-    {
+  {
     return QImage();
-    }
+  }
   return ctk::kwIconToQImage(reinterpret_cast<const unsigned char*>(logo.GetLogo()),
                              logo.GetWidth(), logo.GetHeight(),
                              logo.GetPixelSize(), logo.GetBufferLength(),

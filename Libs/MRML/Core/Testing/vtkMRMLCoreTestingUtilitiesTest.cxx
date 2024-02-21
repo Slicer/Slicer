@@ -52,13 +52,13 @@ public:
   static vtkMRMLCoreTestingUtilitiesNode *New();
   vtkTypeMacro(vtkMRMLCoreTestingUtilitiesNode, vtkMRMLNode);
   vtkMRMLNode* CreateNodeInstance() override
-    {
+  {
     return vtkMRMLCoreTestingUtilitiesNode::New();
-    }
+  }
   const char* GetNodeTagName() override
-    {
+  {
     return "Testing";
-    }
+  }
 private:
   vtkMRMLCoreTestingUtilitiesNode() = default;
 };
@@ -71,43 +71,43 @@ bool TestCheckNodeInSceneByID()
 {
   if (CheckNodeInSceneByID(
         __LINE__, nullptr, nullptr, nullptr))
-    {
+  {
     return false;
-    }
+  }
 
   vtkNew<vtkMRMLScene> scene;
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLCoreTestingUtilitiesNode>::New());
 
   if (CheckNodeInSceneByID(
         __LINE__, scene.GetPointer(), nullptr, nullptr))
-    {
+  {
     return false;
-    }
+  }
 
   if (CheckNodeInSceneByID(
         __LINE__, scene.GetPointer(),
         "vtkMRMLCoreTestingUtilitiesNode", nullptr))
-    {
+  {
     return false;
-    }
+  }
 
   vtkNew<vtkMRMLCoreTestingUtilitiesNode> node1;
 
   if (CheckNodeInSceneByID(
         __LINE__, scene.GetPointer(),
         "vtkMRMLCoreTestingUtilitiesNode", node1.GetPointer()))
-    {
+  {
     return false;
-    }
+  }
 
   scene->AddNode(node1.GetPointer());
 
   if (!CheckNodeInSceneByID(
         __LINE__, scene.GetPointer(),
         "vtkMRMLCoreTestingUtilitiesNode1", node1.GetPointer()))
-    {
+  {
     return false;
-    }
+  }
 
   return true;
 }
@@ -117,23 +117,23 @@ bool TestCheckNodeIdAndName()
 {
   if (CheckNodeIdAndName(
         __LINE__, nullptr, nullptr, nullptr))
-    {
+  {
     return false;
-    }
+  }
 
   vtkNew<vtkMRMLCoreTestingUtilitiesNode> node1;
 
   if (!CheckNodeIdAndName(
         __LINE__, node1.GetPointer(), nullptr, nullptr))
-    {
+  {
     return false;
-    }
+  }
 
   if (CheckNodeIdAndName(
         __LINE__, node1.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode1", "Testing"))
-    {
+  {
     return false;
-    }
+  }
 
   vtkNew<vtkMRMLScene> scene;
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLCoreTestingUtilitiesNode>::New());
@@ -142,9 +142,9 @@ bool TestCheckNodeIdAndName()
 
   if (!CheckNodeIdAndName(
         __LINE__, node1.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode1", "Testing"))
-    {
+  {
     return false;
-    }
+  }
 
   return true;
 }

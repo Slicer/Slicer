@@ -45,20 +45,20 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   void PrintSelf ( ostream& os, vtkIndent indent ) override;
 
   enum VisualizationModes
-    {
+  {
     VIS_MODE_GLYPH,
     VIS_MODE_GRID,
     VIS_MODE_CONTOUR,
     VIS_MODE_LAST // this should be the last mode
-    };
+  };
 
   enum GlyphTypes
-    {
+  {
     GLYPH_TYPE_ARROW,
     GLYPH_TYPE_CONE,
     GLYPH_TYPE_SPHERE,
     GLYPH_TYPE_LAST // this should be the last glyph type
-    };
+  };
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
@@ -199,9 +199,9 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   /// TransformUpdateEditorBoundsEvent event.
   void UpdateEditorBounds();
   enum
-    {
+  {
     TransformUpdateEditorBoundsEvent = 2750
-    };
+  };
 
   /// Set the default color table
   /// Create and a procedural color node with default colors and use it for visualization.

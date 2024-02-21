@@ -60,31 +60,31 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
   std::cout << "3D view has " << numManagers
             << " displayable managers." << std::endl;
   if (numManagers != expectedDisplayableManagerClassNames.size())
-    {
+  {
     std::cerr << "Incorrect number of displayable managers, expected "
               << expectedDisplayableManagerClassNames.size()
               << " but got " << numManagers << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   for (int i = 0; i < numManagers; ++i)
-    {
+  {
     vtkMRMLAbstractDisplayableManager *threeDViewDM =
       vtkMRMLAbstractDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
     if (threeDViewDM)
-      {
+    {
       std::cout << "\tDisplayable manager " << i << " class name = " << threeDViewDM->GetClassName() << std::endl;
       if (!expectedDisplayableManagerClassNames.contains(threeDViewDM->GetClassName()))
-        {
+      {
         std::cerr << "\t\tnot in expected list!" << std::endl;
         return EXIT_FAILURE;
-        }
-      }
-    else
-      {
-      std::cerr << "\tDisplayable manager " << i << " is null." << std::endl;
-      return EXIT_FAILURE;
       }
     }
+    else
+    {
+      std::cerr << "\tDisplayable manager " << i << " is null." << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
   collection->RemoveAllItems();
 
   return EXIT_SUCCESS;

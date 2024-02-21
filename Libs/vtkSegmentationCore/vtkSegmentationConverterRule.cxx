@@ -43,10 +43,10 @@ void vtkSegmentationConverterRule::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SourceRepresentationName: " << (this->GetSourceRepresentationName() ? this->GetSourceRepresentationName() : "(none)") << "\n";
   os << indent << "TargetRepresentationName: " << (this->GetTargetRepresentationName() ? this->GetTargetRepresentationName() : "(none)") << "\n";
   if (this->ConversionParameters->GetNumberOfParameters() > 0)
-    {
+  {
     os << indent << "ConversionParameters:\n";
     this->ConversionParameters->PrintSelf(os, indent.GetNextIndent());
-    }
+  }
   Superclass::PrintSelf(os, indent);
 }
 
@@ -67,11 +67,11 @@ bool vtkSegmentationConverterRule::CreateTargetRepresentation(vtkSegment* segmen
 
   // Create an empty target representation if it does not exist, or if we want to replace the target
   if (!targetRepresentation.GetPointer() || this->ReplaceTargetRepresentation)
-    {
+  {
     targetRepresentation = vtkSmartPointer<vtkDataObject>::Take(
       this->ConstructRepresentationObjectByRepresentation(this->GetTargetRepresentationName()));
     segment->AddRepresentation(this->GetTargetRepresentationName(), targetRepresentation);
-    }
+  }
   return true;
 }
 
@@ -80,15 +80,15 @@ void vtkSegmentationConverterRule::GetRuleConversionParameters(vtkSegmentationCo
 {
   // Copy rule conversion parameters into aggregated path parameters
   if (!conversionParameters)
-    {
+  {
     vtkErrorMacro("GetRuleConversionParameters failed: invalid conversionParameters");
     return;
-    }
+  }
   int numberOfParameters = this->ConversionParameters->GetNumberOfParameters();
   for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
-    {
+  {
     conversionParameters->CopyParameter(this->ConversionParameters, parameterIndex);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -96,9 +96,9 @@ void vtkSegmentationConverterRule::SetConversionParameter(const std::string& nam
 {
   this->ConversionParameters->SetValue(name, value);
   if (!description.empty())
-    {
+  {
     this->ConversionParameters->SetDescription(name, description);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

@@ -130,9 +130,9 @@ public:
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
-    {
+  {
       DisplayModifiedEvent = 17000
-    };
+  };
 
 
 protected:

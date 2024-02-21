@@ -178,13 +178,13 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
 {
   this->AutoRunPushButton->setEnabled(commandLineModuleNode != nullptr);
   if (!commandLineModuleNode)
-    {
+  {
     this->ApplyPushButton->setEnabled(false);
     this->CancelPushButton->setEnabled(false);
     this->DefaultPushButton->setEnabled(false);
     this->CLIModuleUIHelper->updateUi(nullptr); // disable widgets
     return;
-    }
+  }
 
   vtkMRMLCommandLineModuleNode * node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
@@ -195,9 +195,9 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
   // is reported. (try to select text in the label list line edit of the
   // ModelMaker while running)
   if (!(node->GetStatus() & vtkMRMLCommandLineModuleNode::Running))
-    {
+  {
     this->CLIModuleUIHelper->updateUi(node);
-    }
+  }
 
   this->ApplyPushButton->setEnabled(!node->IsBusy());
   this->DefaultPushButton->setEnabled(!node->IsBusy());
@@ -212,9 +212,9 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
   this->AutoRunCancelsRunningProcess->setChecked(
     node->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess);
   if (this->AutoRunPushButton->isChecked() != node->GetAutoRun())
-    {
+  {
     this->AutoRunPushButton->setChecked(node->GetAutoRun());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -222,9 +222,9 @@ void qSlicerCLIModuleWidgetPrivate::updateCommandLineModuleNodeFromUi(
   vtkObject* commandLineModuleNode)
 {
   if (!commandLineModuleNode)
-    {
+  {
     return;
-    }
+  }
   vtkMRMLCommandLineModuleNode * node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   Q_ASSERT(node);
@@ -249,9 +249,9 @@ void qSlicerCLIModuleWidgetPrivate::addParameterGroups()
     this->logic()->GetDefaultModuleDescription();
   for (ParameterGroupConstIterator pgIt = moduleDescription.GetParameterGroups().begin();
        pgIt != moduleDescription.GetParameterGroups().end(); ++pgIt)
-    {
+  {
     this->addParameterGroup(this->VerticalLayout, *pgIt);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -285,9 +285,9 @@ void qSlicerCLIModuleWidgetPrivate::addParameters(QFormLayout* _layout,
   ParameterConstIterator pEndIt = parameterGroup.GetParameters().end();
 
   for (ParameterConstIterator pIt = pBeginIt; pIt != pEndIt; ++pIt)
-    {
+  {
     this->addParameter(_layout, *pIt);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -298,9 +298,9 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
   Q_ASSERT(_layout);
 
   if (moduleParameter.GetHidden() == "true")
-    {
+  {
     return;
-    }
+  }
 
   QString _label = q->translate(moduleParameter.GetLabel());
   QString description = q->translate(moduleParameter.GetDescription());
@@ -328,16 +328,16 @@ void qSlicerCLIModuleWidgetPrivate::onValueChanged(const QString& name, const QV
   // because nodes are getting removed
   if (!q->mrmlScene() ||
       q->mrmlScene()->IsClosing())
-    {
+  {
     return;
-    }
+  }
   // Make sure a command line module node is created
   if (this->CommandLineModuleNode == nullptr)
-    {
+  {
     // if not, then create a default node
     this->MRMLCommandLineModuleNodeSelector->addNode();
     Q_ASSERT(this->CommandLineModuleNode);
-    }
+  }
   this->CLIModuleUIHelper->setCommandLineModuleParameter(
     this->CommandLineModuleNode, name, value);
 }
@@ -380,7 +380,7 @@ void qSlicerCLIModuleWidget::enter()
   // Make sure a command line module node is available when the module widget
   // is activated. If no CLI node is available then create a new one.
   if (d->MRMLCommandLineModuleNodeSelector->currentNode() == nullptr)
-    {
+  {
     bool wasBlocked = d->MRMLCommandLineModuleNodeSelector->blockSignals(true);
     vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(d->MRMLCommandLineModuleNodeSelector->addNode());
     Q_ASSERT(node);
@@ -390,7 +390,7 @@ void qSlicerCLIModuleWidget::enter()
     d->MRMLCommandLineModuleNodeSelector->blockSignals(wasBlocked);
     this->setCurrentCommandLineModuleNode(node);
     Q_ASSERT(d->CommandLineModuleNode);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -408,18 +408,18 @@ void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
   vtkMRMLCommandLineModuleNode * node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   if (node == d->CommandLineModuleNode)
-    {
+  {
     return;
-    }
+  }
 
   // Update the selector if this slot was called programmatically
   Q_ASSERT(d->MRMLCommandLineModuleNodeSelector);
   if (d->MRMLCommandLineModuleNodeSelector->currentNode()
       != commandLineModuleNode)
-    {
+  {
     d->MRMLCommandLineModuleNodeSelector->setCurrentNode(commandLineModuleNode);
     return;
-    }
+  }
 
   // Connect node modified event to updateUi that synchronize the values of the
   // nodes with the Ui
@@ -472,22 +472,22 @@ void qSlicerCLIModuleWidget::run(vtkMRMLCommandLineModuleNode* parameterNode, bo
   Q_ASSERT(d->logic());
 
   if (waitForCompletion)
-    {
+  {
     d->logic()->ApplyAndWait(parameterNode);
-    }
+  }
   else
-    {
+  {
     d->logic()->Apply(parameterNode);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::cancel(vtkMRMLCommandLineModuleNode* node)
 {
   if (!node)
-    {
+  {
     return;
-    }
+  }
   node->Cancel();
 }
 
@@ -504,13 +504,13 @@ void qSlicerCLIModuleWidget::setAutoRunWhenParameterChanged(bool autoRun)
   Q_D(qSlicerCLIModuleWidget);
   int newAutoRunMode = d->commandLineModuleNode()->GetAutoRunMode();
   if (autoRun)
-    {
+  {
     newAutoRunMode |= vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter;
-    }
+  }
   else
-    {
+  {
     newAutoRunMode &= ~vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter;
-    }
+  }
   d->commandLineModuleNode()->SetAutoRunMode(newAutoRunMode);
 }
 
@@ -520,13 +520,13 @@ void qSlicerCLIModuleWidget::setAutoRunWhenInputModified(bool autoRun)
   Q_D(qSlicerCLIModuleWidget);
   int newAutoRunMode = d->commandLineModuleNode()->GetAutoRunMode();
   if (autoRun)
-    {
+  {
     newAutoRunMode |= vtkMRMLCommandLineModuleNode::AutoRunOnModifiedInputEvent;
-    }
+  }
   else
-    {
+  {
     newAutoRunMode &= ~vtkMRMLCommandLineModuleNode::AutoRunOnModifiedInputEvent;
-    }
+  }
   d->commandLineModuleNode()->SetAutoRunMode(newAutoRunMode);
 }
 
@@ -536,13 +536,13 @@ void qSlicerCLIModuleWidget::setAutoRunOnOtherInputEvents(bool autoRun)
   Q_D(qSlicerCLIModuleWidget);
   int newAutoRunMode = d->commandLineModuleNode()->GetAutoRunMode();
   if (autoRun)
-    {
+  {
     newAutoRunMode |= vtkMRMLCommandLineModuleNode::AutoRunOnOtherInputEvents;
-    }
+  }
   else
-    {
+  {
     newAutoRunMode &= ~vtkMRMLCommandLineModuleNode::AutoRunOnOtherInputEvents;
-    }
+  }
   d->commandLineModuleNode()->SetAutoRunMode(newAutoRunMode);
 }
 
@@ -552,13 +552,13 @@ void qSlicerCLIModuleWidget::setAutoRunCancelsRunningProcess(bool autoRun)
   Q_D(qSlicerCLIModuleWidget);
   int newAutoRunMode = d->commandLineModuleNode()->GetAutoRunMode();
   if (autoRun)
-    {
+  {
     newAutoRunMode |= vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess;
-    }
+  }
   else
-    {
+  {
     newAutoRunMode &= ~vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess;
-    }
+  }
   d->commandLineModuleNode()->SetAutoRunMode(newAutoRunMode);
 }
 
@@ -572,21 +572,21 @@ bool qSlicerCLIModuleWidget::setEditedNode(vtkMRMLNode* node,
   Q_UNUSED(context);
   vtkMRMLCommandLineModuleNode* cmdLineModuleNode = vtkMRMLCommandLineModuleNode::SafeDownCast(node);
   if (!cmdLineModuleNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: invalid input node";
     return false;
-    }
+  }
   const char* moduleTitle = cmdLineModuleNode->GetAttribute("CommandLineModule");
   if (!moduleTitle)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: CommandLineModule attribute of node is not set";
     return false;
-    }
+  }
   if (moduleTitle != this->module()->title())
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: mismatch of module title in CommandLineModule attribute of node";
     return false;
-    }
+  }
   d->MRMLCommandLineModuleNodeSelector->setCurrentNode(node);
   return true;
 }
@@ -595,25 +595,25 @@ bool qSlicerCLIModuleWidget::setEditedNode(vtkMRMLNode* node,
 double qSlicerCLIModuleWidget::nodeEditable(vtkMRMLNode* node)
 {
   if (vtkMRMLCommandLineModuleNode::SafeDownCast(node))
-    {
+  {
     vtkMRMLCommandLineModuleNode* cmdLineModuleNode = vtkMRMLCommandLineModuleNode::SafeDownCast(node);
     const char* moduleTitle = cmdLineModuleNode->GetAttribute("CommandLineModule");
     if (!moduleTitle)
-      {
+    {
       // node is not associated to any module
       return 0.0;
-      }
+    }
     if (moduleTitle != this->module()->title())
-      {
+    {
       return 0.0;
-      }
+    }
     // Module title matches, probably this module owns this node
     return 0.5;
-    }
+  }
   else
-    {
+  {
     return 0.0;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

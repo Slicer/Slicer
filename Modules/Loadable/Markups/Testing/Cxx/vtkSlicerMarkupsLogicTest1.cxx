@@ -163,10 +163,10 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
 
   std::cout << "Before renaming:" << std::endl;
   for (int i = 0; i < activeMarkupsNode->GetNumberOfControlPoints(); ++i)
-    {
+  {
     std::cout << "Markup " << i << " label = "
               << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
-    }
+  }
 
   activeMarkupsNode->SetName("RenamingTest");
   activeMarkupsNode->SetControlPointLabelFormat("T %d %N");
@@ -177,10 +177,10 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
 
   std::cout << "After renaming:" << std::endl;
   for (int i = 0; i < activeMarkupsNode->GetNumberOfControlPoints(); ++i)
-    {
+  {
     std::cout << "Markup " << i << " label = "
               << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
-    }
+  }
 
   // test setting active list id
   std::string newID = logic1->AddNewFiducialNode("New list", scene);

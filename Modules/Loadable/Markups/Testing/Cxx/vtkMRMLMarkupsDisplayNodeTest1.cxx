@@ -35,13 +35,13 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
   for (int i = vtkMRMLMarkupsDisplayNode::GetMinimumGlyphType();
        i <= vtkMRMLMarkupsDisplayNode::GetMaximumGlyphType();
        i++)
-    {
+  {
     node1->SetGlyphType(i);
     std::cout << i << " GetGlyphType = " << node1->GetGlyphType()
               << ", as string = " << node1->GetGlyphTypeAsString()
               << ", GetGlyphTypeAsString(" << i << ") = "
               << node1->GetGlyphTypeAsString(i) << std::endl;
-    }
+  }
 
   // print out the enums
   std::cout << "Enum GlyphShapes:" << std::endl;
@@ -105,28 +105,28 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
   // spot test int to string mapping
   node1->SetGlyphType(vtkMRMLMarkupsDisplayNode::Sphere3D);
   if (strcmp(node1->GetGlyphTypeAsString(), "Sphere3D") != 0)
-    {
+  {
     std::cerr << "ERROR: set the glyph type to "
               << vtkMRMLMarkupsDisplayNode::Sphere3D
               << ", but get glyph type as string returned "
               << node1->GetGlyphTypeAsString() << " instead of Sphere3D"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // test GlyphTypeIs3D
   node1->SetGlyphTypeFromString("Triangle2D");
   if (node1->GlyphTypeIs3D() == 1)
-    {
+  {
     std::cerr << "ERROR: triangle 2d not recognised as a 2d glyph" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   node1->SetGlyphTypeFromString("Sphere3D");
   if (node1->GlyphTypeIs3D() != 1)
-    {
+  {
     std::cerr << "ERROR: sphere 3d not recognised as a 3d glyph" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   TEST_SET_GET_DOUBLE_RANGE(node1, GlyphScale, -1.0, 25.6);
 
@@ -136,31 +136,31 @@ int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
   node1->SetSliceProjectionOpacity(0.0);
   node1->SetSliceProjectionOpacity(0.5);
   if (node1->GetSliceProjectionOpacity() != 0.5)
-    {
+  {
     std::cerr << "Failed to set projected opacity to 0.5" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   node1->SetSliceProjectionOpacity(1.0);
 
 
   node1->SliceProjectionUseFiducialColorOn();
   if (node1->GetSliceProjectionUseFiducialColor() != true)
-    {
+  {
     std::cerr << "Failed to turn use markup color on with slice projections"
               << ", slice projection = " << node1->GetSliceProjection()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   node1->SliceProjectionUseFiducialColorOff();
 
   node1->SliceProjectionOutlinedBehindSlicePlaneOn();
   if (node1->GetSliceProjectionOutlinedBehindSlicePlane() != true)
-    {
+  {
     std::cerr << "Failed to turn use outline behind slice plane on"
               << ", slice projection = " << node1->GetSliceProjection()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   node1->SliceProjectionOutlinedBehindSlicePlaneOff();
 
   return EXIT_SUCCESS;

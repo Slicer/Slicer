@@ -67,9 +67,9 @@ void vtkMRMLTransformHandleWidgetRepresentation::SetDisplayNode(vtkMRMLTransform
 vtkMRMLTransformNode* vtkMRMLTransformHandleWidgetRepresentation::GetTransformNode()
 {
   if (!this->GetDisplayNode())
-    {
+  {
     return nullptr;
-    }
+  }
   return vtkMRMLTransformNode::SafeDownCast(this->GetDisplayNode()->GetDisplayableNode());
 }
 
@@ -101,19 +101,19 @@ void vtkMRMLTransformHandleWidgetRepresentation::SetActiveComponentIndex(int ind
 bool vtkMRMLTransformHandleWidgetRepresentation::IsDisplayable()
 {
   if (!this->GetDisplayNode() || !this->GetTransformNode() || !this->GetTransformNode()->IsLinear())
-    {
+  {
     return false;
-    }
+  }
 
   if (!this->GetDisplayNode()->GetEditorVisibility())
-    {
+  {
     return false;
-    }
+  }
 
   if (this->GetSliceNode())
-    {
+  {
     return this->GetDisplayNode()->GetEditorSliceIntersectionVisibility();
-    }
+  }
 
   return this->GetDisplayNode()->GetEditorVisibility3D();
 }
@@ -124,10 +124,10 @@ void vtkMRMLTransformHandleWidgetRepresentation::UpdateInteractionPipeline()
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->ViewNode);
   vtkProp* actor = this->GetInteractionActor();
   if (!viewNode || !this->GetTransformNode())
-    {
+  {
     actor->SetVisibility(false);
     return;
-    }
+  }
 
   // Final visibility handled by superclass in vtkMRMLInteractionWidgetRepresentation
   Superclass::UpdateInteractionPipeline();
@@ -138,10 +138,10 @@ void vtkMRMLTransformHandleWidgetRepresentation::UpdateHandleToWorldTransform(vt
 {
   vtkMRMLTransformNode* transformNode = this->GetTransformNode();
   if (!transformNode)
-    {
+  {
     handleToWorldTransform->Identity();
     return;
-    }
+  }
 
   vtkNew<vtkGeneralTransform> nodeToWorldTransform;
   vtkMRMLTransformNode::GetTransformBetweenNodes(transformNode, nullptr, nodeToWorldTransform);
@@ -166,12 +166,12 @@ void vtkMRMLTransformHandleWidgetRepresentation::UpdateHandleToWorldTransform(vt
 
   vtkNew<vtkMatrix4x4> nodeToWorldMatrix;
   for (int i = 0; i < 3; i++)
-    {
+  {
     nodeToWorldMatrix->SetElement(i, 0, xDirectionWorld[i]);
     nodeToWorldMatrix->SetElement(i, 1, yDirectionWorld[i]);
     nodeToWorldMatrix->SetElement(i, 2, zDirectionWorld[i]);
     nodeToWorldMatrix->SetElement(i, 3, centerOfTransformationWorld[i]);
-    }
+  }
 
   // The vtkMRMLInteractionWidgetRepresentation::UpdateHandleToWorldTransform() method will orthogonalize the matrix.
   handleToWorldTransform->Identity();
@@ -201,50 +201,50 @@ bool vtkMRMLTransformHandleWidgetRepresentation::GetHandleVisibility(int type, i
 {
   vtkMRMLTransformDisplayNode* displayNode = this->GetDisplayNode();
   if (!displayNode)
-    {
+  {
     return false;
-    }
+  }
 
   vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
 
   bool visible = Superclass::GetHandleVisibility(type, index);
   if (type == InteractionRotationHandle)
-    {
+  {
     visible &= sliceNode ? displayNode->GetEditorRotationSliceEnabled() : displayNode->GetEditorRotationEnabled();
-    }
+  }
   else if (type == InteractionTranslationHandle)
-    {
+  {
     visible &= sliceNode ? displayNode->GetEditorTranslationSliceEnabled() : displayNode->GetEditorTranslationEnabled();
-    }
+  }
   else if (type == InteractionScaleHandle)
-    {
+  {
     visible &= sliceNode ? displayNode->GetEditorScalingSliceEnabled() : displayNode->GetEditorScalingEnabled();
-    }
+  }
 
   bool handleVisibility[4] = { false, false, false, false };
   if (type == InteractionRotationHandle)
-    {
+  {
     sliceNode
       ? this->GetDisplayNode()->GetRotationHandleComponentVisibilitySlice(handleVisibility)
       : this->GetDisplayNode()->GetRotationHandleComponentVisibility3D(handleVisibility);
-    }
+  }
   else if (type == InteractionScaleHandle)
-    {
+  {
     sliceNode
       ? this->GetDisplayNode()->GetScaleHandleComponentVisibilitySlice(handleVisibility)
       : this->GetDisplayNode()->GetScaleHandleComponentVisibility3D(handleVisibility);
-    }
+  }
   else if (type == InteractionTranslationHandle)
-    {
+  {
     sliceNode
       ? this->GetDisplayNode()->GetTranslationHandleComponentVisibilitySlice(handleVisibility)
       : this->GetDisplayNode()->GetTranslationHandleComponentVisibility3D(handleVisibility);
-    }
+  }
 
   if (index >= 0 && index <= 3)
-    {
+  {
     visible &= handleVisibility[index];
-    }
+  }
 
   return visible;
 }

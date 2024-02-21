@@ -187,11 +187,11 @@ public:
   void SetEventMode(int eventMode)
   {
     if (eventMode != this->EventMode)
-     {
+    {
      this->EventMode = eventMode;
      this->ProcessEventQueue();
      this->Modified();
-     }
+    }
   };
 
   void SetEventModeToSynchronous() {this->SetEventMode(vtkEventBroker::Synchronous);};
@@ -236,10 +236,10 @@ public:
   ///
   /// Sets the method pointer to be used for processing script observations
   void SetScriptHandler ( void (*scriptHandler) (const char* script, void *clientData), void *clientData )
-    {
+  {
     this->ScriptHandler = scriptHandler;
     this->ScriptHandlerClientData = clientData;
-    }
+  }
 
   /// Request invoking modified event.
   /// Modified event is called later (e.g., when the application becomes idle)

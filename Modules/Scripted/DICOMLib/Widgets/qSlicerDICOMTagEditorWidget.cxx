@@ -122,9 +122,9 @@ void qSlicerDICOMTagEditorWidgetPrivate::init()
 void qSlicerDICOMTagEditorWidgetPrivate::setupUi(QWidget *qSlicerDICOMTagEditorWidget)
 {
   if (qSlicerDICOMTagEditorWidget->objectName().isEmpty())
-    {
+  {
     qSlicerDICOMTagEditorWidget->setObjectName(QString::fromUtf8("qSlicerDICOMTagEditorWidget"));
-    }
+  }
 
   // Create layout
   QVBoxLayout* mainLayout = new QVBoxLayout(qSlicerDICOMTagEditorWidget);
@@ -186,9 +186,9 @@ unsigned int qSlicerDICOMTagEditorWidgetPrivate::topSeriesHeaderRow()
 {
   // Return number of rows if there are no series tables
   if (this->SeriesTagsHeaderRows.isEmpty())
-    {
+  {
     return this->TagsTable->rowCount();
-    }
+  }
 
   // Get minimum of the series tags header row indices
   return this->SeriesTagsHeaderRows.keys()[0];
@@ -199,35 +199,35 @@ qSlicerDICOMExportable* qSlicerDICOMTagEditorWidgetPrivate::exportableForRowInde
 {
   // If patient or study tag, then it corresponds to no exportable
   if (row < this->topSeriesHeaderRow())
-    {
+  {
     return nullptr;
-    }
+  }
 
   unsigned int foundSeriesHeaderRowIndex = 0; // 0 is invalid value as it is the patient header
   QList<unsigned int> headerRowIndices = this->SeriesTagsHeaderRows.keys();
   if (headerRowIndices.contains(row))
-    {
+  {
     // If row is a header, then return nullptr without logging error
     return nullptr;
-    }
+  }
 
   // Iterate through the series header indices from the bottom up
   for (int headerRowIndexIndex = headerRowIndices.size()-1; headerRowIndexIndex >= 0 ; --headerRowIndexIndex)
-    {
+  {
     // If edited row is greater than the current header index, but smaller than the
     // previous ones, and it is not a header, then we found the series section
     unsigned int currentHeaderRowIndex = headerRowIndices[headerRowIndexIndex];
     if (row > currentHeaderRowIndex)
-      {
+    {
       foundSeriesHeaderRowIndex = currentHeaderRowIndex;
       break;
-      }
     }
+  }
   if (foundSeriesHeaderRowIndex == 0)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to find series section for row index " << row;
     return nullptr;
-    }
+  }
 
   return this->SeriesTagsHeaderRows[foundSeriesHeaderRowIndex];
 }
@@ -240,25 +240,25 @@ void qSlicerDICOMTagEditorWidgetPrivate::insertTagsTableRow(unsigned int row)
 
   // Increase study tags header row index if row is inserted above it
   if (row <= this->StudyTagsHeaderRow)
-    {
+  {
     this->StudyTagsHeaderRow++;
-    }
+  }
 
   // Update those series header row indices above which the row is inserted
   QMap<unsigned int, qSlicerDICOMExportable*> updatedSeriesTagsHeaderRows;
   foreach(unsigned int seriesHeaderRow, this->SeriesTagsHeaderRows.keys())
-    {
+  {
     // If inserted above the series header then increase it
     if (row <= seriesHeaderRow)
-      {
+    {
       updatedSeriesTagsHeaderRows[seriesHeaderRow+1] = this->SeriesTagsHeaderRows[seriesHeaderRow];
-      }
+    }
     // If below then keep the same
     else
-      {
+    {
       updatedSeriesTagsHeaderRows[seriesHeaderRow] = this->SeriesTagsHeaderRows[seriesHeaderRow];
-      }
     }
+  }
   // Replace series headers with updated one
   this->SeriesTagsHeaderRows = updatedSeriesTagsHeaderRows;
 }
@@ -306,18 +306,18 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 {
   Q_D(qSlicerDICOMTagEditorWidget);
   if (!d->Scene)
-    {
+  {
     QString error("Invalid MRML scene");
     qCritical() << Q_FUNC_INFO << ": " << error;
     return error;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->Scene);
   if (!shNode)
-    {
+  {
     QString error("Invalid subject hierarchy");
     qCritical() << Q_FUNC_INFO << ": " << error;
     return error;
-    }
+  }
 
   // Set exportable in class
   d->Exportables = exportables;
@@ -329,43 +329,43 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 
   // Check if the exportables are in the same study
   foreach (qSlicerDICOMExportable* exportable, d->Exportables)
-    {
+  {
     vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
     if (seriesItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-      {
+    {
       qCritical() << Q_FUNC_INFO << ": Exportable '" << exportable->name() << QString("' points to invalid item");
       continue;
-      }
+    }
 
     vtkIdType parentItemID = shNode->GetItemParent(seriesItemID);
     if (d->StudyItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-      {
+    {
       if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-        {
+      {
         QString error("No study found");
         qCritical() << Q_FUNC_INFO << ": " << error;
         return error;
-        }
-      d->StudyItemID = parentItemID;
       }
+      d->StudyItemID = parentItemID;
+    }
     else if (d->StudyItemID != parentItemID)
-      {
+    {
       QString error("Exportables are not in the same study");
       qCritical() << Q_FUNC_INFO << ": " << error;
       return error;
-      }
     }
+  }
 
   // Populate patient section
 
   // Get patient item
   d->PatientItemID = shNode->GetItemParent(d->StudyItemID);
   if (d->PatientItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     QString error("No patient found");
     qCritical() << Q_FUNC_INFO << ": " << error;
     return error;
-    }
+  }
 
   // Disconnect signal handling edited cells for the time of populating the table
   // At this line, because there must not be return statements between disconnect and connect (unless connect is called before return!)
@@ -379,24 +379,24 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   std::vector<std::string> patientTagNames = vtkMRMLSubjectHierarchyConstants::GetDICOMPatientTagNames();
   for ( std::vector<std::string>::iterator patientTagIt = patientTagNames.begin();
     patientTagIt != patientTagNames.end(); ++patientTagIt )
-    {
+  {
     std::string tagAttributeName = vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + (*patientTagIt);
     if (std::find(patientItemAttributeNames.begin(), patientItemAttributeNames.end(), tagAttributeName) == patientItemAttributeNames.end())
-      {
+    {
       shNode->SetItemAttribute(d->PatientItemID, tagAttributeName, "");
-      }
     }
+  }
   // Get attribute names again in case some were missing
   patientItemAttributeNames = shNode->GetItemAttributeNames(d->PatientItemID);
   // Create a row in table widget for each tag and populate exportables with patient tags
   // (all tags are acquired from the exportable on export)
   for (std::vector<std::string>::iterator it = patientItemAttributeNames.begin(); it != patientItemAttributeNames.end(); ++it)
-    {
+  {
     std::string attributeName = (*it);
     if (attributeName.size() < vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size())
-      {
+    {
       continue;
-      }
+    }
 
     // Get attribute prefix from attribute name, and tag name (attribute name after prefix) and value
     std::string attributePrefix = attributeName.substr(0, vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size());
@@ -405,7 +405,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 
     // If DICOM tag attribute (i.e. has the prefix), then add to the table and exportable
     if (!attributePrefix.compare(vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()))
-      {
+    {
       // Add patient tag in a new row in the tags table
       unsigned int row = d->StudyTagsHeaderRow;
       d->insertTagsTableRow(row);
@@ -416,11 +416,11 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 
       // Also add it to the exportables (needed there for export)
       foreach (qSlicerDICOMExportable* exportable, d->Exportables)
-        {
+      {
         exportable->setTag(tagName, tagValue);
-        }
       }
     }
+  }
 
 
   // Populate study section (we already have the study item, no need to get it here)
@@ -429,25 +429,25 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   std::vector<std::string> studyItemAttributeNames = shNode->GetItemAttributeNames(d->StudyItemID);
   std::vector<std::string> studyTagNames = vtkMRMLSubjectHierarchyConstants::GetDICOMStudyTagNames();
   for (std::vector<std::string>::iterator studyTagIt = studyTagNames.begin(); studyTagIt != studyTagNames.end(); ++studyTagIt)
-    {
+  {
     std::string tagAttributeName = vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + (*studyTagIt);
     if (std::find(studyItemAttributeNames.begin(), studyItemAttributeNames.end(), tagAttributeName) == studyItemAttributeNames.end())
-      {
+    {
       shNode->SetItemAttribute(d->StudyItemID, tagAttributeName, "");
-      }
     }
+  }
 
   // Get attribute names again in case some were missing
   studyItemAttributeNames = shNode->GetItemAttributeNames(d->StudyItemID);
   // Create a row in table widget for each tag and populate exportables with study tags
   // (all tags are acquired from the exportable on export)
   for (std::vector<std::string>::iterator it = studyItemAttributeNames.begin(); it != studyItemAttributeNames.end(); ++it)
-    {
+  {
     std::string attributeName = (*it);
     if (attributeName.size() < vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size())
-      {
+    {
       continue;
-      }
+    }
 
     // Get attribute prefix from attribute name, and tag name (attribute name after prefix) and value
     std::string attributePrefix = attributeName.substr(0, vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix().size());
@@ -455,7 +455,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
     QString tagValue(shNode->GetItemAttribute(d->StudyItemID, attributeName).c_str());
     // If DICOM tag attribute (i.e. has the prefix), then add to the table and exportable
     if (!attributePrefix.compare(vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()))
-      {
+    {
       // Add study tag in a new row in the study table
       unsigned int row = d->topSeriesHeaderRow();
       d->insertTagsTableRow(row);
@@ -466,16 +466,16 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 
       // Also add it to the exportables (needed there for export)
       foreach (qSlicerDICOMExportable* exportable, d->Exportables)
-        {
+      {
         exportable->setTag(tagName, tagValue);
-        }
       }
     }
+  }
 
 
   // Create series sections for each exportable
   foreach (qSlicerDICOMExportable* exportable, d->Exportables)
-    {
+  {
     // Get exportable series item
     vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
 
@@ -500,13 +500,13 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
     // Get series tags from exportable and populate table with them
     QMap<QString,QString> exportableTagsMap = exportable->tags();
     foreach (QString tagName, exportableTagsMap.keys())
-      {
+    {
       // Only use series tags
       if ( vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(tagName.toUtf8().constData())
         || vtkSlicerSubjectHierarchyModuleLogic::IsStudyTag(tagName.toUtf8().constData()) )
-        {
+      {
         continue;
-        }
+      }
 
       // Add new row in series table for series tag
       row = d->TagsTable->rowCount();
@@ -520,17 +520,17 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
         + std::string(tagName.toUtf8().constData());
       std::string tagAttributeValue = shNode->GetItemAttribute(seriesItemID, tagAttributeName);
       if (shNode->HasItemAttribute(seriesItemID, tagAttributeName))
-        {
+      {
         exportable->setTag(tagName, tagAttributeValue.c_str());
         d->TagsTable->setItem(row, 1, new QTableWidgetItem(QString(tagAttributeValue.c_str())));
-        }
+      }
       // Use default value from exportable otherwise
       else
-        {
+      {
         d->TagsTable->setItem(row, 1, new QTableWidgetItem(exportableTagsMap[tagName]));
-        }
       }
     }
+  }
 
   // Fit tag name column to contents
   //d->TagsTable->resizeColumnToContents(0); //TODO
@@ -555,27 +555,27 @@ void qSlicerDICOMTagEditorWidget::commitChangesToItems()
   Q_D(qSlicerDICOMTagEditorWidget);
 
   if (!d->Scene)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->Scene);
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
-    }
+  }
 
   std::string dicomAttributePrefix = vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix();
 
   // Commit changes to series
   for (int row=d->topSeriesHeaderRow(); row<d->TagsTable->rowCount(); ++row)
-    {
+  {
     qSlicerDICOMExportable* exportable = d->exportableForRowIndex(row);
     if (!exportable) // Header row
-      {
+    {
       continue;
-      }
+    }
 
     // Get subject hierarchy series item from exportable
     vtkIdType seriesItemID = exportable->subjectHierarchyItemID();
@@ -584,37 +584,37 @@ void qSlicerDICOMTagEditorWidget::commitChangesToItems()
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;
     QString tagValue = d->TagsTable->item(row, 1)->text();
     shNode->SetItemAttribute(seriesItemID, tagAttributeName.toUtf8().constData(), tagValue.toUtf8().constData());
-    }
+  }
 
   // Commit changes to study
   if (d->StudyItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to get study item";
     return;
-    }
+  }
   // Write tags from study section to study item
   for (unsigned int row=d->StudyTagsHeaderRow+1; row<d->topSeriesHeaderRow(); ++row)
-    {
+  {
     QString tagName = d->TagsTable->item(row, 0)->text();
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;
     QString tagValue = d->TagsTable->item(row, 1)->text();
     shNode->SetItemAttribute(d->StudyItemID, tagAttributeName.toUtf8().constData(), tagValue.toUtf8().constData());
-    }
+  }
 
   // Commit changes to patient
   if (d->PatientItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to get patient item";
     return;
-    }
+  }
   // Write tags from patient table to patient item
   for (unsigned int row=1; row<d->StudyTagsHeaderRow; ++row)
-    {
+  {
     QString tagName = d->TagsTable->item(row, 0)->text();
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;
     QString tagValue = d->TagsTable->item(row, 1)->text();
     shNode->SetItemAttribute(d->PatientItemID, tagAttributeName.toUtf8().constData(), tagValue.toUtf8().constData());
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -622,33 +622,33 @@ void qSlicerDICOMTagEditorWidget::tagsTableCellChanged(int row, int column)
 {
   Q_D(qSlicerDICOMTagEditorWidget);
   if (column != 1)
-    {
+  {
     // Only the value column is editable
     return;
-    }
+  }
 
   // If patient or study tag (need to set value to each exportable)
   if (row < (int)d->topSeriesHeaderRow())
-    {
+  {
     // Set new tag value in each exportable
     foreach (qSlicerDICOMExportable* exportable, d->Exportables)
-      {
+    {
       exportable->setTag(d->TagsTable->item(row,0)->text(), d->TagsTable->item(row,1)->text());
-      }
     }
+  }
   // Series tag edited. Find exportable and set value in only that one
   else
-    {
+  {
     qSlicerDICOMExportable* exportable = d->exportableForRowIndex(row);
     if (!exportable)
-      {
+    {
       qCritical() << Q_FUNC_INFO << ": Failed to get exportable for row index " << row;
       return;
-      }
+    }
 
     // Set tag in exportable
     exportable->setTag(d->TagsTable->item(row,0)->text(), d->TagsTable->item(row,1)->text());
-    }
+  }
 
   // Emit signal outside so that changes can be used immediately if needed
   emit tagEdited();

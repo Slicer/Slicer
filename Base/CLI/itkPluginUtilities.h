@@ -18,7 +18,7 @@ namespace itk
   void GetImageType (std::string fileName,
                      ImageIOBase::IOPixelType &pixelType,
                      ImageIOBase::IOComponentType &componentType)
-    {
+  {
       typedef itk::Image<unsigned char, 3> ImageType;
       itk::ImageFileReader<ImageType>::Pointer imageReader =
         itk::ImageFileReader<ImageType>::New();
@@ -27,20 +27,20 @@ namespace itk
 
       pixelType = imageReader->GetImageIO()->GetPixelType();
       componentType = imageReader->GetImageIO()->GetComponentType();
-    }
+  }
 
   //-----------------------------------------------------------------------------
   /// Get the PixelTypes and ComponentTypes from fileNames
   void GetImageTypes (std::vector<std::string> fileNames,
                       std::vector<ImageIOBase::IOPixelType> &pixelTypes,
                       std::vector<ImageIOBase::IOComponentType> &componentTypes)
-    {
+  {
     pixelTypes.clear();
     componentTypes.clear();
 
     // For each file, find the pixel and component type
     for (std::vector<std::string>::size_type i = 0; i < fileNames.size(); i++)
-      {
+    {
       ImageIOBase::IOPixelType pixelType;
       ImageIOBase::IOComponentType componentType;
 
@@ -49,8 +49,8 @@ namespace itk
                     componentType);
       pixelTypes.push_back(pixelType);
       componentTypes.push_back(componentType);
-      }
     }
+  }
 
   //-----------------------------------------------------------------------------
   template <class T>
@@ -62,9 +62,9 @@ namespace itk
     itk::ContinuousIndex<double,T::ImageDimension> centerIndex;
     typename T::SizeType size = fixed->GetLargestPossibleRegion().GetSize();
     for (unsigned int i = 0; i < T::ImageDimension; i++)
-      {
+    {
       centerIndex[i] = static_cast<double>((size[i]-1)/2.0);
-      }
+    }
     fixed->TransformContinuousIndexToPhysicalPoint(centerIndex, fixedCenter);
     }
 
@@ -74,16 +74,16 @@ namespace itk
     itk::ContinuousIndex<double,T::ImageDimension> centerIndex;
     typename T::SizeType size = moving->GetLargestPossibleRegion().GetSize();
     for (unsigned i = 0; i < T::ImageDimension; i++)
-      {
+    {
       centerIndex[i] = static_cast<double>((size[i]-1)/2.0);
-      }
+    }
     moving->TransformContinuousIndexToPhysicalPoint(centerIndex, movingCenter);
     }
 
     for (unsigned int j = 0; j < fixedCenter.Size(); j++)
-      {
+    {
       origin[j] = moving->GetOrigin()[j] - (movingCenter[j] - fixedCenter[j]);
-      }
+    }
   }
 
 } // end namespace itk

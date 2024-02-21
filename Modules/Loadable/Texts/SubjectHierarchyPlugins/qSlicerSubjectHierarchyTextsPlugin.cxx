@@ -83,14 +83,14 @@ double qSlicerSubjectHierarchyTextsPlugin::canAddNodeToSubjectHierarchy(
 {
   Q_UNUSED(parentItemID);
   if (!node)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Input node is nullptr!";
     return 0.0;
-    }
+  }
   else if (node->IsA("vtkMRMLTextNode"))
-    {
+  {
     return 0.5;
-    }
+  }
   return 0.0;
 }
 
@@ -98,23 +98,23 @@ double qSlicerSubjectHierarchyTextsPlugin::canAddNodeToSubjectHierarchy(
 double qSlicerSubjectHierarchyTextsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return 0.0;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0.0;
-    }
+  }
 
   // Text
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
   if (associatedNode && associatedNode->IsA("vtkMRMLTextNode"))
-    {
+  {
     return 0.5;
-    }
+  }
 
   return 0.0;
 }
@@ -129,28 +129,28 @@ const QString qSlicerSubjectHierarchyTextsPlugin::roleForPlugin()const
 QString qSlicerSubjectHierarchyTextsPlugin::tooltip(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return QString("Invalid!");
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return QString("Error!");
-    }
+  }
 
   // Get basic tooltip from abstract plugin
   QString tooltipString = Superclass::tooltip(itemID);
 
   vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (textNode)
-    {
+  {
     std::stringstream textNodeInfo;
     textNodeInfo << " (Encoding: " << textNode->GetEncodingAsString() << ")" << std::endl << textNode->GetText();
     QString textInfo = QString::fromStdString(textNodeInfo.str());
     tooltipString.append(textInfo);
-    }
+  }
 
   return tooltipString;
 }
@@ -161,16 +161,16 @@ QIcon qSlicerSubjectHierarchyTextsPlugin::icon(vtkIdType itemID)
   Q_D(qSlicerSubjectHierarchyTextsPlugin);
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return QIcon();
-    }
+  }
 
   // Text
   if (this->canOwnSubjectHierarchyItem(itemID))
-    {
+  {
     return d->TextIcon;
-    }
+  }
 
   // Item unknown by plugin
   return QIcon();

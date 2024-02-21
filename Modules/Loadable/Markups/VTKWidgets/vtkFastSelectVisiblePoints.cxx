@@ -83,37 +83,37 @@ int vtkFastSelectVisiblePoints::RequestData(vtkInformation* vtkNotUsed(request),
 
   // Nothing to extract if there are no points in the data set.
   if (numPts < 1)
-    {
+  {
     return 1;
-    }
+  }
 
   if (this->Renderer == nullptr)
-    {
+  {
     vtkErrorMacro(<< "Renderer must be set");
     return 0;
-    }
+  }
 
   if (!this->Renderer->GetRenderWindow())
-    {
+  {
     vtkErrorMacro("No render window -- can't get window size to query z buffer.");
     return 0;
-    }
+  }
 
   // This will trigger if you do something like ResetCamera before the Renderer or
   // RenderWindow have allocated their appropriate system resources (like creating
   // an OpenGL context)." Resource allocation must occur before we can use the Z
   // buffer.
   if (this->Renderer->GetRenderWindow()->GetNeverRendered())
-    {
+  {
     vtkDebugMacro("RenderWindow not initialized -- aborting update.");
     return 1;
-    }
+  }
 
   vtkCamera* cam = this->Renderer->GetActiveCamera();
   if (!cam)
-    {
+  {
     return 1;
-    }
+  }
 
   vtkPoints* outPts = vtkPoints::New();
   outPts->Allocate(numPts / 2 + 1);
@@ -124,37 +124,37 @@ int vtkFastSelectVisiblePoints::RequestData(vtkInformation* vtkNotUsed(request),
   outputVertices->Delete();
 
   if (!this->ZBuffer)
-    {
+  {
     this->UpdateZBuffer();
-    }
+  }
   else
-    {
+  {
     this->Initialize(false);
-    }
+  }
 
   int abort = 0;
   vtkIdType progressInterval = numPts / 20 + 1;
   x[3] = 1.0;
   for (cellId = (-1), ptId = 0; ptId < numPts && !abort; ptId++)
-    {
+  {
     // perform conversion
     input->GetPoint(ptId, x);
 
     if (!(ptId % progressInterval))
-      {
+    {
       this->UpdateProgress(static_cast<double>(ptId) / numPts);
       abort = this->GetAbortExecute();
-      }
+    }
 
     visible = IsPointOccluded(x, this->ZBuffer->GetPointer(0));
 
     if ((visible && !this->SelectInvisible) || (!visible && this->SelectInvisible))
-      {
+    {
       cellId = outPts->InsertNextPoint(x);
       output->InsertNextCell(VTK_VERTEX, 1, &cellId);
       outPD->CopyData(inPD, ptId, cellId);
-      }
-    } // for all points
+    }
+  } // for all points
 
   output->SetPoints(outPts);
   outPts->Delete();

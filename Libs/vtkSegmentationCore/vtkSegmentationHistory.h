@@ -106,10 +106,10 @@ protected:
   typedef std::map<std::string, vtkSmartPointer<vtkSegment> > SegmentsMap;
 
   struct SegmentationState
-    {
+  {
     SegmentsMap Segments;
     std::vector<std::string> SegmentIds; // order of segments
-    };
+  };
 
   vtkSegmentation* Segmentation;
   vtkCallbackCommand* SegmentationModifiedCallbackCommand;

@@ -114,9 +114,9 @@ void qSlicerTextsModule::setup()
 {
   qSlicerApplication * app = qSlicerApplication::application();
   if (!app)
-    {
+  {
     return;
-    }
+  }
 
   qSlicerTextsReader* textFileReader = new qSlicerTextsReader(this);
   app->coreIOManager()->registerIO(textFileReader);

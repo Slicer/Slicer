@@ -127,29 +127,29 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   //vtkGetMacro ( EnableRemoteCacheOverwriting, int );
   //vtkSetMacro ( EnableRemoteCacheOverwriting, int );
   void SetMRMLScene ( vtkMRMLScene *scene )
-      {
+  {
       this->MRMLScene = scene;
-      }
+  }
   void MapFileToURI ( const char *uri, const char *fname );
 
   void MarkNode ( std::string );
   /// in case we need these.
   enum
-    {
+  {
       NoCachedFile=0,
       OldCachedFile,
       CachedFile
-    };
+  };
 
   /// in case we need these.
   enum
-    {
+  {
       InsufficientFreeBufferEvent =  21000,
       CacheLimitExceededEvent,
       CacheDeleteEvent,
       CacheDirtyEvent,
       CacheClearEvent
-    };
+  };
 
   std::map<std::string, std::string> uriMap;
   const char *GetFileFromURIMap (const char *uri );

@@ -297,10 +297,10 @@ void qMRMLUnitWidget::updateWidgetFromNode()
   d->OffsetSpinBox->setEnabled(d->CurrentUnitNode != nullptr);
 
   if (!d->CurrentUnitNode)
-    {
+  {
     d->clear();
     return;
-    }
+  }
 
   // Preset
   bool modifying = d->PresetNodeComboBox->blockSignals(true);
@@ -334,9 +334,9 @@ void qMRMLUnitWidget::setName(const QString& newName)
   Q_D(qMRMLUnitWidget);
 
   if (d->CurrentUnitNode)
-    {
+  {
     d->CurrentUnitNode->SetName(newName.toUtf8());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -352,9 +352,9 @@ void qMRMLUnitWidget::setQuantity(const QString& newQuantity)
   Q_D(qMRMLUnitWidget);
 
   if (d->CurrentUnitNode)
-    {
+  {
     d->CurrentUnitNode->SetQuantity(newQuantity.toUtf8());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -370,9 +370,9 @@ void qMRMLUnitWidget::setPrefix(const QString& newPrefix)
   Q_D(qMRMLUnitWidget);
 
   if (d->CurrentUnitNode)
-    {
+  {
     d->CurrentUnitNode->SetPrefix(newPrefix.toUtf8());
-    }
+  }
   d->MaximumSpinBox->setPrefix(newPrefix);
   d->MinimumSpinBox->setPrefix(newPrefix);
 }
@@ -390,9 +390,9 @@ void qMRMLUnitWidget::setSuffix(const QString& newSuffix)
   Q_D(qMRMLUnitWidget);
 
   if (d->CurrentUnitNode)
-    {
+  {
     d->CurrentUnitNode->SetSuffix(newSuffix.toUtf8());
-    }
+  }
   d->MaximumSpinBox->setSuffix(newSuffix);
   d->MinimumSpinBox->setSuffix(newSuffix);
 }
@@ -410,9 +410,9 @@ void qMRMLUnitWidget::setPrecision(int newPrecision)
   Q_D(qMRMLUnitWidget);
 
   if (d->CurrentUnitNode)
-    {
+  {
     d->CurrentUnitNode->SetPrecision(newPrecision);
-    }
+  }
   d->MaximumSpinBox->setDecimals(newPrecision);
   d->MinimumSpinBox->setDecimals(newPrecision);
 
@@ -433,9 +433,9 @@ void qMRMLUnitWidget::setMinimum(double newMin)
   Q_D(qMRMLUnitWidget);
 
   if (!d->CurrentUnitNode)
-    {
+  {
     return;
-    }
+  }
 
   d->CurrentUnitNode->SetMinimumValue(newMin);
 }
@@ -453,9 +453,9 @@ void qMRMLUnitWidget::setMaximum(double newMax)
   Q_D(qMRMLUnitWidget);
 
   if (!d->CurrentUnitNode)
-    {
+  {
     return;
-    }
+  }
 
   d->CurrentUnitNode->SetMaximumValue(newMax);
 }
@@ -473,9 +473,9 @@ void qMRMLUnitWidget::setCoefficient(double newCoeff)
   Q_D(qMRMLUnitWidget);
 
   if (!d->CurrentUnitNode)
-    {
+  {
     return;
-    }
+  }
 
   d->CurrentUnitNode->SetDisplayCoefficient(newCoeff);
 }
@@ -493,9 +493,9 @@ void qMRMLUnitWidget::setOffset(double newOffset)
   Q_D(qMRMLUnitWidget);
 
   if (!d->CurrentUnitNode)
-    {
+  {
     return;
-    }
+  }
 
   d->CurrentUnitNode->SetDisplayOffset(newOffset);
 }
@@ -507,9 +507,9 @@ void qMRMLUnitWidget::setUnitFromPreset(vtkMRMLNode* presetNode)
 
   vtkMRMLUnitNode *presetUnitNode = vtkMRMLUnitNode::SafeDownCast(presetNode);
   if (!presetUnitNode || !d->CurrentUnitNode)
-    {
+  {
     return;
-    }
+  }
 
   int disabledModify = d->CurrentUnitNode->StartModify();
   d->CurrentUnitNode->SetQuantity(presetUnitNode->GetQuantity());
@@ -531,9 +531,9 @@ void qMRMLUnitWidget
   Q_D(qMRMLUnitWidget);
 
   if (d->DisplayFlags == flag)
-    {
+  {
     return;
-    }
+  }
 
   d->DisplayFlags = flag;
   d->updatePropertyWidgets();
@@ -546,9 +546,9 @@ void qMRMLUnitWidget
   Q_D(qMRMLUnitWidget);
 
   if (d->EditableProperties == properties)
-    {
+  {
     return;
-    }
+  }
 
   d->EditableProperties = properties;
   d->updatePropertyWidgets();

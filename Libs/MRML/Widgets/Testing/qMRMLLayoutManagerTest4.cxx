@@ -67,21 +67,21 @@ int qMRMLLayoutManagerTest4(int argc, char * argv[] )
 
   for (int i = vtkMRMLLayoutNode::SlicerLayoutInitialView;
     i < vtkMRMLLayoutNode::SlicerLayoutFinalView; ++i)
-    {
+  {
     layoutManager.setLayout(i);
     if (!checkViewArrangement(__LINE__, &layoutManager, layoutNode.GetPointer(), i))
-      {
+    {
       return EXIT_FAILURE;
-      }
-    scene->Clear(false);
     }
+    scene->Clear(false);
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     return safeApplicationQuit(&app);
-    }
+  }
   else
-    {
+  {
     return app.exec();
-    }
+  }
 }

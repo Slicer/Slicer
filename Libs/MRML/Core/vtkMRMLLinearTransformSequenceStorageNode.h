@@ -21,11 +21,11 @@
 class vtkMRMLSequenceNode;
 
 enum SequenceFileType
-  {
+{
   INVALID_SEQUENCE_FILE,
   METAIMAGE_SEQUENCE_FILE,
   NRRD_SEQUENCE_FILE
-  };
+};
 
 class VTK_MRML_EXPORT vtkMRMLLinearTransformSequenceStorageNode : public vtkMRMLNRRDStorageNode
 {

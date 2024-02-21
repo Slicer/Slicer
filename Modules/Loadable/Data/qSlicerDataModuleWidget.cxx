@@ -92,9 +92,9 @@ qSlicerDataModuleWidgetPrivate::~qSlicerDataModuleWidgetPrivate()
 {
   vtkMRMLSubjectHierarchyNode* shNode = this->SubjectHierarchyTreeView->subjectHierarchyNode();
   if (shNode)
-    {
+  {
     shNode->RemoveObserver(this->SubjectHierarchyObservationTag);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -182,14 +182,14 @@ void qSlicerDataModuleWidget::setup()
     "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\"> p, li { white-space: pre-wrap; }"
     "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">");
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
-    {
+  {
     // Add help text from each plugin
     QString pluginHelpText = plugin->helpText();
     if (!pluginHelpText.isEmpty())
-      {
+    {
       aggregatedHelpText.append(QString("\n") + pluginHelpText);
-      }
     }
+  }
   aggregatedHelpText.append(QString("</body></html>"));
   d->HelpButton->setToolTip(aggregatedHelpText);
 
@@ -284,17 +284,17 @@ void qSlicerDataModuleWidget::setMRMLIDsVisible(bool visible)
   d->TransformMRMLTreeView->setColumnHidden(d->TransformMRMLTreeView->sceneModel()->idColumn(), !visible);
   int columnCount = d->TransformMRMLTreeView->header()->count();
   for (int i=0; i<columnCount; ++i)
-    {
+  {
     d->TransformMRMLTreeView->resizeColumnToContents(i);
-    }
+  }
 
   // All nodes view
   d->AllNodesMRMLTreeView->setColumnHidden(d->AllNodesMRMLTreeView->sceneModel()->idColumn(), !visible);
   columnCount = d->AllNodesMRMLTreeView->header()->count();
   for (int i=0; i<columnCount; ++i)
-    {
+  {
     d->AllNodesMRMLTreeView->resizeColumnToContents(i);
-    }
+  }
 
   // Update each checkbox that represent the same thing
   bool wereSignalsBlocked = d->SubjectHierarchyDisplayDataNodeIDsCheckBox->blockSignals(true);
@@ -316,7 +316,7 @@ void qSlicerDataModuleWidget::onCurrentTabChanged(int tabIndex)
   Q_D(qSlicerDataModuleWidget);
 
   if (tabIndex == TabIndexSubjectHierarchy)
-    {
+  {
     // Prevent the taller widget affect the size of the other
     d->TransformMRMLTreeView->setVisible(false);
     d->SubjectHierarchyTreeView->setVisible(true);
@@ -324,9 +324,9 @@ void qSlicerDataModuleWidget::onCurrentTabChanged(int tabIndex)
 
     // Make sure MRML node attribute widget is updated
     this->setDataNodeFromSubjectHierarchyItem(d->SubjectHierarchyTreeView->currentItem());
-    }
+  }
   else if (tabIndex == TabIndexTransformHierarchy)
-    {
+  {
     // Prevent the taller widget affect the size of the other
     d->TransformMRMLTreeView->setVisible(true);
     d->SubjectHierarchyTreeView->setVisible(false);
@@ -336,9 +336,9 @@ void qSlicerDataModuleWidget::onCurrentTabChanged(int tabIndex)
     d->MRMLNodeAttributeTableWidget->setEnabled(true);
     // Make sure MRML node attribute widget is updated
     d->MRMLNodeAttributeTableWidget->setMRMLNode(d->TransformMRMLTreeView->currentNode());
-    }
+  }
   else if (tabIndex == TabIndexAllNodes)
-    {
+  {
     // Prevent the taller widget affect the size of the other
     d->TransformMRMLTreeView->setVisible(false);
     d->SubjectHierarchyTreeView->setVisible(false);
@@ -348,7 +348,7 @@ void qSlicerDataModuleWidget::onCurrentTabChanged(int tabIndex)
     d->MRMLNodeAttributeTableWidget->setEnabled(true);
     // Make sure MRML node attribute widget is updated
     d->MRMLNodeAttributeTableWidget->setMRMLNode(d->AllNodesMRMLTreeView->currentNode());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -362,13 +362,13 @@ void qSlicerDataModuleWidget::onCurrentNodeChanged(vtkMRMLNode* newCurrentNode)
   if (transformNode &&
       (transformNode->CanApplyNonLinearTransforms() ||
       transformNode->IsTransformToWorldLinear()))
-    {
+  {
     d->TransformMRMLTreeView->prependNodeMenuAction(d->HardenTransformAction);
-    }
+  }
   else
-    {
+  {
     d->TransformMRMLTreeView->removeNodeMenuAction(d->HardenTransformAction);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -381,9 +381,9 @@ void qSlicerDataModuleWidget::insertTransformNode()
   vtkMRMLNode* parent = vtkMRMLTransformNode::SafeDownCast(
     d->TransformMRMLTreeView->currentNode());
   if (parent)
-    {
+  {
     linearTransform->SetAndObserveTransformNodeID( parent->GetID() );
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -393,9 +393,9 @@ void qSlicerDataModuleWidget::hardenTransformOnCurrentNode()
   vtkMRMLNode* node = d->TransformMRMLTreeView->currentNode();
   vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(node);
   if (transformableNode)
-    {
+  {
     transformableNode->HardenTransform();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -419,16 +419,16 @@ void qSlicerDataModuleWidget::setDataNodeFromSubjectHierarchyItem(vtkIdType item
 
   vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
-    }
+  }
 
   vtkMRMLNode* dataNode = nullptr;
   if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     dataNode = shNode->GetItemDataNode(itemID);
-    }
+  }
   d->MRMLNodeAttributeTableWidget->setEnabled(dataNode);
   d->MRMLNodeAttributeTableWidget->setMRMLNode(dataNode);
 }
@@ -440,27 +440,27 @@ void qSlicerDataModuleWidget::setInfoLabelFromSubjectHierarchyItem(vtkIdType ite
 
   vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
-    }
+  }
 
   if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     std::stringstream infoStream;
     shNode->PrintItem(itemID, infoStream, vtkIndent(0));
     d->SubjectHierarchyItemInfoLabel->setText(infoStream.str().c_str());
 
     // Connect node for updating info label
     if (!shNode->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack))
-      {
-      d->SubjectHierarchyObservationTag = shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack, -10.0);
-      }
-    }
-  else
     {
-    d->SubjectHierarchyItemInfoLabel->setText(tr("No item selected"));
+      d->SubjectHierarchyObservationTag = shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent, d->CallBack, -10.0);
     }
+  }
+  else
+  {
+    d->SubjectHierarchyItemInfoLabel->setText(tr("No item selected"));
+  }
 
   // Store item ID in the label object
   d->SubjectHierarchyItemInfoLabel->setProperty("itemID", itemID);
@@ -473,28 +473,28 @@ void qSlicerDataModuleWidget::onSubjectHierarchyItemEvent(
   vtkMRMLSubjectHierarchyNode* shNode = reinterpret_cast<vtkMRMLSubjectHierarchyNode*>(caller);
   qSlicerDataModuleWidget* widget = reinterpret_cast<qSlicerDataModuleWidget*>(clientData);
   if (!widget || !shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid event parameters";
     return;
-    }
+  }
 
   // Get item ID
   vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   if (callData)
-    {
+  {
     vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
     if (itemIdPtr)
-      {
+    {
       itemID = *itemIdPtr;
-      }
     }
+  }
 
   switch (event)
-    {
+  {
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent:
       widget->onSubjectHierarchyItemModified(itemID);
       break;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -507,18 +507,18 @@ void qSlicerDataModuleWidget::onSubjectHierarchyItemModified(vtkIdType itemID)
 
   // Update label if the displayed item is the one that changed
   if (displayedItemID == itemID && displayedItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
     if (!shNode)
-      {
+    {
       qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
       return;
-      }
+    }
 
     std::stringstream infoStream;
     shNode->PrintItem(itemID, infoStream, vtkIndent(0));
     d->SubjectHierarchyItemInfoLabel->setText(infoStream.str().c_str());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -537,13 +537,13 @@ void qSlicerDataModuleWidget::onHelpButtonClicked()
 
   // Reset counter so that it is shown
   if (d->ContextMenusHintShown >= 2)
-    {
+  {
     d->ContextMenusHintShown = 0;
-    }
+  }
 
   // Show first or second tooltip
   if (d->SubjectHierarchyTreeView->showContextMenuHint(d->ContextMenusHintShown > 0))
-    {
+  {
     d->ContextMenusHintShown++;
-    }
+  }
 }

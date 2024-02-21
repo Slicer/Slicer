@@ -80,23 +80,23 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   // check for a relative path as the unzip will need an absolute one
   QFileInfo fileInfo(file);
   if (fileInfo.isRelative())
-    {
+  {
     fileInfo = QFileInfo(QDir::currentPath(), file);
     file = fileInfo.absoluteFilePath();
-    }
+  }
   bool clear = false;
   if (properties.contains("clear"))
-    {
+  {
     clear = properties["clear"].toBool();
-    }
+  }
 
   bool success = this->mrmlScene()->ReadFromMRB(file.toUtf8(), clear, this->userMessages());
   if (success)
-    {
+  {
     // Set default scene file format to mrb
     qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
     coreIOManager->setDefaultSceneFileType(tr("Medical Reality Bundle") + " (.mrb)");
-    }
+  }
 
   return success;
 }

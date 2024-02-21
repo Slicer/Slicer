@@ -46,10 +46,10 @@ vtkMRMLAnnotationDisplayNode::~vtkMRMLAnnotationDisplayNode()
 {
 
   if (this->m_Backup)
-    {
+  {
     this->m_Backup->Delete();
     this->m_Backup = nullptr;
-    }
+  }
 
 }
 
@@ -104,10 +104,10 @@ void vtkMRMLAnnotationDisplayNode::UpdateScene(vtkMRMLScene *scene)
 void vtkMRMLAnnotationDisplayNode::ClearBackup()
 {
   if (this->m_Backup)
-    {
+  {
     this->m_Backup->Delete();
     this->m_Backup = nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

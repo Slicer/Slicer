@@ -27,25 +27,25 @@ public:
   vtkTypeMacro(vtkMRMLDisplayNodeTestHelper1,vtkMRMLDisplayNode);
 
   vtkMRMLNode* CreateNodeInstance() override
-    {
+  {
     return vtkMRMLDisplayNodeTestHelper1::New();
-    }
+  }
 
   const char * GetTypeAsString()
-    {
+  {
     return "vtkMRMLDisplayNodeTestHelper1";
-    }
+  }
 
   int ReadFile()
-    {
+  {
     std::cout << "vtkMRMLDisplayNodeTestHelper1 pretending to read a file " << std::endl;
     return EXIT_SUCCESS;
-    }
+  }
 
   const char* GetNodeTagName() override
-    {
+  {
     return "Testing is good";
-    }
+  }
 };
 vtkStandardNewMacro(vtkMRMLDisplayNodeTestHelper1);
 

@@ -138,11 +138,11 @@ void qSlicerVolumeRenderingModule::setup()
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
     vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
   if (qSlicerApplication::application())
-    {
+  {
     qSlicerVolumeRenderingSettingsPanel* panel = new qSlicerVolumeRenderingSettingsPanel;
     qSlicerApplication::application()->settingsDialog()->addPanel(tr("Volume rendering"), panel);
     panel->setVolumeRenderingLogic(volumeRenderingLogic);
-    }
+  }
 
   // Register VolumeProperty reader/writer
   qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();

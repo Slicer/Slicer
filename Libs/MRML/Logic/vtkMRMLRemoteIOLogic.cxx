@@ -44,14 +44,14 @@ vtkMRMLRemoteIOLogic::vtkMRMLRemoteIOLogic()
 vtkMRMLRemoteIOLogic::~vtkMRMLRemoteIOLogic()
 {
   if (this->DataIOManager)
-    {
+  {
     this->DataIOManager->SetCacheManager(nullptr);
     this->SetDataIOManager(nullptr);
-    }
+  }
   if (this->CacheManager)
-    {
+  {
     this->SetCacheManager(nullptr);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -73,10 +73,10 @@ void vtkMRMLRemoteIOLogic::AddDataIOToScene()
   /// this method on a independent scene with separate remote io logic and data
   /// io manager logic
   if (!this->GetMRMLScene())
-    {
+  {
     vtkErrorMacro("Cannot add DataIOHandlers -- scene not set");
     return;
-    }
+  }
 
   // hook our cache and dataIO managers into the MRML scene
   this->CacheManager->SetMRMLScene(this->GetMRMLScene());
@@ -107,9 +107,9 @@ void vtkMRMLRemoteIOLogic::AddDataIOToScene()
 void vtkMRMLRemoteIOLogic::RemoveDataIOFromScene()
 {
   if (!this->GetMRMLScene())
-    {
+  {
     vtkErrorMacro("Cannot remove DataIOHandlers -- scene not set");
-    }
+  }
   this->GetMRMLScene()->SetURIHandlerCollection(nullptr);
   this->GetMRMLScene()->SetUserTagTable( nullptr );
 }

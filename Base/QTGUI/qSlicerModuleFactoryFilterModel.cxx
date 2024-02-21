@@ -235,19 +235,19 @@ void qSlicerModuleFactoryFilterModel::setShowModules(const QStringList& modules)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
   if (modules == d->ShowModules)
-    {
+  {
     return;
-    }
+  }
   d->ShowModules = modules;
   this->setFilterRole(Qt::UserRole);
   if (d->HideAllWhenShowModulesIsEmpty && modules.isEmpty())
-    {
+  {
     this->setFilterWildcard(/*no tr*/"hide all modules");
-    }
+  }
   else
-    {
+  {
     this->setFilterRegExp(QString("\\b(") + d->ShowModules.join("|") + QString(")\\b"));
-    }
+  }
   this->sort(0);
   emit showModulesChanged(d->ShowModules);
 }
@@ -275,9 +275,9 @@ bool qSlicerModuleFactoryFilterModel::lessThan(const QModelIndex& leftIndex,
   QString rightModule = this->sourceModel()->data(rightIndex, Qt::UserRole).toString();
   if (d->ShowModules.contains(leftModule) &&
       d->ShowModules.contains(rightModule))
-    {
+  {
     return d->ShowModules.indexOf(leftModule) < d->ShowModules.indexOf(rightModule);
-    }
+  }
   return this->Superclass::lessThan(leftIndex, rightIndex);
 }
 
@@ -287,62 +287,62 @@ bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QMod
   Q_D(const qSlicerModuleFactoryFilterModel);
   QModelIndex sourceIndex = this->sourceModel()->index(sourceRow, 0, sourceParent);
   if (!d->ShowToLoad)
-    {
+  {
     if (this->sourceModel()->data(sourceIndex, Qt::CheckStateRole).toUInt() == Qt::Checked)
-      {
+    {
       return false;
-      }
     }
+  }
   if (!d->ShowToIgnore)
-    {
+  {
     if (this->sourceModel()->data(sourceIndex, Qt::CheckStateRole).toUInt() == Qt::Unchecked)
-      {
+    {
       return false;
-      }
     }
+  }
   if (!d->ShowLoaded)
-    {
+  {
     if (this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() == QBrush())
-      {
-      return false;
-      }
-    }
-  if (!d->ShowIgnored)
     {
+      return false;
+    }
+  }
+  if (!d->ShowIgnored)
+  {
     if (this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() != QBrush() &&
         this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() != QBrush(Qt::red))
-      {
+    {
       return false;
-      }
     }
+  }
   if (!d->ShowFailed)
-    {
+  {
     if (this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() == QBrush(Qt::red))
-      {
+    {
       return false;
-      }
     }
+  }
   if (!d->ShowBuiltIn)
-    {
+  {
     if (this->sourceModel()->data(sourceIndex, qSlicerModuleFactoryFilterModel::IsBuiltInRole).toBool())
-      {
+    {
       return false;
-      }
     }
+  }
   if (!d->ShowTesting)
-    {
+  {
     if (this->sourceModel()->data(sourceIndex, qSlicerModuleFactoryFilterModel::IsTestingRole).toBool())
-      {
-      return false;
-      }
-    }
-  if (!d->ShowHidden)
     {
-    if (this->sourceModel()->data(sourceIndex, qSlicerModuleFactoryFilterModel::IsHiddenRole).toBool())
-      {
       return false;
-      }
     }
+  }
+  if (!d->ShowHidden)
+  {
+    if (this->sourceModel()->data(sourceIndex, qSlicerModuleFactoryFilterModel::IsHiddenRole).toBool())
+    {
+      return false;
+    }
+  }
 
   return this->Superclass::filterAcceptsRow(sourceRow, sourceParent);
 }
@@ -364,9 +364,9 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData *data, Qt::Dr
   // check if the format is supported
   QString format = QLatin1String("application/x-qstandarditemmodeldatalist");
   if (!data->hasFormat(format))
-    {
+  {
     return QAbstractItemModel::dropMimeData(data, action, row, column, parent);
-    }
+  }
 
   // decode and insert
   QByteArray encoded = data->data(format);
@@ -383,7 +383,7 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData *data, Qt::Dr
   QVector<QStandardItem *> items;
 
   while (!stream.atEnd())
-    {
+  {
     int r, c;
     QStandardItem *item = new QStandardItem;
     stream >> r >> c;
@@ -396,29 +396,29 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData *data, Qt::Dr
     left = qMin(c, left);
     bottom = qMax(r, bottom);
     right = qMax(c, right);
-    }
+  }
 
   QStringList newShowModules = this->showModules();
 
   // Determine where to insert
   int insertionPosition = parent.row();
   if (insertionPosition > newShowModules.size())
-    {
+  {
     insertionPosition = newShowModules.size();
-    }
+  }
   else if (insertionPosition < 0)
-    {
+  {
     insertionPosition = 0;
-    }
+  }
 
   // Insert new items
   foreach(QStandardItem* item, items)
-    {
+  {
     QString moduleName = item->data(Qt::UserRole).toString();
     newShowModules.removeAll(moduleName);
     newShowModules.insert(insertionPosition, moduleName);
     insertionPosition++;
-    }
+  }
 
   newShowModules.removeDuplicates();
   this->setShowModules(newShowModules);

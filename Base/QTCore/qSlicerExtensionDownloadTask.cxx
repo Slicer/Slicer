@@ -87,13 +87,13 @@ void qSlicerExtensionDownloadTask::setMetadata(const QVariantMap& md)
   Q_D(qSlicerExtensionDownloadTask);
   d->Metadata = md;
   if (d->ExtensionName.isEmpty())
-    {
+  {
     d->ExtensionName = md.value("extensionname").toString();
-    }
+  }
   if (d->ArchiveName.isEmpty())
-    {
+  {
     d->ArchiveName = md.value("archivename").toString();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

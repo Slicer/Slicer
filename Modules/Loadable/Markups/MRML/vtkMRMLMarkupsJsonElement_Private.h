@@ -49,19 +49,19 @@ public:
   ~vtkInternal();
 
   struct JsonDocumentContainer
-    {
+  {
     JsonDocumentContainer()
-      {
+    {
       this->Document = new rapidjson::Document;
-      }
+    }
     virtual ~JsonDocumentContainer()
-      {
+    {
       delete this->Document;
-      }
+    }
     JsonDocumentContainer(const JsonDocumentContainer&) = delete;
     JsonDocumentContainer& operator= (const JsonDocumentContainer&) = delete;
     rapidjson::Document* Document;
-    };
+  };
 
   // Helper methods
   bool ReadVector(rapidjson::Value& item, double* v, int numberOfComponents=3);

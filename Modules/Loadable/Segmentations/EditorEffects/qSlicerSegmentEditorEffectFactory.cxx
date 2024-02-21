@@ -37,12 +37,12 @@ public:
   inline void use()   {   }
 
   ~qSlicerSegmentEditorEffectFactoryCleanup()
-    {
+  {
     if (qSlicerSegmentEditorEffectFactory::m_Instance)
-      {
+    {
       qSlicerSegmentEditorEffectFactory::cleanup();
-      }
     }
+  }
 };
 static qSlicerSegmentEditorEffectFactoryCleanup qSlicerSegmentEditorEffectFactoryCleanupGlobal;
 
@@ -50,10 +50,10 @@ static qSlicerSegmentEditorEffectFactoryCleanup qSlicerSegmentEditorEffectFactor
 qSlicerSegmentEditorEffectFactory* qSlicerSegmentEditorEffectFactory::instance()
 {
   if(!qSlicerSegmentEditorEffectFactory::m_Instance)
-    {
+  {
     qSlicerSegmentEditorEffectFactoryCleanupGlobal.use();
     qSlicerSegmentEditorEffectFactory::m_Instance = new qSlicerSegmentEditorEffectFactory();
-    }
+  }
   // Return the instance
   return qSlicerSegmentEditorEffectFactory::m_Instance;
 }
@@ -62,10 +62,10 @@ qSlicerSegmentEditorEffectFactory* qSlicerSegmentEditorEffectFactory::instance()
 void qSlicerSegmentEditorEffectFactory::cleanup()
 {
   if (qSlicerSegmentEditorEffectFactory::m_Instance)
-    {
+  {
     delete qSlicerSegmentEditorEffectFactory::m_Instance;
     qSlicerSegmentEditorEffectFactory::m_Instance = nullptr;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -89,25 +89,25 @@ qSlicerSegmentEditorEffectFactory::~qSlicerSegmentEditorEffectFactory()
 bool qSlicerSegmentEditorEffectFactory::registerEffect(qSlicerSegmentEditorAbstractEffect* effectToRegister)
 {
   if (effectToRegister == nullptr)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid effect to register!";
     return false;
-    }
+  }
   if (effectToRegister->name().isEmpty())
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Segment editor effect cannot be registered with empty name!";
     return false;
-    }
+  }
 
   // Check if the same effect has already been registered
   qSlicerSegmentEditorAbstractEffect* currentEffect = nullptr;
   foreach (currentEffect, this->m_RegisteredEffects)
-    {
+  {
     if (effectToRegister->name().compare(currentEffect->name()) == 0)
-      {
+    {
       return false;
-      }
     }
+  }
 
   // Add the effect to the list
   this->m_RegisteredEffects << effectToRegister;
@@ -120,33 +120,33 @@ QList<qSlicerSegmentEditorAbstractEffect*> qSlicerSegmentEditorEffectFactory::co
 {
   QList<qSlicerSegmentEditorAbstractEffect*> copiedEffects;
   foreach(qSlicerSegmentEditorAbstractEffect* effect, m_RegisteredEffects)
-    {
+  {
     // If effect is added already then skip it
     bool effectAlreadyAdded = false;
     foreach(qSlicerSegmentEditorAbstractEffect* existingEffect, effects)
-      {
+    {
       if (existingEffect->name() == effect->name())
-        {
+      {
         // already in the list
         effectAlreadyAdded = true;
         break;
-        }
       }
+    }
     if (effectAlreadyAdded)
-      {
+    {
       continue;
-      }
+    }
 
     // Effect not in the list yet, clone it and add it
     qSlicerSegmentEditorAbstractEffect* clonedEffect = effect->clone();
     if (!clonedEffect)
-      {
+    {
       // make sure we don't put a nullptr pointer in the effect list
       qCritical() << Q_FUNC_INFO << " failed to clone effect: " << effect->name();
       continue;
-      }
+    }
     effects << clonedEffect;
     copiedEffects << clonedEffect;
-    }
+  }
   return copiedEffects;
 }

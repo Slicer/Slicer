@@ -44,7 +44,7 @@ public:
 
   /// Display properties per segment
   struct SegmentDisplayProperties
-    {
+  {
     /// Override segment color
     /// By default it's invalid (-1,-1,-1), and only valid if different than color stored in segment. Its purpose is to enable showing per-view colors
     double OverrideColor[3];
@@ -62,15 +62,15 @@ public:
 
     // Initialize with default values
     SegmentDisplayProperties()
-      {
+    {
       OverrideColor[0] = SEGMENT_COLOR_NO_OVERRIDE;
       OverrideColor[1] = SEGMENT_COLOR_NO_OVERRIDE;
       OverrideColor[2] = SEGMENT_COLOR_NO_OVERRIDE;
-      }
+    }
 
     // Automatically generated operator= and copy constructor work
     // correctly for these members, so there is no need to define them.
-    };
+  };
 
   typedef std::map<std::string, SegmentDisplayProperties> SegmentDisplayPropertiesMap;
 

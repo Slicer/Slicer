@@ -34,12 +34,12 @@ int qSlicerCoreModuleFactoryTest1(int, char * [] )
 
   QString moduleName = qSlicerCoreModuleFactory::extractModuleName(className);
   if (moduleName != expectedModuleName)
-    {
+  {
     std::cerr << __LINE__ << " - Error in  extractModuleName()" << std::endl
                           << "moduleName = " << qPrintable(moduleName) << std::endl
                           << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

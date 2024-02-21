@@ -42,10 +42,10 @@
 int qMRMLNodeComboBoxTest3( int argc, char * argv [] )
 {
   if (argc < 2)
-    {
+  {
     std::cerr<< "Wrong number of arguments." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -70,9 +70,9 @@ int qMRMLNodeComboBoxTest3( int argc, char * argv [] )
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 
   if (argc < 3 || QString(argv[2]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

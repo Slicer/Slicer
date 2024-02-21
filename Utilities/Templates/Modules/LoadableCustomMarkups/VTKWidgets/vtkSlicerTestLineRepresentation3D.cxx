@@ -77,9 +77,9 @@ void vtkSlicerTestLineRepresentation3D::GetActors(vtkPropCollection* pc)
   this->Superclass::GetActors(pc);
 
   if (this->TargetOrgan)
-    {
+  {
     this->ContourActor->GetActors(pc);
-    }
+  }
 
   this->MiddlePointActor->GetActors(pc);
 }
@@ -90,9 +90,9 @@ void vtkSlicerTestLineRepresentation3D::ReleaseGraphicsResources(vtkWindow* win)
   this->Superclass::ReleaseGraphicsResources(win);
 
   if (this->TargetOrgan)
-    {
+  {
     this->ContourActor->ReleaseGraphicsResources(win);
-    }
+  }
 
   this->MiddlePointActor->ReleaseGraphicsResources(win);
 }
@@ -102,14 +102,14 @@ int vtkSlicerTestLineRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
   int count = this->Superclass::RenderOverlay(viewport);
   if (this->TargetOrgan && this->ContourActor->GetVisibility())
-    {
+  {
     count += this->ContourActor->RenderOverlay(viewport);
-    }
+  }
 
   if (this->MiddlePointActor->GetVisibility())
-    {
+  {
     count += this->MiddlePointActor->RenderOverlay(viewport);
-    }
+  }
   return count;
 }
 
@@ -118,14 +118,14 @@ int vtkSlicerTestLineRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewpor
 {
   int count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->TargetOrgan && this->ContourActor->GetVisibility())
-    {
+  {
     count += this->ContourActor->RenderOpaqueGeometry(viewport);
-    }
+  }
 
   if (this->MiddlePointActor->GetVisibility())
-    {
+  {
     count += this->MiddlePointActor->RenderOpaqueGeometry(viewport);
-    }
+  }
 
   return count;
 }
@@ -135,16 +135,16 @@ int vtkSlicerTestLineRepresentation3D::RenderTranslucentPolygonalGeometry(vtkVie
 {
   int count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->TargetOrgan && this->ContourActor->GetVisibility())
-    {
+  {
     this->ContourActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->ContourActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
 
   if (this->MiddlePointActor->GetVisibility())
-    {
+  {
     this->MiddlePointActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->MiddlePointActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
 
   return count;
 }
@@ -153,21 +153,21 @@ int vtkSlicerTestLineRepresentation3D::RenderTranslucentPolygonalGeometry(vtkVie
 vtkTypeBool vtkSlicerTestLineRepresentation3D::HasTranslucentPolygonalGeometry()
 {
   if (this->Superclass::HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
 
   if (this->TargetOrgan && this->ContourActor->GetVisibility() &&
       this->ContourActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
 
   if (this->MiddlePointActor->GetVisibility() &&
       this->MiddlePointActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
 
   return false;
 }
@@ -188,9 +188,9 @@ void vtkSlicerTestLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
    vtkMRMLMarkupsTestLineNode::SafeDownCast(this->GetMarkupsNode());
 
  if (!liverMarkupsTestLineNode)
-   {
+ {
    return;
-   }
+ }
 
  this->TargetOrgan = liverMarkupsTestLineNode->GetTargetOrgan();
  this->Cutter->SetInputData(this->TargetOrgan);
@@ -201,14 +201,14 @@ void vtkSlicerTestLineRepresentation3D::BuildMiddlePoint()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
-    {
+  {
     return;
-    }
+  }
 
   if (markupsNode->GetNumberOfControlPoints() != 2)
-    {
+  {
     return;
-    }
+  }
 
   double p1[3] = { 0.0 };
   double p2[3] = { 0.0 };
@@ -228,14 +228,14 @@ void vtkSlicerTestLineRepresentation3D::BuildSlicingPlane()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
-    {
+  {
     return;
-    }
+  }
 
   if (markupsNode->GetNumberOfControlPoints() != 2)
-    {
+  {
     return;
-    }
+  }
 
   double p1[3] = { 0.0 };
   double p2[3] = { 0.0 };

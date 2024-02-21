@@ -187,9 +187,9 @@ vtkSlicerMarkupsWidget* CreateInstance() const override\
 { \
   vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
   if(ret) \
-    { \
+  { \
     return static_cast<type *>(ret); \
-    } \
+  } \
   type* result = new type; \
   result->InitializeObjectBase(); \
   return result; \
@@ -200,9 +200,9 @@ vtkSlicerMarkupsWidget* CreateInstance() const override\
 { \
   vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
   if(ret) \
-    { \
+  { \
     return static_cast<type *>(ret); \
-    } \
+  } \
   return new type; \
 }
 #endif

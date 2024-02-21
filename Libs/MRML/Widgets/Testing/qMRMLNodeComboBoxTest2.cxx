@@ -50,32 +50,32 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
 
   int currentCount = nodeSelector.nodeCount();
   if (currentCount != 0)
-    {
+  {
     std::cerr << __LINE__ << " - Error in count() - Expected: 0, current:" << currentCount << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Test: setMRMLScene()/mrmlScene()
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.mrmlScene() != sceneFactory.mrmlScene())
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // test a second time, just to make sure methods are well reinit.
   sceneFactory.generateScene();
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.mrmlScene() != sceneFactory.mrmlScene())
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (nodeSelector.nodeCount())
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::count() failed, expected 0, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   sceneFactory.generateNode();
   sceneFactory.generateNode();
@@ -95,10 +95,10 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
 
   nodeSelector.setMRMLScene(nullptr);
   if (nodeSelector.mrmlScene() != nullptr)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // test nodeType
   sceneFactory.generateScene();
@@ -107,45 +107,45 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
   nodeSelector.setNodeTypes(QStringList("vtkMRMLViewNode"));
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.nodeCount() != 1)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed, expected 1, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   sceneFactory.generateNode("vtkMRMLViewNode");
   if (nodeSelector.nodeCount() != 2)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed, expected 2, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   sceneFactory.mrmlScene()->RemoveNode(sceneFactory.mrmlScene()->GetNthNode(0));
   if (nodeSelector.nodeCount() != 1)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed, expected 1, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   sceneFactory.mrmlScene()->RemoveNode(sceneFactory.mrmlScene()->GetNthNode(0));
   if (nodeSelector.nodeCount() != 0)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed, expected 0, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   sceneFactory.generateNode("vtkMRMLViewNode");
   if (nodeSelector.nodeCount() != 1)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: NodeType failed, expected 1, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   sceneFactory.deleteScene();
   if (nodeSelector.nodeCount() != 0)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: mrml scene delete scene events failed, expected 0 nodes, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (nodeSelector.currentNode() != nullptr)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: currentNode failed, expected no node, got " << nodeSelector.currentNode()->GetID() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // FIXME: add more basic tests here
 
   // Check Attributes
@@ -164,11 +164,11 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
   nodeSelector.addAttribute("vtkMRMLViewNode", "foo", QString("bar2"));
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.nodeCount() != 1)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: attribute filtering failed, expected 1 node, got "
               << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Check hide child node type
   sceneFactory.generateNode("vtkMRMLTransformNode");
@@ -176,28 +176,28 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
   sceneFactory.generateNode("vtkMRMLGridTransformNode");
   nodeSelector.setNodeTypes(QStringList("vtkMRMLTransformNode"));
   if (nodeSelector.nodeCount() != 3)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: node type filtering failed, expected 3 nodes, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   nodeSelector.setShowChildNodeTypes(false);
   if (nodeSelector.nodeCount() != 2)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: show child node types failed, expected 2 nodes, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   nodeSelector.setShowChildNodeTypes(true);
   if (nodeSelector.nodeCount() != 3)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: show child node types failed, expected 3 nodes, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   nodeSelector.setHideChildNodeTypes(QStringList("vtkMRMLGridTransformNode"));
   if (nodeSelector.nodeCount() != 2)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: show child node types failed, expected 2 nodes, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Checks with more than 1 type
   QStringList types;
@@ -207,10 +207,10 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
   nodeSelector.setNodeTypes(types);
 
   if (nodeSelector.nodeTypes() != types)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setNodeTypes() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   sceneFactory.generateScene();
   sceneFactory.generateNode(types[0]);
@@ -222,25 +222,25 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
 
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.nodeCount() != 5)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector:NodeTypeS: setMRMLScene fails, expected 5 nodes, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   sceneFactory.generateNode(types[1]);
   if (nodeSelector.nodeCount() != 6)
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector:NodeTypeS: node added to the scene fails, expected 6 nodes, got " << nodeSelector.nodeCount() << "." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   nodeSelector.setMRMLScene(nullptr);
 
   currentCount = nodeSelector.nodeCount();
   if (currentCount != 0)
-    {
+  {
     std::cerr << __LINE__ << " - Error in count() - Expected: 0, current:" << currentCount << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //
   // Let's connect the sceneFactory with the widget
@@ -257,10 +257,10 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
   // Test: setMRMLScene()/mrmlScene()
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.mrmlScene() != sceneFactory.mrmlScene())
-    {
+  {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 
   sceneFactory.deleteScene();

@@ -54,12 +54,12 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
   qMRMLWidget::postInitializeApplication();
 
   if( argc < 2 )
-    {
+  {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
@@ -74,34 +74,34 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
   vtkNew<vtkMRMLMessageCollection> userMessages;
   scene->Connect(userMessages);
   if (scene->GetNumberOfNodes() == 0)
-    {
+  {
     std::cerr << "Can't load scene:" << argv[1] << " error: " << userMessages->GetAllMessagesAsString() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   vtkMRMLNode* node = scene->GetFirstNodeByClass("vtkMRMLScalarVolumeNode");
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   if (!volumeNode)
-    {
+  {
     std::cerr << "Scene must contain a valid vtkMRMLVolumeNode:" << node << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   vtkMRMLSliceNode* redSliceNode = nullptr;
   std::vector<vtkMRMLNode*> sliceNodes;
   scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
   for (unsigned int i = 0; i < sliceNodes.size(); ++i)
-    {
+  {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
     if (!strcmp(sliceNode->GetLayoutName(), "Red") )
-      {
+    {
       redSliceNode = sliceNode;
       break;
-      }
     }
+  }
   if (!redSliceNode)
-    {
+  {
     std::cerr << "Scene must contain a valid vtkMRMLSliceNode:" << redSliceNode << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QWidget topLevel;
   qMRMLVolumeThresholdWidget volumeThreshold;
@@ -117,9 +117,9 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
   topLevel.show();
 
   if (argc < 3 || QString(argv[2]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

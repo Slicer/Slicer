@@ -112,9 +112,9 @@ void qMRMLSequenceBrowserPlayWidget::updateWidgetFromMRML()
   vtkMRMLSequenceNode* sequenceNode = d->SequenceBrowserNode.GetPointer() ? d->SequenceBrowserNode->GetMasterSequenceNode() : nullptr;
   this->setEnabled(sequenceNode != nullptr);
   if (!sequenceNode)
-    {
+  {
     return;
-    }
+  }
 
   QObjectList vcrPlaybackControls; // Note we don't include the recording, because we want to be able to record when no data is available
   vcrPlaybackControls
@@ -161,11 +161,11 @@ void qMRMLSequenceBrowserPlayWidget::onVcrFirst()
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode==nullptr)
-    {
+  {
     qDebug() << "onVcrFirst failed: no active browser node is selected";
     updateWidgetFromMRML();
     return;
-    }
+  }
   d->SequenceBrowserNode->SelectFirstItem();
 }
 
@@ -174,11 +174,11 @@ void qMRMLSequenceBrowserPlayWidget::onVcrLast()
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode==nullptr)
-    {
+  {
     qDebug() << "onVcrLast failed: no active browser node is selected";
     updateWidgetFromMRML();
     return;
-    }
+  }
   d->SequenceBrowserNode->SelectLastItem();
 }
 
@@ -187,11 +187,11 @@ void qMRMLSequenceBrowserPlayWidget::onVcrPrevious()
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode==nullptr)
-    {
+  {
     qDebug() << "onVcrPrevious failed: no active browser node is selected";
     updateWidgetFromMRML();
     return;
-    }
+  }
   d->SequenceBrowserNode->SelectNextItem(-1);
 }
 
@@ -200,11 +200,11 @@ void qMRMLSequenceBrowserPlayWidget::onVcrNext()
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode==nullptr)
-    {
+  {
     qDebug() << "onVcrNext failed: no active browser node is selected";
     updateWidgetFromMRML();
     return;
-    }
+  }
   d->SequenceBrowserNode->SelectNextItem(1);
 }
 
@@ -213,11 +213,11 @@ void qMRMLSequenceBrowserPlayWidget::onVcrPlayPause()
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode == nullptr)
-    {
+  {
     qDebug() << "onVcrPlayPause failed: no active browser node is selected";
     updateWidgetFromMRML();
     return;
-    }
+  }
   d->SequenceBrowserNode->SetRecordingActive(false);
   d->SequenceBrowserNode->SetPlaybackActive(!d->SequenceBrowserNode->GetPlaybackActive());
 }
@@ -227,11 +227,11 @@ void qMRMLSequenceBrowserPlayWidget::onRecordSnapshot()
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode == nullptr)
-    {
+  {
     qDebug() << "onRecordSnapshot failed: no active browser node is selected";
     updateWidgetFromMRML();
     return;
-    }
+  }
   d->SequenceBrowserNode->SaveProxyNodesState();
 }
 
@@ -241,16 +241,16 @@ void qMRMLSequenceBrowserPlayWidget::setPlaybackEnabled(bool play)
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode==nullptr)
-    {
+  {
     qDebug() << "onVcrPlayPauseStateChanged failed: no active browser node is selected";
     updateWidgetFromMRML();
     return;
-    }
+  }
   d->SequenceBrowserNode->SetRecordingActive(false);
   if (play!=d->SequenceBrowserNode->GetPlaybackActive())
-    {
+  {
     d->SequenceBrowserNode->SetPlaybackActive(play);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -258,16 +258,16 @@ void qMRMLSequenceBrowserPlayWidget::setRecordingEnabled(bool record)
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode==nullptr)
-    {
+  {
     qDebug() << "onVcrRecordStateChanged failed: no active browser node is selected";
     updateWidgetFromMRML();
     return;
-    }
+  }
   d->SequenceBrowserNode->SetPlaybackActive(false);
   if (record!=d->SequenceBrowserNode->GetRecordingActive())
-    {
+  {
     d->SequenceBrowserNode->SetRecordingActive(record);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -275,15 +275,15 @@ void qMRMLSequenceBrowserPlayWidget::setPlaybackLoopEnabled(bool loopEnabled)
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode==nullptr)
-    {
+  {
     qDebug() << "onVcrPlaybackLoopStateChanged failed: no active browser node is selected";
     this->updateWidgetFromMRML();
     return;
-    }
+  }
   if (loopEnabled!=d->SequenceBrowserNode->GetPlaybackLooped())
-    {
+  {
     d->SequenceBrowserNode->SetPlaybackLooped(loopEnabled);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -291,15 +291,15 @@ void qMRMLSequenceBrowserPlayWidget::setPlaybackRateFps(double playbackRateFps)
 {
   Q_D(qMRMLSequenceBrowserPlayWidget);
   if (d->SequenceBrowserNode==nullptr)
-    {
+  {
     qDebug() << "setPlaybackRateFps failed: no active browser node is selected";
     this->updateWidgetFromMRML();
     return;
-    }
+  }
   if (playbackRateFps!=d->SequenceBrowserNode->GetPlaybackRateFps())
-    {
+  {
     d->SequenceBrowserNode->SetPlaybackRateFps(playbackRateFps);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

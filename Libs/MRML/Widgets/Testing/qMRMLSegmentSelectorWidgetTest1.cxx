@@ -173,22 +173,22 @@ int qMRMLSegmentSelectorWidgetTest1( int argc, char * argv [] )
   qMRMLSegmentSelectorWidget singleSegmentSelectorWidget;
   singleSegmentSelectorWidget.show();
   if (testSingleSelection(&singleSegmentSelectorWidget) != EXIT_SUCCESS)
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   qMRMLSegmentSelectorWidget multiSegmentSelectorWidget;
   multiSegmentSelectorWidget.show();
   if (testMultiSelection(&multiSegmentSelectorWidget) != EXIT_SUCCESS)
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

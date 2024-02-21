@@ -74,53 +74,53 @@ public:
 
     vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast(nd);
     if (storableNode)
-      {
+    {
       int numStorageNodes = storableNode->GetNumberOfStorageNodes();
       for (int n = 0; n < numStorageNodes; n++)
-        {
+      {
         vtkMRMLStorageNode *testStorageNode = storableNode->GetNthStorageNode(n);
         if (testStorageNode)
-          {
+        {
           if (useURI && testStorageNode->GetURI() != nullptr)
-            {
+          {
             if (m_Filename.compare(testStorageNode->GetURI()) == 0)
-              {
+            {
               // found a storage node for the remote file
               vtkDebugWithObjectMacro(appLogic, "ProcessReadNodeData: found a storage node with the right URI: " << testStorageNode->GetURI());
               storageNode = testStorageNode;
               break;
-              }
             }
+          }
           else if (testStorageNode->GetFileName() != nullptr &&
             m_Filename.compare(testStorageNode->GetFileName()) == 0)
-            {
+          {
             // found the right storage node for a local file
             vtkDebugWithObjectMacro(appLogic, "ProcessReadNodeData: found a storage node with the right filename: " << testStorageNode->GetFileName());
             storageNode = testStorageNode;
             break;
-            }
           }
         }
+      }
 
       // if there wasn't already a matching storage node on the node, make one
       bool createdNewStorageNode = false;
       if (storageNode.GetPointer() == nullptr)
-        {
+      {
         // Read the data into the referenced node
         if (itksys::SystemTools::FileExists(m_Filename.c_str()))
-          {
+        {
           // file is there on disk
           storableNode->AddDefaultStorageNode(m_Filename.c_str());
           storageNode = storableNode->GetStorageNode();
           createdNewStorageNode = (storageNode != nullptr);
-          }
         }
+      }
 
       // Have the storage node read the data into the current node
       if (storageNode.GetPointer() != nullptr)
-        {
+      {
         try
-          {
+        {
           vtkDebugWithObjectMacro(appLogic, "ProcessReadNodeData: about to call read data, " \
             "storage node's read state is " << storageNode->GetReadStateAsString());
           // If the node was previously empty then the write state may still be
@@ -128,65 +128,65 @@ public:
           // Change the write state back to "Idle" to make sure the file is loaded.
           storageNode->SetWriteStateIdle();
           if (useURI)
-            {
+          {
             storageNode->SetURI(m_Filename.c_str());
             vtkDebugWithObjectMacro(appLogic, "ProcessReadNodeData: calling ReadData on the storage node " \
               << storageNode->GetID() << ", uri = " << storageNode->GetURI());
             storageNode->ReadData(nd, /*temporary*/true);
             if (createdNewStorageNode)
-              {
-              storageNode->SetURI(nullptr); // clear temporary URI
-              }
-            }
-          else
             {
+              storageNode->SetURI(nullptr); // clear temporary URI
+            }
+          }
+          else
+          {
             storageNode->SetFileName(m_Filename.c_str());
             vtkDebugWithObjectMacro(appLogic, "ProcessReadNodeData: calling ReadData on the storage node " \
               << storageNode->GetID() << ", filename = " << storageNode->GetFileName());
             storageNode->ReadData(nd, /*temporary*/true);
             if (createdNewStorageNode)
-              {
+            {
               storageNode->SetFileName(nullptr); // clear temp file name
-              }
             }
           }
+        }
         catch (itk::ExceptionObject& exc)
-          {
+        {
           vtkErrorWithObjectMacro(appLogic, "Exception while reading " << m_Filename << ", " << exc);
-          }
+        }
         catch (...)
-          {
+        {
           vtkErrorWithObjectMacro(appLogic, "Unknown exception while reading " << m_Filename);
-          }
         }
       }
+    }
 #ifdef Slicer_BUILD_CLI_SUPPORT
     // if the node was a CommandLineModule node, then read the file
     // (no storage node for these, yet)
     if (clp)
-      {
+    {
       clp->ReadParameterFile(m_Filename);
-      }
+    }
 #endif
 
     // Delete the file if requested
     if (m_DeleteFile)
-     {
+    {
       int removed;
       // is it a shared memory location?
       if (m_Filename.find("slicer:") != std::string::npos)
-        {
+      {
         removed = 1;
-        }
-      else
-        {
-        removed = static_cast<bool>(itksys::SystemTools::RemoveFile(m_Filename.c_str()));
-        }
-      if (!removed)
-        {
-        vtkGenericWarningMacro("Unable to delete temporary file " << m_Filename);
-        }
       }
+      else
+      {
+        removed = static_cast<bool>(itksys::SystemTools::RemoveFile(m_Filename.c_str()));
+      }
+      if (!removed)
+      {
+        vtkGenericWarningMacro("Unable to delete temporary file " << m_Filename);
+      }
+    }
 
 
     // Get the right type of display node. Only create a display node
@@ -195,10 +195,10 @@ public:
     vtkMRMLDisplayableNode *displayableNode =
       vtkMRMLDisplayableNode::SafeDownCast(nd);
     if (displayableNode)
-      {
+    {
       // Create a default display node if no display node exists for the node yet.
       displayableNode->CreateDefaultDisplayNodes();
-      }
+    }
 
     // Cause the any observers to fire (we may have avoided calling
     // modified on the node)
@@ -212,29 +212,29 @@ public:
     //
     // Tensors? Vectors?
     if (m_DisplayData)
-      {
+    {
       if (vtkMRMLLabelMapVolumeNode::SafeDownCast(nd) != nullptr)
-        {
+      {
         appLogic->GetSelectionNode()->SetActiveLabelVolumeID(m_TargetNode.c_str());
         appLogic->PropagateVolumeSelection();
-        }
+      }
       else if (vtkMRMLScalarVolumeNode::SafeDownCast(nd) != nullptr)
-        {
+      {
         appLogic->GetSelectionNode()->SetActiveVolumeID(m_TargetNode.c_str());
         // make sure win/level gets calculated
         vtkMRMLDisplayNode* displayNode = vtkMRMLScalarVolumeNode::SafeDownCast(nd)->GetDisplayNode();
         if (displayNode)
-          {
-          displayNode->Modified();
-          }
-        appLogic->PropagateVolumeSelection();
-        }
-      else if (vtkMRMLTableNode::SafeDownCast(nd) != nullptr)
         {
+          displayNode->Modified();
+        }
+        appLogic->PropagateVolumeSelection();
+      }
+      else if (vtkMRMLTableNode::SafeDownCast(nd) != nullptr)
+      {
         appLogic->GetSelectionNode()->SetActiveTableID(m_TargetNode.c_str());
         appLogic->PropagateTableSelection();
-        }
       }
+    }
   }
 
 protected:
@@ -265,7 +265,7 @@ public:
   void Execute(vtkSlicerApplicationLogic* appLogic) override
   {
     if (m_SourceNodes.size() != m_TargetNodes.size())
-      {
+    {
       // Can't do ID remapping if the two node lists are different
       // sizes. Just import the scene. (This is where we would put to
       // the code to load into a node hierarchy (with a corresponding
@@ -275,20 +275,20 @@ public:
 
       // Delete the file if requested
       if (m_DeleteFile)
-        {
+      {
         int removed;
         removed = static_cast<bool>(itksys::SystemTools::RemoveFile(m_Filename.c_str()));
         if (!removed)
-          {
+        {
           std::stringstream information;
           information << "Unable to delete temporary file "
                       << m_Filename << std::endl;
           vtkGenericWarningMacro( << information.str().c_str() );
-          }
         }
+      }
 
       return;
-      }
+    }
 
     vtkNew<vtkMRMLScene> miniscene;
     miniscene->SetURL(m_Filename.c_str() );
@@ -304,26 +304,26 @@ public:
     appLogic->GetMRMLScene()->StartState(vtkMRMLScene::ImportState);
 
     while (sit != m_SourceNodes.end())
-      {
+    {
       vtkMRMLNode *source = miniscene->GetNodeByID(sit->c_str());
       vtkMRMLNode *target = appLogic->GetMRMLScene()->GetNodeByID( tit->c_str() );
 
       if (source && target)
-        {
+      {
         // save old storage info (in case user has custom file name already
         // defined for this node, don't use the one from the miniscene since it
         // was only used to read/write the temp area).
         vtkMRMLStorableNode *storableTarget = vtkMRMLStorableNode::SafeDownCast(target);
         if ( storableTarget )
-          {
+        {
           const char *oldStorageNodeID = storableTarget->GetStorageNodeID();
           target->Copy(source);
           storableTarget->SetAndObserveStorageNodeID(oldStorageNodeID);
-          }
+        }
         else
-          {
+        {
           target->Copy(source);
-          }
+        }
 
         // if the source node is a model hierarchy node, then also copy
         // and remap any child nodes of the target that are not in the
@@ -334,7 +334,7 @@ public:
         vtkMRMLModelHierarchyNode *tmhnd
           = vtkMRMLModelHierarchyNode::SafeDownCast(target);
         if (smhnd && tmhnd)
-          {
+        {
           // get the model node and display node BEFORE we add nodes to
           // the target scene
           vtkMRMLModelNode *smnd = smhnd->GetModelNode();
@@ -342,7 +342,7 @@ public:
 
           // add the model and display referenced by source model hierarchy node
           if (smnd)
-            {
+          {
             // set the model node to be modified, as it was read from a temp
             // location
             //smnd->SetModifiedSinceRead(1);
@@ -355,17 +355,17 @@ public:
             tmhnd->SetModelNodeID( mnd->GetID() );
 
             if (sdnd1)
-              {
+            {
               vtkMRMLNode *tdnd = appLogic->GetMRMLScene()->CopyNode(sdnd1);
               mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
-              }
             }
+          }
 
           if (sdnd)
-            {
+          {
             vtkMRMLNode *dnd = appLogic->GetMRMLScene()->CopyNode(sdnd);
             tmhnd->SetAndObserveDisplayNodeID( dnd->GetID() );
-            }
+          }
 
           // add any children model hierarchy nodes, rinse, repeat
           //
@@ -377,23 +377,23 @@ public:
           for (int n=0;
                n<miniscene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
                n++)
-            {
+          {
             vtkMRMLModelHierarchyNode * mhnd = vtkMRMLModelHierarchyNode
               ::SafeDownCast(miniscene->GetNthNodeByClass(n,
                                                   "vtkMRMLModelHierarchyNode"));
             if (mhnd)
-              {
+            {
               // is this model hierarchy node in our source list
               // already? if so skip it
               std::vector<std::string>::const_iterator ssit
                 = std::find(m_SourceNodes.begin(),
                             m_SourceNodes.end(), mhnd->GetID());
               if (ssit == m_SourceNodes.end())
-                {
+              {
                 // not in source list, so we may need to add it,
                 // if it's a child, grandchild etc of the top level node that we're importing
                 if (strcmp(mhnd->GetTopParentNode()->GetID(), smhnd->GetID()) == 0)
-                  {
+                {
                   // get the model and display node BEFORE we add nodes
                   // to the target scene
                   vtkMRMLModelNode *smnd1 = mhnd->GetModelNode();
@@ -409,22 +409,22 @@ public:
                   std::string parentNodeID = std::string(tmhnd->GetID());
                   if (tcmhd->GetParentNodeID() != nullptr &&
                       strcmp(tcmhd->GetParentNodeID(),smhnd->GetID()) != 0)
-                    {
+                  {
                     std::map<std::string,std::string>::iterator pIt = parentNodeIDMapper.find(std::string(tcmhd->GetParentNodeID()));
                     if (pIt != parentNodeIDMapper.end())
-                      {
+                    {
                       parentNodeID = pIt->second;
                       vtkDebugWithObjectMacro(appLogic, "Remapped parent node id to " << parentNodeID.c_str());
-                      }
-                    else
-                      {
-                      childNodesThatNeedParentsIDsRemapped.push_back(tcmhd);
-                      }
                     }
+                    else
+                    {
+                      childNodesThatNeedParentsIDsRemapped.push_back(tcmhd);
+                    }
+                  }
                   tcmhd->SetParentNodeID( parentNodeID.c_str() );
 
                   if (smnd1)
-                    {
+                  {
                     // set it as modified
                     //smnd1->SetModifiedSinceRead(1);
                     // get display node BEFORE we add nodes to the target scene
@@ -436,71 +436,71 @@ public:
                     tcmhd->SetModelNodeID( mnd->GetID() );
 
                     if (sdnd2)
-                      {
+                    {
                       vtkMRMLNode *tdnd = appLogic->GetMRMLScene()->CopyNode(sdnd2);
                       mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
-                      }
                     }
+                  }
 
                   if (sdnd1)
-                    {
+                  {
                     vtkMRMLNode *tdnd = appLogic->GetMRMLScene()->CopyNode(sdnd1);
                     tcmhd->SetAndObserveDisplayNodeID( tdnd->GetID() );
-                    }
                   }
                 }
               }
             }
+          }
           if (childNodesThatNeedParentsIDsRemapped.size() > 0)
-            {
+          {
             // iterate through all the imported hierarchies that failed and double check their parent node ids
             for (unsigned int i = 0; i < childNodesThatNeedParentsIDsRemapped.size(); i++)
-              {
+            {
               std::map<std::string,std::string>::iterator pIt = parentNodeIDMapper.find(childNodesThatNeedParentsIDsRemapped[i]->GetParentNodeID());
               if (pIt != parentNodeIDMapper.end())
-                {
+              {
                 vtkDebugWithObjectMacro(appLogic, "Remapping child node " << childNodesThatNeedParentsIDsRemapped[i]->GetName() << \
                   " parent node id from " << childNodesThatNeedParentsIDsRemapped[i]->GetParentNodeID() << " to " << pIt->second.c_str());
                 childNodesThatNeedParentsIDsRemapped[i]->SetParentNodeID(pIt->second.c_str());
-                }
               }
             }
           }
         }
+      }
       else if (!source)
-        {
+      {
         std::stringstream information;
         information << "Node " << (*sit) << " not found in scene file "
                     << m_Filename << std::endl;
         vtkGenericWarningMacro( << information.str().c_str() );
-        }
+      }
       else if (!target)
-        {
+      {
         std::stringstream information;
         information << "Node " << (*tit) << " not found in current scene."
                     << std::endl;
         vtkGenericWarningMacro( << information.str().c_str() );
-        }
+      }
 
       ++sit;
       ++tit;
-      }
+    }
 
     appLogic->GetMRMLScene()->EndState(vtkMRMLScene::ImportState);
 
     // Delete the file if requested
     if (m_DeleteFile)
-      {
+    {
       int removed;
       removed = static_cast<bool>(itksys::SystemTools::RemoveFile( m_Filename.c_str() ));
       if (!removed)
-        {
+      {
         std::stringstream information;
         information << "Unable to delete temporary file "
                     << m_Filename << std::endl;
         vtkGenericWarningMacro( << information.str().c_str() );
-        }
       }
+    }
   }
 
 protected:
@@ -529,9 +529,9 @@ public:
     vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
       scene->GetNodeByID(m_UpdatedNode));
     if (node)
-      {
+    {
       node->SetAndObserveTransformNodeID(m_ParentTransformNode.c_str());
-      }
+    }
   }
 
 protected:
@@ -562,11 +562,11 @@ public:
     vtkIdType updatedNodeShItemID = shnd->GetItemByDataNode(updatedNode);
 
     if (updatedNodeShItemID && siblingNodeShItemID)
-      {
+    {
       vtkIdType parentItemID = shnd->GetItemParent(siblingNodeShItemID);
       shnd->SetItemParent(updatedNodeShItemID, parentItemID);
       shnd->SetItemLevel(updatedNodeShItemID, shnd->GetItemLevel(siblingNodeShItemID));
-      }
+    }
   }
 
 protected:
@@ -594,9 +594,9 @@ public:
     vtkMRMLNode *referencingNode = scene->GetNodeByID(m_ReferencingNode);
     vtkMRMLNode *referencedNode = scene->GetNodeByID(m_ReferencedNode);
     if (referencingNode && referencedNode)
-      {
+    {
       referencingNode->AddNodeReferenceID(m_Role.c_str(), m_ReferencedNode.c_str());
-      }
+    }
   }
 
 protected:
@@ -639,7 +639,7 @@ public:
   void Execute(vtkSlicerApplicationLogic* appLogic) override
   {
     if (m_SourceNodes.size() != m_TargetNodes.size())
-      {
+    {
       // Can't do ID remapping if the two node lists are different
       // sizes. Just commit the scene. (This is where we would put to
       // the code to load into a node hierarchy (with a corresponding
@@ -647,7 +647,7 @@ public:
       appLogic->GetMRMLScene()->SetURL( m_Filename.c_str() );
       appLogic->GetMRMLScene()->Commit();
       return;
-      }
+    }
   }
 
 protected:

@@ -45,13 +45,13 @@ DiffusionTensor3DNonRigidTransform<TData>
 ::EvaluateTensorPosition( const PointType & point )
 {
   if( m_Transform.IsNotNull() )
-    {
+  {
     return m_Transform->TransformPoint(point);
-    }
+  }
   else
-    {
+  {
     itkExceptionMacro( << "Transform not set" );
-    }
+  }
 }
 
 template <class TData>
@@ -60,18 +60,18 @@ DiffusionTensor3DNonRigidTransform<TData>
 ::EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition )
 {
   if( m_Transform.IsNotNull() && m_Affine.IsNotNull() )
-    {
+  {
     MatrixTransformType matrix;
     matrix.SetIdentity();
     typename TransformType::JacobianType jacobian;
     m_Transform->ComputeJacobianWithRespectToParameters( outputPosition, jacobian );
     for( int i = 0; i < 3; i++ )
-      {
+    {
       for( int j = 0; j < 3; j++ )
-        {
+      {
         matrix[i][j] = jacobian[i][j] + matrix[i][j];
-        }
       }
+    }
     // ITKv4 does not require locking, because ComputeJacobianWithRespectToParameters is thread-safe
     LightObject::Pointer newTransform = m_Affine->CreateAnother();
     typename AffineTransform::Pointer newAffine = dynamic_cast<AffineTransform *>( newTransform.GetPointer() );
@@ -80,11 +80,11 @@ DiffusionTensor3DNonRigidTransform<TData>
     newAffine->SetMeasurementFrame( this->m_MeasurementFrame );
     newAffine->SetMatrix3x3( matrix );
     return newAffine->EvaluateTransformedTensor( tensor );
-    }
+  }
   else
-    {
+  {
     itkExceptionMacro( << "Transform or affine transform type not set" );
-    }
+  }
 }
 
 } // end of itk namespace

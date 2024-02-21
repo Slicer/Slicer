@@ -48,11 +48,11 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   qMRMLLinearTransformSlider* widget = reinterpret_cast<qMRMLLinearTransformSlider*>(data);
 
   CTKCOMPARE(widget->value(), 60.00);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -78,9 +78,9 @@ int qMRMLLinearTransformSliderEventTranslatorPlayerTest1(int argc, char * argv [
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

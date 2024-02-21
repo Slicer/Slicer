@@ -43,7 +43,7 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT qSlicerMarkupsModuleWidgets
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLMarkupsDisplayNodeWidgetPlugin;
     plugins << new qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin;
@@ -54,7 +54,7 @@ public:
     plugins << new qSlicerSimpleMarkupsWidgetPlugin;
 
     return plugins;
-    }
+  }
 };
 
 #endif

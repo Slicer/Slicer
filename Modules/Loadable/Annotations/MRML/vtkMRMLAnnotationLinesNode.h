@@ -69,11 +69,11 @@ public:
   int SetControlPoint(int id, double newControl[3],int selectedFlag, int visibleFlag);
 
   int SetControlPointWorldCoordinates(int id, double newControl[3],int selectedFlag, int visibleFlag)
-    {
+  {
     double localPoint[4]={0,0,0,1};
     this->TransformPointFromWorld(newControl, localPoint);
     return this->SetControlPoint(id, localPoint, selectedFlag, visibleFlag);
-    }
+  }
 
   void DeleteLine(int id);
   int GetEndPointsId(vtkIdType lineID, vtkIdType ctrlPtID[2]);

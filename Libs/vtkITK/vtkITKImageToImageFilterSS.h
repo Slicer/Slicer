@@ -37,10 +37,10 @@ public:
   /// Portion of the SetReleaseDataFlag implementation can be
   /// implemented at this level of the hierarchy.
   void SetReleaseDataFlag(int f) override
-    {
+  {
       Superclass::SetReleaseDataFlag(f);
       m_Filter->SetReleaseDataFlag(f);
-    }
+  }
 
 protected:
 

@@ -47,18 +47,18 @@ void vtkMRMLMeasurementVolume::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLMeasurementVolume::Compute()
 {
   if (!this->InputMRMLNode)
-    {
+  {
     this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
     return;
-    }
+  }
 
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->InputMRMLNode);
   if (!roiNode)
-    {
+  {
     vtkErrorMacro("Compute: Markup type not supported by this measurement: " << this->InputMRMLNode->GetClassName());
     this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
     return;
-    }
+  }
 
   double size[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetSizeWorld(size);

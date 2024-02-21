@@ -55,13 +55,13 @@ vtkMRMLUnitNode::vtkMRMLUnitNode()
 vtkMRMLUnitNode::~vtkMRMLUnitNode()
 {
   if (this->Prefix)
-    {
+  {
     delete [] this->Prefix;
-    }
+  }
   if (this->Suffix)
-    {
+  {
     delete [] this->Suffix;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -112,48 +112,48 @@ void vtkMRMLUnitNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
 
     if (!strcmp(attName, "Quantity"))
-      {
+    {
       this->SetQuantity(attValue);
-      }
+    }
     else if (!strcmp(attName, "Prefix"))
-      {
+    {
       this->SetPrefix(attValue);
-      }
+    }
     else if (!strcmp(attName, "Suffix"))
-      {
+    {
       this->SetSuffix(attValue);
-      }
+    }
     else if (!strcmp(attName, "Precision"))
-      {
+    {
       int precision = StringToInt(attValue);
       this->SetPrecision(precision);
-      }
+    }
     else if (!strcmp(attName, "MinimumValue"))
-      {
+    {
       double min = StringToDouble(attValue);
       this->SetMinimumValue(min);
-      }
+    }
     else if (!strcmp(attName, "MaximumValue"))
-      {
+    {
       double max = StringToDouble(attValue);
       this->SetMaximumValue(max);
-      }
+    }
     else if (!strcmp(attName, "DisplayCoefficient"))
-      {
+    {
       double coef = StringToDouble(attValue);
       this->SetDisplayCoefficient(coef);
-      }
+    }
     else if (!strcmp(attName, "DisplayOffset"))
-      {
+    {
       double offset = StringToDouble(attValue);
       this->SetDisplayOffset(offset);
-      }
     }
+  }
   this->EndModify(disabledModify);
 }
 
@@ -181,10 +181,10 @@ double vtkMRMLUnitNode::GetDisplayValueFromValue(double value)
 double vtkMRMLUnitNode::GetValueFromDisplayValue(double value)
 {
   if (this->DisplayCoefficient)
-    {
+  {
     vtkWarningMacro("Invalid display coefficient");
     return 0.;
-    }
+  }
   return (value - this->DisplayOffset) / this->DisplayCoefficient;
 }
 
@@ -237,9 +237,9 @@ std::string vtkMRMLUnitNode::WrapValueWithPrefix(const std::string& value) const
 {
   std::string wrappedString = "";
   if (this->Prefix)
-    {
+  {
     wrappedString = std::string(this->Prefix) + " ";
-    }
+  }
   return wrappedString + value;
 }
 
@@ -248,9 +248,9 @@ std::string vtkMRMLUnitNode::WrapValueWithSuffix(const std::string& value) const
 {
   std::string wrappedString = "";
   if (this->Suffix)
-    {
+  {
     wrappedString = " " + std::string(this->Suffix);
-    }
+  }
   return value + wrappedString;
 }
 
@@ -274,9 +274,9 @@ void vtkMRMLUnitNode::Copy(vtkMRMLNode *anode)
 {
   vtkMRMLUnitNode *node = vtkMRMLUnitNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   int disabledModify = this->StartModify();
   this->Superclass::Copy(anode);
@@ -297,9 +297,9 @@ void vtkMRMLUnitNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLUnitNode::Reset(vtkMRMLNode* defaultNode)
 {
   if (this->GetSingletonTag() != nullptr)
-    {
+  {
     return;
-    }
+  }
   this->Superclass::Reset(defaultNode);
 }
 

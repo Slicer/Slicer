@@ -63,17 +63,17 @@ vtkMRMLVolumeHeaderlessStorageNode::vtkMRMLVolumeHeaderlessStorageNode()
 vtkMRMLVolumeHeaderlessStorageNode::~vtkMRMLVolumeHeaderlessStorageNode()
 {
   if (this->FileScanOrder)
-    {
+  {
     delete [] this->FileScanOrder;
     this->FileScanOrder = nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLVolumeHeaderlessStorageNode::GetFileScalarTypeAsString()
 {
   switch (this->FileScalarType)
-    {
+  {
     case VTK_VOID:           return "Void"; break;
     case VTK_BIT:            return "Bit"; break;
     case VTK_CHAR:           return "Char"; break;
@@ -86,7 +86,7 @@ const char* vtkMRMLVolumeHeaderlessStorageNode::GetFileScalarTypeAsString()
     case VTK_UNSIGNED_LONG:  return "UnsignedLong"; break;
     case VTK_FLOAT:          return "Float"; break;
     case VTK_DOUBLE:         return "Double"; break;
-    }
+  }
   return "Short";
 }
 
@@ -94,49 +94,49 @@ const char* vtkMRMLVolumeHeaderlessStorageNode::GetFileScalarTypeAsString()
 void vtkMRMLVolumeHeaderlessStorageNode::SetFileScalarTypeAsString(const char* type)
 {
   if (!strcmp(type, "Bit"))
-    {
+  {
     this->FileScalarType = VTK_BIT;
-    }
+  }
   else if (!strcmp(type, "Char"))
-    {
+  {
     this->FileScalarType = VTK_CHAR;
-    }
+  }
   else if (!strcmp(type, "UnsignedChar"))
-    {
+  {
     this->FileScalarType = VTK_UNSIGNED_CHAR;
-    }
+  }
   else if (!strcmp(type, "Short"))
-    {
+  {
     this->FileScalarType = VTK_SHORT;
-    }
+  }
   else if (!strcmp(type, "UnsignedShort"))
-    {
+  {
     this->FileScalarType = VTK_UNSIGNED_SHORT;
-    }
+  }
   else if (!strcmp(type, "Int"))
-    {
+  {
     this->FileScalarType = VTK_INT;
-    }
+  }
   else if (!strcmp(type, "UnsignedInt"))
-    {
+  {
     this->FileScalarType = VTK_UNSIGNED_INT;
-    }
+  }
   else if (!strcmp(type, "Long"))
-    {
+  {
     this->FileScalarType = VTK_LONG;
-    }
+  }
   else if (!strcmp(type, "UnsignedLong"))
-    {
+  {
     this->FileScalarType = VTK_UNSIGNED_LONG;
-    }
+  }
   else if (!strcmp(type, "Float"))
-    {
+  {
     this->FileScalarType = VTK_FLOAT;
-    }
+  }
   else if (!strcmp(type, "Double"))
-    {
+  {
     this->FileScalarType = VTK_DOUBLE;
-    }
+  }
 }
 
 
@@ -190,55 +190,55 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
 
     if (!strcmp(attName, "fileScanOrder"))
-      {
+    {
       this->SetFileScanOrder(attValue);
-      }
+    }
     else if (!strcmp(attName, "fileDimensions"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> FileDimensions[0];
       ss >> FileDimensions[1];
       ss >> FileDimensions[2];
-      }
+    }
     else if (!strcmp(attName, "fileSpacing"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> FileSpacing[0];
       ss >> FileSpacing[1];
       ss >> FileSpacing[2];
-      }
+    }
     else if (!strcmp(attName, "fileNumberOfScalarComponents"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> FileNumberOfScalarComponents;
-      }
+    }
     else if (!strcmp(attName, "fileScalarType"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> FileScalarType;
-      }
+    }
     else if (!strcmp(attName, "fileLittleEndian"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> FileLittleEndian;
-      }
+    }
     else if (!strcmp(attName, "centerImage"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> CenterImage;
-      }
     }
+  }
 
   this->EndModify(disabledModify);
 
@@ -279,16 +279,16 @@ void vtkMRMLVolumeHeaderlessStorageNode::PrintSelf(ostream& os, vtkIndent indent
   os << indent << "FileNumberOfScalarComponents:  " << this->FileNumberOfScalarComponents << "\n";
   os << "FileSpacing:\n";
   for (idx = 0; idx < 3; ++idx)
-    {
+  {
     os << indent << ", " << this->FileSpacing[idx];
-    }
+  }
   os << ")\n";
 
   os << "FileDimensions:\n";
   for (idx = 0; idx < 3; ++idx)
-    {
+  {
     os << indent << ", " << this->FileDimensions[idx];
-    }
+  }
   os << ")\n";
 
 }
@@ -305,35 +305,35 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
   // Skip file loading for empty volume, for which no file was saved
   if (this->GetWriteState() == SkippedNoData)
-    {
+  {
     vtkDebugMacro("ReadDataInternal: Empty volume file was not saved, ignore loading");
     return 1;
-    }
+  }
 
   vtkMRMLVolumeNode *volNode = nullptr;
 
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
-    {
+  {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
-    }
+  }
 #ifdef MRML_USE_vtkTeem
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") )
-    {
+  {
     volNode = dynamic_cast <vtkMRMLVectorVolumeNode *> (refNode);
-    }
+  }
 #endif
   if (volNode->GetImageData())
-    {
+  {
     volNode->SetAndObserveImageData(nullptr);
-    }
+  }
 
   std::string fullName = this->GetFullNameFromFileName();
 
   if (fullName.empty())
-    {
+  {
     vtkErrorMacro("ReadDataInternal: Volume file name not specified");
     return 0;
-    }
+  }
 
   vtkNew<vtkStringArray> archNames;
   itk::ArchetypeSeriesFileNames::Pointer archtypeNames = itk::ArchetypeSeriesFileNames::New();
@@ -366,14 +366,14 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   int result = 1;
 
   for (unsigned int i=0; i<names.size(); i++)
-    {
+  {
     archNames->InsertNextValue(names[i].c_str());
     reader->SetFileName(names[i].c_str());
     try
-      {
+    {
       reader->Update();
       flip->Update();
-      }
+    }
       catch (...)
       {
       vtkErrorMacro("ReadDataInternal: Cannot read file");
@@ -381,22 +381,22 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       return 0;
       }
     if (reader->GetOutput() == nullptr)
-      {
+    {
       vtkErrorMacro("ReadDataInternal: Cannot read file");
       return 0;
-      }
+    }
     if (i==0)
-      {
+    {
       image->DeepCopy(flip->GetOutput());
-      }
+    }
     else
-      {
+    {
       appender->SetInputData(0, image.GetPointer());
       appender->SetInputConnection(1, flip->GetOutputPort());
       appender->Update();
       image ->DeepCopy(appender->GetOutput());
-      }
     }
+  }
 
   vtkNew<vtkImageChangeInformation> ici;
   ici->SetInputData(image.GetPointer());
@@ -405,15 +405,15 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   ici->Update();
 
   if (ici->GetOutput() == nullptr)
-    {
+  {
     vtkErrorMacro("ReadDataInternal: Cannot read file");
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     return 0;
-    }
+  }
   else
-    {
+  {
     volNode->SetAndObserveImageData(ici->GetOutput());
-    }
+  }
 
   vtkNew<vtkMatrix4x4> mat;
   mat->Identity();
@@ -441,27 +441,27 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
 
   if (volNode->GetImageData() == nullptr)
-    {
+  {
     this->SetWriteStateSkippedNoData();
     return 1;
-    }
+  }
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
-    {
+  {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
     return 0;
-    }
+  }
   vtkNew<vtkITKImageWriter> writer;
   writer->SetFileName(fullName.c_str());
 
   writer->SetInputData( volNode->GetImageData() );
   if(this->WriteFileFormat)
-    {
+  {
     writer->SetImageIOClassName(
       this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
       GetClassNameFromFormatString(this->WriteFileFormat));
-    }
+  }
 
   // set volume attributes
   vtkNew<vtkMatrix4x4> mat;
@@ -470,9 +470,9 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   int result = 1;
   try
-    {
+  {
     writer->Write();
-    }
+  }
     catch (...)
     {
     result = 0;
@@ -490,13 +490,13 @@ void vtkMRMLVolumeHeaderlessStorageNode::InitializeSupportedWriteFileTypes()
   if (this->GetScene() &&
       this->GetScene()->GetDataIOManager() &&
       this->GetScene()->GetDataIOManager()->GetFileFormatHelper())
-    {
+  {
     vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
       GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
     for(int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
-      {
+    {
       this->SupportedWriteFileTypes->InsertNextValue(
               supportedFormats->GetValue(i));
-      }
     }
+  }
 }

@@ -139,9 +139,9 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
   const unsigned int numberChain = chain->NumberOfSteps();
 
   if ( numberChain == 0 )
-    {
+  {
     return;
-    }
+  }
 
   vtkIdType * ptIds;
   ptIds = new vtkIdType [numberChain];
@@ -150,9 +150,9 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
   typename ImageType::IndexType chain3D;
 
   do
-    {
+  {
     switch( plane )
-      {
+    {
       default:
       case 0:  //JK plane
         chain3D[0] = seed[0];
@@ -169,7 +169,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
         chain3D[0] = chainTemp[0] ;
         chain3D[1] = chainTemp[1] ;
         break;
-      }
+    }
 
     newPoints->InsertPoint(i, chain3D[0], chain3D[1], chain3D[2]);
     ptIds[i] = i;
@@ -177,7 +177,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
     chainTemp[0] = chainTemp[0] + offset[0];
     chainTemp[1] = chainTemp[1] + offset[1];
     //vtkGenericWarningMacro( << "Chain point: "  << chainTemp );
-    }
+  }
   while( i < numberChain );
 
   newPolys->InsertNextCell( i, ptIds );
@@ -277,7 +277,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
     } //switch
   }
   else if (inScalars->GetNumberOfComponents() == 3)
-    {
+  {
     // RGB - convert for now...
     vtkSmartPointer<vtkUnsignedCharArray> grayScalars
       = vtkUnsignedCharArray::New();
@@ -286,23 +286,23 @@ int vtkITKLevelTracingImageFilter::RequestData(
     double in[3];
     unsigned char out;
     for (vtkIdType i=0; i < inScalars->GetNumberOfTuples(); ++i)
-      {
+    {
       inScalars->GetTuple(i, in);
 
       out = static_cast<unsigned char>((2125.0 * in[0] +  7154.0 * in[1] +  0721.0 * in[2]) / 10000.0);
 
       grayScalars->SetTypedTuple(i, &out);
-      }
+    }
 
     vtkITKLevelTracingTrace(this,
                             (unsigned char *)grayScalars->GetVoidPointer(0),
                             dims, extent, origin, spacing,
                             newPts, newPolys, this->Seed, this->Plane);
-    }
+  }
   else
-    {
+  {
     vtkErrorMacro(<< "Can only trace scalar and RGB images.");
-    }
+  }
 
   vtkDebugMacro(<<"Created: "
     << newPts->GetNumberOfPoints() << " points. " );
@@ -338,7 +338,7 @@ void vtkITKLevelTracingImageFilter::PrintSelf(ostream& os, vtkIndent indent)
     << std::endl;
   os << indent << "Plane: ";
   switch (Plane)
-    {
+  {
     case 2: os << "IJ" << std::endl;
       break;
     case 1: os << "IK" << std::endl;
@@ -347,5 +347,5 @@ void vtkITKLevelTracingImageFilter::PrintSelf(ostream& os, vtkIndent indent)
       break;
     default: os << "(unknown)" << std::endl;
       break;
-    }
+  }
 }

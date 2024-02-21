@@ -64,9 +64,9 @@ const char vtkMRMLVolumeRenderingDisplayableManagerTest1EventLog[] =
 int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
 {
   if (argc < 2)
-    {
+  {
     std::cerr << "Must pass share directory as first argument to test" << std::endl;
-    }
+  }
   const char *moduleShareDirectory = argv[1];
 
   // Renderer, RenderWindow and Interactor
@@ -118,17 +118,17 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   unsigned char* ptr = reinterpret_cast<unsigned char*>(
     imageData->GetScalarPointer(0,0,0));
   for (int z = 0; z < 3; ++z)
-    {
+  {
     for (int y = 0; y < 3; ++y)
-      {
+    {
       for (int x = 0; x < 3; ++x)
-        {
+      {
         double normalizedIntensity = (static_cast<double>(x+(y*3)+(z*3*3)) / static_cast<double>(3*3*3 - 1));
         std::cout << x << " " << y << " " << z << ": " << normalizedIntensity << std::endl;
         *(ptr++) = 255 - static_cast<unsigned char>(255. * normalizedIntensity);
-        }
       }
     }
+  }
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
   scene->AddNode(volumeNode.GetPointer());
 
@@ -166,40 +166,40 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   // Event recorder
   bool disableReplay = false, record = false, screenshot = false;
   for (int i = 0; i < argc; i++)
-    {
+  {
     disableReplay |= (strcmp("--DisableReplay", argv[i]) == 0);
     record        |= (strcmp("--Record", argv[i]) == 0);
     screenshot    |= (strcmp("--Screenshot", argv[i]) == 0);
-    }
+  }
   vtkNew<vtkInteractorEventRecorder> recorder;
   recorder->SetInteractor(displayableManagerGroup->GetInteractor());
   if (!disableReplay)
-    {
+  {
     if (record)
-      {
+    {
       std::cout << "Recording ..." << std::endl;
       recorder->SetFileName("vtkInteractorEventRecorder.log");
       recorder->On();
       recorder->Record();
-      }
+    }
     else
-      {
+    {
       // Play
       recorder->ReadFromInputStringOn();
       recorder->SetInputString(vtkMRMLVolumeRenderingDisplayableManagerTest1EventLog);
       recorder->Play();
-      }
     }
+  }
 
   int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
   if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
-    {
+  {
     displayableManagerGroup->GetInteractor()->Initialize();
     displayableManagerGroup->GetInteractor()->Start();
-    }
+  }
 
   if (record || screenshot)
-    {
+  {
     vtkNew<vtkWindowToImageFilter> windowToImageFilter;
     windowToImageFilter->SetInput(renderWindow.GetPointer());
     windowToImageFilter->SetScale(1, 1); //set the resolution of the output image
@@ -215,11 +215,11 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
     writer->SetInputConnection(windowToImageFilter->GetOutputPort());
     writer->Write();
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
-    }
+  }
 
   vtkGPUVolumeRayCastMapper* mapper = vtkGPUVolumeRayCastMapper::SafeDownCast(vrDisplayableManager->GetVolumeMapper(volumeNode.GetPointer()));
   if (mapper)
-    {
+  {
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 256);
     viewNode->SetGPUMemorySize(250);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 256);
@@ -239,7 +239,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 8192);
     viewNode->SetGPUMemorySize(16384);
     CHECK_INT(mapper->GetMaxMemoryInBytes() / 1024 / 1024, 16384);
-   }
+  }
 
   vrDisplayableManager->SetMRMLApplicationLogic(nullptr);
   applicationLogic->Delete();

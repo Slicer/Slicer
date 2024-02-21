@@ -131,9 +131,9 @@ void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 
   vtkMRMLModelDisplayNode* node = vtkMRMLModelDisplayNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(SliceDisplayMode);
@@ -153,14 +153,14 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
   if (cnode != nullptr && cnode == this->GetDistanceEncodedProjectionColorNode()
     && event == vtkCommand::ModifiedEvent)
-    {
+  {
     // Slice distance encoded projection color node changed
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
-    }
+  }
   else if (event == vtkCommand::ModifiedEvent)
-    {
+  {
     this->UpdateScalarRange();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -168,9 +168,9 @@ void vtkMRMLModelDisplayNode
 ::SetInputMeshConnection(vtkAlgorithmOutput* meshConnection)
 {
   if (this->GetInputMeshConnection() == meshConnection)
-    {
+  {
     return;
-    }
+  }
   this->SetInputToMeshPipeline(meshConnection);
 }
 
@@ -227,21 +227,21 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetInputPolyDataConnection()
 vtkPointSet* vtkMRMLModelDisplayNode::GetOutputMesh()
 {
   if (!this->GetInputMeshConnection())
-    {
+  {
     return nullptr;
-    }
+  }
 
   vtkAlgorithmOutput* outputConnection = this->GetOutputMeshConnection();
   if (!outputConnection)
-    {
+  {
     return nullptr;
-    }
+  }
 
   vtkAlgorithm* producer = outputConnection->GetProducer();
   if (!producer)
-    {
+  {
     return nullptr;
-    }
+  }
 
   producer->Update();
   return vtkPointSet::SafeDownCast(
@@ -266,28 +266,28 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputMeshConnection()
   if (this->GetActiveScalarName() &&
       this->GetScalarVisibility() && // do not threshold if scalars hidden
       this->ThresholdEnabled)
-    {
+  {
     vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(this->GetDisplayableNode());
     if (modelNode && modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
-      {
+    {
       // Threshold filter generates unstructured grid output. If input is a polydata mesh
       // then the pipeline expects polydata as output mesh, therefore we need to use
       // ConvertToPolyDataFilter output.
       return this->ConvertToPolyDataFilter->GetOutputPort();
-      }
+    }
     else
-      {
+    {
       return this->ThresholdFilter->GetOutputPort();
-      }
     }
+  }
   else if (this->GetActiveScalarName())
-    {
+  {
     return this->AssignAttribute->GetOutputPort();
-    }
+  }
   else
-    {
+  {
     return this->PassThrough->GetOutputPort();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -302,9 +302,9 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPolyDataConnection()
 void vtkMRMLModelDisplayNode::SetThresholdEnabled(bool enabled)
 {
   if (this->ThresholdEnabled == enabled)
-    {
+  {
     return;
-    }
+  }
 
   int wasModified = this->StartModify();
 
@@ -313,18 +313,18 @@ void vtkMRMLModelDisplayNode::SetThresholdEnabled(bool enabled)
 
   // initialize threshold range if it has not been initialized yet
   if (enabled && this->GetThresholdMin() > this->GetThresholdMax())
-    {
+  {
     double dataRange[2] = { 0.0, -1.0 };
     vtkDataArray *dataArray = this->GetActiveScalarArray();
     if (dataArray)
-      {
+    {
       dataArray->GetRange(dataRange);
-      }
-    if (dataRange[0] <= dataRange[1])
-      {
-      this->SetThresholdRange(dataRange);
-      }
     }
+    if (dataRange[0] <= dataRange[1])
+    {
+      this->SetThresholdRange(dataRange);
+    }
+  }
 
   this->EndModify(wasModified);
 }
@@ -337,9 +337,9 @@ void vtkMRMLModelDisplayNode::SetThresholdRange(double min, double max)
   this->ThresholdFilter->SetUpperThreshold(max);
   this->ThresholdFilter->SetThresholdFunction(vtkThreshold::THRESHOLD_BETWEEN);
   if (this->ThresholdFilter->GetMTime() > mtime)
-    {
+  {
     this->Modified();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -378,13 +378,13 @@ double* vtkMRMLModelDisplayNode::GetThresholdRange()
 void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
 {
   if (scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
-    {
+  {
     return;
-    }
+  }
   if (scalarName == nullptr && this->ActiveScalarName == nullptr)
-    {
+  {
     return;
-    }
+  }
   int wasModifying = this->StartModify();
   this->Superclass::SetActiveScalarName(scalarName);
   this->UpdateAssignedAttribute();
@@ -395,9 +395,9 @@ void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
 void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
 {
   if (location == this->ActiveAttributeLocation)
-    {
+  {
     return;
-    }
+  }
   int wasModifying = this->StartModify();
   this->Superclass::SetActiveAttributeLocation(location);
   this->UpdateAssignedAttribute();
@@ -413,13 +413,13 @@ void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
     this->GetActiveAttributeLocation() >= 0 ? this->GetActiveAttributeLocation() : vtkAssignAttribute::POINT_DATA);
 
   if (this->GetActiveAttributeLocation() == vtkAssignAttribute::POINT_DATA)
-    {
+  {
     this->ThresholdFilter->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
-    }
+  }
   else if (this->GetActiveAttributeLocation() == vtkAssignAttribute::CELL_DATA)
-    {
+  {
     this->ThresholdFilter->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, vtkDataSetAttributes::SCALARS);
-    }
+  }
 
   this->UpdateScalarRange();
 }
@@ -434,13 +434,13 @@ vtkDataSet* vtkMRMLModelDisplayNode::GetScalarDataSet()
 vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
 {
   if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(),"") == 0)
-    {
+  {
     return nullptr;
-    }
+  }
   if (!this->GetInputMesh())
-    {
+  {
     return nullptr;
-    }
+  }
 
   // Use output of AssignAttribute instead of this->GetOutputMesh()
   // since the data scalar range should not be retrieved from a
@@ -450,13 +450,13 @@ vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
   this->AssignAttribute->Update();
   vtkPointSet* mesh = vtkPointSet::SafeDownCast(this->AssignAttribute->GetOutput());
   if (mesh == nullptr)
-    {
+  {
     return nullptr;
-    }
+  }
 
   vtkDataSetAttributes* attributes = nullptr;
   switch (this->GetActiveAttributeLocation())
-    {
+  {
     case vtkAssignAttribute::POINT_DATA:
       attributes = mesh->GetPointData();
       break;
@@ -467,11 +467,11 @@ vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
       vtkWarningMacro("vtkMRMLModelDisplayNode::GetActiveScalarArray failed: unsupported attribute location: "
         << this->GetActiveAttributeLocation());
       break;
-    }
+  }
   if (attributes == nullptr)
-    {
+  {
     return nullptr;
-    }
+  }
   vtkDataArray *dataArray = attributes->GetArray(this->GetActiveScalarName());
   return dataArray;
 }
@@ -498,32 +498,32 @@ void vtkMRMLModelDisplayNode::SetSliceDisplayModeToDistanceEncodedProjection()
 const char* vtkMRMLModelDisplayNode::GetSliceDisplayModeAsString(int id)
 {
   switch (id)
-    {
+  {
     case SliceDisplayIntersection: return "intersection";
     case SliceDisplayProjection: return "projection";
     case SliceDisplayDistanceEncodedProjection: return "distanceEncodedProjection";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLModelDisplayNode::GetSliceDisplayModeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i = 0; i<SliceDisplayMode_Last; i++)
-    {
+  {
     if (strcmp(name, GetSliceDisplayModeAsString(i)) == 0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // unknown name
   return -1;
 }

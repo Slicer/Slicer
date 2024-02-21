@@ -180,11 +180,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// Also update the glyph polydata source
   void SetGlyphGeometry( int geometry ) {
     if ( this->GlyphGeometry != geometry )
-      {
+    {
       this->GlyphGeometry = geometry;
       this->UpdateGlyphSource();
       this->Modified();
-      }
+    }
   }
 
   void SetGlyphGeometryToLines() {
@@ -252,16 +252,16 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// Also update the glyph polydata source
   void SetGlyphEigenvector( int eigenvector ) {
     if ( this->GlyphEigenvector != eigenvector )
-      {
+    {
       this->GlyphEigenvector = eigenvector;
       if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
-        {
+      {
         /// Update the source if the eigenvector has changed
         this->UpdateGlyphSource();
-        }
+      }
 
       this->Modified();
-      }
+    }
   }
 
   /// Description
@@ -302,16 +302,16 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //vtkSetMacro(LineGlyphResolution, int);
   void SetLineGlyphResolution( int resolution ) {
     if ( this->LineGlyphResolution != resolution )
-      {
+    {
       this->LineGlyphResolution = resolution;
       if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
-        {
+      {
         /// Update the source if the resolution has changed
         this->UpdateGlyphSource();
-        }
+      }
 
       this->Modified();
-      }
+    }
   }
 
   //--------------------------------------------------------------------------
@@ -327,16 +327,16 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //vtkSetMacro(TubeGlyphRadius, double);
   void SetTubeGlyphRadius( double radius ) {
     if ( this->TubeGlyphRadius != radius )
-      {
+    {
       this->TubeGlyphRadius = radius;
       if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
-        {
+      {
         /// Update the source if the radius has changed
         this->UpdateGlyphSource();
-        }
+      }
 
       this->Modified();
-      }
+    }
   }
 
   ///
@@ -345,16 +345,16 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //vtkSetMacro(TubeGlyphNumberOfSides, int);
   void SetTubeGlyphNumberOfSides( int numberOfSides ) {
     if ( this->TubeGlyphNumberOfSides != numberOfSides )
-      {
+    {
       this->TubeGlyphNumberOfSides = numberOfSides;
       if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
-        {
+      {
         /// Update the source if the numberOfSides has changed
         this->UpdateGlyphSource();
-        }
+      }
 
       this->Modified();
-      }
+    }
   }
   //--------------------------------------------------------------------------
   /// Display Information: Parameters of Ellipsoids glyph geometry

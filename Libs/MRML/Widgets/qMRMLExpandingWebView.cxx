@@ -74,9 +74,9 @@ void qMRMLExpandingWebViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
   //Q_Q(qMRMLExpandingWebView);
   if (newScene == this->MRMLScene)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(
     this->mrmlScene(), newScene,
@@ -134,9 +134,9 @@ void qMRMLExpandingWebView::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLExpandingWebView);
   if (newScene == d->MRMLScene)
-    {
+  {
     return;
-    }
+  }
 
   d->setMRMLScene(newScene);
 
@@ -156,14 +156,14 @@ void qMRMLExpandingWebView::updateWidgetFromMRML()
   //qDebug() << "qMRMLExpandingWebView::updateWidgetFromMRML()";
 
   if (!this->mrmlScene())
-    {
+  {
     return;
-    }
+  }
 
   if (!this->isEnabled())
-    {
+  {
     return;
-    }
+  }
 
   /*
   // get a node

@@ -72,14 +72,14 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
 
   int nodeCount = nodeSelector.nodeCount();
   if (nodeCount != 3)
-    {
+  {
     std::cerr << "qMRMLNodeComboBox:: no filtering on attribute string doesn't yield 3 nodes, got nodeCount = " << nodeCount << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   else
-    {
+  {
     std::cout << "Passed with no filtering\n" << std::endl;
-    }
+  }
   nodeSelector.show();
 
   // a node selector with a defined filtering attribute, only one volume
@@ -91,14 +91,14 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
 
   nodeCount = nodeSelectorA.nodeCount();
   if (nodeCount != 1)
-    {
+  {
     std::cerr << "qMRMLNodeComboBox:: filtering on attribute string 'a' doesn't yield a single node, got nodeCount = " << nodeCount << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   else
-    {
+  {
     std::cout << "Passed filtering on 'a'\n" << std::endl;
-    }
+  }
   nodeSelectorA.show();
 
   // a node selector with a defined filtering attribute that doesn't match any
@@ -110,14 +110,14 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
 
   nodeCount = nodeSelectorB.nodeCount();
   if (nodeCount != 0)
-    {
+  {
     std::cerr << "qMRMLNodeComboBox:: filtering on attribute string 'b' doesn't yield no nodes, got nodeCount = " << nodeCount << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   else
-    {
+  {
     std::cout << "Passed filtering on 'b'\n" << std::endl;
-    }
+  }
   nodeSelectorB.show();
 
   // a node selector with an empty string as the filtering attribute, only one
@@ -129,14 +129,14 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
 
   nodeCount = nodeSelectorEmpty.nodeCount();
   if (nodeCount != 1)
-    {
+  {
     std::cerr << "qMRMLNodeComboBox:: filtering on attribute string '' doesn't yield a single node, got nodeCount = " << nodeCount << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   else
-    {
+  {
     std::cout << "Passed filtering on ''\n" << std::endl;
-    }
+  }
   nodeSelectorEmpty.show();
 
   // a node selector without a value for the filtering attribute, two volumes
@@ -148,20 +148,20 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
 
   nodeCount = nodeSelectorNull.nodeCount();
   if (nodeCount != 2)
-    {
+  {
     std::cerr << "qMRMLNodeComboBox:: filtering on null attribute string doesn't yield two nodes, got nodeCount = " << nodeCount << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   else
-    {
+  {
     std::cout << "Passed filtering on null\n" << std::endl;
-    }
+  }
   nodeSelectorNull.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

@@ -42,21 +42,21 @@ vtkMRMLDiffusionImageVolumeNode::~vtkMRMLDiffusionImageVolumeNode()
 {
 
   if (this->BaselineNodeID)
-    {
+  {
     delete [] this->BaselineNodeID;
     this->BaselineNodeID = nullptr;
-    }
+  }
   if (this->MaskNodeID)
-    {
+  {
     delete [] this->MaskNodeID;
     this->MaskNodeID = nullptr;
-    }
+  }
 
   if (this->DiffusionWeightedNodeID)
-    {
+  {
     delete [] this->DiffusionWeightedNodeID;
     this->DiffusionWeightedNodeID = nullptr;
-    }
+  }
    this->SetAndObserveDisplayNodeID(nullptr);
 }
 
@@ -67,17 +67,17 @@ void vtkMRMLDiffusionImageVolumeNode::WriteXML(ostream& of, int nIndent)
 
   std::stringstream ss;
   if (this->BaselineNodeID != nullptr)
-    {
+  {
     of << " baselineNodeRef=\"" << this->BaselineNodeID << "\"";
-    }
+  }
   if (this->DiffusionWeightedNodeID != nullptr)
-    {
+  {
     of << " diffusionWeightedNodeRef=\"" << this->DiffusionWeightedNodeID << "\"";
-    }
+  }
   if (this->MaskNodeID != nullptr)
-    {
+  {
     of << " maskNodeRef=\"" << this->MaskNodeID << "\"";
-    }
+  }
 
 }
 
@@ -91,24 +91,24 @@ void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     std::stringstream ss;
     ss<<attValue;
 
     if (!strcmp(attName, "baselineNodeRef"))
-      {
+    {
       this->SetBaselineNodeID(attValue);
-      }
+    }
     if (!strcmp(attName, "diffusionWeightedNodeRef"))
-      {
+    {
       this->SetDiffusionWeightedNodeID(attValue);
-      }
+    }
     if (!strcmp(attName, "maskNodeRef"))
-      {
+    {
       this->SetMaskNodeID(attValue);
-      }
+    }
   }
 
   this->EndModify(disabledModify);
@@ -120,10 +120,10 @@ vtkMRMLVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetBaselineNode()
 {
   vtkMRMLVolumeNode* node = nullptr;
   if (this->GetScene() && this->GetBaselineNodeID() )
-    {
+  {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->BaselineNodeID);
     node = vtkMRMLVolumeNode::SafeDownCast(snode);
-    }
+  }
   return node;
 }
 
@@ -132,10 +132,10 @@ vtkMRMLVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetMaskNode()
 {
   vtkMRMLVolumeNode* node = nullptr;
   if (this->GetScene() && this->GetMaskNodeID() )
-    {
+  {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->MaskNodeID);
     node = vtkMRMLVolumeNode::SafeDownCast(snode);
-    }
+  }
   return node;
 }
 
@@ -145,10 +145,10 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
 {
   vtkMRMLDiffusionWeightedVolumeNode* node = nullptr;
   if (this->GetScene() && this->GetDiffusionWeightedNodeID() )
-    {
+  {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DiffusionWeightedNodeID);
     node = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(snode);
-    }
+  }
   return node;
 }
 
@@ -181,17 +181,17 @@ void vtkMRMLDiffusionImageVolumeNode::UpdateReferenceID(const char *oldID, const
 {
   this->Superclass::UpdateReferenceID(oldID,newID);
   if (this->BaselineNodeID && !strcmp(oldID, this->BaselineNodeID))
-    {
+  {
     this->SetBaselineNodeID(newID);
-    }
+  }
   if (this->MaskNodeID && !strcmp(oldID, this->MaskNodeID))
-    {
+  {
     this->SetMaskNodeID(newID);
-    }
+  }
   if (this->DiffusionWeightedNodeID && !strcmp(oldID, this->DiffusionWeightedNodeID))
-    {
+  {
     this->SetDiffusionWeightedNodeID(newID);
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -200,17 +200,17 @@ void vtkMRMLDiffusionImageVolumeNode::UpdateReferences()
   Superclass::UpdateReferences();
 
 if (this->BaselineNodeID != nullptr && this->Scene->GetNodeByID(this->BaselineNodeID) == nullptr)
-    {
+{
     this->SetBaselineNodeID(nullptr);
-    }
+}
 if (this->MaskNodeID != nullptr && this->Scene->GetNodeByID(this->MaskNodeID) == nullptr)
-    {
+{
     this->SetMaskNodeID(nullptr);
-    }
+}
 if (this->DiffusionWeightedNodeID != nullptr && this->Scene->GetNodeByID(this->DiffusionWeightedNodeID) == nullptr)
-    {
+{
     this->SetDiffusionWeightedNodeID(nullptr);
-    }
+}
 }
 
 //---------------------------------------------------------------------------

@@ -96,9 +96,9 @@ void vtkMRMLTestSliceViewDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* n
 {
   vtkMRMLCameraNode * cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
   if (!cameraNode)
-    {
+  {
     return;
-    }
+  }
   vtkMRMLTestSliceViewDisplayableManager::NodeAddedCount++;
   //std::cout << "vtkMRMLTestSliceViewDisplayableManager - NodeAdded - "
   //          << (node ? node->GetName() : "None")<< std::endl;

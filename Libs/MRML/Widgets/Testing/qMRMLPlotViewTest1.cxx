@@ -77,11 +77,11 @@ int qMRMLPlotViewTest1( int argc, char * argv [] )
   float inc = 7.5 / (numPoints-1);
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
-    {
+  {
     table->SetValue(i, 0, i * inc);
     table->SetValue(i, 1, cos(i * inc));
     table->SetValue(i, 2, sin(i * inc));
-    }
+  }
 
   // Create a MRMLTableNode
   vtkNew<vtkMRMLTableNode> tableNode;
@@ -134,9 +134,9 @@ int qMRMLPlotViewTest1( int argc, char * argv [] )
   parentWidget.raise();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

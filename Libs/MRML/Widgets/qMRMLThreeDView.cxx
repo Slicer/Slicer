@@ -80,13 +80,13 @@ qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate(qMRMLThreeDView& object)
 qMRMLThreeDViewPrivate::~qMRMLThreeDViewPrivate()
 {
   if (this->DisplayableManagerGroup)
-    {
+  {
     this->DisplayableManagerGroup->Delete();
-    }
+  }
   if (this->InteractorObserver)
-    {
+  {
     this->InteractorObserver->Delete();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -137,12 +137,12 @@ void qMRMLThreeDViewPrivate::initDisplayableManagers()
                       << "vtkMRMLOrientationMarkerDisplayableManager"
                       << "vtkMRMLRulerDisplayableManager";
   foreach(const QString& displayableManager, displayableManagers)
-    {
+  {
     if(!factory->IsDisplayableManagerRegistered(displayableManager.toUtf8()))
-      {
+    {
       factory->RegisterDisplayableManager(displayableManager.toUtf8());
-      }
     }
+  }
 
   this->DisplayableManagerGroup
     = factory->InstantiateDisplayableManagers(q->renderer());
@@ -157,9 +157,9 @@ void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_Q(qMRMLThreeDView);
   if (newScene == this->MRMLScene)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
@@ -196,9 +196,9 @@ void qMRMLThreeDViewPrivate::updateWidgetFromMRML()
 {
   Q_Q(qMRMLThreeDView);
   if (!this->MRMLViewNode)
-    {
+  {
     return;
-    }
+  }
   q->setAnimationIntervalMs(this->MRMLViewNode->GetAnimationMs());
   q->setPitchRollYawIncrement(this->MRMLViewNode->GetRotateDegrees());
   q->setSpinIncrement(this->MRMLViewNode->GetSpinDegrees());
@@ -231,34 +231,34 @@ void ClickCallbackFunction (
   qMRMLThreeDView* threeDView = reinterpret_cast<qMRMLThreeDView*>(clientData);
   vtkMRMLCameraNode* cam = threeDView->cameraNode();
   if (!cam)
-    {
+  {
     qCritical() << "qMRMLThreeDView::mouseMoveEvent: can not retrieve camera node.";
     return;
-    }
+  }
 
   switch(eventId)
-    {
+  {
     case vtkCommand::MouseWheelForwardEvent:
-      {
+    {
       cam->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraInteractionEvent);
-      }
+    }
     break;
     case vtkCommand::MouseWheelBackwardEvent:
-      {
+    {
       cam->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraInteractionEvent);
-      }
+    }
     break;
     case vtkCommand::InteractionEvent:
-      {
+    {
       cam->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraInteractionEvent);
-      }
+    }
     break;
     case vtkCommand::KeyPressEvent:
-      {
+    {
       cam->InvokeCustomModifiedEvent(vtkMRMLCameraNode::CameraInteractionEvent);
-      }
-    break;
     }
+    break;
+  }
 }
 }
 
@@ -318,9 +318,9 @@ vtkMRMLCameraNode* qMRMLThreeDView::cameraNode()
   vtkMRMLCameraDisplayableManager * cameraDM = vtkMRMLCameraDisplayableManager::SafeDownCast(
         this->displayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
   if (!cameraDM)
-    {
+  {
     return nullptr;
-    }
+  }
 
   vtkMRMLCameraNode* cam = cameraDM->GetCameraNode();
   return cam;
@@ -331,13 +331,13 @@ void qMRMLThreeDView::rotateToViewAxis(unsigned int axisId)
 {
   vtkMRMLCameraNode* cam = this->cameraNode();
   if (!cam)
-    {
+  {
     qCritical() << "qMRMLThreeDView::rotateToViewAxis: can not retrieve camera node.";
     return;
-    }
+  }
 
   switch (axisId)
-    {
+  {
   case 0:
     cam->RotateTo(vtkMRMLCameraNode::Left);
     break;
@@ -361,7 +361,7 @@ void qMRMLThreeDView::rotateToViewAxis(unsigned int axisId)
                << " is not a valid axis id (0 to 5 : "
                << "-X, +X, -Y, +Y, -Z, +Z).";
     break;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -369,19 +369,19 @@ void qMRMLThreeDView::rotateToViewAxis(const std::string& axisLabel)
 {
   Q_D(qMRMLThreeDView);
   if (!d->MRMLViewNode)
-    {
+  {
     qCritical() << "qMRMLThreeDView::rotateToViewAxis: no valid view node.";
     return;
-    }
+  }
 
   for (int i = 0; i < vtkMRMLAbstractViewNode::AxisLabelsCount; ++i)
-    {
+  {
     if (axisLabel == std::string(d->MRMLViewNode->GetAxisLabel(i)))
-      {
+    {
       this->rotateToViewAxis(i);
       return;
-      }
     }
+  }
   qWarning() << "qMRMLThreeDView::rotateToViewAxis: " << QString(axisLabel.c_str())
               << "is not a valid axis label.";
 }
@@ -392,10 +392,10 @@ void qMRMLThreeDView
 {
   vtkMRMLCameraNode* cam = this->cameraNode();
   if (!cam)
-    {
+  {
     qCritical() << "qMRMLThreeDView::resetCamera: can not retrieve camera node.";
     return;
-    }
+  }
 
   cam->Reset(resetRotation, resetTranslation, resetDistance, this->renderer());
 }
@@ -407,9 +407,9 @@ void qMRMLThreeDView::setMRMLScene(vtkMRMLScene* newScene)
   d->setMRMLScene(newScene);
 
   if (d->MRMLViewNode && newScene != d->MRMLViewNode->GetScene())
-    {
+  {
     this->setMRMLViewNode(nullptr);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -417,9 +417,9 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 {
   Q_D(qMRMLThreeDView);
   if (d->MRMLViewNode == newViewNode)
-    {
+  {
     return;
-    }
+  }
 
   d->qvtkReconnect(
     d->MRMLViewNode, newViewNode,
@@ -448,7 +448,7 @@ void qMRMLThreeDView::resetFocalPoint()
   bool savedBoxVisibile = true;
   bool savedAxisLabelVisible = true;
   if (d->MRMLViewNode)
-    {
+  {
     // Save current visibility state of Box and AxisLabel
     savedBoxVisibile = d->MRMLViewNode->GetBoxVisible();
     savedAxisLabelVisible = d->MRMLViewNode->GetAxisLabelsVisible();
@@ -459,22 +459,22 @@ void qMRMLThreeDView::resetFocalPoint()
     d->MRMLViewNode->SetBoxVisible(0);
     d->MRMLViewNode->SetAxisLabelsVisible(0);
     d->MRMLViewNode->EndModify(wasModifying);
-    }
+  }
 
   // Exclude crosshair from focal point computation
   vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(d->MRMLScene);
   int crosshairMode = 0;
   if (crosshairNode)
-    {
+  {
     crosshairMode = crosshairNode->GetCrosshairMode();
     crosshairNode->SetCrosshairMode(vtkMRMLCrosshairNode::NoCrosshair);
-    }
+  }
 
   // Superclass resets the camera.
   this->Superclass::resetFocalPoint();
 
   if (d->MRMLViewNode)
-    {
+  {
     // Restore visibility state
     int wasModifying = d->MRMLViewNode->StartModify();
     d->MRMLViewNode->SetBoxVisible(savedBoxVisibile);
@@ -483,17 +483,17 @@ void qMRMLThreeDView::resetFocalPoint()
     // Inform the displayable manager that the view is reset, so it can
     // update the box/labels bounds.
     d->MRMLViewNode->InvokeEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);
-    }
+  }
 
   if (crosshairNode)
-    {
+  {
     crosshairNode->SetCrosshairMode(crosshairMode);
-    }
+  }
 
   if (this->renderer())
-    {
+  {
     this->renderer()->ResetCameraClippingRange();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -502,14 +502,14 @@ void qMRMLThreeDView::getDisplayableManagers(vtkCollection *displayableManagers)
   Q_D(qMRMLThreeDView);
 
   if (!displayableManagers)
-    {
+  {
     return;
-    }
+  }
   int num = d->DisplayableManagerGroup->GetDisplayableManagerCount();
   for (int n = 0; n < num; n++)
-    {
+  {
     displayableManagers->AddItem(d->DisplayableManagerGroup->GetNthDisplayableManager(n));
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -524,9 +524,9 @@ void qMRMLThreeDView::setViewCursor(const QCursor &cursor)
 {
   this->setCursor(cursor);
   if (this->VTKWidget() != nullptr)
-    {
+  {
     this->VTKWidget()->setCursor(cursor);  // TODO: test if cursor settings works
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -534,20 +534,20 @@ void qMRMLThreeDView::unsetViewCursor()
 {
   this->unsetCursor();
   if (this->VTKWidget() != nullptr)
-    {
+  {
     // TODO: it would be better to restore default cursor, but QVTKOpenGLNativeWidget
     // API does not have an accessor method to the default cursor.
     this->VTKWidget()->setCursor(QCursor(Qt::ArrowCursor));  // TODO: test if cursor settings works
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDView::setDefaultViewCursor(const QCursor &cursor)
 {
   if (this->VTKWidget() != nullptr)
-    {
+  {
     this->VTKWidget()->setDefaultCursor(cursor);  // TODO: test if cursor settings works
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -557,10 +557,10 @@ void qMRMLThreeDView::dragEnterEvent(QDragEnterEvent* event)
   vtkNew<vtkIdList> shItemIdList;
   qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(event->mimeData(), shItemIdList);
   if (shItemIdList->GetNumberOfIds() > 0)
-    {
+  {
     event->accept();
     return;
-    }
+  }
   Superclass::dragEnterEvent(event);
 }
 
@@ -571,15 +571,15 @@ void qMRMLThreeDView::dropEvent(QDropEvent* event)
   vtkNew<vtkIdList> shItemIdList;
   qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(event->mimeData(), shItemIdList);
   if (!shItemIdList->GetNumberOfIds())
-    {
+  {
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->MRMLScene);
   if (!shNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
     return;
-    }
+  }
   shNode->ShowItemsInView(shItemIdList, this->mrmlViewNode());
 }
 
@@ -589,9 +589,9 @@ bool qMRMLThreeDView::shadowsVisibility()const
   Q_D(const qMRMLThreeDView);
   vtkRenderer* renderer = this->renderer();
   if (!renderer)
-    {
+  {
     return false;
-    }
+  }
   return (renderer->GetPass() == d->ShadowsRenderPass);
 }
 
@@ -601,17 +601,17 @@ void qMRMLThreeDView::setShadowsVisibility(bool visibility)
   Q_D(const qMRMLThreeDView);
   vtkRenderer* renderer = this->renderer();
   if (!renderer)
-    {
+  {
     return;
-    }
+  }
   if (visibility)
-    {
+  {
     renderer->SetPass(d->ShadowsRenderPass);
-    }
+  }
   else
-    {
+  {
     renderer->SetPass(nullptr);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------

@@ -52,11 +52,11 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   qMRMLLabelComboBox* widget = reinterpret_cast<qMRMLLabelComboBox*>(data);
 
   CTKCOMPARE(widget->currentColor(), 13);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -87,9 +87,9 @@ int qMRMLLabelComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

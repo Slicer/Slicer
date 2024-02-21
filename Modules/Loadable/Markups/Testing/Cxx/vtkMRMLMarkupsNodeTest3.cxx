@@ -40,58 +40,58 @@ int CheckCurvePointDistances(vtkMRMLMarkupsCurveNode* curveNode, double expected
 {
   bool rerunWithReporting = false;
   while (true)
-    {
+  {
     if (verbose || rerunWithReporting)
-      {
+    {
       std::cout << "CheckCurvePointDistances:" << std::endl;
-      }
+    }
     int lastPointIndex = (curveNode->GetCurveClosed() ? curveNode->GetNumberOfControlPoints() : curveNode->GetNumberOfControlPoints() - 1);
     for (int pointIndex = 0; pointIndex < lastPointIndex; pointIndex++)
-      {
+    {
       double actualDistance;
       if (distanceOnCurve)
-        {
+      {
         actualDistance = curveNode->GetCurveLengthBetweenStartEndPointsWorld(
           curveNode->GetCurvePointIndexFromControlPointIndex(pointIndex % curveNode->GetNumberOfControlPoints()),
           curveNode->GetCurvePointIndexFromControlPointIndex((pointIndex + 1) % curveNode->GetNumberOfControlPoints()));
-        }
+      }
       else
-        {
+      {
         actualDistance = sqrt(vtkMath::Distance2BetweenPoints(
           curveNode->GetNthControlPointPosition(pointIndex % curveNode->GetNumberOfControlPoints()),
           curveNode->GetNthControlPointPosition((pointIndex + 1) % curveNode->GetNumberOfControlPoints())));
-        }
+      }
       double expectedDistance = expectedRegularDistance;
       if (pointIndex == lastPointIndex - 1)
-        {
+      {
         expectedDistance = expectedDistanceLast;
-        }
+      }
       else if (pointIndex == lastPointIndex - 2)
-        {
+      {
         expectedDistance = expectedDistanceSecondLast;
-        }
+      }
       if (verbose || rerunWithReporting)
-        {
+      {
         std::cout << "  " << pointIndex << ":  expected = " << expectedDistance << " ["
           << expectedDistance-tolerance << ", " << expectedDistance + tolerance << "]    actual = " << actualDistance
           << " (error=" << actualDistance- expectedDistance << ")" << std::endl;
-        }
+      }
       if (fabs(actualDistance - expectedDistance) > tolerance)
-        {
+      {
         // error found, rerun with reporting
         if (!rerunWithReporting)
-          {
+        {
           rerunWithReporting = true;
           continue;
-          }
+        }
         else
-          {
+        {
           std::cout << "    -> ERROR - actual value is out of tolerance range" << std::endl;
-          }
         }
       }
-    return rerunWithReporting ? EXIT_FAILURE : EXIT_SUCCESS;
     }
+    return rerunWithReporting ? EXIT_FAILURE : EXIT_SUCCESS;
+  }
 }
 
 int vtkMRMLMarkupsNodeTest3(int , char * [] )

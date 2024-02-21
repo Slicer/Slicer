@@ -44,9 +44,9 @@ int vtkMRMLNonlinearTransformNodeTest1(int argc, char * argv[] )
 
   const char *filename = nullptr;
   if (argc > 1)
-    {
+  {
     filename = argv[1];
-    }
+  }
 
   CHECK_EXIT_SUCCESS(TestBSplineTransform(filename));
   CHECK_EXIT_SUCCESS(TestGridTransform(filename));
@@ -72,12 +72,12 @@ int transformPoints(vtkAbstractTransform *transform, vtkPoints* sourcePoints, vt
 bool isSamePointPositions(vtkPoints* sourcePoints, vtkPoints* transformedPoints)
 {
   for (int i=0; i<sourcePoints->GetNumberOfPoints(); i++)
-    {
+  {
     if (vtkMath::Distance2BetweenPoints(sourcePoints->GetPoint(i), transformedPoints->GetPoint(i))>0.1*0.1)
-      {
+    {
       return false;
-      }
     }
+  }
   return true;
 }
 

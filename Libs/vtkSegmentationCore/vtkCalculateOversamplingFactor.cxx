@@ -73,15 +73,15 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
   this->OutputOversamplingFactor = 1;
 
   if (!this->InputPolyData)
-    {
+  {
     vtkErrorMacro("CalculateOversamplingFactor: Invalid input poly data!");
     return false;
-    }
+  }
   if (!this->ReferenceGeometryImageData)
-    {
+  {
     vtkErrorMacro("CalculateOversamplingFactor: Invalid rasterization reference volume node!");
     return false;
-    }
+  }
 
   // Mark start time
   vtkSmartPointer<vtkTimerLog> timer = vtkSmartPointer<vtkTimerLog>::New();
@@ -98,17 +98,17 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
 
   // Get relative structure size
   if (!this->CalculateRelativeStructureSize())
-    {
+  {
     vtkErrorMacro("CalculateOversamplingFactor: Failed to calculate relative structure size");
     return false;
-    }
+  }
 
   // Get complexity measure
   if (!this->CalculateComplexityMeasure())
-    {
+  {
     vtkErrorMacro("CalculateOversamplingFactor: Failed to calculate complexity measure");
     return false;
-    }
+  }
 #ifndef NDEBUG
   double checkpointFuzzyStart = timer->GetUniversalTime();
 #endif
@@ -118,14 +118,14 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
   vtkDebugMacro("CalculateOversamplingFactor: Automatic oversampling factor of " << this->OutputOversamplingFactor << " has been calculated.");
 
   if (this->LogSpeedMeasurements)
-    {
+  {
 #ifndef NDEBUG
     double checkpointEnd = timer->GetUniversalTime();
 #endif
     vtkDebugMacro("CalculateOversamplingFactor: Total automatic oversampling calculation time: " << checkpointEnd-checkpointStart << " s\n"
       << "\tCalculating relative structure size and complexity measure: " << checkpointFuzzyStart-checkpointStart << " s\n"
       << "\tDetermining oversampling factor using fuzzy rules: " << checkpointEnd-checkpointFuzzyStart << " s");
-    }
+  }
 
   // Clean up (triggers destruction of member)
   this->SetMassPropertiesAlgorithm(nullptr);
@@ -137,20 +137,20 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
 bool vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
 {
   if (!this->InputPolyData)
-    {
+  {
     vtkErrorMacro("CalculateRelativeStructureSize: Invalid input poly data!");
     return false;
-    }
+  }
   if (!this->ReferenceGeometryImageData)
-    {
+  {
     vtkErrorMacro("CalculateRelativeStructureSize: Invalid rasterization reference volume node!");
     return false;
-    }
+  }
   if (!this->MassPropertiesAlgorithm)
-    {
+  {
     vtkErrorMacro("CalculateRelativeStructureSize: Invalid mass properties algorithm!");
     return false;
-    }
+  }
 
   // Get structure volume in mm^3
   double structureVolume = this->MassPropertiesAlgorithm->GetVolume();
@@ -159,9 +159,9 @@ bool vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
   double structureProjectedVolume = this->MassPropertiesAlgorithm->GetVolumeProjected();
   double error = (structureVolume - structureProjectedVolume);
   if (error * 10000 > structureVolume)
-    {
+  {
     vtkDebugMacro("CalculateRelativeStructureSize: Computed structure volume may be invalid according to difference in calculated projected and normal volumes.");
-    }
+  }
 
   // Calculate voxel volume in mm^3
   double spacing[3] = {0.0,0.0,0.0};
@@ -181,15 +181,15 @@ bool vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
 bool vtkCalculateOversamplingFactor::CalculateComplexityMeasure()
 {
   if (!this->InputPolyData)
-    {
+  {
     vtkErrorMacro("CalculateComplexityMeasure: Invalid input poly data!");
     return false;
-    }
+  }
   if (!this->MassPropertiesAlgorithm)
-    {
+  {
     vtkErrorMacro("CalculateComplexityMeasure: Invalid mass properties algorithm!");
     return false;
-    }
+  }
 
   // Normalized shape index (NSI) characterizes the deviation of the shape of an object
   // from a sphere (from surface area and volume). A sphere's NSI is one. This number is always >= 1.0
@@ -217,10 +217,10 @@ bool vtkCalculateOversamplingFactor::CalculateComplexityMeasure()
 double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
 {
   if (this->OutputRelativeStructureSize == -1.0 || this->OutputComplexityMeasure == -1.0)
-    {
+  {
     vtkErrorMacro("DetermineOversamplingFactor: Invalid input measures! Returning default oversampling of 1");
     return 1.0;
-    }
+  }
 
   // Define input membership functions for relative structure size
   vtkSmartPointer<vtkPiecewiseFunction> sizeVerySmall = vtkSmartPointer<vtkPiecewiseFunction>::New();
@@ -329,14 +329,14 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
   // Calculate areas and centroids of all the sections (trapezoids) of all the consequent membership functions
   std::vector<std::pair<double,double> > areaCentroidPairs;
   for (std::vector<vtkPiecewiseFunction*>::iterator consequentIt=consequents.begin(); consequentIt!=consequents.end(); ++consequentIt)
-    {
+  {
     vtkPiecewiseFunction* currentMembershipFunction = (*consequentIt);
 
     // Calculate area and center of mass for each consequent
     double currentNode[4] = {0.0,0.0,0.0,0.0};
     double nextNode[4] = {0.0,0.0,0.0,0.0};
     for (int nodeIndex=0; nodeIndex<currentMembershipFunction->GetSize()-1; ++nodeIndex)
-      {
+    {
       // Calculate area of each trapezoid (may be triangle, rectangle, or actual trapezoid)
       currentMembershipFunction->GetNodeValue(nodeIndex, currentNode);
       currentMembershipFunction->GetNodeValue(nodeIndex+1, nextNode);
@@ -347,39 +347,39 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
       double topTriangleArea = 0.0;
       double topTriangleCentroid = 0.0;
       if (nextNode[1] > currentNode[1]) // If right node has higher membership
-        {
+      {
         topTriangleArea = (nextNode[0]-currentNode[0]) * (nextNode[1]-currentNode[1]) / 2.0;
         topTriangleCentroid = currentNode[0] + (nextNode[0]-currentNode[0])*2.0/3.0;
-        }
+      }
       else if (nextNode[1] < currentNode[1]) // If left node has higher membership (if they are equal then there is no triangle)
-        {
+      {
         topTriangleArea = (nextNode[0]-currentNode[0]) * (currentNode[1]-nextNode[1]) / 2.0;
         topTriangleCentroid = currentNode[0] + (nextNode[0]-currentNode[0])/3.0;
-        }
+      }
 
       double trapezoidArea = bottomRectangleArea + topTriangleArea;
       double trapezoidCentroid = bottomRectangleCentroid;
       if (topTriangleArea > 0.0)
-        {
+      {
         trapezoidCentroid = ((bottomRectangleArea*bottomRectangleCentroid) + (topTriangleArea*topTriangleCentroid)) / (bottomRectangleArea+topTriangleArea);
-        }
+      }
 
       if (trapezoidArea > 0.0) // Only add if area is non-zero
-        {
+      {
         std::pair<double,double> areaCentroidPair(trapezoidArea,trapezoidCentroid);
         areaCentroidPairs.push_back(areaCentroidPair);
-        }
       }
     }
+  }
 
   // Calculate combined center of mass from the components
   double nominator = 0.0;
   double denominator = 0.0;
   for (std::vector<std::pair<double,double> >::iterator trapezoidIt=areaCentroidPairs.begin(); trapezoidIt!=areaCentroidPairs.end(); ++trapezoidIt)
-    {
+  {
     nominator += trapezoidIt->first * trapezoidIt->second;
     denominator += trapezoidIt->first;
-    }
+  }
   double centerOfMass = nominator / denominator;
 
   // Defuzzify output
@@ -392,10 +392,10 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
 void vtkCalculateOversamplingFactor::ClipMembershipFunction(vtkPiecewiseFunction* membershipFunction, double clipValue)
 {
   if (clipValue >= 1.0)
-    {
+  {
     // No action needed if clip value is greater or equal to one
     return;
-    }
+  }
 
   // Find parameter values (strictly between nodes, not at nodes) where membership is
   // exactly the clip value. We will need to create new nodes at those parameter values.
@@ -403,56 +403,56 @@ void vtkCalculateOversamplingFactor::ClipMembershipFunction(vtkPiecewiseFunction
   double nextNode[4] = {0.0,0.0,0.0,0.0};
   std::vector<double> newNodeParameterValues;
   for (int nodeIndex=0; nodeIndex<membershipFunction->GetSize()-1; ++nodeIndex)
-    {
+  {
     membershipFunction->GetNodeValue(nodeIndex, currentNode);
     membershipFunction->GetNodeValue(nodeIndex+1, nextNode);
     if ( (currentNode[1] < clipValue && nextNode[1] > clipValue)
       || (currentNode[1] > clipValue && nextNode[1] < clipValue) )
-      {
+    {
       double newNodeParameterValue = (((nextNode[0]-currentNode[0])*(currentNode[1]-clipValue)) / (currentNode[1]-nextNode[1])) + currentNode[0];
       newNodeParameterValues.push_back(newNodeParameterValue);
-      }
     }
+  }
 
   // Move nodes down to clip value that hold value greater than clip value.
   for (int nodeIndex=0; nodeIndex<membershipFunction->GetSize(); ++nodeIndex)
-    {
+  {
     double currentNode[4] = {0.0,0.0,0.0,0.0};
     membershipFunction->GetNodeValue(nodeIndex, currentNode);
     if (currentNode[1] > clipValue)
-      {
+    {
       currentNode[1] = clipValue;
       membershipFunction->SetNodeValue(nodeIndex, currentNode);
-      }
     }
+  }
 
   // Add new nodes to the clipping points
   for (std::vector<double>::iterator pointIt=newNodeParameterValues.begin(); pointIt!=newNodeParameterValues.end(); ++pointIt)
-    {
+  {
     membershipFunction->AddPoint(*pointIt, clipValue);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOrientedImageData* imageData, double oversamplingFactor)
 {
   if (!imageData)
-    {
+  {
     return;
-    }
+  }
 
   // Sanity check for sensible oversampling factor
   if ( oversamplingFactor < 0.01
     || oversamplingFactor > 100.0 )
-    {
+  {
     vtkWarningWithObjectMacro(imageData, "vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry: Oversampling factor" << oversamplingFactor << "seems unreasonable!");
     return;
-    }
+  }
   if (oversamplingFactor == 1.0)
-    {
+  {
     // Oversampling is not needed
     return;
-    }
+  }
   // Calculate extent and spacing
   int newExtent[6] = {0,-1,0,-1,0,-1};
   int extent[6] = {0,-1,0,-1,0,-1};
@@ -461,7 +461,7 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
   double spacing[3] = {0.0,0.0,0.0};
   imageData->GetSpacing(spacing);
   for (unsigned int axis=0; axis<3; ++axis)
-    {
+  {
     int dimension = extent[axis*2+1] - extent[axis*2] + 1;
     int extentMin = static_cast<int>(ceil(oversamplingFactor * extent[axis * 2]));
     int extentMax = std::max(extentMin + static_cast<int>(floor(oversamplingFactor*dimension)) - 1, 0);
@@ -470,7 +470,7 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
     newSpacing[axis] = spacing[axis]
       * double(extent[axis * 2 + 1] - extent[axis * 2] + 1)
       / double(newExtent[axis * 2 + 1] - newExtent[axis * 2] + 1);
-    }
+  }
   imageData->SetExtent(newExtent);
   imageData->SetSpacing(newSpacing);
 

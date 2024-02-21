@@ -81,7 +81,7 @@ public:
   ~qMRMLSpinBox() override;
 
   enum UnitAwareProperty
-    {
+  {
     None = 0x00,
     Prefix = 0x01,
     Suffix = 0x02,
@@ -89,7 +89,7 @@ public:
     MinimumValue = 0x08,
     MaximumValue = 0x10,
     Scaling = 0x20,
-    };
+  };
   Q_DECLARE_FLAGS(UnitAwareProperties, UnitAwareProperty)
 
   /// Get MRML scene that has been set by setMRMLScene(). Default is no scene.

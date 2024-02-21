@@ -222,18 +222,18 @@ void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()
   QList<QAction*> moduleActions;
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   foreach(const QString& moduleName, moduleManager->modulesNames())
-    {
+  {
     qSlicerAbstractModule* module =
       qobject_cast<qSlicerAbstractModule*>(moduleManager->module(moduleName));
     if (module)
-      {
-      moduleActions << module->action();
-      }
-    }
-  if (moduleActions.size())
     {
-    actionsDialog.addActions(moduleActions, "Modules");
+      moduleActions << module->action();
     }
+  }
+  if (moduleActions.size())
+  {
+    actionsDialog.addActions(moduleActions, "Modules");
+  }
   // TODO add more actions
   actionsDialog.exec();
 }

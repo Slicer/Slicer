@@ -48,16 +48,16 @@ vtkMRMLColorNode::vtkMRMLColorNode()
 vtkMRMLColorNode::~vtkMRMLColorNode()
 {
   if (this->FileName)
-    {
+  {
     delete [] this->FileName;
     this->FileName = nullptr;
-    }
+  }
 
   if (this->NoName)
-    {
+  {
     delete [] this->NoName;
     this->NoName = nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -70,9 +70,9 @@ void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
   of << " type=\"" << this->GetType() << "\"";
 
   if (this->FileName != nullptr)
-    {
+  {
     // don't write it out, it's handled by the storage node
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -85,33 +85,33 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "name"))
-      {
+    {
       this->SetName(attValue);
-      }
+    }
     else if (!strcmp(attName, "type"))
-      {
+    {
       int type;
       std::stringstream ss;
       ss << attValue;
       ss >> type;
       this->SetType(type);
-      }
+    }
     else if (!strcmp(attName, "filename"))
-      {
+    {
       this->SetFileName(attValue);
       // don't read in the file with the colors, it's handled by the storage
       // node
       if (this->GetStorageNode() == nullptr)
-        {
+      {
         vtkWarningMacro("A color node has a file name, but no storage node, trying to create one");
         this->AddDefaultStorageNode(attValue);
-        }
       }
     }
+  }
   this->EndModify(disabledModify);
 }
 
@@ -139,11 +139,11 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
   vtkMRMLColorNode *node = (vtkMRMLColorNode *) anode;
 
   if (node->Type != -1)
-    {
+  {
     // not using SetType, as that will basically recreate a new color node,
     // very slow
     this->Type = node->Type;
-    }
+  }
   this->SetFileName(node->FileName);
   this->SetNoName(node->NoName);
 
@@ -174,10 +174,10 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Names array initialised: " << (this->GetNamesInitialised() ? "true" : "false") << "\n";
 
   if (this->Names.size() > 0)
-    {
+  {
     os << indent << "Color Names:\n";
     for (unsigned int i = 0; i < this->Names.size(); i++)
-      {
+    {
       double color[4];
       this->GetColor(i, color);
       os << indent << indent << i << " " << this->GetColorName(i)
@@ -185,12 +185,12 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
          << ", " << color[3] << ")"
          << std::endl;
       if ( i >= 10 )
-        {
+      {
         os << indent << indent << "..." << endl;
         break;
-        }
       }
     }
+  }
 }
 
 //-----------------------------------------------------------
@@ -222,13 +222,13 @@ void vtkMRMLColorNode::ProcessMRMLEvents ( vtkObject *caller,
 const char * vtkMRMLColorNode::GetTypeAsString()
 {
   if (this->Type == this->User)
-    {
+  {
     return "UserDefined";
-    }
+  }
   if (this->Type == this->File)
-    {
+  {
     return "File";
-    }
+  }
   return "(unknown)";
 }
 
@@ -248,10 +248,10 @@ void vtkMRMLColorNode::SetTypeToFile()
 void vtkMRMLColorNode::SetType(int type)
 {
   if (this->Type == type)
-    {
+  {
     vtkDebugMacro("SetType: type is already set to " << type);
     return;
-    }
+  }
 
   this->Type = type;
 
@@ -275,7 +275,7 @@ void vtkMRMLColorNode::SetNamesFromColors()
   this->Names.resize(numPoints);
 
   for (int i = 0; i < numPoints; ++i)
-    {
+  {
 #ifndef NDEBUG
     bool res =
 #endif
@@ -283,7 +283,7 @@ void vtkMRMLColorNode::SetNamesFromColors()
     // There is no reason why SetNameFromColor would fail because we control
     // the array size.
     assert(res);
-    }
+  }
   this->NamesInitialisedOn();
 }
 
@@ -305,10 +305,10 @@ bool vtkMRMLColorNode::SetNameFromColor(int index)
   ss << rgba[3];
   vtkDebugMacro("SetNamesFromColors: " << index << " Name = " << ss.str().c_str());
   if (this->SetColorName(index, ss.str().c_str()) == 0)
-    {
+  {
     vtkErrorMacro("SetNamesFromColors: Error setting color name " << index << " Name = " << ss.str().c_str());
     return false;
-    }
+  }
   return res;
 }
 
@@ -317,32 +317,32 @@ bool vtkMRMLColorNode::HasNameFromColor(int index)
 {
   const char* colorName = this->GetColorName(index);
   if (colorName && strcmp(colorName, this->GetNoName()) == 0)
-    {
+  {
     return false;
-    }
+  }
   std::stringstream ss;
   ss << colorName;
   std::string token;
   ss >> token;
   if (token.compare(0,2,"R=") != 0)
-    {
+  {
     return false;
-    }
+  }
   ss >> token;
   if (token.compare(0,2,"G=") != 0)
-    {
+  {
     return false;
-    }
+  }
   ss >> token;
   if (token.compare(0,2,"B=") != 0)
-    {
+  {
     return false;
-    }
+  }
   ss >> token;
   if (token.compare(0,2,"A=") != 0)
-    {
+  {
     return false;
-    }
+  }
   return true;
 }
 
@@ -350,18 +350,18 @@ bool vtkMRMLColorNode::HasNameFromColor(int index)
 const char *vtkMRMLColorNode::GetColorName(int ind)
 {
   if (!this->GetNamesInitialised())
-    {
+  {
     this->SetNamesFromColors();
-    }
+  }
   if (ind < 0 || ind >= (int)this->Names.size())
-    {
+  {
     vtkDebugMacro("vtkMRMLColorNode::GetColorName: index " << ind << " is out of range 0 - " << this->Names.size());
     return "invalid";
-    }
+  }
   if (this->Names[ind].empty())
-    {
+  {
     return this->NoName;
-    }
+  }
   return this->Names[ind].c_str();
 }
 
@@ -369,24 +369,24 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
 int vtkMRMLColorNode::GetColorIndexByName(const char *name)
 {
   if (name == nullptr)
-    {
+  {
     vtkErrorMacro("vtkMRMLColorNode::GetColorIndexByName: need a non-null name as argument");
     return -1;
-    }
+  }
 
   if (!this->GetNamesInitialised())
-    {
+  {
     this->SetNamesFromColors();
-    }
+  }
 
   std::string strName = name;
   for (int i = 0; i < this->GetNumberOfColors(); ++i)
-    {
+  {
     if (strName == this->GetColorName(i))
-      {
+    {
       return i;
-      }
     }
+  }
   return -1;
 }
 
@@ -395,14 +395,14 @@ std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *sub
 {
   std::string name = std::string(this->GetColorName(ind));
   if (strstr(name.c_str(), " ") != nullptr)
-    {
+  {
     std::string::size_type spaceIndex = name.find( " ", 0 );
     while (spaceIndex != std::string::npos)
-      {
+    {
       name.replace(spaceIndex, 1, subst, 0, strlen(subst));
       spaceIndex = name.find( " ", spaceIndex );
-      }
     }
+  }
 
   return name;
 }
@@ -418,14 +418,14 @@ std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char 
   std::string::size_type pos = 0;
   size_t substLength = strlen(subst);
   while ((pos = fileName.find_first_not_of(validCharacters, pos)) != std::string::npos)
-    {
+  {
     fileName.replace(pos, 1, subst, substLength);
     pos += substLength;
     if (pos > 255)
-      {
+    {
       break;
-      }
     }
+  }
   // Truncate to 256 chars
   return fileName.substr(0, 256);
 }
@@ -434,17 +434,17 @@ std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char 
 int vtkMRMLColorNode::SetColorName(int ind, const char *name)
 {
   if (ind >= static_cast<int>(this->Names.size()) || ind < 0)
-    {
+  {
     vtkErrorMacro("ERROR: SetColorName, index was out of bounds: "<< ind << ", current size is " << this->Names.size() << ", table name = " << (this->GetName() == nullptr ? "null" : this->GetName()));
     return 0;
-    }
+  }
   std::string newName(name);
   if (this->Names[ind] != newName)
-    {
+  {
     this->Names[ind] = newName;
     this->StorableModifiedTime.Modified();
     this->Modified();
-    }
+  }
   return 1;
 }
 
@@ -456,15 +456,15 @@ int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const ch
   std::string substString = std::string(subst);
    // does the input name have the subst character in it?
   if (strstr(name, substString.c_str()) != nullptr)
-    {
+  {
     std::replace(nameString.begin(), nameString.end(), *subst, ' ');
     return this->SetColorName(ind, nameString.c_str());
-    }
+  }
   else
-    {
+  {
     // no substitutions necessary
     return this->SetColorName(ind, name);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------

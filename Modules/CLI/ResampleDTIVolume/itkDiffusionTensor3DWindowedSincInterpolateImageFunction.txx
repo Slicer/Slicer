@@ -35,10 +35,10 @@ DiffusionTensor3DWindowedSincInterpolateImageFunction<TData,
 ::AllocateInterpolator()
 {
   for( int i = 0; i < 6; i++ )
-    {
+  {
     windowedSincInterpolator[i] = WindowedSincInterpolateImageFunctionType::New();
     this->m_Interpol[i] = windowedSincInterpolator[i];
-    }
+  }
 }
 
 } // end itk namespace

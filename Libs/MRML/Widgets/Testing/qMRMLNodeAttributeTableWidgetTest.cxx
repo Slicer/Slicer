@@ -58,11 +58,11 @@ void qMRMLNodeAttributeTableWidgetTester::init()
 void qMRMLNodeAttributeTableWidgetTester::cleanup()
 {
   if (this->NodeAttributeTableWidget != nullptr)
-    {
+  {
     this->NodeAttributeTableWidget->setMRMLNode(nullptr);
     delete this->NodeAttributeTableWidget;
     this->NodeAttributeTableWidget = nullptr;
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------

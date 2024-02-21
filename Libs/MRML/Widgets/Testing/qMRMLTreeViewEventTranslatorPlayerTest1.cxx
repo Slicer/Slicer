@@ -60,21 +60,21 @@ namespace
 QSignalSpy* SpyAction;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   qMRMLTreeView* widget = reinterpret_cast<qMRMLTreeView*>(data);
 
   CTKCOMPARE(widget->currentIndex().row(), 1);
   Q_UNUSED(widget);
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   qMRMLTreeView* widget = reinterpret_cast<qMRMLTreeView*>(data);
 
   Q_UNUSED(widget);
 
   CTKCOMPARE(widget->currentIndex().row(), 1);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -140,9 +140,9 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
                         &checkFinalWidgetState2);
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
 

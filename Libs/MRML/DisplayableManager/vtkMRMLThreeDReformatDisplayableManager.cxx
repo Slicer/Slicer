@@ -115,9 +115,9 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
   if (!sliceNode ||
      this->SliceNodes.find(vtkMRMLSliceNode::SafeDownCast(sliceNode)) !=
      this->SliceNodes.end())
-    {
+  {
     return;
-    }
+  }
 
   // We associate the node with the widget if an instantiation is called.
   // We add the sliceNode without instantiating the widget first.
@@ -133,9 +133,9 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 ::RemoveSliceNode(vtkMRMLSliceNode* sliceNode)
 {
   if (!sliceNode)
-    {
+  {
     return;
-    }
+  }
 
    this->RemoveSliceNode(
      this->SliceNodes.find(vtkMRMLSliceNode::SafeDownCast(sliceNode)));
@@ -146,15 +146,15 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 ::RemoveSliceNode(SliceNodesLink::iterator it)
 {
   if (it == this->SliceNodes.end())
-    {
+  {
     return;
-    }
+  }
 
   // The manager has the responsabilty to delete the widget.
   if (it->second)
-    {
+  {
     it->second->Delete();
-    }
+  }
 
   // TODO: it->first might have already been deleted
   it->first->RemoveObserver(this->External->GetMRMLNodesCallbackCommand());
@@ -167,9 +167,9 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 {
   // The manager has the responsabilty to delete the widgets.
   while (this->SliceNodes.size() > 0)
-    {
+  {
     this->RemoveSliceNode(this->SliceNodes.begin());
-    }
+  }
   this->SliceNodes.clear();
 }
 
@@ -177,23 +177,23 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 void vtkMRMLThreeDReformatDisplayableManager::vtkInternal::UpdateSliceNodes()
 {
   if (this->External->GetMRMLScene() == nullptr)
-    {
+  {
     this->RemoveAllSliceNodes();
     return;
-    }
+  }
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
   vtkCollection* scene = this->External->GetMRMLScene()->GetNodes();
   for (scene->InitTraversal(it);
        (node = vtkMRMLNode::SafeDownCast(scene->GetNextItemAsObject(it))) ;)
-    {
+  {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
     if (sliceNode)
-      {
+    {
       this->AddSliceNode(sliceNode);
-      }
     }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -201,21 +201,21 @@ vtkMRMLSliceNode* vtkMRMLThreeDReformatDisplayableManager::vtkInternal::
 GetSliceNode(vtkImplicitPlaneWidget2* planeWidget)
 {
   if (!planeWidget)
-    {
+  {
     return nullptr;
-    }
+  }
 
   // Get the slice node
   vtkMRMLSliceNode* sliceNode = nullptr;
   for (SliceNodesLink::iterator it=this->SliceNodes.begin();
        it!=this->SliceNodes.end(); ++it)
-    {
+  {
     if (it->second == planeWidget)
-      {
+    {
       sliceNode = it->first;
       break;
-      }
     }
+  }
 
   return sliceNode;
 }
@@ -259,9 +259,9 @@ vtkImplicitPlaneWidget2* vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 ::GetWidget(vtkMRMLSliceNode* sliceNode)
 {
   if (!sliceNode)
-    {
+  {
     return nullptr;
-    }
+  }
 
   SliceNodesLink::iterator it = this->SliceNodes.find(sliceNode);
   return (it != this->SliceNodes.end()) ? it->second : 0;
@@ -273,17 +273,17 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal
                vtkImplicitPlaneWidget2* planeWidget)
 {
   if (!sliceNode || (!planeWidget && !sliceNode->GetWidgetVisible()))
-    {
+  {
     return false;
-    }
+  }
 
   if (!planeWidget)
-    {
+  {
     // Instantiate widget and link it if
     // there is no one associated to the sliceNode yet
     planeWidget = this->NewImplicitPlaneWidget();
     this->SliceNodes.find(sliceNode)->second  = planeWidget;
-    }
+  }
 
   // Update the representation
   vtkImplicitPlaneRepresentation* rep =
@@ -298,21 +298,21 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal
     vtkMRMLSliceLogic::GetSliceCompositeNode(sliceNode);
   const char* volumeNodeID = nullptr;
   if (!volumeNodeID)
-    {
+  {
     volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetBackgroundVolumeID() : nullptr;
-    }
+  }
   if (!volumeNodeID)
-    {
+  {
     volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetForegroundVolumeID() : nullptr;
-    }
+  }
   if (!volumeNodeID)
-    {
+  {
     volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetLabelVolumeID() : nullptr;
-    }
+  }
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(
     this->External->GetMRMLScene()->GetNodeByID(volumeNodeID));
   if (volumeNode)
-    {
+  {
     double dimensions[3], center[3];
     vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, dimensions, center);
     double bounds[6] = {bounds[0] = center[0] - dimensions[0] / 2,
@@ -323,7 +323,7 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal
                         bounds[5] = center[2] + dimensions[2] / 2};
     rep->SetPlaceFactor(1.);
     rep->PlaceWidget(bounds);
-    }
+  }
 
   // Update normal
   rep->SetNormal(sliceToRAS->GetElement(0,2),
@@ -348,10 +348,10 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal
      (planeWidget->GetEnabled() && !visible) ||
      (!rep->GetLockNormalToCamera() && sliceNode->GetWidgetNormalLockedToCamera()) ||
      (rep->GetLockNormalToCamera() && !sliceNode->GetWidgetNormalLockedToCamera()))
-    {
+  {
     planeWidget->SetEnabled(sliceNode->GetWidgetVisible());
     planeWidget->SetLockNormalToCamera(sliceNode->GetWidgetNormalLockedToCamera());
-    }
+  }
 
   return renderingRequired;
 }
@@ -389,9 +389,9 @@ void vtkMRMLThreeDReformatDisplayableManager
 {
   if (this->GetMRMLScene()->IsBatchProcessing() ||
       !nodeAdded->IsA("vtkMRMLSliceNode"))
-    {
+  {
     return;
-    }
+  }
 
   this->Internal->AddSliceNode(vtkMRMLSliceNode::SafeDownCast(nodeAdded));
 }
@@ -401,9 +401,9 @@ void vtkMRMLThreeDReformatDisplayableManager
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* nodeRemoved)
 {
   if (!nodeRemoved->IsA("vtkMRMLSliceNode"))
-    {
+  {
     return;
-    }
+  }
 
   this->Internal->RemoveSliceNode(vtkMRMLSliceNode::SafeDownCast(nodeRemoved));
 }
@@ -416,9 +416,9 @@ OnMRMLNodeModified(vtkMRMLNode* node)
   assert(sliceNode);
   vtkImplicitPlaneWidget2* planeWidget = this->Internal->GetWidget(sliceNode);
   if (this->Internal->UpdateWidget(sliceNode, planeWidget))
-    {
+  {
     this->RequestRender();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -434,27 +434,27 @@ ProcessWidgetsEvents(vtkObject *caller,
     planeWidget->GetImplicitPlaneRepresentation() : nullptr;
 
   if (!planeWidget || !sliceNode || !rep)
-    {
+  {
     return;
-    }
+  }
 
   // Broadcast widget transformation
   vtkMRMLSliceLogic* sliceLogic = this->GetMRMLApplicationLogic()->GetSliceLogic(sliceNode);
   if (event == vtkCommand::StartInteractionEvent && sliceLogic )
-    {
+  {
     sliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::MultiplanarReformatFlag);
     return;
-    }
+  }
   else if (event == vtkCommand::EndInteractionEvent && sliceLogic)
-    {
+  {
     sliceLogic->EndSliceNodeInteraction();
     return;
-    }
+  }
   // We should listen to the interactorStyle instead when LockNormalToCamera on.
   else if (planeWidget->GetImplicitPlaneRepresentation()->GetLockNormalToCamera() && sliceLogic)
-    {
+  {
     sliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::MultiplanarReformatFlag);
-    }
+  }
 
   double cross[3], dot, rotation;
   vtkNew<vtkTransform> transform;

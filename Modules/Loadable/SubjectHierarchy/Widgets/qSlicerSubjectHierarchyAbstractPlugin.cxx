@@ -62,9 +62,9 @@ qSlicerSubjectHierarchyAbstractPlugin::~qSlicerSubjectHierarchyAbstractPlugin() 
 QString qSlicerSubjectHierarchyAbstractPlugin::name()const
 {
   if (m_Name.isEmpty())
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Empty plugin name";
-    }
+  }
   return this->m_Name;
 }
 
@@ -123,16 +123,16 @@ bool qSlicerSubjectHierarchyAbstractPlugin::canEditProperties(vtkIdType itemID)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
-    }
+  }
   vtkMRMLNode* node = shNode->GetItemDataNode(itemID);
   if (!node)
-    {
+  {
     // default implementation can only edit associated nodes
     return false;
-    }
+  }
   double confidence = 0.0;
   QString moduleForEditProperties = qSlicerApplication::application()->nodeModule(node, &confidence);
   return !moduleForEditProperties.isEmpty() && confidence > 0.0;
@@ -143,10 +143,10 @@ void qSlicerSubjectHierarchyAbstractPlugin::editProperties(vtkIdType itemID)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
   qSlicerApplication::application()->openNodeModule(shNode->GetItemDataNode(itemID));
 }
 
@@ -189,30 +189,30 @@ double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMR
 bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkIdType parentItemID)
 {
   if (!nodeToAdd)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid node to add";
     return false;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
-    }
+  }
 
   // If parent is invalid, then add it under the scene
   if (!parentItemID)
-    {
+  {
     parentItemID = shNode->GetSceneItemID();
-    }
+  }
 
   // Create subject hierarchy item with added node
   vtkIdType addedItemID = shNode->CreateItem(parentItemID, nodeToAdd, this->m_Name.toUtf8());
   if (!addedItemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to add subject hierarchy item for data node " << nodeToAdd->GetName();
     return false;
-    }
+  }
   return true;
 }
 
@@ -232,10 +232,10 @@ bool qSlicerSubjectHierarchyAbstractPlugin::reparentItemInsideSubjectHierarchy(v
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
-    }
+  }
 
   shNode->SetItemParent(itemID, parentItemID);
   return true;
@@ -246,10 +246,10 @@ QString qSlicerSubjectHierarchyAbstractPlugin::displayedItemName(vtkIdType itemI
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return QString();
-    }
+  }
 
   return QString(shNode->GetItemName(itemID).c_str());
 }
@@ -259,18 +259,18 @@ QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(vtkIdType itemID)const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return QString();
-    }
+  }
 
   // Display node type and level in the tooltip
   QString tooltipString("");
   vtkMRMLNode* dataNode = shNode->GetItemDataNode(itemID);
   if (dataNode)
-    {
+  {
     tooltipString.append(dataNode->GetNodeTagName());
-    }
+  }
 
   return tooltipString;
 }
@@ -280,10 +280,10 @@ void qSlicerSubjectHierarchyAbstractPlugin::setDisplayVisibility(vtkIdType itemI
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
 
   shNode->SetItemDisplayVisibility(itemID, visible);
 }
@@ -293,10 +293,10 @@ int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkIdType itemID
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0;
-    }
+  }
 
   return shNode->GetItemDisplayVisibility(itemID);
 }
@@ -324,10 +324,10 @@ bool qSlicerSubjectHierarchyAbstractPlugin::isThisPluginOwnerOfItem(vtkIdType it
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
-    }
+  }
 
   return !shNode->GetItemOwnerPluginName(itemID).compare(this->m_Name.toUtf8().constData());
 }
@@ -339,10 +339,10 @@ qSlicerAbstractModuleWidget* qSlicerSubjectHierarchyAbstractPlugin::switchToModu
   qSlicerAbstractCoreModule* module = qSlicerApplication::application()->moduleManager()->module(moduleName);
   qSlicerAbstractModule* moduleWithAction = qobject_cast<qSlicerAbstractModule*>(module);
   if (!moduleWithAction)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Module with name '" << moduleName << "' not found";
     return nullptr;
-    }
+  }
 
   // Switch to module
   moduleWithAction->widgetRepresentation(); // Make sure it's created before showing
@@ -362,9 +362,9 @@ void qSlicerSubjectHierarchyAbstractPlugin::hideAllContextMenuActions()const
   allActions << this->viewContextMenuActions();
 
   foreach (QAction* action, allActions)
-    {
+  {
     action->setVisible(false);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -372,58 +372,58 @@ bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtk
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
-    }
+  }
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!displayableNode)
-    {
+  {
     return false;
-    }
+  }
   displayableNode->CreateDefaultDisplayNodes();
   vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayableNode->GetDisplayNode());
   if (!displayNode || !displayNode->IsShowModeDefault())
-    {
+  {
     return false;
-    }
+  }
   if (viewNode)
-    {
+  {
     // Show in specific view
     MRMLNodeModifyBlocker blocker(displayNode);
     if (!displayNode->GetVisibility())
-      {
+    {
       displayNode->SetVisibility(true);
       // This was hidden in all views, show it only in the currently selected view
       displayNode->RemoveAllViewNodeIDs();
-      }
+    }
     displayNode->AddViewNodeID(viewNode->GetID());
     if (displayNode->GetOpacity() <= 0.0)
-      {
-      displayNode->SetOpacity(1.0);
-      }
-    if (vtkMRMLSliceNode::SafeDownCast(viewNode))
-      {
-      displayNode->SetVisibility2D(true);
-      }
-    if (vtkMRMLViewNode::SafeDownCast(viewNode))
-      {
-      displayNode->SetVisibility3D(true);
-      }
-    }
-  else
     {
+      displayNode->SetOpacity(1.0);
+    }
+    if (vtkMRMLSliceNode::SafeDownCast(viewNode))
+    {
+      displayNode->SetVisibility2D(true);
+    }
+    if (vtkMRMLViewNode::SafeDownCast(viewNode))
+    {
+      displayNode->SetVisibility3D(true);
+    }
+  }
+  else
+  {
     // Show in all views
     MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->RemoveAllViewNodeIDs();
     displayNode->SetVisibility(true);
     if (displayNode->GetOpacity() <= 0.0)
-      {
+    {
       displayNode->SetOpacity(1.0);
-      }
+    }
     displayNode->SetVisibility2D(true);
     displayNode->SetVisibility3D(true);
-    }
+  }
   return true;
 }
 
@@ -431,9 +431,9 @@ bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtk
 void qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(QAction* action, int section, int weight/*=0*/, double weightAdjustment/*=0.0*/)
 {
   if (!action)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: invalid action";
     return;
-    }
+  }
   action->setProperty("section", section + weight * 0.01 + weightAdjustment * 0.0001);
 }

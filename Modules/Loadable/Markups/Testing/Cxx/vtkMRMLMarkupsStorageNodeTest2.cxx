@@ -94,17 +94,17 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
 
   // and add a markup with 1 point, default values
   if (markupsNode->GetMaximumNumberOfControlPoints() != 1)
-    {
+  {
     int defaultPointIndex = markupsNode->AddNControlPoints(1);
     CHECK_INT(defaultPointIndex, 1);
-    }
+  }
 
   int emptyLabelIndex = -1;
   int commaIndex = -1;
   int quotesIndex = -1;
   bool testManyPoints = markupsNode->GetMaximumNumberOfControlPoints() < 0 || markupsNode->GetMaximumNumberOfControlPoints() > 5;
   if (testManyPoints)
-    {
+  {
     // and another one unsetting the label
     emptyLabelIndex = markupsNode->AddNControlPoints(1);
     markupsNode->SetNthControlPointLabel(emptyLabelIndex, "");
@@ -118,19 +118,19 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
     quotesIndex = markupsNode->AddNControlPoints(1);
     markupsNode->SetNthControlPointLabel(quotesIndex, "Label with end quotes \"around the last phrase\"");
     markupsNode->SetNthControlPointDescription(quotesIndex, "\"Description fully quoted\"");
-    }
+  }
 
   //
   // test write
   //
 
   if (verbose)
-    {
+  {
     std::cout << "\nWriting this markup to file:" << std::endl;
     vtkIndent indent;
     markupsNode->PrintSelf(std::cout, indent);
     std::cout << std::endl;
-    }
+  }
 
   storageNode->SetFileName(fileName.c_str());
   std::cout << "Writing " << storageNode->GetFileName() << std::endl;
@@ -160,12 +160,12 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   CHECK_BOOL(snode2->ReadData(markupsNode2), true);
 
   if (verbose)
-    {
+  {
     std::cout << "\nMarkup read from file = " << std::endl;
     vtkIndent indent;
     markupsNode2->PrintSelf(std::cout, indent);
     std::cout << std::endl;
-    }
+  }
 
   // test values on the first markup
   double newOrientation[4] = { -5, -5, -5, -5 };
@@ -173,9 +173,9 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   std::cout << "Orientation from read file: [" << newOrientation[0] << ", " << newOrientation[1] << ", "
     << newOrientation[2] << ", " << newOrientation[3] << "]" << std::endl;
   for (int r = 0; r < 4; r++)
-    {
+  {
     CHECK_DOUBLE_TOLERANCE(newOrientation[r], orientation[r], 1e-3);
-    }
+  }
   CHECK_STD_STRING(markupsNode2->GetNthControlPointAssociatedNodeID(modifiedPointIndex), associatedNodeID);
   CHECK_BOOL(markupsNode2->GetNthControlPointSelected(modifiedPointIndex), false);
   CHECK_BOOL(markupsNode2->GetNthControlPointVisibility(modifiedPointIndex), false);
@@ -190,10 +190,10 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   CHECK_DOUBLE_TOLERANCE(outputPoint[2], inputPoint[2], 0.1);
 
   if (testManyPoints)
-    {
+  {
     // test the unset label on the third markup
     CHECK_STD_STRING(markupsNode2->GetNthControlPointLabel(emptyLabelIndex), "");
-    }
+  }
 
   // now read it again with a display node defined
   vtkNew<vtkMRMLMarkupsDisplayNode> dispNode2;
@@ -219,11 +219,11 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   CHECK_BOOL(snode2->GetUseRAS(), true);
 
   if (verbose)
-    {
+  {
     std::cout << "\nMarkups specified in RAS read from file: " << storageNode->GetFileName() << std::endl;
     vtkIndent indent;
     markupsNode2->PrintSelf(std::cout, indent);
-    }
+  }
 
   // check the point coordinates are correct when stored in files in RAS coordinate system
   double outputPointLoadedFromRASFile[3];
@@ -233,7 +233,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   CHECK_DOUBLE_TOLERANCE(outputPointLoadedFromRASFile[2], inputPoint[2], 0.1);
 
   if (testManyPoints)
-    {
+  {
     // check for commas in the markup label and description
     std::string labelWithCommas = markupsNode2->GetNthControlPointLabel(commaIndex);
     int numCommas = std::count(labelWithCommas.begin(), labelWithCommas.end(), ',');
@@ -257,7 +257,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
     std::string descWithQuotes = markupsNode2->GetNthControlPointDescription(quotesIndex);
     numQuotes = std::count(descWithQuotes.begin(), descWithQuotes.end(), '"');
     CHECK_INT(numQuotes, 2);
-    }
+  }
 
   return EXIT_SUCCESS;
 }
@@ -273,9 +273,9 @@ int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
   // Test if information can be saved to file and retrieved
   std::string tempFolder = ".";
   if (argc > 1)
-    {
+  {
     tempFolder = std::string(argv[1]);
-    }
+  }
   CHECK_EXIT_SUCCESS(TestStoragNode(
     vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(),
     vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-fiducial-temp.fcsv"));

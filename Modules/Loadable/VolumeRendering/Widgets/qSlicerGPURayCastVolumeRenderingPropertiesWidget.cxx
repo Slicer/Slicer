@@ -111,21 +111,21 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
 
   vtkMRMLGPURayCastVolumeRenderingDisplayNode* displayNode = this->mrmlGPURayCastDisplayNode();
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
   vtkMRMLViewNode* firstViewNode = displayNode->GetFirstViewNode();
   if (!firstViewNode)
-    {
+  {
     return;
-    }
+  }
 
   int technique = firstViewNode->GetRaycastTechnique();
   int index = d->RenderingTechniqueComboBox->findData(QVariant(technique));
   if (index == -1)
-    {
+  {
     index = 0;
-    }
+  }
   bool wasBlocked = d->RenderingTechniqueComboBox->blockSignals(true);
   d->RenderingTechniqueComboBox->setCurrentIndex(index);
   d->RenderingTechniqueComboBox->blockSignals(wasBlocked);
@@ -141,21 +141,21 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setRenderingTechnique(int
   Q_D(qSlicerGPURayCastVolumeRenderingPropertiesWidget);
   vtkMRMLGPURayCastVolumeRenderingDisplayNode* displayNode = this->mrmlGPURayCastDisplayNode();
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
   int technique = d->RenderingTechniqueComboBox->itemData(index).toInt();
 
   std::vector<vtkMRMLNode*> viewNodes;
   displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
   for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
-    {
+  {
     vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
     if (displayNode->IsDisplayableInView(viewNode->GetID()))
-      {
+    {
       viewNode->SetRaycastTechnique(technique);
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -164,18 +164,18 @@ void qSlicerGPURayCastVolumeRenderingPropertiesWidget::setSurfaceSmoothing(bool 
   Q_D(qSlicerGPURayCastVolumeRenderingPropertiesWidget);
   vtkMRMLGPURayCastVolumeRenderingDisplayNode* displayNode = this->mrmlGPURayCastDisplayNode();
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
 
   std::vector<vtkMRMLNode*> viewNodes;
   displayNode->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
   for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
-    {
+  {
     vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(*it);
     if (displayNode->IsDisplayableInView(viewNode->GetID()))
-      {
+    {
       viewNode->SetVolumeRenderingSurfaceSmoothing(on);
-      }
     }
+  }
 }

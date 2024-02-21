@@ -27,15 +27,15 @@ DiffusionTensor3DNearestNeighborInterpolateFunction<TData, TCoordRep>
 // ::Evaluate( const PointType &point )
 {
   if( this->m_Image.IsNotNull() )
-    {
+  {
     typename DiffusionImageType::IndexType pixelIndex;
     this->ConvertContinuousIndexToNearestIndex( index, pixelIndex );
     return this->m_Image->GetPixel( pixelIndex );
-    }
+  }
   else
-    {
+  {
     itkExceptionMacro( << " No InputImage set" );
-    }
+  }
 }
 
 } // end namespace itk

@@ -65,23 +65,23 @@ qMRMLSceneCategoryModel::~qMRMLSceneCategoryModel() = default;
 QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category)const
 {
   if (category.isEmpty())
-    {
+  {
     return this->mrmlSceneItem();
-    }
+  }
   // doesn't search category items recursively.
   // options to optimize, categories are continuous and are the first children
   // of the mrmlSceneItem
   int rowCount = this->mrmlSceneItem()->rowCount();
   for (int i = 0; i < rowCount; ++i)
-    {
+  {
     QStandardItem* child = this->mrmlSceneItem()->child(i,0);
     if (child &&
         child->data(qMRMLSceneModel::UIDRole).toString() == "category" &&
         child->text() == category)
-      {
+    {
       return child;
-      }
     }
+  }
   return this->mrmlSceneItem();
 }
 
@@ -117,20 +117,20 @@ QStandardItem* qMRMLSceneCategoryModel::insertNode(vtkMRMLNode* node)
 {
   QStandardItem* nodeItem = this->itemFromNode(node);
   if (nodeItem)
-    {
+  {
     return nodeItem;
-    }
+  }
   // WARNING: works only if the nodes are in the scene in the correct order:
   // parents are before children
   QString category = QString(node->GetAttribute("Category"));
   QStandardItem* parentItem = this->itemFromCategory(category);
   Q_ASSERT(parentItem);
   if (!category.isEmpty() && parentItem == this->mrmlSceneItem())
-    {
+  {
     parentItem = this->insertCategory(category,
                                       this->preItems(parentItem).count()
                                       + this->categoryCount());
-    }
+  }
   //int min = this->preItems(parentItem).count();
   int max = parentItem->rowCount() - this->postItems(parentItem).count();
   nodeItem = this->insertNode(node, parentItem, max);
@@ -162,13 +162,13 @@ void qMRMLSceneCategoryModel::updateItemFromNode(QStandardItem* item, vtkMRMLNod
   // if the item has no parent, then it means it hasn't been put into the scene yet.
   // and it will do it automatically.
   if (parentItem != nullptr && (parentItem != newParentItem))
-    {
+  {
     QList<QStandardItem*> children = parentItem->takeRow(item->row());
     //int min = this->preItems(newParentItem).count();
     int max = newParentItem->rowCount() - this->postItems(newParentItem).count();
     int pos = max;
     newParentItem->insertRow(pos, children);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -182,18 +182,18 @@ void qMRMLSceneCategoryModel::updateNodeFromItem(vtkMRMLNode* node, QStandardIte
   // called for every item changed, so it should be
   QStandardItem* parentItem = item->parent();
   for (int i = 0; i < parentItem->columnCount(); ++i)
-    {
+  {
     if (parentItem->child(item->row(), i) == nullptr)
-      {
+    {
       return;
-      }
     }
+  }
   QString category =
     (parentItem != this->mrmlSceneItem()) ? parentItem->text() : QString();
   // If the attribute has never been set, don't set it with an empty string.
   if (!(node->GetAttribute("Category") == nullptr &&
         category.isEmpty()))
-    {
+  {
     node->SetAttribute("Category", category.toUtf8());
-    }
+  }
 }

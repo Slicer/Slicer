@@ -48,7 +48,7 @@ int vtkMRMLModelStorageNodeTest1(int argc, char * argv[])
   vtkNew<vtkPolyData> poly;
   CreateVoxelMeshes(ug.GetPointer(), poly.GetPointer());
   for (int coordinateSystem : { vtkMRMLStorageNode::CoordinateSystemRAS, vtkMRMLStorageNode::CoordinateSystemLPS })
-    {
+  {
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", poly.GetPointer(), coordinateSystem));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtp", poly.GetPointer(), coordinateSystem));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".stl", poly.GetPointer(), coordinateSystem, true));
@@ -56,7 +56,7 @@ int vtkMRMLModelStorageNodeTest1(int argc, char * argv[])
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".obj", poly.GetPointer(), coordinateSystem));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtk", ug.GetPointer(), coordinateSystem));
     CHECK_EXIT_SUCCESS(TestReadWriteData(scene.GetPointer(), ".vtu", ug.GetPointer(), coordinateSystem));
-    }
+  }
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;
@@ -109,15 +109,15 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *m
   CHECK_NOT_NULL(mesh2);
   CHECK_INT(mesh2->GetNumberOfPoints(), numberOfPoints);
   if (cellsMayBeSubdivided)
-    {
+  {
     // cells may be subdivided when written to file, so we don't check for strict equality
     // but check if we have at least that many as in the original mesh
     CHECK_BOOL(mesh2->GetNumberOfCells() >= numberOfCells, true);
-    }
+  }
   else
-    {
+  {
     CHECK_INT(mesh2->GetNumberOfCells(), numberOfCells);
-    }
+  }
 
   // Check extents to make sure there is no mirroring of the model due to coordinate system mismatch
   double originalBounds[6] = { 0.0 };
@@ -125,9 +125,9 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *m
   double restoredBounds[6] = { 0.0 };
   mesh2->GetBounds(restoredBounds);
   for (int boundsIndex = 0; boundsIndex < 6; boundsIndex++)
-    {
+  {
     CHECK_DOUBLE_TOLERANCE(restoredBounds[boundsIndex], originalBounds[boundsIndex], 1e-3);
-    }
+  }
 
   // Coordinate system after writing must be the one that was requested
   CHECK_INT(storageNode->GetCoordinateSystem(), coordinateSystem);

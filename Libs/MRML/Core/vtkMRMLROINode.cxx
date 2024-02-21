@@ -50,20 +50,20 @@ vtkMRMLROINode::vtkMRMLROINode()
 vtkMRMLROINode::~vtkMRMLROINode()
 {
   if (this->LabelText)
-    {
+  {
     delete [] this->LabelText;
     this->LabelText = nullptr;
-    }
+  }
   if (this->ID)
-    {
+  {
     delete [] this->ID;
     this->ID = nullptr;
-    }
+  }
   if (this->VolumeNodeID)
-    {
+  {
     delete [] this->VolumeNodeID;
     this->VolumeNodeID = nullptr;
-    }
+  }
   return;
 }
 
@@ -74,13 +74,13 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   if (this->VolumeNodeID != nullptr)
-    {
+  {
     of << " volumeNodeID=\"" << this->VolumeNodeID << "\"";
-    }
+  }
   if (this->LabelText != nullptr)
-    {
+  {
     of << " labelText=\"" << this->LabelText << "\"";
-    }
+  }
 
   of << " xyz=\""
     << this->XYZ[0] << " " << this->XYZ[1] << " " << this->XYZ[2] << "\"";
@@ -108,86 +108,86 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
   const char* attValue;
 
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
 
     if (!strcmp(attName, "XYZ") || !strcmp(attName, "xyz"))
-      {
+    {
       std::stringstream ss;
       double val;
       ss << attValue;
       for(int i=0; i<3; i++)
-        {
+      {
         ss >> val;
         this->XYZ[i] = val;
-        }
       }
+    }
     if (!strcmp(attName, "RadiusXYZ") || !strcmp(attName, "radiusXYZ"))
-      {
+    {
       std::stringstream ss;
       double val;
       ss << attValue;
       for(int i=0; i<3; i++)
-        {
+      {
         ss >> val;
         this->RadiusXYZ[i] = val;
-        }
       }
-    if (!strcmp(attName, "Selected") || !strcmp(attName, "selected"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Selected = 1;
-        }
-      else
-        {
-        this->Selected = 0;
-        }
-      }
-    else if (!strcmp(attName, "VolumeNodeID") || !strcmp(attName, "volumeNodeID"))
-      {
-      this->SetVolumeNodeID(attValue);
-      }
-    else if (!strcmp(attName, "LabelText") || !strcmp(attName, "labelText"))
-      {
-      this->SetLabelText(attValue);
-      }
-    else if (!strcmp(attName, "Visibility") || !strcmp(attName, "visibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Visibility = 1;
-        }
-      else
-        {
-        this->Visibility = 0;
-        }
-      }
-    else if (!strcmp(attName, "InteractiveMode") || !strcmp(attName, "interactiveMode"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->InteractiveMode = 1;
-        }
-      else
-        {
-        this->InteractiveMode = 0;
-        }
-      }
-    else if (!strcmp(attName, "InsideOut") || !strcmp(attName, "insideOut"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->InsideOut = 1;
-        }
-      else
-        {
-        this->InsideOut = 0;
-        }
-      }
-
     }
+    if (!strcmp(attName, "Selected") || !strcmp(attName, "selected"))
+    {
+      if (!strcmp(attValue,"true"))
+      {
+        this->Selected = 1;
+      }
+      else
+      {
+        this->Selected = 0;
+      }
+    }
+    else if (!strcmp(attName, "VolumeNodeID") || !strcmp(attName, "volumeNodeID"))
+    {
+      this->SetVolumeNodeID(attValue);
+    }
+    else if (!strcmp(attName, "LabelText") || !strcmp(attName, "labelText"))
+    {
+      this->SetLabelText(attValue);
+    }
+    else if (!strcmp(attName, "Visibility") || !strcmp(attName, "visibility"))
+    {
+      if (!strcmp(attValue,"true"))
+      {
+        this->Visibility = 1;
+      }
+      else
+      {
+        this->Visibility = 0;
+      }
+    }
+    else if (!strcmp(attName, "InteractiveMode") || !strcmp(attName, "interactiveMode"))
+    {
+      if (!strcmp(attValue,"true"))
+      {
+        this->InteractiveMode = 1;
+      }
+      else
+      {
+        this->InteractiveMode = 0;
+      }
+    }
+    else if (!strcmp(attName, "InsideOut") || !strcmp(attName, "insideOut"))
+    {
+      if (!strcmp(attValue,"true"))
+      {
+        this->InsideOut = 1;
+      }
+      else
+      {
+        this->InsideOut = 0;
+      }
+    }
+
+  }
 
   this->EndModify(disabledModify);
 
@@ -214,19 +214,19 @@ void vtkMRMLROINode::ReadXMLString(const char *keyValuePairs)
   // get out the volume id
   ss >> keyName;
   if (!strcmp(keyName, "VolumeNodeID"))
-    {
+  {
     char* IDValue = new char[1024];
     ss >> IDValue;
     this->SetVolumeNodeID(IDValue);
     delete [] IDValue;
     vtkDebugMacro("ReadXMLString: got VolumeNodeID " << this->VolumeNodeID);
-    }
+  }
   else
-    {
+  {
     // now get the label text value
     ss >> this->LabelText;
     vtkDebugMacro("ReadXMLString: got label text " << this->LabelText);
-    }
+  }
 
   // get the xyz key
   ss >> keyName;
@@ -398,10 +398,10 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
   int i;
 
   for (i=0; i<3; i++)
-    {
+  {
     bounds[2*i  ] = this->XYZ[i] - this->RadiusXYZ[i];
     bounds[2*i+1] = this->XYZ[i] + this->RadiusXYZ[i];
-    }
+  }
   vtkPoints *boxPoints = vtkPoints::New(VTK_DOUBLE);
   boxPoints->SetNumberOfPoints(8);
 
@@ -456,27 +456,27 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
 
   double N[6][3];
   for (i=0; i<3; i++)
-    {
+  {
     N[0][i] = p0[i] - px[i];
     N[2][i] = p0[i] - py[i];
     N[4][i] = p0[i] - pz[i];
-    }
+  }
   vtkMath::Normalize(N[0]);
   vtkMath::Normalize(N[2]);
   vtkMath::Normalize(N[4]);
   for (i=0; i<3; i++)
-    {
+  {
     N[1][i] = -N[0][i];
     N[3][i] = -N[2][i];
     N[5][i] = -N[4][i];
-    }
+  }
 
   double factor = (this->InsideOut ? -1.0 : 1.0);
 
   for (i=0; i<6; i++)
-    {
+  {
     normals->SetTuple3(i, factor*N[i][0], factor*N[i][1], factor*N[i][2]);
-    }
+  }
   planes->SetNormals(normals);
 
 
@@ -486,7 +486,7 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   if (tnode != nullptr) // && tnode->IsTransformToWorldLinear())
-    {
+  {
     //vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
     //transformToWorld->Identity();
     //tnode->GetMatrixTransformToWorld(transformToWorld);

@@ -43,9 +43,9 @@ int qMRMLSimpleMarkupsWidgetTest1( int argc, char * argv [] )
   markupsWidget.setMRMLScene(scene.GetPointer());
 
   if (argc < 3 || QString(argv[2]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

@@ -289,9 +289,9 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolumeWithNoLinkedControl()
   vtkMRMLScalarVolumeNode* scalarVolumeNode =
     vtkMRMLScalarVolumeNode::SafeDownCast(this->MRMLScene->GetNodeByID("vtkMRMLLabelMapVolumeNode1"));
   if (scalarVolumeNode)
-    {
+  {
     sliceControllerWidget.mrmlSliceCompositeNode()->SetLabelVolumeID(scalarVolumeNode->GetID());
-    }
+  }
 
   vtkNew<vtkMRMLLabelMapVolumeNode> labelmapNode2;
   labelmapNode2->SetName("Labelmap 2");
@@ -348,9 +348,9 @@ void qMRMLSliceControllerWidgetTester::testUpdateSliceOrientationSelector()
   QVERIFY(orientationSelector != nullptr);
   QStringList items;
   for(int idx = 0; idx < orientationSelector->count(); ++idx)
-    {
+  {
     items << orientationSelector->itemText(idx);
-    }
+  }
   QCOMPARE(items, QStringList() << "Axial" << "Reformat");
 
   // Set orientation back to "Axial"

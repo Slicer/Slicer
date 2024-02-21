@@ -34,20 +34,20 @@ vtkMRMLAnnotationRulerNode::~vtkMRMLAnnotationRulerNode()
 {
   vtkDebugMacro("Destructing...." << (this->GetID() != nullptr ? this->GetID() : "null id"));
   if (this->DistanceAnnotationFormat)
-    {
+  {
       delete [] this->DistanceAnnotationFormat;
       this->DistanceAnnotationFormat = nullptr;
-    }
+  }
   if (this->ModelID1)
-    {
+  {
     delete [] this->ModelID1;
     this->ModelID1 = nullptr;
-    }
+  }
   if (this->ModelID2)
-    {
+  {
     delete [] this->ModelID2;
     this->ModelID2 = nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -57,22 +57,22 @@ void vtkMRMLAnnotationRulerNode::WriteXML(ostream& of, int nIndent)
 
   of << " rulerDistanceAnnotationFormat=\"";
   if (this->DistanceAnnotationFormat)
-    {
+  {
     of << this->DistanceAnnotationFormat << "\"";
-    }
+  }
   else
-    {
+  {
     of << "\"";
-    }
+  }
 
   if (this->ModelID1)
-    {
+  {
     of << " modelID1=\"" << this->ModelID1 << "\"";
-    }
+  }
   if (this->ModelID2)
-    {
+  {
     of << " modelID2=\"" << this->ModelID2 << "\"";
-    }
+  }
   of << " distanceMeasurement=\"" << this->GetDistanceMeasurement() << "\"";
 }
 
@@ -90,25 +90,25 @@ void vtkMRMLAnnotationRulerNode::ReadXMLAttributes(const char** atts)
 
 
   while (*atts != nullptr)
-    {
+  {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
 
 
     if (!strcmp(attName, "rulerDistanceAnnotationFormat"))
-      {
+    {
       this->SetDistanceAnnotationFormat(attValue.c_str());
-      }
+    }
 
     else if (!strcmp(attName, "modelID1"))
-      {
+    {
       this->SetModelID1(attValue.c_str());
-      }
-    else if (!strcmp(attName, "modelID2"))
-      {
-      this->SetModelID2(attValue.c_str());
-      }
     }
+    else if (!strcmp(attName, "modelID2"))
+    {
+      this->SetModelID2(attValue.c_str());
+    }
+  }
   this->EndModify(disabledModify);
 }
 
@@ -152,27 +152,27 @@ void vtkMRMLAnnotationRulerNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
 {
   //cout << "vtkMRMLAnnotationRulerNode::PrintAnnotationInfo" << endl;
   if (titleFlag)
-    {
+  {
 
       os <<indent << "vtkMRMLAnnotationRulerNode: Annotation Summary";
       if (this->GetName())
-    {
+      {
       os << " of " << this->GetName();
-    }
+      }
       os << endl;
-    }
+  }
 
   Superclass::PrintAnnotationInfo(os, indent, 0);
 
   os << indent << "rulerDistanceAnnotationFormat: ";
   if (this->DistanceAnnotationFormat)
-    {
+  {
       os  << this->DistanceAnnotationFormat << "\n";
-    }
+  }
   else
-    {
+  {
       os  << "(None)" << "\n";
-    }
+  }
 
   os << indent << "Model 1: " << (this->ModelID1 ? this->ModelID1 : "none") << "\n";
   os << indent << "Model 2: " << (this->ModelID2 ? this->ModelID2 : "none") << "\n";
@@ -194,9 +194,9 @@ double vtkMRMLAnnotationRulerNode::GetDistanceAnnotationScale()
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
-    {
+  {
       return 0;
-    }
+  }
   return node->GetTextScale();
 }
 
@@ -206,10 +206,10 @@ void vtkMRMLAnnotationRulerNode::SetDistanceAnnotationScale(double init)
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
 
   if (!node)
-    {
+  {
       vtkErrorMacro("AnnotationRuler: "<< this->GetName() << " cannot get AnnotationTextDisplayNode");
       return;
-    }
+  }
   node->SetTextScale(init);
 }
 
@@ -234,10 +234,10 @@ int vtkMRMLAnnotationRulerNode::SetRuler(vtkIdType line1Id, int sel, int vis)
 
   //Change this later
   if (line1IDPoints[0]!= 0 || line1IDPoints[1] != 1)
-    {
+  {
       vtkErrorMacro("Not valid line definition!");
       return -1;
-    }
+  }
   this->SetSelected(sel);
   this->SetDisplayVisibility(vis);
 
@@ -253,13 +253,13 @@ int vtkMRMLAnnotationRulerNode::SetControlPoint(int id, double newControl[3])
 
   int flag = Superclass::SetControlPoint(id, newControl,1,1);
   if (!flag)
-    {
+  {
       return 0;
-    }
+  }
   if (this->GetNumberOfControlPoints() < 2)
-    {
+  {
       return 1;
-    }
+  }
 
   this->AddLine(0,1,1,1);
   return 1;
@@ -270,9 +270,9 @@ double* vtkMRMLAnnotationRulerNode::GetPointColor()
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
-    {
+  {
       return nullptr;
-    }
+  }
   return node->GetSelectedColor();
 }
 
@@ -281,10 +281,10 @@ void vtkMRMLAnnotationRulerNode::SetPointColor(double initColor[3])
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
-    {
+  {
       vtkErrorMacro("AnnotationRuler: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
       return;
-    }
+  }
   node->SetSelectedColor(initColor);
 }
 
@@ -293,9 +293,9 @@ double* vtkMRMLAnnotationRulerNode::GetDistanceAnnotationTextColor()
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
-    {
+  {
       return nullptr;
-    }
+  }
   return node->GetSelectedColor();
 }
 
@@ -304,10 +304,10 @@ void vtkMRMLAnnotationRulerNode::SetDistanceAnnotationTextColor(double initColor
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
-    {
+  {
       vtkErrorMacro("AnnotationRuler: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
       return;
-    }
+  }
   node->SetSelectedColor(initColor);
 }
 
@@ -316,9 +316,9 @@ double* vtkMRMLAnnotationRulerNode::GetLineColor()
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
-    {
+  {
       return nullptr;
-    }
+  }
   return node->GetSelectedColor();
 }
 
@@ -327,10 +327,10 @@ void vtkMRMLAnnotationRulerNode::SetLineColor(double initColor[3])
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
-    {
+  {
       vtkErrorMacro("AnnotationRuler: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
       return;
-    }
+  }
   node->SetSelectedColor(initColor);
 }
 
@@ -344,26 +344,26 @@ void vtkMRMLAnnotationRulerNode::ApplyTransform(vtkAbstractTransform* transform)
   // first point
   p = this->GetPosition1();
   if (p)
-    {
+  {
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];
     xyzIn[2] = p[2];
 
     transform->TransformPoint(xyzIn,xyzOut);
     this->SetPosition1(xyzOut);
-    }
+  }
 
   // second point
   p = this->GetPosition2();
   if (p)
-    {
+  {
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];
     xyzIn[2] = p[2];
 
     transform->TransformPoint(xyzIn,xyzOut);
     this->SetPosition2(xyzOut);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -371,10 +371,10 @@ vtkMRMLStorageNode* vtkMRMLAnnotationRulerNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
   if (scene == nullptr)
-    {
+  {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
-    }
+  }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLAnnotationRulerStorageNode"));
 }
@@ -399,14 +399,14 @@ void vtkMRMLAnnotationRulerNode::GetPosition1(double position[3])
 {
   double * tmp = this->GetControlPointCoordinates(0);
   if (!tmp)
-    {
+  {
     vtkErrorMacro("AnnotationRuler - Failed to get first control point");
     return;
-    }
+  }
   for(int i=0; i < 3; ++i)
-    {
+  {
     position[i] = tmp[i];
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -414,9 +414,9 @@ void vtkMRMLAnnotationRulerNode::GetPosition2(double position[3])
 {
   double * tmp = this->GetControlPointCoordinates(1);
   if (!tmp)
-    {
+  {
     vtkErrorMacro("AnnotationRuler - Failed to get second control point");
     return;
-    }
+  }
   for(int i=0; i < 3; ++i){ position[i] = tmp[i]; }
 }

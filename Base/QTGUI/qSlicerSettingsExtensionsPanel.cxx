@@ -66,14 +66,14 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   // Default values
   this->ExtensionsManagerEnabledCheckBox->setChecked(true);
   if (app->extensionsManagerModel()->serverAPI() == qSlicerExtensionsManagerModel::Girder_v1)
-    {
+  {
     this->ExtensionsServerUrlLineEdit->setText("https://slicer-packages.kitware.com");
     this->ExtensionsFrontendServerUrlLineEdit->setText("https://extensions.slicer.org");
-    }
+  }
   else
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << app->extensionsManagerModel()->serverAPI();
-    }
+  }
   this->ExtensionsInstallPathButton->setDirectory(app->defaultExtensionsInstallPath());
 #ifdef Q_OS_MAC
   this->ExtensionsInstallPathButton->setDisabled(true);
@@ -169,9 +169,9 @@ void qSlicerSettingsExtensionsPanel::updateAutoUpdateWidgetsFromModel()
   Q_D(qSlicerSettingsExtensionsPanel);
   qSlicerApplication* app = qSlicerApplication::application();
   if (!app->extensionsManagerModel())
-    {
+  {
     return;
-    }
+  }
   QSignalBlocker blocker1(d->AutoUpdateCheckCheckBox);
   QSignalBlocker blocker2(d->AutoUpdateInstallCheckBox);
   QSignalBlocker blocker3(d->AutoInstallDependenciesCheckBox);

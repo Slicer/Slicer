@@ -32,19 +32,19 @@ qSlicerAnnotationModuleSnapShotDialog
 qSlicerAnnotationModuleSnapShotDialog::~qSlicerAnnotationModuleSnapShotDialog()
 {
   if (this->m_Logic)
-    {
+  {
     this->m_Logic = nullptr;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleSnapShotDialog::setLogic(vtkSlicerAnnotationModuleLogic* logic)
 {
   if (!logic)
-    {
+  {
     qErrnoWarning("setLogic: We need the Annotation module logic here!");
     return;
-    }
+  }
 
   this->m_Logic = logic;
 }
@@ -53,10 +53,10 @@ void qSlicerAnnotationModuleSnapShotDialog::setLogic(vtkSlicerAnnotationModuleLo
 void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
 {
   if (!this->m_Logic || !nodeId)
-    {
+  {
     qErrnoWarning("initialize: We need a logic and a valid node here!");
     return;
-    }
+  }
 
   // Activate the mode "review"
   this->setData(QVariant(nodeId));
@@ -66,9 +66,9 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
   if (this->m_Logic->GetMRMLScene()
     && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)
     && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName())
-    {
+  {
     name = this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName();
-    }
+  }
 
   // ..and set it in the GUI
   this->setNameEdit(QString::fromStdString(name));
@@ -85,11 +85,11 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
   // double check that the screen shot type is in range
   if (screenshotType < qMRMLScreenShotDialog::ThreeD ||
       screenshotType > qMRMLScreenShotDialog::FullLayout)
-    {
+  {
     // reset to full layout
     qErrnoWarning("Screen shot type is out of range, resetting to full layout");
     screenshotType = qMRMLScreenShotDialog::FullLayout;
-    }
+  }
   this->setWidgetType((qMRMLScreenShotDialog::WidgetType)screenshotType);
 
   double scaleFactor = this->m_Logic->GetSnapShotScaleFactor(nodeId);
@@ -109,10 +109,10 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
   vtkCollection *col =
     this->m_Logic->GetMRMLScene()->GetNodesByName(name.toUtf8());
   if (col->GetNumberOfItems() > 0)
-    {
+  {
     // get a new unique name
     name = this->m_Logic->GetMRMLScene()->GetUniqueNameByString(name.toUtf8());
-    }
+  }
 
   this->resetDialog();
   this->setNameEdit(name);
@@ -135,16 +135,16 @@ void qSlicerAnnotationModuleSnapShotDialog::accept()
   int screenshotType = static_cast<int>(this->widgetType());
 
   if (this->data().toString().isEmpty())
-    {
+  {
     // this is a new snapshot
     this->m_Logic->CreateSnapShot(nameBytes.data(),
                                   descriptionBytes.data(),
                                   screenshotType,
                                   this->scaleFactor(),
                                   this->imageData());
-    }
+  }
   else
-    {
+  {
     // this snapshot already exists
     this->m_Logic->ModifySnapShot(vtkStdString(this->data().toString().toUtf8()),
                                   nameBytes.data(),
@@ -152,6 +152,6 @@ void qSlicerAnnotationModuleSnapShotDialog::accept()
                                   screenshotType,
                                   this->scaleFactor(),
                                   this->imageData());
-    }
+  }
   this->Superclass::accept();
 }

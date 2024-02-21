@@ -148,15 +148,15 @@ double qSlicerSubjectHierarchyFolderPlugin::canAddNodeToSubjectHierarchy(
 {
   Q_UNUSED(parentItemID);
   if (!node)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Input node is NULL";
     return 0.0;
-    }
+  }
   else if (node->IsA("vtkMRMLFolderDisplayNode"))
-    {
+  {
     // Node is a folder display node (handle cases when the display node is added instead of an item created)
     return 1.0;
-    }
+  }
   return 0.0;
 }
 
@@ -165,10 +165,10 @@ bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(vtkMRMLNode*
 {
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
   if (nodeToAdd->GetAttribute(d->AddedByFolderPluginAttributeName.toUtf8().constData()))
-    {
+  {
     // Prevent creation of new folder item if the folder display node was not added by the folder plugin
     return true;
-    }
+  }
 
   return qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(nodeToAdd, parentItemID);
 }
@@ -177,35 +177,35 @@ bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(vtkMRMLNode*
 double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   if (!itemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Input item is invalid";
     return 0.0;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0.0;
-    }
+  }
 
   if (itemID == shNode->GetSceneItemID())
-    {
+  {
     // Do not allow to assign display properties to the scene item,
     // because the scene item is not always visible and overall it is not prepared
     // to be used as a regular folder.
     return 0.0;
-    }
+  }
 
   if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
-    {
+  {
     // Folder with no hierarchy node
     return 1.0;
-    }
+  }
   else if (!shNode->GetItemLevel(itemID).empty())
-    {
+  {
     // There is any level information (for example for DICOM levels which are also folders)
     return 0.5;
-    }
+  }
 
   return 0.0;
 }
@@ -216,22 +216,22 @@ const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin()const
   // Get current node to determine role
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (!currentItemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid current node";
     return "Error!";
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return "Error!";
-    }
+  }
 
   // Folder level
   if (shNode->IsItemLevel(currentItemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
-    {
+  {
     return "Folder";
-    }
+  }
 
   return QString("Error!");
 }
@@ -240,24 +240,24 @@ const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin()const
 QIcon qSlicerSubjectHierarchyFolderPlugin::icon(vtkIdType itemID)
 {
   if (!itemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Input item is invalid";
     return QIcon();
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return QIcon();
-    }
+  }
 
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
 
   // Subject and Folder icon
   if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
-    {
+  {
     return d->FolderIcon;
-    }
+  }
 
   // Item unknown by plugin
   return QIcon();
@@ -277,15 +277,15 @@ void qSlicerSubjectHierarchyFolderPlugin::setDisplayVisibility(vtkIdType itemID,
   // This is necessary because the displayable manager considers this display node.
   vtkMRMLDisplayNode* displayNode = this->displayNodeForItem(itemID);
   if (!displayNode)
-    {
+  {
     displayNode = this->createDisplayNodeForItem(itemID);
-    }
+  }
   if (!displayNode)
-    {
+  {
     // No display node can be associated with this item
     // (for example, it is a scripted module node)
     return;
-    }
+  }
   displayNode->SetVisibility(visible);
 }
 
@@ -296,9 +296,9 @@ int qSlicerSubjectHierarchyFolderPlugin::getDisplayVisibility(vtkIdType itemID)c
   // This is necessary because the displayable manager considers this display node.
   vtkMRMLDisplayNode* displayNode = this->displayNodeForItem(itemID);
   if (displayNode)
-    {
+  {
     return displayNode->GetVisibility();
-    }
+  }
 
   // Visible by default, until visibility is changed, or apply display properties to branch is turned on.
   return true;
@@ -309,27 +309,27 @@ void qSlicerSubjectHierarchyFolderPlugin::setDisplayColor(vtkIdType itemID, QCol
 {
   Q_UNUSED(terminologyMetaData);
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
 
   QMap<int, QVariant> dummyTerminology;
   QColor oldColor = this->getDisplayColor(itemID, dummyTerminology);
   if (oldColor != color)
-    {
+  {
     // Get associated display node, create one if absent
     vtkMRMLDisplayNode* displayNode = this->displayNodeForItem(itemID);
     if (!displayNode)
-      {
+    {
       displayNode = this->createDisplayNodeForItem(itemID);
-      }
+    }
 
     displayNode->SetColor(color.redF(), color.greenF(), color.blueF());
 
@@ -338,39 +338,39 @@ void qSlicerSubjectHierarchyFolderPlugin::setDisplayColor(vtkIdType itemID, QCol
 
     // If apply color to branch is not active then enable that option so that the new color shows
     if (!this->isApplyColorToBranchEnabledForItem(itemID))
-      {
+    {
       this->setApplyColorToBranchEnabledForItem(itemID, true);
-      }
-   } // If color changed
+    }
+  } // If color changed
 }
 
 //-----------------------------------------------------------------------------
 QColor qSlicerSubjectHierarchyFolderPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return QColor(0,0,0,0);
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return QColor(0,0,0,0);
-    }
+  }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
     return QColor(0,0,0,0);
-    }
+  }
 
   if (scene->IsImporting())
-    {
+  {
     // During import SH node may be created before the segmentation is read into the scene,
     // so don't attempt to access the segment yet
     return QColor(0,0,0,0);
-    }
+  }
 
   // Set dummy terminology information
   terminologyMetaData.clear();
@@ -381,9 +381,9 @@ QColor qSlicerSubjectHierarchyFolderPlugin::getDisplayColor(vtkIdType itemID, QM
   // Get and return color
   vtkMRMLDisplayNode* displayNode = this->displayNodeForItem(itemID);
   if (!displayNode)
-    {
+  {
     return QColor(0,0,0,0);
-    }
+  }
 
   double colorArray[3] = {0.0,0.0,0.0};
   displayNode->GetColor(colorArray);
@@ -417,41 +417,41 @@ void qSlicerSubjectHierarchyFolderPlugin::showContextMenuActionsForItem(vtkIdTyp
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
 
   // Scene
   if (itemID == shNode->GetSceneItemID())
-    {
+  {
     d->CreateFolderUnderSceneAction->setVisible(true);
 
     // Show the Show empty folder action if the current tree view has created a folder before. Update checked state if visible.
     this->updateShowEmptyFoldersAction();
 
     return;
-    }
+  }
 
   if (itemID)
-    {
+  {
     // Folder can be created under any node
     d->CreateFolderUnderNodeAction->setVisible(true);
 
     // Show the Show empty folder action if the current tree view has created a folder before. Update checked state if visible.
     this->updateShowEmptyFoldersAction();
-    }
+  }
 
   // Folder
   if (this->canOwnSubjectHierarchyItem(itemID))
-    {
+  {
     bool applyColorToBranch = this->isApplyColorToBranchEnabledForItem(itemID);
 
     d->ApplyColorToBranchAction->blockSignals(true);
     d->ApplyColorToBranchAction->setChecked(applyColorToBranch);
     d->ApplyColorToBranchAction->blockSignals(false);
     d->ApplyColorToBranchAction->setVisible(true);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -461,17 +461,17 @@ void qSlicerSubjectHierarchyFolderPlugin::updateShowEmptyFoldersAction()
 
   qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
   if (currentTreeView)
-    {
+  {
     qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = currentTreeView->sortFilterProxyModel();
     d->ShowEmptyFoldersAction->blockSignals(true);
     d->ShowEmptyFoldersAction->setChecked(sortFilterProxyModel->showEmptyHierarchyItems());
     d->ShowEmptyFoldersAction->blockSignals(false);
     d->ShowEmptyFoldersAction->setVisible(d->TreeViewsToShowEmptyFolderAction.contains(currentTreeView));
-    }
+  }
   else
-    {
+  {
     d->ShowEmptyFoldersAction->setVisible(false);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -490,26 +490,26 @@ void qSlicerSubjectHierarchyFolderPlugin::showVisibilityContextMenuActionsForIte
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
 
   // Folder
   if (this->canOwnSubjectHierarchyItem(itemID))
-    {
+  {
     bool applyColorToBranch = this->isApplyColorToBranchEnabledForItem(itemID);
 
     d->ApplyColorToBranchAction->blockSignals(true);
     d->ApplyColorToBranchAction->setChecked(applyColorToBranch);
     d->ApplyColorToBranchAction->blockSignals(false);
     d->ApplyColorToBranchAction->setVisible(true);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -524,16 +524,16 @@ vtkIdType qSlicerSubjectHierarchyFolderPlugin::createFolderUnderItem(vtkIdType p
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-    }
+  }
 
   // Create folder subject hierarchy node
   std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix()
@@ -545,11 +545,11 @@ vtkIdType qSlicerSubjectHierarchyFolderPlugin::createFolderUnderItem(vtkIdType p
   // Make sure empty folders are shown in the tree view it was created in
   qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
   if (currentTreeView)
-    {
+  {
     qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = currentTreeView->sortFilterProxyModel();
     sortFilterProxyModel->setShowEmptyHierarchyItems(true);
     this->emptyFolderCreatedFromTreeView(currentTreeView);
-    }
+  }
 
   return childItemID;
 }
@@ -559,10 +559,10 @@ void qSlicerSubjectHierarchyFolderPlugin::createFolderUnderScene()
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
 
   this->createFolderUnderItem(shNode->GetSceneItemID());
 }
@@ -572,10 +572,10 @@ void qSlicerSubjectHierarchyFolderPlugin::createFolderUnderCurrentNode()
 {
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (!currentItemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid current node";
     return;
-    }
+  }
 
   this->createFolderUnderItem(currentItemID);
 }
@@ -585,16 +585,16 @@ void qSlicerSubjectHierarchyFolderPlugin::onApplyColorToBranchToggled(bool on)
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (!currentItemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
-    }
+  }
 
   this->setApplyColorToBranchEnabledForItem(currentItemID, on);
 }
@@ -604,10 +604,10 @@ void qSlicerSubjectHierarchyFolderPlugin::onShowEmptyFoldersToggled(bool on)
 {
   qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
   if (!currentTreeView)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access current subject hierarchy tree view";
     return;
-    }
+  }
 
   qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = currentTreeView->sortFilterProxyModel();
   sortFilterProxyModel->setShowEmptyHierarchyItems(on);
@@ -617,23 +617,23 @@ void qSlicerSubjectHierarchyFolderPlugin::onShowEmptyFoldersToggled(bool on)
 vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::displayNodeForItem(vtkIdType itemID)const
 {
   if (!itemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return nullptr;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return nullptr;
-    }
+  }
 
   vtkMRMLNode* dataNode = shNode->GetItemDataNode(itemID);
   vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(dataNode);
   if (displayNode)
-    {
+  {
     return displayNode;
-    }
+  }
   return nullptr;
 }
 
@@ -642,28 +642,28 @@ vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createDisplayNodeForIte
 {
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
   if (!itemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return nullptr;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return nullptr;
-    }
+  }
 
   vtkMRMLDisplayNode* existingDisplayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   vtkMRMLNode* existingDataNode = shNode->GetItemDataNode(itemID);
   if (existingDisplayNode)
-    {
+  {
     return existingDisplayNode;
-    }
+  }
   if (existingDataNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Item " << itemID << " is already associated to a data node, but it is not a display node";
     return nullptr;
-    }
+  }
 
   vtkNew<vtkMRMLFolderDisplayNode> displayNode;
   displayNode->SetName(shNode->GetItemName(itemID).c_str());
@@ -681,22 +681,22 @@ vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createDisplayNodeForIte
 bool qSlicerSubjectHierarchyFolderPlugin::isApplyColorToBranchEnabledForItem(vtkIdType itemID)const
 {
   if (!itemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return false;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
-    }
+  }
 
   vtkMRMLFolderDisplayNode* folderDisplayNode = vtkMRMLFolderDisplayNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!folderDisplayNode)
-    {
+  {
     return false;
-    }
+  }
 
   return folderDisplayNode->GetApplyDisplayPropertiesOnBranch();
 }
@@ -705,24 +705,24 @@ bool qSlicerSubjectHierarchyFolderPlugin::isApplyColorToBranchEnabledForItem(vtk
 void qSlicerSubjectHierarchyFolderPlugin::setApplyColorToBranchEnabledForItem(vtkIdType itemID, bool enabled)
 {
   if (!itemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
 
   vtkMRMLFolderDisplayNode* folderDisplayNode = vtkMRMLFolderDisplayNode::SafeDownCast(
     this->createDisplayNodeForItem(itemID) );
   if (!folderDisplayNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to get folder display node for item " << itemID;
     return;
-    }
+  }
 
   folderDisplayNode->SetApplyDisplayPropertiesOnBranch(enabled);
 }
@@ -733,8 +733,8 @@ void qSlicerSubjectHierarchyFolderPlugin::emptyFolderCreatedFromTreeView(qMRMLSu
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
 
   if (!d->TreeViewsToShowEmptyFolderAction.contains(treeView))
-    {
+  {
     // Only add the tree view in the list if not already there
     d->TreeViewsToShowEmptyFolderAction.push_back(treeView);
-    }
+  }
 }

@@ -37,23 +37,23 @@ class vtkMRMLMarkupNodeObserver : public vtkCommand
 {
 public:
   static vtkMRMLMarkupNodeObserver *New()
-    {
+  {
     return new vtkMRMLMarkupNodeObserver;
-    }
+  }
 
   vtkMRMLMarkupNodeObserver()
-    {
-    }
+  {
+  }
 
   void Execute(vtkObject *caller, unsigned long event, void*) override
-    {
+  {
     vtkMRMLDisplayableNode* dispNode = vtkMRMLDisplayableNode::SafeDownCast(caller);
     if (!dispNode)
-      {
+    {
       return;
-      }
-    invokedEvents.push_back(event);
     }
+    invokedEvents.push_back(event);
+  }
 
   std::vector<int> invokedEvents;
 };

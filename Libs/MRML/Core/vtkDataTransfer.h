@@ -42,13 +42,13 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkSetMacro (TransferCached, int );
 
   void SetTransferStatusNoModify ( int val)
-      {
+  {
       this->TransferStatus = val;
-      }
+  }
 
   const char* GetTransferStatusString( ) {
     switch (this->TransferStatus)
-      {
+    {
       case vtkDataTransfer::Idle: return "Idle";
       case vtkDataTransfer::CancelPending: return "CancelPending";
       case vtkDataTransfer::Pending: return "Pending";
@@ -59,26 +59,26 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       case vtkDataTransfer::Cancelled: return "Cancelled";
       case vtkDataTransfer::Deleted: return "Deleted";
       case vtkDataTransfer::Ready: return "Ready";
-      }
+    }
     return "Unknown";
   }
 
   const char* GetTransferTypeString( ) {
     switch (this->TransferType)
-      {
+    {
       case vtkDataTransfer::RemoteDownload: return "RemoteDownload";
       case vtkDataTransfer::RemoteUpload: return "RemoteUpload";
       case vtkDataTransfer::LocalLoad: return "LocalUpload";
       case vtkDataTransfer::LocalSave: return "LocalSave";
       case vtkDataTransfer::Unspecified: return "Unspecified";
-      }
+    }
     return "Unknown";
   }
 
   /// Transfer status values
   /// ready means ready to read into storage node
   enum
-    {
+  {
       Idle=0,
       Pending,
       Running,
@@ -89,16 +89,16 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       Ready,
       Deleted,
       TimedOut
-    };
+  };
   /// transfer type values
   enum
-    {
+  {
       RemoteDownload=0,
       RemoteUpload,
       LocalLoad,
       LocalSave,
       Unspecified
-    };
+  };
 
  private:
 

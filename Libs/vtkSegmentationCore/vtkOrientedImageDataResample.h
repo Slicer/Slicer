@@ -45,11 +45,11 @@ public:
   vtkTypeMacro(vtkOrientedImageDataResample,vtkObject);
 
   enum
-    {
+  {
     OPERATION_MINIMUM,
     OPERATION_MAXIMUM,
     OPERATION_MASKING
-    };
+  };
 
   /// Resample an oriented image data to match the geometry of a reference geometry matrix.
   /// Origin and dimensions are determined from the contents of the input image.

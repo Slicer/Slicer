@@ -112,9 +112,9 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
 
   QFETCH(QList<AttributeType>, attributes);
   foreach(const AttributeType& attribute, attributes)
-    {
+  {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
-    }
+  }
 
   this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
 
@@ -125,12 +125,12 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
   QStringList resultAttributes = this->NodeAttributeTableView->attributes();
   int i = 0;
   foreach (QString attribute, resultAttributes)
-    {
+  {
     QCOMPARE(attribute, expectedAttributes[i].first);
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attribute),
              expectedAttributes[i].second);
     ++i;
-    }
+  }
 
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
@@ -201,29 +201,29 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute()
   QFETCH(QString, attribute);
   QFETCH(QString, value);
   if (setOnNode)
-    {
+  {
     node->SetAttribute(attribute.isNull() ? static_cast<const char*>(nullptr) : attribute.toUtf8().constData(),
                        value.isNull() ? static_cast<const char*>(nullptr) : value.toUtf8().constData());
-    }
+  }
   else
-    {
+  {
     this->NodeAttributeTableView->setAttribute(attribute, value);
-    }
+  }
 
   QFETCH(int, expectedAttributeCount);
   QFETCH(QString, expectedAttribute1Value);
   if (setOnNode)
-    {
+  {
     QCOMPARE(this->NodeAttributeTableView->attributeCount(),
              expectedAttributeCount);
     QCOMPARE(this->NodeAttributeTableView->attributeValue("Attribute1"),
              expectedAttribute1Value);
-    }
+  }
   else
-    {
+  {
     QCOMPARE(node->GetAttributeNames().size(), static_cast<size_t>(expectedAttributeCount));
     QCOMPARE(QString(node->GetAttribute("Attribute1")), expectedAttribute1Value);
-    }
+  }
 
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
@@ -241,7 +241,7 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute_data()
   QTest::addColumn<QString>("expectedAttribute1Value");
 
   for (int setOnNode = 0; setOnNode < 2; ++setOnNode)
-    {
+  {
     // null vs empty:
     //   QString makes a difference between a QString() and QString("")
     //   vtkMRMLNode::SetAttribute() makes a difference between 0 and ""
@@ -285,21 +285,21 @@ void qMRMLNodeAttributeTableViewTester::testSelect()
   QFETCH(int, expectedSelectedCellCount);
 
   if (!null)
-    {
+  {
     QFETCH(QList<AttributeType>, attributes);
     vtkNew<vtkMRMLModelNode> node;
 
     foreach(const AttributeType& attribute, attributes)
-      {
+    {
       node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
-      }
+    }
 
     this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
-    }
+  }
   else
-    {
+  {
     this->NodeAttributeTableView->setInspectedNode(nullptr);
-    }
+  }
 
   this->NodeAttributeTableView->selectItemRange( rangeToSelect[0]
                                                 ,rangeToSelect[1]
@@ -309,12 +309,12 @@ void qMRMLNodeAttributeTableViewTester::testSelect()
   QCOMPARE(this->NodeAttributeTableView->selectionModel()->selectedIndexes().count(), expectedSelectedCellCount);
 
   if (expectedSelectedCellCount > 0)
-    {
+  {
     QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).top(), rangeToSelect[0]);
     QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).left(), rangeToSelect[1]);
     QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).bottom(), rangeToSelect[2]);
     QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).right(), rangeToSelect[3]);
-    }
+  }
 
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
@@ -355,9 +355,9 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
 
   QFETCH(QList<AttributeType>, attributes);
   foreach(const AttributeType& attribute, attributes)
-    {
+  {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
-    }
+  }
 
   this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
 
@@ -368,12 +368,12 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
   QStringList resultAttributes = this->NodeAttributeTableView->attributes();
   int i = 0;
   foreach (QString attribute, resultAttributes)
-    {
+  {
     QCOMPARE(attribute, expectedAttributes[i].first);
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attribute),
              expectedAttributes[i].second);
     ++i;
-    }
+  }
 
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
@@ -467,9 +467,9 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
   vtkNew<vtkMRMLModelNode> node;
 
   foreach(const AttributeType& attribute, attributesToAdd)
-    {
+  {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
-    }
+  }
 
   this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
 
@@ -482,21 +482,21 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributeCountAfterRemove);
 
   foreach(const AttributeEmptyType& attributeExist, expectedExistingAttributesAfterRemove)
-    {
+  {
     bool isEmpty = attributeExist.second;
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attributeExist.first).isEmpty(), isEmpty);
 
     const char * inspectedNodeAttributeValue
         = this->NodeAttributeTableView->inspectedNode()->GetAttribute(attributeExist.first.toUtf8());
     if (isEmpty)
-      {
+    {
       QVERIFY(inspectedNodeAttributeValue == nullptr);
-      }
-    else
-      {
-      QVERIFY(inspectedNodeAttributeValue != nullptr);
-      }
     }
+    else
+    {
+      QVERIFY(inspectedNodeAttributeValue != nullptr);
+    }
+  }
 
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
@@ -533,9 +533,9 @@ void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
   vtkNew<vtkMRMLModelNode> node;
 
   foreach(const AttributeType& attribute, attributes)
-    {
+  {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
-    }
+  }
 
   this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
 
@@ -553,12 +553,12 @@ void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
   QStringList resultAttributes = this->NodeAttributeTableView->attributes();
   int i = 0;
   foreach (QString attribute, resultAttributes)
-    {
+  {
     QCOMPARE(attribute, expectedAttributes[i].first);
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attribute),
              expectedAttributes[i].second);
     ++i;
-    }
+  }
 
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }

@@ -143,14 +143,14 @@ void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode * no
   Q_Q(qMRMLTableViewControllerWidget);
 
   if (!q->mrmlTableViewNode())
-    {
+  {
     return;
-    }
+  }
 
   if (this->TableNode.GetPointer() == node)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(this->TableNode, node, vtkCommand::ModifiedEvent,
                       q, SLOT(updateWidgetFromMRML()));
@@ -165,10 +165,10 @@ void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode * no
 void qMRMLTableViewControllerWidgetPrivate::onLockTableButtonClicked()
 {
   if (!this->TableNode)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::onLockTableButtonClicked failed: tableNode is invalid");
     return;
-    }
+  }
 
   // toggle the lock
   int locked = this->TableNode->GetLocked();
@@ -179,10 +179,10 @@ void qMRMLTableViewControllerWidgetPrivate::onLockTableButtonClicked()
 void qMRMLTableViewControllerWidgetPrivate::insertColumn()
 {
   if (!this->TableView)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::insertColumn failed: TableView is invalid");
     return;
-    }
+  }
   this->TableView->insertColumn();
 }
 
@@ -190,10 +190,10 @@ void qMRMLTableViewControllerWidgetPrivate::insertColumn()
 void qMRMLTableViewControllerWidgetPrivate::deleteColumn()
 {
   if (!this->TableView)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::deleteColumn failed: TableView is invalid");
     return;
-    }
+  }
   this->TableView->deleteColumn();
 }
 
@@ -201,10 +201,10 @@ void qMRMLTableViewControllerWidgetPrivate::deleteColumn()
 void qMRMLTableViewControllerWidgetPrivate::insertRow()
 {
   if (!this->TableView)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::insertRow failed: TableView is invalid");
     return;
-    }
+  }
   this->TableView->insertRow();
 }
 
@@ -212,10 +212,10 @@ void qMRMLTableViewControllerWidgetPrivate::insertRow()
 void qMRMLTableViewControllerWidgetPrivate::deleteRow()
 {
   if (!this->TableView)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::deleteRow failed: TableView is invalid");
     return;
-    }
+  }
   this->TableView->deleteRow();
 }
 
@@ -223,10 +223,10 @@ void qMRMLTableViewControllerWidgetPrivate::deleteRow()
 void qMRMLTableViewControllerWidgetPrivate::setFirstRowLocked(bool locked)
 {
   if (!this->TableView)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::setFirstRowLocked failed: TableView is invalid");
     return;
-    }
+  }
   this->TableView->setFirstRowLocked(locked);
 }
 
@@ -234,10 +234,10 @@ void qMRMLTableViewControllerWidgetPrivate::setFirstRowLocked(bool locked)
 void qMRMLTableViewControllerWidgetPrivate::setFirstColumnLocked(bool locked)
 {
   if (!this->TableView)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::setFirstColumnLocked failed: TableView is invalid");
     return;
-    }
+  }
   this->TableView->setFirstColumnLocked(locked);
 }
 
@@ -245,10 +245,10 @@ void qMRMLTableViewControllerWidgetPrivate::setFirstColumnLocked(bool locked)
 void qMRMLTableViewControllerWidgetPrivate::copySelection()
 {
   if (!this->TableView)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::copySelection failed: TableView is invalid");
     return;
-    }
+  }
   this->TableView->copySelection();
 }
 
@@ -256,10 +256,10 @@ void qMRMLTableViewControllerWidgetPrivate::copySelection()
 void qMRMLTableViewControllerWidgetPrivate::pasteSelection()
 {
   if (!this->TableView)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::pasteSelection failed: TableView is invalid");
     return;
-    }
+  }
   this->TableView->pasteSelection();
 }
 
@@ -267,10 +267,10 @@ void qMRMLTableViewControllerWidgetPrivate::pasteSelection()
 void qMRMLTableViewControllerWidgetPrivate::plotSelection()
 {
   if (!this->TableView)
-    {
+  {
     qWarning("qMRMLTableViewControllerWidgetPrivate::plotSelection failed: TableView is invalid");
     return;
-    }
+  }
   this->TableView->plotSelection();
 }
 
@@ -304,10 +304,10 @@ void qMRMLTableViewControllerWidget::setViewLabel(const QString& newViewLabel)
 {
   Q_D(qMRMLTableViewControllerWidget);
   if (!this->mrmlTableViewNode())
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return;
-    }
+  }
   this->mrmlTableViewNode()->SetLayoutLabel(newViewLabel.toUtf8());
 }
 
@@ -316,10 +316,10 @@ QString qMRMLTableViewControllerWidget::viewLabel()const
 {
   Q_D(const qMRMLTableViewControllerWidget);
   if (this->mrmlTableViewNode())
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: must set view node first";
     return QString();
-    }
+  }
   return this->mrmlTableViewNode()->GetLayoutLabel();
 }
 
@@ -346,9 +346,9 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
   //qDebug() << "qMRMLTableViewControllerWidget::updateWidgetFromMRML()";
 
   if (!this->mrmlTableViewNode() || !this->mrmlScene())
-    {
+  {
     return;
-    }
+  }
 
   d->ViewLabel->setText(this->mrmlTableViewNode()->GetLayoutLabel());
 
@@ -367,34 +367,34 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
   d->EditControlsFrame->setEnabled(editableNode);
 
   if (!tableNode)
-    {
+  {
     return;
-    }
+  }
 
   if (tableNode->GetLocked())
-    {
+  {
     d->LockTableButton->setIcon(QIcon(":Icons/Medium/SlicerLock.png"));
     d->LockTableButton->setToolTip(tr("Click to unlock this table so that values can be modified"));
-    }
+  }
   else
-    {
+  {
     d->LockTableButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
     d->LockTableButton->setToolTip(tr("Click to lock this table to prevent modification of the values in the user interface"));
-    }
+  }
 
   if (tableNode->GetUseColumnTitleAsColumnHeader() != d->LockFirstRowButton->isChecked())
-    {
+  {
     bool wasBlocked = d->LockFirstRowButton->blockSignals(true);
     d->LockFirstRowButton->setChecked(tableNode->GetUseColumnTitleAsColumnHeader());
     d->LockFirstRowButton->blockSignals(wasBlocked);
-    }
+  }
 
   if (tableNode->GetUseFirstColumnAsRowHeader() != d->LockFirstColumnButton->isChecked())
-    {
+  {
     bool wasBlocked = d->LockFirstColumnButton->blockSignals(true);
     d->LockFirstColumnButton->setChecked(tableNode->GetUseFirstColumnAsRowHeader());
     d->LockFirstColumnButton->blockSignals(wasBlocked);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -403,9 +403,9 @@ void qMRMLTableViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
   Q_D(qMRMLTableViewControllerWidget);
 
   if (this->mrmlScene() == newScene)
-    {
+  {
     return;
-    }
+  }
 
    d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent,
                     this, SLOT(updateWidgetFromMRML()));
@@ -422,9 +422,9 @@ void qMRMLTableViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
   //d->arrayComboBox->blockSignals(arrayBlockSignals);
 
   if (this->mrmlScene())
-    {
+  {
     this->updateWidgetFromMRML();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------

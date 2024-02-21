@@ -171,42 +171,42 @@ int TestSetMesh(bool observeMeshBeforeObserveDisplay,
 
   vtkPointSet* mesh;
   if (meshTypeIsPolyData)
-    {
+  {
     mesh = vtkPolyData::New();
-    }
+  }
   else
-    {
+  {
     mesh = vtkUnstructuredGrid::New();
-    }
+  }
 
   if (observeMeshBeforeObserveDisplay)
-    {
+  {
     model->SetAndObserveMesh(mesh);
-    }
+  }
 
   vtkNew<vtkMRMLModelDisplayNode> display;
   if (!observeDisplayBeforeAddToScene)
-    {
+  {
     scene->AddNode(display.GetPointer());
-    }
+  }
 
   model->SetAndObserveDisplayNodeID("vtkMRMLModelDisplayNode1");
   if (!observeMeshBeforeObserveDisplay)
-    {
+  {
     model->SetAndObserveMesh(mesh);
-    }
+  }
   if (observeDisplayBeforeAddToScene)
-    {
+  {
     scene->AddNode(display.GetPointer());
     model->UpdateScene(scene.GetPointer());
-    }
+  }
 
   vtkPointSet* displayInputMesh = display->GetInputMesh();
   if ((meshTypeIsPolyData && displayInputMesh != display->GetInputPolyData()) ||
       (!meshTypeIsPolyData && displayInputMesh != display->GetInputUnstructuredGrid()) ||
       displayInputMesh != model->GetMesh() ||
       displayInputMesh != mesh)
-    {
+  {
     std::cerr << __LINE__ << ": vtkMRMLModelNode::SetAndobserveMesh failed when "
               << (meshTypeIsPolyData ? "surface" : "volumetric")
               << " mesh is set "
@@ -220,7 +220,7 @@ int TestSetMesh(bool observeMeshBeforeObserveDisplay,
               << "Display: " << display->GetInputMesh() << std::endl;
     mesh->Delete();
     return EXIT_FAILURE;
-    }
+  }
   mesh->Delete();
   return EXIT_SUCCESS;
 }

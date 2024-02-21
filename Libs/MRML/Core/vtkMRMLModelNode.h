@@ -115,10 +115,10 @@ public:
   /// Mesh Type hint
   /// \sa GetMeshType()
   enum MeshTypeHint
-    {
+  {
     PolyDataMeshType = 0,
     UnstructuredGridMeshType
-    };
+  };
 
   /// Get the mesh type of that model. The safest way
   /// to know if the mesh is unstructuredGrid is to check
@@ -134,10 +134,10 @@ public:
   /// return value for GetModifiedSinceRead()
   /// \sa GetModifiedSinceRead()
   enum
-    {
+  {
     MeshModifiedEvent = 17001,
     PolyDataModifiedEvent = 17001 ///< \deprecated Use MeshModifiedEvent
-    };
+  };
 
   /// Utility function that adds an array to the mesh's point data.
   //// \sa AddCellScalars, AddScalars

@@ -71,9 +71,9 @@ public:
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
-    {
+  {
       DisplayModifiedEvent = 20000
-    };
+  };
 
   /// Get the color transfer function for this node
   /// \sa ColorTransferFunction, GetScalarsToColors(),

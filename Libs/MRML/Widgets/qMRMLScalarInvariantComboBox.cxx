@@ -84,12 +84,12 @@ void qMRMLScalarInvariantComboBoxPrivate::populateComboBox()
   for (int i = 0;
         i < vtkMRMLDiffusionTensorVolumeDisplayNode::GetNumberOfScalarInvariants();
        ++i)
-    {
+  {
     const int scalarInvariant = vtkMRMLDiffusionTensorVolumeDisplayNode::GetNthScalarInvariant(i);
     this->ComboBox->addItem(
       vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(scalarInvariant),
       QVariant(scalarInvariant));
-    }
+  }
 
 }
 
@@ -149,9 +149,9 @@ void qMRMLScalarInvariantComboBox::updateWidgetFromMRML()
 {
   Q_D(qMRMLScalarInvariantComboBox);
   if (!d->DisplayPropertiesNode)
-    {
+  {
     return;
-    }
+  }
   d->setScalarInvariantToComboBox(d->DisplayPropertiesNode->GetColorGlyphBy());
 }
 
@@ -177,12 +177,12 @@ void qMRMLScalarInvariantComboBox::setScalarInvariant(int value)
 {
   Q_D(qMRMLScalarInvariantComboBox);
   if (!d->DisplayPropertiesNode)
-    {
+  {
     d->setScalarInvariantToComboBox(value);
-    }
+  }
   else
-    {
+  {
     // SetColorGlyphBy will eventually call updateWidgetFromMRML
     d->DisplayPropertiesNode->SetColorGlyphBy(value);
-    }
+  }
 }

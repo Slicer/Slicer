@@ -183,9 +183,9 @@ QStringList qSlicerExtensionsManagerModelTester::expectedExtensionNames()const
 QString qSlicerExtensionsManagerModelTester::extensionNameFromExtenionId(int extensionId)
 {
   if (extensionId < 0 || extensionId >= this->expectedExtensionNames().count())
-    {
+  {
     return QString();
-    }
+  }
   return  this->expectedExtensionNames().at(extensionId);
 }
 
@@ -198,16 +198,16 @@ QString qSlicerExtensionsManagerModelTester::slicerVersion(const QString& operat
       osExtensionId == "linux-1" ||
       osExtensionId == "linux-2"
       )
-    {
+  {
     return QLatin1String("5.1");
-    }
+  }
   else if (osExtensionId == "macosx-0" ||
       osExtensionId == "macosx-1" ||
       osExtensionId == "macosx-2"
       )
-    {
+  {
     return QLatin1String("5.1");
-    }
+  }
   return QLatin1String("Invalid");
 }
 
@@ -218,19 +218,19 @@ bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile,
   bool success = true;
   QDir tmp = QDir::temp();
   if (!QFile::exists(tmp.filePath(this->TemporaryDirName)))
-    {
+  {
     success = tmp.mkdir(this->TemporaryDirName);
-    }
+  }
   success = tmp.cd(this->TemporaryDirName);
   if (tmp.exists("api"))
-    {
+  {
     success = success && ctk::removeDirRecursively(tmp.filePath("api"));
-    }
+  }
   success = success && tmp.mkdir("api");
   success = success && tmp.cd("api");
   QString filename;
   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
-    {
+  {
     QString appID = "5f4474d0e1d8c75dfc705482";
     success = success && tmp.mkdir("v1");
     success = success && tmp.cd("v1");
@@ -239,7 +239,7 @@ bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile,
     success = success && tmp.mkdir(appID);
     success = success && tmp.cd(appID);
     filename = "extension";
-    }
+  }
   success = success && QFile::copy(jsonFile, tmp.filePath(filename));
   success = success && QFile::setPermissions(tmp.filePath(filename), QFile::ReadOwner | QFile::WriteOwner);
   return success;
@@ -257,11 +257,11 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
   QString inputArchiveFile = QString(":/extension-%1-%2.tar.gz").arg(os).arg(extensionId);
   QString copiedArchiveFile = tmp + "/" + QFileInfo(inputArchiveFile).fileName();
   if (!QFile::exists(copiedArchiveFile))
-    {
+  {
     QVERIFY2(QFile::copy(inputArchiveFile, copiedArchiveFile),
              QString("Failed to copy %1 into %2").arg(inputArchiveFile).arg(copiedArchiveFile).toUtf8());
     QFile::setPermissions(copiedArchiveFile, QFile::ReadOwner | QFile::WriteOwner);
-    }
+  }
 
   QVERIFY2(this->prepareJson(QString(":/extension-%1-%2.json").arg(os).arg(extensionId), qSlicerExtensionsManagerModel::Girder_v1),
            QString("Failed to prepare json for extensionId: %1-%2").arg(os).arg(extensionId).toUtf8());
@@ -321,9 +321,9 @@ bool qSlicerExtensionsManagerModelTester::uninstallHelper(qSlicerExtensionsManag
 bool qSlicerExtensionsManagerModelTester::resetTmp()
 {
   if (this->TemporaryDirName.isEmpty())
-    {
+  {
     return false;
-    }
+  }
   QDir tmp = QDir::temp();
   QFile(tmp.filePath(this->TemporaryDirName)).setPermissions(QFile::ReadUser | QFile::WriteUser | QFile::ExeUser);
   ctk::removeDirRecursively(tmp.filePath(this->TemporaryDirName));
@@ -339,10 +339,10 @@ void qSlicerExtensionsManagerModelTester::dumpExtensionMetatype(
 {
   std::cout << "[" << varname << "]" << std::endl;
   foreach(const QString& key, extensionMetadata.keys())
-    {
+  {
     std::cout << varname << ".insert(\"" << qPrintable(key) << "\", "
               << "\"" << qPrintable(extensionMetadata.value(key).toString()) << "\");" << std::endl;
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -353,52 +353,52 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
 
   QFile metadataFile(QString(":/extension-%1-%2.json").arg(os).arg(extensionId));
   if (!QTest::qVerify(metadataFile.open(QFile::ReadOnly), "metadataFile.open(QFile::ReadOnly)", "", __FILE__, __LINE__))
-    {
+  {
     return ExtensionMetadataType();
-    }
+  }
 
   QJSEngine scriptEngine;
   QJSValue scriptValue = scriptEngine.evaluate("(" + QString(metadataFile.readAll()) + ")");
 
   ExtensionMetadataType allMetadata;
 
-    {
+  {
     // Girder_v1
     allMetadata = scriptValue.property(0).toVariant().toMap();
-    }
+  }
 
   allMetadata = qRestAPI::qVariantMapFlattened(allMetadata);
 
   if (!QTest::qVerify(allMetadata.count() > 0, "allMetadata.count() > 0", "", __FILE__, __LINE__))
-    {
+  {
     return ExtensionMetadataType();
-    }
+  }
 
   if (installed)
-    {
+  {
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
-      {
+    {
       allMetadata["archivename"] = "";
       allMetadata["enabled"] = "true";
       allMetadata["md5"] = "";
       allMetadata["release"] = "";
       allMetadata["status"] = "";
-      }
-    filtered = true;
     }
+    filtered = true;
+  }
 
   QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore(serverAPI));
   QVariantMap metadata;
   foreach(const QString& key, allMetadata.keys())
-    {
+  {
     if (filtered && keysToIgnore.contains(key))
-      {
+    {
       continue;
-      }
+    }
     metadata.insert(
           qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI).value(key, key),
           allMetadata.value(key));
-    }
+  }
   return metadata;
 }
 
@@ -430,10 +430,10 @@ void qSlicerExtensionsManagerModelTester::cleanup()
 void qSlicerExtensionsManagerModelTester::cleanupTestCase()
 {
   if (this->Tmp != QDir::current() && this->Tmp.exists())
-    {
+  {
     ctk::removeDirRecursively(this->Tmp.absolutePath());
     this->Tmp = QDir();
-    }
+  }
   QFile::remove(QSettings().fileName());
 }
 
@@ -660,34 +660,34 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
   QVERIFY(QFile::setPermissions(copiedArchiveFile, QFile::ReadUser | QFile::WriteUser));
 
   if (nonExistentDestinationPath)
-    {
+  {
     QVERIFY(ctk::removeDirRecursively(this->Tmp.absolutePath()));
     QVERIFY(!QFile::exists(this->Tmp.absolutePath()));
-    }
+  }
 
   if (readOnlyDestinationPath)
-    {
+  {
     QVERIFY(QFile::setPermissions(this->Tmp.absolutePath(), QFile::ExeUser | QFile::ReadUser));
     QCOMPARE(static_cast<bool>(QFile::permissions(this->Tmp.absolutePath()) & QFile::WriteUser), false);
-    }
+  }
 
   bool extractSuccess =
       model.extractExtensionArchive(inputExtensionName, copiedArchiveFile, this->Tmp.absolutePath());
   QCOMPARE(extractSuccess, expectedExtractSuccess);
   if (!expectedExtractSuccess)
-    {
+  {
     return;
-    }
+  }
 
   bool expectedFilesExist = true;
   foreach(const QString& expectedFile, expectedFiles)
-    {
+  {
     expectedFilesExist = expectedFilesExist && QFile::exists(this->Tmp.filePath(expectedFile));
     if(!expectedFilesExist)
-      {
+    {
       qCritical() << "Missing file" << expectedFile;
-      }
     }
+  }
   QVERIFY(expectedFilesExist);
 }
 
@@ -853,7 +853,7 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
   QSignalSpy spySlicerRequirementsChanged(&model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)));
 
   for (int extensionId = 0; extensionId < this->expectedExtensionNames().count(); ++extensionId)
-    {
+  {
     this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
 
     QCOMPARE(model.installedExtensionsCount(), extensionId + 1);
@@ -878,7 +878,7 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
     QVERIFY(model.isExtensionEnabled(extensionName));
     QCOMPARE(spyExtensionInstalled.count(), 0);
     QCOMPARE(spyExtensionEnabledChanged.count(), 2);
-    }
+  }
 
   QStringList expectedInstalledExtensionNames = this->expectedExtensionNames();
   std::sort(expectedInstalledExtensionNames.begin(), expectedInstalledExtensionNames.end());
@@ -911,16 +911,16 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
     model.setSlicerVersion(slicerVersion);
 
     for (int extensionId = 0; extensionId < this->expectedExtensionNames().count(); ++extensionId)
-      {
+    {
       this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
-      }
+    }
 
     foreach(const QString& extensionName, QStringList()
             << "MarkupsToModel")
-      {
+    {
       QVERIFY(this->uninstallHelper(&model, extensionName));
       QVERIFY(!model.isExtensionInstalled(extensionName));
-      }
+    }
   }
   {
     qSlicerExtensionsManagerModel model;
@@ -931,26 +931,26 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
     foreach(const QString& extensionName, QStringList()
             << "ImageMaker"
             << "CurveMaker")
-      {
+    {
       QVERIFY(model.isExtensionInstalled(extensionName));
-      }
+    }
 
     foreach(const QString& extensionName, QStringList()
             << "MarkupsToModel")
-      {
+    {
       QVERIFY(!model.isExtensionInstalled(extensionName));
-      }
+    }
 
     foreach(const QString& extensionName, QStringList()
             << "MarkupsToModel")
-      {
+    {
       this->installHelper(&model, operatingSystem, this->expectedExtensionNames().indexOf(extensionName), this->Tmp.absolutePath());
-      }
+    }
 
     foreach(const QString& extensionName, this->expectedExtensionNames())
-      {
+    {
       QVERIFY(model.isExtensionInstalled(extensionName));
-      }
+    }
   }
 }
 
@@ -976,9 +976,9 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall()
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
-      {
+    {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
-      }
+    }
   }
 
   QFETCH(QStringList, extensionNamesToScheduleForUninstall);
@@ -992,9 +992,9 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall()
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
     foreach(const QString& extensionNameToScheduleForUninstall, extensionNamesToScheduleForUninstall)
-      {
+    {
       model.scheduleExtensionForUninstall(extensionNameToScheduleForUninstall);
-      }
+    }
     QCOMPARE(spyExtensionScheduledForUninstall.count(), expectedExtensionNamesScheduledForUninstall.count());
   }
 
@@ -1061,9 +1061,9 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
-      {
+    {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
-      }
+    }
   }
 
   {
@@ -1074,9 +1074,9 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
     foreach(const QString& extensionNameToScheduleForUninstall, extensionNamesToScheduleForUninstall)
-      {
+    {
       model.scheduleExtensionForUninstall(extensionNameToScheduleForUninstall);
-      }
+    }
   }
 
   {
@@ -1089,9 +1089,9 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
     foreach(const QString& extensionNameToCancelScheduledForUninstall, extensionNamesToCancelScheduledForUninstall)
-      {
+    {
       model.cancelExtensionScheduledForUninstall(extensionNameToCancelScheduledForUninstall);
-      }
+    }
     QCOMPARE(spyExtensionCancelledScheduleForUninstall.count(), expectedSpyExtensionCancelledScheduleForUninstallCount);
   }
 
@@ -1168,9 +1168,9 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
     for (int extensionId = 0; extensionId < this->expectedExtensionNames().count(); ++extensionId)
-      {
+    {
       this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
-      }
+    }
     QCOMPARE(spyModelUpdated.count(), this->expectedExtensionNames().count());
   }
   {
@@ -1229,9 +1229,9 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     foreach(const QString& extensionName, QStringList()
             << "MarkupsToModel"
             << "CurveMaker")
-      {
+    {
       QCOMPARE(model.isExtensionEnabled(extensionName), true);
-      }
+    }
 
     model.updateModel();
 
@@ -1239,9 +1239,9 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     foreach(const QString& extensionName, QStringList()
             << "MarkupsToModel"
             << "CurveMaker")
-      {
+    {
       QCOMPARE(model.isExtensionEnabled(extensionName), true);
-      }
+    }
 
     QCOMPARE(spyModelUpdated.count(), 2);
     QCOMPARE(spyExtensionInstalled.count(), 0);
@@ -1277,9 +1277,9 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionInstalled()
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     if (extensionIdToInstall != -1)
-      {
+    {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
-      }
+    }
     QCOMPARE(model.isExtensionInstalled(this->expectedExtensionNames().at(0)), isExtensionZeroInstalled);
     QCOMPARE(model.isExtensionInstalled(this->expectedExtensionNames().at(1)), isExtensionOneInstalled);
     QCOMPARE(model.isExtensionInstalled(this->expectedExtensionNames().at(2)), isExtensionTwoInstalled);
@@ -1349,9 +1349,9 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensionsCount()
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
-      {
+    {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
-      }
+    }
     QCOMPARE(model.installedExtensionsCount(), expectedInstalledExtensionsCount);
   }
   {
@@ -1412,9 +1412,9 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensions()
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
-      {
+    {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
-      }
+    }
     QCOMPARE(model.installedExtensions(), expectedInstalledExtensionNames);
   }
   {
@@ -1481,27 +1481,27 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
-      {
+    {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
-      }
+    }
     QCOMPARE(model.enabledExtensions(), expectedEnabledExtensionNames);
 
     foreach(const QString& extensionName, expectedEnabledExtensionNames)
-      {
+    {
       additionalModulePathsPerExtension.insert(extensionName, model.extensionModulePaths(extensionName));
-      }
+    }
 
     foreach(const QString& extensionName, extensionNamesToDisable)
-      {
+    {
       model.setExtensionEnabled(extensionName, false);
-      }
+    }
     QCOMPARE(model.enabledExtensions(), expectedEnabledExtensionNamesAfterDisable);
 
     QStringList expectedAdditionalPaths;
     foreach(const QString& extensionName, expectedEnabledExtensionNamesAfterDisable)
-      {
+    {
       expectedAdditionalPaths << additionalModulePathsPerExtension.value(extensionName);
-      }
+    }
 
     QStringList currentAdditionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
     QCOMPARE(currentAdditionalPaths, expectedAdditionalPaths);
@@ -1515,9 +1515,9 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
 
     QStringList expectedAdditionalPaths;
     foreach(const QString& extensionName, expectedEnabledExtensionNamesAfterDisable)
-      {
+    {
       expectedAdditionalPaths << additionalModulePathsPerExtension.value(extensionName);
-      }
+    }
 
     QStringList currentAdditionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
     QCOMPARE(currentAdditionalPaths, expectedAdditionalPaths);
@@ -1637,17 +1637,17 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
 
   QCOMPARE(model.installedExtensionsCount(), extensionIdToUninstall == -1 ? 0 : 1);
   if (extensionIdToUninstall >= 0)
-    {
+  {
     model.setSlicerVersion(this->slicerVersion(operatingSystem, extensionIdToUninstall));
     this->uninstallHelper(&model, this->expectedExtensionNames().at(extensionIdToUninstall));
-    }
+  }
   QCOMPARE(model.installedExtensionsCount(), 0);
 
   if (extensionIdToInstall >= 0)
-    {
+  {
     model.setSlicerVersion(this->slicerVersion(operatingSystem, extensionIdToInstall));
     this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
-    }
+  }
 
   QStringList currentAdditionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
   QCOMPARE(currentAdditionalPaths, modulePaths);
@@ -1777,17 +1777,17 @@ void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated
 
   QCOMPARE(model.installedExtensionsCount(), extensionIdToUninstall.second == -1 ? 0 : 1);
   if (extensionIdToUninstall.second >= 0)
-    {
+  {
     model.setSlicerVersion(this->slicerVersion(extensionIdToUninstall.first, extensionIdToUninstall.second));
     this->uninstallHelper(&model, this->expectedExtensionNames().at(extensionIdToUninstall.second));
-    }
+  }
   QCOMPARE(model.installedExtensionsCount(), 0);
 
   if (extensionIdToInstall.second >= 0)
-    {
+  {
     model.setSlicerVersion(this->slicerVersion(extensionIdToInstall.first, extensionIdToInstall.second));
     this->installHelper(&model, extensionIdToInstall.first, extensionIdToInstall.second, this->Tmp.absolutePath());
-    }
+  }
 
   QSettings extensionsSettings(model.extensionsSettingsFilePath(), QSettings::IniFormat);
 
@@ -1900,9 +1900,9 @@ void testRequirementsHelper(qSlicerExtensionsManagerModel * model,
   QSignalSpy spySlicerRequirementsChanged(model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)));
   QSignalSpy spySlicerPropertyChanged(model, changedPropertySignal);
   foreach(const QString& valuetoSet, valuesToSet)
-    {
+  {
     (model->*qStringSetterFuncPtr)(valuetoSet);
-    }
+  }
   QCOMPARE((model->*qStringGetterFuncPtr)(), expectedFinalValue);
   QCOMPARE(spySlicerRequirementsChanged.count(), expectedSlicerRequirementsChangedCount);
   QCOMPARE(spySlicerPropertyChanged.count(), expectedSlicerRequirementsChangedCount);
@@ -2009,12 +2009,12 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerRequirements()
   QCOMPARE(requirementsToSetList.count(), expectedSlicerRequirementsChangedCounts.count());
 
   for(int setIdx = 0; setIdx < requirementsToSetList.count(); ++setIdx)
-    {
+  {
     QStringList set(requirementsToSetList.at(setIdx));
     QCOMPARE(set.count(), 3);
     model.setSlicerRequirements(set.at(0), set.at(1), set.at(2));
     QCOMPARE(spySlicerRequirementsChanged.count(), expectedSlicerRequirementsChangedCounts.at(setIdx));
-    }
+  }
 
   QCOMPARE(model.slicerRevision(), finalExpectedSlicerRequirement.at(0));
   QCOMPARE(model.slicerOs(), finalExpectedSlicerRequirement.at(1));

@@ -126,9 +126,9 @@ void qSlicerTransformsModule::setup()
 {
   qSlicerApplication * app = qSlicerApplication::application();
   if (!app)
-    {
+  {
     return;
-    }
+  }
   vtkSlicerTransformLogic* transformLogic =
     vtkSlicerTransformLogic::SafeDownCast(this->logic());
   app->coreIOManager()->registerIO(

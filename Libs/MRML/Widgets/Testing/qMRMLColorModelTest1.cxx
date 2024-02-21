@@ -54,9 +54,9 @@ int qMRMLColorModelTest1(int argc, char * argv [])
   vtkMRMLNode* node = nodeFactory.createNode("vtkMRMLColorTableNode");
   vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(node);
   if (colorNode)
-    {
+  {
     colorNode->SetTypeToWarmShade1();
-    }
+  }
   model.setMRMLColorNode(colorNode);
   colorNode->SetTypeToCool1();
 
@@ -66,9 +66,9 @@ int qMRMLColorModelTest1(int argc, char * argv [])
   view->resize(500, 800);
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

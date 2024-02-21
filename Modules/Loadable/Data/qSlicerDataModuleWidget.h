@@ -41,11 +41,11 @@ public:
   void enter() override;
 
   enum
-    {
+  {
     TabIndexSubjectHierarchy = 0,
     TabIndexTransformHierarchy,
     TabIndexAllNodes
-    };
+  };
 
 public slots:
   /// Reimplemented for internal reasons

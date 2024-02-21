@@ -88,18 +88,18 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
 {
   Q_D(qSlicerVolumesIOOptionsWidget);
   if (!d->NameLineEdit->text().isEmpty())
-    {
+  {
     QStringList names = d->NameLineEdit->text().split(';');
     for (int i = 0; i < names.count(); ++i)
-      {
-      names[i] = names[i].trimmed();
-      }
-    d->Properties["name"] = names;
-    }
-  else
     {
-    d->Properties.remove("name");
+      names[i] = names[i].trimmed();
     }
+    d->Properties["name"] = names;
+  }
+  else
+  {
+    d->Properties.remove("name");
+  }
   d->Properties["labelmap"] = d->LabelMapCheckBox->isChecked();
   d->Properties["center"] = d->CenteredCheckBox->isChecked();
   d->Properties["singleFile"] = d->SingleFileCheckBox->isChecked();
@@ -125,24 +125,24 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
 
   vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode> snode;
   if (this->mrmlScene())
-    {
+  {
     // storage node must be added to the scene to have access to supported file extensions
     // (known file extensions are used to determine node name accurately when there are
     // multiple '.' characters in the filename.
     snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
       this->mrmlScene()->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
-    }
+  }
   if (snode.GetPointer() == nullptr)
-    {
+  {
     qWarning("qSlicerVolumesIOOptionsWidget::setFileNames: mrmlScene is invalid, node name may not be determined accurately");
     snode = vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New();
-    }
+  }
  foreach(const QString& fileName, fileNames)
-    {
+ {
     QFileInfo fileInfo(fileName);
     QString fileBaseName = fileInfo.baseName();
     if (fileInfo.isFile())
-      {
+    {
       std::string fileNameStd = fileInfo.fileName().toStdString();
       std::string filenameWithoutExtension = snode->GetFileNameWithoutExtension(fileNameStd.c_str());
       fileBaseName = QString(filenameWithoutExtension.c_str());
@@ -152,21 +152,21 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
       // slice from a 3D volume, so uncheck Single File.
       onlyNumberInName = QRegExp("[0-9\\.\\-\\_\\@\\(\\)\\~]+").exactMatch(fileBaseName);
       fileInfo.suffix().toInt(&onlyNumberInExtension);
-      }
+    }
     // Because '_' is considered as a word character (\w), \b
     // doesn't consider '_' as a word boundary.
     QRegExp labelMapName("(\\b|_)([Ll]abel(s)?)(\\b|_)");
     QRegExp segName("(\\b|_)([Ss]eg)(\\b|_)");
     if (fileBaseName.contains(labelMapName) ||
       fileBaseName.contains(segName))
-      {
-      hasLabelMapName = true;
-      }
-    }
-  if (snode->GetScene())
     {
-    snode->GetScene()->RemoveNode(snode);
+      hasLabelMapName = true;
     }
+ }
+  if (snode->GetScene())
+  {
+    snode->GetScene()->RemoveNode(snode);
+  }
   d->NameLineEdit->setText( names.join("; ") );
   d->SingleFileCheckBox->setChecked(!onlyNumberInName && !onlyNumberInExtension);
   d->LabelMapCheckBox->setChecked(hasLabelMapName);
@@ -183,21 +183,21 @@ void qSlicerVolumesIOOptionsWidget::updateColorSelector()
   Q_D(qSlicerVolumesIOOptionsWidget);
 
   if (qSlicerCoreApplication::application() != nullptr)
-    {
+  {
     // access the color logic which has information about default color nodes
     vtkSlicerApplicationLogic* appLogic = qSlicerCoreApplication::application()->applicationLogic();
     if (appLogic && appLogic->GetColorLogic())
-      {
+    {
       if (d->LabelMapCheckBox->isChecked())
-        {
+      {
         d->ColorTableComboBox->setCurrentNodeID(appLogic->GetColorLogic()->GetDefaultLabelMapColorNodeID());
-        }
+      }
       else
-        {
+      {
         d->ColorTableComboBox->setCurrentNodeID(appLogic->GetColorLogic()->GetDefaultVolumeColorNodeID());
-        }
       }
     }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -206,7 +206,7 @@ void qSlicerVolumesIOOptionsWidget::updateGUI(const qSlicerIO::IOProperties& ioP
   Q_D(qSlicerVolumesIOOptionsWidget);
   qSlicerIOOptionsWidget::updateGUI(ioProperties);
   if (ioProperties.contains("singleFile"))
-    {
+  {
     d->SingleFileCheckBox->setChecked(ioProperties["singleFile"].toBool());
-    }
+  }
 }

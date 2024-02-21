@@ -74,7 +74,7 @@ bool testAutoRemoveModelFirst()
       displayNode1->GetScene() != nullptr ||
       displayNode2->GetScene() != nullptr ||
       storageNode->GetScene() != nullptr)
-    {
+  {
     std::cout << __LINE__ << ": testAutoRemove() failed"
               << "Display 1: " << scene->IsNodePresent(
                 displayNode1.GetPointer())
@@ -86,7 +86,7 @@ bool testAutoRemoveModelFirst()
                 storageNode.GetPointer())
               << " " << storageNode->GetScene() << std::endl;
     return false;
-    }
+  }
 
   return true;
 }
@@ -128,7 +128,7 @@ bool testAutoRemoveDisplayFirst()
       displayNode1->GetScene() != nullptr ||
       displayNode2->GetScene() != nullptr ||
       storageNode->GetScene() != nullptr)
-    {
+  {
     std::cout << __LINE__ << ": testAutoRemove() failed"
               << "Display 1: " << scene->IsNodePresent(
                 displayNode1.GetPointer())
@@ -140,7 +140,7 @@ bool testAutoRemoveDisplayFirst()
                 storageNode.GetPointer())
               << " " << storageNode->GetScene() << std::endl;
     return false;
-    }
+  }
 
   return true;
 }

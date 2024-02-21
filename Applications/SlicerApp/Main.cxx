@@ -40,9 +40,9 @@ int SlicerAppMain(int argc, char* argv[])
 
   qSlicerApplication app(argc, argv);
   if (app.returnCode() != -1)
-    {
+  {
     return app.returnCode();
-    }
+  }
 
   QScopedPointer<SlicerMainWindowType> window;
   QScopedPointer<QSplashScreen> splashScreen;
@@ -50,15 +50,15 @@ int SlicerAppMain(int argc, char* argv[])
   int exitCode = qSlicerApplicationHelper::postInitializeApplication<SlicerMainWindowType>(
         app, splashScreen, window);
   if (exitCode != 0)
-    {
+  {
     return exitCode;
-    }
+  }
 
   if (!window.isNull())
-    {
+  {
     QString windowTitle = QString("%1 %2").arg(window->windowTitle()).arg(Slicer_VERSION_FULL);
     window->setWindowTitle(windowTitle);
-    }
+  }
 
   return app.exec();
 }

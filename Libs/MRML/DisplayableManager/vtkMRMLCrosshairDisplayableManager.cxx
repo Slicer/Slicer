@@ -139,11 +139,11 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal::~vtkInternal()
   this->LightBoxRenderer = nullptr;
 
   if (this->SliceIntersectionWidget)
-    {
+  {
     this->SliceIntersectionWidget->SetMRMLApplicationLogic(nullptr);
     this->SliceIntersectionWidget->SetRenderer(nullptr);
     this->SliceIntersectionWidget->SetSliceNode(nullptr);
-    }
+  }
 
   // everything should be empty
   assert(this->CrosshairNode == nullptr);
@@ -165,9 +165,9 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::Modified()
 bool vtkMRMLCrosshairDisplayableManager::vtkInternal::HasCrosshairPositionChanged()
 {
   if (this->CrosshairNode.GetPointer() == nullptr)
-    {
+  {
     return false;
-    }
+  }
 
   // update the position of the actor
   double *ras = this->CrosshairNode->GetCrosshairRAS();
@@ -176,35 +176,35 @@ bool vtkMRMLCrosshairDisplayableManager::vtkInternal::HasCrosshairPositionChange
   if (fabs(lastRas[0] - ras[0]) > eps
     || fabs(lastRas[1] - ras[1]) > eps
     || fabs(lastRas[2] - ras[2]) > eps)
-    {
+  {
     return true;
-    }
+  }
   else
-    {
+  {
     return false;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLCrosshairDisplayableManager::vtkInternal::HasCrosshairPropertyChanged()
 {
   if (this->CrosshairNode.GetPointer() == nullptr)
-    {
+  {
     return false;
-    }
+  }
 
   if (this->CrosshairMode != this->CrosshairNode->GetCrosshairMode()
       || this->CrosshairThickness != this->CrosshairNode->GetCrosshairThickness()
       || this->CrosshairColor[0] != this->CrosshairNode->GetCrosshairColor()[0]
       || this->CrosshairColor[1] != this->CrosshairNode->GetCrosshairColor()[1]
       || this->CrosshairColor[2] != this->CrosshairNode->GetCrosshairColor()[2])
-    {
+  {
     return true;
-    }
+  }
   else
-    {
+  {
     return false;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -227,24 +227,24 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::UpdateSliceNode()
 void vtkMRMLCrosshairDisplayableManager::vtkInternal::UpdateIntersectingSliceNodes()
 {
   if (this->External->GetMRMLScene() == nullptr)
-    {
+  {
     this->SliceIntersectionWidget->SetSliceNode(nullptr);
     return;
-    }
+  }
 
   vtkMRMLApplicationLogic *mrmlAppLogic = this->External->GetMRMLApplicationLogic();
 
   if (!this->SliceIntersectionWidget->GetRenderer())
-    {
+  {
     this->SliceIntersectionWidget->SetMRMLApplicationLogic(mrmlAppLogic);
     this->SliceIntersectionWidget->CreateDefaultRepresentation();
     this->SliceIntersectionWidget->SetRenderer(this->External->GetRenderer());
     this->SliceIntersectionWidget->SetSliceNode(this->GetSliceNode());
-    }
+  }
   else
-    {
+  {
     this->SliceIntersectionWidget->SetSliceNode(this->GetSliceNode());
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -252,9 +252,9 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal
 ::SetCrosshairNode(vtkMRMLCrosshairNode* crosshairNode)
 {
   if (this->CrosshairNode == crosshairNode)
-    {
+  {
     return;
-    }
+  }
   vtkSetAndObserveMRMLNodeMacro(this->CrosshairNode, crosshairNode);
 }
 
@@ -262,9 +262,9 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal
 vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(vtkMRMLScene* scene)
 {
   if (scene == nullptr)
-    {
+  {
     return nullptr;
-    }
+  }
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
@@ -272,15 +272,15 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(vtkM
   crosshairs.TakeReference(scene->GetNodesByClass("vtkMRMLCrosshairNode"));
   for (crosshairs->InitTraversal(it);
        (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it)) ;)
-    {
+  {
     vtkMRMLCrosshairNode* crosshairNode =
       vtkMRMLCrosshairNode::SafeDownCast(node);
     if (crosshairNode
         && crosshairNode->GetCrosshairName() == std::string("default"))
-      {
+    {
       return crosshairNode;
-      }
     }
+  }
   // no matching crosshair node is found
   //assert(0);
   return nullptr;
@@ -291,18 +291,18 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
 {
   // Remove the old actor is any
   if (this->Actor.GetPointer())
-    {
+  {
     if (this->LightBoxRenderer)
-      {
+    {
       this->LightBoxRenderer->RemoveActor(this->Actor);
-      }
-    this->Actor = nullptr;
     }
+    this->Actor = nullptr;
+  }
 
   if (!this->CrosshairNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   // Get the size of the window
   const int *screenSize = this->External->GetInteractor()->GetRenderWindow()->GetScreenSize();
@@ -335,16 +335,16 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
   actor->SetMapper(mapper.GetPointer());
 
   if (this->LightBoxRenderer)
-    {
+  {
     this->LightBoxRenderer->AddActor(actor.GetPointer());
-    }
+  }
 
   // Cache the actor
   this->SetActor(actor.GetPointer());
 
   // Define the geometry
   switch (this->CrosshairNode->GetCrosshairMode())
-    {
+  {
     case vtkMRMLCrosshairNode::NoCrosshair:
       break;
     case vtkMRMLCrosshairNode::ShowBasic:
@@ -381,24 +381,24 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
       break;
     default:
       break;
-    }
+  }
 
   // Set the properties
   //
 
   // Line Width
   if (this->CrosshairNode->GetCrosshairThickness() == vtkMRMLCrosshairNode::Fine)
-    {
+  {
     actor->GetProperty()->SetLineWidth(1);
-    }
+  }
   else if (this->CrosshairNode->GetCrosshairThickness() == vtkMRMLCrosshairNode::Medium)
-    {
+  {
     actor->GetProperty()->SetLineWidth(3);
-    }
+  }
   else if (this->CrosshairNode->GetCrosshairThickness() == vtkMRMLCrosshairNode::Thick)
-    {
+  {
     actor->GetProperty()->SetLineWidth(5);
-    }
+  }
 
   // Set the color
   auto color = this->CrosshairNode->GetCrosshairColor();
@@ -409,13 +409,13 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
 
   // Set the visibility
   if (this->CrosshairNode->GetCrosshairMode() == vtkMRMLCrosshairNode::NoCrosshair)
-    {
+  {
     actor->VisibilityOff();
-    }
+  }
   else
-    {
+  {
     actor->VisibilityOn();
-    }
+  }
 
   this->CrosshairMode = this->CrosshairNode->GetCrosshairMode();
   this->CrosshairThickness = this->CrosshairNode->GetCrosshairThickness();
@@ -485,15 +485,15 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(
   // update the properties and style of the crosshair
   bool builtCrosshair = false;
   if (this->Internal->HasCrosshairPropertyChanged())
-    {
+  {
     this->Internal->BuildCrosshair();
     builtCrosshair = true;
-    }
+  }
 
   // update the position of the actor
   if ((this->Internal->HasCrosshairPositionChanged() || builtCrosshair)
       && this->Internal->Actor)
-    {
+  {
     double xyz[3];
     double *ras = this->Internal->CrosshairNode->GetCrosshairRAS();
     this->ConvertRASToXYZ(ras, xyz);
@@ -502,40 +502,40 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(
 
     // put the actor in the right lightbox
     if (this->GetLightBoxRendererManagerProxy())
-      {
+    {
       int id = (int) (floor(xyz[2] + 0.5)); // round to find the lightbox
       vtkRenderer *renderer
         = this->GetLightBoxRendererManagerProxy()->GetRenderer(id);
       if (renderer == nullptr)
-        {
+      {
         // crosshair must not be displayed in this view
         this->Internal->Actor->SetVisibility(false);
-        }
+      }
       else
-        {
+      {
         // crosshair must be displayed in this view
         if (this->Internal->LightBoxRenderer == renderer)
-          {
+        {
           this->Internal->Actor->SetVisibility(true);
-          }
+        }
         else
-          {
+        {
           if (this->Internal->LightBoxRenderer)
-            {
+          {
             this->Internal->LightBoxRenderer->RemoveActor(this->Internal->Actor);
-            }
+          }
           this->Internal->Actor->SetVisibility(true);
           renderer->AddActor(this->Internal->Actor);
           this->Internal->LightBoxRenderer = renderer;
-          }
         }
       }
+    }
 
     double *lastRas = this->Internal->CrosshairPosition;
     lastRas[0] = ras[0];
     lastRas[1] = ras[1];
     lastRas[2] = ras[2];
-    }
+  }
 
   // Request a render
   this->RequestRender();
@@ -559,7 +559,7 @@ void vtkMRMLCrosshairDisplayableManager::AdditionalInitializeStep()
 void vtkMRMLCrosshairDisplayableManager::OnMRMLSliceNodeModifiedEvent()
 {
   if (this->Internal->CrosshairNode)
-    {
+  {
     // slice position may have changed
 
     // change last crosshair position to force a position update
@@ -569,21 +569,21 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLSliceNodeModifiedEvent()
     double xyz[3] = { 0.0 };
     vtkMRMLSliceNode *crosshairSliceNode = this->Internal->CrosshairNode->GetCursorPositionXYZ(xyz);
     if (crosshairSliceNode != nullptr && crosshairSliceNode == this->Internal->GetSliceNode())
-      {
+    {
       this->Internal->CrosshairNode->SetCursorPositionXYZ(xyz, crosshairSliceNode);
-      }
+    }
 
     this->OnMRMLNodeModified(this->Internal->CrosshairNode);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLCrosshairDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2)
 {
   if (!this->Internal->SliceIntersectionWidget)
-    {
+  {
     return false;
-    }
+  }
   return this->Internal->SliceIntersectionWidget->CanProcessInteractionEvent(eventData, closestDistance2);
 }
 
@@ -591,15 +591,15 @@ bool vtkMRMLCrosshairDisplayableManager::CanProcessInteractionEvent(vtkMRMLInter
 bool vtkMRMLCrosshairDisplayableManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   if (!this->Internal->SliceIntersectionWidget)
-    {
+  {
     return false;
-    }
+  }
   bool processed = this->Internal->SliceIntersectionWidget->ProcessInteractionEvent(eventData);
   if (this->Internal->SliceIntersectionWidget && this->Internal->SliceIntersectionWidget->GetNeedToRender())
-    {
+  {
     this->Internal->SliceIntersectionWidget->NeedToRenderOff();
     this->RequestRender();
-    }
+  }
   return processed;
 }
 
@@ -625,9 +625,9 @@ vtkMRMLSliceIntersectionWidget* vtkMRMLCrosshairDisplayableManager::GetSliceInte
 int vtkMRMLCrosshairDisplayableManager::GetMouseCursor()
 {
   if (!this->Internal->SliceIntersectionWidget)
-    {
+  {
     return VTK_CURSOR_DEFAULT;
-    }
+  }
   return this->Internal->SliceIntersectionWidget->GetMouseCursor();
 }
 
@@ -635,7 +635,7 @@ int vtkMRMLCrosshairDisplayableManager::GetMouseCursor()
 void vtkMRMLCrosshairDisplayableManager::SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData)
 {
   if (!hasFocus && this->Internal->SliceIntersectionWidget)
-    {
+  {
     this->Internal->SliceIntersectionWidget->Leave(eventData);
-    }
+  }
 }

@@ -92,10 +92,10 @@ vtkCollection* qMRMLLayoutThreeDViewFactory::viewLogics() const
 QWidget* qMRMLLayoutThreeDViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!viewNode || !this->layoutManager() || !this->layoutManager()->viewport())
-    {
+  {
     Q_ASSERT(viewNode);
     return nullptr;
-    }
+  }
 
   // There must be a unique ThreeDWidget per node
   Q_ASSERT(!this->viewWidget(viewNode));
@@ -116,9 +116,9 @@ void qMRMLLayoutThreeDViewFactory::deleteView(vtkMRMLAbstractViewNode* viewNode)
   qMRMLThreeDWidget* threeDWidget =
     qobject_cast<qMRMLThreeDWidget*>(this->viewWidget(viewNode));
   if (threeDWidget)
-    {
+  {
     this->viewLogics()->RemoveItem(threeDWidget->viewLogic());
-    }
+  }
   this->Superclass::deleteView(viewNode);
 }
 
@@ -140,10 +140,10 @@ QString qMRMLLayoutTableViewFactory::viewClassName()const
 QWidget* qMRMLLayoutTableViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!this->layoutManager() || !viewNode || !this->layoutManager()->viewport())
-    {
+  {
     Q_ASSERT(viewNode);
     return nullptr;
-    }
+  }
 
   // There must be a unique TableWidget per node
   Q_ASSERT(!this->viewWidget(viewNode));
@@ -193,10 +193,10 @@ void qMRMLLayoutPlotViewFactory::setColorLogic(vtkMRMLColorLogic* colorLogic)
 QWidget* qMRMLLayoutPlotViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!this->layoutManager() || !viewNode || !this->layoutManager()->viewport())
-    {
+  {
     Q_ASSERT(viewNode);
     return nullptr;
-    }
+  }
 
   // There must be a unique plot widget per node
   Q_ASSERT(!this->viewWidget(viewNode));
@@ -244,10 +244,10 @@ vtkCollection* qMRMLLayoutSliceViewFactory::sliceLogics()const
 QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!this->layoutManager() || !viewNode || !this->layoutManager()->viewport())
-    {// can't create a slice widget if there is no parent widget
+  {// can't create a slice widget if there is no parent widget
     Q_ASSERT(viewNode);
     return nullptr;
-    }
+  }
 
   // there is a unique slice widget per node
   Q_ASSERT(!this->viewWidget(viewNode));
@@ -276,9 +276,9 @@ void qMRMLLayoutSliceViewFactory::deleteView(vtkMRMLAbstractViewNode* viewNode)
   qMRMLSliceWidget* sliceWidget =
     qobject_cast<qMRMLSliceWidget*>(this->viewWidget(viewNode));
   if (sliceWidget)
-    {
+  {
     this->sliceLogics()->RemoveItem(sliceWidget->sliceLogic());
-    }
+  }
   this->Superclass::deleteView(viewNode);
 }
 
@@ -367,21 +367,21 @@ qMRMLPlotWidget *qMRMLLayoutManagerPrivate::plotWidget(vtkMRMLPlotViewNode *node
 vtkMRMLNode* qMRMLLayoutManagerPrivate::viewNode(QWidget* widget)const
 {
   if (qobject_cast<qMRMLSliceWidget*>(widget))
-    {
+  {
     return qobject_cast<qMRMLSliceWidget*>(widget)->mrmlSliceNode();
-    }
+  }
   if (qobject_cast<qMRMLThreeDWidget*>(widget))
-    {
+  {
     return qobject_cast<qMRMLThreeDWidget*>(widget)->mrmlViewNode();
-    }
+  }
   if (qobject_cast<qMRMLTableWidget*>(widget))
-    {
+  {
     return qobject_cast<qMRMLTableWidget*>(widget)->mrmlTableViewNode();
-    }
+  }
   if (qobject_cast<qMRMLPlotWidget*>(widget))
-    {
+  {
     return qobject_cast<qMRMLPlotWidget*>(widget)->mrmlPlotViewNode();
-    }
+  }
   return nullptr;
 }
 
@@ -390,26 +390,26 @@ QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode)const
 {
   Q_Q(const qMRMLLayoutManager);
   if (!vtkMRMLAbstractViewNode::SafeDownCast(viewNode))
-    {
+  {
     return nullptr;
-    }
+  }
   QWidget* widget = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
-    {
+  {
     widget = this->sliceWidget(vtkMRMLSliceNode::SafeDownCast(viewNode));
-    }
+  }
   if (vtkMRMLViewNode::SafeDownCast(viewNode))
-    {
+  {
     widget = this->threeDWidget(vtkMRMLViewNode::SafeDownCast(viewNode));
-    }
+  }
   if (vtkMRMLTableViewNode::SafeDownCast(viewNode))
-    {
+  {
     widget = this->tableWidget(vtkMRMLTableViewNode::SafeDownCast(viewNode));
-    }
+  }
   if (vtkMRMLPlotViewNode::SafeDownCast(viewNode))
-    {
+  {
     widget = this->plotWidget(vtkMRMLPlotViewNode::SafeDownCast(viewNode));
-    }
+  }
   return widget ? widget : q->mrmlViewFactory(
         QString::fromUtf8(viewNode->GetClassName()))->viewWidget(
         vtkMRMLAbstractViewNode::SafeDownCast(viewNode));
@@ -499,44 +499,44 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
   Q_ASSERT(scene);
   Q_ASSERT(scene == this->MRMLScene);
   if (!this->MRMLScene || this->MRMLScene->IsBatchProcessing())
-    {
+  {
     return;
-    }
+  }
 
   // Layout node added
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(node);
   if (layoutNode)
-    {
+  {
     //qDebug() << "qMRMLLayoutManagerPrivate::onLayoutNodeAddedEvent";
     // Only one Layout node is expected
     Q_ASSERT(this->MRMLLayoutNode == nullptr);
     if (this->MRMLLayoutNode != nullptr)
-      {
+    {
       return;
-      }
-    this->setMRMLLayoutNode(layoutNode);
     }
+    this->setMRMLLayoutNode(layoutNode);
+  }
 
   // View node added
   vtkMRMLAbstractViewNode* viewNode =
     vtkMRMLAbstractViewNode::SafeDownCast(node);
   if (viewNode)
-    {
+  {
     // No explicit parent layout node means that view is handled by the main Slicer layout
     if (!viewNode->GetParentLayoutNode())
-      {
+    {
       foreach(qMRMLLayoutViewFactory* mrmlViewFactory, q->mrmlViewFactories())
-        {
+      {
         mrmlViewFactory->onViewNodeAdded(viewNode);
-        }
       }
     }
+  }
   else if (node->IsA("vtkMRMLSegmentationNode"))
-    {
+  {
     // Show segmentation section in slice view controller if the first segmentation
     // node has been added to the scene
     this->updateSegmentationControls();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -549,24 +549,24 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
   // Layout node
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(node);
   if (layoutNode)
-    {
+  {
     // The layout to be removed should be the same as the stored one
     Q_ASSERT(this->MRMLLayoutNode == layoutNode);
     this->setMRMLLayoutNode(nullptr);
-    }
+  }
   vtkMRMLAbstractViewNode* viewNode =
     vtkMRMLAbstractViewNode::SafeDownCast(node);
   if (viewNode)
-    {
+  {
     foreach(qMRMLLayoutViewFactory* mrmlViewFactory, q->mrmlViewFactories())
-      {
-      mrmlViewFactory->onViewNodeRemoved(viewNode);
-      }
-    }
-  else if (node->IsA("vtkMRMLSegmentationNode"))
     {
-    this->updateSegmentationControls();
+      mrmlViewFactory->onViewNodeRemoved(viewNode);
     }
+  }
+  else if (node->IsA("vtkMRMLSegmentationNode"))
+  {
+    this->updateSegmentationControls();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -575,10 +575,10 @@ void qMRMLLayoutManagerPrivate::onSceneRestoredEvent()
   //qDebug() << "qMRMLLayoutManagerPrivate::onSceneRestoredEvent";
 
   if (this->MRMLLayoutNode)
-    {
+  {
     // trigger an update to the layout
     this->MRMLLayoutNode->Modified();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -586,9 +586,9 @@ void qMRMLLayoutManagerPrivate::onSceneAboutToBeClosedEvent()
 {
   Q_Q(qMRMLLayoutManager);
   if (!this->Enabled)
-    {
+  {
     return;
-    }
+  }
   // remove the layout during closing.
   q->clearLayout();
 }
@@ -598,11 +598,11 @@ void qMRMLLayoutManagerPrivate::onSceneClosedEvent()
 {
   //qDebug() << "qMRMLLayoutManagerPrivate::onSceneClosedEvent";
   if (this->MRMLScene->IsBatchProcessing())
-    {
+  {
     // Some more processing on the scene is happening, let's just wait until it
     // finishes.
     return;
-    }
+  }
 
   // Since the loaded scene may not contain the required nodes, calling
   // initialize will make sure the LayoutNode, MRMLViewNode,
@@ -617,9 +617,9 @@ void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* vtkNotUsed(
   if (!this->MRMLScene ||
       this->MRMLScene->IsBatchProcessing() ||
       !this->Enabled)
-    {
+  {
     return;
-    }
+  }
   this->updateLayoutInternal();
 }
 
@@ -628,9 +628,9 @@ void qMRMLLayoutManagerPrivate::updateLayoutFromMRMLScene()
 {
   Q_Q(qMRMLLayoutManager);
   foreach(qMRMLLayoutViewFactory* viewFactory, q->mrmlViewFactories())
-    {
+  {
     viewFactory->onSceneModified();
-    }
+  }
   this->setMRMLLayoutNode(this->MRMLLayoutLogic->GetLayoutNode());
 }
 
@@ -669,36 +669,36 @@ void qMRMLLayoutManagerPrivate::updateLayoutInternal()
     vtkMRMLLayoutNode::SlicerLayoutNone;
 
   if (layout == vtkMRMLLayoutNode::SlicerLayoutCustomView)
-    {
+  {
     return;
-    }
+  }
 
   QDomDocument newLayout;
 
   int numberOfMaximizedViewNodes = (this->MRMLLayoutNode ? this->MRMLLayoutNode->GetNumberOfMaximizedViewNodes() : 0);
   if (numberOfMaximizedViewNodes)
-    {
+  {
     std::string maximizedLayoutDescription = this->MRMLLayoutNode->GetCurrentLayoutDescription();
     // Rewrite each viewport that has maximized view node.
     for (int maximizedViewNodeIndex = 0; maximizedViewNodeIndex < numberOfMaximizedViewNodes; maximizedViewNodeIndex++)
-      {
+    {
       vtkMRMLAbstractViewNode* maximizedViewNode = this->MRMLLayoutNode->GetMaximizedViewNode(maximizedViewNodeIndex);
       if (!maximizedViewNode)
-        {
+      {
         continue;
-        }
-      maximizedLayoutDescription = this->MRMLLayoutLogic->GetMaximizedViewLayoutDescription(maximizedViewNode, maximizedLayoutDescription.c_str());
       }
-    newLayout.setContent(QString::fromStdString(maximizedLayoutDescription));
+      maximizedLayoutDescription = this->MRMLLayoutLogic->GetMaximizedViewLayoutDescription(maximizedViewNode, maximizedLayoutDescription.c_str());
     }
+    newLayout.setContent(QString::fromStdString(maximizedLayoutDescription));
+  }
   else
-    {
+  {
     // Normal (non-maximized view)
     // TBD: modify the dom doc manually, don't create a new one
     newLayout.setContent(QString(
       this->MRMLLayoutNode ?
       this->MRMLLayoutNode->GetCurrentLayoutDescription() : ""));
-    }
+  }
 
   q->setLayout(newLayout);
   emit q->layoutChanged(layout);
@@ -713,9 +713,9 @@ void qMRMLLayoutManagerPrivate::setLayoutNumberOfCompareViewRowsInternal(int num
 
   // Update LayoutNode
   if (this->MRMLLayoutNode)
-    {
+  {
     this->MRMLLayoutNode->SetNumberOfCompareViewRows(num);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -727,9 +727,9 @@ void qMRMLLayoutManagerPrivate::setLayoutNumberOfCompareViewColumnsInternal(int 
 
   // Update LayoutNode
   if (this->MRMLLayoutNode)
-    {
+  {
     this->MRMLLayoutNode->SetNumberOfCompareViewColumns(num);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -738,9 +738,9 @@ void qMRMLLayoutManagerPrivate::updateSegmentationControls()
   Q_Q(qMRMLLayoutManager);
 
   foreach(const QString& viewName, q->sliceViewNames())
-    {
+  {
     q->sliceWidget(viewName)->sliceController()->updateSegmentationControlsVisibility();
-    }
+  }
 }
 
 
@@ -782,22 +782,22 @@ qMRMLLayoutManager::~qMRMLLayoutManager()
 
   // Erase all views (must happen before deleting viewports)
   foreach(ctkLayoutViewFactory * viewFactory, this->registeredViewFactories())
-    {
+  {
     qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
     if (mrmlViewFactory)
-      {
+    {
       mrmlViewFactory->setMRMLScene(nullptr);
-      }
     }
+  }
 
   // Delete detached viewports if they are not owned by the application mainWindow
   foreach(qMRMLLayoutManagerPrivate::ViewportInfo viewport, d->DetachedViewports)
-    {
+  {
     if (viewport.Window && !viewport.Window->parent())
-      {
+    {
       delete viewport.Window;
-      }
     }
+  }
   d->DetachedViewports.clear();
 }
 
@@ -820,13 +820,13 @@ QList<qMRMLLayoutViewFactory*> qMRMLLayoutManager::mrmlViewFactories()const
 {
   QList<qMRMLLayoutViewFactory*> res;
   foreach(ctkLayoutViewFactory* viewFactory, this->registeredViewFactories())
-    {
+  {
     qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
     if (mrmlViewFactory)
-      {
+    {
       res << mrmlViewFactory;
-      }
     }
+  }
   return res;
 }
 
@@ -835,12 +835,12 @@ qMRMLLayoutViewFactory* qMRMLLayoutManager
 ::mrmlViewFactory(const QString& viewClassName)const
 {
   foreach(qMRMLLayoutViewFactory* viewFactory, this->mrmlViewFactories())
-    {
+  {
     if (viewFactory->viewClassName() == viewClassName)
-      {
+    {
       return viewFactory;
-      }
     }
+  }
   return nullptr;
 }
 
@@ -851,10 +851,10 @@ void qMRMLLayoutManager
   this->Superclass::registerViewFactory(viewFactory);
   qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
   if (mrmlViewFactory)
-    {
+  {
     mrmlViewFactory->setLayoutManager(this);
     mrmlViewFactory->setMRMLScene(this->mrmlScene());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -870,9 +870,9 @@ qMRMLSliceWidget* qMRMLLayoutManager::sliceWidget(const QString& name)const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLSliceNode");
   if (!viewFactory)
-    {
+  {
     return nullptr;
-    }
+  }
   return qobject_cast<qMRMLSliceWidget*>(viewFactory->viewWidget(name));
 }
 
@@ -881,9 +881,9 @@ QStringList qMRMLLayoutManager::sliceViewNames() const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLSliceNode");
   if (!viewFactory)
-    {
+  {
     return QStringList();
-    }
+  }
   return viewFactory->viewNodeNames();
 }
 
@@ -892,9 +892,9 @@ int qMRMLLayoutManager::threeDViewCount()const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLViewNode");
   if (!viewFactory)
-    {
+  {
     return 0;
-    }
+  }
   return viewFactory->viewCount();
 }
 
@@ -903,9 +903,9 @@ int qMRMLLayoutManager::tableViewCount()const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLTableViewNode");
   if (!viewFactory)
-    {
+  {
     return 0;
-    }
+  }
   return viewFactory->viewCount();
 }
 
@@ -914,9 +914,9 @@ int qMRMLLayoutManager::plotViewCount() const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLPlotViewNode");
   if (!viewFactory)
-    {
+  {
     return 0;
-    }
+  }
   return viewFactory->viewCount();
 }
 
@@ -925,9 +925,9 @@ qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(int id)const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLViewNode");
   if (!viewFactory)
-    {
+  {
     return nullptr;
-    }
+  }
   return qobject_cast<qMRMLThreeDWidget*>(viewFactory->viewWidget(id));
 }
 
@@ -936,9 +936,9 @@ qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(const QString& name)const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLViewNode");
   if (!viewFactory)
-    {
+  {
     return nullptr;
-    }
+  }
   return qobject_cast<qMRMLThreeDWidget*>(viewFactory->viewWidget(name));
 }
 
@@ -947,9 +947,9 @@ qMRMLTableWidget* qMRMLLayoutManager::tableWidget(int id)const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLTableViewNode");
   if (!viewFactory)
-    {
+  {
     return nullptr;
-    }
+  }
   return qobject_cast<qMRMLTableWidget*>(viewFactory->viewWidget(id));
 }
 
@@ -958,9 +958,9 @@ qMRMLPlotWidget *qMRMLLayoutManager::plotWidget(int id)const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLPlotViewNode");
   if (!viewFactory)
-    {
+  {
     return nullptr;
-    }
+  }
   return qobject_cast<qMRMLPlotWidget*>(viewFactory->viewWidget(id));
 }
 
@@ -970,9 +970,9 @@ vtkCollection* qMRMLLayoutManager::mrmlSliceLogics()const
   qMRMLLayoutSliceViewFactory* viewFactory =
     qobject_cast<qMRMLLayoutSliceViewFactory*>(this->mrmlViewFactory("vtkMRMLSliceNode"));
   if (!viewFactory)
-    {
+  {
     return nullptr;
-    }
+  }
   return viewFactory->sliceLogics();
 }
 
@@ -982,9 +982,9 @@ vtkCollection *qMRMLLayoutManager::mrmlViewLogics() const
   qMRMLLayoutThreeDViewFactory* viewFactory =
     qobject_cast<qMRMLLayoutThreeDViewFactory*>(this->mrmlViewFactory("vtkMRMLViewNode"));
   if (!viewFactory)
-    {
+  {
     return nullptr;
-    }
+  }
   return viewFactory->viewLogics();
 }
 
@@ -994,9 +994,9 @@ void qMRMLLayoutManager::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
   qMRMLLayoutPlotViewFactory* viewFactory =
     qobject_cast<qMRMLLayoutPlotViewFactory*>(this->mrmlViewFactory("vtkMRMLPlotViewNode"));
   if (!viewFactory)
-    {
+  {
     return;
-    }
+  }
   viewFactory->setColorLogic(colorLogic);
 }
 
@@ -1006,9 +1006,9 @@ vtkMRMLColorLogic* qMRMLLayoutManager::mrmlColorLogic()const
   qMRMLLayoutPlotViewFactory* viewFactory =
     qobject_cast<qMRMLLayoutPlotViewFactory*>(this->mrmlViewFactory("vtkMRMLPlotViewNode"));
   if (!viewFactory)
-    {
+  {
     return nullptr;
-    }
+  }
   return viewFactory->colorLogic();
 }
 
@@ -1024,9 +1024,9 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLLayoutManager);
   if (d->MRMLScene == scene)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLScene* oldScene = d->MRMLScene;
   d->MRMLScene = scene;
@@ -1060,9 +1060,9 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
                    d, SLOT(onSceneClosedEvent()));
 
   foreach(qMRMLLayoutViewFactory* viewFactory, this->mrmlViewFactories())
-    {
+  {
     viewFactory->setMRMLScene(d->MRMLScene);
-    }
+  }
   d->updateLayoutFromMRMLScene();
 }
 
@@ -1125,19 +1125,19 @@ void qMRMLLayoutManager::setLayout(int layout)
 {
   Q_D(qMRMLLayoutManager);
   if (this->layout() == layout)
-    {
+  {
     return;
-    }
+  }
   // Update LayoutNode
   if (d->MRMLLayoutNode)
-    {
+  {
     if (!d->MRMLLayoutNode->IsLayoutDescription(layout))
-      {
+    {
       layout = vtkMRMLLayoutNode::SlicerLayoutConventionalView;
-      }
+    }
     d->MRMLLayoutNode->RemoveAllMaximizedViewNodes();
     d->MRMLLayoutNode->SetViewArrangement(layout);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1145,9 +1145,9 @@ void qMRMLLayoutManager::addMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   Q_D(qMRMLLayoutManager);
   if (!d->MRMLLayoutNode)
-    {
+  {
     return;
-    }
+  }
   d->MRMLLayoutNode->AddMaximizedViewNode(viewNode);
 }
 
@@ -1156,9 +1156,9 @@ void qMRMLLayoutManager::removeMaximizedViewNode(vtkMRMLAbstractViewNode* viewNo
 {
   Q_D(qMRMLLayoutManager);
   if (!d->MRMLLayoutNode)
-    {
+  {
     return;
-    }
+  }
   d->MRMLLayoutNode->RemoveMaximizedViewNode(viewNode);
 }
 
@@ -1167,9 +1167,9 @@ void qMRMLLayoutManager::removeAllMaximizedViewNodes()
 {
   Q_D(qMRMLLayoutManager);
   if (!d->MRMLLayoutNode)
-    {
+  {
     return;
-    }
+  }
   d->MRMLLayoutNode->RemoveAllMaximizedViewNodes();
 }
 
@@ -1193,20 +1193,20 @@ void qMRMLLayoutManager::setLayoutNumberOfCompareViewColumns(int num)
 void qMRMLLayoutManager::resetThreeDViews()
 {
   for(int idx = 0; idx < this->threeDViewCount(); ++idx)
-    {
+  {
     qMRMLThreeDView* threeDView = this->threeDWidget(idx)->threeDView();
     threeDView->resetFocalPoint();
     threeDView->resetCamera();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
 void qMRMLLayoutManager::resetSliceViews()
 {
   foreach(const QString& viewName, this->sliceViewNames())
-    {
+  {
     this->sliceWidget(viewName)->sliceController()->fitSliceToBackground();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1223,12 +1223,12 @@ QList<QWidget*> qMRMLLayoutManager::viewWidgets() const
   Q_D(const qMRMLLayoutManager);
   QList<QWidget*> viewWidgets;
   for (qMRMLLayoutViewFactory* factory : this->mrmlViewFactories())
-    {
+  {
     for (int i = 0; i < factory->viewCount(); ++i)
-      {
+    {
       viewWidgets.append(factory->viewWidget(i));
-      }
     }
+  }
   return viewWidgets;
 }
 
@@ -1241,27 +1241,27 @@ void qMRMLLayoutManager::setRenderPaused(bool pause)
 
   QList<QWidget*> viewWidgets = this->viewWidgets();
   for (QWidget* widget : viewWidgets)
-    {
+  {
     qMRMLAbstractViewWidget* viewWidget = qobject_cast<qMRMLAbstractViewWidget*>(widget);
     if (viewWidget)
-      {
+    {
       viewWidget->setRenderPaused(pause);
-      }
     }
+  }
 
   if (pause)
-    {
+  {
     d->AllViewsPauseRenderCount++;
-    }
+  }
   else
-    {
+  {
     d->AllViewsPauseRenderCount--;
     if (d->AllViewsPauseRenderCount < 0)
-      {
+    {
       qWarning() << Q_FUNC_INFO << "Cannot resume rendering on all views, pause render count is already 0";
       d->AllViewsPauseRenderCount = 0;
-      }
     }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1289,34 +1289,34 @@ void qMRMLLayoutManager::onViewportUsageChanged(const QString& viewportName)
   Q_D(qMRMLLayoutManager);
   QWidget* viewport = this->viewport(viewportName);
   if (!viewport)
-    {
+  {
     return;
-    }
+  }
   QWidget* viewportWindow = qobject_cast<QWidget*>(viewport->parent());
   if (!viewportWindow)
-    {
+  {
     return;
-    }
+  }
   // Show/hide and save/restore geometry if it is detached viewport managed by this class
   if (d->DetachedViewports.contains(viewportName))
-    {
+  {
     bool used = this->isViewportUsedInLayout(viewportName);
     QByteArray& geometry = d->DetachedViewports[viewportName].LastSavedWindowGeometry;
     if (used)
-      {
+    {
       viewportWindow->setVisible(true);
       if (!geometry.isEmpty())
-        {
-        viewportWindow->restoreGeometry(geometry);
-        }
-      }
-    else
       {
+        viewportWindow->restoreGeometry(geometry);
+      }
+    }
+    else
+    {
       // save geometry and hide if detached window
       geometry = viewportWindow->saveGeometry();
       viewportWindow->setVisible(false);
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1326,25 +1326,25 @@ QWidget* qMRMLLayoutManager::createViewport(const QDomElement& layoutElement, co
   // This method is called by the ctkLayoutManager when a viewport widget is needed by a layout and the
   // viewport is not available yet.
   if (!d->DetachedViewports.contains(viewportName))
-    {
+  {
     qMRMLLayoutManagerPrivate::ViewportInfo viewportInfo;
 
     // Get application mainwindow
     QMainWindow* mainWindow = nullptr;
     foreach(QWidget * widget, qApp->topLevelWidgets())
-      {
+    {
       mainWindow = qobject_cast<QMainWindow*>(widget);
       if (mainWindow)
-        {
+      {
         break;
-        }
       }
+    }
 
     // Use mainWindow as parent to link the viewport to the mainWindow: bring to the top and minimize
     // along with the viewport (and also copy application name and icon by default).
     bool dockable = (layoutElement.attribute("dockable", "true").toLower() == "true");
     if (mainWindow && dockable)
-      {
+    {
       QDockWidget* dockWidget = new QDockWidget(mainWindow);
       dockWidget->setObjectName(viewportName);
       dockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
@@ -1364,34 +1364,34 @@ QWidget* qMRMLLayoutManager::createViewport(const QDomElement& layoutElement, co
       else if (dockPosition == "top-left") { mainWindow->addDockWidget(mainWindow->corner(Qt::TopLeftCorner), dockWidget); }
       else if (dockPosition == "top-right") { mainWindow->addDockWidget(mainWindow->corner(Qt::TopRightCorner), dockWidget); }
       else
-        {
+      {
         qWarning() << "Unknown dockPosition in layout XML:" << dockPosition
           << " - valid values are floating, top, bottom, left, right, bottom-left, bottom-right, top-left, top-right";
         dockWidget->setFloating(true);
-        }
       }
+    }
     else
-      {
+    {
       viewportInfo.Window = new QWidget(mainWindow, Qt::Window | Qt::WindowMaximizeButtonHint);
       viewportInfo.Window->setObjectName(viewportName);
       if (!mainWindow)
-        {
+      {
         viewportInfo.Window->setWindowIcon(QIcon(":/Icons/Medium/DesktopIcon.png"));
-        }
+      }
       QVBoxLayout* layout = new QVBoxLayout(viewportInfo.Window);
       viewportInfo.Viewport = new QWidget(viewportInfo.Window);
       layout->addWidget(viewportInfo.Viewport);
-      }
+    }
 
 
     QString label = layoutElement.attribute("label");
     if (!label.isEmpty())
-      {
+    {
       // TODO: Translate label (see https://github.com/Slicer/Slicer/issues/6647)
       viewportInfo.Window->setWindowTitle(QCoreApplication::translate("vtkMRMLLayoutLogic", label.toStdString().c_str()));
-      }
+    }
 
     d->DetachedViewports.insert(viewportName, viewportInfo);
-    }
+  }
   return d->DetachedViewports.value(viewportName).Viewport;
 }

@@ -69,17 +69,17 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   /// \deprecated
   bool GetWindowLevelLocked()
-    {
+  {
     vtkWarningMacro("vtkMRMLScalarVolumeDisplayNode::GetWindowLevelLocked method is deprecated. To check if the mouse mode cannot change window/level, get info from the interaction node. "
                     "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
     return false;
-    };
+  };
   /// \deprecated
   virtual void SetWindowLevelLocked(bool)
-    {
+  {
     vtkWarningMacro("vtkMRMLScalarVolumeDisplayNode::SetWindowLevelLocked method is deprecated. To prevent the mouse from changing window/level, set the interaction node to something other than AdjustWindowLevel. "
                     "e.g. slicer.app.applicationLogic().GetInteractionNode().SetCurrentInteractionMode(slicer.vtkMRMLInteractionNode.ViewTransform)");
-    };
+  };
 
   ///
   /// Specifies whether windowing and leveling are to be performed automatically

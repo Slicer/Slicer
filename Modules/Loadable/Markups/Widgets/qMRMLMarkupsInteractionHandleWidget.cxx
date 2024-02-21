@@ -149,9 +149,9 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
   d->interactionHandleScaleSlider->setEnabled(d->DisplayNode != nullptr);
 
   if (!d->DisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   // Scale handles currently not implemented for all representations
   bool canDisplayScaleHandles = d->DisplayNode->GetCanDisplayScaleHandles();
@@ -241,9 +241,9 @@ void qMRMLMarkupsInteractionHandleWidget::updateWidgetFromMRML()
 
   wasBlocking = d->interactionHandleScaleSlider->blockSignals(true);
   if (d->DisplayNode->GetInteractionHandleScale() > d->interactionHandleScaleSlider->maximum())
-    {
+  {
     d->interactionHandleScaleSlider->setMaximum(d->DisplayNode->GetInteractionHandleScale());
-    }
+  }
   d->interactionHandleScaleSlider->setValue(d->DisplayNode->GetInteractionHandleScale());
   wasBlocking = d->interactionHandleScaleSlider->blockSignals(wasBlocking);
 }
@@ -253,9 +253,9 @@ void qMRMLMarkupsInteractionHandleWidget::updateMRMLFromWidget()
 {
   Q_D(qMRMLMarkupsInteractionHandleWidget);
   if (!d->DisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker displayNodeBlocker(d->DisplayNode);
   d->DisplayNode->SetHandlesInteractive(d->overallVisibilityCheckBox->isChecked());

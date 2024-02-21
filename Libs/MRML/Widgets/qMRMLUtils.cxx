@@ -59,12 +59,12 @@ void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vect
   vector.clear();
 
   for (int i=0; i < 4; i++)
-    {
+  {
     for (int j=0; j < 4; j++)
-      {
+    {
       vector.append(matrix->GetElement(i,j));
-      }
     }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -81,35 +81,35 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformN
 {
   Q_ASSERT(transform);
   if (!transform)
-    {
+  {
     return;
-    }
+  }
 
   transform->Identity();
 
   if (!transformNode || !transformNode->IsLinear())
-    {
+  {
     return;
-    }
+  }
 
   vtkNew<vtkMatrix4x4> matrix;
   int matrixDefined=transformNode->GetMatrixTransformToParent(matrix.GetPointer());
   Q_ASSERT(matrixDefined);
   if (!matrixDefined)
-    {
+  {
     return;
-    }
+  }
 
   transform->SetMatrix(matrix.GetPointer());
 
   if ( global )
-    {
+  {
     transform->PostMultiply();
-    }
+  }
   else
-    {
+  {
     transform->PreMultiply();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -120,13 +120,13 @@ int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
   const char* className = "vtkMRMLViewNode";
   int nnodes = scene->GetNumberOfNodesByClass(className);
   for (int n = 0; n < nnodes; n++)
-    {
+  {
     vtkMRMLViewNode * node = vtkMRMLViewNode::SafeDownCast(scene->GetNthNodeByClass(n, className));
     if (node && node->GetVisibility())
-      {
+    {
       numberOfVisibleNodes++;
-      }
     }
+  }
   return numberOfVisibleNodes;
 }
 
@@ -134,9 +134,9 @@ int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
 QPixmap qMRMLUtils::createColorPixmap(QStyle * style, const QColor &color)
 {
   if (!style)
-    {
+  {
     return QPixmap();
-    }
+  }
 
   const int size = style->pixelMetric(QStyle::PM_SmallIconSize) - 4;
 
@@ -170,41 +170,41 @@ bool qMRMLUtils::vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img)
 void qMRMLUtils::colorToQColor(const double* color, QColor &qcolor)
 {
   if (color)
-    {
+  {
     qcolor = QColor::fromRgbF(color[0], color[1], color[2]);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLUtils::qColorToColor(const QColor &qcolor, double* color)
 {
   if (color)
-    {
+  {
     color[0] = qcolor.redF();
     color[1] = qcolor.greenF();
     color[2] = qcolor.blueF();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
 void qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vtkIdList* idList)
 {
   if (!mimeData->hasFormat("text/uri-list") || !idList)
-    {
+  {
     return;
-    }
+  }
   idList->Reset();
   foreach(QUrl url, mimeData->urls())
-    {
+  {
     if (!url.isValid() || url.isEmpty())
-      {
+    {
       continue;
-      }
+    }
     if (url.scheme() != "mrml" || url.host() != "scene" || url.path() != "/subjecthierarchy/item")
-      {
+    {
       continue;
-      }
+    }
     QUrlQuery query(url.query());
     idList->InsertNextId(query.queryItemValue("id").toLong());
-    }
+  }
 }

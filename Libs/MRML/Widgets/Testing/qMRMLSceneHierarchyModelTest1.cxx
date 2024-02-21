@@ -52,7 +52,7 @@ int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
   qMRMLSceneFactoryWidget sceneFactory(nullptr);
 
   try
-    {
+  {
     ctkModelTester tester(&model);
     tester.setTestDataEnabled(false);
 
@@ -87,12 +87,12 @@ int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
 
     //vtkMRMLNode* node4 = sceneFactory.generateNode("vtkMRMLViewNode");
     //hierarchyNode5->SetAssociatedNodeID(node4->GetID());
-    }
+  }
   catch (const char* error)
-    {
+  {
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QTreeView view(nullptr);
   view.setDragDropMode(QAbstractItemView::InternalMove);
@@ -114,9 +114,9 @@ int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
   view2.resize(500, 300);
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

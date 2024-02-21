@@ -50,18 +50,18 @@ void vtkMRMLSliceDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   {
   os << indent << "ActiveComponents:";
   for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
-    {
+  {
     os << indent << indent;
     if (it->first.empty())
-      {
+    {
       os << "(default)";
-      }
-    else
-      {
-      os << it->first;
-      }
-    os << ": " << it->second.Type << ", " << it->second.Index;
     }
+    else
+    {
+      os << it->first;
+    }
+    os << ": " << it->second.Type << ", " << it->second.Index;
+  }
   os << "\n";
   }
   vtkMRMLPrintEndMacro();
@@ -109,9 +109,9 @@ void vtkMRMLSliceDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 
   vtkMRMLSliceDisplayNode* node = vtkMRMLSliceDisplayNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyBooleanMacro(IntersectingSlicesInteractive);
@@ -128,7 +128,7 @@ void vtkMRMLSliceDisplayNode::SetIntersectingSlicesInteractiveModeEnabled(
   IntersectingSlicesInteractiveMode mode, bool enabled)
 {
   switch (mode)
-    {
+  {
     case vtkMRMLSliceDisplayNode::ModeTranslation:
       this->SetIntersectingSlicesTranslationEnabled(enabled);
       break;
@@ -138,7 +138,7 @@ void vtkMRMLSliceDisplayNode::SetIntersectingSlicesInteractiveModeEnabled(
     default:
       vtkErrorMacro("Unknown mode");
       break;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -146,14 +146,14 @@ bool vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveModeEnabled(
   IntersectingSlicesInteractiveMode mode)
 {
   switch (mode)
-    {
+  {
     case vtkMRMLSliceDisplayNode::ModeTranslation:
       return this->GetIntersectingSlicesTranslationEnabled();
     case vtkMRMLSliceDisplayNode::ModeRotation:
       return this->GetIntersectingSlicesRotationEnabled();
     default:
       vtkErrorMacro("Unknown mode");
-    }
+  }
   return false;
 }
 
@@ -161,18 +161,18 @@ bool vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveModeEnabled(
 int vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisibilityModeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < HandlesVisibilityMode_Last; ii++)
-    {
+  {
     if (strcmp(name, GetIntersectingSlicesInteractiveHandlesVisibilityModeAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -181,7 +181,7 @@ int vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisibilityMo
 const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisibilityModeAsString(int id)
 {
   switch (id)
-    {
+  {
     case NeverVisible: return "NeverVisible";
     case NearbyVisible: return "NearbyVisible";
     case AlwaysVisible: return "AlwaysVisible";
@@ -189,58 +189,58 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisi
     default:
       // invalid id
       return "Invalid";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeFromString(const char* name)
-  {
+{
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < IntersectionMode_Last; ii++)
-    {
+  {
     if (strcmp(name, GetIntersectingSlicesIntersectionModeAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
-  }
+}
 
 //---------------------------------------------------------------------------
 const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeAsString(int id)
 {
   switch (id)
-    {
+  {
     case SkipLineCrossings: return "SkipLineCrossings";
     case FullLines: return "FullLines";
     default:
       // invalid id
       return "Invalid";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < LineThicknessMode_Last; ii++)
-    {
+  {
     if (strcmp(name, GetIntersectingSlicesLineThicknessModeAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -249,24 +249,24 @@ int vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeFromString(co
 const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsString(int id)
 {
   switch (id)
-    {
+  {
     case FineLines: return "FineLines";
     case MediumLines: return "MediumLines";
     case ThickLines: return "ThickLines";
     default:
       // invalid id
       return "Invalid";
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context/*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
-    {
+  {
     vtkErrorMacro("GetActiveComponentType: No interaction context with identifier '" << context << "' was found");
     return ComponentNone;
-    }
+  }
 
   return this->ActiveComponents[context].Type;
 }
@@ -275,10 +275,10 @@ int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context/*=GetDef
 int vtkMRMLSliceDisplayNode::GetActiveComponentIndex(std::string context/*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
-    {
+  {
     vtkErrorMacro("GetActiveComponentIndex: No interaction context with identifier '" << context << "' was found");
     return -1;
-    }
+  }
 
   return this->ActiveComponents[context].Index;
 }
@@ -289,10 +289,10 @@ void vtkMRMLSliceDisplayNode::SetActiveComponent(int componentType, int componen
   if ( this->ActiveComponents.find(context) != this->ActiveComponents.end()
     && this->ActiveComponents[context].Type == componentType
     && this->ActiveComponents[context].Index == componentIndex )
-    {
+  {
     // no change
     return;
-    }
+  }
   this->ActiveComponents[context].Index = componentIndex;
   this->ActiveComponents[context].Type = componentType;
   this->Modified();
@@ -302,12 +302,12 @@ void vtkMRMLSliceDisplayNode::SetActiveComponent(int componentType, int componen
 bool vtkMRMLSliceDisplayNode::HasActiveComponent()
 {
   for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
-    {
+  {
     if (it->second.Type != ComponentNone)
-      {
+    {
       return true;
-      }
     }
+  }
   return false;
 }
 
@@ -316,11 +316,11 @@ std::vector<std::string> vtkMRMLSliceDisplayNode::GetActiveComponentInteractionC
 {
   std::vector<std::string> interactionContextVector;
   for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
-    {
+  {
     if (it->second.Type != ComponentNone)
-      {
+    {
       interactionContextVector.push_back(it->first);
-      }
     }
+  }
   return interactionContextVector;
 }

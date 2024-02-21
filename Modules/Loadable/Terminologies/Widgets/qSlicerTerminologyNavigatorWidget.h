@@ -55,7 +55,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologyNavigatorWi
 
   /// Roles set to the items in the terminology tables uniquely identifying the entries
   enum TerminologyItemDataRole
-    {
+  {
     CodingSchemeDesignatorRole = Qt::UserRole + 100,
     CodeValueRole,
     // Roles for type items referencing category
@@ -64,7 +64,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologyNavigatorWi
     CategoryCodeMeaningRole,
     // Last role (always keep last)
     LastTerminologyRole
-    };
+  };
 
 public:
   /// Constructor

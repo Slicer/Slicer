@@ -202,12 +202,12 @@ vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetOrCreateShaderP
 {
   vtkMRMLShaderPropertyNode * sp = this->GetShaderPropertyNode();
   if( sp == nullptr )
-    {
+  {
     vtkNew<vtkMRMLShaderPropertyNode> shaderNode;
     mrmlScene->AddNode(shaderNode);
     this->SetAndObserveShaderPropertyNodeID(shaderNode->GetID());
     sp = shaderNode.GetPointer();
-    }
+  }
   return sp;
 }
 
@@ -239,19 +239,19 @@ vtkMRMLMarkupsROINode* vtkMRMLVolumeRenderingDisplayNode::GetMarkupsROINode()
 vtkMRMLViewNode* vtkMRMLVolumeRenderingDisplayNode::GetFirstViewNode()
 {
   if (!this->GetScene())
-    {
+  {
     return nullptr;
-    }
+  }
 
   std::vector<vtkMRMLNode*> viewNodes;
   this->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
   for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
-    {
+  {
     if (this->IsDisplayableInView((*it)->GetID()))
-      {
+    {
       return vtkMRMLViewNode::SafeDownCast(*it);
-      }
     }
+  }
 
   return nullptr;
 }
@@ -261,24 +261,24 @@ double vtkMRMLVolumeRenderingDisplayNode::GetSampleDistance()
 {
   vtkMRMLViewNode* firstViewNode = this->GetFirstViewNode();
   if (!firstViewNode)
-    {
+  {
     vtkErrorMacro("GetSampleDistance: Failed to access view node, returning 1mm");
     return 1.0;
-    }
+  }
   vtkMRMLVolumeNode* volumeNode = this->GetVolumeNode();
   if (!volumeNode)
-    {
+  {
     vtkErrorMacro("GetSampleDistance: Failed to access volume node, assuming 1mm voxel size");
     return 1.0 / firstViewNode->GetVolumeRenderingOversamplingFactor();
-    }
+  }
 
   const double minSpacing = volumeNode->GetMinSpacing() > 0 ? volumeNode->GetMinSpacing() : 1.;
   double sampleDistance = minSpacing / firstViewNode->GetVolumeRenderingOversamplingFactor();
   if ( firstViewNode
     && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Maximum)
-    {
+  {
     sampleDistance = minSpacing / 10.; // =10x smaller than pixel is high quality
-    }
+  }
   return sampleDistance;
 }
 
@@ -293,23 +293,23 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject *caller,
   if (volumePropertyNode != nullptr &&
       volumePropertyNode == vtkMRMLVolumePropertyNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
-    {
+  {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
-    }
+  }
   vtkMRMLShaderPropertyNode* shaderPropertyNode = this->GetShaderPropertyNode();
   if (shaderPropertyNode != nullptr &&
       shaderPropertyNode == vtkMRMLShaderPropertyNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
-    {
+  {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
-    }
+  }
   vtkMRMLMarkupsROINode* markupRoiNode = this->GetMarkupsROINode();
   if (markupRoiNode != nullptr &&
       markupRoiNode == vtkMRMLMarkupsROINode::SafeDownCast(caller) &&
       event == vtkCommand::ModifiedEvent)
-    {
+  {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
-    }
+  }
 
   if (event == vtkCommand::StartEvent ||
       event == vtkCommand::EndEvent ||
@@ -317,7 +317,7 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject *caller,
       event == vtkCommand::InteractionEvent ||
       event == vtkCommand::EndInteractionEvent
       )
-    {
+  {
     this->InvokeEvent(event);
-    }
+  }
 }

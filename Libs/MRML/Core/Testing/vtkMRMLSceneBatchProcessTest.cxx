@@ -59,13 +59,13 @@ int vtkMRMLSceneBatchProcessTest(
 
   if (callback->CalledEvents.size() != 1 ||
       callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1)
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   callback->CalledEvents.clear();
 
@@ -75,13 +75,13 @@ int vtkMRMLSceneBatchProcessTest(
 
   if (callback->CalledEvents.size() != 1 ||
       callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1)
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   //---------------------------------------------------------------------------
@@ -95,25 +95,25 @@ int vtkMRMLSceneBatchProcessTest(
   if (scene->IsBatchProcessing() != true||
       callback->CalledEvents.size() != 1 ||
       callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1)
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   scene->EndState(vtkMRMLScene::BatchProcessState);
   if (scene->IsBatchProcessing() != true ||
       callback->CalledEvents.size() != 0)
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // Fires:
   // 2) EndBatchProcessEvent
   scene->EndState(vtkMRMLScene::BatchProcessState);
@@ -121,13 +121,13 @@ int vtkMRMLSceneBatchProcessTest(
   if (scene->IsBatchProcessing() != false ||
       callback->CalledEvents.size() != 1 ||
       callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1)
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   //---------------------------------------------------------------------------
@@ -145,14 +145,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::StartImportEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartImportEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::StartImportEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   // 3) NodeAboutToBeAddedEvent
@@ -167,14 +167,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::NodeAddedEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::NodeAboutToBeAddedEvent] >
       callback->LastEventMTime[vtkMRMLScene::NodeAddedEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::NodeAboutToBeAddedEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::NodeAddedEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   // 5) EndImportProcessEvent
@@ -188,14 +188,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::EndImportEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::EndImportEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   //---------------------------------------------------------------------------
@@ -214,14 +214,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::StartImportEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartImportEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::StartImportEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   // 3) EndImportProcessEvent
@@ -231,13 +231,13 @@ int vtkMRMLSceneBatchProcessTest(
       scene->IsImporting() != false ||
       callback->CalledEvents.size() != 1 ||
       callback->CalledEvents[vtkMRMLScene::EndImportEvent] != 1)
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::EndImportEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   scene->EndState(vtkMRMLScene::BatchProcessState);
 
   if (scene->IsBatchProcessing() != false ||
@@ -247,14 +247,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::EndImportEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::EndImportEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   //---------------------------------------------------------------------------
@@ -272,14 +272,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::StartCloseEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::StartCloseEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   // 3) NodeAboutToBeRemovedEvent
@@ -293,14 +293,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::NodeRemovedEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::NodeAboutToBeRemovedEvent] >
       callback->LastEventMTime[vtkMRMLScene::NodeRemovedEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::NodeAboutToBeRemovedEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::NodeRemovedEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   // 5) EndCloseProcessEvent
@@ -314,14 +314,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::EndCloseEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::EndCloseEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   //---------------------------------------------------------------------------
@@ -340,14 +340,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::StartRestoreEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartRestoreEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::StartRestoreEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
 
@@ -363,14 +363,14 @@ int vtkMRMLSceneBatchProcessTest(
       callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
       callback->LastEventMTime[vtkMRMLScene::EndRestoreEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::EndRestoreEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
 
@@ -395,7 +395,7 @@ int vtkMRMLSceneBatchProcessTest(
       callback->LastEventMTime[vtkMRMLScene::StartRestoreEvent] ||
       callback->LastEventMTime[vtkMRMLScene::StartRestoreEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartImportEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] << " "
@@ -403,7 +403,7 @@ int vtkMRMLSceneBatchProcessTest(
               << callback->CalledEvents[vtkMRMLScene::StartImportEvent] << " "
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   // 4) EndImportProcessEvent
@@ -423,7 +423,7 @@ int vtkMRMLSceneBatchProcessTest(
       callback->LastEventMTime[vtkMRMLScene::EndRestoreEvent] ||
       callback->LastEventMTime[vtkMRMLScene::EndRestoreEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::EndImportEvent] << " "
@@ -431,7 +431,7 @@ int vtkMRMLSceneBatchProcessTest(
               << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->CalledEvents.clear();
 
   return EXIT_SUCCESS;

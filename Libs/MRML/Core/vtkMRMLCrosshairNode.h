@@ -32,9 +32,9 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   /// CursorPositionModifiedEvent is invoked when the cursor position is modified,
   /// for example a mouse pointer is moved in a slice view.
   enum
-    {
+  {
       CursorPositionModifiedEvent = 22000
-    };
+  };
 
   vtkMRMLNode* CreateNodeInstance() override;
 
@@ -135,7 +135,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
   /// Modes for crosshair display
   enum
-    {
+  {
       NoCrosshair = 0,
       ShowBasic,
       ShowIntersection,
@@ -144,24 +144,24 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
       ShowSmallBasic,
       ShowSmallIntersection,
       CrosshairMode_Last
-    };
+  };
   enum
-    {
+  {
       Fine = 1,
       Medium,
       Thick,
       CrosshairThickness_Last
-    };
+  };
   /// Behavior when crosshair position is changed.
   enum
-    {
+  {
       NoAction = 0,
       OffsetJumpSlice = 1,
       Normal = 1,   ///< \deprecated Use OffsetJumpSlice instead
       CenteredJumpSlice = 2,
       JumpSlice = 2, ///< \deprecated Use CenteredJumpSlice instead
       CrosshairBehavior_Last
-    };
+  };
 
   ///@{
   /// Experimental feature to choose between fast or accurate position computation in 3D views.

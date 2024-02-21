@@ -106,34 +106,34 @@ unsigned int vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionCost(
 vtkDataObject* vtkBinaryLabelmapToClosedSurfaceConversionRule::ConstructRepresentationObjectByRepresentation(std::string representationName)
 {
   if ( !representationName.compare(this->GetSourceRepresentationName()) )
-    {
+  {
     return (vtkDataObject*)vtkOrientedImageData::New();
-    }
+  }
   else if ( !representationName.compare(this->GetTargetRepresentationName()) )
-    {
+  {
     return (vtkDataObject*)vtkPolyData::New();
-    }
+  }
   else
-    {
+  {
     return nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkDataObject* vtkBinaryLabelmapToClosedSurfaceConversionRule::ConstructRepresentationObjectByClass(std::string className)
 {
   if (!className.compare("vtkOrientedImageData"))
-    {
+  {
     return (vtkDataObject*)vtkOrientedImageData::New();
-    }
+  }
   else if (!className.compare("vtkPolyData"))
-    {
+  {
     return (vtkDataObject*)vtkPolyData::New();
-    }
+  }
   else
-    {
+  {
     return nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -146,26 +146,26 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
 
   vtkPolyData* closedSurfacePolyData = vtkPolyData::SafeDownCast(targetRepresentation);
   if (!closedSurfacePolyData)
-    {
+  {
     vtkErrorMacro("Convert: Target representation is not poly data");
     return false;
-    }
+  }
 
   vtkOrientedImageData* orientedBinaryLabelmap = vtkOrientedImageData::SafeDownCast(sourceRepresentation);
   // Check validity of source and target representation objects
   if (!orientedBinaryLabelmap)
-    {
+  {
     vtkErrorMacro("Convert: Source representation is not oriented image data");
     return false;
-    }
+  }
 
   double smoothingFactor = this->ConversionParameters->GetValueAsDouble(GetSmoothingFactorParameterName());
   int jointSmoothing = this->ConversionParameters->GetValueAsInt(GetJointSmoothingParameterName());
 
   if (jointSmoothing > 0 && smoothingFactor > 0)
-    {
+  {
     if (this->JointSmoothCache.find(orientedBinaryLabelmap) == this->JointSmoothCache.end())
-      {
+    {
       double* scalarRange = orientedBinaryLabelmap->GetScalarRange();
       int lowLabel = (int)(floor(scalarRange[0]));
       int highLabel = (int)(ceil(scalarRange[1]));
@@ -180,26 +180,26 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
 
       std::vector<int> labelValues;
       for (int labelValue = lowLabel; labelValue <= highLabel; ++labelValue)
-        {
+      {
         // Add a new threshold for every level in the labelmap
         double numberOfVoxels = imageAccumulate->GetOutput()->GetPointData()->GetScalars()->GetTuple1((int)labelValue - lowLabel);
         if (numberOfVoxels > 0.0)
-          {
+        {
           labelValues.push_back(labelValue);
-          }
         }
+      }
 
       vtkSmartPointer<vtkPolyData> jointSmoothedSurface = vtkSmartPointer<vtkPolyData>::New();
       this->CreateClosedSurface(orientedBinaryLabelmap, jointSmoothedSurface, labelValues);
       this->JointSmoothCache[orientedBinaryLabelmap] = jointSmoothedSurface;
-      }
+    }
 
     vtkDataObject* sharedSurface = this->JointSmoothCache[orientedBinaryLabelmap];
     if (!sharedSurface)
-      {
+    {
       vtkErrorMacro("Convert: Could not find cached surface");
       return false;
-      }
+    }
 
     vtkNew<vtkSelectionSource> selection;
     selection->SetContentType(vtkSelectionNode::THRESHOLDS);
@@ -217,20 +217,20 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
 
     vtkPolyData* thresholdedSurface = geometry->GetOutput();
     closedSurfacePolyData->ShallowCopy(thresholdedSurface);
-    }
+  }
   else
-    {
+  {
     std::vector<int> labelValue = { segment->GetLabelValue() };
     this->CreateClosedSurface(orientedBinaryLabelmap, closedSurfacePolyData, labelValue);
-    }
+  }
 
   // Remove "ImageScalars" array because having a scalar in a model would get that
   // scalar array displayed automatically (instead of model node color) when the mesh is loaded.
   vtkPointData* pointData = closedSurfacePolyData->GetPointData();
   if (pointData!=nullptr)
-    {
+  {
     pointData->RemoveArray("ImageScalars");
-    }
+  }
 
   return true;
 }
@@ -240,42 +240,42 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   vtkPolyData* closedSurfacePolyData, std::vector<int> labelValues)
 {
   if (!closedSurfacePolyData)
-    {
+  {
     vtkErrorMacro("Convert: Target representation is not poly data");
     return false;
-    }
+  }
 
   // Check validity of source and target representation objects
   if (!orientedBinaryLabelmap)
-    {
+  {
     vtkErrorMacro("Convert: Source representation is not oriented image data");
     return false;
-    }
+  }
 
   vtkSmartPointer<vtkImageData> binaryLabelmap = orientedBinaryLabelmap;
   if (!binaryLabelmap)
-    {
+  {
     vtkErrorMacro("Convert: Source representation is not data");
     return false;
-    }
+  }
 
   // Pad labelmap if it has non-background border voxels
   int* binaryLabelmapExtent = binaryLabelmap->GetExtent();
   if (binaryLabelmapExtent[0] > binaryLabelmapExtent[1]
     || binaryLabelmapExtent[2] > binaryLabelmapExtent[3]
     || binaryLabelmapExtent[4] > binaryLabelmapExtent[5])
-    {
+  {
     // empty labelmap
     vtkDebugMacro("Convert: No polygons can be created, input image extent is empty");
     closedSurfacePolyData->Initialize();
     return true;
-    }
+  }
 
   /// If input labelmap has non-background border voxels, then those regions remain open in the output closed surface.
   /// This function adds a 1 voxel padding to the labelmap in these cases.
   bool paddingNecessary = this->IsLabelmapPaddingNecessary(binaryLabelmap);
   if (paddingNecessary)
-    {
+  {
     vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
     padder->SetInputData(binaryLabelmap);
     int extent[6] = { 0, -1, 0, -1, 0, -1 };
@@ -284,7 +284,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     padder->SetOutputWholeExtent(extent[0] - 1, extent[1] + 1, extent[2] - 1, extent[3] + 1, extent[4] - 1, extent[5] + 1);
     padder->Update();
     binaryLabelmap = padder->GetOutput();
-    }
+  }
 
   // Clone labelmap and set identity geometry so that the whole transform can be done in IJK space and then
   // the whole transform can be applied on the poly data to transform it to the world coordinate system
@@ -309,7 +309,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   vtkSmartPointer<vtkPolyData> processingResult = vtkSmartPointer<vtkPolyData>::New();
 
   if (conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES)
-    {
+  {
     vtkNew<vtkDiscreteFlyingEdges3D> flyingEdges;
     flyingEdges->SetInputData(binaryLabelmapWithIdentityGeometry);
     flyingEdges->ComputeGradientsOff();
@@ -318,23 +318,23 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
 
     int valueIndex = 0;
     for (vtkIdType labelValue : labelValues)
-      {
+    {
       flyingEdges->SetValue(valueIndex, labelValue);
       ++valueIndex;
-      }
+    }
     try
-      {
+    {
       flyingEdges->Update();
-      }
+    }
     catch (...)
-      {
+    {
       vtkErrorMacro("Convert: Error while running flying edges!");
       return false;
-      }
-    processingResult = flyingEdges->GetOutput();
     }
+    processingResult = flyingEdges->GetOutput();
+  }
   else if (conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS)
-    {
+  {
     vtkNew<vtkSurfaceNets3D> surfaceNets;
     surfaceNets->SetInputData(binaryLabelmapWithIdentityGeometry);
 
@@ -342,7 +342,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     surfaceNets->SmoothingOff();
 
     if (surfaceNetsSmoothing == 1)
-      {
+    {
       surfaceNets->SmoothingOn();
 
       // This formula maps (input) -> (iteration count)
@@ -354,48 +354,48 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
       double fCount = 15.0 * smoothingFactor * smoothingFactor + 9.0 * smoothingFactor;
       int iterationCount = floor(fCount);
       surfaceNets->SetNumberOfIterations(iterationCount);
-      }
+    }
 
     int valueIndex = 0;
     for (vtkIdType labelValue : labelValues)
-      {
+    {
       surfaceNets->SetValue(valueIndex, labelValue);
       ++valueIndex;
-      }
+    }
 
     try
-      {
+    {
       surfaceNets->Update();
-      }
+    }
     catch (...)
-      {
+    {
       vtkErrorMacro("Convert: Error while running surface nets!");
       return false;
-      }
+    }
     processingResult = surfaceNets->GetOutput();
-    }
+  }
   else
-    {
+  {
     vtkErrorMacro("Conversion Rule: Unknown surface generation method");
-    }
+  }
 
   vtkSmartPointer<vtkPolyData> convertedSegment = vtkSmartPointer<vtkPolyData>::New();
 
   if (processingResult->GetNumberOfPolys() == 0)
-    {
+  {
     vtkDebugMacro("Convert: No polygons can be created, probably all voxels are empty");
     convertedSegment = nullptr;
     closedSurfacePolyData->Initialize();
-    }
+  }
 
   if (!convertedSegment)
-    {
+  {
     return true;
-    }
+  }
 
   // Decimate
   if (decimationFactor > 0.0)
-    {
+  {
     vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
     decimator->SetInputData(processingResult);
     decimator->SetFeatureAngle(60);
@@ -405,10 +405,10 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     decimator->SetTargetReduction(decimationFactor);
     decimator->Update();
     processingResult = decimator->GetOutput();
-    }
+  }
 
   if (smoothingFactor > 0 && surfaceNetsSmoothing == 0)
-    {
+  {
     vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
     smoother->SetInputData(processingResult);
     smoother->SetNumberOfIterations(20); // based on VTK documentation ("Ten or twenty iterations is all the is usually necessary")
@@ -425,7 +425,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     smoother->NormalizeCoordinatesOn();
     smoother->Update();
     processingResult = smoother->GetOutput();
-    }
+  }
 
   // Transform the result surface from labelmap IJK to world coordinate system
   vtkSmartPointer<vtkTransform> labelmapGeometryTransform = vtkSmartPointer<vtkTransform>::New();
@@ -438,7 +438,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
 
   if (computeSurfaceNormals > 0 && conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_FLYING_EDGES)
-    {
+  {
     vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
     polyDataNormals->ConsistencyOn(); // discrete marching cubes may generate inconsistent surface
@@ -447,12 +447,12 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     polyDataNormals->SplittingOff();
     polyDataNormals->Update();
     convertedSegment->ShallowCopy(polyDataNormals->GetOutput());
-    }
+  }
   else
-    {
+  {
     transformPolyDataFilter->Update();
     convertedSegment->ShallowCopy(transformPolyDataFilter->GetOutput());
-    }
+  }
 
   closedSurfacePolyData->ShallowCopy(convertedSegment);
   return true;
@@ -470,10 +470,10 @@ template<class ImageScalarType>
 void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool &paddingNecessary)
 {
   if (!binaryLabelmap)
-    {
+  {
     paddingNecessary = false;
     return;
-    }
+  }
 
   // Check if there are non-zero voxels in the labelmap
   int extent[6] = {0,-1,0,-1,0,-1};
@@ -484,29 +484,29 @@ void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool &paddi
   ImageScalarType* imagePtr = (ImageScalarType*)binaryLabelmap->GetScalarPointerForExtent(extent);
 
   for (long k = 0; k < dimensions[2]; ++k)
-    {
+  {
     long offset2 = k * dimensions[0] * dimensions[1];
     for (long j = 0; j < dimensions[1]; ++j)
-      {
+    {
       long offset1 = j * dimensions[0] + offset2;
       for (long i=0; i<dimensions[0]; ++i)
       {
         if (i!=0 && i!=dimensions[0]-1 && j!=0 && j!=dimensions[1]-1 && k!=0 && k!=dimensions[2]-1)
-          {
+        {
           // Skip non-border voxels
           continue;
-          }
+        }
         int voxelValue = 0;
         voxelValue = (*(imagePtr + i + offset1));
 
         if (voxelValue != 0)
-          {
+        {
           paddingNecessary = true;
           return;
-          }
         }
       }
     }
+  }
 
   paddingNecessary = false;
   return;
@@ -516,19 +516,19 @@ void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool &paddi
 bool vtkBinaryLabelmapToClosedSurfaceConversionRule::IsLabelmapPaddingNecessary(vtkImageData* binaryLabelmap)
 {
   if (!binaryLabelmap)
-    {
+  {
     return false;
-    }
+  }
 
   bool paddingNecessary = false;
 
   switch (binaryLabelmap->GetScalarType())
-    {
+  {
     vtkTemplateMacro(IsLabelmapPaddingNecessaryGeneric<VTK_TT>( binaryLabelmap, paddingNecessary ));
     default:
       vtkErrorWithObjectMacro(binaryLabelmap, "IsLabelmapPaddingNecessary: Unknown image scalar type!");
       return false;
-    }
+  }
 
   return paddingNecessary;
 }

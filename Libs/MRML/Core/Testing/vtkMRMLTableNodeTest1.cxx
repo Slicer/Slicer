@@ -49,22 +49,22 @@ namespace
 {
   template <class ArrayType, typename ValueType>
   void checkDefaultArrayValue(vtkMRMLTableNode* tableNode, std::string columnType, std::string defaultValueString, ValueType value)
-   {
+  {
     tableNode->SetDefaultColumnType(columnType, defaultValueString);
     ArrayType* newArray = ArrayType::SafeDownCast(tableNode->AddColumn());
     if (!newArray)
-      {
+    {
       std::cerr << "checkDefaultArrayValue failed for '" << columnType << "'. Failed to create array" << std::endl;
       exit(EXIT_FAILURE);
-      }
+    }
     if (newArray->GetValue(0) != value)
-      {
+    {
       std::cerr << "checkDefaultArrayValue failed for '" << columnType << "' with '" << defaultValueString
         << "'. Expected value: '" << value << "', got: '" << newArray->GetValue(0) << "'" << std::endl;
       exit(EXIT_FAILURE);
-      }
-    tableNode->RemoveColumn(tableNode->GetNumberOfColumns() - 1);
     }
+    tableNode->RemoveColumn(tableNode->GetNumberOfColumns() - 1);
+  }
 }
 
 int vtkMRMLTableNodeTest1(int , char * [] )

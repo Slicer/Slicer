@@ -55,13 +55,13 @@ void qSlicerCoreModuleFactoryPrivate::registerCoreModule()
 
   QString _moduleName;
   if (!q->registerQObject<ClassType>(_moduleName))
-    {
+  {
     if (q->verbose())
-      {
+    {
       qDebug() << "Failed to register module: " << _moduleName;
-      }
-    return;
     }
+    return;
+  }
 }
 
 //-----------------------------------------------------------------------------

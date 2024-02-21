@@ -106,9 +106,9 @@ public:
 
   /// TypeModifiedEvent is generated when the type of the color look up table changes
   enum
-    {
+  {
       TypeModifiedEvent = 20002
-    };
+  };
 
   /// Get name of a color from its index (index is 0-based)
   /// \sa GetColorIndexByName()

@@ -87,7 +87,7 @@ public:
   ///   different markup points with each controller at the same time).
   int GetActiveComponentType(std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
   enum ComponentType
-    {
+  {
     ComponentNone = 0,
     ComponentControlPoint,
     ComponentCenterPoint,
@@ -97,17 +97,17 @@ public:
     ComponentTranslationHandle,
     ComponentScaleHandle,
     Component_Last
-    };
+  };
   struct ComponentInfo
-    {
+  {
     ComponentInfo()
-      {
+    {
       this->Type = ComponentNone;
       this->Index = -1;
-      }
+    }
     int Type;
     int Index;
-    };
+  };
 
   /// Index of active component (that the mouse or other interaction context is hovered over).
   /// This property is computed on-the-fly and saved to file.
@@ -200,17 +200,17 @@ public:
 
   /// Define how points are placed and moved in views
   enum SnapModes
-    {
+  {
     SnapModeUnconstrained, //< point is moved independently from displayed objects in 3D views (e.g., in parallel with camera plane)
     SnapModeToVisibleSurface, //< point is snapped to any visible surface in 3D views
     //SnapModeToNode //< point is snapped to a specific node, not implemented yet
     SnapMode_Last // insert new items above this line
-    };
+  };
 
   /// Which kind of glyph should be used to display this markup?
   /// Vertex2D is supposed to start at 1
   enum GlyphShapes
-    {
+  {
     GlyphTypeInvalid = 0,
     StarBurst2D,
     Cross2D,
@@ -227,7 +227,7 @@ public:
     ThickArrow2D,
     HookedArrow2D,
     GlyphType_Last // insert new types above this line
-    };
+  };
   /// Return the min/max glyph types, for iterating over them in tcl
   static int GetMinimumGlyphType() { return 1; };
   static int GetMaximumGlyphType() { return vtkMRMLMarkupsDisplayNode::GlyphType_Last-1; };
@@ -279,7 +279,7 @@ public:
   vtkBooleanMacro(UseGlyphScale, bool);
 
   enum
-    {
+  {
     ResetToDefaultsEvent = 19001, //< reset this node to the default values, request completed by markups logic
     JumpToPointEvent, /**< request jump to a selected control point, request completed by markups logic,
                       event data is vtkMRMLInteractionEventData*/
@@ -339,11 +339,11 @@ public:
   /// Way of determining line radius of markup curves. Default is relative thickness
   /// Current mode is stored in \sa CurveLineSizeMode
   enum CurveLineSizeModes
-    {
+  {
     UseLineThickness = 0,
     UseLineDiameter,
     CurveLineSizeMode_Last // insert new types above this line
-    };
+  };
 
   /// Configure mode of determining line radius of markup curves.
   /// Default is relative thickness. Available modes in \sa CurveLineSizeModes

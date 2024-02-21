@@ -63,17 +63,17 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
   vtkNew<vtkMRMLCameraNode> camera1;
   camera1->SetName("Default Scene Camera");
   if(!legacy)
-    {
+  {
     camera1->SetSingletonTag("1");
-    }
+  }
   camera1->SetPosition(camera1Pos);
   scene->AddNode(camera1.GetPointer());
 
   vtkNew<vtkMRMLCameraNode> camera2;
   if(!legacy)
-    {
+  {
     camera2->SetSingletonTag("2");
-    }
+  }
   camera2->SetName("Camera2");
   camera2->SetPosition(camera2Pos);
   scene->AddNode(camera2.GetPointer());
@@ -103,7 +103,7 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
 "</MRML>";
 
   if (legacy)
-    {
+  {
     sceneXML =
 "<MRML  version=\"Slicer4\" userTags=\"\">\n"
 "<View id=\"vtkMRMLViewNode1\" name=\"View\" "
@@ -123,36 +123,36 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
 "parallelScale=\"1\" activetag=\"vtkMRMLViewNode1\" "
 "appliedTransform=\"1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1\"  ></Camera>\n"
 "</MRML>";
-    }
+  }
 
   scene->SetSceneXMLString(sceneXML);
   scene->SetLoadFromXMLString(1);
   if (clear)
-    {
+  {
     scene->Connect();
-    }
+  }
   else
-    {
+  {
     scene->Import();
-    }
+  }
 
   double* expectedCamera1Pos = camera1Pos;
   double* expectedCamera2Pos = camera2Pos;
   double* expectedFirstCamera = camera1Pos;
   if (clear)
-    {
+  {
     expectedFirstCamera = importedCamera1Pos;
     if (!legacy)
-      {
+    {
       expectedCamera1Pos = importedCamera1Pos;
       expectedCamera2Pos = importedCamera2Pos;
-      }
     }
+  }
   else
-    {
+  {
     expectedCamera1Pos = importedCamera1Pos;
     expectedFirstCamera = importedCamera1Pos;
-    }
+  }
 
   vtkMRMLCameraNode* firstCamera = vtkMRMLCameraNode::SafeDownCast(
     scene->GetFirstNodeByClass("vtkMRMLCameraNode"));
@@ -160,7 +160,7 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
   if (camera1->GetPosition()[0] != expectedCamera1Pos[0] ||
       camera2->GetPosition()[0] != expectedCamera2Pos[0] ||
       firstCamera->GetPosition()[0] != expectedFirstCamera[0])
-    {
+  {
     std::cout << "vtkSlicerCamerasModuleLogic::CopyImportedCameras failed.\n"
               << "Clear: " << clear << "\n"
               << "Camera 1\n"
@@ -174,6 +174,6 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
               << "  expected: " << expectedFirstCamera[0]
               << std::endl;
     return false;
-    }
+  }
   return true;
 }

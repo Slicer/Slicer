@@ -19,7 +19,7 @@
 #include "coordTypes.h"
 
 struct skel_branch
-  {
+{
   skel_branch()
   {
     branchID = -1;
@@ -41,7 +41,7 @@ struct skel_branch
   Coord3i end_2_point;
   std::deque<int> end_1_neighbors; // id's == one can use advance for random access
   std::deque<int> end_2_neighbors;
-  };
+};
 
 class SkelGraph
 {

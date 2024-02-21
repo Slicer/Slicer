@@ -86,10 +86,10 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || !this->IsDisplayable())
-    {
+  {
     this->VisibilityOff();
     return;
-    }
+  }
 
   this->VisibilityOn();
 
@@ -104,12 +104,12 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
   // Hide the line actor if it doesn't intersect the current slice
   this->SliceDistance->Update();
   if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()), this->SliceDistance->GetScalarArrayName()))
-    {
+  {
     this->LineActor->SetVisibility(false);
-    }
+  }
 
   if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2)
-    {
+  {
     double p1[3] = { 0.0 };
     double p2[3] = { 0.0 };
     this->GetNthControlPointDisplayPosition(0, p1);
@@ -134,32 +134,32 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
       this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
       && this->AnyPointVisibilityOnSlice
       && markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
-    }
+  }
   else
-    {
+  {
     this->TextActor->SetVisibility(false);
-    }
+  }
 
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
-    {
+  {
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
-    }
+  }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
-    {
+  {
     // Update the line color mapping from the colorNode stored in the markups display node
     this->LineMapper->SetLookupTable(this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction());
-    }
+  }
   else
-    {
+  {
     // if there is no line color node, build the color mapping from few variables
     // (color, opacity, distance fading, saturation and hue offset) stored in the display node
     this->UpdateDistanceColorMap(this->LineColorMap, this->LineActor->GetProperty()->GetColor());
     this->LineMapper->SetLookupTable(this->LineColorMap);
-    }
+  }
 }
 
 
@@ -172,15 +172,15 @@ void vtkSlicerLineRepresentation2D::CanInteract(
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
     || !interactionEventData )
-    {
+  {
     return;
-    }
+  }
   Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-    {
+  {
     // if mouse is near a control point then select that (ignore the line)
     return;
-    }
+  }
 
   this->CanInteractWithLine(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
 }
@@ -204,9 +204,9 @@ int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport *viewport)
 {
   int count=0;
   if (this->LineActor->GetVisibility())
-    {
+  {
     count +=  this->LineActor->RenderOverlay(viewport);
-    }
+  }
   count += this->Superclass::RenderOverlay(viewport);
   return count;
 }
@@ -216,9 +216,9 @@ int vtkSlicerLineRepresentation2D::RenderOpaqueGeometry(vtkViewport *viewport)
 {
   int count=0;
   if (this->LineActor->GetVisibility())
-    {
+  {
     count += this->LineActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   return count;
 }
@@ -228,9 +228,9 @@ int vtkSlicerLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewpor
 {
   int count=0;
   if (this->LineActor->GetVisibility())
-    {
+  {
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   return count;
 }
@@ -239,13 +239,13 @@ int vtkSlicerLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewpor
 vtkTypeBool vtkSlicerLineRepresentation2D::HasTranslucentPolygonalGeometry()
 {
   if (this->Superclass::HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   return false;
 }
 
@@ -261,28 +261,28 @@ void vtkSlicerLineRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   if (this->LineActor)
-    {
+  {
     os << indent << "Line Actor Visibility: " << this->LineActor->GetVisibility() << "\n";
-    }
+  }
   else
-    {
+  {
     os << indent << "Line Actor: (none)\n";
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerLineRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
 {
   if (this->MarkupsNode != markupsNode)
-    {
+  {
     if (markupsNode)
-      {
+    {
       this->SliceDistance->SetInputConnection(markupsNode->GetCurveWorldConnection());
-      }
-    else
-      {
-      this->SliceDistance->SetInputData(this->Line);
-      }
     }
+    else
+    {
+      this->SliceDistance->SetInputData(this->Line);
+    }
+  }
   this->Superclass::SetMarkupsNode(markupsNode);
 }

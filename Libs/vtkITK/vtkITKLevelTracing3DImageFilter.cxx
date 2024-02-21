@@ -171,7 +171,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
     } //switch
   }
   else if (inScalars->GetNumberOfComponents() == 3)
-    {
+  {
     // RGB - convert for now...
     vtkSmartPointer<vtkUnsignedCharArray> grayScalars
       = vtkUnsignedCharArray::New();
@@ -180,23 +180,23 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
     double in[3];
     unsigned char out;
     for (vtkIdType i=0; i < inScalars->GetNumberOfTuples(); ++i)
-      {
+    {
       inScalars->GetTuple(i, in);
 
       out = static_cast<unsigned char>((2125.0 * in[0] +  7154.0 * in[1] +  0721.0 * in[2]) / 10000.0);
 
       grayScalars->SetTypedTuple(i, &out);
-      }
+    }
 
     vtkITKLevelTracing3DTrace(this,
                               (unsigned char *)grayScalars->GetVoidPointer(0),
                               dims, extent, origin, spacing,
                               (unsigned char *)os, this->Seed);
-    }
+  }
   else
-    {
+  {
     vtkErrorMacro(<< "Can only trace scalar and RGB images.");
-    }
+  }
 
   return 1;
 }

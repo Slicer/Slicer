@@ -90,10 +90,10 @@ qMRMLSegmentationGeometryWidgetPrivate::qMRMLSegmentationGeometryWidgetPrivate(q
 qMRMLSegmentationGeometryWidgetPrivate::~qMRMLSegmentationGeometryWidgetPrivate()
 {
   if (this->Logic)
-    {
+  {
     this->Logic->Delete();
     this->Logic = nullptr;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -124,10 +124,10 @@ void qMRMLSegmentationGeometryWidgetPrivate::updateGeometryWidgets()
 
   vtkOrientedImageData* geometryImageData = this->Logic->GetOutputGeometryImageData();
   if (!geometryImageData)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid geometry image data";
     return;
-    }
+  }
 
   int dims[3] = { 0 };
   geometryImageData->GetDimensions(dims);
@@ -155,28 +155,28 @@ void qMRMLSegmentationGeometryWidgetPrivate::updateGeometryWidgets()
   vtkNew<vtkMatrix4x4> directions;
   geometryImageData->GetDirectionMatrix(directions.GetPointer());
   for (int i=0; i<3; ++i)
-    {
+  {
     for (int j=0; j<3; ++j)
-      {
+    {
       this->MatrixWidget_Directions->setValue(i, j, directions->GetElement(i,j));
-      }
     }
+  }
 
   this->CheckBox_PadSegmentation->setIcon(QIcon());
   this->CheckBox_PadSegmentation->setText("");
   if (this->SegmentationNode && this->SegmentationNode->GetSegmentation() && !this->Logic->GetPadOutputGeometry())
-    {
+  {
     std::string commonLabelmapGeometryString = this->SegmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry(
       vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
     vtkNew<vtkOrientedImageData> segmentationGeometry;
     vtkSegmentationConverter::DeserializeImageGeometry(commonLabelmapGeometryString, segmentationGeometry, false/*don't allocate*/);
     if (vtkSlicerSegmentationsModuleLogic::IsSegmentationExentOutsideReferenceGeometry(geometryImageData, segmentationGeometry))
-      {
+    {
       QIcon warningIcon = q->style()->standardIcon(QStyle::SP_MessageBoxWarning);
       this->CheckBox_PadSegmentation->setIcon(warningIcon);
       this->CheckBox_PadSegmentation->setText(qMRMLSegmentationGeometryWidget::tr("The current segmentation may not fit into the new geometry."));
-      }
     }
+  }
 }
 
 
@@ -216,14 +216,14 @@ void qMRMLSegmentationGeometryWidget::setSegmentationNode(vtkMRMLSegmentationNod
   Q_D(qMRMLSegmentationGeometryWidget);
 
   if (d->SegmentationNode == node)
-    {
+  {
     return;
-    }
+  }
 
   if (node)
-    {
+  {
     this->setMRMLScene(node->GetScene());
-    }
+  }
 
   qvtkReconnect(d->SegmentationNode, node, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
@@ -262,10 +262,10 @@ void qMRMLSegmentationGeometryWidget::setSourceNode(vtkMRMLNode* sourceNode)
 {
   Q_D(qMRMLSegmentationGeometryWidget);
   if (sourceNode && sourceNode->GetScene() != this->mrmlScene())
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": MRML scene of the given source node and the widget are different, cannot set node";
     return;
-    }
+  }
 
   qvtkReconnect(this->sourceNode(), sourceNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
@@ -404,7 +404,7 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
   d->label_Error->setVisible(false);
   this->setEnabled(d->SegmentationNode.GetPointer());
   if (!d->SegmentationNode.GetPointer())
-    {
+  {
     d->frame_SourceGeometry->setVisible(false);
     d->groupBox_VolumeSpacingOptions->setVisible(false);
     d->MRMLCoordinatesWidget_Spacing->setEnabled(false);
@@ -412,7 +412,7 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
     d->label_Error->setVisible(true);
     d->updateGeometryWidgets();
     return;
-    }
+  }
 
   // Get source node
   vtkMRMLTransformableNode* sourceNode = vtkMRMLTransformableNode::SafeDownCast(
@@ -423,14 +423,14 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
 
   // If editing is disabled, then hide source node selector and use no source node even if was previously selected
   if (d->EditEnabled)
-    {
+  {
     d->frame_SourceGeometry->setVisible(true);
-    }
+  }
   else
-    {
+  {
     d->frame_SourceGeometry->setVisible(false);
     sourceNode = nullptr;
-    }
+  }
 
   // If volume node is selected, then show volume spacing options box
   d->groupBox_VolumeSpacingOptions->setVisible(sourceNode != nullptr && sourceIsVolume);
@@ -439,23 +439,23 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
 
   // If no source node is selected, then show the current labelmap geometry
   if (!sourceNode)
-    {
+  {
     d->groupBox_VolumeSpacingOptions->setVisible(false);
     std::string geometryString = d->SegmentationNode->GetSegmentation()->GetConversionParameter(
       vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
     if (!geometryString.empty())
-      {
+    {
       vtkOrientedImageData* geometryImageData = d->Logic->GetOutputGeometryImageData();
       vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryImageData, false);
-      }
+    }
     d->updateGeometryWidgets();
     return;
-    }
+  }
 
   // Calculate output geometry based on selection
   std::string errorMessage = d->Logic->CalculateOutputGeometry();
   if (!errorMessage.empty())
-    {
+  {
     d->label_Error->setText(errorMessage.c_str());
     d->label_Error->setVisible(true);
     qCritical() << Q_FUNC_INFO << ": " << errorMessage.c_str();
@@ -465,12 +465,12 @@ void qMRMLSegmentationGeometryWidget::updateWidgetFromMRML()
     // enters 0 into one of the spacing fields and all spacing fields
     // would be reset and because of 0 spacing, directions matrix
     // would be invalid).
-    }
+  }
   else
-    {
+  {
     // Fill output geometry in the widget
     d->updateGeometryWidgets();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -478,10 +478,10 @@ void qMRMLSegmentationGeometryWidget::setReferenceImageGeometryForSegmentationNo
 {
   Q_D(qMRMLSegmentationGeometryWidget);
   if (!d->SegmentationNode.GetPointer())
-    {
+  {
     qCritical() << Q_FUNC_INFO << "No input segmentation specified";
     return;
-    }
+  }
 
   // Save reference geometry
   vtkOrientedImageData* geometryImageData = d->Logic->GetOutputGeometryImageData();
@@ -493,16 +493,16 @@ void qMRMLSegmentationGeometryWidget::setReferenceImageGeometryForSegmentationNo
   // to gives a hint about which node the current geometry is based on)
   const char* referenceGeometryNodeID = nullptr;
   if (d->Logic->GetSourceGeometryNode())
-    {
+  {
     referenceGeometryNodeID = d->Logic->GetSourceGeometryNode()->GetID();
-    }
+  }
 
   // If the reference geometry node is the same as the segmentation node, then don't change the node reference
   if (vtkMRMLSegmentationNode::SafeDownCast(d->Logic->GetSourceGeometryNode()) != d->SegmentationNode)
-    {
+  {
     d->SegmentationNode->SetNodeReferenceID(
       vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(), referenceGeometryNodeID);
-    }
+  }
 
   // Note: it could be also useful to save oversampling value and isotropic flag,
   // we could then allow the user to modify these settings instead of always
@@ -524,8 +524,8 @@ void qMRMLSegmentationGeometryWidget::geometryImageData(vtkOrientedImageData* ou
 {
   Q_D(qMRMLSegmentationGeometryWidget);
   if (!outputGeometry)
-    {
+  {
     return;
-    }
+  }
   outputGeometry->ShallowCopy(d->Logic->GetOutputGeometryImageData());
 }

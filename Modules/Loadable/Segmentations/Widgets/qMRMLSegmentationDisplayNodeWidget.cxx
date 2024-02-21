@@ -161,9 +161,9 @@ void qMRMLSegmentationDisplayNodeWidget::setSegmentationDisplayNode(vtkMRMLSegme
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (d->SegmentationDisplayNode == node)
-    {
+  {
     return;
-    }
+  }
 
   qvtkReconnect(d->SegmentationDisplayNode, node, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
@@ -204,21 +204,21 @@ void qMRMLSegmentationDisplayNodeWidget::updateSelectedSegmentSection()
 
   d->groupBox_SelectedSegment->setEnabled(!d->SelectedSegmentID.isEmpty());
   if (!d->SegmentationDisplayNode || d->SelectedSegmentID.isEmpty())
-    {
+  {
     d->groupBox_SelectedSegment->setTitle(tr("Selected segment: none"));
     return;
-    }
+  }
 
   // Get segment display properties
   vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
   if (d->SegmentationDisplayNode)
-    {
+  {
     if (!d->SegmentationDisplayNode->GetSegmentDisplayProperties(d->SelectedSegmentID.toUtf8().constData(), properties))
-      {
+    {
       qCritical() << Q_FUNC_INFO << ": No display properties found for segment ID " << d->SelectedSegmentID;
       return;
-      }
     }
+  }
 
   d->checkBox_VisibilitySliceFill_SelectedSegment->blockSignals(true);
   d->checkBox_VisibilitySliceFill_SelectedSegment->setChecked(properties.Visible2DFill);
@@ -247,16 +247,16 @@ void qMRMLSegmentationDisplayNodeWidget::updateSelectedSegmentSection()
   // Set groupbox header to include segment name
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
   if (!segmentationNode || !segmentationNode->GetSegmentation())
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid segmentation node!";
     return;
-    }
+  }
   vtkSegment* selectedSegment = segmentationNode->GetSegmentation()->GetSegment(d->SelectedSegmentID.toUtf8().constData());
   if (!selectedSegment)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Unable to access segment " << d->SelectedSegmentID << " in segmentation " << segmentationNode->GetName();
     return;
-    }
+  }
   QString newTitle = tr("Selected segment: %1").arg(selectedSegment->GetName());
   d->groupBox_SelectedSegment->setTitle(newTitle);
 }
@@ -268,14 +268,14 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
 
   this->setEnabled(d->SegmentationDisplayNode.GetPointer());
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
   if (!segmentationNode)
-    {
+  {
     return;
-    }
+  }
 
   // Set overall visibility
   d->checkBox_Visible->setChecked( d->SegmentationDisplayNode->GetVisibility() );
@@ -321,16 +321,16 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
   // Set displayed representation selections
   std::string displayRepresentation3D = d->SegmentationDisplayNode->GetDisplayRepresentationName3D();
   if (!displayRepresentation3D.empty())
-    {
+  {
     d->comboBox_DisplayedRepresentation3D->setCurrentIndex( d->comboBox_DisplayedRepresentation3D->findText(
       displayRepresentation3D.c_str() ) );
-    }
+  }
   std::string displayRepresentation2D = d->SegmentationDisplayNode->GetDisplayRepresentationName2D();
   if (!displayRepresentation2D.empty())
-    {
+  {
     d->comboBox_DisplayedRepresentation2D->setCurrentIndex( d->comboBox_DisplayedRepresentation2D->findText(
       displayRepresentation2D.c_str() ) );
-    }
+  }
 
   // Set display node to display widgets
   d->DisplayNodeViewComboBox->setMRMLDisplayNode(d->SegmentationDisplayNode);
@@ -344,9 +344,9 @@ void qMRMLSegmentationDisplayNodeWidget::populate3DRepresentationsCombobox()
 {
   Q_D(qMRMLSegmentationDisplayNodeWidget);
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   // Note: This function used to collect existing poly data representations from
   // the segmentation and was connected to events like this:
@@ -363,9 +363,9 @@ void qMRMLSegmentationDisplayNodeWidget::populate3DRepresentationsCombobox()
   d->SegmentationDisplayNode->GetPolyDataRepresentationNames(modelRepresentationNames);
   for (std::set<std::string>::iterator reprIt = modelRepresentationNames.begin();
     reprIt != modelRepresentationNames.end(); ++reprIt)
-    {
+  {
     d->comboBox_DisplayedRepresentation3D->addItem(reprIt->c_str());
-    }
+  }
 
   // Unblock signals
   d->comboBox_DisplayedRepresentation3D->blockSignals(false);
@@ -373,10 +373,10 @@ void qMRMLSegmentationDisplayNodeWidget::populate3DRepresentationsCombobox()
   // Set selection from display node
   std::string displayRepresentation3D = d->SegmentationDisplayNode->GetDisplayRepresentationName3D();
   if (!displayRepresentation3D.empty())
-    {
+  {
     d->comboBox_DisplayedRepresentation3D->setCurrentIndex( d->comboBox_DisplayedRepresentation3D->findText(
       displayRepresentation3D.c_str() ) );
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -384,9 +384,9 @@ void qMRMLSegmentationDisplayNodeWidget::populate2DRepresentationsCombobox()
 {
   Q_D(qMRMLSegmentationDisplayNodeWidget);
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   // Prevent selecting incrementally added representations thus changing MRML properties
   d->comboBox_DisplayedRepresentation2D->blockSignals(true);
@@ -394,19 +394,19 @@ void qMRMLSegmentationDisplayNodeWidget::populate2DRepresentationsCombobox()
 
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
   if (!segmentationNode)
-    {
+  {
     d->comboBox_DisplayedRepresentation2D->blockSignals(false);
     return;
-    }
+  }
 
   // Populate 2D representations combobox with all available representations
   std::set<std::string> representationNames;
   segmentationNode->GetSegmentation()->GetAvailableRepresentationNames(representationNames);
   for (std::set<std::string>::iterator reprIt = representationNames.begin();
     reprIt != representationNames.end(); ++reprIt)
-    {
+  {
     d->comboBox_DisplayedRepresentation2D->addItem(reprIt->c_str());
-    }
+  }
 
   // Unblock signals
   d->comboBox_DisplayedRepresentation2D->blockSignals(false);
@@ -414,10 +414,10 @@ void qMRMLSegmentationDisplayNodeWidget::populate2DRepresentationsCombobox()
   // Set selection from display node
   std::string displayRepresentation2D = d->SegmentationDisplayNode->GetDisplayRepresentationName2D();
   if (!displayRepresentation2D.empty())
-    {
+  {
     d->comboBox_DisplayedRepresentation2D->setCurrentIndex( d->comboBox_DisplayedRepresentation2D->findText(
       displayRepresentation2D.c_str() ) );
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -426,9 +426,9 @@ void qMRMLSegmentationDisplayNodeWidget::onVisibilityChanged(int visible)
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetVisibility(visible > 0 ? 1 : 0);
 }
@@ -439,9 +439,9 @@ void qMRMLSegmentationDisplayNodeWidget::onOpacityChanged(double opacity)
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetOpacity(opacity);
 }
@@ -452,9 +452,9 @@ void qMRMLSegmentationDisplayNodeWidget::onVisibilitySliceFillChanged(int visibi
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetVisibility2DFill(visibility);
 }
@@ -465,9 +465,9 @@ void qMRMLSegmentationDisplayNodeWidget::onVisibilitySliceOutlineChanged(int vis
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetVisibility2DOutline(visibility);
 }
@@ -478,9 +478,9 @@ void qMRMLSegmentationDisplayNodeWidget::onVisibility3DChanged(int visibility)
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetVisibility3D(visibility);
 }
@@ -491,9 +491,9 @@ void qMRMLSegmentationDisplayNodeWidget::onOpacitySliceFillChanged(double opacit
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetOpacity2DFill(opacity);
 }
@@ -504,9 +504,9 @@ void qMRMLSegmentationDisplayNodeWidget::onOpacitySliceOutlineChanged(double opa
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetOpacity2DOutline(opacity);
 }
@@ -517,9 +517,9 @@ void qMRMLSegmentationDisplayNodeWidget::onOpacity3DChanged(double opacity)
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetOpacity3D(opacity);
 }
@@ -530,9 +530,9 @@ void qMRMLSegmentationDisplayNodeWidget::onSliceIntersectionThicknessChanged(int
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetSliceIntersectionThickness(thickness);
 }
@@ -543,9 +543,9 @@ void qMRMLSegmentationDisplayNodeWidget::onRepresentation3DChanged(int index)
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   // Get representation name from index
   QString representationName = d->comboBox_DisplayedRepresentation3D->itemText(index);
@@ -559,9 +559,9 @@ void qMRMLSegmentationDisplayNodeWidget::onRepresentation2DChanged(int index)
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
 
   // Get representation name from index
   QString representationName = d->comboBox_DisplayedRepresentation2D->itemText(index);
@@ -577,19 +577,19 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentSelectionChanged(const QItemSe
 
   qMRMLSegmentsTableView* senderSegmentsTable = qobject_cast<qMRMLSegmentsTableView*>(sender());
   if (!senderSegmentsTable)
-    {
+  {
     return;
-    }
+  }
 
   QStringList selectedSegmentIDs = senderSegmentsTable->selectedSegmentIDs();
   if (selectedSegmentIDs.size() == 0)
-    {
+  {
     this->setCurrentSegmentID(QString());
-    }
+  }
   else
-    {
+  {
     this->setCurrentSegmentID(selectedSegmentIDs[0]);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -598,9 +598,9 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentVisibilitySliceFillChanged(int
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer() || d->SelectedSegmentID.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetSegmentVisibility2DFill(d->SelectedSegmentID.toUtf8().constData(), visibility);
 }
@@ -611,9 +611,9 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentVisibilitySliceOutlineChanged(
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer() || d->SelectedSegmentID.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetSegmentVisibility2DOutline(d->SelectedSegmentID.toUtf8().constData(), visibility);
 }
@@ -624,9 +624,9 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentVisibility3DChanged(int visibi
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer() || d->SelectedSegmentID.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetSegmentVisibility3D(d->SelectedSegmentID.toUtf8().constData(), visibility);
 }
@@ -637,9 +637,9 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentOpacitySliceFillChanged(double
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer() || d->SelectedSegmentID.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetSegmentOpacity2DFill(d->SelectedSegmentID.toUtf8().constData(), opacity);
 }
@@ -650,9 +650,9 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentOpacitySliceOutlineChanged(dou
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer() || d->SelectedSegmentID.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetSegmentOpacity2DOutline(d->SelectedSegmentID.toUtf8().constData(), opacity);
 }
@@ -663,9 +663,9 @@ void qMRMLSegmentationDisplayNodeWidget::onSegmentOpacity3DChanged(double opacit
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
   if (!d->SegmentationDisplayNode.GetPointer() || d->SelectedSegmentID.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   d->SegmentationDisplayNode->SetSegmentOpacity3D(d->SelectedSegmentID.toUtf8().constData(), opacity);
 }

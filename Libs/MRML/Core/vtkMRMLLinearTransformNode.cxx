@@ -46,29 +46,29 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   if (this->IsLinear())
-    {
+  {
     // Only write the matrix to the scene if the object stores a linear transform
     vtkNew<vtkMatrix4x4> matrix;
     this->GetMatrixTransformToParent(matrix.GetPointer());
 
     std::stringstream ss;
     for (int row=0; row<4; row++)
-      {
+    {
       for (int col=0; col<4; col++)
-        {
+      {
         ss << matrix->GetElement(row, col);
         if (!(row==3 && col==3))
-          {
-          ss << " ";
-          }
-        }
-      if ( row != 3 )
         {
-        ss << " ";
+          ss << " ";
         }
       }
-    of << " matrixTransformToParent=\"" << ss.str() << "\"";
+      if ( row != 3 )
+      {
+        ss << " ";
+      }
     }
+    of << " matrixTransformToParent=\"" << ss.str() << "\"";
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -83,47 +83,47 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "matrixTransformToParent"))
-      {
+    {
       vtkNew<vtkMatrix4x4> matrix;
       std::stringstream ss;
       double val;
       ss << attValue;
       for (int row=0; row<4; row++)
-        {
+      {
         for (int col=0; col<4; col++)
-          {
+        {
           ss >> val;
           matrix->SetElement(row, col, val);
-          }
         }
+      }
       this->SetMatrixTransformToParent(matrix.GetPointer());
-      }
+    }
     if (!strcmp(attName, "matrixTransformFromParent"))
-      {
+    {
       vtkNew<vtkMatrix4x4> matrix;
       std::stringstream ss;
       double val;
       ss << attValue;
       for (int row=0; row<4; row++)
-        {
+      {
         for (int col=0; col<4; col++)
-          {
+        {
           ss >> val;
           matrix->SetElement(row, col, val);
-          }
         }
-      this->SetMatrixTransformFromParent(matrix.GetPointer());
       }
+      this->SetMatrixTransformFromParent(matrix.GetPointer());
+    }
 
     // For backward compatibility only (because readWriteAsTransformToParent
     // is not present anymore in current scenes, because transforms are always
     // written as TransformFromParent)
     if (!strcmp(attName, "readWriteAsTransformToParent"))
-      {
+    {
       // There was a bug in the scene writing for linear transforms
       // which caused readWriteAsTransformToParent to be written incorrectly.
       // We correct it here by setting ReadAsToParent to 0 if readWriteAsTransformToParent is true
@@ -131,16 +131,16 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       // anymore) vtkMRMLLinearTransformNode and readWriteAsTransformToParent attribute management
       // can be completely removed.
       if (!strcmp(attValue,"true"))
-        {
+      {
         this->ReadAsTransformToParent = 0;
-        }
-      else
-        {
-        this->ReadAsTransformToParent = 1;
-        }
       }
-
+      else
+      {
+        this->ReadAsTransformToParent = 1;
+      }
     }
+
+  }
   this->EndModify(disabledModify);
 }
 
@@ -150,25 +150,25 @@ void vtkMRMLLinearTransformNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   if (this->IsLinear())
-    {
+  {
     vtkNew<vtkMatrix4x4> toParentMatrix;
     this->GetMatrixTransformToParent(toParentMatrix.GetPointer());
 
     os << indent << "MatrixTransformToParent: " << "\n";
     for (int row=0; row<4; row++)
-      {
+    {
       for (int col=0; col<4; col++)
-        {
+      {
         os << toParentMatrix->GetElement(row, col);
         if (!(row==3 && col==3))
-          {
+        {
           os << " ";
-          }
+        }
         else
-          {
+        {
           os << "\n";
-          }
-        } // for (int col
-      } // for (int row
-    }
+        }
+      } // for (int col
+    } // for (int row
+  }
 }

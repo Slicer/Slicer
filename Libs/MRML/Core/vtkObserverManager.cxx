@@ -40,24 +40,24 @@ vtkObserverManager::~vtkObserverManager()
   // Remove all the observations associated to the callback
   std::map< vtkObject*, vtkUnsignedLongArray*>::iterator iter;
   for(iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)
-    {
+  {
     this->RemoveObjectEvents(iter->first);
     vtkUnsignedLongArray *objTags = iter->second;
     objTags->Delete();
-    }
+  }
 
   if (this->CallbackCommand)
-    {
+  {
     if (this->Owner &&
         this->CallbackCommand->GetReferenceCount() > 1)
-      {
+    {
       // It is possible to externally use the callback command, it is not
       // recommended though.
       vtkWarningMacro( << "The callback is not deleted because there are still some observation. "
                        << "They seem to not have been registered into the event broker.");
-      }
-    this->CallbackCommand->Delete();
     }
+    this->CallbackCommand->Delete();
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -67,10 +67,10 @@ void vtkObserverManager::PrintSelf(ostream& os, vtkIndent indent)
 
   std::map< vtkObject*, vtkUnsignedLongArray*>::iterator iter;
   for(iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)
-    {
+  {
     vtkUnsignedLongArray *objTags = iter->second;
     os << indent << "Observer tags:             " << objTags << "\n";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -88,23 +88,23 @@ void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
   this->RemoveObjectEvents(*nodePtr);
 
   if (*nodePtr == node)
-    {
+  {
     return;
-    }
+  }
   vtkObject *nodePtrOld = *nodePtr;
 
   *nodePtr  = node ;
 
   if ( node )
-    {
+  {
     vtkDebugMacro (<< "registering " << node << " with " << this << "\n");
     node->Register(this);
-    }
+  }
 
   if (nodePtrOld)
-    {
+  {
     (nodePtrOld)->UnRegister(this);
-    }
+  }
 
 }
 
@@ -113,11 +113,11 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
 {
   vtkDebugMacro (<< "SetAndObserveObject of " << node);
   if (*nodePtr == node)
-    {
+  {
     if (node == nullptr)
-      {
+    {
       return;
-      }
+    }
     // The node is the same - check if the events are the same, too,
     // because then there is no need to update the observations.
     vtkNew<vtkIntArray> existingEvents;
@@ -125,14 +125,14 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
     this->GetObjectEvents(*nodePtr, existingEvents.GetPointer(), existingPriorities.GetPointer());
     if (existingEvents->GetNumberOfTuples()==1 && existingEvents->GetValue(0) == vtkCommand::ModifiedEvent
       && existingPriorities->GetNumberOfTuples()==1 && existingPriorities->GetValue(0) == priority)
-      {
+    {
       if (logWarningIfSameObservationExists)
-        {
+      {
         vtkWarningMacro( << "The same object is already observed with the same priority. The observation is kept as is.");
-        }
-      return;
       }
+      return;
     }
+  }
   this->SetObject(nodePtr, node);
   this->ObserveObject(node, priority);
 }
@@ -143,11 +143,11 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
 {
   vtkDebugMacro (<< "SetAndObserveObjectEvents of " << node);
   if (*nodePtr == node)
-    {
+  {
     if (node == nullptr)
-      {
+    {
       return;
-      }
+    }
     // The node is the same - check if the events are the same, too,
     // because then there is no need to update the observations.
     int numberOfEvents = events ? events->GetNumberOfTuples() : 0;
@@ -160,32 +160,32 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
     // is simple and fast, but it may update the event observations when it is not necessary
     // (when only the order is different) - which is an acceptable tradeoff.
     if (existingEvents->GetNumberOfTuples() == numberOfEvents && existingEvents->GetNumberOfTuples() == existingPriorities->GetNumberOfTuples())
-      {
+    {
       bool eventsEqual = true;
       for (int i=0; i<numberOfEvents; i++)
-        {
+      {
         if (existingEvents->GetValue(i) != events->GetValue(i))
-          {
+        {
           eventsEqual = false;
           break;
-          }
+        }
         float priority = ( i<numberOfPriorities ? priorities->GetValue(i) : 0.0 /* default priority */ );
         if (existingPriorities->GetValue(i) != priority)
-          {
+        {
           eventsEqual = false;
           break;
-          }
-        }
-      if (eventsEqual)
-        {
-        if (logWarningIfSameObservationExists)
-          {
-          vtkWarningMacro( << "The same object is already observed with the same events and priorities. The observation is kept as is.");
-          }
-        return;
         }
       }
+      if (eventsEqual)
+      {
+        if (logWarningIfSameObservationExists)
+        {
+          vtkWarningMacro( << "The same object is already observed with the same events and priorities. The observation is kept as is.");
+        }
+        return;
+      }
     }
+  }
 
   this->SetObject(nodePtr, node);
   this->AddObjectEvents(node, events, priorities);
@@ -195,19 +195,19 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
 void vtkObserverManager::RemoveObjectEvents(vtkObject *nodePtr)
 {
   if (nodePtr)
-    {
+  {
     std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr);
     vtkEventBroker *broker = vtkEventBroker::GetInstance();
     if (it != this->ObserverTags.end())
-      {
+    {
       vtkUnsignedLongArray* objTags = it->second;
       for (int i=0; i < objTags->GetNumberOfTuples(); i++)
-        {
+      {
         broker->RemoveObservationsForSubjectByTag( nodePtr, objTags->GetValue(i) );
-        }
-      objTags->Reset();
       }
+      objTags->Reset();
     }
+  }
 }
 
 
@@ -225,67 +225,67 @@ void vtkObserverManager::ObserveObject(vtkObject* node, float priority)
 void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities)
 {
   if ( (priorities && !events) )
-    {
+  {
     vtkWarningMacro(<< "Need events if given priorities");
     return;
-    }
+  }
   // check whether no priorities are provided or the same number of
   // events and priorities are provided
   if ( (events && priorities) && (events->GetNumberOfTuples() != priorities->GetNumberOfTuples()) )
-    {
+  {
     vtkWarningMacro(<< "Given events and priorities, but the number of events (" << events->GetNumberOfTuples()
                     << ") doesn't match number of priorities ("
                     << priorities->GetNumberOfTuples());
     return;
-    }
+  }
 
   if (nodePtr)
-    {
+  {
     vtkUnsignedLongArray* objTags = nullptr;
     std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr);
     if (it != this->ObserverTags.end())
-      {
+    {
       objTags = it->second;
-      }
+    }
     else
-      {
+    {
       objTags = vtkUnsignedLongArray::New();
       this->ObserverTags[nodePtr] = objTags;
-      }
+    }
 
     vtkEventBroker *broker = vtkEventBroker::GetInstance();
     vtkObject *observer = this->GetObserver();
     if (events)
-      {
+    {
       for (int i=0; i<events->GetNumberOfTuples(); i++)
-        {
+      {
 #ifndef NDEBUG
         // Make sure we are not adding an already existing connection. It's
         // not a big issue but it just shows poor design.
         if (this->GetObservationsCount(nodePtr, events->GetValue(i)) > 0)
-          {
+        {
           vtkWarningMacro(<< "Observation " << events->GetValue(i)
                           << " between " << nodePtr->GetClassName()
                           << " and " << observer->GetClassName()
                           << " already exists.");
-          }
+        }
 #endif
         vtkObservation *observation=nullptr;
         if (!priorities)
-          {
+        {
           observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand );
-          }
+        }
         else
-          {
+        {
           observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand, priorities->GetValue(i) );
-          }
+        }
 
         unsigned long tag = observation->GetEventTag();
 
         objTags->InsertNextValue(tag);
-        }
       }
     }
+  }
 
 }
 
@@ -305,25 +305,25 @@ void vtkObserverManager::GetObjectEvents(vtkObject *nodePtr, vtkIntArray *events
   events->Resize(0);
   priorities->Resize(0);
   if (nodePtr == nullptr)
-    {
+  {
     // node is invalid
     return;
-    }
+  }
   std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr);
   if (it == this->ObserverTags.end())
-    {
+  {
     // no observations are found
     return;
-    }
+  }
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
   vtkUnsignedLongArray* objTags = it->second;
   for (int i=0; i < objTags->GetNumberOfTuples(); i++)
-    {
+  {
     vtkEventBroker::ObservationVector observations = broker->GetObservationsForSubjectByTag ( nodePtr, objTags->GetValue(i) );
     for (vtkEventBroker::ObservationVector::iterator observationIt = observations.begin(); observationIt != observations.end(); ++observationIt)
-      {
+    {
       events->InsertNextValue((*observationIt)->GetEvent());
       priorities->InsertNextValue((*observationIt)->GetPriority());
-      }
     }
+  }
 }

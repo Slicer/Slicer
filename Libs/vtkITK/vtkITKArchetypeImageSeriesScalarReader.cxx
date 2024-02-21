@@ -69,11 +69,11 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
   vtkInformationVector* outputVector)
 {
   if (!this->Superclass::Archetype)
-    {
+  {
       vtkErrorMacro("An Archetype must be specified.");
       this->SetErrorCode(vtkErrorCode::NoFileNameError);
       return 0;
-    }
+  }
 
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
@@ -93,19 +93,19 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       typedef itk::ImageIOBase ImageIOType; \
       ImageIOType::Pointer imageIO; \
       if (this->DICOMImageIOApproach == vtkITKArchetypeImageSeriesReader::GDCM) \
-        { \
+      { \
         imageIO = itk::GDCMImageIO::New(); \
-        } \
+      } \
       else if (this->DICOMImageIOApproach == vtkITKArchetypeImageSeriesReader::DCMTK) \
-        { \
+      { \
         imageIO = itk::DCMTKImageIO::New(); \
-        } \
+      } \
       else \
-        { \
+      { \
         vtkErrorMacro(<<"vtkITKExecuteDataFromSeries: Unsupported DICOMImageIOApproach: " << this->GetDICOMImageIOApproach()); \
         this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError); \
         return 0; \
-        }
+      }
 #else
 #define vtkITKExecuteDataDeclareDICOMImageIO \
   typedef itk::ImageIOBase ImageIOType; \
@@ -123,9 +123,9 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
         itk::ImageSeriesReader<image##typeN>::New(); \
       vtkITKExecuteDataDeclareDICOMImageIO \
       if (this->ArchetypeIsDICOM) \
-        { \
+      { \
         reader##typeN->SetImageIO(imageIO); \
-        } \
+      } \
       itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
       pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
       pcl->SetClientData(this); \
@@ -133,11 +133,11 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       reader##typeN->SetFileNames(this->FileNames); \
       reader##typeN->ReleaseDataFlagOn(); \
       if (this->UseNativeCoordinateOrientation) \
-        { \
+      { \
         filter = reader##typeN; \
-        } \
+      } \
       else \
-        { \
+      { \
         itk::OrientImageFilter<image##typeN,image##typeN>::Pointer orient##typeN = \
             itk::OrientImageFilter<image##typeN,image##typeN>::New(); \
         if (this->Debug) {orient##typeN->DebugOn();} \
@@ -145,7 +145,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
         orient##typeN->UseImageDirectionOn(); \
         orient##typeN->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation); \
         filter = orient##typeN; \
-        }\
+      }\
       filter->UpdateLargestPossibleRegion(); \
       itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer##typeN;\
       PixelContainer##typeN = filter->GetOutput()->GetPixelContainer();\
@@ -168,15 +168,15 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       reader2##typeN->SetFileName(this->FileNames[0].c_str()); \
       vtkITKExecuteDataDeclareDICOMImageIO \
       if (this->ArchetypeIsDICOM) \
-        { \
+      { \
         reader2##typeN->SetImageIO(imageIO); \
-        } \
+      } \
       if (this->UseNativeCoordinateOrientation) \
-        { \
+      { \
         filter = reader2##typeN; \
-        } \
+      } \
       else \
-        { \
+      { \
         itk::OrientImageFilter<image2##typeN,image2##typeN>::Pointer orient2##typeN = \
               itk::OrientImageFilter<image2##typeN,image2##typeN>::New(); \
         if (this->Debug) {orient2##typeN->DebugOn();} \
@@ -184,7 +184,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
         orient2##typeN->UseImageDirectionOn(); \
         orient2##typeN->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation); \
         filter = orient2##typeN; \
-        } \
+      } \
       filter->UpdateLargestPossibleRegion();\
       itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer2##typeN;\
       PixelContainer2##typeN = filter->GetOutput()->GetPixelContainer();\
@@ -198,14 +198,14 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
   /// END SCALAR MACRO
 
   try
-    {
+  {
     // If there is only one file in the series, just use an image file reader
     if (this->FileNames.size() == 1)
-      {
+    {
       if (this->GetNumberOfComponents() == 1)
-        {
+      {
         switch (this->OutputScalarType)
-          {
+        {
             vtkITKExecuteDataFromFile(VTK_DOUBLE, double);
             vtkITKExecuteDataFromFile(VTK_FLOAT, float);
             vtkITKExecuteDataFromFile(VTK_LONG, long);
@@ -219,20 +219,20 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
           default:
             vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
             this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
-          }
-        }
-      else
-        {
-          vtkErrorMacro(<< "UpdateFromFile: Unsupported number of components (only 1 allowed): " << this->GetNumberOfComponents());
-          this->SetErrorCode(vtkErrorCode::FileFormatError);
         }
       }
-    else
+      else
       {
+          vtkErrorMacro(<< "UpdateFromFile: Unsupported number of components (only 1 allowed): " << this->GetNumberOfComponents());
+          this->SetErrorCode(vtkErrorCode::FileFormatError);
+      }
+    }
+    else
+    {
       if (this->GetNumberOfComponents() == 1)
-        {
+      {
         switch (this->OutputScalarType)
-          {
+        {
             vtkITKExecuteDataFromSeries(VTK_DOUBLE, double);
             vtkITKExecuteDataFromSeries(VTK_FLOAT, float);
             vtkITKExecuteDataFromSeries(VTK_LONG, long);
@@ -246,21 +246,21 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
           default:
             vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
             this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
-          }
-        }
-      else
-        {
-          vtkErrorMacro(<<"UpdateFromSeries: Unsupported number of components: 1 != " << this->GetNumberOfComponents());
-          this->SetErrorCode(vtkErrorCode::FileFormatError);
         }
       }
-    }
-    catch (itk::ExceptionObject & e)
+      else
       {
+          vtkErrorMacro(<<"UpdateFromSeries: Unsupported number of components: 1 != " << this->GetNumberOfComponents());
+          this->SetErrorCode(vtkErrorCode::FileFormatError);
+      }
+    }
+  }
+    catch (itk::ExceptionObject & e)
+    {
       vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
       this->SetErrorCode(vtkErrorCode::FileFormatError);
       return 0;
-      }
+    }
   return 1;
 }
 

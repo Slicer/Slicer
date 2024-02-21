@@ -51,22 +51,22 @@ bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject *Object,
 
   qMRMLNodeComboBox* widget = nullptr;
   for(QObject* test = Object; widget == nullptr && test != nullptr; test = test->parent())
-    {
+  {
     widget = qobject_cast<qMRMLNodeComboBox*>(test);
-    }
+  }
   if(!widget)
-    {
+  {
     return false;
-    }
+  }
 
   if(Event->type() == QEvent::Enter && Object == widget)
-    {
+  {
     if(this->CurrentObject != Object)
-      {
+    {
       if(this->CurrentObject)
-        {
+      {
         disconnect(this->CurrentObject, nullptr, this, nullptr);
-        }
+      }
       this->CurrentObject = Object;
       connect(widget, SIGNAL(destroyed(QObject*)),
               this, SLOT(onDestroyed(QObject*)));
@@ -76,13 +76,13 @@ bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject *Object,
               this, SLOT(onNodeAboutToBeRemoved(vtkMRMLNode*)));
       connect(widget, SIGNAL(currentNodeRenamed(QString)),
               this, SLOT(onCurrentNodeRenamed(QString)));
-      }
+    }
     if(this->CurrentObject)
-      {
+    {
       connect(this->CurrentObject, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
               this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)), Qt::UniqueConnection);
-      }
     }
+  }
 
   return true;
 }
@@ -105,28 +105,28 @@ void qMRMLNodeComboBoxEventTranslator::onRowsInserted()
 void qMRMLNodeComboBoxEventTranslator::onCurrentNodeChanged(vtkMRMLNode* node)
 {
   if(node)
-    {
+  {
     emit recordEvent(this->CurrentObject, "currentNodeChanged", QString(node->GetID()));
-    }
+  }
   else
-    {
+  {
     emit recordEvent(this->CurrentObject, "currentNodeChanged", "None");
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
 void qMRMLNodeComboBoxEventTranslator::onNodeAboutToBeRemoved(vtkMRMLNode* node)
 {
   if(node)
-    {
+  {
     disconnect(this->CurrentObject, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)));
     emit recordEvent(this->CurrentObject, "nodeAboutToBeRemoved", QString(node->GetName()));
-    }
+  }
   else
-    {
+  {
     emit recordEvent(this->CurrentObject, "nodeAboutToBeRemoved", "None");
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------

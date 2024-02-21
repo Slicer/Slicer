@@ -40,49 +40,49 @@ bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject *Object,
                                     bool &Error)
 {
   if(Command != "check_indexes" && Command != "uncheck_indexes")
-    {
+  {
     return false;
-    }
+  }
 
   qMRMLCheckableNodeComboBox* parent = nullptr;
   for(QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
-    {
+  {
     parent = qobject_cast<qMRMLCheckableNodeComboBox*>(test);
-    }
+  }
   // This Command are also use for ctkCheckableComboBox, but here we want the
   // parent.
   if(!parent)
-    {
+  {
     return false;
-    }
+  }
 
   if(parent)
-    {
+  {
     if(Command == "check_indexes")
-      {
+    {
       QStringList Args = Arguments.split(" ");
       foreach (QString Arg, Args)
-        {
+      {
         const int value = Arg.toInt();
         vtkMRMLNode* node = parent->nodeFromIndex(value);
         parent->setCheckState(node, Qt::Checked);
         parent->update();
-        }
-      return true;
       }
+      return true;
+    }
     if(Command == "uncheck_indexes")
-      {
+    {
       QStringList Args = Arguments.split(" ");
       foreach (QString Arg, Args)
-        {
+      {
         const int value = Arg.toInt();
         vtkMRMLNode* node = parent->nodeFromIndex(value);
         parent->setCheckState(node, Qt::Unchecked);
         parent->update();
-        }
-      return true;
       }
+      return true;
     }
+  }
 
   qCritical() << "calling check_indexes/uncheck_indexes on unhandled type " << Object;
   Error = true;

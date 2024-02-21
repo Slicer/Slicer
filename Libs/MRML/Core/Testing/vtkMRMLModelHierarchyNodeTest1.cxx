@@ -42,19 +42,19 @@ int vtkMRMLModelHierarchyNodeTest1(int , char * [] )
 
   vtkMRMLModelNode * mnode2 = node1->GetModelNode();
   if (mnode2 != mnode.GetPointer())
-    {
+  {
     std::cerr << "ERROR setting/getting model node" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkCollection> col;
   node1->GetChildrenModelNodes(col.GetPointer());
   int numChildren =  col->GetNumberOfItems();
   if (numChildren != 1)
-    {
+  {
     std::cerr << "Expected 1 child, got " << numChildren << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

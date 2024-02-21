@@ -85,9 +85,9 @@ sdfMargin(itk::SmartPointer<ImageType> labelImage, int backgroundValue, double i
   typename FloatThresholdType::Pointer sdfTh = FloatThresholdType::New();
   sdfTh->SetInput(sdf<typename ImageType::PixelType, ImageType::ImageDimension>(labelImage, backgroundValue));
   if (innerMarginMM > vtkMath::NegInf())
-    {
+  {
     sdfTh->SetLowerThreshold(innerMarginMM*std::abs(innerMarginMM));
-    }
+  }
   sdfTh->SetUpperThreshold(outerMarginMM*std::abs(outerMarginMM));
   sdfTh->Update();
   return sdfTh->GetOutput();
@@ -100,7 +100,7 @@ void vtkITKImageMarginExecute(vtkITKImageMargin *self, vtkImageData* input,
                 T* inPtr, T* outPtr)
 {
   try
-    {
+  {
     int dims[3];
     input->GetDimensions(dims);
     double spacing[3];
@@ -125,22 +125,22 @@ void vtkITKImageMarginExecute(vtkITKImageMargin *self, vtkImageData* input,
     double innerMarginDistance = self->GetInnerMarginVoxels();
     double outerMarginDistance = self->GetOuterMarginVoxels();
     if (self->GetCalculateMarginInMM())
-      {
+    {
       inImage->SetSpacing(spacing);
       innerMarginDistance = self->GetInnerMarginMM();
       outerMarginDistance = self->GetOuterMarginMM();
-      }
+    }
 
     itk::SmartPointer<ImageType> outputImage;
     outputImage = sdfMargin<ImageType>(inImage, self->GetBackgroundValue(), innerMarginDistance, outerMarginDistance);
 
     // Copy to the output
     memcpy(outPtr, outputImage->GetBufferPointer(), outputImage->GetBufferedRegion().GetNumberOfPixels() * sizeof(T));
-    }
+  }
   catch (itk::ExceptionObject & err)
-    {
+  {
     vtkErrorWithObjectMacro(self, "Failed to compute margin. Details: " << err);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -149,9 +149,9 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData *input, vtkImageData *output)
   vtkDebugMacro(<< "Executing Image Margin");
 
   if (this->GetInnerMarginMM() > this->GetOuterMarginMM())
-    {
+  {
     vtkErrorMacro(<< "Outer margin must be greater than inner margin");
-    }
+  }
 
   //
   // Initialize and check input
@@ -159,19 +159,19 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData *input, vtkImageData *output)
   vtkPointData *pd = input->GetPointData();
   pd=input->GetPointData();
   if (pd ==nullptr)
-    {
+  {
     vtkErrorMacro(<<"PointData is NULL");
     return;
-    }
+  }
   vtkDataArray *inScalars=pd->GetScalars();
   if (inScalars == nullptr)
-    {
+  {
     vtkErrorMacro(<< "Scalars must be defined for image margin");
     return;
-    }
+  }
 
   if (inScalars->GetNumberOfComponents() == 1)
-    {
+  {
 
 ////////// These types are not defined in itk ////////////
 #undef VTK_TYPE_USE_LONG_LONG
@@ -183,7 +183,7 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData *input, vtkImageData *output)
     void* outPtr = output->GetScalarPointer();
 
     switch (inScalars->GetDataType())
-      {
+    {
       vtkTemplateMacroCase(VTK_LONG, long, CALL);                               \
       vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, CALL);             \
       vtkTemplateMacroCase(VTK_INT, int, CALL);                                 \
@@ -196,13 +196,13 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData *input, vtkImageData *output)
       vtkTemplateMacroCase(VTK_FLOAT, float, CALL);                             \
       vtkTemplateMacroCase(VTK_DOUBLE, double, CALL);                           \
       default:
-        {
+      {
         vtkErrorMacro(<< "Incompatible data type for this version of ITK.");
-        }
-      } //switch
-    }
+      }
+    } //switch
+  }
   else
-    {
+  {
     vtkErrorMacro(<< "Only single component images supported.");
-    }
+  }
 }

@@ -157,13 +157,13 @@ void qMRMLSegmentationGeometryDialog::setResampleLabelmaps(bool aResampleLabelma
   Q_D(qMRMLSegmentationGeometryDialog);
   d->ResampleLabelmaps = aResampleLabelmaps;
   if (aResampleLabelmaps)
-    {
+  {
     d->OKButton->setToolTip(tr("Set reference image geometry and resample all segment labelmaps"));
-    }
+  }
   else
-    {
+  {
     d->OKButton->setToolTip(tr("Set reference image geometry (do not resample)"));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -177,30 +177,30 @@ bool qMRMLSegmentationGeometryDialog::exec()
   qSlicerApplication* app = qSlicerApplication::application();
   QWidget* mainWindow = app ? app->mainWindow() : nullptr;
   if (mainWindow)
-    {
+  {
     // setParent resets window flags, so save them and then restore
     Qt::WindowFlags windowFlags = d->windowFlags();
     d->setParent(mainWindow);
     d->setWindowFlags(windowFlags);
-    }
+  }
 
   // Show dialog
   bool result = false;
   if (d->exec() != QDialog::Accepted)
-    {
+  {
     return result;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
 
   // Apply geometry after clean exit
   if (d->GeometryWidget->editEnabled())
-    {
+  {
     d->GeometryWidget->setReferenceImageGeometryForSegmentationNode();
     if (d->ResampleLabelmaps)
-      {
+    {
       d->GeometryWidget->resampleLabelmapsInSegmentationNode();
-      }
     }
+  }
   return true;
 }

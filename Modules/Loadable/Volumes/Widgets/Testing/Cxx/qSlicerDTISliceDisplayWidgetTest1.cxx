@@ -60,14 +60,14 @@ int qSlicerDTISliceDisplayWidgetTest1( int argc, char * argv[] )
   for (int i = 0;
        i < vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNumberOfScalarInvariants();
        ++i)
-    {
+  {
     widget.setColorGlyphBy(vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNthScalarInvariant(i));
-    }
+  }
 
   widget.show();
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

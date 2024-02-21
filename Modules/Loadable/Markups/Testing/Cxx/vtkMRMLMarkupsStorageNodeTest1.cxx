@@ -41,14 +41,14 @@ int TestMarkupsStorageNode(vtkMRMLMarkupsStorageNode* node1)
   // manually test invalid values
   int invalidValues[3] = { -1, 2, 100 };
   for (int i = 0; i < 3; i++)
-    {
+  {
     node1->SetCoordinateSystem(invalidValues[i]);
     if (node1->GetCoordinateSystem() == invalidValues[i])
-      {
+    {
       std::cerr << "Failed to detect invalid coordinate system of -1" << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // test valid values
   node1->UseLPSOn();

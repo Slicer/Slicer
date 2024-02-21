@@ -93,9 +93,9 @@ struct SegmentListFilterParameters
   {
     this->TextFilter = "";
     for (int i = 0; i < vtkSlicerSegmentationsModuleLogic::LastStatus; ++i)
-      {
+    {
       this->ShowStatusFilter[i] = false;
-      }
+    }
   }
 
   /// Returns a string representation of the data in the SegmentListFilterParameters
@@ -106,20 +106,20 @@ struct SegmentListFilterParameters
     statusFilterStringStream << this->StatusFilterKey << this->KeyValueSeparator;
     bool firstElement = true;
     for (int i = 0; i < vtkSlicerSegmentationsModuleLogic::LastStatus; ++i)
-      {
+    {
       if (!this->ShowStatusFilter[i])
-        {
+      {
         continue;
-        }
+      }
 
       if (!firstElement)
-        {
+      {
         statusFilterStringStream << this->ValueSeparator;
-        }
+      }
       firstElement = false;
 
       statusFilterStringStream << vtkSlicerSegmentationsModuleLogic::GetSegmentStatusAsMachineReadableString(i);
-      }
+    }
     return QString::fromStdString(statusFilterStringStream.str());
   };
 
@@ -130,33 +130,33 @@ struct SegmentListFilterParameters
 
     QStringList attributes = filterString.split(this->AttributeSeparator);
     for (QString attribute : attributes)
-      {
+    {
       QStringList keyValue = attribute.split(this->KeyValueSeparator);
       if (keyValue.size() != 2)
-        {
+      {
         continue;
-        }
+      }
       QString key = keyValue[0];
       QString value = keyValue[1];
 
       if (key == this->TextFilterKey)
-        {
+      {
         this->TextFilter = value;
-        }
+      }
       else if(key == this->StatusFilterKey)
-        {
+      {
         QStringList statusFilters = value.split(this->ValueSeparator);
         for (QString statusString : statusFilters)
-          {
+        {
           int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatusFromMachineReadableString(statusString.toStdString());
           if (status < 0 || status >= vtkSlicerSegmentationsModuleLogic::LastStatus)
-            {
+          {
             continue;
-            }
-          this->ShowStatusFilter[status] = true;
           }
+          this->ShowStatusFilter[status] = true;
         }
       }
+    }
   }
 };
 
@@ -216,9 +216,9 @@ qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableV
   , WasBlockingTableSignalsBeforeReset(false)
 {
   for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
-    {
+  {
     this->ShowStatusButtons[status] = nullptr;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -234,9 +234,9 @@ void qMRMLSegmentsTableViewPrivate::init()
   this->SegmentsTable->setModel(this->SortFilterModel);
 
   for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
-    {
+  {
     switch (status)
-      {
+    {
       case vtkSlicerSegmentationsModuleLogic::NotStarted:
         this->ShowStatusButtons[status] = this->ShowNotStartedButton;
         this->StatusIcons[status] = QIcon(":Icons/NotStarted.png");
@@ -256,12 +256,12 @@ void qMRMLSegmentsTableViewPrivate::init()
       default:
         this->ShowStatusButtons[status] = nullptr;
         this->StatusIcons[status] = QIcon();
-      }
-    if (this->ShowStatusButtons[status])
-      {
-      this->ShowStatusButtons[status]->setProperty(STATUS_PROPERTY, status);
-      }
     }
+    if (this->ShowStatusButtons[status])
+    {
+      this->ShowStatusButtons[status]->setProperty(STATUS_PROPERTY, status);
+    }
+  }
 
   // Hide filter bar to simplify default GUI. User can enable to handle many segments
   q->setFilterBarVisible(false);
@@ -295,13 +295,13 @@ void qMRMLSegmentsTableViewPrivate::init()
   QObject::connect(this->SegmentsTable, &QTableView::clicked, q, &qMRMLSegmentsTableView::onSegmentsTableClicked);
   QObject::connect(this->FilterLineEdit, &ctkSearchBox::textEdited, this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::setTextFilter);
   for (QPushButton* button : this->ShowStatusButtons)
-    {
+  {
     if (!button)
-      {
+    {
       continue;
-      }
-    QObject::connect(button, &QToolButton::clicked, q, &qMRMLSegmentsTableView::onShowStatusButtonClicked);
     }
+    QObject::connect(button, &QToolButton::clicked, q, &qMRMLSegmentsTableView::onShowStatusButtonClicked);
+  }
   QObject::connect(this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::filterModified, q, &qMRMLSegmentsTableView::onSegmentsFilterModified);
 
   // Set item delegate to handle color and opacity changes
@@ -358,9 +358,9 @@ void qMRMLSegmentsTableView::onShowStatusButtonClicked()
   Q_D(qMRMLSegmentsTableView);
   QPushButton* button = qobject_cast<QPushButton*>(sender());
   if (!button)
-    {
+  {
     return;
-    }
+  }
   int status = button->property(STATUS_PROPERTY).toInt();
   d->SortFilterModel->setShowStatus(status, button->isChecked());
 }
@@ -372,24 +372,24 @@ void qMRMLSegmentsTableView::onSegmentsFilterModified()
 
   QString textFilter = d->SortFilterModel->textFilter();
   if (d->FilterLineEdit->text() != textFilter)
-    {
+  {
     d->FilterLineEdit->setText(textFilter);
-    }
+  }
 
   for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
-    {
+  {
     QPushButton* button = d->ShowStatusButtons[status];
     if (!button)
-      {
+    {
       continue;
-      }
-    button->setChecked(d->SortFilterModel->showStatus(status));
     }
+    button->setChecked(d->SortFilterModel->showStatus(status));
+  }
 
   if (d->SegmentationNode && !d->IsUpdatingWidgetFromMRML)
-    {
+  {
     d->FilterParameterChangedTimer.start();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -397,18 +397,18 @@ void qMRMLSegmentsTableView::updateMRMLFromFilterParameters()
 {
   Q_D(qMRMLSegmentsTableView);
   if (!d->SegmentationNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << "Invalid segmentation node";
     return;
-    }
+  }
 
   SegmentListFilterParameters filterParameters;
   filterParameters.TextFilter = d->SortFilterModel->textFilter();
   for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
-    {
+  {
     bool showStatus = d->SortFilterModel->showStatus(status);
     filterParameters.ShowStatusFilter[status] = showStatus;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   d->SegmentationNode->SetSegmentListFilterEnabled(d->IsFilterBarVisible);
@@ -423,41 +423,41 @@ void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelInde
   QString segmentId = d->SortFilterModel->segmentIDFromIndex(modelIndex);
   QStandardItem* item = d->Model->itemFromSegmentID(segmentId);
   if (!d->SegmentationNode || !item)
-    {
+  {
     return;
-    }
+  }
 
   Qt::ItemFlags flags = item->flags();
   if (!flags.testFlag(Qt::ItemIsSelectable))
-    {
+  {
     return;
-    }
+  }
 
   vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toStdString());
   if (modelIndex.column() == d->Model->visibilityColumn())
-    {
+  {
     // Set all visibility types to segment referenced by button toggled
     int visible = !item->data(qMRMLSegmentsModel::VisibilityRole).toInt();
     this->setSegmentVisibility(segmentId, visible, -1, -1, -1);
-    }
+  }
   else if (modelIndex.column() == d->Model->statusColumn())
-    {
+  {
     int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment);
     switch (status)
-      {
+    {
       case vtkSlicerSegmentationsModuleLogic::SegmentStatus::Flagged:
         status = vtkSlicerSegmentationsModuleLogic::SegmentStatus::Completed;
         break;
       default:
         ++status;
         if (status >= vtkSlicerSegmentationsModuleLogic::SegmentStatus::LastStatus)
-          {
+        {
           status = 0;
-          }
+        }
         break;
-      }
-    vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, status);
     }
+    vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, status);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -466,15 +466,15 @@ void qMRMLSegmentsTableView::onSegmentAddedOrRemoved()
   Q_D(qMRMLSegmentsTableView);
 
   if (!d->SegmentationNode)
-    {
+  {
     d->setMessage(tr("No node is selected"));
     return;
-    }
+  }
   else if (d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
-    {
+  {
     d->setMessage(tr("Empty segmentation"));
     return;
-    }
+  }
   d->setMessage(QString());
 }
 
@@ -483,9 +483,9 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
 {
   Q_D(qMRMLSegmentsTableView);
   if (!d->SegmentationNode)
-    {
+  {
     return;
-    }
+  }
 
   bool wasUpdatingFromMRML = d->IsUpdatingWidgetFromMRML;
   d->IsUpdatingWidgetFromMRML = true;
@@ -500,9 +500,9 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
 
   d->SortFilterModel->setTextFilter(filterParameters.TextFilter);
   for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
-    {
+  {
     d->SortFilterModel->setShowStatus(status, filterParameters.ShowStatusFilter[status]);
-    }
+  }
 
   d->IsUpdatingWidgetFromMRML = wasUpdatingFromMRML;
 }
@@ -512,14 +512,14 @@ void qMRMLSegmentsTableView::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLSegmentsTableView);
   if (newScene == this->mrmlScene())
-    {
+  {
     return;
-    }
+  }
 
   if (d->SegmentationNode && newScene != d->SegmentationNode->GetScene())
-    {
+  {
     this->setSegmentationNode(nullptr);
-    }
+  }
 
   Superclass::setMRMLScene(newScene);
 }
@@ -537,10 +537,10 @@ qMRMLSortFilterSegmentsProxyModel* qMRMLSegmentsTableView::sortFilterProxyModel(
 {
   Q_D(const qMRMLSegmentsTableView);
   if (!d->SortFilterModel)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid sort filter proxy model";
     return nullptr;
-    }
+  }
   return d->SortFilterModel;
 }
 
@@ -549,10 +549,10 @@ qMRMLSegmentsModel* qMRMLSegmentsTableView::model()const
 {
   Q_D(const qMRMLSegmentsTableView);
   if (!d->Model)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid data model";
     return nullptr;
-    }
+  }
   return d->Model;
 }
 
@@ -568,13 +568,13 @@ void qMRMLSegmentsTableView::onSegmentSelectionChanged(const QItemSelection &sel
 {
   Q_D(qMRMLSegmentsTableView);
   if (d->JumpToSelectedSegmentEnabled)
-    {
+  {
     this->jumpSlices();
-    }
+  }
   if (d->SegmentsTable->signalsBlocked())
-    {
+  {
     return;
-    }
+  }
   emit selectionChanged(selected, deselected);
 }
 
@@ -583,9 +583,9 @@ void qMRMLSegmentsTableView::onVisibility3DActionToggled(bool visible)
 {
   QAction* senderAction = qobject_cast<QAction*>(sender());
   if (!senderAction)
-    {
+  {
     return;
-    }
+  }
 
   // Set 3D visibility to segment referenced by action toggled
   this->setSegmentVisibility(senderAction, -1, visible, -1, -1);
@@ -596,9 +596,9 @@ void qMRMLSegmentsTableView::onVisibility2DFillActionToggled(bool visible)
 {
   QAction* senderAction = qobject_cast<QAction*>(sender());
   if (!senderAction)
-    {
+  {
     return;
-    }
+  }
 
   // Set 2D fill visibility to segment referenced by action toggled
   this->setSegmentVisibility(senderAction, -1, -1, visible, -1);
@@ -609,9 +609,9 @@ void qMRMLSegmentsTableView::onVisibility2DOutlineActionToggled(bool visible)
 {
   QAction* senderAction = qobject_cast<QAction*>(sender());
   if (!senderAction)
-    {
+  {
     return;
-    }
+  }
 
   // Set 2D outline visibility to segment referenced by action toggled
   this->setSegmentVisibility(senderAction, -1, -1, -1, visible);
@@ -623,10 +623,10 @@ void qMRMLSegmentsTableView::setSegmentVisibility(QObject* senderObject, int vis
   Q_D(qMRMLSegmentsTableView);
 
   if (!d->SegmentationNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: segmentation node is not set";
     return;
-    }
+  }
 
   QString segmentId = senderObject->property(ID_PROPERTY).toString();
   this->setSegmentVisibility(segmentId, visible, visible3D, visible2DFill, visible2DOutline);
@@ -638,59 +638,59 @@ void qMRMLSegmentsTableView::setSegmentVisibility(QString segmentId, int visible
   Q_D(qMRMLSegmentsTableView);
 
   if (!d->SegmentationNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: segmentation node is not set";
     return;
-    }
+  }
 
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
     d->SegmentationNode->GetDisplayNode() );
   if (!displayNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": No display node for segmentation!";
     return;
-    }
+  }
   vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
   displayNode->GetSegmentDisplayProperties(segmentId.toStdString(), properties);
 
   // Change visibility to all modes
   bool valueChanged = false;
   if (visible == 0 || visible == 1)
-    {
+  {
     properties.Visible = (bool)visible;
 
     // If overall visibility is explicitly set to true then enable all visibility options
     // to make sure that something is actually visible.
     if (properties.Visible && !properties.Visible3D && !properties.Visible2DFill && !properties.Visible2DOutline)
-      {
+    {
       properties.Visible3D = true;
       properties.Visible2DFill = true;
       properties.Visible2DOutline = true;
-      }
+    }
 
     valueChanged = true;
-    }
+  }
   if (visible3D == 0 || visible3D == 1)
-    {
+  {
     properties.Visible3D = (bool)visible3D;
     valueChanged = true;
-    }
+  }
   if (visible2DFill == 0 || visible2DFill == 1)
-    {
+  {
     properties.Visible2DFill = (bool)visible2DFill;
     valueChanged = true;
-    }
+  }
   if (visible2DOutline == 0 || visible2DOutline == 1)
-    {
+  {
     properties.Visible2DOutline = (bool)visible2DOutline;
     valueChanged = true;
-    }
+  }
 
   // Set visibility to display node
   if (valueChanged)
-    {
+  {
     displayNode->SetSegmentDisplayProperties(segmentId.toStdString(), properties);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -706,19 +706,19 @@ QStringList qMRMLSegmentsTableView::selectedSegmentIDs()
 {
   Q_D(qMRMLSegmentsTableView);
   if (!d->SegmentsTable->selectionModel()->hasSelection())
-    {
+  {
     return QStringList();
-    }
+  }
 
   QStringList selectedSegmentIds;
   for (int row = 0; row < d->SortFilterModel->rowCount(); ++row)
-    {
+  {
     if (!d->SegmentsTable->selectionModel()->isRowSelected(row, QModelIndex()))
-      {
+    {
       continue;
-      }
-    selectedSegmentIds << d->SortFilterModel->segmentIDFromIndex(d->SortFilterModel->index(row, 0));
     }
+    selectedSegmentIds << d->SortFilterModel->segmentIDFromIndex(d->SortFilterModel->index(row, 0));
+  }
   return selectedSegmentIds;
 }
 
@@ -728,26 +728,26 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
   Q_D(qMRMLSegmentsTableView);
 
   if (!d->SegmentationNode && !segmentIDs.empty())
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: segmentation node is not set";
     return;
-    }
+  }
   if (segmentIDs == this->selectedSegmentIDs())
-    {
+  {
     return;
-    }
+  }
 
   bool validSelection = false;
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   // First segment selection should also clear other selections
   QItemSelectionModel::SelectionFlag itemSelectionFlag = QItemSelectionModel::ClearAndSelect;
   for (QString segmentID : segmentIDs)
-    {
+  {
     QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
     if (!index.isValid())
-      {
+    {
       continue;
-      }
+    }
     validSelection = true;
     QItemSelectionModel::QItemSelectionModel::SelectionFlags flags = QFlags<QItemSelectionModel::SelectionFlag>();
     flags.setFlag(itemSelectionFlag);
@@ -755,13 +755,13 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
     d->SegmentsTable->selectionModel()->select(index, flags);
     // After the first segment, we append to the current selection
     itemSelectionFlag = QItemSelectionModel::Select;
-    }
+  }
 
   if (!validSelection)
-    {
+  {
     // The list of segment IDs was either empty, or all IDs were invalid.
     d->SegmentsTable->selectionModel()->clearSelection();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -776,13 +776,13 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
 {
   Q_D(qMRMLSegmentsTableView);
   if (target == d->SegmentsTable)
-    {
+  {
     // Prevent giving the focus to the previous/next widget if arrow keys are used
     // at the edge of the table (without this: if the current cell is in the top
     // row and user press the Up key, the focus goes from the table to the previous
     // widget in the tab order)
     if (event->type() == QEvent::KeyPress)
-      {
+    {
       QKeyEvent* keyEvent = static_cast<QKeyEvent *>(event);
       QAbstractItemModel* model = d->SegmentsTable->model();
       QModelIndex currentIndex = d->SegmentsTable->currentIndex();
@@ -792,11 +792,11 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
         || (keyEvent->key() == Qt::Key_Up && currentIndex.row() == 0)
         || (keyEvent->key() == Qt::Key_Right && currentIndex.column() == model->columnCount() - 1)
         || (keyEvent->key() == Qt::Key_Down && currentIndex.row() == model->rowCount() - 1)))
-        {
+      {
         return true;
-        }
       }
     }
+  }
   return this->QWidget::eventFilter(target, event);
 }
 
@@ -859,13 +859,13 @@ void qMRMLSegmentsTableView::setReadOnly(bool aReadOnly)
 {
   Q_D(qMRMLSegmentsTableView);
   if (aReadOnly)
-    {
+  {
     d->SegmentsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    }
+  }
   else
-    {
+  {
     d->SegmentsTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -959,15 +959,15 @@ bool qMRMLSegmentsTableView::statusShown(int status)
 {
   Q_D(qMRMLSegmentsTableView);
   if (status < 0 || status >= vtkSlicerSegmentationsModuleLogic::LastStatus)
-    {
+  {
     return false;
-    }
+  }
 
   QPushButton* button = d->ShowStatusButtons[status];
   if (!button)
-    {
+  {
     return false;
-    }
+  }
   return button->isChecked();
 }
 
@@ -976,15 +976,15 @@ void qMRMLSegmentsTableView::setStatusShown(int status, bool shown)
 {
   Q_D(qMRMLSegmentsTableView);
   if (status < 0 || status >= vtkSlicerSegmentationsModuleLogic::LastStatus)
-    {
+  {
     return;
-    }
+  }
 
   QPushButton* button = d->ShowStatusButtons[status];
   if (!button)
-    {
+  {
     return;
-    }
+  }
   button->setChecked(shown);
 }
 
@@ -1011,7 +1011,7 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
 
   if (selectedSegmentIDs.size() > 0)
-    {
+  {
     QAction* showOnlySelectedAction = new QAction(tr("Show only selected segments"), this);
     QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
     contextMenu->addAction(showOnlySelectedAction);
@@ -1031,7 +1031,7 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
     QAction* moveDownAction = new QAction(tr("Move selected segments down"), this);
     QObject::connect(moveDownAction, SIGNAL(triggered()), this, SLOT(moveSelectedSegmentsDown()));
     contextMenu->addAction(moveDownAction);
-    }
+  }
 
   contextMenu->addSeparator();
 
@@ -1049,16 +1049,16 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 
   QModelIndex index = d->SegmentsTable->indexAt(d->SegmentsTable->viewport()->mapFromGlobal(event->globalPos()));
   if (d->AdvancedSegmentVisibility && index.isValid())
-    {
+  {
     QString segmentID = d->SortFilterModel->segmentIDFromIndex(index);
 
     // Get segment display properties
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
     if (displayNode)
-      {
+    {
       displayNode->GetSegmentDisplayProperties(segmentID.toUtf8().constData(), properties);
-      }
+    }
 
     contextMenu->addSeparator();
 
@@ -1082,13 +1082,13 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
     visibility2DOutlineAction->setProperty(ID_PROPERTY, segmentID);
     connect(visibility2DOutlineAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DOutlineActionToggled(bool)));
     contextMenu->addAction(visibility2DOutlineAction);
-    }
+  }
 
   if (selectedSegmentIDs.size() > 0)
-    {
+  {
     contextMenu->addSeparator();
     for (int status = 0; status < vtkSlicerSegmentationsModuleLogic::LastStatus; ++status)
-      {
+    {
       QString name = vtkSlicerSegmentationsModuleLogic::GetSegmentStatusAsHumanReadableString(status);
       QIcon icon = d->StatusIcons[status];
 
@@ -1097,13 +1097,13 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
       setStatusAction->setProperty(STATUS_PROPERTY, status);
       QObject::connect(setStatusAction, SIGNAL(triggered()), this, SLOT(setSelectedSegmentsStatus()));
       contextMenu->addAction(setStatusAction);
-      }
+    }
 
     contextMenu->addSeparator();
     QAction* clearSelectedSegmentAction = new QAction(tr("Clear selected segments"), this);
     QObject::connect(clearSelectedSegmentAction, SIGNAL(triggered()), this, SLOT(clearSelectedSegments()));
     contextMenu->addAction(clearSelectedSegmentAction);
-    }
+  }
 
   contextMenu->popup(event->globalPos());
 }
@@ -1115,38 +1115,38 @@ void qMRMLSegmentsTableView::setSelectedSegmentsStatus(int aStatus)
 
   int status = aStatus;
   if (status == -1)
-    {
+  {
     QAction* setStatusAction = qobject_cast<QAction*>(sender());
     Q_ASSERT(setStatusAction);
     if (!setStatusAction)
-      {
+    {
       return;
-      }
-    status = setStatusAction->property(STATUS_PROPERTY).toInt();
     }
+    status = setStatusAction->property(STATUS_PROPERTY).toInt();
+  }
 
   if (!d->SegmentationNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << "Invalid segmentation node";
     return;
-    }
+  }
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   if (!segmentation)
-    {
+  {
     qCritical() << Q_FUNC_INFO << "Invalid segmentation";
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   for (QString segmentID : selectedSegmentIDs)
-    {
+  {
     vtkSegment* segment = segmentation->GetSegment(segmentID.toStdString());
     if (segment)
-      {
+    {
       vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(segment, status);
-      }
     }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1158,16 +1158,16 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
   Q_ASSERT(clearSegmentAction);
 
   if (!d->SegmentationNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << "Invalid segmentation node";
     return;
-    }
+  }
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   if (!segmentation)
-    {
+  {
     qCritical() << Q_FUNC_INFO << "Invalid segmentation";
     return;
-    }
+  }
 
   QMessageBox messageBox;
   messageBox.addButton(tr("Clear"), QMessageBox::ButtonRole::AcceptRole);
@@ -1175,15 +1175,15 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
   messageBox.setDefaultButton(cancelButton);
   messageBox.setText(tr("Are you sure you want to clear the contents of the selected segments?"));
   if (messageBox.exec() == QMessageBox::ButtonRole::RejectRole)
-    {
+  {
     return;
-    }
+  }
 
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   for (QString segmentID : selectedSegmentIDs)
-    {
+  {
     vtkSlicerSegmentationsModuleLogic::ClearSegment(d->SegmentationNode, segmentID.toStdString());
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1191,31 +1191,31 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
 {
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   if (selectedSegmentIDs.size() == 0)
-    {
+  {
     qWarning() << Q_FUNC_INFO << ": No segment selected";
     return;
-    }
+  }
 
   Q_D(qMRMLSegmentsTableView);
   if (!d->SegmentationNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": No current segmentation node";
     return;
-    }
+  }
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
     d->SegmentationNode->GetDisplayNode() );
   if (!displayNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": No display node for segmentation " << d->SegmentationNode->GetName();
     return;
-    }
+  }
 
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
   if (!segmentation)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": No segmentation";
     return;
-    }
+  }
 
   std::vector<std::string> displayedSegmentIDs;
   segmentation->GetSegmentIDs(displayedSegmentIDs);
@@ -1225,21 +1225,21 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
   // Hide all segments except the selected ones
   MRMLNodeModifyBlocker blocker(displayNode);
   for (std::string displayedID : displayedSegmentIDs)
-    {
+  {
     QString segmentID = QString::fromStdString(displayedID);
     if (hiddenSegmentIDs.contains(segmentID))
-      {
+    {
       continue;
-      }
+    }
 
     bool visible = false;
     if (selectedSegmentIDs.contains(segmentID))
-      {
+    {
       visible = true;
-      }
+    }
 
     displayNode->SetSegmentVisibility(displayedID, visible);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1247,66 +1247,66 @@ void qMRMLSegmentsTableView::jumpSlices()
 {
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   if (selectedSegmentIDs.size() == 0)
-    {
+  {
     // No segment selected
     return;
-    }
+  }
 
   Q_D(qMRMLSegmentsTableView);
   if (!d->SegmentationNode)
-    {
+  {
     // No current segmentation node
     return;
-    }
+  }
 
   double* segmentCenterPosition = d->SegmentationNode->GetSegmentCenterRAS(selectedSegmentIDs[0].toUtf8().constData());
   if (!segmentCenterPosition)
-    {
+  {
     return;
-    }
+  }
 
   qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
-    {
+  {
     // application is closing
     return;
-    }
+  }
   foreach(QString sliceViewName, layoutManager->sliceViewNames())
-    {
+  {
     // Check if segmentation is visible in this view
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
     vtkMRMLSliceNode* sliceNode = sliceWidget->mrmlSliceNode();
     if (!sliceNode || !sliceNode->GetID())
-      {
+    {
       continue;
-      }
+    }
     bool visibleInView = false;
     int numberOfDisplayNodes = d->SegmentationNode->GetNumberOfDisplayNodes();
     for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
-      {
+    {
       vtkMRMLDisplayNode* segmentationDisplayNode = d->SegmentationNode->GetNthDisplayNode(displayNodeIndex);
       if (segmentationDisplayNode && segmentationDisplayNode->IsDisplayableInView(sliceNode->GetID()))
-        {
+      {
         visibleInView = true;
         break;
-        }
       }
+    }
     if (!visibleInView)
-      {
+    {
       continue;
-      }
+    }
     sliceNode->JumpSliceByCentering(segmentCenterPosition[0], segmentCenterPosition[1], segmentCenterPosition[2]);
     // snap to IJK to make sure slice is not positioned at the boundary of two voxels
     vtkSlicerApplicationLogic* appLogic = qSlicerApplication::application()->applicationLogic();
     if (appLogic)
-      {
+    {
       vtkMRMLSliceLogic* sliceLogic = appLogic->GetSliceLogic(sliceNode);
       if (sliceLogic)
-        {
+      {
         sliceLogic->SnapSliceOffsetToIJK();
-        }
       }
     }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1314,42 +1314,42 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsUp()
 {
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   if (selectedSegmentIDs.size() == 0)
-    {
+  {
     qWarning() << Q_FUNC_INFO << ": No segment selected";
     return;
-    }
+  }
 
   Q_D(qMRMLSegmentsTableView);
   if (!d->SegmentationNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": No current segmentation node";
     return;
-    }
+  }
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
 
   QModelIndexList segmentModelIndices;
   QList<int> selectedRows;
   foreach (QString segmentID, selectedSegmentIDs)
-    {
+  {
     QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
     segmentModelIndices << index;
     selectedRows << index.row();
-    }
+  }
   int minIndex = *(std::min_element(selectedRows.begin(), selectedRows.end()));
   if (minIndex == 0)
-    {
+  {
     qDebug() << Q_FUNC_INFO << ": Cannot move top segment up";
     return;
-    }
+  }
 
   for (int i = 0; i < selectedSegmentIDs.size(); ++i)
-    {
+  {
     QModelIndex selectedModelIndex = segmentModelIndices[i];
     QModelIndex previousModelIndex = d->SortFilterModel->index(selectedModelIndex.row() - 1, 0);
     QString previousSegmentID = d->SortFilterModel->segmentIDFromIndex(previousModelIndex);
     int previousSegmentIndex = segmentation->GetSegmentIndex(previousSegmentID.toStdString());
     segmentation->SetSegmentIndex(selectedSegmentIDs[i].toUtf8().constData(), previousSegmentIndex);
-    }
+  }
   this->setSelectedSegmentIDs(selectedSegmentIDs);
 }
 
@@ -1358,42 +1358,42 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsDown()
 {
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   if (selectedSegmentIDs.size() == 0)
-    {
+  {
     qWarning() << Q_FUNC_INFO << ": No segment selected";
     return;
-    }
+  }
 
   Q_D(qMRMLSegmentsTableView);
   if (!d->SegmentationNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": No current segmentation node";
     return;
-    }
+  }
   vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
 
   QModelIndexList segmentModelIndices;
   QList<int> selectedRows;
   foreach(QString segmentID, selectedSegmentIDs)
-    {
+  {
     QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
     segmentModelIndices << index;
     selectedRows << index.row();
-    }
+  }
   int maxIndex = *(std::max_element(selectedRows.begin(), selectedRows.end()));
   if (maxIndex == d->SortFilterModel->rowCount() - 1)
-    {
+  {
     qDebug() << Q_FUNC_INFO << ": Cannot move bottom segment down";
     return;
-    }
+  }
 
   for (int i = selectedSegmentIDs.count() - 1; i >= 0; --i)
-    {
+  {
     QModelIndex selectedModelIndex = segmentModelIndices[i];
     QModelIndex nextModelIndex = d->SortFilterModel->index(selectedModelIndex.row() + 1, 0);
     QString nextSegmentID = d->SortFilterModel->segmentIDFromIndex(nextModelIndex);
     int nextSegmentIndex = segmentation->GetSegmentIndex(nextSegmentID.toStdString());
     segmentation->SetSegmentIndex(selectedSegmentIDs[i].toUtf8().constData(), nextSegmentIndex);
-    }
+  }
   this->setSelectedSegmentIDs(selectedSegmentIDs);
 }
 
@@ -1424,9 +1424,9 @@ QStringList qMRMLSegmentsTableView::displayedSegmentIDs()const
 
   QStringList displayedSegmentIDs;
   for (int row = 0; row < d->SortFilterModel->rowCount(); ++row)
-    {
+  {
     displayedSegmentIDs << d->SortFilterModel->segmentIDFromIndex(d->SortFilterModel->index(row, 0));
-    }
+  }
   return displayedSegmentIDs;
 }
 

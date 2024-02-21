@@ -149,9 +149,9 @@ void qMRMLClipNodeWidget::setClipType(int type)
 {
   Q_D(qMRMLClipNodeWidget);
   if (!d->MRMLClipNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLClipNode->SetClipType(type);
 }
 
@@ -169,9 +169,9 @@ void qMRMLClipNodeWidget::setRedSliceClipState(int state)
 {
   Q_D(qMRMLClipNodeWidget);
   if (!d->MRMLClipNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLClipNode->SetRedSliceClipState(state);
 }
 
@@ -191,9 +191,9 @@ void qMRMLClipNodeWidget::setYellowSliceClipState(int state)
 {
   Q_D(qMRMLClipNodeWidget);
   if (!d->MRMLClipNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLClipNode->SetYellowSliceClipState(state);
 }
 
@@ -213,9 +213,9 @@ void qMRMLClipNodeWidget::setGreenSliceClipState(int state)
 {
   Q_D(qMRMLClipNodeWidget);
   if (!d->MRMLClipNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLClipNode->SetGreenSliceClipState(state);
 }
 
@@ -235,9 +235,9 @@ void qMRMLClipNodeWidget::setClippingMethod(vtkMRMLClipModelsNode::ClippingMetho
 {
   Q_D(qMRMLClipNodeWidget);
   if (!d->MRMLClipNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLClipNode->SetClippingMethod(state);
 }
 
@@ -254,9 +254,9 @@ void qMRMLClipNodeWidget::updateWidgetFromMRML()
   Q_D(qMRMLClipNodeWidget);
   this->setEnabled(d->MRMLClipNode.GetPointer() != nullptr);
   if (d->MRMLClipNode.GetPointer() == nullptr)
-    {
+  {
     return;
-    }
+  }
   bool oldUpdating = d->IsUpdatingWidgetFromMRML;
   d->IsUpdatingWidgetFromMRML = true;
 
@@ -305,9 +305,9 @@ void qMRMLClipNodeWidget::updateNodeRedClipState()
 {
   Q_D(const qMRMLClipNodeWidget);
   if (d->IsUpdatingWidgetFromMRML)
-    {
+  {
     return;
-    }
+  }
   this->setRedSliceClipState(this->redSliceClipState());
 }
 
@@ -316,9 +316,9 @@ void qMRMLClipNodeWidget::updateNodeYellowClipState()
 {
   Q_D(const qMRMLClipNodeWidget);
   if (d->IsUpdatingWidgetFromMRML)
-    {
+  {
     return;
-    }
+  }
   this->setYellowSliceClipState(this->yellowSliceClipState());
 }
 
@@ -327,9 +327,9 @@ void qMRMLClipNodeWidget::updateNodeGreenClipState()
 {
   Q_D(const qMRMLClipNodeWidget);
   if (d->IsUpdatingWidgetFromMRML)
-    {
+  {
     return;
-    }
+  }
   this->setGreenSliceClipState(this->greenSliceClipState());
 }
 
@@ -337,8 +337,8 @@ void qMRMLClipNodeWidget::updateNodeClippingMethod()
 {
   Q_D(const qMRMLClipNodeWidget);
   if (d->IsUpdatingWidgetFromMRML)
-    {
+  {
     return;
-    }
+  }
   this->setClippingMethod(this->clippingMethod());
 }

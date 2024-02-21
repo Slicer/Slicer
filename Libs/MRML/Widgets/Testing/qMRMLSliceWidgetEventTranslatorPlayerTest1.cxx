@@ -60,11 +60,11 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   qMRMLSliceWidget* widget = reinterpret_cast<qMRMLSliceWidget*>(data);
 
   Q_UNUSED(widget);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -100,19 +100,19 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
 
   for (unsigned int i = 0; i < sliceNodes.size(); ++i)
-    {
+  {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
     if (!strcmp(sliceNode->GetLayoutName(), "Red") )
-      {
+    {
       redSliceNode = sliceNode;
       break;
-      }
     }
+  }
   if (!redSliceNode)
-    {
+  {
     std::cerr << "Scene must contain a valid vtkMRMLSliceNode:" << redSliceNode << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // "Red" slice by default
   qMRMLSliceWidget sliceWidget;
@@ -126,9 +126,9 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

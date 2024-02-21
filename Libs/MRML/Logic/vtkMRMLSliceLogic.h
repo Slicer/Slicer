@@ -66,17 +66,17 @@ public:
 
   /// CompositeModifiedEvent is generated when slice composite node is modified
   enum
-    {
+  {
     CompositeModifiedEvent = 18000
-    };
+  };
 
   enum
-    {
+  {
     LayerNone = -1,
     LayerBackground = 0,
     LayerForeground = 1,
     LayerLabel = 2
-    };
+  };
 
   ///
   /// The MRML slice node for this slice logic

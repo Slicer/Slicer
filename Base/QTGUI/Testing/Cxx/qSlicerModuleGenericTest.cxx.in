@@ -67,7 +67,7 @@ int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
 
 #ifndef GENERIC_CXX_MODULE_TEST_SKIP_DEPENDENCIES
   if (!module->dependencies().isEmpty())
-    {
+  {
     qSlicerModuleFactoryManager * moduleFactoryManager = app.moduleManager()->factoryManager();
     qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
     moduleFactoryManager->setExplicitModules(module->dependencies());
@@ -82,28 +82,28 @@ int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
 
     // Load all available modules
     foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
-      {
+    {
       Q_ASSERT(!name.isNull());
       moduleFactoryManager->loadModule(name);
-      }
     }
+  }
 #endif
 
   QString modulePathWithoutIntDir = QLatin1String("@MODULEPATH_WITHOUT_INTDIR@");
   if (!QFile::exists(modulePathWithoutIntDir))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " Problem with @" << "MODULEPATH_WITHOUT_INTDIR@ - "
               << " File " << qPrintable(modulePathWithoutIntDir) << " doesn't exist " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString moduleFileName = "@CMAKE_SHARED_MODULE_PREFIX@qSlicer@MODULENAME@Module@CMAKE_SHARED_MODULE_SUFFIX@";
 
   QDir moduleDir(modulePathWithoutIntDir);
   if (!app.intDir().isEmpty())
-    {
+  {
     moduleDir.cd(app.intDir());
-    }
+  }
   QString modulePath = moduleDir.filePath(moduleFileName);
 
   // Path can be required for modules depending on locale resources.
@@ -117,59 +117,59 @@ int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
           pythonManager, app.intDir(), module->path());
     bool expected = true;
     if (current != expected)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " Problem with importModulePythonExtensions\n"
                 << "\tcurrent:" << current << "\n"
                 << "\texpected:" << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
   {
     bool current = qSlicerLoadableModule::addModuleToSlicerModules(
           pythonManager, module, "@MODULENAME@");
     bool expected = true;
     if (current != expected)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " Problem with addModuleToSlicerModules\n"
                 << "\tcurrent:" << current << "\n"
                 << "\texpected:" << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
   {
     bool current = qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
           pythonManager, "@MODULENAME@");
     bool expected = true;
     if (current != expected)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " Problem with addModuleNameToSlicerModuleNames\n"
                 << "\tcurrent:" << current << "\n"
                 << "\texpected:" << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 #endif
 
   if (module->title().isEmpty())
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::title() is empty." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (module->categories().isEmpty())
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::categories() is empty." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (module->index() < -1 || module->index() > 1000)
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::index() seems invalid." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //if (module->helpText().isEmpty())
   //  {
@@ -179,88 +179,88 @@ int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
   //  }
 
   if (module->acknowledgementText().isEmpty())
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::acknowledgementText() is empty." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (module->contributors().isEmpty())
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::contributors() is empty." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Initialize with no application logic. Shouldn't crash
   module->initialize(0);
 
   if (module->appLogic() != 0)
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::initialize() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Instantiate the logic if any
   vtkMRMLAbstractLogic* logic = module->logic();
 
   if (logic != module->logic())
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - The logic must remain the same." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Instantiate the representation if any
   qSlicerAbstractModuleRepresentation* moduleRepresentation =
     module->widgetRepresentation();
 
   if (moduleRepresentation != module->widgetRepresentation())
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - The widget must remain the same." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (!moduleRepresentation && !module->isHidden())
-    {
+  {
     // A module with no widget should be hidden
     std::cerr << "Line " << __LINE__
               << " qSlicer@MODULENAME@Module has no widget representation."
               << " however it is not hidden. " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Set a scene to the module,
   vtkNew<vtkMRMLScene> scene;
   module->setMRMLScene(scene.GetPointer());
   if (module->mrmlScene() != scene.GetPointer())
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (logic && logic->GetMRMLScene() != scene.GetPointer())
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::setMRMLScene() failed to pass"
               << "the mrml scene to the logic" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (moduleRepresentation && moduleRepresentation->mrmlScene() != scene.GetPointer())
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::setMRMLScene() failed to pass"
               << "the mrml scene to the widget" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 #ifdef Slicer_USE_PYTHONQT
   if (pythonManager->pythonErrorOccured())
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 #endif
 
   delete module;

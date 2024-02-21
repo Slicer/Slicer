@@ -137,9 +137,9 @@ void vtkMRMLMarkupsPlaneNode::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLMarkupsPlaneNode::ApplyTransform(vtkAbstractTransform* transform, bool applyToLockedControlPoints)
 {
   if (!transform)
-    {
+  {
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(this);
 
@@ -180,7 +180,7 @@ void vtkMRMLMarkupsPlaneNode::ApplyTransform(vtkAbstractTransform* transform, bo
 const char* vtkMRMLMarkupsPlaneNode::GetPlaneTypeAsString(int planeType)
 {
   switch (planeType)
-    {
+  {
     case vtkMRMLMarkupsPlaneNode::PlaneType3Points:
       return "threePoints";
     case vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal:
@@ -189,7 +189,7 @@ const char* vtkMRMLMarkupsPlaneNode::GetPlaneTypeAsString(int planeType)
       return "planeFit";
     default:
     break;
-    }
+  }
   return "";
 }
 
@@ -197,18 +197,18 @@ const char* vtkMRMLMarkupsPlaneNode::GetPlaneTypeAsString(int planeType)
 int vtkMRMLMarkupsPlaneNode::GetPlaneTypeFromString(const char* planeType)
 {
   if (planeType == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i = 0; i < vtkMRMLMarkupsPlaneNode::PlaneType_Last; i++)
-    {
+  {
     if (strcmp(planeType, vtkMRMLMarkupsPlaneNode::GetPlaneTypeAsString(i)) == 0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // unknown plane type
   return -1;
 }
@@ -217,14 +217,14 @@ int vtkMRMLMarkupsPlaneNode::GetPlaneTypeFromString(const char* planeType)
 const char* vtkMRMLMarkupsPlaneNode::GetSizeModeAsString(int sizeMode)
 {
   switch (sizeMode)
-    {
+  {
   case SizeModeAuto:
     return "auto";
   case SizeModeAbsolute:
     return "absolute";
   default:
     break;
-    }
+  }
   return "";
 }
 
@@ -232,17 +232,17 @@ const char* vtkMRMLMarkupsPlaneNode::GetSizeModeAsString(int sizeMode)
 int vtkMRMLMarkupsPlaneNode::GetSizeModeFromString(const char* sizeMode)
 {
   if (sizeMode == nullptr)
-    {
+  {
     // invalid size mode
     return -1;
-    }
+  }
   for (int i = 0; i < SizeMode_Last; ++i)
-    {
+  {
     if (strcmp(vtkMRMLMarkupsPlaneNode::GetSizeModeAsString(i), sizeMode) == 0)
-      {
+    {
       return i;
-      }
     }
+  }
   // unknown size mode
   return -1;
 }
@@ -251,9 +251,9 @@ int vtkMRMLMarkupsPlaneNode::GetSizeModeFromString(const char* sizeMode)
 void vtkMRMLMarkupsPlaneNode::SetSizeMode(int sizeMode)
 {
   if (this->SizeMode == sizeMode)
-    {
+  {
     return;
-    }
+  }
   this->SizeMode = sizeMode;
 
   MRMLNodeModifyBlocker blocker(this);
@@ -266,14 +266,14 @@ void vtkMRMLMarkupsPlaneNode::SetSizeMode(int sizeMode)
 void vtkMRMLMarkupsPlaneNode::SetPlaneType(int planeType)
 {
   if (this->PlaneType == planeType)
-    {
+  {
     return;
-    }
+  }
 
   this->PlaneType = planeType;
 
   switch (this->PlaneType)
-    {
+  {
     case PlaneTypePointNormal:
       this->RequiredNumberOfControlPoints = this->NormalPointRequired ? 2 : 1;
       this->MaximumNumberOfControlPoints = this->NormalPointRequired ? 2 : 1;
@@ -286,7 +286,7 @@ void vtkMRMLMarkupsPlaneNode::SetPlaneType(int planeType)
       this->RequiredNumberOfControlPoints = 0;
       this->MaximumNumberOfControlPoints = -1;
       break;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(this);
   this->UpdateControlPointsFromPlane();
@@ -298,9 +298,9 @@ void vtkMRMLMarkupsPlaneNode::SetPlaneType(int planeType)
 void vtkMRMLMarkupsPlaneNode::SetNormalPointRequired(bool normalPointRequired)
 {
   if (normalPointRequired == this->NormalPointRequired)
-    {
+  {
     return;
-    }
+  }
 
   this->NormalPointRequired = normalPointRequired;
   this->RequiredNumberOfControlPoints = this->NormalPointRequired ? 2 : 1;
@@ -314,10 +314,10 @@ void vtkMRMLMarkupsPlaneNode::SetNormalPointRequired(bool normalPointRequired)
 void vtkMRMLMarkupsPlaneNode::GetNormal(double normal_Node[3])
 {
   if (!normal_Node)
-    {
+  {
     vtkErrorMacro("GetNormal: Invalid normal argument");
     return;
-    }
+  }
   this->GetAxes(nullptr, nullptr, normal_Node);
 }
 
@@ -332,10 +332,10 @@ double* vtkMRMLMarkupsPlaneNode::GetNormal()
 void vtkMRMLMarkupsPlaneNode::GetNormalWorld(double normalWorld[3])
 {
   if (!normalWorld)
-    {
+  {
     vtkErrorMacro("GetNormalWorld: Invalid normal argument");
     return;
-    }
+  }
   this->GetAxesWorld(nullptr, nullptr, normalWorld);
 }
 
@@ -350,49 +350,49 @@ double* vtkMRMLMarkupsPlaneNode::GetNormalWorld()
 void vtkMRMLMarkupsPlaneNode::SetNormal(const double normal_Node[3])
 {
   if (!normal_Node)
-    {
+  {
     vtkErrorMacro("SetNormal: Invalid normal argument");
     return;
-    }
+  }
 
   double epsilon = 0.0001;
 
   double newNormal_Node[3] = { normal_Node[0], normal_Node[1], normal_Node[2] };
   double normalLength = vtkMath::Normalize(newNormal_Node);
   if (normalLength < epsilon)
-    {
+  {
     vtkErrorMacro("SetNormal: Invalid normal");
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(this);
 
   if (this->GetPlaneType() != PlaneTypePlaneFit)
-    {
+  {
     // If we are not using plane fit, then we can generate the control points
     // base on the current parameters.
     this->SetIsPlaneValid(true);
-    }
+  }
 
   double currentNormal_Node[3] = { 0.0, 0.0, 0.0 };
   this->GetNormal(currentNormal_Node);
 
   if (vtkMath::Dot(newNormal_Node, currentNormal_Node) >= 1.0 - epsilon)
-    {
+  {
     // Normal vectors are equivalent, no change required.
     this->UpdateControlPointsFromPlane();
     return;
-    }
+  }
 
   double angleRadians = vtkMath::AngleBetweenVectors(currentNormal_Node, newNormal_Node);
   double rotationAxis_Node[3] = { 0.0, 0.0, 0.0 };
   vtkMath::Cross(currentNormal_Node, newNormal_Node, rotationAxis_Node);
   if (vtkMath::Norm(rotationAxis_Node) < epsilon)
-    {
+  {
     // New + old normals are facing opposite directions.
     // Find a perpendicular axis to flip around.
     vtkMath::Perpendiculars(currentNormal_Node, rotationAxis_Node, nullptr, 0);
-    }
+  }
 
   vtkNew<vtkTransform> oldToNewNormalTransform;
   double origin_Node[3] = { 0.0, 0.0, 0.0 };
@@ -420,7 +420,7 @@ void vtkMRMLMarkupsPlaneNode::SetNormalWorld(const double normal_World[3])
 
   vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
   if (transformNode)
-    {
+  {
     // Get transform
     vtkNew<vtkGeneralTransform> transformToWorld;
     transformNode->GetTransformFromWorld(transformToWorld);
@@ -429,7 +429,7 @@ void vtkMRMLMarkupsPlaneNode::SetNormalWorld(const double normal_World[3])
     double origin_World[3] = { 0 };
     this->GetOriginWorld(origin_World);
     transformToWorld->TransformVectorAtPoint(origin_World, normal_World, normal_Node);
-    }
+  }
   this->SetNormal(normal_Node);
 }
 
@@ -444,10 +444,10 @@ void vtkMRMLMarkupsPlaneNode::SetNormalWorld(double x_World, double y_World, dou
 void vtkMRMLMarkupsPlaneNode::GetOrigin(double origin_Node[3])
 {
   if (!origin_Node)
-    {
+  {
     vtkErrorMacro("GetOrigin: Invalid origin argument");
     return;
-    }
+  }
 
   origin_Node[0] = 0.0;
   origin_Node[1] = 0.0;
@@ -480,10 +480,10 @@ double* vtkMRMLMarkupsPlaneNode::GetOrigin()
 void vtkMRMLMarkupsPlaneNode::GetOriginWorld(double origin_World[3])
 {
   if (!origin_World)
-    {
+  {
     vtkErrorMacro("GetOriginWorld: Invalid origin argument");
     return;
-    }
+  }
 
   double origin_Object[3] = { 0.0, 0.0, 0.0 };
 
@@ -512,18 +512,18 @@ double* vtkMRMLMarkupsPlaneNode::GetOriginWorld()
 void vtkMRMLMarkupsPlaneNode::SetOrigin(const double origin_Node[3])
 {
   if (!origin_Node)
-    {
+  {
     vtkWarningMacro("SetOrigin: Invalid origin argument");
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(this);
   if (this->GetPlaneType() != PlaneTypePlaneFit)
-    {
+  {
     // If we are not using plane fit, then we can generate the control points
     // base on the current parameters.
     this->SetIsPlaneValid(true);
-    }
+  }
 
   double previousOrigin_Node[3] = { 0.0, 0.0, 0.0 };
   this->GetOrigin(previousOrigin_Node);
@@ -579,10 +579,10 @@ void vtkMRMLMarkupsPlaneNode::CalculateAxesFromPoints(const double point0[3], co
 void vtkMRMLMarkupsPlaneNode::GetBaseToNodeMatrix(vtkMatrix4x4* baseToNodeMatrix)
 {
   if (!baseToNodeMatrix)
-    {
+  {
     vtkErrorMacro(<< "GetObjectToNodeMatrix: Invalid objectToNodeMatrix");
     return;
-    }
+  }
 
   baseToNodeMatrix->DeepCopy(this->BaseToNodeMatrix);
 }
@@ -597,10 +597,10 @@ vtkMatrix4x4* vtkMRMLMarkupsPlaneNode::GetBaseToNodeMatrix()
 void vtkMRMLMarkupsPlaneNode::GetObjectToNodeMatrix(vtkMatrix4x4* objectToNodeMatrix)
 {
   if (!objectToNodeMatrix)
-    {
+  {
     vtkErrorMacro(<< "GetObjectToNodeMatrix: Invalid objectToNodeMatrix");
     return;
-    }
+  }
 
   vtkNew<vtkTransform> objectToNodeTransform;
   objectToNodeTransform->PostMultiply();
@@ -613,47 +613,47 @@ void vtkMRMLMarkupsPlaneNode::GetObjectToNodeMatrix(vtkMatrix4x4* objectToNodeMa
 void vtkMRMLMarkupsPlaneNode::GetObjectToWorldMatrix(vtkMatrix4x4* objectToWorldMatrix)
 {
   if (!objectToWorldMatrix)
-    {
+  {
     return;
-    }
+  }
 
   vtkNew<vtkTransform> objectToWorldTransform;
   objectToWorldTransform->PostMultiply();
   objectToWorldTransform->Concatenate(this->ObjectToBaseMatrix);
   objectToWorldTransform->Concatenate(this->BaseToNodeMatrix);
   if (this->GetParentTransformNode())
-    {
+  {
     vtkNew<vtkGeneralTransform> transformToWorld;
     this->GetParentTransformNode()->GetTransformToWorld(transformToWorld);
     this->GenerateOrthogonalMatrix(objectToWorldTransform->GetMatrix(), objectToWorldMatrix, transformToWorld);
-    }
+  }
   else
-    {
+  {
     objectToWorldMatrix->DeepCopy(objectToWorldTransform->GetMatrix());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::GetBaseToWorldMatrix(vtkMatrix4x4* baseToWorldMatrix)
 {
   if (!baseToWorldMatrix)
-    {
+  {
     return;
-    }
+  }
 
   vtkNew<vtkTransform> objectToWorldTransform;
   objectToWorldTransform->PostMultiply();
   objectToWorldTransform->Concatenate(this->BaseToNodeMatrix);
   if (this->GetParentTransformNode())
-    {
+  {
     vtkNew<vtkGeneralTransform> transformToWorld;
     this->GetParentTransformNode()->GetTransformToWorld(transformToWorld);
     this->GenerateOrthogonalMatrix(objectToWorldTransform->GetMatrix(), baseToWorldMatrix, transformToWorld);
-    }
+  }
   else
-    {
+  {
     baseToWorldMatrix->DeepCopy(objectToWorldTransform->GetMatrix());
-    }
+  }
 }
 
 
@@ -661,31 +661,31 @@ void vtkMRMLMarkupsPlaneNode::GetBaseToWorldMatrix(vtkMatrix4x4* baseToWorldMatr
 void vtkMRMLMarkupsPlaneNode::GetAxes(double xAxis_Node[3], double yAxis_Node[3], double zAxis_Node[3])
 {
   if (!xAxis_Node && !yAxis_Node && !zAxis_Node)
-    {
+  {
     vtkErrorMacro("GetAxes: Invalid input arguments");
     return;
-    }
+  }
 
   if (xAxis_Node)
-      {
+  {
       xAxis_Node[0] = 1.0;
       xAxis_Node[1] = 0.0;
       xAxis_Node[2] = 0.0;
-      }
+  }
 
   if (yAxis_Node)
-      {
+  {
       yAxis_Node[0] = 0.0;
       yAxis_Node[1] = 1.0;
       yAxis_Node[2] = 0.0;
-      }
+  }
 
   if (zAxis_Node)
-      {
+  {
       zAxis_Node[0] = 0.0;
       zAxis_Node[1] = 0.0;
       zAxis_Node[2] = 1.0;
-      }
+  }
 
   vtkNew<vtkMatrix4x4> objectToNodeMatrix;
   this->GetObjectToNodeMatrix(objectToNodeMatrix);
@@ -694,53 +694,53 @@ void vtkMRMLMarkupsPlaneNode::GetAxes(double xAxis_Node[3], double yAxis_Node[3]
   objectToNodeTransform->SetMatrix(objectToNodeMatrix);
 
   if (xAxis_Node)
-    {
+  {
     double xAxis_Object[3] = { 1.0, 0.0, 0.0 };
     objectToNodeTransform->TransformVector(xAxis_Object, xAxis_Node);
-    }
+  }
 
   if (yAxis_Node)
-    {
+  {
     double yAxis_Object[3] = { 0.0, 1.0, 0.0 };
     objectToNodeTransform->TransformVector(yAxis_Object, yAxis_Node);
-    }
+  }
 
   if (zAxis_Node)
-    {
+  {
     double zAxis_Object[3] = { 0.0, 0.0, 1.0 };
     objectToNodeTransform->TransformVector(zAxis_Object, zAxis_Node);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::GetAxesWorld(double xAxis_World[3], double yAxis_World[3], double zAxis_World[3])
 {
   if (!xAxis_World && !yAxis_World && !zAxis_World)
-    {
+  {
     vtkErrorMacro("GetAxesWorld: Invalid input arguments");
     return;
-    }
+  }
 
   if (xAxis_World)
-      {
+  {
       xAxis_World[0] = 1.0;
       xAxis_World[1] = 0.0;
       xAxis_World[2] = 0.0;
-      }
+  }
 
   if (yAxis_World)
-      {
+  {
       yAxis_World[0] = 0.0;
       yAxis_World[1] = 1.0;
       yAxis_World[2] = 0.0;
-      }
+  }
 
   if (zAxis_World)
-      {
+  {
       zAxis_World[0] = 0.0;
       zAxis_World[1] = 0.0;
       zAxis_World[2] = 1.0;
-      }
+  }
 
   vtkNew<vtkMatrix4x4> objectToWorldMatrix;
   this->GetObjectToWorldMatrix(objectToWorldMatrix);
@@ -749,35 +749,35 @@ void vtkMRMLMarkupsPlaneNode::GetAxesWorld(double xAxis_World[3], double yAxis_W
   objectToWorldTransform->SetMatrix(objectToWorldMatrix);
 
   if (xAxis_World)
-    {
+  {
     double xAxis_Object[3] = { 1.0, 0.0, 0.0 };
     objectToWorldTransform->TransformVector(xAxis_Object, xAxis_World);
     vtkMath::Normalize(xAxis_World);
-    }
+  }
 
   if (yAxis_World)
-    {
+  {
     double yAxis_Object[3] = { 0.0, 1.0, 0.0 };
     objectToWorldTransform->TransformVector(yAxis_Object, yAxis_World);
     vtkMath::Normalize(yAxis_World);
-    }
+  }
 
   if (zAxis_World)
-    {
+  {
     double zAxis_Object[3] = { 0.0, 0.0, 1.0 };
     objectToWorldTransform->TransformVector(zAxis_Object, zAxis_World);
     vtkMath::Normalize(zAxis_World);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double yAxis_Node[3], const double zAxis_Node[3])
 {
   if (!xAxis_Node || !yAxis_Node || !zAxis_Node)
-    {
+  {
     vtkErrorMacro("SetAxes: Invalid input axes");
     return;
-    }
+  }
 
   double epsilon = 1e-5;
   double tempX[3] = { 0.0, 0.0, 0.0 };
@@ -789,26 +789,26 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double y
   if (vtkMath::Dot(tempX, xAxis_Node) <= 1.0 - epsilon ||
       vtkMath::Dot(tempY, yAxis_Node) <= 1.0 - epsilon ||
       vtkMath::Dot(tempZ, zAxis_Node) <= 1.0 - epsilon)
-    {
+  {
     vtkErrorMacro("SetAxes: Invalid direction vectors!");
     return;
-    }
+  }
 
   if (fabs(vtkMath::Dot(xAxis_Node, yAxis_Node)) >= epsilon ||
       fabs(vtkMath::Dot(yAxis_Node, zAxis_Node)) >= epsilon ||
       fabs(vtkMath::Dot(zAxis_Node, xAxis_Node)) >= epsilon)
-    {
+  {
     vtkErrorMacro("SetAxes: Invalid vectors");
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(this);
 
   if (this->GetPlaneType() != PlaneTypePlaneFit)
-    {
+  {
     // If we are not using plane fit, then we can generate the control points
     // base on the current parameters.
     this->SetIsPlaneValid(true);
-    }
+  }
 
   double previousXAxis_Node[3] = { 0.0, 0.0, 0.0 };
   double previousYAxis_Node[3] = { 0.0, 0.0, 0.0 };
@@ -817,20 +817,20 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double y
 
   vtkNew<vtkMatrix4x4> previousAxisToIdentity;
   for (int i = 0; i < 3; ++i)
-    {
+  {
     previousAxisToIdentity->SetElement(i, 0, previousXAxis_Node[i]);
     previousAxisToIdentity->SetElement(i, 1, previousYAxis_Node[i]);
     previousAxisToIdentity->SetElement(i, 2, previousZAxis_Node[i]);
-    }
+  }
   previousAxisToIdentity->Invert();
 
   vtkNew<vtkMatrix4x4> identityToNewAxis;
   for (int i = 0; i < 3; ++i)
-    {
+  {
     identityToNewAxis->SetElement(i, 0, xAxis_Node[i]);
     identityToNewAxis->SetElement(i, 1, yAxis_Node[i]);
     identityToNewAxis->SetElement(i, 2, zAxis_Node[i]);
-    }
+  }
 
   double origin_Node[3] = { 0.0, 0.0, 0.0 };
   this->GetOrigin(origin_Node);
@@ -857,7 +857,7 @@ void vtkMRMLMarkupsPlaneNode::SetAxesWorld(const double xAxis_World[3], const do
 
   vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
   if (transformNode)
-    {
+  {
     // Get transform
     vtkNew<vtkGeneralTransform> worldToNodeTransform;
     transformNode->GetTransformFromWorld(worldToNodeTransform.GetPointer());
@@ -868,7 +868,7 @@ void vtkMRMLMarkupsPlaneNode::SetAxesWorld(const double xAxis_World[3], const do
     worldToNodeTransform->TransformVectorAtPoint(origin_World, xAxis_World, xAxis_Node);
     worldToNodeTransform->TransformVectorAtPoint(origin_World, yAxis_World, yAxis_Node);
     worldToNodeTransform->TransformVectorAtPoint(origin_World, zAxis_World, zAxis_Node);
-    }
+  }
   this->SetAxes(xAxis_Node, yAxis_Node, zAxis_Node);
 }
 
@@ -876,24 +876,24 @@ void vtkMRMLMarkupsPlaneNode::SetAxesWorld(const double xAxis_World[3], const do
 void vtkMRMLMarkupsPlaneNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   if (caller == this->CurveInputPoly->GetPoints() || caller == this->GetParentTransformNode())
-    {
+  {
     if (!this->IsUpdatingControlPointsFromPlane && !this->IsUpdatingPlaneFromControlPoints)
-      {
+    {
       this->UpdatePlaneFromControlPoints();
-      }
     }
+  }
   else if (event == vtkCommand::ModifiedEvent && caller == this->BaseToNodeMatrix.GetPointer())
-    {
+  {
     if (!this->IsUpdatingControlPointsFromPlane && !this->IsUpdatingPlaneFromControlPoints)
-      {
+    {
       this->UpdateInteractionHandleToWorldMatrix();
       this->UpdateControlPointsFromPlane();
-      }
     }
+  }
   else if (event == vtkCommand::ModifiedEvent && caller == this->ObjectToBaseMatrix.GetPointer())
-    {
+  {
     this->Modified();
-    }
+  }
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
@@ -916,31 +916,31 @@ void vtkMRMLMarkupsPlaneNode::SetSize(double x, double y)
   MRMLNodeModifyBlocker blocker(this);
 
   if (this->Size[0] == x && this->Size[1] == y)
-    {
+  {
     return;
-    }
+  }
 
   if (this->Size[0] > 0.0)
-    {
+  {
     this->PlaneBounds[0] /= this->Size[0];
     this->PlaneBounds[1] /= this->Size[0];
-    }
+  }
   else
-    {
+  {
     this->PlaneBounds[0] = -0.5;
     this->PlaneBounds[1] = 0.5;
-    }
+  }
 
   if (this->Size[1] > 0.0)
-    {
+  {
     this->PlaneBounds[2] /= this->Size[1];
     this->PlaneBounds[3] /= this->Size[1];
-    }
+  }
   else
-    {
+  {
     this->PlaneBounds[2] = -0.5;
     this->PlaneBounds[3] = 0.5;
-    }
+  }
 
   this->Size[0] = x;
   this->Size[1] = y;
@@ -1011,9 +1011,9 @@ void vtkMRMLMarkupsPlaneNode::SetPlaneBounds(double x0, double x1, double y0, do
 {
   if (this->PlaneBounds[0] == x0 && this->PlaneBounds[1] == x1
     && this->PlaneBounds[2] == y0 && this->PlaneBounds[3] == y1)
-    {
+  {
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(this);
 
@@ -1055,12 +1055,12 @@ void vtkMRMLMarkupsPlaneNode::UpdateInteractionHandleToWorldMatrix()
 
   vtkNew<vtkMatrix4x4> handleToWorldMatrix;
   for (int i = 0; i < 3; ++i)
-    {
+  {
     handleToWorldMatrix->SetElement(i, 0, handleX_World[i]);
     handleToWorldMatrix->SetElement(i, 1, handleY_World[i]);
     handleToWorldMatrix->SetElement(i, 2, handleZ_World[i]);
     handleToWorldMatrix->SetElement(i, 3, origin_World[i]);
-    }
+  }
   this->InteractionHandleToWorldMatrix->DeepCopy(handleToWorldMatrix);
 }
 
@@ -1068,15 +1068,15 @@ void vtkMRMLMarkupsPlaneNode::UpdateInteractionHandleToWorldMatrix()
 double vtkMRMLMarkupsPlaneNode::GetClosestPointOnPlaneWorld(const double posWorld[3], double closestPosWorld[3], bool infinitePlane/*=true*/)
 {
   if (!posWorld)
-    {
+  {
     vtkErrorMacro("GetClosestPointOnPlaneWorld: Invalid posWorld");
     return 0.0;
-    }
+  }
   if (!closestPosWorld)
-    {
+  {
     vtkErrorMacro("GetClosestPointOnPlaneWorld: Invalid closestPosWorld");
     return 0.0;
-    }
+  }
 
   vtkNew<vtkMatrix4x4> objectToWorldMatrix;
   this->GetObjectToWorldMatrix(objectToWorldMatrix);
@@ -1093,19 +1093,19 @@ double vtkMRMLMarkupsPlaneNode::GetClosestPointOnPlaneWorld(const double posWorl
   closestPosPlane4[2] = 0.0; // Project to plane
 
   if (!infinitePlane)
-    {
+  {
     double planeSize_Object[2] = { 0.0, 0.0 };
     this->GetSize(planeSize_Object);
     closestPosPlane4[0] = std::max(std::min(closestPosPlane4[0], planeSize_Object[0] * 0.5), -1.0 * planeSize_Object[0] * 0.5);
     closestPosPlane4[1] = std::max(std::min(closestPosPlane4[1], planeSize_Object[1] * 0.5), -1.0 * planeSize_Object[1] * 0.5);
-    }
+  }
 
   double closestPosWorld4[4] = { 0.0, 0.0, 0.0, 0.0 };
   objectToWorldMatrix->MultiplyPoint(closestPosPlane4, closestPosWorld4);
   for (int i = 0; i < 3; ++i)
-    {
+  {
     closestPosWorld[i] = closestPosWorld4[i];
-    }
+  }
 
   return std::sqrt(vtkMath::Distance2BetweenPoints(closestPosWorld, posWorld));
 }
@@ -1115,10 +1115,10 @@ vtkMRMLStorageNode* vtkMRMLMarkupsPlaneNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
   if (scene == nullptr)
-    {
+  {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
-    }
+  }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLMarkupsPlaneJsonStorageNode"));
 }
@@ -1128,22 +1128,22 @@ void vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes()
 {
   if (this->GetDisplayNode() != nullptr &&
     vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
-    {
+  {
     // display node already exists
     return;
-    }
+  }
   if (this->GetScene() == nullptr)
-    {
+  {
     vtkErrorMacro("vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
-    }
+  }
   vtkMRMLMarkupsPlaneDisplayNode* dispNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(
     this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsPlaneDisplayNode"));
   if (!dispNode)
-    {
+  {
     vtkErrorMacro("vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes failed: scene failed to instantiate a vtkMRMLMarkupsPlaneDisplayNode node");
     return;
-    }
+  }
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }
 
@@ -1151,10 +1151,10 @@ void vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes()
 void vtkMRMLMarkupsPlaneNode::GetRASBounds(double bounds[6])
 {
   if (!bounds)
-    {
+  {
     vtkErrorMacro("Invalid bounds argument");
     return;
-    }
+  }
 
   vtkNew<vtkPoints> cornerPoints_World;
   this->GetPlaneCornerPointsWorld(cornerPoints_World);
@@ -1176,10 +1176,10 @@ void vtkMRMLMarkupsPlaneNode::GetRASBounds(double bounds[6])
 void vtkMRMLMarkupsPlaneNode::GetBounds(double bounds[6])
 {
   if (!bounds)
-    {
+  {
     vtkErrorMacro("Invalid bounds argument");
     return;
-    }
+  }
 
   vtkNew<vtkPoints> cornerPoints_Node;
   this->GetPlaneCornerPoints(cornerPoints_Node);
@@ -1233,10 +1233,10 @@ void vtkMRMLMarkupsPlaneNode::GetPlaneCornerPointsWorld(vtkPoints* points_World)
 void vtkMRMLMarkupsPlaneNode::CalculatePlaneCornerPoints(vtkPoints * points, double xAxis[3], double yAxis[3], double center[3], double size[2])
 {
   if (!points)
-    {
+  {
     vtkErrorMacro("CalculatePlaneCornerPoints: Invalid points");
     return;
-    }
+  }
 
   double planeBounds[4] = { 0.0, -1.0, 0.0, -1.0 };
   this->GetPlaneBounds(planeBounds);
@@ -1288,16 +1288,16 @@ void vtkMRMLMarkupsPlaneNode::CalculatePlaneCornerPoints(vtkPoints * points, dou
 void vtkMRMLMarkupsPlaneNode::CalculatePlaneBounds(vtkPoints* cornerPoints, double bounds[6])
 {
   if (!cornerPoints || !bounds)
-    {
+  {
     vtkErrorMacro("CalculatePlaneBounds: Invalid arguments");
     return;
-    }
+  }
 
   vtkBoundingBox box;
   for (int i = 0; i < cornerPoints->GetNumberOfPoints(); ++i)
-    {
+  {
     box.AddPoint(cornerPoints->GetPoint(i));
-    }
+  }
   box.GetBounds(bounds);
 }
 
@@ -1305,17 +1305,17 @@ void vtkMRMLMarkupsPlaneNode::CalculatePlaneBounds(vtkPoints* cornerPoints, doub
 void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromControlPoints()
 {
   if (this->IsUpdatingControlPointsFromPlane || this->IsUpdatingPlaneFromControlPoints)
-    {
+  {
     return;
-    }
+  }
 
   this->IsUpdatingPlaneFromControlPoints = true;
-    {
+  {
     // Block events in this scope
     MRMLNodeModifyBlocker blocker(this);
 
     switch (this->PlaneType)
-      {
+    {
       case PlaneTypePointNormal:
         this->UpdatePlaneFromPointNormal();
         break;
@@ -1327,8 +1327,8 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromControlPoints()
         break;
       default:
         break;
-      }
     }
+  }
   this->IsUpdatingPlaneFromControlPoints = false;
 }
 
@@ -1337,9 +1337,9 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromPointNormal()
 {
   double origin_Node[3] = { 0.0, 0.0, 0.0 };
   if (this->GetNumberOfControlPoints() > 0)
-    {
+  {
     this->GetNthControlPointPosition(0, origin_Node);
-    }
+  }
 
   vtkNew<vtkTransform> baseToNodeTransform;
   baseToNodeTransform->PostMultiply();
@@ -1357,66 +1357,66 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromPointNormal()
   double newY_Node[3] = { 0.0, 1.0, 0.0 };
   double newZ_Node[3] = { 0.0, 0.0, 1.0 };
   if (this->GetNumberOfControlPoints() > 1)
-    {
+  {
     double normalPoint_Node[3] = { 0.0, 0.0, 0.0 };
     this->GetNthControlPointPosition(1, normalPoint_Node);
     vtkMath::Subtract(normalPoint_Node, origin_Node, newZ_Node);
     vtkMath::Normalize(newZ_Node);
 
     vtkMath::Perpendiculars(newZ_Node, newX_Node, newY_Node, 0.0);
-    }
+  }
   else
-    {
+  {
     baseToNodeTransform->TransformVector(newX_Node, newX_Node);
     baseToNodeTransform->TransformVector(newY_Node, newY_Node);
     baseToNodeTransform->TransformVector(newZ_Node, newZ_Node);
-    }
+  }
 
   double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(oldZ_Node, newZ_Node));
   double epsilon = 0.001;
   if (angle > epsilon)
-    {
+  {
     double rotationVector_Node[3] = { 1.0, 0.0, 0.0 };
     vtkMath::Cross(oldZ_Node, newZ_Node, rotationVector_Node);
     vtkMath::Normalize(rotationVector_Node);
     baseToNodeTransform->RotateWXYZ(angle, rotationVector_Node);
-    }
+  }
   baseToNodeTransform->Translate(origin_Node);
   this->BaseToNodeMatrix->DeepCopy(baseToNodeTransform->GetMatrix());
   // this->BaseToNodeMatrix modified event is ignored if we get here from a MRML node callback,
   // so we need to call Modified() to ensure that node modification is notified.
   this->Modified();
   if (this->GetNumberOfDefinedControlPoints(true/*include preview*/) >= 1 && this->Size[0] >= 0.0 && this->Size[1] >= 0.0)
-    {
+  {
     this->SetIsPlaneValid(true);
-    }
+  }
   else
-    {
+  {
     this->SetIsPlaneValid(false);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::UpdatePlaneFrom3Points()
 {
   if (this->GetNumberOfControlPoints() < 3)
-    {
+  {
     // Not enough points to define the plane
     this->SetIsPlaneValid(false);
     return;
-    }
+  }
 
   double point0_Node[3] = { 0.0 };
   this->GetNthControlPointPosition(0, point0_Node);
 
   vtkNew<vtkMatrix4x4> baseToNodeMatrix;
   for (int i = 0; i < 3; ++i)
-    {
+  {
     baseToNodeMatrix->SetElement(i, 3, point0_Node[i]);
-    }
+  }
 
   if (this->GetNumberOfControlPoints() >= 3)
-    {
+  {
     double point1_Node[3] = { 0.0 };
     double point2_Node[3] = { 0.0 };
 
@@ -1428,12 +1428,12 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFrom3Points()
     double zAxis_Node[3] = { 0.0 };
     this->CalculateAxesFromPoints(point0_Node, point1_Node, point2_Node, xAxis_Node, yAxis_Node, zAxis_Node);
     for (int i = 0; i < 3; ++i)
-      {
+    {
       baseToNodeMatrix->SetElement(i, 0, xAxis_Node[i]);
       baseToNodeMatrix->SetElement(i, 1, yAxis_Node[i]);
       baseToNodeMatrix->SetElement(i, 2, zAxis_Node[i]);
-      }
     }
+  }
   this->BaseToNodeMatrix->DeepCopy(baseToNodeMatrix);
   // this->BaseToNodeMatrix modified event is ignored if we get here from a MRML node callback,
   // so we need to call Modified() to ensure that node modification is notified.
@@ -1452,18 +1452,18 @@ bool vtkMRMLMarkupsPlaneNode::GetClosestFitPlaneFromControlPoints(vtkMatrix4x4* 
   int numberOfControlPoints = this->GetNumberOfControlPoints();
   vtkNew<vtkPoints> controlPoints_Node;
   for (int i = 0; i < numberOfControlPoints; ++i)
-    {
+  {
     double controlPointPosition_Node[3] = { 0.0 };
     this->GetNthControlPointPosition(i, controlPointPosition_Node);
     controlPoints_Node->InsertNextPoint(controlPointPosition_Node);
-    }
+  }
 
   vtkNew<vtkPlane> bestFitPlane_Node;
   if (!vtkAddonMathUtilities::FitPlaneToPoints(controlPoints_Node, bestFitPlane_Node))
-    {
+  {
     vtkErrorMacro("GetClosestFitPlaneFromControlPoints: Could not fit plane to points");
     return false;
-    }
+  }
 
   double newZ_Node[3] = { 0.0, 0.0, 0.0 };
   bestFitPlane_Node->GetNormal(newZ_Node);
@@ -1478,9 +1478,9 @@ bool vtkMRMLMarkupsPlaneNode::GetClosestFitPlaneFromControlPoints(vtkMatrix4x4* 
   oldBaseToNodeTransform->TransformVector(oldZ_Node, oldZ_Node);
 
   if (vtkMath::Dot(oldZ_Node, newZ_Node) < -0.9)
-    {
+  {
     vtkMath::MultiplyScalar(newZ_Node, -1.0);
-    }
+  }
 
   double oldOrigin_Node[3] = { 0.0, 0.0, 0.0 };
   oldBaseToNodeTransform->TransformPoint(oldOrigin_Node, oldOrigin_Node);
@@ -1493,12 +1493,12 @@ bool vtkMRMLMarkupsPlaneNode::GetClosestFitPlaneFromControlPoints(vtkMatrix4x4* 
   double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(oldZ_Node, newZ_Node));
   double epsilon = 0.001;
   if (angle > epsilon)
-    {
+  {
     double rotationVector_Node[3] = { 1.0, 0.0, 0.0 };
     vtkMath::Cross(oldZ_Node, newZ_Node, rotationVector_Node);
     vtkMath::Normalize(rotationVector_Node);
     baseToNodeTransform->RotateWXYZ(angle, rotationVector_Node);
-    }
+  }
   baseToNodeTransform->Translate(bestFitPlane_Node->GetOrigin());
   closestFitPlane->DeepCopy(baseToNodeTransform->GetMatrix());
 
@@ -1510,23 +1510,23 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromPlaneFit()
 {
   // The origin of the coordinate system is at the center of mass of the control points
   if (this->GetNumberOfControlPoints() < 3)
-    {
+  {
     this->BaseToNodeMatrix->Identity();
     if (this->SizeMode == vtkMRMLMarkupsPlaneNode::SizeModeAuto)
-      {
-      this->SetSize(0.0, 0.0);
-      }
-    this->SetIsPlaneValid(false);
-    }
-  else
     {
+      this->SetSize(0.0, 0.0);
+    }
+    this->SetIsPlaneValid(false);
+  }
+  else
+  {
     // The orientation of the coordinate system is adjusted so that the z axis aligns with the normal of the
     // best fit plane defined by the control points.
     vtkNew<vtkMatrix4x4> bestFitMatrix_Node;
     bool valid = this->GetClosestFitPlaneFromControlPoints(this->BaseToNodeMatrix);
     this->SetIsPlaneValid(valid);
     this->UpdatePlaneSize();
-   }
+  }
 
   // this->BaseToNodeMatrix modified event is ignored if we get here from a MRML node callback,
   // so we need to call Modified() to ensure that node modification is notified.
@@ -1537,15 +1537,15 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromPlaneFit()
 void vtkMRMLMarkupsPlaneNode::UpdatePlaneSize()
 {
   if (this->SizeMode != vtkMRMLMarkupsPlaneNode::SizeModeAuto)
-    {
+  {
     return;
-    }
+  }
 
   if (!this->GetIsPlaneValid())
-    {
+  {
     this->SetSize(0.0, 0.0);
     return;
-    }
+  }
 
   vtkNew<vtkMatrix4x4> objectToBaseMatrix;
   this->GetBaseToWorldMatrix(objectToBaseMatrix);
@@ -1560,7 +1560,7 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneSize()
   // Size mode auto means we need to recalculate the diameter of the plane from the control points.
   // Get plane size in world coordinate system units
   for (int i = 0; i < this->GetNumberOfControlPoints(); ++i)
-    {
+  {
     double point_World[3] = { 0.0, 0.0, 0.0 };
     this->GetNthControlPointPositionWorld(i, point_World);
 
@@ -1569,7 +1569,7 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneSize()
 
     xMax_Base = std::max({ std::abs(point_Base[0]), xMax_Base });
     yMax_Base = std::max({ std::abs(point_Base[1]), yMax_Base });
-    }
+  }
 
   double xRadius = xMax_Base * this->AutoSizeScalingFactor;
   double yRadius = yMax_Base * this->AutoSizeScalingFactor;
@@ -1580,9 +1580,9 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneSize()
 void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFromPlane()
 {
   if (this->IsUpdatingControlPointsFromPlane || this->IsUpdatingPlaneFromControlPoints || !this->GetIsPlaneValid())
-    {
+  {
     return;
-    }
+  }
 
   this->IsUpdatingControlPointsFromPlane = true;
 
@@ -1591,7 +1591,7 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFromPlane()
     MRMLNodeModifyBlocker blocker(this);
 
     switch (this->PlaneType)
-      {
+    {
       case vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal:
         this->UpdateControlPointsFromPointNormal();
         break;
@@ -1603,7 +1603,7 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFromPlane()
         break;
       default:
         break;
-      }
+    }
   }
 
   this->IsUpdatingControlPointsFromPlane = false;
@@ -1613,20 +1613,20 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFromPlane()
 void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFromPointNormal()
 {
   if (!this->NormalPointRequired && this->GetNumberOfDefinedControlPoints() > 1)
-    {
+  {
     while (this->GetNumberOfDefinedControlPoints() > 1)
-      {
+    {
       this->RemoveNthControlPoint(1);
-      }
     }
+  }
 
   if (this->GetIsPlaneValid() && this->GetNumberOfControlPoints() == 0)
-    {
+  {
     this->AddControlPoint(vtkVector3d());
-    }
+  }
 
   if (this->GetIsPlaneValid() && this->GetNumberOfControlPoints() > 0)
-    {
+  {
     vtkNew<vtkMatrix4x4> baseToWorldMatrix;
     this->GetBaseToWorldMatrix(baseToWorldMatrix);
 
@@ -1637,31 +1637,31 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFromPointNormal()
     baseToWorldTransform->TransformPoint(origin_World, origin_World);
 
     this->SetNthControlPointPositionWorld(0, origin_World, this->GetNthControlPointPositionStatus(0));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFrom3Points()
 {
   if (!this->GetIsPlaneValid())
-    {
+  {
     return;
-    }
+  }
 
   if (this->Size[0] <= 0.0 || this->Size[1] <= 0.0)
-    {
+  {
     return;
-    }
+  }
 
   if (this->GetNumberOfDefinedControlPoints() > 3)
-    {
+  {
     // If we switch from another plane type, we may have more than 3 points
     // Remove them until we only have 3.
     while (this->GetNumberOfDefinedControlPoints() > 3)
-      {
+    {
       this->RemoveNthControlPoint(3);
-      }
     }
+  }
 
   vtkNew<vtkMatrix4x4> baseToWorldMatrix;
   this->GetBaseToWorldMatrix(baseToWorldMatrix);
@@ -1680,7 +1680,7 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFrom3Points()
 
   /// If the plane is valid but doesn't have all 3 points placed, then place the remaining points
   if (this->GetNumberOfControlPoints() < 3)
-    {
+  {
     this->AddNControlPoints(3 - this->GetNumberOfControlPoints());
 
     double point1_World[3] = { 0.0, 0.0, 0.0 };
@@ -1694,7 +1694,7 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFrom3Points()
     this->SetNthControlPointPositionWorld(0, origin_World);
     this->SetNthControlPointPositionWorld(1, point1_World);
     this->SetNthControlPointPositionWorld(2, point2_World);
-    }
+  }
 
   double point0_World[3] = { 0.0, 0.0, 0.0 };
   double point1_World[3] = { 0.0, 0.0, 0.0 };
@@ -1715,36 +1715,36 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFrom3Points()
   bool pointChanged = false;
   double epsilon = 1e-5;
   if (distancePoint0ToPoint1_World <= epsilon)
-    {
+  {
     // Point1 is at same position as point0.
     // Move point1 away in x axis.
     vtkMath::Add(point1_World, xAxis_World, point1_World);
     pointChanged = true;
-    }
+  }
 
   if (distancePoint0ToPoint2_World <= epsilon)
-    {
+  {
     // Point2 is at same position as point0.
     // Move point2 away in y axis.
     vtkMath::Add(point2_World, yAxis_World, point2_World);
     pointChanged = true;
-    }
+  }
 
   if (vtkMath::Dot(vectorPoint0ToPoint1_World, vectorPoint0ToPoint2_World) >= 1.0 - epsilon)
-    {
+  {
     // Point1 and point2 are along the same vector from point0.
     // Find a perpendicular vector and move point2.
     double perpendicularAxis_World[3] = { 0.0, 0.0, 0.0 };
     vtkMath::Perpendiculars(vectorPoint0ToPoint2_World, perpendicularAxis_World, nullptr, 0.0);
     vtkMath::Add(point0_World, perpendicularAxis_World, point2_World);
-    }
+  }
 
   if (pointChanged)
-    {
+  {
     this->SetNthControlPointPositionWorld(0, point0_World);
     this->SetNthControlPointPositionWorld(1, point1_World);
     this->SetNthControlPointPositionWorld(2, point2_World);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1778,12 +1778,12 @@ void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix
   double zAxis[3] = { 0.0, 0.0, 0.0 };
   double origin[3] = { 0.0,0.0, 0.0 };
   for (int i = 0; i < 3; ++i)
-    {
+  {
     xAxis[i] = inputMatrix->GetElement(i, 0);
     yAxis[i] = inputMatrix->GetElement(i, 1);
     zAxis[i] = inputMatrix->GetElement(i, 2);
     origin[i] = inputMatrix->GetElement(i, 3);
-    }
+  }
   vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(xAxis, yAxis, zAxis, origin, outputMatrix, transform, applyScaling);
 }
 
@@ -1792,10 +1792,10 @@ void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(double xAxis[3], double y
   vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform/*=nullptr*/, bool applyScaling/*=true*/)
 {
   if (!xAxis || !yAxis || !zAxis || !origin || !transform || !outputMatrix)
-    {
+  {
     vtkGenericWarningMacro("GenerateOrthogonalMatrix: Invalid arguments");
     return;
-    }
+  }
 
   double xAxisTransformed[3] = { xAxis[0],  xAxis[1], xAxis[2] };
   double yAxisTransformed[3] = { yAxis[0],  yAxis[1], yAxis[2] };
@@ -1807,12 +1807,12 @@ void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(double xAxis[3], double y
   double zAxisScale = vtkMath::Norm(zAxis);
 
   if (transform)
-    {
+  {
     transform->TransformVectorAtPoint(origin, xAxis, xAxisTransformed);
     transform->TransformVectorAtPoint(origin, yAxis, yAxisTransformed);
     transform->TransformVectorAtPoint(origin, zAxis, zAxisTransformed);
     transform->TransformPoint(origin, originTransformed);
-    }
+  }
 
   vtkMath::Cross(xAxisTransformed, yAxisTransformed, zAxisTransformed);
   vtkMath::Normalize(zAxisTransformed);
@@ -1822,24 +1822,24 @@ void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(double xAxis[3], double y
   vtkMath::Normalize(xAxisTransformed);
 
   if (applyScaling)
-    {
+  {
     if (transform)
-      {
+    {
       vtkAbstractTransform* inverseTransform = transform->GetInverse();
       xAxisScale /= vtkMath::Norm(inverseTransform->TransformVectorAtPoint(originTransformed, xAxisTransformed));
       yAxisScale /= vtkMath::Norm(inverseTransform->TransformVectorAtPoint(originTransformed, yAxisTransformed));
       zAxisScale /= vtkMath::Norm(inverseTransform->TransformVectorAtPoint(originTransformed, zAxisTransformed));
-      }
+    }
     vtkMath::MultiplyScalar(xAxisTransformed, xAxisScale);
     vtkMath::MultiplyScalar(yAxisTransformed, yAxisScale);
     vtkMath::MultiplyScalar(zAxisTransformed, zAxisScale);
-    }
+  }
 
   for (int i = 0; i < 3; ++i)
-    {
+  {
     outputMatrix->SetElement(i, 0, xAxisTransformed[i]);
     outputMatrix->SetElement(i, 1, yAxisTransformed[i]);
     outputMatrix->SetElement(i, 2, zAxisTransformed[i]);
     outputMatrix->SetElement(i, 3, originTransformed[i]);
-    }
+  }
 }

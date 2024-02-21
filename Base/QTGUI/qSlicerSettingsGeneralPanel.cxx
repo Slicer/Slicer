@@ -83,12 +83,12 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   this->LanguageComboBox->setVisible(internationalizationEnabled);
 
   if (internationalizationEnabled)
-    {
+  {
     // Disable showing country flags because not all regions have a flag (e.g., Latin America)
     this->LanguageComboBox->setCountryFlagsVisible(false);
     this->LanguageComboBox->setDefaultLanguage("en");
     this->LanguageComboBox->setDirectories(qSlicerCoreApplication::translationFolders());
-    }
+  }
 #else
   this->LanguageLabel->setVisible(false);
   this->LanguageComboBox->setVisible(false);
@@ -98,7 +98,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 #ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
   applicationUpdateEnabled = qSlicerApplicationUpdateManager::isApplicationUpdateEnabled();
   if (applicationUpdateEnabled)
-    {
+  {
     this->ApplicationUpdateServerURLLineEdit->setText("https://download.slicer.org");
 
     q->registerProperty("ApplicationUpdate/AutoUpdateCheck", this->ApplicationAutoUpdateCheckCheckBox, /*no tr*/"checked",
@@ -110,15 +110,15 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 
     qSlicerApplication* app = qSlicerApplication::application();
     if (app && app->applicationUpdateManager())
-      {
+    {
       QObject::connect(app->applicationUpdateManager(), SIGNAL(autoUpdateCheckChanged()),
         q, SLOT(updateAutoUpdateApplicationFromManager()));
 
       QObject::connect(this->ApplicationAutoUpdateCheckCheckBox, SIGNAL(toggled(bool)),
         app->applicationUpdateManager(), SLOT(setAutoUpdateCheck(bool)));
-      }
-
     }
+
+  }
 #endif
   this->ApplicationAutoUpdateCheckLabel->setVisible(applicationUpdateEnabled);
   this->ApplicationAutoUpdateCheckCheckBox->setVisible(applicationUpdateEnabled);
@@ -127,7 +127,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     PythonQt::init();
     PythonQtObjectPtr context = PythonQt::self()->getMainModule();
     context.evalScript(QString("slicerrcfilename = getSlicerRCFileName()\n"));
@@ -135,12 +135,12 @@ void qSlicerSettingsGeneralPanelPrivate::init()
     this->SlicerRCFileValueLabel->setText(slicerrcFileNameVar.toString());
     this->SlicerRCFileOpenButton->setIcon(QIcon(":Icons/Go.png"));
     QObject::connect(this->SlicerRCFileOpenButton, SIGNAL(clicked()), q, SLOT(openSlicerRCFile()));
-    }
+  }
   else
-    {
+  {
     this->SlicerRCFileOpenButton->setVisible(false);
     this->SlicerRCFileValueLabel->setVisible(false);
-    }
+  }
 #else
   this->SlicerRCFileLabel->setVisible(false);
   this->SlicerRCFileValueLabel->setVisible(false);
@@ -228,10 +228,10 @@ void qSlicerSettingsGeneralPanel::openSlicerRCFile()
   QString slicerRcFileName = d->SlicerRCFileValueLabel->text();
   QFileInfo fileInfo(slicerRcFileName);
   if (!fileInfo.exists())
-    {
+  {
     QFile outputFile(slicerRcFileName);
     if (outputFile.open(QFile::WriteOnly | QFile::Truncate))
-      {
+    {
       // slicerrc file does not exist, create one with some default content
       QTextStream outputStream(&outputFile);
       outputStream <<
@@ -246,23 +246,23 @@ void qSlicerSettingsGeneralPanel::openSlicerRCFile()
         "# slicer.util.mainWindow().moduleSelector().selectModule('SegmentEditor')\n"
         "#\n";
       outputFile.close();
-      }
     }
+  }
 
   QString editor = qSlicerApplication::application()->userSettings()->value("Python/Editor").toString();
   if (editor.isEmpty())
-    {
+  {
     QDesktopServices::openUrl(QUrl("file:///" + slicerRcFileName, QUrl::TolerantMode));
-    }
+  }
   else
-    {
+  {
     QProcess process;
     // Use the startup environment to avoid Python environment issues with text editors implemented in Python
     process.setProcessEnvironment(qSlicerApplication::application()->startupEnvironment());
     process.setProgram(editor);
     process.setArguments(QStringList() << slicerRcFileName);
     process.startDetached();
-    }
+  }
 
 }
 
@@ -273,9 +273,9 @@ void qSlicerSettingsGeneralPanel::updateAutoUpdateApplicationFromManager()
   Q_D(qSlicerSettingsGeneralPanel);
   qSlicerApplication* app = qSlicerApplication::application();
   if (!app->applicationUpdateManager())
-    {
+  {
     return;
-    }
+  }
   QSignalBlocker blocker1(d->ApplicationAutoUpdateCheckCheckBox);
   d->ApplicationAutoUpdateCheckCheckBox->setChecked(app->applicationUpdateManager()->autoUpdateCheck());
 #endif

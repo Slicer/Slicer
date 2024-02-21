@@ -40,10 +40,10 @@ int testAddVolumePropertyFromFile(const std::string &temporaryDirectory);
 int vtkSlicerVolumeRenderingLogicAddFromFileTest(int argc, char* argv[])
 {
   if (argc != 2)
-    {
+  {
     std::cout << "Missing temporary directory argument !" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::string temporaryDirectory(argv[1]);
 
   CHECK_EXIT_SUCCESS(testAddVolumePropertyFromFile(temporaryDirectory));

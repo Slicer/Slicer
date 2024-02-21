@@ -55,13 +55,13 @@ class VTK_ITK_EXPORT vtkITKImageToImageFilter
 {
 public:
   static vtkITKImageToImageFilter *New()
-   {
+  {
      vtkITKImageToImageFilter* result = new vtkITKImageToImageFilter;
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
      result->InitializeObjectBase();
 #endif
      return result;
-   };
+  };
 
   vtkTypeMacro(vtkITKImageToImageFilter, vtkImageAlgorithm);
 
@@ -82,14 +82,14 @@ public:
     t1 = this->Superclass::GetMTime();
     t2 = this->vtkExporter->GetMTime();
     if (t2 > t1)
-      {
+    {
       t1 = t2;
-      }
+    }
     t2 = this->vtkImporter->GetMTime();
     if (t2 > t1)
-      {
+    {
       t1 = t2;
-      }
+    }
     return t1;
   };
 
@@ -99,9 +99,9 @@ public:
   {
     this->Superclass::Modified();
     if (this->m_Process)
-      {
+    {
       m_Process->Modified();
-      }
+    }
   };
 
   ///
@@ -170,21 +170,21 @@ public:
   /// this class's GetOutput(). vtkSource's GetOutput is not virtual.
   using vtkAlgorithm::Update;
   void Update() override
-    {
+  {
       this->vtkCast->Update();
       this->vtkImporter->Update();
-    }
+  }
   void Update(int port) override
-    {
+  {
       this->vtkCast->Update();
       this->vtkImporter->Update(port);
-   }
+  }
   void HandleProgressEvent ()
   {
     if ( this->m_Process )
-      {
+    {
       this->UpdateProgress ( m_Process->GetProgress() );
-      }
+    }
   };
   void HandleStartEvent ()
   {
@@ -233,12 +233,12 @@ public:
   void LinkITKProgressToVTKProgress ( itk::ProcessObject* process )
   {
     if ( process )
-      {
+    {
       this->m_Process = process;
       this->m_Process->AddObserver ( itk::ProgressEvent(), this->m_ProgressCommand );
       this->m_Process->AddObserver ( itk::StartEvent(), this->m_StartEventCommand );
       this->m_Process->AddObserver ( itk::EndEvent(), this->m_EndEventCommand );
-      }
+    }
   };
 
   typedef itk::SimpleMemberCommand<vtkITKImageToImageFilter> MemberCommand;

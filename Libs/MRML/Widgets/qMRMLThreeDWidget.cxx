@@ -124,16 +124,16 @@ void qMRMLThreeDWidget::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 {
   Q_D(qMRMLThreeDWidget);
   if (!newViewNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
     return;
-    }
+  }
   vtkMRMLViewLogic* viewLogic = this->viewLogic();
   if (!viewLogic)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: view logic is invalid";
     return;
-    }
+  }
   d->ThreeDView->setMRMLViewNode(newViewNode);
   viewLogic->SetName(newViewNode->GetLayoutName());
 }
@@ -144,10 +144,10 @@ void qMRMLThreeDWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newView
   Q_D(qMRMLThreeDWidget);
   vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(newViewNode);
   if (newViewNode && !threeDViewNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
       << ". Expected node type: vtkMRMLViewNode";
-    }
+  }
   this->setMRMLViewNode(threeDViewNode);
 }
 

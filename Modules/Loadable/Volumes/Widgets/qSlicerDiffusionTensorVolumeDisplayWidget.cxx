@@ -83,11 +83,11 @@ void qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::glyphsOnSlicesDisplaySetE
 {
   this->GlyphsOnSlicesDisplayCollapsibleGroupBox->setEnabled(enabled);
   if (!enabled)
-    {
+  {
     this->RedSliceCheckBox->setCheckState(Qt::Unchecked);
     this->YellowSliceCheckBox->setCheckState(Qt::Unchecked);
     this->GreenSliceCheckBox->setCheckState(Qt::Unchecked);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -129,9 +129,9 @@ QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> qSlicerDiffusionTensorVolumeDispl
   Q_D(const qSlicerDiffusionTensorVolumeDisplayWidget);
   vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode = this->volumeDisplayNode();
   if (!displayNode)
-    {
+  {
     return QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>();
-    }
+  }
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> res;
   std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> displayNodes =
@@ -168,28 +168,28 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
   vtkMRMLDiffusionTensorVolumeDisplayNode* newVolumeDisplayNode = this->volumeDisplayNode();
   vtkMRMLGlyphableVolumeSliceDisplayNode* glyphableVolumeSliceNode = nullptr;
   if (newVolumeDisplayNode)
-    {
+  {
     std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> dtiSliceDisplayNodes =
       newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
     if (dtiSliceDisplayNodes.size() == 0)
-      {
+    {
       newVolumeDisplayNode->AddSliceGlyphDisplayNodes(d->VolumeNode);
       dtiSliceDisplayNodes =
         newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
-      }
+    }
     Q_ASSERT(dtiSliceDisplayNodes.size());
     d->RedSliceCheckBox->setChecked(dtiSliceDisplayNodes[0]->GetVisibility());
     if (dtiSliceDisplayNodes.size() > 1)
-      {
+    {
       d->YellowSliceCheckBox->setChecked(dtiSliceDisplayNodes[1]->GetVisibility());
-      }
+    }
     if (dtiSliceDisplayNodes.size() > 2)
-      {
+    {
       d->GreenSliceCheckBox->setChecked(dtiSliceDisplayNodes[1]->GetVisibility());
-      }
+    }
 
     glyphableVolumeSliceNode = dtiSliceDisplayNodes[0];
-    }
+  }
   // The update tasks are also needed when scene is closed (newVolumeDisplayNode is nullptr)
   d->DTISliceDisplayWidget->setMRMLDTISliceDisplayNode(glyphableVolumeSliceNode);
   qvtkDisconnect(nullptr, vtkCommand::ModifiedEvent, this, SLOT(synchronizeSliceDisplayNodes()));
@@ -207,9 +207,9 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::updateWidgetFromMRML()
   vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
   d->ScalarInvariantComboBox->setScalarInvariant(displayNode->GetScalarInvariant());
   if (
     displayNode->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation ||
@@ -232,9 +232,9 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::synchronizeSliceDisplayNodes()
 {
   QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes = this->sliceDisplayNodes();
   if (sliceDisplayNodes.count() != 3)
-    {
+  {
     return;
-    }
+  }
   sliceDisplayNodes[1]->SetColorMode(sliceDisplayNodes[0]->GetColorMode());
   sliceDisplayNodes[1]->SetOpacity(sliceDisplayNodes[0]->GetOpacity());
   sliceDisplayNodes[1]->SetAndObserveColorNodeID(sliceDisplayNodes[0]->GetColorNodeID());
@@ -254,9 +254,9 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setVolumeScalarInvariant(int sca
 {
   vtkMRMLDiffusionTensorVolumeDisplayNode* volumeDisplayNode = this->volumeDisplayNode();
   if (!volumeDisplayNode)
-    {
+  {
     return;
-    }
+  }
   volumeDisplayNode->SetScalarInvariant(scalarInvariant);
 }
 
@@ -265,9 +265,9 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setRedSliceVisible(bool visible)
 {
   QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes = this->sliceDisplayNodes();
   if (sliceDisplayNodes.count() != 3)
-    {
+  {
     return;
-    }
+  }
   sliceDisplayNodes[0]->SetVisibility(visible);
 }
 
@@ -276,9 +276,9 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setYellowSliceVisible(bool visib
 {
   QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes = this->sliceDisplayNodes();
   if (sliceDisplayNodes.count() != 3)
-    {
+  {
     return;
-    }
+  }
   sliceDisplayNodes[1]->SetVisibility(visible);
 }
 
@@ -287,8 +287,8 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setGreenSliceVisible(bool visibl
 {
   QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes = this->sliceDisplayNodes();
   if (sliceDisplayNodes.count() != 3)
-    {
+  {
     return;
-    }
+  }
   sliceDisplayNodes[2]->SetVisibility(visible);
 }

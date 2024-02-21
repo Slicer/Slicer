@@ -122,9 +122,9 @@ void qSlicerExtensionsServerWidgetPrivate::setFailurePage(const QStringList& err
 
   QStringList htmlErrors;
   foreach(const QString& error, errors)
-    {
+  {
     htmlErrors << QString("<li>%1</li>").arg(error);
-    }
+  }
   q->webView()->setHtml(html.arg(htmlErrors.join("/n")));
 }
 
@@ -140,18 +140,18 @@ void qSlicerExtensionsServerWidgetPrivate::setDarkThemeEnabled(bool enabled)
 {
   Q_Q(qSlicerExtensionsServerWidget);
   if(!this->BrowsingEnabled)
-    {
+  {
     return;
-    }
+  }
   int serverAPI = this->ExtensionsManagerModel->serverAPI();
   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
-    {
+  {
     q->evalJS(QString("app.$vuetify.theme.dark = %1;").arg(enabled ? "true" : "false"));
-    }
+  }
   else
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -180,13 +180,13 @@ void qSlicerExtensionsServerWidgetPrivate::registerExtensionsManagerModel(
   Q_Q(qSlicerExtensionsServerWidget);
   QWebChannel* webChannel = q->webView()->page()->webChannel();
   if (oldModel)
-    {
+  {
     webChannel->deregisterObject(oldModel);
-    }
+  }
   if (newModel)
-    {
+  {
     webChannel->registerObject("extensions_manager_model", newModel);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -212,9 +212,9 @@ void qSlicerExtensionsServerWidget::setExtensionsManagerModel(qSlicerExtensionsM
 {
   Q_D(qSlicerExtensionsServerWidget);
   if (this->extensionsManagerModel() == model)
-    {
+  {
     return;
-    }
+  }
 
   disconnect(this, SLOT(onExtensionInstalled(QString)));
   //disconnect(this, SLOT(onExtensionUninstalled(QString)));
@@ -230,7 +230,7 @@ void qSlicerExtensionsServerWidget::setExtensionsManagerModel(qSlicerExtensionsM
   d->ExtensionsManagerModel = model;
 
   if (model)
-    {
+  {
     this->onSlicerRequirementsChanged();
 
     QObject::connect(model, SIGNAL(extensionInstalled(QString)),
@@ -253,7 +253,7 @@ void qSlicerExtensionsServerWidget::setExtensionsManagerModel(qSlicerExtensionsM
 
     QObject::connect(model, SIGNAL(downloadFinished(QNetworkReply*)),
                      this, SLOT(onDownloadFinished(QNetworkReply*)));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -265,15 +265,15 @@ void qSlicerExtensionsServerWidget::refresh()
 {
   Q_D(qSlicerExtensionsServerWidget);
   if (!d->ExtensionsManagerModel)
-    {
+  {
     return;
-    }
+  }
   QStringList errors = this->extensionsManagerModel()->checkInstallPrerequisites();
   if (!errors.empty())
-    {
+  {
     d->setFailurePage(errors);
     return;
-    }
+  }
   this->webView()->setUrl(this->extensionsManagerModel()->extensionsListUrl());
 }
 
@@ -282,17 +282,17 @@ void qSlicerExtensionsServerWidget::onExtensionInstalled(const QString& extensio
 {
   Q_D(qSlicerExtensionsServerWidget);
   if(d->BrowsingEnabled)
-    {
+  {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
-      {
+    {
       this->evalJS(QString("app.setExtensionButtonState('%1', 'Installed');").arg(extensionName));
-      }
-    else
-      {
-      qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
-      }
     }
+    else
+    {
+      qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
+    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -300,17 +300,17 @@ void qSlicerExtensionsServerWidget::onExtensionScheduledForUninstall(const QStri
 {
   Q_D(qSlicerExtensionsServerWidget);
   if(d->BrowsingEnabled)
-    {
+  {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
-      {
+    {
       this->evalJS(QString("app.setExtensionButtonState('%1', 'ScheduledForUninstall');").arg(extensionName));
-      }
-    else
-      {
-      qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
-      }
     }
+    else
+    {
+      qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
+    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -324,9 +324,9 @@ void qSlicerExtensionsServerWidget::onSlicerRequirementsChanged()
 {
   Q_D(qSlicerExtensionsServerWidget);
   if (d->BrowsingEnabled)
-    {
+  {
     this->refresh();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -334,31 +334,31 @@ void qSlicerExtensionsServerWidget::onMessageLogged(const QString& text, ctkErro
 {
   Q_D(qSlicerExtensionsServerWidget);
   if(!d->BrowsingEnabled)
-    {
+  {
     return;
-    }
+  }
   QString escapedText = QString(text).replace("'", "\\'");
   QString delay = "2500";
   QString state;
   if (level == ctkErrorLogLevel::Warning)
-    {
+  {
     delay = "10000";
     state = "warning";
-    }
+  }
   else if(level == ctkErrorLogLevel::Critical || level == ctkErrorLogLevel::Fatal)
-    {
+  {
     delay = "10000";
     state = "error";
-    }
+  }
   int serverAPI = d->ExtensionsManagerModel->serverAPI();
   if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
-    {
+  {
     this->evalJS(QString("app.createNotice('%1', %2, '%3')").arg(escapedText).arg(delay).arg(state));
-    }
+  }
   else
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << serverAPI;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -383,14 +383,14 @@ void qSlicerExtensionsServerWidget::onLoadFinished(bool ok)
   Q_D(qSlicerExtensionsServerWidget);
   this->Superclass::onLoadFinished(ok);
   if(!ok && d->NavigationRequestAccepted)
-    {
+  {
     d->setFailurePage(QStringList() << QString("Failed to load extension page using this URL: <strong>%1</strong>")
                       .arg(this->extensionsManagerModel()->extensionsListUrl().toString()));
-    }
+  }
   if (ok)
-    {
+  {
     d->updateTheme();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -406,12 +406,12 @@ void qSlicerExtensionsServerWidget::changeEvent(QEvent *e)
 {
   Q_D(qSlicerExtensionsServerWidget);
   switch (e->type())
-    {
+  {
     case QEvent::StyleChange:
       d->updateTheme();
     break;
     default:
     break;
-    }
+  }
   this->Superclass::changeEvent(e);
 }

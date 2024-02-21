@@ -94,21 +94,21 @@ double qSlicerColorsReader::canLoadFileConfidence(const QString& fileName)const
   // Therefore, confidence below 0.55 means that we got a generic file extension
   // that we need to inspect further.
   if (confidence > 0 && confidence < 0.55)
-    {
+  {
     // Generic file extension, inspect the content
     QString upperCaseFileName = fileName.toUpper();
     if (upperCaseFileName.endsWith("TXT"))
-      {
+    {
       QFile file(fileName);
       if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
+      {
         QTextStream in(&file);
         // Color table text files start with "# Color table file"
         QString line = in.read(100);
         confidence = (line.contains("# Color table file") ? 0.6 : 0.4);
-        }
       }
     }
+  }
   return confidence;
 }
 
@@ -120,16 +120,16 @@ bool qSlicerColorsReader::load(const IOProperties& properties)
   QString fileName = properties["fileName"].toString();
 
   if (d->ColorLogic.GetPointer() == nullptr)
-    {
+  {
     return false;
-    }
+  }
 
   vtkMRMLColorNode* node = d->ColorLogic->LoadColorFile(fileName.toUtf8());
   QStringList loadedNodes;
   if (node)
-    {
+  {
     loadedNodes << QString(node->GetID());
-    }
+  }
   this->setLoadedNodes(loadedNodes);
   return node != nullptr;
 }

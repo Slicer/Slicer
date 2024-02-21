@@ -54,13 +54,13 @@ public:
   vtkTypeMacro(vtkMRMLDisplayableHierarchyNodeTestHelper1, vtkMRMLDisplayableNode);
 
   vtkMRMLNode* CreateNodeInstance() override
-    {
+  {
     return vtkMRMLDisplayableHierarchyNodeTestHelper1::New();
-    }
+  }
   const char* GetNodeTagName() override
-    {
+  {
     return "vtkMRMLNodeTestHelper1";
-    }
+  }
 };
 vtkStandardNewMacro(vtkMRMLDisplayableHierarchyNodeTestHelper1);
 
@@ -116,13 +116,13 @@ int TestHierarchyNodeCount()
   scene->AddNode(dnode2.GetPointer());
 
   if (dnode2->GetID())
-    {
+  {
     node1->SetAndObserveDisplayNodeID(dnode2->GetID());
-    }
+  }
   else
-    {
+  {
     std::cout << "Display node2 is null or its id is null, not observing it\n";
-    }
+  }
 
   vtkNew<vtkCollection> col;
   // needs the scene to be set before getting children

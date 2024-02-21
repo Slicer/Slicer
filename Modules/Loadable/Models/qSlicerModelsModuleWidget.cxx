@@ -96,9 +96,9 @@ qSlicerModelsModuleWidget::~qSlicerModelsModuleWidget()
 
   // set the mrml scene to null so that stop observing it for events
   if (this->mrmlScene())
-    {
+  {
     this->mrmlScene()->RemoveObserver(d->CallBack);
-    }
+  }
 
   this->setMRMLScene(nullptr);
 }
@@ -162,10 +162,10 @@ void qSlicerModelsModuleWidget::enter()
   int headerHeight = d->SubjectHierarchyTreeView->header()->sizeHint().height();
   int treeViewHeight = headerHeight * 3; // Approximately three rows when empty (cannot get row height)
   if (displayedItemCount > 0)
-    {
+  {
     // Calculate full tree view height based on number of displayed items and item height (and add 2 for the borders).
     treeViewHeight = headerHeight + displayedItemCount * d->SubjectHierarchyTreeView->sizeHintForRow(0) + 2;
-    }
+  }
 
   // Get height of the whole Models module widget panel
   int panelHeight = this->sizeHint().height();
@@ -177,10 +177,10 @@ void qSlicerModelsModuleWidget::enter()
   // on the currently selected item (when color is set to a folder)
   vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
-    }
+  }
   qvtkConnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
     this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
   qvtkConnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
@@ -197,10 +197,10 @@ void qSlicerModelsModuleWidget::exit()
   // Disconnect SH node modified when module is not active
   vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
-    }
+  }
   qvtkDisconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
     this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
   qvtkDisconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
@@ -215,24 +215,24 @@ void qSlicerModelsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
   Q_D(qSlicerModelsModuleWidget);
 
   if (scene == this->mrmlScene())
-    {
+  {
     return;
-    }
+  }
   this->Superclass::setMRMLScene(scene);
 
   if (scene)
-    {
+  {
     scene->RemoveObserver(d->CallBack);
-    }
+  }
   if (scene)
-    {
+  {
     d->CallBack->SetClientData(this);
 
     d->CallBack->SetCallback(qSlicerModelsModuleWidget::onMRMLSceneEvent);
 
     scene->AddObserver(vtkMRMLScene::EndImportEvent, d->CallBack);
     this->onMRMLSceneEvent(scene, vtkMRMLScene::EndImportEvent, this, nullptr);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -247,37 +247,37 @@ void qSlicerModelsModuleWidget::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned lo
   Q_UNUSED(scene);
   Q_ASSERT(widget);
   if (event == vtkMRMLScene::EndImportEvent)
-    {
+  {
     //widget->updateWidgetFromSelectionNode();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::showAllModels()
 {
   if (this->logic() == nullptr)
-    {
+  {
     return;
-    }
+  }
   vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (modelsLogic)
-    {
+  {
     modelsLogic->SetAllModelsVisibility(1);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::hideAllModels()
 {
   if (this->logic() == nullptr)
-    {
+  {
     return;
-    }
+  }
   vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (modelsLogic)
-    {
+  {
     modelsLogic->SetAllModelsVisibility(0);
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -289,22 +289,22 @@ bool qSlicerModelsModuleWidget::setEditedNode(vtkMRMLNode* node,
   Q_UNUSED(role);
   Q_UNUSED(context);
   if (vtkMRMLModelNode::SafeDownCast(node) || vtkMRMLFolderDisplayNode::SafeDownCast(node))
-    {
+  {
     d->SubjectHierarchyTreeView->setCurrentNode(node);
     return true;
-    }
+  }
 
   if (vtkMRMLModelDisplayNode::SafeDownCast(node))
-    {
+  {
     vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(node);
     vtkMRMLModelNode* displayableNode = vtkMRMLModelNode::SafeDownCast(displayNode->GetDisplayableNode());
     if (!displayableNode)
-      {
+    {
       return false;
-      }
+    }
     d->SubjectHierarchyTreeView->setCurrentNode(displayableNode);
     return true;
-    }
+  }
 
   return false;
 }
@@ -316,13 +316,13 @@ void qSlicerModelsModuleWidget::onClippingConfigurationButtonClicked()
   d->ClippingButton->setCollapsed(false);
   // Make sure import/export is visible
   if (this->parent() && this->parent()->parent() && this->parent()->parent()->parent())
-    {
+  {
     QScrollArea* scrollArea = qobject_cast<QScrollArea*>(this->parent()->parent()->parent());
     if (scrollArea)
-      {
+    {
       scrollArea->ensureWidgetVisible(d->ClippingButton);
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------
@@ -342,9 +342,9 @@ void qSlicerModelsModuleWidget::onDisplayNodeChanged()
   d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
 
   if (!colorLegendNode)
-    {
+  {
     d->ColorLegendCollapsibleGroupBox->setCollapsed(true);
-    }
+  }
   d->ColorLegendCollapsibleGroupBox->setEnabled(displayNode && displayNode->GetColorNode());}
 
 //-----------------------------------------------------------
@@ -353,27 +353,27 @@ void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
   Q_D(qSlicerModelsModuleWidget);
   vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
   if (displayNode)
-    {
+  {
     int wasModified = displayNode->StartModify();
     displayNode->SetClipping(toggled);
     // By enabling clipping, backfaces may become visible.
     // Therefore, it is better to render them (not cull them).
     if (toggled)
-      {
+    {
       displayNode->BackfaceCullingOff();
       displayNode->FrontfaceCullingOff();
       if (d->MRMLClipNodeWidget->mrmlClipNode() != nullptr
         && d->MRMLClipNodeWidget->redSliceClipState() == vtkMRMLClipModelsNode::ClipOff
         && d->MRMLClipNodeWidget->greenSliceClipState() == vtkMRMLClipModelsNode::ClipOff
         && d->MRMLClipNodeWidget->yellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
-        {
+      {
         // All clipping planes are disabled.
         // Enable the first clipping plane to show a clipped model to the user.
         d->MRMLClipNodeWidget->setRedSliceClipState(vtkMRMLClipModelsNode::ClipPositiveSpace);
-        }
       }
-    displayNode->EndModify(wasModified);
     }
+    displayNode->EndModify(wasModified);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -383,18 +383,18 @@ void qSlicerModelsModuleWidget::setDisplaySelectionFromSubjectHierarchyItems(QLi
 
   vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
-    }
+  }
 
   vtkMRMLNode* firstDataNode = nullptr;
   if ( itemIDs.size() > 0
     // In case of empty selection the only item in the list is the scene
     && !(itemIDs.size() == 1 && itemIDs[0] == shNode->GetSceneItemID()) )
-    {
+  {
     firstDataNode = shNode->GetItemDataNode(itemIDs[0]);
-    }
+  }
   // Only set model node to info widget if it's visible
   d->MRMLModelInfoWidget->setMRMLModelNode(d->InformationButton->collapsed() ? nullptr : firstDataNode);
 
@@ -416,10 +416,10 @@ void qSlicerModelsModuleWidget::onInformationSectionCollapsed(bool collapsed)
   Q_D(qSlicerModelsModuleWidget);
 
   if (!collapsed)
-    {
+  {
     QList<vtkIdType> currentItemIDs = d->SubjectHierarchyTreeView->currentItems();
     this->setDisplaySelectionFromSubjectHierarchyItems(currentItemIDs);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -429,28 +429,28 @@ void qSlicerModelsModuleWidget::onColorLegendCollapsibleGroupBoxToggled(bool tog
 
   // Make sure a legend display node exists if the color legend section is opened
   if (!toggled)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLModelDisplayNode* displayNode = d->ModelDisplayWidget->mrmlModelDisplayNode();
   vtkMRMLColorLegendDisplayNode* colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
   if (!colorLegendNode)
-    {
+  {
     // color legend node does not exist, we need to create it now
 
     // Pause render to prevent the new Color legend displayed for a moment before it is hidden.
     vtkMRMLApplicationLogic* mrmlAppLogic = this->logic()->GetMRMLApplicationLogic();
     if (mrmlAppLogic)
-      {
+    {
       mrmlAppLogic->PauseRender();
-      }
+    }
     colorLegendNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(displayNode);
     colorLegendNode->SetVisibility(false); // just because the groupbox is opened, don't show color legend yet
     if (mrmlAppLogic)
-      {
+    {
       mrmlAppLogic->ResumeRender();
-      }
     }
+  }
   d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
 }

@@ -76,7 +76,7 @@ int main( int argc, char * argv[] )
                                            2.0 / 3.0);
 
   try
-    {
+  {
 
     reader->SetFileName(inputVolume.c_str() );
     reader->Update();
@@ -91,17 +91,17 @@ int main( int argc, char * argv[] )
     minMaxCalculator->Update();
 
     if( labelToSmooth == -1 )
-      {
+    {
       labelToSmooth = minMaxCalculator->GetMaximum();
-      }
+    }
     else if( labelToSmooth > minMaxCalculator->GetMaximum() )
-      {
+    {
       labelToSmooth = minMaxCalculator->GetMaximum();
-      }
+    }
     else if( labelToSmooth < minMaxCalculator->GetMinimum() )
-      {
+    {
       labelToSmooth = minMaxCalculator->GetMinimum();
-      }
+    }
 
     inputThresholder->SetInput( reader->GetOutput() );
     inputThresholder->SetInsideValue( 1 );
@@ -125,12 +125,12 @@ int main( int argc, char * argv[] )
     UCharImageType::RegionType::SizeType regionSize;
     UCharImageType::IndexType            regionIndex;
     for( unsigned int i = 0; i < ImageDimension; i++ )
-      {
+    {
       boundingBox[2 * i] = std::max(0, (int)(boundingBox[2 * i] - boundingBoxPadding) );
       boundingBox[2 * i + 1] = std::min( (int)(imageSize[i] - 1), (int)(boundingBox[2 * i + 1] + boundingBoxPadding) );
       regionIndex[i] = boundingBox[2 * i];
       regionSize[i] = boundingBox[2 * i + 1] - boundingBox[2 * i] + 1;
-      }
+    }
 
     // Create a region corresponding to the bounding box.
     UCharImageType::RegionType boundingRegion;
@@ -144,7 +144,7 @@ int main( int argc, char * argv[] )
     extracter->Update();
 
     FloatImageType::Pointer antiAliasImage;
-      {
+    {
       antiAliasFilter->SetInput( extracter->GetOutput() );
       antiAliasFilter->SetMaximumRMSError( maxRMSError );
       antiAliasFilter->SetNumberOfIterations( numberOfIterations );
@@ -154,7 +154,7 @@ int main( int argc, char * argv[] )
 
       antiAliasImage = antiAliasFilter->GetOutput();
       antiAliasImage->DisconnectPipeline();
-      }
+    }
 
     gaussianFilter->SetInput( antiAliasImage );
     gaussianFilter->SetVariance( gaussianSigma * gaussianSigma );
@@ -185,19 +185,19 @@ int main( int argc, char * argv[] )
     writer->SetUseCompression(true);
     writer->Update();
 
-    }
+  }
   catch( itk::ExceptionObject & exc )
-    {
+  {
     std::cout << "ExceptionObject caught !" << std::endl;
     std::cout << exc << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   catch( std::exception & exc )
-    {
+  {
     std::cout << "ExceptionObject caught !" << std::endl;
     std::cout << exc.what() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

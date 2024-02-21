@@ -126,10 +126,10 @@ void qMRMLSegmentationRepresentationsListView::setSegmentationNode(vtkMRMLNode* 
   Q_D(qMRMLSegmentationRepresentationsListView);
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node);
   if (d->SegmentationNode == segmentationNode)
-    {
+  {
     // no change
     return;
-    }
+  }
 
   qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SourceRepresentationModified,
                  this, SLOT( populateRepresentationsList() ) );
@@ -167,10 +167,10 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
   d->RepresentationsList->clear();
 
   if (!d->SegmentationNode)
-    {
+  {
     d->setMessage(tr("No node is selected"));
     return;
-    }
+  }
 
   // Get available representation names
   std::set<std::string> representationNames;
@@ -179,7 +179,7 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
 
   int row = 0;
   for (std::set<std::string>::iterator reprIt=representationNames.begin(); reprIt!=representationNames.end(); ++reprIt, ++row)
-    {
+  {
     QString name(reprIt->c_str());
 
     QWidget* representationWidget = new QWidget(d->RepresentationsList);
@@ -205,31 +205,31 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
 
     // Status
     if (master)
-      {
+    {
       representationItem->setIcon(QIcon(":/Icons/Source.png"));
       representationItem->setToolTip(tr("This is the source representation.\n  1. This representation is saved on disk\n  2. If this representation is modified, the others are cleared"));
-      }
+    }
     else if (present)
-      {
+    {
       representationItem->setIcon(QIcon(":/Icons/Present.png"));
       representationItem->setToolTip(tr("This representation is present"));
-      }
+    }
     else
-      {
+    {
       QPixmap emptyPixmap(16, 16);
       emptyPixmap.fill(Qt::transparent);
       QIcon emptyIcon(emptyPixmap);
       representationItem->setIcon(emptyIcon);
       representationItem->setToolTip(tr("This representation is not present"));
-      }
+    }
 
     // Action
     if (!master)
-      {
+    {
       if (present || segmentation->GetNumberOfSegments() == 0) // if there are no segments we allow making any representation the master
-        {
+      {
         if (present)
-          {
+        {
           // Existing representations get an update button
           ctkMenuButton* updateButton = new ctkMenuButton(representationWidget);
           updateButton->setText(tr("Update"));
@@ -252,7 +252,7 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
           updateMenu->addAction(removeAction);
 
           representationLayout->addWidget(updateButton);
-          }
+        }
 
         QPushButton* makeSourceButton = new QPushButton(representationWidget);
         makeSourceButton->setText(tr("Make source"));
@@ -260,9 +260,9 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
         QObject::connect(makeSourceButton, SIGNAL(clicked()), this, SLOT(makeSource()));
 
         representationLayout->addWidget(makeSourceButton);
-        }
+      }
       else
-        {
+      {
         // Missing representations get a create button
         ctkMenuButton* createButton = new ctkMenuButton(representationWidget);
         createButton->setText(tr("Create"));
@@ -285,13 +285,13 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
         createMenu->addAction(advancedAction);
 
         representationLayout->addWidget(createButton);
-        }
       }
+    }
 
     representationLayout->addStretch();
     d->RepresentationsList->addItem(representationItem);
     d->RepresentationsList->setItemWidget(representationItem, representationWidget);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -300,9 +300,9 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationDefault()
   Q_D(qMRMLSegmentationRepresentationsListView);
 
   if (!d->SegmentationNode)
-    {
+  {
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
 
@@ -312,11 +312,11 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationDefault()
   // Perform conversion using cheapest path and default conversion parameters
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(representationName.toUtf8().constData()))
-    {
+  {
     QString message = tr("Failed to convert %1 to %2!\n\nProbably there is no valid conversion path between the source representation and %2")
                         .arg(d->SegmentationNode->GetName()).arg(representationName);
     QMessageBox::warning(nullptr, tr("Conversion failed"), message);
-    }
+  }
   QApplication::restoreOverrideCursor();
 
   this->populateRepresentationsList();
@@ -378,9 +378,9 @@ void qMRMLSegmentationRepresentationsListView::removeRepresentation()
   Q_D(qMRMLSegmentationRepresentationsListView);
 
   if (!d->SegmentationNode)
-    {
+  {
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
 
@@ -399,9 +399,9 @@ void qMRMLSegmentationRepresentationsListView::makeSource()
   Q_D(qMRMLSegmentationRepresentationsListView);
 
   if (!d->SegmentationNode)
-    {
+  {
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
 
@@ -409,7 +409,7 @@ void qMRMLSegmentationRepresentationsListView::makeSource()
   QString representationName = this->sender()->property(REPRESENTATION_NAME_PROPERTY).toString();
 
   if (d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() > 0)
-    {
+  {
     // Warn user about the consequences of changing source representation
     QMessageBox::StandardButton answer =
       QMessageBox::question(nullptr, tr("Confirm source representation change"),
@@ -420,10 +420,10 @@ void qMRMLSegmentationRepresentationsListView::makeSource()
       "Do you wish to proceed with changing source representation?"),
       QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
     if (answer != QMessageBox::Yes)
-      {
+    {
       return;
-      }
     }
+  }
 
   d->SegmentationNode->GetSegmentation()->SetSourceRepresentationName(representationName.toUtf8().constData());
   this->populateRepresentationsList();

@@ -49,13 +49,13 @@ void vtkMRMLScalarVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   if (this->GetVoxelValueQuantity())
-    {
+  {
     of << " voxelValueQuantity=\"" << vtkMRMLNode::URLEncodeString(this->GetVoxelValueQuantity()->GetAsString().c_str()) << "\"";
-    }
+  }
   if (this->GetVoxelValueUnits())
-    {
+  {
     of << " voxelValueUnits=\"" << vtkMRMLNode::URLEncodeString(this->GetVoxelValueUnits()->GetAsString().c_str()) << "\"";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -70,33 +70,33 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "labelMap"))
-      {
+    {
       std::stringstream ss;
       int val;
       ss << attValue;
       ss >> val;
       if (val)
-        {
-        this->SetAttribute("LabelMap", "1");
-        }
-      }
-    else if (!strcmp(attName, "voxelValueQuantity"))
       {
+        this->SetAttribute("LabelMap", "1");
+      }
+    }
+    else if (!strcmp(attName, "voxelValueQuantity"))
+    {
       vtkNew<vtkCodedEntry> entry;
       entry->SetFromString(vtkMRMLNode::URLDecodeString(attValue));
       this->SetVoxelValueQuantity(entry.GetPointer());
-      }
+    }
     else if (!strcmp(attName, "voxelValueUnits"))
-      {
+    {
       vtkNew<vtkCodedEntry> entry;
       entry->SetFromString(vtkMRMLNode::URLDecodeString(attValue));
       this->SetVoxelValueUnits(entry.GetPointer());
-      }
     }
+  }
 
   this->EndModify(disabledModify);
 }
@@ -132,13 +132,13 @@ void vtkMRMLScalarVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
   if (this->GetVoxelValueQuantity())
-    {
+  {
     os << indent << "VoxelValueQuantity: " << this->GetVoxelValueQuantity()->GetAsPrintableString() << "\n";
-    }
+  }
   if (this->GetVoxelValueUnits())
-    {
+  {
     os << indent << "VoxelValueUnits: " << this->GetVoxelValueUnits()->GetAsPrintableString() << "\n";
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -146,10 +146,10 @@ vtkMRMLStorageNode* vtkMRMLScalarVolumeNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
   if (scene == nullptr)
-    {
+  {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
-    }
+  }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
 }
@@ -158,22 +158,22 @@ vtkMRMLStorageNode* vtkMRMLScalarVolumeNode::CreateDefaultStorageNode()
 void vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes()
 {
   if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode())!=nullptr)
-    {
+  {
     // display node already exists
     return;
-    }
+  }
   if (this->GetScene()==nullptr)
-    {
+  {
     vtkErrorMacro("vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
-    }
+  }
   vtkMRMLScalarVolumeDisplayNode* dispNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
     this->GetScene()->AddNewNodeByClass("vtkMRMLScalarVolumeDisplayNode") );
   // If color node is already specified (via default display node mechanism) then use that,
   // otherwise set the default color specified in this class.
   if (!dispNode->GetColorNodeID())
-    {
+  {
     dispNode->SetDefaultColorMap();
-    }
+  }
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }

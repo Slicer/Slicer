@@ -38,12 +38,12 @@ int qSlicerModulePanelTest1(int argc, char * argv[] )
     bool expected = true;
     bool current = modulePanel.isHelpAndAcknowledgmentVisible();
     if (current != expected)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with helpAndAcknowledgmentVisible property !\n"
                 << " current:" << current << "\n"
                 << " expected:" << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   modulePanel.setHelpAndAcknowledgmentVisible(false);
@@ -52,27 +52,27 @@ int qSlicerModulePanelTest1(int argc, char * argv[] )
     bool expected = false;
     bool current = modulePanel.isHelpAndAcknowledgmentVisible();
     if (current != expected)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with helpAndAcknowledgmentVisible property !\n"
                 << " current:" << current << "\n"
                 << " expected:" << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   modulePanel.setModuleManager(app.moduleManager());
   if (modulePanel.moduleManager() != app.moduleManager())
-    {
+  {
     std::cerr << "qSlicerModulePanel::setModuleManager() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   modulePanel.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, qApp, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

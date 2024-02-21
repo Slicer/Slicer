@@ -46,13 +46,13 @@ void vtkMRMLTextNode::SetText(const std::string &text, int encoding/*-1*/)
 
   MRMLNodeModifyBlocker blocker(this);
   if (encoding >= 0)
-    {
+  {
     this->SetEncoding(encoding);
-    }
+  }
   if (this->Text == text)
-    {
+  {
     return;
-    }
+  }
   this->Text = text;
   // this indicates that the text (that is stored in a separate file) is modified
   // and therefore the object will be marked as changed for file saving
@@ -67,9 +67,9 @@ void vtkMRMLTextNode::SetEncoding(int encoding)
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting encoding to " << encoding);
   int clampedEncoding = std::max(VTK_ENCODING_NONE, std::min(encoding, VTK_ENCODING_UNKNOWN));
   if (this->Encoding == clampedEncoding)
-    {
+  {
     return;
-    }
+  }
   MRMLNodeModifyBlocker blocker(this);
   this->Encoding = clampedEncoding;
   // this indicates that the text (that is stored in a separate file) is modified
@@ -83,7 +83,7 @@ void vtkMRMLTextNode::SetEncoding(int encoding)
 std::string vtkMRMLTextNode::GetEncodingAsString()
 {
   switch (this->Encoding)
-    {
+  {
     case VTK_ENCODING_NONE:
       return "None";
     case VTK_ENCODING_US_ASCII:
@@ -108,7 +108,7 @@ std::string vtkMRMLTextNode::GetEncodingAsString()
     case VTK_ENCODING_ISO_8859_15:
     case VTK_ENCODING_ISO_8859_16:
       return "ISO-8859-" + vtkVariant(this->Encoding - VTK_ENCODING_ISO_8859_1 + 1).ToString();
-    }
+  }
   return "Unknown";
 }
 
@@ -129,9 +129,9 @@ void vtkMRMLTextNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   vtkMRMLWriteXMLBeginMacro(of);
   if (!this->GetStorageNode())
-    {
+  {
     vtkMRMLWriteXMLStdStringMacro(text, Text);
-    }
+  }
   vtkMRMLWriteXMLIntMacro(encoding, Encoding);
   vtkMRMLWriteXMLEndMacro();
 }
@@ -161,23 +161,23 @@ void vtkMRMLTextNode::PrintSelf(ostream& os, vtkIndent indent)
 std::string vtkMRMLTextNode::GetDefaultStorageNodeClassName(const char* vtkNotUsed(filename))
 {
   if (!this->Scene)
-    {
+  {
     return "";
-    }
+  }
 
   if (this->ForceCreateStorageNode == CreateStorageNodeNever)
-    {
+  {
     return "";
-    }
+  }
 
   if (this->ForceCreateStorageNode == CreateStorageNodeAuto)
-    {
+  {
     int length = this->Text.length();
     if (length < MAX_STRING_LENGTH_FOR_SAVE_WITHOUT_STORAGE_NODE)
-      {
+    {
       return "";
-      }
     }
+  }
 
   return "vtkMRMLTextStorageNode";
 }
@@ -186,18 +186,18 @@ std::string vtkMRMLTextNode::GetDefaultStorageNodeClassName(const char* vtkNotUs
 vtkMRMLStorageNode* vtkMRMLTextNode::CreateDefaultStorageNode()
 {
   if (!this->Scene)
-    {
+  {
     return nullptr;
-    }
+  }
 
   if (!this->ForceCreateStorageNode)
-    {
+  {
     int length = this->Text.length();
     if (length < MAX_STRING_LENGTH_FOR_SAVE_WITHOUT_STORAGE_NODE)
-      {
+    {
       return nullptr;
-      }
     }
+  }
   return vtkMRMLTextStorageNode::SafeDownCast(
     this->Scene->CreateNodeByClass(this->GetDefaultStorageNodeClassName().c_str()));
 }

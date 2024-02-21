@@ -39,30 +39,30 @@ bool qSlicerCLIModuleWidgetEventPlayer::playEvent(QObject *Object,
   // But in the CLI module under Slicer4 when we activate the button apply,
   // we want to do apply and wait instead of apply !
   if (Command != "activate")
-    {
+  {
     return false;
-    }
+  }
 
   qSlicerCLIModuleWidget* parent = nullptr;
   for(QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
-      {
+  {
       parent = qobject_cast<qSlicerCLIModuleWidget*>(test);
-      }
+  }
   // This Command is mainly use for the QPushButton.
   if (!parent || Object->objectName() != "ApplyPushButton")
-    {
+  {
     return false;
-    }
+  }
 
   if (parent)
-    {
+  {
     if (Command == "activate")
-      {
+    {
       qDebug() << "***************************** " << Object->objectName();
       parent->apply(true);
       return true;
-      }
     }
+  }
 
   qCritical() << "calling activate on unhandled type " << Object;
   Error = true;

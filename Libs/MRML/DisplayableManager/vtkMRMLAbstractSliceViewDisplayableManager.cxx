@@ -82,9 +82,9 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
     double x, double y, double xyz[3])
 {
   if (xyz == nullptr || interactor == nullptr || sliceNode == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   double windowWidth = interactor->GetRenderWindow()->GetSize()[0];
   double windowHeight = interactor->GetRenderWindow()->GetSize()[1];
@@ -110,9 +110,9 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
     double x, double y, double xyz[3])
 {
   if (xyz == nullptr || renderer == nullptr || sliceNode == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   double windowWidth = renderer->GetRenderWindow()->GetSize()[0];
   double windowHeight = renderer->GetRenderWindow()->GetSize()[1];
@@ -141,9 +141,9 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(
     vtkMRMLSliceNode * sliceNode, double ras[3], double xyz[3])
 {
   if (sliceNode == nullptr)
-    {
+  {
     return;
-    }
+  }
   vtkNew<vtkMatrix4x4> rasToXYZ;
   vtkMatrix4x4::Invert(sliceNode->GetXYToRAS(), rasToXYZ.GetPointer());
 
@@ -164,9 +164,9 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(
     vtkMRMLSliceNode * sliceNode, double xyz[3], double ras[3])
 {
   if (sliceNode == nullptr)
-    {
+  {
     return;
-    }
+  }
   double rasw[4], xyzw[4];
   xyzw[0] = xyz[0]; xyzw[1] = xyz[1]; xyzw[2] = xyz[2]; xyzw[3] = 1.0;
 

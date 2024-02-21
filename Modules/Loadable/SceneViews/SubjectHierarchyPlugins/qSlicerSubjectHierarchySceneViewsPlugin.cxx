@@ -105,15 +105,15 @@ double qSlicerSubjectHierarchySceneViewsPlugin::canAddNodeToSubjectHierarchy(
 {
   Q_UNUSED(parentItemID);
   if (!node)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Input node is nullptr!";
     return 0.0;
-    }
+  }
   else if (node->IsA("vtkMRMLSceneViewNode"))
-    {
+  {
     // Node is a scene view
     return 1.0;
-    }
+  }
 
   return 0.0;
 }
@@ -122,23 +122,23 @@ double qSlicerSubjectHierarchySceneViewsPlugin::canAddNodeToSubjectHierarchy(
 double qSlicerSubjectHierarchySceneViewsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return 0.0;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0.0;
-    }
+  }
 
   // Scene view
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
   if (associatedNode && associatedNode->IsA("vtkMRMLSceneViewNode"))
-    {
+  {
     return 1.0;
-    }
+  }
 
   return 0.0;
 }
@@ -153,17 +153,17 @@ const QString qSlicerSubjectHierarchySceneViewsPlugin::roleForPlugin()const
 QIcon qSlicerSubjectHierarchySceneViewsPlugin::icon(vtkIdType itemID)
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return QIcon();
-    }
+  }
 
   Q_D(qSlicerSubjectHierarchySceneViewsPlugin);
 
   if (this->canOwnSubjectHierarchyItem(itemID))
-    {
+  {
     return d->SceneViewIcon;
-    }
+  }
 
   // Item unknown by plugin
   return QIcon();
@@ -185,16 +185,16 @@ void qSlicerSubjectHierarchySceneViewsPlugin::showContextMenuActionsForItem(vtkI
   Q_D(qSlicerSubjectHierarchySceneViewsPlugin);
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     // There are no scene actions in this plugin
     return;
-    }
+  }
 
   // Show restore scene view action for all scene views
   if (this->canOwnSubjectHierarchyItem(itemID))
-    {
+  {
     d->RestoreSceneViewAction->setVisible(true);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -202,29 +202,29 @@ void qSlicerSubjectHierarchySceneViewsPlugin::restoreCurrentSceneView()const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;
-    }
+  }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return;
-    }
+  }
 
   vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   if (!viewNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Could not get scene view node!";
     return;
-    }
+  }
 
   scene->SaveStateForUndo();
   viewNode->RestoreScene();

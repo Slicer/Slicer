@@ -31,13 +31,13 @@ public:
   vtkTypeMacro(vtkMRMLTransformableNodeTestHelper1,vtkMRMLTransformableNode);
 
   vtkMRMLNode* CreateNodeInstance() override
-    {
+  {
     return vtkMRMLTransformableNodeTestHelper1::New();
-    }
+  }
   const char* GetNodeTagName() override
-    {
+  {
     return "vtkMRMLTransformableNodeTestHelper1";
-    }
+  }
 };
 vtkStandardNewMacro(vtkMRMLTransformableNodeTestHelper1);
 
@@ -72,10 +72,10 @@ int TestSetAndObserveTransformNodeID()
   double res[3] = {-1., -1., -1.};
   transformable->TransformPointToWorld(point, res);
   if (res[0] != 1. || res[1] != 0. || res[2] != 0.)
-    {
+  {
     std::cout << __LINE__ << "TransformPointToWorld failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

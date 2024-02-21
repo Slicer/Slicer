@@ -78,9 +78,9 @@ void qMRMLNavigationView::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLNavigationView);
   if (d->MRMLScene == newScene)
-    {
+  {
     return;
-    }
+  }
   this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::NodeAddedEvent,
                       this, SLOT(updateFromMRMLScene()));
   this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::NodeRemovedEvent,
@@ -90,9 +90,9 @@ void qMRMLNavigationView::setMRMLScene(vtkMRMLScene* newScene)
                       this, SLOT(updateFromMRMLScene()));
   d->MRMLScene = newScene;
   if (!d->MRMLViewNode || newScene != d->MRMLViewNode->GetScene())
-    {
+  {
     this->setMRMLViewNode(nullptr);
-    }
+  }
   this->updateFromMRMLScene();
 }
 
@@ -101,9 +101,9 @@ void qMRMLNavigationView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 {
   Q_D(qMRMLNavigationView);
   if (d->MRMLViewNode == newViewNode)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkCommand::ModifiedEvent,
                       this, SLOT(updateFromMRMLViewNode()));
@@ -126,9 +126,9 @@ void qMRMLNavigationView::updateFromMRMLScene()
 {
   Q_D(qMRMLNavigationView);
   if (!d->MRMLScene || d->MRMLScene->IsBatchProcessing())
-    {
+  {
     return;
-    }
+  }
   this->updateBounds();
 }
 
@@ -137,9 +137,9 @@ void qMRMLNavigationView::updateFromMRMLViewNode()
 {
   Q_D(qMRMLNavigationView);
   if (!d->MRMLViewNode)
-    {
+  {
     return;
-    }
+  }
   double backgroundColor[3];
   d->MRMLViewNode->GetBackgroundColor(backgroundColor);
   this->setBackgroundColor(

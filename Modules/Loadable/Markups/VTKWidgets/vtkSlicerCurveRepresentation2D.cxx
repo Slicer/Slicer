@@ -92,10 +92,10 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || !this->IsDisplayable())
-    {
+  {
     this->VisibilityOff();
     return;
-    }
+  }
   this->VisibilityOn();
 
   // Line display
@@ -109,58 +109,58 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   // Hide the line actor if it doesn't intersect the current slice
   this->SliceDistance->Update();
   if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()), this->SliceDistance->GetScalarArrayName()))
-    {
+  {
     this->LineActor->SetVisibility(false);
-    }
+  }
 
   bool allControlPointsSelected = this->GetAllControlPointsSelected();
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
-    {
+  {
     controlPointType = allControlPointsSelected ? Selected : Unselected;
-    }
+  }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
-    {
+  {
     // Update the line color mapping from the colorNode stored in the markups display node
     this->LineMapper->SetLookupTable(this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction());
-    }
+  }
   else
-    {
+  {
     // if there is no line color node, build the color mapping from few variables
     // (color, opacity, distance fading, saturation and hue offset) stored in the display node
     this->UpdateDistanceColorMap(this->LineColorMap, this->LineActor->GetProperty()->GetColor());
     this->LineMapper->SetLookupTable(this->LineColorMap);
-    }
+  }
 
   bool allNodesHidden = true;
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
-    {
+  {
     if (markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
       && (markupsNode->GetNthControlPointVisibility(controlPointIndex)))
-      {
+    {
       allNodesHidden = false;
       break;
-      }
     }
+  }
 
   // Display center position
   // It would be cleaner to use a dedicated actor for this instead of using the control points actors
   // as it would give flexibility in what glyph we use, it would not interfere with active control point display, etc.
   if (this->CurveClosed && markupsNode->GetNumberOfControlPoints() > 2 && this->CenterVisibilityOnSlice && !allNodesHidden)
-    {
+  {
     double centerPosWorld[3], centerPosDisplay[3], orient[3] = { 0 };
     markupsNode->GetCenterOfRotationWorld(centerPosWorld);
     this->GetWorldToSliceCoordinates(centerPosWorld, centerPosDisplay);
     int centerControlPointType = allControlPointsSelected ? Selected : Unselected;
     if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentCenterPoint)
-      {
+    {
       centerControlPointType = Active;
       this->GetControlPointsPipeline(centerControlPointType)->ControlPoints->SetNumberOfPoints(0);
       this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->SetNumberOfTuples(0);
-      }
+    }
     this->GetControlPointsPipeline(centerControlPointType)->ControlPoints->InsertNextPoint(centerPosDisplay);
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->InsertNextTuple(orient);
 
@@ -168,39 +168,39 @@ void vtkSlicerCurveRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->Modified();
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->Modified();
     if (centerControlPointType == Active)
-      {
+    {
       this->GetControlPointsPipeline(centerControlPointType)->Actor->VisibilityOn();
       this->GetControlPointsPipeline(centerControlPointType)->LabelsActor->VisibilityOff();
-      }
     }
+  }
 
     // Properties label display
 
   if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
     && this->AnyPointVisibilityOnSlice
     && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
-    {
+  {
     int controlPointIndex = 0;
     int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(); // excluding previewed point
     if (numberOfDefinedControlPoints > 0)
-      {
+    {
       // there is at least one placed point
       controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus((numberOfDefinedControlPoints - 1) / 2, vtkMRMLMarkupsNode::PositionDefined);
-      }
+    }
     else
-      {
+    {
       // we only have a preview point
       controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus(0, vtkMRMLMarkupsNode::PositionPreview);
-      }
+    }
     double textPos[3] = { 0.0,  0.0, 0.0 };
     this->GetNthControlPointDisplayPosition(controlPointIndex, textPos);
     this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), static_cast<int>(textPos[1]));
     this->TextActor->SetVisibility(true);
-    }
+  }
   else
-    {
+  {
     this->TextActor->SetVisibility(false);
-    }
+  }
 }
 
 //----------------------------------------------------------------------
@@ -212,15 +212,15 @@ void vtkSlicerCurveRepresentation2D::CanInteract(
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
     || !interactionEventData )
-    {
+  {
     return;
-    }
+  }
   Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-    {
+  {
     // if mouse is near a control point then select that (ignore the line)
     return;
-    }
+  }
 
   this->CanInteractWithCurve(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
 }
@@ -245,9 +245,9 @@ int vtkSlicerCurveRepresentation2D::RenderOverlay(vtkViewport *viewport)
 {
   int count=0;
   if (this->LineActor->GetVisibility())
-    {
+  {
     count +=  this->LineActor->RenderOverlay(viewport);
-    }
+  }
   count += this->Superclass::RenderOverlay(viewport);
 
   return count;
@@ -259,9 +259,9 @@ int vtkSlicerCurveRepresentation2D::RenderOpaqueGeometry(
 {
   int count=0;
   if (this->LineActor->GetVisibility())
-    {
+  {
     count += this->LineActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   count += this->Superclass::RenderOpaqueGeometry(viewport);
 
   return count;
@@ -273,9 +273,9 @@ int vtkSlicerCurveRepresentation2D::RenderTranslucentPolygonalGeometry(
 {
   int count=0;
   if (this->LineActor->GetVisibility())
-    {
+  {
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   count += this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
 
   return count;
@@ -285,13 +285,13 @@ int vtkSlicerCurveRepresentation2D::RenderTranslucentPolygonalGeometry(
 vtkTypeBool vtkSlicerCurveRepresentation2D::HasTranslucentPolygonalGeometry()
 {
   if (this->Superclass::HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   return false;
 }
 
@@ -308,29 +308,29 @@ void vtkSlicerCurveRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   if (this->LineActor)
-    {
+  {
     os << indent << "Line Actor Visibility: " << this->LineActor->GetVisibility() << "\n";
-    }
+  }
   else
-    {
+  {
     os << indent << "Line Actor: (none)\n";
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerCurveRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
 {
   if (this->MarkupsNode != markupsNode)
-    {
+  {
     if (markupsNode)
-      {
+    {
       this->SliceDistance->SetInputConnection(markupsNode->GetCurveWorldConnection());
-      }
-    else
-      {
-      this->SliceDistance->SetInputData(this->Line);
-      }
     }
+    else
+    {
+      this->SliceDistance->SetInputData(this->Line);
+    }
+  }
   this->Superclass::SetMarkupsNode(markupsNode);
 }
 
@@ -344,17 +344,17 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
   if ( !sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 2
     || !this->GetVisibility() || !interactionEventData
     || !this->MarkupsDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   this->SliceDistance->Update();
   // No points to find. Trying to run the locator would result in a crash.
   vtkDataSet* sliceDistanceData = this->SliceDistance->GetOutput();
   if (!sliceDistanceData || sliceDistanceData->GetNumberOfPoints() == 0)
-    {
+  {
     return;
-    }
+  }
 
   this->SliceCurvePointLocator->SetDataSet(this->SliceDistance->GetOutput());
   this->SliceCurvePointLocator->Update();
@@ -364,16 +364,16 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
   int subId = -1;
   double dist2World = VTK_DOUBLE_MAX;
   if (interactionEventData->IsWorldPositionValid())
-    {
+  {
     const double* worldPosition = interactionEventData->GetWorldPosition();
     this->SliceCurvePointLocator->FindClosestPoint(worldPosition, closestPointWorld, cellId, subId, dist2World);
     double lineVisibilityDistance = this->MarkupsDisplayNode->GetLineColorFadingEnd() * 1.2;
     if (dist2World > lineVisibilityDistance * lineVisibilityDistance)
-      {
+    {
       // line not visible at this distance
       return;
-      }
     }
+  }
 
   double closestPointDisplay[3] = { 0.0 };
   this->GetWorldToSliceCoordinates(closestPointWorld, closestPointDisplay);
@@ -383,9 +383,9 @@ void vtkSlicerCurveRepresentation2D::CanInteractWithCurve(
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
   double dist2 = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);
   if (dist2 < maxPickingDistanceFromControlPoint2)
-    {
+  {
     closestDistance2 = dist2;
     foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;
     componentIndex = markupsNode->GetControlPointIndexFromInterpolatedPointIndex(subId);
-    }
+  }
 }

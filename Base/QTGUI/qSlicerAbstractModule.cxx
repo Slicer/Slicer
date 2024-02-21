@@ -64,12 +64,12 @@ QAction* qSlicerAbstractModule::action()
 {
   Q_D(qSlicerAbstractModule);
   if (d->Action == nullptr)
-    {
+  {
     d->Action = new QAction(this->icon(), this->title(), this);
     d->Action->setObjectName(QString("action%1").arg(this->name()));
     d->Action->setData(this->name());
     d->Action->setIconVisibleInMenu(true);
     d->Action->setProperty("index", this->index());
-    }
+  }
   return d->Action;
 }

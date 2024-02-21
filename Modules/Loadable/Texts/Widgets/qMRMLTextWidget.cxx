@@ -85,9 +85,9 @@ void qMRMLTextWidgetPrivate::setEditing(bool editing)
 {
   Q_Q(qMRMLTextWidget);
   if (this->Editing == editing)
-    {
+  {
     return;
-    }
+  }
 
   this->Editing = editing;
   q->editingChanged(this->Editing);
@@ -138,10 +138,10 @@ void qMRMLTextWidget::setMRMLTextNode(vtkMRMLTextNode* node)
 {
   Q_D(qMRMLTextWidget);
   if (node == d->CurrentTextNode)
-    {
+  {
     // not changed
     return;
-    }
+  }
 
   // Reconnect the appropriate nodes
   this->qvtkReconnect(d->CurrentTextNode, node, vtkMRMLTextNode::TextModifiedEvent, this, SLOT(onTextNodeContentsModified()));
@@ -181,37 +181,37 @@ void qMRMLTextWidget::updateWidgetFromMRML()
   bool updateText = true;
   bool editing = d->isEditing();
   if (this->ReadOnly)
-    {
+  {
     updateText = true;
     d->TextEdit->setReadOnly(true);
     d->EditButton->setVisible(false);
     d->CancelButton->setVisible(false);
     d->SaveButton->setVisible(false);
-    }
+  }
   else if (this->AutoSave)
-    {
+  {
     updateText = true;
     d->TextEdit->setReadOnly(false);
     d->EditButton->setVisible(false);
     d->CancelButton->setVisible(false);
     d->SaveButton->setVisible(false);
-    }
+  }
   else if (editing)
-    {
+  {
     updateText = false;
     d->TextEdit->setReadOnly(false);
     d->EditButton->setVisible(false);
     d->CancelButton->setVisible(true);
     d->SaveButton->setVisible(true);
-    }
+  }
   else
-    {
+  {
     updateText = true;
     d->TextEdit->setReadOnly(true);
     d->EditButton->setVisible(true);
     d->CancelButton->setVisible(false);
     d->SaveButton->setVisible(false);
-    }
+  }
 
   d->EditButton->setEnabled(!editing);
   d->CancelButton->setEnabled(editing);
@@ -219,43 +219,43 @@ void qMRMLTextWidget::updateWidgetFromMRML()
 
   bool wasBlocking = d->TextEdit->blockSignals(true);
   if (!d->CurrentTextNode)
-    {
+  {
     d->TextEdit->setReadOnly(true);
     d->TextEdit->setText("");
     d->TextNodeContentsModified = false;
     d->EditButton->setEnabled(false);
     d->CancelButton->setEnabled(false);
     d->SaveButton->setEnabled(false);
-    }
+  }
   else if (updateText)
-    {
+  {
     int position = d->TextEdit->textCursor().position();
     std::string text;
     if (d->CurrentTextNode)
-      {
+    {
       text = d->CurrentTextNode->GetText();
-      }
+    }
     d->TextEdit->setText(text.c_str());
     d->TextNodeContentsModified = false;
     QTextCursor cursor = d->TextEdit->textCursor();
     position = std::min(position, d->TextEdit->toPlainText().length());
     cursor.setPosition(position);
     d->TextEdit->setTextCursor(cursor);
-    }
+  }
   d->TextEdit->blockSignals(wasBlocking);
 
   if (d->TextNodeContentsModified)
-    {
+  {
     d->SaveButton->setToolTip("The original text has been modified since editing was started");
     QIcon warningIcon = this->style()->standardIcon(QStyle::SP_MessageBoxWarning);
     d->SaveButton->setIcon(warningIcon);
     d->SaveButton->setIconSize(QSize(12, 12));
-    }
+  }
   else
-    {
+  {
     d->SaveButton->setToolTip("The original text has been modified since editing was started");
     d->SaveButton->setIcon(QIcon());
-    }
+  }
 
   this->updateWidgetFromMRMLFinished();
 }
@@ -265,9 +265,9 @@ void qMRMLTextWidget::updateMRMLFromWidget()
 {
   Q_D(qMRMLTextWidget);
   if (!d->CurrentTextNode)
-    {
+  {
     return;
-    }
+  }
   std::string text = d->TextEdit->toPlainText().toStdString();
   d->CurrentTextNode->SetText(text.c_str(), VTK_ENCODING_UTF_8);
   this->updateMRMLFromWidgetFinished();
@@ -298,9 +298,9 @@ void qMRMLTextWidget::setReadOnly(bool readOnly)
 {
   Q_D(qMRMLTextWidget);
   if (this->ReadOnly == readOnly)
-    {
+  {
     return;
-    }
+  }
   this->ReadOnly = readOnly;
 
   this->updateMRMLFromWidgetRequested();
@@ -320,15 +320,15 @@ void qMRMLTextWidget::setAutoSave(bool autoSave)
 {
   Q_D(qMRMLTextWidget);
   if (this->AutoSave == autoSave)
-    {
+  {
     return;
-    }
+  }
 
   this->AutoSave = autoSave;
   if (this->AutoSave)
-    {
+  {
     d->setEditing(false);
-    }
+  }
 
   this->updateMRMLFromWidgetRequested();
   this->autoSaveChanged(this->AutoSave);
@@ -340,9 +340,9 @@ bool qMRMLTextWidget::wordWrap()
 {
   Q_D(qMRMLTextWidget);
   if (d->TextEdit->wordWrapMode() == QTextOption::NoWrap)
-    {
+  {
     return false;
-    }
+  }
   return true;
 }
 
@@ -360,9 +360,9 @@ void qMRMLTextWidget::onTextEditChanged()
 
   d->TextEditModified = true;
   if (!d->CurrentTextNode || !this->AutoSave)
-    {
+  {
     return;
-    }
+  }
 
   this->updateMRMLFromWidgetRequested();
 }

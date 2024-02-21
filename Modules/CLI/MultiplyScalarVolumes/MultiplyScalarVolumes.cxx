@@ -103,14 +103,14 @@ int main( int argc, char * argv[] )
   itk::ImageIOBase::IOComponentType componentType;
 
   try
-    {
+  {
     itk::GetImageType(inputVolume1, pixelType, componentType);
 
     // This filter handles all types on input, but only produces
     // signed types
 
     switch( componentType )
-      {
+    {
       case itk::ImageIOBase::UCHAR:
       case itk::ImageIOBase::CHAR:
         return DoIt( argc, argv, static_cast<char>(0) );
@@ -137,13 +137,13 @@ int main( int argc, char * argv[] )
       default:
         std::cout << "unknown component type" << std::endl;
         break;
-      }
     }
+  }
   catch( itk::ExceptionObject & excep )
-    {
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

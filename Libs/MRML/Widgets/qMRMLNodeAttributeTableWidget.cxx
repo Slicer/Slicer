@@ -124,22 +124,22 @@ void qMRMLNodeAttributeTableWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLNodeAttributeTableWidget);
   if (!this->isVisible())
-    {
+  {
     // Getting the node information may be expensive,
     // so if the widget is not visible then do not update
     return;
-    }
+  }
 
   if (d->MRMLNode.GetPointer())
-    {
+  {
     d->NodePropertiesGroupBox->setVisible(true);
     std::stringstream infoStream;
     d->MRMLNode->PrintSelf(infoStream, vtkIndent(0));
     d->MRMLNodeInfoLabel->setText(infoStream.str().c_str());
-    }
+  }
   else
-    {
+  {
     d->NodePropertiesGroupBox->setVisible(false);
     d->MRMLNodeInfoLabel->clear();
-    }
+  }
 }

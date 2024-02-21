@@ -25,19 +25,19 @@ bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
       || expectedViewArrangement == 28 // SlicerLayoutThreeOverThreeQuantitativeView
       || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutDicomBrowserView // registered by DICOM module
       )
-    {
+  {
     return true;
-    }
+  }
 
   if (layoutManager->layout() != expectedViewArrangement ||
       layoutNode->GetViewArrangement() != expectedViewArrangement)
-    {
+  {
     std::cerr << "Line " << line << " - Add scene failed:\n"
               << " expected ViewArrangement: " << expectedViewArrangement << "\n"
               << " current ViewArrangement: " << layoutNode->GetViewArrangement() << "\n"
               << " current layout: " << layoutManager->layout() << std::endl;
     return false;
-    }
+  }
   return true;
 }
 

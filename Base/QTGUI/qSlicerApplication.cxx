@@ -136,39 +136,39 @@ public:
   ctkSlicerPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager, qSlicerApplication* app)
   : ctkPythonConsoleCompleter(pythonManager)
   , Application(app)
-    {
-    }
+  {
+  }
 
   void updateCompletionModel(const QString& completion) override
-    {
+  {
     bool wasLoggingEnabled = this->setLoggingEnabled(false);
     ctkPythonConsoleCompleter::updateCompletionModel(completion);
     this->setLoggingEnabled(wasLoggingEnabled);
-    }
+  }
 
   int cursorOffset(const QString& completion) override
-    {
+  {
     bool wasLoggingEnabled = this->setLoggingEnabled(false);
     int result = ctkPythonConsoleCompleter::cursorOffset(completion);
     this->setLoggingEnabled(wasLoggingEnabled);
     return result;
-    }
+  }
 
 protected:
 
   bool setLoggingEnabled(bool enable)
-    {
+  {
     if (!this->Application || !this->Application->errorLogModel())
-      {
+    {
       return false;
-      }
+    }
     ctkErrorLogAbstractMessageHandler* qtMessageHandler = this->Application->errorLogModel()->msgHandler("Qt");
     if (!qtMessageHandler)
-      {
+    {
       return false;
-      }
-    return !qtMessageHandler->blockSignals(!enable);
     }
+    return !qtMessageHandler->blockSignals(!enable);
+  }
 
   qSlicerApplication* Application{nullptr};
 };
@@ -249,18 +249,18 @@ qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
   // thus MainWindow is responsible for deleting it.
   // Set the parent to 'nullptr' removes this responsibility.
   if (this->SettingsDialog)
-    {
+  {
     this->SettingsDialog->setParent(nullptr);
     delete this->SettingsDialog;
-    }
+  }
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   if(this->ExtensionsManagerDialog)
-    {
+  {
     this->ExtensionsManagerDialog->setParent(nullptr);
     delete this->ExtensionsManagerDialog;
     this->ExtensionsManagerDialog = nullptr;
-    }
+  }
 #endif
 #ifdef Slicer_USE_QtTesting
   delete this->TestingUtility;
@@ -277,7 +277,7 @@ void qSlicerApplicationPrivate::init()
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     // qSlicerCoreApplication class takes ownership of the pythonManager and
     // will be responsible to delete it
     q->setCorePythonManager(new qSlicerPythonManager());
@@ -286,14 +286,14 @@ void qSlicerApplicationPrivate::init()
     // and not owned by a widget (it is owned and deleted by a widget if it is added
     // to the GUI)
     q->setPythonConsole(new ctkPythonConsole());
-    }
+  }
 #endif
 
   this->Superclass::init();
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     // Initialize method prints the welcome message and a prompt, so we need to set these colors now.
     // All the other colors will be set later in the main window.
     QPalette palette = qSlicerApplication::application()->palette();
@@ -309,16 +309,16 @@ void qSlicerApplicationPrivate::init()
       << "qt.QPushButton";
     q->pythonConsole()->completer()->setAutocompletePreferenceList(autocompletePreferenceList);
     foreach(QAction* action, q->pythonConsole()->actions())
-      {
+    {
       if (action->shortcut() == QKeySequence("Ctrl+H"))
-        {
+      {
         // Remove action as "Ctrl+H" is reserved for going to the "Home" module
         q->pythonConsole()->removeAction(action);
         action->setParent(nullptr);
         break;
-        }
       }
     }
+  }
 #endif
 
   this->initStyle();
@@ -353,9 +353,9 @@ void qSlicerApplicationPrivate::init()
   QSettings* userSettings = q->userSettings();
   ctkErrorLogLevel::LogLevel level = ctkErrorLogLevel::logLevelFromString(userSettings->value("Python/ConsoleLogLevel").toString());
   if (level >= 0)
-    {
+  {
     q->setPythonConsoleLogLevel(level);
-    }
+  }
   QObject::connect(this->ErrorLogModel.data(), SIGNAL(entryAdded(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
     q, SLOT(logToPythonConsole(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)));
 #endif
@@ -406,9 +406,9 @@ void qSlicerApplicationPrivate::init()
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     q->settingsDialog()->addPanel(qSlicerApplication::tr("Python"), new qSlicerSettingsPythonPanel);
-    }
+  }
 #endif
 
   qSlicerSettingsDeveloperPanel* developerPanel = new qSlicerSettingsDeveloperPanel;
@@ -494,12 +494,12 @@ qSlicerApplication::~qSlicerApplication()
   // to the GUI).
   ctkPythonConsole* pythonConsolePtr = this->pythonConsole();
   if (pythonConsolePtr)
-    {
+  {
     if (pythonConsolePtr->parent() == nullptr)
-      {
+    {
       delete pythonConsolePtr;
-      }
     }
+  }
 #endif
 }
 
@@ -514,47 +514,47 @@ qSlicerApplication* qSlicerApplication::application()
 bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
 {
   try
-    {
+  {
     return QApplication::notify(receiver, event);
-    }
+  }
   catch( std::bad_alloc& exception )
-    {
+  {
     QString errorMessage;
     errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
     errorMessage += tr("please save your work and restart.\n\n");
     errorMessage += tr("The application has run out of memory. ");
     if (!QSysInfo::kernelType().compare(/*no tr*/"winnt"))
-      {
+    {
       errorMessage += tr("Increasing virtual memory size in system settings or adding more RAM may fix this issue.\n\n");
-      }
+    }
     else if (!QSysInfo::kernelType().compare(/*no tr*/"linux"))
-      {
+    {
       errorMessage += tr("Increasing swap size in system settings or adding more RAM may fix this issue.\n\n");
-      }
+    }
     else if (!QSysInfo::kernelType().compare(/*no tr*/"darwin"))
-      {
+    {
       errorMessage += tr("Increasing free disk space or adding more RAM may fix this issue.\n\n");
-      }
+    }
     else
-      {
+    {
       errorMessage += tr("Adding more RAM may fix this issue.\n\n");
-      }
+    }
     errorMessage += tr("If you have a repeatable sequence of steps that causes this message, ");
     errorMessage += tr("please report the issue following instructions available at https://slicer.org\n\n\n");
     errorMessage += tr("The message detail is:\n\n");
     errorMessage += tr("Exception thrown in event: ") + exception.what();
     qCritical() << errorMessage;
     if (this->testAttribute(AA_EnableTesting))
-      {
-      this->exit(EXIT_FAILURE);
-      }
-    else
-      {
-      QMessageBox::critical(this->mainWindow(),tr("Application Error"), errorMessage);
-      }
-    }
-  catch( std::exception& exception )
     {
+      this->exit(EXIT_FAILURE);
+    }
+    else
+    {
+      QMessageBox::critical(this->mainWindow(),tr("Application Error"), errorMessage);
+    }
+  }
+  catch( std::exception& exception )
+  {
     QString errorMessage;
     errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
     errorMessage += tr("please save your work and restart.\n\n");
@@ -564,14 +564,14 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     errorMessage += tr("Exception thrown in event: ") + exception.what();
     qCritical() << errorMessage;
     if (this->testAttribute(AA_EnableTesting))
-      {
+    {
       this->exit(EXIT_FAILURE);
-      }
-    else
-      {
-      QMessageBox::critical(this->mainWindow(),tr("Application Error"), errorMessage);
-      }
     }
+    else
+    {
+      QMessageBox::critical(this->mainWindow(),tr("Application Error"), errorMessage);
+    }
+  }
   return false;
 }
 
@@ -597,9 +597,9 @@ qSlicerIOManager* qSlicerApplication::ioManager()
 qSlicerPythonManager* qSlicerApplication::pythonManager()
 {
   if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     return nullptr;
-    }
+  }
   qSlicerPythonManager* _pythonManager = qobject_cast<qSlicerPythonManager*>(this->corePythonManager());
   Q_ASSERT(_pythonManager);
   return _pythonManager;
@@ -609,9 +609,9 @@ qSlicerPythonManager* qSlicerApplication::pythonManager()
 ctkPythonConsole* qSlicerApplication::pythonConsole()
 {
   if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     return nullptr;
-    }
+  }
   return Superclass::pythonConsole();
 }
 #endif
@@ -631,16 +631,16 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
   Q_D(qSlicerApplication);
   d->LayoutManager = layoutManager;
   if (this->applicationLogic())
-    {
+  {
     this->applicationLogic()->SetSliceLogics(
       d->LayoutManager? d->LayoutManager.data()->mrmlSliceLogics() : nullptr);
     this->applicationLogic()->SetViewLogics(
       d->LayoutManager? d->LayoutManager.data()->mrmlViewLogics() : nullptr);
     if (d->LayoutManager)
-      {
+    {
       d->LayoutManager.data()->setMRMLColorLogic(this->applicationLogic()->GetColorLogic());
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -654,13 +654,13 @@ qSlicerLayoutManager* qSlicerApplication::layoutManager()const
 QMainWindow* qSlicerApplication::mainWindow()const
 {
   foreach(QWidget * widget, this->topLevelWidgets())
-    {
+  {
     QMainWindow* window = qobject_cast<QMainWindow*>(widget);
     if (window)
-      {
+    {
       return window;
-      }
     }
+  }
   return nullptr;
 }
 
@@ -681,37 +681,37 @@ void qSlicerApplication::handleCommandLineArguments()
   Q_ASSERT(options);
 
   if (options->disableMessageHandlers())
-    {
+  {
     this->errorLogModel()->disableAllMsgHandler();
-    }
+  }
 
   this->Superclass::handleCommandLineArguments();
 
   this->setToolTipsEnabled(!options->disableToolTips());
 
   if (options->exitAfterStartup())
-    {
+  {
 #ifdef Slicer_USE_PYTHONQT
     if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-      {
+    {
       this->exit(this->corePythonManager()->pythonErrorOccured() ? EXIT_FAILURE : EXIT_SUCCESS);
-      }
+    }
     else
 #endif
-      {
+    {
       this->quit();
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerApplication::onSlicerApplicationLogicModified()
 {
   if (this->layoutManager())
-    {
+  {
     this->layoutManager()->setMRMLColorLogic(
       this->applicationLogic()->GetColorLogic());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -725,9 +725,9 @@ void qSlicerApplication::setToolTipsEnabled(bool enable)
 void qSlicerApplication::confirmRestart(QString reason)
 {
   if (reason.isEmpty())
-    {
+  {
     reason = tr("Are you sure you want to restart?");
-    }
+  }
 
   ctkMessageBox* confirmDialog = new ctkMessageBox(this->mainWindow());
   confirmDialog->setText(reason);
@@ -738,9 +738,9 @@ void qSlicerApplication::confirmRestart(QString reason)
   confirmDialog->deleteLater();
 
   if (restartConfirmed)
-    {
+  {
     this->restart();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -757,38 +757,38 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=n
   // Modules that support a parent class of the node
   QStringList classNames = this->allModuleAssociatedNodeTypes();
   foreach(const QString& className, classNames)
-    {
+  {
     if (node->IsA(className.toUtf8()))
-      {
+    {
       moduleNames << this->modulesAssociatedWithNodeType(className);
-      }
     }
+  }
 
   foreach(const QString& moduleName, moduleNames)
-    {
+  {
     qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
     if (!module)
-      {
+    {
       qWarning() << "Module " << moduleName << " associated with node class " << nodeClassName << " was not found";
       continue;
-      }
+    }
     qSlicerAbstractModuleRepresentation* widget = module->widgetRepresentation();
     if (!widget)
-      {
+    {
       qWarning() << "Module " << moduleName << " associated with node class " << nodeClassName << " does not have widget";
       continue;
-      }
+    }
     double nodeEditableConfidence = widget->nodeEditable(node);
     if (mostSuitableModuleConfidence < nodeEditableConfidence)
-      {
+    {
       mostSuitableModuleName = moduleName;
       mostSuitableModuleConfidence = nodeEditableConfidence;
-      }
     }
+  }
   if (confidence)
-    {
+  {
     *confidence = mostSuitableModuleConfidence;
-    }
+  }
   return mostSuitableModuleName;
 }
 
@@ -796,30 +796,30 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=n
 void qSlicerApplication::openNodeModule(vtkMRMLNode* node, QString role /*=QString()*/, QString context /*=QString()*/)
 {
   if (!node)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: node is invalid";
     return;
-    }
+  }
   QString moduleName = this->nodeModule(node);
   qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
   qSlicerAbstractModule* moduleWithAction = qobject_cast<qSlicerAbstractModule*>(module);
   if (!moduleWithAction)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: suitable module was not found";
     return;
-    }
+  }
   // Select node (select node before activate because some modules create a default node
   // if activated without selecting a node)
   qSlicerAbstractModuleRepresentation* widget = moduleWithAction->widgetRepresentation();
   if (!widget)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: suitable module widget was not found";
     return;
-    }
+  }
   if (!widget->setEditedNode(node, role, context))
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: setEditedNode failed for node type " << node->GetClassName();
-    }
+  }
   // Activate module widget
   moduleWithAction->action()->trigger();
 }
@@ -836,7 +836,7 @@ void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QStri
   Q_D(qSlicerApplication);
 
   if (!d->SettingsDialog->parent() && this->mainWindow())
-    {
+  {
     // Set the parent before displaying the dialog to make sure that
     // when the user clicks on the application screen (even if outside the dialog)
     // then the main window is brought to the front.
@@ -850,12 +850,12 @@ void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QStri
     // (without application restart).
     ctkSettingsPanel* settingsModulesPanel = d->SettingsDialog->panel(qSlicerApplication::tr("Modules"));
     if (settingsModulesPanel)
-      {
+    {
       QObject::connect(settingsModulesPanel, SIGNAL(favoriteModulesChanged()),
         this->mainWindow(), SLOT(on_FavoriteModulesChanged()));
-      }
-
     }
+
+  }
 
   // Reload settings to apply any changes that have been made outside of the
   // dialog (e.g. changes to module paths due to installing extensions). See
@@ -863,9 +863,9 @@ void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QStri
   d->SettingsDialog->reloadSettings();
 
   if (!settingsPanel.isNull())
-    {
+  {
     d->SettingsDialog->setCurrentPanel(settingsPanel);
-    }
+  }
 
   // Now show the dialog
   d->SettingsDialog->exec();
@@ -889,24 +889,24 @@ void qSlicerApplication::openExtensionsManagerDialog()
   // While the extensions manager is starting up, GUI events may be processed, causing repeated call of this method.
   // IsExtensionsManagerDialogOpen flag prevents creating multiple extensions manager dialogs.
   if (d->IsExtensionsManagerDialogOpen)
-    {
+  {
     // already displayed
     return;
-    }
+  }
   d->IsExtensionsManagerDialogOpen = true;
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
   if(!d->ExtensionsManagerDialog)
-    {
+  {
     d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(this->mainWindow());
-    }
+  }
   if (!d->ExtensionsManagerDialog->extensionsManagerModel() &&
       this->mainWindow())
-    {
+  {
     // The first time the dialog is open, resize it.
     d->ExtensionsManagerDialog->resize(this->mainWindow()->size());
-    }
+  }
   // This call takes most of the startup time
   d->ExtensionsManagerDialog->setExtensionsManagerModel(this->extensionsManagerModel());
 
@@ -917,9 +917,9 @@ void qSlicerApplication::openExtensionsManagerDialog()
 
   bool accepted = (d->ExtensionsManagerDialog->exec() == QDialog::Accepted);
   if (accepted)
-    {
+  {
     this->confirmRestart();
-    }
+  }
   d->IsExtensionsManagerDialogOpen = false;
 }
 
@@ -928,9 +928,9 @@ void qSlicerApplication::openExtensionsCatalogWebsite()
 {
   Q_D(qSlicerApplication);
   if (!this->extensionsManagerModel())
-    {
+  {
     return;
-    }
+  }
   QUrl url = this->extensionsManagerModel()->extensionsListUrl();
   QDesktopServices::openUrl(url);
 }
@@ -942,9 +942,9 @@ void qSlicerApplication::openApplicationDownloadWebsite()
 {
   Q_D(qSlicerApplication);
   if (!this->applicationUpdateManager())
-    {
+  {
     return;
-    }
+  }
   QUrl url = this->applicationUpdateManager()->applicationDownloadPageUrl();
   QDesktopServices::openUrl(url);
 }
@@ -963,14 +963,14 @@ int qSlicerApplication::numberOfRecentLogFilesToKeep()
   int numberOfFilesToKeep = userSettings->value(
     "LogFiles/NumberOfFilesToKeep").toInt(&groupExists);
   if (!groupExists)
-    {
+  {
     // Get default value from the ErrorLogModel if value is not set in settings
     numberOfFilesToKeep = d->ErrorLogModel->numberOfFilesToKeep();
-    }
+  }
   else
-    {
+  {
     d->ErrorLogModel->setNumberOfFilesToKeep(numberOfFilesToKeep);
-    }
+  }
 
   return numberOfFilesToKeep;
 }
@@ -983,14 +983,14 @@ QStringList qSlicerApplication::recentLogFiles()
   userSettings->beginGroup("LogFiles");
   int numberOfFilesToKeep = numberOfRecentLogFilesToKeep();
   for (int fileNumber = 0; fileNumber < numberOfFilesToKeep; ++fileNumber)
-    {
+  {
     QString paddedFileNumber = QString("%1").arg(fileNumber, 3, 10, QChar('0')).toUpper();
     QString filePath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(userSettings->value(paddedFileNumber, "").toString());
     if (!filePath.isEmpty())
-      {
+    {
       logFilePaths.append(filePath);
-      }
     }
+  }
   userSettings->endGroup();
   return logFilePaths;
 }
@@ -1036,20 +1036,20 @@ void qSlicerApplication::setupFileLogging()
   userSettings->setValue("NumberOfFilesToKeep", numberOfFilesToKeep);
 
   foreach (QString filePath, logFilePaths)
-    {
+  {
     // If the file is to keep then save it in the settings
     if (fileNumber < numberOfFilesToKeep)
-      {
+    {
       QString paddedFileNumber = QString("%1").arg(fileNumber, 3, 10, QChar('0')).toUpper();
       userSettings->setValue(paddedFileNumber, qSlicerCoreApplication::application()->toSlicerHomeRelativePath(filePath));
-      }
+    }
     // Otherwise delete file
     else
-      {
+    {
       QFile::remove(filePath);
-      }
-    ++fileNumber;
     }
+    ++fileNumber;
+  }
   userSettings->endGroup();
 
   // Set current log file path
@@ -1095,9 +1095,9 @@ void qSlicerApplication::logApplicationInformation() const
   titles << "Session start time "
     << "Slicer version ";
   if (this->isCustomMainApplication())
-    {
+  {
     titles << (QString(Slicer_MAIN_PROJECT_APPLICATION_NAME) + " version ");
-    }
+  }
   titles << "Operating system "
       << "Memory "
       << "CPU "
@@ -1110,12 +1110,12 @@ void qSlicerApplication::logApplicationInformation() const
 
   int titleWidth = 0;
   foreach(const QString& title, titles)
-    {
+  {
     if (title.length() > titleWidth)
-      {
+    {
       titleWidth = title.length();
-      }
     }
+  }
   titleWidth += 2;
 
   int titleIndex = 0;
@@ -1144,13 +1144,13 @@ void qSlicerApplication::logApplicationInformation() const
 
   // Custom application version
   if (this->isCustomMainApplication())
-    {
+  {
     qDebug("%s: %s (revision %s / %s)",
       qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
       Slicer_MAIN_PROJECT_VERSION_FULL,
       qPrintable(Slicer_MAIN_PROJECT_REVISION),
       qPrintable(Slicer_MAIN_PROJECT_WC_REVISION));
-    }
+  }
 
   // Operating system
   vtkNew<vtkSystemInformation> systemInfo;
@@ -1174,9 +1174,9 @@ void qSlicerApplication::logApplicationInformation() const
   QString localeCodecName("unknown");
   QTextCodec* localeCodec = QTextCodec::codecForLocale();
   if (localeCodec)
-    {
+  {
     localeCodecName = localeCodec->toUnicode(localeCodec->name());
-    }
+  }
   qDebug("%s: %s / %s / %s / %s - %s",
     qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
     systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown",
@@ -1207,12 +1207,12 @@ void qSlicerApplication::logApplicationInformation() const
   MEMORYSTATUSEX ms;
   ms.dwLength = sizeof(ms);
   if (GlobalMemoryStatusEx(&ms))
-    {
+  {
     DWORDLONG totalPhysicalBytes = ms.ullTotalPhys;
     totalPhysicalMemoryMb = totalPhysicalBytes>>10>>10;
     DWORDLONG totalVirtualBytes = ms.ullTotalPageFile;
     totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
-    }
+  }
 #endif
 #endif
   qDebug() << qPrintable(QString("%0: %1 MB physical, %2 MB virtual")
@@ -1253,11 +1253,11 @@ void qSlicerApplication::logApplicationInformation() const
   QString openGLProfileStr = "unknown";
   QSurfaceFormat surfaceFormat = QSurfaceFormat::defaultFormat();
   switch (surfaceFormat.profile())
-    {
+  {
     case QSurfaceFormat::NoProfile: openGLProfileStr = "no"; break;
     case QSurfaceFormat::CoreProfile: openGLProfileStr = "core"; break;
     case QSurfaceFormat::CompatibilityProfile: openGLProfileStr = "compatibility"; break;
-    }
+  }
 
   qDebug("%s: version %s, %s, requested OpenGL %d.%d (%s profile)",
     qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
@@ -1299,17 +1299,17 @@ void qSlicerApplication::logApplicationInformation() const
 
   qSlicerModuleFactoryManager* moduleFactoryManager = this->moduleManager()->factoryManager();
   foreach(const QString& extensionOrModulePath, this->commandOptions()->additionalModulePaths())
-    {
+  {
     QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
     if (!modulePaths.empty())
-      {
+    {
       additionalModulePaths << modulePaths;
-      }
-    else
-      {
-      additionalModulePaths << extensionOrModulePath;
-      }
     }
+    else
+    {
+      additionalModulePaths << extensionOrModulePath;
+    }
+  }
 
   qDebug("%s: %s",
     qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
@@ -1327,9 +1327,9 @@ void qSlicerApplication::setRenderPaused(bool pause)
   Q_D(qSlicerApplication);
 
   if (d->LayoutManager)
-    {
+  {
     d->LayoutManager.data()->setRenderPaused(pause);
-    }
+  }
 
   emit renderPaused(pause);
 }
@@ -1386,20 +1386,20 @@ unsigned long int qSlicerApplication::windowsOSBuildNumber()
 {
   HMODULE hMod = ::GetModuleHandleW(L"ntdll.dll");
   if (!hMod)
-    {
+  {
     return 0;
-    }
+  }
   RtlGetVersionPtr fxPtr = (RtlGetVersionPtr)::GetProcAddress(hMod, "RtlGetVersion");
   if (!fxPtr)
-    {
+  {
     return 0;
-    }
+  }
   RTL_OSVERSIONINFOW rovi = { 0 };
   rovi.dwOSVersionInfoSize = sizeof(rovi);
   if (fxPtr(&rovi) != (0x00000000))
-    {
+  {
     return 0;
-    }
+  }
   return rovi.dwBuildNumber;
 }
 
@@ -1426,9 +1426,9 @@ void qSlicerApplication::editNode(vtkObject*, void* callData, unsigned long)
 {
   vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(callData);
   if (node)
-    {
+  {
     this->openNodeModule(node);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1438,9 +1438,9 @@ bool qSlicerApplication::loadFiles(const QStringList& filePaths, vtkMRMLMessageC
   // messages to the user.
   vtkSmartPointer<vtkMRMLMessageCollection> userMessages = userMessagesInput;
   if (!userMessages)
-    {
+  {
     userMessages = vtkSmartPointer<vtkMRMLMessageCollection>::New();
-    }
+  }
 
   bool success = Superclass::loadFiles(filePaths, userMessages);
   qSlicerIOManager::showLoadNodesResultDialog(success, userMessages);
@@ -1460,32 +1460,32 @@ void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime, co
   if (d->PythonConsoleLogLevel == ctkErrorLogLevel::None  // console logging disabled
     || logLevel < d->PythonConsoleLogLevel  // these levels are not displayed
     || origin == "Stream")  // Python stream output is already displayed in the console, other output streams should not appear
-    {
+  {
     return;
-    }
+  }
 
   ctkPythonConsole* pythonConsole = this->pythonConsole();
   if (!pythonConsole)
-    {
+  {
     return;
-    }
+  }
   QString prefixedText;
   QStringList lines = text.split('\n');
   foreach(const QString & line, lines)
-    {
+  {
     if (line.isEmpty())
-      {
+    {
       continue;
-      }
+    }
     prefixedText += "[" + origin + "] " + line + "\n";
-    }
+  }
   if (logLevel < ctkErrorLogLevel::Warning)
-    {
+  {
     pythonConsole->printOutputMessage(prefixedText);
-    }
+  }
   else
-    {
+  {
     pythonConsole->printErrorMessage(prefixedText);
-    }
+  }
 }
 #endif

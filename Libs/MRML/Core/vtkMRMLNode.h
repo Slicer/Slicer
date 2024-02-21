@@ -83,42 +83,42 @@ class vtkCallbackCommand;
   std::string oldValue; \
   if (this->name) { oldValue = this->name; delete [] this->name;  } \
   if (_arg) \
-    { \
+  { \
     size_t n = strlen(_arg) + 1; \
     char *cp1 =  new char[n]; \
     const char *cp2 = (_arg); \
     this->name = cp1; \
     do { *cp1++ = *cp2++; } while ( --n ); \
-    } \
+  } \
    else \
-    { \
+   { \
     this->name = nullptr; \
-    } \
+   } \
   this->Modified(); \
   if (this->Scene && this->name) \
-    { \
+  { \
     if (oldValue.size() > 0) \
-      { \
+    { \
       this->Scene->RemoveReferencedNodeID(oldValue.c_str(), this); \
-      } \
+    } \
     this->Scene->AddReferencedNodeID(this->name, this); \
-    }
+  }
 #endif
 
 #ifndef vtkSetReferenceStringMacro
 #define vtkSetReferenceStringMacro(name) \
 virtual void Set##name (const char* _arg) \
-  { \
+{ \
   vtkSetReferenceStringBodyMacro(name)\
-  }
+}
 #endif
 
 #ifndef vtkCxxSetReferenceStringMacro
 #define vtkCxxSetReferenceStringMacro(class,name)   \
 void class::Set##name (const char* _arg)            \
-  {                                                 \
+{                                                 \
   vtkSetReferenceStringBodyMacro(name);             \
-  }
+}
 #endif
 
 #ifndef vtkMRMLNodeNewMacro
@@ -178,11 +178,11 @@ public:
   /// These values are used in methods that specify node references.
   /// \sa AddNodeReferenceRole, SetAndObserveNodeReferenceID, AddAndObserveNodeReferenceID, SetAndObserveNthNodeReferenceID
   enum ContentModifiedObserveType
-    {
+  {
     ContentModifiedObserveUndefined = -1, ///< Observe content modified events if it is enabled in the node reference role
     ContentModifiedObserveDisabled = 0,   ///< Do not observe content modified events (default)
     ContentModifiedObserveEnabled = 1     ///< Observe content modified events
-    };
+  };
 
   /// \brief Create instance of the default node. Like New only virtual.
   ///
@@ -305,11 +305,11 @@ public:
   ///
   /// \sa EndModify()
   virtual int StartModify()
-    {
+  {
     int disabledModify = this->GetDisableModifiedEvent();
     this->DisableModifiedEventOn();
     return disabledModify;
-    };
+  };
 
   /// \brief End modifying the node.
   ///
@@ -319,14 +319,14 @@ public:
   /// Return the number of pending events (even if
   /// InvokePendingModifiedEvent() is not called).
   virtual int EndModify(int previousDisableModifiedEventState)
-    {
+  {
     this->SetDisableModifiedEvent(previousDisableModifiedEventState);
     if (!previousDisableModifiedEventState)
-      {
+    {
       return this->InvokePendingModifiedEvent();
-      }
+    }
     return this->ModifiedEventPending;
-    };
+  };
 
 
   /// Get node XML tag name (like Volume, Model).
@@ -445,17 +445,17 @@ public:
   vtkSetStringMacro(SingletonTag);
   vtkGetStringMacro(SingletonTag);
   void SetSingletonOn()
-    {
+  {
     this->SetSingletonTag("Singleton");
-    }
+  }
   void SetSingletonOff()
-    {
+  {
     this->SetSingletonTag(nullptr);
-    }
+  }
   bool IsSingleton()
-    {
+  {
     return (this->GetSingletonTag() != nullptr);
-    }
+  }
 
   /// Save node with MRML scene.
   vtkGetMacro(SaveWithScene, int);
@@ -471,17 +471,17 @@ public:
   /// Turn on/off generating InvokeEvent for set macros
   vtkGetMacro(DisableModifiedEvent, int);
   void SetDisableModifiedEvent(int onOff)
-    {
+  {
     this->DisableModifiedEvent = onOff;
-    }
+  }
   void DisableModifiedEventOn()
-    {
+  {
     this->SetDisableModifiedEvent(1);
-    }
+  }
   void DisableModifiedEventOff()
-    {
+  {
     this->SetDisableModifiedEvent(0);
-    }
+  }
 
   /// Number of pending modified events.
   ///
@@ -496,17 +496,17 @@ public:
   /// after a StartModify() call and EndModify() is not called yet.
   /// \sa GetModifiedEventPending()
   int GetCustomModifiedEventPending(int eventId)
-    {
+  {
     std::map< int, int >::iterator it = this->CustomModifiedEventPending.find(eventId);
     if (it == this->CustomModifiedEventPending.end())
-      {
+    {
       return 0;
-      }
-    else
-      {
-      return it->second;
-      }
     }
+    else
+    {
+      return it->second;
+    }
+  }
 
   /// \brief Customized version of Modified() allowing to compress
   /// vtkCommand::ModifiedEvent.
@@ -522,16 +522,16 @@ public:
   ///
   /// \sa GetDisableModifiedEvent()
   void Modified() override
-    {
+  {
     if (!this->GetDisableModifiedEvent())
-      {
+    {
       Superclass::Modified();
-      }
-    else
-      {
-      ++this->ModifiedEventPending;
-      }
     }
+    else
+    {
+      ++this->ModifiedEventPending;
+    }
+  }
 
   /// \brief Invokes any modified events that are `pending`.
   ///
@@ -541,35 +541,35 @@ public:
   /// Returns the total number of pending modified events that have been
   /// replaced by the just invoked modified event(s).
   virtual int InvokePendingModifiedEvent ()
-    {
+  {
     int oldModifiedEventPending = 0;
     // Invoke pending standard Modified event
     if ( this->ModifiedEventPending )
-      {
+    {
       oldModifiedEventPending += this->ModifiedEventPending;
       this->ModifiedEventPending = 0;
       Superclass::Modified();
-      }
+    }
     // Invoke pending custom modified events
     if (!this->CustomModifiedEventPending.empty())
-      {
+    {
       // Need to make a copy of the event IDs stored in this->CustomModifiedEventPending,
       // because event invocation may add more events to this->CustomModifiedEventPending,
       // which would then make the iterator invalid.
       std::vector<int> customEventsToInvoke;
       for (std::map< int, int >::iterator it=this->CustomModifiedEventPending.begin(); it!=this->CustomModifiedEventPending.end(); ++it)
-        {
+      {
         oldModifiedEventPending += it->second;
         customEventsToInvoke.push_back(it->first);
-        }
+      }
       this->CustomModifiedEventPending.clear();
       for (std::vector<int>::iterator it=customEventsToInvoke.begin(); it!=customEventsToInvoke.end(); ++it)
-        {
+      {
         this->InvokeEvent(*it);
-        }
       }
-    return oldModifiedEventPending;
     }
+    return oldModifiedEventPending;
+  }
 
   /// \brief This method allows the node to compress events.
   ///
@@ -584,19 +584,19 @@ public:
   ///
   /// If the event is not invoked immediately then it will be sent with `callData=nullptr`.
   virtual void InvokeCustomModifiedEvent(int eventId, void *callData=nullptr)
-    {
+  {
     if (!this->GetDisableModifiedEvent())
-      {
+    {
       // DisableModify is inactive, we immediately invoke the event
       this->InvokeEvent(eventId, callData);
-      }
+    }
     else
-      {
+    {
       // just remember the custom modified event and invoke it once,
       // when DisableModify is deactivated
       ++this->CustomModifiedEventPending[eventId];
-      }
     }
+  }
 
   /// Get the scene this node has been added to.
   virtual vtkMRMLScene* GetScene();
@@ -819,14 +819,14 @@ public:
   /// HierarchyModifiedEvent is generated when the hierarchy node with which
   /// this node is associated changes
   enum
-    {
+  {
       HierarchyModifiedEvent = 16000,
       IDChangedEvent = 16001,
       ReferenceAddedEvent,
       ReferenceModifiedEvent,
       ReferenceRemovedEvent,
       ReferencedNodeModifiedEvent
-    };
+  };
 
 
 protected:
@@ -1028,10 +1028,10 @@ protected:
   std::map< std::string, std::string> NodeReferenceMRMLAttributeNames;
 
   struct NodeReferenceEventList
-    {
+  {
     vtkSmartPointer<vtkIntArray> StaticEvents;
     ContentModifiedObserveType ObserveContentModifiedEvents{ ContentModifiedObserveUndefined };
-    };
+  };
   typedef std::map< std::string, NodeReferenceEventList> NodeReferenceEventsType;
   NodeReferenceEventsType NodeReferenceEvents; // for each role it specifies which referenced node emitted events this node should observe
 
@@ -1068,16 +1068,16 @@ public:
   {
     this->Node = node;
     if (this->Node)
-      {
+    {
       this->WasModifying = this->Node->StartModify();
-      }
+    }
   };
   ~MRMLNodeModifyBlocker()
   {
     if (this->Node)
-      {
+    {
       this->Node->EndModify(this->WasModifying);
-      }
+    }
   }
 };
 

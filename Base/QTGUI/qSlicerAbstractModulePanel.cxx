@@ -58,9 +58,9 @@ qSlicerModuleManager* qSlicerAbstractModulePanel::moduleManager()const
 void qSlicerAbstractModulePanel::addModule(const QString& moduleName)
 {
   if (!this->moduleManager())
-    {
+  {
     return;
-    }
+  }
   qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
   Q_ASSERT(module);
   this->addModule(module);
@@ -70,9 +70,9 @@ void qSlicerAbstractModulePanel::addModule(const QString& moduleName)
 void qSlicerAbstractModulePanel::removeModule(const QString& moduleName)
 {
   if (!this->moduleManager())
-    {
+  {
     return;
-    }
+  }
   qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
   Q_ASSERT(module);
   this->removeModule(module);

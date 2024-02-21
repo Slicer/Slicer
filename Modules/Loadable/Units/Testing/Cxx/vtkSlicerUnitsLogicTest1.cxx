@@ -60,9 +60,9 @@ int vtkSlicerUnitsLogicTest1( int argc , char * argv[] )
   res = res && testSaveAndReloadScene();
   res = res && testGetSIPrefixCoefficient();
   if (argc > 1)
-    {
+  {
     res = res && testImportScene(argv[1]);
-    }
+  }
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
@@ -73,17 +73,17 @@ namespace
 template <class T> void printNodes(const std::vector<T>& nodes)
 {
   for (size_t i = 0; i < nodes.size(); ++i)
-    {
+  {
     vtkMRMLUnitNode* node = vtkMRMLUnitNode::SafeDownCast(nodes[i]);
     if (!node)
-      {
+    {
       std::cout << i << ": NULL" << std::endl;
-      }
-    else
-      {
-      std::cout << i << ": " << node->GetID() << " "  << node << std::endl;
-      }
     }
+    else
+    {
+      std::cout << i << ": " << node->GetID() << " "  << node << std::endl;
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ template <class T> bool areValidNodes(const std::vector<T>& nodes,
   const size_t numberOfUnits = unitNodeIDs.size();
 
   if (nodes.size() != numberOfUnits)
-    {
+  {
     std::cerr << (testName ? testName : "") << ":" << std::endl
               << "Not the right number of unit node. "
               << "Expected " << numberOfUnits << " nodes, "
@@ -110,32 +110,32 @@ template <class T> bool areValidNodes(const std::vector<T>& nodes,
               << std::endl;
     printNodes(nodes);
     return false;
-    }
+  }
 
   if (sorted)
-    {
+  {
     std::sort(unitNodeIDs.begin(), unitNodeIDs.end());
-    }
+  }
 
   for (size_t i = 0; i < numberOfUnits; ++i)
-    {
+  {
     vtkMRMLUnitNode* node = vtkMRMLUnitNode::SafeDownCast(nodes[i]);
     if (!node || strcmp(node->GetID(), unitNodeIDs[i].c_str()) != 0)
-      {
+    {
       std::cerr << (testName ? testName : "") << ":" << std::endl
                 << "Expecting node " << unitNodeIDs[i]<<" Got: "
                 << (node ? node->GetID() : "NONE") << std::endl;
       return false;
-      }
+    }
 
     if (node->GetSaveWithScene())
-      {
+    {
       std::cerr << (testName ? testName : "") << ":" << std::endl
                 << "Node " << node->GetID()
                 <<" should not be saved with the scene !" << std::endl;
       return false;
-      }
     }
+  }
   return true;
 }
 
@@ -218,18 +218,18 @@ bool testSaveAndReloadScene()
   std::vector<vtkMRMLNode*> nodes;
   scene->GetNodesByClass("vtkMRMLUnitNode", nodes);
   if (!areValidNodes(nodes, /*sorted =*/ false, "testSaveAndReloadScene-sceneAfterImport"))
-    {
+  {
     return false;
-    }
+  }
   nodes.clear();
 
   std::vector<vtkMRMLUnitNode*> unitNodes;
   selectionNode->GetUnitNodes(unitNodes);
 
   if (!areValidNodes(unitNodes, /*sorted =*/ true, "testSaveAndReloadScene-selectionNodeAfterImport"))
-    {
+  {
     return false;
-    }
+  }
   unitNodes.clear();
 
   // logic should ensure units stay in the selection node even after a Clear().
@@ -238,9 +238,9 @@ bool testSaveAndReloadScene()
 
   scene->GetNodesByClass("vtkMRMLUnitNode", nodes);
   if (!areValidNodes(nodes, /*sorted =*/ false, "testSaveAndReloadScene-sceneAfterClear"))
-    {
+  {
     return false;
-    }
+  }
   nodes.clear();
 
   selectionNode->GetUnitNodes(unitNodes);
@@ -268,18 +268,18 @@ bool testImportScene(const char* sceneFilePath)
   std::vector<vtkMRMLNode*> nodes;
   scene->GetNodesByClass("vtkMRMLUnitNode", nodes);
   if (!areValidNodes(nodes, /*sorted =*/ false, "testImportScene-sceneAfterImport"))
-    {
+  {
     return false;
-    }
+  }
   nodes.clear();
 
   std::vector<vtkMRMLUnitNode*> unitNodes;
   selectionNode->GetUnitNodes(unitNodes);
 
   if (!areValidNodes(unitNodes, /*sorted =*/ true, "testImportScene-selectionNodeAfterImport"))
-    {
+  {
     return false;
-    }
+  }
   unitNodes.clear();
 
   // logic should ensure units stay in the selection node even after a Clear().
@@ -288,9 +288,9 @@ bool testImportScene(const char* sceneFilePath)
 
   scene->GetNodesByClass("vtkMRMLUnitNode", nodes);
   if (!areValidNodes(nodes, /*sorted =*/ false, "testImportScene-sceneAfterClear"))
-    {
+  {
     return false;
-    }
+  }
   nodes.clear();
 
   selectionNode->GetUnitNodes(unitNodes);
@@ -325,20 +325,20 @@ bool testGetSIPrefixCoefficient()
 
   for (std::map<std::string, double>::iterator it = coefficients.begin();
        it != coefficients.end(); ++it)
-    {
+  {
     std::string prefix = it->first;
     double expectedCoefficient = it->second;
     double coefficient = vtkSlicerUnitsLogic::GetSIPrefixCoefficient(prefix.c_str());
     if (coefficient != expectedCoefficient)
-      {
+    {
       std::cerr << "Line " << __LINE__
                 << " - Problem with GetSIPrefixCoefficient(\"" << prefix << "\")\n"
                 << "  coefficient: " << coefficient << "\n"
                 << "  expectedCoefficient: " << expectedCoefficient
                 << std::endl;
       return false;
-      }
     }
+  }
   return true;
 }
 

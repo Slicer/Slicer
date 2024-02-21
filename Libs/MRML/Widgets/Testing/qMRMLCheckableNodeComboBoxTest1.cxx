@@ -50,14 +50,14 @@ int qMRMLCheckableNodeComboBoxTest1( int argc, char * argv [] )
   bool editEnabled = nodeSelector.editEnabled();
   // Add button should be enabled
   if (addEnabled || removeEnabled || editEnabled)
-    {
+  {
     std::cerr << __LINE__ << " - Incorrect state" << std::endl
                           << " Expected => Add[0], Remove[0], Edit[0]" << std::endl
                           << " Current => Add[" << addEnabled << "], "
                           << "Remove[" << removeEnabled << "], "
                           << "Edit[" << editEnabled << "]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   nodeSelector.setNodeTypes(QStringList("vtkMRMLViewNode"));
 
   qMRMLSceneFactoryWidget sceneFactory;
@@ -74,9 +74,9 @@ int qMRMLCheckableNodeComboBoxTest1( int argc, char * argv [] )
   nodeSelector.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

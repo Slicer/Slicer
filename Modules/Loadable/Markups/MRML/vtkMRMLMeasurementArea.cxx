@@ -48,10 +48,10 @@ void vtkMRMLMeasurementArea::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLMeasurementArea::Compute()
 {
   if (!this->InputMRMLNode)
-    {
+  {
     this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
     return;
-    }
+  }
 
   // We derive area unit from length unit, but it may be better to introduce
   // an area unit node to be able to specify more human-friendly format.
@@ -60,35 +60,35 @@ void vtkMRMLMeasurementArea::Compute()
   vtkMRMLMarkupsClosedCurveNode* curveNode = vtkMRMLMarkupsClosedCurveNode::SafeDownCast(this->InputMRMLNode);
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->InputMRMLNode);
   if (curveNode)
-    {
+  {
     if (curveNode->GetNumberOfDefinedControlPoints(true) < 3)
-      {
+    {
       vtkDebugMacro("Compute: Curve nodes must have more than one control points ("
         << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
       this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
       return;
-      }
+    }
     vtkPolyData* surfaceAreaMesh = this->GetMeshValue();
     if (!surfaceAreaMesh)
-      {
+    {
       vtkNew<vtkPolyData> newMesh;
       this->SetMeshValue(newMesh);
       surfaceAreaMesh = this->GetMeshValue();
-      }
-    area = vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(curveNode, surfaceAreaMesh);
     }
+    area = vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(curveNode, surfaceAreaMesh);
+  }
   else if (planeNode)
-    {
+  {
     double size_world[2] = { 0.0, 0.0 };
     planeNode->GetSizeWorld(size_world);
     area = size_world[0] * size_world[1];
-    }
+  }
   else
-    {
+  {
     vtkErrorMacro("Compute: Markup type not supported by this measurement: " << this->InputMRMLNode->GetClassName());
     this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
     return;
-    }
+  }
 
   this->SetValue(area, "area");
 }

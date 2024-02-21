@@ -36,9 +36,9 @@ vtkImageFillROI::~vtkImageFillROI()
 {
   // We must UnRegister any object that has a vtkSetObjectMacro
   if (this->Points != nullptr)
-    {
+  {
     this->Points->UnRegister(this);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -53,13 +53,13 @@ void vtkImageFillROI::PrintSelf(ostream& os, vtkIndent indent)
   // vtkSetObjectMacro
   os << indent << "Points: ";
   if (this->Points)
-    {
+  {
     this->Points->PrintSelf(os << "\n" ,indent.GetNextIndent());
-    }
+  }
   else
-    {
+  {
     os << "(none)\n";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -80,17 +80,17 @@ void InsertEdge(Edge *list, Edge *edge)
 
   p = q->next;
   while (p != nullptr)
-    {
+  {
     if (edge->x < p->x)
-      {
+    {
       p = nullptr;
-      }
+    }
     else
-      {
+    {
       q = p;
       p = p->next;
-      }
     }
+  }
   edge->next = q->next;
   q->next = edge;
 }
@@ -107,27 +107,27 @@ void MakeEdgeRec(int x1, int y1, int x2, int y2, Edge *edge, Edge *edges[])
   edge->dx2 = edge->dx << 1;
   edge->dy2 = edge->dy << 1;
   if (x1 < x2)
-    {
+  {
     edge->xInc = 1;
-    }
+  }
   else
-    {
+  {
     edge->xInc = -1;
-    }
+  }
   edge->x = x1;
 
   // < 45 degree slope
   if (edge->dy <= edge->dx)
-    {
+  {
     edge->dydx2 = (edge->dy - edge->dx) << 1;
     edge->r = edge->dy2 - edge->dx;
-    }
+  }
   // > 45 degree slope
   else
-    {
+  {
     edge->dydx2 = (edge->dx - edge->dy) << 1;
     edge->r = edge->dx2 - edge->dy;
-    }
+  }
 
   edge->yUpper = y2;
 
@@ -143,28 +143,28 @@ void BuildEdgeList(int nPts, int *xPts, int *yPts, Edge *edges[])
   y1 = yPts[nPts-1];
 
   for (i=0; i<nPts; i++)
-    {
+  {
     x2 = xPts[i];
     y2 = yPts[i];
 
     if (y1 != y2)
-      {
+    {
       // non-horizontal line
       edge = new Edge;
       if (y1 < y2)
-        {
+      {
         // up-going edge
         MakeEdgeRec(x1, y1, x2, y2, edge, edges);
-        }
+      }
       else
-        {
+      {
         // down-going edge
         MakeEdgeRec(x2, y2, x1, y1, edge, edges);
-        }
       }
+    }
     x1 = x2;
     y1 = y2;
-    }
+  }
 }
 
 template <class T>
@@ -182,129 +182,129 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int 
   Edge **edges = new Edge*[ny];
 
   for (i=0; i<ny; i++)
-    {
+  {
     edges[i] = new Edge;
-    }
+  }
 
   BuildEdgeList(nPts, xPts, yPts, edges);
   active = new Edge;
 
   for (scan=0; scan < ny; scan++)
-    {
+  {
     // BuildActiveList(int scan, Edge *active, Edge *edges[])
     p = edges[scan]->next;
     while (p)
-      {
+    {
       q = p->next;
       InsertEdge(active, p);
       p = q;
-      }
+    }
 
     if (active->next)
-      {
+    {
 
       // DeleteFromActiveList(int scan, Edge *active)
       q = active;
       p = active->next;
       while (p)
-        {
+      {
         if (scan >= p->yUpper)
-          {
+        {
           p = p->next;
 
           // Delete After q
           del = q->next;
           q->next = del->next;
           delete del;
-          }
+        }
         else
-          {
+        {
           q = p;
           p = p->next;
-          }
         }
+      }
 
       // FillScan(int nx, int scan, Edge *active, T value, T *outPtr)
       p = active->next;
       ptr = &outPtr[scan*nx];
       while (p)
-        {
+      {
         q = p->next;
         if (!q)
-          {
+        {
           fprintf(stderr, "ODD FILL: y=%d\n", scan);
           break;
-          }
+        }
         x1 = p->x;
         x2 = q->x;
 
         // Fill from left edge up to AND INCLUDING (x <= x2) right edge
         // (this differs from conventional polygon fill)
         for (x = x1; x < x2; x++)
-          {
+        {
           ptr[x] = value;
-          }
-        p = q->next;
         }
+        p = q->next;
+      }
 
       // UpdateActiveList(int scan, Edge *active)
       // Update 'x' field
       q = active;
       p = active->next;
       while (p)
-        {
+      {
         // < 45 degree slope
         if (p->dy <= p->dx)
-          {
+        {
           done = 0;
           while (done == 0)
-            {
+          {
             p->x += p->xInc;
             if (p->r <= 0)
-              {
+            {
               p->r += p->dy2;
-              }
+            }
             else
-              {
+            {
               done = 1;
               p->r += p->dydx2;
-              }
             }
           }
+        }
         // > 45
         else
-          {
+        {
           if (p->r <= 0)
-            {
+          {
             p->r += p->dx2;
-            }
+          }
           else
-            {
+          {
             p->x += p->xInc;
             p->r += p->dydx2;
-            }
           }
+        }
         q = p;
         p = p->next;
-        }
+      }
 
       // ResortActiveList(Edge *active)
       p = active->next;
       active->next = nullptr;
       while (p)
-        {
+      {
         q = p->next;
         InsertEdge(active, p);
         p = q;
-        }
-      }//if(active->next)
-    }//for
+      }
+    }//if(active->next)
+  }//for
 
   // Free edge records that have been allocated
   for (i=0; i<ny; i++)
-    {
+  {
     delete edges[i];
-    }
+  }
   delete active;
 
   // Free array of edge pointers.
@@ -323,7 +323,7 @@ static void DrawLinesFast(int nx, int ny, int nPts, int *xPts, int *yPts,
   (void)ny; // unused ??
 
   for (i=0; i < n-1; i++)
-    {
+  {
     xx1 = xPts[i];
     yy1 = yPts[i];
     xx2 = xPts[i+1];
@@ -331,32 +331,32 @@ static void DrawLinesFast(int nx, int ny, int nPts, int *xPts, int *yPts,
 
     // Sort points so x1,y1 is below x2,y2
     if (yy1 <= yy2)
-      {
+    {
       x1 = xx1;
       y1 = yy1;
       x2 = xx2;
       y2 = yy2;
-      }
+    }
     else
-      {
+    {
       x1 = xx2;
       y1 = yy2;
       x2 = xx1;
       y2 = yy1;
-      }
+    }
 
     dx = abs(x2 - x1);
     dy = abs(y2 - y1);
     dx2 = dx << 1;
     dy2 = dy << 1;
     if (x1 < x2)
-      {
+    {
       xInc = 1;
-      }
+    }
     else
-      {
+    {
       xInc = -1;
-      }
+    }
     x = x1;
     y = y1;
 
@@ -365,77 +365,77 @@ static void DrawLinesFast(int nx, int ny, int nPts, int *xPts, int *yPts,
 
     // < 45 degree slope
     if (dy <= dx)
-      {
+    {
       dydx2 = (dy-dx) << 1;
       r = dy2 - dx;
 
       // Draw up to (not including) end point
       if (x1 < x2)
-        {
+      {
         while (x < x2)
-          {
-          x += xInc;
-          if (r <= 0)
-            {
-            r += dy2;
-            }
-          else
-            {
-            // Don't draw: don't want thick lines here
-            y++;
-            r += dydx2;
-            }
-          // Draw point with radius r
-          outPtr[y*nx+x] = value;
-          }
-        }
-      else
         {
-        while (x > x2)
-          {
           x += xInc;
           if (r <= 0)
-            {
+          {
             r += dy2;
-            }
+          }
           else
-            {
+          {
             // Don't draw: don't want thick lines here
             y++;
             r += dydx2;
-            }
+          }
           // Draw point with radius r
           outPtr[y*nx+x] = value;
-          }
         }
       }
+      else
+      {
+        while (x > x2)
+        {
+          x += xInc;
+          if (r <= 0)
+          {
+            r += dy2;
+          }
+          else
+          {
+            // Don't draw: don't want thick lines here
+            y++;
+            r += dydx2;
+          }
+          // Draw point with radius r
+          outPtr[y*nx+x] = value;
+        }
+      }
+    }
 
     // > 45 degree slope
     else
-      {
+    {
       dydx2 = (dx-dy) << 1;
       r = dx2 - dy;
 
       // Draw up to (not including) end point
       while (y < y2)
-        {
+      {
         y++;
         if (r <= 0)
-          {
+        {
           r += dx2;
-          }
+        }
         else
-          {
+        {
           // Draw now only because it's thick
 
           x += xInc;
           r += dydx2;
-          }
+        }
         // Draw point with radius r
         outPtr[y*nx+x] = value;
-        }
       }
-    }//for
+    }
+  }//for
 }
 
 // This corresponds to "DrawThickLine" in vtkImageDrawROI.cxx. Both are
@@ -457,7 +457,7 @@ static void DrawLines(int nx, int ny, int z, int radius,
   (void)nx; (void)ny; // unused ??
 
   for (i=0; i < n-1; i++)
-    {
+  {
     xx1 = xPts[i];
     yy1 = yPts[i];
     xx2 = xPts[i+1];
@@ -465,166 +465,166 @@ static void DrawLines(int nx, int ny, int z, int radius,
 
     // Sort points so x1,y1 is below x2,y2
     if (yy1 <= yy2)
-      {
+    {
       x1 = xx1;
       y1 = yy1;
       x2 = xx2;
       y2 = yy2;
-      }
+    }
     else
-      {
+    {
       x1 = xx2;
       y1 = yy2;
       x2 = xx1;
       y2 = yy1;
-      }
+    }
 
     if (x1-rad >= min0 && x1+rad <= max0 &&
       y1-rad >= min1 && y2+rad <= max1 &&
       x2-rad >= min0 && x2+rad <= max0)
-      {
+    {
       dx = abs(x2 - x1);
       dy = abs(y2 - y1);
       dx2 = dx << 1;
       dy2 = dy << 1;
       if (x1 < x2)
-        {
+      {
         xInc = 1;
-        }
+      }
       else
-        {
+      {
         xInc = -1;
-        }
+      }
       x = x1;
       y = y1;
 
       // Draw first point with radius r
       for (yy = y-rad; yy <= y+rad; yy++)
-        {
+      {
         outPtr = (T*)(outData->GetScalarPointer(x-rad, yy, z));
         for (xx = x-rad; xx <= x+rad; xx++)
-          {
+        {
           *outPtr = value;
           outPtr++;
-          }
         }
+      }
 
       // < 45 degree slope
       if (dy <= dx)
-        {
+      {
         dydx2 = (dy-dx) << 1;
         r = dy2 - dx;
 
         // Draw up to (not including) end point
         if (x1 < x2)
-          {
+        {
           while (x < x2)
-            {
-            x += xInc;
-            if (r <= 0)
-              {
-              r += dy2;
-              }
-            else
-              {
-              // Draw now only because it's thick
-              for (yy = y-rad; yy <= y+rad; yy++)
-                {
-                outPtr = (T*)(outData->GetScalarPointer(x-rad, yy, z));
-                for (xx = x-rad; xx <= x+rad; xx++)
-                  {
-                  *outPtr = value;
-                  outPtr++;
-                  }
-                }
-              y++;
-              r += dydx2;
-              }
-            // Draw point with radius r
-            for (yy = y-rad; yy <= y+rad; yy++)
-              {
-              outPtr = (T*)(outData->GetScalarPointer(x-rad, yy, z));
-              for (xx = x-rad; xx <= x+rad; xx++)
-                {
-                *outPtr = value;
-                outPtr++;
-                }
-              }
-            }
-          }
-        else
           {
-          while (x > x2)
-            {
             x += xInc;
             if (r <= 0)
-              {
+            {
               r += dy2;
-              }
+            }
             else
-              {
+            {
               // Draw now only because it's thick
               for (yy = y-rad; yy <= y+rad; yy++)
-                {
+              {
                 outPtr = (T*)(outData->GetScalarPointer(x-rad, yy, z));
                 for (xx = x-rad; xx <= x+rad; xx++)
-                  {
+                {
                   *outPtr = value;
                   outPtr++;
-                  }
                 }
+              }
               y++;
               r += dydx2;
-              }
+            }
             // Draw point with radius r
             for (yy = y-rad; yy <= y+rad; yy++)
-              {
+            {
               outPtr = (T*)(outData->GetScalarPointer(x-rad, yy, z));
               for (xx = x-rad; xx <= x+rad; xx++)
-                {
+              {
                 *outPtr = value;
                 outPtr++;
-                }
               }
             }
           }
         }
-
-      // > 45 degree slope
-      else
+        else
         {
-        dydx2 = (dx-dy) << 1;
-        r = dx2 - dy;
-
-        // Draw up to (not including) end point
-        while (y < y2)
+          while (x > x2)
           {
-          y++;
-          if (r <= 0)
-            {
-            r += dx2;
-            }
-          else
-            {
-            // Draw now only because it's thick
-
             x += xInc;
-            r += dydx2;
-            }
-          // Draw point with radius r
-          for (yy = y-rad; yy <= y+rad; yy++)
+            if (r <= 0)
             {
-            outPtr = (T*)(outData->GetScalarPointer(x-rad, yy, z));
-            for (xx = x-rad; xx <= x+rad; xx++)
+              r += dy2;
+            }
+            else
+            {
+              // Draw now only because it's thick
+              for (yy = y-rad; yy <= y+rad; yy++)
               {
-              *outPtr = value;
-              outPtr++;
+                outPtr = (T*)(outData->GetScalarPointer(x-rad, yy, z));
+                for (xx = x-rad; xx <= x+rad; xx++)
+                {
+                  *outPtr = value;
+                  outPtr++;
+                }
+              }
+              y++;
+              r += dydx2;
+            }
+            // Draw point with radius r
+            for (yy = y-rad; yy <= y+rad; yy++)
+            {
+              outPtr = (T*)(outData->GetScalarPointer(x-rad, yy, z));
+              for (xx = x-rad; xx <= x+rad; xx++)
+              {
+                *outPtr = value;
+                outPtr++;
               }
             }
           }
         }
       }
+
+      // > 45 degree slope
+      else
+      {
+        dydx2 = (dx-dy) << 1;
+        r = dx2 - dy;
+
+        // Draw up to (not including) end point
+        while (y < y2)
+        {
+          y++;
+          if (r <= 0)
+          {
+            r += dx2;
+          }
+          else
+          {
+            // Draw now only because it's thick
+
+            x += xInc;
+            r += dydx2;
+          }
+          // Draw point with radius r
+          for (yy = y-rad; yy <= y+rad; yy++)
+          {
+            outPtr = (T*)(outData->GetScalarPointer(x-rad, yy, z));
+            for (xx = x-rad; xx <= x+rad; xx++)
+            {
+              *outPtr = value;
+              outPtr++;
+            }
+          }
+        }
+      }
     }
+  }
 }
 
 template <class T>
@@ -642,24 +642,24 @@ static void DrawPoints(int nx, int ny, int z, int radius,
   (void)nx; (void)ny; // unused ??
 
   for (i=0; i < n; i++)
-    {
+  {
     x1 = xPts[i];
     y1 = yPts[i];
 
     if (x1-r >= min0 && x1+r <= max0 &&
       y1-r >= min1 && y1+r <= max1)
-      {
+    {
       for (y = y1-r; y <= y1+r; y++)
-        {
+      {
         outPtr = (T*)(outData->GetScalarPointer(x1-r, y, z));
         for (x = x1-r; x <= x1+r; x++)
-          {
+        {
           *outPtr = value;
           outPtr++;
-          }
         }
       }
     }
+  }
 }
 
 template <class T>
@@ -687,18 +687,18 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
   xPts = new int[nPts];
   yPts = new int[nPts];
   for (i=0,j=0; i<nPts; i++)
-    {
+  {
     pt = points->GetPoint(i);
     x = (int)(pt[0]);
     y = (int)(pt[1]);
     if (x >= outExt[0] && x <= outExt[1] &&
       y >= outExt[2] && y <= outExt[3])
-      {
+    {
       xPts[j] = x;
       yPts[j] = y;
       j++;
-      }
     }
+  }
   nPts = j;
 
   outPtr = (T*)outData->GetScalarPointerForExtent(outExt);
@@ -706,39 +706,39 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
   // zero out the background (added when filter switched from
   // in place to being image to image).
   for (int xx = 0; xx < nx; xx++)
-    {
+  {
     for (int yy = 0; yy < ny; yy++)
-      {
+    {
       outPtr[xx + nx*yy] = 0;
-      }
     }
+  }
 
   switch (self->GetShape())
-    {
+  {
     case SHAPE_POLYGON:
     if (nPts >= 3)
-      {
+    {
       vtkImageFillROIDrawPolygon(nx, ny, nPts, xPts, yPts,
         (T)value, (T*)outPtr);
       // Draw lines too because polygons don't include top, right edges
       DrawLinesFast(nx, ny, nPts, xPts, yPts, value, (T*)outPtr);
-      }
+    }
     break;
 
     case SHAPE_LINES:
     if (nPts >= 2)
-      {
+    {
       DrawLines(nx, ny, z, r, nPts, xPts, yPts, value, outData);
-      }
+    }
     break;
 
     case SHAPE_POINTS:
     if (nPts >= 1)
-      {
+    {
       DrawPoints(nx, ny, z, r, nPts, xPts, yPts, value, outData);
-      }
-    break;
     }
+    break;
+  }
 
   delete [] xPts;
   delete [] yPts;
@@ -761,19 +761,19 @@ int vtkImageFillROI::RequestData(
 
   // Make sure the Input has been set.
   if ( input == nullptr )
-    {
+  {
     vtkErrorMacro(<< "ExecuteData: Input is not set.");
     return 0;
-    }
+  }
 
   this->AllocateOutputData(output, outInfo);
 
   if ( !input ||
        input->GetDataObjectType() != VTK_IMAGE_DATA )
-    {
+  {
     vtkWarningMacro ("was sent non-image data data object");
     return 0;
-    }
+  }
 
   void *ptr = nullptr;
   int x1, inExt[6];
@@ -781,27 +781,27 @@ int vtkImageFillROI::RequestData(
   // ensure 1 component data
   x1 = input->GetNumberOfScalarComponents();
   if (x1 != 1)
-    {
+  {
     vtkErrorMacro("Input has "<<x1<<" components instead of 1.");
     return 0;
-    }
+  }
 
   // Ensure input is 2D
   inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
   if (inExt[5] != inExt[4])
-    {
+  {
     vtkErrorMacro("Input must be 2D.");
     return 0;
-    }
+  }
 
   switch (output->GetScalarType())
-    {
+  {
     vtkTemplateMacro( vtkImageFillROIExecute ( this, output, static_cast<VTK_TT*>(ptr) ) );
     default:
-      {
+    {
       vtkErrorMacro(<< "Execute: Unknown ScalarType\n");
       return 0;
-      }
     }
+  }
   return 1;
 }

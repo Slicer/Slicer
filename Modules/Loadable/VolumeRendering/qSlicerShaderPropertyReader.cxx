@@ -109,16 +109,16 @@ bool qSlicerShaderPropertyReader::load(const IOProperties& properties)
   //  name = properties["name"].toString();
   //  }
   if (d->VolumeRenderingLogic.GetPointer() == nullptr)
-    {
+  {
     return false;
-    }
+  }
   vtkMRMLShaderPropertyNode* node =
     d->VolumeRenderingLogic->AddShaderPropertyFromFile(fileName.toUtf8());
   QStringList loadedNodes;
   if (node)
-    {
+  {
     loadedNodes << QString(node->GetID());
-    }
+  }
   this->setLoadedNodes(loadedNodes);
   return node != nullptr;
 }

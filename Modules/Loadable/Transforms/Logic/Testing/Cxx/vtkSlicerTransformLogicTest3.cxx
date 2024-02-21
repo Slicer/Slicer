@@ -44,14 +44,14 @@ bool CompareBounds(double b[6], double e[6])
 {
   bool success = true;
   for (int i = 0; i < 6; ++i)
-    {
+  {
     if (fabs(b[i] - e[i]) > 1e-6)
-      {
-      success = false;
-      }
-    }
-  if (!success)
     {
+      success = false;
+    }
+  }
+  if (!success)
+  {
     std::cout << "Wrong bounds !" << std::endl;
     std::cout << "Expected: "
       << e[0] << " " << e[1] << " "
@@ -61,7 +61,7 @@ bool CompareBounds(double b[6], double e[6])
       << b[0] << " " << b[1] << " "
       << b[2] << " " << b[3] << " "
       << b[4] << " " << b[5] << std::endl;
-    }
+  }
   return success;
 }
 }// end namespace
@@ -70,10 +70,10 @@ bool CompareBounds(double b[6], double e[6])
 int vtkSlicerTransformLogicTest3(int argc, char * argv [])
 {
   if(argc < 2)
-    {
+  {
     std::cerr << "Missing transform file name." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //
   // Scene setup

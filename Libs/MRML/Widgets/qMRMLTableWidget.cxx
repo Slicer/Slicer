@@ -126,10 +126,10 @@ void qMRMLTableWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewN
   Q_D(qMRMLTableWidget);
   vtkMRMLTableViewNode* tableViewNode = vtkMRMLTableViewNode::SafeDownCast(newViewNode);
   if (newViewNode && !tableViewNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
       << ". Expected node type: vtkMRMLTableViewNode";
-    }
+  }
   this->setMRMLTableViewNode(tableViewNode);
 }
 

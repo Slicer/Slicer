@@ -73,20 +73,20 @@ protected:
   void javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level, const QString &message, int lineNumber, const QString &sourceID) override
   {
     if (this->JavaScriptConsoleMessageLoggingEnabled)
-      {
+    {
       if (level == QWebEnginePage::InfoMessageLevel)
-        {
+      {
         qInfo() << sourceID << lineNumber << message;
-        }
-      else if (level == QWebEnginePage::WarningMessageLevel)
-        {
-        qWarning() << sourceID << lineNumber << message;
-        }
-      else if (level == QWebEnginePage::ErrorMessageLevel)
-        {
-        qWarning() << sourceID << lineNumber << message;
-        }
       }
+      else if (level == QWebEnginePage::WarningMessageLevel)
+      {
+        qWarning() << sourceID << lineNumber << message;
+      }
+      else if (level == QWebEnginePage::ErrorMessageLevel)
+      {
+        qWarning() << sourceID << lineNumber << message;
+      }
+    }
     this->QWebEnginePage::javaScriptConsoleMessage(level, message, lineNumber, sourceID);
   }
 

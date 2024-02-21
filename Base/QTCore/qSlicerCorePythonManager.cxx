@@ -60,10 +60,10 @@ qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
 qSlicerCorePythonManager::~qSlicerCorePythonManager()
 {
   if (this->Factory)
-    {
+  {
     delete this->Factory;
     this->Factory = nullptr;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -80,10 +80,10 @@ void qSlicerCorePythonManager::preInitialization()
   this->addWrapperFactory(this->Factory);
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (app)
-    {
+  {
     // Add object to python interpreter context
     this->addObjectToPythonMain("_qSlicerCoreApplicationInstance", app);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -104,10 +104,10 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
         attributeName,
         vtkPythonUtil::GetObjectFromPointer(object));
   if (!success)
-    {
+  {
     qCritical() << "qSlicerCorePythonManager::addVTKObjectToPythonMain - "
                    "Failed to add VTK object:" << name;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -127,9 +127,9 @@ void qSlicerCorePythonManager::appendPythonPath(const QString& path)
 void qSlicerCorePythonManager::appendPythonPaths(const QStringList& paths)
 {
   foreach(const QString& path, paths)
-    {
+  {
     this->appendPythonPath(path);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -85,10 +85,10 @@ QStandardItem* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIn
 {
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   if (sceneModel == nullptr)
-    {
+  {
     //Q_ASSERT(sceneModel);
     return nullptr;
-    }
+  }
   return sourceIndex.isValid() ? sceneModel->itemFromIndex(sourceIndex) : sceneModel->invisibleRootItem();
 }
 
@@ -129,9 +129,9 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
   if (!d->NodeTypes.contains(nodeType) ||
       (d->Attributes.value(nodeType).first == attributeName &&
        d->Attributes.value(nodeType).second == attributeValue))
-    {
+  {
     return;
-    }
+  }
   d->Attributes[nodeType] =
     qMRMLSortFilterProxyModelPrivate::AttributeType(attributeName, attributeValue);
   this->invalidateFilter();
@@ -144,9 +144,9 @@ void qMRMLSortFilterProxyModel::removeAttribute(const QString& nodeType,
   Q_D(qMRMLSortFilterProxyModel);
   if (!d->NodeTypes.contains(nodeType) ||
       d->Attributes.value(nodeType).first != attributeName)
-    {
+  {
     return;
-    }
+  }
   d->Attributes.remove(nodeType);
   this->invalidateFilter();
 }
@@ -168,40 +168,40 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
 {
   QStandardItem* parentItem = this->sourceItem(source_parent);
   if (parentItem == nullptr)
-    {
+  {
     //Q_ASSERT(parentItem);
     return false;
-    }
+  }
   QStandardItem* item = nullptr;
   // Sometimes the row is not complete (DnD), search for a non null item
   for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
-    {
+  {
     item = parentItem->child(source_row, childIndex);
     if (item)
-      {
-      break;
-      }
-    }
-  if (item == nullptr)
     {
+      break;
+    }
+  }
+  if (item == nullptr)
+  {
     //Q_ASSERT(item);
     return false;
-    }
+  }
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   vtkMRMLNode* node = sceneModel->mrmlNodeFromItem(item);
   AcceptType accept = this->filterAcceptsNode(node);
   bool acceptRow = (accept == Accept);
   if (accept == AcceptButPotentiallyRejectable)
-    {
+  {
     acceptRow = this->QSortFilterProxyModel::filterAcceptsRow(source_row,
                                                               source_parent);
-    }
+  }
   if (node &&
       sceneModel->listenNodeModifiedEvent() == qMRMLSceneModel::OnlyVisibleNodes &&
       accept != Reject)
-    {
+  {
     sceneModel->observeNode(node);
-    }
+  }
   return acceptRow;
 }
 
@@ -212,89 +212,89 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
   Q_D(const qMRMLSortFilterProxyModel);
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   if (!node || !node->GetID())
-    {
+  {
     return Accept;
-    }
+  }
   if (this->showAll())
-    {
+  {
     return Accept;
-    }
+  }
   if (this->hideAll())
-    {
+  {
     return Reject;
-    }
+  }
   if (d->HiddenNodeIDs.contains(node->GetID()))
-    {
+  {
     return Reject;
-    }
+  }
   if (d->VisibleNodeIDs.contains(node->GetID()))
-    {
+  {
     return Accept;
-    }
+  }
   // HideFromEditors property
   if (!d->ShowHidden && node->GetHideFromEditors())
-    {
+  {
     bool hide = true;
     foreach(const QString& nodeType, d->ShowHiddenForTypes)
-      {
+    {
       if (node->IsA(nodeType.toUtf8()))
-        {
+      {
         hide = false;
         break;
-        }
-      }
-    if (hide)
-      {
-      return Reject;
       }
     }
+    if (hide)
+    {
+      return Reject;
+    }
+  }
 
   if (!d->HideNodesUnaffiliatedWithNodeID.isEmpty())
-    {
+  {
     vtkMRMLNode* theNode = sceneModel->mrmlScene()->GetNodeByID(
       d->HideNodesUnaffiliatedWithNodeID.toUtf8());
     bool affiliated = sceneModel->isAffiliatedNode(node, theNode);
     if (!affiliated)
-      {
+    {
       return Reject;
-      }
     }
+  }
 
   // Accept all the nodes if no type has been set
   if (d->NodeTypes.isEmpty())
-    {
+  {
     // Apply filter if any
     return AcceptButPotentiallyRejectable;
-    }
+  }
   foreach(const QString& nodeType, d->NodeTypes)
-    {
+  {
     // filter by node type
     if (!node->IsA(nodeType.toUtf8().data()))
-      {
+    {
       //std::cout << "Reject node: " << node->GetName() << "(" << node->GetID()
       //          << ") type: " << typeid(*node).name() <<std::endl;
       continue;
-      }
+    }
     // filter by excluded child node types
     if (!d->ShowChildNodeTypes && nodeType != node->GetClassName())
-      {
+    {
       continue;
-      }
+    }
     // filter by HideChildNodeType
     if (d->ShowChildNodeTypes)
-      {
+    {
       foreach(const QString& hideChildNodeType, d->HideChildNodeTypes)
-        {
+      {
         if (node->IsA(hideChildNodeType.toUtf8().data()))
-          {
+        {
           return Reject;
-          }
         }
       }
+    }
 
     // filter by attributes
     if (d->Attributes.contains(nodeType))
-      {
+    {
       // can be optimized if the event is AttributeModifiedEvent instead of modifiedevent
       const_cast<qMRMLSortFilterProxyModel*>(this)->qvtkConnect(
         node, vtkCommand::ModifiedEvent,
@@ -309,22 +309,22 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
       //std::cout << "attribute name = " << qPrintable(attributeName) << "\n\ttestAttribute = " << qPrintable(testAttribute) << "\n\t" << node->GetID() << " nodeAttributeQString = " << qPrintable(nodeAttributeQString) << "\n\t\tas char str = " << (nodeAttribute ? nodeAttribute : "null") << "." << std::endl;
       // fail if the attribute isn't defined on the node at all
       if (nodeAttribute == nullptr)
-        {
+      {
         return RejectButPotentiallyAcceptable;
-        }
+      }
       // if the filter value is null, any node attribute value will match
       if (!d->Attributes[nodeType].second.isNull())
-        {
+      {
         // otherwise, the node and filter attributes have to match
         if (testAttribute != nodeAttribute)
-          {
+        {
           return RejectButPotentiallyAcceptable;
-          }
         }
       }
+    }
     // Apply filter if any
     return AcceptButPotentiallyRejectable;
-    }
+  }
   return Reject;
 }
 
@@ -347,9 +347,9 @@ void qMRMLSortFilterProxyModel::setHideChildNodeTypes(const QStringList& _nodeTy
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (_nodeTypes == d->HideChildNodeTypes)
-    {
+  {
     return;
-    }
+  }
   d->HideChildNodeTypes = _nodeTypes;
   this->invalidateFilter();
 }
@@ -359,9 +359,9 @@ void qMRMLSortFilterProxyModel::setNodeTypes(const QStringList& _nodeTypes)
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (d->NodeTypes == _nodeTypes)
-    {
+  {
     return;
-    }
+  }
   d->NodeTypes = _nodeTypes;
   this->invalidateFilter();
 }
@@ -371,9 +371,9 @@ void qMRMLSortFilterProxyModel::setShowChildNodeTypes(bool _show)
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (_show == d->ShowChildNodeTypes)
-    {
+  {
     return;
-    }
+  }
   d->ShowChildNodeTypes = _show;
   invalidateFilter();
 }
@@ -390,9 +390,9 @@ void qMRMLSortFilterProxyModel::setShowHidden(bool enable)
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (enable == d->ShowHidden)
-    {
+  {
     return;
-    }
+  }
   d->ShowHidden = enable;
   this->invalidateFilter();
 }
@@ -409,9 +409,9 @@ void qMRMLSortFilterProxyModel::setShowHiddenForTypes(const QStringList& types)
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (types == d->ShowHiddenForTypes)
-    {
+  {
     return;
-    }
+  }
   d->ShowHiddenForTypes = types;
   this->invalidateFilter();
 }
@@ -428,9 +428,9 @@ void qMRMLSortFilterProxyModel::setHiddenNodeIDs(const QStringList& nodeIDs)
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (nodeIDs == d->HiddenNodeIDs)
-    {
+  {
     return;
-    }
+  }
   d->HiddenNodeIDs = nodeIDs;
   this->invalidateFilter();
 }
@@ -447,9 +447,9 @@ void qMRMLSortFilterProxyModel::setVisibleNodeIDs(const QStringList& nodeIDs)
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (nodeIDs == d->VisibleNodeIDs)
-    {
+  {
     return;
-    }
+  }
   d->VisibleNodeIDs = nodeIDs;
   this->invalidateFilter();
 }
@@ -467,9 +467,9 @@ void qMRMLSortFilterProxyModel
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (nodeID == d->HideNodesUnaffiliatedWithNodeID)
-    {
+  {
     return;
-    }
+  }
   d->HideNodesUnaffiliatedWithNodeID = nodeID;
   this->invalidateFilter();
 }
@@ -487,9 +487,9 @@ void qMRMLSortFilterProxyModel
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (filterType == d->Filter)
-    {
+  {
     return;
-    }
+  }
   d->Filter = filterType;
   this->invalidateFilter();
 }
@@ -507,9 +507,9 @@ void qMRMLSortFilterProxyModel
 ::setShowAll(bool show)
 {
   if (show == this->showAll())
-    {
+  {
     return;
-    }
+  }
   this->setFilterType((show ? qMRMLSortFilterProxyModel::ShowAll :
                        (this->hideAll() ? qMRMLSortFilterProxyModel::HideAll :
                         qMRMLSortFilterProxyModel::UseFilters)));
@@ -527,9 +527,9 @@ void qMRMLSortFilterProxyModel
 ::setHideAll(bool hide)
 {
   if (hide == this->hideAll())
-    {
+  {
     return;
-    }
+  }
   this->setFilterType((hide ? qMRMLSortFilterProxyModel::HideAll :
                        (this->showAll() ? qMRMLSortFilterProxyModel:: ShowAll :
                         qMRMLSortFilterProxyModel::UseFilters)));

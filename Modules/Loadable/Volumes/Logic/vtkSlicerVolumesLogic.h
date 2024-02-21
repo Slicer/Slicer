@@ -71,7 +71,7 @@ public:
   typedef vtkSlicerVolumesLogic Self;
 
   struct VolumeDisplayPreset
-    {
+  {
     std::string id;
     std::string name;
     std::string description;
@@ -80,7 +80,7 @@ public:
     double level{0.0};
     std::string colorNodeID;
     bool valid{false};
-    };
+  };
   std::vector<VolumeDisplayPreset> VolumeDisplayPresets;
 
   /// Loading options, bitfield
@@ -130,14 +130,14 @@ public:
   /// bit 4: discard image orientation
   /// higher bits are reserved for future use
   vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions)
-    {
+  {
     return (this->AddArchetypeVolume( filename, volname, loadingOptions, nullptr));
-    }
+  }
   vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList);
   vtkMRMLVolumeNode* AddArchetypeVolume (const char *filename, const char* volname)
-    {
+  {
     return this->AddArchetypeVolume( filename, volname, 0, nullptr);
-    }
+  }
 
   /// Load a scalar volume function directly, bypassing checks of all factories done in AddArchetypeVolume.
   /// \sa AddArchetypeVolume(const NodeSetFactoryRegistry& volumeRegistry, const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList)

@@ -135,7 +135,7 @@ void qSlicerModelsModule::setup()
   vtkSlicerModelsLogic* modelsLogic =
     vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (qSlicerApplication::application())
-    {
+  {
     // Register IOs
     qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
     ioManager->registerIO(new qSlicerModelsReader(modelsLogic, this));
@@ -143,7 +143,7 @@ void qSlicerModelsModule::setup()
     ioManager->registerIO(new qSlicerNodeWriter(
       "Models", QString("ModelFile"),
       QStringList() << "vtkMRMLModelNode", true, this));
-    }
+  }
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyModelsPlugin());

@@ -60,29 +60,29 @@ class DraggableWidgetEventFilter : public QObject
 public:
   /// Set the widget that will become draggable.
   void setWidget(QWidget* w)
-    {
+  {
     this->Widget = w;
-    }
+  }
 protected:
   bool eventFilter(QObject* obj, QEvent* event) override
-    {
+  {
     if (event->type() == QEvent::MouseButtonPress && this->Widget)
-      {
+    {
       // Record the mouse press position for later reference during dragging.
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
       this->PressPosition = mouseEvent->pos();
       this->Dragging = true;
       return true; // do not process the event further
-      }
+    }
     else if (event->type() == QEvent::MouseMove && this->Dragging && this->Widget)
-      {
+    {
       // Move the widget
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
       this->Widget->move(this->Widget->pos() + mouseEvent->pos() - this->PressPosition);
       return true; // do not process the event further
-      }
+    }
     else if (event->type() == QEvent::MouseButtonRelease)
-      {
+    {
       // End the dragging process.
       this->Dragging = false;
       // Disable the WindowStaysOnTop hint to allow other windows to be shown above it.
@@ -90,17 +90,17 @@ protected:
       // as a result of changing the window hint, and during reparenting some events
       // might not arrive to the widget.
       if (this->DisableTopMost)
-        {
+      {
         this->DisableTopMost = false;
         this->Widget->setWindowFlags(this->Widget->windowFlags() & ~Qt::WindowStaysOnTopHint);
         // After removing the WindowStaysOnTopHint hint, we need to show the window again
         this->Widget->show();
-        }
-      return true; // do not process the event further
       }
+      return true; // do not process the event further
+    }
     // If the event is not one of the specified types, pass it to the base class.
     return QObject::eventFilter(obj, event);
-    }
+  }
 private:
   bool DisableTopMost{true};
   QWidget* Widget{nullptr};
@@ -115,9 +115,9 @@ void setEnableQtTesting()
 {
   if (qSlicerApplication::application()->commandOptions()->enableQtTesting() ||
       qSlicerApplication::application()->userSettings()->value("QtTesting/Enabled").toBool())
-    {
+  {
     QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
-    }
+  }
 }
 #endif
 
@@ -125,9 +125,9 @@ void setEnableQtTesting()
 void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& message)
 {
   if (splashScreen.isNull())
-    {
+  {
     return;
-    }
+  }
   splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter);
 }
 
@@ -153,9 +153,9 @@ int qSlicerApplicationHelper::postInitializeApplication(
 #endif
 
   if (app.style())
-    {
+  {
     app.installEventFilter(app.style());
-    }
+  }
 
 #ifdef Slicer_USE_QtTesting
   setEnableQtTesting(); // disabled the native menu bar.
@@ -170,18 +170,18 @@ int qSlicerApplicationHelper::postInitializeApplication(
 // See details at https://issues.slicer.org/view.php?id=4252
 #if defined(_WIN32)
   if (enableMainWindow && !app.testAttribute(qSlicerCoreApplication::AA_EnableTesting))
-    {
+  {
     // Warn the user if rendering requirements are not met and offer
     // exiting from the application.
     if (!qSlicerApplicationHelper::checkRenderingCapabilities())
-      {
+    {
       return 1;
-      }
     }
+  }
 #endif
 
   if (showSplashScreen)
-    {
+  {
     QPixmap pixmap(":/SplashScreen.png");
 
     // The application launcher shows the splash screen without DPI scaling (if the screen resolution is higher
@@ -189,54 +189,54 @@ int qSlicerApplicationHelper::postInitializeApplication(
     // To match this behavior, we set the same device pixel ratio in the pixmap as the window's device pixel ratio.
     QGuiApplication* guiApp = qobject_cast<QGuiApplication*>(&app);
     if (guiApp)
-      {
+    {
       pixmap.setDevicePixelRatio(guiApp->devicePixelRatio());
-      }
+    }
 
     splashScreen.reset(new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint));
     splashMessage(splashScreen, qSlicerApplication::tr("Initializing..."));
     splashScreen->show();
-    }
+  }
 
   DraggableWidgetEventFilter draggable;
   if (splashScreen)
-    {
+  {
     draggable.setWidget(splashScreen.get());
     splashScreen->installEventFilter(&draggable);
-    }
+  }
 
   qSlicerModuleManager * moduleManager = app.moduleManager();
   qSlicerModuleFactoryManager * moduleFactoryManager = moduleManager->factoryManager();
   QStringList additionalModulePaths;
   foreach(const QString& extensionOrModulePath, app.commandOptions()->additionalModulePaths())
-    {
+  {
     QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
     if (!modulePaths.empty())
-      {
+    {
       additionalModulePaths << modulePaths;
-      }
-    else
-      {
-      additionalModulePaths << extensionOrModulePath;
-      }
     }
+    else
+    {
+      additionalModulePaths << extensionOrModulePath;
+    }
+  }
   moduleFactoryManager->addSearchPaths(additionalModulePaths);
   qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
 
   // Set list of modules to ignore
   foreach(const QString& moduleToIgnore, app.commandOptions()->modulesToIgnore())
-    {
+  {
     moduleFactoryManager->addModuleToIgnore(moduleToIgnore);
-    }
+  }
 
   // Register and instantiate modules
   splashMessage(splashScreen, qSlicerApplication::tr("Registering modules..."));
   moduleFactoryManager->registerModules();
   if (app.commandOptions()->verboseModuleDiscovery())
-    {
+  {
     qDebug() << "Number of registered modules:"
              << moduleFactoryManager->registeredModuleNames().count();
-    }
+  }
 
   splashMessage(splashScreen, qSlicerApplication::tr("Instantiating modules..."));
   // Show the name of each module that is being instantiated to make it easier to see if a module
@@ -248,42 +248,42 @@ int qSlicerApplicationHelper::postInitializeApplication(
   QObject::disconnect(moduleAboutToBeInstantiatedConnection);
 
   if (splashScreen)
-    {
+  {
     splashScreen->removeEventFilter(&draggable);
-    }
+  }
 
   if (app.commandOptions()->verboseModuleDiscovery())
-    {
+  {
     qDebug() << "Number of instantiated modules:"
              << moduleFactoryManager->instantiatedModuleNames().count();
-    }
+  }
 
   QStringList failedToBeInstantiatedModuleNames = ctk::qSetToQStringList(
         ctk::qStringListToQSet(moduleFactoryManager->registeredModuleNames()) - ctk::qStringListToQSet(moduleFactoryManager->instantiatedModuleNames()));
   if (!failedToBeInstantiatedModuleNames.isEmpty())
-    {
+  {
     qCritical() << "The following modules failed to be instantiated:";
     foreach(const QString& moduleName, failedToBeInstantiatedModuleNames)
-      {
+    {
       qCritical().noquote() << "  " << moduleName;
-      }
     }
+  }
 
   // Exit if testing module is enabled and not all modules are instantiated
   if (!failedToBeInstantiatedModuleNames.isEmpty() && app.testAttribute(qSlicerCoreApplication::AA_EnableTesting))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   // Create main window
   splashMessage(splashScreen, qSlicerApplication::tr("Initializing user interface..."));
   if (enableMainWindow)
-    {
+  {
     window.reset(new SlicerMainWindowType);
-    }
+  }
   else if (app.commandOptions()->showPythonConsole()
     && !app.commandOptions()->runPythonAndExit())
-    {
+  {
     // there is no main window but we need to show Python console
 #ifdef Slicer_USE_PYTHONQT
     ctkPythonConsole* pythonConsole = app.pythonConsole();
@@ -293,40 +293,40 @@ int qSlicerApplicationHelper::postInitializeApplication(
     pythonConsole->activateWindow();
     pythonConsole->raise();
 #endif
-    }
+  }
 
   // Load all available modules
   foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
-    {
+  {
     Q_ASSERT(!name.isNull());
     splashMessage(splashScreen, qSlicerApplication::tr("Loading module \"%1\"...").arg(name));
     moduleFactoryManager->loadModule(name);
-    }
+  }
   if (app.commandOptions()->verboseModuleDiscovery())
-    {
+  {
     qDebug() << "Number of loaded modules:" << moduleManager->modulesNames().count();
-    }
+  }
 
   splashMessage(splashScreen, QString());
 
   if (window)
-    {
+  {
     QObject::connect(window.data(), SIGNAL(initialWindowShown()), &app, SIGNAL(startupCompleted()));
-    }
+  }
   else
-    {
+  {
     QTimer::singleShot(0, &app, SIGNAL(startupCompleted()));
-    }
+  }
 
   if (window)
-    {
+  {
     if (splashScreen)
-      {
+    {
       splashScreen->close();
-      }
+    }
     window->setHomeModuleCurrent();
     window->show();
-    }
+  }
 
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));

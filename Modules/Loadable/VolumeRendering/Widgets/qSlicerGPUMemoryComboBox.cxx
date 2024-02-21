@@ -94,37 +94,37 @@ void qSlicerGPUMemoryComboBoxPrivate::init()
   // Detect the amount of memory in the graphic card and set it as default
   int gpuMemoryInMB = q->totalGPUMemoryInMB();
   if (gpuMemoryInMB > 0)
-    {
+  {
     q->setCurrentGPUMemory(gpuMemoryInMB);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 double qSlicerGPUMemoryComboBoxPrivate::memoryFromString(const QString& memory)const
 {
   if (memory == this->DefaultText)
-    {
+  {
     return 0.0;
-    }
+  }
 
   int pos = this->MemoryRegExp.indexIn(memory);
   if (pos < 0)
-    {
+  {
     return 0.0;
-    }
+  }
 
   QString memoryValue = this->MemoryRegExp.cap(1);
   double value = memoryValue.toDouble();
   QString memoryUnit = this->MemoryRegExp.cap(2);
 
   if (memoryUnit == "%")
-    {
+  {
     return value / 100.0;
-    }
+  }
   else if (memoryUnit == "GB")
-    {
+  {
     return value * 1024.0;
-    }
+  }
   return value;
 }
 
@@ -132,17 +132,17 @@ double qSlicerGPUMemoryComboBoxPrivate::memoryFromString(const QString& memory)c
 QString qSlicerGPUMemoryComboBoxPrivate::memoryToString(double memory)const
 {
   if (memory == 0.0)
-    {
+  {
     return this->DefaultText;
-    }
+  }
   if (memory < 1.0)
-    {
+  {
     return QString::number(static_cast<int>(memory * 100)) + " %";
-    }
+  }
   if (memory > 1024.0)
-    {
+  {
     return QString::number(static_cast<float>(memory) / 1024) + " GB";
-    }
+  }
   return QString::number(static_cast<int>(memory)) + " MB";
 }
 
@@ -170,12 +170,12 @@ int qSlicerGPUMemoryComboBox::totalGPUMemoryInMB()const
   gpuInfoList->Probe();
 
   if (gpuInfoList->GetNumberOfGPUs() > 0)
-    {
+  {
     int gpuMemoryInBytes = gpuInfoList->GetGPUInfo(0)->GetDedicatedVideoMemory();
     int gpuMemoryInKB = gpuMemoryInBytes / 1024;
     int gpuMemoryInMB = gpuMemoryInKB / 1024;
     return gpuMemoryInMB;
-    }
+  }
 
   return 0;
 }
@@ -196,19 +196,19 @@ int qSlicerGPUMemoryComboBox::currentGPUMemoryInMB()const
 
   QString memoryString = this->currentText();
   if (memoryString == d->DefaultText)
-    {
+  {
     return 0;
-    }
+  }
   double memory = d->memoryFromString(memoryString);
   if (memory < 1.0)
-    {
+  {
     int gpuMemoryInMB = this->totalGPUMemoryInMB();
     if (gpuMemoryInMB == 0)
-      {
+    {
       return 0;
-      }
-    return static_cast<int>(memory * gpuMemoryInMB);
     }
+    return static_cast<int>(memory * gpuMemoryInMB);
+  }
   return static_cast<int>(memory);
 }
 
@@ -232,10 +232,10 @@ void qSlicerGPUMemoryComboBox::setCurrentGPUMemoryFromString(const QString& memo
 {
   int index = this->findText(memoryString);
   if (index == -1)
-    {
+  {
     int customIndex = 0;
     this->setItemText(customIndex, memoryString);
     index = customIndex;
-    }
+  }
   this->setCurrentIndex(index);
 }

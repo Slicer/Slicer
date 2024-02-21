@@ -117,7 +117,7 @@ void qMRMLVolumeWidgetPrivate::updateSingleStep(double min, double max)
   double minRangeSliderMinimumStep = 0.0;
   double maxRangeSliderMinimumStep = 0.0;
   if (order == std::numeric_limits<int>::min())
-    {
+  {
     // the order of magnitude can't be computed (e.g. 0, inf, Nan, denorm)...
     order = -2;
     // Use the same minimum step as in ctkDoubleRangeSlider::isValidStep
@@ -125,7 +125,7 @@ void qMRMLVolumeWidgetPrivate::updateSingleStep(double min, double max)
       std::numeric_limits<double>::epsilon());
     maxRangeSliderMinimumStep = qMax(this->MaxRangeSpinBox->maximum() / std::numeric_limits<double>::max(),
       std::numeric_limits<double>::epsilon());
-    }
+  }
 
   int ratio = 2;
   double singleStep = pow(10., order - ratio);
@@ -196,9 +196,9 @@ void qMRMLVolumeWidget
 {
   Q_D(qMRMLVolumeWidget);
   if (d->VolumeDisplayNode == node)
-    {
+  {
     return;
-    }
+  }
 
   // each time the node is modified, the qt widgets are updated
   this->qvtkReconnect(d->VolumeDisplayNode, node, vtkCommand::ModifiedEvent,
@@ -220,9 +220,9 @@ void qMRMLVolumeWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
   Q_D(qMRMLVolumeWidget);
   if (volumeNode == d->VolumeNode)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(d->VolumeNode, volumeNode, vtkCommand::ModifiedEvent,
                       this, SLOT(updateWidgetFromMRMLVolumeNode()));
@@ -267,12 +267,12 @@ void qMRMLVolumeWidget::updateWidgetFromMRMLDisplayNode()
   Q_D(qMRMLVolumeWidget);
   this->setEnabled(d->VolumeDisplayNode != nullptr && d->VolumeNode != nullptr);
   if (d->VolumeDisplayNode && d->VolumeDisplayNode->GetInputImageData())
-    {
+  {
     d->VolumeDisplayNode->GetDisplayScalarRange(d->DisplayScalarRange);
-    }
+  }
   else
-    {
+  {
     d->DisplayScalarRange[0] = 0.;
     d->DisplayScalarRange[1] = 0.;
-    }
+  }
 }

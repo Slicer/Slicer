@@ -109,9 +109,9 @@ void qMRMLROIWidget::onMRMLNodeModified()
 {
   Q_D(qMRMLROIWidget);
   if (!d->ROINode)
-    {
+  {
     return;
-    }
+  }
   // Visibility
   d->DisplayClippingBoxButton->setChecked(d->ROINode->GetVisibility());
 
@@ -127,10 +127,10 @@ void qMRMLROIWidget::onMRMLNodeModified()
   double *rxyz = d->ROINode->GetRadiusXYZ();
   double bounds[6];
   for (int i=0; i < 3; ++i)
-    {
+  {
     bounds[i]   = xyz[i]-rxyz[i];
     bounds[3+i] = xyz[i]+rxyz[i];
-    }
+  }
   d->LRRangeWidget->setValues(bounds[0], bounds[3]);
   d->PARangeWidget->setValues(bounds[1], bounds[4]);
   d->ISRangeWidget->setValues(bounds[2], bounds[5]);

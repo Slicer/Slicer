@@ -63,16 +63,16 @@ int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
   std::vector< vtkMRMLNode* > nodes;
   scene->GetNodesByClass("vtkMRMLColorNode", nodes);
   for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
-    {
+  {
     colorsWidget->setCurrentColorNode(*nodeIt);
-    }
+  }
 
   // colorsWidget->show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, qApp, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

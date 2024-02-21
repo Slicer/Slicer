@@ -89,9 +89,9 @@ bool testDTIPipeline()
   tensors->SetNumberOfComponents(9);
   tensors->SetNumberOfTuples(2*2*2);
   for (int i = 0; i < 2*2*2;++i)
-    {
+  {
     tensors->SetTuple9(i,1.,0.,0.,0.,1.,0.,0.,0.,1.);
-    }
+  }
   imageData->GetPointData()->SetTensors(tensors.GetPointer());
 
   vtkNew<vtkTrivialProducer> tp;
@@ -108,7 +108,7 @@ bool testDTIPipeline()
   tensorsToScalars->SetInputConnection(tp->GetOutputPort());
   bool verbose = false;
   if (verbose)
-    {
+  {
     tensorsToScalars->Update();
     vtkImageData* output = vtkImageData::SafeDownCast(tensorsToScalars->GetOutputDataObject(0));
     std::cout << "Output: " << output << std::endl;
@@ -117,7 +117,7 @@ bool testDTIPipeline()
     std::cout << "Tensors: " << output->GetPointData()->GetTensors() << std::endl;
     std::cout << "Scalar type: " << output->GetScalarType() << std::endl;
     std::cout << "Input scalar type: " << imageData->GetScalarType() << std::endl;
-    }
+  }
 
   vtkNew<vtkImageReslice> reslicer;
   reslicer->GenerateStencilOutputOn();

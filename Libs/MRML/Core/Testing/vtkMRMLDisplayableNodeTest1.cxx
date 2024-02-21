@@ -35,29 +35,29 @@ public:
   // Return the raw list of display nodes. Elements can be 0 even if the node
   // associated to the node ID exists in the scene.
   const std::vector<vtkMRMLDisplayNode*> GetInternalDisplayNodes()
-    {
+  {
     std::vector<vtkMRMLDisplayNode*> InternalDisplayNodes;
     int ndnodes = this->GetNumberOfDisplayNodes();
     for (int i=0; i<ndnodes; i++)
-      {
+    {
       InternalDisplayNodes.push_back(this->GetNthDisplayNode(i));
-      }
+    }
     return InternalDisplayNodes;
-    }
+  }
   vtkMRMLNode* CreateNodeInstance() override
-    {
+  {
     return vtkMRMLDisplayableNodeTestHelper1::New();
-    }
+  }
   const char* GetNodeTagName() override
-    {
+  {
     return "vtkMRMLDisplayableNodeTestHelper1";
-    }
+  }
 
   vtkMRMLStorageNode* CreateDefaultStorageNode() override
-    {
+  {
     // just some random storage node to pass the storage node test of basic MRML node tests
     return vtkMRMLStorageNode::SafeDownCast(vtkMRMLModelStorageNode::New());
-    }
+  }
 };
 vtkStandardNewMacro(vtkMRMLDisplayableNodeTestHelper1);
 
@@ -71,13 +71,13 @@ public:
   vtkTypeMacro(vtkMRMLDisplayNodeTestHelper, vtkMRMLDisplayNode);
 
   vtkMRMLNode* CreateNodeInstance() override
-    {
+  {
     return vtkMRMLDisplayNodeTestHelper::New();
-    }
+  }
   const char* GetNodeTagName() override
-    {
+  {
     return "vtkMRMLDisplayNodeTestHelper";
-    }
+  }
 
 };
 vtkStandardNewMacro(vtkMRMLDisplayNodeTestHelper);

@@ -72,16 +72,16 @@ void qSlicerTerminologySelectorButtonPrivate::computeIcon()
 
   QColor iconColor;
   if (this->TerminologyInfo.Color.isValid())
-    {
+  {
     // If custom color was chosen then use that
     iconColor = this->TerminologyInfo.Color;
-    }
+  }
   else
-    {
+  {
     // If recommended color is used then show that
     iconColor = qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(
       this->TerminologyInfo.GetTerminologyEntry() );
-    }
+  }
 
   int _iconSize = q->style()->pixelMetric(QStyle::PM_SmallIconSize);
   QPixmap pix(_iconSize, _iconSize);
@@ -111,25 +111,25 @@ void qSlicerTerminologySelectorButton::changeTerminology()
 {
   Q_D(qSlicerTerminologySelectorButton);
   if (qSlicerTerminologySelectorDialog::getTerminology(d->TerminologyInfo, this))
-    {
+  {
     d->computeIcon();
     this->update();
     emit terminologyChanged();
-    }
+  }
   else
-    {
+  {
     emit canceled();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorButton::onToggled(bool change)
 {
   if (change)
-    {
+  {
     this->changeTerminology();
     this->setChecked(false);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

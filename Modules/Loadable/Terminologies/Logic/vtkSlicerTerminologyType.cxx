@@ -89,9 +89,9 @@ void vtkSlicerTerminologyType::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerTerminologyType::Copy(vtkCodedEntry* aType)
 {
   if (!aType)
-    {
+  {
     return;
-    }
+  }
 
   this->Superclass::Copy(aType);
 

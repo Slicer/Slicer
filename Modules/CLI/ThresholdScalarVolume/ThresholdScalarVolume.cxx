@@ -70,20 +70,20 @@ int DoIt( int argc, char * argv[] )
   filter->SetOutsideValue(OutsideValue);
 
   if( ThresholdType == std::string("Outside") )
-    {
+  {
     filter->ThresholdOutside(Lower, Upper);
-    }
+  }
   else if( ThresholdType == std::string("Below") )
-    {
+  {
     filter->ThresholdBelow(ThresholdValue);
-    }
+  }
   else if( ThresholdType == std::string("Above") )
-    {
+  {
     filter->ThresholdAbove(ThresholdValue);
-    }
+  }
 
   if( Negate )
-    {
+  {
     InputPixelType outsideValue =
       (filter->GetLower() != itk::NumericTraits< InputPixelType >::NonpositiveMin()) ?
       filter->GetLower() - 1 : filter->GetUpper() + 1;
@@ -108,7 +108,7 @@ int DoIt( int argc, char * argv[] )
     negateFilter->SetInput(1, changeFilter->GetOutput()); // filter is the mask
     negateFilter->SetOutsideValue(OutsideValue);
     negateFilter->Update();
-    }
+  }
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
                                        "Write Volume",
@@ -132,11 +132,11 @@ int main( int argc, char * argv[] )
   itk::ImageIOBase::IOComponentType componentType;
 
   try
-    {
+  {
     itk::GetImageType(InputVolume, pixelType, componentType);
 
     switch( componentType )
-      {
+    {
       case itk::ImageIOBase::UCHAR:
         return DoIt<unsigned char>( argc, argv );
         break;
@@ -171,14 +171,14 @@ int main( int argc, char * argv[] )
       default:
         std::cout << "unknown component type" << std::endl;
         break;
-      }
     }
+  }
 
   catch( itk::ExceptionObject & excep )
-    {
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

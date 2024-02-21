@@ -84,10 +84,10 @@ void qMRMLMarkupsTestLineWidget::updateWidgetFromMRML()
   Q_D(qMRMLMarkupsTestLineWidget);
 
   if (!this->canManageMRMLMarkupsNode(d->MarkupsTestLineNode))
-    {
+  {
     d->lineTestCollapsibleButton->setVisible(false);
     return;
-    }
+  }
 
   d->lineTestCollapsibleButton->setVisible(true);
 }
@@ -100,9 +100,9 @@ bool qMRMLMarkupsTestLineWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *ma
 
   vtkMRMLMarkupsTestLineNode* testLineNode= vtkMRMLMarkupsTestLineNode::SafeDownCast(markupsNode);
   if (!testLineNode)
-    {
+  {
     return false;
-    }
+  }
 
   return true;
 }

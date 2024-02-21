@@ -124,22 +124,22 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "scalarMode"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->ScalarMode;
-      }
+    }
     else if (!strcmp(attName, "glyphMode"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->GlyphMode;
-      }
     }
+  }
 
   this->EndModify(disabledModify);
 
@@ -152,9 +152,9 @@ void vtkMRMLVectorVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
   Superclass::CopyContent(anode, deepCopy);
   vtkMRMLVectorVolumeDisplayNode *node = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
   this->SetScalarMode(node->ScalarMode);
   this->SetGlyphMode(node->GlyphMode);
 }

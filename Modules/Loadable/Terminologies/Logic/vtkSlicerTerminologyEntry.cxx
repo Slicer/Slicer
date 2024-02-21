@@ -82,70 +82,70 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "CategoryObject: ";
   if (this->CategoryObject)
-    {
+  {
     this->CategoryObject->PrintSelf(os, indent.GetNextIndent());
-    }
+  }
   else
-    {
+  {
     os << indent.GetNextIndent() << "NULL\n";
-    }
+  }
   os << indent << "TypeObject: ";
   if (this->TypeObject)
-    {
+  {
     this->TypeObject->PrintSelf(os, indent.GetNextIndent());
-    }
+  }
   else
-    {
+  {
     os << indent.GetNextIndent() << "NULL\n";
-    }
+  }
   os << indent << "TypeModifierObject: ";
   if (this->TypeModifierObject)
-    {
+  {
     this->TypeModifierObject->PrintSelf(os, indent.GetNextIndent());
-    }
+  }
   else
-    {
+  {
     os << indent.GetNextIndent() << "NULL\n";
-    }
+  }
 
   os << indent << "AnatomicContextName:   " << (this->AnatomicContextName?this->AnatomicContextName:"NULL") << "\n";
   os << indent << "AnatomicRegionObject: ";
   if (this->AnatomicRegionObject)
-    {
+  {
     this->AnatomicRegionObject->PrintSelf(os, indent.GetNextIndent());
-    }
+  }
   else
-    {
+  {
     os << indent.GetNextIndent() << "NULL\n";
-    }
+  }
   os << indent << "AnatomicRegionModifierObject: ";
   if (this->AnatomicRegionModifierObject)
-    {
+  {
     this->AnatomicRegionModifierObject->PrintSelf(os, indent.GetNextIndent());
-    }
+  }
   else
-    {
+  {
     os << indent.GetNextIndent() << "NULL\n";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerTerminologyEntry::Copy(vtkSlicerTerminologyEntry* aEntry)
 {
   if (!aEntry)
-    {
+  {
     return;
-    }
+  }
 
   if (!aEntry->GetCategoryObject() || !aEntry->GetTypeObject() || !aEntry->GetTypeModifierObject()
     || !aEntry->GetAnatomicRegionObject() || !aEntry->GetAnatomicRegionModifierObject() )
-    {
+  {
     vtkErrorMacro("Copy: Invalid terminology entry given");
     // Invalidate whole terminology entry
     this->SetTerminologyContextName(nullptr);
     this->SetAnatomicContextName(nullptr);
     return;
-    }
+  }
 
   this->SetTerminologyContextName(aEntry->GetTerminologyContextName());
 

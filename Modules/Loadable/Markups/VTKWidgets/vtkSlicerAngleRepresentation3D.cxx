@@ -97,9 +97,9 @@ bool vtkSlicerAngleRepresentation3D::GetTransformationReferencePoint(double refe
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) < 2)
-    {
+  {
     return false;
-    }
+  }
   markupsNode->GetNthControlPointPositionWorld(1, referencePointWorld);
   return true;
 }
@@ -109,10 +109,10 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
 {
   vtkMRMLMarkupsAngleNode* markupsNode = vtkMRMLMarkupsAngleNode::SafeDownCast(this->GetMarkupsNode());
   if (!markupsNode || markupsNode->GetNumberOfDefinedControlPoints(true) != 3)
-    {
+  {
     this->TextActor->SetVisibility(false);
     return;
-    }
+  }
 
   double angle = markupsNode->GetAngleDegrees();
   bool longArc = (angle > 180.0 || angle < 0.0) && (markupsNode->GetAngleMeasurementMode() == vtkMRMLMarkupsAngleNode::OrientedPositive);
@@ -132,9 +132,9 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
       ((fabs(p2[0] - c[0]) < 0.001) &&
        (fabs(p2[1] - c[1]) < 0.001) &&
        (fabs(p2[2] - c[2]) < 0.001)))
-    {
+  {
     return;
-    }
+  }
 
   double vector1[3] = { p1[0] - c[0], p1[1] - c[1], p1[2] - c[2] };
   double vector2[3] = { p2[0] - c[0], p2[1] - c[1], p2[2] - c[2] };
@@ -146,14 +146,14 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
   double anglePlacementRatio = 0.5;
   double angleTextPlacementRatio = 0.7;
   if (markupsNode->GetAngleMeasurementMode() == vtkMRMLMarkupsAngleNode::OrientedPositive)
-    {
+  {
     // Reduce arc size if angle>180deg (it just takes too much space).
     // arcLengthAdjustmentFactor is a sigmoid function that is 1.0 for angle<180 and 0.5 for angle>180,
     // with a smooth transition.
     double arcLengthAdjustmentFactor = 0.5 + 0.5 / (1+exp((angle-180.0)*0.1));
     anglePlacementRatio *= arcLengthAdjustmentFactor;
     angleTextPlacementRatio *= arcLengthAdjustmentFactor;
-    }
+  }
   const double lArc = length * anglePlacementRatio;
   const double lText = length * angleTextPlacementRatio;
   double arcp1[3] = { lArc * vector1[0] + c[0],
@@ -189,10 +189,10 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || !this->IsDisplayable())
-    {
+  {
     this->VisibilityOff();
     return;
-    }
+  }
 
   this->VisibilityOn();
 
@@ -218,9 +218,9 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
-    {
+  {
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
-    }
+  }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->ArcActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
@@ -253,21 +253,21 @@ int vtkSlicerAngleRepresentation3D::RenderOverlay(vtkViewport *viewport)
   int count=0;
   count = this->Superclass::RenderOverlay(viewport);
   if (this->LineActor->GetVisibility())
-    {
+  {
     count +=  this->LineActor->RenderOverlay(viewport);
-    }
+  }
   if (this->ArcActor->GetVisibility())
-    {
+  {
     count +=  this->ArcActor->RenderOverlay(viewport);
-    }
+  }
   if (this->ArcOccludedActor->GetVisibility())
-    {
+  {
     count +=  this->ArcOccludedActor->RenderOverlay(viewport);
-    }
+  }
   if (this->LineOccludedActor->GetVisibility())
-    {
+  {
     count +=  this->LineOccludedActor->RenderOverlay(viewport);
-    }
+  }
   return count;
 }
 
@@ -280,23 +280,23 @@ int vtkSlicerAngleRepresentation3D::RenderOpaqueGeometry(
   double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
     this->MarkupsDisplayNode->GetLineDiameter() : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
   if (this->LineActor->GetVisibility())
-    {
+  {
     this->TubeFilter->SetRadius(diameter * 0.5);
     count += this->LineActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   if (this->ArcActor->GetVisibility())
-    {
+  {
     this->ArcTubeFilter->SetRadius(diameter * 0.5);
     count += this->ArcActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   if (this->LineOccludedActor->GetVisibility())
-    {
+  {
     count += this->LineOccludedActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   if (this->ArcOccludedActor->GetVisibility())
-    {
+  {
     count += this->ArcOccludedActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   return count;
 }
 
@@ -307,33 +307,33 @@ int vtkSlicerAngleRepresentation3D::RenderTranslucentPolygonalGeometry(
   int count=0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
-    {
+  {
     // The internal actor needs to share property keys.
     // This ensures the mapper state is consistent and allows depth peeling to work as expected.
     this->LineActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   if (this->ArcActor->GetVisibility())
-    {
+  {
     // The internal actor needs to share property keys.
     // This ensures the mapper state is consistent and allows depth peeling to work as expected.
     this->ArcActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->ArcActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   if (this->LineOccludedActor->GetVisibility())
-    {
+  {
     // The internal actor needs to share property keys.
     // This ensures the mapper state is consistent and allows depth peeling to work as expected.
     this->LineOccludedActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->LineOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   if (this->ArcOccludedActor->GetVisibility())
-    {
+  {
     // The internal actor needs to share property keys.
     // This ensures the mapper state is consistent and allows depth peeling to work as expected.
     this->ArcOccludedActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->ArcOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   return count;
 }
 
@@ -341,25 +341,25 @@ int vtkSlicerAngleRepresentation3D::RenderTranslucentPolygonalGeometry(
 vtkTypeBool vtkSlicerAngleRepresentation3D::HasTranslucentPolygonalGeometry()
 {
   if (this->Superclass::HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->ArcActor->GetVisibility() && this->ArcActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->LineOccludedActor->GetVisibility() && this->LineOccludedActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->ArcOccludedActor->GetVisibility() && this->ArcOccludedActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   return false;
 }
 
@@ -382,14 +382,14 @@ void vtkSlicerAngleRepresentation3D::CanInteract(
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
     || !interactionEventData )
-    {
+  {
     return;
-    }
+  }
   Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-    {
+  {
     return;
-    }
+  }
 
   this->CanInteractWithLine(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
 }
@@ -402,20 +402,20 @@ void vtkSlicerAngleRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   if (this->LineActor)
-    {
+  {
     os << indent << "Line Visibility: " << this->LineActor->GetVisibility() << "\n";
-    }
+  }
   else
-    {
+  {
     os << indent << "Line Visibility: (none)\n";
-    }
+  }
 
   if (this->ArcActor)
-    {
+  {
     os << indent << "Arc Visibility: " << this->ArcActor->GetVisibility() << "\n";
-    }
+  }
   else
-    {
+  {
     os << indent << "Arc Visibility: (none)\n";
-    }
+  }
 }

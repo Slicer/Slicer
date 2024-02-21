@@ -77,15 +77,15 @@ public:
 
   /// Widget states
   enum
-    {
+  {
     WidgetStateMoveCrosshair = WidgetStateUser, ///< Move crosshair position, can be used for moving the crosshair with click-and-drag.
     WidgetStateSpin,
     WidgetStateTouchGesture
-    };
+  };
 
   /// Widget events
   enum
-    {
+  {
     WidgetEventSpinStart = WidgetEventUser,
     WidgetEventSpinEnd,
 
@@ -137,7 +137,7 @@ public:
     WidgetEventSetCrosshairPosition,
     WidgetEventSetCrosshairPositionBackground, //< set crosshair position without consuming the event (so that other widgets can process the event)
     WidgetEventMaximizeView,
-    };
+  };
 
   /// Defines speed of rotation actions by mouse click-and-drag.
   vtkGetMacro(MotionFactor, double);

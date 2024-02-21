@@ -118,13 +118,13 @@ vtkMRMLColorNode* qMRMLColorListView::mrmlColorNode()const
 void qMRMLColorListView::setShowOnlyNamedColors(bool enable)
 {
   if (enable)
-    {
+  {
     this->sortFilterProxyModel()->setFilterRegExp(QRegExp("^(?!\\(none\\))"));
-    }
+  }
   else
-    {
+  {
     this->sortFilterProxyModel()->setFilterRegExp(QRegExp());
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ bool qMRMLColorListView::showOnlyNamedColors()const
 void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModelIndex &previous)
 {
   if (current.isValid())
-    {
+  {
     QModelIndex colorIndex = this->sortFilterProxyModel()->mapToSource(current);
     int colorEntry = this->colorModel()->colorFromIndex(colorIndex);
     emit this->colorSelected(colorEntry);
@@ -145,6 +145,6 @@ void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModel
     emit this->colorSelected(color);
     QString name = this->colorModel()->nameFromColor(colorEntry);
     emit this->colorSelected(name);
-    }
+  }
   this->QListView::currentChanged(current, previous);
 }

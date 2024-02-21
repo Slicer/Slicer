@@ -36,12 +36,12 @@ class qSlicerBaseQTBasePythonQtDecorators : public QObject
 public:
 
   qSlicerBaseQTBasePythonQtDecorators()
-    {
+  {
     PythonQt::self()->registerClass(&qSlicerCoreApplication::staticMetaObject);
     PythonQt::self()->registerClass(&qSlicerAbstractCoreModule::staticMetaObject);
     PythonQt::self()->registerCPPClass("qSlicerUtils", nullptr, "qSlicerBaseQTCore");
     // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
-    }
+  }
 
 public slots:
 
@@ -53,24 +53,24 @@ public slots:
 
   //----------------------------------------------------------------------------
   bool static_qSlicerCoreApplication_testingEnabled()
-    {
+{
     return qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
-    }
+}
 
   //----------------------------------------------------------------------------
   // instance methods
 
   //----------------------------------------------------------------------------
   void sendEvent(qSlicerCoreApplication* app, QObject* _receiver, QEvent* _event)
-    {
+  {
     app->sendEvent(_receiver, _event);
-    }
+  }
 
   //----------------------------------------------------------------------------
   void processEvents(qSlicerCoreApplication* app)
-    {
+  {
     app->processEvents();
-    }
+  }
 
   //----------------------------------------------------------------------------
   // qSlicerUtils

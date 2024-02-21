@@ -165,24 +165,24 @@ bool qSlicerCLIProgressBarPrivate
 ::isVisible(qSlicerCLIProgressBar::Visibility visibility)const
 {
   if (visibility == qSlicerCLIProgressBar::AlwaysHidden)
-    {
+  {
     return false;
-    }
+  }
   if (visibility == qSlicerCLIProgressBar::AlwaysVisible)
-    {
+  {
     return true;
-    }
+  }
   if (visibility == qSlicerCLIProgressBar::HiddenWhenIdle)
-    {
+  {
     return this->CommandLineModuleNode ? this->CommandLineModuleNode->IsBusy() : false;
-    }
+  }
   if (visibility == qSlicerCLIProgressBar::VisibleAfterCompletion)
-    {
+  {
     return this->CommandLineModuleNode ?
       (this->CommandLineModuleNode->IsBusy() ||
        this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::Completed ||
        this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors) : false;
-    }
+  }
   return true;
 }
 
@@ -190,31 +190,31 @@ bool qSlicerCLIProgressBarPrivate
 QString qSlicerCLIProgressBarPrivate::getLastNLines(const std::string& str, int numberOfLines, unsigned int maxLength)
 {
   if (numberOfLines < 1 || str.size() < 1)
-    {
+  {
     return QString();
-    }
+  }
   const char lineSeparator = '\n';
   size_t linesStartPosition = str.size() - 1;
   for (int line = 0; line <= numberOfLines; ++line)
-    {
+  {
     linesStartPosition = str.find_last_of(lineSeparator, linesStartPosition - 1);
     if (linesStartPosition == std::string::npos || linesStartPosition == 0)
-      {
+    {
       // we need the full string
       if (str.size() <= maxLength)
-        {
+      {
         return QString::fromStdString(str);
-        }
+      }
       else
-        {
+      {
         return QStringLiteral("...") + QString::fromStdString(str.substr(str.size() - maxLength, maxLength)).trimmed();
-        }
       }
     }
+  }
   if (str.size() - linesStartPosition > maxLength)
-    {
+  {
     linesStartPosition = str.size() - maxLength;
-    }
+  }
   return QStringLiteral("...") + QString::fromStdString(str.substr(linesStartPosition + 1, str.size() - linesStartPosition)).trimmed();
 }
 
@@ -252,9 +252,9 @@ void qSlicerCLIProgressBar::setNameVisibility(qSlicerCLIProgressBar::Visibility 
 {
   Q_D(qSlicerCLIProgressBar);
   if (visibility == d->NameVisibility)
-    {
+  {
     return;
-    }
+  }
 
   d->NameVisibility = visibility;
   this->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
@@ -272,9 +272,9 @@ void qSlicerCLIProgressBar::setStatusVisibility(qSlicerCLIProgressBar::Visibilit
 {
   Q_D(qSlicerCLIProgressBar);
   if (visibility == d->StatusVisibility)
-    {
+  {
     return;
-    }
+  }
 
   d->StatusVisibility = visibility;
   this->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
@@ -292,9 +292,9 @@ void qSlicerCLIProgressBar::setProgressVisibility(qSlicerCLIProgressBar::Visibil
 {
   Q_D(qSlicerCLIProgressBar);
   if (visibility == d->ProgressVisibility)
-    {
+  {
     return;
-    }
+  }
 
   d->ProgressVisibility = visibility;
   this->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
@@ -306,9 +306,9 @@ void qSlicerCLIProgressBar::setCommandLineModuleNode(
 {
   Q_D(qSlicerCLIProgressBar);
   if (commandLineModuleNode == d->CommandLineModuleNode)
-    {
+  {
     return;
-    }
+  }
 
   // Connect node modified event to updateUi that synchronize the values of the
   // nodes with the Ui
@@ -317,23 +317,23 @@ void qSlicerCLIProgressBar::setCommandLineModuleNode(
     this, SLOT(updateUiFromCommandLineModuleNode(vtkObject*)));
 
   if (d->CommandLineModuleNode)
-    {
+  {
     // UpdateOutputTextDuringExecution was enabled because the details button was open
     if (d->DetailsTextExpandButton->isChecked())
-      {
+    {
       d->CommandLineModuleNode->EndContinuousOutputUpdate();
-      }
     }
+  }
 
   d->CommandLineModuleNode = commandLineModuleNode;
 
   if (d->CommandLineModuleNode)
-    {
+  {
       if (d->DetailsTextExpandButton->isChecked())
       {
       d->CommandLineModuleNode->StartContinuousOutputUpdate();
       }
-    }
+  }
 
   this->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
 }
@@ -354,14 +354,14 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
   d->StageProgressBar->setVisible(d->isVisible(d->StageProgressVisibility));
 
   if (!node)
-    {
+  {
     d->StatusLabel->setText("");
     d->ProgressBar->setMaximum(0);
     d->StageProgressBar->setMaximum(0);
     d->DetailsTextBrowser->setVisible(d->DetailsTextExpandButton->isChecked());
     d->DetailsLastUpdateTime.invalidate();
     return;
-    }
+  }
 
   // Update progress
   d->StatusLabel->setText(QString::fromStdString(node->GetDisplayableStatusString()));
@@ -371,7 +371,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
   ModuleProcessInformation* info = node->GetModuleDescription().GetProcessInformation();
   QString statusLabelFormat = tr("%1 (%2s)");
   switch (node->GetStatus())
-    {
+  {
     case vtkMRMLCommandLineModuleNode::Cancelled:
       d->ProgressBar->setMaximum(0);
       break;
@@ -382,9 +382,9 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
       d->ProgressBar->setMaximum(info->Progress != 0.0 ? 100 : 0);
       d->ProgressBar->setValue(info->Progress * 100.);
       if (info->ElapsedTime != 0.)
-        {
+      {
         d->StatusLabel->setText(statusLabelFormat.arg(QString::fromStdString(node->GetDisplayableStatusString())).arg(info->ElapsedTime, 0, 'f', 1));
-        }
+      }
       // We keep StageProgressBar maximum at 100, because if it was set to 0
       // then the progress message would not be displayed.
       d->StageProgressBar->setMaximum(100);
@@ -394,16 +394,16 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
     case vtkMRMLCommandLineModuleNode::Completed:
     case vtkMRMLCommandLineModuleNode::CompletedWithErrors:
       if (info->ElapsedTime != 0.)
-        {
+      {
         d->StatusLabel->setText(statusLabelFormat.arg(QString::fromStdString(node->GetDisplayableStatusString())).arg(info->ElapsedTime, 0, 'f', 1));
-        }
+      }
       d->ProgressBar->setMaximum(100);
       d->ProgressBar->setValue(100);
       break;
     default:
     case vtkMRMLCommandLineModuleNode::Idle:
       break;
-    }
+  }
 
   // If user chose to show details then all
   std::string errorText = node->GetErrorText();
@@ -422,14 +422,14 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
       (!d->DetailsLastUpdateTime.isValid() || d->DetailsLastUpdateTime.elapsed() > minRefreshTimeMsec));
 
   if (showDetails && updateDetails)
-    {
+  {
     std::string outputText;
     int maxNumberOfLinesShown = 5;
     if (d->DetailsTextExpandButton->isChecked())
-      {
+    {
       outputText = node->GetOutputText();
       maxNumberOfLinesShown = 15;
-      }
+    }
     // Limit number of text lines shown (more shown if user clicked to show more details)
     int lineSpacing = QFontMetrics(d->DetailsTextBrowser->document()->defaultFont()).lineSpacing();
     d->DetailsTextBrowser->setMinimumHeight(lineSpacing * maxNumberOfLinesShown);
@@ -438,45 +438,45 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
     QString detailsText;
     detailsText = "<pre>";
     if (!outputText.empty())
-      {
+    {
       if (node->GetStatus() == vtkMRMLCommandLineModuleNode::Running)
-        {
+      {
         // Limit output text while running, to reduce time spent with updating the GUI and reduce need for scrolling.
         detailsText += d->getLastNLines(node->GetOutputText(), 30).toHtmlEscaped();
-        }
+      }
       else
-        {
+      {
         detailsText += QString::fromStdString(node->GetOutputText()).toHtmlEscaped();
-        }
       }
+    }
     if (!errorText.empty() && !outputText.empty())
-      {
+    {
       detailsText += "<hr/>";
-      }
+    }
     if (!errorText.empty())
-      {
+    {
       detailsText += "<span style = \"color:#FF0000;\">";
       if (node->GetStatus() == vtkMRMLCommandLineModuleNode::Running)
-        {
+      {
         // Limit output text while running, to reduce time spent with updating the GUI and reduce need for scrolling.
         detailsText += d->getLastNLines(errorText, 10).toHtmlEscaped();
-        }
-      else
-        {
-        detailsText += QString::fromStdString(errorText).toHtmlEscaped();
-        }
-      detailsText += "</span>";
       }
+      else
+      {
+        detailsText += QString::fromStdString(errorText).toHtmlEscaped();
+      }
+      detailsText += "</span>";
+    }
 
     detailsText += "</pre>";
     d->DetailsTextBrowser->setText(detailsText);
     QScrollBar* vScrollBar = d->DetailsTextBrowser->verticalScrollBar();
     if (vScrollBar)
-      {
+    {
       vScrollBar->setValue(vScrollBar->maximum());
-      }
-    d->DetailsLastUpdateTime.restart();
     }
+    d->DetailsLastUpdateTime.restart();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -484,15 +484,15 @@ void qSlicerCLIProgressBar::showDetails(bool show)
 {
   Q_D(qSlicerCLIProgressBar);
   if (d->CommandLineModuleNode)
-    {
+  {
     if (show)
-      {
+    {
       d->CommandLineModuleNode->StartContinuousOutputUpdate();
-      }
-    else
-      {
-      d->CommandLineModuleNode->EndContinuousOutputUpdate();
-      }
     }
+    else
+    {
+      d->CommandLineModuleNode->EndContinuousOutputUpdate();
+    }
+  }
   this->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
 }

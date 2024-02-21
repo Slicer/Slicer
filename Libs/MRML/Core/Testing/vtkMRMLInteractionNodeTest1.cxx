@@ -38,10 +38,10 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
   const char *modeStr = node1->GetInteractionModeAsString();
   std::cout << "Interaction mode = " << (modeStr ? modeStr : "null") << std::endl;
   for (int m = 0; m < 9; m++)
-    {
+  {
     modeStr = node1->GetInteractionModeAsString(m);
     std::cout << "Interaction mode " << m << " = " << (modeStr ? modeStr : "null") << std::endl;
-    }
+  }
   int mode = node1->GetInteractionModeByString(nullptr);
   std::cout << "For null string, interaction mode = " << mode << std::endl;
   mode = node1->GetInteractionModeByString("invalid");
@@ -49,21 +49,21 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
 
   node1->SwitchToPersistentPlaceMode();
   if (!node1->GetPlaceModePersistence())
-    {
+  {
     std::cerr << "Error in SwitchToPersistentPlaceMode, got persistence = " << node1->GetPlaceModePersistence() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   node1->SwitchToSinglePlaceMode();
   if (node1->GetPlaceModePersistence())
-    {
+  {
     std::cerr << "Error in SwitchToSinglePlaceMode, got persistence = " << node1->GetPlaceModePersistence() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   node1->SwitchToViewTransformMode();
   if (!node1->GetTransformModePersistence())
-    {
+  {
     std::cerr << "Error in SwitchToViewTransformMode, got persistence = " << node1->GetTransformModePersistence() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

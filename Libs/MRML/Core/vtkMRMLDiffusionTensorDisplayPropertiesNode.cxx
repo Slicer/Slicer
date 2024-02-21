@@ -223,7 +223,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode *anode)
   this->SetSuperquadricGlyphPhiResolution(node->SuperquadricGlyphPhiResolution);
 
   this->EndModify(disabledModify);
-  }
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::PrintSelf(ostream& os, vtkIndent indent)
@@ -251,9 +251,9 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode
 ::SetGlyphConnection(vtkAlgorithmOutput* newGlyphConnection)
 {
   if (newGlyphConnection == this->GlyphConnection)
-    {
+  {
     return;
-    }
+  }
 
   vtkAlgorithm* oldGlyphAlgorithm = this->GlyphConnection ?
     this->GlyphConnection->GetProducer() : nullptr;
@@ -263,13 +263,13 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode
   vtkAlgorithm* glyphAlgorithm = this->GlyphConnection ?
     this->GlyphConnection->GetProducer() : nullptr;
   if (glyphAlgorithm != nullptr)
-    {
+  {
     glyphAlgorithm->Register(this);
-    }
+  }
   if (oldGlyphAlgorithm != nullptr)
-    {
+  {
     oldGlyphAlgorithm->UnRegister(this);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -283,16 +283,16 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
   // Create a new glyph source according to current settings
 
   switch ( this->GlyphGeometry )
-    {
+  {
     case Lines:
     case Tubes:
-      {
+    {
       vtkLineSource *line = vtkLineSource::New();
 
       // Scaling along x-axis corresponds to major eigenvector, etc.
       // Create a line along the proper axis for scaling:
       switch ( this->GlyphEigenvector )
-        {
+      {
         case Major:
           line->SetPoint1( -1, 0, 0 );
           line->SetPoint2( 1, 0, 0 );
@@ -305,14 +305,14 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
           line->SetPoint1( 0, 0, -1 );
           line->SetPoint2( 0, 0, 1 );
           break;
-        }
+      }
 
       line->SetResolution( this->LineGlyphResolution );
 
 
       // if we are doing tubes, put a tube on the line
       if (this->GlyphGeometry == Tubes)
-        {
+      {
         vtkTubeFilter *tube = vtkTubeFilter::New();
         tube->SetInputConnection( line->GetOutputPort( ) );
         tube->SetRadius( this->TubeGlyphRadius );
@@ -322,23 +322,23 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
         tube->Delete( );
 
         vtkDebugMacro("Get Glyph Source: Tubes");
-        }
+      }
       else
-        {
+      {
         vtkDebugMacro("Get Glyph Source: Lines");
         // here we are just displaying lines
         this->SetGlyphConnection( line->GetOutputPort( ) );
 
-        }
+      }
 
       line->Delete( );
-      }
+    }
 
       break;
 
     case Ellipsoids:
 
-      {
+    {
       vtkSphereSource *sphere = vtkSphereSource::New();
       sphere->SetThetaResolution( this->EllipsoidGlyphThetaResolution );
       sphere->SetPhiResolution( this->EllipsoidGlyphPhiResolution );
@@ -347,20 +347,20 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
       sphere->Delete( );
 
       vtkDebugMacro("Get Glyph Source: Ellipsoids");
-      }
+    }
 
       break;
 
     case Superquadrics:
-      {
+    {
       // TODO: this should be fleshed out
       vtkDebugMacro("vtkMRMLDiffusionTensorDisplayPropertiesNode: Superquadric glyph source not handled yet.");
       // Here do nothing, the superquadric must be created specifically for each tensor
-      }
+    }
 
       break;
 
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -379,109 +379,109 @@ int vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastScalarInvariant()
 const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(int var)
 {
   if (var ==  vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace)
-    {
+  {
     return "Trace";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::Determinant)
-    {
+  {
     return "Determinant";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy)
-    {
+  {
     return "RelativeAnisotropy";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy)
-    {
+  {
     return "FractionalAnisotropy";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue)
-    {
+  {
     return "MaxEigenvalue";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue)
-    {
+  {
     return "MidEigenvalue";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue)
-    {
+  {
     return "MinEigenvalue";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure)
-    {
+  {
     return "LinearMeasure";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure)
-    {
+  {
     return "PlanarMeasure";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure)
-    {
+  {
     return "SphericalMeasure";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation)
-    {
+  {
     return "ColorOrientation";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::D11)
-    {
+  {
     return "D11";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::D22)
-    {
+  {
     return "D22";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::D33)
-    {
+  {
     return "D33";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::Mode)
-    {
+  {
     return "Mode";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode)
-    {
+  {
     return "ColorMode";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjX)
-    {
+  {
     return "MaxEigenvalueProjX";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjY)
-    {
+  {
     return "MaxEigenvalueProjY";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjZ)
-    {
+  {
     return "MaxEigenvalueProjZ";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjX)
-    {
+  {
     return "MaxEigenvec_ProjX";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjY)
-    {
+  {
     return "MaxEigenvec_ProjY";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvec_ProjZ)
-    {
+  {
     return "MaxEigenvec_ProjZ";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity)
-    {
+  {
     return "ParallelDiffusivity";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity)
-    {
+  {
     return "PerpendicularDiffusivity";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector)
-    {
+  {
     return "ColorOrientationMiddleEigenvector";
-    }
+  }
   if (var == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector)
-    {
+  {
     return "ColorOrientationMinEigenvector";
-    }
+  }
   return "(unknown)";
 }
 
@@ -501,21 +501,21 @@ const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphGeometryAsStrin
 const char* vtkMRMLDiffusionTensorDisplayPropertiesNode::GetGlyphGeometryAsString(int geometry)
 {
   if (geometry == this->Lines)
-    {
+  {
     return "Lines";
-    }
+  }
   if (geometry == this->Tubes)
-    {
+  {
     return "Tubes";
-    }
+  }
   if (geometry == this->Ellipsoids)
-    {
+  {
     return "Ellipsoids";
-    }
+  }
   if (this->GlyphGeometry == this->Superquadrics)
-    {
+  {
     return "Superquadrics";
-    }
+  }
   return "(unknown)";
 }
 
@@ -533,17 +533,17 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::
 {
 
   if (eigenvector == this->Major)
-    {
+  {
     return "Major";
-    }
+  }
   if (eigenvector == this->Middle)
-    {
+  {
     return "Middle";
-    }
+  }
   if (eigenvector == this->Minor)
-    {
+  {
     return "Minor";
-    }
+  }
   return "(unknown)";
 }
 
@@ -570,7 +570,7 @@ int vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastColorGlyphBy()
 bool vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(int ScalarInvariant)
 {
   switch (ScalarInvariant)
-    {
+  {
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
@@ -580,10 +580,10 @@ bool vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarR
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure:
-      {
+    {
       return true;
       break;
-      }
+    }
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity:
@@ -601,30 +601,30 @@ bool vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarR
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::D22:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::D33:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::Determinant:
-      {
+    {
         return false;
         break;
-      }
+    }
     default:
       return false;
       break;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(int ScalarInvariant, double range[2])
 {
   switch (ScalarInvariant)
-    {
+  {
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
-      {
+    {
       range[0] = 0;
       range[1] = 255.;
       break;
-      }
+    }
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
@@ -645,17 +645,17 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRang
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::D11:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::D22:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::D33:
-      {
+    {
       range[0] = 0;
       range[1] = 1.;
       break;
-      }
+    }
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::Determinant:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::Mode:
     default:
       range[0] = -1;
       range[1] = 1.;
       break;
-    }
+  }
 
 }

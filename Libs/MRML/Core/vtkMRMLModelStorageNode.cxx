@@ -158,68 +158,68 @@ bool vtkMRMLModelStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
   if (this->GetWriteState() == SkippedNoData)
-    {
+  {
     vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): empty model file was not saved, ignore loading");
     return 1;
-    }
+  }
 
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
   if (!modelNode)
-    {
+  {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
       "Node for storing reading result (" << (this->ID ? this->ID : "(unknown)") << ") is not a valid model node.");
     return 0;
-    }
+  }
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
-    {
+  {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
       "Filename is not specified (" << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
-    }
+  }
 
   // check that the file exists
   if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
-    {
+  {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
       "Model file '" << fullName.c_str() << "' is not found while trying to read node (" << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
-    }
+  }
 
   // compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if( extension.empty() )
-    {
+  {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
       "Model file '" << fullName.c_str() << "' has no file extension while trying to read node (" << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
-    }
+  }
 
   vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): extension = " << extension.c_str());
 
   int coordinateSystemInFileHeader = -1;
   vtkSmartPointer<vtkPointSet> meshFromFile;
   try
-    {
+  {
     if (extension == std::string(".g") || extension == std::string(".byu"))
-      {
+    {
       vtkNew<vtkBYUReader> reader;
       this->GetUserMessages()->SetObservedObject(reader);
       reader->SetGeometryFileName(fullName.c_str());
       reader->Update();
       this->GetUserMessages()->SetObservedObject(nullptr);
       meshFromFile = reader->GetOutput();
-      }
+    }
     else if (extension == std::string(".vtk"))
-      {
+    {
       vtkNew<vtkPolyDataReader> reader;
       reader->SetFileName(fullName.c_str());
       vtkNew<vtkUnstructuredGridReader> unstructuredGridReader;
       unstructuredGridReader->SetFileName(fullName.c_str());
 
       if (reader->IsFilePolyData())
-        {
+      {
         reader->ReadAllScalarsOn();
         reader->ReadAllVectorsOn();
         reader->ReadAllNormalsOn();
@@ -231,9 +231,9 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         reader->Update();
         meshFromFile = reader->GetOutput();
         this->GetUserMessages()->SetObservedObject(nullptr);
-        }
+      }
       else if (unstructuredGridReader->IsFileUnstructuredGrid())
-        {
+      {
         unstructuredGridReader->ReadAllScalarsOn();
         unstructuredGridReader->ReadAllVectorsOn();
         unstructuredGridReader->ReadAllNormalsOn();
@@ -245,17 +245,17 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         unstructuredGridReader->Update();
         meshFromFile = unstructuredGridReader->GetOutput();
         this->GetUserMessages()->SetObservedObject(nullptr);
-        }
+      }
       else
-        {
+      {
         vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
           "Failed to load model from VTK file " << fullName << " as it does not contain polydata nor unstructured grid."
           << " The file might be loadable as a volume.");
-        }
-      coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetHeader());
       }
+      coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetHeader());
+    }
     else if (extension == std::string(".vtp"))
-      {
+    {
       vtkNew<vtkXMLPolyDataReader> reader;
       this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
@@ -263,18 +263,18 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       meshFromFile = reader->GetOutput();
       this->GetUserMessages()->SetObservedObject(nullptr);
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(meshFromFile);
-      }
+    }
     else if (extension == std::string(".ucd"))
-      {
+    {
       vtkNew<vtkAVSucdReader> reader;
       this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
       reader->Update();
       meshFromFile = reader->GetOutput();
       this->GetUserMessages()->SetObservedObject(nullptr);
-      }
+    }
     else if (extension == std::string(".vtu"))
-      {
+    {
       vtkNew<vtkXMLUnstructuredGridReader> reader;
       this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
@@ -282,9 +282,9 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       meshFromFile = reader->GetOutput();
       this->GetUserMessages()->SetObservedObject(nullptr);
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(meshFromFile);
-      }
+    }
     else if (extension == std::string(".stl"))
-      {
+    {
       vtkNew<vtkSTLReader> reader;
       this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
@@ -292,9 +292,9 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       meshFromFile = reader->GetOutput();
       this->GetUserMessages()->SetObservedObject(nullptr);
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetHeader());
-      }
+    }
     else if (extension == std::string(".ply"))
-      {
+    {
       vtkNew<vtkPLYReader> reader;
       this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
@@ -303,17 +303,17 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       this->GetUserMessages()->SetObservedObject(nullptr);
       vtkStringArray* comments = reader->GetComments();
       for (int commentIndex = 0; commentIndex < comments->GetNumberOfValues(); commentIndex++)
-        {
+      {
         coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(comments->GetValue(commentIndex).c_str());
         if (coordinateSystemInFileHeader >= 0)
-          {
+        {
           // found a comment that contains coordinate system information
           break;
-          }
         }
       }
+    }
     else if (extension == std::string(".obj"))
-      {
+    {
       vtkNew<vtkOBJReader> reader;
       this->GetUserMessages()->SetObservedObject(reader);
       reader->SetFileName(fullName.c_str());
@@ -321,13 +321,13 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       meshFromFile = reader->GetOutput();
       this->GetUserMessages()->SetObservedObject(nullptr);
       coordinateSystemInFileHeader = vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(reader->GetComment());
-      }
+    }
     else if (extension == std::string(".meta"))  // model in meta format
-      {
+    {
       floatMesh::Pointer surfaceMesh = floatMesh::New();
       MeshReaderType::Pointer readerSH = MeshReaderType::New();
       try
-        {
+      {
         readerSH->SetFileName(fullName.c_str());
         readerSH->Update();
         MeshReaderType::GroupType::Pointer group = readerSH->GetGroup();
@@ -337,13 +337,13 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         itk::SpatialObject<3> * curObj = *it;
         MeshSpatialObjectType::Pointer  SOMesh = dynamic_cast<MeshSpatialObjectType*> (curObj);
         surfaceMesh = SOMesh->GetMesh();
-        }
+      }
       catch(itk::ExceptionObject &ex)
-        {
+      {
         vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
           "Failed to load model from ITK .meta file " << fullName << ": " << ex.GetDescription());
         return 0;
-        }
+      }
       vtkNew<vtkPolyData> vtkMesh;
       // Get the number of points in the mesh
       int numPoints = surfaceMesh->GetNumberOfPoints();
@@ -356,103 +356,103 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       floatMesh::PointsContainer::Pointer points = surfaceMesh->GetPoints();
       for(floatMesh::PointsContainer::Iterator i = points->Begin();
         i != points->End(); ++i)
-        {
+      {
         // Get the point index from the point container iterator
         int idx = i->Index();
         vpoints->SetPoint(idx, const_cast<double*>(i->Value().GetDataPointer()));
-        }
+      }
       vtkMesh->SetPoints(vpoints.GetPointer());
 
       vtkNew<vtkCellArray> cells;
       floatMesh::CellsContainerIterator itCells = surfaceMesh->GetCells()->begin();
       floatMesh::CellsContainerIterator itCellsEnd = surfaceMesh->GetCells()->end();
       for (; itCells != itCellsEnd; ++itCells)
-        {
+      {
         floatMesh::CellTraits::PointIdIterator itPt = itCells->Value()->PointIdsBegin();
         vtkIdType ptIdList[64];
         int nPts = 0;
         for (; itPt != itCells->Value()->PointIdsEnd(); ++itPt)
-          {
+        {
           ptIdList[nPts] = *itPt;
           nPts++;
-          }
-        cells->InsertNextCell(nPts, ptIdList);
         }
+        cells->InsertNextCell(nPts, ptIdList);
+      }
 
       vtkMesh->SetPolys(cells.GetPointer());
       meshFromFile = vtkMesh;
-      }
+    }
     else
-      {
+    {
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
         "Failed to load model: unrecognized file extension '" << extension << "' of file '" << fullName << "'.");
       return 0;
-      }
     }
+  }
   catch (...)
-    {
+  {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
       "Failed to load model: unknown exception while trying to load the file '" << fullName << "'.");
     return 0;
-    }
+  }
 
   if (this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
-    {
+  {
     // User messages are already logged, no need for logging more
     return 0;
-    }
+  }
 
   if (coordinateSystemInFileHeader >= 0)
-    {
+  {
     // coordinate system specified in the file, use it (regardless oassumingf what was the preferred coordinate system in the node)
     this->CoordinateSystem = coordinateSystemInFileHeader;
-    }
+  }
   else
-    {
+  {
     // no coordinate system in the file, use the currently set coordinate system
     vtkInfoMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): File "
       << fullName.c_str() << " does not contain coordinate system information. Assuming "
       << vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(this->CoordinateSystem) << ".");
-    }
+  }
 
   vtkSmartPointer<vtkPointSet> meshToSetInNode;
   if (this->CoordinateSystem == vtkMRMLStorageNode::CoordinateSystemRAS)
-    {
+  {
     // no flip of first two axes
     meshToSetInNode = meshFromFile;
-    }
+  }
   else
-    {
+  {
     // transform from RAS to LPS
     if (meshFromFile->IsA("vtkPolyData"))
-      {
+    {
       meshToSetInNode = vtkSmartPointer<vtkPolyData>::New();
-      }
-    else
-      {
-      meshToSetInNode = vtkSmartPointer<vtkUnstructuredGrid>::New();
-      }
-    vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(meshFromFile, meshToSetInNode);
     }
+    else
+    {
+      meshToSetInNode = vtkSmartPointer<vtkUnstructuredGrid>::New();
+    }
+    vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(meshFromFile, meshToSetInNode);
+  }
   modelNode->SetAndObserveMesh(meshToSetInNode);
 
   if (modelNode->GetMesh() != nullptr)
-    {
+  {
     for (int i=0; i<modelNode->GetNumberOfDisplayNodes(); ++i)
-      {
+    {
       vtkMRMLDisplayNode* displayNode = modelNode->GetNthDisplayNode(i);
       // is there an active scalar array?
       if (displayNode && displayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDataScalarRange)
-        {
+      {
         double *scalarRange = modelNode->GetMesh()->GetScalarRange();
         if (scalarRange)
-          {
+        {
           vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
           displayNode->SetScalarRange(scalarRange);
-          }
         }
-      } // For all display nodes
-    }
+      }
+    } // For all display nodes
+  }
   return 1;
 }
 
@@ -463,17 +463,17 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
-    {
+  {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::WriteDataInternal",
       "Failed to write model: File name not specified.");
     return 0; // failed
-    }
+  }
 
   if (modelNode->GetMeshConnection() == nullptr || modelNode->GetMesh()->GetNumberOfPoints() == 0)
-    {
+  {
     this->SetWriteStateSkippedNoData();
     return 1; // success
-    }
+  }
 
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
@@ -487,46 +487,46 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   vtkSmartPointer<vtkPointSet> meshToWrite;
   if (this->CoordinateSystem == vtkMRMLStorageNode::CoordinateSystemRAS)
-    {
+  {
     // no flip of first two axes
     meshToWrite = modelNode->GetMesh();
-    }
+  }
   else
-    {
+  {
     // transform from RAS to LPS
     if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
-      {
+    {
       meshToWrite = vtkSmartPointer<vtkPolyData>::New();
-      }
-    else
-      {
-      meshToWrite = vtkSmartPointer<vtkUnstructuredGrid>::New();
-      }
-    vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(modelNode->GetMesh(), meshToWrite);
     }
+    else
+    {
+      meshToWrite = vtkSmartPointer<vtkUnstructuredGrid>::New();
+    }
+    vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(modelNode->GetMesh(), meshToWrite);
+  }
 
   bool success = true;
 
   if (extension == ".vtk" &&
     (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType
     || modelNode->GetMeshType() == vtkMRMLModelNode::UnstructuredGridMeshType))
-    {
+  {
     vtkSmartPointer<vtkDataWriter> writer;
     this->GetUserMessages()->SetObservedObject(writer);
     if (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
-      {
+    {
       writer = vtkSmartPointer<vtkPolyDataWriter>::New();
       // version 5.1 is not compatible with earlier Slicer versions (VTK < 9) and most other software
       writer->SetFileVersion(42);
       writer->SetInputData(meshToWrite);
-      }
+    }
     else
-      {
+    {
       writer = vtkSmartPointer<vtkUnstructuredGridWriter>::New();
       // version 5.1 is not compatible with earlier Slicer versions (VTK < 9) and most other software
       writer->SetFileVersion(42);
       writer->SetInputData(meshToWrite);
-      }
+    }
 
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
@@ -534,33 +534,33 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->SetHeader(header.c_str());
     try
-      {
-      success = success && writer->Write();
-      }
-    catch (...)
-      {
-      success = false;
-      }
-    this->GetUserMessages()->SetObservedObject(nullptr);
-    }
-  else if (extension == ".vtu" || extension == ".vtp")
     {
+      success = success && writer->Write();
+    }
+    catch (...)
+    {
+      success = false;
+    }
+    this->GetUserMessages()->SetObservedObject(nullptr);
+  }
+  else if (extension == ".vtu" || extension == ".vtp")
+  {
     vtkSmartPointer<vtkXMLUnstructuredDataWriter> writer;
     // We make a shallow copy of the input data and store in inputData
     // so that we can add a custom field for storing coordinate system.
     vtkSmartPointer<vtkDataObject> inputData;
     if (extension == ".vtu")
-      {
+    {
       writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
       inputData = vtkSmartPointer<vtkUnstructuredGrid>::New();
       inputData->ShallowCopy(meshToWrite);
-      }
+    }
     else
-      {
+    {
       writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
       inputData = vtkSmartPointer<vtkPolyData>::New();
       inputData->ShallowCopy(meshToWrite);
-      }
+    }
     this->GetUserMessages()->SetObservedObject(writer);
     writer->SetInputData(inputData);
     writer->SetFileName(fullName.c_str());
@@ -573,37 +573,37 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     // In the future (when Slicer switches to VTK8) array metadata may be used instead of separate field data.
     vtkFieldData* fieldData = inputData->GetFieldData();
     if (!fieldData)
-      {
+    {
       vtkNew<vtkFieldData> newFieldData;
       inputData->SetFieldData(newFieldData.GetPointer());
       fieldData = newFieldData.GetPointer();
-      }
+    }
     if (!fieldData->GetAbstractArray(coordinateSystemTag.c_str()))
-      {
+    {
       vtkNew<vtkStringArray> coordinateSystemFieldArray;
       coordinateSystemFieldArray->SetName(coordinateSystemTag.c_str());
       coordinateSystemFieldArray->InsertNextValue(coordinateSystemStr.c_str());
       fieldData->AddArray(coordinateSystemFieldArray.GetPointer());
-      }
+    }
     else
-      {
+    {
       vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::WriteDataInternal",
         "Failed to write model " << (this->ID ? this->ID : "(unknown)")
         << ": 'space' field already exists, cannot write coordinate system name into file");
-      }
+    }
 
     try
-      {
-      success = success && writer->Write();
-      }
-    catch (...)
-      {
-      success = false;
-      }
-    this->GetUserMessages()->SetObservedObject(nullptr);
-    }
-  else if (extension == ".stl")
     {
+      success = success && writer->Write();
+    }
+    catch (...)
+    {
+      success = false;
+    }
+    this->GetUserMessages()->SetObservedObject(nullptr);
+  }
+  else if (extension == ".stl")
+  {
     vtkNew<vtkTriangleFilter> triangulator;
     vtkNew<vtkSTLWriter> writer;
     this->GetUserMessages()->SetObservedObject(writer);
@@ -614,17 +614,17 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->SetHeader(header.c_str());
     try
-      {
-      success = success && writer->Write();
-      }
-    catch (...)
-      {
-      success = false;
-      }
-    this->GetUserMessages()->SetObservedObject(nullptr);
-    }
-  else if (extension == ".ply")
     {
+      success = success && writer->Write();
+    }
+    catch (...)
+    {
+      success = false;
+    }
+    this->GetUserMessages()->SetObservedObject(nullptr);
+  }
+  else if (extension == ".ply")
+  {
     vtkNew<vtkTriangleFilter> triangulator;
     vtkNew<vtkPLYWriter> writer;
     this->GetUserMessages()->SetObservedObject(writer);
@@ -633,54 +633,54 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     // VTK's PLY writer can save RGB or RGBA unsigned char color array.
     // If we find such an array then we configure the writer to include that array.
     if (meshToWrite->GetPointData())
-      {
+    {
       vtkPointData* pointData = meshToWrite->GetPointData();
       for (int arrayIndex = 0; arrayIndex < pointData->GetNumberOfArrays(); arrayIndex++)
-        {
+      {
         vtkUnsignedCharArray* dataArray = vtkUnsignedCharArray::SafeDownCast(pointData->GetArray(arrayIndex));
         if (!dataArray || !dataArray->GetName())
-          {
+        {
           continue;
-          }
+        }
         if (dataArray->GetNumberOfComponents() == 3)
-          {
+        {
           // Found a suitable RGB array
           writer->SetArrayName(dataArray->GetName());
           writer->EnableAlphaOff();
           break;
-          }
+        }
         else if (dataArray->GetNumberOfComponents() == 4)
-          {
+        {
           // Found a suitable RGBA array
           writer->SetArrayName(dataArray->GetName());
           writer->EnableAlphaOn();
           break;
-          }
         }
       }
+    }
     triangulator->SetInputData(meshToWrite);
     writer->SetInputConnection( triangulator->GetOutputPort() );
     std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     writer->AddComment(coordinateSytemSpecification);
     try
-      {
-      success = success && writer->Write();
-      }
-    catch (...)
-      {
-      success = false;
-      }
-    this->GetUserMessages()->SetObservedObject(nullptr);
-    }
-  else if (extension == ".obj")
     {
+      success = success && writer->Write();
+    }
+    catch (...)
+    {
+      success = false;
+    }
+    this->GetUserMessages()->SetObservedObject(nullptr);
+  }
+  else if (extension == ".obj")
+  {
     vtkNew<vtkPolyDataMapper> mapper;
     mapper->SetInputData(vtkPolyData::SafeDownCast(meshToWrite));
     vtkNew<vtkActor> actor;
     actor->SetMapper(mapper.GetPointer());
     vtkMRMLDisplayNode* displayNode = modelNode->GetDisplayNode();
     if (displayNode)
-      {
+    {
       double color[3] = { 0.5, 0.5, 0.5 };
       displayNode->GetColor(color);
       // OBJ exporter sets the same color for ambient, diffuse, specular
@@ -689,7 +689,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       actor->GetProperty()->SetColor(color[0] * colorScale, color[1] * colorScale, color[2] * colorScale);
       actor->GetProperty()->SetSpecularPower(3.0);
       actor->GetProperty()->SetOpacity(displayNode->GetOpacity());
-      }
+    }
     vtkNew<vtkRenderer> renderer;
     renderer->AddActor(actor.GetPointer());
     vtkNew<vtkRenderWindow> renderWindow;
@@ -699,43 +699,43 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     exporter->SetRenderWindow(renderWindow.GetPointer());
     std::string fullNameWithoutExtension = fullName;
     if (fullNameWithoutExtension.size() > 4)
-      {
+    {
       fullNameWithoutExtension.erase(fullNameWithoutExtension.size() - 4);
-      }
+    }
     exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
     std::string header = std::string("3D Slicer output. ") + coordinateSytemSpecification;
     exporter->SetOBJFileComment(header.c_str());
     try
-      {
+    {
       exporter->Write();
       // exporter's Write() does not provide a return value but UserMessages will capture any errors
       this->ResetFileNameList();
       std::string materialFileName = fullNameWithoutExtension + ".mtl";
       this->AddFileName(materialFileName.c_str());
-      }
-    catch (...)
-      {
-      success = false;
-      }
-    this->GetUserMessages()->SetObservedObject(nullptr);
     }
-  else
+    catch (...)
     {
+      success = false;
+    }
+    this->GetUserMessages()->SetObservedObject(nullptr);
+  }
+  else
+  {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::WriteDataInternal",
       "Failed to write model " << (this->ID ? this->ID : "(unknown)")
       << ": No file extension recognized : " << fullName.c_str());
-    }
+  }
 
   // If no errors have been reported then check if the output file exists
   // because some writers might miss reporting file creation errors.
   if (success && this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent)==0
     && !vtksys::SystemTools::FileExists(fullName))
-    {
+  {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::WriteDataInternal",
       "Failed to write model " << (this->ID ? this->ID : "(unknown)")
       << ": Output file " << fullName.c_str() << " has not been created.");
     success = false;
-    }
+  }
 
   return (success ? 1 : 0);
 }
@@ -772,7 +772,7 @@ void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
 {
   vtkMRMLModelNode* modelNode = this->GetAssociatedDataNode();
   if (!modelNode || modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType)
-    {
+  {
     //: File format name
     this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK Polygon Mesh") + " (.vtk)");
     //: File format name
@@ -787,38 +787,38 @@ void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
     this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Stanford Polygon Mesh") + " (.ply)");
     //: File format name
     this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "Wavefront Mesh") + " (.obj)");
-    }
+  }
   if (!modelNode || modelNode->GetMeshType() == vtkMRMLModelNode::UnstructuredGridMeshType)
-    {
+  {
     //: File format name
     this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK Unstructured Grid") + " (.vtk)");
     //: File format name
     this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLModelStorageNode", "VTK XML Unstructured Grid") + " (.vtu)");
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
 {
   if (!this->GetScene())
-    {
+  {
     return nullptr;
-    }
+  }
 
   std::vector<vtkMRMLNode*> nodes;
   unsigned int numberOfNodes = this->GetScene()->GetNodesByClass("vtkMRMLModelNode", nodes);
   for (unsigned int nodeIndex=0; nodeIndex<numberOfNodes; nodeIndex++)
-    {
+  {
     vtkMRMLModelNode* node = vtkMRMLModelNode::SafeDownCast(nodes[nodeIndex]);
     if (node)
-      {
+    {
       const char* storageNodeID = node->GetStorageNodeID();
       if (storageNodeID && !strcmp(storageNodeID, this->ID))
-        {
+      {
         return vtkMRMLModelNode::SafeDownCast(node);
-        }
       }
     }
+  }
 
   return nullptr;
 }
@@ -827,49 +827,49 @@ vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
 void vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS(vtkPointSet* inputMesh, vtkPointSet* outputMesh)
 {
   if (!inputMesh || !outputMesh)
-    {
+  {
     vtkGenericWarningMacro("vtkMRMLModelStorageNode::ConvertBetweenRASAndLPS: invalid input or output mesh");
     return;
-    }
+  }
   vtkNew<vtkTransform> transformRasLps;
   transformRasLps->Scale(-1, -1, 1);
   // vtkTransformPolyDataFilter preserves texture coordinates, while vtkTransformFilter removes them,
   // therefore we must use vtkTransformPolyDataFilter for surface meshes.
   if (inputMesh->IsA("vtkPolyData"))
-    {
+  {
     vtkNew<vtkTransformPolyDataFilter> transformFilter;
     transformFilter->SetTransform(transformRasLps);
     transformFilter->SetInputData(inputMesh);
     transformFilter->Update();
     outputMesh->ShallowCopy(transformFilter->GetOutput());
-    }
+  }
   else
-    {
+  {
     vtkNew<vtkTransformFilter> transformFilter;
     transformFilter->SetTransform(transformRasLps);
     transformFilter->SetInputData(inputMesh);
     transformFilter->TransformAllInputVectorsOn();
     transformFilter->Update();
     outputMesh->ShallowCopy(transformFilter->GetOutput());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(const char* header)
 {
   if (!header)
-    {
+  {
     return -1;
-    }
+  }
   std::string headerStr = header;
   if (headerStr.find("SPACE=RAS") != std::string::npos)
-    {
+  {
     return vtkMRMLStorageNode::CoordinateSystemRAS;
-    }
+  }
   else if (headerStr.find("SPACE=LPS") != std::string::npos)
-    {
+  {
     return vtkMRMLStorageNode::CoordinateSystemLPS;
-    }
+  }
   return -1;
 }
 
@@ -877,32 +877,32 @@ int vtkMRMLModelStorageNode::GetCoordinateSystemFromFileHeader(const char* heade
 int vtkMRMLModelStorageNode::GetCoordinateSystemFromFieldData(vtkPointSet* mesh)
 {
   if (!mesh)
-    {
+  {
     return -1;
-    }
+  }
   vtkFieldData* fieldData = mesh->GetFieldData();
   if (!fieldData)
-    {
+  {
     return -1;
-    }
+  }
   const std::string coordinateSystemTag = "SPACE"; // following NRRD naming convention
   vtkStringArray* coordinateSystemArray = vtkStringArray::SafeDownCast(
     fieldData->GetAbstractArray(coordinateSystemTag.c_str()));
   if (!coordinateSystemArray || coordinateSystemArray->GetNumberOfValues() < 1)
-    {
+  {
     return -1;
-    }
+  }
   std::string headerStr = coordinateSystemArray->GetValue(0);
   // We retrieved the value, now delete it, as it would interfere with writing of the file
   // if a coordinate system array is already specified in the mesh.
   fieldData->RemoveArray(coordinateSystemTag.c_str());
   if (headerStr.find("RAS") != std::string::npos)
-    {
+  {
     return vtkMRMLStorageNode::CoordinateSystemRAS;
-    }
+  }
   else if (headerStr.find("LPS") != std::string::npos)
-    {
+  {
     return vtkMRMLStorageNode::CoordinateSystemLPS;
-    }
+  }
   return -1;
 }

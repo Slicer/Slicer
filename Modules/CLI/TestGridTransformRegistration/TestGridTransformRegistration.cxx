@@ -55,7 +55,7 @@ int DoIt( int argc, char * argv[], T )
   GridType::Pointer grid = GridType::New();
 
   // Set up the grid volume
-    {
+  {
     grid->SetVectorLength( ImageDimension );
 
     GridType::IndexType start;
@@ -75,7 +75,7 @@ int DoIt( int argc, char * argv[], T )
     region.SetIndex( start );
 
     grid->SetRegions( region );
-    }
+  }
 
   // Read fixed and moving images
   //
@@ -109,10 +109,10 @@ int DoIt( int argc, char * argv[], T )
   typename InputImageType::SizeType fixedImageSize =
     fixedRegion.GetSize();
   for( unsigned int r = 0; r < ImageDimension; r++ )
-    {
+  {
     spacing[r] *= floor( static_cast<double>(fixedImageSize[r] - 1)
                          / static_cast<double>(gridSize - 1) );
-    }
+  }
 
   grid->SetSpacing( spacing );
 
@@ -125,7 +125,7 @@ int DoIt( int argc, char * argv[], T )
              0.0 );
 
   // Set some elements to non-zero
-    {
+  {
     GridType::IndexType index;
     index[1] = gridSize / 2;
     index[2] = gridSize / 2;
@@ -136,14 +136,14 @@ int DoIt( int argc, char * argv[], T )
     p[1] = 0;
     p[2] = 0;
     for( int x = 0; x < gridSize; ++x )
-      {
+    {
       index[0] = x;
       grid->SetPixel( index, p );
-      }
     }
+  }
 
   if( OutputTransform != "" )
-    {
+  {
     typedef itk::ImageFileWriter<GridType> GridWriterType;
 
     GridWriterType::Pointer gridWriter = GridWriterType::New();
@@ -151,15 +151,15 @@ int DoIt( int argc, char * argv[], T )
     gridWriter->SetInput( grid );
 
     try
-      {
+    {
       gridWriter->Update();
-      }
+    }
     catch( itk::ExceptionObject & exp )
-      {
+    {
       std::cerr << "Exception caught !" << std::endl;
       std::cerr << exp << std::endl;
-      }
     }
+  }
 
   collector.Stop( "Constructing deformation field" );
 
@@ -178,9 +178,9 @@ int main( int argc, char * argv[] )
   //
   std::vector<char *> vargsNew;
   for( int vi = 0; vi < argc; ++vi )
-    {
+  {
     vargsNew.push_back(argv[vi]);
-    }
+  }
   vargsNew.push_back(const_cast<char *>("--echo") );
 
   argc = vargsNew.size();
@@ -192,13 +192,13 @@ int main( int argc, char * argv[] )
   itk::ImageIOBase::IOComponentType componentType;
 
   try
-    {
+  {
     itk::GetImageType(FixedImageFileName, pixelType, componentType);
 
     // This filter handles all types
 
     switch( componentType )
-      {
+    {
       case itk::ImageIOBase::CHAR:
       case itk::ImageIOBase::UCHAR:
       case itk::ImageIOBase::USHORT:
@@ -217,13 +217,13 @@ int main( int argc, char * argv[] )
       default:
         std::cout << "unknown component type" << std::endl;
         break;
-      }
     }
+  }
   catch( itk::ExceptionObject & excep )
-    {
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

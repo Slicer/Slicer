@@ -75,9 +75,9 @@ public:
   /// NOTE: Subclasses should implement these method
   virtual void InitTransfer ( );
   virtual int CloseTransfer ( )
-      {
+  {
       return 0;
-      }
+  }
 
   int RequiresPermission;
   vtkPermissionPrompter *PermissionPrompter;

@@ -41,28 +41,28 @@ bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
 {
   PyObject* pyRes = nullptr;
   if (filePath.endsWith(".py"))
-    {
+  {
     pyRes = PyRun_String(
           QString("import imp;imp.load_source(%2, %1);del imp;")
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toUtf8(),
           Py_file_input, global_dict, local_dict);
-    }
+  }
   else if (filePath.endsWith(".pyc"))
-    {
+  {
     pyRes = PyRun_String(
           QString("with open(%1, 'rb') as f:import imp;imp.load_module(%2, f, %1, ('.pyc', 'rb', 2));del imp")
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toUtf8(),
           Py_file_input, global_dict, local_dict);
-    }
+  }
   if (!pyRes)
-    {
+  {
     PythonQt::self()->handleError();
     qCritical() << "loadSourceAsModule - Failed to load file" << filePath
                 << " as module" << moduleName << "!";
     return false;
-    }
+  }
   Py_DECREF(pyRes);
   return true;
 }
@@ -73,29 +73,29 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
                                               PyObject* attributeValue)
 {
   if (!attributeValue)
-    {
+  {
     return false;
-    }
+  }
 
   // Import module
   PyObject * module = PythonQt::self()->getMainModule();
   if (!moduleName.isEmpty())
-    {
+  {
     module = PyImport_ImportModule(moduleName.toUtf8());
     if (!module)
-      {
+    {
       PythonQt::self()->handleError();
       return false;
-      }
     }
+  }
 
   // Add the object to the imported module
   int ret = PyObject_SetAttrString(module, attributeName.toUtf8(), attributeValue);
   if (ret != 0)
-    {
+  {
     PythonQt::self()->handleError();
     return false;
-    }
+  }
   return true;
 }
 
@@ -108,24 +108,24 @@ bool qSlicerScriptedUtils::importModulePythonExtensions(
   Q_UNUSED(intDir);
 
   if(!pythonManager)
-    {
+  {
     return false;
-    }
+  }
 
   QString pythonModuleDir = QFileInfo(modulePath).absoluteFilePath();
   if (!QFileInfo(pythonModuleDir).isDir())
-    {
+  {
     pythonModuleDir = QFileInfo(pythonModuleDir).absolutePath();
-    }
+  }
 
   // Update current application directory, so that *PythonD modules can be loaded
   ctkScopedCurrentDir scopedCurrentDir(pythonModuleDir);
 
   if (!isEmbedded)
-    {
+  {
     QStringList paths; paths << scopedCurrentDir.currentPath();
     pythonManager->appendPythonPaths(paths);
-    }
+  }
 
   pythonManager->executeString(QString(
         "from slicer.util import importVTKClassesFromDirectory;"
@@ -148,9 +148,9 @@ qSlicerPythonCppAPI::qSlicerPythonCppAPI() = default;
 qSlicerPythonCppAPI::~qSlicerPythonCppAPI()
 {
   if (this->PythonSelf)
-    {
+  {
     this->APIMethods.clear();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -169,9 +169,9 @@ void qSlicerPythonCppAPI::setObjectName(const QString& name)
 void qSlicerPythonCppAPI::declareMethod(int id, const char* name)
 {
   if (!name)
-    {
+  {
     return;
-    }
+  }
   this->APIMethods[id] = QString(name);
 }
 
@@ -180,13 +180,13 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
 {
   PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(cpp);
   if (!wrappedThis)
-    {
+  {
     PythonQt::self()->handleError();
     qCritical() << "qSlicerPythonCppAPI::instantiateClass"
                 << " - [" << this->ObjectName << "]"
                 << " - Failed to wrap" << cpp->metaObject()->className() << "associated with " << className;
     return nullptr;
-    }
+  }
 
   PyObject * arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, wrappedThis);
@@ -195,37 +195,37 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
   PythonQtObjectPtr self;
 
   if (PyType_Check(classToInstantiate))
-    {
+  {
     // New style class
     self.setNewRef(PyObject_Call(classToInstantiate, arguments, nullptr));
-    }
+  }
   else
-    {
+  {
     self.setNewRef(PyObject_CallObject(classToInstantiate, arguments));
-    }
+  }
 
   Py_DECREF(arguments);
 
   if (!self)
-    {
+  {
     PythonQt::self()->handleError();
     qCritical() << "qSlicerPythonCppAPI::instantiateClass"
                 << " - [" << this->ObjectName << "]"
                 << "- Failed to instantiate scripted pythonqt class" << className << classToInstantiate;
     return nullptr;
-    }
+  }
 
   foreach(int methodId, this->APIMethods.keys())
-    {
+  {
     QString methodName = this->APIMethods.value(methodId);
     if (!PyObject_HasAttrString(self.object(), methodName.toUtf8()))
-      {
+    {
       continue;
-      }
+    }
     PythonQtObjectPtr method;
     method.setNewRef(PyObject_GetAttrString(self.object(), methodName.toUtf8()));
     this->PythonAPIMethods[methodId] = method;
-    }
+  }
 
   this->PythonSelf = self;
 
@@ -236,16 +236,16 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
 PyObject * qSlicerPythonCppAPI::callMethod(int id, PyObject * arguments)
 {
   if (!this->PythonAPIMethods.contains(id))
-    {
+  {
     return nullptr;
-    }
+  }
   PyObject * method = this->PythonAPIMethods.value(id).object();
   PythonQt::self()->clearError();
   PyObject * result = PyObject_CallObject(method, arguments);
   if (PythonQt::self()->handleError())
-    {
+  {
     return nullptr;
-    }
+  }
   return result;
 }
 

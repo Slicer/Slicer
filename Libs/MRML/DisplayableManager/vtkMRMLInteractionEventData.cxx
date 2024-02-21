@@ -281,17 +281,17 @@ void vtkMRMLInteractionEventData::SetAttributesFromInteractor(vtkRenderWindowInt
 {
   this->Modifiers = 0;
   if (interactor->GetShiftKey())
-    {
+  {
     this->Modifiers |= vtkEvent::ShiftModifier;
-    }
+  }
   if (interactor->GetControlKey())
-    {
+  {
     this->Modifiers |= vtkEvent::ControlModifier;
-    }
+  }
   if (interactor->GetAltKey())
-    {
+  {
     this->Modifiers |= vtkEvent::AltModifier;
-    }
+  }
   this->KeyCode = interactor->GetKeyCode();
   this->KeySym = (interactor->GetKeySym() ? interactor->GetKeySym() : "");
   this->KeyRepeatCount = interactor->GetRepeatCount();
@@ -344,44 +344,44 @@ const std::string& vtkMRMLInteractionEventData::GetInteractionContextName()
 bool vtkMRMLInteractionEventData::ComputeAccurateWorldPosition(bool force/*=false*/)
 {
   if (this->IsWorldPositionAccurate())
-    {
+  {
     return true;
-    }
+  }
   if (this->ComputeAccurateWorldPositionAttempted && !force)
-    {
+  {
     // by default do not attempt to compute accurate position again
     // if it failed once
     return false;
-    }
+  }
   if (!this->AccuratePicker || !this->Renderer || !this->DisplayPositionValid)
-    {
+  {
     return false;
-    }
+  }
   this->ComputeAccurateWorldPositionAttempted = true;
   if (!this->AccuratePicker->Pick(static_cast<double>(this->DisplayPosition[0]), static_cast<double>(this->DisplayPosition[1]), 0, this->Renderer))
-    {
+  {
     return false;
-    }
+  }
   vtkPoints* pickPositions = this->AccuratePicker->GetPickedPositions();
   int numberOfPickedPositions = pickPositions->GetNumberOfPoints();
   if (numberOfPickedPositions < 1)
-    {
+  {
     return false;
-    }
+  }
   // There may be multiple picked positions, choose the one closest to the camera
   double cameraPosition[3] = { 0,0,0 };
   this->Renderer->GetActiveCamera()->GetPosition(cameraPosition);
   pickPositions->GetPoint(0, this->WorldPosition);
   double minDist2 = vtkMath::Distance2BetweenPoints(this->WorldPosition, cameraPosition);
   for (int i = 1; i < numberOfPickedPositions; i++)
-    {
+  {
     double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(i), cameraPosition);
     if (currentMinDist2 < minDist2)
-      {
+    {
       pickPositions->GetPoint(i, this->WorldPosition);
       minDist2 = currentMinDist2;
-      }
     }
+  }
   this->WorldPositionValid = true;
   this->WorldPositionAccurate = true;
   return true;
@@ -392,13 +392,13 @@ bool vtkMRMLInteractionEventData::Equivalent(const vtkEventData *e) const
 {
   const vtkMRMLInteractionEventData *edd = static_cast<const vtkMRMLInteractionEventData *>(e);
   if (this->Type != edd->Type)
-    {
+  {
     return false;
-    }
+  }
   if (edd->Modifiers >= 0 && (this->Modifiers != edd->Modifiers))
-    {
+  {
     return false;
-    }
+  }
   return true;
 };
 
@@ -456,17 +456,17 @@ const double* vtkMRMLInteractionEventData::GetLastTranslation() const
 void vtkMRMLInteractionEventData::WorldToDisplay(const double worldPosition[3], double displayPosition[3])
 {
   if (!this->Renderer)
-    {
+  {
     return;
-    }
+  }
   if (!this->WorldToViewTransformMatrixValid)
-    {
+  {
     vtkMatrix4x4::DeepCopy(this->WorldToViewTransformMatrix,
       this->Renderer->GetActiveCamera()->
       GetCompositeProjectionTransformMatrix(
         this->Renderer->GetTiledAspectRatio(),0,1));
     this->WorldToViewTransformMatrixValid = true;
-    }
+  }
 
   //get view to display scaling and put in 4x4 matrix
   const double* viewport = this->Renderer->GetViewport();
@@ -477,12 +477,12 @@ void vtkMRMLInteractionEventData::WorldToDisplay(const double worldPosition[3], 
 
   vtkMatrix4x4::MultiplyPoint(this->WorldToViewTransformMatrix, homogeneousWorldPosition, viewPosition);
   if (viewPosition[3] != 0.0)
-    {
+  {
     viewPosition[0] /= viewPosition[3];
     viewPosition[1] /= viewPosition[3];
     viewPosition[2] /= viewPosition[3];
     viewPosition[3] = 1.0;
-    }
+  }
 
   // view to display
   displayPosition[0] = (viewPosition[0] + 1.0) * (displaySize[0] * (viewport[2] - viewport[0])) / 2.0

@@ -47,33 +47,33 @@ preprocessLabelMap(typename itk::Image<pixel_t, 3>::Pointer originalLabelMap, pi
   std::vector<pixel_t> uniqueLabels(sz[0] * sz[1] * sz[2]);
   long                 i = 0;
   for( ; !iter.IsAtEnd(); ++iter )
-    {
+  {
     uniqueLabels[i++] = iter.Get();
-    }
+  }
 
   std::sort(uniqueLabels.begin(), uniqueLabels.end() );
   typename std::vector<pixel_t>::iterator itl = std::unique(uniqueLabels.begin(), uniqueLabels.end() );
   uniqueLabels.resize( itl - uniqueLabels.begin() );
 
   if( uniqueLabels[0] != 0 )
-    {
+  {
     std::cerr << "Error: least label is not 0? no background?\n";
     raise(SIGABRT);
-    }
+  }
 
   short numOfLabels = uniqueLabels.size() - 1; // 0 not count
 
   // 2.
   if( 1 == numOfLabels )
-    {
+  {
     return originalLabelMap;
-    }
+  }
 
   // 3.
   if( !std::binary_search(uniqueLabels.begin(), uniqueLabels.end(), desiredLabel) )
-    {
+  {
     return originalLabelMap;
-    }
+  }
 
   // 4.
   typename image_t::Pointer newLabelMap = image_t::New();
@@ -86,12 +86,12 @@ preprocessLabelMap(typename itk::Image<pixel_t, 3>::Pointer originalLabelMap, pi
   iterNew.GoToBegin();
   iter.GoToBegin();
   for( ; !iter.IsAtEnd(); ++iter, ++iterNew )
-    {
+  {
     if( iter.Get() == desiredLabel )
-      {
+    {
       iterNew.Set(1);
-      }
     }
+  }
 
   return newLabelMap;
 }

@@ -60,22 +60,22 @@ void qMRMLNodeComboBoxDelegate::paint(QPainter *painter,
                                       const QModelIndex &index) const
 {
     if (this->isSeparator(index))
-      {
+    {
       QRect rect = option.rect;
       if (const QAbstractItemView *view =
           qobject_cast<const QAbstractItemView*>(option.widget))
-        {
+      {
         rect.setWidth(view->viewport()->width());
-        }
+      }
       QStyleOption opt;
       opt.rect = rect;
       this->mCombo->style()->drawPrimitive(QStyle::PE_IndicatorToolBarSeparator,
                                            &opt, painter, this->mCombo);
-      }
+    }
     else
-      {
+    {
       this->Superclass::paint(painter, option, index);
-      }
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -83,11 +83,11 @@ QSize qMRMLNodeComboBoxDelegate::sizeHint(const QStyleOptionViewItem &option,
                        const QModelIndex &index) const
 {
   if (this->isSeparator(index))
-    {
+  {
     int pm = this->mCombo->style()->pixelMetric(QStyle::PM_DefaultFrameWidth,
                                                 nullptr, this->mCombo);
     return QSize(pm, pm);
-    }
+  }
   return this->Superclass::sizeHint(option, index);
 }
 
@@ -100,7 +100,7 @@ void qMRMLNodeComboBoxDelegate::drawDisplay(QPainter *painter,
    QStyleOptionViewItem option2 = option;
    if (option.state & QStyle::State_HasFocus &&
        !(option.state & QStyle::State_Selected))
-     {
+   {
      option2.state |= QStyle::State_Selected;
      QColor unselectedHighlight = option2.palette.color(QPalette::Highlight);
      unselectedHighlight.setHsv(unselectedHighlight.hue(),
@@ -110,7 +110,7 @@ void qMRMLNodeComboBoxDelegate::drawDisplay(QPainter *painter,
          option2.palette.color(QPalette::HighlightedText).darker(30);
      option2.palette.setColor(QPalette::Highlight, unselectedHighlight);
      option2.palette.setColor(QPalette::HighlightedText, unselectedHighlightedText);
-     }
+   }
    this->Superclass::drawDisplay(painter, option2, rect, text);
 }
 

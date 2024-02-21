@@ -86,12 +86,12 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
   UINT activeCodePage = GetACP();
   std::cout << "Active code page: " << activeCodePage << std::endl;
   if (activeCodePage != CP_UTF8)
-    {
+  {
     std::cout << "Active code page is not 65001 (UTF-8)."
       << " This is expected on Windows 10 versions before 1903 (May 2019 Update)."
       << " Further tests are skipped." << std::endl;
     return 0;
-    }
+  }
 #endif
 
   // Check if node name that contains special characters is loaded correctly
@@ -129,10 +129,10 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
 
   std::string cameraName = myNode->GetName();
   if (cameraName.find("camera") == std::string::npos)
-    {
+  {
     std::cerr << "bad encoding." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::string newName = cameraName.erase(0, std::strlen("camera"));
   myNode->SetName(newName.c_str());
@@ -150,9 +150,9 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
   myLineEdit->setText(QString("cam") + myLineEdit->text());
 
   if (argc < 3 || QString(argv[2]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

@@ -69,9 +69,9 @@ int qMRMLNodeComboBoxTest6( int argc, char * argv [] )
   nodeSelector2.show();
 */
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   app.processEvents();
   modelNode->SetAttribute("foo", "0");
   modelNode->Modified();

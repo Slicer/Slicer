@@ -55,42 +55,42 @@ int qMRMLNodeComboBoxTest5( int argc, char * argv [] )
   nodeSelector.setMRMLScene(scene.GetPointer());
 
   if (nodeSelector.currentNode() != nullptr)
-    {
+  {
     std::cerr << "qMRMLNodeComboBox::setMRMLScene() failed: " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QSignalSpy spy(&nodeSelector, SIGNAL(currentNodeChanged(bool)));
   nodeSelector.setCurrentNode(camNode.GetPointer());
   if (spy.count() != 1)
-    {
+  {
     std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: "
               << spy.count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   spy.clear();
   nodeSelector.setCurrentNode(nullptr);
   if (spy.count() != 1)
-    {
+  {
     std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: "
               << spy.count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   spy.clear();
   nodeSelector.setCurrentNode(camNode.GetPointer());
   if (spy.count() != 1)
-    {
+  {
     std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: "
               << spy.count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   nodeSelector.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

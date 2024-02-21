@@ -39,9 +39,9 @@ class vtkFloatArray;
     vtkObjectPointer(&(node)), (value));                                      \
   vtkObject *_newNode = (node);                                               \
   if (_oldNode != _newNode)                                                   \
-    {                                                                         \
+  {                                                                           \
     this->Modified();                                                         \
-    }                                                                         \
+  }                                                                           \
 };
 #endif
 
@@ -69,9 +69,9 @@ class vtkFloatArray;
     vtkObjectPointer(&(node)), (value));                                      \
   vtkObject *_newNode = (node);                                               \
   if (_oldNode != _newNode)                                                   \
-    {                                                                         \
+  {                                                                           \
     this->Modified();                                                         \
-    }                                                                         \
+  }                                                                           \
 };
 #endif
 
@@ -83,9 +83,9 @@ class vtkFloatArray;
      vtkObjectPointer(&(node)), (value), (events));                           \
   vtkObject *_newNode = (node);                                               \
   if (_oldNode != _newNode)                                                   \
-    {                                                                         \
+  {                                                                           \
     this->Modified();                                                         \
-    }                                                                         \
+  }                                                                           \
 };
 #endif
 
@@ -458,9 +458,9 @@ int vtkMRMLAbstractLogic::EndModify(bool previousDisableModifiedEventState)
 {
   this->SetDisableModifiedEvent(previousDisableModifiedEventState);
   if (!previousDisableModifiedEventState)
-    {
+  {
     return this->InvokePendingModifiedEvent();
-    }
+  }
   return this->GetPendingModifiedEventCount();
 }
 

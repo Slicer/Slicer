@@ -41,12 +41,12 @@ bool qSlicerUtils::isExecutableName(const QString& name)
              << ".pl" << ".py" << ".tcl" << ".m" << ".exe";
 
   foreach(const QString& extension, extensions)
-    {
+  {
     if (name.endsWith(extension, Qt::CaseInsensitive))
-      {
+    {
       return true;
-      }
     }
+  }
   return false;
 }
 
@@ -54,9 +54,9 @@ bool qSlicerUtils::isExecutableName(const QString& name)
 bool qSlicerUtils::isCLIExecutable(const QString& filePath)
 {
   if (isCLIScriptedExecutable(filePath))
-    {
+  {
     return true;
-    }
+  }
 
 #ifdef _WIN32
   return ( filePath.endsWith(".exe", Qt::CaseInsensitive) ||
@@ -77,9 +77,9 @@ bool qSlicerUtils::isCLIScriptedExecutable(const QString& filePath)
   if ( (filePath.endsWith(".py", Qt::CaseInsensitive)) &&
        (scriptFile.open(QIODevice::ReadOnly))          &&
        (scriptStream.readLine(2).startsWith("#!")) )
-    {
+  {
     return true;
-    }
+  }
   return false;
 }
 
@@ -104,12 +104,12 @@ bool qSlicerUtils::isTestingModule(qSlicerAbstractCoreModule* module)
 {
   const QStringList& categories = module->categories();
   foreach(const QString & category, categories)
-    {
+  {
     if (category.split('.').takeFirst() != "Testing")
-      {
+    {
       return false;
-      }
     }
+  }
   return true;
 }
 
@@ -121,12 +121,12 @@ QString qSlicerUtils::searchTargetInIntDir(const QString& directory, const QStri
   intDirs << "." << "Debug" << "RelWithDebInfo" << "Release" << "MinSizeRel";
   QString intDir = directory + "/%2/" + target;
   foreach(const QString& subdir, intDirs)
-    {
+  {
     if (QFile::exists(intDir.arg(subdir)))
-      {
+    {
       return directory+"/"+subdir+"/";
-      }
     }
+  }
   return QString();
 #else
   Q_UNUSED(target);
@@ -152,29 +152,29 @@ QString qSlicerUtils::extractModuleNameFromLibraryName(const QString& libraryNam
 
   // Remove prefix 'lib' if needed
   if (moduleName.indexOf("lib") == 0)
-    {
+  {
     moduleName.remove(0, 3);
-    }
+  }
 
   // Remove prefix 'qSlicer' if needed
   if (moduleName.indexOf("qSlicer") == 0)
-    {
+  {
     moduleName.remove(0, 7);
-    }
+  }
 
   // Remove suffix 'Module' if needed
   int index = moduleName.lastIndexOf("Module");
   if (index != -1)
-    {
+  {
     moduleName.remove(index, 6);
-    }
+  }
 
   // Remove suffix 'Lib' if needed
   index = moduleName.lastIndexOf("Lib");
   if (index != -1 && index == (moduleName.size() - 3))
-    {
+  {
     moduleName.remove(index, 3);
-    }
+  }
 
   return moduleName;
 }
@@ -186,16 +186,16 @@ QString qSlicerUtils::extractModuleNameFromClassName(const QString& className)
 
   // Remove prefix 'qSlicer' if needed
   if (moduleName.indexOf("qSlicer") == 0)
-    {
+  {
     moduleName.remove(0, 7);
-    }
+  }
 
   // Remove suffix 'Module' if needed
   int index = moduleName.lastIndexOf("Module");
   if (index == (moduleName.size() - 6))
-    {
+  {
     moduleName.remove(index, 6);
-    }
+  }
 
   return moduleName;
 }
@@ -226,15 +226,15 @@ QString qSlicerUtils::pathWithoutIntDir(const QString& path,
 {
   QDir pathAsDir(path);
   if (!qSlicerUtils::pathEndsWith(path, subDirWithoutIntDir))
-    {
+  {
     intDir = pathAsDir.dirName();
     pathAsDir.cdUp();
     if (!qSlicerUtils::pathEndsWith(pathAsDir.path(), subDirWithoutIntDir))
-      {
+    {
       intDir.clear();
       return path;
-      }
     }
+  }
   return pathAsDir.path();
 }
 
@@ -256,57 +256,57 @@ bool qSlicerUtils::setPermissionsRecursively(const QString &path,
                                              QFile::Permissions filePermissions)
 {
   if (!QFile::exists(path))
-    {
+  {
     qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions of nonexistent file" << path;
     return false;
-    }
+  }
 
   foreach(const QFileInfo &info, QDir(path).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
-    {
+  {
     if (info.isDir())
-      {
+    {
       if (directoryPermissions & QFile::ExeOwner
              || directoryPermissions & QFile::ExeGroup
              || directoryPermissions & QFile::ExeOther)
-        {
+      {
         // If executable bit is on /a/b/c/d, we should start with a, b, c, then d
         if (!QFile::setPermissions(info.filePath(), directoryPermissions))
-          {
+        {
           qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on directory" << info.filePath();
           return false;
-          }
-        if (!qSlicerUtils::setPermissionsRecursively(info.filePath(), directoryPermissions, filePermissions))
-          {
-          return false;
-          }
         }
-      else
+        if (!qSlicerUtils::setPermissionsRecursively(info.filePath(), directoryPermissions, filePermissions))
         {
+          return false;
+        }
+      }
+      else
+      {
         // .. otherwise we should start with d, c, b, then a
         if (!qSlicerUtils::setPermissionsRecursively(info.filePath(), directoryPermissions, filePermissions))
-          {
+        {
           return false;
-          }
+        }
         if (!QFile::setPermissions(info.filePath(), directoryPermissions))
-          {
+        {
           qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on directory" << info.filePath();
           return false;
-          }
         }
-      }
-    else if (info.isFile())
-      {
-      if (!QFile::setPermissions(info.filePath(), filePermissions))
-        {
-        qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on file" << info.filePath();
-        return false;
-        }
-      }
-    else
-      {
-      qWarning() << "qSlicerUtils::setPermissionsRecursively: Unhandled item" << info.filePath();
       }
     }
+    else if (info.isFile())
+    {
+      if (!QFile::setPermissions(info.filePath(), filePermissions))
+      {
+        qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on file" << info.filePath();
+        return false;
+      }
+    }
+    else
+    {
+      qWarning() << "qSlicerUtils::setPermissionsRecursively: Unhandled item" << info.filePath();
+    }
+  }
   return true;
 }
 
@@ -317,14 +317,14 @@ QString qSlicerUtils::replaceWikiUrlVersion(const QString& text, const QString& 
   QRegExp rx("http[s]?\\:\\/\\/[a-zA-Z0-9\\-\\._\\?\\,\\'\\/\\\\\\+&amp;%\\$#\\=~]*");
   int pos = 0;
   while ((pos = rx.indexIn(updatedText, pos)) != -1)
-    {
+  {
     // Given an URL matching the regular expression reported above, this second
     // expression will replace the first occurrence of "Documentation/<StringWithLetterOrNumberOrDot>/"
     // with "Documentation/<version>/"
     QString updatedURL = rx.cap(0).replace(QRegExp("Documentation\\/[a-zA-Z0-9\\.]+"), "Documentation/" +version);
     updatedText.replace(pos, rx.matchedLength(), updatedURL);
     pos += updatedURL.length();
-    }
+  }
 
   return updatedText;
 }
@@ -333,9 +333,9 @@ bool replaceFirst(QString& text, const QString& pattern, const QString& replacem
 {
   QRegExp rx = QRegExp(pattern);
   if (!text.contains(rx))
-    {
+  {
     return false;
-    }
+  }
   text = text.replace(rx.pos(0), rx.cap(0).size(), replacement);
   return true;
 }
@@ -347,7 +347,7 @@ QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text, const 
   QRegExp rx("http[s]?\\:\\/\\/[a-zA-Z0-9\\-\\._\\?\\,\\'\\/\\\\\\+&amp;%\\$#\\=~]*");
   int pos = 0;
   while ((pos = rx.indexIn(updatedText, pos)) != -1)
-    {
+  {
     // Given an URL matching the regular expression reported above, this second
     // expression will replace the first occurrence of "/<StringWithLetterOrNumberOrDot>/" or "/<StringWithLetterOrNumberOrDot>#"
     // with "/<version>/" or "/<version>#".
@@ -356,11 +356,11 @@ QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text, const 
       && (replaceFirst(foundURL, "\\/[0-9\\.]+\\/|/latest\\/|/stable\\/", "/" + version + "/") // replace /5.0/
       || replaceFirst(foundURL, "\\/v[0-9\\.]+\\/", "/" + version + "/")) // replace /v5.0/
       )
-      {
+    {
       updatedText.replace(pos, rx.matchedLength(), foundURL);
-      }
-    pos += foundURL.length();
     }
+    pos += foundURL.length();
+  }
 
   return updatedText;
 }

@@ -34,15 +34,15 @@ QString findPython()
 {
   QString python_path = QStandardPaths::findExecutable("python-real");
   if (python_path.isEmpty())
-    {
+  {
     python_path = QStandardPaths::findExecutable("python");
-    }
+  }
 
   QFileInfo python(python_path);
   if (!(python.exists() && python.isExecutable()))
-    {
+  {
     return QString();
-    }
+  }
   return python_path;
 
 }
@@ -80,19 +80,19 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   // Identify CLI-only .py scripts by `#!` first line
   // then set up interpreter path in SEM module `Location` parameter.
   if (QFileInfo(this->path()).suffix().toLower() == "py")
-    {
+  {
       QString python_path = findPython();
       if (python_path.isEmpty())
-        {
+      {
         this->appendInstantiateErrorString(
           qSlicerCLIModule::tr("Failed to find python interpreter for CLI: %1").arg(this->path()));
         return nullptr;
-        }
+      }
 
       module->setEntryPoint("python");
       module->moduleDescription().SetLocation(python_path.toStdString());
       module->moduleDescription().SetTarget(this->path().toStdString());
-    }
+  }
 
   QString xmlFilePath = this->xmlModuleDescriptionFilePath();
 
@@ -102,26 +102,26 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   //
   QString xmlDescription;
   if (QFile::exists(xmlFilePath))
-    {
+  {
     QFile xmlFile(xmlFilePath);
     if (xmlFile.open(QIODevice::ReadOnly))
-      {
+    {
       xmlDescription = QTextStream(&xmlFile).readAll();
-      }
+    }
     else
-      {
+    {
       this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI description: %1").arg(xmlFilePath));
       this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to read XML Description"));
-      }
     }
+  }
   else
-    {
+  {
     xmlDescription = this->runCLIWithXmlArgument();
-    }
+  }
   if (xmlDescription.isEmpty())
-    {
+  {
     return nullptr;
-    }
+  }
 
   module->setXmlModuleDescription(xmlDescription.toUtf8());
   module->setTempDirectory(this->TempDirectory);
@@ -147,11 +147,11 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
   cli.start(this->path(), QStringList(QString("--xml")));
   bool res = cli.waitForFinished(cliProcessTimeoutInMs);
   if (!res)
-    {
+  {
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
     QString errorString;
     switch(cli.error())
-      {
+    {
       case QProcess::FailedToStart:
         errorString = qSlicerCLIModule::tr(
               "The process failed to start. Either the invoked program is missing, or "
@@ -179,13 +179,13 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
         errorString = qSlicerCLIModule::tr(
               "Failed to execute process. An unknown error occurred.");
         break;
-      }
+    }
     this->appendInstantiateErrorString(errorString);
     return nullptr;
-    }
+  }
   QString errors = cli.readAllStandardError();
   if (!errors.isEmpty())
-    {
+  {
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
     this->appendInstantiateErrorString(errors);
     // TODO: More investigation for the following behavior:
@@ -194,22 +194,22 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
     // missing chars and makes the XML invalid. I'm not sure if it's just on my
     // machine so there is a chance it succeeds to parse the XML description
     // on other machines.
-    }
+  }
   QString xmlDescription = cli.readAllStandardOutput();
   if (xmlDescription.isEmpty())
-    {
+  {
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to retrieve XML Description"));
     return QString();
-    }
+  }
   if (!xmlDescription.startsWith("<?xml"))
-    {
+  {
     this->appendInstantiateWarningString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
     this->appendInstantiateWarningString(qSlicerCLIModule::tr("XML description doesn't start right away."));
     this->appendInstantiateWarningString(qSlicerCLIModule::tr("Output before '<?xml' is [%1]").arg(
                                            xmlDescription.mid(0, xmlDescription.indexOf("<?xml"))));
     xmlDescription.remove(0, xmlDescription.indexOf("<?xml"));
-    }
+  }
   return xmlDescription;
 }
 
@@ -267,16 +267,16 @@ void qSlicerCLIExecutableModuleFactory::registerItems()
 bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file)const
 {
   if (!this->Superclass::isValidFile(file))
-    {
+  {
     return false;
-    }
+  }
 
   // consider .py files to be executable. interpreter is set in ::instanciator
   if ((!file.isExecutable()) &&
       (!file.filePath().endsWith(".py", Qt::CaseInsensitive)))
-    {
+  {
     return false;
-    }
+  }
   return qSlicerUtils::isCLIExecutable(file.absoluteFilePath());
 }
 

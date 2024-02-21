@@ -69,13 +69,13 @@ vtkMRMLRubberBandWidgetRepresentation::vtkInternal
   this->PolyData->SetLines(lines);
 
   for (int i = 0; i < 4; i++)
-    {
+  {
     points->InsertNextPoint(0.0, 0.0, 0.0);
     vtkNew<vtkIdList> idList;
     idList->InsertNextId(i);
     idList->InsertNextId((i+1) % 4);
     this->PolyData->InsertNextCell(VTK_LINE, idList);
-    }
+  }
 
   this->ShadowMapper->SetInputData(this->PolyData);
   this->ShadowActor->SetMapper(this->ShadowMapper);
@@ -131,19 +131,19 @@ int vtkMRMLRubberBandWidgetRepresentation::RenderOverlay(vtkViewport *viewport)
 {
   vtkPoints* points = this->Internal->PolyData->GetPoints();
   if (this->GetMTime() > points->GetMTime())
-    {
+  {
     points->SetPoint(0, this->CornerPoint1[0], this->CornerPoint1[1], 0.0);
     points->SetPoint(1, this->CornerPoint2[0], this->CornerPoint1[1], 0.0);
     points->SetPoint(2, this->CornerPoint2[0], this->CornerPoint2[1], 0.0);
     points->SetPoint(3, this->CornerPoint1[0], this->CornerPoint2[1], 0.0);
     points->Modified();
-    }
+  }
   int count = 0;
   if (this->Internal->Actor->GetVisibility())
-    {
+  {
     count += this->Internal->ShadowActor->RenderOverlay(viewport);
     count += this->Internal->Actor->RenderOverlay(viewport);
-    }
+  }
   count += this->Superclass::RenderOverlay(viewport);
   return count;
 }

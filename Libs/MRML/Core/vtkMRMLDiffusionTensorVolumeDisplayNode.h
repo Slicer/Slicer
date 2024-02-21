@@ -141,9 +141,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   ///
   /// Return a text string describing the ScalarInvariant variable
   virtual const char * GetScalarInvariantAsString()
-    {
+  {
     return vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(this->ScalarInvariant);
-    };
+  };
 
   /// Get the input of the pipeline
   vtkAlgorithmOutput* GetInputImageDataConnection() override;

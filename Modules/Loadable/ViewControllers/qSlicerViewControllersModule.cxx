@@ -93,10 +93,10 @@ void qSlicerViewControllersModule::setMRMLScene(vtkMRMLScene* scene)
   this->Superclass::setMRMLScene(scene);
   vtkSlicerViewControllersLogic* logic = vtkSlicerViewControllersLogic::SafeDownCast(this->logic());
   if (!logic)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: logic is invalid";
     return;
-    }
+  }
   // Update default view nodes from settings
   this->readDefaultSliceViewSettings(logic->GetDefaultSliceViewNode());
   this->readDefaultThreeDViewSettings(logic->GetDefaultThreeDViewNode());
@@ -122,20 +122,20 @@ vtkMRMLAbstractLogic* qSlicerViewControllersModule::createLogic()
 void qSlicerViewControllersModule::readCommonViewSettings(vtkMRMLAbstractViewNode* defaultViewNode, QSettings& settings)
 {
   if (settings.contains("OrientationMarkerType"))
-    {
+  {
     defaultViewNode->SetOrientationMarkerType(vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(
       settings.value("OrientationMarkerType").toString().toUtf8()));
-    }
+  }
   if (settings.contains("OrientationMarkerSize"))
-    {
+  {
     defaultViewNode->SetOrientationMarkerSize(vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(
       settings.value("OrientationMarkerSize").toString().toUtf8()));
-    }
+  }
   if (settings.contains("RulerType"))
-    {
+  {
     defaultViewNode->SetRulerType(vtkMRMLAbstractViewNode::GetRulerTypeFromString(
       settings.value("RulerType").toString().toUtf8()));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -150,40 +150,40 @@ void qSlicerViewControllersModule::writeCommonViewSettings(vtkMRMLAbstractViewNo
 void qSlicerViewControllersModule::readDefaultThreeDViewSettings(vtkMRMLViewNode* defaultViewNode)
 {
   if (!defaultViewNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
     return;
-    }
+  }
   QSettings settings;
   settings.beginGroup("Default3DView");
   if (settings.contains("BoxVisibility"))
-    {
+  {
     defaultViewNode->SetBoxVisible(settings.value("BoxVisibility").toBool());
-    }
+  }
   if (settings.contains("AxisLabelsVisibility"))
-    {
+  {
     defaultViewNode->SetAxisLabelsVisible(settings.value("AxisLabelsVisibility").toBool());
-    }
+  }
   if (settings.contains("UseOrthographicProjection"))
-    {
+  {
     defaultViewNode->SetRenderMode(settings.value("UseOrthographicProjection").toBool() ? vtkMRMLViewNode::Orthographic : vtkMRMLViewNode::Perspective);
-    }
+  }
   if (settings.contains("UseDepthPeeling"))
-    {
+  {
     defaultViewNode->SetUseDepthPeeling(settings.value("UseDepthPeeling").toBool());
-    }
+  }
   if (settings.contains("ShadowsVisibility"))
-    {
+  {
     defaultViewNode->SetShadowsVisibility(settings.value("ShadowsVisibility").toBool());
-    }
+  }
   if (settings.contains("AmbientShadowsSizeScale"))
-    {
+  {
     defaultViewNode->SetAmbientShadowsSizeScale(settings.value("AmbientShadowsSizeScale").toDouble());
-    }
+  }
   if (settings.contains("AmbientShadowsVolumeOpacityThreshold"))
-    {
+  {
     defaultViewNode->SetAmbientShadowsVolumeOpacityThreshold(settings.value("AmbientShadowsVolumeOpacityThreshold").toDouble());
-    }
+  }
   readCommonViewSettings(defaultViewNode, settings);
 }
 
@@ -191,10 +191,10 @@ void qSlicerViewControllersModule::readDefaultThreeDViewSettings(vtkMRMLViewNode
 void qSlicerViewControllersModule::writeDefaultThreeDViewSettings(vtkMRMLViewNode* defaultViewNode)
 {
   if (!defaultViewNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
     return;
-    }
+  }
   QSettings settings;
   settings.beginGroup("Default3DView");
   settings.setValue("BoxVisibility", bool(defaultViewNode->GetBoxVisible()));
@@ -211,29 +211,29 @@ void qSlicerViewControllersModule::writeDefaultThreeDViewSettings(vtkMRMLViewNod
 void qSlicerViewControllersModule::readDefaultSliceViewSettings(vtkMRMLSliceNode* defaultViewNode)
 {
   if (!defaultViewNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
     return;
-    }
+  }
   QSettings settings;
   settings.beginGroup("DefaultSliceView");
   if (settings.contains("Orientation"))
-    {
+  {
     QString defaultSliceOrientation = settings.value("Orientation").toString();
     if (defaultSliceOrientation == "PatientRightIsScreenLeft")
-      {
+    {
       vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(this->mrmlScene(), true);
-      }
+    }
     else if (defaultSliceOrientation == "PatientRightIsScreenRight")
-      {
+    {
       vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(this->mrmlScene(), false);
-      }
+    }
     else
-      {
+    {
       qWarning() << Q_FUNC_INFO << ": Unknown DefaultSliceView/Orientation setting " << defaultSliceOrientation << ", using PatientRightIsScreenLeft instead.";
       vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(this->mrmlScene(), true);
-      }
     }
+  }
   readCommonViewSettings(defaultViewNode, settings);
 }
 
@@ -241,10 +241,10 @@ void qSlicerViewControllersModule::readDefaultSliceViewSettings(vtkMRMLSliceNode
 void qSlicerViewControllersModule::writeDefaultSliceViewSettings(vtkMRMLSliceNode* defaultViewNode)
 {
   if (!defaultViewNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
     return;
-    }
+  }
   QSettings settings;
   settings.beginGroup("DefaultSliceView");
 
@@ -253,9 +253,9 @@ void qSlicerViewControllersModule::writeDefaultSliceViewSettings(vtkMRMLSliceNod
   vtkMatrix3x3* axialOrientation = defaultViewNode->GetSliceOrientationPreset("Axial");
   QString defaultSliceOrientation("PatientRightIsScreenLeft");
   if (vtkAddonMathUtilities::MatrixAreEqual(axialOrientation, axialOrientationForPatientRightIsScreenRight))
-    {
+  {
     defaultSliceOrientation = "PatientRightIsScreenRight";
-    }
+  }
   settings.setValue("Orientation", defaultSliceOrientation);
 
   writeCommonViewSettings(defaultViewNode, settings);
@@ -265,10 +265,10 @@ void qSlicerViewControllersModule::writeDefaultSliceViewSettings(vtkMRMLSliceNod
 void qSlicerViewControllersModule::readDefaultPlotViewSettings(vtkMRMLPlotViewNode* defaultViewNode)
 {
   if (!defaultViewNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
     return;
-    }
+  }
   QSettings settings;
   settings.beginGroup("DefaultPlotView");
   readCommonViewSettings(defaultViewNode, settings);
@@ -278,10 +278,10 @@ void qSlicerViewControllersModule::readDefaultPlotViewSettings(vtkMRMLPlotViewNo
 void qSlicerViewControllersModule::writeDefaultPlotViewSettings(vtkMRMLPlotViewNode* defaultViewNode)
 {
   if (!defaultViewNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
     return;
-    }
+  }
   QSettings settings;
   settings.beginGroup("DefaultPlotView");
   writeCommonViewSettings(defaultViewNode, settings);

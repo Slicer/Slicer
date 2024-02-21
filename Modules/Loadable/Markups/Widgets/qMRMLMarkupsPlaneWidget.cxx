@@ -62,15 +62,15 @@ void qMRMLMarkupsPlaneWidgetPrivate::setupUi(qMRMLMarkupsPlaneWidget* widget)
 
   this->planeTypeComboBox->clear();
   for (int planeType = 0; planeType < vtkMRMLMarkupsPlaneNode::PlaneType_Last; ++planeType)
-    {
+  {
     this->planeTypeComboBox->addItem(this->getPlaneTypeName(planeType), planeType);
-    }
+  }
 
   this->planeSizeModeComboBox->clear();
   for (int sizeMode = 0; sizeMode < vtkMRMLMarkupsPlaneNode::SizeMode_Last; ++sizeMode)
-    {
+  {
     this->planeSizeModeComboBox->addItem(vtkMRMLMarkupsPlaneNode::GetSizeModeAsString(sizeMode), sizeMode);
-    }
+  }
 
   QObject::connect(this->planeTypeComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onPlaneTypeIndexChanged()));
@@ -103,7 +103,7 @@ void qMRMLMarkupsPlaneWidgetPrivate::setupUi(qMRMLMarkupsPlaneWidget* widget)
 const char* qMRMLMarkupsPlaneWidgetPrivate::getPlaneTypeName(int planeType)
 {
   switch (planeType)
-    {
+  {
     case vtkMRMLMarkupsPlaneNode::PlaneType3Points:
       return "Three points";
     case vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal:
@@ -112,7 +112,7 @@ const char* qMRMLMarkupsPlaneWidgetPrivate::getPlaneTypeName(int planeType)
       return "Plane fit";
     default:
       break;
-    }
+  }
   return "";
 }
 
@@ -163,9 +163,9 @@ void qMRMLMarkupsPlaneWidget::updateWidgetFromMRML()
 
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
   if (!planeNode)
-    {
+  {
     return;
-    }
+  }
 
   bool wasBlocked = d->planeTypeComboBox->blockSignals(true);
   d->planeTypeComboBox->setCurrentIndex(d->planeTypeComboBox->findData(planeNode->GetPlaneType()));
@@ -211,7 +211,7 @@ void qMRMLMarkupsPlaneWidget::updateWidgetFromMRML()
 
   vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
   if (planeDisplayNode)
-    {
+  {
     wasBlocked = d->normalVisibilityCheckBox->blockSignals(true);
     d->normalVisibilityCheckBox->setChecked(planeDisplayNode->GetNormalVisibility());
     d->normalVisibilityCheckBox->blockSignals(wasBlocked);
@@ -219,7 +219,7 @@ void qMRMLMarkupsPlaneWidget::updateWidgetFromMRML()
     wasBlocked = d->normalOpacitySlider->blockSignals(true);
     d->normalOpacitySlider->setValue(planeDisplayNode->GetNormalOpacity());
     d->normalOpacitySlider->blockSignals(wasBlocked);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -228,9 +228,9 @@ void qMRMLMarkupsPlaneWidget::onPlaneTypeIndexChanged()
   Q_D(qMRMLMarkupsPlaneWidget);
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
   if (!planeNode)
-    {
+  {
     return;
-    }
+  }
   planeNode->SetPlaneType(d->planeTypeComboBox->currentData().toInt());
 }
 
@@ -240,9 +240,9 @@ void qMRMLMarkupsPlaneWidget::onPlaneSizeModeIndexChanged()
   Q_D(qMRMLMarkupsPlaneWidget);
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
   if (!planeNode)
-    {
+  {
     return;
-    }
+  }
   planeNode->SetSizeMode(d->planeSizeModeComboBox->currentData().toInt());
 }
 
@@ -252,9 +252,9 @@ void qMRMLMarkupsPlaneWidget::onPlaneSizeSpinBoxChanged()
   Q_D(qMRMLMarkupsPlaneWidget);
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
   if (!planeNode)
-    {
+  {
     return;
-    }
+  }
   planeNode->SetSize(d->sizeXSpinBox->value(), d->sizeYSpinBox->value());
 }
 
@@ -280,15 +280,15 @@ void qMRMLMarkupsPlaneWidget::onNormalVisibilityCheckBoxChanged()
   Q_D(qMRMLMarkupsPlaneWidget);
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
   if (!planeNode)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLMarkupsPlaneDisplayNode* displayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
 
   displayNode->SetNormalVisibility(d->normalVisibilityCheckBox->checkState() == Qt::Checked);
 }
@@ -299,15 +299,15 @@ void qMRMLMarkupsPlaneWidget::onNormalOpacitySliderChanged()
   Q_D(qMRMLMarkupsPlaneWidget);
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
   if (!planeNode)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLMarkupsPlaneDisplayNode* displayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
 
   displayNode->SetNormalOpacity(d->normalOpacitySlider->value());
 }
@@ -319,9 +319,9 @@ bool qMRMLMarkupsPlaneWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *marku
 
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode);
   if (!planeNode)
-    {
+  {
     return false;
-    }
+  }
 
   return true;
 }

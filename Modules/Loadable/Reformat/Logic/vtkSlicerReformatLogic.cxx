@@ -59,9 +59,9 @@ void vtkSlicerReformatLogic::
 SetSliceOrigin(vtkMRMLSliceNode* node, double x, double y, double z)
 {
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   // Clamp the position given the volume
   double bounds[6];
@@ -94,9 +94,9 @@ void vtkSlicerReformatLogic::
 SetSliceNormal(vtkMRMLSliceNode* node, double x, double y, double z)
 {
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   double normal[3];
   normal[0] = x;
@@ -162,33 +162,33 @@ void vtkSlicerReformatLogic::GetVolumeBounds(vtkMRMLSliceNode* node,
     vtkMRMLSliceLogic::GetSliceCompositeNode(node);
 
   if (!node || !sliceCompositeNode)
-    {
+  {
     return;
-    }
+  }
 
   const char* volumeNodeID = nullptr;
   if (!volumeNodeID)
-    {
+  {
     volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetBackgroundVolumeID() : nullptr;
-    }
+  }
   if (!volumeNodeID)
-    {
+  {
     volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetForegroundVolumeID() : nullptr;
-    }
+  }
   if (!volumeNodeID)
-    {
+  {
     volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetLabelVolumeID() : nullptr;
-    }
+  }
 
   if (!node->GetScene())
-    {
+  {
     vtkWarningWithObjectMacro(node, "vtkSlicerReformatLogic::GetVolumeBounds: slice node must be associated with a scene");
     return;
-    }
+  }
 
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(volumeNodeID));
   if (volumeNode)
-    {
+  {
     double dimensions[3], center[3];
     vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, dimensions, center);
     bounds[0] = center[0] - dimensions[0] / 2;
@@ -197,7 +197,7 @@ void vtkSlicerReformatLogic::GetVolumeBounds(vtkMRMLSliceNode* node,
     bounds[3] = center[1] + dimensions[1] / 2;
     bounds[4] = center[2] - dimensions[2] / 2;
     bounds[5] = center[2] + dimensions[2] / 2;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -213,31 +213,31 @@ void vtkSlicerReformatLogic::GetCenterFromBounds(double bounds[6],
 void vtkSlicerReformatLogic::RotateSlice(vtkMRMLSliceNode* sliceNode, int axisIndex, double rotationAngleDeg)
 {
   if (!sliceNode)
-    {
+  {
     vtkGenericWarningMacro("vtkSlicerReformatLogic::RotateSliceView: node is invalid");
     return;
-    }
+  }
 
   vtkNew<vtkTransform> transform;
   transform->SetMatrix(sliceNode->GetSliceToRAS());
 
   if (axisIndex == 0)
-    {
+  {
     transform->RotateX(rotationAngleDeg);
-    }
+  }
   else if (axisIndex == 1)
-    {
+  {
     transform->RotateY(rotationAngleDeg);
-    }
+  }
   else if (axisIndex == 2)
-    {
+  {
     transform->RotateZ(rotationAngleDeg);
-    }
+  }
   else
-    {
+  {
     vtkWarningWithObjectMacro(sliceNode, "vtkSlicerReformatLogic::RotateSliceView: axisIndex must be 0, 1, or 2");
     return;
-    }
+  }
 
   // Apply the transform
   sliceNode->GetSliceToRAS()->DeepCopy(transform->GetMatrix());

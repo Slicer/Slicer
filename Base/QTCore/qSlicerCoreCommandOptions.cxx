@@ -88,9 +88,9 @@ bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
   bool ok = false;
   d->ParsedArgs = this->parseArguments(arguments, &ok);
   if (!ok)
-    {
+  {
     return false;
-    }
+  }
 
   // If the first argument is a Python script, enable the 'shebang' mode.
   //
@@ -106,30 +106,30 @@ bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
   QString extraPythonScript;
   int extraPythonScriptProcessedArgumentsCount = 0;
   if (unparsedArguments.size() > 0 && unparsedArguments.at(0).endsWith(".py"))
-    {
+  {
     extraPythonScript = unparsedArguments.at(0);
     extraPythonScriptProcessedArgumentsCount = 1;
-    }
+  }
   else if (unparsedArguments.size() > 1 && unparsedArguments.at(0) == "-I" && unparsedArguments.at(1).endsWith(".py"))
-    {
+  {
     extraPythonScript = unparsedArguments.at(1);
     extraPythonScriptProcessedArgumentsCount = 2;
-    }
+  }
   if (!extraPythonScript.isEmpty())
-    {
+  {
     if(!this->pythonScript().isEmpty())
-      {
+    {
       qWarning() << "Ignore script specified using '--python-script'";
-      }
+    }
     this->setExtraPythonScript(extraPythonScript);
     this->setExtraPythonScriptProcessedArgumentsCount(extraPythonScriptProcessedArgumentsCount);
     this->setRunPythonAndExit(true);
-    }
+  }
 
   if (!d->ParsedArgs.value("c").toString().isEmpty())
-    {
+  {
     this->setRunPythonAndExit(true);
-    }
+  }
 
   return true;
 }
@@ -165,9 +165,9 @@ QStringList qSlicerCoreCommandOptions::additionalModulePaths()const
   // note the singular form: 'path' not 'paths'
   QString additionalModulePath = d->ParsedArgs.value("additional-module-path").toString();
   if (!additionalModulePath.isEmpty())
-    {
+  {
     allAdditionalModulePaths << additionalModulePath;
-    }
+  }
   // handle rest of pathS
   allAdditionalModulePaths.append(d->ParsedArgs.value("additional-module-paths").toStringList());
   return allAdditionalModulePaths;
@@ -260,13 +260,13 @@ QString qSlicerCoreCommandOptions::pythonCode() const
   Q_D(const qSlicerCoreCommandOptions);
   QString pythonCode = d->ParsedArgs.value("python-code").toString();
   if(!pythonCode.isEmpty())
-    {
+  {
     return pythonCode;
-    }
+  }
   else
-    {
+  {
     return d->ParsedArgs.value("c").toString();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

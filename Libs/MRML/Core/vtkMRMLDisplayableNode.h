@@ -172,9 +172,9 @@ public:
   /// DisplayModifiedEvent is not fired until found for the first time in
   /// the scene, e.g. Get(Nth)DisplayNode(), UpdateScene()...
   enum
-    {
+  {
     DisplayModifiedEvent = 17000,
-    };
+  };
 
   /// Create and observe default display node(s)
   /// Does nothing by default, must be reimplemented by subclasses that have

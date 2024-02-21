@@ -62,11 +62,11 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
 
   /// Set/Get visualization Mode
   enum
-    {
+  {
     visModeScalar = 0,
     visModeGlyph = 1,
     visModeBoth = 2
-    };
+  };
 
   vtkGetMacro(VisualizationMode, int);
   vtkSetMacro(VisualizationMode, int);
@@ -118,26 +118,26 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
   /// get associated slice glyph display node or nullptr if not set
   virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
     GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* vtkNotUsed(node) )
-    {
+  {
     vtkErrorMacro("Shouldn't be calling this");
     return std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>();
-    }
+  }
 
 
   ///
   /// add slice glyph display nodes if not already present and return it
   virtual void AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* vtkNotUsed(node) )
-    {
+  {
     vtkErrorMacro("Shouldn't be calling this");
-    }
+  }
 
   ///
   /// Defines the expected range of the output data for given imageData after
   /// having been mapped through the current display options
   void GetDisplayScalarRange(double range[2]) override
-    {
+  {
     this->Superclass::GetDisplayScalarRange(range);
-    }
+  }
 
 protected:
   vtkMRMLGlyphableVolumeDisplayNode();

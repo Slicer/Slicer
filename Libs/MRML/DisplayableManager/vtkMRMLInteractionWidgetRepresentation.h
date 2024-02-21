@@ -236,19 +236,19 @@ protected:
       , ApplyScaleToPosition(applyScaleToPosition)
     {
     for (int i = 0; i < 3; ++i)
-      {
+    {
       this->PositionWorld[i] = positionWorld[i];
-      }
+    }
     this->PositionWorld[3] = 1.0;
     for (int i = 0; i < 3; ++i)
-      {
+    {
       this->PositionLocal[i] = positionLocal[i];
-      }
+    }
     this->PositionLocal[3] = 1.0;
     for (int i = 0; i < 4; ++i)
-      {
+    {
       this->Color[i] = color[i];
-      }
+    }
     }
     int Index;
     int ComponentType;
@@ -258,10 +258,10 @@ protected:
     double Color[4];
     bool ApplyScaleToPosition{true};
     bool IsVisible()
-      {
+    {
       double epsilon = 0.001;
       return this->Color[3] > epsilon;
-      }
+    }
   };
 
   /// Get the list of info for all interaction handles

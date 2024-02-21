@@ -40,13 +40,13 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   if (argc != 4)
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - Missing parameters !\n"
               << "Usage: " << argv[0] << " /path/to/ITKSnapSegmentation.nii.gz /path/to/OldSlicerSegmentation.seg.nrrd /path/to/SlicerSegmentation.seg.nrrd"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkSegmentationConverterFactory* converterFactory = vtkSegmentationConverterFactory::GetInstance();
   converterFactory->RegisterConverterRule(vtkSmartPointer<vtkClosedSurfaceToBinaryLabelmapConversionRule>::New());

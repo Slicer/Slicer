@@ -53,24 +53,24 @@ public:
   virtual void setValue(const QString& _value) = 0;
 
   static QString toString(const QString& _value)
-    {
+  {
     return _value;
-    }
+  }
 
   static bool toBool(const QString& _value)
-    {
+  {
     return (_value.compare("true", Qt::CaseInsensitive) == 0);
-    }
+  }
 
   static int toInt(const QString& _value)
-    {
+  {
     return _value.toInt();
-    }
+  }
 
   static double toDouble(const QString& _value)
-    {
+  {
     return _value.toDouble();
-    }
+  }
 
 signals:
   void valueChanged();

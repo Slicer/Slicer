@@ -145,9 +145,9 @@ void qMRMLRangeWidget::updateSymmetricMoves(bool symmetric)
 void qMRMLRangeWidget::setSymmetricMoves(bool symmetry)
 {
   if (symmetry==this->symmetricMoves())
-    {
+  {
     return;
-    }
+  }
   ctkRangeWidget::setSymmetricMoves(symmetry);
   const QSignalBlocker blocker(this->SymmetricAction);
   this->SymmetricAction->setChecked(symmetry);
@@ -157,9 +157,9 @@ void qMRMLRangeWidget::setSymmetricMoves(bool symmetry)
 void qMRMLRangeWidget::setQuantity(const QString& quantity)
 {
   if (quantity == this->quantity())
-    {
+  {
     return;
-    }
+  }
 
   this->MinSpinBox->setQuantity(quantity);
   this->MaxSpinBox->setQuantity(quantity);
@@ -183,9 +183,9 @@ vtkMRMLScene* qMRMLRangeWidget::mrmlScene()const
 void qMRMLRangeWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   if (this->mrmlScene() == scene)
-    {
+  {
     return;
-    }
+  }
 
   this->MinSpinBox->setMRMLScene(scene);
   this->MaxSpinBox->setMRMLScene(scene);

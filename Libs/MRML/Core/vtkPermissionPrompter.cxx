@@ -21,25 +21,25 @@ vtkPermissionPrompter::vtkPermissionPrompter()
 vtkPermissionPrompter::~vtkPermissionPrompter()
 {
   if ( this->Username )
-    {
+  {
     this->SetUsername ( nullptr );
-    }
+  }
   if ( this->Password )
-    {
+  {
     this->SetPassword ( nullptr );
-    }
+  }
   if ( this->HostName)
-    {
+  {
     this->SetHostName ( nullptr );
-    }
+  }
   if ( this->PromptMessage )
-    {
+  {
     this->SetPromptMessage ( nullptr );
-    }
+  }
   if ( this->PromptTitle!= nullptr )
-    {
+  {
     this->SetPromptTitle ( nullptr );
-    }
+  }
 }
 
 

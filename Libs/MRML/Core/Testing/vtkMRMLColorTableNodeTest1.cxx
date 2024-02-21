@@ -34,13 +34,13 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
   }
 
   if (argc != 2)
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " - Missing parameters !\n"
               << "Usage: " << argv[0] << " /path/to/temp"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   const char* tempDir = argv[1];
 

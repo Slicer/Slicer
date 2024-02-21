@@ -171,10 +171,10 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLStdStringVectorMacro(viewNodeRef, ViewNodeIDs, std::vector);
   vtkMRMLWriteXMLBooleanMacro(folderDisplayOverrideAllowed, FolderDisplayOverrideAllowed);
   if (this->GetShowMode() != vtkMRMLDisplayNode::ShowDefault)
-    {
+  {
     // only write out the show mode if using non-default mode
     vtkMRMLWriteXMLEnumMacro(showMode, ShowMode);
-    }
+  }
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -227,32 +227,32 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(folderDisplayOverrideAllowed, FolderDisplayOverrideAllowed);
   vtkMRMLReadXMLEnumMacro(showMode, ShowMode);
   if (!strcmp(xmlReadAttName, "autoScalarRange"))
-    {
+  {
     if (!strcmp(xmlReadAttName,"true"))
-      {
-      this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
-      }
-    else
-      {
-      this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseManualScalarRange);
-      }
-    }
-  if (!strcmp(xmlReadAttName, "viewNodeRef"))
     {
+      this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
+    }
+    else
+    {
+      this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseManualScalarRange);
+    }
+  }
+  if (!strcmp(xmlReadAttName, "viewNodeRef"))
+  {
     std::string nodeIds = xmlReadAttValue;
     // Legacy scenes used " " as separator, replace that by ";".
     vtksys::SystemTools::ReplaceString(nodeIds, " ", ";");
     std::stringstream ss(nodeIds);
     std::string nodeId;
     while (std::getline(ss, nodeId, ';'))
-      {
+    {
       if (nodeId.empty())
-        {
+      {
         continue;
-        }
-      this->AddViewNodeID(nodeId.c_str());
       }
+      this->AddViewNodeID(nodeId.c_str());
     }
+  }
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -264,9 +264,9 @@ void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 
   vtkMRMLDisplayNode *node = vtkMRMLDisplayNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   // Strings
   this->SetColor(node->Color);
@@ -359,14 +359,14 @@ void vtkMRMLDisplayNode::SetSceneReferences()
 {
   this->Superclass::SetSceneReferences();
   if (this->Scene == nullptr)
-    {
+  {
     return;
-    }
+  }
   this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
   for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
-    {
+  {
     this->Scene->AddReferencedNodeID(this->ViewNodeIDs[i].c_str(), this);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -374,59 +374,59 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
-    {
+  {
     this->SetAndObserveColorNodeID(newID);
-    }
+  }
   else
-    {
+  {
     bool modified = false;
     for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
-      {
+    {
       if ( std::string(oldID) == this->ViewNodeIDs[i])
-        {
+      {
         this->ViewNodeIDs[i] =  std::string(newID);
         modified = true;
-        }
-      }
-    if (modified)
-      {
-      this->Modified();
       }
     }
+    if (modified)
+    {
+      this->Modified();
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
 {
   if (this->Scene == nullptr)
-    {
+  {
     return nullptr;
-    }
+  }
   // It is an expensive operation to determine the displayable node
   // (need to iterate through the scene), so the last found value
   // is cached. If it is still valid then we use it.
   if (this->LastFoundDisplayableNode != nullptr)
-    {
+  {
     if (this->LastFoundDisplayableNode->GetScene() == this->Scene
       && this->LastFoundDisplayableNode->HasDisplayNodeID(this->GetID()))
-      {
+    {
       return this->LastFoundDisplayableNode;
-      }
     }
+  }
   vtkMRMLNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   vtkCollection* sceneNodes = this->Scene->GetNodes();
   for (sceneNodes->InitTraversal(it);
        (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
-    {
+  {
     vtkMRMLDisplayableNode* displayableNode =
       vtkMRMLDisplayableNode::SafeDownCast(node);
     if (displayableNode && displayableNode->HasDisplayNodeID(this->GetID()))
-      {
+    {
       this->LastFoundDisplayableNode = displayableNode;
       return displayableNode;
-      }
     }
+  }
   this->LastFoundDisplayableNode = nullptr;
   return nullptr;
 }
@@ -436,9 +436,9 @@ void vtkMRMLDisplayNode
 ::SetTextureImageDataConnection(vtkAlgorithmOutput* newTextureImageDataConnection)
 {
    if (newTextureImageDataConnection == this->TextureImageDataConnection)
-    {
+   {
     return;
-    }
+   }
 
   vtkAlgorithm* oldTextureImageDataAlgorithm = this->TextureImageDataConnection ?
     this->TextureImageDataConnection->GetProducer() : nullptr;
@@ -449,20 +449,20 @@ void vtkMRMLDisplayNode
     this->TextureImageDataConnection->GetProducer() : nullptr;
 
   if (textureImageDataAlgorithm != nullptr)
-    {
+  {
     vtkEventBroker::GetInstance()->AddObservation(
       this->TextureImageDataConnection, vtkCommand::ModifiedEvent,
       this, this->MRMLCallbackCommand );
     textureImageDataAlgorithm->Register(this);
-    }
+  }
 
   if (oldTextureImageDataAlgorithm != nullptr)
-    {
+  {
     vtkEventBroker::GetInstance()->RemoveObservations(
       this->TextureImageDataConnection, vtkCommand::ModifiedEvent,
       this, this->MRMLCallbackCommand );
     oldTextureImageDataAlgorithm->UnRegister(this);
-    }
+  }
   this->Modified();
 }
 
@@ -480,46 +480,46 @@ void vtkMRMLDisplayNode::UpdateReferences()
   Superclass::UpdateReferences();
 
   if (this->Scene == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   if (this->ColorNodeID != nullptr && this->Scene->GetNodeByID(this->ColorNodeID) == nullptr)
-    {
+  {
     this->SetAndObserveColorNodeID(nullptr);
-    }
+  }
 
   std::vector< std::string > viewNodeIDs;
 
   for (unsigned int i=0; i < this->ViewNodeIDs.size(); i++)
-    {
+  {
     if (this->Scene->GetNodeByID(this->ViewNodeIDs[i]) != nullptr)
-      {
-      viewNodeIDs.push_back(this->ViewNodeIDs[i]);
-      }
-    }
-  if (this->ViewNodeIDs.size() != viewNodeIDs.size())
     {
+      viewNodeIDs.push_back(this->ViewNodeIDs[i]);
+    }
+  }
+  if (this->ViewNodeIDs.size() != viewNodeIDs.size())
+  {
     // The following line is probably incorrect
     // (should be this->ViewNodeIDs = viewNodeIDs;)
     viewNodeIDs = this->ViewNodeIDs;
     this->Modified();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLColorNode* vtkMRMLDisplayNode::GetColorNode()
 {
   if (this->ColorNode || !this->ColorNodeID)
-    {
+  {
     return this->ColorNode;
-    }
+  }
   vtkMRMLColorNode* cnode = nullptr;
   if (this->GetScene())
-    {
+  {
     cnode = vtkMRMLColorNode::SafeDownCast(
       this->GetScene()->GetNodeByID(this->ColorNodeID));
-    }
+  }
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
   return cnode;
 }
@@ -529,20 +529,20 @@ void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
 {
   vtkMRMLColorNode* cnode = nullptr;
   if (this->GetScene() && colorNodeID)
-    {
+  {
     cnode = vtkMRMLColorNode::SafeDownCast(
       this->GetScene()->GetNodeByID(colorNodeID));
-    }
+  }
   if (this->ColorNode != cnode)
-    {
+  {
     vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
-    }
+  }
   this->SetColorNodeInternal(cnode);
   this->SetColorNodeID(colorNodeID);
   if (this->Scene)
-    {
+  {
     this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -564,38 +564,38 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents( vtkObject *caller, unsigned long eve
   if (this->TextureImageDataConnection != nullptr &&
       this->TextureImageDataConnection == vtkAlgorithmOutput::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
-    {
+  {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
-    }
+  }
 
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
   if (cnode != nullptr &&
       this->ColorNodeID != nullptr && cnode->GetID() != nullptr &&
       strcmp(this->ColorNodeID, cnode->GetID()) == 0 &&
       event ==  vtkCommand::ModifiedEvent)
-    {
+  {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
-    }
+  }
 }
 
 //-------------------------------------------------------
 void vtkMRMLDisplayNode::AddViewNodeID(const char* viewNodeID)
 {
   if (viewNodeID == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   if (this->IsViewNodeIDPresent(viewNodeID))
-    {
+  {
     return; // already exists, do nothing
-    }
+  }
 
   this->ViewNodeIDs.emplace_back(viewNodeID);
   if (this->Scene)
-    {
+  {
     this->Scene->AddReferencedNodeID(viewNodeID, this);
-    }
+  }
 
   this->Modified();
 }
@@ -604,35 +604,35 @@ void vtkMRMLDisplayNode::AddViewNodeID(const char* viewNodeID)
 void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
 {
   if (viewNodeID == nullptr)
-    {
+  {
     return;
-    }
+  }
   std::vector< std::string > viewNodeIDs;
   for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
-    {
+  {
     if (std::string(viewNodeID) != this->ViewNodeIDs[i])
-      {
-      viewNodeIDs.push_back(this->ViewNodeIDs[i]);
-      }
-    }
-  if (viewNodeIDs.size() != this->ViewNodeIDs.size() && this->Scene!=nullptr)
     {
+      viewNodeIDs.push_back(this->ViewNodeIDs[i]);
+    }
+  }
+  if (viewNodeIDs.size() != this->ViewNodeIDs.size() && this->Scene!=nullptr)
+  {
     this->Scene->RemoveReferencedNodeID(viewNodeID, this);
     this->ViewNodeIDs = viewNodeIDs;
     this->Modified();
-    }
+  }
 }
 
 //-------------------------------------------------------
 void vtkMRMLDisplayNode::RemoveAllViewNodeIDs()
 {
   if (this->Scene!=nullptr)
-    {
+  {
     for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
-      {
+    {
       this->Scene->RemoveReferencedNodeID(ViewNodeIDs[i].c_str(), this);
-      }
     }
+  }
   this->ViewNodeIDs.clear();
   this->Modified();
 }
@@ -641,10 +641,10 @@ void vtkMRMLDisplayNode::RemoveAllViewNodeIDs()
 const char* vtkMRMLDisplayNode::GetNthViewNodeID(unsigned int index)
 {
   if (index >= ViewNodeIDs.size())
-    {
+  {
     vtkErrorMacro("vtkMRMLDisplayNode::GetNthViewNodeID() index " << index << " outside the range 0-" << ViewNodeIDs.size()-1 );
     return nullptr;
-    }
+  }
   return ViewNodeIDs[index].c_str();
 }
 
@@ -652,9 +652,9 @@ const char* vtkMRMLDisplayNode::GetNthViewNodeID(unsigned int index)
 bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)const
 {
   if (viewNodeID == nullptr)
-    {
+  {
     return false;
-    }
+  }
   std::string value(viewNodeID);
   std::vector< std::string >::const_iterator it =
     std::find(this->ViewNodeIDs.begin(), this->ViewNodeIDs.end(), value);
@@ -671,9 +671,9 @@ bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID)const
 void vtkMRMLDisplayNode::SetDisplayableOnlyInView(const char *viewNodeID)
 {
   if (viewNodeID == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   int disabledModify = this->StartModify();
   this->RemoveAllViewNodeIDs();
@@ -691,30 +691,30 @@ void vtkMRMLDisplayNode
     this->ViewNodeIDs.begin();
   bool different = false;
   for (; sourceIt != viewNodeIDs.end(); ++sourceIt, ++destIt)
-    {
+  {
     if (destIt == this->ViewNodeIDs.end())
-      {
+    {
       different = true;
-      }
+    }
     else if (*sourceIt != *destIt)
-      {
+    {
       different = true;
       destIt = this->ViewNodeIDs.erase(destIt);
-      }
-    if (different)
-      {
-      destIt = this->ViewNodeIDs.insert(destIt, *sourceIt);
-      }
     }
-  if (destIt != this->ViewNodeIDs.end())
+    if (different)
     {
+      destIt = this->ViewNodeIDs.insert(destIt, *sourceIt);
+    }
+  }
+  if (destIt != this->ViewNodeIDs.end())
+  {
     different = true;
     this->ViewNodeIDs.erase(destIt, this->ViewNodeIDs.end());
-    }
+  }
   if (different)
-    {
+  {
     this->Modified();
-    }
+  }
 }
 
 //-------------------------------------------------------
@@ -723,37 +723,37 @@ bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
   if (!viewNodeID
     || !this->GetVisibility()
     || !this->IsDisplayableInView(viewNodeID))
-    {
+  {
     return false;
-    }
+  }
 
   // If parent folder visibility is set to false then the markups is not visible
   if (this->GetFolderDisplayOverrideAllowed())
-    {
+  {
     vtkMRMLDisplayableNode* displayableNode = this->GetDisplayableNode();
     // Visibility is applied regardless the fact whether there is override or not.
     // Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden.
     // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
     if (!vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode))
-      {
+    {
       return false;
-      }
     }
+  }
   vtkMRMLNode* viewNode = this->GetScene() ? this->GetScene()->GetNodeByID(viewNodeID) : nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
-    {
+  {
     if (!this->GetVisibility2D())
-      {
-      return false;
-      }
-    }
-  if (vtkMRMLViewNode::SafeDownCast(viewNode))
     {
-    if (!this->GetVisibility3D())
-      {
       return false;
-      }
     }
+  }
+  if (vtkMRMLViewNode::SafeDownCast(viewNode))
+  {
+    if (!this->GetVisibility3D())
+    {
+      return false;
+    }
+  }
   return true;
 }
 
@@ -761,13 +761,13 @@ bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
 void vtkMRMLDisplayNode::SetAutoScalarRange(int b)
 {
   if (b)
-    {
+  {
     this->AutoScalarRangeOn();
-    }
+  }
   else
-    {
+  {
     this->AutoScalarRangeOff();
-    }
+  }
 }
 
 //-------------------------------------------------------
@@ -792,7 +792,7 @@ void vtkMRMLDisplayNode::AutoScalarRangeOff()
 const char* vtkMRMLDisplayNode::GetScalarRangeFlagTypeAsString(int flag)
 {
   switch (flag)
-    {
+  {
     case UseManualScalarRange: return "UseManual";
     case UseDataScalarRange: return "UseData";
     case UseColorNodeScalarRange: return "UseColorNode";
@@ -801,25 +801,25 @@ const char* vtkMRMLDisplayNode::GetScalarRangeFlagTypeAsString(int flag)
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLDisplayNode::GetScalarRangeFlagTypeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i = 0; i < vtkMRMLDisplayNode::NUM_SCALAR_RANGE_FLAGS; i++)
-    {
+  {
     if (strcmp(name, vtkMRMLDisplayNode::GetScalarRangeFlagTypeAsString(i)) == 0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // name not found
   return -1;
 }
@@ -835,10 +835,10 @@ void vtkMRMLDisplayNode::SetScalarRangeFlagFromString(const char* str)
 {
   int scalarRangeFlag = this->GetScalarRangeFlagTypeFromString(str);
   if (scalarRangeFlag < 0)
-    {
+  {
     // invalid value, maybe legacy scene
     scalarRangeFlag = atoi(str);
-    }
+  }
   this->SetScalarRangeFlag(scalarRangeFlag);
 }
 
@@ -846,9 +846,9 @@ void vtkMRMLDisplayNode::SetScalarRangeFlagFromString(const char* str)
 void vtkMRMLDisplayNode::SetScalarRangeFlag(int flag)
 {
   if (flag == this->ScalarRangeFlag)
-    {
+  {
     return;
-    }
+  }
   MRMLNodeModifyBlocker blocker(this);
   this->ScalarRangeFlag = flag;
   this->Modified();
@@ -859,62 +859,62 @@ void vtkMRMLDisplayNode::SetScalarRangeFlag(int flag)
 void vtkMRMLDisplayNode::UpdateScalarRange()
 {
   if (!this->GetScalarDataSet())
-    {
+  {
     return;
-    }
+  }
 
   if (this->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseManualScalarRange)
-    {
+  {
     return;
-    }
+  }
 
   double newScalarRange[2] = { 0.0, -1.0 };
   int flag = this->GetScalarRangeFlag();
   if (flag == vtkMRMLDisplayNode::UseDataScalarRange)
-    {
+  {
     vtkDataArray *dataArray = this->GetActiveScalarArray();
     if (dataArray)
-      {
-      dataArray->GetRange(newScalarRange);
-      }
-    }
-  else if (flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
     {
+      dataArray->GetRange(newScalarRange);
+    }
+  }
+  else if (flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
+  {
     if (this->GetColorNode())
-      {
+    {
       vtkLookupTable* lut = this->GetColorNode()->GetLookupTable();
       if (lut)
-        {
+      {
         double* lutRange = lut->GetRange();
         newScalarRange[0] = lutRange[0];
         newScalarRange[1] = lutRange[1];
-        }
+      }
       else
-        {
+      {
         vtkWarningMacro("Can not use color node scalar range since model "
                         << "display node color node does not have a lookup table.");
-        }
       }
+    }
     else
-      {
+    {
       vtkWarningMacro("Can not use color node scalar range since model "
                       << "display node does not have a color node.");
-      }
     }
+  }
   else if (flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
-    {
+  {
     vtkDataArray *dataArray = this->GetActiveScalarArray();
     if (dataArray)
-      {
+    {
       newScalarRange[0] = dataArray->GetDataTypeMin();
       newScalarRange[1] = dataArray->GetDataTypeMax();
-      }
+    }
     else
-      {
+    {
       vtkWarningMacro("Can not use data type scalar range since the model display node's"
                       << "mesh does not have an active scalar array.");
-      }
     }
+  }
 
   this->SetScalarRange(newScalarRange);
 }
@@ -925,10 +925,10 @@ void vtkMRMLDisplayNode::SetActiveScalar(const char *scalarName, int location)
   if (location == this->ActiveAttributeLocation
     && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
         || (scalarName == nullptr && this->ActiveScalarName == nullptr)))
-    {
+  {
     // no change
     return;
-    }
+  }
   MRMLNodeModifyBlocker blocker(this);
   this->SetActiveScalarName(scalarName);
   this->SetActiveAttributeLocation(location);
@@ -939,7 +939,7 @@ void vtkMRMLDisplayNode::SetActiveScalar(const char *scalarName, int location)
 const char* vtkMRMLDisplayNode::GetAttributeLocationAsString(int id)
 {
   switch (id)
-    {
+  {
     case vtkAssignAttribute::POINT_DATA: return "point";
     case vtkAssignAttribute::CELL_DATA: return "cell";
     case vtkAssignAttribute::VERTEX_DATA: return "vertex";
@@ -947,25 +947,25 @@ const char* vtkMRMLDisplayNode::GetAttributeLocationAsString(int id)
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLDisplayNode::GetAttributeLocationFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i = 0; i < vtkAssignAttribute::NUM_ATTRIBUTE_LOCS; i++)
-    {
+  {
     if (strcmp(name, vtkMRMLDisplayNode::GetAttributeLocationAsString(i)) == 0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // name not found
   return -1;
 }
@@ -981,13 +981,13 @@ void vtkMRMLDisplayNode::SetActiveAttributeLocationFromString(const char* str)
 {
   int id = this->GetAttributeLocationFromString(str);
   if (id<0)
-    {
+  {
     vtkWarningMacro("Invalid activeAttributeLocation: " << (str ? str : "(none)"));
-    }
+  }
   else
-    {
+  {
     this->SetActiveAttributeLocation(id);
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -1022,37 +1022,37 @@ void vtkMRMLDisplayNode::SliceIntersectionVisibilityOff()
 std::string vtkMRMLDisplayNode::GetTextPropertyAsString(vtkTextProperty* textProperty)
 {
   if (!textProperty)
-    {
+  {
     return "";
-    }
+  }
 
   std::stringstream ss;
   ss << "font-family:" << textProperty->GetFontFamilyAsString() << ";";
   if (textProperty->GetFontFile())
-    {
+  {
     ss << "font-file:" << textProperty->GetFontFile() << ";";
-    }
+  }
   ss << "font-size:" << textProperty->GetFontSize() << "px;";
   ss << "font-style:" << (textProperty->GetItalic() ? "italic" : "normal") << ";";
   ss << "font-weight:" << (textProperty->GetBold() ? "bold" : "normal") << ";";
   ss << "color:rgba(";
   for (int i = 0; i < 3; ++i)
-    {
+  {
     ss << static_cast<int>(std::floor(textProperty->GetColor()[i] * 255)) << ",";
-    }
+  }
   ss << textProperty->GetOpacity() << ");";
   ss << "background-color:rgba(";
   for (int i = 0; i < 3; ++i)
-    {
+  {
     ss << static_cast<int>(std::floor(textProperty->GetBackgroundColor()[i] * 255))  << ",";
-    }
+  }
   ss << textProperty->GetBackgroundOpacity() << ");";
   ss << "border-width:" << textProperty->GetFrameWidth() << "px;";
   ss << "border-color:rgba(";
   for (int i = 0; i < 3; ++i)
-    {
+  {
     ss << static_cast<int>(std::floor(textProperty->GetFrameColor()[i] * 255)) << ",";
-    }
+  }
   ss << (textProperty->GetFrame() ? "1.0" : "0.0") << ");";
   ss << "text-shadow:";
   ss << textProperty->GetShadowOffset()[0] << "px " << textProperty->GetShadowOffset()[1] << "px ";
@@ -1065,112 +1065,112 @@ std::string vtkMRMLDisplayNode::GetTextPropertyAsString(vtkTextProperty* textPro
 void vtkMRMLDisplayNode::UpdateTextPropertyFromString(std::string inputString, vtkTextProperty* textProperty)
 {
   if (!textProperty)
-    {
+  {
     return ;
-    }
+  }
 
   std::vector<std::string> textProperties = vtksys::SystemTools::SplitString(inputString, ';');
   for (std::string textPropertyString : textProperties)
-    {
+  {
     std::vector<std::string> keyValue = vtksys::SystemTools::SplitString(textPropertyString, ':');
     if (keyValue.empty())
-      {
+    {
       continue;
-      }
+    }
     std::string key = keyValue[0];
 
     if (keyValue.size() < 2)
-      {
+    {
       continue;
-      }
+    }
 
     std::string value = keyValue[1];
     if (key == "font-family")
-      {
+    {
       textProperty->SetFontFamilyAsString(value.c_str());
-      }
+    }
     else if (key == "font-file")
-      {
+    {
       textProperty->SetFontFile(value.c_str());
-      }
+    }
     else if (key == "font-size")
-      {
+    {
       size_t pos = value.find("px");
       std::stringstream ss;
       vtkVariant size = vtkVariant(value.substr(0, pos));
       textProperty->SetFontSize(size.ToInt());
-      }
+    }
     else if (key == "font-style")
-      {
+    {
       textProperty->SetItalic(value == "italic");
-      }
+    }
     else if (key == "font-weight")
-      {
+    {
       textProperty->SetBold(value == "bold");
-      }
+    }
     else if (key == "color")
-      {
+    {
       double colorF[4] = { 0.0, 0.0, 0.0, 0.0};
       vtkMRMLDisplayNode::GetColorFromString(value, colorF);
       textProperty->SetColor(colorF);
       textProperty->SetOpacity(colorF[3]);
-      }
+    }
     else if (key == "background-color")
-      {
+    {
       double colorF[4] = { 0.0, 0.0, 0.0, 0.0 };
       vtkMRMLDisplayNode::GetColorFromString(value, colorF);
       textProperty->SetBackgroundColor(colorF);
       textProperty->SetBackgroundOpacity(colorF[3]);
-      }
+    }
     else if (key == "border-color")
-      {
+    {
       double colorF[4] = { 0.0, 0.0, 0.0, 0.0 };
       vtkMRMLDisplayNode::GetColorFromString(value, colorF);
       textProperty->SetFrameColor(colorF);
       textProperty->SetFrame(colorF[3] > 0.0);
-      }
+    }
     else if (key == "border-width")
-      {
+    {
       size_t pos = value.find("px");
       std::stringstream ss;
       vtkVariant size = vtkVariant(value.substr(0, pos));
       textProperty->SetFrameWidth(size.ToInt());
-      }
+    }
     else if (key == "text-shadow")
-      {
+    {
       std::vector<std::string> shadowProperties = vtksys::SystemTools::SplitString(keyValue[1], ' ');
       int shadowOffset[2] = { 2, 2 };
       int shadowPropertyIndex = 0;
       for (std::string shadowProperty : shadowProperties)
-        {
+      {
         if (shadowPropertyIndex == SHADOW_H_OFFSET_INDEX || shadowPropertyIndex == SHADOW_V_OFFSET_INDEX)
-          {
+        {
           size_t pos = shadowProperty.find("px");
           std::stringstream ss;
           vtkVariant offset = vtkVariant(shadowProperty.substr(0, pos));
           if (shadowPropertyIndex == SHADOW_H_OFFSET_INDEX)
-            {
-            shadowOffset[0] = offset.ToInt();
-            }
-          else
-            {
-            shadowOffset[1] = offset.ToInt();
-            }
-          }
-        else if (shadowPropertyIndex == SHADOW_COLOR_INDEX)
           {
+            shadowOffset[0] = offset.ToInt();
+          }
+          else
+          {
+            shadowOffset[1] = offset.ToInt();
+          }
+        }
+        else if (shadowPropertyIndex == SHADOW_COLOR_INDEX)
+        {
           // The shadow color in vtkTextProperty is actually just calculated from the text color (either black or white)
           // and cannot be changed.
           // We use the opacity channel to determine if the shadow should be displayed.
           double shadowColorF[4] = { 0.0, 0.0, 0.0, 0.0 };
           vtkMRMLDisplayNode::GetColorFromString(shadowProperty, shadowColorF);
           textProperty->SetShadow(shadowColorF[3] > 0.0);
-          }
-        ++shadowPropertyIndex;
         }
-        textProperty->SetShadowOffset(shadowOffset);
+        ++shadowPropertyIndex;
       }
+        textProperty->SetShadowOffset(shadowOffset);
     }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -1181,57 +1181,57 @@ void vtkMRMLDisplayNode::GetColorFromString(const std::string& inputString, doub
 
   size_t pos = colorString.find(prefixString);
   if (pos != std::string::npos)
-    {
+  {
     colorString = colorString.substr(pos + prefixString.size(), colorString.size());
-    }
+  }
 
   pos = colorString.find(")");
   if (pos != std::string::npos)
-    {
+  {
     colorString = colorString.substr(0, pos);
-    }
+  }
 
   std::vector<std::string> componentStrings = vtksys::SystemTools::SplitString(colorString, ',');
   for (int i = 0; i < 4 && i <static_cast<int>(componentStrings.size()); ++i)
-    {
+  {
     double componentF = vtkVariant(componentStrings[i]).ToDouble();
     if (i != 3)
-      {
+    {
       componentF /= 255.0;
-      }
-    colorF[i] = componentF;
     }
+    colorF[i] = componentF;
+  }
 }
 
 //---------------------------------------------------------------------------
 const char* vtkMRMLDisplayNode::GetShowModeAsString(int id)
 {
   switch (id)
-    {
+  {
     case ShowDefault: return "Default";
     case ShowIgnore: return "Ignore";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLDisplayNode::GetShowModeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < ShowMode_Last; ii++)
-    {
+  {
     if (strcmp(name, GetShowModeAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }

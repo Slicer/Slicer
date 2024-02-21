@@ -93,10 +93,10 @@ public:
   typedef QVariantMap ExtensionMetadataType;
 
   enum ServerAPI
-    {
+  {
     Girder_v1 = 1,
     ServerAPI_Last
-    };
+  };
 
   /// Return current serverAPI.
   ///
@@ -152,11 +152,11 @@ public:
   bool interactive()const;
 
   enum MatadataSource
-    {
+  {
     MetadataAll = 0, ///< return local metadata, and if any fields are not set locally then set it from the server
     MetadataLocal,   ///< return local metadata (stored in s4ext files in the extensions folder)
     MetadataServer   ///< return metadata downloaded from the server
-    };
+  };
   Q_INVOKABLE ExtensionMetadataType extensionMetadata(const QString& extensionName, int source = MetadataAll)const;
 
   Q_INVOKABLE QString extensionDescription(const QString& extensionName)const;

@@ -134,9 +134,9 @@ void qMRMLCaptureToolBarPrivate::init()
 void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
   if (newScene == this->MRMLScene)
-    {
+  {
     return;
-    }
+  }
 /*
   this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::StartBatchProcessEvent,
                       this, SLOT(OnMRMLSceneStartBatchProcessing()));
@@ -178,9 +178,9 @@ void qMRMLCaptureToolBarPrivate::createSceneView()
                                                 qMRMLCaptureToolBar::tr("SceneView Name:"), QLineEdit::Normal,
                                                 "View", &ok);
   if (!ok || sceneViewName.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   // Create scene view
   qMRMLNodeFactory nodeFactory;

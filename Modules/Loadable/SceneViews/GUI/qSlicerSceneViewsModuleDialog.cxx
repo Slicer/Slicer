@@ -40,19 +40,19 @@ qSlicerSceneViewsModuleDialog::~qSlicerSceneViewsModuleDialog()
 {
 
   if(this->m_Logic)
-    {
+  {
     this->m_Logic = nullptr;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleDialog::setLogic(vtkSlicerSceneViewsModuleLogic* logic)
 {
   if (!logic)
-    {
+  {
     qErrnoWarning("setLogic: We need the SceneViews module logic here!");
     return;
-    }
+  }
   this->m_Logic = logic;
 }
 
@@ -60,10 +60,10 @@ void qSlicerSceneViewsModuleDialog::setLogic(vtkSlicerSceneViewsModuleLogic* log
 void qSlicerSceneViewsModuleDialog::loadNode(const QString& nodeId)
 {
   if (!this->m_Logic)
-    {
+  {
     qErrnoWarning("initialize: We need the SceneViews module logic here!");
     return;
-    }
+  }
   this->setLayoutManager(qSlicerApplication::application()->layoutManager());
   this->setData(QVariant(nodeId));
 
@@ -94,19 +94,19 @@ void qSlicerSceneViewsModuleDialog::reset()
 {
   QString name = this->nameEdit();
   if (name.length() == 0)
-    {
+  {
     name = QString("SceneView");
-    }
+  }
   // check to see if it's an already used name for a node (redrawing the
   // dialog causes it to reset and calling GetUniqueNameByString increments
   // the number each time).
   QByteArray nameBytes = name.toUtf8();
   vtkCollection* col = this->m_Logic->GetMRMLScene()->GetNodesByName(nameBytes.data());
   if (col->GetNumberOfItems() > 0)
-    {
+  {
     // get a new unique name
     name = this->m_Logic->GetMRMLScene()->GetUniqueNameByString(name.toUtf8());
-    }
+  }
   col->Delete();
   this->resetDialog();
   this->setNameEdit(name);
@@ -127,21 +127,21 @@ void qSlicerSceneViewsModuleDialog::accept()
   int screenshotType = static_cast<int>(this->widgetType());
 
   if (this->data().toString().isEmpty())
-    {
+  {
     // this is a new SceneView
     this->m_Logic->CreateSceneView(nameBytes.data(),descriptionBytes.data(),
                                    screenshotType,this->imageData());
     //QMessageBox::information(this, "3D Slicer SceneView created",
     //             "A new SceneView was created and the current scene was attached.");
-    }
+  }
   else
-    {
+  {
     // this SceneView already exists
     this->m_Logic->ModifySceneView(vtkStdString(this->data().toString().toUtf8()),nameBytes.data(),descriptionBytes.data()
                                    ,screenshotType,this->imageData());
     //QMessageBox::information(this, "3D Slicer SceneView updated",
     //             The SceneView was updated without changing the attached scene.");
-    }
+  }
   this->Superclass::accept();
 }
 

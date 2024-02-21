@@ -54,12 +54,12 @@ bool checkNumberOfItems(int line, qMRMLLayoutManager* layoutManager, int expecte
   vtkMRMLLayoutLogic * layoutLogic = layoutManager->layoutLogic();
   vtkCollection* viewNodes = layoutLogic->GetViewNodes();
   if (viewNodes->GetNumberOfItems() != expected)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with vtkMRMLLayoutLogic::GetViewNodes()\n"
               << " expected NumberOfItems: " << expected << "\n"
               << " current NumberOfItems: " << viewNodes->GetNumberOfItems() << std::endl;
     return false;
-    }
+  }
   return true;
 }
 
@@ -99,40 +99,40 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
   layoutManager->setMRMLScene(scene.GetPointer());
 
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!checkNumberOfItems(__LINE__, layoutManager, /* expected = */ 1))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!checkNumberOfItems(__LINE__, layoutManager, /* expected = */ 1))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutConventionalView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!checkNumberOfItems(__LINE__, layoutManager, /* expected = */ 4))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     return safeApplicationQuit(&app);
-    }
+  }
   else
-    {
+  {
     return app.exec();
-    }
+  }
 }

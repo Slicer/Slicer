@@ -121,9 +121,9 @@ void qSlicerTemplateKeyModule::setup()
   // not in testing mode (to avoid cluttering the markups module).
   bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
   if (!isTestingEnabled)
-    {
+  {
     return;
-    }
+  }
 
   // Create and configure the options widgets
   auto optionsWidgetFactory = qMRMLMarkupsOptionsWidgetsFactory::instance();
@@ -143,9 +143,9 @@ vtkMRMLAbstractLogic* qSlicerTemplateKeyModule::createLogic()
   // unless the application is in testing mode.
   bool isTestingEnabled = qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting);
   if (!isTestingEnabled)
-    {
+  {
     return nullptr;
-    }
+  }
 
   return vtkSlicerTemplateKeyLogic::New();
 }

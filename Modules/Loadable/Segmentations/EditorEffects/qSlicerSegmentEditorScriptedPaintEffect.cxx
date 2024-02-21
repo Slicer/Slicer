@@ -61,7 +61,7 @@ public:
     UpdateGUIFromMRMLMethod,
     UpdateMRMLFromGUIMethod,
     PaintApplyMethod,
-    };
+  };
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
@@ -121,14 +121,14 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString file
   Q_D(qSlicerSegmentEditorScriptedPaintEffect);
 
   if (!Py_IsInitialized())
-    {
+  {
     return false;
-    }
+  }
 
   if (!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
-    {
+  {
     return false;
-    }
+  }
 
   // Extract moduleName from the provided filename
   QString moduleName = QFileInfo(filePath).baseName();
@@ -136,9 +136,9 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString file
   // In case the effect is within the main module file
   QString className = moduleName;
   if (!moduleName.endsWith("Effect"))
-    {
+  {
     className.append("Effect");
-    }
+  }
 
   // Get a reference to the main module and global dictionary
   PyObject * main_module = PyImport_AddModule("__main__");
@@ -150,25 +150,25 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString file
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
   if (PyObject_HasAttrString(module, className.toUtf8()))
-    {
+  {
     classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
-    }
+  }
   if (!classToInstantiate)
-    {
+  {
     PythonQtObjectPtr local_dict;
     local_dict.setNewRef(PyDict_New());
     if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, filePath, global_dict, local_dict))
-      {
+    {
       return false;
-      }
-    if (PyObject_HasAttrString(module, className.toUtf8()))
-      {
-      classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
-      }
     }
+    if (PyObject_HasAttrString(module, className.toUtf8()))
+    {
+      classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
+    }
+  }
 
   if (!classToInstantiate)
-    {
+  {
     PythonQt::self()->handleError();
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSegmentEditorScriptedPaintEffect::setPythonSource - "
@@ -176,23 +176,23 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString file
                             "class %1 was not found in %2").arg(className).arg(filePath).toUtf8());
     PythonQt::self()->handleError();
     return false;
-    }
+  }
 
   d->PythonCppAPI.setObjectName(className);
 
   PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
-    {
+  {
     return false;
-    }
+  }
 
   d->PythonSourceFilePath = filePath;
 
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer", className, self))
-    {
+  {
     qCritical() << "Failed to set" << ("slicer." + className);
-    }
+  }
 
   return true;
 }
@@ -216,17 +216,17 @@ QIcon qSlicerSegmentEditorScriptedPaintEffect::icon()
   Q_D(const qSlicerSegmentEditorScriptedPaintEffect);
   PyObject* result = d->PythonCppAPI.callMethod(d->IconMethod);
   if (!result)
-    {
+  {
     // Method call failed (probably an omitted function), call default implementation
     return this->Superclass::icon();
-    }
+  }
 
   // Parse result
   QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Icon);
   if (resultVariant.isNull())
-    {
+  {
     return this->Superclass::icon();
-    }
+  }
   return resultVariant.value<QIcon>();
 }
 
@@ -236,17 +236,17 @@ const QString qSlicerSegmentEditorScriptedPaintEffect::helpText()const
   Q_D(const qSlicerSegmentEditorScriptedPaintEffect);
   PyObject* result = d->PythonCppAPI.callMethod(d->HelpTextMethod);
   if (!result)
-    {
+  {
     // Method call failed (probably an omitted function), call default implementation
     return this->Superclass::helpText();
-    }
+  }
 
   // Parse result
   if (!PyUnicode_Check(result))
-    {
+  {
     qWarning() << d->PythonSourceFilePath << ": qSlicerSegmentEditorScriptedPaintEffect: Function 'helpText' is expected to return a string!";
     return this->Superclass::helpText();
-    }
+  }
 
   const char* role = PyUnicode_AsUTF8(result);
   return QString::fromUtf8(role);
@@ -258,20 +258,20 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedPaintEffect::clo
   Q_D(const qSlicerSegmentEditorScriptedPaintEffect);
   PyObject* result = d->PythonCppAPI.callMethod(d->CloneMethod);
   if (!result)
-    {
+  {
     qCritical() << d->PythonSourceFilePath << ": clone: Failed to call mandatory clone method! If it is implemented, please see python output for errors.";
     return nullptr;
-    }
+  }
 
   // Parse result
   QVariant resultVariant = PythonQtConv::PyObjToQVariant(result);
   qSlicerSegmentEditorAbstractEffect* clonedEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
     resultVariant.value<QObject*>() );
   if (!clonedEffect)
-    {
+  {
     qCritical() << d->PythonSourceFilePath << ": clone: Invalid cloned effect object returned from python!";
     return nullptr;
-    }
+  }
   return clonedEffect;
 }
 
@@ -314,10 +314,10 @@ QCursor qSlicerSegmentEditorScriptedPaintEffect::createCursor(qMRMLWidget* viewW
   PyObject* result = d->PythonCppAPI.callMethod(d->CreateCursorMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
-    {
+  {
     // Method call failed (probably an omitted function), call default implementation
     return this->Superclass::createCursor(viewWidget);
-    }
+  }
 
   // Parse result
   QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Cursor);
@@ -379,10 +379,10 @@ void qSlicerSegmentEditorScriptedPaintEffect::layoutChanged()
 void qSlicerSegmentEditorScriptedPaintEffect::updateGUIFromMRML()
 {
   if (!this->active())
-    {
+  {
     // updateGUIFromMRML is called when the effect is activated
     return;
-    }
+  }
 
   // Base class implementation needs to be called before the effect-specific one
   this->Superclass::updateGUIFromMRML();
@@ -410,8 +410,8 @@ void qSlicerSegmentEditorScriptedPaintEffect::paintApply(qMRMLWidget* viewWidget
   PyObject* result = d->PythonCppAPI.callMethod(d->PaintApplyMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
-    {
+  {
     // Method call failed (probably an omitted function), call default implementation
     this->Superclass::paintApply(viewWidget);
-    }
+  }
 }

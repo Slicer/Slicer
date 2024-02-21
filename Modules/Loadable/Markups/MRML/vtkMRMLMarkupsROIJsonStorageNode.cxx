@@ -53,16 +53,16 @@ bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
   vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
 {
   if (!vtkMRMLMarkupsJsonStorageNode::WriteBasicProperties(writer, markupsNode))
-    {
+  {
     return false;
-    }
+  }
 
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
   if (!roiNode)
-    {
+  {
     vtkErrorWithObjectMacro(this, "vtkMRMLMarkupsROINode::WriteBasicProperties failed: invalid markupsNode");
     return false;
-    }
+  }
 
   writer->WriteStringProperty("roiType", roiNode->GetROITypeAsString(roiNode->GetROIType()));
 
@@ -71,27 +71,27 @@ bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
   double center_Node[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetCenter(center_Node);
   if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
-    {
+  {
     center_Node[0] = -center_Node[0];
     center_Node[1] = -center_Node[1];
-    }
+  }
   writer->WriteVectorProperty("center", center_Node);
 
   double orientationMatrix[9] = { 0.0 };
   vtkMatrix4x4* objectToNodeMatrix = roiNode->GetObjectToNodeMatrix();
   for (int i = 0; i < 3; ++i)
-    {
+  {
     orientationMatrix[3 * i]     = objectToNodeMatrix->GetElement(i, 0);
     orientationMatrix[3 * i + 1] = objectToNodeMatrix->GetElement(i, 1);
     orientationMatrix[3 * i + 2] = objectToNodeMatrix->GetElement(i, 2);
-    }
+  }
   if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
-    {
+  {
     for (int i = 0; i < 6; ++i)
-      {
+    {
       orientationMatrix[i] = -orientationMatrix[i];
-      }
     }
+  }
   writer->WriteVectorProperty("orientation", orientationMatrix, 9);
 
   writer->WriteVectorProperty("size", roiNode->GetSize());
@@ -105,77 +105,77 @@ bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMar
 {
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
   if (!roiNode)
-    {
+  {
     vtkErrorWithObjectMacro(this, "vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue failed: invalid markupsNode");
     return false;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(markupsNode);
 
   if (markupsObject->HasMember("roiType"))
-    {
+  {
     roiNode->SetROIType(roiNode->GetROITypeFromString(markupsObject->GetStringProperty("roiType").c_str()));
-    }
+  }
 
   int coordinateSystem = this->GetCoordinateSystem();
 
   double center_Node[3] = { 0.0, 0.0, 0.0 };
   if (markupsObject->HasMember("center"))
-    {
+  {
     if (!markupsObject->GetVectorProperty("center", center_Node))
-      {
+    {
       vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
         "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
         "File reading failed: center position must be a 3-element numeric array.");
       return false;
-      }
+    }
     if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
-      {
+    {
       center_Node[0] = -center_Node[0];
       center_Node[1] = -center_Node[1];
-      }
     }
+  }
 
   if (markupsObject->HasMember("size"))
-    {
+  {
     double size[3] = { 0.0, 0.0, 0.0 };
     markupsObject->GetVectorProperty("size", size);
     roiNode->SetSize(size);
-    }
+  }
 
   double orientationMatrix[9] = { 0.0 };
   if (markupsObject->HasMember("orientation"))
-    {
+  {
     if (!markupsObject->GetVectorProperty("orientation", orientationMatrix, 9))
-      {
+    {
       vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
         "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
         "File reading failed: orientation 9-element numeric array.");
       return false;
-      }
+    }
     if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
-      {
+    {
       for (int i = 0; i < 6; i++)
-        {
+      {
         orientationMatrix[i] = -orientationMatrix[i];
-        }
       }
     }
+  }
 
   vtkNew<vtkMatrix4x4> objectToNodeMatrix;
   for (int i = 0; i < 3; ++i)
-    {
+  {
     objectToNodeMatrix->SetElement(i, 0, orientationMatrix[3*i]);
     objectToNodeMatrix->SetElement(i, 1, orientationMatrix[3*i + 1]);
     objectToNodeMatrix->SetElement(i, 2, orientationMatrix[3*i + 2]);
     objectToNodeMatrix->SetElement(i, 3, center_Node[i]);
-    }
+  }
   roiNode->GetObjectToNodeMatrix()->DeepCopy(objectToNodeMatrix);
 
   if (markupsObject->HasMember("insideOut"))
-    {
+  {
     roiNode->SetInsideOut(markupsObject->GetBoolProperty("insideOut"));
-    }
+  }
 
   return Superclass::UpdateMarkupsNodeFromJsonValue(markupsNode, markupsObject);
 }

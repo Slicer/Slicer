@@ -97,20 +97,20 @@ void qSlicerApplicationHelper::preInitializeApplication(
   // can be distinct for differently named applications
   QString applicationName("Slicer");
   if (argv0)
-    {
+  {
     std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(argv0);
     applicationName = QString::fromLocal8Bit(name.c_str());
     applicationName.remove(QString("App-real"));
-    }
+  }
   QCoreApplication::setApplicationName(applicationName);
 
   QCoreApplication::setApplicationVersion(Slicer_MAIN_PROJECT_VERSION_FULL);
   //vtkObject::SetGlobalWarningDisplay(false);
   QApplication::setDesktopSettingsAware(false);
   if (style)
-    {
+  {
     QApplication::setStyle(style);
-    }
+  }
 
   qMRMLWidget::postInitializeApplication();
 }
@@ -125,49 +125,49 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
   qSlicerCommandOptions* options = qSlicerApplication::application()->commandOptions();
 
   if(options->disableModules())
-    {
+  {
     return;
-    }
+  }
 
   if (!options->disableLoadableModules())
-    {
+  {
     moduleFactoryManager->registerFactory(new qSlicerLoadableModuleFactory);
     if (!options->disableBuiltInModules() &&
         !options->disableBuiltInLoadableModules() &&
         !options->runPythonAndExit())
-      {
+    {
       QString loadablePath = app->slicerHome() + "/" + Slicer_QTLOADABLEMODULES_LIB_DIR + "/";
       moduleFactoryManager->addSearchPath(loadablePath);
       // On Win32, *both* paths have to be there, since scripts are installed
       // in the install location, and exec/libs are *automatically* installed
       // in intDir.
       moduleFactoryManager->addSearchPath(loadablePath + app->intDir());
-      }
     }
+  }
 
 #ifdef Slicer_USE_PYTHONQT
   if (!options->disableScriptedLoadableModules())
-    {
+  {
     moduleFactoryManager->registerFactory(
       new qSlicerScriptedLoadableModuleFactory);
     if (!options->disableBuiltInModules() &&
         !options->disableBuiltInScriptedLoadableModules() &&
         !qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython) &&
         !options->runPythonAndExit())
-      {
+    {
       QString scriptedPath = app->slicerHome() + "/" + Slicer_QTSCRIPTEDMODULES_LIB_DIR + "/";
       moduleFactoryManager->addSearchPath(scriptedPath);
       // On Win32, *both* paths have to be there, since scripts are installed
       // in the install location, and exec/libs are *automatically* installed
       // in intDir.
       moduleFactoryManager->addSearchPath(scriptedPath + app->intDir());
-      }
     }
+  }
 #endif
 
 #ifdef Slicer_BUILD_CLI_SUPPORT
   if (!options->disableCLIModules())
-    {
+  {
     QString tempDirectory =
       qSlicerCoreApplication::application()->temporaryPath();
 
@@ -189,7 +189,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     if (!options->disableBuiltInModules() &&
         !options->disableBuiltInCLIModules() &&
         !options->runPythonAndExit())
-      {
+    {
       QString cliPath = app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
       moduleFactoryManager->addSearchPath(cliPath);
       // On Win32, *both* paths have to be there, since scripts are installed
@@ -199,8 +199,8 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
 #ifdef Q_OS_MAC
       moduleFactoryManager->addSearchPath(app->slicerHome() + "/" + Slicer_CLIMODULES_SUBDIR);
 #endif
-      }
     }
+  }
 #endif
   moduleFactoryManager->addSearchPaths(
     app->toSlicerHomeAbsolutePaths(app->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList()));
@@ -210,9 +210,9 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
   QStringList modulesToTemporarlyIgnore = options->modulesToIgnore();
   // Discard modules already listed in the settings
   foreach(const QString& moduleToAlwaysIgnore, modulesToAlwaysIgnore)
-    {
+  {
     modulesToTemporarlyIgnore.removeAll(moduleToAlwaysIgnore);
-    }
+  }
   QStringList modulesToIgnore = modulesToAlwaysIgnore << modulesToTemporarlyIgnore;
   moduleFactoryManager->setModulesToIgnore(modulesToIgnore);
 
@@ -241,9 +241,9 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
   vtkNew<vtkSystemInformation> systemInfo;
   systemInfo->RunRenderingCheck();
   if (systemInfo->GetRenderingCapabilities() & vtkSystemInformation::OPENGL)
-    {
+  {
     return true;
-    }
+  }
 
   qWarning("Graphics capability of this computer is not sufficient to run this application");
 
@@ -278,7 +278,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
 
 #if defined(_WIN32)
   if (result == QMessageBox::Retry)
-    {
+  {
     // This option is for restarting the application outside of a
     // remote desktop session (during remote desktop sessions, system
     // may report lower OpenGL capabilities).
@@ -292,7 +292,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
     // By now the remote desktop session is terminated, we restart
     // the application in a normal local desktop session.
     qSlicerApplication::restart();
-    }
+  }
 #endif
 
   return (result == QMessageBox::Ignore);
@@ -314,14 +314,14 @@ int qSlicerApplicationHelper::runAsAdmin(QString executable, QString parameters/
   shExecInfo.lpFile = executable.toUtf8().constData();
   shExecInfo.lpParameters = nullptr;
   if (!parameters.isEmpty())
-    {
+  {
     shExecInfo.lpParameters = parameters.toUtf8().constData();
-    }
+  }
   shExecInfo.lpDirectory = nullptr;
   if (!workingDir.isEmpty())
-    {
+  {
     shExecInfo.lpDirectory = workingDir.toUtf8().constData();
-    }
+  }
   shExecInfo.nShow = SW_MAXIMIZE;
   shExecInfo.hInstApp = nullptr;
   ShellExecuteEx(&shExecInfo);

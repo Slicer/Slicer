@@ -92,9 +92,9 @@ int CheckOrientationPresetNames(vtkMRMLSliceNode* sliceNode,
 
   CHECK_INT(orientationPresetNames->GetNumberOfValues(), static_cast<int>(names.size()));
   for (int idx = 0; idx < static_cast<int>(names.size()); ++idx)
-    {
+  {
     CHECK_STD_STRING(orientationPresetNames->GetValue(idx), names.at(idx));
-    }
+  }
   return EXIT_SUCCESS;
 }
 
@@ -128,12 +128,12 @@ namespace
 void InitializeMatrix(vtkMatrix3x3* matrix, double value)
 {
   for(int ii = 0; ii < 3; ++ii)
-    {
+  {
     for(int jj = 0; jj < 3; ++jj)
-      {
+    {
       matrix->SetElement(ii, jj, value);
-      }
     }
+  }
 }
 }
 

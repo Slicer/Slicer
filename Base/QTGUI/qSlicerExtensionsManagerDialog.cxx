@@ -85,10 +85,10 @@ void qSlicerExtensionsManagerDialogPrivate::init()
         qSlicerApplication::application()->settingsDialog()->panel("Extensions"));
   Q_ASSERT(extensionsPanel);
   if (extensionsPanel)
-    {
+  {
     QObject::connect(extensionsPanel, SIGNAL(extensionsServerUrlChanged(QString)),
                      this->ExtensionsManagerWidget, SLOT(refreshInstallWidget()));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -105,9 +105,9 @@ void qSlicerExtensionsManagerDialogPrivate::updateButtons()
       != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUninstall").toStringList() ||
     this->PreviousExtensionsScheduledForUpdate
       != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUpdate").toMap())
-    {
+  {
     shouldRestart = true;
-    }
+  }
   bool isInBatchMode = this->ExtensionsManagerWidget->isInBatchProcessing();
 
   this->ButtonBox->setEnabled(!isInBatchMode);
@@ -142,16 +142,16 @@ void qSlicerExtensionsManagerDialog::setExtensionsManagerModel(qSlicerExtensions
   Q_D(qSlicerExtensionsManagerDialog);
 
   if (this->extensionsManagerModel() == model)
-    {
+  {
     return;
-    }
+  }
 
   disconnect(this, SLOT(onModelUpdated()));
 
   d->ExtensionsManagerWidget->setExtensionsManagerModel(model);
 
   if (model)
-    {
+  {
     this->onModelUpdated();
     connect(model, SIGNAL(modelUpdated()),
             this, SLOT(onModelUpdated()));
@@ -167,7 +167,7 @@ void qSlicerExtensionsManagerDialog::setExtensionsManagerModel(qSlicerExtensions
             this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionEnabledChanged(QString,bool)),
             this, SLOT(onModelUpdated()));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -205,13 +205,13 @@ void qSlicerExtensionsManagerDialog::closeEvent(QCloseEvent* event)
 {
   Q_D(qSlicerExtensionsManagerDialog);
   if (d->ExtensionsManagerWidget->confirmClose())
-    {
+  {
     event->accept(); // close window
-    }
+  }
   else
-    {
+  {
     event->ignore(); // ignore close event
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -219,9 +219,9 @@ void qSlicerExtensionsManagerDialog::accept()
 {
   Q_D(qSlicerExtensionsManagerDialog);
   if (d->ExtensionsManagerWidget->confirmClose())
-    {
+  {
     Superclass::accept(); // close window
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -229,9 +229,9 @@ void qSlicerExtensionsManagerDialog::reject()
 {
   Q_D(qSlicerExtensionsManagerDialog);
   if (d->ExtensionsManagerWidget->confirmClose())
-    {
+  {
     Superclass::reject(); // close window
-    }
+  }
 }
 
 // --------------------------------------------------------------------------

@@ -110,17 +110,17 @@ bool vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
   vtkMRMLTransformNode* newParentTransformNode = vtkMRMLTransformNode::SafeDownCast(
     this->GetScene() != nullptr ? this->GetScene()->GetNodeByID(transformNodeID) : nullptr);
   if (newParentTransformNode)
-    {
+  {
     vtkMRMLTransformNode* thisTransform = vtkMRMLTransformNode::SafeDownCast(this);
     if (thisTransform)
-      {
+    {
       if (newParentTransformNode == thisTransform || thisTransform->IsTransformNodeMyChild(newParentTransformNode))
-        {
+      {
         vtkErrorMacro("vtkMRMLTransformableNode::SetAndObserveTransformNodeID failed: parent transform cannot be self or a child transform");
         return false;
-        }
       }
     }
+  }
 
   this->SetAndObserveNodeReferenceID(this->GetTransformNodeReferenceRole(), transformNodeID);
   return true;
@@ -139,14 +139,14 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
   if (caller == nullptr ||
       (event != vtkCommand::ModifiedEvent &&
       event != vtkMRMLTransformableNode::TransformModifiedEvent))
-    {
+  {
     return;
-    }
+  }
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
   if (tnode == caller)
-    {
+  {
     this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, nullptr);
-    }
+  }
 }
 
 
@@ -175,22 +175,22 @@ bool vtkMRMLTransformableNode::HardenTransform()
 {
   vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
   if (!transformNode)
-    {
+  {
     // already in the world coordinate system
     return true;
-    }
+  }
   if (transformNode->IsTransformToWorldLinear())
-    {
+  {
     vtkNew<vtkMatrix4x4> hardeningMatrix;
     transformNode->GetMatrixTransformToWorld(hardeningMatrix.GetPointer());
     this->ApplyTransformMatrix(hardeningMatrix.GetPointer());
-    }
+  }
   else
-    {
+  {
     vtkNew<vtkGeneralTransform> hardeningTransform;
     transformNode->GetTransformToWorld(hardeningTransform.GetPointer());
     this->ApplyTransform(hardeningTransform.GetPointer());
-    }
+  }
 
   this->SetAndObserveTransformNodeID(nullptr);
   return true;
@@ -201,13 +201,13 @@ void vtkMRMLTransformableNode::TransformPointToWorld(const double inLocal[3], do
 {
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   if (tnode == nullptr)
-    {
+  {
     // not transformed
     outWorld[0] = inLocal[0];
     outWorld[1] = inLocal[1];
     outWorld[2] = inLocal[2];
     return;
-    }
+  }
 
   // Get transform
   vtkNew<vtkGeneralTransform> transformToWorld;
@@ -222,13 +222,13 @@ void vtkMRMLTransformableNode::TransformPointFromWorld(const double inWorld[3], 
 {
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   if (tnode == nullptr)
-    {
+  {
     // not transformed
     outLocal[0] = inWorld[0];
     outLocal[1] = inWorld[1];
     outLocal[2] = inWorld[2];
     return;
-    }
+  }
 
   // Get transform
   vtkNew<vtkGeneralTransform> transformFromWorld;
@@ -255,9 +255,9 @@ void vtkMRMLTransformableNode::OnNodeReferenceAdded(vtkMRMLNodeReference *refere
 {
   Superclass::OnNodeReferenceAdded(reference);
   if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
-    {
+  {
     this->OnTransformNodeReferenceChanged(vtkMRMLTransformNode::SafeDownCast(reference->GetReferencedNode()));
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -265,9 +265,9 @@ void vtkMRMLTransformableNode::OnNodeReferenceModified(vtkMRMLNodeReference *ref
 {
   Superclass::OnNodeReferenceModified(reference);
   if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
-    {
+  {
     this->OnTransformNodeReferenceChanged(vtkMRMLTransformNode::SafeDownCast(reference->GetReferencedNode()));
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -275,9 +275,9 @@ void vtkMRMLTransformableNode::OnNodeReferenceRemoved(vtkMRMLNodeReference *refe
 {
   Superclass::OnNodeReferenceRemoved(reference);
   if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
-    {
+  {
     this->OnTransformNodeReferenceChanged(vtkMRMLTransformNode::SafeDownCast(reference->GetReferencedNode()));
-    }
+  }
 }
 
 //---------------------------------------------------------------------------

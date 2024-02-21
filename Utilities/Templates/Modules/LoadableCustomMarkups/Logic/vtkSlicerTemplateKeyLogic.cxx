@@ -60,17 +60,17 @@ void vtkSlicerTemplateKeyLogic::RegisterNodes()
 {
   vtkMRMLScene *scene = this->GetMRMLScene();
   if (!scene)
-    {
+  {
     vtkErrorMacro("RegisterNodes failed: invalid scene");
     return;
-    }
+  }
 
   vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->GetModuleLogic("Markups"));
   if (!markupsLogic)
-    {
+  {
     vtkErrorMacro("RegisterNodes failed: invalid markups module logic");
     return;
-    }
+  }
 
   vtkNew<vtkMRMLMarkupsTestLineNode> markupsTestLineNode;
   vtkNew<vtkSlicerTestLineWidget> testLineWidget;

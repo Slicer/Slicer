@@ -136,12 +136,12 @@ int main(int argc, char* argv[])
     initializer->InitializeTransform();
 
     if (transformType == "Translation")
-      {
+    {
       // Clear out the computed rotation if we only requested translation
       itk::Versor<double> v;
       v.SetIdentity();
       transform->SetRotation(v);
-      }
+    }
 
     // Convert into an affine transform for saving to Slicer.
     fixedToMovingT->SetCenter(transform->GetCenter());

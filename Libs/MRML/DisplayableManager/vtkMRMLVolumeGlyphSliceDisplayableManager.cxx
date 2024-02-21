@@ -157,11 +157,11 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateSliceNode()
       !this->SliceCompositeNode->GetLayoutName() || // the slice composite points to a diff slice node
       strcmp(this->SliceCompositeNode->GetLayoutName(),
              this->GetSliceNode()->GetLayoutName()))
-    {
+  {
     vtkMRMLSliceCompositeNode* sliceCompositeNode =
       this->FindSliceCompositeNode();
     this->SetSliceCompositeNode(sliceCompositeNode);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -170,28 +170,28 @@ vtkMRMLSliceCompositeNode* vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInterna
 {
   if (this->External->GetMRMLScene() == nullptr ||
       !this->GetSliceNode())
-    {
+  {
     return nullptr;
-    }
+  }
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
   vtkCollection* scene = this->External->GetMRMLScene()->GetNodes();
   for (scene->InitTraversal(it);
        (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
-    {
+  {
     vtkMRMLSliceCompositeNode* sliceCompositeNode =
       vtkMRMLSliceCompositeNode::SafeDownCast(node);
     if (sliceCompositeNode)
-      {
+    {
       const char* compositeLayoutName = sliceCompositeNode->GetLayoutName();
       const char* sliceLayoutName = this->GetSliceNode()->GetLayoutName();
       if (compositeLayoutName && !strcmp(compositeLayoutName, sliceLayoutName))
-        {
+      {
         return sliceCompositeNode;
-        }
       }
     }
+  }
   // no matching slice composite node is found
   return nullptr;
 }
@@ -201,9 +201,9 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
 ::SetSliceCompositeNode(vtkMRMLSliceCompositeNode* compositeNode)
 {
   if (this->SliceCompositeNode == compositeNode)
-    {
+  {
     return;
-    }
+  }
 
   vtkSetAndObserveMRMLNodeMacro(this->SliceCompositeNode, compositeNode);
   this->UpdateSliceCompositeNode(this->SliceCompositeNode);
@@ -223,9 +223,9 @@ std::vector<vtkMRMLDisplayableNode*>  vtkMRMLVolumeGlyphSliceDisplayableManager:
 {
   std::vector<vtkMRMLDisplayableNode*> res;
   if (!compositeNode)
-    {
+  {
     return res;
-    }
+  }
   std::vector<vtkMRMLNode*> allVolumes;
   allVolumes.push_back(
     this->External->GetMRMLScene()->GetNodeByID(
@@ -238,16 +238,16 @@ std::vector<vtkMRMLDisplayableNode*>  vtkMRMLVolumeGlyphSliceDisplayableManager:
   //allVolumes.push_back(
   //  this->External->GetMRMLScene()->GetNodeByID(compositeNode->GetLabelVolumeID()));
   for (unsigned int i = 0; i < allVolumes.size(); ++i)
-    {
+  {
     // currently only support diffusiontensorvolumes but can easily be extended to other volumes
     vtkMRMLDiffusionTensorVolumeNode* dtiNode =
       vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(allVolumes[i]);
     if (dtiNode)
-      {
+    {
       res.push_back(dtiNode);
-      }
-    // Add other volumes supported here
     }
+    // Add other volumes supported here
+  }
   return res;
 }
 
@@ -256,30 +256,30 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::SetVolumeNodes(
   const std::vector<vtkMRMLDisplayableNode*>& volumes)
 {
   if (volumes == this->VolumeNodes)
-    {
+  {
     return;
-    }
+  }
   // Removes the volumes that are not into the new volume list
   for (std::vector<vtkMRMLDisplayableNode*>::iterator it = this->VolumeNodes.begin();
        it != this->VolumeNodes.end(); )
-    {
+  {
     vtkMRMLDisplayableNode* volume = *it;
     // Don't remove the volume if it belongs to the new list
     if (std::find(volumes.begin(), volumes.end(), volume) == volumes.end())
-      {
+    {
       // RemoveVolume() returns a pointer to the next volume
       it = this->RemoveVolume(it);
-      }
-    else
-      {
-      ++it;
-      }
     }
+    else
+    {
+      ++it;
+    }
+  }
   // Add the new volumes if they are not present yet.
   for (unsigned int i = 0; i < volumes.size(); ++i)
-    {
+  {
     this->AddVolume(volumes[i]);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -287,10 +287,10 @@ bool vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
 ::AddVolume(vtkMRMLDisplayableNode* volume)
 {
   if (std::find(this->VolumeNodes.begin(), this->VolumeNodes.end(), volume) != this->VolumeNodes.end())
-    {
+  {
     // volume already exists in the list, don't need to add it
     return false;
-    }
+  }
   // Only observe when a display node is added/removed from the displayable
   // node.
   volume->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent,
@@ -310,9 +310,9 @@ std::vector<vtkMRMLDisplayableNode*>::iterator vtkMRMLVolumeGlyphSliceDisplayabl
   // Remove displaynodes and actors
   DisplayNodesType::iterator it = this->DisplayNodes.find(volume);
   if (it != this->DisplayNodes.end())
-    {
+  {
     this->RemoveVolumeDisplayNodes(it);
-    }
+  }
   // vector::erase() returns a random access iterator pointing to the new location
   // of the element that followed the last element erased by the function call.
   return this->VolumeNodes.erase(volumeIt);
@@ -325,9 +325,9 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
   // Sanity check: make sure the volume exists in the list
   std::vector<vtkMRMLDisplayableNode*>::iterator volumeIt = std::find(this->VolumeNodes.begin(), this->VolumeNodes.end(), volume);
   if (volumeIt != this->VolumeNodes.end())
-    {
+  {
     this->RemoveVolume(volumeIt);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -341,13 +341,13 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
   int nnodes = volume->GetNumberOfDisplayNodes();
   std::vector<vtkMRMLDisplayNode*> displayNodes;
   for (int i=0; i<nnodes; i++)
-    {
+  {
     if (!volume->GetNthDisplayNode(i))
-      {
+    {
       continue;
-      }
-    displayNodes.push_back(volume->GetNthDisplayNode(i));
     }
+    displayNodes.push_back(volume->GetNthDisplayNode(i));
+  }
   this->SetVolumeDisplayNodes(volume, displayNodes);
 }
 
@@ -359,40 +359,40 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
   // Make sure it doesn't exist yet in the display node list
   DisplayNodesType::iterator displayNodesIt = this->DisplayNodes.find(volume);
   if (displayNodesIt != this->DisplayNodes.end())
-    {
+  {
     if (displayNodesIt->second == newDisplayNodes)
-      {
+    {
       // Nothing to do here, the list has already been added and is the same.
       // All the display nodes are already observed.
       return;
-      }
+    }
     // Remove the display nodes that are not in the new display node list
     std::vector<vtkMRMLDisplayNode*>::iterator it;
     for (it = displayNodesIt->second.begin();
          it != displayNodesIt->second.end(); )
-      {
+    {
       if (std::find(newDisplayNodes.begin(), newDisplayNodes.end(), *it) ==
           newDisplayNodes.end())
-        {
+      {
         it = this->RemoveVolumeDisplayNode(displayNodesIt->second, it);
-        }
+      }
       else
-        {
+      {
         ++it;
-        }
       }
     }
+  }
   else // volume is not yet in the DisplayNodes list, add it.
-    {
+  {
     this->DisplayNodes[volume] = std::vector<vtkMRMLDisplayNode*>();
     displayNodesIt = this->DisplayNodes.find(volume);
     assert(displayNodesIt != this->DisplayNodes.end());
-    }
+  }
   // Add the display nodes that are not added yet
   for (unsigned int i = 0; i < newDisplayNodes.size(); ++i)
-    {
+  {
     this->AddVolumeDisplayNode(displayNodesIt, newDisplayNodes[i]);
-    }
+  }
   // Make sure there is no more display nodes than the volume has
   assert( displayNodesIt->second.size() <=
           (unsigned int) displayNodesIt->first->GetNumberOfDisplayNodes());
@@ -405,14 +405,14 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::AddVolumeDisplayNod
   std::vector<vtkMRMLDisplayNode*>& displayNodes = displayNodesIt->second;
   if (std::find(displayNodes.begin(), displayNodes.end(), displayNode) !=
       displayNodes.end())
-    {
+  {
     // displayNode is already in the list and already taken care of
     return;
-    }
+  }
   if (!this->IsDisplayable(displayNode))
-    {
+  {
     return;
-    }
+  }
   displayNode->AddObserver(vtkCommand::ModifiedEvent,
                            this->External->GetMRMLNodesCallbackCommand());
   displayNodesIt->second.push_back(displayNode);
@@ -424,15 +424,15 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::RemoveVolumeDisplay
   DisplayNodesType::iterator displayNodesIt)
 {
   if (displayNodesIt == this->DisplayNodes.end())
-    {
+  {
     return;
-    }
+  }
   // Stop listening to all the displayNodes associtaed with the volume
   for (std::vector<vtkMRMLDisplayNode*>::iterator it = displayNodesIt->second.begin();
        it != displayNodesIt->second.end(); )
-    {
+  {
     it = this->RemoveVolumeDisplayNode(displayNodesIt->second, it);
-    }
+  }
   assert(displayNodesIt->second.size() == 0);
   this->DisplayNodes.erase(displayNodesIt);
   return;
@@ -457,28 +457,28 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateVolumeDisplay
   vtkMRMLDisplayNode* displayNode)
 {
   if (!this->IsDisplayable(displayNode))
-    {
+  {
     return;
-    }
+  }
   DisplayActorsType::const_iterator it = this->Actors.find(displayNode);
   // If the actors haven't been created yet and the actors should not be visible
   // anyway, then don't even create them. However if the actors were created
   // and the visibility has later been turned off, then update the actor by
   // setting its visibility to off.
   if (!this->IsVisible(displayNode) && it == this->Actors.end())
-    {
+  {
     return;
-    }
+  }
   std::cout << "vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateVolumeDisplayNode()" << std::endl;
   if (it == this->Actors.end())
-    {
+  {
     this->AddActor(displayNode);
-    }
+  }
   else
-    {
+  {
     // there is already an actor, just update
     this->UpdateActor(it->first, it->second);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -487,10 +487,10 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::AddActor(
 {
   vtkActor2D* actor = vtkActor2D::New();
   if (displayNode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode"))
-    {
+  {
     vtkNew<vtkPolyDataMapper2D> mapper;
     actor->SetMapper(mapper.GetPointer());
-    }
+  }
   this->External->GetRenderer()->AddActor( actor );
   this->Actors[displayNode] = actor;
   this->UpdateActor(displayNode, actor);
@@ -501,7 +501,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateActor(
   vtkMRMLDisplayNode* displayNode, vtkProp* actor)
 {
   if (displayNode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode"))
-    {
+  {
     vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dtiDisplayNode =
       vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast(displayNode);
 
@@ -512,7 +512,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateActor(
     mapper->SetLookupTable( dtiDisplayNode->GetColorNode() ?
                             dtiDisplayNode->GetColorNode()->GetScalarsToColors() : nullptr);
     mapper->SetScalarRange(dtiDisplayNode->GetScalarRange());
-    }
+  }
   actor->SetVisibility(this->IsVisible(displayNode));
   // TBD: Not sure a render request has to systematically be called
   this->External->RequestRender();
@@ -523,9 +523,9 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::RemoveActor(
   DisplayActorsType::iterator actorIt)
 {
   if (actorIt == this->Actors.end())
-    {
+  {
     return;
-    }
+  }
   this->External->GetRenderer()->RemoveActor( actorIt->second );
   actorIt->second->Delete();
   this->Actors.erase(actorIt);
@@ -591,9 +591,9 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager
   std::vector<vtkMRMLDisplayableNode*> volumes = this->Internal->VolumeNodes;
   for (std::vector<vtkMRMLDisplayableNode*>::iterator it = volumes.begin();
        it != volumes.end(); it++)
-    {
+  {
     this->Internal->RemoveVolume(*it);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -601,30 +601,30 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager
 ::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   if (event == vtkMRMLDisplayableNode::DisplayModifiedEvent)
-    {
+  {
     if (vtkMRMLDisplayableNode::SafeDownCast(caller))
-      {
+    {
         if (callData == nullptr || vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast((vtkObject *)callData) !=nullptr ) // a display node is added/removed/modified
         {
         this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
         }
-      }
     }
+  }
   else if (event == vtkCommand::ModifiedEvent)
-    {
+  {
     if (vtkMRMLSliceCompositeNode::SafeDownCast(caller))
-      {
-      this->Internal->UpdateSliceCompositeNode(vtkMRMLSliceCompositeNode::SafeDownCast(caller));
-      }
-    else if (vtkMRMLDisplayNode::SafeDownCast(caller))
-      {
-      this->Internal->UpdateVolumeDisplayNode(vtkMRMLDisplayNode::SafeDownCast(caller));
-      }
-    }
-  else
     {
-    this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
+      this->Internal->UpdateSliceCompositeNode(vtkMRMLSliceCompositeNode::SafeDownCast(caller));
     }
+    else if (vtkMRMLDisplayNode::SafeDownCast(caller))
+    {
+      this->Internal->UpdateVolumeDisplayNode(vtkMRMLDisplayNode::SafeDownCast(caller));
+    }
+  }
+  else
+  {
+    this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
+  }
 }
 
 //---------------------------------------------------------------------------

@@ -79,7 +79,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
   // Create and initialize the calculator
   typename CalculatorType::Pointer calculator;
   switch (self->GetMethod())
-    {
+  {
     case vtkITKImageThresholdCalculator::METHOD_HUANG: calculator = itk::HuangThresholdCalculator<HistogramType>::New(); break;
     case vtkITKImageThresholdCalculator::METHOD_INTERMODES: calculator = itk::IntermodesThresholdCalculator<HistogramType>::New(); break;
     case vtkITKImageThresholdCalculator::METHOD_ISO_DATA: calculator = itk::IsoDataThresholdCalculator<HistogramType>::New(); break;
@@ -95,19 +95,19 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
     default:
       vtkErrorWithObjectMacro(self, "ITKComputeThresholdFromVTKImage failed: invalid method: " << self->GetMethod());
       return;
-    }
+  }
 
   calculator->SetInput( histGenerator->GetOutput() );
 
   try
-    {
+  {
     calculator->Update();
-    }
+  }
   catch (itk::ExceptionObject &err)
-    {
+  {
     vtkErrorWithObjectMacro(self, "Failed to compute threshold value using method " << self->GetMethodAsString(self->GetMethod())
       << ". Details: " << err);
-    }
+  }
 
   computedThreshold = calculator->GetThreshold();
 }
@@ -137,44 +137,44 @@ void vtkITKImageThresholdCalculator::Update()
   vtkImageData *inputImage = this->GetImageDataInput(0);
   vtkPointData* pointData = nullptr;
   if (inputImage)
-    {
+  {
     pointData = inputImage->GetPointData();
-    }
+  }
   if (pointData == nullptr)
-    {
+  {
     vtkErrorMacro(<<"vtkITKImageThresholdCalculator: No input image");
     return;
-    }
+  }
 
   this->UpdateInformation();
   if (this->GetOutputInformation(0))
-    {
+  {
     this->GetOutputInformation(0)->Set(
       vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
       this->GetOutputInformation(0)->Get(
         vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
-    }
+  }
 
   if ( pointData->GetScalars() == nullptr)
-    {
+  {
     vtkErrorMacro(<<"vtkITKImageThresholdCalculator: Scalar input image is required");
     return;
-    }
+  }
   int inputNumberOfScalarComponents = pointData->GetScalars()->GetNumberOfComponents();
   if (inputNumberOfScalarComponents != 1)
-    {
+  {
     vtkErrorMacro(<<"vtkITKImageThresholdCalculator: Scalar input image with a single component is required");
     return;
-    }
+  }
 
   int inputDataType = pointData->GetScalars()->GetDataType();
   switch (inputDataType)
-    {
+  {
     vtkTemplateMacro(ITKComputeThresholdFromVTKImage<VTK_TT>(this, inputImage, this->Threshold));
     default:
       vtkErrorMacro("Execute: Unknown ScalarType" << inputDataType);
       return;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

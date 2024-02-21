@@ -47,17 +47,17 @@ public:
 
   /// Enumerated values for SetPlot/GetPlot
   enum
-    {
+  {
     PlotTypeLine,
     PlotTypeBar,
     PlotTypeScatter,
     PlotTypeScatterBar,
     PlotType_Last // must be last
-    };
+  };
 
   /// Enumerated values for SetMarkerStyle/GetMarkerStyle
   enum
-    {
+  {
     MarkerStyleNone,
     MarkerStyleCross,
     MarkerStylePlus,
@@ -65,11 +65,11 @@ public:
     MarkerStyleCircle,
     MarkerStyleDiamond,
     MarkerStyle_Last // must be last
-    };
+  };
 
   /// Enumerated values for SetLineStyle/GetLineStyle
   enum
-    {
+  {
     LineStyleNone,
     LineStyleSolid,
     LineStyleDash,
@@ -77,7 +77,7 @@ public:
     LineStyleDashDot,
     LineStyleDashDotDot,
     LineStyle_Last // must be last
-    };
+  };
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -123,9 +123,9 @@ public:
   ///
   /// TableModifiedEvent is send when the parent table is modified
   enum
-    {
+  {
       TableModifiedEvent = 15000
-    };
+  };
 
   ///
   /// Get referenced transform node id
@@ -244,9 +244,9 @@ protected:
   {
     Superclass::OnNodeReferenceAdded(reference);
     if (std::string(reference->GetReferenceRole()) == this->TableNodeReferenceRole)
-      {
+    {
       this->InvokeCustomModifiedEvent(vtkMRMLPlotSeriesNode::TableModifiedEvent, reference->GetReferencedNode());
-      }
+    }
   }
 
   ///

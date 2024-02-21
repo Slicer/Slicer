@@ -124,7 +124,7 @@ public:
   void SetNextGlyphType();
 
   enum GlyphTypes
-    {
+  {
     GlyphNone = 0,
     GlyphStarBurst,
     GlyphCross,
@@ -140,7 +140,7 @@ public:
     GlyphThickArrow,
     GlyphHookedArrow,
     GlyphType_Last // insert new types above this line
-    };
+  };
 
 protected:
   vtkMarkupsGlyphSource2D();

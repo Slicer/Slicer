@@ -43,48 +43,48 @@ int main( int argc, char * argv[] )
   vtkNew<vtkMRMLModelNode> modelNode;
   modelStorageNode->SetFileName(surface.c_str());
   if (!modelStorageNode->ReadData(modelNode))
-    {
+  {
     std::cerr << "Failed to read input model file " << surface << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   vtkSmartPointer<vtkPolyData> closedSurfacePolyData_RAS = modelNode->GetPolyData();
   if (!closedSurfacePolyData_RAS || closedSurfacePolyData_RAS->GetNumberOfPoints() < 2 || closedSurfacePolyData_RAS->GetNumberOfCells() < 2)
-    {
+  {
     std::cerr << "Invalid polydata in model file " << surface << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLScalarVolumeNode> referenceVolumeNode;
   vtkNew<vtkMRMLVolumeArchetypeStorageNode> referenceVolumeStorageNode;
   referenceVolumeStorageNode->SetFileName(InputVolume.c_str());
   if (!referenceVolumeStorageNode->ReadData(referenceVolumeNode))
-    {
+  {
     std::cerr << "Failed to read input volume file " << InputVolume << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (!referenceVolumeNode->GetImageData())
-    {
+  {
     std::cerr << "Invalid input volume file " << InputVolume << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   int* referenceVolumeExtent = referenceVolumeNode->GetImageData()->GetExtent();
   if (referenceVolumeExtent[0]>= referenceVolumeExtent[1]
     || referenceVolumeExtent[2] >= referenceVolumeExtent[3]
     || referenceVolumeExtent[4] >= referenceVolumeExtent[5])
-    {
+  {
     std::cerr << "Empty input volume file " << InputVolume << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkOrientedImageData> binaryLabelmap;
   binaryLabelmap->SetExtent(referenceVolumeExtent);
   binaryLabelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
   void* binaryLabelmapVoxelsPointer = binaryLabelmap->GetScalarPointerForExtent(binaryLabelmap->GetExtent());
   if (!binaryLabelmapVoxelsPointer)
-    {
+  {
     std::cerr << "Failed to allocate memory for output labelmap image" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   binaryLabelmap->GetPointData()->GetScalars()->Fill(0); // background voxels are 0
 
   // Now the output labelmap image data contains the right geometry.
@@ -137,10 +137,10 @@ int main( int argc, char * argv[] )
   vtkNew<vtkMRMLVolumeArchetypeStorageNode> outputVolumeStorageNode;
   outputVolumeStorageNode->SetFileName(OutputVolume.c_str());
   if (!outputVolumeStorageNode->WriteData(outputVolumeNode))
-    {
+  {
     std::cerr << "Failed to write output volume file " << OutputVolume << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

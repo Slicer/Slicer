@@ -103,14 +103,14 @@ void qSlicerColorsModule::setup()
 
   qSlicerApplication * app = qSlicerApplication::application();
   if (!app)
-    {
+  {
     return;
-    }
+  }
   vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::SafeDownCast(this->logic());
   if (this->appLogic() != nullptr)
-    {
+  {
     this->appLogic()->SetColorLogic(colorLogic);
-    }
+  }
   app->coreIOManager()->registerIO(
     new qSlicerColorsReader(colorLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter(

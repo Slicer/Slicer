@@ -53,13 +53,13 @@ void vtkSlicerCurveWidget::CreateDefaultRepresentation(
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
-    {
+  {
     rep = vtkSmartPointer<vtkSlicerCurveRepresentation2D>::New();
-    }
+  }
   else
-    {
+  {
     rep = vtkSmartPointer<vtkSlicerCurveRepresentation3D>::New();
-    }
+  }
   this->SetRenderer(renderer);
   this->SetRepresentation(rep);
   rep->SetViewNode(viewNode);
@@ -73,9 +73,9 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
   vtkMRMLMarkupsCurveNode* markupsNode = this->GetMarkupsCurveNode();
   vtkMRMLMarkupsDisplayNode* markupsDisplayNode = this->GetMarkupsDisplayNode();
   if (!markupsNode || !markupsDisplayNode)
-    {
+  {
     return false;
-    }
+  }
 
   int foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   int foundComponentIndex = -1;
@@ -85,42 +85,42 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
   vtkSlicerCurveRepresentation2D* rep2d = vtkSlicerCurveRepresentation2D::SafeDownCast(this->WidgetRep);
   vtkSlicerCurveRepresentation3D* rep3d = vtkSlicerCurveRepresentation3D::SafeDownCast(this->WidgetRep);
   if (rep2d)
-    {
+  {
     rep2d->CanInteractWithCurve(eventData, foundComponentType, foundComponentIndex, closestDistance2);
-    }
+  }
   else if (rep3d)
-    {
+  {
     rep3d->CanInteractWithCurve(eventData, foundComponentType, foundComponentIndex, closestDistance2);
-    }
+  }
   else
-    {
+  {
     return false;
-    }
+  }
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentLine)
-    {
+  {
     return false;
-    }
+  }
 
   // Determine point position in local coordinate system
   double worldPos[3] = { 0.0 };
   const int* displayPos = eventData->GetDisplayPosition();
   if (rep3d)
-    {
+  {
     if (!eventData->IsWorldPositionValid())
-      {
+    {
       return false;
-      }
+    }
     vtkIdType lineIndex = markupsNode->GetClosestPointPositionAlongCurveWorld(eventData->GetWorldPosition(), worldPos);
     if (lineIndex < 0)
-      {
-      return false;
-      }
-    }
-  else
     {
+      return false;
+    }
+  }
+  else
+  {
     double doubleDisplayPos[3] = { static_cast<double>(displayPos[0]), static_cast<double>(displayPos[1]), 0.0 };
     rep2d->GetSliceToWorldCoordinates(doubleDisplayPos, worldPos);
-    }
+  }
 
   markupsNode->GetScene()->SaveStateForUndo();
 
@@ -128,19 +128,19 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
   vtkMRMLMarkupsNode::ControlPoint* controlPoint = new vtkMRMLMarkupsNode::ControlPoint;
   vtkMRMLMarkupsNode::ControlPoint* foundControlPoint = markupsNode->GetNthControlPoint(foundComponentIndex);
   if (foundControlPoint)
-    {
+  {
     (*controlPoint) = (*foundControlPoint);
-    }
+  }
   else
-    {
+  {
     vtkWarningMacro("ProcessControlPointInsert: Found control point is out of bounds");
-    }
+  }
   markupsNode->TransformPointFromWorld(worldPos, controlPoint->Position);
   if (!markupsNode->InsertControlPoint(controlPoint, foundComponentIndex + 1))
-    {
+  {
     delete controlPoint;
     return false;
-    }
+  }
 
   // Activate the control point that has just been inserted
   this->SetWidgetState(WidgetStateOnWidget);
@@ -154,8 +154,8 @@ vtkMRMLMarkupsCurveNode* vtkSlicerCurveWidget::GetMarkupsCurveNode()
 {
   vtkSlicerMarkupsWidgetRepresentation* rep = this->GetMarkupsRepresentation();
   if (!rep)
-    {
+  {
     return nullptr;
-    }
+  }
   return vtkMRMLMarkupsCurveNode::SafeDownCast(rep->GetMarkupsNode());
 }

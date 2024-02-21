@@ -304,13 +304,13 @@ void qSlicerSettingsViewsPanel::sliceViewOrientationChangedByUser()
 {
   Q_D(qSlicerSettingsViewsPanel);
   if (d->SliceViewOrientationComboBox->currentUserDataAsString() == "PatientRightIsScreenRight")
-    {
+  {
     if (d->SliceOrientationMarkerTypeComboBox->currentData() == /*no tr*/"none")
-      {
+    {
       // Non-default orientation is chosen and no orientation marker is displayed.
       // To ensure that there is no accidental mixup of orientations, show the orientation marker.
       int index = d->SliceOrientationMarkerTypeComboBox->findData(/*no tr*/"axes");
       d->SliceOrientationMarkerTypeComboBox->setCurrentIndex(index);
-      }
     }
+  }
 }

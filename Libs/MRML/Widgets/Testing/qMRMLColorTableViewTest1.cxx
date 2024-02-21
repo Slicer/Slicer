@@ -63,10 +63,10 @@ int qMRMLColorTableViewTest1(int argc, char * argv [])
 
   ColorTableView.setMRMLColorNode(colorTableNode.GetPointer());
   if (ColorTableView.mrmlColorNode() != colorTableNode.GetPointer())
-    {
+  {
     std::cerr << "qMRMLColorTableView::setMRMLColorNode() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // for some reasons it generate a warning if the type is changed.
   colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
@@ -75,10 +75,10 @@ int qMRMLColorTableViewTest1(int argc, char * argv [])
   colorPETNode->SetTypeToRainbow();
   ColorTableView2.setMRMLColorNode(colorPETNode.GetPointer());
   if (ColorTableView2.mrmlColorNode() != colorPETNode.GetPointer())
-    {
+  {
     std::cerr << "qMRMLColorTableView::setMRMLColorNode() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   colorPETNode->SetTypeToMIP();
 
   topLevel.show();
@@ -94,9 +94,9 @@ int qMRMLColorTableViewTest1(int argc, char * argv [])
   colorTableView.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

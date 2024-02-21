@@ -44,11 +44,11 @@ int TestIndexFormatting()
   vtkNew<vtkMRMLSequenceNode> sequenceNode;
   const int numberOfDataNodes = 135;
   for (int i = 0; i < numberOfDataNodes; i++)
-    {
+  {
     vtkNew<vtkMRMLTransformNode> transform;
     std::string indexValue = vtkVariant(valueForIndex(i)).ToString();
     sequenceNode->SetDataNodeAtValue(transform.GetPointer(), indexValue);
-    }
+  }
   scene->AddNode(sequenceNode.GetPointer());
 
   vtkNew<vtkMRMLSequenceBrowserNode> browserNode;
@@ -65,7 +65,7 @@ int TestIndexFormatting()
   // Basic sprintf string "%.5f"
   browserNode->SetIndexDisplayFormat(format);
   for (int i = 0; i < sequenceNode->GetNumberOfDataNodes(); ++i)
-    {
+  {
     std::string formattedIndexValue = browserNode->GetFormattedIndexValue(i);
     std::stringstream expectedFormatSS;
     expectedFormatSS.precision(numberOfDecimals);
@@ -75,16 +75,16 @@ int TestIndexFormatting()
     std::string expectedFormat = expectedFormatSS.str();
 
     CHECK_STD_STRING(formattedIndexValue, expectedFormat);
-    }
+  }
 
   // Basic sprintf string "%s"
   browserNode->SetIndexDisplayFormat("%s");
   for (int i = 0; i < sequenceNode->GetNumberOfDataNodes(); ++i)
-    {
+  {
     std::string formattedIndexValue = browserNode->GetFormattedIndexValue(i);
     std::string expectedFormat = sequenceNode->GetNthIndexValue(i);
     CHECK_STD_STRING(formattedIndexValue, expectedFormat);
-    }
+  }
 
   // Complex sprintf string ""%%x%t%y%.7f%.7f%s". Should only match with first "%.7f"
   numberOfDecimals = 7;
@@ -94,7 +94,7 @@ int TestIndexFormatting()
   suffix = format + suffix;
   browserNode->SetIndexDisplayFormat(prefix + format + suffix);
   for (int i = 0; i < sequenceNode->GetNumberOfDataNodes(); ++i)
-    {
+  {
     std::string formattedIndexValue = browserNode->GetFormattedIndexValue(i);
     std::stringstream expectedFormatSS;
     expectedFormatSS.precision(numberOfDecimals);
@@ -104,7 +104,7 @@ int TestIndexFormatting()
     std::string expectedFormat = expectedFormatSS.str();
 
     CHECK_STD_STRING(formattedIndexValue, expectedFormat);
-    }
+  }
 
   return EXIT_SUCCESS;
 }

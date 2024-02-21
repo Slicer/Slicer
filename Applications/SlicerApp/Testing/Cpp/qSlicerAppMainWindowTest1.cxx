@@ -56,9 +56,9 @@ int qSlicerAppMainWindowTest1(int argc, char * argv[] )
 #endif
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, qApp, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

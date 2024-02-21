@@ -31,10 +31,10 @@ int main(int argc, char* argv[])
   vtkImageData* volume = readerVol->GetOutput();
   int* extent = volume->GetExtent();
   if (extent[0]>extent[1] || extent[2] > extent[3] || extent[4] > extent[5])
-    {
+  {
     std::cerr << "Input image file is empty: " << InputVolume << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::cout << "Done reading the file " << InputVolume << endl;
 
   vtkNew<vtkImageChangeInformation> ici;
@@ -48,10 +48,10 @@ int main(int argc, char* argv[])
   vtkNew<vtkMRMLModelNode> modelNode;
   modelStorageNode->SetFileName(InputModel.c_str());
   if (!modelStorageNode->ReadData(modelNode))
-    {
+  {
     std::cerr << "Failed to read input model file " << InputModel << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Transform the model into the volume's IJK space
   vtkNew<vtkTransformFilter> modelTransformerRasToIjk;
@@ -74,10 +74,10 @@ int main(int argc, char* argv[])
   modelNode->SetAndObserveMesh(modelTransformerIjkToRas->GetOutput());
   modelStorageNode->SetFileName(OutputModel.c_str());
   if (!modelStorageNode->WriteData(modelNode))
-    {
+  {
     std::cerr << "Failed to write output model file " << OutputModel << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

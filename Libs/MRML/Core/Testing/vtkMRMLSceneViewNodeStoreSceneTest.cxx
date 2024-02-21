@@ -283,9 +283,9 @@ int storePerformance()
   const int displayNodePairCount = 100;
 
   for (int i = 0; i < displayNodePairCount; ++i)
-    {
+  {
     populateScene(scene.GetPointer());
-    }
+  }
 
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());

@@ -127,28 +127,28 @@ void qSlicerSubjectHierarchyColorLegendPlugin::showVisibilityContextMenuActionsF
   Q_D(qSlicerSubjectHierarchyColorLegendPlugin);
 
   if (!itemID)
-    {
+  {
     // There are no scene actions in this plugin
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!displayableNode)
-    {
+  {
     // Not a displayable node color legend is not applicable
     return;
-    }
+  }
   vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
   if (!displayNode || !displayNode->GetColorNode())
-    {
+  {
     // No color node for this node, color legend is not applicable
     return;
-    }
+  }
 
   vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
   QSignalBlocker blocker(d->ShowColorLegendAction);
@@ -162,43 +162,43 @@ void qSlicerSubjectHierarchyColorLegendPlugin::toggleVisibilityForCurrentItem(bo
   Q_D(qSlicerSubjectHierarchyColorLegendPlugin);
   vtkIdType itemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!displayableNode)
-    {
+  {
     // Not a displayable node color legend is not applicable
     return;
-    }
+  }
   vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
   if (!displayNode || !displayNode->GetColorNode())
-    {
+  {
     // No color node for this node, color legend is not applicable
     return;
-    }
+  }
 
   vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = nullptr;
   if (on)
-    {
+  {
     colorLegendDisplayNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(displayNode);
-    }
+  }
   else
-    {
+  {
     colorLegendDisplayNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(displayNode);
-    }
+  }
   if (colorLegendDisplayNode)
-    {
+  {
     colorLegendDisplayNode->SetVisibility(on);
     // If visibility is set to false then prevent making the node visible again on show.
     colorLegendDisplayNode->SetShowMode(on ? vtkMRMLDisplayNode::ShowDefault : vtkMRMLDisplayNode::ShowIgnore);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -209,63 +209,63 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showItemInView(vtkIdType itemID, 
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
-    }
+  }
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!volumeNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to find scalar volume node associated to subject hierarchy item " << itemID;
     return false;
-    }
+  }
 
   bool wasVisible = false;
   vtkMRMLColorLegendDisplayNode* displayNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(volumeNode);
   if (displayNode)
-    {
+  {
     wasVisible = displayNode->GetVisibility();
-    }
+  }
   else
-    {
+  {
     // if there is no color legend node => create it, get first color legend node otherwise
     displayNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(volumeNode);
-    }
+  }
   if (!displayNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to create color display node for scalar volume node " << volumeNode->GetName();
     return false;
-    }
+  }
 
   if (viewNode)
-    {
+  {
     // Show in specific view
     MRMLNodeModifyBlocker blocker(displayNode);
     // show
     if (!wasVisible)
-      {
+    {
       displayNode->SetVisibility(true);
-      }
+    }
     displayNode->AddViewNodeID(viewNode->GetID());
-    }
+  }
   else if (sliceNode)
-    {
+  {
     // Show in specific view
     MRMLNodeModifyBlocker blocker(displayNode);
     // show
     if (!wasVisible)
-      {
-      displayNode->SetVisibility(true);
-      }
-    displayNode->AddViewNodeID(sliceNode->GetID());
-    }
-  else
     {
+      displayNode->SetVisibility(true);
+    }
+    displayNode->AddViewNodeID(sliceNode->GetID());
+  }
+  else
+  {
     // Show in all views
     MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->RemoveAllViewNodeIDs();
     displayNode->SetVisibility(true);
-    }
+  }
 
   return true;
 }
@@ -277,70 +277,70 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInView( bool show,
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
-    }
+  }
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!volumeNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to find scalar volume node associated to subject hierarchy item " << itemID;
     return false;
-    }
+  }
 
   bool wasVisible = false;
   vtkMRMLColorLegendDisplayNode* displayNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(volumeNode);
   if (displayNode)
-    {
+  {
     wasVisible = displayNode->GetVisibility();
-    }
+  }
   else
-    {
+  {
     // there is no color legend display node
     if (!show)
-      {
+    {
       // not visible and should not be visible, so we are done
       return true;
-      }
+    }
     // if there is no color legend node => create it, get first color legend node otherwise
     displayNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(volumeNode);
-    }
+  }
   if (!displayNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to create color display node for scalar volume node " << volumeNode->GetName();
     return false;
-    }
+  }
 
   if (viewNode)
-    {
+  {
     // Show/hide in specific view
     MRMLNodeModifyBlocker blocker(displayNode);
     if (show)
-      {
+    {
       // show
       if (!wasVisible)
-        {
+      {
         displayNode->SetVisibility(true);
         // This was hidden in all views, show it only in the currently selected view
         displayNode->RemoveAllViewNodeIDs();
-        }
-      displayNode->AddViewNodeID(viewNode->GetID());
       }
+      displayNode->AddViewNodeID(viewNode->GetID());
+    }
     else
-      {
+    {
       // This hides the volume rendering in all views, which is a bit more than asked for,
       // but since drag-and-drop to view only requires selective showing (and not selective hiding),
       // this should be good enough. The behavior can be refined later if needed.
       displayNode->SetVisibility(false);
-      }
     }
+  }
   else
-    {
+  {
     // Show in all views
     MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->RemoveAllViewNodeIDs();
     displayNode->SetVisibility(show);
-    }
+  }
 
   return true;
 }
@@ -352,70 +352,70 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInSlice( bool show
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
-    }
+  }
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!volumeNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to find scalar volume node associated to subject hierarchy item " << itemID;
     return false;
-    }
+  }
 
   bool wasVisible = false;
   vtkMRMLColorLegendDisplayNode* displayNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(volumeNode);
   if (displayNode)
-    {
+  {
     wasVisible = displayNode->GetVisibility();
-    }
+  }
   else
-    {
+  {
     // there is no color legend display node
     if (!show)
-      {
+    {
       // not visible and should not be visible, so we are done
       return true;
-      }
+    }
     // if there is no color legend node => create it, get first color legend node otherwise
     displayNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(volumeNode);
-    }
+  }
   if (!displayNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to create color display node for scalar volume node " << volumeNode->GetName();
     return false;
-    }
+  }
 
   if (sliceNode)
-    {
+  {
     // Show/hide in specific view
     MRMLNodeModifyBlocker blocker(displayNode);
     if (show)
-      {
+    {
       // show
       if (!wasVisible)
-        {
+      {
         displayNode->SetVisibility(true);
         // This was hidden in all views, show it only in the currently selected view
         displayNode->RemoveAllViewNodeIDs();
-        }
-      displayNode->AddViewNodeID(sliceNode->GetID());
       }
+      displayNode->AddViewNodeID(sliceNode->GetID());
+    }
     else
-      {
+    {
       // This hides the volume rendering in all views, which is a bit more than asked for,
       // but since drag-and-drop to view only requires selective showing (and not selective hiding),
       // this should be good enough. The behavior can be refined later if needed.
       displayNode->SetVisibility(false);
-      }
     }
+  }
   else
-    {
+  {
     // Show in all views
     MRMLNodeModifyBlocker blocker(displayNode);
     displayNode->RemoveAllViewNodeIDs();
     displayNode->SetVisibility(show);
-    }
+  }
 
   return true;
 }

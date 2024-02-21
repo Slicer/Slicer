@@ -58,9 +58,9 @@ int qMRMLModelTreeViewTest1( int argc, char * argv [] )
 
   modelView.show();
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

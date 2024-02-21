@@ -106,19 +106,19 @@ void vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node
 {
   vtkMRMLCameraNode * cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
   if (!cameraNode)
-    {
+  {
     return;
-    }
+  }
   if (vtkMRMLViewNode::SafeDownCast(this->GetMRMLDisplayableNode()))
-    {
+  {
     vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView++;
     //std::cout << "vtkMRMLTestCustomDisplayableManager[vtkMRMLViewNode] - NodeAdded - "
     //          << (node ? node->GetName() : "None")<< std::endl;
-    }
+  }
   if (vtkMRMLSliceNode::SafeDownCast(this->GetMRMLDisplayableNode()))
-    {
+  {
     vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView++;
     //std::cout << "vtkMRMLTestCustomDisplayableManager[vtkMRMLSliceNode] - NodeAdded - "
     //          << (node ? node->GetName() : "None")<< std::endl;
-    }
+  }
 }

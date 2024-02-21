@@ -68,9 +68,9 @@ public:
   /** Method to get the name of the class be monitored by this
    *  vtkPluginFilterWatcher */
   const char *GetNameOfClass ()
-    {
+  {
       return (Process ? Process->GetClassName() : "None");
-    }
+  }
 
   /** Methods to control the verbosity of the messages. Quiet
    * reporting limits the information emitted at a ProgressEvent: only filter

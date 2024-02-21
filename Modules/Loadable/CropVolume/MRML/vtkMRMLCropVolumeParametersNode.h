@@ -28,12 +28,12 @@ class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode :
 {
 public:
   enum
-    {
+  {
     InterpolationNearestNeighbor = 1,
     InterpolationLinear = 2,
     InterpolationWindowedSinc = 3,
     InterpolationBSpline = 4
-    };
+  };
 
   static vtkMRMLCropVolumeParametersNode *New();
   vtkTypeMacro(vtkMRMLCropVolumeParametersNode,vtkMRMLNode);

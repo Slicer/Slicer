@@ -121,9 +121,9 @@ void qSlicerDICOMLoadable::copyToVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadable
   Q_D(qSlicerDICOMLoadable);
 
   if (!vtkLoadable)
-    {
+  {
     return;
-    }
+  }
 
   vtkLoadable->SetName(d->Name.toUtf8().constData());
   vtkLoadable->SetTooltip(d->Tooltip.toUtf8().constData());
@@ -132,14 +132,14 @@ void qSlicerDICOMLoadable::copyToVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadable
   vtkLoadable->SetConfidence(d->Confidence);
 
   foreach(QString file, d->Files)
-    {
+  {
     vtkLoadable->AddFile(file.toUtf8().constData());
-    }
+  }
 
   foreach(QString referencedInstanceUID, d->ReferencedInstanceUIDs)
-    {
+  {
     vtkLoadable->AddReferencedInstanceUID(referencedInstanceUID.toUtf8().constData());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -148,9 +148,9 @@ void qSlicerDICOMLoadable::copyFromVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadab
   Q_D(qSlicerDICOMLoadable);
 
   if (!vtkLoadable)
-    {
+  {
     return;
-    }
+  }
 
   d->Name = QString(vtkLoadable->GetName());
   d->Tooltip = QString(vtkLoadable->GetTooltip());
@@ -160,19 +160,19 @@ void qSlicerDICOMLoadable::copyFromVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadab
 
   vtkStringArray* filesArray = vtkLoadable->GetFiles();
   if (filesArray)
-    {
+  {
     for (int fileIndex = 0; fileIndex < filesArray->GetNumberOfValues(); ++fileIndex)
-      {
+    {
       d->Files.append(QString(filesArray->GetValue(fileIndex).c_str()));
-      }
     }
+  }
 
   vtkStringArray* referencedInstanceUIDsArray = vtkLoadable->GetReferencedInstanceUIDs();
   if (referencedInstanceUIDsArray)
-    {
+  {
     for (int fileIndex = 0; fileIndex < referencedInstanceUIDsArray->GetNumberOfValues(); ++fileIndex)
-      {
+    {
       d->ReferencedInstanceUIDs.append(QString(referencedInstanceUIDsArray->GetValue(fileIndex).c_str()));
-      }
     }
+  }
 }

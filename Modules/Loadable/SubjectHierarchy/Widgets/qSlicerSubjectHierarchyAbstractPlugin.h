@@ -232,7 +232,7 @@ public:
   virtual void setName(QString name);
 
   enum ActionSectionType
-    {
+  {
     SectionTop = -400,   ///< Use this section to make items appear at the top of the menu.
     SectionInteraction = -300, ///< Actions for changing the current interaction mode (in view context menu).
     SectionComponent = -200,   ///< Actions for the selected node component (e.g., control point within a node).
@@ -240,7 +240,7 @@ public:
     SectionDefault = 0,  ///< By default (if no position is defined) actions will appear in this section.
     SectionFolder = 100, ///< Actions for the selected folder.
     SectionBottom = 200, ///< Use this section to make items appear at the bottom of the menu.
-    };
+  };
 
   /// Set the action position within a subject hierarchy menu by setting section and weight.
   /// \param section specifies section where the menu item will appear.

@@ -39,13 +39,13 @@ class Q_SLICER_MODULE_PLOTS_WIDGETS_PLUGINS_EXPORT qSlicerPlotsModuleWidgetsPlug
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLPlotChartPropertiesWidgetPlugin;
     plugins << new qMRMLPlotSeriesPropertiesWidgetPlugin;
 
     return plugins;
-    }
+  }
 };
 
 #endif

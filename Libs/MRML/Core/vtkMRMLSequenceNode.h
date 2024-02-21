@@ -163,11 +163,11 @@ public:
   /// Type of the index. Controls the behavior of sorting, finding, etc.
   /// Additional types may be added in the future, such as tag cloud, two-dimensional index, ...
   enum IndexTypes
-    {
+  {
     NumericIndex = 0,
     TextIndex,
     NumberOfIndexTypes // this line must be the last one
-    };
+  };
 
 protected:
   vtkMRMLSequenceNode();
@@ -184,11 +184,11 @@ protected:
   vtkMRMLNode* DeepCopyNodeToScene(vtkMRMLNode* source, vtkMRMLScene* scene);
 
   struct IndexEntryType
-    {
+  {
     std::string IndexValue;
     vtkWeakPointer<vtkMRMLNode> DataNode;
     std::string DataNodeID; // only used temporarily, during scene load
-    };
+  };
 
 protected:
 

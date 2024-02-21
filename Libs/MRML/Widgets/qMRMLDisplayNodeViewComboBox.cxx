@@ -98,19 +98,19 @@ void qMRMLDisplayNodeViewComboBox
                       this, SLOT(updateWidgetFromMRML()));
   d->MRMLDisplayNode = displayNode;
   if (d->MRMLDisplayNode)
-    {
+  {
     // Only overwrite the scene if the node has a valid scene
     // (otherwise scene may be swapped out to an invalid scene during scene close
     // causing a crash if it happens during a scene model update).
     if (d->MRMLDisplayNode->GetScene())
-      {
-      this->setMRMLScene(d->MRMLDisplayNode->GetScene());
-      }
-    }
-  else
     {
-    this->setMRMLScene(nullptr);
+      this->setMRMLScene(d->MRMLDisplayNode->GetScene());
     }
+  }
+  else
+  {
+    this->setMRMLScene(nullptr);
+  }
   this->updateWidgetFromMRML();
 }
 
@@ -128,36 +128,36 @@ void qMRMLDisplayNodeViewComboBox::updateWidgetFromMRML()
   Q_D(qMRMLDisplayNodeViewComboBox);
   this->setEnabled(this->mrmlScene() != nullptr && d->MRMLDisplayNode != nullptr);
   if (!d->MRMLDisplayNode)
-    {
+  {
     return;
-    }
+  }
   bool oldUpdating = d->IsUpdatingWidgetFromMRML;
   d->IsUpdatingWidgetFromMRML = true;
 
   bool wasBlocking = this->blockSignals(true);
   bool modified = false;
   for (int i = 0; i < this->nodeCount(); ++i)
-    {
+  {
     vtkMRMLNode* view = this->nodeFromIndex(i);
     if (!view)
-      {
+    {
       // we get here if there is an orphan view node and the scene is closing
       this->setCheckState(view, Qt::Unchecked);
       continue;
-      }
+    }
     bool check = d->MRMLDisplayNode->IsDisplayableInView(view->GetID());
     Qt::CheckState viewCheckState = check ? Qt::Checked : Qt::Unchecked;
     if (this->checkState(view) != viewCheckState)
-      {
+    {
       modified = true;
       this->setCheckState(view, viewCheckState);
-      }
     }
+  }
   this->blockSignals(wasBlocking);
   if (modified)
-    {
+  {
     emit checkedNodesChanged();
-    }
+  }
   d->IsUpdatingWidgetFromMRML = oldUpdating;
 }
 
@@ -166,30 +166,30 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
 {
   Q_D(qMRMLDisplayNodeViewComboBox);
   if (!d->MRMLDisplayNode)
-    {
+  {
     return;
-    }
+  }
   if (d->IsUpdatingWidgetFromMRML)
-    {
+  {
     return;
-    }
+  }
   int wasModifying = d->MRMLDisplayNode->StartModify();
 
   if (this->allChecked() || this->noneChecked())
-    {
+  {
     d->MRMLDisplayNode->RemoveAllViewNodeIDs();
-    }
+  }
   else
-    {
+  {
     foreach (vtkMRMLAbstractViewNode* viewNode, this->checkedViewNodes())
-      {
+    {
       d->MRMLDisplayNode->AddViewNodeID(viewNode ? viewNode->GetID() : nullptr);
-      }
-    foreach (vtkMRMLAbstractViewNode* viewNode, this->uncheckedViewNodes())
-      {
-      d->MRMLDisplayNode->RemoveViewNodeID(viewNode ? viewNode->GetID() : nullptr);
-      }
     }
+    foreach (vtkMRMLAbstractViewNode* viewNode, this->uncheckedViewNodes())
+    {
+      d->MRMLDisplayNode->RemoveViewNodeID(viewNode ? viewNode->GetID() : nullptr);
+    }
+  }
 
   d->MRMLDisplayNode->EndModify(wasModifying);
 }
@@ -199,9 +199,9 @@ QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes()
 {
   QList<vtkMRMLAbstractViewNode*> res;
   foreach(vtkMRMLNode* checkedNode, this->checkedNodes())
-    {
+  {
     res << vtkMRMLAbstractViewNode::SafeDownCast(checkedNode);
-    }
+  }
   return res;
 }
 
@@ -210,8 +210,8 @@ QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::uncheckedViewNodes
 {
   QList<vtkMRMLAbstractViewNode*> res;
   foreach(vtkMRMLNode* uncheckedNode, this->uncheckedNodes())
-    {
+  {
     res << vtkMRMLAbstractViewNode::SafeDownCast(uncheckedNode);
-    }
+  }
   return res;
 }

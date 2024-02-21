@@ -70,10 +70,10 @@ void vtkSlicerScalarBarActor::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerScalarBarActor::LayoutTicks()
 {
   if (this->LookupTable->GetIndexedLookup())
-    { // no tick marks in indexed lookup mode.
+  { // no tick marks in indexed lookup mode.
     this->NumberOfLabelsBuilt = 0;
     return;
-    }
+  }
 
   // find the best size for the ticks
   double* range = this->LookupTable->GetRange();
@@ -92,7 +92,7 @@ void vtkSlicerScalarBarActor::LayoutTicks()
   bool formatWarningPrinted = false;
 
   for (int i = 0; i < this->NumberOfLabels; i++)
-    {
+  {
     this->P->TextActors[i].TakeReference(vtkTextActor::New());
 
     double val = 0.0;
@@ -101,108 +101,108 @@ void vtkSlicerScalarBarActor::LayoutTicks()
     SNPRINTF(labelString, 511, "(none)");
 
     if ( isLogTable )
-      {
+    {
       double lval;
       if (this->NumberOfLabels > 1)
-        {
+      {
         lval = log10(range[0]) +
           static_cast<double>(i)/(this->NumberOfLabels-1) *
           (log10(range[1])-log10(range[0]));
-        }
-      else
-        {
-        lval = log10(range[0]) + 0.5*(log10(range[1])-log10(range[0]));
-        }
-      val = pow(10.0,lval);
       }
-    else
+      else
       {
+        lval = log10(range[0]) + 0.5*(log10(range[1])-log10(range[0]));
+      }
+      val = pow(10.0,lval);
+    }
+    else
+    {
       if (this->NumberOfLabels > 1)
-        {
+      {
         if (this->CenterLabel)
-          {
+        {
           // labels are centered on the middle of a color swatch
           val = range[0] +
             (static_cast<double>(i) + 0.5) / this->NumberOfLabels
             * (range[1] - range[0]);
-          }
+        }
         else
-          {
+        {
           val = range[0] +
             static_cast<double>(i) / (this->NumberOfLabels - 1)
             * (range[1] - range[0]);
-          }
-        }
-      else
-        {
-        val = range[0] + 0.5*(range[1]-range[0]);
         }
       }
+      else
+      {
+        val = range[0] + 0.5*(range[1]-range[0]);
+      }
+    }
 
     // if the lookuptable uses the new annotation functionality in VTK6.0
     // then use it as labels
     int numberOfAnnotatedValues = this->LookupTable->GetNumberOfAnnotatedValues();
     if (this->UseAnnotationAsLabel == 1)
-      {
+    {
       if (numberOfAnnotatedValues > 1)
-        {
+      {
         vtkIdType index = 0;
         if (this->NumberOfLabels > 1)
-          {
+        {
           if (this->CenterLabel)
-            {
+          {
             index = (static_cast<double>(i) + 0.5) / this->NumberOfLabels*numberOfAnnotatedValues;
-            }
+          }
           else
-            {
+          {
             index = static_cast<double>(i)/(this->NumberOfLabels-1)*(numberOfAnnotatedValues-1)+0.5;
-            }
+          }
           if (index >= numberOfAnnotatedValues)
-            {
+          {
             // make sure we do not attempt to use label index out of range
             // (this should not happen, but if it did then it would cause crash)
             index = numberOfAnnotatedValues;
-            }
           }
+        }
         // try to make sure the label format supports a string
         // TODO issue 3802: replace with a more strict regular expression
         //
         vtksys::RegularExpression regExForString("%.*s");
         if (regExForString.find(this->LabelFormat))
-          {
+        {
           SNPRINTF(labelString, 511, this->LabelFormat, this->LookupTable->GetAnnotation(index).c_str());
-          }
+        }
         else
-          {
+        {
           if (!formatWarningPrinted)
-            {
+          {
             vtkWarningMacro("LabelFormat doesn't contain a string specifier!" << this->LabelFormat);
             formatWarningPrinted = true;
-            }
           }
         }
       }
+    }
     else
-      {
+    {
       std::string sprintfSpecifier;
       std::string prefix;
       std::string suffix;
       if (vtkSlicerScalarBarActor::ValidateFormatString(
           sprintfSpecifier, prefix, suffix, this->LabelFormat, "fFgGeE"))
-        {
+      {
         SNPRINTF(labelString, 511, sprintfSpecifier.c_str(), val);
         std::string labelStdString = prefix + labelString + suffix;
         strcpy(labelString, labelStdString.c_str());
-        }
+      }
       else
-        {
+      {
         if (!formatWarningPrinted)
-          {
+        {
           vtkWarningMacro("LabelFormat doesn't contain a floating point specifier!" << this->LabelFormat);
           formatWarningPrinted = true;
-          }
         }
       }
+    }
     this->P->TextActors[i]->SetInput(labelString);
 
     // Shallow copy here so that the size of the label prop is not affected
@@ -217,17 +217,17 @@ void vtkSlicerScalarBarActor::LayoutTicks()
     this->P->TextActors[i]->SetProperty(this->GetProperty());
     this->P->TextActors[i]->GetPositionCoordinate()->
       SetReferenceCoordinate(this->PositionCoordinate);
-    }
+  }
 
   if (this->NumberOfLabels)
-    {
+  {
     int labelSize[2];
     labelSize[0] = labelSize[1] = 0;
     int targetWidth, targetHeight;
 
     this->P->TickBox.Posn = this->P->ScalarBarBox.Posn;
     if ( this->Orientation == VTK_ORIENT_VERTICAL )
-      { // NB. Size[0] = width, Size[1] = height
+    { // NB. Size[0] = width, Size[1] = height
       // Ticks share the width with the scalar bar
       this->P->TickBox.Size[0] =
         this->P->Frame.Size[0] - this->P->ScalarBarBox.Size[0] -
@@ -239,37 +239,37 @@ void vtkSlicerScalarBarActor::LayoutTicks()
 
       // Tick box height for labels that precede scalar bar in vertical orientation
       if (this->TextPosition == vtkScalarBarActor::PrecedeScalarBar && this->TextPad < 0)
-        {
+      {
         this->P->TickBox.Size[1] += 3 * this->TextPad;
-        }
+      }
       else // all other states
-        {
+      {
         this->P->TickBox.Size[1] -= 3 * this->TextPad;
-        }
+      }
 
       // Tick box height also reduced by NaN swatch size, if present:
       if (this->DrawNanAnnotation)
-        {
+      {
         this->P->TickBox.Size[1] -=
           this->P->NanBox.Size[1] + this->P->SwatchPad;
-        }
+      }
 
       if (this->TextPosition == vtkScalarBarActor::PrecedeScalarBar)
-        {
+      {
         this->P->TickBox.Posn[0] = this->TextPad;
-        }
+      }
       else
-        {
+      {
         this->P->TickBox.Posn[0] += this->P->ScalarBarBox.Size[0] + 2 * this->TextPad;
-        }
+      }
 
       targetWidth = this->P->TickBox.Size[0];
       targetHeight = static_cast<int>((this->P->TickBox.Size[1] -
           this->TextPad * (this->NumberOfLabels - 1)) /
         this->NumberOfLabels);
-      }
+    }
     else
-      { // NB. Size[1] = width, Size[0] = height
+    { // NB. Size[1] = width, Size[0] = height
       // Ticks span the entire width of the frame
       this->P->TickBox.Size[1] = this->P->ScalarBarBox.Size[1];
       // Ticks share vertical space with title and scalar bar.
@@ -278,7 +278,7 @@ void vtkSlicerScalarBarActor::LayoutTicks()
         4 * this->TextPad - this->P->TitleBox.Size[0];
 
       if (this->TextPosition == vtkScalarBarActor::PrecedeScalarBar)
-        {
+      {
         this->P->TickBox.Posn[1] =
           this->P->TitleBox.Size[0] + 2 * this->TextPad;
         /* or equivalently: Posn[1] -=
@@ -286,17 +286,17 @@ void vtkSlicerScalarBarActor::LayoutTicks()
           this->P->TitleBox.Size[0] - this->TextPad -
           this->P->ScalarBarBox.Size[0];
           */
-        }
+      }
       else
-        {
+      {
         this->P->TickBox.Posn[1] += this->P->ScalarBarBox.Size[0];
-        }
+      }
 
       targetWidth = static_cast<int>((this->P->TickBox.Size[1] -
           this->TextPad * (this->NumberOfLabels - 1)) /
         this->NumberOfLabels);
       targetHeight = this->P->TickBox.Size[0];
-      }
+    }
 
     vtkTextActor::SetMultipleConstrainedFontSize(
       this->P->Viewport, targetWidth, targetHeight,
@@ -311,12 +311,12 @@ void vtkSlicerScalarBarActor::LayoutTicks()
     this->P->TickBox.Size[1] -= labelSize[this->P->TL[1]];
 
     if (this->Orientation == VTK_ORIENT_HORIZONTAL)
-      {
+    {
       this->P->TickBox.Posn[1] += this->TextPad *
         (this->TextPosition == PrecedeScalarBar ? -1 : +1);
       this->P->TickBox.Size[1] -= this->TextPad;
-      }
     }
+  }
   this->NumberOfLabelsBuilt = this->NumberOfLabels;
 }
 
@@ -408,16 +408,16 @@ void vtkSlicerScalarBarActor::ConfigureTitle()
 {
   double xPosition = this->P->TitleBox.Posn[0] + this->P->TitleBox.Size[this->P->TL[0]] / 2; // centered by default
   if (this->Orientation == VTK_ORIENT_VERTICAL)
-    {
+  {
     if (this->TitleTextProperty->GetJustification() == VTK_TEXT_LEFT)
-      {
+    {
       xPosition = this->P->Frame.Posn[0];
-      }
-    else if (this->TitleTextProperty->GetJustification() == VTK_TEXT_RIGHT)
-      {
-      xPosition = this->P->Frame.Posn[0] + this->P->Frame.Size[0];
-      }
     }
+    else if (this->TitleTextProperty->GetJustification() == VTK_TEXT_RIGHT)
+    {
+      xPosition = this->P->Frame.Posn[0] + this->P->Frame.Size[0];
+    }
+  }
 
   this->TitleActor->SetPosition(
     xPosition,
@@ -436,9 +436,9 @@ bool vtkSlicerScalarBarActor::ValidateFormatString(std::string& validatedFormat,
   vtksys::RegularExpression specifierRegex = vtksys::RegularExpression(regexString);
   vtksys::RegularExpressionMatch specifierMatch;
   if (!specifierRegex.find(requestedFormat.c_str(), specifierMatch))
-    {
+  {
     return false;
-    }
+  }
 
   validatedFormat = specifierMatch.match(0);
   prefix = requestedFormat.substr(0, specifierMatch.start());

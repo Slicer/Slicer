@@ -38,10 +38,10 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* tabl
 int vtkMRMLTableStorageNodeTest1(int argc, char * argv[])
 {
   if (argc != 2)
-    {
+  {
     std::cerr << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLTableStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -160,7 +160,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* tabl
 
   // Compare contents
   for (vtkIdType columnId = 0; columnId < numberOfColumns; ++columnId)
-    {
+  {
     vtkAbstractArray* column = table->GetColumn(columnId);
     CHECK_NOT_NULL(column);
 
@@ -170,19 +170,19 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkTable* tabl
     CHECK_INT(column->GetNumberOfTuples(), column2->GetNumberOfTuples());
     CHECK_INT(column->GetNumberOfComponents(), column2->GetNumberOfComponents());
     for (vtkIdType valueId = 0; valueId < column->GetNumberOfValues(); ++valueId)
-      {
+    {
       CHECK_BOOL(column->GetVariantValue(valueId) == column2->GetVariantValue(valueId), true);
-      }
+    }
 
     std::vector<std::string> componentNames = vtkMRMLTableNode::GetComponentNamesFromArray(column);
     std::vector<std::string> componentNames2 = vtkMRMLTableNode::GetComponentNamesFromArray(column2);
     CHECK_BOOL(componentNames.size() == componentNames2.size(), true);
     for (size_t i = 0; i < componentNames.size(); ++i)
-      {
+    {
       std::string componentName = componentNames[i];
       std::string componentName2 = componentNames2[i];
       CHECK_STD_STRING(componentName, componentName2);
-      }
     }
+  }
   return EXIT_SUCCESS;
 }

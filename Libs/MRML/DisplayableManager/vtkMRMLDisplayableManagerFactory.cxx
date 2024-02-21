@@ -88,10 +88,10 @@ bool vtkMRMLDisplayableManagerFactory::IsDisplayableManagerRegistered(const char
 {
   // Sanity checks
   if (!vtkClassName)
-    {
+  {
     vtkWarningMacro(<<"IsDisplayableManagerRegistered - vtkClassName is NULL");
     return false;
-    }
+  }
 
   // Check if the DisplayableManager has already been registered
   vtkInternal::DisplayableManagerClassNamesIt it = std::find(
@@ -100,13 +100,13 @@ bool vtkMRMLDisplayableManagerFactory::IsDisplayableManagerRegistered(const char
       vtkClassName);
 
   if ( it == this->Internal->DisplayableManagerClassNames.end())
-    {
+  {
     return false;
-    }
+  }
   else
-    {
+  {
     return true;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -114,10 +114,10 @@ bool vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
 {
   // Sanity checks
   if (!vtkClassOrScriptName)
-    {
+  {
     vtkWarningMacro(<<"RegisterDisplayableManager - vtkClassOrScriptName is NULL");
     return false;
-    }
+  }
 
   // Check if the DisplayableManager has already been registered
   vtkInternal::DisplayableManagerClassNamesIt it = std::find(
@@ -126,17 +126,17 @@ bool vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
       vtkClassOrScriptName);
 
   if ( it != this->Internal->DisplayableManagerClassNames.end())
-    {
+  {
     vtkWarningMacro(<<"RegisterDisplayableManager - " << vtkClassOrScriptName << " already registered");
     return false;
-    }
+  }
 
   if (!vtkMRMLDisplayableManagerGroup::IsADisplayableManager(vtkClassOrScriptName))
-    {
+  {
     vtkWarningMacro(<<"RegisterDisplayableManager - " << vtkClassOrScriptName
                     << " is not a displayable manager. Failed to register");
     return false;
-    }
+  }
   // Register it
   this->Internal->DisplayableManagerClassNames.emplace_back(vtkClassOrScriptName);
 
@@ -151,10 +151,10 @@ bool vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* 
 {
   // Sanity checks
   if (!vtkClassOrScriptName)
-    {
+  {
     vtkWarningMacro(<<"UnRegisterDisplayableManager - vtkClassOrScriptName is NULL");
     return false;
-    }
+  }
 
   // Check if the DisplayableManager is registered
   vtkInternal::DisplayableManagerClassNamesIt it = std::find(
@@ -163,10 +163,10 @@ bool vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* 
       vtkClassOrScriptName);
 
   if ( it == this->Internal->DisplayableManagerClassNames.end())
-    {
+  {
     vtkWarningMacro(<<"UnRegisterDisplayableManager - " << vtkClassOrScriptName << " is NOT registered");
     return false;
-    }
+  }
 
   this->Internal->DisplayableManagerClassNames.erase(it);
 
@@ -186,12 +186,12 @@ int vtkMRMLDisplayableManagerFactory::GetRegisteredDisplayableManagerCount()
 std::string vtkMRMLDisplayableManagerFactory::GetRegisteredDisplayableManagerName(int n)
 {
   if (n < 0 || n >= this->GetRegisteredDisplayableManagerCount())
-    {
+  {
     vtkWarningMacro(<<"GetNthRegisteredDisplayableManagerName - "
                     "n " << n << " is invalid. A valid value for n should be >= 0 and < " <<
                     this->GetRegisteredDisplayableManagerCount());
     return std::string();
-    }
+  }
   return this->Internal->DisplayableManagerClassNames.at(n);
 }
 
@@ -201,10 +201,10 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
 {
   // Sanity checks
   if (!newRenderer)
-    {
+  {
     vtkWarningMacro(<<"InstanciateDisplayableManagers - newRenderer is NULL");
     return nullptr;
-    }
+  }
 
   vtkMRMLDisplayableManagerGroup * displayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
   displayableManagerGroup->Initialize(this, newRenderer);

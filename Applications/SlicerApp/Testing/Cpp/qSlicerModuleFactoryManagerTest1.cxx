@@ -53,20 +53,20 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   qSlicerAbstractCoreModule * abstractModule =
     moduleFactoryManager.moduleInstance(moduleName);
   if( abstractModule == nullptr )
-    {
+  {
     moduleFactoryManager.printAdditionalInfo();
     std::cerr << __LINE__ << " - Error in loadModule()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if( abstractModule->name() != moduleName )
-    {
+  {
     moduleFactoryManager.printAdditionalInfo();
     std::cerr << __LINE__ << " - Error in moduleTitle() or moduleName()" << std::endl
               << "expected moduleName  = " << qPrintable( moduleName ) << std::endl
               << "real moduleName = " << qPrintable( abstractModule->name() ) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   moduleFactoryManager.unloadModules();
 
@@ -76,11 +76,11 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   abstractModule = moduleFactoryManager.moduleInstance(moduleName);
 
   if( abstractModule == nullptr )
-    {
+  {
     moduleFactoryManager.printAdditionalInfo();
     std::cerr << __LINE__ << " - Error in instantiateModule()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Check failure cases (if loading of modules does not work then other tests will fail,
   // but module loading failures are not tested elsewhere)
@@ -91,20 +91,20 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   std::cout << "The following module loading is expected to fail..." << std::endl;
   bool moduleLoadSuccess = moduleFactoryManager.loadModules(QStringList() << "nonexistent2");
   if (moduleLoadSuccess == true)
-    {
+  {
     moduleFactoryManager.printAdditionalInfo();
     std::cerr << __LINE__ << " - Error in loadModules() - it expected to fail for non-existent module" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::cout << "Module loading failed as expected." << std::endl;
 
   moduleLoadSuccess = moduleFactoryManager.loadModules(QStringList());
   if (moduleLoadSuccess == false)
-    {
+  {
     moduleFactoryManager.printAdditionalInfo();
     std::cerr << __LINE__ << " - Error in loadModules() - it expected to succeed for empty module list" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   moduleFactoryManager.unloadModules();
 

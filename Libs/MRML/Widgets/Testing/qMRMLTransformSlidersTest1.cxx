@@ -39,7 +39,7 @@ int qMRMLTransformSlidersTest1( int argc, char * argv [] )
   if (largeTranslationMatrix->GetElement(0,3)!=largeTranslation[0]
   || largeTranslationMatrix->GetElement(1,3)!=largeTranslation[1]
   || largeTranslationMatrix->GetElement(2,3)!=largeTranslation[2])
-    {
+  {
     std::cerr << "Failed to set large translation: expected ["
       << largeTranslation[0] << ", "
       << largeTranslation[1] << ", "
@@ -49,7 +49,7 @@ int qMRMLTransformSlidersTest1( int argc, char * argv [] )
       << largeTranslationMatrix->GetElement(1,3) << ", "
       << largeTranslationMatrix->GetElement(2,3) << "]" << std::endl;
       return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

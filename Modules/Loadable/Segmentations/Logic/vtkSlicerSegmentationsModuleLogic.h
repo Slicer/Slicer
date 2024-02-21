@@ -360,12 +360,12 @@ public:
   /// \param mergeMode Determines if the labelmap should replace the segment, combined with a maximum or minimum operation, or set under the mask.
   /// \param extent If extent is specified then only that extent of the labelmap is used.
   enum
-    {
+  {
     MODE_REPLACE = 0,
     MODE_MERGE_MAX,
     MODE_MERGE_MIN,
     MODE_MERGE_MASK
-    };
+  };
   static bool SetBinaryLabelmapToSegment(vtkOrientedImageData* labelmap, vtkMRMLSegmentationNode* segmentationNode, std::string segmentID,
     int mergeMode=MODE_REPLACE, const int extent[6]=nullptr, bool minimumOfAllSegments=false, const std::vector<std::string>& segmentIdsToOverwrite={});
 

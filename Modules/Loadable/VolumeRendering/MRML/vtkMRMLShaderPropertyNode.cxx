@@ -54,11 +54,11 @@ vtkMRMLShaderPropertyNode::vtkMRMLShaderPropertyNode()
 vtkMRMLShaderPropertyNode::~vtkMRMLShaderPropertyNode()
 {
   if(this->ShaderProperty)
-    {
+  {
     vtkUnObserveMRMLObjectMacro(this->ShaderProperty->GetVertexCustomUniforms());
     vtkUnObserveMRMLObjectMacro(this->ShaderProperty->GetFragmentCustomUniforms());
     vtkSetAndObserveMRMLObjectMacro(this->ShaderProperty, nullptr);
-    }
+  }
   this->ObservedEvents->Delete();
 }
 
@@ -111,9 +111,9 @@ void vtkMRMLShaderPropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
 
   vtkMRMLShaderPropertyNode* node = vtkMRMLShaderPropertyNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   this->ShaderProperty->DeepCopy( node->ShaderProperty);
 }
@@ -134,11 +134,11 @@ void vtkMRMLShaderPropertyNode::ProcessMRMLEvents( vtkObject *caller,
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
   switch (event)
-    {
+  {
     case vtkCommand::ModifiedEvent:
       this->Modified();
       break;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -146,10 +146,10 @@ vtkMRMLStorageNode* vtkMRMLShaderPropertyNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
   if (scene == nullptr)
-    {
+  {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
-    }
+  }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLShaderPropertyStorageNode"));
 }

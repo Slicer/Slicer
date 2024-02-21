@@ -67,9 +67,9 @@ void qMRMLLabelComboBoxTester::init()
 void qMRMLLabelComboBoxTester::cleanup()
 {
   if (this->LabelComboBox == nullptr)
-    {
+  {
     return;
-    }
+  }
   delete this->LabelComboBox;
 }
 
@@ -106,9 +106,9 @@ void qMRMLLabelComboBoxTester::testSetCurrentColor()
 
   vtkMRMLColorNode* colorNodeToSet = nullptr;
   if (shouldSetColorNode)
-    {
+  {
     colorNodeToSet = this->ColorTableNode;
-    }
+  }
 
   QVERIFY(this->LabelComboBox->currentColor() == -1);
 

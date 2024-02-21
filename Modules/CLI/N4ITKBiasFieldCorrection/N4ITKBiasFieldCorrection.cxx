@@ -38,9 +38,9 @@ public:
       dynamic_cast<const TFilter *>( object );
 
     if( typeid( event ) != typeid( itk::IterationEvent ) )
-      {
+    {
       return;
-      }
+    }
     std::cout << "Progress: " << filter->GetProgress() << std::endl;
   }
 
@@ -85,7 +85,7 @@ int main(int argc, char* * argv)
    */
 
   if( maskImageName != "" )
-    {
+  {
     typedef itk::ImageFileReader<MaskImageType> ReaderType;
     ReaderType::Pointer maskreader = ReaderType::New();
     maskreader->SetFileName( maskImageName.c_str() );
@@ -95,22 +95,22 @@ int main(int argc, char* * argv)
       maskImage, maskImage->GetBufferedRegion() );
     MaskImageType::PixelType maskLabel = 0;
     for( IM.GoToBegin(); !IM.IsAtEnd(); ++IM )
-      {
+    {
       if( IM.Get() )
-        {
+      {
         maskLabel = IM.Get();
         break;
-        }
       }
-    if( !maskLabel )
-      {
-      return EXIT_FAILURE;
-      }
-    correcter->SetMaskLabel(maskLabel);
     }
+    if( !maskLabel )
+    {
+      return EXIT_FAILURE;
+    }
+    correcter->SetMaskLabel(maskLabel);
+  }
 
   if( !maskImage )
-    {
+  {
     std::cout << "Mask no read.  Creaing Otsu mask." << std::endl;
     typedef itk::OtsuThresholdImageFilter<ImageType, MaskImageType>
     ThresholderType;
@@ -122,41 +122,41 @@ int main(int argc, char* * argv)
     otsu->Update();
 
     maskImage = otsu->GetOutput();
-    }
+  }
 
   ImageType::Pointer weightImage = nullptr;
 
   if( weightImageName != "" )
-    {
+  {
     typedef itk::ImageFileReader<ImageType> ReaderType;
     ReaderType::Pointer weightreader = ReaderType::New();
     weightreader->SetFileName( weightImageName.c_str() );
     weightreader->Update();
     weightImage = weightreader->GetOutput();
-    }
+  }
 
   /**
    * convergence options
    */
   if( numberOfIterations.size() > 1 && numberOfIterations[0] )
-    {
+  {
     CorrecterType::VariableSizeArrayType
     maximumNumberOfIterations( numberOfIterations.size() );
     for( unsigned d = 0; d < numberOfIterations.size(); d++ )
-      {
+    {
       maximumNumberOfIterations[d] = numberOfIterations[d];
-      }
+    }
     correcter->SetMaximumNumberOfIterations( maximumNumberOfIterations );
 
     CorrecterType::ArrayType numberOfFittingLevels;
     numberOfFittingLevels.Fill( numberOfIterations.size() );
     correcter->SetNumberOfFittingLevels( numberOfFittingLevels );
-    }
+  }
 
   if( convergenceThreshold )
-    {
+  {
     correcter->SetConvergenceThreshold( convergenceThreshold );
-    }
+  }
 
   /**
    * B-spline options -- we place this here to take care of the case where
@@ -171,18 +171,18 @@ int main(int argc, char* * argv)
   ImageType::PointType newOrigin = inputImage->GetOrigin();
 
   if( bsplineOrder )
-    {
+  {
     correcter->SetSplineOrder(bsplineOrder);
-    }
+  }
 
   CorrecterType::ArrayType numberOfControlPoints;
   if( splineDistance )
-    {
+  {
 
     itk::SizeValueType lowerBound[ImageDimension];
     itk::SizeValueType upperBound[ImageDimension];
     for( unsigned  d = 0; d < 3; d++ )
-      {
+    {
       float domain = static_cast<RealType>( inputImage->
                                             GetLargestPossibleRegion().GetSize()[d] - 1 ) * inputImage->GetSpacing()[d];
       unsigned int  numberOfSpans = static_cast<unsigned int>( std::ceil( domain / splineDistance ) );
@@ -195,7 +195,7 @@ int main(int argc, char* * argv)
       newOrigin[d] -= ( static_cast<RealType>( lowerBound[d] )
                         * inputImage->GetSpacing()[d] );
       numberOfControlPoints[d] = numberOfSpans + correcter->GetSplineOrder();
-      }
+    }
 
     typedef itk::ConstantPadImageFilter<ImageType, ImageType> PadderType;
     PadderType::Pointer padder = PadderType::New();
@@ -216,7 +216,7 @@ int main(int argc, char* * argv)
     maskImage = maskPadder->GetOutput();
 
     if( weightImage )
-      {
+    {
       PadderType::Pointer weightPadder = PadderType::New();
       weightPadder->SetInput( weightImage );
       weightPadder->SetPadLowerBound( lowerBound );
@@ -224,18 +224,18 @@ int main(int argc, char* * argv)
       weightPadder->SetConstant( 0 );
       weightPadder->Update();
       weightImage = weightPadder->GetOutput();
-      }
-    correcter->SetNumberOfControlPoints( numberOfControlPoints );
     }
+    correcter->SetNumberOfControlPoints( numberOfControlPoints );
+  }
   else if( initialMeshResolution.size() == 3 )
-    {
+  {
     for( unsigned d = 0; d < 3; d++ )
-      {
+    {
       numberOfControlPoints[d] = static_cast<unsigned int>( initialMeshResolution[d] )
         + correcter->GetSplineOrder();
-      }
-    correcter->SetNumberOfControlPoints( numberOfControlPoints );
     }
+    correcter->SetNumberOfControlPoints( numberOfControlPoints );
+  }
 
   typedef itk::ShrinkImageFilter<ImageType, ImageType> ShrinkerType;
   ShrinkerType::Pointer shrinker = ShrinkerType::New();
@@ -258,7 +258,7 @@ int main(int argc, char* * argv)
   correcter->SetInput( shrinker->GetOutput() );
   correcter->SetMaskImage( maskshrinker->GetOutput() );
   if( weightImage )
-    {
+  {
     typedef itk::ShrinkImageFilter<ImageType, ImageType> WeightShrinkerType;
     WeightShrinkerType::Pointer weightshrinker = WeightShrinkerType::New();
     weightshrinker->SetInput( weightImage );
@@ -266,7 +266,7 @@ int main(int argc, char* * argv)
     weightshrinker->SetShrinkFactors( shrinkFactor );
     weightshrinker->Update();
     correcter->SetConfidenceImage( weightshrinker->GetOutput() );
-    }
+  }
 
   typedef CommandIterationUpdate<CorrecterType> CommandType;
   CommandType::Pointer observer = CommandType::New();
@@ -276,33 +276,33 @@ int main(int argc, char* * argv)
    * histogram sharpening options
    */
   if( bfFWHM )
-    {
+  {
     correcter->SetBiasFieldFullWidthAtHalfMaximum( bfFWHM );
-    }
+  }
   if( wienerFilterNoise )
-    {
+  {
     correcter->SetWienerFilterNoise( wienerFilterNoise );
-    }
+  }
   if( nHistogramBins )
-    {
+  {
     correcter->SetNumberOfHistogramBins( nHistogramBins );
-    }
+  }
 
   try
-    {
+  {
     itk::PluginFilterWatcher watchN4(correcter, "N4 Bias field correction", CLPProcessInformation, 1.0 / 1.0, 0.0);
     correcter->Update();
-    }
+  }
   catch( itk::ExceptionObject & err )
-    {
+  {
     std::cerr << err << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   catch( ... )
-    {
+  {
     std::cerr << "Unknown Exception caught." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   correcter->Print( std::cout, 3 );
 
@@ -313,7 +313,7 @@ int main(int argc, char* * argv)
    * output
    */
   if( outputImageName != "" )
-    {
+  {
     /**
      * Reconsruct the bias field at full image resoluion.  Divide
      * the original input image by the bias field to get the final
@@ -344,9 +344,9 @@ int main(int argc, char* * argv)
     itk::ImageRegionIterator<ImageType> IF( logField,
                                             logField->GetLargestPossibleRegion() );
     for( IB.GoToBegin(), IF.GoToBegin(); !IB.IsAtEnd(); ++IB, ++IF )
-      {
+    {
       IF.Set( IB.Get()[0] );
-      }
+    }
 
     typedef itk::ExpImageFilter<ImageType, ImageType> ExpFilterType;
     ExpFilterType::Pointer expFilter = ExpFilterType::New();
@@ -377,17 +377,17 @@ int main(int argc, char* * argv)
     biasFieldCropper->Update();
 
     if( outputBiasFieldName != "" )
-      {
+    {
       typedef itk::ImageFileWriter<ImageType> WriterType;
       WriterType::Pointer writer = WriterType::New();
       writer->SetFileName( outputBiasFieldName.c_str() );
       writer->SetInput( biasFieldCropper->GetOutput() );
       writer->SetUseCompression(true);
       writer->Update();
-      }
+    }
 
     try
-      {
+    {
 
       itk::ImageIOBase::IOPixelType     pixelType;
       itk::ImageIOBase::IOComponentType componentType;
@@ -399,14 +399,14 @@ int main(int argc, char* * argv)
       const char *fname = outputImageName.c_str();
 
       return SaveIt(cropper->GetOutput(), fname);
-      }
+    }
     catch( itk::ExceptionObject & e )
-      {
+    {
       std::cerr << "Failed to save the data: " << e << std::endl;
       return EXIT_FAILURE;
-      }
-
     }
+
+  }
 
   return EXIT_SUCCESS;
 }

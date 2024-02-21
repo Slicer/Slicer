@@ -54,9 +54,9 @@ void qSlicerIOOptionsWidget::updateValid()
   bool wasValid = d->ArePropertiesValid;
   this->Superclass::updateValid();
   if (wasValid != d->ArePropertiesValid)
-    {
+  {
     emit this->validChanged(d->ArePropertiesValid);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -65,13 +65,13 @@ void qSlicerIOOptionsWidget::setFileName(const QString& fileName)
   Q_D(qSlicerIOOptions);
   // replace the old filename if any
   if (!fileName.isEmpty())
-    {
+  {
     d->Properties["fileName"] = fileName;
-    }
+  }
   else
-    {
+  {
     d->Properties.remove("fileName");
-    }
+  }
   d->Properties.remove("fileNames");
   this->updateValid();
 }

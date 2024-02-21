@@ -130,35 +130,35 @@ void qSlicerSubjectHierarchyOpacityPlugin::showVisibilityContextMenuActionsForIt
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
 
   if (!itemID || itemID == shNode->GetSceneItemID())
-    {
+  {
     // There are no scene actions in this plugin
     return;
-    }
+  }
 
   // Show opacity for every non-scene items with display node
   vtkMRMLDisplayNode* displayNode = nullptr;
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(displayableNode);
   if (displayableNode)
-    {
+  {
     displayNode = displayableNode->GetDisplayNode();
-    }
+  }
   else
-    {
+  {
     // Folder nodes may have display nodes directly associated
     displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-    }
+  }
 
   if (displayNode)
-    {
+  {
     d->OpacitySlider->setValue(displayNode->GetOpacity());
-    }
+  }
 
   // Show opacity action if there is a valid display node and if the node is not a volume
   d->OpacityAction->setVisible(displayNode && !volumeNode);
@@ -170,34 +170,34 @@ void qSlicerSubjectHierarchyOpacityPlugin::setOpacityForCurrentItem(double opaci
   // Get currently selected node and scene
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (!currentItemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item!";
     return;
-    }
+  }
 
   // Get display node
   vtkMRMLDisplayNode* displayNode = nullptr;
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   if (displayableNode)
-    {
+  {
     displayNode = displayableNode->GetDisplayNode();
-    }
+  }
   else
-    {
+  {
     // Folder nodes may have display nodes directly associated
     displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
-    }
+  }
   if (!displayNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Unable to find display node for subject hierarchy item " << shNode->GetItemName(currentItemID).c_str();
     return;
-    }
+  }
 
   displayNode->SetOpacity(opacity);
 }

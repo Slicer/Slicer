@@ -79,9 +79,9 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   this->TerminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
     qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
   if (!this->TerminologiesLogic)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";
-    }
+  }
 
   // Default values
   this->AutoOpacitiesCheckBox->setChecked(true);
@@ -169,9 +169,9 @@ void qSlicerSegmentationsSettingsPanel::setDefaultSurfaceSmoothing(bool on)
 {
   Q_UNUSED(on);
   if (this->segmentationsLogic())
-    {
+  {
     this->segmentationsLogic()->SetDefaultSurfaceSmoothingEnabled(on);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -179,10 +179,10 @@ void qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode(QString mode)
 {
   Q_UNUSED(mode);
   if (this->segmentationsLogic())
-    {
+  {
     this->segmentationsLogic()->SetDefaultOverwriteMode(
       vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(mode.toStdString().c_str()));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -199,19 +199,19 @@ void qSlicerSegmentationsSettingsPanel::setDefaultTerminologyEntry(QString termi
   d->DefaultTerminologyString = terminologyStr;
   QString buttonText=tr("(set)");
   if (d->TerminologiesLogic && !terminologyStr.isEmpty())
-    {
+  {
     vtkNew<vtkSlicerTerminologyEntry> entry;
     std::string terminologyStdStr = d->DefaultTerminologyString.toUtf8().constData();
     if (d->TerminologiesLogic->DeserializeTerminologyEntry(terminologyStdStr, entry))
-      {
+    {
       buttonText.clear();
       buttonText += (entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodeMeaning()
           ? entry->GetCategoryObject()->GetCodeMeaning() : "?");
       buttonText += "/";
       buttonText += (entry->GetTypeObject() && entry->GetTypeObject()->GetCodeMeaning()
           ? entry->GetTypeObject()->GetCodeMeaning() : "?");
-      }
     }
+  }
   d->EditDefaultTerminologyEntryPushButton->setText(buttonText);
 }
 
@@ -228,10 +228,10 @@ void qSlicerSegmentationsSettingsPanel::onEditDefaultTerminologyEntry()
   std::string terminologyStdStr = d->DefaultTerminologyString.toUtf8().constData();
   d->TerminologiesLogic->DeserializeTerminologyEntry(terminologyStdStr, entry);
   if (!qSlicerTerminologySelectorDialog::getTerminology(entry, this))
-    {
+  {
     // user cancelled
     return;
-    }
+  }
   this->setDefaultTerminologyEntry(vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(entry).c_str());
   emit defaultTerminologyEntryChanged(d->DefaultTerminologyString);
 }

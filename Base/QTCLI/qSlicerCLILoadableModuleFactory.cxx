@@ -41,13 +41,13 @@ bool qSlicerCLILoadableModuleFactoryItem::load()
   // If XML description file exists, skip loading. It will be
   // lazily done by calling ModuleDescription::GetTarget() method.
   if (!QFile::exists(this->xmlModuleDescriptionFilePath()))
-    {
+  {
     return this->Superclass::load();
-    }
+  }
   else
-    {
+  {
     return true;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -58,18 +58,18 @@ void qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols(
       reinterpret_cast<qSlicerCLILoadableModuleFactoryItem*>(libraryLoader);
   // Load library
   if (!item->Superclass::load())
-    {
+  {
     qWarning() << "Failed to load" << item->path();
     qWarning() << "QLibrary error message(s): ";
     qWarning() << item->loadErrorStrings();
     return;
-    }
+  }
 
   // Resolve symbols
   if (!item->resolveSymbols(desc))
-    {
+  {
     return;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -100,36 +100,36 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   //
   QString xmlDescription;
   if (QFile::exists(xmlFilePath))
-    {
+  {
     QFile xmlFile(xmlFilePath);
     if (xmlFile.open(QIODevice::ReadOnly))
-      {
+    {
       xmlDescription = QTextStream(&xmlFile).readAll();
-      }
+    }
     else
-      {
+    {
       this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI description: %1").arg(xmlFilePath));
       this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to read XML Description"));
       return nullptr;
-      }
+    }
     // Set callback to allow lazy loading of target symbols.
     module->moduleDescription().SetTargetCallback(
           this, qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols);
-    }
+  }
   else
-    {
+  {
     // Library is expected to already be loaded
     // in qSlicerCLILoadableModuleFactoryItem::load()
     xmlDescription = this->resolveXMLModuleDescriptionSymbol();
     if (!this->resolveSymbols(module->moduleDescription()))
-      {
-      return nullptr;
-      }
-    }
-  if (xmlDescription.isEmpty())
     {
-    return nullptr;
+      return nullptr;
     }
+  }
+  if (xmlDescription.isEmpty())
+  {
+    return nullptr;
+  }
 
   module->setModuleType("SharedObjectModule");
 
@@ -153,11 +153,11 @@ QString qSlicerCLILoadableModuleFactoryItem::resolveXMLModuleDescriptionSymbol()
   //if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
 
   if (!xmlDescription)
-    {
+  {
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI loadable: %1").arg(this->path()));
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to retrieve XML Description"));
     return QString();
-    }
+  }
   return QString(xmlDescription);
 }
 
@@ -171,11 +171,11 @@ bool qSlicerCLILoadableModuleFactoryItem::resolveSymbols(ModuleDescription& desc
       this->symbolAddress("ModuleEntryPoint"));
 
   if (!moduleEntryPoint)
-    {
+  {
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI loadable: %1").arg(this->path()));
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to retrieve Module Entry Point"));
     return false;
-    }
+  }
 
   char buffer[256];
   // The entry point address must be encoded the same way it is decoded. As it
@@ -185,9 +185,9 @@ bool qSlicerCLILoadableModuleFactoryItem::resolveSymbols(ModuleDescription& desc
 
   ModuleLogo logo;
   if (this->updateLogo(this, logo))
-    {
+  {
     desc.SetLogo(logo);
-    }
+  }
   return true;
 }
 
@@ -196,9 +196,9 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
                                                      ModuleLogo& logo)
 {
   if (!item)
-    {
+  {
     return false;
-    }
+  }
 
   const char* logoImage = nullptr;
   int width = 0;
@@ -210,46 +210,46 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
   SymbolAddressType resolvedModuleLogoImageSymbol = item->symbolAddress("ModuleLogoImage");
 
   if(resolvedGetModuleLogoSymbol)
-    {
+  {
     typedef const char * (*ModuleLogoFunction)(
           int* /*width*/, int* /*height*/, int* /*pixel_size*/, unsigned long * /*bufferLength*/);
     ModuleLogoFunction logoFunction =
         reinterpret_cast<ModuleLogoFunction>(resolvedGetModuleLogoSymbol);
     logoImage = (*logoFunction)(&width, &height, &pixelSize, &bufferLength);
-    }
+  }
   else if(resolvedModuleLogoImageSymbol)
-    {
+  {
     logoImage = reinterpret_cast<const char *>(resolvedModuleLogoImageSymbol);
     QStringList expectedSymbols;
     expectedSymbols << "ModuleLogoWidth" << "ModuleLogoHeight"
                     << "ModuleLogoPixelSize" << "ModuleLogoLength";
     QList<SymbolAddressType> resolvedSymbols;
     foreach(const QString& symbol, expectedSymbols)
-      {
+    {
       SymbolAddressType resolvedSymbol = item->symbolAddress(symbol);
       if (resolvedSymbol)
-        {
-        resolvedSymbols << resolvedSymbol;
-        }
-      else
-        {
-        item->appendLoadErrorString(qSlicerCLIModule::tr("Failed to resolve expected symbol '%1'").arg(symbol));
-        }
-      }
-    if (resolvedSymbols.count() == 4)
       {
+        resolvedSymbols << resolvedSymbol;
+      }
+      else
+      {
+        item->appendLoadErrorString(qSlicerCLIModule::tr("Failed to resolve expected symbol '%1'").arg(symbol));
+      }
+    }
+    if (resolvedSymbols.count() == 4)
+    {
       width = *reinterpret_cast<int *>(resolvedSymbols.at(0));
       height = *reinterpret_cast<int *>(resolvedSymbols.at(1));
       pixelSize = *reinterpret_cast<int *>(resolvedSymbols.at(2));
       bufferLength = *reinterpret_cast<unsigned long *>(resolvedSymbols.at(3));
-      }
     }
+  }
 
   if(resolvedGetModuleLogoSymbol || resolvedModuleLogoImageSymbol)
-    {
+  {
     logo.SetLogo(logoImage, width, height, pixelSize, bufferLength, 0);
     return true;
-    }
+  }
   return false;
 }
 
@@ -334,8 +334,8 @@ void qSlicerCLILoadableModuleFactory::setTempDirectory(const QString& newTempDir
 bool qSlicerCLILoadableModuleFactory::isValidFile(const QFileInfo& file)const
 {
   if (!Superclass::isValidFile(file))
-    {
+  {
     return false;
-    }
+  }
   return qSlicerUtils::isCLILoadableModule(file.absoluteFilePath());
 }

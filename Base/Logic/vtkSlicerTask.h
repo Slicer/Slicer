@@ -27,11 +27,11 @@ public:
   /// The type of task - this can be used, for example, to decide
   /// how many concurrent threads should be allowed
   enum
-    {
+  {
     Undefined = 0,
     Processing,
     Networking
-    };
+  };
 
   vtkSetClampMacro (Type, int, vtkSlicerTask::Undefined, vtkSlicerTask::Networking);
   vtkGetMacro (Type, int);
@@ -40,11 +40,11 @@ public:
 
   const char* GetTypeAsString( ) {
     switch (this->Type)
-      {
+    {
       case vtkSlicerTask::Undefined: return "Undefined";
       case vtkSlicerTask::Processing: return "Processing";
       case vtkSlicerTask::Networking: return "Networking";
-      }
+    }
     return "Unknown";
   }
 

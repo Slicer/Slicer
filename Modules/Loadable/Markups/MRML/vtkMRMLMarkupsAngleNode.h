@@ -49,12 +49,12 @@ public:
   /// \sa SetAngleMeasurementModeToOrientedSigned()
   /// \sa SetAngleMeasurementModeToOrientedPositive()
   enum AngleMeasurementModes
-    {
+  {
     Minimal,
     OrientedSigned,
     OrientedPositive,
     AngleMeasurementMode_Last
-    };
+  };
 
   //--------------------------------------------------------------------------
   // MRMLNode methods

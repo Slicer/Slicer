@@ -46,18 +46,18 @@ void vtkMRMLDisplayableHierarchyLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
   if (!displayableNode || this->GetMRMLScene()->IsBatchProcessing())
-    {
+  {
     return;
-    }
+  }
   // A displayable hierarchy node without children as well as a displayable
   // node is useless node. Delete it.
   vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
     vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetMRMLScene(), node->GetID()) );
   if (displayableHierarchyNode &&
       displayableHierarchyNode->GetNumberOfChildrenNodes() == 0)
-    {
+  {
     this->GetMRMLScene()->RemoveNode(displayableHierarchyNode);
-    }
+  }
 }
 
 
@@ -67,15 +67,15 @@ char *vtkMRMLDisplayableHierarchyLogic::AddDisplayableHierarchyNodeForNode(vtkMR
   char *hierarchyNodeID = nullptr;
 
   if (!node)
-    {
+  {
     vtkErrorMacro("AddDisplayableHierarchyNodeForNode: null node!");
     return hierarchyNodeID;
-    }
+  }
   if (!node->GetScene())
-    {
+  {
     vtkErrorMacro("AddDisplayableHierarchyNodeForNode: node isn't in a scene!");
     return hierarchyNodeID;
-    }
+  }
   vtkMRMLDisplayableHierarchyNode *hierarchyNode = nullptr;
   hierarchyNode = vtkMRMLDisplayableHierarchyNode::New();
   // it's a stealth node:
@@ -106,62 +106,62 @@ char *vtkMRMLDisplayableHierarchyLogic::AddDisplayableHierarchyNodeForNode(vtkMR
 bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode *child, vtkMRMLDisplayableNode *parent)
 {
   if (!child)
-    {
+  {
     vtkErrorMacro("AddChildToParent: null child node");
     return false;
-    }
+  }
   if (!child->GetScene())
-    {
+  {
     vtkErrorMacro("AddChildToParent: child is not in a scene");
     return false;
-    }
+  }
   if (!parent)
-    {
+  {
     vtkErrorMacro("AddChildToParent: null parent node");
     return false;
-    }
+  }
   if (!parent->GetScene())
-    {
+  {
     vtkErrorMacro("AddChildToParent: parent is not in a scene");
     return false;
-    }
+  }
 
   // does the parent already have a hierarchy node associated with it?
   char *parentHierarchyNodeID = nullptr;
   vtkMRMLDisplayableHierarchyNode *hierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
     vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(parent->GetScene(), parent->GetID()) );
   if (!hierarchyNode)
-    {
+  {
     // create one and add to the scene
     parentHierarchyNodeID = this->AddDisplayableHierarchyNodeForNode(parent);
-    }
+  }
   else
-    {
+  {
     parentHierarchyNodeID = hierarchyNode->GetID();
-    }
+  }
   if (!parentHierarchyNodeID)
-    {
+  {
     vtkWarningMacro("AddChildToParent: unable to add or find a hierarchy node for the parent node " << parent->GetID() << ", so unable to place the child in a hierarchy");
     return false;
-    }
+  }
 
   // does the child already have a hierarchy node associated with it?
   vtkMRMLDisplayableHierarchyNode *childHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
     vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(child->GetScene(), child->GetID()) );
   if (!childHierarchyNode)
-    {
+  {
     char *childHierarchyNodeID = this->AddDisplayableHierarchyNodeForNode(child);
     if (childHierarchyNodeID)
-      {
+    {
       vtkMRMLNode *mrmlNode = child->GetScene()->GetNodeByID(childHierarchyNodeID);
       if (mrmlNode)
-        {
+      {
         childHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(mrmlNode);
-        }
       }
     }
+  }
   if (childHierarchyNode)
-    {
+  {
     std::cout << "AddChildToParent: parentHierarchyID = " << parentHierarchyNodeID << ", childHierarchyNodeID = " << childHierarchyNode->GetID() << std::endl;
     // disable modified events on the parent
     vtkMRMLNode *parentNode = childHierarchyNode->GetScene()->GetNodeByID(parentHierarchyNodeID);
@@ -170,12 +170,12 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode *
     parentNode->SetDisableModifiedEvent(0);
 
     return true;
-    }
+  }
   else
-    {
+  {
     vtkWarningMacro("AddChildToParent: unable to add or find a hierarchy node for the child node " << child->GetID() << ", so unable to place it in a hierarchy");
     return false;
-    }
+  }
   return false;
 }
 
@@ -183,15 +183,15 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode *
 bool vtkMRMLDisplayableHierarchyLogic::DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode *hnode)
 {
   if (!hnode)
-    {
+  {
     vtkErrorMacro("DeleteHierarchyNodeAndChildren: no hierarchy node given");
     return false;
-    }
+  }
   if (!this->GetMRMLScene())
-    {
+  {
     vtkErrorMacro("DeleteHierarchyNodeAndChildren: no scene defined on this class");
     return false;
-    }
+  }
 
   // first off, set up batch processing mode on the scene
   this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
@@ -202,39 +202,39 @@ bool vtkMRMLDisplayableHierarchyLogic::DeleteHierarchyNodeAndChildren(vtkMRMLDis
 
   // and loop over them
   for (unsigned int i = 0; i < allChildren.size(); ++i)
-    {
+  {
     vtkMRMLDisplayableHierarchyNode *dispHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i]);
     if (dispHierarchyNode)
-      {
+    {
       // get any associated node
       vtkMRMLNode *associatedNode = dispHierarchyNode->GetAssociatedNode();
       if (associatedNode)
-        {
+      {
         this->GetMRMLScene()->RemoveNode(associatedNode);
-        }
+      }
       // remove the display node (hierarchy nodes aren't displayable so the
       // scene doesn't do the housekeeping automatically)
       vtkMRMLDisplayNode *dispDisplayNode = dispHierarchyNode->GetDisplayNode();
       if (dispDisplayNode)
-        {
+      {
         this->GetMRMLScene()->RemoveNode(dispDisplayNode);
-        }
-      this->GetMRMLScene()->RemoveNode(dispHierarchyNode);
       }
+      this->GetMRMLScene()->RemoveNode(dispHierarchyNode);
     }
+  }
   // sanity check
   bool retval = true;
   if (hnode->GetNumberOfChildrenNodes() != 0)
-    {
+  {
     vtkErrorMacro("Failed to delete all children hierarchy nodes! Still have " << hnode->GetNumberOfChildrenNodes() << " left");
     retval = false;
-    }
+  }
   // delete it's display node
   vtkMRMLDisplayNode *dispNode = hnode->GetDisplayNode();
   if (dispNode)
-    {
+  {
     this->GetMRMLScene()->RemoveNode(dispNode);
-    }
+  }
   // and then delete itself
   this->GetMRMLScene()->RemoveNode(hnode);
 

@@ -59,34 +59,34 @@ unsigned int vtkClosedSurfaceToFractionalLabelmapConversionRule::GetConversionCo
 vtkDataObject* vtkClosedSurfaceToFractionalLabelmapConversionRule::ConstructRepresentationObjectByRepresentation(std::string representationName)
 {
   if ( !representationName.compare(this->GetSourceRepresentationName()) )
-    {
+  {
     return (vtkDataObject*)vtkPolyData::New();
-    }
+  }
   else if ( !representationName.compare(this->GetTargetRepresentationName()) )
-    {
+  {
     return (vtkDataObject*)vtkOrientedImageData::New();
-    }
+  }
   else
-    {
+  {
     return nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkDataObject* vtkClosedSurfaceToFractionalLabelmapConversionRule::ConstructRepresentationObjectByClass(std::string className)
 {
   if (!className.compare("vtkPolyData"))
-    {
+  {
     return (vtkDataObject*)vtkPolyData::New();
-    }
+  }
   else if (!className.compare("vtkOrientedImageData"))
-    {
+  {
     return (vtkDataObject*)vtkOrientedImageData::New();
-    }
+  }
   else
-    {
+  {
     return nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -100,38 +100,38 @@ bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkSegment* seg
   // Check validity of source and target representation objects
   vtkPolyData* closedSurfacePolyData = vtkPolyData::SafeDownCast(sourceRepresentation);
   if (!closedSurfacePolyData)
-    {
+  {
     vtkErrorMacro("Convert: Source representation is not a poly data!");
     return false;
-    }
+  }
   vtkOrientedImageData* fractionalLabelMap = vtkOrientedImageData::SafeDownCast(targetRepresentation);
   if (!fractionalLabelMap)
-    {
+  {
     vtkErrorMacro("Convert: Target representation is not an oriented image data!");
     return false;
-    }
+  }
   if (closedSurfacePolyData->GetNumberOfPoints() < 2 || closedSurfacePolyData->GetNumberOfCells() < 2)
-    {
+  {
     vtkErrorMacro("Convert: Cannot create binary labelmap from surface with number of points: " << closedSurfacePolyData->GetNumberOfPoints() << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
     return false;
-    }
+  }
 
   // Compute output labelmap geometry based on poly data, an reference image
   // geometry, and store the calculated geometry in output labelmap image data
   if (!this->CalculateOutputGeometry(closedSurfacePolyData, fractionalLabelMap))
-    {
+  {
     vtkErrorMacro("Convert: Failed to calculate output image geometry!");
     return false;
-    }
+  }
 
   // Pad the extent of the fractional labelmap
   int extent[6] = {0,-1,0,-1,0,-1};
   fractionalLabelMap->GetExtent(extent);
   for (int i=0; i<2; ++i)
-    {
+  {
     --extent[2*i];
     ++extent[2*i+1];
-    }
+  }
   fractionalLabelMap->SetExtent(extent);
 
   vtkSmartPointer<vtkMatrix4x4> imageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();

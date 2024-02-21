@@ -26,10 +26,10 @@ vtkMRMLPETProceduralColorNode::vtkMRMLPETProceduralColorNode()
 vtkMRMLPETProceduralColorNode::~vtkMRMLPETProceduralColorNode()
 {
   if (this->ColorTransferFunction)
-    {
+  {
     this->ColorTransferFunction->Delete();
     this->ColorTransferFunction = nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -65,10 +65,10 @@ void vtkMRMLPETProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
   Superclass::PrintSelf(os,indent);
   if (this->ColorTransferFunction != nullptr)
-    {
+  {
     os << indent << "ColorTransferFunction:" << endl;
     this->ColorTransferFunction->PrintSelf(os, indent.GetNextIndent());
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -127,29 +127,29 @@ void vtkMRMLPETProceduralColorNode::SetTypeToMIP()
 const char *vtkMRMLPETProceduralColorNode::GetTypeAsString()
 {
   if (this->Type == this->PETheat)
-    {
+  {
     return "PET-Heat";
-    }
+  }
   else if (this->Type == this->PETrainbow)
-    {
+  {
     return "PET-Rainbow";
-    }
+  }
   else if (this->Type == this->PETrainbow2)
-    {
+  {
     return "PET-Rainbow2";
-    }
+  }
   else if ( this->Type == this->PETMIP )
-    {
+  {
     return "PET-MaximumIntensityProjection";
-    }
+  }
   else if ( this->Type == this->PETDICOM )
-    {
+  {
     return "PET-DICOM";
-    }
+  }
   else if ( this->Type == this->PEThotMetalBlue )
-    {
+  {
     return "PET-HotMetalBlue";
-    }
+  }
   return "(unknown)";
 }
 
@@ -163,9 +163,9 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
 
   // is it created yet?
   if (this->ColorTransferFunction == nullptr)
-    {
+  {
     this->ColorTransferFunction = vtkColorTransferFunction::New();
-    }
+  }
 
   // clear it out
   this->ColorTransferFunction->RemoveAllPoints();
@@ -173,7 +173,7 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
 
   // Set up the custom colors here for this type
   if (this->Type == this->PETheat)
-    {
+  {
     this->SetDescription("Useful for displaying colorized PET data.");
     this->ColorTransferFunction->AddRGBPoint(0, 0.0, 0.0, 0.0);
     this->ColorTransferFunction->AddRGBPoint(35, 0.36, 0.0, 0.0);
@@ -182,9 +182,9 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
     this->ColorTransferFunction->AddRGBPoint(70, 0.7, 0.5, 0.0);
     this->ColorTransferFunction->AddRGBPoint(87, 1.0, 1.0, 0.0);
     this->ColorTransferFunction->AddRGBPoint(255, 1.0, 1.0, 1.0);
-    }
+  }
   else if (this->Type == this->PETrainbow)
-    {
+  {
     this->SetDescription("Useful for displaying colorized PET data.");
     this->ColorTransferFunction->AddRGBPoint(0, 0.0, 0.0, 0.0);
     this->ColorTransferFunction->AddRGBPoint(35, 0.0, 0.0, 0.3);
@@ -193,9 +193,9 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
     this->ColorTransferFunction->AddRGBPoint(70, 0.7, 0.5, 0.0);
     this->ColorTransferFunction->AddRGBPoint(87, 1.0, 1.0, 0.0);
     this->ColorTransferFunction->AddRGBPoint(255, 1.0, 1.0, 1.0);
-    }
+  }
   else if (this->Type == this->PETrainbow2)
-    {
+  {
     this->SetDescription("Useful for displaying colorized PET data. Based on Rainbow.lut at https://sourceforge.net/projects/bifijiplugins/files/extraLUT/");
     this->ColorTransferFunction->AddRGBPoint(0, 0.0, 0.0, 0.0);
     this->ColorTransferFunction->AddRGBPoint(32, 0.250980392, 0, 0.501960784);
@@ -204,24 +204,24 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
     this->ColorTransferFunction->AddRGBPoint(160, 1.0, 1.0, 0.0);
     this->ColorTransferFunction->AddRGBPoint(192, 1.0, 0.752941176, 0.0);
     this->ColorTransferFunction->AddRGBPoint(255, 1.0, 0.011764706, 0.0);
-    }
+  }
   else if (this->Type == this->PETMIP)
-    {
+  {
     this->SetDescription("Useful for displaying inverse grey PET data.");
     this->ColorTransferFunction->AddRGBPoint(0, 1.0, 1.0, 1.0);
     this->ColorTransferFunction->AddRGBPoint(255, 0.0, 0.0, 0.0);
-    }
+  }
   else if (this->Type == this->PETDICOM)
-    {
+  {
     this->SetDescription("DICOM PET Color Palette (Part 6, B.1.2)");
     this->ColorTransferFunction->AddRGBPoint(0, 0.0, 0.0, 0.0);
     this->ColorTransferFunction->AddRGBPoint(63, 0.0, 0.501960784, 0.490196078);
     this->ColorTransferFunction->AddRGBPoint(128, 0.501960784, 0.0, 1.0);
     this->ColorTransferFunction->AddRGBPoint(192, 1.0, 0.501960784, 0.0);
     this->ColorTransferFunction->AddRGBPoint(255, 1.0, 1.0, 1.0);
-    }
+  }
   else if (this->Type == this->PEThotMetalBlue)
-    {
+  {
     this->SetDescription("DICOM Hot Metal Blue Color Palette (Part 6, B.1.3)");
     this->ColorTransferFunction->AddRGBPoint(0, 0.0, 0.0, 0.0);
     this->ColorTransferFunction->AddRGBPoint(85, 0.0, 0.0, 0.654901961);
@@ -231,7 +231,7 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
     this->ColorTransferFunction->AddRGBPoint(153, 0.745098039, 0.250980392, 0.0);
     this->ColorTransferFunction->AddRGBPoint(170, 1.0, 0.376470588, 0.0);
     this->ColorTransferFunction->AddRGBPoint(255, 1.0, 1.0, 1.0);
-    }
+  }
 
   // build it
 

@@ -83,9 +83,9 @@ void qSlicerCamerasModuleWidget::synchronizeCameraWithView(vtkMRMLViewNode* curr
 {
   Q_D(qSlicerCamerasModuleWidget);
   if (!currentViewNode)
-    {
+  {
     return;
-    }
+  }
   vtkSlicerCamerasModuleLogic* camerasLogic =
     vtkSlicerCamerasModuleLogic::SafeDownCast(this->logic());
   vtkMRMLCameraNode *found_camera_node =
@@ -101,15 +101,15 @@ void qSlicerCamerasModuleWidget::setCameraToCurrentView(vtkMRMLNode* mrmlNode)
   vtkMRMLCameraNode *currentCameraNode =
         vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!currentCameraNode)
-    {// if the camera list is empty, there is no current camera
+  {// if the camera list is empty, there is no current camera
     return;
-    }
+  }
   vtkMRMLViewNode *currentViewNode = vtkMRMLViewNode::SafeDownCast(
     d->ViewNodeSelector->currentNode());
   if (currentViewNode == nullptr)
-    {
+  {
     return;
-    }
+  }
   currentCameraNode->SetLayoutName(currentViewNode->GetLayoutName());
 }
 
@@ -118,10 +118,10 @@ void qSlicerCamerasModuleWidget::onCameraNodeAdded(vtkMRMLNode* mrmlNode)
 {
   vtkMRMLCameraNode *cameraNode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
-    {
+  {
     //Q_ASSERT(cameraNode);
     return;
-    }
+  }
   this->qvtkConnect(cameraNode, vtkMRMLCameraNode::LayoutNameModifiedEvent,
                     this, SLOT(synchronizeCameraWithView()));
 }
@@ -131,10 +131,10 @@ void qSlicerCamerasModuleWidget::onCameraNodeRemoved(vtkMRMLNode* mrmlNode)
 {
   vtkMRMLCameraNode *cameraNode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
-    {
+  {
     //Q_ASSERT(cameraNode);
     return;
-    }
+  }
   this->qvtkDisconnect(cameraNode, vtkMRMLCameraNode::LayoutNameModifiedEvent,
                        this, SLOT(synchronizeCameraWithView()));
 }
@@ -160,23 +160,23 @@ bool qSlicerCamerasModuleWidget::setEditedNode(vtkMRMLNode* node,
   Q_UNUSED(context);
 
   if (vtkMRMLViewNode::SafeDownCast(node))
-    {
+  {
     d->ViewNodeSelector->setCurrentNode(node);
     return true;
-    }
+  }
 
   if (vtkMRMLCameraNode::SafeDownCast(node))
-    {
+  {
     vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
     vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(
       this->mrmlScene()->GetSingletonNode(cameraNode->GetLayoutName(), "vtkMRMLViewNode"));
     if (!viewNode)
-      {
+    {
       return false;
-      }
+    }
     d->ViewNodeSelector->setCurrentNode(viewNode);
     return true;
-    }
+  }
 
   return false;
 }

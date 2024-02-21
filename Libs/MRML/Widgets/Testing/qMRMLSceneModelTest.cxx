@@ -176,9 +176,9 @@ void qMRMLSceneModelTester::testSetColumnsWithScene()
   sceneModel.setMRMLScene(sceneFactory.mrmlScene());
 
   for (int i=0; i < 100; ++i)
-    {
+  {
     sceneFactory.generateNode();
-    }
+  }
 
   this->setColumns(sceneModel);
   QFETCH(int, columnCount);

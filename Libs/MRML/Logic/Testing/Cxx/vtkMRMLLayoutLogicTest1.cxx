@@ -23,20 +23,20 @@ int vtkMRMLLayoutLogicTest1(int , char * [] )
   layoutLogic->SetMRMLScene(scene.GetPointer());
   vtkMRMLLayoutNode* layoutNode = layoutLogic->GetLayoutNode();
   if (!layoutNode)
-    {
+  {
     std::cerr << __LINE__ << " vtkMRMLLayoutNode::SetMRMLScene failed"
               << ", no layout node:" << layoutNode << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   layoutNode->SetViewArrangement(
     vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   vtkCollection* views = layoutLogic->GetViewNodes();
   if (views->GetNumberOfItems() != 4)
-    {
+  {
     std::cerr << __LINE__ << " Wrong number of views returned:"
               << layoutLogic->GetViewNodes()->GetNumberOfItems() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(
     views->GetItemAsObject(0));
   vtkMRMLSliceNode* redNode = vtkMRMLSliceNode::SafeDownCast(
@@ -47,12 +47,12 @@ int vtkMRMLLayoutLogicTest1(int , char * [] )
     views->GetItemAsObject(3));
 
   if (!viewNode || !redNode || !yellowNode || !greenNode)
-    {
+  {
     std::cerr << __LINE__ << " Wrong nodes returned:"
               << viewNode << " " << redNode << " "
               << yellowNode << " " << greenNode << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   layoutLogic->Print(std::cout);
 

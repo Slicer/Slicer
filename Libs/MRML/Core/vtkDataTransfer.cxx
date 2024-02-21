@@ -33,9 +33,9 @@ vtkDataTransfer::~vtkDataTransfer()
   this->SourceURI = nullptr;
   this->DestinationURI = nullptr;
   if ( this->Handler != nullptr )
-    {
+  {
     this->SetHandler (nullptr);
-    }
+  }
   this->TransferStatus = vtkDataTransfer::Ready;
   this->TransferID = -1;
   this->TransferType = vtkDataTransfer::Unspecified;

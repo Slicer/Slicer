@@ -107,15 +107,15 @@ void vtkITKGrowCut::vtkInternal::RunGrowCut(vtkImageData* intensityVolume, vtkIm
 
   typename FGCType::Pointer fgcFilter = nullptr;
   if (this->FGCFilterProcess)
-    {
+  {
     // Attempt to use the existing filter.
     fgcFilter = dynamic_cast<FGCType*>(this->FGCFilterProcess.GetPointer());
-    }
+  }
   if (!fgcFilter)
-    {
+  {
     fgcFilter = FGCType::New();
     this->FGCFilterProcess = fgcFilter;
-    }
+  }
 
   // Wrap intensity VTK image into an ITK image.
   typename itk::VTKImageToImageFilter<IntensityImageType>::Pointer intensityVTKToITKFilter = itk::VTKImageToImageFilter<IntensityImageType>::New();
@@ -132,14 +132,14 @@ void vtkITKGrowCut::vtkInternal::RunGrowCut(vtkImageData* intensityVolume, vtkIm
   fgcFilter->SetSeedImage(seedImage);
 
   if (maskLabelVolume)
-    {
+  {
     // Wrap mask label VTK image into an ITK image.
     typename itk::VTKImageToImageFilter<MaskImageType>::Pointer maskVTKToITKFilter = itk::VTKImageToImageFilter<MaskImageType>::New();
     maskVTKToITKFilter->SetInput(maskLabelVolume);
     maskVTKToITKFilter->Update();
     MaskImageType* maskImage = maskVTKToITKFilter->GetOutput();
     fgcFilter->SetMaskImage(maskImage);
-    }
+  }
 
   fgcFilter->SetDistancePenalty(this->External->GetDistancePenalty());
   fgcFilter->Update();
@@ -177,10 +177,10 @@ int vtkITKGrowCut::FillInputPortInformation(int port, vtkInformation* info)
 {
   vtkImageAlgorithm::FillInputPortInformation(port, info);
   if (port == 2)
-    {
+  {
     // Mask port is optional.
     info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1);
-    }
+  }
   return 1;
 }
 
@@ -195,47 +195,47 @@ void vtkITKGrowCut::ExecuteDataWithInformation(
 
   vtkDataArray* intensityScalars = intensityVolume ? intensityVolume->GetPointData()->GetScalars() : nullptr;
   if (!intensityScalars)
-    {
+  {
     vtkErrorMacro("Invalid intensity image data");
     return;
-    }
+  }
 
   int intensityVolumeDimensions[3] = {0, 0, 0};
   intensityVolume->GetDimensions(intensityVolumeDimensions);
   if (intensityVolumeDimensions[0] < 3 || intensityVolumeDimensions[1] < 3 || intensityVolumeDimensions[2] < 3)
-    {
+  {
     // image is too small (there should be space for at least one voxel padding around the image)
     vtkErrorMacro("vtkITKGrowCut: image size is too small. Minimum size along each dimension is 3.");
     return;
-    }
+  }
 
   vtkDataArray* seedScalars = seedLabelVolume ? seedLabelVolume->GetPointData()->GetScalars() : nullptr;
   if (!intensityVolume)
-    {
+  {
     vtkErrorMacro("Invalid seed image data");
     return;
-    }
+  }
 
   vtkInternal::FastGrowCutWorker worker;
   if (maskLabelVolume)
-    {
+  {
     vtkDataArray* maskScalars = maskLabelVolume ? maskLabelVolume->GetPointData()->GetScalars() : nullptr;
     if (!maskScalars)
-      {
+    {
       vtkErrorMacro("Invalid mask image data");
       return;
-      }
+    }
 
     vtkArrayDispatch::Dispatch3::Execute(intensityScalars, seedScalars, maskScalars, worker,
       intensityVolume, seedLabelVolume, maskLabelVolume, resultLabelVolume,
       this);
-    }
+  }
   else
-    {
+  {
     vtkArrayDispatch::Dispatch2::Execute(intensityScalars, seedScalars, worker,
       intensityVolume, seedLabelVolume, resultLabelVolume,
       this);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -249,12 +249,12 @@ void vtkITKGrowCut::SetDistancePenalty(double distancePenalty)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting DistancePenalty to " << distancePenalty);
   if (this->DistancePenalty != distancePenalty)
-    {
+  {
     this->DistancePenalty = distancePenalty;
     // TODO: Due to a bug in ITK (https://github.com/InsightSoftwareConsortium/ITKGrowCut/issues/18),
     // we currently need to reset the filter when changing the distance penalty.
     // Otherwise the internal computed distance values will not be recomputed, and the change to distance penalty will not be applied.
     this->Reset();
     this->Modified();
-    }
+  }
 }

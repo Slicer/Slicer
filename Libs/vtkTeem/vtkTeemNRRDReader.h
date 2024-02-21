@@ -100,16 +100,16 @@ public:
   ///
   /// Valid extensions
   const char* GetFileExtensions() override
-    {
+  {
       return ".nhdr .nrrd";
-    }
+  }
 
   ///
   /// A descriptive name for this format
   const char* GetDescriptiveName() override
-    {
+  {
       return "NRRD - Nearly Raw Raster Data";
-    }
+  }
 
   //Description:
   /// Report the status of the reading process.
@@ -158,7 +158,7 @@ public:
   int NrrdToVTKScalarType( const int nrrdPixelType ) const
   {
   switch( nrrdPixelType )
-    {
+  {
     default:
     case nrrdTypeDefault:
       return VTK_VOID;
@@ -196,13 +196,13 @@ public:
     case nrrdTypeBlock:
       return -1;
       break;
-    }
+  }
   }
 
   int VTKToNrrdPixelType( const int vtkPixelType ) const
   {
   switch( vtkPixelType )
-    {
+  {
     default:
     case VTK_VOID:
       return nrrdTypeDefault;
@@ -237,7 +237,7 @@ public:
     case VTK_DOUBLE:
       return nrrdTypeDouble;
       break;
-    }
+  }
   }
 vtkImageData * AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo) override;
 void AllocateOutputData(vtkImageData *out, vtkInformation* outInfo, int *uExtent) override

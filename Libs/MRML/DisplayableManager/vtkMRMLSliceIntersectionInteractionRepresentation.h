@@ -119,30 +119,30 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
     virtual double GetMaximumHandlePickingDistance2();
 
     class HandleInfo
-      {
+    {
       public:
         HandleInfo(int index, int componentType, const std::string& intersectingSliceNodeID, double positionWorld[3], double positionLocal[3])
           : Index(index)
           , ComponentType(componentType)
           , IntersectingSliceNodeID(intersectingSliceNodeID)
-          {
+        {
           for (int i = 0; i < 3; ++i)
-            {
+          {
             this->PositionWorld[i] = positionWorld[i];
-            }
+          }
           this->PositionWorld[3] = 1.0;
           for (int i = 0; i < 3; ++i)
-            {
+          {
             this->PositionLocal[i] = positionLocal[i];
-            }
-          this->PositionLocal[3] = 1.0;
           }
+          this->PositionLocal[3] = 1.0;
+        }
         int Index;
         int ComponentType;
         std::string IntersectingSliceNodeID;
         double PositionLocal[4];
         double PositionWorld[4];
-      };
+    };
 
     /// Get the list of info for all interaction handles
     typedef std::vector<HandleInfo> HandleInfoList;

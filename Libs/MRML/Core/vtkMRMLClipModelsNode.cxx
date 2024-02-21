@@ -52,9 +52,9 @@ void vtkMRMLClipModelsNode::WriteXML(ostream& of, int nIndent)
   of << " yellowSliceClipState=\"" << this->YellowSliceClipState << "\"";
   of << " greenSliceClipState=\"" << this->GreenSliceClipState << "\"";
   if (this->ClippingMethod != vtkMRMLClipModelsNode::Straight)
-    {
+  {
     of << " clippingMethod=\"" << (this->GetClippingMethodAsString(this->ClippingMethod)) << "\"";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -67,48 +67,48 @@ void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "yellowSliceClipState"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> YellowSliceClipState;
-      }
+    }
     else if (!strcmp(attName, "redSliceClipState"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> RedSliceClipState;
-      }
+    }
     else if (!strcmp(attName, "greenSliceClipState"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> GreenSliceClipState;
-      }
+    }
     else if (!strcmp(attName, "clipType"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> ClipType;
-      }
+    }
     else if (!strcmp(attName, "clippingMethod"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       int id = this->GetClippingMethodFromString(attValue);
       if (id < 0)
-        {
+      {
         vtkWarningMacro("Invalid Clipping Methods: "<<(attValue?attValue:"(none)"));
-        }
+      }
       else
-        {
+      {
         this->ClippingMethod = static_cast<ClippingMethodType>(id);
-        }
       }
     }
+  }
     this->EndModify(disabledModify);
 
 }
@@ -121,9 +121,9 @@ void vtkMRMLClipModelsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true
 
   vtkMRMLClipModelsNode* node = vtkMRMLClipModelsNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   this->SetClipType(node->ClipType);
   this->SetYellowSliceClipState(node->YellowSliceClipState);
@@ -148,24 +148,24 @@ void vtkMRMLClipModelsNode::PrintSelf(ostream& os, vtkIndent indent)
 int vtkMRMLClipModelsNode::GetClippingMethodFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   if (!strcmp(name, "Straight"))
-    {
+  {
     return (int)Straight;
-    }
+  }
   else if (!strcmp(name, "WholeCells")
     || !strcmp(name, "Whole Cells"))  // for backward compatibility
-    {
+  {
     return (int)WholeCells;
-    }
+  }
   else if (!strcmp(name, "WholeCellsWithBoundary")
     || !strcmp(name, "Whole Cells With Boundary"))  // for backward compatibility
-    {
+  {
     return (int)WholeCellsWithBoundary;
-    }
+  }
   // unknown name
   return -1;
 }
@@ -174,13 +174,13 @@ int vtkMRMLClipModelsNode::GetClippingMethodFromString(const char* name)
 const char* vtkMRMLClipModelsNode::GetClippingMethodAsString(ClippingMethodType id)
 {
  switch (id)
-    {
+ {
     case Straight: return "Straight";
     case WholeCells: return "WholeCells";
     case WholeCellsWithBoundary: return "WholeCellsWithBoundary";
     default:
       // invalid id
       return "";
-    }
+ }
 }
 

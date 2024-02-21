@@ -39,11 +39,11 @@ class qMRMLMatrixWidgetPrivate
 {
 public:
   qMRMLMatrixWidgetPrivate()
-    {
+  {
     this->CoordinateReference = qMRMLMatrixWidget::GLOBAL;
     this->MRMLTransformNode = nullptr;
     this->UserUpdates = true;
-    }
+  }
 
   qMRMLMatrixWidget::CoordinateReferenceType   CoordinateReference;
   vtkWeakPointer<vtkMRMLTransformNode>         MRMLTransformNode;
@@ -71,9 +71,9 @@ void qMRMLMatrixWidget::setCoordinateReference(CoordinateReferenceType _coordina
 {
   Q_D(qMRMLMatrixWidget);
   if (d->CoordinateReference == _coordinateReference)
-    {
+  {
     return;
-    }
+  }
 
   d->CoordinateReference = _coordinateReference;
 
@@ -99,9 +99,9 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLTransformNode* transformNode
   Q_D(qMRMLMatrixWidget);
 
   if (d->MRMLTransformNode == transformNode)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(d->MRMLTransformNode, transformNode,
                       vtkMRMLTransformableNode::TransformModifiedEvent,
@@ -127,18 +127,18 @@ void qMRMLMatrixWidget::updateMatrix()
   Q_D(qMRMLMatrixWidget);
 
   if (d->MRMLTransformNode == nullptr)
-    {
+  {
     this->setMatrixInternal(nullptr);
     d->Transform = nullptr;
     return;
-    }
+  }
 
   bool isLinear = d->MRMLTransformNode->IsLinear();
   this->setEnabled(isLinear);
   if (!isLinear)
-    {
+  {
     return;
-    }
+  }
 
   vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(
@@ -162,8 +162,8 @@ void qMRMLMatrixWidget::updateTransformNode()
   Q_D(qMRMLMatrixWidget);
   if (d->MRMLTransformNode == nullptr ||
       !d->UserUpdates)
-    {
+  {
     return;
-    }
+  }
   d->MRMLTransformNode->SetMatrixTransformToParent(this->matrix());
 }

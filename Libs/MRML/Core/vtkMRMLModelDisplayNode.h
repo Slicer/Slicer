@@ -41,12 +41,12 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum SliceDisplayModeType
-    {
+  {
     SliceDisplayIntersection, ///< Show model in slice view as intersection with slice
     SliceDisplayProjection, ///< Show full model projected on the slice (similar to MIP view of images)
     SliceDisplayDistanceEncodedProjection, ///< Show full model projected on the slice, colored by distance from slice plane
     SliceDisplayMode_Last // placeholder after the last valid value, this must be the last in the list of modes
-    };
+  };
 
   ///
   /// Read node attributes from XML file

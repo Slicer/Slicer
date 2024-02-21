@@ -27,38 +27,38 @@
   activeActionText = activePlaceActionText(mouseToolBar); \
   std::cout << "Line " << __LINE__ << " Active place action text = " << qPrintable(activeActionText) << std::endl; \
   if (activeActionText.compare(QString(expected)) != 0) \
-    { \
+  { \
     std::cerr << "Line " << __LINE__ << " Error: Expected active action text of '" << #expected << "', got '" \
       << qPrintable(activeActionText) << "'" << std::endl; \
     return EXIT_FAILURE; \
-    } \
+  } \
   };
 
 QString activePlaceActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
 {
   foreach(QAction* action, mouseModeToolBar.actions())
-    {
+  {
     if (action->objectName() == QString("PlaceWidgetAction"))
-      {
+    {
       return action->text();
-      }
     }
+  }
   return QString();
 }
 
 QString getActiveActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
-  {
+{
   foreach(QAction * action, mouseModeToolBar.actions())
-    {
+  {
     std::cout << "action name: " << qPrintable(action->objectName()) << std::endl;;
     if (action->isChecked())
-      {
+    {
       return action->text();
-      }
-
     }
-  return QString();
+
   }
+  return QString();
+}
 
 int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
 {
