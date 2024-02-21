@@ -72,17 +72,17 @@ void qSlicerNodeWriterOptionsWidget::setObject(vtkObject* object)
   Q_D(qSlicerNodeWriterOptionsWidget);
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(object);
   if (storableNode != nullptr)
-    {
+  {
     d->Properties["nodeID"] = storableNode->GetID();
-    }
+  }
   else
-    {
+  {
     d->Properties.remove("nodeID");
-    }
+  }
   vtkMRMLStorageNode* storageNode = storableNode->GetStorageNode();
   d->UseCompressionCheckBox->setEnabled(storageNode != nullptr);
   if (storageNode)
-    {
+  {
     d->UseCompressionCheckBox->setChecked(
       (storageNode->GetUseCompression() == 1));
 
@@ -90,13 +90,13 @@ void qSlicerNodeWriterOptionsWidget::setObject(vtkObject* object)
     d->CompressionParameterSelector->clear();
     std::vector<vtkMRMLStorageNode::CompressionPreset>::iterator presetIt;
     for (presetIt = presets.begin(); presetIt != presets.end(); ++presetIt)
-      {
+    {
       QString name = QString::fromStdString(presetIt->DisplayName);
       QString parameter = QString::fromStdString(presetIt->CompressionParameter);
       d->CompressionParameterSelector->addItem(name, parameter);
-      }
-    this->setCompressionParameter(QString::fromStdString(storageNode->GetCompressionParameter()));
     }
+    this->setCompressionParameter(QString::fromStdString(storageNode->GetCompressionParameter()));
+  }
   d->CompressionParameterSelector->setVisible(d->CompressionParameterSelector->count() > 0);
   d->CompressionParameterSelector->setEnabled(storageNode != nullptr && d->UseCompressionCheckBox->isChecked());
 

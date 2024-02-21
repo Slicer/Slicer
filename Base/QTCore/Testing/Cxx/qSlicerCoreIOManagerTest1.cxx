@@ -41,30 +41,30 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
   // get all the writable file extensions
   QStringList allWritableExtensions = manager.allWritableFileExtensions();
   if (allWritableExtensions.isEmpty())
-    {
+  {
     std::cerr << "Failed to get the list of all writable file extensions."
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   qDebug() << "All writable extensions = ";
   foreach (QString ext, allWritableExtensions)
-    {
+  {
     qDebug() << ext;
-    }
+  }
 
   // get all the readable file extensions
   QStringList allReadableExtensions = manager.allReadableFileExtensions();
   if (allReadableExtensions.isEmpty())
-    {
+  {
     std::cerr << "Failed to get the list of all readable file extensions."
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   qDebug() << "All readable extensions = ";
   foreach (QString ext, allReadableExtensions)
-    {
+  {
     qDebug() << ext;
-    }
+  }
 
   // test getting specific writable file extensions
   QStringList testFileNames;
@@ -89,21 +89,21 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
                      << ".seg.nrrd" << ".seg.nrrd" << ".nrrd";
 
   for (int i = 0; i < testFileNames.size(); ++i)
-    {
+  {
     vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(app.mrmlScene()->CreateNodeByClass(storageNodeClassNames[i].toUtf8().constData()));
     app.mrmlScene()->AddNode(node);
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
     storableNode->AddDefaultStorageNode(testFileNames[i].toUtf8().constData());
     QString ext = manager.completeSlicerWritableFileNameSuffix(storableNode);
     if (expectedExtensions[i] != ext)
-      {
+    {
       qWarning() << "Failed on file " << testFileNames[i]
                  << ", expected extension " << expectedExtensions[i]
                  << ", but got " << ext;
       return EXIT_FAILURE;
-      }
-    qDebug() << "Found extension " << ext << " from file " << testFileNames[i] << " using " << storageNodeClassNames[i];
     }
+    qDebug() << "Found extension " << ext << " from file " << testFileNames[i] << " using " << storageNodeClassNames[i];
+  }
 
   return EXIT_SUCCESS;
 }

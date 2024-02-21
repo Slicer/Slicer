@@ -90,19 +90,19 @@ bool vtkMRMLColors
 ::toRGBColor(const char* hexadecimalColor, double rgbColor[3])
 {
   if (!hexadecimalColor || hexadecimalColor[0] != '#')
-    {
+  {
     return false;
-    }
+  }
   // skip the pound char
   hexadecimalColor = &(hexadecimalColor[1]);
 
   for (int i = 0; i < 3; ++i)
-    {
+  {
     unsigned int colorComponent;
     std::stringstream ss;
     ss << std::hex << hexadecimalColor[2*i] << hexadecimalColor[2*i + 1];
     ss >> colorComponent;
     rgbColor[i] = static_cast<double>(colorComponent) / 255.;
-    }
+  }
   return true;
 }

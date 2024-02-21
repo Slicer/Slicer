@@ -166,9 +166,9 @@ public:
 
   /// Translation function for logic classes
   std::string Translate(const char *context, const char *sourceText, const char *disambiguation = nullptr, int n = -1) override
-    {
+  {
     return QCoreApplication::translate(context, sourceText, disambiguation, n).toStdString();
-    }
+  }
 
 protected:
   vtkQtTranslator() = default;
@@ -186,12 +186,12 @@ vtkStandardNewMacro(vtkQtTranslator);
 namespace
 {
 wchar_t* QStringToPythonWCharPointer(QString str)
-  {
+{
   wchar_t* res = (wchar_t*)PyMem_RawMalloc((str.size() + 1) * sizeof(wchar_t));
   int len = str.toWCharArray(res);
   res[len] = 0; // ensure zero termination
   return res;
-  }
+}
 }
 #endif
 
@@ -267,12 +267,12 @@ void qSlicerCoreApplicationPrivate::init()
 
   // allow a debugger to be attached during startup
   if(qApp->arguments().contains("--attach-process"))
-    {
+  {
     // Message for developers - do not translate.
     QString msg(/*no tr*/"This message box is here to give you time to attach "
                 "your debugger to process [PID %1]");
     QMessageBox::information(nullptr, /*no tr*/"Attach process", msg.arg(QCoreApplication::applicationPid()));
-    }
+  }
 
   QCoreApplication::setOrganizationDomain(Slicer_ORGANIZATION_DOMAIN);
   QCoreApplication::setOrganizationName(Slicer_ORGANIZATION_NAME);
@@ -280,9 +280,9 @@ void qSlicerCoreApplicationPrivate::init()
   QSettings::setDefaultFormat(QSettings::IniFormat);
 
   if (q->arguments().isEmpty())
-    {
+  {
     qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
-    }
+  }
 
   this->parseArguments();
 
@@ -291,15 +291,15 @@ void qSlicerCoreApplicationPrivate::init()
   // Save the environment if no launcher is used (this is for example the case
   // on macOS when slicer is started from an install tree)
   if (ctkAppLauncherEnvironment::currentLevel() == 0)
-    {
+  {
     QProcessEnvironment updatedEnv;
     ctkAppLauncherEnvironment::saveEnvironment(
           this->Environment, this->Environment.keys(), updatedEnv);
     foreach(const QString& varname, updatedEnv.keys())
-      {
+    {
       q->setEnvironmentVariable(varname, updatedEnv.value(varname));
-      }
     }
+  }
 
   q->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
 
@@ -307,44 +307,44 @@ void qSlicerCoreApplicationPrivate::init()
   appLauncherSettings.setLauncherName(q->applicationName());
   appLauncherSettings.setLauncherDir(this->SlicerHome);
   if (!appLauncherSettings.readSettings(q->launcherSettingsFilePath()))
-    {
+  {
     q->showConsoleMessage(QString("Failed to read launcher settings %1").arg(q->launcherSettingsFilePath()));
-    }
+  }
 
   // Regular environment variables
   QHash<QString, QString> envVars = appLauncherSettings.envVars();
   foreach(const QString& key, envVars.keys())
-    {
+  {
     q->setEnvironmentVariable(key, envVars.value(key));
-    }
+  }
   // Path environment variables (includes PATH, (DY)LD_LIBRARY_PATH and variables like PYTHONPATH)
   QHash<QString, QStringList> pathsEnvVars = appLauncherSettings.pathsEnvVars();
   foreach(const QString& key, pathsEnvVars.keys())
-    {
+  {
     QString value;
     if (this->Environment.contains(key))
-      {
+    {
       QStringList consolidatedPaths;
       consolidatedPaths << pathsEnvVars.value(key) << this->Environment.value(key).split(appLauncherSettings.pathSep());
       consolidatedPaths.removeDuplicates();
       value = consolidatedPaths.join(appLauncherSettings.pathSep());
-      }
-    else
-      {
-      value = pathsEnvVars.value(key).join(appLauncherSettings.pathSep());
-      }
-    q->setEnvironmentVariable(key, value);
     }
+    else
+    {
+      value = pathsEnvVars.value(key).join(appLauncherSettings.pathSep());
+    }
+    q->setEnvironmentVariable(key, value);
+  }
 
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
   if (!QSslSocket::supportsSsl())
-    {
+  {
     qWarning() << "[SSL] SSL support disabled - Failed to load SSL library !";
-    }
+  }
   if (!qSlicerCoreApplication::loadCaCertificates(qSlicerCoreApplication::caCertificatesPath(this->SlicerHome)))
-    {
+  {
     qWarning() << "[SSL] Failed to load Slicer.crt";
-    }
+  }
 #endif
 
   // Add 'SLICER_SHARE_DIR' to the environment so that Tcl scripts can reference
@@ -353,19 +353,19 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Load default settings if any.
   if (q->defaultSettings())
-    {
+  {
     foreach(const QString& key, q->defaultSettings()->allKeys())
-      {
+    {
       if (!q->userSettings()->contains(key))
-        {
+      {
         q->userSettings()->setValue(key, q->defaultSettings()->value(key));
-        }
+      }
       if (!q->revisionUserSettings()->contains(key))
-        {
+      {
         q->revisionUserSettings()->setValue(key, q->defaultSettings()->value(key));
-        }
       }
     }
+  }
 
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
@@ -391,21 +391,21 @@ void qSlicerCoreApplicationPrivate::init()
     QTemporaryFile fileInTemporaryPathFolder(
       QFileInfo(q->temporaryPath(), "_write_test_XXXXXX.tmp").absoluteFilePath());
     if (!fileInTemporaryPathFolder.open())
-      {
+    {
       QString newTempFolder = q->defaultTemporaryPath();
       qWarning() << Q_FUNC_INFO << "Setting temporary folder to " << newTempFolder
         << " because previously set " << q->temporaryPath() << " folder is not writable";
       q->setTemporaryPath(newTempFolder);
-      }
+    }
   }
   this->AppLogic->SetTemporaryPath(q->temporaryPath().toUtf8());
 
   vtkPersonInformation* userInfo = this->AppLogic->GetUserInformation();
   if (userInfo)
-    {
+  {
     QString userInfoString = q->userSettings()->value("UserInformation").toString();
     userInfo->SetFromString(userInfoString.toUtf8().constData());
-    }
+  }
   q->qvtkConnect(this->AppLogic, vtkCommand::ModifiedEvent,
               q, SLOT(onSlicerApplicationLogicModified()));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestInvokeEvent,
@@ -468,15 +468,15 @@ void qSlicerCoreApplicationPrivate::init()
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     if (q->corePythonManager())
-      {
+    {
       q->corePythonManager()->mainContext(); // Initialize python
       q->corePythonManager()->setSystemExitExceptionHandlerEnabled(true);
       q->connect(q->corePythonManager(), SIGNAL(systemExitExceptionRaised(int)),
                  q, SLOT(terminate(int)));
-      }
     }
+  }
 #endif
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
@@ -490,10 +490,10 @@ void qSlicerCoreApplicationPrivate::init()
   QSettings extensionsSettings(model->extensionsSettingsFilePath(), QSettings::IniFormat);
   int lastServerAPI = qSlicerExtensionsManagerModel::serverAPIFromString(extensionsSettings.value("Extensions/LastServerAPI").toString());
   if (lastServerAPI != model->serverAPI())
-    {
+  {
     extensionsSettings.remove("Extensions/ServerUrl");
     extensionsSettings.remove("Extensions/FrontendServerUrl");
-    }
+  }
   extensionsSettings.setValue("Extensions/LastServerAPI", qSlicerExtensionsManagerModel::serverAPIToString(model->serverAPI()));
 
 # ifdef Q_OS_MAC
@@ -508,16 +508,16 @@ void qSlicerCoreApplicationPrivate::init()
   this->ApplicationLocale = QLocale(this->ApplicationLocaleName);
 #ifdef Slicer_BUILD_I18N_SUPPORT
   if (q->userSettings()->value("Internationalization/Enabled").toBool())
-    {
+  {
     QString localeName = q->userSettings()->value("language", this->ApplicationLocaleName).toString();
     if (!localeName.isEmpty())
-      {
+    {
       this->ApplicationLocaleName = localeName;
       this->ApplicationLocale = QLocale(this->ApplicationLocaleName);
-      }
+    }
     // We load the language selected for the application
     qSlicerCoreApplication::loadLanguage();
-    }
+  }
 #endif
 
   // Prevent extensions manager model from displaying popups during startup (don't ask for confirmation)
@@ -532,24 +532,24 @@ void qSlicerCoreApplicationPrivate::init()
   QStringList updatedExtensions;
   model->updateScheduledExtensions(updatedExtensions);
   foreach(const QString& extensionName, updatedExtensions)
-    {
+  {
     qDebug() << "Successfully updated extension" << extensionName;
-    }
+  }
 
   QStringList uninstalledExtensions;
   model->uninstallScheduledExtensions(uninstalledExtensions);
   foreach(const QString& extensionName, uninstalledExtensions)
-    {
+  {
     qDebug() << "Successfully uninstalled extension" << extensionName;
-    }
+  }
 
   if (model->autoUpdateCheck())
-    {
+  {
     // The latest metadata updates may not be available yet (because
     // model->updateExtensionsMetadataFromServer() has just been called)
     // but next time the application is started the metadata will be up-to-date.
     model->checkForExtensionsUpdates();
-    }
+  }
 
   model->setInteractive(wasInteractive);
 
@@ -569,9 +569,9 @@ void qSlicerCoreApplicationPrivate::init()
   applicationUpdateManager->setSlicerRequirements(q->revision(), q->os(), q->arch());
   q->setapplicationUpdateManager(applicationUpdateManager);
   if (applicationUpdateManager->autoUpdateCheck())
-    {
+  {
     applicationUpdateManager->checkForUpdate();
-    }
+  }
 #endif
 
   // Default VTK fonts do not support Chinese characters. Allow setting custom font files from application settings.
@@ -581,17 +581,17 @@ void qSlicerCoreApplicationPrivate::init()
   QString viewsFontFileMonospaced = q->userSettings()->value("Views/FontFile/Monospaced").toString();
   QString viewsFontFileSerif = q->userSettings()->value("Views/FontFile/Serif").toString();
   if (!viewsFontFileSansSerif.isEmpty())
-    {
+  {
     this->AppLogic->SetFontFileName(VTK_ARIAL, viewsFontFileSansSerif.toStdString());
-    }
+  }
   if (!viewsFontFileMonospaced.isEmpty())
-    {
+  {
     this->AppLogic->SetFontFileName(VTK_COURIER, viewsFontFileMonospaced.toStdString());
-    }
+  }
   if (!viewsFontFileSerif.isEmpty())
-    {
+  {
     this->AppLogic->SetFontFileName(VTK_TIMES, viewsFontFileSerif.toStdString());
-    }
+  }
 
   q->connect(q, SIGNAL(aboutToQuit()), q, SLOT(onAboutToQuit()));
 }
@@ -664,9 +664,9 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(bool useTmp)
 {
   Q_Q(qSlicerCoreApplication);
   if (useTmp)
-    {
+  {
     q->setApplicationName(q->applicationName() + "-tmp");
-    }
+  }
 #ifdef Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
   // If a Slicer.ini file is available in the home directory then use that,
   // otherwise use the default one in the user profile folder.
@@ -674,16 +674,16 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(bool useTmp)
   // (otherwise QSettings() would return a different setting than app->userSettings()).
   QString iniFileName = QDir(this->SlicerHome).filePath(QString("%1/%2.ini").arg(ctkAppLauncherSettings().organizationDir()).arg(q->applicationName()));
   if (QFile(iniFileName).exists())
-    {
+  {
     // Use settings file in the home folder
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, this->SlicerHome);
-    }
+  }
 #endif
   QSettings* settings = this->newSettings();
   if (useTmp && !q->coreCommandOptions()->keepTemporarySettings())
-    {
+  {
     settings->clear();
-    }
+  }
   return settings;
 }
 
@@ -704,29 +704,29 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
   // to be properly set will fail.
   QString slicerHome = this->Environment.value("SLICER_HOME");
   if (slicerHome.isEmpty())
-    {
+  {
     QString slicerBin = this->discoverSlicerBinDirectory();
     QDir slicerBinDir(slicerBin);
     bool cdUpRes = slicerBinDir.cdUp();
     Q_ASSERT(cdUpRes);
     (void)cdUpRes;
     slicerHome = slicerBinDir.canonicalPath();
-    }
+  }
 
 #ifdef Q_OS_WIN32
   Q_Q(qSlicerCoreApplication);
   if (!this->isInstalled(slicerHome))
-    {
+  {
     foreach(const QString& subDir,
             QStringList() << Slicer_BIN_DIR << Slicer_CLIMODULES_BIN_DIR << "Cxx")
-      {
+    {
       qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), subDir, this->IntDir);
       if (!this->IntDir.isEmpty())
-        {
+      {
         break;
-        }
       }
     }
+  }
   Q_ASSERT(this->isInstalled(slicerHome) ? this->IntDir.isEmpty() : !this->IntDir.isEmpty());
 #endif
 
@@ -738,9 +738,9 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 void qSlicerCoreApplicationPrivate::setPythonOsEnviron(const QString& key, const QString& value)
 {
   if(!this->CorePythonManager->isPythonInitialized())
-    {
+  {
     return;
-    }
+  }
   this->CorePythonManager->executeString(
         QString("import os; os.environ[%1]=%2; del os")
           .arg(qSlicerCorePythonManager::toPythonStringLiteral(key))
@@ -754,27 +754,27 @@ void qSlicerCoreApplicationPrivate::updateEnvironmentVariable(const QString& key
 {
   Q_Q(qSlicerCoreApplication);
   if(q->isEnvironmentVariableValueSet(key, value))
-    {
+  {
     return;
-    }
+  }
   std::string currentValue;
   vtksys::SystemTools::GetEnv(key.toUtf8(), currentValue);
   if(currentValue.size() > 0)
-    {
+  {
     QString updatedValue(value);
     if(prepend)
-      {
-      q->setEnvironmentVariable(key, updatedValue.prepend(separator).prepend(QString::fromStdString(currentValue)));
-      }
-    else
-      {
-      q->setEnvironmentVariable(key, updatedValue.append(separator).append(QString::fromStdString(currentValue)));
-      }
-    }
-  else
     {
-    q->setEnvironmentVariable(key, value);
+      q->setEnvironmentVariable(key, updatedValue.prepend(separator).prepend(QString::fromStdString(currentValue)));
     }
+    else
+    {
+      q->setEnvironmentVariable(key, updatedValue.append(separator).append(QString::fromStdString(currentValue)));
+    }
+  }
+  else
+  {
+    q->setEnvironmentVariable(key, value);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -785,10 +785,10 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
   // Note: On Linux, QCoreApplication::applicationDirPath() will attempt
   //       to get the path using the "/proc" filesystem.
   if (!QFile::exists(q->applicationDirPath()))
-    {
+  {
     q->showConsoleMessage(QString("Cannot find Slicer executable %1").arg(q->applicationDirPath()));
     return slicerBin;
-    }
+  }
 #ifndef Q_OS_MAC
   slicerBin =
       qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_BIN_DIR, this->IntDir);
@@ -804,11 +804,11 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
   QDir slicerBinAsDir(q->applicationDirPath());
   slicerBinAsDir.cdUp(); // Move from /path/to/Foo.app/Contents/MacOSX to /path/to/Foo.app/Contents
   if(!slicerBinAsDir.cd(Slicer_BIN_DIR))
-    {
+  {
     slicerBinAsDir.cdUp(); // Move from /path/to/build-dir/bin/Foo.app/Contents to /path/to/build-dir/bin/Foo.app
     slicerBinAsDir.cdUp(); // Move from /path/to/build-dir/bin/Foo.app          to /path/to/build-dir/bin
     slicerBinAsDir.cd(Slicer_BIN_DIR);
-    }
+  }
   slicerBin = slicerBinAsDir.path();
 #endif
   Q_ASSERT(qSlicerUtils::pathEndsWith(slicerBin, Slicer_BIN_DIR));
@@ -821,15 +821,15 @@ QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()co
 {
   Q_Q(const qSlicerCoreApplication);
   if (q->isInstalled())
-    {
+  {
     QDir slicerHomeDir(q->slicerHome());
     slicerHomeDir.cdUp();
     return slicerHomeDir.absolutePath() + "/Contents/" Slicer_EXTENSIONS_DIRBASENAME "-" Slicer_REVISION;
-    }
+  }
   else
-    {
+  {
     return q->slicerHome() + "/bin/" Slicer_BUNDLE_LOCATION "/" Slicer_EXTENSIONS_DIRBASENAME "-" Slicer_REVISION;
-    }
+  }
 }
 #endif
 
@@ -838,35 +838,35 @@ bool qSlicerCoreApplicationPrivate::isUsingLauncher()const
 {
   Q_Q(const qSlicerCoreApplication);
   if (!q->isInstalled())
-    {
+  {
     return true;
-    }
+  }
   else
-    {
+  {
 #ifdef Q_OS_MAC
     return false;
 #else
     return true;
 #endif
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreApplicationPrivate::createDirectory(const QString& path, const QString& description) const
 {
   if (path.isEmpty())
-    {
+  {
     return false;
-    }
+  }
   if (QDir(path).exists())
-    {
+  {
     return true;
-    }
+  }
   if (!QDir::root().mkpath(path))
-    {
+  {
     qCritical() << qSlicerCoreApplication::tr("Failed to create %1 directory").arg(description) << path;
     return false;
-    }
+  }
   return true;
 }
 
@@ -877,16 +877,16 @@ void qSlicerCoreApplicationPrivate::parseArguments()
 
   qSlicerCoreCommandOptions* options = this->CoreCommandOptions.data();
   if (!options)
-    {
+  {
     q->showConsoleMessage("Failed to parse arguments - "
                   "it seems you forgot to call setCoreCommandOptions()");
     this->quickExit(EXIT_FAILURE);
-    }
+  }
   if (!options->parse(q->arguments()))
-    {
+  {
     q->showConsoleMessage("Problem parsing command line arguments.  Try with --help.");
     this->quickExit(EXIT_FAILURE);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -918,23 +918,23 @@ QStringList qSlicerCoreApplicationPrivate::findTranslationFiles(const QString& d
 {
   // If settings language is empty don't search translation files (application default)
   if (settingsLanguage.isEmpty())
-    {
+  {
     return QStringList{};
-    }
+  }
 
   // Try to find the translation files using specific language extension
   // (In case of fr_FR -> look for *fr_FR.qm files).
   QStringList files = findTranslationFilesWithLanguageExtension(dir, settingsLanguage);
   if (files.isEmpty())
-    {
+  {
     // If no specific translations have been found, look for a generic language extension
     // (In case of fr_FR -> look for *fr.qm files).
     const QString genericExtension = settingsLanguage.split("_")[0];
     if (genericExtension != settingsLanguage)
-      {
+    {
       files = findTranslationFilesWithLanguageExtension(dir, genericExtension);
-      }
     }
+  }
 
   return files;
 }
@@ -1051,13 +1051,13 @@ int qSlicerCoreApplication::exec()
 {
   int exit_code = QApplication::exec();
   if (exit_code == qSlicerCoreApplication::ExitSuccess)
-    {
+  {
     int return_code = qSlicerCoreApplication::application()->returnCode();
     if (return_code != qSlicerCoreApplication::ExitNotRequested)
-      {
+    {
       exit_code = return_code;
-      }
     }
+  }
   return exit_code;
 }
 
@@ -1070,70 +1070,70 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
   Q_ASSERT(options);
 
   if (options->displayHelpAndExit())
-    {
+  {
     if(!d->isUsingLauncher())
-      {
+    {
       std::cout << "Usage\n"
                 << "  " << qPrintable(this->applicationName()) << " [options]\n\n"
                 << "Options\n";
-      }
+    }
     std::cout << qPrintable(options->helpText()) << std::endl;
     d->quickExit(EXIT_SUCCESS);
-    }
+  }
 
   if (options->displayVersionAndExit())
-    {
+  {
     std::cout << qPrintable(this->applicationName() + " " +
                             this->applicationVersion()) << std::endl;
     d->quickExit(EXIT_SUCCESS);
-    }
+  }
 
   if (options->displayProgramPathAndExit())
-    {
+  {
     std::cout << qPrintable(this->arguments().at(0)) << std::endl;
     d->quickExit(EXIT_SUCCESS);
-    }
+  }
 
   if (options->displayHomePathAndExit())
-    {
+  {
     std::cout << qPrintable(this->slicerHome()) << std::endl;
     d->quickExit(EXIT_SUCCESS);
-    }
+  }
 
   if (options->displaySettingsPathAndExit())
-    {
+  {
     std::cout << qPrintable(this->userSettings()->fileName()) << std::endl;
     d->quickExit(EXIT_SUCCESS);
-    }
+  }
 
   if (options->displayTemporaryPathAndExit())
-    {
+  {
     std::cout << qPrintable(this->temporaryPath()) << std::endl;
     d->quickExit(EXIT_SUCCESS);
-    }
+  }
 
   if (options->ignoreRest())
-    {
+  {
     qDebug() << "Ignored arguments:" << options->unparsedArguments();
     return;
-    }
+  }
 
   if (!options->settingsDisabled() && options->keepTemporarySettings())
-    {
+  {
     this->showConsoleMessage("Argument '--keep-temporary-settings' requires "
                   "'--settings-disabled' to be specified.");
-    }
+  }
 
   if (options->isTestingEnabled())
-    {
+  {
     this->setAttribute(AA_EnableTesting);
-    }
+  }
 
 #ifdef Slicer_USE_PYTHONQT
   if (options->isPythonDisabled())
-    {
+  {
     this->setAttribute(AA_DisablePython);
-    }
+  }
 #endif
 }
 
@@ -1147,41 +1147,41 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   if (unparsedArguments.length() > 0 &&
       options->pythonScript().isEmpty() &&
       options->extraPythonScript().isEmpty())
-    {
+  {
     foreach(QString fileName, unparsedArguments)
-      {
+    {
       QUrl url = QUrl(fileName);
       if (url.scheme().toLower() == this->applicationName().toLower()) // Scheme is case insensitive
-        {
+      {
         qDebug() << "URL received via command-line: " << fileName;
         emit urlReceived(fileName);
         continue;
-        }
+      }
 
       QFileInfo file(fileName);
       if (file.exists())
-        {
+      {
         qDebug() << "Local filepath received via command-line: " << fileName;
         // Do not load immediately but just collect the files into a list and load at once
         // so that all potential loading errors can be also reported at once.
         filesToLoad << fileName;
         continue;
-        }
+      }
 
       qDebug() << "Ignore argument received via command-line (not a valid URL or existing local file): " << fileName;
-      }
     }
+  }
 
   if (!filesToLoad.isEmpty())
-    {
+  {
     this->loadFiles(filesToLoad);
-    }
+  }
 
 #ifndef Slicer_USE_PYTHONQT
   Q_UNUSED(options);
 #else
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     // Note that 'pythonScript' is ignored if 'extraPythonScript' is specified
     QString pythonScript = options->pythonScript();
     QString extraPythonScript = options->extraPythonScript();
@@ -1190,11 +1190,11 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     // unknown argument.
     scriptArgs.removeAll("--attach-process");
     if(!extraPythonScript.isEmpty())
-      {
+    {
       // Remove extra Python script processed arguments  (e.g -I /path/to/script.py)
       scriptArgs.erase(scriptArgs.begin(), scriptArgs.begin() + options->extraPythonScriptProcessedArgumentsCount());
       pythonScript = extraPythonScript;
-      }
+    }
 
     // Set 'argv' so that python script can retrieve its associated arguments
 
@@ -1204,9 +1204,9 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     wchar_t** pythonArgv = new wchar_t*[pythonArgc];
     pythonArgv[0] = QStringToPythonWCharPointer(pythonScript);
     for(int i = 0; i < scriptArgs.count(); ++i)
-      {
+    {
       pythonArgv[i + 1] = QStringToPythonWCharPointer(scriptArgs.at(i));
-      }
+    }
 
     // See https://docs.python.org/c-api/init.html
     PySys_SetArgvEx(pythonArgc, pythonArgv, /*updatepath=*/false);
@@ -1219,9 +1219,9 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 
     // Clean memory
     for (int i = 0; i < pythonArgc; i++)
-      {
+    {
       PyMem_RawFree(pythonArgv[i]);
-      }
+    }
     delete[] pythonArgv;
     pythonArgv = nullptr;
     pythonArgc = 0;
@@ -1229,40 +1229,40 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
     if (!(options->displayMessageAndExit() ||
         options->ignoreSlicerRC()))
-      {
+    {
       this->corePythonManager()->executeString("loadSlicerRCFile()");
-      }
+    }
 
     if (this->testAttribute(AA_EnableTesting))
-      {
+    {
       options->setRunPythonAndExit(true);
-      }
+    }
 
     // Execute python script
     if(!pythonScript.isEmpty())
-      {
+    {
       if (QFile::exists(pythonScript))
-        {
+      {
         qApp->processEvents();
         this->corePythonManager()->executeFile(pythonScript);
-        }
+      }
       else
-        {
+      {
         this->showConsoleMessage(QString("Specified python script doesn't exist: %1").arg(pythonScript));
-        }
-      }
-    QString pythonCode = options->pythonCode();
-    if(!pythonCode.isEmpty())
-      {
-      qApp->processEvents();
-      this->corePythonManager()->executeString(pythonCode);
-      }
-    if (options->runPythonAndExit())
-      {
-      qSlicerCoreApplication::exit(
-            this->corePythonManager()->pythonErrorOccured() ? EXIT_FAILURE : EXIT_SUCCESS);
       }
     }
+    QString pythonCode = options->pythonCode();
+    if(!pythonCode.isEmpty())
+    {
+      qApp->processEvents();
+      this->corePythonManager()->executeString(pythonCode);
+    }
+    if (options->runPythonAndExit())
+    {
+      qSlicerCoreApplication::exit(
+            this->corePythonManager()->pythonErrorOccured() ? EXIT_FAILURE : EXIT_SUCCESS);
+    }
+  }
 #endif
 }
 
@@ -1271,19 +1271,19 @@ QSettings* qSlicerCoreApplication::defaultSettings()const
 {
   Q_D(const qSlicerCoreApplication);
   if (!QFile(this->slicerDefaultSettingsFilePath()).exists())
-    {
+  {
     return nullptr;
-    }
+  }
   qSlicerCoreApplication* mutable_self =
     const_cast<qSlicerCoreApplication*>(this);
   qSlicerCoreApplicationPrivate* mutable_d =
     const_cast<qSlicerCoreApplicationPrivate*>(d);
   // If required, instantiate Settings
   if(!mutable_d->DefaultSettings)
-    {
+  {
     mutable_d->DefaultSettings =
         new QSettings(this->slicerDefaultSettingsFilePath(), QSettings::IniFormat, mutable_self);
-    }
+  }
   return mutable_d->DefaultSettings;
 }
 
@@ -1295,10 +1295,10 @@ QSettings* qSlicerCoreApplication::userSettings()const
     const_cast<qSlicerCoreApplicationPrivate*>(d);
   // If required, instantiate Settings
   if(!mutable_d->UserSettings)
-    {
+  {
     mutable_d->UserSettings = mutable_d->instantiateSettings(
           this->coreCommandOptions()->settingsDisabled());
-    }
+  }
   return mutable_d->UserSettings;
 }
 
@@ -1316,11 +1316,11 @@ QSettings* qSlicerCoreApplication::revisionUserSettings()const
     const_cast<qSlicerCoreApplicationPrivate*>(d);
   // If required, instantiate Settings
   if(!mutable_d->RevisionUserSettings)
-    {
+  {
     mutable_d->RevisionUserSettings =
         new QSettings(this->slicerRevisionUserSettingsFilePath(),
                       QSettings::IniFormat, const_cast<qSlicerCoreApplication*>(this));
-    }
+  }
   return mutable_d->RevisionUserSettings;
 }
 
@@ -1352,7 +1352,7 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 
   // Set the default scene save directory
   if (newMRMLScene)
-    {
+  {
     newMRMLScene->SetRootDirectory(this->defaultScenePath().toUtf8());
 
 #ifdef Slicer_BUILD_CLI_SUPPORT
@@ -1366,13 +1366,13 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
     vtkNew<vtkMRMLCrosshairNode> crosshair;
     crosshair->SetCrosshairName(/*no tr*/"default");
     newMRMLScene->AddNode(crosshair.GetPointer());
-    }
+  }
 
   if (d->AppLogic.GetPointer())
-    {
+  {
     d->AppLogic->SetMRMLScene(newMRMLScene);
     d->AppLogic->SetMRMLSceneDataIO(newMRMLScene, d->MRMLRemoteIOLogic.GetPointer(), d->DataIOManagerLogic.GetPointer());
-    }
+  }
 
   d->MRMLScene = newMRMLScene;
 
@@ -1407,9 +1407,9 @@ QString qSlicerCoreApplication::defaultScenePath() const
 void qSlicerCoreApplication::setDefaultScenePath(const QString& path)
 {
   if (this->defaultScenePath() == path)
-    {
+  {
     return;
-    }
+  }
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
   appSettings->setValue("DefaultScenePath", this->toSlicerHomeRelativePath(path));
@@ -1498,10 +1498,10 @@ void qSlicerCoreApplication::setCachePath(const QString& path)
   Q_ASSERT(appSettings);
   appSettings->setValue("Cache/Path", this->toSlicerHomeRelativePath(path));
   if (!d->MRMLRemoteIOLogic)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: invalid MRMLRemoteIOLogic";
     return;
-    }
+  }
   d->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(this->cachePath().toUtf8());
 }
 
@@ -1510,9 +1510,9 @@ QString qSlicerCoreApplication::launcherExecutableFilePath()const
 {
   Q_D(const qSlicerCoreApplication);
   if (!d->isUsingLauncher())
-    {
+  {
     return QString();
-    }
+  }
   QString appName = this->applicationName().replace("-tmp", "");
   return this->slicerHome() + "/" + appName + qSlicerUtils::executableExtension();
 }
@@ -1522,30 +1522,30 @@ QString qSlicerCoreApplication::launcherSettingsFilePath()const
 {
   QString appName = this->applicationName().replace("-tmp", "");
   if (this->isInstalled())
-    {
+  {
     return this->slicerHome() + "/" Slicer_BIN_DIR "/" + appName + "LauncherSettings.ini";
-    }
+  }
   else
-    {
+  {
     return this->slicerHome() + "/" + appName + "LauncherSettings.ini";
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::launcherRevisionSpecificUserSettingsFilePath()const
 {
   if (this->isInstalled())
-    {
+  {
 #ifdef Q_OS_MAC
     return QString();
 #else
     return this->slicerRevisionUserSettingsFilePath();
 #endif
-    }
+  }
   else
-    {
+  {
     return this->slicerRevisionUserSettingsFilePath();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1576,19 +1576,19 @@ QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath()const
   QString suffix = "-" + this->revision();
   bool useTmp = this->coreCommandOptions()->settingsDisabled();
   if (useTmp)
-    {
+  {
     suffix += "-tmp";
     useTmp = true;
-    }
+  }
   QString fileName =
       QDir(filePath).filePath(QString("%1%2%3.ini")
                                      .arg(prefix)
                                      .arg(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME)
                                      .arg(suffix));
   if (useTmp && !this->coreCommandOptions()->keepTemporarySettings())
-    {
+  {
     QSettings(fileName, QSettings::IniFormat).clear();
-    }
+  }
   return fileName;
 }
 
@@ -1623,9 +1623,9 @@ QString qSlicerCoreApplication::extensionsInstallPath() const
 void qSlicerCoreApplication::setExtensionsInstallPath(const QString& path)
 {
   if (this->extensionsInstallPath() == path)
-    {
+  {
     return;
-    }
+  }
   this->revisionUserSettings()->setValue("Extensions/InstallPath",
     qSlicerCoreApplication::application()->toSlicerHomeRelativePath(path));
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
@@ -1920,13 +1920,13 @@ void qSlicerCoreApplication::restart()
   arguments.prepend("--disable-terminal-outputs");
 #endif
   if (launcherAvailable)
-    {
+  {
     QProcess::startDetached(coreApp->launcherExecutableFilePath(), arguments);
-    }
+  }
   else
-    {
+  {
     QProcess::startDetached(coreApp->applicationFilePath(), arguments);
-    }
+  }
   QCoreApplication::quit();
 }
 
@@ -1940,9 +1940,9 @@ void qSlicerCoreApplication::onUserInformationModified()
 {
   vtkPersonInformation* userInfo = this->applicationLogic()->GetUserInformation();
   if (!userInfo)
-    {
+  {
     return;
-    }
+  }
   this->userSettings()->setValue("UserInformation", userInfo->GetAsString().c_str());
 }
 
@@ -1981,9 +1981,9 @@ void qSlicerCoreApplication
   QTimer* timer = qobject_cast<QTimer*>(this->sender());
   Q_ASSERT(timer);
   if (!timer)
-    {
+  {
     return;
-    }
+  }
   QVariant callerVariant = timer->property("caller");
   QVariant eventIDVariant = timer->property("eventID");
   QVariant callDataVariant = timer->property("callData");
@@ -1992,9 +1992,9 @@ void qSlicerCoreApplication
   unsigned long eventID = eventIDVariant.toULongLong();
   void* callData = callDataVariant.value<void*>();
   if (caller)
-    {
+  {
     caller->InvokeEvent(eventID, callData);
-    }
+  }
   timer->deleteLater();
 }
 
@@ -2008,7 +2008,7 @@ void qSlicerCoreApplication
   Q_UNUSED(d);
   int delayInMs = *reinterpret_cast<int *>(delay);
   switch(event)
-    {
+  {
     case vtkSlicerApplicationLogic::RequestModifiedEvent:
       QTimer::singleShot(delayInMs,
                          this, SLOT(processAppLogicModified()));
@@ -2023,7 +2023,7 @@ void qSlicerCoreApplication
       break;
     default:
       break;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -2066,9 +2066,9 @@ void qSlicerCoreApplication::onAboutToQuit()
 #ifdef Slicer_USE_PYTHONQT
   // Override return code only if testing mode is enabled
   if (this->corePythonManager()->pythonErrorOccured() && this->testAttribute(AA_EnableTesting))
-    {
+  {
     d->ReturnCode = qSlicerCoreApplication::ExitFailure;
-    }
+  }
   // Ensure that all events have been processed. This ensures that any pending
   // messages logged from Python scripts are properly reported and written to
   // log files before the application exits.
@@ -2086,17 +2086,17 @@ void qSlicerCoreApplication::loadTranslations(const QString& dir)
   QStringList qmFiles = qSlicerCoreApplicationPrivate::findTranslationFiles(dir, app->applicationLocaleName());
 
   foreach(QString qmFile, qmFiles)
-    {
+  {
     QTranslator* translator = new QTranslator();
     QString qmFilePath = QString(dir + QString("/") + qmFile);
 
     if(!translator->load(qmFilePath))
-      {
+    {
       qDebug() << "The File " << qmFile << " hasn't been loaded in the translator";
       return;
-      }
-    app->installTranslator(translator);
     }
+    app->installTranslator(translator);
+  }
 #else
   Q_UNUSED(dir)
 #endif
@@ -2108,18 +2108,18 @@ QStringList qSlicerCoreApplication::translationFolders()
 #ifdef Slicer_BUILD_I18N_SUPPORT
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)
-    {
+  {
     return QStringList();
-    }
+  }
 
   QStringList qmDirs;
   qmDirs << qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(QString(Slicer_QM_DIR));
 
   // we check if the application is installed or not.
   if (!app->isInstalled())
-    {
+  {
     qmDirs << QString(Slicer_QM_OUTPUT_DIRS).split(";");
-    }
+  }
 
   return qmDirs;
 #else
@@ -2133,14 +2133,14 @@ void qSlicerCoreApplication::loadLanguage()
 #ifdef Slicer_BUILD_I18N_SUPPORT
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)
-    {
+  {
     return;
-    }
+  }
   QStringList qmDirs = qSlicerCoreApplication::translationFolders();
   foreach(QString qmDir, qmDirs)
-    {
+  {
     app->loadTranslations(qmDir);
-    }
+  }
 #endif
 }
 
@@ -2149,11 +2149,11 @@ bool qSlicerCoreApplication::loadCaCertificates(const QString& caCertificatesPat
 {
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
   if (QSslSocket::supportsSsl())
-    {
+  {
     QSslConfiguration sslConfiguration = QSslConfiguration::defaultConfiguration();
     sslConfiguration.setCaCertificates(QSslCertificate::fromPath(caCertificatesPath));
     QSslConfiguration::setDefaultConfiguration(sslConfiguration);
-    }
+  }
   return !QSslConfiguration::defaultConfiguration().caCertificates().empty();
 #else
   Q_UNUSED(caCertificatesPath);
@@ -2179,10 +2179,10 @@ int qSlicerCoreApplication::registerResource(const QByteArray& data)
     reinterpret_cast<const uchar*>(d->LoadedResources[handle].constData());
 
   if (!QResource::registerResource(pdata))
-    {
+  {
     d->LoadedResources.remove(handle);
     return -1;
-    }
+  }
 
   return handle;
 }
@@ -2193,13 +2193,13 @@ bool qSlicerCoreApplication::unregisterResource(int handle)
   Q_D(qSlicerCoreApplication);
 
   if (d->LoadedResources.contains(handle))
-    {
+  {
     const uchar* pdata =
       reinterpret_cast<const uchar*>(d->LoadedResources[handle].constData());
     const bool result = QResource::unregisterResource(pdata);
     d->LoadedResources.remove(handle);
     return result;
-    }
+  }
 
   return false;
 }
@@ -2268,9 +2268,9 @@ QStringList qSlicerCoreApplication::toSlicerHomeAbsolutePaths(const QStringList&
   Q_D(const qSlicerCoreApplication);
   QStringList absolutePaths;
   foreach(QString path, paths)
-    {
+  {
     absolutePaths << this->toSlicerHomeAbsolutePath(path);
-    }
+  }
   return absolutePaths;
 }
 
@@ -2281,9 +2281,9 @@ QStringList qSlicerCoreApplication::toSlicerHomeRelativePaths(const QStringList&
   Q_D(const qSlicerCoreApplication);
   QStringList relativePaths;
   foreach(QString path, paths)
-    {
+  {
     relativePaths << this->toSlicerHomeRelativePath(path);
-    }
+  }
   return relativePaths;
 }
 
@@ -2293,9 +2293,9 @@ vtkMRMLAbstractLogic* qSlicerCoreApplication::moduleLogic(const QString& moduleN
   Q_D(const qSlicerCoreApplication);
   vtkSlicerApplicationLogic* applicationLogic = this->applicationLogic();
   if (!applicationLogic)
-    {
+  {
     return nullptr;
-    }
+  }
   return applicationLogic->GetModuleLogic(moduleName.toUtf8());
 }
 
@@ -2307,13 +2307,13 @@ QString qSlicerCoreApplication::documentationBaseUrl() const
   // Since currently there is only English language documentation on readthedocs, the default URL uses "en" language.
   QString url = appSettings->value("DocumentationBaseURL", "https://slicer.readthedocs.io/en/{version}").toString();
   if (url.contains("{version}"))
-    {
+  {
     url.replace("{version}", this->documentationVersion());
-    }
+  }
   if (url.contains("{language}"))
-    {
+  {
     url.replace("{language}", this->documentationLanguage());
-    }
+  }
   return url;
 }
 
@@ -2322,9 +2322,9 @@ QString qSlicerCoreApplication::documentationVersion() const
 {
   QString version = /*no tr*/"latest";
   if (this->releaseType() == /*no tr*/"Stable")
-    {
+  {
     version = QString("v%1.%2").arg(this->mainApplicationMajorVersion()).arg(this->mainApplicationMinorVersion());
-    }
+  }
   return version;
 }
 
@@ -2357,14 +2357,14 @@ QString qSlicerCoreApplication::moduleDocumentationUrl(const QString& moduleName
     "{documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html").toString();
 
   if (url.contains("{documentationbaseurl}"))
-    {
+  {
     url.replace("{documentationbaseurl}", this->documentationBaseUrl());
-    }
+  }
 
   if (url.contains("{lowercasemodulename}"))
-    {
+  {
     url.replace("{lowercasemodulename}", moduleName.toLower());
-    }
+  }
 
   return url;
 }
@@ -2374,7 +2374,7 @@ bool qSlicerCoreApplication::loadFiles(const QStringList& filePaths, vtkMRMLMess
 {
   bool success = true;
   foreach(QString filePath, filePaths)
-    {
+  {
     QFileInfo file(filePath);
     qSlicerCoreIOManager* ioManager = this->coreIOManager();
     qSlicerIO::IOFileType fileType = ioManager->fileType(filePath);
@@ -2384,10 +2384,10 @@ bool qSlicerCoreApplication::loadFiles(const QStringList& filePaths, vtkMRMLMess
     // relative to the current working directory)
     fileProperties.insert("fileName", file.absoluteFilePath());
     if (!ioManager->loadNodes(fileType, fileProperties, nullptr, userMessages))
-      {
+    {
       success = false;
-      }
     }
+  }
   return success;
 }
 

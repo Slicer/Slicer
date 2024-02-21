@@ -36,10 +36,10 @@ int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkMRMLShaderP
 int vtkMRMLShaderPropertyStorageNodeTest1(int argc, char * argv[])
 {
   if (argc != 2)
-    {
+  {
     std::cerr << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Test basic methods
   vtkNew<vtkMRMLShaderPropertyStorageNode> node1;

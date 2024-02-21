@@ -52,12 +52,12 @@
   vtkOStreamWrapper::EndlType endl;                          \
   vtkOStreamWrapper::UseEndl(endl);                          \
   if (messageCollection)                                     \
-    {                                                        \
+  {                                                          \
     vtkOStrStreamWrapper userMsgStream;                      \
     userMsgStream << userMsg;                                \
     messageCollection->AddMessage(vtkCommand::WarningEvent, userMsgStream.str()); \
     userMsgStream.rdbuf()->freeze(0);                        \
-    }                                                        \
+  }                                                          \
   vtkWarningWithObjectMacro(self, << devMsgPrefix << ": " << userMsg);   \
   }
 #endif
@@ -68,12 +68,12 @@
   vtkOStreamWrapper::EndlType endl;                          \
   vtkOStreamWrapper::UseEndl(endl);                          \
   if (messageCollection)                                     \
-    {                                                        \
+  {                                                          \
     vtkOStrStreamWrapper userMsgStream;                      \
     userMsgStream << userMsg;                                \
     messageCollection->AddMessage(vtkCommand::ErrorEvent, userMsgStream.str()); \
     userMsgStream.rdbuf()->freeze(0);                        \
-    }                                                        \
+  }                                                          \
   vtkErrorWithObjectMacro(self, << devMsgPrefix << ": " << userMsg);   \
   }
 #endif
@@ -144,12 +144,12 @@ protected:
   ///
   /// A helper class that describes a single message
   struct VTK_MRML_EXPORT Message
-    {
+  {
     Message(unsigned long messageType, const std::string &messageText);
 
     unsigned long MessageType;
     std::string MessageText;
-    };
+  };
 
   static void CallbackFunction(vtkObject*, long unsigned int,
     void* clientData, void* callData);

@@ -99,13 +99,13 @@ public:
   ~qMRMLSceneModel() override;
 
   enum NodeTypes
-    {
+  {
     NoNodes = 0,
     AllNodes,
     OnlyVisibleNodes
-    };
+  };
   enum ItemDataRole
-    {
+  {
     /// Unique ID of the item. For nodes, it is the node ID.
     UIDRole = Qt::UserRole + 1,
     /// Pointer (as long long) of the item if it is a scene or a node.
@@ -117,7 +117,7 @@ public:
     VisibilityRole,
     /// Must stay the last enum in the list.
     LastRole
-    };
+  };
 
   /// 0 by default
   Q_INVOKABLE virtual void setMRMLScene(vtkMRMLScene* scene);

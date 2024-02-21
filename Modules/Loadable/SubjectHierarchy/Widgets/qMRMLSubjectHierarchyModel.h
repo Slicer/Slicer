@@ -90,7 +90,7 @@ public:
   ~qMRMLSubjectHierarchyModel() override;
 
   enum ItemDataRole
-    {
+  {
     /// Unique ID of the item, typed vtkIdType
     SubjectHierarchyItemIDRole = Qt::UserRole + 1,
     /// Integer that contains the visibility property of an item.
@@ -100,7 +100,7 @@ public:
     TransformIDRole,
     /// Must stay the last enum in the list.
     LastRole
-    };
+  };
 
   int nameColumn()const;
   void setNameColumn(int column);

@@ -104,20 +104,20 @@ void qMRMLSequenceBrowserSeekWidget::setSelectedItemNumber(int itemNumber)
 {
   Q_D(qMRMLSequenceBrowserSeekWidget);
   if (d->SequenceBrowserNode == nullptr)
-    {
+  {
     qCritical("setSelectedItemNumber failed: browser node is invalid");
     this->updateWidgetFromMRML();
     return;
-    }
+  }
   int selectedItemNumber = -1;
   vtkMRMLSequenceNode* sequenceNode = d->SequenceBrowserNode->GetMasterSequenceNode();
   if (sequenceNode != nullptr && itemNumber >= 0)
-    {
+  {
     if (itemNumber < sequenceNode->GetNumberOfDataNodes())
-      {
+    {
       selectedItemNumber = itemNumber;
-      }
     }
+  }
   d->SequenceBrowserNode->SetSelectedItemNumber(selectedItemNumber);
 }
 
@@ -141,12 +141,12 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
   vtkMRMLSequenceNode* sequenceNode = d->SequenceBrowserNode.GetPointer() ? d->SequenceBrowserNode->GetMasterSequenceNode() : nullptr;
   this->setEnabled(sequenceNode != nullptr);
   if (!sequenceNode)
-    {
+  {
     d->label_IndexName->setText("");
     d->label_IndexUnit->setText("");
     d->label_IndexValue->setText("");
     return;
-    }
+  }
 
   d->label_IndexName->setText(sequenceNode->GetIndexName().c_str());
 
@@ -155,39 +155,39 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
   bool sliderBlockSignals = d->slider_IndexValue->blockSignals(true);
   int numberOfDataNodes = sequenceNode->GetNumberOfDataNodes();
   if (numberOfDataNodes > 0 && !d->SequenceBrowserNode->GetRecordingActive())
-    {
+  {
     d->slider_IndexValue->setEnabled(true);
     d->slider_IndexValue->setMinimum(0);
     d->slider_IndexValue->setMaximum(numberOfDataNodes - 1);
-    }
+  }
   else
-    {
+  {
     d->slider_IndexValue->setEnabled(false);
-    }
+  }
   d->slider_IndexValue->blockSignals(sliderBlockSignals);
 
   int selectedItemNumber = d->SequenceBrowserNode->GetSelectedItemNumber();
   if (selectedItemNumber >= 0 && selectedItemNumber < numberOfDataNodes)
-    {
+  {
     QString indexValue;
     QString indexUnit;
 
     if (d->SequenceBrowserNode->GetIndexDisplayMode() == vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue)
-      {
+    {
       // display as formatted index value (12.34sec)
       indexValue = QString::fromStdString(d->SequenceBrowserNode->GetFormattedIndexValue(selectedItemNumber));
       indexUnit = QString::fromStdString(sequenceNode->GetIndexUnit());
       if (indexValue.length() == 0)
-        {
-        qWarning() << Q_FUNC_INFO << "Item" << selectedItemNumber << "has no index value defined";
-        }
-      }
-    else
       {
+        qWarning() << Q_FUNC_INFO << "Item" << selectedItemNumber << "has no index value defined";
+      }
+    }
+    else
+    {
       // display index as item index number (23/37)
       indexValue = QString::number(selectedItemNumber + 1) + "/" + QString::number(sequenceNode->GetNumberOfDataNodes());
       indexUnit = "";
-      }
+    }
 
     QFontMetrics fontMetrics = QFontMetrics(d->label_IndexValue->font());
 
@@ -200,14 +200,14 @@ void qMRMLSequenceBrowserSeekWidget::updateWidgetFromMRML()
     d->label_IndexValue->setFixedWidth(std::max(fontMetrics.width(indexValue), d->label_IndexValue->width()));
 #endif
     d->slider_IndexValue->setValue(selectedItemNumber);
-    }
+  }
   else
-    {
+  {
     d->label_IndexValue->setFixedWidth(0);
     d->label_IndexValue->setText("");
     d->label_IndexUnit->setText("");
     d->slider_IndexValue->setValue(0);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

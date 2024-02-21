@@ -49,7 +49,7 @@ public:
     ExecMethod = 0,
     IsMimeDataAcceptedMethod,
     DropEventMethod,
-    };
+  };
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
@@ -102,27 +102,27 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
   Q_D(qSlicerScriptedFileDialog);
 
   if (!Py_IsInitialized())
-    {
+  {
     return false;
-    }
+  }
 
   if(!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
-    {
+  {
     return false;
-    }
+  }
 
   // Extract moduleName from the provided filename
   QString moduleName = QFileInfo(filePath).baseName();
 
   QString className = _className;
   if (className.isEmpty())
-    {
+  {
     className = moduleName;
     if (!moduleName.endsWith("FileDialog"))
-      {
+    {
       className.append("FileDialog");
-      }
     }
+  }
 
   d->PythonCppAPI.setObjectName(className);
   d->PythonClassName = className;
@@ -133,17 +133,17 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
   if (PyObject_HasAttrString(module, className.toUtf8()))
-    {
+  {
     classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
-    }
+  }
   else if (missingClassIsExpected)
-    {
+  {
     // Class is not defined for this object, but this is expected, not an error
     return false;
-    }
+  }
 
   if (!classToInstantiate)
-    {
+  {
     // HACK The file dialog class definition is expected to be available after executing the
     //      associated module class, trying to load the file a second time will (1) cause all the
     //      classes within the file to be associated with module corresponding to __name__
@@ -183,13 +183,13 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
     //        https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
     //
     return false;
-    }
+  }
 
   PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
-    {
+  {
     return false;
-    }
+  }
 
   d->PythonSourceFilePath = filePath;
 
@@ -210,16 +210,16 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   d->Properties = ioProperties;
   PyObject * result = d->PythonCppAPI.callMethod(d->ExecMethod);
   if (!result)
-    {
+  {
     return false;
-    }
+  }
   if (!PyBool_Check(result))
-    {
+  {
     qWarning() << d->PythonSourceFilePath
                << " - In" << d->PythonClassName << "class, function 'execDialog' "
                << "is expected to return a boolean";
     return false;
-    }
+  }
   return result == Py_True;
 }
 
@@ -231,9 +231,9 @@ bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData)con
   d->MimeDataAccepted = false;
   PyObject * result = d->PythonCppAPI.callMethod(d->IsMimeDataAcceptedMethod);
   if (!result)
-    {
+  {
     return false;
-    }
+  }
   return d->MimeDataAccepted;
 }
 

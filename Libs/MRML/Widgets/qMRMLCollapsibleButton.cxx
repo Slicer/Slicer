@@ -56,9 +56,9 @@ void qMRMLCollapsibleButton::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLCollapsibleButton);
   if (scene == d->MRMLScene)
-    {
+  {
     return;
-    }
+  }
   d->MRMLScene = scene;
 
   emit mrmlSceneChanged(scene);

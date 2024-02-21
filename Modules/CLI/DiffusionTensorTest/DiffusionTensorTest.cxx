@@ -35,48 +35,48 @@ int main( int argc, char * argv[] )
   DictionaryType::ConstIterator end = dictionary.End();
 
   while( itr != end )
-    {
+  {
     if( itr->first == "DWMRI_b-value" )
-      {
+    {
       std::string bValueString;
       itk::ExposeMetaData<std::string>(dictionary, itr->first, bValueString);
       std::cout << "DWMRI_b-value(string): " << bValueString << std::endl;
-      }
+    }
     else if( itr->first.find("DWMRI_gradient") != std::string::npos )
-      {
+    {
       std::string gradientValueString;
       itk::ExposeMetaData<std::string>(dictionary, itr->first, gradientValueString);
       std::cout << "DWMRI_gradient(string): " << gradientValueString << std::endl;
-      }
+    }
     else if( itr->first.find("NRRD_measurement frame") != std::string::npos )
-      {
+    {
       std::vector<std::vector<double> > measurementFrameValue(3);
       for( unsigned int i = 0; i < 3; i++ )
-        {
+      {
         measurementFrameValue[i].resize(3);
-        }
+      }
 
       itk::ExposeMetaData<std::vector<std::vector<double> > >(dictionary, itr->first, measurementFrameValue);
 
       std::cout << itr->first << ": " << std::endl;
       for( unsigned int i = 0; i < 3; i++ )
-        {
+      {
         for( unsigned int j = 0; j < 3; j++ )
-          {
+        {
           std::cout << measurementFrameValue[i][j] << " ";
-          }
-        std::cout << std::endl;
         }
+        std::cout << std::endl;
+      }
 
       std::cout << std::endl;
-      }
+    }
     else
-      {
+    {
       std::cout << itr->first << std::endl;
-      }
+    }
 
     ++itr;
-    }
+  }
 
   writer->SetFileName( outputVolume.c_str() );
 

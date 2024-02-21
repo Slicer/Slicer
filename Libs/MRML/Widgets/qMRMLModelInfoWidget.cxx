@@ -136,55 +136,55 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
   }
   vtkPointSet *mesh = d->MRMLModelNode ? d->MRMLModelNode->GetMesh() : nullptr;
   if (mesh)
-    {
+  {
     vtkPolyDataAlgorithm* filter;
     vtkPolyData* poly = vtkPolyData::SafeDownCast(mesh);
     if (poly)
-      {
+    {
       filter = d->TriangleFilter;
-      }
+    }
     else
-      {
+    {
       filter = d->GeometryFilter;
-      }
+    }
     d->MassProperties->SetInputConnection( filter->GetOutputPort() );
     filter->SetInputData(mesh);
     filter->Update();
     if (filter->GetOutput()->GetNumberOfCells() > 0)
-      {
+    {
       d->SurfaceAreaDoubleSpinBox->setValue(d->MassProperties->GetSurfaceArea());
       d->VolumeAreaDoubleSpinBox->setValue(d->MassProperties->GetVolume());
-      }
+    }
     else
-      {
+    {
       d->SurfaceAreaDoubleSpinBox->setValue(0);
       d->VolumeAreaDoubleSpinBox->setValue(0);
-      }
+    }
 
     d->NumberOfPointsSpinBox->setValue(mesh->GetNumberOfPoints());
     d->NumberOfCellsSpinBox->setValue(mesh->GetNumberOfCells());
     if (poly)
-      {
+    {
       d->MeshTypeLineEdit->setText("Surface Mesh (vtkPolyData)");
       d->NumberOfVertsValueLabel->setText(QString::number(poly->GetNumberOfVerts()));
       d->NumberOfLinesValueLabel->setText(QString::number(poly->GetNumberOfLines()));
       d->NumberOfPolysValueLabel->setText(QString::number(poly->GetNumberOfPolys()));
       d->NumberOfStripsValueLabel->setText(QString::number(poly->GetNumberOfStrips()));
-      }
+    }
     else
-      {
+    {
       d->MeshTypeLineEdit->setText("Volumetric Mesh (vtkUnstructuredGrid)");
       d->NumberOfVertsValueLabel->setText("0");
       d->NumberOfLinesValueLabel->setText("0");
       d->NumberOfPolysValueLabel->setText("0");
       d->NumberOfStripsValueLabel->setText("0");
-      }
+    }
     d->MaxCellSizeValueLabel->setText(QString::number(mesh->GetMaxCellSize()));
     d->NumberOfPointsScalarsSpinBox->setValue(mesh->GetPointData()->GetNumberOfComponents());
     d->NumberOfCellsScalarsSpinBox->setValue(mesh->GetCellData()->GetNumberOfComponents());
-    }
+  }
   else
-    {
+  {
     d->SurfaceAreaDoubleSpinBox->setValue(0.);
     d->VolumeAreaDoubleSpinBox->setValue(0.);
 
@@ -197,17 +197,17 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
     d->MaxCellSizeValueLabel->setText("0");
     d->NumberOfPointsScalarsSpinBox->setValue(0);
     d->NumberOfCellsScalarsSpinBox->setValue(0);
-    }
+  }
 
   vtkMRMLStorageNode *storageNode = d->MRMLModelNode ? d->MRMLModelNode->GetStorageNode() : nullptr;
   if (storageNode)
-    {
+  {
     d->FileNameLineEdit->setText(storageNode->GetFileName());
-    }
+  }
   else
-    {
+  {
     d->FileNameLineEdit->setText("");
-    }
+  }
   this->setEnabled(d->MRMLModelNode != nullptr);
 }
 

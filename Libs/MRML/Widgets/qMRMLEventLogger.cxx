@@ -58,9 +58,9 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
   Q_Q(qMRMLEventLogger);
 
   if (scene == this->MRMLScene)
-    {
+  {
     return;
-    }
+  }
 
   QString cid; // connectionId
 
@@ -145,7 +145,7 @@ void qMRMLEventLogger::setMRMLScene(vtkMRMLScene* scene)
 #define QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(_EVENT_NAME)   \
 bool qMRMLEventLogger::listening##_EVENT_NAME##Event()        \
 {                                                             \
-  Q_D(qMRMLEventLogger);                                   \
+  Q_D(qMRMLEventLogger);                                      \
   return d->EventToListen.contains(#_EVENT_NAME);             \
 }
 
@@ -173,21 +173,21 @@ QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneRestored);
 #define QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(_EVENT_NAME)            \
 void qMRMLEventLogger::listen##_EVENT_NAME##Event(bool listen)      \
 {                                                                   \
-  Q_D(qMRMLEventLogger);                                         \
+  Q_D(qMRMLEventLogger);                                            \
                                                                     \
   Q_ASSERT(!d->EventNameToConnectionIdMap.contains(#_EVENT_NAME));  \
   QString cid = d->EventNameToConnectionIdMap[#_EVENT_NAME];        \
                                                                     \
   if (listen && !d->EventToListen.contains(#_EVENT_NAME))           \
-    {                                                               \
+  {                                                                 \
     d->EventToListen << #_EVENT_NAME;                               \
     d->qvtkBlock(cid, false);                                       \
-    }                                                               \
+  }                                                                 \
   if (!listen)                                                      \
-    {                                                               \
+  {                                                                 \
     d->EventToListen.removeOne(#_EVENT_NAME);                       \
     d->qvtkBlock(cid, true);                                        \
-    }                                                               \
+  }                                                                 \
 }
 
 //------------------------------------------------------------------------------
@@ -212,9 +212,9 @@ void qMRMLEventLogger::onNodeAddedEvent(vtkObject* caller, vtkObject* call_data)
 {
   Q_D(qMRMLEventLogger);
   if (d->ConsoleOutputEnabled)
-    {
+  {
     std::cout << qPrintable(QString("onNodeAddedEvent: %1").arg(call_data->GetClassName())) << std::endl;
-    }
+  }
   emit this->signalNodeAddedEvent(caller, call_data);
 }
 
@@ -223,9 +223,9 @@ void qMRMLEventLogger::onNodeRemovedEvent(vtkObject* caller, vtkObject* call_dat
 {
   Q_D(qMRMLEventLogger);
   if (d->ConsoleOutputEnabled)
-    {
+  {
     std::cout << qPrintable(QString("onNodeRemovedEvent: %1").arg(call_data->GetClassName())) << std::endl;
-    }
+  }
   emit this->signalNodeRemovedEvent(caller, call_data);
 }
 
@@ -238,11 +238,11 @@ void qMRMLEventLogger::on##_EVENT_NAME##Event()             \
 {                                                           \
   Q_D(qMRMLEventLogger);                                    \
   if (d->ConsoleOutputEnabled)                              \
-    {                                                       \
+  {                                                         \
     std::cout << qPrintable(                                \
       QString("qMRMLEventLogger::on%1Event").               \
         arg(#_EVENT_NAME)) << std::endl;                    \
-    }                                                       \
+  }                                                         \
   emit signal##_EVENT_NAME##Event();                        \
 }
 

@@ -53,14 +53,14 @@ void CreateBSplineVtk2(vtkOrientedBSplineTransform* bsplineTransform,
   vtkNew<vtkMatrix4x4> bulkTransform;
   vtkNew<vtkMatrix4x4> gridOrientation;
   for (int row = 0; row < 3; row++)
-    {
+  {
     for (int col = 0; col < 3; col++)
-      {
+    {
       bulkTransform->SetElement(row, col, bulkMatrix[row][col]);
       gridOrientation->SetElement(row, col, direction[row][col]);
-      }
-    bulkTransform->SetElement(row, 3, bulkOffset[row]);
     }
+    bulkTransform->SetElement(row, 3, bulkOffset[row]);
+  }
 
   bsplineTransform->SetGridDirectionMatrix(gridOrientation.GetPointer());
   bsplineTransform->SetCoefficientData(bsplineCoefficients.GetPointer());
@@ -89,7 +89,7 @@ int TestMarkupOrientation(std::vector<PointOrientation> originalOrientations, vt
   markupsNode->RemoveAllControlPoints();
 
   for (auto pointOrientation : originalOrientations)
-    {
+  {
     int index = markupsNode->AddControlPoint(pointOrientation.Position);
     double* matrix = pointOrientation.Orientation->GetData();
     markupsNode->SetNthControlPointOrientationMatrix(index, matrix);
@@ -99,9 +99,9 @@ int TestMarkupOrientation(std::vector<PointOrientation> originalOrientations, vt
     vtkNew<vtkMatrix3x3> currentControlPointOrientation;
     markupsNode->GetNthControlPointOrientationMatrix(index, currentControlPointOrientation);
     for (int i = 0; i < 9; ++i)
-      {
+    {
       CHECK_DOUBLE_TOLERANCE(currentControlPointOrientation->GetData()[i], pointOrientation.Orientation->GetData()[i], TOLERANCE);
-      }
+    }
 
     // ------------------
     // Check that the matrix orientation in world coordinates matches the expected values
@@ -136,13 +136,13 @@ int TestMarkupOrientation(std::vector<PointOrientation> originalOrientations, vt
     std::copy_n(zAxisActual_World, 3, normalActual_World);
 
     for (int i = 0; i < 3; ++i)
-      {
+    {
       CHECK_DOUBLE_TOLERANCE(controlPointOrientation_World->GetElement(i, 0), xAxisActual_World[i], TOLERANCE);
       CHECK_DOUBLE_TOLERANCE(controlPointOrientation_World->GetElement(i, 1), yAxisActual_World[i], TOLERANCE);
       CHECK_DOUBLE_TOLERANCE(controlPointOrientation_World->GetElement(i, 2), zAxisActual_World[i], TOLERANCE);
       CHECK_DOUBLE_TOLERANCE(normal_World[i], normalActual_World[i], TOLERANCE);
-      }
     }
+  }
 
   return EXIT_SUCCESS;
 }

@@ -52,17 +52,17 @@ qSlicerRelativePathMapper::qSlicerRelativePathMapper(
   Q_D(qSlicerRelativePathMapper);
   d->PropertyName = property;
   if (!signal.isEmpty())
-    {
+  {
     if (QString(this->targetObject()->property(this->propertyName()).typeName()).compare("QStringList") == 0)
-      {
+    {
       // Property is a QStringList
       connect(targetObject, signal, this, SLOT(emitPathsChanged()));
-      }
-    else
-      {
-      connect(targetObject, signal, this, SLOT(emitPathChanged()));
-      }
     }
+    else
+    {
+      connect(targetObject, signal, this, SLOT(emitPathChanged()));
+    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -116,9 +116,9 @@ void qSlicerRelativePathMapper::setPath(const QString& newPath)
 {
   Q_D(qSlicerRelativePathMapper);
   if (this->path() == newPath)
-    {
+  {
     return;
-    }
+  }
   this->targetObject()->setProperty(this->propertyName(), QVariant(newPath));
   this->emitPathChanged();
 }
@@ -128,9 +128,9 @@ void qSlicerRelativePathMapper::setPaths(const QStringList& newPaths)
 {
   Q_D(qSlicerRelativePathMapper);
   if (this->paths() == newPaths)
-    {
+  {
     return;
-    }
+  }
   this->targetObject()->setProperty(this->propertyName(), QVariant(newPaths));
   this->emitPathsChanged();
 }

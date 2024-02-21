@@ -349,16 +349,16 @@ void qSlicerViewersToolBarPrivate::setCrosshairJumpSlicesMode(int jumpSlicesMode
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
   if (!nodes.GetPointer())
-    {
+  {
     return;
-    }
+  }
   vtkMRMLCrosshairNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
-    {
+  {
     node->SetCrosshairBehavior(jumpSlicesMode);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -369,23 +369,23 @@ void qSlicerViewersToolBarPrivate::setCrosshairEnabled(bool enabled)
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
   if (!nodes.GetPointer())
-    {
+  {
     return;
-    }
+  }
   vtkMRMLCrosshairNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
-    {
+  {
     if (enabled)
-      {
+    {
       node->SetCrosshairMode(this->CrosshairLastMode);
-      }
-    else
-      {
-      node->SetCrosshairMode(vtkMRMLCrosshairNode::NoCrosshair);
-      }
     }
+    else
+    {
+      node->SetCrosshairMode(vtkMRMLCrosshairNode::NoCrosshair);
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -396,22 +396,22 @@ void qSlicerViewersToolBarPrivate::setCrosshairMode(int mode)
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
   if (!nodes.GetPointer())
-    {
+  {
     return;
-    }
+  }
   vtkMRMLCrosshairNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
-    {
+  {
     // cache before carry
     if (mode != vtkMRMLCrosshairNode::NoCrosshair)
-      {
+    {
       this->CrosshairLastMode = mode;
-      }
+    }
 
       node->SetCrosshairMode(mode);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -420,26 +420,26 @@ void qSlicerViewersToolBarPrivate::setCrosshairThickness(int thickness)
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
   if (!nodes.GetPointer())
-    {
+  {
     return;
-    }
+  }
   vtkMRMLCrosshairNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
-    {
+  {
     node->SetCrosshairThickness(thickness);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 void qSlicerViewersToolBarPrivate::setIntersectingSlicesLineThicknessMode(int mode)
 {
   if (!this->MRMLAppLogic)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: application logic is invalid";
     return;
-    }
+  }
   this->MRMLAppLogic->SetIntersectingSlicesLineThicknessMode(mode);
 }
 
@@ -447,10 +447,10 @@ void qSlicerViewersToolBarPrivate::setIntersectingSlicesLineThicknessMode(int mo
 void qSlicerViewersToolBarPrivate::setIntersectingSlicesIntersectionMode(int mode)
 {
   if (!this->MRMLAppLogic)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: application logic is invalid";
     return;
-    }
+  }
   this->MRMLAppLogic->SetIntersectingSlicesIntersectionMode(mode);
 }
 
@@ -458,10 +458,10 @@ void qSlicerViewersToolBarPrivate::setIntersectingSlicesIntersectionMode(int mod
 void qSlicerViewersToolBarPrivate::setIntersectingSlicesVisibility(bool visible)
 {
   if (!this->MRMLAppLogic)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: application logic is invalid";
     return;
-    }
+  }
   this->MRMLAppLogic->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesVisibility, visible);
 }
 
@@ -469,10 +469,10 @@ void qSlicerViewersToolBarPrivate::setIntersectingSlicesVisibility(bool visible)
 void qSlicerViewersToolBarPrivate::setIntersectingSlicesInteractive(bool visible)
 {
   if (!this->MRMLAppLogic)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: application logic is invalid";
     return;
-    }
+  }
   this->MRMLAppLogic->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesInteractive, visible);
 }
 
@@ -480,10 +480,10 @@ void qSlicerViewersToolBarPrivate::setIntersectingSlicesInteractive(bool visible
 void qSlicerViewersToolBarPrivate::setIntersectingSlicesRotationEnabled(bool visible)
 {
   if (!this->MRMLAppLogic)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: application logic is invalid";
     return;
-    }
+  }
   this->MRMLAppLogic->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesRotation, visible);
 }
 
@@ -491,10 +491,10 @@ void qSlicerViewersToolBarPrivate::setIntersectingSlicesRotationEnabled(bool vis
 void qSlicerViewersToolBarPrivate::setIntersectingSlicesTranslationEnabled(bool visible)
 {
   if (!this->MRMLAppLogic)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: application logic is invalid";
     return;
-    }
+  }
   this->MRMLAppLogic->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesTranslation, visible);
 }
 
@@ -504,9 +504,9 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   Q_Q(qSlicerViewersToolBar);
 
   if (newScene == this->MRMLScene)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::StartCloseEvent,
                       this, SLOT(OnMRMLSceneStartClose()));
@@ -520,7 +520,7 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   this->MRMLScene = newScene;
 
   if (this->MRMLScene)
-    {
+  {
     // Watch the crosshairs
     vtkMRMLNode *node;
     vtkCollectionSimpleIterator it;
@@ -528,22 +528,22 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
     crosshairs.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
     for (crosshairs->InitTraversal(it);
          (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
-      {
+    {
       vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
       if (crosshairNode)
-        {
+      {
         this->qvtkReconnect(crosshairNode, vtkCommand::ModifiedEvent,
                           this, SLOT(onCrosshairNodeModeChangedEvent()));
-        }
       }
     }
+  }
 
   // Update UI
   q->setEnabled(this->MRMLScene != nullptr);
   if (this->MRMLScene)
-    {
+  {
     this->updateWidgetFromMRML();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -560,65 +560,65 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
   crosshairs.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
   for (crosshairs->InitTraversal(it);
        (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
-    {
+  {
     crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
     if (crosshairNode  && crosshairNode->GetCrosshairName() == std::string("default"))
-      {
-      break;
-      }
-    }
-  if (crosshairNode)
     {
+      break;
+    }
+  }
+  if (crosshairNode)
+  {
     // toggle on/off, jump slices, style of crosshair
     //
 
     // jump slices
     if (this->CrosshairJumpSlicesMapper->mapping(crosshairNode->GetCrosshairBehavior()) != nullptr)
-      {
+    {
       QAction* action = (QAction *)(this->CrosshairJumpSlicesMapper->mapping(crosshairNode->GetCrosshairBehavior()));
       if (action)
-        {
+      {
         action->setChecked(true);
-        }
       }
+    }
 
     // style of crosshair
     if (this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()) != nullptr)
-      {
+    {
       QAction* action = (QAction *)(this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()));
       if (action)
-        {
+      {
         action->setChecked(true);
-        }
       }
+    }
 
     // thickness
     if (this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()) != nullptr)
-      {
+    {
       QAction* action = (QAction *)(this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()));
       if (action)
-        {
+      {
         action->setChecked(true);
-        }
       }
+    }
 
     // cache the mode
     if (crosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair)
-      {
+    {
       this->CrosshairLastMode = crosshairNode->GetCrosshairMode();
-      }
+    }
 
     // on/off
     // Checking the crosshair button may trigger a crosshair enable/disable action
     // therefore this toggle action should be the last.
     if (this->CrosshairToolButton)
-      {
+    {
       this->CrosshairToggleAction->setChecked( crosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair );
-      }
     }
+  }
 
   if (this->MRMLAppLogic)
-    {
+  {
     // Slicer intersection visibility
     this->IntersectingSlicesVisibleAction->setChecked(
       this->MRMLAppLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesVisibility));
@@ -636,7 +636,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
       this->MRMLAppLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesTranslation));
     this->IntersectingSlicesRotationEnabledAction->setChecked(
       this->MRMLAppLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesRotation));
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -664,9 +664,9 @@ void qSlicerViewersToolBarPrivate::OnMRMLSceneEndClose()
   Q_Q(qSlicerViewersToolBar);
   Q_ASSERT(this->MRMLScene);
   if (!this->MRMLScene || this->MRMLScene->IsBatchProcessing())
-    {
+  {
     return;
-    }
+  }
   // re-enable it and update
   q->setEnabled(true);
   this->updateWidgetFromMRML();

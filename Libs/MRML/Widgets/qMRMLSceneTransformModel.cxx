@@ -34,9 +34,9 @@ vtkMRMLNode* qMRMLSceneTransformModel::parentNode(vtkMRMLNode* node)const
   vtkMRMLTransformableNode* transformableNode =
     vtkMRMLTransformableNode::SafeDownCast(node);
   if (transformableNode)
-    {
+  {
     return transformableNode->GetParentTransformNode();
-    }
+  }
   return nullptr;
 }
 
@@ -90,9 +90,9 @@ bool qMRMLSceneTransformModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
 {
   Q_ASSERT(node);
   if (!node || qMRMLSceneTransformModel::parentNode(node) == newParent)
-    {
+  {
     return false;
-    }
+  }
   Q_ASSERT(newParent != node);
   // MRML Transformable Nodes
   vtkMRMLTransformableNode* transformableNode =
@@ -100,14 +100,14 @@ bool qMRMLSceneTransformModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
   vtkMRMLTransformNode* transformNode =
     vtkMRMLTransformNode::SafeDownCast(newParent);
   if (transformableNode)
-    {
+  {
     if (transformNode && !transformNode->IsTransformToWorldLinear() && !transformableNode->CanApplyNonLinearTransforms())
-      {
+    {
       return false;
-      }
+    }
     transformableNode->SetAndObserveTransformNodeID( newParent ? newParent->GetID() : nullptr );
     return true;
-    }
+  }
   return false;
 }
 

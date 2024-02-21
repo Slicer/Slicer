@@ -104,16 +104,16 @@ bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
   if (d->VolumeRenderingLogic.GetPointer() == nullptr)
-    {
+  {
     return false;
-    }
+  }
   vtkMRMLVolumePropertyNode* node =
     d->VolumeRenderingLogic->AddVolumePropertyFromFile(fileName.toUtf8());
   QStringList loadedNodes;
   if (node)
-    {
+  {
     loadedNodes << QString(node->GetID());
-    }
+  }
   this->setLoadedNodes(loadedNodes);
   return node != nullptr;
 }

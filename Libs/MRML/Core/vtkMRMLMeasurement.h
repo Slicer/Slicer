@@ -65,12 +65,12 @@ public:
   /// \sa LastComputationResult, GetLastComputationResult(),
   /// GetLastComputationResultAsString()
   enum ComputationResult
-    {
+  {
     NoChange=0, ///< can be used to indicate to keep the current value
     OK, ///< success
     InsufficientInput,
     InternalError
-    };
+  };
 
   enum Events
   {

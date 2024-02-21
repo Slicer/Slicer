@@ -38,12 +38,12 @@ vtkOrientedImageData::vtkOrientedImageData()
 {
   int i=0,j=0;
   for(i=0; i<3; i++)
-    {
+  {
     for(j=0; j<3; j++)
-      {
+    {
       this->Directions[i][j] = (i == j) ? 1.0 : 0.0;
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -56,12 +56,12 @@ void vtkOrientedImageData::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Directions:\n";
   for (int i = 0; i < 3; i++)
-    {
+  {
     os << indent.GetNextIndent()
       << this->Directions[i][0] << " "
       << this->Directions[i][1] << " "
       << this->Directions[i][2] << "\n";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -89,13 +89,13 @@ void vtkOrientedImageData::CopyDirections(vtkDataObject *dataObject)
 {
   vtkOrientedImageData *orientedImageData = vtkOrientedImageData::SafeDownCast(dataObject);
   if (orientedImageData != nullptr)
-    {
+  {
     double dirs[3][3] = {{0.0, 0.0, 0.0},
                          {0.0, 0.0, 0.0},
                          {0.0, 0.0, 0.0}};
     orientedImageData->GetDirections(dirs);
     this->SetDirections(dirs);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -103,20 +103,20 @@ void vtkOrientedImageData::SetDirections(double dirs[3][3])
 {
   bool isModified = false;
   for (int i=0; i<3; i++)
-    {
+  {
     for (int j=0; j<3; j++)
-      {
+    {
       if (!vtkMathUtilities::FuzzyCompare<double>(this->Directions[i][j], dirs[i][j]))
-        {
+      {
         this->Directions[i][j] = dirs[i][j];
         isModified = true;
-        }
       }
     }
+  }
   if (isModified)
-    {
+  {
     this->Modified();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -134,26 +134,26 @@ void vtkOrientedImageData::SetDirections(double ir, double jr, double kr,
 void vtkOrientedImageData::GetDirections(double dirs[3][3])
 {
   for (int i=0; i<3; i++)
-    {
+  {
     for (int j=0; j<3; j++)
-      {
+    {
       dirs[i][j] = this->Directions[i][j];
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
 double vtkOrientedImageData::GetMinSpacing()
 {
   if (this->GetSpacing() == nullptr)
-    {
+  {
     return 0;
-    }
+  }
   double minSpace = this->GetSpacing()[0];
   for(int i = 1; i < 3; ++i)
-    {
+  {
     minSpace = std::min(this->GetSpacing()[i], minSpace);
-    }
+  }
   return minSpace;
 }
 
@@ -161,14 +161,14 @@ double vtkOrientedImageData::GetMinSpacing()
 double vtkOrientedImageData::GetMaxSpacing()
 {
   if (this->GetSpacing() == nullptr)
-    {
+  {
     return 0;
-    }
+  }
   double maxSpace = this->GetSpacing()[0];
   for(int i = 1; i < 3; ++i)
-    {
+  {
     maxSpace = std::max(this->GetSpacing()[i], maxSpace);
-    }
+  }
   return maxSpace;
 }
 
@@ -176,9 +176,9 @@ double vtkOrientedImageData::GetMaxSpacing()
 void vtkOrientedImageData::SetImageToWorldMatrix(vtkMatrix4x4* argMat)
 {
   if (argMat == nullptr)
-    {
+  {
     return;
-    }
+  }
   vtkNew<vtkMatrix4x4> mat;
   mat->DeepCopy(argMat);
   bool isModified = false;
@@ -186,52 +186,52 @@ void vtkOrientedImageData::SetImageToWorldMatrix(vtkMatrix4x4* argMat)
   // normalize direction vectors
   int col=0;
   for (col=0; col<3; col++)
-    {
+  {
     double len=0.0;
     int row=0;
     for (row=0; row<3; row++)
-      {
+    {
       len += mat->GetElement(row, col) * mat->GetElement(row, col);
-      }
+    }
     len = sqrt(len);
 
     // Set spacing
     if (!vtkMathUtilities::FuzzyCompare<double>(this->Spacing[col], len))
-      {
+    {
       this->Spacing[col] = len;
       isModified = true;
-      }
-
-    for (row=0; row<3; row++)
-      {
-      mat->SetElement(row, col,  mat->GetElement(row, col)/len);
-      }
     }
 
-  for (int row=0; row<3; row++)
+    for (row=0; row<3; row++)
     {
+      mat->SetElement(row, col,  mat->GetElement(row, col)/len);
+    }
+  }
+
+  for (int row=0; row<3; row++)
+  {
     for (int col=0; col<3; col++)
-      {
+    {
       if (!vtkMathUtilities::FuzzyCompare<double>(this->Directions[row][col], mat->GetElement(row, col)))
-        {
+      {
         this->Directions[row][col] = mat->GetElement(row, col);
         isModified = true;
-        }
       }
+    }
 
       // Set origin
       if (!vtkMathUtilities::FuzzyCompare<double>(this->Origin[row], mat->GetElement(row, 3)))
-        {
+      {
         this->Origin[row] = mat->GetElement(row, 3);
         isModified = true;
-        }
-    }
+      }
+  }
 
   // Only one Modified event
   if (isModified)
-    {
+  {
     this->Modified();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -244,21 +244,21 @@ void vtkOrientedImageData::SetGeometryFromImageToWorldMatrix(vtkMatrix4x4* argMa
 void vtkOrientedImageData::GetImageToWorldMatrix(vtkMatrix4x4* mat)
 {
   if (mat == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   // this is the full matrix including the spacing and origin
   mat->Identity();
   int row=0,col=0;
   for (row=0; row<3; row++)
-    {
+  {
     for (col=0; col<3; col++)
-      {
+    {
       mat->SetElement(row, col, this->Spacing[col] * Directions[row][col]);
-      }
-    mat->SetElement(row, 3, this->Origin[row]);
     }
+    mat->SetElement(row, 3, this->Origin[row]);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -275,12 +275,12 @@ void vtkOrientedImageData::SetDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMat
                        {0.0, 0.0, 0.0},
                        {0.0, 0.0, 0.0}};
   for (int i=0; i<3; i++)
-    {
+  {
     for (int j=0; j<3; j++)
-      {
+    {
       dirs[i][j] = ijkToRASDirectionMatrix->Element[i][j];
-      }
     }
+  }
   this->SetDirections(dirs);
 }
 
@@ -292,12 +292,12 @@ void vtkOrientedImageData::GetDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMat
                        {0.0, 0.0, 0.0}};
   this->GetDirections(dirs);
   for (int i=0; i<3; i++)
-    {
+  {
     for (int j=0; j<3; j++)
-      {
+    {
       ijkToRASDirectionMatrix->Element[i][j] = dirs[i][j];
-      }
     }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -306,20 +306,20 @@ void vtkOrientedImageData::GetDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMat
 void vtkOrientedImageData::ComputeBounds()
 {
   if ( this->GetMTime() <= this->ComputeTime )
-    {
+  {
     return;
-    }
+  }
 
   // Sanity check
   const int* extent = this->Extent;
   if ( extent[0] > extent[1] ||
        extent[2] > extent[3] ||
        extent[4] > extent[5] )
-    {
+  {
     // Image is empty, indicated by uninitialized bounds
     vtkMath::UninitializeBounds(this->Bounds);
     return;
-    }
+  }
 
   // Compute oriented image corners
   vtkNew<vtkMatrix4x4> geometryMatrix;
@@ -327,11 +327,11 @@ void vtkOrientedImageData::ComputeBounds()
 
   vtkBoundingBox boundingBox;
   for (int xSide=0; xSide<2; ++xSide)
-    {
+  {
     for (int ySide=0; ySide<2; ++ySide)
-      {
+    {
       for (int zSide=0; zSide<2; ++zSide)
-        {
+      {
         // Get corner point. Loop variables are either 0 or 1, so coordinate is
         // either low or high extent bound along that axis
         double cornerPointIJK[4] = {
@@ -351,9 +351,9 @@ void vtkOrientedImageData::ComputeBounds()
 
         // Determine bounds based on current corner point
         boundingBox.AddPoint(cornerPointWorld);
-        }
       }
     }
+  }
 
   boundingBox.GetBounds(this->Bounds);
   this->ComputeTime.Modified();
@@ -364,9 +364,9 @@ bool vtkOrientedImageData::IsEmpty()
 {
   // Empty if extent is uninitialized or otherwise invalid
   if (this->Extent[0] > this->Extent[1] || this->Extent[2] > this->Extent[3] || this->Extent[4] > this->Extent[5])
-    {
+  {
     // empty
     return true;
-    }
+  }
   return false;
 }

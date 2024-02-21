@@ -88,9 +88,9 @@ vtkSlicerTablesLogic* qSlicerTablesModuleWidgetPrivate::logic()const
 vtkTable* qSlicerTablesModuleWidgetPrivate::table()const
 {
   if (this->MRMLTableNode.GetPointer()==nullptr)
-    {
+  {
     return nullptr;
-    }
+  }
   return this->MRMLTableNode->GetTable();
 }
 
@@ -197,34 +197,34 @@ void qSlicerTablesModuleWidget::onMRMLTableNodeModified(vtkObject* caller)
   d->EditControlsFrame->setEnabled(editableNode);
 
   if (!d->MRMLTableNode)
-    {
+  {
     return;
-    }
+  }
 
   if (d->MRMLTableNode->GetLocked())
-    {
+  {
     d->LockTableButton->setIcon(QIcon(":Icons/Medium/SlicerLock.png"));
     d->LockTableButton->setToolTip(tr("Click to unlock this table so that values can be modified"));
-    }
+  }
   else
-    {
+  {
     d->LockTableButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
     d->LockTableButton->setToolTip(tr("Click to lock this table to prevent modification of the values in the user interface"));
-    }
+  }
 
   if (d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() != d->LockFirstRowButton->isChecked())
-    {
+  {
     bool wasBlocked = d->LockFirstRowButton->blockSignals(true);
     d->LockFirstRowButton->setChecked(d->MRMLTableNode->GetUseColumnTitleAsColumnHeader());
     d->LockFirstRowButton->blockSignals(wasBlocked);
-    }
+  }
 
   if (d->MRMLTableNode->GetUseFirstColumnAsRowHeader() != d->LockFirstColumnButton->isChecked())
-    {
+  {
     bool wasBlocked = d->LockFirstColumnButton->blockSignals(true);
     d->LockFirstColumnButton->setChecked(d->MRMLTableNode->GetUseFirstColumnAsRowHeader());
     d->LockFirstColumnButton->blockSignals(wasBlocked);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -233,9 +233,9 @@ void qSlicerTablesModuleWidget::onLockTableButtonClicked()
   Q_D(qSlicerTablesModuleWidget);
 
   if (!d->MRMLTableNode)
-    {
+  {
     return;
-    }
+  }
 
   // toggle the lock
   int locked = d->MRMLTableNode->GetLocked();
@@ -259,9 +259,9 @@ bool qSlicerTablesModuleWidget::setEditedNode(vtkMRMLNode* node,
   Q_UNUSED(context);
 
   if (vtkMRMLTableNode::SafeDownCast(node))
-    {
+  {
     d->TableNodeSelector->setCurrentNode(node);
     return true;
-    }
+  }
   return false;
 }

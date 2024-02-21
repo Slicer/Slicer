@@ -81,9 +81,9 @@ void qMRMLTransformInfoWidgetPrivate::setAndObserveCrosshairNode()
 
   vtkMRMLCrosshairNode* crosshairNode = nullptr;
   if (this->MRMLScene.GetPointer())
-    {
+  {
     crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(this->MRMLScene->GetFirstNodeByClass("vtkMRMLCrosshairNode"));
-    }
+  }
 
   q->qvtkReconnect(this->CrosshairNode.GetPointer(), crosshairNode,
     vtkMRMLCrosshairNode::CursorPositionModifiedEvent,
@@ -113,9 +113,9 @@ void qMRMLTransformInfoWidget::processEvent(
   Q_UNUSED(clientData);
 
   if (eventId == vtkMRMLCrosshairNode::CursorPositionModifiedEvent)
-    {
+  {
     this->updateTransformVectorDisplayFromMRML();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -144,9 +144,9 @@ void qMRMLTransformInfoWidget::setMRMLScene(vtkMRMLScene* scene)
   Q_D(qMRMLTransformInfoWidget);
 
   if (this->mrmlScene() == scene)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLScene = scene;
   d->setAndObserveCrosshairNode();
@@ -180,22 +180,22 @@ void qMRMLTransformInfoWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLTransformInfoWidget);
   if (!this->isVisible())
-    {
+  {
     // Getting the transform information is too expensive,
     // so if the widget is not visible then do not update
     return;
-    }
+  }
 
   if (d->TransformNode.GetPointer())
-    {
+  {
     d->TransformToParentInfoTextBrowser->setText(d->TransformNode->GetTransformToParentInfo());
     d->TransformFromParentInfoTextBrowser->setText(d->TransformNode->GetTransformFromParentInfo());
-    }
+  }
   else
-    {
+  {
     d->TransformToParentInfoTextBrowser->clear();
     d->TransformFromParentInfoTextBrowser->clear();
-    }
+  }
 
   updateTransformVectorDisplayFromMRML();
 
@@ -207,28 +207,28 @@ void qMRMLTransformInfoWidget::updateTransformVectorDisplayFromMRML()
 {
   Q_D(qMRMLTransformInfoWidget);
   if (!this->isVisible())
-    {
+  {
     // Getting the transform information is too expensive,
     // so if the widget is not visible then do not update
     return;
-    }
+  }
 
   if (d->TransformNode.GetPointer() && d->CrosshairNode.GetPointer())
-    {
+  {
     double ras[3]={0};
     bool validPosition = d->CrosshairNode->GetCursorPositionRAS(ras);
     if (validPosition)
-      {
+    {
       // Get the displacement vector
       vtkAbstractTransform* transformToParent = d->TransformNode->GetTransformToParent();
       if (transformToParent)
-        {
+      {
         double* rasDisplaced = transformToParent->TransformDoublePoint(ras[0], ras[1], ras[2]);
 
         // Verify if the transform is invertible at the current position
         vtkAbstractTransform* transformFromParent = d->TransformNode->GetTransformFromParent();
         if (transformFromParent)
-          {
+        {
           double* rasDisplacedTransformedBack = transformFromParent->TransformDoublePoint(rasDisplaced[0], rasDisplaced[1], rasDisplaced[2]);
           static double INVERSE_COMPUTATION_ALLOWED_SQUARED_ERROR=0.1;
           bool inverseAccurate = vtkMath::Distance2BetweenPoints(ras,rasDisplacedTransformedBack)<INVERSE_COMPUTATION_ALLOWED_SQUARED_ERROR;
@@ -239,10 +239,10 @@ void qMRMLTransformInfoWidget::updateTransformVectorDisplayFromMRML()
             arg(rasDisplaced[2] - ras[2], /* fieldWidth= */ 0, /* format = */ 'f', /* precision= */ 1).
             arg(inverseAccurate?"":"   Warning: inverse is inaccurate!") );
           return;
-          }
         }
       }
     }
+  }
   // transform value is not available, so let's clear the display
   d->ViewerDisplacementVectorRAS->clear();
 }

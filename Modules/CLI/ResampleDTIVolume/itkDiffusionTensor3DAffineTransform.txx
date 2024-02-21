@@ -54,13 +54,13 @@ DiffusionTensor3DAffineTransform<TData>
 ::SetMatrix4x4( MatrixTransform4x4Type matrix )
 {
   for( int i = 0; i < 3; i++ )
-    {
+  {
     for( int j = 0; j < 3; j++ )
-      {
+    {
       this->m_TransformMatrix[i][j] = matrix[i][j];
-      }
-    this->m_Translation[i] = matrix[i][3];
     }
+    this->m_Translation[i] = matrix[i][3];
+  }
   this->Modified();
 }
 

@@ -109,17 +109,17 @@ bool qSlicerApplicationUpdateManagerPrivate::isUpdateCheckDue() const
 
   // stores common settings
   if (!this->AutoUpdateCheck)
-    {
+  {
     return false;
-    }
+  }
 
   // stores time of last update check for this Slicer installation
   QSettings settings;
   if (!settings.contains("ApplicationUpdate/LastUpdateCheckTime"))
-    {
+  {
     // there has never been an update check
     return true;
-    }
+  }
 
   QString lastUpdateCheckTimeStr = settings.value("ApplicationUpdate/LastUpdateCheckTime").toString();
   QDateTime lastUpdateCheckTime = QDateTime::fromString(lastUpdateCheckTimeStr, Qt::ISODate);
@@ -128,10 +128,10 @@ bool qSlicerApplicationUpdateManagerPrivate::isUpdateCheckDue() const
   int updateFrequencyMinutes = settings.value("ApplicationUpdate/AutoUpdateFrequencyMinutes", 24 * 60).toInt();
   qint64 updateFrequencyMsec = qint64(updateFrequencyMinutes) * qint64(60000);
   if (lastUpdateCheckTime.msecsTo(currentTime) < updateFrequencyMsec)
-    {
+  {
     // not enough time has passed since the last update check
     return false;
-    }
+  }
 
   return true;
 }
@@ -168,13 +168,13 @@ bool qSlicerApplicationUpdateManagerPrivate::validateReleaseInfo(const QVariantM
       << "revision"
       << "version";
   foreach(const QString& key, requiredNonEmptyKeys)
-    {
+  {
     if (releaseInfo.value(key).toString().isEmpty())
-      {
+    {
       qWarning() << Q_FUNC_INFO << " failed: required key '" << key << "' is missing from release info.";
       valid = false;
-      }
     }
+  }
   return valid;
 }
 
@@ -213,9 +213,9 @@ void qSlicerApplicationUpdateManager::setAutoUpdateCheck(bool enable)
 {
   Q_D(qSlicerApplicationUpdateManager);
   if (d->AutoUpdateCheck == enable)
-    {
+  {
     return;
-    }
+  }
   d->AutoUpdateCheck = enable;
   QSettings settings;
   settings.setValue("ApplicationUpdate/AutoUpdateCheck", enable);
@@ -243,47 +243,47 @@ bool qSlicerApplicationUpdateManager::checkForUpdate(bool force, bool waitForCom
   QSettings settings;
   QString cachedServerUrl = settings.value("ApplicationUpdate/LastUpdateCheckUrl").toString();
   if (cachedServerUrl.isEmpty() || cachedServerUrl != this->serverUrl().toString())
-    {
+  {
     // no metadata cached for this server URL
     d->LatestReleaseVersion.clear();
     d->LatestReleaseRevision.clear();
-    }
+  }
   else
-    {
+  {
     d->LatestReleaseVersion = settings.value("ApplicationUpdate/LatestReleaseVersion").toString();
     d->LatestReleaseRevision = settings.value("ApplicationUpdate/LatestReleaseRevision").toString();
-    }
+  }
 
   // Contact the server if cached data is stale
   if (!force && !d->isUpdateCheckDue())
-    {
+  {
     refreshUpdateAvailable();
     return true;
-    }
+  }
 
   if (d->ReleaseInfoQueryUID.isNull())
-    {
+  {
     // query is not in progress yet, start it
     qRestAPI::Parameters parameters;
     if (this->serverUrl().toString().isEmpty())
-      {
+    {
       // server address has not been specified, normal at very first startup
       // (default server address is set up by an application settings page)
       this->refreshUpdateAvailable();
       return false;
-      }
+    }
     // URL example: https://download.slicer.org/find?os=win&stability=release
     d->ReleaseInfoAPI.setServerUrl(this->serverUrl().toString() + QString("/find"));
     parameters["os"] = this->slicerOs();
     parameters["stability"] = QLatin1String("release");
     // Issue the query
     d->ReleaseInfoQueryUID = d->ReleaseInfoAPI.get("", parameters);
-    }
+  }
 
   if (!waitForCompletion)
-    {
+  {
     return true;
-    }
+  }
 
   // Temporarily disable onReleaseInfoQueryFinished call via signal/slot
   // because we'll call it directly to get returned result.
@@ -298,10 +298,10 @@ bool qSlicerApplicationUpdateManager::checkForUpdate(bool force, bool waitForCom
     this, SLOT(onReleaseInfoQueryFinished(QUuid)));
 
   if (!success)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "Check for available application update failed: timed out while waiting for server response from "
       << d->ReleaseInfoAPI.serverUrl();
-    }
+  }
 
   return success;
 }
@@ -311,10 +311,10 @@ QDateTime qSlicerApplicationUpdateManager::lastUpdateCheckTime() const
 {
   QSettings settings;
   if (!settings.contains("ApplicationUpdate/LastUpdateCheckTime"))
-    {
+  {
     // there has never been an update check
     return QDateTime();
-    }
+  }
   QString lastUpdateCheckTimeStr = settings.value("ApplicationUpdate/LastUpdateCheckTime").toString();
   QDateTime LastUpdateCheckTime = QDateTime::fromString(lastUpdateCheckTimeStr, Qt::ISODate);
   return LastUpdateCheckTime;
@@ -331,7 +331,7 @@ bool qSlicerApplicationUpdateManager::onReleaseInfoQueryFinished(const QUuid& re
   bool success = false;
   QVariantMap releaseInfo;
   if (!restResult.isNull())
-    {
+  {
     QString responseString = QString(restResult->response());
     QJSEngine scriptEngine;
     QJSValue scriptValue = scriptEngine
@@ -342,39 +342,39 @@ bool qSlicerApplicationUpdateManager::onReleaseInfoQueryFinished(const QUuid& re
     QList<QVariantMap> response;
     // e.g. {["key1": "value1", ...]} or {"key1": "value1", ...}
     if (scriptValue.isArray())
-      {
+    {
       quint32 length = scriptValue.property("length").toUInt();
       for (quint32 i = 0; i < length; ++i)
-        {
-        qRestAPI::appendScriptValueToVariantMapList(response, scriptValue.property(i));
-        }
-      }
-    else
       {
-      qRestAPI::appendScriptValueToVariantMapList(response, scriptValue);
+        qRestAPI::appendScriptValueToVariantMapList(response, scriptValue.property(i));
       }
+    }
+    else
+    {
+      qRestAPI::appendScriptValueToVariantMapList(response, scriptValue);
+    }
 
     if (!response.isEmpty())
-      {
+    {
       if (response.size() > 1)
-        {
+      {
         qWarning() << Q_FUNC_INFO << "Expected one record but received" << response.size();
-        }
+      }
       releaseInfo = response[0];
       success = true;
-      }
+    }
 
     success = success && qSlicerApplicationUpdateManagerPrivate::validateReleaseInfo(releaseInfo);
-    }
+  }
   if (!success)
-    {
+  {
     // Query failed, probably no network connection.
     // Do not pollute the application output with a warning or error message.
     d->ReleaseInfoQueryUID = QUuid();
     this->refreshUpdateAvailable();
     emit updateCheckCompleted(false);
     return false;
-    }
+  }
 
   d->LatestReleaseVersion = releaseInfo["version"].toString();
   d->LatestReleaseRevision = releaseInfo["revision"].toString();
@@ -400,9 +400,9 @@ void qSlicerApplicationUpdateManager::setSlicerRequirements(const QString& revis
 {
   Q_D(qSlicerApplicationUpdateManager);
   if (d->SlicerRevision == revision && d->SlicerOs == os && d->SlicerArch == arch)
-    {
+  {
     return;
-    }
+  }
   QString previousSlicerRevision = d->SlicerRevision;
   d->SlicerRevision = revision;
 
@@ -430,16 +430,16 @@ void qSlicerApplicationUpdateManager::refreshUpdateAvailable()
   Q_D(qSlicerApplicationUpdateManager);
   bool isUpdateAvailable = false;
   if (!d->LatestReleaseRevision.isEmpty() && !d->SlicerRevision.isEmpty())
-    {
+  {
     bool isIntegerCurrentRevision = false;
     int currentRevisionNumber = d->SlicerRevision.toInt(&isIntegerCurrentRevision);
     bool isIntegerLatestRevision = false;
     int latestRevisionNumber = d->LatestReleaseRevision.toInt(&isIntegerLatestRevision);
     if (isIntegerCurrentRevision && isIntegerLatestRevision)
-      {
+    {
       isUpdateAvailable = (currentRevisionNumber < latestRevisionNumber);
-      }
     }
+  }
   d->UpdateAvailable = isUpdateAvailable;
   emit updateAvailable(d->UpdateAvailable);
 }

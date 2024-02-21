@@ -64,32 +64,32 @@ public:
 
 
   enum
-    {
+  {
       ControlPointModifiedEvent = 19010,
-    };
+  };
 
   void Modified() override
-    {
+  {
     Superclass::Modified();
 
     if (!this->GetDisableModifiedEvent())
-      {
+    {
       this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
-      }
     }
+  }
 
   ///
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.
   /// Returns the old flag state.
   int InvokePendingModifiedEvent () override
-    {
+  {
     if ( this->GetModifiedEventPending() )
-      {
+    {
       this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
-      }
-    return Superclass::InvokePendingModifiedEvent();
     }
+    return Superclass::InvokePendingModifiedEvent();
+  }
 
   // Description:
   // get associated display node or nullptr if not set

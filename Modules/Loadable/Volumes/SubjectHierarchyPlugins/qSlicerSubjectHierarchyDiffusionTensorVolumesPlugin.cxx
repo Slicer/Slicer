@@ -121,15 +121,15 @@ double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canAddNodeToSubjectH
 {
   Q_UNUSED(parentItemID);
   if (!node)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Input node is nullptr!";
     return 0.0;
-    }
+  }
   else if (node->IsA("vtkMRMLDiffusionTensorVolumeNode"))
-    {
+  {
     // Node is a DTI
     return 0.7;
-    }
+  }
   return 0.0;
 }
 
@@ -137,23 +137,23 @@ double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canAddNodeToSubjectH
 double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return 0.0;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0.0;
-    }
+  }
 
   // DTI volume
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
   if (associatedNode && associatedNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
-    {
+  {
     return 0.7;
-    }
+  }
 
   return 0.0;
 }
@@ -168,16 +168,16 @@ const QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::roleForPlugin
 QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tooltip(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return tr("Invalid!");
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return tr("Error!");
-    }
+  }
 
   // Get basic tooltip from volumes plugin
   QString tooltipString = qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->tooltip(itemID);
@@ -210,16 +210,16 @@ QIcon qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::icon(vtkIdType itemID
   Q_D(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return QIcon();
-    }
+  }
 
   // DTI volume
   if (this->canOwnSubjectHierarchyItem(itemID))
-    {
+  {
     return d->DiffusionTensorVolumeIcon;
-    }
+  }
 
   // Item unknown by plugin
   return QIcon();
@@ -237,10 +237,10 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::setDisplayVisibility(v
   qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
   if (!volumesPlugin)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy volumes plugin";
     return;
-    }
+  }
 
   volumesPlugin->setDisplayVisibility(itemID, visible);
 }
@@ -251,10 +251,10 @@ int qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::getDisplayVisibility(vt
   qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
   if (!volumesPlugin)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy volumes plugin";
     return -1;
-    }
+  }
 
   return volumesPlugin->getDisplayVisibility(itemID);
 }
@@ -275,19 +275,19 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showContextMenuActions
   Q_D(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     // There are no scene actions in this plugin
     return;
-    }
+  }
 
   // DTI volume
   if (this->canOwnSubjectHierarchyItem(itemID))
-    {
+  {
     // Only show if the extension is installed (those specific modules are available)
     if (!qSlicerApplication::application() || !qSlicerApplication::application()->moduleManager())
-      {
+    {
       return;
-      }
+    }
 
     qSlicerAbstractCoreModule* tractographyInteractiveSeedingModule =
       qSlicerApplication::application()->moduleManager()->module("TractographyInteractiveSeeding");
@@ -296,7 +296,7 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showContextMenuActions
     qSlicerAbstractCoreModule* tractographyLabelMapSeedingModule =
       qSlicerApplication::application()->moduleManager()->module("TractographyLabelMapSeeding");
     d->TractographyLabelMapSeedingAction->setVisible(tractographyLabelMapSeedingModule);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -316,16 +316,16 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyInteract
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid current item!";
     return;
-    }
+  }
 
   qSlicerApplication::application()->openNodeModule(shNode->GetItemDataNode(currentItemID));
 }
@@ -336,9 +336,9 @@ bool qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showItemInView(vtkIdTy
   qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
     return false;
-    }
+  }
   return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
 }

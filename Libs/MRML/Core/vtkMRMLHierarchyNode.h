@@ -120,10 +120,10 @@ public:
 
   /// ChildNodeAddedEvent is send when a child node added to this parent
   enum
-    {
+  {
       ChildNodeAddedEvent = 15550,
       ChildNodeRemovedEvent = 15551
-    };
+  };
 
   //// Associated node methods ////////////////
 

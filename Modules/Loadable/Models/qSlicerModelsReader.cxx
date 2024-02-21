@@ -109,23 +109,23 @@ double qSlicerModelsReader::canLoadFileConfidence(const QString& fileName)const
   // confidence of 0.54 (4 characters in the .vtk file extension matched).
   // Therefore, we set confidence here to 0.6 for meshes and 0.0 for images.
   if (confidence > 0)
-    {
+  {
     // Not a composite file extension, inspect the content (for now, only nrrd).
     QString upperCaseFileName = fileName.toUpper();
     if (upperCaseFileName.endsWith(".VTK"))
-      {
+    {
       QFile file(fileName);
       if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
+      {
         QTextStream in(&file);
         // .vtk image file header contains DATASET STRUCTURED_POINTS at around
         // around position 100, read a bit further to account for slight variations in the header.
         QString line = in.read(200);
         // If dataset is structured points then it is an image, which this reader cannot read.
         confidence = (line.contains("STRUCTURED_POINTS") ? 0.0 : 0.6);
-        }
       }
     }
+  }
   return confidence;
 }
 
@@ -138,55 +138,55 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
 
   this->setLoadedNodes(QStringList());
   if (!d->ModelsLogic)
-    {
+  {
     qCritical() << Q_FUNC_INFO << (" failed: Models logic is invalid.");
     return false;
-    }
+  }
   int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS; // default
   if (properties.contains("coordinateSystem"))
-    {
+  {
     coordinateSystem = properties["coordinateSystem"].toInt();
-    }
+  }
   this->userMessages()->ClearMessages();
   vtkMRMLModelNode* node = d->ModelsLogic->AddModel(
     fileName.toUtf8(), coordinateSystem, this->userMessages());
   if (!node)
-    {
+  {
     // errors are already logged and userMessages contain details that can be displayed to users
     return false;
-    }
+  }
   this->setLoadedNodes( QStringList(QString(node->GetID())) );
   if (properties.contains("name"))
-    {
+  {
     std::string uname = this->mrmlScene()->GetUniqueNameByString(
       properties["name"].toString().toUtf8());
     node->SetName(uname.c_str());
-    }
+  }
 
   // If no other nodes are displayed then reset the field of view
   bool otherNodesAreAlreadyVisible = false;
   vtkSmartPointer<vtkCollection> displayNodes = vtkSmartPointer<vtkCollection>::Take(
     this->mrmlScene()->GetNodesByClass("vtkMRMLDisplayNode"));
   for(int displayNodeIndex = 0; displayNodeIndex < displayNodes->GetNumberOfItems(); ++displayNodeIndex)
-    {
+  {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(
       displayNodes->GetItemAsObject(displayNodeIndex));
     if (displayNode->GetDisplayableNode()
       && displayNode->GetVisibility()
       && displayNode->GetDisplayableNode() != node)
-      {
+    {
       otherNodesAreAlreadyVisible = true;
       break;
-      }
     }
+  }
   if (!otherNodesAreAlreadyVisible)
-    {
+  {
     qSlicerApplication* app = qSlicerApplication::application();
     if (app && app->layoutManager())
-      {
+    {
       app->layoutManager()->resetThreeDViews();
-      }
     }
+  }
 
   return true;
 }

@@ -124,10 +124,10 @@ public:
   /// Used in addition to existing QCoreApplication attribute.
   /// \sa Qt::ApplicationAttribute
   enum ApplicationAttribute
-    {
+  {
     AA_DisablePython = 1000,
     AA_EnableTesting
-    };
+  };
 
   /// \sa QCoreApplication::setAttribute
   static void setAttribute(qSlicerCoreApplication::ApplicationAttribute attribute, bool on = true);
@@ -696,16 +696,16 @@ public:
   {
     this->Application = qSlicerCoreApplication::application();
     if (this->Application)
-      {
+    {
       this->Application->pauseRender();
-      }
+    }
   };
   ~SlicerRenderBlocker()
   {
     if (this->Application)
-      {
+    {
       this->Application->resumeRender();
-      }
+    }
   }
 };
 

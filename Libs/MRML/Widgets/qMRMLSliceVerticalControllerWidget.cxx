@@ -99,10 +99,10 @@ void qMRMLSliceVerticalControllerWidgetPrivate::setSelectionNode()
 
   vtkMRMLSelectionNode* selectionNode = nullptr;
   if (q->mrmlScene())
-    {
+  {
     selectionNode = vtkMRMLSelectionNode::SafeDownCast(
       q->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-    }
+  }
 
   this->SelectionNode = selectionNode;
 }
@@ -119,9 +119,9 @@ void qMRMLSliceVerticalControllerWidgetPrivate::onSliceLogicModifiedEvent()
   double offsetRange[2] = {-1.0, 1.0};
   double offsetResolution = 1.0;
   if (!this->SliceLogic || !this->SliceLogic->GetSliceOffsetRangeResolution(offsetRange, offsetResolution))
-    {
+  {
     return;
-    }
+  }
 
   bool wasBlocking = this->SliceVerticalOffsetSlider->blockSignals(true);
   q->setSliceOffsetRange(offsetRange[0], offsetRange[1]);
@@ -162,9 +162,9 @@ void qMRMLSliceVerticalControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
   Q_D(qMRMLSliceVerticalControllerWidget);
 
   if (this->mrmlScene() == newScene)
-    {
+  {
     return;
-    }
+  }
 
   d->SliceLogic->SetMRMLScene(newScene);
   d->setSelectionNode();
@@ -180,9 +180,9 @@ void qMRMLSliceVerticalControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newS
   // eventually calls onSliceLogicModified.
   d->SliceLogic->SetSliceNode(newSliceNode);
   if (newSliceNode && newSliceNode->GetScene())
-    {
+  {
     this->setMRMLScene(newSliceNode->GetScene());
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -197,9 +197,9 @@ void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSl
 {
   Q_D(qMRMLSliceVerticalControllerWidget);
   if (d->SliceLogic == newSliceLogic)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(d->SliceLogic, newSliceLogic, vtkCommand::ModifiedEvent,
                       this, SLOT(onSliceLogicModifiedEvent()));
@@ -207,9 +207,9 @@ void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSl
   d->SliceLogic = newSliceLogic;
 
   if (d->SliceLogic && d->SliceLogic->GetMRMLScene())
-    {
+  {
     this->setMRMLScene(d->SliceLogic->GetMRMLScene());
-    }
+  }
 
   this->onSliceLogicModifiedEvent();
 }
@@ -236,13 +236,13 @@ void qMRMLSliceVerticalControllerWidget::setSliceOffsetResolution(double resolut
   resolution = qMax(resolution, 0.00000001);
   double displayCoeffiecient = 1.0;
   if (d->SelectionNode && this->mrmlScene())
-    {
+  {
     vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(this->mrmlScene()->GetNodeByID(d->SelectionNode->GetUnitNodeID("length")));
     if (unitNode)
-      {
+    {
       displayCoeffiecient = unitNode->GetDisplayCoefficient();
-      }
     }
+  }
   d->SliceVerticalOffsetSlider->setSingleStep(resolution * displayCoeffiecient);
   d->SliceVerticalOffsetSlider->setPageStep(resolution * displayCoeffiecient);
 }
@@ -259,9 +259,9 @@ void qMRMLSliceVerticalControllerWidget::setSliceOffsetValue(double offset)
 {
   Q_D(qMRMLSliceVerticalControllerWidget);
   if (!d->SliceLogic)
-    {
+  {
     return;
-    }
+  }
   //qDebug() << "qMRMLSliceVerticalControllerWidget::setSliceOffsetValue:" << offset;
 
   // This prevents desynchronized update of displayable managers during user interaction
@@ -269,18 +269,18 @@ void qMRMLSliceVerticalControllerWidget::setSliceOffsetValue(double offset)
   vtkMRMLApplicationLogic* applicationLogic =
     vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
   if (applicationLogic)
-    {
+  {
     applicationLogic->PauseRender();
-    }
+  }
 
   d->SliceLogic->StartSliceOffsetInteraction();
   d->SliceLogic->SetSliceOffset(offset);
   d->SliceLogic->EndSliceOffsetInteraction();
 
   if (applicationLogic)
-    {
+  {
     applicationLogic->ResumeRender();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -288,9 +288,9 @@ void qMRMLSliceVerticalControllerWidget::trackSliceOffsetValue(double offset)
 {
   Q_D(qMRMLSliceVerticalControllerWidget);
   if (!d->SliceLogic)
-    {
+  {
     return;
-    }
+  }
   //qDebug() << "qMRMLSliceVerticalControllerWidget::trackSliceOffsetValue";
 
   // This prevents desynchronized update of displayable managers during user interaction
@@ -298,15 +298,15 @@ void qMRMLSliceVerticalControllerWidget::trackSliceOffsetValue(double offset)
     vtkMRMLApplicationLogic* applicationLogic =
     vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
   if (applicationLogic)
-    {
+  {
     applicationLogic->PauseRender();
-    }
+  }
 
   d->SliceLogic->StartSliceOffsetInteraction();
   d->SliceLogic->SetSliceOffset(offset);
 
   if (applicationLogic)
-    {
+  {
     applicationLogic->ResumeRender();
   }
 }

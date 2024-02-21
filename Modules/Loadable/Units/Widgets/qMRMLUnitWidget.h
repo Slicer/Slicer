@@ -117,7 +117,7 @@ public:
   double offset() const;
 
   enum UnitProperty
-    {
+  {
     None = 0x000,
     Preset = 0x001,
     Name = 0x002,
@@ -130,7 +130,7 @@ public:
     Coefficient = 0x100,
     Offset = 0x200,
     All = 0xfff,
-    };
+  };
   Q_DECLARE_FLAGS(UnitProperties, UnitProperty)
 
   /// Return the displayedProperties property value.

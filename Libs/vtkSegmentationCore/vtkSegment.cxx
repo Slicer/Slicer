@@ -75,10 +75,10 @@ vtkSegment::~vtkSegment()
   this->RemoveAllRepresentations();
   this->Representations.clear();
   if (this->Name)
-    {
+  {
     delete [] this->Name;
     this->Name = nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -99,37 +99,37 @@ void vtkSegment::PrintSelf(ostream& os, vtkIndent indent)
   RepresentationMap::iterator reprIt;
   os << indent << "Representations:\n";
   for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
-    {
+  {
     os << indent.GetNextIndent() << reprIt->first << ":";
     vtkDataObject* dataObject = reprIt->second;
     if (dataObject)
-      {
+    {
       os << "\n";
       os << indent.GetNextIndent().GetNextIndent() << "ClassName: " << dataObject->GetClassName() << "\n";
       vtkImageData* imageData = vtkImageData::SafeDownCast(dataObject);
       vtkPolyData* polyData = vtkPolyData::SafeDownCast(dataObject);
       if (imageData)
-        {
+      {
         vtkOrientedImageDataResample::PrintImageInformation(imageData, os, indent.GetNextIndent().GetNextIndent());
-        }
+      }
       if (polyData)
-        {
+      {
         os << indent.GetNextIndent().GetNextIndent() << "Number of points: " << polyData->GetNumberOfPoints() << "\n";
         os << indent.GetNextIndent().GetNextIndent() << "Number of cells: " << polyData->GetNumberOfCells() << "\n";
-        }
-      }
-    else
-      {
-      os << " (none)\n";
       }
     }
+    else
+    {
+      os << " (none)\n";
+    }
+  }
 
   std::map<std::string,std::string>::iterator tagIt;
   os << indent << "Tags:\n";
   for (tagIt=this->Tags.begin(); tagIt!=this->Tags.end(); ++tagIt)
-    {
+  {
     os << indent.GetNextIndent() << "  " << tagIt->first << ": " << tagIt->second << "\n";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -152,16 +152,16 @@ void vtkSegment::WriteXML(ostream& of, int vtkNotUsed(nIndent))
   RepresentationMap::iterator reprIt;
   of << "Representations=\"";
   for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
-    {
+  {
     of << "  " << reprIt->first << "\"";
-    }
+  }
 
   std::map<std::string,std::string>::iterator tagIt;
   of << "Tags=\"";
   for (tagIt=this->Tags.begin(); tagIt!=this->Tags.end(); ++tagIt)
-    {
+  {
     of << tagIt->first << ":" << tagIt->second << "|";
-    }
+  }
   of << "\"";
 }
 
@@ -169,10 +169,10 @@ void vtkSegment::WriteXML(ostream& of, int vtkNotUsed(nIndent))
 void vtkSegment::DeepCopy(vtkSegment* source)
 {
   if (!source)
-    {
+  {
     vtkErrorMacro("vtkSegment::DeepCopy failed: sourceSegment is invalid");
     return;
-    }
+  }
 
   this->DeepCopyMetadata(source);
   this->SetLabelValue(source->GetLabelValue());
@@ -181,19 +181,19 @@ void vtkSegment::DeepCopy(vtkSegment* source)
   std::set<std::string> representationNamesToKeep;
   RepresentationMap::iterator reprIt;
   for (reprIt=source->Representations.begin(); reprIt!=source->Representations.end(); ++reprIt)
-    {
+  {
     vtkDataObject* representationCopy =
       vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByClass( reprIt->second->GetClassName() );
     if (!representationCopy)
-      {
+    {
       vtkErrorMacro("DeepCopy: Unable to construct representation type class '" << reprIt->second->GetClassName() << "'");
       continue;
-      }
+    }
 
     representationCopy->DeepCopy(reprIt->second);
     // Binary labelmap is a special case, as it may contain multiple segment representations
     if (reprIt->first == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())
-      {
+    {
       vtkNew<vtkImageThreshold> threshold;
       threshold->SetInputData(representationCopy);
       threshold->ThresholdBetween(source->LabelValue, source->LabelValue);
@@ -201,37 +201,37 @@ void vtkSegment::DeepCopy(vtkSegment* source)
       threshold->SetOutValue(0);
       threshold->Update();
       representationCopy->DeepCopy(threshold->GetOutput());
-      }
+    }
 
     this->AddRepresentation(reprIt->first, representationCopy);
     representationCopy->Delete(); // this representation is now owned by the segment
     representationNamesToKeep.insert(reprIt->first);
-    }
+  }
 
   // Remove representations that are not in the source segment
   for (reprIt = this->Representations.begin(); reprIt != this->Representations.end();
     /*upon deletion the increment is done already, so don't increment here*/)
-    {
+  {
     if (representationNamesToKeep.find(reprIt->first) == representationNamesToKeep.end())
-      {
+    {
       // this representation should not be kept
       RepresentationMap::iterator reprItToRemove = reprIt;
       ++reprIt;
       this->Representations.erase(reprItToRemove);
       continue;
-      }
-    ++reprIt;
     }
+    ++reprIt;
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkSegment::DeepCopyMetadata(vtkSegment* source)
 {
   if (!source)
-    {
+  {
     vtkErrorMacro("vtkSegment::DeepCopy failed: sourceSegment is invalid");
     return;
-    }
+  }
 
   // Copy properties
   this->SetName(source->Name);
@@ -250,15 +250,15 @@ void vtkSegment::GetBounds(double bounds[6])
 
   RepresentationMap::iterator reprIt;
   for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
-    {
+  {
     vtkDataSet* representationDataSet = vtkDataSet::SafeDownCast(reprIt->second);
     if (representationDataSet)
-      {
+    {
       double representationBounds[6] = { 1, -1, 1, -1, 1, -1 };
       representationDataSet->GetBounds(representationBounds);
       boundingBox.AddBounds(representationBounds);
-      }
     }
+  }
   boundingBox.GetBounds(bounds);
 }
 
@@ -268,22 +268,22 @@ vtkDataObject* vtkSegment::GetRepresentation(std::string name)
   // Use find function instead of operator[] not to create empty representation if it is missing
   RepresentationMap::iterator reprIt = this->Representations.find(name);
   if (reprIt != this->Representations.end())
-    {
+  {
     return reprIt->second.GetPointer();
-    }
+  }
   else
-    {
+  {
     return nullptr;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 bool vtkSegment::AddRepresentation(std::string name, vtkDataObject* representation)
 {
   if (this->GetRepresentation(name) == representation)
-    {
+  {
     return false;
-    }
+  }
   this->Representations[name] = representation; // Representations stores the pointer in a smart pointer, which makes sure the object is not deleted
   this->Modified();
   return true;
@@ -294,9 +294,9 @@ bool vtkSegment::RemoveRepresentation(std::string name)
 {
   vtkDataObject* representation = this->GetRepresentation(name);
   if (!representation)
-    {
+  {
     return false;
-    }
+  }
   this->Representations.erase(name);
   this->Modified();
   return true;
@@ -308,22 +308,22 @@ void vtkSegment::RemoveAllRepresentations(std::string exceptionRepresentationNam
   bool modified = false;
   RepresentationMap::iterator reprIt = this->Representations.begin();
   while (reprIt != this->Representations.end())
-    {
+  {
     if (reprIt->first.compare(exceptionRepresentationName))
-      {
+    {
       // reprIt++ is safe, as iterators remain valid after erasing from a map
       this->Representations.erase(reprIt++);
       modified = true;
-      }
+    }
     else
-      {
-      ++reprIt;
-      }
-    }
-  if (modified)
     {
-    this->Modified();
+      ++reprIt;
     }
+  }
+  if (modified)
+  {
+    this->Modified();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -333,18 +333,18 @@ void vtkSegment::GetContainedRepresentationNames(std::vector<std::string>& repre
 
   RepresentationMap::iterator reprIt;
   for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
-    {
+  {
     representationNames.push_back(reprIt->first);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 void vtkSegment::SetTag(std::string tag, std::string value)
 {
   if (this->HasTag(tag) && !this->Tags[tag].compare(value))
-    {
+  {
     return;
-    }
+  }
 
   this->Tags[tag] = value;
   this->Modified();
@@ -370,9 +370,9 @@ bool vtkSegment::GetTag(std::string tag, std::string &value)
 {
   std::map<std::string,std::string>::iterator tagIt = this->Tags.find(tag);
   if (tagIt == this->Tags.end())
-    {
+  {
     return false;
-    }
+  }
 
   value = tagIt->second;
   return true;

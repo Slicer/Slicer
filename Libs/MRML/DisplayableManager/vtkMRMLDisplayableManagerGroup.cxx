@@ -105,19 +105,19 @@ vtkMRMLDisplayableManagerGroup::~vtkMRMLDisplayableManagerGroup()
   this->SetMRMLDisplayableNode(nullptr);
 
   for(size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
-    {
+  {
     this->Internal->DisplayableManagers[i]->Delete();
-    }
+  }
 
   if (this->Internal->Renderer)
-    {
+  {
     this->Internal->Renderer->UnRegister(this);
-    }
+  }
 
   if (this->Internal->LightBoxRendererManagerProxy)
-    {
+  {
     this->Internal->LightBoxRendererManagerProxy = nullptr;
-    }
+  }
 
   delete this->Internal;
 }
@@ -137,19 +137,19 @@ bool vtkMRMLDisplayableManagerGroup
   objectSmartPointer.TakeReference(vtkObjectFactory::CreateInstance(displayableManagerName));
   if (objectSmartPointer.GetPointer() &&
       objectSmartPointer->IsA("vtkMRMLAbstractDisplayableManager"))
-    {
+  {
     return true;
-    }
+  }
 #ifdef VTK_DEBUG_LEAKS
   vtkDebugLeaks::DestructClass(displayableManagerName);
 #endif
 #ifdef MRMLDisplayableManager_USE_PYTHON
   // Check if vtkClassOrScriptName is a python script
   if (std::string(displayableManagerName).find(".py") != std::string::npos)
-    {
+  {
     // TODO Make sure the file exists ...
     return true;
-    }
+  }
 #endif
   return false;
 }
@@ -162,21 +162,21 @@ vtkMRMLAbstractDisplayableManager* vtkMRMLDisplayableManagerGroup
 #ifdef MRMLDisplayableManager_USE_PYTHON
   // Are we dealing with a python scripted displayable manager
   if (std::string(displayableManagerName).find(".py") != std::string::npos)
-    {
+  {
     // TODO Make sure the file exists ...
     vtkMRMLScriptedDisplayableManager* scriptedDisplayableManager =
       vtkMRMLScriptedDisplayableManager::New();
     scriptedDisplayableManager->SetPythonSource(displayableManagerName);
     displayableManager = scriptedDisplayableManager;
-    }
+  }
   else
-    {
+  {
 #endif
     // Object will be unregistered when the SmartPointer will go out-of-scope
     displayableManager = vtkMRMLAbstractDisplayableManager::SafeDownCast(
       vtkObjectFactory::CreateInstance(displayableManagerName));
 #ifdef MRMLDisplayableManager_USE_PYTHON
-    }
+  }
 #endif
   return displayableManager;
 }
@@ -187,15 +187,15 @@ void vtkMRMLDisplayableManagerGroup::Initialize(vtkMRMLDisplayableManagerFactory
 {
   // Sanity checks
   if (!factory)
-    {
+  {
     vtkWarningMacro(<<"Initialize - factory is NULL");
     return;
-    }
+  }
   if (!renderer)
-    {
+  {
     vtkWarningMacro(<<"Initialize - renderer is NULL");
     return;
-    }
+  }
 
   // A Group observes the factory and eventually instantiates new DisplayableManager
   // when they are registered in the factory
@@ -203,14 +203,14 @@ void vtkMRMLDisplayableManagerGroup::Initialize(vtkMRMLDisplayableManagerFactory
   this->SetRenderer(renderer);
 
   for(int i=0; i < factory->GetRegisteredDisplayableManagerCount(); ++i)
-    {
+  {
     std::string classOrScriptName = factory->GetRegisteredDisplayableManagerName(i);
     vtkSmartPointer<vtkMRMLAbstractDisplayableManager> displayableManager;
     displayableManager.TakeReference(
       vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(classOrScriptName.c_str()));
     // Note that DisplayableManagerGroup will take ownership of the object
     this->AddDisplayableManager(displayableManager);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -219,17 +219,17 @@ void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
 {
   // Remove observers
   if (this->Internal->DisplayableManagerFactory)
-    {
+  {
     this->Internal->DisplayableManagerFactory->RemoveObserver(this->Internal->CallBackCommand);
     this->Internal->DisplayableManagerFactory->Delete();
     this->Internal->DisplayableManagerFactory = nullptr;
-    }
+  }
 
   this->Internal->DisplayableManagerFactory = factory;
 
   // Add observers
   if (this->Internal->DisplayableManagerFactory)
-    {
+  {
 
     this->Internal->DisplayableManagerFactory->Register(this);
 
@@ -242,7 +242,7 @@ void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
     this->Internal->DisplayableManagerFactory->AddObserver(
         vtkMRMLDisplayableManagerFactory::DisplayableManagerFactoryUnRegisteredEvent,
         this->Internal->CallBackCommand);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -251,27 +251,27 @@ void vtkMRMLDisplayableManagerGroup::AddDisplayableManager(
 {
   // Sanity checks
   if (!displayableManager)
-    {
+  {
     vtkWarningMacro(<<"AddDisplayableManager - displayableManager is NULL");
     return;
-    }
+  }
 
   // Make sure the displayableManager has NOT already been added
   const char * displayableManagerClassName = displayableManager->GetClassName();
   if (this->GetDisplayableManagerByClassName(displayableManagerClassName) != nullptr)
-    {
+  {
     vtkWarningMacro(<<"AddDisplayableManager - "
                     << displayableManager->GetClassName()
                     << " (" << displayableManager << ") already added");
     return;
-    }
+  }
 
   displayableManager->SetMRMLDisplayableManagerGroup(this);
   if (this->Internal->DisplayableManagerFactory)
-    {
+  {
     displayableManager->SetMRMLApplicationLogic(
       this->Internal->DisplayableManagerFactory->GetMRMLApplicationLogic());
-    }
+  }
   displayableManager->SetRenderer(this->Internal->Renderer);
 
   // pass the lightbox manager proxy to the new displayable manager
@@ -299,9 +299,9 @@ vtkMRMLAbstractDisplayableManager * vtkMRMLDisplayableManagerGroup::GetNthDispla
 {
   int numManagers = this->GetDisplayableManagerCount();
   if (n < 0 || n >= numManagers)
-    {
+  {
     return nullptr;
-    }
+  }
   return this->Internal->DisplayableManagers[n];
 }
 //----------------------------------------------------------------------------
@@ -309,31 +309,31 @@ void vtkMRMLDisplayableManagerGroup::SetRenderer(vtkRenderer* newRenderer)
 {
   // Sanity checks
   if (this->Internal->Renderer == newRenderer)
-    {
+  {
     return;
-    }
+  }
 
   if (this->Internal->Renderer)
-    {
+  {
     this->Internal->Renderer->Delete();
-    }
+  }
 
   this->Internal->Renderer = newRenderer;
 
   if (this->Internal->Renderer)
-    {
+  {
     this->Internal->Renderer->Register(this);
-    }
+  }
 
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
                 << "initializing DisplayableManagerGroup using Renderer: " << newRenderer);
 
   // Loop though DisplayableManager and initialize
   for(size_t i = 0; i < this->Internal->DisplayableManagers.size(); ++i)
-    {
+  {
     vtkMRMLAbstractDisplayableManager * displayableManager = this->Internal->DisplayableManagers[i];
     displayableManager->SetRenderer(newRenderer);
-    }
+  }
 
   this->Modified();
 }
@@ -342,10 +342,10 @@ void vtkMRMLDisplayableManagerGroup::SetRenderer(vtkRenderer* newRenderer)
 vtkRenderWindowInteractor* vtkMRMLDisplayableManagerGroup::GetInteractor()
 {
   if (!this->Internal->Renderer || !this->Internal->Renderer->GetRenderWindow())
-    {
+  {
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): returning Interactor address 0");
     return nullptr;
-    }
+  }
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
                 << "returning Internal->Renderer->GetRenderWindow()->GetInteractor() address "
                 << this->Internal->Renderer->GetRenderWindow()->GetInteractor() );
@@ -380,11 +380,11 @@ void vtkMRMLDisplayableManagerGroup::SetMRMLDisplayableNode(
     vtkMRMLNode* newMRMLDisplayableNode)
 {
   for(std::size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
-    {
+  {
     vtkMRMLAbstractDisplayableManager * displayableManager = this->Internal->DisplayableManagers[i];
 
     displayableManager->SetAndObserveMRMLDisplayableNode(newMRMLDisplayableNode);
-    }
+  }
   vtkSetObjectBodyMacro(Internal->MRMLDisplayableNode, vtkMRMLNode, newMRMLDisplayableNode);
 }
 
@@ -393,17 +393,17 @@ vtkMRMLAbstractDisplayableManager*
     vtkMRMLDisplayableManagerGroup::GetDisplayableManagerByClassName(const char* className)
 {
   if (!className)
-    {
+  {
     vtkWarningMacro(<< "GetDisplayableManagerByClassName - className is NULL");
     return nullptr;
-    }
+  }
   vtkInternal::NameToDisplayableManagerMapIt it =
       this->Internal->NameToDisplayableManagerMap.find(className);
 
   if (it == this->Internal->NameToDisplayableManagerMap.end())
-    {
+  {
     return nullptr;
-    }
+  }
 
   return it->second;
 }
@@ -423,14 +423,14 @@ void vtkMRMLDisplayableManagerGroup::DoCallback(vtkObject* vtk_obj, unsigned lon
   assert(displayableManagerName);
 
   switch(event)
-    {
+  {
     case vtkMRMLDisplayableManagerFactory::DisplayableManagerFactoryRegisteredEvent:
       self->onDisplayableManagerFactoryRegisteredEvent(displayableManagerName);
       break;
     case vtkMRMLDisplayableManagerFactory::DisplayableManagerFactoryUnRegisteredEvent:
       self->onDisplayableManagerFactoryUnRegisteredEvent(displayableManagerName);
       break;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -491,9 +491,9 @@ void vtkMRMLDisplayableManagerGroup::SetLightBoxRendererManagerProxy(vtkMRMLLigh
   this->Internal->LightBoxRendererManagerProxy = mgr;
 
   for(size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
-    {
+  {
     this->Internal->DisplayableManagers[i]->SetLightBoxRendererManagerProxy(this->Internal->LightBoxRendererManagerProxy);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------

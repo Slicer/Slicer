@@ -50,9 +50,9 @@ public:
   int GetShape() {return this->Shape;};
 
   const char *GetShapeString()
-    {
+  {
     switch (this->Shape)
-      {
+    {
     case SHAPE_POLYGON:
       return "Polygon";
     case SHAPE_LINES:
@@ -61,8 +61,8 @@ public:
       return "Points";
     default:
       return "None";
-      }
     }
+  }
 
   void SetShapeString(const char *str) {
     if (strcmp(str,"Polygon") == 0)

@@ -33,9 +33,9 @@ vtkImageNeighborhoodFilter::vtkImageNeighborhoodFilter()
 vtkImageNeighborhoodFilter::~vtkImageNeighborhoodFilter()
 {
   if (this->Mask != nullptr)
-    {
+  {
     delete [] this->Mask;
-    }
+  }
 }
 
 
@@ -47,35 +47,35 @@ void vtkImageNeighborhoodFilter::SetKernelSize(int size0, int size1, int size2)
   int modified = 0;
 
   if (this->KernelSize[0] != size0)
-    {
+  {
     modified = 1;
     this->KernelSize[0] = size0;
     this->KernelMiddle[0] = size0 / 2;
-    }
+  }
   if (this->KernelSize[1] != size1)
-    {
+  {
     modified = 1;
     this->KernelSize[1] = size1;
     this->KernelMiddle[1] = size1 / 2;
-    }
+  }
   if (this->KernelSize[2] != size2)
-    {
+  {
     modified = 1;
     this->KernelSize[2] = size2;
     this->KernelMiddle[2] = size2 / 2;
-    }
+  }
 
 
   if (modified)
-    {
+  {
     if (this->Mask != nullptr)
-      {
+    {
       delete [] this->Mask;
-      }
+    }
     this->Mask = new unsigned char[this->KernelSize[0]*
       this->KernelSize[1]*this->KernelSize[2]];
     this->Modified();
-    }
+  }
   //cout << "kernel middle: " <<KernelMiddle[0]<<" "<<KernelMiddle[1]<<" "<<KernelMiddle[2]<<endl;
 }
 

@@ -58,16 +58,16 @@ bool qSlicerSegmentationsNodeWriter::write(const qSlicerIO::IOProperties& proper
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(
     this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
   if (this->canWriteObjectConfidence(node) <= 0.0)
-    {
+  {
     return false;
-    }
+  }
   vtkMRMLSegmentationStorageNode* snode = vtkMRMLSegmentationStorageNode::SafeDownCast(
     qSlicerCoreIOManager::createAndAddDefaultStorageNode(node));
   if (snode == nullptr)
-    {
+  {
     qDebug() << "No storage node for node" << properties["nodeID"].toString();
     return false;
-    }
+  }
   snode->SetCropToMinimumExtent(properties["cropToMinimumExtent"].toBool());
 
   return Superclass::write(properties);

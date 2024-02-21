@@ -179,9 +179,9 @@ void qMRMLColorLegendDisplayNodeWidget::updateWidgetFromMRML()
 
   this->setEnabled(d->ColorLegendDisplayNode != nullptr);
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   // Set visibility checkbox
   QSignalBlocker blocker1(d->ColorLegendVisibilityCheckBox);
@@ -191,25 +191,25 @@ void qMRMLColorLegendDisplayNodeWidget::updateWidgetFromMRML()
   QSignalBlocker blocker2(d->VerticalOrientationRadioButton);
   QSignalBlocker blocker3(d->HorizontalOrientationRadioButton);
   if (d->ColorLegendDisplayNode->GetOrientation() == vtkMRMLColorLegendDisplayNode::Vertical)
-    {
+  {
     d->VerticalOrientationRadioButton->setChecked(true);
-    }
+  }
   else // vtkMRMLColorLegendDisplayNode::Horizontal:
-    {
+  {
     d->HorizontalOrientationRadioButton->setChecked(true);
-    }
+  }
 
   QSignalBlocker blocker4(d->UseColorNameAsLabelTextRadioButton);
   QSignalBlocker blocker5(d->UseScalarValueAsLabelTextRadioButton);
   bool useColorNamesForLabels = d->ColorLegendDisplayNode->GetUseColorNamesForLabels();
   if (useColorNamesForLabels)
-    {
+  {
     d->UseColorNameAsLabelTextRadioButton->setChecked(true);
-    }
+  }
   else
-    {
+  {
     d->UseScalarValueAsLabelTextRadioButton->setChecked(true);
-    }
+  }
   // When using color names for labels then that determines
   // the number of colors and labels (each label is displayed)
   // therefore the MaxNumberOfColors and NumberOfLabels are ignored.
@@ -231,19 +231,19 @@ void qMRMLColorLegendDisplayNodeWidget::updateWidgetFromMRML()
   std::string newTitle = d->ColorLegendDisplayNode->GetTitleText();
   QString currentTitle = d->TitleTextLineEdit->text();
   if (currentTitle.compare(QString::fromStdString(newTitle)))
-    {
+  {
     QSignalBlocker blocker10(d->TitleTextLineEdit);
     d->TitleTextLineEdit->setText(newTitle.c_str());
-    }
+  }
 
   // Label parameters
   std::string newFormat = d->ColorLegendDisplayNode->GetLabelFormat();
   QString currentFormat = d->LabelTextPropertyWidget->text();
   if (currentFormat.compare(QString::fromStdString(newFormat)))
-    {
+  {
     QSignalBlocker blocker11(d->LabelTextPropertyWidget);
     d->LabelTextPropertyWidget->setText(newFormat.c_str());
-    }
+  }
 
   // Number of colors and labels
   QSignalBlocker blocker12(d->MaxNumberOfColorsSpinBox);
@@ -255,13 +255,13 @@ void qMRMLColorLegendDisplayNodeWidget::updateWidgetFromMRML()
   QSignalBlocker blocker14(d->UseColorNameAsLabelTextRadioButton);
   QSignalBlocker blocker15(d->UseScalarValueAsLabelTextRadioButton);
   if (d->ColorLegendDisplayNode->GetUseColorNamesForLabels())
-    {
+  {
     d->UseColorNameAsLabelTextRadioButton->setChecked(true);
-    }
+  }
   else
-    {
+  {
     d->UseScalarValueAsLabelTextRadioButton->setChecked(true);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -270,10 +270,10 @@ void qMRMLColorLegendDisplayNodeWidget::onColorLegendVisibilityToggled(bool stat
   Q_D(qMRMLColorLegendDisplayNodeWidget);
 
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "failed: Invalid color legend display node";
     return;
-    }
+  }
 
   d->ColorLegendDisplayNode->SetVisibility(state);
 }
@@ -283,19 +283,19 @@ void qMRMLColorLegendDisplayNodeWidget::onColorLegendOrientationButtonClicked(QA
 {
   Q_D(qMRMLColorLegendDisplayNodeWidget);
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "failed: Invalid color legend display node";
     return;
-    }
+  }
 
   if (button == d->HorizontalOrientationRadioButton)
-    {
+  {
     d->ColorLegendDisplayNode->SetOrientation(vtkMRMLColorLegendDisplayNode::Horizontal);
-    }
+  }
   else if (button == d->VerticalOrientationRadioButton)
-    {
+  {
     d->ColorLegendDisplayNode->SetOrientation(vtkMRMLColorLegendDisplayNode::Vertical);
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -303,22 +303,22 @@ void qMRMLColorLegendDisplayNodeWidget::onLabelTextButtonClicked(QAbstractButton
 {
   Q_D(qMRMLColorLegendDisplayNodeWidget);
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "failed: Invalid color legend display node";
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(d->ColorLegendDisplayNode);
   if (button == d->UseColorNameAsLabelTextRadioButton)
-    {
+  {
     d->ColorLegendDisplayNode->SetUseColorNamesForLabels(true);
     d->ColorLegendDisplayNode->SetLabelFormat(d->ColorLegendDisplayNode->GetDefaultTextLabelFormat());
-    }
+  }
   else if (button == d->UseScalarValueAsLabelTextRadioButton)
-    {
+  {
     d->ColorLegendDisplayNode->SetUseColorNamesForLabels(false);
     d->ColorLegendDisplayNode->SetLabelFormat(d->ColorLegendDisplayNode->GetDefaultNumericLabelFormat());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -326,10 +326,10 @@ void qMRMLColorLegendDisplayNodeWidget::onPositionChanged()
 {
   Q_D(qMRMLColorLegendDisplayNodeWidget);
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "failed: Invalid color legend display node";
     return;
-    }
+  }
   d->ColorLegendDisplayNode->SetPosition(d->PositionXSlider->value(), d->PositionYSlider->value());
 }
 
@@ -338,10 +338,10 @@ void qMRMLColorLegendDisplayNodeWidget::onSizeChanged()
 {
   Q_D(qMRMLColorLegendDisplayNodeWidget);
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "failed: Invalid color legend display node";
     return;
-    }
+  }
   d->ColorLegendDisplayNode->SetSize(d->ShortSideSizeSlider->value(), d->LongSideSizeSlider->value());
 }
 
@@ -350,10 +350,10 @@ void qMRMLColorLegendDisplayNodeWidget::onTitleTextChanged(const QString& titleT
 {
   Q_D(qMRMLColorLegendDisplayNodeWidget);
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "failed: Invalid color legend display node";
     return;
-    }
+  }
   d->ColorLegendDisplayNode->SetTitleText(titleText.toStdString());
 }
 
@@ -362,10 +362,10 @@ void qMRMLColorLegendDisplayNodeWidget::onLabelFormatChanged(const QString& labe
 {
   Q_D(qMRMLColorLegendDisplayNodeWidget);
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "failed: Invalid color legend display node";
     return;
-    }
+  }
   d->ColorLegendDisplayNode->SetLabelFormat(labelFormat.toStdString());
 }
 
@@ -375,10 +375,10 @@ void qMRMLColorLegendDisplayNodeWidget::onMaximumNumberOfColorsChanged(int maxNu
   Q_D(qMRMLColorLegendDisplayNodeWidget);
 
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "failed: Invalid color legend display node";
     return;
-    }
+  }
 
   d->ColorLegendDisplayNode->SetMaxNumberOfColors(maxNumberOfColors);
 }
@@ -389,10 +389,10 @@ void qMRMLColorLegendDisplayNodeWidget::onNumberOfLabelsChanged(int numberOfLabe
   Q_D(qMRMLColorLegendDisplayNodeWidget);
 
   if (!d->ColorLegendDisplayNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "failed: Invalid color legend display node";
     return;
-    }
+  }
 
   d->ColorLegendDisplayNode->SetNumberOfLabels(numberOfLabels);
 }

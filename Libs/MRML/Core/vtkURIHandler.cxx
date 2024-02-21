@@ -24,22 +24,22 @@ vtkURIHandler::~vtkURIHandler()
 {
   this->LocalFile = nullptr;
   if ( this->PermissionPrompter != nullptr )
-    {
+  {
     this->PermissionPrompter->Delete();
     this->PermissionPrompter = nullptr;
-    }
+  }
   if ( this->Prefix != nullptr )
-    {
+  {
     this->SetPrefix ( nullptr );
-    }
+  }
   if ( this->Name != nullptr )
-    {
+  {
     this->SetName ( nullptr );
-    }
+  }
   if ( this->HostName != nullptr )
-    {
+  {
     this->SetHostName (nullptr );
-    }
+  }
 }
 
 
@@ -64,15 +64,15 @@ int vtkURIHandler::ProgressCallback ( FILE * vtkNotUsed(outputFile), double dlto
     if(ultotal == 0)
     {
     if(dltotal > 0)
-      {
+    {
       std::cout << "<filter-progress>" << dlnow/dltotal
                 << "</filter-progress>" << std::endl;
-      }
+    }
     }
   else
-    {
+  {
     std::cout << ulnow*100/ultotal << "%" << std::endl;
-    }
+  }
   return 0;
 }
 
@@ -81,24 +81,24 @@ int vtkURIHandler::ProgressCallback ( FILE * vtkNotUsed(outputFile), double dlto
 size_t vtkURIHandler::BufferedWrite ( char *buffer, size_t size, size_t nitems )
 {
   if ( this->LocalFile != nullptr )
-    {
+  {
     //this->LocalFile->write(buffer,size*nitems);
     size_t size_written = fwrite(buffer, sizeof(char), size*nitems, this->LocalFile);
     if (size_written != size*nitems)
-      {
+    {
       std::cerr << "Error: BufferedWrite tried to write " << size*nitems << ", only wrote " << size_written << " items" << std::endl;
       return size_written;
-      }
+    }
     else
-      {
+    {
       size *= nitems;
       return size;
-      }
     }
+  }
   else
-    {
+  {
     return ( 0 );
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

@@ -47,9 +47,9 @@ void vtkCodedEntry::PrintSelf(ostream& os, vtkIndent indent)
 void vtkCodedEntry::Copy(vtkCodedEntry* aEntry)
 {
   if (!aEntry)
-    {
+  {
     return;
-    }
+  }
   this->SetCodeValue(aEntry->GetCodeValue());
   this->SetCodingSchemeDesignator(aEntry->GetCodingSchemeDesignator());
   this->SetCodeMeaning(aEntry->GetCodeMeaning());
@@ -68,20 +68,20 @@ void vtkCodedEntry::SetValueSchemeMeaning(const std::string& value,
 bool vtkCodedEntry::SetValueSchemeMeaning(const std::vector<std::string>& codeValueSchemeMeaning)
 {
   if (codeValueSchemeMeaning.size() < 2 || codeValueSchemeMeaning.size() > 3)
-    {
+  {
     vtkErrorMacro("SetValueSchemeMeaning failed: codeValueSchemeMeaning must contain 2 or 3 strings");
     return false;
-    }
+  }
   this->SetCodeValue(codeValueSchemeMeaning[0].c_str());
   this->SetCodingSchemeDesignator(codeValueSchemeMeaning[1].c_str());
   if (codeValueSchemeMeaning.size() > 2)
-    {
+  {
     this->SetCodeMeaning(codeValueSchemeMeaning[3].c_str());
-    }
+  }
   else
-    {
+  {
     this->SetCodeMeaning(codeValueSchemeMeaning[0].c_str());
-    }
+  }
   return true;
 }
 
@@ -110,28 +110,28 @@ std::string vtkCodedEntry::GetAsString()
 {
   std::string str;
   if (this->CodeValue)
-    {
+  {
     str += "CodeValue:";
     str += this->CodeValue;
-    }
+  }
   if (this->CodingSchemeDesignator)
-    {
+  {
     if (!str.empty())
-      {
+    {
       str += "|";
-      }
+    }
     str += "CodingSchemeDesignator:";
     str += this->CodingSchemeDesignator;
-    }
+  }
   if (this->CodeMeaning)
-    {
+  {
     if (!str.empty())
-      {
+    {
       str += "|";
-      }
+    }
     str += "CodeMeaning:";
     str += this->CodeMeaning;
-    }
+  }
   return str;
 }
 
@@ -143,38 +143,38 @@ bool vtkCodedEntry::SetFromString(const std::string& content)
   std::stringstream attributes(content);
   std::string attribute;
   while (std::getline(attributes, attribute, '|'))
-    {
+  {
     int colonIndex = attribute.find(':');
     std::string name = attribute.substr(0, colonIndex);
     std::string value = attribute.substr(colonIndex + 1);
     if (name == "CodeValue")
-      {
+    {
       this->SetCodeValue(value.c_str());
-      }
+    }
     else if (name == "CodingSchemeDesignator")
-      {
+    {
       this->SetCodingSchemeDesignator(value.c_str());
-      }
+    }
     else if (name == "CodeMeaning")
-      {
+    {
       this->SetCodeMeaning(value.c_str());
-      }
+    }
     else
-      {
+    {
       vtkWarningMacro("Parsing coded entry string failed: unknown name " << name << " in " + content);
       success = false;
-      }
     }
+  }
   if (this->GetCodeValue() == nullptr)
-    {
+  {
     vtkWarningMacro("Parsing coded entry string failed: CodeValue is not specified in " + content);
     success = false;
-    }
+  }
   if (this->GetCodingSchemeDesignator() == nullptr)
-    {
+  {
     vtkWarningMacro("Parsing coded entry string failed: CodingSchemeDesignator is not specified in " + content);
     success = false;
-    }
+  }
   // CodeMeaning is optional
   return success;
 }

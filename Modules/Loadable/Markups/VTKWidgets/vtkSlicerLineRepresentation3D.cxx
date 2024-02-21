@@ -89,13 +89,13 @@ int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport *viewport)
   int count=0;
   count = this->Superclass::RenderOverlay(viewport);
   if (this->LineActor->GetVisibility())
-    {
+  {
     count +=  this->LineActor->RenderOverlay(viewport);
-    }
+  }
   if (this->LineOccludedActor->GetVisibility())
-    {
+  {
     count +=  this->LineOccludedActor->RenderOverlay(viewport);
-    }
+  }
   return count;
 }
 
@@ -106,16 +106,16 @@ int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(
   int count=0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
-    {
+  {
     double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
       this->MarkupsDisplayNode->GetLineDiameter() : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
     this->TubeFilter->SetRadius(diameter * 0.5);
     count += this->LineActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   if (this->LineOccludedActor->GetVisibility())
-    {
+  {
     count += this->LineOccludedActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   return count;
 }
 
@@ -126,19 +126,19 @@ int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(
   int count=0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
-    {
+  {
     // The internal actor needs to share property keys.
     // This ensures the mapper state is consistent and allows depth peeling to work as expected.
     this->LineActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   if (this->LineOccludedActor->GetVisibility())
-    {
+  {
     // The internal actor needs to share property keys.
     // This ensures the mapper state is consistent and allows depth peeling to work as expected.
     this->LineOccludedActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->LineOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   return count;
 }
 
@@ -146,17 +146,17 @@ int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(
 vtkTypeBool vtkSlicerLineRepresentation3D::HasTranslucentPolygonalGeometry()
 {
   if (this->Superclass::HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->LineOccludedActor->GetVisibility() && this->LineOccludedActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   return false;
 }
 
@@ -179,10 +179,10 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || !this->IsDisplayable())
-    {
+  {
     this->VisibilityOff();
     return;
-    }
+  }
 
   this->VisibilityOn();
 
@@ -201,9 +201,9 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
-    {
+  {
     controlPointType = this->GetAllControlPointsSelected() ? Selected : Unselected;
-    }
+  }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
@@ -213,7 +213,7 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
     && this->MarkupsDisplayNode->GetOccludedVisibility());
 
   if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2 && this->MarkupsDisplayNode->GetPropertiesLabelVisibility())
-    {
+  {
     this->TextActor->SetVisibility(true);
     double p1[3] = { 0.0 };
     double p2[3] = { 0.0 };
@@ -222,11 +222,11 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
     this->TextActorPositionWorld[0] = (p1[0] + p2[0]) / 2.0;
     this->TextActorPositionWorld[1] = (p1[1] + p2[1]) / 2.0;
     this->TextActorPositionWorld[2] = (p1[2] + p2[2]) / 2.0;
-    }
+  }
   else
-    {
+  {
     this->TextActor->SetVisibility(false);
-    }
+  }
 }
 
 //----------------------------------------------------------------------
@@ -238,15 +238,15 @@ void vtkSlicerLineRepresentation3D::CanInteract(
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
     || !interactionEventData )
-    {
+  {
     return;
-    }
+  }
   Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-    {
+  {
     // if mouse is near a control point then select that (ignore the line)
     return;
-    }
+  }
 
   this->CanInteractWithLine(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
 }
@@ -258,11 +258,11 @@ void vtkSlicerLineRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   if (this->LineActor)
-    {
+  {
     os << indent << "Line Visibility: " << this->LineActor->GetVisibility() << "\n";
-    }
+  }
   else
-    {
+  {
     os << indent << "Line Visibility: (none)\n";
-    }
+  }
 }

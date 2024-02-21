@@ -44,13 +44,13 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum
-    {
+  {
     VoxelVectorTypeUndefined,
     VoxelVectorTypeSpatial,
     VoxelVectorTypeColorRGB,
     VoxelVectorTypeColorRGBA,
     VoxelVectorType_Last // must be last
-    };
+  };
 
   vtkMRMLNode* CreateNodeInstance() override = 0;
 
@@ -204,9 +204,9 @@ public:
 
   /// ImageDataModifiedEvent is generated when image data is changed
   enum
-    {
+  {
     ImageDataModifiedEvent = 18001
-    };
+  };
 
   ///
   /// Set/Get the ITK MetaDataDictionary

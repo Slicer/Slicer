@@ -45,10 +45,10 @@ vtkSmartPointer<vtkMRMLModelNode> LoadModelInScene
 int vtkSlicerTransformLogicTest2(int argc, char * argv [])
 {
   if(argc < 2)
-    {
+  {
     std::cerr << "Missing transform file name." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //
   // Scene setup
@@ -102,59 +102,59 @@ int vtkSlicerTransformLogicTest2(int argc, char * argv [])
   vtkSlicerTransformLogic::GetTransformedNodes(
     scene, childlessTransform.GetPointer(), results);
   if (results.size() != 0)
-    {
+  {
     std::cout << "Error, expected results.size() == 0, got "
       << results.size() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   results.clear();
 
   // Test oneChildTransform
   vtkSlicerTransformLogic::GetTransformedNodes(
     scene, oneChildTransform.GetPointer(), results);
   if (results.size() != 1)
-    {
+  {
     std::cout << "Error, expected results.size() == 1, got "
       << results.size() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (strcmp(results[0]->GetID(), singleChild->GetID()) != 0)
-    {
+  {
     std::cout << "Error, expected results[0] == singleChild " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   results.clear();
 
   // Test twoChildrenTransform
   vtkSlicerTransformLogic::GetTransformedNodes(
     scene, twoChildrenTransform.GetPointer(), results);
   if (results.size() != 2)
-    {
+  {
     std::cout << "Error, expected results.size() == 2, got "
       << results.size() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (strcmp(results[0]->GetID(), child1->GetID()) != 0)
-    {
+  {
     std::cout << "Error, expected results[0] == child1 " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (strcmp(results[1]->GetID(), child2->GetID()) != 0)
-    {
+  {
     std::cout << "Error, expected results[1] == child2 " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   results.clear();
 
   // Try node not in the scene
   vtkSlicerTransformLogic::GetTransformedNodes(
     scene, notInSceneTransform.GetPointer(), results);
   if (results.size() != 0)
-    {
+  {
     std::cout << "Error, expected results.size() == 0, got "
       << results.size() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   results.clear();
 
   // Test transform tree
@@ -162,52 +162,52 @@ int vtkSlicerTransformLogicTest2(int argc, char * argv [])
   vtkSlicerTransformLogic::GetTransformedNodes(
     scene, transformTree.GetPointer(), results, false);
   if (results.size() != 2)
-    {
+  {
     std::cout << "Error, expected results.size() == 2, got "
       << results.size() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (strcmp(results[0]->GetID(), childTransform->GetID()) != 0)
-    {
+  {
     std::cout << "Error, expected results[0] == childTransform " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (strcmp(results[1]->GetID(), child3->GetID()) != 0)
-    {
+  {
     std::cout << "Error, expected results[1] == child3 " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   results.clear();
 
   // Now recursively
   vtkSlicerTransformLogic::GetTransformedNodes(
     scene, transformTree.GetPointer(), results);
   if (results.size() != 4)
-    {
+  {
     std::cout << "Error, expected results.size() == 4, got "
       << results.size() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (strcmp(results[0]->GetID(), childTransform->GetID()) != 0)
-    {
+  {
     std::cout << "Error, expected results[0] == childTransform " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (strcmp(results[1]->GetID(), grandChild1->GetID()) != 0)
-    {
+  {
     std::cout << "Error, expected results[1] == grandChild1 " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (strcmp(results[2]->GetID(), grandChild2->GetID()) != 0)
-    {
+  {
     std::cout << "Error, expected results[2] == grandChild2 " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (strcmp(results[3]->GetID(), child3->GetID()) != 0)
-    {
+  {
     std::cout << "Error, expected results[3] == child3 " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   results.clear();
 
   // Clean-up

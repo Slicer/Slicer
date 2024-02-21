@@ -80,10 +80,10 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || !this->IsDisplayable())
-    {
+  {
     this->VisibilityOff();
     return;
-    }
+  }
 
   this->VisibilityOn();
 
@@ -91,45 +91,45 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   // Display if there is at least one control point (even if preview)
   if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
     && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
-    {
+  {
     int controlPointIndex = 0;
     int numberOfDefinedControlPoints = markupsNode->GetNumberOfDefinedControlPoints(); // excluding previewed point
     if (numberOfDefinedControlPoints > 0)
-      {
+    {
       // there is at least one placed point
       controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus((numberOfDefinedControlPoints - 1) / 2, vtkMRMLMarkupsNode::PositionDefined);
-      }
+    }
     else
-      {
+    {
       // we only have a preview point
       controlPointIndex = markupsNode->GetNthControlPointIndexByPositionStatus(0, vtkMRMLMarkupsNode::PositionPreview);
-      }
+    }
     // It would be better to show the properties label near a visible segment of the curve
     // but then we may need to iterate through many points whenever the camera rotates, so it may not worth the trouble.
     // Especially because labels could be still poorly positioned. Probably some more sophisticated auto-placement
     // with option for manual label position adjustment (and maybe anchor position adjustment) would be the best.
     markupsNode->GetNthControlPointPositionWorld(controlPointIndex, this->TextActorPositionWorld);
     this->TextActor->SetVisibility(true);
-    }
+  }
   else
-    {
+  {
     this->TextActor->SetVisibility(false);
-    }
+  }
 
   // Line display
 
   for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; ++controlPointType)
-    {
+  {
     ControlPointsPipeline3D* controlPoints = this->GetControlPointsPipeline(controlPointType);
     if (controlPointType == Project || controlPointType == ProjectBack)
-      {
+    {
       // no projection display in 3D
       controlPoints->Actor->SetVisibility(false);
       controlPoints->OccludedActor->SetVisibility(false);
       controlPoints->LabelsActor->SetVisibility(false);
       controlPoints->LabelsOccludedActor->SetVisibility(false);
       continue;
-      }
+    }
 
     // For backward compatibility, we hide labels if text scale is set to 0.
     controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
@@ -137,7 +137,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
     controlPoints->GlyphMapper->SetScaleFactor(this->ControlPointSize);
 
     this->UpdateRelativeCoincidentTopologyOffsets(controlPoints->GlyphMapper, controlPoints->OccludedGlyphMapper);
-    }
+  }
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
 
@@ -150,9 +150,9 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   bool allControlPointsSelected = this->GetAllControlPointsSelected();
   int controlPointType = Active;
   if (this->MarkupsDisplayNode->GetActiveComponentType() != vtkMRMLMarkupsDisplayNode::ComponentLine)
-    {
+  {
     controlPointType = allControlPointsSelected ? Selected : Unselected;
-    }
+  }
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
 
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
@@ -164,26 +164,26 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   bool allNodesHidden = true;
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
-    {
+  {
     if (markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
       && (markupsNode->GetNthControlPointVisibility(controlPointIndex)))
-      {
+    {
       allNodesHidden = false;
       break;
-      }
     }
+  }
 
   if (this->CurveClosed && markupsNode->GetNumberOfControlPoints() > 2 && !allNodesHidden)
-    {
+  {
     double centerPosWorld[3], orient[3] = { 0 };
     markupsNode->GetCenterOfRotationWorld(centerPosWorld);
     int centerControlPointType = allControlPointsSelected ? Selected : Unselected;
     if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentCenterPoint)
-      {
+    {
       centerControlPointType = Active;
       this->GetControlPointsPipeline(centerControlPointType)->ControlPoints->SetNumberOfPoints(0);
       this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->SetNumberOfTuples(0);
-      }
+    }
     this->GetControlPointsPipeline(centerControlPointType)->ControlPoints->InsertNextPoint(centerPosWorld);
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->InsertNextTuple(orient);
 
@@ -191,17 +191,17 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->GetPointData()->GetNormals()->Modified();
     this->GetControlPointsPipeline(centerControlPointType)->ControlPointsPolyData->Modified();
     if (centerControlPointType == Active)
-      {
+    {
       this->GetControlPointsPipeline(centerControlPointType)->Actor->VisibilityOn();
       this->GetControlPointsPipeline(centerControlPointType)->LabelsActor->VisibilityOff();
-      }
     }
+  }
 
   // Scalars
   this->LineMapper->SetScalarVisibility(this->MarkupsDisplayNode->GetScalarVisibility());
   // if the scalars are visible, set active scalars, the lookup table and the scalar range
   if (this->MarkupsDisplayNode->GetScalarVisibility())
-    {
+  {
     // Set active display property so that it can be distinguished, given that color cannot be used for this when scalars are visible
     vtkProperty* activePipelineProperty =
       reinterpret_cast<vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D*>(this->ControlPoints[Active])->Property;
@@ -209,17 +209,17 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
     activePipelineProperty->SetSpecular(1.0);
 
     if (this->LineActor->GetVisibility())
-      {
+    {
       this->LineMapper->SetScalarModeToUsePointData();
 
       if (this->MarkupsDisplayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDirectMapping)
-        {
+      {
         this->LineMapper->UseLookupTableScalarRangeOn(); // avoid warning about bad table range
         this->LineMapper->SetColorModeToDirectScalars();
         this->LineMapper->SetLookupTable(nullptr);
-        }
+      }
       else
-        {
+      {
         this->LineMapper->UseLookupTableScalarRangeOff();
         this->LineMapper->SetColorModeToMapScalars();
 
@@ -233,18 +233,18 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
         vtkSmartPointer<vtkLookupTable> dNodeLUT = vtkSmartPointer<vtkLookupTable>::Take(
           this->MarkupsDisplayNode->GetColorNode() ? this->MarkupsDisplayNode->GetColorNode()->CreateLookupTableCopy() : nullptr);
         this->LineMapper->SetLookupTable(dNodeLUT);
-        }
+      }
 
       // Set scalar range
       this->LineMapper->SetScalarRange(this->MarkupsDisplayNode->GetScalarRange());
-      }
     }
+  }
   else
-    {
+  {
     vtkProperty* activePipelineProperty =
       reinterpret_cast<vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D*>(this->ControlPoints[Active])->Property;
     activePipelineProperty->SetSpecular(this->PreviousSpecularLightingCoeff);
-    }
+  }
 }
 
 //----------------------------------------------------------------------
@@ -270,13 +270,13 @@ int vtkSlicerCurveRepresentation3D::RenderOverlay(vtkViewport *viewport)
   int count=0;
   count = this->Superclass::RenderOverlay(viewport);
   if (this->LineActor->GetVisibility())
-    {
+  {
     count +=  this->LineActor->RenderOverlay(viewport);
-    }
+  }
   if (this->LineOccludedActor->GetVisibility())
-    {
+  {
     count +=  this->LineOccludedActor->RenderOverlay(viewport);
-    }
+  }
   return count;
 }
 
@@ -287,16 +287,16 @@ int vtkSlicerCurveRepresentation3D::RenderOpaqueGeometry(
   int count=0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
-    {
+  {
     double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
       this->MarkupsDisplayNode->GetLineDiameter() : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
     this->TubeFilter->SetRadius(diameter * 0.5);
     count += this->LineActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   if (this->LineOccludedActor->GetVisibility())
-    {
+  {
     count += this->LineOccludedActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   return count;
 }
 
@@ -307,19 +307,19 @@ int vtkSlicerCurveRepresentation3D::RenderTranslucentPolygonalGeometry(
   int count=0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
-    {
+  {
     // The internal actor needs to share property keys.
     // This ensures the mapper state is consistent and allows depth peeling to work as expected.
     this->LineActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   if (this->LineOccludedActor->GetVisibility())
-    {
+  {
     // The internal actor needs to share property keys.
     // This ensures the mapper state is consistent and allows depth peeling to work as expected.
     this->LineOccludedActor->SetPropertyKeys(this->GetPropertyKeys());
     count += this->LineOccludedActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   return count;
 }
 
@@ -327,17 +327,17 @@ int vtkSlicerCurveRepresentation3D::RenderTranslucentPolygonalGeometry(
 vtkTypeBool vtkSlicerCurveRepresentation3D::HasTranslucentPolygonalGeometry()
 {
   if (this->Superclass::HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->LineActor->GetVisibility() && this->LineActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->LineOccludedActor->GetVisibility() && this->LineOccludedActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   return false;
 }
 
@@ -360,14 +360,14 @@ void vtkSlicerCurveRepresentation3D::CanInteract(
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
     || !interactionEventData )
-    {
+  {
     return;
-    }
+  }
   Superclass::CanInteract(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
   if (foundComponentType != vtkMRMLMarkupsDisplayNode::ComponentNone)
-    {
+  {
     return;
-    }
+  }
 
   this->CanInteractWithCurve(interactionEventData, foundComponentType, foundComponentIndex, closestDistance2);
 }
@@ -379,13 +379,13 @@ void vtkSlicerCurveRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   if (this->LineActor)
-    {
+  {
     os << indent << "Line Visibility: " << this->LineActor->GetVisibility() << "\n";
-    }
+  }
   else
-    {
+  {
     os << indent << "Line Visibility: (none)\n";
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -394,16 +394,16 @@ void vtkSlicerCurveRepresentation3D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
   if (this->MarkupsNode != markupsNode)
   {
     if (markupsNode)
-      {
+    {
       vtkNew<vtkCleanPolyData> cleaner;
       cleaner->PointMergingOn();
       cleaner->SetInputConnection(markupsNode->GetCurveWorldConnection());
       this->TubeFilter->SetInputConnection(cleaner->GetOutputPort());
-      }
+    }
     else
-      {
+    {
       this->TubeFilter->SetInputData(this->Line);
-      }
+    }
   }
   this->Superclass::SetMarkupsNode(markupsNode);
 }
@@ -416,15 +416,15 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
   if (!this->MarkupsNode || this->MarkupsNode->GetLocked()
     || this->MarkupsNode->GetNumberOfControlPoints() < 2
     || !this->GetVisibility() || !interactionEventData)
-    {
+  {
     return;
-    }
+  }
 
   vtkPolyData* curveWorld = this->MarkupsNode->GetCurveWorld();
   if (!curveWorld || curveWorld->GetNumberOfCells()<1)
-    {
+  {
     return;
-    }
+  }
 
   this->CurvePointLocator->SetDataSet(curveWorld);
   this->CurvePointLocator->Update();
@@ -435,15 +435,15 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
   // dist2 is initialized to -1.0 because this is how FindClosestPoint indicates that no closest point is found
   double dist2 = -1.0;
   if (interactionEventData->IsWorldPositionValid())
-    {
+  {
     const double* worldPosition = interactionEventData->GetWorldPosition();
     this->CurvePointLocator->FindClosestPoint(worldPosition, closestPointDisplay, cellId, subId, dist2);
-    }
+  }
 
   if (dist2>=0 && dist2 < this->ControlPointSize + this->PickingTolerance * this->ScreenScaleFactor * this->ViewScaleFactorMmPerPixel)
-    {
+  {
     closestDistance2 = dist2 / this->ViewScaleFactorMmPerPixel / this->ViewScaleFactorMmPerPixel;
     foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentLine;
     componentIndex = this->MarkupsNode->GetControlPointIndexFromInterpolatedPointIndex(subId);
-    }
+  }
 }

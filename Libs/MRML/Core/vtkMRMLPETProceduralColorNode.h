@@ -51,9 +51,9 @@ public:
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
-    {
+  {
       DisplayModifiedEvent = 20000
-    };
+  };
 
   /// The list of valid types
   /// PETheat to display PET overlay with red to orange to yellow to white.

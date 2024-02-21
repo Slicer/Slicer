@@ -54,19 +54,19 @@ vtkObservation::~vtkObservation()
   this->SetScript( nullptr );
 
   if (this->ObservationCallbackCommand != nullptr)
-    {
+  {
     this->ObservationCallbackCommand->Delete();
-    }
+  }
 
   if (this->CallbackCommand != nullptr)
-    {
+  {
     this->CallbackCommand->Delete();
-    }
+  }
 
   if (this->EventBroker != nullptr)
-    {
+  {
     this->EventBroker->Delete();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

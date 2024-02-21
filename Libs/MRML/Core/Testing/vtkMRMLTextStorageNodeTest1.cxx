@@ -32,10 +32,10 @@ int TestReadWriteData(vtkMRMLScene* scene, const char* extension, std::string te
 int vtkMRMLTextStorageNodeTest1(int argc, char * argv[] )
 {
   if (argc != 2)
-    {
+  {
     std::cerr << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLTextStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

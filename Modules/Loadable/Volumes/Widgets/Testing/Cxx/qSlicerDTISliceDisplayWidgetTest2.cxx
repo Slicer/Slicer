@@ -56,10 +56,10 @@ int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
   qMRMLWidget::postInitializeApplication();
 
   if (argc < 2)
-    {
+  {
     std::cerr << "Usage: qSlicerDTISliceDisplayWidgetTest2 dtiFileName" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::cout << "file: " << argv[1] << std::endl;
 
   vtkNew<vtkMRMLScene> scene;
@@ -80,10 +80,10 @@ int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
 
   vtkMRMLVolumeNode* volumeNode = volumesLogic->AddArchetypeVolume(argv[1], "dti");
   if (!volumeNode)
-    {
+  {
     std::cerr << "Bad DTI file:" << argv[1] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLDiffusionTensorDisplayPropertiesNode> propertiesNode;
   scene->AddNode(propertiesNode);
@@ -101,8 +101,8 @@ int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
 
   widget.show();
   if (argc < 3 || QString(argv[2]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

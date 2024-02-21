@@ -25,27 +25,27 @@ int vtkSlicerTransformLogicTest1(int argc, char * argv [])
   itk::itkFactoryRegistration();
 
   if(argc < 2)
-    {
+  {
     std::cerr << "Missing transform file name." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkMRMLScene* scene = vtkMRMLScene::New();
 
   vtkSlicerTransformLogic* transformModuleLogic = vtkSlicerTransformLogic::New();
   transformModuleLogic->SetMRMLScene(scene);
   if (transformModuleLogic->GetMRMLScene() != scene)
-    {
+  {
     std::cerr << "A MRML Scene must be set to go further." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkMRMLTransformNode* transform = transformModuleLogic->AddTransform(argv[1], scene);
   if (transform == nullptr)
-    {
+  {
     std::cerr << "Could not read transform file: " << argv[1] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   transformModuleLogic->Delete();
   scene->Delete();

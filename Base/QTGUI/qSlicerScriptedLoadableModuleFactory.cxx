@@ -45,20 +45,20 @@ bool ctkFactoryScriptedItem::load()
 {
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     // By convention, if the module is not embedded, "<MODULEPATH>" will be appended to PYTHONPATH
     if (!qSlicerCoreApplication::application()->isEmbeddedModule(this->path()))
-      {
+    {
       QDir modulePathWithoutIntDir = QFileInfo(this->path()).dir();
       QString intDir = qSlicerCoreApplication::application()->intDir();
       if (intDir ==  modulePathWithoutIntDir.dirName())
-        {
+      {
         modulePathWithoutIntDir.cdUp();
-        }
+      }
       qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
       pythonManager->appendPythonPaths(QStringList() << modulePathWithoutIntDir.absolutePath());
-      }
     }
+  }
 #endif
 
   return true;
@@ -75,9 +75,9 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   if (!app)
-    {
+  {
     return nullptr;
-    }
+  }
 
   // Set to /path/to/lib/Slicer-X.Y/qt-scripted-modules
   QString modulePath = QFileInfo(this->path()).absolutePath();
@@ -87,25 +87,25 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   modulePath = modulePath + "/" Slicer_QTLOADABLEMODULES_SUBDIR;
   // Set to /path/to/lib/Slicer-X.Y/qt-loadable-modules/<intDir>
   if (!app->intDir().isEmpty())
-    {
+  {
     modulePath = modulePath + "/" + app->intDir();
-    }
+  }
 
   if (!qSlicerLoadableModule::importModulePythonExtensions(
         app->corePythonManager(), app->intDir(), modulePath,
         app->isEmbeddedModule(this->path())))
-    {
+  {
     qWarning() << "qSlicerScriptedLoadableModuleFactory - Failed to import module" << module->name() << "python extensions";
-    }
+  }
 
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
   module->setBuiltIn(qSlicerUtils::isPluginBuiltIn(this->path(), app->slicerHome(), app->revision()));
 
   bool ret = module->setPythonSource(this->path());
   if (!ret)
-    {
+  {
     return nullptr;
-    }
+  }
 
   return module.take();
 }
@@ -129,14 +129,14 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)
-    {
+  {
     return QStringList();
-    }
+  }
   if (app->slicerHome().isEmpty())
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Application home directory is expected to be set";
     return QStringList();
-    }
+  }
 
   QStringList defaultQTModulePaths;
 
@@ -146,16 +146,16 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
   bool appendDefaultQTModulePaths = app->isInstalled();
 #endif
   if (appendDefaultQTModulePaths)
-    {
+  {
     defaultQTModulePaths << app->slicerHome() + "/" + Slicer_QTSCRIPTEDMODULES_LIB_DIR;
     if (!app->intDir().isEmpty())
-      {
+    {
       // On Win32, *both* paths have to be there, since scripts are installed
       // in the install location, and exec/libs are *automatically* installed
       // in intDir.
       defaultQTModulePaths << app->slicerHome() + "/" + Slicer_QTSCRIPTEDMODULES_LIB_DIR + "/" + app->intDir();
-      }
     }
+  }
 
   // Add the default modules directory (based on the slicer
   // installation or build tree) to the user paths
@@ -185,30 +185,30 @@ bool qSlicerScriptedLoadableModuleFactory::isValidFile(const QFileInfo& file)con
 {
   // Skip if current file isn't a python file
   if(!ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>::isValidFile(file))
-    {
+  {
     return false;
-    }
+  }
 
   if (qSlicerUtils::isCLIScriptedExecutable(file.filePath()))
-    {
+  {
     return false;
-    }
+  }
 
   // Otherwise, accept if current file is a python script
   if (file.suffix().compare("py", Qt::CaseInsensitive) == 0)
-    {
+  {
     return true;
-    }
+  }
   // Accept if current file is a pyc file and there is no associated py file
   if (file.suffix().compare("pyc", Qt::CaseInsensitive) == 0)
-    {
+  {
     int length = file.filePath().size();
     QString pyFilePath = file.filePath().remove(length - 1, 1);
     if (!QFile::exists(pyFilePath))
-      {
+    {
       return true;
-      }
     }
+  }
   return false;
 }
 

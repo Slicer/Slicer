@@ -112,9 +112,9 @@ void qSlicerSimpleMarkupsWidget::setup()
 
   d->MarkupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->moduleLogic("Markups"));
   if (!d->MarkupsLogic)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Markups module is not found, some markup manipulation features will not be available";
-    }
+  }
 
   d->setupUi(this);
 
@@ -171,10 +171,10 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
 
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( currentNode );
   if (currentMarkupsNode==d->CurrentMarkupsNode)
-    {
+  {
     // not changed
     return;
-    }
+  }
 
   // Don't change the active markups if the current node is changed programmatically
   bool wasBlocked = d->MarkupsNodeComboBox->blockSignals(true);
@@ -328,15 +328,15 @@ void qSlicerSimpleMarkupsWidget::highlightNthControlPoint(int n)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
   if ( n >= 0 && n < d->MarkupsControlPointsTableWidget->rowCount() )
-    {
+  {
     d->MarkupsControlPointsTableWidget->selectRow(n);
     d->MarkupsControlPointsTableWidget->setCurrentCell(n,0);
     d->MarkupsControlPointsTableWidget->scrollTo(d->MarkupsControlPointsTableWidget->currentIndex());
-    }
+  }
   else
-    {
+  {
     d->MarkupsControlPointsTableWidget->clearSelection();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -367,9 +367,9 @@ void qSlicerSimpleMarkupsWidget::onMarkupsNodeChanged()
   this->setCurrentNode(currentMarkupsNode);
 
   if (d->EnterPlaceModeOnNodeChange)
-    {
+  {
     d->MarkupsPlaceWidget->setPlaceModeEnabled(currentMarkupsNode!=nullptr);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -377,17 +377,17 @@ void qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded( vtkMRMLNode* newNode )
 {
   Q_D(qSlicerSimpleMarkupsWidget);
   if (d->MarkupsLogic == nullptr)
-    {
+  {
     qCritical("qSlicerSimpleMarkupsWidget::onMarkupsNodeAdded failed: Markups module logic is invalid");
     return;
-    }
+  }
 
   vtkMRMLMarkupsNode* newMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( newNode );
   if (newMarkupsNode->GetDisplayNode()==nullptr)
-    {
+  {
     // Make sure there is an associated display node
     d->MarkupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsNode );
-    }
+  }
   d->MarkupsNodeComboBox->setCurrentNode( newMarkupsNode );
   this->setNodeColor( defaultNodeColor() );
   this->onMarkupsNodeChanged();
@@ -399,10 +399,10 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
   Q_D(qSlicerSimpleMarkupsWidget);
 
   if (d->MarkupsLogic == nullptr)
-    {
+  {
     qCritical("qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu failed: Markups module logic is invalid");
     return;
-    }
+  }
 
   QPoint globalPosition = d->MarkupsControlPointsTableWidget->viewport()->mapToGlobal( position );
 
@@ -423,55 +423,55 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
   vtkMRMLMarkupsNode* currentNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsNodeComboBox->currentNode() );
 
   if ( currentNode == nullptr )
-    {
+  {
     return;
-    }
+  }
 
   // Only do this for non-null node
   if ( selectedAction == deleteAction )
-    {
+  {
     QItemSelectionModel* selectionModel = d->MarkupsControlPointsTableWidget->selectionModel();
     std::vector< int > deleteControlPoints;
     // Need to find selected before removing because removing automatically refreshes the table
     for ( int i = 0; i < d->MarkupsControlPointsTableWidget->rowCount(); i++ )
-      {
+    {
       if ( selectionModel->rowIntersectsSelection( i, d->MarkupsControlPointsTableWidget->rootIndex() ) )
-        {
+      {
         deleteControlPoints.push_back( i );
-        }
       }
+    }
     // Do this in batch mode
     int wasModifying = currentNode->StartModify();
     //Traversing this way should be more efficient and correct
     for ( int i = static_cast<int>(deleteControlPoints.size()) - 1; i >= 0; i-- )
-      {
+    {
       // remove the point at that row
       currentNode->RemoveNthControlPoint(deleteControlPoints.at( static_cast<size_t>(i) ));
-      }
-    currentNode->EndModify(wasModifying);
     }
+    currentNode->EndModify(wasModifying);
+  }
 
 
   if ( selectedAction == upAction )
-    {
+  {
     if ( currentControlPoint > 0 )
-      {
+    {
       currentNode->SwapControlPoints(currentControlPoint, currentControlPoint - 1 );
-      }
     }
+  }
 
   if ( selectedAction == downAction )
-    {
+  {
     if ( currentControlPoint < currentNode->GetNumberOfControlPoints() - 1 )
-      {
+    {
       currentNode->SwapControlPoints( currentControlPoint, currentControlPoint + 1 );
-      }
     }
+  }
 
   if ( selectedAction == jumpAction )
-    {
+  {
     d->MarkupsLogic->JumpSlicesToNthPointInMarkup(this->currentNode()->GetID(), currentControlPoint, true /* centered */, d->ViewGroup);
-    }
+  }
 
   this->updateWidget();
 }
@@ -483,19 +483,19 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected(int row, int colu
   Q_D(qSlicerSimpleMarkupsWidget);
 
   if (d->JumpToSliceEnabled)
-    {
+  {
     vtkMRMLMarkupsNode *currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->currentNode());
     if (currentMarkupsNode == nullptr)
-      {
+    {
       return;
-      }
+    }
 
     if (d->MarkupsLogic == nullptr)
-      {
+    {
       qCritical("qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected "
                 "failed: Cannot jump, markups module logic is invalid");
       return;
-      }
+    }
     d->MarkupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsNode->GetID(), row, true /* centered */, d->ViewGroup);
   }
 
@@ -511,9 +511,9 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( this->currentNode() );
 
   if ( currentMarkupsNode == nullptr )
-    {
+  {
     return;
-    }
+  }
 
   // Find the control point's current properties
   double currentControlPointPosition[3] = { 0, 0, 0 };
@@ -525,26 +525,26 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column
   QString qText = qItem->text();
 
   if ( column == CONTROL_POINT_LABEL_COLUMN )
-    {
+  {
     currentMarkupsNode->SetNthControlPointLabel( row, qText.toStdString() );
-    }
+  }
 
   // Check if the value can be converted to double is already performed implicitly
   double newControlPointPosition = qText.toDouble();
 
   // Change the position values
   if ( column == CONTROL_POINT_X_COLUMN )
-    {
+  {
     currentControlPointPosition[ 0 ] = newControlPointPosition;
-    }
+  }
   if ( column == CONTROL_POINT_Y_COLUMN )
-    {
+  {
     currentControlPointPosition[ 1 ] = newControlPointPosition;
-    }
+  }
   if ( column == CONTROL_POINT_Z_COLUMN )
-    {
+  {
     currentControlPointPosition[ 2 ] = newControlPointPosition;
-    }
+  }
 
   currentMarkupsNode->SetNthControlPointPosition( row, currentControlPointPosition );
 
@@ -557,20 +557,20 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
   Q_D(qSlicerSimpleMarkupsWidget);
 
   if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr)
-    {
+  {
     qCritical("qSlicerSimpleMarkupsWidget::updateWidget failed: Markups module logic or scene is invalid");
-    }
+  }
 
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsNodeComboBox->currentNode() );
   if ( currentMarkupsNode == nullptr || d->MarkupsLogic == nullptr)
-    {
+  {
     d->MarkupsControlPointsTableWidget->clear();
     d->MarkupsControlPointsTableWidget->setRowCount( 0 );
     d->MarkupsControlPointsTableWidget->setColumnCount( 0 );
     d->MarkupsPlaceWidget->setEnabled(false);
     emit updateFinished();
     return;
-    }
+  }
 
   d->MarkupsPlaceWidget->setEnabled(true);
 
@@ -578,22 +578,22 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
   bool wasBlockedTableWidget = d->MarkupsControlPointsTableWidget->blockSignals( true );
 
   if (d->MarkupsControlPointsTableWidget->rowCount()==currentMarkupsNode->GetNumberOfControlPoints())
-    {
+  {
     // don't recreate the table if the number of items is not changed to preserve selection state
     double controlPointPosition[ 3 ] = { 0, 0, 0 };
     std::string controlPointLabel;
     for ( int i = 0; i < currentMarkupsNode->GetNumberOfControlPoints(); i++ )
-      {
+    {
       controlPointLabel = currentMarkupsNode->GetNthControlPointLabel(i);
       currentMarkupsNode->GetNthControlPointPosition(i, controlPointPosition);
       d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_LABEL_COLUMN)->setText(QString::fromStdString(controlPointLabel));
       d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_X_COLUMN)->setText(QString::number( controlPointPosition[0], 'f', 3 ));
       d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Y_COLUMN)->setText(QString::number( controlPointPosition[1], 'f', 3 ));
       d->MarkupsControlPointsTableWidget->item(i, CONTROL_POINT_Z_COLUMN)->setText(QString::number( controlPointPosition[2], 'f', 3 ));
-      }
     }
+  }
   else
-    {
+  {
     d->MarkupsControlPointsTableWidget->clear();
     d->MarkupsControlPointsTableWidget->setRowCount( currentMarkupsNode->GetNumberOfControlPoints() );
     d->MarkupsControlPointsTableWidget->setColumnCount( CONTROL_POINT_COLUMNS );
@@ -611,7 +611,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     double controlPointPosition[ 3 ] = { 0, 0, 0 };
     std::string controlPointLabel;
     for ( int i = 0; i < currentMarkupsNode->GetNumberOfControlPoints(); i++ )
-      {
+    {
       controlPointLabel = currentMarkupsNode->GetNthControlPointLabel( i );
       currentMarkupsNode->GetNthControlPointPosition( i, controlPointPosition );
 
@@ -624,8 +624,8 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
       d->MarkupsControlPointsTableWidget->setItem( i, CONTROL_POINT_X_COLUMN, xItem );
       d->MarkupsControlPointsTableWidget->setItem( i, CONTROL_POINT_Y_COLUMN, yItem );
       d->MarkupsControlPointsTableWidget->setItem( i, CONTROL_POINT_Z_COLUMN, zItem );
-      }
     }
+  }
 
   d->MarkupsControlPointsTableWidget->blockSignals( wasBlockedTableWidget );
 

@@ -73,9 +73,9 @@ qSlicerAbstractCoreModulePrivate::~qSlicerAbstractCoreModulePrivate()
 {
   // Delete the widget representation
   if (this->WidgetRepresentation)
-    {
+  {
     delete this->WidgetRepresentation;
-    }
+  }
   qDeleteAll(this->WidgetRepresentations.begin(), this->WidgetRepresentations.end());
   this->WidgetRepresentations.clear();
 }
@@ -158,20 +158,20 @@ void qSlicerAbstractCoreModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
 {
   Q_D(qSlicerAbstractCoreModule);
   if (d->MRMLScene == _mrmlScene)
-    {
+  {
     return;
-    }
+  }
   d->MRMLScene = _mrmlScene;
   // Since we don't want 'setMRMLScene' to instantiate explicitly the logic,
   // we just check the pointer (instead of calling 'this->logic()')
   if (d->Logic)
-    {// logic should be updated first (because it doesn't depends on the widget
+  {// logic should be updated first (because it doesn't depends on the widget
     d->Logic->SetMRMLScene(_mrmlScene);
-    }
+  }
   if (d->WidgetRepresentation)
-    {
+  {
     d->WidgetRepresentation->setMRMLScene(_mrmlScene);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -184,9 +184,9 @@ void qSlicerAbstractCoreModule::setAppLogic(vtkSlicerApplicationLogic* newAppLog
   vtkSlicerModuleLogic* moduleLogic =
     vtkSlicerModuleLogic::SafeDownCast(d->Logic);
   if (moduleLogic)
-    {
+  {
     moduleLogic->SetMRMLApplicationLogic(newAppLogic);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -196,9 +196,9 @@ CTK_GET_CPP(qSlicerAbstractCoreModule, vtkSlicerApplicationLogic*, appLogic, App
 vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::moduleLogic(const QString& moduleName) const
 {
   if (!this->appLogic())
-    {
+  {
     return nullptr;
-    }
+  }
   return this->appLogic()->GetModuleLogic(moduleName.toUtf8());
 }
 
@@ -237,9 +237,9 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresenta
 
   // If required, create widgetRepresentation
   if (!d->WidgetRepresentation)
-    {
+  {
     d->WidgetRepresentation = this->createNewWidgetRepresentation();
-    }
+  }
   return d->WidgetRepresentation;
 }
 
@@ -249,9 +249,9 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::createNewWidgetR
   Q_D(qSlicerAbstractCoreModule);
 
   if (!this->isWidgetRepresentationCreationEnabled())
-    {
+  {
     return nullptr;
-    }
+  }
 
   // Since 'logic()' should have been called in 'initialize(), let's make
   // sure the 'logic()' method call is consistent and won't create a
@@ -265,10 +265,10 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::createNewWidgetR
   newWidgetRepresentation = this->createWidgetRepresentation();
 
   if (newWidgetRepresentation == nullptr)
-    {
+  {
     qDebug() << "Warning, the module "<<this->name()<< "has no widget representation";
     return nullptr;
-    }
+  }
   // internally sets the logic and call setup,
   newWidgetRepresentation->setModule(this);
   // Note: setMRMLScene should be called after setup (just to make sure widgets
@@ -288,9 +288,9 @@ vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::logic()
 
   // Return a logic object is one already exists
   if (d->Logic)
-    {
+  {
     return d->Logic;
-    }
+  }
   // Attempt to create a logic object
   d->Logic.TakeReference(this->createLogic());
 
@@ -298,16 +298,16 @@ vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::logic()
   // Note also that, in case no logic is associated with the module,
   // 'createLogic()' could return 0
   if (d->Logic)
-    {
+  {
     vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(d->Logic);
     if (moduleLogic)
-      {
+    {
       moduleLogic->SetMRMLApplicationLogic(d->AppLogic);
       moduleLogic->SetModuleShareDirectory(vtkSlicerApplicationLogic::GetModuleShareDirectory(
                                        this->name().toStdString(), this->path().toStdString()));
-      }
-    d->Logic->SetMRMLScene(this->mrmlScene());
     }
+    d->Logic->SetMRMLScene(this->mrmlScene());
+  }
   return d->Logic;
 }
 
@@ -319,9 +319,9 @@ void qSlicerAbstractCoreModule::representationDeleted(qSlicerAbstractModuleRepre
   // Just remove the list entry, the object storage has already been
   // deleted by caller.
   if (d->WidgetRepresentation == representation)
-    {
+  {
     d->WidgetRepresentation = nullptr;
-    }
+  }
   d->WidgetRepresentations.removeAll(representation);
 }
 
@@ -336,11 +336,11 @@ QString qSlicerAbstractCoreModule::defaultDocumentationLink()const
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)
-    {
+  {
     // base URL stored in application settings, therefore if there is no
     // valid application then we cannot get default documentation link
     return "";
-    }
+  }
   QString url = app->moduleDocumentationUrl(this->name());
   QString linkText = QString("<p>")
     + tr("For more information see the %1.").arg(

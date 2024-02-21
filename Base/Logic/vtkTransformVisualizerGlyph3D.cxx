@@ -73,23 +73,23 @@ int vtkTransformVisualizerGlyph3D::RequestData(
   vtkDataArray *inVectors = this->GetInputArrayToProcess(ARRAY_INDEX_VECTORS,inputVector);
   vtkDataArray *inCScalars = this->GetInputArrayToProcess(ARRAY_INDEX_COLORS,inputVector);; // Scalars for Coloring
   if (inCScalars == nullptr)
-    {
+  {
     vtkDataArray *inSScalars = this->GetInputArrayToProcess(ARRAY_INDEX_SCALARS,inputVector); // Scalars for Scaling
     inCScalars = inSScalars;
-    }
+  }
 
   vtkIdType numPts = input->GetNumberOfPoints();
   if (numPts < 1)
-    {
+  {
     vtkDebugMacro("No points to glyph!");
     return 1;
-    }
+  }
 
   if ( inCScalars==nullptr )
-    {
+  {
     vtkDebugMacro("No scalar data is available!");
     return 1;
-    }
+  }
 
   // Allocate storage for output PolyData
   outputPD->CopyVectorsOff();
@@ -131,22 +131,22 @@ int vtkTransformVisualizerGlyph3D::RequestData(
   vtkIdType cellIncr=0;
   double v[3] = {0};
   for (vtkIdType inPtId=0; inPtId < numPts; inPtId++)
-    {
+  {
     if ( ! (inPtId % 10000) )
-      {
+    {
       this->UpdateProgress(static_cast<double>(inPtId)/numPts);
       if (this->GetAbortExecute())
-        {
+      {
         break;
-        }
       }
+    }
 
     // Get the scalar and vector data
     double scalarValue = inCScalars->GetComponent(inPtId, 0);
     if (this->MagnitudeThresholding && (scalarValue<this->MagnitudeThresholdLower || scalarValue>this->MagnitudeThresholdUpper))
-      {
+    {
       continue;
-      }
+    }
 
     inVectors->GetTuple(inPtId, v);
     double vMag = vtkMath::Norm(v);
@@ -156,99 +156,99 @@ int vtkTransformVisualizerGlyph3D::RequestData(
 
     // Copy all topology (transformation independent)
     for (vtkIdType cellId=0; cellId < numSourceCells; cellId++)
-      {
+    {
       vtkCell *cell = source->GetCell(cellId);
       vtkIdList *cellPts = cell->GetPointIds();
       int npts = cellPts->GetNumberOfIds();
       pts->Reset();
       for (vtkIdType i=0; i < npts; i++)
-        {
+      {
         pts->InsertId(i,cellPts->GetId(i) + ptIncr);
-        }
-      output->InsertNextCell(cell->GetCellType(),pts.GetPointer());
       }
+      output->InsertNextCell(cell->GetCellType(),pts.GetPointer());
+    }
 
     // translate Source to Input point
     trans->Translate(input->GetPoint(inPtId));
 
     // Orient the glyph
     if (this->Orient && (vMag > 0.0))
-      {
+    {
       // if there is no y or z component
       if ( v[1] == 0.0 && v[2] == 0.0 )
-        {
+      {
         if (v[0] < 0) //just flip x if we need to
-          {
-          trans->RotateWXYZ(180.0,0,1,0);
-          }
-        }
-      else
         {
-        trans->RotateWXYZ(180.0, (v[0]+vMag)/2.0, v[1]/2.0, v[2]/2.0);
+          trans->RotateWXYZ(180.0,0,1,0);
         }
       }
+      else
+      {
+        trans->RotateWXYZ(180.0, (v[0]+vMag)/2.0, v[1]/2.0, v[2]/2.0);
+      }
+    }
 
     // Scale data if appropriate
     if ( this->Scaling )
-      {
+    {
       if ( this->ScaleDirectional )
-        {
+      {
         double scale = vMag * this->ScaleFactor;
         if ( scale == 0.0 )
-          {
-          scale = 1.0e-10;
-          }
-        trans->Scale(scale,1.0,1.0);
-        }
-      else
         {
+          scale = 1.0e-10;
+        }
+        trans->Scale(scale,1.0,1.0);
+      }
+      else
+      {
         double scale = this->ScaleFactor;
         if (this->ScaleMode==VTK_SCALE_BY_SCALAR)
-          {
+        {
           scale *= scalarValue;
-          }
-        else
-          {
-          scale *= vMag;
-          }
-        if ( scale == 0.0 )
-          {
-          scale = 1.0e-10;
-          }
-        trans->Scale(scale,scale,scale);
         }
+        else
+        {
+          scale *= vMag;
+        }
+        if ( scale == 0.0 )
+        {
+          scale = 1.0e-10;
+        }
+        trans->Scale(scale,scale,scale);
       }
+    }
 
     // Multiply points and normals by resulting matrix
     if (this->SourceTransform)
-      {
+    {
       transformedSourcePts->Reset();
       this->SourceTransform->TransformPoints(sourcePts, transformedSourcePts);
       trans->TransformPoints(transformedSourcePts, newPts.GetPointer());
-      }
+    }
     else
-      {
+    {
       trans->TransformPoints(sourcePts,newPts.GetPointer());
-      }
+    }
 
     // Copy point data from source
     for (vtkIdType i=0; i < numSourcePts; i++)
-      {
+    {
       outputPD->CopyTuple(inCScalars, newScalars, inPtId, ptIncr+i);
-      }
+    }
 
     ptIncr += numSourcePts;
     cellIncr += numSourceCells;
-    }
+  }
 
   // Update ourselves and release memory
   output->SetPoints(newPts.GetPointer());
 
   if (newScalars)
-    {
+  {
     int idx = outputPD->AddArray(newScalars);
     outputPD->SetActiveAttribute(idx, vtkDataSetAttributes::SCALARS);
-    }
+  }
 
   output->Squeeze();
 

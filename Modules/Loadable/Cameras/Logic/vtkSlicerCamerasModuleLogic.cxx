@@ -52,9 +52,9 @@ vtkMRMLCameraNode* vtkSlicerCamerasModuleLogic
 ::GetViewActiveCameraNode(vtkMRMLViewNode* viewNode)
 {
   if (!this->GetMRMLScene())
-    {
+  {
     return nullptr;
-    }
+  }
   vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
     this->GetMRMLScene()->GetSingletonNode(viewNode->GetLayoutName(), "vtkMRMLCameraNode"));
   return cameraNode;

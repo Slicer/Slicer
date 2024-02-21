@@ -84,9 +84,9 @@ vtkSlicerScriptedLoadableModuleLogic::vtkInternal::vtkInternal()
 vtkSlicerScriptedLoadableModuleLogic::vtkInternal::~vtkInternal()
 {
   if (this->PythonSelf)
-    {
+  {
     Py_DECREF(this->PythonSelf);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -181,9 +181,9 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
 {
   if(filePath.find(".py") == std::string::npos &&
      filePath.find(".pyc") == std::string::npos)
-    {
+  {
     return false;
-    }
+  }
 
   // Extract filename - It should match the associated python class
   std::string className = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
@@ -197,37 +197,37 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
   // Load class definition if needed
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
   if (!classToInstantiate)
-    {
+  {
     PyObject * pyRes = nullptr;
     if (filePath.find(".pyc") != std::string::npos)
-      {
+    {
       std::string pyRunStr = std::string("with open('") + filePath +
           std::string("', 'rb') as f:import imp;imp.load_module('__main__', f, '") + filePath +
           std::string("', ('.pyc', 'rb', 2))");
       pyRes = PyRun_String(
             pyRunStr.c_str(),
             Py_file_input, global_dict, global_dict);
-      }
+    }
     else if (filePath.find(".py") != std::string::npos)
-      {
+    {
       std::string pyRunStr = std::string("execfile('") + filePath + std::string("')");
       pyRes = PyRun_String(pyRunStr.c_str(),
         Py_file_input, global_dict, global_dict);
-      }
+    }
     if (!pyRes)
-      {
+    {
       vtkErrorMacro(<< "setPythonSource - Failed to execute file" << filePath << "!");
       return false;
-      }
+    }
     Py_DECREF(pyRes);
     classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
-    }
+  }
   if (!classToInstantiate)
-    {
+  {
     vtkErrorMacro(<< "SetPythonSource - Failed to load displayable manager class definition from "
                   << filePath);
     return false;
-    }
+  }
 
   //std::cout << "classToInstantiate:" << classToInstantiate << std::endl;
 
@@ -238,11 +238,11 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
   PyObject * self = PyObject_CallObject(classToInstantiate, arguments);
   Py_DECREF(arguments);
   if (!self)
-    {
+  {
     vtkErrorMacro(<< "SetPythonSource - Failed to instantiate displayable manager:"
                   << classToInstantiate);
     return false;
-    }
+  }
 
 //  // Retrieve API methods
 //  for (int i = 0; i < vtkInternal::APIMethodCount; ++i)

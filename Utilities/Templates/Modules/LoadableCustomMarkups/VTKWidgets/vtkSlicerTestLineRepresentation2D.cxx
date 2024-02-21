@@ -59,10 +59,10 @@ void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsi
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || !this->IsDisplayable())
-    {
+  {
     this->VisibilityOff();
     return;
-    }
+  }
 
   this->VisibilityOn();
 
@@ -71,12 +71,12 @@ void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsi
   // Hide the line actor if it doesn't intersect the current slice
   this->SliceDistance->Update();
   if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()), this->SliceDistance->GetScalarArrayName()))
-    {
+  {
     this->MiddlePointActor->SetVisibility(false);
-    }
+  }
 
   if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2)
-    {
+  {
     double p1[3] = { 0.0 };
     double p2[3] = { 0.0 };
     this->GetNthControlPointDisplayPosition(0, p1);
@@ -86,11 +86,11 @@ void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsi
     //                                            static_cast<int>(middlePointPos[1]));
     this->MiddlePointSource->SetCenter(middlePointPos[0], middlePointPos[1], 0.0);
     this->MiddlePointSource->Update();
-    }
+  }
   else
-    {
+  {
     this->MiddlePointActor->SetVisibility(false);
-    }
+  }
 
   this->MiddlePointActor->SetProperty(this->GetControlPointsPipeline(Active)->Property);
 }
@@ -114,9 +114,9 @@ int vtkSlicerTestLineRepresentation2D::RenderOverlay(vtkViewport *viewport)
 {
   int count=0;
   if (this->MiddlePointActor->GetVisibility())
-    {
+  {
     count +=  this->MiddlePointActor->RenderOverlay(viewport);
-    }
+  }
   count += this->Superclass::RenderOverlay(viewport);
   return count;
 }
@@ -126,9 +126,9 @@ int vtkSlicerTestLineRepresentation2D::RenderOpaqueGeometry(vtkViewport *viewpor
 {
   int count=0;
   if (this->MiddlePointActor->GetVisibility())
-    {
+  {
     count += this->MiddlePointActor->RenderOpaqueGeometry(viewport);
-    }
+  }
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   return count;
 }
@@ -138,9 +138,9 @@ int vtkSlicerTestLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkVie
 {
   int count=0;
   if (this->MiddlePointActor->GetVisibility())
-    {
+  {
     count += this->MiddlePointActor->RenderTranslucentPolygonalGeometry(viewport);
-    }
+  }
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   return count;
 }
@@ -149,12 +149,12 @@ int vtkSlicerTestLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkVie
 vtkTypeBool vtkSlicerTestLineRepresentation2D::HasTranslucentPolygonalGeometry()
 {
   if (this->Superclass::HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   if (this->MiddlePointActor->GetVisibility() && this->MiddlePointActor->HasTranslucentPolygonalGeometry())
-    {
+  {
     return true;
-    }
+  }
   return false;
 }

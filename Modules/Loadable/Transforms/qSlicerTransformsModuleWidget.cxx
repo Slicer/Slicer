@@ -93,13 +93,13 @@ QList<vtkSmartPointer<vtkMRMLTransformableNode> > qSlicerTransformsModuleWidgetP
   // Return the list of nodes
   QList<vtkSmartPointer<vtkMRMLTransformableNode> > selectedNodes;
   foreach(QModelIndex selectedIndex, selectedIndexes)
-    {
+  {
     vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
       tree->sortFilterProxyModel()->
       mrmlNodeFromIndex( selectedIndex ));
     Q_ASSERT(node);
     selectedNodes << node;
-    }
+  }
   return selectedNodes;
 }
 
@@ -164,14 +164,14 @@ void qSlicerTransformsModuleWidget::setup()
   // Homogeneous transformation matrix is expected to have (0,0,0,1)
   // in its last row, so do not allow users to edit the last row.
   for (int col = 0; col < 4; col++)
-    {
+  {
     QTableWidgetItem* item = d->MatrixWidget->widgetItem(3, col);
     if (!item)
-      {
+    {
       continue;
-      }
-    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
     }
+    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+  }
 
   d->RotationSliders->setSingleStep(0.1);
   d->RotationSliders->setDecimals(1);
@@ -277,9 +277,9 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   // If no transform node, it would show the entire scene, lets shown none
   // instead.
   if (transformNode == nullptr)
-    {
+  {
     nodeTypes << QString("vtkMRMLNotANode");
-    }
+  }
   d->TransformedTreeView->setNodeTypes(nodeTypes);
 
   // Filter the current node in the transformed tree view
@@ -288,9 +288,9 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   // Hide the current node in the transformable tree view
   QStringList hiddenNodeIDs;
   if (transformNode)
-    {
+  {
     hiddenNodeIDs << QString(transformNode->GetID());
-    }
+  }
   d->TransformableTreeView->sortFilterProxyModel()
     ->setHiddenNodeIDs(hiddenNodeIDs);
 
@@ -299,9 +299,9 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
                       this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
 
   if (d->MRMLTransformNode == nullptr && transformNode != nullptr)
-    {
+  {
     d->TransformedCollapsibleButton->setCollapsed(false);
-    }
+  }
 
   d->MRMLTransformNode = transformNode;
 
@@ -310,13 +310,13 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   // the display node is created if the user expands the display section.
   vtkMRMLTransformDisplayNode* dispNode = nullptr;
   if (transformNode)
-    {
+  {
     dispNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
-    }
+  }
   if (dispNode==nullptr)
-    {
+  {
     d->DisplayCollapsibleButton->setCollapsed(true);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -326,9 +326,9 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
 
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(caller);
   if (!transformNode)
-    {
+  {
     return;
-    }
+  }
   Q_ASSERT(d->MRMLTransformNode == transformNode);
 
   bool isLinearTransform = transformNode->IsLinear();
@@ -343,33 +343,33 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
   // even if the visibility state does not change.
   // To save time, only call the set function if the visibility has to be changed.
   if (isLinearTransform!=d->TranslateFirstToolButton->isVisible())
-    {
+  {
     d->TranslateFirstToolButton->setVisible(isLinearTransform);
-    }
+  }
   if (isLinearTransform!=d->MatrixViewGroupBox->isVisible())
-    {
+  {
     d->MatrixViewGroupBox->setVisible(isLinearTransform);
-    }
+  }
   if (isLinearTransform!=d->TranslationSliders->isVisible())
-    {
+  {
     d->TranslationSliders->setVisible(isLinearTransform);
-    }
+  }
   if (isLinearTransform!=d->RotationSliders->isVisible())
-    {
+  {
     d->RotationSliders->setVisible(isLinearTransform);
-    }
+  }
   if (isLinearTransform!=d->CopyTransformToolButton->isVisible())
-    {
+  {
     d->CopyTransformToolButton->setVisible(isLinearTransform);
-    }
+  }
   if (isLinearTransform!=d->PasteTransformToolButton->isVisible())
-    {
+  {
     d->PasteTransformToolButton->setVisible(isLinearTransform);
-    }
+  }
   if (isCompositeTransform!=d->SplitPushButton->isVisible())
-    {
+  {
     d->SplitPushButton->setVisible(isCompositeTransform);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -378,9 +378,9 @@ void qSlicerTransformsModuleWidget::identity()
   Q_D(qSlicerTransformsModuleWidget);
 
   if (d->MRMLTransformNode==nullptr || !d->MRMLTransformNode->IsLinear())
-    {
+  {
     return;
-    }
+  }
 
   d->TranslationSliders->resetUnactiveSliders();
   d->RotationSliders->resetUnactiveSliders();
@@ -410,9 +410,9 @@ void qSlicerTransformsModuleWidget::split()
   Q_D(qSlicerTransformsModuleWidget);
 
   if (d->MRMLTransformNode==nullptr)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLTransformNode->Split();
 }
@@ -425,11 +425,11 @@ void qSlicerTransformsModuleWidget::copyTransform()
   vtkLinearTransform* linearTransform =
       vtkLinearTransform::SafeDownCast(d->MRMLTransformNode->GetTransformToParent());
   if (!linearTransform)
-    {
+  {
     // Silent fail, no worries!
     qWarning() << "Unable to cast parent transform as a vtkLinearTransform";
     return;
-    }
+  }
 
   vtkMatrix4x4* internalMatrix = linearTransform->GetMatrix();
   std::string delimiter = " ";
@@ -448,10 +448,10 @@ void qSlicerTransformsModuleWidget::pasteTransform()
   std::string text = QApplication::clipboard()->text().toStdString();
   bool success = vtkAddonMathUtilities::FromString(tempMatrix.GetPointer(), text);
   if (!success)
-    {
+  {
     qWarning() << "Cannot convert pasted string to matrix.";
     return;
-    }
+  }
   // Homogeneous transformation matrix is expected to have (0,0,0,1)
   // in its last row.
   tempMatrix->SetElement(3, 0, 0.0);
@@ -487,9 +487,9 @@ void qSlicerTransformsModuleWidget::transformSelectedNodes()
   QList<vtkSmartPointer<vtkMRMLTransformableNode> > nodesToTransform =
     qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(d->TransformableTreeView);
   foreach(vtkSmartPointer<vtkMRMLTransformableNode> node, nodesToTransform)
-    {
+  {
     node->SetAndObserveTransformNodeID(d->MRMLTransformNode->GetID());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -499,9 +499,9 @@ void qSlicerTransformsModuleWidget::untransformSelectedNodes()
   QList<vtkSmartPointer<vtkMRMLTransformableNode> > nodesToTransform =
     qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(d->TransformedTreeView);
   foreach(vtkSmartPointer<vtkMRMLTransformableNode> node, nodesToTransform)
-    {
+  {
     node->SetAndObserveTransformNodeID(nullptr);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -512,9 +512,9 @@ void qSlicerTransformsModuleWidget::hardenSelectedNodes()
     qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(d->TransformedTreeView);
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   foreach(vtkSmartPointer<vtkMRMLTransformableNode> node, nodesToTransform)
-    {
+  {
     d->logic()->hardenTransform(vtkMRMLTransformableNode::SafeDownCast(node));
-    }
+  }
   QApplication::restoreOverrideCursor();
 }
 
@@ -524,19 +524,19 @@ void qSlicerTransformsModuleWidget::onDisplaySectionClicked(bool clicked)
   Q_D(qSlicerTransformsModuleWidget);
   // If the display section is opened and there is no display node then create one
   if (!clicked)
-    {
+  {
     return;
-    }
+  }
   if (d->MRMLTransformNode==nullptr)
-    {
+  {
     return;
-    }
+  }
   if (vtkMRMLTransformDisplayNode::SafeDownCast(d->MRMLTransformNode->GetDisplayNode())==nullptr)
-    {
+  {
     d->MRMLTransformNode->CreateDefaultDisplayNodes();
     // Refresh the display node section
     d->TransformDisplayNodeWidget->setMRMLTransformNode(d->MRMLTransformNode);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -544,16 +544,16 @@ void qSlicerTransformsModuleWidget::onTransformableSectionClicked(bool clicked)
 {
   Q_D(qSlicerTransformsModuleWidget);
   if (clicked)
-    {
+  {
     // the transformable section is open, so no need for spacer
     d->BottomSpacer->changeSize(0,0, QSizePolicy::Fixed, QSizePolicy::Fixed);
-    }
+  }
   else
-    {
+  {
     // the transformable section is open, add spacer to prevent stretching of
     // the remaining sections
     d->BottomSpacer->changeSize(1,1, QSizePolicy::Fixed, QSizePolicy::Expanding);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -561,20 +561,20 @@ void qSlicerTransformsModuleWidget::convert()
 {
   Q_D(qSlicerTransformsModuleWidget);
   if (d->MRMLTransformNode == nullptr)
-    {
+  {
     qWarning("qSlicerTransformsModuleWidget::convert failed: MRMLTransformNode is invalid");
     return;
-    }
+  }
   if (d->ConvertReferenceVolumeNodeComboBox->currentNode() == nullptr)
-    {
+  {
     qWarning("qSlicerTransformsModuleWidget::convert failed: reference volume node is invalid");
     return;
-    }
+  }
   if (d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() == nullptr)
-    {
+  {
     qWarning("qSlicerTransformsModuleWidget::convert failed: reference volume node is invalid");
     return;
-    }
+  }
   vtkMRMLScalarVolumeNode* scalarOutputVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
   vtkMRMLVectorVolumeNode* vectorOutputVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
   vtkMRMLTransformNode* outputTransformNode = vtkMRMLTransformNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
@@ -582,27 +582,27 @@ void qSlicerTransformsModuleWidget::convert()
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   vtkMRMLNode* resultNode = nullptr;
   if (vectorOutputVolumeNode)
-    {
+  {
     // this must be checked before scalarOutputVolumeNode, as vtkMRMLVectorVolumeNode is a vtkMRMLScalarVolumeNode as well
     resultNode = d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, false /*magnitudeOnly*/, vectorOutputVolumeNode);
-    }
+  }
   else if (scalarOutputVolumeNode)
-    {
+  {
     resultNode = d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, true /*magnitudeOnly*/, scalarOutputVolumeNode);
-    }
+  }
   else if (outputTransformNode)
-    {
+  {
     resultNode = d->logic()->ConvertToGridTransform(d->MRMLTransformNode, referenceVolumeNode, outputTransformNode);
-    }
+  }
   else
-    {
+  {
     qWarning("qSlicerTransformsModuleWidget::convert failed: invalid output node type");
-    }
+  }
   QApplication::restoreOverrideCursor();
   if (resultNode == nullptr)
-    {
+  {
     QMessageBox::warning(this, tr("Conversion failed"), tr("Failed to convert transform. See application log for details."));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -624,22 +624,22 @@ bool qSlicerTransformsModuleWidget::setEditedNode(vtkMRMLNode* node,
   Q_UNUSED(role);
   Q_UNUSED(context);
   if (vtkMRMLTransformNode::SafeDownCast(node))
-    {
+  {
     d->TransformNodeSelector->setCurrentNode(node);
     return true;
-    }
+  }
 
   if (vtkMRMLTransformDisplayNode::SafeDownCast(node))
-    {
+  {
     vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node);
     vtkMRMLTransformNode* displayableNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
     if (!displayableNode)
-      {
+    {
       return false;
-      }
+    }
     d->TransformNodeSelector->setCurrentNode(displayableNode);
     return true;
-    }
+  }
 
   return false;
 }

@@ -38,12 +38,12 @@ class Q_SLICER_MODULE_TABLES_WIDGETS_PLUGINS_EXPORT qSlicerTablesModuleWidgetsPl
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qSlicerTableColumnPropertiesWidgetPlugin;
 
     return plugins;
-    }
+  }
 };
 
 #endif

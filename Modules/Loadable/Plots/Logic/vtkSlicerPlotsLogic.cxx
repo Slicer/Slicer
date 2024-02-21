@@ -57,7 +57,7 @@ void vtkSlicerPlotsLogic::PrintSelf(ostream& os, vtkIndent indent)
 int vtkSlicerPlotsLogic::GetLayoutWithPlot(int currentLayout)
 {
   switch (currentLayout)
-    {
+  {
     case vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView:
     case vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView:
     case vtkMRMLLayoutNode::SlicerLayoutOneUpPlotView:
@@ -71,17 +71,17 @@ int vtkSlicerPlotsLogic::GetLayoutWithPlot(int currentLayout)
       return vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView;
     default:
       return vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* source, const char * vtkNotUsed(name))
 {
   if (!source || source->GetScene() == nullptr)
-    {
+  {
     vtkErrorMacro("vtkSlicerPlotsLogic::CloneSeries failed: source is nullptr or not added to a a scene");
     return nullptr;
-    }
+  }
 
   vtkSmartPointer<vtkMRMLNode> clonedNode = vtkSmartPointer<vtkMRMLNode>::Take(
     source->GetScene()->CreateNodeByClass("vtkMRMLPlotSeriesNode"));
@@ -101,50 +101,50 @@ void vtkSlicerPlotsLogic::ShowChartInLayout(vtkMRMLPlotChartNode* chartNode)
   // Switch to a layout that contains plot
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
   if (layoutNode)
-    {
+  {
     int currentLayout = layoutNode->GetViewArrangement();
     int layoutWithPlot = vtkSlicerPlotsLogic::GetLayoutWithPlot(currentLayout);
     if (currentLayout != layoutWithPlot)
-      {
+    {
       layoutNode->SetViewArrangement(layoutWithPlot);
-      }
     }
+  }
 
   // Show plot in viewers
   vtkSlicerApplicationLogic* appLogic = this->GetApplicationLogic();
   if (appLogic)
-    {
+  {
     vtkMRMLSelectionNode* selectionNode = appLogic->GetSelectionNode();
     if (selectionNode)
-      {
+    {
       const char* chartNodeID = (chartNode ? chartNode->GetID() : nullptr);
       selectionNode->SetActivePlotChartID(chartNodeID);
-      }
-    appLogic->PropagatePlotChartSelection();
     }
+    appLogic->PropagatePlotChartSelection();
+  }
 }
 
 // --------------------------------------------------------------------------
 vtkMRMLPlotChartNode* vtkSlicerPlotsLogic::GetFirstPlotChartForSeries(vtkMRMLPlotSeriesNode* seriesNode)
 {
   if (seriesNode == nullptr)
-    {
+  {
     return nullptr;
-    }
+  }
   std::vector<vtkMRMLNode*> chartNodes;
   unsigned int numberOfNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
   for (unsigned int chartNodeIndex=0; chartNodeIndex<numberOfNodes; chartNodeIndex++)
-    {
+  {
     vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(chartNodes[chartNodeIndex]);
     if (!chartNode)
-      {
+    {
       continue;
-      }
-    if (chartNode->HasPlotSeriesNodeID(seriesNode->GetID()))
-      {
-      return chartNode;
-      }
     }
+    if (chartNode->HasPlotSeriesNodeID(seriesNode->GetID()))
+    {
+      return chartNode;
+    }
+  }
   // not found
   return nullptr;
 }

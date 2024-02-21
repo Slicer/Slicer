@@ -87,52 +87,52 @@ void vtkMRMLSegmentEditorNode::ReadXMLAttributes(const char** atts)
   const char* attValue = nullptr;
 
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
 
     if (!strcmp(attName, "selectedSegmentID"))
-      {
+    {
       this->SetSelectedSegmentID(attValue);
-      }
+    }
     else if (!strcmp(attName, "activeEffectName"))
-      {
+    {
       this->SetActiveEffectName(attValue);
-      }
+    }
     else if (!strcmp(attName, "maskMode"))
-      {
+    {
       this->SetMaskMode(vtkMRMLSegmentationNode::ConvertMaskModeFromString(attValue));
-      }
+    }
     else if (!strcmp(attName, "maskSegmentID"))
-      {
+    {
       this->SetMaskSegmentID(attValue);
-      }
+    }
     else if (!strcmp(attName, "masterVolumeIntensityMask")
       || !strcmp(attName, "sourceVolumeIntensityMask")) // for future compatibility
-      {
+    {
       this->SetSourceVolumeIntensityMask(!strcmp(attValue,"true"));
-      }
+    }
     else if (!strcmp(attName, "masterVolumeIntensityMaskRange")
       || !strcmp(attName, "sourceVolumeIntensityMaskRange")) // for future compatibility)
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       double range[2]={0};
       ss >> range[0];
       ss >> range[1];
       this->SetSourceVolumeIntensityMaskRange(range);
-      }
-    else if (!strcmp(attName, "overwriteMode"))
-      {
-      this->SetOverwriteMode(vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(attValue));
-      }
     }
+    else if (!strcmp(attName, "overwriteMode"))
+    {
+      this->SetOverwriteMode(vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(attValue));
+    }
+  }
 
   // For future compatibility (when masterVolumeRef will be replaced by sourceVolumeRef)
   if (this->GetNodeReferenceID("sourceVolumeRef"))
-    {
+  {
     this->SetNodeReferenceID(SOURCE_VOLUME_REFERENCE_ROLE, this->GetNodeReferenceID("sourceVolumeRef"));
-    }
+  }
 
   this->EndModify(disabledModify);
 }

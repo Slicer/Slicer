@@ -53,7 +53,7 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
   roiNode->GetZAxisWorld(zAxisActual_World);
 
   if (vtkMath::Dot(xAxisExpected_World, xAxisActual_World) < 1.0 - epsilon)
-    {
+  {
     std::cerr << "X-axis: expected: ["
       << xAxisExpected_World[0] << ", "
       << xAxisExpected_World[1] << ", "
@@ -64,9 +64,9 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
       << xAxisActual_World[2] << ", "
       << "]" << std::endl;
     return false;
-    }
+  }
   if (vtkMath::Dot(yAxisExpected_World, yAxisActual_World) < 1.0 - epsilon)
-    {
+  {
     std::cerr << "Y-axis: expected: ["
       << yAxisExpected_World[0] << ", "
       << yAxisExpected_World[1] << ", "
@@ -77,9 +77,9 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
       << yAxisActual_World[2] << ", "
       << "]" << std::endl;
     return false;
-    }
+  }
   if (vtkMath::Dot(zAxisExpected_World, zAxisActual_World) < 1.0 - epsilon)
-    {
+  {
     std::cerr << "Z-axis: expected: ["
       << zAxisExpected_World[0] << ", "
       << zAxisExpected_World[1] << ", "
@@ -90,7 +90,7 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
       << zAxisActual_World[2]
       << "]" << std::endl;
     return false;
-    }
+  }
 
   double originActual_World[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetCenterWorld(originActual_World);
@@ -98,7 +98,7 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
   double originDifference_World[3] = { 0.0, 0.0, 0.0 };
   vtkMath::Subtract(originExpected_World, originActual_World, originDifference_World);
   if (vtkMath::Norm(originDifference_World) > epsilon)
-    {
+  {
     std::cerr << "Center: expected: ["
       << originExpected_World[0] << ", "
       << originExpected_World[1] << ", "
@@ -109,7 +109,7 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
       << originActual_World[2]
       << "]" << std::endl;
     return false;
-    }
+  }
 
   double sizeActual_World[3] = { 0.0, 0.0, 0.0 };
   roiNode->GetSizeWorld(sizeActual_World);
@@ -153,14 +153,14 @@ void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
   vtkNew<vtkMatrix4x4> bulkTransform;
   vtkNew<vtkMatrix4x4> gridOrientation;
   for (int row = 0; row < 3; row++)
-    {
+  {
     for (int col = 0; col < 3; col++)
-      {
+    {
       bulkTransform->SetElement(row, col, bulkMatrix[row][col]);
       gridOrientation->SetElement(row, col, direction[row][col]);
-      }
-    bulkTransform->SetElement(row, 3, bulkOffset[row]);
     }
+    bulkTransform->SetElement(row, 3, bulkOffset[row]);
+  }
 
   bsplineTransform->SetGridDirectionMatrix(gridOrientation.GetPointer());
   bsplineTransform->SetCoefficientData(bsplineCoefficients.GetPointer());
@@ -233,12 +233,12 @@ int vtkMRMLMarkupsNodeTest5(int , char * [])
   vtkNew<vtkMatrix4x4> matrix;
   vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(xAxis_Node, yAxis_Node, zAxis_Node, origin_Node, matrix, linearTransform);
   for (int i = 0; i < 3; ++i)
-    {
+  {
     xAxis_World[i] = matrix->GetElement(i, 0);
     yAxis_World[i] = matrix->GetElement(i, 1);
     zAxis_World[i] = matrix->GetElement(i, 2);
     origin_World[i] = matrix->GetElement(i, 3);
-    }
+  }
   roiNode->SetSizeWorld(size_World);
 
   CHECK_BOOL(CompareROI(xAxis_World, yAxis_World, zAxis_World, origin_World, size_World, roiNode, EPSILON), true);
@@ -269,12 +269,12 @@ int vtkMRMLMarkupsNodeTest5(int , char * [])
 
   vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(xAxis, yAxis, zAxis, origin, matrix, bSplineTransform, false);
   for (int i = 0; i < 3; ++i)
-    {
+  {
     xAxis_World[i] = matrix->GetElement(i, 0);
     yAxis_World[i] = matrix->GetElement(i, 1);
     zAxis_World[i] = matrix->GetElement(i, 2);
     origin_World[i] = matrix->GetElement(i, 3);
-    }
+  }
 
   CHECK_BOOL(CompareROI(xAxis_World, yAxis_World, zAxis_World, origin_World, size_World, roiNode, EPSILON), true);
 

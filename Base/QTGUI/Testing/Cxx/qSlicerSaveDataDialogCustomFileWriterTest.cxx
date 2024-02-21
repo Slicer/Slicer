@@ -79,12 +79,12 @@ int qSlicerSaveDataDialogCustomFileWriterTest(int argc, char * argv[] )
   qSlicerSaveDataDialog saveDataDialog;
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     // Quit the dialog
     QTimer::singleShot(100, &app, SLOT(quit()));
     // Quit the app
     QTimer::singleShot(120, &app, SLOT(quit()));
-    }
+  }
 
   return saveDataDialog.exec();
 }

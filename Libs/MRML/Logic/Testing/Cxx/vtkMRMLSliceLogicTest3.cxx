@@ -54,9 +54,9 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 
   storageNode->SetFileName(volume);
   if (storageNode->SupportedFileType(volume) == 0)
-    {
+  {
     return nullptr;
-    }
+  }
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene);
   displayNode->SetScene(scene);
@@ -84,12 +84,12 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
   itk::itkFactoryRegistration();
 
   if( argc < 2 )
-    {
+  {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << "  input_image " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -110,10 +110,10 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
 
   vtkMRMLScalarVolumeNode* scalarNode = loadVolume(argv[1], scene.GetPointer());
   if (scalarNode == nullptr || scalarNode->GetImageData() == nullptr)
-    {
+  {
     std::cerr << "Not a valid volume: " << argv[1] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkMRMLDisplayNode* displayNode = scalarNode->GetDisplayNode();
   //sliceLayerLogic->SetVolumeNode(scalarNode);
@@ -126,14 +126,14 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
   //vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
 
   for (int i = 0; i < 30; ++i)
-    {
+  {
     vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
     timerLog->StartTimer();
     displayNode->Modified();
     timerLog->StopTimer();
     std::cout << "vtkMRMLDisplayNode::Modified(): " << timerLog->GetElapsedTime()
               << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
-    }
+  }
   vtkSmartPointer<vtkImageViewer2> viewer = vtkSmartPointer<vtkImageViewer2>::New();
   viewer->SetInputConnection(sliceLogic->GetImageDataConnection());
   //viewer->SetInput(appendComponents->GetOutput());
@@ -149,7 +149,7 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
   rw->Render();
 
   for (int i = 0; i < 30; ++i)
-    {
+  {
     vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
     timerLog->StartTimer();
     displayNode->Modified();
@@ -157,12 +157,12 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
     timerLog->StopTimer();
     std::cout << "vtkMRMLDisplayNode::Modified() + render: " << timerLog->GetElapsedTime()
               << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
-    }
+  }
 
   if (argc > 2 && std::string(argv[2]) == "-I")
-    {
+  {
     ri->Start();
-    }
+  }
 
   ri->Delete();
 

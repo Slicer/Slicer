@@ -76,9 +76,9 @@ qMRMLTableModelPrivate::qMRMLTableModelPrivate(qMRMLTableModel& object)
 qMRMLTableModelPrivate::~qMRMLTableModelPrivate()
 {
   if (this->MRMLTableNode)
-    {
+  {
     this->MRMLTableNode->RemoveObserver(this->CallBack);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -110,9 +110,9 @@ QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
   Q_Q(qMRMLTableModel);
   vtkMRMLTableNode* tableNode = q->mrmlTableNode();
   if (tableNode == nullptr)
-    {
+  {
     return QString();
-    }
+  }
 
   std::string columnNameStd = tableNode->GetColumnName(tableCol);
   QString columnName = QString::fromStdString(columnNameStd);
@@ -124,13 +124,13 @@ QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
 
   // Column name & title
   if (title == columnName || title.isEmpty())
-    {
+  {
     textLines << QString("<b>%1</b>").arg(columnName);
-    }
+  }
   else
-    {
+  {
     textLines << QString("<b>%1</b> <code>&lt;%2&gt;</code>").arg(title).arg(columnName);
-    }
+  }
 
   // Unit
   if (!unitLabel.isEmpty())
@@ -140,9 +140,9 @@ QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
 
   // Description
   if (!description.isEmpty())
-    {
+  {
     textLines << description;
-    }
+  }
 
   // Custom properties (as bullet-point list)
   QString customProperties;
@@ -150,26 +150,26 @@ QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
   tableNode->GetAllColumnPropertyNames(propertyNames);
   vtkIdType numberOfProperties = propertyNames->GetNumberOfValues();
   for (vtkIdType i = 0; i < numberOfProperties; ++i)
-    {
+  {
     std::string propertyName = propertyNames->GetValue(i);
     if (propertyName.empty()
       || propertyName == /*no tr*/"title"
       || propertyName == /*no tr*/"description"
       || propertyName == /*no tr*/"unitLabel")
-      {
+    {
       continue;
-      }
+    }
     std::string propertyValue = tableNode->GetColumnProperty(columnNameStd, propertyName);
     if (propertyValue.empty())
-      {
-      continue;
-      }
-    customProperties += QString("<li>%1: %2</li>").arg(QString::fromStdString(propertyName)).arg(QString::fromStdString(propertyValue));
-    }
-  if (!customProperties.isEmpty())
     {
-    textLines << qMRMLTableModel::tr("Properties:") + "<ul>" + customProperties + "</ul>";
+      continue;
     }
+    customProperties += QString("<li>%1: %2</li>").arg(QString::fromStdString(propertyName)).arg(QString::fromStdString(propertyValue));
+  }
+  if (!customProperties.isEmpty())
+  {
+    textLines << qMRMLTableModel::tr("Properties:") + "<ul>" + customProperties + "</ul>";
+  }
 
   return textLines.join("<p>");
 }
@@ -202,13 +202,13 @@ void qMRMLTableModel::setMRMLTableNode(vtkMRMLTableNode* tableNode)
 {
   Q_D(qMRMLTableModel);
   if (d->MRMLTableNode)
-    {
+  {
     d->MRMLTableNode->RemoveObserver(d->CallBack);
-    }
+  }
   if (tableNode)
-    {
+  {
     tableNode->AddObserver(vtkCommand::ModifiedEvent, d->CallBack);
-    }
+  }
   d->MRMLTableNode = tableNode;
   this->updateModelFromMRML();
 }
@@ -230,7 +230,7 @@ void qMRMLTableModel::updateModelFromMRML()
   vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(d->MRMLTableNode);
   vtkTable* table = (tableNode ? tableNode->GetTable() : nullptr);
   if (table==nullptr || table->GetNumberOfColumns()==0)
-    {
+  {
     beginResetModel();
     // setRowCount and setColumnCount to 0 would not be enough, it's necessary to remove the header as well
     setRowCount(0);
@@ -238,7 +238,7 @@ void qMRMLTableModel::updateModelFromMRML()
     endResetModel();
     QObject::connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)), Qt::UniqueConnection);
     return;
-    }
+  }
 
   bool tableLocked = tableNode->GetLocked();
   bool labelInFirstTableColumn = tableNode->GetUseFirstColumnAsRowHeader();
@@ -250,19 +250,19 @@ void qMRMLTableModel::updateModelFromMRML()
   vtkIdType tableColOffset = labelInFirstTableColumn ? 1 : 0;
   vtkIdType tableRowOffset = useColumnTitleAsColumnHeader ? 0 : -1;
   if (d->Transposed)
-    {
+  {
     setRowCount(static_cast<int>(numberOfTableColumns-tableColOffset));
     setColumnCount(static_cast<int>(numberOfTableRows-tableRowOffset));
-    }
+  }
   else
-    {
+  {
     setRowCount(static_cast<int>(numberOfTableRows-tableRowOffset));
     setColumnCount(static_cast<int>(numberOfTableColumns-tableColOffset));
-    }
+  }
 
   // Setup items for each table column
   for (vtkIdType tableCol = tableColOffset; tableCol < numberOfTableColumns; ++tableCol)
-    {
+  {
     int modelCol = static_cast<int>(tableCol - tableColOffset);
 
     QString columnName(table->GetColumnName(tableCol));
@@ -271,58 +271,58 @@ void qMRMLTableModel::updateModelFromMRML()
     // If column title is used as header then the column title is shown in the header,
     // otherwise the column name is shown in the editable first row of the table.
     if (useColumnTitleAsColumnHeader)
-      {
+    {
       QString headerText = QString::fromStdString(tableNode->GetColumnTitle(columnName.toStdString()));
       if (headerText.isEmpty())
-        {
+      {
         headerText = columnName;
-        }
+      }
       QString units = QString::fromStdString(tableNode->GetColumnUnitLabel(columnName.toStdString()));
       if (!units.isEmpty())
-        {
-        headerText += " [" + units + "]";
-        }
-      setHeaderData(modelCol, d->Transposed ? Qt::Vertical : Qt::Horizontal, headerText);
-      }
-    else
       {
+        headerText += " [" + units + "]";
+      }
+      setHeaderData(modelCol, d->Transposed ? Qt::Vertical : Qt::Horizontal, headerText);
+    }
+    else
+    {
       QString autoColumnHeader = d->columnNameFromIndex(modelCol);
       setHeaderData(modelCol, d->Transposed ? Qt::Vertical : Qt::Horizontal, autoColumnHeader);
-      }
+    }
 
     // Go through the rows of the current column
     for (vtkIdType tableRow = tableRowOffset; tableRow < numberOfTableRows; ++tableRow)
-      {
+    {
       int modelRow = static_cast<int>(tableRow - tableRowOffset);
 
       // Use existing item if already created
       QStandardItem* existingItem = nullptr;
       if (d->Transposed)
-        {
+      {
         existingItem = this->item(modelCol, modelRow);
-        }
+      }
       else
-        {
+      {
         existingItem = this->item(modelRow, modelCol);
-        }
+      }
       QStandardItem* item = existingItem;
       // Create item if did not exist
       if (item==nullptr)
-        {
+      {
         item = new QStandardItem();
-        }
+      }
 
       // Items in first row use bold font, the others regular
       if (tableRow>=0)
-        {
+      {
         vtkVariant variant = table->GetValue(tableRow, tableCol);
         if (tableRow==0)
-          {
+        {
           // the first row might have been bold earlier, make sure
           // it is reset to non-bold
           QFont font;
           item->setData(font, Qt::FontRole);
-          }
+        }
 
         int dataType = columnArray->GetDataType();
 
@@ -331,126 +331,126 @@ void qMRMLTableModel::updateModelFromMRML()
         // NOTE: The data type itself can be enough, but in future types it will be necessary to define display role
         //       as well, e.g. double array can be both color and position.
         if (vtkBitArray::SafeDownCast(columnArray))
-          {
+        {
           // Boolean values indicated by a column of vtkBitArray type are displayed as checkboxes
           item->setData(VTK_BIT, UserRoleValueType);
           item->setCheckable(true);
           item->setCheckState(variant.ToInt() ? Qt::Checked : Qt::Unchecked);
           item->setText(QString()); // No text is supposed to be in the cell
-          }
+        }
         // Default display as text
         else
-          {
+        {
           if (dataType == VTK_CHAR || dataType == VTK_UNSIGNED_CHAR || dataType == VTK_SIGNED_CHAR)
-            {
+          {
             // vtkVariant converts char type to string as a single letter, therefore we need to use
             // custom converter
             item->setText(QString::number(variant.ToInt()));
-            }
+          }
           else
-            {
+          {
             item->setText(QString(variant.ToString().c_str()));
-            }
+          }
           item->setData(QVariant(), UserRoleValueType);
           item->setCheckable(false);
           item->setData(QVariant(), Qt::CheckStateRole);
-          }
         }
+      }
       else
-        {
+      {
         item->setText(columnName);
         QFont font;
         font.setBold(true);
         item->setData(font, Qt::FontRole);
-        }
+      }
 
       // Handle locked flag
       if (item->isCheckable())
-        {
+      {
         if (tableLocked)
-          {
+        {
           // Item is view-only, clear the ItemIsUserCheckable flag
           item->setFlags(item->flags() & (~Qt::ItemIsUserCheckable));
-          }
+        }
         else
-          {
+        {
           // Item is editable, set the ItemIsUserCheckable flag
           item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-          }
+        }
         // Item text is empty and should not be editable
         item->setFlags(item->flags() & (~Qt::ItemIsEditable));
-        }
+      }
       else
-        {
+      {
         if (tableLocked)
-          {
+        {
           // Item is view-only, clear the ItemIsEditable flag
           item->setFlags(item->flags() & (~Qt::ItemIsEditable));
-          }
+        }
         else
-          {
+        {
           // Item is editable, set the ItemIsEditable flag
           item->setFlags(item->flags() | Qt::ItemIsEditable);
-          }
         }
+      }
 
       // Add item if just created
       if (item!=existingItem)
-        {
+      {
         if (d->Transposed)
-          {
+        {
           setItem(modelCol, modelRow, item);
-          }
+        }
         else
-          {
+        {
           setItem(modelRow, modelCol, item);
-          }
         }
       }
     }
+  }
   // Set row label: either simply 1, 2, ... or values of the first column
   for (vtkIdType tableRow = tableRowOffset; tableRow < numberOfTableRows; ++tableRow)
-    {
+  {
     int modelRow = static_cast<int>(tableRow - tableRowOffset);
     QString rowLabel;
     if(labelInFirstTableColumn)
-      {
+    {
       if (tableRow>=0)
-        {
-        rowLabel = QString(table->GetValue(tableRow, 0).ToString().c_str());
-        }
-      else
-        {
-        rowLabel = QString(table->GetColumnName(0));;
-        }
-      }
-    else
       {
-      rowLabel = QString::number(modelRow+1);
+        rowLabel = QString(table->GetValue(tableRow, 0).ToString().c_str());
       }
-    setHeaderData(modelRow, d->Transposed ? Qt::Horizontal : Qt::Vertical, rowLabel);
+      else
+      {
+        rowLabel = QString(table->GetColumnName(0));;
+      }
     }
+    else
+    {
+      rowLabel = QString::number(modelRow+1);
+    }
+    setHeaderData(modelRow, d->Transposed ? Qt::Horizontal : Qt::Vertical, rowLabel);
+  }
 
   // Add tooltip text
   for (vtkIdType tableCol = tableColOffset; tableCol < numberOfTableColumns; ++tableCol)
-    {
+  {
     int modelCol = static_cast<int>(tableCol - tableColOffset);
     QString tooltipText = d->columnTooltipText(tableCol);
     for (vtkIdType tableRow = tableRowOffset; tableRow < numberOfTableRows; ++tableRow)
-      {
+    {
       int modelRow = static_cast<int>(tableRow - tableRowOffset);
       QStandardItem* existingItem = nullptr;
       if (d->Transposed)
-        {
+      {
         existingItem = this->item(modelCol, modelRow);
-        }
-      else
-        {
-        existingItem = this->item(modelRow, modelCol);
-        }
-      existingItem->setToolTip(tooltipText);
       }
+      else
+      {
+        existingItem = this->item(modelRow, modelCol);
+      }
+      existingItem->setToolTip(tooltipText);
     }
+  }
 
   QObject::connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)), Qt::UniqueConnection);
 }
@@ -460,120 +460,120 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
 {
   Q_D(qMRMLTableModel);
   if (item == nullptr)
-    {
+  {
     qCritical("qMRMLTableModel::updateMRMLFromModel failed: item is invalid");
     return;
-    }
+  }
   vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(d->MRMLTableNode);
   if (tableNode==nullptr)
-    {
+  {
     qCritical("qMRMLTableModel::updateMRMLFromModel failed: tableNode is invalid");
     return;
-    }
+  }
   vtkTable* table = tableNode->GetTable();
   if (table==nullptr)
-    {
+  {
     qCritical("qMRMLTableModel::updateMRMLFromModel failed: table is invalid");
     return;
-    }
+  }
 
   int tableRow = mrmlTableRowIndex(item->index());
   int tableCol = mrmlTableColumnIndex(item->index());
 
   if (tableRow>=0)
-    {
+  {
     // Get item value according to type
     int widgetType = item->data(UserRoleValueType).toInt();
     if (widgetType == VTK_BIT)
-      {
+    {
       // Cell bool value changed
       int checked = item->checkState();
       int valueBefore = table->GetValue(tableRow, tableCol).ToInt();
       if (checked == valueBefore)
-        {
+      {
         // The value is not changed, this means that the table cannot store this value - revert the value in the table
         this->blockSignals(true);
         item->setCheckState(valueBefore ? Qt::Checked : Qt::Unchecked);
         item->setText(QString()); // No text is supposed to be in the cell
         this->blockSignals(false);
-        }
+      }
       else
-        {
+      {
         table->SetValue(tableRow, tableCol, vtkVariant(checked));
         table->GetColumn(tableCol)->Modified(); // Enable observation of checked state changed separately
         table->Modified();
-        }
       }
+    }
     else
-      {
+    {
       // Cell text value changed
       int dataType = table->GetColumn(tableCol)->GetDataType();
       if (dataType == VTK_CHAR || dataType == VTK_UNSIGNED_CHAR || dataType == VTK_SIGNED_CHAR)
-        {
+      {
         // vtkVariant would convert char to a letter, so we need custom conversion here
         bool valid = false;
         int newValue = item->text().toInt(&valid);
         if (dataType == VTK_UNSIGNED_CHAR)
-          {
+        {
           if (newValue < VTK_UNSIGNED_CHAR_MIN || newValue > VTK_UNSIGNED_CHAR_MAX)
-            {
+          {
             valid = false;
-            }
           }
+        }
         else
-          {
+        {
           if (newValue < VTK_SIGNED_CHAR_MIN || newValue > VTK_SIGNED_CHAR_MAX)
-            {
-            valid = false;
-            }
-          }
-        if (valid)
           {
+            valid = false;
+          }
+        }
+        if (valid)
+        {
           table->SetValue(tableRow, tableCol, newValue);
           table->Modified();
-          }
+        }
         else
-          {
+        {
           vtkVariant valueInTableBefore = table->GetValue(tableRow, tableCol); // restore this value if new value is invalid
           this->blockSignals(true);
           item->setText(QString::number(valueInTableBefore.ToInt()));
           this->blockSignals(false);
-          }
         }
+      }
       else
-        {
+      {
         vtkVariant valueInTableBefore = table->GetValue(tableRow, tableCol); // restore this value if new value is invalid
         vtkVariant itemText(item->text().toUtf8().constData()); // the vtkVariant constructor makes a copy of the input buffer, so using constData is safe
         table->SetValue(tableRow, tableCol, itemText);
         vtkVariant valueInTableAfter = table->GetValue(tableRow, tableCol);
         if (valueInTableBefore == valueInTableAfter)
-          {
+        {
           // The value is not changed then it means it is invalid,
           // restore previous value
           this->blockSignals(true);
           item->setText(QString(valueInTableBefore.ToString().c_str()));
           this->blockSignals(false);
-          }
+        }
         else
-          {
+        {
           table->Modified();
-          }
         }
       }
     }
+  }
   else
-    {
+  {
     // Column header changed
     vtkAbstractArray* column = table->GetColumn(tableCol);
     if (column)
-      {
+    {
       QString valueBefore = QString::fromStdString(column->GetName()?column->GetName():"");
       if (valueBefore!=item->text())
-        {
+      {
         tableNode->RenameColumn(tableCol, item->text().toUtf8().constData());
-        }
       }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -585,12 +585,12 @@ void qMRMLTableModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
   Q_ASSERT(tableNode);
   Q_ASSERT(tableModel);
   switch(event)
-    {
+  {
     default:
     case vtkCommand::ModifiedEvent:
       tableModel->onMRMLTableNodeModified(tableNode);
       break;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -608,9 +608,9 @@ void qMRMLTableModel::onMRMLTableNodeModified(vtkObject* node)
 void qMRMLTableModel::onItemChanged(QStandardItem * item)
 {
   if (item == this->invisibleRootItem())
-    {
+  {
     return;
-    }
+  }
   this->updateMRMLFromModel(item);
 }
 
@@ -619,9 +619,9 @@ void qMRMLTableModel::setTransposed(bool transposed)
 {
   Q_D(qMRMLTableModel);
   if (d->Transposed == transposed)
-    {
+  {
     return;
-    }
+  }
   d->Transposed = transposed;
   this->updateModelFromMRML();
 }
@@ -638,18 +638,18 @@ int qMRMLTableModel::mrmlTableRowIndex(QModelIndex modelIndex)const
 {
   Q_D(const qMRMLTableModel);
   if (!d->MRMLTableNode)
-    {
+  {
     qWarning("qMRMLTableModel::mrmlTableRowIndex failed: invalid table node");
     return -1;
-    }
+  }
   if (d->Transposed)
-    {
+  {
     return d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() ? modelIndex.column() : modelIndex.column()-1;
-    }
+  }
   else
-    {
+  {
     return d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() ? modelIndex.row() : modelIndex.row()-1;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -657,18 +657,18 @@ int qMRMLTableModel::mrmlTableColumnIndex(QModelIndex modelIndex)const
 {
   Q_D(const qMRMLTableModel);
   if (!d->MRMLTableNode)
-    {
+  {
     qWarning("qMRMLTableModel::mrmlTableColumnIndex failed: invalid table node");
     return -1;
-    }
+  }
   if (d->Transposed)
-    {
+  {
     return d->MRMLTableNode->GetUseFirstColumnAsRowHeader() ? modelIndex.row()+1 : modelIndex.row();
-    }
+  }
   else
-    {
+  {
     return d->MRMLTableNode->GetUseFirstColumnAsRowHeader() ? modelIndex.column()+1 : modelIndex.column();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -676,64 +676,64 @@ int qMRMLTableModel::removeSelectionFromMRML(QModelIndexList selection, bool rem
 {
   Q_D(const qMRMLTableModel);
   if (!d->MRMLTableNode)
-    {
+  {
     return 0;
-    }
+  }
   bool removeMRMLRows = d->Transposed ? !removeModelRow : removeModelRow;
 
   QModelIndex index;
   QList<int> mrmlIndexList; // list of MRML table columns or rows that will be removed
   foreach(index, selection)
-    {
+  {
     int mrmlIndex = removeMRMLRows ? mrmlTableRowIndex(index) : mrmlTableColumnIndex(index);
     if (!mrmlIndexList.contains(mrmlIndex))
-      {
+    {
       // insert unique row/column index only
       mrmlIndexList.push_back(mrmlIndex);
-      }
     }
+  }
   // reverse sort to start removing last index first to keep remaining indices valid
   std::sort(mrmlIndexList.begin(), mrmlIndexList.end(), std::greater<int>());
 
   // block modified events to prevent updating of the table during processing
   int wasModified = d->MRMLTableNode->StartModify();
   foreach(int mrmlIndex, mrmlIndexList)
-    {
+  {
     if (removeMRMLRows)
-      {
+    {
       if (mrmlIndex==-1)
-        {
+      {
         // the header row is deleted, move up the first line to header
         vtkTable* table = d->MRMLTableNode->GetTable();
         if (table)
-          {
+        {
           for (int columnIndex=0; columnIndex<table->GetNumberOfColumns(); columnIndex++)
-            {
+          {
               vtkAbstractArray* column = table->GetColumn(columnIndex);
               if (!column)
-                {
+              {
                 qCritical("qMRMLTableModel::updateMRMLFromModel failed: column %d is invalid", columnIndex);
                 continue;
-                }
+              }
               d->MRMLTableNode->RenameColumn(columnIndex, table->GetValue(0, columnIndex).ToString().c_str());
-            }
+          }
           d->MRMLTableNode->RemoveRow(0);
-          }
-        else
-          {
-          qCritical("qMRMLTableModel::updateMRMLFromModel failed: table is invalid");
-          }
         }
-      else
+        else
         {
-        d->MRMLTableNode->RemoveRow(mrmlIndex);
+          qCritical("qMRMLTableModel::updateMRMLFromModel failed: table is invalid");
         }
       }
-    else
+      else
       {
-      d->MRMLTableNode->RemoveColumn(mrmlIndex);
+        d->MRMLTableNode->RemoveRow(mrmlIndex);
       }
     }
+    else
+    {
+      d->MRMLTableNode->RemoveColumn(mrmlIndex);
+    }
+  }
   d->MRMLTableNode->EndModify(wasModified);
 
   return mrmlIndexList.size();

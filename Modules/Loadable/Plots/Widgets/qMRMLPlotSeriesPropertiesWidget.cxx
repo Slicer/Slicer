@@ -92,7 +92,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
   q->setEnabled(this->PlotSeriesNode != nullptr);
 
   if (!this->PlotSeriesNode)
-    {
+  {
     this->inputTableComboBox->setCurrentNode(nullptr);
     this->xAxisComboBox->clear();
     this->labelsComboBox->clear();
@@ -101,7 +101,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
     this->markersStyleComboBox->setCurrentIndex(0);
     this->plotSeriesColorPickerButton->setColor(QColor(127,127,127));
     return;
-    }
+  }
 
   // Update the TableNode ComboBox
   vtkMRMLTableNode* mrmlTableNode = this->PlotSeriesNode->GetTableNode();
@@ -118,72 +118,72 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
   this->labelsComboBox->clear();
   this->yAxisComboBox->clear();
   if (mrmlTableNode)
-    {
+  {
     if (this->labelsComboBox->findData(QString()) == -1)
-      {
+    {
       this->labelsComboBox->addItem("(none)", QString());
-      }
+    }
     for (int columnIndex = 0; columnIndex < mrmlTableNode->GetNumberOfColumns(); columnIndex++)
-      {
+    {
       std::string columnName = mrmlTableNode->GetColumnName(columnIndex);
       int columnType = mrmlTableNode->GetColumnType(columnName);
       if (columnType == VTK_STRING)
-        {
+      {
         if (this->labelsComboBox->findData(QString(columnName.c_str())) == -1)
-          {
-          this->labelsComboBox->addItem(columnName.c_str(), QString(columnName.c_str()));
-          }
-        }
-      else if (columnType != VTK_BIT)
         {
+          this->labelsComboBox->addItem(columnName.c_str(), QString(columnName.c_str()));
+        }
+      }
+      else if (columnType != VTK_BIT)
+      {
         if (xColumnRequired && this->xAxisComboBox->findData(QString(columnName.c_str())) == -1)
-          {
+        {
           this->xAxisComboBox->addItem(columnName.c_str(), QString(columnName.c_str()));
-          }
+        }
         if (this->yAxisComboBox->findData(QString(columnName.c_str())) == -1)
-          {
+        {
           this->yAxisComboBox->addItem(columnName.c_str(), QString(columnName.c_str()));
-          }
         }
       }
     }
+  }
 
   if (xColumnRequired)
-    {
+  {
     std::string xAxisName = this->PlotSeriesNode->GetXColumnName();
     int xAxisIndex = this->xAxisComboBox->findData(QString(xAxisName.c_str()));
     if (xAxisIndex < 0)
-      {
+    {
       this->xAxisComboBox->addItem(xAxisName.c_str(), QString(xAxisName.c_str()));
       xAxisIndex = this->xAxisComboBox->findData(QString(xAxisName.c_str()));
-      }
+    }
     this->xAxisComboBox->setCurrentIndex(xAxisIndex);
     this->xAxisComboBox->setToolTip("");
-    }
+  }
   else
-    {
+  {
     this->xAxisComboBox->addItem("(Indexes)", QString());
     this->xAxisComboBox->setCurrentIndex(0);
     this->xAxisComboBox->setToolTip(tr("This plot type uses indexes as X axis values. Switch to scatter plot type to allow column selection."));
-    }
+  }
 
   std::string labelsName = this->PlotSeriesNode->GetLabelColumnName();
   int labelsIndex = this->labelsComboBox->findData(QString(labelsName.c_str()));
   if (labelsIndex < 0)
-    {
+  {
     this->labelsComboBox->addItem(labelsName.c_str(), QString(labelsName.c_str()));
     labelsIndex = this->labelsComboBox->findData(QString(labelsName.c_str()));
-    }
+  }
   this->labelsComboBox->setCurrentIndex(labelsIndex);
   this->labelsComboBox->setEnabled(mrmlTableNode != nullptr);
 
   std::string yAxisName = this->PlotSeriesNode->GetYColumnName();
   int yAxisIndex = this->yAxisComboBox->findData(QString(yAxisName.c_str()));
   if (yAxisIndex < 0)
-    {
+  {
     this->yAxisComboBox->addItem(yAxisName.c_str(), QString(yAxisName.c_str()));
     yAxisIndex = this->yAxisComboBox->findData(QString(yAxisName.c_str()));
-    }
+  }
   this->yAxisComboBox->setCurrentIndex(yAxisIndex);
 
   this->xAxisComboBox->blockSignals(xAxisBlockSignals);
@@ -254,9 +254,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotSeriesNodeChanged(vtkMRMLNode
   vtkMRMLPlotSeriesNode *mrmlPlotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(node);
 
   if (this->PlotSeriesNode == mrmlPlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(this->PlotSeriesNode, mrmlPlotSeriesNode, vtkCommand::ModifiedEvent,
                       this, SLOT(updateWidgetFromMRMLPlotSeriesNode()));
@@ -272,27 +272,27 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onInputTableNodeChanged(vtkMRMLNode
   vtkMRMLTableNode *mrmlTableNode = vtkMRMLTableNode::SafeDownCast(node);
 
   if (!this->PlotSeriesNode || this->PlotSeriesNode->GetTableNode() == mrmlTableNode)
-    {
+  {
     return;
-    }
+  }
 
   if (mrmlTableNode)
-    {
+  {
     this->PlotSeriesNode->SetAndObserveTableNodeID(mrmlTableNode->GetID());
-    }
+  }
   else
-    {
+  {
     this->PlotSeriesNode->SetAndObserveTableNodeID(nullptr);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 void qMRMLPlotSeriesPropertiesWidgetPrivate::onXAxisChanged(int index)
 {
   if (!this->PlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
 
   this->PlotSeriesNode->SetXColumnName(this->xAxisComboBox->itemData(index).toString().toUtf8().constData());
 }
@@ -312,9 +312,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onLabelsChanged(int index)
 void qMRMLPlotSeriesPropertiesWidgetPrivate::onYAxisChanged(int index)
 {
   if (!this->PlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
 
   this->PlotSeriesNode->SetYColumnName(this->yAxisComboBox->itemData(index).toString().toUtf8().constData());
 }
@@ -323,9 +323,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onYAxisChanged(int index)
 void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotTypeChanged(int index)
 {
   if (!this->PlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
 
   this->PlotSeriesNode->SetPlotType(index);
 }
@@ -334,9 +334,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotTypeChanged(int index)
 void qMRMLPlotSeriesPropertiesWidgetPrivate::onMarkersStyleChanged(const QString &style)
 {
   if (!this->PlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
 
   this->PlotSeriesNode->SetMarkerStyle(this->PlotSeriesNode->
     GetMarkerStyleFromString(style.toStdString().c_str()));
@@ -346,9 +346,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onMarkersStyleChanged(const QString
 void qMRMLPlotSeriesPropertiesWidgetPrivate::onMarkersSizeChanged(double size)
 {
   if (!this->PlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
 
   this->PlotSeriesNode->SetMarkerSize(size);
 }
@@ -357,9 +357,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onMarkersSizeChanged(double size)
 void qMRMLPlotSeriesPropertiesWidgetPrivate::onLineStyleChanged(const QString &style)
 {
   if (!this->PlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
 
   this->PlotSeriesNode->SetLineStyle(this->PlotSeriesNode->
     GetLineStyleFromString(style.toStdString().c_str()));
@@ -369,9 +369,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onLineStyleChanged(const QString &s
 void qMRMLPlotSeriesPropertiesWidgetPrivate::onLineWidthChanged(double width)
 {
   if (!this->PlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
 
   this->PlotSeriesNode->SetLineWidth(width);
 }
@@ -380,9 +380,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onLineWidthChanged(double width)
 void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotSeriesColorChanged(const QColor & color)
 {
   if (!this->PlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
   double rgb[3] = { color.redF() , color.greenF() , color.blueF() };
   this->PlotSeriesNode->SetColor(rgb);
   this->PlotSeriesNode->SetOpacity(color.alphaF());
@@ -406,10 +406,10 @@ qMRMLPlotSeriesPropertiesWidget::~qMRMLPlotSeriesPropertiesWidget() = default;
 
 //---------------------------------------------------------------------------
  vtkMRMLPlotSeriesNode* qMRMLPlotSeriesPropertiesWidget::mrmlPlotSeriesNode()const
-{
+ {
   Q_D(const qMRMLPlotSeriesPropertiesWidget);
   return d->PlotSeriesNode;
-}
+ }
 
 //---------------------------------------------------------------------------
 void qMRMLPlotSeriesPropertiesWidget::setMRMLPlotSeriesNode(vtkMRMLNode* node)
@@ -424,9 +424,9 @@ void qMRMLPlotSeriesPropertiesWidget::setMRMLPlotSeriesNode(vtkMRMLPlotSeriesNod
 {
   Q_D(qMRMLPlotSeriesPropertiesWidget);
   if (plotSeriesNode == d->PlotSeriesNode)
-    {
+  {
     return;
-    }
+  }
 
   d->qvtkReconnect(d->PlotSeriesNode, plotSeriesNode, vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRML()));
   d->PlotSeriesNode = plotSeriesNode;

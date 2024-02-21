@@ -202,11 +202,11 @@ void vtkMRMLCropVolumeParametersNode::DeleteROIAlignmentTransformNode()
 {
   vtkMRMLTransformNode* transformNode = this->GetROIAlignmentTransformNode();
   if (transformNode)
-    {
+  {
     this->SetROIAlignmentTransformNodeID(nullptr);
     if (this->GetScene())
-      {
+    {
       this->GetScene()->RemoveNode(transformNode);
-      }
     }
+  }
 }

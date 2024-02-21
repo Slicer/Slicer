@@ -120,13 +120,13 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
 
   double boxColor[3];
   if (this->External->GetMRMLViewNode())
-    {
+  {
     this->External->GetMRMLViewNode()->GetBoxColor(boxColor);
-    }
+  }
   else
-    {
+  {
     vtkMRMLViewNode::GetDefaultBoxColor(boxColor);
-    }
+  }
   this->BoxAxisActor->GetProperty()->SetColor(boxColor);
   this->BoxAxisActor->SetPickable(0);
 
@@ -138,7 +138,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
   const char* labels[6] = {"R", "A", "S", "L", "P", "I"};
 
   for(int i = 0; i < 6; ++i)
-    {
+  {
     vtkNew<vtkVectorText> axisText;
     axisText->SetText(labels[i]);
     this->AxisLabelTexts.emplace_back(axisText.GetPointer());
@@ -159,7 +159,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
     axisActor->GetProperty()->SetDiffuse(0.0);
     axisActor->GetProperty()->SetAmbient(1.0);
     axisActor->GetProperty()->SetSpecular(0.0);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -170,10 +170,10 @@ void vtkMRMLViewDisplayableManager::vtkInternal::AddAxis(vtkRenderer * renderer)
   renderer->AddViewProp(this->BoxAxisActor);
 
   for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
-    {
+  {
     vtkFollower* actor = this->AxisLabelActors[i];
     renderer->AddViewProp(actor);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -183,67 +183,67 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
   vtkMath::UninitializeBounds(bounds);
 
   if (this->External->GetMRMLViewNode() == nullptr)
-    {
+  {
     return;
-    }
+  }
   vtkMRMLScene *scene = this->External->GetMRMLViewNode()->GetScene();
   if (scene == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   std::vector<vtkMRMLNode *> nodes;
   int nnodes = scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
   for (int n=0; n < nnodes; n++)
-    {
+  {
     vtkMRMLDisplayableNode* displayableNode =
       vtkMRMLDisplayableNode::SafeDownCast(nodes[n]);
     if (!displayableNode || vtkMRMLSliceLogic::IsSliceModelNode(displayableNode))
-      {
+    {
       continue;
-      }
+    }
     bool isDisplayableNodeVisibleInView = false;
     for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
-      {
+    {
       vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
       if (displayNode && displayNode->IsDisplayableInView(
                            this->External->GetMRMLViewNode()->GetID()))
-        {
+      {
         isDisplayableNodeVisibleInView = true;
         break;
-        }
       }
+    }
     if (!isDisplayableNodeVisibleInView)
-      {
+    {
       continue;
-      }
+    }
     double nodeBounds[6];
     displayableNode->GetRASBounds(nodeBounds);
     if (vtkMath::AreBoundsInitialized(nodeBounds))
-      {
+    {
       if (!vtkMath::AreBoundsInitialized(bounds))
-        {
+      {
         for (int i=0; i<6; i++)
-          {
-          bounds[i] = nodeBounds[i];
-          }
-        }
-      else
         {
+          bounds[i] = nodeBounds[i];
+        }
+      }
+      else
+      {
         for (int i=0; i<3; i++)
-          {
+        {
           if (bounds[2*i] > nodeBounds[2*i])
-            {
+          {
             bounds[2*i] = nodeBounds[2*i];
-            }
+          }
           if (bounds[2*i+1] < nodeBounds[2*i+1])
-            {
+          {
             bounds[2*i+1] = nodeBounds[2*i+1];
-            }
           }
         }
       }
     }
+  }
 
 }
 
@@ -252,9 +252,9 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
                                                             vtkMRMLViewNode * viewNode)
 {
   if (!renderer || !renderer->IsActiveCameraCreated() || !viewNode)
-    {
+  {
     return;
-    }
+  }
 
   // Update box color
   this->BoxAxisActor->GetProperty()->SetColor(this->External->GetMRMLViewNode()->GetBoxColor());
@@ -265,11 +265,11 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
 
   int axisLabelVisibility = 0;
   for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
-    {
+  {
     vtkFollower* actor = this->AxisLabelActors[i];
     axisLabelVisibility = actor->GetVisibility();
     actor->VisibilityOff();
-    }
+  }
 
   // Compute bounds
   double bounds[6];
@@ -280,13 +280,13 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
   // If there are no visible props, create a default set of bounds
   vtkBoundingBox newBBox;
   if (!vtkMath::AreBoundsInitialized(bounds))
-    {
+  {
     newBBox.SetBounds(-100.0, 100.0,
                       -100.0, 100.0,
                       -100.0, 100.0);
-    }
+  }
   else
-    {
+  {
     newBBox.SetBounds(bounds);
 
     // Check for degenerate bounds
@@ -296,20 +296,20 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     newBBox.GetMaxPoint(maxPoint[0], maxPoint[1], maxPoint[2]);
 
     for (unsigned int i = 0; i < 3; i++)
-      {
+    {
       if (newBBox.GetLength(i) == 0.0)
-        {
+      {
         minPoint[i] = minPoint[i] - maxLength * .05;
         maxPoint[i] = maxPoint[i] + maxLength * .05;
-        }
       }
+    }
     newBBox.SetMinPoint(minPoint);
     newBBox.SetMaxPoint(maxPoint);
-    }
+  }
 
   // See if bounding box has changed. If not, no need to change the axis actors.
   if (newBBox != *(this->BoxAxisBoundingBox))
-    {
+  {
     *(this->BoxAxisBoundingBox) = newBBox;
 
     double bounds[6];
@@ -330,7 +330,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     double letterSizeWorld = this->BoxAxisBoundingBox->GetMaxLength() * letterSize;
 
     for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
-      {
+    {
       vtkFollower* actor = this->AxisLabelActors[i];
       actor->SetScale(letterSizeWorld, letterSizeWorld, letterSizeWorld);
       // Apply a transform so that center of the letter is in (0,0,0) position.
@@ -343,17 +343,17 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
       this->AxisLabelTexts[i]->Update();
       vtkPolyData* textPoly = this->AxisLabelTexts[i]->GetOutput();
       if (textPoly)
-        {
+      {
         double bounds[6] = { 0.0, 1.0, 0.0, 1.0, 0.0, 1.0 };
         textPoly->GetBounds(bounds);
         offsetToCenter[0] = -(bounds[0] + bounds[1]) / 2.0;
         offsetToCenter[1] = -(bounds[2] + bounds[3]) / 2.0;
         offsetToCenter[2] = -(bounds[4] + bounds[5]) / 2.0;
-        }
+      }
       vtkNew<vtkTransform> transform;
       transform->Translate(offsetToCenter);
       this->CenterAxisLabelTexts[i]->SetTransform(transform);
-      }
+    }
 
     // Position the axis labels
     double center[3];
@@ -387,16 +387,16 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
       center[0],
       center[1],
       bounds[4] - offset);
-    }
+  }
 
   // Update camera and make the axis visible again
   this->BoxAxisActor->SetVisibility(boxVisibility);
   for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
-    {
+  {
     vtkFollower* actor = this->AxisLabelActors[i];
     actor->SetCamera(renderer->GetActiveCamera());
     actor->SetVisibility(axisLabelVisibility);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -426,9 +426,9 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
     this->External->GetRenderer()->GetActiveCamera() : nullptr;
   if (!camera ||
       !this->External->GetMRMLViewNode())
-    {
+  {
     return;
-    }
+  }
 
   double orient[] = {-1,1};
   double dir[4];
@@ -440,30 +440,30 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
 
   double s2 = 0.5*sqrt(2.0);
   for  (int j=0; j<2; j++)
-    {
+  {
     for  (int i=0; i<3; i++)
-      {
+    {
       vtkFollower* actor = this->AxisLabelActors[i+3*j];
       if (cameraBasedVilibility)
-        {
+      {
         double axis[] = {0,0,0};
         axis[i] = orient[j];
         double dot = vtkMath::Dot(axis, dir);
         if (dot > s2)
-          {
-          actor->SetVisibility(false);
-          }
-        else
-          {
-          actor->SetVisibility(visible);
-          }
-        }
-      else
         {
-        actor->SetVisibility(visible);
+          actor->SetVisibility(false);
+        }
+        else
+        {
+          actor->SetVisibility(visible);
         }
       }
+      else
+      {
+        actor->SetVisibility(visible);
+      }
     }
+  }
   this->External->RequestRender();
 }
 
@@ -472,9 +472,9 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelText()
 {
   vtkMRMLViewNode* viewNode = this->External->GetMRMLViewNode();
   if (!viewNode || !viewNode->GetAxisLabelsVisible())
-    {
+  {
     return;
-    }
+  }
 
   bool updateNeeded = false;
   // In this displayable manager class axis labels are ordered as +X,+Y,+Z,-X,-Y-,-Z.
@@ -482,27 +482,27 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelText()
   // viewAxisToDmAxis converts from view to displayable manager axis order.
   const int viewAxisToDmAxis[6]={3,0,4,1,5,2};
   for (int labelIndexView=0; labelIndexView<6; labelIndexView++)
-    {
+  {
     if (strcmp(this->AxisLabelTexts[viewAxisToDmAxis[labelIndexView]]->GetText(),viewNode->GetAxisLabel(labelIndexView))!=0)
-      {
+    {
       this->AxisLabelTexts[viewAxisToDmAxis[labelIndexView]]->SetText(viewNode->GetAxisLabel(labelIndexView));
       updateNeeded = true;
-      }
     }
+  }
   if (updateNeeded)
-    {
+  {
     this->External->RequestRender();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::SetAxisLabelColor(double newAxisLabelColor[3])
 {
   for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
-    {
+  {
     vtkFollower* actor = this->AxisLabelActors[i];
     actor->GetProperty()->SetColor(newAxisLabelColor);
-    }
+  }
   this->External->RequestRender();
 }
 
@@ -513,20 +513,20 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRenderMode()
                 this->External->GetMRMLViewNode()->GetRenderMode());
 
   if (!this->External->GetRenderer()->IsActiveCameraCreated())
-    {
+  {
     return;
-    }
+  }
 
   vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
   if (this->External->GetMRMLViewNode()->GetRenderMode() == vtkMRMLViewNode::Perspective)
-    {
+  {
     cam->ParallelProjectionOff();
-    }
+  }
   else if (this->External->GetMRMLViewNode()->GetRenderMode() == vtkMRMLViewNode::Orthographic)
-    {
+  {
     cam->ParallelProjectionOn();
     cam->SetParallelScale(this->External->GetMRMLViewNode()->GetFieldOfView());
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -538,34 +538,34 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateStereoType()
   vtkRenderWindow * renderWindow = this->External->GetRenderer()->GetRenderWindow();
   int stereoType = this->External->GetMRMLViewNode()->GetStereoType();
   if (stereoType == vtkMRMLViewNode::RedBlue)
-    {
+  {
     renderWindow->SetStereoTypeToRedBlue();
-    }
+  }
   else if (stereoType == vtkMRMLViewNode::Anaglyph)
-    {
+  {
     renderWindow->SetStereoTypeToAnaglyph();
     //renderWindow->SetAnaglyphColorSaturation(0.1);
-    }
+  }
   else if (stereoType == vtkMRMLViewNode::QuadBuffer)
-    {
+  {
     renderWindow->SetStereoTypeToCrystalEyes();
-    }
+  }
   else if (stereoType == vtkMRMLViewNode::Interlaced)
-    {
+  {
     renderWindow->SetStereoTypeToInterlaced();
-    }
+  }
   else if (stereoType == vtkMRMLViewNode::UserDefined_1)
-    {
+  {
     renderWindow->SetStereoType(101);
-    }
+  }
   else if (stereoType == vtkMRMLViewNode::UserDefined_2)
-    {
+  {
     renderWindow->SetStereoType(102);
-    }
+  }
   else if (stereoType == vtkMRMLViewNode::UserDefined_3)
-    {
+  {
     renderWindow->SetStereoType(103);
-    }
+  }
 
   renderWindow->SetStereoRender(stereoType != vtkMRMLViewNode::NoStereo);
   this->External->RequestRender();
@@ -590,15 +590,15 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateBackgroundColor()
 
   // If new background color is White, switch axis color label to black
   if (backgroundColor[0] == 1.0 && backgroundColor[1] == 1.0 && backgroundColor[2] == 1.0)
-    {
+  {
     double black[3] = {0.0, 0.0, 0.0};
     this->SetAxisLabelColor(black);
-    }
+  }
   else
-    {
+  {
     double white[3] = {1.0, 1.0, 1.0};
     this->SetAxisLabelColor(white);
-    }
+  }
 
   this->External->RequestRender();
 }
@@ -704,22 +704,22 @@ void vtkMRMLViewDisplayableManager
                          void * callData)
 {
   if (vtkMRMLViewNode::SafeDownCast(caller))
-    {
+  {
     if (event == vtkMRMLViewNode::ResetFocalPointRequestedEvent)
-      {
+    {
       vtkDebugMacro(<< "ProcessMRMLNodesEvents - ResetFocalPointEvent");
       this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
       this->Internal->UpdateAxisLabelVisibility();
-      }
+    }
     // Note: event == ModifiedEvent is handled by superclass
-    }
+  }
   else if(vtkMRMLCameraNode::SafeDownCast(caller))
-    {
+  {
     if (event == vtkCommand::ModifiedEvent)
-      {
+    {
       this->UpdateFromCameraNode();
-      }
     }
+  }
   this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
 }
 
@@ -730,13 +730,13 @@ void vtkMRMLViewDisplayableManager
                        void *callData)
 {
   if (vtkMRMLCameraDisplayableManager::SafeDownCast(caller))
-    {
+  {
     if (event == vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent)
-      {
+    {
       vtkMRMLCameraDisplayableManager* cameraDisplayableManager =
         vtkMRMLCameraDisplayableManager::SafeDownCast(caller);
       this->SetAndObserveCameraNode(cameraDisplayableManager->GetCameraNode());
-      }
     }
+  }
   this->Superclass::ProcessWidgetsEvents(caller, event, callData);
 }

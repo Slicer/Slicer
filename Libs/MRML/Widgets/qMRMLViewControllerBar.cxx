@@ -155,12 +155,12 @@ void qMRMLViewControllerBarPrivate::setupPopupUi()
 bool qMRMLViewControllerBarPrivate::eventFilter(QObject* object, QEvent* event)
 {
   if (object == this->PinButton && event->type() == QEvent::Enter)
-    {
+  {
     if (this->LayoutBehavior == qMRMLViewControllerBar::Popup)
-      {
+    {
       this->PopupWidget->showPopup();
-      }
     }
+  }
   return this->QObject::eventFilter(object, event);
 }
 
@@ -237,18 +237,18 @@ void qMRMLViewControllerBar::setLayoutBehavior(LayoutBehavior behavior)
   d->LayoutBehavior = behavior;
 
   if (d->PopupWidget)
-    {
+  {
     if (behavior == qMRMLViewControllerBar::Popup)
-      {
+    {
       d->PopupWidget->setAutoShow(false);
       d->PopupWidget->setAutoHide(true);
       d->ControllerLayout->removeWidget(d->PopupWidget);
       d->PopupWidget->setActive(true);
       d->PopupWidget->setWindowFlags(d->PopupWidget->windowFlags() | Qt::ToolTip);
       d->PinButton->show();
-      }
+    }
     else
-      {
+    {
       d->PopupWidget->setAutoShow(false);
       d->PopupWidget->setAutoHide(false);
       d->ControllerLayout->addWidget(d->PopupWidget);
@@ -257,8 +257,8 @@ void qMRMLViewControllerBar::setLayoutBehavior(LayoutBehavior behavior)
       d->PopupWidget->setActive(false);
       d->PopupWidget->setWindowFlags(d->PopupWidget->windowFlags() & ~Qt::ToolTip);
       d->PopupWidget->pinPopup(true);
-      }
     }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -296,27 +296,27 @@ void qMRMLViewControllerBar::maximizeView()
 {
   Q_D(qMRMLViewControllerBar);
   if (!this->mrmlViewNode())
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid view node.";
     return;
-    }
+  }
 
   bool isMaximized = false;
   bool canBeMaximized = false;
   vtkMRMLLayoutNode* layoutNode = this->mrmlViewNode()->GetMaximizedState(isMaximized, canBeMaximized);
   if (!layoutNode || !canBeMaximized)
-    {
+  {
     return;
-    }
+  }
 
   if (isMaximized)
-    {
+  {
     layoutNode->RemoveMaximizedViewNode(this->mrmlViewNode());
-    }
+  }
   else
-    {
+  {
     layoutNode->AddMaximizedViewNode(this->mrmlViewNode());
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -346,24 +346,24 @@ void qMRMLViewControllerBar::updateWidgetFromMRMLView()
   bool isMaximized = false;
   bool canBeMaximized = false;
   if (d->ViewNode)
-    {
+  {
     d->ViewNode->GetMaximizedState(isMaximized, canBeMaximized);
-    }
+  }
 
   d->MaximizeViewButton->setVisible(canBeMaximized && d->ShowMaximizeViewButton);
   if (canBeMaximized && d->ShowMaximizeViewButton)
-    {
+  {
     if (isMaximized)
-      {
+    {
       d->MaximizeViewButton->setToolTip(tr("Restore view layout"));
       d->MaximizeViewButton->setIcon(d->ViewRestoreIcon);
-      }
+    }
     else
-      {
+    {
       d->MaximizeViewButton->setToolTip(tr("Maximize view"));
       d->MaximizeViewButton->setIcon(d->ViewMaximizeIcon);
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------

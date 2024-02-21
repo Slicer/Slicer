@@ -66,15 +66,15 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
   QList<qSlicerFileReader*> readers =
     qSlicerApplication::application()->ioManager()->readers(fileType);
   foreach(const qSlicerFileReader* reader, readers)
-    {
+  {
     foreach(const QString& filter, reader->extensions())
-      {
+    {
       QString nameFilter = filter.contains('(') ? filter :
         reader->description() + " (" + filter + ")";
       filters << nameFilter;
       extensions << ctk::nameFilterToExtensions(nameFilter);
-      }
     }
+  }
   filters.insert(0, tr("All") + " (" + extensions.join(" ") + ")");
   return filters;
 }
@@ -180,25 +180,25 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
     const qSlicerIO::IOProperties& ioProperties, QWidget* parent/*=nullptr*/)
 {
   if(ioProperties["objectName"].toString().isEmpty())
-    {
+  {
     qWarning() << "Impossible to create the ctkFileDialog - No object name has been set";
     return nullptr;
-    }
+  }
 
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   ctkFileDialog* fileDialog = new ctkFileDialog(parent);
 
   if(ioProperties["fileType"].toBool())
-    {
+  {
     fileDialog->setNameFilters(
       qSlicerFileDialog::nameFilters(
         (qSlicerIO::IOFileType)ioProperties["fileType"].toString()));
-    }
+  }
   fileDialog->setHistory(ioManager->history());
   if (ioManager->favorites().count())
-    {
+  {
     fileDialog->setSidebarUrls(ioManager->favorites());
-    }
+  }
 #ifdef Q_OS_MAC
   // Workaround for Mac to show mounted volumes.
   // See issue #2240
@@ -207,14 +207,14 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
   fileDialog->setSidebarUrls(sidebarUrls);
 #endif
   if (ioProperties["multipleFiles"].toBool())
-    {
+  {
     fileDialog->setFileMode(QFileDialog::ExistingFiles);
-    }
+  }
   if (ioProperties["fileMode"].toBool())
-    {
+  {
     fileDialog->setOption(QFileDialog::ShowDirsOnly);
     fileDialog->setFileMode(QFileDialog::Directory);
-    }
+  }
 
   fileDialog->setObjectName(ioProperties["objectName"].toString());
 
@@ -230,33 +230,33 @@ qSlicerIOOptions* qSlicerStandardFileDialog
   // warning: we are responsible for the memory of options
   qSlicerIOOptions* options = nullptr;
   if (d->Action == qSlicerFileDialog::Read)
-    {
+  {
     QStringList fileDescriptions = ioManager->fileDescriptionsByType(this->fileType());
     options = fileDescriptions.count() ?
       ioManager->fileOptions(fileDescriptions[0]) : nullptr;
-    }
+  }
   else if (d->Action == qSlicerFileDialog::Write)
-    {
+  {
     vtkMRMLScene* scene = qSlicerCoreApplication::application()->mrmlScene();
     vtkMRMLNode* nodeToSave = nullptr;
     if (!ioProperties["nodeID"].toString().isEmpty())
-      {
+    {
       nodeToSave = scene->GetNodeByID(ioProperties["nodeID"].toString().toUtf8());
-      }
+    }
     QStringList fileDescriptions =
       ioManager->fileWriterDescriptions(this->fileType());
     // TODO: this seems wrong, a description is provided while the method expects an extension
     options = fileDescriptions.count() ?
       ioManager->fileWriterOptions(nodeToSave, fileDescriptions[0]) : nullptr;
-    }
+  }
   // Update options widget based on properties.
   // This allows customizing default settings in the widget. For example,
   // in scene open dialog, Clear scene option can be set to enabled or disabled by default.
   qSlicerIOOptionsWidget* optionsWidget = dynamic_cast<qSlicerIOOptionsWidget*>(options);
   if (optionsWidget)
-    {
+  {
     optionsWidget->updateGUI(ioProperties);
-    }
+  }
   return options;
 }
 
@@ -288,7 +288,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   // readers/modules with no UI. If there is a UI then add it inside the file
   // dialog.
   if (optionsWidget)
-    {
+  {
     // fileDialog will reparent optionsWidget and take care of deleting
     // optionsWidget for us.
     fileDialog->setBottomWidget(optionsWidget, tr("Options:"));
@@ -297,51 +297,51 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     connect(optionsWidget, SIGNAL(validChanged(bool)),
             fileDialog, SLOT(setAcceptButtonEnable(bool)));
     fileDialog->setAcceptButtonEnable(optionsWidget->isValid());
-    }
+  }
 
   if (ioProperties.contains("defaultFileName"))
-    {
+  {
     fileDialog->selectFile(ioProperties["defaultFileName"].toString());
-    }
+  }
 
   // we do not delete options now as it is still useful later (even if there is
   // no UI.) they are the options of the reader, UI or not.
   bool res = fileDialog->exec();
   if (res)
-    {
+  {
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     properties = ioProperties;
     if (options)
-      {
+    {
       properties.unite(options->properties());
-      }
+    }
     properties["fileName"] = fileDialog->selectedFiles();
     if (d->Action == qSlicerFileDialog::Read)
-      {
+    {
       vtkNew<vtkCollection> loadedNodes;
       ioManager->loadNodes(this->fileType(), properties, loadedNodes.GetPointer());
       for (int i = 0; i < loadedNodes->GetNumberOfItems();++i)
-        {
+      {
         vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(loadedNodes->GetItemAsObject(i));
         if (node)
-          {
+        {
           d->LoadedNodes << node->GetID();
-          }
         }
+      }
       res = !d->LoadedNodes.isEmpty();
-      }
+    }
     else if(d->Action == qSlicerFileDialog::Write)
-      {
+    {
       res = ioManager->saveNodes(this->fileType(), properties);
-      }
+    }
     else
-      {
+    {
       res = false;
       Q_ASSERT(d->Action == qSlicerFileDialog::Read ||
                d->Action == qSlicerFileDialog::Write);
-      }
-    QApplication::restoreOverrideCursor();
     }
+    QApplication::restoreOverrideCursor();
+  }
 
   ioManager->setFavorites(fileDialog->sidebarUrls());
 
@@ -349,10 +349,10 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   // deleting options. If it is, then fileDialog would have reparent
   // the options and take care of its destruction
   if (!optionsWidget)
-    {
+  {
     delete options;
     options = nullptr;
-    }
+  }
 
   fileDialog->deleteLater();
   return res;
@@ -372,9 +372,9 @@ QStringList qSlicerStandardFileDialog::getOpenFileName(
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
   if(fileDialog->exec() == QDialog::Accepted)
-    {
+  {
     files = fileDialog->selectedFiles();
-    }
+  }
   ioManager->setFavorites(fileDialog->sidebarUrls());
   fileDialog->deleteLater();
   return files;
@@ -394,9 +394,9 @@ QString qSlicerStandardFileDialog::getExistingDirectory(
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
   if (fileDialog->exec() == QDialog::Accepted)
-    {
+  {
     directory = fileDialog->selectedFiles().value(0);
-    }
+  }
   ioManager->setFavorites(fileDialog->sidebarUrls());
   fileDialog->deleteLater();
   return directory;

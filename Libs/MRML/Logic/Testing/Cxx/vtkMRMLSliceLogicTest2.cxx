@@ -57,12 +57,12 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 //  vtkMultiThreader::SetGlobalMaximumNumberOfThreads(1);
 
   if( argc < 2 )
-    {
+  {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -89,9 +89,9 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 
   storageNode->SetFileName(argv[1]);
   if (storageNode->SupportedFileType(argv[1]) == 0)
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene.GetPointer());
   displayNode->SetScene(scene.GetPointer());
@@ -105,10 +105,10 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   scene->AddNode(scalarNode.GetPointer());
   storageNode->ReadData(scalarNode.GetPointer());
   if (scalarNode->GetImageData()==nullptr)
-    {
+  {
     std::cerr << "Failed to read volume from " <<argv[1] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::New();
   colorNode->SetTypeToGrey();
@@ -120,7 +120,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
 
   for (int i = 0; i < 10; ++i)
-    {
+  {
     vtkNew<vtkTimerLog> timerLog;
     timerLog->StartTimer();
     displayNode->Modified();
@@ -139,7 +139,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
     sliceLayerLogic->GetImageDataConnection();
     timerLog->StopTimer();
     std::cout << "vtkMRMLSliceLayerLogic::UpdateImageData(): " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
-    }
+  }
 
   // Duplicate the pipeline of vtkMRMLScalarVolumeDisplayNode
   vtkNew<vtkImageData> imageData;
@@ -166,9 +166,9 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   vtkNew<vtkImageMapToColors> mapToColors;
   mapToColors->SetOutputFormatToRGB();
   if (colorNode->GetLookupTable() == nullptr)
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   mapToColors->SetLookupTable(colorNode->GetLookupTable());
   mapToColors->SetInputConnection(mapToWindow->GetOutputPort());
   //mapToWindow->Update();
@@ -200,7 +200,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   timerLog->StopTimer();
   std::cout << "vtkMRMLScalarVolumeDisplayNode::pipeline: " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
   for (int i = 0; i < 4; ++i)
-    {
+  {
     imageData->Modified();
     timerLog->StartTimer();
     appendComponents->Update();
@@ -223,7 +223,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
     appendComponents->Update();
     timerLog->StopTimer();
     std::cout << "vtkMRMLScalarVolumeDisplayNode::alpha updated: " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
-    }
+  }
   vtkNew<vtkImageViewer2> viewer;
   viewer->SetInputConnection(sliceLogic->GetImageDataConnection());
   //viewer->SetInput(appendComponents->GetOutput());
@@ -238,9 +238,9 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 
   rw->Render();
   if (argc > 2 && std::string(argv[2]) == "-I")
-    {
+  {
     ri->Start();
-    }
+  }
 
   ri->Delete();
 

@@ -56,7 +56,7 @@ public:
     UpdateFromMRMLMethod,
     OnMRMLDisplayableNodeModifiedEventMethod,
     OnInteractorStyleEventMethod,
-    };
+  };
 
   static int          APIMethodCount;
   static const char * APIMethodNames[8];
@@ -90,22 +90,22 @@ vtkMRMLScriptedDisplayableManager::vtkInternal::vtkInternal()
 {
   this->PythonSelf = nullptr;
   for (int i = 0; i < vtkInternal::APIMethodCount; ++i)
-    {
+  {
     this->PythonAPIMethods[i] = nullptr;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLScriptedDisplayableManager::vtkInternal::~vtkInternal()
 {
   if (this->PythonSelf)
-    {
+  {
     for (int i = 0; i < vtkInternal::APIMethodCount; ++i)
-      {
+    {
       Py_XDECREF(this->PythonAPIMethods[i]);
-      }
-    Py_DECREF(this->PythonSelf);
     }
+    Py_DECREF(this->PythonSelf);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -134,9 +134,9 @@ void vtkMRMLScriptedDisplayableManager::Create()
 {
   PyObject * method = this->Internal->PythonAPIMethods[vtkInternal::CreateMethod];
   if (!method)
-    {
+  {
     return;
-    }
+  }
   PyObject_CallObject(method, nullptr);
   PyErr_Print();
 }
@@ -150,11 +150,11 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
   PyObject* method =
       this->Internal->PythonAPIMethods[vtkInternal::GetMRMLSceneEventsToObserveMethod];
   if (method)
-    {
+  {
     sceneEventsAsPointer = vtkIntArray::SafeDownCast(
         vtkPythonUtil::GetPointerFromObject(PyObject_CallObject(method, nullptr), "vtkIntArray"));
     PyErr_Print();
-    }
+  }
   vtkSmartPointer<vtkIntArray> sceneEvents;
   sceneEvents.TakeReference(sceneEventsAsPointer);
   //for(int i = 0; i < sceneEvents->GetNumberOfTuples(); i++)
@@ -172,9 +172,9 @@ void vtkMRMLScriptedDisplayableManager
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLSceneEventsMethod];
   if (!method)
-    {
+  {
     return;
-    }
+  }
 
   PyObject * arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
@@ -195,9 +195,9 @@ void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
   if (!method)
-    {
+  {
     return;
-    }
+  }
 
   PyObject * arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
@@ -215,9 +215,9 @@ void vtkMRMLScriptedDisplayableManager::RemoveMRMLObservers()
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::RemoveMRMLObserversMethod];
   if (!method)
-    {
+  {
     return;
-    }
+  }
   PyObject_CallObject(method, nullptr);
   PyErr_Print();
 
@@ -229,9 +229,9 @@ void vtkMRMLScriptedDisplayableManager::UpdateFromMRML()
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::UpdateFromMRMLMethod];
   if (!method)
-    {
+  {
     return;
-    }
+  }
   PyObject_CallObject(method, nullptr);
   PyErr_Print();
 }
@@ -241,9 +241,9 @@ void vtkMRMLScriptedDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::OnInteractorStyleEventMethod];
   if (!method)
-    {
+  {
     return;
-    }
+  }
 
   PyObject * arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLong(eventid));
@@ -260,9 +260,9 @@ void vtkMRMLScriptedDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkOb
   PyObject* method =
       this->Internal->PythonAPIMethods[vtkInternal::OnMRMLDisplayableNodeModifiedEventMethod];
   if (!method)
-    {
+  {
     return;
-    }
+  }
 
   PyObject * arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
@@ -278,9 +278,9 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
 {
   if(filePath.find(".py") == std::string::npos &&
      filePath.find(".pyc") == std::string::npos)
-    {
+  {
     return;
-    }
+  }
 
   // Extract filename - It should match the associated python class
   std::string className = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
@@ -293,37 +293,37 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
   // Load class definition if needed
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
   if (!classToInstantiate)
-    {
+  {
     PyObject * pyRes = nullptr;
     if (filePath.find(".py") != std::string::npos)
-      {
+    {
       std::string pyRunStr = std::string("exec(open('") + filePath + std::string("').read())");
       pyRes = PyRun_String(pyRunStr.c_str(),
                            Py_file_input, global_dict, global_dict);
-      }
+    }
     else if (filePath.find(".pyc") != std::string::npos)
-      {
+    {
       std::string pyRunStr = std::string("with open('") + filePath +
           std::string("', 'rb') as f:import imp;imp.load_module('__main__', f, '") + filePath +
           std::string("', ('.pyc', 'rb', 2))");
       pyRes = PyRun_String(
             pyRunStr.c_str(),
             Py_file_input, global_dict, global_dict);
-      }
+    }
     if (!pyRes)
-      {
+    {
       vtkErrorMacro(<< "setPythonSource - Failed to execute file" << filePath << "!");
       return;
-      }
+    }
     Py_DECREF(pyRes);
     classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
-    }
+  }
   if (!classToInstantiate)
-    {
+  {
     vtkErrorMacro(<< "SetPythonSource - Failed to load displayable manager class definition from "
                   << filePath);
     return;
-    }
+  }
 
   //std::cout << "classToInstantiate:" << classToInstantiate << std::endl;
 
@@ -334,24 +334,24 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
   PyObject * self = PyObject_CallObject(classToInstantiate, arguments);
   Py_DECREF(arguments);
   if (!self)
-    {
+  {
     vtkErrorMacro(<< "SetPythonSource - Failed to instantiate displayable manager:"
                   << classToInstantiate);
     return;
-    }
+  }
 
   // Retrieve API methods
   for (int i = 0; i < vtkInternal::APIMethodCount; ++i)
-    {
+  {
     assert(vtkInternal::APIMethodNames[i]);
     if (!PyObject_HasAttrString(self, vtkInternal::APIMethodNames[i]))
-      {
+    {
       continue;
-      }
+    }
     PyObject * method = PyObject_GetAttrString(self, vtkInternal::APIMethodNames[i]);
     //std::cout << "method:" << method << std::endl;
     this->Internal->PythonAPIMethods[i] = method;
-    }
+  }
 
   //std::cout << "self (" << className << ", instance:" << self << ")" << std::endl;
 

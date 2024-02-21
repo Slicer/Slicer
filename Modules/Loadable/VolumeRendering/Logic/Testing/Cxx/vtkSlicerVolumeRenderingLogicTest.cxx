@@ -41,10 +41,10 @@ int testPresets(const std::string &moduleShareDirectory);
 int vtkSlicerVolumeRenderingLogicTest(int argc, char* argv[])
 {
   if (argc != 2)
-    {
+  {
     std::cout << "Missing moduleShare Directory argument !" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::string moduleShareDirectory(argv[1]);
 
   CHECK_EXIT_SUCCESS(testDefaultRenderingMethod(moduleShareDirectory));

@@ -61,9 +61,9 @@ int vtkSlicerTablesLogicAddFileTest( int argc, char * argv[] )
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   if (argc > 1)
-    {
+  {
     CHECK_EXIT_SUCCESS(testAddFile(argv[1]));
-    }
+  }
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 

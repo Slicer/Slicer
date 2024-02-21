@@ -52,14 +52,14 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   qMRMLClipNodeWidget* widget = reinterpret_cast<qMRMLClipNodeWidget*>(data);
 
   CTKCOMPARE(widget->redSliceClipState(), vtkMRMLClipModelsNode::ClipPositiveSpace);
   CTKCOMPARE(widget->greenSliceClipState(), vtkMRMLClipModelsNode::ClipNegativeSpace);
   CTKCOMPARE(widget->clipType(), vtkMRMLClipModelsNode::ClipUnion);
   CTKCOMPARE(widget->yellowSliceClipState(), vtkMRMLClipModelsNode::ClipOff);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -90,9 +90,9 @@ int qMRMLClipNodeWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

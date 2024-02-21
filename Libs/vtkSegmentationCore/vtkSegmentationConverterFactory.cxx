@@ -43,18 +43,18 @@ unsigned int vtkSegmentationConverterFactoryInitialize::Count;
 vtkSegmentationConverterFactoryInitialize::vtkSegmentationConverterFactoryInitialize()
 {
   if(++Self::Count == 1)
-    {
+  {
     vtkSegmentationConverterFactory::classInitialize();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterFactoryInitialize::~vtkSegmentationConverterFactoryInitialize()
 {
   if(--Self::Count == 0)
-    {
+  {
     vtkSegmentationConverterFactory::classFinalize();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -73,18 +73,18 @@ vtkSegmentationConverterFactory* vtkSegmentationConverterFactory::New()
 vtkSegmentationConverterFactory* vtkSegmentationConverterFactory::GetInstance()
 {
   if(!vtkSegmentationConverterFactoryInstance)
-    {
+  {
     // Try the factory first
     vtkSegmentationConverterFactoryInstance = (vtkSegmentationConverterFactory*)vtkObjectFactory::CreateInstance("vtkSegmentationConverterFactory");
     // if the factory did not provide one, then create it here
     if(!vtkSegmentationConverterFactoryInstance)
-      {
+    {
       vtkSegmentationConverterFactoryInstance = new vtkSegmentationConverterFactory;
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
       vtkSegmentationConverterFactoryInstance->InitializeObjectBase();
 #endif
-      }
     }
+  }
   // return the instance
   return vtkSegmentationConverterFactoryInstance;
 }

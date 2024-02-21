@@ -71,14 +71,14 @@ void vtkMRMLTableViewNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if(!strcmp (attName, "doPropagateTableSelection" ))
-      {
+    {
       this->SetDoPropagateTableSelection(atoi(attValue)?true:false);
-      }
     }
+  }
   this->EndModify(disabledModify);
 }
 
@@ -91,13 +91,13 @@ void vtkMRMLTableViewNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLTableViewNode *node = vtkMRMLTableViewNode::SafeDownCast(anode);
   if (node)
-    {
+  {
     this->SetDoPropagateTableSelection (node->GetDoPropagateTableSelection());
-    }
+  }
   else
-    {
+  {
     vtkErrorMacro("vtkMRMLTableViewNode::Copy failed: invalid input node");
-    }
+  }
   this->EndModify(disabledModify);
 }
 

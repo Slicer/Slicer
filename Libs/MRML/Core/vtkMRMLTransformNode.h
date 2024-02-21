@@ -58,9 +58,9 @@ public:
   ///
   /// Finds the storage node and read the data
   void UpdateScene(vtkMRMLScene *scene) override
-    {
+  {
      Superclass::UpdateScene(scene);
-    };
+  };
 
   ///
   /// Returns 1 if transform is a non-composite linear transform, 0 otherwise (if composite transform or non-linear transform)
@@ -278,9 +278,9 @@ public:
   /// Typical usage would be to disable transform modified events, call a series of operations that change transforms
   /// and then re-enable transform modified events to invoke any pending notifications.
   virtual void TransformModified()
-    {
+  {
     this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
-    }
+  }
 
   bool GetModifiedSinceRead() override;
 

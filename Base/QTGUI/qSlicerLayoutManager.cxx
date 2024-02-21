@@ -79,9 +79,9 @@ void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
 #ifdef Slicer_USE_PYTHONQT
   if (qSlicerCoreApplication::testAttribute(
         qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     return;
-    }
+  }
   Q_D(qSlicerLayoutManager);
 
   Q_ASSERT(QFileInfo(scriptedDisplayableManagerDirectory).isDir());

@@ -61,9 +61,9 @@ void qMRMLWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLWidget);
   if (newScene == d->MRMLScene)
-    {
+  {
     return ;
-    }
+  }
   d->MRMLScene = newScene;
   emit mrmlSceneChanged(newScene);
 }
@@ -91,7 +91,7 @@ void qMRMLWidget::preInitializeApplication()
   QString openGLProfileStr = qgetenv(MRML_APPLICATION_OPENGL_PROFILE_ENV);
   openGLProfileStr = openGLProfileStr.toLower();
   if (openGLProfileStr.isEmpty() || openGLProfileStr=="default")
-    {
+  {
     // Use default profile
 #ifdef _WIN32
     // Enable OpenGL compatibility profile on Windows.
@@ -103,23 +103,23 @@ void qMRMLWidget::preInitializeApplication()
     // More details: https://gitlab.kitware.com/vtk/vtk/issues/17572
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
 #endif
-    }
+  }
   else
-    {
+  {
     // Force a specific profile
     if (openGLProfileStr == "no")
-      {
+    {
       format.setProfile(QSurfaceFormat::NoProfile);
-      }
-    else if (openGLProfileStr == "core")
-      {
-      format.setProfile(QSurfaceFormat::CoreProfile);
-      }
-    else if (openGLProfileStr == "compatibility")
-      {
-      format.setProfile(QSurfaceFormat::CompatibilityProfile);
-      }
     }
+    else if (openGLProfileStr == "core")
+    {
+      format.setProfile(QSurfaceFormat::CoreProfile);
+    }
+    else if (openGLProfileStr == "compatibility")
+    {
+      format.setProfile(QSurfaceFormat::CompatibilityProfile);
+    }
+  }
 
   // Set default surface format for QVTKOpenGLWidget. Disable multisampling to
   // support volume rendering and other VTK functionality that reads from the

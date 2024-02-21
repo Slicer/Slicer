@@ -48,7 +48,7 @@ public:
     CanWriteObjectConfidenceMethod,
     ExtensionsMethod,
     WriteMethod,
-    };
+  };
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
@@ -99,27 +99,27 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
   Q_D(qSlicerScriptedFileWriter);
 
   if (!Py_IsInitialized())
-    {
+  {
     return false;
-    }
+  }
 
   if(!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
-    {
+  {
     return false;
-    }
+  }
 
   // Extract moduleName from the provided filename
   QString moduleName = QFileInfo(filePath).baseName();
 
   QString className = _className;
   if (className.isEmpty())
-    {
+  {
     className = moduleName;
     if (!moduleName.endsWith("FileWriter"))
-      {
+    {
       className.append("FileWriter");
-      }
     }
+  }
   d->PythonClassName = className;
 
   d->PythonCppAPI.setObjectName(className);
@@ -130,29 +130,29 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
   if (PyObject_HasAttrString(module, className.toUtf8()))
-    {
+  {
     classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
-    }
+  }
   else if (missingClassIsExpected)
-    {
+  {
     // Class is not defined for this object, but this is expected, not an error
     return false;
-    }
+  }
   if (!classToInstantiate)
-    {
+  {
     PythonQt::self()->handleError();
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedFileWriter::setPythonSource - "
                             "Failed to load scripted file writer: "
                             "class %1 was not found in file %2").arg(className).arg(filePath).toUtf8());
     return false;
-    }
+  }
 
   PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
-    {
+  {
     return false;
-    }
+  }
 
   d->PythonSource = filePath;
 
@@ -173,16 +173,16 @@ QString qSlicerScriptedFileWriter::description()const
 
   PyObject * result = d->PythonCppAPI.callMethod(d->DescriptionMethod);
   if (!result)
-    {
+  {
     return QString();
-    }
+  }
   if (!PyUnicode_Check(result))
-    {
+  {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'description' "
                << "is expected to return a string !";
     return QString();
-    }
+  }
   QString fileType = QString(PyUnicode_AsUTF8(result));
   return fileType;
 }
@@ -194,16 +194,16 @@ qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType()const
 
   PyObject * result = d->PythonCppAPI.callMethod(d->FileTypeMethod);
   if (!result)
-    {
+  {
     return IOFileType();
-    }
+  }
   if (!PyUnicode_Check(result))
-    {
+  {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'fileType' "
                << "is expected to return a string !";
     return IOFileType();
-    }
+  }
   return IOFileType(PyUnicode_AsUTF8(result));
 }
 
@@ -217,17 +217,17 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
   PyObject * result = d->PythonCppAPI.callMethod(d->CanWriteObjectMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
-    {
+  {
     // Method call failed (probably an omitted function), call default implementation
     return this->Superclass::canWriteObject(object);
-    }
+  }
   if (!PyBool_Check(result))
-    {
+  {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'canWriteObject' "
                << "is expected to return a boolean !";
     return false;
-    }
+  }
   return result == Py_True;
 }
 
@@ -241,17 +241,17 @@ double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object)con
   PyObject * result = d->PythonCppAPI.callMethod(d->CanWriteObjectConfidenceMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
-    {
+  {
     // Method call failed (probably an omitted function), call default implementation
     return this->Superclass::canWriteObjectConfidence(object);
-    }
+  }
   if (!PyFloat_Check(result))
-    {
+  {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'canWriteObjectConfidence' "
                << "is expected to return a float!";
     return 0.0;
-    }
+  }
   return PyFloat_AsDouble(result);
 }
 
@@ -265,30 +265,30 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
   PyObject * result = d->PythonCppAPI.callMethod(d->ExtensionsMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
-    {
+  {
     return QStringList();
-    }
+  }
   if (!PyList_Check(result))
-    {
+  {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'extensions' "
                << "is expected to return a string list !";
     return QStringList();
-    }
+  }
   PyObject* resultAsTuple = PyList_AsTuple(result);
   QStringList extensionList;
   Py_ssize_t size = PyTuple_Size(resultAsTuple);
   for (Py_ssize_t i = 0; i < size; ++i)
-    {
+  {
     if (!PyUnicode_Check(PyTuple_GetItem(resultAsTuple, i)))
-      {
+    {
       qWarning() << d->PythonSource
                  << " - In" << d->PythonClassName << "class, function 'extensions' "
                  << "is expected to return a string list !";
       break;
-      }
-    extensionList << PyUnicode_AsUTF8(PyTuple_GetItem(resultAsTuple, i));
     }
+    extensionList << PyUnicode_AsUTF8(PyTuple_GetItem(resultAsTuple, i));
+  }
   Py_DECREF(resultAsTuple);
   return extensionList;
 }
@@ -302,15 +302,15 @@ bool qSlicerScriptedFileWriter::write(const qSlicerIO::IOProperties& properties)
   PyObject * result = d->PythonCppAPI.callMethod(d->WriteMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
-    {
+  {
     return false;
-    }
+  }
   if (!PyBool_Check(result))
-    {
+  {
     qWarning() << d->PythonSource
                << " - In" << d->PythonClassName << "class, function 'write' "
                << "is expected to return a string boolean !";
     return false;
-    }
+  }
   return result == Py_True;
 }

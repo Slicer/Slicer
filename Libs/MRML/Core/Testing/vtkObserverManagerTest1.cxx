@@ -31,21 +31,21 @@ void TestCallback( vtkObject *caller,
   std::cout << "TestCallback" << std::endl;
   callBackDataStruct *myCBStruct = (callBackDataStruct*)clientData;
   if (myCBStruct)
-    {
+  {
     std::cout << "testString = " << myCBStruct->testString << std::endl;
-    }
+  }
   if (caller != nullptr)
-    {
+  {
     vtkMRMLModelNode *callNode = vtkMRMLModelNode::SafeDownCast(caller);
     if (callNode != nullptr)
-      {
+    {
       std::cout << "Caller name = " << callNode->GetName();
-      }
-    else
-      {
-      std::cerr << "Null caller node" << std::endl;
-      }
     }
+    else
+    {
+      std::cerr << "Null caller node" << std::endl;
+    }
+  }
 }
 
 int vtkObserverManagerTest1(int , char * [] )
@@ -61,18 +61,18 @@ int vtkObserverManagerTest1(int , char * [] )
   observerManager->AssignOwner(modelNode.GetPointer());
   vtkObject *owner = observerManager->GetOwner();
   if (vtkMRMLModelNode::SafeDownCast(owner) != modelNode.GetPointer())
-    {
+  {
     std::cerr << "Error getting owner."  << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // get the call back
   vtkCallbackCommand* callbackCommand = observerManager->GetCallbackCommand();
   if (callbackCommand == nullptr)
-    {
+  {
      std::cerr << "Error getting call back command."  << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callBackDataStruct *cbStruct = new callBackDataStruct;
   cbStruct->testString = std::string("Testing");
   callbackCommand->SetClientData(cbStruct);

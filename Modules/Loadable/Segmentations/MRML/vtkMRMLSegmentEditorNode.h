@@ -46,15 +46,15 @@ class VTK_SLICER_SEGMENTATIONS_MODULE_MRML_EXPORT vtkMRMLSegmentEditorNode : pub
 {
 public:
   enum
-    {
+  {
     /// Fired when an effect parameter is modified. As this node handles not only the effect parameters,
     /// but also the segment editor state, a full Modified event is an overkill, because it would trigger
     /// editor widget UI update, instead of simple update of the effect option widgets only.
     EffectParameterModified = 62200
-    };
+  };
 
   enum
-    {
+  {
     /// Areas added to selected segment will be removed from all other segments. (no overlap)
     OverwriteAllSegments=0,
     /// Areas added to selected segment will be removed from all visible segments. (no overlap with visible, overlap possible with hidden)
@@ -63,7 +63,7 @@ public:
     OverwriteNone,
     // Insert valid types above this line
     Overwrite_Last
-    };
+  };
 
 public:
   static vtkMRMLSegmentEditorNode *New();
@@ -170,35 +170,35 @@ public:
   //@{
   /// Deprecated. Use Get/SetSourceVolumeIntensityMaskRange method instead.
   virtual void SetMasterVolumeIntensityMaskRange(double _arg1, double _arg2)
-    {
+  {
     vtkWarningMacro("vtkMRMLSegmentEditorNode::SetMasterVolumeIntensityMaskRange() method is deprecated, use SetSourceVolumeIntensityMaskRange method instead");
     this->SetSourceVolumeIntensityMaskRange(_arg1, _arg2);
-    }
+  }
   void SetMasterVolumeIntensityMaskRange(const double _arg[2])
-    {
+  {
     vtkWarningMacro("vtkMRMLSegmentEditorNode::SetMasterVolumeIntensityMaskRange() method is deprecated, use SetSourceVolumeIntensityMaskRange method instead");
     this->SetSourceVolumeIntensityMaskRange(_arg);
-    }
+  }
 
   virtual double* GetMasterVolumeIntensityMaskRange() VTK_SIZEHINT(2)
-    {
+  {
     vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
     return this->GetSourceVolumeIntensityMaskRange();
-    }
+  }
 
   VTK_WRAPEXCLUDE
   virtual void GetMasterVolumeIntensityMaskRange(double& _arg1, double& _arg2)
-    {
+  {
     vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
     this->GetSourceVolumeIntensityMaskRange(_arg1, _arg2);
-    }
+  }
 
   VTK_WRAPEXCLUDE
   virtual void GetMasterVolumeIntensityMaskRange(double _arg[2])
-    {
+  {
     vtkWarningMacro("vtkMRMLSegmentEditorNode::GetMasterVolumeIntensityMaskRange() method is deprecated, use GetSourceVolumeIntensityMaskRange method instead");
     this->GetSourceVolumeIntensityMaskRange(_arg);
-    }
+  }
   //@}
 
   //@{

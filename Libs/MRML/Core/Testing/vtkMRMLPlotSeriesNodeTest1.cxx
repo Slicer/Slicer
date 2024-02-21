@@ -51,10 +51,10 @@ int vtkMRMLPlotSeriesNodeTest1(int , char * [] )
   float inc = 7.5 / (numPoints-1);
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
-    {
+  {
     table->SetValue(i, 0, i * inc);
     table->SetValue(i, 1, cos(i * inc));
-    }
+  }
 
   // Create a MRMLTableNode
   vtkNew<vtkMRMLTableNode> tableNode;

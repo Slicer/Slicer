@@ -60,47 +60,47 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     applicationLogic->SetMRMLScene(scene.GetPointer());
     layoutManager->setMRMLScene(scene.GetPointer());
     if (layoutManager->mrmlScene() != scene.GetPointer())
-      {
+    {
       std::cerr << __LINE__ << " Problem with setMRMLScene()" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     vtkMRMLLayoutNode* layoutNode = layoutManager->layoutLogic()->GetLayoutNode();
 
     if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutInitialView))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     int expectedThreeDViewCout = 1;
     int currentThreeDViewCount = layoutManager->threeDViewCount();
     if (expectedThreeDViewCout != currentThreeDViewCount)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
                 << "  expectedThreeDViewCout:" << expectedThreeDViewCout << "\n"
                 << "  currentThreeDViewCount:" << currentThreeDViewCount << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     int expectedSliceViewCout = 3;
     int currentSliceViewCount = layoutManager->sliceViewNames().count();
     if (expectedSliceViewCout != currentSliceViewCount)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
                 << "  expectedSliceViewCout:" << expectedSliceViewCout << "\n"
                 << "  currentSliceViewCount:" << currentSliceViewCount << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     int expectedTableViewCout = 0;
     int currentTableViewCount = layoutManager->tableViewCount();
     if (expectedTableViewCout != currentTableViewCount)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
                 << "  expectedTableViewCout:" << expectedTableViewCout << "\n"
                 << "  currentTableViewCount:" << currentTableViewCount << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     layoutManager->setMRMLScene(nullptr);
     applicationLogic->SetMRMLScene(nullptr);
@@ -108,12 +108,12 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     int current = scene->GetReferenceCount();
     int expected = 1;
     if (current != expected)
-      {
+    {
       std::cerr << __LINE__ << " Problem with MRMLScene reference count !\n"
                 << "  current: " << current << "\n"
                 << "  expected: " << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   {
@@ -124,39 +124,39 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     vtkMRMLLayoutNode* layoutNode = layoutManager->layoutLogic()->GetLayoutNode();
 
     if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutInitialView))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     int expectedThreeDViewCout = 1;
     int currentThreeDViewCount = layoutManager->threeDViewCount();
     if (expectedThreeDViewCout != currentThreeDViewCount)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
                 << "  expectedThreeDViewCout:" << expectedThreeDViewCout << "\n"
                 << "  currentThreeDViewCount:" << currentThreeDViewCount << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     int expectedSliceViewCout = 3;
     int currentSliceViewCount = layoutManager->sliceViewNames().count();
     if (expectedSliceViewCout != currentSliceViewCount)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
                 << "  expectedSliceViewCout:" << expectedSliceViewCout << "\n"
                 << "  currentSliceViewCount:" << currentSliceViewCount << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     int expectedTableViewCout = 0;
     int currentTableViewCount = layoutManager->tableViewCount();
     if (expectedTableViewCout != currentTableViewCount)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
                 << "  expectedTableViewCout:" << expectedTableViewCout << "\n"
                 << "  currentTableViewCount:" << currentTableViewCount << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
   }
   vtkMRMLLayoutNode* layoutNode = nullptr;
@@ -175,21 +175,21 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   }
 
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   layoutManager->setLayout(vtkMRMLLayoutNode::SlicerLayoutCompareView);
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutCompareView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   vtkMRMLScene * scene = layoutManager->mrmlScene();
 
@@ -197,43 +197,43 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   scene->EndState(vtkMRMLScene::ImportState);
 
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutCompareView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   scene->StartState(vtkMRMLScene::ImportState);
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
   scene->EndState(vtkMRMLScene::ImportState);
 
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   scene->StartState(vtkMRMLScene::CloseState);
   scene->EndState(vtkMRMLScene::CloseState);
 
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   scene->StartState(vtkMRMLScene::CloseState);
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
   scene->EndState(vtkMRMLScene::CloseState);
 
   if (!checkViewArrangement(__LINE__, layoutManager,layoutNode,  vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   // The layout is changed to none only if vtkMRMLScene::Clear() is called
   scene->StartState(vtkMRMLScene::CloseState);
 
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   // Imitates what vtkMRMLScene::Clear() would have done:
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutNone);
@@ -242,17 +242,17 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   scene->EndState(vtkMRMLScene::CloseState);
 
   if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     return safeApplicationQuit(&app);
-    }
+  }
   else
-    {
+  {
     return app.exec();
-    }
+  }
 }
 

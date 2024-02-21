@@ -95,10 +95,10 @@ public:
   /// Event data used with SubjectHierarchyItemsShowInViewRequestedEvent.
   /// For internal use only.
   struct SubjectHierarchyItemsShowInViewRequestedEventData
-    {
+  {
     vtkIdList* itemIDsToShow = nullptr;
     vtkMRMLAbstractViewNode* viewNode = nullptr;
-    };
+  };
 
 public:
   static vtkMRMLSubjectHierarchyNode *New();

@@ -56,11 +56,11 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
   qMRMLWidget::postInitializeApplication();
 
   if (argc < 2)
-    {
+  {
     std::cerr << "Usage: qSlicerModelsModuleWidgetTest1 sceneFilePath [-I]"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkSlicerApplicationLogic* appLogic = app.applicationLogic();
   vtkNew<vtkMRMLScene> scene;
@@ -98,10 +98,10 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
   // Add a model node
   vtkMRMLModelNode* modelNode = modelsLogic->AddModel(argv[1]);
   if (!modelNode)
-    {
+  {
     std::cerr << "Bad model file:" << argv[1] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Create a few folders
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
@@ -124,8 +124,8 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
   modelsLogic->AddModel(argv[1]);
 
   if (argc < 3 || QString(argv[2]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

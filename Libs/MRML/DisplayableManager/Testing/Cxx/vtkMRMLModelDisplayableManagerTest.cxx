@@ -114,40 +114,40 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
   // Event recorder
   bool disableReplay = false, record = false, screenshot = false;
   for (int i = 0; i < argc; i++)
-    {
+  {
     disableReplay |= (strcmp("--DisableReplay", argv[i]) == 0);
     record        |= (strcmp("--Record", argv[i]) == 0);
     screenshot    |= (strcmp("--Screenshot", argv[i]) == 0);
-    }
+  }
   vtkNew<vtkInteractorEventRecorder> recorder;
   recorder->SetInteractor(displayableManagerGroup->GetInteractor());
   if (!disableReplay)
-    {
+  {
     if (record)
-      {
+    {
       std::cout << "Recording ..." << std::endl;
       recorder->SetFileName("vtkInteractorEventRecorder.log");
       recorder->On();
       recorder->Record();
-      }
+    }
     else
-      {
+    {
       // Play
       recorder->ReadFromInputStringOn();
       recorder->SetInputString(vtkMRMLModelDisplayableManagerTest1EventLog);
       recorder->Play();
-      }
     }
+  }
 
   int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
   if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
-    {
+  {
     displayableManagerGroup->GetInteractor()->Initialize();
     displayableManagerGroup->GetInteractor()->Start();
-    }
+  }
 
   if (record || screenshot)
-    {
+  {
     vtkNew<vtkWindowToImageFilter> windowToImageFilter;
     windowToImageFilter->SetInput(renderWindow.GetPointer());
     windowToImageFilter->SetScale(1, 1); //set the resolution of the output image
@@ -163,7 +163,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
     writer->SetInputConnection(windowToImageFilter->GetOutputPort());
     writer->Write();
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
-    }
+  }
 
   vrDisplayableManager->SetMRMLApplicationLogic(nullptr);
   applicationLogic->Delete();

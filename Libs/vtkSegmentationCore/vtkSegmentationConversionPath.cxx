@@ -42,10 +42,10 @@ void vtkSegmentationConversionPath::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "Cost: " << this->GetCost() << "\n";
   for (const vtkSmartPointer<vtkSegmentationConverterRule>& rule : this->Rules)
-    {
+  {
     os << indent << "Rule:\n";
     rule->PrintSelf(os, indent.GetNextIndent());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -64,10 +64,10 @@ void vtkSegmentationConversionPath::RemoveAllRules()
 vtkSegmentationConverterRule* vtkSegmentationConversionPath::GetRule(int index)
 {
   if (index < 0 || index >= this->GetNumberOfRules())
-    {
+  {
     vtkErrorMacro("GetRule failed: invalid index: " << index);
     return nullptr;
-    }
+  }
   return this->Rules[index].GetPointer();
 }
 
@@ -75,10 +75,10 @@ vtkSegmentationConverterRule* vtkSegmentationConversionPath::GetRule(int index)
 void vtkSegmentationConversionPath::RemoveRule(int index)
 {
   if (index < 0 || index >= this->GetNumberOfRules())
-    {
+  {
     vtkErrorMacro("RemoveRule failed: invalid index: " << index);
     return;
-    }
+  }
   this->Rules.erase(this->Rules.begin()+index);
 }
 
@@ -94,19 +94,19 @@ void vtkSegmentationConversionPath::AddRules(vtkSegmentationConversionPath* path
 {
   int numberOfRules = path->GetNumberOfRules();
   for (int ruleIndex = 0; ruleIndex < numberOfRules; ++ruleIndex)
-    {
+  {
     this->AddRule(path->GetRule(ruleIndex));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConversionPath::Copy(vtkSegmentationConversionPath* source)
 {
   if (!source)
-    {
+  {
     vtkErrorMacro("DeepCopy failed: invalid source object");
     return;
-    }
+  }
   this->Rules = source->Rules;
 }
 
@@ -115,9 +115,9 @@ unsigned int vtkSegmentationConversionPath::GetCost()
 {
   unsigned int cost = 0;
   for (const vtkSmartPointer<vtkSegmentationConverterRule>& rule : this->Rules)
-    {
+  {
     cost += rule->GetConversionCost();
-    }
+  }
   return cost;
 }
 
@@ -129,10 +129,10 @@ void vtkSegmentationConversionPaths::PrintSelf(ostream& os, vtkIndent indent)
   vtkSegmentationConversionPath* path = nullptr;
   vtkCollectionSimpleIterator it;
   for (this->InitTraversal(it); (path = this->GetNextPath(it));)
-    {
+  {
     os << indent << "Path:\n";
     path->PrintSelf(os, indent.GetNextIndent());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

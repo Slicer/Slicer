@@ -91,34 +91,34 @@ vtkDataFileFormatHelper::vtkDataFileFormatHelper()
 vtkDataFileFormatHelper::~vtkDataFileFormatHelper()
 {
   if(this->ITKSupportedWriteFileFormats)
-    {
+  {
     this->ITKSupportedWriteFileFormats->Delete();
-    }
+  }
   if(this->SupportedWriteFileExtensions)
-    {
+  {
     this->SupportedWriteFileExtensions->Delete();
-    }
+  }
   if(this->SupportedWriteFileGenericNames)
-    {
+  {
     this->SupportedWriteFileGenericNames->Delete();
-    }
+  }
   if(this->SupportedWriteFileClassNames)
-    {
+  {
     this->SupportedWriteFileClassNames->Delete();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkStringArray* vtkDataFileFormatHelper::GetITKSupportedWriteFileFormats()
 {
   if(!this->ITKSupportedWriteFileFormats)
-    {
+  {
     this->InitializeITKSupportedFileFormats();
-    }
+  }
   if (this->ITKSupportedWriteFileFormats->GetNumberOfValues() == 0)
-    {
+  {
     this->InitializeITKSupportedFileFormats();
-    }
+  }
   return this->ITKSupportedWriteFileFormats;
 }
 
@@ -140,14 +140,14 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
 
   ArrayOfImageIOType::iterator itr = allobjects.begin();
   while( itr != allobjects.end() )
-    {
+  {
     IOBaseType * io = dynamic_cast< IOBaseType * >( itr->GetPointer() );
     if( ! io )
-      {
+    {
       continue;
-      }
+    }
     else
-      {
+    {
 #ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
       std::string ioClassName = io->GetNameOfClass();
       ITKIOClassNames.insert(ioClassName);
@@ -156,37 +156,37 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
       ArrayOfITKExtensionsType::const_iterator writeItr = writeExtensions.begin();
 
       while( writeItr != writeExtensions.end() )
-        {
+      {
         // Once we have the GetSupportedWriteGenericNames() ready, we will used that.
         // For now, just use the class name.
         ITKImageFileFormat structFileFormat =
           {io->GetNameOfClass(), io->GetNameOfClass(), io->GetNameOfClass(), writeItr->c_str()};
         this->AddSupportedWriterFileFormat(structFileFormat);
         ++writeItr;
-        }
-#endif
       }
-    itr++;
+#endif
     }
+    itr++;
+  }
 
 #ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
   for(int idx=0; idx<numFiles; idx++)
-    {
+  {
     ITKImageFileFormat structFileFormat = FileFormatTable[idx];
     std::string ioClassName(structFileFormat.ClassName);
     if(ITKIOClassNames.find(ioClassName) != ITKIOClassNames.end() ||
        this->SupportedWriteFileClassNames->LookupValue(structFileFormat.ClassName) == -1 ||
        this->SupportedWriteFileGenericNames->LookupValue(structFileFormat.GenericName) == -1 ||
        this->SupportedWriteFileExtensions->LookupValue(structFileFormat.Extension) == -1)
-      {
+    {
       //vtkWarningMacro("PopulateITKSupportedWriteFileTypes: USE_TEMP_ITK_FILEFORMAT_TABLE adding a format " << structFileFormat.ClassName << ", " << structFileFormat.GenericName << ", " << structFileFormat.Extension);
       this->AddSupportedWriterFileFormat(structFileFormat);
-      }
-    else
-      {
-      //vtkWarningMacro("PopulateITKSupportedWriteFileTypes: NOT adding a format with classname " << structFileFormat.ClassName << " and ext " << structFileFormat.Extension << " as it's already in either ITKIOclassNames or one of the SupportedWriteFile arrays. In SupportedWriteFileClassNames = " << this->SupportedWriteFileClassNames->LookupValue(structFileFormat.ClassName) << ", in generic names = " << this->SupportedWriteFileGenericNames->LookupValue(structFileFormat.GenericName) << ", in extensions = " << this->SupportedWriteFileExtensions->LookupValue(structFileFormat.Extension));
-      }
     }
+    else
+    {
+      //vtkWarningMacro("PopulateITKSupportedWriteFileTypes: NOT adding a format with classname " << structFileFormat.ClassName << " and ext " << structFileFormat.Extension << " as it's already in either ITKIOclassNames or one of the SupportedWriteFile arrays. In SupportedWriteFileClassNames = " << this->SupportedWriteFileClassNames->LookupValue(structFileFormat.ClassName) << ", in generic names = " << this->SupportedWriteFileGenericNames->LookupValue(structFileFormat.GenericName) << ", in extensions = " << this->SupportedWriteFileExtensions->LookupValue(structFileFormat.Extension));
+    }
+  }
 #endif
 }
 
@@ -203,41 +203,41 @@ std::string vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
   std::string::size_type pos2 = fileformat.find(")");
   if(pos1 != std::string::npos &&
     pos2 != std::string::npos )
-    {
+  {
     std::string fileext = fileformat.substr(pos1+1, pos2-pos1-1);
     // remove leading and trailing space
     pos1 = fileext.find(".");
     if(pos1 != std::string::npos)
-      {
+    {
       fileext = fileext.substr(pos1);
-      }
+    }
     pos1 = fileext.find(' ');
     if(pos1 != std::string::npos)
-      {
+    {
       fileext = fileext.substr(0, pos1);
-      }
+    }
     std::string lowercaseExtension=vtksys::SystemTools::LowerCase(fileext);
     // make sure there is a leading . character
     if (!lowercaseExtension.empty() && lowercaseExtension[0] != '.')
-      {
+    {
       lowercaseExtension = std::string(".") + lowercaseExtension;
-      }
-    return lowercaseExtension;
     }
+    return lowercaseExtension;
+  }
 
   // handle extension-only formats
   pos1 = fileformat.find_first_of(".");
   if (pos1 != std::string::npos)
-    {
+  {
     std::string lowerCaseExtension = vtksys::SystemTools::LowerCase(fileformat.substr(pos1));
     if (!lowerCaseExtension.empty())
-      {
+    {
       vtkGenericWarningMacro("vtkDataFileFormatHelper::GetFileExtensionFromFormatString: please update deprecated "
         "extension-only format specifier to 'File format name (.ext)' format! "
         "Current format string: " << fileformat.c_str());
       return lowerCaseExtension;
-      }
     }
+  }
   // default case
   return "";
 }
@@ -251,30 +251,30 @@ const char* vtkDataFileFormatHelper::GetClassNameFromFormatString(
     fileformat.c_str());
   // if no extension found
   if(fileExt.empty())
-    {
+  {
     return nullptr;
-    }
+  }
   std::string::size_type pos1 = fileformat.find("(");
   if(pos1 != std::string::npos)
-    {
+  {
     //remove trailing space too
     std::string genericName = fileformat.substr(0,pos1-1);
 
     vtkStringArray* itkFileExtensions = this->GetITKSupportedWriteFileExtensions();
 
     for(int idx=0; idx<itkFileExtensions->GetNumberOfTuples(); idx++)
-      {
+    {
       const char* extFormat = this->GetITKSupportedExtensionGenericNameByIndex(idx);
       std::string strExt = vtksys::SystemTools::LowerCase( itkFileExtensions->GetValue(idx) );
 
       if((!strExt.empty() && strExt.compare(fileExt)==0)
         && (extFormat && strcmp(extFormat, genericName.c_str())==0))
-        {
+      {
         return this->GetITKSupportedExtensionClassNameByIndex(idx);
-        }
       }
-
     }
+
+  }
 
   // if the file format is not expected.
   return nullptr;
@@ -286,15 +286,15 @@ vtkStringArray* vtkDataFileFormatHelper::GetITKSupportedWriteFileExtensions()
   if(!this->SupportedWriteFileExtensions ||
     !this->SupportedWriteFileGenericNames ||
     !this->SupportedWriteFileClassNames)
-    {
+  {
     this->InitializeITKSupportedFileFormats();
-    }
+  }
   if (this->SupportedWriteFileExtensions->GetNumberOfValues() == 0 ||
       this->SupportedWriteFileGenericNames->GetNumberOfValues() == 0 ||
       this->SupportedWriteFileClassNames->GetNumberOfValues() == 0)
-    {
+  {
     this->InitializeITKSupportedFileFormats();
-    }
+  }
   return this->SupportedWriteFileExtensions;
 }
 
@@ -304,22 +304,22 @@ const char* vtkDataFileFormatHelper::GetITKSupportedExtensionGenericNameByIndex(
 {
   if(!this->SupportedWriteFileExtensions ||
     !this->SupportedWriteFileGenericNames )
-    {
+  {
     this->InitializeITKSupportedFileFormats();
-    }
+  }
   if (this->SupportedWriteFileExtensions->GetNumberOfValues() == 0 ||
       this->SupportedWriteFileGenericNames->GetNumberOfValues() == 0)
-    {
+  {
     this->InitializeITKSupportedFileFormats();
-    }
+  }
   if(idx < 0 || this->SupportedWriteFileGenericNames->GetNumberOfTuples() ==0 ||
     idx >= this->SupportedWriteFileGenericNames->GetNumberOfTuples() ||
     this->SupportedWriteFileExtensions->GetNumberOfTuples() !=
     this->SupportedWriteFileGenericNames->GetNumberOfTuples())
-    {
+  {
     vtkErrorMacro(<< "Can not find the extension generic name by given index.");
     return nullptr;
-    }
+  }
 
   return this->SupportedWriteFileGenericNames->GetValue(idx).c_str();
 }
@@ -330,23 +330,23 @@ const char* vtkDataFileFormatHelper::GetITKSupportedExtensionClassNameByIndex(
 {
   if(!this->SupportedWriteFileExtensions ||
     !this->SupportedWriteFileClassNames)
-    {
+  {
     this->InitializeITKSupportedFileFormats();
-    }
+  }
   if (this->SupportedWriteFileExtensions->GetNumberOfValues() == 0 ||
       this->SupportedWriteFileClassNames->GetNumberOfValues() == 0)
-    {
+  {
     this->InitializeITKSupportedFileFormats();
-    }
+  }
 
   if(idx < 0 || this->SupportedWriteFileClassNames->GetNumberOfTuples() ==0 ||
     idx >= this->SupportedWriteFileClassNames->GetNumberOfTuples() ||
     this->SupportedWriteFileExtensions->GetNumberOfTuples() !=
     this->SupportedWriteFileClassNames->GetNumberOfTuples())
-    {
+  {
     vtkErrorMacro(<< "Can not find the extension class name by given index.");
     return nullptr;
-    }
+  }
 
   return this->SupportedWriteFileClassNames->GetValue(idx).c_str();
 }
@@ -355,21 +355,21 @@ const char* vtkDataFileFormatHelper::GetITKSupportedExtensionClassNameByIndex(
 void vtkDataFileFormatHelper::InitializeITKSupportedFileFormats()
 {
   if(!this->SupportedWriteFileExtensions)
-    {
+  {
     this->SupportedWriteFileExtensions = vtkStringArray::New();
-    }
+  }
   if(!this->SupportedWriteFileGenericNames)
-    {
+  {
     this->SupportedWriteFileGenericNames = vtkStringArray::New();
-    }
+  }
   if(!this->SupportedWriteFileClassNames)
-    {
+  {
     this->SupportedWriteFileClassNames = vtkStringArray::New();
-    }
+  }
   if(!this->ITKSupportedWriteFileFormats)
-    {
+  {
     this->ITKSupportedWriteFileFormats = vtkStringArray::New();
-    }
+  }
 
   this->ITKSupportedWriteFileFormats->Reset();
   this->ITKSupportedWriteFileFormats->SetNumberOfTuples(0);

@@ -51,10 +51,10 @@ int qSlicerVolumesModuleWidgetTest1( int argc, char * argv[] )
   qMRMLWidget::postInitializeApplication();
 
   if (argc < 2)
-    {
+  {
     std::cerr << "Usage: qSlicerVolumesModuleWidgetTest1 volumeName [-I]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   qSlicerVolumesModule module;
   module.initialize(nullptr);
@@ -65,17 +65,17 @@ int qSlicerVolumesModuleWidgetTest1( int argc, char * argv[] )
 
   vtkMRMLVolumeNode* volumeNode = volumesLogic->AddArchetypeVolume(argv[1], "volume");
   if (!volumeNode)
-    {
+  {
     std::cerr << "Bad volume file:" << argv[1] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   module.setMRMLScene(scene.GetPointer());
 
   dynamic_cast<QWidget*>(module.widgetRepresentation())->show();
 
   if (argc < 3 || QString(argv[2]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

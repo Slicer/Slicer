@@ -64,11 +64,11 @@ public:
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
   bool Evaluate( const PointType& point ) const override
-    {
+  {
       IndexType index;
       this->ConvertPointToNearestIndex( point, index );
       return ( this->EvaluateAtIndex( index ) );
-    }
+  }
 
   /** BinaryThreshold the image at a continuous index position
    *
@@ -80,12 +80,12 @@ public:
    * calling the method. */
   bool EvaluateAtContinuousIndex(
     const ContinuousIndexType & index ) const override
-    {
+  {
       IndexType nindex;
 
       this->ConvertContinuousIndexToNearestIndex (index, nindex);
       return this->EvaluateAtIndex(nindex);
-    }
+  }
 
   /** BinaryThreshold the image at an index position.
    *
@@ -96,7 +96,7 @@ public:
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
   bool EvaluateAtIndex( const IndexType & index ) const override
-    {
+  {
       // Create an N-d neighborhood kernel, using a zeroflux boundary condition
       ConstNeighborhoodIterator<InputImageType>
         it(m_Radius, this->GetInputImage(), this->GetInputImage()->GetBufferedRegion());
@@ -114,9 +114,9 @@ public:
 
       // check the center pixel first
       if (it.GetCenterPixel() < threshold)
-        {
+      {
         return false;
-        }
+      }
 
       // Walk the neighborhood
       bool allInside = true;
@@ -124,22 +124,22 @@ public:
       PixelType value;
       const unsigned int size = it.Size();
       for (unsigned int i = 0; i < size; ++i)
-        {
+      {
         if (i == (size >> 1))
-          {
+        {
           continue;
-          }
+        }
 
         value = it.GetPixel(i);
         if (value < threshold)
-          {
+        {
           allInside = false;
           break;
-          }
         }
+      }
 
       return ( !allInside );
-    }
+  }
 
   /** Values greater than or equal to the value are inside. */
   void SetThreshold(PixelType thresh) {m_Threshold = thresh;};
@@ -147,10 +147,10 @@ public:
 
 protected:
   LevelTracingImageFunction()
-    {
+  {
       m_Threshold = NumericTraits<PixelType>::min();
       m_Radius.Fill(1);
-    }
+  }
   ~LevelTracingImageFunction() override = default;
 
 private:
@@ -190,7 +190,7 @@ LevelTracingImageFilter<TInputImage, TOutputImage>
 
 
   switch (output)
-    {
+  {
     case 0:
       return static_cast<DataObject*>(TOutputImage::New().GetPointer());
       break;
@@ -201,7 +201,7 @@ LevelTracingImageFilter<TInputImage, TOutputImage>
       // might as well make an image
       return static_cast<DataObject*>(TOutputImage::New().GetPointer());
       break;
-    }
+  }
 }
 
 
@@ -225,10 +225,10 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
 {
   Superclass::GenerateInputRequestedRegion();
   if ( this->GetInput() )
-    {
+  {
     InputImagePointer image = const_cast< InputImageType * >( this->GetInput() );
     image->SetRequestedRegionToLargestPossibleRegion();
-    }
+  }
 }
 
 template <class TInputImage, class TOutputImage>
@@ -248,13 +248,13 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   // Delegate to either a version specialized for dimension or a
   // general N-dimensional version
   if (this->GetInput()->GetRequestedRegion().IsInside( m_Seed ))
-    {
+  {
     this->Trace( Dispatch<InputImageDimension>() );
-    }
+  }
   else
-    {
+  {
     //itkWarningMacro(<< "Seed point " << m_Seed << " is outside the image.");
-    }
+  }
 }
 
 template <class TInputImage, class TOutputImage>
@@ -333,49 +333,49 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   // the zeroIndex.
   bool found = false;
   for(zeroIndex = 1; zeroIndex<8; zeroIndex+=2)
-    {
+  {
     offsetX = neighbors[zeroIndex][0];
     offsetY = neighbors[zeroIndex][1];
     pixTemp[0] = pix[0] + offsetX;
     pixTemp[1] = pix[1] + offsetY;
     if(region.IsInside(pixTemp))
-      {
+    {
       val = inputImage->GetPixel(pixTemp);
       if(val < threshold)
-        {
+      {
         found = true;
         break;
-        }
       }
     }
+  }
 
   // if no 4 connected neighbor is background, look for an 8 connected
   // neighbor that is background. Then adjust the seed point to be one
   // of the 4 connected neighbors to the original seed point that is 4
   // connected to this 8 connected neighbor of the original seed.
   if (!found)
-    {
+  {
     // only need to check the corners since we already checked the 4
     // connected neighbors
     for(zeroIndex = 0; zeroIndex<8; zeroIndex+=2)
-      {
+    {
       offsetX = neighbors[zeroIndex][0];
       offsetY = neighbors[zeroIndex][1];
       pixTemp[0] = pix[0] + offsetX;
       pixTemp[1] = pix[1] + offsetY;
       if(region.IsInside(pixTemp))
-        {
+      {
         val = inputImage->GetPixel(pixTemp);
         if(val < threshold)
-          {
+        {
           found = true;
           break;
-          }
         }
       }
+    }
 
     if (found)
-      {
+    {
       // found an 8 connected neighbor that is background. Move seed
       // a 4 connected neighbor of the original seed (at this point,
       // said neighbor is implicitly foreground) which is also a 4
@@ -396,31 +396,31 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
       m_MovedSeed = true;
       m_Seed[0] = seed[0];
       m_Seed[1] = seed[1];
-      }
+    }
     else
-      {
+    {
       // not near a boundary, no boundary to trace
       return;
-      }
     }
+  }
 
 
   // Now we have the seed and the starting neighbor
   outputPath->SetStart(seed);
   outputImage->SetPixel(pix, NumericTraits<OutputImagePixelType>::OneValue());
   do
-    {
+  {
     for(int s = 0; s<8; s++)
-      {
+    {
       offsetX = neighbors[(s + zeroIndex + 1)%8][0];
       offsetY = neighbors[(s + zeroIndex + 1)%8][1];
       pixTemp[0] = pix[0] + offsetX;
       pixTemp[1] = pix[1] + offsetY;
       if(region.IsInside(pixTemp))
-        {
+      {
         val = inputImage->GetPixel(pixTemp);
         if (val >= threshold)
-          {
+        {
           //condition is satisfied, label the output image and output path
           outputImage->SetPixel(pixTemp,
                                 NumericTraits<OutputImagePixelType>::OneValue());
@@ -429,13 +429,13 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
           outputPath->InsertStep(noOfPixels, offset);
           noOfPixels++;
           if (val > m_Max)
-            {
+          {
             m_Max = val;
-            }
+          }
           if (val < m_Min)
-            {
+          {
             m_Min = val;
-            }
+          }
           //new seed
           pix[0] = pixTemp[0];
           pix[1] = pixTemp[1];
@@ -443,15 +443,15 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
           // the current pixel is last neighbor to check in next iteration
           zeroIndex = (s + zeroIndex + 1 + 4)%8;
           break;
-          }// if more than thresh
-        } // if IsInside is true
+        }// if more than thresh
+      } // if IsInside is true
       else
-        {
+      {
         // if the pixel is out of the boundary, then go to next neighbor
         continue;
-        }
-      } //for loop
-    }  while ( ! ((pix[0] == seed[0]) && (pix[1] == seed[1])) );  //end while
+      }
+    } //for loop
+  }  while ( ! ((pix[0] == seed[0]) && (pix[1] == seed[1])) );  //end while
 }
 
 template <class TInputImage, class TOutputImage>
@@ -484,11 +484,11 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   it.GoToBegin();
 
   while( !it.IsAtEnd())
-    {
+  {
     it.Set(NumericTraits<OutputImagePixelType>::OneValue());
     ++it;
     progress.CompletedPixel();  // potential exception thrown here
-    }
+  }
 }
 
 } // end namespace itk

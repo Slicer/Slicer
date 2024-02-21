@@ -52,14 +52,14 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   qMRMLDisplayNodeWidget* widget = reinterpret_cast<qMRMLDisplayNodeWidget*>(data);
 
   CTKCOMPARE(widget->visibility(), false);
   CTKCOMPARE(widget->selected(), true);
   CTKCOMPARE(widget->clipping(), true);
   CTKCOMPARE(widget->sliceIntersectionVisible(), true);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -90,9 +90,9 @@ int qMRMLDisplayNodeWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

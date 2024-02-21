@@ -98,11 +98,11 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     /// DisplayModifiedEvent is generated when display node parameters is changed
     /// PolyDataModifiedEvent is generated when something else is changed
     enum
-      {
+    {
       DisplayModifiedEvent = 21000,
       PolyDataModifiedEvent = 21001,
       ROIModifiedEvent = 21002
-      };
+    };
 
     ///
     /// Get/Set for list visibility

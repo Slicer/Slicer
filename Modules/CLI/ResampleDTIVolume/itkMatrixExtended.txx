@@ -49,17 +49,17 @@ template <class T, unsigned int NRows, unsigned int NColumns>
 template <class C, unsigned int NRowsC, unsigned int NColumnsC>
 MatrixExtended<T, NRows, NColumns>
 ::operator MatrixExtended<C, NRowsC, NColumnsC> const ()
-  {
+{
   MatrixExtended<C, NRowsC, NColumnsC> tmp;
   for( unsigned int i = 0; i < NRows; i++ )
-    {
+  {
     for( unsigned int j = 0; j < NColumns; j++ )
-      {
+    {
       tmp[i][j] = ( C ) ( *this )[i][j];
-      }
     }
-  return tmp;
   }
+  return tmp;
+}
 
 template <class T, unsigned int NRows, unsigned int NColumns>
 MatrixExtended<T, NRows, NColumns>
@@ -67,12 +67,12 @@ MatrixExtended<T, NRows, NColumns>
 ::operator=( const Self & matrix )
 {
   for( unsigned int i = 0; i < NRows; i++ )
-    {
+  {
     for( unsigned int j = 0; j < NColumns; j++ )
-      {
+    {
       ( *this )[i][j] = matrix[i][j];
-      }
     }
+  }
   return *this;
 }
 
@@ -82,12 +82,12 @@ MatrixExtended<T, NRows, NColumns>
 ::operator=( const Superclass & matrix )
 {
   for( unsigned int i = 0; i < NRows; i++ )
-    {
+  {
     for( unsigned int j = 0; j < NColumns; j++ )
-      {
+    {
       ( *this )[i][j] = matrix[i][j];
-      }
     }
+  }
   return *this;
 }
 
@@ -97,12 +97,12 @@ MatrixExtended<T, NRows, NColumns>
 ::operator=( const InternalMatrixType & matrix )
 {
   for( unsigned int i = 0; i < NRows; i++ )
-    {
+  {
     for( unsigned int j = 0; j < NColumns; j++ )
-      {
+    {
       ( *this )[i][j] = matrix[i][j];
-      }
     }
+  }
   return *this;
 }
 

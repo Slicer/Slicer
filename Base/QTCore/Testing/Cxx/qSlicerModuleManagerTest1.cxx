@@ -39,54 +39,54 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
   qSlicerModuleFactory * factory = moduleManager.factory();
 
   if( factory == nullptr )
-    {
+  {
     std::cerr << "Error in factory()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString moduleName = "qSlicerTransformsModule";
 
   bool result0 = moduleManager.isLoaded( moduleName );
 
   if( result0 != false )
-    {
+  {
     std::cerr << "Error in isLoaded() " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool result1 = moduleManager.loadModule( moduleName );
 
   if( result1 == false )
-    {
+  {
     std::cerr << "Error in loadModule() " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool result2 = moduleManager.isLoaded( moduleName );
 
   if( result2 != true )
-    {
+  {
     std::cerr << "Error in isLoaded() or loadModule() " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   qSlicerAbstractModule * module = moduleManager.module( moduleName );
 
   if( module == nullptr )
-    {
+  {
     std::cerr << "Error in getModule() " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString moduleTitle = moduleManager.moduleTitle( moduleName );
 
   QString moduleName1 = moduleManager.moduleName( moduleTitle );
 
   if( moduleName != moduleName1 )
-    {
+  {
     std::cerr << "Error in moduleName recovery" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::cout << "Module Name = " << qPrintable( moduleName ) << std::endl;
 
@@ -96,18 +96,18 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
   bool result3 = moduleManager.unLoadModule( moduleName );
 
   if( result3 == false )
-    {
+  {
     std::cerr << "Error in unLoadModule() " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool result4 = moduleManager.isLoaded( moduleName );
 
   if( result4 != false )
-    {
+  {
     std::cerr << "Error in isLoaded() or loadModule() " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

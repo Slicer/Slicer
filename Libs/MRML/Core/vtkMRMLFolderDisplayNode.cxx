@@ -80,9 +80,9 @@ void vtkMRMLFolderDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=t
 
   vtkMRMLFolderDisplayNode* node = vtkMRMLFolderDisplayNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyBooleanMacro(ApplyDisplayPropertiesOnBranch);
@@ -95,19 +95,19 @@ void vtkMRMLFolderDisplayNode::SetScene(vtkMRMLScene* scene)
   Superclass::SetScene(scene);
 
   if (scene)
-    {
+  {
     // Observe subject hierarchy item reparented event
     vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene);
     if (!shNode)
-      {
+    {
       vtkErrorMacro("SetScene: Failed to get subject hierarchy node from current scene");
       return;
-      }
-    if (!shNode->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->MRMLCallbackCommand))
-      {
-      shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->MRMLCallbackCommand);
-      }
     }
+    if (!shNode->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->MRMLCallbackCommand))
+    {
+      shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->MRMLCallbackCommand);
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -117,36 +117,36 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject *caller, unsigned lon
 
   if ( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent
     && vtkMRMLSubjectHierarchyNode::SafeDownCast(caller) )
-    {
+  {
     // No-op if this folder node does not apply display properties on its branch
     if (!this->ApplyDisplayPropertiesOnBranch)
-      {
+    {
       return;
-      }
+    }
     // Get item ID for subject hierarchy node events
     vtkIdType reparentedItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     if (callData)
-      {
+    {
       vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
       if (itemIdPtr)
-        {
+      {
         reparentedItemID = *itemIdPtr;
-        }
       }
+    }
     vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(caller);
     vtkMRMLDisplayableNode* displayableReparentedNode = vtkMRMLDisplayableNode::SafeDownCast(
       shNode->GetItemDataNode(reparentedItemID) );
     // Trigger display update for reparented displayable node if it is in a folder that applies
     // display properties on its branch (only display nodes that allow overriding)
     for (int i=0; i<displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
-      {
+    {
       vtkMRMLDisplayNode* currentDisplayNode = displayableReparentedNode->GetNthDisplayNode(i);
       if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
-        {
+      {
         currentDisplayNode->Modified();
-        }
-      } // For all display nodes
-    } // SubjectHierarchyItemReparentedEvent
+      }
+    } // For all display nodes
+  } // SubjectHierarchyItemReparentedEvent
 }
 
 //----------------------------------------------------------------------------
@@ -179,20 +179,20 @@ void vtkMRMLFolderDisplayNode::Modified()
 void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
 {
   if (!this->GetScene())
-    {
+  {
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(this->GetScene());
   if (!shNode)
-    {
+  {
     vtkErrorMacro("ChildDisplayNodesModified: Failed to get subject hierarchy node from scene");
     return;
-    }
+  }
   vtkIdType folderItemId = shNode->GetItemByDataNode(this);
   if (!folderItemId)
-    {
+  {
     return;
-    }
+  }
 
   // Get items in branch
   std::vector<vtkIdType> childItemIDs;
@@ -200,55 +200,55 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
 
   bool batchProcessing = (childItemIDs.size() > 10);
   if (batchProcessing)
-    {
+  {
     this->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
-    }
+  }
 
   std::vector<vtkIdType>::iterator childIt;
   for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
-    {
+  {
     vtkMRMLDisplayableNode* childDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(
       shNode->GetItemDataNode(*childIt) );
     if (!childDisplayableNode)
-      {
+    {
       continue;
-      }
+    }
     // Trigger display update for display node of child nodes that allow overriding
     for (int i=0; i<childDisplayableNode->GetNumberOfDisplayNodes(); ++i)
-      {
+    {
       vtkMRMLDisplayNode* currentDisplayNode = childDisplayableNode->GetNthDisplayNode(i);
       if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
-        {
+      {
         currentDisplayNode->Modified();
-        }
-      } // For all display nodes
-    }
+      }
+    } // For all display nodes
+  }
 
   if (batchProcessing)
-    {
+  {
     this->GetScene()->EndState(vtkMRMLScene::BatchProcessState);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(vtkMRMLDisplayableNode* node)
 {
   if (!node || !node->GetScene() || node->GetScene()->IsImporting())
-    {
+  {
     return nullptr;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(node->GetScene());
   if (!shNode)
-    {
+  {
     vtkErrorWithObjectMacro(node, "GetOverridingHierarchyDisplayNode: Failed to get subject hierarchy node from current scene");
     return nullptr;
-    }
+  }
   vtkIdType nodeShId = shNode->GetItemByDataNode(node);
   if (!nodeShId)
-    {
+  {
     // May happen if an AddNode event is caught before SH had the chance to add the item
     return nullptr;
-    }
+  }
 
   // Get effective display node from hierarchy:
   // go through parents and return display node of first that applies color
@@ -256,20 +256,20 @@ vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(
   vtkIdType overridingFolderId = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
   for (vtkIdType currentParentId = shNode->GetItemParent(nodeShId); currentParentId != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
     currentParentId = shNode->GetItemParent(currentParentId))
-    {
+  {
     vtkMRMLFolderDisplayNode* folderDisplayNode = vtkMRMLFolderDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentParentId) );
     if (folderDisplayNode)
-      {
+    {
       if (folderDisplayNode->GetApplyDisplayPropertiesOnBranch())
-        {
+      {
         overridingFolderId = currentParentId;
-        }
       }
     }
+  }
   if (overridingFolderId == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     return nullptr;
-    }
+  }
   return vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(overridingFolderId));
 }
 
@@ -277,39 +277,39 @@ vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(
 bool vtkMRMLFolderDisplayNode::GetHierarchyVisibility(vtkMRMLDisplayableNode* node)
 {
   if (!node || node->GetHideFromEditors())
-    {
+  {
     // Nodes that have HideFromEditors on do not appear in the hierarchy
     return true;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(node->GetScene());
   if (!shNode)
-    {
+  {
     vtkErrorWithObjectMacro(node, "GetHierarchyVisibility: Failed to get subject hierarchy node from current scene");
     return true;
-    }
+  }
   vtkIdType sceneItemID = shNode->GetSceneItemID();
   vtkIdType nodeShId = shNode->GetItemByDataNode(node);
   if (!nodeShId)
-    {
+  {
     return true;
-    }
+  }
 
   // Traverse all parents
   vtkIdType parentItemID = nodeShId;
   while ( (parentItemID = shNode->GetItemParent(parentItemID)) != sceneItemID ) // The double parentheses avoids a Linux build warning
-    {
+  {
     if (!parentItemID)
-      {
+    {
       vtkErrorWithObjectMacro(node, "GetHierarchyVisibility: Invalid parent of subject hierarchy item");
       return false;
-      }
+    }
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
     if (displayNode && displayNode->GetVisibility() == 0)
-      {
+    {
       // If any of the ancestors are hidden, then the visibility of the node defined by the hierarchy is off
       return false;
-      }
     }
+  }
 
   return true;
 }
@@ -318,34 +318,34 @@ bool vtkMRMLFolderDisplayNode::GetHierarchyVisibility(vtkMRMLDisplayableNode* no
 double vtkMRMLFolderDisplayNode::GetHierarchyOpacity(vtkMRMLDisplayableNode* node)
 {
   if (!node || node->GetHideFromEditors())
-    {
+  {
     // Nodes that have HideFromEditors on do not appear in the hierarchy
     return 1.0;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(node->GetScene());
   if (!shNode)
-    {
+  {
     vtkErrorWithObjectMacro(node, "GetHierarchyOpacity: Failed to get subject hierarchy node from current scene");
     return 1.0;
-    }
+  }
   vtkIdType sceneItemID = shNode->GetSceneItemID();
   vtkIdType nodeShId = shNode->GetItemByDataNode(node);
   if (!nodeShId)
-    {
+  {
     return 1.0;
-    }
+  }
 
   // Traverse all parents
   double opacityProduct = 1.0;
   vtkIdType parentItemID = nodeShId;
   while ( (parentItemID = shNode->GetItemParent(parentItemID)) != sceneItemID ) // The double parentheses avoids a Linux build warning
-    {
+  {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
     if (displayNode)
-      {
+    {
       opacityProduct *= displayNode->GetOpacity();
-      }
     }
+  }
 
   return opacityProduct;
 }

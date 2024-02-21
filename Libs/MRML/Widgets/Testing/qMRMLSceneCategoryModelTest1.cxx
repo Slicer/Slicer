@@ -75,12 +75,12 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
 
   if (model.itemFromCategory("Second Category") == nullptr ||
       model.itemFromCategory("Second Category") == model.mrmlSceneItem())
-    {
+  {
     std::cerr << "Wrong category. Item: "
               << model.itemFromCategory("Second Category")
               << " scene item: " << model.mrmlSceneItem() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   model.setPreItems(scenePreItems, model.itemFromCategory("Second Category"));
 
   QTreeView* view = new QTreeView(nullptr);
@@ -89,9 +89,9 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
   view->resize(500, 800);
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

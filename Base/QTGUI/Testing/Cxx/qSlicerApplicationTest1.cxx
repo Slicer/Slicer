@@ -33,49 +33,49 @@ int qSlicerApplicationTest1(int argc, char * argv[] )
   qSlicerApplication app(argc, argv);
 
   if (app.commandOptions() == nullptr)
-    {
+  {
     std::cerr << "Problem with commandOptions()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   qSlicerCommandOptions * commandOptions = new qSlicerCommandOptions;
   app.setCoreCommandOptions(commandOptions);
 
   qSlicerCommandOptions * commandOptions2 = app.commandOptions();
   if (commandOptions2 != commandOptions)
-    {
+  {
     std::cerr << "Problem with setCommandOptions()/commandOptions()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (app.ioManager() == nullptr)
-    {
+  {
     std::cerr << "Problem with ioManager()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   qSlicerIOManager * ioManager = new qSlicerIOManager;
   app.setCoreIOManager(ioManager);
 
   qSlicerIOManager * ioManager2 = app.ioManager();
   if(ioManager2 != ioManager)
-    {
+  {
     std::cerr << "Problem with setIOManager()/ioManager()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   /// Application shouldn't have ask for exit
   if (app.returnCode() != -1)
-    {
+  {
     std::cerr << "Problem with the application::parseArguments function."
               << "Return code: " << app.returnCode() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, qApp, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

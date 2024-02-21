@@ -141,9 +141,9 @@ vtkMRMLApplicationLogic* vtkMRMLAbstractLogic::GetMRMLApplicationLogic()const
 void vtkMRMLAbstractLogic::SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic)
 {
   if (logic == this->Internal->MRMLApplicationLogic)
-    {
+  {
     return;
-    }
+  }
   this->Internal->MRMLApplicationLogic = logic;
   this->Modified();
 }
@@ -157,12 +157,12 @@ void vtkMRMLAbstractLogic::MRMLSceneCallback(vtkObject*caller, unsigned long eid
   assert(caller == self->GetMRMLScene());
 
   if (self && !self->EnterMRMLSceneCallback())
-    {
+  {
 #ifdef _DEBUG
     vtkWarningWithObjectMacro(self, "vtkMRMLAbstractLogic ******* MRMLSceneCallback called recursively?");
 #endif
     return;
-    }
+  }
 
   vtkDebugWithObjectMacro(self, "In vtkMRMLAbstractLogic MRMLSceneCallback");
 
@@ -183,29 +183,29 @@ void vtkMRMLAbstractLogic::MRMLNodesCallback(vtkObject* caller, unsigned long ei
                                              void* clientData, void* callData)
 {
   if (!vtkMRMLNode::SafeDownCast(caller))
-    {
+  {
 #ifdef _DEBUG
     vtkGenericWarningMacro("vtkMRMLAbstractLogic::MRMLNodesCallback: Observed object is not a node");
 #endif
     return;
-    }
+  }
 
   vtkMRMLAbstractLogic *self = reinterpret_cast<vtkMRMLAbstractLogic *>(clientData);
   if (!self)
-    {
+  {
 #ifdef _DEBUG
     vtkGenericWarningMacro("vtkMRMLAbstractLogic::MRMLNodesCallback: ClientData is invalid");
 #endif
     return;
-    }
+  }
 
   if (!self->EnterMRMLNodesCallback())
-    {
+  {
 #ifdef _DEBUG
     vtkWarningWithObjectMacro(self, "vtkMRMLAbstractLogic ******* MRMLNodesCallback called recursively?");
 #endif
     return;
-    }
+  }
   vtkDebugWithObjectMacro(self, "In vtkMRMLAbstractLogic MRMLNodesCallback");
 
   self->SetInMRMLNodesCallbackFlag(self->GetInMRMLNodesCallbackFlag() + 1);
@@ -223,13 +223,13 @@ void vtkMRMLAbstractLogic
          vtkMRMLAbstractLogic::SafeDownCast(caller));
 
   if (self && !self->EnterMRMLLogicsCallback())
-    {
+  {
 #ifdef _DEBUG
     vtkWarningWithObjectMacro(self,
       "vtkMRMLAbstractLogic ******* MRMLLogicCallback called recursively?");
 #endif
     return;
-    }
+  }
   vtkDebugWithObjectMacro(self, "In vtkMRMLAbstractLogic MRMLLogicsCallback");
 
   self->SetInMRMLLogicsCallbackFlag(self->GetInMRMLLogicsCallbackFlag() + 1);
@@ -283,22 +283,22 @@ vtkCallbackCommand* vtkMRMLAbstractLogic::GetMRMLLogicsCallbackCommand()
 void vtkMRMLAbstractLogic::SetMRMLScene(vtkMRMLScene * newScene)
 {
   if (this->Internal->MRMLScene == newScene)
-    {
+  {
     return;
-    }
+  }
 
   if (this->Internal->MRMLScene != nullptr)
-    {
+  {
     this->UnobserveMRMLScene();
-    }
+  }
 
   this->SetMRMLSceneInternal(newScene);
 
   if (newScene)
-    {
+  {
     this->RegisterNodes();
     this->ObserveMRMLScene();
-    }
+  }
   this->Modified();
 }
 
@@ -313,21 +313,21 @@ void vtkMRMLAbstractLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 void vtkMRMLAbstractLogic::SetAndObserveMRMLScene(vtkMRMLScene *newScene)
 {
   if (this->Internal->MRMLScene == newScene)
-    {
+  {
     return;
-    }
+  }
 
   if (this->Internal->MRMLScene != nullptr)
-    {
+  {
     this->UnobserveMRMLScene();
-    }
+  }
 
   this->SetAndObserveMRMLSceneInternal(newScene);
 
   if (newScene)
-    {
+  {
     this->ObserveMRMLScene();
-    }
+  }
 
   this->Modified();
 }
@@ -343,21 +343,21 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene
 void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, vtkIntArray *events, vtkFloatArray *priorities)
 {
   if (this->Internal->MRMLScene == newScene)
-    {
+  {
     return;
-    }
+  }
 
   if (this->Internal->MRMLScene)
-    {
+  {
     this->UnobserveMRMLScene();
-    }
+  }
 
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events, priorities);
 
   if (newScene)
-    {
+  {
     this->ObserveMRMLScene();
-    }
+  }
   this->Modified();
 }
 
@@ -455,7 +455,7 @@ void vtkMRMLAbstractLogic
   vtkMRMLNode * node = nullptr;
 
   switch(event)
-    {
+  {
     case vtkMRMLScene::StartBatchProcessEvent:
       this->OnMRMLSceneStartBatchProcess();
       break;
@@ -495,7 +495,7 @@ void vtkMRMLAbstractLogic
       break;
     default:
       break;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -527,13 +527,13 @@ void vtkMRMLAbstractLogic
   vtkMRMLNode * node = vtkMRMLNode::SafeDownCast(caller);
   assert(node);
   switch(event)
-    {
+  {
     case vtkCommand::ModifiedEvent:
       this->OnMRMLNodeModified(node);
       break;
     default:
       break;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -566,10 +566,10 @@ void vtkMRMLAbstractLogic::SetDisableModifiedEvent(bool onOff)
 void vtkMRMLAbstractLogic::Modified()
 {
   if (this->GetDisableModifiedEvent())
-    {
+  {
     ++this->Internal->ModifiedEventPending;
     return;
-    }
+  }
   this->Superclass::Modified();
 }
 
@@ -577,12 +577,12 @@ void vtkMRMLAbstractLogic::Modified()
 int vtkMRMLAbstractLogic::InvokePendingModifiedEvent ()
 {
   if ( this->Internal->ModifiedEventPending )
-    {
+  {
     int oldModifiedEventPending = this->Internal->ModifiedEventPending;
     this->Internal->ModifiedEventPending = 0;
     this->Superclass::Modified();
     return oldModifiedEventPending;
-    }
+  }
   return this->Internal->ModifiedEventPending;
 }
 

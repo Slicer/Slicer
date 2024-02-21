@@ -132,9 +132,9 @@ void qMRMLDisplayNodeWidget::setVisibility(bool visible)
 {
   Q_D(qMRMLDisplayNodeWidget);
   if (!d->MRMLDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLDisplayNode->SetVisibility(visible);
 }
 
@@ -157,9 +157,9 @@ void qMRMLDisplayNodeWidget::setSelected(bool selected)
 {
   Q_D(qMRMLDisplayNodeWidget);
   if (!d->MRMLDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLDisplayNode->SetSelected(selected);
 }
 
@@ -183,9 +183,9 @@ void qMRMLDisplayNodeWidget::setClipping(bool clip)
 {
   Q_D(qMRMLDisplayNodeWidget);
   if (!d->MRMLDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLDisplayNode->SetClipping(clip);
 }
 
@@ -208,9 +208,9 @@ void qMRMLDisplayNodeWidget::setThreeDVisible(bool visible)
 {
   Q_D(qMRMLDisplayNodeWidget);
   if (!d->MRMLDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLDisplayNode->SetVisibility3D(visible);
 }
 
@@ -219,9 +219,9 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionVisible(bool visible)
 {
   Q_D(qMRMLDisplayNodeWidget);
   if (!d->MRMLDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLDisplayNode->SetVisibility2D(visible);
 }
 
@@ -258,9 +258,9 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionThickness(int thickness)
 {
   Q_D(qMRMLDisplayNodeWidget);
   if (!d->MRMLDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLDisplayNode->SetSliceIntersectionThickness(thickness);
 }
 
@@ -283,9 +283,9 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionOpacity(double opacity)
 {
   Q_D(qMRMLDisplayNodeWidget);
   if (!d->MRMLDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->MRMLDisplayNode->SetSliceIntersectionOpacity(opacity);
 }
 
@@ -309,9 +309,9 @@ void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
   Q_D(qMRMLDisplayNodeWidget);
   this->setEnabled(d->MRMLDisplayNode.GetPointer() != nullptr);
   if (!d->MRMLDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   d->VisibilityCheckBox->setChecked(d->MRMLDisplayNode->GetVisibility());
   d->DisplayNodeViewComboBox->setMRMLDisplayNode(d->MRMLDisplayNode);
   d->SelectedCheckBox->setEnabled(d->MRMLDisplayNode->GetSelectable());
@@ -363,9 +363,9 @@ void qMRMLDisplayNodeWidget::updateNodeFromProperty()
 {
   Q_D(qMRMLDisplayNodeWidget);
   if (!d->MRMLDisplayNode.GetPointer())
-    {
+  {
     return;
-    }
+  }
   int wasModifying = d->MRMLDisplayNode->StartModify();
   // Representation
   d->MRMLDisplayNode->SetRepresentation(d->Property->GetRepresentation());

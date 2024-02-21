@@ -112,11 +112,11 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyMo
 
 public:
   enum FilterType
-    {
+  {
     HideAll = 0,
     ShowAll,
     UseFilters
-    };
+  };
 
   typedef QSortFilterProxyModel Superclass;
   qMRMLSortFilterProxyModel(QObject *parent=nullptr);

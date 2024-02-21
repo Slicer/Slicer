@@ -58,13 +58,13 @@ vtkMRMLViewLogic::~vtkMRMLViewLogic()
 {
   this->Name.clear();
   if (this->CameraNode)
-    {
+  {
     vtkSetAndObserveMRMLNodeMacro(this->CameraNode, 0);
     this->CameraNode = nullptr;
-    }
+  }
 
   if (this->ViewNode)
-    {
+  {
     vtkSetAndObserveMRMLNodeMacro(this->ViewNode, 0);
     this->ViewNode = nullptr;
   }
@@ -88,18 +88,18 @@ void vtkMRMLViewLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 void vtkMRMLViewLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   if (node->IsA("vtkMRMLViewNode") || node->IsA("vtkMRMLCameraNode"))
-    {
+  {
     this->UpdateMRMLNodes();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if (node->IsA("vtkMRMLViewNode") || node->IsA("vtkMRMLCameraNode"))
-    {
+  {
     this->UpdateMRMLNodes();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -112,13 +112,13 @@ void vtkMRMLViewLogic::UpdateFromMRMLScene()
 void vtkMRMLViewLogic::UpdateMRMLNodes()
 {
   if (this->GetMRMLScene() && this->GetMRMLScene()->IsBatchProcessing())
-    {
+  {
     return;
-    }
+  }
   if (this->UpdatingMRMLNodes)
-    {
+  {
     return;
-    }
+  }
   this->UpdatingMRMLNodes = true;
 
   vtkMRMLViewNode* updatedViewNode = vtkMRMLViewLogic::GetViewNode(this->GetMRMLScene(), this->GetName());
@@ -134,23 +134,23 @@ void vtkMRMLViewLogic::UpdateMRMLNodes()
 vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* layoutName)
 {
   if (!scene || !layoutName)
-    {
+  {
     return nullptr;
-    }
+  }
 
   vtkSmartPointer<vtkCollection> viewNodes = vtkSmartPointer<vtkCollection>::Take
       (scene->GetNodesByClass("vtkMRMLViewNode"));
   for(int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); ++viewNodeIndex)
-    {
+  {
     vtkMRMLViewNode* viewNode =
         vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));
     if (viewNode &&
         viewNode->GetLayoutName() &&
         !strcmp(viewNode->GetLayoutName(), layoutName))
-      {
+    {
       return viewNode;
-      }
     }
+  }
   return nullptr;
 }
 
@@ -158,9 +158,9 @@ vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* 
 vtkMRMLCameraNode* vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene* scene, const char* layoutName)
 {
   if (!scene || !layoutName || strlen(layoutName)==0)
-    {
+  {
     return nullptr;
-    }
+  }
   vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
     scene->GetSingletonNode(layoutName, "vtkMRMLCameraNode"));
   return cameraNode;
@@ -170,9 +170,9 @@ vtkMRMLCameraNode* vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene* scene, const ch
 void vtkMRMLViewLogic::SetCameraNode(vtkMRMLCameraNode* newCameraNode)
 {
   if (this->CameraNode == newCameraNode)
-    {
+  {
     return;
-    }
+  }
 
   // Observe the camera node for general properties.
   vtkSetAndObserveMRMLNodeMacro(this->CameraNode, newCameraNode);
@@ -184,9 +184,9 @@ void vtkMRMLViewLogic::SetCameraNode(vtkMRMLCameraNode* newCameraNode)
 void vtkMRMLViewLogic::SetViewNode(vtkMRMLViewNode* newViewNode)
 {
   if (this->ViewNode == newViewNode)
-    {
+  {
     return;
-    }
+  }
 
   // Observe the view node for general properties.
   vtkSetAndObserveMRMLNodeMacro(this->ViewNode, newViewNode);
@@ -202,35 +202,35 @@ void vtkMRMLViewLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SlicerViewLogic:             " << this->GetClassName() << "\n";
 
   if (this->CameraNode)
-    {
+  {
     os << indent << "CameraNode: ";
     os << (this->CameraNode->GetID() ? this->CameraNode->GetID() : "(0 ID)") << "\n";
     this->CameraNode->PrintSelf(os, nextIndent);
-    }
+  }
   else
-    {
+  {
     os << indent << "CameraNode: (none)\n";
-    }
+  }
 
   if (this->ViewNode)
-    {
+  {
     os << indent << "ViewNode: ";
     os << (this->ViewNode->GetID() ? this->ViewNode->GetID() : "(0 ID)") << "\n";
     this->ViewNode->PrintSelf(os, nextIndent);
-    }
+  }
   else
-    {
+  {
     os << indent << "ViewNode: (none)\n";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewLogic::StartViewNodeInteraction(unsigned int parameters)
 {
   if (!this->ViewNode)
-    {
+  {
     return;
-    }
+  }
 
   // Cache the flags on what parameters are going to be modified. Need
   // to this this outside the conditional on LinkedControl
@@ -238,22 +238,22 @@ void vtkMRMLViewLogic::StartViewNodeInteraction(unsigned int parameters)
 
   // If we have linked controls, then we want to broadcast changes
   if (this->ViewNode->GetLinkedControl())
-    {
+  {
     // Activate interaction
     this->ViewNode->InteractingOn();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewLogic::EndViewNodeInteraction()
 {
   if (!this->ViewNode)
-    {
+  {
     return;
-    }
+  }
 
   if (this->ViewNode->GetLinkedControl())
-    {
+  {
     this->ViewNode->InteractingOff();
     this->ViewNode->SetInteractionFlags(0);
   }
@@ -263,10 +263,10 @@ void vtkMRMLViewLogic::EndViewNodeInteraction()
 vtkMRMLViewNode* vtkMRMLViewLogic::AddViewNode(const char* layoutName)
 {
   if (!this->GetMRMLScene())
-    {
+  {
     vtkErrorMacro("vtkMRMLViewLogic::AddViewNode failed: scene is not set");
     return nullptr;
-    }
+  }
   vtkSmartPointer<vtkMRMLViewNode> node = vtkSmartPointer<vtkMRMLViewNode>::Take(
     vtkMRMLViewNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLViewNode")));
   node->SetLayoutName(layoutName);
@@ -279,9 +279,9 @@ vtkMRMLViewNode* vtkMRMLViewLogic::AddViewNode(const char* layoutName)
 void vtkMRMLViewLogic::StartCameraNodeInteraction(unsigned int parameters)
 {
   if (!this->ViewNode || !this->CameraNode)
-    {
+  {
     return;
-    }
+  }
 
   // Cache the flags on what parameters are going to be modified. Need
   // to this this outside the conditional on LinkedControl
@@ -289,25 +289,25 @@ void vtkMRMLViewLogic::StartCameraNodeInteraction(unsigned int parameters)
 
   // If we have hot linked controls, then we want to broadcast changes
   if (this->ViewNode->GetLinkedControl())
-    {
+  {
     // Activate interaction
     this->CameraNode->InteractingOn();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewLogic::EndCameraNodeInteraction()
 {
   if (!this->ViewNode || !this->CameraNode)
-    {
+  {
     return;
-    }
+  }
 
   if (this->ViewNode->GetLinkedControl())
-    {
+  {
     this->CameraNode->InteractingOff();
     this->CameraNode->SetInteractionFlags(0);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

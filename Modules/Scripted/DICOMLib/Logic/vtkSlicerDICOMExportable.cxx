@@ -63,9 +63,9 @@ void vtkSlicerDICOMExportable::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Tags:   " << "\n";
   for ( std::map<std::string, std::string>::iterator it=this->Tags.begin();
     it != this->Tags.end(); ++it )
-    {
+  {
     os << indent << "  " << it->first << ", " << it->second << "\n";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

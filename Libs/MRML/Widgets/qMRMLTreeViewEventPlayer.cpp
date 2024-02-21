@@ -41,17 +41,17 @@ QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index,
 #endif
   QModelIndex index;
   for (int cc=0; (cc+1) < indices.size(); cc+=2)
-    {
+  {
     index = treeView->model()->index(indices[cc].toInt(), indices[cc+1].toInt(),
       index);
     if (!index.isValid())
-      {
+    {
       error=true;
       qCritical() << "ERROR: Tree view must have changed. "
         << "Indices recorded in the test are no longer valid. Cannot playback.";
       break;
-      }
     }
+  }
   return index;
 }
 
@@ -71,58 +71,58 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
   if(Command != "currentNodeRenamed" && Command != "currentNodeDeleted" &&
      Command != "editNodeRequested" && Command != "decorationClicked" &&
      Command != "reParentByDragnDrop")
-    {
+  {
     return this->Superclass::playEvent(Object, Command, Arguments, EventType, Error);
-    }
+  }
 
   if(qMRMLTreeView* const treeView =
      qobject_cast<qMRMLTreeView*>(Object))
-    {
+  {
     if(Command == "currentNodeRenamed")
-      {
+    {
       treeView->currentNode()->SetName(Arguments.toUtf8());
       // for improvement, see the method qMRMLTreeView::renameCurrentNode()
       // and set the name in the line edit, then simulate a OK
       return true;
-      }
+    }
     if(Command == "currentNodeDeleted")
-      {
+    {
       QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(Arguments, treeView, Error);
       if (index.isValid())
-        {
+      {
         treeView->setCurrentIndex(index);
         treeView->deleteCurrentNode();
         return true;
-        }
-//      return false;
       }
+//      return false;
+    }
     if(Command == "editNodeRequested")
-      {
+    {
 //      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(Arguments.toUtf8());
 //      emit treeView->editNodeRequested(node);
       treeView->editCurrentNode();
       return true;
-      }
+    }
     if(Command == "reParentByDragnDrop")
-      {
+    {
       QStringList nodes = Arguments.split(".");
       if(nodes.count() != 2)
-        {
+      {
         return false;
-        }
+      }
       vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(nodes[0].toUtf8());
       vtkMRMLNode* nodeParent = treeView->mrmlScene()->GetNodeByID(nodes[1].toUtf8());
       treeView->sceneModel()->reparent(node, nodeParent);
       return true;
-      }
+    }
     if(Command == "decorationClicked")
-      {
+    {
       QString str_index = Arguments;
       QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(str_index, treeView, Error);
       treeView->clickDecoration(index);
       return true;
-      }
     }
+  }
 
   qCritical() << "calling currentNodeRenamed/currentNodeDeleted/editNodeRequested on unhandled type " << Object;
   Error = true;

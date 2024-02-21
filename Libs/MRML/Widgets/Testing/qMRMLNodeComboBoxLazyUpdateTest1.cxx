@@ -70,21 +70,21 @@ int qMRMLNodeComboBoxLazyUpdateTest1( int argc, char * argv [] )
 
   if (nodeSelector.nodeCount() != 0 ||
       treeNodeSelector.nodeCount() != 0 )
-    {
+  {
     std::cerr << "qMRMLSceneModel::LazyUpdate failed when adding a node"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   scene->EndState(vtkMRMLScene::ImportState);
 
   if (nodeSelector.nodeCount() != 1 ||
       treeNodeSelector.nodeCount() != 1 )
-    {
+  {
     std::cerr << "qMRMLSceneModel::LazyUpdate failed when updating the scene"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   qMRMLNodeComboBox nodeSelector2;
   nodeSelector2.setNodeTypes(QStringList("vtkMRMLColorTableNode"));
@@ -103,11 +103,11 @@ int qMRMLNodeComboBoxLazyUpdateTest1( int argc, char * argv [] )
 
   if (nodeSelector2.nodeCount() != 1 ||
       treeNodeSelector2.nodeCount() != 1 )
-    {
+  {
     std::cerr << "qMRMLSceneModel::LazyUpdate failed when updating the scene"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   nodeSelector.show();
   nodeSelector2.show();
@@ -116,9 +116,9 @@ int qMRMLNodeComboBoxLazyUpdateTest1( int argc, char * argv [] )
   treeNodeSelector2.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

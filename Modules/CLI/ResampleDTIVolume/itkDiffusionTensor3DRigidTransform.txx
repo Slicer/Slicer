@@ -34,13 +34,13 @@ DiffusionTensor3DRigidTransform<TData>
   MatrixTransformType matrix3x3;
 
   for( int i = 0; i < 3; i++ )
-    {
+  {
     for( int j = 0; j < 3; j++ )
-      {
+    {
       matrix3x3[i][j] = transform->GetParameters().GetElement( i * 3 + j );
-      }
-    this->m_Translation[i] = transform->GetFixedParameters().GetElement( i );
     }
+    this->m_Translation[i] = transform->GetFixedParameters().GetElement( i );
+  }
   SetMatrix3x3( matrix3x3 );
   this->Modified();
 }
@@ -64,19 +64,19 @@ DiffusionTensor3DRigidTransform<TData>
   MatrixTransformType matrix3x3;
 
   for( int i = 0; i < 3; i++ )
-    {
+  {
     for( int j = 0; j < 3; j++ )
-      {
+    {
       matrix3x3[i][j] = matrix[i][j];
-      }
     }
+  }
   SetMatrix3x3(matrix3x3);
   // We set the translation after SetMatrix3x3 in case it throws an exception and in that case we do not want to set the
   // new translation
   for( int i = 0; i < 3; i++ )
-    {
+  {
     this->m_Translation[i] = matrix[i][3];
-    }
+  }
 }
 
 template <class TData>
@@ -88,44 +88,44 @@ DiffusionTensor3DRigidTransform<TData>
   result = matrix * matrix.GetTranspose();
   bool ok = true;
   if( m_PrecisionChecking )
-    {
+  {
     for( int i = 0; i < 3; i++ )
-      {
+    {
       for( int j = 0; j < 3; j++ )
-        {
+      {
         if( i != j && result[i][j] > PRECISION )
-          {
-          ok = false;
-          break;
-          }
-        else if( i == j && ( result[i][j] < 1.0 - PRECISION || result[i][j] > 1.0 + PRECISION ) )
-          {
-          ok = false;
-          break;
-          }
-        }
-      if( !ok )
         {
-        break;
+          ok = false;
+          break;
+        }
+        else if( i == j && ( result[i][j] < 1.0 - PRECISION || result[i][j] > 1.0 + PRECISION ) )
+        {
+          ok = false;
+          break;
         }
       }
+      if( !ok )
+      {
+        break;
+      }
     }
+  }
   if( ok )
-    {
+  {
     double det = this->GetDet( matrix );
     if( det > 1 - PRECISION && det < 1 + PRECISION )
-      {
-      this->m_TransformMatrix = matrix;
-      }
-    else
-      {
-      itkExceptionMacro( << " Matrix is not a rotation matrix" );
-      }
-    }
-  else
     {
-    itkExceptionMacro( << " Matrix is not a rotation matrix" );
+      this->m_TransformMatrix = matrix;
     }
+    else
+    {
+      itkExceptionMacro( << " Matrix is not a rotation matrix" );
+    }
+  }
+  else
+  {
+    itkExceptionMacro( << " Matrix is not a rotation matrix" );
+  }
   this->Modified();
 }
 

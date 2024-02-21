@@ -44,9 +44,9 @@ public slots:
 
   //----------------------------------------------------------------------------
   void static_qSlicerApplicationHelper_setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager)
-    {
+{
     qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
-    }
+}
 };
 
 //-----------------------------------------------------------------------------

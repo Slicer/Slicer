@@ -45,13 +45,13 @@ int AddModuleLogicTest();
 int vtkMRMLApplicationLogicTest1(int argc, char *argv [])
 {
   if (argc != 2)
-    {
+  {
     std::cerr << "Line " << __LINE__
       << " - Missing parameters!\n"
       << "Usage: " << argv[0] << " /path/to/temp"
       << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   const char* tempDir = argv[1];
 
   CHECK_EXIT_SUCCESS(SliceLogicsTest());
@@ -154,13 +154,13 @@ int TemporaryPathTest()
 
   MRMLAppLogic->SetTemporaryPath(nullptr); // Test nullptr
   if (strlen(MRMLAppLogic->GetTemporaryPath()) != 0)
-    {
+  {
     std::string temporaryEmptyString;
     std::cerr << "Line " << __LINE__ << " - Problem with SetTemporaryPath using NULL" << "\n"
               << "\ttemporaryPath:" << MRMLAppLogic->GetTemporaryPath() << "\n"
               << "\texpected:" << temporaryEmptyString << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   typedef std::vector<std::string> TestDataType;
   TestDataType data;
@@ -171,17 +171,17 @@ int TemporaryPathTest()
   data.push_back(""); // Test empty string
 
   for(TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
-    {
+  {
     std::string temporaryPath(data.at(rowIdx));
     MRMLAppLogic->SetTemporaryPath(temporaryPath.c_str());
     if (MRMLAppLogic->GetTemporaryPath() != temporaryPath)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with SetTemporaryPath using " << temporaryPath << " :\n"
                 << "\ttemporaryPath:" << MRMLAppLogic->GetTemporaryPath() << "\n"
                 << "\texpected:" << temporaryPath << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   return EXIT_SUCCESS;
 }

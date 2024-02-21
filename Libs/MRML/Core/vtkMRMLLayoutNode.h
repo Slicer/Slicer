@@ -89,7 +89,7 @@ public:
   const char* GetNodeTagName() override {return "Layout";}
 
   enum SlicerLayout
-    {
+  {
     SlicerLayoutInitialView = 0,
     SlicerLayoutDefaultView = 1,
     SlicerLayoutConventionalView = 2,
@@ -129,7 +129,7 @@ public:
     SlicerLayoutMaximizedView = 98,
     SlicerLayoutCustomView = 99,
     SlicerLayoutUserView = 100
-    };
+  };
 
   /// Adds a layout description with integer identifier
   /// "layout". Returns false without making any modifications if the

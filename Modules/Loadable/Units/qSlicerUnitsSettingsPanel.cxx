@@ -173,9 +173,9 @@ void qSlicerUnitsSettingsPanelPrivate::addQuantity(const QString& quantity)
 void qSlicerUnitsSettingsPanelPrivate::clearQuantities()
 {
   foreach (QObject* obj, this->GridLayout->children())
-    {
+  {
     delete obj;
-    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -184,9 +184,9 @@ void qSlicerUnitsSettingsPanelPrivate::setMRMLScene(vtkMRMLScene* scene)
   Q_Q(qSlicerUnitsSettingsPanel);
 
   if (scene == this->MRMLScene)
-    {
+  {
     return;
-    }
+  }
   this->MRMLScene = scene;
 
   // Quantities are hardcoded for now
@@ -197,16 +197,16 @@ void qSlicerUnitsSettingsPanelPrivate::setMRMLScene(vtkMRMLScene* scene)
   q->setQuantities(quantities);
 
   foreach (qMRMLSettingsUnitWidget* widget, this->Quantities.values())
-    {
+  {
     widget->unitComboBox()->setMRMLScene(this->MRMLScene);
-    }
+  }
 
  vtkMRMLSelectionNode* newSelectionNode = nullptr;
   if (this->MRMLScene)
-    {
+  {
     newSelectionNode = vtkMRMLSelectionNode::SafeDownCast(
       scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-    }
+  }
 
   this->setSelectionNode(newSelectionNode);
 }
@@ -217,9 +217,9 @@ void qSlicerUnitsSettingsPanelPrivate
 {
   Q_Q(qSlicerUnitsSettingsPanel);
   if (newSelectionNode == this->SelectionNode)
-    {
+  {
     return;
-    }
+  }
 
   q->qvtkReconnect(this->SelectionNode, newSelectionNode,
     vtkMRMLSelectionNode::UnitModifiedEvent, q,
@@ -232,13 +232,13 @@ void qSlicerUnitsSettingsPanelPrivate
 void qSlicerUnitsSettingsPanelPrivate::resize(bool showall)
 {
   if(showall)
-    {
+  {
     this->scrollArea->setMinimumSize(QSize(0, 700));
-    }
+  }
   else
-    {
+  {
     this->scrollArea->setMinimumSize(QSize(0, 350));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -266,9 +266,9 @@ void qSlicerUnitsSettingsPanel::setUnitsLogic(vtkSlicerUnitsLogic* logic)
   d->Logic = logic;
 
   foreach (qMRMLSettingsUnitWidget* widget, d->Quantities.values())
-    {
+  {
     widget->setUnitsLogic(d->Logic);
-    }
+  }
 
   this->onUnitsLogicModified();
 }
@@ -285,9 +285,9 @@ void qSlicerUnitsSettingsPanel::onUnitsLogicModified()
 {
   Q_D(qSlicerUnitsSettingsPanel);
   if (!d->Logic)
-    {
+  {
     return;
-    }
+  }
 
   d->setMRMLScene(d->Logic->GetMRMLScene());
   this->updateFromSelectionNode();
@@ -299,12 +299,12 @@ void qSlicerUnitsSettingsPanel::setQuantities(const QStringList& newQuantities)
   Q_D(qSlicerUnitsSettingsPanel);
 
   foreach(QString newQuantity, newQuantities)
-    {
+  {
     if (!d->Quantities.contains(newQuantity))
-      {
+    {
       d->addQuantity(newQuantity);
-      }
     }
+  }
   // \todo Add removeQuantity(oldQuantity)
 }
 
@@ -313,28 +313,28 @@ void qSlicerUnitsSettingsPanel::updateFromSelectionNode()
 {
   Q_D(qSlicerUnitsSettingsPanel);
   if (! d->SelectionNode)
-    {
+  {
     // clear panel ?
     return;
-    }
+  }
 
   std::vector<vtkMRMLUnitNode*> units;
   d->SelectionNode->GetUnitNodes(units);
   for (std::vector<vtkMRMLUnitNode*>::iterator it = units.begin();
     it != units.end(); ++it)
-    {
+  {
     if (*it)
-      {
+    {
       QString quantity = (*it)->GetQuantity();
       if (!d->Quantities.contains(quantity))
-        {
+      {
         d->addQuantity(quantity);
-        }
+      }
 
       d->Quantities[quantity]->unitComboBox()->setCurrentNodeID(
         (*it)->GetID());
-      }
     }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -345,7 +345,7 @@ void qSlicerUnitsSettingsPanel::showAll(bool showAll)
   d->resize(showAll);
 
   foreach (qMRMLSettingsUnitWidget* widget, d->Quantities.values())
-    {
+  {
     qMRMLUnitWidget::UnitProperties allButNameAndQuantity =
       qMRMLUnitWidget::Preset |
       qMRMLUnitWidget::Prefix | qMRMLUnitWidget::Suffix |
@@ -355,6 +355,6 @@ void qSlicerUnitsSettingsPanel::showAll(bool showAll)
 
     widget->unitWidget()->setDisplayedProperties(showAll ?
       allButNameAndQuantity : qMRMLUnitWidget::Precision);
-    }
+  }
 
 }

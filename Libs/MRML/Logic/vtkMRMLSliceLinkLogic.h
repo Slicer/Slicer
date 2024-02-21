@@ -94,11 +94,11 @@ private:
   int BroadcastingEvents;
 
   struct SliceNodeInfos
-    {
+  {
     SliceNodeInfos(int interacting) : Interacting(interacting) {}
     double LastNormal[3];
     int Interacting;
-    };
+  };
 
   typedef std::map<std::string, SliceNodeInfos> SliceNodeStatusMap;
   SliceNodeStatusMap SliceNodeInteractionStatus;

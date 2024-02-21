@@ -65,10 +65,10 @@ void qSlicerSettingsPythonPanelPrivate::init()
   this->setupUi(q);
   this->PythonConsole = qSlicerApplication::application()->pythonConsole();
   if (this->PythonConsole.isNull())
-    {
+  {
     qWarning() << "qSlicerSettingsPythonPanelPrivate requires a python console";
     return;
-    }
+  }
 
   // Set default properties
 
@@ -140,9 +140,9 @@ void qSlicerSettingsPythonPanel::onConsoleLogLevelChanged(const QString& levelSt
 {
   Q_D(const qSlicerSettingsPythonPanel);
   if (qSlicerApplication::application())
-    {
+  {
     qSlicerApplication::application()->setPythonConsoleLogLevel(ctkErrorLogLevel::logLevelFromString(levelStr));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -158,10 +158,10 @@ void qSlicerSettingsPythonPanel::setConsoleLogLevel(const QString& text)
   Q_D(qSlicerSettingsPythonPanel);
   int selectedIndex = d->ConsoleLogLevelComboBox->findText(text);
   if (selectedIndex < 0)
-    {
+  {
     // this text is for developers and so it is not translated
     selectedIndex = d->ConsoleLogLevelComboBox->findText(ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::Warning));
-    }
+  }
   // default to first item if conversion fails
   d->ConsoleLogLevelComboBox->setCurrentIndex(selectedIndex);
 }
@@ -171,8 +171,8 @@ void qSlicerSettingsPythonPanel::applySettings()
 {
   Q_D(qSlicerSettingsPythonPanel);
   if (!d->EditorPathLineEdit->currentPath().isEmpty())
-    {
+  {
     d->EditorPathLineEdit->addCurrentPathToHistory();
-    }
+  }
   Superclass::applySettings();
 }

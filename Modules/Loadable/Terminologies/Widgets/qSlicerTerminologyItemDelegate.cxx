@@ -46,9 +46,9 @@ vtkSlicerTerminologiesModuleLogic* terminologiesLogic()
   vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
     qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
   if (!terminologiesLogic)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";
-    }
+  }
   return terminologiesLogic;
 }
 
@@ -71,13 +71,13 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModel
 {
   qSlicerTerminologySelectorButton* terminologyButton = qobject_cast<qSlicerTerminologySelectorButton*>(editor);
   if (!terminologyButton)
-    {
+  {
     return;
-    }
+  }
   if (!terminologyButton->property("changeDataOnSet").toBool())
-    {
+  {
     return;
-    }
+  }
   vtkSlicerTerminologiesModuleLogic* logic = terminologiesLogic();
   terminologyButton->setProperty("changeDataOnSet", false);
 
@@ -87,9 +87,9 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModel
   // Convert string list to VTK terminology entry. Do not check success, as an empty terminology is also a valid starting point
   vtkNew<vtkSlicerTerminologyEntry> terminologyEntry;
   if (logic)
-    {
+  {
     logic->DeserializeTerminologyEntry(terminologyString.toUtf8().constData(), terminologyEntry);
-    }
+  }
 
   // Get metadata
   QString name = index.model()->data(index, NameRole).toString();
@@ -110,15 +110,15 @@ void qSlicerTerminologyItemDelegate::setModelData(QWidget *editor, QAbstractItem
 {
   vtkSlicerTerminologiesModuleLogic* logic = terminologiesLogic();
   if (!logic)
-    {
+  {
     return;
-    }
+  }
   // Get terminology (changed by the user) from the terminology button
   qSlicerTerminologySelectorButton* terminologyButton = qobject_cast<qSlicerTerminologySelectorButton*>(editor);
   if (!terminologyButton)
-    {
+  {
     return;
-    }
+  }
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle terminologyInfo;
   terminologyButton->terminologyInfo(terminologyInfo);
 
@@ -143,9 +143,9 @@ void qSlicerTerminologyItemDelegate::commitSenderData()
 {
   QWidget* editor = qobject_cast<QWidget*>(this->sender());
   if (!editor)
-    {
+  {
     return;
-    }
+  }
   emit commitData(editor);
 }
 
@@ -154,9 +154,9 @@ void qSlicerTerminologyItemDelegate::commitAndClose()
 {
   QWidget* editor = qobject_cast<QWidget*>(this->sender());
   if (!editor)
-    {
+  {
     return;
-    }
+  }
   emit commitData(editor);
   emit closeEditor(editor);
 }
@@ -166,8 +166,8 @@ void qSlicerTerminologyItemDelegate::close()
 {
   QWidget* editor = qobject_cast<QWidget*>(this->sender());
   if (!editor)
-    {
+  {
     return;
-    }
+  }
   emit closeEditor(editor);
 }

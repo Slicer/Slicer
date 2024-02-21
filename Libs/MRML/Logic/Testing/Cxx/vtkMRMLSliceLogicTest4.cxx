@@ -51,9 +51,9 @@ vtkMRMLScalarVolumeNode* loadVolume2(const char* volume, vtkMRMLScene* scene)
 
   storageNode->SetFileName(volume);
   if (storageNode->SupportedFileType(volume) == 0)
-    {
+  {
     return nullptr;
-    }
+  }
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene);
   displayNode->SetScene(scene);
@@ -82,21 +82,21 @@ int vtkMRMLSliceLogicTest4(int argc, char * argv [] )
   itk::itkFactoryRegistration();
 
   if( argc < 2 )
-    {
+  {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << "  input_image " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLScene> scene;
 
   vtkMRMLScalarVolumeNode* scalarNode = loadVolume2(argv[1], scene.GetPointer());
   if (scalarNode == nullptr)
-    {
+  {
     std::cerr << "Not a valid volume: " << argv[1] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkImageData* img = scalarNode->GetImageData();
 

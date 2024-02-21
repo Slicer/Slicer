@@ -56,15 +56,15 @@ bool testLayoutManagerViewWidgetForTable(int line, qMRMLLayoutManager* layoutMan
   qMRMLTableWidget* widget = layoutManager->tableWidget(viewId);
   vtkMRMLTableViewNode* node = widget ? widget->mrmlTableViewNode() : nullptr;
   if (!widget || !node)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::tableWidget()" << std::endl;
     return false;
-    }
+  }
   if (layoutManager->viewWidget(node) != widget)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::viewWidget()" << std::endl;
     return false;
-    }
+  }
   return true;
 }
 //------------------------------------------------------------------------------
@@ -73,15 +73,15 @@ bool testLayoutManagerViewWidgetForSlice(int line, qMRMLLayoutManager* layoutMan
   qMRMLSliceWidget* widget = layoutManager->sliceWidget(viewName);
   vtkMRMLSliceNode* node = widget ? widget->mrmlSliceNode() : nullptr;
   if (!widget || !node)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::sliceWidget()" << std::endl;
     return false;
-    }
+  }
   if (layoutManager->viewWidget(node) != widget)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::viewWidget()" << std::endl;
     return false;
-    }
+  }
   return true;
 }
 //------------------------------------------------------------------------------
@@ -90,15 +90,15 @@ bool testLayoutManagerViewWidgetForThreeD(int line, qMRMLLayoutManager* layoutMa
   qMRMLThreeDWidget* widget = layoutManager->threeDWidget(viewId);
   vtkMRMLViewNode* node = widget ? widget->mrmlViewNode() : nullptr;
   if (!widget || !node)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::threeDWidget()" << std::endl;
     return false;
-    }
+  }
   if (layoutManager->viewWidget(node) != widget)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::viewWidget()" << std::endl;
     return false;
-    }
+  }
   return true;
 }
 }
@@ -120,17 +120,17 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
     applicationLogic->SetMRMLScene(scene.GetPointer());
     layoutManager->setMRMLScene(scene.GetPointer());
     if (layoutManager->mrmlScene() != scene.GetPointer())
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager::setMRMLScene()" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
     layoutManager->setMRMLScene(nullptr);
     applicationLogic->SetMRMLScene(nullptr);
     if (layoutManager->mrmlScene() != nullptr)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager::setMRMLScene()" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   vtkNew<vtkMRMLScene> scene;
@@ -152,49 +152,49 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
 
   layoutManager->setLayout(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Green"))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Red"))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Yellow"))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!testLayoutManagerViewWidgetForThreeD(__LINE__, layoutManager, 0))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   layoutManager->setLayout(vtkMRMLLayoutNode::SlicerLayoutFourUpTableView);
   if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Green"))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Red"))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Yellow"))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!testLayoutManagerViewWidgetForTable(__LINE__, layoutManager, 0))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   int res = 0;
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     res = safeApplicationQuit(&app);
-    }
+  }
   else
-    {
+  {
     res = app.exec();
-    }
+  }
 
   delete layoutManager;
   delete viewport;

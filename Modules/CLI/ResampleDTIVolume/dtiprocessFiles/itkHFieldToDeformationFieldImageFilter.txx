@@ -49,12 +49,12 @@ void HFieldToDeformationFieldImageFilter<TInputImage, TOutputImage>::GenerateDat
       output, outputRequestedRegion);
   //  typename InputImageType::SpacingType spacing = input->GetSpacing();
   for( it.GoToBegin(), oit.GoToBegin(); !it.IsAtEnd(); ++it, ++oit )
-    {
+  {
     InputPixelType hvec = it.Get();
     typename OutputImageType::IndexType index = it.GetIndex();
 
     oit.Set(this->ComputeDisplacement(input, index, hvec) );
-    }
+  }
 
 }
 
@@ -76,9 +76,9 @@ HFieldToDeformationFieldImageFilter<TInputImage, TOutputImage>::ComputeDisplacem
   typedef ContinuousIndex<CoordRepType, Dimension> ContinuousIndexType;
   ContinuousIndexType hind;
   for( unsigned int i = 0; i < Dimension; ++i )
-    {
+  {
     hind[i] = hvec[i];
-    }
+  }
 
   input->TransformIndexToPhysicalPoint(ind, ipt);
   input->TransformContinuousIndexToPhysicalPoint(hind, hpt);

@@ -124,10 +124,10 @@ void qMRMLPlotWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNo
 {
   vtkMRMLPlotViewNode* plotViewNode = vtkMRMLPlotViewNode::SafeDownCast(newViewNode);
   if (newViewNode && !plotViewNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
       << ". Expected node type: vtkMRMLPlotViewNode";
-    }
+  }
   this->setMRMLPlotViewNode(plotViewNode);
 }
 

@@ -76,9 +76,9 @@ bool qSlicerLoadableModule::addModuleToSlicerModules(
 {
 #ifdef Slicer_USE_PYTHONQT
   if(!pythonManager || !module || moduleName.isEmpty())
-    {
+  {
     return false;
-    }
+  }
   pythonManager->addObjectToPythonMain("_tmp_module_variable", module);
   pythonManager->executeString(
         QString("import __main__;"
@@ -101,9 +101,9 @@ bool qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
 {
 #ifdef Slicer_USE_PYTHONQT
   if(!pythonManager || moduleName.isEmpty())
-    {
+  {
     return false;
-    }
+  }
   pythonManager->executeString(
         QString("import __main__;"
                 "setattr( slicer.moduleNames, %1, %2)")

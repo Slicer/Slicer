@@ -79,25 +79,25 @@ void vtkITKExecuteDataFromSeriesVector(
   typedef itk::ImageIOBase ImageIOType;
   ImageIOType::Pointer imageIO;
   if (self->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::GDCM)
-    {
+  {
     imageIO = itk::GDCMImageIO::New();
-    }
+  }
   else if (self->GetDICOMImageIOApproach() == vtkITKArchetypeImageSeriesReader::DCMTK)
-    {
+  {
     imageIO = itk::DCMTKImageIO::New();
-    }
+  }
   else
 #endif
-    {
+  {
     vtkErrorWithObjectMacro(self, <<"vtkITKArchetypeImageSeriesVectorReaderSeries: Unsupported DICOMImageIOApproach: " << self->GetDICOMImageIOApproach());
     itkGenericExceptionMacro("UnrecognizedFileTypeError");
-    }
+  }
   if (self->GetUseNativeCoordinateOrientation())
-    {
+  {
     filter = reader;
-    }
+  }
   else
-    {
+  {
     typename itk::OrientImageFilter<image,image>::Pointer orient =
         itk::OrientImageFilter<image,image>::New();
     orient->SetDebug(self->GetDebug());
@@ -106,7 +106,7 @@ void vtkITKExecuteDataFromSeriesVector(
     orient->SetDesiredCoordinateOrientation(
       self->GetDesiredCoordinateOrientation());
     filter = orient;
-    }
+  }
   filter->UpdateLargestPossibleRegion();
   typename itk::ImportImageContainer<itk::SizeValueType, VectorPixelType>::Pointer PixelContainer;
   PixelContainer = filter->GetOutput()->GetPixelContainer();
@@ -123,26 +123,26 @@ void vtkITKExecuteDataFromSeriesVector(
 void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {
   if (!this->Superclass::Archetype)
-    {
+  {
       vtkErrorMacro("An Archetype must be specified.");
       this->SetErrorCode(vtkErrorCode::NoFileNameError);
       return;
-    }
+  }
   vtkImageData *data = this->AllocateOutputData(output, outInfo);
 
     // If there is only one file in the series, just use an image file reader
   if (this->FileNames.size() == 1)
-    {
+  {
     vtkErrorMacro("ImageSeriesVectorReaderSeries: only one file: " << this->FileNames[0].c_str() << " use the VectorReaderFile instead!");
     this->SetErrorCode(vtkErrorCode::FileFormatError);
-    }
+  }
   else
-    {
+  {
     // use the series reader
     try
-      {
+    {
       switch (this->OutputScalarType)
-        {
+      {
         vtkTemplateMacroCase(VTK_DOUBLE, double, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
         vtkTemplateMacroCase(VTK_FLOAT, float, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
         vtkTemplateMacroCase(VTK_LONG, long, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
@@ -156,16 +156,16 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
         default:
           vtkErrorMacro(<< "UpdateFromFile Series: Unknown data type " << this->OutputScalarType);
           this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
-        }
       }
+    }
     catch (itk::ExceptionObject & e)
-      {
+    {
       vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
       this->SetErrorCode(vtkErrorCode::FileFormatError);
-      }
+    }
 
     this->SetMetaDataScalarRangeToPointDataInfo(data);
-    }
+  }
 }
 
 

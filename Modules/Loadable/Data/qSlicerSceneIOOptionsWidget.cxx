@@ -70,7 +70,7 @@ void qSlicerSceneIOOptionsWidget::updateGUI(const qSlicerIO::IOProperties& ioPro
   Q_D(qSlicerSceneIOOptionsWidget);
   qSlicerIOOptionsWidget::updateGUI(ioProperties);
   if (ioProperties.contains("clear"))
-    {
+  {
     d->ClearSceneCheckBox->setChecked(ioProperties["clear"].toBool());
-    }
+  }
 }

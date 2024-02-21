@@ -55,9 +55,9 @@ void vtkITKIslandMathHandleProgressEvent (itk::Object *caller,
   itk::ProcessObject *itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
   vtkAlgorithm *vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
   if ( itkFilter && vtkFilter )
-    {
+  {
     vtkFilter->UpdateProgress ( itkFilter->GetProgress() );
-    }
+  }
 };
 
 template <class T>
@@ -134,19 +134,19 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
   vtkPointData *pd = input->GetPointData();
   pd=input->GetPointData();
   if (pd ==nullptr)
-    {
+  {
     vtkErrorMacro(<<"PointData is NULL");
     return;
-    }
+  }
   vtkDataArray *inScalars=pd->GetScalars();
   if ( inScalars == nullptr )
-    {
+  {
     vtkErrorMacro(<<"Scalars must be defined for island math");
     return;
-    }
+  }
 
   if (inScalars->GetNumberOfComponents() == 1 )
-    {
+  {
 
 ////////// These types are not defined in itk ////////////
 #undef VTK_TYPE_USE_LONG_LONG
@@ -158,7 +158,7 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
     void* outPtr = output->GetScalarPointer();
 
     switch (inScalars->GetDataType())
-      {
+    {
       vtkTemplateMacroCase(VTK_LONG, long, CALL);                               \
       vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, CALL);             \
       vtkTemplateMacroCase(VTK_INT, int, CALL);                                 \
@@ -169,13 +169,13 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
       vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, CALL);                 \
       vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, CALL);             \
       default:
-        {
+      {
         vtkErrorMacro(<< "Incompatible data type for this version of ITK.");
-        }
-      } //switch
-    }
+      }
+    } //switch
+  }
   else
-    {
+  {
     vtkErrorMacro(<< "Only single component images supported.");
-    }
+  }
 }

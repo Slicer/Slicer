@@ -90,34 +90,34 @@ unsigned int vtkClosedSurfaceToBinaryLabelmapConversionRule::GetConversionCost(
 vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresentationObjectByRepresentation(std::string representationName)
 {
   if ( !representationName.compare(this->GetSourceRepresentationName()) )
-    {
+  {
     return (vtkDataObject*)vtkPolyData::New();
-    }
+  }
   else if ( !representationName.compare(this->GetTargetRepresentationName()) )
-    {
+  {
     return (vtkDataObject*)vtkOrientedImageData::New();
-    }
+  }
   else
-    {
+  {
     return nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresentationObjectByClass(std::string className)
 {
   if (!className.compare("vtkPolyData"))
-    {
+  {
     return (vtkDataObject*)vtkPolyData::New();
-    }
+  }
   else if (!className.compare("vtkOrientedImageData"))
-    {
+  {
     return (vtkDataObject*)vtkOrientedImageData::New();
-    }
+  }
   else
-    {
+  {
     return nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -130,60 +130,60 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   // Check validity of source and target representation objects
   vtkPolyData* closedSurfacePolyData = vtkPolyData::SafeDownCast(segment->GetRepresentation(this->GetSourceRepresentationName()));
   if (!closedSurfacePolyData)
-    {
+  {
     vtkErrorMacro("Convert: Source representation is not a poly data!");
     return false;
-    }
+  }
 
   if (closedSurfacePolyData->GetNumberOfPoints() < 2 || closedSurfacePolyData->GetNumberOfCells() < 2)
-    {
+  {
     vtkDebugMacro("Convert: Cannot create binary labelmap from surface with number of points: "
       << closedSurfacePolyData->GetNumberOfPoints() << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
     return false;
-    }
+  }
 
   vtkOrientedImageData* binaryLabelmap = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(this->GetTargetRepresentationName()));
   if (!binaryLabelmap)
-    {
+  {
     vtkErrorMacro("Convert: Target representation is not an oriented image data!");
     return false;
-    }
+  }
 
   // Setup output labelmap
 
   // Compute output labelmap geometry based on poly data, an reference image
   // geometry, and store the calculated geometry in output labelmap image data
   if (!this->UseOutputImageDataGeometry)
-    {
+  {
     if (!this->CalculateOutputGeometry(closedSurfacePolyData, binaryLabelmap))
-      {
+    {
       vtkErrorMacro("Convert: Failed to calculate output image geometry!");
       return false;
-      }
     }
+  }
   else if (outputGeometryLabelmap)
-    {
+  {
     std::string geometryString = vtkSegmentationConverter::SerializeImageGeometry(outputGeometryLabelmap);
     vtkSegmentationConverter::DeserializeImageGeometry(geometryString, binaryLabelmap, false);
-    }
+  }
 
   // Allocate output image data
   binaryLabelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
   void* binaryLabelmapVoxelsPointer = binaryLabelmap->GetScalarPointerForExtent(binaryLabelmap->GetExtent());
   if (!binaryLabelmapVoxelsPointer)
-    {
+  {
     vtkErrorMacro("Convert: Failed to allocate memory for output labelmap image!");
     return false;
-    }
+  }
   else
-    {
+  {
     // Set voxel values to 0
     int extent[6] = {0,-1,0,-1,0,-1};
     binaryLabelmap->GetExtent(extent);
     memset(binaryLabelmapVoxelsPointer, 0, ((extent[1]-extent[0]+1)*(extent[3]-extent[2]+1)*(extent[5]-extent[4]+1) *
       binaryLabelmap->GetScalarSize() * binaryLabelmap->GetNumberOfScalarComponents()));
-    }
+  }
 
   // Perform conversion
 
@@ -257,9 +257,9 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::PostConvert(vtkSegmentation
 {
   int collapseLabelmaps = this->ConversionParameters->GetValueAsInt(GetCollapseLabelmapsParameterName());
   if (collapseLabelmaps > 0)
-    {
+  {
     segmentation->CollapseBinaryLabelmaps(false);
-    }
+  }
   return true;
 }
 
@@ -267,82 +267,82 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::PostConvert(vtkSegmentation
 bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtkPolyData* closedSurfacePolyData, vtkOrientedImageData* geometryImageData)
 {
   if (!closedSurfacePolyData)
-    {
+  {
     vtkErrorMacro("CalculateOutputGeometry: Invalid input closed surface poly data!");
     return false;
-    }
+  }
   if (!geometryImageData)
-    {
+  {
     vtkErrorMacro("CalculateOutputGeometry: Invalid output geometry image Data!");
     return false;
-    }
+  }
 
   // Get reference image geometry from parameters
   std::string geometryString = this->ConversionParameters->GetValue(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
   if (geometryString.empty() || !vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryImageData))
-    {
+  {
     geometryString = this->GetDefaultImageGeometryStringForPolyData(closedSurfacePolyData);
     vtkInfoMacro("CalculateOutputGeometry: No image geometry specified, default geometry is calculated (" << geometryString << ")");
 
     // If still not valid then return with error
     if (!vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryImageData))
-      {
+    {
       vtkErrorMacro("CalculateOutputGeometry: Failed to get reference image geometry");
       return false;
-      }
     }
+  }
 
   // Return reference geometry if polydata is empty
   if (!closedSurfacePolyData->GetPoints())
-    {
+  {
     return true;
-    }
+  }
 
   // Get oversampling factor
   std::string oversamplingString = this->ConversionParameters->GetValue(GetOversamplingFactorParameterName());
   double oversamplingFactor = 1.0;
   if (!oversamplingString.compare("A"))
-    {
+  {
     // Automatic oversampling factor is used
     vtkSmartPointer<vtkCalculateOversamplingFactor> oversamplingCalculator = vtkSmartPointer<vtkCalculateOversamplingFactor>::New();
     oversamplingCalculator->SetInputPolyData(closedSurfacePolyData);
     oversamplingCalculator->SetReferenceGeometryImageData(geometryImageData);
     if (oversamplingCalculator->CalculateOversamplingFactor())
-      {
+    {
       oversamplingFactor = oversamplingCalculator->GetOutputOversamplingFactor();
-      }
+    }
     else
-      {
+    {
       vtkWarningMacro("CalculateOutputGeometry: Failed to automatically calculate oversampling factor! Using default value of 1");
       oversamplingFactor = 1.0;
-      }
     }
+  }
   else
-    {
+  {
     // Static oversampling factor
     std::stringstream ss;
     ss << oversamplingString;
     ss >> oversamplingFactor;
     if (ss.fail())
-      {
+    {
       oversamplingFactor = 1.0;
-      }
     }
+  }
 
   // Apply oversampling if needed
   vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(geometryImageData, oversamplingFactor);
 
   int cropToReferenceImageGeometry = 0;
-    {
+  {
     std::string cropToReferenceImageGeometryString = this->ConversionParameters->GetValue(GetCropToReferenceImageGeometryParameterName());
     std::stringstream ss;
     ss << cropToReferenceImageGeometryString;
     ss >> cropToReferenceImageGeometry;
     if (ss.fail())
-      {
+    {
       cropToReferenceImageGeometry = 0;
-      }
     }
+  }
 
   // We need to apply inverse of direction matrix to the input poly data
   // so that we can expand the image in its IJK directions
@@ -373,7 +373,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
   surfaceExtent[5] = (int)ceil(surfaceBounds[5]);
 
   if (cropToReferenceImageGeometry)
-    {
+  {
     // Set effective extent to be maximum as large as the reference extent (less memory needed if the extent only covers the non-zero region)
     int referenceExtent[6] = { 0, -1, 0, -1, 0, -1 };
     geometryImageData->GetExtent(referenceExtent);
@@ -384,12 +384,12 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
     if (surfaceExtent[4] > referenceExtent[4]) { referenceExtent[4] = surfaceExtent[4]; }
     if (surfaceExtent[5] < referenceExtent[5]) { referenceExtent[5] = surfaceExtent[5]; }
     geometryImageData->SetExtent(referenceExtent);
-    }
+  }
   else
-    {
+  {
     // Set effective extent to be just large enough to contain the full surface
     geometryImageData->SetExtent(surfaceExtent);
-    }
+  }
 
   return true;
 }
@@ -398,10 +398,10 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
 std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeometryStringForPolyData(vtkPolyData* polyData)
 {
   if (!polyData)
-    {
+  {
     vtkErrorMacro("GetDefaultImageGeometryStringForPolyData: Invalid input poly data!");
     return "";
-    }
+  }
 
   // Get poly data bounds
   double bounds[6] = {0,0,0,0,0,0};

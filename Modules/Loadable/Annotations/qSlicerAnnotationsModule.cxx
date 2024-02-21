@@ -34,15 +34,15 @@ qSlicerAnnotationsModule::~qSlicerAnnotationsModule()
 {
   Q_D(qSlicerAnnotationsModule);
   if (d->m_SnapShotDialog)
-    {
+  {
     // If the application was started without main window then snapshot dialog
     // does not have a parent, so we need to delete it manually.
     if (!d->m_SnapShotDialog->parent())
-      {
+    {
       delete d->m_SnapShotDialog;
       d->m_SnapShotDialog = nullptr;
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -119,10 +119,10 @@ void qSlicerAnnotationsModule::showScreenshotDialog()
 {
   Q_D(qSlicerAnnotationsModule);
   if (!d->m_SnapShotDialog)
-    {
+  {
     QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
     d->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog(mainWindow);
-    }
+  }
   d->m_SnapShotDialog->setLogic(vtkSlicerAnnotationModuleLogic::SafeDownCast(this->logic()));
   d->m_SnapShotDialog->reset();
   d->m_SnapShotDialog->open();

@@ -116,9 +116,9 @@ double qSlicerTablesReader::canLoadFileConfidence(const QString& fileName)const
 
   // .txt file is more likely a simple text file than a table
   if (confidence > 0 && fileName.toUpper().endsWith("TXT"))
-    {
+  {
     confidence = 0.4;
-    }
+  }
   return confidence;
 }
 
@@ -133,67 +133,67 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
 
   QString name = QFileInfo(fileName).baseName();
   if (properties.contains("name"))
-    {
+  {
     name = properties["name"].toString();
-    }
+  }
   std::string uname = this->mrmlScene()->GetUniqueNameByString(name.toUtf8());
   std::string password;
 
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
   if( extension.empty() )
-    {
+  {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
       (tr("Table reading failed: no file extension specified: %1").arg(fileName)).toStdString());
     return false;
-    }
+  }
   if (   !extension.compare(".db")
       || !extension.compare(".db3")
       || !extension.compare(".sqlite")
       || !extension.compare(".sqlite3"))
-    {
+  {
     uname = "";
     std::string dbname = std::string("sqlite://") + fileName.toStdString();
     vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(
                    vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
     if (!database->Open("", vtkSQLiteDatabase::USE_EXISTING))
-      {
+    {
       bool ok;
       QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"),
                                            tr("Database Password:"), QLineEdit::Normal,
                                            "", &ok);
       if (ok && !text.isEmpty())
-        {
+      {
         password = text.toStdString();
-        }
       }
     }
+  }
 
   vtkMRMLTableNode* node = nullptr;
   if (d->Logic!=nullptr)
-    {
+  {
     node = d->Logic->AddTable(fileName.toUtf8(),uname.c_str(), true, password.c_str(), this->userMessages());
-    }
+  }
   if (node)
-    {
+  {
     // Show table in viewers
     vtkSlicerApplicationLogic* appLogic = d->Logic->GetApplicationLogic();
     vtkMRMLSelectionNode* selectionNode = appLogic ? appLogic->GetSelectionNode() : nullptr;
     if (selectionNode)
-      {
-      selectionNode->SetActiveTableID(node->GetID());
-      }
-    if (appLogic)
-      {
-      appLogic->PropagateTableSelection();
-      }
-    this->setLoadedNodes(QStringList(QString(node->GetID())));
-    }
-  else
     {
+      selectionNode->SetActiveTableID(node->GetID());
+    }
+    if (appLogic)
+    {
+      appLogic->PropagateTableSelection();
+    }
+    this->setLoadedNodes(QStringList(QString(node->GetID())));
+  }
+  else
+  {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
       (tr("Failed to read table from  '%1'").arg(fileName)).toStdString());
     this->setLoadedNodes(QStringList());
-    }
+  }
   return node != nullptr;
 }

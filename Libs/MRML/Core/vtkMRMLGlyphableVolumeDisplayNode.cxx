@@ -55,13 +55,13 @@ void vtkMRMLGlyphableVolumeDisplayNode::SetDefaultColorMap(/*int isLabelMap*/)
   this->SetAndObserveGlyphColorNodeID("vtkMRMLColorTableNodeGrey");
   //  }
   if (this->GlyphColorNode == nullptr)
-    {
+  {
     vtkDebugMacro("vtkMRMLGlyphableVolumeDisplayNode: FAILED setting default  color node, it's still null\n");
-    }
+  }
   else
-    {
+  {
     vtkDebugMacro("vtkMRMLGlyphableVolumeDisplayNode: set up the default color node\n");
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -76,9 +76,9 @@ void vtkMRMLGlyphableVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   if (this->GlyphColorNodeID != nullptr)
-    {
+  {
     of << " glyphColorNodeRef=\"" << this->GlyphColorNodeID << "\"";
-    }
+  }
 
   std::stringstream ss;
   ss << this->VisualizationMode;
@@ -90,9 +90,9 @@ void vtkMRMLGlyphableVolumeDisplayNode::UpdateReferenceID(const char *oldID, con
 {
   Superclass::UpdateReferenceID(oldID, newID);
   if (this->GlyphColorNodeID && !strcmp(oldID, this->GlyphColorNodeID))
-    {
+  {
     this->SetGlyphColorNodeID(newID);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -105,21 +105,21 @@ void vtkMRMLGlyphableVolumeDisplayNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "glyphColorNodeRef"))
-      {
+    {
       this->SetGlyphColorNodeID(attValue);
-      }
+    }
     if (!strcmp(attName, "visualizationMode"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->VisualizationMode;
-      }
-
     }
+
+  }
 
   this->EndModify(disabledModify);
 }
@@ -171,9 +171,9 @@ void vtkMRMLGlyphableVolumeDisplayNode::UpdateReferences()
    Superclass::UpdateReferences();
 
   if (this->GlyphColorNodeID != nullptr && this->Scene->GetNodeByID(this->GlyphColorNodeID) == nullptr)
-    {
+  {
     this->SetAndObserveGlyphColorNodeID(nullptr);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -181,10 +181,10 @@ vtkMRMLColorNode* vtkMRMLGlyphableVolumeDisplayNode::GetGlyphColorNode()
 {
   vtkMRMLColorNode* node = nullptr;
   if (this->GetScene() && this->GetGlyphColorNodeID() )
-    {
+  {
     vtkMRMLNode* cnode = this->GetScene()->GetNodeByID(this->GlyphColorNodeID);
     node = vtkMRMLColorNode::SafeDownCast(cnode);
-    }
+  }
   return node;
 }
 
@@ -203,13 +203,13 @@ void vtkMRMLGlyphableVolumeDisplayNode::SetAndObserveGlyphColorNodeID(const char
 
   vtkMRMLColorNode *cnode = this->GetGlyphColorNode();
   if (cnode != nullptr)
-    {
+  {
     vtkSetAndObserveMRMLObjectMacro(this->GlyphColorNode, cnode);
-    }
+  }
   if (this->Scene)
-    {
+  {
     this->Scene->AddReferencedNodeID(glyphColorNodeID, this);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -222,9 +222,9 @@ void vtkMRMLGlyphableVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLColorNode *cnode = this->GetGlyphColorNode();
   if (cnode != nullptr && cnode == vtkMRMLColorNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
-    {
+  {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
-    }
+  }
   return;
 }
 

@@ -103,19 +103,19 @@ public:
 public:
 
   enum ModificationMode
-    {
+  {
     ModificationModeSet,
     ModificationModeAdd,
     ModificationModeRemove,
     ModificationModeRemoveAll
-    };
+  };
 
   enum ConfirmationResult
-    {
+  {
     NotConfirmed,
     ConfirmedWithoutDialog,
     ConfirmedWithDialog,
-    };
+  };
 
   /// Get icon for effect to be displayed in segment editor
   virtual QIcon icon() { return QIcon(); };

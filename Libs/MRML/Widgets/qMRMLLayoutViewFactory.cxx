@@ -94,12 +94,12 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
 ::viewNodeByName(const QString& viewName)const
 {
   foreach(vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
-    {
+  {
     if (viewName == QString(viewNode->GetName()))
-      {
+    {
       return viewNode;
-      }
     }
+  }
   return nullptr;
 }
 
@@ -108,12 +108,12 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
 ::viewNodeByLayoutLabel(const QString& layoutLabel)const
 {
   foreach(vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
-    {
+  {
     if (layoutLabel == QString(viewNode->GetLayoutLabel()))
-      {
+    {
       return viewNode;
-      }
     }
+  }
   return nullptr;
 }
 
@@ -125,11 +125,11 @@ vtkMRMLLayoutLogic::ViewAttributes qMRMLLayoutViewFactoryPrivate
   QDomNamedNodeMap elementAttributes = viewElement.attributes();
   const int attributeCount = elementAttributes.count();
   for (int i = 0; i < attributeCount; ++i)
-    {
+  {
     QDomNode attribute = elementAttributes.item(i);
     attributes[attribute.nodeName().toStdString()] =
       viewElement.attribute(attribute.nodeName()).toStdString();
-    }
+  }
   return attributes;
 }
 
@@ -141,9 +141,9 @@ vtkMRMLLayoutLogic::ViewProperties qMRMLLayoutViewFactoryPrivate
   for (QDomElement childElement = viewElement.firstChildElement();
        !childElement.isNull();
        childElement = childElement.nextSiblingElement())
-    {
+  {
     properties.push_back(this->propertyFromXML(childElement));
-    }
+  }
   return properties;
 }
 
@@ -155,11 +155,11 @@ vtkMRMLLayoutLogic::ViewProperty qMRMLLayoutViewFactoryPrivate
   QDomNamedNodeMap elementAttributes = propertyElement.attributes();
   const int attributeCount = elementAttributes.count();
   for (int i = 0; i < attributeCount; ++i)
-    {
+  {
     QDomNode attribute = elementAttributes.item(i);
     property[attribute.nodeName().toStdString()] =
       propertyElement.attribute(attribute.nodeName()).toStdString();
-    }
+  }
   property["value"] = propertyElement.text().toStdString();
   return property;
 }
@@ -171,13 +171,13 @@ QList<qMRMLWidget*> qMRMLLayoutViewFactoryPrivate
 {
   QList<qMRMLWidget*> res;
   foreach(QWidget* viewWidget, this->Views.values())
-    {
+  {
     qMRMLWidget* mrmlWidget = qobject_cast<qMRMLWidget*>(viewWidget);
     if (mrmlWidget)
-      {
+    {
       res << mrmlWidget;
-      }
     }
+  }
   return res;
 }
 
@@ -198,9 +198,9 @@ qMRMLLayoutViewFactory::~qMRMLLayoutViewFactory()
 {
   Q_D(qMRMLLayoutViewFactory);
   while(this->viewCount())
-    {
+  {
     this->deleteView(d->Views.keys()[0]);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -213,9 +213,9 @@ QString qMRMLLayoutViewFactory::viewClassName()const
 bool qMRMLLayoutViewFactory::isElementSupported(QDomElement layoutElement)const
 {
   if (!this->Superclass::isElementSupported(layoutElement))
-    {
+  {
     return false;
-    }
+  }
   vtkMRMLAbstractViewNode* viewNode = this->viewNodeFromXML(layoutElement);
   return this->isViewNodeSupported(viewNode);
 }
@@ -253,13 +253,13 @@ void qMRMLLayoutViewFactory::setMRMLScene(vtkMRMLScene* scene)
   Q_D(qMRMLLayoutViewFactory);
 
   if (d->MRMLScene == scene)
-    {
+  {
     return;
-    }
+  }
   while(this->viewCount())
-    {
+  {
     this->deleteView(d->Views.keys()[0]);
-    }
+  }
   this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent,
                       this, SLOT(onNodeAdded(vtkObject*,vtkObject*)));
 
@@ -279,9 +279,9 @@ QWidget* qMRMLLayoutViewFactory::viewWidget(int id)const
 {
   Q_D(const qMRMLLayoutViewFactory);
   if (id < 0 || id >= d->Views.size())
-    {
+  {
     return nullptr;
-    }
+  }
   return d->Views.values().at(id);
 }
 
@@ -322,9 +322,9 @@ QStringList qMRMLLayoutViewFactory::viewNodeNames() const
 
   QStringList res;
   foreach (vtkMRMLAbstractViewNode* viewNode, d->Views.keys())
-    {
+  {
     res << viewNode->GetName();
-    }
+  }
 
   return res;
 }
@@ -342,9 +342,9 @@ void qMRMLLayoutViewFactory::beginSetupLayout()
   Q_D(qMRMLLayoutViewFactory);
   this->Superclass::beginSetupLayout();
   foreach(vtkMRMLAbstractViewNode* viewNode, d->Views.keys())
-    {
+  {
     viewNode->SetMappedInLayout(0);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -352,19 +352,19 @@ void qMRMLLayoutViewFactory::onNodeAdded(vtkObject* scene, vtkObject* node)
 {
   vtkMRMLScene* mrmlScene = vtkMRMLScene::SafeDownCast(scene);
   if (!mrmlScene || mrmlScene->IsBatchProcessing())
-    {
+  {
     // We have to leave because maybe all the nodes required by the view node
     // (e.g. composite slice node) have not yet been added to the scene.
     return;
-    }
+  }
 
   Q_UNUSED(scene);
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(node);
   if (viewNode && !viewNode->GetParentLayoutNode())
-    {
+  {
     // No explicit parent layout node means that view is handled by the main Slicer layout
     this->onViewNodeAdded(viewNode);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -373,9 +373,9 @@ void qMRMLLayoutViewFactory::onNodeRemoved(vtkObject* scene, vtkObject* node)
   Q_UNUSED(scene);
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(node);
   if (viewNode)
-    {
+  {
     this->onViewNodeRemoved(viewNode);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -383,9 +383,9 @@ void qMRMLLayoutViewFactory::onNodeModified(vtkObject* node)
 {
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(node);
   if (viewNode)
-    {
+  {
     this->onViewNodeModified(viewNode);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -393,28 +393,28 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
 {
   Q_D(qMRMLLayoutViewFactory);
   if (!this->isViewNodeSupported(node))
-    {
+  {
     return;
-    }
+  }
   if (this->viewWidget(node))
-    { // The view already exists, no need to create it again.
+  { // The view already exists, no need to create it again.
     return;
-    }
+  }
   QWidget* widget = this->createViewFromNode(node);
   if (!widget)
-    { // The factory cannot create such view, do nothing about it
+  { // The factory cannot create such view, do nothing about it
     return;
-    }
+  }
 
   qMRMLAbstractViewWidget* viewWidget = qobject_cast<qMRMLAbstractViewWidget*>(widget);
   if (viewWidget)
-    {
+  {
     // Initialize the pause render state to match the current pause render count on all views.
     for (int i = 0; i < d->LayoutManager->allViewsPauseRenderCount(); ++i)
-      {
+    {
       viewWidget->pauseRender();
-      }
     }
+  }
 
   // Do not show until mapped into a view (the widget is shown/hidden only
   // if it is part of the layout, but if the widget was not yet part of any layout
@@ -425,9 +425,9 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
 
   // For now, the active view is the first one
   if (this->viewCount() == 1)
-    {
+  {
     this->setActiveViewNode(node);
-    }
+  }
   this->qvtkConnect(node, vtkCommand::ModifiedEvent,
                     this, SLOT(onNodeModified(vtkObject*)));
   emit viewCreated(widget);
@@ -450,18 +450,18 @@ void qMRMLLayoutViewFactory::onSceneModified()
 {
   Q_D(qMRMLLayoutViewFactory);
   if (!d->MRMLScene)
-    {
+  {
     return;
-    }
+  }
   std::vector<vtkMRMLNode*> viewNodes;
   d->MRMLScene->GetNodesByClass("vtkMRMLAbstractViewNode", viewNodes);
   for (unsigned int i = 0; i < viewNodes.size(); ++i)
-    {
+  {
     vtkMRMLAbstractViewNode* viewNode =
       vtkMRMLAbstractViewNode::SafeDownCast(viewNodes[i]);
     Q_ASSERT(viewNode);
     this->onViewNodeAdded(viewNode);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -483,21 +483,21 @@ void qMRMLLayoutViewFactory::deleteView(vtkMRMLAbstractViewNode* viewNode)
 
   // Remove slice widget
   if (!widgetToDelete)
-    {
+  {
     return;
-    }
+  }
   qMRMLWidget* mrmlWidgetToDelete = qobject_cast<qMRMLWidget*>(widgetToDelete);
   if (mrmlWidgetToDelete)
-    {
+  {
     mrmlWidgetToDelete->setMRMLScene(nullptr);
-    }
+  }
   this->unregisterView(widgetToDelete);
   d->Views.remove(viewNode);
   widgetToDelete->deleteLater();
   if (this->activeViewNode() == viewNode)
-    {
+  {
     this->setActiveViewNode(nullptr);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -505,9 +505,9 @@ void qMRMLLayoutViewFactory::setActiveViewNode(vtkMRMLAbstractViewNode* node)
 {
   Q_D(qMRMLLayoutViewFactory);
   if (d->ActiveViewNode == node)
-    {
+  {
     return;
-    }
+  }
   d->ActiveViewNode = node;
 
   emit this->activeViewNodeChanged(d->ActiveViewNode);
@@ -525,9 +525,9 @@ vtkRenderer* qMRMLLayoutViewFactory::activeRenderer()const
 {
   QWidget* activeViewWidget = this->viewWidget(this->activeViewNode());
   if (!activeViewWidget)
-    {
+  {
     return nullptr;
-    }
+  }
   ctkVTKAbstractView* view = activeViewWidget->findChild<ctkVTKAbstractView*>();
   vtkRenderWindow* renderWindow = view ? view->renderWindow() : nullptr;
   vtkRendererCollection* renderers =
@@ -558,13 +558,13 @@ QWidget* qMRMLLayoutViewFactory::createViewFromXML(QDomElement viewElement)
   //  (3) a batch process ends (See EndBatchProcessEvent / onSceneModified)
   QWidget* view = this->viewWidget(viewNode);
   if (!view)
-    {
+  {
     // The following call will take care of creating the view when a sceneView is
     // restored. In that case, vtkMRMLLayoutLogic::OnMRMLSceneEndRestore was called first
     // without giving a chance to the factory to create the missing views.
     this->onViewNodeAdded(viewNode);
     view = this->viewWidget(viewNode);
-    }
+  }
   Q_ASSERT(view);
 
   vtkMRMLLayoutLogic::ViewProperties properties = d->propertiesFromXML(viewElement);
@@ -585,9 +585,9 @@ QList<vtkMRMLAbstractViewNode*> qMRMLLayoutViewFactory
   QList<vtkMRMLAbstractViewNode*> res;
   for (vtkMRMLAbstractViewNode* node = nullptr;
        (node = vtkMRMLAbstractViewNode::SafeDownCast(viewNodes->GetNextItemAsObject()));)
-    {
+  {
     res << node;
-    }
+  }
   viewNodes->Delete();
   return res;
 }
@@ -600,11 +600,11 @@ QList<QWidget*> qMRMLLayoutViewFactory::createViewsFromXML(QDomElement viewEleme
 
   QList<QWidget*> res;
   foreach(vtkMRMLAbstractViewNode* viewNode, viewNodes)
-    {
+  {
     res << this->viewWidget(viewNode);
     vtkMRMLLayoutLogic::ViewProperties properties = d->propertiesFromXML(viewElement);
     this->layoutManager()->layoutLogic()->ApplyProperties(properties, viewNode, "relayout");
-    }
+  }
   return res;
 }
 

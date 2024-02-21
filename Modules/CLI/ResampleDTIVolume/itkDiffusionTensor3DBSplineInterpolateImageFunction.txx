@@ -32,11 +32,11 @@ DiffusionTensor3DBSplineInterpolateImageFunction<TData, TCoordRep>
 ::AllocateInterpolator()
 {
   for( int i = 0; i < 6; i++ )
-    {
+  {
     bSplineInterpolateFunction[i] = BSplineInterpolateFunction::New();
     bSplineInterpolateFunction[i]->SetSplineOrder( m_SplineOrder );
     this->m_Interpol[i] = bSplineInterpolateFunction[i];
-    }
+  }
 }
 
 } // end itk namespace

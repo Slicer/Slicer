@@ -37,9 +37,9 @@ public:
   ~qMRMLMarkupsOptionsWidgetsFactoryCleanup()
   {
     if (qMRMLMarkupsOptionsWidgetsFactory::Instance)
-      {
+    {
       qMRMLMarkupsOptionsWidgetsFactory::cleanup();
-      }
+    }
   }
 
   void cleanup()
@@ -55,10 +55,10 @@ static qMRMLMarkupsOptionsWidgetsFactoryCleanup qMRMLMarkupsOptionsWidgetsFactor
 qMRMLMarkupsOptionsWidgetsFactory* qMRMLMarkupsOptionsWidgetsFactory::instance()
 {
   if(!qMRMLMarkupsOptionsWidgetsFactory::Instance)
-    {
+  {
     qMRMLMarkupsOptionsWidgetsFactoryCleanupGlobal.use();
     qMRMLMarkupsOptionsWidgetsFactory::Instance = new qMRMLMarkupsOptionsWidgetsFactory();
-    }
+  }
   // Return the instance
   return qMRMLMarkupsOptionsWidgetsFactory::Instance;
 }
@@ -67,10 +67,10 @@ qMRMLMarkupsOptionsWidgetsFactory* qMRMLMarkupsOptionsWidgetsFactory::instance()
 void qMRMLMarkupsOptionsWidgetsFactory::cleanup()
 {
   if (qMRMLMarkupsOptionsWidgetsFactory::Instance)
-    {
+  {
     delete qMRMLMarkupsOptionsWidgetsFactory::Instance;
     qMRMLMarkupsOptionsWidgetsFactory::Instance = nullptr;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -91,27 +91,27 @@ bool qMRMLMarkupsOptionsWidgetsFactory::registerOptionsWidget(qMRMLMarkupsAbstra
 {
   // Check for nullptr
   if (!widget)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ":  Invalid widget.";
     return false;
-    }
+  }
 
   // Check for empty type name
   if (widget->className().isEmpty())
-    {
+  {
     qCritical() << Q_FUNC_INFO << ":  options widget has no class name.";
     return false;
-    }
+  }
 
   // Check for already registered widget
   if (this->RegisteredWidgets.contains(widget->className()))
-    {
+  {
     qWarning() << Q_FUNC_INFO << ":  options widget type "
                << widget->className()
                << " already registered.";
     delete widget;
     return false;
-    }
+  }
 
   // Register the additional options widget
   this->RegisteredWidgets[widget->className()] = widget;
@@ -127,21 +127,21 @@ bool qMRMLMarkupsOptionsWidgetsFactory::unregisterOptionsWidget(qMRMLMarkupsAbst
 {
   // Check for empty type name
   if (!widget)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ":  Invalid widget.";
     return false;
-    }
+  }
 
   auto className = widget->className();
 
   delete widget;
 
   if(this->unregisterOptionsWidget(className))
-    {
+  {
     // Emit registered signal
     emit optionsWidgetUnregistered();
     return true;
-    }
+  }
 
   return false;
 }
@@ -151,18 +151,18 @@ bool qMRMLMarkupsOptionsWidgetsFactory::unregisterOptionsWidget(const QString& c
 {
   // Check for empty type name
   if (className.isEmpty())
-    {
+  {
     qCritical() << Q_FUNC_INFO << ":  options widget has no type name.";
     return false;
-    }
+  }
 
   // Check for already registered widget
   if (!this->RegisteredWidgets.remove(className))
-    {
+  {
     qWarning() << Q_FUNC_INFO << ":  options widget type "
                << className << " not registered.";
     return false;
-    }
+  }
 
   return true;
 }
@@ -172,19 +172,19 @@ qMRMLMarkupsAbstractOptionsWidget* qMRMLMarkupsOptionsWidgetsFactory::createWidg
 {
   // Check for empty type name
   if (className.isEmpty())
-    {
+  {
     qCritical() << Q_FUNC_INFO << ":  options widget has no class name.";
     return nullptr;
-    }
+  }
 
   // Check for already registered widget
   if (!this->RegisteredWidgets.contains(className))
-    {
+  {
     qWarning() << Q_FUNC_INFO << ":  options widget type "
                << className
                << " not registered.";
     return nullptr;
-    }
+  }
 
   return this->RegisteredWidgets[className]->createInstance();
 
@@ -194,12 +194,12 @@ qMRMLMarkupsAbstractOptionsWidget* qMRMLMarkupsOptionsWidgetsFactory::createWidg
 void qMRMLMarkupsOptionsWidgetsFactory::unregisterAll()
 {
   foreach(auto widget, this->RegisteredWidgets)
-    {
+  {
     if (widget)
-      {
+    {
       delete widget.data();
-      }
     }
+  }
 
   this->RegisteredWidgets.clear();
 }

@@ -16,10 +16,10 @@ public:
                        void* vtkNotUsed(v)) override
   {
     if (event == vtkCommand::StartEvent && this->Watcher)
-      {
+    {
       this->Watcher->SetSteps(0);
       if (this->Watcher->GetProcessInformation())
-        {
+      {
         this->Watcher->GetProcessInformation()->Progress = 0;
         this->Watcher->GetProcessInformation()->StageProgress = 0;
         strncpy(this->Watcher->GetProcessInformation()->ProgressMessage,
@@ -27,12 +27,12 @@ public:
 
         if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
             && this->Watcher->GetProcessInformation()->ProgressCallbackClientData)
-          {
-          (*(this->Watcher->GetProcessInformation()->ProgressCallbackFunction))(this->Watcher->GetProcessInformation()->ProgressCallbackClientData);
-          }
-        }
-      else
         {
+          (*(this->Watcher->GetProcessInformation()->ProgressCallbackFunction))(this->Watcher->GetProcessInformation()->ProgressCallbackClientData);
+        }
+      }
+      else
+      {
         std::cout << "<filter-start>"
                   << std::endl;
         std::cout << "<filter-name>"
@@ -47,8 +47,8 @@ public:
         std::cout << "</filter-start>"
                   << std::endl;
         std::cout << std::flush;
-        }
       }
+    }
   }
   void SetWatcher(vtkPluginFilterWatcher *w)
   {
@@ -75,19 +75,19 @@ public:
                        void* vtkNotUsed(v)) override
   {
     if (event == vtkCommand::EndEvent && this->Watcher)
-      {
+    {
       if (this->Watcher->GetProcessInformation())
-        {
+      {
         this->Watcher->GetProcessInformation()->Progress = 0;
         this->Watcher->GetProcessInformation()->StageProgress = 0;
         if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
             && this->Watcher->GetProcessInformation()->ProgressCallbackClientData)
-          {
-          (*(this->Watcher->GetProcessInformation()->ProgressCallbackFunction))(this->Watcher->GetProcessInformation()->ProgressCallbackClientData);
-          }
-        }
-      else
         {
+          (*(this->Watcher->GetProcessInformation()->ProgressCallbackFunction))(this->Watcher->GetProcessInformation()->ProgressCallbackClientData);
+        }
+      }
+      else
+      {
         std::cout << "<filter-end>"
                   << std::endl;
         std::cout << "<filter-name>"
@@ -97,8 +97,8 @@ public:
                   << std::endl;
         std::cout << "</filter-end>";
         std::cout << std::flush;
-        }
       }
+    }
   }
   void SetWatcher(vtkPluginFilterWatcher *w)
   {
@@ -124,53 +124,53 @@ public:
                        void* vtkNotUsed(v)) override
   {
     if (event == vtkCommand::ProgressEvent && this->Watcher)
-      {
+    {
       this->Watcher->SetSteps( this->Watcher->GetSteps()+1 );
       if (this->Watcher->GetProcessInformation())
-        {
+      {
         strncpy(this->Watcher->GetProcessInformation()->ProgressMessage,
                 this->Watcher->GetComment().c_str(), 1023);
         this->Watcher->GetProcessInformation()->Progress =
           (this->Watcher->GetProcess()->GetProgress() *
            this->Watcher->GetFraction() + this->Watcher->GetStart());
         if (this->Watcher->GetFraction() != 1.0)
-          {
+        {
           this->Watcher->GetProcessInformation()->StageProgress =
             this->Watcher->GetProcess()->GetProgress();
-          }
+        }
 
         if (this->Watcher->GetProcessInformation()->Abort)
-          {
+        {
           this->Watcher->GetProcessInformation()->Progress = 0;
           this->Watcher->GetProcessInformation()->StageProgress = 0;
-          }
+        }
 
         if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
             && this->Watcher->GetProcessInformation()->ProgressCallbackClientData)
-          {
-          (*(this->Watcher->GetProcessInformation()->ProgressCallbackFunction))(this->Watcher->GetProcessInformation()->ProgressCallbackClientData);
-          }
-        }
-      else
         {
+          (*(this->Watcher->GetProcessInformation()->ProgressCallbackFunction))(this->Watcher->GetProcessInformation()->ProgressCallbackClientData);
+        }
+      }
+      else
+      {
         if (!this->Quiet)
-          {
+        {
           std::cout << "<filter-progress>"
                     << (this->Watcher->GetProcess()->GetProgress() *
                         this->Watcher->GetFraction()) + this->Watcher->GetStart()
                     << "</filter-progress>"
                     << std::endl;
           if (this->Watcher->GetFraction() != 1.0)
-            {
+          {
             std::cout << "<filter-stage-progress>"
                       << this->Watcher->GetProcess()->GetProgress()
                       << "</filter-stage-progress>"
                       << std::endl;
-            }
-          std::cout << std::flush;
           }
+          std::cout << std::flush;
         }
       }
+    }
   }
 
   //-----------------------------------------------------------------------------
@@ -237,22 +237,22 @@ vtkPluginFilterWatcher::~vtkPluginFilterWatcher()
 {
   // Remove any observers we have on the old process object
   if (this->Process)
-    {
+  {
     if (this->StartFilterCommand)
-      {
+    {
       this->Process->RemoveObserver(this->StartTag);
-      }
+    }
     if (this->EndFilterCommand)
-      {
+    {
       this->Process->RemoveObserver(this->EndTag);
-      }
+    }
     if (this->ProgressFilterCommand)
-      {
+    {
       this->Process->RemoveObserver(this->ProgressTag);
-      }
+    }
 
     this->Process->UnRegister(nullptr);
-    }
+  }
   this->StartFilterCommand->Delete();
   this->EndFilterCommand->Delete();
   this->ProgressFilterCommand->Delete();
@@ -263,7 +263,7 @@ void vtkPluginFilterWatcher::SetQuiet(bool val)
 {
   Quiet=val;
   if (this->ProgressFilterCommand)
-    {
+  {
     this->ProgressFilterCommand->SetQuiet(val);
-    }
+  }
 }

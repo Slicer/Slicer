@@ -58,9 +58,9 @@ void vtkMRMLVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=t
   Superclass::CopyContent(anode, deepCopy);
   vtkMRMLVolumeDisplayNode *node = vtkMRMLVolumeDisplayNode::SafeDownCast(anode);
   if (node)
-    {
+  {
     this->SetInputImageDataConnection(node->GetInputImageDataConnection());
-    }
+  }
   this->UpdateImageDataPipeline();
 }
 
@@ -70,9 +70,9 @@ void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents(vtkObject *caller,
                                                  void *callData)
 {
   if (event ==  vtkCommand::ModifiedEvent)
-    {
+  {
     this->UpdateImageDataPipeline();
-    }
+  }
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
@@ -112,9 +112,9 @@ void vtkMRMLVolumeDisplayNode
 ::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
 {
   if (this->GetInputImageDataConnection() == imageDataConnection)
-    {
+  {
     return;
-    }
+  }
   this->SetInputToImageDataPipeline(imageDataConnection);
   this->Modified();
 }

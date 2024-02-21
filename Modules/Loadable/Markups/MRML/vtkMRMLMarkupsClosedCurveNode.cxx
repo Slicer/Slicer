@@ -69,32 +69,32 @@ double vtkMRMLMarkupsClosedCurveNode::GetClosedCurveSurfaceArea(vtkMRMLMarkupsCl
 {
   vtkSmartPointer<vtkPolyData> surface;
   if (inputSurface)
-    {
+  {
     inputSurface->Reset();
     surface = inputSurface;
-    }
+  }
   else
-    {
+  {
     surface = vtkSmartPointer<vtkPolyData>::New();
-    }
+  }
   vtkPoints* curvePointsWorld = curveNode->GetCurvePointsWorld();
   if (curvePointsWorld == nullptr || curvePointsWorld->GetNumberOfPoints() == 0)
-    {
+  {
     return 0.0;
-    }
+  }
   bool success = false;
   if (projectWarp)
-    {
+  {
     success = vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(curvePointsWorld, surface);
-    }
+  }
   else
-    {
+  {
     success = vtkMRMLMarkupsClosedCurveNode::FitSurfaceDiskWarp(curvePointsWorld, surface);
-    }
+  }
   if (!success)
-    {
+  {
     return 0.0;
-    }
+  }
 
   vtkNew<vtkMassProperties> metrics;
   metrics->SetInputData(surface);
@@ -108,28 +108,28 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   vtkPolyData* surface, double vtkNotUsed(radiusScalingFactor)/*=1.0*/, vtkIdType numberOfInternalGridPoints/*=225*/)
 {
   if (!surface)
-    {
+  {
     vtkGenericWarningMacro("FitSurfaceProjectWarp failed: invalid surface");
     return false;
-    }
+  }
 
   if (!curvePoints)
-    {
+  {
     vtkGenericWarningMacro("FitSurfaceProjectWarp failed: invalid curvePoints");
     surface->Initialize();
     return false;
-    }
+  }
 
   // The triangulator needs a polygon, where the first and last points are different.
   // However, in the curve points, the first and last points are the same, therefore we remove the last point
   // by setting number of points to n-1.
   vtkIdType numberOfCurvePoints = curvePoints->GetNumberOfPoints()-1;
   if (numberOfCurvePoints < 3)
-    {
+  {
     // less than 3 points means that the surface is empty
     surface->Initialize();
     return true;
-    }
+  }
 
   // Create a polydata containing a single polygon of the curve points
   vtkNew<vtkPolyData> inputSurface;
@@ -137,9 +137,9 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   vtkNew<vtkCellArray> polys;
   polys->InsertNextCell(numberOfCurvePoints);
   for (int i = 0; i < numberOfCurvePoints; i++)
-    {
+  {
     polys->InsertCellPoint(i);
-    }
+  }
   polys->Modified();
   inputSurface->SetPolys(polys);
 
@@ -155,10 +155,10 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   // The triangulator requires all points to be on the XY plane
   vtkNew<vtkMatrix4x4> transformToBestFitPlaneMatrix;
   if (!vtkAddonMathUtilities::FitPlaneToPoints(inputSurface->GetPoints(), transformToBestFitPlaneMatrix))
-    {
+  {
     surface->Initialize();
     return false;
-    }
+  }
   vtkNew<vtkTransform> transformToXYPlane;
   transformToXYPlane->SetMatrix(transformToBestFitPlaneMatrix); // set XY plane -> best-fit plane
   transformToXYPlane->Inverse(); // // change the transform to: set best-fit plane -> XY plane
@@ -166,10 +166,10 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   transformToXYPlane->TransformPoints(cleanedCurvePoints, pointsOnPlane);
   inputSurface->SetPoints(pointsOnPlane);
   for (vtkIdType i = 0; i < numberOfCurvePoints; i++)
-    {
+  {
     double* pt = pointsOnPlane->GetPoint(i);
     pointsOnPlane->SetPoint(i, pt[0], pt[1], 0.0);
-    }
+  }
 
   // Ensure points are in counter-clockwise direction
   // (that indicates to Delaunay2D that it is a polygon to be
@@ -177,17 +177,17 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   vtkNew<vtkIdList> cleanedCurvePointIds;
   polys->GetCell(0, cleanedCurvePointIds);
   if (vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(pointsOnPlane, cleanedCurvePointIds))
-    {
+  {
     vtkIdType numberOfCleanedCurvePointIds = cleanedCurvePointIds->GetNumberOfIds();
     vtkNew<vtkCellArray> reversePolys;
     reversePolys->InsertNextCell(numberOfCleanedCurvePointIds);
     for (vtkIdType i = 0; i < numberOfCleanedCurvePointIds; i++)
-      {
+    {
       reversePolys->InsertCellPoint(cleanedCurvePointIds->GetId(numberOfCleanedCurvePointIds-1-i));
-      }
+    }
     reversePolys->Modified();
     inputSurface->SetPolys(reversePolys);
-    }
+  }
 
   // Add set of internal points to improve triangulation quality.
   // We already have many points on the boundary but no points inside the polygon.
@@ -204,29 +204,29 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   // 2.  rows/cols = height/width
   vtkIdType rows = 1;
   if (height > width / numberOfInternalGridPoints)
-    {
+  {
     rows = static_cast<vtkIdType>(sqrt(numberOfInternalGridPoints * height / width));
     if (rows>numberOfInternalGridPoints)
-      {
+    {
       rows = numberOfInternalGridPoints;
-      }
     }
+  }
   vtkIdType cols = numberOfInternalGridPoints / rows;
   if (cols < 1)
-    {
+  {
     cols = 1;
-    }
+  }
   double colSpacing = width / cols;
   double rowSpacing = height / rows;
   double colStart = bounds[0] + 0.5 * colSpacing;
   double rowStart = bounds[2] + 0.5 * rowSpacing;
   for (vtkIdType row = 0; row < rows; row++)
-    {
+  {
     for (vtkIdType col = 0; col < cols; col++)
-      {
+    {
       pointsOnPlane->InsertNextPoint(colStart + colSpacing * col, rowStart + rowSpacing * row, 0.0);
-      }
     }
+  }
 
   vtkNew<vtkDelaunay2D> triangulator;
   triangulator->SetInputData(inputSurface);
@@ -240,11 +240,11 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   bool warningFound = false;
   std::string messageStr = messages->GetAllMessagesAsString(&errorFound, &warningFound);
   if (errorFound || warningFound)
-    {
+  {
     vtkGenericWarningMacro("FitSurfaceProjectWarp failed: error triangulating the surface area of the closed curve. Details: " << messageStr);
     surface->Initialize();
     return false;
-    }
+  }
 
   vtkPolyData* triangulatedSurface = triangulator->GetOutput();
   vtkPoints* triangulatedSurfacePoints = triangulatedSurface->GetPoints();
@@ -258,10 +258,10 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
   sourceLandmarkPoints->SetNumberOfPoints(numberOfRegistrationLandmarkPoints);
   targetLandmarkPoints->SetNumberOfPoints(numberOfRegistrationLandmarkPoints);
   for (vtkIdType landmarkPointIndex = 0; landmarkPointIndex < numberOfRegistrationLandmarkPoints; landmarkPointIndex++)
-    {
+  {
     sourceLandmarkPoints->SetPoint(landmarkPointIndex, triangulatedSurfacePoints->GetPoint(landmarkPointIndex*step));
     targetLandmarkPoints->SetPoint(landmarkPointIndex, cleanedCurvePoints->GetPoint(landmarkPointIndex*step));
-    }
+  }
 
   vtkNew<vtkThinPlateSplineTransform> landmarkTransform;
   // Disable regularization to make sure transformation is correct even if source or target points are coplanar
@@ -287,14 +287,14 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceProjectWarp(vtkPoints* curvePoints
 bool vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(vtkPoints* points, vtkIdList* pointIds/*=nullptr*/)
 {
   if (!points)
-    {
+  {
     return false;
-    }
+  }
   vtkIdType numberOfPoints = (pointIds!=nullptr ? pointIds->GetNumberOfIds() : points->GetNumberOfPoints());
   if (numberOfPoints < 3)
-    {
+  {
     return false;
-    }
+  }
 
   // Find the bottom-left point (it is on the convex hull) of the polygon,
   // and check sign of cross-product of the edges before and after that point.
@@ -305,32 +305,32 @@ bool vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(vtkPoints* points, vtkIdL
   double minY = point0[1];
   vtkIdType cornerPointIndex = 0;
   for (vtkIdType i = 1; i < numberOfPoints; i++)
-    {
+  {
     vtkIdType pointId = (pointIds != nullptr ? pointIds->GetId(i) : i);
     double* p = points->GetPoint(pointId);
     if ((p[1] < minY) || ((p[1] == minY) && (p[0] < minX)))
-      {
+    {
       cornerPointIndex = i;
       minX = p[0];
       minY = p[1];
-      }
     }
+  }
 
   double p1[3];
   double p2[3];
   double p3[3];
   if (pointIds != nullptr)
-    {
+  {
     points->GetPoint(pointIds->GetId((cornerPointIndex - 1 + numberOfPoints) % numberOfPoints), p1);
     points->GetPoint(pointIds->GetId(cornerPointIndex), p2);
     points->GetPoint(pointIds->GetId((cornerPointIndex + 1) % numberOfPoints), p3);
-    }
+  }
   else
-    {
+  {
     points->GetPoint((cornerPointIndex - 1 + numberOfPoints) % numberOfPoints, p1);
     points->GetPoint(cornerPointIndex, p2);
     points->GetPoint((cornerPointIndex + 1) % numberOfPoints, p3);
-    }
+  }
   double det = p2[0] * p3[1] - p2[1] * p3[0] - p1[0] * p3[1] + p1[0] * p2[1] + p1[1] * p3[0] - p1[1] * p2[0];
   return (det < 0);
 }
@@ -340,9 +340,9 @@ bool vtkMRMLMarkupsClosedCurveNode::IsPolygonClockwise(vtkPoints* points, vtkIdL
 bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceDiskWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor/*=1.0*/)
 {
   if (!curvePoints || !surface)
-    {
+  {
     return false;
-    }
+  }
 
   // Transform a unit disk to the curve circumference using thin-plate spline interpolation.
   // It does not guarantee minimum area surface but at least it is a smooth surface that tightly
@@ -361,12 +361,12 @@ bool vtkMRMLMarkupsClosedCurveNode::FitSurfaceDiskWarp(vtkPoints* curvePoints, v
   vtkNew<vtkPoints> targetLandmarkPoints; // curve points
   targetLandmarkPoints->SetNumberOfPoints(numberOfLandmarkPoints);
   for (vtkIdType landmarkPointIndex = 0; landmarkPointIndex < numberOfLandmarkPoints; ++landmarkPointIndex)
-    {
+  {
     double angle = double(landmarkPointIndex) / double(numberOfLandmarkPoints) * 2.0 * vtkMath::Pi();
     vtkIdType curvePointIndex = vtkMath::Round(round(double(landmarkPointIndex) / double(numberOfLandmarkPoints) * numberOfCurvePoints));
     sourceLandmarkPoints->SetPoint(landmarkPointIndex, cos(angle), sin(angle), 0);
     targetLandmarkPoints->SetPoint(landmarkPointIndex, curvePoints->GetPoint(curvePointIndex));
-    }
+  }
 
   vtkNew<vtkThinPlateSplineTransform> landmarkTransform;
   // Disable regularization to make sure transformation is correct even if source or target points are coplanar

@@ -57,9 +57,9 @@ void qMRMLColorModelTester::init()
 void qMRMLColorModelTester::cleanup()
 {
   if (this->ColorModel == nullptr)
-    {
+  {
     return;
-    }
+  }
   delete this->ColorModel;
 }
 

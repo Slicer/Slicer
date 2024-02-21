@@ -76,10 +76,10 @@ vtkMRMLAnnotationROINode::~vtkMRMLAnnotationROINode()
 {
   vtkDebugMacro("Destructing...." << (this->GetID() != nullptr ? this->GetID() : "null id"));
   if (this->LabelText)
-    {
+  {
     delete [] this->LabelText;
     this->LabelText = nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -89,13 +89,13 @@ void vtkMRMLAnnotationROINode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   if (this->VolumeNodeID != nullptr)
-    {
+  {
     of << " volumeNodeID=\"" << this->VolumeNodeID << "\"";
-    }
+  }
   if (this->LabelText != nullptr)
-    {
+  {
     of << " labelText=\"" << this->LabelText << "\"";
-    }
+  }
 
   // we do not have to write out the coordinates since the controlPointNode does that
   /*of << " xyz=\""
@@ -127,14 +127,14 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
   const char* attValue;
 
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
 
     // this is for backwards compatibility
     // we need to parse XYZ and RadiusXYZ and store the values in the new annotation controlPoints framework
     if (!strcmp(attName, "XYZ") || !strcmp(attName, "xyz"))
-      {
+    {
       std::stringstream ss;
       double val;
       ss << attValue;
@@ -142,15 +142,15 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
       double newVal[3] = {0,0,0};
 
       for(int i=0; i<3; i++)
-        {
+      {
         ss >> val;
         newVal[i] = val;
-        }
+      }
 
       this->SetXYZ(newVal[0],newVal[1],newVal[2]);
-      }
+    }
     if (!strcmp(attName, "RadiusXYZ") || !strcmp(attName, "radiusXYZ"))
-      {
+    {
       std::stringstream ss;
       double val;
       ss << attValue;
@@ -158,35 +158,35 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
       double newVal[3] = {0,0,0};
 
       for(int i=0; i<3; i++)
-        {
+      {
         ss >> val;
         newVal[i] = val;
-        }
+      }
 
       this->SetRadiusXYZ(newVal[0],newVal[1],newVal[2]);
-      }
+    }
     // end of backwards compatibility
 
 
     if (!strcmp(attName, "Selected") || !strcmp(attName, "selected"))
-      {
+    {
       if (!strcmp(attValue,"true"))
-        {
+      {
         this->Selected = 1;
-        }
+      }
       else
-        {
+      {
         this->Selected = 0;
-        }
       }
+    }
     else if (!strcmp(attName, "VolumeNodeID") || !strcmp(attName, "volumeNodeID"))
-      {
+    {
       this->SetVolumeNodeID(attValue);
-      }
+    }
     else if (!strcmp(attName, "LabelText") || !strcmp(attName, "labelText"))
-      {
+    {
       this->SetLabelText(attValue);
-      }
+    }
     /*else if (!strcmp(attName, "Visibility") || !strcmp(attName, "visibility"))
       {
       if (!strcmp(attValue,"true"))
@@ -199,29 +199,29 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
         }
       }*/
     else if (!strcmp(attName, "InteractiveMode") || !strcmp(attName, "interactiveMode"))
-      {
+    {
       if (!strcmp(attValue,"true"))
-        {
+      {
         this->InteractiveMode = 1;
-        }
-      else
-        {
-        this->InteractiveMode = 0;
-        }
       }
-    else if (!strcmp(attName, "InsideOut") || !strcmp(attName, "insideOut"))
+      else
       {
-      if (!strcmp(attValue,"true"))
-        {
-        this->InsideOut = 1;
-        }
-      else
-        {
-        this->InsideOut = 0;
-        }
+        this->InteractiveMode = 0;
       }
-
     }
+    else if (!strcmp(attName, "InsideOut") || !strcmp(attName, "insideOut"))
+    {
+      if (!strcmp(attValue,"true"))
+      {
+        this->InsideOut = 1;
+      }
+      else
+      {
+        this->InsideOut = 0;
+      }
+    }
+
+  }
 
   this->EndModify(disabledModify);
 
@@ -236,13 +236,13 @@ void vtkMRMLAnnotationROINode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=t
   //  vtkObject::Copy(anode);
   vtkMRMLAnnotationROINode *node = vtkMRMLAnnotationROINode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
   if (node->GetLabelText())
-    {
+  {
     this->SetLabelText(node->GetLabelText());
-    }
+  }
   this->SetInteractiveMode(node->InteractiveMode);
   this->SetInsideOut(node->InsideOut);
 }
@@ -264,9 +264,9 @@ void vtkMRMLAnnotationROINode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
-    {
+  {
     this->Modified();
-    }
+  }
 
   // Not necessary bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode
   // => will be taken care of  in vtkMRMLModelNode
@@ -277,15 +277,15 @@ void vtkMRMLAnnotationROINode::PrintAnnotationInfo(ostream& os, vtkIndent indent
 {
   //cout << "vtkMRMLAnnotationROINode::PrintAnnotationInfo" << endl;
   if (titleFlag)
-    {
+  {
 
       os <<indent << "vtkMRMLAnnotationROINode: Annotation Summary";
       if (this->GetName())
-    {
+      {
       os << " of " << this->GetName();
-    }
+      }
       os << endl;
-    }
+  }
 
   Superclass::PrintAnnotationInfo(os, indent, 0);
 
@@ -320,9 +320,9 @@ double vtkMRMLAnnotationROINode::GetROIAnnotationScale()
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
-    {
+  {
       return 0;
-    }
+  }
   return node->GetTextScale();
 }
 
@@ -332,10 +332,10 @@ void vtkMRMLAnnotationROINode::SetROIAnnotationScale(double init)
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
 
   if (!node)
-    {
+  {
       vtkErrorMacro("AnnotationROI: "<< this->GetName() << " cannot get AnnotationTextDisplayNode");
       return;
-    }
+  }
   node->SetTextScale(init);
 }
 
@@ -357,10 +357,10 @@ bool vtkMRMLAnnotationROINode::GetXYZ(double point[3])
 {
   point[0] = point[1] = point[2] = 0.0;
   if (this->GetPoints())
-    {
+  {
     this->GetPoints()->GetPoint(0, point);
     return true;
-    }
+  }
   return false;
 }
 
@@ -369,10 +369,10 @@ bool vtkMRMLAnnotationROINode::GetRadiusXYZ(double point[3])
 {
   point[0] = point[1] = point[2] = 0.0;
   if (this->GetPoints())
-    {
+  {
     this->GetPoints()->GetPoint(1, point);
     return true;
-    }
+  }
   return false;
 }
 
@@ -385,13 +385,13 @@ int vtkMRMLAnnotationROINode::SetControlPoint(int id, double newControl[3])
 
   int flag = Superclass::SetControlPoint(id, newControl,1,1);
   if (!flag)
-    {
+  {
       return 0;
-    }
+  }
   if (this->GetNumberOfControlPoints() < 2)
-    {
+  {
       return 1;
-    }
+  }
 
   this->AddLine(0,1,1,1);
   return 1;
@@ -402,9 +402,9 @@ double* vtkMRMLAnnotationROINode::GetPointColor()
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
-    {
+  {
       return nullptr;
-    }
+  }
   return node->GetSelectedColor();
 }
 
@@ -413,10 +413,10 @@ void vtkMRMLAnnotationROINode::SetPointColor(double initColor[3])
 {
   vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
   if (!node)
-    {
+  {
       vtkErrorMacro("AnnotationROI: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
       return;
-    }
+  }
   node->SetSelectedColor(initColor);
 }
 
@@ -425,9 +425,9 @@ double* vtkMRMLAnnotationROINode::GetROIAnnotationTextColor()
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
-    {
+  {
       return nullptr;
-    }
+  }
   return node->GetSelectedColor();
 }
 
@@ -436,10 +436,10 @@ void vtkMRMLAnnotationROINode::SetROIAnnotationTextColor(double initColor[3])
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (!node)
-    {
+  {
       vtkErrorMacro("AnnotationROI: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
       return;
-    }
+  }
   node->SetSelectedColor(initColor);
 }
 
@@ -448,9 +448,9 @@ double* vtkMRMLAnnotationROINode::GetLineColor()
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
-    {
+  {
       return nullptr;
-    }
+  }
   return node->GetSelectedColor();
 }
 
@@ -459,10 +459,10 @@ void vtkMRMLAnnotationROINode::SetLineColor(double initColor[3])
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (!node)
-    {
+  {
       vtkErrorMacro("AnnotationROI: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
       return;
-    }
+  }
   node->SetSelectedColor(initColor);
 }
 
@@ -492,10 +492,10 @@ void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatri
 
   vtkBoundingBox boundingBox_Transformed;
   for (int i = 0; i < numberOfCornerPoints; i++)
-    {
+  {
     double* cornerPoint_Transformed = transformMatrix->MultiplyDoublePoint(cornerPoints_Local[i]);
     boundingBox_Transformed.AddPoint(cornerPoint_Transformed);
-    }
+  }
 
   double center_Transformed[3] = { 0 };
   boundingBox_Transformed.GetCenter(center_Transformed);
@@ -514,10 +514,10 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
 {
   vtkHomogeneousTransform* linearTransform = vtkHomogeneousTransform::SafeDownCast(transform);
   if (linearTransform)
-    {
+  {
     this->ApplyTransformMatrix(linearTransform->GetMatrix());
     return;
-    }
+  }
 
   vtkErrorMacro("vtkMRMLAnnotationROINode::ApplyTransform is only supported for linear transforms");
 }
@@ -535,10 +535,10 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
   this->GetRadiusXYZ(RadiusXYZ);
 
   for (i=0; i<3; i++)
-    {
+  {
     bounds[2*i  ] = XYZ[i] - RadiusXYZ[i];
     bounds[2*i+1] = XYZ[i] + RadiusXYZ[i];
-    }
+  }
   vtkSmartPointer<vtkPoints> boxPoints =
       vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
   boxPoints->SetNumberOfPoints(8);
@@ -555,19 +555,19 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   if (tnode != nullptr)
-    {
+  {
     vtkNew<vtkGeneralTransform> transform;
     tnode->GetTransformToWorld(transform.GetPointer());
 
     for(unsigned int idx = 0; idx < 8; ++idx)
-      {
+    {
       double oldPoint[3] = {0., 0., 0.};
       boxPoints->GetPoint(idx, oldPoint);
 
       double newPoint[3] = {0., 0., 0.};
       transform->TransformPoint(oldPoint, newPoint);
       boxPoints->SetPoint(idx, newPoint);
-      }
+    }
   }
 
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
@@ -657,19 +657,19 @@ void vtkMRMLAnnotationROINode::GetBounds(double bounds[6])
 {
   vtkMath::UninitializeBounds(bounds);
   if (this->GetPolyData() == nullptr)
-    {
+  {
     return;
-    }
+  }
   double centerPoint[3]={0};
   if (!this->GetXYZ(centerPoint))
-    {
+  {
     return;
-    }
+  }
   double radius[3]={0};
   if (!this->GetRadiusXYZ(radius))
-    {
+  {
     return;
-    }
+  }
   bounds[0]=centerPoint[0]-radius[0];
   bounds[1]=centerPoint[0]+radius[0];
   bounds[2]=centerPoint[1]-radius[1];

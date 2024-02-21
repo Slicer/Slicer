@@ -84,9 +84,9 @@ qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::New()
 {
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkInternalLightBoxRendererManagerProxy");
   if (ret)
-    {
+  {
     return static_cast<qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy*>(ret);
-    }
+  }
 
   qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy* result =
     new qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy;
@@ -112,9 +112,9 @@ qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::~vtkInternalLigh
 vtkRenderer* qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::GetRenderer(int id)
 {
   if (this->LightBoxRendererManager)
-    {
+  {
     return this->LightBoxRendererManager->GetRenderer(id);
-    }
+  }
   return nullptr;
 }
 
@@ -143,17 +143,17 @@ qMRMLSliceViewPrivate::qMRMLSliceViewPrivate(qMRMLSliceView& object)
 qMRMLSliceViewPrivate::~qMRMLSliceViewPrivate()
 {
   if (this->DisplayableManagerGroup)
-    {
+  {
     this->DisplayableManagerGroup->Delete();
-    }
+  }
   if (this->InteractorObserver)
-    {
+  {
     this->InteractorObserver->Delete();
-    }
+  }
   if (this->LightBoxRendererManagerProxy)
-    {
+  {
     this->LightBoxRendererManagerProxy->Delete();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -201,12 +201,12 @@ void qMRMLSliceViewPrivate::initDisplayableManagers()
   displayableManagers << "vtkMRMLRulerDisplayableManager";
   displayableManagers << "vtkMRMLScalarBarDisplayableManager";
   foreach(const QString& displayableManager, displayableManagers)
-    {
+  {
     if (!factory->IsDisplayableManagerRegistered(displayableManager.toUtf8()))
-      {
+    {
       factory->RegisterDisplayableManager(displayableManager.toUtf8());
-      }
     }
+  }
 
   this->DisplayableManagerGroup
     = factory->InstantiateDisplayableManagers(
@@ -227,9 +227,9 @@ void qMRMLSliceViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_Q(qMRMLSliceView);
   if (newScene == this->MRMLScene)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
@@ -263,9 +263,9 @@ void qMRMLSliceViewPrivate::updateWidgetFromMRML()
 {
   Q_Q(qMRMLSliceView);
   if (!this->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
   q->lightBoxRendererManager()->SetRenderWindowLayout(
     this->MRMLSliceNode->GetLayoutGridRows(),
     this->MRMLSliceNode->GetLayoutGridColumns());
@@ -322,14 +322,14 @@ void qMRMLSliceView::getDisplayableManagers(vtkCollection *displayableManagers)
   Q_D(qMRMLSliceView);
 
   if (!displayableManagers)
-    {
+  {
     return;
-    }
+  }
   int num = d->DisplayableManagerGroup->GetDisplayableManagerCount();
   for (int n = 0; n < num; n++)
-    {
+  {
     displayableManagers->AddItem(d->DisplayableManagerGroup->GetNthDisplayableManager(n));
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -347,9 +347,9 @@ void qMRMLSliceView::setMRMLScene(vtkMRMLScene* newScene)
   d->setMRMLScene(newScene);
 
   if (d->MRMLSliceNode && newScene != d->MRMLSliceNode->GetScene())
-    {
+  {
     this->setMRMLSliceNode(nullptr);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -357,9 +357,9 @@ void qMRMLSliceView::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
   Q_D(qMRMLSliceView);
   if (d->MRMLSliceNode == newSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->qvtkReconnect(
     d->MRMLSliceNode, newSliceNode,
@@ -400,13 +400,13 @@ QList<double> qMRMLSliceView::convertDeviceToXYZ(const QList<int>& xy)const
       d->DisplayableManagerGroup->GetDisplayableManagerByClassName(
         "vtkMRMLCrosshairDisplayableManager"));
   if (cmgr)
-    {
+  {
     double xyz[3];
     cmgr->ConvertDeviceToXYZ(xy[0], xy[1], xyz);
     QList<double> ret;
     ret << xyz[0] << xyz[1] << xyz[2];
     return ret;
-    }
+  }
 
   QList<double> ret;
   ret << 0. << 0. << 0.;
@@ -425,14 +425,14 @@ QList<double> qMRMLSliceView::convertRASToXYZ(const QList<double>& ras)const
       d->DisplayableManagerGroup->GetDisplayableManagerByClassName(
         "vtkMRMLCrosshairDisplayableManager"));
   if (cmgr)
-    {
+  {
     double rasv[3], xyz[3];
     rasv[0] = ras[0]; rasv[1] = ras[1]; rasv[2] = ras[2];
     cmgr->ConvertRASToXYZ(rasv, xyz);
     QList<double> ret;
     ret << xyz[0] << xyz[1] << xyz[2];
     return ret;
-    }
+  }
 
   QList<double> ret;
   ret << 0. << 0. << 0.;
@@ -451,14 +451,14 @@ QList<double> qMRMLSliceView::convertXYZToRAS(const QList<double>& xyz)const
       d->DisplayableManagerGroup->GetDisplayableManagerByClassName(
         "vtkMRMLCrosshairDisplayableManager"));
   if (cmgr)
-    {
+  {
     double xyzv[3], ras[3];
     xyzv[0] = xyz[0]; xyzv[1] = xyz[1]; xyzv[2] = xyz[2];
     cmgr->ConvertXYZToRAS(xyzv, ras);
     QList<double> ret;
     ret << ras[0] << ras[1] << ras[2];
     return ret;
-    }
+  }
 
   QList<double> ret;
   ret << 0. << 0. << 0.;
@@ -470,9 +470,9 @@ void qMRMLSliceView::setViewCursor(const QCursor &cursor)
 {
   this->setCursor(cursor);
   if (this->VTKWidget() != nullptr)
-    {
+  {
     this->VTKWidget()->setCursor(cursor);  // TODO: test if cursor settings works
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -480,20 +480,20 @@ void qMRMLSliceView::unsetViewCursor()
 {
   this->unsetCursor();
   if (this->VTKWidget() != nullptr)
-    {
+  {
     // TODO: it would be better to restore default cursor, but QVTKOpenGLNativeWidget
     // API does not have an accessor method to the default cursor.
     this->VTKWidget()->setCursor(QCursor(Qt::ArrowCursor));  // TODO: test if cursor settings works
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSliceView::setDefaultViewCursor(const QCursor &cursor)
 {
   if (this->VTKWidget() != nullptr)
-    {
+  {
     this->VTKWidget()->setDefaultCursor(cursor);  // TODO: test if cursor settings works
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -503,10 +503,10 @@ void qMRMLSliceView::dragEnterEvent(QDragEnterEvent* event)
   vtkNew<vtkIdList> shItemIdList;
   qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(event->mimeData(), shItemIdList);
   if (shItemIdList->GetNumberOfIds() > 0)
-    {
+  {
     event->accept();
     return;
-    }
+  }
   Superclass::dragEnterEvent(event);
 }
 
@@ -517,14 +517,14 @@ void qMRMLSliceView::dropEvent(QDropEvent* event)
   vtkNew<vtkIdList> shItemIdList;
   qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(event->mimeData(), shItemIdList);
   if (!shItemIdList->GetNumberOfIds())
-    {
+  {
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->MRMLScene);
   if (!shNode)
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: invalid subject hierarchy node";
     return;
-    }
+  }
   shNode->ShowItemsInView(shItemIdList, this->mrmlSliceNode());
 }

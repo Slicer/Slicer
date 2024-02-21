@@ -113,23 +113,23 @@ void qSlicerSubjectHierarchyCloneNodePlugin::showContextMenuActionsForItem(vtkId
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
 
   if (!itemID || itemID == shNode->GetSceneItemID())
-    {
+  {
     // There are no scene actions in this plugin
     return;
-    }
+  }
 
   vtkIdType parentItemID = shNode->GetItemParent(itemID);
   if (parentItemID && shNode->IsItemVirtualBranchParent(parentItemID))
-    {
+  {
     // This generic plugin does not know how to clone virtual branch items
     return;
-    }
+  }
 
   // Show clone node for every non-scene items
   d->CloneItemAction->setVisible(true);
@@ -141,23 +141,23 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentItem()
   // Get currently selected node and scene
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
   if (!currentItemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy item!";
     return;
-    }
+  }
 
   vtkIdType clonedItemID = vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(shNode, currentItemID);
   if (!clonedItemID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to clone subject hierarchy item (ID:"
         << currentItemID << ", name:" << shNode->GetItemName(currentItemID).c_str() << ")";
-    }
+  }
 
   // Trigger update
   emit requestInvalidateFilter();

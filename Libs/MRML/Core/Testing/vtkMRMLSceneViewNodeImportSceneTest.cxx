@@ -46,12 +46,12 @@ int populateScene(vtkMRMLScene* scene, bool saveInSceneView)
   displayableNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 
   if (saveInSceneView)
-    {
+  {
     vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
     scene->AddNode(sceneViewNode.GetPointer());
 
     sceneViewNode->StoreScene();
-    }
+  }
 
   scene->RemoveNode(displayableNode.GetPointer());
   return EXIT_SUCCESS;

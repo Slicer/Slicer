@@ -30,16 +30,16 @@ vtkUserTagTable::vtkUserTagTable()
 vtkUserTagTable::~vtkUserTagTable()
 {
   if ( this->TagTable )
-    {
+  {
     int numcols = this->TagTable->GetNumberOfColumns();
     for ( int i=numcols-1; i >= 0; i-- )
-      {
+    {
       this->TagTable->RemoveColumn ( i );
-      }
+    }
 
     this->TagTable->Delete();
     this->TagTable = nullptr;
-    }
+  }
 }
 
 
@@ -56,17 +56,17 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, const char *valu
 {
 
   if ( this->TagTable && keyword != nullptr )
-    {
+  {
     if ( value == nullptr )
-      {
+    {
       value = "NULL";
-      }
+    }
 
     if ( this->CheckTableForKeyword ( keyword ) == 1 )
-      {
+    {
       vtkErrorMacro ( "Already a tag specified for keyword " << keyword << ". Not adding the value " << value << "to the user tags." );
       return ( 0 );
-      }
+    }
     //--- add a new column whose name is
     //--- the new keyword, and whose value
     //--- is given by 'value'.
@@ -76,7 +76,7 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, const char *valu
     a->SetValue ( 0, value );
     this->TagTable->AddColumn ( a );
     a->Delete();
-    }
+  }
   return (1 );
 }
 
@@ -86,22 +86,22 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, void *value)
 {
 
   if ( this->TagTable && keyword != nullptr )
-    {
+  {
       std::stringstream ss;
     if ( value != nullptr )
-      {
+    {
       ss << value;
-      }
+    }
     else
-      {
+    {
       ss << "NULL";
-      }
+    }
 
     if ( this->CheckTableForKeyword ( keyword ) == 1 )
-      {
+    {
       vtkErrorMacro ( "Already a tag specified for keyword " << keyword << ". Not adding the value " << value << "to the user tags." );
       return ( 0 );
-      }
+    }
     //--- add a new column whose name is
     //--- the new keyword, and whose value
     //--- is given by 'value'.
@@ -111,7 +111,7 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, void *value)
     a->SetValue ( 0, ss.str().c_str() );
     this->TagTable->AddColumn ( a );
     a->Delete();
-    }
+  }
   return (1 );
 }
 
@@ -122,15 +122,15 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, void *value)
 const char * vtkUserTagTable::GetUserTagKeyword ( int index)
 {
   if ( this->TagTable )
-    {
+  {
     int numcols = this->TagTable->GetNumberOfColumns();
 
     if ( index < numcols )
-      {
+    {
       //--- return the keyword in this keyword-value column
       return ( this->TagTable->GetColumnName( index ) );
-      }
     }
+  }
   return ( nullptr );
 }
 
@@ -139,16 +139,16 @@ const char * vtkUserTagTable::GetUserTagKeyword ( int index)
 int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
 {
   if ( this->TagTable )
-    {
+  {
     int numcols = this->TagTable->GetNumberOfColumns();
     for ( int i=0; i < numcols; i++ )
-      {
+    {
       if ( !strcmp ( this->TagTable->GetColumnName( i ), keyword ))
-        {
+      {
         return (i);
-        }
       }
     }
+  }
     return ( -1 );
 }
 
@@ -157,17 +157,17 @@ int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
 
 //----------------------------------------------------------------------------
  const char * vtkUserTagTable::GetUserTagValue ( int index)
-{
+ {
   char * returnString = nullptr;
   const char *val;
   vtkVariant d;
   std::string s;
 
   if ( this->TagTable )
-    {
+  {
     int numcols = this->TagTable->GetNumberOfColumns();
     if ( index < numcols )
-      {
+    {
       //--- get the value in this keyword-value column.
       d = this->TagTable->GetValue ( 0, index );
       s = d.ToString();
@@ -176,10 +176,10 @@ int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
       char *cptr = new char[n];
       returnString = cptr;
       do { *cptr++ = *val++; } while ( --n );
-      }
     }
+  }
   return (returnString);
-}
+ }
 
 
 //----------------------------------------------------------------------------
@@ -191,15 +191,15 @@ const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
   std::string ss;
 
   if ( this->TagTable )
-    {
+  {
     int numcols = this->TagTable->GetNumberOfColumns();
     for ( int i=0; i < numcols; i++ )
-      {
+    {
       //--- get each column in table and check to see if
       //--- its name matches the keyword.
       vtkStringArray *s =  vtkStringArray::SafeDownCast ( this->TagTable->GetColumn(i) );
       if ( !strcmp (keyword,  s->GetName() ) )
-        {
+      {
         //--- if we have a match, return the keyword's value
         d = this->TagTable->GetValue ( 0, i);
         ss = d.ToString();
@@ -209,65 +209,65 @@ const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
         char *cptr = new char[n];
         returnString = cptr;
         do { *cptr++ = *val++; } while ( --n );
-        }
       }
     }
+  }
   return  (returnString );
 }
 
 
 //----------------------------------------------------------------------------
  int vtkUserTagTable::CheckTableForKeyword ( const char *keyword)
-{
+ {
   if ( this->TagTable )
-    {
+  {
     std::stringstream ss;
     int numcols = this->TagTable->GetNumberOfColumns();
     for ( int i=0; i < numcols; i++ )
-      {
+    {
       //--- get each column in table and check to see if
       //--- its name matches the keyword.
       vtkStringArray *s =  vtkStringArray::SafeDownCast ( this->TagTable->GetColumn(i) );
       ss << s->GetName ( );
       if ( !strcmp (keyword,  ss.str().c_str() ) )
-        {
+      {
         //--- if the keyword is here, return 1,
         //--- otherwise return 0
         return ( 1 );
-        }
       }
     }
+  }
   return ( 0 );
-}
+ }
 
 
 //----------------------------------------------------------------------------
  int vtkUserTagTable::DeleteKeywordValuePair ( int index )
-{
+ {
   if ( this->TagTable )
-    {
+  {
     int numcols = this->TagTable->GetNumberOfColumns();
     if ( index < numcols )
-      {
+    {
       this->TagTable->RemoveColumn ( index );
       return ( 1 );
-      }
     }
+  }
   return ( 0 );
-}
+ }
 
 
 //----------------------------------------------------------------------------
 int vtkUserTagTable::GetNumberOfColumns ()
 {
   if ( this->TagTable )
-    {
+  {
     return (this->TagTable->GetNumberOfColumns() );
-    }
+  }
   else
-    {
+  {
     return 0;
-    }
+  }
 }
 
 
@@ -276,23 +276,23 @@ int vtkUserTagTable::GetNumberOfColumns ()
 int vtkUserTagTable::DeleteKeywordValuePair ( const char *keyword  )
 {
   if ( this->TagTable )
-    {
+  {
     std::stringstream ss;
     int numcols = this->TagTable->GetNumberOfColumns();
     for ( int i=0; i < numcols; i++ )
-      {
+    {
       //--- find what column keyword is in
       int col = this->GetKeywordColumn ( keyword );
       if ( col >= 0 && col < numcols )
-        {
+      {
         //--- try to delete it and return 1 if successful.
         if ( this->DeleteKeywordValuePair ( col ) )
-          {
+        {
           return (1 );
-          }
         }
       }
     }
+  }
   return ( 0 );
 }
 

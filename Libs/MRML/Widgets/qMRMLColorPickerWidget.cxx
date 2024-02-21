@@ -132,17 +132,17 @@ void qMRMLColorPickerWidget::setCurrentColorNodeToDefault()
 {
   Q_D(qMRMLColorPickerWidget);
   if (!this->mrmlScene())
-    {
+  {
     return;
-    }
+  }
   vtkMRMLNode* defaultColorNode =
     this->mrmlScene()->GetNodeByID( d->ColorLogic.GetPointer() != nullptr ?
                                     d->ColorLogic->GetDefaultEditorColorNodeID() :
                                     nullptr);
   if (defaultColorNode)
-    {
+  {
     this->setCurrentColorNode(defaultColorNode);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -153,9 +153,9 @@ void qMRMLColorPickerWidget::onNodeAdded(vtkObject* scene, vtkObject* nodeObject
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
   if (node != nullptr && d->ColorLogic.GetPointer() != nullptr &&
       QString(node->GetID()) == d->ColorLogic->GetDefaultEditorColorNodeID())
-    {
+  {
     this->setCurrentColorNode(node);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -165,11 +165,11 @@ void qMRMLColorPickerWidget::setMRMLScene(vtkMRMLScene* scene)
   this->setCurrentColorNode(nullptr); // eventually disconnect NodeAddedEvent
   this->qMRMLWidget::setMRMLScene(scene);
   if (scene && !d->ColorTableComboBox->currentNode())
-    {
+  {
     this->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent,
                       this, SLOT(onNodeAdded(vtkObject*,vtkObject*)));
     this->setCurrentColorNodeToDefault();
-   }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -181,12 +181,12 @@ void qMRMLColorPickerWidget::onCurrentColorNodeChanged(vtkMRMLNode* colorNode)
   QModelIndex rootIndex = d->MRMLColorListView->rootIndex();
   const int count = d->MRMLColorListView->model()->rowCount(rootIndex);
   for (int i = 0; i < count; ++i)
-    {
+  {
     QSize sizeHint = d->MRMLColorListView->sizeHintForIndex(
       d->MRMLColorListView->model()->index(i, 0, rootIndex));
     maxSizeHint.setWidth(qMax(maxSizeHint.width(), sizeHint.width()));
     maxSizeHint.setHeight(qMax(maxSizeHint.height(), sizeHint.height()));
-    }
+  }
   // Set the largest the default size for all the items, that way they will
   // be aligned horizontally and vertically.
   d->MRMLColorListView->setGridSize(maxSizeHint);
@@ -204,7 +204,7 @@ void qMRMLColorPickerWidget::onTextChanged(const QString& colorText)
   QModelIndex newCurrentIndex;
 
   if (!d->SearchBox->text().isEmpty())
-    {
+  {
     QModelIndex start = d->MRMLColorListView->sortFilterProxyModel()
                         ->index(0,0);
     QModelIndexList indexList = d->MRMLColorListView->sortFilterProxyModel()
@@ -213,17 +213,17 @@ void qMRMLColorPickerWidget::onTextChanged(const QString& colorText)
                                       Qt::MatchStartsWith);
 
     if (indexList.isEmpty())
-      {
+    {
       indexList = d->MRMLColorListView->sortFilterProxyModel()
                                 ->match(start, 0,
                                         d->SearchBox->text(), 1,
                                         Qt::MatchContains);
-      }
-    if(indexList.count() > 0 )
-      {
-      newCurrentIndex = indexList[0];
-      }
     }
+    if(indexList.count() > 0 )
+    {
+      newCurrentIndex = indexList[0];
+    }
+  }
   // Show to the user and set the current index
   d->MRMLColorListView->setCurrentIndex(newCurrentIndex);
   d->SearchBox->setFocus();
@@ -234,22 +234,22 @@ bool qMRMLColorPickerWidget::eventFilter(QObject* target, QEvent* event)
 {
   Q_D(qMRMLColorPickerWidget);
   if (target == d->SearchBox)
-    {
+  {
     if (event->type() == QEvent::Show)
-      {
+    {
       d->SearchBox->clear();
       d->MRMLColorListView->setFocus();
-      }
+    }
     if (event->type() == QEvent::KeyPress)
-      {
+    {
       QKeyEvent* keyEvent = static_cast<QKeyEvent *>(event);
       if (keyEvent->key() == Qt::Key_Up ||
           keyEvent->key() == Qt::Key_Down)
-        {
+      {
         // give the Focus to MRMLColorListView
         d->MRMLColorListView->setFocus();
-        }
       }
     }
+  }
   return this->qMRMLWidget::eventFilter(target, event);
 }

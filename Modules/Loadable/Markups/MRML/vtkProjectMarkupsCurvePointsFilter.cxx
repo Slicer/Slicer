@@ -47,9 +47,9 @@ vtkProjectMarkupsCurvePointsFilter::vtkProjectMarkupsCurvePointsFilter()
 void vtkProjectMarkupsCurvePointsFilter::SetInputCurveNode(vtkMRMLMarkupsCurveNode* inputCurveNode)
 {
   if (this->InputCurveNode == inputCurveNode)
-    {
+  {
     return;
-    }
+  }
   this->InputCurveNode = inputCurveNode;
   this->Modified();
 }
@@ -58,9 +58,9 @@ void vtkProjectMarkupsCurvePointsFilter::SetInputCurveNode(vtkMRMLMarkupsCurveNo
 void vtkProjectMarkupsCurvePointsFilter::SetMaximumSearchRadiusTolerance(double maximumSearchRadiusTolerance)
 {
   if (vtkMathUtilities::FuzzyCompare<double>(this->MaximumSearchRadiusTolerance, maximumSearchRadiusTolerance))
-    {
+  {
     return;
-    }
+  }
   this->MaximumSearchRadiusTolerance = maximumSearchRadiusTolerance;
   this->Modified();
 }
@@ -74,14 +74,14 @@ double vtkProjectMarkupsCurvePointsFilter::GetMaximumSearchRadiusTolerance() con
 int vtkProjectMarkupsCurvePointsFilter::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
-    {
+  {
     info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
-    }
+  }
   else
-    {
+  {
     vtkErrorMacro("Cannot set input info for port " << port);
     return 0;
-    }
+  }
   return 1;
 }
 
@@ -96,42 +96,42 @@ int vtkProjectMarkupsCurvePointsFilter::RequestData(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   if (!inputPolyData)
-    {
+  {
     return 1;
-    }
+  }
 
   vtkPoints* inputPoints = inputPolyData->GetPoints();
   if (!inputPoints)
-    {
+  {
     return 1;
-    }
+  }
 
   if (!this->InputCurveNode)
-    {
+  {
     return 1;
-    }
+  }
 
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   vtkPolyData* outputPolyData = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
   if (!outputPolyData)
-    {
+  {
     return 1;
-    }
+  }
   outputPolyData->DeepCopy(inputPolyData);
   vtkNew<vtkPoints> outputPoints;
 
   // If we have a surface node, project, otherwise the copy was enough
   if (this->InputCurveNode->GetSurfaceConstraintNode())
-    {
+  {
     if(!this->ProjectPointsToSurface(
          this->InputCurveNode->GetSurfaceConstraintNode(), this->GetMaximumSearchRadiusTolerance(), inputPoints,
          outputPoints))
-      {
+    {
       return 0;
-      }
-    outputPolyData->SetPoints(outputPoints);
     }
+    outputPolyData->SetPoints(outputPoints);
+  }
 
   outputPolyData->Squeeze();
   return 1;
@@ -143,15 +143,15 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
   vtkPoints* surfacePoints, double maximumSearchRadiusTolerance)
 {
   if (originalPoints->GetNumberOfPoints()!= normalVectors->GetNumberOfTuples())
-    {
+  {
     vtkGenericWarningMacro("vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurface failed: invalid inputs");
     return false;
-    }
+  }
   if (maximumSearchRadiusTolerance <= 0.0 || maximumSearchRadiusTolerance > 1.0)
-    {
+  {
     vtkGenericWarningMacro("vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurface failed: Invalid search radius");
     return false;
-    }
+  }
 
   double tolerance = surfaceObbTree->GetTolerance();
 
@@ -171,7 +171,7 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
 
   size_t noIntersectionCount = 0;
   for (vtkIdType controlPointIndex = 0; controlPointIndex < originalPoints->GetNumberOfPoints(); controlPointIndex++)
-    {
+  {
     originalPoints->GetPoint(controlPointIndex, originalPoint);
     normalVectors->GetTuple(controlPointIndex, rayDirection);
     // Cast ray and find model intersection point
@@ -187,26 +187,26 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
     vtkNew <vtkGenericCell> cell;
     int foundIntersection = surfaceObbTree->IntersectWithLine(rayEndPoint, originalPoint, tolerance, t, exteriorPoint, pcoords, subId, cellId, cell);
     if(foundIntersection == 0)
-      {
+    {
       // If no intersection, reverse direction of normal vector ray
       rayEndPoint[0] = originalPoint[0] + rayDirection[0] * -rayLength;
       rayEndPoint[1] = originalPoint[1] + rayDirection[1] * -rayLength;
       rayEndPoint[2] = originalPoint[2] + rayDirection[2] * -rayLength;
       int foundIntersection = surfaceObbTree->IntersectWithLine(originalPoint, rayEndPoint, tolerance, t, exteriorPoint, pcoords, subId, cellId, cell);
       if(foundIntersection == 0)
-        {
+      {
         // If no intersection in either direction, use closest mesh point
         vtkIdType closestPointId = pointLocator->FindClosestPoint(originalPoint);
         surfacePolydata->GetPoint(closestPointId, exteriorPoint);
         ++noIntersectionCount;
-        }
       }
+    }
     surfacePoints->InsertNextPoint(exteriorPoint);
-    }
+  }
   if (noIntersectionCount > 0)
-    {
+  {
     vtkGenericWarningMacro("No intersections found for " << noIntersectionCount << " points for curve ");
-    }
+  }
   return true;
 }
 
@@ -237,19 +237,19 @@ bool vtkProjectMarkupsCurvePointsFilter::ProjectPointsToSurface(
   this->PointProjection.SetModel(modelNode);
   vtkSmartPointer<vtkPolyData> surfacePolydata = this->PointProjection.GetSurfacePolyData();
   if(!surfacePolydata)
-    {
+  {
     vtkErrorMacro("vtkProjectMarkupsCurvePointsFilter::ProjectPointsToSurface failed: Constraint surface polydata is not valid");
     return false;
-    }
+  }
 
   vtkNew<vtkPoints> controlPoints;
   this->InputCurveNode->GetControlPointPositionsWorld(controlPoints);
 
   auto pointNormalArray = this->PointProjection.GetPointNormals(pointsToProject, controlPoints);
   if (!pointNormalArray)
-    {
+  {
     return false;
-    }
+  }
 
   return vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(this->PointProjection.GetObbTree(), this->PointProjection.GetPointLocator(),
     pointsToProject, pointNormalArray, surfacePolydata,
@@ -298,13 +298,13 @@ vtkOBBTree* vtkProjectMarkupsCurvePointsFilter::PointProjectionHelper::GetObbTre
 bool vtkProjectMarkupsCurvePointsFilter::PointProjectionHelper::UpdateAll()
 {
   if (!this->Model)
-    {
+  {
     this->ModelPointLocator = vtkSmartPointer<vtkPointLocator>();
     this->ModelNormalVectorArray = vtkSmartPointer<vtkDataArray>();
     this->ModelObbTree = vtkSmartPointer<vtkOBBTree>();
     this->SurfacePolyData = vtkSmartPointer<vtkPolyData>();
     return false;
-    }
+  }
 
   // by using != instead of say, <, this will catch both if the model is updated
   // and if a different model was set
@@ -312,11 +312,11 @@ bool vtkProjectMarkupsCurvePointsFilter::PointProjectionHelper::UpdateAll()
   if (this->Model->GetMTime() != this->LastModelModifiedTime
     || (parentTransformNode && parentTransformNode->GetTransformToWorldMTime() != this->LastTransformModifiedTime)
     || !this->ModelNormalVectorArray)
-    {
+  {
     this->LastModelModifiedTime = this->Model->GetMTime();
     this->SurfacePolyData = this->Model->GetPolyData();
     if (parentTransformNode)
-      {
+    {
       this->LastTransformModifiedTime = parentTransformNode->GetTransformToWorldMTime();
       vtkNew<vtkGeneralTransform> modelToWorldTransform;
       parentTransformNode->GetTransformToWorld(modelToWorldTransform);
@@ -325,7 +325,7 @@ bool vtkProjectMarkupsCurvePointsFilter::PointProjectionHelper::UpdateAll()
       transformPolydataFilter->SetTransform(modelToWorldTransform);
       transformPolydataFilter->Update();
       this->SurfacePolyData = transformPolydataFilter->GetOutput();
-      }
+    }
 
     this->ModelPointLocator = vtkSmartPointer<vtkPointLocator>::New();
     this->ModelPointLocator->SetDataSet(this->SurfacePolyData);
@@ -342,15 +342,15 @@ bool vtkProjectMarkupsCurvePointsFilter::PointProjectionHelper::UpdateAll()
     vtkPolyData* normalPolydata = normalFilter->GetOutput();
     this->ModelNormalVectorArray = vtkArrayDownCast<vtkDataArray>(normalPolydata->GetPointData()->GetNormals());
     if (!this->ModelNormalVectorArray)
-      {
+    {
       vtkGenericWarningMacro("vtkProjectMarkupsCurvePointsFilter::PointProjectionHelper::GetPointNormals failed: Unable to calculate normals");
       this->ModelPointLocator = vtkSmartPointer<vtkPointLocator>();
       this->ModelNormalVectorArray = vtkSmartPointer<vtkDataArray>();
       this->ModelObbTree = vtkSmartPointer<vtkOBBTree>();
       this->SurfacePolyData = vtkSmartPointer<vtkPolyData>();
       return false;
-      }
     }
+  }
   return true;
 }
 
@@ -359,20 +359,20 @@ vtkIdType vtkProjectMarkupsCurvePointsFilter::PointProjectionHelper::GetClosestC
 {
   const auto numberOfControlPoints = controlPoints->GetNumberOfPoints();
   if (numberOfControlPoints == 0)
-    {
+  {
     return -1;
-    }
+  }
   vtkIdType closestIndex = 0;
   double closestDistanceSquare = vtkMath::Distance2BetweenPoints(point, controlPoints->GetPoint(0));
   for (vtkIdType i = 1; i < numberOfControlPoints; ++i)
-    {
+  {
     const double distSquare = vtkMath::Distance2BetweenPoints(point, controlPoints->GetPoint(i));
     if (distSquare < closestDistanceSquare)
-      {
+    {
       closestDistanceSquare = distSquare;
       closestIndex = i;
-      }
     }
+  }
   return closestIndex;
 }
 
@@ -382,30 +382,30 @@ vtkSmartPointer<vtkDoubleArray> vtkProjectMarkupsCurvePointsFilter::PointProject
   vtkPoints* controlPoints)
 {
   if (!this->UpdateAll())
-    {
+  {
     return vtkSmartPointer<vtkDoubleArray>();
-    }
+  }
 
   auto normals = vtkSmartPointer<vtkDoubleArray>::New();
   normals->SetNumberOfComponents(3);
   const auto numberOfPoints = points->GetNumberOfPoints();
   for (vtkIdType i = 0; i < numberOfPoints; ++i)
-    {
+  {
     const double* point = points->GetPoint(i);
     const auto segmentStartIndex = GetClosestControlPointIndex(point, controlPoints);
     double segmentStartPoint[3] = { 0.0, 0.0, 0.0 };
     controlPoints->GetPoint(segmentStartIndex, segmentStartPoint);
     const auto segmentEndIndex = [&]() -> vtkIdType {
       if (segmentStartIndex == 0)
-        {
+      {
         return 1;
-        }
+      }
       else if (segmentStartIndex == controlPoints->GetNumberOfPoints() - 1)
-        {
+      {
         return segmentStartIndex - 1;
-        }
+      }
       else
-        {
+      {
         double segmentEndPoint1[3] = { 0.0, 0.0, 0.0 };
         controlPoints->GetPoint(segmentStartIndex - 1, segmentEndPoint1);
         double dist1 = vtkMath::Distance2BetweenPoints(segmentEndPoint1, point);
@@ -414,15 +414,15 @@ vtkSmartPointer<vtkDoubleArray> vtkProjectMarkupsCurvePointsFilter::PointProject
         double dist2 = vtkMath::Distance2BetweenPoints(segmentEndPoint2, point);
 
         if ((dist1 < dist2) && dist1 < vtkMath::Distance2BetweenPoints(segmentEndPoint1, segmentStartPoint))
-          {
+        {
           return segmentStartIndex - 1;
-          }
-        else
-          {
-          return segmentStartIndex + 1;
-          }
         }
-      }();
+        else
+        {
+          return segmentStartIndex + 1;
+        }
+      }
+    }();
     double segmentEndPoint[3] = { 0.0, 0.0, 0.0 };
     controlPoints->GetPoint(segmentEndIndex, segmentEndPoint);
 
@@ -446,7 +446,7 @@ vtkSmartPointer<vtkDoubleArray> vtkProjectMarkupsCurvePointsFilter::PointProject
       };
     vtkMath::Normalize(rayDirection);
     normals->InsertNextTuple(rayDirection);
-    }
+  }
 
     return normals;
 }

@@ -142,9 +142,9 @@ void qSlicerDICOMExportable::copyToVtkExportable(vtkSlicerDICOMExportable* vtkEx
   Q_D(qSlicerDICOMExportable);
 
   if (!vtkExportable)
-    {
+  {
     return;
-    }
+  }
 
   vtkExportable->SetName(d->Name.toUtf8().constData());
   vtkExportable->SetTooltip(d->Tooltip.toUtf8().constData());
@@ -155,10 +155,10 @@ void qSlicerDICOMExportable::copyToVtkExportable(vtkSlicerDICOMExportable* vtkEx
 
   QMapIterator<QString,QString> tagsIt(d->Tags);
   while (tagsIt.hasNext())
-    {
+  {
     tagsIt.next();
     vtkExportable->SetTag(tagsIt.key().toUtf8().constData(), tagsIt.value().toUtf8().constData());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -167,9 +167,9 @@ void qSlicerDICOMExportable::copyFromVtkExportable(vtkSlicerDICOMExportable* vtk
   Q_D(qSlicerDICOMExportable);
 
   if (!vtkExportable)
-    {
+  {
     return;
-    }
+  }
 
   d->Name = QString(vtkExportable->GetName());
   d->Tooltip = QString(vtkExportable->GetTooltip());
@@ -180,7 +180,7 @@ void qSlicerDICOMExportable::copyFromVtkExportable(vtkSlicerDICOMExportable* vtk
 
   std::map<std::string, std::string> vtkTags = vtkExportable->GetTags();
   for ( std::map<std::string, std::string>::iterator it=vtkTags.begin(); it != vtkTags.end(); ++it )
-    {
+  {
     this->setTag(it->first.c_str(), it->second.c_str());
-    }
+  }
 }

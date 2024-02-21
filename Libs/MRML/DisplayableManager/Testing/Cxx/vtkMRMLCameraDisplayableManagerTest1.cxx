@@ -453,16 +453,16 @@ bool readFileIntoString(const char* filename, std::string& output)
 {
   std::ifstream istream(filename);
   if( !istream )
-    {
+  {
     cerr << "Could not open input file:" << filename << endl;
     return false;
-    }
+  }
 
   std::string line;
   while(std::getline(istream,line))
-    {
+  {
     output+=line;
-    }
+  }
 
   return true;
 }
@@ -479,11 +479,11 @@ public:
   int GetRenderRequestCount()
     { return this->RenderRequestCount; }
   void Execute(vtkObject*, unsigned long , void* ) override
-    {
+  {
     this->Renderer->GetRenderWindow()->Render();
     this->RenderRequestCount++;
     //std::cout << "RenderRequestCount [" << this->RenderRequestCount << "]" << std::endl;
-    }
+  }
 protected:
   vtkRenderRequestCallback() = default;
   vtkRenderer * Renderer{nullptr};
@@ -521,34 +521,34 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   viewNode->SetLayoutLabel("1");
   vtkMRMLNode * nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
-    {
+  {
     std::cerr << "Failed to add vtkMRMLViewNode" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Factory
   vtkNew<vtkMRMLThreeDViewDisplayableManagerFactory> factory;
 
   // Check if GetRegisteredDisplayableManagerCount returns 0
   if (factory->GetRegisteredDisplayableManagerCount() != 0)
-    {
+  {
     std::cerr << "Expected RegisteredDisplayableManagerCount: 0" << std::endl;
     std::cerr << "Current RegisteredDisplayableManagerCount:"
         << factory->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   factory->RegisterDisplayableManager("vtkMRMLCameraDisplayableManager");
   factory->RegisterDisplayableManager("vtkMRMLViewDisplayableManager");
 
   // Check if GetRegisteredDisplayableManagerCount returns 2
   if (factory->GetRegisteredDisplayableManagerCount() != 2)
-    {
+  {
     std::cerr << "Expected RegisteredDisplayableManagerCount: 2" << std::endl;
     std::cerr << "Current RegisteredDisplayableManagerCount:"
         << factory->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   /*// Check if GetDisplayableManagerByClassName works as expected
   vtkMRMLCameraDisplayableManager * cameraDM2 =
@@ -576,11 +576,11 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
       vtkSmartPointer<vtkMRMLDisplayableManagerGroup>::Take(factory->InstantiateDisplayableManagers(rr.GetPointer()));
 
   if (!displayableManagerGroup)
-    {
+  {
     std::cerr << "Failed to instantiate Displayable Managers using "
         << "InstantiateDisplayableManagers" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLThreeDViewInteractorStyle> iObserver;
   iObserver->SetDisplayableManagers(displayableManagerGroup);
@@ -588,13 +588,13 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 
   // Check if GetDisplayableManagerCount returns 2
   if (displayableManagerGroup->GetDisplayableManagerCount() != 2)
-    {
+  {
     std::cerr << "Check displayableManagerGroup->GetDisplayableManagerCount()" << std::endl;
     std::cerr << "Expected DisplayableManagerCount: 2" << std::endl;
     std::cerr << "Current DisplayableManagerCount:"
       << displayableManagerGroup->GetDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // RenderRequest Callback
   vtkNew<vtkRenderRequestCallback> renderRequestCallback;
@@ -606,22 +606,22 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 
   // Check if RenderWindowInteractor has NOT been changed
   if (displayableManagerGroup->GetInteractor() != ri.GetPointer())
-    {
+  {
     std::cerr << "Expected RenderWindowInteractor:" << ri.GetPointer() << std::endl;
     std::cerr << "Current RenderWindowInteractor:"
         << displayableManagerGroup->GetInteractor() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Interactor style should be vtkMRMLThreeDViewInteractorStyle
   vtkInteractorObserver * currentInteractoryStyle = ri->GetInteractorStyle();
   if (!vtkInteractorStyle3D::SafeDownCast(currentInteractoryStyle))
-    {
+  {
     std::cerr << "Expected interactorStyle: vtkInteractorStyle3D" << std::endl;
     std::cerr << "Current RenderWindowInteractor: "
       << (currentInteractoryStyle ? currentInteractoryStyle->GetClassName() : "Null") << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Save current scene
   vtkNew<vtkTesting> testHelper;
@@ -630,10 +630,10 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   savedScene += "/vtkMRMLCameraDisplayableManagerTest1_saved.mrml";
   scene->SetVersion("Slicer4.4.0"); // Force scene version to be the same as in the baseline scene file
   if (!scene->Commit(savedScene.c_str()))
-    {
+  {
     std::cerr << "Failed to save current scene into: " << savedScene << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Compare saved scene with baseline
   vtkStdString baselineScene = testHelper->GetDataRoot();
@@ -643,81 +643,81 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   std::string baselineSceneAsString;
   bool ret = readFileIntoString(baselineScene.c_str(), baselineSceneAsString);
   if (!ret || baselineSceneAsString.size() == 0)
-    {
+  {
     std::cerr << "Failed to read baseline scene into string: " << baselineScene << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::string savedSceneAsString;
   ret = readFileIntoString(savedScene.c_str(), savedSceneAsString);
   if (!ret || savedSceneAsString.size() == 0)
-    {
+  {
     std::cerr << "Failed to read saved scene into string: " << savedScene << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (savedSceneAsString != baselineSceneAsString)
-    {
+  {
     std::cerr << "Baseline scene and Saved scene are different !\n"
               << "Baseline scene\n"
               << "[BASELINE]\n" << baselineSceneAsString << "\n[/BASELINE]\n"
               << "[SAVED]\n" << savedSceneAsString << "\n[/SAVED]"<< std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Import baseline scene
   scene->SetURL(baselineScene.c_str());
   if (scene->GetURL() != baselineScene)
-    {
+  {
     std::cerr << "Failed to set URL: " << baselineScene << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (!scene->Connect())
-    {
+  {
     std::cerr << "Failed to import baseline scene: " << baselineScene << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Event recorder
   bool disableReplay = false, record = false, screenshot = false;
   for (int i = 0; i < argc; i++)
-    {
+  {
     disableReplay |= (strcmp("--DisableReplay", argv[i]) == 0);
     record        |= (strcmp("--Record", argv[i]) == 0);
     screenshot    |= (strcmp("--Screenshot", argv[i]) == 0);
-    }
+  }
   vtkNew<vtkInteractorEventRecorder> recorder;
   recorder->SetInteractor(displayableManagerGroup->GetInteractor());
   if (!disableReplay)
-    {
+  {
     if (record)
-      {
+    {
       std::cout << "Recording ..." << std::endl;
       recorder->SetFileName("vtkInteractorEventRecorder.log");
       recorder->On();
       recorder->Record();
-      }
+    }
     else
-      {
+    {
       // Play
       recorder->ReadFromInputStringOn();
       recorder->SetInputString(vtkMRMLCameraDisplayableManagerTest1EventLog);
       recorder->Play();
-      }
     }
+  }
   recorder->SetInteractor(nullptr);
 
   int retval = vtkRegressionTestImageThreshold(rw.GetPointer(), 85.0);
   if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
-    {
+  {
     displayableManagerGroup->GetInteractor()->Initialize();
     displayableManagerGroup->GetInteractor()->Start();
     std::cout << "Current RenderRequestCount: "
         << renderRequestCallback->GetRenderRequestCount() << std::endl;
-    }
+  }
 
   if (record || screenshot)
-    {
+  {
     vtkNew<vtkWindowToImageFilter> windowToImageFilter;
     windowToImageFilter->SetInput(rw.GetPointer());
     windowToImageFilter->SetScale(1, 1); //set the resolution of the output image
@@ -730,7 +730,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     writer->SetInputConnection(windowToImageFilter->GetOutputPort());
     writer->Write();
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
-    }
+  }
 
   return !retval;
 }

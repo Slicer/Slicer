@@ -62,9 +62,9 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   //--------------------------------------------------------------------------
 
   enum
-    {
+  {
     scalarModeMagnitude = 0
-    };
+  };
   vtkGetMacro(ScalarMode, int);
   vtkSetMacro(ScalarMode, int);
 
@@ -73,10 +73,10 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   }
 
   enum
-    {
+  {
     glyphModeLines = 1,
     glyphModeTubes = 2
-    };
+  };
   vtkGetMacro(GlyphMode, int);
   vtkSetMacro(GlyphMode, int);
 
@@ -107,9 +107,9 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   /// TODO: return empty list for now, later add glyphs
   std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
     GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* vtkNotUsed(node) ) override
-    {
+  {
     return std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>();
-    }
+  }
 
   ///
   /// Access to this class's internal filter elements

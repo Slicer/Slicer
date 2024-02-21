@@ -154,18 +154,18 @@ void qMRMLSubjectHierarchyComboBox::setMRMLScene(vtkMRMLScene* scene)
   Q_D(const qMRMLSubjectHierarchyComboBox);
 
   if (this->mrmlScene() == scene)
-    {
+  {
     return;
-    }
+  }
 
   d->TreeView->setMRMLScene(scene);
 
   vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
-    }
+  }
 
   // Connect scene events so that title can be updated
   qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onMRMLSceneCloseEnded(vtkObject*) ) );
@@ -485,9 +485,9 @@ void qMRMLSubjectHierarchyComboBox::setAlignPopupVertically(bool align)
 bool qMRMLSubjectHierarchyComboBox::noneEnabled()const
 {
   if (!this->model())
-    {
+  {
     return false;
-    }
+  }
   return this->model()->noneEnabled();
 }
 
@@ -495,9 +495,9 @@ bool qMRMLSubjectHierarchyComboBox::noneEnabled()const
 void qMRMLSubjectHierarchyComboBox::setNoneEnabled(bool enable)
 {
   if (!this->model())
-    {
+  {
     return;
-    }
+  }
   this->model()->setNoneEnabled(enable);
 }
 
@@ -505,9 +505,9 @@ void qMRMLSubjectHierarchyComboBox::setNoneEnabled(bool enable)
 QString qMRMLSubjectHierarchyComboBox::noneDisplay()const
 {
   if (!this->model())
-    {
+  {
     return QString();
-    }
+  }
   return this->model()->noneDisplay();
 }
 
@@ -515,9 +515,9 @@ QString qMRMLSubjectHierarchyComboBox::noneDisplay()const
 void qMRMLSubjectHierarchyComboBox::setNoneDisplay(const QString& displayName)
 {
   if (!this->model())
-    {
+  {
     return;
-    }
+  }
   this->model()->setNoneDisplay(displayName);
 }
 
@@ -572,37 +572,37 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   int popupHeight = 0;
   int displayedItemCount = d->TreeView->displayedItemCount();
   if (displayedItemCount == 0)
-    {
+  {
     // If there is no items, find what message to show instead
     vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();
     vtkIdType rootItem = d->TreeView->rootItem();
     std::vector<vtkIdType> childItemIDs;
     shNode->GetItemChildren(rootItem, childItemIDs, false);
     if (childItemIDs.empty())
-      {
+    {
       if (rootItem != shNode->GetSceneItemID())
-        {
+      {
         std::string rootName = shNode->GetItemName(rootItem);
         QString label = QString("No items in branch: ") + QString::fromStdString(rootName);
         d->NoItemLabel->setText(label);
-        }
+      }
       else
-        {
-        d->NoItemLabel->setText("No items in scene");
-        }
-      }
-    else
       {
-      d->NoItemLabel->setText("No items accepted by current filters");
+        d->NoItemLabel->setText("No items in scene");
       }
+    }
+    else
+    {
+      d->NoItemLabel->setText("No items accepted by current filters");
+    }
 
       // Show no item label instead of tree view
       d->NoItemLabel->show();
       d->TreeView->hide();
       popupHeight = d->NoItemLabel->sizeHint().height();
-    }
+  }
   else
-    {
+  {
     // Height based on the number of items
     const int numberOfShownShItems = qMin(displayedItemCount, d->MaximumNumberOfShownItems);
     const int numberOfRows = (this->noneEnabled() ? numberOfShownShItems + 1 : numberOfShownShItems);
@@ -617,7 +617,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
 
     d->NoItemLabel->hide();
     d->TreeView->show();
-    }
+  }
 
   // Add container margins for the height
   QMargins margins = container->contentsMargins();
@@ -625,7 +625,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
 
   // Position of the container
   if(d->AlignPopupVertically)
-    {
+  {
     // Position horizontally
     listRect.moveLeft(above.x());
 
@@ -635,25 +635,25 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
     listRect.moveTop(above.y() + offset - listRect.top());
 
     if (listRect.width() > screen.width() )
-      {
+    {
       listRect.setWidth(screen.width());
-      }
+    }
     if (mapToGlobal(listRect.bottomRight()).x() > screen.right())
-      {
+    {
       below.setX(screen.x() + screen.width() - listRect.width());
       above.setX(screen.x() + screen.width() - listRect.width());
-      }
+    }
     if (mapToGlobal(listRect.topLeft()).x() < screen.x() )
-      {
+    {
       below.setX(screen.x());
       above.setX(screen.x());
-      }
     }
+  }
   else
-    {
+  {
     // Position below the combobox
     listRect.moveTo(below);
-    }
+  }
 
   container->move(listRect.topLeft());
   container->setFixedHeight(popupHeight);
@@ -675,9 +675,9 @@ void qMRMLSubjectHierarchyComboBox::hidePopup()
   // Hide popup
   QFrame* container = qobject_cast<QFrame*>(this->view()->parentWidget());
   if (container)
-    {
+  {
     container->hide();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -685,9 +685,9 @@ void qMRMLSubjectHierarchyComboBox::mousePressEvent(QMouseEvent* e)
 {
   // Disable context menu altogether
   if (e->button() == Qt::RightButton)
-    {
+  {
     return;
-    }
+  }
 
   // Perform default mouse press event (make selections etc.)
   this->Superclass::mousePressEvent(e);
@@ -700,44 +700,44 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
 
   vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     this->setDefaultText("Error: Invalid subject hierarchy");
     this->setDefaultIcon(QIcon());
     return;
-    }
+  }
   if (!selectedShItemID)
-    {
+  {
     if (this->noneEnabled())
-      {
+    {
       this->setDefaultText(this->noneDisplay());
-      }
+    }
     else
-      {
+    {
       this->setDefaultText("Select subject hierarchy item");
-      }
+    }
     this->setDefaultIcon(QIcon());
     return;
-    }
+  }
 
   // Assemble title for selected item
   QString titleText(shNode->GetItemName(selectedShItemID).c_str());
   if (d->ShowCurrentItemParents)
-    {
+  {
     vtkIdType parentItemID = shNode->GetItemParent(selectedShItemID);
     while (parentItemID != shNode->GetSceneItemID() && parentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-      {
+    {
       titleText.prepend(" / ");
       QString parentItemName(shNode->GetItemName(parentItemID).c_str());
       if (parentItemName.length() > 21)
-        {
+      {
         // Truncate item name if too long
         parentItemName = parentItemName.left(9) + "..." + parentItemName.right(9);
-        }
+      }
       titleText.prepend(parentItemName);
       parentItemID = shNode->GetItemParent(parentItemID);
-      }
     }
+  }
   this->setDefaultText(titleText);
 
   // Get icon for selected item
@@ -745,17 +745,17 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName(ownerPluginName.c_str());
   if (ownerPlugin)
-    {
+  {
     this->setDefaultIcon(ownerPlugin->icon(selectedShItemID));
-    }
+  }
   else
-    {
+  {
     if (selectedShItemID != shNode->GetSceneItemID())
-      {
+    {
       qCritical() << Q_FUNC_INFO << ": No owner plugin for subject hierarchy item " << shNode->GetItemName(selectedShItemID).c_str();
-      }
-    this->setDefaultIcon(QIcon());
     }
+    this->setDefaultIcon(QIcon());
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -763,9 +763,9 @@ void qMRMLSubjectHierarchyComboBox::onMRMLSceneCloseEnded(vtkObject* sceneObject
 {
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
-    {
+  {
     return;
-    }
+  }
 
   // Make sure the title generated from previous selection is cleared when closing the scene.
   this->updateComboBoxTitleAndIcon(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);

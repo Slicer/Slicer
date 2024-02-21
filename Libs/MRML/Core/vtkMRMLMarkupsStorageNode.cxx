@@ -129,13 +129,13 @@ int vtkMRMLMarkupsStorageNode::GetCoordinateSystemFromString(const char* name)
 {
   // For backward-compatibility with old scenes (magic number was used instead of string)
   if (strcmp(name, "0") == 0)
-    {
+  {
     return vtkMRMLStorageNode::CoordinateSystemRAS;
-    }
+  }
   else if (strcmp(name, "1") == 0)
-    {
+  {
     return vtkMRMLStorageNode::CoordinateSystemLPS;
-    }
+  }
 
   // Current method, store coordinate system as string
   return vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(name);

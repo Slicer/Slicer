@@ -17,10 +17,10 @@
 
 #define vtkSetAndPropagateVector3Macro(name,type) \
 virtual void SetAndPropagateSuper##name (type _arg1, type _arg2, type _arg3) \
-  { \
+{ \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Super" << #name " to (" << _arg1 << "," << _arg2 << "," << _arg3 << ")"); \
   if ((this->Super##name[0] != _arg1)||(this->Super##name[1] != _arg2)||(this->Super##name[2] != _arg3)) \
-    { \
+  { \
     this->name[0] = _arg1; \
     this->name[1] = _arg2; \
     this->name[2] = _arg3; \
@@ -29,51 +29,51 @@ virtual void SetAndPropagateSuper##name (type _arg1, type _arg2, type _arg3) \
     this->Super##name[2] = _arg3; \
     vtkMRMLDisplayableNode *displayableNode = this->GetDisplayableNode(); \
     if (!displayableNode) \
-      { \
+    { \
       return; \
-      } \
+    } \
     for (int i=0; i<displayableNode->GetNumberOfDisplayNodes(); i++) \
-      { \
+    { \
       vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i); \
       if (!displayNode || displayNode==this) \
-        { \
+      { \
         continue; \
-        } \
-      displayNode->Set##name(this->Super##name); \
       } \
-    this->Modified(); \
+      displayNode->Set##name(this->Super##name); \
     } \
-  }; \
+    this->Modified(); \
+  } \
+}; \
 virtual void SetAndPropagateSuper##name (type _arg[3]) \
-  { \
+{ \
   this->SetAndPropagateSuper##name (_arg[0], _arg[1], _arg[2]);\
-  }
+}
 
 #define vtkSetAndPropagateMacro(name,type) \
 virtual void SetAndPropagateSuper##name (type _arg) \
-  { \
+{ \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Super" << #name " to (" << _arg << ")"); \
   if (this->Super##name != _arg) \
-    { \
+  { \
     this->name = _arg; \
     this->Super##name = _arg; \
     vtkMRMLDisplayableNode *displayableNode = this->GetDisplayableNode(); \
     if (!displayableNode) \
-      { \
+    { \
       return; \
-      } \
+    } \
     for (int i=0; i<displayableNode->GetNumberOfDisplayNodes(); i++) \
-      { \
+    { \
       vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i); \
       if (!displayNode || displayNode==this) \
-        { \
+      { \
         continue; \
-        } \
-      displayNode->Set##name(this->Super##name); \
       } \
-    this->Modified(); \
+      displayNode->Set##name(this->Super##name); \
     } \
-  }; \
+    this->Modified(); \
+  } \
+}; \
 
 
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : public vtkMRMLModelDisplayNode

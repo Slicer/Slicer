@@ -87,11 +87,11 @@ public:
 protected:
 
   struct ConversionParameterType
-    {
+  {
     std::string Name;
     std::string Description;
     std::string Value;
-    };
+  };
 
   std::vector<ConversionParameterType> ParameterList;
 

@@ -41,12 +41,12 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_PLUGINS_EXPORT qSlicerSubjectHier
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLSubjectHierarchyTreeViewPlugin;
     plugins << new qMRMLSubjectHierarchyComboBoxPlugin;
     return plugins;
-    }
+  }
 };
 
 #endif

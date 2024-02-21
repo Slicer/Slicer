@@ -56,14 +56,14 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   // get the file name
   std::string fileName;
   if (argc > 1)
-    {
+  {
     fileName = std::string(argv[1]);
-    }
+  }
   else
-    {
+  {
     std::cerr << "No mrml scene file name given!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::cout << "Using scene file name " << fileName.c_str() << std::endl;
 
   // set up the scene
@@ -113,12 +113,12 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
     };
 
   for (int i = 0; i < 3; i++)
-    {
+  {
     double actualPosition[3] = { 0.0, 0.0, 0.0 };
     mfnode->GetNthControlPointPosition(i, actualPosition);
     double diff = vtkMath::Distance2BetweenPoints(expectedPosition[i], actualPosition);
     if (diff > 0.01)
-      {
+    {
       std::cerr << "Failed to parse the first fiducial location, expected: "
         << expectedPosition[i][0] << ","
         << expectedPosition[i][1] << ","
@@ -129,7 +129,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
         << actualPosition[2]
         << "\n\tdiff = " << diff << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   //
@@ -147,7 +147,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   double expectedColor[3] = { 0.862745, 0.960784, 0.0784314 };
   double diff = vtkMath::Distance2BetweenPoints(color, expectedColor);
   if (diff > 0.01)
-    {
+  {
     std::cerr << "Failed to get color on first display node, expected: "
               << expectedColor[0] << ","
               << expectedColor[1] << ","
@@ -156,13 +156,13 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
               << color[1] << ","
               << color[2] << ", diff = " << diff << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   double* selectedColor = markupsFiducialDisplayNode1->GetSelectedColor();
   double expectedSelectedColor[3] = { 0.2667, 0.6745, 0.3922 };
   diff = vtkMath::Distance2BetweenPoints(selectedColor, expectedSelectedColor);
   if (diff > 0.01)
-    {
+  {
     std::cerr << "Failed to get selected color on first display node, expected: "
       << expectedSelectedColor[0] << ","
       << expectedSelectedColor[1] << ","
@@ -171,7 +171,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
       << selectedColor[1] << ","
       << selectedColor[2] << ", diff = " << diff << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //
   // check storage nodes

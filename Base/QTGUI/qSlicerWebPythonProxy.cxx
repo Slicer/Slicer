@@ -44,15 +44,15 @@ bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
 {
 #ifdef Slicer_USE_PYTHONQT
   if (this->pythonEvaluationAllowed)
-    {
+  {
     return true;
-    }
+  }
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   if (!app || qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
-    {
+  {
     return false;
-    }
+  }
 
   ctkMessageBox* confirmationBox = new ctkMessageBox(qSlicerApplication::application()->mainWindow());
   confirmationBox->setAttribute(Qt::WA_DeleteOnClose);
@@ -68,9 +68,9 @@ bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
   int resultCode = confirmationBox->exec();
 
   if (resultCode == QMessageBox::AcceptRole)
-    {
+  {
     this->pythonEvaluationAllowed = true;
-    }
+  }
 #endif
   return this->pythonEvaluationAllowed;
 }
@@ -82,11 +82,11 @@ QString qSlicerWebPythonProxy::evalPython(const QString &python)
   QString result;
 #ifdef Slicer_USE_PYTHONQT
   if (this->isPythonEvaluationAllowed())
-    {
+  {
     qSlicerPythonManager *pythonManager = qSlicerApplication::application()->pythonManager();
     result = pythonManager->executeString(python).toString();
     qDebug() << "Running " << python << " result is " << result;
-    }
+  }
 #else
   Q_UNUSED(python);
 #endif

@@ -116,23 +116,23 @@ double qSlicerSegmentationsReader::canLoadFileConfidence(const QString& fileName
   // Therefore, confidence below 0.56 means that we got a generic file extension
   // that we need to inspect further.
   if (confidence > 0 && confidence < 0.56)
-    {
+  {
     // Not a composite file extension, inspect the content (for now, only nrrd).
     QString upperCaseFileName = fileName.toUpper();
     if (upperCaseFileName.endsWith("NRRD") || upperCaseFileName.endsWith("NHDR"))
-      {
+    {
       QFile file(fileName);
       if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
+      {
         QTextStream in(&file);
         // Segmentation NRRD files contain ID for each segment (such as Segment0_ID:=...)
         // around position 500, read a bit further to account for slight variations in the header.
         QString line = in.read(800);
         // If this appears in the file header then declare higher confidence value.
         confidence = (line.contains("Segment0_ID:=") ? 0.6 : 0.4);
-        }
       }
     }
+  }
   return confidence;
 }
 
@@ -145,50 +145,50 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 
   this->setLoadedNodes(QStringList());
   if (d->SegmentationsLogic.GetPointer() == nullptr)
-    {
+  {
     return false;
-    }
+  }
 
   QString name;
   if (properties.contains("name"))
-    {
+  {
     name = properties["name"].toString();
-    }
+  }
 
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
 
   if (extension.compare(".stl") == 0 || extension.compare(".obj") == 0)
-    {
+  {
     vtkSmartPointer<vtkPolyData> closedSurfaceRepresentation;
     vtkNew<vtkMRMLModelStorageNode> modelStorageNode;
     modelStorageNode->SetFileName(fileName.toStdString().c_str());
     vtkNew<vtkMRMLModelNode> modelNode;
     if (!modelStorageNode->ReadData(modelNode))
-      {
+    {
       return false;
-      }
+    }
     closedSurfaceRepresentation = modelNode->GetPolyData();
 
     // Remove all arrays, because they could slow down all further processing
     // and consume significant amount of memory.
     if (closedSurfaceRepresentation != nullptr && closedSurfaceRepresentation->GetPointData() != nullptr)
-      {
+    {
       vtkPointData* pointData = closedSurfaceRepresentation->GetPointData();
       while (pointData->GetNumberOfArrays() > 0)
-        {
+      {
         pointData->RemoveArray(0);
-        }
       }
+    }
 
     if (closedSurfaceRepresentation == nullptr)
-      {
+    {
       return false;
-      }
+    }
 
     if (name.isEmpty())
-      {
+    {
       name = QFileInfo(fileName).completeBaseName();
-      }
+    }
 
     vtkNew<vtkSegment> segment;
     segment->SetName(name.toUtf8().constData());
@@ -200,41 +200,41 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     segmentationNode->CreateDefaultDisplayNodes();
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
     if (displayNode)
-      {
+    {
       // Show slice intersections using closed surface representation (don't create binary labelmap for display)
       displayNode->SetPreferredDisplayRepresentationName2D(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
-      }
+    }
 
     segmentationNode->GetSegmentation()->AddSegment(segment.GetPointer());
 
     this->setLoadedNodes(QStringList(QString(segmentationNode->GetID())));
-    }
+  }
   else
-    {
+  {
     // Non-STL file, load using segmentation storage node
     bool autoOpacities = true;
     if (properties.contains("autoOpacities"))
-      {
+    {
       autoOpacities = properties["autoOpacities"].toBool();
-      }
+    }
 
     vtkMRMLColorTableNode* colorTableNode = nullptr;
     if (properties.contains("colorNodeID"))
-      {
+    {
       std::string nodeID = properties["colorNodeID"].toString().toStdString();
       colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(nodeID));
-      }
+    }
 
     vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(
       fileName.toUtf8().constData(), autoOpacities, name.toUtf8(), colorTableNode);
     if (!node)
-      {
+    {
       this->setLoadedNodes(QStringList());
       return false;
-      }
+    }
 
     this->setLoadedNodes( QStringList(QString(node->GetID())) );
-    }
+  }
 
   return true;
 }

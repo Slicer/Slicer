@@ -56,9 +56,9 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
   ///
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override
-    {
+  {
     return Superclass::CreateDefaultStorageNode();
-    };
+  };
 
 protected:
   vtkMRMLLinearTransformNode();

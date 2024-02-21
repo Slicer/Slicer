@@ -40,12 +40,12 @@ int qMRMLTreeViewTest1( int argc, char * argv [] )
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
   if( argc < 2 )
-    {
+  {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::cout << std::endl<< "***************************************" << std::endl;
   vtkTimerLog* timer = vtkTimerLog::New();
   vtkMRMLScene* scene = vtkMRMLScene::New();

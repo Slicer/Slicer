@@ -42,11 +42,11 @@ class Q_SLICER_BASE_QTCLI_EXPORT vtkSlicerCLIModuleLogic :
 {
 public:
   enum CommandLineModuleType
-    {
+  {
     CommandLineModule,
     SharedObjectModule,
     PythonModule
-    };
+  };
 
   static vtkSlicerCLIModuleLogic *New();
   vtkTypeMacro(vtkSlicerCLIModuleLogic,vtkSlicerModuleLogic);
@@ -168,9 +168,9 @@ protected:
 
     /// List of custom events fired by the class.
   enum Events
-    {
+  {
     RequestHierarchyEditEvent = vtkCommand::UserEvent + 1
-    };
+  };
 
   // Add a model hierarchy node and all its descendants to a scene (miniscene to sent to a CLI).
   // The mapping of ids from the original scene to the mini scene is put in (added to) sceneToMiniSceneMap.

@@ -50,9 +50,9 @@ qSlicerAbstractModuleRepresentation::~qSlicerAbstractModuleRepresentation()
 {
   Q_D(qSlicerAbstractModuleRepresentation);
   if (d->Module)
-    {
+  {
     d->Module->representationDeleted(this);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

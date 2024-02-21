@@ -125,13 +125,13 @@ vtkMRMLColorNode* qMRMLColorTableView::mrmlColorNode()const
 void qMRMLColorTableView::setShowOnlyNamedColors(bool enable)
 {
   if (enable)
-    {
+  {
     this->sortFilterProxyModel()->setFilterRegExp(QRegExp("^(?!\\(none\\))"));
-    }
+  }
   else
-    {
+  {
     this->sortFilterProxyModel()->setFilterRegExp(QRegExp());
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -152,9 +152,9 @@ int qMRMLColorTableView::rowFromColorIndex(int colorIndex)const
 {
   QModelIndexList indexes = this->colorModel()->indexes(colorIndex);
   if (indexes.isEmpty())
-    {
+  {
     return -1;
-    }
+  }
   QModelIndex sortedIndex = this->sortFilterProxyModel()->mapFromSource(indexes[0]);
   return sortedIndex.row();
 }

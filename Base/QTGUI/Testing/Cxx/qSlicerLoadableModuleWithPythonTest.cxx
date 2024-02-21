@@ -100,10 +100,10 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleToSlicerModules()
   QCOMPARE(currentResult, expectedResult);
 
   if (expectedResult)
-    {
+  {
     this->PythonManager.executeString(QString("dir(slicer.modules.%1)").arg(moduleName.toLower()));
     QCOMPARE(!this->PythonManager.pythonErrorOccured(), expectedResult);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -130,10 +130,10 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleNameToSlicerModuleNames
   QCOMPARE(currentResult, expectedResult);
 
   if (expectedResult)
-    {
+  {
     this->PythonManager.executeString(QString("dir(slicer.moduleNames.%1)").arg(moduleName.toLower()));
     QCOMPARE(!this->PythonManager.pythonErrorOccured(), expectedResult);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------

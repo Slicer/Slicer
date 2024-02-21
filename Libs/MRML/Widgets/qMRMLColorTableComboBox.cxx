@@ -66,9 +66,9 @@ void qMRMLColorTableComboBoxPrivate::init()
   QIcon defaultIcon(":blankLUT");
   QList<QSize> iconSizes(defaultIcon.availableSizes());
   if (iconSizes.size() > 0)
-    {
+  {
     comboBox->setIconSize(iconSizes[0]);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------

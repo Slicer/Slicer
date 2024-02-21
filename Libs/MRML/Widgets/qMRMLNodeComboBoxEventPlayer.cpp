@@ -43,38 +43,38 @@ bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject *Object,
 {
   if (Command != "nodeAddedByUser" && Command != "currentNodeChanged" &&
       Command != "nodeAboutToBeRemoved" && Command != "nodeRenamed")
-    {
+  {
     return false;
-    }
+  }
 
   if (qMRMLNodeComboBox* const comboBox =
       qobject_cast<qMRMLNodeComboBox*>(Object))
-    {
+  {
     if (Command == "nodeAddedByUser")
-      {
+    {
       comboBox->addNode();
       return true;
-      }
+    }
     if (Command == "currentNodeChanged")
-      {
+    {
       if (Arguments == "None")
-        {
+      {
         comboBox->setCurrentNodeIndex(0);
-        }
+      }
       comboBox->setCurrentNodeID(Arguments);
       return true;
-      }
+    }
     if (Command == "nodeAboutToBeRemoved")
-      {
+    {
       comboBox->removeCurrentNode();
       return true;
-      }
+    }
     if (Command == "nodeRenamed")
-      {
+    {
       comboBox->currentNode()->SetName(Arguments.toUtf8());
       return true;
-      }
     }
+  }
 
   qCritical() << "calling nodeAddedByUser/currentNodeChanged/nodeAboutToBeRemoved/nodeRenamed on unhandled type " << Object;
   Error = true;

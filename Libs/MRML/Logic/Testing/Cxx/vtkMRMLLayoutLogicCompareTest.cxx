@@ -41,36 +41,36 @@ bool TestSetSlicerLayoutCompareGridView()
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutCompareGridView);
   if (layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutCompareGridView)
-    {
+  {
     std::cout << __LINE__ << ": SetViewArrangement failed." << std::endl;
     return false;
-    }
+  }
 
   if (layoutLogic->GetViewNodes()->GetNumberOfItems() != 3)
-    {
+  {
     std::cout << __LINE__ << ": SetViewArrangement(Grid) failed. "
               << layoutLogic->GetViewNodes()->GetNumberOfItems() << " views."
               << std::endl;
     return false;
-    }
+  }
 
   layoutNode->SetNumberOfCompareViewRows(2);
   if (layoutLogic->GetViewNodes()->GetNumberOfItems() != 4)
-    {
+  {
     std::cout << __LINE__ << ": SetNumberOfCompareViewRows(Grid) failed. "
               << layoutLogic->GetViewNodes()->GetNumberOfItems() << " views."
               << std::endl;
     return false;
-    }
+  }
 
   layoutNode->SetNumberOfCompareViewColumns(2);
   if (layoutLogic->GetViewNodes()->GetNumberOfItems() != 6)
-    {
+  {
     std::cout << __LINE__ << ": SetNumberOfCompareViewRows(Grid) failed. "
               << layoutLogic->GetViewNodes()->GetNumberOfItems() << " views."
               << std::endl;
     return false;
-    }
+  }
   return true;
 }
 
@@ -93,13 +93,13 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutCompareGridView);
   if (spy->GetTotalNumberOfEvents() != 1 ||
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1)
-    {
+  {
     std::cout << __LINE__ << ": SetViewArrangement failed. "
               << spy->GetTotalNumberOfEvents() << " events, "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " modified events"
               << std::endl;
     return false;
-    }
+  }
   spy->ResetNumberOfEvents();
 
   // Fires 2 modified events:
@@ -109,13 +109,13 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
   layoutNode->SetNumberOfCompareViewRows(2);
   if (spy->GetTotalNumberOfEvents() != 2 ||
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 2)
-    {
+  {
     std::cout << __LINE__ << ": SetViewArrangement failed. "
               << spy->GetTotalNumberOfEvents() << " events, "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " modified events"
               << std::endl;
     return false;
-    }
+  }
   spy->ResetNumberOfEvents();
 
 
@@ -126,25 +126,25 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
   layoutNode->SetNumberOfCompareViewColumns(2);
   if (spy->GetTotalNumberOfEvents() != 2 ||
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 2)
-    {
+  {
     std::cout << __LINE__ << ": SetViewArrangement failed. "
               << spy->GetTotalNumberOfEvents() << " events, "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " modified events"
               << std::endl;
     return false;
-    }
+  }
   spy->ResetNumberOfEvents();
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
   if (spy->GetTotalNumberOfEvents() != 1 ||
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1)
-    {
+  {
     std::cout << __LINE__ << ": SetViewArrangement failed. "
               << spy->GetTotalNumberOfEvents() << " events, "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " modified events"
               << std::endl;
     return false;
-    }
+  }
   spy->ResetNumberOfEvents();
 
   // Fires 2 modified events:
@@ -154,13 +154,13 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
   layoutNode->SetNumberOfCompareViewRows(3);
   if (spy->GetTotalNumberOfEvents() != 2 ||
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 2)
-    {
+  {
     std::cout << __LINE__ << ": SetViewArrangement failed. "
               << spy->GetTotalNumberOfEvents() << " events, "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " modified events"
               << std::endl;
     return false;
-    }
+  }
   spy->ResetNumberOfEvents();
   return true;
 }

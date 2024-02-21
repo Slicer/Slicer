@@ -37,17 +37,17 @@ int vtkMRMLStreamingVolumeNodeTest1(int , char * [] )
   imageData1->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
   unsigned char* originImagePointer = (unsigned char*)imageData1->GetScalarPointer();
   for (int y = 0; y < height; y++)
-    {
+  {
     for (int x = 0; x < width; x++)
-      {
+    {
       for (int c = 0; c < 3; c++)
-        {
+      {
         unsigned char value = x + y + c;
         *originImagePointer = value;
         ++originImagePointer;
-        }
       }
     }
+  }
 
   vtkSmartPointer<vtkMRMLStreamingVolumeNode> streamingVolumeNode1 = vtkSmartPointer<vtkMRMLStreamingVolumeNode>::New();
   streamingVolumeNode1->SetCodecFourCC("RV24");
@@ -73,30 +73,30 @@ int vtkMRMLStreamingVolumeNodeTest1(int , char * [] )
   imageData2->GetDimensions(image2Dimensions);
 
   for (int i = 0; i < 3; ++i)
-    {
+  {
     if (image1Dimensions[i] != image2Dimensions[i])
-      {
+    {
       return EXIT_FAILURE;
-      }
     }
+  }
 
   unsigned char* image1Pointer = (unsigned char*)imageData1->GetScalarPointer();
   unsigned char* image2Pointer = (unsigned char*)imageData2->GetScalarPointer();
   for (int z = 0; z < image1Dimensions[2]; z++)
-    {
+  {
     for (int y = 0; y < image1Dimensions[1]; y++)
-      {
+    {
       for (int x = 0; x < image1Dimensions[0]; x++)
-        {
+      {
         for (int c = 0; c < 3; c++)
-          {
+        {
           CHECK_INT(*image2Pointer, *image1Pointer);
           ++image1Pointer;
           ++image2Pointer;
-          }
         }
       }
     }
+  }
 
   return EXIT_SUCCESS;
 }

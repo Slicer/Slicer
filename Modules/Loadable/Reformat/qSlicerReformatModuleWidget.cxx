@@ -174,9 +174,9 @@ void qSlicerReformatModuleWidgetPrivate::updateVisibilityControllers()
 void qSlicerReformatModuleWidgetPrivate::updateOffsetSlidersGroupBox()
 {
   if (!this->MRMLSliceNode || !this->MRMLSliceLogic)
-    {
+  {
     return;
-    }
+  }
 
   bool wasBlocking = this->OffsetSlider->blockSignals(true);
 
@@ -208,9 +208,9 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
     vtkSlicerReformatLogic::SafeDownCast(q->logic());
 
   if (!this->MRMLSliceNode || !reformatLogic)
-    {
+  {
     return;
-    }
+  }
 
   // Block signals
   //bool wasOnPlaneXBlocking = this->OnPlaneXdoubleSpinBox->blockSignals(true);
@@ -256,10 +256,10 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
 void qSlicerReformatModuleWidgetPrivate::updateOrientationGroupBox()
 {
   if (!this->MRMLSliceNode)
-    {
+  {
     this->SliceOrientationSelector->setCurrentIndex(-1);
     return;
-    }
+  }
 
   qMRMLSliceControllerWidgetPrivate::updateSliceOrientationSelector(
         this->MRMLSliceNode, this->SliceOrientationSelector);
@@ -286,17 +286,17 @@ resetSlider(qMRMLLinearTransformSlider* slider)
   slider->reset();
 
   if (slider == this->RotateXSlider)
-    {
+  {
     this->LastRotationValues[qSlicerReformatModuleWidget::axisX] = slider->value();
-    }
+  }
   else if (slider == this->RotateYSlider)
-    {
+  {
     this->LastRotationValues[qSlicerReformatModuleWidget::axisY] = slider->value();
-    }
+  }
   else if (slider == this->RotateZSlider)
-    {
+  {
     this->LastRotationValues[qSlicerReformatModuleWidget::axisZ] = slider->value();
-    }
+  }
 
   slider->blockSignals(wasSliderBlocking);
 }
@@ -421,9 +421,9 @@ onMRMLSliceNodeModified(vtkObject* caller)
 
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
   if (!sliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->updateUi();
 }
@@ -453,9 +453,9 @@ void qSlicerReformatModuleWidget::onSliceVisibilityChanged(bool visible)
   std::cout << "onSliceVisibilityChanged" << std::endl;
   Q_D(qSlicerReformatModuleWidget);
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceNode->SetSliceVisible(visible);
 }
@@ -466,14 +466,14 @@ onReformatWidgetVisibilityChanged(bool visible)
 {
   Q_D(qSlicerReformatModuleWidget);
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   if (visible)
-    {
+  {
     d->MRMLSliceNode->SetSliceVisible(visible);
-    }
+  }
 
   d->MRMLSliceNode->SetWidgetVisible(visible);
 }
@@ -483,14 +483,14 @@ void qSlicerReformatModuleWidget::onLockReformatWidgetToCamera(bool lock)
 {
   Q_D(qSlicerReformatModuleWidget);
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
   if (lock)
-    {
+  {
     // "Lock to slice plane" only works if widget is visible, show it now
     d->MRMLSliceNode->SetWidgetVisible(true);
-    }
+  }
 
   d->MRMLSliceNode->SetWidgetNormalLockedToCamera(lock);
 }
@@ -511,9 +511,9 @@ setSliceOffsetValue(double offset)
 {
   Q_D(qSlicerReformatModuleWidget);
   if (!d->MRMLSliceLogic)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceLogic->StartSliceOffsetInteraction();
   d->MRMLSliceLogic->SetSliceOffset(offset);
@@ -526,9 +526,9 @@ onTrackSliceOffsetValueChanged(double offset)
 {
   Q_D(qSlicerReformatModuleWidget);
   if (!d->MRMLSliceLogic)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceLogic->StartSliceOffsetInteraction();
   d->MRMLSliceLogic->SetSliceOffset(offset);
@@ -543,9 +543,9 @@ void qSlicerReformatModuleWidget::setWorldPosition(double* worldCoordinates)
     vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
   if (!d->MRMLSliceNode || !reformatLogic)
-    {
+  {
     return;
-    }
+  }
 
   // Insert the widget translation
   vtkSlicerReformatLogic::SetSliceOrigin(d->MRMLSliceNode, worldCoordinates);
@@ -567,9 +567,9 @@ void qSlicerReformatModuleWidget::setNormalToCamera()
     vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
   if (!reformatLogic)
-    {
+  {
     return;
-    }
+  }
 
   // NOTE: We use the first Camera because there is no notion of active scene
   // Code to be changed when methods available.
@@ -577,17 +577,17 @@ void qSlicerReformatModuleWidget::setNormalToCamera()
     reformatLogic->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLCameraNode"));
 
   if (!cameraNode)
-    {
+  {
     return;
-    }
+  }
 
   // When the user clicks the "Normal to camera button" and the checkbox was checked,
   // then make sure the checkbox becomes unchecked, too, to make it clear to the user
   // that the slice view does not follow the camera normal anymore
   if (d->NormalToCameraCheckablePushButton->checkState() == Qt::Checked)
-    {
+  {
     d->NormalToCameraCheckablePushButton->setCheckState(Qt::Unchecked);
-    }
+  }
 
   double camNormal[3];
   cameraNode->GetCamera()->GetViewPlaneNormal(camNormal);
@@ -634,9 +634,9 @@ void qSlicerReformatModuleWidget::setSliceNormal(double* sliceNormal)
     vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
   if (!d->MRMLSliceNode || !reformatLogic)
-    {
+  {
     return;
-    }
+  }
 
   // Reset rotation sliders
   d->resetSlider(d->RotateXSlider);
@@ -657,9 +657,9 @@ onSliceOrientationChanged(const QString& orientation)
   Q_D(qSlicerReformatModuleWidget);
 
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   // Reset the Rotation Sliders
   d->resetSlider(d->RotateXSlider);
@@ -676,7 +676,7 @@ onSliderRotationChanged(double rotation)
   Q_D(qSlicerReformatModuleWidget);
 
   if (this->sender() == d->RotateXSlider)
-    {
+  {
     // Reset PA & IS sliders
     d->resetSlider(d->RotateYSlider);
     d->resetSlider(d->RotateZSlider);
@@ -686,9 +686,9 @@ onSliderRotationChanged(double rotation)
 
     // Update last value and apply the transform
     d->LastRotationValues[axisX] = rotation;
-    }
+  }
   else if (this->sender() == d->RotateYSlider)
-    {
+  {
     // Reset LR & IS sliders
     d->resetSlider(d->RotateXSlider);
     d->resetSlider(d->RotateZSlider);
@@ -698,9 +698,9 @@ onSliderRotationChanged(double rotation)
 
     // Update last value and apply the transform
     d->LastRotationValues[axisY] = rotation;
-    }
+  }
   else if (this->sender() == d->RotateZSlider)
-    {
+  {
     // Reset LR & PA sliders
     d->resetSlider(d->RotateXSlider);
     d->resetSlider(d->RotateYSlider);
@@ -710,7 +710,7 @@ onSliderRotationChanged(double rotation)
 
     // Update last value and apply the transform
     d->LastRotationValues[axisZ] = rotation;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -722,9 +722,9 @@ void qSlicerReformatModuleWidget::centerSliceNode()
     vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
   if (!d->MRMLSliceNode || !d->MRMLSliceLogic || !reformatLogic)
-    {
+  {
     return;
-    }
+  }
 
   // TODO add the recenter given the Plane Referentiel
 
@@ -747,22 +747,22 @@ bool qSlicerReformatModuleWidget::setEditedNode(vtkMRMLNode* node,
   Q_UNUSED(context);
 
   if (vtkMRMLSliceNode::SafeDownCast(node))
-    {
+  {
     d->SliceNodeSelector->setCurrentNode(node);
     return true;
-    }
+  }
 
   if (vtkMRMLSliceCompositeNode::SafeDownCast(node))
-    {
+  {
     vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceLogic::GetSliceNode(sliceCompositeNode);
     if (!sliceNode)
-      {
+    {
       return false;
-      }
+    }
     d->SliceNodeSelector->setCurrentNode(sliceNode);
     return true;
-    }
+  }
 
   return false;
 }
@@ -800,9 +800,9 @@ void qSlicerReformatModuleWidget::rotateToVolumePlane()
 {
   Q_D(qSlicerReformatModuleWidget);
   if (!d->MRMLSliceNode || !d->MRMLSliceLogic)
-    {
+  {
     return;
-    }
+  }
   d->MRMLSliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::RotateToBackgroundVolumePlaneFlag);
   d->MRMLSliceLogic->RotateSliceToLowestVolumeAxes();
   d->MRMLSliceLogic->EndSliceNodeInteraction();

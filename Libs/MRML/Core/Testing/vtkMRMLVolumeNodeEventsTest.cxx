@@ -56,7 +56,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
       callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent) != 1)
-    {
+  {
     std::cerr << __LINE__ << ": vtkMRMLVolumeNode::SetAndObserveImageData failed: "
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: "
@@ -65,7 +65,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   // Set the same image data:
@@ -74,7 +74,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 0 ||
       callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent) != 0)
-    {
+  {
     std::cerr << __LINE__ << ": vtkMRMLVolumeNode::SetAndObserveImageData failed: "
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: "
@@ -83,7 +83,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   // Update image data
@@ -91,7 +91,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 0 ||
       callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent) != 1)
-    {
+  {
     std::cerr << "vtkImageData::Modified failed."
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: "
@@ -100,7 +100,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   // Update volume node
@@ -108,7 +108,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
       callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent) != 0)
-    {
+  {
     std::cerr << __LINE__ << ": vtkMRMLVolumeNode::Modified failed: "
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: "
@@ -117,7 +117,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   // StartModify
@@ -163,7 +163,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
       callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent) != 1)
-    {
+  {
     std::cerr << __LINE__ << ": vtkMRMLVolumeNode::SetAndObserveImageData failed: "
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: "
@@ -172,7 +172,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   // Update old image data
@@ -181,7 +181,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 0 ||
       callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent) != 0)
-    {
+  {
     std::cerr << __LINE__ << ": vtkMRMLVolumeNode::SetAndObserveImageData failed: "
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: "
@@ -190,7 +190,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   // Update new image data
@@ -199,7 +199,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 0 ||
       callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent) != 1)
-    {
+  {
     std::cerr << __LINE__ << ": vtkMRMLVolumeNode::SetAndObserveImageData failed: "
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: "
@@ -208,7 +208,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   // Clear image data
@@ -217,7 +217,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
       callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent) != 1)
-    {
+  {
     std::cerr << __LINE__ << ": vtkMRMLVolumeNode::SetAndObserveImageData failed: "
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: "
@@ -226,7 +226,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   return EXIT_SUCCESS;

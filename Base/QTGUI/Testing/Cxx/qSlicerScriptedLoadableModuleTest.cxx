@@ -65,9 +65,9 @@ QString qSlicerScriptedLoadableModuleTester::preparePythonSource(const QString& 
 bool qSlicerScriptedLoadableModuleTester::resetTmp()
 {
   if (this->TemporaryDirName.isEmpty())
-    {
+  {
     return false;
-    }
+  }
   QDir tmp = QDir::temp();
   ctk::removeDirRecursively(tmp.filePath(this->TemporaryDirName));
   tmp.mkdir(this->TemporaryDirName);
@@ -91,10 +91,10 @@ void qSlicerScriptedLoadableModuleTester::initTestCase()
 void qSlicerScriptedLoadableModuleTester::cleanupTestCase()
 {
   if (this->Tmp != QDir::current() && this->Tmp.exists())
-    {
+  {
     ctk::removeDirRecursively(this->Tmp.absolutePath());
     this->Tmp = QDir();
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------

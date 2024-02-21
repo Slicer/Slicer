@@ -62,16 +62,16 @@ void vtkMRMLModelHierarchyNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "modelNodeRef") ||
         !strcmp(attName, "modelNodeID") )
-      {
+    {
       this->SetDisplayableNodeID(attValue);
       //this->Scene->AddReferencedNodeID(this->ModelNodeID, this);
-      }
     }
+  }
 
   this->EndModify(disabledModify);
 }
@@ -98,10 +98,10 @@ void vtkMRMLModelHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   if (this->ModelDisplayNode)
-    {
+  {
     os << indent << "ModelDisplayNode ID = " <<
       (this->ModelDisplayNode->GetID() ? this->ModelDisplayNode->GetID() : "(none)") << "\n";
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -130,9 +130,9 @@ vtkMRMLModelDisplayNode* vtkMRMLModelHierarchyNode::GetModelDisplayNode()
   vtkMRMLModelDisplayNode* node = nullptr;
   vtkMRMLNode* snode = Superclass::GetDisplayNode();
   if (snode)
-    {
+  {
     node = vtkMRMLModelDisplayNode::SafeDownCast(snode);
-    }
+  }
   return node;
 }
 
@@ -148,9 +148,9 @@ void vtkMRMLModelHierarchyNode::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLModelDisplayNode *dnode = this->GetModelDisplayNode();
   if (dnode != nullptr && dnode == vtkMRMLModelDisplayNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
-    {
+  {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
-    }
+  }
   return;
 }
 
@@ -160,9 +160,9 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetCollapsedParentNode()
   vtkMRMLModelHierarchyNode *node = nullptr;
   vtkMRMLDisplayableHierarchyNode *dhnode = Superclass::GetCollapsedParentNode();
   if (dhnode != nullptr)
-    {
+  {
     node = vtkMRMLModelHierarchyNode::SafeDownCast(dhnode);
-    }
+  }
   return node;
 }
 
@@ -172,30 +172,30 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetCollapsedParentNode()
 void vtkMRMLModelHierarchyNode:: GetChildrenModelNodes(vtkCollection *models)
 {
   if (models == nullptr)
-    {
+  {
     return;
-    }
+  }
   vtkMRMLScene *scene = this->GetScene();
   vtkMRMLNode *mnode = nullptr;
   vtkMRMLModelHierarchyNode *hnode = nullptr;
   for (int n=0; n < scene->GetNumberOfNodes(); n++)
-    {
+  {
     mnode = scene->GetNthNode(n);
     if (mnode->IsA("vtkMRMLModelNode"))
-      {
+    {
       hnode = vtkMRMLModelHierarchyNode::SafeDownCast(
           vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(scene, mnode->GetID()));
       while (hnode)
-        {
+      {
         if (hnode == this)
-          {
+        {
           models->AddItem(mnode);
           break;
-          }
+        }
           hnode = vtkMRMLModelHierarchyNode::SafeDownCast(hnode->GetParentNode());
-        }// end while
-      }// end if
-    }// end for
+      }// end while
+    }// end if
+  }// end for
 }
 
 

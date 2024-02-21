@@ -75,7 +75,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   void TerminateProcessingThread();
   /// List of events potentially fired by the application logic
   enum RequestEvents
-    {
+  {
       RequestModifiedEvent = vtkMRMLApplicationLogic::RequestInvokeEvent + 1,
       RequestReadDataEvent,
       RequestWriteDataEvent,
@@ -84,7 +84,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
       /// The UID of the request is passed as callData.
       /// \todo Add support for "modified" request.
       RequestProcessedEvent
-    };
+  };
 
   /// Schedule a task to run in the processing thread. Returns true if
   /// task was successfully scheduled. ScheduleTask() is called from the

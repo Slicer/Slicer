@@ -135,9 +135,9 @@ bool qSlicerTerminologySelectorDialog::exec()
   // Show dialog
   bool result = false;
   if (d->exec() != QDialog::Accepted)
-    {
+  {
     return result;
-    }
+  }
 
   // Save selection after clean exit
   d->NavigatorWidget->terminologyInfo(d->TerminologyInfo);
@@ -164,9 +164,9 @@ bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry*
   qSlicerTerminologySelectorDialog dialog(terminologyInfo, parent);
   dialog.setOverrideSectionVisible(false);
   if (!dialog.exec())
-    {
+  {
     return false;
-    }
+  }
   dialog.terminologyInfo(terminologyInfo);
   terminologyEntry->Copy(terminologyInfo.GetTerminologyEntry());
   return true;

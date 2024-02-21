@@ -70,16 +70,16 @@ public:
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
-    {
+  {
       DisplayModifiedEvent = 20000
-    };
+  };
 
   ///
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override
-    {
+  {
     return Superclass::CreateDefaultStorageNode();
-    }
+  }
 
   /// The list of valid types
   /// dGEMRIC-15T to display 1.5T dGEMRIC scans

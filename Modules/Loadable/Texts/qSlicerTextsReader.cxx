@@ -80,36 +80,36 @@ bool qSlicerTextsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerTextsReader);
   if (!properties.contains("fileName"))
-    {
+  {
     qCritical() << Q_FUNC_INFO << " did not receive fileName property";
     return false;
-    }
+  }
   std::string fileName = properties["fileName"].toString().toStdString();
 
   std::string textNodeName = vtksys::SystemTools::GetFilenameWithoutLastExtension(fileName);
   vtkSmartPointer<vtkMRMLTextNode> textNode = vtkMRMLTextNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLTextNode", textNodeName));
   if (!textNode)
-    {
+  {
     return false;
-    }
+  }
 
   vtkSmartPointer<vtkMRMLTextStorageNode> storageNode = vtkMRMLTextStorageNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLTextStorageNode"));
   if (!storageNode)
-    {
+  {
     this->mrmlScene()->RemoveNode(textNode);
     return false;
-    }
+  }
 
   textNode->SetAndObserveStorageNodeID(storageNode->GetID());
   storageNode->SetFileName(fileName.c_str());
   int retval = storageNode->ReadData(textNode);
   if (retval != 1)
-    {
+  {
     qCritical() << Q_FUNC_INFO << "load: error reading " << fileName.c_str();
     this->mrmlScene()->RemoveNode(textNode);
     this->mrmlScene()->RemoveNode(storageNode);
     return false;
-    }
+  }
 
   this->setLoadedNodes(QStringList(QString(textNode->GetID())));
 

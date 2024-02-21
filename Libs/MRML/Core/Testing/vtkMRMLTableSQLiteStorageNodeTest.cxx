@@ -72,11 +72,11 @@ int vtkMRMLTableSQLiteStorageNodeTest(int , char * [] )
   float inc = 7.0 / (numPoints-1);
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
-    {
+  {
     table->SetValue(i, 0, i * inc);
     table->SetValue(i, 1, cos(i * inc) + 0.0);
     table->SetValue(i, 2, sin(i * inc) + 0.0);
-    }
+  }
 
   tableNode->SetAndObserveTable(table.GetPointer());
 
@@ -88,28 +88,28 @@ int vtkMRMLTableSQLiteStorageNodeTest(int , char * [] )
 
   tableNode->RemoveAllColumns();
   if (tableNode->GetNumberOfColumns() != 0)
-    {
+  {
     std::cerr << "Unable to remove columns " << std::endl;
     removeFile(storageNode->GetFileName());
     return EXIT_FAILURE;
-    }
+  }
 
   // read table from the database
   storageNode->ReadData(tableNode.GetPointer());
 
   if (tableNode->GetNumberOfColumns() != 3)
-    {
+  {
     std::cerr << "Unable to read table columns from the database " << storageNode->GetFileName() <<std::endl;
     removeFile(storageNode->GetFileName());
     return EXIT_FAILURE;
-    }
+  }
 
   if (tableNode->GetNumberOfRows() != numPoints)
-    {
+  {
     std::cerr << "Unable to read table rows from the database " << storageNode->GetFileName() <<std::endl;
     removeFile(storageNode->GetFileName());
     return EXIT_FAILURE;
-    }
+  }
 
   // clean up
   removeFile(storageNode->GetFileName());

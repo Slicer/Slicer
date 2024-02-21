@@ -27,12 +27,12 @@ void * ipAllocateData(const int size, const size_t elemsize)
   void *data = nullptr;
 
   if( !(data = malloc(size * elemsize) ) )
-    {
+  {
     fprintf(stderr, "Error: ipAllocateData [%s, line %d]: memory allocation failed:",
             __FILE__, __LINE__);
     perror("");
     exit(errno);
-    }
+  }
 
   memset(data, 0, size * elemsize);
 
@@ -44,7 +44,7 @@ size_t ipGetDataSize(const ipDataType type)
   size_t retval;
 
   switch( type )
-    {
+  {
     case IP_BYTE:
       retval = sizeof(char);
       break;
@@ -68,7 +68,7 @@ size_t ipGetDataSize(const ipDataType type)
 
       retval = 0;
       break;
-    }
+  }
 
   return retval;
 

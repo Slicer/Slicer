@@ -80,19 +80,19 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   // MarkupExists
   std::cout << "Checking if markup exists in empty markups node" << std::endl;
   for (int m = -1; m < 3; m++)
-    {
+  {
     CHECK_BOOL(node1->ControlPointExists(m), false);
-    }
+  }
 
   // Get Nth Markup
   vtkMRMLMarkupsNode::ControlPoint *markup;
   for (int n = -1; n < 3; n++)
-    {
+  {
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
     markup = node1->GetNthControlPoint(n);
     TESTING_OUTPUT_ASSERT_ERRORS_END();
     CHECK_NULL(markup);
-    }
+  }
 
   // AddMarkupWithNPoints
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -134,9 +134,9 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   //
   std::cout << "IDs:" << std::endl;
   for (int n = 0; n < node1->GetNumberOfControlPoints(); ++n)
-    {
+  {
     std::cout << n << ": id = " << node1->GetNthControlPointID(n).c_str() << std::endl;
-    }
+  }
   // reset one
   std::string oldID = node1->GetNthControlPointID(0);
   CHECK_BOOL(node1->ResetNthControlPointID(0), true);
@@ -148,7 +148,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   std::cout << "Orientations:" << std::endl;
   double orientation[4];
   for (int n = 0; n < node1->GetNumberOfControlPoints(); ++n)
-    {
+  {
     node1->GetNthControlPointOrientation(n, orientation);
     std::cout << n << ": orientation = "
               << orientation[0] << ","
@@ -160,12 +160,12 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
         orientation[1] != 0.0 ||
         orientation[2] != 0.0 ||
         orientation[3] != 1.0)
-      {
+    {
       std::cerr << "Incorrect default orientation for markup " << n
                 << "! Expected 0.0, 0.0, 0.0, 1.0," << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
   double testOrientation[4] = {0.5, 1.0, 0.0, 0.0};
   node1->SetNthControlPointOrientation(0,
                                  testOrientation[0], testOrientation[1],
@@ -173,9 +173,9 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   double newOrientation[4];
   node1->GetNthControlPointOrientation(0, newOrientation);
   for (int r = 0; r < 4; r++)
-    {
+  {
     if (newOrientation[r] != testOrientation[r])
-      {
+    {
       std::cerr << "Failed to set orientation! "
                 << "Expected: "
                 << testOrientation[0] << ", "
@@ -188,16 +188,16 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
                 << newOrientation[2] << ", "
                 << newOrientation[3] << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   testOrientation[0] = 0.333;
   node1->SetNthControlPointOrientation(0, testOrientation);
   node1->GetNthControlPointOrientation(0, newOrientation);
   for (int r = 0; r < 4; r++)
-    {
+  {
     if (fabs(newOrientation[r] - testOrientation[r]) > 1e-5)
-      {
+    {
       std::cerr << "Failed to set orientation from array! "
                 << "Expected: "
                 << testOrientation[0] << ", "
@@ -210,8 +210,8 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
                 << newOrientation[2] << ", "
                 << newOrientation[3] << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   testOrientation[0] = 0.111;
   testOrientation[1] = 0.0;
@@ -221,9 +221,9 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   node1->SetNthControlPointOrientation(0, orientationPointer);
   node1->GetNthControlPointOrientation(0, newOrientation);
   for (int r = 0; r < 4; r++)
-    {
+  {
     if (fabs(newOrientation[r] - testOrientation[r]) > 1e-5)
-      {
+    {
       std::cerr << "Failed to set orientation from pointer! "
                 << "Expected: "
                 << testOrientation[0] << ", "
@@ -236,8 +236,8 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
                 << newOrientation[2] << ", "
                 << newOrientation[3] << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   //
   // Selected/Visib
@@ -269,31 +269,31 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   if (p1.GetX() != p0[0] ||
       p1.GetY() != p0[1] ||
       p1.GetZ() != p0[2])
-    {
+  {
     std::cerr << "Failed to get back markup 2 point 1 via vector, expected "
               << p0[0] << "," << p0[1] << "," << p0[2] << ", but got "
               << p1.GetX() << "," << p1.GetY() << "," << p1.GetZ() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   else
-    {
+  {
     std::cout << "Get markup point vector: " << p1.GetX() << "," << p1.GetY() << "," << p1.GetZ() << std::endl;
-    }
+  }
   double p3[3];
   node1->GetNthControlPointPosition(2,p3);
   if (p3[0] != p0[0] ||
       p3[1] != p0[1] ||
       p3[2] != p0[2])
-    {
+  {
     std::cerr << "Failed to get back markup 2 point 1 via array, expected "
               << p0[0] << "," << p0[1] << "," << p0[2] << ", but got "
               << p3[0] << "," << p3[1] << "," << p3[2] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   else
-    {
+  {
     std::cout << "Get markup point array: " << p3[0] << "," << p3[1] << "," << p3[2] << std::endl;
-    }
+  }
 
   vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
   double offset[3] = {-10.0, 5.5, 0.22};
@@ -315,23 +315,23 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   std::cout << "Output Point = " << outputPoint[0] << "," << outputPoint[1] << "," << outputPoint[2] << std::endl;
   double diff = sqrt(vtkMath::Distance2BetweenPoints(expectedPos, outputPoint));
   if (diff > 0.1)
-    {
+  {
     std::cerr << "Difference between expected and output too large: " << diff << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   else
-    {
+  {
     std::cout << "\tdiff = " << diff << std::endl;
-    }
+  }
 
   // test WriteCLI
   vtkIndent indent;
   int numMarkups = node1->GetNumberOfControlPoints();
   for (int m = 0; m < numMarkups; m++)
-    {
+  {
     // make sure all are selected so all will be passed
     node1->SetNthControlPointSelected(m, true);
-    }
+  }
   std::cout << "\nTesting WriteCLI call on markups node with "
             << numMarkups<< " markups." << std::endl;
   node1->PrintSelf(std::cout, indent);
@@ -340,18 +340,18 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   node1->WriteCLI(commandLine1, prefix, vtkMRMLStorageNode::CoordinateSystemRAS);
   std::cout << "Wrote RAS points to CLI as:" << std::endl;
   for (unsigned int i = 0; i < commandLine1.size(); ++i)
-    {
+  {
     std::cout << commandLine1[i].c_str() << std::endl;
-    }
+  }
   CHECK_INT(commandLine1.size(), numMarkups * 2);
 
   std::vector<std::string> commandLine2;
   node1->WriteCLI(commandLine2, prefix, vtkMRMLStorageNode::CoordinateSystemLPS);
   std::cout << "Wrote LPS points to CLI as:" << std::endl;;
   for (unsigned int i = 0; i < commandLine2.size(); ++i)
-    {
+  {
     std::cout << commandLine2[i].c_str() << std::endl;
-    }
+  }
   CHECK_INT(commandLine2.size(), numMarkups * 2);
 
   // single point test
@@ -360,9 +360,9 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   std::cout << "Wrote single RAS markup to CLI (command line size "
             << commandLine3.size() << ") :" << std::endl;
   for (unsigned int i = 0; i < commandLine3.size(); ++i)
-    {
+  {
     std::cout << commandLine3[i].c_str() << std::endl;
-    }
+  }
   CHECK_INT(commandLine3.size(), 2);
 
   return EXIT_SUCCESS;

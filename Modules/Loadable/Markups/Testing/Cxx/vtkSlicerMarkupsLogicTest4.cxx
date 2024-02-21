@@ -135,35 +135,35 @@ int vtkSlicerMarkupsLogicTest4(int , char*[])
   logic4->RegisterMarkupsNode(markupsAngleNode, markupsAngleWidget, true);
   CHECK_BOOL(registeredEventReceived, true);
   if (logic4->GetWidgetByMarkupsType(markupsFiducialNode->GetMarkupType()) != markupsPointsWidget)
-    {
+  {
     std::cerr << "Error in GetWidgetByMarkupsType: obtained widget does not match the expected one." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (logic4->GetNodeByMarkupsType(markupsFiducialNode->GetMarkupType()) != markupsFiducialNode)
-    {
+  {
     std::cerr << "Error in GetNodeByMarkupsType: obtained node does not match the expected one." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (logic4->GetCreateMarkupsPushButton(markupsFiducialNode->GetMarkupType()) != false)
-    {
+  {
     std::cerr << "Error in GetCreateMarkupsPushButton: obtained value does not match the expected one." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (logic4->GetWidgetByMarkupsType(markupsAngleNode->GetMarkupType()) != markupsAngleWidget)
-    {
+  {
     std::cerr << "Error in GetWidgetByMarkupsType: obtained widget does not match the expected one." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (logic4->GetNodeByMarkupsType(markupsAngleNode->GetMarkupType()) != markupsAngleNode)
-    {
+  {
     std::cerr << "Error in GetNodeByMarkupsType: obtained widget does not match the expected one." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (logic4->GetCreateMarkupsPushButton(markupsAngleNode->GetMarkupType()) != true)
-    {
+  {
     std::cerr << "Error in GetCreateMarkupsPushButton: obtained value does not match the expected one." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Get registered markups with a nullptr
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();

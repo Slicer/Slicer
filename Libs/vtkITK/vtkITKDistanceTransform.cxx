@@ -96,19 +96,19 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData *input, vtkImageData *o
   vtkPointData *pd = input->GetPointData();
   pd=input->GetPointData();
   if (pd ==nullptr)
-    {
+  {
     vtkErrorMacro(<<"PointData is NULL");
     return;
-    }
+  }
   vtkDataArray *inScalars=pd->GetScalars();
   if ( inScalars == nullptr )
-    {
+  {
     vtkErrorMacro(<<"Scalars must be defined for distance transform");
     return;
-    }
+  }
 
   if (inScalars->GetNumberOfComponents() == 1 )
-    {
+  {
 
 ////////// These types are not defined in itk ////////////
 #undef VTK_TYPE_USE_LONG_LONG
@@ -120,7 +120,7 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData *input, vtkImageData *o
     void* outPtr = output->GetScalarPointer();
 
     switch (inScalars->GetDataType())
-      {
+    {
       vtkTemplateMacroCase(VTK_DOUBLE, double, CALL);                           \
       vtkTemplateMacroCase(VTK_FLOAT, float, CALL);                             \
       vtkTemplateMacroCase(VTK_LONG, long, CALL);                               \
@@ -132,12 +132,12 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData *input, vtkImageData *o
       vtkTemplateMacroCase(VTK_CHAR, char, CALL);                               \
       vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, CALL);                 \
       vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, CALL);
-      } //switch
-    }
+    } //switch
+  }
   else
-    {
+  {
     vtkErrorMacro(<< "Can only calculate on scalar.");
-    }
+  }
 }
 
 void vtkITKDistanceTransform::PrintSelf(ostream& os, vtkIndent indent)

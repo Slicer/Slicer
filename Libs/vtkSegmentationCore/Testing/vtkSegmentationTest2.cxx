@@ -85,38 +85,38 @@ bool TestSharedLabelmapConversion()
 
   int numClosedSurfaceLayers = segmentation->GetNumberOfLayers(vtkSegmentationConverter::GetClosedSurfaceRepresentationName());
   if (numClosedSurfaceLayers != 3)
-    {
+  {
     std::cerr << __LINE__ << ": Invalid number of closed surface layers " << numClosedSurfaceLayers
       << " should be 3" << std::endl;
     return false;
-    }
+  }
 
   segmentation->CreateRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
 
   int numBinaryLabelmapLayers = segmentation->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
   if (numBinaryLabelmapLayers != 2)
-    {
+  {
     std::cerr << __LINE__ << ": Invalid number of binary labelmap layers " << numBinaryLabelmapLayers
       << " should be 2" << std::endl;
     return false;
-    }
+  }
 
   std::vector<std::string> sharedSegmentIDs;
   segmentation->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentation->GetSegmentIdBySegment(sphereSegment1), sharedSegmentIDs, true);
   if (sharedSegmentIDs.size() != 2)
-    {
+  {
     std::cerr << __LINE__ << ": Invalid number of shared labelmaps for segment " << sphereSegment1->GetName()
       << ": " << sharedSegmentIDs.size() << " should be 2" << std::endl;
     return false;
-    }
+  }
 
   segmentation->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentation->GetSegmentIdBySegment(sphereSegment2), sharedSegmentIDs, true);
   if (sharedSegmentIDs.size() != 1)
-    {
+  {
     std::cerr << __LINE__ << ": Invalid number of shared labelmaps for segment " << sphereSegment2->GetName()
       << ": " << sharedSegmentIDs.size() << " should be 1" << std::endl;
     return false;
-    }
+  }
 
   return true;
 }
@@ -174,20 +174,20 @@ bool TestSharedLabelmapCollapse()
 
   numberOfLayers = segmentation->GetNumberOfLayers();
   if (numberOfLayers != 4)
-    {
+  {
     std::cerr << "Invalid number of layers " << numberOfLayers << " should be 4" << std::endl;
     return false;
-    }
+  }
 
   /////////////////////////////////////
   segmentation->CollapseBinaryLabelmaps(false); // Merge to multiple layers
 
   numberOfLayers = segmentation->GetNumberOfLayers();
   if (numberOfLayers != 3)
-    {
+  {
     std::cerr << "Safe merge failed: Invalid number of layers " << numberOfLayers << " should be 3" << std::endl;
     return false;
-    }
+  }
 
   vtkNew<vtkImageAccumulate> imageAccumulate;
   double frequency = 0.0;
@@ -200,7 +200,7 @@ bool TestSharedLabelmapCollapse()
     imageCount4,
     };
   for (size_t i = 0; i < segments.size(); ++i)
-    {
+  {
     vtkSegment* segment = segments[i];
     int expectedFrequency = expectedResults[i];
 
@@ -211,21 +211,21 @@ bool TestSharedLabelmapCollapse()
     imageAccumulate->Update();
     frequency = imageAccumulate->GetOutput()->GetPointData()->GetScalars()->GetTuple1((vtkIdType)labelValue);
     if (frequency != expectedFrequency)
-      {
+    {
       std::cerr << "Invalid number of voxels in " << segment->GetName() << " " << frequency << " should be " << expectedFrequency << std::endl;
       return false;
-      }
     }
+  }
 
   /////////////////////////////////////
   segmentation->CollapseBinaryLabelmaps(true); // Overwrite merge
 
   numberOfLayers = segmentation->GetNumberOfLayers();
   if (numberOfLayers != 1)
-    {
+  {
     std::cerr << "Overwrite merge failed: Invalid number of layers " << numberOfLayers << " should be 1" << std::endl;
     return false;
-    }
+  }
 
 
    expectedResults =
@@ -236,7 +236,7 @@ bool TestSharedLabelmapCollapse()
     imageCount4,
     };
   for (size_t i = 0; i < segments.size(); ++i)
-    {
+  {
     vtkSegment* segment = segments[i];
     int expectedFrequency = expectedResults[i];
 
@@ -247,21 +247,21 @@ bool TestSharedLabelmapCollapse()
     imageAccumulate->Update();
     frequency = imageAccumulate->GetOutput()->GetPointData()->GetScalars()->GetTuple1((vtkIdType)labelValue);
     if (frequency != expectedFrequency)
-      {
+    {
       std::cerr << "Invalid number of voxels in " << segment->GetName() << " " << frequency << " should be " << expectedFrequency << std::endl;
       return false;
-      }
     }
+  }
 
   /////////////////////////////////////
   segmentation->SeparateSegmentLabelmap(segmentation->GetSegmentIdBySegment(segment1));
 
   numberOfLayers = segmentation->GetNumberOfLayers();
   if (numberOfLayers != 2)
-    {
+  {
     std::cerr << "Separate segment labelmap failed: Invalid number of layers " << numberOfLayers << " should be 2" << std::endl;
     return false;
-    }
+  }
 
   return true;
 }
@@ -281,35 +281,35 @@ bool TestSharedLabelmapCasting()
   segmentation->AddSegment(segment);
 
   if (labelmap->GetScalarType() != VTK_UNSIGNED_CHAR)
-    {
+  {
     std::cerr << "Invalid scalar type " << labelmap->GetScalarType() << " should be " << VTK_UNSIGNED_CHAR << std::endl;
     return false;
-    }
+  }
 
   for (int i = 0; i < 254; ++i)
-    {
+  {
     segmentation->AddEmptySegment();
-    }
+  }
 
   if (labelmap->GetScalarType() != VTK_UNSIGNED_CHAR)
-    {
+  {
     std::cerr << "Invalid scalar type " << labelmap->GetScalarType() << " should be " << VTK_UNSIGNED_CHAR << std::endl;
     return false;
-    }
+  }
 
   segmentation->AddEmptySegment();
   if (labelmap->GetScalarType() != VTK_UNSIGNED_SHORT)
-    {
+  {
     std::cerr << "Invalid scalar type " << labelmap->GetScalarType() << " should be " << VTK_UNSIGNED_SHORT << std::endl;
     return false;
-    }
+  }
 
   vtkOrientedImageDataResample::CastImageForValue(labelmap, VTK_UNSIGNED_SHORT_MAX + 1);
   if (labelmap->GetScalarType() != VTK_UNSIGNED_INT)
-    {
+  {
     std::cerr << "Invalid scalar type " << labelmap->GetScalarType() << " should be " << VTK_UNSIGNED_INT << std::endl;
     return false;
-    }
+  }
 
   return true;
 }
@@ -324,19 +324,19 @@ int vtkSegmentationTest2(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
     vtkSmartPointer<vtkClosedSurfaceToBinaryLabelmapConversionRule>::New() );
 
   if (!TestSharedLabelmapConversion())
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   if (!TestSharedLabelmapCollapse())
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   if (!TestSharedLabelmapCasting())
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   std::cout << "Segmentation test 2 passed." << std::endl;
   return EXIT_SUCCESS;

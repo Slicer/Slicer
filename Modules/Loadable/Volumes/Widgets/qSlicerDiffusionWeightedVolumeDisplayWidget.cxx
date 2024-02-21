@@ -137,9 +137,9 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::updateWidgetFromVolumeNode()
   Q_D(qSlicerDiffusionWeightedVolumeDisplayWidget);
   this->setEnabled(d->VolumeNode != nullptr);
   if (!d->VolumeNode)
-    {
+  {
     return;
-    }
+  }
   int maxRange = d->VolumeNode->GetImageData() ?
     d->VolumeNode->GetImageData()->GetNumberOfScalarComponents() - 1 : 0;
   // we save the component here, as changing the range of the slider/spinbox
@@ -164,9 +164,9 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::updateWidgetFromDisplayNode()
   vtkMRMLDiffusionWeightedVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
   d->DWIComponentSlider->setValue(displayNode->GetDiffusionComponent());
 }
 
@@ -176,8 +176,8 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::setDWIComponent(int component)
 {
   vtkMRMLDiffusionWeightedVolumeDisplayNode* volumeDisplayNode = this->volumeDisplayNode();
   if (!volumeDisplayNode)
-    {
+  {
     return;
-    }
+  }
   volumeDisplayNode->SetDiffusionComponent(component);
 }

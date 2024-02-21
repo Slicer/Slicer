@@ -138,14 +138,14 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
 int qSlicerWidgetTest2(int argc, char * argv[] )
 {
   if (argc != 2 && argc != 3)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Missing parameters !" << std::endl
       << "Usage:" << std::endl
       << "  Default: " << argv[0] << " /path/to/temp" << std::endl
       << "  For interactive testing: " << argv[0] << " /path/to/temp -I" << std::endl
       << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //
   // Create a simple gui with a quit button and render window

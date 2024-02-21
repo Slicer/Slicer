@@ -92,7 +92,7 @@ namespace
 {
 
 struct parameters
-  {
+{
     std::string PETDICOMPath;
     std::string PETVolumeName;
     std::string VOIVolumeName;
@@ -124,10 +124,10 @@ struct parameters
 double ConvertTimeToSeconds(const char *time )
 {
   if( time == nullptr )
-    {
+  {
     std::cerr << "ConvertTimeToSeconds got a nullptr time string." << std::endl;
     return -1.0;
-    }
+  }
 
   std::string h;
   std::string m;
@@ -139,9 +139,9 @@ double ConvertTimeToSeconds(const char *time )
   double seconds;
 
   if( time == nullptr )
-    {
+  {
     return 0.0;
-    }
+  }
 
   // ---
   // --- time will be in format HH:MM:SS.SSSS
@@ -173,15 +173,15 @@ double ConvertWeightUnits(double count, const char *fromunits, const char *touni
   double conversion = count;
 
   if( fromunits == nullptr )
-    {
+  {
     std::cout << "Got nullptr parameter fromunits. A bad param was probably specified." << std::endl;
     return -1.0;
-    }
+  }
   if( tounits == nullptr )
-    {
+  {
     std::cout << "Got nullptr parameter from tounits. A bad parameter was probably specified." << std::endl;
     return -1.0;
-    }
+  }
 
   /*
     possibilities include:
@@ -193,50 +193,50 @@ double ConvertWeightUnits(double count, const char *fromunits, const char *touni
 
   // --- kg to...
   if( !strcmp(fromunits, "kg") )
-    {
+  {
     if( !strcmp(tounits, "kg") )
-      {
+    {
       return conversion;
-      }
+    }
     else if( !strcmp(tounits, "g") )
-      {
+    {
       conversion *= 1000.0;
-      }
+    }
     else if( !strcmp(tounits, "lb") )
-      {
+    {
       conversion *= 2.2;
-      }
     }
+  }
   else if( !strcmp(fromunits, "g") )
-    {
+  {
     if( !strcmp(tounits, "kg") )
-      {
+    {
       conversion /= 1000.0;
-      }
-    else if( !strcmp(tounits, "g") )
-      {
-      return conversion;
-      }
-    else if( !strcmp(tounits, "lb") )
-      {
-      conversion *= .0022;
-      }
     }
-  else if( !strcmp(fromunits, "lb") )
+    else if( !strcmp(tounits, "g") )
     {
-    if( !strcmp(tounits, "kg") )
-      {
-      conversion *= 0.45454545454545453;
-      }
-    else if( !strcmp(tounits, "g") )
-      {
-      conversion *= 454.54545454545453;
-      }
-    else if( !strcmp(tounits, "lb") )
-      {
       return conversion;
-      }
     }
+    else if( !strcmp(tounits, "lb") )
+    {
+      conversion *= .0022;
+    }
+  }
+  else if( !strcmp(fromunits, "lb") )
+  {
+    if( !strcmp(tounits, "kg") )
+    {
+      conversion *= 0.45454545454545453;
+    }
+    else if( !strcmp(tounits, "g") )
+    {
+      conversion *= 454.54545454545453;
+    }
+    else if( !strcmp(tounits, "lb") )
+    {
+      return conversion;
+    }
+  }
   return conversion;
 
 }
@@ -250,15 +250,15 @@ double ConvertRadioactivityUnits(double count, const char *fromunits, const char
   double conversion = count;
 
   if( fromunits == nullptr )
-    {
+  {
     std::cout << "Got nullptr parameter in fromunits. A bad parameter was probably specified." << std::endl;
     return -1.0;
-    }
+  }
   if( tounits == nullptr )
-    {
+  {
     std::cout << "Got nullptr parameter in tounits. A bad parameter was probably specified." << std::endl;
     return -1.0;
-    }
+  }
 
 /*
   possibilities include:
@@ -277,444 +277,444 @@ double ConvertRadioactivityUnits(double count, const char *fromunits, const char
 
   // --- MBq to...
   if( !strcmp(fromunits, "MBq" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       return conversion;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      conversion *= 1000.0;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      conversion *= 1000000.0;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      conversion *= 1000000000.0;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      conversion *= 1000000000000.0;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      conversion *= 0.000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      conversion *= 0.000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      conversion *= 0.000027027027027027;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      conversion *= 0.027027027027027;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      conversion *= 27.027027027;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      conversion *= 1000.0;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      conversion *= 1000000.0;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      conversion *= 1000000000.0;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      conversion *= 1000000000000.0;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      conversion *= 0.000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      conversion *= 0.000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      conversion *= 0.000027027027027027;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      conversion *= 0.027027027027027;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      conversion *= 27.027027027;
+    }
+  }
   // --- kBq to...
   else if( !strcmp(fromunits, "kBq" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       conversion *= .001;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      return conversion;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      conversion *= 1000.0;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      conversion *= 1000000.0;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      conversion *= 1000000000.0;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      conversion *= 0.000000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      conversion *= 0.000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      conversion *= 0.000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      conversion *= 0.000027027027027027;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      conversion *= 0.027027027027027;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      return conversion;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      conversion *= 1000.0;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      conversion *= 1000000.0;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      conversion *= 1000000000.0;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      conversion *= 0.000000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      conversion *= 0.000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      conversion *= 0.000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      conversion *= 0.000027027027027027;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      conversion *= 0.027027027027027;
+    }
+  }
   // --- Bq to...
   else if( !strcmp(fromunits, "Bq" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       conversion *= 0.000001;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      conversion *= 0.001;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      return conversion;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      conversion *= 1000.0;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      conversion *= 1000000.0;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      conversion *= 0.000000000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      conversion *=  0.000000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      conversion *= 0.000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      conversion *= 0.000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      conversion *= 0.000027027027027027;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      conversion *= 0.001;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      return conversion;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      conversion *= 1000.0;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      conversion *= 1000000.0;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      conversion *= 0.000000000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      conversion *=  0.000000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      conversion *= 0.000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      conversion *= 0.000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      conversion *= 0.000027027027027027;
+    }
+  }
   // --- mBq to...
   else if( !strcmp(fromunits, "mBq" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       conversion *= 0.000000001;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      conversion *= 0.000001;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      conversion *= 0.001;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      return conversion;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      conversion *= 1000.0;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      conversion *= 0.00000000000000000002702702702702;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      conversion *= 0.000000000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      conversion *= 0.000000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      conversion *= 0.000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      conversion *= 0.000000027027027027027;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      conversion *= 0.000001;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      conversion *= 0.001;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      return conversion;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      conversion *= 1000.0;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      conversion *= 0.00000000000000000002702702702702;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      conversion *= 0.000000000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      conversion *= 0.000000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      conversion *= 0.000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      conversion *= 0.000000027027027027027;
+    }
+  }
   // --- uBq to...
   else if( !strcmp(fromunits, "uBq" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       conversion *= 0.000000000001;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      conversion *= 0.000000001;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      conversion *= 0.000001;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      conversion *= 0.001;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      return conversion;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      conversion *= 0.000000000000000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      conversion *= 0.000000000000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      conversion *= 0.000000000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      conversion *= 0.000000000000027027027027027;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      conversion *= 0.000000000027027027027027;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      conversion *= 0.000000001;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      conversion *= 0.000001;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      conversion *= 0.001;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      return conversion;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      conversion *= 0.000000000000000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      conversion *= 0.000000000000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      conversion *= 0.000000000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      conversion *= 0.000000000000027027027027027;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      conversion *= 0.000000000027027027027027;
+    }
+  }
   // --- MCi to...
   else if( !strcmp(fromunits, "MCi" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       conversion *= 37000000000.0;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      conversion *= 37000000000000.0;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      conversion *= 37000000000000000.0;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      conversion *= 37000000000000000000.0;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      conversion *=  37000000000000000000848.0;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      return conversion;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      conversion *= 1000.0;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      conversion *= 1000000.0;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      conversion *= 1000000000.0;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      conversion *= 1000000000000.0;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      conversion *= 37000000000000.0;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      conversion *= 37000000000000000.0;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      conversion *= 37000000000000000000.0;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      conversion *=  37000000000000000000848.0;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      return conversion;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      conversion *= 1000.0;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      conversion *= 1000000.0;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      conversion *= 1000000000.0;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      conversion *= 1000000000000.0;
+    }
+  }
   // --- kCi to...
   else if( !strcmp(fromunits, "kCi" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       conversion *= 37000000.0;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      conversion *= 37000000000.0;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      conversion *= 37000000000000.0;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      conversion *= 37000000000000000.0;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      conversion *= 37000000000000000000.0;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      conversion *= 0.001;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      return conversion;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      conversion *= 1000.0;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      conversion *= 1000000.0;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      conversion *= 1000000000.0;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      conversion *= 37000000000.0;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      conversion *= 37000000000000.0;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      conversion *= 37000000000000000.0;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      conversion *= 37000000000000000000.0;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      conversion *= 0.001;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      return conversion;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      conversion *= 1000.0;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      conversion *= 1000000.0;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      conversion *= 1000000000.0;
+    }
+  }
   // --- Ci to...
   else if( !strcmp(fromunits, "Ci" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       conversion *= 37000.0;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      conversion *= 37000000.0;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      conversion *= 37000000000.0;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      conversion *= 37000000000000.0;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      conversion *= 37000000000000000.0;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      conversion *= 0.0000010;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      conversion *= 0.001;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      return conversion;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      conversion *= 1000.0;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      conversion *= 1000000.0;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      conversion *= 37000000.0;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      conversion *= 37000000000.0;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      conversion *= 37000000000000.0;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      conversion *= 37000000000000000.0;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      conversion *= 0.0000010;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      conversion *= 0.001;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      return conversion;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      conversion *= 1000.0;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      conversion *= 1000000.0;
+    }
+  }
   // --- mCi to...
   else if( !strcmp(fromunits, "mCi" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       conversion *= 37.0;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      conversion *= 37000.0;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      conversion *= 37000000.0;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      conversion *= 37000000000.0;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      conversion *= 37000000000000.0;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      conversion *= 0.0000000010;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      conversion *= 0.0000010;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      conversion *= 0.001;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      return conversion;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      conversion *= 1000.0;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      conversion *= 37000.0;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      conversion *= 37000000.0;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      conversion *= 37000000000.0;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      conversion *= 37000000000000.0;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      conversion *= 0.0000000010;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      conversion *= 0.0000010;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      conversion *= 0.001;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      return conversion;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      conversion *= 1000.0;
+    }
+  }
   // --- uCi to...
   else if( !strcmp(fromunits, " uCi" ) )
-    {
+  {
     if( !(strcmp(tounits, "MBq" ) ) )
-      {
+    {
       conversion *= 0.037;
-      }
-    else if( !(strcmp(tounits, "kBq" ) ) )
-      {
-      conversion *= 37.0;
-      }
-    else if( !(strcmp(tounits, "Bq" ) ) )
-      {
-      conversion *= 37000.0;
-      }
-    else if( !(strcmp(tounits, "mBq" ) ) )
-      {
-      conversion *= 37000000.0;
-      }
-    else if( !(strcmp(tounits, " uBq" ) ) )
-      {
-      conversion *= 37000000000.0;
-      }
-    else if( !(strcmp(tounits, "MCi" ) ) )
-      {
-      conversion *= 0.0000000000010;
-      }
-    else if( !(strcmp(tounits, "kCi" ) ) )
-      {
-      conversion *= 0.0000000010;
-      }
-    else if( !(strcmp(tounits, "Ci" ) ) )
-      {
-      conversion *= 0.0000010;
-      }
-    else if( !(strcmp(tounits, "mCi" ) ) )
-      {
-      conversion *= 0.001;
-      }
-    else if( !(strcmp(tounits, "uCi" ) ) )
-      {
-      return conversion;
-      }
     }
+    else if( !(strcmp(tounits, "kBq" ) ) )
+    {
+      conversion *= 37.0;
+    }
+    else if( !(strcmp(tounits, "Bq" ) ) )
+    {
+      conversion *= 37000.0;
+    }
+    else if( !(strcmp(tounits, "mBq" ) ) )
+    {
+      conversion *= 37000000.0;
+    }
+    else if( !(strcmp(tounits, " uBq" ) ) )
+    {
+      conversion *= 37000000000.0;
+    }
+    else if( !(strcmp(tounits, "MCi" ) ) )
+    {
+      conversion *= 0.0000000000010;
+    }
+    else if( !(strcmp(tounits, "kCi" ) ) )
+    {
+      conversion *= 0.0000000010;
+    }
+    else if( !(strcmp(tounits, "Ci" ) ) )
+    {
+      conversion *= 0.0000010;
+    }
+    else if( !(strcmp(tounits, "mCi" ) ) )
+    {
+      conversion *= 0.001;
+    }
+    else if( !(strcmp(tounits, "uCi" ) ) )
+    {
+      return conversion;
+    }
+  }
 
   return conversion;
 }
@@ -748,13 +748,13 @@ std::string MapLabelIDtoColorName( int id, std::string colorFile )
   colorStorageNode->SetFileName(colorFile.c_str() );
 
   if( !colorStorageNode->ReadData(colorNode.GetPointer()) )
-    {
+  {
     std::cerr << "Error reading color file " << colorStorageNode->GetFileName() << endl;
-    }
+  }
   else
-    {
+  {
     colorName = colorNode->GetColorName(id);
-    }
+  }
   return colorName;
 }
 
@@ -782,19 +782,19 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   FILE * petfile;
   petfile = fopen(list.PETVolumeName.c_str(), "r");
   if( petfile == nullptr )
-    {
+  {
     std::cerr << "ERROR: cannot open input volume file '" << list.PETVolumeName.c_str() << "'" << endl;
     return EXIT_FAILURE;
-    }
+  }
   fclose(petfile);
 
   FILE * voifile;
   voifile = fopen(list.VOIVolumeName.c_str(), "r");
   if( voifile == nullptr )
-    {
+  {
     std::cerr << "ERROR: cannot open ROI Volume  file '" << list.VOIVolumeName.c_str() << "'" << endl;
     return EXIT_FAILURE;
-    }
+  }
   fclose(voifile);
 
   // Read the PET file
@@ -831,17 +831,17 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   //
 
   if( petVolume == nullptr )
-    {
+  {
     std::cerr << "No input PET volume found." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // find input labelmap volume
   if( voiVolume == nullptr )
-    {
+  {
     std::cerr <<  "No input VOI volume found" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // read the DICOM dir to get the radiological data
 
@@ -851,10 +851,10 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
 
   if ( !list.PETDICOMPath.compare(""))
-    {
+  {
     std::cerr << "GetParametersFromDicomHeader:Got empty list.PETDICOMPath." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 
   //--- catch non-dicom data
@@ -871,15 +871,15 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   int notDICOM = 0;
   int nFiles = gfn->GetNumberOfFileNames();
   if (nFiles > 0)
-    {
+  {
     notDICOM = 1;
-    }
+  }
   gfn->Delete();
   if ( notDICOM )
-    {
+  {
     std::cerr << "PET Dicom parameter doesn't point to a dicom directory!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 
   InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
@@ -913,7 +913,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
     itk::DCMTKSequence seq;
     if(fileReader.GetElementSQ(0x0054,0x0016,seq,false) == EXIT_SUCCESS)
-      {
+    {
       parsingDICOM = 1;
 //      for(int i = 0; i < seq.card(); ++i)
 //        {
@@ -941,39 +941,39 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         //---2. "1010" represents a time of 10 hours, and 10 minutes.
         //---3. "021" is an invalid value.
         if ( tag.c_str() == nullptr || *(tag.c_str()) == '\0' )
-          {
+        {
           list.injectionTime  = "MODULE_INIT_NO_VALUE" ;
-          }
+        }
         else
-          {
+        {
           len = tag.length();
           hourstr.clear();
           minutestr.clear();
           secondstr.clear();
           if ( len >= 2 )
-            {
+          {
             hourstr = tag.substr(0, 2);
-            }
+          }
           else
-            {
+          {
             hourstr = "00";
-            }
+          }
           if ( len >= 4 )
-            {
+          {
             minutestr = tag.substr(2, 2);
-            }
+          }
           else
-            {
+          {
             minutestr = "00";
-            }
+          }
           if ( len >= 6 )
-            {
+          {
             secondstr = tag.substr(4);
-            }
+          }
           else
-            {
+          {
             secondstr = "00";
-            }
+          }
           tag.clear();
           tag = hourstr.c_str();
           tag += ":";
@@ -981,15 +981,15 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           tag += ":";
           tag += secondstr.c_str();
           list.injectionTime = tag.c_str();
-          }
+        }
 
         //---
         //--- Radionuclide Total Dose
 //        if(sqItem.GetElementDS(0x0018,0x1074,1,&list.injectedDose,false) != EXIT_SUCCESS)
         if(seq.GetElementDS(0x0018,0x1074,1,&list.injectedDose,false) != EXIT_SUCCESS)
-          {
+        {
           list.injectedDose = 0.0;
-          }
+        }
 
         //---
         //--- RadionuclideHalfLife
@@ -1004,18 +1004,18 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         //--- or trailing spaces. Embedded spaces are not allowed.
 //        if(sqItem.GetElementCS(0x0018,0x1075,list.radionuclideHalfLife,false) != EXIT_SUCCESS)
         if(seq.GetElementDS(0x0018,0x1075,list.radionuclideHalfLife,false) != EXIT_SUCCESS)
-          {
+        {
           list.radionuclideHalfLife = "MODULE_INIT_NO_VALUE";
-          }
+        }
         //---
         //---Radionuclide Positron Fraction
         //--- not currently using this one?
         std::string radioNuclidePositronFraction;
 //        if(sqItem.GetElementCS(0x0018,0x1075,radioNuclidePositronFraction,false) != EXIT_SUCCESS)
         if(seq.GetElementDS(0x0018,0x1075,radioNuclidePositronFraction,false) != EXIT_SUCCESS)
-          {
+        {
           radioNuclidePositronFraction = "MODULE_INIT_NO_VALUE";
-          }
+        }
 //        }
 
       //--
@@ -1027,85 +1027,85 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       //---
 
       if(fileReader.GetElementCS(0x0054,0x1001,tag,false) == EXIT_SUCCESS)
-        {
+      {
         //--- I think these are piled together. MBq ml... search for all.
         std::string units = tag.c_str();
         if (units.find ("BQML") != std::string::npos)
-          {
+        {
           list.radioactivityUnits= "Bq";
           list.tissueRadioactivityUnits = "Bq";
-          }
+        }
         else if ( ( units.find ("MBq") != std::string::npos) ||
                   ( units.find ("MBQ") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "MBq";
           list.tissueRadioactivityUnits = "MBq";
-          }
+        }
         else if ( (units.find ("kBq") != std::string::npos) ||
                   (units.find ("kBQ") != std::string::npos) ||
                   (units.find ("KBQ") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "kBq";
           list.tissueRadioactivityUnits = "kBq";
-          }
+        }
         else if ( (units.find ("mBq") != std::string::npos) ||
                   (units.find ("mBQ") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "mBq";
           list.tissueRadioactivityUnits = "mBq";
-          }
+        }
         else if ( (units.find ("uBq") != std::string::npos) ||
                   (units.find ("uBQ") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "uBq";
           list.tissueRadioactivityUnits = "uBq";
-          }
+        }
         else if ( (units.find ("Bq") != std::string::npos) ||
                   (units.find ("BQ") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "Bq";
           list.tissueRadioactivityUnits = "Bq";
-          }
+        }
         else if ( (units.find ("MCi") != std::string::npos) ||
                   ( units.find ("MCI") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "MCi";
           list.tissueRadioactivityUnits = "MCi";
-          }
+        }
         else if ( (units.find ("kCi") != std::string::npos) ||
                   (units.find ("kCI") != std::string::npos)  ||
                   (units.find ("KCI") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "kCi";
           list.tissueRadioactivityUnits = "kCi";
-          }
+        }
         else if ( (units.find ("mCi") != std::string::npos) ||
                   (units.find ("mCI") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "mCi";
           list.tissueRadioactivityUnits = "mCi";
-          }
+        }
         else if ( (units.find ("uCi") != std::string::npos) ||
                   (units.find ("uCI") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "uCi";
           list.tissueRadioactivityUnits = "uCi";
-          }
+        }
         else if ( (units.find ("Ci") != std::string::npos) ||
                   (units.find ("CI") != std::string::npos) )
-          {
+        {
           list.radioactivityUnits = "Ci";
           list.tissueRadioactivityUnits = "Ci";
-          }
-        list.volumeUnits = "ml";
         }
+        list.volumeUnits = "ml";
+      }
       else
-        {
+      {
         //--- default values.
         list.radioactivityUnits = "MBq";
         list.tissueRadioactivityUnits = "MBq";
         list.volumeUnits = "ml";
-        }
+      }
 
 
       //---
@@ -1121,54 +1121,54 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       //--- Series Time (0008,0031).
       //--- We don't pull these out now, but can if we have to.
       if(fileReader.GetElementCS(0x0054,0x1102,tag,false) == EXIT_SUCCESS)
-        {
+      {
         //---A string of characters with leading or trailing spaces (20H) being non-significant.
         list.decayCorrection = tag.c_str();
-        }
+      }
       else
-        {
+      {
         list.decayCorrection = "MODULE_INIT_NO_VALUE";
-        }
+      }
 
       //---
       //--- StudyDate
       if(fileReader.GetElementDA(0x0008,0x0021,tag,false) == EXIT_SUCCESS)
-        {
+      {
         //--- YYYYMMDD
         yearstr.clear();
         daystr.clear();
         monthstr.clear();
         len = tag.length();
         if ( len >= 4 )
-          {
+        {
           yearstr = tag.substr(0, 4);
           // this->Year = atoi(yearstr.c_str() );
-          }
+        }
         else
-          {
+        {
           yearstr = "????";
           // this->Year = 0;
-          }
+        }
         if ( len >= 6 )
-          {
+        {
           monthstr = tag.substr(4, 2);
           // this->Month = atoi ( monthstr.c_str() );
-          }
+        }
         else
-          {
+        {
           monthstr = "??";
           // this->Month = 0;
-          }
+        }
         if ( len >= 8 )
-          {
+        {
           daystr = tag.substr (6, 2);
 //            this->Day = atoi ( daystr.c_str() );
-          }
+        }
         else
-          {
+        {
           daystr = "??";
 //            this->Day = 0;
-          }
+        }
         tag.clear();
         tag = yearstr.c_str();
         tag += "/";
@@ -1176,27 +1176,27 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         tag += "/";
         tag += daystr.c_str();
         list.studyDate = tag.c_str();
-        }
+      }
       else
-        {
+      {
         list.studyDate = "MODULE_INIT_NO_VALUE";
-        }
+      }
 
       //---
       //--- PatientName
       if(fileReader.GetElementPN(0x0010,0x0010,tag,false) == EXIT_SUCCESS)
-        {
+      {
         list.patientName = tag.c_str();
-        }
+      }
       else
-        {
+      {
         list.patientName = "MODULE_INIT_NO_VALUE";
-        }
+      }
 
       //---
       //--- DecayFactor
       if(fileReader.GetElementDS(0x0054,0x1321,tag,false) == EXIT_SUCCESS)
-        {
+      {
         //--- have to parse this out. what we have is
         //---A string of characters representing either a fixed point number or a
         //--- floating point number. A fixed point number shall contain only the
@@ -1206,61 +1206,61 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         //---exponent. Decimal Strings may be padded with leading or trailing spaces.
         //---Embedded spaces are not allowed. or maybe atof does it already...
         list.decayFactor =  tag.c_str() ;
-        }
+      }
       else
-        {
+      {
         list.decayFactor =  "MODULE_INIT_NO_VALUE" ;
-        }
+      }
 
 
       //---
       //--- FrameReferenceTime
       if(fileReader.GetElementDS(0x0054,0x1300,tag,false) == EXIT_SUCCESS)
-        {
+      {
         //--- The time that the pixel values in the image
         //--- occurred. Frame Reference Time is the
         //--- offset, in msec, from the Series reference
         //--- time.
         list.frameReferenceTime = tag.c_str();
-        }
+      }
       else
-        {
+      {
         list.frameReferenceTime = "MODULE_INIT_NO_VALUE";
-        }
+      }
 
 
       //---
       //--- SeriesTime
       if(fileReader.GetElementTM(0x0008,0x0031,tag,false) == EXIT_SUCCESS)
-        {
+      {
         hourstr.clear();
         minutestr.clear();
         secondstr.clear();
         len = tag.length();
         if ( len >= 2 )
-          {
+        {
           hourstr = tag.substr(0, 2);
-          }
+        }
         else
-          {
+        {
           hourstr = "00";
-          }
+        }
         if ( len >= 4 )
-          {
+        {
           minutestr = tag.substr(2, 2);
-          }
+        }
         else
-          {
+        {
           minutestr = "00";
-          }
+        }
         if ( len >= 6 )
-          {
+        {
           secondstr = tag.substr(4);
-          }
+        }
         else
-          {
+        {
           secondstr = "00";
-          }
+        }
         tag.clear();
         tag = hourstr.c_str();
         tag += ":";
@@ -1268,36 +1268,36 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         tag += ":";
         tag += secondstr.c_str();
         list.seriesReferenceTime = tag.c_str();
-        }
+      }
       else
-        {
+      {
         list.seriesReferenceTime = "MODULE_INIT_NO_VALUE";
-        }
+      }
 
 
       //---
       //--- PatientWeight
       if(fileReader.GetElementDS(0x0010,0x1030,1,&list.patientWeight,false) == EXIT_SUCCESS)
-        {
+      {
         //--- Expect same format as RadionuclideHalfLife
         list.weightUnits = "kg";
-        }
+      }
       else
-        {
+      {
         list.patientWeight = 0.0;
         list.weightUnits = "";
 
-        }
+      }
 
 
       //---
       //--- CalibrationFactor
       if(fileReader.GetElementDS(0x7053,0x1009,1,
                                  &list.calibrationFactor,false) != EXIT_SUCCESS)
-        {
+      {
         list.calibrationFactor =  0.0 ;
-        }
       }
+    }
 
 
     // check.... did we get all params we need for computation?
@@ -1307,11 +1307,11 @@ int LoadImagesAndComputeSUV( parameters & list, T )
          (list.seriesReferenceTime.compare("MODULE_INIT_NO_VALUE") != 0) &&
          (list.injectionTime.compare("MODULE_INIT_NO_VALUE") != 0) &&
          (list.radionuclideHalfLife.compare("MODULE_INIT_NO_VALUE") != 0) )
-      {
+    {
       std::cout << "Input parameters okay..." << std::endl;
-      }
+    }
     else
-      {
+    {
       std::cerr << "Missing some parameters..." << std::endl;
       std::cerr << "\tinjected Dose " << list.injectedDose << " should not be 0" << std::endl;
       std::cerr << "\tpatientWeight " << list.patientWeight << " should not be 0" << std::endl;
@@ -1319,22 +1319,22 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       std::cerr << "\tinjectionTime " << list.injectionTime<< " should not be MODULE_INIT_NO_VALUE" << std::endl;
       std::cerr << "\tradionuclideHalfLife " << list.radionuclideHalfLife << " should not be MODULE_INIT_NO_VALUE" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
 
 
 
   // convert from input units.
   if( list.radioactivityUnits.c_str() == nullptr )
-    {
+  {
     std::cerr << "ComputeSUV: Got nullptr radioactivity units. No computation done." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if( list.weightUnits.c_str() == nullptr )
-    {
+  {
     std::cerr << "ComputeSUV: Got nullptr weight units. No computation could be done." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   double suvmax, suvmin, suvmean;
 
@@ -1356,21 +1356,21 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   std::string labelName;
   int         NumberOfVOIs = 0;
   for( int i = lo; i <= hi; i++ )
-    {
+  {
     std::stringstream ss;
     if( i == 0 )
-      {
+    {
       // --- eliminate 0 (background) label.
       continue;
-      }
+    }
 
     labelName.clear();
     labelName = MapLabelIDtoColorName(i, list.VOIVolumeColorTableFile);
     if( labelName.empty() )
-      {
+    {
       labelName.clear();
       labelName = "unknown";
-      }
+    }
 
     // --- get label name from labelID
 
@@ -1403,7 +1403,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
     int voxNumber = labelstat->GetVoxelCount();
     if( voxNumber > 0 )
-      {
+    {
       NumberOfVOIs++;
 
       double CPETmin = (labelstat->GetMin() )[0];
@@ -1420,20 +1420,20 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
       // --- do some error checking and reporting.
       if( list.radioactivityUnits.c_str() == nullptr )
-        {
+      {
         std::cerr << "ComputeSUV: Got null radioactivityUnits." << std::endl;
         return EXIT_FAILURE;
-        }
+      }
       if( dose == 0.0 )
-        {
+      {
         std::cerr << "ComputeSUV: Got nullptr dose!" << std::endl;
         return EXIT_FAILURE;
-        }
+      }
       if( weight == 0.0 )
-        {
+      {
         std::cerr << "ComputeSUV: got zero weight!" << std::endl;
         return EXIT_FAILURE;
-        }
+      }
 
       double tissueConversionFactor = ConvertRadioactivityUnits(1, list.radioactivityUnits.c_str(), "kBq");
       dose  = ConvertRadioactivityUnits( dose, list.radioactivityUnits.c_str(), "MBq");
@@ -1442,28 +1442,28 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
       // --- check a possible multiply by slope -- take intercept into account?
       if( dose == 0.0 )
-        {
+      {
         // oops, weight by dose is infinity. make a ridiculous number.
         suvmin = 99999999999999999.;
         suvmax = 99999999999999999.;
         suvmean = 99999999999999999.;
         std::cerr << "Warning: got an injected dose of 0.0. Results of SUV computation not valid." << std::endl;
-        }
+      }
       else
-        {
+      {
         double weightByDose = weight / dose;
         suvmax = (CPETmax * tissueConversionFactor) * weightByDose;
         suvmin = (CPETmin * tissueConversionFactor ) * weightByDose;
         suvmean = (CPETmean * tissueConversionFactor) * weightByDose;
-        }
+      }
       // --- append to output return string file
       std::stringstream outputStringStream;
 //      outputStringStream << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmax << ", " << suvmean << ", " << labelName.c_str() << ", " << ", " << ", " << ", " << std::endl;
       std::string postfixStr = ", ";
       if (i == hi)
-        {
+      {
         postfixStr = "";
-        }
+      }
       outputStringStream.str("");
       outputStringStream << labelName.c_str() << postfixStr;
       outputLabelString += outputStringStream.str();
@@ -1484,22 +1484,22 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
       // open file containing suvs and append to it.
       if (outputFile.compare("") != 0)
-        {
+      {
         ofile.open( outputFile.c_str(), ios::out | ios::app );
         if( !ofile.is_open() )
-          {
+        {
           // report error, clean up, and get out.
           std::cerr << "ERROR: cannot open nuclear medicine output csv parameter file '" << outputFile.c_str() << "', see return strings for values" << std::endl;
-          }
+        }
         else
-          {
+        {
           ss.str("");
           ofile.seekp(0,ios::end);
           long pos = ofile.tellp();
           if (pos == 0)
-            {
+          {
             ss << "patientID,studyDate,dose,labelID,suvmin,suvmax,suvmean,labelName" << std::endl;
-            }
+          }
           // --- for each value..
           // --- format looks like:
           // patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName
@@ -1510,17 +1510,17 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           ofile << ss.str();
           ofile.close();
           std::cout << "Wrote output for label " << labelName.c_str() << " to " << outputFile.c_str() << std::endl;
-          }
         }
       }
+    }
 
 
     thresholder->Delete();
     labelstat->Delete();
-    }
+  }
   // --- write output return string file
   if (outputStringFile.compare("") != 0)
-    {
+  {
     std::stringstream ss;
     ss << outputLabelString << std::endl;
     ss << outputLabelValueString << std::endl;
@@ -1530,25 +1530,25 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     std::string stringOutput = ss.str();
     stringFile.open(outputStringFile.c_str());
     if (!stringFile.is_open() )
-      {
+    {
       // report error, clean up
       std::cerr << "ERROR: cannot open nuclear medicine output string parameter file '" << outputStringFile.c_str() << "', output string was:\n" << stringOutput.c_str() << std::endl;
       return EXIT_FAILURE;
-      }
+    }
     stringFile << stringOutput;
     stringFile.close();
     std::cout << "Wrote return string to " << outputStringFile.c_str() << ": " << std::endl << stringOutput.c_str() << std::endl;
-    }
+  }
   else
-    {
+  {
     // if nothing was written because no output file was specified, report an
     // error
      if (outputFile.compare("") == 0)
-       {
+     {
        std::cerr << "Neither the nuclear medicine output csv parameter file nor the string parameter file were specified, please specify one or the other to obtain the calculated output." << std::endl;
        return EXIT_FAILURE;
-       }
-    }
+     }
+  }
   reader1->Delete();
   reader2->Delete();
 
@@ -1599,7 +1599,7 @@ int main( int argc, char * argv[] )
   list.weightUnits = "kg";
 
   try
-    {
+  {
     // pass the input parameters to the helper method
     list.PETDICOMPath = PETDICOMPath;
     // keep the PET volume as the node selector PET volume
@@ -1612,14 +1612,14 @@ int main( int argc, char * argv[] )
     list.SUVOutputStringFile = returnParameterFile;
     std::cout << "list.SUVOutputStringFile = " << list.SUVOutputStringFile << std::endl;
     LoadImagesAndComputeSUV( list, static_cast<double>(0) );
-    }
+  }
 
   catch( itk::ExceptionObject & excep )
-    {
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }
 

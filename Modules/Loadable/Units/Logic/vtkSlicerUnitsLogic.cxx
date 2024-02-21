@@ -50,9 +50,9 @@ vtkSlicerUnitsLogic::vtkSlicerUnitsLogic()
 vtkSlicerUnitsLogic::~vtkSlicerUnitsLogic()
 {
   if (this->UnitsScene)
-    {
+  {
     this->UnitsScene->Delete();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -81,9 +81,9 @@ double vtkSlicerUnitsLogic::
 GetSIPrefixCoefficient(const char* prefix)
 {
   if (!prefix)
-    {
+  {
     return 1.;
-    }
+  }
   if (strcmp("yotta", prefix) == 0) { return 1000000000000000000000000.; }
   else if (strcmp("zetta", prefix) == 0) { return 1000000000000000000000.; }
   else if (strcmp("exa", prefix) == 0) { return 1000000000000000000.; }
@@ -123,9 +123,9 @@ vtkMRMLUnitNode* vtkSlicerUnitsLogic
                      double displayCoeff, double displayOffset)
 {
   if (!scene)
-    {
+  {
     return nullptr;
-    }
+  }
 
   vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::New();
   unitNode->SetName(name);
@@ -164,9 +164,9 @@ void vtkSlicerUnitsLogic::UpdateFromMRMLScene()
 {
   // called on EndBatchProcessEvent (e.g., scene close).
   if (this->GetMRMLScene())
-    {
+  {
     this->Modified();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -208,9 +208,9 @@ void vtkSlicerUnitsLogic::AddDefaultsUnits()
 void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
 {
   if (!scene)
-    {
+  {
     return;
-    }
+  }
 
   this->RegisterNodesInternal(scene);
 
@@ -296,21 +296,21 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
 void vtkSlicerUnitsLogic::SetDefaultUnit(const char* quantity, const char* id)
 {
   if (!quantity || !this->GetMRMLScene())
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
     this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (selectionNode)
-    {
+  {
     selectionNode->SetUnitNodeID(quantity, id);
     if (!vtkIsObservedMRMLNodeEventMacro(selectionNode,
                                          vtkCommand::ModifiedEvent))
-      {
+    {
       vtkObserveMRMLNodeMacro(selectionNode);
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -342,9 +342,9 @@ void vtkSlicerUnitsLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   if (vtkMRMLSelectionNode::SafeDownCast(node) &&
       !this->RestoringDefaultUnits)
-    {
+  {
     this->RestoreDefaultUnits();
-    }
+  }
   this->Superclass::OnMRMLNodeModified(node);
 }
 
@@ -357,24 +357,24 @@ void vtkSlicerUnitsLogic::SaveDefaultUnits()
   std::vector<const char *> quantities;
   std::vector<const char *> unitIDs;
   if (selectionNode)
-    {
+  {
     selectionNode->GetUnitNodeIDs(quantities, unitIDs);
-    }
+  }
   this->CachedDefaultUnits.clear();
   std::vector<const char*>::const_iterator qIt;
   std::vector<const char*>::const_iterator uIt;
   for (qIt = quantities.begin(), uIt = unitIDs.begin();
        uIt != unitIDs.end(); ++qIt, ++uIt)
-    {
+  {
     assert(qIt != quantities.end());
     const char* quantity = *qIt;
     const char* unitID = *uIt;
     assert( (quantity != nullptr) == (unitID != nullptr) );
     if (quantity && unitID)
-      {
+    {
       this->CachedDefaultUnits[quantity] = unitID;
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -385,20 +385,20 @@ void vtkSlicerUnitsLogic::RestoreDefaultUnits()
     this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   int wasModifying = 0;
   if (selectionNode)
-    {
+  {
     wasModifying = selectionNode->StartModify();
-    }
+  }
   // Restore selection node units.
   std::map<std::string, std::string>::const_iterator it;
   for ( it = this->CachedDefaultUnits.begin() ;
         it != this->CachedDefaultUnits.end();
         ++it )
-    {
+  {
     this->SetDefaultUnit(it->first.c_str(), it->second.c_str());
-    }
+  }
   if (selectionNode)
-    {
+  {
     selectionNode->EndModify(wasModifying);
-    }
+  }
   this->RestoringDefaultUnits = false;
 }

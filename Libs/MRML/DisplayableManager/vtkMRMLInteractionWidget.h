@@ -73,13 +73,13 @@ public:
 
   /// Widget events
   enum
-    {
+  {
     WidgetEventReserved = WidgetEventUser,  // this events is only to prevent other widgets from processing an event
     WidgetStateUniformScale,
     WidgetEventUniformScaleStart,
     WidgetEventUniformScaleEnd,
     WidgetEventInteraction_Last
-    };
+  };
 
   virtual int GetActiveComponentType();
   virtual void SetActiveComponentType(int type);

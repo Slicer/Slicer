@@ -29,16 +29,16 @@ int main(int argc, char* * argv)
   Image_t::Pointer img;
 
   try
-    {
+  {
     reader->Update();
     img = reader->GetOutput();
-    }
+  }
   catch( itk::ExceptionObject & err )
-    {
+  {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
     raise(SIGABRT);
-    }
+  }
 
   // read input label image
   typedef SFLSRobustStatSegmentor3DLabelMap_c::TLabelImage LabelImage_t;
@@ -49,16 +49,16 @@ int main(int argc, char* * argv)
   LabelImage_t::Pointer labelImg;
 
   try
-    {
+  {
     readerLabel->Update();
     labelImg = readerLabel->GetOutput();
-    }
+  }
   catch( itk::ExceptionObject & err )
-    {
+  {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
     raise(SIGABRT);
-    }
+  }
 
   // preprocess label map (labelImg, the naming is confusing.....)
   LabelImage_t::Pointer newLabelMap = preprocessLabelMap<LabelImage_t::PixelType>(labelImg, labelValue);
@@ -130,15 +130,15 @@ int main(int argc, char* * argv)
   outputWriter->Update();
 
   try
-    {
+  {
     outputWriter->Update();
-    }
+  }
   catch( itk::ExceptionObject & err )
-    {
+  {
     std::cout << "ExceptionObject caught !" << std::endl;
     std::cout << err << std::endl;
     raise(SIGABRT);
-    }
+  }
 
   return EXIT_SUCCESS;
 }
@@ -170,18 +170,18 @@ getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixe
   mask->Allocate();
   mask->FillBuffer(0);
   for( long ix = 0; ix < nx; ++ix )
-    {
+  {
     for( long iy = 0; iy < ny; ++iy )
-      {
+    {
       for( long iz = 0; iz < nz; ++iz )
-        {
+      {
         MaskType::IndexType idx = {{ix, iy, iz}};
         TPixel              v = img->GetPixel(idx);
 
         mask->SetPixel(idx, v <= thod ? l : 0);
-        }
       }
     }
+  }
 
   return mask;
 }

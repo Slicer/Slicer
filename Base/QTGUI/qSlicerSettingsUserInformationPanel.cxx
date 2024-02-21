@@ -89,9 +89,9 @@ void qSlicerSettingsUserInformationPanel::setUserInformation(vtkPersonInformatio
 {
   Q_D(qSlicerSettingsUserInformationPanel);
   if (d->UserInformation == userInfo)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(d->UserInformation, userInfo,
     vtkCommand::ModifiedEvent,
@@ -109,9 +109,9 @@ void qSlicerSettingsUserInformationPanel::updateFromUserInformation()
   Q_D(qSlicerSettingsUserInformationPanel);
 
   if (d->UserInformation == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   d->NameLineEdit->setText(d->UserInformation->GetName().c_str());
   d->LoginLineEdit->setText(d->UserInformation->GetLogin().c_str());
@@ -165,13 +165,13 @@ void qSlicerSettingsUserInformationPanel::onEmailChanged(const QString& value)
 {
   Q_D(qSlicerSettingsUserInformationPanel);
   if(!d->UserInformation->SetEmail(value.toStdString().c_str()))
-    {
+  {
     d->EmailValidationLabel->setText(tr("Invalid format"));
-    }
+  }
   else
-    {
+  {
     d->EmailValidationLabel->setText("");
-    }
+  }
 }
 
 // --------------------------------------------------------------------------

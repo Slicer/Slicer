@@ -25,13 +25,13 @@ DiffusionTensor3DPPDAffineTransform<TData>
 ::PreCompute()
 {
   try
-    {
+  {
     m_TransformMatrixInverse = this->m_TransformMatrix.GetInverse();
-    }
+  }
   catch( ... )
-    {
+  {
     itkExceptionMacro(<< "Transform matrix is not invertible" );
-    }
+  }
   this->ComputeOffset();
   this->m_LatestTime = Object::GetMTime();
 }
@@ -44,14 +44,14 @@ DiffusionTensor3DPPDAffineTransform<TData>
   InternalTensorDataType internalTensor = tensor;
 
   if( this->m_LatestTime < Object::GetMTime() )
-    {
+  {
     this->m_Lock.lock();
     if( this->m_LatestTime < Object::GetMTime() )
-      {
+    {
       PreCompute();
-      }
-    this->m_Lock.unlock();
     }
+    this->m_Lock.unlock();
+  }
   EValuesType                       eigenValues;
   EVectorsType                      eigenVectors;
   DiffusionTensor3DExtended<double> tensorDouble ( tensor );
@@ -61,18 +61,18 @@ DiffusionTensor3DPPDAffineTransform<TData>
   tensorDouble.SetTensorFromMatrix( this->m_MeasurementFrame * tensorMatrixDouble * MFT );
   tensorDouble.ComputeEigenAnalysis( eigenValues, eigenVectors );
   if( eigenValues[0] == 0 && eigenValues[1] == 0 && eigenValues[2] == 0 )
-    {
+  {
     return tensor;
-    }
+  }
   VectorType e1;
   VectorType e2;
   VectorType n1;
   VectorType n2;
   for( int i = 0; i < 3; i++ )
-    {
+  {
     e1[i] = eigenVectors[2][i];       // eigen values sorted in ascending order, Vectors in line
     e2[i] = eigenVectors[1][i];
-    }
+  }
   // InternalMatrixTransformType transformMF = m_TransformMatrixInverse * ( InternalMatrixTransformType )
   // this->m_MeasurementFrame ;
 
@@ -82,29 +82,29 @@ DiffusionTensor3DPPDAffineTransform<TData>
   // n1 = transformMF  * e1 ;
   double normtemp = n1.GetVnlVector().two_norm();
   if( normtemp )
-    {
+  {
     n1 /= normtemp;
-    }
+  }
   n2 = m_TransformMatrixInverse * e2;
   // n2 = transformMF * e2 ;
   normtemp = n2.GetVnlVector().two_norm();
   if( normtemp )
-    {
+  {
     n2 /= normtemp;
-    }
+  }
   double     costheta = dot_product( e1.GetVnlVector(), n1.GetVnlVector() );
   VectorType axis;
   axis.SetVnlVector( vnl_cross_3d( e1.GetVnlVector(), n1.GetVnlVector() ) );
   double              norm = axis.GetVnlVector().two_norm();
   MatrixTransformType r1;
   if( norm < 0.00001 )
-    {
+  {
     r1.SetIdentity();
-    }
+  }
   else
-    {
+  {
     r1 = ComputeMatrixFromAxisAndAngle( axis / norm, costheta );
-    }
+  }
   VectorType pn2;
   pn2 = n2 - dot_product( n2.GetVnlVector(), n1.GetVnlVector() ) * n1;
   pn2 /= pn2.GetVnlVector().two_norm();
@@ -115,13 +115,13 @@ DiffusionTensor3DPPDAffineTransform<TData>
   axis.SetVnlVector( vnl_cross_3d( r1e2.GetVnlVector(), pn2.GetVnlVector() ) );
   norm = axis.GetVnlVector().two_norm();
   if( norm < .00001 )
-    {
+  {
     r2.SetIdentity();
-    }
+  }
   else
-    {
+  {
     r2 = ComputeMatrixFromAxisAndAngle( axis / norm, costheta );
-    }
+  }
   InternalMatrixTransformType R = r2 * r1;
 //  InternalMatrixDataType tensorMatrix = internalTensor.GetTensor2Matrix() ;
   InternalMatrixTransformType RTranspose = R.GetTranspose();
@@ -144,13 +144,13 @@ DiffusionTensor3DPPDAffineTransform<TData>
   double c = cosangle;
 
   if( cosangle < -1 )
-    {
+  {
     cosangle = -1;
-    }
+  }
   else if( cosangle > 1 )
-    {
+  {
     cosangle = 1;
-    }
+  }
   double                      s = sqrt( 1 - cosangle * cosangle );
   double                      C = 1 - c;
   double                      xs = axis[0] * s;

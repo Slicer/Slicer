@@ -49,10 +49,10 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
   // Check default values
   if (nodeFactory.mrmlScene() != nullptr ||
       nodeFactory.createNode("vtkMRMLCameraNode") != nullptr)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory wrong default values" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLScene> scene;
 
@@ -60,19 +60,19 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
     nodeFactory.setMRMLScene(scene.GetPointer());
 
     if (nodeFactory.mrmlScene() != scene.GetPointer())
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::setMRMLScene() failed" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   {
     vtkMRMLNode* createdEmptyNode = nodeFactory.createNode("");
     if (createdEmptyNode != nullptr)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() created a bad node" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   {
@@ -82,7 +82,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
         createdNode->IsA("vtkMRMLCameraNode") != 1 ||
         createdNode->GetReferenceCount() != 2 ||
         scene->IsNodePresent(createdNode) == 0)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() failed.\n"
                 << " node: " << createdNode << "\n"
                 << " class: " << createdNode->IsA("vtkMRMLCameraNode") << "\n"
@@ -90,7 +90,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
                 << " present: " << scene->IsNodePresent(createdNode) << "\n"
                 << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   {
@@ -102,7 +102,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
         createdSingletonNode->IsA("vtkMRMLInteractionNode") != 1 ||
         createdSingletonNode->GetReferenceCount() != 2 ||
         scene->IsNodePresent(createdSingletonNode) == 0)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() failed with singleton.\n"
                 << " node: " << createdSingletonNode << "\n"
                 << " class: " << createdSingletonNode->IsA("vtkMRMLInteractionNode") << "\n"
@@ -110,7 +110,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
                 << " present: " << scene->IsNodePresent(createdSingletonNode) << "\n"
                 << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     // Test another singleton
     vtkMRMLNode* createdSingletonNode2 =
@@ -123,7 +123,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
         createdSingletonNode2->IsA("vtkMRMLInteractionNode") != 1 ||
         createdSingletonNode2->GetReferenceCount() != 2 ||
         scene->IsNodePresent(createdSingletonNode2) == 0)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() failed with singleton2.\n"
                 << " node: " << createdSingletonNode << " / " << createdSingletonNode2 << "\n"
                 << " class: " << createdSingletonNode2->IsA("vtkMRMLInteractionNode") << "\n"
@@ -131,7 +131,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
                 << " present: " << scene->IsNodePresent(createdSingletonNode2) << "\n"
                 << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   {
@@ -142,7 +142,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
         createdNodeStatic->IsA("vtkMRMLCameraNode") != 1 ||
         createdNodeStatic->GetReferenceCount() != 2 ||
         scene->IsNodePresent(createdNodeStatic) == 0)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() failed.\n"
                 << " node: " << createdNodeStatic << "\n"
                 << " class: " << createdNodeStatic->IsA("vtkMRMLCameraNode") << "\n"
@@ -150,7 +150,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
                 << " present: " << scene->IsNodePresent(createdNodeStatic) << "\n"
                 << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   {
@@ -163,14 +163,14 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
     if (nodeFactory.attribute("attribute1") != "value1" ||
         (nodeFactory.attribute("attribute2").isNull() != true) ||
         (nodeFactory.attribute("attribute0").isNull() != true))
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::addAttribute failed:"
                 << " attribute1: " << qPrintable(nodeFactory.attribute("attribute1"))
                 << " attribute2: " << qPrintable(nodeFactory.attribute("attribute2"))
                 << " attribute0: " << qPrintable(nodeFactory.attribute("attribute0"))
                 << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   {
@@ -181,10 +181,10 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
     if (createdNodeWithAttribute1 == nullptr ||
         strcmp(createdNodeWithAttribute1->GetAttribute("attribute1"), "value1") != 0 ||
         createdNodeWithAttribute1->GetAttribute("attribute2") != nullptr)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() with attribute failed." << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 
   {
@@ -198,10 +198,10 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
         nodeFactory.baseName("vtkMRMLColorTableNode").isNull() != true ||
         strcmp(createdNodeWithBaseName->GetName(), "MyBaseName") != 0 ||
         strcmp(createdNodeWithoutBaseName->GetName(), "MyBaseName") == 0)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - qMRMLFactory::setBaseName failed." << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
   return EXIT_SUCCESS;
 }

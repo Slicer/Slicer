@@ -75,9 +75,9 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   /// plotModifiedEvent is not fired until found for the first time in
   /// the scene, e.g. Get(Nth)PlotSeriesNode(), UpdateScene()...
   enum
-    {
+  {
     PlotModifiedEvent = 17000,
-    };
+  };
 
   /// Properties used by SetPropertyToAllPlotSeriesNodes() and GetPropertyFromAllPlotSeriesNodes() methods.
   enum PlotSeriesNodeProperty

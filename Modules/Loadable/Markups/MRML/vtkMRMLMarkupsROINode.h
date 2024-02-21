@@ -128,18 +128,18 @@ public:
   //@{
   /// 4x4 matrix defining the object center and axis directions within the node coordinate system.
   vtkMatrix4x4* GetObjectToNodeMatrix()
-    {
+  {
     return this->ObjectToNodeMatrix;
-    };
+  };
   void SetAndObserveObjectToNodeMatrix(vtkMatrix4x4* objectToNodeMatrix);
   //@}
 
   /// 4x4 matrix defining the object center and axis directions within the world coordinate system.
   /// Changes made to the matrix will not be applied.
   vtkMatrix4x4* GetObjectToWorldMatrix()
-    {
+  {
     return this->ObjectToWorldMatrix;
-    };
+  };
 
   //@{
   /// ROIType represents the method that is used to calculate the size of the ROI.
@@ -166,11 +166,11 @@ public:
 
   // ROI type enum defines the calculation method that should be used to convert to and from control points.
   enum
-    {
+  {
     ROITypeBox, ///< Requires two Control points that are removed after they have been placed.
     ROITypeBoundingBox, ///< ROI forms a bounding box around the control points.
     ROIType_Last
-    };
+  };
 
   /// Reimplemented to recalculate InteractionHandleToWorld matrix when parent transform is changed.
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;

@@ -66,7 +66,7 @@ int vtkMRMLMarkupsNodeTest4(int , char * [] )
   scene->AddNode(planeNode);
 
   for (int planeType = vtkMRMLMarkupsPlaneNode::PlaneType3Points; planeType < vtkMRMLMarkupsPlaneNode::PlaneTypePlaneFit; ++planeType)
-    {
+  {
     std::cout << "Testing plane type: " << planeNode->GetPlaneTypeAsString(planeType) << "." << std::endl;
     planeNode->SetPlaneType(planeType);
 
@@ -131,7 +131,7 @@ int vtkMRMLMarkupsNodeTest4(int , char * [] )
     double originDifference_World[3] = { 0.0 };
     vtkMath::Subtract(actualOrigin_World, expectedOrigin_World, originDifference_World);
     CHECK_DOUBLE_TOLERANCE(vtkMath::Norm(originDifference_World), 0.0, EPSILON);
-    }
+  }
 
   std::cout << "Success." << std::endl;
 

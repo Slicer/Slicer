@@ -48,11 +48,11 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   qMRMLThreeDViewControllerWidget* widget = reinterpret_cast<qMRMLThreeDViewControllerWidget*>(data);
 
   Q_UNUSED(widget);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -77,9 +77,9 @@ int qMRMLThreeDViewControllerWidgetEventTranslatorPlayerTest1(int argc, char * a
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

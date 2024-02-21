@@ -56,10 +56,10 @@ vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
 
   this->AxisLabels = vtkSmartPointer<vtkStringArray>::New();
   for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
-    {
+  {
     this->AxisLabels->InsertNextValue(DEFAULT_AXIS_LABELS[i]);
-    }
- }
+  }
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLAbstractViewNode::~vtkMRMLAbstractViewNode()
@@ -78,31 +78,31 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLStringMacro(layoutLabel, LayoutLabel);
   vtkMRMLWriteXMLStringMacro(layoutName, LayoutName);
   if (this->GetViewGroup() > 0)
-    {
+  {
     vtkMRMLWriteXMLBooleanMacro(viewGroup, ViewGroup);
-    }
+  }
   vtkMRMLWriteXMLBooleanMacro(active, Active);
   vtkMRMLWriteXMLBooleanMacro(visibility, Visibility);
   vtkMRMLWriteXMLVectorMacro(backgroundColor, BackgroundColor, double, 3);
   vtkMRMLWriteXMLVectorMacro(backgroundColor2, BackgroundColor2, double, 3);
   vtkMRMLWriteXMLVectorMacro(layoutColor, LayoutColor, double, 3);
   if (this->OrientationMarkerEnabled)
-    {
+  {
     vtkMRMLWriteXMLEnumMacro(orientationMarkerType, OrientationMarkerType);
     vtkMRMLWriteXMLEnumMacro(orientationMarkerSize, OrientationMarkerSize);
-    }
+  }
   if (this->RulerEnabled)
-    {
+  {
     vtkMRMLWriteXMLEnumMacro(rulerType, RulerType);
-    }
+  }
   vtkMRMLWriteXMLEnumMacro(rulerColor, RulerColor);
   vtkMRMLWriteXMLEndMacro();
 
   of << " AxisLabels=\"";
   for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
-    {
+  {
     of << (i>0?";":"") << this->GetAxisLabel(i);
-    }
+  }
   of << "\"";
 }
 
@@ -147,52 +147,52 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "AxisLabels"))
-      {
+    {
       std::stringstream labels(attValue);
       std::string label;
       int labelIndex = 0;
       while (std::getline(labels, label, ';') && labelIndex<vtkMRMLAbstractViewNode::AxisLabelsCount)
-        {
+      {
         this->SetAxisLabel(labelIndex, label.c_str());
         labelIndex++;
-        }
+      }
       // If not all labels were defined set the missing ones to empty
       // to make sure all labels are consistently set.
       for (; labelIndex<vtkMRMLAbstractViewNode::AxisLabelsCount; labelIndex++)
-        {
+      {
         this->SetAxisLabel(labelIndex, "");
-        }
       }
     }
+  }
 #if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 0, 0)
   if (this->BackgroundColor2[0] == backGroundColorInvalid)
-    {
+  {
     // BackgroundColor2 has not been set
     this->BackgroundColor2[0] = this->BackgroundColor[0];
     this->BackgroundColor2[1] = this->BackgroundColor[1];
     this->BackgroundColor2[2] = this->BackgroundColor[2];
-    }
+  }
 #endif
 #if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 2, 0)
   // vtkMRMLAbstractViewNodes where not singletons before 4.2
   if (!this->GetLayoutName() || strlen(this->GetLayoutName()))
-    {
+  {
     const char* layoutName = nullptr;
     if (this->GetID() &&
         strncmp(this->GetID(), this->GetClassName(), strlen(this->GetClassName())) == 0)
-      {
+    {
       layoutName = this->GetID() + strlen(this->GetClassName());
-      }
-    if (!layoutName || strlen(layoutName) == 0)
-      {
-      layoutName = "1";
-      }
-    this->SetLayoutName(layoutName);
     }
+    if (!layoutName || strlen(layoutName) == 0)
+    {
+      layoutName = "1";
+    }
+    this->SetLayoutName(layoutName);
+  }
 #endif
 
   // Do not restore MappedInLayout state, because the view may not be mapped into the layout just yet.
@@ -218,22 +218,22 @@ void vtkMRMLAbstractViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   vtkMRMLCopyVectorMacro(BackgroundColor2, double, 3);
   vtkMRMLCopyVectorMacro(LayoutColor, double, 3);
   if (this->OrientationMarkerEnabled)
-    {
+  {
     vtkMRMLCopyEnumMacro(OrientationMarkerType);
     vtkMRMLCopyEnumMacro(OrientationMarkerSize);
-    }
+  }
   if (this->RulerEnabled)
-    {
+  {
     vtkMRMLCopyEnumMacro(RulerType);
-    }
+  }
   vtkMRMLCopyEnumMacro(RulerColor);
   vtkMRMLCopyEndMacro();
 
   vtkMRMLAbstractViewNode *node = vtkMRMLAbstractViewNode::SafeDownCast(anode);
   for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
-    {
+  {
     this->SetAxisLabel(i,node->GetAxisLabel(i));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -266,22 +266,22 @@ void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintVectorMacro(BackgroundColor2, double, 3);
   vtkMRMLPrintVectorMacro(LayoutColor, double, 3);
   if (this->OrientationMarkerEnabled)
-    {
+  {
     vtkMRMLPrintEnumMacro(OrientationMarkerType);
     vtkMRMLPrintEnumMacro(OrientationMarkerSize);
-    }
+  }
   if (this->RulerEnabled)
-    {
+  {
     vtkMRMLPrintEnumMacro(RulerType);
-    }
+  }
   vtkMRMLPrintEnumMacro(RulerColor);
   vtkMRMLPrintEndMacro();
 
   os << indent << " AxisLabels: ";
   for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
-    {
+  {
     os << (i>0?";":"") << this->GetAxisLabel(i);
-    }
+  }
   os << "\n";
 
 }
@@ -292,10 +292,10 @@ vtkMRMLInteractionNode* vtkMRMLAbstractViewNode::GetInteractionNode()
   vtkMRMLInteractionNode * interactionNode =
       vtkMRMLInteractionNode::SafeDownCast(this->GetNodeReference(this->InteractionNodeReferenceRole));
   if (this->GetScene() && !interactionNode)
-    {
+  {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast (
           this->GetScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
-    }
+  }
   return interactionNode;
 }
 
@@ -303,9 +303,9 @@ vtkMRMLInteractionNode* vtkMRMLAbstractViewNode::GetInteractionNode()
 bool vtkMRMLAbstractViewNode::SetInteractionNodeID(const char *interactionNodeId)
 {
   if (!interactionNodeId)
-    {
+  {
     return false;
-    }
+  }
   this->SetNodeReferenceID(this->InteractionNodeReferenceRole, interactionNodeId);
   return true;
 }
@@ -314,19 +314,19 @@ bool vtkMRMLAbstractViewNode::SetInteractionNodeID(const char *interactionNodeId
 bool vtkMRMLAbstractViewNode::SetInteractionNode(vtkMRMLNode* node)
 {
   if (node && this->Scene != node->GetScene())
-    {
+  {
     vtkErrorMacro("Cannot set reference: the referenced and referencing node are not in the same scene");
     return false;
-    }
+  }
   return this->SetInteractionNodeID(node ? node->GetID() : nullptr);
 }
 
 int vtkMRMLAbstractViewNode::IsMappedInLayout()
 {
   if (!this->GetAttribute("MappedInLayout"))
-    {
+  {
     return 0;
-    }
+  }
   return strcmp(this->GetAttribute("MappedInLayout"), "1") == 0;
 }
 
@@ -334,9 +334,9 @@ int vtkMRMLAbstractViewNode::IsMappedInLayout()
 void vtkMRMLAbstractViewNode::SetMappedInLayout(int value)
 {
   if (this->IsMappedInLayout() == value)
-    {
+  {
     return;
-    }
+  }
   this->SetAttribute("MappedInLayout", value ? "1" : "0");
 }
 
@@ -350,7 +350,7 @@ bool vtkMRMLAbstractViewNode::IsViewVisibleInLayout()
 const char* vtkMRMLAbstractViewNode::GetOrientationMarkerTypeAsString(int id)
 {
   switch (id)
-    {
+  {
     case OrientationMarkerTypeNone: return "none";
     case OrientationMarkerTypeCube: return "cube";
     case OrientationMarkerTypeHuman: return "human";
@@ -358,7 +358,7 @@ const char* vtkMRMLAbstractViewNode::GetOrientationMarkerTypeAsString(int id)
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -370,13 +370,13 @@ int vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(const char* name
     return -1;
   }
   for (int i=0; i<OrientationMarkerType_Last; i++)
-    {
+  {
     if (strcmp(name, GetOrientationMarkerTypeAsString(i))==0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -385,14 +385,14 @@ int vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(const char* name
 const char* vtkMRMLAbstractViewNode::GetOrientationMarkerSizeAsString(int id)
 {
   switch (id)
-    {
+  {
     case OrientationMarkerSizeSmall: return "small";
     case OrientationMarkerSizeMedium: return "medium";
     case OrientationMarkerSizeLarge: return "large";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -404,13 +404,13 @@ int vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(const char* name
     return -1;
   }
   for (int i=0; i<OrientationMarkerSize_Last; i++)
-    {
+  {
     if (strcmp(name, GetOrientationMarkerSizeAsString(i))==0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -419,32 +419,32 @@ int vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(const char* name
 const char* vtkMRMLAbstractViewNode::GetRulerTypeAsString(int id)
 {
   switch (id)
-    {
+  {
     case RulerTypeNone: return "none";
     case RulerTypeThin: return "thin";
     case RulerTypeThick: return "thick";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLAbstractViewNode::GetRulerTypeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i=0; i<RulerType_Last; i++)
-    {
+  {
     if (strcmp(name, GetRulerTypeAsString(i))==0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -453,32 +453,32 @@ int vtkMRMLAbstractViewNode::GetRulerTypeFromString(const char* name)
 const char* vtkMRMLAbstractViewNode::GetRulerColorAsString(int id)
 {
   switch (id)
-    {
+  {
     case RulerColorWhite: return "white";
     case RulerColorBlack: return "black";
     case RulerColorYellow: return "yellow";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLAbstractViewNode::GetRulerColorFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i=0; i<RulerColor_Last; i++)
-    {
+  {
     if (strcmp(name, GetRulerColorAsString(i))==0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -487,10 +487,10 @@ int vtkMRMLAbstractViewNode::GetRulerColorFromString(const char* name)
 void vtkMRMLAbstractViewNode::SetOrientationMarkerHumanModelNodeID(const char* modelNodeId)
 {
   if (!this->OrientationMarkerEnabled)
-    {
+  {
     vtkErrorMacro("vtkMRMLAbstractViewNode::SetOrientationMarkerHumanModelID failed: orientation marker is disabled");
     return;
-    }
+  }
   this->SetNodeReferenceID(OrientationMarkerHumanModelReferenceRole, modelNodeId);
 }
 
@@ -498,10 +498,10 @@ void vtkMRMLAbstractViewNode::SetOrientationMarkerHumanModelNodeID(const char* m
 const char* vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModelNodeID()
 {
   if (!this->OrientationMarkerEnabled)
-    {
+  {
     vtkErrorMacro("vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModelID failed: orientation marker is disabled");
     return nullptr;
-    }
+  }
   return this->GetNodeReferenceID(OrientationMarkerHumanModelReferenceRole);
 }
 
@@ -509,10 +509,10 @@ const char* vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModelNodeID()
 vtkMRMLModelNode* vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModelNode()
 {
   if (!this->OrientationMarkerEnabled)
-    {
+  {
     vtkErrorMacro("vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModel failed: orientation marker is disabled");
     return nullptr;
-    }
+  }
   return vtkMRMLModelNode::SafeDownCast(this->GetNodeReference(OrientationMarkerHumanModelReferenceRole));
 }
 
@@ -520,11 +520,11 @@ vtkMRMLModelNode* vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModelNode()
 const char* vtkMRMLAbstractViewNode::GetAxisLabel(int labelIndex)
 {
   if (labelIndex<0 || labelIndex>=vtkMRMLAbstractViewNode::AxisLabelsCount)
-    {
+  {
     vtkErrorMacro("vtkMRMLAbstractViewNode::GetAxisLabel labelIndex=" << labelIndex << " argument is invalid. Valid range: 0<=labelIndex<"
       << vtkMRMLAbstractViewNode::AxisLabelsCount);
     return "";
-    }
+  }
   return this->AxisLabels->GetValue(labelIndex).c_str();
 }
 
@@ -532,20 +532,20 @@ const char* vtkMRMLAbstractViewNode::GetAxisLabel(int labelIndex)
 void vtkMRMLAbstractViewNode::SetAxisLabel(int labelIndex, const char* label)
 {
   if (labelIndex<0 || labelIndex>=vtkMRMLAbstractViewNode::AxisLabelsCount)
-    {
+  {
     vtkErrorMacro("vtkMRMLAbstractViewNode::SetAxisLabel labelIndex=" << labelIndex << " argument is invalid. Valid range: 0<=labelIndex<"
       << vtkMRMLAbstractViewNode::AxisLabelsCount);
     return;
-    }
+  }
   if (label==nullptr)
-    {
+  {
     label = "";
-    }
+  }
   if (this->AxisLabels->GetValue(labelIndex).compare(label)==0)
-    {
+  {
     // no change
     return;
-    }
+  }
   this->AxisLabels->SetValue(labelIndex, label);
   this->Modified();
 }
@@ -560,9 +560,9 @@ vtkMRMLNode* vtkMRMLAbstractViewNode::GetParentLayoutNode()
 bool vtkMRMLAbstractViewNode::SetAndObserveParentLayoutNodeID(const char *layoutNodeId)
 {
   if (!layoutNodeId)
-    {
+  {
     return false;
-    }
+  }
 
   this->SetAndObserveNodeReferenceID(this->ParentLayoutNodeReferenceRole, layoutNodeId);
   return true;
@@ -572,10 +572,10 @@ bool vtkMRMLAbstractViewNode::SetAndObserveParentLayoutNodeID(const char *layout
 bool vtkMRMLAbstractViewNode::SetAndObserveParentLayoutNode(vtkMRMLNode* node)
 {
   if (node && this->Scene != node->GetScene())
-    {
+  {
     vtkErrorMacro("Cannot set reference: the referenced and referencing node are not in the same scene");
     return false;
-    }
+  }
 
   return this->SetAndObserveParentLayoutNodeID(node ? node->GetID() : nullptr);
 }
@@ -647,22 +647,22 @@ vtkMRMLLayoutNode* vtkMRMLAbstractViewNode::GetMaximizedState(bool& maximized, b
   maximized = false;
   vtkMRMLLayoutNode* layoutNode = nullptr;
   if (this->GetParentLayoutNode())
-    {
+  {
     layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->GetParentLayoutNode());
     if (!layoutNode)
-      {
+    {
       // the owner is not a real layout node, it means it is a standalone view, cannot be maximized
       canBeMaximized = false;
-      }
     }
+  }
   if (!layoutNode && this->GetScene())
-    {
+  {
    layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->GetScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
-    }
+  }
   if (layoutNode)
-    {
+  {
     maximized = (layoutNode->IsMaximizedViewNode(this));
-    }
+  }
   return layoutNode;
 }
 
@@ -670,55 +670,55 @@ vtkMRMLLayoutNode* vtkMRMLAbstractViewNode::GetMaximizedState(bool& maximized, b
 std::string vtkMRMLAbstractViewNode::GetDirectionLabel(double direction[3], bool positive/*=true*/, double toleranceDeg/*=1.0*/)
 {
   if (vtkMath::Norm(direction) == 0.0)
-    {
+  {
     return "?";
-    }
+  }
   if (this->AxisLabels->GetNumberOfValues() < 6)
-    {
+  {
     return "?";
-    }
+  }
   double toleranceRad = vtkMath::RadiansFromDegrees(toleranceDeg);
 
   // Compute labels and angles
   std::string axisLabels[3];
   double absoluteNormalAngleDiffsRad[3] = { 0.0, 0.0, 0.0 };
   for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
-    {
+  {
     double axisDirection[3] = { axisIndex == 0 ? 1.0 : 0.0, axisIndex == 1 ? 1.0 : 0.0, axisIndex == 2 ? 1.0 : 0.0 };
     double normalAngleDiffRad = (vtkMath::AngleBetweenVectors(direction, axisDirection) - vtkMath::Pi() / 2.0);
     double absoluteNormalAngleDiffRad = fabs(normalAngleDiffRad);
     if (absoluteNormalAngleDiffRad < toleranceRad)
-      {
+    {
       // orthogonal to this axis, do not add its label
       continue;
-      }
+    }
     absoluteNormalAngleDiffsRad[axisIndex] = absoluteNormalAngleDiffRad;
     axisLabels[axisIndex] = this->AxisLabels->GetValue(axisIndex * 2 + ((positive == (normalAngleDiffRad < 0)) ? 1 : 0));
-    }
+  }
 
   // Concatenate labels, ordered by angle difference
   std::string label;
   for (int axisIndex = 0; axisIndex < 3; ++axisIndex)
-    {
+  {
     int axisA = axisIndex;
     int axisB = (axisIndex + 1) % 3;
     int axisC = (axisIndex + 2) % 3;
     if (absoluteNormalAngleDiffsRad[axisA] >= absoluteNormalAngleDiffsRad[axisB] && absoluteNormalAngleDiffsRad[axisA] >= absoluteNormalAngleDiffsRad[axisC])
-      {
+    {
       label += axisLabels[axisA];
       if (absoluteNormalAngleDiffsRad[axisB] >= absoluteNormalAngleDiffsRad[axisC])
-        {
+      {
         label += axisLabels[axisB];
         label += axisLabels[axisC];
-        }
-      else
-        {
-        label += axisLabels[axisC];
-        label += axisLabels[axisB];
-        }
-      return label;
       }
+      else
+      {
+        label += axisLabels[axisC];
+        label += axisLabels[axisB];
+      }
+      return label;
     }
+  }
 
   // should not happen, but the compiler may complain if this case is not handled
   return "?";

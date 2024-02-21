@@ -54,64 +54,64 @@ protected:
 void ShowProgress() override
 {
   if (this->GetProcess())
-    {
+  {
     this->SetSteps( this->GetSteps()+1 );
     if (!this->GetQuiet())
-      {
+    {
       if (m_ProcessInformation)
-        {
+      {
         strncpy(m_ProcessInformation->ProgressMessage,
                 this->GetComment().c_str(), 1023);
         m_ProcessInformation->Progress =
           (this->GetProcess()->GetProgress() * m_Fraction + m_Start);
         if (m_Fraction != 1.0)
-          {
+        {
           m_ProcessInformation->StageProgress = this->GetProcess()->GetProgress();
-          }
+        }
 
         try
-          {
+        {
           this->GetTimeProbe().Stop();
           m_ProcessInformation->ElapsedTime
             = this->GetTimeProbe().GetMean()
             * this->GetTimeProbe().GetNumberOfStops();
-          }
+        }
         catch(...)
-          {
+        {
           // ignore time probe exceptions
-          }
+        }
         this->GetTimeProbe().Start();
 
         if (m_ProcessInformation->Abort)
-          {
+        {
           this->GetProcess()->AbortGenerateDataOn();
           m_ProcessInformation->Progress = 0;
           m_ProcessInformation->StageProgress = 0;
-          }
+        }
 
         if (m_ProcessInformation->ProgressCallbackFunction
             && m_ProcessInformation->ProgressCallbackClientData)
-          {
-          (*(m_ProcessInformation->ProgressCallbackFunction))(m_ProcessInformation->ProgressCallbackClientData);
-          }
-        }
-      else
         {
+          (*(m_ProcessInformation->ProgressCallbackFunction))(m_ProcessInformation->ProgressCallbackClientData);
+        }
+      }
+      else
+      {
         std::cout << "<filter-progress>"
                   << (this->GetProcess()->GetProgress() * m_Fraction) + m_Start
                   << "</filter-progress>"
                   << std::endl;
         if (m_Fraction != 1.0)
-          {
+        {
           std::cout << "<filter-stage-progress>"
                     << this->GetProcess()->GetProgress()
                     << "</filter-stage-progress>"
                     << std::endl;
-          }
-        std::cout << std::flush;
         }
+        std::cout << std::flush;
       }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -122,9 +122,9 @@ void StartFilter() override
   this->SetIterations(0);
   this->GetTimeProbe().Start();
   if (!this->GetQuiet())
-    {
+  {
     if (m_ProcessInformation)
-      {
+    {
       m_ProcessInformation->Progress = 0;
       m_ProcessInformation->StageProgress = 0;
       strncpy(m_ProcessInformation->ProgressMessage,
@@ -132,12 +132,12 @@ void StartFilter() override
 
       if (m_ProcessInformation->ProgressCallbackFunction
           && m_ProcessInformation->ProgressCallbackClientData)
-        {
-        (*(m_ProcessInformation->ProgressCallbackFunction))(m_ProcessInformation->ProgressCallbackClientData);
-        }
-      }
-    else
       {
+        (*(m_ProcessInformation->ProgressCallbackFunction))(m_ProcessInformation->ProgressCallbackClientData);
+      }
+    }
+    else
+    {
       std::cout << "<filter-start>"
                 << std::endl;
       std::cout << "<filter-name>"
@@ -152,8 +152,8 @@ void StartFilter() override
       std::cout << "</filter-start>"
                 << std::endl;
       std::cout << std::flush;
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -162,9 +162,9 @@ void EndFilter() override
 {
   this->GetTimeProbe().Stop();
   if (!this->GetQuiet())
-    {
+  {
     if (m_ProcessInformation)
-      {
+    {
       m_ProcessInformation->Progress = 0;
       m_ProcessInformation->StageProgress = 0;
 
@@ -174,12 +174,12 @@ void EndFilter() override
 
       if (m_ProcessInformation->ProgressCallbackFunction
           && m_ProcessInformation->ProgressCallbackClientData)
-        {
-        (*(m_ProcessInformation->ProgressCallbackFunction))(m_ProcessInformation->ProgressCallbackClientData);
-        }
-      }
-    else
       {
+        (*(m_ProcessInformation->ProgressCallbackFunction))(m_ProcessInformation->ProgressCallbackClientData);
+      }
+    }
+    else
+    {
       std::cout << "<filter-end>"
                 << std::endl;
       std::cout << "<filter-name>"
@@ -193,8 +193,8 @@ void EndFilter() override
                 << std::endl;
       std::cout << "</filter-end>";
       std::cout << std::flush;
-      }
     }
+  }
 }
 
 

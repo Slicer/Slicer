@@ -43,10 +43,10 @@ qMRMLAbstractViewWidget::qMRMLAbstractViewWidget(QWidget* parentWidget)
 QColor qMRMLAbstractViewWidget::viewColor() const
 {
   if (!this->mrmlAbstractViewNode())
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
     return QColor(127, 127, 127);
-    }
+  }
   double* layoutColorVtk = this->mrmlAbstractViewNode()->GetLayoutColor();
   QColor layoutColor = QColor::fromRgbF(layoutColorVtk[0], layoutColorVtk[1], layoutColorVtk[2]);
   return layoutColor;
@@ -56,10 +56,10 @@ QColor qMRMLAbstractViewWidget::viewColor() const
 void qMRMLAbstractViewWidget::setViewColor(const QColor& newViewColor)
 {
   if (!this->mrmlAbstractViewNode())
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
     return;
-    }
+  }
   double layoutColor[3] = { newViewColor.redF(), newViewColor.greenF(), newViewColor.blueF() };
   this->mrmlAbstractViewNode()->SetLayoutColor(layoutColor);
 }
@@ -68,10 +68,10 @@ void qMRMLAbstractViewWidget::setViewColor(const QColor& newViewColor)
 void qMRMLAbstractViewWidget::setViewLabel(const QString& newViewLabel)
 {
   if (!this->mrmlAbstractViewNode())
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
     return;
-    }
+  }
   std::string newViewLabelString = newViewLabel.toStdString();
   this->mrmlAbstractViewNode()->SetLayoutLabel(newViewLabelString.c_str());
 }
@@ -80,10 +80,10 @@ void qMRMLAbstractViewWidget::setViewLabel(const QString& newViewLabel)
 QString qMRMLAbstractViewWidget::viewLabel() const
 {
   if (!this->mrmlAbstractViewNode())
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: view node is invalid";
     return "";
-    }
+  }
   return this->mrmlAbstractViewNode()->GetLayoutLabel();
 }
 
@@ -97,13 +97,13 @@ vtkMRMLAbstractLogic* qMRMLAbstractViewWidget::logic() const
 void qMRMLAbstractViewWidget::setRenderPaused(bool pause)
 {
   if (pause)
-    {
+  {
     this->pauseRender();
-    }
+  }
   else
-    {
+  {
     this->resumeRender();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -111,9 +111,9 @@ void qMRMLAbstractViewWidget::pauseRender()
 {
   ctkVTKAbstractView* view = qobject_cast<ctkVTKAbstractView*>(this->viewWidget());
   if (view)
-    {
+  {
     view->pauseRender();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -121,7 +121,7 @@ void qMRMLAbstractViewWidget::resumeRender()
 {
   ctkVTKAbstractView* view = qobject_cast<ctkVTKAbstractView*>(this->viewWidget());
   if (view)
-    {
+  {
     view->resumeRender();
-    }
+  }
 }

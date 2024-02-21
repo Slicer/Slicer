@@ -38,11 +38,11 @@ class Q_SLICER_BASE_QTCLI_PLUGINS_EXPORT qSlicerQTCLIPlugins
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qSlicerCLIProgressBarPlugin;
     return plugins;
-    }
+  }
 };
 
 #endif

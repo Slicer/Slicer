@@ -67,26 +67,26 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
   logic->CreateSceneView("SceneViewTestToRemove", "this is a scene view to remove", 0, screenShot);
   vtkCollection *col = scene->GetNodesByClassByName("vtkMRMLSceneViewNode", "SceneViewTestToRemove");
   if (col && col->GetNumberOfItems() > 0)
-    {
+  {
     vtkMRMLSceneViewNode *nodeToRemove = vtkMRMLSceneViewNode::SafeDownCast(col->GetItemAsObject(0));
     if (nodeToRemove)
-      {
+    {
       // now remove one of the nodes
       logic->RemoveSceneViewNode(nodeToRemove);
       std::cout << "After adding and removing a scene view node, scene has " << scene->GetNumberOfNodesByClass("vtkMRMLSceneViewNode") << " scene view nodes" << std::endl;
 
-      }
+    }
      else
-      {
+     {
       std::cerr << "Error getting a scene view node to remove" << std::endl;
       return EXIT_FAILURE;
-      }
-    }
+     }
+  }
   else
-    {
+  {
     std::cerr << "Error adding and finding a node to remove" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
    col->RemoveAllItems();
    col->Delete();
   return EXIT_SUCCESS;

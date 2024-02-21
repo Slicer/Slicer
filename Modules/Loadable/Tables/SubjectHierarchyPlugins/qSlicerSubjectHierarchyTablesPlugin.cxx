@@ -112,15 +112,15 @@ double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(
 {
   Q_UNUSED(parentItemID);
   if (!node)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Input node is NULL";
     return 0.0;
-    }
+  }
   else if (node->IsA("vtkMRMLTableNode"))
-    {
+  {
     // Node is a table
     return 0.5;
-    }
+  }
 
   return 0.0;
 }
@@ -129,23 +129,23 @@ double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(
 double qSlicerSubjectHierarchyTablesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return 0.0;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0.0;
-    }
+  }
 
   // Table
   vtkMRMLNode* associatedNode = shNode->GetItemDataNode(itemID);
   if (associatedNode && associatedNode->IsA("vtkMRMLTableNode"))
-    {
+  {
     return 0.5; // There may be other plugins that can handle special Tables better
-    }
+  }
 
   return 0.0;
 }
@@ -160,17 +160,17 @@ const QString qSlicerSubjectHierarchyTablesPlugin::roleForPlugin()const
 QIcon qSlicerSubjectHierarchyTablesPlugin::icon(vtkIdType itemID)
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return QIcon();
-    }
+  }
 
   Q_D(qSlicerSubjectHierarchyTablesPlugin);
 
   if (this->canOwnSubjectHierarchyItem(itemID))
-    {
+  {
     return d->TableIcon;
-    }
+  }
 
   // Item unknown by plugin
   return QIcon();
@@ -187,40 +187,40 @@ QIcon qSlicerSubjectHierarchyTablesPlugin::visibilityIcon(int visible)
 void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
-    }
+  }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return;
-    }
+  }
   if (this->getDisplayVisibility(itemID) == visible)
-    {
+  {
     return;
-    }
+  }
 
   // Get layout node
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLLayoutNode"));
   if (!layoutNode)
-    {
+  {
     qCritical("qSlicerSubjectHierarchyTablesPlugin::getTableViewNode: Unable to get layout node");
     return;
-    }
+  }
 
   vtkMRMLTableViewNode* tableViewNode = this->getTableViewNode();
 
   vtkMRMLTableNode* associatedTableNode = vtkMRMLTableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (associatedTableNode && visible)
-    {
+  {
     // Switch to a layout that contains table
     int currentLayout = qSlicerApplication::application()->layoutManager()->layout();
     int layoutWithTable = vtkSlicerTablesLogic::GetLayoutWithTable(currentLayout);
@@ -229,35 +229,35 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
     // Make sure we have a valid table view node (if we want to show the table, but there was
     // no table view, then one was just created when we switched to table layout)
     if (!tableViewNode)
-      {
+    {
       tableViewNode = this->getTableViewNode();
-      }
+    }
     if (!tableViewNode)
-      {
+    {
       qCritical("qSlicerSubjectHierarchyTablesPlugin::getTableViewNode: Unable to get table view node");
       return;
-      }
+    }
 
     // Hide currently shown table and trigger icon update
     if ( tableViewNode->GetTableNodeID()
       && strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()) )
-      {
+    {
       vtkIdType tableItemID = shNode->GetItemByDataNode(scene->GetNodeByID(tableViewNode->GetTableNodeID()));
       if (tableItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-        {
+      {
         tableViewNode->SetTableNodeID(nullptr);
         shNode->ItemModified(tableItemID);
-        }
       }
+    }
 
     // Select table to show
     tableViewNode->SetTableNodeID(associatedTableNode->GetID());
-    }
+  }
   else if (tableViewNode)
-    {
+  {
     // Hide table
     tableViewNode->SetTableNodeID(nullptr);
-    }
+  }
 
   // Trigger icon update
   shNode->ItemModified(itemID);
@@ -267,35 +267,35 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
 int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkIdType itemID)const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
     return -1;
-    }
+  }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return -1;
-    }
+  }
 
   vtkMRMLTableViewNode* tableViewNode = this->getTableViewNode();
   if (!tableViewNode)
-    {
+  {
     // No table view has been set yet
     return 0;
-    }
+  }
 
   // Return shown if table in table view is the examined node's associated data node
   vtkMRMLTableNode* associatedTableNode = vtkMRMLTableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if ( associatedTableNode && tableViewNode->GetTableNodeID()
     && !strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()) )
-    {
+  {
     return 1;
-    }
+  }
   else
-    {
+  {
     return 0;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -303,31 +303,31 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode()con
 {
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return nullptr;
-    }
+  }
 
   qMRMLLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
-    {
+  {
     return nullptr;
-    }
+  }
 
   for (int i = 0; i<layoutManager->tableViewCount(); i++)
-    {
+  {
     qMRMLTableWidget* tableWidget = layoutManager->tableWidget(i);
     if (!tableWidget)
-      {
+    {
       // invalid plot widget
       continue;
-      }
+    }
     vtkMRMLTableViewNode* tableView = tableWidget->mrmlTableViewNode();
     if (tableView)
-      {
+    {
       return tableView;
-      }
     }
+  }
 
   return nullptr;
 }

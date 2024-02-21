@@ -96,9 +96,9 @@ void qMRMLMarkupsAngleMeasurementsWidget::updateWidgetFromMRML()
 {
   vtkMRMLMarkupsAngleNode* angleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(this->MarkupsNode);
   if (!angleNode)
-    {
+  {
     return;
-    }
+  }
 
     double axisVector[3] = {0.0, 0.0, 0.0};
     angleNode->GetOrientationRotationAxis(axisVector);
@@ -115,9 +115,9 @@ void qMRMLMarkupsAngleMeasurementsWidget::onAngleMeasurementModeChanged()
   Q_D(qMRMLMarkupsAngleMeasurementsWidget);
   vtkMRMLMarkupsAngleNode* markupsAngleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(this->MarkupsNode);
   if (!markupsAngleNode)
-    {
+  {
     return;
-    }
+  }
 
   markupsAngleNode->SetAngleMeasurementMode(d_ptr->angleMeasurementModeComboBox->currentIndex());
 }
@@ -127,9 +127,9 @@ void qMRMLMarkupsAngleMeasurementsWidget::onRotationAxisChanged()
 {
   vtkMRMLMarkupsAngleNode* markupsAngleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(this->MarkupsNode);
   if (!markupsAngleNode)
-    {
+  {
     return;
-    }
+  }
   markupsAngleNode->SetOrientationRotationAxis(const_cast<double*>(d_ptr->rotationAxisCoordinatesWidget->coordinates()));
 }
 
@@ -138,9 +138,9 @@ bool qMRMLMarkupsAngleMeasurementsWidget::canManageMRMLMarkupsNode(vtkMRMLMarkup
 {
   vtkMRMLMarkupsAngleNode* angleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode);
   if (!angleNode)
-    {
+  {
     return false;
-    }
+  }
 
   return true;
 }
@@ -151,9 +151,9 @@ void qMRMLMarkupsAngleMeasurementsWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode*
   this->MarkupsNode = vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode);
 
   if(!this->MarkupsNode)
-    {
+  {
     return;
-    }
+  }
 
   this->qvtkReconnect(this->MarkupsNode, vtkCommand::ModifiedEvent,
                       this, SLOT(updateWidgetFromMRML()));

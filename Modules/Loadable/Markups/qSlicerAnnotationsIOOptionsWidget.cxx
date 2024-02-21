@@ -82,18 +82,18 @@ void qSlicerAnnotationsIOOptionsWidget::updateProperties()
 {
   Q_D(qSlicerAnnotationsIOOptionsWidget);
   if (!d->NameLineEdit->text().isEmpty())
-    {
+  {
     QStringList names = d->NameLineEdit->text().split(';');
     for (int i = 0; i < names.count(); ++i)
-      {
-      names[i] = names[i].trimmed();
-      }
-    d->Properties["name"] = names;
-    }
-  else
     {
-    d->Properties.remove("name");
+      names[i] = names[i].trimmed();
     }
+    d->Properties["name"] = names;
+  }
+  else
+  {
+    d->Properties.remove("name");
+  }
   d->Properties["fiducial"] = d->FiducialRadioButton->isChecked();
   d->Properties["ruler"] = d->RulerRadioButton->isChecked();
   d->Properties["roi"] = d->ROIRadioButton->isChecked();
@@ -112,12 +112,12 @@ void qSlicerAnnotationsIOOptionsWidget::setFileNames(const QStringList& fileName
   Q_D(qSlicerAnnotationsIOOptionsWidget);
   QStringList names;
   foreach(const QString& fileName, fileNames)
-    {
+  {
     QFileInfo fileInfo(fileName);
     if (fileInfo.isFile())
-      {
+    {
       names << fileInfo.baseName();
-      }
+    }
     // Because '_' is considered as a word character (\w), \b
     // doesn't consider '_' as a word boundary.
     QRegExp fiducialName("(\\b|_)(F)(\\b|_)");
@@ -132,22 +132,22 @@ void qSlicerAnnotationsIOOptionsWidget::setFileNames(const QStringList& fileName
     else
 */
     if (fileInfo.baseName().contains(fiducialName))
-      {
+    {
       activeButton = d->FiducialRadioButton;
-      }
-    else if (fileInfo.baseName().contains(rulerName))
-      {
-      activeButton = d->RulerRadioButton;
-      }
-    else if (fileInfo.baseName().contains(roiName))
-      {
-      activeButton = d->ROIRadioButton;
-      }
-    if (activeButton)
-      {
-      activeButton->click();
-      }
     }
+    else if (fileInfo.baseName().contains(rulerName))
+    {
+      activeButton = d->RulerRadioButton;
+    }
+    else if (fileInfo.baseName().contains(roiName))
+    {
+      activeButton = d->ROIRadioButton;
+    }
+    if (activeButton)
+    {
+      activeButton->click();
+    }
+  }
 
   this->qSlicerIOOptionsWidget::setFileNames(fileNames);
 }

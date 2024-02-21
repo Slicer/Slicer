@@ -60,20 +60,20 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterHierarchyProxyModel
   //Q_D(const qMRMLSortFilterHierarchyProxyModel);
   AcceptType res = this->Superclass::filterAcceptsNode(node);
   if (res == Accept || res == AcceptButPotentiallyRejectable)
-    {
+  {
     return res;
-    }
+  }
   vtkMRMLHierarchyNode* hNode = vtkMRMLHierarchyNode::SafeDownCast(node);
   if (!hNode)
-    {
+  {
     return res;
-    }
+  }
   // Don't show vtkMRMLHierarchyNode if they are tied to a vtkMRMLModelNode
   // The only vtkMRMLHierarchyNode to display are the ones who reference other
   // vtkMRMLHierarchyNode (tree parent) or empty (tree parent to be)
   if (hNode->GetAssociatedNode())
-    {
+  {
     return RejectButPotentiallyAcceptable;
-    }
+  }
   return res;
 }

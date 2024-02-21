@@ -42,15 +42,15 @@ int qMRMLSceneTransformModelTest2(int argc, char * argv [] )
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
   if( argc < 2 )
-    {
+  {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   try
-    {
+  {
     qMRMLSceneTransformModel model;
     qMRMLSortFilterProxyModel sort;
     sort.setSourceModel(&model);
@@ -68,12 +68,12 @@ int qMRMLSceneTransformModelTest2(int argc, char * argv [] )
 
     scene->Delete();
 
-    }
+  }
   catch (const char* error)
-    {
+  {
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }
 

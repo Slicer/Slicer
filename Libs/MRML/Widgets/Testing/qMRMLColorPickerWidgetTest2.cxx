@@ -67,10 +67,10 @@ int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
   ctkColorDialog::addDefaultTab(&colorPickerWidget, "Extra", SIGNAL(colorSelected(QColor)));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     // quits the getColor dialog event loop.
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   ctkColorDialog::getColor(Qt::red, nullptr, "", ctkColorDialog::ColorDialogOptions());
   return EXIT_SUCCESS;
 }

@@ -98,16 +98,16 @@ public:
 
   /// Widget states
   enum
-    {
+  {
     WidgetStateAdjustWindowLevel = WidgetStateUser,
     /// alternative state: if current mode is region-based then in alternative state
     /// the mode is adjustment; if current mode is adjustment then alternative state is region-based
     WidgetStateAdjustWindowLevelAlternative,
-    };
+  };
 
   /// Widget events
   enum
-    {
+  {
     WidgetEventResetWindowLevel = WidgetEventUser,
     WidgetEventAdjustWindowLevelStart,
     WidgetEventAdjustWindowLevelEnd,
@@ -122,7 +122,7 @@ public:
     WidgetEventAlwaysOnAdjustWindowLevelAlternativeStart,
     WidgetEventAlwaysOnAdjustWindowLevelAlternativeEnd,
     WidgetEventAlwaysOnAdjustWindowLevelAlternativeCancel,
-    };
+  };
 
   bool UpdateWindowLevelFromRectangle(int layer, int cornerPoint1[2], int cornerPoint2[2]);
 

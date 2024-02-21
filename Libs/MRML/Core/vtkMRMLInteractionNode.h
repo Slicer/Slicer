@@ -48,23 +48,23 @@ public:
   /// note: any new modes should be powers of 2 to allow
   /// bit field operations
   enum
-    {
+  {
       Place = 1,
       ViewTransform = 2,
       Select = 4,
       AdjustWindowLevel,
       User = 1000
-    };
+  };
 
   /// events
   enum
-    {
+  {
       InteractionModeChangedEvent = 19001,
       InteractionModePersistenceChangedEvent,
       EndPlacementEvent,
       EditNodeEvent,
       ShowViewContextMenuEvent,
-    };
+  };
 
   /// Return a text string describing the mode
   const char *GetInteractionModeAsString(int mode);

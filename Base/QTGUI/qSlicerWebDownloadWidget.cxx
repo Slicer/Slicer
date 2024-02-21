@@ -61,7 +61,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
   messageBox->exec();
 
   if (messageBox->clickedButton() == loadButton)
-    {
+  {
     // start the download into Slicer's temp directory
     qDebug() << "Load...";
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
@@ -76,9 +76,9 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
 #else
     download->setPath(QFileInfo(directory, fileName).absoluteFilePath());
 #endif
-    }
+  }
   else if (messageBox->clickedButton() == saveButton)
-    {
+  {
     qDebug() << "Save...";
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     QString filePath = QFileInfo(download->downloadDirectory(), download->downloadFileName()).absoluteFilePath();
@@ -87,10 +87,10 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
 #endif
     filePath = QFileDialog::getSaveFileName(this, tr("Save File"), filePath);
     if (filePath.isEmpty())
-      {
+    {
       download->cancel();
       return;
-      }
+    }
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     download->setDownloadFileName(QFileInfo(filePath).fileName());
     download->setDownloadDirectory(QFileInfo(filePath).absoluteDir().absolutePath());
@@ -155,7 +155,7 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
   connect(download, &QWebEngineDownloadItem::finished, [=]() {
     this->hide();
     if (messageBox->clickedButton() == loadButton)
-      {
+    {
       qSlicerDataDialog *dataDialog = new qSlicerDataDialog(this->parent());
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
       dataDialog->addFile(QFileInfo(download->downloadDirectory(), download->downloadFileName()).absoluteFilePath());
@@ -163,10 +163,10 @@ void qSlicerWebDownloadWidget::handleDownload(QWebEngineDownloadItem *download)
       dataDialog->addFile(download->path());
 #endif
       dataDialog->exec();
-      }
+    }
     else
-      {
+    {
       QMessageBox::information(this, tr("Web download"), tr("Download complete"));
-      }
+    }
   });
 }

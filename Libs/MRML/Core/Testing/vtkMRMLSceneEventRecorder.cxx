@@ -39,13 +39,13 @@ void vtkMRMLSceneEventRecorder::Execute(
   vtkObject *vtkcaller, unsigned long eid, void *vtkNotUsed(calldata))
 {
   if (vtkMRMLScene::SafeDownCast(vtkcaller) == nullptr)
-    {
+  {
     return;
-    }
+  }
   if (eid == vtkCommand::ModifiedEvent)
-    {
+  {
     return;
-    }
+  }
   ++this->CalledEvents[eid];
   this->LastEventMTime[eid] = vtkTimeStamp();
 }

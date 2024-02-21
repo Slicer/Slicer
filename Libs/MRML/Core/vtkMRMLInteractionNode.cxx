@@ -32,22 +32,22 @@ vtkMRMLInteractionNode::~vtkMRMLInteractionNode() = default;
 int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString )
 {
   if (modeString == nullptr)
-    {
+  {
     return (-1);
-    }
+  }
 
   if ( !strcmp (modeString, "Place" ))
-    {
+  {
     return ( vtkMRMLInteractionNode::Place);
-    }
+  }
   else if ( !strcmp (modeString, "ViewTransform" ))
-    {
+  {
     return ( vtkMRMLInteractionNode::ViewTransform);
-    }
+  }
   else if ( !strcmp (modeString, "Transform" ))
-    {
+  {
     return ( vtkMRMLInteractionNode::ViewTransform);
-    }
+  }
 //  else if ( !strcmp (modeString, "SelectRegion" ))
 //    {
 //    return ( vtkMRMLInteractionNode::SelectRegion);
@@ -57,9 +57,9 @@ int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString
 //    return ( vtkMRMLInteractionNode::LassoRegion);
 //    }
   else
-    {
+  {
     return (-1);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -73,48 +73,48 @@ void vtkMRMLInteractionNode::NormalizeAllMouseModes()
 void vtkMRMLInteractionNode::SetPlaceModePersistence ( int val )
 {
   if (this->PlaceModePersistence != val)
-    {
+  {
     this->PlaceModePersistence = val;
     this->InvokeEvent(this->InteractionModePersistenceChangedEvent, nullptr);
     this->Modified();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::SetTransformModePersistence ( int val )
 {
   if (this->TransformModePersistence != val)
-    {
+  {
     this->TransformModePersistence = val;
     this->InvokeEvent(this->InteractionModePersistenceChangedEvent, nullptr);
     this->Modified();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::SetLastInteractionMode ( int mode )
 {
   if (this->LastInteractionMode != mode)
-    {
+  {
     this->LastInteractionMode = mode;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
 {
   if (this->CurrentInteractionMode == mode)
-    {
+  {
     return;
-    }
+  }
   bool wasPlacing = (this->CurrentInteractionMode == vtkMRMLInteractionNode::Place);
   this->CurrentInteractionMode = mode;
   this->Modified();
   this->InvokeCustomModifiedEvent(vtkMRMLInteractionNode::InteractionModeChangedEvent);
   if (wasPlacing)
-    {
+  {
     this->InvokeCustomModifiedEvent(vtkMRMLInteractionNode::EndPlacementEvent);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -125,13 +125,13 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place )
-    {
+  {
     of << " currentInteractionMode=\"" << "Place" << "\"";
-    }
+  }
   else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
-    {
+  {
     of << " currentInteractionMode=\"" << "ViewTransform" << "\"";
-    }
+  }
 //  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::SelectRegion )
 //    {
 //    of << " currentInteractionMode=\"" << "SelectRegion" << "\"";
@@ -144,13 +144,13 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
   of << " placeModePersistence=\"" << (this->PlaceModePersistence ? "true" : "false") << "\"";
 
   if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::Place )
-    {
+  {
     of << " lastInteractionMode=\"" << "Place" << "\"";
-    }
+  }
   else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
-    {
+  {
     of << " lastInteractionMode=\"" << "ViewTransform" << "\"";
-    }
+  }
 //  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::SelectRegion )
 //    {
 //    of << " lastInteractionMode=\"" << "SelectRegion" << "\"";
@@ -171,20 +171,20 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
 
     if (!strcmp(attName, "currentInteractionMode"))
-      {
+    {
       if ( !strcmp (attValue, "Place" ))
-        {
+      {
         this->CurrentInteractionMode = vtkMRMLInteractionNode::Place;
-        }
+      }
       else if ( !strcmp (attValue, "ViewTransform" ))
-        {
+      {
         this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewTransform;
-        }
+      }
 //      else if ( !strcmp (attValue, "SelectRegion" ))
 //        {
 //        this->CurrentInteractionMode = vtkMRMLInteractionNode::SelectRegion;
@@ -193,28 +193,28 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 //        {
 //        this->CurrentInteractionMode = vtkMRMLInteractionNode::LassoRegion;
 //        }
-      }
+    }
     else if (!strcmp(attName, "placeModePersistence"))
-      {
+    {
       if (!strcmp(attValue,"true"))
-        {
-        this->PlaceModePersistence = 1;
-        }
-      else
-        {
-        this->PlaceModePersistence = 0;
-        }
-      }
-    else if (!strcmp(attName, "lastInteractionMode"))
       {
+        this->PlaceModePersistence = 1;
+      }
+      else
+      {
+        this->PlaceModePersistence = 0;
+      }
+    }
+    else if (!strcmp(attName, "lastInteractionMode"))
+    {
       if ( !strcmp (attValue, "Place" ))
-        {
+      {
         this->LastInteractionMode = vtkMRMLInteractionNode::Place;
-        }
+      }
       else if ( !strcmp (attValue, "ViewTransform" ))
-        {
+      {
         this->LastInteractionMode = vtkMRMLInteractionNode::ViewTransform;
-        }
+      }
 //      else if ( !strcmp (attValue, "SelectRegion" ))
 //        {
 //        this->LastInteractionMode = vtkMRMLInteractionNode::SelectRegion;
@@ -223,8 +223,8 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 //        {
 //        this->LastInteractionMode = vtkMRMLInteractionNode::LassoRegion;
 //        }
-      }
     }
+  }
 
   this->EndModify(disabledModify);
 }
@@ -263,13 +263,13 @@ void vtkMRMLInteractionNode::PrintSelf(ostream& os, vtkIndent indent)
 const char * vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
 {
   if (mode == this->Place)
-    {
+  {
     return "Place";
-    }
+  }
   else if (mode == this->ViewTransform)
-    {
+  {
     return "ViewTransform";
-    }
+  }
   //  else if (mode == this->SelectRegion)
   //    {
   //    return "SelectRegion";
@@ -279,9 +279,9 @@ const char * vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
   //    return "LassoRegion";
   //    }
   else
-    {
+  {
     return "(unknown)";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -289,9 +289,9 @@ void vtkMRMLInteractionNode::SwitchToPersistentPlaceMode()
 {
   if (this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place &&
       this->GetPlaceModePersistence() == 1)
-    {
+  {
     return;
-    }
+  }
   int disabledModify = this->StartModify();
   this->NormalizeAllMouseModes();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
@@ -305,9 +305,9 @@ void vtkMRMLInteractionNode::SwitchToSinglePlaceMode()
 {
   if (this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place &&
       this->GetPlaceModePersistence() == 0)
-    {
+  {
     return;
-    }
+  }
   int disabledModify = this->StartModify();
   this->NormalizeAllMouseModes();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
@@ -321,9 +321,9 @@ void vtkMRMLInteractionNode::SwitchToViewTransformMode()
 {
   if (this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform &&
       this->GetTransformModePersistence() == 1)
-    {
+  {
     return;
-    }
+  }
   int disabledModify = this->StartModify();
   this->SetLastInteractionMode(this->GetCurrentInteractionMode());
   // only set transform mode persistence, keep the state of the pick and place

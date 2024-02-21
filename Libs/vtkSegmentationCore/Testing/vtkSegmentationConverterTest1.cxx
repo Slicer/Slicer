@@ -32,14 +32,14 @@
 #define VERIFY_EQUAL(description, actual, expected) \
 { \
   if (expected != actual) \
-    { \
+  { \
     std::cerr << "Test failure: Mismatch in " << description << ". Expected " << expected << ", actual value is " << actual << std::endl << std::endl; \
     exit(EXIT_FAILURE); \
-    } \
+  } \
   else \
-    { \
+  { \
     std::cout << "Test case success: " << description << " matches expected value " << actual << std::endl; \
-    } \
+  } \
 }
 
 //----------------------------------------------------------------------------
@@ -100,10 +100,10 @@ RULE(E, D, 1);
 void PrintPath(vtkSegmentationConversionPath* path)
 {
   for (int i=0; i < path->GetNumberOfRules(); i++)
-    {
+  {
     vtkSegmentationConverterRule* rule = path->GetRule(i);
     std::cout << "      " << rule->GetName() << "(" << rule->GetConversionCost() << ")" << std::endl;
-    }
+  }
 }
 
 void PrintPaths(vtkSegmentationConversionPaths* paths)
@@ -111,10 +111,10 @@ void PrintPaths(vtkSegmentationConversionPaths* paths)
   vtkSegmentationConversionPath* path = nullptr;
   vtkCollectionSimpleIterator it;
   for (paths->InitTraversal(it); (path = paths->GetNextPath(it));)
-    {
+  {
     std::cout << "    Path: (total cost = " << path->GetCost() << ")" << std::endl;
     PrintPath(path);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -134,9 +134,9 @@ void TestRegisterUnregister()
 
   // Remove all
   while (converterFactory->GetConverterRules().size()>0)
-    {
+  {
     converterFactory->UnregisterConverterRule(converterFactory->GetConverterRules()[0]);
-    }
+  }
   VERIFY_EQUAL("number of rules after unregister", converterFactory->GetConverterRules().size(), 0);
 }
 

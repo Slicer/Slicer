@@ -41,25 +41,25 @@ public:
   vtkTypeMacro(vtkMRMLStorageNodeTestHelper1,vtkMRMLStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override
-    {
+  {
     return vtkMRMLStorageNodeTestHelper1::New();
-    }
+  }
   const char* GetNodeTagName() override
-    {
+  {
     return "vtkMRMLStorageNodeTestHelper1";
-    }
+  }
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
 
   bool CanReadInReferenceNode(vtkMRMLNode * refNode) override
-    {
+  {
     return refNode->IsA(this->SupportedClass);
-    }
+  }
   int ReadDataInternal(vtkMRMLNode * vtkNotUsed(refNode)) override
-    {
+  {
     return this->ReadDataReturnValue;
-    }
+  }
 
   const char* SupportedClass{nullptr};
   int ReadDataReturnValue{0};
@@ -106,11 +106,11 @@ int TestReadData(TestReadReferenceType referenceNodeType,
   vtkNew<vtkMRMLModelNode> modelNode;
   vtkMRMLNode* referenceNode = nullptr;
   switch (referenceNodeType)
-    {
+  {
     case NullptrAsReference: referenceNode = nullptr; break;
     case TransformNodeAsReference: referenceNode = transformNode; break;
     case ModelNodeAsReference: referenceNode = modelNode; break;
-    }
+  }
   int res = storageNode->ReadData(referenceNode);
   std::cout << "StoredTime: " << storageNode->GetStoredTime() << std::endl;
   CHECK_INT(res, expectedRes);

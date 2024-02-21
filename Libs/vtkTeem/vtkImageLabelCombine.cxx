@@ -47,23 +47,23 @@ int vtkImageLabelCombine::RequestInformation (
 
   // two input take intersection
   if (!inInfo2)
-    {
+  {
     vtkErrorMacro(<< "Second input must be specified for this operation.");
     return 1;
-    }
+  }
 
   inInfo2->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext2);
   for (idx = 0; idx < 3; ++idx)
-    {
+  {
     if (ext2[idx*2] > ext[idx*2])
-      {
+    {
       ext[idx*2] = ext2[idx*2];
-      }
-    if (ext2[idx*2+1] < ext[idx*2+1])
-      {
-      ext[idx*2+1] = ext2[idx*2+1];
-      }
     }
+    if (ext2[idx*2+1] < ext[idx*2+1])
+    {
+      ext[idx*2+1] = ext2[idx*2+1];
+    }
+  }
 
   outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext, 6);
 
@@ -109,64 +109,64 @@ void vtkImageLabelCombineExecute2(vtkImageLabelCombine *self,
 
   // Loop through output pixels
   for (idxZ = 0; idxZ <= maxZ; idxZ++)
-    {
+  {
     for (idxY = 0; !self->AbortExecute && idxY <= maxY; idxY++)
-      {
+    {
       if (!id)
-        {
+      {
         if (!(count%target))
-          {
-          self->UpdateProgress(count/(50.0*target));
-          }
-        count++;
-        }
-      for (idxR = 0; idxR < rowLength; idxR++)
         {
+          self->UpdateProgress(count/(50.0*target));
+        }
+        count++;
+      }
+      for (idxR = 0; idxR < rowLength; idxR++)
+      {
         // Pixel operation
         v1 = *in1Ptr;
         v2 = *in2Ptr;
         if (op == 0)
-          {
+        {
           if (v1 > 0)
-            {
-            *outPtr = v1;
-            }
-          else if (v2 > 0 && v1 == 0)
-            {
-            *outPtr = v2;
-            }
-          else
-            {
-            *outPtr = 0;
-            }
-          }
-        else
           {
-          if (v2 > 0)
-            {
-            *outPtr = v2;
-            }
-          else if (v1 > 0 && v2 == 0)
-            {
             *outPtr = v1;
-            }
-          else
-            {
-            *outPtr = 0;
-            }
           }
+          else if (v2 > 0 && v1 == 0)
+          {
+            *outPtr = v2;
+          }
+          else
+          {
+            *outPtr = 0;
+          }
+        }
+        else
+        {
+          if (v2 > 0)
+          {
+            *outPtr = v2;
+          }
+          else if (v1 > 0 && v2 == 0)
+          {
+            *outPtr = v1;
+          }
+          else
+          {
+            *outPtr = 0;
+          }
+        }
         outPtr++;
         in1Ptr++;
         in2Ptr++;
-        }
+      }
       outPtr += outIncY;
       in1Ptr += inIncY;
       in2Ptr += in2IncY;
-      }
+    }
     outPtr += outIncZ;
     in1Ptr += inIncZ;
     in2Ptr += in2IncZ;
-    }
+  }
 }
 
 
@@ -192,22 +192,22 @@ void vtkImageLabelCombine::ThreadedRequestData(
   void *inPtr2;
 
   if (!inData[1] || ! inData[1][0])
-    {
+  {
     vtkErrorMacro("ImageMathematics requested to perform a two input operation with only one input\n");
     return;
-    }
+  }
 
   inPtr2 = inData[1][0]->GetScalarPointerForExtent(outExt);
 
   // this filter expects that input is the same type as output.
   if (inData[0][0]->GetScalarType() != outData[0]->GetScalarType())
-    {
+  {
       vtkErrorMacro(<< "Execute: input1 ScalarType, "
                     <<  inData[0][0]->GetScalarType()
                     << ", must match output ScalarType "
                     << outData[0]->GetScalarType());
       return;
-    }
+  }
   /**
   if (inData[1][0]->GetScalarType() != outData[0]->GetScalarType())
     {
@@ -221,16 +221,16 @@ void vtkImageLabelCombine::ThreadedRequestData(
   // this filter expects that inputs that have the same number of components
   if (inData[0][0]->GetNumberOfScalarComponents() !=
       inData[1][0]->GetNumberOfScalarComponents())
-    {
+  {
       vtkErrorMacro(<< "Execute: input1 NumberOfScalarComponents, "
                     << inData[0][0]->GetNumberOfScalarComponents()
                     << ", must match out input2 NumberOfScalarComponents "
                     << inData[1][0]->GetNumberOfScalarComponents());
       return;
-    }
+  }
 
   switch (inData[0][0]->GetScalarType())
-    {
+  {
     vtkTemplateMacro(
                      vtkImageLabelCombineExecute2(this,inData[0][0], (VTK_TT *)(inPtr1),
                                                   inData[1][0], (VTK_TT *)(inPtr2),
@@ -238,7 +238,7 @@ void vtkImageLabelCombine::ThreadedRequestData(
     default:
       vtkErrorMacro(<< "Execute: Unknown ScalarType");
       return;
-    }
+  }
 
 }
 

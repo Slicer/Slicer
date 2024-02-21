@@ -61,15 +61,15 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
   vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   if (!this->GetMRMLScene())
-    {
+  {
     vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: scene is invalid");
     return nullptr;
-    }
+  }
   if (!fileName)
-    {
+  {
     vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: fileName is invalid");
     return nullptr;
-    }
+  }
 
   // Storable node
   vtkMRMLTableNode *tableNode = nullptr;
@@ -77,28 +77,28 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
   if( extension.empty() )
-    {
+  {
     vtkErrorMacro("AddTable: no file extension specified: " << fileName);
     return nullptr;
-    }
+  }
   if (   !extension.compare(".db")
       || !extension.compare(".db3")
       || !extension.compare(".sqlite")
       || !extension.compare(".sqlite3"))
-    {
+  {
     // SQLite
     std::string dbname = std::string("sqlite://") + std::string(fileName);
     vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(
                    vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
 
     if (!database->Open(password?password:"", vtkSQLiteDatabase::USE_EXISTING))
-      {
+    {
       vtkErrorMacro("Failed to read tables from " << fileName);
       return nullptr;
-      }
+    }
     vtkStringArray *tables = database->GetTables();
     for (int i=0; i<tables->GetNumberOfTuples(); i++)
-      {
+    {
       vtkStdString table = tables->GetValue(i);
 
       // Storage node
@@ -116,21 +116,21 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
       // Read
       int res = tableStorageNode->ReadData(tableNode1.GetPointer());
       if (res == 0) // failed to read
-        {
+      {
         vtkErrorMacro("Failed to read tables from " << fileName);
         this->GetMRMLScene()->RemoveNode(tableStorageNode.GetPointer());
         this->GetMRMLScene()->RemoveNode(tableNode1.GetPointer());
         if (userMessages)
-          {
+        {
           userMessages->AddMessages(tableStorageNode->GetUserMessages());
-          }
-        return nullptr;
         }
-      tableNode = tableNode1.GetPointer();
+        return nullptr;
       }
+      tableNode = tableNode1.GetPointer();
     }
+  }
   else
-    {
+  {
     // Storage node
     vtkNew<vtkMRMLTableStorageNode> tableStorageNode;
     tableStorageNode->SetFileName(fileName);
@@ -139,26 +139,26 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
 
     vtkNew<vtkMRMLTableNode> tableNode1;
     if (name)
-      {
+    {
       tableNode1->SetName(name);
-      }
+    }
     this->GetMRMLScene()->AddNode(tableNode1.GetPointer());
 
     // Read
     int res = tableStorageNode->ReadData(tableNode1.GetPointer());
     if (userMessages)
-      {
+    {
       userMessages->AddMessages(tableStorageNode->GetUserMessages());
-      }
+    }
     if (res == 0) // failed to read
-      {
+    {
       vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: failed to read data from file: "<<fileName);
       this->GetMRMLScene()->RemoveNode(tableStorageNode.GetPointer());
       this->GetMRMLScene()->RemoveNode(tableNode1.GetPointer());
       return nullptr;
-      }
-    tableNode = tableNode1.GetPointer();
     }
+    tableNode = tableNode1.GetPointer();
+  }
 
   return tableNode;
 }
@@ -167,7 +167,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
 int vtkSlicerTablesLogic::GetLayoutWithTable(int currentLayout)
 {
   switch (currentLayout)
-    {
+  {
     case vtkMRMLLayoutNode::SlicerLayoutFourUpTableView:
     case vtkMRMLLayoutNode::SlicerLayout3DTableView:
     case vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView:
@@ -182,5 +182,5 @@ int vtkSlicerTablesLogic::GetLayoutWithTable(int currentLayout)
       return vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView;
     default:
       return vtkMRMLLayoutNode::SlicerLayoutFourUpTableView;
-    }
+  }
 }

@@ -33,38 +33,38 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
 {
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   if (!app)
-    {
+  {
     qCritical("qSlicerCLIModuleFactoryHelper::modulePaths failed: qSlicerCoreApplication is not instantiated");
     return QStringList();
-    }
+  }
 
   // slicerHome shouldn't be empty
   if (!app->slicerHome().isEmpty())
-    {
+  {
     qCritical("qSlicerCLIModuleFactoryHelper::modulePaths failed: app->slicerHome() is empty");
     return QStringList();
-    }
+  }
 
   QStringList defaultCmdLineModulePaths;
   if (QFile::exists(app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR))
-    {
+  {
     defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR;
     if (!app->intDir().isEmpty())
-       {
+    {
        // On Win32, *both* paths have to be there, since scripts are installed
        // in the install location, and exec/libs are *automatically* installed
        // in intDir.
        defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/" + app->intDir();
-       }
     }
+  }
 
   QSettings * settings = app->revisionUserSettings();
   QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList cmdLineModulePaths = additionalModulePaths + defaultCmdLineModulePaths;
   foreach(const QString& path, cmdLineModulePaths)
-    {
+  {
     app->addLibraryPath(path);
-    }
+  }
   return cmdLineModulePaths;
 }
 

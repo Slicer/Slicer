@@ -93,7 +93,7 @@ class vtkSegmentationCore_EXPORT vtkSegmentation : public vtkObject
 {
 public:
   enum
-    {
+  {
     /// Invoked when content of the source representation in a segment is changed.
     SourceRepresentationModified = 62100,
     /// Invoked when content of any representation (including the source representation) in a segment is changed.
@@ -109,10 +109,10 @@ public:
     ContainedRepresentationNamesModified,
     /// Invoked if segment IDs order is changed. Not called when a segment is added or removed.
     SegmentsOrderModified,
-    };
+  };
 
   enum
-    {
+  {
     /// Extent of common geometry is used as extent
     EXTENT_REFERENCE_GEOMETRY,
     /// Extent is computed as union of extent of all segments
@@ -125,7 +125,7 @@ public:
     EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED,
     /// Extent is computed as the reference geometry, expanded to contain the union of all segments
     EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY
-    };
+  };
 
   /// Container type for segments. Maps segment IDs to segment objects
   typedef std::map<std::string, vtkSmartPointer<vtkSegment> > SegmentMap;
@@ -303,20 +303,20 @@ public:
 
   /// \deprecated Use IsSourceRepresentationPolyData instead.
   bool IsMasterRepresentationPolyData()
-    {
+  {
     vtkWarningMacro("vtkSegmentation::IsMasterRepresentationPolyData() method is deprecated, please use IsSourceRepresentationPolyData method instead");
     return this->IsSourceRepresentationPolyData();
-    };
+  };
 
   /// Determine if source representation is (oriented) image data type
   bool IsSourceRepresentationImageData();
 
   /// \deprecated Use IsSourceRepresentationImageData instead.
   bool IsMasterRepresentationImageData()
-    {
+  {
     vtkWarningMacro("vtkSegmentation::IsMasterRepresentationImageData() method is deprecated, please use IsSourceRepresentationImageData method instead");
     return this->IsSourceRepresentationImageData();
-    };
+  };
 
   /// Get all representations supported by the converter
   void GetAvailableRepresentationNames(std::set<std::string>& representationNames) { this->Converter->GetAvailableRepresentationNames(representationNames); };
@@ -326,10 +326,10 @@ public:
 
   /// \deprecated Use InvalidateNonSourceRepresentations instead.
   void InvalidateNonMasterRepresentations()
-    {
+  {
     vtkWarningMacro("vtkSegmentation::InvalidateNonMasterRepresentations() method is deprecated, please use InvalidateNonSourceRepresentations method instead");
     this->InvalidateNonSourceRepresentations();
-    };
+  };
 
   /// Merged labelmap functions
 
@@ -500,17 +500,17 @@ public:
 
   /// \deprecated Use SetSourceRepresentationName instead.
   virtual void SetMasterRepresentationName(const std::string& representationName)
-    {
+  {
     vtkWarningMacro("vtkSegmentation::SetMasterRepresentationName() method is deprecated, please use SetSourceRepresentationName method instead");
     this->SetSourceRepresentationName(representationName);
-    };
+  };
 
   /// \deprecated Use SetSourceRepresentationName instead.
   virtual std::string GetMasterRepresentationName()
-    {
+  {
     vtkWarningMacro("vtkSegmentation::GetMasterRepresentationName() method is deprecated, please use GetSourceRepresentationName method instead");
     return this->GetSourceRepresentationName();
-    };
+  };
 
   /// Deep copies source segment to destination segment. If the same representation is found in baseline
   /// with up-to-date timestamp then the representation is reused from baseline.

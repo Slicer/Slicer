@@ -92,9 +92,9 @@ void qSlicerIconComboBox::showPopup()
 
   int verticalScrollBarWidth = 0;
   if (this->view()->verticalScrollBar())
-    {
+  {
     verticalScrollBarWidth = this->view()->verticalScrollBar()->width();
-    }
+  }
   QMargins margins = container->contentsMargins();
   // Item size is not exactly the icon size, so we'll add 10% and 20% margin.
   // We don't need exact match, just approximate size match is sufficient.
@@ -113,9 +113,9 @@ void qSlicerIconComboBox::showPopup()
   listRect.moveTop(above.y() + offset - listRect.top());
 
   if (listRect.width() > screen.width())
-    {
+  {
     listRect.setWidth(screen.width());
-    }
+  }
 
   container->setGeometry(listRect);
   container->raise();
@@ -165,20 +165,20 @@ void qSlicerPresetComboBoxPrivate::updateLabelsIconsVisibility()
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(q->sortFilterProxyModel()->sourceModel());
 
   if (this->ShowIcons)
-    {
+  {
     qSlicerIconComboBox* comboBox = new qSlicerIconComboBox;
     comboBox->forceDefault(true);
     q->setComboBox(comboBox);
     q->setIconSizeInPopup(q->iconSizeInPopup());
     sceneModel->setNameColumn(this->ShowLabelsInPopup ? 0 : -1);
-    }
+  }
   else
-    {
+  {
     ctkComboBox* comboBox = new ctkComboBox;
     comboBox->forceDefault(false);
     q->setComboBox(comboBox);
     sceneModel->setNameColumn(0);
-    }
+  }
 
   // Update from scene
   QString currentNodeID = q->currentNodeID();
@@ -205,47 +205,47 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
 {
   Q_D(qSlicerPresetComboBox);
   if (presetNode == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sortFilterProxyModel()->sourceModel());
   const QModelIndex& itemIndex = sceneModel->indexFromNode(presetNode);
 
   if (d->ShowIcons)
-    {
+  {
     // Search corresponding icon
     QIcon presetIcon;
     vtkMRMLVolumeNode* iconVolume = vtkMRMLVolumeNode::SafeDownCast(
       presetNode->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
     if (iconVolume && iconVolume->GetImageData()!=nullptr)
-      {
+    {
       QImage qimage;
       qMRMLUtils::vtkImageDataToQImage(iconVolume->GetImageData(), qimage);
       // vtkITK loads 3D images with y axis flipped (compared to loading 2D images), flip it back now
       QImage qimageFlipped(qimage.mirrored(false, true));
       presetIcon.addPixmap(QPixmap::fromImage(qimageFlipped));
-      }
+    }
     if (presetIcon.availableSizes().size() == 0)
-      {
+    {
       // Check if an image is available for this preset in the stock preset images.
       // This may be faster than loading images using storage nodes from the scene.
       presetIcon = QIcon(QString(":/presets/") + presetNode->GetName());
-      }
+    }
     if (presetIcon.availableSizes().size() == 0)
-      {
+    {
       // Use generic icon (puzzle piece)
       presetIcon = QIcon(":/Icons/Extension.png");
-      }
+    }
 
     // Set icon
     sceneModel->setData(itemIndex, presetIcon, Qt::DecorationRole);
-    }
+  }
 
   // Set toolTip
   vtkMRMLVolumePropertyNode* volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(presetNode);
   if (volumePropertyNode)
-    {
+  {
     int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
     vtkScalarsToColors* colors =
       volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : nullptr;
@@ -254,7 +254,7 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
     QString imgSrc = ctk::base64HTMLImageTagSrc(img);
     QString toolTip = QString("<img src=\"%1\"> %2").arg(imgSrc).arg(presetNode->GetName());
     sceneModel->setData(itemIndex, toolTip, Qt::ToolTipRole);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -263,15 +263,15 @@ void qSlicerPresetComboBox::updateComboBoxTitleAndIcon(vtkMRMLNode* node)
   Q_D(qSlicerPresetComboBox);
   ctkComboBox* combo = qobject_cast<ctkComboBox*>(this->comboBox());
   if (node)
-    {
+  {
     combo->setDefaultText(node->GetName());
     combo->setDefaultIcon(d->ShowIcons ? combo->itemIcon(combo->currentIndex()) : QIcon());
-    }
+  }
   else
-    {
+  {
     combo->setDefaultText(tr("Select a Preset"));
     combo->setDefaultIcon(QIcon());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------

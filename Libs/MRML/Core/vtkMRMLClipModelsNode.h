@@ -59,10 +59,10 @@ public:
   vtkSetMacro(ClipType, int);
 
   enum
-    {
+  {
       ClipIntersection = 0,
       ClipUnion = 1
-    };
+  };
 
   ///
   /// Indicates if the Red slice clipping is Off,
@@ -83,21 +83,21 @@ public:
   vtkSetMacro(GreenSliceClipState, int);
 
   enum
-    {
+  {
     ClipOff = 0,
     ClipPositiveSpace = 1,
     ClipNegativeSpace = 2,
-    };
+  };
 
   ///
   ///Indicates what clipping method should be used
   ///Straight cut, whole cell extraction, or whole cell extraction with boundary cells
   enum ClippingMethodType
-    {
+  {
     Straight = 0,
     WholeCells,
     WholeCellsWithBoundary,
-    };
+  };
 
   vtkGetMacro(ClippingMethod, ClippingMethodType);
   vtkSetMacro(ClippingMethod, ClippingMethodType);

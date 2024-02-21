@@ -96,9 +96,9 @@ void qSlicerDataModule::setup()
   // to the qSlicerSceneReader. Therefore we trigger a warning but don't return
   // immediately.
   if (!camerasLogic)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Cameras module is not found";
-    }
+  }
 
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 

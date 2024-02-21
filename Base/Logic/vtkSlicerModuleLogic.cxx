@@ -37,9 +37,9 @@ vtkMRMLAbstractLogic* vtkSlicerModuleLogic::GetModuleLogic(const char* moduleNam
   vtkMRMLApplicationLogic* appLogic =
     vtkMRMLApplicationLogic::SafeDownCast(this->GetMRMLApplicationLogic());
   if (!appLogic)
-    {
+  {
     return nullptr;
-    }
+  }
   return appLogic->GetModuleLogic(moduleName);
 }
 
@@ -53,10 +53,10 @@ std::string vtkSlicerModuleLogic::GetModuleShareDirectory()const
 void vtkSlicerModuleLogic::SetModuleShareDirectory(const std::string& shareDirectory)
 {
   if (this->ModuleShareDirectory != shareDirectory)
-    {
+  {
     this->ModuleShareDirectory = shareDirectory;
     this->Modified();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

@@ -146,9 +146,9 @@ void qMRMLSegmentationFileExportWidget::setSegmentationNode(vtkMRMLSegmentationN
 
   // Get reference volume node
   if (nodeChanged)
-    {
+  {
     this->onSegmentationReferenceImageGeometryChanged();
-    }
+  }
 
 }
 
@@ -164,9 +164,9 @@ void qMRMLSegmentationFileExportWidget::updateWidgetFromMRML()
   Q_D(qMRMLSegmentationFileExportWidget);
   vtkMRMLColorTableNode* exportColorTableNode = nullptr;
   if (d->SegmentationNode)
-    {
+  {
     exportColorTableNode = d->SegmentationNode->GetLabelmapConversionColorTableNode();
-    }
+  }
   d->ColorTableNodeSelector->setCurrentNode(exportColorTableNode);
 }
 
@@ -176,9 +176,9 @@ void qMRMLSegmentationFileExportWidget::updateWidgetFromSettings()
   Q_D(qMRMLSegmentationFileExportWidget);
 
   if (d->SettingsKey.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   QSettings settings;
 
@@ -206,9 +206,9 @@ void qMRMLSegmentationFileExportWidget::updateSettingsFromWidget()
   Q_D(qMRMLSegmentationFileExportWidget);
 
   if (d->SettingsKey.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   QSettings settings;
 
@@ -227,9 +227,9 @@ void qMRMLSegmentationFileExportWidget::onSegmentationReferenceImageGeometryChan
 {
   Q_D(qMRMLSegmentationFileExportWidget);
   if (!d->SegmentationNode)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLNode* referenceVolumeNode = d->SegmentationNode->GetNodeReference(
     vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str());
@@ -249,17 +249,17 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
   if (d->VisibleSegmentsOnlyCheckBox->isChecked()
     && d->SegmentationNode != nullptr
     && vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode()) != nullptr)
-    {
+  {
     segmentIds = vtkSmartPointer<vtkStringArray>::New();
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
     displayNode->GetVisibleSegmentIDs(segmentIds);
-    }
+  }
 
   bool merge = d->MergeIntoSingleSTLFileCheckBox->isChecked(); // merge is only used for STL format
 
   QString fileFormat = d->FileFormatComboBox->currentText();
   if (fileFormat.toUpper() == "STL" || fileFormat.toUpper() == "OBJ")
-    {
+  {
     vtkSlicerSegmentationsModuleLogic::ExportSegmentsClosedSurfaceRepresentationToFiles(
       d->DestinationFolderButton->directory().toUtf8().constData(),
       d->SegmentationNode.GetPointer(),
@@ -268,30 +268,30 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
       d->CoordinateSystemComboBox->currentText() == "LPS",
       d->SizeScaleSpinBox->value(),
       merge);
-    }
+  }
   else if (fileFormat.toUpper() == "NRRD" || fileFormat.toUpper() == "NIFTI")
-    {
+  {
     std::string extension = fileFormat.toUtf8().constData();
     if (fileFormat == "NIFTI")
-      {
+    {
       extension = "nii";
       if (d->UseCompressionCheckBox->isChecked())
-        {
+      {
         extension = "nii.gz";
-        }
       }
+    }
 
     vtkMRMLColorTableNode* labelmapConversionColorTableNode = nullptr;
     if (d->UseColorTableValuesCheckBox->isChecked())
-      {
+    {
       labelmapConversionColorTableNode = vtkMRMLColorTableNode::SafeDownCast(d->ColorTableNodeSelector->currentNode());
-      }
+    }
 
     vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ReferenceVolumeComboBox->currentNode());
     if (referenceVolumeNode && d->SegmentationNode &&
       vtkSlicerSegmentationsModuleLogic::IsEffectiveExentOutsideReferenceVolume(
         referenceVolumeNode, d->SegmentationNode, segmentIds))
-      {
+    {
       ctkMessageBox* exportWarningMesssgeBox = new ctkMessageBox(this);
       exportWarningMesssgeBox->setAttribute(Qt::WA_DeleteOnClose);
       exportWarningMesssgeBox->setWindowTitle(tr("Exporting may erase data"));
@@ -303,10 +303,10 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
       exportWarningMesssgeBox->setText(tr("The current segmentation does not completely fit into the new geometry.\n"
                                        "Do you want to crop the segmentation?\n"));
       if (exportWarningMesssgeBox->exec() != QMessageBox::StandardButton::Ok)
-        {
+      {
         return;
-        }
       }
+    }
 
     vtkSlicerSegmentationsModuleLogic::ExportSegmentsBinaryLabelmapRepresentationToFiles(
       d->DestinationFolderButton->directory().toUtf8().constData(),
@@ -317,14 +317,14 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
       referenceVolumeNode,
       vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY,
       labelmapConversionColorTableNode);
-    }
+  }
 
   QApplication::restoreOverrideCursor();
 
   if (d->ShowDestinationFolderOnExportCompleteCheckBox->isChecked())
-    {
+  {
     this->showDestinationFolder();
-    }
+  }
 
   emit exportToFilesDone();
 }

@@ -1140,9 +1140,9 @@ vtkMRMLLayoutLogic::~vtkMRMLLayoutLogic()
   this->ViewNodes->Delete();
   this->ViewNodes = nullptr;
   if (this->ConventionalLayoutRootElement)
-    {
+  {
     this->ConventionalLayoutRootElement->Delete();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1178,9 +1178,9 @@ void vtkMRMLLayoutLogic::UpdateFromMRMLScene()
       //    && !this->GetMRMLScene()->IsBatchProcessing())
       //    || this->GetProcessingMRMLSceneEvent() == vtkMRMLScene::EndImportEvent)
       )
-    {
+  {
     this->LayoutNode->SetViewArrangement(this->LastValidViewArrangement);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1214,15 +1214,15 @@ void vtkMRMLLayoutLogic::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLLayoutLogic::UpdateViewNodes()
 {
   if (!this->GetMRMLScene())
-    {
+  {
     return;
-    }
+  }
   if (this->ConventionalLayoutRootElement == nullptr)
-    {
+  {
     // vtkMRMLLayoutLogic is responsible for the returned vtkXMLDataElement
     // pointer, this is why we delete it in the ~vtkMRMLLayoutLogic()
     this->ConventionalLayoutRootElement = vtkMRMLLayoutNode::ParseLayout(conventionalView);
-    }
+  }
   this->CreateMissingViews(this->ConventionalLayoutRootElement);
 }
 
@@ -1230,23 +1230,23 @@ void vtkMRMLLayoutLogic::UpdateViewNodes()
 void vtkMRMLLayoutLogic::UpdateLayoutNode()
 {
   if (!this->GetMRMLScene())
-    {
+  {
     this->SetLayoutNode(nullptr);
     return;
-    }
+  }
   if (this->LayoutNode && this->LayoutNode->GetScene() == this->GetMRMLScene())
-    {
+  {
     this->UpdateFromLayoutNode();
     return;
-    }
+  }
   vtkMRMLLayoutNode* sceneLayoutNode = vtkMRMLLayoutNode::SafeDownCast(
     this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
   if (sceneLayoutNode)
-    {
+  {
     this->SetLayoutNode(sceneLayoutNode);
-    }
+  }
   else
-    {
+  {
     sceneLayoutNode = vtkMRMLLayoutNode::New();
 
     // we want to set the node to the logic before adding it into the scene, in
@@ -1264,11 +1264,11 @@ void vtkMRMLLayoutLogic::UpdateLayoutNode()
     // as we checked that there was no vtkMRMLLayoutNode in the scene, the
     // returned node by vtkMRMLScene::AddNode() should be layoutNode
     if (nodeCreated != sceneLayoutNode)
-      {
+    {
       vtkWarningMacro("Error when adding layout node into the scene");
-      }
-    sceneLayoutNode->Delete();
     }
+    sceneLayoutNode->Delete();
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1276,9 +1276,9 @@ void vtkMRMLLayoutLogic::UpdateFromLayoutNode()
 {
   if (this->LayoutNode &&
       this->LayoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutNone)
-    {
+  {
     this->LastValidViewArrangement = this->LayoutNode->GetViewArrangement();
-    }
+  }
   this->UpdateCompareViewLayoutDefinitions();
   this->CreateMissingViews();
   this->UpdateViewCollectionsFromLayout();
@@ -1290,9 +1290,9 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
   // std::cerr << "UpdateCompareViewLayoutDefinitions" << std::endl;
 
   if (!this->LayoutNode)
-    {
+  {
     return;
-    }
+  }
 
   int wasModifying = this->LayoutNode->StartModify();
 
@@ -1317,7 +1317,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     "  <layout type=\"vertical\">";
 
   for (int i=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
-    {
+  {
     compareView <<
       "   <item>"
       "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< i << "\">"
@@ -1330,22 +1330,22 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
       "     <property name=\"lightboxcolumns\" action=\"relayout\">" << this->LayoutNode->GetNumberOfCompareViewLightboxColumns() << "</property>"
       "    </view>"
       "   </item>";
-      }
+  }
   compareView <<
     "  </layout>"
     " </item>"
     "</layout>";
 
   if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView))
-    {
+  {
     this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
                                            compareView.str().c_str());
-    }
+  }
   else
-    {
+  {
     this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
                                            compareView.str().c_str());
-    }
+  }
 
   // Vertical compare viewers
   std::stringstream compareWidescreenView;
@@ -1368,7 +1368,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     "  <layout type=\"horizontal\">";
 
   for (int i=1; i <= this->LayoutNode->GetNumberOfCompareViewColumns(); ++i)
-    {
+  {
     compareWidescreenView <<
       "   <item>"
       "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< i<< "\">"
@@ -1381,22 +1381,22 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
       "     <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
       "    </view>"
       "   </item>";
-    }
+  }
   compareWidescreenView <<
     "  </layout>"
     " </item>"
     "</layout>";
 
   if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView))
-    {
+  {
     this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
                                         compareWidescreenView.str().c_str());
-    }
+  }
   else
-    {
+  {
     this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
                                         compareWidescreenView.str().c_str());
-    }
+  }
 
   // Grid compare viewers
   std::stringstream compareViewGrid;
@@ -1419,13 +1419,13 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     "  <layout type=\"vertical\">";
 
   for (int i=1, k=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
-    {
+  {
     compareViewGrid <<
       "   <item>"
       "    <layout type=\"horizontal\">";
     for (int j=1; j <= this->LayoutNode->GetNumberOfCompareViewColumns();
          ++j,++k)
-      {
+    {
       compareViewGrid <<
         "     <item>"
         "      <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< k << "\">"
@@ -1438,26 +1438,26 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
         "       <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
         "      </view>"
         "     </item>";
-      }
+    }
     compareViewGrid <<
       "     </layout>"
       "    </item>";
-    }
+  }
   compareViewGrid <<
     "  </layout>"
     " </item>"
     "</layout>";
 
   if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView))
-    {
+  {
     this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView,
                                            compareViewGrid.str().c_str());
-    }
+  }
   else
-    {
+  {
     this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView,
                                            compareViewGrid.str().c_str());
-    }
+  }
   this->LayoutNode->EndModify(wasModifying);
 }
 
@@ -1465,9 +1465,9 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
 void vtkMRMLLayoutLogic::SetLayoutNode(vtkMRMLLayoutNode* layoutNode)
 {
   if (this->LayoutNode == layoutNode)
-    {
+  {
     return;
-    }
+  }
   // vtkMRMLLayoutLogic needs to receive the ModifiedEvent before anyone (in
   // particular qMRMLLayoutManager). It should be the case as vtkMRMLLayoutLogic
   // is the first to add an observer to it. However VTK wrongly calls the
@@ -1479,24 +1479,24 @@ void vtkMRMLLayoutLogic::SetLayoutNode(vtkMRMLLayoutNode* layoutNode)
   //  vtkObjectPointer(&this->LayoutNode), layoutNode);
 
   if (this->LayoutNode)
-    {
+  {
     this->LayoutNode->RemoveObservers(vtkCommand::ModifiedEvent, this->GetMRMLNodesCallbackCommand());
-    }
+  }
   this->LayoutNode = layoutNode;
   if (this->LayoutNode)
-    {
+  {
     this->LayoutNode->AddObserver(vtkCommand::ModifiedEvent, this->GetMRMLNodesCallbackCommand(), 10.);
-    }
+  }
 
   // Add default layouts only the first time (when the layout node is set)
   this->AddDefaultLayouts();
   if (this->LayoutNode)
-    {
+  {
     // Maybe the vtkMRMLLayoutNode::ViewArrangement was set before the
     // layout descriptions were added into the node.
     // UpdateCurrentLayoutDescription needs to be called.
     this->LayoutNode->SetViewArrangement(this->LayoutNode->GetViewArrangement());
-    }
+  }
   this->OnMRMLNodeModified(this->LayoutNode); //this->UpdateFromLayoutNode();
 }
 
@@ -1504,9 +1504,9 @@ void vtkMRMLLayoutLogic::SetLayoutNode(vtkMRMLLayoutNode* layoutNode)
 void vtkMRMLLayoutLogic::AddDefaultLayouts()
 {
   if (!this->LayoutNode)
-    {
+  {
     return;
-    }
+  }
   int wasModifying = this->LayoutNode->StartModify();
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutInitialView,
                                          fourUpView);
@@ -1585,35 +1585,35 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
   ViewAttributes::const_iterator it = attributes.find(std::string("class"));
   ViewAttributes::const_iterator end = attributes.end();
   if (it == end)
-    {
+  {
     return nullptr;
-    }
+  }
   const std::string& className = it->second;
   vtkMRMLNode* node = this->GetMRMLScene()->CreateNodeByClass(className.c_str());
   it = attributes.find(std::string("type"));
   if (it != end)
-    {
+  {
     const std::string& type = it->second;
     node->SetAttribute("ViewType", type.c_str());
-    }
+  }
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(node);
   if (viewNode)
-    {
+  {
     it = attributes.find(std::string("singletontag"));
     if (it != end)
-      {
+    {
       const std::string& singletonTag = it->second;
       viewNode->SetLayoutName(singletonTag.c_str());
-      }
+    }
     std::string name = std::string(viewNode->GetLayoutName());
     // Maintain backward compatibility
     if (!viewNode->IsA("vtkMRMLSliceNode")
         && !viewNode->IsA("vtkMRMLTableViewNode") && !viewNode->IsA("vtkMRMLPlotViewNode"))
-      {
+    {
       name = std::string("View") + name;
-      }
-    viewNode->SetName(name.c_str());
     }
+    viewNode->SetName(name.c_str());
+  }
   return node;
 }
 
@@ -1621,16 +1621,16 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
 void vtkMRMLLayoutLogic::ApplyProperties(const ViewProperties& properties, vtkMRMLNode* view, const std::string& action)
 {
   for (unsigned int i = 0; i < properties.size(); ++i)
-    {
+  {
     ViewProperty property = properties[i];
     ViewProperty::const_iterator it = property.find("action");
     if (it != property.end() &&
         it->second != action)
-      {
+    {
       continue;
-      }
-    this->ApplyProperty(property, view);
     }
+    this->ApplyProperty(property, view);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1639,97 +1639,97 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
   std::string value;
   ViewProperty::const_iterator it = property.find("value");
   if (it != property.end())
-    {
+  {
     value = it->second;
-    }
+  }
   it = property.find("name");
   if (it == property.end())
-    {
+  {
     vtkWarningMacro("Invalid property, no name given.");
     return;
-    }
+  }
 
   const std::string name = it->second;
   // Orientation
   if (name == std::string("orientation"))
-    {
+  {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
     if (!sliceNode)
-      {
+    {
       vtkWarningMacro("Invalid orientation property.");
       return;
-      }
+    }
     sliceNode->SetDefaultOrientation(value.c_str());
     sliceNode->SetOrientation(value.c_str());
-    }
+  }
   // ViewGroup
   if (name == std::string("viewgroup"))
-    {
+  {
     vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(view);
     if (!viewNode)
-      {
+    {
       vtkWarningMacro("Invalid view group property.");
       return;
-      }
+    }
     std::stringstream ss;
     int n;
     ss << value;
     ss >> n;
     viewNode->SetViewGroup(n);
-    }
+  }
   // LayoutLabel
   if (name == std::string("viewlabel"))
-    {
+  {
     vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(view);
     if (!viewNode)
-      {
+    {
       vtkWarningMacro("Invalid view label property.");
       return;
-      }
-    viewNode->SetLayoutLabel(value.c_str());
     }
+    viewNode->SetLayoutLabel(value.c_str());
+  }
   // ViewColor
   if (name == std::string("viewcolor"))
-    {
+  {
     vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(view);
     if (!viewNode)
-      {
+    {
       vtkWarningMacro("Invalid view color property.");
       return;
-      }
+    }
     double color[3];
     vtkMRMLColors::toRGBColor(value.c_str(), color);
     viewNode->SetLayoutColor(color);
-    }
+  }
   // Lightbox
   if (name == std::string("lightboxrows"))
-    {
+  {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
     if (!sliceNode)
-      {
+    {
       vtkWarningMacro("Invalid lightboxrows property.");
       return;
-      }
+    }
     std::stringstream ss;
     int n;
     ss << value;
     ss >> n;
     sliceNode->SetLayoutGridRows(n);
-    }
+  }
   if (name == std::string("lightboxcolumns"))
-    {
+  {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
     if (!sliceNode)
-      {
+    {
       vtkWarningMacro("Invalid lightboxcolumns property.");
       return;
-      }
+    }
     std::stringstream ss;
     int n;
     ss << value;
     ss >> n;
     sliceNode->SetLayoutGridColumns(n);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1739,9 +1739,9 @@ void vtkMRMLLayoutLogic::MaximizeView(vtkMRMLAbstractViewNode* viewToMaximize)
   this->CreateMaximizedViewLayoutDescription( layout, viewToMaximize);
   vtkMRMLLayoutNode* layoutNode = this->GetLayoutNode();
   if (layoutNode)
-    {
+  {
     layoutNode->SetViewArrangement(layout);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1751,18 +1751,18 @@ void vtkMRMLLayoutLogic
 {
   vtkMRMLLayoutNode* layoutNode = this->GetLayoutNode();
   if (!layoutNode)
-    {
+  {
     vtkErrorMacro( << "No layout node");
-    }
+  }
   std::string layoutDescription = this->GetMaximizedViewLayoutDescription(viewToMaximize, layoutNode->GetCurrentLayoutDescription());
   if (layoutNode->IsLayoutDescription(layout))
-    {
+  {
     layoutNode->SetLayoutDescription(layout, layoutDescription.c_str());
-    }
+  }
   else
-    {
+  {
     layoutNode->AddLayoutDescription(layout, layoutDescription.c_str());
-    }
+  }
 }
 
 
@@ -1770,29 +1770,29 @@ void vtkMRMLLayoutLogic
 vtkXMLDataElement* vtkMRMLLayoutLogic::GetViewportElementForView(vtkXMLDataElement* layoutRootElement, vtkMRMLAbstractViewNode* viewNode)
 {
   if (!layoutRootElement || !layoutRootElement->GetName() || strcmp(layoutRootElement->GetName(), "viewports") != 0)
-    {
+  {
     return nullptr;
-    }
+  }
   // multiple viewports
   vtkXMLDataElement* viewElement = layoutRootElement;
   while ((viewElement = this->GetNextViewElement(viewElement)))
-    {
+  {
     vtkMRMLNode* foundViewNode = this->GetViewFromElement(viewElement);
     if (viewNode == foundViewNode)
-      {
+    {
       // we have found the view node in the tree, now look up the viewport element,
       // which is the layout node right below the "viewports" root
       vtkXMLDataElement* viewportElement = viewElement->GetParent();
       while (viewportElement)
-        {
+      {
         if (viewportElement->GetParent() == layoutRootElement)
-          {
+        {
           return viewportElement;
-          }
-        viewportElement = viewportElement->GetParent();
         }
+        viewportElement = viewportElement->GetParent();
       }
     }
+  }
   return nullptr;
 }
 
@@ -1800,27 +1800,27 @@ vtkXMLDataElement* vtkMRMLLayoutLogic::GetViewportElementForView(vtkXMLDataEleme
 std::string vtkMRMLLayoutLogic::GetMaximizedViewLayoutDescription(vtkMRMLAbstractViewNode* viewToMaximize, const char* currentLayoutDescription)
 {
   if (!currentLayoutDescription || !viewToMaximize)
-    {
+  {
     return "";
-    }
+  }
   vtkSmartPointer<vtkXMLDataElement> layoutRootElement = vtkSmartPointer<vtkXMLDataElement>::Take(vtkMRMLLayoutNode::ParseLayout(currentLayoutDescription));
   if (!layoutRootElement.GetPointer())
-    {
+  {
     return "";
-    }
+  }
   vtkXMLDataElement* viewportElement = this->GetViewportElementForView(layoutRootElement, viewToMaximize);
   std::string viewportName;
   if (viewportElement)
-    {
+  {
     // multiple viewports
     viewportName = viewportElement->GetAttribute("name") ? viewportElement->GetAttribute("name") : "";
-    }
+  }
   else
-    {
+  {
     // single viewport
     layoutRootElement = vtkSmartPointer<vtkXMLDataElement>::New();
     viewportElement = layoutRootElement;
-    }
+  }
 
   viewportElement->RemoveAllNestedElements();
   viewportElement->RemoveAllAttributes();
@@ -1847,9 +1847,9 @@ vtkMRMLNode* vtkMRMLLayoutLogic::GetViewFromAttributes(const ViewAttributes& att
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->GetViewsFromAttributes(attributes));
   if (nodes.GetPointer() == nullptr || nodes->GetNumberOfItems() == 0)
-    {
+  {
     return nullptr;
-    }
+  }
   return vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(0));
 }
 
@@ -1857,84 +1857,84 @@ vtkMRMLNode* vtkMRMLLayoutLogic::GetViewFromAttributes(const ViewAttributes& att
 vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& attributes)
 {
   if (!this->GetMRMLScene())
-    {
+  {
     return nullptr;
-    }
+  }
   // filter on the class name to remove a lot of options.
   ViewAttributes::const_iterator it = attributes.find(std::string("class"));
   ViewAttributes::const_iterator end = attributes.end();
   if (it == end)
-    {
+  {
     return nullptr;
-    }
+  }
   const std::string& className = it->second;
   vtkCollection* nodes = this->GetMRMLScene()->GetNodesByClass(className.c_str());
   if (nodes == nullptr || nodes->GetNumberOfItems() == 0)
-    {
+  {
     // It is not necessarily a bug to not find nodes. It just means they
     // are not in the scene and will be then created by CreateMissingViews()
     vtkDebugMacro("Couldn't find nodes matching class: " << className);
     if (nodes)
-      {
+    {
       nodes->Delete();
       nodes = nullptr;
-      }
-    return nodes;
     }
+    return nodes;
+  }
   vtkCollectionSimpleIterator nodesIt;
   vtkMRMLNode* node;
   for (it = attributes.begin(); it != end; ++it)
-    {
+  {
     nodes->InitTraversal(nodesIt);
     std::string attributeName = it->first;
     std::string attributeValue = it->second;
     if (attributeName == "class")
-      {
+    {
       continue;
-      }
+    }
     else if (attributeName == "singletontag")
-      {
+    {
       for (;(node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
-        {
+      {
         std::string singletonTag =
           node->GetSingletonTag() ? node->GetSingletonTag() : "";
         if (attributeValue != singletonTag)
-          {
-          nodes->RemoveItem(node);
-          }
-        }
-      if (nodes->GetNumberOfItems() > 1)
         {
+          nodes->RemoveItem(node);
+        }
+      }
+      if (nodes->GetNumberOfItems() > 1)
+      {
         vtkWarningMacro("Found several nodes with a similar SingletonTag: " << attributeValue );
         // Did not find the node, return an empty list to trigger the
         // calling method, CreateMissingViews(), to create the appropriate node.
         nodes->RemoveAllItems();
         break;
-        }
+      }
       assert(nodes->GetNumberOfItems() == 0 ||
              vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(0))->GetSingletonTag() == attributeValue);
-      }
+    }
     else if (attributeName == "type")
-      {
+    {
       if (className != "vtkMRMLViewNode")
-        {
+      {
         continue;
-        }
+      }
       for (;(node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
-        {
+      {
         std::string viewType =
           node->GetAttribute("ViewType") ? node->GetAttribute("ViewType") : "";
 
         if (attributeValue != viewType &&
             // if there is no viewType, it's a main view.
             !(attributeValue == "main" && viewType != std::string()))
-          {
+        {
           nodes->RemoveItem(node);
-          }
         }
       }
-    // Add here specific codes to retrieve views
     }
+    // Add here specific codes to retrieve views
+  }
   return nodes;
 }
 
@@ -1942,10 +1942,10 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
 void vtkMRMLLayoutLogic::UpdateViewCollectionsFromLayout()
 {
   if (!this->LayoutNode)
-    {
+  {
     this->ViewNodes->RemoveAllItems();
     return;
-    }
+  }
   this->ViewNodes->Delete();
   this->ViewNodes = this->GetViewsFromLayout(this->LayoutNode->GetLayoutRootElement());
 }
@@ -1956,18 +1956,18 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromLayout(vtkXMLDataElement* root)
   vtkCollection* views = vtkCollection::New();
   vtkXMLDataElement* viewElement = root;
   while ((viewElement = this->GetNextViewElement(viewElement)))
-    {
+  {
     vtkMRMLNode* viewNode = this->GetViewFromElement(viewElement);
     if (!viewNode)
-      {
+    {
       vtkWarningMacro("Can't find node for element: " << viewElement->GetName());
       viewElement->PrintXML(std::cerr, vtkIndent(0));
-      }
-    else
-      {
-      views->AddItem(viewNode);
-      }
     }
+    else
+    {
+      views->AddItem(viewNode);
+    }
+  }
   return views;
 }
 
@@ -1983,29 +1983,29 @@ void vtkMRMLLayoutLogic::CreateMissingViews(vtkXMLDataElement* layoutRootElement
 {
   vtkXMLDataElement* viewElement = layoutRootElement;
   while ((viewElement = this->GetNextViewElement(viewElement)))
-    {
+  {
     vtkMRMLNode* viewNode = this->GetViewFromElement(viewElement);
     if (viewNode)
-      {
+    {
       // View already exists, just apply the "relayout" properties for
       // the layout
       ViewProperties properties = this->GetViewElementProperties(viewElement);
       this->ApplyProperties(properties, viewNode, "relayout");
       continue;
-      }
+    }
     ViewAttributes attributes = this->GetViewElementAttributes(viewElement);
     viewNode = this->CreateViewFromAttributes(attributes);
     if (!viewNode)
-      {
+    {
       vtkWarningMacro("Can't find node for element: " << viewElement->GetName());
       viewElement->PrintXML(std::cerr, vtkIndent(0));
-      }
+    }
     // New View, apply the "default" properties for the layout.
     ViewProperties properties = this->GetViewElementProperties(viewElement);
     this->ApplyProperties(properties, viewNode, "default");
     this->GetMRMLScene()->AddNode(viewNode);
     viewNode->Delete();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -2025,9 +2025,9 @@ vtkMRMLLayoutLogic::ViewAttributes vtkMRMLLayoutLogic
   ViewAttributes attributes;
   assert(viewElement->GetName() == std::string("view"));
   for (int i = 0; i < viewElement->GetNumberOfAttributes(); ++i)
-    {
+  {
     attributes[viewElement->GetAttributeName(i)] = viewElement->GetAttributeValue(i);
-    }
+  }
   return attributes;
 }
 
@@ -2039,9 +2039,9 @@ vtkMRMLLayoutLogic::ViewProperties vtkMRMLLayoutLogic
   assert(viewElement->GetName() == std::string("view"));
 
   for (int i = 0; i < viewElement->GetNumberOfNestedElements(); ++i)
-    {
+  {
     properties.push_back(this->GetViewElementProperty(viewElement->GetNestedElement(i)));
-    }
+  }
   return properties;
 }
 
@@ -2053,9 +2053,9 @@ vtkMRMLLayoutLogic::ViewProperty vtkMRMLLayoutLogic
   assert(viewProperty->GetName() == std::string("property"));
 
   for (int i = 0; i < viewProperty->GetNumberOfAttributes(); ++i)
-    {
+  {
     property[viewProperty->GetAttributeName(i)] = viewProperty->GetAttributeValue(i);
-    }
+  }
   property["value"]  = viewProperty->GetCharacterData();
   return property;
 }
@@ -2064,18 +2064,18 @@ vtkMRMLLayoutLogic::ViewProperty vtkMRMLLayoutLogic
 vtkXMLDataElement* vtkMRMLLayoutLogic::GetNextViewElement(vtkXMLDataElement* viewElement)
 {
   if (!viewElement)
-    {
+  {
     return nullptr;
-    }
+  }
   while (viewElement)
-    {
+  {
     vtkXMLDataElement* nextViewElement = viewElement->LookupElementWithName("view");
     if (nextViewElement)
-      {
+    {
       return nextViewElement;
-      }
-    viewElement = this->GetNextElement(viewElement);
     }
+    viewElement = this->GetNextElement(viewElement);
+  }
   return nullptr;
 }
 
@@ -2083,24 +2083,24 @@ vtkXMLDataElement* vtkMRMLLayoutLogic::GetNextViewElement(vtkXMLDataElement* vie
 vtkXMLDataElement* vtkMRMLLayoutLogic::GetNextElement(vtkXMLDataElement* element)
 {
   if (!element)
-    {
+  {
     return nullptr;
-    }
+  }
   // try it's sibling first
   vtkXMLDataElement* parent = element->GetParent();
   if (!parent)
-    {
+  {
     return nullptr;
-    }
+  }
   // find the index of the current element
   for (int i = 0; i < parent->GetNumberOfNestedElements() - 1; ++i)
-    {
+  {
     if (element == parent->GetNestedElement(i))
-      {
+    {
       // found, return the next element
       return parent->GetNestedElement(i+1);
-      }
     }
+  }
   // the element didn't have any younger sibling, pick an uncle younger than parent
   return this->GetNextElement(parent);
 }

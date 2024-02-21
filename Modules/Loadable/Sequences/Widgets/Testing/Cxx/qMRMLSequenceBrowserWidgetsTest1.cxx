@@ -46,11 +46,11 @@ int qMRMLSequenceBrowserWidgetsTest1( int argc, char * argv [] )
   vtkNew<vtkMRMLSequenceNode> sequenceNode;
   const int numberOfDataNodes = 135;
   for (int i=0; i<numberOfDataNodes; i++)
-    {
+  {
     vtkNew<vtkMRMLTransformNode> transform;
     QString indexValue = QString::number(i*1322.345);
     sequenceNode->SetDataNodeAtValue(transform.GetPointer(), indexValue.toLatin1().constData());
-    }
+  }
   scene->AddNode(sequenceNode.GetPointer());
 
   vtkNew<vtkMRMLSequenceBrowserNode> browserNode;
@@ -76,9 +76,9 @@ int qMRMLSequenceBrowserWidgetsTest1( int argc, char * argv [] )
   parentWidget.raise();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

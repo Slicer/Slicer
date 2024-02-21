@@ -83,7 +83,7 @@ public:
   ~qMRMLCoordinatesWidget() override;
 
   enum UnitAwareProperty
-    {
+  {
     None = 0x00,
     Prefix = 0x01,
     Suffix = 0x02,
@@ -92,7 +92,7 @@ public:
     MaximumValue = 0x10,
     Scaling = 0x20,
     All = Prefix | Suffix | Precision | MinimumValue | MaximumValue | Scaling
-    };
+  };
   Q_DECLARE_FLAGS(UnitAwareProperties, UnitAwareProperty)
 
   /// Get MRML scene that has been set by setMRMLScene(). Default is no scene.

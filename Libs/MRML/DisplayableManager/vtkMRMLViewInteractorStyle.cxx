@@ -55,15 +55,15 @@ vtkMRMLViewInteractorStyle::~vtkMRMLViewInteractorStyle()
   this->EventCallbackCommand->Delete();
 
   if (this->DisplayableManagers)
-    {
+  {
     int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
     for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
-      {
+    {
       vtkMRMLAbstractDisplayableManager* displayableManager =
           this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex);
       displayableManager->RemoveObserver(this->DisplayableManagerCallbackCommand);
-      }
     }
+  }
   this->DisplayableManagerCallbackCommand->Delete();
 }
 
@@ -285,9 +285,9 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(u
 
   bool delegated = this->DelegateInteractionEventToDisplayableManagers(ed);
   if (delegated)
-    {
+  {
     this->EventCallbackCommand->SetAbortFlag(1);
-    }
+  }
   return delegated;
 }
 
@@ -295,16 +295,16 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(u
 bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(vtkEventData* inputEventData)
 {
   if (!inputEventData)
-    {
+  {
     return false;
-    }
+  }
   int* displayPositionInt = this->GetInteractor()->GetEventPosition();
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(displayPositionInt[0], displayPositionInt[1]);
   if (!pokedRenderer)
-    {
+  {
     // can happen during application shutdown
     return false;
-    }
+  }
 
   vtkNew<vtkMRMLInteractionEventData> ed;
   ed->SetType(inputEventData ? inputEventData->GetType() : vtkCommand::NoEvent);
@@ -314,14 +314,14 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(v
   ed->SetAttributesFromInteractor(this->GetInteractor());
   vtkEventDataDevice3D* inputEventDataDevice3D = inputEventData->GetAsEventDataDevice3D();
   if (inputEventDataDevice3D)
-    {
+  {
     ed->SetDevice(inputEventDataDevice3D->GetDevice());
     ed->SetWorldPosition(inputEventDataDevice3D->GetWorldPosition());
     ed->SetWorldOrientation(inputEventDataDevice3D->GetWorldOrientation());
     ed->SetWorldDirection(inputEventDataDevice3D->GetWorldDirection());
     ed->SetInput(inputEventDataDevice3D->GetInput());
     ed->SetAction(inputEventDataDevice3D->GetAction());
-    }
+  }
 
   return this->DelegateInteractionEventDataToDisplayableManagers(ed);
 }
@@ -330,15 +330,15 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventToDisplayableManagers(v
 bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManagers(vtkMRMLInteractionEventData* eventData)
 {
   if (!this->DisplayableManagers)
-    {
+  {
     //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
     return false;
-    }
+  }
   if (eventData->GetType() == vtkCommand::Button3DEvent || eventData->GetType() == vtkCommand::Move3DEvent)
-    {
+  {
     // Invalidate display position if 3D event
     eventData->SetDisplayPositionInvalid();
-    }
+  }
 
   bool canProcessEvent = false;
   double closestDistance2 = VTK_DOUBLE_MAX;
@@ -347,80 +347,80 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
 
   // Find the most suitable displayable manager
   for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
-    {
+  {
     vtkMRMLAbstractDisplayableManager* displayableManager = vtkMRMLAbstractDisplayableManager::SafeDownCast(
       this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex));
     if (!displayableManager)
-      {
+    {
       continue;
-      }
+    }
     double distance2 = VTK_DOUBLE_MAX;
     if (displayableManager->CanProcessInteractionEvent(eventData, distance2))
-      {
+    {
       if (!canProcessEvent || (distance2 < closestDistance2))
-        {
+      {
         canProcessEvent = true;
         closestDisplayableManager = displayableManager;
         closestDistance2 = distance2;
-        }
       }
     }
+  }
 
   if (!canProcessEvent)
-    {
+  {
     // None of the displayable managers can process the event, just ignore it.
     // If click events (non-keyboard events) cannot be processed here then
     // indicate this by setting the mouse cursor to default.
     if (eventData->GetType() != vtkCommand::KeyPressEvent && eventData->GetType() != vtkCommand::KeyReleaseEvent)
-      {
+    {
       this->DisplayableManagers->GetNthDisplayableManager(0)->SetMouseCursor(VTK_CURSOR_DEFAULT);
-      }
-    return false;
     }
+    return false;
+  }
 
   // Notify displayable managers about focus change
   vtkMRMLAbstractDisplayableManager* oldFocusedDisplayableManager = this->FocusedDisplayableManager;
   if (oldFocusedDisplayableManager != closestDisplayableManager)
-    {
+  {
     if (oldFocusedDisplayableManager != nullptr)
-      {
+    {
       oldFocusedDisplayableManager->SetHasFocus(false, eventData);
-      }
+    }
     this->FocusedDisplayableManager = closestDisplayableManager;
     if (closestDisplayableManager != nullptr)
-      {
+    {
       closestDisplayableManager->SetHasFocus(true, eventData);
-      }
     }
+  }
 
   // Process event with new displayable manager
   if (!this->FocusedDisplayableManager)
-    {
+  {
     if (oldFocusedDisplayableManager)
-      {
+    {
       oldFocusedDisplayableManager->SetMouseCursor(VTK_CURSOR_DEFAULT);
-      }
-    return false;
     }
+    return false;
+  }
 
   // This prevents desynchronized update of displayable managers during user interaction
   // (ie. slice intersection widget or segmentations lagging behind during slice translation)
   vtkMRMLApplicationLogic* appLogic = this->FocusedDisplayableManager->GetMRMLApplicationLogic();
   if(appLogic)
-    {
+  {
     this->FocusedDisplayableManager->GetMRMLApplicationLogic()->PauseRender();
-    }
+  }
   bool processed = this->FocusedDisplayableManager->ProcessInteractionEvent(eventData);
   int cursor = VTK_CURSOR_DEFAULT;
   if (processed)
-    {
+  {
     cursor = this->FocusedDisplayableManager->GetMouseCursor();
-    }
+  }
   this->FocusedDisplayableManager->SetMouseCursor(cursor);
   if(appLogic)
-    {
+  {
     this->FocusedDisplayableManager->GetMRMLApplicationLogic()->ResumeRender();
-    }
+  }
   return processed;
 }
 
@@ -428,9 +428,9 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
 void vtkMRMLViewInteractorStyle::SetMouseCursor(int cursor)
 {
   if (this->GetInteractor() && this->GetInteractor()->GetRenderWindow())
-    {
+  {
     this->GetInteractor()->GetRenderWindow()->SetCurrentCursor(cursor);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -444,13 +444,13 @@ void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
   if (event == vtkCommand::LeftButtonPressEvent
     || event == vtkCommand::RightButtonPressEvent
     || event == vtkCommand::MiddleButtonPressEvent)
-    {
+  {
     self->MouseMovedSinceButtonDown = false;
-    }
+  }
   if (event == vtkCommand::MouseMoveEvent)
-    {
+  {
     self->MouseMovedSinceButtonDown = true;
-    }
+  }
 
   // Displayable managers add interactor style observers and those observers
   // replace callback method calls. We make sure here that displayable managers
@@ -458,10 +458,10 @@ void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
   // interaction state - such as zooming, panning, etc).
 
   if (/*self->GetInteractorStyle()->GetState() != VTKIS_NONE || */!self->DelegateInteractionEventToDisplayableManagers(event) || self->GetInteractorStyle()->GetState() != VTKIS_NONE)
-    {
+  {
     // Displayable managers did not processed it
     vtkMRMLViewInteractorStyle::ProcessEvents(object, event, clientdata, calldata);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -472,7 +472,7 @@ void vtkMRMLViewInteractorStyle::ProcessEvents(vtkObject* vtkNotUsed(object),
     = reinterpret_cast<vtkMRMLViewInteractorStyle *>(clientdata);
 
   switch(event)
-    {
+  {
     /// Mouse functions
     case vtkCommand::MouseMoveEvent:
       self->OnMouseMove();
@@ -580,25 +580,25 @@ void vtkMRMLViewInteractorStyle::ProcessEvents(vtkObject* vtkNotUsed(object),
 
     default:
       break;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *interactor)
 {
   if (interactor == this->Interactor)
-    {
+  {
     return;
-    }
+  }
   // if we already have an Interactor then stop observing it
   if (this->Interactor)
-    {
+  {
     this->Interactor->RemoveObserver(this->EventCallbackCommand);
-    }
+  }
   this->Interactor = interactor;
 
   if (interactor)
-    {
+  {
     float priority = 0.0f;
 
     // Mouse
@@ -641,7 +641,7 @@ void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *intera
 
     interactor->AddObserver(vtkCommand::ExposeEvent, this->EventCallbackCommand, priority);
     interactor->AddObserver(vtkCommand::ConfigureEvent, this->EventCallbackCommand, priority);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

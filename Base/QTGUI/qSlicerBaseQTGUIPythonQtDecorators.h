@@ -50,7 +50,7 @@ class qSlicerBaseQTGUIPythonQtDecorators : public QObject
 public:
 
   qSlicerBaseQTGUIPythonQtDecorators()
-    {
+  {
     PythonQt::self()->registerClass(&qSlicerAbstractModuleWidget::staticMetaObject);
     PythonQt::self()->registerClass(&qSlicerPythonManager::staticMetaObject);
     PythonQt::self()->registerClass(&qSlicerCommandOptions::staticMetaObject);
@@ -60,7 +60,7 @@ public:
     PythonQt::self()->registerClass(&ctkErrorLogModel::staticMetaObject);
     PythonQt::self()->registerClass(&ctkErrorLogTerminalOutput::staticMetaObject);
     // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
-    }
+  }
 
 public slots:
 
@@ -69,24 +69,24 @@ public slots:
 
   //----------------------------------------------------------------------------
   qSlicerAbstractModuleWidget* widgetRepresentation(qSlicerAbstractModule* _module)
-    {
+{
     return dynamic_cast<qSlicerAbstractModuleWidget*>(_module->widgetRepresentation());
-    }
+}
 
   //----------------------------------------------------------------------------
   qSlicerAbstractModuleWidget* createNewWidgetRepresentation(qSlicerAbstractModule* _module)
-    {
+  {
     return dynamic_cast<qSlicerAbstractModuleWidget*>(_module->createNewWidgetRepresentation());
-    }
+  }
 
   //----------------------------------------------------------------------------
   // qSlicerAbstractModule
 
   //----------------------------------------------------------------------------
   qSlicerAbstractModule* module(qSlicerAbstractModuleWidget * _moduleWidget)
-    {
+  {
     return dynamic_cast<qSlicerAbstractModule*>(_moduleWidget->module());
-    }
+  }
 };
 
 //-----------------------------------------------------------------------------

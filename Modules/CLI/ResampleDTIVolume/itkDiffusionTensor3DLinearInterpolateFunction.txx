@@ -25,10 +25,10 @@ DiffusionTensor3DLinearInterpolateFunction<TData, TCoordRep>
 ::AllocateInterpolator()
 {
   for( int i = 0; i < 6; i++ )
-    {
+  {
     linearInterpolator[i] = LinearInterpolateImageFunctionType::New();
     this->m_Interpol[i] = linearInterpolator[i];
-    }
+  }
 }
 
 } // end itk namespace

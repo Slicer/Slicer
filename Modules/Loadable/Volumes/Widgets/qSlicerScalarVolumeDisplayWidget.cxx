@@ -100,13 +100,13 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
   {
     QLayout* volumeDisplayPresetsLayout = this->PresetsGroupBox->layout();
     if (!volumeDisplayPresetsLayout)
-      {
+    {
       volumeDisplayPresetsLayout = new QHBoxLayout;
       this->PresetsGroupBox->setLayout(volumeDisplayPresetsLayout);
-      }
+    }
     std::vector<std::string> presetIds = volumesModuleLogic->GetVolumeDisplayPresetIDs();
     for (const auto& presetId : presetIds)
-      {
+    {
       vtkSlicerVolumesLogic::VolumeDisplayPreset preset = volumesModuleLogic->GetVolumeDisplayPreset(presetId);
       QString presetIdStr = QString::fromStdString(presetId);
       QString presetName = qSlicerScalarVolumeDisplayWidget::tr(preset.name.c_str());
@@ -115,20 +115,20 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
       presetButton->setToolTip(qSlicerScalarVolumeDisplayWidget::tr(preset.name.c_str()) + "\n"
         + qSlicerScalarVolumeDisplayWidget::tr(preset.description.c_str()));
       if (!preset.icon.empty())
-        {
+      {
         presetButton->setIcon(QIcon(QString::fromStdString(preset.icon)));
         presetButton->setIconSize(QSize(45, 45));
-        }
+      }
       volumeDisplayPresetsLayout->addWidget(presetButton);
       QObject::connect(presetButton, SIGNAL(clicked()),
         q, SLOT(onPresetButtonClicked()));
-      }
     }
+  }
   else
-    {
+  {
     qWarning() << Q_FUNC_INFO << " failed: Module logic 'Volumes' not found. No volume display presets will be added.";
     return;
-    }
+  }
 
   QObject::connect(this->InterpolateCheckbox, SIGNAL(toggled(bool)),
                    q, SLOT(setInterpolate(bool)));
@@ -229,10 +229,10 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (displayNode)
-    {
+  {
     d->ColorTableComboBox->setCurrentNode(displayNode->GetColorNode());
     d->InterpolateCheckbox->setChecked(displayNode->GetInterpolate());
-    }
+  }
   this->updateHistogram();
 }
 
@@ -256,10 +256,10 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   // the histogram if there are voxels (otherwise histogram is hidden).
 
   if (!voxelValues || !this->isVisible() || d->HistogramGroupBox->collapsed())
-    {
+  {
     d->ColorTransferFunction->RemoveAllPoints();
     return;
-    }
+  }
 
   // Update histogram
 
@@ -267,23 +267,23 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   // many bin counts.
   const int maxBinCount = 1000;
   if (voxelValues->GetDataType() == VTK_FLOAT || voxelValues->GetDataType() == VTK_DOUBLE)
-    {
+  {
     d->Histogram->setNumberOfBins(maxBinCount);
-    }
+  }
   else
-    {
+  {
     double* range = voxelValues->GetRange();
     int binCount = static_cast<int>(range[1] - range[0] + 1);
     if (binCount > maxBinCount)
-      {
+    {
       binCount = maxBinCount;
-      }
-    if (binCount < 1)
-      {
-      binCount = 1;
-      }
-    d->Histogram->setNumberOfBins(binCount);
     }
+    if (binCount < 1)
+    {
+      binCount = 1;
+    }
+    d->Histogram->setNumberOfBins(binCount);
+  }
   d->Histogram->build();
 
   // Update histogram background
@@ -293,13 +293,13 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (displayNode)
-    {
+  {
     displayNode->GetDisplayScalarRange(range);
-    }
+  }
   else
-    {
+  {
     imageData->GetScalarRange(range);
-    }
+  }
   // AdjustRange call will take out points that are outside of the new
   // range, but it needs the points to be there in order to work, so call
   // RemoveAllPoints after it's done
@@ -316,28 +316,28 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
   d->ColorTransferFunction->SetColorSpaceToRGB();
 
   if (low >= max || upper <= min)
-    {
+  {
     d->ColorTransferFunction->AddRGBPoint(range[0], 0, 0, 0);
     d->ColorTransferFunction->AddRGBPoint(range[1], 0, 0, 0);
-    }
+  }
   else
-    {
+  {
     max = qMax(min+0.001, max);
     low = qMax(range[0] + 0.001, low);
     min = qMax(range[0] + 0.001, min);
     upper = qMin(range[1] - 0.001, upper);
 
     if (min <= low)
-      {
+    {
       minVal = (low - min)/(max - min);
       min = low + 0.001;
-      }
+    }
 
     if (max >= upper)
-      {
+    {
       maxVal = (upper - min)/(max-min);
       max = upper - 0.001;
-      }
+    }
 
     d->ColorTransferFunction->AddRGBPoint(range[0], 0, 0, 0);
     d->ColorTransferFunction->AddRGBPoint(low, 0, 0, 0);
@@ -345,11 +345,11 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
     d->ColorTransferFunction->AddRGBPoint(max, maxVal, maxVal, maxVal);
     d->ColorTransferFunction->AddRGBPoint(upper, maxVal, maxVal, maxVal);
     if (upper+0.001 < range[1])
-      {
+    {
       d->ColorTransferFunction->AddRGBPoint(upper+0.001, 0, 0, 0);
       d->ColorTransferFunction->AddRGBPoint(range[1], 0, 0, 0);
-      }
     }
+  }
 
   d->ColorTransferFunction->SetAlpha(1.0);
   d->ColorTransferFunction->Build();
@@ -375,9 +375,9 @@ void qSlicerScalarVolumeDisplayWidget::setInterpolate(bool interpolate)
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
   displayNode->SetInterpolate(interpolate);
 }
 
@@ -387,9 +387,9 @@ void qSlicerScalarVolumeDisplayWidget::setColorNode(vtkMRMLNode* colorNode)
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (!displayNode || !colorNode)
-    {
+  {
     return;
-    }
+  }
   Q_ASSERT(vtkMRMLColorNode::SafeDownCast(colorNode));
   displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 }
@@ -407,9 +407,9 @@ void qSlicerScalarVolumeDisplayWidget::setPreset(const QString& presetId)
   Q_D(qSlicerScalarVolumeDisplayWidget);
   vtkSlicerVolumesLogic* volumesModuleLogic = vtkSlicerVolumesLogic::SafeDownCast(qSlicerApplication::application()->moduleLogic("Volumes"));
   if (!volumesModuleLogic)
-    {
+  {
     qCritical() << Q_FUNC_INFO << " failed: volumes module logic is not available";
     return;
-    }
+  }
   volumesModuleLogic->ApplyVolumeDisplayPreset(this->volumeDisplayNode(), presetId.toStdString());
 }

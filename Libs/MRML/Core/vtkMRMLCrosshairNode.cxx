@@ -74,9 +74,9 @@ void vtkMRMLCrosshairNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*
 
   vtkMRMLCrosshairNode* node = vtkMRMLCrosshairNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLCopyBeginMacro(node);
   vtkMRMLCopyEnumMacro(CrosshairMode);
@@ -107,16 +107,16 @@ void vtkMRMLCrosshairNode::SetCrosshairRAS(double ras[3], int id)
   bool modified = false;
 
   if (this->LightBoxPane != id)
-    {
+  {
     modified = true;
-    }
+  }
 
   if (this->CrosshairRAS[0] != ras[0]
       || this->CrosshairRAS[1] != ras[1]
       || this->CrosshairRAS[2] != ras[2])
-    {
+  {
     modified = true;
-    }
+  }
 
   this->CrosshairRAS[0] = ras[0];
   this->CrosshairRAS[1] = ras[1];
@@ -124,9 +124,9 @@ void vtkMRMLCrosshairNode::SetCrosshairRAS(double ras[3], int id)
   this->LightBoxPane = id;
 
   if (modified)
-    {
+  {
     this->Modified();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -150,7 +150,7 @@ void vtkMRMLCrosshairNode::SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode 
 
   // Cursor position in the slice viewer defines the RAS position, so update that as well
   if (this->CursorSliceNode)
-    {
+  {
     double xyzw[4] = {xyz[0], xyz[1], xyz[2], 1.0 };
     double rasw[4] = {0.0, 0.0, 0.0, 1.0};
     sliceNode->GetXYToRAS()->MultiplyPoint(xyzw, rasw);
@@ -158,7 +158,7 @@ void vtkMRMLCrosshairNode::SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode 
     this->CursorPositionRAS[1]=rasw[1]/rasw[3];
     this->CursorPositionRAS[2]=rasw[2]/rasw[3];
     this->CursorPositionRASValid=true;
-    }
+  }
 
   this->InvokeEvent(vtkMRMLCrosshairNode::CursorPositionModifiedEvent, nullptr);
 }
@@ -193,7 +193,7 @@ vtkMRMLSliceNode* vtkMRMLCrosshairNode::GetCursorPositionXYZ(double xyz[3])
 const char* vtkMRMLCrosshairNode::GetCrosshairModeAsString(int id)
 {
   switch (id)
-    {
+  {
     case vtkMRMLCrosshairNode::NoCrosshair: return "NoCrosshair";
     case vtkMRMLCrosshairNode::ShowBasic: return "ShowBasic";
     case vtkMRMLCrosshairNode::ShowIntersection: return "ShowIntersection";
@@ -204,25 +204,25 @@ const char* vtkMRMLCrosshairNode::GetCrosshairModeAsString(int id)
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLCrosshairNode::GetCrosshairModeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i = 0; i < CrosshairMode_Last; i++)
-    {
+  {
     if (strcmp(name, vtkMRMLCrosshairNode::GetCrosshairModeAsString(i)) == 0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -231,37 +231,37 @@ int vtkMRMLCrosshairNode::GetCrosshairModeFromString(const char* name)
 const char* vtkMRMLCrosshairNode::GetCrosshairBehaviorAsString(int id)
 {
   switch (id)
-    {
+  {
     case vtkMRMLCrosshairNode::OffsetJumpSlice: return "OffsetJumpSlice";
     case vtkMRMLCrosshairNode::CenteredJumpSlice: return "CenteredJumpSlice";
     case vtkMRMLCrosshairNode::NoAction: return "NoAction";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLCrosshairNode::GetCrosshairBehaviorFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i = 0; i < CrosshairBehavior_Last; i++)
-    {
+  {
     if (strcmp(name, vtkMRMLCrosshairNode::GetCrosshairBehaviorAsString(i)) == 0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // Alternative names for OffsetJumpSlice for legacy scenes
   if (!strcmp(name, "JumpSlice") || !strcmp(name, "Normal"))
-    {
+  {
     return vtkMRMLCrosshairNode::OffsetJumpSlice;
-    }
+  }
   // unknown name
   return -1;
 }
@@ -270,32 +270,32 @@ int vtkMRMLCrosshairNode::GetCrosshairBehaviorFromString(const char* name)
 const char* vtkMRMLCrosshairNode::GetCrosshairThicknessAsString(int id)
 {
   switch (id)
-    {
+  {
     case vtkMRMLCrosshairNode::Fine: return "Fine";
     case vtkMRMLCrosshairNode::Medium: return "Medium";
     case vtkMRMLCrosshairNode::Thick: return "Thick";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLCrosshairNode::GetCrosshairThicknessFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i = 0; i < CrosshairThickness_Last; i++)
-    {
+  {
     if (strcmp(name, vtkMRMLCrosshairNode::GetCrosshairThicknessAsString(i)) == 0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // unknown name
   return -1;
 }

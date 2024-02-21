@@ -61,9 +61,9 @@ bool qSlicerFileReader::canLoadFile(const QString& fileName)const
 double qSlicerFileReader::canLoadFileConfidence(const QString& fileName)const
 {
   if (!this->canLoadFile(fileName))
-    {
+  {
     return 0.0;
-    }
+  }
   int longestExtensionMatch = 0;
   QStringList res = this->supportedNameFilters(fileName, &longestExtensionMatch);
   // If longer extension is matched then the confidence that this is a good reader is
@@ -77,35 +77,35 @@ double qSlicerFileReader::canLoadFileConfidence(const QString& fileName)const
 QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr /* =nullptr */)const
 {
   if (longestExtensionMatchPtr)
-    {
+  {
     (*longestExtensionMatchPtr) = 0;
-    }
+  }
   QStringList matchingNameFilters;
   QFileInfo file(fileName);
   if (!file.isFile() ||
       !file.isReadable() ||
       file.suffix().contains('~')) //temporary file
-    {
+  {
     return matchingNameFilters;
-    }
+  }
   foreach(const QString& nameFilter, this->extensions())
-    {
+  {
     foreach(QString extension, ctk::nameFilterToExtensions(nameFilter))
-      {
+    {
       QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
       Q_ASSERT(regExp.isValid());
       if (regExp.exactMatch(file.absoluteFilePath()))
-        {
+      {
         extension.remove('*'); // wildcard does not count, that's not a specific match
         int matchedExtensionLength = extension.size();
         if (longestExtensionMatchPtr && (*longestExtensionMatchPtr) < matchedExtensionLength)
-          {
+        {
           (*longestExtensionMatchPtr) = matchedExtensionLength;
-          }
-        matchingNameFilters << nameFilter;
         }
+        matchingNameFilters << nameFilter;
       }
     }
+  }
   matchingNameFilters.removeDuplicates();
   return matchingNameFilters;
 }

@@ -135,9 +135,9 @@ vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
   this->PointPlacer = vtkSmartPointer<vtkFocalPlanePointPlacer>::New();
 
   for (int i = 0; i<NumberOfControlPointTypes; i++)
-    {
+  {
     this->ControlPoints[i] = nullptr;
-    }
+  }
 
   this->AlwaysOnTop = false;
 }
@@ -146,10 +146,10 @@ vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
 vtkSlicerMarkupsWidgetRepresentation::~vtkSlicerMarkupsWidgetRepresentation()
 {
   for (int i=0; i<NumberOfControlPointTypes; i++)
-    {
+  {
     delete this->ControlPoints[i];
     this->ControlPoints[i] = nullptr;
-    }
+  }
   // Force deleting variables to prevent circular dependency keeping objects alive
   this->PointPlacer = nullptr;
 }
@@ -159,9 +159,9 @@ int vtkSlicerMarkupsWidgetRepresentation::GetNumberOfControlPoints()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
-    {
+  {
     return 0;
-    }
+  }
   return markupsNode->GetNumberOfControlPoints();
 }
 
@@ -173,9 +173,9 @@ int vtkSlicerMarkupsWidgetRepresentation::GetNthControlPointDisplayPosition(int 
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || n < 0 || n >= markupsNode->GetNumberOfControlPoints())
-    {
+  {
     return 0;
-    }
+  }
 
   double pos[4] = { 0.0, 0.0, 0.0, 1.0 };
   markupsNode->TransformPointToWorld(this->GetNthControlPoint(n)->Position, pos);
@@ -194,9 +194,9 @@ vtkMRMLMarkupsNode::ControlPoint* vtkSlicerMarkupsWidgetRepresentation::GetNthCo
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || n < 0 || n >= markupsNode->GetNumberOfControlPoints())
-    {
+  {
     return nullptr;
-    }
+  }
   return markupsNode->GetNthControlPoint(n);
 }
 
@@ -206,9 +206,9 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
-    {
+  {
     return 0;
-    }
+  }
 
   // Make a line out of this viewing ray
   double p1[4] = { 0.0, 0.0, 0.0, 1.0 };
@@ -255,25 +255,25 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
   vtkPoints* curvePointsWorld = this->GetMarkupsNode()->GetCurvePointsWorld();
   vtkIdType numberOfPoints = curvePointsWorld->GetNumberOfPoints();
   for(vtkIdType i = 0; i < numberOfPoints; i++)
-    {
+  {
     curvePointsWorld->GetPoint(i, p3);
     if (i + 1 < numberOfPoints)
-      {
+    {
       curvePointsWorld->GetPoint(i + 1, p4);
-      }
+    }
     else
-      {
+    {
       if (!this->CurveClosed)
-        {
+      {
         continue;
-        }
-      curvePointsWorld->GetPoint(0, p4);
       }
+      curvePointsWorld->GetPoint(0, p4);
+    }
 
     // Now we have the four points - check closest intersection
     double u, v;
     if (vtkLine::Intersection(p1, p2, p3, p4, u, v))
-      {
+    {
       double p5[3], p6[3];
       p5[0] = p1[0] + u*(p2[0]-p1[0]);
       p5[1] = p1[1] + u*(p2[1]-p1[1]);
@@ -286,51 +286,51 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
       double d = vtkMath::Distance2BetweenPoints(p5, p6);
 
       if (d < wt2 && d < closestDistance2)
-        {
+      {
         closestWorldPos[0] = p6[0];
         closestWorldPos[1] = p6[1];
         closestWorldPos[2] = p6[2];
         closestDistance2 = d;
         closestNode = static_cast<int>(i);
-        }
       }
+    }
     else
-      {
+    {
       double d = vtkLine::DistanceToLine(p3, p1, p2);
       if (d < wt2 && d < closestDistance2)
-        {
+      {
         closestWorldPos[0] = p3[0];
         closestWorldPos[1] = p3[1];
         closestWorldPos[2] = p3[2];
         closestDistance2 = d;
         closestNode = static_cast<int>(i);
-        }
+      }
 
       d = vtkLine::DistanceToLine(p4, p1, p2);
       if (d < wt2 && d < closestDistance2)
-        {
+      {
         closestWorldPos[0] = p4[0];
         closestWorldPos[1] = p4[1];
         closestWorldPos[2] = p4[2];
         closestDistance2 = d;
         closestNode = static_cast<int>(i);
-        }
       }
     }
+  }
 
   if (closestDistance2 < VTK_DOUBLE_MAX)
-    {
+  {
     if (closestNode < markupsNode->GetNumberOfControlPoints() -1)
-      {
+    {
       *idx = closestNode+1;
       return 1;
-      }
+    }
     else if (this->CurveClosed)
-      {
+    {
       *idx = 0;
       return 1;
-      }
     }
+  }
 
   return 0;
 }
@@ -340,19 +340,19 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateCenterOfRotation()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode || markupsNode->GetNumberOfControlPoints() < 1)
-    {
+  {
     return;
-    }
+  }
   double centerWorldPos[3] = { 0.0 };
 
   for (int i = 0; i < markupsNode->GetNumberOfControlPoints(); i++)
-    {
+  {
     double p[4];
     markupsNode->GetNthControlPointPositionWorld(i, p);
     centerWorldPos[0] += p[0];
     centerWorldPos[1] += p[1];
     centerWorldPos[2] += p[2];
-    }
+  }
   double inv_N = 1. / static_cast< double >(markupsNode->GetNumberOfControlPoints());
   centerWorldPos[0] *= inv_N;
   centerWorldPos[1] *= inv_N;
@@ -365,17 +365,17 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateCenterOfRotation()
 void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode *markupsDisplayNode)
 {
   if (this->MarkupsDisplayNode == markupsDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   this->MarkupsDisplayNode = markupsDisplayNode;
 
   vtkMRMLMarkupsNode* markupsNode = nullptr;
   if (this->MarkupsDisplayNode)
-    {
+  {
     markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->MarkupsDisplayNode->GetDisplayableNode());
-    }
+  }
   this->SetMarkupsNode(markupsNode);
 }
 
@@ -389,9 +389,9 @@ vtkMRMLMarkupsDisplayNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsDispl
 vtkMRMLMarkupsNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsNode()
 {
   if (!this->MarkupsDisplayNode)
-    {
+  {
     return nullptr;
-    }
+  }
   return vtkMRMLMarkupsNode::SafeDownCast(this->MarkupsDisplayNode->GetDisplayableNode());
 }
 
@@ -423,9 +423,9 @@ bool vtkSlicerMarkupsWidgetRepresentation::GetTransformationReferencePoint(doubl
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
-    {
+  {
     return false;
-    }
+  }
   this->UpdateCenterOfRotation();
   markupsNode->GetCenterOfRotationWorld(referencePointWorld);
   return true;
@@ -439,56 +439,56 @@ void vtkSlicerMarkupsWidgetRepresentation::BuildLine(vtkPolyData* linePolyData, 
 
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
-    {
+  {
     linePolyData->SetPoints(points);
     linePolyData->SetLines(line);
     return;
-    }
+  }
   int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
   vtkIdType numberOfLines = numberOfControlPoints - 1;
   bool loop = (markupsNode->GetCurveClosed() && numberOfControlPoints > 2);
   if (loop)
-    {
+  {
     numberOfLines++;
-    }
+  }
   if (numberOfLines <= 0)
-    {
+  {
     return;
-    }
+  }
 
   double pos[3] = { 0.0 };
   vtkIdType index = 0;
   line->InsertNextCell(numberOfLines+1);
 
   for (int i = 0; i < numberOfControlPoints; i++)
-    {
+  {
     // Add the node
     if (displayPosition)
-      {
+    {
       this->GetNthControlPointDisplayPosition(i, pos);
-      }
+    }
     else
-      {
+    {
       markupsNode->GetNthControlPointPositionWorld(i, pos);
-      }
+    }
     points->InsertNextPoint(pos);
     line->InsertCellPoint(i);
     index++;
-    }
+  }
 
   if (loop)
-    {
+  {
     if (displayPosition)
-      {
+    {
       this->GetNthControlPointDisplayPosition(0, pos);
-      }
+    }
     else
-      {
+    {
       markupsNode->GetNthControlPointPositionWorld(0, pos);
-      }
+    }
     points->InsertPoint(index, pos);
     line->InsertCellPoint(0);
-    }
+  }
 
   linePolyData->SetPoints(points);
   linePolyData->SetLines(line);
@@ -506,39 +506,39 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRMLInternal(
     vtkMRMLNode* vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
 {
   if (!event || event == vtkMRMLTransformableNode::TransformModifiedEvent)
-    {
+  {
     this->MarkupsTransformModifiedTime.Modified();
-    }
+  }
 
   if (!event || event == vtkMRMLDisplayableNode::DisplayModifiedEvent)
-    {
+  {
     // Update MRML data node from display node
     vtkMRMLMarkupsNode* markupsNode = nullptr;
     if (this->MarkupsDisplayNode)
-      {
+    {
       markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->MarkupsDisplayNode->GetDisplayableNode());
-      }
-    this->SetMarkupsNode(markupsNode);
     }
+    this->SetMarkupsNode(markupsNode);
+  }
 
   if (this->MarkupsNode)
-    {
+  {
     std::string labelText;
     if (this->MarkupsNode->GetName())
-      {
+    {
       labelText = this->MarkupsNode->GetName();
-      }
+    }
     std::string properties = this->MarkupsNode->GetPropertiesLabelText();
     if (!properties.empty())
-      {
-      labelText += ":" + properties;
-      }
-    this->TextActor->SetInput(labelText.c_str());
-    }
-  else
     {
-    this->TextActor->SetInput("");
+      labelText += ":" + properties;
     }
+    this->TextActor->SetInput(labelText.c_str());
+  }
+  else
+  {
+    this->TextActor->SetInput("");
+  }
 
 
   this->NeedToRenderOn(); // TODO: to improve performance, call this only if it is actually needed
@@ -549,18 +549,18 @@ bool vtkSlicerMarkupsWidgetRepresentation::GetAllControlPointsVisible()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
-    {
+  {
     return false;
-    }
+  }
 
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
-    {
+  {
     if (!(markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
       && (markupsNode->GetNthControlPointVisibility(controlPointIndex))))
-      {
+    {
       return false;
-      }
     }
+  }
   return true;
 }
 
@@ -569,17 +569,17 @@ bool vtkSlicerMarkupsWidgetRepresentation::GetAllControlPointsSelected()
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
-    {
+  {
     return false;
-    }
+  }
 
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
-    {
+  {
     if (!markupsNode->GetNthControlPointSelected(controlPointIndex))
-      {
+    {
       return false;
-      }
     }
+  }
   return true;
 }
 
@@ -590,36 +590,36 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
   static double color[3];
 
   if (!this->MarkupsDisplayNode)
-    {
+  {
     return invalidColor;
-    }
+  }
 
   // If a folder is overriding display properties then return the color defined by the folder
   if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
-    {
+  {
     vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
     vtkMRMLDisplayNode* overrideHierarchyDisplayNode =
       vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(displayableNode);
     if (overrideHierarchyDisplayNode)
-      {
+    {
       if (controlPointType == Active)
-        {
+      {
         this->MarkupsDisplayNode->GetActiveColor(color);
         return color;
-        }
+      }
       else
-        {
+      {
         // Folder display has "selected" color but since usually for folders we only set
         // the plain Color property, we always use this plain color, regardless of selected state
         // of the control point.
         overrideHierarchyDisplayNode->GetColor(color);
         return color;
-        }
       }
     }
+  }
 
   switch (controlPointType)
-    {
+  {
     case Unselected:
       this->MarkupsDisplayNode->GetColor(color);
       break;
@@ -631,48 +631,48 @@ double* vtkSlicerMarkupsWidgetRepresentation::GetWidgetColor(int controlPointTyp
       break;
     case Project:
       if (this->MarkupsDisplayNode->GetSliceProjectionUseFiducialColor())
-        {
+      {
         if (this->GetAllControlPointsSelected())
-          {
-          this->MarkupsDisplayNode->GetSelectedColor(color);
-          }
-        else
-          {
-          this->MarkupsDisplayNode->GetColor(color);
-          }
-        }
-      else
         {
-        this->MarkupsDisplayNode->GetSliceProjectionColor(color);
+          this->MarkupsDisplayNode->GetSelectedColor(color);
         }
+        else
+        {
+          this->MarkupsDisplayNode->GetColor(color);
+        }
+      }
+      else
+      {
+        this->MarkupsDisplayNode->GetSliceProjectionColor(color);
+      }
       break;
     case ProjectBack:
       if (this->MarkupsDisplayNode->GetSliceProjectionUseFiducialColor())
-        {
+      {
         if (this->GetAllControlPointsSelected())
-          {
+        {
           this->MarkupsDisplayNode->GetSelectedColor(color);
-          }
+        }
         else
-          {
+        {
           this->MarkupsDisplayNode->GetColor(color);
-          }
         }
+      }
       else
-        {
+      {
         this->MarkupsDisplayNode->GetSliceProjectionColor(color);
-        }
+      }
       for (int i = 0; i < 3; i++)
-        {
+      {
         if (fabs(color[1] - 1.) > 0.001)
-          {
+        {
           color[i] = 1. - color[i];
-          }
         }
+      }
       break;
     default:
       return invalidColor;
-    }
+  }
 
   return color;
 }
@@ -687,10 +687,10 @@ vtkPointPlacer* vtkSlicerMarkupsWidgetRepresentation::GetPointPlacer()
 vtkPolyData* vtkSlicerMarkupsWidgetRepresentation::GetControlPointsPolyData(int controlPointType)
 {
   if (controlPointType < 0 || controlPointType >= NumberOfControlPointTypes)
-    {
+  {
     vtkErrorMacro("vtkSlicerMarkupsWidgetRepresentation::GetControlPointsPolyData failed: invalid controlPointType: " << controlPointType);
     return nullptr;
-    }
+  }
   return this->ControlPoints[controlPointType]->ControlPointsPolyData;
 }
 
@@ -698,10 +698,10 @@ vtkPolyData* vtkSlicerMarkupsWidgetRepresentation::GetControlPointsPolyData(int 
 vtkPolyData* vtkSlicerMarkupsWidgetRepresentation::GetLabelControlPointsPolyData(int controlPointType)
 {
   if (controlPointType < 0 || controlPointType >= NumberOfControlPointTypes)
-    {
+  {
     vtkErrorMacro("vtkSlicerMarkupsWidgetRepresentation::GetLabelControlPointsPolyData failed: invalid controlPointType: " << controlPointType);
     return nullptr;
-    }
+  }
   return this->ControlPoints[controlPointType]->LabelControlPointsPolyData;
 }
 
@@ -709,10 +709,10 @@ vtkPolyData* vtkSlicerMarkupsWidgetRepresentation::GetLabelControlPointsPolyData
 vtkStringArray* vtkSlicerMarkupsWidgetRepresentation::GetLabels(int controlPointType)
 {
   if (controlPointType < 0 || controlPointType >= NumberOfControlPointTypes)
-    {
+  {
     vtkErrorMacro("vtkSlicerMarkupsWidgetRepresentation::GetControlPointsPolyData failed: invalid controlPointType: " << controlPointType);
     return nullptr;
-    }
+  }
   return this->ControlPoints[controlPointType]->Labels;
 }
 
@@ -723,36 +723,36 @@ bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
     || !this->ViewNode
     || !this->MarkupsDisplayNode->GetVisibility()
     || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
-    {
+  {
     return false;
-    }
+  }
 
   // If parent folder visibility is set to false then the markups is not visible
   if (this->MarkupsDisplayNode->GetFolderDisplayOverrideAllowed())
-    {
+  {
     vtkMRMLDisplayableNode* displayableNode = this->MarkupsDisplayNode->GetDisplayableNode();
     // Visibility is applied regardless the fact whether there is override or not.
     // Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden.
     // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
     if (!vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode))
-      {
+    {
       return false;
-      }
     }
+  }
   if (vtkMRMLSliceNode::SafeDownCast(this->ViewNode))
-    {
+  {
     if (!this->MarkupsDisplayNode->GetVisibility2D())
-      {
-      return false;
-      }
-    }
-  if (vtkMRMLViewNode::SafeDownCast(this->ViewNode))
     {
-    if (!this->MarkupsDisplayNode->GetVisibility3D())
-      {
       return false;
-      }
     }
+  }
+  if (vtkMRMLViewNode::SafeDownCast(this->ViewNode))
+  {
+    if (!this->MarkupsDisplayNode->GetVisibility3D())
+    {
+      return false;
+    }
+  }
   return true;
 }
 
@@ -794,7 +794,7 @@ vtkTypeBool vtkSlicerMarkupsWidgetRepresentation::HasTranslucentPolygonalGeometr
 int vtkSlicerMarkupsWidgetRepresentation::GetGlyphTypeSourceFromDisplay(int glyphTypeDisplay)
 {
   switch (glyphTypeDisplay)
-    {
+  {
     case vtkMRMLMarkupsDisplayNode::GlyphTypeInvalid: return vtkMarkupsGlyphSource2D::GlyphNone;
     case vtkMRMLMarkupsDisplayNode::StarBurst2D: return vtkMarkupsGlyphSource2D::GlyphStarBurst;
     case vtkMRMLMarkupsDisplayNode::Cross2D: return vtkMarkupsGlyphSource2D::GlyphCross;
@@ -812,5 +812,5 @@ int vtkSlicerMarkupsWidgetRepresentation::GetGlyphTypeSourceFromDisplay(int glyp
     case vtkMRMLMarkupsDisplayNode::HookedArrow2D: return vtkMarkupsGlyphSource2D::GlyphHookedArrow;
     default:
       return -1;
-    }
+  }
 }

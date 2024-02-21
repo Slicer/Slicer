@@ -47,9 +47,9 @@ void qSlicerObject::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qSlicerObject);
   if (scene == d->MRMLScene)
-    {
+  {
     return ;
-    }
+  }
   d->MRMLScene = scene;
 }
 

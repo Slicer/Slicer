@@ -79,7 +79,7 @@ public:
 
   /// Widget states
   enum
-    {
+  {
     // Interactions without handles
     WidgetStateMoveCrosshair = WidgetStateUser, ///< Move crosshair position, can be used for moving the crosshair with click-and-drag.
     WidgetStateBlend, ///< Fade between foreground/background volumes
@@ -101,11 +101,11 @@ public:
     WidgetStateTranslateIntersectingThickSlabHandle, ///< adjusting a slice thick slab thickness by drag-and-dropping handle
 
     WidgetState_Last
-    };
+  };
 
   /// Widget events
   enum
-    {
+  {
     // Interactions without handles
     WidgetEventTouchGestureStart = WidgetEventUser,
     WidgetEventTouchGestureEnd,
@@ -154,11 +154,11 @@ public:
     // WidgetStateOnTranslateIntersectingThickSlabHandle/WidgetStateTranslateIntersectingThickSlabHandle
     WidgetEventTranslateIntersectingThickSlabHandleStart,
     WidgetEventTranslateIntersectingThickSlabHandleEnd,
-    };
+  };
 
   /// Action State values and management
   enum
-    {
+  {
     ActionNone = 0,
     ActionTranslate = 1,
     ActionZoom = 2,
@@ -176,7 +176,7 @@ public:
     | ActionBrowseSlice | ActionShowSlice | ActionAdjustLightbox | ActionSelectVolume
     | ActionSetCursorPosition | ActionSetCrosshairPosition
     | ActionTranslateSliceIntersection | ActionRotateSliceIntersection
-    };
+  };
 
   /// Set exact list of actions to enable.
   void SetActionsEnabled(int actions);
@@ -282,11 +282,11 @@ protected:
   double VolumeScalarRange[2];
 
   enum
-    {
+  {
     LayerBackground,
     LayerForeground,
     LayerLabelmap
-    };
+  };
 
   // Blend
   double LastForegroundOpacity;

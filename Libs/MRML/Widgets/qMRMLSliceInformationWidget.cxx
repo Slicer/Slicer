@@ -95,9 +95,9 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
 
   q->setEnabled(this->MRMLSliceNode != nullptr);
   if (this->MRMLSliceNode == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   //qDebug() << "qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode";
 
@@ -138,17 +138,17 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
 
   // Update spacing mode
   if (this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode)
-    {
+  {
     this->AutomaticSliceSpacingRadioButton->setChecked(true);
-    }
+  }
   else if (this->MRMLSliceNode->GetSliceSpacingMode() ==
            vtkMRMLSliceNode::PrescribedSliceSpacingMode)
-    {
+  {
     this->PrescribedSliceSpacingRadioButton->setChecked(true);
     double prescribedSpacing[3] = {0.0, 0.0, 0.0};
     this->MRMLSliceNode->GetPrescribedSliceSpacing(prescribedSpacing);
     this->PrescribedSpacingSpinBox->setValue(prescribedSpacing[2]);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -178,9 +178,9 @@ void qMRMLSliceInformationWidget::setMRMLSliceNode(vtkMRMLNode* newNode)
 {
   vtkMRMLSliceNode * newSliceNode = vtkMRMLSliceNode::SafeDownCast(newNode);
   if (!newSliceNode)
-    {
+  {
     return;
-    }
+  }
   this->setMRMLSliceNode(newSliceNode);
 }
 
@@ -190,9 +190,9 @@ void qMRMLSliceInformationWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNod
   Q_D(qMRMLSliceInformationWidget);
 
   if (newSliceNode == d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
                    d, SLOT(updateWidgetFromMRMLSliceNode()));
@@ -209,9 +209,9 @@ void qMRMLSliceInformationWidget::setSliceOrientation(const QString& orientation
   Q_D(qMRMLSliceInformationWidget);
 
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceNode->SetOrientation(orientation.toUtf8());
 }
@@ -222,9 +222,9 @@ void qMRMLSliceInformationWidget::setSliceVisible(bool visible)
   Q_D(qMRMLSliceInformationWidget);
 
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceNode->SetSliceVisible(visible);
 }
@@ -235,9 +235,9 @@ void qMRMLSliceInformationWidget::setViewGroup(int viewGroup)
   Q_D(qMRMLSliceInformationWidget);
 
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceNode->SetViewGroup(viewGroup);
 }
@@ -248,9 +248,9 @@ void qMRMLSliceInformationWidget::setWidgetVisible(bool visible)
   Q_D(qMRMLSliceInformationWidget);
 
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceNode->SetWidgetVisible(visible);
 }
@@ -261,9 +261,9 @@ void qMRMLSliceInformationWidget::setLightboxLayoutRows(int rowCount)
   Q_D(qMRMLSliceInformationWidget);
 
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceNode->SetLayoutGridRows(rowCount);
 }
@@ -274,9 +274,9 @@ void qMRMLSliceInformationWidget::setLightboxLayoutColumns(int columnCount)
   Q_D(qMRMLSliceInformationWidget);
 
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceNode->SetLayoutGridColumns(columnCount);
 }
@@ -288,15 +288,15 @@ void qMRMLSliceInformationWidget::setSliceSpacingMode(int spacingMode)
 
   if (spacingMode != vtkMRMLSliceNode::AutomaticSliceSpacingMode &&
       spacingMode != vtkMRMLSliceNode::PrescribedSliceSpacingMode)
-    {
+  {
     qWarning() << "setSliceSpacingMode - Invalid spacingMode:" << spacingMode;
     return;
-    }
+  }
 
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLSliceNode->SetSliceSpacingMode(spacingMode);
 }
@@ -307,9 +307,9 @@ void qMRMLSliceInformationWidget::setPrescribedSliceSpacing(double spacing)
   Q_D(qMRMLSliceInformationWidget);
 
   if (!d->MRMLSliceNode)
-    {
+  {
     return;
-    }
+  }
 
   double spacingArray[3] = {0.0, 0.0, 0.0};
   d->MRMLSliceNode->GetPrescribedSliceSpacing(spacingArray);

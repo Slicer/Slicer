@@ -35,21 +35,21 @@ namespace
 {
 
 bool outputResult(int result, const std::string& outputFile)
-  {
+{
   std::ofstream myfile;
   myfile.open(outputFile.c_str());
 
   if (!myfile.is_open())
-    {
+  {
       std::cerr << "Failed to open file:" << outputFile << std::endl;
       return false;
-    }
+  }
 
   myfile << result << "\n";
 
   myfile.close();
   return true;
-  }
+}
 
 } // end of anonymous namespace
 
@@ -62,23 +62,23 @@ int main(int argc, char * argv[])
   int result = 0;
 
   if (OperationType == std::string("Addition"))
-    {
+  {
     result = InputValue1 + InputValue2;
-    }
+  }
   else if (OperationType == std::string("Multiplication"))
-    {
+  {
     result = InputValue1 * InputValue2;
-    }
+  }
   else
-    {
+  {
     std::cerr << "Unknown OperationType:" << OperationType << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (!outputResult(result, OutputFile))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

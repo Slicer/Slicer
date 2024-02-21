@@ -271,32 +271,32 @@ void vtkMRMLViewNode::GetDefaultBoxColor(double color[3])
 const char* vtkMRMLViewNode::GetAnimationModeAsString(int id)
 {
   switch (id)
-    {
+  {
     case Off: return "Off";
     case Spin: return "Spin";
     case Rock: return "Rock";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetAnimationModeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < AnimationMode_Last; ii++)
-    {
+  {
     if (strcmp(name, GetAnimationModeAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -305,31 +305,31 @@ int vtkMRMLViewNode::GetAnimationModeFromString(const char* name)
 const char* vtkMRMLViewNode::GetViewAxisModeAsString(int id)
 {
   switch (id)
-    {
+  {
     case LookFrom: return "LookFrom";
     case RotateAround: return "RotateAround";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetViewAxisModeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < ViewAxisMode_Last; ii++)
-    {
+  {
     if (strcmp(name, GetViewAxisModeAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -338,7 +338,7 @@ int vtkMRMLViewNode::GetViewAxisModeFromString(const char* name)
 const char* vtkMRMLViewNode::GetSpinDirectionAsString(int id)
 {
   switch (id)
-    {
+  {
     case PitchUp: return "PitchUp";
     case PitchDown: return "PitchDown";
     case RollLeft: return "RollLeft";
@@ -348,25 +348,25 @@ const char* vtkMRMLViewNode::GetSpinDirectionAsString(int id)
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetSpinDirectionFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < SpinDirection_Last; ii++)
-    {
+  {
     if (strcmp(name, GetSpinDirectionAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -375,7 +375,7 @@ int vtkMRMLViewNode::GetSpinDirectionFromString(const char* name)
 const char* vtkMRMLViewNode::GetStereoTypeAsString(int id)
 {
   switch (id)
-    {
+  {
     case NoStereo: return "NoStereo";
     case RedBlue: return "RedBlue";
     case Anaglyph: return "Anaglyph";
@@ -387,25 +387,25 @@ const char* vtkMRMLViewNode::GetStereoTypeAsString(int id)
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetStereoTypeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < StereoType_Last; ii++)
-    {
+  {
     if (strcmp(name, GetStereoTypeAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -414,31 +414,31 @@ int vtkMRMLViewNode::GetStereoTypeFromString(const char* name)
 const char* vtkMRMLViewNode::GetRenderModeAsString(int id)
 {
   switch (id)
-    {
+  {
     case Perspective: return "Perspective";
     case Orthographic: return "Orthographic";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetRenderModeFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < RenderMode_Last; ii++)
-    {
+  {
     if (strcmp(name, GetRenderModeAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -447,32 +447,32 @@ int vtkMRMLViewNode::GetRenderModeFromString(const char* name)
 const char* vtkMRMLViewNode::GetVolumeRenderingQualityAsString(int id)
 {
   switch (id)
-    {
+  {
     case Adaptive: return "Adaptive";
     case Normal: return "Normal";
     case Maximum: return "Maximum";
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetVolumeRenderingQualityFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < VolumeRenderingQuality_Last; ii++)
-    {
+  {
     if (strcmp(name, GetVolumeRenderingQualityAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -481,7 +481,7 @@ int vtkMRMLViewNode::GetVolumeRenderingQualityFromString(const char* name)
 const char* vtkMRMLViewNode::GetRaycastTechniqueAsString(int id)
 {
   switch (id)
-    {
+  {
     case Composite: return "Composite";
     case CompositeEdgeColoring: return "CompositeEdgeColoring";
     case MaximumIntensityProjection: return "MaximumIntensityProjection";
@@ -491,25 +491,25 @@ const char* vtkMRMLViewNode::GetRaycastTechniqueAsString(int id)
     default:
       // invalid id
       return "";
-    }
+  }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLViewNode::GetRaycastTechniqueFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int ii = 0; ii < RaycastTechnique_Last; ii++)
-    {
+  {
     if (strcmp(name, GetRaycastTechniqueAsString(ii)) == 0)
-      {
+    {
       // found a matching name
       return ii;
-      }
     }
+  }
   // unknown name
   return -1;
 }

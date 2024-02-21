@@ -73,33 +73,33 @@ int vtkMRMLTableSQLiteStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();
 
   if (fullName.empty())
-    {
+  {
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
-    }
+  }
   vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
   if (tableNode == nullptr)
-    {
+  {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a table node");
     return 0;
-    }
+  }
 
   // Check that the file exists
   if (vtksys::SystemTools::FileExists(fullName) == false)
-    {
+  {
     vtkErrorMacro("ReadData: table file '" << fullName << "' not found.");
     return 0;
-    }
+  }
 
   std::string dbname = std::string("sqlite://") + fullName;
   vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(
                    vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
 
   if (!database.GetPointer() || !database->Open(this->GetPassword(), vtkSQLiteDatabase::USE_EXISTING))
-    {
+  {
     vtkErrorMacro("ReadData: database file '" << fullName << "cannot be opened");
     return 0;
-    }
+  }
 
   vtkSmartPointer<vtkSQLiteQuery> query = vtkSmartPointer<vtkSQLiteQuery>::Take(
                    vtkSQLiteQuery::SafeDownCast( database->GetQueryInstance()));
@@ -125,28 +125,28 @@ int vtkMRMLTableSQLiteStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   if (this->GetFileName() == nullptr)
-    {
+  {
     vtkErrorMacro("WriteData: file name is not set");
     return 0;
-    }
+  }
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
-    {
+  {
     vtkErrorMacro("WriteData: file name not specified");
     return 0;
-    }
+  }
 
   vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
   if (tableNode == nullptr)
-    {
+  {
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a valid table node");
     return 0;
-    }
+  }
   if(!this->TableName || std::string(this->TableName).empty())
-    {
+  {
     vtkErrorMacro(<<"No table name specified!");
     return 0;
-    }
+  }
 
   std::string dbname = std::string("sqlite://") + fullName;
 
@@ -154,23 +154,23 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkSQLiteDatabase *database = vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str()));
 
   if (!database || !database->Open(this->GetPassword(), vtkSQLiteDatabase::USE_EXISTING_OR_CREATE))
-    {
+  {
     vtkErrorMacro("ReadData: database file '" << fullName << "cannot be opened");
     return 0;
-    }
+  }
 
   vtkTable *table = tableNode->GetTable();
   if (!table)
-    {
+  {
     vtkErrorMacro("ReadData: no table to write for the node '" << std::string(tableNode->GetName()));
     return 0;
-    }
+  }
 
   if (!this->TableName || std::string(this->TableName).empty())
-    {
+  {
     vtkErrorMacro("ReadData: no table name for the node '" << std::string(tableNode->GetName()));
     return 0;
-    }
+  }
 
   // first try to drop the table
   this->DropTable(this->TableName, database);
@@ -188,7 +188,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   //get the columns from the vtkTable to finish the query
   vtkIdType numColumns = table->GetNumberOfColumns();
   for(vtkIdType i = 0; i < numColumns; i++)
-    {
+  {
     //get this column's name
     std::string columnName = table->GetColumn(i)->GetName();
     createTableQuery += columnName;
@@ -200,29 +200,29 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     if( (columnType.find("String") != std::string::npos) ||
         (columnType.find("Data") != std::string::npos) ||
         (columnType.find("Variant") != std::string::npos) )
-      {
+    {
       createTableQuery += " TEXT";
-      }
+    }
     else if( (columnType.find("Double") != std::string::npos) ||
              (columnType.find("Float") != std::string::npos) )
-      {
+    {
       createTableQuery += " REAL";
-      }
+    }
     else
-      {
+    {
       createTableQuery += " INTEGER";
-      }
+    }
     if(i == numColumns - 1)
-      {
+    {
       createTableQuery += ");";
       insertPreamble += ") VALUES (";
-      }
+    }
     else
-      {
+    {
       createTableQuery += ", ";
       insertPreamble += ", ";
-      }
     }
+  }
 
   //perform the create table query
   vtkSQLiteQuery *query =
@@ -231,31 +231,31 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   query->SetQuery(createTableQuery.c_str());
   cout << "creating the table" << endl;
   if(!query->Execute())
-    {
+  {
     vtkErrorMacro(<<"Error performing 'create table' query");
-    }
+  }
 
   //iterate over the rows of the vtkTable to complete the insert query
   vtkIdType numRows = table->GetNumberOfRows();
   for(vtkIdType i = 0; i < numRows; i++)
-    {
+  {
     std::string insertQuery = insertPreamble;
     for (vtkIdType j = 0; j < numColumns; j++)
-      {
+    {
       insertQuery += "'" + table->GetValue(i, j).ToString() + "'";
       if(j < numColumns - 1)
-        {
+      {
         insertQuery += ", ";
-        }
       }
+    }
     insertQuery += ");";
     //perform the insert query for this row
     query->SetQuery(insertQuery.c_str());
     if(!query->Execute())
-      {
+    {
       vtkErrorMacro(<<"Error performing 'insert' query");
-      }
     }
+  }
 
   //cleanup and return
   query->Delete();
@@ -269,32 +269,32 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 int vtkMRMLTableSQLiteStorageNode::DropTable(char *tableName, vtkSQLiteDatabase* database)
 {
   if(!tableName || std::string(tableName).empty())
-    {
+  {
     std::cerr <<"No table name specified!";
     return 0;
-    }
+  }
 
   if (!database)
-    {
+  {
     std::cerr << "No database specified!";
     return 0;
-    }
+  }
 
   vtkStringArray *tables = database->GetTables();
   vtkSmartPointer<vtkSQLiteQuery> query = vtkSmartPointer<vtkSQLiteQuery>::Take(
                        vtkSQLiteQuery::SafeDownCast( database->GetQueryInstance()));
 
   for (int i=0; i<tables->GetNumberOfValues(); i++)
-    {
+  {
     if (!tables->GetValue(i).compare(tableName))
-      {
+    {
       std::string dropTableQuery = "DROP TABLE ";
       dropTableQuery += tableName;
       query->SetQuery(dropTableQuery.c_str());
       query->Execute();
       break;
-      }
     }
+  }
 
   //database->Close();
   return 1;

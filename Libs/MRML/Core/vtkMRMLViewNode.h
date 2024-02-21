@@ -191,15 +191,15 @@ public:
 
   /// Modes for automatically controlling camera
   enum
-    {
+  {
     RotateAround = 0,
     LookFrom,
     ViewAxisMode_Last
-    };
+  };
 
   /// Rotate camera directions
   enum
-    {
+  {
     PitchUp = 0,
     PitchDown,
     RollLeft,
@@ -207,11 +207,11 @@ public:
     YawLeft,
     YawRight,
     SpinDirection_Last
-    };
+  };
 
   /// Stereo modes
   enum
-    {
+  {
     NoStereo = 0,
     RedBlue,
     Anaglyph,
@@ -221,37 +221,37 @@ public:
     UserDefined_2,
     UserDefined_3,
     StereoType_Last
-    };
+  };
 
   /// Render modes
   enum
-    {
+  {
     Perspective = 0,
     Orthographic,
     RenderMode_Last
-    };
+  };
 
   /// Animation mode
   enum
-    {
+  {
     Off = 0,
     Spin,
     Rock,
     AnimationMode_Last
-    };
+  };
 
   /// Quality setting used for \sa VolumeRenderingQuality
   enum
-    {
+  {
     Adaptive = 0, ///< quality determined from desired update rate
     Normal,       ///< good image quality at reasonable speed
     Maximum,      ///< high image quality, rendering time is not considered
     VolumeRenderingQuality_Last
-    };
+  };
 
   /// Ray casting technique for volume rendering
   enum
-    {
+  {
     Composite = 0, // Composite with directional lighting (default)
     CompositeEdgeColoring, // Composite with fake lighting (edge coloring, faster) - Not used
     MaximumIntensityProjection,
@@ -259,14 +259,14 @@ public:
     GradiantMagnitudeOpacityModulation, // Not used
     IllustrativeContextPreservingExploration, // Not used
     RaycastTechnique_Last
-    };
+  };
 
   /// Events
   enum
-    {
+  {
     GraphicalResourcesCreatedEvent = 19001,
     ResetFocalPointRequestedEvent,
-    };
+  };
 
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by

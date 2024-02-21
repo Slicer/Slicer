@@ -40,16 +40,16 @@ bool testAddFile(const char* filePath);
 bool SequenceSortedByIndex(vtkMRMLSequenceNode* seqNode)
 {
   for (int i = 1; i < seqNode->GetNumberOfDataNodes(); i++)
-    {
+  {
     double previousIndexValue = atof(seqNode->GetNthIndexValue(i - 1).c_str());
     double currentIndexValue = atof(seqNode->GetNthIndexValue(i).c_str());
     if (previousIndexValue >= currentIndexValue)
-      {
+    {
       std::cout << "Sequence is not sorted: index[" << i - 1 << "] = " << previousIndexValue
         << ", index[" << i << "] = " << currentIndexValue << "\n";
       return false;
-      }
     }
+  }
   return true;
 }
 
@@ -66,13 +66,13 @@ int vtkMRMLSequenceNodeTest1( int, char * [] )
   vtkNew<vtkMatrix4x4> transformMatrix;
   int numberOfDataNodes = 50;
   for (int i = 0; i < numberOfDataNodes; i++)
-    {
+  {
     std::ostringstream indexStr;
     indexStr << i*10.0+5.0;
     transformMatrix->SetElement(1, 3, i * 20.0);
     dataNode->SetMatrixTransformFromParent(transformMatrix.GetPointer());
     seqNode->SetDataNodeAtValue(dataNode.GetPointer(), indexStr.str().c_str());
-    }
+  }
   CHECK_INT(seqNode->GetNumberOfDataNodes(), numberOfDataNodes);
 
   // Updating and existing data node
@@ -122,29 +122,29 @@ int vtkMRMLSequenceNodeTest1( int, char * [] )
 
   // Check if number of data nodes == number of nodes in the sequence scene after adding.
   for (int i = 0; i < numberOfDataNodes; ++i)
-    {
+  {
     std::ostringstream valueStr;
     valueStr << i;
     seqNode->SetDataNodeAtValue(dataNode, valueStr.str());
-    }
+  }
   CHECK_INT(scene->GetNumberOfNodes(), numberOfDataNodes);
   CHECK_INT(seqNode->GetNumberOfDataNodes(), numberOfDataNodes);
 
   // Check if nodes are correctly removed from the internal sequence scene.
   for (int i = 0; i < numberOfDataNodes; ++i)
-    {
+  {
     std::ostringstream valueStr;
     valueStr << i;
     seqNode->RemoveDataNodeAtValue(valueStr.str());
-    }
+  }
   CHECK_INT(scene->GetNumberOfNodes(), 0);
   CHECK_INT(seqNode->GetNumberOfDataNodes(), 0);
 
   // Check if only one node is added to the sequence scene if the same value is added multiple times.
   for (int i = 0; i < 10; ++i)
-    {
+  {
     seqNode->SetDataNodeAtValue(dataNode, "0");
-    }
+  }
   CHECK_INT(scene->GetNumberOfNodes(), 1);
   CHECK_INT(seqNode->GetNumberOfDataNodes(), 1);
 

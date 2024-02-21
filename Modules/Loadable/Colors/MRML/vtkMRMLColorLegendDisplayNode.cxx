@@ -157,9 +157,9 @@ void vtkMRMLColorLegendDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCop
 
   vtkMRMLColorLegendDisplayNode* node = vtkMRMLColorLegendDisplayNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(Orientation);
@@ -180,7 +180,7 @@ void vtkMRMLColorLegendDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCop
 void vtkMRMLColorLegendDisplayNode::SetOrientation(int id)
 {
   switch (id)
-    {
+  {
     case 0:
       this->SetOrientation(vtkMRMLColorLegendDisplayNode::Horizontal);
       break;
@@ -188,38 +188,38 @@ void vtkMRMLColorLegendDisplayNode::SetOrientation(int id)
     default:
       this->SetOrientation(vtkMRMLColorLegendDisplayNode::Vertical);
       break;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 const char* vtkMRMLColorLegendDisplayNode::GetOrientationAsString(int id)
 {
   switch (id)
-    {
+  {
     case vtkMRMLColorLegendDisplayNode::Horizontal:
       return "Horizontal";
     case vtkMRMLColorLegendDisplayNode::Vertical:
     default:
       return "Vertical";
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLColorLegendDisplayNode::GetOrientationFromString(const char* name)
 {
   if (name == nullptr)
-    {
+  {
     // invalid name
     return -1;
-    }
+  }
   for (int i = 0; i < vtkMRMLColorLegendDisplayNode::Orientation_Last; i++)
-    {
+  {
     if (std::strcmp(name, vtkMRMLColorLegendDisplayNode::GetOrientationAsString(i)) == 0)
-      {
+    {
       // found a matching name
       return i;
-      }
     }
+  }
   // unknown name
   return -1;
 }
@@ -234,10 +234,10 @@ vtkMRMLDisplayNode* vtkMRMLColorLegendDisplayNode::GetPrimaryDisplayNode()
 void vtkMRMLColorLegendDisplayNode::SetAndObservePrimaryDisplayNode(vtkMRMLDisplayNode* node)
 {
   if (node && this->Scene != node->GetScene())
-    {
+  {
     vtkErrorMacro("vtkMRMLColorLegendDisplayNode: Cannot set reference, the referenced and referencing node are not in the same scene");
     return;
-    }
+  }
 
   this->SetAndObserveNodeReferenceID(PRIMARY_DISPLAY_NODE_REFERENCE_ROLE, (node ? node->GetID() : nullptr));
 }
@@ -251,25 +251,25 @@ void vtkMRMLColorLegendDisplayNode::ProcessMRMLEvents(vtkObject *caller, unsigne
   if (eventID == vtkCommand::ModifiedEvent
     && (caller == this->TitleTextProperty || caller == this->LabelTextProperty
      || caller == this->GetPrimaryDisplayNode()))
-    {
+  {
     this->Modified();
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLColorLegendDisplayNode::SetTitleTextPropertyFromString(std::string textPropertyString)
 {
   if (textPropertyString.empty())
-    {
+  {
     vtkErrorMacro("SetTitleTextPropertyFromString: Invalid text property string");
     return;
-    }
+  }
 
   std::string currentTextPropertyString = vtkMRMLDisplayNode::GetTextPropertyAsString(this->TitleTextProperty);
   if (textPropertyString == currentTextPropertyString)
-    {
+  {
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(this);
   this->UpdateTextPropertyFromString(textPropertyString, this->TitleTextProperty);
@@ -286,16 +286,16 @@ std::string vtkMRMLColorLegendDisplayNode::GetTitleTextPropertyAsString()
 void vtkMRMLColorLegendDisplayNode::SetLabelTextPropertyFromString(std::string textPropertyString)
 {
   if (textPropertyString.empty())
-    {
+  {
     vtkErrorMacro("SetLabelTextPropertyFromString: Invalid text property string");
     return;
-    }
+  }
 
   std::string currentTextPropertyString = vtkMRMLDisplayNode::GetTextPropertyAsString(this->LabelTextProperty);
   if (textPropertyString == currentTextPropertyString)
-    {
+  {
     return;
-    }
+  }
 
   MRMLNodeModifyBlocker blocker(this);
   this->UpdateTextPropertyFromString(textPropertyString, this->LabelTextProperty);

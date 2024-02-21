@@ -51,7 +51,7 @@ public:
     Yellow = 2,
     Green = 3,
     FullLayout = 4
-    };
+  };
 
   qMRMLScreenShotDialog(QWidget *parent = nullptr);
   ~qMRMLScreenShotDialog() override;

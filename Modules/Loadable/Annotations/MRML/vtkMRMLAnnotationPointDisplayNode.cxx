@@ -56,7 +56,7 @@ void vtkMRMLAnnotationPointDisplayNode::WriteXML(ostream& of, int nIndent)
      << this->ProjectedColor[2] << "\"";
 
   of << " projectedOpacity=\"" << this->ProjectedOpacity << "\"";
- }
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationPointDisplayNode::ReadXMLAttributes(const char** atts)
@@ -68,43 +68,43 @@ void vtkMRMLAnnotationPointDisplayNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
 
       if (!strcmp(attName, "glyphType"))
-        {
+      {
         std::stringstream ss;
         ss << attValue;
         ss >> this->GlyphType;
-        }
+      }
       else if (!strcmp(attName, "glyphScale"))
-        {
+      {
         std::stringstream ss;
         ss << attValue;
         ss >> this->GlyphScale;
-        }
+      }
       else if (!strcmp(attName, "sliceProjection"))
-        {
+      {
         std::stringstream ss;
         ss << attValue;
         ss >> this->SliceProjection;
-        }
+      }
       else if (!strcmp(attName, "projectedColor"))
-        {
+      {
         std::stringstream ss;
         ss << attValue;
         ss >> this->ProjectedColor[0];
         ss >> this->ProjectedColor[1];
         ss >> this->ProjectedColor[2];
-        }
+      }
       else if (!strcmp(attName, "projectedOpacity"))
-        {
+      {
         std::stringstream ss;
         ss << attValue;
         ss >> this->ProjectedOpacity;
-        }
-    }
+      }
+  }
   this->EndModify(disabledModify);
 }
 
@@ -136,9 +136,9 @@ const char* vtkMRMLAnnotationPointDisplayNode::GetGlyphTypeAsString()
 const char* vtkMRMLAnnotationPointDisplayNode::GetGlyphTypeAsString(int glyphType)
 {
   if (glyphType < GlyphMin || (glyphType > GlyphMax))
-    {
+  {
       return "UNKNOWN";
-    }
+  }
     return this->GlyphTypesNames[glyphType];
 }
 
@@ -146,13 +146,13 @@ const char* vtkMRMLAnnotationPointDisplayNode::GetGlyphTypeAsString(int glyphTyp
 void vtkMRMLAnnotationPointDisplayNode::SetGlyphTypeFromString(const char *glyphString)
 {
   for (int ID = GlyphMin; ID <= GlyphMax; ID++)
-    {
+  {
       if (!strcmp(glyphString,GlyphTypesNames[ID]))
       {
       this->SetGlyphType(ID);
       return;
       }
-    }
+  }
   vtkErrorMacro("Invalid glyph type string: " << glyphString);
 }
 
@@ -192,22 +192,22 @@ void vtkMRMLAnnotationPointDisplayNode::UpdateScene(vtkMRMLScene *scene)
 int  vtkMRMLAnnotationPointDisplayNode::GlyphTypeIs3D(int glyphType)
 {
   if (glyphType >= vtkMRMLAnnotationPointDisplayNode::Sphere3D)
-    {
+  {
     return 1;
-    }
+  }
   else
-    {
+  {
     return 0;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 void  vtkMRMLAnnotationPointDisplayNode::SetGlyphType(int type)
 {
   if (this->GlyphType == type)
-    {
+  {
     return;
-    }
+  }
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphType to " << type);
   this->GlyphType = type;
 
@@ -218,9 +218,9 @@ void  vtkMRMLAnnotationPointDisplayNode::SetGlyphType(int type)
 void vtkMRMLAnnotationPointDisplayNode::SetGlyphScale(double scale)
 {
   if (this->GlyphScale == scale)
-    {
+  {
     return;
-    }
+  }
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphScale to " << scale);
   this->GlyphScale = scale;
   this->Modified();
@@ -248,14 +248,14 @@ void vtkMRMLAnnotationPointDisplayNode::RestoreBackup()
 {
 
   if (this->m_Backup)
-    {
+  {
     MRMLNodeModifyBlocker blocker(this);
     this->Copy(this->m_Backup);
-    }
+  }
   else
-    {
+  {
     vtkErrorMacro("RestoreBackup - could not get the attached backup");
-    }
+  }
 
 }
 

@@ -64,9 +64,9 @@ public:
   /// Use SetAndObserveLookupTable method instead.
   /// \sa SetAndObserveLookupTable()
   virtual void SetLookupTable(vtkLookupTable* newLookupTable)
-    {
+  {
     SetAndObserveLookupTable(newLookupTable);
-    }
+  }
 
   ///
   /// Get/Set for Type
@@ -143,7 +143,7 @@ public:
   /// CoolTint# - ramps of cool colors with variation in saturation that are
   ///       complimentary to WarmSTint#
   enum
-    {
+  {
       FullRainbow = 0,
       Grey = 1,
       Iron = 2,
@@ -181,7 +181,7 @@ public:
       CoolTint1 = 36,
       CoolTint2 = 37,
       CoolTint3 = 38
-    };
+  };
 
   ///
   /// Return the lowest and highest integers, for use in looping

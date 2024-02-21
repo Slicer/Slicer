@@ -79,9 +79,9 @@ bool qSlicerTextsModuleWidget::setEditedNode(
   Q_UNUSED(role);
   Q_UNUSED(context);
   if (vtkMRMLTextNode::SafeDownCast(node))
-    {
+  {
     d->TextNodeSelector->setCurrentNode(node);
     return true;
-    }
+  }
   return false;
 }

@@ -68,30 +68,30 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
         option.palette.resolve(QApplication::palette("QMenu"));
     QVariant value = index.data(Qt::ForegroundRole);
     if (value.canConvert(QMetaType::QBrush))
-      {
+    {
       resolvedpalette.setBrush(QPalette::WindowText, qvariant_cast<QBrush>(value));
       resolvedpalette.setBrush(QPalette::ButtonText, qvariant_cast<QBrush>(value));
       resolvedpalette.setBrush(QPalette::Text, qvariant_cast<QBrush>(value));
-      }
+    }
     menuOption.palette = resolvedpalette;
     menuOption.state = QStyle::State_None;
     if (this->mCombo->window()->isActiveWindow())
-      {
+    {
       menuOption.state = QStyle::State_Active;
-      }
+    }
     if ((option.state & QStyle::State_Enabled) &&
         (index.model()->flags(index) & Qt::ItemIsEnabled))
-      {
+    {
       menuOption.state |= QStyle::State_Enabled;
-      }
+    }
     else
-      {
+    {
       menuOption.palette.setCurrentColorGroup(QPalette::Disabled);
-      }
+    }
     if (option.state & QStyle::State_Selected)
-      {
+    {
       menuOption.state |= QStyle::State_Selected;
-      }
+    }
 
     /// Hash to show unselectable items highlighted when the mouse is
     /// over them to give a feeling of selectable item.
@@ -100,7 +100,7 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
     /// but correspond to an action.
     if (option.state & QStyle::State_HasFocus &&
         !(option.state & QStyle::State_Selected))
-      {
+    {
       menuOption.state |= QStyle::State_Selected;
       QColor unselectedHighlight = menuOption.palette.color(QPalette::Highlight);
       unselectedHighlight.setHsv(unselectedHighlight.hue(),
@@ -111,41 +111,41 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
       menuOption.palette.setColor(QPalette::Highlight, unselectedHighlight);
       menuOption.palette.setColor(QPalette::HighlightedText,
                                   unselectedHighlightedText);
-      }
+    }
     /// End of the highlight
 
     menuOption.checkType = QStyleOptionMenuItem::NonExclusive;
     menuOption.checked = this->mCombo->currentIndex() == index.row();
     if (qMRMLNodeComboBoxDelegate::isSeparator(index))
-      {
+    {
       menuOption.menuItemType = QStyleOptionMenuItem::Separator;
-      }
+    }
     else
-      {
+    {
       menuOption.menuItemType = QStyleOptionMenuItem::Normal;
-      }
+    }
     QVariant variant = index.model()->data(index, Qt::DecorationRole);
     switch (variant.type())
-      {
+    {
       case QVariant::Icon:
           menuOption.icon = qvariant_cast<QIcon>(variant);
           break;
       case QVariant::Color:
-          {
+      {
           static QPixmap pixmap(option.decorationSize);
           pixmap.fill(qvariant_cast<QColor>(variant));
           menuOption.icon = pixmap;
           break;
-          }
+      }
       default:
           menuOption.icon = qvariant_cast<QPixmap>(variant);
           break;
-      }
+    }
     if (index.data(Qt::BackgroundRole).canConvert(QMetaType::QBrush))
-      {
+    {
       menuOption.palette.setBrush(QPalette::All, QPalette::Window,
                              qvariant_cast<QBrush>(index.data(Qt::BackgroundRole)));
-      }
+    }
     menuOption.text = index.model()->data(index, Qt::DisplayRole).toString()
                            .replace(QLatin1Char('&'), QLatin1String("&&"));
     menuOption.tabWidth = 0;
@@ -158,13 +158,13 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
         this->mCombo->testAttribute(Qt::WA_MacSmallSize) ||
         this->mCombo->testAttribute(Qt::WA_MacMiniSize) ||
         this->mCombo->font() != QFont())
-      {
+    {
       menuOption.font = this->mCombo->font();
-      }
+    }
     else
-      {
+    {
       menuOption.font = this->mCombo->font();
-      }
+    }
 
     menuOption.fontMetrics = QFontMetrics(menuOption.font);
 

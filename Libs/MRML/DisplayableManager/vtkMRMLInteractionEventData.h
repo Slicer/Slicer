@@ -40,11 +40,11 @@ public:
 
   /// Extends vtkCommand events
   enum MRMLInteractionEvents
-    {
+  {
     LeftButtonClickEvent = vtkCommand::UserEvent + 300, // button press and release without moving mouse
     MiddleButtonClickEvent,
     RightButtonClickEvent,
-    };
+  };
 
   void SetType(unsigned long v);
 

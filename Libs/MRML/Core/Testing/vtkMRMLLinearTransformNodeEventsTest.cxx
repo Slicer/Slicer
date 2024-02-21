@@ -33,10 +33,10 @@ int vtkMRMLLinearTransformNodeEventsTest(int , char * [] )
 
   vtkNew<vtkMatrix4x4> matrixRetrieved;
   if (!linearTransformNode->GetMatrixTransformToParent(matrixRetrieved.GetPointer()))
-    {
+  {
     std::cerr << "GetMatrixTransformToParent() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if ( fabs(matrixRetrieved->Element[0][0]-matrix->Element[0][0])>0.001
     || fabs(matrixRetrieved->Element[0][1]-matrix->Element[0][1])>0.001
     || fabs(matrixRetrieved->Element[0][2]-matrix->Element[0][2])>0.001
@@ -49,14 +49,14 @@ int vtkMRMLLinearTransformNodeEventsTest(int , char * [] )
     || fabs(matrixRetrieved->Element[2][1]-matrix->Element[2][1])>0.001
     || fabs(matrixRetrieved->Element[2][2]-matrix->Element[2][2])>0.001
     || fabs(matrixRetrieved->Element[2][3]-matrix->Element[2][3])>0.001 )
-    {
+  {
     std::cerr << "GetMatrixTransformToParent() returned incorrect result" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfModified() != 0 ||
       callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent) != 1)
-    {
+  {
     std::cerr << "vtkMRMLLinearTransformNode::SetAndObserveMatrixTransformToParent failed (1)."
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: " << callback->GetNumberOfModified() << " "
@@ -64,7 +64,7 @@ int vtkMRMLLinearTransformNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   // Set the same matrix:
@@ -72,7 +72,7 @@ int vtkMRMLLinearTransformNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfModified() != 0 ||
       callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent) != 1)
-    {
+  {
     std::cerr << "vtkMRMLLinearTransformNode::SetAndObserveMatrixTransformToParent failed (2)."
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: " << callback->GetNumberOfModified() << " "
@@ -80,7 +80,7 @@ int vtkMRMLLinearTransformNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   // Update matrix, as the matrix is not observed we expect that the output will not be updated
@@ -90,7 +90,7 @@ int vtkMRMLLinearTransformNodeEventsTest(int , char * [] )
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfModified() != 0 ||
       callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent) != 0)
-    {
+  {
     std::cerr << "vtkMatrix4x4::Modified failed."
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: " << callback->GetNumberOfModified() << " "
@@ -98,19 +98,19 @@ int vtkMRMLLinearTransformNodeEventsTest(int , char * [] )
               << callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   callback->ResetNumberOfEvents();
 
   if (!linearTransformNode->GetMatrixTransformToParent(matrixRetrieved.GetPointer()))
-    {
+  {
     std::cerr << "GetMatrixTransformToParent() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if ( fabs(matrixRetrieved->Element[0][3]-originalElement03)>0.001 )
-    {
+  {
     std::cerr << "GetMatrixTransformToParent() changed while expected it to remain the same" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

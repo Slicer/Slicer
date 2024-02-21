@@ -230,9 +230,9 @@ void qMRMLTransformDisplayNodeWidget
   Q_D(qMRMLTransformDisplayNodeWidget);
   vtkMRMLTransformDisplayNode* displayNode = nullptr;
   if (transformNode!=nullptr)
-    {
+  {
     displayNode=vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
-    }
+  }
 
   qvtkReconnect(d->TransformDisplayNode, displayNode, vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromDisplayNode()));
@@ -250,9 +250,9 @@ void qMRMLTransformDisplayNodeWidget
   this->setEnabled(d->TransformDisplayNode != nullptr);
 
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   // Update widget if different from MRML node
 
@@ -263,11 +263,11 @@ void qMRMLTransformDisplayNodeWidget
   d->Visible3dCheckBox->setChecked(d->TransformDisplayNode->GetVisibility3D());
 
   switch (d->TransformDisplayNode->GetVisualizationMode())
-    {
+  {
     case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH: d->GlyphToggle->setChecked(true); break;
     case vtkMRMLTransformDisplayNode::VIS_MODE_GRID: d->GridToggle->setChecked(true); break;
     case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR: d->ContourToggle->setChecked(true); break;
-    }
+  }
 
   d->RegionNodeComboBox->setCurrentNode(d->TransformDisplayNode->GetRegionNode());
 
@@ -301,22 +301,22 @@ void qMRMLTransformDisplayNodeWidget
   std::vector<double> levelsInMRML;
   d->TransformDisplayNode->GetContourLevelsMm(levelsInMRML);
   if (!vtkMRMLTransformDisplayNode::IsContourLevelEqual(levelsInWidget,levelsInMRML))
-    {
+  {
     d->ContourLevelsMm->setText(QLatin1String(d->TransformDisplayNode->GetContourLevelsMmAsString().c_str()));
-    }
+  }
 
   // Update ColorMap
   vtkColorTransferFunction* colorTransferFunctionInNode=d->TransformDisplayNode->GetColorMap();
   if (colorTransferFunctionInNode)
-    {
+  {
     if (!vtkMRMLProceduralColorNode::IsColorMapEqual(d->ColorTransferFunction,colorTransferFunctionInNode))
-      {
+    {
       // only update the range if the colormap is changed to avoid immediate update,
       // because we don't want to change the colormap plot range while dragging the control point
       d->ColorTransferFunction->DeepCopy(colorTransferFunctionInNode);
       this->colorUpdateRange();
-      }
     }
+  }
 
   // Interaction
   bool wasBlocking = false;
@@ -344,9 +344,9 @@ void qMRMLTransformDisplayNodeWidget
   Q_D(qMRMLTransformDisplayNodeWidget);
 
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   bool wasBlocking = false;
 
@@ -449,9 +449,9 @@ void qMRMLTransformDisplayNodeWidget::updateInteractionSliceWidgetsFromDisplayNo
   Q_D(qMRMLTransformDisplayNodeWidget);
 
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   bool wasBlocking = false;
 
@@ -554,32 +554,32 @@ void qMRMLTransformDisplayNodeWidget::updateGlyphSourceOptions(int glyphType)
   Q_D(qMRMLTransformDisplayNodeWidget);
 
   if (glyphType == vtkMRMLTransformDisplayNode::GLYPH_TYPE_ARROW)
-    {
+  {
     d->GlyphDiameterMmLabel->setVisible(true);
     d->GlyphDiameterMm->setVisible(true);
     d->GlyphShaftDiameterLabel->setVisible(true);
     d->GlyphShaftDiameterPercent->setVisible(true);
     d->GlyphTipLengthLabel->setVisible(true);
     d->GlyphTipLengthPercent->setVisible(true);
-    }
+  }
   else if (glyphType == vtkMRMLTransformDisplayNode::GLYPH_TYPE_CONE)
-    {
+  {
     d->GlyphDiameterMmLabel->setVisible(true);
     d->GlyphDiameterMm->setVisible(true);
     d->GlyphShaftDiameterLabel->setVisible(false);
     d->GlyphShaftDiameterPercent->setVisible(false);
     d->GlyphTipLengthLabel->setVisible(false);
     d->GlyphTipLengthPercent->setVisible(false);
-    }
+  }
   else if (glyphType == vtkMRMLTransformDisplayNode::GLYPH_TYPE_SPHERE)
-    {
+  {
     d->GlyphDiameterMmLabel->setVisible(false);
     d->GlyphDiameterMm->setVisible(false);
     d->GlyphShaftDiameterLabel->setVisible(false);
     d->GlyphShaftDiameterPercent->setVisible(false);
     d->GlyphTipLengthLabel->setVisible(false);
     d->GlyphTipLengthPercent->setVisible(false);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -587,9 +587,9 @@ void qMRMLTransformDisplayNodeWidget::regionNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetAndObserveRegionNode(node);
 }
 
@@ -598,9 +598,9 @@ void qMRMLTransformDisplayNodeWidget::glyphPointsNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetAndObserveGlyphPointsNode(node);
 }
 
@@ -609,9 +609,9 @@ void qMRMLTransformDisplayNodeWidget::setGlyphSpacingMm(double spacing)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGlyphSpacingMm(spacing);
 }
 
@@ -620,9 +620,9 @@ void qMRMLTransformDisplayNodeWidget::setGlyphScalePercent(double scale)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGlyphScalePercent(scale);
 }
 
@@ -631,9 +631,9 @@ void qMRMLTransformDisplayNodeWidget::setGlyphDisplayRangeMm(double min, double 
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   int oldModify=d->TransformDisplayNode->StartModify();
   d->TransformDisplayNode->SetGlyphDisplayRangeMinMm(min);
   d->TransformDisplayNode->SetGlyphDisplayRangeMaxMm(max);
@@ -645,9 +645,9 @@ void qMRMLTransformDisplayNodeWidget::setGlyphType(int glyphType)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGlyphType(glyphType);
   this->updateGlyphSourceOptions(glyphType);
 }
@@ -657,9 +657,9 @@ void qMRMLTransformDisplayNodeWidget::setGlyphTipLengthPercent(double length)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGlyphTipLengthPercent(length);
 }
 
@@ -668,9 +668,9 @@ void qMRMLTransformDisplayNodeWidget::setGlyphDiameterMm(double diameterMm)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGlyphDiameterMm(diameterMm);
 }
 
@@ -679,9 +679,9 @@ void qMRMLTransformDisplayNodeWidget::setGlyphShaftDiameterPercent(double diamet
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGlyphShaftDiameterPercent(diameterPercent);
 }
 
@@ -690,9 +690,9 @@ void qMRMLTransformDisplayNodeWidget::setGlyphResolution(double resolution)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGlyphResolution(resolution);
 }
 
@@ -701,9 +701,9 @@ void qMRMLTransformDisplayNodeWidget::setGridScalePercent(double scale)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGridScalePercent(scale);
 }
 
@@ -712,9 +712,9 @@ void qMRMLTransformDisplayNodeWidget::setGridSpacingMm(double spacing)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGridSpacingMm(spacing);
 }
 
@@ -723,9 +723,9 @@ void qMRMLTransformDisplayNodeWidget::setGridLineDiameterMm(double diameterMm)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGridLineDiameterMm(diameterMm);
 }
 
@@ -734,9 +734,9 @@ void qMRMLTransformDisplayNodeWidget::setGridResolutionMm(double resolutionMm)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGridResolutionMm(resolutionMm);
 }
 
@@ -745,9 +745,9 @@ void qMRMLTransformDisplayNodeWidget::setGridShowNonWarped(bool show)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetGridShowNonWarped(show);
 }
 
@@ -756,9 +756,9 @@ void qMRMLTransformDisplayNodeWidget::setContourLevelsMm(QString values_str)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetContourLevelsMmFromString(values_str.toUtf8());
 }
 
@@ -767,9 +767,9 @@ void qMRMLTransformDisplayNodeWidget::setContourResolutionMm(double resolutionMm
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetContourResolutionMm(resolutionMm);
 }
 
@@ -778,9 +778,9 @@ void qMRMLTransformDisplayNodeWidget::setContourOpacityPercent(double opacityPer
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetContourOpacity(opacityPercent*0.01);
 }
 
@@ -790,13 +790,13 @@ void qMRMLTransformDisplayNodeWidget::setGlyphVisualizationMode(bool activate)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!activate)
-    {
+  {
     return;
-    }
+  }
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH);
 }
 
@@ -805,13 +805,13 @@ void qMRMLTransformDisplayNodeWidget::setGridVisualizationMode(bool activate)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!activate)
-    {
+  {
     return;
-    }
+  }
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GRID);
 }
 
@@ -820,13 +820,13 @@ void qMRMLTransformDisplayNodeWidget::setContourVisualizationMode(bool activate)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!activate)
-    {
+  {
     return;
-    }
+  }
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR);
 }
 
@@ -835,9 +835,9 @@ void qMRMLTransformDisplayNodeWidget::setEditorVisibility(bool enabled)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetEditorVisibility(enabled);
 }
 
@@ -846,9 +846,9 @@ void qMRMLTransformDisplayNodeWidget::setEditorVisibility3d(bool enabled)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetEditorVisibility3D(enabled);
 }
 
@@ -857,9 +857,9 @@ void qMRMLTransformDisplayNodeWidget::setEditorVisibility2d(bool enabled)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetEditorSliceIntersectionVisibility(enabled);
 }
 
@@ -868,9 +868,9 @@ void qMRMLTransformDisplayNodeWidget::setEditorTranslationEnabled(bool enabled)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetEditorTranslationEnabled(enabled);
 }
 
@@ -879,9 +879,9 @@ void qMRMLTransformDisplayNodeWidget::setEditorTranslationSliceEnabled(bool enab
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetEditorTranslationSliceEnabled(enabled);
 }
 
@@ -890,9 +890,9 @@ void qMRMLTransformDisplayNodeWidget::setEditorRotationEnabled(bool enabled)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetEditorRotationEnabled(enabled);
 }
 
@@ -901,9 +901,9 @@ void qMRMLTransformDisplayNodeWidget::setEditorRotationSliceEnabled(bool enabled
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetEditorRotationSliceEnabled(enabled);
 }
 
@@ -912,9 +912,9 @@ void qMRMLTransformDisplayNodeWidget::setEditorScalingEnabled(bool enabled)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetEditorScalingEnabled(enabled);
 }
 
@@ -923,9 +923,9 @@ void qMRMLTransformDisplayNodeWidget::setEditorScalingSliceEnabled(bool enabled)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetEditorScalingSliceEnabled(enabled);
 }
 
@@ -934,9 +934,9 @@ void qMRMLTransformDisplayNodeWidget::setVisibility(bool visible)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetVisibility(visible);
 }
 
@@ -945,9 +945,9 @@ void qMRMLTransformDisplayNodeWidget::setVisibility2d(bool visible)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetVisibility2D(visible);
 }
 
@@ -956,9 +956,9 @@ void qMRMLTransformDisplayNodeWidget::setVisibility3d(bool visible)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetVisibility3D(visible);
 }
 
@@ -967,9 +967,9 @@ void qMRMLTransformDisplayNodeWidget::setColorTableNode(vtkMRMLNode* colorTableN
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetAndObserveColorNodeID(colorTableNode?colorTableNode->GetID():nullptr);
 }
 
@@ -979,15 +979,15 @@ void qMRMLTransformDisplayNodeWidget::colorUpdateRange()
   Q_D(qMRMLTransformDisplayNodeWidget);
 
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   // Rescale the chart so that all the points are visible
   vtkColorTransferFunction* colorMap=d->TransformDisplayNode->GetColorMap();
   if (colorMap==nullptr)
-    {
+  {
     return;
-    }
+  }
   double range[2] = {0.0, 10.0};
   colorMap->GetRange(range);
   double chartBounds[8] = {0};
@@ -1003,9 +1003,9 @@ void qMRMLTransformDisplayNodeWidget::onColorInteractionEvent()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   colorUpdateRange();
 }
 
@@ -1014,9 +1014,9 @@ void qMRMLTransformDisplayNodeWidget::onColorModifiedEvent()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
   d->TransformDisplayNode->SetColorMap(d->ColorTransferFunction);
 }
 
@@ -1025,9 +1025,9 @@ void qMRMLTransformDisplayNodeWidget::updateEditorBounds()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   qWarning() << "qMRMLTransformDisplayNodeWidget::updateEditorBounds() is not implemented yet";
 }
@@ -1037,9 +1037,9 @@ void qMRMLTransformDisplayNodeWidget::updateTranslationComponentVisibility()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   bool componentVisibility[4] = {
     d->translateX3DCheckBox->isChecked(),
@@ -1061,9 +1061,9 @@ void qMRMLTransformDisplayNodeWidget::updateRotationComponentVisibility()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   bool componentVisibility[4] = {
     d->rotateX3DCheckBox->isChecked(),
@@ -1085,9 +1085,9 @@ void qMRMLTransformDisplayNodeWidget::updateScalingComponentVisibility()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   if (!d->TransformDisplayNode)
-    {
+  {
     return;
-    }
+  }
 
   bool componentVisibility[4] = {
     d->scaleX3DCheckBox->isChecked(),

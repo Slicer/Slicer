@@ -68,25 +68,25 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
 vtkMRMLPlotChartNode::~vtkMRMLPlotChartNode()
 {
   if (this->Title)
-    {
+  {
     delete [] this->Title;
     this->Title = nullptr;
-    }
+  }
   if (this->XAxisTitle)
-    {
+  {
     delete [] this->XAxisTitle;
     this->XAxisTitle = nullptr;
-    }
+  }
   if (this->YAxisTitle)
-    {
+  {
     delete [] this->YAxisTitle;
     this->YAxisTitle = nullptr;
-    }
+  }
   if (this->FontType)
-    {
+  {
     delete [] this->FontType;
     this->FontType = nullptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -100,9 +100,9 @@ void vtkMRMLPlotChartNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
 {
   this->Superclass::OnNodeReferenceAdded(reference);
   if (std::string(reference->GetReferenceRole()) == this->PlotSeriesNodeReferenceRole)
-    {
+  {
     this->InvokeEvent(vtkMRMLPlotChartNode::PlotModifiedEvent, reference->GetReferencedNode());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -110,9 +110,9 @@ void vtkMRMLPlotChartNode::OnNodeReferenceModified(vtkMRMLNodeReference *referen
 {
   this->Superclass::OnNodeReferenceModified(reference);
   if (std::string(reference->GetReferenceRole()) == this->PlotSeriesNodeReferenceRole)
-    {
+  {
     this->InvokeEvent(vtkMRMLPlotChartNode::PlotModifiedEvent, reference->GetReferencedNode());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -120,9 +120,9 @@ void vtkMRMLPlotChartNode::OnNodeReferenceRemoved(vtkMRMLNodeReference *referenc
 {
   this->Superclass::OnNodeReferenceRemoved(reference);
   if (std::string(reference->GetReferenceRole()) == this->PlotSeriesNodeReferenceRole)
-    {
+  {
     this->InvokeEvent(vtkMRMLPlotChartNode::PlotModifiedEvent, reference->GetReferencedNode());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -267,9 +267,9 @@ void vtkMRMLPlotChartNode::AddAndObservePlotSeriesNodeID(const char *plotSeriesN
 void vtkMRMLPlotChartNode::RemovePlotSeriesNodeID(const char *plotSeriesNodeID)
 {
   if (!plotSeriesNodeID)
-    {
+  {
     return;
-    }
+  }
 
   this->RemoveNthPlotSeriesNodeID(this->GetPlotSeriesNodeIndexFromID(plotSeriesNodeID));
 }
@@ -314,22 +314,22 @@ const char* vtkMRMLPlotChartNode::GetNthPlotSeriesNodeID(int n)
 int vtkMRMLPlotChartNode::GetPlotSeriesNodeIndexFromID(const char *plotSeriesNodeID)
 {
   if (!plotSeriesNodeID)
-    {
+  {
     return -1;
-    }
+  }
 
   int numPlotSeriesNodes = this->GetNumberOfNodeReferences(
     this->GetPlotSeriesNodeReferenceRole());
 
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
-    {
+  {
     const char* id = this->GetNthNodeReferenceID(
       this->GetPlotSeriesNodeReferenceRole(), plotIndex);
     if (id && !strcmp(plotSeriesNodeID, id))
-      {
+    {
       return plotIndex;
-      }
     }
+  }
 
   return -1;
 }
@@ -362,15 +362,15 @@ void vtkMRMLPlotChartNode::ProcessMRMLEvents(vtkObject *caller,
 
   int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
-    {
+  {
     vtkMRMLPlotSeriesNode *pnode = this->GetNthPlotSeriesNode(plotIndex);
     if (pnode != nullptr && pnode == vtkMRMLPlotSeriesNode::SafeDownCast(caller) &&
        (event ==  vtkCommand::ModifiedEvent || event == vtkMRMLPlotSeriesNode::TableModifiedEvent))
-      {
+    {
       this->InvokeEvent(vtkMRMLPlotChartNode::PlotModifiedEvent, pnode);
       this->Modified();
-      }
     }
+  }
 
   return;
 }
@@ -381,14 +381,14 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeNames(std::vector<std::string> &plotS
   plotSeriesNodeNames.clear();
   int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
-    {
+  {
     vtkMRMLPlotSeriesNode *pnode = this->GetNthPlotSeriesNode(plotIndex);
     if (!pnode)
-      {
+    {
       continue;
-      }
-    plotSeriesNodeNames.emplace_back(pnode->GetName());
     }
+    plotSeriesNodeNames.emplace_back(pnode->GetName());
+  }
 
   return static_cast<int>(plotSeriesNodeNames.size());
 }
@@ -399,9 +399,9 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeIDs(std::vector<std::string> &plotSer
   plotSeriesNodeIDs.clear();
   int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
-    {
+  {
     plotSeriesNodeIDs.emplace_back(this->GetNthPlotSeriesNodeID(plotIndex));
-    }
+  }
 
   return static_cast<int>(plotSeriesNodeIDs.size());
 }
@@ -410,10 +410,10 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeIDs(std::vector<std::string> &plotSer
 void vtkMRMLPlotChartNode::SetPropertyToAllPlotSeriesNodes(PlotSeriesNodeProperty plotProperty, const char* value)
 {
   if (!this->GetScene())
-    {
+  {
     vtkErrorMacro("vtkMRMLPlotChartNode::SetPropertyToAllPlotSeriesNodes failed: invalid scene");
     return;
-    }
+  }
 
   int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
 
@@ -422,39 +422,39 @@ void vtkMRMLPlotChartNode::SetPropertyToAllPlotSeriesNodes(PlotSeriesNodePropert
   // Update all plot nodes and invoke modified events at the end
 
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
-    {
+  {
     vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), plotIndex));
     if (!plotSeriesNode)
-      {
+    {
       continue;
-      }
+    }
     plotSeriesNodesWasModifying[plotIndex] = plotSeriesNode->StartModify();
 
     if (plotProperty == PlotType)
-      {
+    {
       plotSeriesNode->SetPlotType(value);
-      }
-    else if (plotProperty == PlotXColumnName)
-      {
-      plotSeriesNode->SetXColumnName(value);
-      }
-    else if (plotProperty == PlotYColumnName)
-      {
-      plotSeriesNode->SetYColumnName(value);
-      }
-    else if (plotProperty == PlotMarkerStyle)
-      {
-      plotSeriesNode->SetMarkerStyle(plotSeriesNode->GetMarkerStyleFromString(value));
-      }
     }
+    else if (plotProperty == PlotXColumnName)
+    {
+      plotSeriesNode->SetXColumnName(value);
+    }
+    else if (plotProperty == PlotYColumnName)
+    {
+      plotSeriesNode->SetYColumnName(value);
+    }
+    else if (plotProperty == PlotMarkerStyle)
+    {
+      plotSeriesNode->SetMarkerStyle(plotSeriesNode->GetMarkerStyleFromString(value));
+    }
+  }
 
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
-    {
+  {
     vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), plotIndex));
     if (!plotSeriesNode)
-      {
+    {
       continue;
-      }
+    }
     plotSeriesNode->EndModify(plotSeriesNodesWasModifying[plotIndex]);
   }
 }
@@ -464,61 +464,61 @@ bool vtkMRMLPlotChartNode::GetPropertyFromAllPlotSeriesNodes(PlotSeriesNodePrope
 {
   value.clear();
   if (!this->GetScene())
-    {
+  {
     vtkErrorMacro("vtkMRMLPlotChartNode::GetPropertyFromAllPlotSeriesNodes failed: invalid scene");
     return false;
-    }
+  }
 
   int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
 
   if (numPlotSeriesNodes < 1)
-    {
+  {
     return false;
-    }
+  }
 
   bool commonPropertyDefined = false;
 
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
-    {
+  {
     vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), plotIndex));
     if (!plotSeriesNode)
-      {
+    {
       continue;
-      }
+    }
 
     // Get property value
     std::string propertyValue;
     if (plotProperty == PlotType)
-      {
+    {
       propertyValue = plotSeriesNode->GetPlotTypeAsString(plotSeriesNode->GetPlotType());
-      }
+    }
     else if (plotProperty == PlotXColumnName)
-      {
+    {
       propertyValue = plotSeriesNode->GetXColumnName();
-      }
+    }
     else if (plotProperty == PlotYColumnName)
-      {
+    {
       propertyValue = plotSeriesNode->GetYColumnName();
-      }
+    }
     else if (plotProperty == PlotMarkerStyle)
-      {
+    {
       propertyValue = plotSeriesNode->GetMarkerStyleAsString(plotSeriesNode->GetMarkerStyle());
-      }
+    }
 
     if (commonPropertyDefined)
-      {
+    {
       if (propertyValue != value)
-        {
+      {
         // not all plot nodes have the same property value
         return false;
-        }
-      }
-    else
-      {
-      commonPropertyDefined = true;
-      value = propertyValue;
       }
     }
+    else
+    {
+      commonPropertyDefined = true;
+      value = propertyValue;
+    }
+  }
 
   return true;
 }

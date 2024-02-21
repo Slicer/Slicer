@@ -75,12 +75,12 @@ int qSlicerDataDialogTest1(int argc, char * argv[] )
   qSlicerDataDialog dataDialog;
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     // Quit the dialog
     QTimer::singleShot(100, &app, SLOT(quit()));
     // Quit the app
     QTimer::singleShot(120, &app, SLOT(quit()));
-    }
+  }
 
   return dataDialog.exec();
 }

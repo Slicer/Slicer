@@ -93,11 +93,11 @@ void qMRMLListWidget::setMRMLScene(vtkMRMLScene* scene)
 
   mrmlModel->setMRMLScene(scene);
   if (scene)
-    {
+  {
     this->setRootIndex(sortModel->index(0, 0));
     sortModel->sort(0);
     sortModel->invalidate();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------

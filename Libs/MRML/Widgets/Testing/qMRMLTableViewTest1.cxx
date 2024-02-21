@@ -63,11 +63,11 @@ int qMRMLTableViewTest1( int argc, char * argv [] )
   int numPoints = 15;
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
-    {
+  {
     table->SetValue(i, 0, i*0.5-10 );
     table->SetValue(i, 1, i*1.2+12);
     table->SetValue(i, 2, table->GetValue(i,0).ToDouble()+table->GetValue(i,1).ToDouble());
-    }
+  }
 
   vtkNew<vtkMRMLTableNode> tableNode;
   tableNode->SetAndObserveTable(table.GetPointer());
@@ -95,9 +95,9 @@ int qMRMLTableViewTest1( int argc, char * argv [] )
   parentWidget.raise();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

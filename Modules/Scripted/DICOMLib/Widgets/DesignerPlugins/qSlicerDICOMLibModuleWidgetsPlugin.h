@@ -40,11 +40,11 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_PLUGINS_EXPORT qSlicerDICOMLibModuleWidge
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qSlicerDICOMTagEditorWidgetPlugin;
     return plugins;
-    }
+  }
 };
 
 #endif

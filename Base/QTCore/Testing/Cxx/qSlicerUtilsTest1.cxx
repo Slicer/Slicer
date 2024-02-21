@@ -56,10 +56,10 @@ bool createFile(int line, const QDir& dir, const QString& relativePath, const QS
   file.close();
 
   if (!QFile::exists(filePath))
-    {
+  {
     std::cerr << "Line " << line << " - Failed to create file" << qPrintable(filePath) << std::endl;
     return false;
-    }
+  }
 
   return true;
 }
@@ -70,13 +70,13 @@ bool isPluginInstalledTest(int line, bool expectedResult,
 {
   bool res = qSlicerUtils::isPluginInstalled(path, applicationHomeDir);
   if (res != expectedResult)
-    {
+  {
 //    std::cerr << "Line " << line << " - Problem with isPluginInstalled()\n"
 //              << "\tpath: " << qPrintable(path) << "\n"
 //              << "\tapplicationHomeDir: " << qPrintable(applicationHomeDir) << std::endl;
     QString msg("Line %1 - Problem with isPluginInstalled()\n\tpath: %2\n\tapplicationHomeDir: %3");
     throw std::runtime_error(qPrintable(msg.arg(line).arg(path).arg(applicationHomeDir)));
-    }
+  }
   return res;
 }
 
@@ -86,10 +86,10 @@ bool isPluginBuiltInTest(int line, bool expectedResult,
 {
   bool res = qSlicerUtils::isPluginBuiltIn(path, applicationHomeDir, QString::fromUtf8(Slicer_REVISION));
   if (res != expectedResult)
-    {
+  {
     QString msg("Line %1 - Problem with isPluginBuiltIn(). Expected %2 for:\n\tpath: %3\n\tapplicationHomeDir: %4");
     throw std::runtime_error(qPrintable(msg.arg(line).arg(expectedResult).arg(path).arg(applicationHomeDir)));
-    }
+  }
   return res;
 }
 
@@ -105,16 +105,16 @@ int isExecutableNameTest()
                   << "Threshold.m" << "Threshold.exe";
 
   foreach(const QString& executableName, executableNames)
-    {
+  {
     CHECK_BOOL(qSlicerUtils::isExecutableName(executableName), true);
-    }
+  }
 
   QStringList notExecutableNames;
   notExecutableNames << "Threshold.ini" << "Threshold.txt" << "Threshold";
   foreach(const QString& notExecutableName, notExecutableNames)
-    {
+  {
     CHECK_BOOL(qSlicerUtils::isExecutableName(notExecutableName), false);
-    }
+  }
   return EXIT_SUCCESS;
 }
 
@@ -129,9 +129,9 @@ int isCLILoadableModuleTest()
                   << "libThresholdLib.dylib"
                   << "libThresholdLib.so";
   foreach (const QString& filePath, validFilePaths)
-    {
+  {
     CHECK_BOOL(qSlicerUtils::isCLILoadableModule(filePath), true);
-    }
+  }
   invalidFilePaths << "libThresholdLib.dll"
                     << "ThresholdLib.dylib"
                     << "ThresholdLib.so"
@@ -142,11 +142,11 @@ int isCLILoadableModuleTest()
                     << "libThresholdlib.so"
                     << "Thresholdlib.so";
   foreach (const QString& filePath, invalidFilePaths)
-    {
+  {
     CHECK_BOOL(qSlicerUtils::isCLILoadableModule(filePath), false);
-    }
-  return EXIT_SUCCESS;
   }
+  return EXIT_SUCCESS;
+}
 
 //-----------------------------------------------------------------------------
 int isLoadableModuleTest()
@@ -159,9 +159,9 @@ int isLoadableModuleTest()
                   << "libqSlicerThresholdModule.dylib"
                   << "libqSlicerThresholdModule.so";
   foreach (const QString& filePath, validFilePaths)
-    {
+  {
     CHECK_BOOL(qSlicerUtils::isLoadableModule(filePath), true);
-    }
+  }
 
   invalidFilePaths << "libqSlicerThresholdModule.dll"
                     << "qSlicerThresholdModule.dylib"
@@ -171,12 +171,12 @@ int isLoadableModuleTest()
                     << "libQSlicerThresholdmodule.so"
                     << "QSlicerThresholdmodule.so";
   foreach (const QString& filePath, invalidFilePaths)
-    {
+  {
     CHECK_BOOL(qSlicerUtils::isLoadableModule(filePath), false);
-    }
+  }
 
   return EXIT_SUCCESS;
-  }
+}
 
   //-----------------------------------------------------------------------------
   int executableExtensionTest()
@@ -204,21 +204,21 @@ int isLoadableModuleTest()
     QString expectedModuleName = "VR";
 
     foreach (const QString& libraryName, libraryNames)
-      {
+    {
       QString moduleName = qSlicerUtils::extractModuleNameFromLibraryName(libraryName);
       CHECK_QSTRING(moduleName, expectedModuleName);
-      }
+    }
     return EXIT_SUCCESS;
   }
 
   //-----------------------------------------------------------------------------
   int extractModuleNameFromClassNameTest()
-    {
+  {
     CHECK_QSTRING(qSlicerUtils::extractModuleNameFromClassName("qSlicerThresholdModule"), "Threshold");
     CHECK_QSTRING(qSlicerUtils::extractModuleNameFromClassName("qSlicerThresholdModuleModule"), "ThresholdModule");
     CHECK_QSTRING(qSlicerUtils::extractModuleNameFromClassName("qSlicerModuleThresholdModule"), "ModuleThreshold");
     return EXIT_SUCCESS;
-    }
+  }
 
   //-----------------------------------------------------------------------------
   int isPluginInstalledBuiltinTest()
@@ -254,9 +254,9 @@ int isLoadableModuleTest()
     foreach(const QString& relativePath,
             QStringList() << debug << release << relWithDebInfo << minSizeRel << foo << fooDebug
                           << fooRelease << fooBar << fooBarDebug << fooBarRelease)
-      {
+    {
       createFile(__LINE__, tmp1, relativePath, "plugin.txt");
-      }
+    }
 
     isPluginInstalledTest(__LINE__, false, tmp1.path() + "/" + debug + "/plugin.txt", tmp1.path());
     isPluginInstalledTest(__LINE__, false, tmp1.path() + "/" + release + "/plugin.txt", tmp1.path());
@@ -336,9 +336,9 @@ int isLoadableModuleTest()
     tmp3.cd(temporaryDirName);
 
     foreach(const QString& relativePath, QStringList() << foo << fooBar)
-      {
+    {
       createFile(__LINE__, tmp1, relativePath, "plugin.txt");
-      }
+    }
 
     isPluginInstalledTest(__LINE__, true, tmp3.path() + "/" + foo + "/plugin.txt", tmp2.path());
     isPluginInstalledTest(__LINE__, true, tmp3.path() + "/" + fooBar + "/plugin.txt", tmp2.path());
@@ -424,9 +424,9 @@ int isLoadableModuleTest()
 
     // Clean temporary directories
     foreach(const QString& dir, directoriesToRemove)
-      {
+    {
       ctk::removeDirRecursively(dir);
-      }
+    }
 
     //
     // Case 6: Platform is macOS, application is installed
@@ -474,14 +474,14 @@ int isLoadableModuleTest()
     QString expectedPath = tmp.path() + "/" + libModule;
     QString currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModuleRelease;
     subDirWithoutIntDir = QString("lib%1module").arg(QDir::separator());
@@ -490,14 +490,14 @@ int isLoadableModuleTest()
     expectedPath = tmp.path() + "/" + libModule;
     currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModuleRelease + "/";
     subDirWithoutIntDir = "lib/module";
@@ -506,14 +506,14 @@ int isLoadableModuleTest()
     expectedPath = tmp.path() + "/" + libModule;
     currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModuleRelease;
     subDirWithoutIntDir = "module";
@@ -522,14 +522,14 @@ int isLoadableModuleTest()
     expectedPath = tmp.path() + "/" + libModule;
     currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModuleRelease;
     subDirWithoutIntDir = "";
@@ -538,14 +538,14 @@ int isLoadableModuleTest()
     expectedPath = tmp.path() + "/" + libModuleRelease;
     currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModuleRelease + "/foo.txt";
     subDirWithoutIntDir = "lib/module";
@@ -554,14 +554,14 @@ int isLoadableModuleTest()
     expectedPath = tmp.path() + "/" + libModuleRelease + "/foo.txt";
     currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModuleRelease + "/foo.txt";
     subDirWithoutIntDir = libModuleRelease;
@@ -570,14 +570,14 @@ int isLoadableModuleTest()
     expectedPath = tmp.path() + "/" + libModuleRelease;
     currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModuleRelease;
     subDirWithoutIntDir = tmp.path() + "/" + libModule;
@@ -586,14 +586,14 @@ int isLoadableModuleTest()
     expectedPath = tmp.path() + "/" + libModule;
     currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/bin";
     subDirWithoutIntDir = libModule;
@@ -602,30 +602,30 @@ int isLoadableModuleTest()
     expectedPath = tmp.path() + "/bin";
     currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     QString fooAppContentsMacOSX("Foo.app/Contents/MacOSX");
     tmp.mkpath(fooAppContentsMacOSX);
     QString expectedFilePath = tmp.path() + "/" +  fooAppContentsMacOSX;
     if (!QFile::exists(expectedFilePath))
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Failed to create file" << qPrintable(expectedFilePath) << std::endl;
-      }
+    }
 
     QString fooAppContentsBin("Foo.app/Contents/bin");
     tmp.mkpath(fooAppContentsBin);
     expectedFilePath = tmp.path() + "/" +  fooAppContentsMacOSX;
     if (!QFile::exists(expectedFilePath))
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Failed to create file" << qPrintable(expectedFilePath) << std::endl;
-      }
+    }
 
     inputPath = tmp.path() + "/" + fooAppContentsMacOSX;
     subDirWithoutIntDir = "bin";
@@ -634,14 +634,14 @@ int isLoadableModuleTest()
     expectedPath = tmp.path() + "/" + fooAppContentsMacOSX;
     currentPath = qSlicerUtils::pathWithoutIntDir(inputPath, subDirWithoutIntDir, currentIntDir);
     if (currentPath != expectedPath || currentIntDir != expectedIntDir)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathWithoutIntDir()" << std::endl
                             << "currentPath = " << qPrintable(currentPath) << std::endl
                             << "expectedPath = " << qPrintable(expectedPath) << std::endl
                             << "currentIntDir = " << qPrintable(currentIntDir) << std::endl
                             << "expectedIntDir = " << qPrintable(expectedIntDir) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     //-----------------------------------------------------------------------------
     // Test pathEndsWith()
@@ -652,48 +652,48 @@ int isLoadableModuleTest()
     bool expected = true;
     bool current = qSlicerUtils::pathEndsWith(inputPath, relativePath);
     if (current != expected)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathEndsWith()" << std::endl
                             << "current = " << current << std::endl
                             << "expected = " << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModule;
     relativePath = "module";
     expected = true;
     current = qSlicerUtils::pathEndsWith(inputPath, relativePath);
     if (current != expected)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathEndsWith()" << std::endl
                             << "current = " << current << std::endl
                             << "expected = " << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModuleRelease;
     relativePath = tmp.path() + "/" + libModuleRelease;
     expected = true;
     current = qSlicerUtils::pathEndsWith(inputPath, relativePath);
     if (current != expected)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathEndsWith()" << std::endl
                             << "current = " << current << std::endl
                             << "expected = " << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     inputPath = tmp.path() + "/" + libModuleRelease;
     relativePath = tmp.path() + "/" + libModule;
     expected = false;
     current = qSlicerUtils::pathEndsWith(inputPath, relativePath);
     if (current != expected)
-      {
+    {
       std::cerr << __LINE__ << " - Error in  pathEndsWith()" << std::endl
                             << "current = " << current << std::endl
                             << "expected = " << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     //-----------------------------------------------------------------------------
     // Remove 'tmp' directory
@@ -705,7 +705,7 @@ int isLoadableModuleTest()
 
   //-----------------------------------------------------------------------------
   int setPermissionsRecursivelyTest()
-    {
+  {
     QDir tmp = QDir::temp();
     QString temporaryDirName = QString("qSlicerUtilsTest1-setPermissionsRecursively.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
     tmp.mkdir(temporaryDirName);
@@ -726,9 +726,9 @@ int isLoadableModuleTest()
             << path2 + "/si.txt"
             << path2 + "/sol.txt"
             )
-      {
+    {
       CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
-      }
+    }
 
     // Make sure directories and files are read-only
     CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner, QFile::ReadOwner), true);
@@ -745,9 +745,9 @@ int isLoadableModuleTest()
             << path2 + "/si.txt"
             << path2 + "/sol.txt"
             )
-        {
+    {
         CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, false);
-        }
+    }
 
     CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner, QFile::ReadOwner), true);
 
@@ -758,9 +758,9 @@ int isLoadableModuleTest()
             << path2 + "/si.txt"
             << path2 + "/sol.txt"
             )
-      {
+    {
       CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner) != 0, true);
-      }
+    }
 
     // Since directories and files are not writable, shouldn't be able to delete
     CHECK_BOOL(ctk::removeDirRecursively(tmp.path()), false);
@@ -772,10 +772,10 @@ int isLoadableModuleTest()
             << path2 + "/si.txt"
             << path2 + "/sol.txt"
             )
-      {
+    {
       // Since files are read-only, they should *NOT* be writable
       CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner) != 0, false);
-      }
+    }
 
     CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(),
       QFile::ReadOwner | QFile::ExeOwner | QFile::WriteOwner, QFile::ReadOwner | QFile::WriteOwner), true);
@@ -787,19 +787,19 @@ int isLoadableModuleTest()
             << path2 + "/si.txt"
             << path2 + "/sol.txt"
             )
-      {
+    {
       CHECK_BOOL((QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner) != 0, true);
-      }
+    }
 
     // Should be possible to recursively delete
     CHECK_BOOL(ctk::removeDirRecursively(tmp.path()), true);
 
     return EXIT_SUCCESS;
-    }
+  }
 
   //-----------------------------------------------------------------------------
   int replaceWikiUrlVersionTest()
-    {
+  {
     //! [replaceWikiUrlVersion example1]
     CHECK_QSTRING(
       qSlicerUtils::replaceWikiUrlVersion("https://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter", "4.4"),
@@ -831,11 +831,11 @@ int isLoadableModuleTest()
     //! [replaceWikiUrlVersion example4]
 
     return EXIT_SUCCESS;
-    }
+  }
 
   //-----------------------------------------------------------------------------
   int replaceDocumentationUrlVersionTest()
-    {
+  {
 
     QString hostname = "slicer.readthedocs.io";
     // Slicer ReadTheDocs -> replacements are done
@@ -888,7 +888,7 @@ int isLoadableModuleTest()
       "https://github.com/SlicerHeart/SlicerHeart/blob/latest/data/1.0/README.md");
 
     return EXIT_SUCCESS;
-    }
+  }
 
 
 } // end of anonymous namespace
@@ -896,7 +896,7 @@ int isLoadableModuleTest()
 int qSlicerUtilsTest1(int, char *[])
 {
   try
-    {
+  {
     CHECK_EXIT_SUCCESS(isExecutableNameTest());
     CHECK_EXIT_SUCCESS(isCLILoadableModuleTest());
     CHECK_EXIT_SUCCESS(isLoadableModuleTest());
@@ -906,12 +906,12 @@ int qSlicerUtilsTest1(int, char *[])
     CHECK_EXIT_SUCCESS(setPermissionsRecursivelyTest());
     CHECK_EXIT_SUCCESS(replaceWikiUrlVersionTest());
     CHECK_EXIT_SUCCESS(replaceDocumentationUrlVersionTest());
-    }
+  }
   catch (const std::runtime_error& e)
-    {
+  {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

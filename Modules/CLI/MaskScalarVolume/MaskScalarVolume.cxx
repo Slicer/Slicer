@@ -121,11 +121,11 @@ int main( int argc, char * argv[] )
   itk::ImageIOBase::IOComponentType componentType;
 
   try
-    {
+  {
     itk::GetImageType(InputVolume, pixelType, componentType);
 
     switch( componentType )
-      {
+    {
       case itk::ImageIOBase::UCHAR:
         return DoIt<unsigned char>( argc, argv);
         break;
@@ -160,13 +160,13 @@ int main( int argc, char * argv[] )
       default:
         std::cout << "unknown component type" << std::endl;
         break;
-      }
     }
+  }
   catch( itk::ExceptionObject & excep )
-    {
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

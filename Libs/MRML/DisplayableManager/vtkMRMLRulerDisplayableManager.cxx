@@ -61,19 +61,19 @@ class vtkRulerRendererUpdateObserver : public vtkCommand
 {
 public:
   static vtkRulerRendererUpdateObserver *New()
-    {
+  {
     return new vtkRulerRendererUpdateObserver;
-    }
+  }
   vtkRulerRendererUpdateObserver()
-    {
+  {
     this->DisplayableManager = nullptr;
-    }
+  }
   void Execute(vtkObject* vtkNotUsed(wdg), unsigned long vtkNotUsed(event), void* vtkNotUsed(calldata)) override
-    {
+  {
     if (this->DisplayableManager)
-      {
+    {
       this->DisplayableManager->UpdateFromRenderer();
-      }
+    }
   }
   vtkWeakPointer<vtkMRMLRulerDisplayableManager> DisplayableManager;
 };
@@ -141,20 +141,20 @@ vtkMRMLRulerDisplayableManager::vtkInternal::~vtkInternal()
 void vtkMRMLRulerDisplayableManager::vtkInternal::ShowActors(bool show)
 {
   if (this->ActorsAddedToRenderer == show)
-    {
+  {
     // no change
     return;
-    }
+  }
   if (show)
-    {
+  {
     this->MarkerRenderer->AddViewProp(this->RulerTextActor);
     this->MarkerRenderer->AddViewProp(this->RulerLineActor);
-    }
+  }
   else
-    {
+  {
     this->MarkerRenderer->RemoveViewProp(this->RulerTextActor);
     this->MarkerRenderer->RemoveViewProp(this->RulerLineActor);
-    }
+  }
   this->ActorsAddedToRenderer = show;
 }
 
@@ -163,21 +163,21 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::AddRendererUpdateObserver(vtkR
 {
   RemoveRendererUpdateObserver();
   if (renderer)
-    {
+  {
     this->ObservedRenderer = renderer;
     this->RendererUpdateObservationId = renderer->AddObserver(vtkCommand::StartEvent, this->RendererUpdateObserver);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLRulerDisplayableManager::vtkInternal::RemoveRendererUpdateObserver()
 {
   if (this->ObservedRenderer)
-    {
+  {
     this->ObservedRenderer->RemoveObserver(this->RendererUpdateObservationId);
     this->RendererUpdateObservationId = 0;
     this->ObservedRenderer = nullptr;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -185,34 +185,34 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::SetupMarkerRenderer()
 {
   vtkRenderer* renderer = this->External->GetRenderer();
   if (renderer==nullptr)
-    {
+  {
     vtkErrorWithObjectMacro(this->External, "vtkMRMLRulerDisplayableManager::vtkInternal::SetupMarkerRenderer() failed: renderer is invalid");
     return;
-    }
+  }
 
   this->MarkerRenderer->InteractiveOff();
 
   vtkRenderWindow* renderWindow = renderer->GetRenderWindow();
   if (renderWindow->GetNumberOfLayers() < RENDERER_LAYER+1)
-    {
+  {
     renderWindow->SetNumberOfLayers( RENDERER_LAYER+1 );
-    }
+  }
   this->MarkerRenderer->SetLayer(RENDERER_LAYER);
   renderWindow->AddRenderer(this->MarkerRenderer);
   // Parallel projection is needed to prevent actors from warping/tilting
   // when they are near the edge of the window.
   vtkCamera* camera = this->MarkerRenderer->GetActiveCamera();
   if (camera)
-    {
+  {
     camera->ParallelProjectionOn();
-    }
+  }
 
   // In 3D viewers we need to follow the renderer and update the orientation marker accordingly
   vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(this->External->GetMRMLDisplayableNode());
   if (threeDViewNode)
-    {
+  {
     this->AddRendererUpdateObserver(renderer);
-    }
+  }
 
 }
 
@@ -233,9 +233,9 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::SetupRuler()
   textProperty->SetFontSize(RULER_BASE_FONT_SIZE);
   textProperty->SetFontFamilyToArial();
   if (this->External->GetMRMLApplicationLogic())
-    {
+  {
     this->External->GetMRMLApplicationLogic()->UseCustomFontFile(textProperty);
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -243,26 +243,26 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
 {
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->External->GetMRMLDisplayableNode());
   if (!viewNode || !viewNode->GetRulerEnabled())
-    {
+  {
     vtkErrorWithObjectMacro(this->External, "vtkMRMLRulerDisplayableManager::UpdateMarkerOrientation() failed: view node is invalid");
     this->ShowActors(false);
     return;
-    }
+  }
 
   if (this->External->RulerScalePresets.empty())
-    {
+  {
     vtkErrorWithObjectMacro(this->External, "vtkMRMLRulerDisplayableManager::UpdateMarkerOrientation() failed: no ruler scale presets are defined");
     this->ShowActors(false);
     return;
-    }
+  }
 
   int type = viewNode->GetRulerType();
   if (type==vtkMRMLAbstractViewNode::RulerTypeNone)
-    {
+  {
     // ruler not visible, no updates are needed
     this->ShowActors(false);
     return;
-    }
+  }
 
   int viewWidthPixel = 0;
   int viewHeightPixel = 0;
@@ -271,7 +271,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
   vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
   if (sliceNode)
-    {
+  {
     viewWidthPixel = sliceNode->GetDimensions()[0];
     viewHeightPixel = sliceNode->GetDimensions()[1];
 
@@ -283,12 +283,12 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
       rasToXY->GetElement(0,1)*rasToXY->GetElement(0,1) +
       rasToXY->GetElement(0,2)*rasToXY->GetElement(0,2));
 
-    }
+  }
   else if (threeDViewNode && this->ObservedRenderer)
-    {
+  {
     vtkCamera *cam = this->ObservedRenderer->GetActiveCamera();
     if (cam && cam->GetParallelProjection())
-      {
+    {
       // Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
       // Determine the available renderer size in pixels
       double minX = 0;
@@ -305,14 +305,14 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
       // Parallel scale: height of the viewport in world-coordinate distances.
       // Larger numbers produce smaller images.
       scalingFactorPixelPerMm = double(rendererSizeInPixels[1])/cam->GetParallelScale()/2.0;
-      }
     }
+  }
   else
-    {
+  {
     vtkErrorWithObjectMacro(this->External, "vtkMRMLRulerDisplayableManager::UpdateMarkerOrientation() failed: displayable node is invalid");
     this->ShowActors(false);
     return;
-    }
+  }
 
   double rulerPreferredLengthPixel = double(viewWidthPixel)/4.0;
 
@@ -320,26 +320,26 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
   double rulerPreferredLength = rulerPreferredLengthPixel / scalingFactorPixelPerMm;
   std::vector<RulerScalePreset>::iterator bestMatchScalePreset = this->External->RulerScalePresets.begin();
   for (std::vector<RulerScalePreset>::iterator it = bestMatchScalePreset+1; it != this->External->RulerScalePresets.end(); ++it)
-    {
+  {
     if (fabs(it->Length-rulerPreferredLength)<fabs(bestMatchScalePreset->Length-rulerPreferredLength))
-      {
+    {
       bestMatchScalePreset = it;
-      }
+    }
     else
-      {
+    {
       // list is ordered, therefore if the difference has not got smaller
       // then it will not, so we can stop searching
       break;
-      }
     }
+  }
 
   double actualRulerLengthPixel = double(bestMatchScalePreset->Length)*scalingFactorPixelPerMm;
   if (actualRulerLengthPixel < RULER_MINIMUM_LENGTH*viewWidthPixel || actualRulerLengthPixel > RULER_MAXIMUM_LENGTH*viewWidthPixel || viewWidthPixel==0)
-    {
+  {
     // ruler is too small or too big to display or view type is invalid
     this->ShowActors(false);
     return;
-    }
+  }
 
   int rulerLineMarginPixel = int(RULER_LINE_MARGIN*viewHeightPixel);
   int rulerTickBaseLengthPixel = int(RULER_TICK_BASE_LENGTH*viewHeightPixel);
@@ -488,22 +488,22 @@ void vtkMRMLRulerDisplayableManager::AddRulerScalePreset(double length, int numb
   // insert into this->RulerScalePresets list, ordered by Length
   std::vector<RulerScalePreset>::iterator it = this->RulerScalePresets.begin();
   for (; it != this->RulerScalePresets.end(); ++it)
-    {
+  {
     if (it->Length == length)
-      {
+    {
       // found an exact match, update it
       it->NumberOfMajorDivisions = numberOfMajorDivisions;
       it->NumberOfMinorDivisions = numberOfMinorDivisions;
       it->DisplayedUnitName = displayedUnitName;
       it->DisplayedScale = displayedScale;
       return;
-      }
+    }
     if (it->Length>length)
-      {
+    {
       // this element's Length is larger, insert the new element before this
       break;
-      }
     }
+  }
   RulerScalePreset preset;
   preset.Length = length;
   preset.NumberOfMajorDivisions = numberOfMajorDivisions;

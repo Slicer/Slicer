@@ -115,15 +115,15 @@ int DoIt( int argc, char * argv[], T )
   reader->SetFileName( InputVolume.c_str() );
 
   try
-    {
+  {
     reader->Update();
-    }
+  }
   catch( itk::ExceptionObject & excp )
-    {
+  {
     std::cerr << "Exception thrown while reading the input file" << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 // //////////////////////////////////////////////
 // 2) Resample the series
@@ -155,12 +155,12 @@ int DoIt( int argc, char * argv[], T )
   outputSpacing[1] = outputPixelSpacing[1];
   outputSpacing[2] = outputPixelSpacing[2];
   for( unsigned int i = 0; i < 3; i++ )
-    {
+  {
     if( outputSpacing[i] == 0.0 )
-      {
+    {
       outputSpacing[i] = inputSpacing[i];
-      }
     }
+  }
   typename InputImageType::SizeType   outputSize;
   typedef typename InputImageType::SizeType::SizeValueType SizeValueType;
   outputSize[0] = static_cast<SizeValueType>(inputSize[0] * inputSpacing[0] / outputSpacing[0] + .5);
@@ -174,41 +174,41 @@ int DoIt( int argc, char * argv[], T )
   resampler->SetInput( reader->GetOutput() );
   resampler->SetTransform( transform );
   if( interpolationType == "linear" )
-    {
+  {
     resampler->SetInterpolator( linearInterpolator );
-    }
+  }
   else if( interpolationType == "nearestNeighbor" )
-    {
+  {
     resampler->SetInterpolator( nearestNeighborInterpolator );
-    }
+  }
   else if( interpolationType == "bspline" )
-    {
+  {
     resampler->SetInterpolator( bsplineInterpolator );
-    }
+  }
   else if( interpolationType == "hamming" )
-    {
+  {
     resampler->SetInterpolator( hammingInterpolator );
-    }
+  }
   else if( interpolationType == "cosine" )
-    {
+  {
     resampler->SetInterpolator( cosineInterpolator );
-    }
+  }
   else if( interpolationType == "welch" )
-    {
+  {
     resampler->SetInterpolator( welchInterpolator );
-    }
+  }
   else if( interpolationType == "lanczos" )
-    {
+  {
     resampler->SetInterpolator( lanczosInterpolator );
-    }
+  }
   else if( interpolationType == "blackman" )
-    {
+  {
     resampler->SetInterpolator( blackmanInterpolator );
-    }
+  }
   else
-    {
+  {
     resampler->SetInterpolator( linearInterpolator );
-    }
+  }
 
   resampler->SetOutputOrigin( reader->GetOutput()->GetOrigin() );
   resampler->SetOutputSpacing( outputSpacing );
@@ -224,15 +224,15 @@ int DoIt( int argc, char * argv[], T )
   seriesWriter->SetFileName( OutputVolume.c_str() );
   seriesWriter->SetUseCompression(1);
   try
-    {
+  {
     seriesWriter->Update();
-    }
+  }
   catch( itk::ExceptionObject & excp )
-    {
+  {
     std::cerr << "Exception thrown while writing the series " << std::endl;
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }
 
@@ -247,13 +247,13 @@ int main( int argc, char * argv[] )
   itk::ImageIOBase::IOComponentType componentType;
 
   try
-    {
+  {
     itk::GetImageType(InputVolume, pixelType, componentType);
 
     // This filter handles all types
 
     switch( componentType )
-      {
+    {
       case itk::ImageIOBase::UCHAR:
         return DoIt( argc, argv, static_cast<unsigned char>(0) );
         break;
@@ -288,13 +288,13 @@ int main( int argc, char * argv[] )
       default:
         std::cout << "unknown component type" << std::endl;
         break;
-      }
     }
+  }
   catch( itk::ExceptionObject & excep )
-    {
+  {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

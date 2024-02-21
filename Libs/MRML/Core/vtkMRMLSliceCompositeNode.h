@@ -137,12 +137,12 @@ public:
 
   /// Modes for compositing
   enum
-    {
+  {
       Alpha = 0,
       ReverseAlpha,
       Add,
       Subtract
-    };
+  };
 
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by

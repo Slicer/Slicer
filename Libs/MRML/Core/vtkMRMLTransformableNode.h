@@ -70,9 +70,9 @@ public:
 
   /// TransformModifiedEvent is send when the parent transform is modified
   enum
-    {
+  {
       TransformModifiedEvent = 15000
-    };
+  };
 
   /// Returns true if the transformable node can apply non-linear transforms.
   /// A transformable node is always expected to apply linear transforms.

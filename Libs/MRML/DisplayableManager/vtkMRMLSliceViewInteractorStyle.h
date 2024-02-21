@@ -55,7 +55,7 @@ public:
 
   /// Action State values and management
   enum
-    {
+  {
     None = 0,
     Translate = 1,
     Zoom = 2,
@@ -74,7 +74,7 @@ public:
     AllActionsMask = Translate | Zoom | Rotate | Blend | AdjustWindowLevelBackground | AdjustWindowLevelForeground
       | BrowseSlice | ShowSlice | AdjustLightbox | SelectVolume | SetCursorPosition | SetCrosshairPosition
       | TranslateSliceIntersection | RotateSliceIntersection
-    };
+  };
 
   /// Enable/disable the specified action (Translate, Zoom, Blend, etc.).
   /// Multiple actions can be specified by providing the sum of action ids.

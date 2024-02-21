@@ -208,15 +208,15 @@ protected:
   void operator=(const vtkMRMLSliceDisplayNode&);
 
   struct ComponentInfo
-    {
+  {
     ComponentInfo()
-      {
+    {
       this->Type = ComponentNone;
       this->Index = -1;
-      }
+    }
     int Type;
     int Index;
-    };
+  };
 
   bool IntersectingSlicesInteractive{ false };
   bool IntersectingSlicesTranslationEnabled{ true };

@@ -127,44 +127,44 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
 
   QString name = QFileInfo(fileName).baseName();
   if (properties.contains("name"))
-    {
+  {
     name = properties["name"].toString();
-    }
+  }
   int options = 0;
   if (properties.contains("labelmap"))
-    {
+  {
     options |= properties["labelmap"].toBool() ? 0x1 : 0x0;
-    }
+  }
   if (properties.contains("center"))
-    {
+  {
     options |= properties["center"].toBool() ? 0x2 : 0x0;
-    }
+  }
   if (properties.contains("singleFile"))
-    {
+  {
     options |= properties["singleFile"].toBool() ? 0x4 : 0x0;
-    }
+  }
   if (properties.contains("autoWindowLevel"))
-    {
+  {
     options |= properties["autoWindowLevel"].toBool() ? 0x8: 0x0;
-    }
+  }
   if (properties.contains("discardOrientation"))
-    {
+  {
     options |= properties["discardOrientation"].toBool() ? 0x10 : 0x0;
-    }
+  }
   bool propagateVolumeSelection = true;
   if (properties.contains("show"))
-    {
+  {
     propagateVolumeSelection = properties["show"].toBool();
-    }
+  }
   vtkSmartPointer<vtkStringArray> fileList;
   if (properties.contains("fileNames"))
-    {
+  {
     fileList = vtkSmartPointer<vtkStringArray>::New();
     foreach(QString file, properties["fileNames"].toStringList())
-      {
+    {
       fileList->InsertNextValue(file.toUtf8());
-      }
     }
+  }
   Q_ASSERT(d->Logic);
   // Weak pointer is used because the node may be deleted if the scene is closed
   // right after reading.
@@ -174,44 +174,44 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     options,
     fileList.GetPointer());
   if (node)
-    {
+  {
     QString colorNodeID = properties.value("colorNodeID", QString()).toString();
     if (!colorNodeID.isEmpty())
-      {
+    {
       vtkMRMLVolumeDisplayNode* displayNode = node->GetVolumeDisplayNode();
       if (displayNode)
-        {
-        displayNode->SetAndObserveColorNodeID(colorNodeID.toUtf8());
-        }
-      }
-    if (propagateVolumeSelection)
       {
+        displayNode->SetAndObserveColorNodeID(colorNodeID.toUtf8());
+      }
+    }
+    if (propagateVolumeSelection)
+    {
       vtkSlicerApplicationLogic* appLogic =
         d->Logic->GetApplicationLogic();
       vtkMRMLSelectionNode* selectionNode =
         appLogic ? appLogic->GetSelectionNode() : nullptr;
       if (selectionNode)
-        {
+      {
         if (vtkMRMLLabelMapVolumeNode::SafeDownCast(node))
-          {
+        {
           selectionNode->SetActiveLabelVolumeID(node->GetID());
-          }
+        }
         else
-          {
+        {
           selectionNode->SetActiveVolumeID(node->GetID());
-          }
+        }
         if (appLogic)
-          {
+        {
           appLogic->PropagateVolumeSelection(); // includes FitSliceToAll by default
-          }
         }
       }
+    }
     this->setLoadedNodes(QStringList(QString(node->GetID())));
-    }
+  }
   else
-    {
+  {
     this->setLoadedNodes(QStringList());
-    }
+  }
   return node != nullptr;
 }
 
@@ -224,30 +224,30 @@ bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList &fileInfoList, QFil
   // keep it as the archetype and remove all the others from the list
   //
   foreach(QFileInfo fileInfo, fileInfoList)
-    {
+  {
     itk::ArchetypeSeriesFileNames::Pointer seriesNames = itk::ArchetypeSeriesFileNames::New();
     std::vector<std::string> candidateFiles;
     seriesNames->SetArchetype(fileInfo.absoluteFilePath().toStdString());
     candidateFiles = seriesNames->GetFileNames();
     if (candidateFiles.size() > 1)
-      {
+    {
       archetypeFileInfo = fileInfo;
       QMutableListIterator<QFileInfo> fileInfoIterator(fileInfoList);
       while (fileInfoIterator.hasNext())
-        {
+      {
         const QString &path = fileInfoIterator.next().absoluteFilePath();
         if (path == archetypeFileInfo.absoluteFilePath())
-          {
+        {
           continue;
-          }
-        if (std::find(candidateFiles.begin(), candidateFiles.end(), path.toStdString()) != candidateFiles.end())
-          {
-          fileInfoIterator.remove();
-          }
         }
+        if (std::find(candidateFiles.begin(), candidateFiles.end(), path.toStdString()) != candidateFiles.end())
+        {
+          fileInfoIterator.remove();
+        }
+      }
       ioProperties["singleFile"] = false;
       return true;
-      }
     }
+  }
   return false;
 }

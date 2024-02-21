@@ -83,9 +83,9 @@ class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRML
 public:
 
   struct ControlPoint
-    {
+  {
     ControlPoint()
-      {
+    {
       // position is 0
       this->Position[0] = 0.0;
       this->Position[1] = 0.0;
@@ -108,7 +108,7 @@ public:
       Visibility = true;
       PositionStatus = PositionUndefined;
       AutoCreated = false;
-      }
+    }
 
     // Positions and orientation in local coordinates.
     // If transform is applied to the markup node then world
@@ -128,7 +128,7 @@ public:
     bool Visibility;
     int PositionStatus;
     bool AutoCreated;
-    };
+  };
 
   typedef std::vector<ControlPoint*> ControlPointsListType;
 

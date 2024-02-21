@@ -46,9 +46,9 @@ int TestWriteReadSequence(const std::string& tempDir, vtkMRMLSequenceNode* seque
   fullFilePathSS << tempDir << "/" << fileName << "." << storageNode->GetDefaultWriteFileExtension();
   std::string fullFilePath = fullFilePathSS.str();
   if (vtksys::SystemTools::FileExists(fullFilePath.c_str(), true))
-    {
+  {
     vtksys::SystemTools::RemoveFile(fullFilePath.c_str());
-    }
+  }
 
   std::cout << "Testing sequence write: " << fullFilePath << std::endl;
   storageNode->SetFileName(fullFilePath.c_str());
@@ -75,9 +75,9 @@ int vtkMRMLSequenceStorageNodeTest1( int argc, char * argv[] )
 {
   std::string tempDir = ".";
   if (argc > 1)
-    {
+  {
     tempDir = argv[1];
-    }
+  }
 
   vtkNew<vtkMRMLScene> scene;
   scene->SetDataIOManager(vtkNew<vtkDataIOManager>());

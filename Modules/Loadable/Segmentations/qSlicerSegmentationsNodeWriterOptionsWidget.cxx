@@ -70,14 +70,14 @@ void qSlicerSegmentationsNodeWriterOptionsWidget::setObject(vtkObject* object)
   Q_D(qSlicerSegmentationsNodeWriterOptionsWidget);
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(object);
   if (storableNode)
-    {
+  {
     vtkMRMLSegmentationStorageNode* storageNode = vtkMRMLSegmentationStorageNode::SafeDownCast(
       storableNode->GetStorageNode());
     if (storageNode)
-      {
+    {
       d->CropToMinimumExtentCheckbox->setChecked(storageNode->GetCropToMinimumExtent());
-      }
     }
+  }
   Superclass::setObject(object);
 }
 

@@ -104,13 +104,13 @@ void qSlicerWebWidgetPrivate::init()
   QSettings settings;
   bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
   if (developerModeEnabled)
-    {
+  {
     // Enable dev tools by default for the test browser
     if (qgetenv("QTWEBENGINE_REMOTE_DEBUGGING").isNull())
-      {
+    {
       qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "1337");
-      }
     }
+  }
 
   this->PythonProxy = new qSlicerWebPythonProxy(q);
   QWebEngineProfile* profile = QWebEngineProfile::defaultProfile();
@@ -162,11 +162,11 @@ void qSlicerWebWidgetPrivate::init()
 void qSlicerWebWidgetPrivate::onAppAboutToQuit()
 {
   if (this->WebView)
-    {
+  {
     this->WebView->setParent(nullptr);
     delete this->WebView;
     this->WebView = nullptr;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -192,25 +192,25 @@ void qSlicerWebWidgetPrivate::initializeWebChannelTransport(QByteArray& webChann
 void qSlicerWebWidgetPrivate::initializeWebEngineProfile(QWebEngineProfile* profile)
 {
   if (!profile)
-    {
+  {
     qWarning() << Q_FUNC_INFO << "Invalid profile";
     return;
-    }
+  }
 
   if (!this->WebEnginePage->scripts().findScript("qwebchannel_appended.js").isNull())
-    {
+  {
     // profile is already initialized
     return;
-    }
+  }
 
   QFile webChannelJsFile(":/qtwebchannel/qwebchannel.js");
 
   if (!webChannelJsFile.open(QIODevice::ReadOnly))
-    {
+  {
     qWarning() << QString("Couldn't open qwebchannel.js file: %1").arg(webChannelJsFile.errorString());
-    }
+  }
   else
-    {
+  {
     QByteArray webChannelJs = webChannelJsFile.readAll();
     this->updateWebChannelScript(webChannelJs);
     QWebEngineScript script;
@@ -220,7 +220,7 @@ void qSlicerWebWidgetPrivate::initializeWebEngineProfile(QWebEngineProfile* prof
     script.setInjectionPoint(QWebEngineScript::DocumentCreation);
     script.setRunsOnSubFrames(false);
     this->WebEnginePage->scripts().insert(script);
-    }
+  }
 
   // setup default download handler shared across all widgets
   QObject::connect(profile, SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
@@ -241,12 +241,12 @@ void qSlicerWebWidgetPrivate::handleDownload(QWebEngineDownloadItem* download)
   Q_Q(qSlicerWebWidget);
 
   if (this->WebEnginePage != download->page())
-    {
+  {
     // Since the download request is emitted by the default profile observed by
     // all web widget instances, we ignore the request if it does not originate
     // from the page associated with this web widget instance.
     return;
-    }
+  }
 
   qSlicerWebDownloadWidget *downloader = new qSlicerWebDownloadWidget(q);
   downloader->setAttribute(Qt::WA_DeleteOnClose);
@@ -385,18 +385,18 @@ void qSlicerWebWidget::onDownloadProgress(qint64 bytesReceived, qint64 bytesTota
   double speed = bytesReceived * 1000.0 / d->DownloadTime.elapsed();
   QString unit;
   if (speed < 1024)
-    {
+  {
     unit = tr("bytes/sec");
-    }
+  }
   else if (speed < 1024*1024) {
     speed /= 1024;
     unit = tr("kB/s");
-    }
+  }
   else
-    {
+  {
     speed /= 1024*1024;
     unit = tr("MB/s");
-    }
+  }
 
   d->ProgressBar->setFormat(QString("%p% (%1 %2)").arg(speed, 3, 'f', 1).arg(unit));
   d->ProgressBar->setMaximum(bytesTotal);
@@ -467,17 +467,17 @@ bool qSlicerWebWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage:
     || url.scheme() == "data" // QWebEngineView::setHtml creates a special URL, which encodes data in the URL, always internal
     || !d->HandleExternalUrlWithDesktopService // all requests are internal
     )
-    {
+  {
     d->NavigationRequestAccepted = d->WebEnginePage->webEnginePageAcceptNavigationRequest(url, type, isMainFrame);
-    }
+  }
   else
-    {
+  {
     if(!QDesktopServices::openUrl(url))
-      {
+    {
       qWarning() << "Failed to open url:" << url;
-      }
-    d->NavigationRequestAccepted = false;
     }
+    d->NavigationRequestAccepted = false;
+  }
   return d->NavigationRequestAccepted;
 }
 
@@ -490,10 +490,10 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
   Q_UNUSED(errors)
 #else
   foreach (QSslError e, errors)
-    {
+  {
     qDebug() << "[SSL] [" << qPrintable(reply->url().host().trimmed()) << "]"
              << qPrintable(e.errorString());
-    }
+  }
 #endif
 }
 
@@ -504,11 +504,11 @@ bool qSlicerWebWidget::eventFilter(QObject* obj, QEvent* event)
   Q_ASSERT(d->WebView == obj);
   if (d->WebView == obj && !event->spontaneous() &&
       (event->type() == QEvent::Show || event->type() == QEvent::Hide))
-    {
+  {
     d->setDocumentWebkitHidden(!d->WebView->isVisible());
     this->evalJS("if (typeof $ != 'undefined') {"
                  "  $.event.trigger({type: 'webkitvisibilitychange'})"
                  "} else { console.info('JQuery not loaded - Failed to trigger webkitvisibilitychange') }");
-    }
+  }
   return QObject::eventFilter(obj, event);
 }

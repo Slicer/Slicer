@@ -75,7 +75,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 
 #ifndef GENERIC_CXX_MODULE_TEST_SKIP_DEPENDENCIES
   if (!module.dependencies().isEmpty())
-    {
+  {
     qSlicerModuleFactoryManager * moduleFactoryManager = app.moduleManager()->factoryManager();
     qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
     moduleFactoryManager->setExplicitModules(module.dependencies());
@@ -90,28 +90,28 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 
     // Load all available modules
     foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
-      {
+    {
       Q_ASSERT(!name.isNull());
       moduleFactoryManager->loadModule(name);
-      }
     }
+  }
 #endif
 
   QString modulePathWithoutIntDir = QLatin1String("@MODULEPATH_WITHOUT_INTDIR@");
   if (!QFile::exists(modulePathWithoutIntDir))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " Problem with @" << "MODULEPATH_WITHOUT_INTDIR@ - "
               << " File " << qPrintable(modulePathWithoutIntDir) << " doesn't exist " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString moduleFileName = "@CMAKE_SHARED_MODULE_PREFIX@qSlicer@MODULENAME@Module@CMAKE_SHARED_MODULE_SUFFIX@";
 
   QDir moduleDir(modulePathWithoutIntDir);
   if (!app.intDir().isEmpty())
-    {
+  {
     moduleDir.cd(app.intDir());
-    }
+  }
   QString modulePath = moduleDir.filePath(moduleFileName);
 
   // Path can be required for modules depending on locale resources.
@@ -125,36 +125,36 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
           pythonManager, app.intDir(), module.path());
     bool expected = true;
     if (current != expected)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " Problem with importModulePythonExtensions\n"
                 << "\tcurrent:" << current << "\n"
                 << "\texpected:" << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
   {
     bool current = qSlicerLoadableModule::addModuleToSlicerModules(
           pythonManager, &module, "@MODULENAME@");
     bool expected = true;
     if (current != expected)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " Problem with addModuleToSlicerModules\n"
                 << "\tcurrent:" << current << "\n"
                 << "\texpected:" << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
   {
     bool current = qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
           pythonManager, "@MODULENAME@");
     bool expected = true;
     if (current != expected)
-      {
+    {
       std::cerr << "Line " << __LINE__ << " Problem with addModuleNameToSlicerModuleNames\n"
                 << "\tcurrent:" << current << "\n"
                 << "\texpected:" << expected << std::endl;
       return EXIT_FAILURE;
-      }
+    }
   }
 #endif
 
@@ -167,9 +167,9 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
   qSlicerAbstractModuleWidget* widget =
     dynamic_cast<qSlicerAbstractModuleWidget*>(module.widgetRepresentation());
   if (!widget)
-    {
+  {
     return EXIT_SUCCESS;
-    }
+  }
 
   // If the test fails here, there might be in the panel a GUI element (e.g. a
   // combobox, a push button...) with a too large minimum size hint.
@@ -190,7 +190,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
     int(double(desktopWidth) * double(allowedWidgetWidthScreenPercentage) * 0.01));
 
   if (widget->minimumSizeHint().width() > maxMinimumSizeHintWidth)
-    {
+  {
     std::cerr << "Line " << __LINE__
               << " qSlicer@MODULENAME@Module widget has a minimum size hint width"
               << " of " << widget->minimumSizeHint().width() << "px. It is wider"
@@ -200,7 +200,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
               << desktopWidth << "px)"
               << std::endl;
     res = false;
-    }
+  }
 
   widget->enter();
   widget->exit();
@@ -212,14 +212,14 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 
 #ifdef Slicer_USE_PYTHONQT
   if (pythonManager->pythonErrorOccured())
-    {
+  {
     res = false;
-    }
+  }
 #endif
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return (app.exec() == EXIT_SUCCESS && res) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

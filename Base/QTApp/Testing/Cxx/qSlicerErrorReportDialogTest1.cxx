@@ -34,9 +34,9 @@ int qSlicerErrorReportDialogTest1(int argc, char * argv[] )
   qSlicerErrorReportDialog errorReport;
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, qApp, SLOT(quit()));
-    }
+  }
 
   return errorReport.exec();
 }

@@ -46,10 +46,10 @@ int qMRMLModelDisplayNodeWidgetTest2( int argc, char * argv [] )
   qMRMLWidget::postInitializeApplication();
 
   if (argc < 2)
-    {
+  {
     std::cerr << "Usage: qMRMLModelDisplayNodeWidgetTest2 <mrmlScenePath>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   scene->SetURL(argv[1]);
@@ -59,11 +59,11 @@ int qMRMLModelDisplayNodeWidgetTest2( int argc, char * argv [] )
     scene->GetFirstNodeByClass("vtkMRMLModelDisplayNode"));
 
   if (!modelDisplayNode)
-    {
+  {
     std::cerr << "Scene: " << argv[1] << " must contain a"
               << " vtkMRMLModelDisplayNode" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //qMRMLModelDisplayNodeWidget modelDisplayNodeWidget;
   //modelDisplayNodeWidget.setMRMLModelDisplayNode(modelDisplayNode);
@@ -72,9 +72,9 @@ int qMRMLModelDisplayNodeWidgetTest2( int argc, char * argv [] )
   dataSetModel.setDataSet(modelDisplayNode->GetInputMesh());
 
   if (argc < 3 || QString(argv[2]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

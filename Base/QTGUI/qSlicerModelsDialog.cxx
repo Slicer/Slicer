@@ -63,9 +63,9 @@ void qSlicerModelsDialogPrivate::openAddModelFileDialog()
   this->SelectedFiles = QFileDialog::getOpenFileNames(
     this, qSlicerModelsDialog::tr("Select Model file(s)"), "", filters.join(", "));
   if (this->SelectedFiles.count() < 1)
-    {
+  {
     return;
-    }
+  }
   this->accept();
 }
 
@@ -77,9 +77,9 @@ void qSlicerModelsDialogPrivate::openAddModelDirectoryDialog()
   QString modelDirectory = QFileDialog::getExistingDirectory(
     this, qSlicerModelsDialog::tr("Select a Model directory"), "", QFileDialog::ReadOnly);
   if (modelDirectory.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   QStringList filters = qSlicerFileDialog::nameFilters(q->fileType());
   this->SelectedFiles = QDir(modelDirectory).entryList(filters);
@@ -126,12 +126,12 @@ bool qSlicerModelsDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   d->LoadedNodeIDs.clear();
   bool res = false;
   if (d->exec() != QDialog::Accepted)
-    {
+  {
     return res;
-    }
+  }
   QStringList files = d->SelectedFiles;
   foreach(QString file, files)
-    {
+  {
     qSlicerIO::IOProperties properties = readerProperties;
     properties["fileName"] = file;
     vtkNew<vtkCollection> loadedNodes;
@@ -139,11 +139,11 @@ bool qSlicerModelsDialog::exec(const qSlicerIO::IOProperties& readerProperties)
       ->loadNodes(this->fileType(),
                   properties, loadedNodes.GetPointer()) || res;
     for (int i = 0; i < loadedNodes->GetNumberOfItems(); ++i)
-      {
+    {
       d->LoadedNodeIDs << vtkMRMLNode::SafeDownCast(loadedNodes->GetItemAsObject(i))
         ->GetID();
-      }
     }
+  }
   return res;
 }
 

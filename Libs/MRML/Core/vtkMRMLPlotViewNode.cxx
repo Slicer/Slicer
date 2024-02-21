@@ -141,9 +141,9 @@ void vtkMRMLPlotViewNode::ProcessMRMLEvents(vtkObject *caller, unsigned long eve
   vtkMRMLPlotChartNode *pnode = this->GetPlotChartNode();
   if (pnode != nullptr && pnode == vtkMRMLPlotChartNode::SafeDownCast(caller) &&
      (event ==  vtkCommand::ModifiedEvent || event == vtkMRMLPlotChartNode::PlotModifiedEvent))
-    {
+  {
     this->InvokeEvent(vtkMRMLPlotViewNode::PlotChartNodeChangedEvent, pnode);
-    }
+  }
 
   return;
 }
@@ -165,9 +165,9 @@ void vtkMRMLPlotViewNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
 {
   this->Superclass::OnNodeReferenceAdded(reference);
   if (std::string(reference->GetReferenceRole()) == this->PlotChartNodeReferenceRole)
-    {
+  {
     this->InvokeEvent(vtkMRMLPlotViewNode::PlotChartNodeChangedEvent, reference->GetReferencedNode());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -175,9 +175,9 @@ void vtkMRMLPlotViewNode::OnNodeReferenceModified(vtkMRMLNodeReference *referenc
 {
   this->Superclass::OnNodeReferenceModified(reference);
   if (std::string(reference->GetReferenceRole()) == this->PlotChartNodeReferenceRole)
-    {
+  {
     this->InvokeEvent(vtkMRMLPlotViewNode::PlotChartNodeChangedEvent, reference->GetReferencedNode());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -185,9 +185,9 @@ void vtkMRMLPlotViewNode::OnNodeReferenceRemoved(vtkMRMLNodeReference *reference
 {
   this->Superclass::OnNodeReferenceRemoved(reference);
   if (std::string(reference->GetReferenceRole()) == this->PlotChartNodeReferenceRole)
-    {
+  {
     this->InvokeEvent(vtkMRMLPlotViewNode::PlotChartNodeChangedEvent, reference->GetReferencedNode());
-    }
+  }
 }
 
 //-----------------------------------------------------------

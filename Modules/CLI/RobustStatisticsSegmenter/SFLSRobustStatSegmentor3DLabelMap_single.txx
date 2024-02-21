@@ -49,26 +49,26 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   TIndex start = m_inputLabelImage->GetLargestPossibleRegion().GetIndex();
   TIndex origin = {{0, 0, 0}};
   if( start != origin )
-    {
+  {
     std::cout << "Warning: Force mask start to be (0, 0, 0)\n";
 
     TRegion region = m_inputLabelImage->GetLargestPossibleRegion();
     region.SetIndex(origin);
 
     m_inputLabelImage->SetRegions(region);
-    }
+  }
 
   if( this->m_nx + this->m_ny + this->m_nz == 0 )
-    {
+  {
     this->m_nx = size[0];
     this->m_ny = size[1];
     this->m_nz = size[2];
-    }
+  }
   else if( this->m_nx != (long)size[0] || this->m_ny != (long)size[1] || this->m_nz != (long)size[2] )
-    {
+  {
     std::cerr << "Error: image sizes do not match with label image size.\n";
     raise(SIGABRT);
-    }
+  }
 
   return;
 }
@@ -87,19 +87,19 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   double* cvForce = new double[n];
 
   std::vector<typename CSFLSLayer::iterator> m_lzIterVct( n );
-    {
+  {
     long iiizzz = 0;
     for( typename CSFLSLayer::iterator itz = this->m_lz.begin(); itz != this->m_lz.end(); ++itz )
-      {
+    {
       m_lzIterVct[iiizzz++] = itz;
-      }
     }
+  }
 
 // #ifndef NDEBUG
 //     std::ofstream ff("/tmp/force.txt");
 // #endif
   for( long i = 0; i < n; ++i )
-    {
+  {
     typename CSFLSLayer::iterator itz = m_lzIterVct[i];
 
     long ix = (*itz)[0];
@@ -121,17 +121,17 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
     kappaMax = kappaMax > fabs(kappaOnZeroLS[i]) ? kappaMax : fabs(kappaOnZeroLS[i]);
 
     cvForce[i] = a;
-    }
+  }
 
   // std::cout<<"fmax = "<<fmax<<std::endl;
 
   this->m_force.resize(n);
   for( long i = 0; i < n; ++i )
-    {
+  {
     // this->m_force.push_back(cvForce[i]/(fmax + 1e-10) +  (this->m_curvatureWeight)*kappaOnZeroLS[i]);
     this->m_force[i] = (1 - (this->m_curvatureWeight) ) * cvForce[i] / (fmax + 1e-10) \
       +  (this->m_curvatureWeight) * kappaOnZeroLS[i] / (kappaMax + 1e-10);
-    }
+  }
 
   delete[] kappaOnZeroLS;
   delete[] cvForce;
@@ -149,12 +149,12 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 
   std::ofstream sf("_seeds.txt");
 
-    {
+  {
     std::vector<long> thisSeed(3);
     for( ; !it.IsAtEnd(); ++it )
-      {
+    {
       if( it.Get() != 0 )  // 0 for bkgd, every label else is obj
-        {
+      {
         TIndex idx = it.GetIndex();
         thisSeed[0] = idx[0];
         thisSeed[1] = idx[1];
@@ -163,9 +163,9 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
         m_seeds.push_back(thisSeed);
 
         sf << thisSeed[0] << ", " << thisSeed[1] << ", " << thisSeed[2] << std::endl;
-        }
       }
     }
+  }
 
   sf.close();
 
@@ -209,12 +209,12 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 ::initFeatureImage()
 {
   if( !(this->mp_img) )
-    {
+  {
     std::cerr << "Error: set input image first.\n";
     raise(SIGABRT);
-    }
+  }
   for( long ifeature = 0; ifeature < m_numberOfFeature; ++ifeature )
-    {
+  {
     // TDoubleImagePointer fimg = TDoubleImage::New();
 
     TFloatImagePointer fimg = TFloatImage::New();
@@ -223,7 +223,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
     fimg->CopyInformation(this->mp_img);
 
     m_featureImageList.push_back(fimg);
-    }
+  }
 
   return;
 }
@@ -235,10 +235,10 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 ::initFeatureComputedImage()
 {
   if( !(this->mp_img) )
-    {
+  {
     std::cerr << "Error: set input image first.\n";
     raise(SIGABRT);
-    }
+  }
 
   m_featureComputed = TLabelImage::New();
   m_featureComputed->SetRegions(this->mp_img->GetLargestPossibleRegion() );
@@ -258,15 +258,15 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   f.resize(m_numberOfFeature);
 
   if( m_featureComputed->GetPixel(idx) )
-    {
+  {
     // the feature at this pixel is computed, just retrieve
     for( long i = 0; i < m_numberOfFeature; ++i )
-      {
-      f[i] = (m_featureImageList[i])->GetPixel(idx);
-      }
-    }
-  else
     {
+      f[i] = (m_featureImageList[i])->GetPixel(idx);
+    }
+  }
+  else
+  {
     // compute the feature
     std::vector<double> neighborIntensities;
 
@@ -274,30 +274,30 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
     long iy = idx[1];
     long iz = idx[2];
     for( long iiz = iz - m_statNeighborZ; iiz <= iz + m_statNeighborZ; ++iiz )
-      {
+    {
       for( long iiy = iy - m_statNeighborY; iiy <= iy + m_statNeighborY; ++iiy )
-        {
+      {
         for( long iix = ix - m_statNeighborX; iix <= ix + m_statNeighborX; ++iix )
-          {
+        {
           if( 0 <= iix && iix < this->m_nx    \
               && 0 <= iiy && iiy < this->m_ny    \
               && 0 <= iiz && iiz < this->m_nz )
-            {
+          {
             TIndex idxa = {{iix, iiy, iiz}};
             neighborIntensities.push_back(this->mp_img->GetPixel(idxa) );
-            }
           }
         }
       }
+    }
 
     getRobustStatistics(neighborIntensities, f);
     for( long ifeature = 0; ifeature < m_numberOfFeature; ++ifeature )
-      {
+    {
       m_featureImageList[ifeature]->SetPixel(idx, f[ifeature]);
-      }
+    }
 
     m_featureComputed->SetPixel(idx, 1);   // mark as computed
-    }
+  }
 
   return;
 }
@@ -328,7 +328,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 // douher::saveAsImage2< double >(mp_phi, "initPhi.nrrd");
   for( unsigned int it = 0; it < this->m_numIter; ++it )
   // for (unsigned int it = 0; ; ++it)
-    {
+  {
     // dbg//
     std::cout << "In iteration " << it << std::endl << std::flush;
     // DBG//
@@ -342,9 +342,9 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 
     // keep current zero contour as history is required
     if( this->m_keepZeroLayerHistory )
-      {
+    {
       (this->m_zeroLayerHistory).push_back(this->m_lz);
-      }
+    }
 
     double oldVoxelCount = this->m_insideVoxelCount;
 
@@ -358,7 +358,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
       If the level set stops growing, stop */
     this->updateInsideVoxelCount();
     if( it > 2 && oldVoxelCount >= this->m_insideVoxelCount )
-      {
+    {
       std::ofstream f("/tmp/o.txt");
       f << "In the " << it << "-th iteration\n";
 
@@ -371,7 +371,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
       f.close();
 
       break;
-      }
+    }
 
     /* If the level set stops growing, stop
        ----------------------------------------------------------------------*/
@@ -380,7 +380,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
       If the inside physical volume exceed expected volume, stop */
     double volumeIn = (this->m_insideVoxelCount) * (this->m_dx) * (this->m_dy) * (this->m_dz);
     if( volumeIn > (this->m_maxVolume) )
-      {
+    {
       //          std::fstream f("/tmp/o.txt", std::ios_base::app);
       std::ofstream f("/tmp/o.txt");
       f << "In the " << it << "-th iteration\n";
@@ -392,22 +392,22 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
       f.close();
 
       break;
-      }
+    }
     /*If the inside physical volume exceed expected volume, stop
       ----------------------------------------------------------------------*/
 
     double ellapsedTime = (clock() - startingTime) / static_cast<double>(CLOCKS_PER_SEC);
     if( ellapsedTime > (this->m_maxRunningTime) )
-      {
+    {
       std::ofstream f("/tmp/o.txt");
       f << "running time = " << ellapsedTime << std::endl;
       f << "m_maxRunningTime = " << this->m_maxRunningTime << std::endl;
       f.close();
 
       break;
-      }
-
     }
+
+  }
 
 // #ifndef NDEBUG
 //   dbgf.close();
@@ -453,9 +453,9 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   long                nn = samples.size();
   std::vector<double> samplesDeMedian(nn);
   for( long i = 0; i < nn; ++i )
-    {
+  {
     samplesDeMedian[i] = fabs(samples[i] - median);
-    }
+  }
 
   std::sort(samplesDeMedian.begin(), samplesDeMedian.end() );
 
@@ -473,27 +473,27 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 ::seedToMask()
 {
   if( !(this->mp_img) )
-    {
+  {
     std::cerr << "Error: set input image first.\n";
     raise(SIGABRT);
-    }
+  }
 
   if( this->mp_mask )
-    {
+  {
     /* Sometimes, the mask is not corresponding to the seed, like
        using the mean shape as the mask and just some other seed as
        the samples for feature. In such cases, do not touch mask
        and just return. */
 
     return;
-    }
+  }
 
   long n = m_seeds.size();
   if( n == 0 )
-    {
+  {
     std::cerr << "Error: No seeds specified." << std::endl;
     raise(SIGABRT);
-    }
+  }
 
   this->mp_mask = TMaskImage::New();
   this->mp_mask->SetRegions(this->mp_img->GetLargestPossibleRegion() );
@@ -501,33 +501,33 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   this->mp_mask->CopyInformation(this->mp_img);
   this->mp_mask->FillBuffer(0);
   for( long i = 0; i < n; ++i )
-    {
+  {
     if( 3 != m_seeds[i].size() )
-      {
+    {
       std::cerr << "Error: 3 != m_seeds[i].size()\n";
       raise(SIGABRT);
-      }
+    }
 
     long ix = m_seeds[i][0];
     long iy = m_seeds[i][1];
     long iz = m_seeds[i][2];
     for( long iiz = iz - 1; iiz <= iz + 1; ++iiz )
-      {
+    {
       for( long iiy = iy - 1; iiy <= iy + 1; ++iiy )
-        {
+      {
         for( long iix = ix - 1; iix <= ix + 1; ++iix )
-          {
+        {
           if( 0 <= iix && iix < this->m_nx    \
               && 0 <= iiy && iiy < this->m_ny    \
               && 0 <= iiz && iiz < this->m_nz )
-            {
+          {
             TIndex idx = {{iix, iiy, iiz}};
             this->mp_mask->SetPixel(idx, 1);
-            }
           }
         }
       }
     }
+  }
 
   return;
 }
@@ -541,40 +541,40 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   /* For each seed, add its 26 neighbors into the seed list. */
 
   if( !(this->mp_img) )
-    {
+  {
     std::cerr << "Error: set input image first.\n";
     raise(SIGABRT);
-    }
+  }
 
   long                            n = m_seeds.size();
   std::vector<std::vector<long> > newSeeds;
 
   if( n == 0 )
-    {
+  {
     std::cerr << "Error: No seeds specified." << std::endl;
     raise(SIGABRT);
-    }
+  }
   for( long i = 0; i < n; ++i )
-    {
+  {
     if( 3 != m_seeds[i].size() )
-      {
+    {
       std::cerr << "Error: 3 != m_seeds[i].size()\n";
       raise(SIGABRT);
-      }
+    }
 
     long ix = m_seeds[i][0];
     long iy = m_seeds[i][1];
     long iz = m_seeds[i][2];
     for( long iiz = iz - 1; iiz <= iz + 1; ++iiz )
-      {
+    {
       for( long iiy = iy - 1; iiy <= iy + 1; ++iiy )
-        {
+      {
         for( long iix = ix - 1; iix <= ix + 1; ++iix )
-          {
+        {
           if( 0 <= iix && iix < this->m_nx    \
               && 0 <= iiy && iiy < this->m_ny    \
               && 0 <= iiz && iiz < this->m_nz )
-            {
+          {
             /* Some locations may be added multiple times,
                if the original seeds are close. But I think
                this is fine */
@@ -585,11 +585,11 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
             s[2] = iiz;
 
             newSeeds.push_back(s);
-            }
           }
         }
       }
     }
+  }
 
   m_seeds.assign(newSeeds.begin(), newSeeds.end() );
 
@@ -603,18 +603,18 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 ::getFeatureAroundSeeds()
 {
   if( !m_featureImageList[m_numberOfFeature - 1] )
-    {
+  {
     // last feature image is not constructed
     std::cerr << "Error: construct feature images first.\n";
     raise(SIGABRT);
-    }
+  }
 
   long n = m_seeds.size();
   if( n == 0 )
-    {
+  {
     std::cerr << "Error: No seeds specified." << std::endl;
     raise(SIGABRT);
-    }
+  }
 
 //   short ax = 0;
 //   short ay = 0;
@@ -624,12 +624,12 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 //   std::ofstream intensityAtSeeds("/tmp/intenSeeds.txt");
 // #endif
   for( long i = 0; i < n; ++i )
-    {
+  {
     if( 3 != m_seeds[i].size() )
-      {
+    {
       std::cerr << "Error: 3 != m_seeds[i].size()\n";
       raise(SIGABRT);
-      }
+    }
 
     long ix = m_seeds[i][0];
     long iy = m_seeds[i][1];
@@ -652,7 +652,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 //       //intensityAtSeeds<<"inensity at ( "<<ix<<", "<<iy<<", "<<iz<<") is "<<this->mp_img->GetPixel(idx)<<std::endl;
 //       intensityAtSeeds<<this->mp_img->GetPixel(idx)<<std::endl;
 // #endif
-    }
+  }
 
 // #ifndef NDEBUG
 //   intensityAtSeeds.close();
@@ -671,21 +671,21 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 
   long n = m_seeds.size(); // == m_featureAtTheSeeds.size()
   for( long i = 0; i < m_numberOfFeature; ++i )
-    {
+  {
     double m = 0;
     for( long ii = 0; ii < n; ++ii )
-      {
+    {
       m += m_featureAtTheSeeds[ii][i];
-      }
+    }
     m /= n;
     for( long ii = 0; ii < n; ++ii )
-      {
+    {
       m_kernelStddev[i] += (m_featureAtTheSeeds[ii][i] - m) * (m_featureAtTheSeeds[ii][i] - m);
-      }
+    }
 
     m_kernelStddev[i] /= (n - 1);
     m_kernelStddev[i] = sqrt(m_kernelStddev[i]);
-    }
+  }
 
 // // #ifndef NDEBUG
 // //   std::ofstream dbgf("/tmp/dbgo.txt", std::ios_base::app);
@@ -707,13 +707,13 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   double p = 1;
 
   for( long i = 0; i < m_numberOfFeature; ++i )
-    {
+  {
     long idx = static_cast<long>(newFeature[i] - m_inputImageIntensityMin);
 
     double probOfThisFeature = m_PDFlearnedFromSeeds[i][idx];
 
     p *= probOfThisFeature;
-    }
+  }
 
   return p;
 }
@@ -730,7 +730,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 
   // double p = 0;
   for( long i = 0; i < m_numberOfFeature; ++i )
-    {
+  {
     double pp = 0.0;
 
     double stdDev = m_kernelStddev[i] / m_kernelWidthFactor; // /10 as in Eric's appendix
@@ -738,16 +738,16 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
     double var2 = -1.0 / (2 * stdDev * stdDev);
     double c = 1.0 / sqrt(2 * (itk::Math::pi) ) / stdDev;
     for( long ii = 0; ii < n; ++ii )
-      {
+    {
       pp += exp(var2 * (newFeature[i] - m_featureAtTheSeeds[ii][i]) * (newFeature[i] - m_featureAtTheSeeds[ii][i]) );
-      }
+    }
 
     pp *= c;
     pp /= n;
 
     p *= pp;
     // p = p>pp?p:pp;
-    }
+  }
 
   return p;
 }
@@ -759,14 +759,14 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 ::setKernelWidthFactor(double f)
 {
   if( f < 0.1 )
-    {
+  {
     m_kernelWidthFactor = 0.1;
-    }
+  }
 
   if( f > 20.0 )
-    {
+  {
     m_kernelWidthFactor = 20.0;
-    }
+  }
 
   m_kernelWidthFactor = f;
 
@@ -811,7 +811,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 
   long n = m_seeds.size();
   for( long ifeature = 0; ifeature < m_numberOfFeature; ++ifeature )
-    {
+  {
     std::vector<double> thisPDF(m_inputImageIntensityMax - m_inputImageIntensityMin + 1);
     // assumption: TPixel are of integer types.
 
@@ -830,24 +830,24 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
     double var2 = -1.0 / (2 * stdDev * stdDev);
     double c = 1.0 / sqrt(2 * (itk::Math::pi) ) / stdDev;
     for( TPixel a = m_inputImageIntensityMin; a <= m_inputImageIntensityMax; ++a )
-      {
+    {
       long ia = static_cast<long>(a - m_inputImageIntensityMin);
 
       double pp = 0.0;
       for( long ii = 0; ii < n; ++ii )
-        {
+      {
         pp += exp(var2 * (a - m_featureAtTheSeeds[ii][ifeature]) * (a - m_featureAtTheSeeds[ii][ifeature]) );
 
-        }
+      }
 
       pp *= c;
       pp /= n;
 
       thisPDF[ia] = pp;
-      }
+    }
 
     m_PDFlearnedFromSeeds.push_back(thisPDF);
-    }
+  }
 
   return;
 }
@@ -859,10 +859,10 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 ::computeMinMax()
 {
   if( !(this->mp_img) )
-    {
+  {
     std::cerr << "Error: set input image first.\n";
     raise(SIGABRT);
-    }
+  }
 
   typedef itk::Image<TPixel, 3> itkImage_t;
   typedef itk::ImageRegionConstIterator<itkImage_t> itkImageRegionConstIterator_t;
@@ -871,11 +871,11 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   m_inputImageIntensityMax = std::numeric_limits<TPixel>::min();
   itkImageRegionConstIterator_t it( (this->mp_img), (this->mp_img)->GetLargestPossibleRegion() );
   for( it.GoToBegin(); !it.IsAtEnd(); ++it )
-    {
+  {
     const TPixel v = it.Get();
     m_inputImageIntensityMin = ( m_inputImageIntensityMin < v ) ? m_inputImageIntensityMin : v;
     m_inputImageIntensityMax = ( m_inputImageIntensityMax > v ) ? m_inputImageIntensityMax : v;
-    }
+  }
   return;
 }
 

@@ -113,9 +113,9 @@ void qSlicerColorsModuleWidgetPrivate::setDefaultColorNode()
   if (!q->mrmlScene() ||
       !this->ColorTableComboBox ||
       this->ColorTableComboBox->currentNode() != nullptr)
-    {
+  {
     return;
-    }
+  }
   const char *defaultID = this->colorLogic()->GetDefaultLabelMapColorNodeID();
   vtkMRMLColorNode *defaultNode = vtkMRMLColorNode::SafeDownCast(
     q->mrmlScene()->GetNodeByID(defaultID));
@@ -186,7 +186,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
 
   vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(newColorNode);
   if (!colorNode)
-    {
+  {
     d->NumberOfColorsSpinBox->setEnabled(false);
     d->NumberOfColorsSpinBox->setValue(0);
     d->LUTRangeWidget->setEnabled(false);
@@ -194,14 +194,14 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     d->CopyColorNodeButton->setEnabled(false);
     d->ContinuousScalarsToColorsWidget->setEnabled(false);
     return;
-    }
+  }
 
   d->CopyColorNodeButton->setEnabled(true);
 
   vtkMRMLColorTableNode *colorTableNode = vtkMRMLColorTableNode::SafeDownCast(colorNode);
   vtkMRMLProceduralColorNode *procColorNode = vtkMRMLProceduralColorNode::SafeDownCast(colorNode);
   if (colorTableNode && !procColorNode)
-    {
+  {
     // hide the procedural display, show the color table
     // freesurfer nodes are bit of a special case, they're defined
     // procedurally, but provide a look up table rather than a
@@ -220,28 +220,28 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     double *range = nullptr;
     d->LUTRangeWidget->setEnabled(colorNode->GetType() == vtkMRMLColorTableNode::User);
     if (colorTableNode && colorTableNode->GetLookupTable())
-      {
+    {
       range = colorTableNode->GetLookupTable()->GetRange();
-      }
+    }
     disconnect(d->LUTRangeWidget, SIGNAL(valuesChanged(double, double)),
       this, SLOT(setLookupTableRange(double, double)));
     if (range)
-      {
+    {
       // Make the range a bit (10%) larger than the values to allow some room for
       // adjustment. More adjustment can be done by manually setting the range on the GUI.
       double rangeMargin = (range[1] - range[0])*0.1;
       if (rangeMargin == 0)
-        {
+      {
         rangeMargin = 10.0;
-        }
+      }
       d->LUTRangeWidget->setRange(range[0] - rangeMargin, range[1] + rangeMargin);
       d->LUTRangeWidget->setValues(range[0], range[1]);
-      }
+    }
     else
-      {
+    {
       d->LUTRangeWidget->setEnabled(false);
       d->LUTRangeWidget->setValues(0.,0.);
-      }
+    }
     connect(d->LUTRangeWidget, SIGNAL(valuesChanged(double, double)),
       this, SLOT(setLookupTableRange(double, double)));
     // update the annotations from the superclass color node since this is a
@@ -252,13 +252,13 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     vtkNew<vtkStringArray> stringArray;
     stringArray->SetNumberOfValues(numberOfColors);
     for (int colorIndex=0; colorIndex<numberOfColors; ++colorIndex)
-      {
+    {
       indexArray->SetValue(colorIndex, colorIndex);
       stringArray->SetValue(colorIndex, colorNode->GetColorName(colorIndex));
-      }
     }
+  }
   else if (procColorNode && !colorTableNode)
-    {
+  {
     // hide and disable the color table display, show the continuous one
     d->NumberOfColorsSpinBox->setEnabled(false);
     d->NumberOfColorsSpinBox->setValue(0);
@@ -272,12 +272,12 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     bool editable = procColorNode->GetType() == vtkMRMLColorNode::User; // only allow editing of user types
     d->ContinuousScalarsToColorsWidget->view()->setColorTransferFunctionToPlots(procColorNode->GetColorTransferFunction(), editable);
     d->ContinuousScalarsToColorsWidget->setEnabled(editable);
-    }
+  }
   else
-    {
+  {
     // not a valid type of color node
     d->LUTRangeWidget->setValues(0.,0.);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -285,20 +285,20 @@ void qSlicerColorsModuleWidget::updateNumberOfColors()
 {
   Q_D(qSlicerColorsModuleWidget);
   if (!d->NumberOfColorsSpinBox->isEnabled())
-    {
+  {
     return;
-    }
+  }
   int newNumber = d->NumberOfColorsSpinBox->value();
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(
     d->ColorTableComboBox->currentNode());
   if (colorTableNode)
-    {
+  {
     colorTableNode->SetNumberOfColors(newNumber);
-    }
+  }
   else
-    {
+  {
     qWarning() << "updateNumberOfColors: please select a discrete color table node to adjust the number of colors";
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -308,15 +308,15 @@ void qSlicerColorsModuleWidget::setLookupTableRange(double min, double max)
 
   vtkMRMLNode *currentNode = d->ColorTableComboBox->currentNode();
   if (!currentNode)
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(currentNode);
   if (colorNode && colorNode->GetLookupTable())
-    {
+  {
     colorNode->GetLookupTable()->SetRange(min, max);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -332,36 +332,36 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
     QLineEdit::Normal,
     QString(currentNode->GetName()) + QString("Copy"));
   if (newColorName.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   vtkMRMLColorNode *colorNode = nullptr;
   if (currentNode->IsA("vtkMRMLColorTableNode") ||
       currentNode->IsA("vtkMRMLFreeSurferProceduralColorNode"))
-    {
+  {
     colorNode = d->colorLogic()->CopyNode(currentNode, newColorName.toUtf8());
-    }
+  }
   else if (currentNode->IsA("vtkMRMLProceduralColorNode"))
-    {
+  {
     colorNode = d->colorLogic()->CopyProceduralNode(currentNode, newColorName.toUtf8());
-    }
+  }
   else
-    {
+  {
     qWarning() << "CopyCurrentColorNode: current node not of a color node type "
                << "that can be copied. It's a " << currentNode->GetClassName()
                << ", not a procedural or color table node";
     return;
-    }
+  }
   if (!this->mrmlScene()->AddNode(colorNode))
-    {
+  {
     qWarning() << "CopyCurrentColorNode: failed to add new node to scene";
-    }
+  }
   colorNode->Delete();
   if (colorNode->GetID())
-    {
+  {
     d->ColorTableComboBox->setCurrentNode(colorNode);
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -380,9 +380,9 @@ void qSlicerColorsModuleWidget::updateColorLegendFromMRML()
   Q_D(qSlicerColorsModuleWidget);
   vtkMRMLDisplayNode* displayNode = nullptr;
   if (d->DisplayableNode)
-    {
+  {
     displayNode = d->DisplayableNode->GetDisplayNode();
-    }
+  }
   d->ColorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(d->DisplayableNode);
   d->CreateColorLegendButton->setVisible(displayNode && !d->ColorLegendNode);
   d->UseCurrentColorsButton->setVisible(displayNode && d->ColorLegendNode);
@@ -396,25 +396,25 @@ void qSlicerColorsModuleWidget::createColorLegend()
 {
   Q_D(qSlicerColorsModuleWidget);
   if (!d->DisplayableNode || !d->colorLogic() || d->ColorLegendNode)
-    {
+  {
     return;
-    }
+  }
   vtkMRMLDisplayNode* displayNode = d->DisplayableNode->GetDisplayNode();
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
   if (!displayNode->GetColorNode())
-    {
+  {
     // If there is no color node selected in this display node then choose the current color node
     this->useCurrentColorsForColorLegend();
-    }
+  }
   vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode =
     vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(d->DisplayableNode);
   if (!colorLegendDisplayNode)
-    {
+  {
     qWarning() << "createColorLegend: failed to add display node to scene";
-    }
+  }
 }
 
 //-----------------------------------------------------------
@@ -422,9 +422,9 @@ void qSlicerColorsModuleWidget::deleteColorLegend()
 {
   Q_D(qSlicerColorsModuleWidget);
   if (!d->ColorLegendNode || !d->ColorLegendNode->GetScene())
-    {
+  {
     return;
-    }
+  }
   d->ColorLegendNode->GetScene()->RemoveNode(d->ColorLegendNode);
 }
 
@@ -434,14 +434,14 @@ void qSlicerColorsModuleWidget::useCurrentColorsForColorLegend()
   Q_D(qSlicerColorsModuleWidget);
   vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(d->ColorTableComboBox->currentNode());
   if (!colorNode)
-    {
+  {
     return;
-    }
+  }
   vtkMRMLDisplayNode* displayNode = d->DisplayableNode->GetDisplayNode();
   if (!displayNode)
-    {
+  {
     return;
-    }
+  }
   displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 }
 
@@ -454,10 +454,10 @@ bool qSlicerColorsModuleWidget::setEditedNode(vtkMRMLNode* node,
   Q_UNUSED(role);
   Q_UNUSED(context);
   if (vtkMRMLColorNode::SafeDownCast(node))
-    {
+  {
     d->ColorTableComboBox->setCurrentNode(node);
     return true;
-    }
+  }
 
   return false;
 }

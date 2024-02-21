@@ -76,9 +76,9 @@ public:
     typename DiffusionTensor3DExtended<double>::EigenVectorsMatrixType eigenVectors;
     tensorDouble.ComputeEigenAnalysis( eigenValues, eigenVectors );
     for( int i = 0; i < 3; i++ )
-      {
+    {
       mat[i][i] = sqrt(eigenValues[i]);
-      }
+    }
     eigenVectors = eigenVectors.GetTranspose();
     H = eigenVectors * mat * eigenVectors.GetInverse();
     mat = (B + H) / 2;
@@ -87,17 +87,17 @@ public:
                                                                      // appear; we suppress them
     mat.Fill(0);
     for( int i = 0; i < 3; i++ )
-      {
+    {
       mat[i][i] = ( eigenValues[i] <= 0 ? ITK_DIFFUSION_TENSOR_3D_ZERO : eigenValues[i] );
-      }
+    }
     eigenVectors = eigenVectors.GetTranspose();
     tensorDouble.SetTensorFromMatrix<double>( eigenVectors * mat * eigenVectors.GetInverse() );
 
     DiffusionTensor3D<TOutput>        tensor;
     for( int i = 0; i < 6; i++ )
-      {
+    {
       tensor[i] = ( TOutput ) tensorDouble[i];
-      }
+    }
     return tensor;
   }
 

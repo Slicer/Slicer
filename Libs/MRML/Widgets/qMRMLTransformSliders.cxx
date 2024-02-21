@@ -40,10 +40,10 @@ class qMRMLTransformSlidersPrivate: public Ui_qMRMLTransformSliders
 {
 public:
   qMRMLTransformSlidersPrivate()
-    {
+  {
     this->TypeOfTransform = -1;
     this->MRMLTransformNode = nullptr;
-    }
+  }
 
   int                                    TypeOfTransform;
   vtkMRMLTransformNode*                  MRMLTransformNode;
@@ -106,12 +106,12 @@ void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coor
         _coordinateReference);
 
   if (this->coordinateReference() != _coordinateReference)
-    {
+  {
     // reference changed
     if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
       || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION
           && ref == qMRMLLinearTransformSlider::LOCAL) )
-      {
+    {
       // No one-to-one correspondence between slider and transform matrix values
       bool blocked = false;
       blocked = d->LRSlider->blockSignals(true);
@@ -123,16 +123,16 @@ void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coor
       blocked = d->ISSlider->blockSignals(true);
       d->ISSlider->reset();
       d->ISSlider->blockSignals(blocked);
-      }
+    }
     else
-      {
+    {
       // make sure the current translation values can be set on the slider
       updateRangeFromTransform(d->MRMLTransformNode);
-      }
+    }
     d->LRSlider->setCoordinateReference(ref);
     d->PASlider->setCoordinateReference(ref);
     d->ISSlider->setCoordinateReference(ref);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -153,20 +153,20 @@ void qMRMLTransformSliders::setTypeOfTransform(TransformType _typeOfTransform)
 
   if (d->TypeOfTransform == _typeOfTransform) { return; }
   if (_typeOfTransform == qMRMLTransformSliders::TRANSLATION)
-    {
+  {
     d->LRSlider->setTypeOfTransform(qMRMLLinearTransformSlider::TRANSLATION_LR);
     d->PASlider->setTypeOfTransform(qMRMLLinearTransformSlider::TRANSLATION_PA);
     d->ISSlider->setTypeOfTransform(qMRMLLinearTransformSlider::TRANSLATION_IS);
-    }
+  }
   else if (_typeOfTransform == qMRMLTransformSliders::ROTATION)
-    {
+  {
     d->LRSlider->setTypeOfTransform(qMRMLLinearTransformSlider::ROTATION_LR);
     d->PASlider->setTypeOfTransform(qMRMLLinearTransformSlider::ROTATION_PA);
     d->ISSlider->setTypeOfTransform(qMRMLLinearTransformSlider::ROTATION_IS);
 
     // Range of Rotation sliders should be fixed to (-180,180)
     this->setRange(-180.00, 180.00);
-    }
+  }
   d->TypeOfTransform = _typeOfTransform;
 }
 
@@ -189,10 +189,10 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLTransformNode* transform
   Q_D(qMRMLTransformSliders);
 
   if (d->MRMLTransformNode == transformNode)
-    {
+  {
     // no change
     return;
-    }
+  }
 
   this->qvtkReconnect(d->MRMLTransformNode, transformNode,
                       vtkMRMLTransformableNode::TransformModifiedEvent,
@@ -225,16 +225,16 @@ void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
 {
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(caller);
   if (!transformNode)
-    {
+  {
     return;
-    }
+  }
   Q_ASSERT(transformNode);
   bool isLinear = transformNode->IsLinear();
   this->setEnabled(isLinear);
   if (!isLinear)
-    {
+  {
     return;
-    }
+  }
 
   // There is no one-to-one correspondence between matrix values and slider position if transform type is rotation;
   // or transform type is translation and coordinate reference is global. In these cases the slider range must not be updated:
@@ -242,9 +242,9 @@ void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
   // can even cause instability (transform value increasing continuously) when the user drags the slider using the mouse.
   if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
     || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION && coordinateReference() == LOCAL) )
-    {
+  {
     return;
-    }
+  }
 
   this->updateRangeFromTransform(transformNode);
 }
@@ -262,15 +262,15 @@ void qMRMLTransformSliders::updateRangeFromTransform(vtkMRMLTransformNode* trans
 
   QPair<double, double> minmax = this->extractMinMaxTranslationValue(matrix, 0.0);
   if(minmax.first < this->minimum())
-    {
+  {
     minmax.first = minmax.first - 0.3 * fabs(minmax.first);
     this->setMinimum(minmax.first);
-    }
+  }
   if(minmax.second > this->maximum())
-    {
+  {
     minmax.second = minmax.second + 0.3 * fabs(minmax.second);
     this->setMaximum(minmax.second);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -459,23 +459,23 @@ void qMRMLTransformSliders::resetUnactiveSliders()
   Q_D(qMRMLTransformSliders);
 
   if (!d->ActiveSliders.contains(d->LRSlider))
-    {
+  {
     bool blocked = d->LRSlider->blockSignals(true);
     d->LRSlider->reset();
     d->LRSlider->blockSignals(blocked);
-    }
+  }
   if (!d->ActiveSliders.contains(d->PASlider))
-    {
+  {
     bool blocked = d->PASlider->blockSignals(true);
     d->PASlider->reset();
     d->PASlider->blockSignals(blocked);
-    }
+  }
   if (!d->ActiveSliders.contains(d->ISSlider))
-    {
+  {
     bool blocked = d->ISSlider->blockSignals(true);
     d->ISSlider->reset();
     d->ISSlider->blockSignals(blocked);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -486,11 +486,11 @@ void qMRMLTransformSliders::onSliderPositionChanged(qMRMLLinearTransformSlider* 
 
   if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
     || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION && coordinateReference() == LOCAL) )
-    {
+  {
     // When a rotation slider is manipulated, the other rotation sliders are
     // reset to 0. Resetting the other sliders should no fire any event.
     this->resetUnactiveSliders();
-    }
+  }
   slider->applyTransformation(position);
   emit this->valuesChanged();
 
@@ -524,15 +524,15 @@ QPair<double, double> qMRMLTransformSliders::extractMinMaxTranslationValue(
 {
   QPair<double, double> minmax;
   if (!mat)
-    {
+  {
     Q_ASSERT(mat);
     return minmax;
-    }
+  }
   for (int i=0; i <3; i++)
-    {
+  {
     minmax.first = qMin(minmax.first, mat->GetElement(i,3));
     minmax.second = qMax(minmax.second, mat->GetElement(i,3));
-    }
+  }
   double range = minmax.second - minmax.first;
   minmax.first = minmax.first - pad * range;
   minmax.second = minmax.second + pad * range;

@@ -58,9 +58,9 @@ void qMRMLThreeDViewInformationWidgetPrivate::updateWidgetFromMRMLViewNode()
 
   q->setEnabled(this->MRMLViewNode != nullptr);
   if (this->MRMLViewNode == nullptr)
-    {
+  {
     return;
-    }
+  }
 
   this->LayoutNameLineEdit->setText(this->MRMLViewNode->GetLayoutName());
   this->ViewGroupSpinBox->setValue(this->MRMLViewNode->GetViewGroup());
@@ -100,9 +100,9 @@ void qMRMLThreeDViewInformationWidget::setMRMLViewNode(vtkMRMLViewNode* newViewN
   Q_D(qMRMLThreeDViewInformationWidget);
 
   if (newViewNode == d->MRMLViewNode)
-    {
+  {
     return;
-    }
+  }
 
   d->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkCommand::ModifiedEvent,
     d, SLOT(updateWidgetFromMRMLViewNode()));
@@ -119,9 +119,9 @@ void qMRMLThreeDViewInformationWidget::setViewGroup(int viewGroup)
   Q_D(qMRMLThreeDViewInformationWidget);
 
   if (!d->MRMLViewNode)
-    {
+  {
     return;
-    }
+  }
 
   d->MRMLViewNode->SetViewGroup(viewGroup);
 }

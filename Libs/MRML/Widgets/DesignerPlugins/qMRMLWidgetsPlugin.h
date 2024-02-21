@@ -90,7 +90,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLWidgetsPlugin
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLCheckableNodeComboBoxPlugin
             << new qMRMLClipNodeWidgetPlugin
@@ -139,7 +139,7 @@ public:
             << new qMRMLWidgetPlugin
             << new qMRMLWindowLevelWidgetPlugin;
     return plugins;
-    }
+  }
 };
 
 #endif

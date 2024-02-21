@@ -41,15 +41,15 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
 vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
 {
   if ( this->SelectedModule)
-    {
+  {
     delete [] this->SelectedModule;
     this->SelectedModule = nullptr;
-    }
+  }
   if (this->LayoutRootElement)
-    {
+  {
     this->LayoutRootElement->Delete();
     this->LayoutRootElement = nullptr;
-    }
+  }
   this->SetCurrentLayoutDescription(nullptr);
 }
 
@@ -74,9 +74,9 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   of << " mainPanelSize=\"" << this->MainPanelSize << "\"";
   of << " secondaryPanelSize=\"" << this->SecondaryPanelSize << "\"";
   if (this->SelectedModule != nullptr)
-    {
+  {
     of << " selectedModule=\"" << (this->SelectedModule != nullptr ? this->SelectedModule : "") << "\"";
-    }
+  }
   //of << " layout=\"" << this->CurrentLayoutDescription << "\"";
 }
 
@@ -92,88 +92,88 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
   const char* attValue;
 
   while (*atts != nullptr)
-    {
+  {
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "currentViewArrangement"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->ViewArrangement;
       if (this->ViewArrangement < vtkMRMLLayoutNode::SlicerLayoutInitialView)
-        {
-        this->ViewArrangement = vtkMRMLLayoutNode::SlicerLayoutInitialView;
-        }
-      }
-    else if (!strcmp (attName, "guiPanelVisibility"))
       {
+        this->ViewArrangement = vtkMRMLLayoutNode::SlicerLayoutInitialView;
+      }
+    }
+    else if (!strcmp (attName, "guiPanelVisibility"))
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->GUIPanelVisibility;
-      }
+    }
     else if ( !strcmp ( attName, "bottomPanelVisibility" ))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->BottomPanelVisibility;
-      }
+    }
     else if ( !strcmp (attName, "guiPanelLR" ))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->GUIPanelLR;
-      }
+    }
     else if ( !strcmp (attName, "collapseSliceControllers"))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->CollapseSliceControllers;
-      }
+    }
     else if ( !strcmp (attName, "numberOfCompareViewRows" ))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfCompareViewRows;
-      }
+    }
     else if ( !strcmp (attName, "numberOfCompareViewColumns" ))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfCompareViewColumns;
-      }
+    }
     else if ( !strcmp (attName, "numberOfLightboxRows" ))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfCompareViewLightboxRows;
-      }
+    }
     else if ( !strcmp (attName, "numberOfLightboxColumns" ))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfCompareViewLightboxColumns;
-      }
+    }
     else if ( !strcmp (attName, "mainPanelSize" ))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->MainPanelSize;
-      }
+    }
     else if ( !strcmp (attName, "secondaryPanelSize" ))
-      {
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->SecondaryPanelSize;
-      }
-    else if ( !strcmp (attName, "selectedModule" ))
-      {
-      this->SetSelectedModule(attValue);
-      }
-    else if ( !strcmp(attName, "layout"))
-      {
-      //this->SetAndParseCurrentLayoutDescription(attValue);
-      }
     }
+    else if ( !strcmp (attName, "selectedModule" ))
+    {
+      this->SetSelectedModule(attValue);
+    }
+    else if ( !strcmp(attName, "layout"))
+    {
+      //this->SetAndParseCurrentLayoutDescription(attValue);
+    }
+  }
 
   this->EndModify(disabledModify);
 }
@@ -193,9 +193,9 @@ void vtkMRMLLayoutNode::SetViewArrangement(int arrNew)
   if ( this->ViewArrangement == arrNew
     && this->GetCurrentLayoutDescription()
     && this->GetCurrentLayoutDescription() == this->GetLayoutDescription(arrNew) )
-    {
+  {
     return;
-    }
+  }
   this->ViewArrangement = arrNew;
   int wasModifying = this->StartModify();
   this->UpdateCurrentLayoutDescription();
@@ -207,10 +207,10 @@ void vtkMRMLLayoutNode::SetViewArrangement(int arrNew)
 bool vtkMRMLLayoutNode::AddLayoutDescription(int layout, const char* layoutDescription)
 {
   if (this->IsLayoutDescription(layout))
-    {
+  {
     vtkDebugMacro( << "Layout " << layout << " has already been registered");
     return false;
-    }
+  }
   this->Layouts[layout] = std::string(layoutDescription);
   this->Modified();
   return true;
@@ -220,14 +220,14 @@ bool vtkMRMLLayoutNode::AddLayoutDescription(int layout, const char* layoutDescr
 bool vtkMRMLLayoutNode::SetLayoutDescription(int layout, const char* layoutDescription)
 {
   if (!this->IsLayoutDescription(layout))
-    {
+  {
     vtkDebugMacro( << "Layout " << layout << " has NOT been registered");
     return false;
-    }
+  }
   if (this->Layouts[layout] == layoutDescription)
-    {
+  {
     return true;
-    }
+  }
   this->Layouts[layout] = std::string(layoutDescription);
   int wasModifying = this->StartModify();
   this->UpdateCurrentLayoutDescription();
@@ -248,10 +248,10 @@ std::string vtkMRMLLayoutNode::GetLayoutDescription(int layout)
 {
   std::map<int, std::string>::const_iterator it = this->Layouts.find(layout);
   if (it == this->Layouts.end())
-    {
+  {
     vtkWarningMacro("Can't find layout:" << layout);
     return std::string();
-    }
+  }
   return it->second;
 }
 
@@ -259,23 +259,23 @@ std::string vtkMRMLLayoutNode::GetLayoutDescription(int layout)
 void vtkMRMLLayoutNode::UpdateCurrentLayoutDescription()
 {
   if (this->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCustomView)
-    {
+  {
     return;
-    }
+  }
   int viewArrangement = this->ViewArrangement;
   if (!this->IsLayoutDescription(viewArrangement))
-    {
+  {
     vtkWarningMacro(<< "View arrangement " << this->ViewArrangement
       << " is not recognized, register it with "
       << "AddLayoutDescription()");
     viewArrangement = vtkMRMLLayoutNode::SlicerLayoutDefaultView;
-    }
+  }
   std::string description = this->GetLayoutDescription(viewArrangement);
   if (this->GetCurrentLayoutDescription() &&
       description == this->GetCurrentLayoutDescription())
-    {
+  {
     return;
-    }
+  }
   this->SetAndParseCurrentLayoutDescription(description.c_str());
 }
 
@@ -284,16 +284,16 @@ void vtkMRMLLayoutNode::SetAndParseCurrentLayoutDescription(const char* descript
 {
   // Be careful that it matches the ViewArrangement value
   if (this->LayoutRootElement)
-    {
+  {
     this->LayoutRootElement->Delete();
-    }
+  }
   this->LayoutRootElement = this->ParseLayout(description);
   if (this->LayoutRootElement == nullptr)
-    {
+  {
     // ParseLayout has already logged an error, if there was any
     this->SetCurrentLayoutDescription("");
     return;
-    }
+  }
 
   this->SetCurrentLayoutDescription(description);
 }
@@ -302,9 +302,9 @@ void vtkMRMLLayoutNode::SetAndParseCurrentLayoutDescription(const char* descript
 vtkXMLDataElement* vtkMRMLLayoutNode::ParseLayout(const char* description)
 {
   if (!description || strlen(description) <= 0)
-    {
+  {
     return nullptr;
-    }
+  }
 
   std::istringstream iss(description, std::istringstream::in);
   vtkNew<vtkXMLDataParser> parser;
@@ -313,10 +313,10 @@ vtkXMLDataElement* vtkMRMLLayoutNode::ParseLayout(const char* description)
 
   vtkXMLDataElement* root = parser->GetRootElement();
   if (root==nullptr)
-    {
+  {
     vtkErrorWithObjectMacro(parser, "vtkMRMLLayoutNode::ParseLayout: failed to parse layout description");
     return nullptr;
-    }
+  }
 
   // if we don't register, then the root element will be destroyed when the
   // parser gets out of scope
@@ -337,9 +337,9 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
   // currently has layout descriptions (more than the default None description)
   // then we don't want to copy them (it would overwrite the descriptions)
   if (node->Layouts.size() > 1 && this->Layouts.size() == 1)
-    {
+  {
     this->Layouts = node->Layouts;
-    }
+  }
   this->SetViewArrangement (node->GetViewArrangement() );
   this->SetGUIPanelVisibility(node->GetGUIPanelVisibility()) ;
   this->SetBottomPanelVisibility (node->GetBottomPanelVisibility());
@@ -375,13 +375,13 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Main panel size: " << this->MainPanelSize << "\n";
   os << indent << "Secondary panel size: " << this->SecondaryPanelSize << "\n";
   if ( this->SelectedModule )
-    {
+  {
     os << indent << "Selected module: " << this->SelectedModule << "\n";
-    }
+  }
   else
-    {
+  {
     os << indent << "Selected module: (none)\n";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -400,15 +400,15 @@ int vtkMRMLLayoutNode::GetNumberOfMaximizedViewNodes()
 void vtkMRMLLayoutNode::AddMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedViewNode)
 {
   if (!maximizedViewNode || !maximizedViewNode->GetID())
-    {
+  {
     // nothing to add
     return;
-    }
+  }
   if (this->HasNodeReferenceID("MaximizedView", maximizedViewNode->GetID()))
-    {
+  {
     // already added
     return;
-    }
+  }
   this->AddNodeReferenceID("MaximizedView", maximizedViewNode->GetID());
 }
 
@@ -416,23 +416,23 @@ void vtkMRMLLayoutNode::AddMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedV
 void vtkMRMLLayoutNode::RemoveMaximizedViewNode(vtkMRMLAbstractViewNode* maximizedViewNode)
 {
   for (int nodeReferenceIndex = 0; nodeReferenceIndex < this->GetNumberOfMaximizedViewNodes(); ++nodeReferenceIndex)
-    {
+  {
     vtkMRMLAbstractViewNode* viewNode = this->GetMaximizedViewNode(nodeReferenceIndex);
     if (viewNode == maximizedViewNode)
-      {
+    {
       this->RemoveNthNodeReferenceID("MaximizedView", nodeReferenceIndex);
       return;
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
 bool vtkMRMLLayoutNode::IsMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode)
 {
   if (!viewNode || !viewNode->GetID())
-    {
+  {
     return false;
-    }
+  }
   return this->HasNodeReferenceID("MaximizedView", viewNode->GetID());
 }
 

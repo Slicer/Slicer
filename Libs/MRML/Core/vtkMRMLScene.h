@@ -589,7 +589,7 @@ public:
   /// * \link vtkMRMLScene::EndImportEvent EndImportEvent \endlink,
   /// * \link vtkMRMLScene::EndBatchProcessEvent EndBatchProcessEvent \endlink
   enum StateType
-    {
+  {
     BatchProcessState = 0x0001,
     CloseState = 0x0002 | BatchProcessState,
     ImportState = 0x0004 | BatchProcessState,
@@ -597,7 +597,7 @@ public:
     SaveState = 0x0010,
     UndoState = 0x0020,
     RedoState = 0x0040,
-    };
+  };
 
   /// \brief Returns the current state of the scene.
   ///
@@ -671,7 +671,7 @@ public:
   void ProgressState(unsigned long state, int progress = 0);
 
   enum SceneEventType
-    {
+  {
     NodeAboutToBeAddedEvent = 0x2000,
     NodeAddedEvent,
     NodeAboutToBeRemovedEvent,
@@ -719,7 +719,7 @@ public:
     EndRedoEvent = StateEvent | EndEvent | RedoState,
     ProgressRedoEvent = StateEvent | ProgressEvent | RedoState,
 
-    };
+  };
 
   /// The version of the last loaded scene file.
   vtkGetStringMacro(LastLoadedVersion);

@@ -87,19 +87,19 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData *input, 
   vtkPointData *pd = input->GetPointData();
   pd=input->GetPointData();
   if (pd ==nullptr)
-    {
+  {
     vtkErrorMacro(<<"PointData is NULL");
     return;
-    }
+  }
   vtkDataArray *inScalars=pd->GetScalars();
   if ( inScalars == nullptr )
-    {
+  {
     vtkErrorMacro(<<"Scalars must be defined for distance transform");
     return;
-    }
+  }
 
   if (inScalars->GetNumberOfComponents() == 1 )
-    {
+  {
 
 ////////// These types are not defined in itk ////////////
 #undef VTK_TYPE_USE_LONG_LONG
@@ -111,7 +111,7 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData *input, 
     void* outPtr = output->GetScalarPointer();
 
     switch (inScalars->GetDataType())
-      {
+    {
       vtkTemplateMacroCase(VTK_LONG, long, CALL);                               \
       vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, CALL);             \
       vtkTemplateMacroCase(VTK_INT, int, CALL);                                 \
@@ -121,12 +121,12 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData *input, 
       vtkTemplateMacroCase(VTK_CHAR, char, CALL);                               \
       vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, CALL);                 \
       vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, CALL);
-      } //switch
-    }
+    } //switch
+  }
   else
-    {
+  {
     vtkErrorMacro(<< "Can only calculate on scalar.");
-    }
+  }
 }
 
 void vtkITKMorphologicalContourInterpolator::PrintSelf(ostream& os, vtkIndent indent)

@@ -64,9 +64,9 @@ void qSlicerEventBrokerModuleWidget::onCurrentObjectChanged(vtkObject* object)
 {
   Q_D(qSlicerEventBrokerModuleWidget);
   if (!object)
-    {
+  {
     return;
-    }
+  }
   std::stringstream dumpStream;
   object->Print(dumpStream);
   d->TextEdit->setText(QString::fromStdString(dumpStream.str()));

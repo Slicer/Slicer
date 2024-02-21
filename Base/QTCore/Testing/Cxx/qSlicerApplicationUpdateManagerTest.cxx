@@ -66,9 +66,9 @@ bool qSlicerApplicationUpdateManagerTester::prepareJson(const QString& jsonFile)
   bool success = true;
   QDir tmp = QDir::temp();
   if (!QFile::exists(tmp.filePath(this->TemporaryDirName)))
-    {
+  {
     success = tmp.mkdir(this->TemporaryDirName);
-    }
+  }
   success = tmp.cd(this->TemporaryDirName);
   QString filename = QLatin1String("find");
   success = success && QFile::copy(jsonFile, tmp.filePath(filename));
@@ -80,9 +80,9 @@ bool qSlicerApplicationUpdateManagerTester::prepareJson(const QString& jsonFile)
 bool qSlicerApplicationUpdateManagerTester::resetTmp()
 {
   if (this->TemporaryDirName.isEmpty())
-    {
+  {
     return false;
-    }
+  }
   QDir tmp = QDir::temp();
   QFile(tmp.filePath(this->TemporaryDirName)).setPermissions(QFile::ReadUser | QFile::WriteUser | QFile::ExeUser);
   ctk::removeDirRecursively(tmp.filePath(this->TemporaryDirName));
@@ -120,10 +120,10 @@ void qSlicerApplicationUpdateManagerTester::cleanup()
 void qSlicerApplicationUpdateManagerTester::cleanupTestCase()
 {
   if (this->Tmp != QDir::current() && this->Tmp.exists())
-    {
+  {
     ctk::removeDirRecursively(this->Tmp.absolutePath());
     this->Tmp = QDir();
-    }
+  }
   QFile::remove(QSettings().fileName());
 }
 

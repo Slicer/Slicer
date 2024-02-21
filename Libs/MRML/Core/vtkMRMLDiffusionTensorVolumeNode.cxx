@@ -39,10 +39,10 @@ void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *di
   // Make sure the node added is a DiffusionTensorVolumeDisplayNode
   vtkMRMLNode* displayNode =  this->GetDisplayNode();
   if (displayNode && !vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode))
-    {
+  {
     vtkWarningMacro("SetAndObserveDisplayNodeID: The node to display "
                     << displayNodeID << " can NOT display diffusion tensors");
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -66,10 +66,10 @@ vtkMRMLStorageNode* vtkMRMLDiffusionTensorVolumeNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
   if (scene == nullptr)
-    {
+  {
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
-    }
+  }
   return vtkMRMLStorageNode::SafeDownCast(
     scene->CreateNodeByClass("vtkMRMLNRRDStorageNode"));
 }
@@ -78,15 +78,15 @@ vtkMRMLStorageNode* vtkMRMLDiffusionTensorVolumeNode::CreateDefaultStorageNode()
 void vtkMRMLDiffusionTensorVolumeNode::CreateDefaultDisplayNodes()
 {
   if (vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode())!=nullptr)
-    {
+  {
     // display node already exists
     return;
-    }
+  }
   if (this->GetScene()==nullptr)
-    {
+  {
     vtkErrorMacro("vtkMRMLDiffusionTensorVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
-    }
+  }
   vtkMRMLDiffusionTensorVolumeDisplayNode* dispNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(
     this->GetScene()->AddNewNodeByClass("vtkMRMLDiffusionTensorVolumeDisplayNode") );
   dispNode->SetDefaultColorMap();

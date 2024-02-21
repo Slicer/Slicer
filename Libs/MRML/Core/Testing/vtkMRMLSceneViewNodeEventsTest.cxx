@@ -53,11 +53,11 @@ int vtkMRMLSceneViewNodeEventsTest(
 
   if (scene->GetNumberOfNodesByClass("vtkMRMLCameraNode") != 0 ||
       scene->GetNumberOfNodesByClass("vtkMRMLInteractionNode") != 1)
-    {
+  {
     std::cerr << "Camera node not removed after vtkMRMLScene::Clear()"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   vtkNew<vtkMRMLSceneEventRecorder> callback;
   scene->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
@@ -71,10 +71,10 @@ int vtkMRMLSceneViewNodeEventsTest(
 
   if (scene->GetNumberOfNodesByClass("vtkMRMLCameraNode") != 1 ||
       scene->GetNumberOfNodesByClass("vtkMRMLInteractionNode") != 1)
-    {
+  {
     std::cerr << "Camera or interaction nodes not restored " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (callback->CalledEvents.size() != 6 ||
       callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
@@ -83,7 +83,7 @@ int vtkMRMLSceneViewNodeEventsTest(
       callback->CalledEvents[vtkMRMLScene::NodeAddedEvent] != 1 ||
       callback->CalledEvents[vtkMRMLScene::EndRestoreEvent] != 1 ||
       callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1)
-    {
+  {
     std::cerr << "Wrong fired events: "
               << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] << " "
@@ -94,6 +94,6 @@ int vtkMRMLSceneViewNodeEventsTest(
               << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

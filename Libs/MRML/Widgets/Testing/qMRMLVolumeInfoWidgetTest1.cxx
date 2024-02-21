@@ -72,9 +72,9 @@ int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
   volumeInfo.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }
 

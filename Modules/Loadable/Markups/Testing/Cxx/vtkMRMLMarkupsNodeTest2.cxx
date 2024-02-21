@@ -45,10 +45,10 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   if (markup1.Position[0] != markup2.Position[0] ||
       markup1.Position[1] != markup2.Position[1] ||
       markup1.Position[2] != markup2.Position[2])
-    {
+  {
     std::cerr << "After copy, point 0 doesn't match in markups" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // test swap
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -88,26 +88,26 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   if (pos0New[0] != pos1[0] ||
       pos0New[1] != pos1[1] ||
       pos0New[2] != pos1[2])
-    {
+  {
     std::cerr << "Swap failed, point 0 expected: "
               << pos1[0] << ", " << pos1[1] << ", " << pos1[2]
               << ", but got:"
               << pos0New[0] << ", " << pos0New[1] << ", " << pos0New[2]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   node1->GetNthControlPointPosition(1, pos1New);
   if (pos1New[0] != pos0[0] ||
       pos1New[1] != pos0[1] ||
       pos1New[2] != pos0[2])
-    {
+  {
     std::cerr << "Swap failed, point 1 expected: "
               << pos0[0] << ", " << pos0[1] << ", " << pos0[2]
               << ", but got:"
               << pos1New[0] << ", " << pos1New[1] << ", " << pos1New[2]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // double check that can change a swapped point without changing the other
   // one
@@ -119,61 +119,61 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   if (pos0New[0] != pos1[0] ||
       pos0New[1] != pos1[1] ||
       pos0New[2] != pos1[2])
-    {
+  {
     std::cerr << "Swap failed after changing point 1, point 0 expected: "
               << pos1[0] << ", " << pos1[1] << ", " << pos1[2]
               << ", but got:"
               << pos0New[0] << ", " << pos0New[1] << ", " << pos0New[2]
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Check if ID returned is valid
   if (node1->GetNumberOfControlPoints() > 0)
-    {
+  {
     vtkMRMLMarkupsNode::ControlPoint* markup = node1->GetNthControlPoint(0);
     const char* markupID = markup->ID.c_str();
     int markupIndex = node1->GetNthControlPointIndexByID(markupID);
     if (node1->GetNthControlPointByID(markupID) != markup)
-      {
+    {
       std::cerr << "Get Markup by ID failed" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
     if (markupIndex != 0)
-      {
+    {
       std::cerr << "Get Markup index by ID failed, returned "
                 << markupIndex << ", expecting 0" << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // Check returned value with a nullptr ID
   vtkMRMLMarkupsNode::ControlPoint* markupNull = node1->GetNthControlPointByID(nullptr);
   int indexNull = node1->GetNthControlPointIndexByID(nullptr);
   if (markupNull)
-    {
+  {
     std::cerr << "Get Markup by ID with nullptr parameters failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (indexNull >= 0)
-    {
+  {
     std::cerr << "Get Markup index by ID with nullptr parameters failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Check returned value with an invalid ID
   vtkMRMLMarkupsNode::ControlPoint* markupInvalid = node1->GetNthControlPointByID("Invalid");
   int indexInvalid = node1->GetNthControlPointIndexByID("Invalid");
   if (markupInvalid)
-    {
+  {
     std::cerr << "Get Markup by ID with invalid ID failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (indexInvalid >= 0)
-    {
+  {
     std::cerr << "Get Markup index by ID with invalid ID failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

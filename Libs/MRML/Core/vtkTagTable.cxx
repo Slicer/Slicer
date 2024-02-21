@@ -21,9 +21,9 @@ vtkTagTable::~vtkTagTable()
 {
   this->RestoreSelectionState = 0;
   if ( this->Name )
-    {
+  {
     delete [] this->Name;
-    }
+  }
   this->TagTable.clear();
   this->TagSelectionTable.clear();
 
@@ -42,24 +42,24 @@ void vtkTagTable::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "RestoreSelectionState: " << this->GetRestoreSelectionState() << "\n";
 
   if (!this->TagTable.empty())
-    {
+  {
     os << indent << "TagTable:\n";
     for (iter = this->TagTable.begin(); iter != this->TagTable.end(); iter++)
-      {
+    {
       iter2 = this->TagSelectionTable.find( iter->first );
       os << indent.GetNextIndent() << "Attribute[" << iter->first << "]: Value: " << iter->second << " Selected: ";
       if (iter2 != this->TagSelectionTable.end())
-        {
+      {
         os << iter2->second;
-        }
+      }
       else
-        {
+      {
         os << "??";
         vtkErrorMacro ( "vtkTagTable::PrintSelf -- TagTable and TagSelectionTable are out of sync." );
-        }
-      os << "\n";
       }
+      os << "\n";
     }
+  }
 }
 
 
@@ -70,28 +70,28 @@ void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value)
   //--- add a attribute value pair. If the attribute
   //--- already exists in the table, overwrite its value and parentID.
   if ( attribute != nullptr )
-    {
+  {
     if ( value == nullptr )
-      {
+    {
       value = "NULL";
-      }
+    }
 
     //--- replace the tag if already present.
     //--- maintain its selected status.
     if ( this->UpdateTag ( attribute, value ) == 1 )
-      {
+    {
       return;
-      }
+    }
     else
-      {
+    {
       //--- otherwise...
       //--- add tag in a new column and deselect it
       std::string att(attribute);
       std::string val(value );
       this->TagTable.insert (std::make_pair(att, val ));
       this->TagSelectionTable.insert ( std::make_pair(att, 0));
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -102,28 +102,28 @@ void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value, int
 
 
   if ( attribute != nullptr )
-    {
+  {
     if ( value == nullptr )
-      {
+    {
       value = "NULL";
-      }
+    }
 
     //--- replace the tag if already present.
     //--- maintain its selected status.
     if ( this->UpdateTag ( attribute, value, selected ) == 1 )
-      {
+    {
       return;
-      }
+    }
     else
-      {
+    {
       //--- otherwise...
       //--- add tag in a new column and deselect it
       std::string att(attribute);
       std::string val(value );
       this->TagTable.insert (std::make_pair(att, val ));
       this->TagSelectionTable.insert ( std::make_pair(att, selected));
-      }
     }
+  }
 }
 
 
@@ -135,11 +135,11 @@ void vtkTagTable::Copy( vtkTagTable *t)
   std::string val;
   int selected;
   if ( t != nullptr )
-    {
+  {
     this->ClearTagTable();
     this->SetName ( t->GetName() );
     for ( int i=0; i < t->GetNumberOfTags(); i++ )
-      {
+    {
       att.clear();
       val.clear();
       att = t->GetTagAttribute(i);
@@ -147,15 +147,15 @@ void vtkTagTable::Copy( vtkTagTable *t)
       selected = t->IsTagSelected ( att.c_str() );
       this->AddUniqueTag ( att.c_str(), val.c_str() );
       if ( selected )
-        {
+      {
         this->SelectTag ( att.c_str() );
-        }
+      }
       else
-        {
+      {
         this->DeselectTag ( att.c_str() );
-        }
       }
     }
+  }
 }
 
 
@@ -166,11 +166,11 @@ void vtkTagTable::AddUniqueTag ( const char *attribute, const char *value )
   //--- add a attribute value pair.
   //--- update the tag if it's present in the table.
   if ( attribute != nullptr )
-    {
+  {
     if ( value == nullptr )
-      {
+    {
       value = "NULL";
-      }
+    }
 
     std::string att (attribute);
     std::string val (value);
@@ -179,23 +179,23 @@ void vtkTagTable::AddUniqueTag ( const char *attribute, const char *value )
     for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++)
-      {
+    {
       if (iter->first == att && iter->second == val )
-        {
+      {
         unique=0;
         break;
-        }
       }
+    }
 
     if ( unique == 1 )
-      {
+    {
       //--- otherwise...
       //--- add tag in a new column and deselect it
       std::string val2(value );
       this->TagTable.insert (std::make_pair(att, val2 ));
       this->TagSelectionTable.insert ( std::make_pair(att, 0));
-      }
     }
+  }
 }
 
 
@@ -220,14 +220,14 @@ int vtkTagTable::UpdateTag ( const char *attribute, const char *value )
     for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++)
-      {
+    {
       lowTest = vtksys::SystemTools::LowerCase(iter->first);
       if (lowTest == lowAtt )
-        {
+      {
         iter->second = val;
         return 1;
-        }
       }
+    }
     return 0;
 }
 
@@ -251,22 +251,22 @@ int vtkTagTable::UpdateTag ( const char *attribute, const char *value, int selec
     for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++)
-      {
+    {
       lowTest = vtksys::SystemTools::LowerCase(iter->first);
       if (lowTest == lowAtt )
-        {
+      {
         iter->second = val;
         if ( selected )
-          {
+        {
           this->SelectTag ( attribute );
-          }
-        else
-          {
-          this->DeselectTag ( attribute );
-          }
-        return 1;
         }
+        else
+        {
+          this->DeselectTag ( attribute );
+        }
+        return 1;
       }
+    }
     return 0;
 }
 
@@ -283,12 +283,12 @@ void vtkTagTable::SelectTag ( const char *attribute )
     for ( iter = this->TagSelectionTable.begin();
           iter != this->TagSelectionTable.end();
           iter++)
-      {
+    {
       if (iter->first == att )
-        {
+      {
         iter->second = 1;
-        }
       }
+    }
 }
 
 
@@ -302,12 +302,12 @@ void vtkTagTable::DeselectTag ( const char *attribute)
     for ( iter = this->TagSelectionTable.begin();
           iter != this->TagSelectionTable.end();
           iter++)
-      {
+    {
       if (iter->first == att )
-        {
+      {
         iter->second = 0;
-        }
       }
+    }
 }
 
 
@@ -322,19 +322,19 @@ int vtkTagTable::IsTagSelected ( const char *attribute )
     for ( iter = this->TagSelectionTable.begin();
           iter != this->TagSelectionTable.end();
           iter++)
-      {
+    {
       if (iter->first == att )
-        {
+      {
         if ( iter->second == 0 )
-          {
+        {
           return 0;
-          }
+        }
         else if ( iter->second ==1 )
-          {
+        {
           return 1;
-          }
         }
       }
+    }
     return -1;
 }
 
@@ -350,12 +350,12 @@ const char * vtkTagTable::GetTagAttribute ( int index)
     for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++, i++)
-      {
+    {
       if (i==index )
-        {
+      {
         return ( iter->first.c_str() );
-        }
       }
+    }
     return ( nullptr );
 }
 
@@ -365,21 +365,21 @@ const char * vtkTagTable::GetTagAttribute ( int index)
 
 //----------------------------------------------------------------------------
  const char * vtkTagTable::GetTagValue ( int index)
-{
+ {
 
     std::map<std::string, std::string>::iterator iter;
     int i=0;
     for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++, i++)
-      {
+    {
       if (i==index )
-        {
+      {
         return ( iter->second.c_str() );
-        }
       }
+    }
     return ( nullptr );
-}
+ }
 
 
 //----------------------------------------------------------------------------
@@ -392,12 +392,12 @@ const char * vtkTagTable::GetTagValue ( const char* attribute)
   for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++, i++)
-      {
+  {
       if (iter->first == att )
-        {
+      {
         return ( iter->second.c_str() );
-        }
       }
+  }
     return ( nullptr );
 }
 
@@ -414,14 +414,14 @@ int vtkTagTable::CheckTableForTag ( const char *attribute )
   for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++)
-      {
+  {
       lowatt = vtksys::SystemTools::LowerCase(iter->first);
       if ( lowatt == att )
-        {
+      {
         return ( index );
-        }
-      index ++;
       }
+      index ++;
+  }
     return ( -1 );
 }
 
@@ -429,7 +429,7 @@ int vtkTagTable::CheckTableForTag ( const char *attribute )
 
 //----------------------------------------------------------------------------
  int vtkTagTable::CheckTableForTag ( const char *attribute, const char *value)
-{
+ {
   std::string att;
   std::string val;
   std::map<std::string, std::string>::iterator iter;
@@ -443,17 +443,17 @@ int vtkTagTable::CheckTableForTag ( const char *attribute )
   for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++)
-      {
+  {
       lowatt = vtksys::SystemTools::LowerCase(iter->first);
       lowval = vtksys::SystemTools::LowerCase(iter->second);
       if ( (lowatt == att ) && (lowval == val) )
-        {
+      {
         return ( index );
-        }
-      index ++;
       }
+      index ++;
+  }
     return ( -1 );
-}
+ }
 
 
 

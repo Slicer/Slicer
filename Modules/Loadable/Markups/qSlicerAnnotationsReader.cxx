@@ -112,43 +112,43 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
 
   QString name = QFileInfo(fileName).baseName();
   if (properties.contains("name"))
-    {
+  {
     name = properties["name"].toString();
-    }
+  }
 
   if (d->MarkupsLogic.GetPointer() == nullptr)
-    {
+  {
     return false;
-    }
+  }
 
   // file type
   int fileType = vtkSlicerMarkupsLogic::AnnotationNone;
   if (properties.contains("fiducial") && properties["fiducial"].toBool() == true)
-    {
+  {
     fileType = vtkSlicerMarkupsLogic::AnnotationFiducial;
-    }
+  }
   else if (properties.contains("ruler") && properties["ruler"].toBool() == true)
-    {
+  {
     fileType = vtkSlicerMarkupsLogic::AnnotationRuler;
-    }
+  }
   else if (properties.contains("roi") && properties["roi"].toBool() == true)
-    {
+  {
     fileType = vtkSlicerMarkupsLogic::AnnotationROI;
-    }
+  }
 
   char * nodeID = d->MarkupsLogic->LoadAnnotation(
     fileName.toUtf8(), name.toUtf8(), fileType);
   if (!nodeID)
-    {
+  {
     this->setLoadedNodes(QStringList());
     return false;
-    }
+  }
   this->setLoadedNodes( QStringList(QString(nodeID)) );
   if (properties.contains("name"))
-    {
+  {
     std::string uname = this->mrmlScene()->GetUniqueNameByString(
       properties["name"].toString().toUtf8());
     this->mrmlScene()->GetNodeByID(nodeID)->SetName(uname.c_str());
-    }
+  }
   return true;
 }

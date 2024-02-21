@@ -28,17 +28,17 @@ int main(int argc, char * argv[])
   PARSE_ARGS;
 
   for (size_t i=0; i<ROI_One.size(); i++)
-    {
+  {
     std::cout << "ROI_In[" << i << "]" << ROI_One[i] << ",";
-    }
+  }
 
   for (size_t j=0; j<ROI_List.size(); j++)
-    {
+  {
     for (size_t i=0; i<ROI_List[j].size(); i++)
-      {
+    {
       std::cout << "ROI_List["<< j << "][" << i << "]" << ROI_List[j][i] << ",";
-      }
     }
+  }
 
   return EXIT_SUCCESS;
 }

@@ -46,21 +46,21 @@ int main(int argc, char * *argv)
   std::cout << "Processed args." << std::endl;
 
   try
-    {
+  {
 
     if (!OutputCurveFileName.empty())
-      {
+    {
       if (FullTree)
-        {
+      {
         std::cerr << "Output curve can only be computed if fullTree option is disabled" << std::endl;
         return EXIT_FAILURE;
-        }
+      }
       if (SkeletonType != "1D")
-        {
+      {
         std::cerr << "Output curve can only be computed if skeleton type is 1D" << std::endl;
         return EXIT_FAILURE;
-        }
       }
+    }
 
     typedef unsigned char                        InputPixelType;
     typedef itk::Image<InputPixelType, 3>        InputImageType;
@@ -102,9 +102,9 @@ int main(int argc, char * *argv)
 
     int extract2DSheet = 0;
     if( SkeletonType == "2D" )
-      {
+    {
       extract2DSheet = 1;
-      }
+    }
     tilg_iso_3D(dim[0], dim[1], dim[2],
                 inputImageBuffer, outputImageBuffer, extract2DSheet);
     std::cout << "Extracted skeleton." << std::endl;
@@ -120,18 +120,18 @@ int main(int argc, char * *argv)
     std::ofstream writeOutputFile;
     bool writeSeedsFile = !OutputPointsFileName.empty();
     if (writeSeedsFile)
-      {
+    {
       writeOutputFile.open(OutputPointsFileName.c_str());
-      }
+    }
 
     vtkNew<vtkMRMLMarkupsCurveNode> curveNode;
     curveNode->SetName("C");
 
     if (FullTree)
-      {
+    {
       memset(outputImageBuffer, 0,
              dim[0] * dim[1] * dim[2] * sizeof(OutputPixelType) );
-      }
+    }
 
     OutputPointType position_LPS;
     OutputIndexType position_IJK;
@@ -139,23 +139,23 @@ int main(int argc, char * *argv)
     int i = 0;
     std::deque<Coord3i>::iterator iter = axisPoints.begin();
     while( iter != axisPoints.end() )
-      {
+    {
       position_IJK[0] = (*iter)[0];
       position_IJK[1] = (*iter)[1];
       position_IJK[2] = (*iter)[2];
 
       if (FullTree)
-        {
+      {
         outputImage->SetPixel(position_IJK, 255);
-        }
+      }
 
       if (writeSeedsFile)
-        {
+      {
         writeOutputFile << i
           << " " << (*iter)[0]
           << " " << (*iter)[1]
           << " " << (*iter)[2] << std::endl;
-        }
+      }
 
       outputImage->TransformIndexToPhysicalPoint(position_IJK, position_LPS);
       // first two coordinates are inverted because MRML is always in RAS coordinate system
@@ -163,40 +163,40 @@ int main(int argc, char * *argv)
 
       iter++;
       i++;
-      }
+    }
 
     if (writeSeedsFile)
-      {
+    {
       std::cout << "Wrote points file." << std::endl;
-      }
+    }
 
     if (!OutputCurveFileName.empty())
-      {
+    {
       vtkNew<vtkMRMLMarkupsJsonStorageNode> outputCurveStorageNode;
       outputCurveStorageNode->SetFileName(OutputCurveFileName.c_str());
       outputCurveStorageNode->UseLPSOn();
       outputCurveStorageNode->WriteData(curveNode.GetPointer());
       std::cout << "Wrote output curve." << std::endl;
-      }
+    }
 
     if (!OutputImageFileName.empty())
-      {
+    {
       WriterType::Pointer writer = WriterType::New();
       writer->SetFileName(OutputImageFileName.c_str());
       writer->SetInput(outputImage);
       writer->Update();
       std::cout << "Wrote output image." << std::endl;
-      }
-
     }
+
+  }
   catch( itk::ExceptionObject & excep )
-    {
+  {
 
     std::cerr << argv[0] << " : Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
 
-    }
+  }
 
   return EXIT_SUCCESS;
 }

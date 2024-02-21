@@ -160,9 +160,9 @@ int vtkMRMLCameraWidgetTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 
   // Check if camera shift is the same even if the camera is anisotropically scaled
   for (int i = 0; i < 3; i++)
-    {
+  {
     CHECK_DOUBLE_TOLERANCE(cameraShiftAnisotropic[i], cameraShift[i], 1.0e-5);
-    }
+  }
 
   return EXIT_SUCCESS;
 }

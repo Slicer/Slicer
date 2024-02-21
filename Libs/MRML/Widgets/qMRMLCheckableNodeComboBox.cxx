@@ -76,9 +76,9 @@ void qMRMLCheckableNodeComboBoxPrivate::init(QAbstractItemModel* model)
 void qMRMLCheckableNodeComboBoxPrivate::setModel(QAbstractItemModel* model)
 {
   if (model)
-    {
+  {
     qobject_cast<ctkCheckableComboBox*>(this->ComboBox)->setCheckableModel(model);
-    }
+  }
   this->qMRMLNodeComboBoxPrivate::setModel(model);
 }
 
@@ -108,14 +108,14 @@ QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::checkedNodes()const
   const ctkCheckableComboBox* checkableComboBox =
     qobject_cast<const ctkCheckableComboBox*>(d->ComboBox);
   foreach(const QModelIndex& checkedIndex, checkableComboBox->checkedIndexes())
-    {
+  {
     vtkMRMLNode* checkedNode = d->mrmlNodeFromIndex(checkedIndex);
     // MRMLScene or extra items could be checked, we don't want them
     if (checkedNode)
-      {
+    {
       res << checkedNode;
-      }
     }
+  }
   return res;
 }
 
@@ -124,9 +124,9 @@ QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::uncheckedNodes()const
 {
   QList<vtkMRMLNode*> res = this->nodes();
   foreach(vtkMRMLNode* checkedNode, this->checkedNodes())
-    {
+  {
     res.removeAll(checkedNode);
-    }
+  }
   return res;
 }
 
@@ -157,9 +157,9 @@ Qt::CheckState qMRMLCheckableNodeComboBox::checkState(vtkMRMLNode* node)const
   QModelIndexList indexes =
     d->indexesFromMRMLNodeID(node ? node->GetID() : QString());
   if (indexes.size() == 0)
-    {
+  {
     return Qt::Unchecked;
-    }
+  }
   return checkableComboBox->checkState(indexes[0]);
 }
 
@@ -172,9 +172,9 @@ void qMRMLCheckableNodeComboBox::setCheckState(vtkMRMLNode* node, Qt::CheckState
   QModelIndexList indexes =
     d->indexesFromMRMLNodeID(node ? node->GetID(): QString());
   if (indexes.count() < 1)
-    {
+  {
     return;
-    }
+  }
   checkableComboBox->setCheckState(indexes[0], check);
 }
 
@@ -183,14 +183,14 @@ void qMRMLCheckableNodeComboBox::setUserCheckable(vtkMRMLNode* node, bool userCh
 {
   QStandardItem* nodeItem = this->sceneModel()->itemFromNode(node);
   if (nodeItem)
-    {
+  {
     if (userCheckable)
-      {
+    {
       nodeItem->setFlags(nodeItem->flags() | Qt::ItemIsUserCheckable);
-      }
-    else
-      {
-      nodeItem->setFlags(nodeItem->flags() & ~Qt::ItemIsUserCheckable);
-      }
     }
+    else
+    {
+      nodeItem->setFlags(nodeItem->flags() & ~Qt::ItemIsUserCheckable);
+    }
+  }
 }

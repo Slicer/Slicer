@@ -77,7 +77,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
   {
 
   switch(eventid)
-    {
+  {
     case vtkCommand::ExposeEvent:
       interactorStyle->OnExpose();
       break;
@@ -157,7 +157,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
     case vtkCommand::TDxButtonReleaseEvent:
       interactorStyle->DelegateTDxEvent(eventid,nullptr);
       break;
-    }
+  }
 
     return;
   }

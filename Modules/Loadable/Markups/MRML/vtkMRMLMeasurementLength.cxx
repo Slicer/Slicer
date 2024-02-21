@@ -45,43 +45,43 @@ void vtkMRMLMeasurementLength::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLMeasurementLength::Compute()
 {
   if (!this->InputMRMLNode)
-    {
+  {
     this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
     return;
-    }
+  }
 
   vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->InputMRMLNode);
   vtkMRMLMarkupsLineNode* lineNode = vtkMRMLMarkupsLineNode::SafeDownCast(this->InputMRMLNode);
 
   double length = 0.0;
   if (curveNode)
-    {
+  {
     if (curveNode->GetNumberOfDefinedControlPoints(true) < 2)
-      {
+    {
       vtkDebugMacro("Compute: Curve nodes must have more than one control points ("
         << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
       this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
       return;
-      }
-    length = curveNode->GetCurveLengthWorld();
     }
+    length = curveNode->GetCurveLengthWorld();
+  }
   else if (lineNode)
-    {
+  {
     if (lineNode->GetNumberOfDefinedControlPoints(true) < 2)
-      {
+    {
       vtkDebugMacro("Compute: Line nodes must have exactly two control points ("
         << lineNode->GetNumberOfDefinedControlPoints(true) << " found)");
       this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
       return;
-      }
-    length = lineNode->GetLineLengthWorld();
     }
+    length = lineNode->GetLineLengthWorld();
+  }
   else
-    {
+  {
     vtkErrorMacro("Compute: Markup type not supported by this measurement: " << this->InputMRMLNode->GetClassName());
     this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
     return;
-    }
+  }
 
   this->SetValue(length, "length");
 }

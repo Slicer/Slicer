@@ -49,13 +49,13 @@ void vtkSlicerTestLineWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayN
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
-    {
+  {
     rep = vtkSmartPointer<vtkSlicerTestLineRepresentation2D>::New();
-    }
+  }
   else
-    {
+  {
     rep = vtkSmartPointer<vtkSlicerTestLineRepresentation3D>::New();
-    }
+  }
   this->SetRenderer(renderer);
   this->SetRepresentation(rep);
   rep->SetViewNode(viewNode);
@@ -68,9 +68,9 @@ vtkSlicerMarkupsWidget* vtkSlicerTestLineWidget::CreateInstance() const
 {
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSlicerTestLineWidget");
   if(ret)
-    {
+  {
     return static_cast<vtkSlicerTestLineWidget*>(ret);
-    }
+  }
 
   vtkSlicerTestLineWidget* result = new vtkSlicerTestLineWidget;
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE

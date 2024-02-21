@@ -73,9 +73,9 @@ void qMRMLVolumeInfoWidgetPrivate::init()
 
   // populate Scalar Types
   for (int i = VTK_VOID; i < VTK_OBJECT; ++i)
-    {
+  {
     this->ScalarTypeComboBox->addItem(vtkImageScalarTypeNameMacro(i), i);
-    }
+  }
   // populate scan order
   this->ScanOrderComboBox->addItem("Sagittal LR", "LR");
   this->ScanOrderComboBox->addItem("Sagittal RL", "RL");
@@ -176,7 +176,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   Q_D(qMRMLVolumeInfoWidget);
   this->setEnabled(d->VolumeNode != nullptr);
   if (!d->VolumeNode)
-    {
+  {
     double dimensions[3] = {0.,0.,0.};
     d->ImageDimensionsWidget->setCoordinates(dimensions);
 
@@ -188,12 +188,12 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
 
     // Set IJK to RAS direction matrix to identity
     for (int i=0; i<3; i++)
-      {
+    {
       for (int j=0; j<3; j++)
-        {
+      {
         d->IJKToRASDirectionMatrixWidget->setValue(i,j, i==j ? 1. : 0.);
-        }
       }
+    }
 
     d->ScalarRangeValueLabel->setText("");
 
@@ -213,16 +213,16 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
     d->WindowLevelPresetsListWidget->clear();
 
     return;
-    }
+  }
   vtkImageData* image = d->VolumeNode->GetImageData();
   double dimensions[3] = {0.,0.,0.};
   int* dims = image ? image->GetDimensions() : nullptr;
   if (dims)
-    {
+  {
     dimensions[0] = dims[0];
     dimensions[1] = dims[1];
     dimensions[2] = dims[2];
-    }
+  }
   d->ImageDimensionsWidget->setCoordinates(dimensions);
 
   double* spacing = d->VolumeNode->GetSpacing();
@@ -234,12 +234,12 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   double IJKToRASDirections[3][3] = { {1.,0.,0.}, {0.,1.,0.}, {0.,0.,1.} };
   d->VolumeNode->GetIJKToRASDirections(IJKToRASDirections);
   for (int i=0; i<3; i++)
-    {
+  {
     for (int j=0; j<3; j++)
-      {
+    {
       d->IJKToRASDirectionMatrixWidget->setValue(i,j, IJKToRASDirections[i][j]);
-      }
     }
+  }
 
   d->CenterVolumePushButton->setEnabled(!this->isCentered());
 
@@ -250,7 +250,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   d->ScanOrderValueLabel->setText(d->ScanOrderComboBox->currentText());
 
   if (image)
-    {
+  {
     d->NumberOfScalarsSpinBox->setValue(image->GetNumberOfScalarComponents());
     d->NumberOfScalarsValueLabel->setText(QString::number(image->GetNumberOfScalarComponents()));
     d->ScalarTypeComboBox->setCurrentIndex(d->ScalarTypeComboBox->findData(image->GetScalarType()));
@@ -258,15 +258,15 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
     double* scalarRange = image->GetScalarRange();
     ;
     d->ScalarRangeValueLabel->setText(QString("%1 to %2").arg(scalarRange[0]).arg(scalarRange[1]));
-    }
+  }
   else
-    {
+  {
     d->NumberOfScalarsSpinBox->setValue(1);
     d->NumberOfScalarsValueLabel->setText("");
     d->ScalarTypeComboBox->setCurrentIndex(-1);
     d->ScalarTypeValueLabel->setText("");
     d->ScalarRangeValueLabel->setText("");
-    }
+  }
 
   vtkMRMLStorageNode* storageNode = d->VolumeNode->GetStorageNode();
   d->FileNameLineEdit->setText(storageNode ? storageNode->GetFileName() : "");
@@ -276,35 +276,35 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   // Remove "Volume" postfix from node tag name to get only the volume type
   QString volumeType(d->VolumeNode->GetNodeTagName());
   if (volumeType.endsWith("Volume"))
-    {
+  {
     volumeType.chop(6);
     // Workaround for not having the "Scalar" tag in scalar volumes
     if (volumeType.isEmpty())
-      {
-      volumeType = QString("Scalar");
-      }
-    }
-  else
     {
-    qWarning() << __FUNCTION__ << "Invalid volume node tag '" << volumeType << "'!";
+      volumeType = QString("Scalar");
     }
+  }
+  else
+  {
+    qWarning() << __FUNCTION__ << "Invalid volume node tag '" << volumeType << "'!";
+  }
   d->VolumeTagLabel->setText(volumeType);
 
   d->WindowLevelPresetsListWidget->clear();
   vtkMRMLScalarVolumeDisplayNode *displayNode =
     scalarNode ? scalarNode->GetScalarVolumeDisplayNode() : nullptr;
   if (displayNode)
-    {
+  {
     // populate the win/level presets
     for (int p = 0; p < displayNode->GetNumberOfWindowLevelPresets(); ++p)
-      {
+    {
       QString windowLevel;
       windowLevel += QString::number(displayNode->GetWindowPreset(p));
       windowLevel += " | ";
       windowLevel += QString::number(displayNode->GetLevelPreset(p));
       d->WindowLevelPresetsListWidget->addItem(windowLevel);
-      }
     }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -312,9 +312,9 @@ void qMRMLVolumeInfoWidget::setImageSpacing(double* spacing)
 {
   Q_D(qMRMLVolumeInfoWidget);
   if (d->VolumeNode == nullptr)
-    {
+  {
     return;
-    }
+  }
   d->VolumeNode->SetSpacing(spacing);
 }
 
@@ -323,9 +323,9 @@ void qMRMLVolumeInfoWidget::setImageOrigin(double* origin)
 {
   Q_D(qMRMLVolumeInfoWidget);
   if (d->VolumeNode == nullptr)
-    {
+  {
     return;
-    }
+  }
   d->VolumeNode->SetOrigin(origin);
 }
 
@@ -334,9 +334,9 @@ bool qMRMLVolumeInfoWidget::isCentered()const
 {
   Q_D(const qMRMLVolumeInfoWidget);
   if (!d->VolumeNode)
-    {
+  {
     return true;
-    }
+  }
   return d->VolumeNode->IsCentered();
 }
 
@@ -345,9 +345,9 @@ void qMRMLVolumeInfoWidget::center()
 {
   Q_D(qMRMLVolumeInfoWidget);
   if (d->VolumeNode)
-    {
+  {
     d->VolumeNode->AddCenteringTransform();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -355,9 +355,9 @@ void qMRMLVolumeInfoWidget::setScanOrder(int index)
 {
   Q_D(qMRMLVolumeInfoWidget);
   if (d->VolumeNode == nullptr)
-    {
+  {
     return;
-    }
+  }
   QString scanOrder = d->ScanOrderComboBox->itemData(index).toString();
   vtkNew<vtkMatrix4x4> IJKToRAS;
   if (vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(
@@ -366,15 +366,15 @@ void qMRMLVolumeInfoWidget::setScanOrder(int index)
     d->VolumeNode->GetImageData()->GetDimensions(),
     this->isCentered(),
     IJKToRAS.GetPointer()))
-    {
+  {
     if (!this->isCentered())
-      {
+    {
       IJKToRAS->SetElement(0, 3, d->VolumeNode->GetOrigin()[0]);
       IJKToRAS->SetElement(1, 3, d->VolumeNode->GetOrigin()[1]);
       IJKToRAS->SetElement(2, 3, d->VolumeNode->GetOrigin()[2]);
-      }
-    d->VolumeNode->SetIJKToRASMatrix(IJKToRAS.GetPointer());
     }
+    d->VolumeNode->SetIJKToRASMatrix(IJKToRAS.GetPointer());
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -383,9 +383,9 @@ void qMRMLVolumeInfoWidget::setNumberOfScalars(int number)
   Q_D(qMRMLVolumeInfoWidget);
   vtkImageData* imageData = d->VolumeNode ? d->VolumeNode->GetImageData() : nullptr;
   if (imageData == nullptr)
-    {
+  {
     return;
-    }
+  }
   vtkNew<vtkTrivialProducer> tp;
   tp->SetOutput(imageData);
   vtkInformation* outInfo = tp->GetOutputInformation(0);
@@ -399,9 +399,9 @@ void qMRMLVolumeInfoWidget::setScalarType(int index)
   Q_D(qMRMLVolumeInfoWidget);
   vtkImageData* imageData = d->VolumeNode ? d->VolumeNode->GetImageData() : nullptr;
   if (imageData == nullptr)
-    {
+  {
     return;
-    }
+  }
   int type = d->ScalarTypeComboBox->itemData(index).toInt();
   vtkNew<vtkTrivialProducer> tp;
   tp->SetOutput(imageData);
@@ -417,8 +417,8 @@ void qMRMLVolumeInfoWidget::setWindowLevelFromPreset(QListWidgetItem *presetItem
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( d->VolumeNode );
   vtkMRMLScalarVolumeDisplayNode *displayNode = scalarNode ? scalarNode->GetScalarVolumeDisplayNode() : nullptr;
   if (displayNode == nullptr)
-    {
+  {
     return;
-    }
+  }
   displayNode->SetWindowLevelFromPreset(d->WindowLevelPresetsListWidget->row(presetItem));
 }

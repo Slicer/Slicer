@@ -31,9 +31,9 @@ void vtkSlicerTask::SetTaskFunction(vtkMRMLAbstractLogic *object,
 void vtkSlicerTask::Execute()
 {
   if (this->TaskObject)
-    {
+  {
     ((*this->TaskObject).*(this->TaskFunction))(this->TaskClientData);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

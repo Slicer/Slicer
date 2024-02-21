@@ -50,17 +50,17 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
 
   float* ptr = reinterpret_cast<float*>(scalars->GetVoidPointer(0));
   for (int z=0; z < dimensions[2]; ++z )
-    {
+  {
     for (int y=0; y < dimensions[1]; ++y )
-      {
+    {
       for (int x=0; x < dimensions[0]; ++x )
-        {
+      {
         ptr[0] = ptr[4] = ptr[8] = 1.f;
         ptr[1] = ptr[2] = ptr[3] = ptr[5] = ptr[6] = ptr[7] = 0.f;
         ptr+=9;
-        }
       }
     }
+  }
   ptr = reinterpret_cast<float*>(scalars->GetVoidPointer(0));
   // Change the last element of the last tensor to 2.f (instead of 1.f)
   // so the trace would be 4.f not 3.f
@@ -76,15 +76,15 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
 
   short* maskPtr = reinterpret_cast<short*>(maskImage->GetScalarPointer());
   for (int z=0; z < dimensions[2]; ++z )
-    {
+  {
     for (int y=0; y < dimensions[1]; ++y )
-      {
+    {
       for (int x=0; x < dimensions[0]; ++x )
-        {
+      {
         *maskPtr++ = 0;
-        }
       }
     }
+  }
   // Mask the 2nd voxel
   maskPtr = reinterpret_cast<short*>(maskImage->GetScalarPointer());
   maskPtr[1] = 1;
@@ -98,7 +98,7 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   for (int i = vtkDiffusionTensorMathematics::VTK_TENS_TRACE;
        i <=vtkDiffusionTensorMathematics::VTK_TENS_MEAN_DIFFUSIVITY;
        ++i)
-    {
+  {
     filter->SetOperation(i);
     filter->Update();
 
@@ -107,17 +107,17 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
     vtkImageData* output = filter->GetOutput();
     ptr = reinterpret_cast<float*>(output->GetScalarPointer());
     for (int z=0; z < dimensions[2]; ++z )
-      {
+    {
       for (int y=0; y < dimensions[1]; ++y )
-        {
+      {
         for (int x=0; x < dimensions[0]; ++x )
-          {
+        {
           std::cout << '(' << x << ',' << y << ',' << z << ")=" << *ptr << std::endl;
           ++ptr;
-          }
         }
       }
-    std::cout << std::endl << std::endl;
     }
+    std::cout << std::endl << std::endl;
+  }
   return EXIT_SUCCESS;
 }

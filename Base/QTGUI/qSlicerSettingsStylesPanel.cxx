@@ -124,11 +124,11 @@ int qSlicerSettingsStylesPanelPrivate
 {
   int styleIndex = this->StyleComboBox->findText(styleName, Qt::MatchFixedString);
   if (styleIndex == -1)
-    {
+  {
     // if not found (call setCurrentStyle with a wrong style for example),
     // default to slicer's style
     styleIndex = this->StyleComboBox->findText("Slicer", Qt::MatchFixedString);
-    }
+  }
   return styleIndex;
 }
 
@@ -138,22 +138,22 @@ QString toCamelCase(const QString& s)
 {
   QString camelCase;
   if (s.size() <= 0)
-    {
+  {
     return camelCase;
-    }
+  }
 
   camelCase = s[0].toUpper();
   for (int i = 1; i < s.size(); ++i)
-    {
+  {
     if (s[i - 1] == ' ')
-      {
+    {
       camelCase.append(s[i].toUpper());
-      }
+    }
     else
-      {
+    {
       camelCase.append(s[i]);
-      }
-    };
+    }
+  };
   return camelCase;
 }
 }
@@ -168,9 +168,9 @@ void qSlicerSettingsStylesPanelPrivate::populateStyles()
   // Re-populate styles
   this->StyleComboBox->clear();
   foreach(const QString& style, q->availableSlicerStyles())
-    {
+  {
     this->StyleComboBox->addItem(toCamelCase(style));
-    }
+  }
 
   // Find the previously set style
   int currentStyleIndex = this->styleIndex(currentStyle);
@@ -227,16 +227,16 @@ void qSlicerSettingsStylesPanel::onAdditionalStylePathsChanged()
 
   // Remove old paths
   foreach(const QString& path, d->AdditionalPaths)
-    {
+  {
     QCoreApplication::removeLibraryPath(path);
-    }
+  }
 
   // Add new ones
   d->AdditionalPaths = d->AdditionalStylePathsView->directoryList(true);
   foreach(const QString&  path, d->AdditionalPaths)
-    {
+  {
     QCoreApplication::addLibraryPath(path);
-    }
+  }
 
   d->populateStyles();
 }
@@ -253,9 +253,9 @@ void qSlicerSettingsStylesPanel::onAddStyleAdditionalPathClicked()
       extensionInstallPath);
   // An empty directory means that the user cancelled the dialog.
   if (path.isEmpty())
-    {
+  {
     return;
-    }
+  }
   d->AdditionalStylePathsView->addDirectory(path);
 }
 
@@ -272,13 +272,13 @@ QStringList qSlicerSettingsStylesPanel::availableSlicerStyles()
 {
   QStringList styles;
   foreach(const QString& style, QStyleFactory::keys())
-    {
+  {
     if (qSlicerSettingsStylesPanelPrivate::isQtStyle(style))
-      {
+    {
       continue;
-      }
-    styles << style;
     }
+    styles << style;
+  }
   return styles;
 }
 
@@ -304,12 +304,12 @@ void qSlicerSettingsStylesPanel::onStyleChanged(const QString& newStyleName)
 
   QStyle* newStyle = QStyleFactory::create(newStyleName);
   if (!newStyle)
-    {
+  {
     qWarning() << "Style named " << newStyleName << " not found !"
                <<" Defaulting to Slicer's style.";
     this->setCurrentStyle("Slicer");
     return;
-    }
+  }
 
   app->setStyle(newStyle);
   app->installEventFilter(app->style());
@@ -335,8 +335,8 @@ void qSlicerSettingsStylesPanel::onShowToolButtonTextToggled(bool enable)
 {
   QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
   if (mainWindow)
-    {
+  {
     mainWindow->setToolButtonStyle(enable ?
       Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
-    }
+  }
 }

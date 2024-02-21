@@ -138,9 +138,9 @@ void qSlicerSettingsModulesPanelPrivate::init()
   // The separator commas have been removed, but we also need need to remove leading and trailing spaces from the retrieved names.
   QStringList favorites;
   foreach(QString s, favoritesRaw)
-    {
+  {
     favorites << s.trimmed();
-    }
+  }
   this->FavoritesModulesListView->filterModel()->setShowModules(favorites);
 
   // Register settings
@@ -236,9 +236,9 @@ void qSlicerSettingsModulesPanel::setModulesToAlwaysIgnore(const QStringList& mo
   // list.
 
   if (d->ModulesToAlwaysIgnore == moduleNames)
-    {
+  {
     return;
-    }
+  }
 
   // Ensure the ModulesListView observing the factoryManager is updated
   // when settings are restored.
@@ -249,17 +249,17 @@ void qSlicerSettingsModulesPanel::setModulesToAlwaysIgnore(const QStringList& mo
   // specified from the command line.
   QStringList updatedModulesToAlwaysIgnore;
   foreach(const QString& moduleName, moduleNames)
-    {
+  {
     if (!coreApp->coreCommandOptions()->modulesToIgnore().contains(moduleName))
-      {
+    {
       updatedModulesToAlwaysIgnore.append(moduleName);
-      }
     }
+  }
 
   if (d->ModulesToAlwaysIgnore == updatedModulesToAlwaysIgnore)
-    {
+  {
     return;
-    }
+  }
 
   d->ModulesToAlwaysIgnore = updatedModulesToAlwaysIgnore;
 
@@ -295,12 +295,12 @@ void qSlicerSettingsModulesPanel::onShowHiddenModulesChanged(bool show)
   QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
   foreach (qSlicerModuleSelectorToolBar* toolBar,
            mainWindow->findChildren<qSlicerModuleSelectorToolBar*>())
-    {
+  {
     toolBar->modulesMenu()->setShowHiddenModules(show);
     // refresh the list
     toolBar->modulesMenu()->setModuleManager(
       toolBar->modulesMenu()->moduleManager());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -323,9 +323,9 @@ void qSlicerSettingsModulesPanel::onAddModulesAdditionalPathClicked()
         mostRecentPath);
   // An empty directory means that the user cancelled the dialog.
   if (path.isEmpty())
-    {
+  {
     return;
-    }
+  }
   d->AdditionalModulePathsView->addDirectory(path);
   coreApp->revisionUserSettings()->setValue("Modules/MostRecentlySelectedPath",
     coreApp->toSlicerHomeRelativePath(path));

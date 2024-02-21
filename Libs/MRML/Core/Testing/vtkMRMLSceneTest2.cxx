@@ -56,125 +56,125 @@ public:
   std::vector<std::string> NodeAddedClassNames;
 
   void ResetNumberOfEvents() override
-    {
+  {
     vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback::ResetNumberOfEvents();
     this->NumberOfSingletonNodes = 0;
     this->NodeAddedClassNames.clear();
-    }
+  }
 
   void Execute(vtkObject* caller, unsigned long eid, void *calldata) override
-    {
+  {
     vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback::Execute(caller, eid, calldata);
 
     // Let's return if an error already occurred
     if (this->CheckStatus() == EXIT_FAILURE)
-      {
+    {
       return;
-      }
+    }
 
     vtkMRMLScene* callerScene = vtkMRMLScene::SafeDownCast(caller);
 
     if (eid == vtkMRMLScene::NodeAboutToBeAddedEvent)
-      {
+    {
       vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
       if (!node)
-        {
+      {
         SetErrorString(__LINE__, "mrmlEventCallback - NodeAboutToBeAddedEvent - node is NULL");
         return;
-        }
-      }
-    else if (eid == vtkMRMLScene::NodeAddedEvent)
-      {
-      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
-      if (!node)
-        {
-        SetErrorString(__LINE__, "mrmlEventCallback - NodeAddedEvent - node is NULL");
-        return;
-        }
-      if (node->GetSingletonTag())
-        {
-        ++this->NumberOfSingletonNodes;
-        }
-
-      this->NodeAddedClassNames.emplace_back(node->GetClassName());
-      }
-    else if (eid == vtkMRMLScene::NodeAboutToBeRemovedEvent)
-      {
-      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
-      if (!node)
-        {
-        SetErrorString(__LINE__, "mrmlEventCallback - NodeAboutToBeRemovedEvent - node is NULL");
-        return;
-        }
-      }
-    else if (eid == vtkMRMLScene::NodeRemovedEvent)
-      {
-      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
-      if (!node)
-        {
-        SetErrorString(__LINE__, "mrmlEventCallback - NodeRemovedEvent - node is NULL");
-        return;
-        }
-      }
-    else if (eid == vtkMRMLScene::StartCloseEvent)
-      {
-      if (callerScene->IsImporting())
-        {
-        SetErrorString(__LINE__, "StartCloseEvent - IsImporting is expected to be 0");
-        return;
-        }
-      if (!callerScene->IsClosing())
-        {
-        SetErrorString(__LINE__, "StartCloseEvent - IsClosing is expected to be 1");
-        return;
-        }
-      if (!callerScene->IsBatchProcessing())
-        {
-        SetErrorString(__LINE__, "StartCloseEvent - IsUpdating is expected to be 1");
-        return;
-        }
-      }
-    else if (eid == vtkMRMLScene::EndCloseEvent)
-      {
-      if (callerScene->IsImporting())
-        {
-        SetErrorString(__LINE__, "EndCloseEvent - IsImporting is expected to be 0");
-        return;
-        }
-      if (callerScene->IsClosing())
-        {
-        SetErrorString(__LINE__, "EndCloseEvent - IsClosing is expected to be 0");
-        return;
-        }
-      }
-    else if (eid == vtkMRMLScene::StartImportEvent)
-      {
-      if (!callerScene->IsImporting())
-        {
-        SetErrorString(__LINE__, "StartImport - ImportState is expected");
-        return;
-        }
-      if (!callerScene->IsBatchProcessing())
-        {
-        SetErrorString(__LINE__, "StartImport - IsBatchProcessing is expected");
-        return;
-        }
-      }
-    else if (eid == vtkMRMLScene::EndImportEvent)
-      {
-      if (callerScene->IsImporting())
-        {
-        SetErrorString(__LINE__, "EndImportEvent - ImportState is not expected");
-        return;
-        }
       }
     }
+    else if (eid == vtkMRMLScene::NodeAddedEvent)
+    {
+      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      if (!node)
+      {
+        SetErrorString(__LINE__, "mrmlEventCallback - NodeAddedEvent - node is NULL");
+        return;
+      }
+      if (node->GetSingletonTag())
+      {
+        ++this->NumberOfSingletonNodes;
+      }
+
+      this->NodeAddedClassNames.emplace_back(node->GetClassName());
+    }
+    else if (eid == vtkMRMLScene::NodeAboutToBeRemovedEvent)
+    {
+      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      if (!node)
+      {
+        SetErrorString(__LINE__, "mrmlEventCallback - NodeAboutToBeRemovedEvent - node is NULL");
+        return;
+      }
+    }
+    else if (eid == vtkMRMLScene::NodeRemovedEvent)
+    {
+      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      if (!node)
+      {
+        SetErrorString(__LINE__, "mrmlEventCallback - NodeRemovedEvent - node is NULL");
+        return;
+      }
+    }
+    else if (eid == vtkMRMLScene::StartCloseEvent)
+    {
+      if (callerScene->IsImporting())
+      {
+        SetErrorString(__LINE__, "StartCloseEvent - IsImporting is expected to be 0");
+        return;
+      }
+      if (!callerScene->IsClosing())
+      {
+        SetErrorString(__LINE__, "StartCloseEvent - IsClosing is expected to be 1");
+        return;
+      }
+      if (!callerScene->IsBatchProcessing())
+      {
+        SetErrorString(__LINE__, "StartCloseEvent - IsUpdating is expected to be 1");
+        return;
+      }
+    }
+    else if (eid == vtkMRMLScene::EndCloseEvent)
+    {
+      if (callerScene->IsImporting())
+      {
+        SetErrorString(__LINE__, "EndCloseEvent - IsImporting is expected to be 0");
+        return;
+      }
+      if (callerScene->IsClosing())
+      {
+        SetErrorString(__LINE__, "EndCloseEvent - IsClosing is expected to be 0");
+        return;
+      }
+    }
+    else if (eid == vtkMRMLScene::StartImportEvent)
+    {
+      if (!callerScene->IsImporting())
+      {
+        SetErrorString(__LINE__, "StartImport - ImportState is expected");
+        return;
+      }
+      if (!callerScene->IsBatchProcessing())
+      {
+        SetErrorString(__LINE__, "StartImport - IsBatchProcessing is expected");
+        return;
+      }
+    }
+    else if (eid == vtkMRMLScene::EndImportEvent)
+    {
+      if (callerScene->IsImporting())
+      {
+        SetErrorString(__LINE__, "EndImportEvent - ImportState is not expected");
+        return;
+      }
+    }
+  }
 
 protected:
   vtkMRMLSceneCallback()
-    {
+  {
     this->NumberOfSingletonNodes = 0;
-    }
+  }
   ~vtkMRMLSceneCallback() override  = default;
 
 }; // class vtkMRMLSceneCallback
@@ -185,12 +185,12 @@ protected:
 int vtkMRMLSceneTest2(int argc, char * argv [] )
 {
   if( argc < 2 )
-    {
+  {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   const char* sceneFilePath = argv[1];
 
   // Instantiate scene
@@ -263,21 +263,21 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   std::vector<std::string> unexpectedAddedNodeNames =
       vector_diff(expectedNodeAddedClassNames, callback->NodeAddedClassNames);
   if (!unexpectedAddedNodeNames.empty())
-    {
+  {
     std::cerr << "line " << __LINE__ << " - unexpectedAddedNodeNames: ";
     for(size_t i = 0; i < unexpectedAddedNodeNames.size(); ++i)
-      {
+    {
       std::cerr << unexpectedAddedNodeNames[i] << " ";
-      }
+    }
     std::cerr << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // If additional nodes have been instantiated, let's update expectedNumberOfNode
   if (static_cast<int>(callback->NodeAddedClassNames.size()) > expectedNumberOfNode)
-    {
+  {
     expectedNumberOfNode = static_cast<int>(callback->NodeAddedClassNames.size());
-    }
+  }
   CHECK_INT(scene->GetNumberOfNodes(), expectedNumberOfNode);
   CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeAddedEvent), expectedNumberOfNode);
   CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeAboutToBeAddedEvent), expectedNumberOfNode);
@@ -335,9 +335,9 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   vtkCollection *nodes = scene->GetNodes();
   for (nodes->InitTraversal(it);
     (node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
-    {
+  {
     std::cout << " " << node->GetName() << std::endl;
-    }
+  }
 #endif
 
   //---------------------------------------------------------------------------

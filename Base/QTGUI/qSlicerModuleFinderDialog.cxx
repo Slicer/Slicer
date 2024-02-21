@@ -83,9 +83,9 @@ void qSlicerModuleFinderDialogPrivate::init()
   QSettings settings;
   bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
   if (!developerModeEnabled)
-    {
+  {
     this->ShowTestingCheckBox->hide();
-    }
+  }
 
   // Set default search role (not full text)
   q->setSearchInAllText(false);
@@ -109,10 +109,10 @@ void qSlicerModuleFinderDialogPrivate::init()
   okButton->setText(qSlicerModuleFinderDialog::tr("Switch to module"));
 
   if (filterModel->rowCount() > 0)
-    {
+  {
     // select first item
     this->ModuleListView->setCurrentIndex(filterModel->index(0, 0));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -122,18 +122,18 @@ void qSlicerModuleFinderDialogPrivate::makeSelectedItemVisible()
 
   // Make sure that an item is selected
   if (!this->ModuleListView->currentIndex().isValid())
-    {
+  {
     if (filterModel->rowCount() > 0)
-      {
+    {
       // select first item
       this->ModuleListView->setCurrentIndex(filterModel->index(0, 0));
-      }
     }
+  }
   // Make sure that the selected item is visible
   if (this->ModuleListView->currentIndex().isValid())
-    {
+  {
     this->ModuleListView->scrollTo(this->ModuleListView->currentIndex());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -166,21 +166,21 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
   QString moduleName;
   qSlicerAbstractCoreModule* module = nullptr;
   if (!selected.indexes().empty())
-    {
+  {
     moduleName = selected.indexes().first().data(Qt::UserRole).toString();
     qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
     qSlicerModuleManager* moduleManager = coreApp->moduleManager();
     qSlicerModuleFactoryManager* factoryManager = moduleManager->factoryManager();
     if (factoryManager->isLoaded(moduleName))
-      {
+    {
       module = moduleManager->module(moduleName);
-      }
     }
+  }
 
   d->CurrentModuleName = moduleName;
 
   if (module)
-    {
+  {
     d->ModuleDescriptionBrowser->clear();
     QString html;
 
@@ -191,106 +191,106 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     QStringList categories = module->categories();
     QStringList filteredCategories;
     foreach(QString category, categories)
-      {
+    {
       if (category.isEmpty())
-        {
+      {
         category = QLatin1String("[main]");
-        }
-      else
-        {
-        category.replace(".", "->");
-        }
-      filteredCategories << category;
       }
+      else
+      {
+        category.replace(".", "->");
+      }
+      filteredCategories << category;
+    }
     html.append(QString("<p><b>" + tr("Category:") + "</b> %1</p>").arg(filteredCategories.join(", ")));
 
     // Help
     QString help = module->helpText();
     qSlicerCoreApplication* app = qSlicerCoreApplication::application();
     if (app)
-      {
+    {
       help = qSlicerUtils::replaceDocumentationUrlVersion(module->helpText(),
         QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
-      }
+    }
     help.replace("\\n", "<br>");
     help = help.trimmed();
     if (!help.isEmpty())
-      {
+    {
       html.append(help.trimmed());
-      }
+    }
 
     // Acknowledgments
     qSlicerAbstractModule* guiModule = qobject_cast<qSlicerAbstractModule*>(module);
     if (guiModule && !guiModule->logo().isNull())
-      {
+    {
       d->ModuleDescriptionBrowser->document()->addResource(QTextDocument::ImageResource,
         QUrl("module://logo.png"), QVariant(guiModule->logo()));
       html.append(
         QString("<center><img src=\"module://logo.png\"/></center><br>"));
-      }
+    }
     QString acknowledgement = module->acknowledgementText();
     if (!acknowledgement.isEmpty())
-      {
+    {
       acknowledgement.replace("\\n", "<br>");
       acknowledgement = acknowledgement.trimmed();
       html.append("<p>");
       html.append(acknowledgement.trimmed());
-      }
+    }
 
     // Contributors
     if (!module->contributors().isEmpty())
-      {
+    {
       QString contributors = module->contributors().join(", ");
       QString contributorsText = "<p><b>" + tr("Contributors:") + "</b> " + contributors + "</p>";
       html.append(contributorsText);
-      }
+    }
 
     // Internal name
     if (module->name() != module->title())
-      {
+    {
       html.append(QString("<p><b>" + tr("Internal name:") + "</b> %1</p>").arg(module->name()));
-      }
+    }
 
     // Type
     QString type = tr("Unknown type");
     // Use "inherits" instead of "qobject_cast" because "qSlicerBaseQTCLI" depends on "qSlicerQTGUI"
     if (module->inherits("qSlicerScriptedLoadableModule"))
-      {
+    {
       type = tr("Python Scripted Loadable");
-      }
+    }
     else if (module->inherits("qSlicerLoadableModule"))
-      {
+    {
       type = tr("C++ Loadable");
-      }
+    }
     else if (module->inherits("qSlicerCLIModule"))
-      {
+    {
       type = tr("Command-Line Interface (CLI)");
-      }
+    }
     if (module->isBuiltIn())
-      {
+    {
       type += ", " + tr("built-in");
-      }
+    }
     html.append(QString("<p><b>" + tr("Type:") + "</b> %1</p>").arg(type));
 
     // Dependencies
     if (!module->dependencies().empty())
-      {
+    {
       html.append(QString("<p><b>" + tr("Require:") + "</b> %1</p>").arg(module->dependencies().join(", ")));
-      }
+    }
 
     // Location
     html.append(QString("<p><b>" + tr("Location:") + "</b> %1</p>").arg(module->path()));
 
     d->ModuleDescriptionBrowser->setHtml(html);
-    }
+  }
   else
-    {
+  {
     d->ModuleDescriptionBrowser->clear();
     if (!moduleName.isEmpty())
-      {
+    {
       d->ModuleDescriptionBrowser->setText(tr("%1 module is not loaded").arg(moduleName));
-      }
     }
+  }
 
   // scroll to the top
   QTextCursor cursor = d->ModuleDescriptionBrowser->textCursor();
@@ -306,54 +306,54 @@ bool qSlicerModuleFinderDialog::eventFilter(QObject* target, QEvent* event)
 {
   Q_D(qSlicerModuleFinderDialog);
   if (target == d->FilterTitleSearchBox)
-    {
+  {
     // Prevent giving the focus to the previous/next widget if arrow keys are used
     // at the edge of the table (without this: if the current cell is in the top
     // row and user press the Up key, the focus goes from the table to the previous
     // widget in the tab order)
     if (event->type() == QEvent::KeyPress)
-      {
+    {
       QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
       if (keyEvent != nullptr && filterModel->rowCount() > 0)
-        {
+      {
         int currentRow = d->ModuleListView->currentIndex().row();
         int stepSize = 1;
         if (keyEvent->key() == Qt::Key_PageUp || keyEvent->key() == Qt::Key_PageDown)
-          {
+        {
           stepSize = 5;
-          }
+        }
         else if (keyEvent->key() == Qt::Key_Home || keyEvent->key() == Qt::Key_End)
-          {
+        {
           stepSize = 10000;
-          }
+        }
         if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_PageUp || keyEvent->key() == Qt::Key_Home)
-          {
+        {
           if (currentRow > 0)
-            {
+          {
             d->ModuleListView->setCurrentIndex(filterModel->index(std::max(0, currentRow - stepSize), 0));
             d->ModuleListView->scrollTo(d->ModuleListView->currentIndex());
-            }
-          return true;
           }
+          return true;
+        }
         else if (keyEvent->key() == Qt::Key_Down || keyEvent->key() == Qt::Key_PageDown || keyEvent->key() == Qt::Key_End)
-          {
+        {
           if (currentRow + 1 < filterModel->rowCount())
-            {
+          {
             d->ModuleListView->setCurrentIndex(filterModel->index(std::min(currentRow + stepSize, filterModel->rowCount()-1), 0));
             d->ModuleListView->scrollTo(d->ModuleListView->currentIndex());
-            }
-          return true;
           }
+          return true;
         }
       }
     }
+  }
   else if (target == d->ModuleListView->viewport() && event->type() == QEvent::MouseButtonDblClick)
-    {
+  {
     // accept selection on double-click
     this->accept();
     return true;
-    }
+  }
   return this->Superclass::eventFilter(target, event);
 }
 
@@ -394,13 +394,13 @@ void qSlicerModuleFinderDialog::setSearchInAllText(bool searchAll)
   Q_D(qSlicerModuleFinderDialog);
   qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
   if (searchAll)
-    {
+  {
     filterModel->setFilterRole(qSlicerModuleFactoryFilterModel::FullTextSearchRole);
-    }
+  }
   else
-    {
+  {
     filterModel->setFilterRole(qSlicerModuleFactoryFilterModel::SearchRole);
-    }
+  }
   d->makeSelectedItemVisible();
 }
 

@@ -36,9 +36,9 @@ namespace
 bool CheckInt(int line, const std::string& description, int current, int expected)
 {
   if (current == expected)
-    {
+  {
     return EXIT_SUCCESS;
-    }
+  }
   std::cerr << "\nLine " << line << " - " << description.c_str() << " : test failed"
     << "\n\tcurrent :" << current
     << "\n\texpected:" << expected
@@ -48,12 +48,12 @@ bool CheckInt(int line, const std::string& description, int current, int expecte
 
 // Use a macro to be able to print the evaluated expression and the line number
 #define CHECK_INT(actual, expected) \
-  { \
+{ \
   if (CheckInt(__LINE__,#actual " != " #expected, (actual), (expected)) != EXIT_SUCCESS) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
-  }
+  } \
+}
 
 }
 
@@ -149,16 +149,16 @@ int vtkSegmentationHistoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   int modfiedSegment1VoxelCount = GetVoxelCount(labelmap, segment1LabelValue);
   int modfiedSegment2VoxelCount = GetVoxelCount(labelmap, segment2LabelValue);
   if (modfiedSegment1VoxelCount == originalSegment1VoxelCount)
-    {
+  {
     std::cerr << "Segment 1 original voxel count (" << originalSegment2VoxelCount << ") and modified voxel count (" << modfiedSegment1VoxelCount << ") should not match!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (modfiedSegment2VoxelCount == originalSegment2VoxelCount)
-    {
+  {
     std::cerr << "Segment 2 original voxel count (" << originalSegment2VoxelCount << ") and modified voxel count (" << modfiedSegment2VoxelCount << ") should not match!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   /////////////////////////////////////////////////
   // Test undo
@@ -173,17 +173,17 @@ int vtkSegmentationHistoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 
   int undoSegment1VoxelCount = GetVoxelCount(undoLabelmap, segment1LabelValue);
   if (undoSegment1VoxelCount != originalSegment1VoxelCount)
-    {
+  {
     std::cerr << "Segment 1 original voxel count (" << originalSegment1VoxelCount << ") and undo voxel count (" << undoSegment1VoxelCount << ") does not match!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int undoSegment2VoxelCount = GetVoxelCount(undoLabelmap, segment2LabelValue);
   if (undoSegment2VoxelCount != originalSegment2VoxelCount)
-    {
+  {
     std::cerr << "Segment 2 original voxel count (" << originalSegment2VoxelCount << ") and undo voxel count (" << undoSegment2VoxelCount << ") does not match!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Segmentation state is already saved, check that it does not create a new state
   // (it would be the duplicate of the previous state) and does not remove future states.
@@ -201,17 +201,17 @@ int vtkSegmentationHistoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   vtkOrientedImageData* redoLabelmap = vtkOrientedImageData::SafeDownCast(segment1->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()));
   int redoSegment1VoxelCount = GetVoxelCount(redoLabelmap, segment1LabelValue);
   if (redoSegment1VoxelCount != modfiedSegment1VoxelCount)
-    {
+  {
     std::cerr << "Segment 1 modified voxel count (" << modfiedSegment1VoxelCount << ") and redo voxel count (" << redoSegment1VoxelCount << ") does not match!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int redoSegment2VoxelCount = GetVoxelCount(redoLabelmap, segment2LabelValue);
   if (redoSegment2VoxelCount != modfiedSegment2VoxelCount)
-    {
+  {
     std::cerr << "Segment 2 modified voxel count (" << modfiedSegment2VoxelCount << ") and redo voxel count (" << redoSegment2VoxelCount << ") does not match!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Add two more states to have some more items in the history
   history->SaveState();

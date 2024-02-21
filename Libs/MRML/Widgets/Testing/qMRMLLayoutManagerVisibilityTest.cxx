@@ -52,13 +52,13 @@ bool checkNodeVisibility(int line,
 {
   bool nodeVisibility = (viewNode->GetVisibility() != 0);
   if (nodeVisibility != expectedNodeVisibility)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with GetVisibility()"
               << " associated with node " << viewNode->GetID() << "\n"
               << "  visibility: " << nodeVisibility << "\n"
               << "  expectedVisibility: " << expectedNodeVisibility << std::endl;
     return false;
-    }
+  }
   return true;
 }
 
@@ -69,13 +69,13 @@ bool checkNodeMappedInLayout(int line,
 {
   bool nodeMappedInLayout = (viewNode->IsMappedInLayout() != 0);
   if (nodeMappedInLayout != expectedNodeMappedInLayout)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with GetVisibility()"
               << " associated with node " << viewNode->GetID() << "\n"
               << "  mappedInLayout: " << nodeMappedInLayout << "\n"
               << "  expectedMappedInLayout: " << expectedNodeMappedInLayout << std::endl;
     return false;
-    }
+  }
   return true;
 }
 
@@ -87,13 +87,13 @@ bool checkNodeVisibleInLayout(int line,
 {
   bool nodeVisibleInLayout = (viewNode->IsViewVisibleInLayout() != 0);
   if (nodeVisibleInLayout != expectedNodeVisibleInLayout)
-    {
+  {
     std::cerr << "Line " << line << " - Problem with GetVisibility()"
               << " associated with node " << viewNode->GetID() << "\n"
               << "  visibleInLayout: " << nodeVisibleInLayout << "\n"
               << "  expectedVisibleInLayout: " << expectedNodeVisibleInLayout << std::endl;
     return false;
-    }
+  }
   return true;
 }
 
@@ -103,53 +103,53 @@ bool checkViews(int line,
                 QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility)
 {
   foreach(vtkMRMLAbstractViewNode* viewNode, viewNodesToExpectedVisibility.keys())
-    {
+  {
 
     bool expectedNodeVisibility = viewNodesToExpectedVisibility[viewNode].at(0);
     bool expectedNodeMappedInLayout = viewNodesToExpectedVisibility[viewNode].at(1);
     bool expectedNodeVisibleInLayout = viewNodesToExpectedVisibility[viewNode].at(2);
 
     if (!viewNode)
-      {
+    {
       std::cerr << "Line " << line << " - Problem with to GetNodeByID()."
                << " 'viewNode' should NOT be null." << std::endl;
       return false;
-      }
+    }
 
     if (!checkNodeVisibility(line, viewNode, expectedNodeVisibility))
-      {
+    {
       return false;
-      }
+    }
 
     if (!checkNodeMappedInLayout(line, viewNode, expectedNodeMappedInLayout))
-      {
+    {
       return false;
-      }
+    }
 
     if (!checkNodeVisibleInLayout(line, viewNode, expectedNodeVisibleInLayout))
-      {
+    {
       return false;
-      }
+    }
 
     QWidget* viewWidget = layoutManager->viewWidget(viewNode);
     if (!viewWidget)
-      {
+    {
       std::cerr << "Line " << line << " - Failed to retrieve view widget"
                << "associated with view node " << viewNode->GetID() << std::endl;
       return false;
-      }
+    }
 
     bool widgetVisibility = viewWidget->isVisible();
     bool expectedWidgetVisibility = expectedNodeVisibleInLayout;
     if (widgetVisibility != expectedWidgetVisibility)
-      {
+    {
       std::cerr << "Line " << line << " - Problem with widget visibility"
                 << " associated with node " << viewNode->GetID() << "\n"
                 << "  widgetVisibility: " << widgetVisibility << "\n"
                 << "  expectedWidgetVisibility: " << expectedWidgetVisibility << std::endl;
       return false;
-      }
     }
+  }
   return true;
 }
 
@@ -199,9 +199,9 @@ bool runTests(vtkMRMLScene* scene,
     viewNodesToExpectedVisibility[threeDNode] = QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
 
     if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
-      {
+    {
       return false;
-      }
+    }
   }
 
   yellowNode->SetVisibility(0);
@@ -216,9 +216,9 @@ bool runTests(vtkMRMLScene* scene,
     viewNodesToExpectedVisibility[threeDNode] = QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
 
     if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
-      {
+    {
       return false;
-      }
+    }
   }
 
   threeDNode->SetVisibility(0);
@@ -233,9 +233,9 @@ bool runTests(vtkMRMLScene* scene,
     viewNodesToExpectedVisibility[threeDNode] = QList<bool>()  << NoVisibility << MappedInLayout    << NotVisibleInLayout;
 
     if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
-      {
+    {
       return false;
-      }
+    }
   }
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView);
@@ -253,9 +253,9 @@ bool runTests(vtkMRMLScene* scene,
     viewNodesToExpectedVisibility[plotNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
 
     if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
-      {
+    {
       return false;
-      }
+    }
   }
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpTableView);
@@ -273,9 +273,9 @@ bool runTests(vtkMRMLScene* scene,
     viewNodesToExpectedVisibility[tableNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
 
     if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
-      {
+    {
       return false;
-      }
+    }
   }
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
@@ -292,9 +292,9 @@ bool runTests(vtkMRMLScene* scene,
     viewNodesToExpectedVisibility[tableNode] =  QList<bool>()  << Visibility   << NotMappedInLayout << NotVisibleInLayout;
 
     if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
-      {
+    {
       return false;
-      }
+    }
   }
 
   scene->Clear(/*removeSingletons = */ 0);
@@ -311,9 +311,9 @@ bool runTests(vtkMRMLScene* scene,
     viewNodesToExpectedVisibility[tableNode] =  QList<bool>()  << Visibility   << NotMappedInLayout << NotVisibleInLayout;
 
     if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
-      {
+    {
       return false;
-      }
+    }
   }
 
   {
@@ -327,9 +327,9 @@ bool runTests(vtkMRMLScene* scene,
     if (!checkNodeVisibility(__LINE__,
                              yellowNode,
                              /* expectedNodeVisibility = */ false))
-      {
+    {
       return false;
-      }
+    }
 
     scene->SetSaveToXMLString(1);
     scene->Commit();
@@ -344,9 +344,9 @@ bool runTests(vtkMRMLScene* scene,
     if (!checkNodeVisibility(__LINE__,
                              yellowNode,
                              /* expectedNodeVisibility = */ true))
-      {
+    {
       return false;
-      }
+    }
 
     scene->SetLoadFromXMLString(1);
     scene->SetSceneXMLString(xmlScene);
@@ -356,9 +356,9 @@ bool runTests(vtkMRMLScene* scene,
     if (!checkNodeVisibility(__LINE__,
                              yellowNode,
                              /* expectedNodeVisibility = */ true))
-      {
+    {
       return false;
-      }
+    }
   }
 
   return true;
@@ -391,16 +391,16 @@ int qMRMLLayoutManagerVisibilityTest(int argc, char * argv[] )
   qApp->processEvents();
 
   if (!runTests(scene.GetPointer(), layoutNode.GetPointer(), &layoutManager))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     return safeApplicationQuit(&app);
-    }
+  }
   else
-    {
+  {
     return app.exec();
-    }
+  }
 }

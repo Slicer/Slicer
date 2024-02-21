@@ -29,10 +29,10 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyNode
 {
 public:
   enum
-    {
+  {
     /// Invoked when \sa EffectiveRange is modified
     EffectiveRangeModified = 62300
-    };
+  };
 
   /// Create a new vtkMRMLVolumePropertyNode
   static vtkMRMLVolumePropertyNode *New();

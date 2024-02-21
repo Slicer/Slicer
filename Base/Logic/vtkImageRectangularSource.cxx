@@ -71,13 +71,13 @@ void vtkImageRectangularSource::SetWholeExtent(int extent[6])
   int idx;
 
   for (idx = 0; idx < 6; ++idx)
-    {
+  {
     if (this->WholeExtent[idx] != extent[idx])
-      {
+    {
       this->WholeExtent[idx] = extent[idx];
       this->Modified();
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -100,9 +100,9 @@ void vtkImageRectangularSource::GetWholeExtent(int extent[6])
   int idx;
 
   for (idx = 0; idx < 6; ++idx)
-    {
+  {
     extent[idx] = this->WholeExtent[idx];
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -183,7 +183,7 @@ void vtkImageRectangularSourceExecute(vtkImageRectangularSource *self,
     else if (idx2 == Max[2]) InFlag[2] = 0;
     InFlag[1] = 0;
     for (idx1 = ext[2]; !self->AbortExecute && idx1 <= ext[3]; ++idx1)
-      {
+    {
       if (!(count%target)) self->UpdateProgress(count/(50.0*target));
       count++;
       if (idx1 == Min[1]) InFlag[1] = InFlag[2];
@@ -202,11 +202,11 @@ void vtkImageRectangularSourceExecute(vtkImageRectangularSource *self,
         } else *ptr = outVal;
         ++ptr;
         // inc0 is 0
-        }
-      ptr += inc1;
       }
-    ptr += inc2;
+      ptr += inc1;
     }
+    ptr += inc2;
+  }
 }
 
 // Beginning

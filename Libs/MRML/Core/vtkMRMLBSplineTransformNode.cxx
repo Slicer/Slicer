@@ -34,9 +34,9 @@ vtkMRMLBSplineTransformNode::vtkMRMLBSplineTransformNode()
   double* bsplineParams=static_cast<double*>(bsplineCoefficients->GetScalarPointer());
   const unsigned int numberOfParams = 3*gridSize[0]*gridSize[1]*gridSize[2];
   for (unsigned int i=0; i<numberOfParams; i++)
-    {
+  {
     *(bsplineParams++) =  0.0;
-    }
+  }
 
   vtkNew<vtkOrientedBSplineTransform> warp;
   warp->SetCoefficientData(bsplineCoefficients.GetPointer());

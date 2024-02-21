@@ -49,32 +49,32 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
   int index = node1->PlaceNodeClassNameInList(className);
   std::cout << "Checking for className '" << className.c_str() << "' in list, got index: " << index << std::endl;
   if (index != -1)
-    {
+  {
     std::string classNamestring = node1->GetPlaceNodeClassNameByIndex(index);
     if (classNamestring.compare(className) != 0)
-      {
+    {
       std::cerr << "Error! Set className '" << className.c_str()
                 << "' to list at index " << index << ", but got back '"
                 << classNamestring.c_str() << "'" << std::endl;
       node1->Print(std::cout);
       return EXIT_FAILURE;
-      }
+    }
     std::string resource = node1->GetPlaceNodeResourceByIndex(index);
     if (resource.compare(":/Icons/MarkupsLine.png") != 0)
-      {
+    {
       std::cerr << "ERROR! Got resource for index " << index << ": '" << resource.c_str() << "', but expected ':/Icons/MarkupsLine.png'" << std::endl;
       node1->Print(std::cout);
       return EXIT_FAILURE;
-      }
-    std::cout << "Got resource for index " << index << ": " << resource.c_str() << std::endl;
     }
+    std::cout << "Got resource for index " << index << ": " << resource.c_str() << std::endl;
+  }
   std::string resource = node1->GetPlaceNodeResourceByClassName(className);
   if (resource.compare(":/Icons/MarkupsLine.png") != 0)
-    {
+  {
     std::cerr << "ERROR! Got resource for className " << className << ": '" << resource.c_str() << "', but expected ':/Icons/MarkupsLine.png'" << std::endl;
     node1->Print(std::cout);
     return EXIT_FAILURE;
-    }
+  }
 
   CHECK_EXIT_SUCCESS(TestUnit(node1.GetPointer()));
 

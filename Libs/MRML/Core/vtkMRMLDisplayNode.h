@@ -44,21 +44,21 @@ public:
   /// Representation models
   /// \sa GetRepresentation(), SetRepresentation()
   enum RepresentationType
-    {
+  {
     PointsRepresentation = 0,
     WireframeRepresentation,
     SurfaceRepresentation
-    };
+  };
 
   /// Interpolation modes
   /// \sa GetInterpolation(), SetInterpolation()
   enum InterpolationType
-    {
+  {
     FlatInterpolation = 0,
     GouraudInterpolation,
     PhongInterpolation,
     PBRInterpolation
-    };
+  };
 
   /// Scalar range options for displaying data associated with this display
   /// node, this setting determines if the display node, color node, or ?
@@ -73,7 +73,7 @@ public:
   /// \sa ScalarRangeFlag, GetScalarRangeFlag(), SetScalarRangeFlag(),
   /// SetScalarRange(), GetScalarRange(), GetScalarRangeFlagTypeAsString()
   enum ScalarRangeFlagType
-    {
+  {
     UseManualScalarRange = 0,
     UseDataScalarRange,
     UseColorNodeScalarRange,
@@ -81,21 +81,21 @@ public:
     UseDirectMapping,
     // insert types above this line
     NUM_SCALAR_RANGE_FLAGS
-    };
+  };
 
   /// Enumerated values for ShowMode.
   enum ShowModeType
-    {
+  {
     ShowDefault = 0, ///< set visibility of this node if user requests show of the displayable node
     ShowIgnore, ///< set visibility manually, useful for non-essential display nodes (e.g., color legend)
     ShowMode_Last
-    };
+  };
 
   enum
-    {
+  {
     MenuEvent = 16100, /**< display of context menu is requested (mapped to right-click by default),
                        event data is vtkMRMLInteractionEventData */
-    };
+  };
 
   /// Convert between scalar range flag type id and string
   /// \sa ScalarRangeFlag
