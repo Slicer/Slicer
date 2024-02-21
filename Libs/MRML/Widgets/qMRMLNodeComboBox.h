@@ -397,6 +397,15 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLNodeComboBox);
   Q_DISABLE_COPY(qMRMLNodeComboBox);
+
+  /// \brief Creates a specified node type
+  void createNodeAs(const QString& nodeTypeName);
+
+  /// Retrieves a name from a dialog box input.
+  /// \param dialogTitle Title of the dialog box.
+  /// \param defaultName Default name to display in the input field.
+  /// \param ok Pointer to a boolean variable to indicate if the operation was successful.
+  virtual QString getNameFromDialog(const QString& dialogTitle, const QString& defaultName, bool* ok);
 };
 
 // --------------------------------------------------------------------------
