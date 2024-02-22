@@ -51,6 +51,9 @@ vtkMRMLTransformHandleWidget::vtkMRMLTransformHandleWidget()
   // Handle interactions
   this->SetEventTranslationClickAndDrag(WidgetStateOnTranslationHandle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
     WidgetStateTranslateTransformCenter, WidgetEventTranslateTransformCenterStart, WidgetEventTranslateTransformCenterEnd);
+
+  this->SetEventTranslation(WidgetStateTranslateTransformCenter, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventCancel);
+  this->SetKeyboardEventTranslation(WidgetStateTranslateTransformCenter, vtkEvent::NoModifier, 0, 0, "Escape", WidgetEventCancel);
 }
 
 //----------------------------------------------------------------------
@@ -413,4 +416,10 @@ bool vtkMRMLTransformHandleWidget::ProcessJumpCursor(vtkMRMLInteractionEventData
   }
 
   return Superclass::ProcessJumpCursor(eventData);
+}
+
+//-------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLTransformHandleWidget::GetMRMLNode()
+{
+  return this->GetTransformNode();
 }

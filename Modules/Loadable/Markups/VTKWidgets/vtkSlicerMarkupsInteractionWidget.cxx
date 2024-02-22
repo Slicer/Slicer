@@ -938,3 +938,9 @@ void vtkSlicerMarkupsInteractionWidget::FlipROIHandles(bool flipLRHandle, bool f
 
   displayNode->SetActiveComponent(displayNode->GetActiveComponentType(), index);
 }
+
+//-------------------------------------------------------------------------
+vtkMRMLNode* vtkSlicerMarkupsInteractionWidget::GetMRMLNode()
+{
+  return this->GetMarkupsNode();
+}

@@ -42,8 +42,6 @@ vtkMRMLInteractionWidget::vtkMRMLInteractionWidget()
 {
   this->LastEventPosition[0] = 0.0;
   this->LastEventPosition[1] = 0.0;
-  this->StartEventOffsetPosition[0] = 0.0;
-  this->StartEventOffsetPosition[1] = 0.0;
 
   // Update active component
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseMoveEvent, vtkEvent::AnyModifier, WidgetEventMouseMove);
@@ -78,6 +76,19 @@ vtkMRMLInteractionWidget::vtkMRMLInteractionWidget()
     // Update active interaction handle component
     this->SetEventTranslation(interactionHandleState, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
     this->SetEventTranslation(interactionHandleState, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+  }
+
+  int interactionStates[4] =
+  {
+    WidgetStateTranslate,
+    WidgetStateRotate,
+    WidgetStateScale,
+    WidgetStateUniformScale
+  };
+  for (int interactionState : interactionStates)
+  {
+    this->SetEventTranslation(interactionState, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetEventCancel);
+    this->SetKeyboardEventTranslation(interactionState, vtkEvent::NoModifier, 0, 0, "Escape", WidgetEventCancel);
   }
 }
 
@@ -432,6 +443,9 @@ bool vtkMRMLInteractionWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
     case WidgetEventJumpCursor:
       processedEvent = ProcessJumpCursor(eventData);
       break;
+    case WidgetEventCancel:
+      processedEvent = ProcessCancelEvent(eventData);
+      break;
     default:
       break;
   }
@@ -468,6 +482,8 @@ void vtkMRMLInteractionWidget::StartWidgetInteraction(vtkMRMLInteractionEventDat
   }
   rep->InteractingOn();
 
+  this->SaveInitialState();
+
   double startEventPos[2]
   {
     static_cast<double>(eventData->GetDisplayPosition()[0]),
@@ -477,9 +493,6 @@ void vtkMRMLInteractionWidget::StartWidgetInteraction(vtkMRMLInteractionEventDat
   // save the cursor position
   this->LastEventPosition[0] = startEventPos[0];
   this->LastEventPosition[1] = startEventPos[1];
-
-  this->StartEventOffsetPosition[0] = 0;
-  this->StartEventOffsetPosition[1] = 0;
 }
 
 //----------------------------------------------------------------------
@@ -496,7 +509,7 @@ void vtkMRMLInteractionWidget::EndWidgetInteraction()
 //----------------------------------------------------------------------
 void vtkMRMLInteractionWidget::TranslateWidget(double eventPos[2])
 {
-  double lastEventPos_World[3] = { 0.0, 0.0, 0.0 };
+  double previousEventPos_World[3] = { 0.0, 0.0, 0.0 };
   double eventPos_World[3] = { 0.0, 0.0, 0.0 };
 
   vtkMRMLInteractionWidgetRepresentation* rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
@@ -511,7 +524,7 @@ void vtkMRMLInteractionWidget::TranslateWidget(double eventPos[2])
     double eventPos_Slice[3] = { 0.0, 0.0, 0.0 };
     eventPos_Slice[0] = this->LastEventPosition[0];
     eventPos_Slice[1] = this->LastEventPosition[1];
-    rep->GetSliceToWorldCoordinates(eventPos_Slice, lastEventPos_World);
+    rep->GetSliceToWorldCoordinates(eventPos_Slice, previousEventPos_World);
 
     eventPos_Slice[0] = eventPos[0];
     eventPos_Slice[1] = eventPos[1];
@@ -526,21 +539,21 @@ void vtkMRMLInteractionWidget::TranslateWidget(double eventPos[2])
       0.0, 0.0, 1.0
       };
     if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      this->LastEventPosition, lastEventPos_World, orientation_World))
+      this->LastEventPosition, previousEventPos_World, orientation_World))
     {
       return;
     }
     if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      eventPos, lastEventPos_World, eventPos_World, orientation_World))
+      eventPos, previousEventPos_World, eventPos_World, orientation_World))
     {
       return;
     }
   }
 
   double translationVector_World[3] = { 0.0, 0.0, 0.0 };
-  translationVector_World[0] = eventPos_World[0] - lastEventPos_World[0];
-  translationVector_World[1] = eventPos_World[1] - lastEventPos_World[1];
-  translationVector_World[2] = eventPos_World[2] - lastEventPos_World[2];
+  translationVector_World[0] = eventPos_World[0] - previousEventPos_World[0];
+  translationVector_World[1] = eventPos_World[1] - previousEventPos_World[1];
+  translationVector_World[2] = eventPos_World[2] - previousEventPos_World[2];
 
   int index = this->GetActiveComponentIndex();
   double translationAxis_World[3] = { 0.0, 0.0, 0.0 };
@@ -1008,4 +1021,46 @@ void vtkMRMLInteractionWidget::SetActiveComponentIndex(int index)
 {
   vtkSmartPointer<vtkMRMLInteractionWidgetRepresentation> rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   rep->SetActiveComponentIndex(index);
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLInteractionWidget::ProcessCancelEvent(vtkMRMLInteractionEventData* eventData)
+{
+  this->RestoreInitialState();
+  return this->ProcessEndMouseDrag(eventData);
+}
+
+//-------------------------------------------------------------------------
+void vtkMRMLInteractionWidget::SaveInitialState()
+{
+  vtkMRMLNode* node = this->GetMRMLNode();
+  if (!node)
+  {
+    vtkErrorMacro("SaveInitialState: Invalid transform node");
+    return;
+  }
+
+  this->OriginalStateNode = vtkSmartPointer<vtkMRMLNode>::Take(node->CreateNodeInstance());
+  this->OriginalStateNode->CopyContent(node);
+}
+
+//-------------------------------------------------------------------------
+void vtkMRMLInteractionWidget::RestoreInitialState()
+{
+  if (!this->OriginalStateNode)
+  {
+    vtkErrorMacro("RestoreInitialState: Original state node is not set");
+    return;
+  }
+
+  vtkMRMLNode* node = this->GetMRMLNode();
+  if (!node)
+  {
+    vtkErrorMacro("RestoreInitialState: Invalid transform node");
+    return;
+  }
+
+  node->CopyContent(this->OriginalStateNode);
+  this->OriginalStateNode = nullptr;
+  this->WidgetRep->NeedToRenderOn();
 }

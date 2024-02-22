@@ -28,9 +28,12 @@
 #ifndef vtkMRMLInteractionWidget_h
 #define vtkMRMLInteractionWidget_h
 
+// MRMLDisplayableManager includes
 #include "vtkMRMLDisplayableManagerExport.h"
-
 #include "vtkMRMLAbstractWidget.h"
+
+// MRML includes
+#include <vtkMRMLNode.h>
 
 class vtkMRMLAbstractViewNode;
 class vtkMRMLApplicationLogic;
@@ -68,16 +71,18 @@ public:
     WidgetStateOnTranslationHandle = WidgetStateInteraction_First, // hovering over a translation interaction handle
     WidgetStateOnRotationHandle, // hovering over a rotation interaction handle
     WidgetStateOnScaleHandle, // hovering over a scale interaction handle
+    WidgetStateUniformScale, // uniform scaling
     WidgetStateInteraction_Last
   };
 
   /// Widget events
   enum
   {
-    WidgetEventReserved = WidgetEventUser,  // this events is only to prevent other widgets from processing an event
-    WidgetStateUniformScale,
+    WidgetEventInteraction_First = WidgetEventUser,
+    WidgetEventReserved = WidgetEventInteraction_First,  // this events is only to prevent other widgets from processing an event
     WidgetEventUniformScaleStart,
     WidgetEventUniformScaleEnd,
+    WidgetEventCancel,
     WidgetEventInteraction_Last
   };
 
@@ -129,6 +134,11 @@ protected:
   virtual bool ProcessWidgetUniformScaleStart(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessEndMouseDrag(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessJumpCursor(vtkMRMLInteractionEventData* eventData);
+  virtual bool ProcessCancelEvent(vtkMRMLInteractionEventData* eventData);
+
+  virtual vtkMRMLNode* GetMRMLNode() = 0;
+  virtual void SaveInitialState();
+  virtual void RestoreInitialState();
 
   // Jump to the handle position for the given type and index. Returns true if successful.
   virtual bool JumpToHandlePosition(int type, int index);
@@ -143,10 +153,8 @@ protected:
 
   /// Variables for translate/rotate/scale
   double LastEventPosition[2];
-  double StartEventOffsetPosition[2];
 
-  bool ConvertDisplayPositionToWorld(const int displayPos[2],
-    double worldPos[3], double worldOrientationMatrix[9], double* refWorldPos = nullptr);
+  vtkSmartPointer<vtkMRMLNode> OriginalStateNode{ nullptr };
 
 private:
   vtkMRMLInteractionWidget(const vtkMRMLInteractionWidget&) = delete;

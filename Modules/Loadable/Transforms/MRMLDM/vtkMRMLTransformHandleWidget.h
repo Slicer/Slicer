@@ -18,7 +18,6 @@
 
 ==============================================================================*/
 
-
 ///
 /// \class vtkMRMLTransformHandleWidget
 /// \brief Process interaction events to update state of interaction widgets
@@ -33,16 +32,17 @@
 
 #include "vtkMRMLInteractionWidget.h"
 
+class vtkIdList;
+class vtkMatrix4x4;
 class vtkMRMLAbstractViewNode;
 class vtkMRMLApplicationLogic;
 class vtkMRMLDisplayableNode;
 class vtkMRMLInteractionEventData;
 class vtkMRMLInteractionNode;
-class vtkIdList;
-class vtkPolyData;
-class vtkTransform;
 class vtkMRMLTransformDisplayNode;
 class vtkMRMLTransformNode;
+class vtkPolyData;
+class vtkTransform;
 
 class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformHandleWidget
   : public vtkMRMLInteractionWidget
@@ -91,6 +91,8 @@ protected:
   virtual void TranslateTransformCenter(double eventPos[2]);
 
   void ApplyTransform(vtkTransform* transform) override;
+
+  vtkMRMLNode* GetMRMLNode() override;
 
 private:
   vtkMRMLTransformHandleWidget(const vtkMRMLTransformHandleWidget&) = delete;

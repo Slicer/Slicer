@@ -103,12 +103,11 @@ void vtkMRMLMarkupsPlaneNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   MRMLNodeModifyBlocker blocker(this);
   vtkMRMLCopyBeginMacro(anode);
   vtkMRMLCopyEnumMacro(PlaneType);
-  vtkMRMLCopyIntMacro(MaximumNumberOfControlPoints);
-  vtkMRMLCopyIntMacro(RequiredNumberOfControlPoints);
   vtkMRMLCopyEnumMacro(SizeMode);
   vtkMRMLCopyVectorMacro(Size, double, 2);
   vtkMRMLCopyVectorMacro(Normal, double, 3);
   vtkMRMLCopyVectorMacro(Center, double, 3);
+  vtkMRMLCopyVectorMacro(PlaneBounds, double, 4);
   vtkMRMLCopyFloatMacro(AutoSizeScalingFactor);
   vtkMRMLCopyEndMacro();
 
@@ -126,10 +125,15 @@ void vtkMRMLMarkupsPlaneNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
   vtkMRMLPrintBeginMacro(os, indent);
+  vtkMRMLPrintEnumMacro(PlaneType);
   vtkMRMLPrintEnumMacro(SizeMode);
   vtkMRMLPrintVectorMacro(Size, double, 2);
+  vtkMRMLPrintVectorMacro(Normal, double, 3);
+  vtkMRMLPrintVectorMacro(Center, double, 3);
+  vtkMRMLPrintVectorMacro(PlaneBounds, double, 4);
   vtkMRMLPrintFloatMacro(AutoSizeScalingFactor);
   vtkMRMLPrintMatrix4x4Macro(ObjectToBaseMatrix);
+  vtkMRMLPrintMatrix4x4Macro(BaseToNodeMatrix);
   vtkMRMLPrintEndMacro();
 }
 
