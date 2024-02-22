@@ -82,6 +82,8 @@ public:
 
   bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData) override;
 
+  vtkMRMLNode* GetMRMLNode() override;
+
 protected:
   vtkSlicerMarkupsInteractionWidget();
   ~vtkSlicerMarkupsInteractionWidget() override;

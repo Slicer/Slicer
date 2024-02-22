@@ -340,7 +340,7 @@ else
 }
 
   // copy the center of transformation
-  node->SetCenterOfTransformation(this->GetCenterOfTransformation());
+  this->SetCenterOfTransformation(node->GetCenterOfTransformation());
 
   this->Modified();
   this->TransformModified();
