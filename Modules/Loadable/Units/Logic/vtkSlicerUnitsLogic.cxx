@@ -84,6 +84,7 @@ GetSIPrefixCoefficient(const char* prefix)
   {
     return 1.;
   }
+  // clang-format off
   if (strcmp("yotta", prefix) == 0) { return 1000000000000000000000000.; }
   else if (strcmp("zetta", prefix) == 0) { return 1000000000000000000000.; }
   else if (strcmp("exa", prefix) == 0) { return 1000000000000000000.; }
@@ -106,6 +107,7 @@ GetSIPrefixCoefficient(const char* prefix)
   else if (strcmp("zepto", prefix) == 0) { return 0.000000000000000000001; }
   else if (strcmp("yocto", prefix) == 0) { return 0.000000000000000000000001; }
   else { return 1.; }
+  // clang-format on
 }
 
 //----------------------------------------------------------------------------
@@ -172,6 +174,7 @@ void vtkSlicerUnitsLogic::UpdateFromMRMLScene()
 //---------------------------------------------------------------------------
 void vtkSlicerUnitsLogic::AddDefaultsUnits()
 {
+  // clang-format off
   vtkMRMLUnitNode* node =
     this->AddUnitNode("ApplicationLength", "length", "", "mm", 4);
   node->SetSaveWithScene(false);
@@ -202,6 +205,7 @@ void vtkSlicerUnitsLogic::AddDefaultsUnits()
   node = this->AddUnitNode("ApplicationIntensity", "intensity", "", "W/m^2", 3);
   node->SetSaveWithScene(false);
   this->SetDefaultUnit(node->GetQuantity(), node->GetID());
+  // clang-format on
 }
 
 //---------------------------------------------------------------------------
@@ -216,6 +220,7 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
 
   // Add defaults nodes here
 
+  // clang-format off
   // in Slicer, "length" quantity values are always expressed in millimeters.
   this->AddUnitNodeToScene(scene,
     "Meter", "length", "", "m", 4, -10000., 10000., Self::GetDisplayCoefficient("", "milli"), 0.);
@@ -290,6 +295,7 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
 
   this->AddUnitNodeToScene(scene,
     "Intensity", "intensity", "", "W/m\xB2", 3, -10000., 10000., 1., 0.);
+  // clang-format on
 }
 
 //-----------------------------------------------------------------------------
