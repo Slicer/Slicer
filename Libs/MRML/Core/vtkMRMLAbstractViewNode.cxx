@@ -133,7 +133,7 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
   // the mrml version. Scene with a newer version number would consider the
   // serialized attribute whereas older scene would not.
   //
-  // vtkMRMLReadXMLBooleanMacro(visibility, Visibility)
+  // vtkMRMLReadXMLBooleanMacro(visibility, Visibility);
 
   vtkMRMLReadXMLVectorMacro(backgroundColor, BackgroundColor, double, 3);
   vtkMRMLReadXMLVectorMacro(backgroundColor2, BackgroundColor2, double, 3);

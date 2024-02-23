@@ -1661,7 +1661,7 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentType(vtkSlicerTerminologyType*
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::onTypeSelected(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
 {
-  Q_UNUSED(previousItem)
+  Q_UNUSED(previousItem);
   Q_D(qSlicerTerminologyNavigatorWidget);
 
   if (!currentItem)
@@ -2258,7 +2258,7 @@ bool qSlicerTerminologyNavigatorWidget::setCurrentRegion(vtkSlicerTerminologyTyp
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::onRegionSelected(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
 {
-  Q_UNUSED(previousItem)
+  Q_UNUSED(previousItem);
   Q_D(qSlicerTerminologyNavigatorWidget);
 
   if (!currentItem)

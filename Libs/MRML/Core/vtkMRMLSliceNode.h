@@ -268,7 +268,7 @@ public:
   ///
   /// Number of samples in each direction
   /// -- note that the spacing is implicitly FieldOfView / Dimensions
-  vtkGetVectorMacro(Dimensions,int,3)
+  vtkGetVectorMacro(Dimensions,int,3);
   void SetDimensions(int x, int y, int z);
   void SetDimensions(int xyz[3]) { SetDimensions(xyz[0], xyz[1], xyz[2]); }
 
@@ -279,13 +279,13 @@ public:
   ///    to the full Dimensions
   /// -- note that z, the number of slices, should be the same for both
   ///    Dimensions and UVWDimensions
-  vtkGetVectorMacro(UVWDimensions,int,3)
+  vtkGetVectorMacro(UVWDimensions,int,3);
   void SetUVWDimensions(int x, int y, int z);
   void SetUVWDimensions(int xyz[3]);
 
   ///
   ///    maximum limit for  UVWDimensions
-  vtkGetVectorMacro(UVWMaximumDimensions,int,3)
+  vtkGetVectorMacro(UVWMaximumDimensions,int,3);
   void SetUVWMaximumDimensions(int x, int y, int z);
   void SetUVWMaximumDimensions(int xyz[3]);
 

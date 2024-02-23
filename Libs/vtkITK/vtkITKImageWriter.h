@@ -96,6 +96,6 @@ private:
   void operator=(const vtkITKImageWriter&) = delete;
 };
 
-//vtkStandardNewMacro(vtkITKImageWriter)
+//vtkStandardNewMacro(vtkITKImageWriter);
 
 #endif

@@ -167,10 +167,10 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(InteractionSizeMm, InteractionSizeMm);
   vtkMRMLWriteXMLFloatMacro(InteractionScalePercent, InteractionScalePercent);
   vtkMRMLWriteXMLVectorMacro(TranslationHandleComponentVisibility3D, TranslationHandleComponentVisibility3D, bool, 4);
-  vtkMRMLWriteXMLVectorMacro(RotationHandleComponentVisibility3D, RotationHandleComponentVisibility3D, bool, 4)
+  vtkMRMLWriteXMLVectorMacro(RotationHandleComponentVisibility3D, RotationHandleComponentVisibility3D, bool, 4);
   vtkMRMLWriteXMLVectorMacro(ScaleHandleComponentVisibility3D, ScaleHandleComponentVisibility3D, bool, 4);
   vtkMRMLWriteXMLVectorMacro(TranslationHandleComponentVisibilitySlice, TranslationHandleComponentVisibilitySlice, bool, 4);
-  vtkMRMLWriteXMLVectorMacro(RotationHandleComponentVisibilitySlice, RotationHandleComponentVisibilitySlice, bool, 4)
+  vtkMRMLWriteXMLVectorMacro(RotationHandleComponentVisibilitySlice, RotationHandleComponentVisibilitySlice, bool, 4);
   vtkMRMLWriteXMLVectorMacro(ScaleHandleComponentVisibilitySlice, ScaleHandleComponentVisibilitySlice, bool, 4);
 
   vtkMRMLWriteXMLEndMacro();

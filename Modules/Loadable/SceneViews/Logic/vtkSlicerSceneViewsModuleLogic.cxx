@@ -18,7 +18,7 @@
 #include <sstream>
 
 //-----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkSlicerSceneViewsModuleLogic)
+vtkStandardNewMacro(vtkSlicerSceneViewsModuleLogic);
 
 //-----------------------------------------------------------------------------
 // vtkSlicerSceneViewsModuleLogic methods
