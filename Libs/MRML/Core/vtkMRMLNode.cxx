@@ -306,7 +306,7 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(HideFromEditors);
   vtkMRMLPrintBooleanMacro(Selectable);
   vtkMRMLPrintBooleanMacro(Selected);
-  vtkMRMLPrintBooleanMacro(UndoEnabled)
+  vtkMRMLPrintBooleanMacro(UndoEnabled);
   vtkMRMLPrintEndMacro();
 
   if (!this->Attributes.empty())
@@ -367,7 +367,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(selectable, Selectable);
   vtkMRMLReadXMLBooleanMacro(selected, Selected);
   vtkMRMLReadXMLStringMacro(singletonTag, SingletonTag);
-  vtkMRMLReadXMLBooleanMacro(undoEnabled, UndoEnabled)
+  vtkMRMLReadXMLBooleanMacro(undoEnabled, UndoEnabled);
   vtkMRMLReadXMLEndMacro();
 
   std::set<std::string> references;

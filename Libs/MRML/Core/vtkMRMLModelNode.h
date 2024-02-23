@@ -100,7 +100,7 @@ public:
 
   /// Return the input mesh pipeline.
   /// \sa GetPolyDataConnection(), GetUnstructuredGridConnection()
-  vtkGetObjectMacro(MeshConnection,vtkAlgorithmOutput)
+  vtkGetObjectMacro(MeshConnection,vtkAlgorithmOutput);
 
   /// Return the input mesh pipeline if the mesh
   /// is a polydata.

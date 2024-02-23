@@ -93,6 +93,6 @@ private:
   void operator=(const vtkITKImageThresholdCalculator&) = delete;
 };
 
-//vtkStandardNewMacro(vtkITKImageThresholdCalculator)
+//vtkStandardNewMacro(vtkITKImageThresholdCalculator);
 
 #endif

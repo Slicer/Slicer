@@ -198,7 +198,7 @@ void qSlicerDICOMExportDialog::makeDialogSelections()
 //-----------------------------------------------------------------------------
 void qSlicerDICOMExportDialog::onCurrentItemChanged(vtkIdType itemID)
 {
-  Q_UNUSED(itemID)
+  Q_UNUSED(itemID);
   Q_D(qSlicerDICOMExportDialog);
 
   // Clear error label

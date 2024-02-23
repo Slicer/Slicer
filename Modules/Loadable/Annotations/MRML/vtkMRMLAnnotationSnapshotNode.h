@@ -33,7 +33,7 @@ public:
   const char* GetIcon() override {return ":/Icons/ViewCamera.png";}
 
   void SetSnapshotDescription(const vtkStdString& newDescription);
-  vtkGetMacro(SnapshotDescription, vtkStdString)
+  vtkGetMacro(SnapshotDescription, vtkStdString);
 
   void WriteXML(ostream& of, int nIndent) override;
   void ReadXMLAttributes(const char** atts) override;

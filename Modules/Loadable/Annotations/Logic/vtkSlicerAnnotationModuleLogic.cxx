@@ -38,7 +38,7 @@
 #include <sstream>
 
 //-----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkSlicerAnnotationModuleLogic)
+vtkStandardNewMacro(vtkSlicerAnnotationModuleLogic);
 
 //-----------------------------------------------------------------------------
 // vtkSlicerAnnotationModuleLogic methods

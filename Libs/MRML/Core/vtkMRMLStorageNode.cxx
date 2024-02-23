@@ -37,7 +37,7 @@ Version:   $Revision: 1.1.1.1 $
 #include <sstream>
 
 //----------------------------------------------------------------------------
-vtkCxxSetObjectMacro(vtkMRMLStorageNode, URIHandler, vtkURIHandler)
+vtkCxxSetObjectMacro(vtkMRMLStorageNode, URIHandler, vtkURIHandler);
 
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode::vtkMRMLStorageNode()

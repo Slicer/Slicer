@@ -106,10 +106,10 @@ Version:   $Revision: 1.18 $
 # include <vtkTimerLog.h>
 #endif
 
-vtkCxxSetObjectMacro(vtkMRMLScene, CacheManager, vtkCacheManager)
-vtkCxxSetObjectMacro(vtkMRMLScene, DataIOManager, vtkDataIOManager)
-vtkCxxSetObjectMacro(vtkMRMLScene, UserTagTable, vtkTagTable)
-vtkCxxSetObjectMacro(vtkMRMLScene, URIHandlerCollection, vtkCollection)
+vtkCxxSetObjectMacro(vtkMRMLScene, CacheManager, vtkCacheManager);
+vtkCxxSetObjectMacro(vtkMRMLScene, DataIOManager, vtkDataIOManager);
+vtkCxxSetObjectMacro(vtkMRMLScene, UserTagTable, vtkTagTable);
+vtkCxxSetObjectMacro(vtkMRMLScene, URIHandlerCollection, vtkCollection);
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene()

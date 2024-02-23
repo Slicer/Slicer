@@ -116,12 +116,12 @@ public:
   /// Get number of entries used when discretizing
   /// the color transfer function into a lookup table
   /// \sa SetNumberOfTableValues(), GetLookupTable()
-  vtkGetMacro(NumberOfTableValues, unsigned int)
+  vtkGetMacro(NumberOfTableValues, unsigned int);
 
   /// Set number of entries used when discretizing
   /// the color transfer function into a lookup table
   /// \sa GetNumberOfTableValues(), GetLookupTable()
-  vtkSetMacro(NumberOfTableValues, unsigned int)
+  vtkSetMacro(NumberOfTableValues, unsigned int);
 
 protected:
   vtkMRMLProceduralColorNode();

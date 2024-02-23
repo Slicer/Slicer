@@ -319,7 +319,7 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(Locked);
   vtkMRMLPrintStdStringMacro(ControlPointLabelFormat);
-  vtkMRMLPrintMatrix4x4Macro(InteractionHandleToWorldMatrix)
+  vtkMRMLPrintMatrix4x4Macro(InteractionHandleToWorldMatrix);
   vtkMRMLPrintEndMacro();
 
   os << indent << "Control point number locked: ";

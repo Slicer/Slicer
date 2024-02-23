@@ -2098,7 +2098,7 @@ void qSlicerCoreApplication::loadTranslations(const QString& dir)
     app->installTranslator(translator);
   }
 #else
-  Q_UNUSED(dir)
+  Q_UNUSED(dir);
 #endif
 }
 

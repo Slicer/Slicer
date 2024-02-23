@@ -486,8 +486,8 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
                                        const QList<QSslError> &errors)
 {
 #ifdef QT_NO_SSL
-  Q_UNUSED(reply)
-  Q_UNUSED(errors)
+  Q_UNUSED(reply);
+  Q_UNUSED(errors);
 #else
   foreach (QSslError e, errors)
   {

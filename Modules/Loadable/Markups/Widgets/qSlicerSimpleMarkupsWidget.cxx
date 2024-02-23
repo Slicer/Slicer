@@ -479,7 +479,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
 //-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected(int row, int column)
 {
-  Q_UNUSED(column)
+  Q_UNUSED(column);
   Q_D(qSlicerSimpleMarkupsWidget);
 
   if (d->JumpToSliceEnabled)
