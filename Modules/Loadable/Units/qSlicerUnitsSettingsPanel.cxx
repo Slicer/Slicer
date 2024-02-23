@@ -107,6 +107,7 @@ void qSlicerUnitsSettingsPanelPrivate
 
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 
+  // clang-format off
   q->registerProperty(quantity + "/id", unitWidget->unitComboBox(),
     "currentNodeID", SIGNAL(currentNodeIDChanged(QString)),
     QString(), ctkSettingsPanel::OptionNone, app->userSettings());
@@ -131,6 +132,7 @@ void qSlicerUnitsSettingsPanelPrivate
   q->registerProperty(quantity + "/offset", unitWidget->unitWidget(),
     "offset", SIGNAL(offsetChanged(double)),
     QString(), ctkSettingsPanel::OptionNone, app->userSettings());
+  // clang-format on
 }
 
 // ---------------------------------------------------------------------------
@@ -346,12 +348,14 @@ void qSlicerUnitsSettingsPanel::showAll(bool showAll)
 
   foreach (qMRMLSettingsUnitWidget* widget, d->Quantities.values())
   {
+    // clang-format off
     qMRMLUnitWidget::UnitProperties allButNameAndQuantity =
       qMRMLUnitWidget::Preset |
       qMRMLUnitWidget::Prefix | qMRMLUnitWidget::Suffix |
       qMRMLUnitWidget::Precision |
       qMRMLUnitWidget::Minimum | qMRMLUnitWidget::Maximum |
       qMRMLUnitWidget::Coefficient | qMRMLUnitWidget::Offset;
+    // clang-format on
 
     widget->unitWidget()->setDisplayedProperties(showAll ?
       allButNameAndQuantity : qMRMLUnitWidget::Precision);
