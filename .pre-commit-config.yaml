@@ -8,6 +8,7 @@ repos:
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-yaml
+        exclude: ^\.clang-format$ # check-yaml do not support multi-document file
       - id: debug-statements
         exclude: "Base/QTGUI/Testing/Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py|Base/QTGUI/Testing/Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTest.py"
       - id: end-of-file-fixer
