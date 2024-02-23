@@ -346,3 +346,5 @@ b19d02ac2119b7457c2341e995ad6353235bbbb4
 90164ec63b891a0d9ee89b06af68ba8d9a29dfb6
 # STYLE: Align Python scripts with "ruff" formatting updating if expressions
 830c33a34ca6d33dc70a4004f674ed640337eee7
+# STYLE: Convert C++ source files from old-style "Whitesmiths" to "Allman" style
+2762f0c9f3bc442e8665612f62465106d97766cf
