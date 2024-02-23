@@ -24,6 +24,19 @@ repos:
       - id: ruff
         args: ["--fix", "--show-fixes"]
 
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: "v20.1.7"
+    hooks:
+      - id: clang-format
+        # Explicitly include ".txx" files, which are not recognized as source files
+        # by the "identify" package used by pre-commit. To work around this,
+        # we manually specify file matching via the "files" regex and set "types_or"
+        # to allow formatting of files treated as plain text.
+        #
+        # Reference: https://github.com/pre-commit/identify/blob/main/identify/extensions.py
+        types_or: [file, text]
+        files: \.(cpp|cxx|h|hpp|txx)$
+
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.20.0
     hooks:
