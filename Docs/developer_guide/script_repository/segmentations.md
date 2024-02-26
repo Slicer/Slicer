@@ -635,6 +635,41 @@ sourceSegmentId = segmentation.GetSegmentIdBySegmentName(sourceSegmentName)
 segmentation.CopySegmentFromSegmentation(segmentation, sourceSegmentId)
 ```
 
+### Resample segmentation to higher resolution
+
+This code snippet can be used to resample internal binary labelmap representation of a segmentation to allow segmenting finer details
+
+```python
+# Set inputs
+volumeNode = getNode("MRHead")
+segmentationNode = getNode("Segmentation")
+
+# The higher the oversampling factor is the finer resolution the segmentation will be,
+# at the cost of more memory usage and longer computation times.
+oversamplingFactor = 2.0
+
+# Make spacing value uniform for all axes.
+# It is useful for removing staircase artifacts in 3D reconstructions but may increase
+# memory usage and computation time.
+isotropicSpacing = True
+
+# Compute desired image geometry by oversampling the input volume
+segmentationGeometryLogic = slicer.vtkSlicerSegmentationGeometryLogic()
+segmentationGeometryLogic.SetInputSegmentationNode(segmentationNode)
+segmentationGeometryLogic.SetSourceGeometryNode(volumeNode)
+segmentationGeometryLogic.SetOversamplingFactor(oversamplingFactor)
+segmentationGeometryLogic.SetIsotropicSpacing(isotropicSpacing)
+segmentationGeometryLogic.CalculateOutputGeometry()
+
+# Update geometry of internal binary labelmap representation in segmentation node
+geometryImageData = segmentationGeometryLogic.GetOutputGeometryImageData()
+geometryString = slicer.vtkSegmentationConverter.SerializeImageGeometry(geometryImageData)
+segmentationNode.GetSegmentation().SetConversionParameter(slicer.vtkSegmentationConverter.GetReferenceImageGeometryParameterName(), geometryString)
+
+# Resample labelmaps in segmentation node
+segmentationGeometryLogic.ResampleLabelmapsInSegmentationNode()
+```
+
 ### Quantifying segments
 
 #### Get volume of each segment
