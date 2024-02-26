@@ -479,37 +479,16 @@ void qMRMLSegmentationGeometryWidget::setReferenceImageGeometryForSegmentationNo
   Q_D(qMRMLSegmentationGeometryWidget);
   if (!d->SegmentationNode.GetPointer())
   {
-    qCritical() << Q_FUNC_INFO << "No input segmentation specified";
+    qCritical() << Q_FUNC_INFO << ": No input segmentation specified";
     return;
   }
 
-  // Save reference geometry
+  d->Logic->SetReferenceImageGeometryInSegmentationNode();
+
   vtkOrientedImageData* geometryImageData = d->Logic->GetOutputGeometryImageData();
   std::string geometryString = vtkSegmentationConverter::SerializeImageGeometry(geometryImageData);
-  d->SegmentationNode->GetSegmentation()->SetConversionParameter(
-    vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), geometryString );
-
-  // Save reference geometry node (this is shown in Segmentations module
-  // to gives a hint about which node the current geometry is based on)
-  const char* referenceGeometryNodeID = nullptr;
-  if (d->Logic->GetSourceGeometryNode())
-  {
-    referenceGeometryNodeID = d->Logic->GetSourceGeometryNode()->GetID();
-  }
-
-  // If the reference geometry node is the same as the segmentation node, then don't change the node reference
-  if (vtkMRMLSegmentationNode::SafeDownCast(d->Logic->GetSourceGeometryNode()) != d->SegmentationNode)
-  {
-    d->SegmentationNode->SetNodeReferenceID(
-      vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(), referenceGeometryNodeID);
-  }
-
-  // Note: it could be also useful to save oversampling value and isotropic flag,
-  // we could then allow the user to modify these settings instead of always
-  // setting from scratch.
-
-  qDebug() << Q_FUNC_INFO << "Reference image geometry of " << d->SegmentationNode->GetName()
-    << " has been set to '" << geometryString.c_str() << "'";
+  qDebug() << Q_FUNC_INFO << ": Reference image geometry of" << d->SegmentationNode->GetName()
+    << "is set to '" << geometryString.c_str() << "'";
 }
 
 //-----------------------------------------------------------------------------
