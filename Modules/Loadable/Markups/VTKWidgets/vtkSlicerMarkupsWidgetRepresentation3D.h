@@ -22,7 +22,7 @@
  *
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation vtkSlicerMarkupsWidget
-*/
+ */
 
 #ifndef vtkSlicerMarkupsWidgetRepresentation3D_h
 #define vtkSlicerMarkupsWidgetRepresentation3D_h
@@ -43,40 +43,45 @@ class vtkProperty;
 
 class vtkMRMLInteractionEventData;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation3D
+  : public vtkSlicerMarkupsWidgetRepresentation
 {
 public:
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkSlicerMarkupsWidgetRepresentation3D, vtkSlicerMarkupsWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  void SetRenderer(vtkRenderer *ren) override;
+  void SetRenderer(vtkRenderer* ren) override;
 
   /// Subclasses of vtkSlicerMarkupsWidgetRepresentation3D must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) override;
-  void ReleaseGraphicsResources(vtkWindow *) override;
-  int RenderOverlay(vtkViewport *viewport) override;
-  int RenderOpaqueGeometry(vtkViewport *viewport) override;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  void GetActors(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
+  int RenderOpaqueGeometry(vtkViewport* viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport* viewport) override;
   vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
   double* GetBounds() VTK_SIZEHINT(6) override;
 
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
+                   int& foundComponentType,
+                   int& foundComponentIndex,
+                   double& closestDistance2) override;
 
   /// Checks if interaction with straight line between visible points is possible.
   /// Can be used on the output of CanInteract, as if no better component is found then the input is returned.
   void CanInteractWithLine(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2);
+                           int& foundComponentType,
+                           int& foundComponentIndex,
+                           double& closestDistance2);
 
-  bool AccuratePick(int x, int y, double pickPoint[3], double pickNormal[3]=nullptr);
+  bool AccuratePick(int x, int y, double pickPoint[3], double pickNormal[3] = nullptr);
 
   /// Return true if the control point is actually visible
   /// (displayed and not occluded by other objects in the view).
@@ -94,7 +99,8 @@ protected:
   vtkSlicerMarkupsWidgetRepresentation3D();
   ~vtkSlicerMarkupsWidgetRepresentation3D() override;
 
-  double GetViewScaleFactorAtPosition(double positionWorld[3], vtkMRMLInteractionEventData* interactionEventData = nullptr);
+  double GetViewScaleFactorAtPosition(double positionWorld[3],
+                                      vtkMRMLInteractionEventData* interactionEventData = nullptr);
 
   void UpdateViewScaleFactor() override;
 
@@ -107,29 +113,30 @@ protected:
     ~ControlPointsPipeline3D() override;
 
     /// Orientation of the glyphs, represented as an array of quaternions
-    vtkSmartPointer<vtkDoubleArray>   GlyphOrientationArray;
+    vtkSmartPointer<vtkDoubleArray> GlyphOrientationArray;
 
     vtkSmartPointer<vtkGlyph3DMapper> GlyphMapper;
 
     // Properties used to control the appearance of selected objects and
     // the manipulator in general.
-    vtkSmartPointer<vtkProperty>     Property;
-    vtkSmartPointer<vtkProperty>     OccludedProperty;
+    vtkSmartPointer<vtkProperty> Property;
+    vtkSmartPointer<vtkProperty> OccludedProperty;
     vtkSmartPointer<vtkTextProperty> OccludedTextProperty;
 
     vtkSmartPointer<vtkPolyData> VisiblePointsPolyData;
 
-    vtkSmartPointer<vtkFastSelectVisiblePoints>      SelectVisiblePoints;
+    vtkSmartPointer<vtkFastSelectVisiblePoints> SelectVisiblePoints;
 
-    vtkSmartPointer<vtkIdTypeArray>              ControlPointIndices;  // store original ID to determine which control point is actually visible
+    vtkSmartPointer<vtkIdTypeArray>
+      ControlPointIndices; // store original ID to determine which control point is actually visible
     vtkSmartPointer<vtkPointSetToLabelHierarchy> OccludedPointSetToLabelHierarchyFilter;
 
-    vtkSmartPointer<vtkGlyph3DMapper>        OccludedGlyphMapper;
+    vtkSmartPointer<vtkGlyph3DMapper> OccludedGlyphMapper;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsMapper;
     vtkSmartPointer<vtkLabelPlacementMapper> LabelsOccludedMapper;
 
-    vtkSmartPointer<vtkActor>   Actor;
-    vtkSmartPointer<vtkActor>   OccludedActor;
+    vtkSmartPointer<vtkActor> Actor;
+    vtkSmartPointer<vtkActor> OccludedActor;
     vtkSmartPointer<vtkActor2D> LabelsActor;
     vtkSmartPointer<vtkActor2D> LabelsOccludedActor;
   };
@@ -158,7 +165,7 @@ protected:
   bool HideTextActorIfAllPointsOccluded;
   double OccludedRelativeOffset;
 
-  static std::map<vtkRenderer*, vtkSmartPointer<vtkFloatArray> > CachedZBuffers;
+  static std::map<vtkRenderer*, vtkSmartPointer<vtkFloatArray>> CachedZBuffers;
 
   vtkSmartPointer<vtkCallbackCommand> RenderCompletedCallback;
   static void OnRenderCompleted(vtkObject* caller, unsigned long event, void* clientData, void* callData);

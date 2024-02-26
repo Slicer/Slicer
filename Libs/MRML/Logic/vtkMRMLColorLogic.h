@@ -33,10 +33,9 @@ class vtkMRMLColorTableNode;
 class VTK_MRML_LOGIC_EXPORT vtkMRMLColorLogic : public vtkMRMLAbstractLogic
 {
 public:
-
   /// The Usual vtk class functions
-  static vtkMRMLColorLogic *New();
-  vtkTypeMacro(vtkMRMLColorLogic,vtkMRMLAbstractLogic);
+  static vtkMRMLColorLogic* New();
+  vtkTypeMacro(vtkMRMLColorLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// \brief Add default color nodes.
@@ -49,74 +48,124 @@ public:
   /// The type of default nodes along with their properties are listed
   /// in the table below:
   ///
-  /// | Family                    | Category                 | Type                           | Node name                      | Singleton Tag                         | Node ID                                                     |
-  /// | ------------------------- | ------------------------ | ------------------------------ | ------------------------------ | ------------------------------------- | ----------------------------------------------------------- |
-  /// | ColorTable                | Discrete                 | Labels                         | Labels                         | Labels                                | vtkMRMLColorTableNodeLabels                                 |
-  /// | ColorTable                | Discrete                 | FullRainbow                    | FullRainbow                    | FullRainbow                           | vtkMRMLColorTableNodeFullRainbow                            |
-  /// | ColorTable                | Discrete                 | Grey                           | Grey                           | Grey                                  | vtkMRMLColorTableNodeGrey                                   |
-  /// | ColorTable                | Discrete                 | Iron                           | Iron                           | Iron                                  | vtkMRMLColorTableNodeIron                                   |
-  /// | ColorTable                | Discrete                 | Rainbow                        | Rainbow                        | Rainbow                               | vtkMRMLColorTableNodeRainbow                                |
-  /// | ColorTable                | Discrete                 | Ocean                          | Ocean                          | Ocean                                 | vtkMRMLColorTableNodeOcean                                  |
-  /// | ColorTable                | Discrete                 | Desert                         | Desert                         | Desert                                | vtkMRMLColorTableNodeDesert                                 |
-  /// | ColorTable                | Discrete                 | InvertedGrey                   | InvertedGrey                   | InvertedGrey                          | vtkMRMLColorTableNodeInvertedGrey                           |
-  /// | ColorTable                | Discrete                 | ReverseRainbow                 | ReverseRainbow                 | ReverseRainbow                        | vtkMRMLColorTableNodeReverseRainbow                         |
-  /// | ColorTable                | Discrete                 | fMRI                           | fMRI                           | fMRI                                  | vtkMRMLColorTableNodefMRI                                   |
-  /// | ColorTable                | Discrete                 | fMRIPA                         | fMRIPA                         | fMRIPA                                | vtkMRMLColorTableNodefMRIPA                                 |
-  /// | ColorTable                | Discrete                 | Random                         | Random                         | Random                                | vtkMRMLColorTableNodeRandom                                 |
-  /// | ColorTable                | Discrete                 | Red                            | Red                            | Red                                   | vtkMRMLColorTableNodeRed                                    |
-  /// | ColorTable                | Discrete                 | Green                          | Green                          | Green                                 | vtkMRMLColorTableNodeGreen                                  |
-  /// | ColorTable                | Discrete                 | Blue                           | Blue                           | Blue                                  | vtkMRMLColorTableNodeBlue                                   |
-  /// | ColorTable                | Discrete                 | Yellow                         | Yellow                         | Yellow                                | vtkMRMLColorTableNodeYellow                                 |
-  /// | ColorTable                | Discrete                 | Cyan                           | Cyan                           | Cyan                                  | vtkMRMLColorTableNodeCyan                                   |
-  /// | ColorTable                | Discrete                 | Magenta                        | Magenta                        | Magenta                               | vtkMRMLColorTableNodeMagenta                                |
-  /// | ColorTable                | Discrete                 | Warm1                          | Warm1                          | Warm1                                 | vtkMRMLColorTableNodeWarm1                                  |
-  /// | ColorTable                | Discrete                 | Warm2                          | Warm2                          | Warm2                                 | vtkMRMLColorTableNodeWarm2                                  |
-  /// | ColorTable                | Discrete                 | Warm3                          | Warm3                          | Warm3                                 | vtkMRMLColorTableNodeWarm3                                  |
-  /// | ColorTable                | Discrete                 | Cool1                          | Cool1                          | Cool1                                 | vtkMRMLColorTableNodeCool1                                  |
-  /// | ColorTable                | Discrete                 | Cool2                          | Cool2                          | Cool2                                 | vtkMRMLColorTableNodeCool2                                  |
-  /// | ColorTable                | Discrete                 | Cool3                          | Cool3                          | Cool3                                 | vtkMRMLColorTableNodeCool3                                  |
-  /// | ColorTable                | Shade                    | WarmShade1                     | WarmShade1                     | WarmShade1                            | vtkMRMLColorTableNodeWarmShade1                             |
-  /// | ColorTable                | Shade                    | WarmShade2                     | WarmShade2                     | WarmShade2                            | vtkMRMLColorTableNodeWarmShade2                             |
-  /// | ColorTable                | Shade                    | WarmShade3                     | WarmShade3                     | WarmShade3                            | vtkMRMLColorTableNodeWarmShade3                             |
-  /// | ColorTable                | Shade                    | CoolShade1                     | CoolShade1                     | CoolShade1                            | vtkMRMLColorTableNodeCoolShade1                             |
-  /// | ColorTable                | Shade                    | CoolShade2                     | CoolShade2                     | CoolShade2                            | vtkMRMLColorTableNodeCoolShade2                             |
-  /// | ColorTable                | Shade                    | CoolShade3                     | CoolShade3                     | CoolShade3                            | vtkMRMLColorTableNodeCoolShade3                             |
-  /// | ColorTable                | Tint                     | WarmTint1                      | WarmTint1                      | WarmTint1                             | vtkMRMLColorTableNodeWarmTint1                              |
-  /// | ColorTable                | Tint                     | WarmTint2                      | WarmTint2                      | WarmTint2                             | vtkMRMLColorTableNodeWarmTint2                              |
-  /// | ColorTable                | Tint                     | WarmTint3                      | WarmTint3                      | WarmTint3                             | vtkMRMLColorTableNodeWarmTint3                              |
-  /// | ColorTable                | Tint                     | CoolTint1                      | CoolTint1                      | CoolTint1                             | vtkMRMLColorTableNodeCoolTint1                              |
-  /// | ColorTable                | Tint                     | CoolTint2                      | CoolTint2                      | CoolTint2                             | vtkMRMLColorTableNodeCoolTint2                              |
-  /// | ColorTable                | Tint                     | CoolTint3                      | CoolTint3                      | CoolTint3                             | vtkMRMLColorTableNodeCoolTint3                              |
-  /// | ProceduralColor           | Discrete                 | RandomIntegers                 | RandomIntegers                 | RandomIntegers                        | vtkMRMLProceduralColorNodeRandomIntegers                    |
-  /// | ProceduralColor           | Continuous               | RedGreenBlue                   | RedGreenBlue                   | RedGreenBlue                          | vtkMRMLProceduralColorNodeRedGreenBlue                      |
-  /// | PETProceduralColor        | PET                      | PET-Heat                       | PET-Heat                       | PET-Heat                              | vtkMRMLPETProceduralColorNodePET-Heat                       |
-  /// | PETProceduralColor        | PET                      | PET-Rainbow                    | PET-Rainbow                    | PET-Rainbow                           | vtkMRMLPETProceduralColorNodePET-Rainbow                    |
-  /// | PETProceduralColor        | PET                      | PET-MaximumIntensityProjection | PET-MaximumIntensityProjection | PET-MaximumIntensityProjection        | vtkMRMLPETProceduralColorNodePET-MaximumIntensityProjection |
-  /// | dGEMRICProceduralColor    | Cartilage MRI            | dGEMRIC-1.5T                   | dGEMRIC-1.5T                   | dGEMRIC-1.5T                          | vtkMRMLdGEMRICProceduralColorNodedGEMRIC-1.5T               |
-  /// | dGEMRICProceduralColor    | Cartilage MRI            | dGEMRIC-3T                     | dGEMRIC-3T                     | dGEMRIC-3T                            | vtkMRMLdGEMRICProceduralColorNodedGEMRIC-3T                 |
-  /// | ColorTable                | Default Labels from File | File                           | LightPaleChartColors           | FileLightPaleChartColors.txt          | vtkMRMLColorTableNodeFileLightPaleChartColors.txt           |
-  /// | ColorTable                | Default Labels from File | File                           | ColdToHotRainbow               | FileColdToHotRainbow.txt              | vtkMRMLColorTableNodeFileColdToHotRainbow.txt               |
-  /// | ColorTable                | Default Labels from File | File                           | Viridis                        | FileViridis.txt                       | vtkMRMLColorTableNodeFileViridis.txt                        |
-  /// | ColorTable                | Default Labels from File | File                           | Magma                          | FileMagma.txt                         | vtkMRMLColorTableNodeFileMagma.txt                          |
-  /// | ColorTable                | Default Labels from File | File                           | DivergingBlueRed               | FileDivergingBlueRed.txt              | vtkMRMLColorTableNodeFileDivergingBlueRed.txt               |
-  /// | ColorTable                | Default Labels from File | File                           | HotToColdRainbow               | FileHotToColdRainbow.txt              | vtkMRMLColorTableNodeFileHotToColdRainbow.txt               |
-  /// | ColorTable                | Default Labels from File | File                           | DarkBrightChartColors          | FileDarkBrightChartColors.txt         | vtkMRMLColorTableNodeFileDarkBrightChartColors.txt          |
-  /// | ColorTable                | Default Labels from File | File                           | MediumChartColors              | FileMediumChartColors.txt             | vtkMRMLColorTableNodeFileMediumChartColors.txt              |
-  /// | ColorTable                | Default Labels from File | File                           | Slicer3_2010_Label_Colors      | FileSlicer3_2010_Label_Colors.txt     | vtkMRMLColorTableNodeFileSlicer3_2010_Label_Colors.txt      |
-  /// | ColorTable                | Default Labels from File | File                           | Slicer3_2010_Brain_Labels      | FileSlicer3_2010_Brain_Labels.txt     | vtkMRMLColorTableNodeFileSlicer3_2010_Brain_Labels.txt      |
-  /// | ColorTable                | Default Labels from File | File                           | Inferno                        | FileInferno.txt                       | vtkMRMLColorTableNodeFileInferno.txt                        |
-  /// | ColorTable                | Default Labels from File | File                           | PelvisColor                    | FilePelvisColor.txt                   | vtkMRMLColorTableNodeFilePelvisColor.txt                    |
-  /// | ColorTable                | Default Labels from File | File                           | SPL-BrainAtlas-ColorFile       | FileSPL-BrainAtlas-ColorFile.txt      | vtkMRMLColorTableNodeFileSPL-BrainAtlas-ColorFile.txt       |
-  /// | ColorTable                | Default Labels from File | File                           | AbdomenColors                  | FileAbdomenColors.txt                 | vtkMRMLColorTableNodeFileAbdomenColors.txt                  |
-  /// | ColorTable                | None                     | File                           | GenericColors                  | FileGenericColors.txt                 | vtkMRMLColorTableNodeFileGenericColors.txt                  |
-  /// | ColorTable                | Default Labels from File | File                           | 64Color-Nonsemantic            | File64Color-Nonsemantic.txt           | vtkMRMLColorTableNodeFile64Color-Nonsemantic.txt            |
-  /// | ColorTable                | Default Labels from File | File                           | Plasma                         | FilePlasma.txt                        | vtkMRMLColorTableNodeFilePlasma.txt                         |
-  /// | ColorTable                | Default Labels from File | File                           | Cividis                        | FileCividis.txt                       | vtkMRMLColorTableNodeFileCividis.txt                        |
-  /// | ColorTable                | Default Labels from File | File                           | SPL-BrainAtlas-2009-ColorFile  | FileSPL-BrainAtlas-2009-ColorFile.txt | vtkMRMLColorTableNodeFileSPL-BrainAtlas-2009-ColorFile.txt  |
-  /// | ColorTable                | Default Labels from File | File                           | SPL-BrainAtlas-2012-ColorFile  | FileSPL-BrainAtlas-2012-ColorFile.txt | vtkMRMLColorTableNodeFileSPL-BrainAtlas-2012-ColorFile.txt  |
-  /// | ColorTable                | None                     | File                           | GenericAnatomyColors           | FileGenericAnatomyColors.txt          | vtkMRMLColorTableNodeFileGenericAnatomyColors.txt           |
+  /// | Family                    | Category                 | Type                           | Node name | Singleton
+  /// Tag                         | Node ID                                                     | |
+  /// ------------------------- | ------------------------ | ------------------------------ |
+  /// ------------------------------ | ------------------------------------- |
+  /// ----------------------------------------------------------- | | ColorTable                | Discrete | Labels |
+  /// Labels                         | Labels                                | vtkMRMLColorTableNodeLabels | |
+  /// ColorTable                | Discrete                 | FullRainbow                    | FullRainbow | FullRainbow
+  /// | vtkMRMLColorTableNodeFullRainbow                            | | ColorTable                | Discrete | Grey |
+  /// Grey                           | Grey                                  | vtkMRMLColorTableNodeGrey | | ColorTable
+  /// | Discrete                 | Iron                           | Iron                           | Iron |
+  /// vtkMRMLColorTableNodeIron                                   | | ColorTable                | Discrete | Rainbow |
+  /// Rainbow                        | Rainbow                               | vtkMRMLColorTableNodeRainbow | |
+  /// ColorTable                | Discrete                 | Ocean                          | Ocean | Ocean |
+  /// vtkMRMLColorTableNodeOcean                                  | | ColorTable                | Discrete | Desert |
+  /// Desert                         | Desert                                | vtkMRMLColorTableNodeDesert | |
+  /// ColorTable                | Discrete                 | InvertedGrey                   | InvertedGrey |
+  /// InvertedGrey                          | vtkMRMLColorTableNodeInvertedGrey                           | | ColorTable
+  /// | Discrete                 | ReverseRainbow                 | ReverseRainbow                 | ReverseRainbow |
+  /// vtkMRMLColorTableNodeReverseRainbow                         | | ColorTable                | Discrete | fMRI | fMRI
+  /// | fMRI                                  | vtkMRMLColorTableNodefMRI                                   | |
+  /// ColorTable                | Discrete                 | fMRIPA                         | fMRIPA | fMRIPA |
+  /// vtkMRMLColorTableNodefMRIPA                                 | | ColorTable                | Discrete | Random |
+  /// Random                         | Random                                | vtkMRMLColorTableNodeRandom | |
+  /// ColorTable                | Discrete                 | Red                            | Red | Red |
+  /// vtkMRMLColorTableNodeRed                                    | | ColorTable                | Discrete | Green |
+  /// Green                          | Green                                 | vtkMRMLColorTableNodeGreen | | ColorTable
+  /// | Discrete                 | Blue                           | Blue                           | Blue |
+  /// vtkMRMLColorTableNodeBlue                                   | | ColorTable                | Discrete | Yellow |
+  /// Yellow                         | Yellow                                | vtkMRMLColorTableNodeYellow | |
+  /// ColorTable                | Discrete                 | Cyan                           | Cyan | Cyan |
+  /// vtkMRMLColorTableNodeCyan                                   | | ColorTable                | Discrete | Magenta |
+  /// Magenta                        | Magenta                               | vtkMRMLColorTableNodeMagenta | |
+  /// ColorTable                | Discrete                 | Warm1                          | Warm1 | Warm1 |
+  /// vtkMRMLColorTableNodeWarm1                                  | | ColorTable                | Discrete | Warm2 |
+  /// Warm2                          | Warm2                                 | vtkMRMLColorTableNodeWarm2 | | ColorTable
+  /// | Discrete                 | Warm3                          | Warm3                          | Warm3 |
+  /// vtkMRMLColorTableNodeWarm3                                  | | ColorTable                | Discrete | Cool1 |
+  /// Cool1                          | Cool1                                 | vtkMRMLColorTableNodeCool1 | | ColorTable
+  /// | Discrete                 | Cool2                          | Cool2                          | Cool2 |
+  /// vtkMRMLColorTableNodeCool2                                  | | ColorTable                | Discrete | Cool3 |
+  /// Cool3                          | Cool3                                 | vtkMRMLColorTableNodeCool3 | | ColorTable
+  /// | Shade                    | WarmShade1                     | WarmShade1                     | WarmShade1 |
+  /// vtkMRMLColorTableNodeWarmShade1                             | | ColorTable                | Shade | WarmShade2 |
+  /// WarmShade2                     | WarmShade2                            | vtkMRMLColorTableNodeWarmShade2 | |
+  /// ColorTable                | Shade                    | WarmShade3                     | WarmShade3 | WarmShade3 |
+  /// vtkMRMLColorTableNodeWarmShade3                             | | ColorTable                | Shade | CoolShade1 |
+  /// CoolShade1                     | CoolShade1                            | vtkMRMLColorTableNodeCoolShade1 | |
+  /// ColorTable                | Shade                    | CoolShade2                     | CoolShade2 | CoolShade2 |
+  /// vtkMRMLColorTableNodeCoolShade2                             | | ColorTable                | Shade | CoolShade3 |
+  /// CoolShade3                     | CoolShade3                            | vtkMRMLColorTableNodeCoolShade3 | |
+  /// ColorTable                | Tint                     | WarmTint1                      | WarmTint1 | WarmTint1 |
+  /// vtkMRMLColorTableNodeWarmTint1                              | | ColorTable                | Tint | WarmTint2 |
+  /// WarmTint2                      | WarmTint2                             | vtkMRMLColorTableNodeWarmTint2 | |
+  /// ColorTable                | Tint                     | WarmTint3                      | WarmTint3 | WarmTint3 |
+  /// vtkMRMLColorTableNodeWarmTint3                              | | ColorTable                | Tint | CoolTint1 |
+  /// CoolTint1                      | CoolTint1                             | vtkMRMLColorTableNodeCoolTint1 | |
+  /// ColorTable                | Tint                     | CoolTint2                      | CoolTint2 | CoolTint2 |
+  /// vtkMRMLColorTableNodeCoolTint2                              | | ColorTable                | Tint | CoolTint3 |
+  /// CoolTint3                      | CoolTint3                             | vtkMRMLColorTableNodeCoolTint3 | |
+  /// ProceduralColor           | Discrete                 | RandomIntegers                 | RandomIntegers |
+  /// RandomIntegers                        | vtkMRMLProceduralColorNodeRandomIntegers                    | |
+  /// ProceduralColor           | Continuous               | RedGreenBlue                   | RedGreenBlue |
+  /// RedGreenBlue                          | vtkMRMLProceduralColorNodeRedGreenBlue                      | |
+  /// PETProceduralColor        | PET                      | PET-Heat                       | PET-Heat | PET-Heat |
+  /// vtkMRMLPETProceduralColorNodePET-Heat                       | | PETProceduralColor        | PET | PET-Rainbow |
+  /// PET-Rainbow                    | PET-Rainbow                           | vtkMRMLPETProceduralColorNodePET-Rainbow
+  /// | | PETProceduralColor        | PET                      | PET-MaximumIntensityProjection |
+  /// PET-MaximumIntensityProjection | PET-MaximumIntensityProjection        |
+  /// vtkMRMLPETProceduralColorNodePET-MaximumIntensityProjection | | dGEMRICProceduralColor    | Cartilage MRI |
+  /// dGEMRIC-1.5T                   | dGEMRIC-1.5T                   | dGEMRIC-1.5T                          |
+  /// vtkMRMLdGEMRICProceduralColorNodedGEMRIC-1.5T               | | dGEMRICProceduralColor    | Cartilage MRI |
+  /// dGEMRIC-3T                     | dGEMRIC-3T                     | dGEMRIC-3T                            |
+  /// vtkMRMLdGEMRICProceduralColorNodedGEMRIC-3T                 | | ColorTable                | Default Labels from
+  /// File | File                           | LightPaleChartColors           | FileLightPaleChartColors.txt          |
+  /// vtkMRMLColorTableNodeFileLightPaleChartColors.txt           | | ColorTable                | Default Labels from
+  /// File | File                           | ColdToHotRainbow               | FileColdToHotRainbow.txt              |
+  /// vtkMRMLColorTableNodeFileColdToHotRainbow.txt               | | ColorTable                | Default Labels from
+  /// File | File                           | Viridis                        | FileViridis.txt                       |
+  /// vtkMRMLColorTableNodeFileViridis.txt                        | | ColorTable                | Default Labels from
+  /// File | File                           | Magma                          | FileMagma.txt                         |
+  /// vtkMRMLColorTableNodeFileMagma.txt                          | | ColorTable                | Default Labels from
+  /// File | File                           | DivergingBlueRed               | FileDivergingBlueRed.txt              |
+  /// vtkMRMLColorTableNodeFileDivergingBlueRed.txt               | | ColorTable                | Default Labels from
+  /// File | File                           | HotToColdRainbow               | FileHotToColdRainbow.txt              |
+  /// vtkMRMLColorTableNodeFileHotToColdRainbow.txt               | | ColorTable                | Default Labels from
+  /// File | File                           | DarkBrightChartColors          | FileDarkBrightChartColors.txt         |
+  /// vtkMRMLColorTableNodeFileDarkBrightChartColors.txt          | | ColorTable                | Default Labels from
+  /// File | File                           | MediumChartColors              | FileMediumChartColors.txt             |
+  /// vtkMRMLColorTableNodeFileMediumChartColors.txt              | | ColorTable                | Default Labels from
+  /// File | File                           | Slicer3_2010_Label_Colors      | FileSlicer3_2010_Label_Colors.txt     |
+  /// vtkMRMLColorTableNodeFileSlicer3_2010_Label_Colors.txt      | | ColorTable                | Default Labels from
+  /// File | File                           | Slicer3_2010_Brain_Labels      | FileSlicer3_2010_Brain_Labels.txt     |
+  /// vtkMRMLColorTableNodeFileSlicer3_2010_Brain_Labels.txt      | | ColorTable                | Default Labels from
+  /// File | File                           | Inferno                        | FileInferno.txt                       |
+  /// vtkMRMLColorTableNodeFileInferno.txt                        | | ColorTable                | Default Labels from
+  /// File | File                           | PelvisColor                    | FilePelvisColor.txt                   |
+  /// vtkMRMLColorTableNodeFilePelvisColor.txt                    | | ColorTable                | Default Labels from
+  /// File | File                           | SPL-BrainAtlas-ColorFile       | FileSPL-BrainAtlas-ColorFile.txt      |
+  /// vtkMRMLColorTableNodeFileSPL-BrainAtlas-ColorFile.txt       | | ColorTable                | Default Labels from
+  /// File | File                           | AbdomenColors                  | FileAbdomenColors.txt                 |
+  /// vtkMRMLColorTableNodeFileAbdomenColors.txt                  | | ColorTable                | None | File |
+  /// GenericColors                  | FileGenericColors.txt                 |
+  /// vtkMRMLColorTableNodeFileGenericColors.txt                  | | ColorTable                | Default Labels from
+  /// File | File                           | 64Color-Nonsemantic            | File64Color-Nonsemantic.txt           |
+  /// vtkMRMLColorTableNodeFile64Color-Nonsemantic.txt            | | ColorTable                | Default Labels from
+  /// File | File                           | Plasma                         | FilePlasma.txt                        |
+  /// vtkMRMLColorTableNodeFilePlasma.txt                         | | ColorTable                | Default Labels from
+  /// File | File                           | Cividis                        | FileCividis.txt                       |
+  /// vtkMRMLColorTableNodeFileCividis.txt                        | | ColorTable                | Default Labels from
+  /// File | File                           | SPL-BrainAtlas-2009-ColorFile  | FileSPL-BrainAtlas-2009-ColorFile.txt |
+  /// vtkMRMLColorTableNodeFileSPL-BrainAtlas-2009-ColorFile.txt  | | ColorTable                | Default Labels from
+  /// File | File                           | SPL-BrainAtlas-2012-ColorFile  | FileSPL-BrainAtlas-2012-ColorFile.txt |
+  /// vtkMRMLColorTableNodeFileSPL-BrainAtlas-2012-ColorFile.txt  | | ColorTable                | None | File |
+  /// GenericAnatomyColors           | FileGenericAnatomyColors.txt          |
+  /// vtkMRMLColorTableNodeFileGenericAnatomyColors.txt           |
   ///
-  /// \note The table has been generated using Libs/MRML/Core/Documentation/generate_default_color_node_property_table.py
+  /// \note The table has been generated using
+  /// Libs/MRML/Core/Documentation/generate_default_color_node_property_table.py
   ///
   /// \sa vtkMRMLNode::GetSingletonTag(), vtkMRMLScene::Commit()
   /// \sa RemoveDefaultColorNodes()
@@ -136,46 +185,46 @@ public:
   virtual void RemoveDefaultColorNodes();
 
   /// Return the default color table node id for a given type
-  static const char * GetColorTableNodeID(int type);
+  static const char* GetColorTableNodeID(int type);
 
   /// Return the default dGEMRIC color node id for a given type
-  static const char * GetdGEMRICColorNodeID(int type);
+  static const char* GetdGEMRICColorNodeID(int type);
 
   /// Return the default PET color node id for a given type
-  static const char * GetPETColorNodeID(int type);
+  static const char* GetPETColorNodeID(int type);
 
   /// \brief Return a default color node id for a procedural color node.
   ///
   /// \warning You are responsible to delete the returned string.
-  static const char * GetProceduralColorNodeID(const char *name);
+  static const char* GetProceduralColorNodeID(const char* name);
 
   /// \brief Return a default color node id for a file based node,
   /// based on the file name.
   ///
   /// \warning You are responsible to delete the returned string.
-  static const char * GetFileColorNodeID(const char *fileName);
-  static std::string  GetFileColorNodeSingletonTag(const char * fileName);
+  static const char* GetFileColorNodeID(const char* fileName);
+  static std::string GetFileColorNodeSingletonTag(const char* fileName);
 
   /// Return a default color node id for a volume
-  virtual const char * GetDefaultVolumeColorNodeID();
+  virtual const char* GetDefaultVolumeColorNodeID();
 
   /// Return a default color node id for a label map
-  virtual const char * GetDefaultLabelMapColorNodeID();
+  virtual const char* GetDefaultLabelMapColorNodeID();
 
   /// Return a default color node id for the editor
-  virtual const char * GetDefaultEditorColorNodeID();
+  virtual const char* GetDefaultEditorColorNodeID();
 
   /// Return a default color node id for a model
-  virtual const char * GetDefaultModelColorNodeID();
+  virtual const char* GetDefaultModelColorNodeID();
 
   /// Return a default color node id for a chart
-  virtual const char * GetDefaultChartColorNodeID();
+  virtual const char* GetDefaultChartColorNodeID();
 
   /// Return a default color node id for a plot
-  virtual const char * GetDefaultPlotColorNodeID();
+  virtual const char* GetDefaultPlotColorNodeID();
 
   /// Add a file to the input list Files, checking first for null, duplicates
-  void AddColorFile(const char *fileName, std::vector<std::string> *Files);
+  void AddColorFile(const char* fileName, std::vector<std::string>* Files);
 
   /// Load in a color file, creating a storage node. Returns a pointer to the
   /// created node on success, 0 on failure (no file, invalid color file). The
@@ -188,7 +237,7 @@ public:
   /// it's storage node, turn off hide from editors, remove the
   /// singleton tag.
   /// \sa CreateFileNode, CreateProceduralFileNode
-  vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = nullptr);
+  vtkMRMLColorNode* LoadColorFile(const char* fileName, const char* nodeName = nullptr);
 
   /// Get/Set the user defined paths where to look for extra color files
   vtkGetStringMacro(UserColorFilePaths);
@@ -250,7 +299,7 @@ protected:
 
   /// Return the ID of a node that doesn't belong to a scene.
   /// It is the concatenation of the node class name and its type.
-  static const char * GetColorNodeID(vtkMRMLColorNode* colorNode);
+  static const char* GetColorNodeID(vtkMRMLColorNode* colorNode);
 
   /// a vector holding discovered default color files, found in the
   /// Resources/ColorFiles directory, white space separated with:
@@ -264,7 +313,7 @@ protected:
   /// a string holding delimiter separated (; on win32, : else) paths where to
   /// look for extra color files, set from the return value of
   /// vtkMRMLApplication::GetColorFilePaths
-  char *UserColorFilePaths;
+  char* UserColorFilePaths;
 
   static std::string TempColorNodeID;
 

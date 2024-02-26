@@ -47,14 +47,15 @@
 
 namespace
 {
-  // enable for more debugging output
-  const bool verbose = false;
-}
+// enable for more debugging output
+const bool verbose = false;
+} // namespace
 
 int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* storageNode, const std::string& fileName)
 {
   std::cout << "--------------------------------" << std::endl;
-  std::cout << "TestStoragNode for " << markupsNode->GetClassName() << " with " << storageNode->GetClassName() << std::endl;
+  std::cout << "TestStoragNode for " << markupsNode->GetClassName() << " with " << storageNode->GetClassName()
+            << std::endl;
 
   // set up a scene
   vtkNew<vtkMRMLScene> scene;
@@ -73,12 +74,12 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   markupsNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   // add a markup with one point with non default values
-  int modifiedPointIndex =  markupsNode->AddNControlPoints(1);
-  double orientation[4] = {0.2, 1.0, 0.0, 0.0};
+  int modifiedPointIndex = markupsNode->AddNControlPoints(1);
+  double orientation[4] = { 0.2, 1.0, 0.0, 0.0 };
   markupsNode->SetNthControlPointOrientation(modifiedPointIndex, orientation);
   markupsNode->ResetNthControlPointID(modifiedPointIndex);
   std::string associatedNodeID = std::string("testingAssociatedID");
-  markupsNode->SetNthControlPointAssociatedNodeID(modifiedPointIndex,associatedNodeID);
+  markupsNode->SetNthControlPointAssociatedNodeID(modifiedPointIndex, associatedNodeID);
   markupsNode->SetNthControlPointSelected(modifiedPointIndex, false);
   markupsNode->SetNthControlPointVisibility(modifiedPointIndex, false);
   markupsNode->SetNthControlPointLocked(modifiedPointIndex, true);
@@ -89,7 +90,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   markupsNode->SetNthControlPointDescription(modifiedPointIndex, desc);
   // NAN should not be present, but we test this case anyway
   // to make sure that having a NAN does not break reading or writing.
-  double inputPoint[3] = {-9.9, 1.1, NAN};
+  double inputPoint[3] = { -9.9, 1.1, NAN };
   markupsNode->SetNthControlPointPosition(modifiedPointIndex, inputPoint);
 
   // and add a markup with 1 point, default values
@@ -102,7 +103,8 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   int emptyLabelIndex = -1;
   int commaIndex = -1;
   int quotesIndex = -1;
-  bool testManyPoints = markupsNode->GetMaximumNumberOfControlPoints() < 0 || markupsNode->GetMaximumNumberOfControlPoints() > 5;
+  bool testManyPoints =
+    markupsNode->GetMaximumNumberOfControlPoints() < 0 || markupsNode->GetMaximumNumberOfControlPoints() > 5;
   if (testManyPoints)
   {
     // and another one unsetting the label
@@ -112,7 +114,8 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
     // add another one with a label and description that have commas in them
     commaIndex = markupsNode->AddNControlPoints(1);
     markupsNode->SetNthControlPointLabel(commaIndex, "Label, commas, two");
-    markupsNode->SetNthControlPointDescription(commaIndex, "Description one comma \"and two quotes\", for more testing");
+    markupsNode->SetNthControlPointDescription(commaIndex,
+                                               "Description one comma \"and two quotes\", for more testing");
 
     // add another one with a label and description with complex combos of commas and quotes
     quotesIndex = markupsNode->AddNControlPoints(1);
@@ -140,8 +143,8 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   // test read
   //
 
-  vtkSmartPointer<vtkMRMLMarkupsNode> markupsNode2 = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(
-    vtkMRMLMarkupsNode::SafeDownCast(markupsNode->CreateNodeInstance()));
+  vtkSmartPointer<vtkMRMLMarkupsNode> markupsNode2 =
+    vtkSmartPointer<vtkMRMLMarkupsNode>::Take(vtkMRMLMarkupsNode::SafeDownCast(markupsNode->CreateNodeInstance()));
 
   vtkNew<vtkMRMLScene> scene2;
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
@@ -171,7 +174,7 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
   double newOrientation[4] = { -5, -5, -5, -5 };
   markupsNode2->GetNthControlPointOrientation(modifiedPointIndex, newOrientation);
   std::cout << "Orientation from read file: [" << newOrientation[0] << ", " << newOrientation[1] << ", "
-    << newOrientation[2] << ", " << newOrientation[3] << "]" << std::endl;
+            << newOrientation[2] << ", " << newOrientation[3] << "]" << std::endl;
   for (int r = 0; r < 4; r++)
   {
     CHECK_DOUBLE_TOLERANCE(newOrientation[r], orientation[r], 1e-3);
@@ -239,13 +242,9 @@ int TestStoragNode(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsStorageNode* s
     int numCommas = std::count(labelWithCommas.begin(), labelWithCommas.end(), ',');
     CHECK_INT(numCommas, 2);
     std::string descriptionWithCommasAndQuotes = markupsNode2->GetNthControlPointDescription(commaIndex);
-    numCommas = std::count(descriptionWithCommasAndQuotes.begin(),
-                           descriptionWithCommasAndQuotes.end(),
-                           ',');
+    numCommas = std::count(descriptionWithCommasAndQuotes.begin(), descriptionWithCommasAndQuotes.end(), ',');
     CHECK_INT(numCommas, 1);
-    int numQuotes = std::count(descriptionWithCommasAndQuotes.begin(),
-                              descriptionWithCommasAndQuotes.end(),
-                              '"');
+    int numQuotes = std::count(descriptionWithCommasAndQuotes.begin(), descriptionWithCommasAndQuotes.end(), '"');
     CHECK_INT(numQuotes, 2);
 
     // check ending quoted label
@@ -276,30 +275,30 @@ int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
   {
     tempFolder = std::string(argv[1]);
   }
-  CHECK_EXIT_SUCCESS(TestStoragNode(
-    vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(),
-    vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-fiducial-temp.fcsv"));
-  CHECK_EXIT_SUCCESS(TestStoragNode(
-    vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(),
-    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-fiducial-temp.mrk.json"));
-  CHECK_EXIT_SUCCESS(TestStoragNode(
-    vtkSmartPointer<vtkMRMLMarkupsLineNode>::New(),
-    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-line-temp.mrk.json"));
-  CHECK_EXIT_SUCCESS(TestStoragNode(
-    vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New(),
-    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-angle-temp.mrk.json"));
-  CHECK_EXIT_SUCCESS(TestStoragNode(
-    vtkSmartPointer<vtkMRMLMarkupsCurveNode>::New(),
-    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-opencurve-temp.mrk.json"));
-  CHECK_EXIT_SUCCESS(TestStoragNode(
-    vtkSmartPointer<vtkMRMLMarkupsClosedCurveNode>::New(),
-    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-closedcurve-temp.mrk.json"));
-  CHECK_EXIT_SUCCESS(TestStoragNode(
-    vtkSmartPointer<vtkMRMLMarkupsPlaneNode>::New(),
-    vtkSmartPointer<vtkMRMLMarkupsPlaneJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-plane-temp.mrk.json"));
-  CHECK_EXIT_SUCCESS(TestStoragNode(
-    vtkSmartPointer<vtkMRMLMarkupsROINode>::New(),
-    vtkSmartPointer<vtkMRMLMarkupsROIJsonStorageNode>::New(), tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-roi-temp.mrk.json"));
+  CHECK_EXIT_SUCCESS(TestStoragNode(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(),
+                                    vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New(),
+                                    tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-fiducial-temp.fcsv"));
+  CHECK_EXIT_SUCCESS(TestStoragNode(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(),
+                                    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(),
+                                    tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-fiducial-temp.mrk.json"));
+  CHECK_EXIT_SUCCESS(TestStoragNode(vtkSmartPointer<vtkMRMLMarkupsLineNode>::New(),
+                                    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(),
+                                    tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-line-temp.mrk.json"));
+  CHECK_EXIT_SUCCESS(TestStoragNode(vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New(),
+                                    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(),
+                                    tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-angle-temp.mrk.json"));
+  CHECK_EXIT_SUCCESS(TestStoragNode(vtkSmartPointer<vtkMRMLMarkupsCurveNode>::New(),
+                                    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(),
+                                    tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-opencurve-temp.mrk.json"));
+  CHECK_EXIT_SUCCESS(TestStoragNode(vtkSmartPointer<vtkMRMLMarkupsClosedCurveNode>::New(),
+                                    vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New(),
+                                    tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-closedcurve-temp.mrk.json"));
+  CHECK_EXIT_SUCCESS(TestStoragNode(vtkSmartPointer<vtkMRMLMarkupsPlaneNode>::New(),
+                                    vtkSmartPointer<vtkMRMLMarkupsPlaneJsonStorageNode>::New(),
+                                    tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-plane-temp.mrk.json"));
+  CHECK_EXIT_SUCCESS(TestStoragNode(vtkSmartPointer<vtkMRMLMarkupsROINode>::New(),
+                                    vtkSmartPointer<vtkMRMLMarkupsROIJsonStorageNode>::New(),
+                                    tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-roi-temp.mrk.json"));
 
   // Test if markups node can be instantiated correctly
   vtkNew<vtkMRMLScene> scene;
@@ -356,7 +355,6 @@ int vtkMRMLMarkupsStorageNodeTest2(int argc, char* argv[])
     std::string(tempFolder + "/vtkMRMLMarkupsStorageNodeTest2-roi-temp.mrk.json").c_str());
   CHECK_NOT_NULL(roiNode);
   CHECK_STRING(roiNode->GetClassName(), "vtkMRMLMarkupsROINode");
-
 
   return EXIT_SUCCESS;
 }

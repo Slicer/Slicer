@@ -43,15 +43,18 @@
 #include <QAction>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchySceneViewsPluginPrivate: public QObject
+class qSlicerSubjectHierarchySceneViewsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchySceneViewsPlugin);
+
 protected:
   qSlicerSubjectHierarchySceneViewsPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchySceneViewsPluginPrivate(qSlicerSubjectHierarchySceneViewsPlugin& object);
   ~qSlicerSubjectHierarchySceneViewsPluginPrivate() override;
   void init();
+
 public:
   QIcon SceneViewIcon;
 
@@ -62,8 +65,9 @@ public:
 // qSlicerSubjectHierarchySceneViewsPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchySceneViewsPluginPrivate::qSlicerSubjectHierarchySceneViewsPluginPrivate(qSlicerSubjectHierarchySceneViewsPlugin& object)
-: q_ptr(&object)
+qSlicerSubjectHierarchySceneViewsPluginPrivate::qSlicerSubjectHierarchySceneViewsPluginPrivate(
+  qSlicerSubjectHierarchySceneViewsPlugin& object)
+  : q_ptr(&object)
 {
   this->SceneViewIcon = QIcon(":Icons/SceneView.png");
 
@@ -87,8 +91,8 @@ qSlicerSubjectHierarchySceneViewsPluginPrivate::~qSlicerSubjectHierarchySceneVie
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchySceneViewsPlugin::qSlicerSubjectHierarchySceneViewsPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchySceneViewsPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchySceneViewsPluginPrivate(*this))
 {
   this->m_Name = QString("SceneViews");
 
@@ -101,7 +105,8 @@ qSlicerSubjectHierarchySceneViewsPlugin::~qSlicerSubjectHierarchySceneViewsPlugi
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchySceneViewsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node,
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -119,7 +124,7 @@ double qSlicerSubjectHierarchySceneViewsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchySceneViewsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchySceneViewsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -144,7 +149,7 @@ double qSlicerSubjectHierarchySceneViewsPlugin::canOwnSubjectHierarchyItem(vtkId
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchySceneViewsPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchySceneViewsPlugin::roleForPlugin() const
 {
   return "SceneView";
 }
@@ -170,7 +175,7 @@ QIcon qSlicerSubjectHierarchySceneViewsPlugin::icon(vtkIdType itemID)
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchySceneViewsPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchySceneViewsPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchySceneViewsPlugin);
 
@@ -198,7 +203,7 @@ void qSlicerSubjectHierarchySceneViewsPlugin::showContextMenuActionsForItem(vtkI
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySceneViewsPlugin::restoreCurrentSceneView()const
+void qSlicerSubjectHierarchySceneViewsPlugin::restoreCurrentSceneView() const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)

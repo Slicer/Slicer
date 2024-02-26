@@ -84,7 +84,8 @@
 // qSlicerSegmentEditorAbstractEffectPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorAbstractEffectPrivate::qSlicerSegmentEditorAbstractEffectPrivate(qSlicerSegmentEditorAbstractEffect& object)
+qSlicerSegmentEditorAbstractEffectPrivate::qSlicerSegmentEditorAbstractEffectPrivate(
+  qSlicerSegmentEditorAbstractEffect& object)
   : q_ptr(&object)
   , Scene(nullptr)
   , SavedCursor(QCursor(Qt::ArrowCursor))
@@ -110,15 +111,14 @@ qSlicerSegmentEditorAbstractEffectPrivate::~qSlicerSegmentEditorAbstractEffectPr
 
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 // qSlicerSegmentEditorAbstractEffect methods
 
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractEffect::qSlicerSegmentEditorAbstractEffect(QObject* parent)
- : Superclass(parent)
- , m_Name(QString())
- , d_ptr(new qSlicerSegmentEditorAbstractEffectPrivate(*this))
+  : Superclass(parent)
+  , m_Name(QString())
+  , d_ptr(new qSlicerSegmentEditorAbstractEffectPrivate(*this))
 {
 }
 
@@ -126,7 +126,7 @@ qSlicerSegmentEditorAbstractEffect::qSlicerSegmentEditorAbstractEffect(QObject* 
 qSlicerSegmentEditorAbstractEffect::~qSlicerSegmentEditorAbstractEffect() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSegmentEditorAbstractEffect::name()const
+QString qSlicerSegmentEditorAbstractEffect::name() const
 {
   if (m_Name.isEmpty())
   {
@@ -143,7 +143,7 @@ void qSlicerSegmentEditorAbstractEffect::setName(QString name)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSegmentEditorAbstractEffect::title()const
+QString qSlicerSegmentEditorAbstractEffect::title() const
 {
   if (!this->m_Title.isEmpty())
   {
@@ -167,7 +167,7 @@ void qSlicerSegmentEditorAbstractEffect::setTitle(QString title)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSegmentEditorAbstractEffect::perSegment()const
+bool qSlicerSegmentEditorAbstractEffect::perSegment() const
 {
   return this->m_PerSegment;
 }
@@ -180,7 +180,7 @@ void qSlicerSegmentEditorAbstractEffect::setPerSegment(bool perSegment)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSegmentEditorAbstractEffect::requireSegments()const
+bool qSlicerSegmentEditorAbstractEffect::requireSegments() const
 {
   return this->m_RequireSegments;
 }
@@ -221,20 +221,23 @@ bool qSlicerSegmentEditorAbstractEffect::active()
   return m_Active;
 }
 
-
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::setCallbackSlots(QObject* receiver, const char* selectEffectSlot,
-  const char* updateVolumeSlot, const char* saveStateForUndoSlot)
+void qSlicerSegmentEditorAbstractEffect::setCallbackSlots(QObject* receiver,
+                                                          const char* selectEffectSlot,
+                                                          const char* updateVolumeSlot,
+                                                          const char* saveStateForUndoSlot)
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
   QObject::connect(d, SIGNAL(selectEffectSignal(QString)), receiver, selectEffectSlot);
-  QObject::connect(d, SIGNAL(updateVolumeSignal(void*,bool&)), receiver, updateVolumeSlot);
+  QObject::connect(d, SIGNAL(updateVolumeSignal(void*, bool&)), receiver, updateVolumeSlot);
   QObject::connect(d, SIGNAL(saveStateForUndoSignal()), receiver, saveStateForUndoSlot);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::applyImageMask(vtkOrientedImageData* input, vtkOrientedImageData* mask, double fillValue,
-  bool notMask/*=false*/)
+void qSlicerSegmentEditorAbstractEffect::applyImageMask(vtkOrientedImageData* input,
+                                                        vtkOrientedImageData* mask,
+                                                        double fillValue,
+                                                        bool notMask /*=false*/)
 {
   // The method is now moved to vtkOrientedImageDataResample::ApplyImageMask but kept here
   // for a while for backward compatibility.
@@ -243,7 +246,8 @@ void qSlicerSegmentEditorAbstractEffect::applyImageMask(vtkOrientedImageData* in
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap,
-  ModificationMode modificationMode, bool bypassMasking/*=false*/)
+                                                                         ModificationMode modificationMode,
+                                                                         bool bypassMasking /*=false*/)
 {
   int modificationExtent[6] = { 0, -1, 0, -1, 0, -1 };
   this->modifySelectedSegmentByLabelmap(modifierLabelmap, modificationMode, modificationExtent, bypassMasking);
@@ -251,7 +255,9 @@ void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrie
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap,
-  ModificationMode modificationMode, QList<int> extent, bool bypassMasking/*=false*/)
+                                                                         ModificationMode modificationMode,
+                                                                         QList<int> extent,
+                                                                         bool bypassMasking /*=false*/)
 {
   if (extent.size() != 6)
   {
@@ -264,24 +270,38 @@ void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrie
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::modifySelectedSegmentByLabelmap(vtkOrientedImageData* modifierLabelmap,
-  ModificationMode modificationMode, const int modificationExtent[6], bool bypassMasking/*=false*/)
+                                                                         ModificationMode modificationMode,
+                                                                         const int modificationExtent[6],
+                                                                         bool bypassMasking /*=false*/)
 {
-  this->modifySegmentByLabelmap(this->parameterSetNode()->GetSegmentationNode(),
+  this->modifySegmentByLabelmap(
+    this->parameterSetNode()->GetSegmentationNode(),
     this->parameterSetNode()->GetSelectedSegmentID() ? this->parameterSetNode()->GetSelectedSegmentID() : "",
-    modifierLabelmap, modificationMode, modificationExtent, bypassMasking);
+    modifierLabelmap,
+    modificationMode,
+    modificationExtent,
+    bypassMasking);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmentationNode* segmentationNode, const char* segmentID,
-  vtkOrientedImageData* modifierLabelmap, ModificationMode modificationMode, bool bypassMasking/*=false*/)
+void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmentationNode* segmentationNode,
+                                                                 const char* segmentID,
+                                                                 vtkOrientedImageData* modifierLabelmap,
+                                                                 ModificationMode modificationMode,
+                                                                 bool bypassMasking /*=false*/)
 {
   int modificationExtent[6] = { 0, -1, 0, -1, 0, -1 };
-  this->modifySegmentByLabelmap(segmentationNode, segmentID, modifierLabelmap, modificationMode, modificationExtent, bypassMasking);
+  this->modifySegmentByLabelmap(
+    segmentationNode, segmentID, modifierLabelmap, modificationMode, modificationExtent, bypassMasking);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmentationNode* segmentationNode, const char* segmentID,
-  vtkOrientedImageData* modifierLabelmapInput, ModificationMode modificationMode, const int modificationExtent[6], bool bypassMasking/*=false*/)
+void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmentationNode* segmentationNode,
+                                                                 const char* segmentID,
+                                                                 vtkOrientedImageData* modifierLabelmapInput,
+                                                                 ModificationMode modificationMode,
+                                                                 const int modificationExtent[6],
+                                                                 bool bypassMasking /*=false*/)
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
 
@@ -327,8 +347,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   SlicerRenderBlocker renderBlocker;
 
   vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = modifierLabelmapInput;
-  if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere) ||
-    parameterSetNode->GetSourceVolumeIntensityMask())
+  if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere)
+      || parameterSetNode->GetSourceVolumeIntensityMask())
   {
     vtkNew<vtkOrientedImageData> maskImage;
     maskImage->SetExtent(modifierLabelmap->GetExtent());
@@ -341,7 +361,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     // Apply mask to modifier labelmap if masking is enabled
     if (!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere)
     {
-      vtkOrientedImageDataResample::ModifyImage(maskImage, this->maskLabelmap(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
+      vtkOrientedImageDataResample::ModifyImage(
+        maskImage, this->maskLabelmap(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
     }
 
     // Apply threshold mask if paint threshold is turned on
@@ -365,7 +386,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       // Create threshold image
       vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
       threshold->SetInputData(sourceVolumeOrientedImageData);
-      threshold->ThresholdBetween(parameterSetNode->GetSourceVolumeIntensityMaskRange()[0], parameterSetNode->GetSourceVolumeIntensityMaskRange()[1]);
+      threshold->ThresholdBetween(parameterSetNode->GetSourceVolumeIntensityMaskRange()[0],
+                                  parameterSetNode->GetSourceVolumeIntensityMaskRange()[1]);
       threshold->SetInValue(m_EraseValue);
       threshold->SetOutValue(m_FillValue);
       threshold->SetOutputScalarTypeToUnsignedChar();
@@ -376,17 +398,18 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       vtkSmartPointer<vtkMatrix4x4> modifierLabelmapToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
       modifierLabelmap->GetImageToWorldMatrix(modifierLabelmapToWorldMatrix);
       thresholdMask->SetGeometryFromImageToWorldMatrix(modifierLabelmapToWorldMatrix);
-      vtkOrientedImageDataResample::ModifyImage(maskImage, thresholdMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
+      vtkOrientedImageDataResample::ModifyImage(
+        maskImage, thresholdMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
     }
 
-    vtkSmartPointer<vtkOrientedImageData> segmentLayerLabelmap =
-      vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetSourceRepresentationName()));
+    vtkSmartPointer<vtkOrientedImageData> segmentLayerLabelmap = vtkOrientedImageData::SafeDownCast(
+      segment->GetRepresentation(segmentationNode->GetSegmentation()->GetSourceRepresentationName()));
     if (segmentLayerLabelmap
-      && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
-      && modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove)
+        && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
+        && modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove)
     {
-      // If we are painting inside a segment, the erase effect can modify the current segment outside the masking region by adding back regions
-      // in the current segment. Add the current segment to the editable area
+      // If we are painting inside a segment, the erase effect can modify the current segment outside the masking region
+      // by adding back regions in the current segment. Add the current segment to the editable area
       vtkNew<vtkImageThreshold> segmentInverter;
       segmentInverter->SetInputData(segmentLayerLabelmap);
       segmentInverter->SetInValue(m_EraseValue);
@@ -399,7 +422,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       vtkNew<vtkOrientedImageData> invertedSegment;
       invertedSegment->ShallowCopy(segmentInverter->GetOutput());
       invertedSegment->CopyDirections(segmentLayerLabelmap);
-      vtkOrientedImageDataResample::ModifyImage(maskImage, invertedSegment, vtkOrientedImageDataResample::OPERATION_MINIMUM);
+      vtkOrientedImageDataResample::ModifyImage(
+        maskImage, invertedSegment, vtkOrientedImageDataResample::OPERATION_MINIMUM);
     }
 
     // Apply the mask to the modifier labelmap. Make a copy so that we don't modify the original.
@@ -423,14 +447,16 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       int segmentThresholdExtent[6] = { 0, -1, 0, -1, 0, -1 };
       segmentThreshold->GetOutput()->GetExtent(segmentThresholdExtent);
       if (segmentThresholdExtent[0] <= segmentThresholdExtent[1]
-        && segmentThresholdExtent[2] <= segmentThresholdExtent[3]
-        && segmentThresholdExtent[4] <= segmentThresholdExtent[5])
+          && segmentThresholdExtent[2] <= segmentThresholdExtent[3]
+          && segmentThresholdExtent[4] <= segmentThresholdExtent[5])
       {
         vtkNew<vtkOrientedImageData> segmentOutsideMask;
         segmentOutsideMask->ShallowCopy(segmentThreshold->GetOutput());
         segmentOutsideMask->CopyDirections(segmentLayerLabelmap);
-        vtkOrientedImageDataResample::ModifyImage(segmentOutsideMask, maskImage, vtkOrientedImageDataResample::OPERATION_MINIMUM);
-        vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, segmentOutsideMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
+        vtkOrientedImageDataResample::ModifyImage(
+          segmentOutsideMask, maskImage, vtkOrientedImageDataResample::OPERATION_MINIMUM);
+        vtkOrientedImageDataResample::ModifyImage(
+          modifierLabelmap, segmentOutsideMask, vtkOrientedImageDataResample::OPERATION_MAXIMUM);
       }
     }
   }
@@ -438,7 +464,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   // Copy the temporary padded modifier labelmap to the segment.
   // Mask and threshold was already applied on modifier labelmap at this point if requested.
   const int* extent = modificationExtent;
-  if (extent[0]>extent[1] || extent[2]>extent[3] || extent[4]>extent[5])
+  if (extent[0] > extent[1] || extent[2] > extent[3] || extent[4] > extent[5])
   {
     // invalid extent, it means we have to work with the entire modifier labelmap
     extent = nullptr;
@@ -450,10 +476,12 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   allSegmentIDs.erase(std::remove(allSegmentIDs.begin(), allSegmentIDs.end(), segmentID), allSegmentIDs.end());
 
   std::vector<std::string> visibleSegmentIDs;
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+  vtkMRMLSegmentationDisplayNode* displayNode =
+    vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
   if (displayNode)
   {
-    for (std::vector<std::string>::iterator segmentIDIt = allSegmentIDs.begin(); segmentIDIt != allSegmentIDs.end(); ++segmentIDIt)
+    for (std::vector<std::string>::iterator segmentIDIt = allSegmentIDs.begin(); segmentIDIt != allSegmentIDs.end();
+         ++segmentIDIt)
     {
       if (displayNode->GetSegmentVisibility(*segmentIDIt))
       {
@@ -498,7 +526,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet)
   {
     vtkSmartPointer<vtkImageThreshold> segmentInverter = vtkSmartPointer<vtkImageThreshold>::New();
-    segmentInverter->SetInputData(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetSourceRepresentationName()));
+    segmentInverter->SetInputData(
+      segment->GetRepresentation(segmentationNode->GetSegmentation()->GetSourceRepresentationName()));
     segmentInverter->SetInValue(m_EraseValue);
     segmentInverter->SetOutValue(VTK_UNSIGNED_CHAR_MAX);
     segmentInverter->ReplaceInOn();
@@ -511,13 +540,24 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     modifierLabelmap->GetImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     invertedModifierLabelmap->SetGeometryFromImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN,
-      nullptr, false, segmentIDsToOverwrite))
+          invertedModifierLabelmap.GetPointer(),
+          segmentationNode,
+          segmentID,
+          vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN,
+          nullptr,
+          false,
+          segmentIDsToOverwrite))
     {
       qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from selected segment";
     }
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      modifierLabelmap, segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK, extent, false, segmentIDsToOverwrite))
+          modifierLabelmap,
+          segmentationNode,
+          segmentID,
+          vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK,
+          extent,
+          false,
+          segmentIDsToOverwrite))
     {
       qCritical() << Q_FUNC_INFO << ": Failed to add modifier labelmap to selected segment";
     }
@@ -525,13 +565,19 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeAdd)
   {
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      modifierLabelmap, segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK, extent, false, segmentIDsToOverwrite))
+          modifierLabelmap,
+          segmentationNode,
+          segmentID,
+          vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK,
+          extent,
+          false,
+          segmentIDsToOverwrite))
     {
       qCritical() << Q_FUNC_INFO << ": Failed to add modifier labelmap to selected segment";
     }
   }
   else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove
-    || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll)
+           || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll)
   {
     inverter->Update();
     vtkNew<vtkOrientedImageData> invertedModifierLabelmap;
@@ -541,8 +587,13 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     invertedModifierLabelmap->SetGeometryFromImageToWorldMatrix(imageToWorldMatrix.GetPointer());
     bool minimumOfAllSegments = modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll;
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      invertedModifierLabelmap.GetPointer(), segmentationNode, segmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN,
-      extent, minimumOfAllSegments, segmentIDsToOverwrite))
+          invertedModifierLabelmap.GetPointer(),
+          segmentationNode,
+          segmentID,
+          vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN,
+          extent,
+          minimumOfAllSegments,
+          segmentIDsToOverwrite))
     {
       qCritical() << Q_FUNC_INFO << ": Failed to remove modifier labelmap from selected segment";
     }
@@ -557,22 +608,24 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   }
 
   std::vector<std::string> sharedSegmentIDs;
-  segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentID, sharedSegmentIDs, false);
+  segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(
+    segmentID, sharedSegmentIDs, false);
 
   std::vector<std::string> segmentsToErase;
   for (std::string segmentIDToOverwrite : segmentIDsToOverwrite)
   {
-    std::vector<std::string>::iterator foundSegmentIDIt = std::find(sharedSegmentIDs.begin(), sharedSegmentIDs.end(), segmentIDToOverwrite);
+    std::vector<std::string>::iterator foundSegmentIDIt =
+      std::find(sharedSegmentIDs.begin(), sharedSegmentIDs.end(), segmentIDToOverwrite);
     if (foundSegmentIDIt == sharedSegmentIDs.end())
     {
       segmentsToErase.push_back(segmentIDToOverwrite);
     }
   }
 
-  if (!segmentsToErase.empty() &&
-     ( modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet
-    || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeAdd
-    || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll))
+  if (!segmentsToErase.empty()
+      && (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet
+          || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeAdd
+          || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll))
   {
     inverter->Update();
     vtkNew<vtkOrientedImageData> invertedModifierLabelmap;
@@ -585,7 +638,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     for (std::string eraseSegmentID : segmentsToErase)
     {
       vtkSegment* currentSegment = segmentationNode->GetSegmentation()->GetSegment(eraseSegmentID);
-      vtkDataObject* dataObject = currentSegment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+      vtkDataObject* dataObject =
+        currentSegment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
       if (erased[dataObject])
       {
         continue;
@@ -596,7 +650,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
 
       std::vector<std::string> dontOverwriteIDs;
       std::vector<std::string> currentSharedIDs;
-      segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(eraseSegmentID, currentSharedIDs, true);
+      segmentationNode->GetSegmentation()->GetSegmentIDsSharingBinaryLabelmapRepresentation(
+        eraseSegmentID, currentSharedIDs, true);
       for (std::string sharedSegmentID : currentSharedIDs)
       {
         if (std::find(segmentsToErase.begin(), segmentsToErase.end(), sharedSegmentID) == segmentsToErase.end())
@@ -624,30 +679,43 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
           threshold->SetOutputScalarTypeToUnsignedChar();
           threshold->Update();
           maskImage->ShallowCopy(threshold->GetOutput());
-          vtkOrientedImageDataResample::ApplyImageMask(invertedModifierLabelmap2, maskImage, VTK_UNSIGNED_CHAR_MAX, true);
+          vtkOrientedImageDataResample::ApplyImageMask(
+            invertedModifierLabelmap2, maskImage, VTK_UNSIGNED_CHAR_MAX, true);
         }
       }
 
       if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-        invertedModifierLabelmap2, segmentationNode, eraseSegmentID, vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN, extent, true, segmentIDsToOverwrite))
+            invertedModifierLabelmap2,
+            segmentationNode,
+            eraseSegmentID,
+            vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MIN,
+            extent,
+            true,
+            segmentIDsToOverwrite))
       {
         qCritical() << Q_FUNC_INFO << ": Failed to set modifier labelmap to segment " << (eraseSegmentID.c_str());
       }
     }
   }
   else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove
-    && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
-    && this->parameterSetNode()->GetMaskSegmentID()
-    && strcmp(this->parameterSetNode()->GetMaskSegmentID(), segmentID) != 0)
+           && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
+           && this->parameterSetNode()->GetMaskSegmentID()
+           && strcmp(this->parameterSetNode()->GetMaskSegmentID(), segmentID) != 0)
   {
     // In general, we don't try to "add back" areas to other segments when an area is removed from the selected segment.
-    // The only exception is when we draw inside one specific segment. In that case erasing adds to the mask segment. It is useful
-    // for splitting a segment into two by painting.
+    // The only exception is when we draw inside one specific segment. In that case erasing adds to the mask segment. It
+    // is useful for splitting a segment into two by painting.
     if (!vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(
-      modifierLabelmap, segmentationNode, this->parameterSetNode()->GetMaskSegmentID(), vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK,
-      extent, false, segmentIDsToOverwrite))
+          modifierLabelmap,
+          segmentationNode,
+          this->parameterSetNode()->GetMaskSegmentID(),
+          vtkSlicerSegmentationsModuleLogic::MODE_MERGE_MASK,
+          extent,
+          false,
+          segmentIDsToOverwrite))
     {
-      qCritical() << Q_FUNC_INFO << ": Failed to add back modifier labelmap to segment " << this->parameterSetNode()->GetMaskSegmentID();
+      qCritical() << Q_FUNC_INFO << ": Failed to add back modifier labelmap to segment "
+                  << this->parameterSetNode()->GetMaskSegmentID();
     }
   }
 
@@ -655,7 +723,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   vtkMRMLScalarVolumeNode* sourceVolumeNode = d->ParameterSetNode->GetSourceVolumeNode();
   if (sourceVolumeNode)
   {
-    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->ParameterSetNode->GetScene());
+    vtkMRMLSubjectHierarchyNode* shNode =
+      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(d->ParameterSetNode->GetScene());
     if (shNode)
     {
       vtkIdType segmentationId = shNode->GetItemByDataNode(segmentationNode);
@@ -689,21 +758,21 @@ QCursor qSlicerSegmentEditorAbstractEffect::createCursor(qMRMLWidget* viewWidget
   if (effectIcon.isNull())
   {
     QPixmap cursorPixmap = QPixmap::fromImage(baseImage);
-    return QCursor(cursorPixmap, baseImage.width()/2, 0);
+    return QCursor(cursorPixmap, baseImage.width() / 2, 0);
   }
 
   QImage effectImage(effectIcon.pixmap(effectIcon.availableSizes()[0]).toImage());
   int width = qMax(baseImage.width(), effectImage.width());
   int height = baseImage.height() + effectImage.height();
-  width = height = qMax(width,height);
-  int center = width/2;
+  width = height = qMax(width, height);
+  int center = width / 2;
   QImage cursorImage(width, height, QImage::Format_ARGB32);
   QPainter painter;
   cursorImage.fill(0);
   painter.begin(&cursorImage);
-  QPoint point(center - (baseImage.width()/2), 0);
+  QPoint point(center - (baseImage.width() / 2), 0);
   painter.drawImage(point, baseImage);
-  int draw_x_start = center - (effectImage.width()/2);
+  int draw_x_start = center - (effectImage.width() / 2);
   int draw_y_start = cursorImage.height() - effectImage.height();
   point.setX(draw_x_start);
   point.setY(draw_y_start);
@@ -715,7 +784,7 @@ QCursor qSlicerSegmentEditorAbstractEffect::createCursor(qMRMLWidget* viewWidget
 
   QPixmap cursorPixmap = QPixmap::fromImage(cursorImage);
   // NullEffect.png arrow point at 5 pixels right and 2 pixels down from upper left (0,0) location
-  int hotX = center - (baseImage.width()/2) + 5;
+  int hotX = center - (baseImage.width() / 2) + 5;
   int hotY = 2;
   return QCursor(cursorPixmap, hotX, hotY);
 }
@@ -1037,7 +1106,7 @@ int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
     return ConfirmedWithoutDialog;
   }
   char* segmentID = this->parameterSetNode()->GetSelectedSegmentID();
-  if (!segmentID || strlen(segmentID)==0)
+  if (!segmentID || strlen(segmentID) == 0)
   {
     // no selected segment, probably this effect operates on the entire segmentation - do not prevent operation
     return ConfirmedWithoutDialog;
@@ -1059,7 +1128,8 @@ int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
   int numberOfDisplayNodes = segmentationNode->GetNumberOfDisplayNodes();
   for (int displayNodeIndex = 0; displayNodeIndex < numberOfDisplayNodes; displayNodeIndex++)
   {
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetNthDisplayNode(displayNodeIndex));
+    vtkMRMLSegmentationDisplayNode* displayNode =
+      vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetNthDisplayNode(displayNodeIndex));
     if (displayNode && displayNode->GetVisibility() && displayNode->GetSegmentVisibility(segmentID))
     {
       // segment already visible
@@ -1073,7 +1143,8 @@ int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
   ctkMessageBox* confirmCurrentSegmentVisibleMsgBox = new ctkMessageBox(mainWindow);
   confirmCurrentSegmentVisibleMsgBox->setAttribute(Qt::WA_DeleteOnClose);
   confirmCurrentSegmentVisibleMsgBox->setWindowTitle(tr("Operate on invisible segment?"));
-  confirmCurrentSegmentVisibleMsgBox->setText(tr("The currently selected segment is hidden. Would you like to make it visible?"));
+  confirmCurrentSegmentVisibleMsgBox->setText(
+    tr("The currently selected segment is hidden. Would you like to make it visible?"));
 
   confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::Yes);
   confirmCurrentSegmentVisibleMsgBox->addButton(QMessageBox::No);
@@ -1087,7 +1158,10 @@ int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
   confirmCurrentSegmentVisibleMsgBox->setIcon(QMessageBox::Question);
 
   QSettings settings;
-  int savedButtonSelection = settings.value(confirmCurrentSegmentVisibleMsgBox->dontShowAgainSettingsKey(), static_cast<int>(QMessageBox::InvalidRole)).toInt();
+  int savedButtonSelection =
+    settings
+      .value(confirmCurrentSegmentVisibleMsgBox->dontShowAgainSettingsKey(), static_cast<int>(QMessageBox::InvalidRole))
+      .toInt();
 
   int resultCode = confirmCurrentSegmentVisibleMsgBox->exec();
 
@@ -1100,7 +1174,8 @@ int qSlicerSegmentEditorAbstractEffect::confirmCurrentSegmentVisible()
   // User chose to show the current segment
   if (resultCode == QMessageBox::Yes)
   {
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+    vtkMRMLSegmentationDisplayNode* displayNode =
+      vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
     if (displayNode)
     {
       displayNode->SetVisibility(true);
@@ -1167,8 +1242,8 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, QStrin
   d->ParameterSetNode->SetDisableModifiedEvent(disableState);
 
   // Emit parameter modified event if requested
-  // Don't pass parameter name as char pointer, as custom modified events may be compressed and invoked after EndModify()
-  // and by that time the pointer may not be valid anymore.
+  // Don't pass parameter name as char pointer, as custom modified events may be compressed and invoked after
+  // EndModify() and by that time the pointer may not be valid anymore.
   d->ParameterSetNode->InvokeCustomModifiedEvent(vtkMRMLSegmentEditorNode::EffectParameterModified);
 }
 
@@ -1282,15 +1357,17 @@ void qSlicerSegmentEditorAbstractEffect::setCommonNodeReference(QString name, vt
   d->ParameterSetNode->SetNodeReferenceID(name.toUtf8().constData(), node ? node->GetID() : nullptr);
 
   // Emit parameter modified event
-  // Don't pass parameter name as char pointer, as custom modified events may be compressed and invoked after EndModify()
-  // and by that time the pointer may not be valid anymore.
+  // Don't pass parameter name as char pointer, as custom modified events may be compressed and invoked after
+  // EndModify() and by that time the pointer may not be valid anymore.
   d->ParameterSetNode->InvokeCustomModifiedEvent(vtkMRMLSegmentEditorNode::EffectParameterModified);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setVolumes(vtkOrientedImageData* alignedSourceVolume,
-  vtkOrientedImageData* modifierLabelmap, vtkOrientedImageData* maskLabelmap,
-  vtkOrientedImageData* selectedSegmentLabelmap, vtkOrientedImageData* referenceGeometryImage)
+                                                    vtkOrientedImageData* modifierLabelmap,
+                                                    vtkOrientedImageData* maskLabelmap,
+                                                    vtkOrientedImageData* selectedSegmentLabelmap,
+                                                    vtkOrientedImageData* referenceGeometryImage)
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
   d->ModifierLabelmap = modifierLabelmap;
@@ -1350,7 +1427,7 @@ vtkOrientedImageData* qSlicerSegmentEditorAbstractEffect::sourceVolumeImageData(
 vtkOrientedImageData* qSlicerSegmentEditorAbstractEffect::masterVolumeImageData()
 {
   qWarning("qSlicerSegmentEditorAbstractEffect::masterVolumeImageData() method is deprecated,"
-    " use sourceVolumeImageData method instead");
+           " use sourceVolumeImageData method instead");
   return this->sourceVolumeImageData();
 }
 
@@ -1413,7 +1490,7 @@ vtkRenderWindow* qSlicerSegmentEditorAbstractEffect::renderWindow(qMRMLWidget* v
       // probably the application is closing
       return nullptr;
     }
-      return threeDWidget->threeDView()->renderWindow();
+    return threeDWidget->threeDView()->renderWindow();
   }
 
   qCritical() << Q_FUNC_INFO << ": Unsupported view widget type!";
@@ -1458,18 +1535,18 @@ vtkMRMLAbstractViewNode* qSlicerSegmentEditorAbstractEffect::viewNode(qMRMLWidge
 //-----------------------------------------------------------------------------
 QPoint qSlicerSegmentEditorAbstractEffect::rasToXy(double ras[3], qMRMLSliceWidget* sliceWidget)
 {
-  QPoint xy(0,0);
+  QPoint xy(0, 0);
 
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(
-    qSlicerSegmentEditorAbstractEffect::viewNode(sliceWidget) );
+  vtkMRMLSliceNode* sliceNode =
+    vtkMRMLSliceNode::SafeDownCast(qSlicerSegmentEditorAbstractEffect::viewNode(sliceWidget));
   if (!sliceNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to get slice node!";
     return xy;
   }
 
-  double rast[4] = {ras[0], ras[1], ras[2], 1.0};
-  double xyzw[4] = {0.0, 0.0, 0.0, 1.0};
+  double rast[4] = { ras[0], ras[1], ras[2], 1.0 };
+  double xyzw[4] = { 0.0, 0.0, 0.0, 1.0 };
   vtkSmartPointer<vtkMatrix4x4> rasToXyMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   rasToXyMatrix->DeepCopy(sliceNode->GetXYToRAS());
   rasToXyMatrix->Invert();
@@ -1483,17 +1560,19 @@ QPoint qSlicerSegmentEditorAbstractEffect::rasToXy(double ras[3], qMRMLSliceWidg
 //-----------------------------------------------------------------------------
 QPoint qSlicerSegmentEditorAbstractEffect::rasToXy(QVector3D rasVector, qMRMLSliceWidget* sliceWidget)
 {
-  double ras[3] = {rasVector.x(), rasVector.y(), rasVector.z()};
+  double ras[3] = { rasVector.x(), rasVector.y(), rasVector.z() };
   return qSlicerSegmentEditorAbstractEffect::rasToXy(ras, sliceWidget);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::xyzToRas(double inputXyz[3], double outputRas[3], qMRMLSliceWidget* sliceWidget)
+void qSlicerSegmentEditorAbstractEffect::xyzToRas(double inputXyz[3],
+                                                  double outputRas[3],
+                                                  qMRMLSliceWidget* sliceWidget)
 {
   outputRas[0] = outputRas[1] = outputRas[2] = 0.0;
 
-  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(
-    qSlicerSegmentEditorAbstractEffect::viewNode(sliceWidget) );
+  vtkMRMLSliceNode* sliceNode =
+    vtkMRMLSliceNode::SafeDownCast(qSlicerSegmentEditorAbstractEffect::viewNode(sliceWidget));
   if (!sliceNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to get slice node!";
@@ -1503,8 +1582,8 @@ void qSlicerSegmentEditorAbstractEffect::xyzToRas(double inputXyz[3], double out
   // x,y uses slice (canvas) coordinate system and actually has a 3rd z component (index into the
   // slice you're looking at), hence xyToRAS is really performing xyzToRAS. RAS is patient world
   // coordinate system. Note the 1 is because the transform uses homogeneous coordinates.
-  double xyzw[4] = {inputXyz[0], inputXyz[1], inputXyz[2], 1.0};
-  double rast[4] = {0.0, 0.0, 0.0, 1.0};
+  double xyzw[4] = { inputXyz[0], inputXyz[1], inputXyz[2], 1.0 };
+  double rast[4] = { 0.0, 0.0, 0.0, 1.0 };
   sliceNode->GetXYToRAS()->MultiplyPoint(xyzw, rast);
   outputRas[0] = rast[0];
   outputRas[1] = rast[1];
@@ -1514,8 +1593,8 @@ void qSlicerSegmentEditorAbstractEffect::xyzToRas(double inputXyz[3], double out
 //-----------------------------------------------------------------------------
 QVector3D qSlicerSegmentEditorAbstractEffect::xyzToRas(QVector3D inputXyzVector, qMRMLSliceWidget* sliceWidget)
 {
-  double inputXyz[3] = {inputXyzVector.x(), inputXyzVector.y(), inputXyzVector.z()};
-  double outputRas[3] = {0.0, 0.0, 0.0};
+  double inputXyz[3] = { inputXyzVector.x(), inputXyzVector.y(), inputXyzVector.z() };
+  double outputRas[3] = { 0.0, 0.0, 0.0 };
   qSlicerSegmentEditorAbstractEffect::xyzToRas(inputXyz, outputRas, sliceWidget);
   QVector3D outputVector(outputRas[0], outputRas[1], outputRas[2]);
   return outputVector;
@@ -1524,10 +1603,7 @@ QVector3D qSlicerSegmentEditorAbstractEffect::xyzToRas(QVector3D inputXyzVector,
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::xyToRas(QPoint xy, double outputRas[3], qMRMLSliceWidget* sliceWidget)
 {
-  double xyz[3] = {
-    static_cast<double>(xy.x()),
-    static_cast<double>(xy.y()),
-    0.0};
+  double xyz[3] = { static_cast<double>(xy.x()), static_cast<double>(xy.y()), 0.0 };
 
   qSlicerSegmentEditorAbstractEffect::xyzToRas(xyz, outputRas, sliceWidget);
 }
@@ -1535,21 +1611,25 @@ void qSlicerSegmentEditorAbstractEffect::xyToRas(QPoint xy, double outputRas[3],
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::xyToRas(double xy[2], double outputRas[3], qMRMLSliceWidget* sliceWidget)
 {
-  double xyz[3] = {xy[0], xy[1], 0.0};
+  double xyz[3] = { xy[0], xy[1], 0.0 };
   qSlicerSegmentEditorAbstractEffect::xyzToRas(xyz, outputRas, sliceWidget);
 }
 
 //-----------------------------------------------------------------------------
 QVector3D qSlicerSegmentEditorAbstractEffect::xyToRas(QPoint xy, qMRMLSliceWidget* sliceWidget)
 {
-  double outputRas[3] = {0.0, 0.0, 0.0};
+  double outputRas[3] = { 0.0, 0.0, 0.0 };
   qSlicerSegmentEditorAbstractEffect::xyToRas(xy, outputRas, sliceWidget);
   QVector3D outputVector(outputRas[0], outputRas[1], outputRas[2]);
   return outputVector;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::xyzToIjk(double inputXyz[3], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
+void qSlicerSegmentEditorAbstractEffect::xyzToIjk(double inputXyz[3],
+                                                  int outputIjk[3],
+                                                  qMRMLSliceWidget* sliceWidget,
+                                                  vtkOrientedImageData* image,
+                                                  vtkMRMLTransformNode* parentTransformNode /*=nullptr*/)
 {
   outputIjk[0] = outputIjk[1] = outputIjk[2] = 0;
 
@@ -1559,7 +1639,7 @@ void qSlicerSegmentEditorAbstractEffect::xyzToIjk(double inputXyz[3], int output
   }
 
   // Convert from XY to RAS first
-  double ras[3] = {0.0, 0.0, 0.0};
+  double ras[3] = { 0.0, 0.0, 0.0 };
   qSlicerSegmentEditorAbstractEffect::xyzToRas(inputXyz, ras, sliceWidget);
 
   // Move point from world to same transform as image
@@ -1583,8 +1663,8 @@ void qSlicerSegmentEditorAbstractEffect::xyzToIjk(double inputXyz[3], int output
   }
 
   // Convert RAS to image IJK
-  double rast[4] = {ras[0], ras[1], ras[2], 1.0};
-  double ijkl[4] = {0.0, 0.0, 0.0, 1.0};
+  double rast[4] = { ras[0], ras[1], ras[2], 1.0 };
+  double ijkl[4] = { 0.0, 0.0, 0.0, 1.0 };
   vtkSmartPointer<vtkMatrix4x4> rasToIjkMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   image->GetImageToWorldMatrix(rasToIjkMatrix);
   rasToIjkMatrix->Invert();
@@ -1596,10 +1676,13 @@ void qSlicerSegmentEditorAbstractEffect::xyzToIjk(double inputXyz[3], int output
 }
 
 //-----------------------------------------------------------------------------
-QVector3D qSlicerSegmentEditorAbstractEffect::xyzToIjk(QVector3D inputXyzVector, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
+QVector3D qSlicerSegmentEditorAbstractEffect::xyzToIjk(QVector3D inputXyzVector,
+                                                       qMRMLSliceWidget* sliceWidget,
+                                                       vtkOrientedImageData* image,
+                                                       vtkMRMLTransformNode* parentTransformNode /*=nullptr*/)
 {
-  double inputXyz[3] = {inputXyzVector.x(), inputXyzVector.y(), inputXyzVector.z()};
-  int outputIjk[3] = {0, 0, 0};
+  double inputXyz[3] = { inputXyzVector.x(), inputXyzVector.y(), inputXyzVector.z() };
+  int outputIjk[3] = { 0, 0, 0 };
   qSlicerSegmentEditorAbstractEffect::xyzToIjk(inputXyz, outputIjk, sliceWidget, image, parentTransformNode);
 
   QVector3D outputVector(outputIjk[0], outputIjk[1], outputIjk[2]);
@@ -1607,26 +1690,34 @@ QVector3D qSlicerSegmentEditorAbstractEffect::xyzToIjk(QVector3D inputXyzVector,
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::xyToIjk(QPoint xy, int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
+void qSlicerSegmentEditorAbstractEffect::xyToIjk(QPoint xy,
+                                                 int outputIjk[3],
+                                                 qMRMLSliceWidget* sliceWidget,
+                                                 vtkOrientedImageData* image,
+                                                 vtkMRMLTransformNode* parentTransformNode /*=nullptr*/)
 {
-  double xyz[3] = {
-    static_cast<double>(xy.x()),
-    static_cast<double>(xy.y()),
-    0.0};
+  double xyz[3] = { static_cast<double>(xy.x()), static_cast<double>(xy.y()), 0.0 };
   qSlicerSegmentEditorAbstractEffect::xyzToIjk(xyz, outputIjk, sliceWidget, image, parentTransformNode);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::xyToIjk(double xy[2], int outputIjk[3], qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
+void qSlicerSegmentEditorAbstractEffect::xyToIjk(double xy[2],
+                                                 int outputIjk[3],
+                                                 qMRMLSliceWidget* sliceWidget,
+                                                 vtkOrientedImageData* image,
+                                                 vtkMRMLTransformNode* parentTransformNode /*=nullptr*/)
 {
-  double xyz[3] = {xy[0], xy[0], 0.0};
+  double xyz[3] = { xy[0], xy[0], 0.0 };
   qSlicerSegmentEditorAbstractEffect::xyzToIjk(xyz, outputIjk, sliceWidget, image, parentTransformNode);
 }
 
 //-----------------------------------------------------------------------------
-QVector3D qSlicerSegmentEditorAbstractEffect::xyToIjk(QPoint xy, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image, vtkMRMLTransformNode* parentTransformNode/*=nullptr*/)
+QVector3D qSlicerSegmentEditorAbstractEffect::xyToIjk(QPoint xy,
+                                                      qMRMLSliceWidget* sliceWidget,
+                                                      vtkOrientedImageData* image,
+                                                      vtkMRMLTransformNode* parentTransformNode /*=nullptr*/)
 {
-  int outputIjk[3] = {0, 0, 0};
+  int outputIjk[3] = { 0, 0, 0 };
   qSlicerSegmentEditorAbstractEffect::xyToIjk(xy, outputIjk, sliceWidget, image, parentTransformNode);
   QVector3D outputVector(outputIjk[0], outputIjk[1], outputIjk[2]);
   return outputVector;
@@ -1666,7 +1757,7 @@ void qSlicerSegmentEditorAbstractEffect::scheduleRender(qMRMLWidget* viewWidget)
 double qSlicerSegmentEditorAbstractEffect::sliceSpacing(qMRMLSliceWidget* sliceWidget)
 {
   // Implementation copied from vtkMRMLSliceViewInteractorStyle::GetSliceSpacing()
-  vtkMRMLSliceNode *sliceNode = sliceWidget->sliceLogic()->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = sliceWidget->sliceLogic()->GetSliceNode();
   double spacing = 1.0;
   if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
   {

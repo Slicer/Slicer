@@ -39,9 +39,10 @@ public:
   /// Returns true if the options have been set and if they are
   /// meaningful. By default, checks that there is at least 1 option.
   /// To be reimplemented in subclasses
-  virtual bool isValid()const;
+  virtual bool isValid() const;
 
-  const qSlicerIO::IOProperties& properties()const;
+  const qSlicerIO::IOProperties& properties() const;
+
 protected:
   qSlicerIOOptions(qSlicerIOOptionsPrivate* pimpl);
   QScopedPointer<qSlicerIOOptionsPrivate> d_ptr;

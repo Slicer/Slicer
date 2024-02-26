@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerVolumesReaderPrivate
 {
-  public:
+public:
   vtkSmartPointer<vtkSlicerVolumesLogic> Logic;
 };
 
@@ -80,37 +80,37 @@ void qSlicerVolumesReader::setLogic(vtkSlicerVolumesLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerVolumesLogic* qSlicerVolumesReader::logic()const
+vtkSlicerVolumesLogic* qSlicerVolumesReader::logic() const
 {
   Q_D(const qSlicerVolumesReader);
   return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesReader::description()const
+QString qSlicerVolumesReader::description() const
 {
   return tr("Volume");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerVolumesReader::fileType()const
+qSlicerIO::IOFileType qSlicerVolumesReader::fileType() const
 {
   return QString("VolumeFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumesReader::extensions()const
+QStringList qSlicerVolumesReader::extensions() const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
   return QStringList()
-    << tr("Volume") + " (*.hdr *.nhdr *.nrrd *.mhd *.mha *.mnc *.nii *.nii.gz *.mgh *.mgz *.mgh.gz *.img *.img.gz *.pic)"
-    << tr("Dicom") + " (*.dcm *.ima)"
-    << tr("Image") + " (*.png *.tif *.tiff *.jpg *.jpeg)"
-    << tr("All Files") + " (*)";
+         << tr("Volume")
+              + " (*.hdr *.nhdr *.nrrd *.mhd *.mha *.mnc *.nii *.nii.gz *.mgh *.mgz *.mgh.gz *.img *.img.gz *.pic)"
+         << tr("Dicom") + " (*.dcm *.ima)" << tr("Image") + " (*.png *.tif *.tiff *.jpg *.jpeg)"
+         << tr("All Files") + " (*)";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerVolumesReader::options()const
+qSlicerIOOptions* qSlicerVolumesReader::options() const
 {
   // set the mrml scene on the options widget to allow selecting a color node
   qSlicerIOOptionsWidget* options = new qSlicerVolumesIOOptionsWidget;
@@ -145,7 +145,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
   }
   if (properties.contains("autoWindowLevel"))
   {
-    options |= properties["autoWindowLevel"].toBool() ? 0x8: 0x0;
+    options |= properties["autoWindowLevel"].toBool() ? 0x8 : 0x0;
   }
   if (properties.contains("discardOrientation"))
   {
@@ -160,7 +160,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
   if (properties.contains("fileNames"))
   {
     fileList = vtkSmartPointer<vtkStringArray>::New();
-    foreach(QString file, properties["fileNames"].toStringList())
+    foreach (QString file, properties["fileNames"].toStringList())
     {
       fileList->InsertNextValue(file.toUtf8());
     }
@@ -168,11 +168,8 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
   Q_ASSERT(d->Logic);
   // Weak pointer is used because the node may be deleted if the scene is closed
   // right after reading.
-  vtkWeakPointer<vtkMRMLVolumeNode> node = d->Logic->AddArchetypeVolume(
-    fileName.toUtf8(),
-    name.toUtf8(),
-    options,
-    fileList.GetPointer());
+  vtkWeakPointer<vtkMRMLVolumeNode> node =
+    d->Logic->AddArchetypeVolume(fileName.toUtf8(), name.toUtf8(), options, fileList.GetPointer());
   if (node)
   {
     QString colorNodeID = properties.value("colorNodeID", QString()).toString();
@@ -186,10 +183,8 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     }
     if (propagateVolumeSelection)
     {
-      vtkSlicerApplicationLogic* appLogic =
-        d->Logic->GetApplicationLogic();
-      vtkMRMLSelectionNode* selectionNode =
-        appLogic ? appLogic->GetSelectionNode() : nullptr;
+      vtkSlicerApplicationLogic* appLogic = d->Logic->GetApplicationLogic();
+      vtkMRMLSelectionNode* selectionNode = appLogic ? appLogic->GetSelectionNode() : nullptr;
       if (selectionNode)
       {
         if (vtkMRMLLabelMapVolumeNode::SafeDownCast(node))
@@ -216,14 +211,16 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const
+bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList& fileInfoList,
+                                               QFileInfo& archetypeFileInfo,
+                                               qSlicerIO::IOProperties& ioProperties) const
 {
 
   //
   // Check each file to see if it's recognized as part of a series.  If so,
   // keep it as the archetype and remove all the others from the list
   //
-  foreach(QFileInfo fileInfo, fileInfoList)
+  foreach (QFileInfo fileInfo, fileInfoList)
   {
     itk::ArchetypeSeriesFileNames::Pointer seriesNames = itk::ArchetypeSeriesFileNames::New();
     std::vector<std::string> candidateFiles;
@@ -235,7 +232,7 @@ bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList &fileInfoList, QFil
       QMutableListIterator<QFileInfo> fileInfoIterator(fileInfoList);
       while (fileInfoIterator.hasNext())
       {
-        const QString &path = fileInfoIterator.next().absoluteFilePath();
+        const QString& path = fileInfoIterator.next().absoluteFilePath();
         if (path == archetypeFileInfo.absoluteFilePath())
         {
           continue;

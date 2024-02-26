@@ -45,8 +45,9 @@ vtkCurveMeasurementsCalculator::vtkCurveMeasurementsCalculator()
   this->SetNumberOfInputPorts(1);
 
   this->ControlPointArrayModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->ControlPointArrayModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->ControlPointArrayModifiedCallbackCommand->SetCallback( vtkCurveMeasurementsCalculator::OnControlPointArrayModified );
+  this->ControlPointArrayModifiedCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
+  this->ControlPointArrayModifiedCallbackCommand->SetCallback(
+    vtkCurveMeasurementsCalculator::OnControlPointArrayModified);
 
   this->ObservedControlPointArrays = vtkCollection::New();
 
@@ -58,9 +59,10 @@ vtkCurveMeasurementsCalculator::vtkCurveMeasurementsCalculator()
 vtkCurveMeasurementsCalculator::~vtkCurveMeasurementsCalculator()
 {
   // Remove observations before deleting control point array callback and observed arrays collection
-  for (int idx=0; idx<this->ObservedControlPointArrays->GetNumberOfItems(); ++idx)
+  for (int idx = 0; idx < this->ObservedControlPointArrays->GetNumberOfItems(); ++idx)
   {
-    vtkDoubleArray* observedArray = vtkDoubleArray::SafeDownCast(this->ObservedControlPointArrays->GetItemAsObject(idx));
+    vtkDoubleArray* observedArray =
+      vtkDoubleArray::SafeDownCast(this->ObservedControlPointArrays->GetItemAsObject(idx));
     if (observedArray)
     {
       observedArray->RemoveObserver(this->ControlPointArrayModifiedCallbackCommand);
@@ -82,7 +84,7 @@ vtkCurveMeasurementsCalculator::~vtkCurveMeasurementsCalculator()
 }
 
 //------------------------------------------------------------------------------
-void vtkCurveMeasurementsCalculator::PrintSelf(std::ostream &os, vtkIndent indent)
+void vtkCurveMeasurementsCalculator::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "CalculateCurvature: " << this->CalculateCurvature << std::endl;
@@ -122,8 +124,9 @@ int vtkCurveMeasurementsCalculator::FillInputPortInformation(int port, vtkInform
 }
 
 //------------------------------------------------------------------------------
-int vtkCurveMeasurementsCalculator::RequestData(
-  vtkInformation* vtkNotUsed(request), vtkInformationVector** inputVector, vtkInformationVector* outputVector)
+int vtkCurveMeasurementsCalculator::RequestData(vtkInformation* vtkNotUsed(request),
+                                                vtkInformationVector** inputVector,
+                                                vtkInformationVector* outputVector)
 {
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
   vtkPolyData* inputPolyData = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
@@ -196,16 +199,17 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
 
   lines->GetCell(0, linePoints);
   vtkIdType numberOfPoints = // Last point in closed curve line is the first point
-    (this->CurveIsClosed ? linePoints->GetNumberOfIds()-1 : linePoints->GetNumberOfIds());
+    (this->CurveIsClosed ? linePoints->GetNumberOfIds() - 1 : linePoints->GetNumberOfIds());
   if (numberOfPoints < 3)
   {
-    vtkErrorMacro("Number of curve points too low for curvature calculation (" << numberOfPoints << "), at least 3 needed");
+    vtkErrorMacro("Number of curve points too low for curvature calculation (" << numberOfPoints
+                                                                               << "), at least 3 needed");
     return false;
   }
 
   // Initialize curvature array
-  vtkSmartPointer<vtkDoubleArray> curvatureValues = vtkDoubleArray::SafeDownCast(
-    polyData->GetPointData()->GetArray(this->GetCurvatureArrayName()));
+  vtkSmartPointer<vtkDoubleArray> curvatureValues =
+    vtkDoubleArray::SafeDownCast(polyData->GetPointData()->GetArray(this->GetCurvatureArrayName()));
   if (curvatureValues == nullptr)
   {
     curvatureValues = vtkSmartPointer<vtkDoubleArray>::New();
@@ -215,7 +219,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   curvatureValues->SetNumberOfComponents(1);
   curvatureValues->SetNumberOfTuples(numberOfPoints);
   curvatureValues->Reset();
-  curvatureValues->FillComponent(0,0.0);
+  curvatureValues->FillComponent(0, 0.0);
 
   // Initialize curvature variables
   double minKappa = 0.0;
@@ -223,14 +227,17 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   double meanKappa = 0.0; // Mean is weighted by the length of each segment
 
   // Get values for first point
-  double prevPoint[3] = {points->GetPoint(linePoints->GetId(0))[0], points->GetPoint(linePoints->GetId(0))[1], points->GetPoint(linePoints->GetId(0))[2]}; // pp
-  double* currPoint = points->GetPoint(linePoints->GetId(1)); // p
-  double diffVector[3] = {currPoint[0]-prevPoint[0], currPoint[1]-prevPoint[1], currPoint[2]-prevPoint[2]};
-  double diffNorm = sqrt(diffVector[0]*diffVector[0] + diffVector[1]*diffVector[1] + diffVector[2]*diffVector[2]); // ds
-  double normDiffVector[3] = {0.0, 0.0, 0.0}; // T
-  double prevNormDiffVector[3] = {diffVector[0]/diffNorm, diffVector[1]/diffNorm, diffVector[2]/diffNorm}; // pT
-  double meanPoint[3] = {0.0, 0.0, 0.0}; // m
-  double prevMeanPoint[3] = {currPoint[0], currPoint[1], currPoint[2]}; // pm (Skip first point)
+  double prevPoint[3] = { points->GetPoint(linePoints->GetId(0))[0],
+                          points->GetPoint(linePoints->GetId(0))[1],
+                          points->GetPoint(linePoints->GetId(0))[2] }; // pp
+  double* currPoint = points->GetPoint(linePoints->GetId(1));          // p
+  double diffVector[3] = { currPoint[0] - prevPoint[0], currPoint[1] - prevPoint[1], currPoint[2] - prevPoint[2] };
+  double diffNorm =
+    sqrt(diffVector[0] * diffVector[0] + diffVector[1] * diffVector[1] + diffVector[2] * diffVector[2]);           // ds
+  double normDiffVector[3] = { 0.0, 0.0, 0.0 };                                                                    // T
+  double prevNormDiffVector[3] = { diffVector[0] / diffNorm, diffVector[1] / diffNorm, diffVector[2] / diffNorm }; // pT
+  double meanPoint[3] = { 0.0, 0.0, 0.0 };                                                                         // m
+  double prevMeanPoint[3] = { currPoint[0], currPoint[1], currPoint[2] }; // pm (Skip first point)
   double kappa = 0.0;
   double currentLength = 0.0;
   double length = 0.0;
@@ -238,35 +245,37 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   // The curvature for the first cell is 0.0 for open curves
   curvatureValues->InsertValue(linePoints->GetId(0), 0.0);
 
-  prevPoint[0] = currPoint[0]; prevPoint[1] = currPoint[1]; prevPoint[2] = currPoint[2];
-  for (vtkIdType idx=1; idx<numberOfPoints-1; ++idx)
+  prevPoint[0] = currPoint[0];
+  prevPoint[1] = currPoint[1];
+  prevPoint[2] = currPoint[2];
+  for (vtkIdType idx = 1; idx < numberOfPoints - 1; ++idx)
   {
-    currPoint = points->GetPoint(linePoints->GetId(idx+1));
+    currPoint = points->GetPoint(linePoints->GetId(idx + 1));
 
-    diffVector[0] = currPoint[0]-prevPoint[0];
-    diffVector[1] = currPoint[1]-prevPoint[1];
-    diffVector[2] = currPoint[2]-prevPoint[2];
-    diffNorm = sqrt(diffVector[0]*diffVector[0] + diffVector[1]*diffVector[1] + diffVector[2]*diffVector[2]);
+    diffVector[0] = currPoint[0] - prevPoint[0];
+    diffVector[1] = currPoint[1] - prevPoint[1];
+    diffVector[2] = currPoint[2] - prevPoint[2];
+    diffNorm = sqrt(diffVector[0] * diffVector[0] + diffVector[1] * diffVector[1] + diffVector[2] * diffVector[2]);
 
     normDiffVector[0] = diffVector[0] / diffNorm;
     normDiffVector[1] = diffVector[1] / diffNorm;
     normDiffVector[2] = diffVector[2] / diffNorm;
 
     // Local curvature
-    kappa = sqrt( (normDiffVector[0]-prevNormDiffVector[0])*(normDiffVector[0]-prevNormDiffVector[0])
-                + (normDiffVector[1]-prevNormDiffVector[1])*(normDiffVector[1]-prevNormDiffVector[1])
-                + (normDiffVector[2]-prevNormDiffVector[2])*(normDiffVector[2]-prevNormDiffVector[2]) )
+    kappa = sqrt((normDiffVector[0] - prevNormDiffVector[0]) * (normDiffVector[0] - prevNormDiffVector[0])
+                 + (normDiffVector[1] - prevNormDiffVector[1]) * (normDiffVector[1] - prevNormDiffVector[1])
+                 + (normDiffVector[2] - prevNormDiffVector[2]) * (normDiffVector[2] - prevNormDiffVector[2]))
             / diffNorm;
     curvatureValues->InsertValue(linePoints->GetId(idx), kappa);
 
     // Statistics
-    meanPoint[0] = (currPoint[0]+prevPoint[0]) / 2.0;
-    meanPoint[1] = (currPoint[1]+prevPoint[1]) / 2.0;
-    meanPoint[2] = (currPoint[2]+prevPoint[2]) / 2.0;
+    meanPoint[0] = (currPoint[0] + prevPoint[0]) / 2.0;
+    meanPoint[1] = (currPoint[1] + prevPoint[1]) / 2.0;
+    meanPoint[2] = (currPoint[2] + prevPoint[2]) / 2.0;
 
-    currentLength = sqrt( (meanPoint[0]-prevMeanPoint[0])*(meanPoint[0]-prevMeanPoint[0])
-                        + (meanPoint[1]-prevMeanPoint[1])*(meanPoint[1]-prevMeanPoint[1])
-                        + (meanPoint[2]-prevMeanPoint[2])*(meanPoint[2]-prevMeanPoint[2]) );
+    currentLength = sqrt((meanPoint[0] - prevMeanPoint[0]) * (meanPoint[0] - prevMeanPoint[0])
+                         + (meanPoint[1] - prevMeanPoint[1]) * (meanPoint[1] - prevMeanPoint[1])
+                         + (meanPoint[2] - prevMeanPoint[2]) * (meanPoint[2] - prevMeanPoint[2]));
     if (kappa < minKappa)
     {
       minKappa = kappa;
@@ -279,7 +288,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
     length += currentLength;
 
     // Propagate current values to previous
-    for (int i=0; i<3; ++i)
+    for (int i = 0; i < 3; ++i)
     {
       prevPoint[i] = currPoint[i];
       prevMeanPoint[i] = meanPoint[i];
@@ -290,20 +299,19 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
   if (!this->CurveIsClosed)
   {
     // The curvature for the last cell by definition is 0.0 for open curves
-    curvatureValues->InsertValue(linePoints->GetId(numberOfPoints-1), 0.0);
+    curvatureValues->InsertValue(linePoints->GetId(numberOfPoints - 1), 0.0);
   }
   else
   {
     // Use the adjacent values for closed curve instead of the singular values
-    curvatureValues->SetComponent(linePoints->GetId(0), 0,
-      curvatureValues->GetValue(linePoints->GetId(1)));
-    curvatureValues->InsertValue(linePoints->GetId(numberOfPoints-1),
-      curvatureValues->GetValue(linePoints->GetId(numberOfPoints-2)));
+    curvatureValues->SetComponent(linePoints->GetId(0), 0, curvatureValues->GetValue(linePoints->GetId(1)));
+    curvatureValues->InsertValue(linePoints->GetId(numberOfPoints - 1),
+                                 curvatureValues->GetValue(linePoints->GetId(numberOfPoints - 2)));
   }
 
-  currentLength = sqrt( (prevPoint[0]-prevMeanPoint[0])*(prevPoint[0]-prevMeanPoint[0])
-                      + (prevPoint[1]-prevMeanPoint[1])*(prevPoint[1]-prevMeanPoint[1])
-                      + (prevPoint[2]-prevMeanPoint[2])*(prevPoint[2]-prevMeanPoint[2]) );
+  currentLength = sqrt((prevPoint[0] - prevMeanPoint[0]) * (prevPoint[0] - prevMeanPoint[0])
+                       + (prevPoint[1] - prevMeanPoint[1]) * (prevPoint[1] - prevMeanPoint[1])
+                       + (prevPoint[2] - prevMeanPoint[2]) * (prevPoint[2] - prevMeanPoint[2]));
   length += currentLength;
   if (length > 0.0)
   {
@@ -316,7 +324,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
 
   // Set mean and max curvature to measurements
   // Calculate and set interpolated control point measurements in poly data
-  for (int index=0; index<this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
+  for (int index = 0; index < this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
   {
     vtkMRMLMeasurement* currentMeasurement = this->InputMarkupsMRMLNode->GetNthMeasurement(index);
     if (!currentMeasurement || currentMeasurement->GetName().empty() || !currentMeasurement->GetEnabled())
@@ -362,30 +370,33 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   //       and based on the implementation of CalculatePolyDataCurvature
 
   // Get binormals and tangents arrays
-  vtkParallelTransportFrame* curveCoordinateSystemGenerator = this->InputMarkupsMRMLNode->GetCurveCoordinateSystemGeneratorWorld();
+  vtkParallelTransportFrame* curveCoordinateSystemGenerator =
+    this->InputMarkupsMRMLNode->GetCurveCoordinateSystemGeneratorWorld();
   if (!curveCoordinateSystemGenerator)
   {
     vtkErrorMacro("Failed to access coordinate system generator");
     return false;
   }
   vtkPointData* pointData = polyData->GetPointData();
-  vtkDoubleArray* tangents = vtkDoubleArray::SafeDownCast(
-    pointData->GetAbstractArray(curveCoordinateSystemGenerator->GetTangentsArrayName()));
-  vtkDoubleArray* binormals = vtkDoubleArray::SafeDownCast(
-    pointData->GetAbstractArray(curveCoordinateSystemGenerator->GetBinormalsArrayName()));
+  vtkDoubleArray* tangents =
+    vtkDoubleArray::SafeDownCast(pointData->GetAbstractArray(curveCoordinateSystemGenerator->GetTangentsArrayName()));
+  vtkDoubleArray* binormals =
+    vtkDoubleArray::SafeDownCast(pointData->GetAbstractArray(curveCoordinateSystemGenerator->GetBinormalsArrayName()));
   // Sanity checks
   vtkPolyData* curvePoly = curveCoordinateSystemGenerator->GetOutput();
   if (curvePoly->GetNumberOfPoints() != polyData->GetNumberOfPoints())
   {
     // Sanity check
-    vtkErrorMacro("Number of points does not match between given poly data and the coordinate system generator poly data ("
-      << curvePoly->GetNumberOfPoints() << " != " <<  polyData->GetNumberOfPoints() << ")");
+    vtkErrorMacro(
+      "Number of points does not match between given poly data and the coordinate system generator poly data ("
+      << curvePoly->GetNumberOfPoints() << " != " << polyData->GetNumberOfPoints() << ")");
     return false;
   }
   if (binormals->GetNumberOfTuples() != pointData->GetNumberOfTuples())
   {
     vtkErrorMacro("Number of data points does not match between coordinate system generator ("
-      << binormals->GetNumberOfTuples() << ") and poly data point data (" << pointData->GetNumberOfTuples() << ")");
+                  << binormals->GetNumberOfTuples() << ") and poly data point data (" << pointData->GetNumberOfTuples()
+                  << ")");
     return false;
   }
 
@@ -394,16 +405,17 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
 
   lines->GetCell(0, linePoints);
   vtkIdType numberOfPoints = // Last point in closed curve line is the first point
-    (this->CurveIsClosed ? linePoints->GetNumberOfIds()-1 : linePoints->GetNumberOfIds());
+    (this->CurveIsClosed ? linePoints->GetNumberOfIds() - 1 : linePoints->GetNumberOfIds());
   if (numberOfPoints < 3)
   {
-    vtkErrorMacro("Number of curve points too low for torsion calculation (" << numberOfPoints << "), at least 3 needed");
+    vtkErrorMacro("Number of curve points too low for torsion calculation (" << numberOfPoints
+                                                                             << "), at least 3 needed");
     return false;
   }
 
   // Initialize torsion array
-  vtkSmartPointer<vtkDoubleArray> torsionArray = vtkDoubleArray::SafeDownCast(
-    polyData->GetPointData()->GetArray(this->GetTorsionArrayName()));
+  vtkSmartPointer<vtkDoubleArray> torsionArray =
+    vtkDoubleArray::SafeDownCast(polyData->GetPointData()->GetArray(this->GetTorsionArrayName()));
   if (torsionArray == nullptr)
   {
     torsionArray = vtkSmartPointer<vtkDoubleArray>::New();
@@ -413,16 +425,16 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   torsionArray->SetNumberOfComponents(1);
   torsionArray->SetNumberOfTuples(numberOfPoints);
   torsionArray->Reset();
-  torsionArray->FillComponent(0,0.0);
+  torsionArray->FillComponent(0, 0.0);
 
   // Initialize curvature variables
-  double minTorsion= 0.0;
+  double minTorsion = 0.0;
   double maxTorsion = 0.0;
   double meanTorsion = 0.0;
 
   // Get values for first point
   double* binormal = binormals->GetTuple3(linePoints->GetId(1));
-  double binormalNorm = sqrt(binormal[0]*binormal[0] + binormal[1]*binormal[1] + binormal[2]*binormal[2]);
+  double binormalNorm = sqrt(binormal[0] * binormal[0] + binormal[1] * binormal[1] + binormal[2] * binormal[2]);
   double prevNormBinormal[3] = { 0.0, 0.0, 0.0 };
   if (binormalNorm > 0)
   {
@@ -432,17 +444,17 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   }
   double normBinormal[3] = { 0.0, 0.0, 0.0 };
   double torsion = 0.0;
-  double *tangent = nullptr;
+  double* tangent = nullptr;
   double currentLength = 0.0;
   double length = 0.0;
 
   // The torsion for the first cell is 0.0 for open curves
   torsionArray->InsertValue(linePoints->GetId(0), 0.0);
 
-  for (vtkIdType idx=1; idx<numberOfPoints-1; ++idx)
+  for (vtkIdType idx = 1; idx < numberOfPoints - 1; ++idx)
   {
-    binormal = binormals->GetTuple3(linePoints->GetId(idx+1));
-    binormalNorm = sqrt(binormal[0]*binormal[0] + binormal[1]*binormal[1] + binormal[2]*binormal[2]);
+    binormal = binormals->GetTuple3(linePoints->GetId(idx + 1));
+    binormalNorm = sqrt(binormal[0] * binormal[0] + binormal[1] * binormal[1] + binormal[2] * binormal[2]);
     torsion = 0.0;
     if (binormalNorm > 0.0)
     {
@@ -451,16 +463,16 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
       normBinormal[2] = binormal[2] / binormalNorm;
 
       // Local torsion
-      torsion = sqrt( (normBinormal[0]-prevNormBinormal[0])*(normBinormal[0]-prevNormBinormal[0])
-                    + (normBinormal[1]-prevNormBinormal[1])*(normBinormal[1]-prevNormBinormal[1])
-                    + (normBinormal[2]-prevNormBinormal[2])*(normBinormal[2]-prevNormBinormal[2]) )
+      torsion = sqrt((normBinormal[0] - prevNormBinormal[0]) * (normBinormal[0] - prevNormBinormal[0])
+                     + (normBinormal[1] - prevNormBinormal[1]) * (normBinormal[1] - prevNormBinormal[1])
+                     + (normBinormal[2] - prevNormBinormal[2]) * (normBinormal[2] - prevNormBinormal[2]))
                 / binormalNorm;
     }
     torsionArray->InsertValue(linePoints->GetId(idx), torsion);
 
     // Statistics
     tangent = tangents->GetTuple3(linePoints->GetId(idx));
-    currentLength = sqrt( tangent[0]*tangent[0] + tangent[1]*tangent[1] + tangent[2]*tangent[2] );
+    currentLength = sqrt(tangent[0] * tangent[0] + tangent[1] * tangent[1] + tangent[2] * tangent[2]);
     if (torsion < minTorsion)
     {
       minTorsion = torsion;
@@ -473,7 +485,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
     length += currentLength;
 
     // Propagate current values to previous
-    for (int i=0; i<3; ++i)
+    for (int i = 0; i < 3; ++i)
     {
       prevNormBinormal[i] = normBinormal[i];
     }
@@ -482,19 +494,18 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   // Use the adjacent values for instead of the singular values
   if (!this->CurveIsClosed)
   {
-    torsionArray->InsertValue(linePoints->GetId(numberOfPoints-1),
-      torsionArray->GetValue(linePoints->GetId(numberOfPoints-2)));
+    torsionArray->InsertValue(linePoints->GetId(numberOfPoints - 1),
+                              torsionArray->GetValue(linePoints->GetId(numberOfPoints - 2)));
   }
   else
   {
-    torsionArray->SetComponent(linePoints->GetId(0), 0,
-      torsionArray->GetValue(linePoints->GetId(1)));
-    torsionArray->InsertValue(linePoints->GetId(numberOfPoints-1),
-      torsionArray->GetValue(linePoints->GetId(numberOfPoints-2)));
+    torsionArray->SetComponent(linePoints->GetId(0), 0, torsionArray->GetValue(linePoints->GetId(1)));
+    torsionArray->InsertValue(linePoints->GetId(numberOfPoints - 1),
+                              torsionArray->GetValue(linePoints->GetId(numberOfPoints - 2)));
   }
 
-  tangent = tangents->GetTuple3(linePoints->GetId(numberOfPoints-1));
-  currentLength = sqrt( tangent[0]*tangent[0] + tangent[1]*tangent[1] + tangent[2]*tangent[2] );
+  tangent = tangents->GetTuple3(linePoints->GetId(numberOfPoints - 1));
+  currentLength = sqrt(tangent[0] * tangent[0] + tangent[1] * tangent[1] + tangent[2] * tangent[2]);
   length += currentLength;
   if (length > 0.0)
   {
@@ -507,7 +518,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
 
   // Set mean and max torsion to measurements
   // Calculate and set interpolated control point measurements in poly data
-  for (int index=0; index<this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
+  for (int index = 0; index < this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
   {
     vtkMRMLMeasurement* currentMeasurement = this->InputMarkupsMRMLNode->GetNthMeasurement(index);
     if (!currentMeasurement || currentMeasurement->GetName().empty() || !currentMeasurement->GetEnabled())
@@ -548,7 +559,8 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
   {
     return false;
   }
-  vtkDoubleArray* pedigreeIdsArray = vtkDoubleArray::SafeDownCast(outputPolyData->GetPointData()->GetAbstractArray("PedigreeIDs"));
+  vtkDoubleArray* pedigreeIdsArray =
+    vtkDoubleArray::SafeDownCast(outputPolyData->GetPointData()->GetAbstractArray("PedigreeIDs"));
   if (!pedigreeIdsArray)
   {
     vtkErrorMacro("InterpolateControlPointMeasurementToPolyData: Missing PedigreeIDs array in the curve poly data");
@@ -557,12 +569,12 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
   if (pedigreeIdsArray->GetNumberOfTuples() != numberOfPoints)
   {
     vtkErrorMacro("InterpolateControlPointMeasurementToPolyData: Size mismatch between PedigreeIDs array ("
-      << pedigreeIdsArray->GetNumberOfTuples() << ") and polydata points (" << numberOfPoints << ")");
+                  << pedigreeIdsArray->GetNumberOfTuples() << ") and polydata points (" << numberOfPoints << ")");
     return false;
   }
 
   // Calculate and set interpolated control point measurements in poly data
-  for (int index=0; index<this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
+  for (int index = 0; index < this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
   {
     vtkMRMLMeasurement* currentMeasurement = this->InputMarkupsMRMLNode->GetNthMeasurement(index);
     if (!currentMeasurement || !currentMeasurement->GetEnabled())
@@ -576,8 +588,9 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
     }
     if (controlPointValues->GetNumberOfComponents() != 1)
     {
-      //TODO: Add support for more components
-      vtkWarningMacro("InterpolateControlPointMeasurementToPolyData: Only the interpolation of single component control point measurements is implemented");
+      // TODO: Add support for more components
+      vtkWarningMacro("InterpolateControlPointMeasurementToPolyData: Only the interpolation of single component "
+                      "control point measurements is implemented");
       return false;
     }
 
@@ -590,7 +603,8 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
     std::string arrayName = !currentMeasurement->GetName().empty() ? currentMeasurement->GetName() : "Unnamed";
     interpolatedMeasurement->SetName(arrayName.c_str());
 
-    if (!vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues, this->CurveIsClosed, interpolatedMeasurement, pedigreeIdsArray, 1.0))
+    if (!vtkCurveMeasurementsCalculator::InterpolateArray(
+          controlPointValues, this->CurveIsClosed, interpolatedMeasurement, pedigreeIdsArray, 1.0))
     {
       vtkErrorMacro("Failed to add " + arrayName + " measurement array to curve");
       continue;
@@ -603,8 +617,11 @@ bool vtkCurveMeasurementsCalculator::InterpolateControlPointMeasurementToPolyDat
 }
 
 //------------------------------------------------------------------------------
-bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValues, bool closedCurve, vtkDoubleArray* interpolatedValues,
-  vtkDoubleArray* pedigreeIdsArray, double pedigreeIdsValueScale/*=1.0*/)
+bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValues,
+                                                      bool closedCurve,
+                                                      vtkDoubleArray* interpolatedValues,
+                                                      vtkDoubleArray* pedigreeIdsArray,
+                                                      double pedigreeIdsValueScale /*=1.0*/)
 {
   if (!inputValues || !interpolatedValues || !pedigreeIdsArray)
   {
@@ -614,8 +631,9 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
   vtkIdType numberOfValues = pedigreeIdsArray->GetNumberOfValues();
   if (inputValues->GetNumberOfComponents() != 1)
   {
-    //TODO: Add support for more components
-    vtkGenericWarningMacro("vtkCurveMeasurementsCalculator::InterpolateArray: Only the interpolation of single component values is implemented");
+    // TODO: Add support for more components
+    vtkGenericWarningMacro("vtkCurveMeasurementsCalculator::InterpolateArray: Only the interpolation of single "
+                           "component values is implemented");
     return false;
   }
   interpolatedValues->Reset(); // empty without reallocating memory
@@ -623,16 +641,19 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
   {
     return true;
   }
-  // Pedigree IDs wrap around if curve is closed. IDs of the last segment are between go up to the number of control points.
-  vtkIdType lastValidControlPointIndex = (closedCurve ? inputValues->GetNumberOfTuples() : inputValues->GetNumberOfTuples() - 1);
+  // Pedigree IDs wrap around if curve is closed. IDs of the last segment are between go up to the number of control
+  // points.
+  vtkIdType lastValidControlPointIndex =
+    (closedCurve ? inputValues->GetNumberOfTuples() : inputValues->GetNumberOfTuples() - 1);
   double pedigreeRange[2] = { 0.0, 0.0 };
   pedigreeIdsArray->GetValueRange(pedigreeRange);
   if (pedigreeRange[0] * pedigreeIdsValueScale < -VTK_DBL_EPSILON
-    || pedigreeRange[1] * pedigreeIdsValueScale > lastValidControlPointIndex + VTK_DBL_EPSILON)
+      || pedigreeRange[1] * pedigreeIdsValueScale > lastValidControlPointIndex + VTK_DBL_EPSILON)
   {
     vtkGenericWarningMacro("vtkCurveMeasurementsCalculator::InterpolateArray: pedigreeIdsArray contain values between "
-      << pedigreeRange[0] * pedigreeIdsValueScale << " and " << pedigreeRange[1] * pedigreeIdsValueScale << ", but there are only "
-      << inputValues->GetNumberOfTuples() << " values in the input array");
+                           << pedigreeRange[0] * pedigreeIdsValueScale << " and "
+                           << pedigreeRange[1] * pedigreeIdsValueScale << ", but there are only "
+                           << inputValues->GetNumberOfTuples() << " values in the input array");
     return false;
   }
   if (numberOfValues == 1)
@@ -657,7 +678,8 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
     {
       // Need to interpolate
       double nextControlPointValue = inputValues->GetValue((controlPointIndex + 1) % inputValues->GetNumberOfTuples());
-      double interpolatedValue = currentControlPointValue + fractionValue * (nextControlPointValue-currentControlPointValue);
+      double interpolatedValue =
+        currentControlPointValue + fractionValue * (nextControlPointValue - currentControlPointValue);
       interpolatedValues->InsertValue(pointIdx, interpolatedValue);
     }
   }
@@ -665,8 +687,10 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
 }
 
 //---------------------------------------------------------------------------
-void vtkCurveMeasurementsCalculator::OnControlPointArrayModified(
-  vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+void vtkCurveMeasurementsCalculator::OnControlPointArrayModified(vtkObject* vtkNotUsed(caller),
+                                                                 unsigned long vtkNotUsed(eid),
+                                                                 void* clientData,
+                                                                 void* vtkNotUsed(callData))
 {
   vtkCurveMeasurementsCalculator* self = reinterpret_cast<vtkCurveMeasurementsCalculator*>(clientData);
   self->Modified();
@@ -679,7 +703,7 @@ vtkMTimeType vtkCurveMeasurementsCalculator::GetMTime()
   // Modified time is the latest modified time of all measurements
   if (this->InputMarkupsMRMLNode)
   {
-    for (int index=0; index<this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
+    for (int index = 0; index < this->InputMarkupsMRMLNode->GetNumberOfMeasurements(); ++index)
     {
       vtkMRMLMeasurement* currentMeasurement = this->InputMarkupsMRMLNode->GetNthMeasurement(index);
       vtkMTimeType measurementMTime = currentMeasurement->GetMTime();

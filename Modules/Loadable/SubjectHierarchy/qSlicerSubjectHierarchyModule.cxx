@@ -25,7 +25,7 @@
 // QtGUI includes
 #include <qSlicerApplication.h>
 #ifdef Slicer_USE_PYTHONQT
-#include <qSlicerPythonManager.h>
+# include <qSlicerPythonManager.h>
 #endif
 
 // SubjectHierarchy includes
@@ -48,7 +48,7 @@ public:
   qSlicerSubjectHierarchyModulePrivate();
   ~qSlicerSubjectHierarchyModulePrivate();
 
-  qSlicerSubjectHierarchyPluginLogic* PluginLogic{nullptr};
+  qSlicerSubjectHierarchyPluginLogic* PluginLogic{ nullptr };
 };
 
 //-----------------------------------------------------------------------------
@@ -81,19 +81,20 @@ qSlicerSubjectHierarchyModule::qSlicerSubjectHierarchyModule(QObject* _parent)
 qSlicerSubjectHierarchyModule::~qSlicerSubjectHierarchyModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyModule::helpText()const
+QString qSlicerSubjectHierarchyModule::helpText() const
 {
-  QString help =
-    "The Subject hierarchy module provides a nice and intuitive tree view of the loaded data."
-    " It acts as a convenient central organizing point for many of the operations that 3D Slicer and its extensions perform.<br>";
+  QString help = "The Subject hierarchy module provides a nice and intuitive tree view of the loaded data."
+                 " It acts as a convenient central organizing point for many of the operations that 3D Slicer and its "
+                 "extensions perform.<br>";
   help += this->defaultDocumentationLink();
   return help;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyModule::acknowledgementText()const
+QString qSlicerSubjectHierarchyModule::acknowledgementText() const
 {
-  return "This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).";
+  return "This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program and Ontario "
+         "Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).";
 }
 
 //-----------------------------------------------------------------------------
@@ -111,7 +112,7 @@ QStringList qSlicerSubjectHierarchyModule::contributors() const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyModule::icon()const
+QIcon qSlicerSubjectHierarchyModule::icon() const
 {
   return QIcon(":/Icons/SubjectHierarchy.png");
 }
@@ -121,7 +122,7 @@ void qSlicerSubjectHierarchyModule::setup()
 {
   this->Superclass::setup();
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (app)
   {
     // Register settings panel
@@ -146,7 +147,7 @@ vtkMRMLAbstractLogic* qSlicerSubjectHierarchyModule::createLogic()
   // Create logic
   vtkSlicerSubjectHierarchyModuleLogic* logic = vtkSlicerSubjectHierarchyModuleLogic::New();
   // Handle scene change event if occurs
-  qvtkConnect( logic, vtkCommand::ModifiedEvent, this, SLOT( onLogicModified() ) );
+  qvtkConnect(logic, vtkCommand::ModifiedEvent, this, SLOT(onLogicModified()));
 
   // Create plugin logic
   d->PluginLogic = new qSlicerSubjectHierarchyPluginLogic();

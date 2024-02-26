@@ -70,19 +70,19 @@ public:
   bool parse(const QStringList& arguments);
 
   /// Return True if slicer should display help and exit
-  bool displayHelpAndExit()const;
+  bool displayHelpAndExit() const;
 
   /// Return True if the ignore rest argument has been passed
   bool ignoreRest() const;
 
   /// Return True if the loading of SlicerRC should be skipped
-  bool ignoreSlicerRC()const;
+  bool ignoreSlicerRC() const;
 
   /// Return path of the python script to execute after slicer is loaded
-  QString pythonScript()const;
+  QString pythonScript() const;
 
   /// Return extra python script
-  QString extraPythonScript()const;
+  QString extraPythonScript() const;
 
   /// Set extra python script to be executed after slicer is loaded
   void setExtraPythonScript(const QString& newExtraPythonScript);
@@ -90,62 +90,62 @@ public:
   ///@{
   /// Set/Get the number of arguments that are already processed and that will not be
   /// passed as additional arguments when executing extraPythonScript file.
-  int extraPythonScriptProcessedArgumentsCount()const;
+  int extraPythonScriptProcessedArgumentsCount() const;
   void setExtraPythonScriptProcessedArgumentsCount(int argumentCount);
   ///}@
   /// Return python code snippet to execute after slicer is loaded
-  QString pythonCode()const;
+  QString pythonCode() const;
 
   /// Return True if Slicer should execute python code or script and exit
-  bool runPythonAndExit()const;
+  bool runPythonAndExit() const;
 
   /// \sa runPythonAndExit
   void setRunPythonAndExit(bool value);
 
   /// Return list of additional module path that should be considered when searching for modules to load.
-  QStringList additionalModulePaths()const;
+  QStringList additionalModulePaths() const;
 
   /// Return list of modules that should not be loaded.
-  QStringList modulesToIgnore()const;
+  QStringList modulesToIgnore() const;
 
   /// Return True if the loading of any modules should be disabled
-  bool disableModules()const;
+  bool disableModules() const;
 
   /// Return True if the loading of all built-in modules should be disabled
-  bool disableBuiltInModules()const;
+  bool disableBuiltInModules() const;
 
   /// Return True if the loading of any Command Line Modules should be disabled
-  bool disableCLIModules()const;
+  bool disableCLIModules() const;
 
   /// Return True if the loading of built-in Command Line Modules should be disabled
-  bool disableBuiltInCLIModules()const;
+  bool disableBuiltInCLIModules() const;
 
   /// Return True if the loading of any Loadable Modules should be disabled
-  bool disableLoadableModules()const;
+  bool disableLoadableModules() const;
 
   /// Return True if the loading of built-in Loadable Modules should be disabled
-  bool disableBuiltInLoadableModules()const;
+  bool disableBuiltInLoadableModules() const;
 
   /// Return True if the loading of any Scripted Loadable Modules should be disabled
-  bool disableScriptedLoadableModules()const;
+  bool disableScriptedLoadableModules() const;
 
   /// Return True if the loading of built-in Scripted Loadable Modules should be disabled
-  bool disableBuiltInScriptedLoadableModules()const;
+  bool disableBuiltInScriptedLoadableModules() const;
 
   /// Return True if slicer should display version and exit
-  bool displayVersionAndExit()const;
+  bool displayVersionAndExit() const;
 
   /// Return True if slicer should display program path and exit
-  bool displayProgramPathAndExit()const;
+  bool displayProgramPathAndExit() const;
 
   /// Return True if slicer should display home path and exit
-  bool displayHomePathAndExit()const;
+  bool displayHomePathAndExit() const;
 
   /// Return True if slicer should display settings path and exit
-  bool displaySettingsPathAndExit()const;
+  bool displaySettingsPathAndExit() const;
 
   /// Return True if slicer should display temporary path and exit
-  bool displayTemporaryPathAndExit()const;
+  bool displayTemporaryPathAndExit() const;
 
   /// Return True if slicer should display a message and exit.
   /// A message is displayed if any of the
@@ -162,20 +162,20 @@ public:
   bool displayApplicationInformation() const;
 
   /// Return True if slicer should display details regarding the module discovery process
-  bool verboseModuleDiscovery()const;
+  bool verboseModuleDiscovery() const;
 
   /// Return True if slicer should display information at startup
-  bool verbose()const;
+  bool verbose() const;
 
   /// Return True if slicer shouldn't catch messages printed to the terminal.
-  bool disableMessageHandlers()const;
+  bool disableMessageHandlers() const;
 
   /// Return True if slicer shouldn't print messages on the terminal.
   /// Messages won't be displayed on either stdout or stderr and will only be captured
   /// in the error log model.
   /// \sa qSlicerCoreApplication::errorLogModel()
   /// \sa ctkErrorLogModel::setTerminalOutputs()
-  bool disableTerminalOutputs()const;
+  bool disableTerminalOutputs() const;
 
   /// Return a value indicating if slicer settings should be disabled.
   ///
@@ -196,15 +196,14 @@ public:
   ///  ./Slicer --testing --launch ./bin/qSlicerXXXTests ...
   /// \note Using this option implies 'disable-settings' option.
   /// \sa settingsDisabled()
-  bool isTestingEnabled()const;
+  bool isTestingEnabled() const;
 
 #ifdef Slicer_USE_PYTHONQT
   /// Return True if slicer has no python infrastructure initialized.
   /// Python is still compiled with the app, but not enabled at run-time.
   /// \sa settingsDisabled()
-  bool isPythonDisabled()const;
+  bool isPythonDisabled() const;
 #endif
-
 
 protected:
   /// Add arguments - Called from parse() method
@@ -221,7 +220,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerCoreCommandOptions);
   Q_DISABLE_COPY(qSlicerCoreCommandOptions);
-
 };
 
 #endif

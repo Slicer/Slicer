@@ -33,9 +33,7 @@ public:
 // qSlicerLoadableModuleTemplateModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableModuleTemplateModulePrivate::qSlicerLoadableModuleTemplateModulePrivate()
-{
-}
+qSlicerLoadableModuleTemplateModulePrivate::qSlicerLoadableModuleTemplateModulePrivate() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerLoadableModuleTemplateModule methods
@@ -48,9 +46,7 @@ qSlicerLoadableModuleTemplateModule::qSlicerLoadableModuleTemplateModule(QObject
 }
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableModuleTemplateModule::~qSlicerLoadableModuleTemplateModule()
-{
-}
+qSlicerLoadableModuleTemplateModule::~qSlicerLoadableModuleTemplateModule() {}
 
 //-----------------------------------------------------------------------------
 QString qSlicerLoadableModuleTemplateModule::helpText() const
@@ -97,8 +93,7 @@ void qSlicerLoadableModuleTemplateModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerLoadableModuleTemplateModule
-::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerLoadableModuleTemplateModule ::createWidgetRepresentation()
 {
   return new qSlicerLoadableModuleTemplateModuleWidget;
 }

@@ -14,7 +14,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkDataIOManagerLogic.h"
 
-int vtkDataIOManagerLogicTest1(int , char * [] )
+int vtkDataIOManagerLogicTest1(int, char*[])
 {
   vtkNew<vtkDataIOManagerLogic> logic;
   EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
@@ -28,4 +28,3 @@ int vtkDataIOManagerLogicTest1(int , char * [] )
 
   return EXIT_SUCCESS;
 }
-

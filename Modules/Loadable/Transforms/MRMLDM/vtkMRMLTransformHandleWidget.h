@@ -18,7 +18,6 @@
 
 ==============================================================================*/
 
-
 ///
 /// \class vtkMRMLTransformHandleWidget
 /// \brief Process interaction events to update state of interaction widgets
@@ -60,7 +59,8 @@ public:
   /// The state of the widget
   enum
   {
-    WidgetStateTranslateTransformCenter = WidgetStateInteraction_Last ///< mouse move transforms the center of transformation
+    WidgetStateTranslateTransformCenter =
+      WidgetStateInteraction_Last ///< mouse move transforms the center of transformation
   };
 
   enum
@@ -70,7 +70,9 @@ public:
   };
 
   /// Create the default widget representation and initializes the widget and representation.
-  virtual void CreateDefaultRepresentation(vtkMRMLTransformDisplayNode* displayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer);
+  virtual void CreateDefaultRepresentation(vtkMRMLTransformDisplayNode* displayNode,
+                                           vtkMRMLAbstractViewNode* viewNode,
+                                           vtkRenderer* renderer);
 
   virtual vtkMRMLTransformDisplayNode* GetDisplayNode();
   virtual vtkMRMLTransformNode* GetTransformNode();

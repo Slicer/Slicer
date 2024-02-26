@@ -53,8 +53,7 @@
 // qMRMLTableViewControllerWidgetPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLTableViewControllerWidgetPrivate::qMRMLTableViewControllerWidgetPrivate(
-  qMRMLTableViewControllerWidget& object)
+qMRMLTableViewControllerWidgetPrivate::qMRMLTableViewControllerWidgetPrivate(qMRMLTableViewControllerWidget& object)
   : Superclass(object)
 {
   this->TableNode = nullptr;
@@ -101,8 +100,7 @@ void qMRMLTableViewControllerWidgetPrivate::setupPopupUi()
   q->addAction(this->PlotAction);
 
   // Connect Table selector
-  this->connect(this->tableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                SLOT(onTableNodeSelected(vtkMRMLNode*)));
+  this->connect(this->tableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(onTableNodeSelected(vtkMRMLNode*)));
 
   this->connect(this->LockTableButton, SIGNAL(clicked()), SLOT(onLockTableButtonClicked()));
 
@@ -122,8 +120,7 @@ void qMRMLTableViewControllerWidgetPrivate::setupPopupUi()
   this->connect(this->PlotAction, SIGNAL(triggered()), SLOT(plotSelection()));
 
   // Connect the scene
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->tableComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->tableComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   onTableNodeSelected(nullptr);
 }
@@ -138,7 +135,7 @@ void qMRMLTableViewControllerWidgetPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode * node)
+void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode* node)
 {
   Q_Q(qMRMLTableViewControllerWidget);
 
@@ -152,8 +149,7 @@ void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode * no
     return;
   }
 
-  this->qvtkReconnect(this->TableNode, node, vtkCommand::ModifiedEvent,
-                      q, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(this->TableNode, node, vtkCommand::ModifiedEvent, q, SLOT(updateWidgetFromMRML()));
   this->TableNode = vtkMRMLTableNode::SafeDownCast(node);
 
   q->mrmlTableViewNode()->SetTableNodeID(this->TableNode ? this->TableNode->GetID() : nullptr);
@@ -312,7 +308,7 @@ void qMRMLTableViewControllerWidget::setViewLabel(const QString& newViewLabel)
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLTableViewControllerWidget::viewLabel()const
+QString qMRMLTableViewControllerWidget::viewLabel() const
 {
   Q_D(const qMRMLTableViewControllerWidget);
   if (this->mrmlTableViewNode())
@@ -324,15 +320,14 @@ QString qMRMLTableViewControllerWidget::viewLabel()const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTableViewControllerWidget::setMRMLTableViewNode(
-    vtkMRMLTableViewNode * viewNode)
+void qMRMLTableViewControllerWidget::setMRMLTableViewNode(vtkMRMLTableViewNode* viewNode)
 {
   Q_D(qMRMLTableViewControllerWidget);
   this->setMRMLViewNode(viewNode);
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLTableViewNode* qMRMLTableViewControllerWidget::mrmlTableViewNode()const
+vtkMRMLTableViewNode* qMRMLTableViewControllerWidget::mrmlTableViewNode() const
 {
   Q_D(const qMRMLTableViewControllerWidget);
   return vtkMRMLTableViewNode::SafeDownCast(this->mrmlViewNode());
@@ -343,7 +338,7 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLTableViewControllerWidget);
 
-  //qDebug() << "qMRMLTableViewControllerWidget::updateWidgetFromMRML()";
+  // qDebug() << "qMRMLTableViewControllerWidget::updateWidgetFromMRML()";
 
   if (!this->mrmlTableViewNode() || !this->mrmlScene())
   {
@@ -352,8 +347,8 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
 
   d->ViewLabel->setText(this->mrmlTableViewNode()->GetLayoutLabel());
 
-  vtkMRMLTableNode *tableNode
-    = vtkMRMLTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(this->mrmlTableViewNode()->GetTableNodeID()));
+  vtkMRMLTableNode* tableNode =
+    vtkMRMLTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(this->mrmlTableViewNode()->GetTableNodeID()));
 
   // TableNode selector
   d->tableComboBox->setCurrentNodeID(tableNode ? tableNode->GetID() : nullptr);
@@ -379,7 +374,8 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
   else
   {
     d->LockTableButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
-    d->LockTableButton->setToolTip(tr("Click to lock this table to prevent modification of the values in the user interface"));
+    d->LockTableButton->setToolTip(
+      tr("Click to lock this table to prevent modification of the values in the user interface"));
   }
 
   if (tableNode->GetUseColumnTitleAsColumnHeader() != d->LockFirstRowButton->isChecked())
@@ -407,19 +403,18 @@ void qMRMLTableViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
     return;
   }
 
-   d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent,
-                    this, SLOT(updateWidgetFromMRML()));
+  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT(updateWidgetFromMRML()));
 
   // Disable the node selectors as they would fire signal currentIndexChanged(0)
   // meaning that there is no current node anymore. It's not true, it just means
   // that the current node was not in the combo box list menu before
   bool tableBlockSignals = d->tableComboBox->blockSignals(true);
-  //bool arrayBlockSignals = d->arrayComboBox->blockSignals(true);
+  // bool arrayBlockSignals = d->arrayComboBox->blockSignals(true);
 
   this->Superclass::setMRMLScene(newScene);
 
   d->tableComboBox->blockSignals(tableBlockSignals);
-  //d->arrayComboBox->blockSignals(arrayBlockSignals);
+  // d->arrayComboBox->blockSignals(arrayBlockSignals);
 
   if (this->mrmlScene())
   {

@@ -24,9 +24,9 @@
 // Qt includes
 #include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
 #ifdef Slicer_HAVE_QT5
-#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+# include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 #else
-#include <QDesignerCustomWidgetCollectionInterface>
+# include <QDesignerCustomWidgetCollectionInterface>
 #endif
 
 // SequenceBrowser includes
@@ -49,7 +49,7 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT qSlicerSequenceBrowserMod
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
-    QList<QDesignerCustomWidgetInterface *> plugins;
+    QList<QDesignerCustomWidgetInterface*> plugins;
     plugins << new qMRMLSequenceBrowserPlayWidgetPlugin;
     plugins << new qMRMLSequenceBrowserSeekWidgetPlugin;
     plugins << new qMRMLSequenceBrowserToolBarPlugin;

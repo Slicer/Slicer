@@ -21,12 +21,12 @@
 #include "qMRMLColorListViewPlugin.h"
 #include "qMRMLColorListView.h"
 
-qMRMLColorListViewPlugin::qMRMLColorListViewPlugin(QObject *_parent)
-        : QObject(_parent)
+qMRMLColorListViewPlugin::qMRMLColorListViewPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
-QWidget *qMRMLColorListViewPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLColorListViewPlugin::createWidget(QWidget* _parent)
 {
   qMRMLColorListView* _widget = new qMRMLColorListView(_parent);
   return _widget;
@@ -36,7 +36,7 @@ QString qMRMLColorListViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLColorListView\" \
           name=\"MRMLColorListView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLColorListViewPlugin::icon() const

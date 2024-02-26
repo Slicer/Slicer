@@ -65,28 +65,28 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMLoadable : public QObj
 
 public:
   typedef QObject Superclass;
-  qSlicerDICOMLoadable(QObject *parent = nullptr);
+  qSlicerDICOMLoadable(QObject* parent = nullptr);
   ~qSlicerDICOMLoadable() override;
 
-  virtual QString name()const;
+  virtual QString name() const;
   void setName(const QString& newName);
 
-  virtual QString tooltip()const;
+  virtual QString tooltip() const;
   void setTooltip(const QString& newTooltip);
 
-  virtual QString warning()const;
+  virtual QString warning() const;
   void setWarning(const QString& newWarning);
 
-  virtual QStringList files()const;
+  virtual QStringList files() const;
   void setFiles(const QStringList& newFiles);
 
-  virtual bool selected()const;
+  virtual bool selected() const;
   void setSelected(const bool newSelected);
 
-  virtual double confidence()const;
+  virtual double confidence() const;
   void setConfidence(const double newConfidence);
 
-  virtual QStringList referencedInstanceUIDs()const;
+  virtual QStringList referencedInstanceUIDs() const;
   void setReferencedInstanceUIDs(const QStringList& newReferencedInstanceUIDs);
 
   /// Copy values to VTK loadable

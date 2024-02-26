@@ -6,7 +6,7 @@ command line processing and additional features have been added.
 
 =========================================================================*/
 #if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+# pragma warning(disable : 4786)
 #endif
 
 #include <ctime>
@@ -41,29 +41,29 @@ std::string GenerateRandomCapitalLetters(int numberOfCharacters)
 }
 
 template <class Tin>
-int DoIt( int argc, char * argv[])
+int DoIt(int argc, char* argv[])
 {
   PARSE_ARGS;
 
-  typedef Tin     InputPixelType;
+  typedef Tin InputPixelType;
 
-  typedef itk::Image<InputPixelType, 3>                        Image3DType;
-  typedef itk::Image<InputPixelType, 2>                        Image2DType;
-  typedef itk::ImageFileReader<Image3DType>                    ReaderType;
+  typedef itk::Image<InputPixelType, 3> Image3DType;
+  typedef itk::Image<InputPixelType, 2> Image2DType;
+  typedef itk::ImageFileReader<Image3DType> ReaderType;
   typedef itk::ShiftScaleImageFilter<Image3DType, Image3DType> ShiftScaleType;
-  typedef itk::ImageFileWriter<Image2DType>                    WriterType;
-  typedef itk::GDCMImageIO                                     ImageIOType;
+  typedef itk::ImageFileWriter<Image2DType> WriterType;
+  typedef itk::GDCMImageIO ImageIOType;
 
   typename Image3DType::Pointer image;
-  typename ReaderType::Pointer  reader = ReaderType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
 
   try
   {
-    reader->SetFileName(inputVolume.c_str() );
+    reader->SetFileName(inputVolume.c_str());
     reader->Update();
     image = reader->GetOutput();
   }
-  catch( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject& excp)
   {
     std::cerr << "Exception thrown while reading the image file: " << inputVolume << std::endl;
     std::cerr << excp << std::endl;
@@ -71,29 +71,29 @@ int DoIt( int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  typename Image3DType::SpacingType   spacing = image->GetSpacing();
+  typename Image3DType::SpacingType spacing = image->GetSpacing();
   typename Image3DType::DirectionType oMatrix = image->GetDirection();
 
   // Shift scale the data if necessary based on the rescale slope and
   // rescale interscept prescribed.
-  if( fabs(rescaleIntercept) > itk::NumericTraits<double>::epsilon()
-      || fabs(rescaleSlope - 1.0) > itk::NumericTraits<double>::epsilon() )
+  if (fabs(rescaleIntercept) > itk::NumericTraits<double>::epsilon()
+      || fabs(rescaleSlope - 1.0) > itk::NumericTraits<double>::epsilon())
   {
     reader->ReleaseDataFlagOn();
 
     typename ShiftScaleType::Pointer shiftScale = ShiftScaleType::New();
-    shiftScale->SetInput( reader->GetOutput() );
-    shiftScale->SetShift( -rescaleIntercept );
+    shiftScale->SetInput(reader->GetOutput());
+    shiftScale->SetShift(-rescaleIntercept);
 
-    if( fabs(rescaleSlope) < itk::NumericTraits<double>::epsilon() )
+    if (fabs(rescaleSlope) < itk::NumericTraits<double>::epsilon())
     {
       // too close to zero, ignore
-      std::cerr << "Rescale slope too close to zero (" << rescaleSlope
-                << "). Using the default value of 1.0" << std::endl;
+      std::cerr << "Rescale slope too close to zero (" << rescaleSlope << "). Using the default value of 1.0"
+                << std::endl;
 
       rescaleSlope = 1.0;
     }
-    shiftScale->SetScale( 1.0 / rescaleSlope );
+    shiftScale->SetScale(1.0 / rescaleSlope);
 
     shiftScale->Update();
     image = shiftScale->GetOutput();
@@ -103,7 +103,7 @@ int DoIt( int argc, char * argv[])
   unsigned int numberOfSlices = image->GetLargestPossibleRegion().GetSize()[2];
 
   typename ImageIOType::Pointer gdcmIO = ImageIOType::New();
-  DictionaryType       dictionary;
+  DictionaryType dictionary;
 
   // Progress
   std::cout << "<filter-start>" << std::endl;
@@ -170,7 +170,7 @@ int DoIt( int argc, char * argv[])
       std::cerr << "Unknown modality: " << modality << ". Using CT Image Storage SOP class UID." << std::endl;
     }
     sopClassUID = "1.2.840.10008.5.1.4.1.1.2"; // CT Image Storage
-    imageType = "ORIGINAL\\PRIMARY\\AXIAL"; // type 1
+    imageType = "ORIGINAL\\PRIMARY\\AXIAL";    // type 1
     // Rescale Type is set to US (unspecified) in GDCM if the attribute is not set, which would not be optimal for CT,
     // therefore Rescale Type is set to HU (Hounsfield unit) here.
     if (rescaleType.empty())
@@ -194,7 +194,7 @@ int DoIt( int argc, char * argv[])
 
   // Patient ID (required, empty if unknown)
   // It is recommended to set it, since there is no such thing as patient UID in DICOM.
-  if (patientID=="[random]")
+  if (patientID == "[random]")
   {
     patientID = GenerateRandomCapitalLetters(6);
   }
@@ -360,7 +360,7 @@ int DoIt( int argc, char * argv[])
     if (studyInstanceUID.empty() || seriesInstanceUID.empty() || frameOfReferenceUID.empty())
     {
       std::cerr << "If any of UIDs (studyInstanceUID, seriesInstanceUID, and frameOfReferenceUID)"
-        << " are specified then all of them must be specified." << std::endl;
+                << " are specified then all of them must be specified." << std::endl;
       return EXIT_FAILURE;
     }
     gdcmIO->SetKeepOriginalUID(true);
@@ -372,14 +372,10 @@ int DoIt( int argc, char * argv[])
   // -----------------------------------------
   // For each slice
 
-  float progress = 1.0 / (float) numberOfSlices;
-  for( unsigned int i = 0; i < numberOfSlices; i++ )
+  float progress = 1.0 / (float)numberOfSlices;
+  for (unsigned int i = 0; i < numberOfSlices; i++)
   {
-    std::cout << "<filter-progress>"
-              << (i + 1) * progress
-              << "</filter-progress>"
-              << std::endl
-              << std::flush;
+    std::cout << "<filter-progress>" << (i + 1) * progress << "</filter-progress>" << std::endl << std::flush;
 
     std::ostringstream value;
 
@@ -389,25 +385,25 @@ int DoIt( int argc, char * argv[])
     itk::EncapsulateMetaData<std::string>(dictionary, "0020|0013", value.str());
 
     // Image Position (Patient)
-    typename Image3DType::PointType    origin;
-    typename Image3DType::IndexType    index;
+    typename Image3DType::PointType origin;
+    typename Image3DType::IndexType index;
     index.Fill(0);
     index[2] = i;
     image->TransformIndexToPhysicalPoint(index, origin);
     value.str("");
     value << origin[0] << "\\" << origin[1] << "\\" << origin[2];
-    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0032", value.str() );
+    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0032", value.str());
 
     // Image Orientation (Patient)
     value.str("");
     value << oMatrix[0][0] << "\\" << oMatrix[1][0] << "\\" << oMatrix[2][0] << "\\";
     value << oMatrix[0][1] << "\\" << oMatrix[1][1] << "\\" << oMatrix[2][1];
-    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0037", value.str() );
+    itk::EncapsulateMetaData<std::string>(dictionary, "0020|0037", value.str());
 
     // Slice Thickness
     value.str("");
     value << spacing[2];
-    itk::EncapsulateMetaData<std::string>(dictionary, "0018|0050", value.str() );
+    itk::EncapsulateMetaData<std::string>(dictionary, "0018|0050", value.str());
 
     // Always set the rescale interscept and rescale slope (even if
     // they are at their defaults of 0 and 1 respectively).
@@ -419,11 +415,11 @@ int DoIt( int argc, char * argv[])
     // itk::EncapsulateMetaData<std::string>(dictionary, "0028|1053", value.str());
 
     typename Image3DType::RegionType extractRegion;
-    typename Image3DType::SizeType   extractSize;
-    typename Image3DType::IndexType  extractIndex;
+    typename Image3DType::SizeType extractSize;
+    typename Image3DType::IndexType extractIndex;
     extractSize = image->GetLargestPossibleRegion().GetSize();
     extractIndex.Fill(0);
-    if( reverseImages )
+    if (reverseImages)
     {
       extractIndex[2] = numberOfSlices - i - 1;
     }
@@ -437,8 +433,8 @@ int DoIt( int argc, char * argv[])
 
     typedef itk::ExtractImageFilter<Image3DType, Image2DType> ExtractType;
     typename ExtractType::Pointer extract = ExtractType::New();
-    extract->SetDirectionCollapseToGuess();  // ITKv3 compatible, but not recommended
-    extract->SetInput(image );
+    extract->SetDirectionCollapseToGuess(); // ITKv3 compatible, but not recommended
+    extract->SetInput(image);
     extract->SetExtractionRegion(extractRegion);
     extract->Update();
 
@@ -450,17 +446,17 @@ int DoIt( int argc, char * argv[])
     {
       // Window width and center are required attributes (if VOI LUT sequence is not present), therefore
       // if the value is not specified then set it to include the full range of voxel values.
-      itk::ImageRegionIterator<Image2DType> it( extract->GetOutput(), extract->GetOutput()->GetLargestPossibleRegion() );
-      typename Image2DType::PixelType                minValue = itk::NumericTraits<typename Image2DType::PixelType>::max();
-      typename Image2DType::PixelType                maxValue = itk::NumericTraits<typename Image2DType::PixelType>::min();
-      for( it.GoToBegin(); !it.IsAtEnd(); ++it )
+      itk::ImageRegionIterator<Image2DType> it(extract->GetOutput(), extract->GetOutput()->GetLargestPossibleRegion());
+      typename Image2DType::PixelType minValue = itk::NumericTraits<typename Image2DType::PixelType>::max();
+      typename Image2DType::PixelType maxValue = itk::NumericTraits<typename Image2DType::PixelType>::min();
+      for (it.GoToBegin(); !it.IsAtEnd(); ++it)
       {
         typename Image2DType::PixelType p = it.Get();
-        if( p > maxValue )
+        if (p > maxValue)
         {
           maxValue = p;
         }
-        if( p < minValue )
+        if (p < minValue)
         {
           minValue = p;
         }
@@ -482,14 +478,15 @@ int DoIt( int argc, char * argv[])
     extract->GetOutput()->SetMetaDataDictionary(dictionary);
 
     typename WriterType::Pointer writer = WriterType::New();
-    char                imageNumber[BUFSIZ+1];
+    char imageNumber[BUFSIZ + 1];
     imageNumber[BUFSIZ] = '\0';
 
 #if WIN32
-#define snprintf sprintf_s
+# define snprintf sprintf_s
 #endif
-    // On Windows, it is hard to pass a string such as "%04d" via command-line, as the % is interpreted as an escape character,
-    // therefore we allow the user to omit the leading "%". If the format string does not start with "%" then we add it here.
+    // On Windows, it is hard to pass a string such as "%04d" via command-line, as the % is interpreted as an escape
+    // character, therefore we allow the user to omit the leading "%". If the format string does not start with "%" then
+    // we add it here.
     if (!dicomNumberFormat.empty())
     {
       if (dicomNumberFormat[0] != '%')
@@ -500,16 +497,16 @@ int DoIt( int argc, char * argv[])
     snprintf(imageNumber, BUFSIZ, dicomNumberFormat.c_str(), i + 1);
     value.str("");
     value << dicomDirectory << "/" << dicomPrefix << imageNumber << ".dcm";
-    writer->SetFileName(value.str().c_str() );
+    writer->SetFileName(value.str().c_str());
 
-    writer->SetInput(extract->GetOutput() );
+    writer->SetInput(extract->GetOutput());
     writer->SetUseCompression(useCompression);
     try
     {
       writer->SetImageIO(gdcmIO);
       writer->Update();
     }
-    catch( itk::ExceptionObject & excp )
+    catch (itk::ExceptionObject& excp)
     {
       std::cerr << "Exception thrown while writing the file " << std::endl;
       std::cerr << excp << std::endl;
@@ -526,35 +523,35 @@ int DoIt( int argc, char * argv[])
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
   try
   {
-    if( Type == std::string("Char") )
+    if (Type == std::string("Char"))
     {
-      return DoIt<char>( argc, argv);
+      return DoIt<char>(argc, argv);
     }
-    else if( Type == std::string("UnsignedChar") )
+    else if (Type == std::string("UnsignedChar"))
     {
-      return DoIt<unsigned char>( argc, argv);
+      return DoIt<unsigned char>(argc, argv);
     }
-    else if( Type == std::string("Short") )
+    else if (Type == std::string("Short"))
     {
-      return DoIt<short>( argc, argv);
+      return DoIt<short>(argc, argv);
     }
-    else if( Type == std::string("UnsignedShort") )
+    else if (Type == std::string("UnsignedShort"))
     {
-      return DoIt<unsigned short>( argc, argv);
+      return DoIt<unsigned short>(argc, argv);
     }
-    else if( Type == std::string("Int") )
+    else if (Type == std::string("Int"))
     {
-      return DoIt<int>( argc, argv);
+      return DoIt<int>(argc, argv);
     }
-    else if( Type == std::string("UnsignedInt") )
+    else if (Type == std::string("UnsignedInt"))
     {
-      return DoIt<unsigned int>( argc, argv);
+      return DoIt<unsigned int>(argc, argv);
     }
     else
     {
@@ -562,7 +559,7 @@ int main( int argc, char* argv[] )
       return EXIT_FAILURE;
     }
   }
-  catch( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

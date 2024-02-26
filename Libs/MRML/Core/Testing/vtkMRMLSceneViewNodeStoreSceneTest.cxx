@@ -47,8 +47,7 @@ int storePerformance();
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneViewNodeStoreSceneTest(int vtkNotUsed(argc),
-                                       char * vtkNotUsed(argv)[] )
+int vtkMRMLSceneViewNodeStoreSceneTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   CHECK_EXIT_SUCCESS(store());
   CHECK_EXIT_SUCCESS(storeAndRestore());
@@ -171,8 +170,7 @@ int storeTwice()
   scene->AddNode(sceneViewNode.GetPointer());
 
   // Empty scene view nodes until "stored"
-  int defaultNodes = sceneViewNode->GetStoredScene() ?
-    sceneViewNode->GetStoredScene()->GetNumberOfNodes() : 0;
+  int defaultNodes = sceneViewNode->GetStoredScene() ? sceneViewNode->GetStoredScene()->GetNumberOfNodes() : 0;
   CHECK_INT(defaultNodes, 0);
 
   sceneViewNode->StoreScene();
@@ -244,25 +242,21 @@ int references()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
-  vtkMRMLNode* volumeNode =
-    scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
   vtkSmartPointer<vtkCollection> sceneReferencedNodes;
-  sceneReferencedNodes.TakeReference(
-    scene->GetReferencedNodes(volumeNode));
+  sceneReferencedNodes.TakeReference(scene->GetReferencedNodes(volumeNode));
   CHECK_INT(sceneReferencedNodes->GetNumberOfItems(), 2);
 
   sceneViewNode->StoreScene();
 
-  vtkMRMLNode* sceneViewVolumeNode =
-    sceneViewNode->GetStoredScene()->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkMRMLNode* sceneViewVolumeNode = sceneViewNode->GetStoredScene()->GetNodeByID("vtkMRMLScalarVolumeNode1");
   vtkMRMLNode* sceneViewVolumeDisplayNode =
     sceneViewNode->GetStoredScene()->GetNodeByID("vtkMRMLScalarVolumeDisplayNode1");
 
   vtkSmartPointer<vtkCollection> referencedNodes;
   referencedNodes.TakeReference(scene->GetReferencedNodes(volumeNode));
   vtkSmartPointer<vtkCollection> sceneViewReferencedNodes;
-  sceneViewReferencedNodes.TakeReference(
-    sceneViewNode->GetStoredScene()->GetReferencedNodes(sceneViewVolumeNode));
+  sceneViewReferencedNodes.TakeReference(sceneViewNode->GetStoredScene()->GetReferencedNodes(sceneViewVolumeNode));
 
   // Number of references in scene view node scene should be the same as the
   // main scene reference count (+1 for new storage node).
@@ -295,9 +289,8 @@ int storePerformance()
   sceneViewNode->StoreScene();
   timer->StopTimer();
 
-  std::cout<< "<DartMeasurement name=\"vtkMRMLSceneViewNode-StorePerformance-"
-           << displayNodePairCount <<"\" type=\"numeric/double\">"
-           << timer->GetElapsedTime() << "</DartMeasurement>" << std::endl;
+  std::cout << "<DartMeasurement name=\"vtkMRMLSceneViewNode-StorePerformance-" << displayNodePairCount
+            << "\" type=\"numeric/double\">" << timer->GetElapsedTime() << "</DartMeasurement>" << std::endl;
 
   return EXIT_SUCCESS;
 }

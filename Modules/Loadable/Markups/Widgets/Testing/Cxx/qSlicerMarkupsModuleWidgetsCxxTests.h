@@ -15,7 +15,6 @@
 
 ==============================================================================*/
 
-
 #ifndef __qSlicerMarkupsModuleWidgetsCxxTests_h
 #define __qSlicerMarkupsModuleWidgetsCxxTests_h
 

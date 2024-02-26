@@ -40,20 +40,19 @@ vtkMRMLVolumePropertyStorageNode::~vtkMRMLVolumePropertyStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLVolumePropertyStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLVolumePropertyStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLVolumePropertyNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLVolumePropertyNode *vpNode =
-    vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
+  vtkMRMLVolumePropertyNode* vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -70,7 +69,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #else
   ifs.open(fullName.c_str(), ios::in);
 #endif
-  if ( !ifs )
+  if (!ifs)
   {
     vtkErrorMacro("Cannot open volume property file: " << fullName);
     return 0;
@@ -143,9 +142,8 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   sline = line;
   if (!sline.empty())
   {
-    vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
-    vpNode->GetPiecewiseFunctionFromString(sline, scalarOpacity),
-    vpNode->SetScalarOpacity(scalarOpacity);
+    vtkPiecewiseFunction* scalarOpacity = vtkPiecewiseFunction::New();
+    vpNode->GetPiecewiseFunctionFromString(sline, scalarOpacity), vpNode->SetScalarOpacity(scalarOpacity);
     scalarOpacity->Delete();
   }
 
@@ -153,7 +151,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   sline = line;
   if (!sline.empty())
   {
-    vtkPiecewiseFunction *gradientOpacity=vtkPiecewiseFunction::New();
+    vtkPiecewiseFunction* gradientOpacity = vtkPiecewiseFunction::New();
     vpNode->GetPiecewiseFunctionFromString(sline, gradientOpacity);
     vpNode->SetGradientOpacity(gradientOpacity);
     gradientOpacity->Delete();
@@ -163,7 +161,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   sline = line;
   if (!sline.empty())
   {
-    vtkColorTransferFunction *colorTransfer=vtkColorTransferFunction::New();
+    vtkColorTransferFunction* colorTransfer = vtkColorTransferFunction::New();
     vpNode->GetColorTransferFunctionFromString(sline, colorTransfer);
     vpNode->SetColor(colorTransfer);
     colorTransfer->Delete();
@@ -174,11 +172,11 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
+  vtkMRMLVolumePropertyNode* vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
-  std::string fullName =  this->GetFullNameFromFileName();
+  std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLVolumePropertyStorageNode: File name not specified");
@@ -192,24 +190,24 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   ofs.open(fullName.c_str(), ios::out);
 #endif
 
-  if ( !ofs )
+  if (!ofs)
   {
     vtkErrorMacro("Cannot open volume property file: " << fullName);
     return 0;
   }
-  ofs << vpNode->GetVolumeProperty()->GetInterpolationType()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetShade()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetDiffuse()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetAmbient()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetSpecular()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetSpecularPower()  << std::endl;
-  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetScalarOpacity())  << std::endl;
-  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetGradientOpacity())<< std::endl;
-  ofs << vpNode->GetColorTransferFunctionString(vpNode->GetVolumeProperty()->GetRGBTransferFunction())<< std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetInterpolationType() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetShade() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetDiffuse() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetAmbient() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetSpecular() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetSpecularPower() << std::endl;
+  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetScalarOpacity()) << std::endl;
+  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetGradientOpacity()) << std::endl;
+  ofs << vpNode->GetColorTransferFunctionString(vpNode->GetVolumeProperty()->GetRGBTransferFunction()) << std::endl;
 
   ofs.close();
 
-  int result =1;
+  int result = 1;
   return result;
 }
 
@@ -217,14 +215,17 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 void vtkMRMLVolumePropertyStorageNode::InitializeSupportedReadFileTypes()
 {
   //: File format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.vp)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property")
+                                                + " (.vp)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyStorageNode::InitializeSupportedWriteFileTypes()
 {
   //: File format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.vp)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property")
+                                                 + " (.vp)");
   //: File format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property") + " (.txt)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLVolumePropertyStorageNode", "MRML Volume Property")
+                                                 + " (.txt)");
 }

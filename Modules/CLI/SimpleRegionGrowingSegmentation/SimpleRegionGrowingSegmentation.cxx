@@ -31,64 +31,58 @@ namespace
 
 } // end of anonymous namespace
 
-int main( int argc, char *argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
-  typedef   float InternalPixelType;
-  const     unsigned int Dimension = 3;
+  typedef float InternalPixelType;
+  const unsigned int Dimension = 3;
   typedef itk::Image<InternalPixelType, Dimension> InternalImageType;
 
-  typedef unsigned short                         OutputPixelType;
+  typedef unsigned short OutputPixelType;
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
-  typedef itk::CastImageFilter<InternalImageType, OutputImageType>
-  CastingFilterType;
+  typedef itk::CastImageFilter<InternalImageType, OutputImageType> CastingFilterType;
   CastingFilterType::Pointer caster = CastingFilterType::New();
 
-  typedef  itk::ImageFileReader<InternalImageType> ReaderType;
-  typedef  itk::ImageFileWriter<OutputImageType>   WriterType;
+  typedef itk::ImageFileReader<InternalImageType> ReaderType;
+  typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
 
-  reader->SetFileName( inputVolume.c_str() );
+  reader->SetFileName(inputVolume.c_str());
   reader->Update();
 
-  writer->SetFileName( outputVolume.c_str() );
+  writer->SetFileName(outputVolume.c_str());
 
-  typedef itk::CurvatureFlowImageFilter<InternalImageType, InternalImageType>
-  CurvatureFlowImageFilterType;
-  CurvatureFlowImageFilterType::Pointer smoothing =
-    CurvatureFlowImageFilterType::New();
-  itk::PluginFilterWatcher watcher1(smoothing, "Smoothing",
-                                    CLPProcessInformation, 0.5, 0.0);
+  typedef itk::CurvatureFlowImageFilter<InternalImageType, InternalImageType> CurvatureFlowImageFilterType;
+  CurvatureFlowImageFilterType::Pointer smoothing = CurvatureFlowImageFilterType::New();
+  itk::PluginFilterWatcher watcher1(smoothing, "Smoothing", CLPProcessInformation, 0.5, 0.0);
 
-  typedef itk::ConfidenceConnectedImageFilter<InternalImageType, InternalImageType>
-  ConnectedFilterType;
+  typedef itk::ConfidenceConnectedImageFilter<InternalImageType, InternalImageType> ConnectedFilterType;
   ConnectedFilterType::Pointer confidenceConnected = ConnectedFilterType::New();
-  itk::PluginFilterWatcher     watcher2(confidenceConnected, "Segmenting",
-                                        CLPProcessInformation, 0.5, 0.5);
+  itk::PluginFilterWatcher watcher2(confidenceConnected, "Segmenting", CLPProcessInformation, 0.5, 0.5);
 
-  smoothing->SetInput( reader->GetOutput() );
-  confidenceConnected->SetInput( smoothing->GetOutput() );
-  caster->SetInput( confidenceConnected->GetOutput() );
-  writer->SetInput( caster->GetOutput() );
+  smoothing->SetInput(reader->GetOutput());
+  confidenceConnected->SetInput(smoothing->GetOutput());
+  caster->SetInput(confidenceConnected->GetOutput());
+  writer->SetInput(caster->GetOutput());
   writer->SetUseCompression(true);
 
-  smoothing->SetNumberOfIterations( smoothingIterations );
-  smoothing->SetTimeStep( timestep );
+  smoothing->SetNumberOfIterations(smoothingIterations);
+  smoothing->SetTimeStep(timestep);
 
-  confidenceConnected->SetMultiplier( multiplier );
-  confidenceConnected->SetNumberOfIterations( iterations );
-  confidenceConnected->SetReplaceValue( labelvalue );
-  confidenceConnected->SetInitialNeighborhoodRadius( neighborhood );
+  confidenceConnected->SetMultiplier(multiplier);
+  confidenceConnected->SetNumberOfIterations(iterations);
+  confidenceConnected->SetReplaceValue(labelvalue);
+  confidenceConnected->SetInitialNeighborhoodRadius(neighborhood);
 
-  if( seed.size() > 0 )
+  if (seed.size() > 0)
   {
     InternalImageType::PointType lpsPoint;
     InternalImageType::IndexType index;
-    for( ::size_t i = 0; i < seed.size(); ++i )
+    for (::size_t i = 0; i < seed.size(); ++i)
     {
       // seeds come in ras, convert to lps
       lpsPoint[0] = -seed[i][0];
@@ -98,8 +92,8 @@ int main( int argc, char *argv[] )
       reader->GetOutput()->TransformPhysicalPointToIndex(lpsPoint, index);
       confidenceConnected->AddSeed(index);
 
-//       std::cout << "LPS: " << lpsPoint << std::endl;
-//       std::cout << "IJK: " << index << std::endl;
+      //       std::cout << "LPS: " << lpsPoint << std::endl;
+      //       std::cout << "IJK: " << index << std::endl;
     }
   }
   else
@@ -112,7 +106,7 @@ int main( int argc, char *argv[] )
   {
     writer->Update();
   }
-  catch( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;

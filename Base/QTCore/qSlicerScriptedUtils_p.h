@@ -56,7 +56,10 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedUtils
 public:
   typedef qSlicerScriptedUtils Self;
 
-  static bool loadSourceAsModule(const QString& moduleName, const QString& filePath, PyObject * global_dict, PyObject *local_dict);
+  static bool loadSourceAsModule(const QString& moduleName,
+                                 const QString& filePath,
+                                 PyObject* global_dict,
+                                 PyObject* local_dict);
 
   /// \brief Set the value of the attribute named \a attributeName, for module
   /// named \a moduleName, to the value \a attributeValue.
@@ -64,23 +67,19 @@ public:
   /// If \a moduleName is empty, attribute will be set for module `__main__`.
   ///
   /// If \a moduleName is a dotted name, attribute will be set the last module.
-  static bool setModuleAttribute(const QString& moduleName,
-                                 const QString& attributeName,
-                                 PyObject* attributeValue);
+  static bool setModuleAttribute(const QString& moduleName, const QString& attributeName, PyObject* attributeValue);
 
   /// \sa qSlicerLoadableModule::importModulePythonExtensions
-  static bool importModulePythonExtensions(qSlicerCorePythonManager * pythonManager,
+  static bool importModulePythonExtensions(qSlicerCorePythonManager* pythonManager,
                                            const QString& intDir,
                                            const QString& modulePath,
-                                           bool isEmbedded=false);
+                                           bool isEmbedded = false);
 
 private:
   /// Not implemented
   qSlicerScriptedUtils() = default;
   virtual ~qSlicerScriptedUtils() = default;
-
 };
-
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPythonCppAPI
 {
@@ -88,26 +87,24 @@ public:
   qSlicerPythonCppAPI();
   virtual ~qSlicerPythonCppAPI();
 
-  QString objectName()const;
+  QString objectName() const;
   void setObjectName(const QString& name);
 
   void declareMethod(int id, const char* name);
 
   PyObject* instantiateClass(QObject* cpp, const QString& className, PyObject* classToInstantiate);
 
-  PyObject * callMethod(int id, PyObject * arguments = nullptr);
+  PyObject* callMethod(int id, PyObject* arguments = nullptr);
 
-  PyObject* pythonSelf()const;
+  PyObject* pythonSelf() const;
 
 private:
-
   QString ObjectName;
 
-  QHash<int, QString>   APIMethods;
+  QHash<int, QString> APIMethods;
   QHash<int, PythonQtObjectPtr> PythonAPIMethods;
 
   PythonQtObjectPtr PythonSelf;
 };
-
 
 #endif

@@ -39,16 +39,16 @@ class vtkImageMathematics;
 /// vtkMRMLScalarVolumeDisplayNode nodes describe how volume is displayed.
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
-  public:
-  static vtkMRMLScalarVolumeDisplayNode *New();
-  vtkTypeMacro(vtkMRMLScalarVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
+public:
+  static vtkMRMLScalarVolumeDisplayNode* New();
+  vtkTypeMacro(vtkMRMLScalarVolumeDisplayNode, vtkMRMLVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -60,8 +60,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "VolumeDisplay";}
-
+  const char* GetNodeTagName() override { return "VolumeDisplay"; }
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -70,15 +69,20 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// \deprecated
   bool GetWindowLevelLocked()
   {
-    vtkWarningMacro("vtkMRMLScalarVolumeDisplayNode::GetWindowLevelLocked method is deprecated. To check if the mouse mode cannot change window/level, get info from the interaction node. "
-                    "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
+    vtkWarningMacro("vtkMRMLScalarVolumeDisplayNode::GetWindowLevelLocked method is deprecated. To check if the mouse "
+                    "mode cannot change window/level, get info from the interaction node. "
+                    "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == "
+                    "slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
     return false;
   };
   /// \deprecated
   virtual void SetWindowLevelLocked(bool)
   {
-    vtkWarningMacro("vtkMRMLScalarVolumeDisplayNode::SetWindowLevelLocked method is deprecated. To prevent the mouse from changing window/level, set the interaction node to something other than AdjustWindowLevel. "
-                    "e.g. slicer.app.applicationLogic().GetInteractionNode().SetCurrentInteractionMode(slicer.vtkMRMLInteractionNode.ViewTransform)");
+    vtkWarningMacro("vtkMRMLScalarVolumeDisplayNode::SetWindowLevelLocked method is deprecated. To prevent the mouse "
+                    "from changing window/level, set the interaction node to something other than AdjustWindowLevel. "
+                    "e.g. "
+                    "slicer.app.applicationLogic().GetInteractionNode().SetCurrentInteractionMode(slicer."
+                    "vtkMRMLInteractionNode.ViewTransform)");
   };
 
   ///
@@ -145,12 +149,10 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Set the pipeline input
-  void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection) override;
 
   /// Gets the pipeline input
   vtkAlgorithmOutput* GetInputImageDataConnection() override;
@@ -160,12 +162,12 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   ///
   /// Get/set background mask stencil
-  void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* imageDataConnection) override;
   vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection() override;
 
   ///
   /// Parse a string with window and level as double|double, and add a preset
-  void AddWindowLevelPresetFromString(const char *preset);
+  void AddWindowLevelPresetFromString(const char* preset);
   ///
   /// Add a window level preset
   void AddWindowLevelPreset(double window, double level);
@@ -209,7 +211,7 @@ protected:
   vtkImageData* GetScalarImageData();
   virtual vtkAlgorithmOutput* GetScalarImageDataConnection();
 
-  void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection) override;
 
   ///
   /// To hold preset values for window and level, so can restore this display
@@ -220,13 +222,16 @@ protected:
   public:
     double Window;
     double Level;
-    WindowLevelPreset() { this->Window = 0.0; this->Level = 0.0; };
+    WindowLevelPreset()
+    {
+      this->Window = 0.0;
+      this->Level = 0.0;
+    };
   };
-  //double Window;
-  //double Level;
-  //double UpperThreshold;
-  //double LowerThreshold;
-
+  // double Window;
+  // double Level;
+  // double UpperThreshold;
+  // double LowerThreshold;
 
   /// Booleans
   int Interpolate;
@@ -234,14 +239,14 @@ protected:
   int ApplyThreshold;
   int AutoThreshold;
 
-  vtkImageLogic *AlphaLogic;
-  vtkImageMapToColors *MapToColors;
-  vtkImageThreshold *Threshold;
-  vtkImageAppendComponents *AppendComponents;
-  vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
-  vtkImageExtractComponents *ExtractRGB;
-  vtkImageExtractComponents *ExtractAlpha;
-  vtkImageStencil *MultiplyAlpha;
+  vtkImageLogic* AlphaLogic;
+  vtkImageMapToColors* MapToColors;
+  vtkImageThreshold* Threshold;
+  vtkImageAppendComponents* AppendComponents;
+  vtkImageMapToWindowLevelColors* MapToWindowLevelColors;
+  vtkImageExtractComponents* ExtractRGB;
+  vtkImageExtractComponents* ExtractAlpha;
+  vtkImageStencil* MultiplyAlpha;
 
   ///
   /// window level presets
@@ -249,7 +254,7 @@ protected:
 
   ///
   /// Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
-  vtkImageHistogramStatistics *HistogramStatistics;
+  vtkImageHistogramStatistics* HistogramStatistics;
   bool IsInCalculateAutoLevels;
 };
 

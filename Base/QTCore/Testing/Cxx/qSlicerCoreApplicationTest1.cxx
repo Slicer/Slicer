@@ -37,7 +37,6 @@
 
 // STD includes
 
-
 // namespace{
 // class qSlicerCoreApplicationTest : public qSlicerCoreApplication
 // {
@@ -46,13 +45,13 @@
 // };
 // }
 
-int qSlicerCoreApplicationTest1(int argc, char * argv [] )
+int qSlicerCoreApplicationTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);
 
-  qSlicerCoreApplication * aptr = app.application();
+  qSlicerCoreApplication* aptr = app.application();
 
-  if( aptr != (&app) )
+  if (aptr != (&app))
   {
     std::cerr << "Problem with the application() singleton" << std::endl;
     return EXIT_FAILURE;
@@ -64,18 +63,18 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
 
-  qSlicerCoreIOManager * coreIOManager = new qSlicerCoreIOManager;
+  qSlicerCoreIOManager* coreIOManager = new qSlicerCoreIOManager;
   app.setCoreIOManager(coreIOManager);
 
-  qSlicerCoreIOManager * coreIOManager2 = app.coreIOManager();
+  qSlicerCoreIOManager* coreIOManager2 = app.coreIOManager();
   if (coreIOManager2 != coreIOManager)
   {
     std::cerr << "Problem with setCoreIOManager()/coreIOManager()" << std::endl;
     return EXIT_FAILURE;
   }
 
-  QSettings * settings = app.userSettings();
-  if( settings == nullptr )
+  QSettings* settings = app.userSettings();
+  if (settings == nullptr)
   {
     std::cerr << "Problem with settings()" << std::endl;
     return EXIT_FAILURE;
@@ -87,10 +86,10 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
 
-  qSlicerCoreCommandOptions * coreCommandOptions = new qSlicerCoreCommandOptions;
+  qSlicerCoreCommandOptions* coreCommandOptions = new qSlicerCoreCommandOptions;
   app.setCoreCommandOptions(coreCommandOptions);
 
-  qSlicerCoreCommandOptions * coreCommandOptions2 = app.coreCommandOptions();
+  qSlicerCoreCommandOptions* coreCommandOptions2 = app.coreCommandOptions();
   if (coreCommandOptions2 != coreCommandOptions)
   {
     std::cerr << "Problem with setCoreCommandOptions()/coreCommandOptions()" << std::endl;
@@ -113,9 +112,9 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
   }
 
   // Since initialize has been called, the module manager should be available
-  qSlicerModuleManager * moduleManager1 = app.moduleManager();
+  qSlicerModuleManager* moduleManager1 = app.moduleManager();
 
-  if( !moduleManager1 )
+  if (!moduleManager1)
   {
     std::cerr << "Problem with moduleManager()" << std::endl;
     return EXIT_FAILURE;
@@ -129,19 +128,19 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
 
-  std::cout << "Slicer Home Directory = " << qPrintable( homeDirectory ) << std::endl;
+  std::cout << "Slicer Home Directory = " << qPrintable(homeDirectory) << std::endl;
 
-  vtkSlicerApplicationLogic * logic1 = app.applicationLogic();
+  vtkSlicerApplicationLogic* logic1 = app.applicationLogic();
 
-  if( logic1 == nullptr )
+  if (logic1 == nullptr)
   {
     std::cerr << "Error in appLogic() " << std::endl;
     return EXIT_FAILURE;
   }
 
-  vtkMRMLScene * scene1 = app.mrmlScene();
+  vtkMRMLScene* scene1 = app.mrmlScene();
 
-  if( scene1 == nullptr )
+  if (scene1 == nullptr)
   {
     std::cerr << "Error in mrmlScene() " << std::endl;
     return EXIT_FAILURE;
@@ -149,7 +148,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
 #ifdef Slicer_USE_PYTHONQT
 
-  qSlicerCorePythonManager * pythonManager = app.corePythonManager();
+  qSlicerCorePythonManager* pythonManager = app.corePythonManager();
   if (pythonManager)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with  corePythonManager()"
@@ -169,7 +168,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
 
-  QObject * foo = new QObject(&app);
+  QObject* foo = new QObject(&app);
   foo->setProperty("something", QVariant(7));
   pythonManager->addObjectToPythonMain("foo", foo);
   pythonManager->executeString("value = foo.something");
@@ -179,7 +178,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
 
-  ctkPythonConsole * pythonConsole = app.pythonConsole();
+  ctkPythonConsole* pythonConsole = app.pythonConsole();
   if (pythonConsole)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with  pythonConsole()"
@@ -205,4 +204,3 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
-

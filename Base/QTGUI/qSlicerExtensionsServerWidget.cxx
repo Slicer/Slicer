@@ -41,9 +41,9 @@ void ExtensionInstallWidgetWebChannelProxy::refresh()
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsServerWidgetPrivate::qSlicerExtensionsServerWidgetPrivate(qSlicerExtensionsServerWidget& object)
-  : qSlicerWebWidgetPrivate(object),
-    q_ptr(&object),
-    BrowsingEnabled(true)
+  : qSlicerWebWidgetPrivate(object)
+  , q_ptr(&object)
+  , BrowsingEnabled(true)
 {
   Q_Q(qSlicerExtensionsServerWidget);
   this->ExtensionsManagerModel = nullptr;
@@ -63,65 +63,76 @@ void qSlicerExtensionsServerWidgetPrivate::setFailurePage(const QStringList& err
 {
   Q_Q(qSlicerExtensionsServerWidget);
   QString html =
-      "<style type='text/css'>"
-      "  div.viewWrapperSlicer{"
-      "    font-family:'Lucida Grande','Lucida Sans Unicode',helvetica,arial,Verdana,sans-serif;"
-      "    font-size:13px;margin-left:8px;color:#777777;"
-      "  }"
-      "  div.extensionsHeader,div.extensionsBody{margin-right:10px;}"
-      "  div.extensionsHeader{height:45px;border-bottom:1px solid #d0d0d0;}"
-      "  div.extensionsTitle{float:left;font-size:24px;font-weight:bolder;margin-top:10px;}"
-      "  div.extensionsBodyLeftColumn{float:left;width:230px;border-right:1px solid #d0d0d0;min-height:450px;}"
-      "  div.extensionsBodyRightColumn{margin-left:230px;}"
-      "  div.error{"
-      "      position: relative;"
-      "      min-width: 13em; max-width: 52em; margin: 4em auto;"
-      "      border: 1px solid threedshadow; border-radius: 10px 10px 10px 10px;"
-      "      padding: 3em;"
-      "      -webkit-padding-start: 30px;"
-      "      background: url('qrc:Icons/ExtensionError.svg') no-repeat scroll left 0px content-box border-box;"
-      "     }"
-      "   #errorTitle, #errorDescription {-webkit-margin-start:80px;}"
-      "   #errorTitle h1 {margin:0px 0px 0.6em;}"
-      "   #errorDescription ul{"
-      "     list-style: square outside none;"
-      "     margin: 0px; -webkit-margin-start: 1.5em; padding: 0px;"
-      "     }"
-      "   #errorDescription ul > li{margin-bottom: 0.5em;}"
-      "   #errorTryAgain{margin-top: 2em;}"
-      "</style>"
-      "<div class='viewWrapperSlicer'>"
-      "  <div class='extensionsHeader'>"
-      "    <div class='extensionsTitle'>" + qSlicerExtensionsServerWidget::tr("Slicer Extensions") + "</div>"
+    "<style type='text/css'>"
+    "  div.viewWrapperSlicer{"
+    "    font-family:'Lucida Grande','Lucida Sans Unicode',helvetica,arial,Verdana,sans-serif;"
+    "    font-size:13px;margin-left:8px;color:#777777;"
+    "  }"
+    "  div.extensionsHeader,div.extensionsBody{margin-right:10px;}"
+    "  div.extensionsHeader{height:45px;border-bottom:1px solid #d0d0d0;}"
+    "  div.extensionsTitle{float:left;font-size:24px;font-weight:bolder;margin-top:10px;}"
+    "  div.extensionsBodyLeftColumn{float:left;width:230px;border-right:1px solid #d0d0d0;min-height:450px;}"
+    "  div.extensionsBodyRightColumn{margin-left:230px;}"
+    "  div.error{"
+    "      position: relative;"
+    "      min-width: 13em; max-width: 52em; margin: 4em auto;"
+    "      border: 1px solid threedshadow; border-radius: 10px 10px 10px 10px;"
+    "      padding: 3em;"
+    "      -webkit-padding-start: 30px;"
+    "      background: url('qrc:Icons/ExtensionError.svg') no-repeat scroll left 0px content-box border-box;"
+    "     }"
+    "   #errorTitle, #errorDescription {-webkit-margin-start:80px;}"
+    "   #errorTitle h1 {margin:0px 0px 0.6em;}"
+    "   #errorDescription ul{"
+    "     list-style: square outside none;"
+    "     margin: 0px; -webkit-margin-start: 1.5em; padding: 0px;"
+    "     }"
+    "   #errorDescription ul > li{margin-bottom: 0.5em;}"
+    "   #errorTryAgain{margin-top: 2em;}"
+    "</style>"
+    "<div class='viewWrapperSlicer'>"
+    "  <div class='extensionsHeader'>"
+    "    <div class='extensionsTitle'>"
+    + qSlicerExtensionsServerWidget::tr("Slicer Extensions")
+    + "</div>"
       "  </div>"
       "  <div class='extensionsBody'>"
       "    <!-- Following layout and associated CSS style are inspired from Mozilla error message. -->"
       "    <!-- It is originally covered by https://mozilla.org/MPL/2.0/ license -->"
       "    <!-- MPL 2.0 license is compatible with Slicer (BSD-like) license -->"
       "    <div class='error'>"
-      "      <div id='errorTitle'><h1>" + qSlicerExtensionsServerWidget::tr("Extensions can not be installed.") + "</h1></div>"
+      "      <div id='errorTitle'><h1>"
+    + qSlicerExtensionsServerWidget::tr("Extensions can not be installed.")
+    + "</h1></div>"
       "      <div id='errorDescription'>"
       "        <ul>"
       "%1"
 #ifdef Q_OS_MAC
-    "          <li><b>" + qSlicerExtensionsServerWidget::tr("Extensions manager requires <em>3D Slicer</em> to be installed. "
-    "Open the disk image (.dmg) file, drag <em>Slicer.app</em> into the the <em>Applications</em> folder, "
-    "and launch <em>3D Slicer</em> from the <em>Applications</em> folder.") + "</b> "
+      "          <li><b>"
+    + qSlicerExtensionsServerWidget::tr(
+      "Extensions manager requires <em>3D Slicer</em> to be installed. "
+      "Open the disk image (.dmg) file, drag <em>Slicer.app</em> into the the <em>Applications</em> folder, "
+      "and launch <em>3D Slicer</em> from the <em>Applications</em> folder.")
+    + "</b> "
 #else
-    "          <li>" + qSlicerExtensionsServerWidget::tr("Check that <b>3D Slicer</b> is properly installed.") + " "
+      "          <li>"
+    + qSlicerExtensionsServerWidget::tr("Check that <b>3D Slicer</b> is properly installed.")
+    + " "
 #endif
-      "<a href='https://slicer.readthedocs.io/en/latest/user_guide/getting_started.html#installing-3d-slicer'>" +
-        qSlicerExtensionsServerWidget::tr("Read more...") + "</a></li>"
+      "<a href='https://slicer.readthedocs.io/en/latest/user_guide/getting_started.html#installing-3d-slicer'>"
+    + qSlicerExtensionsServerWidget::tr("Read more...")
+    + "</a></li>"
       "        </ul>"
-      "        <button id='errorTryAgain' onclick='window.extensions_install_widget.refresh();' autofocus='true'>" +
-                qSlicerExtensionsServerWidget::tr("Try Again") + "</button>"
+      "        <button id='errorTryAgain' onclick='window.extensions_install_widget.refresh();' autofocus='true'>"
+    + qSlicerExtensionsServerWidget::tr("Try Again")
+    + "</button>"
       "      </div>"
       "    </div>"
       "  </div>"
       "</div>";
 
   QStringList htmlErrors;
-  foreach(const QString& error, errors)
+  foreach (const QString& error, errors)
   {
     htmlErrors << QString("<li>%1</li>").arg(error);
   }
@@ -139,7 +150,7 @@ void qSlicerExtensionsServerWidgetPrivate::updateTheme()
 void qSlicerExtensionsServerWidgetPrivate::setDarkThemeEnabled(bool enabled)
 {
   Q_Q(qSlicerExtensionsServerWidget);
-  if(!this->BrowsingEnabled)
+  if (!this->BrowsingEnabled)
   {
     return;
   }
@@ -158,24 +169,21 @@ void qSlicerExtensionsServerWidgetPrivate::setDarkThemeEnabled(bool enabled)
 void qSlicerExtensionsServerWidgetPrivate::initializeWebChannelTransport(QByteArray& webChannelScript)
 {
   this->Superclass::initializeWebChannelTransport(webChannelScript);
-  webChannelScript.append(
-      " window.extensions_manager_model = channel.objects.extensions_manager_model;\n"
-      // See ExtensionInstallWidgetWebChannelProxy
-      " window.extensions_install_widget = channel.objects.extensions_install_widget;\n"
-      );
+  webChannelScript.append(" window.extensions_manager_model = channel.objects.extensions_manager_model;\n"
+                          // See ExtensionInstallWidgetWebChannelProxy
+                          " window.extensions_install_widget = channel.objects.extensions_install_widget;\n");
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsServerWidgetPrivate::initializeWebChannel(QWebChannel* webChannel)
 {
   this->Superclass::initializeWebChannel(webChannel);
-  webChannel->registerObject(
-        "extensions_install_widget", this->InstallWidgetForWebChannel);
+  webChannel->registerObject("extensions_install_widget", this->InstallWidgetForWebChannel);
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsServerWidgetPrivate::registerExtensionsManagerModel(
-    qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel)
+void qSlicerExtensionsServerWidgetPrivate::registerExtensionsManagerModel(qSlicerExtensionsManagerModel* oldModel,
+                                                                          qSlicerExtensionsManagerModel* newModel)
 {
   Q_Q(qSlicerExtensionsServerWidget);
   QWebChannel* webChannel = q->webView()->page()->webChannel();
@@ -201,7 +209,7 @@ qSlicerExtensionsServerWidget::qSlicerExtensionsServerWidget(QWidget* _parent)
 qSlicerExtensionsServerWidget::~qSlicerExtensionsServerWidget() = default;
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel* qSlicerExtensionsServerWidget::extensionsManagerModel()const
+qSlicerExtensionsManagerModel* qSlicerExtensionsServerWidget::extensionsManagerModel() const
 {
   Q_D(const qSlicerExtensionsServerWidget);
   return d->ExtensionsManagerModel;
@@ -217,15 +225,15 @@ void qSlicerExtensionsServerWidget::setExtensionsManagerModel(qSlicerExtensionsM
   }
 
   disconnect(this, SLOT(onExtensionInstalled(QString)));
-  //disconnect(this, SLOT(onExtensionUninstalled(QString)));
+  // disconnect(this, SLOT(onExtensionUninstalled(QString)));
   disconnect(this, SLOT(onExtensionScheduledForUninstall(QString)));
   disconnect(this, SLOT(onSlicerRequirementsChanged()));
-  disconnect(this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
+  disconnect(this, SLOT(onMessageLogged(QString, ctkErrorLogLevel::LogLevels)));
   disconnect(this, SLOT(onDownloadStarted(QNetworkReply*)));
   disconnect(this, SLOT(onDownloadFinished(QNetworkReply*)));
 
   d->registerExtensionsManagerModel(
-        /* oldModel= */ d->ExtensionsManagerModel, /* newModel= */ model);
+    /* oldModel= */ d->ExtensionsManagerModel, /* newModel= */ model);
 
   d->ExtensionsManagerModel = model;
 
@@ -233,26 +241,27 @@ void qSlicerExtensionsServerWidget::setExtensionsManagerModel(qSlicerExtensionsM
   {
     this->onSlicerRequirementsChanged();
 
-    QObject::connect(model, SIGNAL(extensionInstalled(QString)),
-                     this, SLOT(onExtensionInstalled(QString)));
+    QObject::connect(model, SIGNAL(extensionInstalled(QString)), this, SLOT(onExtensionInstalled(QString)));
 
-    QObject::connect(model, SIGNAL(extensionScheduledForUninstall(QString)),
-                     this, SLOT(onExtensionScheduledForUninstall(QString)));
+    QObject::connect(
+      model, SIGNAL(extensionScheduledForUninstall(QString)), this, SLOT(onExtensionScheduledForUninstall(QString)));
 
-    QObject::connect(model, SIGNAL(extensionCancelledScheduleForUninstall(QString)),
-                     this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
+    QObject::connect(model,
+                     SIGNAL(extensionCancelledScheduleForUninstall(QString)),
+                     this,
+                     SLOT(onExtensionCancelledScheduleForUninstall(QString)));
 
-    QObject::connect(model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
-                     this, SLOT(onSlicerRequirementsChanged()));
+    QObject::connect(
+      model, SIGNAL(slicerRequirementsChanged(QString, QString, QString)), this, SLOT(onSlicerRequirementsChanged()));
 
-    QObject::connect(model, SIGNAL(messageLogged(QString,ctkErrorLogLevel::LogLevels)),
-                     this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
+    QObject::connect(model,
+                     SIGNAL(messageLogged(QString, ctkErrorLogLevel::LogLevels)),
+                     this,
+                     SLOT(onMessageLogged(QString, ctkErrorLogLevel::LogLevels)));
 
-    QObject::connect(model, SIGNAL(downloadStarted(QNetworkReply*)),
-                     this, SLOT(onDownloadStarted(QNetworkReply*)));
+    QObject::connect(model, SIGNAL(downloadStarted(QNetworkReply*)), this, SLOT(onDownloadStarted(QNetworkReply*)));
 
-    QObject::connect(model, SIGNAL(downloadFinished(QNetworkReply*)),
-                     this, SLOT(onDownloadFinished(QNetworkReply*)));
+    QObject::connect(model, SIGNAL(downloadFinished(QNetworkReply*)), this, SLOT(onDownloadFinished(QNetworkReply*)));
   }
 }
 
@@ -281,7 +290,7 @@ void qSlicerExtensionsServerWidget::refresh()
 void qSlicerExtensionsServerWidget::onExtensionInstalled(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsServerWidget);
-  if(d->BrowsingEnabled)
+  if (d->BrowsingEnabled)
   {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
@@ -299,7 +308,7 @@ void qSlicerExtensionsServerWidget::onExtensionInstalled(const QString& extensio
 void qSlicerExtensionsServerWidget::onExtensionScheduledForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsServerWidget);
-  if(d->BrowsingEnabled)
+  if (d->BrowsingEnabled)
   {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
@@ -333,7 +342,7 @@ void qSlicerExtensionsServerWidget::onSlicerRequirementsChanged()
 void qSlicerExtensionsServerWidget::onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level)
 {
   Q_D(qSlicerExtensionsServerWidget);
-  if(!d->BrowsingEnabled)
+  if (!d->BrowsingEnabled)
   {
     return;
   }
@@ -345,7 +354,7 @@ void qSlicerExtensionsServerWidget::onMessageLogged(const QString& text, ctkErro
     delay = "10000";
     state = "warning";
   }
-  else if(level == ctkErrorLogLevel::Critical || level == ctkErrorLogLevel::Fatal)
+  else if (level == ctkErrorLogLevel::Critical || level == ctkErrorLogLevel::Fatal)
   {
     delay = "10000";
     state = "error";
@@ -382,10 +391,10 @@ void qSlicerExtensionsServerWidget::onLoadFinished(bool ok)
 {
   Q_D(qSlicerExtensionsServerWidget);
   this->Superclass::onLoadFinished(ok);
-  if(!ok && d->NavigationRequestAccepted)
+  if (!ok && d->NavigationRequestAccepted)
   {
     d->setFailurePage(QStringList() << QString("Failed to load extension page using this URL: <strong>%1</strong>")
-                      .arg(this->extensionsManagerModel()->extensionsListUrl().toString()));
+                                         .arg(this->extensionsManagerModel()->extensionsListUrl().toString()));
   }
   if (ok)
   {
@@ -394,7 +403,9 @@ void qSlicerExtensionsServerWidget::onLoadFinished(bool ok)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsServerWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+bool qSlicerExtensionsServerWidget::acceptNavigationRequest(const QUrl& url,
+                                                            QWebEnginePage::NavigationType type,
+                                                            bool isMainFrame)
 {
   Q_D(qSlicerExtensionsServerWidget);
   d->InternalHosts = QStringList() << this->extensionsManagerModel()->frontendServerUrl().host();
@@ -402,16 +413,16 @@ bool qSlicerExtensionsServerWidget::acceptNavigationRequest(const QUrl & url, QW
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsServerWidget::changeEvent(QEvent *e)
+void qSlicerExtensionsServerWidget::changeEvent(QEvent* e)
 {
   Q_D(qSlicerExtensionsServerWidget);
   switch (e->type())
   {
     case QEvent::StyleChange:
       d->updateTheme();
-    break;
+      break;
     default:
-    break;
+      break;
   }
   this->Superclass::changeEvent(e);
 }

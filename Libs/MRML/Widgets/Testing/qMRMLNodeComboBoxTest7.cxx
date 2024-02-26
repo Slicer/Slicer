@@ -33,9 +33,8 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-
 // test the filtering with many cases
-int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
+int qMRMLNodeComboBoxTest7(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -46,23 +45,26 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   vtkNew<vtkMRMLScalarVolumeNode> noAttributeNode;
   scene->AddNode(noAttributeNode.GetPointer());
 
-  const char *testingAttributeName = "testingAttribute";
-  const char *testingAttribute = noAttributeNode->GetAttribute(testingAttributeName);
-  std::cout << "Volume node with no call to SetAttribute, GetAttribute returns " << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
+  const char* testingAttributeName = "testingAttribute";
+  const char* testingAttribute = noAttributeNode->GetAttribute(testingAttributeName);
+  std::cout << "Volume node with no call to SetAttribute, GetAttribute returns "
+            << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
 
   vtkNew<vtkMRMLScalarVolumeNode> emptyStringAttributeNode;
   emptyStringAttributeNode->SetAttribute(testingAttributeName, "");
   scene->AddNode(emptyStringAttributeNode.GetPointer());
 
   testingAttribute = emptyStringAttributeNode->GetAttribute(testingAttributeName);
-  std::cout << "Volume node with SetAttribute called with an empty string, GetAttribute returns " << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
+  std::cout << "Volume node with SetAttribute called with an empty string, GetAttribute returns "
+            << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
 
   vtkNew<vtkMRMLScalarVolumeNode> validAttributeNode;
   validAttributeNode->SetAttribute(testingAttributeName, "a");
   scene->AddNode(validAttributeNode.GetPointer());
 
   testingAttribute = validAttributeNode->GetAttribute(testingAttributeName);
-  std::cout << "Volume node with SetAttribute called with 'a', GetAttribute returns " << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
+  std::cout << "Volume node with SetAttribute called with 'a', GetAttribute returns "
+            << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
 
   // a node selector with no filtering attribute, three volumes should be
   // counted
@@ -73,7 +75,8 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   int nodeCount = nodeSelector.nodeCount();
   if (nodeCount != 3)
   {
-    std::cerr << "qMRMLNodeComboBox:: no filtering on attribute string doesn't yield 3 nodes, got nodeCount = " << nodeCount << std::endl;
+    std::cerr << "qMRMLNodeComboBox:: no filtering on attribute string doesn't yield 3 nodes, got nodeCount = "
+              << nodeCount << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -92,7 +95,8 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   nodeCount = nodeSelectorA.nodeCount();
   if (nodeCount != 1)
   {
-    std::cerr << "qMRMLNodeComboBox:: filtering on attribute string 'a' doesn't yield a single node, got nodeCount = " << nodeCount << std::endl;
+    std::cerr << "qMRMLNodeComboBox:: filtering on attribute string 'a' doesn't yield a single node, got nodeCount = "
+              << nodeCount << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -111,7 +115,8 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   nodeCount = nodeSelectorB.nodeCount();
   if (nodeCount != 0)
   {
-    std::cerr << "qMRMLNodeComboBox:: filtering on attribute string 'b' doesn't yield no nodes, got nodeCount = " << nodeCount << std::endl;
+    std::cerr << "qMRMLNodeComboBox:: filtering on attribute string 'b' doesn't yield no nodes, got nodeCount = "
+              << nodeCount << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -130,7 +135,8 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   nodeCount = nodeSelectorEmpty.nodeCount();
   if (nodeCount != 1)
   {
-    std::cerr << "qMRMLNodeComboBox:: filtering on attribute string '' doesn't yield a single node, got nodeCount = " << nodeCount << std::endl;
+    std::cerr << "qMRMLNodeComboBox:: filtering on attribute string '' doesn't yield a single node, got nodeCount = "
+              << nodeCount << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -149,7 +155,8 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   nodeCount = nodeSelectorNull.nodeCount();
   if (nodeCount != 2)
   {
-    std::cerr << "qMRMLNodeComboBox:: filtering on null attribute string doesn't yield two nodes, got nodeCount = " << nodeCount << std::endl;
+    std::cerr << "qMRMLNodeComboBox:: filtering on null attribute string doesn't yield two nodes, got nodeCount = "
+              << nodeCount << std::endl;
     return EXIT_FAILURE;
   }
   else

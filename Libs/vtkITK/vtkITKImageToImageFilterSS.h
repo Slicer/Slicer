@@ -25,11 +25,11 @@
 class VTK_ITK_EXPORT vtkITKImageToImageFilterSS : public vtkITKImageToImageFilter
 {
 public:
-  vtkTypeMacro(vtkITKImageToImageFilterSS,vtkITKImageToImageFilter);
+  vtkTypeMacro(vtkITKImageToImageFilterSS, vtkITKImageToImageFilter);
   static vtkITKImageToImageFilterSS* New() { return nullptr; }
   void PrintSelf(ostream& os, vtkIndent indent) override
   {
-    Superclass::PrintSelf ( os, indent );
+    Superclass::PrintSelf(os, indent);
     os << m_Filter;
   }
 
@@ -38,12 +38,11 @@ public:
   /// implemented at this level of the hierarchy.
   void SetReleaseDataFlag(int f) override
   {
-      Superclass::SetReleaseDataFlag(f);
-      m_Filter->SetReleaseDataFlag(f);
+    Superclass::SetReleaseDataFlag(f);
+    m_Filter->SetReleaseDataFlag(f);
   }
 
 protected:
-
   /// To/from ITK
   typedef short InputImagePixelType;
   typedef short OutputImagePixelType;
@@ -55,10 +54,10 @@ protected:
   ImageImportType::Pointer itkImporter;
   ImageExportType::Pointer itkExporter;
 
-  typedef itk::ImageToImageFilter<InputImageType,OutputImageType> GenericFilterType;
+  typedef itk::ImageToImageFilter<InputImageType, OutputImageType> GenericFilterType;
   GenericFilterType::Pointer m_Filter;
 
-  vtkITKImageToImageFilterSS ( GenericFilterType* filter )
+  vtkITKImageToImageFilterSS(GenericFilterType* filter)
   {
     /// Need an import, export, and a ITK pipeline
     m_Filter = filter;
@@ -66,11 +65,11 @@ protected:
     this->itkExporter = ImageExportType::New();
     ConnectPipelines(this->vtkExporter, this->itkImporter);
     ConnectPipelines(this->itkExporter, this->vtkImporter);
-    this->LinkITKProgressToVTKProgress ( m_Filter );
+    this->LinkITKProgressToVTKProgress(m_Filter);
 
     /// Set up the filter pipeline
-    m_Filter->SetInput ( this->itkImporter->GetOutput() );
-    this->itkExporter->SetInput ( m_Filter->GetOutput() );
+    m_Filter->SetInput(this->itkImporter->GetOutput());
+    this->itkExporter->SetInput(m_Filter->GetOutput());
     this->vtkCast->SetOutputScalarTypeToShort();
   };
 

@@ -5,8 +5,8 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro ( vtkURIHandler );
-vtkCxxSetObjectMacro( vtkURIHandler, PermissionPrompter, vtkPermissionPrompter );
+vtkStandardNewMacro(vtkURIHandler);
+vtkCxxSetObjectMacro(vtkURIHandler, PermissionPrompter, vtkPermissionPrompter);
 //----------------------------------------------------------------------------
 vtkURIHandler::vtkURIHandler()
 {
@@ -18,75 +18,73 @@ vtkURIHandler::vtkURIHandler()
   this->HostName = nullptr;
 }
 
-
 //----------------------------------------------------------------------------
 vtkURIHandler::~vtkURIHandler()
 {
   this->LocalFile = nullptr;
-  if ( this->PermissionPrompter != nullptr )
+  if (this->PermissionPrompter != nullptr)
   {
     this->PermissionPrompter->Delete();
     this->PermissionPrompter = nullptr;
   }
-  if ( this->Prefix != nullptr )
+  if (this->Prefix != nullptr)
   {
-    this->SetPrefix ( nullptr );
+    this->SetPrefix(nullptr);
   }
-  if ( this->Name != nullptr )
+  if (this->Name != nullptr)
   {
-    this->SetName ( nullptr );
+    this->SetName(nullptr);
   }
-  if ( this->HostName != nullptr )
+  if (this->HostName != nullptr)
   {
-    this->SetHostName (nullptr );
+    this->SetHostName(nullptr);
   }
 }
-
 
 //----------------------------------------------------------------------------
 void vtkURIHandler::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf ( os, indent );
+  Superclass::PrintSelf(os, indent);
 }
 
-
 //----------------------------------------------------------------------------
-void vtkURIHandler::SetLocalFile (FILE *localFile )
+void vtkURIHandler::SetLocalFile(FILE* localFile)
 {
   this->LocalFile = localFile;
 }
 
-
 //----------------------------------------------------------------------------
-int vtkURIHandler::ProgressCallback ( FILE * vtkNotUsed(outputFile), double dltotal,
-                              double dlnow, double ultotal, double ulnow )
+int vtkURIHandler::ProgressCallback(FILE* vtkNotUsed(outputFile),
+                                    double dltotal,
+                                    double dlnow,
+                                    double ultotal,
+                                    double ulnow)
 {
-    if(ultotal == 0)
+  if (ultotal == 0)
+  {
+    if (dltotal > 0)
     {
-    if(dltotal > 0)
-    {
-      std::cout << "<filter-progress>" << dlnow/dltotal
-                << "</filter-progress>" << std::endl;
+      std::cout << "<filter-progress>" << dlnow / dltotal << "</filter-progress>" << std::endl;
     }
-    }
+  }
   else
   {
-    std::cout << ulnow*100/ultotal << "%" << std::endl;
+    std::cout << ulnow * 100 / ultotal << "%" << std::endl;
   }
   return 0;
 }
 
-
 //----------------------------------------------------------------------------
-size_t vtkURIHandler::BufferedWrite ( char *buffer, size_t size, size_t nitems )
+size_t vtkURIHandler::BufferedWrite(char* buffer, size_t size, size_t nitems)
 {
-  if ( this->LocalFile != nullptr )
+  if (this->LocalFile != nullptr)
   {
-    //this->LocalFile->write(buffer,size*nitems);
-    size_t size_written = fwrite(buffer, sizeof(char), size*nitems, this->LocalFile);
-    if (size_written != size*nitems)
+    // this->LocalFile->write(buffer,size*nitems);
+    size_t size_written = fwrite(buffer, sizeof(char), size * nitems, this->LocalFile);
+    if (size_written != size * nitems)
     {
-      std::cerr << "Error: BufferedWrite tried to write " << size*nitems << ", only wrote " << size_written << " items" << std::endl;
+      std::cerr << "Error: BufferedWrite tried to write " << size * nitems << ", only wrote " << size_written
+                << " items" << std::endl;
       return size_written;
     }
     else
@@ -97,39 +95,33 @@ size_t vtkURIHandler::BufferedWrite ( char *buffer, size_t size, size_t nitems )
   }
   else
   {
-    return ( 0 );
+    return (0);
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkURIHandler::StageFileRead ( const char * vtkNotUsed( source ), const char *  vtkNotUsed( destination ))
+void vtkURIHandler::StageFileRead(const char* vtkNotUsed(source), const char* vtkNotUsed(destination)) {}
+
+//----------------------------------------------------------------------------
+void vtkURIHandler::StageFileWrite(const char* vtkNotUsed(source), const char* vtkNotUsed(destination)) {}
+
+//----------------------------------------------------------------------------
+void vtkURIHandler::StageFileRead(const char* vtkNotUsed(source),
+                                  const char* vtkNotUsed(destination),
+                                  const char* vtkNotUsed(username),
+                                  const char* vtkNotUsed(password),
+                                  const char* vtkNotUsed(hostname))
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkURIHandler::StageFileWrite ( const char * vtkNotUsed( source ), const char *  vtkNotUsed( destination ))
+void vtkURIHandler::StageFileWrite(const char* vtkNotUsed(source),
+                                   const char* vtkNotUsed(username),
+                                   const char* vtkNotUsed(password),
+                                   const char* vtkNotUsed(hostname),
+                                   const char* vtkNotUsed(sessionID))
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkURIHandler::StageFileRead(const char * vtkNotUsed( source ),
-                             const char * vtkNotUsed( destination ),
-                             const char * vtkNotUsed( username ),
-                             const char * vtkNotUsed( password ),
-                             const char * vtkNotUsed( hostname ) )
-{
-}
-
-//----------------------------------------------------------------------------
-void vtkURIHandler::StageFileWrite(const char * vtkNotUsed( source ),
-                              const char * vtkNotUsed( username ),
-                              const char * vtkNotUsed( password ),
-                              const char * vtkNotUsed( hostname ),
-                              const char * vtkNotUsed( sessionID ) )
-{
-}
-
-//----------------------------------------------------------------------------
-void vtkURIHandler::InitTransfer ( )
-{
-}
+void vtkURIHandler::InitTransfer() {}

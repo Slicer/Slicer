@@ -29,18 +29,17 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkSphereSource.h>
 
-
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerTestLineRepresentation3D);
 
 //------------------------------------------------------------------------------
 vtkSlicerTestLineRepresentation3D::vtkSlicerTestLineRepresentation3D()
-  :TargetOrgan(nullptr)
+  : TargetOrgan(nullptr)
 {
 
   this->SlicingPlane = vtkSmartPointer<vtkPlane>::New();
 
-  this->Cutter =  vtkSmartPointer<vtkCutter>::New();
+  this->Cutter = vtkSmartPointer<vtkCutter>::New();
   this->Cutter->SetInputData(this->TargetOrgan);
   this->Cutter->SetCutFunction(this->SlicingPlane);
   this->Cutter->SetNumberOfContours(1);
@@ -157,14 +156,12 @@ vtkTypeBool vtkSlicerTestLineRepresentation3D::HasTranslucentPolygonalGeometry()
     return true;
   }
 
-  if (this->TargetOrgan && this->ContourActor->GetVisibility() &&
-      this->ContourActor->HasTranslucentPolygonalGeometry())
+  if (this->TargetOrgan && this->ContourActor->GetVisibility() && this->ContourActor->HasTranslucentPolygonalGeometry())
   {
     return true;
   }
 
-  if (this->MiddlePointActor->GetVisibility() &&
-      this->MiddlePointActor->HasTranslucentPolygonalGeometry())
+  if (this->MiddlePointActor->GetVisibility() && this->MiddlePointActor->HasTranslucentPolygonalGeometry())
   {
     return true;
   }
@@ -174,26 +171,26 @@ vtkTypeBool vtkSlicerTestLineRepresentation3D::HasTranslucentPolygonalGeometry()
 
 //----------------------------------------------------------------------
 void vtkSlicerTestLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
-                                                           unsigned long event,
-                                                           void *callData /*=nullptr*/)
+                                                       unsigned long event,
+                                                       void* callData /*=nullptr*/)
 {
- this->Superclass::UpdateFromMRML(caller, event, callData);
+  this->Superclass::UpdateFromMRML(caller, event, callData);
 
- this->NeedToRenderOn();
+  this->NeedToRenderOn();
 
- this->BuildMiddlePoint();
- this->BuildSlicingPlane();
+  this->BuildMiddlePoint();
+  this->BuildSlicingPlane();
 
- vtkMRMLMarkupsTestLineNode* liverMarkupsTestLineNode=
-   vtkMRMLMarkupsTestLineNode::SafeDownCast(this->GetMarkupsNode());
+  vtkMRMLMarkupsTestLineNode* liverMarkupsTestLineNode =
+    vtkMRMLMarkupsTestLineNode::SafeDownCast(this->GetMarkupsNode());
 
- if (!liverMarkupsTestLineNode)
- {
-   return;
- }
+  if (!liverMarkupsTestLineNode)
+  {
+    return;
+  }
 
- this->TargetOrgan = liverMarkupsTestLineNode->GetTargetOrgan();
- this->Cutter->SetInputData(this->TargetOrgan);
+  this->TargetOrgan = liverMarkupsTestLineNode->GetTargetOrgan();
+  this->Cutter->SetInputData(this->TargetOrgan);
 }
 
 //------------------------------------------------------------------------------
@@ -212,7 +209,7 @@ void vtkSlicerTestLineRepresentation3D::BuildMiddlePoint()
 
   double p1[3] = { 0.0 };
   double p2[3] = { 0.0 };
-  double center[3] = {0.0};
+  double center[3] = { 0.0 };
   markupsNode->GetNthControlPointPositionWorld(0, p1);
   markupsNode->GetNthControlPointPositionWorld(1, p2);
   center[0] = (p1[0] + p2[0]) / 2.0;
@@ -239,8 +236,8 @@ void vtkSlicerTestLineRepresentation3D::BuildSlicingPlane()
 
   double p1[3] = { 0.0 };
   double p2[3] = { 0.0 };
-  double origin[3] = {0.0};
-  double normal[3] = {0.0};
+  double origin[3] = { 0.0 };
+  double normal[3] = { 0.0 };
 
   markupsNode->GetNthControlPointPositionWorld(0, p1);
   markupsNode->GetNthControlPointPositionWorld(1, p2);

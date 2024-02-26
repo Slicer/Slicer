@@ -30,8 +30,7 @@
 class qSlicerExtensionsManagerDialogPrivate;
 class qSlicerExtensionsManagerModel;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManagerDialog
-  : public QDialog
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManagerDialog : public QDialog
 {
   Q_OBJECT
   Q_PROPERTY(bool restartRequested READ restartRequested WRITE setRestartRequested)
@@ -45,11 +44,11 @@ public:
   /// Destructor
   ~qSlicerExtensionsManagerDialog() override;
 
-  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
+  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel() const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
   /// Return True if the application is expected to be restarted.
-  bool restartRequested()const;
+  bool restartRequested() const;
 
   /// \sa restartRequested()
   void setRestartRequested(bool value);

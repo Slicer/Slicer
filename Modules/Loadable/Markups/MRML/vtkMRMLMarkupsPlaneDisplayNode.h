@@ -29,7 +29,7 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneDisplayNode : public vtkMRMLMarkupsDisplayNode
+class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:
   static vtkMRMLMarkupsPlaneDisplayNode* New();
@@ -84,13 +84,12 @@ public:
   //@}
 
 protected:
-
   bool NormalVisibility{ true };
   double NormalOpacity{ 1.0 };
 
   vtkMRMLMarkupsPlaneDisplayNode();
   ~vtkMRMLMarkupsPlaneDisplayNode() override;
   vtkMRMLMarkupsPlaneDisplayNode(const vtkMRMLMarkupsPlaneDisplayNode&);
-  void operator= (const vtkMRMLMarkupsPlaneDisplayNode&);
+  void operator=(const vtkMRMLMarkupsPlaneDisplayNode&);
 };
 #endif

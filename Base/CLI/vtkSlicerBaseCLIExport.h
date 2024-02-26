@@ -18,13 +18,13 @@
 #include <vtkSlicerBaseCLIConfigure.h>
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
-#if defined(SlicerBaseCLI_EXPORTS)
-#define VTK_SLICER_BASE_CLI_EXPORT __declspec( dllexport )
+# if defined(SlicerBaseCLI_EXPORTS)
+#  define VTK_SLICER_BASE_CLI_EXPORT __declspec(dllexport)
+# else
+#  define VTK_SLICER_BASE_CLI_EXPORT __declspec(dllimport)
+# endif
 #else
-#define VTK_SLICER_BASE_CLI_EXPORT __declspec( dllimport )
-#endif
-#else
-#define VTK_SLICER_BASE_CLI_EXPORT
+# define VTK_SLICER_BASE_CLI_EXPORT
 #endif
 
 #endif

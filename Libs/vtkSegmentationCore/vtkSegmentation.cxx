@@ -61,12 +61,12 @@ vtkSegmentation::vtkSegmentation()
   this->Converter = vtkSegmentationConverter::New();
 
   this->SegmentCallbackCommand = vtkCallbackCommand::New();
-  this->SegmentCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->SegmentCallbackCommand->SetCallback( vtkSegmentation::OnSegmentModified );
+  this->SegmentCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
+  this->SegmentCallbackCommand->SetCallback(vtkSegmentation::OnSegmentModified);
 
   this->SourceRepresentationCallbackCommand = vtkCallbackCommand::New();
-  this->SourceRepresentationCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->SourceRepresentationCallbackCommand->SetCallback( vtkSegmentation::OnSourceRepresentationModified );
+  this->SourceRepresentationCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
+  this->SourceRepresentationCallbackCommand->SetCallback(vtkSegmentation::OnSourceRepresentationModified);
 
   this->SourceRepresentationModifiedEnabled = true;
   this->SegmentModifiedEnabled = true;
@@ -142,7 +142,9 @@ void vtkSegmentation::DeepCopy(vtkSegmentation* aSegmentation)
 
   // Deep copy segments list
   std::map<vtkDataObject*, vtkDataObject*> copiedDataObjects;
-  for (std::deque< std::string >::iterator segmentIdIt = aSegmentation->SegmentIds.begin(); segmentIdIt != aSegmentation->SegmentIds.end(); ++segmentIdIt)
+  for (std::deque<std::string>::iterator segmentIdIt = aSegmentation->SegmentIds.begin();
+       segmentIdIt != aSegmentation->SegmentIds.end();
+       ++segmentIdIt)
   {
     vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::New();
     vtkSegmentation::CopySegment(segment, aSegmentation->Segments[*segmentIdIt], nullptr, copiedDataObjects);
@@ -168,8 +170,8 @@ void vtkSegmentation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SourceRepresentationName:  " << this->SourceRepresentationName << "\n";
   os << indent << "Number of segments: " << this->Segments.size() << "\n";
   os << indent << "Segments:\n";
-  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin();
-    segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
+  for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
+       ++segmentIdIt)
   {
     os << indent.GetNextIndent() << (*segmentIdIt) << ":\n";
     vtkSegment* segment = this->Segments[*segmentIdIt];
@@ -206,8 +208,9 @@ void vtkSegmentation::GetBounds(double bounds[6])
 //---------------------------------------------------------------------------
 void vtkSegmentation::SetSourceRepresentationName(const std::string& representationName)
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SourceRepresentationName to " << representationName );
-  if ( this->SourceRepresentationName == representationName )
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SourceRepresentationName to "
+                << representationName);
+  if (this->SourceRepresentationName == representationName)
   {
     // no change in representation name
     return;
@@ -273,7 +276,7 @@ bool vtkSegmentation::SetSegmentModifiedEnabled(bool enabled)
 //---------------------------------------------------------------------------
 std::string vtkSegmentation::GenerateUniqueSegmentID(std::string id)
 {
-  if (!id.empty() &&  this->Segments.find(id) == this->Segments.end())
+  if (!id.empty() && this->Segments.find(id) == this->Segments.end())
   {
     // the provided id is already unique
     return id;
@@ -309,7 +312,9 @@ std::string vtkSegmentation::GenerateUniqueSegmentID(std::string id)
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""*/, std::string insertBeforeSegmentId/*=""*/)
+bool vtkSegmentation::AddSegment(vtkSegment* segment,
+                                 std::string segmentId /*=""*/,
+                                 std::string insertBeforeSegmentId /*=""*/)
 {
   if (!segment)
   {
@@ -347,14 +352,19 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
     }
 
     for (std::vector<std::string>::iterator reprIt = requiredRepresentationNames.begin();
-      reprIt != requiredRepresentationNames.end(); ++reprIt)
+         reprIt != requiredRepresentationNames.end();
+         ++reprIt)
     {
       vtkSmartPointer<vtkDataObject> emptyRepresentation;
-      if (this->GetSourceRepresentationName() == vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
+      if (this->GetSourceRepresentationName()
+          == vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
       {
-        for (std::deque<std::string>::iterator segmentIDIt = this->SegmentIds.begin(); segmentIDIt != this->SegmentIds.end(); ++segmentIDIt)
+        for (std::deque<std::string>::iterator segmentIDIt = this->SegmentIds.begin();
+             segmentIDIt != this->SegmentIds.end();
+             ++segmentIDIt)
         {
-          emptyRepresentation = segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
+          emptyRepresentation =
+            segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
           if (emptyRepresentation)
           {
             break;
@@ -387,16 +397,17 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
       // Collect all available paths to source representation
       vtkNew<vtkSegmentationConversionPaths> allPathsToMaster;
       for (std::vector<std::string>::iterator reprIt = containedRepresentationNamesInAddedSegment.begin();
-        reprIt != containedRepresentationNamesInAddedSegment.end(); ++reprIt)
+           reprIt != containedRepresentationNamesInAddedSegment.end();
+           ++reprIt)
       {
         vtkNew<vtkSegmentationConversionPaths> pathsFromCurrentRepresentationToMaster;
-        this->Converter->GetPossibleConversions((*reprIt), this->SourceRepresentationName, pathsFromCurrentRepresentationToMaster);
+        this->Converter->GetPossibleConversions(
+          (*reprIt), this->SourceRepresentationName, pathsFromCurrentRepresentationToMaster);
         // Append paths from current representation to master to all found paths to master
         allPathsToMaster->AddPaths(pathsFromCurrentRepresentationToMaster);
       }
       // Get cheapest path from any representation to master and try to convert
-      vtkSegmentationConversionPath* cheapestPath =
-        vtkSegmentationConverter::GetCheapestPath(allPathsToMaster);
+      vtkSegmentationConversionPath* cheapestPath = vtkSegmentationConverter::GetCheapestPath(allPathsToMaster);
       if (!cheapestPath || !this->ConvertSegmentUsingPath(segment, cheapestPath))
       {
         // Return if cannot convert to source representation
@@ -418,7 +429,8 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
 
         // Convert to representations that exist in this segmentation
         for (std::vector<std::string>::iterator reprIt = requiredRepresentationNames.begin();
-          reprIt != requiredRepresentationNames.end(); ++reprIt)
+             reprIt != requiredRepresentationNames.end();
+             ++reprIt)
         {
           // If representation exists then there is nothing to do
           if (segment->GetRepresentation(*reprIt))
@@ -428,7 +440,8 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
 
           // Convert using the cheapest available path
           vtkNew<vtkSegmentationConversionPaths> pathsToCurrentRepresentation;
-          this->Converter->GetPossibleConversions(this->SourceRepresentationName, (*reprIt), pathsToCurrentRepresentation);
+          this->Converter->GetPossibleConversions(
+            this->SourceRepresentationName, (*reprIt), pathsToCurrentRepresentation);
           vtkSegmentationConversionPath* cheapestPath =
             vtkSegmentationConverter::GetCheapestPath(pathsToCurrentRepresentation);
           if (!cheapestPath)
@@ -442,7 +455,8 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
 
         // Remove representations that do not exist in this segmentation
         for (std::vector<std::string>::iterator reprIt = containedRepresentationNamesInAddedSegment.begin();
-          reprIt != containedRepresentationNamesInAddedSegment.end(); ++reprIt)
+             reprIt != containedRepresentationNamesInAddedSegment.end();
+             ++reprIt)
         {
           if (!firstSegment->GetRepresentation(*reprIt))
           {
@@ -455,8 +469,11 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
 
   if (!representationsCreated)
   {
-    SegmentMap::iterator segmentIt = std::find_if(this->Segments.begin(), this->Segments.end(),
-      [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment> >& segmentIdPtr) { return segmentIdPtr.second == segment; });
+    SegmentMap::iterator segmentIt =
+      std::find_if(this->Segments.begin(),
+                   this->Segments.end(),
+                   [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment>>& segmentIdPtr)
+                   { return segmentIdPtr.second == segment; });
     if (segmentIt != this->Segments.end())
     {
       this->Segments.erase(segmentIt);
@@ -473,7 +490,8 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
   {
     if (segment->GetName() == nullptr)
     {
-      vtkErrorMacro("AddSegment: Unable to add segment without a key; neither key is given nor segment name is defined!");
+      vtkErrorMacro(
+        "AddSegment: Unable to add segment without a key; neither key is given nor segment name is defined!");
       return false;
     }
     key = segment->GetName();
@@ -486,7 +504,8 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
   }
   else
   {
-    std::deque< std::string >::iterator insertionPosition = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), insertBeforeSegmentId);
+    std::deque<std::string>::iterator insertionPosition =
+      std::find(this->SegmentIds.begin(), this->SegmentIds.end(), insertBeforeSegmentId);
     this->SegmentIds.insert(insertionPosition, key);
   }
 
@@ -522,8 +541,11 @@ void vtkSegmentation::RemoveSegment(vtkSegment* segment)
     return;
   }
 
-  SegmentMap::iterator segmentIt = std::find_if(this->Segments.begin(), this->Segments.end(),
-    [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment> >& segmentIdPtr) { return segmentIdPtr.second == segment; });
+  SegmentMap::iterator segmentIt =
+    std::find_if(this->Segments.begin(),
+                 this->Segments.end(),
+                 [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment>>& segmentIdPtr)
+                 { return segmentIdPtr.second == segment; });
   if (segmentIt == this->Segments.end())
   {
     vtkWarningMacro("RemoveSegment: Segment to remove cannot be found!");
@@ -550,7 +572,8 @@ void vtkSegmentation::RemoveSegment(SegmentMap::iterator segmentIt)
   this->SeparateSegmentLabelmap(segmentId);
 
   // Remove segment
-  this->SegmentIds.erase(std::remove(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId), this->SegmentIds.end());
+  this->SegmentIds.erase(std::remove(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId),
+                         this->SegmentIds.end());
   this->Segments.erase(segmentIt);
   if (this->Segments.empty())
   {
@@ -632,7 +655,7 @@ void vtkSegmentation::OnSourceRepresentationModified(vtkObject* vtkNotUsed(calle
 //---------------------------------------------------------------------------
 void vtkSegmentation::UpdateSourceRepresentationObservers()
 {
-  std::set<vtkSmartPointer<vtkDataObject> > newSourceRepresentations;
+  std::set<vtkSmartPointer<vtkDataObject>> newSourceRepresentations;
   // Add/remove observation of source representation in all segments
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
   {
@@ -646,7 +669,8 @@ void vtkSegmentation::UpdateSourceRepresentationObservers()
   // Remove observers from source representations that are no longer in any segments
   for (vtkSmartPointer<vtkDataObject> sourceRepresentation : this->SourceRepresentationCache)
   {
-    if (std::find(newSourceRepresentations.begin(), newSourceRepresentations.end(), sourceRepresentation) == newSourceRepresentations.end())
+    if (std::find(newSourceRepresentations.begin(), newSourceRepresentations.end(), sourceRepresentation)
+        == newSourceRepresentations.end())
     {
       sourceRepresentation->RemoveObservers(vtkCommand::ModifiedEvent, this->SourceRepresentationCallbackCommand);
     }
@@ -718,7 +742,7 @@ std::string vtkSegmentation::GetNthSegmentID(unsigned int index) const
 //---------------------------------------------------------------------------
 int vtkSegmentation::GetSegmentIndex(const std::string& segmentId)
 {
-  std::deque< std::string >::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
+  std::deque<std::string>::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
   if (foundIt == this->SegmentIds.end())
   {
     return -1;
@@ -731,11 +755,11 @@ bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, unsigned int
 {
   if (newIndex >= this->SegmentIds.size())
   {
-    vtkErrorMacro("vtkSegmentation::SetSegmentIndex failed: index " << newIndex
-      << " is out of range [0," << this->SegmentIds.size()-1 << "]");
+    vtkErrorMacro("vtkSegmentation::SetSegmentIndex failed: index " << newIndex << " is out of range [0,"
+                                                                    << this->SegmentIds.size() - 1 << "]");
     return false;
   }
-  std::deque< std::string >::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
+  std::deque<std::string>::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
   if (foundIt == this->SegmentIds.end())
   {
     vtkErrorMacro("vtkSegmentation::SetSegmentIndex failed: segment not found by ID " << segmentId);
@@ -749,7 +773,8 @@ bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, unsigned int
 }
 
 //---------------------------------------------------------------------------
-void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove, std::string insertBeforeSegmentId /* ="" */)
+void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
+                                      std::string insertBeforeSegmentId /* ="" */)
 {
   if (segmentIdsToMove.empty())
   {
@@ -757,16 +782,17 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
   }
 
   // Remove all segmentIdsToMove from the segment ID list
-  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
-    /*upon deletion the increment is done already, so don't increment here*/)
+  for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
+       /*upon deletion the increment is done already, so don't increment here*/)
   {
-      std::string t = *segmentIdIt;
-      std::vector<std::string>::iterator foundSegmentIdToMove = std::find(segmentIdsToMove.begin(), segmentIdsToMove.end(), t);
+    std::string t = *segmentIdIt;
+    std::vector<std::string>::iterator foundSegmentIdToMove =
+      std::find(segmentIdsToMove.begin(), segmentIdsToMove.end(), t);
     if (foundSegmentIdToMove != segmentIdsToMove.end())
     {
       // this segment gets a new position, so remove it from current position
       // ### Slicer 4.4: Simplify this logic when adding support for C++11 across all supported platform/compilers
-      std::deque< std::string >::iterator segmentIdItToRemove = segmentIdIt;
+      std::deque<std::string>::iterator segmentIdItToRemove = segmentIdIt;
       ++segmentIdIt;
       this->SegmentIds.erase(segmentIdItToRemove);
       if (this->SegmentIds.empty())
@@ -782,7 +808,7 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
   }
 
   // Find insert position
-  std::deque< std::string >::iterator insertPosition = this->SegmentIds.end();
+  std::deque<std::string>::iterator insertPosition = this->SegmentIds.end();
   if (!insertBeforeSegmentId.empty())
   {
     insertPosition = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), insertBeforeSegmentId);
@@ -791,7 +817,8 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
 
   // Add segments at the insert position
   for (std::vector<std::string>::const_iterator segmentIdsToMoveIt = segmentIdsToMove.begin();
-    segmentIdsToMoveIt != segmentIdsToMove.end(); ++segmentIdsToMoveIt)
+       segmentIdsToMoveIt != segmentIdsToMove.end();
+       ++segmentIdsToMoveIt)
   {
     if (this->Segments.find(*segmentIdsToMoveIt) == this->Segments.end())
     {
@@ -820,8 +847,11 @@ std::string vtkSegmentation::GetSegmentIdBySegment(vtkSegment* segment)
     return "";
   }
 
-  SegmentMap::iterator segmentIt = std::find_if(this->Segments.begin(), this->Segments.end(),
-    [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment> >& segmentIdPtr) { return segmentIdPtr.second == segment; });
+  SegmentMap::iterator segmentIt =
+    std::find_if(this->Segments.begin(),
+                 this->Segments.end(),
+                 [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment>>& segmentIdPtr)
+                 { return segmentIdPtr.second == segment; });
   if (segmentIt == this->Segments.end())
   {
     vtkDebugMacro("GetSegmentIdBySegment: Segment cannot be found!");
@@ -851,7 +881,7 @@ std::string vtkSegmentation::GetSegmentIdBySegmentName(std::string name)
 }
 
 //---------------------------------------------------------------------------
-std::vector<vtkSegment*> vtkSegmentation::GetSegmentsByTag(std::string tag, std::string value/*=""*/)
+std::vector<vtkSegment*> vtkSegmentation::GetSegmentsByTag(std::string tag, std::string value /*=""*/)
 {
   std::vector<vtkSegment*> foundSegments;
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
@@ -875,10 +905,11 @@ std::vector<vtkSegment*> vtkSegmentation::GetSegmentsByTag(std::string tag, std:
 }
 
 //---------------------------------------------------------------------------
-void vtkSegmentation::GetSegmentIDs(std::vector<std::string> &segmentIds)
+void vtkSegmentation::GetSegmentIDs(std::vector<std::string>& segmentIds)
 {
   segmentIds.clear();
-  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
+  for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
+       ++segmentIdIt)
   {
     segmentIds.push_back(*segmentIdIt);
   }
@@ -892,7 +923,8 @@ void vtkSegmentation::GetSegmentIDs(vtkStringArray* segmentIds)
     return;
   }
   segmentIds->Initialize();
-  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
+  for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
+       ++segmentIdIt)
   {
     segmentIds->InsertNextValue(segmentIdIt->c_str());
   }
@@ -928,7 +960,8 @@ void vtkSegmentation::ApplyLinearTransform(vtkAbstractTransform* transform)
     vtkDataObject* currentSourceRepresentation = it->second->GetRepresentation(this->SourceRepresentationName);
     if (!currentSourceRepresentation)
     {
-      vtkErrorMacro("ApplyLinearTransform: Cannot get source representation (" << this->SourceRepresentationName << ") from segment!");
+      vtkErrorMacro("ApplyLinearTransform: Cannot get source representation (" << this->SourceRepresentationName
+                                                                               << ") from segment!");
       return;
     }
     if (transformedDataObjects.find(currentSourceRepresentation) != transformedDataObjects.end())
@@ -938,7 +971,8 @@ void vtkSegmentation::ApplyLinearTransform(vtkAbstractTransform* transform)
     transformedDataObjects.insert(currentSourceRepresentation);
 
     vtkPolyData* currentSourceRepresentationPolyData = vtkPolyData::SafeDownCast(currentSourceRepresentation);
-    vtkOrientedImageData* currentSourceRepresentationOrientedImageData = vtkOrientedImageData::SafeDownCast(currentSourceRepresentation);
+    vtkOrientedImageData* currentSourceRepresentationOrientedImageData =
+      vtkOrientedImageData::SafeDownCast(currentSourceRepresentation);
     // Poly data
     if (currentSourceRepresentationPolyData)
     {
@@ -951,11 +985,13 @@ void vtkSegmentation::ApplyLinearTransform(vtkAbstractTransform* transform)
     // Oriented image data
     else if (currentSourceRepresentationOrientedImageData)
     {
-      vtkOrientedImageDataResample::TransformOrientedImage(currentSourceRepresentationOrientedImageData, linearTransform);
+      vtkOrientedImageDataResample::TransformOrientedImage(currentSourceRepresentationOrientedImageData,
+                                                           linearTransform);
     }
     else
     {
-      vtkErrorMacro("ApplyLinearTransform: Representation data type '" << currentSourceRepresentation->GetClassName() << "' not supported!");
+      vtkErrorMacro("ApplyLinearTransform: Representation data type '" << currentSourceRepresentation->GetClassName()
+                                                                       << "' not supported!");
     }
   }
 }
@@ -968,7 +1004,8 @@ void vtkSegmentation::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   vtkSmartPointer<vtkTransform> linearTransform = vtkSmartPointer<vtkTransform>::New();
   if (vtkOrientedImageDataResample::IsTransformLinear(transform, linearTransform))
   {
-    vtkWarningMacro("ApplyNonLinearTransform: Linear input transform is detected in function that should only handle non-linear transforms!");
+    vtkWarningMacro("ApplyNonLinearTransform: Linear input transform is detected in function that should only handle "
+                    "non-linear transforms!");
   }
 
   // Apply transform on reference image geometry conversion parameter (to preserve validity of shared labelmap)
@@ -981,7 +1018,8 @@ void vtkSegmentation::ApplyNonLinearTransform(vtkAbstractTransform* transform)
     vtkDataObject* currentSourceRepresentation = it->second->GetRepresentation(this->SourceRepresentationName);
     if (!currentSourceRepresentation)
     {
-      vtkErrorMacro("ApplyNonLinearTransform: Cannot get source representation (" << this->SourceRepresentationName << ") from segment!");
+      vtkErrorMacro("ApplyNonLinearTransform: Cannot get source representation (" << this->SourceRepresentationName
+                                                                                  << ") from segment!");
       return;
     }
     if (transformedDataObjects.find(currentSourceRepresentation) != transformedDataObjects.end())
@@ -991,7 +1029,8 @@ void vtkSegmentation::ApplyNonLinearTransform(vtkAbstractTransform* transform)
     transformedDataObjects.insert(currentSourceRepresentation);
 
     vtkPolyData* currentSourceRepresentationPolyData = vtkPolyData::SafeDownCast(currentSourceRepresentation);
-    vtkOrientedImageData* currentSourceRepresentationOrientedImageData = vtkOrientedImageData::SafeDownCast(currentSourceRepresentation);
+    vtkOrientedImageData* currentSourceRepresentationOrientedImageData =
+      vtkOrientedImageData::SafeDownCast(currentSourceRepresentation);
     // Poly data
     if (currentSourceRepresentationPolyData)
     {
@@ -1008,13 +1047,16 @@ void vtkSegmentation::ApplyNonLinearTransform(vtkAbstractTransform* transform)
     }
     else
     {
-      vtkErrorMacro("ApplyLinearTransform: Representation data type '" << currentSourceRepresentation->GetClassName() << "' not supported!");
+      vtkErrorMacro("ApplyLinearTransform: Representation data type '" << currentSourceRepresentation->GetClassName()
+                                                                       << "' not supported!");
     }
   }
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs, vtkSegmentationConversionPath* path, bool overwriteExisting)
+bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs,
+                                               vtkSegmentationConversionPath* path,
+                                               bool overwriteExisting)
 {
   if (segmentIDs.empty())
   {
@@ -1039,8 +1081,8 @@ bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentI
       vtkSegment* segment = this->GetSegment(segmentID);
 
       // Get source representation from segment. It is expected to exist
-      vtkDataObject* sourceRepresentation = segment->GetRepresentation(
-        currentConversionRule->GetSourceRepresentationName());
+      vtkDataObject* sourceRepresentation =
+        segment->GetRepresentation(currentConversionRule->GetSourceRepresentationName());
       if (!sourceRepresentation)
       {
         vtkErrorMacro("ConvertSegmentsUsingPath: Source representation does not exist!");
@@ -1048,8 +1090,8 @@ bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentI
       }
 
       // Get target representation
-      vtkSmartPointer<vtkDataObject> targetRepresentation = segment->GetRepresentation(
-        currentConversionRule->GetTargetRepresentationName());
+      vtkSmartPointer<vtkDataObject> targetRepresentation =
+        segment->GetRepresentation(currentConversionRule->GetTargetRepresentationName());
       // If target representation exists and we do not overwrite existing representations,
       // then no conversion is necessary with this conversion rule
       if (targetRepresentation.GetPointer() && !overwriteExisting)
@@ -1059,14 +1101,15 @@ bool vtkSegmentation::ConvertSegmentsUsingPath(std::vector<std::string> segmentI
       currentConversionRule->Convert(segment);
     }
     currentConversionRule->PostConvert(this);
-
   }
 
   return true;
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSegmentation::ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentationConversionPath* path, bool overwriteExisting/*=false*/)
+bool vtkSegmentation::ConvertSegmentUsingPath(vtkSegment* segment,
+                                              vtkSegmentationConversionPath* path,
+                                              bool overwriteExisting /*=false*/)
 {
   // Execute each conversion step in the selected path
   int numberOfRules = (path == nullptr ? 0 : path->GetNumberOfRules());
@@ -1080,8 +1123,8 @@ bool vtkSegmentation::ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentati
     }
 
     // Get source representation from segment. It is expected to exist
-    vtkDataObject* sourceRepresentation = segment->GetRepresentation(
-      currentConversionRule->GetSourceRepresentationName() );
+    vtkDataObject* sourceRepresentation =
+      segment->GetRepresentation(currentConversionRule->GetSourceRepresentationName());
     if (!sourceRepresentation)
     {
       vtkErrorMacro("ConvertSegmentUsingPath: Source representation does not exist!");
@@ -1089,8 +1132,8 @@ bool vtkSegmentation::ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentati
     }
 
     // Get target representation
-    vtkSmartPointer<vtkDataObject> targetRepresentation = segment->GetRepresentation(
-      currentConversionRule->GetTargetRepresentationName() );
+    vtkSmartPointer<vtkDataObject> targetRepresentation =
+      segment->GetRepresentation(currentConversionRule->GetTargetRepresentationName());
     // If target representation exists and we do not overwrite existing representations,
     // then no conversion is necessary with this conversion rule
     if (targetRepresentation.GetPointer() && !overwriteExisting)
@@ -1108,7 +1151,7 @@ bool vtkSegmentation::ConvertSegmentUsingPath(vtkSegment* segment, vtkSegmentati
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentationName, bool alwaysConvert/*=false*/)
+bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentationName, bool alwaysConvert /*=false*/)
 {
   if (!this->Converter)
   {
@@ -1148,7 +1191,8 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
     vtkNew<vtkSegmentationConversionPaths> currentPaths;
     std::vector<std::string> representationNames;
     this->GetContainedRepresentationNames(representationNames);
-    for (std::vector<std::string>::iterator reprIt=representationNames.begin(); reprIt!=representationNames.end(); ++reprIt)
+    for (std::vector<std::string>::iterator reprIt = representationNames.begin(); reprIt != representationNames.end();
+         ++reprIt)
     {
       if (!reprIt->compare(targetRepresentationName))
       {
@@ -1167,7 +1211,7 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
 
   // Perform conversion on all segments (no overwrites)
   // Delay segment modified event invocation until all segments have the new representation.
-  std::deque< std::string > modifiedSegmentIds;
+  std::deque<std::string> modifiedSegmentIds;
 
   bool wasSegmentModifiedEnabled = this->SetSegmentModifiedEnabled(false);
   std::map<std::string, vtkDataObject*> representationsBefore;
@@ -1189,7 +1233,8 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
     vtkDataObject* representationBefore = representationsBefore[segmentIt->first];
     vtkDataObject* representationAfter = segmentIt->second->GetRepresentation(targetRepresentationName);
     if (representationBefore != representationAfter
-      || (representationBefore != nullptr && representationAfter != nullptr && representationBefore->GetMTime() != representationAfter->GetMTime()) )
+        || (representationBefore != nullptr && representationAfter != nullptr
+            && representationBefore->GetMTime() != representationAfter->GetMTime()))
     {
       // representation has been modified
       modifiedSegmentIds.push_back(segmentIt->first);
@@ -1199,8 +1244,9 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
   this->SetSegmentModifiedEnabled(wasSegmentModifiedEnabled);
 
   // All the updates are completed, now invoke modified events
-  for (std::deque< std::string >::iterator segmentIdIt = modifiedSegmentIds.begin();
-    segmentIdIt != modifiedSegmentIds.end(); ++segmentIdIt)
+  for (std::deque<std::string>::iterator segmentIdIt = modifiedSegmentIds.begin();
+       segmentIdIt != modifiedSegmentIds.end();
+       ++segmentIdIt)
   {
     const char* segmentId = segmentIdIt->c_str();
     vtkSegment* segment = GetSegment(segmentId);
@@ -1217,7 +1263,7 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
 
 //---------------------------------------------------------------------------
 bool vtkSegmentation::CreateRepresentation(vtkSegmentationConversionPath* path,
-  vtkSegmentationConversionParameters* parameters)
+                                           vtkSegmentationConversionParameters* parameters)
 {
   if (!this->Converter)
   {
@@ -1253,7 +1299,7 @@ void vtkSegmentation::RemoveRepresentation(const std::string& representationName
   // We temporarily disable modification of segments to avoid invoking events
   // when segmentation is in an inconsistent state (when segments have different
   // representations). We call Modified events after all the updates are completed.
-  std::deque< vtkSegment* > modifiedSegments;
+  std::deque<vtkSegment*> modifiedSegments;
   bool wasSegmentModifiedEnabled = this->SetSegmentModifiedEnabled(false);
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
   {
@@ -1265,8 +1311,8 @@ void vtkSegmentation::RemoveRepresentation(const std::string& representationName
   this->SetSegmentModifiedEnabled(wasSegmentModifiedEnabled);
 
   // All the updates are completed, now invoke modified events
-  for (std::deque< vtkSegment* >::iterator segmentIt = modifiedSegments.begin(); segmentIt != modifiedSegments.end();
-    ++segmentIt)
+  for (std::deque<vtkSegment*>::iterator segmentIt = modifiedSegments.begin(); segmentIt != modifiedSegments.end();
+       ++segmentIt)
   {
     (*segmentIt)->Modified();
   }
@@ -1299,13 +1345,15 @@ void vtkSegmentation::InvalidateNonSourceRepresentations()
 bool vtkSegmentation::IsSharedBinaryLabelmap(std::string segmentId)
 {
   std::vector<std::string> sharedLabelmapSegmentIds;
-    this->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentId, sharedLabelmapSegmentIds, false);
+  this->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentId, sharedLabelmapSegmentIds, false);
   return sharedLabelmapSegmentIds.empty();
 }
 
 //---------------------------------------------------------------------------
-void vtkSegmentation::GetSegmentIDsSharingRepresentation(std::string originalSegmentId, std::string representationName,
-  std::vector<std::string>& sharedSegmentIds, bool includeOriginalSegmentId/*=true*/)
+void vtkSegmentation::GetSegmentIDsSharingRepresentation(std::string originalSegmentId,
+                                                         std::string representationName,
+                                                         std::vector<std::string>& sharedSegmentIds,
+                                                         bool includeOriginalSegmentId /*=true*/)
 {
   sharedSegmentIds.clear();
 
@@ -1338,18 +1386,22 @@ void vtkSegmentation::GetSegmentIDsSharingRepresentation(std::string originalSeg
 }
 
 //---------------------------------------------------------------------------
-void vtkSegmentation::GetSegmentIDsSharingBinaryLabelmapRepresentation(std::string originalSegmentId, std::vector<std::string>& sharedSegmentIds,
-  bool includeOriginalSegmentId/*=true*/)
+void vtkSegmentation::GetSegmentIDsSharingBinaryLabelmapRepresentation(std::string originalSegmentId,
+                                                                       std::vector<std::string>& sharedSegmentIds,
+                                                                       bool includeOriginalSegmentId /*=true*/)
 {
-  this->GetSegmentIDsSharingRepresentation(originalSegmentId, vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), sharedSegmentIds,
-    includeOriginalSegmentId/*=true*/);
+  this->GetSegmentIDsSharingRepresentation(originalSegmentId,
+                                           vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(),
+                                           sharedSegmentIds,
+                                           includeOriginalSegmentId /*=true*/);
 }
 
 //---------------------------------------------------------------------------
 void vtkSegmentation::MergeSegmentLabelmaps(std::vector<std::string> mergeSegmentIds)
 {
   vtkNew<vtkOrientedImageData> sharedLabelmapRepresentation;
-  this->GenerateMergedLabelmap(sharedLabelmapRepresentation, EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, nullptr, mergeSegmentIds);
+  this->GenerateMergedLabelmap(
+    sharedLabelmapRepresentation, EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, nullptr, mergeSegmentIds);
 
   int value = 0;
   for (std::string segmentId : mergeSegmentIds)
@@ -1357,18 +1409,18 @@ void vtkSegmentation::MergeSegmentLabelmaps(std::vector<std::string> mergeSegmen
     vtkSegment* segment = this->GetSegment(segmentId);
     ++value;
     segment->SetLabelValue(value);
-    segment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), sharedLabelmapRepresentation);
+    segment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(),
+                               sharedLabelmapRepresentation);
   }
   sharedLabelmapRepresentation->Modified();
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegmentation::GenerateMergedLabelmap(
-  vtkOrientedImageData* sharedImageData,
-  int extentComputationMode,
-  vtkOrientedImageData* sharedLabelmapGeometry/*=nullptr*/,
-  const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/,
-  vtkIntArray* labelValues/*=nullptr*/)
+bool vtkSegmentation::GenerateMergedLabelmap(vtkOrientedImageData* sharedImageData,
+                                             int extentComputationMode,
+                                             vtkOrientedImageData* sharedLabelmapGeometry /*=nullptr*/,
+                                             const std::vector<std::string>& segmentIDs /*=std::vector<std::string>()*/,
+                                             vtkIntArray* labelValues /*=nullptr*/)
 {
   if (!sharedImageData)
   {
@@ -1421,17 +1473,18 @@ bool vtkSegmentation::GenerateMergedLabelmap(
     vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, commonGeometryImage, false);
   }
   commonGeometryImage->GetImageToWorldMatrix(sharedImageToWorldMatrix);
-  int referenceDimensions[3] = { 0,0,0 };
+  int referenceDimensions[3] = { 0, 0, 0 };
   commonGeometryImage->GetDimensions(referenceDimensions);
-  int referenceExtent[6] = { 0,-1,0,-1,0,-1 };
+  int referenceExtent[6] = { 0, -1, 0, -1, 0, -1 };
   commonGeometryImage->GetExtent(referenceExtent);
 
   // Allocate image data if empty or if reference extent changed
-  int imageDataExtent[6] = { 0,-1,0,-1,0,-1 };
+  int imageDataExtent[6] = { 0, -1, 0, -1, 0, -1 };
   sharedImageData->GetExtent(imageDataExtent);
-  if (sharedImageData->GetScalarType() != VTK_SHORT
-    || imageDataExtent[0] != referenceExtent[0] || imageDataExtent[1] != referenceExtent[1] || imageDataExtent[2] != referenceExtent[2]
-    || imageDataExtent[3] != referenceExtent[3] || imageDataExtent[4] != referenceExtent[4] || imageDataExtent[5] != referenceExtent[5])
+  if (sharedImageData->GetScalarType() != VTK_SHORT || imageDataExtent[0] != referenceExtent[0]
+      || imageDataExtent[1] != referenceExtent[1] || imageDataExtent[2] != referenceExtent[2]
+      || imageDataExtent[3] != referenceExtent[3] || imageDataExtent[4] != referenceExtent[4]
+      || imageDataExtent[5] != referenceExtent[5])
   {
     if (sharedImageData->GetPointData()->GetScalars() && sharedImageData->GetScalarType() != VTK_SHORT)
     {
@@ -1462,7 +1515,8 @@ bool vtkSegmentation::GenerateMergedLabelmap(
   // Create shared labelmap
   bool success = true;
   short segmentIndex = 0;
-  for (std::vector<std::string>::iterator segmentIdIt = sharedSegmentIDs.begin(); segmentIdIt != sharedSegmentIDs.end(); ++segmentIdIt, ++segmentIndex)
+  for (std::vector<std::string>::iterator segmentIdIt = sharedSegmentIDs.begin(); segmentIdIt != sharedSegmentIDs.end();
+       ++segmentIdIt, ++segmentIndex)
   {
     std::string currentSegmentId = *segmentIdIt;
     vtkSegment* currentSegment = this->GetSegment(currentSegmentId);
@@ -1493,9 +1547,10 @@ bool vtkSegmentation::GenerateMergedLabelmap(
 
       // Resample segment labelmap for merging
       if (!vtkOrientedImageDataResample::ResampleOrientedImageToReferenceGeometry(
-        representationBinaryLabelmap, sharedImageToWorldMatrix, resampledBinaryLabelmap))
+            representationBinaryLabelmap, sharedImageToWorldMatrix, resampledBinaryLabelmap))
       {
-        vtkErrorMacro("GenerateSharedLabelmap: ResampleOrientedImageToReferenceGeometry failed for segment " << currentSegmentId);
+        vtkErrorMacro("GenerateSharedLabelmap: ResampleOrientedImageToReferenceGeometry failed for segment "
+                      << currentSegmentId);
         success = false;
         continue;
       }
@@ -1523,12 +1578,7 @@ bool vtkSegmentation::GenerateMergedLabelmap(
 
     // Copy image data voxels into shared labelmap with the proper color index
     vtkOrientedImageDataResample::ModifyImage(
-      sharedImageData,
-      binaryLabelmap,
-      vtkOrientedImageDataResample::OPERATION_MASKING,
-      nullptr,
-      0,
-      labelValue);
+      sharedImageData, binaryLabelmap, vtkOrientedImageDataResample::OPERATION_MASKING, nullptr, 0, labelValue);
   }
 
   return success;
@@ -1577,9 +1627,10 @@ void vtkSegmentation::SeparateSegmentLabelmap(std::string segmentId)
   thresholdErase->ReplaceOutOff();
   thresholdErase->Update();
 
-  // Although the source labelmap will be modified, vtkSegmentation::onSourceRepresentationModified would unnecessarily invalidate the non-source
-  // representations (because separating a labelmap into a new layer does not change the segment's shape).
-  // This prevents vtkSegmentation::onSourceRepresentationModified from being called. We will later invoke events to let observers know about the change.
+  // Although the source labelmap will be modified, vtkSegmentation::onSourceRepresentationModified would unnecessarily
+  // invalidate the non-source representations (because separating a labelmap into a new layer does not change the
+  // segment's shape). This prevents vtkSegmentation::onSourceRepresentationModified from being called. We will later
+  // invoke events to let observers know about the change.
   bool wasSourceRepresentationModifiedEnabled = this->SetSourceRepresentationModifiedEnabled(false);
   labelmap->ShallowCopy(thresholdErase->GetOutput());
   this->SetSourceRepresentationModifiedEnabled(wasSourceRepresentationModifiedEnabled);
@@ -1589,7 +1640,8 @@ void vtkSegmentation::SeparateSegmentLabelmap(std::string segmentId)
   std::string sourceRepresentationName = this->GetSourceRepresentationName();
   if (strcmp(sourceRepresentationName.c_str(), vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()) == 0)
   {
-    // We were blocking onSourceRepresentationModified, however the source labelmap was modified so we need to manually invoke the event.
+    // We were blocking onSourceRepresentationModified, however the source labelmap was modified so we need to manually
+    // invoke the event.
     this->InvokeEvent(vtkSegmentation::SourceRepresentationModified, labelmap);
   }
   this->InvokeEvent(vtkSegmentation::RepresentationModified, (void*)segmentId.c_str());
@@ -1614,7 +1666,8 @@ void vtkSegmentation::ClearSegment(std::string segmentId)
 
   std::vector<std::string> sharedSegmentIDs;
   this->GetSegmentIDsSharingBinaryLabelmapRepresentation(segmentId, sharedSegmentIDs, false);
-  if (this->GetSourceRepresentationName() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() && !sharedSegmentIDs.empty())
+  if (this->GetSourceRepresentationName() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()
+      && !sharedSegmentIDs.empty())
   {
     vtkOrientedImageData* binaryLabelmap = vtkOrientedImageData::SafeDownCast(sourceRepresentation);
     if (binaryLabelmap)
@@ -1698,8 +1751,8 @@ bool vtkSegmentation::ContainsRepresentation(std::string representationName)
 
   std::vector<std::string> containedRepresentationNames;
   this->GetContainedRepresentationNames(containedRepresentationNames);
-  std::vector<std::string>::iterator reprIt = std::find(
-    containedRepresentationNames.begin(), containedRepresentationNames.end(), representationName);
+  std::vector<std::string>::iterator reprIt =
+    std::find(containedRepresentationNames.begin(), containedRepresentationNames.end(), representationName);
 
   return (reprIt != containedRepresentationNames.end());
 }
@@ -1709,7 +1762,8 @@ bool vtkSegmentation::IsSourceRepresentationPolyData()
 {
   if (!this->Segments.empty())
   {
-    // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
+    // Assume the first segment contains the same name of representations as all segments (this should be the case by
+    // design)
     vtkSegment* firstSegment = this->Segments.begin()->second;
     vtkDataObject* sourceRepresentation = firstSegment->GetRepresentation(this->SourceRepresentationName);
     return vtkPolyData::SafeDownCast(sourceRepresentation) != nullptr;
@@ -1718,7 +1772,8 @@ bool vtkSegmentation::IsSourceRepresentationPolyData()
   {
     // There are no segments, create an empty representation to find out what type it is
     vtkSmartPointer<vtkDataObject> sourceRepresentation = vtkSmartPointer<vtkDataObject>::Take(
-      vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(this->SourceRepresentationName));
+      vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(
+        this->SourceRepresentationName));
     return vtkPolyData::SafeDownCast(sourceRepresentation) != nullptr;
   }
 }
@@ -1728,7 +1783,8 @@ bool vtkSegmentation::IsSourceRepresentationImageData()
 {
   if (!this->Segments.empty())
   {
-    // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
+    // Assume the first segment contains the same name of representations as all segments (this should be the case by
+    // design)
     vtkSegment* firstSegment = this->Segments.begin()->second;
     vtkDataObject* sourceRepresentation = firstSegment->GetRepresentation(this->SourceRepresentationName);
     return vtkOrientedImageData::SafeDownCast(sourceRepresentation) != nullptr;
@@ -1737,7 +1793,8 @@ bool vtkSegmentation::IsSourceRepresentationImageData()
   {
     // There are no segments, create an empty representation to find out what type it is
     vtkSmartPointer<vtkDataObject> sourceRepresentation = vtkSmartPointer<vtkDataObject>::Take(
-      vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(this->SourceRepresentationName));
+      vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(
+        this->SourceRepresentationName));
     return vtkOrientedImageData::SafeDownCast(sourceRepresentation) != nullptr;
   }
 }
@@ -1781,7 +1838,8 @@ bool vtkSegmentation::CanAcceptSegment(vtkSegment* segment)
   std::vector<std::string> containedRepresentationNames;
   segment->GetContainedRepresentationNames(containedRepresentationNames);
   for (std::vector<std::string>::iterator reprIt = containedRepresentationNames.begin();
-    reprIt != containedRepresentationNames.end(); ++reprIt)
+       reprIt != containedRepresentationNames.end();
+       ++reprIt)
   {
     if (this->CanAcceptRepresentation(*reprIt))
     {
@@ -1795,7 +1853,9 @@ bool vtkSegmentation::CanAcceptSegment(vtkSegment* segment)
 }
 
 //-----------------------------------------------------------------------------
-std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::string segmentName/*=""*/, double* color/*=nullptr*/)
+std::string vtkSegmentation::AddEmptySegment(std::string segmentId /*=""*/,
+                                             std::string segmentName /*=""*/,
+                                             double* color /*=nullptr*/)
 {
   vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::New();
   if (color)
@@ -1804,7 +1864,8 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
   }
   else
   {
-    segment->SetColor(vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]);
+    segment->SetColor(
+      vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]);
   }
 
   // Segment ID will be segment name by default
@@ -1824,14 +1885,16 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
     if (this->SegmentIds.size() > 0)
     {
       // Add the empty segment to the first shared labelmap.
-      // This is faster when adding a large number of empty segments, but there is likely a heuristic that would provide a better layer to merge into.
+      // This is faster when adding a large number of empty segments, but there is likely a heuristic that would provide
+      // a better layer to merge into.
       sharedSegmentId = this->SegmentIds[0];
     }
 
     if (!sharedSegmentId.empty())
     {
       vtkSegment* sharedSegment = this->GetSegment(sharedSegmentId);
-      vtkDataObject* dataObject = sharedSegment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+      vtkDataObject* dataObject =
+        sharedSegment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
       int labelValue = this->GetUniqueLabelValueForSharedLabelmap(sharedSegmentId);
       segment->SetLabelValue(labelValue);
       segment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), dataObject);
@@ -1850,14 +1913,16 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
 
 //-----------------------------------------------------------------------------
 void vtkSegmentation::GetPossibleConversions(const std::string& targetRepresentationName,
-  vtkSegmentationConversionPaths* paths)
+                                             vtkSegmentationConversionPaths* paths)
 {
   paths->RemoveAllItems();
   this->Converter->GetPossibleConversions(this->SourceRepresentationName, targetRepresentationName, paths);
 };
 
 //-----------------------------------------------------------------------------
-bool vtkSegmentation::CopySegmentFromSegmentation(vtkSegmentation* fromSegmentation, std::string segmentId, bool removeFromSource/*=false*/)
+bool vtkSegmentation::CopySegmentFromSegmentation(vtkSegmentation* fromSegmentation,
+                                                  std::string segmentId,
+                                                  bool removeFromSource /*=false*/)
 {
   if (!fromSegmentation || segmentId.empty())
   {
@@ -1869,7 +1934,9 @@ bool vtkSegmentation::CopySegmentFromSegmentation(vtkSegmentation* fromSegmentat
   if (this->GetSegment(segmentId))
   {
     targetSegmentId = this->GenerateUniqueSegmentID(segmentId);
-    vtkWarningMacro("CopySegmentFromSegmentation: Segment with the same ID as the copied one (" << segmentId << ") already exists in the target segmentation. Generate a new unique segment ID: " << targetSegmentId);
+    vtkWarningMacro("CopySegmentFromSegmentation: Segment with the same ID as the copied one ("
+                    << segmentId << ") already exists in the target segmentation. Generate a new unique segment ID: "
+                    << targetSegmentId);
   }
 
   // Get segment from source
@@ -1883,11 +1950,14 @@ bool vtkSegmentation::CopySegmentFromSegmentation(vtkSegmentation* fromSegmentat
   // If source segmentation contains reference image geometry conversion parameter,
   // but target segmentation does not, then copy that parameter from the source segmentation
   // TODO: Do this with all parameters? (so those which have non-default values are replaced)
-  std::string referenceImageGeometryParameter = this->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
-  std::string fromReferenceImageGeometryParameter = fromSegmentation->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
+  std::string referenceImageGeometryParameter =
+    this->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
+  std::string fromReferenceImageGeometryParameter =
+    fromSegmentation->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
   if (referenceImageGeometryParameter.empty() && !fromReferenceImageGeometryParameter.empty())
   {
-    this->SetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), fromReferenceImageGeometryParameter);
+    this->SetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(),
+                                 fromReferenceImageGeometryParameter);
   }
 
   // If copy, then duplicate segment and add it to the target segmentation
@@ -1930,8 +2000,11 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
 }
 
 //-----------------------------------------------------------------------------
-void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
-  vtkStringArray* segmentIds /*=nullptr*/, bool computeEffectiveExtent /*=false*/, bool addPadding /*=false*/)
+void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
+                                                    vtkOrientedImageData* commonGeometryImage,
+                                                    vtkStringArray* segmentIds /*=nullptr*/,
+                                                    bool computeEffectiveExtent /*=false*/,
+                                                    bool addPadding /*=false*/)
 {
   std::vector<std::string> segmentIdsVector;
   if (segmentIds)
@@ -1941,11 +2014,14 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
       segmentIdsVector.push_back(segmentIds->GetValue(segmentIndex));
     }
   }
-  this->DetermineCommonLabelmapExtent(commonGeometryExtent, commonGeometryImage, segmentIdsVector, computeEffectiveExtent, addPadding);
+  this->DetermineCommonLabelmapExtent(
+    commonGeometryExtent, commonGeometryImage, segmentIdsVector, computeEffectiveExtent, addPadding);
 }
 
 //-----------------------------------------------------------------------------
-std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputationMode, const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/)
+std::string vtkSegmentation::DetermineCommonLabelmapGeometry(
+  int extentComputationMode,
+  const std::vector<std::string>& segmentIDs /*=std::vector<std::string>()*/)
 {
   // If segment IDs list is empty then include all segments
   std::vector<std::string> sharedSegmentIDs;
@@ -1960,8 +2036,9 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
 
   // Get highest resolution reference geometry available in segments
   vtkOrientedImageData* highestResolutionLabelmap = nullptr;
-  double lowestSpacing[3] = {1, 1, 1}; // We'll multiply the spacings together to get the voxel size
-  for (std::vector<std::string>::iterator segmentIt = sharedSegmentIDs.begin(); segmentIt != sharedSegmentIDs.end(); ++segmentIt)
+  double lowestSpacing[3] = { 1, 1, 1 }; // We'll multiply the spacings together to get the voxel size
+  for (std::vector<std::string>::iterator segmentIt = sharedSegmentIDs.begin(); segmentIt != sharedSegmentIDs.end();
+       ++segmentIt)
   {
     vtkSegment* currentSegment = this->GetSegment(*segmentIt);
     if (!currentSegment)
@@ -1970,16 +2047,17 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
       continue;
     }
     vtkOrientedImageData* currentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
-      currentSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()) );
+      currentSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
     if (!currentBinaryLabelmap || currentBinaryLabelmap->IsEmpty())
     {
       continue;
     }
 
-    double currentSpacing[3] = {1, 1, 1};
+    double currentSpacing[3] = { 1, 1, 1 };
     currentBinaryLabelmap->GetSpacing(currentSpacing);
     if (!highestResolutionLabelmap
-      || currentSpacing[0] * currentSpacing[1] * currentSpacing[2] < lowestSpacing[0] * lowestSpacing[1] * lowestSpacing[2])
+        || currentSpacing[0] * currentSpacing[1] * currentSpacing[2]
+             < lowestSpacing[0] * lowestSpacing[1] * lowestSpacing[2])
     {
       lowestSpacing[0] = currentSpacing[0];
       lowestSpacing[1] = currentSpacing[1];
@@ -1994,21 +2072,24 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
   }
 
   // Get reference image geometry conversion parameter
-  std::string referenceGeometryString = this->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
+  std::string referenceGeometryString =
+    this->GetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName());
   if (referenceGeometryString.empty())
   {
     // Reference image geometry might be missing because segmentation was created from labelmaps.
     // Set reference image geometry from highest resolution segment labelmap
     if (!highestResolutionLabelmap)
     {
-      vtkErrorMacro("DetermineCommonLabelmapGeometry: Unable to find largest extent labelmap to define reference image geometry!");
+      vtkErrorMacro(
+        "DetermineCommonLabelmapGeometry: Unable to find largest extent labelmap to define reference image geometry!");
       return std::string("");
     }
     referenceGeometryString = vtkSegmentationConverter::SerializeImageGeometry(highestResolutionLabelmap);
 
     // We were supposed to use the extent from the reference geometry string, however it did  not exist.
     // Instead, calculate extent from effective extent of segments.
-    if (extentComputationMode == EXTENT_REFERENCE_GEOMETRY || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
+    if (extentComputationMode == EXTENT_REFERENCE_GEOMETRY
+        || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
     {
       extentComputationMode = EXTENT_UNION_OF_EFFECTIVE_SEGMENTS;
     }
@@ -2018,15 +2099,21 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
   vtkSegmentationConverter::DeserializeImageGeometry(referenceGeometryString, commonGeometryImage, false);
 
   if (extentComputationMode == EXTENT_UNION_OF_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS
-    || extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED
-    || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
+      || extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED
+      || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED
+      || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
   {
     // Determine extent that contains all segments
     int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
-    this->DetermineCommonLabelmapExtent(commonGeometryExtent, commonGeometryImage, sharedSegmentIDs,
-      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED ||
-      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY,
-      extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED);
+    this->DetermineCommonLabelmapExtent(commonGeometryExtent,
+                                        commonGeometryImage,
+                                        sharedSegmentIDs,
+                                        extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS
+                                          || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED
+                                          || extentComputationMode
+                                               == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY,
+                                        extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED
+                                          || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED);
     if (extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
     {
       // Expand the common geometry extent to include the reference image geometry.
@@ -2034,20 +2121,22 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
       commonGeometryImage->GetExtent(referenceGeometryExtent);
       for (int i = 0; i < 3; ++i)
       {
-        commonGeometryExtent[2*i]   = std::min(commonGeometryExtent[2*i],   referenceGeometryExtent[2*i]);
-        commonGeometryExtent[2*i+1] = std::max(commonGeometryExtent[2*i+1], referenceGeometryExtent[2*i+1]);
+        commonGeometryExtent[2 * i] = std::min(commonGeometryExtent[2 * i], referenceGeometryExtent[2 * i]);
+        commonGeometryExtent[2 * i + 1] = std::max(commonGeometryExtent[2 * i + 1], referenceGeometryExtent[2 * i + 1]);
       }
     }
     commonGeometryImage->SetExtent(commonGeometryExtent);
   }
 
   // Oversample reference image geometry to match highest resolution labelmap's spacing
-  double referenceSpacing[3] = {0.0,0.0,0.0};
+  double referenceSpacing[3] = { 0.0, 0.0, 0.0 };
   commonGeometryImage->GetSpacing(referenceSpacing);
-  double voxelSizeRatio = ((referenceSpacing[0]*referenceSpacing[1]*referenceSpacing[2]) / (lowestSpacing[0]*lowestSpacing[1]*lowestSpacing[2]));
+  double voxelSizeRatio = ((referenceSpacing[0] * referenceSpacing[1] * referenceSpacing[2])
+                           / (lowestSpacing[0] * lowestSpacing[1] * lowestSpacing[2]));
   // Round oversampling to the nearest integer
-  // Note: We need to round to some degree, because e.g. pow(64,1/3) is not exactly 4. It may be debated whether to round to integer or to a certain number of decimals
-  double oversamplingFactor = vtkMath::Round( pow( voxelSizeRatio, 1.0/3.0 ) );
+  // Note: We need to round to some degree, because e.g. pow(64,1/3) is not exactly 4. It may be debated whether to
+  // round to integer or to a certain number of decimals
+  double oversamplingFactor = vtkMath::Round(pow(voxelSizeRatio, 1.0 / 3.0));
   vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(commonGeometryImage, oversamplingFactor);
 
   // Serialize common geometry and return it
@@ -2055,8 +2144,12 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
 }
 
 //-----------------------------------------------------------------------------
-void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
-  const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/, bool computeEffectiveExtent /*=false*/, bool addPadding /*=false*/)
+void vtkSegmentation::DetermineCommonLabelmapExtent(
+  int commonGeometryExtent[6],
+  vtkOrientedImageData* commonGeometryImage,
+  const std::vector<std::string>& segmentIDs /*=std::vector<std::string>()*/,
+  bool computeEffectiveExtent /*=false*/,
+  bool addPadding /*=false*/)
 {
   // If segment IDs list is empty then include all segments
   std::vector<std::string> sharedSegmentIDs;
@@ -2076,7 +2169,8 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
   commonGeometryExtent[3] = -1;
   commonGeometryExtent[4] = 0;
   commonGeometryExtent[5] = -1;
-  for (std::vector<std::string>::iterator segmentIt = sharedSegmentIDs.begin(); segmentIt != sharedSegmentIDs.end(); ++segmentIt)
+  for (std::vector<std::string>::iterator segmentIt = sharedSegmentIDs.begin(); segmentIt != sharedSegmentIDs.end();
+       ++segmentIt)
   {
     vtkSegment* currentSegment = this->GetSegment(*segmentIt);
     if (!currentSegment)
@@ -2086,7 +2180,7 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
     }
     vtkOrientedImageData* currentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
       currentSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
-    if (currentBinaryLabelmap==nullptr || currentBinaryLabelmap->IsEmpty())
+    if (currentBinaryLabelmap == nullptr || currentBinaryLabelmap->IsEmpty())
     {
       continue;
     }
@@ -2095,24 +2189,29 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
     bool validExtent = true;
     if (computeEffectiveExtent)
     {
-      validExtent = vtkOrientedImageDataResample::CalculateEffectiveExtent(currentBinaryLabelmap, currentBinaryLabelmapExtent);
+      validExtent =
+        vtkOrientedImageDataResample::CalculateEffectiveExtent(currentBinaryLabelmap, currentBinaryLabelmapExtent);
     }
     else
     {
       currentBinaryLabelmap->GetExtent(currentBinaryLabelmapExtent);
     }
     if (validExtent && currentBinaryLabelmapExtent[0] <= currentBinaryLabelmapExtent[1]
-      && currentBinaryLabelmapExtent[2] <= currentBinaryLabelmapExtent[3]
-      && currentBinaryLabelmapExtent[4] <= currentBinaryLabelmapExtent[5])
+        && currentBinaryLabelmapExtent[2] <= currentBinaryLabelmapExtent[3]
+        && currentBinaryLabelmapExtent[4] <= currentBinaryLabelmapExtent[5])
     {
       // There is a valid labelmap
 
       // Get transformed extents of the segment in the common labelmap geometry
       vtkNew<vtkTransform> currentBinaryLabelmapToCommonGeometryImageTransform;
-      vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(currentBinaryLabelmap, commonGeometryImage, currentBinaryLabelmapToCommonGeometryImageTransform.GetPointer());
+      vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(
+        currentBinaryLabelmap, commonGeometryImage, currentBinaryLabelmapToCommonGeometryImageTransform.GetPointer());
       int currentBinaryLabelmapExtentInCommonGeometryImageFrame[6] = { 0, -1, 0, -1, 0, -1 };
-      vtkOrientedImageDataResample::TransformExtent(currentBinaryLabelmapExtent, currentBinaryLabelmapToCommonGeometryImageTransform.GetPointer(), currentBinaryLabelmapExtentInCommonGeometryImageFrame);
-      if (commonGeometryExtent[0] > commonGeometryExtent[1] || commonGeometryExtent[2] > commonGeometryExtent[3] || commonGeometryExtent[4] > commonGeometryExtent[5])
+      vtkOrientedImageDataResample::TransformExtent(currentBinaryLabelmapExtent,
+                                                    currentBinaryLabelmapToCommonGeometryImageTransform.GetPointer(),
+                                                    currentBinaryLabelmapExtentInCommonGeometryImageFrame);
+      if (commonGeometryExtent[0] > commonGeometryExtent[1] || commonGeometryExtent[2] > commonGeometryExtent[3]
+          || commonGeometryExtent[4] > commonGeometryExtent[5])
       {
         // empty commonGeometryExtent
         for (int i = 0; i < 3; i++)
@@ -2125,8 +2224,10 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
       {
         for (int i = 0; i < 3; i++)
         {
-          commonGeometryExtent[i * 2] = std::min(currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2], commonGeometryExtent[i * 2]);
-          commonGeometryExtent[i * 2 + 1] = std::max(currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2 + 1], commonGeometryExtent[i * 2 + 1]);
+          commonGeometryExtent[i * 2] =
+            std::min(currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2], commonGeometryExtent[i * 2]);
+          commonGeometryExtent[i * 2 + 1] =
+            std::max(currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2 + 1], commonGeometryExtent[i * 2 + 1]);
         }
       }
     }
@@ -2136,7 +2237,7 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
     // Add single-voxel padding
     for (int i = 0; i < 3; i++)
     {
-      if (commonGeometryExtent[i * 2]>commonGeometryExtent[i * 2 + 1])
+      if (commonGeometryExtent[i * 2] > commonGeometryExtent[i * 2 + 1])
       {
         // empty along this dimension, do not pad
         continue;
@@ -2148,11 +2249,14 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
 }
 
 //----------------------------------------------------------------------------
-bool vtkSegmentation::SetImageGeometryFromCommonLabelmapGeometry(vtkOrientedImageData* imageData, vtkStringArray* segmentIDs /*=nullptr*/,
+bool vtkSegmentation::SetImageGeometryFromCommonLabelmapGeometry(
+  vtkOrientedImageData* imageData,
+  vtkStringArray* segmentIDs /*=nullptr*/,
   int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/)
 {
   std::string commonGeometryString = this->DetermineCommonLabelmapGeometry(extentComputationMode, segmentIDs);
-  return vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, imageData, false /* do not allocate scalars */);
+  return vtkSegmentationConverter::DeserializeImageGeometry(
+    commonGeometryString, imageData, false /* do not allocate scalars */);
 }
 
 //----------------------------------------------------------------------------
@@ -2198,7 +2302,7 @@ void vtkSegmentation::DeserializeConversionParameters(std::string conversionPara
 }
 
 //----------------------------------------------------------------------------
-int vtkSegmentation::GetNumberOfLayers(std::string representationName/*=""*/)
+int vtkSegmentation::GetNumberOfLayers(std::string representationName /*=""*/)
 {
   if (representationName.empty())
   {
@@ -2211,7 +2315,7 @@ int vtkSegmentation::GetNumberOfLayers(std::string representationName/*=""*/)
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentation::GetLayerObjects(vtkCollection* layerObjects, std::string representationName/*= ""*/)
+void vtkSegmentation::GetLayerObjects(vtkCollection* layerObjects, std::string representationName /*= ""*/)
 {
   if (!layerObjects)
   {
@@ -2240,7 +2344,7 @@ void vtkSegmentation::GetLayerObjects(vtkCollection* layerObjects, std::string r
 }
 
 //----------------------------------------------------------------------------
-int vtkSegmentation::GetLayerIndex(std::string segmentId, std::string representationName/*=""*/)
+int vtkSegmentation::GetLayerIndex(std::string segmentId, std::string representationName /*=""*/)
 {
   if (representationName.empty())
   {
@@ -2274,7 +2378,7 @@ int vtkSegmentation::GetLayerIndex(std::string segmentId, std::string representa
 }
 
 //----------------------------------------------------------------------------
-vtkDataObject* vtkSegmentation::GetLayerDataObject(int layer, std::string representationName/*=""*/)
+vtkDataObject* vtkSegmentation::GetLayerDataObject(int layer, std::string representationName /*=""*/)
 {
   if (representationName.empty())
   {
@@ -2292,7 +2396,7 @@ vtkDataObject* vtkSegmentation::GetLayerDataObject(int layer, std::string repres
 }
 
 //----------------------------------------------------------------------------
-std::vector<std::string> vtkSegmentation::GetSegmentIDsForLayer(int layer, std::string representationName/*=""*/)
+std::vector<std::string> vtkSegmentation::GetSegmentIDsForLayer(int layer, std::string representationName /*=""*/)
 {
   if (representationName.empty())
   {
@@ -2304,7 +2408,8 @@ std::vector<std::string> vtkSegmentation::GetSegmentIDsForLayer(int layer, std::
 }
 
 //----------------------------------------------------------------------------
-std::vector<std::string> vtkSegmentation::GetSegmentIDsForDataObject(vtkDataObject* dataObject, std::string representationName/*=""*/)
+std::vector<std::string> vtkSegmentation::GetSegmentIDsForDataObject(vtkDataObject* dataObject,
+                                                                     std::string representationName /*=""*/)
 {
   if (representationName.empty())
   {
@@ -2325,7 +2430,7 @@ std::vector<std::string> vtkSegmentation::GetSegmentIDsForDataObject(vtkDataObje
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
+void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer /*=false*/)
 {
   std::string labelmapRepresentationName = vtkSegmentationConverter::GetBinaryLabelmapRepresentationName();
   int numberOfLayers = this->GetNumberOfLayers(labelmapRepresentationName);
@@ -2344,19 +2449,20 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
     return;
   }
 
-  typedef std::pair<vtkSmartPointer<vtkOrientedImageData>, std::vector<std::string> > LayerType;
+  typedef std::pair<vtkSmartPointer<vtkOrientedImageData>, std::vector<std::string>> LayerType;
   typedef std::vector<LayerType> LayerListType;
   std::map<std::string, int> newLabelmapValues;
   LayerListType newLayers;
   for (int i = 0; i < numberOfLayers; ++i)
   {
-    vtkOrientedImageData* layerLabelmap = vtkOrientedImageData::SafeDownCast(this->GetLayerDataObject(i, labelmapRepresentationName));
+    vtkOrientedImageData* layerLabelmap =
+      vtkOrientedImageData::SafeDownCast(this->GetLayerDataObject(i, labelmapRepresentationName));
     std::vector<std::string> currentLayerSegmentIds = this->GetSegmentIDsForLayer(i, labelmapRepresentationName);
     if (i == 0)
     {
       vtkSmartPointer<vtkOrientedImageData> newLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
       newLabelmap->DeepCopy(layerLabelmap);
-      newLayers.push_back( std::make_pair(newLabelmap, currentLayerSegmentIds));
+      newLayers.push_back(std::make_pair(newLabelmap, currentLayerSegmentIds));
       for (std::string currentSegmentId : currentLayerSegmentIds)
       {
         vtkSegment* segment = this->GetSegment(currentSegmentId);
@@ -2368,7 +2474,8 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
     for (std::string currentSegmentId : currentLayerSegmentIds)
     {
       vtkSegment* currentSegment = this->GetSegment(currentSegmentId);
-      vtkOrientedImageData* currentLabelmap = vtkOrientedImageData::SafeDownCast(currentSegment->GetRepresentation(labelmapRepresentationName));
+      vtkOrientedImageData* currentLabelmap =
+        vtkOrientedImageData::SafeDownCast(currentSegment->GetRepresentation(labelmapRepresentationName));
 
       vtkSmartPointer<vtkOrientedImageData> thresholdedLabelmap = vtkSmartPointer<vtkOrientedImageData>::New();
       if (currentLabelmap)
@@ -2391,7 +2498,8 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
         referenceImage->ShallowCopy(thresholdedLabelmap);
         referenceImage->SetExtent(effectiveExtent);
 
-        vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(thresholdedLabelmap, referenceImage, thresholdedLabelmap);
+        vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(
+          thresholdedLabelmap, referenceImage, thresholdedLabelmap);
       }
 
       bool shared = false;
@@ -2411,10 +2519,10 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
           int labelValue = this->GetUniqueLabelValueForSharedLabelmap(newLayerLabelmap);
           for (std::string layerSegmentID : newLayer.second)
           {
-            // GetUniqueLabelValueForSharedLabelmap(vtkOrientedImageData) only checks the existing scalars in the labelmap.
-            // If there are shared labelmaps in the new layer that do not have filled voxels in the labelmap, then the result of
-            // GetUniqueLabelValueForSharedLabelmap may not be unique. Instead, we compare the label value of all of the segments in the
-            // new layer to make sure the value is unique.
+            // GetUniqueLabelValueForSharedLabelmap(vtkOrientedImageData) only checks the existing scalars in the
+            // labelmap. If there are shared labelmaps in the new layer that do not have filled voxels in the labelmap,
+            // then the result of GetUniqueLabelValueForSharedLabelmap may not be unique. Instead, we compare the label
+            // value of all of the segments in the new layer to make sure the value is unique.
             int existingValue = newLabelmapValues[layerSegmentID];
             labelValue = std::max(labelValue, existingValue + 1);
           }
@@ -2427,10 +2535,15 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
             if (extent[0] <= extent[1] || extent[2] <= extent[3] || extent[4] <= extent[5])
             {
               vtkOrientedImageDataResample::CastImageForValue(newLayerLabelmap, labelValue);
-              vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(thresholdedLabelmap,
-                newLayerLabelmap, thresholdedLabelmap, false, true);
-              vtkOrientedImageDataResample::MergeImage(newLayerLabelmap, thresholdedLabelmap, newLayerLabelmap,
-                vtkOrientedImageDataResample::OPERATION_MASKING, thresholdedLabelmap->GetExtent(), 0.0, labelValue); // Add segment to new layer
+              vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(
+                thresholdedLabelmap, newLayerLabelmap, thresholdedLabelmap, false, true);
+              vtkOrientedImageDataResample::MergeImage(newLayerLabelmap,
+                                                       thresholdedLabelmap,
+                                                       newLayerLabelmap,
+                                                       vtkOrientedImageDataResample::OPERATION_MASKING,
+                                                       thresholdedLabelmap->GetExtent(),
+                                                       0.0,
+                                                       labelValue); // Add segment to new layer
             }
           }
           newLayers[layerCount].second.push_back(currentSegmentId);
@@ -2464,8 +2577,10 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
 }
 
 //---------------------------------------------------------------------------
-void vtkSegmentation::CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
-  std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations)
+void vtkSegmentation::CopySegment(vtkSegment* destination,
+                                  vtkSegment* source,
+                                  vtkSegment* baseline,
+                                  std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations)
 {
   destination->RemoveAllRepresentations();
   destination->DeepCopyMetadata(source);
@@ -2474,7 +2589,8 @@ void vtkSegmentation::CopySegment(vtkSegment* destination, vtkSegment* source, v
   std::vector<std::string> representationNames;
   source->GetContainedRepresentationNames(representationNames);
   for (std::vector<std::string>::iterator representationNameIt = representationNames.begin();
-    representationNameIt != representationNames.end(); ++representationNameIt)
+       representationNameIt != representationNames.end();
+       ++representationNameIt)
   {
     vtkDataObject* sourceRepresentation = source->GetRepresentation(*representationNameIt);
     if (cachedRepresentations.find(sourceRepresentation) != cachedRepresentations.end())
@@ -2491,8 +2607,7 @@ void vtkSegmentation::CopySegment(vtkSegment* destination, vtkSegment* source, v
       baselineRepresentation = baseline->GetRepresentation(*representationNameIt);
     }
     // Shallow-copy from baseline if it's up-to-date, otherwise deep-copy from source
-    if (baselineRepresentation != nullptr
-      && baselineRepresentation->GetMTime() > sourceRepresentation->GetMTime())
+    if (baselineRepresentation != nullptr && baselineRepresentation->GetMTime() > sourceRepresentation->GetMTime())
     {
       // we already have an up-to-date copy in the baseline, so reuse that
       destination->AddRepresentation(*representationNameIt, baselineRepresentation);
@@ -2501,10 +2616,13 @@ void vtkSegmentation::CopySegment(vtkSegment* destination, vtkSegment* source, v
     else
     {
       vtkDataObject* representationCopy =
-        vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByClass(sourceRepresentation->GetClassName());
+        vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByClass(
+          sourceRepresentation->GetClassName());
       if (!representationCopy)
       {
-        vtkErrorWithObjectMacro(nullptr, "DeepCopy: Unable to construct representation type class '" << sourceRepresentation->GetClassName() << "'");
+        vtkErrorWithObjectMacro(nullptr,
+                                "DeepCopy: Unable to construct representation type class '"
+                                  << sourceRepresentation->GetClassName() << "'");
         continue;
       }
       representationCopy->DeepCopy(sourceRepresentation);

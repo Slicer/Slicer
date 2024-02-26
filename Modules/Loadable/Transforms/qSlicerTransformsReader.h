@@ -29,8 +29,7 @@ class qSlicerTransformsReaderPrivate;
 class vtkSlicerTransformLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerTransformsReader
-  : public qSlicerFileReader
+class qSlicerTransformsReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
@@ -39,11 +38,11 @@ public:
   ~qSlicerTransformsReader() override;
 
   void setTransformLogic(vtkSlicerTransformLogic* transformLogic);
-  vtkSlicerTransformLogic* transformLogic()const;
+  vtkSlicerTransformLogic* transformLogic() const;
 
-  QString description()const override;
-  IOFileType fileType()const override;
-  QStringList extensions()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
 
   bool load(const IOProperties& properties) override;
 

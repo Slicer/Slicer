@@ -11,7 +11,7 @@
 #define itkMRMLIDImageIO_h
 
 #ifdef _MSC_VER
-#pragma warning ( disable : 4786 )
+# pragma warning(disable : 4786)
 #endif
 
 #include <vtkVersion.h>
@@ -55,9 +55,9 @@ class MRMLIDImageIO_EXPORT MRMLIDImageIO : public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
-  typedef MRMLIDImageIO       Self;
-  typedef ImageIOBase         Superclass;
-  typedef SmartPointer<Self>  Pointer;
+  typedef MRMLIDImageIO Self;
+  typedef ImageIOBase Superclass;
+  typedef SmartPointer<Self> Pointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -71,7 +71,7 @@ public:
 
   virtual bool CanUseOwnBuffer();
   virtual void ReadUsingOwnBuffer();
-  virtual void * GetOwnBuffer();
+  virtual void* GetOwnBuffer();
 
   /** Set the spacing and dimension information for the set filename. */
   void ReadImageInformation() override;
@@ -99,28 +99,23 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
   /** Write the image information to the node and specified image */
-  virtual void WriteImageInformation(vtkMRMLVolumeNode *, vtkImageData*,
-                                     int *scalarType, int *numberOfScalarComponents);
+  virtual void WriteImageInformation(vtkMRMLVolumeNode*, vtkImageData*, int* scalarType, int* numberOfScalarComponents);
 
   /** Take information in a Slicer node and transfer it the
    *  MetaDataDictionary in ITK */
-  void SetDWDictionaryValues(MetaDataDictionary &dict,
-                             vtkMRMLDiffusionWeightedVolumeNode *dw);
+  void SetDWDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffusionWeightedVolumeNode* dw);
 
   /** Take information in a Slicer node and transfer it the
    *  MetaDataDictionary in ITK */
-  void SetDTDictionaryValues(MetaDataDictionary &dict,
-                             vtkMRMLDiffusionImageVolumeNode *di);
+  void SetDTDictionaryValues(MetaDataDictionary& dict, vtkMRMLDiffusionImageVolumeNode* di);
 
   /** Take information from the MetaDataDictionary that is needed to
    *  transfer this volume to a Slicer node */
-  void SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode *dw,
-                       MetaDataDictionary &dict);
+  void SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode* dw, MetaDataDictionary& dict);
 
   /** Take information from the MetaDataDictionary that is needed to
    *  transfer this volume to a Slicer node */
-  void SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di,
-                       MetaDataDictionary &dict);
+  void SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode* di, MetaDataDictionary& dict);
 
   void RequestModified(vtkMRMLNode* modifiedObject);
 
@@ -135,9 +130,7 @@ private:
   std::string m_Authority;
   std::string m_SceneID;
   std::string m_NodeID;
-
 };
 
-
-} /// end namespace itk
+} // namespace itk
 #endif

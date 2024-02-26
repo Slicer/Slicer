@@ -33,12 +33,13 @@
 // STD includes
 
 //-----------------------------------------------------------------------------
-class qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate
-  : public Ui_qSlicerDiffusionWeightedVolumeDisplayWidget
+class qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate : public Ui_qSlicerDiffusionWeightedVolumeDisplayWidget
 {
   Q_DECLARE_PUBLIC(qSlicerDiffusionWeightedVolumeDisplayWidget);
+
 protected:
   qSlicerDiffusionWeightedVolumeDisplayWidget* const q_ptr;
+
 public:
   qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate(qSlicerDiffusionWeightedVolumeDisplayWidget& object);
   ~qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate();
@@ -47,16 +48,14 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate
-::qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate(
+qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate ::qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate(
   qSlicerDiffusionWeightedVolumeDisplayWidget& object)
   : q_ptr(&object)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate
-::~qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate() = default;
+qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate ::~qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate::init()
@@ -65,13 +64,11 @@ void qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate::init()
 
   this->setupUi(q);
 
-  QObject::connect(this->DWIComponentSlider, SIGNAL(valueChanged(int)),
-                   q, SLOT(setDWIComponent(int)));
+  QObject::connect(this->DWIComponentSlider, SIGNAL(valueChanged(int)), q, SLOT(setDWIComponent(int)));
 }
 
 // --------------------------------------------------------------------------
-qSlicerDiffusionWeightedVolumeDisplayWidget
-::qSlicerDiffusionWeightedVolumeDisplayWidget(QWidget* parentWidget)
+qSlicerDiffusionWeightedVolumeDisplayWidget ::qSlicerDiffusionWeightedVolumeDisplayWidget(QWidget* parentWidget)
   : Superclass(parentWidget)
   , d_ptr(new qSlicerDiffusionWeightedVolumeDisplayWidgetPrivate(*this))
 {
@@ -83,24 +80,21 @@ qSlicerDiffusionWeightedVolumeDisplayWidget
 }
 
 // --------------------------------------------------------------------------
-qSlicerDiffusionWeightedVolumeDisplayWidget
-::~qSlicerDiffusionWeightedVolumeDisplayWidget() = default;
+qSlicerDiffusionWeightedVolumeDisplayWidget ::~qSlicerDiffusionWeightedVolumeDisplayWidget() = default;
 
 // --------------------------------------------------------------------------
-vtkMRMLDiffusionWeightedVolumeNode* qSlicerDiffusionWeightedVolumeDisplayWidget
-::volumeNode()const
+vtkMRMLDiffusionWeightedVolumeNode* qSlicerDiffusionWeightedVolumeDisplayWidget ::volumeNode() const
 {
   Q_D(const qSlicerDiffusionWeightedVolumeDisplayWidget);
   return d->VolumeNode;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLDiffusionWeightedVolumeDisplayNode* qSlicerDiffusionWeightedVolumeDisplayWidget
-::volumeDisplayNode()const
+vtkMRMLDiffusionWeightedVolumeDisplayNode* qSlicerDiffusionWeightedVolumeDisplayWidget ::volumeDisplayNode() const
 {
   vtkMRMLDiffusionWeightedVolumeNode* volumeNode = this->volumeNode();
-  return volumeNode ? vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(
-    volumeNode->GetVolumeDisplayNode()) : nullptr;
+  return volumeNode ? vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(volumeNode->GetVolumeDisplayNode())
+                    : nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -110,19 +104,18 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode*
 }
 
 // --------------------------------------------------------------------------
-void qSlicerDiffusionWeightedVolumeDisplayWidget
-::setMRMLVolumeNode(vtkMRMLDiffusionWeightedVolumeNode* volumeNode)
+void qSlicerDiffusionWeightedVolumeDisplayWidget ::setMRMLVolumeNode(vtkMRMLDiffusionWeightedVolumeNode* volumeNode)
 {
   Q_D(qSlicerDiffusionWeightedVolumeDisplayWidget);
 
   vtkMRMLDiffusionWeightedVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
-  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() :nullptr,
+  qvtkReconnect(oldVolumeDisplayNode,
+                volumeNode ? volumeNode->GetVolumeDisplayNode() : nullptr,
                 vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromDisplayNode()));
-  qvtkReconnect(d->VolumeNode, volumeNode,
-                vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromVolumeNode()));
+                this,
+                SLOT(updateWidgetFromDisplayNode()));
+  qvtkReconnect(d->VolumeNode, volumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromVolumeNode()));
 
   d->VolumeNode = volumeNode;
   d->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
@@ -140,12 +133,10 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::updateWidgetFromVolumeNode()
   {
     return;
   }
-  int maxRange = d->VolumeNode->GetImageData() ?
-    d->VolumeNode->GetImageData()->GetNumberOfScalarComponents() - 1 : 0;
+  int maxRange = d->VolumeNode->GetImageData() ? d->VolumeNode->GetImageData()->GetNumberOfScalarComponents() - 1 : 0;
   // we save the component here, as changing the range of the slider/spinbox
   // can change the component value. We want to set it back.
-  vtkMRMLDiffusionWeightedVolumeDisplayNode* displayNode =
-    this->volumeDisplayNode();
+  vtkMRMLDiffusionWeightedVolumeDisplayNode* displayNode = this->volumeDisplayNode();
 
   int component = displayNode ? displayNode->GetDiffusionComponent() : d->DWIComponentSlider->value();
   bool sliderWasBlocking = d->DWIComponentSlider->blockSignals(true);
@@ -161,15 +152,13 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::updateWidgetFromVolumeNode()
 void qSlicerDiffusionWeightedVolumeDisplayWidget::updateWidgetFromDisplayNode()
 {
   Q_D(qSlicerDiffusionWeightedVolumeDisplayWidget);
-  vtkMRMLDiffusionWeightedVolumeDisplayNode* displayNode =
-    this->volumeDisplayNode();
+  vtkMRMLDiffusionWeightedVolumeDisplayNode* displayNode = this->volumeDisplayNode();
   if (!displayNode)
   {
     return;
   }
   d->DWIComponentSlider->setValue(displayNode->GetDiffusionComponent());
 }
-
 
 //----------------------------------------------------------------------------
 void qSlicerDiffusionWeightedVolumeDisplayWidget::setDWIComponent(int component)

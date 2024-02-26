@@ -19,7 +19,7 @@
  *
  * @sa
  * vtkSliceIntersectionWidget vtkWidgetRepresentation vtkAbstractWidget
-*/
+ */
 
 #ifndef vtkMRMLSliceIntersectionRepresentation2D_h
 #define vtkMRMLSliceIntersectionRepresentation2D_h
@@ -47,14 +47,14 @@ class vtkActor2D;
 
 class SliceIntersectionDisplayPipeline;
 
-
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionRepresentation2D : public vtkMRMLAbstractWidgetRepresentation
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionRepresentation2D
+  : public vtkMRMLAbstractWidgetRepresentation
 {
 public:
   /**
    * Instantiate this class.
    */
-  static vtkMRMLSliceIntersectionRepresentation2D *New();
+  static vtkMRMLSliceIntersectionRepresentation2D* New();
 
   //@{
   /**
@@ -76,9 +76,9 @@ public:
   /**
    * Methods to make this class behave as a vtkProp.
    */
-  void GetActors2D(vtkPropCollection *) override;
-  void ReleaseGraphicsResources(vtkWindow *) override;
-  int RenderOverlay(vtkViewport *viewport) override;
+  void GetActors2D(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
   //@}
 
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic*);
@@ -98,17 +98,17 @@ protected:
   void SliceNodeModified(vtkMRMLSliceNode* sliceNode);
   void SliceModelDisplayNodeModified(vtkMRMLModelDisplayNode* sliceNode);
 
-  void UpdateSliceIntersectionDisplay(SliceIntersectionDisplayPipeline *pipeline);
+  void UpdateSliceIntersectionDisplay(SliceIntersectionDisplayPipeline* pipeline);
 
   double GetSliceRotationAngleRad(int eventPos[2]);
 
   // The internal transformation matrix
-  vtkTransform *CurrentTransform;
-  vtkTransform *TotalTransform;
-  double Origin[4]; //the current origin in world coordinates
-  double DisplayOrigin[3]; //the current origin in display coordinates
-  double CurrentTranslation[3]; //translation this movement
-  double StartWorldPosition[4]; //Start event position converted to world
+  vtkTransform* CurrentTransform;
+  vtkTransform* TotalTransform;
+  double Origin[4];             // the current origin in world coordinates
+  double DisplayOrigin[3];      // the current origin in display coordinates
+  double CurrentTranslation[3]; // translation this movement
+  double StartWorldPosition[4]; // Start event position converted to world
 
   // Support picking
   double LastEventPosition[2];
@@ -119,7 +119,7 @@ protected:
   vtkMRMLApplicationLogic* MRMLApplicationLogic;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 
 private:
   vtkMRMLSliceIntersectionRepresentation2D(const vtkMRMLSliceIntersectionRepresentation2D&) = delete;

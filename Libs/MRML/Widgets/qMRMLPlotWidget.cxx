@@ -38,22 +38,22 @@
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate
-class qMRMLPlotWidgetPrivate
-  : public QObject
+class qMRMLPlotWidgetPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qMRMLPlotWidget);
+
 protected:
   qMRMLPlotWidget* const q_ptr;
+
 public:
   qMRMLPlotWidgetPrivate(qMRMLPlotWidget& object);
   ~qMRMLPlotWidgetPrivate() override;
 
   void init();
 
-  qMRMLPlotView*       PlotView;
+  qMRMLPlotView* PlotView;
   qMRMLPlotViewControllerWidget* PlotController;
 };
-
 
 //---------------------------------------------------------------------------
 qMRMLPlotWidgetPrivate::qMRMLPlotWidgetPrivate(qMRMLPlotWidget& object)
@@ -84,10 +84,8 @@ void qMRMLPlotWidgetPrivate::init()
 
   this->PlotController->setPlotView(this->PlotView);
 
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->PlotView, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->PlotController, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->PlotView, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->PlotController, SLOT(setMRMLScene(vtkMRMLScene*)));
 }
 
 // --------------------------------------------------------------------------
@@ -110,7 +108,6 @@ qMRMLPlotWidget::~qMRMLPlotWidget()
   d->PlotController->setMRMLScene(nullptr);
 }
 
-
 // --------------------------------------------------------------------------
 void qMRMLPlotWidget::setMRMLPlotViewNode(vtkMRMLPlotViewNode* newPlotViewNode)
 {
@@ -126,46 +123,46 @@ void qMRMLPlotWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNo
   if (newViewNode && !plotViewNode)
   {
     qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
-      << ". Expected node type: vtkMRMLPlotViewNode";
+               << ". Expected node type: vtkMRMLPlotViewNode";
   }
   this->setMRMLPlotViewNode(plotViewNode);
 }
 
 //--------------------------------------------------------------------------
-vtkMRMLPlotViewNode* qMRMLPlotWidget::mrmlPlotViewNode()const
+vtkMRMLPlotViewNode* qMRMLPlotWidget::mrmlPlotViewNode() const
 {
   Q_D(const qMRMLPlotWidget);
   return d->PlotView->mrmlPlotViewNode();
 }
 
 //--------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLPlotWidget::mrmlAbstractViewNode()const
+vtkMRMLAbstractViewNode* qMRMLPlotWidget::mrmlAbstractViewNode() const
 {
   return this->mrmlPlotViewNode();
 }
 
 //--------------------------------------------------------------------------
-qMRMLPlotView* qMRMLPlotWidget::plotView()const
+qMRMLPlotView* qMRMLPlotWidget::plotView() const
 {
   Q_D(const qMRMLPlotWidget);
   return d->PlotView;
 }
 
 //--------------------------------------------------------------------------
-QWidget* qMRMLPlotWidget::viewWidget()const
+QWidget* qMRMLPlotWidget::viewWidget() const
 {
   return this->plotView();
 }
 
 //--------------------------------------------------------------------------
-qMRMLPlotViewControllerWidget* qMRMLPlotWidget::plotController()const
+qMRMLPlotViewControllerWidget* qMRMLPlotWidget::plotController() const
 {
   Q_D(const qMRMLPlotWidget);
   return d->PlotController;
 }
 
 //---------------------------------------------------------------------------
-qMRMLViewControllerBar* qMRMLPlotWidget::controllerWidget()const
+qMRMLViewControllerBar* qMRMLPlotWidget::controllerWidget() const
 {
   return this->plotController();
 }

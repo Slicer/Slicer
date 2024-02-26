@@ -41,7 +41,7 @@
 // MRML includes
 #include <vtkMRMLDisplayableHierarchyNode.h>
 
-int qMRMLSceneDisplayableModelTest1(int argc, char * argv [])
+int qMRMLSceneDisplayableModelTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -84,15 +84,15 @@ int qMRMLSceneDisplayableModelTest1(int argc, char * argv [])
     sceneFactory.deleteNode();
     sceneFactory.deleteNode();
 
-    for( int i = 0; i < 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
       sceneFactory.deleteNode();
     }
-    for( int i = 0; i < 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
       sceneFactory.generateNode();
     }
-    for( int i = 0; i < 99; ++i)
+    for (int i = 0; i < 99; ++i)
     {
       sceneFactory.deleteNode();
     }
@@ -151,18 +151,17 @@ int qMRMLSceneDisplayableModelTest1(int argc, char * argv [])
   item->insertRow(0,items);
   */
   QTreeView* view = new QTreeView(nullptr);
-  //view->setSelectionBehavior(QAbstractItemView::SelectRows);
+  // view->setSelectionBehavior(QAbstractItemView::SelectRows);
   view->setDragDropMode(QAbstractItemView::InternalMove);
   view->setModel(&model);
-  //view->setModel(&m);
+  // view->setModel(&m);
   view->show();
   view->resize(500, 800);
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
 
   return app.exec();
 }
-

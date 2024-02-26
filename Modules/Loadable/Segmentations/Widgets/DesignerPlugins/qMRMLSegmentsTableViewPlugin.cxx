@@ -28,10 +28,9 @@ qMRMLSegmentsTableViewPlugin::qMRMLSegmentsTableViewPlugin(QObject* pluginParent
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentsTableViewPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentsTableViewPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentsTableView* pluginWidget =
-    new qMRMLSegmentsTableView(parentWidget);
+  qMRMLSegmentsTableView* pluginWidget = new qMRMLSegmentsTableView(parentWidget);
   return pluginWidget;
 }
 
@@ -40,7 +39,7 @@ QString qMRMLSegmentsTableViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentsTableView\" \
           name=\"SegmentsTableView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

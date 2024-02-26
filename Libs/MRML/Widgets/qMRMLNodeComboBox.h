@@ -52,11 +52,11 @@ class vtkMRMLScene;
 /// In addition to the populated nodes, qMRMLNodeComboBox contains menu
 /// items to add, delete, edit or rename the currently selected node. Each item
 /// can be hidden.
-class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox
-  : public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString currentNodeID READ currentNodeID WRITE setCurrentNodeID NOTIFY currentNodeIDChanged DESIGNABLE false)
+  Q_PROPERTY(
+    QString currentNodeID READ currentNodeID WRITE setCurrentNodeID NOTIFY currentNodeIDChanged DESIGNABLE false)
   Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode DESIGNABLE false) // \deprecated
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
@@ -103,18 +103,18 @@ public:
   /// Get MRML scene that has been set by setMRMLScene(), there is no scene
   /// by default (0).
   /// \sa setMRMLScene
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
   /// vtkMRMLTransformNode
-  QStringList nodeTypes()const;
+  QStringList nodeTypes() const;
   void setNodeTypes(const QStringList& nodeTypes);
 
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
   inline void setShowHidden(bool);
-  inline bool showHidden()const;
+  inline bool showHidden() const;
 
   /// This property controls whether subclasses of \a nodeType
   /// are hidden or not. If false, only the nodes of 'final' type
@@ -123,13 +123,13 @@ public:
   /// type \a hideChildNodeTypes.
   /// true by default.
   inline void setShowChildNodeTypes(bool show);
-  inline bool showChildNodeTypes()const;
+  inline bool showChildNodeTypes() const;
 
   /// If a node is a nodeType, hide the node if it is also
   /// a ExcludedChildNodeType. (this can happen if nodeType is a
   /// mother class of ExcludedChildNodeType)
   inline void setHideChildNodeTypes(const QStringList& nodeTypes);
-  inline QStringList hideChildNodeTypes()const;
+  inline QStringList hideChildNodeTypes() const;
 
   /// Add node type attribute that filter the nodes to
   /// display. For example, colormap categories are defined with the "Category"
@@ -146,101 +146,100 @@ public:
                                 const QVariant& attributeValue = QVariant());
   /// Remove node type attribute filtering the displayed nodes
   /// \sa addAttribute
-  Q_INVOKABLE void removeAttribute(const QString& nodeType,
-                                const QString& attributeName);
+  Q_INVOKABLE void removeAttribute(const QString& nodeType, const QString& attributeName);
 
   /// BaseName is the name used to generate a node name for all the new created
   /// nodes.
   /// If nodeType is not specified for setBaseName() then base name is set for all already defined node types.
   /// If nodeType is not specified for baseName() then base name of the first node type is returned.
   void setBaseName(const QString& baseName, const QString& nodeType = "");
-  QString baseName(const QString& nodeType = "")const;
+  QString baseName(const QString& nodeType = "") const;
 
   /// NodeTypeLabel is the name displayed to the user as node type. By default the node's tag is used.
   /// Configuration is useful for cases when a more specific type name is preferred (e.g., instead of
   /// the generic "Create new SubjectHierarchy" option, a module can set up the widget to show
   /// "Create new Measurements"). If label is set to empty then the default label is used.
   Q_INVOKABLE void setNodeTypeLabel(const QString& label, const QString& nodeType);
-  Q_INVOKABLE QString nodeTypeLabel(const QString& nodeType)const;
+  Q_INVOKABLE QString nodeTypeLabel(const QString& nodeType) const;
 
   /// return the number of nodes. it can be different from count()
   /// as count includes the "AddNode", "Remove Node"... items
-  Q_INVOKABLE int nodeCount()const;
+  Q_INVOKABLE int nodeCount() const;
 
   /// return the vtkMRMLNode* at the corresponding index. 0 if the index is
   /// invalid
   /// \sa nodeCount(), setCurrentNode(int)
-  Q_INVOKABLE vtkMRMLNode* nodeFromIndex(int index)const;
+  Q_INVOKABLE vtkMRMLNode* nodeFromIndex(int index) const;
 
   /// Return the currently selected node. 0 if no node is selected
-  Q_INVOKABLE vtkMRMLNode* currentNode()const;
+  Q_INVOKABLE vtkMRMLNode* currentNode() const;
 
   /// Return the currently selected node id . "" if no node is selected
   /// Utility function that is based on currentNode
-  QString currentNodeID()const;
+  QString currentNodeID() const;
 
   /// \deprecated
   /// Use currentNodeID instead
-  Q_INVOKABLE QString currentNodeId()const;
+  Q_INVOKABLE QString currentNodeId() const;
 
   /// if true, when the user create a node using "Add node", the node will be
   /// automatically selected. It doesn't apply if the node is programmatically
   /// added (when the combobox is populated by the scene).
-  bool selectNodeUponCreation()const;
+  bool selectNodeUponCreation() const;
   void setSelectNodeUponCreation(bool value);
 
   /// Return true if the "none" is in the comboBox list, false otherwise.
   /// \sa noneEnabled, setNoneEnabled()
-  bool noneEnabled()const;
+  bool noneEnabled() const;
   /// Set whether the "none" item should be in the comboBox list or not.
   /// \sa noneEnabled, noneEnabled()
   void setNoneEnabled(bool enable);
 
   /// Allow the user to create a new node. An "Add node" item is added into the
   /// menu list.
-  bool addEnabled()const;
+  bool addEnabled() const;
   void setAddEnabled(bool enable);
 
   /// Allow the user to delete the currently selected node. A "Remove node" item
   /// is added to the menu list.
-  bool removeEnabled()const;
+  bool removeEnabled() const;
   void setRemoveEnabled(bool enable);
 
   /// TODO
   /// Allow the user to modify the properties of the currently selected.
-  bool editEnabled()const;
+  bool editEnabled() const;
   void setEditEnabled(bool enable);
 
   /// Allow the user to rename the node.
-  bool renameEnabled()const;
+  bool renameEnabled() const;
   void setRenameEnabled(bool enable);
 
   /// Return the name of the "none" item
   /// \sa noneDisplay, setNoneDisplay()
-  QString noneDisplay()const;
+  QString noneDisplay() const;
 
   /// Set the name of the "none" item.
   /// \sa noneDisplay, noneDisplay()
   void setNoneDisplay(const QString& displayName);
 
   /// Return a list of all the nodes that are displayed in the combo box.
-  QList<vtkMRMLNode*> nodes()const;
+  QList<vtkMRMLNode*> nodes() const;
 
   /// Internal model associated to the combobox.
   /// It is usually not the scene model but the sort filter proxy model.
   /// \sa sortFilterProxyModel(), sceneModel()
-  QAbstractItemModel* model()const;
+  QAbstractItemModel* model() const;
 
   /// Retrieve the sortFilterProxyModel used to filter/sort
   /// the nodes.
   /// \sa sceneModel()
-  Q_INVOKABLE qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
+  Q_INVOKABLE qMRMLSortFilterProxyModel* sortFilterProxyModel() const;
 
   /// Retrieve the scene model internally used.
   /// The scene model is usually not used directly, but a sortFilterProxyModel
   /// is plugged in.
   /// \sa sortFilterProxyModel()
-  qMRMLSceneModel* sceneModel()const;
+  qMRMLSceneModel* sceneModel() const;
 
   /// Return the node factory used to create nodes when "Add Node"
   /// is selected (property \a AddEnabled should be true).
@@ -249,10 +248,10 @@ public:
   /// slot:
   /// connect(nodeComboBox->nodeFactory(), SIGNAL(nodeInitialized(vtkMRMLNode*)),
   ///         this, SLOT(initializeNode(vtkMRMLNode*)));
-  qMRMLNodeFactory* nodeFactory()const;
+  qMRMLNodeFactory* nodeFactory() const;
 
   /// \sa QComboBox::sizeAdjustPolicy
-  QComboBox::SizeAdjustPolicy sizeAdjustPolicy()const;
+  QComboBox::SizeAdjustPolicy sizeAdjustPolicy() const;
   void setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy policy);
 
   /// Allow addition of menu actions in addition to the default actions that
@@ -264,9 +263,9 @@ public:
   /// Checks for action text duplicates and doesn't add them.
   /// Also checks for action text that will be hidden by the default action
   /// texts and doesn't add it.
-  Q_INVOKABLE virtual void addMenuAction(QAction *newAction);
+  Q_INVOKABLE virtual void addMenuAction(QAction* newAction);
 
-  virtual QString interactionNodeSingletonTag()const;
+  virtual QString interactionNodeSingletonTag() const;
   virtual void setInteractionNodeSingletonTag(const QString& tag);
 
 public slots:
@@ -373,13 +372,13 @@ protected:
   /// qMRMLNodeComboBox will not take ownership on the model.
   qMRMLNodeComboBox(QAbstractItemModel* model, QWidget* parent = nullptr);
   qMRMLNodeComboBox(qMRMLNodeComboBoxPrivate* pimpl, QWidget* parent = nullptr);
-  QAbstractItemModel* rootModel()const;
+  QAbstractItemModel* rootModel() const;
 
   void setComboBox(QComboBox* comboBox);
 
   /// Exposed internal combobox to tweak its behavior such as changing the
   /// QComboBox view or item delegate.
-  QComboBox* comboBox()const;
+  QComboBox* comboBox() const;
 
   void changeEvent(QEvent* event) override;
 
@@ -387,8 +386,8 @@ protected slots:
   void activateExtraItem(const QModelIndex& index);
   void emitCurrentNodeChanged();
   void emitNodeActivated(int currentIndex);
-  void emitNodesAdded(const QModelIndex & parent, int start, int end);
-  void emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end);
+  void emitNodesAdded(const QModelIndex& parent, int start, int end);
+  void emitNodesAboutToBeRemoved(const QModelIndex& parent, int start, int end);
   void refreshIfCurrentNodeHidden();
 
 protected:
@@ -406,7 +405,7 @@ void qMRMLNodeComboBox::setShowHidden(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLNodeComboBox::showHidden()const
+bool qMRMLNodeComboBox::showHidden() const
 {
   return this->sortFilterProxyModel()->showHidden();
 }
@@ -418,7 +417,7 @@ void qMRMLNodeComboBox::setShowChildNodeTypes(bool show)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLNodeComboBox::showChildNodeTypes()const
+bool qMRMLNodeComboBox::showChildNodeTypes() const
 {
   return this->sortFilterProxyModel()->showChildNodeTypes();
 }
@@ -430,7 +429,7 @@ void qMRMLNodeComboBox::setHideChildNodeTypes(const QStringList& _nodeTypes)
 }
 
 // --------------------------------------------------------------------------
-QStringList qMRMLNodeComboBox::hideChildNodeTypes()const
+QStringList qMRMLNodeComboBox::hideChildNodeTypes() const
 {
   return this->sortFilterProxyModel()->hideChildNodeTypes();
 }

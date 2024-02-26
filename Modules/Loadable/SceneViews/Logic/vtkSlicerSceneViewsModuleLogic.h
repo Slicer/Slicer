@@ -28,7 +28,7 @@
 #include "vtkMRMLAbstractLogic.h"
 
 #include "vtkSlicerSceneViewsModuleLogicExport.h"
-//#include "qSlicerSceneViewsModuleExport.h"
+// #include "qSlicerSceneViewsModuleExport.h"
 
 #include "vtkSlicerModuleLogic.h"
 
@@ -41,17 +41,15 @@ class vtkImageData;
 
 #include <string>
 
-class VTK_SLICER_SCENEVIEWS_MODULE_LOGIC_EXPORT vtkSlicerSceneViewsModuleLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_SCENEVIEWS_MODULE_LOGIC_EXPORT vtkSlicerSceneViewsModuleLogic : public vtkSlicerModuleLogic
 {
 public:
-
-  static vtkSlicerSceneViewsModuleLogic *New();
-  vtkTypeMacro(vtkSlicerSceneViewsModuleLogic,vtkSlicerModuleLogic);
+  static vtkSlicerSceneViewsModuleLogic* New();
+  vtkTypeMacro(vtkSlicerSceneViewsModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Initialize listening to MRML events
-  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   void RegisterNodes() override;
@@ -60,7 +58,11 @@ public:
   void CreateSceneView(const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
 
   /// Modify an existing sceneView.
-  void ModifySceneView(vtkStdString id, const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
+  void ModifySceneView(vtkStdString id,
+                       const char* name,
+                       const char* description,
+                       int screenshotType,
+                       vtkImageData* screenshot);
 
   /// Return the name of an existing sceneView.
   vtkStdString GetSceneViewName(const char* id);
@@ -88,10 +90,9 @@ public:
   const char* MoveSceneViewDown(const char* id);
 
   /// Remove a scene view node
-  void RemoveSceneViewNode(vtkMRMLSceneViewNode *sceneViewNode);
+  void RemoveSceneViewNode(vtkMRMLSceneViewNode* sceneViewNode);
 
 protected:
-
   vtkSlicerSceneViewsModuleLogic();
 
   ~vtkSlicerSceneViewsModuleLogic() override;
@@ -104,7 +105,6 @@ protected:
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
 private:
-
   std::string m_StringHolder;
 
 private:

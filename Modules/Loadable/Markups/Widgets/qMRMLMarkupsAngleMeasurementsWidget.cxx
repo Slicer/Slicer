@@ -32,12 +32,11 @@
 class qMRMLMarkupsAngleMeasurementsWidget;
 
 // --------------------------------------------------------------------------
-class qMRMLMarkupsAngleMeasurementsWidgetPrivate:
-  public Ui_qMRMLMarkupsAngleMeasurementsWidget
+class qMRMLMarkupsAngleMeasurementsWidgetPrivate : public Ui_qMRMLMarkupsAngleMeasurementsWidget
 {
 
 public:
-  qMRMLMarkupsAngleMeasurementsWidgetPrivate(qMRMLMarkupsAngleMeasurementsWidget &widget);
+  qMRMLMarkupsAngleMeasurementsWidgetPrivate(qMRMLMarkupsAngleMeasurementsWidget& widget);
   void setupUi(qMRMLMarkupsAngleMeasurementsWidget* widget);
 
 protected:
@@ -45,11 +44,11 @@ protected:
 
 private:
   Q_DECLARE_PUBLIC(qMRMLMarkupsAngleMeasurementsWidget);
-
 };
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsAngleMeasurementsWidgetPrivate::qMRMLMarkupsAngleMeasurementsWidgetPrivate(qMRMLMarkupsAngleMeasurementsWidget& widget)
+qMRMLMarkupsAngleMeasurementsWidgetPrivate::qMRMLMarkupsAngleMeasurementsWidgetPrivate(
+  qMRMLMarkupsAngleMeasurementsWidget& widget)
   : q_ptr(&widget)
 {
 }
@@ -61,10 +60,10 @@ void qMRMLMarkupsAngleMeasurementsWidgetPrivate::setupUi(qMRMLMarkupsAngleMeasur
 
   this->Ui_qMRMLMarkupsAngleMeasurementsWidget::setupUi(widget);
 
-  QObject::connect(this->angleMeasurementModeComboBox, SIGNAL(currentIndexChanged(int)),
-                   q_ptr, SLOT(onAngleMeasurementModeChanged()));
-  QObject::connect(this->rotationAxisCoordinatesWidget, SIGNAL(coordinatesChanged(double*)),
-                   q_ptr, SLOT(onRotationAxisChanged()));
+  QObject::connect(
+    this->angleMeasurementModeComboBox, SIGNAL(currentIndexChanged(int)), q_ptr, SLOT(onAngleMeasurementModeChanged()));
+  QObject::connect(
+    this->rotationAxisCoordinatesWidget, SIGNAL(coordinatesChanged(double*)), q_ptr, SLOT(onRotationAxisChanged()));
 
   q_ptr->setEnabled(q_ptr->MarkupsNode != nullptr);
 }
@@ -73,17 +72,15 @@ void qMRMLMarkupsAngleMeasurementsWidgetPrivate::setupUi(qMRMLMarkupsAngleMeasur
 // qMRMLMarkupsAngleMeasurementsWidget methods
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsAngleMeasurementsWidget::
-qMRMLMarkupsAngleMeasurementsWidget(QWidget *parent)
-  : Superclass(parent), d_ptr(new qMRMLMarkupsAngleMeasurementsWidgetPrivate(*this))
+qMRMLMarkupsAngleMeasurementsWidget::qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent)
+  : Superclass(parent)
+  , d_ptr(new qMRMLMarkupsAngleMeasurementsWidgetPrivate(*this))
 {
   this->setup();
 }
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsAngleMeasurementsWidget::~qMRMLMarkupsAngleMeasurementsWidget()
-{
-}
+qMRMLMarkupsAngleMeasurementsWidget::~qMRMLMarkupsAngleMeasurementsWidget() {}
 
 // --------------------------------------------------------------------------
 void qMRMLMarkupsAngleMeasurementsWidget::setup()
@@ -100,13 +97,14 @@ void qMRMLMarkupsAngleMeasurementsWidget::updateWidgetFromMRML()
     return;
   }
 
-    double axisVector[3] = {0.0, 0.0, 0.0};
-    angleNode->GetOrientationRotationAxis(axisVector);
-    bool wasBlocked = d_ptr->rotationAxisCoordinatesWidget->blockSignals(true);
-    d_ptr->rotationAxisCoordinatesWidget->setCoordinates(axisVector);
-    d_ptr->rotationAxisCoordinatesWidget->setEnabled(angleNode->GetAngleMeasurementMode() != vtkMRMLMarkupsAngleNode::Minimal);
-    d_ptr->rotationAxisCoordinatesWidget->blockSignals(wasBlocked);
-    d_ptr->angleMeasurementModeComboBox->setCurrentIndex(angleNode->GetAngleMeasurementMode());
+  double axisVector[3] = { 0.0, 0.0, 0.0 };
+  angleNode->GetOrientationRotationAxis(axisVector);
+  bool wasBlocked = d_ptr->rotationAxisCoordinatesWidget->blockSignals(true);
+  d_ptr->rotationAxisCoordinatesWidget->setCoordinates(axisVector);
+  d_ptr->rotationAxisCoordinatesWidget->setEnabled(angleNode->GetAngleMeasurementMode()
+                                                   != vtkMRMLMarkupsAngleNode::Minimal);
+  d_ptr->rotationAxisCoordinatesWidget->blockSignals(wasBlocked);
+  d_ptr->angleMeasurementModeComboBox->setCurrentIndex(angleNode->GetAngleMeasurementMode());
 }
 
 //-----------------------------------------------------------------------------
@@ -130,11 +128,12 @@ void qMRMLMarkupsAngleMeasurementsWidget::onRotationAxisChanged()
   {
     return;
   }
-  markupsAngleNode->SetOrientationRotationAxis(const_cast<double*>(d_ptr->rotationAxisCoordinatesWidget->coordinates()));
+  markupsAngleNode->SetOrientationRotationAxis(
+    const_cast<double*>(d_ptr->rotationAxisCoordinatesWidget->coordinates()));
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsAngleMeasurementsWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qMRMLMarkupsAngleMeasurementsWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const
 {
   vtkMRMLMarkupsAngleNode* angleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode);
   if (!angleNode)
@@ -150,13 +149,12 @@ void qMRMLMarkupsAngleMeasurementsWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode*
 {
   this->MarkupsNode = vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode);
 
-  if(!this->MarkupsNode)
+  if (!this->MarkupsNode)
   {
     return;
   }
 
-  this->qvtkReconnect(this->MarkupsNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(this->MarkupsNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   this->updateWidgetFromMRML();
   this->setEnabled(markupsNode != nullptr);

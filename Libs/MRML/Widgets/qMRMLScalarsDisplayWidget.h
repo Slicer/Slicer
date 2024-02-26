@@ -46,24 +46,24 @@ public:
   ~qMRMLScalarsDisplayWidget() override;
 
   /// Get the (first) current display node
-  vtkMRMLDisplayNode* mrmlDisplayNode()const;
+  vtkMRMLDisplayNode* mrmlDisplayNode() const;
   /// Get current display nodes. This is for supporting changing properties
   /// in case of multiple nodes are selected (e.g., in subject hierarchy folders).
-  QList<vtkMRMLDisplayNode*> mrmlDisplayNodes()const;
+  QList<vtkMRMLDisplayNode*> mrmlDisplayNodes() const;
 
-  bool scalarsVisibility()const;
-  QString activeScalarName()const;
-  vtkMRMLColorNode* scalarsColorNode()const;
+  bool scalarsVisibility() const;
+  QString activeScalarName() const;
+  vtkMRMLColorNode* scalarsColorNode() const;
 
   /// Set scalar range mode
   void setScalarRangeMode(vtkMRMLDisplayNode::ScalarRangeFlagType mode);
   vtkMRMLDisplayNode::ScalarRangeFlagType scalarRangeMode() const;
 
   /// Get minimum of the scalar display range
-  double minimumValue()const;
+  double minimumValue() const;
 
   /// Get maximum of the scalar display range
-  double maximumValue()const;
+  double maximumValue() const;
 
 signals:
   /// Signal sent if the auto/manual value is updated

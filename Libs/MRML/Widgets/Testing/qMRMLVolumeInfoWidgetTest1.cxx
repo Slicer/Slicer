@@ -40,15 +40,15 @@
 #include <vtkVersion.h>
 #include "qMRMLWidget.h"
 
-int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
+int qMRMLVolumeInfoWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkNew< vtkMRMLScalarVolumeNode > volumeNode;
+  vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
 
-  vtkNew< vtkImageData > imageData;
+  vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(256, 256, 1);
   imageData->AllocateScalars(VTK_UNSIGNED_SHORT, 1); // allocate storage for image data
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
@@ -71,10 +71,9 @@ int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
   volumeInfo.setVolumeNode(volumeNode.GetPointer());
   volumeInfo.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
   return app.exec();
 }
-

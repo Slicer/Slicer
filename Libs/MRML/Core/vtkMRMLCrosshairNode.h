@@ -24,23 +24,23 @@
 /// style, attributes)
 class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 {
-  public:
-  static vtkMRMLCrosshairNode *New();
-  vtkTypeMacro(vtkMRMLCrosshairNode,vtkMRMLNode);
+public:
+  static vtkMRMLCrosshairNode* New();
+  vtkTypeMacro(vtkMRMLCrosshairNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// CursorPositionModifiedEvent is invoked when the cursor position is modified,
   /// for example a mouse pointer is moved in a slice view.
   enum
   {
-      CursorPositionModifiedEvent = 22000
+    CursorPositionModifiedEvent = 22000
   };
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -52,12 +52,12 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Crosshair";};
+  const char* GetNodeTagName() override { return "Crosshair"; };
 
   ///@{
   /// Configure crosshair appearance.
-  vtkGetMacro (CrosshairMode, int );
-  vtkSetMacro (CrosshairMode, int );
+  vtkGetMacro(CrosshairMode, int);
+  vtkSetMacro(CrosshairMode, int);
   static const char* GetCrosshairModeAsString(int id);
   static int GetCrosshairModeFromString(const char* name);
 
@@ -75,8 +75,8 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
   ///@{
   /// Configure crosshair behavior.
-  vtkGetMacro (CrosshairBehavior, int );
-  vtkSetMacro (CrosshairBehavior, int );
+  vtkGetMacro(CrosshairBehavior, int);
+  vtkSetMacro(CrosshairBehavior, int);
   static const char* GetCrosshairBehaviorAsString(int id);
   static int GetCrosshairBehaviorFromString(const char* name);
   ///@}
@@ -94,7 +94,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   /// Set cursor position in a 2D slice view.
   /// The method also computes the RAS position.
   /// This method should be called whenever the mouse moves in a slice viewer.
-  void SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode *sliceNode);
+  void SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode* sliceNode);
 
   /// Invalidates the cursor position. This should be called whenever the mouse moves out of a view.
   void SetCursorPositionInvalid();
@@ -123,44 +123,39 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   /// Get the pane of the lightbox that was last cached
   vtkGetMacro(LightBoxPane, int);
 
-
   ///
   /// Name of the layout
-  void SetCrosshairName(const char *name) {
-    this->SetSingletonTag(name);
-  }
-  char *GetCrosshairName() {
-    return this->GetSingletonTag();
-  }
+  void SetCrosshairName(const char* name) { this->SetSingletonTag(name); }
+  char* GetCrosshairName() { return this->GetSingletonTag(); }
 
   /// Modes for crosshair display
   enum
   {
-      NoCrosshair = 0,
-      ShowBasic,
-      ShowIntersection,
-      ShowHashmarks,
-      ShowAll,
-      ShowSmallBasic,
-      ShowSmallIntersection,
-      CrosshairMode_Last
+    NoCrosshair = 0,
+    ShowBasic,
+    ShowIntersection,
+    ShowHashmarks,
+    ShowAll,
+    ShowSmallBasic,
+    ShowSmallIntersection,
+    CrosshairMode_Last
   };
   enum
   {
-      Fine = 1,
-      Medium,
-      Thick,
-      CrosshairThickness_Last
+    Fine = 1,
+    Medium,
+    Thick,
+    CrosshairThickness_Last
   };
   /// Behavior when crosshair position is changed.
   enum
   {
-      NoAction = 0,
-      OffsetJumpSlice = 1,
-      Normal = 1,   ///< \deprecated Use OffsetJumpSlice instead
-      CenteredJumpSlice = 2,
-      JumpSlice = 2, ///< \deprecated Use CenteredJumpSlice instead
-      CrosshairBehavior_Last
+    NoAction = 0,
+    OffsetJumpSlice = 1,
+    Normal = 1, ///< \deprecated Use OffsetJumpSlice instead
+    CenteredJumpSlice = 2,
+    JumpSlice = 2, ///< \deprecated Use CenteredJumpSlice instead
+    CrosshairBehavior_Last
   };
 
   ///@{
@@ -182,28 +177,28 @@ protected:
   vtkMRMLCrosshairNode(const vtkMRMLCrosshairNode&);
   void operator=(const vtkMRMLCrosshairNode&);
 
-  int CrosshairMode{NoCrosshair};
-  int CrosshairThickness{Fine};
-  int CrosshairBehavior{OffsetJumpSlice};
-  float CrosshairColor[3]{1.0f, 0.8f, 0.1f}; // Light yellow
+  int CrosshairMode{ NoCrosshair };
+  int CrosshairThickness{ Fine };
+  int CrosshairBehavior{ OffsetJumpSlice };
+  float CrosshairColor[3]{ 1.0f, 0.8f, 0.1f }; // Light yellow
 
-  double CrosshairRAS[3]{0.0, 0.0, 0.0};
-  int LightBoxPane{0};
+  double CrosshairRAS[3]{ 0.0, 0.0, 0.0 };
+  int LightBoxPane{ 0 };
 
   /// Last known cursor position in RAS coordinate system.
   /// If CursorPositionValid is false then this position is not up-to-date anymore.
-  double CursorPositionRAS[3]{0.0, 0.0, 0.0};
+  double CursorPositionRAS[3]{ 0.0, 0.0, 0.0 };
   /// Last known cursor position in XYZ coordinate system.
   /// If CursorSliceNode is nullptr then this position is not up-to-date anymore.
-  double CursorPositionXYZ[3]{0.0, 0.0, 0.0};
+  double CursorPositionXYZ[3]{ 0.0, 0.0, 0.0 };
   /// CursorSliceNode points to the slice where the cursor is. It is not stored as a MRML node reference
   /// as its value is not saved with the scene and also it changes frequently therefore it is better
   /// to keep a lightweight reference.
   vtkWeakPointer<vtkMRMLSliceNode> CursorSliceNode;
 
   /// Set to false if the cursor is not in a view
-  bool CursorPositionRASValid{false};
-  bool FastPick3D{false};
+  bool CursorPositionRASValid{ false };
+  bool FastPick3D{ false };
 };
 
 #endif

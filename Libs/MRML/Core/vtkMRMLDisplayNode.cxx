@@ -112,8 +112,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->ActiveAttributeLocation = vtkAssignAttribute::POINT_DATA;
 
   // add observer to process visualization pipeline
-  vtkEventBroker::GetInstance()->AddObservation(
-    this, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+  vtkEventBroker::GetInstance()->AddObservation(this, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
 }
 
 //----------------------------------------------------------------------------
@@ -121,7 +120,7 @@ vtkMRMLDisplayNode::~vtkMRMLDisplayNode()
 {
   this->SetTextureImageDataConnection(nullptr);
   this->SetActiveScalarName(nullptr);
-  this->SetAndObserveColorNodeID( nullptr);
+  this->SetAndObserveColorNodeID(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -228,7 +227,7 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(showMode, ShowMode);
   if (!strcmp(xmlReadAttName, "autoScalarRange"))
   {
-    if (!strcmp(xmlReadAttName,"true"))
+    if (!strcmp(xmlReadAttName, "true"))
     {
       this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
     }
@@ -257,12 +256,12 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLDisplayNode *node = vtkMRMLDisplayNode::SafeDownCast(anode);
+  vtkMRMLDisplayNode* node = vtkMRMLDisplayNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -309,7 +308,7 @@ void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintVectorMacro(Color, double, 3);
@@ -363,14 +362,14 @@ void vtkMRMLDisplayNode::SetSceneReferences()
     return;
   }
   this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
-  for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+  for (unsigned int i = 0; i < this->ViewNodeIDs.size(); i++)
   {
     this->Scene->AddReferencedNodeID(this->ViewNodeIDs[i].c_str(), this);
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
+void vtkMRMLDisplayNode::UpdateReferenceID(const char* oldID, const char* newID)
 {
   this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
@@ -380,11 +379,11 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
   else
   {
     bool modified = false;
-    for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    for (unsigned int i = 0; i < this->ViewNodeIDs.size(); i++)
     {
-      if ( std::string(oldID) == this->ViewNodeIDs[i])
+      if (std::string(oldID) == this->ViewNodeIDs[i])
       {
-        this->ViewNodeIDs[i] =  std::string(newID);
+        this->ViewNodeIDs[i] = std::string(newID);
         modified = true;
       }
     }
@@ -408,7 +407,7 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
   if (this->LastFoundDisplayableNode != nullptr)
   {
     if (this->LastFoundDisplayableNode->GetScene() == this->Scene
-      && this->LastFoundDisplayableNode->HasDisplayNodeID(this->GetID()))
+        && this->LastFoundDisplayableNode->HasDisplayNodeID(this->GetID()))
     {
       return this->LastFoundDisplayableNode;
     }
@@ -416,11 +415,9 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
   vtkMRMLNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   vtkCollection* sceneNodes = this->Scene->GetNodes();
-  for (sceneNodes->InitTraversal(it);
-       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
+  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
   {
-    vtkMRMLDisplayableNode* displayableNode =
-      vtkMRMLDisplayableNode::SafeDownCast(node);
+    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
     if (displayableNode && displayableNode->HasDisplayNodeID(this->GetID()))
     {
       this->LastFoundDisplayableNode = displayableNode;
@@ -432,46 +429,43 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayNode
-::SetTextureImageDataConnection(vtkAlgorithmOutput* newTextureImageDataConnection)
+void vtkMRMLDisplayNode ::SetTextureImageDataConnection(vtkAlgorithmOutput* newTextureImageDataConnection)
 {
-   if (newTextureImageDataConnection == this->TextureImageDataConnection)
-   {
+  if (newTextureImageDataConnection == this->TextureImageDataConnection)
+  {
     return;
-   }
+  }
 
-  vtkAlgorithm* oldTextureImageDataAlgorithm = this->TextureImageDataConnection ?
-    this->TextureImageDataConnection->GetProducer() : nullptr;
+  vtkAlgorithm* oldTextureImageDataAlgorithm =
+    this->TextureImageDataConnection ? this->TextureImageDataConnection->GetProducer() : nullptr;
 
   this->TextureImageDataConnection = newTextureImageDataConnection;
 
-  vtkAlgorithm* textureImageDataAlgorithm = this->TextureImageDataConnection ?
-    this->TextureImageDataConnection->GetProducer() : nullptr;
+  vtkAlgorithm* textureImageDataAlgorithm =
+    this->TextureImageDataConnection ? this->TextureImageDataConnection->GetProducer() : nullptr;
 
   if (textureImageDataAlgorithm != nullptr)
   {
     vtkEventBroker::GetInstance()->AddObservation(
-      this->TextureImageDataConnection, vtkCommand::ModifiedEvent,
-      this, this->MRMLCallbackCommand );
+      this->TextureImageDataConnection, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
     textureImageDataAlgorithm->Register(this);
   }
 
   if (oldTextureImageDataAlgorithm != nullptr)
   {
     vtkEventBroker::GetInstance()->RemoveObservations(
-      this->TextureImageDataConnection, vtkCommand::ModifiedEvent,
-      this, this->MRMLCallbackCommand );
+      this->TextureImageDataConnection, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
     oldTextureImageDataAlgorithm->UnRegister(this);
   }
   this->Modified();
 }
 
 //-----------------------------------------------------------
-void vtkMRMLDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
-   Superclass::UpdateScene(scene);
+  Superclass::UpdateScene(scene);
 
-   this->SetAndObserveColorNodeID(this->GetColorNodeID());
+  this->SetAndObserveColorNodeID(this->GetColorNodeID());
 }
 
 //-----------------------------------------------------------
@@ -489,9 +483,9 @@ void vtkMRMLDisplayNode::UpdateReferences()
     this->SetAndObserveColorNodeID(nullptr);
   }
 
-  std::vector< std::string > viewNodeIDs;
+  std::vector<std::string> viewNodeIDs;
 
-  for (unsigned int i=0; i < this->ViewNodeIDs.size(); i++)
+  for (unsigned int i = 0; i < this->ViewNodeIDs.size(); i++)
   {
     if (this->Scene->GetNodeByID(this->ViewNodeIDs[i]) != nullptr)
     {
@@ -517,21 +511,19 @@ vtkMRMLColorNode* vtkMRMLDisplayNode::GetColorNode()
   vtkMRMLColorNode* cnode = nullptr;
   if (this->GetScene())
   {
-    cnode = vtkMRMLColorNode::SafeDownCast(
-      this->GetScene()->GetNodeByID(this->ColorNodeID));
+    cnode = vtkMRMLColorNode::SafeDownCast(this->GetScene()->GetNodeByID(this->ColorNodeID));
   }
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
   return cnode;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
+void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char* colorNodeID)
 {
   vtkMRMLColorNode* cnode = nullptr;
   if (this->GetScene() && colorNodeID)
   {
-    cnode = vtkMRMLColorNode::SafeDownCast(
-      this->GetScene()->GetNodeByID(colorNodeID));
+    cnode = vtkMRMLColorNode::SafeDownCast(this->GetScene()->GetNodeByID(colorNodeID));
   }
   if (this->ColorNode != cnode)
   {
@@ -548,31 +540,27 @@ void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const std::string& colorNodeID)
 {
-  this->SetAndObserveColorNodeID( colorNodeID.c_str() );
+  this->SetAndObserveColorNodeID(colorNodeID.c_str());
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* vtkNotUsed(newColorNode))
-{
-}
+void vtkMRMLDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* vtkNotUsed(newColorNode)) {}
 
 //---------------------------------------------------------------------------
-void vtkMRMLDisplayNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->TextureImageDataConnection != nullptr &&
-      this->TextureImageDataConnection == vtkAlgorithmOutput::SafeDownCast(caller) &&
-      event ==  vtkCommand::ModifiedEvent)
+  if (this->TextureImageDataConnection != nullptr
+      && this->TextureImageDataConnection == vtkAlgorithmOutput::SafeDownCast(caller)
+      && event == vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
 
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
-  if (cnode != nullptr &&
-      this->ColorNodeID != nullptr && cnode->GetID() != nullptr &&
-      strcmp(this->ColorNodeID, cnode->GetID()) == 0 &&
-      event ==  vtkCommand::ModifiedEvent)
+  if (cnode != nullptr && this->ColorNodeID != nullptr && cnode->GetID() != nullptr
+      && strcmp(this->ColorNodeID, cnode->GetID()) == 0 && event == vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
@@ -607,15 +595,15 @@ void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
   {
     return;
   }
-  std::vector< std::string > viewNodeIDs;
-  for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+  std::vector<std::string> viewNodeIDs;
+  for (unsigned int i = 0; i < this->ViewNodeIDs.size(); i++)
   {
     if (std::string(viewNodeID) != this->ViewNodeIDs[i])
     {
       viewNodeIDs.push_back(this->ViewNodeIDs[i]);
     }
   }
-  if (viewNodeIDs.size() != this->ViewNodeIDs.size() && this->Scene!=nullptr)
+  if (viewNodeIDs.size() != this->ViewNodeIDs.size() && this->Scene != nullptr)
   {
     this->Scene->RemoveReferencedNodeID(viewNodeID, this);
     this->ViewNodeIDs = viewNodeIDs;
@@ -626,9 +614,9 @@ void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
 //-------------------------------------------------------
 void vtkMRMLDisplayNode::RemoveAllViewNodeIDs()
 {
-  if (this->Scene!=nullptr)
+  if (this->Scene != nullptr)
   {
-    for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    for (unsigned int i = 0; i < this->ViewNodeIDs.size(); i++)
     {
       this->Scene->RemoveReferencedNodeID(ViewNodeIDs[i].c_str(), this);
     }
@@ -642,33 +630,33 @@ const char* vtkMRMLDisplayNode::GetNthViewNodeID(unsigned int index)
 {
   if (index >= ViewNodeIDs.size())
   {
-    vtkErrorMacro("vtkMRMLDisplayNode::GetNthViewNodeID() index " << index << " outside the range 0-" << ViewNodeIDs.size()-1 );
+    vtkErrorMacro("vtkMRMLDisplayNode::GetNthViewNodeID() index " << index << " outside the range 0-"
+                                                                  << ViewNodeIDs.size() - 1);
     return nullptr;
   }
   return ViewNodeIDs[index].c_str();
 }
 
 //-------------------------------------------------------
-bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)const
+bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID) const
 {
   if (viewNodeID == nullptr)
   {
     return false;
   }
   std::string value(viewNodeID);
-  std::vector< std::string >::const_iterator it =
-    std::find(this->ViewNodeIDs.begin(), this->ViewNodeIDs.end(), value);
+  std::vector<std::string>::const_iterator it = std::find(this->ViewNodeIDs.begin(), this->ViewNodeIDs.end(), value);
   return it != this->ViewNodeIDs.end();
 }
 
 //-------------------------------------------------------
-bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID)const
+bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID) const
 {
   return this->GetNumberOfViewNodeIDs() == 0 || this->IsViewNodeIDPresent(viewNodeID);
 }
 
 //-------------------------------------------------------
-void vtkMRMLDisplayNode::SetDisplayableOnlyInView(const char *viewNodeID)
+void vtkMRMLDisplayNode::SetDisplayableOnlyInView(const char* viewNodeID)
 {
   if (viewNodeID == nullptr)
   {
@@ -682,13 +670,10 @@ void vtkMRMLDisplayNode::SetDisplayableOnlyInView(const char *viewNodeID)
 }
 
 //-------------------------------------------------------
-void vtkMRMLDisplayNode
-::SetViewNodeIDs(const std::vector<std::string>& viewNodeIDs)
+void vtkMRMLDisplayNode ::SetViewNodeIDs(const std::vector<std::string>& viewNodeIDs)
 {
-  std::vector<std::string>::const_iterator sourceIt =
-    viewNodeIDs.begin();
-  std::vector<std::string>::iterator destIt =
-    this->ViewNodeIDs.begin();
+  std::vector<std::string>::const_iterator sourceIt = viewNodeIDs.begin();
+  std::vector<std::string>::iterator destIt = this->ViewNodeIDs.begin();
   bool different = false;
   for (; sourceIt != viewNodeIDs.end(); ++sourceIt, ++destIt)
   {
@@ -720,9 +705,7 @@ void vtkMRMLDisplayNode
 //-------------------------------------------------------
 bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
 {
-  if (!viewNodeID
-    || !this->GetVisibility()
-    || !this->IsDisplayableInView(viewNodeID))
+  if (!viewNodeID || !this->GetVisibility() || !this->IsDisplayableInView(viewNodeID))
   {
     return false;
   }
@@ -793,11 +776,16 @@ const char* vtkMRMLDisplayNode::GetScalarRangeFlagTypeAsString(int flag)
 {
   switch (flag)
   {
-    case UseManualScalarRange: return "UseManual";
-    case UseDataScalarRange: return "UseData";
-    case UseColorNodeScalarRange: return "UseColorNode";
-    case UseDataTypeScalarRange: return "UseDataType";
-    case UseDirectMapping: return "UseDirectMapping";
+    case UseManualScalarRange:
+      return "UseManual";
+    case UseDataScalarRange:
+      return "UseData";
+    case UseColorNodeScalarRange:
+      return "UseColorNode";
+    case UseDataTypeScalarRange:
+      return "UseDataType";
+    case UseDirectMapping:
+      return "UseDirectMapping";
     default:
       // invalid id
       return "";
@@ -872,7 +860,7 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
   int flag = this->GetScalarRangeFlag();
   if (flag == vtkMRMLDisplayNode::UseDataScalarRange)
   {
-    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    vtkDataArray* dataArray = this->GetActiveScalarArray();
     if (dataArray)
     {
       dataArray->GetRange(newScalarRange);
@@ -903,7 +891,7 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
   }
   else if (flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
   {
-    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    vtkDataArray* dataArray = this->GetActiveScalarArray();
     if (dataArray)
     {
       newScalarRange[0] = dataArray->GetDataTypeMin();
@@ -920,11 +908,11 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLDisplayNode::SetActiveScalar(const char *scalarName, int location)
+void vtkMRMLDisplayNode::SetActiveScalar(const char* scalarName, int location)
 {
   if (location == this->ActiveAttributeLocation
-    && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
-        || (scalarName == nullptr && this->ActiveScalarName == nullptr)))
+      && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
+          || (scalarName == nullptr && this->ActiveScalarName == nullptr)))
   {
     // no change
     return;
@@ -940,10 +928,14 @@ const char* vtkMRMLDisplayNode::GetAttributeLocationAsString(int id)
 {
   switch (id)
   {
-    case vtkAssignAttribute::POINT_DATA: return "point";
-    case vtkAssignAttribute::CELL_DATA: return "cell";
-    case vtkAssignAttribute::VERTEX_DATA: return "vertex";
-    case vtkAssignAttribute::EDGE_DATA: return "edge";
+    case vtkAssignAttribute::POINT_DATA:
+      return "point";
+    case vtkAssignAttribute::CELL_DATA:
+      return "cell";
+    case vtkAssignAttribute::VERTEX_DATA:
+      return "vertex";
+    case vtkAssignAttribute::EDGE_DATA:
+      return "edge";
     default:
       // invalid id
       return "";
@@ -980,7 +972,7 @@ const char* vtkMRMLDisplayNode::GetActiveAttributeLocationAsString()
 void vtkMRMLDisplayNode::SetActiveAttributeLocationFromString(const char* str)
 {
   int id = this->GetAttributeLocationFromString(str);
-  if (id<0)
+  if (id < 0)
   {
     vtkWarningMacro("Invalid activeAttributeLocation: " << (str ? str : "(none)"));
   }
@@ -1044,7 +1036,7 @@ std::string vtkMRMLDisplayNode::GetTextPropertyAsString(vtkTextProperty* textPro
   ss << "background-color:rgba(";
   for (int i = 0; i < 3; ++i)
   {
-    ss << static_cast<int>(std::floor(textProperty->GetBackgroundColor()[i] * 255))  << ",";
+    ss << static_cast<int>(std::floor(textProperty->GetBackgroundColor()[i] * 255)) << ",";
   }
   ss << textProperty->GetBackgroundOpacity() << ");";
   ss << "border-width:" << textProperty->GetFrameWidth() << "px;";
@@ -1066,7 +1058,7 @@ void vtkMRMLDisplayNode::UpdateTextPropertyFromString(std::string inputString, v
 {
   if (!textProperty)
   {
-    return ;
+    return;
   }
 
   std::vector<std::string> textProperties = vtksys::SystemTools::SplitString(inputString, ';');
@@ -1110,7 +1102,7 @@ void vtkMRMLDisplayNode::UpdateTextPropertyFromString(std::string inputString, v
     }
     else if (key == "color")
     {
-      double colorF[4] = { 0.0, 0.0, 0.0, 0.0};
+      double colorF[4] = { 0.0, 0.0, 0.0, 0.0 };
       vtkMRMLDisplayNode::GetColorFromString(value, colorF);
       textProperty->SetColor(colorF);
       textProperty->SetOpacity(colorF[3]);
@@ -1168,7 +1160,7 @@ void vtkMRMLDisplayNode::UpdateTextPropertyFromString(std::string inputString, v
         }
         ++shadowPropertyIndex;
       }
-        textProperty->SetShadowOffset(shadowOffset);
+      textProperty->SetShadowOffset(shadowOffset);
     }
   }
 }
@@ -1192,7 +1184,7 @@ void vtkMRMLDisplayNode::GetColorFromString(const std::string& inputString, doub
   }
 
   std::vector<std::string> componentStrings = vtksys::SystemTools::SplitString(colorString, ',');
-  for (int i = 0; i < 4 && i <static_cast<int>(componentStrings.size()); ++i)
+  for (int i = 0; i < 4 && i < static_cast<int>(componentStrings.size()); ++i)
   {
     double componentF = vtkVariant(componentStrings[i]).ToDouble();
     if (i != 3)
@@ -1208,8 +1200,10 @@ const char* vtkMRMLDisplayNode::GetShowModeAsString(int id)
 {
   switch (id)
   {
-    case ShowDefault: return "Default";
-    case ShowIgnore: return "Ignore";
+    case ShowDefault:
+      return "Default";
+    case ShowIgnore:
+      return "Ignore";
     default:
       // invalid id
       return "";

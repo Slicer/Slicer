@@ -33,9 +33,7 @@ public:
 // qSlicerSuperLoadableModuleTemplateModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateModulePrivate::qSlicerSuperLoadableModuleTemplateModulePrivate()
-{
-}
+qSlicerSuperLoadableModuleTemplateModulePrivate::qSlicerSuperLoadableModuleTemplateModulePrivate() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerSuperLoadableModuleTemplateModule methods
@@ -48,9 +46,7 @@ qSlicerSuperLoadableModuleTemplateModule::qSlicerSuperLoadableModuleTemplateModu
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateModule::~qSlicerSuperLoadableModuleTemplateModule()
-{
-}
+qSlicerSuperLoadableModuleTemplateModule::~qSlicerSuperLoadableModuleTemplateModule() {}
 
 //-----------------------------------------------------------------------------
 QString qSlicerSuperLoadableModuleTemplateModule::helpText() const
@@ -97,8 +93,7 @@ void qSlicerSuperLoadableModuleTemplateModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerSuperLoadableModuleTemplateModule
-::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerSuperLoadableModuleTemplateModule ::createWidgetRepresentation()
 {
   return new qSlicerSuperLoadableModuleTemplateModuleWidget;
 }

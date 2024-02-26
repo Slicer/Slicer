@@ -51,11 +51,11 @@ bool ctkFactoryScriptedItem::load()
     {
       QDir modulePathWithoutIntDir = QFileInfo(this->path()).dir();
       QString intDir = qSlicerCoreApplication::application()->intDir();
-      if (intDir ==  modulePathWithoutIntDir.dirName())
+      if (intDir == modulePathWithoutIntDir.dirName())
       {
         modulePathWithoutIntDir.cdUp();
       }
-      qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
+      qSlicerCorePythonManager* pythonManager = qSlicerCoreApplication::application()->corePythonManager();
       pythonManager->appendPythonPaths(QStringList() << modulePathWithoutIntDir.absolutePath());
     }
   }
@@ -73,7 +73,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 
   module->setPath(this->path());
 
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)
   {
     return nullptr;
@@ -92,10 +92,10 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   }
 
   if (!qSlicerLoadableModule::importModulePythonExtensions(
-        app->corePythonManager(), app->intDir(), modulePath,
-        app->isEmbeddedModule(this->path())))
+        app->corePythonManager(), app->intDir(), modulePath, app->isEmbeddedModule(this->path())))
   {
-    qWarning() << "qSlicerScriptedLoadableModuleFactory - Failed to import module" << module->name() << "python extensions";
+    qWarning() << "qSlicerScriptedLoadableModuleFactory - Failed to import module" << module->name()
+               << "python extensions";
   }
 
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
@@ -159,11 +159,12 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
 
   // Add the default modules directory (based on the slicer
   // installation or build tree) to the user paths
-  QSettings * settings = app->revisionUserSettings();
-  QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
+  QSettings* settings = app->revisionUserSettings();
+  QStringList additionalModulePaths =
+    app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList qtModulePaths = additionalModulePaths + defaultQTModulePaths;
 
-//  qDebug() << "scriptedModulePaths:" << qtModulePaths;
+  //  qDebug() << "scriptedModulePaths:" << qtModulePaths;
 
   return qtModulePaths;
 }
@@ -181,10 +182,10 @@ qSlicerScriptedLoadableModuleFactory::qSlicerScriptedLoadableModuleFactory()
 qSlicerScriptedLoadableModuleFactory::~qSlicerScriptedLoadableModuleFactory() = default;
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedLoadableModuleFactory::isValidFile(const QFileInfo& file)const
+bool qSlicerScriptedLoadableModuleFactory::isValidFile(const QFileInfo& file) const
 {
   // Skip if current file isn't a python file
-  if(!ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>::isValidFile(file))
+  if (!ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>::isValidFile(file))
   {
     return false;
   }
@@ -213,8 +214,7 @@ bool qSlicerScriptedLoadableModuleFactory::isValidFile(const QFileInfo& file)con
 }
 
 //----------------------------------------------------------------------------
-ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerScriptedLoadableModuleFactory
-::createFactoryFileBasedItem()
+ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerScriptedLoadableModuleFactory ::createFactoryFileBasedItem()
 {
   return new ctkFactoryScriptedItem();
 }

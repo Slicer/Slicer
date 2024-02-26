@@ -19,7 +19,7 @@
 class VTK_ITK_EXPORT vtkITKLevelTracing3DImageFilter : public vtkImageAlgorithm
 {
 public:
-  static vtkITKLevelTracing3DImageFilter *New();
+  static vtkITKLevelTracing3DImageFilter* New();
   vtkTypeMacro(vtkITKLevelTracing3DImageFilter, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -31,9 +31,9 @@ protected:
   vtkITKLevelTracing3DImageFilter();
   ~vtkITKLevelTracing3DImageFilter() override;
 
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   int Seed[3];
 

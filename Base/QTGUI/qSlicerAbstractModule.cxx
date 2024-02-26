@@ -39,7 +39,7 @@ qSlicerAbstractModulePrivate::qSlicerAbstractModulePrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModule::qSlicerAbstractModule(QObject* parentObject)
-  :Superclass(parentObject)
+  : Superclass(parentObject)
   , d_ptr(new qSlicerAbstractModulePrivate)
 {
 }
@@ -48,13 +48,13 @@ qSlicerAbstractModule::qSlicerAbstractModule(QObject* parentObject)
 qSlicerAbstractModule::~qSlicerAbstractModule() = default;
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerAbstractModule::icon()const
+QIcon qSlicerAbstractModule::icon() const
 {
   return QIcon(":Icons/Extension.png");
 }
 
 //-----------------------------------------------------------------------------
-QImage qSlicerAbstractModule::logo()const
+QImage qSlicerAbstractModule::logo() const
 {
   return QImage();
 }

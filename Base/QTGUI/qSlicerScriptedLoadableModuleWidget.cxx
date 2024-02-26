@@ -42,7 +42,8 @@ public:
   qSlicerScriptedLoadableModuleWidgetPrivate();
   virtual ~qSlicerScriptedLoadableModuleWidgetPrivate();
 
-  enum {
+  enum
+  {
     SetupMethod = 0,
     EnterMethod,
     ExitMethod,
@@ -52,7 +53,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSourceFilePath;
+  QString PythonSourceFilePath;
 };
 
 //-----------------------------------------------------------------------------
@@ -76,7 +77,8 @@ qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidget
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModuleWidget::qSlicerScriptedLoadableModuleWidget(QWidget* parentWidget)
-  :Superclass(parentWidget), d_ptr(new qSlicerScriptedLoadableModuleWidgetPrivate)
+  : Superclass(parentWidget)
+  , d_ptr(new qSlicerScriptedLoadableModuleWidgetPrivate)
 {
   new QVBoxLayout(this);
 }
@@ -85,7 +87,7 @@ qSlicerScriptedLoadableModuleWidget::qSlicerScriptedLoadableModuleWidget(QWidget
 qSlicerScriptedLoadableModuleWidget::~qSlicerScriptedLoadableModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedLoadableModuleWidget::pythonSource()const
+QString qSlicerScriptedLoadableModuleWidget::pythonSource() const
 {
   Q_D(const qSlicerScriptedLoadableModuleWidget);
   return d->PythonSourceFilePath;
@@ -120,11 +122,11 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
   }
 
   // Get a reference to the main module and global dictionary
-  PyObject * main_module = PyImport_AddModule("__main__");
-  PyObject * global_dict = PyModule_GetDict(main_module);
+  PyObject* main_module = PyImport_AddModule("__main__");
+  PyObject* global_dict = PyModule_GetDict(main_module);
 
   // Get a reference (or create if needed) the <moduleName> python module
-  PyObject * module = PyImport_AddModule(moduleName.toUtf8());
+  PyObject* module = PyImport_AddModule(moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
@@ -152,7 +154,10 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModuleWidget::setPythonSource - "
                             "Failed to load scripted loadable module widget: "
-                            "class %1 was not found in %2").arg(className).arg(filePath).toUtf8());
+                            "class %1 was not found in %2")
+                      .arg(className)
+                      .arg(filePath)
+                      .toUtf8());
     PythonQt::self()->handleError();
     return false;
   }
@@ -167,8 +172,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
 
   d->PythonSourceFilePath = filePath;
 
-  if (!qSlicerScriptedUtils::setModuleAttribute(
-        "slicer.modules", className, self))
+  if (!qSlicerScriptedUtils::setModuleAttribute("slicer.modules", className, self))
   {
     qCritical() << "Failed to set" << ("slicer.modules." + className);
   }
@@ -240,7 +244,8 @@ bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node,
   // Parse result
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": qSlicerScriptedLoadableModuleWidget: Function 'setEditedNode' is expected to return a boolean";
+    qWarning() << d->PythonSourceFilePath
+               << ": qSlicerScriptedLoadableModuleWidget: Function 'setEditedNode' is expected to return a boolean";
     return false;
   }
 
@@ -264,7 +269,9 @@ double qSlicerScriptedLoadableModuleWidget::nodeEditable(vtkMRMLNode* node)
   // Parse result
   if (!PyFloat_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": qSlicerScriptedLoadableModuleWidget: Function 'nodeEditable' is expected to return a floating point number!";
+    qWarning() << d->PythonSourceFilePath
+               << ": qSlicerScriptedLoadableModuleWidget: Function 'nodeEditable' is expected to return a floating "
+                  "point number!";
     return 0.0;
   }
 

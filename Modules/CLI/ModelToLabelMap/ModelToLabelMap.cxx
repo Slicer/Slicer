@@ -33,8 +33,7 @@
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkOrientedImageData.h"
 
-
-int main( int argc, char * argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
@@ -48,7 +47,8 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
   }
   vtkSmartPointer<vtkPolyData> closedSurfacePolyData_RAS = modelNode->GetPolyData();
-  if (!closedSurfacePolyData_RAS || closedSurfacePolyData_RAS->GetNumberOfPoints() < 2 || closedSurfacePolyData_RAS->GetNumberOfCells() < 2)
+  if (!closedSurfacePolyData_RAS || closedSurfacePolyData_RAS->GetNumberOfPoints() < 2
+      || closedSurfacePolyData_RAS->GetNumberOfCells() < 2)
   {
     std::cerr << "Invalid polydata in model file " << surface << std::endl;
     return EXIT_FAILURE;
@@ -68,9 +68,8 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
   }
   int* referenceVolumeExtent = referenceVolumeNode->GetImageData()->GetExtent();
-  if (referenceVolumeExtent[0]>= referenceVolumeExtent[1]
-    || referenceVolumeExtent[2] >= referenceVolumeExtent[3]
-    || referenceVolumeExtent[4] >= referenceVolumeExtent[5])
+  if (referenceVolumeExtent[0] >= referenceVolumeExtent[1] || referenceVolumeExtent[2] >= referenceVolumeExtent[3]
+      || referenceVolumeExtent[4] >= referenceVolumeExtent[5])
   {
     std::cerr << "Empty input volume file " << InputVolume << std::endl;
     return EXIT_FAILURE;

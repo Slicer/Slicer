@@ -33,7 +33,7 @@
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-class qMRMLDisplayNodeWidgetPrivate: public Ui_qMRMLDisplayNodeWidget
+class qMRMLDisplayNodeWidgetPrivate : public Ui_qMRMLDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLDisplayNodeWidget);
 
@@ -49,8 +49,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLDisplayNodeWidgetPrivate::qMRMLDisplayNodeWidgetPrivate(
-  qMRMLDisplayNodeWidget& object)
+qMRMLDisplayNodeWidgetPrivate::qMRMLDisplayNodeWidgetPrivate(qMRMLDisplayNodeWidget& object)
   : q_ptr(&object)
 {
   this->Property = vtkSmartPointer<vtkProperty>::New();
@@ -62,29 +61,24 @@ void qMRMLDisplayNodeWidgetPrivate::init()
   Q_Q(qMRMLDisplayNodeWidget);
   this->setupUi(q);
 
-  QObject::connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setVisibility(bool)));
-  QObject::connect(this->SelectedCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setSelected(bool)));
-  QObject::connect(this->ClippingCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setClipping(bool)));
-  QObject::connect(this->ThreeDVisibilityCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(set3DVisible(bool)));
-  QObject::connect(this->SliceIntersectionVisibilityCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setSliceIntersectionVisible(bool)));
-  QObject::connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)),
-                   q, SLOT(setSliceIntersectionThickness(int)));
-  QObject::connect(this->SliceIntersectionOpacitySlider, SIGNAL(valueChanged(double)),
-                   q, SLOT(setSliceIntersectionOpacity(double)));
+  QObject::connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility(bool)));
+  QObject::connect(this->SelectedCheckBox, SIGNAL(toggled(bool)), q, SLOT(setSelected(bool)));
+  QObject::connect(this->ClippingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setClipping(bool)));
+  QObject::connect(this->ThreeDVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(set3DVisible(bool)));
+  QObject::connect(
+    this->SliceIntersectionVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setSliceIntersectionVisible(bool)));
+  QObject::connect(
+    this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setSliceIntersectionThickness(int)));
+  QObject::connect(
+    this->SliceIntersectionOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(setSliceIntersectionOpacity(double)));
 
   this->PropertyWidget->setProperty(this->Property);
-  q->qvtkConnect(this->Property, vtkCommand::ModifiedEvent,
-                 q, SLOT(updateNodeFromProperty()));
+  q->qvtkConnect(this->Property, vtkCommand::ModifiedEvent, q, SLOT(updateNodeFromProperty()));
   q->setEnabled(this->MRMLDisplayNode.GetPointer() != nullptr);
 }
 
 //------------------------------------------------------------------------------
-qMRMLDisplayNodeWidget::qMRMLDisplayNodeWidget(QWidget *_parent)
+qMRMLDisplayNodeWidget::qMRMLDisplayNodeWidget(QWidget* _parent)
   : QWidget(_parent)
   , d_ptr(new qMRMLDisplayNodeWidgetPrivate(*this))
 {
@@ -95,9 +89,8 @@ qMRMLDisplayNodeWidget::qMRMLDisplayNodeWidget(QWidget *_parent)
 //------------------------------------------------------------------------------
 qMRMLDisplayNodeWidget::~qMRMLDisplayNodeWidget() = default;
 
-
 //------------------------------------------------------------------------------
-vtkMRMLDisplayNode* qMRMLDisplayNodeWidget::mrmlDisplayNode()const
+vtkMRMLDisplayNode* qMRMLDisplayNodeWidget::mrmlDisplayNode() const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->MRMLDisplayNode;
@@ -106,8 +99,7 @@ vtkMRMLDisplayNode* qMRMLDisplayNodeWidget::mrmlDisplayNode()const
 //------------------------------------------------------------------------------
 void qMRMLDisplayNodeWidget::setMRMLDisplayableNode(vtkMRMLNode* node)
 {
-  vtkMRMLDisplayableNode* displayableNode =
-    vtkMRMLDisplayableNode::SafeDownCast(node);
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
   this->setMRMLDisplayNode(displayableNode ? displayableNode->GetDisplayNode() : nullptr);
 }
 
@@ -121,8 +113,7 @@ void qMRMLDisplayNodeWidget::setMRMLDisplayNode(vtkMRMLNode* node)
 void qMRMLDisplayNodeWidget::setMRMLDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
   Q_D(qMRMLDisplayNodeWidget);
-  qvtkReconnect(d->MRMLDisplayNode, displayNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLDisplayNode, displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->MRMLDisplayNode = displayNode;
   this->updateWidgetFromMRML();
 }
@@ -139,7 +130,7 @@ void qMRMLDisplayNodeWidget::setVisibility(bool visible)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLDisplayNodeWidget::visibility()const
+bool qMRMLDisplayNodeWidget::visibility() const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->VisibilityCheckBox->isChecked();
@@ -164,7 +155,7 @@ void qMRMLDisplayNodeWidget::setSelected(bool selected)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLDisplayNodeWidget::selected()const
+bool qMRMLDisplayNodeWidget::selected() const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->SelectedCheckBox->isChecked();
@@ -190,7 +181,7 @@ void qMRMLDisplayNodeWidget::setClipping(bool clip)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLDisplayNodeWidget::clipping()const
+bool qMRMLDisplayNodeWidget::clipping() const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->ClippingCheckBox->isChecked();
@@ -226,14 +217,14 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionVisible(bool visible)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLDisplayNodeWidget::threeDVisible()const
+bool qMRMLDisplayNodeWidget::threeDVisible() const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->ThreeDVisibilityCheckBox->isChecked();
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLDisplayNodeWidget::sliceIntersectionVisible()const
+bool qMRMLDisplayNodeWidget::sliceIntersectionVisible() const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->SliceIntersectionVisibilityCheckBox->isChecked();
@@ -265,7 +256,7 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionThickness(int thickness)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLDisplayNodeWidget::sliceIntersectionThickness()const
+int qMRMLDisplayNodeWidget::sliceIntersectionThickness() const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->SliceIntersectionThicknessSpinBox->value();
@@ -290,7 +281,7 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionOpacity(double opacity)
 }
 
 //------------------------------------------------------------------------------
-double qMRMLDisplayNodeWidget::sliceIntersectionOpacity()const
+double qMRMLDisplayNodeWidget::sliceIntersectionOpacity() const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->SliceIntersectionOpacitySlider->value();
@@ -317,14 +308,10 @@ void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
   d->SelectedCheckBox->setEnabled(d->MRMLDisplayNode->GetSelectable());
   d->SelectedCheckBox->setChecked(d->MRMLDisplayNode->GetSelected());
   d->ClippingCheckBox->setChecked(d->MRMLDisplayNode->GetClipping());
-  d->ThreeDVisibilityCheckBox->setChecked(
-    d->MRMLDisplayNode->GetVisibility3D());
-  d->SliceIntersectionVisibilityCheckBox->setChecked(
-    d->MRMLDisplayNode->GetVisibility2D());
-  d->SliceIntersectionThicknessSpinBox->setValue(
-    d->MRMLDisplayNode->GetSliceIntersectionThickness());
-  d->SliceIntersectionOpacitySlider->setValue(
-    d->MRMLDisplayNode->GetSliceIntersectionOpacity());
+  d->ThreeDVisibilityCheckBox->setChecked(d->MRMLDisplayNode->GetVisibility3D());
+  d->SliceIntersectionVisibilityCheckBox->setChecked(d->MRMLDisplayNode->GetVisibility2D());
+  d->SliceIntersectionThicknessSpinBox->setValue(d->MRMLDisplayNode->GetSliceIntersectionThickness());
+  d->SliceIntersectionOpacitySlider->setValue(d->MRMLDisplayNode->GetSliceIntersectionOpacity());
 
   // While updating Property, its state is unstable.
   qvtkBlock(d->Property, vtkCommand::ModifiedEvent, this);
@@ -336,9 +323,8 @@ void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
   d->Property->SetFrontfaceCulling(d->MRMLDisplayNode->GetFrontfaceCulling());
   d->Property->SetBackfaceCulling(d->MRMLDisplayNode->GetBackfaceCulling());
   // Color
-  d->Property->SetColor(d->MRMLDisplayNode->GetColor()[0],
-                        d->MRMLDisplayNode->GetColor()[1],
-                        d->MRMLDisplayNode->GetColor()[2]);
+  d->Property->SetColor(
+    d->MRMLDisplayNode->GetColor()[0], d->MRMLDisplayNode->GetColor()[1], d->MRMLDisplayNode->GetColor()[2]);
   d->Property->SetOpacity(d->MRMLDisplayNode->GetOpacity());
   d->Property->SetEdgeVisibility(d->MRMLDisplayNode->GetEdgeVisibility());
   d->Property->SetEdgeColor(d->MRMLDisplayNode->GetEdgeColor()[0],
@@ -374,14 +360,11 @@ void qMRMLDisplayNodeWidget::updateNodeFromProperty()
   d->MRMLDisplayNode->SetFrontfaceCulling(d->Property->GetFrontfaceCulling());
   d->MRMLDisplayNode->SetBackfaceCulling(d->Property->GetBackfaceCulling());
   // Color
-  d->MRMLDisplayNode->SetColor(d->Property->GetColor()[0],
-                               d->Property->GetColor()[1],
-                               d->Property->GetColor()[2]);
+  d->MRMLDisplayNode->SetColor(d->Property->GetColor()[0], d->Property->GetColor()[1], d->Property->GetColor()[2]);
   d->MRMLDisplayNode->SetOpacity(d->Property->GetOpacity());
   d->MRMLDisplayNode->SetEdgeVisibility(d->Property->GetEdgeVisibility());
-  d->MRMLDisplayNode->SetEdgeColor(d->Property->GetEdgeColor()[0],
-                                   d->Property->GetEdgeColor()[1],
-                                   d->Property->GetEdgeColor()[2]);
+  d->MRMLDisplayNode->SetEdgeColor(
+    d->Property->GetEdgeColor()[0], d->Property->GetEdgeColor()[1], d->Property->GetEdgeColor()[2]);
   // Lighting
   d->MRMLDisplayNode->SetLighting(d->Property->GetLighting());
   d->MRMLDisplayNode->SetInterpolation(d->Property->GetInterpolation());

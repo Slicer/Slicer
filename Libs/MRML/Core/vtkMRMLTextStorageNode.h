@@ -27,7 +27,6 @@
 class VTK_MRML_EXPORT vtkMRMLTextStorageNode : public vtkMRMLStorageNode
 {
 public:
-
   static vtkMRMLTextStorageNode* New();
   vtkTypeMacro(vtkMRMLTextStorageNode, vtkMRMLStorageNode);
 

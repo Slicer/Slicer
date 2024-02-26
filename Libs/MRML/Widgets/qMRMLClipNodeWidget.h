@@ -40,16 +40,16 @@ class QMRML_WIDGETS_EXPORT qMRMLClipNodeWidget : public QWidget
   Q_OBJECT
   QVTK_OBJECT
 public:
-  qMRMLClipNodeWidget(QWidget *parent=nullptr);
+  qMRMLClipNodeWidget(QWidget* parent = nullptr);
   ~qMRMLClipNodeWidget() override;
 
-  vtkMRMLClipModelsNode* mrmlClipNode()const;
+  vtkMRMLClipModelsNode* mrmlClipNode() const;
 
-  int clipType()const;
-  int redSliceClipState()const;
-  int yellowSliceClipState()const;
-  int greenSliceClipState()const;
-  vtkMRMLClipModelsNode::ClippingMethodType clippingMethod()const;
+  int clipType() const;
+  int redSliceClipState() const;
+  int yellowSliceClipState() const;
+  int greenSliceClipState() const;
+  vtkMRMLClipModelsNode::ClippingMethodType clippingMethod() const;
 
   void setClipType(int);
   void setRedSliceClipState(int);
@@ -59,9 +59,9 @@ public:
 
 public slots:
   /// Set the clip node to represent
-  void setMRMLClipNode(vtkMRMLClipModelsNode *node);
+  void setMRMLClipNode(vtkMRMLClipModelsNode* node);
   /// Utility function to be connected to signals/slots
-  void setMRMLClipNode(vtkMRMLNode *node);
+  void setMRMLClipNode(vtkMRMLNode* node);
 
 protected slots:
   void updateWidgetFromMRML();

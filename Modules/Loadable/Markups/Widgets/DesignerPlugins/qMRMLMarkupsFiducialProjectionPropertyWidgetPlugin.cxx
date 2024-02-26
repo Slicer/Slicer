@@ -26,48 +26,41 @@
 #include "qMRMLMarkupsFiducialProjectionPropertyWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
-::qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin(QObject *_parent)
+qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin ::qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin(
+  QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qMRMLMarkupsFiducialProjectionPropertyWidget* _widget
-    = new qMRMLMarkupsFiducialProjectionPropertyWidget(_parent);
+  qMRMLMarkupsFiducialProjectionPropertyWidget* _widget = new qMRMLMarkupsFiducialProjectionPropertyWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
-::domXml() const
+QString qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qMRMLMarkupsFiducialProjectionPropertyWidget\" \
           name=\"MRMLMarkupsFiducialProjectionPropertyWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
-::includeFile() const
+QString qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin ::includeFile() const
 {
   return "qMRMLMarkupsFiducialProjectionPropertyWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
-::isContainer() const
+bool qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
-::name() const
+QString qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin ::name() const
 {
   return "qMRMLMarkupsFiducialProjectionPropertyWidget";
 }

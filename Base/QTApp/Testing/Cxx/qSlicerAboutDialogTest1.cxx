@@ -27,7 +27,7 @@
 
 // STD includes
 
-int qSlicerAboutDialogTest1(int argc, char * argv[] )
+int qSlicerAboutDialogTest1(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
 
@@ -40,4 +40,3 @@ int qSlicerAboutDialogTest1(int argc, char * argv[] )
 
   return about.exec();
 }
-

@@ -23,46 +23,29 @@
 /// vtkITKGradientAnisotropicDiffusionImageFilter
 class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkITKImageToImageFilterFF
 {
- public:
-  static vtkITKGradientAnisotropicDiffusionImageFilter *New();
+public:
+  static vtkITKGradientAnisotropicDiffusionImageFilter* New();
   vtkTypeMacro(vtkITKGradientAnisotropicDiffusionImageFilter, vtkITKImageToImageFilterFF);
 
-  double GetTimeStep ()
-  {
-    DelegateITKOutputMacro(GetTimeStep) ;
-  };
+  double GetTimeStep() { DelegateITKOutputMacro(GetTimeStep); };
 
-  double GetConductanceParameter ()
-  {
-    DelegateITKOutputMacro(GetConductanceParameter) ;
-  };
+  double GetConductanceParameter() { DelegateITKOutputMacro(GetConductanceParameter); };
 
-  unsigned int GetNumberOfIterations ()
-  {
-    DelegateITKOutputMacro ( GetNumberOfIterations );
-  };
+  unsigned int GetNumberOfIterations() { DelegateITKOutputMacro(GetNumberOfIterations); };
 
-  void SetNumberOfIterations( unsigned int value )
-  {
-    DelegateITKInputMacro ( SetNumberOfIterations, value );
-  };
+  void SetNumberOfIterations(unsigned int value) { DelegateITKInputMacro(SetNumberOfIterations, value); };
 
-  void SetTimeStep ( double value )
-  {
-    DelegateITKInputMacro ( SetTimeStep, value );
-  };
+  void SetTimeStep(double value) { DelegateITKInputMacro(SetTimeStep, value); };
 
-  void SetConductanceParameter ( double value )
-  {
-    DelegateITKInputMacro ( SetConductanceParameter, value );
-  };
+  void SetConductanceParameter(double value) { DelegateITKInputMacro(SetConductanceParameter, value); };
 
 protected:
-  typedef itk::GradientAnisotropicDiffusionImageFilter<Superclass::InputImageType,Superclass::InputImageType> ImageFilterType;
-  vtkITKGradientAnisotropicDiffusionImageFilter() : Superclass ( ImageFilterType::New() ){};
-  ~vtkITKGradientAnisotropicDiffusionImageFilter() override  = default;
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
-
+  typedef itk::GradientAnisotropicDiffusionImageFilter<Superclass::InputImageType, Superclass::InputImageType>
+    ImageFilterType;
+  vtkITKGradientAnisotropicDiffusionImageFilter()
+    : Superclass(ImageFilterType::New()){};
+  ~vtkITKGradientAnisotropicDiffusionImageFilter() override = default;
+  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*>(m_Filter.GetPointer()); }
 
 private:
   vtkITKGradientAnisotropicDiffusionImageFilter(const vtkITKGradientAnisotropicDiffusionImageFilter&) = delete;

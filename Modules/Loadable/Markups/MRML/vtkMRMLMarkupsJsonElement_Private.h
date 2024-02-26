@@ -50,26 +50,19 @@ public:
 
   struct JsonDocumentContainer
   {
-    JsonDocumentContainer()
-    {
-      this->Document = new rapidjson::Document;
-    }
-    virtual ~JsonDocumentContainer()
-    {
-      delete this->Document;
-    }
+    JsonDocumentContainer() { this->Document = new rapidjson::Document; }
+    virtual ~JsonDocumentContainer() { delete this->Document; }
     JsonDocumentContainer(const JsonDocumentContainer&) = delete;
-    JsonDocumentContainer& operator= (const JsonDocumentContainer&) = delete;
+    JsonDocumentContainer& operator=(const JsonDocumentContainer&) = delete;
     rapidjson::Document* Document;
   };
 
   // Helper methods
-  bool ReadVector(rapidjson::Value& item, double* v, int numberOfComponents=3);
+  bool ReadVector(rapidjson::Value& item, double* v, int numberOfComponents = 3);
 
   // Data
   std::shared_ptr<JsonDocumentContainer> JsonRoot;
   rapidjson::Value JsonValue;
-
 
 protected:
   vtkMRMLMarkupsJsonElement* External;
@@ -88,8 +81,8 @@ public:
 
   std::vector<char> WriteBuffer;
   FILE* WriteFileHandle{ 0 };
-  std::unique_ptr< rapidjson::FileWriteStream > FileWriteStream;
-  std::unique_ptr < rapidjson::PrettyWriter<rapidjson::FileWriteStream> > Writer;
+  std::unique_ptr<rapidjson::FileWriteStream> FileWriteStream;
+  std::unique_ptr<rapidjson::PrettyWriter<rapidjson::FileWriteStream>> Writer;
 
 protected:
   vtkMRMLMarkupsJsonWriter* External;

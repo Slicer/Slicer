@@ -38,18 +38,22 @@ class QWebChannel;
 class QWebEngineView;
 
 #ifdef QT_NO_SSL
-struct QSslError{};
+struct QSslError
+{
+};
 #endif
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget
-  : public QWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(bool handleExternalUrlWithDesktopService READ handleExternalUrlWithDesktopService WRITE setHandleExternalUrlWithDesktopService)
+  Q_PROPERTY(bool handleExternalUrlWithDesktopService READ handleExternalUrlWithDesktopService WRITE
+               setHandleExternalUrlWithDesktopService)
   Q_PROPERTY(QStringList internalHosts READ internalHosts WRITE setInternalHosts)
-  Q_PROPERTY(bool javaScriptConsoleMessageLoggingEnabled READ javaScriptConsoleMessageLoggingEnabled WRITE setJavaScriptConsoleMessageLoggingEnabled)
+  Q_PROPERTY(bool javaScriptConsoleMessageLoggingEnabled READ javaScriptConsoleMessageLoggingEnabled WRITE
+               setJavaScriptConsoleMessageLoggingEnabled)
   Q_PROPERTY(QString url READ url WRITE setUrl)
   friend class qSlicerWebEnginePage;
+
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -86,26 +90,26 @@ public:
   bool javaScriptConsoleMessageLoggingEnabled() const;
   void setJavaScriptConsoleMessageLoggingEnabled(bool enable);
 
-//  QWebEngineProfile* profile()const;
-//  void setProfile(QWebEngineProfile* profile);
+  //  QWebEngineProfile* profile()const;
+  //  void setProfile(QWebEngineProfile* profile);
 
   /// Return a reference to the QWebView used internally.
-  Q_INVOKABLE QWebEngineView * webView();
+  Q_INVOKABLE QWebEngineView* webView();
 
   /// Convenient function to evaluate JS in main frame context
   /// from C++ or Python code
-  Q_INVOKABLE QString evalJS(const QString &js);
+  Q_INVOKABLE QString evalJS(const QString& js);
 
   /// Convenience for setting the internal webView QUrl from a QString
   Q_INVOKABLE QString url();
 
   /// Convenience for setting the internal webView html from a QString
-  Q_INVOKABLE void setHtml(const QString &html, const QUrl &baseUrl = QUrl());
+  Q_INVOKABLE void setHtml(const QString& html, const QUrl& baseUrl = QUrl());
 
 public slots:
 
   /// Convenience for setting the internal webView QUrl from a QString
-  void setUrl(const QString &url);
+  void setUrl(const QString& url);
 
   void onDownloadStarted(QNetworkReply* reply);
 
@@ -136,14 +140,14 @@ signals:
   void loadFinished(bool ok);
 
   /// signal passed through from QWebEnginePage
-  void pdfPrintingFinished(const QString &filePath, bool success);
+  void pdfPrintingFinished(const QString& filePath, bool success);
 
 protected slots:
   virtual void initJavascript();
   virtual void onLoadStarted();
   virtual void onLoadProgress(int progress);
   virtual void onLoadFinished(bool ok);
-  void handleSslErrors(QNetworkReply* reply, const QList<QSslError> &errors);
+  void handleSslErrors(QNetworkReply* reply, const QList<QSslError>& errors);
 
 protected:
   qSlicerWebWidget(qSlicerWebWidgetPrivate* pimpl, QWidget* parent = nullptr);
@@ -151,9 +155,9 @@ protected:
 
   /// Event filter used to capture WebView Show and Hide events in order to both set
   /// "document.webkitHidden" property and trigger the associated event.
-  bool eventFilter(QObject *obj, QEvent *event) override;
+  bool eventFilter(QObject* obj, QEvent* event) override;
 
-  virtual bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame);
+  virtual bool acceptNavigationRequest(const QUrl& url, QWebEnginePage::NavigationType type, bool isMainFrame);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerWebWidget);

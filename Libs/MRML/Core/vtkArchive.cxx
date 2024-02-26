@@ -7,7 +7,6 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 =========================================================================auto=*/
 
-
 #include "vtkArchive.h"
 #include "vtkLoggingMacros.h"
 #include "vtksys/Glob.hxx"
@@ -26,7 +25,6 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 
 vtkStandardNewMacro(vtkArchive);
 
-
 namespace
 {
 
@@ -34,14 +32,8 @@ namespace
 class vtkArchiveTools
 {
 public:
-  static void Message(const char* title, const char* message)
-  {
-    vtkInfoWithoutObjectMacro(<< title << " " << message);
-  }
-  static void Message(const char* m)
-  {
-    vtkInfoWithoutObjectMacro(<< m);
-  }
+  static void Message(const char* title, const char* message) { vtkInfoWithoutObjectMacro(<< title << " " << message); }
+  static void Message(const char* m) { vtkInfoWithoutObjectMacro(<< m); }
   static void Stdout(const char* s)
   {
     std::cout << s;
@@ -50,11 +42,11 @@ public:
   static void Error(const char* m1, const char* m2)
   {
     std::string message = "vtkArchive Error: ";
-    if(m1)
+    if (m1)
     {
       message += m1;
     }
-    if(m2)
+    if (m2)
     {
       message += " ";
       message += m2;
@@ -64,16 +56,16 @@ public:
 };
 
 // --------------------------------------------------------------------------
-#define BSDTAR_FILESIZE_PRINTF  "%lu"
-#define BSDTAR_FILESIZE_TYPE    unsigned long
-void list_item_verbose(FILE *out, struct archive_entry *entry)
+#define BSDTAR_FILESIZE_PRINTF "%lu"
+#define BSDTAR_FILESIZE_TYPE unsigned long
+void list_item_verbose(FILE* out, struct archive_entry* entry)
 {
-  char                   tmp[100];
-  size_t                         w;
-  const char            *p;
-  const char            *fmt;
-  time_t                         tim;
-  static time_t          now;
+  char tmp[100];
+  size_t w;
+  const char* p;
+  const char* fmt;
+  time_t tim;
+  static time_t now;
   size_t u_width = 6;
   size_t gs_width = 13;
 
@@ -88,16 +80,13 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
   {
     time(&now);
   }
-  fprintf(out, "%s %d ",
-          archive_entry_strmode(entry),
-          archive_entry_nlink(entry));
+  fprintf(out, "%s %d ", archive_entry_strmode(entry), archive_entry_nlink(entry));
 
   /* Use uname if it's present, else uid. */
   p = archive_entry_uname(entry);
   if ((p == nullptr) || (*p == '\0'))
   {
-    sprintf(tmp, "%lu ",
-            (unsigned long)archive_entry_uid(entry));
+    sprintf(tmp, "%lu ", (unsigned long)archive_entry_uid(entry));
     p = tmp;
   }
   w = strlen(p);
@@ -115,8 +104,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
   }
   else
   {
-    sprintf(tmp, "%lu",
-            (unsigned long)archive_entry_gid(entry));
+    sprintf(tmp, "%lu", (unsigned long)archive_entry_gid(entry));
     w = strlen(tmp);
     fprintf(out, "%s", tmp);
   }
@@ -126,12 +114,10 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
    * total width of group and devnum/filesize fields be gs_width.
    * If gs_width is too small, grow it.
    */
-  if (archive_entry_filetype(entry) == AE_IFCHR
-      || archive_entry_filetype(entry) == AE_IFBLK)
+  if (archive_entry_filetype(entry) == AE_IFCHR || archive_entry_filetype(entry) == AE_IFBLK)
   {
-    sprintf(tmp, "%lu,%lu",
-            (unsigned long)archive_entry_rdevmajor(entry),
-            (unsigned long)archive_entry_rdevminor(entry));
+    sprintf(
+      tmp, "%lu,%lu", (unsigned long)archive_entry_rdevmajor(entry), (unsigned long)archive_entry_rdevminor(entry));
   }
   else
   {
@@ -140,12 +126,11 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
      * the filesize here.  We need the format string and the
      * corresponding type for the cast.
      */
-    sprintf(tmp, BSDTAR_FILESIZE_PRINTF,
-            (BSDTAR_FILESIZE_TYPE)archive_entry_size(entry));
+    sprintf(tmp, BSDTAR_FILESIZE_PRINTF, (BSDTAR_FILESIZE_TYPE)archive_entry_size(entry));
   }
   if (w + strlen(tmp) >= gs_width)
   {
-    gs_width = w+strlen(tmp)+1;
+    gs_width = w + strlen(tmp) + 1;
   }
   fprintf(out, "%*s", (int)(gs_width - w), tmp);
 
@@ -154,9 +139,9 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
 #define HALF_YEAR (time_t)365 * 86400 / 2
 #if defined(_WIN32) && !defined(__CYGWIN__)
   /* Windows' strftime function does not support %e format. */
-#define DAY_FMT  "%d"
+# define DAY_FMT "%d"
 #else
-#define DAY_FMT  "%e"  /* Day number without leading zeros */
+# define DAY_FMT "%e" /* Day number without leading zeros */
 #endif
   if (tim < now - HALF_YEAR || tim > now + HALF_YEAR)
   {
@@ -173,8 +158,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
   /* Extra information for links. */
   if (archive_entry_hardlink(entry)) /* Hard link */
   {
-    fprintf(out, " link to %s",
-            archive_entry_hardlink(entry));
+    fprintf(out, " link to %s", archive_entry_hardlink(entry));
   }
   else if (archive_entry_symlink(entry)) /* Symbolic link */
   {
@@ -182,14 +166,14 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
   }
 }
 #ifdef __BORLANDC__
-# pragma warn -8066 /* unreachable code */
+# pragma warn - 8066 /* unreachable code */
 #endif
 
 // --------------------------------------------------------------------------
-long copy_data(struct archive *ar, struct archive *aw)
+long copy_data(struct archive* ar, struct archive* aw)
 {
   long r;
-  const void *buff;
+  const void* buff;
   size_t size;
 #if defined(ARCHIVE_VERSION_NUMBER) && ARCHIVE_VERSION_NUMBER >= 3000000
   __LA_INT64_T offset;
@@ -211,8 +195,7 @@ long copy_data(struct archive *ar, struct archive *aw)
     r = archive_write_data_block(aw, buff, size, offset);
     if (r != ARCHIVE_OK)
     {
-      vtkArchiveTools::Message("archive_write_data_block()",
-                             archive_error_string(aw));
+      vtkArchiveTools::Message("archive_write_data_block()", archive_error_string(aw));
       return (r);
     }
   }
@@ -230,7 +213,7 @@ vtkArchive::~vtkArchive() = default;
 //----------------------------------------------------------------------------
 void vtkArchive::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //-----------------------------------------------------------------------------
@@ -243,8 +226,7 @@ bool vtkArchive::ListArchive(const char* archiveFileName, std::vector<std::strin
 
   if (archive_read_open_filename(a, archiveFileName, 10240) != ARCHIVE_OK)
   {
-    vtkArchiveTools::Error("Problem with archive_read_open_filename(): ",
-                           archive_error_string(a));
+    vtkArchiveTools::Error("Problem with archive_read_open_filename(): ", archive_error_string(a));
     return false;
   }
 
@@ -256,8 +238,7 @@ bool vtkArchive::ListArchive(const char* archiveFileName, std::vector<std::strin
   {
     if (r != ARCHIVE_OK)
     {
-      vtkArchiveTools::Error("Problem with archive_read_next_header(): ",
-                             archive_error_string(a));
+      vtkArchiveTools::Error("Problem with archive_read_next_header(): ", archive_error_string(a));
       return false;
     }
     files.emplace_back(archive_entry_pathname(entry));
@@ -269,18 +250,20 @@ bool vtkArchive::ListArchive(const char* archiveFileName, std::vector<std::strin
 }
 
 //-----------------------------------------------------------------------------
-bool vtkArchive::ExtractTar(const char* tarFileName, bool verbose, bool extract, std::vector<std::string> * extracted_files)
+bool vtkArchive::ExtractTar(const char* tarFileName,
+                            bool verbose,
+                            bool extract,
+                            std::vector<std::string>* extracted_files)
 {
   struct archive* a = archive_read_new();
-  struct archive *ext = archive_write_disk_new();
+  struct archive* ext = archive_write_disk_new();
   archive_read_support_filter_all(a);
   archive_read_support_format_all(a);
-  struct archive_entry *entry;
+  struct archive_entry* entry;
   int r = archive_read_open_filename(a, tarFileName, 10240);
-  if(r)
+  if (r)
   {
-    vtkArchiveTools::Error("Problem with archive_read_open_filename(): ",
-                         archive_error_string(a));
+    vtkArchiveTools::Error("Problem with archive_read_open_filename(): ", archive_error_string(a));
     return false;
   }
   for (;;)
@@ -293,10 +276,9 @@ bool vtkArchive::ExtractTar(const char* tarFileName, bool verbose, bool extract,
     }
     if (r != ARCHIVE_OK)
     {
-      vtkArchiveTools::Error("Problem with archive_read_next_header(): ",
-                           archive_error_string(a));
+      vtkArchiveTools::Error("Problem with archive_read_next_header(): ", archive_error_string(a));
     }
-    if ( extract && extracted_files)
+    if (extract && extracted_files)
     {
       extracted_files->push_back(archive_entry_pathname(entry));
     }
@@ -305,47 +287,40 @@ bool vtkArchive::ExtractTar(const char* tarFileName, bool verbose, bool extract,
       message += "x ";
       message += +archive_entry_pathname(entry);
     }
-    if(verbose && !extract)
+    if (verbose && !extract)
     {
       list_item_verbose(stdout, entry);
     }
-    else if(!extract)
+    else if (!extract)
     {
       message += archive_entry_pathname(entry);
     }
-    if(extract)
+    if (extract)
     {
       r = archive_write_disk_set_options(ext, ARCHIVE_EXTRACT_TIME);
       if (r != ARCHIVE_OK)
       {
-        vtkArchiveTools::Error(
-          "Problem with archive_write_disk_set_options(): ",
-          archive_error_string(ext));
+        vtkArchiveTools::Error("Problem with archive_write_disk_set_options(): ", archive_error_string(ext));
       }
 
       r = archive_write_header(ext, entry);
       if (r != ARCHIVE_OK)
       {
-        vtkArchiveTools::Error("Problem with archive_write_header(): ",
-                             archive_error_string(ext));
-        vtkArchiveTools::Error("Current file:",
-                             archive_entry_pathname(entry));
+        vtkArchiveTools::Error("Problem with archive_write_header(): ", archive_error_string(ext));
+        vtkArchiveTools::Error("Current file:", archive_entry_pathname(entry));
       }
       else
       {
         r = copy_data(a, ext);
         if (r != ARCHIVE_OK)
         {
-          vtkArchiveTools::Error("Problem with copy_data(): source:",
-                               archive_error_string(a));
-          vtkArchiveTools::Error("destination: ",
-                               archive_error_string(ext));
+          vtkArchiveTools::Error("Problem with copy_data(): source:", archive_error_string(a));
+          vtkArchiveTools::Error("destination: ", archive_error_string(ext));
         }
         r = archive_write_finish_entry(ext);
         if (r != ARCHIVE_OK)
         {
-          vtkArchiveTools::Error("Problem with archive_write_finish_entry(): ",
-                               archive_error_string(ext));
+          vtkArchiveTools::Error("Problem with archive_write_finish_entry(): ", archive_error_string(ext));
         }
       }
     }
@@ -449,7 +424,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
   while (sit != files.end() && success)
   {
     vtkArchiveTools::Message("Zip: adding:", sit->c_str());
-    const char *fileName = sit->c_str();
+    const char* fileName = sit->c_str();
     ++sit;
 
     //
@@ -458,9 +433,8 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     struct archive_entry* entry = archive_entry_new();
     // use a relative path for the entry file name, including the top
     // directory so it unzips into a directory of it's own
-    std::string relFileName = vtksys::SystemTools::RelativePath(
-              vtksys::SystemTools::GetParentDirectory(directoryToZip).c_str(),
-              fileName);
+    std::string relFileName =
+      vtksys::SystemTools::RelativePath(vtksys::SystemTools::GetParentDirectory(directoryToZip).c_str(), fileName);
     vtkArchiveTools::Message("Zip: adding rel:", relFileName.c_str());
     archive_entry_set_pathname(entry, relFileName.c_str());
     // size is required, for now use the vtksys call though it uses struct stat
@@ -478,7 +452,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     //
     // add the data for this entry
     //
-    FILE *fd = fopen(fileName, "rb");
+    FILE* fd = fopen(fileName, "rb");
     if (!fd)
     {
       vtkArchiveTools::Error("Zip: cannot open input file:", sit->c_str());
@@ -487,7 +461,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     else
     {
       size_t len = fread(buff, sizeof(char), sizeof(buff), fd);
-      while ( len > 0 )
+      while (len > 0)
       {
         if (archive_write_data(zipArchive, buff, len) < 0)
         {
@@ -529,19 +503,19 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
   // - cd back to original directory
   //
 
-  if ( !zipFileName || !destinationDirectory )
+  if (!zipFileName || !destinationDirectory)
   {
     vtkArchiveTools::Error("Unzip:", "Invalid zipfile or directory");
     return false;
   }
 
-  if ( !vtksys::SystemTools::FileExists(zipFileName) )
+  if (!vtksys::SystemTools::FileExists(zipFileName))
   {
     vtkArchiveTools::Error("Unzip:", "Zip file does not exist");
     return false;
   }
 
-  if ( !vtksys::SystemTools::FileIsDirectory(destinationDirectory) )
+  if (!vtksys::SystemTools::FileIsDirectory(destinationDirectory))
   {
     vtkArchiveTools::Error("Unzip:", "Destination is not a directory");
     return false;
@@ -550,18 +524,18 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
   std::string cwd = vtksys::SystemTools::GetCurrentWorkingDirectory();
 
 #if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0 && VTK_BUILD_VERSION >= 20210806)
-  if ( !vtksys::SystemTools::ChangeDirectory(destinationDirectory) )
+  if (!vtksys::SystemTools::ChangeDirectory(destinationDirectory))
 #else
-  if ( vtksys::SystemTools::ChangeDirectory(destinationDirectory) )
+  if (vtksys::SystemTools::ChangeDirectory(destinationDirectory))
 #endif
   {
     vtkArchiveTools::Error("Unzip:", "could not change to destination directory");
     return false;
   }
 
-  struct archive *zipArchive;
-  struct archive *diskDestination;
-  struct archive_entry *entry;
+  struct archive* zipArchive;
+  struct archive* diskDestination;
+  struct archive_entry* entry;
   int result;
 
   zipArchive = archive_read_new();
@@ -607,7 +581,7 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
     else
     {
       // copy data
-      const void *buff;
+      const void* buff;
       size_t size;
 #if defined(ARCHIVE_VERSION_NUMBER) && ARCHIVE_VERSION_NUMBER >= 3000000
       __LA_INT64_T offset;
@@ -663,9 +637,9 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
   }
 
 #if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0 && VTK_BUILD_VERSION >= 20210806)
-  if ( !vtksys::SystemTools::ChangeDirectory(cwd.c_str()) )
+  if (!vtksys::SystemTools::ChangeDirectory(cwd.c_str()))
 #else
-  if ( vtksys::SystemTools::ChangeDirectory(cwd.c_str()) )
+  if (vtksys::SystemTools::ChangeDirectory(cwd.c_str()))
 #endif
   {
     vtkArchiveTools::Error("Unzip:", "could not change back to working directory");

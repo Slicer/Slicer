@@ -26,48 +26,40 @@
 #include "qSlicerSimpleMarkupsWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerSimpleMarkupsWidgetPlugin
-::qSlicerSimpleMarkupsWidgetPlugin(QObject *_parent)
+qSlicerSimpleMarkupsWidgetPlugin ::qSlicerSimpleMarkupsWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerSimpleMarkupsWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerSimpleMarkupsWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qSlicerSimpleMarkupsWidget* _widget
-    = new qSlicerSimpleMarkupsWidget(_parent);
+  qSlicerSimpleMarkupsWidget* _widget = new qSlicerSimpleMarkupsWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerSimpleMarkupsWidgetPlugin
-::domXml() const
+QString qSlicerSimpleMarkupsWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qSlicerSimpleMarkupsWidget\" \
           name=\"SimpleMarkupsWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerSimpleMarkupsWidgetPlugin
-::includeFile() const
+QString qSlicerSimpleMarkupsWidgetPlugin ::includeFile() const
 {
   return "qSlicerSimpleMarkupsWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerSimpleMarkupsWidgetPlugin
-::isContainer() const
+bool qSlicerSimpleMarkupsWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerSimpleMarkupsWidgetPlugin
-::name() const
+QString qSlicerSimpleMarkupsWidgetPlugin ::name() const
 {
   return "qSlicerSimpleMarkupsWidget";
 }

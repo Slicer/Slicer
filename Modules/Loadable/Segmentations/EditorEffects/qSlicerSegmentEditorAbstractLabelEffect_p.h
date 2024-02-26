@@ -45,12 +45,14 @@ class QLabel;
 class ctkRangeWidget;
 
 /// \brief Private implementation of the segment editor abstract label effect
-class qSlicerSegmentEditorAbstractLabelEffectPrivate: public QObject
+class qSlicerSegmentEditorAbstractLabelEffectPrivate : public QObject
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorAbstractLabelEffect);
+
 protected:
   qSlicerSegmentEditorAbstractLabelEffect* const q_ptr;
+
 public:
   typedef QObject Superclass;
   qSlicerSegmentEditorAbstractLabelEffectPrivate(qSlicerSegmentEditorAbstractLabelEffect& object);

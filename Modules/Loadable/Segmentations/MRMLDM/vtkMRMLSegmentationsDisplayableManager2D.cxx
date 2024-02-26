@@ -79,7 +79,7 @@
 #include <sstream>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLSegmentationsDisplayableManager2D );
+vtkStandardNewMacro(vtkMRMLSegmentationsDisplayableManager2D);
 
 //---------------------------------------------------------------------------
 // Convert a linear transform that is almost exactly a permute transform
@@ -103,16 +103,18 @@ void SnapToPermuteMatrix(vtkTransform* transform)
   bool modified = false;
   vtkNew<vtkMatrix4x4> transformMatrix;
   linearTransform->GetMatrix(transformMatrix.GetPointer());
-  for (int c=0; c<3; c++)
+  for (int c = 0; c < 3; c++)
   {
-    double absValues[3] = {fabs(transformMatrix->Element[0][c]), fabs(transformMatrix->Element[1][c]), fabs(transformMatrix->Element[2][c])};
+    double absValues[3] = { fabs(transformMatrix->Element[0][c]),
+                            fabs(transformMatrix->Element[1][c]),
+                            fabs(transformMatrix->Element[2][c]) };
     double maxValue = std::max(absValues[0], std::max(absValues[1], absValues[2]));
     double zeroThreshold = SUPPRESSION_FACTOR * maxValue;
-    for (int r=0; r<3; r++)
+    for (int r = 0; r < 3; r++)
     {
-      if (absValues[r]!=0 && absValues[r]<zeroThreshold)
+      if (absValues[r] != 0 && absValues[r] < zeroThreshold)
       {
-        transformMatrix->Element[r][c]=0;
+        transformMatrix->Element[r][c] = 0;
         modified = true;
       }
     }
@@ -127,8 +129,7 @@ void SnapToPermuteMatrix(vtkTransform* transform)
 class vtkMRMLSegmentationsDisplayableManager2D::vtkInternal
 {
 public:
-
-  vtkInternal( vtkMRMLSegmentationsDisplayableManager2D* external );
+  vtkInternal(vtkMRMLSegmentationsDisplayableManager2D* external);
   ~vtkInternal();
 
   struct Pipeline
@@ -153,7 +154,8 @@ public:
       this->Cutter->SetInputConnection(this->ModelWarper->GetOutputPort());
       this->Cutter->SetPlane(this->Plane);
       this->Cutter->BuildTreeOff(); // the cutter crashes for complex geometries if build tree is enabled
-      vtkSmartPointer<vtkTransformPolyDataFilter> polyDataOutlineTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      vtkSmartPointer<vtkTransformPolyDataFilter> polyDataOutlineTransformer =
+        vtkSmartPointer<vtkTransformPolyDataFilter>::New();
       vtkNew<vtkGeometryFilter> geometryFilter;
       geometryFilter->SetInputConnection(this->Cutter->GetOutputPort());
       polyDataOutlineTransformer->SetInputConnection(geometryFilter->GetOutputPort());
@@ -169,7 +171,8 @@ public:
       pointMerger->PointMergingOn();
       pointMerger->SetInputConnection(geometryFilter->GetOutputPort());
       this->Triangulator->SetInputConnection(pointMerger->GetOutputPort());
-      vtkSmartPointer<vtkTransformPolyDataFilter> polyDataFillTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      vtkSmartPointer<vtkTransformPolyDataFilter> polyDataFillTransformer =
+        vtkSmartPointer<vtkTransformPolyDataFilter>::New();
       polyDataFillTransformer->SetInputConnection(this->Triangulator->GetOutputPort());
       polyDataFillTransformer->SetTransform(this->WorldToSliceTransform);
       vtkSmartPointer<vtkPolyDataMapper2D> polyDataFillMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
@@ -252,11 +255,12 @@ public:
     vtkMTimeType SliceIntersectionUpdatedTime;
   };
 
-  typedef std::map<vtkSmartPointer<vtkDataObject>, Pipeline*> PipelineMapType; // first: representation object; second: display pipeline
-  typedef std::map < vtkMRMLSegmentationDisplayNode*, PipelineMapType > PipelinesCacheType;
+  typedef std::map<vtkSmartPointer<vtkDataObject>, Pipeline*>
+    PipelineMapType; // first: representation object; second: display pipeline
+  typedef std::map<vtkMRMLSegmentationDisplayNode*, PipelineMapType> PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLSegmentationNode*, std::set< vtkMRMLSegmentationDisplayNode* > > SegmentationToDisplayCacheType;
+  typedef std::map<vtkMRMLSegmentationNode*, std::set<vtkMRMLSegmentationDisplayNode*>> SegmentationToDisplayCacheType;
   SegmentationToDisplayCacheType SegmentationToDisplayNodes;
 
   // Segmentations
@@ -264,8 +268,10 @@ public:
   void RemoveSegmentationNode(vtkMRMLSegmentationNode* displayableNode);
 
   // Transforms
-  void UpdateDisplayableTransforms(vtkMRMLSegmentationNode *node);
-  void GetNodeTransformToWorld(vtkMRMLTransformableNode* node, vtkGeneralTransform* transformToWorld, vtkGeneralTransform* transformFromWorld);
+  void UpdateDisplayableTransforms(vtkMRMLSegmentationNode* node);
+  void GetNodeTransformToWorld(vtkMRMLTransformableNode* node,
+                               vtkGeneralTransform* transformToWorld,
+                               vtkGeneralTransform* transformFromWorld);
 
   // Slice Node
   void SetSliceNode(vtkMRMLSliceNode* sliceNode);
@@ -291,7 +297,9 @@ public:
   bool UseDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode);
   bool UseDisplayableNode(vtkMRMLSegmentationNode* node);
   void ClearDisplayableNodes();
-  bool IsSegmentVisibleInCurrentSlice(vtkMRMLSegmentationDisplayNode* displayNode, Pipeline* pipeline, const std::string &segmentID);
+  bool IsSegmentVisibleInCurrentSlice(vtkMRMLSegmentationDisplayNode* displayNode,
+                                      Pipeline* pipeline,
+                                      const std::string& segmentID);
 
 private:
   vtkSmartPointer<vtkMatrix4x4> SliceXYToRAS;
@@ -308,8 +316,8 @@ private:
 
 //---------------------------------------------------------------------------
 vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::vtkInternal(vtkMRMLSegmentationsDisplayableManager2D* external)
-: External(external)
-, AddingSegmentationNode(false)
+  : External(external)
+  , AddingSegmentationNode(false)
 {
   this->SliceXYToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
   this->SliceXYToRAS->Identity();
@@ -328,7 +336,7 @@ vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::~vtkInternal()
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UseDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode)
 {
-   // allow nodes to appear only in designated viewers
+  // allow nodes to appear only in designated viewers
   if (displayNode && !displayNode->IsDisplayableInView(this->SliceNode->GetID()))
   {
     return false;
@@ -343,10 +351,9 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UseDisplayNode(vtkMR
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsVisible(vtkMRMLSegmentationDisplayNode* displayNode)
 {
-  return displayNode
-      && displayNode->GetVisibility(this->External->GetMRMLSliceNode()->GetID())
-      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill())
-      && (displayNode->GetOpacity2DOutline() > 0 || displayNode->GetOpacity2DFill() > 0);
+  return displayNode && displayNode->GetVisibility(this->External->GetMRMLSliceNode()->GetID())
+         && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill())
+         && (displayNode->GetOpacity2DOutline() > 0 || displayNode->GetOpacity2DFill() > 0);
 }
 
 //---------------------------------------------------------------------------
@@ -356,7 +363,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::SetSliceNode(vtkMRML
   {
     return;
   }
-  this->SliceNode=sliceNode;
+  this->SliceNode = sliceNode;
   this->UpdateSliceNode();
 }
 
@@ -364,7 +371,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::SetSliceNode(vtkMRML
 void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSliceNode()
 {
   // Update the Slice node transform then update the DisplayNode pipelines to account for plane location
-  this->SliceXYToRAS->DeepCopy( this->SliceNode->GetXYToRAS() );
+  this->SliceXYToRAS->DeepCopy(this->SliceNode->GetXYToRAS());
   PipelinesCacheType::iterator displayNodeIt;
   for (displayNodeIt = this->DisplayPipelines.begin(); displayNodeIt != this->DisplayPipelines.end(); ++displayNodeIt)
   {
@@ -373,17 +380,18 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSliceNode()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::SetSlicePlaneFromMatrix(vtkMatrix4x4* sliceMatrix, vtkPlane* plane)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::SetSlicePlaneFromMatrix(vtkMatrix4x4* sliceMatrix,
+                                                                                    vtkPlane* plane)
 {
-  double normal[3] = {0.0,0.0,0.0};
-  double origin[3] = {0.0,0.0,0.0};
+  double normal[3] = { 0.0, 0.0, 0.0 };
+  double origin[3] = { 0.0, 0.0, 0.0 };
 
   // +/-1: orientation of the normal
   const int planeOrientation = 1;
   for (int i = 0; i < 3; i++)
   {
-    normal[i] = planeOrientation * sliceMatrix->GetElement(i,2);
-    origin[i] = sliceMatrix->GetElement(i,3);
+    normal[i] = planeOrientation * sliceMatrix->GetElement(i, 2);
+    origin[i] = sliceMatrix->GetElement(i, 3);
   }
 
   vtkMath::Normalize(normal);
@@ -410,13 +418,13 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddSegmentationNode(
 
   this->AddObservations(node);
 
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i < nnodes; i++)
   {
-    vtkMRMLSegmentationDisplayNode *dnode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
-    if ( this->UseDisplayNode(dnode) )
+    vtkMRMLSegmentationDisplayNode* dnode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
+    if (this->UseDisplayNode(dnode))
     {
       this->SegmentationToDisplayNodes[node].insert(dnode);
-      this->AddDisplayNode( node, dnode );
+      this->AddDisplayNode(node, dnode);
     }
   }
   this->AddingSegmentationNode = false;
@@ -429,15 +437,14 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::RemoveSegmentationNo
   {
     return;
   }
-  vtkInternal::SegmentationToDisplayCacheType::iterator displayableIt =
-    this->SegmentationToDisplayNodes.find(node);
-  if(displayableIt == this->SegmentationToDisplayNodes.end())
+  vtkInternal::SegmentationToDisplayCacheType::iterator displayableIt = this->SegmentationToDisplayNodes.find(node);
+  if (displayableIt == this->SegmentationToDisplayNodes.end())
   {
     return;
   }
 
-  std::set< vtkMRMLSegmentationDisplayNode* > dnodes = displayableIt->second;
-  std::set< vtkMRMLSegmentationDisplayNode* >::iterator diter;
+  std::set<vtkMRMLSegmentationDisplayNode*> dnodes = displayableIt->second;
+  std::set<vtkMRMLSegmentationDisplayNode*>::iterator diter;
   for (diter = dnodes.begin(); diter != dnodes.end(); ++diter)
   {
     this->RemoveDisplayNode(*diter);
@@ -447,7 +454,10 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::RemoveSegmentationNo
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::GetNodeTransformToWorld(vtkMRMLTransformableNode* node, vtkGeneralTransform* transformToWorld, vtkGeneralTransform* transformFromWorld)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::GetNodeTransformToWorld(
+  vtkMRMLTransformableNode* node,
+  vtkGeneralTransform* transformToWorld,
+  vtkGeneralTransform* transformFromWorld)
 {
   if (!node || !transformToWorld)
   {
@@ -471,17 +481,20 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayableTra
 {
   // Update the NodeToWorld matrix for all tracked DisplayableNode
   PipelinesCacheType::iterator pipelinesIter;
-  std::set<vtkMRMLSegmentationDisplayNode *> displayNodes = this->SegmentationToDisplayNodes[mNode];
-  std::set<vtkMRMLSegmentationDisplayNode *>::iterator dnodesIter;
-  for ( dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++ )
+  std::set<vtkMRMLSegmentationDisplayNode*> displayNodes = this->SegmentationToDisplayNodes[mNode];
+  std::set<vtkMRMLSegmentationDisplayNode*>::iterator dnodesIter;
+  for (dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++)
   {
-    if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
+    if (((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()))
     {
-      for (PipelineMapType::iterator pipelineIt=pipelinesIter->second.begin(); pipelineIt!=pipelinesIter->second.end(); ++pipelineIt)
+      for (PipelineMapType::iterator pipelineIt = pipelinesIter->second.begin();
+           pipelineIt != pipelinesIter->second.end();
+           ++pipelineIt)
       {
         Pipeline* currentPipeline = pipelineIt->second;
         currentPipeline->SliceIntersectionUpdatedTime = 0; // Trigger slice intersection recomputation
-        this->GetNodeTransformToWorld(mNode, currentPipeline->NodeToWorldTransform, currentPipeline->WorldToNodeTransform);
+        this->GetNodeTransformToWorld(
+          mNode, currentPipeline->NodeToWorldTransform, currentPipeline->WorldToNodeTransform);
       }
       this->UpdateDisplayNodePipeline(pipelinesIter->first, pipelinesIter->second);
     }
@@ -489,7 +502,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayableTra
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::RemoveDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::RemoveDisplayNode(
+  vtkMRMLSegmentationDisplayNode* displayNode)
 {
   PipelinesCacheType::iterator pipelinesIter = this->DisplayPipelines.find(displayNode);
   if (pipelinesIter == this->DisplayPipelines.end())
@@ -510,7 +524,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::RemoveDisplayNode(vt
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddDisplayNode(vtkMRMLSegmentationNode* mNode, vtkMRMLSegmentationDisplayNode* displayNode)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddDisplayNode(vtkMRMLSegmentationNode* mNode,
+                                                                           vtkMRMLSegmentationDisplayNode* displayNode)
 {
   if (!mNode || !displayNode)
   {
@@ -536,9 +551,10 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddDisplayNode(vtkMR
   }
   PipelineMapType pipelineVector;
 
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end();
+       ++segmentIdIt)
   {
     vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
     if (!segment)
@@ -553,7 +569,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddDisplayNode(vtkMR
     }
   }
 
-  this->DisplayPipelines.insert( std::make_pair(displayNode, pipelineVector) );
+  this->DisplayPipelines.insert(std::make_pair(displayNode, pipelineVector));
 
   // Update cached matrices. Calls UpdateDisplayNodePipeline
   this->UpdateDisplayableTransforms(mNode);
@@ -566,16 +582,17 @@ vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::CreateSegmentPipeline()
   Pipeline* pipeline = new Pipeline();
 
   // Add actors to Renderer
-  this->External->GetRenderer()->AddActor( pipeline->PolyDataOutlineActor );
-  this->External->GetRenderer()->AddActor( pipeline->PolyDataFillActor );
-  this->External->GetRenderer()->AddActor( pipeline->ImageOutlineActor );
-  this->External->GetRenderer()->AddActor( pipeline->ImageFillActor );
+  this->External->GetRenderer()->AddActor(pipeline->PolyDataOutlineActor);
+  this->External->GetRenderer()->AddActor(pipeline->PolyDataFillActor);
+  this->External->GetRenderer()->AddActor(pipeline->ImageOutlineActor);
+  this->External->GetRenderer()->AddActor(pipeline->ImageFillActor);
 
   return pipeline;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNode(
+  vtkMRMLSegmentationDisplayNode* displayNode)
 {
   // If the DisplayNode already exists, just update. Otherwise, add as new node
   if (!displayNode)
@@ -590,22 +607,27 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNode(vt
   }
   else
   {
-    this->AddSegmentationNode( vtkMRMLSegmentationNode::SafeDownCast(displayNode->GetDisplayableNode()) );
+    this->AddSegmentationNode(vtkMRMLSegmentationNode::SafeDownCast(displayNode->GetDisplayableNode()));
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateAllDisplayNodesForSegment(vtkMRMLSegmentationNode* segmentationNode)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateAllDisplayNodesForSegment(
+  vtkMRMLSegmentationNode* segmentationNode)
 {
-  std::set<vtkMRMLSegmentationDisplayNode *> displayNodes = this->SegmentationToDisplayNodes[segmentationNode];
-  for (std::set<vtkMRMLSegmentationDisplayNode *>::iterator dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++)
+  std::set<vtkMRMLSegmentationDisplayNode*> displayNodes = this->SegmentationToDisplayNodes[segmentationNode];
+  for (std::set<vtkMRMLSegmentationDisplayNode*>::iterator dnodesIter = displayNodes.begin();
+       dnodesIter != displayNodes.end();
+       dnodesIter++)
   {
     this->UpdateDisplayNode(*dnodesIter);
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelines(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType &pipelines)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelines(
+  vtkMRMLSegmentationDisplayNode* displayNode,
+  PipelineMapType& pipelines)
 {
   // Get segmentation
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(displayNode->GetDisplayableNode());
@@ -621,9 +643,10 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelin
 
   bool requestTransformUpdate = false;
   // Make sure each segment has a pipeline
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end();
+       ++segmentIdIt)
   {
     vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
     vtkDataObject* representationObject = segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D());
@@ -680,7 +703,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelin
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePipeline(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType &pipelines)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePipeline(
+  vtkMRMLSegmentationDisplayNode* displayNode,
+  PipelineMapType& pipelines)
 {
   // Sets visibility, set pipeline polydata input, update color calculate and set pipeline segments.
   if (!displayNode)
@@ -720,7 +745,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
   if (shownRepresenatationName.empty())
   {
     // Hide segmentation if there is no 2D representation to show
-    for (PipelineMapType::iterator pipelineIt=pipelines.begin(); pipelineIt!=pipelines.end(); ++pipelineIt)
+    for (PipelineMapType::iterator pipelineIt = pipelines.begin(); pipelineIt != pipelines.end(); ++pipelineIt)
     {
       pipelineIt->second->PolyDataOutlineActor->SetVisibility(false);
       pipelineIt->second->PolyDataFillActor->SetVisibility(false);
@@ -748,12 +773,13 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
   }
 
   // For all pipelines (pipeline per segment)
-  for (PipelineMapType::iterator pipelineIt=pipelines.begin(); pipelineIt!=pipelines.end(); ++pipelineIt)
+  for (PipelineMapType::iterator pipelineIt = pipelines.begin(); pipelineIt != pipelines.end(); ++pipelineIt)
   {
     Pipeline* pipeline = pipelineIt->second;
 
     vtkDataObject* dataObject = pipelineIt->first;
-    std::vector<std::string> sharedSegmentIds = segmentation->GetSegmentIDsForDataObject(dataObject, displayNode->GetDisplayRepresentationName2D());
+    std::vector<std::string> sharedSegmentIds =
+      segmentation->GetSegmentIDsForDataObject(dataObject, displayNode->GetDisplayRepresentationName2D());
 
     // Get representation to display
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(dataObject);
@@ -761,7 +787,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
     if (imageData)
     {
       int* imageExtent = imageData->GetExtent();
-      if (imageExtent[0]>imageExtent[1] || imageExtent[2]>imageExtent[3] || imageExtent[4]>imageExtent[5])
+      if (imageExtent[0] > imageExtent[1] || imageExtent[2] > imageExtent[3] || imageExtent[4] > imageExtent[5])
       {
         // empty image
         imageData = nullptr;
@@ -792,12 +818,16 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
       displayNode->GetSegmentDisplayProperties(segmentID, properties);
 
-      double outlineOpacity = hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * genericDisplayNode->GetOpacity();
-      bool segmentOutlineVisible = hierarchyVisibility && displayNodeVisible && properties.Visible &&
-        properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
-      double fillOpacity = hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill() * genericDisplayNode->GetOpacity();
-      bool segmentFillVisible = hierarchyVisibility && displayNodeVisible && properties.Visible &&
-        properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
+      double outlineOpacity = hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline()
+                              * genericDisplayNode->GetOpacity();
+      bool segmentOutlineVisible = hierarchyVisibility && displayNodeVisible && properties.Visible
+                                   && properties.Visible2DOutline && displayNode->GetVisibility2DOutline()
+                                   && (outlineOpacity > 0.0);
+      double fillOpacity = hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill()
+                           * genericDisplayNode->GetOpacity();
+      bool segmentFillVisible = hierarchyVisibility && displayNodeVisible && properties.Visible
+                                && properties.Visible2DFill && displayNode->GetVisibility2DFill()
+                                && (fillOpacity > 0.0);
 
       // Turn off image visibility when showing poly data
       pipeline->ImageOutlineActor->SetVisibility(false);
@@ -813,8 +843,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       }
 
       // Only update slice intersection if it has changed
-      if ( pipeline->SliceIntersectionUpdatedTime < polyData->GetMTime()
-        || pipeline->SliceIntersectionUpdatedTime < this->SliceXYToRAS->GetMTime() )
+      if (pipeline->SliceIntersectionUpdatedTime < polyData->GetMTime()
+          || pipeline->SliceIntersectionUpdatedTime < this->SliceXYToRAS->GetMTime())
       {
         pipeline->ModelWarper->SetInputData(polyData);
         pipeline->ModelWarper->SetTransform(pipeline->NodeToWorldTransform);
@@ -831,13 +861,16 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         if (segmentFillVisible)
         {
           // Save time of slice intersection update
-          pipeline->SliceIntersectionUpdatedTime = (polyData->GetMTime() > this->SliceXYToRAS->GetMTime() ?
-            polyData->GetMTime() : this->SliceXYToRAS->GetMTime());
+          pipeline->SliceIntersectionUpdatedTime =
+            (polyData->GetMTime() > this->SliceXYToRAS->GetMTime() ? polyData->GetMTime()
+                                                                   : this->SliceXYToRAS->GetMTime());
         }
       }
 
       // Get displayed color (if no override is defined then use the color from the segment)
-      double color[3] = { vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2] };
+      double color[3] = { vtkSegment::SEGMENT_COLOR_INVALID[0],
+                          vtkSegment::SEGMENT_COLOR_INVALID[1],
+                          vtkSegment::SEGMENT_COLOR_INVALID[2] };
       if (overrideHierarchyDisplayNode)
       {
         overrideHierarchyDisplayNode->GetColor(color);
@@ -852,11 +885,11 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       pipeline->PolyDataOutlineActor->GetProperty()->SetColor(color);
       pipeline->PolyDataOutlineActor->GetProperty()->SetOpacity(outlineOpacity);
       pipeline->PolyDataOutlineActor->GetProperty()->SetLineWidth(genericDisplayNode->GetSliceIntersectionThickness());
-      pipeline->PolyDataOutlineActor->SetPosition(0,0);
+      pipeline->PolyDataOutlineActor->SetPosition(0, 0);
       pipeline->PolyDataFillActor->SetVisibility(segmentFillVisible);
       pipeline->PolyDataFillActor->GetProperty()->SetColor(color[0], color[1], color[2]);
       pipeline->PolyDataFillActor->GetProperty()->SetOpacity(fillOpacity);
-      pipeline->PolyDataFillActor->SetPosition(0,0);
+      pipeline->PolyDataFillActor->SetPosition(0, 0);
     }
     // If shown representation is image data
     else if (imageData)
@@ -872,13 +905,14 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
         displayNode->GetSegmentDisplayProperties(segmentId, properties);
 
-        double outlineOpacity = properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity();
-        outlineVisible |= displayNodeVisible && properties.Visible
-          && properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
+        double outlineOpacity =
+          properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity();
+        outlineVisible |= displayNodeVisible && properties.Visible && properties.Visible2DOutline
+                          && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
 
         double fillOpacity = properties.Opacity2DFill * displayNode->GetOpacity2DFill() * displayNode->GetOpacity();
-        fillVisible |= displayNodeVisible && properties.Visible
-          && properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
+        fillVisible |= displayNodeVisible && properties.Visible && properties.Visible2DFill
+                       && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
 
         if (outlineVisible && fillVisible)
         {
@@ -931,7 +965,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         maxLabelmapValue = std::max(maxLabelmapValue, labelmapValue);
       }
 
-      if (displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
+      if (displayNode->GetDisplayRepresentationName2D()
+          == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
       {
         pipeline->LookupTableFill->SetNumberOfTableValues(maximumValue - minimumValue + 1);
         pipeline->LookupTableFill->SetTableRange(minimumValue, maximumValue);
@@ -964,24 +999,29 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
         displayNode->GetSegmentDisplayProperties(segmentId, properties);
 
-        double outlineOpacity = hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * genericDisplayNode->GetOpacity();
-        bool segmentOutlineVisible = displayNodeVisible && properties.Visible
-          && properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
+        double outlineOpacity = hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline()
+                                * genericDisplayNode->GetOpacity();
+        bool segmentOutlineVisible = displayNodeVisible && properties.Visible && properties.Visible2DOutline
+                                     && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
         if (!segmentOutlineVisible)
         {
           outlineOpacity = 0.0;
         }
 
-        double fillOpacity = hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill() * genericDisplayNode->GetOpacity();
-        bool segmentFillVisible = displayNodeVisible && properties.Visible
-          && properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
+        double fillOpacity = hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill()
+                             * genericDisplayNode->GetOpacity();
+        bool segmentFillVisible = displayNodeVisible && properties.Visible && properties.Visible2DFill
+                                  && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
         if (!segmentFillVisible)
         {
           fillOpacity = 0.0;
         }
 
         // Get displayed color (if no override is defined then use the color from the segment)
-        double color[4] = { vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2], 1.0};
+        double color[4] = { vtkSegment::SEGMENT_COLOR_INVALID[0],
+                            vtkSegment::SEGMENT_COLOR_INVALID[1],
+                            vtkSegment::SEGMENT_COLOR_INVALID[2],
+                            1.0 };
         if (overrideHierarchyDisplayNode)
         {
           overrideHierarchyDisplayNode->GetColor(color);
@@ -991,7 +1031,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
           displayNode->GetSegmentColor(segmentId, color);
         }
 
-        if (displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
+        if (displayNode->GetDisplayRepresentationName2D()
+            == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
         {
           pipeline->LookupTableFill->SetRampToLinear();
           if (!this->SmoothFractionalLabelMapBorder)
@@ -1002,20 +1043,26 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
           {
             pipeline->LookupTableFill->SetNumberOfTableValues(maximumValue - minimumValue + 1);
           }
-          double hsv[3] = { 0,0,0 };
+          double hsv[3] = { 0, 0, 0 };
           vtkMath::RGBToHSV(color, hsv);
           pipeline->LookupTableFill->SetHueRange(hsv[0], hsv[0]);
           pipeline->LookupTableFill->SetSaturationRange(hsv[1], hsv[1]);
           pipeline->LookupTableFill->SetValueRange(hsv[2], hsv[2]);
           pipeline->LookupTableFill->SetAlphaRange(0.0,
-            hierarchyOpacity* properties.Opacity2DFill* displayNode->GetOpacity2DFill()* genericDisplayNode->GetOpacity());
+                                                   hierarchyOpacity * properties.Opacity2DFill
+                                                     * displayNode->GetOpacity2DFill()
+                                                     * genericDisplayNode->GetOpacity());
           pipeline->LookupTableFill->SetTableRange(minimumValue, maximumValue);
           pipeline->LookupTableFill->ForceBuild();
 
-          pipeline->LookupTableOutline->SetTableValue(0,color[0], color[1], color[2], 0.0);
+          pipeline->LookupTableOutline->SetTableValue(0, color[0], color[1], color[2], 0.0);
           pipeline->LookupTableOutline->SetTableValue(1,
-            color[0], color[1], color[2],
-            hierarchyOpacity* properties.Opacity2DOutline* displayNode->GetOpacity2DOutline()* genericDisplayNode->GetOpacity());
+                                                      color[0],
+                                                      color[1],
+                                                      color[2],
+                                                      hierarchyOpacity * properties.Opacity2DOutline
+                                                        * displayNode->GetOpacity2DOutline()
+                                                        * genericDisplayNode->GetOpacity());
           pipeline->LookupTableOutline->SetNumberOfTableValues(2);
           pipeline->LookupTableOutline->SetTableRange(0, 1);
         }
@@ -1081,7 +1128,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 
       // Smooth the border of fractional labelmaps
       pipeline->LabelOutline->SetInputConnection(pipeline->Reslice->GetOutputPort());
-      pipeline->ImageFillActor->GetMapper()->GetInputAlgorithm()->SetInputConnection(pipeline->Reslice->GetOutputPort());
+      pipeline->ImageFillActor->GetMapper()->GetInputAlgorithm()->SetInputConnection(
+        pipeline->Reslice->GetOutputPort());
       if (shownRepresenatationName == vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName())
       {
         // If ThresholdValue is not specified, then do not perform thresholding
@@ -1091,7 +1139,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         {
           if (!this->SmoothFractionalLabelMapBorder && thresholdValue && thresholdValue->GetNumberOfValues() == 1)
           {
-            pipeline->ImageFillActor->GetMapper()->GetInputAlgorithm()->SetInputConnection(pipeline->ImageThreshold->GetOutputPort());
+            pipeline->ImageFillActor->GetMapper()->GetInputAlgorithm()->SetInputConnection(
+              pipeline->ImageThreshold->GetOutputPort());
           }
           pipeline->ImageThreshold->ThresholdByLower(thresholdValue->GetValue(0));
           pipeline->LabelOutline->SetInputConnection(pipeline->ImageThreshold->GetOutputPort());
@@ -1114,33 +1163,55 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddObservations(vtkMRMLSegmentationNode* node)
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
-  if (!broker->GetObservationExist(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand()))
+  if (!broker->GetObservationExist(
+        node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
+    broker->AddObservation(
+      node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   }
-  if (!broker->GetObservationExist(node, vtkMRMLTransformableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand()))
+  if (!broker->GetObservationExist(node,
+                                   vtkMRMLTransformableNode::TransformModifiedEvent,
+                                   this->External,
+                                   this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkMRMLTransformableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+    broker->AddObservation(node,
+                           vtkMRMLTransformableNode::TransformModifiedEvent,
+                           this->External,
+                           this->External->GetMRMLNodesCallbackCommand());
   }
-  if (!broker->GetObservationExist(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() ))
+  if (!broker->GetObservationExist(node,
+                                   vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                                   this->External,
+                                   this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+    broker->AddObservation(node,
+                           vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                           this->External,
+                           this->External->GetMRMLNodesCallbackCommand());
   }
-  if (!broker->GetObservationExist(node, vtkSegmentation::RepresentationModified, this->External, this->External->GetMRMLNodesCallbackCommand() ))
+  if (!broker->GetObservationExist(
+        node, vtkSegmentation::RepresentationModified, this->External, this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkSegmentation::RepresentationModified, this->External, this->External->GetMRMLNodesCallbackCommand() );
+    broker->AddObservation(
+      node, vtkSegmentation::RepresentationModified, this->External, this->External->GetMRMLNodesCallbackCommand());
   }
-  if (!broker->GetObservationExist(node, vtkSegmentation::SegmentAdded, this->External, this->External->GetMRMLNodesCallbackCommand()))
+  if (!broker->GetObservationExist(
+        node, vtkSegmentation::SegmentAdded, this->External, this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkSegmentation::SegmentAdded, this->External, this->External->GetMRMLNodesCallbackCommand());
+    broker->AddObservation(
+      node, vtkSegmentation::SegmentAdded, this->External, this->External->GetMRMLNodesCallbackCommand());
   }
-  if (!broker->GetObservationExist(node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand()))
+  if (!broker->GetObservationExist(
+        node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand());
+    broker->AddObservation(
+      node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand());
   }
-  if (!broker->GetObservationExist(node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand()))
+  if (!broker->GetObservationExist(
+        node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand());
+    broker->AddObservation(
+      node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand());
   }
 }
 
@@ -1149,19 +1220,28 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::RemoveObservations(v
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
   vtkEventBroker::ObservationVector observations;
-  observations = broker->GetObservations(node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
+  observations = broker->GetObservations(
+    node, vtkCommand::ModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkMRMLTransformableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
+  observations = broker->GetObservations(node,
+                                         vtkMRMLTransformableNode::TransformModifiedEvent,
+                                         this->External,
+                                         this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(
+    node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkSegmentation::RepresentationModified, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(
+    node, vtkSegmentation::RepresentationModified, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkSegmentation::SegmentAdded, this->External, this->External->GetMRMLNodesCallbackCommand());
+  observations = broker->GetObservations(
+    node, vtkSegmentation::SegmentAdded, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand());
+  observations = broker->GetObservations(
+    node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand());
+  observations = broker->GetObservations(
+    node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
 }
 
@@ -1183,7 +1263,7 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsNodeObserved(vtkMR
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::ClearDisplayableNodes()
 {
-  while(this->SegmentationToDisplayNodes.size() > 0)
+  while (this->SegmentationToDisplayNodes.size() > 0)
   {
     this->RemoveSegmentationNode(this->SegmentationToDisplayNodes.begin()->first);
   }
@@ -1198,10 +1278,11 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UseDisplayableNode(v
 
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCurrentSlice(
-  vtkMRMLSegmentationDisplayNode* displayNode, Pipeline* pipeline, const std::string &segmentID)
+  vtkMRMLSegmentationDisplayNode* displayNode,
+  Pipeline* pipeline,
+  const std::string& segmentID)
 {
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-    displayNode->GetDisplayableNode() );
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(displayNode->GetDisplayableNode());
   if (!segmentationNode)
   {
     return false;
@@ -1221,13 +1302,17 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
 
   if (displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetClosedSurfaceRepresentationName())
   {
-    vtkPolyData* polyData = vtkPolyData::SafeDownCast(segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D()));
+    vtkPolyData* polyData =
+      vtkPolyData::SafeDownCast(segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D()));
     polyData->GetBounds(segmentBounds_Segment);
   }
-  else if (displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() ||
-    displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
+  else if (displayNode->GetDisplayRepresentationName2D()
+             == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()
+           || displayNode->GetDisplayRepresentationName2D()
+                == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
   {
-    vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D()));
+    vtkOrientedImageData* imageData =
+      vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D()));
     imageData->GetBounds(segmentBounds_Segment);
   }
   else
@@ -1242,43 +1327,42 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
   segmentationToSliceTransform->Concatenate(pipeline->NodeToWorldTransform);
 
   double segmentBounds_Slice[6] = { 0 };
-  vtkOrientedImageDataResample::TransformBounds(segmentBounds_Segment, segmentationToSliceTransform, segmentBounds_Slice);
+  vtkOrientedImageDataResample::TransformBounds(
+    segmentBounds_Segment, segmentationToSliceTransform, segmentBounds_Slice);
 
   bool visibleInCurrentSlice = true;
 
   // if segment does not intersect the slice plane then hide actors
   const double slicePositionTolerance = 0.1;
-  if ((segmentBounds_Slice[4]<-slicePositionTolerance && segmentBounds_Slice[5]<-slicePositionTolerance)
-    || (segmentBounds_Slice[4]>slicePositionTolerance && segmentBounds_Slice[5]>slicePositionTolerance))
+  if ((segmentBounds_Slice[4] < -slicePositionTolerance && segmentBounds_Slice[5] < -slicePositionTolerance)
+      || (segmentBounds_Slice[4] > slicePositionTolerance && segmentBounds_Slice[5] > slicePositionTolerance))
   {
     visibleInCurrentSlice = false;
   }
   else
   {
     int outlineWidth = displayNode->GetSliceIntersectionThickness();
-      for (int i=0; i<3; i++)
+    for (int i = 0; i < 3; i++)
+    {
+      int startExtent = int(floor(segmentBounds_Slice[i * 2]) - outlineWidth);
+      int endExtent = int(ceil(segmentBounds_Slice[i * 2 + 1]) + outlineWidth);
+      if (segmentBounds_Slice[i * 2] < startExtent)
       {
-        int startExtent = int(floor(segmentBounds_Slice[i * 2]) - outlineWidth);
-        int endExtent = int(ceil(segmentBounds_Slice[i * 2 + 1]) + outlineWidth);
-        if (segmentBounds_Slice[i * 2] < startExtent)
-        {
-          segmentBounds_Slice[i * 2] = startExtent;
-        }
-        if (segmentBounds_Slice[i * 2 + 1] > endExtent)
-        {
-          segmentBounds_Slice[i * 2 + 1] = endExtent;
-        }
+        segmentBounds_Slice[i * 2] = startExtent;
       }
-      if (segmentBounds_Slice[0]>segmentBounds_Slice[1]
-        || segmentBounds_Slice[2]>segmentBounds_Slice[3])
+      if (segmentBounds_Slice[i * 2 + 1] > endExtent)
       {
-        visibleInCurrentSlice = false;
+        segmentBounds_Slice[i * 2 + 1] = endExtent;
       }
+    }
+    if (segmentBounds_Slice[0] > segmentBounds_Slice[1] || segmentBounds_Slice[2] > segmentBounds_Slice[3])
+    {
+      visibleInCurrentSlice = false;
+    }
   }
 
   return visibleInCurrentSlice;
 }
-
 
 //---------------------------------------------------------------------------
 // vtkMRMLSegmentationsDisplayableManager2D methods
@@ -1306,7 +1390,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::PrintSelf(ostream& os, vtkIndent 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if ( !node->IsA("vtkMRMLSegmentationNode") )
+  if (!node->IsA("vtkMRMLSegmentationNode"))
   {
     return;
   }
@@ -1325,9 +1409,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeAdded(vtkMRMLNode*
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if ( node
-    && (!node->IsA("vtkMRMLSegmentationNode"))
-    && (!node->IsA("vtkMRMLSegmentationDisplayNode")) )
+  if (node && (!node->IsA("vtkMRMLSegmentationNode")) && (!node->IsA("vtkMRMLSegmentationDisplayNode")))
   {
     return;
   }
@@ -1336,12 +1418,12 @@ void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeRemoved(vtkMRMLNod
   vtkMRMLSegmentationDisplayNode* displayNode = nullptr;
 
   bool modified = false;
-  if ( (segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node)) )
+  if ((segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node)))
   {
     this->Internal->RemoveSegmentationNode(segmentationNode);
     modified = true;
   }
-  else if ( (displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node)) )
+  else if ((displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node)))
   {
     this->Internal->RemoveDisplayNode(displayNode);
     modified = true;
@@ -1353,7 +1435,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeRemoved(vtkMRMLNod
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
+void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject* caller,
+                                                                      unsigned long event,
+                                                                      void* callData)
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
 
@@ -1368,7 +1452,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject*
   {
     if (event == vtkMRMLDisplayableNode::DisplayModifiedEvent)
     {
-      vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode *> (callData);
+      vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*>(callData);
       vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(callDataNode);
       if (displayNode)
       {
@@ -1376,23 +1460,22 @@ void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject*
         this->RequestRender();
       }
     }
-    else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
-           || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
-           || (event == vtkSegmentation::RepresentationModified))
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)
+             || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
+             || (event == vtkSegmentation::RepresentationModified))
     {
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();
     }
-    else if ( (event == vtkCommand::ModifiedEvent) // segmentation object may be replaced
-           || (event == vtkSegmentation::SegmentAdded)
-           || (event == vtkSegmentation::SegmentModified)
-           || (event == vtkSegmentation::SegmentRemoved) )
+    else if ((event == vtkCommand::ModifiedEvent) // segmentation object may be replaced
+             || (event == vtkSegmentation::SegmentAdded) || (event == vtkSegmentation::SegmentModified)
+             || (event == vtkSegmentation::SegmentRemoved))
     {
       this->Internal->UpdateAllDisplayNodesForSegment(displayableNode);
       this->RequestRender();
     }
   }
-  else if ( vtkMRMLSliceNode::SafeDownCast(caller) )
+  else if (vtkMRMLSliceNode::SafeDownCast(caller))
   {
     this->Internal->UpdateSliceNode();
     this->RequestRender();
@@ -1417,11 +1500,11 @@ void vtkMRMLSegmentationsDisplayableManager2D::UpdateFromMRML()
   this->Internal->ClearDisplayableNodes();
 
   vtkMRMLSegmentationNode* mNode = nullptr;
-  std::vector<vtkMRMLNode *> mNodes;
+  std::vector<vtkMRMLNode*> mNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLSegmentationNode", mNodes) : 0;
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i < nnodes; i++)
   {
-    mNode  = vtkMRMLSegmentationNode::SafeDownCast(mNodes[i]);
+    mNode = vtkMRMLSegmentationNode::SafeDownCast(mNodes[i]);
     if (mNode && this->Internal->UseDisplayableNode(mNode))
     {
       this->Internal->AddSegmentationNode(mNode);
@@ -1472,14 +1555,16 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
   }
 
   // Convert from slice view XYZ to RAS coordinates
-  double xyzw[4] = {xyz[0], xyz[1], xyz[2], 1.0 };
-  double rasw[4] = {0.0, 0.0, 0.0, 1.0};
+  double xyzw[4] = { xyz[0], xyz[1], xyz[2], 1.0 };
+  double rasw[4] = { 0.0, 0.0, 0.0, 1.0 };
   this->GetMRMLSliceNode()->GetXYToRAS()->MultiplyPoint(xyzw, rasw);
   double ras[3] = { rasw[0], rasw[1], rasw[2] };
 
   bool firstSegmentationNode = true;
   vtkInternal::PipelinesCacheType::iterator displayNodeIt;
-  for (displayNodeIt = this->Internal->DisplayPipelines.begin(); displayNodeIt != this->Internal->DisplayPipelines.end(); ++displayNodeIt)
+  for (displayNodeIt = this->Internal->DisplayPipelines.begin();
+       displayNodeIt != this->Internal->DisplayPipelines.end();
+       ++displayNodeIt)
   {
     vtkMRMLSegmentationDisplayNode* displayNode = displayNodeIt->first;
     if (!displayNode)
@@ -1501,8 +1586,8 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
       continue;
     }
 
-    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-      displayNode->GetDisplayableNode());
+    vtkMRMLSegmentationNode* segmentationNode =
+      vtkMRMLSegmentationNode::SafeDownCast(displayNode->GetDisplayableNode());
     if (!segmentationNode)
     {
       continue;
@@ -1517,7 +1602,7 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
     {
       segmentsAtPositionInfoStr.append(" "); // separate segmentations
     }
-    segmentsAtPositionInfoStr.append( "<b>" + std::string(segmentationNode->GetName()) + ":</b> " );
+    segmentsAtPositionInfoStr.append("<b>" + std::string(segmentationNode->GetName()) + ":</b> ");
     std::string segmentsInfoStr;
     for (int segmentIdIndex = 0; segmentIdIndex < segmentIDs->GetNumberOfValues(); ++segmentIdIndex)
     {
@@ -1526,13 +1611,13 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
       if (segment)
       {
         // Add color indicator
-        double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
+        double color[3] = { vtkSegment::SEGMENT_COLOR_INVALID[0],
+                            vtkSegment::SEGMENT_COLOR_INVALID[1],
+                            vtkSegment::SEGMENT_COLOR_INVALID[2] };
         displayNode->GetSegmentColor(segmentId, color);
         std::stringstream colorStream;
-        colorStream << "#" << std::hex << std::setfill('0')
-            << std::setw(2) << (int)(color[0] * 255.0)
-            << std::setw(2) << (int)(color[1] * 255.0)
-            << std::setw(2) << (int)(color[2] * 255.0);
+        colorStream << "#" << std::hex << std::setfill('0') << std::setw(2) << (int)(color[0] * 255.0) << std::setw(2)
+                    << (int)(color[1] * 255.0) << std::setw(2) << (int)(color[2] * 255.0);
         segmentsInfoStr.append("<font color=\"" + colorStream.str() + "\">&#x25cf;</font>");
 
         segmentsInfoStr.append(segment->GetName() ? segment->GetName() : "");
@@ -1541,8 +1626,8 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
         if (segmentValues.GetPointer() != nullptr)
         {
           // Get the minimum and maximum scalar values from the fractional labelmap (default to 0.0 and 1.0)
-          vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(
-            segment->GetRepresentation(shownRepresenatationName));
+          vtkOrientedImageData* imageData =
+            vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(shownRepresenatationName));
           if (imageData)
           {
             vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
@@ -1556,7 +1641,8 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
             }
 
             // Calculate the voxel fill percent based on the maximum and minimum values.
-            double segmentVoxelFillPercent = 100 * (segmentValues->GetValue(segmentIdIndex) - minimumValue) / (maximumValue - minimumValue);
+            double segmentVoxelFillPercent =
+              100 * (segmentValues->GetValue(segmentIdIndex) - minimumValue) / (maximumValue - minimumValue);
             std::stringstream percentStream;
             percentStream << " " << std::fixed << std::setprecision(1) << segmentVoxelFillPercent << "%";
             segmentsInfoStr.append(percentStream.str());
@@ -1566,7 +1652,7 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
         segmentsInfoStr.append(" ");
       }
     }
-    segmentsAtPositionInfoStr.append( segmentsInfoStr.substr(0, segmentsInfoStr.size()-1) );
+    segmentsAtPositionInfoStr.append(segmentsInfoStr.substr(0, segmentsInfoStr.size() - 1));
 
   } // For each display node
 
@@ -1578,8 +1664,11 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(double ras[3],
-  vtkMRMLSegmentationDisplayNode* displayNode, vtkStringArray* segmentIDs, vtkDoubleArray* segmentValues/*=nullptr*/)
+void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(
+  double ras[3],
+  vtkMRMLSegmentationDisplayNode* displayNode,
+  vtkStringArray* segmentIDs,
+  vtkDoubleArray* segmentValues /*=nullptr*/)
 {
   if (!segmentIDs)
   {
@@ -1604,8 +1693,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
   }
 
   // Get segmentation
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-    displayNode->GetDisplayableNode());
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(displayNode->GetDisplayableNode());
   if (!segmentationNode)
   {
     return;
@@ -1623,7 +1711,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
   std::set<std::string> segmentIDsAtPosition;
   std::map<std::string, double> valueForSegment;
 
-  for (vtkInternal::PipelineMapType::iterator pipelineIt = pipelinesIter->second.begin(); pipelineIt != pipelinesIter->second.end(); ++pipelineIt)
+  for (vtkInternal::PipelineMapType::iterator pipelineIt = pipelinesIter->second.begin();
+       pipelineIt != pipelinesIter->second.end();
+       ++pipelineIt)
   {
     vtkInternal::Pipeline* pipeline = pipelineIt->second;
 
@@ -1633,7 +1723,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
     if (imageData)
     {
       int* imageExtent = imageData->GetExtent();
-      if (imageExtent[0]>imageExtent[1] || imageExtent[2]>imageExtent[3] || imageExtent[4]>imageExtent[5])
+      if (imageExtent[0] > imageExtent[1] || imageExtent[2] > imageExtent[3] || imageExtent[4] > imageExtent[5])
       {
         continue;
       }
@@ -1646,14 +1736,12 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
       worldToOrientedImageIjkToTransform->Concatenate(pipeline->WorldToNodeTransform);
       double* ijkDouble = worldToOrientedImageIjkToTransform->TransformPoint(ras);
       int ijk[3] = { (int)(ijkDouble[0] + 0.5), (int)(ijkDouble[1] + 0.5), (int)(ijkDouble[2] + 0.5) };
-      if (ijk[0] < imageExtent[0] || ijk[0] > imageExtent[1] ||
-        ijk[1] < imageExtent[2] || ijk[1] > imageExtent[3] ||
-        ijk[2] < imageExtent[4] || ijk[2] > imageExtent[5])
+      if (ijk[0] < imageExtent[0] || ijk[0] > imageExtent[1] || ijk[1] < imageExtent[2] || ijk[1] > imageExtent[3]
+          || ijk[2] < imageExtent[4] || ijk[2] > imageExtent[5])
       {
         continue;
       }
-      double voxelValue = imageData->GetScalarComponentAsDouble(
-        ijk[0], ijk[1], ijk[2], 0);
+      double voxelValue = imageData->GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0);
 
       vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
         imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
@@ -1683,16 +1771,17 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
         // Get visibility
         vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
         displayNode->GetSegmentDisplayProperties(segmentID, properties);
-        bool segmentVisible = displayNodeVisible && properties.Visible
-          && (properties.Visible2DOutline || properties.Visible2DFill);
+        bool segmentVisible =
+          displayNodeVisible && properties.Visible && (properties.Visible2DOutline || properties.Visible2DFill);
         if (!segmentVisible)
         {
           continue;
         }
 
         int labelmapValue = segment->GetLabelValue();
-        if ((shownRepresenatationName == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() && voxelValue != labelmapValue) ||
-          segment->GetRepresentation(shownRepresenatationName) != imageData)
+        if ((shownRepresenatationName == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()
+             && voxelValue != labelmapValue)
+            || segment->GetRepresentation(shownRepresenatationName) != imageData)
         {
           continue;
         }
@@ -1722,14 +1811,13 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
       double dist2 = 0.0;
       double pcoords[3] = { 0.0, 0.0, 0.0 };
       double* weights = new double[sliceFillPolyData->GetMaxCellSize()];
-      for (int index = 0; index<sliceFillPolyData->GetNumberOfCells(); ++index)
+      for (int index = 0; index < sliceFillPolyData->GetNumberOfCells(); ++index)
       {
         vtkCell* cell = sliceFillPolyData->GetCell(index);
         // If out of bounds, then do not investigate this cell further
         double* bounds = cell->GetBounds();
-        if (ras[0]<bounds[0] - tolerance || ras[0]>bounds[1] + tolerance ||
-          ras[1]<bounds[2] - tolerance || ras[1]>bounds[3] + tolerance ||
-          ras[2]<bounds[4] - tolerance || ras[2]>bounds[5] + tolerance)
+        if (ras[0] < bounds[0] - tolerance || ras[0] > bounds[1] + tolerance || ras[1] < bounds[2] - tolerance
+            || ras[1] > bounds[3] + tolerance || ras[2] < bounds[4] - tolerance || ras[2] > bounds[5] + tolerance)
         {
           continue;
         }
@@ -1756,7 +1844,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
     }
   } // For each pipeline (=segment)
 
-  for (std::set<std::string>::iterator segmentIt = segmentIDsAtPosition.begin(); segmentIt != segmentIDsAtPosition.end(); ++segmentIt)
+  for (std::set<std::string>::iterator segmentIt = segmentIDsAtPosition.begin();
+       segmentIt != segmentIDsAtPosition.end();
+       ++segmentIt)
   {
     segmentIDs->InsertNextValue(*segmentIt);
     if (segmentValues)

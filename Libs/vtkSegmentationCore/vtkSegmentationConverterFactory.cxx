@@ -42,7 +42,7 @@ unsigned int vtkSegmentationConverterFactoryInitialize::Count;
 //----------------------------------------------------------------------------
 vtkSegmentationConverterFactoryInitialize::vtkSegmentationConverterFactoryInitialize()
 {
-  if(++Self::Count == 1)
+  if (++Self::Count == 1)
   {
     vtkSegmentationConverterFactory::classInitialize();
   }
@@ -51,7 +51,7 @@ vtkSegmentationConverterFactoryInitialize::vtkSegmentationConverterFactoryInitia
 //----------------------------------------------------------------------------
 vtkSegmentationConverterFactoryInitialize::~vtkSegmentationConverterFactoryInitialize()
 {
-  if(--Self::Count == 0)
+  if (--Self::Count == 0)
   {
     vtkSegmentationConverterFactory::classFinalize();
   }
@@ -72,12 +72,13 @@ vtkSegmentationConverterFactory* vtkSegmentationConverterFactory::New()
 // Return the single instance of the vtkSegmentationConverterFactory
 vtkSegmentationConverterFactory* vtkSegmentationConverterFactory::GetInstance()
 {
-  if(!vtkSegmentationConverterFactoryInstance)
+  if (!vtkSegmentationConverterFactoryInstance)
   {
     // Try the factory first
-    vtkSegmentationConverterFactoryInstance = (vtkSegmentationConverterFactory*)vtkObjectFactory::CreateInstance("vtkSegmentationConverterFactory");
+    vtkSegmentationConverterFactoryInstance =
+      (vtkSegmentationConverterFactory*)vtkObjectFactory::CreateInstance("vtkSegmentationConverterFactory");
     // if the factory did not provide one, then create it here
-    if(!vtkSegmentationConverterFactoryInstance)
+    if (!vtkSegmentationConverterFactoryInstance)
     {
       vtkSegmentationConverterFactoryInstance = new vtkSegmentationConverterFactory;
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
@@ -143,12 +144,13 @@ void vtkSegmentationConverterFactory::UnregisterConverterRule(vtkSegmentationCon
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverterFactory::CopyConverterRules(RuleListType &rules)
+void vtkSegmentationConverterFactory::CopyConverterRules(RuleListType& rules)
 {
   rules.clear();
   for (RuleListType::iterator ruleIt = this->Rules.begin(); ruleIt != this->Rules.end(); ++ruleIt)
   {
-    vtkSmartPointer<vtkSegmentationConverterRule> rule = vtkSmartPointer<vtkSegmentationConverterRule>::Take((*ruleIt)->Clone());
+    vtkSmartPointer<vtkSegmentationConverterRule> rule =
+      vtkSmartPointer<vtkSegmentationConverterRule>::Take((*ruleIt)->Clone());
     rules.push_back(rule);
   }
 }
@@ -160,14 +162,15 @@ const vtkSegmentationConverterFactory::RuleListType& vtkSegmentationConverterFac
 }
 
 //----------------------------------------------------------------------------
-bool vtkSegmentationConverterFactory::DisableConverterRule(std::string sourceRepresentationName, std::string targetRepresentationName)
+bool vtkSegmentationConverterFactory::DisableConverterRule(std::string sourceRepresentationName,
+                                                           std::string targetRepresentationName)
 {
   bool result = false;
   RuleListType rulesCopy = this->Rules;
   for (RuleListType::iterator ruleIt = rulesCopy.begin(); ruleIt != rulesCopy.end(); ++ruleIt)
   {
-    if ( !sourceRepresentationName.compare(ruleIt->GetPointer()->GetSourceRepresentationName())
-      && !targetRepresentationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()) )
+    if (!sourceRepresentationName.compare(ruleIt->GetPointer()->GetSourceRepresentationName())
+        && !targetRepresentationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()))
     {
       this->UnregisterConverterRule(ruleIt->GetPointer());
       result = true;
@@ -182,8 +185,8 @@ void vtkSegmentationConverterFactory::DisableRepresentation(std::string represen
   RuleListType rulesCopy = this->Rules;
   for (RuleListType::iterator ruleIt = rulesCopy.begin(); ruleIt != rulesCopy.end(); ++ruleIt)
   {
-    if ( !representationName.compare(ruleIt->GetPointer()->GetSourceRepresentationName())
-      || !representationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()) )
+    if (!representationName.compare(ruleIt->GetPointer()->GetSourceRepresentationName())
+        || !representationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()))
     {
       this->UnregisterConverterRule(ruleIt->GetPointer());
     }
@@ -207,7 +210,8 @@ vtkDataObject* vtkSegmentationConverterFactory::ConstructRepresentationObjectByC
 }
 
 //----------------------------------------------------------------------------
-vtkDataObject* vtkSegmentationConverterFactory::ConstructRepresentationObjectByRepresentation(std::string representationName)
+vtkDataObject* vtkSegmentationConverterFactory::ConstructRepresentationObjectByRepresentation(
+  std::string representationName)
 {
   for (RuleListType::iterator ruleIt = this->Rules.begin(); ruleIt != this->Rules.end(); ++ruleIt)
   {

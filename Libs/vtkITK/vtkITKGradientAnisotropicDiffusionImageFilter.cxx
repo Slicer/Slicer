@@ -14,7 +14,3 @@
 #include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
 
 vtkStandardNewMacro(vtkITKGradientAnisotropicDiffusionImageFilter);
-
-
-
-

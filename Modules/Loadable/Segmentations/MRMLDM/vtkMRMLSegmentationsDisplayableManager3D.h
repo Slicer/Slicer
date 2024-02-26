@@ -37,9 +37,8 @@ class VTK_SLICER_SEGMENTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLSegme
   : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
-
   static vtkMRMLSegmentationsDisplayableManager3D* New();
-  vtkTypeMacro(vtkMRMLSegmentationsDisplayableManager3D,vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLSegmentationsDisplayableManager3D, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Find display node managed by the displayable manager at a specified world RAS position.
@@ -53,7 +52,6 @@ public:
   virtual const char* GetPickedSegmentID();
 
 protected:
-
   vtkMRMLSegmentationsDisplayableManager3D();
   ~vtkMRMLSegmentationsDisplayableManager3D() override;
 
@@ -74,7 +72,6 @@ protected:
   void Create() override;
 
 private:
-
   vtkMRMLSegmentationsDisplayableManager3D(const vtkMRMLSegmentationsDisplayableManager3D&) = delete;
   void operator=(const vtkMRMLSegmentationsDisplayableManager3D&) = delete;
 

@@ -35,7 +35,7 @@ vtkMRMLScriptedModuleNode::~vtkMRMLScriptedModuleNode()
 {
   if (this->ModuleName)
   {
-    delete [] this->ModuleName;
+    delete[] this->ModuleName;
     this->ModuleName = nullptr;
   }
 }
@@ -54,14 +54,15 @@ void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
 
   ParameterMap::iterator iter;
   int i = 0;
-  for (iter=this->Parameters.begin(); iter != this->Parameters.end(); iter++)
+  for (iter = this->Parameters.begin(); iter != this->Parameters.end(); iter++)
   {
     std::string paramName = iter->first;
     // space is used as separator, so space (and the escape character) have to be encoded
     vtksys::SystemTools::ReplaceString(paramName, "%", "%25");
     vtksys::SystemTools::ReplaceString(paramName, " ", "%20");
     std::string paramValue = iter->second;
-    of << " parameter" << i << "= \"" << this->XMLAttributeEncodeString(paramName) << " " << this->XMLAttributeEncodeString(paramValue)<< "\"";
+    of << " parameter" << i << "= \"" << this->XMLAttributeEncodeString(paramName) << " "
+       << this->XMLAttributeEncodeString(paramValue) << "\"";
     i++;
   }
 }
@@ -78,26 +79,26 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-    if ( !strcmp(attName, "ModuleName") )
+    if (!strcmp(attName, "ModuleName"))
     {
-      this->SetModuleName( attValue );
+      this->SetModuleName(attValue);
     }
-    else if ( !strncmp(attName, "parameter", strlen("parameter") ) )
+    else if (!strncmp(attName, "parameter", strlen("parameter")))
     {
       std::string satt(attValue);
       int space = (int)satt.find(" ", 0);
-      std::string sname = satt.substr(0,space);
-      std::string svalue = satt.substr(space+1,satt.length()-space-1);
+      std::string sname = satt.substr(0, space);
+      std::string svalue = satt.substr(space + 1, satt.length() - space - 1);
       // decode separator character (space) and escape character
-      vtksys::SystemTools::ReplaceString(sname, "%20", " "); \
-      vtksys::SystemTools::ReplaceString(sname, "%25", "%"); \
+      vtksys::SystemTools::ReplaceString(sname, "%20", " ");
+      vtksys::SystemTools::ReplaceString(sname, "%25", "%");
       this->SetParameter(sname, svalue);
     }
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLScriptedModuleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLScriptedModuleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -125,13 +126,13 @@ const char* vtkMRMLScriptedModuleNode::GetNodeTagName()
 //----------------------------------------------------------------------------
 void vtkMRMLScriptedModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  vtkMRMLNode::PrintSelf(os, indent);
 
   std::map<std::string, std::string>::iterator iter;
 
   os << indent << "ModuleName: " << (this->GetModuleName() ? this->GetModuleName() : "(none)") << "\n";
 
-  for (iter=this->Parameters.begin(); iter != this->Parameters.end(); iter++)
+  for (iter = this->Parameters.begin(); iter != this->Parameters.end(); iter++)
   {
     os << indent << iter->first << ": " << iter->second << "\n";
   }
@@ -144,8 +145,7 @@ bool vtkMRMLScriptedModuleNode::HasParameter(const std::string& name) const
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLScriptedModuleNode
-::SetParameter(const std::string& name, const std::string& value)
+void vtkMRMLScriptedModuleNode ::SetParameter(const std::string& name, const std::string& value)
 {
   const std::string currentValue = this->GetParameter(name);
   if (value != currentValue || !this->HasParameter(name))
@@ -177,10 +177,9 @@ void vtkMRMLScriptedModuleNode::UnsetAllParameters()
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLScriptedModuleNode
-::GetParameter(const std::string& name) const
+std::string vtkMRMLScriptedModuleNode ::GetParameter(const std::string& name) const
 {
-  if ( this->Parameters.find(name) == this->Parameters.end() )
+  if (this->Parameters.find(name) == this->Parameters.end())
   {
     return std::string();
   }
@@ -204,7 +203,7 @@ std::string vtkMRMLScriptedModuleNode::GetParameterNamesAsCommaSeparatedList()
     namesAsStr = *it;
     ++it;
   }
-  for(; it != names.end(); ++it)
+  for (; it != names.end(); ++it)
   {
     namesAsStr.append(",").append(*it);
   }
@@ -220,7 +219,7 @@ std::vector<std::string> vtkMRMLScriptedModuleNode::GetParameterNames()
   std::vector<std::string> names;
 
   ParameterMap::iterator it;
-  for(it = this->Parameters.begin(); it != this->Parameters.end(); ++it)
+  for (it = this->Parameters.begin(); it != this->Parameters.end(); ++it)
   {
     names.push_back(it->first);
   }

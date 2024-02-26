@@ -39,12 +39,11 @@ class vtkRenderWindowInteractor;
 /// forwarded to displayable managers for processing.
 /// Some additional high-level events (such as click and double-click)
 /// are generated here.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewInteractorStyle :
-  public vtkObject
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewInteractorStyle : public vtkObject
 {
 public:
-  static vtkMRMLViewInteractorStyle *New();
-  vtkTypeMacro(vtkMRMLViewInteractorStyle,vtkObject);
+  static vtkMRMLViewInteractorStyle* New();
+  vtkTypeMacro(vtkMRMLViewInteractorStyle, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Mouse functions
@@ -107,13 +106,13 @@ public:
   virtual bool DelegateInteractionEventDataToDisplayableManagers(vtkMRMLInteractionEventData* eventData);
 
   vtkGetObjectMacro(Interactor, vtkRenderWindowInteractor);
-  virtual void SetInteractor(vtkRenderWindowInteractor *interactor);
+  virtual void SetInteractor(vtkRenderWindowInteractor* interactor);
 
 protected:
   vtkMRMLViewInteractorStyle();
   ~vtkMRMLViewInteractorStyle() override;
 
-  vtkRenderWindowInteractor* Interactor{nullptr};
+  vtkRenderWindowInteractor* Interactor{ nullptr };
   vtkInteractorStyle* GetInteractorStyle();
 
   vtkCallbackCommand* EventCallbackCommand;
@@ -130,9 +129,10 @@ protected:
   static void ProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata);
 
   vtkCallbackCommand* DisplayableManagerCallbackCommand;
-  static void DisplayableManagerCallback(vtkObject *object, unsigned long event, void *clientData, void *callData);
-  virtual void ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager * displayableManager,
-                                               unsigned long event, void *callData);
+  static void DisplayableManagerCallback(vtkObject* object, unsigned long event, void* clientData, void* callData);
+  virtual void ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager* displayableManager,
+                                               unsigned long event,
+                                               void* callData);
 
   void SetMouseCursor(int cursor);
 

@@ -28,20 +28,20 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsROIDisplayNode : public vtkMRMLMarkupsDisplayNode
+class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsROIDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:
-  static vtkMRMLMarkupsROIDisplayNode *New();
-  vtkTypeMacro ( vtkMRMLMarkupsROIDisplayNode,vtkMRMLMarkupsDisplayNode );
+  static vtkMRMLMarkupsROIDisplayNode* New();
+  vtkTypeMacro(vtkMRMLMarkupsROIDisplayNode, vtkMRMLMarkupsDisplayNode);
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance (  ) override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Get node XML tag name (like Volume, Markups)
-  const char* GetNodeTagName() override {return "MarkupsROIDisplay";};
+  const char* GetNodeTagName() override { return "MarkupsROIDisplay"; };
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
@@ -91,7 +91,7 @@ public:
 protected:
   vtkMRMLMarkupsROIDisplayNode();
   ~vtkMRMLMarkupsROIDisplayNode() override;
-  vtkMRMLMarkupsROIDisplayNode( const vtkMRMLMarkupsROIDisplayNode& );
-  void operator= ( const vtkMRMLMarkupsROIDisplayNode& );
+  vtkMRMLMarkupsROIDisplayNode(const vtkMRMLMarkupsROIDisplayNode&);
+  void operator=(const vtkMRMLMarkupsROIDisplayNode&);
 };
 #endif

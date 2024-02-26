@@ -38,14 +38,14 @@ class QMRML_WIDGETS_EXPORT qMRMLColorListView : public QListView
   Q_OBJECT
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
-  qMRMLColorListView(QWidget *parent=nullptr);
+  qMRMLColorListView(QWidget* parent = nullptr);
   ~qMRMLColorListView() override;
 
-  vtkMRMLColorNode* mrmlColorNode()const;
-  qMRMLColorModel* colorModel()const;
-  QSortFilterProxyModel* sortFilterProxyModel()const;
+  vtkMRMLColorNode* mrmlColorNode() const;
+  qMRMLColorModel* colorModel() const;
+  QSortFilterProxyModel* sortFilterProxyModel() const;
 
-  bool showOnlyNamedColors()const;
+  bool showOnlyNamedColors() const;
 
 public slots:
   void setMRMLColorNode(vtkMRMLColorNode* colorNode);

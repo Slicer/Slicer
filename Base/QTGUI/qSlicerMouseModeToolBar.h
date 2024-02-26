@@ -39,7 +39,7 @@ class vtkSlicerApplicationLogic;
 /// \note The toolbar expects qSlicerCoreApplication::mrmlApplicationLogic() to return a valid object
 /// qSlicerMouseModeToolBar observes the singletons selection node and
 /// interaction node to control its state.
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerMouseModeToolBar: public QToolBar
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerMouseModeToolBar : public QToolBar
 {
   Q_OBJECT
   /// "vtkMRMLMarkupsFiducialNode" by default.
@@ -53,12 +53,12 @@ public:
   qSlicerMouseModeToolBar(QWidget* parent = nullptr);
   ~qSlicerMouseModeToolBar() override;
 
-  QString defaultPlaceClassName()const;
+  QString defaultPlaceClassName() const;
   void setDefaultPlaceClassName(const QString& className);
 
   /// Get interaction node.
   /// \sa setInteractionNode()
-  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
+  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode() const;
 
 public slots:
 
@@ -92,7 +92,8 @@ public slots:
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
 
-  QAction* actionFromPlaceNodeClassName(QString placeNodeClassName, QMenu *menu);
+  QAction* actionFromPlaceNodeClassName(QString placeNodeClassName, QMenu* menu);
+
 private:
   Q_DECLARE_PRIVATE(qSlicerMouseModeToolBar);
   Q_DISABLE_COPY(qSlicerMouseModeToolBar);

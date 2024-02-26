@@ -23,30 +23,26 @@
 #include "ui_qSlicerTemplateKeyFooBarWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTemplateKeyFooBarWidgetPrivate
-  : public Ui_qSlicerTemplateKeyFooBarWidget
+class qSlicerTemplateKeyFooBarWidgetPrivate : public Ui_qSlicerTemplateKeyFooBarWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTemplateKeyFooBarWidget);
+
 protected:
   qSlicerTemplateKeyFooBarWidget* const q_ptr;
 
 public:
-  qSlicerTemplateKeyFooBarWidgetPrivate(
-    qSlicerTemplateKeyFooBarWidget& object);
+  qSlicerTemplateKeyFooBarWidgetPrivate(qSlicerTemplateKeyFooBarWidget& object);
   virtual void setupUi(qSlicerTemplateKeyFooBarWidget*);
 };
 
 // --------------------------------------------------------------------------
-qSlicerTemplateKeyFooBarWidgetPrivate
-::qSlicerTemplateKeyFooBarWidgetPrivate(
-  qSlicerTemplateKeyFooBarWidget& object)
+qSlicerTemplateKeyFooBarWidgetPrivate ::qSlicerTemplateKeyFooBarWidgetPrivate(qSlicerTemplateKeyFooBarWidget& object)
   : q_ptr(&object)
 {
 }
 
 // --------------------------------------------------------------------------
-void qSlicerTemplateKeyFooBarWidgetPrivate
-::setupUi(qSlicerTemplateKeyFooBarWidget* widget)
+void qSlicerTemplateKeyFooBarWidgetPrivate ::setupUi(qSlicerTemplateKeyFooBarWidget* widget)
 {
   this->Ui_qSlicerTemplateKeyFooBarWidget::setupUi(widget);
 }
@@ -55,17 +51,13 @@ void qSlicerTemplateKeyFooBarWidgetPrivate
 // qSlicerTemplateKeyFooBarWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyFooBarWidget
-::qSlicerTemplateKeyFooBarWidget(QWidget* parentWidget)
-  : Superclass( parentWidget )
-  , d_ptr( new qSlicerTemplateKeyFooBarWidgetPrivate(*this) )
+qSlicerTemplateKeyFooBarWidget ::qSlicerTemplateKeyFooBarWidget(QWidget* parentWidget)
+  : Superclass(parentWidget)
+  , d_ptr(new qSlicerTemplateKeyFooBarWidgetPrivate(*this))
 {
   Q_D(qSlicerTemplateKeyFooBarWidget);
   d->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyFooBarWidget
-::~qSlicerTemplateKeyFooBarWidget()
-{
-}
+qSlicerTemplateKeyFooBarWidget ::~qSlicerTemplateKeyFooBarWidget() {}

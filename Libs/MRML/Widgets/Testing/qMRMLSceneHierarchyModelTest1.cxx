@@ -42,7 +42,7 @@
 
 // STD includes
 
-int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
+int qMRMLSceneHierarchyModelTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -61,32 +61,30 @@ int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
     model.setMRMLScene(sceneFactory.mrmlScene());
 
     vtkMRMLNode* node1 = sceneFactory.generateNode("vtkMRMLViewNode");
-    vtkMRMLHierarchyNode* hierarchyNode1 = vtkMRMLHierarchyNode::SafeDownCast(
-      sceneFactory.generateNode("vtkMRMLHierarchyNode"));
+    vtkMRMLHierarchyNode* hierarchyNode1 =
+      vtkMRMLHierarchyNode::SafeDownCast(sceneFactory.generateNode("vtkMRMLHierarchyNode"));
 
-    vtkMRMLHierarchyNode* hierarchyNode2 = vtkMRMLHierarchyNode::SafeDownCast(
-      sceneFactory.generateNode("vtkMRMLHierarchyNode"));
+    vtkMRMLHierarchyNode* hierarchyNode2 =
+      vtkMRMLHierarchyNode::SafeDownCast(sceneFactory.generateNode("vtkMRMLHierarchyNode"));
     vtkMRMLNode* node2 = sceneFactory.generateNode("vtkMRMLViewNode");
 
-    vtkMRMLHierarchyNode* hierarchyNode3 = vtkMRMLHierarchyNode::SafeDownCast(
-      sceneFactory.generateNode("vtkMRMLHierarchyNode"));
+    vtkMRMLHierarchyNode* hierarchyNode3 =
+      vtkMRMLHierarchyNode::SafeDownCast(sceneFactory.generateNode("vtkMRMLHierarchyNode"));
     vtkMRMLNode* node3 = sceneFactory.generateNode("vtkMRMLViewNode");
 
-    //vtkMRMLHierarchyNode* hierarchyNode4 =
-    vtkMRMLHierarchyNode::SafeDownCast(
-      sceneFactory.generateNode("vtkMRMLHierarchyNode"));
+    // vtkMRMLHierarchyNode* hierarchyNode4 =
+    vtkMRMLHierarchyNode::SafeDownCast(sceneFactory.generateNode("vtkMRMLHierarchyNode"));
 
     hierarchyNode1->SetAssociatedNodeID(node1->GetID());
     hierarchyNode2->SetAssociatedNodeID(node3->GetID());
     hierarchyNode3->SetAssociatedNodeID(node2->GetID());
 
-    //vtkMRMLHierarchyNode* hierarchyNode5 =
-    vtkMRMLHierarchyNode::SafeDownCast(
-      sceneFactory.generateNode("vtkMRMLHierarchyNode"));
-    //hierarchyNode5->SetParentNodeID(hierarchyNode4->GetID());
+    // vtkMRMLHierarchyNode* hierarchyNode5 =
+    vtkMRMLHierarchyNode::SafeDownCast(sceneFactory.generateNode("vtkMRMLHierarchyNode"));
+    // hierarchyNode5->SetParentNodeID(hierarchyNode4->GetID());
 
-    //vtkMRMLNode* node4 = sceneFactory.generateNode("vtkMRMLViewNode");
-    //hierarchyNode5->SetAssociatedNodeID(node4->GetID());
+    // vtkMRMLNode* node4 = sceneFactory.generateNode("vtkMRMLViewNode");
+    // hierarchyNode5->SetAssociatedNodeID(node4->GetID());
   }
   catch (const char* error)
   {
@@ -104,8 +102,8 @@ int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
   view2.setWindowTitle("Filtered");
 
   qMRMLSortFilterHierarchyProxyModel sortFilterModel;
-  sortFilterModel.setNodeTypes(
-    QStringList() << "vtkMRMLHierarchyNode" << "vtkMRMLViewNode" );
+  sortFilterModel.setNodeTypes(QStringList() << "vtkMRMLHierarchyNode"
+                                             << "vtkMRMLViewNode");
   sortFilterModel.setSourceModel(&model);
 
   view2.setDragDropMode(QAbstractItemView::InternalMove);
@@ -113,11 +111,10 @@ int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
   view2.show();
   view2.resize(500, 300);
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
 
   return app.exec();
 }
-

@@ -29,7 +29,7 @@
 #include <vtkNew.h>
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
+int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -72,15 +72,13 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
   CHECK_STRING(singleton2->GetName(), "Model_1");
   CHECK_INT(scene->GetNumberOfNodes(), 2);
 
-  const char sceneXML[] =
-    "<MRML  version=\"18916\" userTags=\"\">"
-    "<SceneView id=\"vtkMRMLSceneSnapshotNode1\" name=\"sceneView\">"
-    "  <Model id=\"vtkMRMLModelNodeSingleton\" name=\"Restored Model\" ></Model>"
-    "  <Model id=\"vtkMRMLModelNode1\"      name=\"Old Model\" ></Model>"
-    "  <Model id=\"vtkMRMLModelNodeSingleton1\" name=\"Restored Model2\" ></Model>"
-    "</SceneView>"
-    "</MRML>"
-    ;
+  const char sceneXML[] = "<MRML  version=\"18916\" userTags=\"\">"
+                          "<SceneView id=\"vtkMRMLSceneSnapshotNode1\" name=\"sceneView\">"
+                          "  <Model id=\"vtkMRMLModelNodeSingleton\" name=\"Restored Model\" ></Model>"
+                          "  <Model id=\"vtkMRMLModelNode1\"      name=\"Old Model\" ></Model>"
+                          "  <Model id=\"vtkMRMLModelNodeSingleton1\" name=\"Restored Model2\" ></Model>"
+                          "</SceneView>"
+                          "</MRML>";
 
   vtkNew<vtkMRMLScene> tempScene;
   vtkNew<vtkMRMLSceneViewNode> registerNode;
@@ -90,12 +88,10 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
   parser->SetMRMLScene(tempScene.GetPointer());
   parser->Parse(sceneXML);
 
-  vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
-    tempScene->GetFirstNodeByName("sceneView"));
+  vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(tempScene->GetFirstNodeByName("sceneView"));
 
   // Test singleton loading/restoring.
-  vtkMRMLNode* restoredSingleton1 =
-    sceneViewNode->GetStoredScene()->GetNthNodeByClass(0, "vtkMRMLModelNode");
+  vtkMRMLNode* restoredSingleton1 = sceneViewNode->GetStoredScene()->GetNthNodeByClass(0, "vtkMRMLModelNode");
   restoredSingleton1->SetSingletonTag("Singleton");
   restoredSingleton1->SetAddToScene(1);
   addedNode = scene->AddNode(restoredSingleton1);
@@ -108,8 +104,7 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
 
   // Test compatibility with Slicer 3 scenes.
   std::string singleton1ID = singleton1->GetID();
-  restoredSingleton1 =
-    sceneViewNode->GetStoredScene()->GetNthNodeByClass(1, "vtkMRMLModelNode");
+  restoredSingleton1 = sceneViewNode->GetStoredScene()->GetNthNodeByClass(1, "vtkMRMLModelNode");
   restoredSingleton1->SetSingletonTag("Singleton");
   restoredSingleton1->SetAddToScene(1);
   addedNode = scene->AddNode(restoredSingleton1);
@@ -124,8 +119,7 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
 
   // Test odd node ID. There is no reason why it could happen, but there is no
   // reason why it shouldn't be supported.
-  restoredSingleton1 =
-    sceneViewNode->GetStoredScene()->GetNthNodeByClass(2, "vtkMRMLModelNode");
+  restoredSingleton1 = sceneViewNode->GetStoredScene()->GetNthNodeByClass(2, "vtkMRMLModelNode");
   restoredSingleton1->SetSingletonTag("Singleton");
   restoredSingleton1->SetAddToScene(1);
   addedNode = scene->AddNode(restoredSingleton1);
@@ -148,18 +142,22 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
   // vtkMRMLScriptedModuleNode1: regular node referencing a singleton node and another regular node
   const char scene1XML[] =
     "<MRML>"
-    "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonA\" name=\"Scene1SingletonNodeA\" singletonTag=\"SingletonA\""
-      " references=\"ReferenceB:vtkMRMLScriptedModuleNodeSingletonB;Reference1:vtkMRMLScriptedModuleNode1;\" > </ScriptedModule>"
-    "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonB\" name=\"Scene1SingletonNodeB\" singletonTag=\"SingletonB\""
-      " references=\"Reference1:vtkMRMLScriptedModuleNode2;\" > </ScriptedModule>"
+    "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonA\" name=\"Scene1SingletonNodeA\" "
+    "singletonTag=\"SingletonA\""
+    " references=\"ReferenceB:vtkMRMLScriptedModuleNodeSingletonB;Reference1:vtkMRMLScriptedModuleNode1;\" > "
+    "</ScriptedModule>"
+    "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonB\" name=\"Scene1SingletonNodeB\" "
+    "singletonTag=\"SingletonB\""
+    " references=\"Reference1:vtkMRMLScriptedModuleNode2;\" > </ScriptedModule>"
     "<ScriptedModule id=\"vtkMRMLScriptedModuleNode1\" name=\"Scene1RegularNode1\""
-      " references=\"Reference2:vtkMRMLScriptedModuleNode2;ReferenceA:vtkMRMLScriptedModuleNodeSingletonA;ReferenceB:vtkMRMLScriptedModuleNodeSingletonB;\" > </ScriptedModule>"
+    " references=\"Reference2:vtkMRMLScriptedModuleNode2;ReferenceA:vtkMRMLScriptedModuleNodeSingletonA;ReferenceB:"
+    "vtkMRMLScriptedModuleNodeSingletonB;\" > </ScriptedModule>"
     "<ScriptedModule id=\"vtkMRMLScriptedModuleNode2\" name=\"Scene1RegularNode2\" > </ScriptedModule>"
     "</MRML>";
 
   scene->SetLoadFromXMLString(1);
   scene->SetSceneXMLString(scene1XML);
-  scene->Import();  // adds Subject Hierarchy Node
+  scene->Import(); // adds Subject Hierarchy Node
 
   CHECK_INT(scene->GetNumberOfNodes(), 5);
 
@@ -187,27 +185,34 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
 
   // SingletonNodeA: singleton node referencing another singleton node and a regular node
   // SingletonNodeB: singleton node, ID clash with a node in scene 1
-  // vtkMRMLScriptedModuleNode1: regular node referencing a singleton node and another regular node; ID clash with a node in scene 1
+  // vtkMRMLScriptedModuleNode1: regular node referencing a singleton node and another regular node; ID clash with a
+  // node in scene 1
   const char scene2XML[] =
     "<MRML>"
-    "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonA\" name=\"Scene2SingletonNodeA\" singletonTag=\"SingletonA\""
-      " references=\"ReferenceB:vtkMRMLScriptedModuleNodeSingletonB;Reference1:vtkMRMLScriptedModuleNode1;\" > </ScriptedModule>"
-    "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonXB\" name=\"Scene2SingletonNodeB\" singletonTag=\"SingletonB\""
-      " references=\"Reference1:vtkMRMLScriptedModuleNodeX2;\" > </ScriptedModule>"
+    "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonA\" name=\"Scene2SingletonNodeA\" "
+    "singletonTag=\"SingletonA\""
+    " references=\"ReferenceB:vtkMRMLScriptedModuleNodeSingletonB;Reference1:vtkMRMLScriptedModuleNode1;\" > "
+    "</ScriptedModule>"
+    "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonXB\" name=\"Scene2SingletonNodeB\" "
+    "singletonTag=\"SingletonB\""
+    " references=\"Reference1:vtkMRMLScriptedModuleNodeX2;\" > </ScriptedModule>"
     "<ScriptedModule id=\"vtkMRMLScriptedModuleNode1\" name=\"Scene2RegularNode1\""
-      " references=\"Reference2:vtkMRMLScriptedModuleNodeX2;ReferenceA:vtkMRMLScriptedModuleNodeSingletonA;ReferenceB:vtkMRMLScriptedModuleNodeSingletonXB;\" > </ScriptedModule>"
+    " references=\"Reference2:vtkMRMLScriptedModuleNodeX2;ReferenceA:vtkMRMLScriptedModuleNodeSingletonA;ReferenceB:"
+    "vtkMRMLScriptedModuleNodeSingletonXB;\" > </ScriptedModule>"
     "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeX2\" name=\"Scene2RegularNode2\" > </ScriptedModule>"
     "</MRML>";
 
   scene->SetLoadFromXMLString(1);
   scene->SetSceneXMLString(scene2XML);
-  scene->Import();  // adds Subject Hierarchy Node
+  scene->Import(); // adds Subject Hierarchy Node
 
   CHECK_INT(scene->GetNumberOfNodes(), 7);
 
   vtkMRMLNode* scene2SingletonA = scene->GetNodeByID("vtkMRMLScriptedModuleNodeSingletonA");
-  vtkMRMLNode* scene2SingletonB = scene->GetNodeByID("vtkMRMLScriptedModuleNodeSingletonB"); // ID changed (singleton is matched based on singleton tag)
-  vtkMRMLNode* scene2Regular1 = scene->GetNodeByID("vtkMRMLScriptedModuleNode3"); // ID changed (due to clash with a regular node in scene1)
+  vtkMRMLNode* scene2SingletonB = scene->GetNodeByID(
+    "vtkMRMLScriptedModuleNodeSingletonB"); // ID changed (singleton is matched based on singleton tag)
+  vtkMRMLNode* scene2Regular1 =
+    scene->GetNodeByID("vtkMRMLScriptedModuleNode3"); // ID changed (due to clash with a regular node in scene1)
   vtkMRMLNode* scene2Regular2 = scene->GetNodeByID("vtkMRMLScriptedModuleNodeX2");
 
   CHECK_NULL(scene->GetNodeByID("vtkMRMLScriptedModuleNodeSingletonXB"));
@@ -225,17 +230,17 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [
 
   // Check that singleton ID is kept but contents is overwritten
   CHECK_STRING(scene1SingletonA->GetID(), "vtkMRMLScriptedModuleNodeSingletonA"); // same
-  CHECK_STRING(scene1SingletonA->GetName(), "Scene2SingletonNodeA"); // changed
+  CHECK_STRING(scene1SingletonA->GetName(), "Scene2SingletonNodeA");              // changed
   CHECK_STRING(scene1SingletonB->GetID(), "vtkMRMLScriptedModuleNodeSingletonB"); // same
-  CHECK_STRING(scene1SingletonB->GetName(), "Scene2SingletonNodeB"); // changed
+  CHECK_STRING(scene1SingletonB->GetName(), "Scene2SingletonNodeB");              // changed
   // Check that singleton node pointers remained the same
   CHECK_POINTER(scene1SingletonA, scene2SingletonA);
   CHECK_POINTER(scene1SingletonB, scene2SingletonB);
   // Check that regular nodes have not changed
   CHECK_STRING(scene1Regular1->GetID(), "vtkMRMLScriptedModuleNode1"); // same
-  CHECK_STRING(scene1Regular1->GetName(), "Scene1RegularNode1"); // same
+  CHECK_STRING(scene1Regular1->GetName(), "Scene1RegularNode1");       // same
   CHECK_STRING(scene1Regular2->GetID(), "vtkMRMLScriptedModuleNode2"); // same
-  CHECK_STRING(scene1Regular2->GetName(), "Scene1RegularNode2"); // same
+  CHECK_STRING(scene1Regular2->GetName(), "Scene1RegularNode2");       // same
 
   // Check that node references in regular nodes did not change
   CHECK_POINTER(scene1Regular1->GetNodeReference("ReferenceB"), scene1SingletonB);

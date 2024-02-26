@@ -52,7 +52,7 @@ public:
   vtkTypeMacro(vtkEventBroker, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  typedef std::set< vtkObservation * > ObservationVector;
+  typedef std::set<vtkObservation*> ObservationVector;
 
   ///
   /// Return the singleton instance with no reference counting.
@@ -72,114 +72,117 @@ public:
   ///   the pointer to the vtkObservation class as the clientData
   /// - the vtkObservation has a pointer to vtkEventBroker,
   ///   which knows how to process that event for that Observation
-  static void Callback(vtkObject *caller,
-      unsigned long eid, void *clientData, void *callData);
+  static void Callback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   /// Adding and Removing Observation objects
   ///
   /// Request that an observer be added to the subject (or "observee")
   /// - this is the "Attach" operation
-  vtkObservation *AddObservation (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify, float priority=0.0f);
+  vtkObservation* AddObservation(vtkObject* subject,
+                                 unsigned long event,
+                                 vtkObject* observer,
+                                 vtkCallbackCommand* notify,
+                                 float priority = 0.0f);
 
   ///
   /// Scripted version of observation
   /// - creates an observation that will be invoked using the ScriptHandler method
-  vtkObservation *AddObservation (vtkObject *subject, const char *event, const char *script);
+  vtkObservation* AddObservation(vtkObject* subject, const char* event, const char* script);
 
   ///
   /// Remove observation from the broker and event queue
-  void RemoveObservation (vtkObservation *observation);
+  void RemoveObservation(vtkObservation* observation);
 
   ///
   /// Remove all observations that match
   /// - various signatures provided as helpers
   /// - when specifying the tag, a 0 matches all tags
-  void RemoveObservations (ObservationVector observations);
-  void RemoveObservations (vtkObject *observer);
-  void RemoveObservations (vtkObject *subject, vtkObject *observer);
-  void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer);
-  void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
-  void RemoveObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
+  void RemoveObservations(ObservationVector observations);
+  void RemoveObservations(vtkObject* observer);
+  void RemoveObservations(vtkObject* subject, vtkObject* observer);
+  void RemoveObservations(vtkObject* subject, unsigned long event, vtkObject* observer);
+  void RemoveObservations(vtkObject* subject, unsigned long event, vtkObject* observer, vtkCallbackCommand* notify);
+  void RemoveObservationsForSubjectByTag(vtkObject* subject, unsigned long tag);
   /// Fast retrieve of all observations of a given subject
-  ObservationVector GetSubjectObservations(vtkObject *subject);
+  ObservationVector GetSubjectObservations(vtkObject* subject);
   /// If event is != 0 , only observations matching the events are returned
   /// If observer is != 0 , only observations matching the observer are returned
   /// If notify is != 0, only observations matching the callback are returned
   /// If maxReturnedObservations is != 0, only up to this number of observations are are returned
-  ObservationVector GetObservations (vtkObject *subject,
-                                                  unsigned long event = 0,
-                                                  vtkObject *observer = nullptr,
-                                                  vtkCallbackCommand *notify = nullptr,
-                                                  unsigned int maxReturnedObservations = 0);
+  ObservationVector GetObservations(vtkObject* subject,
+                                    unsigned long event = 0,
+                                    vtkObject* observer = nullptr,
+                                    vtkCallbackCommand* notify = nullptr,
+                                    unsigned int maxReturnedObservations = 0);
   /// Returns true if such an observation exists (arguments are same as for GetObservations)
-  bool GetObservationExist (vtkObject *subject,
-                                                  unsigned long event = 0,
-                                                  vtkObject *observer = nullptr,
-                                                  vtkCallbackCommand *notify = nullptr);
-  ObservationVector GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
+  bool GetObservationExist(vtkObject* subject,
+                           unsigned long event = 0,
+                           vtkObject* observer = nullptr,
+                           vtkCallbackCommand* notify = nullptr);
+  ObservationVector GetObservationsForSubjectByTag(vtkObject* subject, unsigned long tag);
 
   /// Description
   /// Accessors for introspection
   /// Note: vtkCollection object is allocated internally
   /// and must be freed by the caller
-  vtkCollection *GetObservationsForSubject (vtkObject *subject);
-  vtkCollection *GetObservationsForObserver (vtkObject *observer);
-  vtkCollection *GetObservationsForCallback (vtkCallbackCommand* callback);
+  vtkCollection* GetObservationsForSubject(vtkObject* subject);
+  vtkCollection* GetObservationsForObserver(vtkObject* observer);
+  vtkCollection* GetObservationsForCallback(vtkCallbackCommand* callback);
 
   ///
   /// Accessors for Observations
   int GetNumberOfObservations();
-  vtkObservation *GetNthObservation(int n);
+  vtkObservation* GetNthObservation(int n);
 
   ///
   /// Process any event that comes from either subject or observer
-  void ProcessEvent (vtkObservation *observation, vtkObject *caller, unsigned long eid, void *callData);
+  void ProcessEvent(vtkObservation* observation, vtkObject* caller, unsigned long eid, void* callData);
 
   /// Event Logging
   ///
   /// Turn on event tracing (requires TraceFile)
-  vtkBooleanMacro (EventLogging, int);
-  vtkSetMacro (EventLogging, int);
-  vtkGetMacro (EventLogging, int);
+  vtkBooleanMacro(EventLogging, int);
+  vtkSetMacro(EventLogging, int);
+  vtkGetMacro(EventLogging, int);
 
   ///
   /// Current level of indent (event nesting)
   /// shows what is called by what when in synchronous mode
-  vtkSetMacro (EventNestingLevel, int);
-  vtkGetMacro (EventNestingLevel, int);
+  vtkSetMacro(EventNestingLevel, int);
+  vtkGetMacro(EventNestingLevel, int);
 
   ///
   /// File to write event logs to when EventLogging is turned on
-  vtkSetStringMacro (LogFileName);
-  vtkGetStringMacro (LogFileName);
+  vtkSetStringMacro(LogFileName);
+  vtkGetStringMacro(LogFileName);
 
   ///
   /// Timer log class for calculating elapsed time for event invocations
   virtual void SetTimerLog(vtkTimerLog* timerLog);
-  vtkGetObjectMacro (TimerLog, vtkTimerLog);
+  vtkGetObjectMacro(TimerLog, vtkTimerLog);
 
   ///
   /// Open and close the log file
-  void OpenLogFile ();
-  void CloseLogFile ();
+  void OpenLogFile();
+  void CloseLogFile();
 
   ///
   /// actually write to the log file (also manages state of the LogFile ivar
   /// based on the filename and the EventLogging variable)
-  void LogEvent (vtkObservation *observation);
+  void LogEvent(vtkObservation* observation);
 
   /// Graph File
   ///
   /// Write out the current list of observations in graphviz format (.dot)
-  int GenerateGraphFile ( const char *graphFile );
-
+  int GenerateGraphFile(const char* graphFile);
 
   /// Event Queue processing modes
   ///
   /// In synchronous mode, observations are invoked immediately when the
   /// event takes place.  In asynchronous mode, observations are added
   /// to the event queue for later invocation.
-  enum EventMode {
+  enum EventMode
+  {
     Synchronous,
     Asynchronous
   };
@@ -188,20 +191,22 @@ public:
   {
     if (eventMode != this->EventMode)
     {
-     this->EventMode = eventMode;
-     this->ProcessEventQueue();
-     this->Modified();
+      this->EventMode = eventMode;
+      this->ProcessEventQueue();
+      this->Modified();
     }
   };
 
-  void SetEventModeToSynchronous() {this->SetEventMode(vtkEventBroker::Synchronous);};
-  void SetEventModeToAsynchronous() {this->SetEventMode(vtkEventBroker::Asynchronous);};
-  const char * GetEventModeAsString() {
-    if (this->EventMode == vtkEventBroker::Synchronous) return ("Synchronous");
-    if (this->EventMode == vtkEventBroker::Asynchronous) return ("Asynchronous");
+  void SetEventModeToSynchronous() { this->SetEventMode(vtkEventBroker::Synchronous); };
+  void SetEventModeToAsynchronous() { this->SetEventMode(vtkEventBroker::Asynchronous); };
+  const char* GetEventModeAsString()
+  {
+    if (this->EventMode == vtkEventBroker::Synchronous)
+      return ("Synchronous");
+    if (this->EventMode == vtkEventBroker::Asynchronous)
+      return ("Asynchronous");
     return "Undefined";
   }
-
 
   /// Event queue processing
 
@@ -213,14 +218,12 @@ public:
   /// the callData field of the event back)
   /// TODO: if the callData is needed, we will need another class/struct to
   /// go into the event queue that saves them
-  void QueueObservation (vtkObservation *observation, unsigned long eid,
-                         void *callData);
-  int GetNumberOfQueuedObservations ();
-  vtkObservation *GetNthQueuedObservation (int n);
-  vtkObservation *DequeueObservation ();
-  void InvokeObservation (vtkObservation *observation, unsigned long eid,
-                          void *callData);
-  void ProcessEventQueue ();
+  void QueueObservation(vtkObservation* observation, unsigned long eid, void* callData);
+  int GetNumberOfQueuedObservations();
+  vtkObservation* GetNthQueuedObservation(int n);
+  vtkObservation* DequeueObservation();
+  void InvokeObservation(vtkObservation* observation, unsigned long eid, void* callData);
+  void ProcessEventQueue();
 
   ///
   /// two modes -
@@ -229,13 +232,13 @@ public:
   ///  - CompressCallDataOff: maintain the list of all call data values, but only
   ///    one unique entry for each
   ///  Compression is ON by default
-  vtkBooleanMacro (CompressCallData, int);
-  vtkGetMacro (CompressCallData, int);
-  vtkSetMacro (CompressCallData, int);
+  vtkBooleanMacro(CompressCallData, int);
+  vtkGetMacro(CompressCallData, int);
+  vtkSetMacro(CompressCallData, int);
 
   ///
   /// Sets the method pointer to be used for processing script observations
-  void SetScriptHandler ( void (*scriptHandler) (const char* script, void *clientData), void *clientData )
+  void SetScriptHandler(void (*scriptHandler)(const char* script, void* clientData), void* clientData)
   {
     this->ScriptHandler = scriptHandler;
     this->ScriptHandlerClientData = clientData;
@@ -269,30 +272,29 @@ protected:
   /// These routines manage the internal datastructures and should
   /// be the only methods used to modified the internal Observations member
   /// Please note that they don't update the SubjectMap nor the ObserverMap.
-  void AttachObservation (vtkObservation *observation);
-  void DetachObservation (vtkObservation *observation);
+  void AttachObservation(vtkObservation* observation);
+  void DetachObservation(vtkObservation* observation);
 
   friend class vtkEventBrokerInitialize;
   typedef vtkEventBroker Self;
 
-
   ///
-  typedef std::map< vtkObject*, ObservationVector > ObjectToObservationVectorMap;
+  typedef std::map<vtkObject*, ObservationVector> ObjectToObservationVectorMap;
 
   /// maps to manage quick lookup by object
   ObjectToObservationVectorMap SubjectMap;
   ObjectToObservationVectorMap ObserverMap;
 
   /// The event queue of triggered but not-yet-invoked observations
-  std::deque< vtkObservation * > EventQueue;
+  std::deque<vtkObservation*> EventQueue;
 
-  void (*ScriptHandler) (const char* script, void* clientData);
-  void *ScriptHandlerClientData;
+  void (*ScriptHandler)(const char* script, void* clientData);
+  void* ScriptHandlerClientData;
 
   int EventLogging;
   int EventNestingLevel;
-  char *LogFileName;
-  vtkTimerLog *TimerLog;
+  char* LogFileName;
+  vtkTimerLog* TimerLog;
 
   int EventMode;
   int CompressCallData;
@@ -318,6 +320,7 @@ public:
 
   vtkEventBrokerInitialize();
   ~vtkEventBrokerInitialize();
+
 private:
   static unsigned int Count;
 };

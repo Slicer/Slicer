@@ -23,50 +23,50 @@ namespace itk
 {
 
 template <class TData>
-class DiffusionTensor3DNonRigidTransform :
-  public DiffusionTensor3DTransform<TData>
+class DiffusionTensor3DNonRigidTransform : public DiffusionTensor3DTransform<TData>
 {
 public:
-  typedef TData                                              DataType;
-  typedef DiffusionTensor3DNonRigidTransform                 Self;
-  typedef DiffusionTensor3DTransform<DataType>               Superclass;
-  typedef typename Superclass::TensorDataType                TensorDataType;
-  typedef typename Superclass::MatrixTransformType           MatrixTransformType;
-  typedef typename Superclass::PointType                     PointType;
-  typedef SmartPointer<Self>                                 Pointer;
-  typedef SmartPointer<const Self>                           ConstPointer;
-  typedef Transform<double, 3, 3>                            TransformType;
+  typedef TData DataType;
+  typedef DiffusionTensor3DNonRigidTransform Self;
+  typedef DiffusionTensor3DTransform<DataType> Superclass;
+  typedef typename Superclass::TensorDataType TensorDataType;
+  typedef typename Superclass::MatrixTransformType MatrixTransformType;
+  typedef typename Superclass::PointType PointType;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef Transform<double, 3, 3> TransformType;
   typedef itk::DiffusionTensor3DPPDAffineTransform<DataType> PPDAffineTransformType;
-  typedef itk::DiffusionTensor3DFSAffineTransform<DataType>  FSAffineTransformType;
-  typedef itk::DiffusionTensor3DAffineTransform<DataType>    AffineTransform;
+  typedef itk::DiffusionTensor3DFSAffineTransform<DataType> FSAffineTransformType;
+  typedef itk::DiffusionTensor3DAffineTransform<DataType> AffineTransform;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DNonRigidTransform, DiffusionTensor3DTransform);
 
   // SmartPointer
-  itkNewMacro( Self );
+  itkNewMacro(Self);
   // /Set the transform
-  itkSetObjectMacro( Transform, TransformType );
+  itkSetObjectMacro(Transform, TransformType);
   TransformType::Pointer GetTransform() override;
 
   // /Evaluate the position of the transformed tensor in the output image
-  PointType EvaluateTensorPosition( const PointType & point ) override;
+  PointType EvaluateTensorPosition(const PointType& point) override;
 
   // /Evaluate the transformed tensor
-  TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) override;
+  TensorDataType EvaluateTransformedTensor(TensorDataType& tensor, PointType& outputPosition) override;
 
   void SetAffineTransformType(typename AffineTransform::Pointer transform);
+
 protected:
   DiffusionTensor3DNonRigidTransform();
-  unsigned long                     m_LatestTime;
-  typename TransformType::Pointer   m_Transform;
+  unsigned long m_LatestTime;
+  typename TransformType::Pointer m_Transform;
   typename AffineTransform::Pointer m_Affine;
 };
 
-} // end of itk namespace
+} // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DNonRigidTransform.txx"
+# include "itkDiffusionTensor3DNonRigidTransform.txx"
 #endif
 
 #endif

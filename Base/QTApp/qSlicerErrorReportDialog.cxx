@@ -34,7 +34,7 @@
 #include "ui_qSlicerErrorReportDialog.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerErrorReportDialogPrivate: public Ui_qSlicerErrorReportDialog
+class qSlicerErrorReportDialogPrivate : public Ui_qSlicerErrorReportDialog
 {
 public:
 };
@@ -45,31 +45,37 @@ public:
 //-----------------------------------------------------------------------------
 // qSlicerErrorReportDialog methods
 qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
- :QDialog(parentWidget)
+  : QDialog(parentWidget)
   , d_ptr(new qSlicerErrorReportDialogPrivate)
 {
   Q_D(qSlicerErrorReportDialog);
   d->setupUi(this);
 
   QString instructionsText = d->InstructionsLabel->text();
-  QString appNameVersionPlatform = QString("%1 %2 %3").arg(
-    qSlicerApplication::application()->applicationName()).arg(
-    qSlicerApplication::application()->applicationVersion()).arg(
-    qSlicerApplication::application()->platform());
+  QString appNameVersionPlatform = QString("%1 %2 %3")
+                                     .arg(qSlicerApplication::application()->applicationName())
+                                     .arg(qSlicerApplication::application()->applicationVersion())
+                                     .arg(qSlicerApplication::application()->platform());
   instructionsText.replace(QString("[appname-version-platform]"), QUrl::toPercentEncoding(appNameVersionPlatform));
   d->InstructionsLabel->setText(instructionsText);
 
   QStringList headers;
-  headers << "App Name" << "Version" << "Revision" << "Date" << "Time" << "File Path";
+  headers << "App Name"
+          << "Version"
+          << "Revision"
+          << "Date"
+          << "Time"
+          << "File Path";
   d->RecentLogFilesComboBox->setSelectionMode(QAbstractItemView::ExtendedSelection);
   d->RecentLogFilesComboBox->setColumnCount(6);
   d->RecentLogFilesComboBox->setHorizontalHeaderLabels(headers);
-  for (int i = 0; i < d->RecentLogFilesComboBox->columnCount(); i++) {
-      d->RecentLogFilesComboBox->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+  for (int i = 0; i < d->RecentLogFilesComboBox->columnCount(); i++)
+  {
+    d->RecentLogFilesComboBox->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
   }
   QLocale locale = qSlicerCoreApplication::application()->applicationLocale();
   QStringList logFilePaths = qSlicerApplication::application()->recentLogFiles();
-  foreach(const QString& path, logFilePaths)
+  foreach (const QString& path, logFilePaths)
   {
     QTableWidgetItem* itemApp = new QTableWidgetItem(path);
     QTableWidgetItem* itemVersion = new QTableWidgetItem(path);
@@ -128,9 +134,12 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
     d->RecentLogFilesComboBox->setCurrentIndex(d->RecentLogFilesComboBox->model()->index(0, 0));
   }
 
-
-  //QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onLogFileSelectionChanged()));
-  QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentItemChanged(QTableWidgetItem*,QTableWidgetItem*)), this, SLOT(onLogFileSelectionChanged()));
+  // QObject::connect(d->RecentLogFilesComboBox, SIGNAL(currentTextChanged(QString)), this,
+  // SLOT(onLogFileSelectionChanged()));
+  QObject::connect(d->RecentLogFilesComboBox,
+                   SIGNAL(currentItemChanged(QTableWidgetItem*, QTableWidgetItem*)),
+                   this,
+                   SLOT(onLogFileSelectionChanged()));
   QObject::connect(d->LogCopyToClipboardPushButton, SIGNAL(clicked()), this, SLOT(onLogCopy()));
   QObject::connect(d->LogOpenFileLocationPushButton, SIGNAL(clicked()), this, SLOT(onLogFileLocationOpen()));
   QObject::connect(d->LogFileOpenPushButton, SIGNAL(clicked()), this, SLOT(onLogFileOpen()));
@@ -139,7 +148,6 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
   connect(d->ButtonBox, SIGNAL(rejected()), this, SLOT(close()));
 
   onLogFileSelectionChanged(); // update log messages textbox
-
 }
 
 //-----------------------------------------------------------------------------

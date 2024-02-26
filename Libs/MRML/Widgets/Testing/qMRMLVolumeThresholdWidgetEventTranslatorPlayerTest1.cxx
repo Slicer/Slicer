@@ -60,10 +60,10 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLVolumeThresholdWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLVolumeThresholdWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -108,4 +108,3 @@ int qMRMLVolumeThresholdWidgetEventTranslatorPlayerTest1(int argc, char * argv [
   etpWidget.show();
   return app.exec();
 }
-

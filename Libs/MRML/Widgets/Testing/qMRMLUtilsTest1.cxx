@@ -35,7 +35,7 @@
 #include <cstdlib>
 #include <cmath>
 
-int qMRMLUtilsTest1( int argc, char * argv [] )
+int qMRMLUtilsTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -44,30 +44,22 @@ int qMRMLUtilsTest1( int argc, char * argv [] )
   // Test color conversions
   QColor qcolor1 = QColor(255, 127, 0);
   QColor qcolor2;
-  double color1[3] = {0.0, 1.0, 0.5};
+  double color1[3] = { 0.0, 1.0, 0.5 };
   double color2[3];
   qMRMLUtils::colorToQColor(nullptr, qcolor1);
   qMRMLUtils::qColorToColor(qcolor1, nullptr);
   qMRMLUtils::colorToQColor(color1, qcolor2);
-  if (fabs(qcolor2.redF() - 0.0) > 0.01 ||
-      fabs(qcolor2.greenF() - 1.0) > 0.01 ||
-      fabs(qcolor2.blueF() - 0.5) > 0.01)
+  if (fabs(qcolor2.redF() - 0.0) > 0.01 || fabs(qcolor2.greenF() - 1.0) > 0.01 || fabs(qcolor2.blueF() - 0.5) > 0.01)
   {
-    qDebug() << QString("colorToQColor, expected 0.0, 1.0, 0.5, but got ")
-      + QString::number(qcolor2.redF()) + QString(" ")
-      + QString::number(qcolor2.greenF()) + QString(" ")
-      + QString::number(qcolor2.blueF());
+    qDebug() << QString("colorToQColor, expected 0.0, 1.0, 0.5, but got ") + QString::number(qcolor2.redF())
+                  + QString(" ") + QString::number(qcolor2.greenF()) + QString(" ") + QString::number(qcolor2.blueF());
     return EXIT_FAILURE;
   }
   qMRMLUtils::qColorToColor(qcolor1, color2);
-  if (fabs(color2[0] - 1.0) > 0.01 ||
-      fabs(color2[1] - 0.5) > 0.01 ||
-      fabs(color2[2] - 0.0) > 0.01)
+  if (fabs(color2[0] - 1.0) > 0.01 || fabs(color2[1] - 0.5) > 0.01 || fabs(color2[2] - 0.0) > 0.01)
   {
-    qDebug() << QString("Failed: qColorToColor, expected 1.0, 0.5, 0.0 but got ")
-      + QString::number(color2[0]) + QString(" ")
-      + QString::number(color2[1]) + QString(" ")
-      + QString::number(color2[2]);
+    qDebug() << QString("Failed: qColorToColor, expected 1.0, 0.5, 0.0 but got ") + QString::number(color2[0])
+                  + QString(" ") + QString::number(color2[1]) + QString(" ") + QString::number(color2[2]);
     return EXIT_FAILURE;
   }
 

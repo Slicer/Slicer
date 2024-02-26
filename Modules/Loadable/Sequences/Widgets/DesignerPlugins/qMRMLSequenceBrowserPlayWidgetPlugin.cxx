@@ -19,48 +19,40 @@
 #include "qMRMLSequenceBrowserPlayWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLSequenceBrowserPlayWidgetPlugin
-::qMRMLSequenceBrowserPlayWidgetPlugin(QObject *_parent)
+qMRMLSequenceBrowserPlayWidgetPlugin ::qMRMLSequenceBrowserPlayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLSequenceBrowserPlayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLSequenceBrowserPlayWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qMRMLSequenceBrowserPlayWidget* _widget
-    = new qMRMLSequenceBrowserPlayWidget(_parent);
+  qMRMLSequenceBrowserPlayWidget* _widget = new qMRMLSequenceBrowserPlayWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSequenceBrowserPlayWidgetPlugin
-::domXml() const
+QString qMRMLSequenceBrowserPlayWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qMRMLSequenceBrowserPlayWidget\" \
           name=\"SequenceBrowserPlayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSequenceBrowserPlayWidgetPlugin
-::includeFile() const
+QString qMRMLSequenceBrowserPlayWidgetPlugin ::includeFile() const
 {
   return "qMRMLSequenceBrowserPlayWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSequenceBrowserPlayWidgetPlugin
-::isContainer() const
+bool qMRMLSequenceBrowserPlayWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSequenceBrowserPlayWidgetPlugin
-::name() const
+QString qMRMLSequenceBrowserPlayWidgetPlugin ::name() const
 {
   return "qMRMLSequenceBrowserPlayWidget";
 }

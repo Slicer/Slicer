@@ -41,8 +41,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerColorsReader::qSlicerColorsReader(
-  vtkSlicerColorLogic* _colorLogic, QObject* _parent)
+qSlicerColorsReader::qSlicerColorsReader(vtkSlicerColorLogic* _colorLogic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerColorsReaderPrivate)
 {
@@ -60,32 +59,32 @@ void qSlicerColorsReader::setColorLogic(vtkSlicerColorLogic* newColorLogic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerColorLogic* qSlicerColorsReader::colorLogic()const
+vtkSlicerColorLogic* qSlicerColorsReader::colorLogic() const
 {
   Q_D(const qSlicerColorsReader);
   return d->ColorLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerColorsReader::description()const
+QString qSlicerColorsReader::description() const
 {
   return "Color";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerColorsReader::fileType()const
+qSlicerIO::IOFileType qSlicerColorsReader::fileType() const
 {
   return QString("ColorTableFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerColorsReader::extensions()const
+QStringList qSlicerColorsReader::extensions() const
 {
   return QStringList() << "Color (*.txt *.ctbl *.cxml)";
 }
 
 //----------------------------------------------------------------------------
-double qSlicerColorsReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerColorsReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 

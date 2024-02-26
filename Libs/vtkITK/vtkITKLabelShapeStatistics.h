@@ -43,12 +43,13 @@ class vtkPoints;
 /// (https://itk.org/Doxygen/html/classitk_1_1LabelImageToShapeLabelMapFilter.html)
 /// Label centroid and flatness are the only statistics calculated by default.
 /// For a list of available parameters, see: vtkITKLabelShapeStatistics::ShapeStatistic
-/// Calculated statistics can be changed using the SetComputeShapeStatistic/ComputeShapeStatisticOn/ComputeShapeStatisticOff methods.
-/// Output statistics are represented in a vtkTable where each column represents a statistic and each row is a different label value.
+/// Calculated statistics can be changed using the
+/// SetComputeShapeStatistic/ComputeShapeStatisticOn/ComputeShapeStatisticOff methods. Output statistics are represented
+/// in a vtkTable where each column represents a statistic and each row is a different label value.
 class VTK_ITK_EXPORT vtkITKLabelShapeStatistics : public vtkTableAlgorithm
 {
 public:
-  static vtkITKLabelShapeStatistics *New();
+  static vtkITKLabelShapeStatistics* New();
   vtkTypeMacro(vtkITKLabelShapeStatistics, vtkTableAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -66,7 +67,8 @@ public:
     Perimeter,
     /// Ratio of the area of the hypersphere by the actual area. A value of 1 represents a spherical structure
     Roundness,
-    /// Square root of the ratio of the second smallest principal moment by the smallest. A value of 0 represents a flat structure
+    /// Square root of the ratio of the second smallest principal moment by the smallest. A value of 0 represents a flat
+    /// structure
     Flatness,
     /// Square root of the ratio of the second largest principal moment by the second smallest
     Elongation,
@@ -98,8 +100,8 @@ protected:
 
   int FillInputPortInformation(int vtkNotUsed(port), vtkInformation* info) override;
   int RequestData(vtkInformation* request,
-    vtkInformationVector** inputVector,
-    vtkInformationVector* outputVector) override;
+                  vtkInformationVector** inputVector,
+                  vtkInformationVector* outputVector) override;
 
 protected:
   std::vector<std::string> ComputedStatistics;

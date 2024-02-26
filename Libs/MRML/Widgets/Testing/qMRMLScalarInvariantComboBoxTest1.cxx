@@ -37,7 +37,7 @@
 
 // STD includes
 
-int qMRMLScalarInvariantComboBoxTest1(int argc, char * argv [] )
+int qMRMLScalarInvariantComboBoxTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -48,34 +48,29 @@ int qMRMLScalarInvariantComboBoxTest1(int argc, char * argv [] )
   qMRMLScalarInvariantComboBox scalarComboBox;
   scalarComboBox.setDisplayPropertiesNode(displayPropertiesNode.GetPointer());
 
-  displayPropertiesNode->SetColorGlyphBy(
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity);
+  displayPropertiesNode->SetColorGlyphBy(vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity);
   if (scalarComboBox.scalarInvariant() != vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity)
   {
-    std::cerr << "qMRMLScalarInvariantComboBox failed: "
-              << scalarComboBox.scalarInvariant() << " instead of "
+    std::cerr << "qMRMLScalarInvariantComboBox failed: " << scalarComboBox.scalarInvariant() << " instead of "
               << displayPropertiesNode->GetColorGlyphBy() << std::endl;
     return EXIT_FAILURE;
   }
 
-  scalarComboBox.setScalarInvariant(
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
-  if (displayPropertiesNode->GetColorGlyphBy() !=
-      vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy)
+  scalarComboBox.setScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
+  if (displayPropertiesNode->GetColorGlyphBy() != vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy)
   {
     std::cerr << "qMRMLScalarInvariantComboBox::setScalarInvariant() failed: "
-              << displayPropertiesNode->GetColorGlyphBy() << " instead of "
-              << scalarComboBox.scalarInvariant() << std::endl;
+              << displayPropertiesNode->GetColorGlyphBy() << " instead of " << scalarComboBox.scalarInvariant()
+              << std::endl;
     return EXIT_FAILURE;
   }
 
   scalarComboBox.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
 
   return app.exec();
 }
-

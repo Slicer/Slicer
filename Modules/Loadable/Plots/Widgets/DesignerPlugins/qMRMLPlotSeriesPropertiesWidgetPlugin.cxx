@@ -22,48 +22,40 @@
 #include "qMRMLPlotSeriesPropertiesWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLPlotSeriesPropertiesWidgetPlugin
-::qMRMLPlotSeriesPropertiesWidgetPlugin(QObject *_parent)
+qMRMLPlotSeriesPropertiesWidgetPlugin ::qMRMLPlotSeriesPropertiesWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLPlotSeriesPropertiesWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLPlotSeriesPropertiesWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qMRMLPlotSeriesPropertiesWidget* _widget
-    = new qMRMLPlotSeriesPropertiesWidget(_parent);
+  qMRMLPlotSeriesPropertiesWidget* _widget = new qMRMLPlotSeriesPropertiesWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLPlotSeriesPropertiesWidgetPlugin
-::domXml() const
+QString qMRMLPlotSeriesPropertiesWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qMRMLPlotSeriesPropertiesWidget\" \
           name=\"SlicerPlotChartPropertiesWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLPlotSeriesPropertiesWidgetPlugin
-::includeFile() const
+QString qMRMLPlotSeriesPropertiesWidgetPlugin ::includeFile() const
 {
   return "qMRMLPlotSeriesPropertiesWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLPlotSeriesPropertiesWidgetPlugin
-::isContainer() const
+bool qMRMLPlotSeriesPropertiesWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLPlotSeriesPropertiesWidgetPlugin
-::name() const
+QString qMRMLPlotSeriesPropertiesWidgetPlugin ::name() const
 {
   return "qMRMLPlotSeriesPropertiesWidget";
 }

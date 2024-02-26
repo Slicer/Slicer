@@ -18,7 +18,6 @@
 
 ==============================================================================*/
 
-
 #include "vtkSlicerMarkupsInteractionWidget.h"
 #include "vtkSlicerMarkupsInteractionWidgetRepresentation.h"
 
@@ -73,28 +72,32 @@ void vtkSlicerMarkupsInteractionWidget::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------
 int vtkSlicerMarkupsInteractionWidget::GetActiveComponentType()
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep =
+    vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   return rep->GetActiveComponentType();
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidget::SetActiveComponentType(int type)
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep =
+    vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   rep->SetActiveComponentType(type);
 }
 
 //----------------------------------------------------------------------
 int vtkSlicerMarkupsInteractionWidget::GetActiveComponentIndex()
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep =
+    vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   return rep->GetActiveComponentIndex();
 }
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidget::SetActiveComponentIndex(int index)
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep =
+    vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   rep->SetActiveComponentIndex(index);
 }
 
@@ -107,7 +110,8 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetMenu(vtkMRMLInteractionEven
     return false;
   }
 
-  return this->ProcessWidgetMenuDisplayNodeTypeAndIndex(eventData, displayNode, displayNode->GetActiveComponentType(), displayNode->GetActiveComponentIndex());
+  return this->ProcessWidgetMenuDisplayNodeTypeAndIndex(
+    eventData, displayNode, displayNode->GetActiveComponentType(), displayNode->GetActiveComponentIndex());
 }
 
 //----------------------------------------------------------------------
@@ -121,7 +125,8 @@ void vtkSlicerMarkupsInteractionWidget::ApplyTransform(vtkTransform* transform)
   MRMLNodeModifyBlocker blocker(this->GetMarkupsNode());
 
   vtkNew<vtkGeneralTransform> transformToWorld;
-  vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetMarkupsNode()->GetParentTransformNode(), nullptr, transformToWorld);
+  vtkMRMLTransformNode::GetTransformBetweenNodes(
+    this->GetMarkupsNode()->GetParentTransformNode(), nullptr, transformToWorld);
 
   vtkAbstractTransform* transformFromWorld = transformToWorld->GetInverse();
 
@@ -136,9 +141,11 @@ void vtkSlicerMarkupsInteractionWidget::ApplyTransform(vtkTransform* transform)
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsInteractionWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* displayNode,
-  vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+                                                                    vtkMRMLAbstractViewNode* viewNode,
+                                                                    vtkRenderer* renderer)
 {
-  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation>::New();
+  vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep =
+    vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation>::New();
   this->SetRenderer(renderer);
   this->SetRepresentation(rep);
   rep->SetViewNode(viewNode);
@@ -149,7 +156,8 @@ void vtkSlicerMarkupsInteractionWidget::CreateDefaultRepresentation(vtkMRMLMarku
 //----------------------------------------------------------------------
 vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsInteractionWidget::GetDisplayNode()
 {
-  vtkSlicerMarkupsInteractionWidgetRepresentation* widgetRep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
+  vtkSlicerMarkupsInteractionWidgetRepresentation* widgetRep =
+    vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
   if (!widgetRep)
   {
     return nullptr;
@@ -160,7 +168,8 @@ vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsInteractionWidget::GetDisplayNode()
 //----------------------------------------------------------------------
 vtkMRMLMarkupsNode* vtkSlicerMarkupsInteractionWidget::GetMarkupsNode()
 {
-  vtkSlicerMarkupsInteractionWidgetRepresentation* widgetRep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
+  vtkSlicerMarkupsInteractionWidgetRepresentation* widgetRep =
+    vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->GetRepresentation());
   if (!widgetRep)
   {
     return nullptr;
@@ -208,11 +217,13 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetJumpCursor(vtkMRMLInteracti
 
   // For interaction handle, send the position of the handle as well.
   // The position of the handle may be different in each view, so we need to get the position from the representation.
-  vtkSlicerMarkupsInteractionWidgetRepresentation* rep = vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
+  vtkSlicerMarkupsInteractionWidgetRepresentation* rep =
+    vtkSlicerMarkupsInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   if (rep)
   {
     double position_World[3] = { 0.0, 0.0, 0.0 };
-    rep->GetInteractionHandlePositionWorld(rep->GetActiveComponentType(), rep->GetActiveComponentIndex(), position_World);
+    rep->GetInteractionHandlePositionWorld(
+      rep->GetActiveComponentType(), rep->GetActiveComponentIndex(), position_World);
     jumpToPointEventData->SetWorldPosition(position_World);
   }
 
@@ -221,7 +232,7 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetJumpCursor(vtkMRMLInteracti
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsInteractionWidget::ScaleWidget(double eventPos[2], bool uniformScale/*=false*/)
+void vtkSlicerMarkupsInteractionWidget::ScaleWidget(double eventPos[2], bool uniformScale /*=false*/)
 {
   if (vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode()))
   {
@@ -272,14 +283,14 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
   else
   {
     // 3D view
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      this->LastEventPosition, lastEventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(
+          this->Renderer, this->LastEventPosition, lastEventPos_World, orientation_World))
     {
       return;
     }
 
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      eventPos, lastEventPos_World, eventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(
+          this->Renderer, eventPos, lastEventPos_World, eventPos_World, orientation_World))
     {
       return;
     }
@@ -296,15 +307,14 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
   {
     // We are interacting with one of the edges.
     // Restrict scaling to apply only in that direction.
-    this->GetClosestPointOnInteractionAxis(
-      InteractionScaleHandle, index, this->LastEventPosition, lastEventPos_World);
-    this->GetClosestPointOnInteractionAxis(
-      InteractionScaleHandle, index, eventPos, eventPos_World);
+    this->GetClosestPointOnInteractionAxis(InteractionScaleHandle, index, this->LastEventPosition, lastEventPos_World);
+    this->GetClosestPointOnInteractionAxis(InteractionScaleHandle, index, eventPos, eventPos_World);
   }
   else
   {
     // We are interacting with one of the corners
-    // Restrict scaling so that the projection of the interaction handle and the event position will be at the same display position.
+    // Restrict scaling so that the projection of the interaction handle and the event position will be at the same
+    // display position.
     double cameraDirectionEventPos_World[3] = { 0.0, 0.0, 0.0 };
     double cameraDirectionLastEventPos_World[3] = { 0.0, 0.0, 0.0 };
     if (rep->GetSliceNode())
@@ -536,10 +546,8 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
   MRMLNodeModifyBlocker blocker(roiNode);
 
   double lastEventPos_World[3] = { 0.0, 0.0, 0.0 };
-  double eventPos_World[3]     = { 0.0, 0.0, 0.0 };
-  double orientation_World[9]  = { 0.0, 0.0, 0.0,
-                                   0.0, 0.0, 0.0,
-                                   0.0, 0.0, 0.0 };
+  double eventPos_World[3] = { 0.0, 0.0, 0.0 };
+  double orientation_World[9] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
   vtkMRMLInteractionWidgetRepresentation* rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   if (!rep)
@@ -562,14 +570,14 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
   else
   {
     // 3D view
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      this->LastEventPosition, lastEventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(
+          this->Renderer, this->LastEventPosition, lastEventPos_World, orientation_World))
     {
       return;
     }
 
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      eventPos, lastEventPos_World, eventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(
+          this->Renderer, eventPos, lastEventPos_World, eventPos_World, orientation_World))
     {
       return;
     }
@@ -588,8 +596,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
     {
       this->GetClosestPointOnInteractionAxis(
         InteractionScaleHandle, index, this->LastEventPosition, lastEventPos_World);
-      this->GetClosestPointOnInteractionAxis(
-        InteractionScaleHandle, index, eventPos, eventPos_World);
+      this->GetClosestPointOnInteractionAxis(InteractionScaleHandle, index, eventPos, eventPos_World);
     }
 
     double scaleVector_World[3] = { 0.0, 0.0, 0.0 };
@@ -602,7 +609,9 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
     roiNode->GetSize(radius_ROI);
     vtkMath::MultiplyScalar(radius_ROI, 0.5);
 
-    double bounds_ROI[6] = { -radius_ROI[0], radius_ROI[0], -radius_ROI[1], radius_ROI[1], -radius_ROI[2], radius_ROI[2] };
+    double bounds_ROI[6] = {
+      -radius_ROI[0], radius_ROI[0], -radius_ROI[1], radius_ROI[1], -radius_ROI[2], radius_ROI[2]
+    };
     switch (index)
     {
       case vtkMRMLMarkupsROIDisplayNode::HandleLFace:

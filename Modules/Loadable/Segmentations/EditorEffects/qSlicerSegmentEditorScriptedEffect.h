@@ -52,7 +52,7 @@ public:
   qSlicerSegmentEditorScriptedEffect(QObject* parent = nullptr);
   ~qSlicerSegmentEditorScriptedEffect() override;
 
-  Q_INVOKABLE QString pythonSource()const;
+  Q_INVOKABLE QString pythonSource() const;
 
   /// Set python source for the implemented effect
   /// \param newPythonSource Python file path
@@ -71,13 +71,13 @@ public:
   /// If this property is set to true then this effect is enabled only when the segmentation has segment(s) in it.
   void setRequireSegments(bool requireSegments) override;
 
-// API: Methods that are to be reimplemented in the effect subclasses
+  // API: Methods that are to be reimplemented in the effect subclasses
 public:
   /// Get icon for effect to be displayed in segment editor
   QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  const QString helpText()const override;
+  const QString helpText() const override;
 
   /// Clone editor effect. Override to return a new instance of the effect sub-class
   qSlicerSegmentEditorAbstractEffect* clone() override;
@@ -98,13 +98,17 @@ public:
   /// \param callerInteractor Interactor object that was observed to catch the event
   /// \param eid Event identifier
   /// \param viewWidget Widget of the Slicer layout view. Can be \sa qMRMLSliceWidget or \sa qMRMLThreeDWidget
-  bool processInteractionEvents(vtkRenderWindowInteractor* callerInteractor, unsigned long eid, qMRMLWidget* viewWidget) override;
+  bool processInteractionEvents(vtkRenderWindowInteractor* callerInteractor,
+                                unsigned long eid,
+                                qMRMLWidget* viewWidget) override;
 
   /// Callback function invoked when view node is modified
-  /// \param callerViewNode View node that was observed to catch the event. Can be either \sa vtkMRMLSliceNode or \sa vtkMRMLViewNode
-  /// \param eid Event identifier
-  /// \param viewWidget Widget of the Slicer layout view. Can be \sa qMRMLSliceWidget or \sa qMRMLThreeDWidget
-  void processViewNodeEvents(vtkMRMLAbstractViewNode* callerViewNode, unsigned long eid, qMRMLWidget* viewWidget) override;
+  /// \param callerViewNode View node that was observed to catch the event. Can be either \sa vtkMRMLSliceNode or \sa
+  /// vtkMRMLViewNode \param eid Event identifier \param viewWidget Widget of the Slicer layout view. Can be \sa
+  /// qMRMLSliceWidget or \sa qMRMLThreeDWidget
+  void processViewNodeEvents(vtkMRMLAbstractViewNode* callerViewNode,
+                             unsigned long eid,
+                             qMRMLWidget* viewWidget) override;
 
   /// Set default parameters in the parameter MRML node
   void setMRMLDefaults() override;

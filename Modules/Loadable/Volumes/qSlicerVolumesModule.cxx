@@ -62,39 +62,39 @@ qSlicerVolumesModule::qSlicerVolumesModule(QObject* _parent)
 qSlicerVolumesModule::~qSlicerVolumesModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesModule::title()const
+QString qSlicerVolumesModule::title() const
 {
   return tr("Volumes");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesModule::helpText()const
+QString qSlicerVolumesModule::helpText() const
 {
-  QString help = tr(
-    "The Volumes Module is the interface for adjusting Window, Level, Threshold, "
-    "Color LUT and other parameters that control the display of volume image data "
-    "in the scene.") + "<br>";
+  QString help = tr("The Volumes Module is the interface for adjusting Window, Level, Threshold, "
+                    "Color LUT and other parameters that control the display of volume image data "
+                    "in the scene.")
+                 + "<br>";
   help += this->defaultDocumentationLink();
   return help;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesModule::acknowledgementText()const
+QString qSlicerVolumesModule::acknowledgementText() const
 {
-  QString acknowledgement = QString(
-    "<center><table border=\"0\"><tr>"
-    "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
-    "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
-    "</tr><tr>"
-    "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
-    "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
-    "</tr></table></center>" +
-    tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community."));
+  QString acknowledgement =
+    QString("<center><table border=\"0\"><tr>"
+            "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
+            "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
+            "</tr><tr>"
+            "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
+            "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
+            "</tr></table></center>"
+            + tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community."));
   return acknowledgement;
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumesModule::contributors()const
+QStringList qSlicerVolumesModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Steve Pieper (Isomics)");
@@ -106,7 +106,7 @@ QStringList qSlicerVolumesModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerVolumesModule::icon()const
+QIcon qSlicerVolumesModule::icon() const
 {
   return QIcon(":/Icons/Medium/SlicerVolumes.png");
 }
@@ -121,7 +121,8 @@ QStringList qSlicerVolumesModule::categories() const
 QStringList qSlicerVolumesModule::dependencies() const
 {
   QStringList moduleDependencies;
-  moduleDependencies << "Colors" << "Units";
+  moduleDependencies << "Colors"
+                     << "Units";
   return moduleDependencies;
 }
 
@@ -130,20 +131,18 @@ void qSlicerVolumesModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerVolumesLogic* volumesLogic =
-    vtkSlicerVolumesLogic::SafeDownCast(this->logic());
+  vtkSlicerVolumesLogic* volumesLogic = vtkSlicerVolumesLogic::SafeDownCast(this->logic());
 
-  qSlicerCoreIOManager* ioManager =
-    qSlicerCoreApplication::application()->coreIOManager();
-  ioManager->registerIO(new qSlicerVolumesReader(volumesLogic,this));
-  ioManager->registerIO(new qSlicerNodeWriter(
-    "Volumes", QString("VolumeFile"),
-    QStringList() << "vtkMRMLVolumeNode", true, this));
+  qSlicerCoreIOManager* ioManager = qSlicerCoreApplication::application()->coreIOManager();
+  ioManager->registerIO(new qSlicerVolumesReader(volumesLogic, this));
+  ioManager->registerIO(
+    new qSlicerNodeWriter("Volumes", QString("VolumeFile"), QStringList() << "vtkMRMLVolumeNode", true, this));
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyVolumesPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyLabelMapsPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin());
 }
 
 //-----------------------------------------------------------------------------
@@ -161,7 +160,6 @@ vtkMRMLAbstractLogic* qSlicerVolumesModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerVolumesModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLVolumeNode"
-    << "vtkMRMLVolumeDisplayNode";
+  return QStringList() << "vtkMRMLVolumeNode"
+                       << "vtkMRMLVolumeDisplayNode";
 }

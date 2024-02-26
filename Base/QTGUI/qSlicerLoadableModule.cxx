@@ -52,10 +52,10 @@ qSlicerLoadableModule::qSlicerLoadableModule(QObject* _parentObject)
 qSlicerLoadableModule::~qSlicerLoadableModule() = default;
 
 //-----------------------------------------------------------------------------
-bool qSlicerLoadableModule::importModulePythonExtensions(
-    qSlicerCorePythonManager * pythonManager,
-    const QString& intDir,const QString& modulePath,
-    bool isEmbedded)
+bool qSlicerLoadableModule::importModulePythonExtensions(qSlicerCorePythonManager* pythonManager,
+                                                         const QString& intDir,
+                                                         const QString& modulePath,
+                                                         bool isEmbedded)
 {
 #ifdef Slicer_USE_PYTHONQT
   return qSlicerScriptedUtils::importModulePythonExtensions(pythonManager, intDir, modulePath, isEmbedded);
@@ -69,22 +69,20 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerLoadableModule::addModuleToSlicerModules(
-    qSlicerCorePythonManager * pythonManager,
-    qSlicerAbstractModule * module,
-    const QString& moduleName)
+bool qSlicerLoadableModule::addModuleToSlicerModules(qSlicerCorePythonManager* pythonManager,
+                                                     qSlicerAbstractModule* module,
+                                                     const QString& moduleName)
 {
 #ifdef Slicer_USE_PYTHONQT
-  if(!pythonManager || !module || moduleName.isEmpty())
+  if (!pythonManager || !module || moduleName.isEmpty())
   {
     return false;
   }
   pythonManager->addObjectToPythonMain("_tmp_module_variable", module);
-  pythonManager->executeString(
-        QString("import __main__;"
-                "setattr( slicer.modules, %1, __main__._tmp_module_variable);"
-                "del __main__._tmp_module_variable").arg(
-          qSlicerCorePythonManager::toPythonStringLiteral(moduleName.toLower())));
+  pythonManager->executeString(QString("import __main__;"
+                                       "setattr( slicer.modules, %1, __main__._tmp_module_variable);"
+                                       "del __main__._tmp_module_variable")
+                                 .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName.toLower())));
   return !pythonManager->pythonErrorOccured();
 #else
   Q_UNUSED(pythonManager);
@@ -95,20 +93,18 @@ bool qSlicerLoadableModule::addModuleToSlicerModules(
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
-    qSlicerCorePythonManager * pythonManager,
-    const QString& moduleName)
+bool qSlicerLoadableModule::addModuleNameToSlicerModuleNames(qSlicerCorePythonManager* pythonManager,
+                                                             const QString& moduleName)
 {
 #ifdef Slicer_USE_PYTHONQT
-  if(!pythonManager || moduleName.isEmpty())
+  if (!pythonManager || moduleName.isEmpty())
   {
     return false;
   }
-  pythonManager->executeString(
-        QString("import __main__;"
-                "setattr( slicer.moduleNames, %1, %2)")
-                .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName.toLower()))
-                .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)));
+  pythonManager->executeString(QString("import __main__;"
+                                       "setattr( slicer.moduleNames, %1, %2)")
+                                 .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName.toLower()))
+                                 .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)));
   return !pythonManager->pythonErrorOccured();
 #else
   Q_UNUSED(pythonManager);
@@ -124,21 +120,18 @@ void qSlicerLoadableModule::setup()
   Q_D(qSlicerLoadableModule);
   // Q_ASSERT(d != 0);
 #endif
-
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerLoadableModule::helpText()const
+QString qSlicerLoadableModule::helpText() const
 {
-  qDebug() << "WARNING: " << this->metaObject()->className()
-           << "::helpText() is not implemented";
+  qDebug() << "WARNING: " << this->metaObject()->className() << "::helpText() is not implemented";
   return QString();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerLoadableModule::acknowledgementText()const
+QString qSlicerLoadableModule::acknowledgementText() const
 {
-  qDebug() << "WARNING: " << this->metaObject()->className()
-           << "::acknowledgementText - Not implemented";
+  qDebug() << "WARNING: " << this->metaObject()->className() << "::acknowledgementText - Not implemented";
   return QString();
 }

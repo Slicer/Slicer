@@ -60,25 +60,25 @@ vtkSlicerDICOMLoadable::~vtkSlicerDICOMLoadable()
 //----------------------------------------------------------------------------
 void vtkSlicerDICOMLoadable::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
-  os << indent << "Name:   " << (this->Name?this->Name:"NULL") << "\n";
-  os << indent << "Tooltip:   " << (this->Tooltip?this->Tooltip:"NULL") << "\n";
-  os << indent << "Warning:   " << (this->Warning?this->Warning:"NULL") << "\n";
-  os << indent << "Files:   " << (this->Files?"":"NULL") << "\n";
+  os << indent << "Name:   " << (this->Name ? this->Name : "NULL") << "\n";
+  os << indent << "Tooltip:   " << (this->Tooltip ? this->Tooltip : "NULL") << "\n";
+  os << indent << "Warning:   " << (this->Warning ? this->Warning : "NULL") << "\n";
+  os << indent << "Files:   " << (this->Files ? "" : "NULL") << "\n";
   if (this->Files)
   {
-    for (int fileIndex=0; fileIndex<this->Files->GetNumberOfValues(); ++fileIndex)
+    for (int fileIndex = 0; fileIndex < this->Files->GetNumberOfValues(); ++fileIndex)
     {
       os << indent << "  " << this->Files->GetValue(fileIndex) << "\n";
     }
   }
-  os << indent << "Selected:   " << (this->Selected?"true":"false") << "\n";
+  os << indent << "Selected:   " << (this->Selected ? "true" : "false") << "\n";
   os << indent << "Confidence:   " << this->Confidence << "\n";
-  os << indent << "ReferencedInstanceUIDs:   " << (this->ReferencedInstanceUIDs?"":"NULL") << "\n";
+  os << indent << "ReferencedInstanceUIDs:   " << (this->ReferencedInstanceUIDs ? "" : "NULL") << "\n";
   if (this->ReferencedInstanceUIDs)
   {
-    for (int fileIndex=0; fileIndex<this->ReferencedInstanceUIDs->GetNumberOfValues(); ++fileIndex)
+    for (int fileIndex = 0; fileIndex < this->ReferencedInstanceUIDs->GetNumberOfValues(); ++fileIndex)
     {
       os << indent << "  " << this->ReferencedInstanceUIDs->GetValue(fileIndex) << "\n";
     }

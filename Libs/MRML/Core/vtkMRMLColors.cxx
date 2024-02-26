@@ -86,8 +86,7 @@ bool vtkMRMLColors::toRGBColor(const vtkColor3d& from, double to[3])
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLColors
-::toRGBColor(const char* hexadecimalColor, double rgbColor[3])
+bool vtkMRMLColors ::toRGBColor(const char* hexadecimalColor, double rgbColor[3])
 {
   if (!hexadecimalColor || hexadecimalColor[0] != '#')
   {
@@ -100,7 +99,7 @@ bool vtkMRMLColors
   {
     unsigned int colorComponent;
     std::stringstream ss;
-    ss << std::hex << hexadecimalColor[2*i] << hexadecimalColor[2*i + 1];
+    ss << std::hex << hexadecimalColor[2 * i] << hexadecimalColor[2 * i + 1];
     ss >> colorComponent;
     rgbColor[i] = static_cast<double>(colorComponent) / 255.;
   }

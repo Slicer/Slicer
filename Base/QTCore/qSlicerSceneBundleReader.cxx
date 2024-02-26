@@ -54,21 +54,23 @@ qSlicerSceneBundleReader::qSlicerSceneBundleReader(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSceneBundleReader::description()const
+QString qSlicerSceneBundleReader::description() const
 {
   return tr("MRB Slicer Data Bundle");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerSceneBundleReader::fileType()const
+qSlicerIO::IOFileType qSlicerSceneBundleReader::fileType() const
 {
   return QString("SceneFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSceneBundleReader::extensions()const
+QStringList qSlicerSceneBundleReader::extensions() const
 {
-  return QStringList() << "*.mrb" << "*.zip" << "*.xar";
+  return QStringList() << "*.mrb"
+                       << "*.zip"
+                       << "*.xar";
 }
 
 //-----------------------------------------------------------------------------

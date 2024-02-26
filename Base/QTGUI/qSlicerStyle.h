@@ -38,19 +38,26 @@ public:
   qSlicerStyle();
   ~qSlicerStyle() override;
 
-  SubControl hitTestComplexControl(ComplexControl cc, const QStyleOptionComplex *opt,
-                                           const QPoint &pt, const QWidget *widget) const override;
+  SubControl hitTestComplexControl(ComplexControl cc,
+                                   const QStyleOptionComplex* opt,
+                                   const QPoint& pt,
+                                   const QWidget* widget) const override;
 
-  int pixelMetric(PixelMetric metric, const QStyleOption * option = nullptr,
-                          const QWidget * widget = nullptr)const override;
+  int pixelMetric(PixelMetric metric,
+                  const QStyleOption* option = nullptr,
+                  const QWidget* widget = nullptr) const override;
 
-  QRect subControlRect(ComplexControl control, const QStyleOptionComplex *option,
-                               SubControl subControl, const QWidget *widget) const override;
-  QPalette standardPalette()const override;
-  QPalette standardLightPalette()const;
-  QPalette standardDarkPalette()const;
-  int styleHint(StyleHint hint, const QStyleOption *opt, const QWidget *widget,
-                        QStyleHintReturn *returnData) const override;
+  QRect subControlRect(ComplexControl control,
+                       const QStyleOptionComplex* option,
+                       SubControl subControl,
+                       const QWidget* widget) const override;
+  QPalette standardPalette() const override;
+  QPalette standardLightPalette() const;
+  QPalette standardDarkPalette() const;
+  int styleHint(StyleHint hint,
+                const QStyleOption* opt,
+                const QWidget* widget,
+                QStyleHintReturn* returnData) const override;
 
   /// Behavior of widgets can be tweaked if an event filter is installed on a
   /// widget or application.
@@ -61,4 +68,3 @@ public:
 };
 
 #endif
-

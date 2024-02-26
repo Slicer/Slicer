@@ -18,7 +18,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLScene.h"
 
 // when change the display node, update the scalars
-//#include "vtkMRMLVolumeNode.h"
+// #include "vtkMRMLVolumeNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -40,9 +40,8 @@ vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLDisplayableNode::DisplayModifiedEvent);
 
-  this->AddNodeReferenceRole(this->GetDisplayNodeReferenceRole(),
-                             this->GetDisplayNodeReferenceMRMLAttributeName(),
-                             events.GetPointer());
+  this->AddNodeReferenceRole(
+    this->GetDisplayNodeReferenceRole(), this->GetDisplayNodeReferenceMRMLAttributeName(), events.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -61,7 +60,7 @@ const char* vtkMRMLDisplayableNode::GetDisplayNodeReferenceMRMLAttributeName()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+void vtkMRMLDisplayableNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
 {
   this->Superclass::OnNodeReferenceAdded(reference);
   if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
@@ -71,7 +70,7 @@ void vtkMRMLDisplayableNode::OnNodeReferenceAdded(vtkMRMLNodeReference *referenc
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+void vtkMRMLDisplayableNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 {
   this->Superclass::OnNodeReferenceModified(reference);
   if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
@@ -81,7 +80,7 @@ void vtkMRMLDisplayableNode::OnNodeReferenceModified(vtkMRMLNodeReference *refer
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
+void vtkMRMLDisplayableNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* reference)
 {
   this->Superclass::OnNodeReferenceRemoved(reference);
   if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
@@ -111,7 +110,7 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLDisplayableNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
@@ -123,27 +122,25 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
-  int numDisplayNodes = this->GetNumberOfNodeReferences(
-    this->GetDisplayNodeReferenceRole());
+  int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
 
-  for (int i=0; i<numDisplayNodes; i++)
+  for (int i = 0; i < numDisplayNodes; i++)
   {
-    const char * id = this->GetNthNodeReferenceID(
-      this->GetDisplayNodeReferenceRole(), i);
+    const char* id = this->GetNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), i);
     os << indent << "DisplayNodeIDs[" << i << "]: " << (id ? id : "(none)") << "\n";
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
+void vtkMRMLDisplayableNode::SetAndObserveDisplayNodeID(const char* displayNodeID)
 {
   this->SetAndObserveNodeReferenceID(this->GetDisplayNodeReferenceRole(), displayNodeID);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::AddAndObserveDisplayNodeID(const char *displayNodeID)
+void vtkMRMLDisplayableNode::AddAndObserveDisplayNodeID(const char* displayNodeID)
 {
   this->AddAndObserveNodeReferenceID(this->GetDisplayNodeReferenceRole(), displayNodeID);
 }
@@ -161,7 +158,7 @@ void vtkMRMLDisplayableNode::RemoveAllDisplayNodeIDs()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *displayNodeID)
+void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char* displayNodeID)
 {
   this->SetAndObserveNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), n, displayNodeID);
 }
@@ -193,8 +190,7 @@ const char* vtkMRMLDisplayableNode::GetDisplayNodeID()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetNthDisplayNode(int n)
 {
-  return vtkMRMLDisplayNode::SafeDownCast(
-    this->GetNthNodeReference(this->GetDisplayNodeReferenceRole(), n));
+  return vtkMRMLDisplayNode::SafeDownCast(this->GetNthNodeReference(this->GetDisplayNodeReferenceRole(), n));
 }
 
 //----------------------------------------------------------------------------
@@ -204,17 +200,14 @@ vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetDisplayNode()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+void vtkMRMLDisplayableNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
-  for (int i=0; i<numDisplayNodes; i++)
+  for (int i = 0; i < numDisplayNodes; i++)
   {
-    vtkMRMLDisplayNode *dnode = this->GetNthDisplayNode(i);
-    if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
-      event ==  vtkCommand::ModifiedEvent)
+    vtkMRMLDisplayNode* dnode = this->GetNthDisplayNode(i);
+    if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
     {
       this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, dnode);
     }
@@ -250,11 +243,10 @@ int vtkMRMLDisplayableNode::GetDisplayVisibility()
     return 2;
   }
 
-  for (int i=1; i<ndnodes; i++)
+  for (int i = 1; i < ndnodes; i++)
   {
-    vtkMRMLDisplayNode *displayNode = this->GetNthDisplayNode(i);
-    if (displayNode && displayNode->IsShowModeDefault()
-      && displayNode->GetVisibility() != visible)
+    vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
+    if (displayNode && displayNode->IsShowModeDefault() && displayNode->GetVisibility() != visible)
     {
       return 2;
     }
@@ -271,11 +263,10 @@ int vtkMRMLDisplayableNode::GetDisplayClassVisibility(const char* nodeClass)
   }
   int ndnodes = this->GetNumberOfDisplayNodes();
   int visible = 0;
-  for (int i=0; i<ndnodes; i++)
+  for (int i = 0; i < ndnodes; i++)
   {
-    vtkMRMLDisplayNode *displayNode = this->GetNthDisplayNode(i);
-    if ( displayNode && displayNode->IsShowModeDefault()
-      && displayNode->IsA(nodeClass) )
+    vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
+    if (displayNode && displayNode->IsShowModeDefault() && displayNode->IsA(nodeClass))
     {
       visible = displayNode->GetVisibility();
     }
@@ -292,9 +283,9 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
   }
 
   int ndnodes = this->GetNumberOfDisplayNodes();
-  for (int i=0; i<ndnodes; i++)
+  for (int i = 0; i < ndnodes; i++)
   {
-    vtkMRMLDisplayNode *displayNode = this->GetNthDisplayNode(i);
+    vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
     if (displayNode && displayNode->IsShowModeDefault())
     {
       displayNode->SetVisibility(visible);
@@ -316,11 +307,10 @@ void vtkMRMLDisplayableNode::SetDisplayClassVisibility(const char* nodeClass, in
   }
 
   int ndnodes = this->GetNumberOfDisplayNodes();
-  for (int i=0; i<ndnodes; i++)
+  for (int i = 0; i < ndnodes; i++)
   {
-    vtkMRMLDisplayNode *displayNode = this->GetNthDisplayNode(i);
-    if (displayNode && displayNode->IsShowModeDefault()
-      && displayNode->IsA(nodeClass))
+    vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
+    if (displayNode && displayNode->IsShowModeDefault() && displayNode->IsA(nodeClass))
     {
       displayNode->SetVisibility(visible);
     }

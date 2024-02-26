@@ -37,21 +37,19 @@
 
 // STD includes
 
-int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
+int qMRMLDisplayNodeWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkSmartPointer< vtkMRMLModelDisplayNode > displayNode =
-    vtkSmartPointer< vtkMRMLModelDisplayNode >::New();
+  vtkSmartPointer<vtkMRMLModelDisplayNode> displayNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
 
   qMRMLDisplayNodeWidget displayNodeWidget;
 
   if (displayNodeWidget.isEnabled())
   {
-    std::cerr << "No vtkMRMLDisplayNode provided, should be disabled."
-              << std::endl;
+    std::cerr << "No vtkMRMLDisplayNode provided, should be disabled." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -59,8 +57,8 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 
   if (displayNodeWidget.mrmlDisplayNode() != displayNode.GetPointer())
   {
-    std::cerr << "qMRMLDisplayNodeWidget::setMRMLDisplayNode() failed."
-              << displayNodeWidget.mrmlDisplayNode() << std::endl;
+    std::cerr << "qMRMLDisplayNodeWidget::setMRMLDisplayNode() failed." << displayNodeWidget.mrmlDisplayNode()
+              << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -88,41 +86,36 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
   bool sliceIntersectionVisible = displayNode->GetVisibility2D();
   if (displayNodeWidget.sliceIntersectionVisible() != sliceIntersectionVisible)
   {
-    std::cerr << "Wrong intersection: "
-              << displayNodeWidget.sliceIntersectionVisible() << std::endl;
+    std::cerr << "Wrong intersection: " << displayNodeWidget.sliceIntersectionVisible() << std::endl;
     return EXIT_FAILURE;
   }
 
   int sliceIntersectionThickness = displayNode->GetSliceIntersectionThickness();
   if (displayNodeWidget.sliceIntersectionThickness() != sliceIntersectionThickness)
   {
-    std::cerr << "Wrong intersection thickness: "
-              << displayNodeWidget.sliceIntersectionThickness() << std::endl;
+    std::cerr << "Wrong intersection thickness: " << displayNodeWidget.sliceIntersectionThickness() << std::endl;
     return EXIT_FAILURE;
   }
 
   displayNode->VisibilityOff();
   if (displayNodeWidget.visibility() != false)
   {
-    std::cerr << "vtkMRMLDisplayNode::SetVisibility() failed: "
-              << displayNodeWidget.visibility() << std::endl;
+    std::cerr << "vtkMRMLDisplayNode::SetVisibility() failed: " << displayNodeWidget.visibility() << std::endl;
     return EXIT_FAILURE;
   }
 
   displayNodeWidget.setVisibility(true);
   if (displayNode->GetVisibility() != 1)
   {
-    std::cerr << "qMRMLDisplayNodeWidget::setVisibility failed: "
-              << displayNode->GetVisibility() << std::endl;
+    std::cerr << "qMRMLDisplayNodeWidget::setVisibility failed: " << displayNode->GetVisibility() << std::endl;
     return EXIT_FAILURE;
   }
 
   displayNodeWidget.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
   return app.exec();
 }
-

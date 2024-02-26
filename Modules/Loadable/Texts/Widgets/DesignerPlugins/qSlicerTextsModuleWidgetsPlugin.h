@@ -18,7 +18,6 @@
 
 ==============================================================================*/
 
-
 #ifndef qSlicerTextsModuleWidgetsPlugin_h
 #define qSlicerTextsModuleWidgetsPlugin_h
 
@@ -38,11 +37,10 @@ class Q_SLICER_MODULE_TEXTS_WIDGETS_PLUGINS_EXPORT qSlicerTextModuleWidgetsPlugi
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
-
   /// Return designer plugins created by the module
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
-    QList<QDesignerCustomWidgetInterface *> plugins;
+    QList<QDesignerCustomWidgetInterface*> plugins;
     plugins << new qMRMLTextWidgetPlugin;
 
     return plugins;

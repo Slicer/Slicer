@@ -44,17 +44,17 @@ class vtkTable;
 class VTK_MRML_EXPORT vtkMRMLTableStorageNode : public vtkMRMLStorageNode
 {
 public:
-  static vtkMRMLTableStorageNode *New();
-  vtkTypeMacro(vtkMRMLTableStorageNode,vtkMRMLStorageNode);
+  static vtkMRMLTableStorageNode* New();
+  vtkTypeMacro(vtkMRMLTableStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "TableStorage";}
+  const char* GetNodeTagName() override { return "TableStorage"; }
 
   /// Return true if the node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// Get/Set schema file name, which contain description of data type of each column
   virtual void SetSchemaFileName(const char* schemaFileName);
@@ -89,10 +89,10 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node. Returns 0 on failure.
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node. Returns 0 on failure.
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
   std::string GenerateSchemaFileName(const char* fileName);
 
@@ -115,7 +115,9 @@ protected:
   std::vector<ColumnInfo> GetColumnInfo(vtkMRMLTableNode* tableNode, vtkTable* rawTable);
 
   /// Casts the data in the string array to the correct type and stores it in the data array
-  void FillDataFromStringArray(vtkStringArray* stringComponentArray, vtkDataArray* dataArray, std::string nullValueString="");
+  void FillDataFromStringArray(vtkStringArray* stringComponentArray,
+                               vtkDataArray* dataArray,
+                               std::string nullValueString = "");
 
   /// Adds the column specified by the given columnInfo to the table.
   /// Handles both single and multi-component columns

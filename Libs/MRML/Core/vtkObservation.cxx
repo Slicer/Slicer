@@ -41,8 +41,8 @@ vtkObservation::vtkObservation()
   this->ObserverDeleteEventTag = 0;
 
   this->ObservationCallbackCommand = vtkCallbackCommand::New();
-  this->ObservationCallbackCommand->SetCallback( vtkEventBroker::Callback );
-  this->ObservationCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
+  this->ObservationCallbackCommand->SetCallback(vtkEventBroker::Callback);
+  this->ObservationCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
 
   this->LastElapsedTime = 0.0;
   this->TotalElapsedTime = 0.0;
@@ -51,7 +51,7 @@ vtkObservation::vtkObservation()
 //----------------------------------------------------------------------------
 vtkObservation::~vtkObservation()
 {
-  this->SetScript( nullptr );
+  this->SetScript(nullptr);
 
   if (this->ObservationCallbackCommand != nullptr)
   {
@@ -74,26 +74,35 @@ void vtkObservation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
 
+  if (this->CallbackCommand)
+    os << indent << "EventBroker: " << this->EventBroker << "\n";
+  else
+    os << indent << "EventBroker: "
+       << "(none) \n";
 
-  if ( this->CallbackCommand ) os << indent << "EventBroker: " << this->EventBroker << "\n";
-  else os << indent << "EventBroker: " << "(none) \n";
-
-  if ( this->Subject ) os << indent << "Subject: " << this->Subject << "\n";
-  else os << indent << "Subject: " << "(none) \n";
+  if (this->Subject)
+    os << indent << "Subject: " << this->Subject << "\n";
+  else
+    os << indent << "Subject: "
+       << "(none) \n";
 
   os << indent << "Event: " << this->Event << "\n";
 
-  if ( this->Observer ) os << indent << "Observer: " << this->Observer << "\n";
-  else os << indent << "Observer: " << "(none) \n";
+  if (this->Observer)
+    os << indent << "Observer: " << this->Observer << "\n";
+  else
+    os << indent << "Observer: "
+       << "(none) \n";
 
-  if ( this->CallbackCommand ) os << indent << "CallbackCommand: " << this->CallbackCommand << "\n";
-  else os << indent << "CallbackCommand: " << "(none) \n";
+  if (this->CallbackCommand)
+    os << indent << "CallbackCommand: " << this->CallbackCommand << "\n";
+  else
+    os << indent << "CallbackCommand: "
+       << "(none) \n";
 
-  os << indent << "Script: " <<
-    (this->Script ? this->Script : "(none)") << "\n";
+  os << indent << "Script: " << (this->Script ? this->Script : "(none)") << "\n";
 
-  os << indent << "Comment: " <<
-    (this->Comment ? this->Comment : "(none)") << "\n";
+  os << indent << "Comment: " << (this->Comment ? this->Comment : "(none)") << "\n";
   os << indent << "EventTag: " << this->EventTag << "\n";
   os << indent << "SubjectDeleteEventTag: " << this->SubjectDeleteEventTag << "\n";
   os << indent << "ObserverDeleteEventTag: " << this->ObserverDeleteEventTag << "\n";

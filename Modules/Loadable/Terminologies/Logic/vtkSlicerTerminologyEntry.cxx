@@ -76,9 +76,10 @@ vtkSlicerTerminologyEntry::~vtkSlicerTerminologyEntry()
 //----------------------------------------------------------------------------
 void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
-  os << indent << "TerminologyContextName:   " << (this->TerminologyContextName?this->TerminologyContextName:"NULL") << "\n";
+  os << indent << "TerminologyContextName:   " << (this->TerminologyContextName ? this->TerminologyContextName : "NULL")
+     << "\n";
 
   os << indent << "CategoryObject: ";
   if (this->CategoryObject)
@@ -108,7 +109,7 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
     os << indent.GetNextIndent() << "NULL\n";
   }
 
-  os << indent << "AnatomicContextName:   " << (this->AnatomicContextName?this->AnatomicContextName:"NULL") << "\n";
+  os << indent << "AnatomicContextName:   " << (this->AnatomicContextName ? this->AnatomicContextName : "NULL") << "\n";
   os << indent << "AnatomicRegionObject: ";
   if (this->AnatomicRegionObject)
   {
@@ -138,7 +139,7 @@ void vtkSlicerTerminologyEntry::Copy(vtkSlicerTerminologyEntry* aEntry)
   }
 
   if (!aEntry->GetCategoryObject() || !aEntry->GetTypeObject() || !aEntry->GetTypeModifierObject()
-    || !aEntry->GetAnatomicRegionObject() || !aEntry->GetAnatomicRegionModifierObject() )
+      || !aEntry->GetAnatomicRegionObject() || !aEntry->GetAnatomicRegionModifierObject())
   {
     vtkErrorMacro("Copy: Invalid terminology entry given");
     // Invalidate whole terminology entry

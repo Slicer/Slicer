@@ -32,8 +32,7 @@
 #include <vtkWeakPointer.h>
 
 //-----------------------------------------------------------------------------
-class qMRMLVolumePropertyNodeWidgetPrivate
-  : public Ui_qMRMLVolumePropertyNodeWidget
+class qMRMLVolumePropertyNodeWidgetPrivate : public Ui_qMRMLVolumePropertyNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLVolumePropertyNodeWidget);
 
@@ -50,8 +49,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLVolumePropertyNodeWidgetPrivate::qMRMLVolumePropertyNodeWidgetPrivate(
-  qMRMLVolumePropertyNodeWidget& object)
+qMRMLVolumePropertyNodeWidgetPrivate::qMRMLVolumePropertyNodeWidgetPrivate(qMRMLVolumePropertyNodeWidget& object)
   : q_ptr(&object)
 {
   this->VolumePropertyNode = nullptr;
@@ -65,10 +63,9 @@ void qMRMLVolumePropertyNodeWidgetPrivate::setupUi()
 {
   Q_Q(qMRMLVolumePropertyNodeWidget);
   this->Ui_qMRMLVolumePropertyNodeWidget::setupUi(q);
-  QObject::connect(this->VolumePropertyWidget, SIGNAL(chartsExtentChanged()),
-                   q, SIGNAL(chartsExtentChanged()));
-  QObject::connect(this->VolumePropertyWidget, SIGNAL(thresholdEnabledChanged(bool)),
-                   q, SIGNAL(thresholdChanged(bool)));
+  QObject::connect(this->VolumePropertyWidget, SIGNAL(chartsExtentChanged()), q, SIGNAL(chartsExtentChanged()));
+  QObject::connect(
+    this->VolumePropertyWidget, SIGNAL(thresholdEnabledChanged(bool)), q, SIGNAL(thresholdChanged(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -86,45 +83,43 @@ qMRMLVolumePropertyNodeWidget::qMRMLVolumePropertyNodeWidget(QWidget* parentWidg
 qMRMLVolumePropertyNodeWidget::~qMRMLVolumePropertyNodeWidget() = default;
 
 // --------------------------------------------------------------------------
-vtkVolumeProperty* qMRMLVolumePropertyNodeWidget::volumeProperty()const
+vtkVolumeProperty* qMRMLVolumePropertyNodeWidget::volumeProperty() const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   return d->VolumePropertyWidget->volumeProperty();
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget::setMRMLVolumePropertyNode(
-  vtkMRMLNode* volumePropertyNode)
+void qMRMLVolumePropertyNodeWidget::setMRMLVolumePropertyNode(vtkMRMLNode* volumePropertyNode)
 {
-  this->setMRMLVolumePropertyNode(
-    vtkMRMLVolumePropertyNode::SafeDownCast(volumePropertyNode));
+  this->setMRMLVolumePropertyNode(vtkMRMLVolumePropertyNode::SafeDownCast(volumePropertyNode));
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget::setMRMLVolumePropertyNode(
-  vtkMRMLVolumePropertyNode* volumePropertyNode)
+void qMRMLVolumePropertyNodeWidget::setMRMLVolumePropertyNode(vtkMRMLVolumePropertyNode* volumePropertyNode)
 {
-   Q_D(qMRMLVolumePropertyNodeWidget);
-   this->qvtkReconnect(d->VolumePropertyNode, volumePropertyNode,
-                        vtkCommand::ModifiedEvent,
-                        this, SLOT(updateFromVolumePropertyNode()));
-   d->VolumePropertyNode = volumePropertyNode;
-   this->updateFromVolumePropertyNode();
+  Q_D(qMRMLVolumePropertyNodeWidget);
+  this->qvtkReconnect(
+    d->VolumePropertyNode, volumePropertyNode, vtkCommand::ModifiedEvent, this, SLOT(updateFromVolumePropertyNode()));
+  d->VolumePropertyNode = volumePropertyNode;
+  this->updateFromVolumePropertyNode();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLVolumePropertyNodeWidget::updateFromVolumePropertyNode()
 {
   Q_D(qMRMLVolumePropertyNodeWidget);
-  vtkVolumeProperty* newVolumeProperty =
-    d->VolumePropertyNode ? d->VolumePropertyNode->GetVolumeProperty() : nullptr;
-  qvtkReconnect(d->VolumePropertyWidget->volumeProperty(), newVolumeProperty,
-                vtkCommand::ModifiedEvent, this, SIGNAL(volumePropertyChanged()));
+  vtkVolumeProperty* newVolumeProperty = d->VolumePropertyNode ? d->VolumePropertyNode->GetVolumeProperty() : nullptr;
+  qvtkReconnect(d->VolumePropertyWidget->volumeProperty(),
+                newVolumeProperty,
+                vtkCommand::ModifiedEvent,
+                this,
+                SIGNAL(volumePropertyChanged()));
   d->VolumePropertyWidget->setVolumeProperty(newVolumeProperty);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget::chartsBounds(double bounds[4])const
+void qMRMLVolumePropertyNodeWidget::chartsBounds(double bounds[4]) const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   d->VolumePropertyWidget->chartsBounds(bounds);
@@ -145,7 +140,7 @@ void qMRMLVolumePropertyNodeWidget::setChartsExtent(double min, double max)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget::chartsExtent(double extent[4])const
+void qMRMLVolumePropertyNodeWidget::chartsExtent(double extent[4]) const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   d->VolumePropertyWidget->chartsExtent(extent);
@@ -159,7 +154,7 @@ void qMRMLVolumePropertyNodeWidget::setThreshold(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLVolumePropertyNodeWidget::hasThreshold()const
+bool qMRMLVolumePropertyNodeWidget::hasThreshold() const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   return d->VolumePropertyWidget->isThresholdEnabled();

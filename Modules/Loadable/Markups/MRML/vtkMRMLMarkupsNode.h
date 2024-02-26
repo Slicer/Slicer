@@ -73,7 +73,7 @@ class vtkPolyData;
 class vtkStringArray;
 class vtkTransformPolyDataFilter;
 
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
+class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
 {
   /// Make the storage node a friend so that ReadDataInternal can set the ControlPoint ids
   friend class vtkMRMLMarkupsStorageNode;
@@ -81,7 +81,6 @@ class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRML
   friend class vtkMRMLMarkupsJsonStorageNode;
 
 public:
-
   struct ControlPoint
   {
     ControlPoint()
@@ -132,13 +131,13 @@ public:
 
   typedef std::vector<ControlPoint*> ControlPointsListType;
 
-  vtkTypeMacro(vtkMRMLMarkupsNode,vtkMRMLDisplayableNode);
+  vtkTypeMacro(vtkMRMLMarkupsNode, vtkMRMLDisplayableNode);
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual const char* GetIcon() {return ":/Icons/MarkupsGeneric.png";}
-  virtual const char* GetAddIcon() {return ":/Icons/MarkupsGenericMouseModePlace.png";}
-  virtual const char* GetPlaceAddIcon() {return ":/Icons/MarkupsGenericMouseModePlaceAdd.png";}
+  virtual const char* GetIcon() { return ":/Icons/MarkupsGeneric.png"; }
+  virtual const char* GetAddIcon() { return ":/Icons/MarkupsGenericMouseModePlace.png"; }
+  virtual const char* GetPlaceAddIcon() { return ":/Icons/MarkupsGenericMouseModePlaceAdd.png"; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -146,10 +145,10 @@ public:
 
   /// Get markup type internal name. This type name is the same regardless of the
   /// chosen application language and should not be displayed to end users.
-  virtual const char* GetMarkupType() {return "Markup";};
+  virtual const char* GetMarkupType() { return "Markup"; };
 
   /// Get markup short name
-  virtual const char* GetDefaultNodeNamePrefix() {return "M";};
+  virtual const char* GetDefaultNodeNamePrefix() { return "M"; };
 
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;
@@ -162,17 +161,16 @@ public:
   /// coordinateSystemFlag = vtkMRMLStorageNode::CoordinateSystemRAS or vtkMRMLStorageNode::CoordinateSystemLPS
   /// multipleFlag = 1 for the whole list, 1 for the first selected control point
   void WriteCLI(std::vector<std::string>& commandLine,
-                        std::string prefix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS,
-                        int multipleFlag = 1) override;
+                std::string prefix,
+                int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS,
+                int multipleFlag = 1) override;
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsNode);
 
   /// Alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// \brief End modifying the node.
   /// Updates pending measurements and other updates.
@@ -214,10 +212,16 @@ public:
    * and only updated (Compute called) as needed.
    */
   void SetNthMeasurement(int id, vtkMRMLMeasurement* measurement);
-  void SetNthMeasurement(int id, const std::string& name, double value, const std::string &units,
-    std::string printFormat = "", const std::string description = "",
-    vtkCodedEntry* quantityCode = nullptr, vtkCodedEntry* derivationCode = nullptr,
-    vtkCodedEntry* unitsCode = nullptr, vtkCodedEntry* methodCode = nullptr);
+  void SetNthMeasurement(int id,
+                         const std::string& name,
+                         double value,
+                         const std::string& units,
+                         std::string printFormat = "",
+                         const std::string description = "",
+                         vtkCodedEntry* quantityCode = nullptr,
+                         vtkCodedEntry* derivationCode = nullptr,
+                         vtkCodedEntry* unitsCode = nullptr,
+                         vtkCodedEntry* methodCode = nullptr);
   void RemoveAllMeasurements();
   //@}
 
@@ -230,31 +234,34 @@ public:
   ///
   enum
   {
-    LockModifiedEvent = 19000,                  ///< Markups node lock status is changed. Modified event is invoked, too.
-    LabelFormatModifiedEvent,                   ///< Markups node label format changed. Modified event is invoked, too.
-    PointAddedEvent,                            ///< New control point(s) added. Modified event is NOT invoked.
-    PointRemovedEvent,                          ///< Control point(s) deleted. Modified event is NOT invoked.
-    PointPositionDefinedEvent,                  ///< Point was not defined (undefined, preview position status,
-                                                ///  or non-existent point) before but now it is defined.
-    PointPositionUndefinedEvent,                ///< Point position was defined and now it is not defined anymore (point deleted or position is not defined).
-    PointPositionMissingEvent,                  ///< Point was not not missing before and now it is missing.
-    PointPositionNonMissingEvent,               ///< Point missing before and now it is not missing.
-    PointModifiedEvent,                         ///< Existing control point(s) modified, added, or removed. Modified event is NOT invoked.
-    PointStartInteractionEvent,                 ///< When starting interacting with a control point.
-    PointEndInteractionEvent,                   ///< When an interaction with a control point process finishes.
-    CenterOfRotationModifiedEvent,              ///< When position of the center of rotation is changed (used for example for rotating closed curves).
-    FixedNumberOfControlPointsModifiedEvent,    ///< When fixed number of points set/unset.
-    PointAboutToBeRemovedEvent,                 ///< Point is about to be deleted. Thus it is alive when event is called.
+    LockModifiedEvent = 19000,    ///< Markups node lock status is changed. Modified event is invoked, too.
+    LabelFormatModifiedEvent,     ///< Markups node label format changed. Modified event is invoked, too.
+    PointAddedEvent,              ///< New control point(s) added. Modified event is NOT invoked.
+    PointRemovedEvent,            ///< Control point(s) deleted. Modified event is NOT invoked.
+    PointPositionDefinedEvent,    ///< Point was not defined (undefined, preview position status,
+                                  ///  or non-existent point) before but now it is defined.
+    PointPositionUndefinedEvent,  ///< Point position was defined and now it is not defined anymore (point deleted or
+                                  ///< position is not defined).
+    PointPositionMissingEvent,    ///< Point was not not missing before and now it is missing.
+    PointPositionNonMissingEvent, ///< Point missing before and now it is not missing.
+    PointModifiedEvent, ///< Existing control point(s) modified, added, or removed. Modified event is NOT invoked.
+    PointStartInteractionEvent,    ///< When starting interacting with a control point.
+    PointEndInteractionEvent,      ///< When an interaction with a control point process finishes.
+    CenterOfRotationModifiedEvent, ///< When position of the center of rotation is changed (used for example for
+                                   ///< rotating closed curves).
+    FixedNumberOfControlPointsModifiedEvent, ///< When fixed number of points set/unset.
+    PointAboutToBeRemovedEvent,              ///< Point is about to be deleted. Thus it is alive when event is called.
   };
 
   /// Placement status of a control point.
   enum
   {
-    PositionUndefined,      ///< PositionUndefined: position is undefined (coordinate values must not be used).
-    PositionPreview,        ///< PositionPreview: new point is being placed, position is tentative.
-    PositionDefined,        ///< PositionDefined: position is specified.
-    PositionMissing,        ///< PositionMissing: point is undefined and placement should not be attempted.
-    PositionStatus_Last     ///< PositionStatus_Last: indicates the end of the enum (int first = 0, int last = PositionStatus_Last)
+    PositionUndefined,  ///< PositionUndefined: position is undefined (coordinate values must not be used).
+    PositionPreview,    ///< PositionPreview: new point is being placed, position is tentative.
+    PositionDefined,    ///< PositionDefined: position is specified.
+    PositionMissing,    ///< PositionMissing: point is undefined and placement should not be attempted.
+    PositionStatus_Last ///< PositionStatus_Last: indicates the end of the enum (int first = 0, int last =
+                        ///< PositionStatus_Last)
   };
 
   static const char* GetPositionStatusAsString(int id);
@@ -278,7 +285,7 @@ public:
   ///@}
 
   /// Return a cast display node, returns null if none
-  vtkMRMLMarkupsDisplayNode *GetMarkupsDisplayNode();
+  vtkMRMLMarkupsDisplayNode* GetMarkupsDisplayNode();
 
   /// Return true if n is a valid control point, false otherwise.
   bool ControlPointExists(int n);
@@ -288,7 +295,7 @@ public:
   /// Return the number of unlocked control points with defined position in this node
   int GetNumberOfMovableControlPoints();
   /// Return the number of control points that are already placed (not being previewed or undefined).
-  int GetNumberOfDefinedControlPoints(bool includePreview=false);
+  int GetNumberOfDefinedControlPoints(bool includePreview = false);
   /// Return the number of control points that have not been placed (not being previewed or skipped).
   int GetNumberOfUndefinedControlPoints(bool includePreview = false);
 
@@ -313,7 +320,7 @@ public:
   /// New control points are added if needed.
   /// Existing control points are updated with the new positions.
   /// Any extra existing control points are removed.
-  void SetControlPointPositionsWorld(vtkPoints* points, bool setUndefinedPoints=true);
+  void SetControlPointPositionsWorld(vtkPoints* points, bool setUndefinedPoints = true);
 
   /// Get a copy of all control point positions in world coordinate system
   void GetControlPointPositionsWorld(vtkPoints* points);
@@ -330,7 +337,7 @@ public:
   /// Markups node takes over ownership of the pointer (markups node will delete it)
   /// \param autoLabel: if enabled (by default it is) then empty point label will be
   /// replaced with automatically generated label.
-  int AddControlPoint(ControlPoint *controlPoint, bool autoLabel=true);
+  int AddControlPoint(ControlPoint* controlPoint, bool autoLabel = true);
 
   ///@{
   /// Add a new control point, defined in the world coordinate system.
@@ -353,7 +360,7 @@ public:
   ///@}
 
   ///@{
-  //Add and insert control point at index, defined in the world coordinate system.
+  // Add and insert control point at index, defined in the world coordinate system.
   //\sa InsertControlPoint
   bool InsertControlPointWorld(int n, vtkVector3d pointWorld, std::string label = std::string());
   bool InsertControlPointWorld(int n, double pointWorld[3], std::string label = std::string());
@@ -391,10 +398,13 @@ public:
   vtkVector3d GetNthControlPointPositionWorld(int pointIndex);
   ///@}
 
-
-    ///@{
+  ///@{
   /// Set of the Nth control point position from coordinates
-  void SetNthControlPointPosition(const int pointIndex, const double x, const double y, const double z, int positionStatus = PositionDefined);
+  void SetNthControlPointPosition(const int pointIndex,
+                                  const double x,
+                                  const double y,
+                                  const double z,
+                                  int positionStatus = PositionDefined);
   void SetNthControlPointPosition(const int pointIndex, const double position[3], int positionStatus = PositionDefined);
   ///@}
 
@@ -402,15 +412,24 @@ public:
   /// Set of the Nth control point position using World coordinate system
   /// Calls SetNthControlPointPosition after transforming the passed in coordinate
   /// \sa SetNthControlPointPosition
-  void SetNthControlPointPositionWorld(const int pointIndex, const double x, const double y, const double z, int positionStatus = PositionDefined);
-  void SetNthControlPointPositionWorld(const int pointIndex, const double position[3], int positionStatus = PositionDefined);
+  void SetNthControlPointPositionWorld(const int pointIndex,
+                                       const double x,
+                                       const double y,
+                                       const double z,
+                                       int positionStatus = PositionDefined);
+  void SetNthControlPointPositionWorld(const int pointIndex,
+                                       const double position[3],
+                                       int positionStatus = PositionDefined);
   ///@}
 
   /// Set of the Nth control point position and orientation from an array using World coordinate system.
   /// Orientation: x (0, 3, 6), y (1, 4, 7), z (2, 5, 8)
   /// \sa SetNthControlPointPosition
   void SetNthControlPointPositionOrientationWorld(const int pointIndex,
-    const double pos[3], const double orientationMatrix[9], const char* associatedNodeID, int positionStatus = PositionDefined);
+                                                  const double pos[3],
+                                                  const double orientationMatrix[9],
+                                                  const char* associatedNodeID,
+                                                  int positionStatus = PositionDefined);
 
   ///@{
   /// Set the orientation for the Nth control point from a WXYZ orientation.
@@ -590,7 +609,7 @@ public:
 
   /// Returns true since can apply non linear transforms
   /// \sa ApplyTransform
-  bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms() const override;
 
   /// Apply the passed transformation to all of the control points
   /// \sa CanApplyNonLinearTransforms
@@ -681,14 +700,17 @@ public:
 
   /// The internal instance of the curve coordinate system generator to allow
   /// use of the coordinate systems computed for curve point for other computations.
-  vtkParallelTransportFrame* GetCurveCoordinateSystemGeneratorWorld() { return this->CurveCoordinateSystemGeneratorWorld.GetPointer(); };
+  vtkParallelTransportFrame* GetCurveCoordinateSystemGeneratorWorld()
+  {
+    return this->CurveCoordinateSystemGeneratorWorld.GetPointer();
+  };
 
   void GetRASBounds(double bounds[6]) override;
   void GetBounds(double bounds[6]) override;
 
   /// Get the index of the closest control point to the world coordinates.
   /// If visibleOnly is set to true then index of the closest visible control point will be returned.
-  int GetClosestControlPointIndexToPositionWorld(double pos[3], bool visibleOnly=false);
+  int GetClosestControlPointIndexToPositionWorld(double pos[3], bool visibleOnly = false);
 
   /// 4x4 matrix detailing the orientation and position in world coordinates of the interaction handles.
   virtual vtkMatrix4x4* GetInteractionHandleToWorldMatrix();
@@ -702,7 +724,7 @@ public:
 
   /// Update the AssignAttribute filter based on its ActiveScalarName and its ActiveAttributeLocation
   /// To be re-implemented in subclasses
-  virtual void UpdateAssignedAttribute() {};
+  virtual void UpdateAssignedAttribute(){};
 
   /// Returns true if no additional control points can be added to this node.
   virtual bool GetControlPointPlacementComplete();
@@ -737,7 +759,8 @@ public:
   /// \deprecated Use RemoveAllControlPoints instead.
   void RemoveAllMarkups()
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::RemoveAllMarkups method is deprecated, please use RemoveAllControlPoints instead");
+    vtkWarningMacro(
+      "vtkMRMLMarkupsNode::RemoveAllMarkups method is deprecated, please use RemoveAllControlPoints instead");
     this->RemoveAllControlPoints();
   };
 
@@ -751,20 +774,23 @@ public:
   /// \deprecated Use GetNumberOfControlPoints() instead.
   int GetNumberOfMarkups()
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetNumberOfMarkups method is deprecated, please use GetNumberOfControlPoints instead");
+    vtkWarningMacro(
+      "vtkMRMLMarkupsNode::GetNumberOfMarkups method is deprecated, please use GetNumberOfControlPoints instead");
     return this->GetNumberOfControlPoints();
   };
   /// \deprecated Use GetNumberOfControlPoints() instead.
   int GetNumberOfPointsInNthMarkup(int)
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetNumberOfPointsInNthMarkup method is deprecated, please use GetNumberOfControlPoints instead");
+    vtkWarningMacro("vtkMRMLMarkupsNode::GetNumberOfPointsInNthMarkup method is deprecated, please use "
+                    "GetNumberOfControlPoints instead");
     return this->GetNumberOfControlPoints();
   };
 
   /// \deprecated Use GetNthControlPointPositionVector() method instead.
   vtkVector3d GetMarkupPointVector(int markupIndex, int)
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetMarkupPointVector method is deprecated, please use GetNthControlPointPositionVector instead");
+    vtkWarningMacro("vtkMRMLMarkupsNode::GetMarkupPointVector method is deprecated, please use "
+                    "GetNthControlPointPositionVector instead");
     return this->GetNthControlPointPositionVector(markupIndex);
   };
 
@@ -785,27 +811,34 @@ public:
 
   /// Set of the Nth control point position from an array
   /// \deprecated Use SetNthControlPointPosition instead.
-  void SetNthControlPointPositionFromArray(const int pointIndex, const double pos[3], int positionStatus = PositionDefined)
+  void SetNthControlPointPositionFromArray(const int pointIndex,
+                                           const double pos[3],
+                                           int positionStatus = PositionDefined)
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::SetNthControlPointPositionFromArray method is deprecated, please use SetNthControlPointPosition instead");
+    vtkWarningMacro("vtkMRMLMarkupsNode::SetNthControlPointPositionFromArray method is deprecated, please use "
+                    "SetNthControlPointPosition instead");
     this->SetNthControlPointPosition(pointIndex, pos[0], pos[1], pos[2], positionStatus);
   }
 
   /// Set of the Nth control point position from an array using World coordinate system
   /// \deprecated Use SetNthControlPointPositionWorld instead.
   /// \sa SetNthControlPointPosition
-  void SetNthControlPointPositionWorldFromArray(const int pointIndex, const double pos[3], int positionStatus = PositionDefined);
+  void SetNthControlPointPositionWorldFromArray(const int pointIndex,
+                                                const double pos[3],
+                                                int positionStatus = PositionDefined);
 
   /// Set of the Nth control point position and orientation from an array using World coordinate system.
   /// \deprecated Use SetNthControlPointPositionOrientationWorld instead.
   /// Orientation: x (0, 3, 6), y (1, 4, 7), z (2, 5, 8)
   /// \sa SetNthControlPointPosition
   void SetNthControlPointPositionOrientationWorldFromArray(const int pointIndex,
-    const double positionWorld[3], const double orientationMatrix_World[9],
-    const char* associatedNodeID, int positionStatus = PositionDefined)
+                                                           const double positionWorld[3],
+                                                           const double orientationMatrix_World[9],
+                                                           const char* associatedNodeID,
+                                                           int positionStatus = PositionDefined)
   {
     vtkWarningMacro("vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray method is deprecated,"
-      << " please use SetNthControlPointPositionOrientationWorld instead");
+                    << " please use SetNthControlPointPositionOrientationWorld instead");
     this->SetNthControlPointPositionOrientationWorld(
       pointIndex, positionWorld, orientationMatrix_World, associatedNodeID, positionStatus);
   }
@@ -822,7 +855,8 @@ public:
   /// Return (0,0,0) if center position is undefined.
   vtkVector3d GetCenterOfRotationVector()
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetCenterOfRotationVector method is deprecated, please use GetCenterOfRotation instead");
+    vtkWarningMacro(
+      "vtkMRMLMarkupsNode::GetCenterOfRotationVector method is deprecated, please use GetCenterOfRotation instead");
     return this->GetCenterOfRotation();
   }
 
@@ -835,7 +869,8 @@ public:
   /// \sa SetCenterOfRotation
   void SetCenterOfRotationFromArray(const double pos[3])
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::SetCenterOfRotationFromArray method is deprecated, please use SetCenterOfRotation instead");
+    vtkWarningMacro(
+      "vtkMRMLMarkupsNode::SetCenterOfRotationFromArray method is deprecated, please use SetCenterOfRotation instead");
     this->SetCenterOfRotation(pos[0], pos[1], pos[2]);
   }
 
@@ -846,21 +881,25 @@ public:
   void SetNthControlPointOrientationFromPointer(int n, const double* orientationWXYZ);
   void SetNthControlPointOrientationFromArray(int n, const double orientationWXYZ[4])
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::SetNthControlPointOrientationFromArray method is deprecated, please use SetNthControlPointOrientation instead");
-    this->SetNthControlPointOrientation(n, orientationWXYZ[0], orientationWXYZ[1], orientationWXYZ[2], orientationWXYZ[3]);
+    vtkWarningMacro("vtkMRMLMarkupsNode::SetNthControlPointOrientationFromArray method is deprecated, please use "
+                    "SetNthControlPointOrientation instead");
+    this->SetNthControlPointOrientation(
+      n, orientationWXYZ[0], orientationWXYZ[1], orientationWXYZ[2], orientationWXYZ[3]);
   }
   ///@}
 
   /// \deprecated Use GetNthControlPointAssociatedNodeID instead.
   std::string GetNthMarkupAssociatedNodeID(int n = 0)
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetNthMarkupAssociatedNodeID method is deprecated, please use GetNthControlPointAssociatedNodeID instead");
+    vtkWarningMacro("vtkMRMLMarkupsNode::GetNthMarkupAssociatedNodeID method is deprecated, please use "
+                    "GetNthControlPointAssociatedNodeID instead");
     return this->GetNthControlPointAssociatedNodeID(n);
   };
   /// \deprecated Use SetNthControlPointAssociatedNodeID instead.
   void SetNthMarkupAssociatedNodeID(int n, std::string id)
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::SetNthMarkupAssociatedNodeID method is deprecated, please use SetNthControlPointAssociatedNodeID instead");
+    vtkWarningMacro("vtkMRMLMarkupsNode::SetNthMarkupAssociatedNodeID method is deprecated, please use "
+                    "SetNthControlPointAssociatedNodeID instead");
     this->SetNthControlPointAssociatedNodeID(n, id);
   };
 
@@ -874,45 +913,52 @@ public:
   /// \deprecated Use GetNthControlPointLocked instead.
   bool GetNthMarkupLocked(int n = 0)
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetNthMarkupLocked method is deprecated, please use GetNthControlPointLocked instead");
+    vtkWarningMacro(
+      "vtkMRMLMarkupsNode::GetNthMarkupLocked method is deprecated, please use GetNthControlPointLocked instead");
     return this->GetNthControlPointLocked(n);
   };
   /// \deprecated Use SetNthControlPointLocked instead.
   void SetNthMarkupLocked(int n, bool flag)
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::SetNthMarkupLocked method is deprecated, please use SetNthControlPointLocked instead");
+    vtkWarningMacro(
+      "vtkMRMLMarkupsNode::SetNthMarkupLocked method is deprecated, please use SetNthControlPointLocked instead");
     this->SetNthControlPointLocked(n, flag);
   };
 
   /// \deprecated Use GetNthControlPointLabel instead.
   std::string GetNthMarkupLabel(int n = 0)
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetNthMarkupLabel method is deprecated, please use GetNthControlPointLabel instead");
+    vtkWarningMacro(
+      "vtkMRMLMarkupsNode::GetNthMarkupLabel method is deprecated, please use GetNthControlPointLabel instead");
     return this->GetNthControlPointLabel(n);
   };
   /// \deprecated Use SetNthControlPointLabel instead.
   void SetNthMarkupLabel(int n, std::string label)
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::SetNthMarkupLabel method is deprecated, please use SetNthControlPointLabel instead");
+    vtkWarningMacro(
+      "vtkMRMLMarkupsNode::SetNthMarkupLabel method is deprecated, please use SetNthControlPointLabel instead");
     this->SetNthControlPointLabel(n, label);
   };
   /// \deprecated Use GetControlPointLabelFormat instead.
   std::string GetMarkupLabelFormat()
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::GetMarkupLabelFormat method is deprecated, please use GetControlPointLabelFormat instead");
+    vtkWarningMacro(
+      "vtkMRMLMarkupsNode::GetMarkupLabelFormat method is deprecated, please use GetControlPointLabelFormat instead");
     return this->GetControlPointLabelFormat();
   };
   /// \deprecated Use SetControlPointLabelFormat instead.
   void SetMarkupLabelFormat(std::string format)
   {
-    // Not warning this at the moment as existing scene files will contain the markupLabelFormat attribute name and would warn on load
-    // vtkWarningMacro("vtkMRMLMarkupsNode::SetMarkupLabelFormat method is deprecated, please use SetControlPointLabelFormat instead");
+    // Not warning this at the moment as existing scene files will contain the markupLabelFormat attribute name and
+    // would warn on load vtkWarningMacro("vtkMRMLMarkupsNode::SetMarkupLabelFormat method is deprecated, please use
+    // SetControlPointLabelFormat instead");
     return this->SetControlPointLabelFormat(format);
   };
   /// \deprecated Use ReplaceListNameInControlPointLabelFormat instead.
   std::string ReplaceListNameInMarkupLabelFormat()
   {
-    vtkWarningMacro("vtkMRMLMarkupsNode::ReplaceListNameInMarkupLabelFormat method is deprecated, please use ReplaceListNameInControlPointLabelFormat instead");
+    vtkWarningMacro("vtkMRMLMarkupsNode::ReplaceListNameInMarkupLabelFormat method is deprecated, please use "
+                    "ReplaceListNameInControlPointLabelFormat instead");
     return this->ReplaceListNameInControlPointLabelFormat();
   };
 
@@ -964,21 +1010,23 @@ protected:
   virtual void UpdateInteractionHandleToWorldMatrix();
 
   /// Transform the orientation matrix from node to world coordinates
-  virtual void TransformOrientationMatrixFromNodeToWorld(
-    const double position_Node[3], const double orientationMatrix_Node[9], double orientationMatrix_World[9]);
+  virtual void TransformOrientationMatrixFromNodeToWorld(const double position_Node[3],
+                                                         const double orientationMatrix_Node[9],
+                                                         double orientationMatrix_World[9]);
 
   /// Transform the orientation matrix from world to node coordinates
-  virtual void TransformOrientationMatrixFromWorldToNode(
-    const double position_World[3], const double orientationMatrix_World[9], double orientationMatrix_Node[9]);
+  virtual void TransformOrientationMatrixFromWorldToNode(const double position_World[3],
+                                                         const double orientationMatrix_World[9],
+                                                         double orientationMatrix_Node[9]);
 
   /// Used for limiting number of control points that may be placed.
   /// This is a soft limit at which automatic placement stops.
-  int RequiredNumberOfControlPoints{0};
+  int RequiredNumberOfControlPoints{ 0 };
   /// Used for limiting number of control points that may be placed.
   /// This is a hard limit at which new control points cannot be added.
-  int MaximumNumberOfControlPoints{-1};
+  int MaximumNumberOfControlPoints{ -1 };
 
-  bool CurveClosed{false};
+  bool CurveClosed{ false };
 
   /// Vector of control points
   ControlPointsListType ControlPoints;
@@ -1004,18 +1052,18 @@ protected:
   vtkSmartPointer<vtkPointLocator> TransformedCurvePolyLocator;
 
   /// Locks all the points and GUI
-  int Locked{0};
+  int Locked{ 0 };
 
   /// Locks number of control points. If enabled then points cannot be added or removed.
   /// Point position can be unset instead of deleting the point.
-  bool FixedNumberOfControlPoints{false};
+  bool FixedNumberOfControlPoints{ false };
 
-  std::string ControlPointLabelFormat{"%N-%d"};
+  std::string ControlPointLabelFormat{ "%N-%d" };
 
   /// Keep track of the number of markups that were added to the list, always
   /// incrementing, not decreasing when they're removed. Used to help create
   /// unique names and ids. Reset to 0 when \sa RemoveAllControlPoints called
-  int LastUsedControlPointNumber{0};
+  int LastUsedControlPointNumber{ 0 };
 
   /// Index of the control point index that placement is started from (if no other point is requested specifically).
   int ControlPointPlacementStartIndex{ -1 };
@@ -1033,7 +1081,7 @@ protected:
   vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;
 
   /// Flag set from SetControlPointPositionsWorld that pauses update of measurements until the update is complete.
-  bool IsUpdatingPoints{false};
+  bool IsUpdatingPoints{ false };
 
   friend class qSlicerMarkupsModuleWidget; // To directly access measurements
 };

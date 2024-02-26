@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 // qMRML includes
 #include "qMRMLTransformDisplayNodeWidget.h"
 #include "ui_qMRMLTransformDisplayNodeWidget.h"
@@ -41,12 +40,13 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qMRMLTransformDisplayNodeWidgetPrivate
-  : public Ui_qMRMLTransformDisplayNodeWidget
+class qMRMLTransformDisplayNodeWidgetPrivate : public Ui_qMRMLTransformDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLTransformDisplayNodeWidget);
+
 protected:
   qMRMLTransformDisplayNodeWidget* const q_ptr;
+
 public:
   qMRMLTransformDisplayNodeWidgetPrivate(qMRMLTransformDisplayNodeWidget& object);
   ~qMRMLTransformDisplayNodeWidgetPrivate();
@@ -60,8 +60,7 @@ public:
 // qMRMLTransformDisplayNodeWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qMRMLTransformDisplayNodeWidgetPrivate
-::qMRMLTransformDisplayNodeWidgetPrivate(qMRMLTransformDisplayNodeWidget& object)
+qMRMLTransformDisplayNodeWidgetPrivate ::qMRMLTransformDisplayNodeWidgetPrivate(qMRMLTransformDisplayNodeWidget& object)
   : q_ptr(&object)
 {
   this->TransformDisplayNode = nullptr;
@@ -69,27 +68,25 @@ qMRMLTransformDisplayNodeWidgetPrivate
 }
 
 //-----------------------------------------------------------------------------
-qMRMLTransformDisplayNodeWidgetPrivate
-::~qMRMLTransformDisplayNodeWidgetPrivate()
+qMRMLTransformDisplayNodeWidgetPrivate ::~qMRMLTransformDisplayNodeWidgetPrivate()
 {
   this->ColorTransferFunction->Delete();
   this->ColorTransferFunction = nullptr;
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformDisplayNodeWidgetPrivate
-::init()
+void qMRMLTransformDisplayNodeWidgetPrivate ::init()
 {
   Q_Q(qMRMLTransformDisplayNodeWidget);
   this->setupUi(q);
 
-  double validBounds[4] = {VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, 0., 1.};
+  double validBounds[4] = { VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, 0., 1. };
 
   this->ColorMapWidget->view()->setValidBounds(validBounds);
   this->ColorMapWidget->view()->addColorTransferFunction(nullptr);
   this->ColorMapWidget->view()->setColorTransferFunctionToPlots(this->ColorTransferFunction);
 
-  double chartBounds[8]={0};
+  double chartBounds[8] = { 0 };
   this->ColorMapWidget->view()->chartBounds(chartBounds);
   chartBounds[2] = 0;
   chartBounds[3] = 100;
@@ -99,12 +96,16 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   this->ColorMapWidget->view()->setPlotsUserBounds(chartBounds);
   this->ColorMapWidget->view()->update();
 
-  q->qvtkConnect(this->ColorTransferFunction, vtkCommand::EndInteractionEvent,
-                    q, SLOT(onColorInteractionEvent()), 0., Qt::QueuedConnection);
-  q->qvtkConnect(this->ColorTransferFunction, vtkCommand::EndEvent,
-                    q, SLOT(onColorInteractionEvent()), 0., Qt::QueuedConnection);
-  q->qvtkConnect(this->ColorTransferFunction, vtkCommand::ModifiedEvent,
-                    q, SLOT(onColorModifiedEvent()), 0., Qt::QueuedConnection);
+  q->qvtkConnect(this->ColorTransferFunction,
+                 vtkCommand::EndInteractionEvent,
+                 q,
+                 SLOT(onColorInteractionEvent()),
+                 0.,
+                 Qt::QueuedConnection);
+  q->qvtkConnect(
+    this->ColorTransferFunction, vtkCommand::EndEvent, q, SLOT(onColorInteractionEvent()), 0., Qt::QueuedConnection);
+  q->qvtkConnect(
+    this->ColorTransferFunction, vtkCommand::ModifiedEvent, q, SLOT(onColorModifiedEvent()), 0., Qt::QueuedConnection);
 
   this->AdvancedParameters->setCollapsed(true);
 
@@ -113,18 +114,23 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   QObject::connect(this->InteractionVisible3dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorVisibility3d(bool)));
   QObject::connect(this->InteractionVisible2dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorVisibility2d(bool)));
 
-  QObject::connect(this->InteractiveTranslation3DCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorTranslationEnabled(bool)));
+  QObject::connect(
+    this->InteractiveTranslation3DCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorTranslationEnabled(bool)));
   QObject::connect(this->InteractiveRotation3DCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorRotationEnabled(bool)));
   QObject::connect(this->InteractiveScaling3DCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorScalingEnabled(bool)));
 
-  QObject::connect(this->InteractiveTranslationSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorTranslationSliceEnabled(bool)));
-  QObject::connect(this->InteractiveRotationSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorRotationSliceEnabled(bool)));
-  QObject::connect(this->InteractiveScalingSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorScalingSliceEnabled(bool)));
+  QObject::connect(
+    this->InteractiveTranslationSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorTranslationSliceEnabled(bool)));
+  QObject::connect(
+    this->InteractiveRotationSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorRotationSliceEnabled(bool)));
+  QObject::connect(
+    this->InteractiveScalingSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setEditorScalingSliceEnabled(bool)));
 
   QObject::connect(this->translateX3DCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
   QObject::connect(this->translateY3DCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
   QObject::connect(this->translateZ3DCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
-  QObject::connect(this->translateViewPlane3DCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
+  QObject::connect(
+    this->translateViewPlane3DCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
 
   QObject::connect(this->rotateX3DCheckBox, SIGNAL(clicked()), q, SLOT(updateRotationComponentVisibility()));
   QObject::connect(this->rotateY3DCheckBox, SIGNAL(clicked()), q, SLOT(updateRotationComponentVisibility()));
@@ -139,7 +145,8 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   QObject::connect(this->translateXSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
   QObject::connect(this->translateYSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
   QObject::connect(this->translateZSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
-  QObject::connect(this->translateViewPlaneSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
+  QObject::connect(
+    this->translateViewPlaneSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateTranslationComponentVisibility()));
 
   QObject::connect(this->rotateXSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateRotationComponentVisibility()));
   QObject::connect(this->rotateYSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateRotationComponentVisibility()));
@@ -164,22 +171,29 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   QObject::connect(this->Visible2dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility2d(bool)));
   QObject::connect(this->Visible3dCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility3d(bool)));
 
-  QObject::connect(this->RegionNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(regionNodeChanged(vtkMRMLNode*)));
+  QObject::connect(
+    this->RegionNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(regionNodeChanged(vtkMRMLNode*)));
 
   QObject::connect(this->GlyphToggle, SIGNAL(toggled(bool)), q, SLOT(setGlyphVisualizationMode(bool)));
   QObject::connect(this->GridToggle, SIGNAL(toggled(bool)), q, SLOT(setGridVisualizationMode(bool)));
   QObject::connect(this->ContourToggle, SIGNAL(toggled(bool)), q, SLOT(setContourVisualizationMode(bool)));
 
   // Glyph Parameters
-  QObject::connect(this->GlyphPointsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(glyphPointsNodeChanged(vtkMRMLNode*)));
+  QObject::connect(this->GlyphPointsNodeComboBox,
+                   SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   q,
+                   SLOT(glyphPointsNodeChanged(vtkMRMLNode*)));
   QObject::connect(this->GlyphSpacingMm, SIGNAL(valueChanged(double)), q, SLOT(setGlyphSpacingMm(double)));
   QObject::connect(this->GlyphScalePercent, SIGNAL(valueChanged(double)), q, SLOT(setGlyphScalePercent(double)));
-  QObject::connect(this->GlyphDisplayRangeMm, SIGNAL(valuesChanged(double, double)), q, SLOT(setGlyphDisplayRangeMm(double, double)));
+  QObject::connect(
+    this->GlyphDisplayRangeMm, SIGNAL(valuesChanged(double, double)), q, SLOT(setGlyphDisplayRangeMm(double, double)));
   QObject::connect(this->GlyphTypeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setGlyphType(int)));
   // 3D Glyph Parameters
   QObject::connect(this->GlyphDiameterMm, SIGNAL(valueChanged(double)), q, SLOT(setGlyphDiameterMm(double)));
-  QObject::connect(this->GlyphTipLengthPercent, SIGNAL(valueChanged(double)), q, SLOT(setGlyphTipLengthPercent(double)));
-  QObject::connect(this->GlyphShaftDiameterPercent, SIGNAL(valueChanged(double)), q, SLOT(setGlyphShaftDiameterPercent(double)));
+  QObject::connect(
+    this->GlyphTipLengthPercent, SIGNAL(valueChanged(double)), q, SLOT(setGlyphTipLengthPercent(double)));
+  QObject::connect(
+    this->GlyphShaftDiameterPercent, SIGNAL(valueChanged(double)), q, SLOT(setGlyphShaftDiameterPercent(double)));
   QObject::connect(this->GlyphResolution, SIGNAL(valueChanged(double)), q, SLOT(setGlyphResolution(double)));
 
   // Grid Parameters
@@ -191,10 +205,11 @@ void qMRMLTransformDisplayNodeWidgetPrivate
 
   // Contour Parameters
   QRegExp rx("^(([0-9]+(.[0-9]+)?)[ ]?)*([0-9]+(.[0-9]+)?)[ ]?$");
-  this->ContourLevelsMm->setValidator(new QRegExpValidator(rx,q));
+  this->ContourLevelsMm->setValidator(new QRegExpValidator(rx, q));
   QObject::connect(this->ContourLevelsMm, SIGNAL(textChanged(QString)), q, SLOT(setContourLevelsMm(QString)));
   QObject::connect(this->ContourResolutionMm, SIGNAL(valueChanged(double)), q, SLOT(setContourResolutionMm(double)));
-  QObject::connect(this->ContourOpacityPercent, SIGNAL(valueChanged(double)), q, SLOT(setContourOpacityPercent(double)));
+  QObject::connect(
+    this->ContourOpacityPercent, SIGNAL(valueChanged(double)), q, SLOT(setContourOpacityPercent(double)));
 
   q->updateWidgetFromDisplayNode();
 }
@@ -203,9 +218,8 @@ void qMRMLTransformDisplayNodeWidgetPrivate
 // qMRMLTransformDisplayNodeWidget methods
 
 //-----------------------------------------------------------------------------
-qMRMLTransformDisplayNodeWidget
-::qMRMLTransformDisplayNodeWidget(QWidget *newParent) :
-    Superclass(newParent)
+qMRMLTransformDisplayNodeWidget ::qMRMLTransformDisplayNodeWidget(QWidget* newParent)
+  : Superclass(newParent)
   , d_ptr(new qMRMLTransformDisplayNodeWidgetPrivate(*this))
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
@@ -213,37 +227,33 @@ qMRMLTransformDisplayNodeWidget
 }
 
 //-----------------------------------------------------------------------------
-qMRMLTransformDisplayNodeWidget
-::~qMRMLTransformDisplayNodeWidget() = default;
+qMRMLTransformDisplayNodeWidget ::~qMRMLTransformDisplayNodeWidget() = default;
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformDisplayNodeWidget
-::setMRMLTransformNode(vtkMRMLNode* transformNode)
+void qMRMLTransformDisplayNodeWidget ::setMRMLTransformNode(vtkMRMLNode* transformNode)
 {
   setMRMLTransformNode(vtkMRMLTransformNode::SafeDownCast(transformNode));
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformDisplayNodeWidget
-::setMRMLTransformNode(vtkMRMLTransformNode* transformNode)
+void qMRMLTransformDisplayNodeWidget ::setMRMLTransformNode(vtkMRMLTransformNode* transformNode)
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
   vtkMRMLTransformDisplayNode* displayNode = nullptr;
-  if (transformNode!=nullptr)
+  if (transformNode != nullptr)
   {
-    displayNode=vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
+    displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
   }
 
-  qvtkReconnect(d->TransformDisplayNode, displayNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromDisplayNode()));
+  qvtkReconnect(
+    d->TransformDisplayNode, displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromDisplayNode()));
 
   d->TransformDisplayNode = displayNode;
   this->updateWidgetFromDisplayNode();
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformDisplayNodeWidget
-::updateWidgetFromDisplayNode()
+void qMRMLTransformDisplayNodeWidget ::updateWidgetFromDisplayNode()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
 
@@ -264,9 +274,15 @@ void qMRMLTransformDisplayNodeWidget
 
   switch (d->TransformDisplayNode->GetVisualizationMode())
   {
-    case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH: d->GlyphToggle->setChecked(true); break;
-    case vtkMRMLTransformDisplayNode::VIS_MODE_GRID: d->GridToggle->setChecked(true); break;
-    case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR: d->ContourToggle->setChecked(true); break;
+    case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH:
+      d->GlyphToggle->setChecked(true);
+      break;
+    case vtkMRMLTransformDisplayNode::VIS_MODE_GRID:
+      d->GridToggle->setChecked(true);
+      break;
+    case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR:
+      d->ContourToggle->setChecked(true);
+      break;
   }
 
   d->RegionNodeComboBox->setCurrentNode(d->TransformDisplayNode->GetRegionNode());
@@ -295,21 +311,22 @@ void qMRMLTransformDisplayNodeWidget
 
   // Contour Parameters
   d->ContourResolutionMm->setValue(d->TransformDisplayNode->GetContourResolutionMm());
-  d->ContourOpacityPercent->setValue(d->TransformDisplayNode->GetContourOpacity()*100.0);
+  d->ContourOpacityPercent->setValue(d->TransformDisplayNode->GetContourOpacity() * 100.0);
   // Only update the text in the editbox if it is changed (to not interfere with editing of the values)
-  std::vector<double> levelsInWidget=vtkMRMLTransformDisplayNode::ConvertContourLevelsFromString(d->ContourLevelsMm->text().toUtf8());
+  std::vector<double> levelsInWidget =
+    vtkMRMLTransformDisplayNode::ConvertContourLevelsFromString(d->ContourLevelsMm->text().toUtf8());
   std::vector<double> levelsInMRML;
   d->TransformDisplayNode->GetContourLevelsMm(levelsInMRML);
-  if (!vtkMRMLTransformDisplayNode::IsContourLevelEqual(levelsInWidget,levelsInMRML))
+  if (!vtkMRMLTransformDisplayNode::IsContourLevelEqual(levelsInWidget, levelsInMRML))
   {
     d->ContourLevelsMm->setText(QLatin1String(d->TransformDisplayNode->GetContourLevelsMmAsString().c_str()));
   }
 
   // Update ColorMap
-  vtkColorTransferFunction* colorTransferFunctionInNode=d->TransformDisplayNode->GetColorMap();
+  vtkColorTransferFunction* colorTransferFunctionInNode = d->TransformDisplayNode->GetColorMap();
   if (colorTransferFunctionInNode)
   {
-    if (!vtkMRMLProceduralColorNode::IsColorMapEqual(d->ColorTransferFunction,colorTransferFunctionInNode))
+    if (!vtkMRMLProceduralColorNode::IsColorMapEqual(d->ColorTransferFunction, colorTransferFunctionInNode))
     {
       // only update the range if the colormap is changed to avoid immediate update,
       // because we don't want to change the colormap plot range while dragging the control point
@@ -338,8 +355,7 @@ void qMRMLTransformDisplayNodeWidget
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformDisplayNodeWidget
-::updateInteraction3DWidgetsFromDisplayNode()
+void qMRMLTransformDisplayNodeWidget ::updateInteraction3DWidgetsFromDisplayNode()
 {
   Q_D(qMRMLTransformDisplayNodeWidget);
 
@@ -634,7 +650,7 @@ void qMRMLTransformDisplayNodeWidget::setGlyphDisplayRangeMm(double min, double 
   {
     return;
   }
-  int oldModify=d->TransformDisplayNode->StartModify();
+  int oldModify = d->TransformDisplayNode->StartModify();
   d->TransformDisplayNode->SetGlyphDisplayRangeMinMm(min);
   d->TransformDisplayNode->SetGlyphDisplayRangeMaxMm(max);
   d->TransformDisplayNode->EndModify(oldModify);
@@ -781,9 +797,8 @@ void qMRMLTransformDisplayNodeWidget::setContourOpacityPercent(double opacityPer
   {
     return;
   }
-  d->TransformDisplayNode->SetContourOpacity(opacityPercent*0.01);
+  d->TransformDisplayNode->SetContourOpacity(opacityPercent * 0.01);
 }
-
 
 //-----------------------------------------------------------------------------
 void qMRMLTransformDisplayNodeWidget::setGlyphVisualizationMode(bool activate)
@@ -970,7 +985,7 @@ void qMRMLTransformDisplayNodeWidget::setColorTableNode(vtkMRMLNode* colorTableN
   {
     return;
   }
-  d->TransformDisplayNode->SetAndObserveColorNodeID(colorTableNode?colorTableNode->GetID():nullptr);
+  d->TransformDisplayNode->SetAndObserveColorNodeID(colorTableNode ? colorTableNode->GetID() : nullptr);
 }
 
 // ----------------------------------------------------------------------------
@@ -983,17 +998,17 @@ void qMRMLTransformDisplayNodeWidget::colorUpdateRange()
     return;
   }
   // Rescale the chart so that all the points are visible
-  vtkColorTransferFunction* colorMap=d->TransformDisplayNode->GetColorMap();
-  if (colorMap==nullptr)
+  vtkColorTransferFunction* colorMap = d->TransformDisplayNode->GetColorMap();
+  if (colorMap == nullptr)
   {
     return;
   }
-  double range[2] = {0.0, 10.0};
+  double range[2] = { 0.0, 10.0 };
   colorMap->GetRange(range);
-  double chartBounds[8] = {0};
+  double chartBounds[8] = { 0 };
   d->ColorMapWidget->view()->chartBounds(chartBounds);
   chartBounds[2] = 0;
-  chartBounds[3] = range[1]*1.1;
+  chartBounds[3] = range[1] * 1.1;
   d->ColorMapWidget->view()->setChartUserBounds(chartBounds);
   d->ColorMapWidget->view()->update();
 }
@@ -1041,12 +1056,10 @@ void qMRMLTransformDisplayNodeWidget::updateTranslationComponentVisibility()
     return;
   }
 
-  bool componentVisibility[4] = {
-    d->translateX3DCheckBox->isChecked(),
-    d->translateY3DCheckBox->isChecked(),
-    d->translateZ3DCheckBox->isChecked(),
-    d->translateViewPlane3DCheckBox->isChecked()
-  };
+  bool componentVisibility[4] = { d->translateX3DCheckBox->isChecked(),
+                                  d->translateY3DCheckBox->isChecked(),
+                                  d->translateZ3DCheckBox->isChecked(),
+                                  d->translateViewPlane3DCheckBox->isChecked() };
   d->TransformDisplayNode->SetTranslationHandleComponentVisibility3D(componentVisibility);
 
   componentVisibility[0] = d->translateXSliceCheckBox->isChecked();
@@ -1065,12 +1078,10 @@ void qMRMLTransformDisplayNodeWidget::updateRotationComponentVisibility()
     return;
   }
 
-  bool componentVisibility[4] = {
-    d->rotateX3DCheckBox->isChecked(),
-    d->rotateY3DCheckBox->isChecked(),
-    d->rotateZ3DCheckBox->isChecked(),
-    d->rotateViewPlane3DCheckBox->isChecked()
-  };
+  bool componentVisibility[4] = { d->rotateX3DCheckBox->isChecked(),
+                                  d->rotateY3DCheckBox->isChecked(),
+                                  d->rotateZ3DCheckBox->isChecked(),
+                                  d->rotateViewPlane3DCheckBox->isChecked() };
   d->TransformDisplayNode->SetRotationHandleComponentVisibility3D(componentVisibility);
 
   componentVisibility[0] = d->rotateXSliceCheckBox->isChecked();
@@ -1089,12 +1100,10 @@ void qMRMLTransformDisplayNodeWidget::updateScalingComponentVisibility()
     return;
   }
 
-  bool componentVisibility[4] = {
-    d->scaleX3DCheckBox->isChecked(),
-    d->scaleY3DCheckBox->isChecked(),
-    d->scaleZ3DCheckBox->isChecked(),
-    d->scaleViewPlane3DCheckBox->isChecked()
-  };
+  bool componentVisibility[4] = { d->scaleX3DCheckBox->isChecked(),
+                                  d->scaleY3DCheckBox->isChecked(),
+                                  d->scaleZ3DCheckBox->isChecked(),
+                                  d->scaleViewPlane3DCheckBox->isChecked() };
   d->TransformDisplayNode->SetScaleHandleComponentVisibility3D(componentVisibility);
 
   componentVisibility[0] = d->scaleXSliceCheckBox->isChecked();

@@ -67,7 +67,7 @@ void qSlicerAbstractModuleWidget::exit()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerAbstractModuleWidget::isEntered()const
+bool qSlicerAbstractModuleWidget::isEntered() const
 {
   Q_D(const qSlicerAbstractModuleWidget);
   return d->IsEntered;
@@ -76,8 +76,7 @@ bool qSlicerAbstractModuleWidget::isEntered()const
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModuleWidget::setup()
 {
-  const qSlicerAbstractModule* m =
-    qobject_cast<const qSlicerAbstractModule*>(this->module());
+  const qSlicerAbstractModule* m = qobject_cast<const qSlicerAbstractModule*>(this->module());
   if (m)
   {
     this->setObjectName(QString("%1ModuleWidget").arg(m->name()));

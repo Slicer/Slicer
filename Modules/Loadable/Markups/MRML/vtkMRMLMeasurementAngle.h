@@ -28,7 +28,7 @@
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMeasurementAngle : public vtkMRMLMeasurement
 {
 public:
-  static vtkMRMLMeasurementAngle *New();
+  static vtkMRMLMeasurementAngle* New();
   vtkTypeMacro(vtkMRMLMeasurementAngle, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

@@ -42,7 +42,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
+int qSlicerColorsModuleWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -60,9 +60,9 @@ int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
     dynamic_cast<qSlicerColorsModuleWidget*>(colorsModule.widgetRepresentation());
   colorsWidget->show();
 
-  std::vector< vtkMRMLNode* > nodes;
+  std::vector<vtkMRMLNode*> nodes;
   scene->GetNodesByClass("vtkMRMLColorNode", nodes);
-  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
   {
     colorsWidget->setCurrentColorNode(*nodeIt);
   }
@@ -76,4 +76,3 @@ int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

@@ -31,24 +31,22 @@
 #include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
-QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index,
-  QTreeView* treeView, bool &error)
+QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index, QTreeView* treeView, bool& error)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QStringList indices = str_index.split(".", Qt::SkipEmptyParts);
 #else
-  QStringList indices = str_index.split(".",QString::SkipEmptyParts);
+  QStringList indices = str_index.split(".", QString::SkipEmptyParts);
 #endif
   QModelIndex index;
-  for (int cc=0; (cc+1) < indices.size(); cc+=2)
+  for (int cc = 0; (cc + 1) < indices.size(); cc += 2)
   {
-    index = treeView->model()->index(indices[cc].toInt(), indices[cc+1].toInt(),
-      index);
+    index = treeView->model()->index(indices[cc].toInt(), indices[cc + 1].toInt(), index);
     if (!index.isValid())
     {
-      error=true;
+      error = true;
       qCritical() << "ERROR: Tree view must have changed. "
-        << "Indices recorded in the test are no longer valid. Cannot playback.";
+                  << "Indices recorded in the test are no longer valid. Cannot playback.";
       break;
     }
   }
@@ -56,36 +54,34 @@ QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index,
 }
 
 // ----------------------------------------------------------------------------
-qMRMLTreeViewEventPlayer::qMRMLTreeViewEventPlayer(QObject *parent)
+qMRMLTreeViewEventPlayer::qMRMLTreeViewEventPlayer(QObject* parent)
   : Superclass(parent)
 {
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
-                                    const QString &Command,
-                                    const QString &Arguments,
-                                    int EventType,
-                                    bool &Error)
+bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object,
+                                         const QString& Command,
+                                         const QString& Arguments,
+                                         int EventType,
+                                         bool& Error)
 {
-  if(Command != "currentNodeRenamed" && Command != "currentNodeDeleted" &&
-     Command != "editNodeRequested" && Command != "decorationClicked" &&
-     Command != "reParentByDragnDrop")
+  if (Command != "currentNodeRenamed" && Command != "currentNodeDeleted" && Command != "editNodeRequested"
+      && Command != "decorationClicked" && Command != "reParentByDragnDrop")
   {
     return this->Superclass::playEvent(Object, Command, Arguments, EventType, Error);
   }
 
-  if(qMRMLTreeView* const treeView =
-     qobject_cast<qMRMLTreeView*>(Object))
+  if (qMRMLTreeView* const treeView = qobject_cast<qMRMLTreeView*>(Object))
   {
-    if(Command == "currentNodeRenamed")
+    if (Command == "currentNodeRenamed")
     {
       treeView->currentNode()->SetName(Arguments.toUtf8());
       // for improvement, see the method qMRMLTreeView::renameCurrentNode()
       // and set the name in the line edit, then simulate a OK
       return true;
     }
-    if(Command == "currentNodeDeleted")
+    if (Command == "currentNodeDeleted")
     {
       QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(Arguments, treeView, Error);
       if (index.isValid())
@@ -94,19 +90,19 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
         treeView->deleteCurrentNode();
         return true;
       }
-//      return false;
+      //      return false;
     }
-    if(Command == "editNodeRequested")
+    if (Command == "editNodeRequested")
     {
-//      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(Arguments.toUtf8());
-//      emit treeView->editNodeRequested(node);
+      //      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(Arguments.toUtf8());
+      //      emit treeView->editNodeRequested(node);
       treeView->editCurrentNode();
       return true;
     }
-    if(Command == "reParentByDragnDrop")
+    if (Command == "reParentByDragnDrop")
     {
       QStringList nodes = Arguments.split(".");
-      if(nodes.count() != 2)
+      if (nodes.count() != 2)
       {
         return false;
       }
@@ -115,7 +111,7 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
       treeView->sceneModel()->reparent(node, nodeParent);
       return true;
     }
-    if(Command == "decorationClicked")
+    if (Command == "decorationClicked")
     {
       QString str_index = Arguments;
       QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(str_index, treeView, Error);
@@ -128,4 +124,3 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
   Error = true;
   return true;
 }
-

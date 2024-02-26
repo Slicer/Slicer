@@ -19,13 +19,13 @@
 #include "qMRMLSequenceBrowserToolBar.h"
 
 // --------------------------------------------------------------------------
-qMRMLSequenceBrowserToolBarPlugin::qMRMLSequenceBrowserToolBarPlugin(QObject *_parent)
-        : QObject(_parent)
+qMRMLSequenceBrowserToolBarPlugin::qMRMLSequenceBrowserToolBarPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLSequenceBrowserToolBarPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLSequenceBrowserToolBarPlugin::createWidget(QWidget* _parent)
 {
   qMRMLSequenceBrowserToolBar* _widget = new qMRMLSequenceBrowserToolBar(_parent);
   return _widget;
@@ -36,7 +36,7 @@ QString qMRMLSequenceBrowserToolBarPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSequenceBrowserToolBar\" \
           name=\"MRMLSequenceBrowserToolBar\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

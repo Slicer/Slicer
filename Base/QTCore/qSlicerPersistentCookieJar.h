@@ -39,18 +39,18 @@ class qSlicerPersistentCookieJarPrivate;
 /// A cookie jar can be associated with a QNetworkAccessManager using method QNetworkAccessManager::setCookieJar
 ///
 /// \sa QSettings::IniFormat, QNetworkAccessManager::setCookieJar
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPersistentCookieJar: public QNetworkCookieJar
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPersistentCookieJar : public QNetworkCookieJar
 {
 public:
   typedef QNetworkCookieJar Superclass;
-  qSlicerPersistentCookieJar(QObject *parent = nullptr);
+  qSlicerPersistentCookieJar(QObject* parent = nullptr);
   ~qSlicerPersistentCookieJar() override;
 
-  QString filePath()const;
+  QString filePath() const;
   void setFilePath(const QString& filePath);
 
-  QList<QNetworkCookie> cookiesForUrl(const QUrl & url) const override;
-  bool setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, const QUrl & url) override;
+  QList<QNetworkCookie> cookiesForUrl(const QUrl& url) const override;
+  bool setCookiesFromUrl(const QList<QNetworkCookie>& cookieList, const QUrl& url) override;
 
 protected:
   QScopedPointer<qSlicerPersistentCookieJarPrivate> d_ptr;
@@ -61,4 +61,3 @@ private:
 };
 
 #endif
-

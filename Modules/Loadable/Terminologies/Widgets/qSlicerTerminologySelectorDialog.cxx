@@ -36,24 +36,29 @@
 class qSlicerTerminologySelectorDialogPrivate : public QDialog
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologySelectorDialog);
+
 protected:
   qSlicerTerminologySelectorDialog* const q_ptr;
+
 public:
   qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object);
   ~qSlicerTerminologySelectorDialogPrivate() override;
+
 public:
   void init();
+
 private:
-  qSlicerTerminologyNavigatorWidget* NavigatorWidget{nullptr};
-  QPushButton* SelectButton{nullptr};
-  QPushButton* CancelButton{nullptr};
+  qSlicerTerminologyNavigatorWidget* NavigatorWidget{ nullptr };
+  QPushButton* SelectButton{ nullptr };
+  QPushButton* CancelButton{ nullptr };
 
   /// Terminology and other metadata (name, color, auto-generated flags) into which the selection is set
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object)
+qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate(
+  qSlicerTerminologySelectorDialog& object)
   : q_ptr(&object)
 {
 }
@@ -111,7 +116,8 @@ qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(QObject* pare
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent)
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& initialTerminologyInfo,
+  QObject* parent)
   : QObject(parent)
   , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this))
 {
@@ -146,7 +152,8 @@ bool qSlicerTerminologySelectorDialog::exec()
 
 //-----------------------------------------------------------------------------
 bool qSlicerTerminologySelectorDialog::getTerminology(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo, QObject* parent)
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo,
+  QObject* parent)
 {
   // Open terminology dialog and store result
   qSlicerTerminologySelectorDialog dialog(terminologyInfo, parent);
@@ -174,7 +181,7 @@ bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry*
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorDialog::terminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologySelectorDialog);
   terminologyInfo = d->TerminologyInfo;

@@ -52,12 +52,13 @@
 #include <vtkSlicerApplicationLogic.h>
 
 //-----------------------------------------------------------------------------
-class qMRMLSegmentationFileExportWidgetPrivate: public Ui_qMRMLSegmentationFileExportWidget
+class qMRMLSegmentationFileExportWidgetPrivate : public Ui_qMRMLSegmentationFileExportWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationFileExportWidget);
 
 protected:
   qMRMLSegmentationFileExportWidget* const q_ptr;
+
 public:
   qMRMLSegmentationFileExportWidgetPrivate(qMRMLSegmentationFileExportWidget& object);
   void init();
@@ -68,7 +69,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentationFileExportWidgetPrivate::qMRMLSegmentationFileExportWidgetPrivate(qMRMLSegmentationFileExportWidget& object)
+qMRMLSegmentationFileExportWidgetPrivate::qMRMLSegmentationFileExportWidgetPrivate(
+  qMRMLSegmentationFileExportWidget& object)
   : q_ptr(&object)
 {
   this->SegmentationNode = nullptr;
@@ -80,16 +82,15 @@ void qMRMLSegmentationFileExportWidgetPrivate::init()
   Q_Q(qMRMLSegmentationFileExportWidget);
   this->setupUi(q);
   q->setEnabled(false);
-  QObject::connect(this->ExportToFilesButton, SIGNAL(clicked()),
-    q, SLOT(exportToFiles()));
-  QObject::connect(this->ShowDestinationFolderButton, SIGNAL(clicked()),
-    q, SLOT(showDestinationFolder()));
-  QObject::connect(this->FileFormatComboBox, SIGNAL(currentIndexChanged(const QString&)),
-    q, SLOT(setFileFormat(const QString&)));
-  QObject::connect(this->ColorTableNodeSelector, SIGNAL(currentNodeIDChanged(const QString&)),
-    q, SLOT(setColorNodeID(const QString&)));
-  QObject::connect(this->UseColorTableValuesCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(setUseLabelsFromColorNode(bool)));
+  QObject::connect(this->ExportToFilesButton, SIGNAL(clicked()), q, SLOT(exportToFiles()));
+  QObject::connect(this->ShowDestinationFolderButton, SIGNAL(clicked()), q, SLOT(showDestinationFolder()));
+  QObject::connect(
+    this->FileFormatComboBox, SIGNAL(currentIndexChanged(const QString&)), q, SLOT(setFileFormat(const QString&)));
+  QObject::connect(this->ColorTableNodeSelector,
+                   SIGNAL(currentNodeIDChanged(const QString&)),
+                   q,
+                   SLOT(setColorNodeID(const QString&)));
+  QObject::connect(this->UseColorTableValuesCheckBox, SIGNAL(toggled(bool)), q, SLOT(setUseLabelsFromColorNode(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -135,8 +136,11 @@ void qMRMLSegmentationFileExportWidget::setSegmentationNode(vtkMRMLSegmentationN
   Q_D(qMRMLSegmentationFileExportWidget);
 
   qvtkReconnect(d->SegmentationNode, node, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
-  qvtkReconnect(d->SegmentationNode, node, vtkMRMLSegmentationNode::ReferenceImageGeometryChangedEvent, this,
-    SLOT(onSegmentationReferenceImageGeometryChanged()));
+  qvtkReconnect(d->SegmentationNode,
+                node,
+                vtkMRMLSegmentationNode::ReferenceImageGeometryChangedEvent,
+                this,
+                SLOT(onSegmentationReferenceImageGeometryChanged()));
 
   bool nodeChanged = d->SegmentationNode != node;
 
@@ -149,7 +153,6 @@ void qMRMLSegmentationFileExportWidget::setSegmentationNode(vtkMRMLSegmentationN
   {
     this->onSegmentationReferenceImageGeometryChanged();
   }
-
 }
 
 //-----------------------------------------------------------------------------
@@ -186,15 +189,19 @@ void qMRMLSegmentationFileExportWidget::updateWidgetFromSettings()
   d->FileFormatComboBox->setCurrentIndex(d->FileFormatComboBox->findText(fileFormat));
   this->setFileFormat(fileFormat);
 
-  QString path = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(settings.value(d->SettingsKey + "/DestinationFolder", ".").toString());
+  QString path = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(
+    settings.value(d->SettingsKey + "/DestinationFolder", ".").toString());
   d->DestinationFolderButton->setDirectory(path);
   d->VisibleSegmentsOnlyCheckBox->setChecked(settings.value(d->SettingsKey + "/VisibleSegmentsOnly", false).toBool());
 
-  d->MergeIntoSingleSTLFileCheckBox->setChecked(settings.value(d->SettingsKey + "/MergeIntoSingleFile", false).toBool());
-  d->MergeIntoSingleOBJFileCheckBox->setChecked(settings.value(d->SettingsKey + "/MergeIntoSingleFile", false).toBool());
+  d->MergeIntoSingleSTLFileCheckBox->setChecked(
+    settings.value(d->SettingsKey + "/MergeIntoSingleFile", false).toBool());
+  d->MergeIntoSingleOBJFileCheckBox->setChecked(
+    settings.value(d->SettingsKey + "/MergeIntoSingleFile", false).toBool());
 
   d->SizeScaleSpinBox->setValue(settings.value(d->SettingsKey + "/SizeScale", 1.0).toDouble());
-  d->ShowDestinationFolderOnExportCompleteCheckBox->setChecked(settings.value(d->SettingsKey + "/ShowDestinationFolderOnExportComplete", true).toBool());
+  d->ShowDestinationFolderOnExportCompleteCheckBox->setChecked(
+    settings.value(d->SettingsKey + "/ShowDestinationFolderOnExportComplete", true).toBool());
 
   QString coordinateSystem = settings.value(d->SettingsKey + "/CoordinateSystem", "LPS").toString();
   d->CoordinateSystemComboBox->setCurrentIndex(d->CoordinateSystemComboBox->findText(coordinateSystem));
@@ -213,12 +220,14 @@ void qMRMLSegmentationFileExportWidget::updateSettingsFromWidget()
   QSettings settings;
 
   settings.setValue(d->SettingsKey + "/FileFormat", d->FileFormatComboBox->currentText());
-  QString path = qSlicerCoreApplication::application()->toSlicerHomeRelativePath(d->DestinationFolderButton->directory());
+  QString path =
+    qSlicerCoreApplication::application()->toSlicerHomeRelativePath(d->DestinationFolderButton->directory());
   settings.setValue(d->SettingsKey + "/DestinationFolder", path);
   settings.setValue(d->SettingsKey + "/VisibleSegmentsOnly", d->VisibleSegmentsOnlyCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/MergeIntoSingleFile", d->MergeIntoSingleSTLFileCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/SizeScale", d->SizeScaleSpinBox->value());
-  settings.setValue(d->SettingsKey + "/ShowDestinationFolderOnExportComplete", d->ShowDestinationFolderOnExportCompleteCheckBox->isChecked());
+  settings.setValue(d->SettingsKey + "/ShowDestinationFolderOnExportComplete",
+                    d->ShowDestinationFolderOnExportCompleteCheckBox->isChecked());
   settings.setValue(d->SettingsKey + "/CoordinateSystem", d->CoordinateSystemComboBox->currentText());
 }
 
@@ -231,8 +240,8 @@ void qMRMLSegmentationFileExportWidget::onSegmentationReferenceImageGeometryChan
     return;
   }
 
-  vtkMRMLNode* referenceVolumeNode = d->SegmentationNode->GetNodeReference(
-    vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str());
+  vtkMRMLNode* referenceVolumeNode =
+    d->SegmentationNode->GetNodeReference(vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str());
   d->ReferenceVolumeComboBox->setCurrentNode(referenceVolumeNode);
 }
 
@@ -246,12 +255,12 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
   this->updateSettingsFromWidget();
 
   vtkSmartPointer<vtkStringArray> segmentIds;
-  if (d->VisibleSegmentsOnlyCheckBox->isChecked()
-    && d->SegmentationNode != nullptr
-    && vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode()) != nullptr)
+  if (d->VisibleSegmentsOnlyCheckBox->isChecked() && d->SegmentationNode != nullptr
+      && vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode()) != nullptr)
   {
     segmentIds = vtkSmartPointer<vtkStringArray>::New();
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
+    vtkMRMLSegmentationDisplayNode* displayNode =
+      vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
     displayNode->GetVisibleSegmentIDs(segmentIds);
   }
 
@@ -288,9 +297,9 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
     }
 
     vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ReferenceVolumeComboBox->currentNode());
-    if (referenceVolumeNode && d->SegmentationNode &&
-      vtkSlicerSegmentationsModuleLogic::IsEffectiveExentOutsideReferenceVolume(
-        referenceVolumeNode, d->SegmentationNode, segmentIds))
+    if (referenceVolumeNode && d->SegmentationNode
+        && vtkSlicerSegmentationsModuleLogic::IsEffectiveExentOutsideReferenceVolume(
+          referenceVolumeNode, d->SegmentationNode, segmentIds))
     {
       ctkMessageBox* exportWarningMesssgeBox = new ctkMessageBox(this);
       exportWarningMesssgeBox->setAttribute(Qt::WA_DeleteOnClose);
@@ -301,7 +310,7 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
       exportWarningMesssgeBox->setIcon(QMessageBox::Warning);
       exportWarningMesssgeBox->setDontShowAgainSettingsKey("Segmentations/AlwaysCropDuringSegmentationFileExport");
       exportWarningMesssgeBox->setText(tr("The current segmentation does not completely fit into the new geometry.\n"
-                                       "Do you want to crop the segmentation?\n"));
+                                          "Do you want to crop the segmentation?\n"));
       if (exportWarningMesssgeBox->exec() != QMessageBox::StandardButton::Ok)
       {
         return;
@@ -337,7 +346,7 @@ void qMRMLSegmentationFileExportWidget::showDestinationFolder()
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSegmentationFileExportWidget::settingsKey()const
+QString qMRMLSegmentationFileExportWidget::settingsKey() const
 {
   Q_D(const qMRMLSegmentationFileExportWidget);
   return d->SettingsKey;
@@ -378,7 +387,8 @@ void qMRMLSegmentationFileExportWidget::setUseLabelsFromColorNode(bool useColorN
 {
   Q_UNUSED(useColorNode);
   Q_D(qMRMLSegmentationFileExportWidget);
-  d->ColorTableNodeSelector->setEnabled(d->UseColorTableValuesCheckBox->isEnabled() && d->UseColorTableValuesCheckBox->isChecked());
+  d->ColorTableNodeSelector->setEnabled(d->UseColorTableValuesCheckBox->isEnabled()
+                                        && d->UseColorTableValuesCheckBox->isChecked());
 }
 
 //------------------------------------------------------------------------------

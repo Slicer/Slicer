@@ -35,8 +35,7 @@ class qSlicerMarkupsModulePrivate;
 class vtkMRMLMarkupsDisplayNode;
 class vtkObject;
 
-class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   QVTK_OBJECT;
@@ -47,30 +46,29 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModule :
   Q_PROPERTY(bool autoShowToolBar READ autoShowToolBar WRITE setAutoShowToolBar)
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerMarkupsModule(QObject *parent=nullptr);
+  explicit qSlicerMarkupsModule(QObject* parent = nullptr);
   ~qSlicerMarkupsModule() override;
 
   qSlicerGetTitleMacro(tr("Markups"));
 
   /// Help to use the module
-  QString helpText()const override;
+  QString helpText() const override;
 
   /// Return acknowledgements
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
 
   /// Return the authors of the module
-  QStringList  contributors()const override;
+  QStringList contributors() const override;
 
   /// Return a custom icon for the module
-  QIcon icon()const override;
+  QIcon icon() const override;
 
   /// Return the categories for the module
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
   void setMRMLScene(vtkMRMLScene* scene) override;
 
@@ -89,12 +87,11 @@ public:
   Q_INVOKABLE static bool showMarkups(vtkMRMLMarkupsNode* markupsNode);
 
 protected:
-
   /// Initialize the module. Register the volumes reader/writer
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;
@@ -103,16 +100,14 @@ public slots:
   void setToolBarVisible(bool visible);
   /// Enables automatic showing markups toolbar when a new markups node is loaded
   void setAutoShowToolBar(bool autoShow);
-  //void onNodeAddedEvent(vtkObject*, vtkObject*);
+  // void onNodeAddedEvent(vtkObject*, vtkObject*);
 
 protected:
   QScopedPointer<qSlicerMarkupsModulePrivate> d_ptr;
 
-
 private:
   Q_DECLARE_PRIVATE(qSlicerMarkupsModule);
   Q_DISABLE_COPY(qSlicerMarkupsModule);
-
 };
 
 #endif

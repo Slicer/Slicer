@@ -29,8 +29,7 @@
 #include <vtkMRMLSelectionNode.h>
 
 //------------------------------------------------------------------------------
-qMRMLSceneDisplayableModelPrivate
-::qMRMLSceneDisplayableModelPrivate(qMRMLSceneDisplayableModel& object)
+qMRMLSceneDisplayableModelPrivate ::qMRMLSceneDisplayableModelPrivate(qMRMLSceneDisplayableModel& object)
   : qMRMLSceneHierarchyModelPrivate(object)
 {
   this->OpacityColumn = -1;
@@ -45,14 +44,13 @@ void qMRMLSceneDisplayableModelPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLHierarchyNode* qMRMLSceneDisplayableModelPrivate::CreateHierarchyNode()const
+vtkMRMLHierarchyNode* qMRMLSceneDisplayableModelPrivate::CreateHierarchyNode() const
 {
   return vtkMRMLDisplayableHierarchyNode::New();
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate
-::displayNode(vtkMRMLNode* node)const
+vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate ::displayNode(vtkMRMLNode* node) const
 {
   if (vtkMRMLDisplayNode::SafeDownCast(node))
   {
@@ -65,8 +63,7 @@ vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate
     return displayableNode->GetDisplayNode();
   }
 
-  vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode
-      = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+  vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
   if (displayableHierarchyNode)
   {
     return displayableHierarchyNode->GetDisplayNode();
@@ -77,17 +74,16 @@ vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(QObject *vparent)
-  :Superclass(new qMRMLSceneDisplayableModelPrivate(*this), vparent)
+qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(QObject* vparent)
+  : Superclass(new qMRMLSceneDisplayableModelPrivate(*this), vparent)
 {
   Q_D(qMRMLSceneDisplayableModel);
   d->init();
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(
-  qMRMLSceneDisplayableModelPrivate* pimpl, QObject *vparent)
-  :Superclass(pimpl, vparent)
+qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(qMRMLSceneDisplayableModelPrivate* pimpl, QObject* vparent)
+  : Superclass(pimpl, vparent)
 {
 }
 
@@ -95,25 +91,23 @@ qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(
 qMRMLSceneDisplayableModel::~qMRMLSceneDisplayableModel() = default;
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSceneDisplayableModel::parentNode(vtkMRMLNode* node)const
+vtkMRMLNode* qMRMLSceneDisplayableModel::parentNode(vtkMRMLNode* node) const
 {
-  return vtkMRMLDisplayableHierarchyNode::SafeDownCast(
-    this->Superclass::parentNode(node));
+  return vtkMRMLDisplayableHierarchyNode::SafeDownCast(this->Superclass::parentNode(node));
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneDisplayableModel::canBeAChild(vtkMRMLNode* node)const
+bool qMRMLSceneDisplayableModel::canBeAChild(vtkMRMLNode* node) const
 {
   if (!node)
   {
     return false;
   }
-  return node->IsA("vtkMRMLDisplayableNode") ||
-         node->IsA("vtkMRMLDisplayableHierarchyNode");
+  return node->IsA("vtkMRMLDisplayableNode") || node->IsA("vtkMRMLDisplayableHierarchyNode");
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneDisplayableModel::canBeAParent(vtkMRMLNode* node)const
+bool qMRMLSceneDisplayableModel::canBeAParent(vtkMRMLNode* node) const
 {
   return this->canBeAChild(node);
 }
@@ -124,29 +118,25 @@ void qMRMLSceneDisplayableModel::observeNode(vtkMRMLNode* node)
   this->Superclass::observeNode(node);
   if (node->IsA("vtkMRMLDisplayableNode"))
   {
-    qvtkConnect(node, vtkMRMLDisplayableNode::DisplayModifiedEvent,
-                this, SLOT(onMRMLNodeModified(vtkObject*)));
+    qvtkConnect(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(onMRMLNodeModified(vtkObject*)));
   }
 }
 
 //------------------------------------------------------------------------------
-QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, int column)const
+QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, int column) const
 {
   Q_D(const qMRMLSceneDisplayableModel);
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
-  vtkMRMLNode *displayNode = d->displayNode(node);
-  if (column == this->visibilityColumn() &&
-      displayNode != nullptr)
+  vtkMRMLNode* displayNode = d->displayNode(node);
+  if (column == this->visibilityColumn() && displayNode != nullptr)
   {
     flags |= Qt::ItemIsEditable;
   }
-  if (column == this->colorColumn() &&
-      displayNode != nullptr)
+  if (column == this->colorColumn() && displayNode != nullptr)
   {
     flags |= Qt::ItemIsEditable;
   }
-  if (column == this->opacityColumn() &&
-      displayNode != nullptr)
+  if (column == this->opacityColumn() && displayNode != nullptr)
   {
     flags |= Qt::ItemIsEditable;
   }
@@ -154,8 +144,7 @@ QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, in
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneDisplayableModel
-::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
+void qMRMLSceneDisplayableModel ::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
   Q_D(qMRMLSceneDisplayableModel);
   vtkMRMLDisplayNode* displayNode = d->displayNode(node);
@@ -164,8 +153,7 @@ void qMRMLSceneDisplayableModel
     if (displayNode)
     {
       double* rgbF = displayNode->GetColor();
-      QColor color = QColor::fromRgbF(rgbF[0], rgbF[1], rgbF[2],
-                                      displayNode->GetOpacity());
+      QColor color = QColor::fromRgbF(rgbF[0], rgbF[1], rgbF[2], displayNode->GetOpacity());
       item->setData(color, Qt::DecorationRole);
       item->setToolTip("Color");
     }
@@ -174,8 +162,7 @@ void qMRMLSceneDisplayableModel
   {
     if (displayNode)
     {
-      QString displayedOpacity
-        = QString::number(displayNode->GetOpacity(), 'f', 2);
+      QString displayedOpacity = QString::number(displayNode->GetOpacity(), 'f', 2);
       item->setData(displayedOpacity, Qt::DisplayRole);
       item->setToolTip("Opacity");
     }
@@ -184,8 +171,7 @@ void qMRMLSceneDisplayableModel
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneDisplayableModel
-::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
+void qMRMLSceneDisplayableModel ::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
   Q_D(qMRMLSceneDisplayableModel);
   if (item->column() == this->colorColumn())
@@ -222,7 +208,7 @@ void qMRMLSceneDisplayableModel
       // Invalid color can happen when the item hasn't been initialized yet
       if (displayNode)
       {
-        QString currentOpacity = QString::number( displayNode->GetOpacity(), 'f', 2);
+        QString currentOpacity = QString::number(displayNode->GetOpacity(), 'f', 2);
         if (displayedOpacity != currentOpacity)
         {
           displayNode->SetOpacity(displayedOpacity.toDouble());
@@ -234,7 +220,7 @@ void qMRMLSceneDisplayableModel
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneDisplayableModel::colorColumn()const
+int qMRMLSceneDisplayableModel::colorColumn() const
 {
   Q_D(const qMRMLSceneDisplayableModel);
   return d->ColorColumn;
@@ -249,7 +235,7 @@ void qMRMLSceneDisplayableModel::setColorColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneDisplayableModel::opacityColumn()const
+int qMRMLSceneDisplayableModel::opacityColumn() const
 {
   Q_D(const qMRMLSceneDisplayableModel);
   return d->OpacityColumn;
@@ -264,7 +250,7 @@ void qMRMLSceneDisplayableModel::setOpacityColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneDisplayableModel::maxColumnId()const
+int qMRMLSceneDisplayableModel::maxColumnId() const
 {
   Q_D(const qMRMLSceneDisplayableModel);
   int maxId = this->Superclass::maxColumnId();

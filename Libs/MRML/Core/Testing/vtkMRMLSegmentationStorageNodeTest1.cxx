@@ -32,7 +32,7 @@ Care Ontario.
 #include "vtkFractionalLabelmapToClosedSurfaceConversionRule.h"
 #include "vtkClosedSurfaceToFractionalLabelmapConversionRule.h"
 
-int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
+int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
 {
   vtkNew<vtkMRMLSegmentationStorageNode> node1;
   vtkNew<vtkMRMLScene> scene;
@@ -41,9 +41,10 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
 
   if (argc != 4)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Missing parameters !\n"
-              << "Usage: " << argv[0] << " /path/to/ITKSnapSegmentation.nii.gz /path/to/OldSlicerSegmentation.seg.nrrd /path/to/SlicerSegmentation.seg.nrrd"
+    std::cerr << "Line " << __LINE__ << " - Missing parameters !\n"
+              << "Usage: " << argv[0]
+              << " /path/to/ITKSnapSegmentation.nii.gz /path/to/OldSlicerSegmentation.seg.nrrd "
+                 "/path/to/SlicerSegmentation.seg.nrrd"
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -55,7 +56,8 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
   converterFactory->RegisterConverterRule(vtkSmartPointer<vtkClosedSurfaceToFractionalLabelmapConversionRule>::New());
 
   const char* itkSnapSegmentationFilename = argv[1]; // ITKSnapSegmentation.nii.gz
-  const char* oldSlicerSegmentationFilename = argv[2]; // OldSlicerSegmentation.seg.nrrd: Segmentation before shared labelmaps implemented.
+  const char* oldSlicerSegmentationFilename =
+    argv[2]; // OldSlicerSegmentation.seg.nrrd: Segmentation before shared labelmaps implemented.
   const char* slicerSegmentationFilename = argv[3]; // SlicerSegmentation.seg.nrrd: Segmentation with shared labelmaps.
 
   // Test segmentation exported from ITK-SNAP
@@ -73,7 +75,8 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
     int numberOfSegments = segmentation->GetNumberOfSegments();
     CHECK_INT(numberOfSegments, 4);
 
-    int numberOfLayers = segmentation->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+    int numberOfLayers =
+      segmentation->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
     CHECK_INT(numberOfLayers, 1);
   }
 
@@ -92,7 +95,8 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
     int numberOfSegments = segmentation->GetNumberOfSegments();
     CHECK_INT(numberOfSegments, 3);
 
-    int numberOfLayers = segmentation->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+    int numberOfLayers =
+      segmentation->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
     CHECK_INT(numberOfLayers, 3);
   }
 
@@ -110,7 +114,8 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
     int numberOfSegments = segmentation->GetNumberOfSegments();
     CHECK_INT(numberOfSegments, 3);
 
-    int numberOfLayers = segmentation->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+    int numberOfLayers =
+      segmentation->GetNumberOfLayers(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
     CHECK_INT(numberOfLayers, 2);
   }
 

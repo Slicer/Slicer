@@ -87,7 +87,7 @@ void qSlicerCorePythonManager::preInitialization()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtkObject * object)
+void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtkObject* object)
 {
   // Split name using '.'
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
@@ -100,13 +100,12 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
   QString attributeName = moduleNameList.takeLast();
 
   bool success = qSlicerScriptedUtils::setModuleAttribute(
-        moduleNameList.join("."),
-        attributeName,
-        vtkPythonUtil::GetObjectFromPointer(object));
+    moduleNameList.join("."), attributeName, vtkPythonUtil::GetObjectFromPointer(object));
   if (!success)
   {
     qCritical() << "qSlicerCorePythonManager::addVTKObjectToPythonMain - "
-                   "Failed to add VTK object:" << name;
+                   "Failed to add VTK object:"
+                << name;
   }
 }
 
@@ -114,19 +113,18 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
 void qSlicerCorePythonManager::appendPythonPath(const QString& path)
 {
   // TODO Make sure PYTHONPATH is updated
-  this->executeString(QString(
-    "import sys, os\n"
-    "___path = os.path.abspath(%1)\n"
-    "if ___path not in sys.path:\n"
-    "  sys.path.append(___path)\n"
-    "del sys, os"
-    ).arg(qSlicerCorePythonManager::toPythonStringLiteral(path)));
+  this->executeString(QString("import sys, os\n"
+                              "___path = os.path.abspath(%1)\n"
+                              "if ___path not in sys.path:\n"
+                              "  sys.path.append(___path)\n"
+                              "del sys, os")
+                        .arg(qSlicerCorePythonManager::toPythonStringLiteral(path)));
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCorePythonManager::appendPythonPaths(const QStringList& paths)
 {
-  foreach(const QString& path, paths)
+  foreach (const QString& path, paths)
   {
     this->appendPythonPath(path);
   }

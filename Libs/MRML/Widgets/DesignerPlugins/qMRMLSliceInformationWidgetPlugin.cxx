@@ -2,13 +2,13 @@
 #include "qMRMLSliceInformationWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLSliceInformationWidgetPlugin::qMRMLSliceInformationWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
+qMRMLSliceInformationWidgetPlugin::qMRMLSliceInformationWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLSliceInformationWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLSliceInformationWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLSliceInformationWidget* _widget = new qMRMLSliceInformationWidget(_parent);
   return _widget;
@@ -19,7 +19,7 @@ QString qMRMLSliceInformationWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSliceInformationWidget\" \
           name=\"MRMLSliceInformationWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
@@ -45,4 +45,3 @@ QString qMRMLSliceInformationWidgetPlugin::name() const
 {
   return "qMRMLSliceInformationWidget";
 }
-

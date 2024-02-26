@@ -9,15 +9,15 @@
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTask : public vtkObject
 {
 public:
-  static vtkSlicerTask *New();
-  vtkTypeMacro(vtkSlicerTask,vtkObject);
+  static vtkSlicerTask* New();
+  vtkTypeMacro(vtkSlicerTask, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   typedef vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunctionPointer;
 
   ///
   /// Set the function and object to call for the task.
-  void SetTaskFunction(vtkMRMLAbstractLogic*, TaskFunctionPointer, void *clientdata);
+  void SetTaskFunction(vtkMRMLAbstractLogic*, TaskFunctionPointer, void* clientdata);
 
   ///
   /// Execute the task.
@@ -33,17 +33,21 @@ public:
     Networking
   };
 
-  vtkSetClampMacro (Type, int, vtkSlicerTask::Undefined, vtkSlicerTask::Networking);
-  vtkGetMacro (Type, int);
-  void SetTypeToProcessing() {this->SetType(vtkSlicerTask::Processing);};
-  void SetTypeToNetworking() {this->SetType(vtkSlicerTask::Networking);};
+  vtkSetClampMacro(Type, int, vtkSlicerTask::Undefined, vtkSlicerTask::Networking);
+  vtkGetMacro(Type, int);
+  void SetTypeToProcessing() { this->SetType(vtkSlicerTask::Processing); };
+  void SetTypeToNetworking() { this->SetType(vtkSlicerTask::Networking); };
 
-  const char* GetTypeAsString( ) {
+  const char* GetTypeAsString()
+  {
     switch (this->Type)
     {
-      case vtkSlicerTask::Undefined: return "Undefined";
-      case vtkSlicerTask::Processing: return "Processing";
-      case vtkSlicerTask::Networking: return "Networking";
+      case vtkSlicerTask::Undefined:
+        return "Undefined";
+      case vtkSlicerTask::Processing:
+        return "Processing";
+      case vtkSlicerTask::Networking:
+        return "Networking";
     }
     return "Unknown";
   }
@@ -57,11 +61,8 @@ protected:
 private:
   vtkSmartPointer<vtkMRMLAbstractLogic> TaskObject;
   vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunction;
-  void *TaskClientData;
+  void* TaskClientData;
 
   int Type;
-
 };
 #endif
-
-

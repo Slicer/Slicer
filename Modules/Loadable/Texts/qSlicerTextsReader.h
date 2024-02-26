@@ -41,7 +41,7 @@ public:
   bool load(const IOProperties& properties) override;
 
 protected:
-  QScopedPointer< qSlicerTextsReaderPrivate > d_ptr;
+  QScopedPointer<qSlicerTextsReaderPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerTextsReader);

@@ -19,48 +19,40 @@
 #include "qSlicerLabelMapVolumeDisplayWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerLabelMapVolumeDisplayWidgetPlugin
-::qSlicerLabelMapVolumeDisplayWidgetPlugin(QObject *_parent)
+qSlicerLabelMapVolumeDisplayWidgetPlugin ::qSlicerLabelMapVolumeDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerLabelMapVolumeDisplayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerLabelMapVolumeDisplayWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qSlicerLabelMapVolumeDisplayWidget* _widget
-    = new qSlicerLabelMapVolumeDisplayWidget(_parent);
+  qSlicerLabelMapVolumeDisplayWidget* _widget = new qSlicerLabelMapVolumeDisplayWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerLabelMapVolumeDisplayWidgetPlugin
-::domXml() const
+QString qSlicerLabelMapVolumeDisplayWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qSlicerLabelMapVolumeDisplayWidget\" \
           name=\"VolumeDisplayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerLabelMapVolumeDisplayWidgetPlugin
-::includeFile() const
+QString qSlicerLabelMapVolumeDisplayWidgetPlugin ::includeFile() const
 {
   return "qSlicerLabelMapVolumeDisplayWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerLabelMapVolumeDisplayWidgetPlugin
-::isContainer() const
+bool qSlicerLabelMapVolumeDisplayWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerLabelMapVolumeDisplayWidgetPlugin
-::name() const
+QString qSlicerLabelMapVolumeDisplayWidgetPlugin ::name() const
 {
   return "qSlicerLabelMapVolumeDisplayWidget";
 }

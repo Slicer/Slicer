@@ -45,7 +45,8 @@ public:
   mutable bool MimeDataAccepted;
   QDropEvent* DropEvent;
 
-  enum {
+  enum
+  {
     ExecMethod = 0,
     IsMimeDataAcceptedMethod,
     DropEventMethod,
@@ -53,8 +54,8 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSourceFilePath;
-  QString    PythonClassName;
+  QString PythonSourceFilePath;
+  QString PythonClassName;
 };
 
 //-----------------------------------------------------------------------------
@@ -90,14 +91,16 @@ qSlicerScriptedFileDialog::qSlicerScriptedFileDialog(QObject* parent)
 qSlicerScriptedFileDialog::~qSlicerScriptedFileDialog() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileDialog::pythonSource()const
+QString qSlicerScriptedFileDialog::pythonSource() const
 {
   Q_D(const qSlicerScriptedFileDialog);
   return d->PythonSourceFilePath;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const QString& _className, bool missingClassIsExpected)
+bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath,
+                                                const QString& _className,
+                                                bool missingClassIsExpected)
 {
   Q_D(qSlicerScriptedFileDialog);
 
@@ -106,7 +109,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
     return false;
   }
 
-  if(!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
+  if (!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
   {
     return false;
   }
@@ -128,7 +131,7 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& filePath, const Q
   d->PythonClassName = className;
 
   // Get a reference (or create if needed) the <moduleName> python module
-  PyObject * module = PyImport_AddModule(moduleName.toUtf8());
+  PyObject* module = PyImport_AddModule(moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
@@ -208,15 +211,14 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 {
   Q_D(qSlicerScriptedFileDialog);
   d->Properties = ioProperties;
-  PyObject * result = d->PythonCppAPI.callMethod(d->ExecMethod);
+  PyObject* result = d->PythonCppAPI.callMethod(d->ExecMethod);
   if (!result)
   {
     return false;
   }
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath
-               << " - In" << d->PythonClassName << "class, function 'execDialog' "
+    qWarning() << d->PythonSourceFilePath << " - In" << d->PythonClassName << "class, function 'execDialog' "
                << "is expected to return a boolean";
     return false;
   }
@@ -224,12 +226,12 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData)const
+bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData) const
 {
   Q_D(const qSlicerScriptedFileDialog);
   d->MimeData = mimeData;
   d->MimeDataAccepted = false;
-  PyObject * result = d->PythonCppAPI.callMethod(d->IsMimeDataAcceptedMethod);
+  PyObject* result = d->PythonCppAPI.callMethod(d->IsMimeDataAcceptedMethod);
   if (!result)
   {
     return false;
@@ -241,27 +243,27 @@ bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData)con
 void qSlicerScriptedFileDialog::dropEvent(QDropEvent* event)
 {
   Q_D(qSlicerScriptedFileDialog);
-  d->DropEvent =  event;
+  d->DropEvent = event;
   d->MimeData = event->mimeData();
   d->PythonCppAPI.callMethod(d->DropEventMethod);
 }
 
 //-----------------------------------------------------------------------------
-const qSlicerIO::IOProperties& qSlicerScriptedFileDialog::ioProperties()const
+const qSlicerIO::IOProperties& qSlicerScriptedFileDialog::ioProperties() const
 {
   Q_D(const qSlicerScriptedFileDialog);
   return d->Properties;
 }
 
 //-----------------------------------------------------------------------------
-const QMimeData* qSlicerScriptedFileDialog::mimeData()const
+const QMimeData* qSlicerScriptedFileDialog::mimeData() const
 {
   Q_D(const qSlicerScriptedFileDialog);
   return d->MimeData;
 }
 
 //-----------------------------------------------------------------------------
-QDropEvent* qSlicerScriptedFileDialog::dropEvent()const
+QDropEvent* qSlicerScriptedFileDialog::dropEvent() const
 {
   Q_D(const qSlicerScriptedFileDialog);
   return d->DropEvent;

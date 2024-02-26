@@ -20,26 +20,15 @@
 
 #include "qSlicerCoreModule.h"
 
-
-class ACoreModule: public qSlicerCoreModule
+class ACoreModule : public qSlicerCoreModule
 {
 public:
-  QString title()const override
-  {
-    return "A title \n\t#$%^&*";
-  }
-  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
-  {
-    return nullptr;
-  }
-  vtkMRMLAbstractLogic* createLogic() override
-  {
-    return nullptr;
-  }
+  QString title() const override { return "A title \n\t#$%^&*"; }
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return nullptr; }
+  vtkMRMLAbstractLogic* createLogic() override { return nullptr; }
 };
 
-
-int qSlicerCoreModuleTest1(int, char * [] )
+int qSlicerCoreModuleTest1(int, char*[])
 {
   qSlicerCoreModule* module = new ACoreModule;
   delete module;

@@ -161,7 +161,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -203,7 +203,7 @@ void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintFloatMacro(FieldOfView);
@@ -243,19 +243,15 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
 //------------------------------------------------------------------------------
 double* vtkMRMLViewNode::defaultBackgroundColor()
 {
-  //static double backgroundColor[3] = {0.70196, 0.70196, 0.90588};
-  static double backgroundColor[3] = {0.7568627450980392,
-                                      0.7647058823529412,
-                                      0.9098039215686275};
+  // static double backgroundColor[3] = {0.70196, 0.70196, 0.90588};
+  static double backgroundColor[3] = { 0.7568627450980392, 0.7647058823529412, 0.9098039215686275 };
   return backgroundColor;
 }
 
 //------------------------------------------------------------------------------
 double* vtkMRMLViewNode::defaultBackgroundColor2()
 {
-  static double backgroundColor2[3] = {0.4549019607843137,
-                                       0.4705882352941176,
-                                       0.7450980392156863};
+  static double backgroundColor2[3] = { 0.4549019607843137, 0.4705882352941176, 0.7450980392156863 };
   return backgroundColor2;
 }
 
@@ -272,9 +268,12 @@ const char* vtkMRMLViewNode::GetAnimationModeAsString(int id)
 {
   switch (id)
   {
-    case Off: return "Off";
-    case Spin: return "Spin";
-    case Rock: return "Rock";
+    case Off:
+      return "Off";
+    case Spin:
+      return "Spin";
+    case Rock:
+      return "Rock";
     default:
       // invalid id
       return "";
@@ -306,8 +305,10 @@ const char* vtkMRMLViewNode::GetViewAxisModeAsString(int id)
 {
   switch (id)
   {
-    case LookFrom: return "LookFrom";
-    case RotateAround: return "RotateAround";
+    case LookFrom:
+      return "LookFrom";
+    case RotateAround:
+      return "RotateAround";
     default:
       // invalid id
       return "";
@@ -339,12 +340,18 @@ const char* vtkMRMLViewNode::GetSpinDirectionAsString(int id)
 {
   switch (id)
   {
-    case PitchUp: return "PitchUp";
-    case PitchDown: return "PitchDown";
-    case RollLeft: return "RollLeft";
-    case RollRight: return "RollRight";
-    case YawLeft: return "YawLeft";
-    case YawRight: return "YawRight";
+    case PitchUp:
+      return "PitchUp";
+    case PitchDown:
+      return "PitchDown";
+    case RollLeft:
+      return "RollLeft";
+    case RollRight:
+      return "RollRight";
+    case YawLeft:
+      return "YawLeft";
+    case YawRight:
+      return "YawRight";
     default:
       // invalid id
       return "";
@@ -376,14 +383,22 @@ const char* vtkMRMLViewNode::GetStereoTypeAsString(int id)
 {
   switch (id)
   {
-    case NoStereo: return "NoStereo";
-    case RedBlue: return "RedBlue";
-    case Anaglyph: return "Anaglyph";
-    case QuadBuffer: return "QuadBuffer";
-    case Interlaced: return "Interlaced";
-    case UserDefined_1: return "UserDefined_1";
-    case UserDefined_2: return "UserDefined_2";
-    case UserDefined_3: return "UserDefined_3";
+    case NoStereo:
+      return "NoStereo";
+    case RedBlue:
+      return "RedBlue";
+    case Anaglyph:
+      return "Anaglyph";
+    case QuadBuffer:
+      return "QuadBuffer";
+    case Interlaced:
+      return "Interlaced";
+    case UserDefined_1:
+      return "UserDefined_1";
+    case UserDefined_2:
+      return "UserDefined_2";
+    case UserDefined_3:
+      return "UserDefined_3";
     default:
       // invalid id
       return "";
@@ -415,8 +430,10 @@ const char* vtkMRMLViewNode::GetRenderModeAsString(int id)
 {
   switch (id)
   {
-    case Perspective: return "Perspective";
-    case Orthographic: return "Orthographic";
+    case Perspective:
+      return "Perspective";
+    case Orthographic:
+      return "Orthographic";
     default:
       // invalid id
       return "";
@@ -448,9 +465,12 @@ const char* vtkMRMLViewNode::GetVolumeRenderingQualityAsString(int id)
 {
   switch (id)
   {
-    case Adaptive: return "Adaptive";
-    case Normal: return "Normal";
-    case Maximum: return "Maximum";
+    case Adaptive:
+      return "Adaptive";
+    case Normal:
+      return "Normal";
+    case Maximum:
+      return "Maximum";
     default:
       // invalid id
       return "";
@@ -482,12 +502,18 @@ const char* vtkMRMLViewNode::GetRaycastTechniqueAsString(int id)
 {
   switch (id)
   {
-    case Composite: return "Composite";
-    case CompositeEdgeColoring: return "CompositeEdgeColoring";
-    case MaximumIntensityProjection: return "MaximumIntensityProjection";
-    case MinimumIntensityProjection: return "MinimumIntensityProjection";
-    case GradiantMagnitudeOpacityModulation: return "GradiantMagnitudeOpacityModulation";
-    case IllustrativeContextPreservingExploration: return "IllustrativeContextPreservingExploration";
+    case Composite:
+      return "Composite";
+    case CompositeEdgeColoring:
+      return "CompositeEdgeColoring";
+    case MaximumIntensityProjection:
+      return "MaximumIntensityProjection";
+    case MinimumIntensityProjection:
+      return "MinimumIntensityProjection";
+    case GradiantMagnitudeOpacityModulation:
+      return "GradiantMagnitudeOpacityModulation";
+    case IllustrativeContextPreservingExploration:
+      return "IllustrativeContextPreservingExploration";
     default:
       // invalid id
       return "";

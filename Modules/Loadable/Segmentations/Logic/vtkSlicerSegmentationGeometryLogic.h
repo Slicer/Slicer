@@ -88,15 +88,16 @@ public:
 
   //@{
   /// Oversampling factor:
-  /// Split each voxel of the volume to this many voxels along each direction. Useful when increasing the resolution is needed
-  /// 1 by default.
+  /// Split each voxel of the volume to this many voxels along each direction. Useful when increasing the resolution is
+  /// needed 1 by default.
   vtkGetMacro(OversamplingFactor, double);
   vtkSetMacro(OversamplingFactor, double);
   //@}
 
   //@{
   /// Explicitly specified spacing. Only applied if \sa SourceGeometryNode does not contain volume data
-  /// (i.e. not a volume node nor a segmentation node with labelmap master, but an ROI, model, or segmentation with poly data master)
+  /// (i.e. not a volume node nor a segmentation node with labelmap master, but an ROI, model, or segmentation with poly
+  /// data master)
   vtkGetVectorMacro(UserSpacing, double, 3);
   vtkSetVectorMacro(UserSpacing, double, 3);
   //@}
@@ -108,8 +109,8 @@ public:
   vtkGetVectorMacro(SourceAxisIndexForInputAxis, int, 3);
 
   //@{
-  /// If enabled then the output geometry extent is padded as needed to ensure that the input segmentation extent fits into the output.
-  /// Enabled by default.
+  /// If enabled then the output geometry extent is padded as needed to ensure that the input segmentation extent fits
+  /// into the output. Enabled by default.
   vtkGetMacro(PadOutputGeometry, bool);
   vtkSetMacro(PadOutputGeometry, bool);
   vtkBooleanMacro(PadOutputGeometry, bool);
@@ -120,7 +121,6 @@ protected:
   ~vtkSlicerSegmentationGeometryLogic() override;
 
 protected:
-
   /// Calculate output geometry into \sa GeometryImageData with current options from image
   /// or segmentation that uses labelmap as source representation.
   /// \return Error message. Empty when successful

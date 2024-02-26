@@ -51,8 +51,7 @@ class vtkMRMLSliceNode;
 /// controllerWidget.setMRMLScene(scene);
 /// controllerWidget.setMRMLSliceNode(sliceNode);
 /// \endcode
-class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget
-  : public qMRMLViewControllerBar
+class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget : public qMRMLViewControllerBar
 {
   Q_OBJECT
   Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
@@ -71,29 +70,29 @@ public:
   ~qMRMLSliceControllerWidget() override;
 
   /// Are the slices linked to each other
-  bool isLinked()const;
+  bool isLinked() const;
 
   /// Is the view a compare view
-  bool isCompareView()const;
+  bool isCompareView() const;
 
   /// Get slice orientation
   /// \sa setSliceOrientation(QString);
-  QString sliceOrientation()const;
+  QString sliceOrientation() const;
 
   /// Get imageData from the slice logic.
   /// Returns 0 if there is no volume assigned to
   /// Background, Foreground or LabelMap.
   /// Or if the only volume assigned doesn't have have
   /// a display node or its display node image data is 0.
-  Q_INVOKABLE vtkAlgorithmOutput* imageDataConnection()const;
+  Q_INVOKABLE vtkAlgorithmOutput* imageDataConnection() const;
 
   /// Get \a sliceNode
   /// \sa setMRMLSliceCompositeNode();
-  Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
+  Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode() const;
 
   /// Get sliceCompositeNode
   /// \sa vtkMRMLSliceLogic::GetSliceCompositeNode();
-  Q_INVOKABLE vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode()const;
+  Q_INVOKABLE vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode() const;
 
   /// Set slice view name
   /// \note SliceViewName should be set before setMRMLSliceNode() is called
@@ -101,7 +100,7 @@ public:
   void setSliceViewName(const QString& newSliceViewName);
 
   /// Get slice view name
-  QString sliceViewName()const;
+  QString sliceViewName() const;
 
   /// Convenience function to set the abbreviated name for the slice view.
   /// This is equivalent to call vtkMRMLSliceNode::SetLayoutLabel()
@@ -111,13 +110,13 @@ public:
 
   /// Get the abbreviated slice view name.
   /// \sa setSliceViewLabel(), vtkMRMLSliceNode::GetLayoutLabel()
-  QString sliceViewLabel()const;
+  QString sliceViewLabel() const;
 
   /// Set the color for the slice view
   void setSliceViewColor(const QColor& newSliceViewColor);
 
   /// Get the color for the slice view
-  QColor sliceViewColor()const;
+  QColor sliceViewColor() const;
 
   /// Set slice offset range
   Q_INVOKABLE void setSliceOffsetRange(double min, double max);
@@ -129,11 +128,11 @@ public:
   double sliceOffsetResolution();
 
   /// Get SliceLogic
-  Q_INVOKABLE vtkMRMLSliceLogic* sliceLogic()const;
+  Q_INVOKABLE vtkMRMLSliceLogic* sliceLogic() const;
 
   /// Set \a newSliceLogic
   /// Use if two instances of the controller need to observe the same logic.
-  Q_INVOKABLE void setSliceLogic(vtkMRMLSliceLogic * newSliceLogic);
+  Q_INVOKABLE void setSliceLogic(vtkMRMLSliceLogic* newSliceLogic);
 
   /// Set controller widget group
   /// All controllers of a same group will be set visible or hidden if at least
@@ -152,7 +151,7 @@ public:
   Q_INVOKABLE QToolButton* fitToWindowToolButton();
 
   /// Get the slice offset slider visibility.
-  bool showSliceOffsetSlider()const;
+  bool showSliceOffsetSlider() const;
 
 public slots:
 
@@ -298,7 +297,7 @@ public slots:
 
 signals:
   /// This signal is emitted when the given \a imageData is modified.
-  void imageDataConnectionChanged(vtkAlgorithmOutput * imageDataConnection);
+  void imageDataConnectionChanged(vtkAlgorithmOutput* imageDataConnection);
 
   void renderRequested();
 
@@ -311,8 +310,7 @@ protected:
   /// \note You are responsible to call init() in the constructor of
   /// derived class. Doing so ensures the derived class is fully
   /// instantiated in case virtual method are called within init() itself.
-  qMRMLSliceControllerWidget(qMRMLSliceControllerWidgetPrivate* obj,
-                             QWidget* parent);
+  qMRMLSliceControllerWidget(qMRMLSliceControllerWidgetPrivate* obj, QWidget* parent);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSliceControllerWidget);

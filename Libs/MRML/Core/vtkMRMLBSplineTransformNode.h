@@ -26,16 +26,16 @@ class vtkMRMLStorageNode;
 /// node in the form of a vtkBSplineDeformableTransform.
 class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLTransformNode
 {
-  public:
-  static vtkMRMLBSplineTransformNode *New();
-  vtkTypeMacro(vtkMRMLBSplineTransformNode,vtkMRMLTransformNode);
+public:
+  static vtkMRMLBSplineTransformNode* New();
+  vtkTypeMacro(vtkMRMLBSplineTransformNode, vtkMRMLTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -47,22 +47,17 @@ class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLTransformNode
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "BSplineTransform";};
+  const char* GetNodeTagName() override { return "BSplineTransform"; };
 
   ///
   /// Create default storage node or nullptr if does not have one
-  vtkMRMLStorageNode* CreateDefaultStorageNode() override
-  {
-    return Superclass::CreateDefaultStorageNode();
-  };
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override { return Superclass::CreateDefaultStorageNode(); };
 
 protected:
   vtkMRMLBSplineTransformNode();
   ~vtkMRMLBSplineTransformNode() override;
   vtkMRMLBSplineTransformNode(const vtkMRMLBSplineTransformNode&);
   void operator=(const vtkMRMLBSplineTransformNode&);
-
 };
 
 #endif
-

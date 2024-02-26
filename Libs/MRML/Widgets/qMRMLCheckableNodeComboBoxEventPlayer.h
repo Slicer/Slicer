@@ -29,8 +29,7 @@
 
 /// Concrete implementation of pqWidgetEventPlayer that translates
 /// high-level events into low-level Qt events.
-class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBoxEventPlayer :
-  public pqWidgetEventPlayer
+class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBoxEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
 
@@ -39,12 +38,11 @@ public:
   qMRMLCheckableNodeComboBoxEventPlayer(QObject* parent = nullptr);
 
   using Superclass::playEvent;
-  bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error) override;
+  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
-  qMRMLCheckableNodeComboBoxEventPlayer(const qMRMLCheckableNodeComboBoxEventPlayer&); // NOT implemented
+  qMRMLCheckableNodeComboBoxEventPlayer(const qMRMLCheckableNodeComboBoxEventPlayer&);            // NOT implemented
   qMRMLCheckableNodeComboBoxEventPlayer& operator=(const qMRMLCheckableNodeComboBoxEventPlayer&); // NOT implemented
-
 };
 
 #endif

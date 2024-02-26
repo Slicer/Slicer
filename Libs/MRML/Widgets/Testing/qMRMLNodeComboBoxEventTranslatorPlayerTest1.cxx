@@ -60,10 +60,10 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLNodeComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLNodeComboBoxEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -80,7 +80,7 @@ int qMRMLNodeComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // Test case 1
   qMRMLNodeComboBox* widget = new qMRMLNodeComboBox();
-//  widget->setEditEnabled(true);
+  //  widget->setEditEnabled(true);
   widget->setRenameEnabled(true);
   qMRMLSceneFactoryWidget sceneFactory;
 
@@ -89,11 +89,10 @@ int qMRMLNodeComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
   widget->setNodeTypes(QStringList("vtkMRMLViewNode"));
   widget->setMRMLScene(sceneFactory.mrmlScene());
 
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLNodeComboBoxEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    widget, xmlDirectory + "qMRMLNodeComboBoxEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
-//  sceneFactory.deleteScene();
+  //  sceneFactory.deleteScene();
 
   // ------------------------
   if (!app.arguments().contains("-I"))
@@ -104,4 +103,3 @@ int qMRMLNodeComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

@@ -45,9 +45,9 @@ qSlicerReformatModulePrivate::qSlicerReformatModulePrivate() = default;
 // qSlicerReformatModule methods
 
 //------------------------------------------------------------------------------
-qSlicerReformatModule::
-qSlicerReformatModule(QObject* _parent) : Superclass(_parent),
-  d_ptr(new qSlicerReformatModulePrivate)
+qSlicerReformatModule::qSlicerReformatModule(QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerReformatModulePrivate)
 {
 }
 
@@ -55,37 +55,35 @@ qSlicerReformatModule(QObject* _parent) : Superclass(_parent),
 qSlicerReformatModule::~qSlicerReformatModule() = default;
 
 //------------------------------------------------------------------------------
-QString qSlicerReformatModule::helpText()const
+QString qSlicerReformatModule::helpText() const
 {
-  QString help =
-      "The Transforms Reformat Widget Module creates "
-      "and edits the Slice Node transforms.<br>";
+  QString help = "The Transforms Reformat Widget Module creates "
+                 "and edits the Slice Node transforms.<br>";
   help += this->defaultDocumentationLink();
   return help;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerReformatModule::acknowledgementText()const
+QString qSlicerReformatModule::acknowledgementText() const
 {
-  QString acknowledgement =
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.";
+  QString acknowledgement = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.";
   return acknowledgement;
 }
 
 //------------------------------------------------------------------------------
-QIcon qSlicerReformatModule::icon()const
+QIcon qSlicerReformatModule::icon() const
 {
   return QIcon(":/Icons/Reformat.png");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerReformatModule::categories()const
+QStringList qSlicerReformatModule::categories() const
 {
   return QStringList() << qSlicerAbstractCoreModule::tr("Registration.Specialized");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerReformatModule::contributors()const
+QStringList qSlicerReformatModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Michael Jeulin-Lagarrigue (Kitware)");
@@ -99,8 +97,7 @@ void qSlicerReformatModule::setup()
 }
 
 //------------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerReformatModule::
-createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerReformatModule::createWidgetRepresentation()
 {
   return new qSlicerReformatModuleWidget;
 }
@@ -114,7 +111,6 @@ vtkMRMLAbstractLogic* qSlicerReformatModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerReformatModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLSliceNode"
-    << "vtkMRMLSliceCompositeNode";
+  return QStringList() << "vtkMRMLSliceNode"
+                       << "vtkMRMLSliceCompositeNode";
 }

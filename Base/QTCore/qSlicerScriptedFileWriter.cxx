@@ -41,7 +41,8 @@ public:
   qSlicerScriptedFileWriterPrivate();
   virtual ~qSlicerScriptedFileWriterPrivate();
 
-  enum {
+  enum
+  {
     DescriptionMethod = 0,
     FileTypeMethod,
     CanWriteObjectMethod,
@@ -52,8 +53,8 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSource;
-  QString    PythonClassName;
+  QString PythonSource;
+  QString PythonClassName;
 };
 
 //-----------------------------------------------------------------------------
@@ -87,14 +88,16 @@ qSlicerScriptedFileWriter::qSlicerScriptedFileWriter(QObject* parent)
 qSlicerScriptedFileWriter::~qSlicerScriptedFileWriter() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileWriter::pythonSource()const
+QString qSlicerScriptedFileWriter::pythonSource() const
 {
   Q_D(const qSlicerScriptedFileWriter);
   return d->PythonSource;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const QString& _className, bool missingClassIsExpected)
+bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath,
+                                                const QString& _className,
+                                                bool missingClassIsExpected)
 {
   Q_D(qSlicerScriptedFileWriter);
 
@@ -103,7 +106,7 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
     return false;
   }
 
-  if(!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
+  if (!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
   {
     return false;
   }
@@ -125,7 +128,7 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
   d->PythonCppAPI.setObjectName(className);
 
   // Get a reference (or create if needed) the <moduleName> python module
-  PyObject * module = PyImport_AddModule(moduleName.toUtf8());
+  PyObject* module = PyImport_AddModule(moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
@@ -144,7 +147,10 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedFileWriter::setPythonSource - "
                             "Failed to load scripted file writer: "
-                            "class %1 was not found in file %2").arg(className).arg(filePath).toUtf8());
+                            "class %1 was not found in file %2")
+                      .arg(className)
+                      .arg(filePath)
+                      .toUtf8());
     return false;
   }
 
@@ -167,19 +173,18 @@ PyObject* qSlicerScriptedFileWriter::self() const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileWriter::description()const
+QString qSlicerScriptedFileWriter::description() const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject * result = d->PythonCppAPI.callMethod(d->DescriptionMethod);
+  PyObject* result = d->PythonCppAPI.callMethod(d->DescriptionMethod);
   if (!result)
   {
     return QString();
   }
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'description' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'description' "
                << "is expected to return a string !";
     return QString();
   }
@@ -188,19 +193,18 @@ QString qSlicerScriptedFileWriter::description()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType()const
+qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType() const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject * result = d->PythonCppAPI.callMethod(d->FileTypeMethod);
+  PyObject* result = d->PythonCppAPI.callMethod(d->FileTypeMethod);
   if (!result)
   {
     return IOFileType();
   }
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'fileType' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'fileType' "
                << "is expected to return a string !";
     return IOFileType();
   }
@@ -208,13 +212,13 @@ qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
+bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object) const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject * arguments = PyTuple_New(1);
+  PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
-  PyObject * result = d->PythonCppAPI.callMethod(d->CanWriteObjectMethod, arguments);
+  PyObject* result = d->PythonCppAPI.callMethod(d->CanWriteObjectMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -223,8 +227,7 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
   }
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'canWriteObject' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'canWriteObject' "
                << "is expected to return a boolean !";
     return false;
   }
@@ -232,13 +235,13 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
 }
 
 //-----------------------------------------------------------------------------
-double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object)const
+double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object) const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject * arguments = PyTuple_New(1);
+  PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
-  PyObject * result = d->PythonCppAPI.callMethod(d->CanWriteObjectConfidenceMethod, arguments);
+  PyObject* result = d->PythonCppAPI.callMethod(d->CanWriteObjectConfidenceMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -247,8 +250,7 @@ double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object)con
   }
   if (!PyFloat_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'canWriteObjectConfidence' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'canWriteObjectConfidence' "
                << "is expected to return a float!";
     return 0.0;
   }
@@ -256,13 +258,13 @@ double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object)con
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
+QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object) const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
-  PyObject * arguments = PyTuple_New(1);
+  PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(object));
-  PyObject * result = d->PythonCppAPI.callMethod(d->ExtensionsMethod, arguments);
+  PyObject* result = d->PythonCppAPI.callMethod(d->ExtensionsMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -270,8 +272,7 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
   }
   if (!PyList_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'extensions' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'extensions' "
                << "is expected to return a string list !";
     return QStringList();
   }
@@ -282,8 +283,7 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
   {
     if (!PyUnicode_Check(PyTuple_GetItem(resultAsTuple, i)))
     {
-      qWarning() << d->PythonSource
-                 << " - In" << d->PythonClassName << "class, function 'extensions' "
+      qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'extensions' "
                  << "is expected to return a string list !";
       break;
     }
@@ -297,9 +297,9 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
 bool qSlicerScriptedFileWriter::write(const qSlicerIO::IOProperties& properties)
 {
   Q_D(qSlicerScriptedFileWriter);
-  PyObject * arguments = PyTuple_New(1);
+  PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PythonQtConv::QVariantMapToPyObject(properties));
-  PyObject * result = d->PythonCppAPI.callMethod(d->WriteMethod, arguments);
+  PyObject* result = d->PythonCppAPI.callMethod(d->WriteMethod, arguments);
   Py_DECREF(arguments);
   if (!result)
   {
@@ -307,8 +307,7 @@ bool qSlicerScriptedFileWriter::write(const qSlicerIO::IOProperties& properties)
   }
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'write' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'write' "
                << "is expected to return a string boolean !";
     return false;
   }

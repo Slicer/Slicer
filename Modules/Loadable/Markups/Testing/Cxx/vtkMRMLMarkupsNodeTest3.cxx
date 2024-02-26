@@ -34,9 +34,13 @@
 
 // Test markups measurements
 
-
-int CheckCurvePointDistances(vtkMRMLMarkupsCurveNode* curveNode, double expectedRegularDistance,
-  double expectedDistanceSecondLast, double expectedDistanceLast, double tolerance, bool distanceOnCurve = false, bool verbose = false)
+int CheckCurvePointDistances(vtkMRMLMarkupsCurveNode* curveNode,
+                             double expectedRegularDistance,
+                             double expectedDistanceSecondLast,
+                             double expectedDistanceLast,
+                             double tolerance,
+                             bool distanceOnCurve = false,
+                             bool verbose = false)
 {
   bool rerunWithReporting = false;
   while (true)
@@ -45,7 +49,8 @@ int CheckCurvePointDistances(vtkMRMLMarkupsCurveNode* curveNode, double expected
     {
       std::cout << "CheckCurvePointDistances:" << std::endl;
     }
-    int lastPointIndex = (curveNode->GetCurveClosed() ? curveNode->GetNumberOfControlPoints() : curveNode->GetNumberOfControlPoints() - 1);
+    int lastPointIndex =
+      (curveNode->GetCurveClosed() ? curveNode->GetNumberOfControlPoints() : curveNode->GetNumberOfControlPoints() - 1);
     for (int pointIndex = 0; pointIndex < lastPointIndex; pointIndex++)
     {
       double actualDistance;
@@ -72,9 +77,9 @@ int CheckCurvePointDistances(vtkMRMLMarkupsCurveNode* curveNode, double expected
       }
       if (verbose || rerunWithReporting)
       {
-        std::cout << "  " << pointIndex << ":  expected = " << expectedDistance << " ["
-          << expectedDistance-tolerance << ", " << expectedDistance + tolerance << "]    actual = " << actualDistance
-          << " (error=" << actualDistance- expectedDistance << ")" << std::endl;
+        std::cout << "  " << pointIndex << ":  expected = " << expectedDistance << " [" << expectedDistance - tolerance
+                  << ", " << expectedDistance + tolerance << "]    actual = " << actualDistance
+                  << " (error=" << actualDistance - expectedDistance << ")" << std::endl;
       }
       if (fabs(actualDistance - expectedDistance) > tolerance)
       {
@@ -94,7 +99,7 @@ int CheckCurvePointDistances(vtkMRMLMarkupsCurveNode* curveNode, double expected
   }
 }
 
-int vtkMRMLMarkupsNodeTest3(int , char * [] )
+int vtkMRMLMarkupsNodeTest3(int, char*[])
 {
   //
   // Test curve interpolation
@@ -112,7 +117,7 @@ int vtkMRMLMarkupsNodeTest3(int , char * [] )
   vtkNew<vtkMRMLMarkupsCurveNode> curveNode;
   double curveLength = 100.0;
   curveNode->AddControlPoint(vtkVector3d(10, 25, -30));
-  curveNode->AddControlPoint(vtkVector3d(10, 25+curveLength, -30));
+  curveNode->AddControlPoint(vtkVector3d(10, 25 + curveLength, -30));
   CHECK_DOUBLE_TOLERANCE(curveNode->GetCurveLengthWorld(), curveLength, tol);
 
   curveNode->ResampleCurveWorld(1.0);
@@ -157,51 +162,77 @@ int vtkMRMLMarkupsNodeTest3(int , char * [] )
   double samplingDistance = 10.0;
   closedCurveNode->ResampleCurveWorld(samplingDistance);
   CHECK_INT(closedCurveNode->GetNumberOfControlPoints(), 9);
-  // tolerance is large because control points are quite far from each other, so curve segments are long and some variance is expected
-  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, samplingDistance, samplingDistance,
-    samplingDistance / 2.0, distanceOnCurve, verbose));
+  // tolerance is large because control points are quite far from each other, so curve segments are long and some
+  // variance is expected
+  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance / 2.0,
+                                              distanceOnCurve,
+                                              verbose));
   CHECK_DOUBLE_TOLERANCE(closedCurveNode->GetCurveLengthWorld(), closedCurveLength, circumferenceTol);
 
   samplingDistance = 1.0;
   closedCurveNode->ResampleCurveWorld(samplingDistance);
   CHECK_INT(closedCurveNode->GetNumberOfControlPoints(), 94);
-  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, samplingDistance, samplingDistance,
-    samplingDistance / 10.0, distanceOnCurve, verbose));
+  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance / 10.0,
+                                              distanceOnCurve,
+                                              verbose));
   CHECK_DOUBLE_TOLERANCE(closedCurveNode->GetCurveLengthWorld(), closedCurveLength, circumferenceTol);
 
   samplingDistance = closedCurveNode->GetCurveLengthWorld() / 10.0;
   closedCurveNode->ResampleCurveWorld(samplingDistance);
   CHECK_INT(closedCurveNode->GetNumberOfControlPoints(), 10);
-  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, samplingDistance, samplingDistance,
-    samplingDistance / 10.0, distanceOnCurve, verbose));
+  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance / 10.0,
+                                              distanceOnCurve,
+                                              verbose));
   CHECK_DOUBLE_TOLERANCE(closedCurveNode->GetCurveLengthWorld(), closedCurveLength, circumferenceTol * 2);
 
   samplingDistance = closedCurveNode->GetCurveLengthWorld() / 10.1;
   closedCurveNode->ResampleCurveWorld(samplingDistance);
   CHECK_INT(closedCurveNode->GetNumberOfControlPoints(), 10);
-  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, samplingDistance, samplingDistance,
-    samplingDistance / 10.0, distanceOnCurve, verbose));
+  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance / 10.0,
+                                              distanceOnCurve,
+                                              verbose));
   CHECK_DOUBLE_TOLERANCE(closedCurveNode->GetCurveLengthWorld(), closedCurveLength, circumferenceTol * 2);
 
   samplingDistance = closedCurveNode->GetCurveLengthWorld() / 9.99;
   closedCurveNode->ResampleCurveWorld(samplingDistance);
   CHECK_INT(closedCurveNode->GetNumberOfControlPoints(), 10);
-  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, samplingDistance, samplingDistance,
-    samplingDistance / 10.0, distanceOnCurve, verbose));
+  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance,
+                                              samplingDistance / 10.0,
+                                              distanceOnCurve,
+                                              verbose));
   CHECK_DOUBLE_TOLERANCE(closedCurveNode->GetCurveLengthWorld(), closedCurveLength, circumferenceTol * 2);
 
   samplingDistance = closedCurveNode->GetCurveLengthWorld() / 10.4;
   closedCurveNode->ResampleCurveWorld(samplingDistance);
   CHECK_INT(closedCurveNode->GetNumberOfControlPoints(), 10);
-  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, 10.84, 10.82,
-    samplingDistance / 100.0, distanceOnCurve, verbose));
+  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(
+    closedCurveNode, samplingDistance, 10.84, 10.82, samplingDistance / 100.0, distanceOnCurve, verbose));
   CHECK_DOUBLE_TOLERANCE(closedCurveNode->GetCurveLengthWorld(), closedCurveLength, circumferenceTol * 3);
 
   samplingDistance = closedCurveNode->GetCurveLengthWorld() / 10.6;
   closedCurveNode->ResampleCurveWorld(samplingDistance);
   CHECK_INT(closedCurveNode->GetNumberOfControlPoints(), 11);
-  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(closedCurveNode, samplingDistance, 7.09, 7.12,
-    samplingDistance / 100.0, distanceOnCurve, verbose));
+  CHECK_EXIT_SUCCESS(CheckCurvePointDistances(
+    closedCurveNode, samplingDistance, 7.09, 7.12, samplingDistance / 100.0, distanceOnCurve, verbose));
   CHECK_DOUBLE_TOLERANCE(closedCurveNode->GetCurveLengthWorld(), closedCurveLength, circumferenceTol * 3);
 
   std::cout << "Success." << std::endl;

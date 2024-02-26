@@ -60,6 +60,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentsModelPrivate
 
 protected:
   qMRMLSegmentsModel* const q_ptr;
+
 public:
   qMRMLSegmentsModelPrivate(qMRMLSegmentsModel& object);
   virtual ~qMRMLSegmentsModelPrivate();
@@ -67,7 +68,7 @@ public:
 
   // Insert a segment into the specified row
   // If no row is specified, then the index is retrieved from the segmentation
-  QStandardItem* insertSegment(QString segmentID, int row=-1);
+  QStandardItem* insertSegment(QString segmentID, int row = -1);
 
   /// Get string to pass terminology information via table widget item
   QString getTerminologyUserDataForSegment(vtkSegment* segment);

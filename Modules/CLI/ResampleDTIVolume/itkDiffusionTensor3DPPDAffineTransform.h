@@ -32,38 +32,37 @@ namespace itk
  *
  */
 template <class TData>
-class DiffusionTensor3DPPDAffineTransform :
-  public DiffusionTensor3DAffineTransform<TData>
+class DiffusionTensor3DPPDAffineTransform : public DiffusionTensor3DAffineTransform<TData>
 {
 public:
-  typedef TData                                                     DataType;
-  typedef DiffusionTensor3DPPDAffineTransform                       Self;
-  typedef DiffusionTensor3DAffineTransform<DataType>                Superclass;
-  typedef typename Superclass::TensorDataType                       TensorDataType;
-  typedef typename Superclass::MatrixDataType                       MatrixDataType;
-  typedef typename Superclass::MatrixTransformType                  MatrixTransformType;
-  typedef typename Superclass::InternalTensorDataType               InternalTensorDataType;
-  typedef typename Superclass::InternalMatrixDataType               InternalMatrixDataType;
-  typedef typename Superclass::InternalMatrixTransformType          InternalMatrixTransformType;
-  typedef SmartPointer<Self>                                        Pointer;
-  typedef SmartPointer<const Self>                                  ConstPointer;
-  typedef typename Superclass::VectorType                           VectorType;
-  typedef DiffusionTensor3DExtended<double>::EigenValuesArrayType   EValuesType;
+  typedef TData DataType;
+  typedef DiffusionTensor3DPPDAffineTransform Self;
+  typedef DiffusionTensor3DAffineTransform<DataType> Superclass;
+  typedef typename Superclass::TensorDataType TensorDataType;
+  typedef typename Superclass::MatrixDataType MatrixDataType;
+  typedef typename Superclass::MatrixTransformType MatrixTransformType;
+  typedef typename Superclass::InternalTensorDataType InternalTensorDataType;
+  typedef typename Superclass::InternalMatrixDataType InternalMatrixDataType;
+  typedef typename Superclass::InternalMatrixTransformType InternalMatrixTransformType;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef typename Superclass::VectorType VectorType;
+  typedef DiffusionTensor3DExtended<double>::EigenValuesArrayType EValuesType;
   typedef DiffusionTensor3DExtended<double>::EigenVectorsMatrixType EVectorsType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DPPDAffineTransform, DiffusionTensor3DAffineTransform);
 
-  itkNewMacro( Self );
+  itkNewMacro(Self);
   using Superclass::EvaluateTransformedTensor;
-  TensorDataType EvaluateTransformedTensor( TensorDataType & tensor ) override;
+  TensorDataType EvaluateTransformedTensor(TensorDataType& tensor) override;
 
-  void SetMatrix( MatrixTransformType & matrix );
+  void SetMatrix(MatrixTransformType& matrix);
 
 protected:
   void PreCompute() override;
 
-  InternalMatrixTransformType ComputeMatrixFromAxisAndAngle( VectorType axis, double cosangle );
+  InternalMatrixTransformType ComputeMatrixFromAxisAndAngle(VectorType axis, double cosangle);
 
   InternalMatrixTransformType m_TransformMatrixInverse;
 };
@@ -71,7 +70,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DPPDAffineTransform.txx"
+# include "itkDiffusionTensor3DPPDAffineTransform.txx"
 #endif
 
 #endif

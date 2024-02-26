@@ -36,7 +36,7 @@ int testAddFile(const char* filePath);
 int testAddModelWithPolyData(bool withPolyData);
 
 //-----------------------------------------------------------------------------
-int vtkSlicerModelsLogicAddFileTest( int argc, char * argv[] )
+int vtkSlicerModelsLogicAddFileTest(int argc, char* argv[])
 {
   // Test failure cases
 
@@ -69,7 +69,7 @@ int vtkSlicerModelsLogicAddFileTest( int argc, char * argv[] )
 }
 
 //-----------------------------------------------------------------------------
-int testAddEmptyFile(const char * filePath)
+int testAddEmptyFile(const char* filePath)
 {
   vtkNew<vtkSlicerModelsLogic> modelsLogic;
   vtkMRMLModelNode* model = modelsLogic->AddModel(filePath);
@@ -92,7 +92,7 @@ int testAddEmptyFile(const char * filePath)
 }
 
 //-----------------------------------------------------------------------------
-int testAddFile(const char * filePath)
+int testAddFile(const char* filePath)
 {
   vtkNew<vtkSlicerModelsLogic> modelsLogic;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -134,4 +134,3 @@ int testAddModelWithPolyData(bool withPolyData)
 
   return EXIT_SUCCESS;
 }
-

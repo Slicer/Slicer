@@ -26,7 +26,7 @@ qSlicerModulePanelPlugin::qSlicerModulePanelPlugin(QObject* parent)
 {
 }
 
-QWidget *qSlicerModulePanelPlugin::createWidget(QWidget* parentWidget)
+QWidget* qSlicerModulePanelPlugin::createWidget(QWidget* parentWidget)
 {
   qSlicerModulePanel* widget = new qSlicerModulePanel(parentWidget);
   return widget;
@@ -36,7 +36,7 @@ QString qSlicerModulePanelPlugin::domXml() const
 {
   return "<widget class=\"qSlicerModulePanel\" \
           name=\"SlicerModulePanel\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QString qSlicerModulePanelPlugin::includeFile() const

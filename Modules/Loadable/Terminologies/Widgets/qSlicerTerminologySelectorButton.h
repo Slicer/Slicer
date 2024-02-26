@@ -38,19 +38,19 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorBut
   Q_OBJECT
 
 public:
-  explicit qSlicerTerminologySelectorButton(QWidget* parent=nullptr);
+  explicit qSlicerTerminologySelectorButton(QWidget* parent = nullptr);
   ~qSlicerTerminologySelectorButton() override;
 
 #ifndef __VTK_WRAP__
   /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object
-  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
+  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo);
 #endif
 
 public slots:
 
 #ifndef __VTK_WRAP__
   /// Set terminology and other metadata (name, color, auto-generated flags)
-  void setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
+  void setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo);
 #endif
 
   /// Opens a terminology dialog to select a new terminology.
@@ -61,13 +61,14 @@ signals:
   void canceled();
 
 protected slots:
-  void onToggled(bool toggled=true);
+  void onToggled(bool toggled = true);
 
 protected:
   void paintEvent(QPaintEvent* event) override;
 
   QScopedPointer<qSlicerTerminologySelectorButtonPrivate> d_ptr;
-private :
+
+private:
   Q_DECLARE_PRIVATE(qSlicerTerminologySelectorButton);
   Q_DISABLE_COPY(qSlicerTerminologySelectorButton);
 };

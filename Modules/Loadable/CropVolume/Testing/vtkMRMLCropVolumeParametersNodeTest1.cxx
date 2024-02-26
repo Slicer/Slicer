@@ -14,9 +14,9 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLCropVolumeParametersNode.h"
 
-int vtkMRMLCropVolumeParametersNodeTest1(int , char * [] )
+int vtkMRMLCropVolumeParametersNodeTest1(int, char*[])
 {
-  vtkNew< vtkMRMLCropVolumeParametersNode > node1;
+  vtkNew<vtkMRMLCropVolumeParametersNode> node1;
 
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 

@@ -17,7 +17,6 @@
 
 ==============================================================================*/
 
-
 #include "vtkMRMLMessageCollection.h"
 
 // MRML includes
@@ -25,50 +24,43 @@
 
 namespace
 {
-  // This message type is chosen arbitrary and used only inside this class
-  // (this event is chosen because it has a name that is remotely related
-  // to separation between groups of messages, and unlikely to be used otherwise).
-  const int SEPARATOR_MESSAGE_TYPE = vtkCommand::PropertyModifiedEvent;
-}
+// This message type is chosen arbitrary and used only inside this class
+// (this event is chosen because it has a name that is remotely related
+// to separation between groups of messages, and unlikely to be used otherwise).
+const int SEPARATOR_MESSAGE_TYPE = vtkCommand::PropertyModifiedEvent;
+} // namespace
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLMessageCollection);
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLMessageCollection
-::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLMessageCollection ::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Messages: " << &this->Messages << "\n";
   for (int i = 0; i < this->GetNumberOfMessages(); i++)
   {
     const unsigned long messageType = this->GetNthMessageType(i);
     const std::string messageText = this->GetNthMessageText(i);
-    os << indent << "MessagesMember: " << messageType << " "
-       << messageText << "\n";
+    os << indent << "MessagesMember: " << messageType << " " << messageText << "\n";
   }
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMessageCollection::Message
-::Message(unsigned long messageType, const std::string &messageText)
-  : MessageType(messageType), MessageText(messageText)
+vtkMRMLMessageCollection::Message ::Message(unsigned long messageType, const std::string& messageText)
+  : MessageType(messageType)
+  , MessageText(messageText)
 {
 }
 
 //----------------------------------------------------------------------------
-int
-vtkMRMLMessageCollection
-::GetNumberOfMessages() const
+int vtkMRMLMessageCollection ::GetNumberOfMessages() const
 {
   return this->Messages.size();
 }
 
 //----------------------------------------------------------------------------
-int
-vtkMRMLMessageCollection
-::GetNumberOfMessagesOfType(unsigned long messageType) const
+int vtkMRMLMessageCollection ::GetNumberOfMessagesOfType(unsigned long messageType) const
 {
   int response = 0;
   for (int i = 0; i < static_cast<int>(this->Messages.size()); ++i)
@@ -82,35 +74,27 @@ vtkMRMLMessageCollection
 }
 
 //----------------------------------------------------------------------------
-int
-vtkMRMLMessageCollection
-::GetNumberOfMessagesOfType(const char *eventName) const
+int vtkMRMLMessageCollection ::GetNumberOfMessagesOfType(const char* eventName) const
 {
   return GetNumberOfMessagesOfType(vtkCommand::GetEventIdFromString(eventName));
 }
 
 //----------------------------------------------------------------------------
-unsigned long
-vtkMRMLMessageCollection
-::GetNthMessageType(int index) const
+unsigned long vtkMRMLMessageCollection ::GetNthMessageType(int index) const
 {
   return this->Messages.at(index).MessageType;
 }
 
 //----------------------------------------------------------------------------
-std::string
-vtkMRMLMessageCollection
-::GetNthMessageText(int index) const
+std::string vtkMRMLMessageCollection ::GetNthMessageText(int index) const
 {
   return this->Messages.at(index).MessageText;
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLMessageCollection
-::AddMessage(unsigned long messageType, const std::string &messageText)
+void vtkMRMLMessageCollection ::AddMessage(unsigned long messageType, const std::string& messageText)
 {
-  this->Messages.push_back({messageType, messageText});
+  this->Messages.push_back({ messageType, messageText });
 }
 
 //----------------------------------------------------------------------------
@@ -120,9 +104,7 @@ void vtkMRMLMessageCollection::AddSeparator()
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLMessageCollection
-::ClearMessages()
+void vtkMRMLMessageCollection ::ClearMessages()
 {
   this->Messages.clear();
 }
@@ -167,7 +149,8 @@ void vtkMRMLMessageCollection::AddMessages(vtkMRMLMessageCollection* source, con
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLMessageCollection::GetAllMessagesAsString(bool* errorFoundPtr/*=nullptr*/, bool* warningFoundPtr/*=nullptr*/)
+std::string vtkMRMLMessageCollection::GetAllMessagesAsString(bool* errorFoundPtr /*=nullptr*/,
+                                                             bool* warningFoundPtr /*=nullptr*/)
 {
   std::string messagesStr;
   bool warningFound = false;
@@ -211,20 +194,20 @@ std::string vtkMRMLMessageCollection::GetAllMessagesAsString(bool* errorFoundPtr
     }
     switch (messageType)
     {
-    case vtkCommand::WarningEvent:
-      warningFound = true;
-      if (!messageText.empty())
-      {
-        messagesStr.append("Warning: ");
-      }
-      break;
-    case vtkCommand::ErrorEvent:
-      errorFound = true;
-      if (!messageText.empty())
-      {
-        messagesStr.append("Error: ");
-      }
-      break;
+      case vtkCommand::WarningEvent:
+        warningFound = true;
+        if (!messageText.empty())
+        {
+          messagesStr.append("Warning: ");
+        }
+        break;
+      case vtkCommand::ErrorEvent:
+        errorFound = true;
+        if (!messageText.empty())
+        {
+          messagesStr.append("Error: ");
+        }
+        break;
     }
     if (!messageText.empty())
     {
@@ -246,7 +229,9 @@ std::string vtkMRMLMessageCollection::GetAllMessagesAsString(bool* errorFoundPtr
 
 //----------------------------------------------------------------------------
 void vtkMRMLMessageCollection::CallbackFunction(vtkObject* vtkNotUsed(caller),
-  long unsigned int eventId, void* clientData, void* callData)
+                                                long unsigned int eventId,
+                                                void* clientData,
+                                                void* callData)
 {
   vtkMRMLMessageCollection* self = reinterpret_cast<vtkMRMLMessageCollection*>(clientData);
   if (!self || !callData)

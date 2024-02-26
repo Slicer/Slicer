@@ -69,50 +69,47 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
   float priority = 100.0;
 
   this->EventNameToConnectionIdMap["NodeAdded"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::NodeAddedEvent, q,
-    SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)), priority);
+    this->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent, q, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)), priority);
 
-  this->EventNameToConnectionIdMap["NodeRemoved"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::NodeRemovedEvent, q,
-    SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)), priority);
+  this->EventNameToConnectionIdMap["NodeRemoved"] =
+    this->qvtkReconnect(this->MRMLScene,
+                        scene,
+                        vtkMRMLScene::NodeRemovedEvent,
+                        q,
+                        SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)),
+                        priority);
 
-  this->EventNameToConnectionIdMap["NewScene"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::NewSceneEvent, q, SLOT(onNewSceneEvent()), priority);
+  this->EventNameToConnectionIdMap["NewScene"] =
+    this->qvtkReconnect(this->MRMLScene, scene, vtkMRMLScene::NewSceneEvent, q, SLOT(onNewSceneEvent()), priority);
 
-  this->EventNameToConnectionIdMap["SceneClosed"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::EndCloseEvent, q, SLOT(onSceneClosedEvent()), priority);
+  this->EventNameToConnectionIdMap["SceneClosed"] =
+    this->qvtkReconnect(this->MRMLScene, scene, vtkMRMLScene::EndCloseEvent, q, SLOT(onSceneClosedEvent()), priority);
 
   this->EventNameToConnectionIdMap["SceneAboutToBeClosed"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::StartCloseEvent, q, SLOT(onSceneAboutToBeClosedEvent()), priority);
+    this->MRMLScene, scene, vtkMRMLScene::StartCloseEvent, q, SLOT(onSceneAboutToBeClosedEvent()), priority);
 
   this->EventNameToConnectionIdMap["MetadataAdded"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::MetadataAddedEvent, q, SLOT(onMetadataAddedEvent()), priority);
+    this->MRMLScene, scene, vtkMRMLScene::MetadataAddedEvent, q, SLOT(onMetadataAddedEvent()), priority);
 
-  this->EventNameToConnectionIdMap["ImportProgressFeedback"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::ImportProgressFeedbackEvent, q, SLOT(onImportProgressFeedbackEvent()), priority);
+  this->EventNameToConnectionIdMap["ImportProgressFeedback"] =
+    this->qvtkReconnect(this->MRMLScene,
+                        scene,
+                        vtkMRMLScene::ImportProgressFeedbackEvent,
+                        q,
+                        SLOT(onImportProgressFeedbackEvent()),
+                        priority);
 
   this->EventNameToConnectionIdMap["SaveProgressFeedback"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SaveProgressFeedbackEvent, q, SLOT(onSaveProgressFeedbackEvent()), priority);
+    this->MRMLScene, scene, vtkMRMLScene::SaveProgressFeedbackEvent, q, SLOT(onSaveProgressFeedbackEvent()), priority);
 
   this->EventNameToConnectionIdMap["SceneAboutToBeImported"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::StartImportEvent, q, SLOT(onSceneAboutToBeImportedEvent()), priority);
+    this->MRMLScene, scene, vtkMRMLScene::StartImportEvent, q, SLOT(onSceneAboutToBeImportedEvent()), priority);
 
   this->EventNameToConnectionIdMap["SceneImported"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::EndImportEvent, q, SLOT(onSceneImportedEvent()), priority);
+    this->MRMLScene, scene, vtkMRMLScene::EndImportEvent, q, SLOT(onSceneImportedEvent()), priority);
 
   this->EventNameToConnectionIdMap["SceneRestored"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::EndRestoreEvent, q, SLOT(onSceneRestoredEvent()), priority);
+    this->MRMLScene, scene, vtkMRMLScene::EndRestoreEvent, q, SLOT(onSceneRestoredEvent()), priority);
 
   this->MRMLScene = scene;
 }
@@ -142,12 +139,12 @@ void qMRMLEventLogger::setMRMLScene(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 // Helper macro allowing to define function of the form 'bool ListeningEVENT_NAME()'
 //
-#define QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(_EVENT_NAME)   \
-bool qMRMLEventLogger::listening##_EVENT_NAME##Event()        \
-{                                                             \
-  Q_D(qMRMLEventLogger);                                      \
-  return d->EventToListen.contains(#_EVENT_NAME);             \
-}
+#define QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(_EVENT_NAME) \
+  bool qMRMLEventLogger::listening##_EVENT_NAME##Event()    \
+  {                                                         \
+    Q_D(qMRMLEventLogger);                                  \
+    return d->EventToListen.contains(#_EVENT_NAME);         \
+  }
 
 //------------------------------------------------------------------------------
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(NodeAdded);
@@ -170,25 +167,25 @@ QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneRestored);
 // Helper macro allowing to define function of the
 // form void listenEVENT_NAMEEvent(bool listen)'
 //
-#define QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(_EVENT_NAME)            \
-void qMRMLEventLogger::listen##_EVENT_NAME##Event(bool listen)      \
-{                                                                   \
-  Q_D(qMRMLEventLogger);                                            \
-                                                                    \
-  Q_ASSERT(!d->EventNameToConnectionIdMap.contains(#_EVENT_NAME));  \
-  QString cid = d->EventNameToConnectionIdMap[#_EVENT_NAME];        \
-                                                                    \
-  if (listen && !d->EventToListen.contains(#_EVENT_NAME))           \
-  {                                                                 \
-    d->EventToListen << #_EVENT_NAME;                               \
-    d->qvtkBlock(cid, false);                                       \
-  }                                                                 \
-  if (!listen)                                                      \
-  {                                                                 \
-    d->EventToListen.removeOne(#_EVENT_NAME);                       \
-    d->qvtkBlock(cid, true);                                        \
-  }                                                                 \
-}
+#define QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(_EVENT_NAME)             \
+  void qMRMLEventLogger::listen##_EVENT_NAME##Event(bool listen)     \
+  {                                                                  \
+    Q_D(qMRMLEventLogger);                                           \
+                                                                     \
+    Q_ASSERT(!d->EventNameToConnectionIdMap.contains(#_EVENT_NAME)); \
+    QString cid = d->EventNameToConnectionIdMap[#_EVENT_NAME];       \
+                                                                     \
+    if (listen && !d->EventToListen.contains(#_EVENT_NAME))          \
+    {                                                                \
+      d->EventToListen << #_EVENT_NAME;                              \
+      d->qvtkBlock(cid, false);                                      \
+    }                                                                \
+    if (!listen)                                                     \
+    {                                                                \
+      d->EventToListen.removeOne(#_EVENT_NAME);                      \
+      d->qvtkBlock(cid, true);                                       \
+    }                                                                \
+  }
 
 //------------------------------------------------------------------------------
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(NodeAdded);
@@ -233,18 +230,16 @@ void qMRMLEventLogger::onNodeRemovedEvent(vtkObject* caller, vtkObject* call_dat
 // Helper macro allowing to define function of the
 // form void onEVENT_NAMEEvent()'
 //
-#define QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(_EVENT_NAME)    \
-void qMRMLEventLogger::on##_EVENT_NAME##Event()             \
-{                                                           \
-  Q_D(qMRMLEventLogger);                                    \
-  if (d->ConsoleOutputEnabled)                              \
-  {                                                         \
-    std::cout << qPrintable(                                \
-      QString("qMRMLEventLogger::on%1Event").               \
-        arg(#_EVENT_NAME)) << std::endl;                    \
-  }                                                         \
-  emit signal##_EVENT_NAME##Event();                        \
-}
+#define QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(_EVENT_NAME)                                              \
+  void qMRMLEventLogger::on##_EVENT_NAME##Event()                                                     \
+  {                                                                                                   \
+    Q_D(qMRMLEventLogger);                                                                            \
+    if (d->ConsoleOutputEnabled)                                                                      \
+    {                                                                                                 \
+      std::cout << qPrintable(QString("qMRMLEventLogger::on%1Event").arg(#_EVENT_NAME)) << std::endl; \
+    }                                                                                                 \
+    emit signal##_EVENT_NAME##Event();                                                                \
+  }
 
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(NewScene);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneClosed);
@@ -266,4 +261,3 @@ void qMRMLEventLogger::setConsoleOutputEnabled(bool enabled)
   Q_D(qMRMLEventLogger);
   d->ConsoleOutputEnabled = enabled;
 }
-

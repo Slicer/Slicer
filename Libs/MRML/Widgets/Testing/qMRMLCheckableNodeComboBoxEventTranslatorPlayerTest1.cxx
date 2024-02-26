@@ -53,10 +53,10 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -82,9 +82,8 @@ int qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1(int argc, char * argv [
   sceneFactory.generateNode("vtkMRMLViewNode");
   sceneFactory.generateNode("vtkMRMLViewNode");
 
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    widget, xmlDirectory + "qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))
@@ -95,4 +94,3 @@ int qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1(int argc, char * argv [
   etpWidget.show();
   return app.exec();
 }
-

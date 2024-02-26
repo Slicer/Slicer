@@ -35,7 +35,7 @@
 #include <vtkNew.h>
 
 // ----------------------------------------------------------------------------
-class qSlicerTransformsModuleWidgetTester: public QObject
+class qSlicerTransformsModuleWidgetTester : public QObject
 {
   Q_OBJECT
 
@@ -60,15 +60,15 @@ void qSlicerTransformsModuleWidgetTester::testIdentity()
 
   vtkNew<vtkMatrix4x4> matrix;
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
-  matrix->SetElement(0,0, 10.);
-  matrix->SetElement(1,0, 2.);
+  matrix->SetElement(0, 0, 10.);
+  matrix->SetElement(1, 0, 2.);
   transformNode->SetMatrixTransformToParent(matrix.GetPointer());
   transformsWidget->identity();
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
-  QCOMPARE(matrix->GetElement(0,0), 1.);
-  QCOMPARE(matrix->GetElement(1,0), 0.);
-  //transformsWidget->show();
-  //qApp->exec();
+  QCOMPARE(matrix->GetElement(0, 0), 1.);
+  QCOMPARE(matrix->GetElement(1, 0), 0.);
+  // transformsWidget->show();
+  // qApp->exec();
 }
 
 // ----------------------------------------------------------------------------
@@ -86,15 +86,15 @@ void qSlicerTransformsModuleWidgetTester::testInvert()
 
   vtkNew<vtkMatrix4x4> matrix;
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
-  matrix->SetElement(0,0, 10.);
-  matrix->SetElement(1,0, 2.);
+  matrix->SetElement(0, 0, 10.);
+  matrix->SetElement(1, 0, 2.);
   transformNode->SetMatrixTransformToParent(matrix.GetPointer());
   transformsWidget->invert();
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
-  QCOMPARE(matrix->GetElement(0,0), 0.1);
-  QCOMPARE(matrix->GetElement(1,0), -0.2);
-  //transformsWidget->show();
-  //qApp->exec();
+  QCOMPARE(matrix->GetElement(0, 0), 0.1);
+  QCOMPARE(matrix->GetElement(1, 0), -0.2);
+  // transformsWidget->show();
+  // qApp->exec();
 }
 
 // ----------------------------------------------------------------------------

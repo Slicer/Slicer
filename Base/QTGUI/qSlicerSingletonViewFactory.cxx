@@ -30,8 +30,10 @@ Care Ontario.
 class qSlicerSingletonViewFactoryPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerSingletonViewFactory);
+
 protected:
   qSlicerSingletonViewFactory* q_ptr;
+
 public:
   qSlicerSingletonViewFactoryPrivate(qSlicerSingletonViewFactory& object);
   virtual ~qSlicerSingletonViewFactoryPrivate();
@@ -49,8 +51,7 @@ public:
 //-----------------------------------------------------------------------------
 // qSlicerSingletonViewFactoryPrivate methods
 
-qSlicerSingletonViewFactoryPrivate
-::qSlicerSingletonViewFactoryPrivate(qSlicerSingletonViewFactory& object)
+qSlicerSingletonViewFactoryPrivate ::qSlicerSingletonViewFactoryPrivate(qSlicerSingletonViewFactory& object)
   : q_ptr(&object)
   , Widget(nullptr)
   , InternalWidget(new QWidget())
@@ -65,9 +66,7 @@ qSlicerSingletonViewFactoryPrivate::~qSlicerSingletonViewFactoryPrivate()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSingletonViewFactoryPrivate::init()
-{
-}
+void qSlicerSingletonViewFactoryPrivate::init() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerSingletonViewFactory methods
@@ -109,7 +108,8 @@ void qSlicerSingletonViewFactory::setWidget(QWidget* widget)
   d->Widget = widget;
   if (d->Widget)
   {
-    d->Widget->setParent(d->InternalWidget.data()); // Hold the widget in the internal widget until the layout manager can take it
+    d->Widget->setParent(
+      d->InternalWidget.data()); // Hold the widget in the internal widget until the layout manager can take it
     QObject::connect(d->Widget, &QWidget::destroyed, this, &qSlicerSingletonViewFactory::onWidgetDestroyed);
   }
 }
@@ -148,7 +148,8 @@ QWidget* qSlicerSingletonViewFactory::createViewFromXML(QDomElement layoutElemen
   Q_D(qSlicerSingletonViewFactory);
   if (d->Widget && d->Widget->isVisible())
   {
-    qCritical() << "qSlicerSingletonViewFactory::createViewFromXML - Widget for view \"" << d->TagName << "\" is already in use within the current layout!";
+    qCritical() << "qSlicerSingletonViewFactory::createViewFromXML - Widget for view \"" << d->TagName
+                << "\" is already in use within the current layout!";
   }
 
   return this->widget();

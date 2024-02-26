@@ -22,17 +22,15 @@
 #include "qMRMLCheckableNodeComboBox.h"
 
 //-----------------------------------------------------------------------------
-qMRMLCheckableNodeComboBoxPlugin
-::qMRMLCheckableNodeComboBoxPlugin(QObject* pluginParent)
+qMRMLCheckableNodeComboBoxPlugin ::qMRMLCheckableNodeComboBoxPlugin(QObject* pluginParent)
   : QObject(pluginParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLCheckableNodeComboBoxPlugin::createWidget(QWidget *parentWidget)
+QWidget* qMRMLCheckableNodeComboBoxPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLCheckableNodeComboBox* widget =
-    new qMRMLCheckableNodeComboBox(parentWidget);
+  qMRMLCheckableNodeComboBox* widget = new qMRMLCheckableNodeComboBox(parentWidget);
   return widget;
 }
 
@@ -41,15 +39,15 @@ QString qMRMLCheckableNodeComboBoxPlugin::domXml() const
 {
   return "<widget class=\"qMRMLCheckableNodeComboBox\" \
           name=\"CheckableNodeComboBox\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>20</height>\n"
-          "  </rect>\n"
-          " </property>\n"
-          "</widget>\n";
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>20</height>\n"
+         "  </rect>\n"
+         " </property>\n"
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

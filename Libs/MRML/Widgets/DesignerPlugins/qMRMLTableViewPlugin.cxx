@@ -24,40 +24,40 @@
 #include "qMRMLTableView.h"
 
 //------------------------------------------------------------------------------
-qMRMLTableViewPlugin::qMRMLTableViewPlugin(QObject *_parent)
-: QObject(_parent)
+qMRMLTableViewPlugin::qMRMLTableViewPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLTableViewPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLTableViewPlugin::createWidget(QWidget* _parent)
 {
-qMRMLTableView* _widget = new qMRMLTableView(_parent);
-return _widget;
+  qMRMLTableView* _widget = new qMRMLTableView(_parent);
+  return _widget;
 }
 
 //------------------------------------------------------------------------------
 QString qMRMLTableViewPlugin::domXml() const
 {
-return "<widget class=\"qMRMLTableView\" \
+  return "<widget class=\"qMRMLTableView\" \
 name=\"MRMLTableView\">\n"
-"</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
 QString qMRMLTableViewPlugin::includeFile() const
 {
-return "qMRMLTableView.h";
+  return "qMRMLTableView.h";
 }
 
 //------------------------------------------------------------------------------
 bool qMRMLTableViewPlugin::isContainer() const
 {
-return false;
+  return false;
 }
 
 //------------------------------------------------------------------------------
 QString qMRMLTableViewPlugin::name() const
 {
-return "qMRMLTableView";
+  return "qMRMLTableView";
 }

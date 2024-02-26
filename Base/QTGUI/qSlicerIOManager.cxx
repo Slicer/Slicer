@@ -44,19 +44,16 @@ protected:
 public:
   qSlicerIOManagerPrivate(qSlicerIOManager& object);
 
-  vtkMRMLScene* currentScene()const;
+  vtkMRMLScene* currentScene() const;
 
   /// Return true if a dialog is created, false if a dialog already existed
   bool startProgressDialog(int steps = 1);
   void stopProgressDialog();
   void readSettings();
   void writeSettings();
-  QString createUniqueDialogName(qSlicerIO::IOFileType,
-                                 qSlicerFileDialog::IOAction,
-                                 const qSlicerIO::IOProperties&);
+  QString createUniqueDialogName(qSlicerIO::IOFileType, qSlicerFileDialog::IOAction, const qSlicerIO::IOProperties&);
 
-  qSlicerFileDialog* findDialog(qSlicerIO::IOFileType fileType,
-                                qSlicerFileDialog::IOAction)const;
+  qSlicerFileDialog* findDialog(qSlicerIO::IOFileType fileType, qSlicerFileDialog::IOAction) const;
 
   QStringList History;
   QList<QUrl> Favorites;
@@ -64,10 +61,10 @@ public:
   QList<qSlicerFileDialog*> WriteDialogs;
 
   QSharedPointer<ctkScreenshotDialog> ScreenshotDialog;
-  QProgressDialog* ProgressDialog{nullptr};
+  QProgressDialog* ProgressDialog{ nullptr };
 
   /// File dialog that next call of execDelayedFileDialog signal will execute
-  qSlicerFileDialog* DelayedFileDialog{nullptr};
+  qSlicerFileDialog* DelayedFileDialog{ nullptr };
 };
 
 //-----------------------------------------------------------------------------
@@ -80,7 +77,7 @@ qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerIOManagerPrivate::currentScene()const
+vtkMRMLScene* qSlicerIOManagerPrivate::currentScene() const
 {
   return qSlicerCoreApplication::application()->mrmlScene();
 }
@@ -94,7 +91,8 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
     return false;
   }
   int max = (steps != 1 ? steps : 100);
-  this->ProgressDialog = new QProgressDialog(qSlicerIOManager::tr("Loading file... "), qSlicerIOManager::tr("Cancel"), 0, max);
+  this->ProgressDialog =
+    new QProgressDialog(qSlicerIOManager::tr("Loading file... "), qSlicerIOManager::tr("Cancel"), 0, max);
   this->ProgressDialog->setWindowTitle(qSlicerIOManager::tr("Loading ..."));
   if (steps == 1)
   {
@@ -108,8 +106,9 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
   if (steps == 1)
   {
     q->qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(),
-                    vtkMRMLScene::NodeAddedEvent,
-                    q, SLOT(updateProgressDialog()));
+                   vtkMRMLScene::NodeAddedEvent,
+                   q,
+                   SLOT(updateProgressDialog()));
   }
   return true;
 }
@@ -124,9 +123,8 @@ void qSlicerIOManagerPrivate::stopProgressDialog()
   }
   this->ProgressDialog->setValue(this->ProgressDialog->maximum());
 
-  q->qvtkDisconnect(qSlicerCoreApplication::application()->mrmlScene(),
-                    vtkMRMLScene::NodeAddedEvent,
-                    q, SLOT(updateProgressDialog()));
+  q->qvtkDisconnect(
+    qSlicerCoreApplication::application()->mrmlScene(), vtkMRMLScene::NodeAddedEvent, q, SLOT(updateProgressDialog()));
   delete this->ProgressDialog;
   this->ProgressDialog = nullptr;
 }
@@ -139,7 +137,8 @@ void qSlicerIOManagerPrivate::readSettings()
 
   if (!settings.value("favoritesPaths").toList().isEmpty())
   {
-    QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(settings.value("favoritesPaths").toStringList());
+    QStringList paths =
+      qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(settings.value("favoritesPaths").toStringList());
     foreach (const QString& varUrl, paths)
     {
       this->Favorites << QUrl(varUrl);
@@ -170,29 +169,27 @@ void qSlicerIOManagerPrivate::writeSettings()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerIOManagerPrivate::
-createUniqueDialogName(qSlicerIO::IOFileType fileType,
-                       qSlicerFileDialog::IOAction action,
-                       const qSlicerIO::IOProperties& ioProperties)
+QString qSlicerIOManagerPrivate::createUniqueDialogName(qSlicerIO::IOFileType fileType,
+                                                        qSlicerFileDialog::IOAction action,
+                                                        const qSlicerIO::IOProperties& ioProperties)
 {
   QString objectName;
 
-  objectName += action == qSlicerFileDialog::Read ?/*no tr*/"Add" : /*no tr*/"Save";
+  objectName += action == qSlicerFileDialog::Read ? /*no tr*/ "Add" : /*no tr*/ "Save";
   objectName += fileType;
   objectName += ioProperties["multipleFiles"].toBool() ? "s" : "";
-  objectName += /*no tr*/"Dialog";
+  objectName += /*no tr*/ "Dialog";
 
   return objectName;
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileDialog* qSlicerIOManagerPrivate
-::findDialog(qSlicerIO::IOFileType fileType,
-             qSlicerFileDialog::IOAction action)const
+qSlicerFileDialog* qSlicerIOManagerPrivate ::findDialog(qSlicerIO::IOFileType fileType,
+                                                        qSlicerFileDialog::IOAction action) const
 {
   const QList<qSlicerFileDialog*>& dialogs =
-    (action == qSlicerFileDialog::Read)? this->ReadDialogs : this->WriteDialogs;
-  foreach(qSlicerFileDialog* dialog, dialogs)
+    (action == qSlicerFileDialog::Read) ? this->ReadDialogs : this->WriteDialogs;
+  foreach (qSlicerFileDialog* dialog, dialogs)
   {
     if (dialog->fileType() == fileType)
     {
@@ -206,7 +203,8 @@ qSlicerFileDialog* qSlicerIOManagerPrivate
 // qSlicerIOManager methods
 
 //-----------------------------------------------------------------------------
-qSlicerIOManager::qSlicerIOManager(QObject* _parent):Superclass(_parent)
+qSlicerIOManager::qSlicerIOManager(QObject* _parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerIOManagerPrivate(*this))
 {
   Q_D(qSlicerIOManager);
@@ -253,8 +251,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
   if (dialog == nullptr)
   {
     deleteDialog = true;
-    qSlicerStandardFileDialog* standardDialog =
-      new qSlicerStandardFileDialog(this);
+    qSlicerStandardFileDialog* standardDialog = new qSlicerStandardFileDialog(this);
     standardDialog->setFileType(fileType);
     standardDialog->setAction(action);
     dialog = standardDialog;
@@ -262,7 +259,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
   bool res = dialog->exec(properties);
   if (loadedNodes)
   {
-    foreach(const QString& nodeID, dialog->loadedNodes())
+    foreach (const QString& nodeID, dialog->loadedNodes())
     {
       vtkMRMLNode* node = d->currentScene()->GetNodeByID(nodeID.toUtf8());
       if (node)
@@ -279,10 +276,10 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
 }
 
 //---------------------------------------------------------------------------
-void qSlicerIOManager::dragEnterEvent(QDragEnterEvent *event)
+void qSlicerIOManager::dragEnterEvent(QDragEnterEvent* event)
 {
   Q_D(qSlicerIOManager);
-  foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
+  foreach (qSlicerFileDialog* dialog, d->ReadDialogs)
   {
     if (dialog->isMimeDataAccepted(event->mimeData()))
     {
@@ -293,12 +290,12 @@ void qSlicerIOManager::dragEnterEvent(QDragEnterEvent *event)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerIOManager::dropEvent(QDropEvent *event)
+void qSlicerIOManager::dropEvent(QDropEvent* event)
 {
   Q_D(qSlicerIOManager);
   QStringList supportedReaders;
   QStringList genericReaders; // those must be last in the choice menu
-  foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
+  foreach (qSlicerFileDialog* dialog, d->ReadDialogs)
   {
     if (dialog->isMimeDataAccepted(event->mimeData()))
     {
@@ -330,7 +327,7 @@ void qSlicerIOManager::dropEvent(QDropEvent *event)
       selectedReader = QString();
     }
   }
-  else if (supportedReaders.size() ==1)
+  else if (supportedReaders.size() == 1)
   {
     selectedReader = supportedReaders[0];
   }
@@ -338,7 +335,7 @@ void qSlicerIOManager::dropEvent(QDropEvent *event)
   {
     return;
   }
-  foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
+  foreach (qSlicerFileDialog* dialog, d->ReadDialogs)
   {
     if (dialog->description() == selectedReader)
     {
@@ -374,7 +371,7 @@ void qSlicerIOManager::addHistory(const QString& path)
 }
 
 //-----------------------------------------------------------------------------
-const QStringList& qSlicerIOManager::history()const
+const QStringList& qSlicerIOManager::history() const
 {
   Q_D(const qSlicerIOManager);
   return d->History;
@@ -385,7 +382,7 @@ void qSlicerIOManager::setFavorites(const QList<QUrl>& urls)
 {
   Q_D(qSlicerIOManager);
   QList<QUrl> newFavorites;
-  foreach(const QUrl& url, urls)
+  foreach (const QUrl& url, urls)
   {
     newFavorites << url;
   }
@@ -393,7 +390,7 @@ void qSlicerIOManager::setFavorites(const QList<QUrl>& urls)
 }
 
 //-----------------------------------------------------------------------------
-const QList<QUrl>& qSlicerIOManager::favorites()const
+const QList<QUrl>& qSlicerIOManager::favorites() const
 {
   Q_D(const qSlicerIOManager);
   return d->Favorites;
@@ -404,8 +401,7 @@ void qSlicerIOManager::registerDialog(qSlicerFileDialog* dialog)
 {
   Q_D(qSlicerIOManager);
   Q_ASSERT(dialog);
-  qSlicerFileDialog* existingDialog =
-    d->findDialog(dialog->fileType(), dialog->action());
+  qSlicerFileDialog* existingDialog = d->findDialog(dialog->fileType(), dialog->action());
   if (existingDialog)
   {
     d->ReadDialogs.removeAll(existingDialog);
@@ -422,8 +418,7 @@ void qSlicerIOManager::registerDialog(qSlicerFileDialog* dialog)
   }
   else
   {
-    Q_ASSERT(dialog->action() == qSlicerFileDialog::Read ||
-             dialog->action() == qSlicerFileDialog::Write);
+    Q_ASSERT(dialog->action() == qSlicerFileDialog::Read || dialog->action() == qSlicerFileDialog::Write);
   }
   dialog->setParent(this);
 }
@@ -438,16 +433,17 @@ bool qSlicerIOManager::isDialogRegistered(qSlicerIO::IOFileType fileType, qSlice
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
-  const qSlicerIO::IOProperties& parameters, vtkCollection* loadedNodes,
-  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+                                 const qSlicerIO::IOProperties& parameters,
+                                 vtkCollection* loadedNodes,
+                                 vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   Q_D(qSlicerIOManager);
   // speed up data loading by disabling re-rendering
   // (it can make a big difference if hundreds of nodes are loaded)
   SlicerRenderBlocker renderBlocker;
   bool needStop = d->startProgressDialog(1);
-  d->ProgressDialog->setLabelText(
-    qSlicerIOManager::tr("Loading file ") + parameters.value("fileName").toString() + " ...");
+  d->ProgressDialog->setLabelText(qSlicerIOManager::tr("Loading file ") + parameters.value("fileName").toString()
+                                  + " ...");
   if (needStop)
   {
     d->ProgressDialog->setValue(25);
@@ -461,10 +457,10 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   return res;
 }
 
-
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
-  vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+                                 vtkCollection* loadedNodes,
+                                 vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   Q_D(qSlicerIOManager);
   // Speed up data loading by disabling re-rendering
@@ -472,13 +468,14 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
   SlicerRenderBlocker renderBlocker;
   bool needStop = d->startProgressDialog(files.count());
   bool success = true;
-  foreach(qSlicerIO::IOProperties fileProperties, files)
+  foreach (qSlicerIO::IOProperties fileProperties, files)
   {
     int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
-    success = this->loadNodes(
-      static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
-      fileProperties,
-      loadedNodes, userMessages) && success;
+    success = this->loadNodes(static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
+                              fileProperties,
+                              loadedNodes,
+                              userMessages)
+              && success;
     if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
     {
       userMessages->AddSeparator();
@@ -508,10 +505,10 @@ void qSlicerIOManager::updateProgressDialog()
     return;
   }
   int progress = d->ProgressDialog->value();
-  d->ProgressDialog->setValue(qMin(progress + 1, d->ProgressDialog->maximum() - 1) );
+  d->ProgressDialog->setValue(qMin(progress + 1, d->ProgressDialog->maximum() - 1));
   // Give time to process graphic events including the progress dialog if needed
   // TBD: Not needed ?
-  //qApp->processEvents();
+  // qApp->processEvents();
 }
 
 //-----------------------------------------------------------------------------
@@ -519,9 +516,9 @@ void qSlicerIOManager::openScreenshotDialog()
 {
   Q_D(qSlicerIOManager);
   // try opening the Annotation module's screen shot
-  qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
 
-  qSlicerAbstractCoreModule *modulePointer = nullptr;
+  qSlicerAbstractCoreModule* modulePointer = nullptr;
   if (moduleManager)
   {
     modulePointer = moduleManager->module("Annotations");
@@ -532,14 +529,13 @@ void qSlicerIOManager::openScreenshotDialog()
   }
   else
   {
-    qWarning() << "qSlicerIOManager::openScreenshotDialog: Unable to get Annotations module (annotations), using the CTK screen shot dialog.";
+    qWarning() << "qSlicerIOManager::openScreenshotDialog: Unable to get Annotations module (annotations), using the "
+                  "CTK screen shot dialog.";
     // use the ctk one
     if (!d->ScreenshotDialog)
     {
-      d->ScreenshotDialog = QSharedPointer<ctkScreenshotDialog>(
-        new ctkScreenshotDialog());
-      d->ScreenshotDialog->setWidgetToGrab(
-        qSlicerApplication::application()->layoutManager()->viewport());
+      d->ScreenshotDialog = QSharedPointer<ctkScreenshotDialog>(new ctkScreenshotDialog());
+      d->ScreenshotDialog->setWidgetToGrab(qSlicerApplication::application()->layoutManager()->viewport());
     }
     d->ScreenshotDialog->show();
   }
@@ -548,15 +544,16 @@ void qSlicerIOManager::openScreenshotDialog()
 //-----------------------------------------------------------------------------
 void qSlicerIOManager::openSceneViewsDialog()
 {
-//  Q_D(qSlicerIOManager);
-  qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
+  //  Q_D(qSlicerIOManager);
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   if (!moduleManager)
   {
-    qWarning() << "qSlicerIOManager::openSceneViewsDialog: unable to get module manager, can't get at the Scene Views module";
+    qWarning()
+      << "qSlicerIOManager::openSceneViewsDialog: unable to get module manager, can't get at the Scene Views module";
     return;
   }
 
-  qSlicerAbstractCoreModule *modulePointer = moduleManager->module("SceneViews");
+  qSlicerAbstractCoreModule* modulePointer = moduleManager->module("SceneViews");
   if (modulePointer == nullptr)
   {
     qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to get at the SceneViews module (sceneviews).";
@@ -574,9 +571,8 @@ void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMes
     // Do not block the execution with popup windows if testing mode is enabled.
     return;
   }
-  if (overallSuccess
-    && userMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) == 0
-    && userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0)
+  if (overallSuccess && userMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) == 0
+      && userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0)
   {
     // Everything is OK, no need to show error popup.
     return;

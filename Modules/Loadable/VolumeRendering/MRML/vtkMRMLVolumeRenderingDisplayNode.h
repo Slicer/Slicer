@@ -30,36 +30,35 @@ class vtkMRMLVolumePropertyNode;
 
 /// \name vtkMRMLVolumeRenderingDisplayNode
 /// \brief Abstract MRML node for storing information for Volume Rendering
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode
-  : public vtkMRMLDisplayNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-  vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   const char* GetVolumeNodeID();
   vtkMRMLVolumeNode* GetVolumeNode();
 
   const char* GetVolumePropertyNodeID();
-  void SetAndObserveVolumePropertyNodeID(const char *volumePropertyNodeID);
+  void SetAndObserveVolumePropertyNodeID(const char* volumePropertyNodeID);
   vtkMRMLVolumePropertyNode* GetVolumePropertyNode();
 
   const char* GetShaderPropertyNodeID();
-  void SetAndObserveShaderPropertyNodeID(const char *shaderPropertyNodeID);
+  void SetAndObserveShaderPropertyNodeID(const char* shaderPropertyNodeID);
   vtkMRMLShaderPropertyNode* GetShaderPropertyNode();
-  vtkMRMLShaderPropertyNode* GetOrCreateShaderPropertyNode( vtkMRMLScene * mrmlScene );
+  vtkMRMLShaderPropertyNode* GetOrCreateShaderPropertyNode(vtkMRMLScene* mrmlScene);
 
   const char* GetROINodeID();
-  void SetAndObserveROINodeID(const char *roiNodeID);
+  void SetAndObserveROINodeID(const char* roiNodeID);
   vtkMRMLDisplayableNode* GetROINode();
   /// Deprecated. Use GetROINode() instead for retrieving the markups ROI node.
   vtkMRMLAnnotationROINode* GetAnnotationROINode() { return nullptr; };
@@ -69,9 +68,9 @@ public:
 
   double GetSampleDistance();
 
-  vtkSetMacro(CroppingEnabled,int);
-  vtkGetMacro(CroppingEnabled,int);
-  vtkBooleanMacro(CroppingEnabled,int);
+  vtkSetMacro(CroppingEnabled, int);
+  vtkGetMacro(CroppingEnabled, int);
+  vtkBooleanMacro(CroppingEnabled, int);
 
   vtkSetVector2Macro(Threshold, double);
   vtkGetVectorMacro(Threshold, double, 2);
@@ -94,7 +93,7 @@ protected:
   vtkMRMLVolumeRenderingDisplayNode(const vtkMRMLVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLVolumeRenderingDisplayNode&);
 
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   static const char* VolumePropertyNodeReferenceRole;
   static const char* VolumePropertyNodeReferenceMRMLAttributeName;

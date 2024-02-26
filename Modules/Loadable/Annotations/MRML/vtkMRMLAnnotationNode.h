@@ -24,17 +24,17 @@ class vtkCellArray;
 class vtkPoints;
 class vtkStringArray;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
 {
 public:
-  static vtkMRMLAnnotationNode *New();
-  vtkTypeMacro(vtkMRMLAnnotationNode,vtkMRMLModelNode);
+  static vtkMRMLAnnotationNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationNode, vtkMRMLModelNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   // Description:
   // Just prints short summary
   virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
-  virtual const char* GetIcon() {return "";}
+  virtual const char* GetIcon() { return ""; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -43,28 +43,25 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Annotation";}
+  const char* GetNodeTagName() override { return "Annotation"; }
 
   // Description:
   // Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
-
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLAnnotationNode);
 
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   // vtkMRMLModelNode overrides it and it handles models only, while in annotations
   // we have all kinds of nodes (e.g., screenshot), so we need to revert to the generic
@@ -77,10 +74,10 @@ public:
 
   /// Returns false since in general cannot apply non linear transforms
   /// \sa ApplyTransformMatrix, ApplyTransform
-  bool CanApplyNonLinearTransforms()const override {return false;}
+  bool CanApplyNonLinearTransforms() const override { return false; }
 
-  int AddText(const char *newText,int selectedFlag, int visibleFlag);
-  void SetText(int id, const char *newText,int selectedFlag, int visibleFlag);
+  int AddText(const char* newText, int selectedFlag, int visibleFlag);
+  void SetText(int id, const char* newText, int selectedFlag, int visibleFlag);
   vtkStdString GetText(int id);
   int DeleteText(int id);
 
@@ -91,13 +88,13 @@ public:
     TEXT_SELECTED = 0,
     TEXT_VISIBLE,
     NUM_TEXT_ATTRIBUTE_TYPES,
-     LockModifiedEvent,
+    LockModifiedEvent,
   };
-  virtual const char *GetAttributeTypesEnumAsString(int val);
+  virtual const char* GetAttributeTypesEnumAsString(int val);
   vtkDataArray* GetAnnotationAttributes(int att);
   int GetAnnotationAttribute(vtkIdType id, int att);
   void SetAnnotationAttribute(vtkIdType id, int att, double value);
-  int DeleteAttribute(vtkIdType idAttEntry,  vtkIdType idAttType);
+  int DeleteAttribute(vtkIdType idAttEntry, vtkIdType idAttType);
 
   // Description:
   // Initializes all variables associated with annotations
@@ -114,11 +111,10 @@ public:
   /// Get the text scale of the associated text.
   double GetTextScale();
 
-
   // Description:
   // Reference of this annotation - can be an image, model, scene ,  ...
-  vtkGetStringMacro (ReferenceNodeID);
-  vtkSetStringMacro (ReferenceNodeID);
+  vtkGetStringMacro(ReferenceNodeID);
+  vtkSetStringMacro(ReferenceNodeID);
 
   /// If set to 1 then parameters should not be changed.
   /// Fires vtkMRMLAnnotationNode::LockModifiedEvent if changed except if
@@ -144,24 +140,23 @@ protected:
   // Description:
   // Initializes all attributes
   void ResetTextAttributesAll();
-  void SetAttributeSize(vtkIdType  id, vtkIdType n);
+  void SetAttributeSize(vtkIdType id, vtkIdType n);
 
   void CreatePolyData();
   vtkPoints* GetPoints();
   vtkCellArray* GetLines();
 
-  vtkStringArray *TextList;
-  char *ReferenceNodeID;
+  vtkStringArray* TextList;
+  char* ReferenceNodeID;
 
   int Locked;
 
-  vtkMRMLAnnotationNode * m_Backup;
+  vtkMRMLAnnotationNode* m_Backup;
 
   vtkSmartPointer<vtkMRMLSliceNode> m_RedSliceNode;
   vtkSmartPointer<vtkMRMLSliceNode> m_YellowSliceNode;
   vtkSmartPointer<vtkMRMLSliceNode> m_GreenSliceNode;
   vtkSmartPointer<vtkMRMLCameraNode> m_CameraNode;
-
 };
 
 #endif

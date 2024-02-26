@@ -23,24 +23,22 @@ class vtkMRMLColorLegendDisplayNode;
 class vtkMRMLDisplayableNode;
 class vtkMRMLDisplayNode;
 
-class VTK_SLICER_COLORS_MODULE_LOGIC_EXPORT vtkSlicerColorLogic
-  : public vtkMRMLColorLogic
+class VTK_SLICER_COLORS_MODULE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkMRMLColorLogic
 {
 public:
-
   /// The Usual vtk class functions
-  static vtkSlicerColorLogic *New();
-  vtkTypeMacro(vtkSlicerColorLogic,vtkMRMLColorLogic);
+  static vtkSlicerColorLogic* New();
+  vtkTypeMacro(vtkSlicerColorLogic, vtkMRMLColorLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Return a default color node id for a label map
-  const char * GetDefaultLabelMapColorNodeID() override;
+  const char* GetDefaultLabelMapColorNodeID() override;
 
   /// Return a default color node id for the editor
-  const char * GetDefaultEditorColorNodeID() override;
+  const char* GetDefaultEditorColorNodeID() override;
 
   /// Return a default color node id for the charts
-  const char * GetDefaultChartColorNodeID() override;
+  const char* GetDefaultChartColorNodeID() override;
 
   /// look for color files in the Base/Logic/Resources/ColorFiles directory and
   /// put their names in the ColorFiles list. Look in any user defined color
@@ -99,4 +97,3 @@ protected:
 };
 
 #endif
-

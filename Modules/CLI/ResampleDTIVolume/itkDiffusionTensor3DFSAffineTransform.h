@@ -39,17 +39,16 @@ namespace itk
  * R=(FF_{T}^{-1/2}F
  */
 template <class TData>
-class DiffusionTensor3DFSAffineTransform :
-  public DiffusionTensor3DAffineTransform<TData>
+class DiffusionTensor3DFSAffineTransform : public DiffusionTensor3DAffineTransform<TData>
 {
 public:
-  typedef TData                                            DataType;
-  typedef DiffusionTensor3DFSAffineTransform               Self;
-  typedef DiffusionTensor3DAffineTransform<DataType>       Superclass;
-  typedef typename Superclass::MatrixTransformType         MatrixTransformType;
+  typedef TData DataType;
+  typedef DiffusionTensor3DFSAffineTransform Self;
+  typedef DiffusionTensor3DAffineTransform<DataType> Superclass;
+  typedef typename Superclass::MatrixTransformType MatrixTransformType;
   typedef typename Superclass::InternalMatrixTransformType InternalMatrixTransformType;
-  typedef SmartPointer<Self>                               Pointer;
-  typedef SmartPointer<const Self>                         ConstPointer;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
   itkNewMacro(Self);
 
@@ -60,16 +59,15 @@ protected:
   void PreCompute() override;
 
 private:
-  MatrixTransformType ComputeMatrixSquareRoot( MatrixTransformType matrix );
+  MatrixTransformType ComputeMatrixSquareRoot(MatrixTransformType matrix);
 
   MatrixTransformType ComputeRotationMatrixFromTransformationMatrix();
-
 };
 
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DFSAffineTransform.txx"
+# include "itkDiffusionTensor3DFSAffineTransform.txx"
 #endif
 
 #endif

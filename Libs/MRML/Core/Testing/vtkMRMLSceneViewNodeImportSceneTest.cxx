@@ -60,8 +60,7 @@ int populateScene(vtkMRMLScene* scene, bool saveInSceneView)
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneViewNodeImportSceneTest(int vtkNotUsed(argc),
-                                       char * vtkNotUsed(argv)[] )
+int vtkMRMLSceneViewNodeImportSceneTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   // Save a scene containing a viewnode and a sceneview node.
   vtkNew<vtkMRMLScene> scene;
@@ -99,11 +98,10 @@ int vtkMRMLSceneViewNodeImportSceneTest(int vtkNotUsed(argc),
   //       + vtkMRMLScalarVolumeDisplayNode2
 
   // Check scene node IDs
-  vtkMRMLNode* displayNode =
-    scene2->GetFirstNodeByClass("vtkMRMLScalarVolumeDisplayNode");
+  vtkMRMLNode* displayNode = scene2->GetFirstNodeByClass("vtkMRMLScalarVolumeDisplayNode");
   vtkMRMLNode* displayNode2 = scene2->GetNthNodeByClass(1, "vtkMRMLScalarVolumeDisplayNode");
-  vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
-    scene2->GetFirstNodeByClass("vtkMRMLSceneViewNode"));
+  vtkMRMLSceneViewNode* sceneViewNode =
+    vtkMRMLSceneViewNode::SafeDownCast(scene2->GetFirstNodeByClass("vtkMRMLSceneViewNode"));
 
   CHECK_NOT_NULL(displayNode);
   CHECK_NOT_NULL(displayNode2);

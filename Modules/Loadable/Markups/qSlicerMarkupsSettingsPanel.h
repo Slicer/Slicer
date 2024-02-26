@@ -27,15 +27,17 @@
 class qSlicerMarkupsSettingsPanelPrivate;
 class vtkSlicerMarkupsLogic;
 
-class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsSettingsPanel
-  : public ctkSettingsPanel
+class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsSettingsPanel : public ctkSettingsPanel
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(QString defaultGlyphType READ defaultGlyphType WRITE setDefaultGlyphType NOTIFY defaultGlyphTypeChanged)
-  Q_PROPERTY(QColor defaultUnselectedColor READ defaultUnselectedColor WRITE setDefaultUnselectedColor NOTIFY defaultUnselectedColorChanged)
-  Q_PROPERTY(QColor defaultSelectedColor READ defaultSelectedColor WRITE setDefaultSelectedColor NOTIFY defaultSelectedColorChanged)
-  Q_PROPERTY(QColor defaultActiveColor READ defaultActiveColor WRITE setDefaultActiveColor NOTIFY defaultActiveColorChanged)
+  Q_PROPERTY(QColor defaultUnselectedColor READ defaultUnselectedColor WRITE setDefaultUnselectedColor NOTIFY
+               defaultUnselectedColorChanged)
+  Q_PROPERTY(QColor defaultSelectedColor READ defaultSelectedColor WRITE setDefaultSelectedColor NOTIFY
+               defaultSelectedColorChanged)
+  Q_PROPERTY(
+    QColor defaultActiveColor READ defaultActiveColor WRITE setDefaultActiveColor NOTIFY defaultActiveColorChanged)
   Q_PROPERTY(double defaultGlyphScale READ defaultGlyphScale WRITE setDefaultGlyphScale NOTIFY defaultGlyphScaleChanged)
   Q_PROPERTY(double defaultTextScale READ defaultTextScale WRITE setDefaultTextScale NOTIFY defaultTextScaleChanged)
   Q_PROPERTY(double defaultOpacity READ defaultOpacity WRITE setDefaultOpacity NOTIFY defaultOpacityChanged)
@@ -58,7 +60,7 @@ public:
   /// \sa vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeColor
   /// \sa vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSelectedColor
   void setMarkupsLogic(vtkSlicerMarkupsLogic* logic);
-  vtkSlicerMarkupsLogic* markupsLogic()const;
+  vtkSlicerMarkupsLogic* markupsLogic() const;
 
   QString defaultGlyphType() const;
   QColor defaultUnselectedColor() const;

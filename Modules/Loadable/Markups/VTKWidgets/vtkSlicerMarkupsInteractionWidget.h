@@ -43,8 +43,7 @@ class vtkTransform;
 class vtkMRMLMarkupsNode;
 class vtkMRMLMarkupsDisplayNode;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsInteractionWidget
-  : public vtkMRMLInteractionWidget
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsInteractionWidget : public vtkMRMLInteractionWidget
 {
 public:
   /// Instantiate this class.
@@ -57,7 +56,9 @@ public:
   ///@}
 
   /// Create the default widget representation and initializes the widget and representation.
-  virtual void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer);
+  virtual void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* displayNode,
+                                           vtkMRMLAbstractViewNode* viewNode,
+                                           vtkRenderer* renderer);
 
   virtual vtkMRMLMarkupsDisplayNode* GetDisplayNode();
   virtual vtkMRMLMarkupsNode* GetMarkupsNode();
@@ -70,7 +71,7 @@ public:
 
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
-  void ScaleWidget(double eventPos[2], bool uniformScale=false) override;
+  void ScaleWidget(double eventPos[2], bool uniformScale = false) override;
   virtual void ScaleWidgetPlane(double eventPos[2], bool symmetricScale);
   virtual void FlipPlaneHandles(bool flipLRHandle, bool flipPAHandle);
   virtual void ScaleWidgetROI(double eventPos[2], bool symmetricScale);
@@ -97,29 +98,29 @@ private:
 // CREATE INSTANCE MACRO
 
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
-#define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
-  vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
-  if(ret) \
-  { \
-    return static_cast<type *>(ret); \
-  } \
-  type* result = new type; \
-  result->InitializeObjectBase(); \
-  return result;
+# define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
+   vtkObject* ret = vtkObjectFactory::CreateInstance(#type);            \
+   if (ret)                                                             \
+   {                                                                    \
+     return static_cast<type*>(ret);                                    \
+   }                                                                    \
+   type* result = new type;                                             \
+   result->InitializeObjectBase();                                      \
+   return result;
 #else
-#define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
-  vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
-  if (ret) \
-  { \
-    return static_cast<type*>(ret); \
-  } \
-return new type;
+# define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
+   vtkObject* ret = vtkObjectFactory::CreateInstance(#type);            \
+   if (ret)                                                             \
+   {                                                                    \
+     return static_cast<type*>(ret);                                    \
+   }                                                                    \
+   return new type;
 #endif
 
-#define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacro(type) \
-vtkSlicerMarkupsInteractionWidget* CreateInstance() const override\
-{ \
-  vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
-}
+#define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacro(type)   \
+  vtkSlicerMarkupsInteractionWidget* CreateInstance() const override \
+  {                                                                  \
+    vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type)   \
+  }
 
 #endif

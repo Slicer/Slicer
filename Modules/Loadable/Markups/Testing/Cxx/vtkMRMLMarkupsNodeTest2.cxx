@@ -23,7 +23,7 @@
 #include <vtkTestingOutputWindow.h>
 
 // test copy and swap
-int vtkMRMLMarkupsNodeTest2(int , char * [] )
+int vtkMRMLMarkupsNodeTest2(int, char*[])
 {
   vtkNew<vtkMRMLMarkupsFiducialNode> node1;
   vtkIndent indent;
@@ -42,9 +42,8 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
 
   markup1 = markup2;
 
-  if (markup1.Position[0] != markup2.Position[0] ||
-      markup1.Position[1] != markup2.Position[1] ||
-      markup1.Position[2] != markup2.Position[2])
+  if (markup1.Position[0] != markup2.Position[0] || markup1.Position[1] != markup2.Position[1]
+      || markup1.Position[2] != markup2.Position[2])
   {
     std::cerr << "After copy, point 0 doesn't match in markups" << std::endl;
     return EXIT_FAILURE;
@@ -52,7 +51,7 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
 
   // test swap
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  node1->SwapControlPoints(-1,100);
+  node1->SwapControlPoints(-1, 100);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   std::cout << "Adding a markup with 1 point" << std::endl;
   node1->AddNControlPoints(1);
@@ -63,11 +62,11 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   node1->SetNthControlPointPosition(0, pos0);
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  node1->SwapControlPoints(-1,100);
-  node1->SwapControlPoints(-1,1);
-  node1->SwapControlPoints(1,-1);
-  node1->SwapControlPoints(1,100);
-  node1->SwapControlPoints(100,1);
+  node1->SwapControlPoints(-1, 100);
+  node1->SwapControlPoints(-1, 1);
+  node1->SwapControlPoints(1, -1);
+  node1->SwapControlPoints(1, 100);
+  node1->SwapControlPoints(100, 1);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   std::cout << "Adding another markup with 1 point" << std::endl;
@@ -85,27 +84,17 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
 
   double pos0New[3], pos1New[3];
   node1->GetNthControlPointPosition(0, pos0New);
-  if (pos0New[0] != pos1[0] ||
-      pos0New[1] != pos1[1] ||
-      pos0New[2] != pos1[2])
+  if (pos0New[0] != pos1[0] || pos0New[1] != pos1[1] || pos0New[2] != pos1[2])
   {
-    std::cerr << "Swap failed, point 0 expected: "
-              << pos1[0] << ", " << pos1[1] << ", " << pos1[2]
-              << ", but got:"
-              << pos0New[0] << ", " << pos0New[1] << ", " << pos0New[2]
-              << std::endl;
+    std::cerr << "Swap failed, point 0 expected: " << pos1[0] << ", " << pos1[1] << ", " << pos1[2]
+              << ", but got:" << pos0New[0] << ", " << pos0New[1] << ", " << pos0New[2] << std::endl;
     return EXIT_FAILURE;
   }
   node1->GetNthControlPointPosition(1, pos1New);
-  if (pos1New[0] != pos0[0] ||
-      pos1New[1] != pos0[1] ||
-      pos1New[2] != pos0[2])
+  if (pos1New[0] != pos0[0] || pos1New[1] != pos0[1] || pos1New[2] != pos0[2])
   {
-    std::cerr << "Swap failed, point 1 expected: "
-              << pos0[0] << ", " << pos0[1] << ", " << pos0[2]
-              << ", but got:"
-              << pos1New[0] << ", " << pos1New[1] << ", " << pos1New[2]
-              << std::endl;
+    std::cerr << "Swap failed, point 1 expected: " << pos0[0] << ", " << pos0[1] << ", " << pos0[2]
+              << ", but got:" << pos1New[0] << ", " << pos1New[1] << ", " << pos1New[2] << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -116,15 +105,10 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   pos1New[2] = pos1New[2] * -10.67;
   node1->SetNthControlPointPosition(1, pos1New);
   node1->GetNthControlPointPosition(0, pos0New);
-  if (pos0New[0] != pos1[0] ||
-      pos0New[1] != pos1[1] ||
-      pos0New[2] != pos1[2])
+  if (pos0New[0] != pos1[0] || pos0New[1] != pos1[1] || pos0New[2] != pos1[2])
   {
-    std::cerr << "Swap failed after changing point 1, point 0 expected: "
-              << pos1[0] << ", " << pos1[1] << ", " << pos1[2]
-              << ", but got:"
-              << pos0New[0] << ", " << pos0New[1] << ", " << pos0New[2]
-              << std::endl;
+    std::cerr << "Swap failed after changing point 1, point 0 expected: " << pos1[0] << ", " << pos1[1] << ", "
+              << pos1[2] << ", but got:" << pos0New[0] << ", " << pos0New[1] << ", " << pos0New[2] << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -141,8 +125,7 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
     }
     if (markupIndex != 0)
     {
-      std::cerr << "Get Markup index by ID failed, returned "
-                << markupIndex << ", expecting 0" << std::endl;
+      std::cerr << "Get Markup index by ID failed, returned " << markupIndex << ", expecting 0" << std::endl;
       return EXIT_FAILURE;
     }
   }

@@ -24,7 +24,7 @@
 using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
+int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
 {
   vtkNew<vtkMRMLColorTableNode> node1;
   {
@@ -35,10 +35,8 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
 
   if (argc != 2)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Missing parameters !\n"
-              << "Usage: " << argv[0] << " /path/to/temp"
-              << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Missing parameters !\n"
+              << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -68,7 +66,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
 
     // add storage node to the scene
     vtkSmartPointer<vtkMRMLStorageNode> colorStorageNode =
-        vtkSmartPointer<vtkMRMLStorageNode>::Take(colorNode->CreateDefaultStorageNode());
+      vtkSmartPointer<vtkMRMLStorageNode>::Take(colorNode->CreateDefaultStorageNode());
 
     scene->AddNode(colorStorageNode);
     colorNode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
@@ -95,11 +93,11 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
     CHECK_INT(parser->Parse(), 1);
 
     // test the color node
-    vtkMRMLColorTableNode *colorNode =
-        vtkMRMLColorTableNode::SafeDownCast(scene->GetNodeByID(expectedColorNodeId.c_str()));
+    vtkMRMLColorTableNode* colorNode =
+      vtkMRMLColorTableNode::SafeDownCast(scene->GetNodeByID(expectedColorNodeId.c_str()));
     CHECK_NOT_NULL(colorNode);
 
-    CHECK_INT(colorNode->GetStorageNode()->ReadData(colorNode),1);
+    CHECK_INT(colorNode->GetStorageNode()->ReadData(colorNode), 1);
 
     CHECK_STRING(colorNode->GetColorName(0), "zero")
     CHECK_STRING(colorNode->GetColorName(1), "one")

@@ -20,14 +20,14 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 
-int vtkMRMLSceneViewNodeTest1(int , char * [] )
+int vtkMRMLSceneViewNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLSceneViewNode> node1;
 
   // test with null scene
   node1->StoreScene();
   node1->SetAbsentStorageFileNames();
-  vtkCollection *col = node1->GetNodesByClass(nullptr);
+  vtkCollection* col = node1->GetNodesByClass(nullptr);
   CHECK_NULL(col);
 
   // make a scene and test again
@@ -36,23 +36,23 @@ int vtkMRMLSceneViewNodeTest1(int , char * [] )
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   node1->StoreScene();
 
-  vtkMRMLScene *storedScene = node1->GetStoredScene();
+  vtkMRMLScene* storedScene = node1->GetStoredScene();
   std::cout << "GetStoredScene returned " << (storedScene == nullptr ? "null" : "not null") << std::endl;
 
   node1->SetAbsentStorageFileNames();
 
-  TEST_SET_GET_STRING( node1.GetPointer(), SceneViewDescription);
+  TEST_SET_GET_STRING(node1.GetPointer(), SceneViewDescription);
 
   node1->SetScreenShot(nullptr);
-  vtkImageData *nullImage = node1->GetScreenShot();
+  vtkImageData* nullImage = node1->GetScreenShot();
   CHECK_NULL(nullImage);
 
-  vtkImageData *imageData = vtkImageData::New();
+  vtkImageData* imageData = vtkImageData::New();
   node1->SetScreenShot(imageData);
   imageData->Delete();
   imageData = node1->GetScreenShot();
 
-  TEST_SET_GET_INT_RANGE( node1.GetPointer(), ScreenShotType, 0, 4);
+  TEST_SET_GET_INT_RANGE(node1.GetPointer(), ScreenShotType, 0, 4);
 
   col = node1->GetNodesByClass("vtkMRMLNode");
   CHECK_NOT_NULL(col);

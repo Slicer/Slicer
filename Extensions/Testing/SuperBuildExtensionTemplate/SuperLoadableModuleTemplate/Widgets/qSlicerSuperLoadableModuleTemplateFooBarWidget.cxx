@@ -23,30 +23,28 @@
 #include "ui_qSlicerSuperLoadableModuleTemplateFooBarWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate
-  : public Ui_qSlicerSuperLoadableModuleTemplateFooBarWidget
+class qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate : public Ui_qSlicerSuperLoadableModuleTemplateFooBarWidget
 {
   Q_DECLARE_PUBLIC(qSlicerSuperLoadableModuleTemplateFooBarWidget);
+
 protected:
   qSlicerSuperLoadableModuleTemplateFooBarWidget* const q_ptr;
 
 public:
-  qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate(
-    qSlicerSuperLoadableModuleTemplateFooBarWidget& object);
+  qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate(qSlicerSuperLoadableModuleTemplateFooBarWidget& object);
   virtual void setupUi(qSlicerSuperLoadableModuleTemplateFooBarWidget*);
 };
 
 // --------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate
-::qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate(
+qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate ::qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate(
   qSlicerSuperLoadableModuleTemplateFooBarWidget& object)
   : q_ptr(&object)
 {
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate
-::setupUi(qSlicerSuperLoadableModuleTemplateFooBarWidget* widget)
+void qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate ::setupUi(
+  qSlicerSuperLoadableModuleTemplateFooBarWidget* widget)
 {
   this->Ui_qSlicerSuperLoadableModuleTemplateFooBarWidget::setupUi(widget);
 }
@@ -55,17 +53,13 @@ void qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate
 // qSlicerSuperLoadableModuleTemplateFooBarWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateFooBarWidget
-::qSlicerSuperLoadableModuleTemplateFooBarWidget(QWidget* parentWidget)
-  : Superclass( parentWidget )
-  , d_ptr( new qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate(*this) )
+qSlicerSuperLoadableModuleTemplateFooBarWidget ::qSlicerSuperLoadableModuleTemplateFooBarWidget(QWidget* parentWidget)
+  : Superclass(parentWidget)
+  , d_ptr(new qSlicerSuperLoadableModuleTemplateFooBarWidgetPrivate(*this))
 {
   Q_D(qSlicerSuperLoadableModuleTemplateFooBarWidget);
   d->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateFooBarWidget
-::~qSlicerSuperLoadableModuleTemplateFooBarWidget()
-{
-}
+qSlicerSuperLoadableModuleTemplateFooBarWidget ::~qSlicerSuperLoadableModuleTemplateFooBarWidget() {}

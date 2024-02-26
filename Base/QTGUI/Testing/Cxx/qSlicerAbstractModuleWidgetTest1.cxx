@@ -18,13 +18,11 @@
 
 ==============================================================================*/
 
-
 // STD includes
 #include <cstdlib>
 
-int qSlicerAbstractModuleWidgetTest1(int, char * [] )
+int qSlicerAbstractModuleWidgetTest1(int, char*[])
 {
-
 
   return EXIT_SUCCESS;
 }

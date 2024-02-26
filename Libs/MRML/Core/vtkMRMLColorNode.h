@@ -47,8 +47,8 @@ class vtkScalarsToColors;
 class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
 {
 public:
-  static vtkMRMLColorNode *New();
-  vtkTypeMacro(vtkMRMLColorNode,vtkMRMLStorableNode);
+  static vtkMRMLColorNode* New();
+  vtkTypeMacro(vtkMRMLColorNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -59,7 +59,7 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -67,11 +67,11 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Color";};
+  const char* GetNodeTagName() override { return "Color"; };
 
   ///
   /// Reset node attributes to the initial state as defined in the constructor.
@@ -80,44 +80,44 @@ public:
 
   ///
   ///
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Set Type to type, then build colors and set names
   virtual void SetType(int type);
   ///
   /// Get for Type
-  vtkGetMacro(Type,int);
+  vtkGetMacro(Type, int);
 
   /// Set the type to User or File, ones that don't require building
   /// data structures, just setting flags
   void SetTypeToUser();
   void SetTypeToFile();
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Return the lowest and highest integers, for use in looping.
   /// Override in subclasses when more enums are added.
-  virtual int GetFirstType () { return this->User; }
-  virtual int GetLastType () { return this->File; }
+  virtual int GetFirstType() { return this->User; }
+  virtual int GetLastType() { return this->File; }
 
   /// return a text string describing the color look up table type
-  virtual const char * GetTypeAsString();
+  virtual const char* GetTypeAsString();
 
   /// TypeModifiedEvent is generated when the type of the color look up table changes
   enum
   {
-      TypeModifiedEvent = 20002
+    TypeModifiedEvent = 20002
   };
 
   /// Get name of a color from its index (index is 0-based)
   /// \sa GetColorIndexByName()
-  const char *GetColorName(int ind);
+  const char* GetColorName(int ind);
 
   /// Return the index associated with this color name, which can then be used
   /// to get the color. Returns -1 on failure.
   /// \sa GetColorName()
-  int GetColorIndexByName(const char *name);
+  int GetColorIndexByName(const char* name);
 
   /// Get the 0'th based \a colorIndex'th name of this color, replacing all
   /// file name sensitive color name characters with safer character(s).
@@ -129,22 +129,22 @@ public:
   /// The color name is truncated to not be longer than 255 characters.
   /// \a subst can be made of invalid characters and be longer than 1 char
   /// \sa GetColorNameWithoutSpaces
-  std::string GetColorNameAsFileName(int colorIndex, const char *subst = "_");
+  std::string GetColorNameAsFileName(int colorIndex, const char* subst = "_");
 
   /// \deprecated GetColorNameWithoutSpaces
   /// Get the 0th based nth name of this color, replacing the spaces with
   /// subst
   /// \sa GetColorNameAsFileName
-  std::string GetColorNameWithoutSpaces(int ind, const char *subst);
+  std::string GetColorNameWithoutSpaces(int ind, const char* subst);
 
   /// Set the 0th based nth name of this color.
   /// Returns 1 on success, 0 on failure.
-  int SetColorName(int ind, const char *name);
+  int SetColorName(int ind, const char* name);
 
   ///
   /// Set the 0th based nth name of this color, replacing the subst character
   /// with spaces. Returns 1 on success, 0 on failure
-  int SetColorNameWithSpaces(int ind, const char *name, const char *subst);
+  int SetColorNameWithSpaces(int ind, const char* name, const char* subst);
   ///
   /// Get the number of colors in the table
   virtual int GetNumberOfColors();
@@ -162,7 +162,7 @@ public:
   ///
   /// Most color nodes will implement a look up table, so provide a top level
   /// get method
-  virtual vtkLookupTable * GetLookupTable();
+  virtual vtkLookupTable* GetLookupTable();
 
   /// Utility function that either returns a vtkLookupTable or a
   /// vtkColorTransferFunction whichever makes more sense.
@@ -231,11 +231,11 @@ protected:
 
   ///
   /// A file name to read text attributes from
-  char *FileName;
+  char* FileName;
 
   ///
   /// the string used for an unnamed color
-  char *NoName;
+  char* NoName;
 
   ///
   /// Have the color names been set? Used to do lazy copy of the Names array.

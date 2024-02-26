@@ -27,13 +27,12 @@
 /// \brief Displayable manager for the crosshair on 3D views
 ///
 /// Responsible for any display of the crosshair on 3D views.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCrosshairDisplayableManager3D :
-  public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCrosshairDisplayableManager3D
+  : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
   static vtkMRMLCrosshairDisplayableManager3D* New();
-  vtkTypeMacro(vtkMRMLCrosshairDisplayableManager3D,
-    vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLCrosshairDisplayableManager3D, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
@@ -57,7 +56,7 @@ private:
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

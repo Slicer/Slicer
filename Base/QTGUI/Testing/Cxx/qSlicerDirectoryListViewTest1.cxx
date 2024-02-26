@@ -33,7 +33,7 @@
 // STD includes
 #include <iostream>
 
-int qSlicerDirectoryListViewTest1(int argc, char * argv[] )
+int qSlicerDirectoryListViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -62,7 +62,9 @@ int qSlicerDirectoryListViewTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
   }
 
-  paths << "." << "/should-not-exist" << ".";
+  paths << "."
+        << "/should-not-exist"
+        << ".";
   widget.setDirectoryList(paths);
 
   if (spy.count() != 1)
@@ -165,7 +167,8 @@ int qSlicerDirectoryListViewTest1(int argc, char * argv[] )
 
   if (widget.selectedDirectoryList().size() != 1)
   {
-    std::cerr << "Line " << __LINE__ << " - Problem with selectAllDirectories/selectedDirectoryList methods !" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with selectAllDirectories/selectedDirectoryList methods !"
+              << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -218,7 +221,8 @@ int qSlicerDirectoryListViewTest1(int argc, char * argv[] )
   }
 
   currentAsList = widget.directoryList(true);
-  expectedAsList = QStringList() << QDir::current().absolutePath() << QDir::tempPath() << currentDirParent.absolutePath();
+  expectedAsList = QStringList() << QDir::current().absolutePath() << QDir::tempPath()
+                                 << currentDirParent.absolutePath();
   if (currentAsList != expectedAsList)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with addDirectory method !\n"

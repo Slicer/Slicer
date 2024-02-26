@@ -101,13 +101,13 @@ public:
   /// Segments that have their ID listed in hideSegments are
   /// not shown in the table.
   Q_INVOKABLE void setHideSegments(const QStringList& segmentIDs);
-  Q_INVOKABLE QStringList hideSegments()const;
+  Q_INVOKABLE QStringList hideSegments() const;
 
   /// Return list of visible segment IDs
-  Q_INVOKABLE QStringList displayedSegmentIDs()const;
+  Q_INVOKABLE QStringList displayedSegmentIDs() const;
 
-  Q_INVOKABLE qMRMLSortFilterSegmentsProxyModel* sortFilterProxyModel()const;
-  Q_INVOKABLE qMRMLSegmentsModel* model()const;
+  Q_INVOKABLE qMRMLSortFilterSegmentsProxyModel* sortFilterProxyModel() const;
+  Q_INVOKABLE qMRMLSegmentsModel* model() const;
 
   /// The text used to filter the segments in the table
   /// \sa setTextFilter
@@ -152,7 +152,7 @@ public slots:
   void setJumpToSelectedSegmentEnabled(bool enable);
 
   /// Set the status of the selected segments
-  void setSelectedSegmentsStatus(int status=-1);
+  void setSelectedSegmentsStatus(int status = -1);
 
   /// Erase the contents of the selected segments and set the status to "Not started"
   void clearSelectedSegments();
@@ -170,19 +170,19 @@ public slots:
   void setStatusShown(int status, bool shown);
 
   /// Returns true if automatic jump to current segment is enabled.
-  bool jumpToSelectedSegmentEnabled()const;
+  bool jumpToSelectedSegmentEnabled() const;
 
 signals:
   /// Emitted if selection changes
-  void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Emitted when a segment property (e.g., name) is about to be changed.
   /// Can be used for capturing the current state of the segment, before it is modified.
-  void segmentAboutToBeModified(const QString &segmentID);
+  void segmentAboutToBeModified(const QString& segmentID);
 
 protected slots:
   /// Forwards selection changed events. In case of batch update of items, selected and deselected are empty.
-  void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Handles actions on table cell (visibility)
   void onVisibility3DActionToggled(bool visible);
@@ -215,11 +215,13 @@ protected slots:
 
 protected:
   /// Convenience function to set segment visibility options from event handlers
-  /// \sa onVisibilityButtonToggled \sa onVisibility3DActionToggled \sa onVisibility2DFillActionToggled \sa onVisibility2DOutlineActionToggled
-  /// \param visible Visibility of the segment referenced from senderObject. If 0, then hide, if 1 then show, otherwise don't change
-  /// \param visible3D Visibility of the segment referenced from senderObject in 3D. If 0, then hide, if 1 then show, otherwise don't change
-  /// \param visible2DFill Visibility of the segment referenced from senderObject for 2D fill. If 0, then hide, if 1 then show, otherwise don't change
-  /// \param visible2DOutline Visibility of the segment referenced from senderObject for 2D outline. If 0, then hide, if 1 then show, otherwise don't change
+  /// \sa onVisibilityButtonToggled \sa onVisibility3DActionToggled \sa onVisibility2DFillActionToggled \sa
+  /// onVisibility2DOutlineActionToggled \param visible Visibility of the segment referenced from senderObject. If 0,
+  /// then hide, if 1 then show, otherwise don't change \param visible3D Visibility of the segment referenced from
+  /// senderObject in 3D. If 0, then hide, if 1 then show, otherwise don't change \param visible2DFill Visibility of the
+  /// segment referenced from senderObject for 2D fill. If 0, then hide, if 1 then show, otherwise don't change \param
+  /// visible2DOutline Visibility of the segment referenced from senderObject for 2D outline. If 0, then hide, if 1 then
+  /// show, otherwise don't change
   void setSegmentVisibility(QObject* senderObject, int visible, int visible3D, int visible2DFill, int visible2DOutline);
   void setSegmentVisibility(QString segmentId, int visible, int visible3D, int visible2DFill, int visible2DOutline);
 

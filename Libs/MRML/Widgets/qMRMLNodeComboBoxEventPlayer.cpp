@@ -29,26 +29,24 @@
 #include "vtkMRMLNode.h"
 
 // ----------------------------------------------------------------------------
-qMRMLNodeComboBoxEventPlayer::qMRMLNodeComboBoxEventPlayer(QObject *parent)
+qMRMLNodeComboBoxEventPlayer::qMRMLNodeComboBoxEventPlayer(QObject* parent)
   : pqWidgetEventPlayer(parent)
 {
-
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject *Object,
-                                    const QString &Command,
-                                    const QString &Arguments,
-                                    bool &Error)
+bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject* Object,
+                                             const QString& Command,
+                                             const QString& Arguments,
+                                             bool& Error)
 {
-  if (Command != "nodeAddedByUser" && Command != "currentNodeChanged" &&
-      Command != "nodeAboutToBeRemoved" && Command != "nodeRenamed")
+  if (Command != "nodeAddedByUser" && Command != "currentNodeChanged" && Command != "nodeAboutToBeRemoved"
+      && Command != "nodeRenamed")
   {
     return false;
   }
 
-  if (qMRMLNodeComboBox* const comboBox =
-      qobject_cast<qMRMLNodeComboBox*>(Object))
+  if (qMRMLNodeComboBox* const comboBox = qobject_cast<qMRMLNodeComboBox*>(Object))
   {
     if (Command == "nodeAddedByUser")
     {
@@ -76,8 +74,8 @@ bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject *Object,
     }
   }
 
-  qCritical() << "calling nodeAddedByUser/currentNodeChanged/nodeAboutToBeRemoved/nodeRenamed on unhandled type " << Object;
+  qCritical() << "calling nodeAddedByUser/currentNodeChanged/nodeAboutToBeRemoved/nodeRenamed on unhandled type "
+              << Object;
   Error = true;
   return true;
 }
-

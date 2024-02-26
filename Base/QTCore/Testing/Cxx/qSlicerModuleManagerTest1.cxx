@@ -19,7 +19,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int qSlicerModuleManagerTest1(int argc, char * argv [] )
+int qSlicerModuleManagerTest1(int argc, char* argv[])
 {
 
   // By design, a ModuleManager should be instantiated only if a
@@ -36,9 +36,9 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
 
   moduleManager.printAdditionalInfo();
 
-  qSlicerModuleFactory * factory = moduleManager.factory();
+  qSlicerModuleFactory* factory = moduleManager.factory();
 
-  if( factory == nullptr )
+  if (factory == nullptr)
   {
     std::cerr << "Error in factory()" << std::endl;
     return EXIT_FAILURE;
@@ -46,64 +46,63 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
 
   QString moduleName = "qSlicerTransformsModule";
 
-  bool result0 = moduleManager.isLoaded( moduleName );
+  bool result0 = moduleManager.isLoaded(moduleName);
 
-  if( result0 != false )
+  if (result0 != false)
   {
     std::cerr << "Error in isLoaded() " << std::endl;
     return EXIT_FAILURE;
   }
 
-  bool result1 = moduleManager.loadModule( moduleName );
+  bool result1 = moduleManager.loadModule(moduleName);
 
-  if( result1 == false )
+  if (result1 == false)
   {
     std::cerr << "Error in loadModule() " << std::endl;
     return EXIT_FAILURE;
   }
 
-  bool result2 = moduleManager.isLoaded( moduleName );
+  bool result2 = moduleManager.isLoaded(moduleName);
 
-  if( result2 != true )
+  if (result2 != true)
   {
     std::cerr << "Error in isLoaded() or loadModule() " << std::endl;
     return EXIT_FAILURE;
   }
 
-  qSlicerAbstractModule * module = moduleManager.module( moduleName );
+  qSlicerAbstractModule* module = moduleManager.module(moduleName);
 
-  if( module == nullptr )
+  if (module == nullptr)
   {
     std::cerr << "Error in getModule() " << std::endl;
     return EXIT_FAILURE;
   }
 
-  QString moduleTitle = moduleManager.moduleTitle( moduleName );
+  QString moduleTitle = moduleManager.moduleTitle(moduleName);
 
-  QString moduleName1 = moduleManager.moduleName( moduleTitle );
+  QString moduleName1 = moduleManager.moduleName(moduleTitle);
 
-  if( moduleName != moduleName1 )
+  if (moduleName != moduleName1)
   {
     std::cerr << "Error in moduleName recovery" << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::cout << "Module Name = " << qPrintable( moduleName ) << std::endl;
+  std::cout << "Module Name = " << qPrintable(moduleName) << std::endl;
 
-  std::cout << "Module Title = " << qPrintable( moduleTitle ) << std::endl;
+  std::cout << "Module Title = " << qPrintable(moduleTitle) << std::endl;
 
+  bool result3 = moduleManager.unLoadModule(moduleName);
 
-  bool result3 = moduleManager.unLoadModule( moduleName );
-
-  if( result3 == false )
+  if (result3 == false)
   {
     std::cerr << "Error in unLoadModule() " << std::endl;
     return EXIT_FAILURE;
   }
 
-  bool result4 = moduleManager.isLoaded( moduleName );
+  bool result4 = moduleManager.isLoaded(moduleName);
 
-  if( result4 != false )
+  if (result4 != false)
   {
     std::cerr << "Error in isLoaded() or loadModule() " << std::endl;
     return EXIT_FAILURE;
@@ -111,4 +110,3 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
-

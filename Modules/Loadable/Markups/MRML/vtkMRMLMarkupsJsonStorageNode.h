@@ -27,7 +27,6 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
-
 class vtkMRMLMarkupsJsonElement;
 class vtkMRMLMarkupsJsonWriter;
 class vtkMRMLMarkupsDisplayNode;
@@ -36,29 +35,31 @@ class vtkMRMLMarkupsNode;
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonStorageNode : public vtkMRMLMarkupsStorageNode
 {
 public:
-  static vtkMRMLMarkupsJsonStorageNode *New();
-  vtkTypeMacro(vtkMRMLMarkupsJsonStorageNode,vtkMRMLMarkupsStorageNode);
+  static vtkMRMLMarkupsJsonStorageNode* New();
+  vtkTypeMacro(vtkMRMLMarkupsJsonStorageNode, vtkMRMLMarkupsStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Read a markups node from a file.
-  vtkMRMLMarkupsNode* AddNewMarkupsNodeFromFile(const char* filePath, const char* nodeName=nullptr, int markupIndex=0);
+  vtkMRMLMarkupsNode* AddNewMarkupsNodeFromFile(const char* filePath,
+                                                const char* nodeName = nullptr,
+                                                int markupIndex = 0);
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "MarkupsJsonStorage";};
+  const char* GetNodeTagName() override { return "MarkupsJsonStorage"; };
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// Returns a list of all markup types ("Curve", "ClosedCurve", "Angle", "Plane", etc.) in the json file.
   /// The types are ordered by the index in which they appear in the Json file.
@@ -77,10 +78,10 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node.
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
   /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
@@ -89,9 +90,12 @@ protected:
   std::string GetMarkupsClassNameFromMarkupsType(std::string markupsType);
 
   virtual bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupObject);
-  virtual bool UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLMarkupsJsonElement* markupObject);
+  virtual bool UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode,
+                                                     vtkMRMLMarkupsJsonElement* markupObject);
 
-  virtual bool ReadControlPoints(vtkMRMLMarkupsJsonElement* controlPointsArray, int coordinateSystem, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool ReadControlPoints(vtkMRMLMarkupsJsonElement* controlPointsArray,
+                                 int coordinateSystem,
+                                 vtkMRMLMarkupsNode* markupsNode);
   virtual bool ReadMeasurements(vtkMRMLMarkupsJsonElement* measurementsArray, vtkMRMLMarkupsNode* markupsNode);
 
   virtual bool WriteMarkup(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);

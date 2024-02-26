@@ -28,15 +28,15 @@ class vtkCollection;
 class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLHierarchyNode *New();
-  vtkTypeMacro(vtkMRMLHierarchyNode,vtkMRMLNode);
+  static vtkMRMLHierarchyNode* New();
+  vtkTypeMacro(vtkMRMLHierarchyNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -44,11 +44,11 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Hierarchy";}
+  const char* GetNodeTagName() override { return "Hierarchy"; }
 
   /// Set the reference node to current scene.
   void SetSceneReferences() override;
@@ -60,11 +60,11 @@ public:
 
   ///
   /// Observe the reference transform node
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   ///
   /// Associated parent MRML node
@@ -76,31 +76,25 @@ public:
 
   ///
   /// String ID of the parent hierarchy MRML node
-  virtual char* GetParentNodeID()
-  {
-    return GetParentNodeIDReference();
-  }
+  virtual char* GetParentNodeID() { return GetParentNodeIDReference(); }
 
   virtual void SetParentNodeID(const char* ref);
 
   ///
   /// Given this hierarchy node returns all it's children recursively.
-  void GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode *> &childrenNodes);
+  void GetAllChildrenNodes(std::vector<vtkMRMLHierarchyNode*>& childrenNodes);
 
   ///
   /// Given this hierarchy node returns all it's 1st level children (not recursive).
   /// Note: Most compilers don't make a copy of the list if you call the function like that:
   /// std::vector< vtkMRMLHierarchyNode* > children = this->GetChildrenNodes();
-  std::vector< vtkMRMLHierarchyNode *> GetChildrenNodes();
+  std::vector<vtkMRMLHierarchyNode*> GetChildrenNodes();
 
   /// Returns the number of immediate children in the hierarchy
-  int GetNumberOfChildrenNodes()
-  {
-    return static_cast<int>(this->GetChildrenNodes().size());
-  }
+  int GetNumberOfChildrenNodes() { return static_cast<int>(this->GetChildrenNodes().size()); }
 
   /// Get n-th child node sorted in the order of their SortingValue
-  vtkMRMLHierarchyNode *GetNthChildNode(int index);
+  vtkMRMLHierarchyNode* GetNthChildNode(int index);
 
   /// Get index of this node in it's parent based on the value of their SortingValue
   int GetIndexInParent();
@@ -121,42 +115,35 @@ public:
   /// ChildNodeAddedEvent is send when a child node added to this parent
   enum
   {
-      ChildNodeAddedEvent = 15550,
-      ChildNodeRemovedEvent = 15551
+    ChildNodeAddedEvent = 15550,
+    ChildNodeRemovedEvent = 15551
   };
 
   //// Associated node methods ////////////////
 
   ///
   /// String ID of the corresponding displayable MRML node
-  virtual char* GetAssociatedNodeID()
-  {
-    return GetAssociatedNodeIDReference();
-  }
+  virtual char* GetAssociatedNodeID() { return GetAssociatedNodeIDReference(); }
 
   virtual void SetAssociatedNodeID(const char* ref);
-
 
   /// Get node associated with this hierarchy node
   virtual vtkMRMLNode* GetAssociatedNode();
 
-
   /// Find all associated children nodes of a specified class in the hierarchy
   /// if childClass is nullptr returns all associated children nodes.
-  virtual void GetAssociatedChildrenNodes(vtkCollection *children, const char* childClass=nullptr);
+  virtual void GetAssociatedChildrenNodes(vtkCollection* children, const char* childClass = nullptr);
 
   ///
   /// Get Hierarchy node for a given associated node
-  static vtkMRMLHierarchyNode* GetAssociatedHierarchyNode(vtkMRMLScene *scene,
-                                                          const char *associatedNodeID);
+  static vtkMRMLHierarchyNode* GetAssociatedHierarchyNode(vtkMRMLScene* scene, const char* associatedNodeID);
   ///
   /// Node's Sorting Value
-  //vtkSetMacro(SortingValue, double);
+  // vtkSetMacro(SortingValue, double);
   /// Use a method for Set because it needs to call modified on any associated
-  //nodes (since the order of that associated node could have changed as well)
+  // nodes (since the order of that associated node could have changed as well)
   void SetSortingValue(double value);
   vtkGetMacro(SortingValue, double);
-
 
   /// turn off if only want to have one child associated with this hierarchy
   /// node, as with the leaf type nodes that are pointing to a single mrml
@@ -171,45 +158,43 @@ protected:
   vtkMRMLHierarchyNode(const vtkMRMLHierarchyNode&);
   void operator=(const vtkMRMLHierarchyNode&);
 
-
   ///
   /// String ID of the parent hierarchy MRML node
   void SetParentNodeIDReference(const char* id);
   vtkGetStringMacro(ParentNodeIDReference);
 
-  char *ParentNodeIDReference;
+  char* ParentNodeIDReference;
 
   /// Mark hierarchy as modified when you
-  static void HierarchyIsModified(vtkMRMLScene *scene);
-
+  static void HierarchyIsModified(vtkMRMLScene* scene);
 
   ///////////////////////
 
   /// Mark hierarchy as modified
-  static void AssociatedHierarchyIsModified(vtkMRMLScene *scene);
+  static void AssociatedHierarchyIsModified(vtkMRMLScene* scene);
   ///
   /// String ID of the associated MRML node
-  char *AssociatedNodeIDReference;
+  char* AssociatedNodeIDReference;
 
   void SetAssociatedNodeIDReference(const char*);
   vtkGetStringMacro(AssociatedNodeIDReference);
 
-  typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;
+  typedef std::map<std::string, std::vector<vtkMRMLHierarchyNode*>> HierarchyChildrenNodesType;
 
-  static std::map< vtkMRMLScene*, HierarchyChildrenNodesType> SceneHierarchyChildrenNodes;
-  static std::map< vtkMRMLScene*, vtkMTimeType> SceneHierarchyChildrenNodesMTime;
+  static std::map<vtkMRMLScene*, HierarchyChildrenNodesType> SceneHierarchyChildrenNodes;
+  static std::map<vtkMRMLScene*, vtkMTimeType> SceneHierarchyChildrenNodesMTime;
 
   ////////////////////////////
   ///
   /// Create Associated to hierarchy map,
   /// return number of Associated hierarchy nodes
-  static int UpdateAssociatedToHierarchyMap(vtkMRMLScene *scene);
+  static int UpdateAssociatedToHierarchyMap(vtkMRMLScene* scene);
 
-  typedef std::map<std::string, vtkMRMLHierarchyNode *> AssociatedHierarchyNodesType;
+  typedef std::map<std::string, vtkMRMLHierarchyNode*> AssociatedHierarchyNodesType;
 
-  static std::map< vtkMRMLScene*, AssociatedHierarchyNodesType> SceneAssociatedHierarchyNodes;
+  static std::map<vtkMRMLScene*, AssociatedHierarchyNodesType> SceneAssociatedHierarchyNodes;
 
-  static std::map< vtkMRMLScene*, vtkMTimeType> SceneAssociatedHierarchyNodesMTime;
+  static std::map<vtkMRMLScene*, vtkMTimeType> SceneAssociatedHierarchyNodesMTime;
 
   double SortingValue;
 
@@ -225,11 +210,7 @@ protected:
   /// it parent, and also on a parent that add/remove/move a child
   /// Invoke the event on the passed node if not null, otherwise on the
   /// associated node if not null.
-  void InvokeHierarchyModifiedEvent(vtkMRMLNode *node = nullptr);
+  void InvokeHierarchyModifiedEvent(vtkMRMLNode* node = nullptr);
 };
 
 #endif
-
-
-
-

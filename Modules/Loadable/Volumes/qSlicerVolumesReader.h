@@ -27,8 +27,7 @@ class qSlicerVolumesReaderPrivate;
 class vtkSlicerVolumesLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumesReader
-  : public qSlicerFileReader
+class qSlicerVolumesReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
@@ -37,20 +36,22 @@ public:
   qSlicerVolumesReader(vtkSlicerVolumesLogic* logic, QObject* parent = nullptr);
   ~qSlicerVolumesReader() override;
 
-  vtkSlicerVolumesLogic* logic()const;
+  vtkSlicerVolumesLogic* logic() const;
   void setLogic(vtkSlicerVolumesLogic* logic);
 
-  QString description()const override;
-  IOFileType fileType()const override;
-  QStringList extensions()const override;
-  qSlicerIOOptions* options()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
+  qSlicerIOOptions* options() const override;
 
   bool load(const IOProperties& properties) override;
 
   /// Implements the file list examination for the corresponding method in the core
   /// IO manager.
   /// \sa qSlicerCoreIOManager
-  bool examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const override;
+  bool examineFileInfoList(QFileInfoList& fileInfoList,
+                           QFileInfo& archetypeFileInfo,
+                           qSlicerIO::IOProperties& ioProperties) const override;
 
 protected:
   QScopedPointer<qSlicerVolumesReaderPrivate> d_ptr;

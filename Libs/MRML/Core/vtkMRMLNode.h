@@ -43,91 +43,130 @@ class vtkCallbackCommand;
 #include <vector>
 
 #ifndef vtkSetMRMLObjectMacro
-#define vtkSetMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
+# define vtkSetMRMLObjectMacro(node, value)                                    \
+   {                                                                           \
+     this->MRMLObserverManager->SetObject(vtkObjectPointer(&(node)), (value)); \
+   };
 #endif
 
 /// Can be used to set any vtkObject, not only vtkMRMLNodes.
 #ifndef vtkSetAndObserveMRMLObjectMacro
-#define vtkSetAndObserveMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value) );};
+# define vtkSetAndObserveMRMLObjectMacro(node, value)                                    \
+   {                                                                                     \
+     this->MRMLObserverManager->SetAndObserveObject(vtkObjectPointer(&(node)), (value)); \
+   };
 #endif
 
 #ifndef vtkSetAndObserveMRMLObjectMacroNoWarning
-#define vtkSetAndObserveMRMLObjectMacroNoWarning(node,value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value), 0.0, false /* no warning */ );};
+# define vtkSetAndObserveMRMLObjectMacroNoWarning(node, value)                                                        \
+   {                                                                                                                  \
+     this->MRMLObserverManager->SetAndObserveObject(vtkObjectPointer(&(node)), (value), 0.0, false /* no warning */); \
+   };
 #endif
 
 #ifndef vtkSetAndObserveMRMLObjectEventsMacro
-#define vtkSetAndObserveMRMLObjectEventsMacro(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events));};
+# define vtkSetAndObserveMRMLObjectEventsMacro(node, value, events)                                      \
+   {                                                                                                     \
+     this->MRMLObserverManager->SetAndObserveObjectEvents(vtkObjectPointer(&(node)), (value), (events)); \
+   };
 #endif
 
 #ifndef vtkSetAndObserveMRMLObjectEventsMacroNoWarning
-#define vtkSetAndObserveMRMLObjectEventsMacroNoWarning(node,value,events)  {this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &(node)), (value), (events), nullptr /* priorities */, false /* no warning */);};
+# define vtkSetAndObserveMRMLObjectEventsMacroNoWarning(node, value, events)                            \
+   {                                                                                                    \
+     this->MRMLObserverManager->SetAndObserveObjectEvents(                                              \
+       vtkObjectPointer(&(node)), (value), (events), nullptr /* priorities */, false /* no warning */); \
+   };
 #endif
 
 #ifndef vtkObserveMRMLObjectMacro
-#define vtkObserveMRMLObjectMacro(node)  {this->MRMLObserverManager->ObserveObject ( (node) );};
+# define vtkObserveMRMLObjectMacro(node)               \
+   {                                                   \
+     this->MRMLObserverManager->ObserveObject((node)); \
+   };
 #endif
 
 #ifndef vtkObserveMRMLObjectEventsMacro
-#define vtkObserveMRMLObjectEventsMacro(node, events)  {this->MRMLObserverManager->AddObjectEvents ( (node), (events) );};
+# define vtkObserveMRMLObjectEventsMacro(node, events)             \
+   {                                                               \
+     this->MRMLObserverManager->AddObjectEvents((node), (events)); \
+   };
 #endif
 
 #ifndef vtkUnObserveMRMLObjectMacro
-#define vtkUnObserveMRMLObjectMacro(node)  {this->MRMLObserverManager->RemoveObjectEvents ( (node) );};
+# define vtkUnObserveMRMLObjectMacro(node)                  \
+   {                                                        \
+     this->MRMLObserverManager->RemoveObjectEvents((node)); \
+   };
 #endif
 
 #ifndef vtkSetReferenceStringBodyMacro
-#define vtkSetReferenceStringBodyMacro(name) \
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to " << (_arg?_arg:"(null)") ); \
-  if ( this->name == nullptr && _arg == nullptr) { return;} \
-  if ( this->name && _arg && (!strcmp(this->name,_arg))) { return;} \
-  std::string oldValue; \
-  if (this->name) { oldValue = this->name; delete [] this->name;  } \
-  if (_arg) \
-  { \
-    size_t n = strlen(_arg) + 1; \
-    char *cp1 =  new char[n]; \
-    const char *cp2 = (_arg); \
-    this->name = cp1; \
-    do { *cp1++ = *cp2++; } while ( --n ); \
-  } \
-   else \
-   { \
-    this->name = nullptr; \
-   } \
-  this->Modified(); \
-  if (this->Scene && this->name) \
-  { \
-    if (oldValue.size() > 0) \
-    { \
-      this->Scene->RemoveReferencedNodeID(oldValue.c_str(), this); \
-    } \
-    this->Scene->AddReferencedNodeID(this->name, this); \
-  }
+# define vtkSetReferenceStringBodyMacro(name)                                             \
+   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to " \
+                 << (_arg ? _arg : "(null)"));                                            \
+   if (this->name == nullptr && _arg == nullptr)                                          \
+   {                                                                                      \
+     return;                                                                              \
+   }                                                                                      \
+   if (this->name && _arg && (!strcmp(this->name, _arg)))                                 \
+   {                                                                                      \
+     return;                                                                              \
+   }                                                                                      \
+   std::string oldValue;                                                                  \
+   if (this->name)                                                                        \
+   {                                                                                      \
+     oldValue = this->name;                                                               \
+     delete[] this->name;                                                                 \
+   }                                                                                      \
+   if (_arg)                                                                              \
+   {                                                                                      \
+     size_t n = strlen(_arg) + 1;                                                         \
+     char* cp1 = new char[n];                                                             \
+     const char* cp2 = (_arg);                                                            \
+     this->name = cp1;                                                                    \
+     do                                                                                   \
+     {                                                                                    \
+       *cp1++ = *cp2++;                                                                   \
+     } while (--n);                                                                       \
+   }                                                                                      \
+   else                                                                                   \
+   {                                                                                      \
+     this->name = nullptr;                                                                \
+   }                                                                                      \
+   this->Modified();                                                                      \
+   if (this->Scene && this->name)                                                         \
+   {                                                                                      \
+     if (oldValue.size() > 0)                                                             \
+     {                                                                                    \
+       this->Scene->RemoveReferencedNodeID(oldValue.c_str(), this);                       \
+     }                                                                                    \
+     this->Scene->AddReferencedNodeID(this->name, this);                                  \
+   }
 #endif
 
 #ifndef vtkSetReferenceStringMacro
-#define vtkSetReferenceStringMacro(name) \
-virtual void Set##name (const char* _arg) \
-{ \
-  vtkSetReferenceStringBodyMacro(name)\
-}
+# define vtkSetReferenceStringMacro(name)   \
+   virtual void Set##name(const char* _arg) \
+   {                                        \
+     vtkSetReferenceStringBodyMacro(name)   \
+   }
 #endif
 
 #ifndef vtkCxxSetReferenceStringMacro
-#define vtkCxxSetReferenceStringMacro(class,name)   \
-void class::Set##name (const char* _arg)            \
-{                                                 \
-  vtkSetReferenceStringBodyMacro(name);             \
-}
+# define vtkCxxSetReferenceStringMacro(class, name) \
+   void class ::Set##name(const char* _arg)         \
+   {                                                \
+     vtkSetReferenceStringBodyMacro(name);          \
+   }
 #endif
 
 #ifndef vtkMRMLNodeNewMacro
-#define vtkMRMLNodeNewMacro(newClass) \
-  vtkStandardNewMacro(newClass); \
-  vtkMRMLNode* newClass::CreateNodeInstance() \
-  { \
-    return newClass::New(); \
-  }
+# define vtkMRMLNodeNewMacro(newClass)         \
+   vtkStandardNewMacro(newClass);              \
+   vtkMRMLNode* newClass::CreateNodeInstance() \
+   {                                           \
+     return newClass::New();                   \
+   }
 #endif
 
 // Use this macro to declare that this node supports
@@ -139,12 +178,12 @@ void class::Set##name (const char* _arg)            \
 // a parent class implemented it that may not be enough).
 //
 #ifndef vtkMRMLCopyContentMacro
-#define vtkMRMLCopyContentMacro(thisClassName) \
-    void CopyContent(vtkMRMLNode* node, bool deepCopy=true) override; \
-    bool HasCopyContent() const override \
-    { \
-    return strcmp(#thisClassName, this->GetClassNameInternal()) == 0; \
-    }
+# define vtkMRMLCopyContentMacro(thisClassName)                        \
+   void CopyContent(vtkMRMLNode* node, bool deepCopy = true) override; \
+   bool HasCopyContent() const override                                \
+   {                                                                   \
+     return strcmp(#thisClassName, this->GetClassNameInternal()) == 0; \
+   }
 #endif
 
 // Use this macro to declare that this node supports
@@ -152,11 +191,11 @@ void class::Set##name (const char* _arg)            \
 // implementing CopyContent method
 // (this is the case when parent classes copy all content).
 #ifndef vtkMRMLCopyContentDefaultMacro
-#define vtkMRMLCopyContentDefaultMacro(thisClassName) \
-    bool HasCopyContent() const override \
-    { \
-    return strcmp(#thisClassName, this->GetClassNameInternal()) == 0; \
-    }
+# define vtkMRMLCopyContentDefaultMacro(thisClassName)                 \
+   bool HasCopyContent() const override                                \
+   {                                                                   \
+     return strcmp(#thisClassName, this->GetClassNameInternal()) == 0; \
+   }
 #endif
 
 /// \brief Abstract Superclass for all specific types of MRML nodes.
@@ -168,20 +207,22 @@ class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
 {
   /// make the vtkMRMLScene a friend so that AddNodeNoNotify can call
   /// SetID, but that's the only class that is allowed to do so
-    friend class vtkMRMLScene;
-    friend class vtkMRMLSceneViewNode;
+  friend class vtkMRMLScene;
+  friend class vtkMRMLSceneViewNode;
 
 public:
-  vtkTypeMacro(vtkMRMLNode,vtkObject);
+  vtkTypeMacro(vtkMRMLNode, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// These values are used in methods that specify node references.
-  /// \sa AddNodeReferenceRole, SetAndObserveNodeReferenceID, AddAndObserveNodeReferenceID, SetAndObserveNthNodeReferenceID
+  /// \sa AddNodeReferenceRole, SetAndObserveNodeReferenceID, AddAndObserveNodeReferenceID,
+  /// SetAndObserveNthNodeReferenceID
   enum ContentModifiedObserveType
   {
-    ContentModifiedObserveUndefined = -1, ///< Observe content modified events if it is enabled in the node reference role
-    ContentModifiedObserveDisabled = 0,   ///< Do not observe content modified events (default)
-    ContentModifiedObserveEnabled = 1     ///< Observe content modified events
+    ContentModifiedObserveUndefined =
+      -1,                               ///< Observe content modified events if it is enabled in the node reference role
+    ContentModifiedObserveDisabled = 0, ///< Do not observe content modified events (default)
+    ContentModifiedObserveEnabled = 1   ///< Observe content modified events
   };
 
   /// \brief Create instance of the default node. Like New only virtual.
@@ -207,22 +248,16 @@ public:
 
   /// \brief Set dependencies between this node and a child node
   /// when parsing XML file.
-  virtual void ProcessChildNode(vtkMRMLNode *){};
+  virtual void ProcessChildNode(vtkMRMLNode*){};
 
   /// Updates other nodes in the scene depending on this node
   /// or updates this node if it depends on other nodes when the scene is read in
   /// This method is called automatically by XML parser after all nodes are created
-  virtual void UpdateScene(vtkMRMLScene *)
-  {
-    this->UpdateNodeReferences();
-  };
+  virtual void UpdateScene(vtkMRMLScene*) { this->UpdateNodeReferences(); };
 
   /// Updates this node if it depends on other nodes when the scene is read in
   /// This method is called by scene when a node added to a scene.
-  virtual void OnNodeAddedToScene()
-  {
-    this->UpdateNodeReferences();
-  };
+  virtual void OnNodeAddedToScene() { this->UpdateNodeReferences(); };
 
   /// Write this node's information to a MRML file in XML format.
   ///
@@ -241,7 +276,7 @@ public:
   /// \note
   /// Subclasses should implement this method.
   /// Call this method in the subclass implementation.
-  virtual void Copy(vtkMRMLNode *node);
+  virtual void Copy(vtkMRMLNode* node);
 
   /// \brief Copy node contents from another node of the same type.
   /// Does not copy node ID, Scene, Name, SingletonTag, HideFromEditors, AddToScene, UndoEnabled,
@@ -252,7 +287,7 @@ public:
   /// \note
   /// If a class implements this then make sure CopyContent and HasCopyContent methods are implemented
   /// in all parent classes by adding vtkMRMLCopyContentMacro(ClassName) to the class headers.
-  virtual void CopyContent(vtkMRMLNode* node, bool deepCopy=true);
+  virtual void CopyContent(vtkMRMLNode* node, bool deepCopy = true);
 
   /// \brief Copy the references of the node into this.
   ///
@@ -274,7 +309,7 @@ public:
   /// See [#4078](https://github.com/Slicer/Slicer/issues/4078)
   ///
   /// \sa vtkMRMLScene::AddNode(vtkMRMLNode*)
-  void CopyWithScene(vtkMRMLNode *node);
+  void CopyWithScene(vtkMRMLNode* node);
 
   /// \brief Reset node attributes to the initial state as defined in the
   /// constructor or the passed default node.
@@ -328,7 +363,6 @@ public:
     return this->ModifiedEventPending;
   };
 
-
   /// Get node XML tag name (like Volume, Model).
   ///
   /// \note Subclasses should implement this method.
@@ -337,10 +371,7 @@ public:
   /// Get node type display name (like "Closed Curve", "Markup", etc).
   ///
   /// \note Subclasses should override this method to provide a more appropriate and translatable name.
-  virtual const char* GetTypeDisplayName()
-  {
-    return this->GetNodeTagName();
-  }
+  virtual const char* GetTypeDisplayName() { return this->GetNodeTagName(); }
 
   /// \brief Set a name value pair attribute.
   ///
@@ -364,7 +395,7 @@ public:
   const char* GetAttribute(const char* name);
 
   /// Get all attribute names.
-  std::vector< std::string > GetAttributeNames();
+  std::vector<std::string> GetAttributeNames();
 
   /// Get all attribute names. Python-wrappable version.
   void GetAttributeNames(vtkStringArray* attributeNames);
@@ -393,16 +424,14 @@ public:
   vtkBooleanMacro(UndoEnabled, bool);
 
   /// Propagate events generated in mrml.
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+  virtual void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData);
 
   /// \brief Flags to avoid event loops.
   ///
   /// \warning Do NOT use the SetMacro or it call modified on itself and
   /// generate even more events!
   vtkGetMacro(InMRMLCallbackFlag, int);
-  void SetInMRMLCallbackFlag (int flag) {
-    this->InMRMLCallbackFlag = flag;
-  }
+  void SetInMRMLCallbackFlag(int flag) { this->InMRMLCallbackFlag = flag; }
 
   /// Text description of this node, to be set by the user.
   vtkSetStringMacro(Description);
@@ -413,7 +442,7 @@ public:
   vtkGetStringMacro(Name);
 
   /// ID use by other nodes to reference this node in XML.
-  //vtkSetStringMacro(ID);
+  // vtkSetStringMacro(ID);
   vtkGetStringMacro(ID);
 
   /// \brief Tag that make this node a singleton in the scene.
@@ -444,18 +473,9 @@ public:
   /// \sa vtkMRMLScene::BuildID
   vtkSetStringMacro(SingletonTag);
   vtkGetStringMacro(SingletonTag);
-  void SetSingletonOn()
-  {
-    this->SetSingletonTag("Singleton");
-  }
-  void SetSingletonOff()
-  {
-    this->SetSingletonTag(nullptr);
-  }
-  bool IsSingleton()
-  {
-    return (this->GetSingletonTag() != nullptr);
-  }
+  void SetSingletonOn() { this->SetSingletonTag("Singleton"); }
+  void SetSingletonOff() { this->SetSingletonTag(nullptr); }
+  bool IsSingleton() { return (this->GetSingletonTag() != nullptr); }
 
   /// Save node with MRML scene.
   vtkGetMacro(SaveWithScene, int);
@@ -470,18 +490,9 @@ public:
 
   /// Turn on/off generating InvokeEvent for set macros
   vtkGetMacro(DisableModifiedEvent, int);
-  void SetDisableModifiedEvent(int onOff)
-  {
-    this->DisableModifiedEvent = onOff;
-  }
-  void DisableModifiedEventOn()
-  {
-    this->SetDisableModifiedEvent(1);
-  }
-  void DisableModifiedEventOff()
-  {
-    this->SetDisableModifiedEvent(0);
-  }
+  void SetDisableModifiedEvent(int onOff) { this->DisableModifiedEvent = onOff; }
+  void DisableModifiedEventOn() { this->SetDisableModifiedEvent(1); }
+  void DisableModifiedEventOff() { this->SetDisableModifiedEvent(0); }
 
   /// Number of pending modified events.
   ///
@@ -497,7 +508,7 @@ public:
   /// \sa GetModifiedEventPending()
   int GetCustomModifiedEventPending(int eventId)
   {
-    std::map< int, int >::iterator it = this->CustomModifiedEventPending.find(eventId);
+    std::map<int, int>::iterator it = this->CustomModifiedEventPending.find(eventId);
     if (it == this->CustomModifiedEventPending.end())
     {
       return 0;
@@ -540,11 +551,11 @@ public:
   ///
   /// Returns the total number of pending modified events that have been
   /// replaced by the just invoked modified event(s).
-  virtual int InvokePendingModifiedEvent ()
+  virtual int InvokePendingModifiedEvent()
   {
     int oldModifiedEventPending = 0;
     // Invoke pending standard Modified event
-    if ( this->ModifiedEventPending )
+    if (this->ModifiedEventPending)
     {
       oldModifiedEventPending += this->ModifiedEventPending;
       this->ModifiedEventPending = 0;
@@ -557,13 +568,15 @@ public:
       // because event invocation may add more events to this->CustomModifiedEventPending,
       // which would then make the iterator invalid.
       std::vector<int> customEventsToInvoke;
-      for (std::map< int, int >::iterator it=this->CustomModifiedEventPending.begin(); it!=this->CustomModifiedEventPending.end(); ++it)
+      for (std::map<int, int>::iterator it = this->CustomModifiedEventPending.begin();
+           it != this->CustomModifiedEventPending.end();
+           ++it)
       {
         oldModifiedEventPending += it->second;
         customEventsToInvoke.push_back(it->first);
       }
       this->CustomModifiedEventPending.clear();
-      for (std::vector<int>::iterator it=customEventsToInvoke.begin(); it!=customEventsToInvoke.end(); ++it)
+      for (std::vector<int>::iterator it = customEventsToInvoke.begin(); it != customEventsToInvoke.end(); ++it)
       {
         this->InvokeEvent(*it);
       }
@@ -583,7 +596,7 @@ public:
   /// \a callData is passed to InvokeEvent() if the event is invoked immediately.
   ///
   /// If the event is not invoked immediately then it will be sent with `callData=nullptr`.
-  virtual void InvokeCustomModifiedEvent(int eventId, void *callData=nullptr)
+  virtual void InvokeCustomModifiedEvent(int eventId, void* callData = nullptr)
   {
     if (!this->GetDisableModifiedEvent())
     {
@@ -615,7 +628,7 @@ public:
   virtual void SetSceneReferences();
 
   /// Update the stored reference to another node in the scene.
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
+  virtual void UpdateReferenceID(const char* oldID, const char* newID);
 
   /// Return list of events that indicate that content of the node is modified.
   /// For example, it is not enough to observe vtkCommand::ModifiedEvent to get
@@ -629,7 +642,7 @@ public:
   ///
   /// \note Currently only works on %, space, ', ", <, >
   /// \sa URLDecodeString()
-  const char *URLEncodeString(const char *inString);
+  const char* URLEncodeString(const char* inString);
 
   /// \brief Decode a URL string.
   ///
@@ -637,7 +650,7 @@ public:
   ///
   /// \note Currently only works on %, space, ', ", <, >
   /// \sa URLEncodeString()
-  const char *URLDecodeString(const char *inString);
+  const char* URLDecodeString(const char* inString);
 
   /// \brief Encode an XML attribute string (replaces special characters by code sequences)
   ///
@@ -670,22 +683,25 @@ public:
   /// Use this method to add new reference types to a node.
   /// This method is typically called in the constructors of each subclass.
   ///
-  /// The optional events argument specifies what events should be observed by default (e.g., when loading the scene from file).
-  /// If referenceRole ends with '/' character then events are used for all roles names begins with this role name (for example,
-  /// events specified for referenceRole='unit/' will be used for referenceRole='unit/length', referenceRole='unit/area', etc).
+  /// The optional events argument specifies what events should be observed by default (e.g., when loading the scene
+  /// from file). If referenceRole ends with '/' character then events are used for all roles names begins with this
+  /// role name (for example, events specified for referenceRole='unit/' will be used for referenceRole='unit/length',
+  /// referenceRole='unit/area', etc).
   ///
   /// If observeContentModifiedEvents is enabled then this node will get notifications when any of the
   /// event in the ContentModifiedEvents list of the observed node is invoked.
   ///
   /// \sa GetReferenceNodeFromMRMLAttributeName()
-  void AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName=nullptr,
-    vtkIntArray *events=nullptr, bool observeContentModifiedEvents=false);
+  void AddNodeReferenceRole(const char* referenceRole,
+                            const char* mrmlAttributeName = nullptr,
+                            vtkIntArray* events = nullptr,
+                            bool observeContentModifiedEvents = false);
 
   /// \brief Set a reference to a node with specified nodeID from this node for a specific \a referenceRole.
   vtkMRMLNode* SetNodeReferenceID(const char* referenceRole, const char* referencedNodeID);
 
   /// Convenience method that adds a \a referencedNodeID at the end of the list.
-  vtkMRMLNode* AddNodeReferenceID(const char* referenceRole , const char* referencedNodeID);
+  vtkMRMLNode* AddNodeReferenceID(const char* referenceRole, const char* referencedNodeID);
 
   /// \brief Set a N-th reference from this node with specified
   /// \a referencedNodeID for a specific \a referenceRole.
@@ -700,8 +716,11 @@ public:
   /// this node will get notifications when any of the event in the ContentModifiedEvents
   /// list of the observed node is invoked. If observeContentModifiedEvents is set to
   /// ContentModifiedObserveUndefined then the behavior defined in the node reference role will be used.
-  vtkMRMLNode* SetAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID,
-    vtkIntArray *events=nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
+  vtkMRMLNode* SetAndObserveNodeReferenceID(
+    const char* referenceRole,
+    const char* referencedNodeID,
+    vtkIntArray* events = nullptr,
+    ContentModifiedObserveType observeContentModifiedEvents = ContentModifiedObserveUndefined);
 
   /// \brief Add and observe a reference node from this node for a specific
   /// \a referenceRole.
@@ -712,8 +731,11 @@ public:
   /// this node will get notifications when any of the event in the ContentModifiedEvents
   /// list of the observed node is invoked. If observeContentModifiedEvents is set to
   /// ContentModifiedObserveUndefined then the behavior defined in the node reference role will be used.
-  vtkMRMLNode* AddAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID,
-    vtkIntArray *events=nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
+  vtkMRMLNode* AddAndObserveNodeReferenceID(
+    const char* referenceRole,
+    const char* referencedNodeID,
+    vtkIntArray* events = nullptr,
+    ContentModifiedObserveType observeContentModifiedEvents = ContentModifiedObserveUndefined);
 
   /// \brief Set and observe the Nth node ID for a specific reference role.
   ///
@@ -736,8 +758,12 @@ public:
   /// \sa SetAndObserveNodeReferenceID(const char*)
   /// \sa AddAndObserveNodeReferenceID(const char*)
   /// \sa RemoveNthNodeReferenceID(int)
-  vtkMRMLNode* SetAndObserveNthNodeReferenceID(const char* referenceRole, int n, const char *referencedNodeID,
-    vtkIntArray *events=nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
+  vtkMRMLNode* SetAndObserveNthNodeReferenceID(
+    const char* referenceRole,
+    int n,
+    const char* referencedNodeID,
+    vtkIntArray* events = nullptr,
+    ContentModifiedObserveType observeContentModifiedEvents = ContentModifiedObserveUndefined);
 
   /// Convenience method that removes the Nth node ID from the list.
   void RemoveNthNodeReferenceID(const char* referenceRole, int n);
@@ -763,13 +789,13 @@ public:
   ///
   /// \warning A temporary char generated from a std::string::c_str()
   /// is returned.
-  const char *GetNthNodeReferenceID(const char* referenceRole, int n);
+  const char* GetNthNodeReferenceID(const char* referenceRole, int n);
 
   /// \brief Utility function that returns the first node id for a specific
   /// \a referenceRole.
   ///
   /// \sa GetNthNodeReferenceID(int), GetNodeReference()
-  const char *GetNodeReferenceID(const char* referenceRole);
+  const char* GetNodeReferenceID(const char* referenceRole);
 
   /// \brief Get referenced MRML node for a specific \a referenceRole.
   ///
@@ -794,19 +820,18 @@ public:
   /// \note The list of nodes is browsed (slow) to make sure the pointers are
   /// up-to-date.
   /// \sa GetNthNodeReference
-  void GetNodeReferences(const char* referenceRole, std::vector<vtkMRMLNode*> &nodes);
+  void GetNodeReferences(const char* referenceRole, std::vector<vtkMRMLNode*>& nodes);
 
   /// \brief Return a list of the referenced node IDs.
   ///
   /// Some IDs may be null and nodes for valid IDs may not yet be in the scene.
   ///
   /// \sa GetNodeReferences(), GetNodeReferenceID()
-  void GetNodeReferenceIDs(const char* referenceRole,
-                           std::vector<const char*> &referencedNodeIDs);
+  void GetNodeReferenceIDs(const char* referenceRole, std::vector<const char*>& referencedNodeIDs);
 
   /// Get reference roles of the present node references.
   /// \sa GetNodeReferenceRoles(), GetNodeReferenceRoles(), GetNthNodeReferenceRole()
-  void GetNodeReferenceRoles(std::vector<std::string> &roles);
+  void GetNodeReferenceRoles(std::vector<std::string>& roles);
 
   /// Get number of node reference role names.
   /// \sa GetNodeReferenceRoles(), GetNodeReferenceRoles(), GetNthNodeReferenceRole()
@@ -820,24 +845,22 @@ public:
   /// this node is associated changes
   enum
   {
-      HierarchyModifiedEvent = 16000,
-      IDChangedEvent = 16001,
-      ReferenceAddedEvent,
-      ReferenceModifiedEvent,
-      ReferenceRemovedEvent,
-      ReferencedNodeModifiedEvent
+    HierarchyModifiedEvent = 16000,
+    IDChangedEvent = 16001,
+    ReferenceAddedEvent,
+    ReferenceModifiedEvent,
+    ReferenceRemovedEvent,
+    ReferencedNodeModifiedEvent
   };
 
-
 protected:
-
   /// \brief Class to hold information about a node reference
   class VTK_MRML_EXPORT vtkMRMLNodeReference : public vtkObject
   {
   public:
-    vtkTypeMacro(vtkMRMLNodeReference,vtkObject);
-    static vtkMRMLNodeReference *New();
-    void PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent)) override {};
+    vtkTypeMacro(vtkMRMLNodeReference, vtkObject);
+    static vtkMRMLNodeReference* New();
+    void PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent)) override{};
 
   public:
     vtkSetStringMacro(ReferenceRole);
@@ -872,7 +895,7 @@ protected:
     void operator=(const vtkMRMLNodeReference&);
 
     /// Name of the reference role
-    char*     ReferenceRole;
+    char* ReferenceRole;
 
     /// Points to this MRML node (that added the reference)
     vtkWeakPointer<vtkMRMLNode> ReferencingNode;
@@ -881,7 +904,7 @@ protected:
 
     /// Referenced node that should be observed (may not be the same
     /// as ReferencedNode if the ReferencedNodeID is recently changed)
-    char*     ReferencedNodeID;
+    char* ReferencedNodeID;
     /// Events that should be observed
     vtkSmartPointer<vtkIntArray> StaticEvents;
     /// Specifies whether ContentModified events of the referenced node should be observed.
@@ -898,13 +921,12 @@ protected:
 
   /// a shared set of functions that call the
   /// virtual ProcessMRMLEvents
-  static void MRMLCallback( vtkObject *caller,
-                            unsigned long eid, void *clientData, void *callData );
+  static void MRMLCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   /// \brief Get/Set the string used to manage encoding/decoding of strings/URLs
   /// with special characters.
-  vtkSetStringMacro( TempURLString );
-  vtkGetStringMacro( TempURLString );
+  vtkSetStringMacro(TempURLString);
+  vtkGetStringMacro(TempURLString);
 
   /// \brief Return the reference role (if found) associated with the attribute
   /// name found in a MRML scene file. Return 0 otherwise.
@@ -948,18 +970,26 @@ protected:
   /// Helper function for SetAndObserveNthNodeReferenceID.
   /// Updates the event observers on the old and new referenced node.
   /// referenceToIgnore should contain the current reference that is being updated.
-  vtkMRMLNode* UpdateNodeReferenceEventObserver(vtkMRMLNode *oldReferencedNode, vtkMRMLNode *newReferencedNode,
-    vtkIntArray *newEvents, bool newObserveContentModifiedEvents, vtkMRMLNodeReference* referenceToIgnore);
+  vtkMRMLNode* UpdateNodeReferenceEventObserver(vtkMRMLNode* oldReferencedNode,
+                                                vtkMRMLNode* newReferencedNode,
+                                                vtkIntArray* newEvents,
+                                                bool newObserveContentModifiedEvents,
+                                                vtkMRMLNodeReference* referenceToIgnore);
 
   /// Helper function for SetAndObserveNthNodeReferenceID (through UpdateNodeReferenceEventObserver).
   /// Counts how many times the old and new node is used and what events are observed.
   /// referenceToIgnore specifies a reference (the reference that is currently being processed)
   /// that is ignored.
   /// oldReferencedNodeUseCount and oldConsolidatedEventList are only computed if oldReferencedNode!=newReferencedNode.
-  void GetUpdatedReferencedNodeEventList(int& oldReferencedNodeUseCount, int& newReferencedNodeUseCount,
-    vtkIntArray* oldConsolidatedEventList, vtkIntArray* newConsolidatedEventList,
-    vtkMRMLNode* oldReferencedNode, vtkMRMLNode* newReferencedNode,
-    vtkMRMLNodeReference* referenceToIgnore, vtkIntArray* newEvents, bool newObserveContentModifiedEvents);
+  void GetUpdatedReferencedNodeEventList(int& oldReferencedNodeUseCount,
+                                         int& newReferencedNodeUseCount,
+                                         vtkIntArray* oldConsolidatedEventList,
+                                         vtkIntArray* newConsolidatedEventList,
+                                         vtkMRMLNode* oldReferencedNode,
+                                         vtkMRMLNode* newReferencedNode,
+                                         vtkMRMLNodeReference* referenceToIgnore,
+                                         vtkIntArray* newEvents,
+                                         bool newObserveContentModifiedEvents);
 
   /// Remove all references and event observers to referenced nodes but leave ID's and events.
   /// References and event observers can be re-added by calling UpdateNodeReferences().
@@ -968,86 +998,86 @@ protected:
   /// Called when a valid node reference is added.
   /// The event is not invoked when the referenced node ID is specified,
   /// but only when a valid node pointer is obtained.
-  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
   {
     this->InvokeEvent(vtkMRMLNode::ReferenceAddedEvent, reference);
   }
 
   /// Called when a referenced node pointer is modified.
-  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+  virtual void OnNodeReferenceModified(vtkMRMLNodeReference* reference)
   {
     this->InvokeEvent(vtkMRMLNode::ReferenceModifiedEvent, reference);
   }
 
   /// Called when a referenced node pointer is removed (set to nullptr).
-  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
+  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference)
   {
     this->InvokeEvent(vtkMRMLNode::ReferenceRemovedEvent, reference);
   }
 
   /// Parse references in the form "role1:id1 id2;role2:id3;"
   /// map contains existing role-id pairs, so we don't repeat them
-  void ParseReferencesAttribute(const char *attValue, std::set<std::string> &references);
+  void ParseReferencesAttribute(const char* attValue, std::set<std::string>& references);
 
   /// Holders for MRML callbacks
-  vtkCallbackCommand *MRMLCallbackCommand;
+  vtkCallbackCommand* MRMLCallbackCommand;
 
-  char *ID{nullptr};
-  char *Name{nullptr};
-  char *Description{nullptr};
-  int HideFromEditors{0};
-  int Selectable{1};
-  int Selected{0};
-  int AddToScene{1};
-  bool UndoEnabled{false};
+  char* ID{ nullptr };
+  char* Name{ nullptr };
+  char* Description{ nullptr };
+  int HideFromEditors{ 0 };
+  int Selectable{ 1 };
+  int Selected{ 0 };
+  int AddToScene{ 1 };
+  bool UndoEnabled{ false };
 
-  int  SaveWithScene{true};
+  int SaveWithScene{ true };
 
   ///
   /// Flag to avoid event loops
-  int InMRMLCallbackFlag{0};
+  int InMRMLCallbackFlag{ 0 };
 
   // We don't increase the reference count of Scene when store its pointer
   // therefore we must use a weak pointer to prevent pointer dangling when
   // the scene is deleted.
   vtkWeakPointer<vtkMRMLScene> Scene;
 
-  typedef std::map< std::string, std::string > AttributesType;
+  typedef std::map<std::string, std::string> AttributesType;
   AttributesType Attributes;
 
   vtkIntArray* ContentModifiedEvents;
 
-  vtkObserverManager *MRMLObserverManager;
+  vtkObserverManager* MRMLObserverManager;
 
   /// NodeReferences is a map that stores vector of references for each referenceRole,
   /// the referenceRole can be any unique string, for example "display", "transform" etc.
-  typedef std::vector< vtkSmartPointer<vtkMRMLNodeReference> > NodeReferenceListType;
-  typedef std::map< std::string, NodeReferenceListType > NodeReferencesType;
+  typedef std::vector<vtkSmartPointer<vtkMRMLNodeReference>> NodeReferenceListType;
+  typedef std::map<std::string, NodeReferenceListType> NodeReferencesType;
   NodeReferencesType NodeReferences;
 
-  std::map< std::string, std::string> NodeReferenceMRMLAttributeNames;
+  std::map<std::string, std::string> NodeReferenceMRMLAttributeNames;
 
   struct NodeReferenceEventList
   {
     vtkSmartPointer<vtkIntArray> StaticEvents;
     ContentModifiedObserveType ObserveContentModifiedEvents{ ContentModifiedObserveUndefined };
   };
-  typedef std::map< std::string, NodeReferenceEventList> NodeReferenceEventsType;
-  NodeReferenceEventsType NodeReferenceEvents; // for each role it specifies which referenced node emitted events this node should observe
+  typedef std::map<std::string, NodeReferenceEventList> NodeReferenceEventsType;
+  NodeReferenceEventsType
+    NodeReferenceEvents; // for each role it specifies which referenced node emitted events this node should observe
 
 private:
-
   /// ID use by other nodes to reference this node in XML.
   /// The ID must be unique in the scene. Only the scene can set the ID
   void SetID(const char* newID);
 
   /// Variable used to manage encoded/decoded URL strings
-  char *TempURLString{nullptr};
+  char* TempURLString{ nullptr };
 
-  char *SingletonTag{nullptr};
+  char* SingletonTag{ nullptr };
 
-  int DisableModifiedEvent{0};
-  int ModifiedEventPending{0};
+  int DisableModifiedEvent{ 0 };
+  int ModifiedEventPending{ 0 };
   std::map<int, int> CustomModifiedEventPending; // event id, pending value (number of events grouped together)
 };
 

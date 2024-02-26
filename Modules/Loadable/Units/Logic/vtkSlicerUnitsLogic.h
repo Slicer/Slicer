@@ -18,7 +18,6 @@
 
 ==============================================================================*/
 
-
 #ifndef __vtkSlicerUnitsLogic_h
 #define __vtkSlicerUnitsLogic_h
 
@@ -39,11 +38,10 @@ class vtkMRMLUnitNode;
 /// a new unit easily. The logic is in charge of calling a modify on the
 /// the selection node every time a current unit is modified so the listeners
 /// can update themselves.
-class VTK_SLICER_UNITS_MODULE_LOGIC_EXPORT vtkSlicerUnitsLogic
-  : public vtkMRMLAbstractLogic
+class VTK_SLICER_UNITS_MODULE_LOGIC_EXPORT vtkSlicerUnitsLogic : public vtkMRMLAbstractLogic
 {
 public:
-  static vtkSlicerUnitsLogic *New();
+  static vtkSlicerUnitsLogic* New();
   typedef vtkSlicerUnitsLogic Self;
   vtkTypeMacro(vtkSlicerUnitsLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -51,12 +49,12 @@ public:
   /// Add unit node to the scene.
   /// Returns nullptr if the logic has no scene.
   vtkMRMLUnitNode* AddUnitNode(const char* name,
-    const char* quantity = "length",
-    const char* prefix = "",
-    const char* suffix = "",
-    int precision = 3,
-    double min = -10000.,
-    double max = 10000.);
+                               const char* quantity = "length",
+                               const char* prefix = "",
+                               const char* suffix = "",
+                               int precision = 3,
+                               double min = -10000.,
+                               double max = 10000.);
 
   /// Change the default unit for the corresponding quantity
   void SetDefaultUnit(const char* quantity, const char* id);
@@ -67,7 +65,8 @@ public:
   /// \brief Get the coefficient associated with the given SI prefix \a name.
   ///
   /// Returns the coefficient for all prefix names defined in the [International
-  /// System of Units (SI)](https://en.wikipedia.org/wiki/Metric_prefix#List_of_SI_prefixes) reported in the table below.
+  /// System of Units (SI)](https://en.wikipedia.org/wiki/Metric_prefix#List_of_SI_prefixes) reported in the table
+  /// below.
   ///
   /// Otherwise, returns 1 if an empty name or an unknown prefix name is given.
   ///
@@ -126,7 +125,7 @@ public:
   /// \sa GetSIPrefixCoefficient()
   /// \sa AddUnitNodeToScene()
   /// \sa AddDefaultsUnits(), AddBuiltInUnits()
-  static double GetDisplayCoefficient(const char* displayPrefix, const char* valuePrefix = "", double power=1);
+  static double GetDisplayCoefficient(const char* displayPrefix, const char* valuePrefix = "", double power = 1);
 
 protected:
   vtkSlicerUnitsLogic();
@@ -186,15 +185,15 @@ protected:
   ///
   /// \sa GetDisplayCoefficient()
   vtkMRMLUnitNode* AddUnitNodeToScene(vtkMRMLScene* scene,
-    const char* name,
-    const char* quantity = "length",
-    const char* prefix = "",
-    const char* suffix = "",
-    int precision = 3,
-    double min = -10000.,
-    double max = 10000.,
-    double displayCoeff = 1.0,
-    double displayOffset = 0.0);
+                                      const char* name,
+                                      const char* quantity = "length",
+                                      const char* prefix = "",
+                                      const char* suffix = "",
+                                      int precision = 3,
+                                      double min = -10000.,
+                                      double max = 10000.,
+                                      double displayCoeff = 1.0,
+                                      double displayOffset = 0.0);
 
   /// Save the default units referenced in the selection node singleton.
   /// \sa RestoreDefaultUnits()
@@ -207,6 +206,7 @@ protected:
 
   // Variables
   vtkMRMLScene* UnitsScene;
+
 private:
   vtkSlicerUnitsLogic(const vtkSlicerUnitsLogic&) = delete;
   void operator=(const vtkSlicerUnitsLogic&) = delete;

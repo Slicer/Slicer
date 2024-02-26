@@ -52,17 +52,17 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
     this->GetMatrixTransformToParent(matrix.GetPointer());
 
     std::stringstream ss;
-    for (int row=0; row<4; row++)
+    for (int row = 0; row < 4; row++)
     {
-      for (int col=0; col<4; col++)
+      for (int col = 0; col < 4; col++)
       {
         ss << matrix->GetElement(row, col);
-        if (!(row==3 && col==3))
+        if (!(row == 3 && col == 3))
         {
           ss << " ";
         }
       }
-      if ( row != 3 )
+      if (row != 3)
       {
         ss << " ";
       }
@@ -92,9 +92,9 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for (int row=0; row<4; row++)
+      for (int row = 0; row < 4; row++)
       {
-        for (int col=0; col<4; col++)
+        for (int col = 0; col < 4; col++)
         {
           ss >> val;
           matrix->SetElement(row, col, val);
@@ -108,9 +108,9 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for (int row=0; row<4; row++)
+      for (int row = 0; row < 4; row++)
       {
-        for (int col=0; col<4; col++)
+        for (int col = 0; col < 4; col++)
         {
           ss >> val;
           matrix->SetElement(row, col, val);
@@ -130,7 +130,7 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       // In the long term (when backward compatibility with old scenes is not a strong requirement
       // anymore) vtkMRMLLinearTransformNode and readWriteAsTransformToParent attribute management
       // can be completely removed.
-      if (!strcmp(attValue,"true"))
+      if (!strcmp(attValue, "true"))
       {
         this->ReadAsTransformToParent = 0;
       }
@@ -139,7 +139,6 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
         this->ReadAsTransformToParent = 1;
       }
     }
-
   }
   this->EndModify(disabledModify);
 }
@@ -147,20 +146,21 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   if (this->IsLinear())
   {
     vtkNew<vtkMatrix4x4> toParentMatrix;
     this->GetMatrixTransformToParent(toParentMatrix.GetPointer());
 
-    os << indent << "MatrixTransformToParent: " << "\n";
-    for (int row=0; row<4; row++)
+    os << indent << "MatrixTransformToParent: "
+       << "\n";
+    for (int row = 0; row < 4; row++)
     {
-      for (int col=0; col<4; col++)
+      for (int col = 0; col < 4; col++)
       {
         os << toParentMatrix->GetElement(row, col);
-        if (!(row==3 && col==3))
+        if (!(row == 3 && col == 3))
         {
           os << " ";
         }
@@ -169,6 +169,6 @@ void vtkMRMLLinearTransformNode::PrintSelf(ostream& os, vtkIndent indent)
           os << "\n";
         }
       } // for (int col
-    } // for (int row
+    }   // for (int row
   }
 }

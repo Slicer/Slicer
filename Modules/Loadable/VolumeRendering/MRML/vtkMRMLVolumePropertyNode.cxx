@@ -23,7 +23,7 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
-  : EffectiveRange{0.0,-1.0}
+  : EffectiveRange{ 0.0, -1.0 }
 {
   this->ObservedEvents = vtkIntArray::New();
   this->ObservedEvents->InsertNextValue(vtkCommand::StartEvent);
@@ -54,7 +54,7 @@ vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode()
 {
-  if(this->VolumeProperty)
+  if (this->VolumeProperty)
   {
     vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetScalarOpacity());
     vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetGradientOpacity());
@@ -67,7 +67,8 @@ vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode()
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::SetEffectiveRange(double min, double max)
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting EffectiveRange to (" << min << "," << max << ")");
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting EffectiveRange to (" << min << "," << max
+                << ")");
   if ((this->EffectiveRange[0] != min) || (this->EffectiveRange[1] != max))
   {
     this->EffectiveRange[0] = min;
@@ -127,7 +128,7 @@ void vtkMRMLVolumePropertyNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLVolumePropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -135,9 +136,9 @@ void vtkMRMLVolumePropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
+void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode* anode)
 {
-  vtkMRMLVolumePropertyNode *node = vtkMRMLVolumePropertyNode::SafeDownCast(anode);
+  vtkMRMLVolumePropertyNode* node = vtkMRMLVolumePropertyNode::SafeDownCast(anode);
   if (!node)
   {
     vtkErrorMacro("CopyParameterSet: Invalid input MRML node");
@@ -154,10 +155,10 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
   this->VolumeProperty->SetInterpolationType(node->VolumeProperty->GetInterpolationType());
   this->VolumeProperty->SetUseClippedVoxelIntensity(node->VolumeProperty->GetUseClippedVoxelIntensity());
 
-  for (int i=0; i<VTK_MAX_VRCOMP; i++)
+  for (int i = 0; i < VTK_MAX_VRCOMP; i++)
   {
-    this->VolumeProperty->SetComponentWeight(i,node->GetVolumeProperty()->GetComponentWeight(i));
-    //TODO: No set method for GrayTransferFunction, ColorChannels, and DefaultGradientOpacity
+    this->VolumeProperty->SetComponentWeight(i, node->GetVolumeProperty()->GetComponentWeight(i));
+    // TODO: No set method for GrayTransferFunction, ColorChannels, and DefaultGradientOpacity
 
     // Transfer functions
     vtkColorTransferFunction* rgbTransfer = vtkColorTransferFunction::New();
@@ -169,7 +170,7 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
     scalar->DeepCopy(node->GetVolumeProperty()->GetScalarOpacity(i));
     this->SetScalarOpacity(scalar, i);
     scalar->Delete();
-    this->VolumeProperty->SetScalarOpacityUnitDistance(i,this->VolumeProperty->GetScalarOpacityUnitDistance(i));
+    this->VolumeProperty->SetScalarOpacityUnitDistance(i, this->VolumeProperty->GetScalarOpacityUnitDistance(i));
 
     vtkPiecewiseFunction* gradient = vtkPiecewiseFunction::New();
     gradient->DeepCopy(node->GetVolumeProperty()->GetGradientOpacity(i));
@@ -177,8 +178,8 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
     gradient->Delete();
 
     // Lighting
-    this->VolumeProperty->SetDisableGradientOpacity(i,node->GetVolumeProperty()->GetDisableGradientOpacity(i));
-    this->VolumeProperty->SetShade(i,node->GetVolumeProperty()->GetShade(i));
+    this->VolumeProperty->SetDisableGradientOpacity(i, node->GetVolumeProperty()->GetDisableGradientOpacity(i));
+    this->VolumeProperty->SetShade(i, node->GetVolumeProperty()->GetShade(i));
     this->VolumeProperty->SetAmbient(i, node->VolumeProperty->GetAmbient(i));
     this->VolumeProperty->SetDiffuse(i, node->VolumeProperty->GetDiffuse(i));
     this->VolumeProperty->SetSpecular(i, node->VolumeProperty->GetSpecular(i));
@@ -189,20 +190,18 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintVectorMacro(EffectiveRange, double, 2);
   vtkMRMLPrintEndMacro();
 
   os << indent << "VolumeProperty: ";
-  this->VolumeProperty->PrintSelf(os,indent.GetNextIndent());
+  this->VolumeProperty->PrintSelf(os, indent.GetNextIndent());
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode::ProcessMRMLEvents( vtkObject *caller,
-                                                   unsigned long event,
-                                                   void *callData )
+void vtkMRMLVolumePropertyNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
   switch (event)
@@ -224,11 +223,11 @@ void vtkMRMLVolumePropertyNode::ProcessMRMLEvents( vtkObject *caller,
 std::string vtkMRMLVolumePropertyNode::DataToString(double* data, int size)
 {
   std::stringstream resultStream;
-  double *it = data;
+  double* it = data;
   // Write header
   resultStream << size;
   resultStream.precision(std::numeric_limits<double>::digits10);
-  for (int i=0; i < size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     resultStream << " ";
     resultStream << *it;
@@ -238,19 +237,19 @@ std::string vtkMRMLVolumePropertyNode::DataToString(double* data, int size)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLVolumePropertyNode::DataFromString(const std::string& dataString, double* &data)
+int vtkMRMLVolumePropertyNode::DataFromString(const std::string& dataString, double*& data)
 {
   std::stringstream stream;
   stream << dataString;
 
-  int size=0;
+  int size = 0;
   stream >> size;
-  if (size==0)
+  if (size == 0)
   {
     return 0;
   }
   data = new double[size];
-  for(int i=0; i < size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     std::string s;
     stream >> s;
@@ -260,7 +259,7 @@ int vtkMRMLVolumePropertyNode::DataFromString(const std::string& dataString, dou
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLVolumePropertyNode::NodesFromString(const std::string& dataString, double* &nodes, int nodeSize)
+int vtkMRMLVolumePropertyNode::NodesFromString(const std::string& dataString, double*& nodes, int nodeSize)
 {
   int size = vtkMRMLVolumePropertyNode::DataFromString(dataString, nodes);
   if (size % nodeSize)
@@ -270,7 +269,7 @@ int vtkMRMLVolumePropertyNode::NodesFromString(const std::string& dataString, do
   }
   // Ensure uniqueness
   double previous = VTK_DOUBLE_MIN;
-  for (int i = 0; i < size; i+= nodeSize)
+  for (int i = 0; i < size; i += nodeSize)
   {
     nodes[i] = vtkMRMLVolumePropertyNode::HigherAndUnique(nodes[i], previous);
   }
@@ -290,8 +289,7 @@ std::string vtkMRMLVolumePropertyNode::GetColorTransferFunctionString(vtkColorTr
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(
-  const std::string& str,vtkPiecewiseFunction* result)
+void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(const std::string& str, vtkPiecewiseFunction* result)
 {
   double* data = nullptr;
   int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 2);
@@ -299,12 +297,12 @@ void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(
   {
     result->FillFromDataPointer(size, data);
   }
-  delete [] data;
+  delete[] data;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(
-  const std::string& str, vtkColorTransferFunction* result)
+void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(const std::string& str,
+                                                                   vtkColorTransferFunction* result)
 {
   double* data = nullptr;
   int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 4);
@@ -312,7 +310,7 @@ void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(
   {
     result->FillFromDataPointer(size, data);
   }
-  delete [] data;
+  delete[] data;
 }
 
 //----------------------------------------------------------------------------
@@ -326,9 +324,10 @@ double vtkMRMLVolumePropertyNode::NextHigher(double value)
   // Increment the value by the smallest offset possible
   // The challenge here is to find the offset, if the value is 100000000., an
   // offset of epsilon won't work.
-  typedef union {
-      long long i64;
-      double d64;
+  typedef union
+  {
+    long long i64;
+    double d64;
   } dbl_64;
   dbl_64 d;
   d.d64 = value;
@@ -337,14 +336,14 @@ double vtkMRMLVolumePropertyNode::NextHigher(double value)
 }
 
 //----------------------------------------------------------------------------
-double vtkMRMLVolumePropertyNode::HigherAndUnique(double value, double &previousValue)
+double vtkMRMLVolumePropertyNode::HigherAndUnique(double value, double& previousValue)
 {
   value = std::max(value, previousValue);
   if (value == previousValue)
   {
     value = vtkMRMLVolumePropertyNode::NextHigher(value);
   }
-  assert (value != previousValue);
+  assert(value != previousValue);
   previousValue = value;
   return value;
 }
@@ -358,8 +357,7 @@ vtkMRMLStorageNode* vtkMRMLVolumePropertyNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLVolumePropertyStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLVolumePropertyStorageNode"));
 }
 
 //---------------------------------------------------------------------------
@@ -377,8 +375,7 @@ vtkPiecewiseFunction* vtkMRMLVolumePropertyNode::GetScalarOpacity(int component)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode::SetGradientOpacity(
-  vtkPiecewiseFunction* newGradientOpacity, int component)
+void vtkMRMLVolumePropertyNode::SetGradientOpacity(vtkPiecewiseFunction* newGradientOpacity, int component)
 {
   vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetGradientOpacity(component));
   this->VolumeProperty->SetGradientOpacity(component, newGradientOpacity);
@@ -408,9 +405,8 @@ vtkColorTransferFunction* vtkMRMLVolumePropertyNode::GetColor(int component)
 //---------------------------------------------------------------------------
 bool vtkMRMLVolumePropertyNode::GetModifiedSinceRead()
 {
-  return this->Superclass::GetModifiedSinceRead() ||
-    (this->VolumeProperty &&
-     this->VolumeProperty->GetMTime() > this->GetStoredTime());
+  return this->Superclass::GetModifiedSinceRead()
+         || (this->VolumeProperty && this->VolumeProperty->GetMTime() > this->GetStoredTime());
 }
 
 //---------------------------------------------------------------------------
@@ -431,19 +427,19 @@ bool vtkMRMLVolumePropertyNode::CalculateEffectiveRange()
     return false;
   }
 
-  double effectiveRange[2] = {0.0};
+  double effectiveRange[2] = { 0.0 };
 
-  double colorRange[2] = {0.0};
+  double colorRange[2] = { 0.0 };
   colorTransferFunction->GetRange(colorRange);
   effectiveRange[0] = std::min(effectiveRange[0], colorRange[0]);
   effectiveRange[1] = std::max(effectiveRange[1], colorRange[1]);
 
-  double opacityRange[2] = {0.0};
+  double opacityRange[2] = { 0.0 };
   opacityFunction->GetRange(opacityRange);
   effectiveRange[0] = std::min(effectiveRange[0], opacityRange[0]);
   effectiveRange[1] = std::max(effectiveRange[1], opacityRange[1]);
 
-  double gradientRange[2] = {0.0};
+  double gradientRange[2] = { 0.0 };
   gradientFunction->GetRange(gradientRange);
   effectiveRange[0] = std::min(effectiveRange[0], gradientRange[0]);
   effectiveRange[1] = std::max(effectiveRange[1], gradientRange[1]);

@@ -46,5 +46,3 @@ QString qSlicerModelsWidgetsAbstractPlugin::whatsThis() const
 {
   return QString();
 }
-
-

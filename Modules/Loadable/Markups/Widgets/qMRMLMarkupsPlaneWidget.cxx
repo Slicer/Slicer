@@ -31,8 +31,7 @@
 #include <vector>
 
 // --------------------------------------------------------------------------
-class qMRMLMarkupsPlaneWidgetPrivate:
-  public Ui_qMRMLMarkupsPlaneWidget
+class qMRMLMarkupsPlaneWidgetPrivate : public Ui_qMRMLMarkupsPlaneWidget
 {
 public:
   qMRMLMarkupsPlaneWidgetPrivate(qMRMLMarkupsPlaneWidget& object);
@@ -72,27 +71,20 @@ void qMRMLMarkupsPlaneWidgetPrivate::setupUi(qMRMLMarkupsPlaneWidget* widget)
     this->planeSizeModeComboBox->addItem(vtkMRMLMarkupsPlaneNode::GetSizeModeAsString(sizeMode), sizeMode);
   }
 
-  QObject::connect(this->planeTypeComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onPlaneTypeIndexChanged()));
-  QObject::connect(this->planeSizeModeComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(onPlaneSizeModeIndexChanged()));
+  QObject::connect(this->planeTypeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onPlaneTypeIndexChanged()));
+  QObject::connect(
+    this->planeSizeModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onPlaneSizeModeIndexChanged()));
 
-  QObject::connect(this->sizeXSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneSizeSpinBoxChanged()));
-  QObject::connect(this->sizeYSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneSizeSpinBoxChanged()));
+  QObject::connect(this->sizeXSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneSizeSpinBoxChanged()));
+  QObject::connect(this->sizeYSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneSizeSpinBoxChanged()));
 
+  QObject::connect(this->boundsXMinSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
+  QObject::connect(this->boundsXMaxSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
+  QObject::connect(this->boundsYMinSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
+  QObject::connect(this->boundsYMaxSpinBox, SIGNAL(valueChanged(double)), q, SLOT(onPlaneBoundsSpinBoxChanged()));
 
-  QObject::connect(this->boundsXMinSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneBoundsSpinBoxChanged()));
-  QObject::connect(this->boundsXMaxSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneBoundsSpinBoxChanged()));
-  QObject::connect(this->boundsYMinSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneBoundsSpinBoxChanged()));
-  QObject::connect(this->boundsYMaxSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(onPlaneBoundsSpinBoxChanged()));
-
-  QObject::connect(this->normalVisibilityCheckBox, SIGNAL(stateChanged(int)), q, SLOT(onNormalVisibilityCheckBoxChanged()));
+  QObject::connect(
+    this->normalVisibilityCheckBox, SIGNAL(stateChanged(int)), q, SLOT(onNormalVisibilityCheckBoxChanged()));
   QObject::connect(this->normalOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(onNormalOpacitySliderChanged()));
 
   q->setEnabled(vtkMRMLMarkupsPlaneNode::SafeDownCast(q->MarkupsNode) != nullptr);
@@ -121,7 +113,8 @@ const char* qMRMLMarkupsPlaneWidgetPrivate::getPlaneTypeName(int planeType)
 
 // --------------------------------------------------------------------------
 qMRMLMarkupsPlaneWidget::qMRMLMarkupsPlaneWidget(QWidget* parent)
-  : Superclass(parent), d_ptr(new qMRMLMarkupsPlaneWidgetPrivate(*this))
+  : Superclass(parent)
+  , d_ptr(new qMRMLMarkupsPlaneWidgetPrivate(*this))
 {
   this->setup();
 }
@@ -137,7 +130,7 @@ void qMRMLMarkupsPlaneWidget::setup()
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLMarkupsPlaneNode* qMRMLMarkupsPlaneWidget::mrmlPlaneNode()const
+vtkMRMLMarkupsPlaneNode* qMRMLMarkupsPlaneWidget::mrmlPlaneNode() const
 {
   Q_D(const qMRMLMarkupsPlaneWidget);
   return vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
@@ -146,8 +139,7 @@ vtkMRMLMarkupsPlaneNode* qMRMLMarkupsPlaneWidget::mrmlPlaneNode()const
 // --------------------------------------------------------------------------
 void qMRMLMarkupsPlaneWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
-  this->qvtkReconnect(this->MarkupsNode, markupsNode, vtkCommand::ModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(this->MarkupsNode, markupsNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   this->MarkupsNode = markupsNode;
   this->updateWidgetFromMRML();
@@ -209,7 +201,8 @@ void qMRMLMarkupsPlaneWidget::updateWidgetFromMRML()
   d->boundsYMaxSpinBox->blockSignals(wasBlocked);
   d->boundsYMaxSpinBox->setEnabled(planeNode->GetSizeMode() != vtkMRMLMarkupsPlaneNode::SizeModeAuto);
 
-  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
+  vtkMRMLMarkupsPlaneDisplayNode* planeDisplayNode =
+    vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
   if (planeDisplayNode)
   {
     wasBlocked = d->normalVisibilityCheckBox->blockSignals(true);
@@ -284,7 +277,8 @@ void qMRMLMarkupsPlaneWidget::onNormalVisibilityCheckBoxChanged()
     return;
   }
 
-  vtkMRMLMarkupsPlaneDisplayNode* displayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
+  vtkMRMLMarkupsPlaneDisplayNode* displayNode =
+    vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
   if (!displayNode)
   {
     return;
@@ -303,7 +297,8 @@ void qMRMLMarkupsPlaneWidget::onNormalOpacitySliderChanged()
     return;
   }
 
-  vtkMRMLMarkupsPlaneDisplayNode* displayNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
+  vtkMRMLMarkupsPlaneDisplayNode* displayNode =
+    vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(planeNode->GetDisplayNode());
   if (!displayNode)
   {
     return;
@@ -313,7 +308,7 @@ void qMRMLMarkupsPlaneWidget::onNormalOpacitySliderChanged()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsPlaneWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qMRMLMarkupsPlaneWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const
 {
   Q_D(const qMRMLMarkupsPlaneWidget);
 

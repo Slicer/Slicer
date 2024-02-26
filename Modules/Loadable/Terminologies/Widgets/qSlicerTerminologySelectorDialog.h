@@ -45,8 +45,8 @@ public:
   typedef QObject Superclass;
   qSlicerTerminologySelectorDialog(QObject* parent = nullptr);
 #ifndef __VTK_WRAP__
-  qSlicerTerminologySelectorDialog(
-    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent = nullptr );
+  qSlicerTerminologySelectorDialog(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& initialTerminologyInfo,
+                                   QObject* parent = nullptr);
 #endif
   ~qSlicerTerminologySelectorDialog() override;
 
@@ -55,13 +55,13 @@ public:
   /// Convenience function to start dialog, initialized with a terminology entry
   /// \param terminology Initial terminology shown by the dialog. The selected terminology is set to this as well.
   /// \param name Initial name shown by the dialog. Selected name (only if custom) is set to this as well after closing
-  /// \param color Initial color shown by the dialog. Selected color (only if custom) is set to this as well after closing
-  /// \return Success flag
-  static bool getTerminology(
-    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo, QObject* parent );
+  /// \param color Initial color shown by the dialog. Selected color (only if custom) is set to this as well after
+  /// closing \return Success flag
+  static bool getTerminology(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo,
+                             QObject* parent);
 
   /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object
-  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
+  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo);
 #endif
 
   /// Convenience function to start dialog, initialized with a terminology entry.

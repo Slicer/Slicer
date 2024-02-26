@@ -1,6 +1,7 @@
 # Ignore all dotfiles...
 .*
 !.codespellignore
+!.clang-format
 !.gitattributes
 !.git-blame-ignore-revs
 !.pre-commit-config.yaml

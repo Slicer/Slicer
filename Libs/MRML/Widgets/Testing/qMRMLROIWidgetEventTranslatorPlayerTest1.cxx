@@ -57,10 +57,10 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLROIWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLROIWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -81,9 +81,7 @@ int qMRMLROIWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   widget->setMRMLROINode(roiNode.GetPointer());
 
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLROIWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(widget, xmlDirectory + "qMRMLROIWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))
@@ -94,4 +92,3 @@ int qMRMLROIWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

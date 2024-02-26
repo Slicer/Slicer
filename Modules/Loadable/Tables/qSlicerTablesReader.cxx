@@ -58,8 +58,7 @@ qSlicerTablesReader::qSlicerTablesReader(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTablesReader
-::qSlicerTablesReader(vtkSlicerTablesLogic* logic, QObject* _parent)
+qSlicerTablesReader ::qSlicerTablesReader(vtkSlicerTablesLogic* logic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerTablesReaderPrivate)
 {
@@ -77,40 +76,38 @@ void qSlicerTablesReader::setLogic(vtkSlicerTablesLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerTablesLogic* qSlicerTablesReader::logic()const
+vtkSlicerTablesLogic* qSlicerTablesReader::logic() const
 {
   Q_D(const qSlicerTablesReader);
   return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTablesReader::description()const
+QString qSlicerTablesReader::description() const
 {
   return "Table";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerTablesReader::fileType()const
+qSlicerIO::IOFileType qSlicerTablesReader::fileType() const
 {
   return QString("TableFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTablesReader::extensions()const
+QStringList qSlicerTablesReader::extensions() const
 {
-  return QStringList()
-    << "Table (*.tsv)"
-    << "Table (*.csv)"
-    << "Table (*.txt)"
-    << "Table (*.db)"
-    << "Table (*.db3)"
-    << "Table (*.sqlite)"
-    << "Table (*.sqlite3)"
-    ;
+  return QStringList() << "Table (*.tsv)"
+                       << "Table (*.csv)"
+                       << "Table (*.txt)"
+                       << "Table (*.db)"
+                       << "Table (*.db3)"
+                       << "Table (*.sqlite)"
+                       << "Table (*.sqlite3)";
 }
 
 //----------------------------------------------------------------------------
-double qSlicerTablesReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerTablesReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 
@@ -141,27 +138,25 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
 
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
-  if( extension.empty() )
+  if (extension.empty())
   {
-    this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
+    this->userMessages()->AddMessage(
+      vtkCommand::ErrorEvent,
       (tr("Table reading failed: no file extension specified: %1").arg(fileName)).toStdString());
     return false;
   }
-  if (   !extension.compare(".db")
-      || !extension.compare(".db3")
-      || !extension.compare(".sqlite")
+  if (!extension.compare(".db") || !extension.compare(".db3") || !extension.compare(".sqlite")
       || !extension.compare(".sqlite3"))
   {
     uname = "";
     std::string dbname = std::string("sqlite://") + fileName.toStdString();
     vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(
-                   vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
+      vtkSQLiteDatabase::SafeDownCast(vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
     if (!database->Open("", vtkSQLiteDatabase::USE_EXISTING))
     {
       bool ok;
-      QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"),
-                                           tr("Database Password:"), QLineEdit::Normal,
-                                           "", &ok);
+      QString text = QInputDialog::getText(
+        nullptr, tr("QInputDialog::getText()"), tr("Database Password:"), QLineEdit::Normal, "", &ok);
       if (ok && !text.isEmpty())
       {
         password = text.toStdString();
@@ -170,9 +165,9 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
   }
 
   vtkMRMLTableNode* node = nullptr;
-  if (d->Logic!=nullptr)
+  if (d->Logic != nullptr)
   {
-    node = d->Logic->AddTable(fileName.toUtf8(),uname.c_str(), true, password.c_str(), this->userMessages());
+    node = d->Logic->AddTable(fileName.toUtf8(), uname.c_str(), true, password.c_str(), this->userMessages());
   }
   if (node)
   {
@@ -192,7 +187,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
   else
   {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
-      (tr("Failed to read table from  '%1'").arg(fileName)).toStdString());
+                                     (tr("Failed to read table from  '%1'").arg(fileName)).toStdString());
     this->setLoadedNodes(QStringList());
   }
   return node != nullptr;

@@ -16,11 +16,12 @@ class vtkMRMLStorageNode;
 /// Visualization parameters for these nodes are controlled by the
 /// vtkMRMLAnnotationPointDisplayNode class.
 /// \deprecated Use vtkMRMLMarkupsFiducialNode
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialNode : public vtkMRMLAnnotationControlPointsNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialNode
+  : public vtkMRMLAnnotationControlPointsNode
 {
 public:
-  static vtkMRMLAnnotationFiducialNode *New();
-  vtkTypeMacro(vtkMRMLAnnotationFiducialNode,vtkMRMLAnnotationControlPointsNode);
+  static vtkMRMLAnnotationFiducialNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationFiducialNode, vtkMRMLAnnotationControlPointsNode);
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -28,42 +29,30 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "AnnotationFiducials";}
+  const char* GetNodeTagName() override { return "AnnotationFiducials"; }
 
-  const char* GetIcon() override {return ":/Icons/AnnotationPoint.png";}
+  const char* GetIcon() override { return ":/Icons/AnnotationPoint.png"; }
 
-  int  SetFiducial(double newControl[3],int selectedFlag, int visibleFlag);
+  int SetFiducial(double newControl[3], int selectedFlag, int visibleFlag);
 
   /// Selected and visible are currently always set to 1 and are controlled by selected and visible flag
-  void SetFiducialLabel(const char* newLabel)
-  {
-    this->SetText(0,newLabel,1,1);
-  }
+  void SetFiducialLabel(const char* newLabel) { this->SetText(0, newLabel, 1, 1); }
 
-  vtkStdString GetFiducialLabel()
-  {
-    return this->GetText(0);
-  }
+  vtkStdString GetFiducialLabel() { return this->GetText(0); }
 
-  void SetFiducialValue(const char* newValue)
-  {
-    this->SetText(1,newValue,1,1);
-  }
+  void SetFiducialValue(const char* newValue) { this->SetText(1, newValue, 1, 1); }
 
   /// return atoi(this->GetText(1).c_str());
-  int GetFiducialValue()
-  {
-    return 0;
-  }
+  int GetFiducialValue() { return 0; }
 
   int SetFiducialCoordinates(double newCoord[3], int selFlag = 1, int visFlag = 1)
   {
-    return this->SetControlPoint(0,newCoord,selFlag,visFlag);
+    return this->SetControlPoint(0, newCoord, selFlag, visFlag);
   }
 
   int SetFiducialWorldCoordinates(double newCoord[3], int selFlag = 1, int visFlag = 1)
   {
-    return this->SetControlPointWorldCoordinates(0,newCoord,selFlag,visFlag);
+    return this->SetControlPointWorldCoordinates(0, newCoord, selFlag, visFlag);
   }
 
   int SetFiducialCoordinates(double x, double y, double z)
@@ -75,15 +64,9 @@ public:
     return this->SetFiducialCoordinates(newCoord);
   }
 
-  double* GetFiducialCoordinates()
-  {
-    return this->GetControlPointCoordinates(0);
-  }
+  double* GetFiducialCoordinates() { return this->GetControlPointCoordinates(0); }
 
-  void GetFiducialWorldCoordinates(double *point)
-  {
-    this->GetControlPointWorldCoordinates(0, point);
-  }
+  void GetFiducialWorldCoordinates(double* point) { this->GetControlPointWorldCoordinates(0, point); }
 
   /// returns true and control point coordinate 0 on success, false and 0,0,0 on failure
   bool GetFiducialCoordinates(double coord[3]);
@@ -103,7 +86,6 @@ protected:
   void operator=(const vtkMRMLAnnotationFiducialNode&);
 
   void SetTextFromID();
-
 };
 
 #endif

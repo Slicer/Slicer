@@ -37,18 +37,18 @@ class qSlicerSaveDataDialogPrivate
   Q_OBJECT
 public:
   typedef qSlicerSaveDataDialogPrivate Self;
-  explicit qSlicerSaveDataDialogPrivate(QWidget* _parent=nullptr);
+  explicit qSlicerSaveDataDialogPrivate(QWidget* _parent = nullptr);
   ~qSlicerSaveDataDialogPrivate() override;
 
   void populateItems();
 
   void setMRMLScene(vtkMRMLScene* scene);
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
   /// Helper function for finding a node in the main scene and all scene view scenes.
   /// This method differs from vtkMRMLScene::GetNodeByID in that this method looks for
   /// node IDs in the internal scene view scenes as well.
-  static vtkMRMLNode* getNodeByID(char *id, vtkMRMLScene* scene);
+  static vtkMRMLNode* getNodeByID(char* id, vtkMRMLScene* scene);
 
   void formatChanged(int row);
 
@@ -65,7 +65,7 @@ protected slots:
   void formatChanged();
   bool saveScene();
   bool saveNodes();
-  QFileInfo sceneFile()const; // ### Slicer 4.4: Move as protected
+  QFileInfo sceneFile() const; // ### Slicer 4.4: Move as protected
   void showMoreColumns(bool);
   void updateSize();
   void onSceneFormatChanged();
@@ -93,38 +93,38 @@ protected:
     UIDRole
   };
 
-  int               findSceneRow()const;
-  bool              mustSceneBeSaved()const;
-  void              setSceneRootDirectory(const QString& rootDirectory);
-  void              updateOptionsWidget(int row);
-  void              updateStatusIconFromStorageNode(int row, bool success);
-  void              updateStatusIconFromMessageCollection(int row, vtkMRMLMessageCollection* userMessages, bool success);
-  void              setStatusIcon(int row, const QIcon& icon, const QString& message);
+  int findSceneRow() const;
+  bool mustSceneBeSaved() const;
+  void setSceneRootDirectory(const QString& rootDirectory);
+  void updateOptionsWidget(int row);
+  void updateStatusIconFromStorageNode(int row, bool success);
+  void updateStatusIconFromMessageCollection(int row, vtkMRMLMessageCollection* userMessages, bool success);
+  void setStatusIcon(int row, const QIcon& icon, const QString& message);
 
-  QString           sceneFileFormat()const;
+  QString sceneFileFormat() const;
 
-  void              populateScene();
-  void              populateNode(vtkMRMLNode* node);
+  void populateScene();
+  void populateNode(vtkMRMLNode* node);
 
-  QFileInfo         nodeFileInfo(vtkMRMLStorableNode* node);
+  QFileInfo nodeFileInfo(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeNameItem(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeTypeItem(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
-  QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, QFileInfo& fileInfo);
+  QWidget* createFileFormatsWidget(vtkMRMLStorableNode* node, QFileInfo& fileInfo);
   QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension, const QString& nodeID);
-  ctkPathLineEdit*  createFileDirectoryWidget(const QFileInfo& fileInfo);
-  void              clearUserMessagesInStorageNodes();
+  ctkPathLineEdit* createFileDirectoryWidget(const QFileInfo& fileInfo);
+  void clearUserMessagesInStorageNodes();
 
-  QFileInfo         file(int row)const;
-  vtkObject*        object(int row)const;
-  QString           format(int row)const;
-  QString           type(int row)const;
-  qSlicerIOOptions* options(int row)const;
+  QFileInfo file(int row) const;
+  vtkObject* object(int row) const;
+  QString format(int row) const;
+  QString type(int row) const;
+  qSlicerIOOptions* options(int row) const;
 
   bool confirmOverwrite(const QString& filepath);
 
   /// Helper function for finding a node in the main scene and all scene view scenes
-  vtkMRMLNode*      getNodeByID(char *id)const;
+  vtkMRMLNode* getNodeByID(char* id) const;
 
   vtkMRMLScene* MRMLScene;
   QString MRMLSceneRootDirectoryBeforeSaving;
@@ -145,9 +145,11 @@ class qSlicerFileNameItemDelegate : public QStyledItemDelegate
 {
 public:
   typedef QStyledItemDelegate Superclass;
-  qSlicerFileNameItemDelegate( QObject * parent = nullptr );
-  static QString forceFileNameExtension(const QString& fileName, const QString& extension,
-                               vtkMRMLScene *mrmlScene, const QString &nodeID);
+  qSlicerFileNameItemDelegate(QObject* parent = nullptr);
+  static QString forceFileNameExtension(const QString& fileName,
+                                        const QString& extension,
+                                        vtkMRMLScene* mrmlScene,
+                                        const QString& nodeID);
 
   vtkMRMLScene* MRMLScene;
 };

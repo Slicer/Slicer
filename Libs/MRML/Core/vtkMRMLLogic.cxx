@@ -33,18 +33,18 @@ void vtkMRMLLogic::RemoveUnreferencedStorageNodes()
   {
     return;
   }
-  std::set<vtkMRMLNode *> referencedNodes;
-  std::set<vtkMRMLNode *>::iterator iter;
-  std::vector<vtkMRMLNode *> storableNodes;
-  std::vector<vtkMRMLNode *> storageNodes;
+  std::set<vtkMRMLNode*> referencedNodes;
+  std::set<vtkMRMLNode*>::iterator iter;
+  std::vector<vtkMRMLNode*> storableNodes;
+  std::vector<vtkMRMLNode*> storageNodes;
   this->Scene->GetNodesByClass("vtkMRMLStorableNode", storableNodes);
   this->Scene->GetNodesByClass("vtkMRMLStorageNode", storageNodes);
 
-  vtkMRMLNode *node = nullptr;
-  vtkMRMLStorableNode *storableNode = nullptr;
-  vtkMRMLStorageNode *storageNode = nullptr;
+  vtkMRMLNode* node = nullptr;
+  vtkMRMLStorableNode* storableNode = nullptr;
+  vtkMRMLStorageNode* storageNode = nullptr;
   unsigned int i;
-  for (i=0; i<storableNodes.size(); i++)
+  for (i = 0; i < storableNodes.size(); i++)
   {
     node = storableNodes[i];
     if (node)
@@ -62,7 +62,7 @@ void vtkMRMLLogic::RemoveUnreferencedStorageNodes()
     }
   }
 
-  for (i=0; i<storageNodes.size(); i++)
+  for (i = 0; i < storageNodes.size(); i++)
   {
     node = storageNodes[i];
     if (node)
@@ -87,18 +87,18 @@ void vtkMRMLLogic::RemoveUnreferencedDisplayNodes()
   {
     return;
   }
-  std::set<vtkMRMLNode *> referencedNodes;
-  std::set<vtkMRMLNode *>::iterator iter;
-  std::vector<vtkMRMLNode *> displayableNodes;
-  std::vector<vtkMRMLNode *> displayNodes;
+  std::set<vtkMRMLNode*> referencedNodes;
+  std::set<vtkMRMLNode*>::iterator iter;
+  std::vector<vtkMRMLNode*> displayableNodes;
+  std::vector<vtkMRMLNode*> displayNodes;
   this->Scene->GetNodesByClass("vtkMRMLDisplayableNode", displayableNodes);
   this->Scene->GetNodesByClass("vtkMRMLDisplayNode", displayNodes);
 
-  vtkMRMLNode *node = nullptr;
-  vtkMRMLDisplayableNode *displayableNode = nullptr;
-  vtkMRMLDisplayNode *displayNode = nullptr;
+  vtkMRMLNode* node = nullptr;
+  vtkMRMLDisplayableNode* displayableNode = nullptr;
+  vtkMRMLDisplayNode* displayNode = nullptr;
   unsigned int i;
-  for (i=0; i<displayableNodes.size(); i++)
+  for (i = 0; i < displayableNodes.size(); i++)
   {
     node = displayableNodes[i];
     if (node)
@@ -110,7 +110,7 @@ void vtkMRMLLogic::RemoveUnreferencedDisplayNodes()
       continue;
     }
     int numDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
-    for (int n=0; n<numDisplayNodes; n++)
+    for (int n = 0; n < numDisplayNodes; n++)
     {
       displayNode = displayableNode->GetNthDisplayNode(n);
       if (displayNode)
@@ -120,7 +120,7 @@ void vtkMRMLLogic::RemoveUnreferencedDisplayNodes()
     }
   }
 
-  for (i=0; i<displayNodes.size(); i++)
+  for (i = 0; i < displayNodes.size(); i++)
   {
     node = displayNodes[i];
     if (node)
@@ -151,11 +151,11 @@ std::string vtkMRMLLogic::GetApplicationHomeDirectory()
   {
     if (vtksys::SystemTools::GetEnv("PWD") != nullptr)
     {
-      applicationHome =  std::string(vtksys::SystemTools::GetEnv("PWD"));
+      applicationHome = std::string(vtksys::SystemTools::GetEnv("PWD"));
     }
     else
     {
-      applicationHome =  std::string("");
+      applicationHome = std::string("");
     }
   }
   return applicationHome;

@@ -88,7 +88,6 @@ protected:
   void setupPopupUi() override;
 
 public:
-
 };
 
 #endif

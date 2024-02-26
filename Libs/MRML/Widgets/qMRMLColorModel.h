@@ -71,60 +71,60 @@ class QMRML_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
 
 public:
   typedef QAbstractItemModel Superclass;
-  qMRMLColorModel(QObject *parent=nullptr);
+  qMRMLColorModel(QObject* parent = nullptr);
   ~qMRMLColorModel() override;
 
   /// ColorRole is an invisible role that contains the true color (QColor) when
   /// Qt::DecorationRole contains a pixmap of the color.
-  enum ItemDataRole{
+  enum ItemDataRole
+  {
     ColorEntryRole = Qt::UserRole,
     PointerRole,
     ColorRole
   };
 
-
   void setMRMLColorNode(vtkMRMLColorNode* node);
-  vtkMRMLColorNode* mrmlColorNode()const;
+  vtkMRMLColorNode* mrmlColorNode() const;
 
   /// Set/Get NoneEnabled flags
   /// An additional item is added into the menu list, where the user can select "None".
   void setNoneEnabled(bool enable);
-  bool noneEnabled()const;
+  bool noneEnabled() const;
 
-  int colorColumn()const;
+  int colorColumn() const;
   void setColorColumn(int column);
 
-  int labelColumn()const;
+  int labelColumn() const;
   void setLabelColumn(int column);
 
-  int opacityColumn()const;
+  int opacityColumn() const;
   void setOpacityColumn(int column);
 
-  int checkableColumn()const;
+  int checkableColumn() const;
   void setCheckableColumn(int column);
 
   /// Return the color entry associated to the index.
   /// -1 if the index is not in the model.
   /// \sa colorFromItem(), nameFromColor(), colorFromName()
-  inline int colorFromIndex(const QModelIndex &index)const;
+  inline int colorFromIndex(const QModelIndex& index) const;
   /// Return the color entry associated to the item.
   /// -1 if the item is not in the model.
   /// \sa colorFromIndex(), nameFromColor(), colorFromName()
-  int colorFromItem(QStandardItem* item)const;
+  int colorFromItem(QStandardItem* item) const;
 
-  QStandardItem* itemFromColor(int color, int column = 0)const;
-  QModelIndexList indexes(int color)const;
+  QStandardItem* itemFromColor(int color, int column = 0) const;
+  QModelIndexList indexes(int color) const;
 
-  inline QColor qcolorFromIndex(const QModelIndex& nodeIndex)const;
-  inline QColor qcolorFromItem(QStandardItem* nodeItem)const;
-  QColor qcolorFromColor(int color)const;
+  inline QColor qcolorFromIndex(const QModelIndex& nodeIndex) const;
+  inline QColor qcolorFromItem(QStandardItem* nodeItem) const;
+  QColor qcolorFromColor(int color) const;
 
   /// Return the name of the color \a colorEntry
   /// \sa colorFromName(), colorFromIndex(), colorFromItem()
-  QString nameFromColor(int colorEntry)const;
+  QString nameFromColor(int colorEntry) const;
   /// Return the color entry of the first color with name \a name.
   /// \sa nameFromColor(), colorFromIndex(), colorFromItem()
-  int colorFromName(const QString& name)const;
+  int colorFromName(const QString& name) const;
 
   /// Overload the header data method for the vertical header
   /// so that can return the color index rather than the row
@@ -132,17 +132,16 @@ public:
 
 protected slots:
   void onMRMLColorNodeModified(vtkObject* node);
-  void onItemChanged(QStandardItem * item);
+  void onItemChanged(QStandardItem* item);
 
 protected:
-
-  qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parent=nullptr);
+  qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject* parent = nullptr);
   virtual void updateItemFromColor(QStandardItem* item, int color, int column);
   virtual void updateColorFromItem(int color, QStandardItem* item);
   virtual void updateNode();
 
-  static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
-                              void* client_data, void* call_data);
+  static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data);
+
 protected:
   QScopedPointer<qMRMLColorModelPrivate> d_ptr;
 
@@ -152,19 +151,19 @@ private:
 };
 
 // -----------------------------------------------------------------------------
-int qMRMLColorModel::colorFromIndex(const QModelIndex &nodeIndex)const
+int qMRMLColorModel::colorFromIndex(const QModelIndex& nodeIndex) const
 {
   return this->colorFromItem(this->itemFromIndex(nodeIndex));
 }
 
 // -----------------------------------------------------------------------------
-QColor qMRMLColorModel::qcolorFromIndex(const QModelIndex &nodeIndex)const
+QColor qMRMLColorModel::qcolorFromIndex(const QModelIndex& nodeIndex) const
 {
   return this->qcolorFromItem(this->itemFromIndex(nodeIndex));
 }
 
 // -----------------------------------------------------------------------------
-QColor qMRMLColorModel::qcolorFromItem(QStandardItem* nodeItem)const
+QColor qMRMLColorModel::qcolorFromItem(QStandardItem* nodeItem) const
 {
   return this->qcolorFromColor(this->colorFromItem(nodeItem));
 }

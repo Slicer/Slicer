@@ -33,7 +33,7 @@
 #include "qSlicerWebPythonProxy.h"
 
 // --------------------------------------------------------------------------
-qSlicerWebPythonProxy::qSlicerWebPythonProxy(QObject *parent)
+qSlicerWebPythonProxy::qSlicerWebPythonProxy(QObject* parent)
   : QObject(parent)
 {
   this->pythonEvaluationAllowed = false;
@@ -48,7 +48,7 @@ bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
     return true;
   }
 
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app || qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
     return false;
@@ -76,14 +76,14 @@ bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerWebPythonProxy::evalPython(const QString &python)
+QString qSlicerWebPythonProxy::evalPython(const QString& python)
 {
 
   QString result;
 #ifdef Slicer_USE_PYTHONQT
   if (this->isPythonEvaluationAllowed())
   {
-    qSlicerPythonManager *pythonManager = qSlicerApplication::application()->pythonManager();
+    qSlicerPythonManager* pythonManager = qSlicerApplication::application()->pythonManager();
     result = pythonManager->executeString(python).toString();
     qDebug() << "Running " << python << " result is " << result;
   }

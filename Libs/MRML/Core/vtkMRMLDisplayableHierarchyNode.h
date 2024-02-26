@@ -25,8 +25,8 @@ class vtkCallbackCommand;
 class VTK_MRML_EXPORT vtkMRMLDisplayableHierarchyNode : public vtkMRMLHierarchyNode
 {
 public:
-  static vtkMRMLDisplayableHierarchyNode *New();
-  vtkTypeMacro(vtkMRMLDisplayableHierarchyNode,vtkMRMLHierarchyNode);
+  static vtkMRMLDisplayableHierarchyNode* New();
+  vtkTypeMacro(vtkMRMLDisplayableHierarchyNode, vtkMRMLHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -37,20 +37,19 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
-
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, DisplayableHierarchy)
-  const char* GetNodeTagName() override {return "DisplayableHierarchy";}
+  const char* GetNodeTagName() override { return "DisplayableHierarchy"; }
 
   /// Set the display node as reference into the scene
   void SetSceneReferences() override;
@@ -62,27 +61,20 @@ public:
 
   ///
   /// Finds the Displayable node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   ///
   /// String ID of the corresponding displayable MRML node
-  virtual char* GetDisplayableNodeID()
-  {
-    return this->GetAssociatedNodeID();
-  }
+  virtual char* GetDisplayableNodeID() { return this->GetAssociatedNodeID(); }
 
-  virtual void SetDisplayableNodeID(const char* ref)
-  {
-    this->SetAssociatedNodeID(ref);
-  }
+  virtual void SetDisplayableNodeID(const char* ref) { this->SetAssociatedNodeID(ref); }
 
-  void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
+  void SetAndObserveDisplayNodeID(const char* DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
-
 
   ///
   /// Get associated displayable MRML node
@@ -91,7 +83,6 @@ public:
   ///
   /// Get associated display MRML node
   vtkMRMLDisplayNode* GetDisplayNode();
-
 
   ///
   /// Indicates if the node is expanded
@@ -105,13 +96,12 @@ public:
 
   ///
   /// Find all child displayable nodes in the hierarchy
-  void GetChildrenDisplayableNodes(vtkCollection *children);
+  void GetChildrenDisplayableNodes(vtkCollection* children);
 
   ///
   /// Get Hierarchy node for a given displayable node
-  static vtkMRMLDisplayableHierarchyNode* GetDisplayableHierarchyNode(vtkMRMLScene *scene,
-                                                                      const char *displayableNodeID);
-
+  static vtkMRMLDisplayableHierarchyNode* GetDisplayableHierarchyNode(vtkMRMLScene* scene,
+                                                                      const char* displayableNodeID);
 
   /// Removes immediate children nodes, both hierarchy and corresponding displayable/display nodes
   /// their children are reparented to this parent node.
@@ -121,19 +111,15 @@ public:
   /// including children of children, etc.
   void RemoveAllChildrenNodes();
 
-
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
   {
-      DisplayModifiedEvent = 17000
+    DisplayModifiedEvent = 17000
   };
-
 
 protected:
   vtkMRMLDisplayableHierarchyNode();
@@ -141,15 +127,13 @@ protected:
   vtkMRMLDisplayableHierarchyNode(const vtkMRMLDisplayableHierarchyNode&);
   void operator=(const vtkMRMLDisplayableHierarchyNode&);
 
-  void SetDisplayNodeID(const char *);
+  void SetDisplayNodeID(const char*);
 
-  char *DisplayNodeID;
+  char* DisplayNodeID;
 
-  vtkMRMLDisplayNode *DisplayNode;
+  vtkMRMLDisplayNode* DisplayNode;
 
   int Expanded;
-
-
 };
 
 #endif

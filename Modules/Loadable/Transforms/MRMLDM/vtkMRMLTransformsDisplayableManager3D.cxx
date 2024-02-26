@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 // MRMLDisplayableManager includes
 #include "vtkMRMLTransformsDisplayableManager3D.h"
 
@@ -50,13 +49,12 @@
 #include <vtkSmartPointer.h>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro ( vtkMRMLTransformsDisplayableManager3D );
+vtkStandardNewMacro(vtkMRMLTransformsDisplayableManager3D);
 
 //---------------------------------------------------------------------------
 class vtkMRMLTransformsDisplayableManager3D::vtkInternal
 {
 public:
-
   vtkInternal(vtkMRMLTransformsDisplayableManager3D* external);
   ~vtkInternal();
 
@@ -66,23 +64,23 @@ public:
     vtkSmartPointer<vtkPolyData> InputPolyData;
   };
 
-  typedef std::map < vtkMRMLTransformDisplayNode*, const Pipeline* > PipelinesCacheType;
+  typedef std::map<vtkMRMLTransformDisplayNode*, const Pipeline*> PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLTransformNode*, std::set< vtkMRMLTransformDisplayNode* > > TransformToDisplayCacheType;
+  typedef std::map<vtkMRMLTransformNode*, std::set<vtkMRMLTransformDisplayNode*>> TransformToDisplayCacheType;
   TransformToDisplayCacheType TransformToDisplayNodes;
 
   // Transforms
   void AddTransformNode(vtkMRMLTransformNode* displayableNode);
   void RemoveTransformNode(vtkMRMLTransformNode* displayableNode);
-  void UpdateDisplayableTransforms(vtkMRMLTransformNode *node);
+  void UpdateDisplayableTransforms(vtkMRMLTransformNode* node);
 
   // Display Nodes
   void AddDisplayNode(vtkMRMLTransformNode*, vtkMRMLTransformDisplayNode*);
   void UpdateDisplayNode(vtkMRMLTransformDisplayNode* displayNode);
   void UpdateDisplayNodePipeline(vtkMRMLTransformDisplayNode*, const Pipeline*);
   void RemoveDisplayNode(vtkMRMLTransformDisplayNode* displayNode);
-  void SetTransformDisplayProperty(vtkMRMLTransformDisplayNode *displayNode, vtkActor* actor);
+  void SetTransformDisplayProperty(vtkMRMLTransformDisplayNode* displayNode, vtkActor* actor);
 
   // Observations
   void AddObservations(vtkMRMLTransformNode* node);
@@ -104,9 +102,9 @@ private:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLTransformsDisplayableManager3D::vtkInternal::vtkInternal(vtkMRMLTransformsDisplayableManager3D * external)
-: External(external)
-, AddingTransformNode(false)
+vtkMRMLTransformsDisplayableManager3D::vtkInternal::vtkInternal(vtkMRMLTransformsDisplayableManager3D* external)
+  : External(external)
+  , AddingTransformNode(false)
 {
 }
 
@@ -119,7 +117,7 @@ vtkMRMLTransformsDisplayableManager3D::vtkInternal::~vtkInternal()
 //---------------------------------------------------------------------------
 bool vtkMRMLTransformsDisplayableManager3D::vtkInternal::UseDisplayNode(vtkMRMLTransformDisplayNode* displayNode)
 {
-   // allow nodes to appear only in designated viewers
+  // allow nodes to appear only in designated viewers
   if (displayNode && !displayNode->IsDisplayableInView(this->External->GetMRMLViewNode()->GetID()))
   {
     return false;
@@ -156,13 +154,13 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::AddTransformNode(vtkMRM
 
   this->AddObservations(node);
 
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i < nnodes; i++)
   {
-    vtkMRMLTransformDisplayNode *dnode = vtkMRMLTransformDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
-    if ( this->UseDisplayNode(dnode) )
+    vtkMRMLTransformDisplayNode* dnode = vtkMRMLTransformDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
+    if (this->UseDisplayNode(dnode))
     {
       this->TransformToDisplayNodes[node].insert(dnode);
-      this->AddDisplayNode( node, dnode );
+      this->AddDisplayNode(node, dnode);
     }
   }
   this->AddingTransformNode = false;
@@ -175,16 +173,15 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::RemoveTransformNode(vtk
   {
     return;
   }
-  vtkInternal::TransformToDisplayCacheType::iterator displayableIt =
-    this->TransformToDisplayNodes.find(node);
-  if(displayableIt == this->TransformToDisplayNodes.end())
+  vtkInternal::TransformToDisplayCacheType::iterator displayableIt = this->TransformToDisplayNodes.find(node);
+  if (displayableIt == this->TransformToDisplayNodes.end())
   {
     return;
   }
 
-  std::set<vtkMRMLTransformDisplayNode *> dnodes = displayableIt->second;
-  std::set<vtkMRMLTransformDisplayNode *>::iterator diter;
-  for ( diter = dnodes.begin(); diter != dnodes.end(); ++diter)
+  std::set<vtkMRMLTransformDisplayNode*> dnodes = displayableIt->second;
+  std::set<vtkMRMLTransformDisplayNode*>::iterator diter;
+  for (diter = dnodes.begin(); diter != dnodes.end(); ++diter)
   {
     this->RemoveDisplayNode(*diter);
   }
@@ -198,11 +195,11 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayableTransf
   // Update the pipeline for all tracked DisplayableNode
 
   PipelinesCacheType::iterator pipelinesIter;
-  std::set< vtkMRMLTransformDisplayNode* > displayNodes = this->TransformToDisplayNodes[mNode];
-  std::set< vtkMRMLTransformDisplayNode* >::iterator dnodesIter;
-  for ( dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++ )
+  std::set<vtkMRMLTransformDisplayNode*> displayNodes = this->TransformToDisplayNodes[mNode];
+  std::set<vtkMRMLTransformDisplayNode*>::iterator dnodesIter;
+  for (dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++)
   {
-    if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
+    if (((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()))
     {
       this->UpdateDisplayNodePipeline(pipelinesIter->first, pipelinesIter->second);
     }
@@ -213,7 +210,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayableTransf
 void vtkMRMLTransformsDisplayableManager3D::vtkInternal::RemoveDisplayNode(vtkMRMLTransformDisplayNode* displayNode)
 {
   PipelinesCacheType::iterator actorsIt = this->DisplayPipelines.find(displayNode);
-  if(actorsIt == this->DisplayPipelines.end())
+  if (actorsIt == this->DisplayPipelines.end())
   {
     return;
   }
@@ -224,7 +221,8 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::RemoveDisplayNode(vtkMR
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformsDisplayableManager3D::vtkInternal::AddDisplayNode(vtkMRMLTransformNode* mNode, vtkMRMLTransformDisplayNode* displayNode)
+void vtkMRMLTransformsDisplayableManager3D::vtkInternal::AddDisplayNode(vtkMRMLTransformNode* mNode,
+                                                                        vtkMRMLTransformDisplayNode* displayNode)
 {
   if (!mNode || !displayNode)
   {
@@ -254,8 +252,8 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::AddDisplayNode(vtkMRMLT
   mapper->SetInputData(pipeline->InputPolyData);
 
   // Add actor to Renderer and local cache
-  this->External->GetRenderer()->AddActor( pipeline->Actor );
-  this->DisplayPipelines.insert( std::make_pair(displayNode, pipeline) );
+  this->External->GetRenderer()->AddActor(pipeline->Actor);
+  this->DisplayPipelines.insert(std::make_pair(displayNode, pipeline));
 
   // Update cached matrices. Calls UpdateDisplayNodePipeline
   this->UpdateDisplayableTransforms(mNode);
@@ -279,12 +277,14 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNode(vtkMR
   }
   else
   {
-    this->AddTransformNode( vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode()) );
+    this->AddTransformNode(vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode()));
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeline(vtkMRMLTransformDisplayNode* displayNode, const Pipeline* pipeline)
+void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeline(
+  vtkMRMLTransformDisplayNode* displayNode,
+  const Pipeline* pipeline)
 {
   // Sets visibility, set pipeline polydata input, update color
   //   calculate and set pipeline transforms.
@@ -294,15 +294,15 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeli
     return;
   }
 
-  vtkMRMLTransformNode* transformNode=vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
-  if (transformNode==nullptr)
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
+  if (transformNode == nullptr)
   {
     pipeline->Actor->SetVisibility(false);
     return;
   }
 
   vtkMRMLNode* regionNode = displayNode->GetRegionNode();
-  if (regionNode==nullptr)
+  if (regionNode == nullptr)
   {
     pipeline->Actor->SetVisibility(false);
     return;
@@ -324,7 +324,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeli
     return;
   }
 
-  if (pipeline->InputPolyData->GetNumberOfPoints()==0)
+  if (pipeline->InputPolyData->GetNumberOfPoints() == 0)
   {
     pipeline->Actor->SetVisibility(false);
     return;
@@ -338,13 +338,25 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayNodePipeli
 void vtkMRMLTransformsDisplayableManager3D::vtkInternal::AddObservations(vtkMRMLTransformNode* node)
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
-  if (!broker->GetObservationExist(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() ))
+  if (!broker->GetObservationExist(node,
+                                   vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                                   this->External,
+                                   this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+    broker->AddObservation(node,
+                           vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                           this->External,
+                           this->External->GetMRMLNodesCallbackCommand());
   }
-  if (!broker->GetObservationExist(node, vtkMRMLTransformableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() ))
+  if (!broker->GetObservationExist(node,
+                                   vtkMRMLTransformableNode::TransformModifiedEvent,
+                                   this->External,
+                                   this->External->GetMRMLNodesCallbackCommand()))
   {
-    broker->AddObservation(node, vtkMRMLTransformableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+    broker->AddObservation(node,
+                           vtkMRMLTransformableNode::TransformModifiedEvent,
+                           this->External,
+                           this->External->GetMRMLNodesCallbackCommand());
   }
 }
 
@@ -353,9 +365,13 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::RemoveObservations(vtkM
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
   vtkEventBroker::ObservationVector observations;
-  observations = broker->GetObservations(node, vtkMRMLTransformableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(node,
+                                         vtkMRMLTransformableNode::TransformModifiedEvent,
+                                         this->External,
+                                         this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
-  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  observations = broker->GetObservations(
+    node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
 }
 
@@ -377,7 +393,7 @@ bool vtkMRMLTransformsDisplayableManager3D::vtkInternal::IsNodeObserved(vtkMRMLT
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager3D::vtkInternal::ClearDisplayableNodes()
 {
-  while(this->TransformToDisplayNodes.size() > 0)
+  while (this->TransformToDisplayNodes.size() > 0)
   {
     this->RemoveTransformNode(this->TransformToDisplayNodes.begin()->first);
   }
@@ -391,19 +407,21 @@ bool vtkMRMLTransformsDisplayableManager3D::vtkInternal::UseDisplayableNode(vtkM
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformsDisplayableManager3D::vtkInternal::SetTransformDisplayProperty(vtkMRMLTransformDisplayNode *displayNode, vtkActor* actor)
+void vtkMRMLTransformsDisplayableManager3D::vtkInternal::SetTransformDisplayProperty(
+  vtkMRMLTransformDisplayNode* displayNode,
+  vtkActor* actor)
 {
   bool visible = this->IsVisible(displayNode);
   actor->SetVisibility(visible);
 
-  vtkMapper* mapper=actor->GetMapper();
+  vtkMapper* mapper = actor->GetMapper();
 
   // if the scalars are visible, set active scalars
   bool scalarVisibility = false;
   if (displayNode->GetScalarVisibility())
   {
-    vtkColorTransferFunction* colorTransferFunction=displayNode->GetColorMap();
-    if (colorTransferFunction != nullptr && colorTransferFunction->GetSize()>0)
+    vtkColorTransferFunction* colorTransferFunction = displayNode->GetColorMap();
+    if (colorTransferFunction != nullptr && colorTransferFunction->GetSize() > 0)
     {
       // Copy the transfer function to not share them between multiple mappers
       vtkNew<vtkColorTransferFunction> colorTransferFunctionCopy;
@@ -464,20 +482,20 @@ vtkMRMLTransformsDisplayableManager3D::vtkMRMLTransformsDisplayableManager3D()
 vtkMRMLTransformsDisplayableManager3D::~vtkMRMLTransformsDisplayableManager3D()
 {
   delete this->Internal;
-  this->Internal=nullptr;
+  this->Internal = nullptr;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformsDisplayableManager3D::PrintSelf ( ostream& os, vtkIndent indent )
+void vtkMRMLTransformsDisplayableManager3D::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf ( os, indent );
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "vtkMRMLTransformsDisplayableManager3D: " << this->GetClassName() << "\n";
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager3D::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if ( !node->IsA("vtkMRMLTransformNode") )
+  if (!node->IsA("vtkMRMLTransformNode"))
   {
     return;
   }
@@ -496,9 +514,7 @@ void vtkMRMLTransformsDisplayableManager3D::OnMRMLSceneNodeAdded(vtkMRMLNode* no
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager3D::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if ( node
-    && (!node->IsA("vtkMRMLTransformNode"))
-    && (!node->IsA("vtkMRMLTransformDisplayNode")) )
+  if (node && (!node->IsA("vtkMRMLTransformNode")) && (!node->IsA("vtkMRMLTransformDisplayNode")))
   {
     return;
   }
@@ -507,12 +523,12 @@ void vtkMRMLTransformsDisplayableManager3D::OnMRMLSceneNodeRemoved(vtkMRMLNode* 
   vtkMRMLTransformDisplayNode* displayNode = nullptr;
 
   bool modified = false;
-  if ( (transformNode = vtkMRMLTransformNode::SafeDownCast(node)) )
+  if ((transformNode = vtkMRMLTransformNode::SafeDownCast(node)))
   {
     this->Internal->RemoveTransformNode(transformNode);
     modified = true;
   }
-  else if ( (displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node)) )
+  else if ((displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node)))
   {
     this->Internal->RemoveDisplayNode(displayNode);
     modified = true;
@@ -524,7 +540,9 @@ void vtkMRMLTransformsDisplayableManager3D::OnMRMLSceneNodeRemoved(vtkMRMLNode* 
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
+void vtkMRMLTransformsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject* caller,
+                                                                   unsigned long event,
+                                                                   void* callData)
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
 
@@ -535,12 +553,12 @@ void vtkMRMLTransformsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject* ca
 
   vtkMRMLTransformNode* displayableNode = vtkMRMLTransformNode::SafeDownCast(caller);
   vtkMRMLTransformDisplayNode* displayNode = nullptr;
-  if ( displayableNode )
+  if (displayableNode)
   {
-    vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode *> (callData);
+    vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*>(callData);
     displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(callDataNode);
 
-    if ( displayNode && (event == vtkMRMLDisplayableNode::DisplayModifiedEvent) )
+    if (displayNode && (event == vtkMRMLDisplayableNode::DisplayModifiedEvent))
     {
       this->Internal->UpdateDisplayNode(displayNode);
       this->RequestRender();
@@ -565,17 +583,17 @@ void vtkMRMLTransformsDisplayableManager3D::UpdateFromMRML()
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
   {
-    vtkDebugMacro( "vtkMRMLTransformsDisplayableManager3D->UpdateFromMRML: Scene is not set.");
+    vtkDebugMacro("vtkMRMLTransformsDisplayableManager3D->UpdateFromMRML: Scene is not set.");
     return;
   }
   this->Internal->ClearDisplayableNodes();
 
   vtkMRMLTransformNode* mNode = nullptr;
-  std::vector<vtkMRMLNode *> mNodes;
+  std::vector<vtkMRMLNode*> mNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLTransformNode", mNodes) : 0;
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i < nnodes; i++)
   {
-    mNode  = vtkMRMLTransformNode::SafeDownCast(mNodes[i]);
+    mNode = vtkMRMLTransformNode::SafeDownCast(mNodes[i]);
     if (mNode && this->Internal->UseDisplayableNode(mNode))
     {
       this->Internal->AddTransformNode(mNode);

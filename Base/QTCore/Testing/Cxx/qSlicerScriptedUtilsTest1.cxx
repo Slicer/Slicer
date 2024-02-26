@@ -13,8 +13,7 @@ bool setModuleAttribute(int line,
                         PyObject* expectedAttributeValue,
                         bool expectedResult)
 {
-  bool currentResult = qSlicerScriptedUtils::setModuleAttribute(
-          moduleName, attributeName, expectedAttributeValue);
+  bool currentResult = qSlicerScriptedUtils::setModuleAttribute(moduleName, attributeName, expectedAttributeValue);
   if (currentResult != expectedResult)
   {
     std::cerr << "Line " << line << " - Problem with setModuleAttribute()\n"
@@ -38,8 +37,7 @@ bool setModuleAttribute(int line,
   }
 
   PythonQtObjectPtr currentAttributeValue;
-  currentAttributeValue.setNewRef(
-        PyObject_GetAttrString(module, attributeName.toUtf8()));
+  currentAttributeValue.setNewRef(PyObject_GetAttrString(module, attributeName.toUtf8()));
   if (currentAttributeValue != expectedAttributeValue)
   {
     std::cerr << "Line " << line << " - Problem with setModuleAttribute()\n"
@@ -53,7 +51,7 @@ bool setModuleAttribute(int line,
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerScriptedUtilsTest1(int, char * [] )
+int qSlicerScriptedUtilsTest1(int, char*[])
 {
   qSlicerCorePythonManager pythonManager;
   pythonManager.initialize();
@@ -78,23 +76,23 @@ int qSlicerScriptedUtilsTest1(int, char * [] )
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "moduleA", "attrA", nullptr, false))
+  if (!setModuleAttribute(__LINE__, "moduleA", "attrA", nullptr, false))
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "moduleA", "attrA", attrA, true))
+  if (!setModuleAttribute(__LINE__, "moduleA", "attrA", attrA, true))
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "moduleA.moduleB", "attrB", attrB, true))
+  if (!setModuleAttribute(__LINE__, "moduleA.moduleB", "attrB", attrB, true))
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "__main__", "attrMain", attrMain, true))
+  if (!setModuleAttribute(__LINE__, "__main__", "attrMain", attrMain, true))
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "", "attrMain2", attrMain2, true))
+  if (!setModuleAttribute(__LINE__, "", "attrMain2", attrMain2, true))
   {
     return EXIT_FAILURE;
   }

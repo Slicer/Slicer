@@ -50,32 +50,32 @@
 class qMRMLScreenShotDialogPrivate : public Ui_qMRMLScreenShotDialog
 {
   Q_DECLARE_PUBLIC(qMRMLScreenShotDialog);
+
 protected:
   qMRMLScreenShotDialog* const q_ptr;
+
 public:
   qMRMLScreenShotDialogPrivate(qMRMLScreenShotDialog& object);
 
   void setupUi(QDialog* dialog);
   void setCheckedRadioButton(int type);
   void setWidgetEnabled(bool state);
-  QPointer<qMRMLLayoutManager>   LayoutManager;
-  vtkSmartPointer<vtkImageData>      ImageData;
+  QPointer<qMRMLLayoutManager> LayoutManager;
+  vtkSmartPointer<vtkImageData> ImageData;
   /// The ID of the associated snapshot node.
   /// This is nullptr if the dialog has no associated snapshot node (== new snapshot mode).
-  QVariant                           Data;
-  QButtonGroup*                      WidgetTypeGroup;
+  QVariant Data;
+  QButtonGroup* WidgetTypeGroup;
 
   /// The last selected thumbnail type
   int LastWidgetType;
-
 };
 
 //-----------------------------------------------------------------------------
-qMRMLScreenShotDialogPrivate::qMRMLScreenShotDialogPrivate(qMRMLScreenShotDialog &object)
+qMRMLScreenShotDialogPrivate::qMRMLScreenShotDialogPrivate(qMRMLScreenShotDialog& object)
   : q_ptr(&object)
 {
-  qRegisterMetaType<qMRMLScreenShotDialog::WidgetType>(
-      "qMRMLScreenShotDialog::WidgetType");
+  qRegisterMetaType<qMRMLScreenShotDialog::WidgetType>("qMRMLScreenShotDialog::WidgetType");
   this->WidgetTypeGroup = nullptr;
 
   this->LastWidgetType = qMRMLScreenShotDialog::FullLayout;
@@ -97,18 +97,14 @@ void qMRMLScreenShotDialogPrivate::setupUi(QDialog* dialog)
 
   this->setCheckedRadioButton(this->LastWidgetType);
 
-  QObject::connect(this->saveAsButton, SIGNAL(clicked()),
-                   q, SLOT(saveAs()));
-  QObject::connect(this->WidgetTypeGroup, SIGNAL(buttonClicked(int)),
-                   q, SLOT(setLastWidgetType(int)));
+  QObject::connect(this->saveAsButton, SIGNAL(clicked()), q, SLOT(saveAs()));
+  QObject::connect(this->WidgetTypeGroup, SIGNAL(buttonClicked(int)), q, SLOT(setLastWidgetType(int)));
 }
-
 
 //-----------------------------------------------------------------------------
 void qMRMLScreenShotDialogPrivate::setCheckedRadioButton(int type)
 {
-  QRadioButton* widgetButton =
-    qobject_cast<QRadioButton*>(this->WidgetTypeGroup->button(type));
+  QRadioButton* widgetButton = qobject_cast<QRadioButton*>(this->WidgetTypeGroup->button(type));
   if (widgetButton)
   {
     // this can crash if an invalid type is passed in
@@ -131,7 +127,7 @@ void qMRMLScreenShotDialogPrivate::setWidgetEnabled(bool state)
 // qMRMLScreenShotDialog methods
 
 //-----------------------------------------------------------------------------
-qMRMLScreenShotDialog::qMRMLScreenShotDialog(QWidget * _parent)
+qMRMLScreenShotDialog::qMRMLScreenShotDialog(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qMRMLScreenShotDialogPrivate(*this))
 {
@@ -242,7 +238,7 @@ void qMRMLScreenShotDialog::setImageData(vtkImageData* screenshot)
   Q_D(qMRMLScreenShotDialog);
   d->ImageData = screenshot;
   QImage qimage;
-  qMRMLUtils::vtkImageDataToQImage(screenshot,qimage);
+  qMRMLUtils::vtkImageDataToQImage(screenshot, qimage);
   // set preview
   d->ScreenshotWidget->setPixmap(QPixmap::fromImage(qimage));
 }
@@ -320,18 +316,18 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
       widget = threeDView;
       renderWindow = threeDView->renderWindow();
     }
-      break;
+    break;
     case qMRMLScreenShotDialog::Red:
     case qMRMLScreenShotDialog::Yellow:
     case qMRMLScreenShotDialog::Green:
       // Create a screenshot of a specific sliceView
-    {
-      QString name = this->enumToString(screenshotWindow);
-      qMRMLSliceWidget* sliceWidget = d->LayoutManager.data()->sliceWidget(name);
-      qMRMLSliceView* sliceView = sliceWidget->sliceView();
-      widget = sliceView;
-      renderWindow = sliceView->renderWindow();
-    }
+      {
+        QString name = this->enumToString(screenshotWindow);
+        qMRMLSliceWidget* sliceWidget = d->LayoutManager.data()->sliceWidget(name);
+        qMRMLSliceView* sliceView = sliceWidget->sliceView();
+        widget = sliceView;
+        renderWindow = sliceView->renderWindow();
+      }
       break;
     case qMRMLScreenShotDialog::FullLayout:
     default:
@@ -343,11 +339,10 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
   double scaleFactor = d->scaleFactorSpinBox->value();
 
   vtkNew<vtkImageData> newImageData;
-  if (!qFuzzyCompare(scaleFactor, 1.0) &&
-      screenshotWindow == qMRMLScreenShotDialog::ThreeD)
+  if (!qFuzzyCompare(scaleFactor, 1.0) && screenshotWindow == qMRMLScreenShotDialog::ThreeD)
   {
     // use off screen rendering to magnifiy the VTK widget's image without interpolation
-    vtkRenderer *renderer = renderWindow->GetRenderers()->GetFirstRenderer();
+    vtkRenderer* renderer = renderWindow->GetRenderers()->GetFirstRenderer();
     vtkNew<vtkRenderLargeImage> renderLargeImage;
     renderLargeImage->SetInput(renderer);
     renderLargeImage->SetMagnification(scaleFactor);
@@ -391,18 +386,16 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
     if (!qFuzzyCompare(scaleFactor, 1.0))
     {
       // Rescale the image which gets saved
-      QImage rescaledScreenShot = screenShot.scaled(screenShot.size().width() * scaleFactor,
-                                                    screenShot.size().height() * scaleFactor);
+      QImage rescaledScreenShot =
+        screenShot.scaled(screenShot.size().width() * scaleFactor, screenShot.size().height() * scaleFactor);
 
       // convert the scaled screenshot from QPixmap to vtkImageData
-      qMRMLUtils::qImageToVtkImageData(rescaledScreenShot,
-                                       newImageData.GetPointer());
+      qMRMLUtils::qImageToVtkImageData(rescaledScreenShot, newImageData.GetPointer());
     }
     else
     {
       // convert the screenshot from QPixmap to vtkImageData
-      qMRMLUtils::qImageToVtkImageData(screenShot,
-                                       newImageData.GetPointer());
+      qMRMLUtils::qImageToVtkImageData(screenShot, newImageData.GetPointer());
     }
   }
   // save the screen shot image to this class
@@ -422,13 +415,12 @@ void qMRMLScreenShotDialog::saveAs()
   {
     name = "Slicer Screen Capture";
   }
-  QString savePath = QFileDialog::getSaveFileName(this, tr("Save File"),
-                           name, tr("Images (*.png *.jpg)"));
+  QString savePath = QFileDialog::getSaveFileName(this, tr("Save File"), name, tr("Images (*.png *.jpg)"));
 
   if (savePath != "")
   {
     QImage qimage;
-    qMRMLUtils::vtkImageDataToQImage(this->imageData(),qimage);
+    qMRMLUtils::vtkImageDataToQImage(this->imageData(), qimage);
     qimage.save(savePath);
   }
 }

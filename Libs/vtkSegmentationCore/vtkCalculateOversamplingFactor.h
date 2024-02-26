@@ -40,7 +40,7 @@ class vtkPiecewiseFunction;
 class vtkSegmentationCore_EXPORT vtkCalculateOversamplingFactor : public vtkObject
 {
 public:
-  static vtkCalculateOversamplingFactor *New();
+  static vtkCalculateOversamplingFactor* New();
   vtkTypeMacro(vtkCalculateOversamplingFactor, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -64,8 +64,8 @@ protected:
   /// \return Success flag
   bool CalculateComplexityMeasure();
 
-  /// Use fuzzy rules to determine oversampling factor based on calculated relative structure size and complexity measure
-  /// \return Automatically calculated oversampling factor
+  /// Use fuzzy rules to determine oversampling factor based on calculated relative structure size and complexity
+  /// measure \return Automatically calculated oversampling factor
   double DetermineOversamplingFactor();
 
   /// Clip a membership function with the clip value
@@ -127,8 +127,7 @@ protected:
 private:
   vtkCalculateOversamplingFactor(const vtkCalculateOversamplingFactor&) = delete;
   void operator=(const vtkCalculateOversamplingFactor&) = delete;
-  //ETX
+  // ETX
 };
 
 #endif
-

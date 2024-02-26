@@ -33,10 +33,10 @@
  * This class (and subclasses) are a type of
  * vtkProp; meaning that they can be associated with a vtkRenderer end
  * embedded in a scene like any other vtkActor.
-*
+ *
  * @sa
  * vtkMRMLAbstractWidgetRepresentation vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkMRMLAbstractWidgetRepresentation_h
 #define vtkMRMLAbstractWidgetRepresentation_h
@@ -62,61 +62,61 @@ public:
 
   //@{
   /**
-  * Methods to make this class behave as a vtkProp. They are repeated here (from the
-  * vtkProp superclass) as a reminder to the widget implementer. Failure to implement
-  * these methods properly may result in the representation not appearing in the scene
-  * (i.e., not implementing the Render() methods properly) or leaking graphics resources
-  * (i.e., not implementing ReleaseGraphicsResources() properly).
-  */
+   * Methods to make this class behave as a vtkProp. They are repeated here (from the
+   * vtkProp superclass) as a reminder to the widget implementer. Failure to implement
+   * these methods properly may result in the representation not appearing in the scene
+   * (i.e., not implementing the Render() methods properly) or leaking graphics resources
+   * (i.e., not implementing ReleaseGraphicsResources() properly).
+   */
   double* GetBounds() VTK_SIZEHINT(6) override { return nullptr; }
-  void GetActors(vtkPropCollection *) override {}
-  void GetActors2D(vtkPropCollection *) override {}
-  void GetVolumes(vtkPropCollection *) override {}
-  void ReleaseGraphicsResources(vtkWindow *) override {}
-  int RenderOverlay(vtkViewport *vtkNotUsed(viewport)) override { return 0; }
-  int RenderOpaqueGeometry(vtkViewport *vtkNotUsed(viewport)) override { return 0; }
-  int RenderTranslucentPolygonalGeometry(vtkViewport *vtkNotUsed(viewport)) override { return 0; }
-  int RenderVolumetricGeometry(vtkViewport *vtkNotUsed(viewport)) override { return 0; }
+  void GetActors(vtkPropCollection*) override {}
+  void GetActors2D(vtkPropCollection*) override {}
+  void GetVolumes(vtkPropCollection*) override {}
+  void ReleaseGraphicsResources(vtkWindow*) override {}
+  int RenderOverlay(vtkViewport* vtkNotUsed(viewport)) override { return 0; }
+  int RenderOpaqueGeometry(vtkViewport* vtkNotUsed(viewport)) override { return 0; }
+  int RenderTranslucentPolygonalGeometry(vtkViewport* vtkNotUsed(viewport)) override { return 0; }
+  int RenderVolumetricGeometry(vtkViewport* vtkNotUsed(viewport)) override { return 0; }
   vtkTypeBool HasTranslucentPolygonalGeometry() override { return 0; }
   //@}
 
   //@{
   /**
-  * Set the renderer in which the representations draws itself.
-  * Typically the renderer is set by the associated widget.
-  * Use the widget's SetCurrentRenderer() method in most cases;
-  * otherwise there is a risk of inconsistent behavior as events
-  * and drawing may be performed in different viewports.
-  * WARNING: The renderer is NOT reference counted by the representation,
-  * in order to avoid reference loops.  Be sure that the representation
-  * lifetime does not extend beyond the renderer lifetime.
-  */
-  virtual void SetRenderer(vtkRenderer *ren);
+   * Set the renderer in which the representations draws itself.
+   * Typically the renderer is set by the associated widget.
+   * Use the widget's SetCurrentRenderer() method in most cases;
+   * otherwise there is a risk of inconsistent behavior as events
+   * and drawing may be performed in different viewports.
+   * WARNING: The renderer is NOT reference counted by the representation,
+   * in order to avoid reference loops.  Be sure that the representation
+   * lifetime does not extend beyond the renderer lifetime.
+   */
+  virtual void SetRenderer(vtkRenderer* ren);
   virtual vtkRenderer* GetRenderer();
   //@}
 
   //@{
   /**
-  * Set the application logic. Used for retrieving custom font file, etc.
-  */
+   * Set the application logic. Used for retrieving custom font file, etc.
+   */
   virtual void SetApplicationLogic(vtkMRMLApplicationLogic* appLogic);
   virtual vtkMRMLApplicationLogic* GetApplicationLogic();
   //@}
 
   //@{
   /**
-  * Set the view node where this widget is displayed.
-  */
+   * Set the view node where this widget is displayed.
+   */
   virtual void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
   virtual vtkMRMLAbstractViewNode* GetViewNode();
   //@}
 
   /**
-  * UpdateFromMRML() - update the widget from its state stored in MRML.
-  * if event is non-zero then a specific update (faster, smaller scope) is performed instead
-  * of a full update.
-  */
-  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
+   * UpdateFromMRML() - update the widget from its state stored in MRML.
+   * if event is non-zero then a specific update (faster, smaller scope) is performed instead
+   * of a full update.
+   */
+  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr);
 
   /// Specify tolerance for performing pick operations of points.
   /// For display renderers it is defined in pixels. The specified value is scaled with ScreenScaleFactor.
@@ -134,21 +134,21 @@ public:
 
   //@{
   /**
-  * The widget representation can set this data member to true to indicate that it needs to be re-rendered.
-  * If the rendering request is processed then the flag is cleared.
-  */
+   * The widget representation can set this data member to true to indicate that it needs to be re-rendered.
+   * If the rendering request is processed then the flag is cleared.
+   */
   vtkGetMacro(NeedToRender, bool);
   vtkSetMacro(NeedToRender, bool);
   vtkBooleanMacro(NeedToRender, bool);
   //@}
 
- protected:
+protected:
   vtkMRMLAbstractWidgetRepresentation();
   ~vtkMRMLAbstractWidgetRepresentation() override;
 
   /// Helper function to add bounds of all listed actors to the supplied bounding box.
   /// additionalBounds is for convenience only, it allows defining additional bounds.
-  void AddActorsBounds(vtkBoundingBox& bounds, const std::vector<vtkProp*> &actors, double* additionalBounds = nullptr);
+  void AddActorsBounds(vtkBoundingBox& bounds, const std::vector<vtkProp*>& actors, double* additionalBounds = nullptr);
 
   /// Given a world position and orientation, this computes the display position
   /// using the renderer of this class.

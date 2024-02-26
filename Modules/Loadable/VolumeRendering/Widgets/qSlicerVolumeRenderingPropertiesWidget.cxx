@@ -29,6 +29,7 @@
 class qSlicerVolumeRenderingPropertiesWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerVolumeRenderingPropertiesWidget);
+
 protected:
   qSlicerVolumeRenderingPropertiesWidget* const q_ptr;
 
@@ -43,8 +44,7 @@ public:
 // qSlicerVolumeRenderingPropertiesWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingPropertiesWidgetPrivate
-::qSlicerVolumeRenderingPropertiesWidgetPrivate(
+qSlicerVolumeRenderingPropertiesWidgetPrivate ::qSlicerVolumeRenderingPropertiesWidgetPrivate(
   qSlicerVolumeRenderingPropertiesWidget& object)
   : q_ptr(&object)
 {
@@ -56,10 +56,9 @@ qSlicerVolumeRenderingPropertiesWidgetPrivate
 // qSlicerVolumeRenderingPropertiesWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingPropertiesWidget
-::qSlicerVolumeRenderingPropertiesWidget(QWidget* parentWidget)
-  : Superclass( parentWidget )
-  , d_ptr( new qSlicerVolumeRenderingPropertiesWidgetPrivate(*this) )
+qSlicerVolumeRenderingPropertiesWidget ::qSlicerVolumeRenderingPropertiesWidget(QWidget* parentWidget)
+  : Superclass(parentWidget)
+  , d_ptr(new qSlicerVolumeRenderingPropertiesWidgetPrivate(*this))
 {
 }
 
@@ -67,43 +66,38 @@ qSlicerVolumeRenderingPropertiesWidget
 qSlicerVolumeRenderingPropertiesWidget::~qSlicerVolumeRenderingPropertiesWidget() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerVolumeRenderingPropertiesWidget::mrmlNode()const
+vtkMRMLNode* qSlicerVolumeRenderingPropertiesWidget::mrmlNode() const
 {
-  return vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
-    this->mrmlVolumeRenderingDisplayNode());
+  return vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(this->mrmlVolumeRenderingDisplayNode());
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingPropertiesWidget
-::mrmlVolumeRenderingDisplayNode()const
+vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingPropertiesWidget ::mrmlVolumeRenderingDisplayNode() const
 {
   Q_D(const qSlicerVolumeRenderingPropertiesWidget);
   return d->VolumeRenderingDisplayNode;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLVolumeNode* qSlicerVolumeRenderingPropertiesWidget
-::mrmlVolumeNode()const
+vtkMRMLVolumeNode* qSlicerVolumeRenderingPropertiesWidget ::mrmlVolumeNode() const
 {
   Q_D(const qSlicerVolumeRenderingPropertiesWidget);
   return d->VolumeNode;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerVolumeRenderingPropertiesWidget
-::setMRMLNode(vtkMRMLNode* node)
+void qSlicerVolumeRenderingPropertiesWidget ::setMRMLNode(vtkMRMLNode* node)
 {
-  this->setMRMLVolumeRenderingDisplayNode(
-    vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node));
+  this->setMRMLVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node));
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerVolumeRenderingPropertiesWidget
-::setMRMLVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* displayNode)
+void qSlicerVolumeRenderingPropertiesWidget ::setMRMLVolumeRenderingDisplayNode(
+  vtkMRMLVolumeRenderingDisplayNode* displayNode)
 {
   Q_D(qSlicerVolumeRenderingPropertiesWidget);
-  qvtkReconnect(d->VolumeRenderingDisplayNode, displayNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(
+    d->VolumeRenderingDisplayNode, displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   d->VolumeRenderingDisplayNode = displayNode;
   this->updateWidgetFromMRML();
@@ -115,13 +109,10 @@ void qSlicerVolumeRenderingPropertiesWidget::updateWidgetFromMRML()
   Q_D(qSlicerVolumeRenderingPropertiesWidget);
   vtkMRMLVolumeNode* newVolumeNode =
     d->VolumeRenderingDisplayNode ? d->VolumeRenderingDisplayNode->GetVolumeNode() : nullptr;
-  qvtkReconnect(d->VolumeNode, newVolumeNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRMLVolumeNode()));
+  qvtkReconnect(d->VolumeNode, newVolumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRMLVolumeNode()));
   d->VolumeNode = newVolumeNode;
   this->updateWidgetFromMRMLVolumeNode();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerVolumeRenderingPropertiesWidget::updateWidgetFromMRMLVolumeNode()
-{
-}
+void qSlicerVolumeRenderingPropertiesWidget::updateWidgetFromMRMLVolumeNode() {}

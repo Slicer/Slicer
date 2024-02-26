@@ -56,9 +56,11 @@ void vtkSlicerTablesLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTableNode* vtkSlicerTablesLogic
-::AddTable(const char* fileName, const char* name /*=nullptr*/, bool findSchema /*=true*/, const char* password /*=0*/,
-  vtkMRMLMessageCollection* userMessages /*=nullptr*/)
+vtkMRMLTableNode* vtkSlicerTablesLogic ::AddTable(const char* fileName,
+                                                  const char* name /*=nullptr*/,
+                                                  bool findSchema /*=true*/,
+                                                  const char* password /*=0*/,
+                                                  vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   if (!this->GetMRMLScene())
   {
@@ -72,32 +74,30 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
   }
 
   // Storable node
-  vtkMRMLTableNode *tableNode = nullptr;
+  vtkMRMLTableNode* tableNode = nullptr;
 
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
-  if( extension.empty() )
+  if (extension.empty())
   {
     vtkErrorMacro("AddTable: no file extension specified: " << fileName);
     return nullptr;
   }
-  if (   !extension.compare(".db")
-      || !extension.compare(".db3")
-      || !extension.compare(".sqlite")
+  if (!extension.compare(".db") || !extension.compare(".db3") || !extension.compare(".sqlite")
       || !extension.compare(".sqlite3"))
   {
     // SQLite
     std::string dbname = std::string("sqlite://") + std::string(fileName);
     vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(
-                   vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
+      vtkSQLiteDatabase::SafeDownCast(vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
 
-    if (!database->Open(password?password:"", vtkSQLiteDatabase::USE_EXISTING))
+    if (!database->Open(password ? password : "", vtkSQLiteDatabase::USE_EXISTING))
     {
       vtkErrorMacro("Failed to read tables from " << fileName);
       return nullptr;
     }
-    vtkStringArray *tables = database->GetTables();
-    for (int i=0; i<tables->GetNumberOfTuples(); i++)
+    vtkStringArray* tables = database->GetTables();
+    for (int i = 0; i < tables->GetNumberOfTuples(); i++)
     {
       vtkStdString table = tables->GetValue(i);
 
@@ -152,7 +152,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
     }
     if (res == 0) // failed to read
     {
-      vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: failed to read data from file: "<<fileName);
+      vtkErrorMacro("vtkSlicerTablesLogic::AddTable failed: failed to read data from file: " << fileName);
       this->GetMRMLScene()->RemoveNode(tableStorageNode.GetPointer());
       this->GetMRMLScene()->RemoveNode(tableNode1.GetPointer());
       return nullptr;

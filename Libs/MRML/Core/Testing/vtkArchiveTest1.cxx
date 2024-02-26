@@ -19,21 +19,24 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/Directory.hxx>
 
-
 // STD includes
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-bool validFile(const char *fileName)
+bool validFile(const char* fileName)
 {
-  if (!strcmp(fileName, ".")) return true;
-  if (!strcmp(fileName, "..")) return true;
-  if (!strcmp(fileName, "vol.mrml")) return true;
-  if (!strcmp(fileName, "vol_and_cube.mrml")) return true;
+  if (!strcmp(fileName, "."))
+    return true;
+  if (!strcmp(fileName, ".."))
+    return true;
+  if (!strcmp(fileName, "vol.mrml"))
+    return true;
+  if (!strcmp(fileName, "vol_and_cube.mrml"))
+    return true;
   return false;
 }
 
-int vtkArchiveTest1(int argc, char * argv[] )
+int vtkArchiveTest1(int argc, char* argv[])
 {
   if (argc < 2)
   {
@@ -54,8 +57,7 @@ int vtkArchiveTest1(int argc, char * argv[] )
   {
     if (!validFile(files[n].c_str()))
     {
-      std::cerr << "unexpected file in archive listing: " << files[n]
-                << std::endl;
+      std::cerr << "unexpected file in archive listing: " << files[n] << std::endl;
       return EXIT_FAILURE;
     }
   }
@@ -63,9 +65,9 @@ int vtkArchiveTest1(int argc, char * argv[] )
   //
   // unzip test file to local directory
   //
-  if ( vtksys::SystemTools::FileExists("archiveTest") )
+  if (vtksys::SystemTools::FileExists("archiveTest"))
   {
-    if ( !vtksys::SystemTools::RemoveADirectory("archiveTest") )
+    if (!vtksys::SystemTools::RemoveADirectory("archiveTest"))
     {
       std::cerr << "Error: could not remove archiveTest directory" << std::endl;
       return EXIT_FAILURE;
@@ -91,7 +93,8 @@ int vtkArchiveTest1(int argc, char * argv[] )
   for (unsigned int i = 0; i < numberOfFiles; i++)
   {
     std::cout << "Extracted file: " << cwd.GetFile(i) << std::endl;
-    if ( validFile(cwd.GetFile(i)) ) validFiles++;
+    if (validFile(cwd.GetFile(i)))
+      validFiles++;
   }
 
   if (validFiles != 4)
@@ -101,14 +104,13 @@ int vtkArchiveTest1(int argc, char * argv[] )
   }
   vtksys::SystemTools::ChangeDirectory("..");
 
-
   //
   // Create a new zip file of the archive
   //
 
-  if ( vtksys::SystemTools::FileExists("archiveTest.zip") )
+  if (vtksys::SystemTools::FileExists("archiveTest.zip"))
   {
-    if ( !vtksys::SystemTools::RemoveFile("archiveTest.zip") )
+    if (!vtksys::SystemTools::RemoveFile("archiveTest.zip"))
     {
       std::cerr << "Error: could not remove archiveTest.zip file" << std::endl;
       return EXIT_FAILURE;
@@ -116,10 +118,8 @@ int vtkArchiveTest1(int argc, char * argv[] )
   }
 
   std::cout << "creating archiveTest.zip" << std::endl;
-  std::string zipFilePath = vtksys::SystemTools::GetCurrentWorkingDirectory() +
-                                                    std::string("/archiveTest.zip");
-  std::string zipDirPath = vtksys::SystemTools::GetCurrentWorkingDirectory() +
-                                                    std::string("/archiveTest");
+  std::string zipFilePath = vtksys::SystemTools::GetCurrentWorkingDirectory() + std::string("/archiveTest.zip");
+  std::string zipDirPath = vtksys::SystemTools::GetCurrentWorkingDirectory() + std::string("/archiveTest");
   res = vtkArchive::Zip(zipFilePath.c_str(), zipDirPath.c_str());
   if (!res)
   {
@@ -129,9 +129,9 @@ int vtkArchiveTest1(int argc, char * argv[] )
 
   // make fresh output directory
   std::cout << "creating extractedArchiveTest" << std::endl;
-  if ( vtksys::SystemTools::FileExists("extractedArchiveTest") )
+  if (vtksys::SystemTools::FileExists("extractedArchiveTest"))
   {
-    if ( !vtksys::SystemTools::RemoveADirectory("extractedArchiveTest") )
+    if (!vtksys::SystemTools::RemoveADirectory("extractedArchiveTest"))
     {
       std::cerr << "Error: could not remove extractedArchiveTest directory" << std::endl;
       return EXIT_FAILURE;
@@ -158,12 +158,14 @@ int vtkArchiveTest1(int argc, char * argv[] )
   for (unsigned int i = 0; i < numberOfFiles; i++)
   {
     std::cerr << "Extracted file: " << cwd.GetFile(i) << std::endl;
-    if ( validFile(cwd.GetFile(i)) ) validFiles++;
+    if (validFile(cwd.GetFile(i)))
+      validFiles++;
   }
 
   if (validFiles != 4)
   {
-    std::cerr << "failed to extract archive : " << "extractedArchiveTest" << std::endl;
+    std::cerr << "failed to extract archive : "
+              << "extractedArchiveTest" << std::endl;
     return EXIT_FAILURE;
   }
 

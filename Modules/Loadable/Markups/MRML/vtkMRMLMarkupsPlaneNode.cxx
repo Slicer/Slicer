@@ -71,7 +71,7 @@ vtkMRMLMarkupsPlaneNode::~vtkMRMLMarkupsPlaneNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  Superclass::WriteXML(of, nIndent);
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLIntMacro(maximumNumberOfControlPoints, MaximumNumberOfControlPoints);
   vtkMRMLWriteXMLIntMacro(requiredNumberOfControlPoints, RequiredNumberOfControlPoints);
@@ -98,7 +98,7 @@ void vtkMRMLMarkupsPlaneNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLMarkupsPlaneNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   vtkMRMLCopyBeginMacro(anode);
@@ -124,7 +124,7 @@ void vtkMRMLMarkupsPlaneNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintEnumMacro(SizeMode);
   vtkMRMLPrintVectorMacro(Size, double, 2);
@@ -188,7 +188,7 @@ const char* vtkMRMLMarkupsPlaneNode::GetPlaneTypeAsString(int planeType)
     case vtkMRMLMarkupsPlaneNode::PlaneTypePlaneFit:
       return "planeFit";
     default:
-    break;
+      break;
   }
   return "";
 }
@@ -218,12 +218,12 @@ const char* vtkMRMLMarkupsPlaneNode::GetSizeModeAsString(int sizeMode)
 {
   switch (sizeMode)
   {
-  case SizeModeAuto:
-    return "auto";
-  case SizeModeAbsolute:
-    return "absolute";
-  default:
-    break;
+    case SizeModeAuto:
+      return "auto";
+    case SizeModeAbsolute:
+      return "absolute";
+    default:
+      break;
   }
   return "";
 }
@@ -308,7 +308,6 @@ void vtkMRMLMarkupsPlaneNode::SetNormalPointRequired(bool normalPointRequired)
 
   this->Modified();
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::GetNormal(double normal_Node[3])
@@ -560,8 +559,12 @@ void vtkMRMLMarkupsPlaneNode::SetOriginWorld(double x_World, double y_World, dou
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::CalculateAxesFromPoints(const double point0[3], const double point1[3], const double point2[3],
-  double x[3], double y[3], double z[3])
+void vtkMRMLMarkupsPlaneNode::CalculateAxesFromPoints(const double point0[3],
+                                                      const double point1[3],
+                                                      const double point2[3],
+                                                      double x[3],
+                                                      double y[3],
+                                                      double z[3])
 {
   vtkMath::Subtract(point1, point0, x);
   vtkMath::Normalize(x);
@@ -656,7 +659,6 @@ void vtkMRMLMarkupsPlaneNode::GetBaseToWorldMatrix(vtkMatrix4x4* baseToWorldMatr
   }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::GetAxes(double xAxis_Node[3], double yAxis_Node[3], double zAxis_Node[3])
 {
@@ -668,23 +670,23 @@ void vtkMRMLMarkupsPlaneNode::GetAxes(double xAxis_Node[3], double yAxis_Node[3]
 
   if (xAxis_Node)
   {
-      xAxis_Node[0] = 1.0;
-      xAxis_Node[1] = 0.0;
-      xAxis_Node[2] = 0.0;
+    xAxis_Node[0] = 1.0;
+    xAxis_Node[1] = 0.0;
+    xAxis_Node[2] = 0.0;
   }
 
   if (yAxis_Node)
   {
-      yAxis_Node[0] = 0.0;
-      yAxis_Node[1] = 1.0;
-      yAxis_Node[2] = 0.0;
+    yAxis_Node[0] = 0.0;
+    yAxis_Node[1] = 1.0;
+    yAxis_Node[2] = 0.0;
   }
 
   if (zAxis_Node)
   {
-      zAxis_Node[0] = 0.0;
-      zAxis_Node[1] = 0.0;
-      zAxis_Node[2] = 1.0;
+    zAxis_Node[0] = 0.0;
+    zAxis_Node[1] = 0.0;
+    zAxis_Node[2] = 1.0;
   }
 
   vtkNew<vtkMatrix4x4> objectToNodeMatrix;
@@ -723,23 +725,23 @@ void vtkMRMLMarkupsPlaneNode::GetAxesWorld(double xAxis_World[3], double yAxis_W
 
   if (xAxis_World)
   {
-      xAxis_World[0] = 1.0;
-      xAxis_World[1] = 0.0;
-      xAxis_World[2] = 0.0;
+    xAxis_World[0] = 1.0;
+    xAxis_World[1] = 0.0;
+    xAxis_World[2] = 0.0;
   }
 
   if (yAxis_World)
   {
-      yAxis_World[0] = 0.0;
-      yAxis_World[1] = 1.0;
-      yAxis_World[2] = 0.0;
+    yAxis_World[0] = 0.0;
+    yAxis_World[1] = 1.0;
+    yAxis_World[2] = 0.0;
   }
 
   if (zAxis_World)
   {
-      zAxis_World[0] = 0.0;
-      zAxis_World[1] = 0.0;
-      zAxis_World[2] = 1.0;
+    zAxis_World[0] = 0.0;
+    zAxis_World[1] = 0.0;
+    zAxis_World[2] = 1.0;
   }
 
   vtkNew<vtkMatrix4x4> objectToWorldMatrix;
@@ -771,7 +773,9 @@ void vtkMRMLMarkupsPlaneNode::GetAxesWorld(double xAxis_World[3], double yAxis_W
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double yAxis_Node[3], const double zAxis_Node[3])
+void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3],
+                                      const double yAxis_Node[3],
+                                      const double zAxis_Node[3])
 {
   if (!xAxis_Node || !yAxis_Node || !zAxis_Node)
   {
@@ -786,17 +790,15 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double y
   vtkMath::Cross(yAxis_Node, zAxis_Node, tempX);
   vtkMath::Cross(zAxis_Node, xAxis_Node, tempY);
   vtkMath::Cross(xAxis_Node, yAxis_Node, tempZ);
-  if (vtkMath::Dot(tempX, xAxis_Node) <= 1.0 - epsilon ||
-      vtkMath::Dot(tempY, yAxis_Node) <= 1.0 - epsilon ||
-      vtkMath::Dot(tempZ, zAxis_Node) <= 1.0 - epsilon)
+  if (vtkMath::Dot(tempX, xAxis_Node) <= 1.0 - epsilon || vtkMath::Dot(tempY, yAxis_Node) <= 1.0 - epsilon
+      || vtkMath::Dot(tempZ, zAxis_Node) <= 1.0 - epsilon)
   {
     vtkErrorMacro("SetAxes: Invalid direction vectors!");
     return;
   }
 
-  if (fabs(vtkMath::Dot(xAxis_Node, yAxis_Node)) >= epsilon ||
-      fabs(vtkMath::Dot(yAxis_Node, zAxis_Node)) >= epsilon ||
-      fabs(vtkMath::Dot(zAxis_Node, xAxis_Node)) >= epsilon)
+  if (fabs(vtkMath::Dot(xAxis_Node, yAxis_Node)) >= epsilon || fabs(vtkMath::Dot(yAxis_Node, zAxis_Node)) >= epsilon
+      || fabs(vtkMath::Dot(zAxis_Node, xAxis_Node)) >= epsilon)
   {
     vtkErrorMacro("SetAxes: Invalid vectors");
   }
@@ -847,7 +849,9 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double y
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::SetAxesWorld(const double xAxis_World[3], const double yAxis_World[3], const double zAxis_World[3])
+void vtkMRMLMarkupsPlaneNode::SetAxesWorld(const double xAxis_World[3],
+                                           const double yAxis_World[3],
+                                           const double zAxis_World[3])
 {
   double xAxis_Node[3] = { xAxis_World[0], xAxis_World[1], xAxis_World[2] };
   double yAxis_Node[3] = { yAxis_World[0], yAxis_World[1], yAxis_World[2] };
@@ -1009,8 +1013,8 @@ void vtkMRMLMarkupsPlaneNode::SetSizeWorld(double sizeX_World, double sizeY_Worl
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::SetPlaneBounds(double x0, double x1, double y0, double y1)
 {
-  if (this->PlaneBounds[0] == x0 && this->PlaneBounds[1] == x1
-    && this->PlaneBounds[2] == y0 && this->PlaneBounds[3] == y1)
+  if (this->PlaneBounds[0] == x0 && this->PlaneBounds[1] == x1 && this->PlaneBounds[2] == y0
+      && this->PlaneBounds[3] == y1)
   {
     return;
   }
@@ -1065,7 +1069,9 @@ void vtkMRMLMarkupsPlaneNode::UpdateInteractionHandleToWorldMatrix()
 }
 
 //---------------------------------------------------------------------------
-double vtkMRMLMarkupsPlaneNode::GetClosestPointOnPlaneWorld(const double posWorld[3], double closestPosWorld[3], bool infinitePlane/*=true*/)
+double vtkMRMLMarkupsPlaneNode::GetClosestPointOnPlaneWorld(const double posWorld[3],
+                                                            double closestPosWorld[3],
+                                                            bool infinitePlane /*=true*/)
 {
   if (!posWorld)
   {
@@ -1096,8 +1102,10 @@ double vtkMRMLMarkupsPlaneNode::GetClosestPointOnPlaneWorld(const double posWorl
   {
     double planeSize_Object[2] = { 0.0, 0.0 };
     this->GetSize(planeSize_Object);
-    closestPosPlane4[0] = std::max(std::min(closestPosPlane4[0], planeSize_Object[0] * 0.5), -1.0 * planeSize_Object[0] * 0.5);
-    closestPosPlane4[1] = std::max(std::min(closestPosPlane4[1], planeSize_Object[1] * 0.5), -1.0 * planeSize_Object[1] * 0.5);
+    closestPosPlane4[0] =
+      std::max(std::min(closestPosPlane4[0], planeSize_Object[0] * 0.5), -1.0 * planeSize_Object[0] * 0.5);
+    closestPosPlane4[1] =
+      std::max(std::min(closestPosPlane4[1], planeSize_Object[1] * 0.5), -1.0 * planeSize_Object[1] * 0.5);
   }
 
   double closestPosWorld4[4] = { 0.0, 0.0, 0.0, 0.0 };
@@ -1119,15 +1127,14 @@ vtkMRMLStorageNode* vtkMRMLMarkupsPlaneNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLMarkupsPlaneJsonStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLMarkupsPlaneJsonStorageNode"));
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes()
 {
-  if (this->GetDisplayNode() != nullptr &&
-    vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
+  if (this->GetDisplayNode() != nullptr
+      && vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
   {
     // display node already exists
     return;
@@ -1137,11 +1144,12 @@ void vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
   }
-  vtkMRMLMarkupsPlaneDisplayNode* dispNode = vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(
-    this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsPlaneDisplayNode"));
+  vtkMRMLMarkupsPlaneDisplayNode* dispNode =
+    vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsPlaneDisplayNode"));
   if (!dispNode)
   {
-    vtkErrorMacro("vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes failed: scene failed to instantiate a vtkMRMLMarkupsPlaneDisplayNode node");
+    vtkErrorMacro("vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes failed: scene failed to instantiate a "
+                  "vtkMRMLMarkupsPlaneDisplayNode node");
     return;
   }
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
@@ -1230,7 +1238,11 @@ void vtkMRMLMarkupsPlaneNode::GetPlaneCornerPointsWorld(vtkPoints* points_World)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::CalculatePlaneCornerPoints(vtkPoints * points, double xAxis[3], double yAxis[3], double center[3], double size[2])
+void vtkMRMLMarkupsPlaneNode::CalculatePlaneCornerPoints(vtkPoints* points,
+                                                         double xAxis[3],
+                                                         double yAxis[3],
+                                                         double center[3],
+                                                         double size[2])
 {
   if (!points)
   {
@@ -1386,7 +1398,8 @@ void vtkMRMLMarkupsPlaneNode::UpdatePlaneFromPointNormal()
   // this->BaseToNodeMatrix modified event is ignored if we get here from a MRML node callback,
   // so we need to call Modified() to ensure that node modification is notified.
   this->Modified();
-  if (this->GetNumberOfDefinedControlPoints(true/*include preview*/) >= 1 && this->Size[0] >= 0.0 && this->Size[1] >= 0.0)
+  if (this->GetNumberOfDefinedControlPoints(true /*include preview*/) >= 1 && this->Size[0] >= 0.0
+      && this->Size[1] >= 0.0)
   {
     this->SetIsPlaneValid(true);
   }
@@ -1633,7 +1646,7 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFromPointNormal()
     vtkNew<vtkTransform> baseToWorldTransform;
     baseToWorldTransform->SetMatrix(baseToWorldMatrix);
 
-    double origin_World[3] = { 0,0,0 };
+    double origin_World[3] = { 0, 0, 0 };
     baseToWorldTransform->TransformPoint(origin_World, origin_World);
 
     this->SetNthControlPointPositionWorld(0, origin_World, this->GetNthControlPointPositionStatus(0));
@@ -1771,12 +1784,14 @@ void vtkMRMLMarkupsPlaneNode::UpdateControlPointsFromPlaneFit()
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix,
-  vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform/*=nullptr*/, bool applyScaling/*=true*/)
+                                                       vtkMatrix4x4* outputMatrix,
+                                                       vtkAbstractTransform* transform /*=nullptr*/,
+                                                       bool applyScaling /*=true*/)
 {
   double xAxis[3] = { 0.0, 0.0, 0.0 };
   double yAxis[3] = { 0.0, 0.0, 0.0 };
   double zAxis[3] = { 0.0, 0.0, 0.0 };
-  double origin[3] = { 0.0,0.0, 0.0 };
+  double origin[3] = { 0.0, 0.0, 0.0 };
   for (int i = 0; i < 3; ++i)
   {
     xAxis[i] = inputMatrix->GetElement(i, 0);
@@ -1788,8 +1803,13 @@ void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(double xAxis[3], double yAxis[3], double zAxis[3], double origin[3],
-  vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform/*=nullptr*/, bool applyScaling/*=true*/)
+void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(double xAxis[3],
+                                                       double yAxis[3],
+                                                       double zAxis[3],
+                                                       double origin[3],
+                                                       vtkMatrix4x4* outputMatrix,
+                                                       vtkAbstractTransform* transform /*=nullptr*/,
+                                                       bool applyScaling /*=true*/)
 {
   if (!xAxis || !yAxis || !zAxis || !origin || !transform || !outputMatrix)
   {
@@ -1797,10 +1817,10 @@ void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(double xAxis[3], double y
     return;
   }
 
-  double xAxisTransformed[3] = { xAxis[0],  xAxis[1], xAxis[2] };
-  double yAxisTransformed[3] = { yAxis[0],  yAxis[1], yAxis[2] };
-  double zAxisTransformed[3] = { zAxis[0],  zAxis[1], zAxis[2] };
-  double originTransformed[3] = { origin[0],  origin[1], origin[2] };
+  double xAxisTransformed[3] = { xAxis[0], xAxis[1], xAxis[2] };
+  double yAxisTransformed[3] = { yAxis[0], yAxis[1], yAxis[2] };
+  double zAxisTransformed[3] = { zAxis[0], zAxis[1], zAxis[2] };
+  double originTransformed[3] = { origin[0], origin[1], origin[2] };
 
   double xAxisScale = vtkMath::Norm(xAxis);
   double yAxisScale = vtkMath::Norm(yAxis);

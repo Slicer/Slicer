@@ -30,12 +30,14 @@
 class vtkMRMLScene;
 
 //------------------------------------------------------------------------------
-class qMRMLEventLoggerPrivate: public QObject
+class qMRMLEventLoggerPrivate : public QObject
 {
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLEventLogger);
+
 protected:
   qMRMLEventLogger* const q_ptr;
+
 public:
   qMRMLEventLoggerPrivate(qMRMLEventLogger& object);
   typedef QObject Superclass;
@@ -47,7 +49,7 @@ public:
 private:
   vtkWeakPointer<vtkMRMLScene> MRMLScene;
 
-  QList<QString>          EventToListen;
+  QList<QString> EventToListen;
   QHash<QString, QString> EventNameToConnectionIdMap;
 
   bool ConsoleOutputEnabled;

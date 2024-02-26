@@ -41,11 +41,11 @@
 class vtkMRMLInteractionEventData;
 class vtkMRMLProceduralColorNode;
 
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
+class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-  static vtkMRMLMarkupsDisplayNode *New();
-  vtkTypeMacro(vtkMRMLMarkupsDisplayNode,vtkMRMLDisplayNode);
+  static vtkMRMLMarkupsDisplayNode* New();
+  vtkTypeMacro(vtkMRMLMarkupsDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ public:
   void UpdateScene(vtkMRMLScene* scene) override;
 
   /// Alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Convenience function for getting the displayable markups node
   vtkMRMLMarkupsNode* GetMarkupsNode();
@@ -85,7 +85,7 @@ public:
   ///   Additional devices, such as virtual reality controllers can specify additional context names.
   ///   This mechanism allows interacting with multiple markups at the same time (user can grab
   ///   different markup points with each controller at the same time).
-  int GetActiveComponentType(std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
+  int GetActiveComponentType(std::string context = vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
   enum ComponentType
   {
     ComponentNone = 0,
@@ -112,11 +112,12 @@ public:
   /// Index of active component (that the mouse or other interaction context is hovered over).
   /// This property is computed on-the-fly and saved to file.
   /// \param context Name of the interaction context. By default it is empty string, meaning mouse
-  int GetActiveComponentIndex(std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
+  int GetActiveComponentIndex(std::string context = vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
 
   /// Set active component type and index for interaction context (empty by default, meaning mouse)
-  void SetActiveComponent(int componentType, int componentIndex,
-                          std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
+  void SetActiveComponent(int componentType,
+                          int componentIndex,
+                          std::string context = vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
 
   /// Query if there is an active component for any interaction context
   bool HasActiveComponent();
@@ -132,9 +133,12 @@ public:
   /// It updates the active control point index (if controlPointIndex<0 then it creates a new point) and
   /// updates its position and orientation.
   /// Returns the control point index (different from the input if the input was < 0).
-  int UpdateActiveControlPointWorld(int controlPointIndex, vtkMRMLInteractionEventData* eventData,
-    double accurateWorldOrientationMatrix[9], const char* viewNodeID,
-    const char* associatedNodeID, int positionStatus);
+  int UpdateActiveControlPointWorld(int controlPointIndex,
+                                    vtkMRMLInteractionEventData* eventData,
+                                    double accurateWorldOrientationMatrix[9],
+                                    const char* viewNodeID,
+                                    const char* associatedNodeID,
+                                    int positionStatus);
 
   /// Returns index of active control point for all interaction contexts if active component type is
   /// ComponentControlPoint.
@@ -142,11 +146,11 @@ public:
   /// Returns index of active control point for interaction context if active component type is
   /// ComponentControlPoint, -1 otherwise.
   /// \param context Name of the interaction context. By default it is empty string, meaning mouse
-  int GetActiveControlPoint(std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
+  int GetActiveControlPoint(std::string context = vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
 
   /// Set the text scale of the associated text.
-  vtkGetMacro(TextScale,double);
-  vtkSetMacro(TextScale,double);
+  vtkGetMacro(TextScale, double);
+  vtkSetMacro(TextScale, double);
 
   //@{
   /**
@@ -201,9 +205,10 @@ public:
   /// Define how points are placed and moved in views
   enum SnapModes
   {
-    SnapModeUnconstrained, //< point is moved independently from displayed objects in 3D views (e.g., in parallel with camera plane)
+    SnapModeUnconstrained, //< point is moved independently from displayed objects in 3D views (e.g., in parallel with
+                           // camera plane)
     SnapModeToVisibleSurface, //< point is snapped to any visible surface in 3D views
-    //SnapModeToNode //< point is snapped to a specific node, not implemented yet
+    // SnapModeToNode //< point is snapped to a specific node, not implemented yet
     SnapMode_Last // insert new items above this line
   };
 
@@ -230,7 +235,7 @@ public:
   };
   /// Return the min/max glyph types, for iterating over them in tcl
   static int GetMinimumGlyphType() { return 1; };
-  static int GetMaximumGlyphType() { return vtkMRMLMarkupsDisplayNode::GlyphType_Last-1; };
+  static int GetMaximumGlyphType() { return vtkMRMLMarkupsDisplayNode::GlyphType_Last - 1; };
 
   /// The glyph type used to display this fiducial
   vtkSetMacro(GlyphType, int);
@@ -261,14 +266,14 @@ public:
   /// Currently ScreenScaleFactor is set to to a fixed value of 0.2 (therefore glyph scale = 1.00
   /// corresponds to 20% of the screen diagonal size), but this factor may be made configurable
   /// in the future.
-  vtkSetMacro(GlyphScale,double);
-  vtkGetMacro(GlyphScale,double);
+  vtkSetMacro(GlyphScale, double);
+  vtkGetMacro(GlyphScale, double);
 
   /// Get/Set absolute markup point size.
   /// This value is used in 3D views. This value is used in slice views if SliceUseGlyphScale is set to false.
   /// Diameter of the point is defined as "scale" percentage of diagonal size of the window.
-  vtkSetMacro(GlyphSize,double);
-  vtkGetMacro(GlyphSize,double);
+  vtkSetMacro(GlyphSize, double);
+  vtkGetMacro(GlyphSize, double);
 
   /// This flag controls if GlyphScale relative or GlyphSize absolute size is used
   /// to determine size of point glyphs.
@@ -281,28 +286,32 @@ public:
   enum
   {
     ResetToDefaultsEvent = 19001, //< reset this node to the default values, request completed by markups logic
-    JumpToPointEvent, /**< request jump to a selected control point, request completed by markups logic,
-                      event data is vtkMRMLInteractionEventData*/
+    JumpToPointEvent,             /**< request jump to a selected control point, request completed by markups logic,
+                                  event data is vtkMRMLInteractionEventData*/
     ActionEvent, /**< this event is invoked in on the display node if the widget performs WidgetEventAction action
                  (mapped to double-click interaction event by default), event data is vtkMRMLInteractionEventData */
-    CustomActionEvent1, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction1 action
-                 (not mapped to any interaction event by default but it can be specified by modules to specify additional
-                 actions for a widget), event data is vtkMRMLInteractionEventData */
-    CustomActionEvent2, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction2 action
-                (not mapped to any interaction event by default but it can be specified by modules to specify additional
-                actions for a widget), event data is vtkMRMLInteractionEventData */
-    CustomActionEvent3, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction3 action
-                  (not mapped to any interaction event by default but it can be specified by modules to specify additional
-                  actions for a widget), event data is vtkMRMLInteractionEventData */
-    CustomActionEvent4, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction4 action
-                  (not mapped to any interaction event by default but it can be specified by modules to specify additional
-                  actions for a widget), event data is vtkMRMLInteractionEventData */
-    CustomActionEvent5, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction5 action
-                  (not mapped to any interaction event by default but it can be specified by modules to specify additional
-                  actions for a widget), event data is vtkMRMLInteractionEventData */
-    CustomActionEvent6, /**< this event is invoked in on the display node if the widget performs WidgetEventCustomAction6 action
-                  (not mapped to any interaction event by default but it can be specified by modules to specify additional
-                  actions for a widget), event data is vtkMRMLInteractionEventData */
+    CustomActionEvent1, /**< this event is invoked in on the display node if the widget performs
+                 WidgetEventCustomAction1 action (not mapped to any interaction event by default but it can be specified
+                 by modules to specify additional actions for a widget), event data is vtkMRMLInteractionEventData */
+    CustomActionEvent2, /**< this event is invoked in on the display node if the widget performs
+                WidgetEventCustomAction2 action (not mapped to any interaction event by default but it can be specified
+                by modules to specify additional actions for a widget), event data is vtkMRMLInteractionEventData */
+    CustomActionEvent3, /**< this event is invoked in on the display node if the widget performs
+                  WidgetEventCustomAction3 action (not mapped to any interaction event by default but it can be
+                  specified by modules to specify additional actions for a widget), event data is
+                  vtkMRMLInteractionEventData */
+    CustomActionEvent4, /**< this event is invoked in on the display node if the widget performs
+                  WidgetEventCustomAction4 action (not mapped to any interaction event by default but it can be
+                  specified by modules to specify additional actions for a widget), event data is
+                  vtkMRMLInteractionEventData */
+    CustomActionEvent5, /**< this event is invoked in on the display node if the widget performs
+                  WidgetEventCustomAction5 action (not mapped to any interaction event by default but it can be
+                  specified by modules to specify additional actions for a widget), event data is
+                  vtkMRMLInteractionEventData */
+    CustomActionEvent6, /**< this event is invoked in on the display node if the widget performs
+                  WidgetEventCustomAction6 action (not mapped to any interaction event by default but it can be
+                  specified by modules to specify additional actions for a widget), event data is
+                  vtkMRMLInteractionEventData */
   };
 
   /// Set SliceProjection flag that controls if the projection of markups
@@ -393,7 +402,7 @@ public:
   /// Setting a line color node allows to define any arbitrary color mapping.
   /// Setting a line color node will overwrite the settings given by the
   /// color, opacity and LineColorFading variables of the displayNode.
-  virtual void SetLineColorNodeID(const char *lineColorNodeID);
+  virtual void SetLineColorNodeID(const char* lineColorNodeID);
 
   /// Get the line color node ID used for the projection on the line actors on the 2D viewers.
   const char* GetLineColorNodeID();
@@ -480,8 +489,8 @@ public:
 protected:
   vtkMRMLMarkupsDisplayNode();
   ~vtkMRMLMarkupsDisplayNode() override;
-  vtkMRMLMarkupsDisplayNode( const vtkMRMLMarkupsDisplayNode& );
-  void operator= ( const vtkMRMLMarkupsDisplayNode& );
+  vtkMRMLMarkupsDisplayNode(const vtkMRMLMarkupsDisplayNode&);
+  void operator=(const vtkMRMLMarkupsDisplayNode&);
 
   // Set the text style from a string
   // String format follows html-style conventions

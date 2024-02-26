@@ -31,15 +31,13 @@ class vtkMatrix4x4;
 class vtkMRMLNode;
 class qSlicerTransformsModuleWidgetPrivate;
 
-class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerTransformsModuleWidget(QWidget *parent=nullptr);
+  qSlicerTransformsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerTransformsModuleWidget() override;
 
   /// Reimplemented for internal reasons
@@ -60,7 +58,6 @@ public slots:
   void split();
 
 protected:
-
   void setup() override;
 
 protected slots:
@@ -85,7 +82,7 @@ protected slots:
 protected:
   ///
   /// Convenient method to return the coordinate system currently selected
-  int coordinateReference()const;
+  int coordinateReference() const;
 
 protected:
   QScopedPointer<qSlicerTransformsModuleWidgetPrivate> d_ptr;

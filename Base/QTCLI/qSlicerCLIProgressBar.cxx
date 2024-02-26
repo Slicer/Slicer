@@ -49,29 +49,30 @@
 class qSlicerCLIProgressBarPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerCLIProgressBar);
+
 protected:
   qSlicerCLIProgressBar* const q_ptr;
+
 public:
   typedef qSlicerCLIProgressBarPrivate Self;
   qSlicerCLIProgressBarPrivate(qSlicerCLIProgressBar& object);
 
   void init();
 
-  bool isVisible(qSlicerCLIProgressBar::Visibility visibility)const;
+  bool isVisible(qSlicerCLIProgressBar::Visibility visibility) const;
 
-  QString getLastNLines(const std::string& str, int numberOfLines, unsigned int maxLength=5000);
+  QString getLastNLines(const std::string& str, int numberOfLines, unsigned int maxLength = 5000);
 
 private:
-
-  QGridLayout *  GridLayout;
-  QLabel *       NameLabel;
-  QLabel *       StatusLabelLabel;
-  QLabel *       StatusLabel;
-  ctkExpandButton * DetailsTextExpandButton;
-  QTextBrowser * DetailsTextBrowser;
+  QGridLayout* GridLayout;
+  QLabel* NameLabel;
+  QLabel* StatusLabelLabel;
+  QLabel* StatusLabel;
+  ctkExpandButton* DetailsTextExpandButton;
+  QTextBrowser* DetailsTextBrowser;
   QElapsedTimer DetailsLastUpdateTime;
-  QProgressBar * ProgressBar;
-  QProgressBar * StageProgressBar;
+  QProgressBar* ProgressBar;
+  QProgressBar* StageProgressBar;
 
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
   qSlicerCLIProgressBar::Visibility NameVisibility;
@@ -85,7 +86,7 @@ private:
 
 //-----------------------------------------------------------------------------
 qSlicerCLIProgressBarPrivate::qSlicerCLIProgressBarPrivate(qSlicerCLIProgressBar& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->CommandLineModuleNode = nullptr;
   this->NameVisibility = qSlicerCLIProgressBar::AlwaysHidden;
@@ -101,7 +102,7 @@ void qSlicerCLIProgressBarPrivate::init()
   // Create widget .. layout
   this->GridLayout = new QGridLayout(this->q_ptr);
   this->GridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-  this->GridLayout->setContentsMargins(0,0,0,0);
+  this->GridLayout->setContentsMargins(0, 0, 0, 0);
 
   this->NameLabel = new QLabel();
   this->NameLabel->setObjectName(QString::fromUtf8("NameLabel"));
@@ -115,7 +116,7 @@ void qSlicerCLIProgressBarPrivate::init()
   sizePolicy.setVerticalStretch(0);
   sizePolicy.setHeightForWidth(StatusLabelLabel->sizePolicy().hasHeightForWidth());
   this->StatusLabelLabel->setSizePolicy(sizePolicy);
-  this->StatusLabelLabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+  this->StatusLabelLabel->setAlignment(Qt::AlignRight | Qt::AlignTrailing | Qt::AlignVCenter);
 
   this->GridLayout->addWidget(StatusLabelLabel, 1, 0, 1, 1);
 
@@ -154,15 +155,13 @@ void qSlicerCLIProgressBarPrivate::init()
   this->StatusLabelLabel->setText(qSlicerCLIProgressBar::tr("Status:"));
   this->StatusLabel->setText(qSlicerCLIProgressBar::tr("Idle"));
 
-  QObject::connect(this->DetailsTextExpandButton, SIGNAL(toggled(bool)),
-    q, SLOT(showDetails(bool)));
+  QObject::connect(this->DetailsTextExpandButton, SIGNAL(toggled(bool)), q, SLOT(showDetails(bool)));
 
   q->updateUiFromCommandLineModuleNode(this->CommandLineModuleNode);
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCLIProgressBarPrivate
-::isVisible(qSlicerCLIProgressBar::Visibility visibility)const
+bool qSlicerCLIProgressBarPrivate ::isVisible(qSlicerCLIProgressBar::Visibility visibility) const
 {
   if (visibility == qSlicerCLIProgressBar::AlwaysHidden)
   {
@@ -178,10 +177,11 @@ bool qSlicerCLIProgressBarPrivate
   }
   if (visibility == qSlicerCLIProgressBar::VisibleAfterCompletion)
   {
-    return this->CommandLineModuleNode ?
-      (this->CommandLineModuleNode->IsBusy() ||
-       this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::Completed ||
-       this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors) : false;
+    return this->CommandLineModuleNode
+             ? (this->CommandLineModuleNode->IsBusy()
+                || this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::Completed
+                || this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors)
+             : false;
   }
   return true;
 }
@@ -215,7 +215,8 @@ QString qSlicerCLIProgressBarPrivate::getLastNLines(const std::string& str, int 
   {
     linesStartPosition = str.size() - maxLength;
   }
-  return QStringLiteral("...") + QString::fromStdString(str.substr(linesStartPosition + 1, str.size() - linesStartPosition)).trimmed();
+  return QStringLiteral("...")
+         + QString::fromStdString(str.substr(linesStartPosition + 1, str.size() - linesStartPosition)).trimmed();
 }
 
 //-----------------------------------------------------------------------------
@@ -234,14 +235,14 @@ qSlicerCLIProgressBar::qSlicerCLIProgressBar(QWidget* _parent)
 qSlicerCLIProgressBar::~qSlicerCLIProgressBar() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLCommandLineModuleNode * qSlicerCLIProgressBar::commandLineModuleNode()const
+vtkMRMLCommandLineModuleNode* qSlicerCLIProgressBar::commandLineModuleNode() const
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->CommandLineModuleNode;
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::nameVisibility()const
+qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::nameVisibility() const
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->NameVisibility;
@@ -261,7 +262,7 @@ void qSlicerCLIProgressBar::setNameVisibility(qSlicerCLIProgressBar::Visibility 
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::statusVisibility()const
+qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::statusVisibility() const
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->StatusVisibility;
@@ -281,7 +282,7 @@ void qSlicerCLIProgressBar::setStatusVisibility(qSlicerCLIProgressBar::Visibilit
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::progressVisibility()const
+qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::progressVisibility() const
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->ProgressVisibility;
@@ -301,8 +302,7 @@ void qSlicerCLIProgressBar::setProgressVisibility(qSlicerCLIProgressBar::Visibil
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIProgressBar::setCommandLineModuleNode(
-  vtkMRMLCommandLineModuleNode* commandLineModuleNode)
+void qSlicerCLIProgressBar::setCommandLineModuleNode(vtkMRMLCommandLineModuleNode* commandLineModuleNode)
 {
   Q_D(qSlicerCLIProgressBar);
   if (commandLineModuleNode == d->CommandLineModuleNode)
@@ -312,9 +312,11 @@ void qSlicerCLIProgressBar::setCommandLineModuleNode(
 
   // Connect node modified event to updateUi that synchronize the values of the
   // nodes with the Ui
-  this->qvtkReconnect(d->CommandLineModuleNode, commandLineModuleNode,
-    vtkCommand::ModifiedEvent,
-    this, SLOT(updateUiFromCommandLineModuleNode(vtkObject*)));
+  this->qvtkReconnect(d->CommandLineModuleNode,
+                      commandLineModuleNode,
+                      vtkCommand::ModifiedEvent,
+                      this,
+                      SLOT(updateUiFromCommandLineModuleNode(vtkObject*)));
 
   if (d->CommandLineModuleNode)
   {
@@ -329,23 +331,21 @@ void qSlicerCLIProgressBar::setCommandLineModuleNode(
 
   if (d->CommandLineModuleNode)
   {
-      if (d->DetailsTextExpandButton->isChecked())
-      {
+    if (d->DetailsTextExpandButton->isChecked())
+    {
       d->CommandLineModuleNode->StartContinuousOutputUpdate();
-      }
+    }
   }
 
   this->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
-  vtkObject* commandLineModuleNode)
+void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(vtkObject* commandLineModuleNode)
 {
   Q_D(qSlicerCLIProgressBar);
   Q_ASSERT(commandLineModuleNode == d->CommandLineModuleNode);
-  vtkMRMLCommandLineModuleNode * node =
-    vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
+  vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
 
   d->NameLabel->setVisible(d->isVisible(d->NameVisibility));
   d->StatusLabelLabel->setVisible(d->isVisible(d->StatusVisibility));
@@ -383,7 +383,8 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
       d->ProgressBar->setValue(info->Progress * 100.);
       if (info->ElapsedTime != 0.)
       {
-        d->StatusLabel->setText(statusLabelFormat.arg(QString::fromStdString(node->GetDisplayableStatusString())).arg(info->ElapsedTime, 0, 'f', 1));
+        d->StatusLabel->setText(statusLabelFormat.arg(QString::fromStdString(node->GetDisplayableStatusString()))
+                                  .arg(info->ElapsedTime, 0, 'f', 1));
       }
       // We keep StageProgressBar maximum at 100, because if it was set to 0
       // then the progress message would not be displayed.
@@ -395,7 +396,8 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
     case vtkMRMLCommandLineModuleNode::CompletedWithErrors:
       if (info->ElapsedTime != 0.)
       {
-        d->StatusLabel->setText(statusLabelFormat.arg(QString::fromStdString(node->GetDisplayableStatusString())).arg(info->ElapsedTime, 0, 'f', 1));
+        d->StatusLabel->setText(statusLabelFormat.arg(QString::fromStdString(node->GetDisplayableStatusString()))
+                                  .arg(info->ElapsedTime, 0, 'f', 1));
       }
       d->ProgressBar->setMaximum(100);
       d->ProgressBar->setValue(100);
@@ -407,19 +409,18 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
 
   // If user chose to show details then all
   std::string errorText = node->GetErrorText();
-  bool showDetails = (d->DetailsTextExpandButton->isChecked()
-    || (node->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors
-    && !errorText.empty()));
+  bool showDetails =
+    (d->DetailsTextExpandButton->isChecked()
+     || (node->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors && !errorText.empty()));
   d->DetailsTextBrowser->setVisible(showDetails);
 
   // While the module is running, avoid too frequent updates of the process output
   // as long output can cause slowdowns.
   const double minRefreshTimeMsec = 3000.0;
-  bool updateDetails = showDetails
-    && (
-      (node->GetStatus() != vtkMRMLCommandLineModuleNode::Running)
-      ||
-      (!d->DetailsLastUpdateTime.isValid() || d->DetailsLastUpdateTime.elapsed() > minRefreshTimeMsec));
+  bool updateDetails =
+    showDetails
+    && ((node->GetStatus() != vtkMRMLCommandLineModuleNode::Running)
+        || (!d->DetailsLastUpdateTime.isValid() || d->DetailsLastUpdateTime.elapsed() > minRefreshTimeMsec));
 
   if (showDetails && updateDetails)
   {

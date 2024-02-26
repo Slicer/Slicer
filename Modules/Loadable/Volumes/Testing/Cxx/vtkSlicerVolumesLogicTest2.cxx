@@ -52,22 +52,20 @@
 //-----------------------------------------------------------------------------
 bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
 {
-  if (!imageDataConnection ||
-      !imageDataConnection->GetProducer())
+  if (!imageDataConnection || !imageDataConnection->GetProducer())
   {
     std::cout << "No image data port" << std::endl;
     return false;
   }
   imageDataConnection->GetProducer()->Update();
-  vtkInformation* info =
-    imageDataConnection->GetProducer()->GetOutputInformation(0);
+  vtkInformation* info = imageDataConnection->GetProducer()->GetOutputInformation(0);
   if (!info)
   {
     std::cout << "No output information" << std::endl;
     return false;
   }
-  vtkInformation *scalarInfo = vtkDataObject::GetActiveFieldInformation(info,
-    vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
+  vtkInformation* scalarInfo = vtkDataObject::GetActiveFieldInformation(
+    info, vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
   if (!scalarInfo)
   {
     std::cout << "No scalar information" << std::endl;
@@ -77,32 +75,34 @@ bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
 }
 
 //-----------------------------------------------------------------------------
-int main( int argc, char * argv[] )
+int main(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 
-  if(argc<2)
+  if (argc < 2)
   {
     std::cerr << "Usage: <testName> <temporary dir path>" << std::endl;
     return EXIT_FAILURE;
   }
 
-  typedef itk::Image<itk::RGBPixel<unsigned char>,3 > ImageType;
+  typedef itk::Image<itk::RGBPixel<unsigned char>, 3> ImageType;
   typedef itk::ImageFileWriter<ImageType> WriterType;
 
   vtkSmartPointer<vtkStringArray> fileNameList = vtkSmartPointer<vtkStringArray>::New();
   // create two RGB images and save as PNG
-  for(int i=0;i<5;i++)
+  for (int i = 0; i < 5; i++)
   {
 
     std::ostringstream sstr;
-    sstr << argv[argc-1] << "/rgb_test_image" << i << ".png";
+    sstr << argv[argc - 1] << "/rgb_test_image" << i << ".png";
     fileNameList->InsertNextValue(sstr.str().c_str());
     ImageType::Pointer im1 = ImageType::New();
 
     ImageType::SizeType size;
     ImageType::RegionType region;
-    size[0] = 10; size[1] = 10; size[2] = 10;
+    size[0] = 10;
+    size[1] = 10;
+    size[2] = 10;
 
     region.SetSize(size);
     im1->SetRegions(region);
@@ -114,19 +114,15 @@ int main( int argc, char * argv[] )
     w->Update();
   }
 
-
-
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkSlicerVolumesLogic> logic;
 
   logic->SetMRMLScene(scene.GetPointer());
 
-  vtkSmartPointer<vtkMRMLVectorVolumeNode> vectorVolume =
-    vtkMRMLVectorVolumeNode::SafeDownCast(
-      logic->AddArchetypeVolume(fileNameList->GetValue(0).c_str(), "rgbVolume", 0, fileNameList));
+  vtkSmartPointer<vtkMRMLVectorVolumeNode> vectorVolume = vtkMRMLVectorVolumeNode::SafeDownCast(
+    logic->AddArchetypeVolume(fileNameList->GetValue(0).c_str(), "rgbVolume", 0, fileNameList));
 
-  if (!vectorVolume ||
-      !isImageDataValid(vectorVolume->GetImageDataConnection()))
+  if (!vectorVolume || !isImageDataValid(vectorVolume->GetImageDataConnection()))
   {
     std::cerr << "Failed to load RGB image." << std::endl;
     return EXIT_FAILURE;

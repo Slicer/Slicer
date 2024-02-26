@@ -21,28 +21,30 @@
 namespace
 {
 
-  class vtkTestTranslator : public vtkMRMLTranslator
+class vtkTestTranslator : public vtkMRMLTranslator
+{
+public:
+  static vtkTestTranslator* New();
+  vtkTypeMacro(vtkTestTranslator, vtkMRMLTranslator);
+
+  /// Translation method for testing that returns "translated-(context)(sourceText)" as translation
+  std::string Translate(const char* context,
+                        const char* sourceText,
+                        const char* vtkNotUsed(disambiguation) /*= nullptr*/,
+                        int vtkNotUsed(n) /*= -1*/) override
   {
-  public:
-    static vtkTestTranslator * New();
-    vtkTypeMacro(vtkTestTranslator, vtkMRMLTranslator);
+    return std::string("translated-") + context + sourceText;
+  }
 
-    /// Translation method for testing that returns "translated-(context)(sourceText)" as translation
-    std::string Translate(const char* context, const char* sourceText,
-                          const char* vtkNotUsed(disambiguation) /*= nullptr*/, int vtkNotUsed(n) /*= -1*/) override
-    {
-      return std::string("translated-") + context + sourceText;
-    }
+protected:
+  vtkTestTranslator() = default;
+  ~vtkTestTranslator() override = default;
+  vtkTestTranslator(const vtkTestTranslator&) = delete;
+  void operator=(const vtkTestTranslator&) = delete;
+};
 
-  protected:
-    vtkTestTranslator () = default;
-    ~vtkTestTranslator () override = default;
-    vtkTestTranslator (const vtkTestTranslator &) = delete;
-    void operator=(const vtkTestTranslator &) = delete;
-  };
-
-  vtkStandardNewMacro(vtkTestTranslator );
-}
+vtkStandardNewMacro(vtkTestTranslator);
+} // namespace
 
 int vtkMRMLI18NTest1(int, char*[])
 {

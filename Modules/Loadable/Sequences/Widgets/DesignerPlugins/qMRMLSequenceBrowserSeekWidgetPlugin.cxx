@@ -19,48 +19,40 @@
 #include "qMRMLSequenceBrowserSeekWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLSequenceBrowserSeekWidgetPlugin
-::qMRMLSequenceBrowserSeekWidgetPlugin(QObject *_parent)
+qMRMLSequenceBrowserSeekWidgetPlugin ::qMRMLSequenceBrowserSeekWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLSequenceBrowserSeekWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLSequenceBrowserSeekWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qMRMLSequenceBrowserSeekWidget* _widget
-    = new qMRMLSequenceBrowserSeekWidget(_parent);
+  qMRMLSequenceBrowserSeekWidget* _widget = new qMRMLSequenceBrowserSeekWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSequenceBrowserSeekWidgetPlugin
-::domXml() const
+QString qMRMLSequenceBrowserSeekWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qMRMLSequenceBrowserSeekWidget\" \
           name=\"SequenceBrowserSeekWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSequenceBrowserSeekWidgetPlugin
-::includeFile() const
+QString qMRMLSequenceBrowserSeekWidgetPlugin ::includeFile() const
 {
   return "qMRMLSequenceBrowserSeekWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSequenceBrowserSeekWidgetPlugin
-::isContainer() const
+bool qMRMLSequenceBrowserSeekWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSequenceBrowserSeekWidgetPlugin
-::name() const
+QString qMRMLSequenceBrowserSeekWidgetPlugin ::name() const
 {
   return "qMRMLSequenceBrowserSeekWidget";
 }

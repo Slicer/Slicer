@@ -36,9 +36,10 @@
 // qSlicerMarkupsSettingsPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerMarkupsSettingsPanelPrivate: public Ui_qSlicerMarkupsSettingsPanel
+class qSlicerMarkupsSettingsPanelPrivate : public Ui_qSlicerMarkupsSettingsPanel
 {
   Q_DECLARE_PUBLIC(qSlicerMarkupsSettingsPanel);
+
 protected:
   qSlicerMarkupsSettingsPanel* const q_ptr;
 
@@ -53,9 +54,8 @@ public:
 // qSlicerMarkupsSettingsPanelPrivate methods
 
 // --------------------------------------------------------------------------
-qSlicerMarkupsSettingsPanelPrivate
-::qSlicerMarkupsSettingsPanelPrivate(qSlicerMarkupsSettingsPanel& object)
-  :q_ptr(&object)
+qSlicerMarkupsSettingsPanelPrivate ::qSlicerMarkupsSettingsPanelPrivate(qSlicerMarkupsSettingsPanel& object)
+  : q_ptr(&object)
 {
 }
 
@@ -66,8 +66,6 @@ void qSlicerMarkupsSettingsPanelPrivate::init()
 
   this->setupUi(q);
 }
-
-
 
 // --------------------------------------------------------------------------
 // qSlicerMarkupsSettingsPanel methods
@@ -85,109 +83,99 @@ qSlicerMarkupsSettingsPanel::qSlicerMarkupsSettingsPanel(QWidget* _parent)
 qSlicerMarkupsSettingsPanel::~qSlicerMarkupsSettingsPanel() = default;
 
 // --------------------------------------------------------------------------
-vtkSlicerMarkupsLogic* qSlicerMarkupsSettingsPanel
-::markupsLogic()const
+vtkSlicerMarkupsLogic* qSlicerMarkupsSettingsPanel ::markupsLogic() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
   return d->MarkupsLogic;
 }
 
 // --------------------------------------------------------------------------
-void qSlicerMarkupsSettingsPanel
-::setMarkupsLogic(vtkSlicerMarkupsLogic* logic)
+void qSlicerMarkupsSettingsPanel ::setMarkupsLogic(vtkSlicerMarkupsLogic* logic)
 {
   Q_D(qSlicerMarkupsSettingsPanel);
 
-  qvtkReconnect(d->MarkupsLogic, logic, vtkCommand::ModifiedEvent,
-                this, SLOT(onMarkupsLogicModified()));
+  qvtkReconnect(d->MarkupsLogic, logic, vtkCommand::ModifiedEvent, this, SLOT(onMarkupsLogicModified()));
   d->MarkupsLogic = logic;
 
   this->onMarkupsLogicModified();
 
-  this->registerProperty("Markups/GlyphType", this,
-                         "defaultGlyphType", SIGNAL(defaultGlyphTypeChanged(QString)));
-  this->registerProperty("Markups/SelectedColor", this,
-                         "defaultSelectedColor", SIGNAL(defaultSelectedColorChanged(QColor)));
-  this->registerProperty("Markups/UnselectedColor", this,
-                         "defaultUnselectedColor", SIGNAL(defaultUnselectedColorChanged(QColor)));
-  this->registerProperty("Markups/ActiveColor", this,
-                         "defaultActiveColor", SIGNAL(defaultActiveColorChanged(QColor)));
-  this->registerProperty("Markups/GlyphScale", this,
-                         "defaultGlyphScale", SIGNAL(defaultGlyphScaleChanged(double)));
-  this->registerProperty("Markups/TextScale", this,
-                         "defaultTextScale", SIGNAL(defaultTextScaleChanged(double)));
-  this->registerProperty("Markups/Opacity", this,
-                         "defaultOpacity", SIGNAL(defaultOpacityChanged(double)));
+  this->registerProperty("Markups/GlyphType", this, "defaultGlyphType", SIGNAL(defaultGlyphTypeChanged(QString)));
+  this->registerProperty(
+    "Markups/SelectedColor", this, "defaultSelectedColor", SIGNAL(defaultSelectedColorChanged(QColor)));
+  this->registerProperty(
+    "Markups/UnselectedColor", this, "defaultUnselectedColor", SIGNAL(defaultUnselectedColorChanged(QColor)));
+  this->registerProperty("Markups/ActiveColor", this, "defaultActiveColor", SIGNAL(defaultActiveColorChanged(QColor)));
+  this->registerProperty("Markups/GlyphScale", this, "defaultGlyphScale", SIGNAL(defaultGlyphScaleChanged(double)));
+  this->registerProperty("Markups/TextScale", this, "defaultTextScale", SIGNAL(defaultTextScaleChanged(double)));
+  this->registerProperty("Markups/Opacity", this, "defaultOpacity", SIGNAL(defaultOpacityChanged(double)));
 }
 
 // --------------------------------------------------------------------------
-void qSlicerMarkupsSettingsPanel
-::onMarkupsLogicModified()
+void qSlicerMarkupsSettingsPanel ::onMarkupsLogicModified()
 {
   Q_D(qSlicerMarkupsSettingsPanel);
-/* disable it for now; if we want a settings panel then use the same pattern that is used for default view options
+  /* disable it for now; if we want a settings panel then use the same pattern that is used for default view options
 
-  // update the gui to match the logic
-  QString glyphType = QString(d->MarkupsLogic->GetDefaultMarkupsDisplayNodeGlyphTypeAsString().c_str());
+    // update the gui to match the logic
+    QString glyphType = QString(d->MarkupsLogic->GetDefaultMarkupsDisplayNodeGlyphTypeAsString().c_str());
 
-  QObject::connect(d->defaultGlyphTypeComboBox, SIGNAL(currentIndexChanged(int)),
-                   this, SLOT(onDefaultGlyphTypeChanged(int)),Qt::UniqueConnection);
+    QObject::connect(d->defaultGlyphTypeComboBox, SIGNAL(currentIndexChanged(int)),
+                     this, SLOT(onDefaultGlyphTypeChanged(int)),Qt::UniqueConnection);
 
-  // TODO: do I need to use the strings?
-//  d->defaultGlyphTypeComboBox->setCurrentIndex(glyphType - 1);
-  int glyphTypeIndex = d->defaultGlyphTypeComboBox->findData(glyphType);
-  if (glyphTypeIndex != -1)
-    {
-    d->defaultGlyphTypeComboBox->setCurrentIndex(glyphTypeIndex);
-    }
+    // TODO: do I need to use the strings?
+  //  d->defaultGlyphTypeComboBox->setCurrentIndex(glyphType - 1);
+    int glyphTypeIndex = d->defaultGlyphTypeComboBox->findData(glyphType);
+    if (glyphTypeIndex != -1)
+      {
+      d->defaultGlyphTypeComboBox->setCurrentIndex(glyphTypeIndex);
+      }
 
 
-  double *unselectedColor = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeColor();
-  QObject::connect(d->defaultUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
-                   this, SLOT(onDefaultUnselectedColorChanged(QColor)));
-  QColor qcolor = QColor::fromRgbF(unselectedColor[0], unselectedColor[1], unselectedColor[2]);
-  d->defaultUnselectedColorPickerButton->setColor(qcolor);
+    double *unselectedColor = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeColor();
+    QObject::connect(d->defaultUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
+                     this, SLOT(onDefaultUnselectedColorChanged(QColor)));
+    QColor qcolor = QColor::fromRgbF(unselectedColor[0], unselectedColor[1], unselectedColor[2]);
+    d->defaultUnselectedColorPickerButton->setColor(qcolor);
 
-  double *selectedColor =  d->MarkupsLogic->GetDefaultMarkupsDisplayNodeSelectedColor();
-  QObject::connect(d->defaultSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
-                   this, SLOT(onDefaultSelectedColorChanged(QColor)),Qt::UniqueConnection);
-  qcolor = QColor::fromRgbF(selectedColor[0], selectedColor[1], selectedColor[2]);
-  d->defaultSelectedColorPickerButton->setColor(qcolor);
+    double *selectedColor =  d->MarkupsLogic->GetDefaultMarkupsDisplayNodeSelectedColor();
+    QObject::connect(d->defaultSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
+                     this, SLOT(onDefaultSelectedColorChanged(QColor)),Qt::UniqueConnection);
+    qcolor = QColor::fromRgbF(selectedColor[0], selectedColor[1], selectedColor[2]);
+    d->defaultSelectedColorPickerButton->setColor(qcolor);
 
-  double glyphScale = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeGlyphScale();
-  QObject::connect(d->defaultGlyphScaleSliderWidget, SIGNAL(valueChanged(double)),
-                   this, SLOT(onDefaultGlyphScaleChanged(double)),Qt::UniqueConnection);
-  d->defaultGlyphScaleSliderWidget->setValue(glyphScale);
+    double glyphScale = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeGlyphScale();
+    QObject::connect(d->defaultGlyphScaleSliderWidget, SIGNAL(valueChanged(double)),
+                     this, SLOT(onDefaultGlyphScaleChanged(double)),Qt::UniqueConnection);
+    d->defaultGlyphScaleSliderWidget->setValue(glyphScale);
 
-  double textScale = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeTextScale();
-  QObject::connect(d->defaultTextScaleSliderWidget, SIGNAL(valueChanged(double)),
-                   this, SLOT(onDefaultTextScaleChanged(double)),Qt::UniqueConnection);
-  d->defaultTextScaleSliderWidget->setValue(textScale);
+    double textScale = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeTextScale();
+    QObject::connect(d->defaultTextScaleSliderWidget, SIGNAL(valueChanged(double)),
+                     this, SLOT(onDefaultTextScaleChanged(double)),Qt::UniqueConnection);
+    d->defaultTextScaleSliderWidget->setValue(textScale);
 
-  double opacity = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeOpacity();
-  QObject::connect(d->defaultOpacitySliderWidget, SIGNAL(valueChanged(double)),
-                   this, SLOT(onDefaultOpacityChanged(double)),Qt::UniqueConnection);
-  d->defaultOpacitySliderWidget->setValue(opacity);
-  */
+    double opacity = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeOpacity();
+    QObject::connect(d->defaultOpacitySliderWidget, SIGNAL(valueChanged(double)),
+                     this, SLOT(onDefaultOpacityChanged(double)),Qt::UniqueConnection);
+    d->defaultOpacitySliderWidget->setValue(opacity);
+    */
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerMarkupsSettingsPanel::defaultGlyphType()const
+QString qSlicerMarkupsSettingsPanel::defaultGlyphType() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
-  int currentIndex  = d->defaultGlyphTypeComboBox->currentIndex();
+  int currentIndex = d->defaultGlyphTypeComboBox->currentIndex();
   QString glyphType;
   if (currentIndex != -1)
   {
-    glyphType =
-      d->defaultGlyphTypeComboBox->itemText(currentIndex);
+    glyphType = d->defaultGlyphTypeComboBox->itemText(currentIndex);
   }
   return glyphType;
 }
 
 // --------------------------------------------------------------------------
-QColor qSlicerMarkupsSettingsPanel::defaultUnselectedColor()const
+QColor qSlicerMarkupsSettingsPanel::defaultUnselectedColor() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -197,7 +185,7 @@ QColor qSlicerMarkupsSettingsPanel::defaultUnselectedColor()const
 }
 
 // --------------------------------------------------------------------------
-QColor qSlicerMarkupsSettingsPanel::defaultSelectedColor()const
+QColor qSlicerMarkupsSettingsPanel::defaultSelectedColor() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -207,7 +195,7 @@ QColor qSlicerMarkupsSettingsPanel::defaultSelectedColor()const
 }
 
 // --------------------------------------------------------------------------
-QColor qSlicerMarkupsSettingsPanel::defaultActiveColor()const
+QColor qSlicerMarkupsSettingsPanel::defaultActiveColor() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -217,7 +205,7 @@ QColor qSlicerMarkupsSettingsPanel::defaultActiveColor()const
 }
 
 // --------------------------------------------------------------------------
-double qSlicerMarkupsSettingsPanel::defaultGlyphScale()const
+double qSlicerMarkupsSettingsPanel::defaultGlyphScale() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -227,7 +215,7 @@ double qSlicerMarkupsSettingsPanel::defaultGlyphScale()const
 }
 
 // --------------------------------------------------------------------------
-double qSlicerMarkupsSettingsPanel::defaultTextScale()const
+double qSlicerMarkupsSettingsPanel::defaultTextScale() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -237,7 +225,7 @@ double qSlicerMarkupsSettingsPanel::defaultTextScale()const
 }
 
 // --------------------------------------------------------------------------
-double qSlicerMarkupsSettingsPanel::defaultOpacity()const
+double qSlicerMarkupsSettingsPanel::defaultOpacity() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -310,7 +298,7 @@ void qSlicerMarkupsSettingsPanel::setDefaultOpacity(const double opacity)
 // --------------------------------------------------------------------------
 void qSlicerMarkupsSettingsPanel::onDefaultGlyphTypeChanged(int index)
 {
-//   Q_D(qSlicerMarkupsSettingsPanel);
+  //   Q_D(qSlicerMarkupsSettingsPanel);
   Q_UNUSED(index);
 
   this->updateMarkupsLogicDefaultGlyphType();

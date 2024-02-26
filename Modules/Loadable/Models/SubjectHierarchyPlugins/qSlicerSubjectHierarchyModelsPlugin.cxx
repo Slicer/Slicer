@@ -52,15 +52,18 @@
 #include "qSlicerAbstractModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyModelsPluginPrivate: public QObject
+class qSlicerSubjectHierarchyModelsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyModelsPlugin);
+
 protected:
   qSlicerSubjectHierarchyModelsPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyModelsPluginPrivate(qSlicerSubjectHierarchyModelsPlugin& object);
   ~qSlicerSubjectHierarchyModelsPluginPrivate() override;
   void init();
+
 public:
   QIcon ModelIcon;
 };
@@ -69,16 +72,15 @@ public:
 // qSlicerSubjectHierarchyModelsPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyModelsPluginPrivate::qSlicerSubjectHierarchyModelsPluginPrivate(qSlicerSubjectHierarchyModelsPlugin& object)
-: q_ptr(&object)
-, ModelIcon(QIcon(":Icons/Model.png"))
+qSlicerSubjectHierarchyModelsPluginPrivate::qSlicerSubjectHierarchyModelsPluginPrivate(
+  qSlicerSubjectHierarchyModelsPlugin& object)
+  : q_ptr(&object)
+  , ModelIcon(QIcon(":Icons/Model.png"))
 {
 }
 
 //------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModelsPluginPrivate::init()
-{
-}
+void qSlicerSubjectHierarchyModelsPluginPrivate::init() {}
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModelsPluginPrivate::~qSlicerSubjectHierarchyModelsPluginPrivate() = default;
@@ -88,8 +90,8 @@ qSlicerSubjectHierarchyModelsPluginPrivate::~qSlicerSubjectHierarchyModelsPlugin
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModelsPlugin::qSlicerSubjectHierarchyModelsPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyModelsPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyModelsPluginPrivate(*this))
 {
   this->m_Name = QString("Models");
 
@@ -102,7 +104,8 @@ qSlicerSubjectHierarchyModelsPlugin::~qSlicerSubjectHierarchyModelsPlugin() = de
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyModelsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node,
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -119,7 +122,7 @@ double qSlicerSubjectHierarchyModelsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyModelsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyModelsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -144,7 +147,7 @@ double qSlicerSubjectHierarchyModelsPlugin::canOwnSubjectHierarchyItem(vtkIdType
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyModelsPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyModelsPlugin::roleForPlugin() const
 {
   return "Model";
 }
@@ -177,7 +180,7 @@ QIcon qSlicerSubjectHierarchyModelsPlugin::visibilityIcon(int visible)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID)const
+QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -196,20 +199,24 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID)const
 
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   vtkPolyData* polyData = modelNode ? modelNode->GetPolyData() : nullptr;
-  vtkMRMLModelDisplayNode* displayNode = modelNode ? vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode()) : nullptr;
+  vtkMRMLModelDisplayNode* displayNode =
+    modelNode ? vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode()) : nullptr;
   if (modelNode && displayNode && polyData)
   {
     bool visible = (displayNode->GetVisibility() > 0);
-    tooltipString.append( QString(" (Points: %1  Cells: %2  Visible: %3")
-      .arg(polyData->GetNumberOfPoints()).arg(polyData->GetNumberOfCells())
-      .arg(visible ? "YES" : "NO") );
+    tooltipString.append(QString(" (Points: %1  Cells: %2  Visible: %3")
+                           .arg(polyData->GetNumberOfPoints())
+                           .arg(polyData->GetNumberOfCells())
+                           .arg(visible ? "YES" : "NO"));
     if (visible)
     {
-        double color[3] = {0.0,0.0,0.0};
-        displayNode->GetColor(color);
-      tooltipString.append( QString("  Color: %4,%5,%6  Opacity: %7%")
-        .arg(int(color[0]*255.0)).arg(int(color[1]*255.0)).arg(int(color[2]*255.0))
-        .arg(int(displayNode->GetOpacity()*100.0)) );
+      double color[3] = { 0.0, 0.0, 0.0 };
+      displayNode->GetColor(color);
+      tooltipString.append(QString("  Color: %4,%5,%6  Opacity: %7%")
+                             .arg(int(color[0] * 255.0))
+                             .arg(int(color[1] * 255.0))
+                             .arg(int(color[2] * 255.0))
+                             .arg(int(displayNode->GetOpacity() * 100.0)));
     }
     tooltipString.append(QString(")"));
   }
@@ -222,7 +229,9 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID)const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)
+void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID,
+                                                          QColor color,
+                                                          QMap<int, QVariant> terminologyMetaData)
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -240,7 +249,8 @@ void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID, QCol
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!modelNode)
   {
-    qCritical() << Q_FUNC_INFO << ": Unable to find model node for subject hierarchy item " << shNode->GetItemName(itemID).c_str();
+    qCritical() << Q_FUNC_INFO << ": Unable to find model node for subject hierarchy item "
+                << shNode->GetItemName(itemID).c_str();
     return;
   }
   vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
@@ -253,23 +263,25 @@ void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID, QCol
   // Set terminology metadata
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::TerminologyRole))
   {
-    modelNode->SetAttribute(vtkSegment::GetTerminologyEntryTagName(),
-      terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString().toUtf8().constData() );
+    modelNode->SetAttribute(
+      vtkSegment::GetTerminologyEntryTagName(),
+      terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString().toUtf8().constData());
   }
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::NameRole))
   {
-    modelNode->SetName(
-      terminologyMetaData[qSlicerTerminologyItemDelegate::NameRole].toString().toUtf8().constData() );
+    modelNode->SetName(terminologyMetaData[qSlicerTerminologyItemDelegate::NameRole].toString().toUtf8().constData());
   }
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::NameAutoGeneratedRole))
   {
-    modelNode->SetAttribute( vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName(),
-      terminologyMetaData[qSlicerTerminologyItemDelegate::NameAutoGeneratedRole].toString().toUtf8().constData() );
+    modelNode->SetAttribute(
+      vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName(),
+      terminologyMetaData[qSlicerTerminologyItemDelegate::NameAutoGeneratedRole].toString().toUtf8().constData());
   }
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole))
   {
-    modelNode->SetAttribute( vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName(),
-      terminologyMetaData[qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole].toString().toUtf8().constData() );
+    modelNode->SetAttribute(
+      vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName(),
+      terminologyMetaData[qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole].toString().toUtf8().constData());
   }
 
   // Set color
@@ -289,44 +301,46 @@ void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID, QCol
 }
 
 //-----------------------------------------------------------------------------
-QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const
+QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID,
+                                                            QMap<int, QVariant>& terminologyMetaData) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
 
   if (scene->IsImporting())
   {
     // During import SH node may be created before the segmentation is read into the scene,
     // so don't attempt to access the segment yet
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
 
   // Get model node and display node
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!modelNode)
   {
-    qCritical() << Q_FUNC_INFO << ": Unable to find model node for subject hierarchy item " << shNode->GetItemName(itemID).c_str();
-    return QColor(0,0,0,0);
+    qCritical() << Q_FUNC_INFO << ": Unable to find model node for subject hierarchy item "
+                << shNode->GetItemName(itemID).c_str();
+    return QColor(0, 0, 0, 0);
   }
   vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
   if (!displayNode)
   {
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
 
   // Get terminology metadata
@@ -339,13 +353,17 @@ QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID, QM
   bool nameAutoGenerated = false;
   if (modelNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName()))
   {
-    nameAutoGenerated = QVariant(modelNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName())).toBool();
+    nameAutoGenerated =
+      QVariant(modelNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName()))
+        .toBool();
   }
   terminologyMetaData[qSlicerTerminologyItemDelegate::NameAutoGeneratedRole] = nameAutoGenerated;
   bool colorAutoGenerated = true;
   if (modelNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName()))
   {
-    colorAutoGenerated = QVariant(modelNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName())).toBool();
+    colorAutoGenerated =
+      QVariant(modelNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName()))
+        .toBool();
   }
   terminologyMetaData[qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole] = colorAutoGenerated;
 

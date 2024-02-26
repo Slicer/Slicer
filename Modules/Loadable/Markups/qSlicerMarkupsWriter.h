@@ -29,8 +29,7 @@ class vtkMRMLNode;
 class vtkMRMLStorableNode;
 
 /// Utility class that offers writing of markups in both json format, regardless of the current storage node.
-class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsWriter
-  : public qSlicerNodeWriter
+class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsWriter : public qSlicerNodeWriter
 {
   Q_OBJECT
 public:
@@ -38,7 +37,7 @@ public:
   qSlicerMarkupsWriter(QObject* parent);
   ~qSlicerMarkupsWriter() override;
 
-  QStringList extensions(vtkObject* object)const override;
+  QStringList extensions(vtkObject* object) const override;
 
   bool write(const qSlicerIO::IOProperties& properties) override;
 

@@ -31,8 +31,7 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneIDTest(
-  int vtkNotUsed(argc), char * vtkNotUsed(argv) [] )
+int vtkMRMLSceneIDTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -123,8 +122,7 @@ int vtkMRMLSceneIDTest(
 
   if (node2->GetID() != std::string("vtkMRMLModelNode2"))
   {
-    std::cerr << __LINE__ << " Node ID failed: "
-              << node2->GetID() << std::endl;
+    std::cerr << __LINE__ << " Node ID failed: " << node2->GetID() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -135,8 +133,7 @@ int vtkMRMLSceneIDTest(
 
   if (node3->GetID() != std::string("vtkMRMLModelNode4"))
   {
-    std::cerr << __LINE__ << " Node ID failed: "
-              << node3->GetID() << std::endl;
+    std::cerr << __LINE__ << " Node ID failed: " << node3->GetID() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -148,8 +145,7 @@ int vtkMRMLSceneIDTest(
 
   if (node4->GetID() != std::string("vtkMRMLModelNode5"))
   {
-    std::cerr << __LINE__ << " Node ID failed: "
-              << node4->GetID() << std::endl;
+    std::cerr << __LINE__ << " Node ID failed: " << node4->GetID() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -160,8 +156,7 @@ int vtkMRMLSceneIDTest(
 
   if (strcmp(redSlice->GetID(), "vtkMRMLSliceNodeRed") != 0)
   {
-    std::cerr << __LINE__ << " Node ID failed: "
-              << redSlice->GetID() << std::endl;
+    std::cerr << __LINE__ << " Node ID failed: " << redSlice->GetID() << std::endl;
     return EXIT_FAILURE;
   }
   // Test increment when using different singleton tags
@@ -171,8 +166,7 @@ int vtkMRMLSceneIDTest(
 
   if (strcmp(greenSlice->GetID(), "vtkMRMLSliceNodeGreen") != 0)
   {
-    std::cerr << __LINE__ << " Node ID failed: "
-              << greenSlice->GetID() << std::endl;
+    std::cerr << __LINE__ << " Node ID failed: " << greenSlice->GetID() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -181,11 +175,9 @@ int vtkMRMLSceneIDTest(
   greenSlice2->SetLayoutName("Green"); // sets the singleton tag
   scene->AddNode(greenSlice2.GetPointer());
 
-  if (greenSlice2->GetID() != nullptr ||
-      scene->GetNodeByID("vtkMRMLSliceNodeGreen") != greenSlice.GetPointer())
+  if (greenSlice2->GetID() != nullptr || scene->GetNodeByID("vtkMRMLSliceNodeGreen") != greenSlice.GetPointer())
   {
-    std::cerr << __LINE__ << " Node ID failed: "
-              << greenSlice->GetID() << std::endl;
+    std::cerr << __LINE__ << " Node ID failed: " << greenSlice->GetID() << std::endl;
     return EXIT_FAILURE;
   }
 

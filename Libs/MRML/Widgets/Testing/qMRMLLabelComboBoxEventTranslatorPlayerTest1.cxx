@@ -57,10 +57,10 @@ void checkFinalWidgetState(void* data)
 
   CTKCOMPARE(widget->currentColor(), 13);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLLabelComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLLabelComboBoxEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -81,9 +81,8 @@ int qMRMLLabelComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   widget->setMRMLColorNode(colorTableNode.GetPointer());
 
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLLabelComboBoxEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    widget, xmlDirectory + "qMRMLLabelComboBoxEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))
@@ -94,4 +93,3 @@ int qMRMLLabelComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

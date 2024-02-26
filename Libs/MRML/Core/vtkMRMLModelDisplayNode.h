@@ -36,15 +36,16 @@ class vtkUnstructuredGrid;
 class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-  static vtkMRMLModelDisplayNode *New();
-  vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLDisplayNode);
+  static vtkMRMLModelDisplayNode* New();
+  vtkTypeMacro(vtkMRMLModelDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum SliceDisplayModeType
   {
-    SliceDisplayIntersection, ///< Show model in slice view as intersection with slice
-    SliceDisplayProjection, ///< Show full model projected on the slice (similar to MIP view of images)
-    SliceDisplayDistanceEncodedProjection, ///< Show full model projected on the slice, colored by distance from slice plane
+    SliceDisplayIntersection,              ///< Show model in slice view as intersection with slice
+    SliceDisplayProjection,                ///< Show full model projected on the slice (similar to MIP view of images)
+    SliceDisplayDistanceEncodedProjection, ///< Show full model projected on the slice, colored by distance from slice
+                                           ///< plane
     SliceDisplayMode_Last // placeholder after the last valid value, this must be the last in the list of modes
   };
 
@@ -63,7 +64,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "ModelDisplay";}
+  const char* GetNodeTagName() override { return "ModelDisplay"; }
 
   /// Set and observe mesh for this model. It should be the output
   /// mesh connection of the model node.
@@ -106,7 +107,7 @@ public:
   /// are removed, therefore if a GUI or other component observes the mesh, then it will detect that
   /// the scalar is deleted and so it may deactivate the selected scalar.
   /// \sa SetActiveAttributeLocation()
-  void SetActiveScalarName(const char *scalarName) override;
+  void SetActiveScalarName(const char* scalarName) override;
 
   /// Reimplemented to update pipeline with new value
   /// \sa SetActiveScalarName()
@@ -115,12 +116,12 @@ public:
   /// Set whether to threshold the model display node.
   /// \sa ThresholdEnabled, GetThresholdEnabled()
   void SetThresholdEnabled(bool enabled);
-  vtkBooleanMacro(ThresholdEnabled,bool);
+  vtkBooleanMacro(ThresholdEnabled, bool);
 
   /// Get whether to threshold the model display node.
   /// \sa ThresholdEnabled, SetThresholdEnabled(), ThresholdEnabledOn(),
   /// ThresholdEnabledOff()
-  vtkGetMacro(ThresholdEnabled,bool);
+  vtkGetMacro(ThresholdEnabled, bool);
 
   /// Set the threshold range of the model display node.
   /// \sa GetThresholdMin(), GetThresholdMax()
@@ -151,7 +152,7 @@ public:
   /// Model that is projected to the slice will be colored based on the
   /// projected point distance from the slice.
   /// \sa GetDistanceEncodedProjectionColorNodeID(), GetDistanceEncodedProjectionColorNode()
-  virtual void SetAndObserveDistanceEncodedProjectionColorNodeID(const char *colorNodeID);
+  virtual void SetAndObserveDistanceEncodedProjectionColorNodeID(const char* colorNodeID);
   /// Get color node for distance encoded slice projection.
   /// \sa SetDistanceEncodedProjectionColorNodeID(), SetDistanceEncodedProjectionColorNode()
   virtual const char* GetDistanceEncodedProjectionColorNodeID();
@@ -174,9 +175,7 @@ protected:
   vtkMRMLModelDisplayNode(const vtkMRMLModelDisplayNode&);
   void operator=(const vtkMRMLModelDisplayNode&);
 
-  void ProcessMRMLEvents(vtkObject *caller,
-                                 unsigned long event,
-                                 void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// To be reimplemented in subclasses if the input of the pipeline changes
   virtual void SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection);

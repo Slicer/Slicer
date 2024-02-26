@@ -35,6 +35,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerDirectoryListView : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QStringList directoryList READ directoryList WRITE setDirectoryList NOTIFY directoryListChanged);
+
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -46,14 +47,14 @@ public:
   ~qSlicerDirectoryListView() override;
 
   /// Return True if the \a path has already been added
-  bool hasDirectory(const QString& path)const;
+  bool hasDirectory(const QString& path) const;
 
-  QStringList directoryList(bool absolutePath = false)const;
+  QStringList directoryList(bool absolutePath = false) const;
 
-  QStringList selectedDirectoryList(bool absolutePath = false)const;
+  QStringList selectedDirectoryList(bool absolutePath = false) const;
 
-  void dragEnterEvent(QDragEnterEvent *event) override;
-  void dropEvent(QDropEvent *event) override;
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
 
 public slots:
 
@@ -91,8 +92,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerDirectoryListView);
   Q_DISABLE_COPY(qSlicerDirectoryListView);
-
 };
 
 #endif
-

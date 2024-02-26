@@ -24,23 +24,23 @@ namespace itk
  * Blockwise linear interpolation for diffusion tensor images
  */
 template <class TData, class TCoordRep = double>
-class DiffusionTensor3DLinearInterpolateFunction :
-  public DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
+class DiffusionTensor3DLinearInterpolateFunction
+  : public DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
 {
 public:
-  typedef TData                                                                          DataType;
-  typedef DiffusionTensor3DLinearInterpolateFunction                                     Self;
+  typedef TData DataType;
+  typedef DiffusionTensor3DLinearInterpolateFunction Self;
   typedef DiffusionTensor3DInterpolateImageFunctionReimplementation<DataType, TCoordRep> Superclass;
-  typedef typename Superclass::ImageType                                                 ImageType;
-  typedef SmartPointer<Self>                                                             Pointer;
-  typedef SmartPointer<const Self>                                                       ConstPointer;
-  typedef LinearInterpolateImageFunction<ImageType,
-                                         TCoordRep>                           LinearInterpolateImageFunctionType;
+  typedef typename Superclass::ImageType ImageType;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef LinearInterpolateImageFunction<ImageType, TCoordRep> LinearInterpolateImageFunctionType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DLinearInterpolateFunction, DiffusionTensor3DInterpolateImageFunctionReimplementation);
 
   itkNewMacro(Self);
+
 protected:
   void AllocateInterpolator() override;
 
@@ -50,7 +50,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DLinearInterpolateFunction.txx"
+# include "itkDiffusionTensor3DLinearInterpolateFunction.txx"
 #endif
 
 #endif

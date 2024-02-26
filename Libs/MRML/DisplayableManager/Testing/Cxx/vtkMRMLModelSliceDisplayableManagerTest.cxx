@@ -52,8 +52,7 @@
 bool TestBatchRemoveDisplayNode();
 
 //----------------------------------------------------------------------------
-int vtkMRMLModelSliceDisplayableManagerTest(int vtkNotUsed(argc),
-                                            char* vtkNotUsed(argv)[])
+int vtkMRMLModelSliceDisplayableManagerTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   bool res = true;
   res = TestBatchRemoveDisplayNode() && res;
@@ -76,8 +75,7 @@ vtkSmartPointer<vtkRenderWindow> CreateRenderWindow()
 }
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkMRMLDisplayableManagerGroup> CreateDisplayableManager(
-  vtkMRMLScene* scene, vtkRenderer* renderer)
+vtkSmartPointer<vtkMRMLDisplayableManagerGroup> CreateDisplayableManager(vtkMRMLScene* scene, vtkRenderer* renderer)
 {
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
@@ -105,13 +103,11 @@ bool TestBatchRemoveDisplayNode()
   vtkSmartPointer<vtkRenderWindow> renderWindow = CreateRenderWindow();
   vtkNew<vtkMRMLScene> scene;
   vtkSmartPointer<vtkMRMLDisplayableManagerGroup> displayableManagerGroup =
-    CreateDisplayableManager(scene.GetPointer(),
-                             renderWindow->GetRenderers()->GetFirstRenderer());
+    CreateDisplayableManager(scene.GetPointer(), renderWindow->GetRenderers()->GetFirstRenderer());
 
   // We observe the model display nodes and we make sure only the mrmlscene
   // has a reference on them (ref count is 1)
-  vtkMRMLModelDisplayNode* modelDisplayNode =
-    vtkMRMLModelDisplayNode::New();
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::New();
   scene->AddNode(modelDisplayNode);
   modelDisplayNode->Delete();
 
@@ -137,4 +133,3 @@ bool TestBatchRemoveDisplayNode()
   sliceNode->Modified();
   return true;
 }
-

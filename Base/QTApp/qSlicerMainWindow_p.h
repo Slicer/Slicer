@@ -37,10 +37,10 @@ class qSlicerMainWindowPrivate;
 class qSlicerLayoutManager;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTAPP_EXPORT qSlicerMainWindowPrivate
-  : public Ui_qSlicerMainWindow
+class Q_SLICER_BASE_QTAPP_EXPORT qSlicerMainWindowPrivate : public Ui_qSlicerMainWindow
 {
   Q_DECLARE_PUBLIC(qSlicerMainWindow);
+
 protected:
   qSlicerMainWindow* const q_ptr;
 
@@ -50,7 +50,7 @@ public:
   virtual ~qSlicerMainWindowPrivate();
 
   virtual void init();
-  virtual void setupUi(QMainWindow * mainWindow);
+  virtual void setupUi(QMainWindow* mainWindow);
   virtual void setupStatusBar();
 
   virtual void setupRecentlyLoadedMenu(const QList<qSlicerIO::IOProperties>& fileProperties);
@@ -71,25 +71,25 @@ public:
   void addFavoriteModule(const QString& moduleName);
 
 #ifdef Slicer_USE_PYTHONQT
-  QDockWidget*                    PythonConsoleDockWidget{nullptr};
-  QAction*                        PythonConsoleToggleViewAction{nullptr};
+  QDockWidget* PythonConsoleDockWidget{ nullptr };
+  QAction* PythonConsoleToggleViewAction{ nullptr };
 #endif
-  QDockWidget*                    ErrorLogDockWidget{nullptr};
-  QAction*                        ErrorLogToggleViewAction{nullptr};
-  ctkErrorLogWidget*              ErrorLogWidget{nullptr};
-  QToolButton*                    ErrorLogToolButton{nullptr};
-  QToolButton*                    LayoutButton{nullptr};
-  qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar{nullptr};
-  QStringList                     FavoriteModules;
+  QDockWidget* ErrorLogDockWidget{ nullptr };
+  QAction* ErrorLogToggleViewAction{ nullptr };
+  ctkErrorLogWidget* ErrorLogWidget{ nullptr };
+  QToolButton* ErrorLogToolButton{ nullptr };
+  QToolButton* LayoutButton{ nullptr };
+  qSlicerModuleSelectorToolBar* ModuleSelectorToolBar{ nullptr };
+  QStringList FavoriteModules;
   // In case of a custom CentralWidget is used, the layout manager may get deleted.
   // Use QPointer to detect if the underlying object is deleted.
-  QPointer<qSlicerLayoutManager>  LayoutManager;
+  QPointer<qSlicerLayoutManager> LayoutManager;
   QQueue<qSlicerIO::IOProperties> RecentlyLoadedFileProperties;
 
-  QByteArray                      StartupState;
+  QByteArray StartupState;
 
-  bool                            WindowInitialShowCompleted{false};
-  bool                            IsClosing{false};
+  bool WindowInitialShowCompleted{ false };
+  bool IsClosing{ false };
 };
 
 #endif

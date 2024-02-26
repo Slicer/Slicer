@@ -36,13 +36,15 @@
 class qSlicerTerminologySelectorButtonPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologySelectorButton);
+
 protected:
   qSlicerTerminologySelectorButton* const q_ptr;
+
 public:
   qSlicerTerminologySelectorButtonPrivate(qSlicerTerminologySelectorButton& object);
   void init();
   void computeIcon();
-  QString text()const;
+  QString text() const;
 
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;
   QIcon Icon;
@@ -50,7 +52,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorButtonPrivate::qSlicerTerminologySelectorButtonPrivate(qSlicerTerminologySelectorButton& object)
+qSlicerTerminologySelectorButtonPrivate::qSlicerTerminologySelectorButtonPrivate(
+  qSlicerTerminologySelectorButton& object)
   : q_ptr(&object)
 {
 }
@@ -60,8 +63,7 @@ void qSlicerTerminologySelectorButtonPrivate::init()
 {
   Q_Q(qSlicerTerminologySelectorButton);
   q->setCheckable(true);
-  QObject::connect(q, SIGNAL(toggled(bool)),
-                   q, SLOT(onToggled(bool)));
+  QObject::connect(q, SIGNAL(toggled(bool)), q, SLOT(onToggled(bool)));
   this->computeIcon();
 }
 
@@ -79,8 +81,8 @@ void qSlicerTerminologySelectorButtonPrivate::computeIcon()
   else
   {
     // If recommended color is used then show that
-    iconColor = qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(
-      this->TerminologyInfo.GetTerminologyEntry() );
+    iconColor =
+      qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(this->TerminologyInfo.GetTerminologyEntry());
   }
 
   int _iconSize = q->style()->pixelMetric(QStyle::PM_SmallIconSize);
@@ -134,7 +136,7 @@ void qSlicerTerminologySelectorButton::onToggled(bool change)
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorButton::terminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologySelectorButton);
   terminologyInfo = d->TerminologyInfo;
@@ -142,7 +144,7 @@ void qSlicerTerminologySelectorButton::terminologyInfo(
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorButton::setTerminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologySelectorButton);
 
@@ -153,7 +155,7 @@ void qSlicerTerminologySelectorButton::setTerminologyInfo(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorButton::paintEvent(QPaintEvent *)
+void qSlicerTerminologySelectorButton::paintEvent(QPaintEvent*)
 {
   Q_D(qSlicerTerminologySelectorButton);
   QStylePainter p(this);

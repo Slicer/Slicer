@@ -22,7 +22,11 @@
 
 //------------------------------------------------------------------------------
 qSlicerIconEnginePlugin::qSlicerIconEnginePlugin(QObject* parentObject)
-  :ctkIconEnginePlugin(parentObject)
+  : ctkIconEnginePlugin(parentObject)
 {
-  this->setSizeDirectories(QStringList() << "XLarge" << "Large" << "Medium" << "Small" << "XSmall");
+  this->setSizeDirectories(QStringList() << "XLarge"
+                                         << "Large"
+                                         << "Medium"
+                                         << "Small"
+                                         << "XSmall");
 }

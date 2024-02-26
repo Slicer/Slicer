@@ -44,7 +44,7 @@ vtkMRMLLabelMapVolumeDisplayNode::vtkMRMLLabelMapVolumeDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeDisplayNode::~vtkMRMLLabelMapVolumeDisplayNode()
 {
-   this->MapToColors->Delete();
+  this->MapToColors->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -59,19 +59,17 @@ void vtkMRMLLabelMapVolumeDisplayNode::SetDefaultColorMap()
 void vtkMRMLLabelMapVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
+void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection)
 {
   this->MapToColors->SetInputConnection(imageDataConnection);
 }
@@ -101,7 +99,7 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();
 
-  vtkScalarsToColors *lookupTable = nullptr;
+  vtkScalarsToColors* lookupTable = nullptr;
   if (this->GetColorNode())
   {
     lookupTable = this->GetColorNode()->GetLookupTable();
@@ -110,7 +108,8 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
       if (vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode()) != nullptr)
       {
         vtkDebugMacro("UpdateImageDataPipeline: getting a color transfer function");
-        lookupTable = (vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode())->GetColorTransferFunction());
+        lookupTable = (vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode())
+                                              ->GetColorTransferFunction());
       }
     }
   }
@@ -119,8 +118,8 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
     // only complain if there's a scene set and that scene is not batch processing
     if (this->GetScene() && !this->GetScene()->IsBatchProcessing())
     {
-      vtkWarningMacro(<< "vtkMRMLLabelMapVolumeDisplayNode: Warning, the color table node: "
-                    << this->ColorNodeID << " can't be found");
+      vtkWarningMacro(<< "vtkMRMLLabelMapVolumeDisplayNode: Warning, the color table node: " << this->ColorNodeID
+                      << " can't be found");
     }
   }
   if (lookupTable && lookupTable->IsA("vtkLookupTable"))
@@ -132,10 +131,9 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
     // make sure that the table range matches number of colors for proper drawing
     // Tables are generally set up with the range set to 0-255 for non label map
     // volume scalar mapping, but for label maps, we want a 1:1 mapping that doesn't get scaled.
-    if ((lut->GetTableRange()[1] - lut->GetTableRange()[0] + 1)
-        != lut->GetNumberOfTableValues())
+    if ((lut->GetTableRange()[1] - lut->GetTableRange()[0] + 1) != lut->GetNumberOfTableValues())
     {
-      lut->SetTableRange(0,lut->GetNumberOfTableValues() - 1);
+      lut->SetTableRange(0, lut->GetNumberOfTableValues() - 1);
     }
   }
   else

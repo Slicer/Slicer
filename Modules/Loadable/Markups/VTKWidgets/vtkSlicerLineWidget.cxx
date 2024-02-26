@@ -30,18 +30,27 @@ vtkStandardNewMacro(vtkSlicerLineWidget);
 //----------------------------------------------------------------------
 vtkSlicerLineWidget::vtkSlicerLineWidget()
 {
-  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
-  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget,
+                                        vtkCommand::LeftButtonPressEvent,
+                                        vtkEvent::AltModifier,
+                                        WidgetStateRotate,
+                                        WidgetEventRotateStart,
+                                        WidgetEventRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget,
+                                        vtkCommand::RightButtonPressEvent,
+                                        vtkEvent::AltModifier,
+                                        WidgetStateScale,
+                                        WidgetEventScaleStart,
+                                        WidgetEventScaleEnd);
 }
 
 //----------------------------------------------------------------------
 vtkSlicerLineWidget::~vtkSlicerLineWidget() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerLineWidget::CreateDefaultRepresentation(
-  vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+void vtkSlicerLineWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                                      vtkMRMLAbstractViewNode* viewNode,
+                                                      vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))

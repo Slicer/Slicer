@@ -42,7 +42,7 @@
 #include "qMRMLLayoutManagerTestHelper.cxx"
 
 // --------------------------------------------------------------------------
-int qMRMLLayoutManagerTest2(int argc, char * argv[] )
+int qMRMLLayoutManagerTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -157,7 +157,6 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
                 << "  currentTableViewCount:" << currentTableViewCount << std::endl;
       return EXIT_FAILURE;
     }
-
   }
   vtkMRMLLayoutNode* layoutNode = nullptr;
   {
@@ -191,7 +190,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     return EXIT_FAILURE;
   }
 
-  vtkMRMLScene * scene = layoutManager->mrmlScene();
+  vtkMRMLScene* scene = layoutManager->mrmlScene();
 
   scene->StartState(vtkMRMLScene::ImportState);
   scene->EndState(vtkMRMLScene::ImportState);
@@ -222,7 +221,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
   scene->EndState(vtkMRMLScene::CloseState);
 
-  if (!checkViewArrangement(__LINE__, layoutManager,layoutNode,  vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView))
+  if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView))
   {
     return EXIT_FAILURE;
   }
@@ -255,4 +254,3 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     return app.exec();
   }
 }
-

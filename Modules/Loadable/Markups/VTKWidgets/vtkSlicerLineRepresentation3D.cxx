@@ -67,7 +67,7 @@ vtkSlicerLineRepresentation3D::vtkSlicerLineRepresentation3D()
 vtkSlicerLineRepresentation3D::~vtkSlicerLineRepresentation3D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation3D::GetActors(vtkPropCollection *pc)
+void vtkSlicerLineRepresentation3D::GetActors(vtkPropCollection* pc)
 {
   this->Superclass::GetActors(pc);
   this->LineActor->GetActors(pc);
@@ -75,8 +75,7 @@ void vtkSlicerLineRepresentation3D::GetActors(vtkPropCollection *pc)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation3D::ReleaseGraphicsResources(
-  vtkWindow *win)
+void vtkSlicerLineRepresentation3D::ReleaseGraphicsResources(vtkWindow* win)
 {
   this->Superclass::ReleaseGraphicsResources(win);
   this->LineActor->ReleaseGraphicsResources(win);
@@ -84,31 +83,31 @@ void vtkSlicerLineRepresentation3D::ReleaseGraphicsResources(
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderOverlay(viewport);
   if (this->LineActor->GetVisibility())
   {
-    count +=  this->LineActor->RenderOverlay(viewport);
+    count += this->LineActor->RenderOverlay(viewport);
   }
   if (this->LineOccludedActor->GetVisibility())
   {
-    count +=  this->LineOccludedActor->RenderOverlay(viewport);
+    count += this->LineOccludedActor->RenderOverlay(viewport);
   }
   return count;
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {
-    double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
-      this->MarkupsDisplayNode->GetLineDiameter() : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
+    double diameter = (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter
+                         ? this->MarkupsDisplayNode->GetLineDiameter()
+                         : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
     this->TubeFilter->SetRadius(diameter * 0.5);
     count += this->LineActor->RenderOpaqueGeometry(viewport);
   }
@@ -120,10 +119,9 @@ int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {
@@ -161,7 +159,7 @@ vtkTypeBool vtkSlicerLineRepresentation3D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerLineRepresentation3D::GetBounds()
+double* vtkSlicerLineRepresentation3D::GetBounds()
 {
   vtkBoundingBox boundingBox;
   const std::vector<vtkProp*> actors({ this->LineActor });
@@ -171,7 +169,9 @@ double *vtkSlicerLineRepresentation3D::GetBounds()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
+                                                           unsigned long event,
+                                                           void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -194,8 +194,9 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 
   this->UpdateRelativeCoincidentTopologyOffsets(this->LineMapper, this->LineOccludedMapper);
 
-  double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
-    this->MarkupsDisplayNode->GetLineDiameter() : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
+  double diameter = (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter
+                       ? this->MarkupsDisplayNode->GetLineDiameter()
+                       : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
@@ -208,11 +209,11 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
-  this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode
-    && this->LineActor->GetVisibility()
-    && this->MarkupsDisplayNode->GetOccludedVisibility());
+  this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode && this->LineActor->GetVisibility()
+                                         && this->MarkupsDisplayNode->GetOccludedVisibility());
 
-  if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2 && this->MarkupsDisplayNode->GetPropertiesLabelVisibility())
+  if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2
+      && this->MarkupsDisplayNode->GetPropertiesLabelVisibility())
   {
     this->TextActor->SetVisibility(true);
     double p1[3] = { 0.0 };
@@ -230,14 +231,15 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation3D::CanInteract(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+void vtkSlicerLineRepresentation3D::CanInteract(vtkMRMLInteractionEventData* interactionEventData,
+                                                int& foundComponentType,
+                                                int& foundComponentIndex,
+                                                double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
-    || !interactionEventData )
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
+      || !interactionEventData)
   {
     return;
   }
@@ -254,7 +256,7 @@ void vtkSlicerLineRepresentation3D::CanInteract(
 //-----------------------------------------------------------------------------
 void vtkSlicerLineRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
 {
-  //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
+  // Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
 
   if (this->LineActor)

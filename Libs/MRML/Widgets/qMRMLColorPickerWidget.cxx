@@ -39,7 +39,7 @@
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-class qMRMLColorPickerWidgetPrivate: public Ui_qMRMLColorPickerWidget
+class qMRMLColorPickerWidgetPrivate : public Ui_qMRMLColorPickerWidget
 {
   Q_DECLARE_PUBLIC(qMRMLColorPickerWidget);
 
@@ -66,27 +66,24 @@ void qMRMLColorPickerWidgetPrivate::init()
 {
   Q_Q(qMRMLColorPickerWidget);
   this->setupUi(q);
-  QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   q, SLOT(onCurrentColorNodeChanged(vtkMRMLNode*)));
-  QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   this->SearchBox, SLOT(clear()));
-  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(int)),
-                   q, SIGNAL(colorEntrySelected(int)));
-  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(QColor)),
-                   q, SIGNAL(colorSelected(QColor)));
-  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(QString)),
-                   q, SIGNAL(colorNameSelected(QString)));
+  QObject::connect(this->ColorTableComboBox,
+                   SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   q,
+                   SLOT(onCurrentColorNodeChanged(vtkMRMLNode*)));
+  QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this->SearchBox, SLOT(clear()));
+  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(int)), q, SIGNAL(colorEntrySelected(int)));
+  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(QColor)), q, SIGNAL(colorSelected(QColor)));
+  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(QString)), q, SIGNAL(colorNameSelected(QString)));
 
   // SearchBox
   this->SearchBox->setPlaceholderText("Search color...");
   this->SearchBox->setShowSearchIcon(true);
   this->SearchBox->installEventFilter(q);
-  QObject::connect(this->SearchBox, SIGNAL(textChanged(QString)),
-                   q, SLOT(onTextChanged(QString)));
+  QObject::connect(this->SearchBox, SIGNAL(textChanged(QString)), q, SLOT(onTextChanged(QString)));
 }
 
 //------------------------------------------------------------------------------
-qMRMLColorPickerWidget::qMRMLColorPickerWidget(QWidget *_parent)
+qMRMLColorPickerWidget::qMRMLColorPickerWidget(QWidget* _parent)
   : qMRMLWidget(_parent)
   , d_ptr(new qMRMLColorPickerWidgetPrivate(*this))
 {
@@ -105,14 +102,14 @@ void qMRMLColorPickerWidget::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorLogic* qMRMLColorPickerWidget::mrmlColorLogic()const
+vtkMRMLColorLogic* qMRMLColorPickerWidget::mrmlColorLogic() const
 {
   Q_D(const qMRMLColorPickerWidget);
   return d->ColorLogic.GetPointer();
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLColorPickerWidget::currentColorNode()const
+vtkMRMLColorNode* qMRMLColorPickerWidget::currentColorNode() const
 {
   Q_D(const qMRMLColorPickerWidget);
   return vtkMRMLColorNode::SafeDownCast(d->ColorTableComboBox->currentNode());
@@ -123,8 +120,8 @@ void qMRMLColorPickerWidget::setCurrentColorNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLColorPickerWidget);
   d->ColorTableComboBox->setCurrentNode(node);
-  this->qvtkDisconnect(this->mrmlScene(), vtkMRMLScene::NodeAddedEvent,
-                       this, SLOT(onNodeAdded(vtkObject*,vtkObject*)));
+  this->qvtkDisconnect(
+    this->mrmlScene(), vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAdded(vtkObject*, vtkObject*)));
 }
 
 //------------------------------------------------------------------------------
@@ -135,10 +132,8 @@ void qMRMLColorPickerWidget::setCurrentColorNodeToDefault()
   {
     return;
   }
-  vtkMRMLNode* defaultColorNode =
-    this->mrmlScene()->GetNodeByID( d->ColorLogic.GetPointer() != nullptr ?
-                                    d->ColorLogic->GetDefaultEditorColorNodeID() :
-                                    nullptr);
+  vtkMRMLNode* defaultColorNode = this->mrmlScene()->GetNodeByID(
+    d->ColorLogic.GetPointer() != nullptr ? d->ColorLogic->GetDefaultEditorColorNodeID() : nullptr);
   if (defaultColorNode)
   {
     this->setCurrentColorNode(defaultColorNode);
@@ -151,8 +146,8 @@ void qMRMLColorPickerWidget::onNodeAdded(vtkObject* scene, vtkObject* nodeObject
   Q_D(qMRMLColorPickerWidget);
   Q_UNUSED(scene);
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
-  if (node != nullptr && d->ColorLogic.GetPointer() != nullptr &&
-      QString(node->GetID()) == d->ColorLogic->GetDefaultEditorColorNodeID())
+  if (node != nullptr && d->ColorLogic.GetPointer() != nullptr
+      && QString(node->GetID()) == d->ColorLogic->GetDefaultEditorColorNodeID())
   {
     this->setCurrentColorNode(node);
   }
@@ -166,8 +161,7 @@ void qMRMLColorPickerWidget::setMRMLScene(vtkMRMLScene* scene)
   this->qMRMLWidget::setMRMLScene(scene);
   if (scene && !d->ColorTableComboBox->currentNode())
   {
-    this->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent,
-                      this, SLOT(onNodeAdded(vtkObject*,vtkObject*)));
+    this->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAdded(vtkObject*, vtkObject*)));
     this->setCurrentColorNodeToDefault();
   }
 }
@@ -182,8 +176,7 @@ void qMRMLColorPickerWidget::onCurrentColorNodeChanged(vtkMRMLNode* colorNode)
   const int count = d->MRMLColorListView->model()->rowCount(rootIndex);
   for (int i = 0; i < count; ++i)
   {
-    QSize sizeHint = d->MRMLColorListView->sizeHintForIndex(
-      d->MRMLColorListView->model()->index(i, 0, rootIndex));
+    QSize sizeHint = d->MRMLColorListView->sizeHintForIndex(d->MRMLColorListView->model()->index(i, 0, rootIndex));
     maxSizeHint.setWidth(qMax(maxSizeHint.width(), sizeHint.width()));
     maxSizeHint.setHeight(qMax(maxSizeHint.height(), sizeHint.height()));
   }
@@ -198,28 +191,23 @@ void qMRMLColorPickerWidget::onCurrentColorNodeChanged(vtkMRMLNode* colorNode)
 void qMRMLColorPickerWidget::onTextChanged(const QString& colorText)
 {
   Q_D(qMRMLColorPickerWidget);
-  QRegExp regExp(colorText,Qt::CaseInsensitive, QRegExp::RegExp);
+  QRegExp regExp(colorText, Qt::CaseInsensitive, QRegExp::RegExp);
   d->MRMLColorListView->sortFilterProxyModel()->setFilterRegExp(regExp);
 
   QModelIndex newCurrentIndex;
 
   if (!d->SearchBox->text().isEmpty())
   {
-    QModelIndex start = d->MRMLColorListView->sortFilterProxyModel()
-                        ->index(0,0);
-    QModelIndexList indexList = d->MRMLColorListView->sortFilterProxyModel()
-                              ->match(start, 0,
-                                      d->SearchBox->text(), 1,
-                                      Qt::MatchStartsWith);
+    QModelIndex start = d->MRMLColorListView->sortFilterProxyModel()->index(0, 0);
+    QModelIndexList indexList =
+      d->MRMLColorListView->sortFilterProxyModel()->match(start, 0, d->SearchBox->text(), 1, Qt::MatchStartsWith);
 
     if (indexList.isEmpty())
     {
-      indexList = d->MRMLColorListView->sortFilterProxyModel()
-                                ->match(start, 0,
-                                        d->SearchBox->text(), 1,
-                                        Qt::MatchContains);
+      indexList =
+        d->MRMLColorListView->sortFilterProxyModel()->match(start, 0, d->SearchBox->text(), 1, Qt::MatchContains);
     }
-    if(indexList.count() > 0 )
+    if (indexList.count() > 0)
     {
       newCurrentIndex = indexList[0];
     }
@@ -242,9 +230,8 @@ bool qMRMLColorPickerWidget::eventFilter(QObject* target, QEvent* event)
     }
     if (event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* keyEvent = static_cast<QKeyEvent *>(event);
-      if (keyEvent->key() == Qt::Key_Up ||
-          keyEvent->key() == Qt::Key_Down)
+      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+      if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down)
       {
         // give the Focus to MRMLColorListView
         d->MRMLColorListView->setFocus();

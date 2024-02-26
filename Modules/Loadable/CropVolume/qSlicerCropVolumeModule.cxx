@@ -42,14 +42,14 @@ qSlicerCropVolumeModule::qSlicerCropVolumeModule(QObject* _parent)
 qSlicerCropVolumeModule::~qSlicerCropVolumeModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerCropVolumeModule::helpText()const
+QString qSlicerCropVolumeModule::helpText() const
 {
   return "CropVolume module extracts the subvolume of the image described "
          "by the Region of Interest widget and can also be used to resample the volume.";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCropVolumeModule::acknowledgementText()const
+QString qSlicerCropVolumeModule::acknowledgementText() const
 {
   return "This module was developed by Andrey Fedorov and Ron Kikinis. "
          "This work was supported by NIH grants CA111288 and CA151261, "
@@ -57,7 +57,7 @@ QString qSlicerCropVolumeModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCropVolumeModule::contributors()const
+QStringList qSlicerCropVolumeModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Andrey Fedorov (BWH, SPL)");
@@ -66,21 +66,22 @@ QStringList qSlicerCropVolumeModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerCropVolumeModule::icon()const
+QIcon qSlicerCropVolumeModule::icon() const
 {
   return QIcon(":/Icons/CropVolume.png");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCropVolumeModule::categories()const
+QStringList qSlicerCropVolumeModule::categories() const
 {
   return QStringList() << qSlicerAbstractCoreModule::tr("Converters");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCropVolumeModule::dependencies()const
+QStringList qSlicerCropVolumeModule::dependencies() const
 {
-  return QStringList() << "Volumes" << "ResampleScalarVectorDWIVolume";
+  return QStringList() << "Volumes"
+                       << "ResampleScalarVectorDWIVolume";
 }
 
 //-----------------------------------------------------------------------------
@@ -90,7 +91,7 @@ void qSlicerCropVolumeModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerCropVolumeModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerCropVolumeModule::createWidgetRepresentation()
 {
   return new qSlicerCropVolumeModuleWidget;
 }

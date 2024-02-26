@@ -43,14 +43,10 @@ vtkStandardNewMacro(vtkSlicerAnnotationModuleLogic);
 //-----------------------------------------------------------------------------
 // vtkSlicerAnnotationModuleLogic methods
 //-----------------------------------------------------------------------------
-vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
-{
-}
+vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic() {}
 
 //-----------------------------------------------------------------------------
-vtkSlicerAnnotationModuleLogic::~vtkSlicerAnnotationModuleLogic()
-{
-}
+vtkSlicerAnnotationModuleLogic::~vtkSlicerAnnotationModuleLogic() {}
 
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -69,7 +65,7 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
     return;
   }
 
-  vtkMRMLScene *scene = this->GetMRMLScene();
+  vtkMRMLScene* scene = this->GetMRMLScene();
 
   //
   // The core nodes
@@ -149,106 +145,109 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   scene->RegisterNodeClass(annotationHierarchyNode.GetPointer());
 }
 
-  //---------------------------------------------------------------------------
-  //
-  //
-  // Annotation SnapShot Functionality
-  //
-  //
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//
+//
+// Annotation SnapShot Functionality
+//
+//
+//---------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------
-  // Create a snapShot. This includes a screenshot of a specific view (see \ref GrabScreenShot(int screenshotWindow)),
-  // a multiline text description.
-  //---------------------------------------------------------------------------
-  void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot)
+//---------------------------------------------------------------------------
+// Create a snapShot. This includes a screenshot of a specific view (see \ref GrabScreenShot(int screenshotWindow)),
+// a multiline text description.
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name,
+                                                    const char* description,
+                                                    int screenshotType,
+                                                    double scaleFactor,
+                                                    vtkImageData* screenshot)
+{
+  if (!screenshot)
   {
-    if (!screenshot)
-    {
-      vtkErrorMacro("CreateSnapShot: No screenshot was set.");
-      return;
-    }
-    if (!this->GetMRMLScene())
-    {
-      vtkErrorMacro("No scene defined");
-      return;
-    }
-
-    vtkMRMLAnnotationSnapshotNode * newSnapshotNode =
-        vtkMRMLAnnotationSnapshotNode::New();
-    newSnapshotNode->SetScene(this->GetMRMLScene());
-    if (std::string(name) != "")
-    {
-      // a name was specified
-      newSnapshotNode->SetName(name);
-    }
-    else
-    {
-      // if no name is specified, generate a new unique one
-      newSnapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString(
-          "Screenshot"));
-    }
-    newSnapshotNode->SetSnapshotDescription(description);
-    newSnapshotNode->SetScreenShotType(screenshotType);
-    newSnapshotNode->SetScreenShot(screenshot);
-    newSnapshotNode->SetScaleFactor(scaleFactor);
-    newSnapshotNode->HideFromEditorsOff();
-    this->GetMRMLScene()->AddNode(newSnapshotNode);
-    newSnapshotNode->Delete();
+    vtkErrorMacro("CreateSnapShot: No screenshot was set.");
+    return;
+  }
+  if (!this->GetMRMLScene())
+  {
+    vtkErrorMacro("No scene defined");
+    return;
   }
 
-  //---------------------------------------------------------------------------
-  // Modify an existing annotation snapShot.
-  //---------------------------------------------------------------------------
-  void vtkSlicerAnnotationModuleLogic::ModifySnapShot(vtkStdString id, const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot)
+  vtkMRMLAnnotationSnapshotNode* newSnapshotNode = vtkMRMLAnnotationSnapshotNode::New();
+  newSnapshotNode->SetScene(this->GetMRMLScene());
+  if (std::string(name) != "")
   {
-
-    if (!screenshot)
-    {
-      vtkErrorMacro("ModifySnapShot: No screenshot was set.");
-      return;
-    }
-    if (!this->GetMRMLScene())
-    {
-      vtkErrorMacro("No scene defined");
-      return;
-    }
-    vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id.c_str());
-
-    if (!node)
-    {
-      vtkErrorMacro("ModifySnapShot: Could not get node: " << id.c_str());
-      return;
-    }
-
-    vtkMRMLAnnotationSnapshotNode* snapshotNode =
-        vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
-
-    if (!snapshotNode)
-    {
-      vtkErrorMacro("ModifySnapShot: Could not get snapshot node.");
-      return;
-    }
-
-    if (std::string(name) != "")
-    {
-      // a name was specified
-      snapshotNode->SetName(name);
-    }
-    else
-    {
-      // if no name is specified, generate a new unique one
-      snapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString(
-          "Snapshot"));
-    }
-    snapshotNode->SetSnapshotDescription(description);
-    snapshotNode->SetScreenShotType(screenshotType);
-    snapshotNode->SetScreenShot(screenshot);
-    snapshotNode->SetScaleFactor(scaleFactor);
-    snapshotNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent,
-        snapshotNode);
-
+    // a name was specified
+    newSnapshotNode->SetName(name);
   }
+  else
+  {
+    // if no name is specified, generate a new unique one
+    newSnapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("Screenshot"));
+  }
+  newSnapshotNode->SetSnapshotDescription(description);
+  newSnapshotNode->SetScreenShotType(screenshotType);
+  newSnapshotNode->SetScreenShot(screenshot);
+  newSnapshotNode->SetScaleFactor(scaleFactor);
+  newSnapshotNode->HideFromEditorsOff();
+  this->GetMRMLScene()->AddNode(newSnapshotNode);
+  newSnapshotNode->Delete();
+}
+
+//---------------------------------------------------------------------------
+// Modify an existing annotation snapShot.
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::ModifySnapShot(vtkStdString id,
+                                                    const char* name,
+                                                    const char* description,
+                                                    int screenshotType,
+                                                    double scaleFactor,
+                                                    vtkImageData* screenshot)
+{
+
+  if (!screenshot)
+  {
+    vtkErrorMacro("ModifySnapShot: No screenshot was set.");
+    return;
+  }
+  if (!this->GetMRMLScene())
+  {
+    vtkErrorMacro("No scene defined");
+    return;
+  }
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id.c_str());
+
+  if (!node)
+  {
+    vtkErrorMacro("ModifySnapShot: Could not get node: " << id.c_str());
+    return;
+  }
+
+  vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+
+  if (!snapshotNode)
+  {
+    vtkErrorMacro("ModifySnapShot: Could not get snapshot node.");
+    return;
+  }
+
+  if (std::string(name) != "")
+  {
+    // a name was specified
+    snapshotNode->SetName(name);
+  }
+  else
+  {
+    // if no name is specified, generate a new unique one
+    snapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("Snapshot"));
+  }
+  snapshotNode->SetSnapshotDescription(description);
+  snapshotNode->SetScreenShotType(screenshotType);
+  snapshotNode->SetScreenShot(screenshot);
+  snapshotNode->SetScaleFactor(scaleFactor);
+  snapshotNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, snapshotNode);
+}
 
 //---------------------------------------------------------------------------
 // Return the description of an existing Annotation snapShot node.
@@ -265,21 +264,19 @@ vtkStdString vtkSlicerAnnotationModuleLogic::GetSnapShotName(const char* id)
   if (!node)
   {
     vtkErrorMacro("GetSnapShotDescription: Could not get mrml node!");
-      return nullptr;
+    return nullptr;
   }
 
-  vtkMRMLAnnotationSnapshotNode* snapshotNode =
-    vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+  vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
 
   if (!snapshotNode)
   {
     vtkErrorMacro("GetSnapShotDescription: Could not get snapshot node!");
-      return nullptr;
+    return nullptr;
   }
 
   return snapshotNode->GetName();
 }
-
 
 //---------------------------------------------------------------------------
 // Return the description of an existing Annotation snapShot node.
@@ -296,16 +293,15 @@ vtkStdString vtkSlicerAnnotationModuleLogic::GetSnapShotDescription(const char* 
   if (!node)
   {
     vtkErrorMacro("GetSnapShotDescription: Could not get mrml node!");
-      return nullptr;
+    return nullptr;
   }
 
-  vtkMRMLAnnotationSnapshotNode* snapshotNode =
-    vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+  vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
 
   if (!snapshotNode)
   {
     vtkErrorMacro("GetSnapShotDescription: Could not get snapshot node!");
-      return nullptr;
+    return nullptr;
   }
 
   return snapshotNode->GetSnapshotDescription();
@@ -326,16 +322,15 @@ int vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshotType(const char* id)
   if (!node)
   {
     vtkErrorMacro("GetSnapShotScreenshotType: Could not get mrml node!");
-      return 0;
+    return 0;
   }
 
-  vtkMRMLAnnotationSnapshotNode* snapshotNode =
-    vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+  vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
 
   if (!snapshotNode)
   {
     vtkErrorMacro("GetSnapShotScreenshotType: Could not get snapshot node!");
-      return 0;
+    return 0;
   }
 
   return snapshotNode->GetScreenShotType();
@@ -356,16 +351,15 @@ double vtkSlicerAnnotationModuleLogic::GetSnapShotScaleFactor(const char* id)
   if (!node)
   {
     vtkErrorMacro("GetSnapShotScaleFactor: Could not get mrml node!");
-      return 0;
+    return 0;
   }
 
-  vtkMRMLAnnotationSnapshotNode* snapshotNode =
-    vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+  vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
 
   if (!snapshotNode)
   {
     vtkErrorMacro("GetSnapShotScaleFactor: Could not get snapshot node!");
-      return 0;
+    return 0;
   }
 
   return snapshotNode->GetScaleFactor();
@@ -385,16 +379,15 @@ vtkImageData* vtkSlicerAnnotationModuleLogic::GetSnapShotScreenshot(const char* 
   if (!node)
   {
     vtkErrorMacro("GetSnapShotScreenshot: Could not get mrml node!");
-      return nullptr;
+    return nullptr;
   }
 
-  vtkMRMLAnnotationSnapshotNode* snapshotNode =
-    vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
+  vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
 
   if (!snapshotNode)
   {
     vtkErrorMacro("GetSnapShotScreenshot: Could not get snapshot node!");
-      return nullptr;
+    return nullptr;
   }
 
   return snapshotNode->GetScreenShot();
@@ -420,5 +413,4 @@ bool vtkSlicerAnnotationModuleLogic::IsSnapshotNode(const char* id)
   }
 
   return node->IsA("vtkMRMLAnnotationSnapshotNode");
-
 }

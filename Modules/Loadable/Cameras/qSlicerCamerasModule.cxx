@@ -40,19 +40,19 @@ qSlicerCamerasModule::qSlicerCamerasModule(QObject* _parent)
 qSlicerCamerasModule::~qSlicerCamerasModule() = default;
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCamerasModule::categories()const
+QStringList qSlicerCamerasModule::categories() const
 {
   return QStringList() << qSlicerAbstractCoreModule::tr("Developer Tools");
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerCamerasModule::icon()const
+QIcon qSlicerCamerasModule::icon() const
 {
   return QIcon(":/Icons/Cameras.png");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerCamerasModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerCamerasModule::createWidgetRepresentation()
 {
   return new qSlicerCamerasModuleWidget;
 }
@@ -64,39 +64,37 @@ vtkMRMLAbstractLogic* qSlicerCamerasModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCamerasModule::helpText()const
+QString qSlicerCamerasModule::helpText() const
 {
-  QString help = tr(
-    "Manage 3D views and cameras.<br>"
-    "The view pulldown menu below can be used to create new views and select "
-    "the active view. Switch the layout to \"Tabbed 3D Layout\" from the "
-    "layout icon in the toolbar to access multiple views. The view selected in "
-    "\"Tabbed 3D Layout\" becomes the active view and replaces the 3D view in "
-    "all other layouts. The camera pulldown menu below can be used to set the "
-    "active camera for the selected view.<br>"
-    "WARNING: this is rather experimental at the moment (fiducials, IO/data, "
-    "closing the scene are probably broken for new views).<br>");
+  QString help = tr("Manage 3D views and cameras.<br>"
+                    "The view pulldown menu below can be used to create new views and select "
+                    "the active view. Switch the layout to \"Tabbed 3D Layout\" from the "
+                    "layout icon in the toolbar to access multiple views. The view selected in "
+                    "\"Tabbed 3D Layout\" becomes the active view and replaces the 3D view in "
+                    "all other layouts. The camera pulldown menu below can be used to set the "
+                    "active camera for the selected view.<br>"
+                    "WARNING: this is rather experimental at the moment (fiducials, IO/data, "
+                    "closing the scene are probably broken for new views).<br>");
   help += this->defaultDocumentationLink();
   return help;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCamerasModule::acknowledgementText()const
+QString qSlicerCamerasModule::acknowledgementText() const
 {
-  QString acknowledgement = tr(
-    "<center><table border=\"0\"><tr>"
-    "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
-    "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
-    "</tr><tr>"
-    "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
-    "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
-    "</tr></table></center>"
-    "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
+  QString acknowledgement = tr("<center><table border=\"0\"><tr>"
+                               "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
+                               "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
+                               "</tr><tr>"
+                               "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
+                               "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
+                               "</tr></table></center>"
+                               "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
   return acknowledgement;
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCamerasModule::contributors()const
+QStringList qSlicerCamerasModule::contributors() const
 {
   QStringList contributors;
   contributors << QString("Julien Finet (Kitware)");
@@ -107,7 +105,6 @@ QStringList qSlicerCamerasModule::contributors()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerCamerasModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLCameraNode"
-    << "vtkMRMLViewNode";
+  return QStringList() << "vtkMRMLCameraNode"
+                       << "vtkMRMLViewNode";
 }

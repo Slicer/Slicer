@@ -75,10 +75,10 @@ void checkFinalWidgetState2(void* data)
 
   CTKCOMPARE(widget->currentIndex().row(), 1);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -103,9 +103,7 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   scene->SetURL(argv[2]);
   scene->Import();
 
-  etpWidget.addTestCase(&widget,
-                        xmlDirectory + "qMRMLTreeViewEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(&widget, xmlDirectory + "qMRMLTreeViewEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // Test case 2
   qMRMLTreeView widget2;
@@ -135,9 +133,8 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   QSignalSpy spyAction(insertTransformAction, SIGNAL(triggered()));
   SpyAction = &spyAction;
 
-  etpWidget.addTestCase(&widget2,
-                        xmlDirectory + "qMRMLTreeViewEventTranslatorPlayerTest2.xml",
-                        &checkFinalWidgetState2);
+  etpWidget.addTestCase(
+    &widget2, xmlDirectory + "qMRMLTreeViewEventTranslatorPlayerTest2.xml", &checkFinalWidgetState2);
   // ------------------------
   if (!app.arguments().contains("-I"))
   {
@@ -148,4 +145,3 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

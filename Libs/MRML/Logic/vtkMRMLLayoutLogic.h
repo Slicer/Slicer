@@ -73,8 +73,8 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLLayoutLogic : public vtkMRMLAbstractLogic
 {
 public:
   /// The Usual vtk class functions
-  static vtkMRMLLayoutLogic *New();
-  vtkTypeMacro(vtkMRMLLayoutLogic,vtkMRMLAbstractLogic);
+  static vtkMRMLLayoutLogic* New();
+  vtkTypeMacro(vtkMRMLLayoutLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   typedef std::map<std::string, std::string> ViewAttributes;
@@ -83,19 +83,19 @@ public:
 
   /// Add all the layout descriptions of the known layouts
   /// TBD: could be done in vtkMRMLLayoutNode directly... not sure what's best.
-  virtual void   AddDefaultLayouts();
+  virtual void AddDefaultLayouts();
 
   /// Returns the best node that fits the description given in the XML
   /// attributes in the element. The attributes should be precise enough to
   /// match a unique node in the scene. Returns 0 if no node can be found.
-  vtkMRMLNode*   GetViewFromElement(vtkXMLDataElement* element);
+  vtkMRMLNode* GetViewFromElement(vtkXMLDataElement* element);
   /// This returns the best view node that matches the attributes
-  vtkMRMLNode*   GetViewFromAttributes(const ViewAttributes& attributes);
+  vtkMRMLNode* GetViewFromAttributes(const ViewAttributes& attributes);
 
   /// This returns the best view node that matches the attributes
   vtkCollection* GetViewsFromAttributes(const ViewAttributes& attributes);
 
-  vtkMRMLNode*   CreateViewFromAttributes(const ViewAttributes& attributes);
+  vtkMRMLNode* CreateViewFromAttributes(const ViewAttributes& attributes);
 
   void ApplyProperties(const ViewProperties& properties, vtkMRMLNode* view, const std::string& action);
   void ApplyProperty(const ViewProperty& property, vtkMRMLNode* view);
@@ -117,11 +117,11 @@ public:
   /// Create a layout description that maximizes a view.
   /// Note that the view node must be a singleton.
   /// \sa MaximizeView()
-  void CreateMaximizedViewLayoutDescription(int layout,
-                                            vtkMRMLAbstractViewNode* viewToMaximize);
+  void CreateMaximizedViewLayoutDescription(int layout, vtkMRMLAbstractViewNode* viewToMaximize);
 
   /// Returns layout description that shows the specified view maximized.
-  std::string GetMaximizedViewLayoutDescription(vtkMRMLAbstractViewNode* viewToMaximize, const char* currentLayoutDescription);
+  std::string GetMaximizedViewLayoutDescription(vtkMRMLAbstractViewNode* viewToMaximize,
+                                                const char* currentLayoutDescription);
 
 protected:
   /// Logic constructor
@@ -162,7 +162,7 @@ protected:
 
   /// As we pass the root element of the entire layout, it returns a list of
   /// all the nodes that are found in the layout.
-  vtkCollection*     GetViewsFromLayout(vtkXMLDataElement* root);
+  vtkCollection* GetViewsFromLayout(vtkXMLDataElement* root);
 
   /// Define the compare view layouts available based on settings
   /// in the layout node
@@ -171,19 +171,18 @@ protected:
   /// Utility functions to browse XML data elements
   vtkXMLDataElement* GetNextViewElement(vtkXMLDataElement* viewElement);
   vtkXMLDataElement* GetNextElement(vtkXMLDataElement* element);
-  ViewAttributes     GetViewElementAttributes(vtkXMLDataElement* viewElement)const;
-  ViewProperties     GetViewElementProperties(vtkXMLDataElement* viewElement)const;
-  ViewProperty       GetViewElementProperty(vtkXMLDataElement* viewProperty)const;
+  ViewAttributes GetViewElementAttributes(vtkXMLDataElement* viewElement) const;
+  ViewProperties GetViewElementProperties(vtkXMLDataElement* viewElement) const;
+  ViewProperty GetViewElementProperty(vtkXMLDataElement* viewProperty) const;
 
   vtkXMLDataElement* GetViewportElementForView(vtkXMLDataElement* layoutRootElement, vtkMRMLAbstractViewNode* viewNode);
 
   /// Pointer on the unique Layout node of the mrml node.
   vtkMRMLLayoutNode* LayoutNode;
-  int                LastValidViewArrangement;
+  int LastValidViewArrangement;
   /// Up-to-date list of the nodes that are mapped into the scene
-  vtkCollection*     ViewNodes;
+  vtkCollection* ViewNodes;
   vtkXMLDataElement* ConventionalLayoutRootElement;
 };
 
 #endif
-

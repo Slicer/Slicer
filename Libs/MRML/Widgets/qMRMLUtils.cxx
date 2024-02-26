@@ -44,7 +44,7 @@
 
 //-----------------------------------------------------------------------------
 qMRMLUtils::qMRMLUtils(QObject* _parent)
-  :QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -52,32 +52,34 @@ qMRMLUtils::qMRMLUtils(QObject* _parent)
 qMRMLUtils::~qMRMLUtils() = default;
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector)
+void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double>& vector)
 {
-  if (!matrix) { return; }
+  if (!matrix)
+  {
+    return;
+  }
 
   vector.clear();
 
-  for (int i=0; i < 4; i++)
+  for (int i = 0; i < 4; i++)
   {
-    for (int j=0; j < 4; j++)
+    for (int j = 0; j < 4; j++)
     {
-      vector.append(matrix->GetElement(i,j));
+      vector.append(matrix->GetElement(i, j));
     }
   }
 }
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global,
-    vtkTransform* transform)
+void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global, vtkTransform* transform)
 {
-  Self::getTransformInCoordinateSystem(vtkMRMLTransformNode::SafeDownCast( node ),
-    global, transform);
+  Self::getTransformInCoordinateSystem(vtkMRMLTransformNode::SafeDownCast(node), global, transform);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformNode,
-  bool global, vtkTransform* transform)
+                                                bool global,
+                                                vtkTransform* transform)
 {
   Q_ASSERT(transform);
   if (!transform)
@@ -93,7 +95,7 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformN
   }
 
   vtkNew<vtkMatrix4x4> matrix;
-  int matrixDefined=transformNode->GetMatrixTransformToParent(matrix.GetPointer());
+  int matrixDefined = transformNode->GetMatrixTransformToParent(matrix.GetPointer());
   Q_ASSERT(matrixDefined);
   if (!matrixDefined)
   {
@@ -102,7 +104,7 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformN
 
   transform->SetMatrix(matrix.GetPointer());
 
-  if ( global )
+  if (global)
   {
     transform->PostMultiply();
   }
@@ -121,7 +123,7 @@ int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
   int nnodes = scene->GetNumberOfNodesByClass(className);
   for (int n = 0; n < nnodes; n++)
   {
-    vtkMRMLViewNode * node = vtkMRMLViewNode::SafeDownCast(scene->GetNthNodeByClass(n, className));
+    vtkMRMLViewNode* node = vtkMRMLViewNode::SafeDownCast(scene->GetNthNodeByClass(n, className));
     if (node && node->GetVisibility())
     {
       numberOfVisibleNodes++;
@@ -131,7 +133,7 @@ int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
 }
 
 // ----------------------------------------------------------------
-QPixmap qMRMLUtils::createColorPixmap(QStyle * style, const QColor &color)
+QPixmap qMRMLUtils::createColorPixmap(QStyle* style, const QColor& color)
 {
   if (!style)
   {
@@ -167,7 +169,7 @@ bool qMRMLUtils::vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLUtils::colorToQColor(const double* color, QColor &qcolor)
+void qMRMLUtils::colorToQColor(const double* color, QColor& qcolor)
 {
   if (color)
   {
@@ -176,7 +178,7 @@ void qMRMLUtils::colorToQColor(const double* color, QColor &qcolor)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLUtils::qColorToColor(const QColor &qcolor, double* color)
+void qMRMLUtils::qColorToColor(const QColor& qcolor, double* color)
 {
   if (color)
   {
@@ -194,7 +196,7 @@ void qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vt
     return;
   }
   idList->Reset();
-  foreach(QUrl url, mimeData->urls())
+  foreach (QUrl url, mimeData->urls())
   {
     if (!url.isValid() || url.isEmpty())
     {

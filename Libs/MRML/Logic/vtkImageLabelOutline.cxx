@@ -34,19 +34,19 @@ vtkImageLabelOutline::vtkImageLabelOutline()
   this->SetNeighborTo8();
 }
 
-
 //----------------------------------------------------------------------------
 vtkImageLabelOutline::~vtkImageLabelOutline() = default;
 //----------------------------------------------------------------------------
 
-
 // Description:
 // This templated function executes the filter for any type of data.
 template <class T>
-static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
-                     vtkImageData *inData, T *vtkNotUsed(inPtr),
-                     vtkImageData *outData,
-                     int outExt[6], int id)
+static void vtkImageLabelOutlineExecute(vtkImageLabelOutline* self,
+                                        vtkImageData* inData,
+                                        T* vtkNotUsed(inPtr),
+                                        vtkImageData* outData,
+                                        int outExt[6],
+                                        int id)
 {
   int *kernelMiddle, *kernelSize;
   // For looping though output (and input) pixels.
@@ -66,7 +66,7 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
   // Other
   T backgroundLabelValue = (T)(self->GetBackground());
   T inLabelValue;
-  T *outPtr = (T*)outData->GetScalarPointerForExtent(outExt);
+  T* outPtr = (T*)outData->GetScalarPointerForExtent(outExt);
   unsigned long count = 0;
   unsigned long target;
 
@@ -74,36 +74,41 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
 
   inData->GetIncrements(inInc0, inInc1, inInc2);
   int inExt[6];
-  self->GetInputInformation()->Get(
-        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
-  inImageMin0 = inExt[0]; inImageMax0 = inExt[1];
-  inImageMin1 = inExt[2]; inImageMax1 = inExt[3];
-  inImageMin2 = inExt[4]; inImageMax2 = inExt[5];
+  self->GetInputInformation()->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
+  inImageMin0 = inExt[0];
+  inImageMax0 = inExt[1];
+  inImageMin1 = inExt[2];
+  inImageMax1 = inExt[3];
+  inImageMin2 = inExt[4];
+  inImageMax2 = inExt[5];
   outData->GetIncrements(outInc0, outInc1, outInc2);
-  outMin0 = outExt[0];   outMax0 = outExt[1];
-  outMin1 = outExt[2];   outMax1 = outExt[3];
-  outMin2 = outExt[4];   outMax2 = outExt[5];
+  outMin0 = outExt[0];
+  outMax0 = outExt[1];
+  outMin1 = outExt[2];
+  outMax1 = outExt[3];
+  outMin2 = outExt[4];
+  outMax2 = outExt[5];
 
   // Neighborhood around current voxel
   kernelSize = self->GetKernelSize();
   kernelMiddle = self->GetKernelMiddle();
-  hoodMin0 = kernelMiddle[0] - kernelSize[0]/2; // truncate on purpose
-  hoodMin1 = kernelMiddle[1] - kernelSize[1]/2; // to round down odd sizes
-  hoodMin2 = kernelMiddle[2] - kernelSize[2]/2;
+  hoodMin0 = kernelMiddle[0] - kernelSize[0] / 2; // truncate on purpose
+  hoodMin1 = kernelMiddle[1] - kernelSize[1] / 2; // to round down odd sizes
+  hoodMin2 = kernelMiddle[2] - kernelSize[2] / 2;
   hoodMax0 = hoodMin0 + kernelSize[0];
   hoodMax1 = hoodMin1 + kernelSize[1];
   hoodMax2 = hoodMin2 + kernelSize[2];
 
   int outline = self->GetOutline();
-  hoodMin0 = - outline;
-  hoodMin1 = - outline;
+  hoodMin0 = -outline;
+  hoodMin1 = -outline;
   hoodMin2 = 0;
   hoodMax0 = outline;
   hoodMax1 = outline;
   hoodMax2 = 0;
 
   // in and out should be marching through corresponding pixels.
-  target = (unsigned long)((outMax2-outMin2+1)*(outMax1-outMin1+1)/50.0);
+  target = (unsigned long)((outMax2 - outMin2 + 1) * (outMax1 - outMin1 + 1) / 50.0);
   target++;
 
   // loop through pixels of output
@@ -113,14 +118,13 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
   {
     outPtr1 = outPtr2;
     inPtr1 = inPtr2;
-    for (outIdx1 = outMin1;
-      !self->AbortExecute && outIdx1 <= outMax1; outIdx1++)
+    for (outIdx1 = outMin1; !self->AbortExecute && outIdx1 <= outMax1; outIdx1++)
     {
       if (!id)
       {
-        if (!(count%target))
+        if (!(count % target))
         {
-          self->UpdateProgress(count/(50.0*target));
+          self->UpdateProgress(count / (50.0 * target));
         }
         count++;
       }
@@ -141,9 +145,7 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
           // Loop through neighborhood pixels
           // Note: hood pointer marches out of bounds.
           // start at lower left pixel
-          hoodPtr2 = inPtr0 + hoodMin0 * inInc0
-                            + hoodMin1 * inInc1
-                            + hoodMin2 * inInc2;
+          hoodPtr2 = inPtr0 + hoodMin0 * inInc0 + hoodMin1 * inInc1 + hoodMin2 * inInc2;
 
           for (hoodIdx2 = hoodMin2; hoodIdx2 <= hoodMax2; ++hoodIdx2)
           {
@@ -154,12 +156,9 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
               for (hoodIdx0 = hoodMin0; hoodIdx0 <= hoodMax0; ++hoodIdx0)
               {
                 // handle boundaries
-                if (outIdx0 + hoodIdx0 >= inImageMin0 &&
-                    outIdx0 + hoodIdx0 <= inImageMax0 &&
-                    outIdx1 + hoodIdx1 >= inImageMin1 &&
-                    outIdx1 + hoodIdx1 <= inImageMax1 &&
-                    outIdx2 + hoodIdx2 >= inImageMin2 &&
-                    outIdx2 + hoodIdx2 <= inImageMax2)
+                if (outIdx0 + hoodIdx0 >= inImageMin0 && outIdx0 + hoodIdx0 <= inImageMax0
+                    && outIdx1 + hoodIdx1 >= inImageMin1 && outIdx1 + hoodIdx1 <= inImageMax1
+                    && outIdx2 + hoodIdx2 >= inImageMin2 && outIdx2 + hoodIdx2 <= inImageMax2)
                 {
                   // If the neighbor value is not the same label value
                   // that means this is an outline pixel
@@ -177,21 +176,21 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
                   *outPtr0 = inLabelValue;
                 }
                 hoodPtr0 += inInc0;
-              }//for0
+              } // for0
               hoodPtr1 += inInc1;
-            }//for1
+            } // for1
             hoodPtr2 += inInc2;
-          }//for2
-        }//if
+          } // for2
+        }   // if
         inPtr0 += inInc0;
         outPtr0 += outInc0;
-      }//for0
+      } // for0
       inPtr1 += inInc1;
       outPtr1 += outInc1;
-    }//for1
+    } // for1
     inPtr2 += inInc2;
     outPtr2 += outInc2;
-  }//for2
+  } // for2
 }
 
 //----------------------------------------------------------------------------
@@ -200,92 +199,80 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
 // the data data types.
-void vtkImageLabelOutline::ThreadedExecute(vtkImageData *inData,
-  vtkImageData *outData,
-  int outExt[6], int id)
-{    int x1;
+void vtkImageLabelOutline::ThreadedExecute(vtkImageData* inData, vtkImageData* outData, int outExt[6], int id)
+{
+  int x1;
 
   // Single component input is required
-  vtkImageData *input = this->GetImageDataInput(0);
+  vtkImageData* input = this->GetImageDataInput(0);
   x1 = input->GetNumberOfScalarComponents();
-  if (x1 != 1) {
-    vtkErrorMacro(<<"Input has "<<x1<<" instead of 1 scalar component.");
+  if (x1 != 1)
+  {
+    vtkErrorMacro(<< "Input has " << x1 << " instead of 1 scalar component.");
     return;
   }
 
-
-  void *inPtr = inData->GetScalarPointerForExtent(outExt);
+  void* inPtr = inData->GetScalarPointerForExtent(outExt);
 
   switch (inData->GetScalarType())
   {
-  case VTK_DOUBLE:
-    vtkImageLabelOutlineExecute(this, inData, (double *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_FLOAT:
-    vtkImageLabelOutlineExecute(this, inData, (float *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_LONG:
-    vtkImageLabelOutlineExecute(this, inData, (long *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_UNSIGNED_LONG:
-    vtkImageLabelOutlineExecute(this, inData, (unsigned long *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_INT:
-    vtkImageLabelOutlineExecute(this, inData, (int *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_UNSIGNED_INT:
-    vtkImageLabelOutlineExecute(this, inData, (unsigned int *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_SHORT:
-    vtkImageLabelOutlineExecute(this, inData, (short *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_UNSIGNED_SHORT:
-    vtkImageLabelOutlineExecute(this, inData, (unsigned short *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_CHAR:
-    vtkImageLabelOutlineExecute(this, inData, (char *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_SIGNED_CHAR:
-    vtkImageLabelOutlineExecute(this, inData, (signed char *)(inPtr),
-      outData, outExt, id);
-    break;
-  case VTK_UNSIGNED_CHAR:
-    vtkImageLabelOutlineExecute(this, inData, (unsigned char *)(inPtr),
-      outData, outExt, id);
-    break;
-  default:
-    vtkErrorMacro(<< "Execute: Unknown input ScalarType");
-    return;
+    case VTK_DOUBLE:
+      vtkImageLabelOutlineExecute(this, inData, (double*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_FLOAT:
+      vtkImageLabelOutlineExecute(this, inData, (float*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_LONG:
+      vtkImageLabelOutlineExecute(this, inData, (long*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_UNSIGNED_LONG:
+      vtkImageLabelOutlineExecute(this, inData, (unsigned long*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_INT:
+      vtkImageLabelOutlineExecute(this, inData, (int*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_UNSIGNED_INT:
+      vtkImageLabelOutlineExecute(this, inData, (unsigned int*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_SHORT:
+      vtkImageLabelOutlineExecute(this, inData, (short*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_UNSIGNED_SHORT:
+      vtkImageLabelOutlineExecute(this, inData, (unsigned short*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_CHAR:
+      vtkImageLabelOutlineExecute(this, inData, (char*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_SIGNED_CHAR:
+      vtkImageLabelOutlineExecute(this, inData, (signed char*)(inPtr), outData, outExt, id);
+      break;
+    case VTK_UNSIGNED_CHAR:
+      vtkImageLabelOutlineExecute(this, inData, (unsigned char*)(inPtr), outData, outExt, id);
+      break;
+    default:
+      vtkErrorMacro(<< "Execute: Unknown input ScalarType");
+      return;
   }
 }
 
 //----------------------------------------------------------------------------
 void vtkImageLabelOutline::PrintSelf(ostream& os, vtkIndent indent)
 {
-    Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
-    os << indent << "Outline: " << this->Outline << "\n";
-    os << indent << "Background: " << this->Background<< "\n";
+  os << indent << "Outline: " << this->Outline << "\n";
+  os << indent << "Background: " << this->Background << "\n";
 
-    if (this->GetInput() != nullptr)
-    {
-      os << indent << "Input0:\n";
-      this->GetInput()->PrintSelf(os,indent.GetNextIndent());
-    }
-    if (this->GetOutput() != nullptr)
-    {
-      os << indent << "Output0:\n";
-      this->GetOutput()->PrintSelf(os,indent.GetNextIndent());
-    }
+  if (this->GetInput() != nullptr)
+  {
+    os << indent << "Input0:\n";
+    this->GetInput()->PrintSelf(os, indent.GetNextIndent());
+  }
+  if (this->GetOutput() != nullptr)
+  {
+    os << indent << "Output0:\n";
+    this->GetOutput()->PrintSelf(os, indent.GetNextIndent());
+  }
 }
 
 //----------------------------------------------------------------------------

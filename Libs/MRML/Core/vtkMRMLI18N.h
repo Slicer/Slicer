@@ -48,7 +48,10 @@ public:
   static vtkMRMLI18N* New();
 
   /// Translate message with the current translator
-  static std::string Translate(const char *context, const char *sourceText, const char *disambiguation = nullptr, int n = -1);
+  static std::string Translate(const char* context,
+                               const char* sourceText,
+                               const char* disambiguation = nullptr,
+                               int n = -1);
 
   /// Set translator object. This class takes ownership of the translator
   /// and it releases it when the process quits.
@@ -56,7 +59,7 @@ public:
 
   /// Get translator object that can translate text that is displayed to the user
   /// to the currently chosen language.
-  vtkGetObjectMacro (Translator, vtkMRMLTranslator);
+  vtkGetObjectMacro(Translator, vtkMRMLTranslator);
 
 protected:
   vtkMRMLI18N();
@@ -83,6 +86,7 @@ public:
 
   vtkMRMLI18NInitialize();
   ~vtkMRMLI18NInitialize();
+
 private:
   static unsigned int Count;
 };

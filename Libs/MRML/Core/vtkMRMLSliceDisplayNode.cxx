@@ -31,9 +31,7 @@ vtkMRMLSliceDisplayNode::vtkMRMLSliceDisplayNode()
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSliceDisplayNode::~vtkMRMLSliceDisplayNode()
-{
-}
+vtkMRMLSliceDisplayNode::~vtkMRMLSliceDisplayNode() {}
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
@@ -48,21 +46,23 @@ void vtkMRMLSliceDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(IntersectingSlicesIntersectionMode);
   vtkMRMLPrintIntMacro(IntersectingSlicesLineThicknessMode);
   {
-  os << indent << "ActiveComponents:";
-  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
-  {
-    os << indent << indent;
-    if (it->first.empty())
+    os << indent << "ActiveComponents:";
+    for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin();
+         it != this->ActiveComponents.end();
+         ++it)
     {
-      os << "(default)";
+      os << indent << indent;
+      if (it->first.empty())
+      {
+        os << "(default)";
+      }
+      else
+      {
+        os << it->first;
+      }
+      os << ": " << it->second.Type << ", " << it->second.Index;
     }
-    else
-    {
-      os << it->first;
-    }
-    os << ": " << it->second.Type << ", " << it->second.Index;
-  }
-  os << "\n";
+    os << "\n";
   }
   vtkMRMLPrintEndMacro();
 }
@@ -77,7 +77,8 @@ void vtkMRMLSliceDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(intersectingSlicesInteractive, IntersectingSlicesInteractive);
   vtkMRMLWriteXMLBooleanMacro(intersectingSlicesTranslationEnabled, IntersectingSlicesTranslationEnabled);
   vtkMRMLWriteXMLBooleanMacro(intersectingSlicesRotationEnabled, IntersectingSlicesRotationEnabled);
-  vtkMRMLWriteXMLIntMacro(intersectingSlicesInteractiveHandlesVisibilityMode, IntersectingSlicesInteractiveHandlesVisibilityMode);
+  vtkMRMLWriteXMLIntMacro(intersectingSlicesInteractiveHandlesVisibilityMode,
+                          IntersectingSlicesInteractiveHandlesVisibilityMode);
   vtkMRMLWriteXMLIntMacro(intersectingSlicesIntersectionMode, IntersectingSlicesIntersectionMode);
   vtkMRMLWriteXMLIntMacro(intersectingSlicesIntersectionMode, IntersectingSlicesLineThicknessMode);
   vtkMRMLWriteXMLEndMacro();
@@ -93,7 +94,8 @@ void vtkMRMLSliceDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(intersectingSlicesInteractive, IntersectingSlicesInteractive);
   vtkMRMLReadXMLBooleanMacro(intersectingSlicesTranslationEnabled, IntersectingSlicesTranslationEnabled);
   vtkMRMLReadXMLBooleanMacro(intersectingSlicesRotationEnabled, IntersectingSlicesRotationEnabled);
-  vtkMRMLReadXMLIntMacro(intersectingSlicesInteractiveHandlesVisibilityMode, IntersectingSlicesInteractiveHandlesVisibilityMode);
+  vtkMRMLReadXMLIntMacro(intersectingSlicesInteractiveHandlesVisibilityMode,
+                         IntersectingSlicesInteractiveHandlesVisibilityMode);
   vtkMRMLReadXMLIntMacro(intersectingSlicesIntersectionMode, IntersectingSlicesIntersectionMode);
   vtkMRMLReadXMLIntMacro(intersectingSlicesLineThicknessMode, IntersectingSlicesLineThicknessMode);
   vtkMRMLReadXMLEndMacro();
@@ -102,7 +104,7 @@ void vtkMRMLSliceDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLSliceDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -124,8 +126,8 @@ void vtkMRMLSliceDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSliceDisplayNode::SetIntersectingSlicesInteractiveModeEnabled(
-  IntersectingSlicesInteractiveMode mode, bool enabled)
+void vtkMRMLSliceDisplayNode::SetIntersectingSlicesInteractiveModeEnabled(IntersectingSlicesInteractiveMode mode,
+                                                                          bool enabled)
 {
   switch (mode)
   {
@@ -142,8 +144,7 @@ void vtkMRMLSliceDisplayNode::SetIntersectingSlicesInteractiveModeEnabled(
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveModeEnabled(
-  IntersectingSlicesInteractiveMode mode)
+bool vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveModeEnabled(IntersectingSlicesInteractiveMode mode)
 {
   switch (mode)
   {
@@ -182,10 +183,13 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisi
 {
   switch (id)
   {
-    case NeverVisible: return "NeverVisible";
-    case NearbyVisible: return "NearbyVisible";
-    case AlwaysVisible: return "AlwaysVisible";
-    //case FadingVisible: return "FadingVisible";
+    case NeverVisible:
+      return "NeverVisible";
+    case NearbyVisible:
+      return "NearbyVisible";
+    case AlwaysVisible:
+      return "AlwaysVisible";
+    // case FadingVisible: return "FadingVisible";
     default:
       // invalid id
       return "Invalid";
@@ -217,8 +221,10 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesIntersectionModeAsStri
 {
   switch (id)
   {
-    case SkipLineCrossings: return "SkipLineCrossings";
-    case FullLines: return "FullLines";
+    case SkipLineCrossings:
+      return "SkipLineCrossings";
+    case FullLines:
+      return "FullLines";
     default:
       // invalid id
       return "Invalid";
@@ -250,9 +256,12 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsStr
 {
   switch (id)
   {
-    case FineLines: return "FineLines";
-    case MediumLines: return "MediumLines";
-    case ThickLines: return "ThickLines";
+    case FineLines:
+      return "FineLines";
+    case MediumLines:
+      return "MediumLines";
+    case ThickLines:
+      return "ThickLines";
     default:
       // invalid id
       return "Invalid";
@@ -260,7 +269,7 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsStr
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context/*=GetDefaultContextName()*/)
+int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context /*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
   {
@@ -272,7 +281,7 @@ int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context/*=GetDef
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLSliceDisplayNode::GetActiveComponentIndex(std::string context/*=GetDefaultContextName()*/)
+int vtkMRMLSliceDisplayNode::GetActiveComponentIndex(std::string context /*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
   {
@@ -284,11 +293,13 @@ int vtkMRMLSliceDisplayNode::GetActiveComponentIndex(std::string context/*=GetDe
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSliceDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context/*=GetDefaultContextName()*/)
+void vtkMRMLSliceDisplayNode::SetActiveComponent(int componentType,
+                                                 int componentIndex,
+                                                 std::string context /*=GetDefaultContextName()*/)
 {
-  if ( this->ActiveComponents.find(context) != this->ActiveComponents.end()
-    && this->ActiveComponents[context].Type == componentType
-    && this->ActiveComponents[context].Index == componentIndex )
+  if (this->ActiveComponents.find(context) != this->ActiveComponents.end()
+      && this->ActiveComponents[context].Type == componentType
+      && this->ActiveComponents[context].Index == componentIndex)
   {
     // no change
     return;
@@ -301,7 +312,9 @@ void vtkMRMLSliceDisplayNode::SetActiveComponent(int componentType, int componen
 //---------------------------------------------------------------------------
 bool vtkMRMLSliceDisplayNode::HasActiveComponent()
 {
-  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
+  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin();
+       it != this->ActiveComponents.end();
+       ++it)
   {
     if (it->second.Type != ComponentNone)
     {
@@ -315,7 +328,9 @@ bool vtkMRMLSliceDisplayNode::HasActiveComponent()
 std::vector<std::string> vtkMRMLSliceDisplayNode::GetActiveComponentInteractionContexts()
 {
   std::vector<std::string> interactionContextVector;
-  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
+  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin();
+       it != this->ActiveComponents.end();
+       ++it)
   {
     if (it->second.Type != ComponentNone)
     {

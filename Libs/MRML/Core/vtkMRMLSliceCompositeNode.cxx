@@ -47,9 +47,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSliceCompositeNode::~vtkMRMLSliceCompositeNode()
-{
-}
+vtkMRMLSliceCompositeNode::~vtkMRMLSliceCompositeNode() {}
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
@@ -94,7 +92,7 @@ void vtkMRMLSliceCompositeNode::SetInteractionFlagsModifier(unsigned int flags)
 void vtkMRMLSliceCompositeNode::ResetInteractionFlagsModifier()
 {
   // Don't call Modified()
-  this->InteractionFlagsModifier = (unsigned int) -1;
+  this->InteractionFlagsModifier = (unsigned int)-1;
 }
 
 //----------------------------------------------------------------------------
@@ -120,12 +118,12 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
+  vtkMRMLSliceCompositeNode* node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
 
   vtkMRMLCopyBeginMacro(node);
   vtkMRMLCopyIntMacro(Compositing);
@@ -137,7 +135,7 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyIntMacro(FiducialLabelVisibility);
   // To avoid breaking current implementation, copy of the "LayoutName" attribute
   // will be enabled after revisiting the view initialization pipeline.
-  //vtkMRMLCopyStringMacro(LayoutName);
+  // vtkMRMLCopyStringMacro(LayoutName);
   vtkMRMLCopyIntMacro(DoPropagateVolumeSelection);
   vtkMRMLCopyEndMacro();
 }
@@ -145,7 +143,7 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintStringMacro(BackgroundVolumeID);
@@ -162,8 +160,7 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(DoPropagateVolumeSelection);
   vtkMRMLPrintEndMacro();
 
-  os << indent << "Interacting: " <<
-    (this->Interacting ? "on" : "off") << "\n";
+  os << indent << "Interacting: " << (this->Interacting ? "on" : "off") << "\n";
 }
 
 //-----------------------------------------------------------
@@ -206,7 +203,7 @@ const char* vtkMRMLSliceCompositeNode::GetLabelVolumeID()
 int vtkMRMLSliceCompositeNode::GetSliceIntersectionVisibility()
 {
   vtkWarningMacro("GetSliceIntersectionVisibility method is deprecated. Use GetIntersectingSlicesVisibility method"
-    " of vtkMRMLSliceDisplayNode object instead.");
+                  " of vtkMRMLSliceDisplayNode object instead.");
   vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode();
   if (!sliceDisplayNode)
   {
@@ -220,7 +217,7 @@ int vtkMRMLSliceCompositeNode::GetSliceIntersectionVisibility()
 void vtkMRMLSliceCompositeNode::SetSliceIntersectionVisibility(int visibility)
 {
   vtkWarningMacro("SetSliceIntersectionVisibility method is deprecated. Use SetIntersectingSlicesVisibility method"
-    " of vtkMRMLSliceDisplayNode object instead.");
+                  " of vtkMRMLSliceDisplayNode object instead.");
   vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode();
   if (!sliceDisplayNode)
   {
@@ -280,10 +277,10 @@ vtkMRMLSliceDisplayNode* vtkMRMLSliceCompositeNode::GetSliceDisplayNode()
   // It is an expensive operation to determine the displayable node
   // (need to iterate through the scene), so the last found value
   // is cached. If it is still valid then we use it.
-  if (this->LastFoundSliceDisplayNode != nullptr
-    && this->LastFoundSliceDisplayNode->GetScene() == this->Scene)
+  if (this->LastFoundSliceDisplayNode != nullptr && this->LastFoundSliceDisplayNode->GetScene() == this->Scene)
   {
-    vtkMRMLModelNode* sliceModelNode = vtkMRMLModelNode::SafeDownCast(this->LastFoundSliceDisplayNode->GetDisplayableNode());
+    vtkMRMLModelNode* sliceModelNode =
+      vtkMRMLModelNode::SafeDownCast(this->LastFoundSliceDisplayNode->GetDisplayableNode());
     if (this->GetCompositeNodeIDFromSliceModelNode(sliceModelNode) == this->GetID())
     {
       return this->LastFoundSliceDisplayNode;
@@ -293,8 +290,7 @@ vtkMRMLSliceDisplayNode* vtkMRMLSliceCompositeNode::GetSliceDisplayNode()
   vtkMRMLNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   vtkCollection* sceneNodes = this->Scene->GetNodes();
-  for (sceneNodes->InitTraversal(it);
-       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
+  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
   {
     vtkMRMLModelNode* sliceModelNode = vtkMRMLModelNode::SafeDownCast(node);
     if (this->GetCompositeNodeIDFromSliceModelNode(sliceModelNode) == this->GetID())

@@ -52,7 +52,8 @@ protected:
   void operator=(const vtkMRMLMarkupsPlaneJsonStorageNode&);
 
   bool WriteBasicProperties(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode) override;
-  bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupObject) override;
+  bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode,
+                                      vtkMRMLMarkupsJsonElement* markupObject) override;
 };
 
 #endif

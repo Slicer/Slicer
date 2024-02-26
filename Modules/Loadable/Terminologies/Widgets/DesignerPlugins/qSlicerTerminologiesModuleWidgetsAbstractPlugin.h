@@ -16,7 +16,7 @@
   and was supported through the Applied Cancer Research Unit program of Cancer Care
   Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
 
-==============================================================================*/\
+==============================================================================*/
 
 #ifndef __qSlicerTerminologiesModuleWidgetsAbstractPlugin_h
 #define __qSlicerTerminologiesModuleWidgetsAbstractPlugin_h
@@ -27,12 +27,12 @@
 #include "qSlicerTerminologiesModuleWidgetsPluginsExport.h"
 
 class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_PLUGINS_EXPORT qSlicerTerminologiesModuleWidgetsAbstractPlugin
-    : public QDesignerCustomWidgetInterface
+  : public QDesignerCustomWidgetInterface
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerTerminologiesModuleWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;

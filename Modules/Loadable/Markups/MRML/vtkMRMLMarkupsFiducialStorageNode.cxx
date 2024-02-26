@@ -36,7 +36,7 @@
 
 // CSV table field indexes
 static const int FIELD_ID = 0;
-static const int FIELD_XYZ = 1; // 3 values
+static const int FIELD_XYZ = 1;  // 3 values
 static const int FIELD_WXYZ = 4; // 4 values
 static const int FIELD_VISIBILITY = 8;
 static const int FIELD_SELECTED = 9;
@@ -52,10 +52,10 @@ static const int FIELD_AUTOCREATED = 15;
 class CsvCodec
 {
 public:
-  CsvCodec()  = default;
-  ~CsvCodec()  = default;
+  CsvCodec() = default;
+  ~CsvCodec() = default;
 
-  void ReadFromString(const std::string &row)
+  void ReadFromString(const std::string& row)
   {
     CSVState state = UnquotedField;
     this->Fields.clear();
@@ -64,61 +64,61 @@ public:
     {
       switch (state)
       {
-      case UnquotedField:
-        if (*c == this->Separator)
-        {
-          // end of field
-          this->Fields.push_back(currentField);
-          currentField.clear();
-        }
-        else if (*c == '"' && currentField.empty())
-        {
-          // If quote occurs within the field then the quote does
-          // not indicate a quoted field, it simply means a quote character.
-          // Therefore, only switch to quoted-field mode if quote
-          // is the first character in the field.
-          state = QuotedField;
-        }
-        else
-        {
-          currentField.push_back(*c);
-        }
-        break;
-      case QuotedField:
-        if (*c == '"')
-        {
-          state = QuotedQuote;
-        }
-        else
-        {
-          currentField.push_back(*c);
-        }
-        break;
-      case QuotedQuote:
-        if (*c == this->Separator)
-        {
-          // , after closing quote
-          this->Fields.push_back(currentField);
-          currentField.clear();
-          state = UnquotedField;
-        }
-        else if (*c == '"')
-        {
-          // double-quote ("") in a quoted field means a single quote (")
-          currentField.push_back('"');
-          state = QuotedField;
-        }
-        else
-        {
-          // This is an invalid character sequence, such as the last quote
-          // and the following space in this example:
-          //   ...,"This ""is"" a, quoted" field,...
-          // We save the character and revert back to unquoted mode to not lose any data:
-          //   [This "is" a, quoted field]
-          currentField.push_back(*c);
-          state = UnquotedField;
-        }
-        break;
+        case UnquotedField:
+          if (*c == this->Separator)
+          {
+            // end of field
+            this->Fields.push_back(currentField);
+            currentField.clear();
+          }
+          else if (*c == '"' && currentField.empty())
+          {
+            // If quote occurs within the field then the quote does
+            // not indicate a quoted field, it simply means a quote character.
+            // Therefore, only switch to quoted-field mode if quote
+            // is the first character in the field.
+            state = QuotedField;
+          }
+          else
+          {
+            currentField.push_back(*c);
+          }
+          break;
+        case QuotedField:
+          if (*c == '"')
+          {
+            state = QuotedQuote;
+          }
+          else
+          {
+            currentField.push_back(*c);
+          }
+          break;
+        case QuotedQuote:
+          if (*c == this->Separator)
+          {
+            // , after closing quote
+            this->Fields.push_back(currentField);
+            currentField.clear();
+            state = UnquotedField;
+          }
+          else if (*c == '"')
+          {
+            // double-quote ("") in a quoted field means a single quote (")
+            currentField.push_back('"');
+            state = QuotedField;
+          }
+          else
+          {
+            // This is an invalid character sequence, such as the last quote
+            // and the following space in this example:
+            //   ...,"This ""is"" a, quoted" field,...
+            // We save the character and revert back to unquoted mode to not lose any data:
+            //   [This "is" a, quoted field]
+            currentField.push_back(*c);
+            state = UnquotedField;
+          }
+          break;
       }
     }
     this->Fields.push_back(currentField);
@@ -127,10 +127,7 @@ public:
   char GetSeparator() { return this->Separator; }
   void SetSeparator(char separator) { this->Separator = separator; }
 
-  inline int GetNumberOfFields() const
-  {
-    return static_cast<int>(this->Fields.size());
-  }
+  inline int GetNumberOfFields() const { return static_cast<int>(this->Fields.size()); }
 
   std::string GetField(int fieldIndex)
   {
@@ -141,8 +138,7 @@ public:
     return this->Fields[fieldIndex];
   }
 
-
-  bool GetStringField(int fieldIndex, std::string &fieldValue)
+  bool GetStringField(int fieldIndex, std::string& fieldValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
     {
@@ -152,7 +148,7 @@ public:
     return true;
   }
 
-  bool GetDoubleField(int fieldIndex, double &fieldValue)
+  bool GetDoubleField(int fieldIndex, double& fieldValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
     {
@@ -163,7 +159,7 @@ public:
     return v.IsValid();
   }
 
-  bool GetDoubleField(int fieldIndex, double &fieldValue, double defaultValue)
+  bool GetDoubleField(int fieldIndex, double& fieldValue, double defaultValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields() || this->Fields[fieldIndex].empty())
     {
@@ -180,7 +176,7 @@ public:
     return true;
   }
 
-  bool GetIntField(int fieldIndex, int &fieldValue)
+  bool GetIntField(int fieldIndex, int& fieldValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
     {
@@ -191,7 +187,7 @@ public:
     return v.IsValid();
   }
 
-  bool GetIntField(int fieldIndex, int &fieldValue, int defaultValue)
+  bool GetIntField(int fieldIndex, int& fieldValue, int defaultValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields() || this->Fields[fieldIndex].empty())
     {
@@ -216,32 +212,31 @@ protected:
     QuotedQuote
   };
 
-  char Separator{','};
+  char Separator{ ',' };
   std::vector<std::string> Fields;
 };
 
-
 namespace
 {
-  const std::string WHITESPACE = " \n\r\t\f\v";
+const std::string WHITESPACE = " \n\r\t\f\v";
 
-  std::string ltrim(const std::string& s)
-  {
-    size_t start = s.find_first_not_of(WHITESPACE);
-    return (start == std::string::npos) ? "" : s.substr(start);
-  }
-
-  std::string rtrim(const std::string& s)
-  {
-    size_t end = s.find_last_not_of(WHITESPACE);
-    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
-  }
-
-  std::string trim(const std::string& s)
-  {
-    return rtrim(ltrim(s));
-  }
+std::string ltrim(const std::string& s)
+{
+  size_t start = s.find_first_not_of(WHITESPACE);
+  return (start == std::string::npos) ? "" : s.substr(start);
 }
+
+std::string rtrim(const std::string& s)
+{
+  size_t end = s.find_last_not_of(WHITESPACE);
+  return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+
+std::string trim(const std::string& s)
+{
+  return rtrim(ltrim(s));
+}
+} // namespace
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialStorageNode);
@@ -259,7 +254,7 @@ vtkMRMLMarkupsFiducialStorageNode::~vtkMRMLMarkupsFiducialStorageNode() = defaul
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  Superclass::WriteXML(of, nIndent);
 }
 
 //----------------------------------------------------------------------------
@@ -271,23 +266,25 @@ void vtkMRMLMarkupsFiducialStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMarkupsFiducialStorageNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsFiducialStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLMarkupsFiducialStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLMarkupsNode");
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *markupsNode, int pointIndex, const char* line)
+bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode* markupsNode,
+                                                           int pointIndex,
+                                                           const char* line)
 {
   if (!markupsNode)
   {
@@ -295,20 +292,22 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
     return false;
   }
 
-  if (pointIndex<0)
+  if (pointIndex < 0)
   {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: invalid pointIndex");
     return false;
   }
 
-  if (markupsNode->GetMaximumNumberOfControlPoints() >= 0 && pointIndex >= markupsNode->GetMaximumNumberOfControlPoints())
+  if (markupsNode->GetMaximumNumberOfControlPoints() >= 0
+      && pointIndex >= markupsNode->GetMaximumNumberOfControlPoints())
   {
-    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: index beyond control point maximum");
+    vtkGenericWarningMacro(
+      "vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: index beyond control point maximum");
     return false;
   }
 
   if (this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemRAS
-    && this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemLPS)
+      && this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemLPS)
   {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: invalid coordinate system");
     return false;
@@ -335,7 +334,7 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
     if (!parser.GetDoubleField(FIELD_XYZ + i, xyz[i]))
     {
       vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
-        << " numeric values expected for xyz, got instead: "<<parser.GetField(FIELD_XYZ + i));
+                             << " numeric values expected for xyz, got instead: " << parser.GetField(FIELD_XYZ + i));
       return false;
     }
   }
@@ -347,7 +346,8 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
     if (!parser.GetDoubleField(FIELD_WXYZ + i, wxyz[i], wxyz[i]))
     {
       vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
-        " numeric values expected for wxyz, got instead: " << parser.GetField(FIELD_WXYZ + i));
+                             " numeric values expected for wxyz, got instead: "
+                             << parser.GetField(FIELD_WXYZ + i));
       return false;
     }
   }
@@ -357,35 +357,40 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
   if (!parser.GetIntField(FIELD_VISIBILITY, visibility, visibility))
   {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
-      " numeric values expected for visibility field, got instead: " << parser.GetField(FIELD_VISIBILITY));
+                           " numeric values expected for visibility field, got instead: "
+                           << parser.GetField(FIELD_VISIBILITY));
     return false;
   }
   int selected = 1;
   if (!parser.GetIntField(FIELD_SELECTED, selected, selected))
   {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
-      " numeric values expected for selected field, got instead: " << parser.GetField(FIELD_SELECTED));
+                           " numeric values expected for selected field, got instead: "
+                           << parser.GetField(FIELD_SELECTED));
     return false;
   }
   int locked = 0;
   if (!parser.GetIntField(FIELD_LOCKED, locked, locked))
   {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
-      " numeric values expected for locked field, got instead: " << parser.GetField(FIELD_LOCKED));
+                           " numeric values expected for locked field, got instead: "
+                           << parser.GetField(FIELD_LOCKED));
     return false;
   }
   int positionStatus = 2;
   if (!parser.GetIntField(FIELD_POSITION_STATUS, positionStatus, positionStatus))
   {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
-      " numeric values expected for position status field, got instead: " << parser.GetField(FIELD_POSITION_STATUS));
+                           " numeric values expected for position status field, got instead: "
+                           << parser.GetField(FIELD_POSITION_STATUS));
     return false;
   }
   int autoCreated = 0;
   if (!parser.GetIntField(FIELD_AUTOCREATED, autoCreated, autoCreated))
   {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed:"
-      " numeric values expected for autocreated field, got instead: " << parser.GetField(FIELD_AUTOCREATED));
+                           " numeric values expected for autocreated field, got instead: "
+                           << parser.GetField(FIELD_AUTOCREATED));
     return false;
   }
 
@@ -404,7 +409,8 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
 
   if (markupsNode->GetNthControlPoint(pointIndex) == nullptr)
   {
-    vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: could not get/add control point");
+    vtkGenericWarningMacro(
+      "vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: could not get/add control point");
     return false;
   }
 
@@ -441,7 +447,7 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNode *markupsNode, int pointIndex)
+std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNode* markupsNode, int pointIndex)
 {
   if (!markupsNode)
   {
@@ -505,7 +511,7 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNo
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   if (!refNode)
   {
@@ -522,7 +528,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   }
 
   // cast the input node
-  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(refNode);
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(refNode);
   if (!markupsNode)
   {
     return 0;
@@ -555,7 +561,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     char* line = &(lineBuff[0]);
 
     // save the valid lines in a vector, parse them once know the max id
-    std::vector<std::string>lines;
+    std::vector<std::string> lines;
     int thisMarkupNumber = 0;
 
     // check for the version
@@ -624,7 +630,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
                 vtkDebugMacro("Got point string = " << component.c_str());
                 // use the file name for the point label
                 label = this->GetFileNameWithoutExtension(this->GetFileName());
-                markupsNode->SetNthControlPointLabel(thisMarkupNumber,label);
+                markupsNode->SetNthControlPointLabel(thisMarkupNumber, label);
               }
 
               // x,y,z
@@ -634,18 +640,18 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               y = atof(component.c_str());
               getline(ss, component, '|');
               z = atof(component.c_str());
-              markupsNode->SetNthControlPointPosition(thisMarkupNumber,x,y,z);
+              markupsNode->SetNthControlPointPosition(thisMarkupNumber, x, y, z);
 
               // selected
               getline(ss, component, '|');
               sel = atoi(component.c_str());
-              markupsNode->SetNthControlPointSelected(thisMarkupNumber,sel);
+              markupsNode->SetNthControlPointSelected(thisMarkupNumber, sel);
 
               // visibility
               getline(ss, component, '|');
               vtkDebugMacro("component = " << component.c_str());
               vis = atoi(component.c_str());
-              markupsNode->SetNthControlPointVisibility(thisMarkupNumber,vis);
+              markupsNode->SetNthControlPointVisibility(thisMarkupNumber, vis);
             }
             else
             {
@@ -668,7 +674,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               {
                 vtkDebugMacro("Got label = " << component.c_str());
                 label = component;
-                markupsNode->SetNthControlPointLabel(thisMarkupNumber,label);
+                markupsNode->SetNthControlPointLabel(thisMarkupNumber, label);
               }
 
               // x,y,z
@@ -678,18 +684,18 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               y = atof(component.c_str());
               getline(ss, component, separator);
               z = atof(component.c_str());
-              markupsNode->SetNthControlPointPosition(thisMarkupNumber,x,y,z);
+              markupsNode->SetNthControlPointPosition(thisMarkupNumber, x, y, z);
 
               // selected
               getline(ss, component, separator);
               sel = atoi(component.c_str());
-              markupsNode->SetNthControlPointSelected(thisMarkupNumber,sel);
+              markupsNode->SetNthControlPointSelected(thisMarkupNumber, sel);
 
               // visibility
               getline(ss, component, separator);
               vtkDebugMacro("component = " << component.c_str());
               vis = atoi(component.c_str());
-              markupsNode->SetNthControlPointVisibility(thisMarkupNumber,vis);
+              markupsNode->SetNthControlPointVisibility(thisMarkupNumber, vis);
             }
             thisMarkupNumber++;
           }
@@ -715,7 +721,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -726,10 +732,10 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkDebugMacro("WriteDataInternal: have file name " << fullName.c_str());
 
   // cast the input node
-  vtkMRMLMarkupsNode *markupsNode = nullptr;
+  vtkMRMLMarkupsNode* markupsNode = nullptr;
   if (refNode->IsA("vtkMRMLMarkupsNode"))
   {
-    markupsNode = dynamic_cast <vtkMRMLMarkupsNode *> (refNode);
+    markupsNode = dynamic_cast<vtkMRMLMarkupsNode*>(refNode);
   }
 
   if (markupsNode == nullptr)
@@ -738,7 +744,8 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
+  this->GetUserMessages()->AddMessage(
+    vtkCommand::WarningEvent,
     "fcsv file format only stores control point coordinates and a limited set of display properties.");
 
   // open the file for writing
@@ -754,7 +761,8 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   // put down a header
   of << "# Markups fiducial file version = " << Slicer_VERSION << endl;
-  of << "# CoordinateSystem = " << vtkMRMLMarkupsStorageNode::GetCoordinateSystemAsString(this->GetCoordinateSystem()) << endl;
+  of << "# CoordinateSystem = " << vtkMRMLMarkupsStorageNode::GetCoordinateSystemAsString(this->GetCoordinateSystem())
+     << endl;
 
   // label the columns
   // id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
@@ -769,8 +777,8 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     separator = this->FieldDelimiterCharacters[0];
   }
   of << "# columns = id" << separator << "x" << separator << "y" << separator << "z" << separator << "ow" << separator
-    << "ox" << separator << "oy" << separator << "oz" << separator << "vis" << separator << "sel" << separator
-    << "lock" << separator << "label" << separator << "desc" << separator << "associatedNodeID" << endl;
+     << "ox" << separator << "oy" << separator << "oz" << separator << "vis" << separator << "sel" << separator
+     << "lock" << separator << "label" << separator << "desc" << separator << "associatedNodeID" << endl;
   for (int i = 0; i < markupsNode->GetNumberOfControlPoints(); i++)
   {
     of << this->GetPointAsString(markupsNode, i);
@@ -786,16 +794,19 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedReadFileTypes()
 {
   //: File format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV") + " (.fcsv)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV")
+                                                + " (.fcsv)");
   //: File format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Annotation Fiducial CSV") + " (.acsv)");
+  this->SupportedReadFileTypes->InsertNextValue(
+    vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Annotation Fiducial CSV") + " (.acsv)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedWriteFileTypes()
 {
   //: File format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV") + " (.fcsv)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLMarkupsFiducialStorageNode", "Markups Fiducial CSV")
+                                                 + " (.fcsv)");
 }
 
 //---------------------------------------------------------------------------
@@ -810,8 +821,7 @@ std::string vtkMRMLMarkupsFiducialStorageNode::ConvertStringToStorageFormat(std:
   size_t commaPos = output.find(",");
   size_t quotePos = output.find("\"");
 
-  if (commaPos != std::string::npos ||
-      quotePos != std::string::npos)
+  if (commaPos != std::string::npos || quotePos != std::string::npos)
   {
     surroundingQuotesNeeded = true;
   }
@@ -820,7 +830,7 @@ std::string vtkMRMLMarkupsFiducialStorageNode::ConvertStringToStorageFormat(std:
   while (quotePos != std::string::npos)
   {
     output.replace(quotePos, 1, std::string("\"\""));
-    quotePos = output.find("\"",quotePos+2);
+    quotePos = output.find("\"", quotePos + 2);
   }
   if (surroundingQuotesNeeded)
   {

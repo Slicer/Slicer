@@ -59,10 +59,10 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLWindowLevelWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLWindowLevelWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -87,9 +87,8 @@ int qMRMLWindowLevelWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   qMRMLWindowLevelWidget windowLevel;
   windowLevel.setMRMLVolumeNode(volumeNode);
 
-  etpWidget.addTestCase(&windowLevel,
-                        xmlDirectory + "qMRMLWindowLevelWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    &windowLevel, xmlDirectory + "qMRMLWindowLevelWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))
@@ -100,4 +99,3 @@ int qMRMLWindowLevelWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

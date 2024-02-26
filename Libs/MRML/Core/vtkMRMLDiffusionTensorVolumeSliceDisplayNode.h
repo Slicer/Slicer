@@ -28,36 +28,34 @@ class vtkPolyData;
 /// from tractography in diffusion MRI data, including color type (by bundle, by fiber,
 /// or by scalar invariants), display on/off for tensor glyphs and display of
 /// trajectory as a line or tube.
-class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
-  : public vtkMRMLGlyphableVolumeSliceDisplayNode
+class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkMRMLGlyphableVolumeSliceDisplayNode
 {
- public:
-  static vtkMRMLDiffusionTensorVolumeSliceDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLDiffusionTensorVolumeSliceDisplayNode,vtkMRMLGlyphableVolumeSliceDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) override;
+public:
+  static vtkMRMLDiffusionTensorVolumeSliceDisplayNode* New();
+  vtkTypeMacro(vtkMRMLDiffusionTensorVolumeSliceDisplayNode, vtkMRMLGlyphableVolumeSliceDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML (MRML) file
-  void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  void WriteXML ( ostream& of, int indent ) override;
-
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode *node ) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
-  const char* GetNodeTagName () override {return "DiffusionTensorVolumeSliceDisplayNode";}
+  const char* GetNodeTagName() override { return "DiffusionTensorVolumeSliceDisplayNode"; }
 
   ///
   /// Updates this node if it depends on other nodes
@@ -66,17 +64,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Return the glyph producer output for the input image data.
   /// \sa GetOutputPolyData()
@@ -88,20 +84,19 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
   ///
   /// Set ImageData for a volume slice
-  void SetSliceImagePort(vtkAlgorithmOutput *imagePort) override;
+  void SetSliceImagePort(vtkAlgorithmOutput* imagePort) override;
 
   ///
   /// Set slice to RAS transformation
-  void SetSlicePositionMatrix(vtkMatrix4x4 *matrix) override;
+  void SetSlicePositionMatrix(vtkMatrix4x4* matrix) override;
 
   ///
   /// Set slice to IJK transformation
-  void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix) override;
+  void SetSliceGlyphRotationMatrix(vtkMatrix4x4* matrix) override;
 
   //--------------------------------------------------------------------------
   /// Display Information: Geometry to display (not mutually exclusive)
   //--------------------------------------------------------------------------
-
 
   //--------------------------------------------------------------------------
   /// Display Information: Color Mode
@@ -123,22 +118,16 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
   ///
   /// Color by solid color (for example the whole fiber bundle red. blue, etc.)
-  void SetColorModeToSolid ( ) {
-    this->SetColorMode ( this->colorModeSolid );
-  };
+  void SetColorModeToSolid() { this->SetColorMode(this->colorModeSolid); };
 
   ///
   /// Color according to the tensors using various scalar invariants.
-  void SetColorModeToScalar ( ) {
-    this->SetColorMode ( this->colorModeScalar );
-  };
+  void SetColorModeToScalar() { this->SetColorMode(this->colorModeScalar); };
 
   ///
   /// Color according to the tensors using a function of scalar invariants along the tract.
   /// This enables coloring by average FA, for example.
-  void SetColorModeToFunctionOfScalar ( ) {
-    this->SetColorMode ( this->colorModeFunctionOfScalar );
-  };
+  void SetColorModeToFunctionOfScalar() { this->SetColorMode(this->colorModeFunctionOfScalar); };
 
   ///
   /// Use to color by the active cell scalars.  This is intended to support
@@ -147,31 +136,25 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
   /// the active cell scalar field, this will allow coloring by that information.
   /// TO DO: make sure this information can be saved with the tract, save name of
   /// active scalar field if needed.
-  void SetColorModeToUseCellScalars ( ) {
-    this->SetColorMode ( this->colorModeUseCellScalars );
-  };
-
-
+  void SetColorModeToUseCellScalars() { this->SetColorMode(this->colorModeUseCellScalars); };
 
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for glyphs
   //--------------------------------------------------------------------------
 
-
   //--------------------------------------------------------------------------
   /// MRML nodes that are observed
   //--------------------------------------------------------------------------
-
 
   /// Node reference to ALL DT nodes
 
   ///
   /// Get diffusion tensor display MRML object for fiber glyph.
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDiffusionTensorDisplayPropertiesNode ( );
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDiffusionTensorDisplayPropertiesNode();
 
   ///
   /// Set diffusion tensor display MRML object for fiber glyph.
-  void SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID );
+  void SetAndObserveDiffusionTensorDisplayPropertiesNodeID(const char* ID);
 
   ///
   /// Get ID of diffusion tensor display MRML object for fiber glyph.
@@ -185,22 +168,21 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
   /// Get the nth scalar invariant to color a Slice
   static int GetNthScalarInvariant(int i);
 
- protected:
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
-  ~vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( ) override;
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
-  void operator= ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
+protected:
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode();
+  ~vtkMRMLDiffusionTensorVolumeSliceDisplayNode() override;
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode(const vtkMRMLDiffusionTensorVolumeSliceDisplayNode&);
+  void operator=(const vtkMRMLDiffusionTensorVolumeSliceDisplayNode&);
 
-  vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
+  vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 
   /// ALL MRML nodes
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
-  char *DiffusionTensorDisplayPropertiesNodeID;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* DiffusionTensorDisplayPropertiesNode;
+  char* DiffusionTensorDisplayPropertiesNodeID;
 
   void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 
   static std::vector<int> GetSupportedColorModes();
-
 };
 
 #endif

@@ -45,21 +45,24 @@ class qSlicerSubjectHierarchyAbstractPlugin;
 
 /// \brief Qt-based logic class to exercise Qt-related logic functions. The Subject
 ///   hierarchy plugin mechanism and those are Qt classes
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPluginLogic :
-  public QObject, public virtual qSlicerObject
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPluginLogic
+  : public QObject
+  , public virtual qSlicerObject
 {
   Q_OBJECT
   QVTK_OBJECT
 
-  /// Allow-list for view context menu actions. If empty (by default) then all registered view context menu action names will be displayable.
-  /// Allow-list can be further restricted for a specific node by using setAllowedViewContextMenuActionNamesForItem method.
-  Q_PROPERTY(QStringList allowedViewContextMenuActionNames READ allowedViewContextMenuActionNames WRITE setAllowedViewContextMenuActionNames)
+  /// Allow-list for view context menu actions. If empty (by default) then all registered view context menu action names
+  /// will be displayable. Allow-list can be further restricted for a specific node by using
+  /// setAllowedViewContextMenuActionNamesForItem method.
+  Q_PROPERTY(QStringList allowedViewContextMenuActionNames READ allowedViewContextMenuActionNames WRITE
+               setAllowedViewContextMenuActionNames)
   /// List of all registered view context menu actions.
   Q_PROPERTY(QStringList registeredViewContextMenuActionNames READ registeredViewContextMenuActionNames)
 
 public:
   typedef QObject Superclass;
-  qSlicerSubjectHierarchyPluginLogic(QObject *parent=nullptr);
+  qSlicerSubjectHierarchyPluginLogic(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyPluginLogic() override;
 
 public:
@@ -67,10 +70,10 @@ public:
   void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Assessor function for getting subject hierarchy plugin by name (for python)
-  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* subjectHierarchyPluginByName(QString name)const;
+  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* subjectHierarchyPluginByName(QString name) const;
 
   /// Assessor function for getting currently selected subject hierarchy item (for python)
-  Q_INVOKABLE vtkIdType currentSubjectHierarchyItem()const;
+  Q_INVOKABLE vtkIdType currentSubjectHierarchyItem() const;
 
   /// Utility test function to be able to set currently selected subject hierarchy node from python
   /// Only used in python tests!
@@ -86,8 +89,8 @@ public:
   QStringList registeredViewContextMenuActionNames();
 
   /// Set list of view context menu action names that are allowed to be displayed.
-  /// Allow-list can be further restricted for a specific node by using setAllowedViewContextMenuActionNamesForItem method.
-  /// \param actionObjectNames List of view context menu actions to consider for displaying.
+  /// Allow-list can be further restricted for a specific node by using setAllowedViewContextMenuActionNamesForItem
+  /// method. \param actionObjectNames List of view context menu actions to consider for displaying.
   ///        Only actions that are chosen to be visible by the owner plugin and listed in
   ///        actionObjectNames will be displayed to the user.
   void setAllowedViewContextMenuActionNames(QStringList actionObjectNames);
@@ -108,11 +111,13 @@ public:
 
   /// Create menu from list of actions.
   /// Uses "section" property to determine position of the action in the menu:
-  /// each integer section value corresponds to a section and fractional part is used for ordering actions within the section.
-  /// \param menu will be set by inserting the actions. If it is set to nullptr then a string will be returned that contains
-  /// name and "section" value of each action.
-  /// \param allowedActions specifies object name of actions may be added to the menu. If the list is empty then it is ignored.
-  static Q_INVOKABLE QString buildMenuFromActions(QMenu* menu, QList< QAction* > actions, const QStringList& allowedActions=QStringList());
+  /// each integer section value corresponds to a section and fractional part is used for ordering actions within the
+  /// section. \param menu will be set by inserting the actions. If it is set to nullptr then a string will be returned
+  /// that contains name and "section" value of each action. \param allowedActions specifies object name of actions may
+  /// be added to the menu. If the list is empty then it is ignored.
+  static Q_INVOKABLE QString buildMenuFromActions(QMenu* menu,
+                                                  QList<QAction*> actions,
+                                                  const QStringList& allowedActions = QStringList());
 
 protected:
   /// Add observations for node that was added to subject hierarchy

@@ -28,37 +28,37 @@
 #include "qMRMLCheckableNodeComboBoxEventPlayer.h"
 
 // ----------------------------------------------------------------------------
-qMRMLCheckableNodeComboBoxEventPlayer::qMRMLCheckableNodeComboBoxEventPlayer(QObject *parent)
+qMRMLCheckableNodeComboBoxEventPlayer::qMRMLCheckableNodeComboBoxEventPlayer(QObject* parent)
   : pqWidgetEventPlayer(parent)
 {
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject *Object,
-                                    const QString &Command,
-                                    const QString &Arguments,
-                                    bool &Error)
+bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject* Object,
+                                                      const QString& Command,
+                                                      const QString& Arguments,
+                                                      bool& Error)
 {
-  if(Command != "check_indexes" && Command != "uncheck_indexes")
+  if (Command != "check_indexes" && Command != "uncheck_indexes")
   {
     return false;
   }
 
   qMRMLCheckableNodeComboBox* parent = nullptr;
-  for(QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
+  for (QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
   {
     parent = qobject_cast<qMRMLCheckableNodeComboBox*>(test);
   }
   // This Command are also use for ctkCheckableComboBox, but here we want the
   // parent.
-  if(!parent)
+  if (!parent)
   {
     return false;
   }
 
-  if(parent)
+  if (parent)
   {
-    if(Command == "check_indexes")
+    if (Command == "check_indexes")
     {
       QStringList Args = Arguments.split(" ");
       foreach (QString Arg, Args)
@@ -70,7 +70,7 @@ bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject *Object,
       }
       return true;
     }
-    if(Command == "uncheck_indexes")
+    if (Command == "uncheck_indexes")
     {
       QStringList Args = Arguments.split(" ");
       foreach (QString Arg, Args)
@@ -88,4 +88,3 @@ bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject *Object,
   Error = true;
   return true;
 }
-

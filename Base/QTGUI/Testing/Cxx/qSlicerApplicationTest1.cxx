@@ -28,7 +28,7 @@
 
 // STD includes
 
-int qSlicerApplicationTest1(int argc, char * argv[] )
+int qSlicerApplicationTest1(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
 
@@ -38,10 +38,10 @@ int qSlicerApplicationTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
   }
 
-  qSlicerCommandOptions * commandOptions = new qSlicerCommandOptions;
+  qSlicerCommandOptions* commandOptions = new qSlicerCommandOptions;
   app.setCoreCommandOptions(commandOptions);
 
-  qSlicerCommandOptions * commandOptions2 = app.commandOptions();
+  qSlicerCommandOptions* commandOptions2 = app.commandOptions();
   if (commandOptions2 != commandOptions)
   {
     std::cerr << "Problem with setCommandOptions()/commandOptions()" << std::endl;
@@ -54,11 +54,11 @@ int qSlicerApplicationTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
   }
 
-  qSlicerIOManager * ioManager = new qSlicerIOManager;
+  qSlicerIOManager* ioManager = new qSlicerIOManager;
   app.setCoreIOManager(ioManager);
 
-  qSlicerIOManager * ioManager2 = app.ioManager();
-  if(ioManager2 != ioManager)
+  qSlicerIOManager* ioManager2 = app.ioManager();
+  if (ioManager2 != ioManager)
   {
     std::cerr << "Problem with setIOManager()/ioManager()" << std::endl;
     return EXIT_FAILURE;
@@ -79,4 +79,3 @@ int qSlicerApplicationTest1(int argc, char * argv[] )
 
   return app.exec();
 }
-

@@ -41,7 +41,7 @@
 #include <vtkSmartPointer.h>
 #include "qMRMLWidget.h"
 
-int qMRMLColorTableViewTest1(int argc, char * argv [])
+int qMRMLColorTableViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -83,21 +83,18 @@ int qMRMLColorTableViewTest1(int argc, char * argv [])
 
   topLevel.show();
 
-  vtkSmartPointer<vtkMRMLColorTableNode> userNode
-    = vtkSmartPointer<vtkMRMLColorTableNode>::Take(
-      vtkMRMLColorLogic::CopyNode(colorTableNode.GetPointer(), "User"));
-
+  vtkSmartPointer<vtkMRMLColorTableNode> userNode =
+    vtkSmartPointer<vtkMRMLColorTableNode>::Take(vtkMRMLColorLogic::CopyNode(colorTableNode.GetPointer(), "User"));
 
   qMRMLColorTableView colorTableView;
   colorTableView.setWindowTitle("Editable");
   colorTableView.setMRMLColorNode(userNode);
   colorTableView.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
 
   return app.exec();
 }
-

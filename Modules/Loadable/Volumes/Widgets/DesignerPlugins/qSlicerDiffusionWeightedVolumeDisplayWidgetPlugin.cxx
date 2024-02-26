@@ -19,48 +19,40 @@
 #include "qSlicerDiffusionWeightedVolumeDisplayWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
-::qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin(QObject *_parent)
+qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin ::qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qSlicerDiffusionWeightedVolumeDisplayWidget* _widget
-    = new qSlicerDiffusionWeightedVolumeDisplayWidget(_parent);
+  qSlicerDiffusionWeightedVolumeDisplayWidget* _widget = new qSlicerDiffusionWeightedVolumeDisplayWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
-::domXml() const
+QString qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qSlicerDiffusionWeightedVolumeDisplayWidget\" \
           name=\"VolumeDisplayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
-::includeFile() const
+QString qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin ::includeFile() const
 {
   return "qSlicerDiffusionWeightedVolumeDisplayWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
-::isContainer() const
+bool qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
-::name() const
+QString qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin ::name() const
 {
   return "qSlicerDiffusionWeightedVolumeDisplayWidget";
 }

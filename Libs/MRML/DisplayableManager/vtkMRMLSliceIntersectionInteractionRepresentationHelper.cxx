@@ -33,32 +33,29 @@
 #include <deque>
 
 // Handles
-static const double SLICEOFFSET_HANDLE_DEFAULT_POSITION[3] = { 0.0,0.0,0.0 };
-static const double SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[3] = { 0.0,1.0,0.0 };
+static const double SLICEOFFSET_HANDLE_DEFAULT_POSITION[3] = { 0.0, 0.0, 0.0 };
+static const double SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[3] = { 0.0, 1.0, 0.0 };
 
 vtkStandardNewMacro(vtkMRMLSliceIntersectionInteractionRepresentationHelper);
 
 //----------------------------------------------------------------------
-vtkMRMLSliceIntersectionInteractionRepresentationHelper::vtkMRMLSliceIntersectionInteractionRepresentationHelper()
-{
-}
+vtkMRMLSliceIntersectionInteractionRepresentationHelper::vtkMRMLSliceIntersectionInteractionRepresentationHelper() {}
 
 //----------------------------------------------------------------------
-vtkMRMLSliceIntersectionInteractionRepresentationHelper::~vtkMRMLSliceIntersectionInteractionRepresentationHelper()
-{
-}
+vtkMRMLSliceIntersectionInteractionRepresentationHelper::~vtkMRMLSliceIntersectionInteractionRepresentationHelper() {}
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentationHelper::PrintSelf(ostream & os, vtkIndent indent)
+void vtkMRMLSliceIntersectionInteractionRepresentationHelper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetSliceViewBoundariesXY(vtkMRMLSliceNode* sliceNode, double* sliceViewBounds)
+void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetSliceViewBoundariesXY(vtkMRMLSliceNode* sliceNode,
+                                                                                       double* sliceViewBounds)
 {
   // Get FOV of current slice node in mm
-  double sliceFOVMm[3] = { 0.0,0.0,0.0 };
+  double sliceFOVMm[3] = { 0.0, 0.0, 0.0 };
   sliceNode->GetFieldOfView(sliceFOVMm);
 
   // Get XYToRAS and RASToXY transform matrices
@@ -67,9 +64,9 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetSliceViewBounda
   vtkMatrix4x4::Invert(currentXYToRAS, currentRASToXY);
 
   // Get slice view axes in RAS
-  double sliceOrigin[4] = { 0.0,0.0,0.0,1.0 };
-  double slicePointAxisX[4] = { 100.0,0.0,0.0,1.0 };
-  double slicePointAxisY[4] = { 0.0,100.0,0.0,1.0 };
+  double sliceOrigin[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double slicePointAxisX[4] = { 100.0, 0.0, 0.0, 1.0 };
+  double slicePointAxisY[4] = { 0.0, 100.0, 0.0, 1.0 };
   currentXYToRAS->MultiplyPoint(sliceOrigin, sliceOrigin);
   currentXYToRAS->MultiplyPoint(slicePointAxisX, slicePointAxisX);
   currentXYToRAS->MultiplyPoint(slicePointAxisY, slicePointAxisY);
@@ -83,10 +80,10 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetSliceViewBounda
   vtkMath::Normalize(sliceAxisY);
 
   // Calculate corners of FOV in RAS coordinate system
-  double bottomLeftCornerRAS[4] = { 0.0,0.0,0.0,1.0 };
-  double topLeftCornerRAS[4] = { 0.0,0.0,0.0,1.0 };
-  double bottomRightCornerRAS[4] = { 0.0,0.0,0.0,1.0 };
-  double topRightCornerRAS[4] = { 0.0,0.0,0.0,1.0 };
+  double bottomLeftCornerRAS[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double topLeftCornerRAS[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double bottomRightCornerRAS[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double topRightCornerRAS[4] = { 0.0, 0.0, 0.0, 1.0 };
 
   // Get slice view corners RAS
   bottomLeftCornerRAS[0] = sliceOrigin[0];
@@ -103,10 +100,10 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetSliceViewBounda
   topRightCornerRAS[2] = sliceOrigin[2] + sliceAxisY[2] * sliceFOVMm[1] + sliceAxisX[2] * sliceFOVMm[0];
 
   // Calculate corners of FOV in XY coordinate system
-  double bottomLeftCornerXY[4] = { 0.0,0.0,0.0,1.0 };
-  double topLeftCornerXY[4] = { 0.0,0.0,0.0,1.0 };
-  double bottomRightCornerXY[4] = { 0.0,0.0,0.0,1.0 };
-  double topRightCornerXY[4] = { 0.0,0.0,0.0,1.0 };
+  double bottomLeftCornerXY[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double topLeftCornerXY[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double bottomRightCornerXY[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double topRightCornerXY[4] = { 0.0, 0.0, 0.0, 1.0 };
   currentRASToXY->MultiplyPoint(bottomLeftCornerRAS, bottomLeftCornerXY);
   currentRASToXY->MultiplyPoint(topLeftCornerRAS, topLeftCornerXY);
   currentRASToXY->MultiplyPoint(bottomRightCornerRAS, bottomRightCornerXY);
@@ -114,109 +111,118 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetSliceViewBounda
 
   // Get slice view range XY
   sliceViewBounds[0] = bottomLeftCornerXY[0]; // Min value of X
-  sliceViewBounds[1] = topRightCornerXY[0]; // Max value of X
+  sliceViewBounds[1] = topRightCornerXY[0];   // Max value of X
   sliceViewBounds[2] = bottomLeftCornerXY[1]; //  Min value of Y
-  sliceViewBounds[3] = topRightCornerXY[1]; //  Max value of Y
+  sliceViewBounds[3] = topRightCornerXY[1];   //  Max value of Y
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetIntersectionWithSliceViewBoundaries(double* pointA, double* pointB,
-      double* sliceViewBounds, double* intersectionPoint)
+void vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetIntersectionWithSliceViewBoundaries(
+  double* pointA,
+  double* pointB,
+  double* sliceViewBounds,
+  double* intersectionPoint)
 {
-    // Get line equation -> y = slope * x + intercept
-    double xA = pointA[0];
-    double yA = pointA[1];
-    double xB = pointB[0];
-    double yB = pointB[1];
-    double dx, dy, slope, intercept;
-    dx = xB - xA;
-    dy = yB - yA;
-    slope = dy / dx;
-    intercept = yA - slope * xA;
+  // Get line equation -> y = slope * x + intercept
+  double xA = pointA[0];
+  double yA = pointA[1];
+  double xB = pointB[0];
+  double yB = pointB[1];
+  double dx, dy, slope, intercept;
+  dx = xB - xA;
+  dy = yB - yA;
+  slope = dy / dx;
+  intercept = yA - slope * xA;
 
-    // Get line bounding box
-    double lineBounds[4] = { std::min(xA, xB), std::max(xA, xB), std::min(yA, yB), std::max(yA, yB) };
+  // Get line bounding box
+  double lineBounds[4] = { std::min(xA, xB), std::max(xA, xB), std::min(yA, yB), std::max(yA, yB) };
 
-    // Slice view bounds
-    double xMin = sliceViewBounds[0];
-    double xMax = sliceViewBounds[1];
-    double yMin = sliceViewBounds[2];
-    double yMax = sliceViewBounds[3];
+  // Slice view bounds
+  double xMin = sliceViewBounds[0];
+  double xMax = sliceViewBounds[1];
+  double yMin = sliceViewBounds[2];
+  double yMax = sliceViewBounds[3];
 
-    // Get intersection point using line equation
-    double x0, y0;
-    if ((xMin > lineBounds[0]) && (xMin < lineBounds[1]))
+  // Get intersection point using line equation
+  double x0, y0;
+  if ((xMin > lineBounds[0]) && (xMin < lineBounds[1]))
+  {
+    y0 = slope * xMin + intercept;
+    if ((y0 > yMin) && (y0 < yMax))
     {
-      y0 = slope * xMin + intercept;
-      if ((y0 > yMin) && (y0 < yMax))
+      intersectionPoint[0] = xMin;
+      intersectionPoint[1] = y0;
+      return;
+    }
+  }
+  if ((xMax > lineBounds[0]) && (xMax < lineBounds[1]))
+  {
+    y0 = slope * xMax + intercept;
+    if ((y0 > yMin) && (y0 < yMax))
+    {
+      intersectionPoint[0] = xMax;
+      intersectionPoint[1] = y0;
+      return;
+    }
+  }
+  if ((yMin > lineBounds[2]) && (yMin < lineBounds[3]))
+  {
+    if (std::isfinite(slope)) // check if slope is finite
+    {
+      x0 = (yMin - intercept) / slope;
+      if ((x0 > xMin) && (x0 < xMax))
       {
-        intersectionPoint[0] = xMin;
-        intersectionPoint[1] = y0;
+        intersectionPoint[0] = x0;
+        intersectionPoint[1] = yMin;
         return;
       }
     }
-    if ((xMax > lineBounds[0]) && (xMax < lineBounds[1]))
+    else // infinite slope = vertical line
     {
-      y0 = slope * xMax + intercept;
-      if ((y0 > yMin) && (y0 < yMax))
+      intersectionPoint[0] =
+        lineBounds[0]; // or lineBounds[1] (if the line is vertical, then both points A and B have the same value of X)
+      intersectionPoint[1] = yMin;
+      return;
+    }
+  }
+  if ((yMax > lineBounds[2]) && (yMax < lineBounds[3]))
+  {
+    if (std::isfinite(slope)) // check if slope is finite
+    {
+      x0 = (yMax - intercept) / slope;
+      if ((x0 > xMin) && (x0 < xMax))
       {
-        intersectionPoint[0] = xMax;
-        intersectionPoint[1] = y0;
+        intersectionPoint[0] = x0;
+        intersectionPoint[1] = yMax;
         return;
       }
     }
-    if ((yMin > lineBounds[2]) && (yMin < lineBounds[3]))
+    else // infinite slope = vertical line
     {
-      if (std::isfinite(slope)) // check if slope is finite
-      {
-        x0 = (yMin - intercept)/slope;
-        if ((x0 > xMin) && (x0 < xMax))
-        {
-          intersectionPoint[0] = x0;
-          intersectionPoint[1] = yMin;
-          return;
-        }
-      }
-      else // infinite slope = vertical line
-      {
-          intersectionPoint[0] = lineBounds[0]; // or lineBounds[1] (if the line is vertical, then both points A and B have the same value of X)
-          intersectionPoint[1] = yMin;
-          return;
-      }
+      intersectionPoint[0] =
+        lineBounds[0]; // or lineBounds[1] (if the line is vertical, then both points A and B have the same value of X)
+      intersectionPoint[1] = yMax;
+      return;
     }
-    if ((yMax > lineBounds[2]) && (yMax < lineBounds[3]))
-    {
-      if (std::isfinite(slope)) // check if slope is finite
-      {
-        x0 = (yMax - intercept)/slope;
-        if ((x0 > xMin) && (x0 < xMax))
-        {
-          intersectionPoint[0] = x0;
-          intersectionPoint[1] = yMax;
-          return;
-        }
-      }
-      else // infinite slope = vertical line
-      {
-          intersectionPoint[0] = lineBounds[0]; // or lineBounds[1] (if the line is vertical, then both points A and B have the same value of X)
-          intersectionPoint[1] = yMax;
-          return;
-      }
-    }
-    return;
+  }
+  return;
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLSliceIntersectionInteractionRepresentationHelper::IntersectWithFinitePlane(double n[3], double o[3],
-  double pOrigin[3], double px[3], double py[3],
-  double x0[3], double x1[3])
+int vtkMRMLSliceIntersectionInteractionRepresentationHelper::IntersectWithFinitePlane(double n[3],
+                                                                                      double o[3],
+                                                                                      double pOrigin[3],
+                                                                                      double px[3],
+                                                                                      double py[3],
+                                                                                      double x0[3],
+                                                                                      double x1[3])
 {
   // Since we are dealing with convex shapes, if there is an intersection a
   // single line is produced as output. So all this is necessary is to
   // intersect the four bounding lines of the finite line and find the two
   // intersection points.
   int numInts = 0;
-  double t, * x = x0;
+  double t, *x = x0;
   double xr0[3], xr1[3];
 
   // First line
@@ -278,11 +284,14 @@ int vtkMRMLSliceIntersectionInteractionRepresentationHelper::IntersectWithFinite
 }
 
 //----------------------------------------------------------------------
-int vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetLineTipsFromIntersectingSliceNode(vtkMRMLSliceNode* intersectingSliceNode,
-    vtkMatrix4x4* intersectingXYToXY, double intersectionOuterLineTip1[3], double intersectionOuterLineTip2[3])
+int vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetLineTipsFromIntersectingSliceNode(
+  vtkMRMLSliceNode* intersectingSliceNode,
+  vtkMatrix4x4* intersectingXYToXY,
+  double intersectionOuterLineTip1[3],
+  double intersectionOuterLineTip2[3])
 {
   // Define current slice plane
-  double slicePlaneNormal[3] = { 0.,0.,1. };
+  double slicePlaneNormal[3] = { 0., 0., 1. };
   double slicePlaneOrigin[3] = { 0., 0., 0. };
 
   // Define slice size dimensions
@@ -295,14 +304,21 @@ int vtkMRMLSliceIntersectionInteractionRepresentationHelper::GetLineTipsFromInte
   intersectingXYToXY->MultiplyPoint(intersectingPlaneY, intersectingPlaneY);
 
   // Compute intersection
-  int intersectionFound = this->IntersectWithFinitePlane(slicePlaneNormal, slicePlaneOrigin,
-    intersectingPlaneOrigin, intersectingPlaneX, intersectingPlaneY, intersectionOuterLineTip1, intersectionOuterLineTip2);
+  int intersectionFound = this->IntersectWithFinitePlane(slicePlaneNormal,
+                                                         slicePlaneOrigin,
+                                                         intersectingPlaneOrigin,
+                                                         intersectingPlaneX,
+                                                         intersectingPlaneY,
+                                                         intersectionOuterLineTip1,
+                                                         intersectionOuterLineTip2);
 
   return intersectionFound;
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentationHelper::ComputeHandleToWorldTransformMatrix(double handlePosition[2], double handleOrientation[2],
+void vtkMRMLSliceIntersectionInteractionRepresentationHelper::ComputeHandleToWorldTransformMatrix(
+  double handlePosition[2],
+  double handleOrientation[2],
   vtkMatrix4x4* handleToWorldTransformMatrix)
 {
   // Reset handle to world transform
@@ -310,21 +326,23 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::ComputeHandleToWor
 
   // Get rotation matrix
   double handleOrientationDefault[2] = { SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[0],
-                                         SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION [1]};
+                                         SLICEOFFSET_HANDLE_DEFAULT_ORIENTATION[1] };
   this->RotationMatrixFromVectors(handleOrientationDefault, handleOrientation, handleToWorldTransformMatrix);
 
   // Add translation to matrix
   double handleTranslation[2] = { handlePosition[0] - SLICEOFFSET_HANDLE_DEFAULT_POSITION[0],
-                                  handlePosition[1] - SLICEOFFSET_HANDLE_DEFAULT_POSITION[1]};
+                                  handlePosition[1] - SLICEOFFSET_HANDLE_DEFAULT_POSITION[1] };
   handleToWorldTransformMatrix->SetElement(0, 3, handleTranslation[0]); // Translation X
   handleToWorldTransformMatrix->SetElement(1, 3, handleTranslation[1]); // Translation Y
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentationHelper::RotationMatrixFromVectors(double vector1[2], double vector2[2], vtkMatrix4x4* rotationMatrixHom)
+void vtkMRMLSliceIntersectionInteractionRepresentationHelper::RotationMatrixFromVectors(double vector1[2],
+                                                                                        double vector2[2],
+                                                                                        vtkMatrix4x4* rotationMatrixHom)
 {
   // 3D vectors
-  double vector1_3D[3] = { vector1[0], vector1[1], 0.0};
+  double vector1_3D[3] = { vector1[0], vector1[1], 0.0 };
   double vector2_3D[3] = { vector2[0], vector2[1], 0.0 };
 
   // Normalize input vectos
@@ -383,15 +401,42 @@ void vtkMRMLSliceIntersectionInteractionRepresentationHelper::RotationMatrixFrom
     vtkNew<vtkMatrix3x3> kmat2;
     vtkMatrix3x3::Multiply3x3(kmat, kmat, kmat2);
     vtkNew<vtkMatrix3x3> kmat2x;
-    rotationMatrix->SetElement(0, 0, identityMatrix->GetElement(0, 0) + kmat->GetElement(0, 0) + kmat2->GetElement(0, 0) * ((1 - c) / (pow(s, 2.0))));
-    rotationMatrix->SetElement(0, 1, identityMatrix->GetElement(0, 1) + kmat->GetElement(0, 1) + kmat2->GetElement(0, 1) * ((1 - c) / (pow(s, 2.0))));
-    rotationMatrix->SetElement(0, 2, identityMatrix->GetElement(0, 2) + kmat->GetElement(0, 2) + kmat2->GetElement(0, 2) * ((1 - c) / (pow(s, 2.0))));
-    rotationMatrix->SetElement(1, 0, identityMatrix->GetElement(1, 0) + kmat->GetElement(1, 0) + kmat2->GetElement(1, 0) * ((1 - c) / (pow(s, 2.0))));
-    rotationMatrix->SetElement(1, 1, identityMatrix->GetElement(1, 1) + kmat->GetElement(1, 1) + kmat2->GetElement(1, 1) * ((1 - c) / (pow(s, 2.0))));
-    rotationMatrix->SetElement(1, 2, identityMatrix->GetElement(1, 2) + kmat->GetElement(1, 2) + kmat2->GetElement(1, 2) * ((1 - c) / (pow(s, 2.0))));
-    rotationMatrix->SetElement(2, 0, identityMatrix->GetElement(2, 0) + kmat->GetElement(2, 0) + kmat2->GetElement(2, 0) * ((1 - c) / (pow(s, 2.0))));
-    rotationMatrix->SetElement(2, 1, identityMatrix->GetElement(2, 1) + kmat->GetElement(2, 1) + kmat2->GetElement(2, 1) * ((1 - c) / (pow(s, 2.0))));
-    rotationMatrix->SetElement(2, 2, identityMatrix->GetElement(2, 2) + kmat->GetElement(2, 2) + kmat2->GetElement(2, 2) * ((1 - c) / (pow(s, 2.0))));
+    rotationMatrix->SetElement(0,
+                               0,
+                               identityMatrix->GetElement(0, 0) + kmat->GetElement(0, 0)
+                                 + kmat2->GetElement(0, 0) * ((1 - c) / (pow(s, 2.0))));
+    rotationMatrix->SetElement(0,
+                               1,
+                               identityMatrix->GetElement(0, 1) + kmat->GetElement(0, 1)
+                                 + kmat2->GetElement(0, 1) * ((1 - c) / (pow(s, 2.0))));
+    rotationMatrix->SetElement(0,
+                               2,
+                               identityMatrix->GetElement(0, 2) + kmat->GetElement(0, 2)
+                                 + kmat2->GetElement(0, 2) * ((1 - c) / (pow(s, 2.0))));
+    rotationMatrix->SetElement(1,
+                               0,
+                               identityMatrix->GetElement(1, 0) + kmat->GetElement(1, 0)
+                                 + kmat2->GetElement(1, 0) * ((1 - c) / (pow(s, 2.0))));
+    rotationMatrix->SetElement(1,
+                               1,
+                               identityMatrix->GetElement(1, 1) + kmat->GetElement(1, 1)
+                                 + kmat2->GetElement(1, 1) * ((1 - c) / (pow(s, 2.0))));
+    rotationMatrix->SetElement(1,
+                               2,
+                               identityMatrix->GetElement(1, 2) + kmat->GetElement(1, 2)
+                                 + kmat2->GetElement(1, 2) * ((1 - c) / (pow(s, 2.0))));
+    rotationMatrix->SetElement(2,
+                               0,
+                               identityMatrix->GetElement(2, 0) + kmat->GetElement(2, 0)
+                                 + kmat2->GetElement(2, 0) * ((1 - c) / (pow(s, 2.0))));
+    rotationMatrix->SetElement(2,
+                               1,
+                               identityMatrix->GetElement(2, 1) + kmat->GetElement(2, 1)
+                                 + kmat2->GetElement(2, 1) * ((1 - c) / (pow(s, 2.0))));
+    rotationMatrix->SetElement(2,
+                               2,
+                               identityMatrix->GetElement(2, 2) + kmat->GetElement(2, 2)
+                                 + kmat2->GetElement(2, 2) * ((1 - c) / (pow(s, 2.0))));
 
     // Convert to 4x4 matrix
     rotationMatrixHom->SetElement(0, 0, rotationMatrix->GetElement(0, 0));

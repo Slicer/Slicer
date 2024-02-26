@@ -39,7 +39,7 @@
 #include <vtkVersion.h>
 
 //------------------------------------------------------------------------------
-class qMRMLModelInfoWidgetPrivate: public Ui_qMRMLModelInfoWidget
+class qMRMLModelInfoWidgetPrivate : public Ui_qMRMLModelInfoWidget
 {
   Q_DECLARE_PUBLIC(qMRMLModelInfoWidget);
 
@@ -78,7 +78,7 @@ void qMRMLModelInfoWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLModelInfoWidget::qMRMLModelInfoWidget(QWidget *_parent)
+qMRMLModelInfoWidget::qMRMLModelInfoWidget(QWidget* _parent)
   : QWidget(_parent)
   , d_ptr(new qMRMLModelInfoWidgetPrivate(*this))
 {
@@ -89,9 +89,8 @@ qMRMLModelInfoWidget::qMRMLModelInfoWidget(QWidget *_parent)
 //------------------------------------------------------------------------------
 qMRMLModelInfoWidget::~qMRMLModelInfoWidget() = default;
 
-
 //------------------------------------------------------------------------------
-vtkMRMLModelNode* qMRMLModelInfoWidget::mrmlModelNode()const
+vtkMRMLModelNode* qMRMLModelInfoWidget::mrmlModelNode() const
 {
   Q_D(const qMRMLModelInfoWidget);
   return d->MRMLModelNode;
@@ -107,16 +106,15 @@ void qMRMLModelInfoWidget::setMRMLModelNode(vtkMRMLNode* node)
 void qMRMLModelInfoWidget::setMRMLModelNode(vtkMRMLModelNode* modelNode)
 {
   Q_D(qMRMLModelInfoWidget);
-  qvtkReconnect(d->MRMLModelNode, modelNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
-  //qvtkReconnect(d->MRMLModelNode, modelNode, vtkMRMLModelNode::DisplayModifiedEvent,
-  //              this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLModelNode, modelNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+  // qvtkReconnect(d->MRMLModelNode, modelNode, vtkMRMLModelNode::DisplayModifiedEvent,
+  //               this, SLOT(updateWidgetFromMRML()));
   d->MRMLModelNode = modelNode;
   this->updateWidgetFromMRML();
 }
 
 //------------------------------------------------------------------------------
-void qMRMLModelInfoWidget::showEvent(QShowEvent *)
+void qMRMLModelInfoWidget::showEvent(QShowEvent*)
 {
   // Update the widget, now that it becomes becomes visible
   // (we might have missed some updates, because widget contents is not updated
@@ -134,7 +132,7 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
     // so if the widget is not visible then do not update
     return;
   }
-  vtkPointSet *mesh = d->MRMLModelNode ? d->MRMLModelNode->GetMesh() : nullptr;
+  vtkPointSet* mesh = d->MRMLModelNode ? d->MRMLModelNode->GetMesh() : nullptr;
   if (mesh)
   {
     vtkPolyDataAlgorithm* filter;
@@ -147,7 +145,7 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
     {
       filter = d->GeometryFilter;
     }
-    d->MassProperties->SetInputConnection( filter->GetOutputPort() );
+    d->MassProperties->SetInputConnection(filter->GetOutputPort());
     filter->SetInputData(mesh);
     filter->Update();
     if (filter->GetOutput()->GetNumberOfCells() > 0)
@@ -199,7 +197,7 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
     d->NumberOfCellsScalarsSpinBox->setValue(0);
   }
 
-  vtkMRMLStorageNode *storageNode = d->MRMLModelNode ? d->MRMLModelNode->GetStorageNode() : nullptr;
+  vtkMRMLStorageNode* storageNode = d->MRMLModelNode ? d->MRMLModelNode->GetStorageNode() : nullptr;
   if (storageNode)
   {
     d->FileNameLineEdit->setText(storageNode->GetFileName());
@@ -210,4 +208,3 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
   }
   this->setEnabled(d->MRMLModelNode != nullptr);
 }
-

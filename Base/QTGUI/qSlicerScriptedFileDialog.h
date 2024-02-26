@@ -32,8 +32,7 @@ typedef _object PyObject;
 #endif
 class qSlicerScriptedFileDialogPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedFileDialog
-  : public qSlicerStandardFileDialog
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedFileDialog : public qSlicerStandardFileDialog
 {
   Q_OBJECT
 
@@ -42,32 +41,33 @@ public:
   qSlicerScriptedFileDialog(QObject* parent = nullptr);
   ~qSlicerScriptedFileDialog() override;
 
-  QString pythonSource()const;
+  QString pythonSource() const;
 
   /// \warning Setting the source is a no-op. See detailed comment in the source code.
   /// If missingClassIsExpected is true (default) then missing class is expected and not treated as an error.
-  bool setPythonSource(const QString& filePath, const QString& className = QLatin1String(""), bool missingClassIsExpected = true);
+  bool setPythonSource(const QString& filePath,
+                       const QString& className = QLatin1String(""),
+                       bool missingClassIsExpected = true);
 
   /// Convenience method allowing to retrieve the associated scripted instance
   Q_INVOKABLE PyObject* self() const;
 
   /// Reimplemented to propagate to python methods
-  bool isMimeDataAccepted(const QMimeData* mimeData)const override;
+  bool isMimeDataAccepted(const QMimeData* mimeData) const override;
   /// Reimplemented to propagate to python methods
   void dropEvent(QDropEvent* event) override;
   /// Reimplemented to propagate to python methods
-  bool exec(const qSlicerIO::IOProperties& ioProperties =
-                    qSlicerIO::IOProperties()) override;
+  bool exec(const qSlicerIO::IOProperties& ioProperties = qSlicerIO::IOProperties()) override;
 
   /// Return the ioProperties when exec() is being called.
   /// \sa exec()
-  Q_INVOKABLE const qSlicerIO::IOProperties& ioProperties()const;
+  Q_INVOKABLE const qSlicerIO::IOProperties& ioProperties() const;
   /// Return the dragEnterEvent when dragEnterEvent() is being called.
   /// \sa dragEnterEvent()
-  Q_INVOKABLE const QMimeData* mimeData()const;
+  Q_INVOKABLE const QMimeData* mimeData() const;
   /// Return the dropEvent when dropEvent() is being called.
   /// \sa dropEvent()
-  Q_INVOKABLE QDropEvent* dropEvent()const;
+  Q_INVOKABLE QDropEvent* dropEvent() const;
 
 public Q_SLOTS:
   void acceptMimeData(bool accept);

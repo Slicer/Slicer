@@ -31,8 +31,7 @@
 #include <vtkSmartPointer.h>
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneViewNodeEventsTest(
-  int vtkNotUsed(argc), char * vtkNotUsed(argv)[])
+int vtkMRMLSceneViewNodeEventsTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -51,11 +50,10 @@ int vtkMRMLSceneViewNodeEventsTest(
   // Change the interaction node
   interactionNode->SetPlaceModePersistence(1);
 
-  if (scene->GetNumberOfNodesByClass("vtkMRMLCameraNode") != 0 ||
-      scene->GetNumberOfNodesByClass("vtkMRMLInteractionNode") != 1)
+  if (scene->GetNumberOfNodesByClass("vtkMRMLCameraNode") != 0
+      || scene->GetNumberOfNodesByClass("vtkMRMLInteractionNode") != 1)
   {
-    std::cerr << "Camera node not removed after vtkMRMLScene::Clear()"
-              << std::endl;
+    std::cerr << "Camera node not removed after vtkMRMLScene::Clear()" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -69,30 +67,27 @@ int vtkMRMLSceneViewNodeEventsTest(
   // vtkMRMLScene::EndState(RestoreState);
   sceneViewNode->RestoreScene();
 
-  if (scene->GetNumberOfNodesByClass("vtkMRMLCameraNode") != 1 ||
-      scene->GetNumberOfNodesByClass("vtkMRMLInteractionNode") != 1)
+  if (scene->GetNumberOfNodesByClass("vtkMRMLCameraNode") != 1
+      || scene->GetNumberOfNodesByClass("vtkMRMLInteractionNode") != 1)
   {
     std::cerr << "Camera or interaction nodes not restored " << std::endl;
     return EXIT_FAILURE;
   }
 
-  if (callback->CalledEvents.size() != 6 ||
-      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::StartRestoreEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::NodeAboutToBeAddedEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::NodeAddedEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::EndRestoreEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1)
+  if (callback->CalledEvents.size() != 6 || callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1
+      || callback->CalledEvents[vtkMRMLScene::StartRestoreEvent] != 1
+      || callback->CalledEvents[vtkMRMLScene::NodeAboutToBeAddedEvent] != 1
+      || callback->CalledEvents[vtkMRMLScene::NodeAddedEvent] != 1
+      || callback->CalledEvents[vtkMRMLScene::EndRestoreEvent] != 1
+      || callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << callback->CalledEvents.size() << " event(s) fired." << std::endl
+    std::cerr << "Wrong fired events: " << callback->CalledEvents.size() << " event(s) fired." << std::endl
               << callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::StartRestoreEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::NodeAboutToBeAddedEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::NodeAddedEvent] << " "
               << callback->CalledEvents[vtkMRMLScene::EndRestoreEvent] << " "
-              << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent]
-              << std::endl;
+              << callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] << std::endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

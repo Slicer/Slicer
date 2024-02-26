@@ -35,14 +35,14 @@ public:
     InterpolationBSpline = 4
   };
 
-  static vtkMRMLCropVolumeParametersNode *New();
-  vtkTypeMacro(vtkMRMLCropVolumeParametersNode,vtkMRMLNode);
+  static vtkMRMLCropVolumeParametersNode* New();
+  vtkTypeMacro(vtkMRMLCropVolumeParametersNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from XML attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -52,41 +52,41 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLCropVolumeParametersNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "CropVolumeParameters";}
+  const char* GetNodeTagName() override { return "CropVolumeParameters"; }
 
   /// Set volume node to be cropped
-  void SetInputVolumeNodeID(const char *nodeID);
+  void SetInputVolumeNodeID(const char* nodeID);
   /// Get volume node to be cropped
-  const char *GetInputVolumeNodeID();
+  const char* GetInputVolumeNodeID();
   vtkMRMLVolumeNode* GetInputVolumeNode();
 
   /// Set resulting cropped volume node
-  void SetOutputVolumeNodeID(const char *nodeID);
+  void SetOutputVolumeNodeID(const char* nodeID);
   /// Get resulting cropped volume node
   const char* GetOutputVolumeNodeID();
   vtkMRMLVolumeNode* GetOutputVolumeNode();
 
   /// Set cropping region of interest.
   /// It must be vtkMRMLMarkupsROINode.
-  void SetROINodeID(const char *nodeID);
+  void SetROINodeID(const char* nodeID);
   /// Get cropping region of interest
   const char* GetROINodeID();
   vtkMRMLDisplayableNode* GetROINode();
 
   /// Set transform node that may be used for aligning
   /// the ROI with the input volume.
-  void SetROIAlignmentTransformNodeID(const char *nodeID);
+  void SetROIAlignmentTransformNodeID(const char* nodeID);
   const char* GetROIAlignmentTransformNodeID();
   vtkMRMLTransformNode* GetROIAlignmentTransformNode();
   void DeleteROIAlignmentTransformNode();
 
-  vtkSetMacro(IsotropicResampling,bool);
-  vtkGetMacro(IsotropicResampling,bool);
-  vtkBooleanMacro(IsotropicResampling,bool);
+  vtkSetMacro(IsotropicResampling, bool);
+  vtkGetMacro(IsotropicResampling, bool);
+  vtkBooleanMacro(IsotropicResampling, bool);
 
-  vtkSetMacro(VoxelBased,bool);
-  vtkGetMacro(VoxelBased,bool);
-  vtkBooleanMacro(VoxelBased,bool);
+  vtkSetMacro(VoxelBased, bool);
+  vtkGetMacro(VoxelBased, bool);
+  vtkBooleanMacro(VoxelBased, bool);
 
   vtkSetMacro(InterpolationMode, int);
   vtkGetMacro(InterpolationMode, int);

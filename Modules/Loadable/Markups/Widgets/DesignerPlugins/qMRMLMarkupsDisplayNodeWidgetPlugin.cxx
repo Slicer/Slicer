@@ -19,48 +19,40 @@
 #include "qMRMLMarkupsDisplayNodeWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLMarkupsDisplayNodeWidgetPlugin
-::qMRMLMarkupsDisplayNodeWidgetPlugin(QObject *_parent)
+qMRMLMarkupsDisplayNodeWidgetPlugin ::qMRMLMarkupsDisplayNodeWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLMarkupsDisplayNodeWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLMarkupsDisplayNodeWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qMRMLMarkupsDisplayNodeWidget* _widget
-    = new qMRMLMarkupsDisplayNodeWidget(_parent);
+  qMRMLMarkupsDisplayNodeWidget* _widget = new qMRMLMarkupsDisplayNodeWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLMarkupsDisplayNodeWidgetPlugin
-::domXml() const
+QString qMRMLMarkupsDisplayNodeWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qMRMLMarkupsDisplayNodeWidget\" \
           name=\"MarkupsDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLMarkupsDisplayNodeWidgetPlugin
-::includeFile() const
+QString qMRMLMarkupsDisplayNodeWidgetPlugin ::includeFile() const
 {
   return "qMRMLMarkupsDisplayNodeWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLMarkupsDisplayNodeWidgetPlugin
-::isContainer() const
+bool qMRMLMarkupsDisplayNodeWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLMarkupsDisplayNodeWidgetPlugin
-::name() const
+QString qMRMLMarkupsDisplayNodeWidgetPlugin ::name() const
 {
   return "qMRMLMarkupsDisplayNodeWidget";
 }

@@ -30,6 +30,7 @@ class qMRMLWindowLevelWidgetPrivate
   , public Ui_qMRMLWindowLevelWidget
 {
   Q_DECLARE_PUBLIC(qMRMLWindowLevelWidget);
+
 protected:
   typedef qMRMLVolumeWidgetPrivate Superclass;
 
@@ -45,8 +46,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLWindowLevelWidgetPrivate
-::qMRMLWindowLevelWidgetPrivate(qMRMLWindowLevelWidget& object)
+qMRMLWindowLevelWidgetPrivate ::qMRMLWindowLevelWidgetPrivate(qMRMLWindowLevelWidget& object)
   : Superclass(object)
 {
 }
@@ -64,27 +64,21 @@ void qMRMLWindowLevelWidgetPrivate::init()
 
   q->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
 
-  QObject::connect(this->WindowLevelRangeSlider, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(setMinMaxRangeValue(double,double)));
+  QObject::connect(
+    this->WindowLevelRangeSlider, SIGNAL(valuesChanged(double, double)), q, SLOT(setMinMaxRangeValue(double, double)));
 
-  QObject::connect(this->WindowSpinBox, SIGNAL(valueChanged(double)),
-                   q, SLOT(setWindow(double)));
-  QObject::connect(this->LevelSpinBox, SIGNAL(valueChanged(double)),
-                   q, SLOT(setLevel(double)));
+  QObject::connect(this->WindowSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setWindow(double)));
+  QObject::connect(this->LevelSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setLevel(double)));
 
-  QObject::connect(this->MinSpinBox, SIGNAL(valueChanged(double)),
-                   q, SLOT(setMinimumValue(double)));
-  QObject::connect(this->MaxSpinBox, SIGNAL(valueChanged(double)),
-                   q, SLOT(setMaximumValue(double)));
+  QObject::connect(this->MinSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setMinimumValue(double)));
+  QObject::connect(this->MaxSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setMaximumValue(double)));
   this->MinSpinBox->setVisible(false);
   this->MaxSpinBox->setVisible(false);
 
-  QObject::connect(this->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(setAutoWindowLevel(int)));
+  QObject::connect(this->AutoManualComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setAutoWindowLevel(int)));
 
   this->RangeButton->setMenu(this->OptionsMenu);
   this->RangeButton->setPopupMode(QToolButton::InstantPopup);
-
 }
 
 // --------------------------------------------------------------------------
@@ -108,7 +102,7 @@ void qMRMLWindowLevelWidgetPrivate::setRange(double min, double max)
   this->LevelSpinBox->setRange(min, max);
   this->MinSpinBox->setRange(min, max);
   this->MaxSpinBox->setRange(min, max);
-  //this->RangeWidget->setValues(min, max);
+  // this->RangeWidget->setValues(min, max);
 }
 
 // --------------------------------------------------------------------------
@@ -129,7 +123,7 @@ void qMRMLWindowLevelWidgetPrivate::setSingleStep(double singleStep)
   // Use the same minimum step as in ctkDoubleRangeSlider::isValidStep
   // to avoid attempting to set too small step size.
   double sliderMinimumStep = qMax(this->WindowLevelRangeSlider->maximum() / std::numeric_limits<double>::max(),
-    std::numeric_limits<double>::epsilon());
+                                  std::numeric_limits<double>::epsilon());
   this->WindowLevelRangeSlider->setSingleStep(qMax(singleStep, sliderMinimumStep));
 
   this->WindowSpinBox->setSingleStep(singleStep);
@@ -168,10 +162,9 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
 
   int oldAuto = d->VolumeDisplayNode->GetAutoWindowLevel();
 
-  //int disabledModify = this->VolumeDisplayNode->StartModify();
-  d->VolumeDisplayNode->SetAutoWindowLevel(
-    autoWindowLevel == qMRMLWindowLevelWidget::Auto ? 1 : 0);
-  //this->VolumeDisplayNode->EndModify(disabledModify);
+  // int disabledModify = this->VolumeDisplayNode->StartModify();
+  d->VolumeDisplayNode->SetAutoWindowLevel(autoWindowLevel == qMRMLWindowLevelWidget::Auto ? 1 : 0);
+  // this->VolumeDisplayNode->EndModify(disabledModify);
 
   switch (autoWindowLevel)
   {
@@ -196,15 +189,14 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
   if (autoWindowLevel != oldAuto)
   {
     emit this->autoWindowLevelValueChanged(
-      autoWindowLevel == qMRMLWindowLevelWidget::Auto ?
-        qMRMLWindowLevelWidget::Auto : qMRMLWindowLevelWidget::Manual);
+      autoWindowLevel == qMRMLWindowLevelWidget::Auto ? qMRMLWindowLevelWidget::Auto : qMRMLWindowLevelWidget::Manual);
   }
 }
 
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
 {
-  switch(autoWindowLevel)
+  switch (autoWindowLevel)
   {
     case qMRMLWindowLevelWidget::Auto:
       this->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
@@ -248,12 +240,12 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
     return;
   }
   double oldWindow = d->VolumeDisplayNode->GetWindow();
-  double oldLevel  = d->VolumeDisplayNode->GetLevel();
+  double oldLevel = d->VolumeDisplayNode->GetLevel();
 
   int disabledModify = d->VolumeDisplayNode->StartModify();
   d->VolumeDisplayNode->SetWindowLevel(window, level);
-  if (!qFuzzyCompare(oldWindow, d->VolumeDisplayNode->GetWindow()) ||
-      !qFuzzyCompare(oldLevel, d->VolumeDisplayNode->GetLevel()))
+  if (!qFuzzyCompare(oldWindow, d->VolumeDisplayNode->GetWindow())
+      || !qFuzzyCompare(oldLevel, d->VolumeDisplayNode->GetLevel()))
   {
     if (this->autoWindowLevel() == qMRMLWindowLevelWidget::Auto)
     {
@@ -268,7 +260,7 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
 void qMRMLWindowLevelWidget::setMinMaxRangeValue(double min, double max)
 {
   double window = max - min;
-  double level = 0.5*(min+max);
+  double level = 0.5 * (min + max);
 
   this->setWindowLevel(window, level);
 }
@@ -279,7 +271,7 @@ void qMRMLWindowLevelWidget::setWindow(double window)
   Q_D(const qMRMLWindowLevelWidget);
   if (d->VolumeDisplayNode)
   {
-    double level  = d->VolumeDisplayNode->GetLevel();
+    double level = d->VolumeDisplayNode->GetLevel();
     this->setWindowLevel(window, level);
   }
 }
@@ -350,7 +342,7 @@ double qMRMLWindowLevelWidget::level() const
   double min = d->WindowLevelRangeSlider->minimumValue();
   double max = d->WindowLevelRangeSlider->maximumValue();
 
-  return 0.5*(max + min);
+  return 0.5 * (max + min);
 }
 
 // --------------------------------------------------------------------------

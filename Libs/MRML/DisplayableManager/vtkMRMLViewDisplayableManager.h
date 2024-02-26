@@ -41,17 +41,16 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewDisplayableManager
 
 public:
   static vtkMRMLViewDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLViewDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLViewDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLViewDisplayableManager();
   ~vtkMRMLViewDisplayableManager() override;
 
   /// Receives events from the view and the camera nodes.
-  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
-  void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  void ProcessWidgetsEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   void AdditionalInitializeStep() override;
 
@@ -76,12 +75,11 @@ protected:
   void UpdateFromCameraNode();
 
 private:
-
   vtkMRMLViewDisplayableManager(const vtkMRMLViewDisplayableManager&) = delete;
   void operator=(const vtkMRMLViewDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

@@ -38,22 +38,22 @@ class vtkMRMLVolumeNode;
 class vtkMRMLVolumePropertyNode;
 class vtkMRMLVolumeRenderingDisplayNode;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingModuleWidget
+  : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
   QVTK_OBJECT
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerVolumeRenderingModuleWidget(QWidget *parent=nullptr);
+  qSlicerVolumeRenderingModuleWidget(QWidget* parent = nullptr);
   ~qSlicerVolumeRenderingModuleWidget() override;
 
-  Q_INVOKABLE vtkMRMLVolumeNode* mrmlVolumeNode()const;
-  Q_INVOKABLE vtkMRMLDisplayableNode* mrmlROINode()const;
-  Q_INVOKABLE vtkMRMLMarkupsROINode* mrmlMarkupsROINode()const;
-  Q_INVOKABLE vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode()const;
-  Q_INVOKABLE vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode()const;
+  Q_INVOKABLE vtkMRMLVolumeNode* mrmlVolumeNode() const;
+  Q_INVOKABLE vtkMRMLDisplayableNode* mrmlROINode() const;
+  Q_INVOKABLE vtkMRMLMarkupsROINode* mrmlMarkupsROINode() const;
+  Q_INVOKABLE vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode() const;
+  Q_INVOKABLE vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode() const;
 
   void addRenderingMethodWidget(const QString& methodClassName, qSlicerVolumeRenderingPropertiesWidget* widget);
 

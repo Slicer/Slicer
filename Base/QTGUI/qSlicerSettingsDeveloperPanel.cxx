@@ -32,9 +32,10 @@
 // qSlicerSettingsDeveloperPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsDeveloperPanelPrivate: public Ui_qSlicerSettingsDeveloperPanel
+class qSlicerSettingsDeveloperPanelPrivate : public Ui_qSlicerSettingsDeveloperPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsDeveloperPanel);
+
 protected:
   qSlicerSettingsDeveloperPanel* const q_ptr;
 
@@ -47,9 +48,8 @@ public:
 // qSlicerSettingsDeveloperPanelPrivate methods
 
 // --------------------------------------------------------------------------
-qSlicerSettingsDeveloperPanelPrivate
-::qSlicerSettingsDeveloperPanelPrivate(qSlicerSettingsDeveloperPanel& object)
-  :q_ptr(&object)
+qSlicerSettingsDeveloperPanelPrivate ::qSlicerSettingsDeveloperPanelPrivate(qSlicerSettingsDeveloperPanel& object)
+  : q_ptr(&object)
 {
 }
 
@@ -70,32 +70,42 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
 #endif
 
   // Register settings
-  q->registerProperty("Developer/DeveloperMode", this->DeveloperModeEnabledCheckBox,
-    /*no tr*/"checked", SIGNAL(toggled(bool)),
-    qSlicerSettingsDeveloperPanel::tr("Enable/Disable developer mode"), ctkSettingsPanel::OptionRequireRestart);
+  q->registerProperty("Developer/DeveloperMode",
+                      this->DeveloperModeEnabledCheckBox,
+                      /*no tr*/ "checked",
+                      SIGNAL(toggled(bool)),
+                      qSlicerSettingsDeveloperPanel::tr("Enable/Disable developer mode"),
+                      ctkSettingsPanel::OptionRequireRestart);
 
-  q->registerProperty("Developer/PreserveCLIModuleDataFiles", this->PreserveCLIModuleDataFilesCheckBox,
-    /*no tr*/"checked", SIGNAL(toggled(bool)),
-    qSlicerSettingsDeveloperPanel::tr("Preserve CLI module input/output files"), ctkSettingsPanel::OptionRequireRestart);
+  q->registerProperty("Developer/PreserveCLIModuleDataFiles",
+                      this->PreserveCLIModuleDataFilesCheckBox,
+                      /*no tr*/ "checked",
+                      SIGNAL(toggled(bool)),
+                      qSlicerSettingsDeveloperPanel::tr("Preserve CLI module input/output files"),
+                      ctkSettingsPanel::OptionRequireRestart);
 
-  q->registerProperty("Developer/SelfTestDisplayMessageDelay", this->SelfTestMessageDelaySlider,
-    /*no tr*/"value", SIGNAL(valueChanged(double)),
-    qSlicerSettingsDeveloperPanel::tr("Time to wait before resuming self-test execution and hiding messages displayed to the user"));
+  q->registerProperty("Developer/SelfTestDisplayMessageDelay",
+                      this->SelfTestMessageDelaySlider,
+                      /*no tr*/ "value",
+                      SIGNAL(valueChanged(double)),
+                      qSlicerSettingsDeveloperPanel::tr(
+                        "Time to wait before resuming self-test execution and hiding messages displayed to the user"));
 
-  q->registerProperty("QtTesting/Enabled", this->QtTestingEnabledCheckBox,
-    /*no tr*/"checked", SIGNAL(toggled(bool)),
-    qSlicerSettingsDeveloperPanel::tr("Enable/Disable QtTesting"), ctkSettingsPanel::OptionRequireRestart);
+  q->registerProperty("QtTesting/Enabled",
+                      this->QtTestingEnabledCheckBox,
+                      /*no tr*/ "checked",
+                      SIGNAL(toggled(bool)),
+                      qSlicerSettingsDeveloperPanel::tr("Enable/Disable QtTesting"),
+                      ctkSettingsPanel::OptionRequireRestart);
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->DeveloperModeEnabledCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(enableDeveloperMode(bool)));
-  QObject::connect(this->PreserveCLIModuleDataFilesCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(preserveCLIModuleDataFiles(bool)));
-  QObject::connect(this->QtTestingEnabledCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(enableQtTesting(bool)));
+  QObject::connect(this->DeveloperModeEnabledCheckBox, SIGNAL(toggled(bool)), q, SLOT(enableDeveloperMode(bool)));
+  QObject::connect(
+    this->PreserveCLIModuleDataFilesCheckBox, SIGNAL(toggled(bool)), q, SLOT(preserveCLIModuleDataFiles(bool)));
+  QObject::connect(this->QtTestingEnabledCheckBox, SIGNAL(toggled(bool)), q, SLOT(enableQtTesting(bool)));
 
-  QObject::connect(this->QtDesignerButton, SIGNAL(clicked()),
-    qSlicerApplication::application(), SLOT(launchDesigner()));
+  QObject::connect(
+    this->QtDesignerButton, SIGNAL(clicked()), qSlicerApplication::application(), SLOT(launchDesigner()));
 }
 
 // --------------------------------------------------------------------------

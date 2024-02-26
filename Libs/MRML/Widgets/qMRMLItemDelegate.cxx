@@ -37,7 +37,7 @@
 #include "qMRMLItemDelegate.h"
 
 //------------------------------------------------------------------------------
-qMRMLItemDelegate::qMRMLItemDelegate(QObject *parent)
+qMRMLItemDelegate::qMRMLItemDelegate(QObject* parent)
   : QStyledItemDelegate(parent)
 {
   this->DummySpinBox = new ctkDoubleSpinBox(nullptr);
@@ -53,18 +53,16 @@ qMRMLItemDelegate::~qMRMLItemDelegate()
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLItemDelegate::isColor(const QModelIndex& index)const
+bool qMRMLItemDelegate::isColor(const QModelIndex& index) const
 {
   QVariant editData = index.data(Qt::EditRole);
   QVariant decorationData = index.data(Qt::DecorationRole);
-  if (editData.isNull() &&
-      decorationData.type() == QVariant::Color)
+  if (editData.isNull() && decorationData.type() == QVariant::Color)
   {
     return true;
   }
-  else if ( editData.isNull() &&
-            decorationData.type() == QVariant::Pixmap &&
-            index.data(qMRMLColorModel::ColorRole).type() == QVariant::Color )
+  else if (editData.isNull() && decorationData.type() == QVariant::Pixmap
+           && index.data(qMRMLColorModel::ColorRole).type() == QVariant::Color)
   {
     return true;
   }
@@ -72,7 +70,7 @@ bool qMRMLItemDelegate::isColor(const QModelIndex& index)const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLItemDelegate::colorRole(const QModelIndex& index)const
+int qMRMLItemDelegate::colorRole(const QModelIndex& index) const
 {
   QVariant decorationData = index.data(Qt::DecorationRole);
   QVariant colorData = index.data(qMRMLColorModel::ColorRole);
@@ -88,7 +86,7 @@ int qMRMLItemDelegate::colorRole(const QModelIndex& index)const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLItemDelegate::is0To1Value(const QModelIndex& index)const
+bool qMRMLItemDelegate::is0To1Value(const QModelIndex& index) const
 {
   QVariant editData = index.data(Qt::EditRole);
   if (editData.type() != QVariant::String)
@@ -96,26 +94,24 @@ bool qMRMLItemDelegate::is0To1Value(const QModelIndex& index)const
     return false;
   }
   QRegExp regExp0To1With2Decimals("[01]\\.[0-9][0-9]");
-  bool res=  regExp0To1With2Decimals.exactMatch(editData.toString());
+  bool res = regExp0To1With2Decimals.exactMatch(editData.toString());
   return res;
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLItemDelegate
-::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-               const QModelIndex &index) const
+QWidget* qMRMLItemDelegate ::createEditor(QWidget* parent,
+                                          const QStyleOptionViewItem& option,
+                                          const QModelIndex& index) const
 {
   if (this->isColor(index))
   {
     ctkColorPickerButton* colorPicker = new ctkColorPickerButton(parent);
     colorPicker->setProperty("changeColorOnSet", true);
     colorPicker->setDisplayColorName(false);
-    ctkColorPickerButton::ColorDialogOptions options
-      = ctkColorPickerButton::ShowAlphaChannel
-      | ctkColorPickerButton::UseCTKColorDialog;
+    ctkColorPickerButton::ColorDialogOptions options =
+      ctkColorPickerButton::ShowAlphaChannel | ctkColorPickerButton::UseCTKColorDialog;
     colorPicker->setDialogOptions(options);
-    connect(colorPicker, SIGNAL(colorChanged(QColor)),
-            this, SLOT(commitAndClose()),Qt::QueuedConnection);
+    connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(commitAndClose()), Qt::QueuedConnection);
     return colorPicker;
   }
   else if (this->is0To1Value(index))
@@ -128,18 +124,16 @@ QWidget *qMRMLItemDelegate
     slider->popup()->layout()->setSizeConstraint(QLayout::SetMinimumSize);
     slider->setParent(parent);
 
-    ctkDoubleSpinBox *spinBox = slider->spinBox();
+    ctkDoubleSpinBox* spinBox = slider->spinBox();
     spinBox->setFrame(false);
-    QObject::connect(slider, SIGNAL(valueChanged(double)),
-                     this, SLOT(commitSenderData()));
+    QObject::connect(slider, SIGNAL(valueChanged(double)), this, SLOT(commitSenderData()));
     return slider;
   }
   return this->Superclass::createEditor(parent, option, index);
 }
 
 //------------------------------------------------------------------------------
-void qMRMLItemDelegate::setEditorData(QWidget *editor,
-                                      const QModelIndex &index) const
+void qMRMLItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
   if (this->isColor(index))
   {
@@ -163,7 +157,7 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor,
   }
   else if (this->is0To1Value(index))
   {
-    ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
+    ctkSliderWidget* sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
     double value = index.data(Qt::EditRole).toDouble();
     if (sliderWidget) // sliderWidget may be nullptr, don't make the application crash when that happens
     {
@@ -181,8 +175,7 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor,
 }
 
 //------------------------------------------------------------------------------
-void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
-                                   const QModelIndex &index) const
+void qMRMLItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
   if (this->isColor(index))
   {
@@ -194,7 +187,7 @@ void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
   }
   else if (this->is0To1Value(index))
   {
-    ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
+    ctkSliderWidget* sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
     QString value = QString::number(sliderWidget->value(), 'f', 2);
     model->setData(index, value, Qt::EditRole);
   }
@@ -220,9 +213,7 @@ void qMRMLItemDelegate::commitAndClose()
 }
 
 //------------------------------------------------------------------------------
-QSize qMRMLItemDelegate
-::sizeHint(const QStyleOptionViewItem &option,
-           const QModelIndex &index) const
+QSize qMRMLItemDelegate ::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   if (this->is0To1Value(index))
   {
@@ -232,9 +223,9 @@ QSize qMRMLItemDelegate
 }
 
 //------------------------------------------------------------------------------
-void qMRMLItemDelegate
-::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-                       const QModelIndex &index) const
+void qMRMLItemDelegate ::updateEditorGeometry(QWidget* editor,
+                                              const QStyleOptionViewItem& option,
+                                              const QModelIndex& index) const
 {
   if (this->isColor(index))
   {
@@ -251,12 +242,10 @@ void qMRMLItemDelegate
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLItemDelegate::eventFilter(QObject *object, QEvent *event)
+bool qMRMLItemDelegate::eventFilter(QObject* object, QEvent* event)
 {
   ctkSliderWidget* editor = qobject_cast<ctkSliderWidget*>(object);
-  if (editor &&
-      (event->type() == QEvent::FocusOut ||
-      (event->type() == QEvent::Hide && editor->isWindow())))
+  if (editor && (event->type() == QEvent::FocusOut || (event->type() == QEvent::Hide && editor->isWindow())))
   {
     // The Hide event will take care of he editors that are in fact complete dialogs
     if (!editor->isActiveWindow() || (QApplication::focusWidget() != editor))
@@ -275,4 +264,3 @@ bool qMRMLItemDelegate::eventFilter(QObject *object, QEvent *event)
   }
   return this->Superclass::eventFilter(object, event);
 }
-

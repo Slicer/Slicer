@@ -115,16 +115,20 @@ bool vtkCalculateOversamplingFactor::CalculateOversamplingFactor()
 
   // Determine crisp oversampling factor based on crisp inputs using fuzzy rules
   this->OutputOversamplingFactor = this->DetermineOversamplingFactor();
-  vtkDebugMacro("CalculateOversamplingFactor: Automatic oversampling factor of " << this->OutputOversamplingFactor << " has been calculated.");
+  vtkDebugMacro("CalculateOversamplingFactor: Automatic oversampling factor of " << this->OutputOversamplingFactor
+                                                                                 << " has been calculated.");
 
   if (this->LogSpeedMeasurements)
   {
 #ifndef NDEBUG
     double checkpointEnd = timer->GetUniversalTime();
 #endif
-    vtkDebugMacro("CalculateOversamplingFactor: Total automatic oversampling calculation time: " << checkpointEnd-checkpointStart << " s\n"
-      << "\tCalculating relative structure size and complexity measure: " << checkpointFuzzyStart-checkpointStart << " s\n"
-      << "\tDetermining oversampling factor using fuzzy rules: " << checkpointEnd-checkpointFuzzyStart << " s");
+    vtkDebugMacro("CalculateOversamplingFactor: Total automatic oversampling calculation time: "
+                  << checkpointEnd - checkpointStart << " s\n"
+                  << "\tCalculating relative structure size and complexity measure: "
+                  << checkpointFuzzyStart - checkpointStart << " s\n"
+                  << "\tDetermining oversampling factor using fuzzy rules: " << checkpointEnd - checkpointFuzzyStart
+                  << " s");
   }
 
   // Clean up (triggers destruction of member)
@@ -160,19 +164,21 @@ bool vtkCalculateOversamplingFactor::CalculateRelativeStructureSize()
   double error = (structureVolume - structureProjectedVolume);
   if (error * 10000 > structureVolume)
   {
-    vtkDebugMacro("CalculateRelativeStructureSize: Computed structure volume may be invalid according to difference in calculated projected and normal volumes.");
+    vtkDebugMacro("CalculateRelativeStructureSize: Computed structure volume may be invalid according to difference in "
+                  "calculated projected and normal volumes.");
   }
 
   // Calculate voxel volume in mm^3
-  double spacing[3] = {0.0,0.0,0.0};
+  double spacing[3] = { 0.0, 0.0, 0.0 };
   this->ReferenceGeometryImageData->GetSpacing(spacing);
-  double voxelVolume = spacing[0]*spacing[1]*spacing[2];
+  double voxelVolume = spacing[0] * spacing[1] * spacing[2];
 
   double relativeStructureSize = structureVolume / voxelVolume;
 
   // Map raw measurement to the fuzzy input scale
-  this->OutputRelativeStructureSize = pow(relativeStructureSize, 1.0/3.0);
-  vtkDebugMacro("CalculateRelativeStructureSize: Structure size fraction: " << relativeStructureSize << ", relative structure size: " << this->OutputRelativeStructureSize);
+  this->OutputRelativeStructureSize = pow(relativeStructureSize, 1.0 / 3.0);
+  vtkDebugMacro("CalculateRelativeStructureSize: Structure size fraction: "
+                << relativeStructureSize << ", relative structure size: " << this->OutputRelativeStructureSize);
 
   return true;
 }
@@ -196,8 +202,10 @@ bool vtkCalculateOversamplingFactor::CalculateComplexityMeasure()
   this->OutputNormalizedShapeIndex = this->MassPropertiesAlgorithm->GetNormalizedShapeIndex();
 
   // Map raw measurement to the fuzzy input scale
-  this->OutputComplexityMeasure = std::max(this->OutputNormalizedShapeIndex - 1.0, 0.0); // If smaller then 0, then return 0
-  vtkDebugMacro("CalculateComplexityMeasure: Normalized shape index: " << this->OutputNormalizedShapeIndex << ", complexity measure: " << this->OutputComplexityMeasure);
+  this->OutputComplexityMeasure =
+    std::max(this->OutputNormalizedShapeIndex - 1.0, 0.0); // If smaller then 0, then return 0
+  vtkDebugMacro("CalculateComplexityMeasure: Normalized shape index: "
+                << this->OutputNormalizedShapeIndex << ", complexity measure: " << this->OutputComplexityMeasure);
 
   return true;
 }
@@ -327,46 +335,50 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
   consequents.push_back(rule6_OversamplingLow);
 
   // Calculate areas and centroids of all the sections (trapezoids) of all the consequent membership functions
-  std::vector<std::pair<double,double> > areaCentroidPairs;
-  for (std::vector<vtkPiecewiseFunction*>::iterator consequentIt=consequents.begin(); consequentIt!=consequents.end(); ++consequentIt)
+  std::vector<std::pair<double, double>> areaCentroidPairs;
+  for (std::vector<vtkPiecewiseFunction*>::iterator consequentIt = consequents.begin();
+       consequentIt != consequents.end();
+       ++consequentIt)
   {
     vtkPiecewiseFunction* currentMembershipFunction = (*consequentIt);
 
     // Calculate area and center of mass for each consequent
-    double currentNode[4] = {0.0,0.0,0.0,0.0};
-    double nextNode[4] = {0.0,0.0,0.0,0.0};
-    for (int nodeIndex=0; nodeIndex<currentMembershipFunction->GetSize()-1; ++nodeIndex)
+    double currentNode[4] = { 0.0, 0.0, 0.0, 0.0 };
+    double nextNode[4] = { 0.0, 0.0, 0.0, 0.0 };
+    for (int nodeIndex = 0; nodeIndex < currentMembershipFunction->GetSize() - 1; ++nodeIndex)
     {
       // Calculate area of each trapezoid (may be triangle, rectangle, or actual trapezoid)
       currentMembershipFunction->GetNodeValue(nodeIndex, currentNode);
-      currentMembershipFunction->GetNodeValue(nodeIndex+1, nextNode);
+      currentMembershipFunction->GetNodeValue(nodeIndex + 1, nextNode);
 
-      double bottomRectangleArea = (nextNode[0]-currentNode[0]) * std::min(nextNode[1], currentNode[1]);
-      double bottomRectangleCentroid = (nextNode[0]+currentNode[0]) / 2.0;
+      double bottomRectangleArea = (nextNode[0] - currentNode[0]) * std::min(nextNode[1], currentNode[1]);
+      double bottomRectangleCentroid = (nextNode[0] + currentNode[0]) / 2.0;
 
       double topTriangleArea = 0.0;
       double topTriangleCentroid = 0.0;
       if (nextNode[1] > currentNode[1]) // If right node has higher membership
       {
-        topTriangleArea = (nextNode[0]-currentNode[0]) * (nextNode[1]-currentNode[1]) / 2.0;
-        topTriangleCentroid = currentNode[0] + (nextNode[0]-currentNode[0])*2.0/3.0;
+        topTriangleArea = (nextNode[0] - currentNode[0]) * (nextNode[1] - currentNode[1]) / 2.0;
+        topTriangleCentroid = currentNode[0] + (nextNode[0] - currentNode[0]) * 2.0 / 3.0;
       }
-      else if (nextNode[1] < currentNode[1]) // If left node has higher membership (if they are equal then there is no triangle)
+      else if (nextNode[1]
+               < currentNode[1]) // If left node has higher membership (if they are equal then there is no triangle)
       {
-        topTriangleArea = (nextNode[0]-currentNode[0]) * (currentNode[1]-nextNode[1]) / 2.0;
-        topTriangleCentroid = currentNode[0] + (nextNode[0]-currentNode[0])/3.0;
+        topTriangleArea = (nextNode[0] - currentNode[0]) * (currentNode[1] - nextNode[1]) / 2.0;
+        topTriangleCentroid = currentNode[0] + (nextNode[0] - currentNode[0]) / 3.0;
       }
 
       double trapezoidArea = bottomRectangleArea + topTriangleArea;
       double trapezoidCentroid = bottomRectangleCentroid;
       if (topTriangleArea > 0.0)
       {
-        trapezoidCentroid = ((bottomRectangleArea*bottomRectangleCentroid) + (topTriangleArea*topTriangleCentroid)) / (bottomRectangleArea+topTriangleArea);
+        trapezoidCentroid = ((bottomRectangleArea * bottomRectangleCentroid) + (topTriangleArea * topTriangleCentroid))
+                            / (bottomRectangleArea + topTriangleArea);
       }
 
       if (trapezoidArea > 0.0) // Only add if area is non-zero
       {
-        std::pair<double,double> areaCentroidPair(trapezoidArea,trapezoidCentroid);
+        std::pair<double, double> areaCentroidPair(trapezoidArea, trapezoidCentroid);
         areaCentroidPairs.push_back(areaCentroidPair);
       }
     }
@@ -375,7 +387,9 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
   // Calculate combined center of mass from the components
   double nominator = 0.0;
   double denominator = 0.0;
-  for (std::vector<std::pair<double,double> >::iterator trapezoidIt=areaCentroidPairs.begin(); trapezoidIt!=areaCentroidPairs.end(); ++trapezoidIt)
+  for (std::vector<std::pair<double, double>>::iterator trapezoidIt = areaCentroidPairs.begin();
+       trapezoidIt != areaCentroidPairs.end();
+       ++trapezoidIt)
   {
     nominator += trapezoidIt->first * trapezoidIt->second;
     denominator += trapezoidIt->first;
@@ -383,9 +397,9 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
   double centerOfMass = nominator / denominator;
 
   // Defuzzify output
-  double calculatedOversamplingFactorPower = floor(centerOfMass+0.5);
+  double calculatedOversamplingFactorPower = floor(centerOfMass + 0.5);
 
-  return pow(2.0,calculatedOversamplingFactorPower);
+  return pow(2.0, calculatedOversamplingFactorPower);
 }
 
 //---------------------------------------------------------------------------
@@ -399,25 +413,27 @@ void vtkCalculateOversamplingFactor::ClipMembershipFunction(vtkPiecewiseFunction
 
   // Find parameter values (strictly between nodes, not at nodes) where membership is
   // exactly the clip value. We will need to create new nodes at those parameter values.
-  double currentNode[4] = {0.0,0.0,0.0,0.0};
-  double nextNode[4] = {0.0,0.0,0.0,0.0};
+  double currentNode[4] = { 0.0, 0.0, 0.0, 0.0 };
+  double nextNode[4] = { 0.0, 0.0, 0.0, 0.0 };
   std::vector<double> newNodeParameterValues;
-  for (int nodeIndex=0; nodeIndex<membershipFunction->GetSize()-1; ++nodeIndex)
+  for (int nodeIndex = 0; nodeIndex < membershipFunction->GetSize() - 1; ++nodeIndex)
   {
     membershipFunction->GetNodeValue(nodeIndex, currentNode);
-    membershipFunction->GetNodeValue(nodeIndex+1, nextNode);
-    if ( (currentNode[1] < clipValue && nextNode[1] > clipValue)
-      || (currentNode[1] > clipValue && nextNode[1] < clipValue) )
+    membershipFunction->GetNodeValue(nodeIndex + 1, nextNode);
+    if ((currentNode[1] < clipValue && nextNode[1] > clipValue)
+        || (currentNode[1] > clipValue && nextNode[1] < clipValue))
     {
-      double newNodeParameterValue = (((nextNode[0]-currentNode[0])*(currentNode[1]-clipValue)) / (currentNode[1]-nextNode[1])) + currentNode[0];
+      double newNodeParameterValue =
+        (((nextNode[0] - currentNode[0]) * (currentNode[1] - clipValue)) / (currentNode[1] - nextNode[1]))
+        + currentNode[0];
       newNodeParameterValues.push_back(newNodeParameterValue);
     }
   }
 
   // Move nodes down to clip value that hold value greater than clip value.
-  for (int nodeIndex=0; nodeIndex<membershipFunction->GetSize(); ++nodeIndex)
+  for (int nodeIndex = 0; nodeIndex < membershipFunction->GetSize(); ++nodeIndex)
   {
-    double currentNode[4] = {0.0,0.0,0.0,0.0};
+    double currentNode[4] = { 0.0, 0.0, 0.0, 0.0 };
     membershipFunction->GetNodeValue(nodeIndex, currentNode);
     if (currentNode[1] > clipValue)
     {
@@ -427,14 +443,16 @@ void vtkCalculateOversamplingFactor::ClipMembershipFunction(vtkPiecewiseFunction
   }
 
   // Add new nodes to the clipping points
-  for (std::vector<double>::iterator pointIt=newNodeParameterValues.begin(); pointIt!=newNodeParameterValues.end(); ++pointIt)
+  for (std::vector<double>::iterator pointIt = newNodeParameterValues.begin(); pointIt != newNodeParameterValues.end();
+       ++pointIt)
   {
     membershipFunction->AddPoint(*pointIt, clipValue);
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOrientedImageData* imageData, double oversamplingFactor)
+void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOrientedImageData* imageData,
+                                                                      double oversamplingFactor)
 {
   if (!imageData)
   {
@@ -442,10 +460,11 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
   }
 
   // Sanity check for sensible oversampling factor
-  if ( oversamplingFactor < 0.01
-    || oversamplingFactor > 100.0 )
+  if (oversamplingFactor < 0.01 || oversamplingFactor > 100.0)
   {
-    vtkWarningWithObjectMacro(imageData, "vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry: Oversampling factor" << oversamplingFactor << "seems unreasonable!");
+    vtkWarningWithObjectMacro(imageData,
+                              "vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry: Oversampling factor"
+                                << oversamplingFactor << "seems unreasonable!");
     return;
   }
   if (oversamplingFactor == 1.0)
@@ -454,22 +473,21 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
     return;
   }
   // Calculate extent and spacing
-  int newExtent[6] = {0,-1,0,-1,0,-1};
-  int extent[6] = {0,-1,0,-1,0,-1};
+  int newExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
   imageData->GetExtent(extent);
-  double newSpacing[3] = {0.0,0.0,0.0};
-  double spacing[3] = {0.0,0.0,0.0};
+  double newSpacing[3] = { 0.0, 0.0, 0.0 };
+  double spacing[3] = { 0.0, 0.0, 0.0 };
   imageData->GetSpacing(spacing);
-  for (unsigned int axis=0; axis<3; ++axis)
+  for (unsigned int axis = 0; axis < 3; ++axis)
   {
-    int dimension = extent[axis*2+1] - extent[axis*2] + 1;
+    int dimension = extent[axis * 2 + 1] - extent[axis * 2] + 1;
     int extentMin = static_cast<int>(ceil(oversamplingFactor * extent[axis * 2]));
-    int extentMax = std::max(extentMin + static_cast<int>(floor(oversamplingFactor*dimension)) - 1, 0);
-    newExtent[axis*2] = extentMin;
-    newExtent[axis*2+1] = extentMax;
-    newSpacing[axis] = spacing[axis]
-      * double(extent[axis * 2 + 1] - extent[axis * 2] + 1)
-      / double(newExtent[axis * 2 + 1] - newExtent[axis * 2] + 1);
+    int extentMax = std::max(extentMin + static_cast<int>(floor(oversamplingFactor * dimension)) - 1, 0);
+    newExtent[axis * 2] = extentMin;
+    newExtent[axis * 2 + 1] = extentMax;
+    newSpacing[axis] = spacing[axis] * double(extent[axis * 2 + 1] - extent[axis * 2] + 1)
+                       / double(newExtent[axis * 2 + 1] - newExtent[axis * 2] + 1);
   }
   imageData->SetExtent(newExtent);
   imageData->SetSpacing(newSpacing);
@@ -478,13 +496,10 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
   // to be in the same position, so we need to shift the origin by a half voxel size difference
   vtkSmartPointer<vtkMatrix4x4> imageToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
   imageData->GetImageToWorldMatrix(imageToWorld);
-  double newOrigin_Image[4] =
-    {
-    0.5 * (1.0 - spacing[0] / newSpacing[0]),
-    0.5 * (1.0 - spacing[1] / newSpacing[1]),
-    0.5 * (1.0 - spacing[2] / newSpacing[2]),
-    1.0
-    };
+  double newOrigin_Image[4] = { 0.5 * (1.0 - spacing[0] / newSpacing[0]),
+                                0.5 * (1.0 - spacing[1] / newSpacing[1]),
+                                0.5 * (1.0 - spacing[2] / newSpacing[2]),
+                                1.0 };
   double newOrigin_World[4] = { 0.0, 0.0, 0.0, 1.0 };
   imageToWorld->MultiplyPoint(newOrigin_Image, newOrigin_World);
   imageData->SetOrigin(newOrigin_World);

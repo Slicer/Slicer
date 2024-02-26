@@ -39,19 +39,17 @@ class vtkMRMLSliceCompositeNode;
 class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLinkLogic : public vtkMRMLAbstractLogic
 {
 public:
-
   /// The Usual VTK class functions
-  static vtkMRMLSliceLinkLogic *New();
-  vtkTypeMacro(vtkMRMLSliceLinkLogic,vtkMRMLAbstractLogic);
+  static vtkMRMLSliceLinkLogic* New();
+  vtkTypeMacro(vtkMRMLSliceLinkLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLSliceLinkLogic();
   ~vtkMRMLSliceLinkLogic() override;
 
   // On a change in scene, we need to manage the observations.
-  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
@@ -70,16 +68,17 @@ protected:
   int GetBroadcastingEvents();
 
   /// Broadcast a slice node to other slice nodes.
-  void BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode);
+  void BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode);
 
   /// Broadcast a slice composite node to other slice composite nodes
-  void BroadcastSliceCompositeNodeEvent(vtkMRMLSliceCompositeNode *compositeNode);
+  void BroadcastSliceCompositeNodeEvent(vtkMRMLSliceCompositeNode* compositeNode);
 
   /// Returns true if orientation of the slices match. Slice position and scaling is ignored.
-  bool IsOrientationMatching(vtkMRMLSliceNode *sliceNode1, vtkMRMLSliceNode *sliceNode2, double comparisonTolerance = 0.001);
+  bool IsOrientationMatching(vtkMRMLSliceNode* sliceNode1,
+                             vtkMRMLSliceNode* sliceNode2,
+                             double comparisonTolerance = 0.001);
 
 private:
-
   vtkMRMLSliceLinkLogic(const vtkMRMLSliceLinkLogic&) = delete;
   void operator=(const vtkMRMLSliceLinkLogic&) = delete;
 
@@ -95,14 +94,16 @@ private:
 
   struct SliceNodeInfos
   {
-    SliceNodeInfos(int interacting) : Interacting(interacting) {}
+    SliceNodeInfos(int interacting)
+      : Interacting(interacting)
+    {
+    }
     double LastNormal[3];
     int Interacting;
   };
 
   typedef std::map<std::string, SliceNodeInfos> SliceNodeStatusMap;
   SliceNodeStatusMap SliceNodeInteractionStatus;
-
 };
 
 #endif

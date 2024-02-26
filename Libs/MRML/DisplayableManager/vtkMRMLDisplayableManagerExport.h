@@ -17,17 +17,17 @@
 #include <vtkMRMLDisplayableManagerConfigure.h>
 
 #if defined(WIN32) && !defined(MRMLDisplayableManager_STATIC)
-#if defined(MRMLDisplayableManager_EXPORTS)
-#define VTK_MRML_DISPLAYABLEMANAGER_EXPORT __declspec( dllexport )
+# if defined(MRMLDisplayableManager_EXPORTS)
+#  define VTK_MRML_DISPLAYABLEMANAGER_EXPORT __declspec(dllexport)
+# else
+#  define VTK_MRML_DISPLAYABLEMANAGER_EXPORT __declspec(dllimport)
+# endif
 #else
-#define VTK_MRML_DISPLAYABLEMANAGER_EXPORT __declspec( dllimport )
-#endif
-#else
-#define VTK_MRML_DISPLAYABLEMANAGER_EXPORT
+# define VTK_MRML_DISPLAYABLEMANAGER_EXPORT
 #endif
 
 #if defined(MRMLDisplayableManager_AUTOINIT)
-#include <vtkAutoInit.h>
+# include <vtkAutoInit.h>
 VTK_AUTOINIT(MRMLDisplayableManager)
 #endif
 

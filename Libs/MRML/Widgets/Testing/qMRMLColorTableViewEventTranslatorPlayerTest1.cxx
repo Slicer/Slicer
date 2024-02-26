@@ -59,10 +59,10 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLColorTableViewEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLColorTableViewEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -100,9 +100,8 @@ int qMRMLColorTableViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   ColorTableView2.setMRMLColorNode(colorPETNode.GetPointer());
   colorPETNode->SetTypeToMIP();
 
-  etpWidget.addTestCase(&topLevel,
-                        xmlDirectory + "qMRMLColorTableViewEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    &topLevel, xmlDirectory + "qMRMLColorTableViewEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))
@@ -113,4 +112,3 @@ int qMRMLColorTableViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

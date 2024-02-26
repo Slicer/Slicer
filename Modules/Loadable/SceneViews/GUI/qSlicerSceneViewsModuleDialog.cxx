@@ -22,7 +22,7 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog(QWidget* parent/*=nullptr*/)
+qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog(QWidget* parent /*=nullptr*/)
   : qMRMLScreenShotDialog(parent)
 {
   this->m_Logic = nullptr;
@@ -39,7 +39,7 @@ qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog(QWidget* parent/*=n
 qSlicerSceneViewsModuleDialog::~qSlicerSceneViewsModuleDialog()
 {
 
-  if(this->m_Logic)
+  if (this->m_Logic)
   {
     this->m_Logic = nullptr;
   }
@@ -129,19 +129,20 @@ void qSlicerSceneViewsModuleDialog::accept()
   if (this->data().toString().isEmpty())
   {
     // this is a new SceneView
-    this->m_Logic->CreateSceneView(nameBytes.data(),descriptionBytes.data(),
-                                   screenshotType,this->imageData());
-    //QMessageBox::information(this, "3D Slicer SceneView created",
-    //             "A new SceneView was created and the current scene was attached.");
+    this->m_Logic->CreateSceneView(nameBytes.data(), descriptionBytes.data(), screenshotType, this->imageData());
+    // QMessageBox::information(this, "3D Slicer SceneView created",
+    //              "A new SceneView was created and the current scene was attached.");
   }
   else
   {
     // this SceneView already exists
-    this->m_Logic->ModifySceneView(vtkStdString(this->data().toString().toUtf8()),nameBytes.data(),descriptionBytes.data()
-                                   ,screenshotType,this->imageData());
-    //QMessageBox::information(this, "3D Slicer SceneView updated",
-    //             The SceneView was updated without changing the attached scene.");
+    this->m_Logic->ModifySceneView(vtkStdString(this->data().toString().toUtf8()),
+                                   nameBytes.data(),
+                                   descriptionBytes.data(),
+                                   screenshotType,
+                                   this->imageData());
+    // QMessageBox::information(this, "3D Slicer SceneView updated",
+    //              The SceneView was updated without changing the attached scene.");
   }
   this->Superclass::accept();
 }
-

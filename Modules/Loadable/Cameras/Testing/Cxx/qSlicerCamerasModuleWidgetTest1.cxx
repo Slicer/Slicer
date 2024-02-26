@@ -21,24 +21,21 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCamerasModuleWidget.h"
 
-
-
-int qSlicerCamerasModuleWidgetTest1(int argc, char * argv [] )
+int qSlicerCamerasModuleWidgetTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);
 
-  qSlicerCoreApplication * aptr = app.application();
+  qSlicerCoreApplication* aptr = app.application();
 
-  if( aptr != (&app) )
+  if (aptr != (&app))
   {
     std::cerr << "Problem with the application() singleton" << std::endl;
     return EXIT_FAILURE;
   }
 
-  qSlicerCamerasModuleWidget * cameraModuleWidget = new qSlicerCamerasModuleWidget;
+  qSlicerCamerasModuleWidget* cameraModuleWidget = new qSlicerCamerasModuleWidget;
 
   delete cameraModuleWidget;
 
   return EXIT_SUCCESS;
 }
-

@@ -56,9 +56,8 @@
 #include <vtkCallbackCommand.h>
 #include <vtkNew.h>
 
-
 //-----------------------------------------------------------------------------
-class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModuleWidget
+class qSlicerModelsModuleWidgetPrivate : public Ui_qSlicerModelsModuleWidget
 {
 public:
   qSlicerModelsModuleWidgetPrivate();
@@ -74,7 +73,8 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerModelsModuleWidgetPrivate::qSlicerModelsModuleWidgetPrivate()
 {
-  this->HideChildNodeTypes = (QStringList() << "vtkMRMLFiberBundleNode" << "vtkMRMLAnnotationNode");
+  this->HideChildNodeTypes = (QStringList() << "vtkMRMLFiberBundleNode"
+                                            << "vtkMRMLAnnotationNode");
   this->FiberDisplayClass = "vtkMRMLFiberBundleLineDisplayNode";
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
 }
@@ -84,8 +84,8 @@ qSlicerModelsModuleWidgetPrivate::qSlicerModelsModuleWidgetPrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerModelsModuleWidget::qSlicerModelsModuleWidget(QWidget* _parent)
-  : Superclass( _parent )
-  , d_ptr( new qSlicerModelsModuleWidgetPrivate )
+  : Superclass(_parent)
+  , d_ptr(new qSlicerModelsModuleWidgetPrivate)
 {
 }
 
@@ -116,38 +116,43 @@ void qSlicerModelsModuleWidget::setup()
 
   // Set up tree view
   qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = d->SubjectHierarchyTreeView->sortFilterProxyModel();
-  sortFilterProxyModel->setNodeTypes(QStringList() << "vtkMRMLModelNode" << "vtkMRMLFolderDisplayNode");
+  sortFilterProxyModel->setNodeTypes(QStringList() << "vtkMRMLModelNode"
+                                                   << "vtkMRMLFolderDisplayNode");
   d->SubjectHierarchyTreeView->setColumnHidden(d->SubjectHierarchyTreeView->model()->idColumn(), true);
   d->SubjectHierarchyTreeView->setColumnHidden(d->SubjectHierarchyTreeView->model()->transformColumn(), true);
-  d->SubjectHierarchyTreeView->setPluginAllowlist(QStringList() << "Models" << "Folder" << "Opacity" << "Visibility");
+  d->SubjectHierarchyTreeView->setPluginAllowlist(QStringList() << "Models"
+                                                                << "Folder"
+                                                                << "Opacity"
+                                                                << "Visibility");
   d->SubjectHierarchyTreeView->setSelectRoleSubMenuVisible(false);
   d->SubjectHierarchyTreeView->expandToDepth(4);
   d->SubjectHierarchyTreeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
 
-  connect( d->SubjectHierarchyTreeView, SIGNAL(currentItemsChanged(QList<vtkIdType>)),
-    this, SLOT(setDisplaySelectionFromSubjectHierarchyItems(QList<vtkIdType>)) );
+  connect(d->SubjectHierarchyTreeView,
+          SIGNAL(currentItemsChanged(QList<vtkIdType>)),
+          this,
+          SLOT(setDisplaySelectionFromSubjectHierarchyItems(QList<vtkIdType>)));
 
-  connect( d->FilterModelSearchBox, SIGNAL(textChanged(QString)),
-    sortFilterProxyModel, SLOT(setNameFilter(QString)) );
+  connect(d->FilterModelSearchBox, SIGNAL(textChanged(QString)), sortFilterProxyModel, SLOT(setNameFilter(QString)));
 
-  connect( d->InformationButton, SIGNAL(contentsCollapsed(bool)),
-    this, SLOT(onInformationSectionCollapsed(bool)) );
+  connect(d->InformationButton, SIGNAL(contentsCollapsed(bool)), this, SLOT(onInformationSectionCollapsed(bool)));
 
-  connect(d->ModelDisplayWidget, SIGNAL(clippingToggled(bool)),
-    this, SLOT(onClipSelectedModelToggled(bool)) );
+  connect(d->ModelDisplayWidget, SIGNAL(clippingToggled(bool)), this, SLOT(onClipSelectedModelToggled(bool)));
 
-  connect(d->ModelDisplayWidget, SIGNAL(clippingConfigurationButtonClicked()),
-    this, SLOT(onClippingConfigurationButtonClicked()) );
+  connect(d->ModelDisplayWidget,
+          SIGNAL(clippingConfigurationButtonClicked()),
+          this,
+          SLOT(onClippingConfigurationButtonClicked()));
 
   // add an add hierarchy right click action on the scene and hierarchy nodes
-  connect(d->ModelDisplayWidget, SIGNAL(displayNodeChanged()),
-    this, SLOT(onDisplayNodeChanged()) );
+  connect(d->ModelDisplayWidget, SIGNAL(displayNodeChanged()), this, SLOT(onDisplayNodeChanged()));
 
-  connect(d->ClipSelectedModelCheckBox, SIGNAL(toggled(bool)),
-    this, SLOT(onClipSelectedModelToggled(bool)) );
+  connect(d->ClipSelectedModelCheckBox, SIGNAL(toggled(bool)), this, SLOT(onClipSelectedModelToggled(bool)));
 
-  connect(d->ColorLegendCollapsibleGroupBox, SIGNAL(toggled(bool)),
-    this, SLOT(onColorLegendCollapsibleGroupBoxToggled(bool)));
+  connect(d->ColorLegendCollapsibleGroupBox,
+          SIGNAL(toggled(bool)),
+          this,
+          SLOT(onColorLegendCollapsibleGroupBoxToggled(bool)));
 
   this->Superclass::setup();
 }
@@ -181,10 +186,14 @@ void qSlicerModelsModuleWidget::enter()
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
   }
-  qvtkConnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
-    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
-  qvtkConnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
-    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
+  qvtkConnect(shNode,
+              vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
+              this,
+              SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
+  qvtkConnect(shNode,
+              vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
+              this,
+              SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
 
   this->Superclass::enter();
 }
@@ -201,10 +210,14 @@ void qSlicerModelsModuleWidget::exit()
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
     return;
   }
-  qvtkDisconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
-    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
-  qvtkDisconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
-    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
+  qvtkDisconnect(shNode,
+                 vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
+                 this,
+                 SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
+  qvtkDisconnect(shNode,
+                 vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
+                 this,
+                 SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
 
   this->Superclass::exit();
 }
@@ -236,8 +249,10 @@ void qSlicerModelsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
-                                                void* client_data, void* call_data)
+void qSlicerModelsModuleWidget::onMRMLSceneEvent(vtkObject* vtk_obj,
+                                                 unsigned long event,
+                                                 void* client_data,
+                                                 void* call_data)
 {
   vtkMRMLScene* scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
   qSlicerModelsModuleWidget* widget = reinterpret_cast<qSlicerModelsModuleWidget*>(client_data);
@@ -248,7 +263,7 @@ void qSlicerModelsModuleWidget::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned lo
   Q_ASSERT(widget);
   if (event == vtkMRMLScene::EndImportEvent)
   {
-    //widget->updateWidgetFromSelectionNode();
+    // widget->updateWidgetFromSelectionNode();
   }
 }
 
@@ -259,7 +274,7 @@ void qSlicerModelsModuleWidget::showAllModels()
   {
     return;
   }
-  vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (modelsLogic)
   {
     modelsLogic->SetAllModelsVisibility(1);
@@ -273,7 +288,7 @@ void qSlicerModelsModuleWidget::hideAllModels()
   {
     return;
   }
-  vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (modelsLogic)
   {
     modelsLogic->SetAllModelsVisibility(0);
@@ -345,7 +360,8 @@ void qSlicerModelsModuleWidget::onDisplayNodeChanged()
   {
     d->ColorLegendCollapsibleGroupBox->setCollapsed(true);
   }
-  d->ColorLegendCollapsibleGroupBox->setEnabled(displayNode && displayNode->GetColorNode());}
+  d->ColorLegendCollapsibleGroupBox->setEnabled(displayNode && displayNode->GetColorNode());
+}
 
 //-----------------------------------------------------------
 void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
@@ -363,9 +379,9 @@ void qSlicerModelsModuleWidget::onClipSelectedModelToggled(bool toggled)
       displayNode->BackfaceCullingOff();
       displayNode->FrontfaceCullingOff();
       if (d->MRMLClipNodeWidget->mrmlClipNode() != nullptr
-        && d->MRMLClipNodeWidget->redSliceClipState() == vtkMRMLClipModelsNode::ClipOff
-        && d->MRMLClipNodeWidget->greenSliceClipState() == vtkMRMLClipModelsNode::ClipOff
-        && d->MRMLClipNodeWidget->yellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+          && d->MRMLClipNodeWidget->redSliceClipState() == vtkMRMLClipModelsNode::ClipOff
+          && d->MRMLClipNodeWidget->greenSliceClipState() == vtkMRMLClipModelsNode::ClipOff
+          && d->MRMLClipNodeWidget->yellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
       {
         // All clipping planes are disabled.
         // Enable the first clipping plane to show a clipped model to the user.
@@ -389,9 +405,9 @@ void qSlicerModelsModuleWidget::setDisplaySelectionFromSubjectHierarchyItems(QLi
   }
 
   vtkMRMLNode* firstDataNode = nullptr;
-  if ( itemIDs.size() > 0
-    // In case of empty selection the only item in the list is the scene
-    && !(itemIDs.size() == 1 && itemIDs[0] == shNode->GetSceneItemID()) )
+  if (itemIDs.size() > 0
+      // In case of empty selection the only item in the list is the scene
+      && !(itemIDs.size() == 1 && itemIDs[0] == shNode->GetSceneItemID()))
   {
     firstDataNode = shNode->GetItemDataNode(itemIDs[0]);
   }
@@ -402,7 +418,8 @@ void qSlicerModelsModuleWidget::setDisplaySelectionFromSubjectHierarchyItems(QLi
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::onSubjectHierarchyItemModified(vtkObject* vtkNotUsed(caller), void* vtkNotUsed(callData))
+void qSlicerModelsModuleWidget::onSubjectHierarchyItemModified(vtkObject* vtkNotUsed(caller),
+                                                               void* vtkNotUsed(callData))
 {
   Q_D(qSlicerModelsModuleWidget);
 

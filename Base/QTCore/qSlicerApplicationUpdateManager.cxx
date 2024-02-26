@@ -47,6 +47,7 @@
 class qSlicerApplicationUpdateManagerPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerApplicationUpdateManager);
+
 protected:
   qSlicerApplicationUpdateManager* const q_ptr;
 
@@ -64,7 +65,7 @@ protected:
   // most software (including venerable open source apps like vim).
   // Anyone who is particularly concerned is expected to look
   // for ways to disable automatic updates.
-  bool AutoUpdateCheck{true};
+  bool AutoUpdateCheck{ true };
 
   QString SlicerRevision;
   QString SlicerOs;
@@ -72,7 +73,7 @@ protected:
 
   QNetworkAccessManager NetworkManager;
   qRestAPI ReleaseInfoAPI;
-  QUuid ReleaseInfoQueryUID;  // if not null then it means that query is in progress
+  QUuid ReleaseInfoQueryUID; // if not null then it means that query is in progress
 
   // ReleaseInfo query results
   QString LatestReleaseVersion;
@@ -94,12 +95,9 @@ void qSlicerApplicationUpdateManagerPrivate::init()
   QSettings settings;
   this->AutoUpdateCheck = settings.value("ApplicationUpdate/AutoUpdateCheck", this->AutoUpdateCheck).toBool();
 
-  QObject::connect(q, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
-                   q, SLOT(refreshUpdateAvailable()));
+  QObject::connect(q, SIGNAL(slicerRequirementsChanged(QString, QString, QString)), q, SLOT(refreshUpdateAvailable()));
 
-  QObject::connect(&this->ReleaseInfoAPI,
-                   SIGNAL(finished(QUuid)),
-                   q, SLOT(onReleaseInfoQueryFinished(QUuid)));
+  QObject::connect(&this->ReleaseInfoAPI, SIGNAL(finished(QUuid)), q, SLOT(onReleaseInfoQueryFinished(QUuid)));
 }
 
 // --------------------------------------------------------------------------
@@ -160,14 +158,13 @@ bool qSlicerApplicationUpdateManagerPrivate::validateReleaseInfo(const QVariantM
   //  }
   bool valid = true;
   QStringList requiredNonEmptyKeys;
-  requiredNonEmptyKeys
-      << "arch"
-      << "build_date"
-      << "download_url"
-      << "product_name"
-      << "revision"
-      << "version";
-  foreach(const QString& key, requiredNonEmptyKeys)
+  requiredNonEmptyKeys << "arch"
+                       << "build_date"
+                       << "download_url"
+                       << "product_name"
+                       << "revision"
+                       << "version";
+  foreach (const QString& key, requiredNonEmptyKeys)
   {
     if (releaseInfo.value(key).toString().isEmpty())
     {
@@ -202,7 +199,7 @@ qSlicerApplicationUpdateManager::qSlicerApplicationUpdateManager(QObject* _paren
 qSlicerApplicationUpdateManager::~qSlicerApplicationUpdateManager() = default;
 
 // --------------------------------------------------------------------------
-QUrl qSlicerApplicationUpdateManager::serverUrl()const
+QUrl qSlicerApplicationUpdateManager::serverUrl() const
 {
   QSettings settings;
   return QUrl(settings.value("ApplicationUpdate/ServerUrl").toString());
@@ -223,7 +220,7 @@ void qSlicerApplicationUpdateManager::setAutoUpdateCheck(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerApplicationUpdateManager::autoUpdateCheck()const
+bool qSlicerApplicationUpdateManager::autoUpdateCheck() const
 {
   Q_D(const qSlicerApplicationUpdateManager);
   return d->AutoUpdateCheck;
@@ -287,20 +284,17 @@ bool qSlicerApplicationUpdateManager::checkForUpdate(bool force, bool waitForCom
 
   // Temporarily disable onReleaseInfoQueryFinished call via signal/slot
   // because we'll call it directly to get returned result.
-  QObject::disconnect(&d->ReleaseInfoAPI,
-    SIGNAL(finished(QUuid)),
-    this, SLOT(onReleaseInfoQueryFinished(QUuid)));
+  QObject::disconnect(&d->ReleaseInfoAPI, SIGNAL(finished(QUuid)), this, SLOT(onReleaseInfoQueryFinished(QUuid)));
 
   bool success = this->onReleaseInfoQueryFinished(d->ReleaseInfoQueryUID);
 
-  QObject::connect(&d->ReleaseInfoAPI,
-    SIGNAL(finished(QUuid)),
-    this, SLOT(onReleaseInfoQueryFinished(QUuid)));
+  QObject::connect(&d->ReleaseInfoAPI, SIGNAL(finished(QUuid)), this, SLOT(onReleaseInfoQueryFinished(QUuid)));
 
   if (!success)
   {
-    qWarning() << Q_FUNC_INFO << "Check for available application update failed: timed out while waiting for server response from "
-      << d->ReleaseInfoAPI.serverUrl();
+    qWarning() << Q_FUNC_INFO
+               << "Check for available application update failed: timed out while waiting for server response from "
+               << d->ReleaseInfoAPI.serverUrl();
   }
 
   return success;
@@ -334,10 +328,8 @@ bool qSlicerApplicationUpdateManager::onReleaseInfoQueryFinished(const QUuid& re
   {
     QString responseString = QString(restResult->response());
     QJSEngine scriptEngine;
-    QJSValue scriptValue = scriptEngine
-      .evaluate("JSON.parse")
-      .callWithInstance(QJSValue(),
-        QJSValueList() << responseString);
+    QJSValue scriptValue =
+      scriptEngine.evaluate("JSON.parse").callWithInstance(QJSValue(), QJSValueList() << responseString);
 
     QList<QVariantMap> response;
     // e.g. {["key1": "value1", ...]} or {"key1": "value1", ...}
@@ -396,7 +388,9 @@ bool qSlicerApplicationUpdateManager::onReleaseInfoQueryFinished(const QUuid& re
 }
 
 // --------------------------------------------------------------------------
-void qSlicerApplicationUpdateManager::setSlicerRequirements(const QString& revision, const QString& os, const QString& arch)
+void qSlicerApplicationUpdateManager::setSlicerRequirements(const QString& revision,
+                                                            const QString& os,
+                                                            const QString& arch)
 {
   Q_D(qSlicerApplicationUpdateManager);
   if (d->SlicerRevision == revision && d->SlicerOs == os && d->SlicerArch == arch)
@@ -418,7 +412,7 @@ void qSlicerApplicationUpdateManager::setSlicerRequirements(const QString& revis
 }
 
 // --------------------------------------------------------------------------
-QUrl qSlicerApplicationUpdateManager::applicationDownloadPageUrl()const
+QUrl qSlicerApplicationUpdateManager::applicationDownloadPageUrl() const
 {
   // Currently the download page is the root folder of the application update servers
   return this->serverUrl();

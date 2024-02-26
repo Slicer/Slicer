@@ -43,7 +43,7 @@
 #include <cstdlib>
 #include <iostream>
 
-int qMRMLThreeDWidgetTest1(int argc, char * argv [] )
+int qMRMLThreeDWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -66,10 +66,9 @@ int qMRMLThreeDWidgetTest1(int argc, char * argv [] )
   widget.setMRMLScene(scene.GetPointer());
   widget.setMRMLViewNode(viewNode.GetPointer());
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
   return app.exec();
 }
-

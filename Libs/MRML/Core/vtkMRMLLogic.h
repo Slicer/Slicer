@@ -31,12 +31,12 @@ class VTK_MRML_EXPORT vtkMRMLLogic : public vtkObject
 {
 public:
   /// The Usual vtk class functions
-  static vtkMRMLLogic *New();
-  vtkTypeMacro(vtkMRMLLogic,vtkObject);
+  static vtkMRMLLogic* New();
+  vtkTypeMacro(vtkMRMLLogic, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override { this->Superclass::PrintSelf(os, indent); }
 
-  vtkMRMLScene* GetScene() {return this->Scene;};
-  void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
+  vtkMRMLScene* GetScene() { return this->Scene; };
+  void SetScene(vtkMRMLScene* scene) { this->Scene = scene; };
 
   void RemoveUnreferencedStorageNodes();
 
@@ -56,7 +56,7 @@ protected:
   vtkMRMLLogic(const vtkMRMLLogic&);
   void operator=(const vtkMRMLLogic&);
 
-  vtkMRMLScene *Scene;
+  vtkMRMLScene* Scene;
 };
 
 #endif

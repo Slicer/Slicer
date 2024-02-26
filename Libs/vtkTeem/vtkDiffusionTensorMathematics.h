@@ -22,7 +22,6 @@
 /// may be useful someday.
 //
 
-
 #ifndef __vtkDiffusionTensorMathematics_h
 #define __vtkDiffusionTensorMathematics_h
 
@@ -37,8 +36,8 @@ class vtkImageData;
 class VTK_Teem_EXPORT vtkDiffusionTensorMathematics : public vtkThreadedImageAlgorithm
 {
 public:
-  static vtkDiffusionTensorMathematics *New();
-  vtkTypeMacro(vtkDiffusionTensorMathematics,vtkThreadedImageAlgorithm);
+  static vtkDiffusionTensorMathematics* New();
+  vtkTypeMacro(vtkDiffusionTensorMathematics, vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Operation options.
@@ -59,7 +58,7 @@ public:
     VTK_TENS_D22 = 12,
     VTK_TENS_D33 = 13,
     VTK_TENS_MODE = 14,
-    VTK_TENS_COLOR_MODE =15,
+    VTK_TENS_COLOR_MODE = 15,
     VTK_TENS_MAX_EIGENVALUE_PROJX = 16,
     VTK_TENS_MAX_EIGENVALUE_PROJY = 17,
     VTK_TENS_MAX_EIGENVALUE_PROJZ = 18,
@@ -77,114 +76,85 @@ public:
   };
   ///
   /// Get the Operation to perform.
-  vtkGetMacro(Operation,int);
-  vtkSetClampMacro(Operation,int, VTK_TENS_TRACE, VTK_TENS_MEAN_DIFFUSIVITY);
+  vtkGetMacro(Operation, int);
+  vtkSetClampMacro(Operation, int, VTK_TENS_TRACE, VTK_TENS_MEAN_DIFFUSIVITY);
 
   ///
   /// Output the trace (sum of eigenvalues = sum along diagonal)
-  void SetOperationToTrace()
-    {this->SetOperation(VTK_TENS_TRACE);};
+  void SetOperationToTrace() { this->SetOperation(VTK_TENS_TRACE); };
 
   ///
   /// Output the determinant
-  void SetOperationToDeterminant()
-    {this->SetOperation(VTK_TENS_DETERMINANT);};
+  void SetOperationToDeterminant() { this->SetOperation(VTK_TENS_DETERMINANT); };
 
   ///
   /// Output various anisotropy and shape measures
-  void SetOperationToRelativeAnisotropy()
-    {this->SetOperation(VTK_TENS_RELATIVE_ANISOTROPY);};
-  void SetOperationToFractionalAnisotropy()
-    {this->SetOperation(VTK_TENS_FRACTIONAL_ANISOTROPY);};
-  void SetOperationToLinearMeasure()
-    {this->SetOperation(VTK_TENS_LINEAR_MEASURE);};
-  void SetOperationToPlanarMeasure()
-    {this->SetOperation(VTK_TENS_PLANAR_MEASURE);};
-  void SetOperationToSphericalMeasure()
-    {this->SetOperation(VTK_TENS_SPHERICAL_MEASURE);};
+  void SetOperationToRelativeAnisotropy() { this->SetOperation(VTK_TENS_RELATIVE_ANISOTROPY); };
+  void SetOperationToFractionalAnisotropy() { this->SetOperation(VTK_TENS_FRACTIONAL_ANISOTROPY); };
+  void SetOperationToLinearMeasure() { this->SetOperation(VTK_TENS_LINEAR_MEASURE); };
+  void SetOperationToPlanarMeasure() { this->SetOperation(VTK_TENS_PLANAR_MEASURE); };
+  void SetOperationToSphericalMeasure() { this->SetOperation(VTK_TENS_SPHERICAL_MEASURE); };
   /// This is the skewness of the eigenvalues
   /// (thanks to Gordon Lothar (of the Hill People) Kindlmann)
-  void SetOperationToMode()
-    {this->SetOperation(VTK_TENS_MODE);};
-  void SetOperationToParallelDiffusivity()
-    {this->SetOperation(VTK_TENS_PARALLEL_DIFFUSIVITY);};
-  void SetOperationToPerpendicularDiffusivity()
-    {this->SetOperation(VTK_TENS_PERPENDICULAR_DIFFUSIVITY);};
-  void SetOperationToMeanDiffusivity()
-    {this->SetOperation(VTK_TENS_MEAN_DIFFUSIVITY);};
+  void SetOperationToMode() { this->SetOperation(VTK_TENS_MODE); };
+  void SetOperationToParallelDiffusivity() { this->SetOperation(VTK_TENS_PARALLEL_DIFFUSIVITY); };
+  void SetOperationToPerpendicularDiffusivity() { this->SetOperation(VTK_TENS_PERPENDICULAR_DIFFUSIVITY); };
+  void SetOperationToMeanDiffusivity() { this->SetOperation(VTK_TENS_MEAN_DIFFUSIVITY); };
 
   ///
   /// Output a selected eigenvalue
-  void SetOperationToMaxEigenvalue()
-    {this->SetOperation(VTK_TENS_MAX_EIGENVALUE);};
-  void SetOperationToMiddleEigenvalue()
-    {this->SetOperation(VTK_TENS_MID_EIGENVALUE);};
-  void SetOperationToMinEigenvalue()
-    {this->SetOperation(VTK_TENS_MIN_EIGENVALUE);};
+  void SetOperationToMaxEigenvalue() { this->SetOperation(VTK_TENS_MAX_EIGENVALUE); };
+  void SetOperationToMiddleEigenvalue() { this->SetOperation(VTK_TENS_MID_EIGENVALUE); };
+  void SetOperationToMinEigenvalue() { this->SetOperation(VTK_TENS_MIN_EIGENVALUE); };
 
   ///
   /// Output Maxeigenvalue*Maxeigenvec_projection also known as L1Z
-  void SetOperationToMaxEigenvalueProjectionX()
-  {this->SetOperation(VTK_TENS_MAX_EIGENVALUE_PROJX);};
-  void SetOperationToMaxEigenvalueProjectionY()
-  {this->SetOperation(VTK_TENS_MAX_EIGENVALUE_PROJY);};
-  void SetOperationToMaxEigenvalueProjectionZ()
-  {this->SetOperation(VTK_TENS_MAX_EIGENVALUE_PROJZ);};
+  void SetOperationToMaxEigenvalueProjectionX() { this->SetOperation(VTK_TENS_MAX_EIGENVALUE_PROJX); };
+  void SetOperationToMaxEigenvalueProjectionY() { this->SetOperation(VTK_TENS_MAX_EIGENVALUE_PROJY); };
+  void SetOperationToMaxEigenvalueProjectionZ() { this->SetOperation(VTK_TENS_MAX_EIGENVALUE_PROJZ); };
 
   ///
   /// Output Relative_anisotropy*Maxeigenvec_projection also known as L1z
-  void SetOperationToRAIMaxEigenvecX()
-  {this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJX);}
-  void SetOperationToRAIMaxEigenvecY()
-  {this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJY);}
-  void SetOperationToRAIMaxEigenvecZ()
-  {this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJZ);}
+  void SetOperationToRAIMaxEigenvecX() { this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJX); }
+  void SetOperationToRAIMaxEigenvecY() { this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJY); }
+  void SetOperationToRAIMaxEigenvecZ() { this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJZ); }
 
   ///
   /// Output Relative_anisotropy*Maxeigenvec_projection also known as L1z
-  void SetOperationToMaxEigenvecX()
-  {this->SetOperation(VTK_TENS_MAX_EIGENVEC_PROJX);}
-  void SetOperationToMaxEigenvecY()
-  {this->SetOperation(VTK_TENS_MAX_EIGENVEC_PROJY);}
-  void SetOperationToMaxEigenvecZ()
-  {this->SetOperation(VTK_TENS_MAX_EIGENVEC_PROJZ);}
-
+  void SetOperationToMaxEigenvecX() { this->SetOperation(VTK_TENS_MAX_EIGENVEC_PROJX); }
+  void SetOperationToMaxEigenvecY() { this->SetOperation(VTK_TENS_MAX_EIGENVEC_PROJY); }
+  void SetOperationToMaxEigenvecZ() { this->SetOperation(VTK_TENS_MAX_EIGENVEC_PROJZ); }
 
   ///
   /// Output a matrix (tensor) component
-  void SetOperationToD11()
-    {this->SetOperation(VTK_TENS_D11);};
-  void SetOperationToD22()
-    {this->SetOperation(VTK_TENS_D22);};
-  void SetOperationToD33()
-    {this->SetOperation(VTK_TENS_D33);};
+  void SetOperationToD11() { this->SetOperation(VTK_TENS_D11); };
+  void SetOperationToD22() { this->SetOperation(VTK_TENS_D22); };
+  void SetOperationToD33() { this->SetOperation(VTK_TENS_D33); };
 
   ///
   /// Output RGB color according to XYZ of eigenvectors.
   /// Output A (alpha, or transparency) according to
   /// anisotropy (1-spherical measure).
-  void SetOperationToColorByOrientation()
-    {this->SetOperation(VTK_TENS_COLOR_ORIENTATION);};
+  void SetOperationToColorByOrientation() { this->SetOperation(VTK_TENS_COLOR_ORIENTATION); };
 
   ///
   /// Output RGB color according to colormapping of mode, with
   /// final RGB being a linear combination of gray and
   /// this color.  Amount of gray is determined by FA.
   /// Thanks to Gordon Lothar Kindlmann for this method.
-  void SetOperationToColorByMode()
-    {this->SetOperation(VTK_TENS_COLOR_MODE);};
+  void SetOperationToColorByMode() { this->SetOperation(VTK_TENS_COLOR_MODE); };
 
   ///
   /// Specify scale factor to scale output (float) scalars by.
   /// This is not used when the output is RGBA (char color data).
-  vtkSetMacro(ScaleFactor,double);
-  vtkGetMacro(ScaleFactor,double);
+  vtkSetMacro(ScaleFactor, double);
+  vtkGetMacro(ScaleFactor, double);
 
   ///
   /// Turn on/off extraction of eigenvalues from tensor.
-  vtkSetMacro(ExtractEigenvalues,int);
-  vtkBooleanMacro(ExtractEigenvalues,int);
-  vtkGetMacro(ExtractEigenvalues,int);
+  vtkSetMacro(ExtractEigenvalues, int);
+  vtkBooleanMacro(ExtractEigenvalues, int);
+  vtkGetMacro(ExtractEigenvalues, int);
 
   /// Description
   /// This matrix is only used for ColorByOrientation.
@@ -230,11 +200,9 @@ public:
   vtkGetMacro(MaskLabelValue, int);
 
   /// Public for access from threads
-  static void ModeToRGB(double Mode, double FA,
-                 double &R, double &G, double &B);
+  static void ModeToRGB(double Mode, double FA, double& R, double& G, double& B);
 
-  static void RGBToIndex(double R, double G,
-                  double B, double &index);
+  static void RGBToIndex(double R, double G, double B, double& index);
 
   ///
   /// Helper functions to perform operations pixel-wise
@@ -253,71 +221,58 @@ public:
   static double PerpendicularDiffusivity(double w[3]);
   static double MeanDiffusivity(double w[3]);
   static double MinEigenvalue(double w[3]);
-  static double RAIMaxEigenvecX(double **v, double w[3]);
-  static double RAIMaxEigenvecY(double **v, double w[3]);
-  static double RAIMaxEigenvecZ(double **v, double w[3]);
-  static double MaxEigenvecX(double **v, double w[3]);
-  static double MaxEigenvecY(double **v, double w[3]);
-  static double MaxEigenvecZ(double **v, double w[3]);
-  static double MaxEigenvalueProjectionX(double **v, double w[3]);
-  static double MaxEigenvalueProjectionY(double **v, double w[3]);
-  static double MaxEigenvalueProjectionZ(double **v, double w[3]);
+  static double RAIMaxEigenvecX(double** v, double w[3]);
+  static double RAIMaxEigenvecY(double** v, double w[3]);
+  static double RAIMaxEigenvecZ(double** v, double w[3]);
+  static double MaxEigenvecX(double** v, double w[3]);
+  static double MaxEigenvecY(double** v, double w[3]);
+  static double MaxEigenvecZ(double** v, double w[3]);
+  static double MaxEigenvalueProjectionX(double** v, double w[3]);
+  static double MaxEigenvalueProjectionY(double** v, double w[3]);
+  static double MaxEigenvalueProjectionZ(double** v, double w[3]);
   static double Mode(double w[3]);
-  static void ColorByMode(double w[3], double &R,double &G, double &B);
+  static void ColorByMode(double w[3], double& R, double& G, double& B);
 
-  //Description
-  //Wrap function to teem eigen solver
-  static int TeemEigenSolver(double **m, double *w, double **v);
-  void ComputeTensorIncrements(vtkImageData *imageData, vtkIdType incr[3]);
+  // Description
+  // Wrap function to teem eigen solver
+  static int TeemEigenSolver(double** m, double* w, double** v);
+  void ComputeTensorIncrements(vtkImageData* imageData, vtkIdType incr[3]);
 
 protected:
   vtkDiffusionTensorMathematics();
   ~vtkDiffusionTensorMathematics() override;
 
-  int Operation; /// math operation to perform
-  double ScaleFactor; /// Scale factor for output scalars
+  int Operation;          /// math operation to perform
+  double ScaleFactor;     /// Scale factor for output scalars
   int ExtractEigenvalues; /// Boolean controls eigenfunction extraction
 
   int MaskWithScalars;
-  vtkImageData *ScalarMask;
+  vtkImageData* ScalarMask;
   int MaskLabelValue;
 
-  vtkMatrix4x4 *TensorRotationMatrix;
+  vtkMatrix4x4* TensorRotationMatrix;
   int FixNegativeEigenvalues;
 
-  int RequestInformation (vtkInformation*,
-                                  vtkInformationVector**,
-                                  vtkInformationVector*) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  void ThreadedRequestData(vtkInformation *request,
-                                   vtkInformationVector **inputVector,
-                                   vtkInformationVector *outputVector,
-                                   vtkImageData ***inData,
-                                   vtkImageData **outData,
-                                   int extent[6], int threadId) override;
+  void ThreadedRequestData(vtkInformation* request,
+                           vtkInformationVector** inputVector,
+                           vtkInformationVector* outputVector,
+                           vtkImageData*** inData,
+                           vtkImageData** outData,
+                           int extent[6],
+                           int threadId) override;
 
   int FillInputPortInformation(int port, vtkInformation* info) override;
 
   // Reimplemented to delete the tensor array of the output.
   int RequestData(vtkInformation* request,
-                          vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector) override;
+                  vtkInformationVector** inputVector,
+                  vtkInformationVector* outputVector) override;
+
 private:
   vtkDiffusionTensorMathematics(const vtkDiffusionTensorMathematics&) = delete;
   void operator=(const vtkDiffusionTensorMathematics&) = delete;
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

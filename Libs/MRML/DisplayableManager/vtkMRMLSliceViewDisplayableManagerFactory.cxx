@@ -41,14 +41,14 @@ vtkMRMLSliceViewDisplayableManagerFactory* vtkMRMLSliceViewDisplayableManagerFac
 //----------------------------------------------------------------------------
 vtkMRMLSliceViewDisplayableManagerFactory* vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()
 {
-  if(!Self::Instance)
+  if (!Self::Instance)
   {
     // Try the factory first
-    Self::Instance = (vtkMRMLSliceViewDisplayableManagerFactory*)
-                     vtkObjectFactory::CreateInstance("vtkMRMLSliceViewDisplayableManagerFactory");
+    Self::Instance = (vtkMRMLSliceViewDisplayableManagerFactory*)vtkObjectFactory::CreateInstance(
+      "vtkMRMLSliceViewDisplayableManagerFactory");
 
     // if the factory did not provide one, then create it here
-    if(!Self::Instance)
+    if (!Self::Instance)
     {
       Self::Instance = new vtkMRMLSliceViewDisplayableManagerFactory;
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
@@ -61,8 +61,8 @@ vtkMRMLSliceViewDisplayableManagerFactory* vtkMRMLSliceViewDisplayableManagerFac
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSliceViewDisplayableManagerFactory::
-    vtkMRMLSliceViewDisplayableManagerFactory():Superclass()
+vtkMRMLSliceViewDisplayableManagerFactory::vtkMRMLSliceViewDisplayableManagerFactory()
+  : Superclass()
 {
 }
 
@@ -76,4 +76,3 @@ void vtkMRMLSliceViewDisplayableManagerFactory::PrintSelf(ostream& os, vtkIndent
 }
 
 VTK_SINGLETON_CXX(vtkMRMLSliceViewDisplayableManagerFactory);
-

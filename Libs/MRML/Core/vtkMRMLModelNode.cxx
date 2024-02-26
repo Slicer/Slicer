@@ -72,7 +72,7 @@ vtkMRMLModelNode::~vtkMRMLModelNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLModelNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -86,14 +86,13 @@ void vtkMRMLModelNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   {
     if (node->GetMesh())
     {
-      if (this->GetMesh() && strcmp(this->GetMesh()->GetClassName(), node->GetMesh()->GetClassName())==0)
+      if (this->GetMesh() && strcmp(this->GetMesh()->GetClassName(), node->GetMesh()->GetClassName()) == 0)
       {
         this->GetMesh()->DeepCopy(node->GetMesh());
       }
       else
       {
-        vtkSmartPointer<vtkPointSet> newMesh
-          = vtkSmartPointer<vtkPointSet>::Take(node->GetMesh()->NewInstance());
+        vtkSmartPointer<vtkPointSet> newMesh = vtkSmartPointer<vtkPointSet>::Take(node->GetMesh()->NewInstance());
         newMesh->DeepCopy(node->GetMesh());
         this->SetAndObserveMesh(newMesh);
       }
@@ -112,15 +111,12 @@ void vtkMRMLModelNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+void vtkMRMLModelNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->MeshConnection &&
-      this->MeshConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
-      event ==  vtkCommand::ModifiedEvent)
+  if (this->MeshConnection && this->MeshConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller)
+      && event == vtkCommand::ModifiedEvent)
   {
     this->StorableModifiedTime.Modified();
     this->InvokeCustomModifiedEvent(vtkMRMLModelNode::MeshModifiedEvent, nullptr);
@@ -136,7 +132,7 @@ vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetModelDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintObjectMacro(UnstructuredGrid);
@@ -145,7 +141,7 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet *mesh)
+void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet* mesh)
 {
   if (mesh == nullptr)
   {
@@ -155,23 +151,22 @@ void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet *mesh)
   {
     // Check that mesh is polydata or unstructuredgrid
     vtkPolyData* polydata = vtkPolyData::SafeDownCast(mesh);
-    if( !polydata && !vtkUnstructuredGrid::SafeDownCast(mesh))
+    if (!polydata && !vtkUnstructuredGrid::SafeDownCast(mesh))
     {
       vtkErrorMacro("SetAndObserveMesh: mesh should be a"
                     "vtkPolyData or an vtkUnstructuredGrid.");
       return;
     }
 
-    vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
-      this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr);
+    vtkTrivialProducer* oldProducer =
+      vtkTrivialProducer::SafeDownCast(this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr);
     if (oldProducer && oldProducer->GetOutputDataObject(0) == mesh)
     {
       return;
     }
     else if (oldProducer && oldProducer->GetOutputDataObject(0))
     {
-      oldProducer->GetOutputDataObject(0)->RemoveObservers(
-        vtkCommand::ModifiedEvent, this->DataEventForwarder);
+      oldProducer->GetOutputDataObject(0)->RemoveObservers(vtkCommand::ModifiedEvent, this->DataEventForwarder);
     }
 
     vtkNew<vtkTrivialProducer> tp;
@@ -197,13 +192,13 @@ void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet *mesh)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
+void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData* polyData)
 {
   this->SetAndObserveMesh(polyData);
 }
 
 //---------------------------------------------------------------------------
-vtkPointSet *vtkMRMLModelNode::GetMesh()
+vtkPointSet* vtkMRMLModelNode::GetMesh()
 {
   if (!this->MeshConnection)
   {
@@ -220,8 +215,7 @@ vtkPointSet *vtkMRMLModelNode::GetMesh()
 
   producer->Update();
 
-  return vtkPointSet::SafeDownCast(
-    producer->GetOutputDataObject(this->MeshConnection->GetIndex()));
+  return vtkPointSet::SafeDownCast(producer->GetOutputDataObject(this->MeshConnection->GetIndex()));
 }
 
 //---------------------------------------------------------------------------
@@ -237,8 +231,7 @@ vtkPolyData* vtkMRMLModelNode::GetPolyData()
                     << "with SetUnstructuredGridConnection() instead of "
                     << "SetPolyDataConnection().");
   }
-  else if (!poly && this->MeshType == vtkMRMLModelNode::PolyDataMeshType &&
-           vtkUnstructuredGrid::SafeDownCast(mesh))
+  else if (!poly && this->MeshType == vtkMRMLModelNode::PolyDataMeshType && vtkUnstructuredGrid::SafeDownCast(mesh))
   {
     vtkWarningMacro("GetPolyData() correctly returned a null pointer "
                     << "since the model's mesh is a vtkUnstructuredGrid, but "
@@ -263,8 +256,7 @@ vtkUnstructuredGrid* vtkMRMLModelNode::GetUnstructuredGrid()
                     << "with SetPolyDataConnection() instead of "
                     << "SetUnstructuredGridConnection().");
   }
-  else if (!ug && this->MeshType == vtkMRMLModelNode::UnstructuredGridMeshType &&
-           vtkPolyData::SafeDownCast(mesh))
+  else if (!ug && this->MeshType == vtkMRMLModelNode::UnstructuredGridMeshType && vtkPolyData::SafeDownCast(mesh))
   {
     vtkWarningMacro("GetUnstructuredGrid() correctly returned a null pointer "
                     << "since the model's mesh is a vtkPolyData, but "
@@ -277,25 +269,22 @@ vtkUnstructuredGrid* vtkMRMLModelNode::GetUnstructuredGrid()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode
-::SetMeshConnection(vtkAlgorithmOutput *newMeshConnection)
+void vtkMRMLModelNode ::SetMeshConnection(vtkAlgorithmOutput* newMeshConnection)
 {
   if (newMeshConnection == this->MeshConnection)
   {
     return;
   }
 
-  vtkAlgorithm* oldMeshAlgorithm = this->MeshConnection ?
-    this->MeshConnection->GetProducer() : nullptr;
+  vtkAlgorithm* oldMeshAlgorithm = this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr;
 
   this->MeshConnection = newMeshConnection;
 
-  vtkAlgorithm* newMeshAlgorithm = this->MeshConnection ?
-    this->MeshConnection->GetProducer() : nullptr;
+  vtkAlgorithm* newMeshAlgorithm = this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr;
   if (newMeshAlgorithm != nullptr)
   {
     vtkEventBroker::GetInstance()->AddObservation(
-      newMeshAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+      newMeshAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
     newMeshAlgorithm->Register(this);
   }
 
@@ -303,27 +292,25 @@ void vtkMRMLModelNode
 
   if (oldMeshAlgorithm != nullptr)
   {
-    vtkEventBroker::GetInstance()->RemoveObservations (
-      oldMeshAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      oldMeshAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
     oldMeshAlgorithm->UnRegister(this);
   }
 
   this->StorableModifiedTime.Modified();
   this->Modified();
-  this->InvokeCustomModifiedEvent( vtkMRMLModelNode::MeshModifiedEvent , this);
+  this->InvokeCustomModifiedEvent(vtkMRMLModelNode::MeshModifiedEvent, this);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode
-::SetPolyDataConnection(vtkAlgorithmOutput *newPolyDataConnection)
+void vtkMRMLModelNode ::SetPolyDataConnection(vtkAlgorithmOutput* newPolyDataConnection)
 {
   this->MeshType = vtkMRMLModelNode::PolyDataMeshType;
   this->SetMeshConnection(newPolyDataConnection);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode
-::SetUnstructuredGridConnection(vtkAlgorithmOutput *newUnstructuredGridConnection)
+void vtkMRMLModelNode ::SetUnstructuredGridConnection(vtkAlgorithmOutput* newUnstructuredGridConnection)
 {
   this->MeshType = vtkMRMLModelNode::UnstructuredGridMeshType;
   this->SetMeshConnection(newUnstructuredGridConnection);
@@ -332,31 +319,29 @@ void vtkMRMLModelNode
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelNode::GetPolyDataConnection()
 {
-  return (this->MeshType == vtkMRMLModelNode::PolyDataMeshType) ?
-    this->GetMeshConnection() : nullptr;
+  return (this->MeshType == vtkMRMLModelNode::PolyDataMeshType) ? this->GetMeshConnection() : nullptr;
 }
 
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelNode::GetUnstructuredGridConnection()
 {
-  return (this->MeshType == vtkMRMLModelNode::UnstructuredGridMeshType) ?
-    this->GetMeshConnection() : nullptr;
+  return (this->MeshType == vtkMRMLModelNode::UnstructuredGridMeshType) ? this->GetMeshConnection() : nullptr;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::AddPointScalars(vtkDataArray *array)
+void vtkMRMLModelNode::AddPointScalars(vtkDataArray* array)
 {
   this->AddScalars(array, vtkAssignAttribute::POINT_DATA);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::AddCellScalars(vtkDataArray *array)
+void vtkMRMLModelNode::AddCellScalars(vtkDataArray* array)
 {
   this->AddScalars(array, vtkAssignAttribute::CELL_DATA);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::AddScalars(vtkDataArray *array, int location)
+void vtkMRMLModelNode::AddScalars(vtkDataArray* array, int location)
 {
   if (array == nullptr)
   {
@@ -364,18 +349,16 @@ void vtkMRMLModelNode::AddScalars(vtkDataArray *array, int location)
   }
   if (this->GetMesh() == nullptr)
   {
-    vtkErrorMacro("AddScalars: No mesh on model "
-                  << (this->GetName() ? this->GetName() : "no_name"));
+    vtkErrorMacro("AddScalars: No mesh on model " << (this->GetName() ? this->GetName() : "no_name"));
     return;
   }
   vtkDataSetAttributes* data =
-    (location == vtkAssignAttribute::POINT_DATA ?
-     vtkDataSetAttributes::SafeDownCast(this->GetMesh()->GetPointData()) :
-     vtkDataSetAttributes::SafeDownCast(this->GetMesh()->GetCellData()));
+    (location == vtkAssignAttribute::POINT_DATA ? vtkDataSetAttributes::SafeDownCast(this->GetMesh()->GetPointData())
+                                                : vtkDataSetAttributes::SafeDownCast(this->GetMesh()->GetCellData()));
 
   int numScalars = data->GetNumberOfArrays();
   vtkDebugMacro("Model node has " << numScalars << " scalars now, "
-                << "adding " << array->GetName());
+                                  << "adding " << array->GetName());
 
   data->AddArray(array);
   if (numScalars > 0)
@@ -386,7 +369,7 @@ void vtkMRMLModelNode::AddScalars(vtkDataArray *array, int location)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
+void vtkMRMLModelNode::RemoveScalars(const char* scalarName)
 {
   if (scalarName == nullptr)
   {
@@ -395,8 +378,7 @@ void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
   }
   if (this->GetMesh() == nullptr)
   {
-    vtkErrorMacro("RemoveScalars: No poly data on model "
-                  << (this->GetName() ? this->GetName() : "no_name"));
+    vtkErrorMacro("RemoveScalars: No poly data on model " << (this->GetName() ? this->GetName() : "no_name"));
     return;
   }
   // try removing the array from the points first
@@ -413,53 +395,45 @@ void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
 }
 
 //---------------------------------------------------------------------------
-const char * vtkMRMLModelNode::GetActivePointScalarName(int type)
+const char* vtkMRMLModelNode::GetActivePointScalarName(int type)
 {
-  if (this->GetMesh() == nullptr ||
-      this->GetMesh()->GetPointData() == nullptr)
+  if (this->GetMesh() == nullptr || this->GetMesh()->GetPointData() == nullptr)
   {
     return nullptr;
   }
-  vtkAbstractArray* attributeArray =
-    this->GetMesh()->GetPointData()->GetAbstractAttribute(type);
+  vtkAbstractArray* attributeArray = this->GetMesh()->GetPointData()->GetAbstractAttribute(type);
   return attributeArray ? attributeArray->GetName() : nullptr;
 }
 
 //---------------------------------------------------------------------------
-const char * vtkMRMLModelNode::GetActiveCellScalarName(int type)
+const char* vtkMRMLModelNode::GetActiveCellScalarName(int type)
 {
-  if (this->GetMesh() == nullptr ||
-      this->GetMesh()->GetCellData() == nullptr)
+  if (this->GetMesh() == nullptr || this->GetMesh()->GetCellData() == nullptr)
   {
     return nullptr;
   }
-  vtkAbstractArray* attributeArray =
-    this->GetMesh()->GetCellData()->GetAbstractAttribute(type);
+  vtkAbstractArray* attributeArray = this->GetMesh()->GetCellData()->GetAbstractAttribute(type);
   return attributeArray ? attributeArray->GetName() : nullptr;
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLModelNode::HasPointScalarName(const char* scalarName)
 {
-  if (this->GetMesh() == nullptr ||
-      this->GetMesh()->GetPointData() == nullptr)
+  if (this->GetMesh() == nullptr || this->GetMesh()->GetPointData() == nullptr)
   {
     return false;
   }
-  return static_cast<bool>(
-    this->GetMesh()->GetPointData()->HasArray(scalarName));
+  return static_cast<bool>(this->GetMesh()->GetPointData()->HasArray(scalarName));
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLModelNode::HasCellScalarName(const char* scalarName)
 {
-  if (this->GetMesh() == nullptr ||
-      this->GetMesh()->GetCellData() == nullptr)
+  if (this->GetMesh() == nullptr || this->GetMesh()->GetCellData() == nullptr)
   {
     return false;
   }
-  return static_cast<bool>(
-    this->GetMesh()->GetCellData()->HasArray(scalarName));
+  return static_cast<bool>(this->GetMesh()->GetCellData()->HasArray(scalarName));
 }
 
 //---------------------------------------------------------------------------
@@ -479,7 +453,7 @@ int vtkMRMLModelNode::GetAttributeTypeFromString(const char* typeName)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName, int attributeType)
+int vtkMRMLModelNode::SetActivePointScalars(const char* scalarName, int attributeType)
 {
   if (this->GetMesh() == nullptr)
   {
@@ -487,12 +461,11 @@ int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName, int attribut
   }
   this->MeshConnection->GetProducer()->Update();
   vtkPointData* pointData = this->GetMesh()->GetPointData();
-  return pointData? pointData->SetActiveAttribute(
-    scalarName, attributeType) : 0;
+  return pointData ? pointData->SetActiveAttribute(scalarName, attributeType) : 0;
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelNode::SetActiveCellScalars(const char *scalarName, int attributeType)
+int vtkMRMLModelNode::SetActiveCellScalars(const char* scalarName, int attributeType)
 {
   if (this->GetMesh() == nullptr)
   {
@@ -500,192 +473,193 @@ int vtkMRMLModelNode::SetActiveCellScalars(const char *scalarName, int attribute
   }
   this->MeshConnection->GetProducer()->Update();
   vtkCellData* cellData = this->GetMesh()->GetCellData();
-  return cellData ? cellData->SetActiveAttribute(
-    scalarName, attributeType) : 0;
+  return cellData ? cellData->SetActiveAttribute(scalarName, attributeType) : 0;
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* overlayName,
-                                       float overlayMin, float overlayMax,
-                                       int showOverlayPositive, int showOverlayNegative,
+int vtkMRMLModelNode::CompositeScalars(const char* backgroundName,
+                                       const char* overlayName,
+                                       float overlayMin,
+                                       float overlayMax,
+                                       int showOverlayPositive,
+                                       int showOverlayNegative,
                                        int reverseOverlay)
 {
-    if (backgroundName == nullptr || overlayName == nullptr)
+  if (backgroundName == nullptr || overlayName == nullptr)
+  {
+    vtkErrorMacro("CompositeScalars: one of the input array names is null");
+    return 0;
+  }
+
+  bool haveCurvScalars = false;
+  // is there a curv scalar in the composite?
+  if (strstr(backgroundName, "curv") != nullptr || strstr(overlayName, "curv") != nullptr)
+  {
+    haveCurvScalars = true;
+  }
+
+  // get the scalars to composite, putting any curv file in scalars 1
+  vtkDataArray *scalars1, *scalars2;
+  if (!haveCurvScalars || strstr(backgroundName, "curv") != nullptr)
+  {
+    scalars1 = this->GetMesh()->GetPointData()->GetScalars(backgroundName);
+    scalars2 = this->GetMesh()->GetPointData()->GetScalars(overlayName);
+  }
+  else
+  {
+    scalars1 = this->GetMesh()->GetPointData()->GetScalars(overlayName);
+    scalars2 = this->GetMesh()->GetPointData()->GetScalars(backgroundName);
+  }
+  if (scalars1 == nullptr || scalars2 == nullptr)
+  {
+    vtkErrorMacro("CompositeScalars: unable to find the named scalar arrays " << backgroundName << " and/or "
+                                                                              << overlayName);
+    return 0;
+  }
+  if (scalars1->GetNumberOfTuples() != scalars2->GetNumberOfTuples())
+  {
+    vtkErrorMacro("CompositeScalars: sizes of scalar arrays don't match");
+    return 0;
+  }
+  // Get the number of elements and initialize the composed scalar
+  // array.
+  int cValues = 0;
+  cValues = scalars1->GetNumberOfTuples();
+
+  vtkFloatArray* composedScalars = vtkFloatArray::New();
+
+  std::stringstream ss;
+  ss << backgroundName;
+  ss << "+";
+  ss << overlayName;
+  std::string composedName = std::string(ss.str());
+  composedScalars->SetName(composedName.c_str());
+  composedScalars->Allocate(cValues);
+  composedScalars->SetNumberOfComponents(1);
+
+  // For each value, check the overlay value. If it's < min, use
+  // the background value. If we're reversing, reverse the overlay
+  // value. If we're not showing one side, use the background
+  // value. If we are showing curvature (and have it), the
+  // background value is our curvature value.
+  float overlayMid = 0.5 * (overlayMax - overlayMin) + overlayMin; // 2.0;
+  vtkDebugMacro("CompositeScalars: using overlay mid = " << overlayMid);
+  float overlay = 0.0;
+  float background = 0.0;
+  for (int nValue = 0; nValue < cValues; nValue++)
+  {
+    background = scalars1->GetTuple1(nValue);
+    overlay = scalars2->GetTuple1(nValue);
+
+    if (reverseOverlay)
     {
-      vtkErrorMacro("CompositeScalars: one of the input array names is null");
-      return 0;
+      overlay = -overlay;
+    }
+    if (overlay > 0 && !showOverlayPositive)
+    {
+      overlay = 0;
     }
 
-    bool haveCurvScalars = false;
-    // is there a curv scalar in the composite?
-    if (strstr(backgroundName, "curv") != nullptr ||
-        strstr(overlayName, "curv") != nullptr)
+    if (overlay < 0 && !showOverlayNegative)
     {
-      haveCurvScalars = true;
+      overlay = 0;
     }
 
-    // get the scalars to composite, putting any curv file in scalars 1
-    vtkDataArray *scalars1, *scalars2;
-    if (!haveCurvScalars ||
-        strstr(backgroundName, "curv") != nullptr)
+    // Insert the appropriate color into the composed array.
+    if (overlay < overlayMin && overlay > -overlayMin)
     {
-      scalars1 = this->GetMesh()->GetPointData()->GetScalars(backgroundName);
-      scalars2 = this->GetMesh()->GetPointData()->GetScalars(overlayName);
+      composedScalars->InsertNextValue(background);
     }
     else
     {
-      scalars1 = this->GetMesh()->GetPointData()->GetScalars(overlayName);
-      scalars2 = this->GetMesh()->GetPointData()->GetScalars(backgroundName);
+      composedScalars->InsertNextValue(overlay);
     }
-    if (scalars1 == nullptr || scalars2 == nullptr)
-    {
-      vtkErrorMacro("CompositeScalars: unable to find the named scalar arrays " << backgroundName << " and/or " << overlayName);
-      return 0;
-    }
-    if (scalars1->GetNumberOfTuples() != scalars2->GetNumberOfTuples())
-    {
-      vtkErrorMacro("CompositeScalars: sizes of scalar arrays don't match");
-      return 0;
-    }
-    // Get the number of elements and initialize the composed scalar
-    // array.
-    int cValues = 0;
-    cValues = scalars1->GetNumberOfTuples();
+  }
 
-    vtkFloatArray* composedScalars = vtkFloatArray::New();
+  // set up a color node
+  vtkMRMLProceduralColorNode* colorNode = vtkMRMLProceduralColorNode::New();
+  colorNode->SetName(composedName.c_str());
+  // set the type to avoid error messages when copy it, as the default is -1
+  colorNode->SetType(vtkMRMLProceduralColorNode::User);
+  vtkColorTransferFunction* func = colorNode->GetColorTransferFunction();
 
-    std::stringstream ss;
-    ss << backgroundName;
-    ss << "+";
-    ss << overlayName;
-    std::string composedName = std::string(ss.str());
-    composedScalars->SetName(composedName.c_str());
-    composedScalars->Allocate( cValues );
-    composedScalars->SetNumberOfComponents( 1 );
+  // adapted from FS code that assumed that one scalar was curvature, the
+  // other heat overlay
+  const double EPS = 0.00001; // epsilon
+  double curvatureMin = 0;
 
-    // For each value, check the overlay value. If it's < min, use
-    // the background value. If we're reversing, reverse the overlay
-    // value. If we're not showing one side, use the background
-    // value. If we are showing curvature (and have it), the
-    // background value is our curvature value.
-    float overlayMid = 0.5 * (overlayMax - overlayMin) + overlayMin; // 2.0;
-    vtkDebugMacro("CompositeScalars: using overlay mid = " << overlayMid);
-    float overlay = 0.0;
-    float background = 0.0;
-    for( int nValue = 0; nValue < cValues; nValue++ )
-    {
-      background = scalars1->GetTuple1(nValue);
-      overlay = scalars2->GetTuple1(nValue);
+  if (haveCurvScalars)
+  {
+    curvatureMin = 0.5;
+  }
+  bool bUseGray = true;
+  if (overlayMin <= curvatureMin)
+  {
+    curvatureMin = overlayMin - EPS;
+    bUseGray = false;
+  }
+  func->AddRGBPoint(-overlayMax, 0, 1, 1);
+  func->AddRGBPoint(-overlayMid, 0, 0, 1);
+  func->AddRGBPoint(-overlayMin, 0, 0, 1);
 
-      if( reverseOverlay )
-      {
-        overlay = -overlay;
-      }
-      if( overlay > 0 && !showOverlayPositive )
-      {
-        overlay = 0;
-      }
-
-      if( overlay < 0 && !showOverlayNegative )
-      {
-        overlay = 0;
-      }
-
-      // Insert the appropriate color into the composed array.
-      if( overlay < overlayMin &&
-          overlay > -overlayMin )
-      {
-        composedScalars->InsertNextValue( background );
-      }
-      else
-      {
-        composedScalars->InsertNextValue( overlay );
-      }
-    }
-
-    // set up a color node
-    vtkMRMLProceduralColorNode *colorNode = vtkMRMLProceduralColorNode::New();
-    colorNode->SetName(composedName.c_str());
-    // set the type to avoid error messages when copy it, as the default is -1
-    colorNode->SetType(vtkMRMLProceduralColorNode::User);
-    vtkColorTransferFunction *func = colorNode->GetColorTransferFunction();
-
-    // adapted from FS code that assumed that one scalar was curvature, the
-    // other heat overlay
-    const double EPS = 0.00001; // epsilon
-    double curvatureMin = 0;
-
+  if (bUseGray && overlayMin != 0)
+  {
+    func->AddRGBPoint(-overlayMin + EPS, 0.5, 0.5, 0.5);
     if (haveCurvScalars)
     {
-      curvatureMin = 0.5;
+      func->AddRGBPoint(-curvatureMin - EPS, 0.5, 0.5, 0.5);
     }
-    bool bUseGray = true;
-    if( overlayMin <= curvatureMin )
+  }
+  if (haveCurvScalars && overlayMin != 0)
+  {
+    func->AddRGBPoint(-curvatureMin, 0.6, 0.6, 0.6);
+    func->AddRGBPoint(0, 0.6, 0.6, 0.6);
+    func->AddRGBPoint(EPS, 0.4, 0.4, 0.4);
+    func->AddRGBPoint(curvatureMin, 0.4, 0.4, 0.4);
+  }
+
+  if (bUseGray && overlayMin != 0)
+  {
+    if (haveCurvScalars)
     {
-      curvatureMin = overlayMin - EPS;
-      bUseGray = false;
+      func->AddRGBPoint(curvatureMin + EPS, 0.5, 0.5, 0.5);
     }
-    func->AddRGBPoint( -overlayMax, 0, 1, 1 );
-    func->AddRGBPoint( -overlayMid, 0, 0, 1 );
-    func->AddRGBPoint( -overlayMin, 0, 0, 1 );
+    func->AddRGBPoint(overlayMin - EPS, 0.5, 0.5, 0.5);
+  }
 
-    if( bUseGray && overlayMin != 0 )
-    {
-      func->AddRGBPoint( -overlayMin + EPS, 0.5, 0.5, 0.5 );
-      if( haveCurvScalars)
-      {
-        func->AddRGBPoint( -curvatureMin - EPS, 0.5, 0.5, 0.5 );
-      }
-    }
-    if( haveCurvScalars && overlayMin != 0 )
-    {
-      func->AddRGBPoint( -curvatureMin, 0.6, 0.6, 0.6 );
-      func->AddRGBPoint(  0,            0.6, 0.6, 0.6 );
-      func->AddRGBPoint(  EPS,          0.4, 0.4, 0.4 );
-      func->AddRGBPoint(  curvatureMin, 0.4, 0.4, 0.4 );
-    }
+  func->AddRGBPoint(overlayMin, 1, 0, 0);
+  func->AddRGBPoint(overlayMid, 1, 0, 0);
+  func->AddRGBPoint(overlayMax, 1, 1, 0);
 
-    if ( bUseGray && overlayMin != 0 )
-    {
-      if( haveCurvScalars )
-      {
-        func->AddRGBPoint( curvatureMin + EPS, 0.5, 0.5, 0.5 );
-      }
-      func->AddRGBPoint( overlayMin - EPS, 0.5, 0.5, 0.5 );
-    }
+  func->Build();
 
-    func->AddRGBPoint( overlayMin, 1, 0, 0 );
-    func->AddRGBPoint( overlayMid, 1, 0, 0 );
-    func->AddRGBPoint( overlayMax, 1, 1, 0 );
+  // use the new colornode
+  this->Scene->AddNode(colorNode);
+  vtkDebugMacro("CompositeScalars: created color transfer function, and added proc color node to scene, id = "
+                << colorNode->GetID());
+  if (colorNode->GetID() != nullptr)
+  {
+    this->GetModelDisplayNode()->SetAndObserveColorNodeID(colorNode->GetID());
+    this->GetModelDisplayNode()->SetScalarRange(-overlayMax, overlayMax);
+  }
 
-    func->Build();
+  // add the new scalars
+  this->AddPointScalars(composedScalars);
 
-    // use the new colornode
-    this->Scene->AddNode(colorNode);
-    vtkDebugMacro("CompositeScalars: created color transfer function, and added proc color node to scene, id = " << colorNode->GetID());
-    if (colorNode->GetID() != nullptr)
-    {
-      this->GetModelDisplayNode()->SetAndObserveColorNodeID(colorNode->GetID());
-      this->GetModelDisplayNode()->SetScalarRange(-overlayMax, overlayMax);
-    }
+  // make them active
+  this->GetModelDisplayNode()->SetActiveScalarName(composedName.c_str());
 
-    // add the new scalars
-    this->AddPointScalars(composedScalars);
+  // clean up
+  colorNode->Delete();
+  colorNode = nullptr;
+  composedScalars->Delete();
+  composedScalars = nullptr;
 
-    // make them active
-    this->GetModelDisplayNode()->SetActiveScalarName(composedName.c_str());
-
-    // clean up
-    colorNode->Delete();
-    colorNode = nullptr;
-    composedScalars->Delete();
-    composedScalars = nullptr;
-
-    return 1;
+  return 1;
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLModelNode::CanApplyNonLinearTransforms()const
+bool vtkMRMLModelNode::CanApplyNonLinearTransforms() const
 {
   return true;
 }
@@ -702,8 +676,8 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   transformFilter->SetInputConnection(this->MeshConnection);
   transformFilter->SetTransform(transform);
 
-  bool isInPipeline = !vtkTrivialProducer::SafeDownCast(
-     this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr);
+  bool isInPipeline =
+    !vtkTrivialProducer::SafeDownCast(this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr);
 
   // If mesh was set through pipeline (SetMeshConnection), append
   // transform filter to that pipeline
@@ -717,7 +691,7 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   else
   {
     transformFilter->Update();
-    vtkPointSet * mesh = this->GetMesh();
+    vtkPointSet* mesh = this->GetMesh();
     mesh->DeepCopy(transformFilter->GetOutput());
   }
   transformFilter->Delete();
@@ -748,13 +722,13 @@ void vtkMRMLModelNode::GetBounds(double bounds[6])
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double outputBounds_RAS[6])
 {
-  vtkMRMLTransformNode *transformNode = this->GetParentTransformNode();
-  if ( !transformNode )
+  vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
+  if (!transformNode)
   {
     // node is not transformed, therefore RAS=local
-    for (int i=0; i<6; i++)
+    for (int i = 0; i < 6; i++)
     {
-      outputBounds_RAS[i]=inputBounds_Local[i];
+      outputBounds_RAS[i] = inputBounds_Local[i];
     }
     return;
   }
@@ -762,39 +736,36 @@ void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double 
   vtkNew<vtkGeneralTransform> transformLocalToRAS;
   transformNode->GetTransformToWorld(transformLocalToRAS.GetPointer());
 
-  double cornerPoints_Local[8][4] =
-    {
-    {inputBounds_Local[0], inputBounds_Local[2], inputBounds_Local[4], 1},
-    {inputBounds_Local[0], inputBounds_Local[3], inputBounds_Local[4], 1},
-    {inputBounds_Local[0], inputBounds_Local[2], inputBounds_Local[5], 1},
-    {inputBounds_Local[0], inputBounds_Local[3], inputBounds_Local[5], 1},
-    {inputBounds_Local[1], inputBounds_Local[2], inputBounds_Local[4], 1},
-    {inputBounds_Local[1], inputBounds_Local[3], inputBounds_Local[4], 1},
-    {inputBounds_Local[1], inputBounds_Local[2], inputBounds_Local[5], 1},
-    {inputBounds_Local[1], inputBounds_Local[3], inputBounds_Local[5], 1}
-    };
+  double cornerPoints_Local[8][4] = { { inputBounds_Local[0], inputBounds_Local[2], inputBounds_Local[4], 1 },
+                                      { inputBounds_Local[0], inputBounds_Local[3], inputBounds_Local[4], 1 },
+                                      { inputBounds_Local[0], inputBounds_Local[2], inputBounds_Local[5], 1 },
+                                      { inputBounds_Local[0], inputBounds_Local[3], inputBounds_Local[5], 1 },
+                                      { inputBounds_Local[1], inputBounds_Local[2], inputBounds_Local[4], 1 },
+                                      { inputBounds_Local[1], inputBounds_Local[3], inputBounds_Local[4], 1 },
+                                      { inputBounds_Local[1], inputBounds_Local[2], inputBounds_Local[5], 1 },
+                                      { inputBounds_Local[1], inputBounds_Local[3], inputBounds_Local[5], 1 } };
 
   // initialize bounds with point 0
   double* cornerPoint_RAS = transformLocalToRAS->TransformDoublePoint(cornerPoints_Local[0]);
-  for ( int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    outputBounds_RAS[2*i]   = cornerPoint_RAS[i];
-    outputBounds_RAS[2*i+1] = cornerPoint_RAS[i];
+    outputBounds_RAS[2 * i] = cornerPoint_RAS[i];
+    outputBounds_RAS[2 * i + 1] = cornerPoint_RAS[i];
   }
 
   // update bounds with the rest of the points
-  for ( int i=1; i<8; i++)
+  for (int i = 1; i < 8; i++)
   {
-    cornerPoint_RAS = transformLocalToRAS->TransformPoint( cornerPoints_Local[i] );
-    for (int n=0; n<3; n++)
+    cornerPoint_RAS = transformLocalToRAS->TransformPoint(cornerPoints_Local[i]);
+    for (int n = 0; n < 3; n++)
     {
-      if (cornerPoint_RAS[n] < outputBounds_RAS[2*n]) // min bound
+      if (cornerPoint_RAS[n] < outputBounds_RAS[2 * n]) // min bound
       {
-        outputBounds_RAS[2*n] = cornerPoint_RAS[n];
+        outputBounds_RAS[2 * n] = cornerPoint_RAS[n];
       }
-      if (cornerPoint_RAS[n] > outputBounds_RAS[2*n+1]) // max bound
+      if (cornerPoint_RAS[n] > outputBounds_RAS[2 * n + 1]) // max bound
       {
-        outputBounds_RAS[2*n+1] = cornerPoint_RAS[n];
+        outputBounds_RAS[2 * n + 1] = cornerPoint_RAS[n];
       }
     }
   }
@@ -809,8 +780,7 @@ vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLModelStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLModelStorageNode"));
 }
 
 //---------------------------------------------------------------------------
@@ -822,7 +792,7 @@ std::string vtkMRMLModelNode::GetDefaultStorageNodeClassName(const char* vtkNotU
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::CreateDefaultDisplayNodes()
 {
-  if (vtkMRMLModelDisplayNode::SafeDownCast(this->GetDisplayNode())!=nullptr)
+  if (vtkMRMLModelDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
   {
     // display node already exists
     return;
@@ -833,15 +803,15 @@ void vtkMRMLModelNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLModelNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
   }
-  vtkMRMLModelDisplayNode* dispNode = vtkMRMLModelDisplayNode::SafeDownCast(
-    scene->AddNewNodeByClass("vtkMRMLModelDisplayNode") );
+  vtkMRMLModelDisplayNode* dispNode =
+    vtkMRMLModelDisplayNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLModelDisplayNode"));
 
   if (this->GetMesh())
   {
     dispNode->SetInputMeshConnection(this->MeshConnection);
   }
 
-  this->SetAndObserveDisplayNodeID( dispNode->GetID() );
+  this->SetAndObserveDisplayNodeID(dispNode->GetID());
 
   this->ShowDefaultScalarData();
 }
@@ -891,7 +861,7 @@ bool vtkMRMLModelNode::ShowDefaultScalarData()
     if (cellData->GetScalars())
     {
       vtkDebugMacro("Made a new model display node, there are cell scalars defined "
-          "on the model - setting them visible and using the first one as the selected overlay");
+                    "on the model - setting them visible and using the first one as the selected overlay");
       displayNode->SetScalarVisibility(1);
       displayNode->SetActiveScalar(cellData->GetAttribute(0)->GetName(), vtkAssignAttribute::CELL_DATA);
       displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFileViridis.txt");
@@ -923,7 +893,7 @@ bool vtkMRMLModelNode::ShowDefaultScalarData()
     if (pointData->GetScalars())
     {
       vtkDebugMacro("Made a new model display node, there are point scalars defined "
-          "on the model - setting them visible and using the first one as the selected overlay");
+                    "on the model - setting them visible and using the first one as the selected overlay");
       displayNode->SetScalarVisibility(1);
       displayNode->SetActiveScalar(pointData->GetAttribute(0)->GetName(), vtkAssignAttribute::POINT_DATA);
       displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFileViridis.txt");
@@ -935,7 +905,7 @@ bool vtkMRMLModelNode::ShowDefaultScalarData()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+void vtkMRMLModelNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
 {
   if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
   {
@@ -945,17 +915,16 @@ void vtkMRMLModelNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+void vtkMRMLModelNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 {
-   this->UpdateDisplayNodeMesh(vtkMRMLDisplayNode::SafeDownCast(reference->GetReferencedNode()));
-   Superclass::OnNodeReferenceModified(reference);
+  this->UpdateDisplayNodeMesh(vtkMRMLDisplayNode::SafeDownCast(reference->GetReferencedNode()));
+  Superclass::OnNodeReferenceModified(reference);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::UpdateDisplayNodeMesh(vtkMRMLDisplayNode *dnode)
+void vtkMRMLModelNode::UpdateDisplayNodeMesh(vtkMRMLDisplayNode* dnode)
 {
-  vtkMRMLModelDisplayNode* modelDisplayNode =
-    vtkMRMLModelDisplayNode::SafeDownCast(dnode);
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(dnode);
   if (modelDisplayNode)
   {
     this->SetMeshToDisplayNode(modelDisplayNode);
@@ -963,14 +932,12 @@ void vtkMRMLModelNode::UpdateDisplayNodeMesh(vtkMRMLDisplayNode *dnode)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode
-::SetMeshToDisplayNodes()
+void vtkMRMLModelNode ::SetMeshToDisplayNodes()
 {
   int ndisp = this->GetNumberOfDisplayNodes();
-  for (int n=0; n<ndisp; n++)
+  for (int n = 0; n < ndisp; n++)
   {
-    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(
-      this->GetNthDisplayNode(n));
+    vtkMRMLModelDisplayNode* dnode = vtkMRMLModelDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
     if (dnode)
     {
       this->SetMeshToDisplayNode(dnode);
@@ -979,8 +946,7 @@ void vtkMRMLModelNode
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode
-::SetMeshToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode)
+void vtkMRMLModelNode ::SetMeshToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode)
 {
   assert(modelDisplayNode);
   modelDisplayNode->SetInputMeshConnection(this->MeshConnection);
@@ -989,6 +955,6 @@ void vtkMRMLModelNode
 //---------------------------------------------------------------------------
 bool vtkMRMLModelNode::GetModifiedSinceRead()
 {
-  return this->Superclass::GetModifiedSinceRead() ||
-    (this->GetMesh() && this->GetMesh()->GetMTime() > this->GetStoredTime());
+  return this->Superclass::GetModifiedSinceRead()
+         || (this->GetMesh() && this->GetMesh()->GetMTime() > this->GetStoredTime());
 }

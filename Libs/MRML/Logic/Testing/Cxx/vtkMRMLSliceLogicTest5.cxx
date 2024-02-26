@@ -61,9 +61,9 @@ vtkMRMLScalarVolumeNode* vtkMRMLSliceLogicTest5_loadVolume(const char* volume, v
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene);
   displayNode->SetScene(scene);
-  //vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-  //displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
-  //colorLogic->Delete();
+  // vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+  // displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+  // colorLogic->Delete();
   scene->AddNode(storageNode.GetPointer());
   scene->AddNode(displayNode.GetPointer());
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
@@ -81,11 +81,11 @@ vtkMRMLScalarVolumeNode* vtkMRMLSliceLogicTest5_loadVolume(const char* volume, v
 }
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
+int vtkMRMLSliceLogicTest5(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 
-  if( argc < 2 )
+  if (argc < 2)
   {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -103,7 +103,7 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
   sliceLogic->AddSliceNode("Green");
   sliceLogic->ResizeSliceNode(256, 256);
 
-  vtkMRMLSliceNode* sliceNode =sliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = sliceLogic->GetSliceNode();
   sliceNode->SetSliceResolutionMode(vtkMRMLSliceNode::SliceResolutionMatch2DView);
 
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
@@ -120,20 +120,22 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
   }
 
   vtkMRMLDisplayNode* displayNode = scalarNode->GetDisplayNode();
-  //sliceLayerLogic->SetVolumeNode(scalarNode);
+  // sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
 
   vtkAlgorithmOutput* textureImagePort = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataConnection();
-  vtkImageData* textureImage = vtkImageData::SafeDownCast(textureImagePort->GetProducer()->GetOutputDataObject(textureImagePort->GetIndex()));
+  vtkImageData* textureImage =
+    vtkImageData::SafeDownCast(textureImagePort->GetProducer()->GetOutputDataObject(textureImagePort->GetIndex()));
   int* tdims = textureImage->GetDimensions();
-  std::cout << "Texture dimension"  << tdims[0] << " " << tdims[1] << " " << tdims[2] << std::endl;
+  std::cout << "Texture dimension" << tdims[0] << " " << tdims[1] << " " << tdims[2] << std::endl;
 
   vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataConnection();
   vtkImageData* img = vtkImageData::SafeDownCast(imgPort->GetProducer()->GetOutputDataObject(0));
   int* dims = img->GetDimensions();
-  std::cout << "Logic dimension"  << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
+  std::cout << "Logic dimension" << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
-  //vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
+  // vtkMRMLScalarVolumeDisplayNode* displayNode2 =
+  // vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
 
   for (int i = 0; i < 30; ++i)
   {
@@ -145,9 +147,9 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
               << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
   }
   vtkNew<vtkImageViewer2> viewer;
-  //viewer->SetInput(appendComponents->GetOutput());
+  // viewer->SetInput(appendComponents->GetOutput());
   viewer->SetInputConnection(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataConnection());
-  //viewer->SetInputConnection(appendComponents->GetOutputPort());
+  // viewer->SetInputConnection(appendComponents->GetOutputPort());
 
   // Renderer, RenderWindow and Interactor
   vtkRenderWindow* rw = viewer->GetRenderWindow();
@@ -179,4 +181,3 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
-

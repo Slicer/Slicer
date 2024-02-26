@@ -35,7 +35,7 @@
 // STD includes
 #include <cstdlib>
 
-int qSlicerLayoutManagerTest1(int argc, char * argv[] )
+int qSlicerLayoutManagerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -44,4 +44,3 @@ int qSlicerLayoutManagerTest1(int argc, char * argv[] )
   delete layoutManager;
   return EXIT_SUCCESS;
 }
-

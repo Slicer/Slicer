@@ -24,7 +24,7 @@
 // kParseNanAndInfFlag = 256,      //!< Allow parsing NaN, Inf, Infinity, -Inf and -Infinity as doubles.
 #define RAPIDJSON_PARSE_DEFAULT_FLAGS 256
 
-#include "rapidjson/document.h" // rapidjson's DOM-style API
+#include "rapidjson/document.h"     // rapidjson's DOM-style API
 #include "rapidjson/prettywriter.h" // for stringify JSON
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
@@ -53,12 +53,12 @@ vtkMRMLMarkupsJsonElement::vtkInternal::vtkInternal(vtkMRMLMarkupsJsonElement* e
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLMarkupsJsonElement::vtkInternal::~vtkInternal()
-{
-}
+vtkMRMLMarkupsJsonElement::vtkInternal::~vtkInternal() {}
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsJsonElement::vtkInternal::ReadVector(rapidjson::Value& item, double* v, int numberOfComponents/*=3*/)
+bool vtkMRMLMarkupsJsonElement::vtkInternal::ReadVector(rapidjson::Value& item,
+                                                        double* v,
+                                                        int numberOfComponents /*=3*/)
 {
   if (!item.IsArray())
   {
@@ -97,7 +97,7 @@ vtkMRMLMarkupsJsonElement::~vtkMRMLMarkupsJsonElement()
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsJsonElement::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -203,7 +203,6 @@ bool vtkMRMLMarkupsJsonElement::GetBoolProperty(const char* propertyName)
   return this->Internal->JsonValue[propertyName].GetBool();
 }
 
-
 //----------------------------------------------------------------------------
 vtkCodedEntry* vtkMRMLMarkupsJsonElement::GetCodedEntryProperty(const char* propertyName)
 {
@@ -219,14 +218,16 @@ vtkCodedEntry* vtkMRMLMarkupsJsonElement::GetCodedEntryProperty(const char* prop
     return nullptr;
   }
   vtkNew<vtkCodedEntry> codedEntry;
-  codedEntry->SetValueSchemeMeaning(codedEntryVector[0], codedEntryVector[1],
-    codedEntryVector.size() > 2 ? codedEntryVector[2] : "");
+  codedEntry->SetValueSchemeMeaning(
+    codedEntryVector[0], codedEntryVector[1], codedEntryVector.size() > 2 ? codedEntryVector[2] : "");
   codedEntry->Register(this);
   return codedEntry;
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsJsonElement::GetArrayItemsStringProperty(const char* arrayName, const char* propertyName, std::vector<std::string>& propertyValues)
+bool vtkMRMLMarkupsJsonElement::GetArrayItemsStringProperty(const char* arrayName,
+                                                            const char* propertyName,
+                                                            std::vector<std::string>& propertyValues)
 {
   if (!this->Internal->JsonValue.IsObject())
   {
@@ -238,7 +239,7 @@ bool vtkMRMLMarkupsJsonElement::GetArrayItemsStringProperty(const char* arrayNam
     vtkErrorMacro("GetArrayItemsStringProperty: " << arrayName << " property is not found");
     return false;
   }
-  rapidjson::Value& jsonArray= this->Internal->JsonValue[arrayName];
+  rapidjson::Value& jsonArray = this->Internal->JsonValue[arrayName];
   if (!jsonArray.IsArray())
   {
     vtkErrorMacro("GetArrayItemsStringProperty: " << arrayName << " property is not an array");
@@ -352,7 +353,7 @@ std::string vtkMRMLMarkupsJsonElement::GetSchema()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsJsonElement::GetVectorProperty(const char* propertyName, double* v, int numberOfComponents/*=3*/)
+bool vtkMRMLMarkupsJsonElement::GetVectorProperty(const char* propertyName, double* v, int numberOfComponents /*=3*/)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
@@ -367,7 +368,9 @@ bool vtkMRMLMarkupsJsonElement::GetMatrix4x4Property(const char* propertyName, d
 {
   if (!this->GetVectorProperty(propertyName, v, 16))
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+    vtkErrorToMessageCollectionWithObjectMacro(
+      this,
+      this->GetUserMessages(),
       "vtkMRMLMarkupsPlaneJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
       "File reading failed: " << propertyName << " 16 - element numeric array.");
     return false;
@@ -426,7 +429,9 @@ vtkDoubleArray* vtkMRMLMarkupsJsonElement::GetDoubleArrayProperty(const char* pr
   rapidjson::Value& arrayItem = this->Internal->JsonValue[propertyName];
   if (!arrayItem.IsArray())
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+    vtkErrorToMessageCollectionWithObjectMacro(
+      this,
+      this->GetUserMessages(),
       "vtkMRMLMarkupsJsonElement::GetDoubleArrayProperty",
       "Property " << propertyName << " is expected to contain an array of floating-point numbers");
     return nullptr;
@@ -446,7 +451,9 @@ vtkDoubleArray* vtkMRMLMarkupsJsonElement::GetDoubleArrayProperty(const char* pr
     bool success = this->GetVectorProperty(propertyName, valuesPtr, numberOfTuples);
     if (!success)
     {
-      vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+      vtkErrorToMessageCollectionWithObjectMacro(
+        this,
+        this->GetUserMessages(),
         "vtkMRMLMarkupsJsonIO::GetDoubleArrayProperty",
         "Property " << propertyName << " is expected to contain an array of floating-point numbers");
       return nullptr;
@@ -463,10 +470,12 @@ vtkDoubleArray* vtkMRMLMarkupsJsonElement::GetDoubleArrayProperty(const char* pr
       bool success = this->Internal->ReadVector(itemValue, valuesPtr, numberOfComponents);
       if (!success)
       {
-        vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+        vtkErrorToMessageCollectionWithObjectMacro(
+          this,
+          this->GetUserMessages(),
           "vtkMRMLMarkupsJsonIO::GetDoubleArrayProperty",
           "Property " << propertyName << " is expected to contain an array of floating-point numbers"
-          << " with the same number of components");
+                      << " with the same number of components");
         return nullptr;
       }
       valuesPtr += numberOfComponents;
@@ -474,10 +483,12 @@ vtkDoubleArray* vtkMRMLMarkupsJsonElement::GetDoubleArrayProperty(const char* pr
   }
   else
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+    vtkErrorToMessageCollectionWithObjectMacro(
+      this,
+      this->GetUserMessages(),
       "vtkMRMLMarkupsJsonIO::GetDoubleArrayProperty",
       "Property " << propertyName << " is expected to contain an array of floating-point numbers"
-      << " or array of arrays of floating-point numbers");
+                  << " or array of arrays of floating-point numbers");
     return nullptr;
   }
   values->Register(this);
@@ -485,14 +496,10 @@ vtkDoubleArray* vtkMRMLMarkupsJsonElement::GetDoubleArrayProperty(const char* pr
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsJsonReader::vtkMRMLMarkupsJsonReader()
-{
-}
+vtkMRMLMarkupsJsonReader::vtkMRMLMarkupsJsonReader() {}
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsJsonReader::~vtkMRMLMarkupsJsonReader()
-{
-}
+vtkMRMLMarkupsJsonReader::~vtkMRMLMarkupsJsonReader() {}
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsJsonReader::PrintSelf(ostream& os, vtkIndent indent)
@@ -511,9 +518,8 @@ vtkMRMLMarkupsJsonElement* vtkMRMLMarkupsJsonReader::ReadFromFile(const char* fi
 {
   if (!filePath)
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLMarkupsJsonIO::ReadFromFile",
-      "Invalid filename");
+    vtkErrorToMessageCollectionWithObjectMacro(
+      this, this->GetUserMessages(), "vtkMRMLMarkupsJsonIO::ReadFromFile", "Invalid filename");
     return nullptr;
   }
 
@@ -521,9 +527,10 @@ vtkMRMLMarkupsJsonElement* vtkMRMLMarkupsJsonReader::ReadFromFile(const char* fi
   FILE* fp = fopen(filePath, "r");
   if (!fp)
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLMarkupsJsonIO::ReadFromFile",
-      "Error opening the file '" << filePath << "'");
+    vtkErrorToMessageCollectionWithObjectMacro(this,
+                                               this->GetUserMessages(),
+                                               "vtkMRMLMarkupsJsonIO::ReadFromFile",
+                                               "Error opening the file '" << filePath << "'");
     return nullptr;
   }
 
@@ -535,9 +542,10 @@ vtkMRMLMarkupsJsonElement* vtkMRMLMarkupsJsonReader::ReadFromFile(const char* fi
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
   if (jsonElement->Internal->JsonRoot->Document->ParseStream(fs).HasParseError())
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLMarkupsJsonIO::ReadFromFile",
-      "Error parsing the file '" << filePath << "'");
+    vtkErrorToMessageCollectionWithObjectMacro(this,
+                                               this->GetUserMessages(),
+                                               "vtkMRMLMarkupsJsonIO::ReadFromFile",
+                                               "Error parsing the file '" << filePath << "'");
     fclose(fp);
     return nullptr;
   }
@@ -553,9 +561,11 @@ vtkMRMLMarkupsJsonElement* vtkMRMLMarkupsJsonReader::ReadFromFile(const char* fi
   }
   else
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLMarkupsJsonIO::ReadFromFile",
-      "Error parsing the file '" << filePath << "' - root item must be array or list");
+    vtkErrorToMessageCollectionWithObjectMacro(this,
+                                               this->GetUserMessages(),
+                                               "vtkMRMLMarkupsJsonIO::ReadFromFile",
+                                               "Error parsing the file '" << filePath
+                                                                          << "' - root item must be array or list");
     return nullptr;
   }
 
@@ -571,9 +581,7 @@ vtkMRMLMarkupsJsonWriter::vtkInternal::vtkInternal(vtkMRMLMarkupsJsonWriter* ext
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLMarkupsJsonWriter::vtkInternal::~vtkInternal()
-{
-}
+vtkMRMLMarkupsJsonWriter::vtkInternal::~vtkInternal() {}
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsJsonWriter::vtkMRMLMarkupsJsonWriter()
@@ -582,9 +590,7 @@ vtkMRMLMarkupsJsonWriter::vtkMRMLMarkupsJsonWriter()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsJsonWriter::~vtkMRMLMarkupsJsonWriter()
-{
-}
+vtkMRMLMarkupsJsonWriter::~vtkMRMLMarkupsJsonWriter() {}
 
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsJsonWriter::HasErrors()
@@ -599,7 +605,7 @@ void vtkMRMLMarkupsJsonWriter::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsJsonWriter::vtkInternal::WriteVector(double* v, int numberOfComponents/*=3*/)
+void vtkMRMLMarkupsJsonWriter::vtkInternal::WriteVector(double* v, int numberOfComponents /*=3*/)
 {
   this->Writer->SetFormatOptions(rapidjson::kFormatSingleLineArray);
   this->Writer->StartArray();
@@ -616,9 +622,8 @@ bool vtkMRMLMarkupsJsonWriter::WriteToFileBegin(const char* filePath, const char
 {
   if (!filePath)
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLMarkupsJsonIO::WriteToFileBegin",
-      "Invalid filename");
+    vtkErrorToMessageCollectionWithObjectMacro(
+      this, this->GetUserMessages(), "vtkMRMLMarkupsJsonIO::WriteToFileBegin", "Invalid filename");
     return false;
   }
 
@@ -626,17 +631,19 @@ bool vtkMRMLMarkupsJsonWriter::WriteToFileBegin(const char* filePath, const char
   this->Internal->WriteFileHandle = fopen(filePath, "wb");
   if (!this->Internal->WriteFileHandle)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::WriteDataInternal",
-      "Writing markups node file failed: unable to open file '" << filePath << "' for writing.");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsJsonStorageNode::WriteDataInternal",
+                                     "Writing markups node file failed: unable to open file '" << filePath
+                                                                                               << "' for writing.");
     return false;
   }
 
   // Prepare JSON writer and output stream.
-  this->Internal->FileWriteStream = std::unique_ptr< rapidjson::FileWriteStream >(
-    new rapidjson::FileWriteStream(this->Internal->WriteFileHandle, &this->Internal->WriteBuffer[0], this->Internal->WriteBuffer.size()));
+  this->Internal->FileWriteStream = std::unique_ptr<rapidjson::FileWriteStream>(new rapidjson::FileWriteStream(
+    this->Internal->WriteFileHandle, &this->Internal->WriteBuffer[0], this->Internal->WriteBuffer.size()));
 
-  this->Internal->Writer = std::unique_ptr < rapidjson::PrettyWriter<rapidjson::FileWriteStream> >(
-    new rapidjson::PrettyWriter<rapidjson::FileWriteStream> (*this->Internal->FileWriteStream));
+  this->Internal->Writer = std::unique_ptr<rapidjson::PrettyWriter<rapidjson::FileWriteStream>>(
+    new rapidjson::PrettyWriter<rapidjson::FileWriteStream>(*this->Internal->FileWriteStream));
 
   this->Internal->Writer->StartObject();
 
@@ -656,7 +663,8 @@ void vtkMRMLMarkupsJsonWriter::WriteStringProperty(const std::string& propertyNa
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsJsonWriter::WriteStringVectorProperty(const std::string& propertyName, const std::vector<std::string>& arrayValues)
+void vtkMRMLMarkupsJsonWriter::WriteStringVectorProperty(const std::string& propertyName,
+                                                         const std::vector<std::string>& arrayValues)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->Writer->StartArray();
@@ -668,7 +676,8 @@ void vtkMRMLMarkupsJsonWriter::WriteStringVectorProperty(const std::string& prop
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsJsonWriter::WriteStringPropertyIfNotEmpty(const std::string& propertyName, const std::string& propertyValue)
+void vtkMRMLMarkupsJsonWriter::WriteStringPropertyIfNotEmpty(const std::string& propertyName,
+                                                             const std::string& propertyValue)
 {
   if (propertyValue.empty())
   {
@@ -715,7 +724,9 @@ void vtkMRMLMarkupsJsonWriter::WriteDoubleProperty(const std::string& propertyNa
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsJsonWriter::WriteVectorProperty(const std::string& propertyName, double* v, int numberOfComponents/*=3*/)
+void vtkMRMLMarkupsJsonWriter::WriteVectorProperty(const std::string& propertyName,
+                                                   double* v,
+                                                   int numberOfComponents /*=3*/)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->WriteVector(v, numberOfComponents);

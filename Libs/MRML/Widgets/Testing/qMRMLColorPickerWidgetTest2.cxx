@@ -40,7 +40,7 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
+int qMRMLColorPickerWidgetTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -66,7 +66,7 @@ int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
 
   ctkColorDialog::addDefaultTab(&colorPickerWidget, "Extra", SIGNAL(colorSelected(QColor)));
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     // quits the getColor dialog event loop.
     QTimer::singleShot(200, &app, SLOT(quit()));
@@ -74,4 +74,3 @@ int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
   ctkColorDialog::getColor(Qt::red, nullptr, "", ctkColorDialog::ColorDialogOptions());
   return EXIT_SUCCESS;
 }
-

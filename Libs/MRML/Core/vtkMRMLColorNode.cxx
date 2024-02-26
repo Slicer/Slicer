@@ -49,13 +49,13 @@ vtkMRMLColorNode::~vtkMRMLColorNode()
 {
   if (this->FileName)
   {
-    delete [] this->FileName;
+    delete[] this->FileName;
     this->FileName = nullptr;
   }
 
   if (this->NoName)
   {
-    delete [] this->NoName;
+    delete[] this->NoName;
     this->NoName = nullptr;
   }
 }
@@ -116,14 +116,14 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-vtkLookupTable * vtkMRMLColorNode::GetLookupTable()
+vtkLookupTable* vtkMRMLColorNode::GetLookupTable()
 {
   vtkDebugMacro("Subclass has not implemented GetLookupTable, returning NULL");
   return nullptr;
 }
 
 //----------------------------------------------------------------------------
-vtkScalarsToColors * vtkMRMLColorNode::GetScalarsToColors()
+vtkScalarsToColors* vtkMRMLColorNode::GetScalarsToColors()
 {
   return this->GetLookupTable();
 }
@@ -131,12 +131,12 @@ vtkScalarsToColors * vtkMRMLColorNode::GetScalarsToColors()
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLColorNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLColorNode *node = (vtkMRMLColorNode *) anode;
+  vtkMRMLColorNode* node = (vtkMRMLColorNode*)anode;
 
   if (node->Type != -1)
   {
@@ -153,23 +153,19 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
   this->NamesInitialised = node->NamesInitialised;
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
-  os << indent << "Name: " <<
-      (this->Name ? this->Name : "(none)") << "\n";
-
+  os << indent << "Name: " << (this->Name ? this->Name : "(none)") << "\n";
 
   os << indent << "Type: (" << this->GetTypeAsString() << ")\n";
 
-  os << indent << "NoName = " <<
-    (this->NoName ? this->NoName : "(not set)") <<  "\n";
+  os << indent << "NoName = " << (this->NoName ? this->NoName : "(not set)") << "\n";
 
   os << indent << "Names array initialised: " << (this->GetNamesInitialised() ? "true" : "false") << "\n";
 
@@ -180,11 +176,9 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
     {
       double color[4];
       this->GetColor(i, color);
-      os << indent << indent << i << " " << this->GetColorName(i)
-         << " (" << color[0] << ", " << color[1] << ", " << color[2]
-         << ", " << color[3] << ")"
-         << std::endl;
-      if ( i >= 10 )
+      os << indent << indent << i << " " << this->GetColorName(i) << " (" << color[0] << ", " << color[1] << ", "
+         << color[2] << ", " << color[3] << ")" << std::endl;
+      if (i >= 10)
       {
         os << indent << indent << "..." << endl;
         break;
@@ -195,31 +189,28 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //-----------------------------------------------------------
 
-void vtkMRMLColorNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLColorNode::UpdateScene(vtkMRMLScene* scene)
 {
-    Superclass::UpdateScene(scene);
+  Superclass::UpdateScene(scene);
 }
 
-
 //---------------------------------------------------------------------------
-void vtkMRMLColorNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+void vtkMRMLColorNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-/*
-  vtkMRMLColorDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != nullptr && dnode == vtkMRMLColorDisplayNode::SafeDownCast(caller) &&
-      event ==  vtkCommand::ModifiedEvent)
-    {
-        this->InvokeEvent(vtkMRMLColorNode::DisplayModifiedEvent, nullptr);
-    }
-*/
+  /*
+    vtkMRMLColorDisplayNode *dnode = this->GetDisplayNode();
+    if (dnode != nullptr && dnode == vtkMRMLColorDisplayNode::SafeDownCast(caller) &&
+        event ==  vtkCommand::ModifiedEvent)
+      {
+          this->InvokeEvent(vtkMRMLColorNode::DisplayModifiedEvent, nullptr);
+      }
+  */
   return;
 }
 
 //---------------------------------------------------------------------------
-const char * vtkMRMLColorNode::GetTypeAsString()
+const char* vtkMRMLColorNode::GetTypeAsString()
 {
   if (this->Type == this->User)
   {
@@ -290,7 +281,7 @@ void vtkMRMLColorNode::SetNamesFromColors()
 //---------------------------------------------------------------------------
 bool vtkMRMLColorNode::SetNameFromColor(int index)
 {
-  double rgba[4] = {-1.,-1.,-1.,-1.};
+  double rgba[4] = { -1., -1., -1., -1. };
   bool res = this->GetColor(index, rgba);
   std::stringstream ss;
   ss.precision(3);
@@ -324,22 +315,22 @@ bool vtkMRMLColorNode::HasNameFromColor(int index)
   ss << colorName;
   std::string token;
   ss >> token;
-  if (token.compare(0,2,"R=") != 0)
+  if (token.compare(0, 2, "R=") != 0)
   {
     return false;
   }
   ss >> token;
-  if (token.compare(0,2,"G=") != 0)
+  if (token.compare(0, 2, "G=") != 0)
   {
     return false;
   }
   ss >> token;
-  if (token.compare(0,2,"B=") != 0)
+  if (token.compare(0, 2, "B=") != 0)
   {
     return false;
   }
   ss >> token;
-  if (token.compare(0,2,"A=") != 0)
+  if (token.compare(0, 2, "A=") != 0)
   {
     return false;
   }
@@ -347,7 +338,7 @@ bool vtkMRMLColorNode::HasNameFromColor(int index)
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLColorNode::GetColorName(int ind)
+const char* vtkMRMLColorNode::GetColorName(int ind)
 {
   if (!this->GetNamesInitialised())
   {
@@ -366,7 +357,7 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorNode::GetColorIndexByName(const char *name)
+int vtkMRMLColorNode::GetColorIndexByName(const char* name)
 {
   if (name == nullptr)
   {
@@ -391,16 +382,16 @@ int vtkMRMLColorNode::GetColorIndexByName(const char *name)
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *subst)
+std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char* subst)
 {
   std::string name = std::string(this->GetColorName(ind));
   if (strstr(name.c_str(), " ") != nullptr)
   {
-    std::string::size_type spaceIndex = name.find( " ", 0 );
+    std::string::size_type spaceIndex = name.find(" ", 0);
     while (spaceIndex != std::string::npos)
     {
       name.replace(spaceIndex, 1, subst, 0, strlen(subst));
-      spaceIndex = name.find( " ", spaceIndex );
+      spaceIndex = name.find(" ", spaceIndex);
     }
   }
 
@@ -408,13 +399,12 @@ std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *sub
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char *subst)
+std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char* subst)
 {
   std::string fileName(this->GetColorName(colorIndex));
-  std::string validCharacters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabscdefghijklmnopqrstuvwxyz"
-    "0123456789"
-    "-_.()$!~#'%^{}";
+  std::string validCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabscdefghijklmnopqrstuvwxyz"
+                                "0123456789"
+                                "-_.()$!~#'%^{}";
   std::string::size_type pos = 0;
   size_t substLength = strlen(subst);
   while ((pos = fileName.find_first_not_of(validCharacters, pos)) != std::string::npos)
@@ -431,11 +421,13 @@ std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char 
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorNode::SetColorName(int ind, const char *name)
+int vtkMRMLColorNode::SetColorName(int ind, const char* name)
 {
   if (ind >= static_cast<int>(this->Names.size()) || ind < 0)
   {
-    vtkErrorMacro("ERROR: SetColorName, index was out of bounds: "<< ind << ", current size is " << this->Names.size() << ", table name = " << (this->GetName() == nullptr ? "null" : this->GetName()));
+    vtkErrorMacro("ERROR: SetColorName, index was out of bounds: "
+                  << ind << ", current size is " << this->Names.size()
+                  << ", table name = " << (this->GetName() == nullptr ? "null" : this->GetName()));
     return 0;
   }
   std::string newName(name);
@@ -449,12 +441,12 @@ int vtkMRMLColorNode::SetColorName(int ind, const char *name)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const char *subst)
+int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char* name, const char* subst)
 {
 
   std::string nameString = std::string(name);
   std::string substString = std::string(subst);
-   // does the input name have the subst character in it?
+  // does the input name have the subst character in it?
   if (strstr(name, substString.c_str()) != nullptr)
   {
     std::replace(nameString.begin(), nameString.end(), *subst, ' ');
@@ -484,15 +476,14 @@ void vtkMRMLColorNode::Reset(vtkMRMLNode* vtkNotUsed(defaultNode))
 {
   // don't need to call reset on color nodes, as all but the User color table
   // node are static, and that's taken care of in the vtkMRMLColorTableNode
-  //Superclass::Reset(defaultNode);
+  // Superclass::Reset(defaultNode);
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLColorNode::GetModifiedSinceRead()
 {
-  return this->Superclass::GetModifiedSinceRead() ||
-    (this->GetScalarsToColors() &&
-     this->GetScalarsToColors()->GetMTime() > this->GetStoredTime());
+  return this->Superclass::GetModifiedSinceRead()
+         || (this->GetScalarsToColors() && this->GetScalarsToColors()->GetMTime() > this->GetStoredTime());
 }
 
 //---------------------------------------------------------------------------

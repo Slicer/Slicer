@@ -34,13 +34,12 @@
 #include <iostream>
 
 // ----------------------------------------------------------------------------
-class qSlicerApplicationUpdateManagerTester: public QObject
+class qSlicerApplicationUpdateManagerTester : public QObject
 {
   Q_OBJECT
   typedef qSlicerApplicationUpdateManagerTester Self;
 
 private:
-
   bool prepareJson(const QString& jsonFile);
 
   bool resetTmp();
@@ -100,15 +99,13 @@ void qSlicerApplicationUpdateManagerTester::initTestCase()
   QVERIFY(QDir::temp().exists());
 
   this->TemporaryDirName =
-      QString("qSlicerApplicationUpdateManagerTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+    QString("qSlicerApplicationUpdateManagerTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
 
   QSettings().clear();
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerApplicationUpdateManagerTester::init()
-{
-}
+void qSlicerApplicationUpdateManagerTester::init() {}
 
 // ----------------------------------------------------------------------------
 void qSlicerApplicationUpdateManagerTester::cleanup()
@@ -163,8 +160,7 @@ void qSlicerApplicationUpdateManagerTester::testUpdateCheck()
   QFETCH(QString, expectedLatestReleaseVersion);
   QFETCH(QString, expectedLatestReleaseRevision);
 
-  QVERIFY2(this->prepareJson(jsonFile),
-           QString("Failed to prepare json file: %1").arg(jsonFile).toUtf8());
+  QVERIFY2(this->prepareJson(jsonFile), QString("Failed to prepare json file: %1").arg(jsonFile).toUtf8());
 
   QSettings().setValue("ApplicationUpdate/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
 
@@ -195,13 +191,25 @@ void qSlicerApplicationUpdateManagerTester::testUpdateCheck_data()
   QTest::addColumn<QString>("expectedLatestReleaseVersion");
   QTest::addColumn<QString>("expectedLatestReleaseRevision");
 
-  QTest::newRow("1") << ":/application_30893_slicer_win_amd64.json" << Slicer_OS_WIN_NAME << "amd64" << "29000" << true << "5.0.3" << "30893";
-  QTest::newRow("2") << ":/application_30893_slicer_linux_amd64.json" << Slicer_OS_LINUX_NAME << "amd64" << "29000" << true << "5.0.3" << "30893";
-  QTest::newRow("3") << ":/application_30893_slicer_macosx_amd64.json" << Slicer_OS_MAC_NAME << "amd64" << "29000" << true << "5.0.3" << "30893";
+  QTest::newRow("1") << ":/application_30893_slicer_win_amd64.json" << Slicer_OS_WIN_NAME << "amd64"
+                     << "29000" << true << "5.0.3"
+                     << "30893";
+  QTest::newRow("2") << ":/application_30893_slicer_linux_amd64.json" << Slicer_OS_LINUX_NAME << "amd64"
+                     << "29000" << true << "5.0.3"
+                     << "30893";
+  QTest::newRow("3") << ":/application_30893_slicer_macosx_amd64.json" << Slicer_OS_MAC_NAME << "amd64"
+                     << "29000" << true << "5.0.3"
+                     << "30893";
 
-  QTest::newRow("4") << ":/application_30893_slicer_win_amd64.json" << Slicer_OS_WIN_NAME << "amd64" << "31000" << false << "5.0.3" << "30893";
-  QTest::newRow("5") << ":/application_30893_slicer_linux_amd64.json" << Slicer_OS_LINUX_NAME << "amd64" << "31000" << false << "5.0.3" << "30893";
-  QTest::newRow("6") << ":/application_30893_slicer_macosx_amd64.json" << Slicer_OS_MAC_NAME << "amd64" << "31000" << false << "5.0.3" << "30893";
+  QTest::newRow("4") << ":/application_30893_slicer_win_amd64.json" << Slicer_OS_WIN_NAME << "amd64"
+                     << "31000" << false << "5.0.3"
+                     << "30893";
+  QTest::newRow("5") << ":/application_30893_slicer_linux_amd64.json" << Slicer_OS_LINUX_NAME << "amd64"
+                     << "31000" << false << "5.0.3"
+                     << "30893";
+  QTest::newRow("6") << ":/application_30893_slicer_macosx_amd64.json" << Slicer_OS_MAC_NAME << "amd64"
+                     << "31000" << false << "5.0.3"
+                     << "30893";
 }
 
 // ----------------------------------------------------------------------------

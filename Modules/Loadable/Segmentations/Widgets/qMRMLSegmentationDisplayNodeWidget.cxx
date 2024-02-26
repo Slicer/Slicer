@@ -41,12 +41,13 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qMRMLSegmentationDisplayNodeWidgetPrivate: public Ui_qMRMLSegmentationDisplayNodeWidget
+class qMRMLSegmentationDisplayNodeWidgetPrivate : public Ui_qMRMLSegmentationDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationDisplayNodeWidget);
 
 protected:
   qMRMLSegmentationDisplayNodeWidget* const q_ptr;
+
 public:
   qMRMLSegmentationDisplayNodeWidgetPrivate(qMRMLSegmentationDisplayNodeWidget& object);
   void init();
@@ -60,7 +61,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentationDisplayNodeWidgetPrivate::qMRMLSegmentationDisplayNodeWidgetPrivate(qMRMLSegmentationDisplayNodeWidget& object)
+qMRMLSegmentationDisplayNodeWidgetPrivate::qMRMLSegmentationDisplayNodeWidgetPrivate(
+  qMRMLSegmentationDisplayNodeWidget& object)
   : q_ptr(&object)
 {
   this->SegmentationDisplayNode = nullptr;
@@ -73,57 +75,69 @@ void qMRMLSegmentationDisplayNodeWidgetPrivate::init()
   this->setupUi(q);
 
   // Make connections
-  QObject::connect(this->checkBox_Visible, SIGNAL(stateChanged(int)),
-    q, SLOT(onVisibilityChanged(int)) );
-  QObject::connect(this->SliderWidget_Opacity, SIGNAL(valueChanged(double)),
-    q, SLOT(onOpacityChanged(double)));
+  QObject::connect(this->checkBox_Visible, SIGNAL(stateChanged(int)), q, SLOT(onVisibilityChanged(int)));
+  QObject::connect(this->SliderWidget_Opacity, SIGNAL(valueChanged(double)), q, SLOT(onOpacityChanged(double)));
 
   // Segmentation visibility and opacity settings
-  QObject::connect(this->checkBox_VisibilitySliceFill, SIGNAL(stateChanged(int)),
-    q, SLOT(onVisibilitySliceFillChanged(int)) );
-  QObject::connect(this->checkBox_VisibilitySliceOutline, SIGNAL(stateChanged(int)),
-    q, SLOT(onVisibilitySliceOutlineChanged(int)) );
-  QObject::connect(this->checkBox_Visibility3D, SIGNAL(stateChanged(int)),
-    q, SLOT(onVisibility3DChanged(int)) );
+  QObject::connect(
+    this->checkBox_VisibilitySliceFill, SIGNAL(stateChanged(int)), q, SLOT(onVisibilitySliceFillChanged(int)));
+  QObject::connect(
+    this->checkBox_VisibilitySliceOutline, SIGNAL(stateChanged(int)), q, SLOT(onVisibilitySliceOutlineChanged(int)));
+  QObject::connect(this->checkBox_Visibility3D, SIGNAL(stateChanged(int)), q, SLOT(onVisibility3DChanged(int)));
 
-  QObject::connect(this->SliderWidget_OpacitySliceFill, SIGNAL(valueChanged(double)),
-    q, SLOT(onOpacitySliceFillChanged(double)) );
-  QObject::connect(this->SliderWidget_OpacitySliceOutline, SIGNAL(valueChanged(double)),
-    q, SLOT(onOpacitySliceOutlineChanged(double)) );
-  QObject::connect(this->SliderWidget_Opacity3D, SIGNAL(valueChanged(double)),
-    q, SLOT(onOpacity3DChanged(double)) );
+  QObject::connect(
+    this->SliderWidget_OpacitySliceFill, SIGNAL(valueChanged(double)), q, SLOT(onOpacitySliceFillChanged(double)));
+  QObject::connect(this->SliderWidget_OpacitySliceOutline,
+                   SIGNAL(valueChanged(double)),
+                   q,
+                   SLOT(onOpacitySliceOutlineChanged(double)));
+  QObject::connect(this->SliderWidget_Opacity3D, SIGNAL(valueChanged(double)), q, SLOT(onOpacity3DChanged(double)));
 
   // Advanced options
-  QObject::connect(this->spinBox_SliceIntersectionThickness, SIGNAL(valueChanged(int)),
-    q, SLOT(onSliceIntersectionThicknessChanged(int)) );
-  QObject::connect(this->comboBox_DisplayedRepresentation3D, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(onRepresentation3DChanged(int)) );
-  QObject::connect(this->comboBox_DisplayedRepresentation2D, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(onRepresentation2DChanged(int)) );
+  QObject::connect(this->spinBox_SliceIntersectionThickness,
+                   SIGNAL(valueChanged(int)),
+                   q,
+                   SLOT(onSliceIntersectionThicknessChanged(int)));
+  QObject::connect(this->comboBox_DisplayedRepresentation3D,
+                   SIGNAL(currentIndexChanged(int)),
+                   q,
+                   SLOT(onRepresentation3DChanged(int)));
+  QObject::connect(this->comboBox_DisplayedRepresentation2D,
+                   SIGNAL(currentIndexChanged(int)),
+                   q,
+                   SLOT(onRepresentation2DChanged(int)));
 
   // Selected segment visibility and opacity settings
-  QObject::connect(this->checkBox_VisibilitySliceFill_SelectedSegment, SIGNAL(stateChanged(int)),
-    q, SLOT(onSegmentVisibilitySliceFillChanged(int)) );
-  QObject::connect(this->checkBox_VisibilitySliceOutline_SelectedSegment, SIGNAL(stateChanged(int)),
-    q, SLOT(onSegmentVisibilitySliceOutlineChanged(int)) );
-  QObject::connect(this->checkBox_Visibility3D_SelectedSegment, SIGNAL(stateChanged(int)),
-    q, SLOT(onSegmentVisibility3DChanged(int)) );
+  QObject::connect(this->checkBox_VisibilitySliceFill_SelectedSegment,
+                   SIGNAL(stateChanged(int)),
+                   q,
+                   SLOT(onSegmentVisibilitySliceFillChanged(int)));
+  QObject::connect(this->checkBox_VisibilitySliceOutline_SelectedSegment,
+                   SIGNAL(stateChanged(int)),
+                   q,
+                   SLOT(onSegmentVisibilitySliceOutlineChanged(int)));
+  QObject::connect(
+    this->checkBox_Visibility3D_SelectedSegment, SIGNAL(stateChanged(int)), q, SLOT(onSegmentVisibility3DChanged(int)));
 
-  QObject::connect(this->SliderWidget_OpacitySliceFill_SelectedSegment, SIGNAL(valueChanged(double)),
-    q, SLOT(onSegmentOpacitySliceFillChanged(double)) );
-  QObject::connect(this->SliderWidget_OpacitySliceOutline_SelectedSegment, SIGNAL(valueChanged(double)),
-    q, SLOT(onSegmentOpacitySliceOutlineChanged(double)) );
-  QObject::connect(this->SliderWidget_Opacity3D_SelectedSegment, SIGNAL(valueChanged(double)),
-    q, SLOT(onSegmentOpacity3DChanged(double)) );
+  QObject::connect(this->SliderWidget_OpacitySliceFill_SelectedSegment,
+                   SIGNAL(valueChanged(double)),
+                   q,
+                   SLOT(onSegmentOpacitySliceFillChanged(double)));
+  QObject::connect(this->SliderWidget_OpacitySliceOutline_SelectedSegment,
+                   SIGNAL(valueChanged(double)),
+                   q,
+                   SLOT(onSegmentOpacitySliceOutlineChanged(double)));
+  QObject::connect(this->SliderWidget_Opacity3D_SelectedSegment,
+                   SIGNAL(valueChanged(double)),
+                   q,
+                   SLOT(onSegmentOpacity3DChanged(double)));
 
   q->setEnabled(this->SegmentationDisplayNode.GetPointer());
 
   q->updateSelectedSegmentSection();
 }
 
-
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 // qMRMLSegmentationDisplayNodeWidget methods
@@ -176,8 +190,8 @@ void qMRMLSegmentationDisplayNodeWidget::setSegmentationDisplayNode(vtkMRMLSegme
 //-----------------------------------------------------------------------------
 void qMRMLSegmentationDisplayNodeWidget::setSegmentationNode(vtkMRMLSegmentationNode* node)
 {
-  this->setSegmentationDisplayNode(
-    node ? vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetDisplayNode()) : nullptr );
+  this->setSegmentationDisplayNode(node ? vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetDisplayNode())
+                                        : nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -245,16 +259,19 @@ void qMRMLSegmentationDisplayNodeWidget::updateSelectedSegmentSection()
   d->SliderWidget_Opacity3D_SelectedSegment->blockSignals(false);
 
   // Set groupbox header to include segment name
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
+  vtkMRMLSegmentationNode* segmentationNode =
+    vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
   if (!segmentationNode || !segmentationNode->GetSegmentation())
   {
     qCritical() << Q_FUNC_INFO << ": Invalid segmentation node!";
     return;
   }
-  vtkSegment* selectedSegment = segmentationNode->GetSegmentation()->GetSegment(d->SelectedSegmentID.toUtf8().constData());
+  vtkSegment* selectedSegment =
+    segmentationNode->GetSegmentation()->GetSegment(d->SelectedSegmentID.toUtf8().constData());
   if (!selectedSegment)
   {
-    qCritical() << Q_FUNC_INFO << ": Unable to access segment " << d->SelectedSegmentID << " in segmentation " << segmentationNode->GetName();
+    qCritical() << Q_FUNC_INFO << ": Unable to access segment " << d->SelectedSegmentID << " in segmentation "
+                << segmentationNode->GetName();
     return;
   }
   QString newTitle = tr("Selected segment: %1").arg(selectedSegment->GetName());
@@ -271,14 +288,15 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
   {
     return;
   }
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
+  vtkMRMLSegmentationNode* segmentationNode =
+    vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
   if (!segmentationNode)
   {
     return;
   }
 
   // Set overall visibility
-  d->checkBox_Visible->setChecked( d->SegmentationDisplayNode->GetVisibility() );
+  d->checkBox_Visible->setChecked(d->SegmentationDisplayNode->GetVisibility());
 
   bool wasBlocked = d->SliderWidget_Opacity->blockSignals(true);
   d->SliderWidget_Opacity->setValue(d->SegmentationDisplayNode->GetOpacity());
@@ -312,7 +330,7 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
   // Set visibility checkbox states
 
   // Set slice intersection thickness
-  d->spinBox_SliceIntersectionThickness->setValue( d->SegmentationDisplayNode->GetSliceIntersectionThickness() );
+  d->spinBox_SliceIntersectionThickness->setValue(d->SegmentationDisplayNode->GetSliceIntersectionThickness());
 
   // Populate representations comboboxes
   this->populate3DRepresentationsCombobox();
@@ -322,14 +340,14 @@ void qMRMLSegmentationDisplayNodeWidget::updateWidgetFromMRML()
   std::string displayRepresentation3D = d->SegmentationDisplayNode->GetDisplayRepresentationName3D();
   if (!displayRepresentation3D.empty())
   {
-    d->comboBox_DisplayedRepresentation3D->setCurrentIndex( d->comboBox_DisplayedRepresentation3D->findText(
-      displayRepresentation3D.c_str() ) );
+    d->comboBox_DisplayedRepresentation3D->setCurrentIndex(
+      d->comboBox_DisplayedRepresentation3D->findText(displayRepresentation3D.c_str()));
   }
   std::string displayRepresentation2D = d->SegmentationDisplayNode->GetDisplayRepresentationName2D();
   if (!displayRepresentation2D.empty())
   {
-    d->comboBox_DisplayedRepresentation2D->setCurrentIndex( d->comboBox_DisplayedRepresentation2D->findText(
-      displayRepresentation2D.c_str() ) );
+    d->comboBox_DisplayedRepresentation2D->setCurrentIndex(
+      d->comboBox_DisplayedRepresentation2D->findText(displayRepresentation2D.c_str()));
   }
 
   // Set display node to display widgets
@@ -350,9 +368,9 @@ void qMRMLSegmentationDisplayNodeWidget::populate3DRepresentationsCombobox()
 
   // Note: This function used to collect existing poly data representations from
   // the segmentation and was connected to events like this:
-  // qvtkConnect( segmentationNode, vtkSegmentation::ContainedRepresentationNamesModified, this, SLOT( populateRepresentationsCombobox() ) );
-  // It was then decided that a preferred poly data representation can be selected
-  // regardless its existence, thus the combobox is populated only once at initialization.
+  // qvtkConnect( segmentationNode, vtkSegmentation::ContainedRepresentationNamesModified, this, SLOT(
+  // populateRepresentationsCombobox() ) ); It was then decided that a preferred poly data representation can be
+  // selected regardless its existence, thus the combobox is populated only once at initialization.
 
   // Prevent selecting incrementally added representations thus changing MRML properties
   d->comboBox_DisplayedRepresentation3D->blockSignals(true);
@@ -362,7 +380,8 @@ void qMRMLSegmentationDisplayNodeWidget::populate3DRepresentationsCombobox()
   std::set<std::string> modelRepresentationNames;
   d->SegmentationDisplayNode->GetPolyDataRepresentationNames(modelRepresentationNames);
   for (std::set<std::string>::iterator reprIt = modelRepresentationNames.begin();
-    reprIt != modelRepresentationNames.end(); ++reprIt)
+       reprIt != modelRepresentationNames.end();
+       ++reprIt)
   {
     d->comboBox_DisplayedRepresentation3D->addItem(reprIt->c_str());
   }
@@ -374,8 +393,8 @@ void qMRMLSegmentationDisplayNodeWidget::populate3DRepresentationsCombobox()
   std::string displayRepresentation3D = d->SegmentationDisplayNode->GetDisplayRepresentationName3D();
   if (!displayRepresentation3D.empty())
   {
-    d->comboBox_DisplayedRepresentation3D->setCurrentIndex( d->comboBox_DisplayedRepresentation3D->findText(
-      displayRepresentation3D.c_str() ) );
+    d->comboBox_DisplayedRepresentation3D->setCurrentIndex(
+      d->comboBox_DisplayedRepresentation3D->findText(displayRepresentation3D.c_str()));
   }
 }
 
@@ -392,7 +411,8 @@ void qMRMLSegmentationDisplayNodeWidget::populate2DRepresentationsCombobox()
   d->comboBox_DisplayedRepresentation2D->blockSignals(true);
   d->comboBox_DisplayedRepresentation2D->clear();
 
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
+  vtkMRMLSegmentationNode* segmentationNode =
+    vtkMRMLSegmentationNode::SafeDownCast(d->SegmentationDisplayNode->GetDisplayableNode());
   if (!segmentationNode)
   {
     d->comboBox_DisplayedRepresentation2D->blockSignals(false);
@@ -402,8 +422,8 @@ void qMRMLSegmentationDisplayNodeWidget::populate2DRepresentationsCombobox()
   // Populate 2D representations combobox with all available representations
   std::set<std::string> representationNames;
   segmentationNode->GetSegmentation()->GetAvailableRepresentationNames(representationNames);
-  for (std::set<std::string>::iterator reprIt = representationNames.begin();
-    reprIt != representationNames.end(); ++reprIt)
+  for (std::set<std::string>::iterator reprIt = representationNames.begin(); reprIt != representationNames.end();
+       ++reprIt)
   {
     d->comboBox_DisplayedRepresentation2D->addItem(reprIt->c_str());
   }
@@ -415,8 +435,8 @@ void qMRMLSegmentationDisplayNodeWidget::populate2DRepresentationsCombobox()
   std::string displayRepresentation2D = d->SegmentationDisplayNode->GetDisplayRepresentationName2D();
   if (!displayRepresentation2D.empty())
   {
-    d->comboBox_DisplayedRepresentation2D->setCurrentIndex( d->comboBox_DisplayedRepresentation2D->findText(
-      displayRepresentation2D.c_str() ) );
+    d->comboBox_DisplayedRepresentation2D->setCurrentIndex(
+      d->comboBox_DisplayedRepresentation2D->findText(displayRepresentation2D.c_str()));
   }
 }
 
@@ -570,7 +590,8 @@ void qMRMLSegmentationDisplayNodeWidget::onRepresentation2DChanged(int index)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentationDisplayNodeWidget::onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void qMRMLSegmentationDisplayNodeWidget::onSegmentSelectionChanged(const QItemSelection& selected,
+                                                                   const QItemSelection& deselected)
 {
   Q_UNUSED(selected);
   Q_UNUSED(deselected);

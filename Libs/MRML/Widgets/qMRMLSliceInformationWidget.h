@@ -51,7 +51,7 @@ public:
 
   /// Get \a sliceNode
   /// \sa setMRMLSliceCompositeNode();
-  vtkMRMLSliceNode* mrmlSliceNode()const;
+  vtkMRMLSliceNode* mrmlSliceNode() const;
 
 public slots:
 

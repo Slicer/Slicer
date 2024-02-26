@@ -45,7 +45,7 @@ vtkMRMLColorTableStorageNode::~vtkMRMLColorTableStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -55,13 +55,12 @@ bool vtkMRMLColorTableStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
 
   // cast the input node
-  vtkMRMLColorTableNode *colorNode =
-    vtkMRMLColorTableNode::SafeDownCast(refNode);
+  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(refNode);
 
   if (colorNode == nullptr)
   {
@@ -82,8 +81,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     // It is important to only change type if it has not been set already
     // because otherwise "User" color node types would be always reverted to
     // read-only "File" type when the scene is saved and reloaded.
-    if (colorNode->GetType()<colorNode->GetFirstType()
-      || colorNode->GetType()>colorNode->GetLastType())
+    if (colorNode->GetType() < colorNode->GetFirstType() || colorNode->GetType() > colorNode->GetLastType())
     {
       // no valid type has been set, set it to File
       colorNode->SetTypeToFile();
@@ -93,7 +91,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
     char line[1024];
     // save the valid lines in a vector, parse them once know the max id
-    std::vector<std::string>lines;
+    std::vector<std::string> lines;
     int maxID = 0;
     while (fstr.good())
     {
@@ -139,9 +137,8 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkDebugMacro("The largest id is " << maxID);
     if (maxID > this->MaximumColorID)
     {
-      vtkErrorMacro("ReadData: maximum color id " << maxID << " is > "
-                    << this->MaximumColorID << ", invalid color file: "
-                    << this->GetFileName());
+      vtkErrorMacro("ReadData: maximum color id " << maxID << " is > " << this->MaximumColorID
+                                                  << ", invalid color file: " << this->GetFileName());
       colorNode->SetNumberOfColors(0);
       colorNode->EndModify(wasModifying);
       return 0;
@@ -181,8 +178,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       {
         ss >> a;
       }
-      if (!biggerThanOne &&
-          (r > 1.0 || g > 1.0 || b > 1.0))
+      if (!biggerThanOne && (r > 1.0 || g > 1.0 || b > 1.0))
       {
         biggerThanOne = true;
       }
@@ -207,17 +203,21 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       {
         size_t firstnottick = name.find_first_not_of("'");
         size_t lastnottick = name.find_last_not_of("'");
-        std::string withoutTicks = name.substr(firstnottick, (lastnottick-firstnottick) + 1);
-        vtkDebugMacro("ReadDataInternal: Found ticks around name \"" << name << "\", using name without ticks instead:  \"" << withoutTicks << "\"");
+        std::string withoutTicks = name.substr(firstnottick, (lastnottick - firstnottick) + 1);
+        vtkDebugMacro("ReadDataInternal: Found ticks around name \""
+                      << name << "\", using name without ticks instead:  \"" << withoutTicks << "\"");
         name = withoutTicks;
       }
       if (i < 10)
       {
-        vtkDebugMacro("(first ten) Adding color at id " << id << ", name = " << name.c_str() << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a);
+        vtkDebugMacro("(first ten) Adding color at id " << id << ", name = " << name.c_str() << ", r = " << r
+                                                        << ", g = " << g << ", b = " << b << ", a = " << a);
       }
       if (colorNode->SetColor(id, name.c_str(), r, g, b, a) == 0)
       {
-        vtkWarningMacro("ReadData: unable to set color " << id << " with name " << name.c_str() << ", breaking the loop over " << lines.size() << " lines in the file " << this->FileName);
+        vtkWarningMacro("ReadData: unable to set color " << id << " with name " << name.c_str()
+                                                         << ", breaking the loop over " << lines.size()
+                                                         << " lines in the file " << this->FileName);
         colorNode->EndModify(wasModifying);
         return 0;
       }
@@ -225,7 +225,8 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
     if (lines.size() > 0 && !biggerThanOne)
     {
-      vtkWarningMacro("ReadDataInternal: possibly malformed color table file:\n" << this->FileName << ".\n\tNo RGB values are greater than 1. Valid values are 0-255");
+      vtkWarningMacro("ReadDataInternal: possibly malformed color table file:\n"
+                      << this->FileName << ".\n\tNo RGB values are greater than 1. Valid values are 0-255");
     }
     colorNode->EndModify(wasModifying);
   }
@@ -239,7 +240,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -249,10 +250,10 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   }
 
   // cast the input node
-  vtkMRMLColorTableNode *colorNode = nullptr;
-  if ( refNode->IsA("vtkMRMLColorTableNode") )
+  vtkMRMLColorTableNode* colorNode = nullptr;
+  if (refNode->IsA("vtkMRMLColorTableNode"))
   {
-    colorNode = dynamic_cast <vtkMRMLColorTableNode *> (refNode);
+    colorNode = dynamic_cast<vtkMRMLColorTableNode*>(refNode);
   }
 
   if (colorNode == nullptr)
@@ -280,14 +281,13 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     for (int i = 0; i < colorNode->GetLookupTable()->GetNumberOfTableValues(); i++)
     {
       // is it an unnamed color?
-      if (colorNode->GetNoName() &&
-          colorNode->GetColorName(i) &&
-          strcmp(colorNode->GetNoName(), colorNode->GetColorName(i)) == 0)
+      if (colorNode->GetNoName() && colorNode->GetColorName(i)
+          && strcmp(colorNode->GetNoName(), colorNode->GetColorName(i)) == 0)
       {
         continue;
       }
 
-      double *rgba;
+      double* rgba;
       rgba = colorNode->GetLookupTable()->GetTableValue(i);
       // the color look up table uses 0-1, file values are 0-255,
       double r = rgba[0] * 255.0;
@@ -317,16 +317,20 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 void vtkMRMLColorTableStorageNode::InitializeSupportedReadFileTypes()
 {
   //: File format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.ctbl)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table")
+                                                + " (.ctbl)");
   //: File format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.txt)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table")
+                                                + " (.txt)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableStorageNode::InitializeSupportedWriteFileTypes()
 {
   //: File format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.ctbl)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table")
+                                                 + " (.ctbl)");
   //: File format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.txt)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table")
+                                                 + " (.txt)");
 }

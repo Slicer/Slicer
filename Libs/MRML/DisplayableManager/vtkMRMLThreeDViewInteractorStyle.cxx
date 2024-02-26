@@ -44,7 +44,7 @@ vtkMRMLThreeDViewInteractorStyle::vtkMRMLThreeDViewInteractorStyle()
 {
   this->CameraNode = nullptr;
   this->AccuratePicker = vtkSmartPointer<vtkCellPicker>::New();
-  this->AccuratePicker->SetTolerance( .005 );
+  this->AccuratePicker->SetTolerance(.005);
   this->QuickPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
   this->QuickVolumePicker = vtkSmartPointer<vtkVolumePicker>::New();
   this->QuickVolumePicker->SetPickFromList(true); // will only pick volumes
@@ -59,7 +59,7 @@ vtkMRMLThreeDViewInteractorStyle::~vtkMRMLThreeDViewInteractorStyle()
 //----------------------------------------------------------------------------
 void vtkMRMLThreeDViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void vtkMRMLThreeDViewInteractorStyle::SetDisplayableManagers(vtkMRMLDisplayable
 
   // Observe ActiveCameraChangedEvent
   vtkMRMLAbstractDisplayableManager* cameraDisplayableManager =
-      this->DisplayableManagers->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager");
+    this->DisplayableManagers->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager");
   if (cameraDisplayableManager)
   {
     // Listen for ActiveCameraChangedEvent to detect when the camera displayable manager
@@ -83,9 +83,8 @@ void vtkMRMLThreeDViewInteractorStyle::SetDisplayableManagers(vtkMRMLDisplayable
     // is handled.
     // A simpler approach would be to directly store a reference to the camera in the view node.
     // See https://github.com/Slicer/Slicer/issues/7333
-    cameraDisplayableManager->AddObserver(
-          vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent,
-          this->DisplayableManagerCallbackCommand);
+    cameraDisplayableManager->AddObserver(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent,
+                                          this->DisplayableManagerCallbackCommand);
   }
 }
 
@@ -125,7 +124,8 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
 
   vtkNew<vtkMRMLInteractionEventData> ed;
   ed->SetType(inputEventData->GetType());
-  int displayPositionCorrected[2] = { displayPositionInt[0] - pokedRenderer->GetOrigin()[0], displayPositionInt[1] - pokedRenderer->GetOrigin()[1] };
+  int displayPositionCorrected[2] = { displayPositionInt[0] - pokedRenderer->GetOrigin()[0],
+                                      displayPositionInt[1] - pokedRenderer->GetOrigin()[1] };
   ed->SetDisplayPosition(displayPositionCorrected);
   double worldPosition[4] = { 0.0, 0.0, 0.0, 1.0 };
   if (this->QuickPick(displayPositionInt[0], displayPositionInt[1], worldPosition))
@@ -134,9 +134,8 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
     ed->SetWorldPosition(worldPosition, false);
 
     // update the cursor position on mouse move
-    if (this->GetCameraNode() != nullptr
-      && this->GetCameraNode()->GetScene() != nullptr
-      && inputEventData->GetType() == vtkCommand::MouseMoveEvent)
+    if (this->GetCameraNode() != nullptr && this->GetCameraNode()->GetScene() != nullptr
+        && inputEventData->GetType() == vtkCommand::MouseMoveEvent)
     {
       vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
       vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
@@ -156,13 +155,13 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLThreeDViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *interactor)
+void vtkMRMLThreeDViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor* interactor)
 {
   if (interactor)
   {
     // A default FPS of 30. seems good enough, but feel free to increase if needed
     // Please note that the VolumeRendering module changes it.
-    interactor->SetDesiredUpdateRate( 30.);
+    interactor->SetDesiredUpdateRate(30.);
   }
   this->Superclass::SetInteractor(interactor);
 }
@@ -200,8 +199,7 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
       aProp->GetVolumes(pickList);
     }
 
-    if (pickList->GetNumberOfItems() > 0
-      && this->QuickVolumePicker->Pick(x, y, 0, pokedRenderer))
+    if (pickList->GetNumberOfItems() > 0 && this->QuickVolumePicker->Pick(x, y, 0, pokedRenderer))
     {
       double volumePickPoint[3] = { 0.0, 0.0, 0.0 };
       this->QuickVolumePicker->GetPickPosition(volumePickPoint);
@@ -209,8 +207,8 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
       // Use QuickVolumePicker result instead of QuickPicker result if picked volume point
       // is closer to the camera (or QuickPicker did not find anything).
       if (!quickPicked
-        || vtkMath::Distance2BetweenPoints(volumePickPoint, cameraPosition)
-        < vtkMath::Distance2BetweenPoints(pickPoint, cameraPosition))
+          || vtkMath::Distance2BetweenPoints(volumePickPoint, cameraPosition)
+               < vtkMath::Distance2BetweenPoints(pickPoint, cameraPosition))
       {
         pickPoint[0] = volumePickPoint[0];
         pickPoint[1] = volumePickPoint[1];
@@ -223,8 +221,10 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDViewInteractorStyle::ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager * displayableManager,
-                                     unsigned long event, void *callData)
+void vtkMRMLThreeDViewInteractorStyle::ProcessDisplayableManagerEvents(
+  vtkMRMLAbstractDisplayableManager* displayableManager,
+  unsigned long event,
+  void* callData)
 {
   this->Superclass::ProcessDisplayableManagerEvents(displayableManager, event, callData);
 

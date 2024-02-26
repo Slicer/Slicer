@@ -25,20 +25,19 @@
 
 class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLScalarInvariantComboBoxPlugin
   : public QObject
-  ,  public qMRMLWidgetsAbstractPlugin
+  , public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLScalarInvariantComboBoxPlugin(QObject *_parent = nullptr);
+  qMRMLScalarInvariantComboBoxPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
-  QString  domXml() const override;
-  QIcon    icon() const override;
-  QString  includeFile() const override;
-  bool     isContainer() const override;
-  QString  name() const override;
+  QWidget* createWidget(QWidget* _parent) override;
+  QString domXml() const override;
+  QIcon icon() const override;
+  QString includeFile() const override;
+  bool isContainer() const override;
+  QString name() const override;
 };
 
 #endif
-

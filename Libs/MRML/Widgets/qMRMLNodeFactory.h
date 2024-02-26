@@ -41,9 +41,8 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
 {
   Q_OBJECT
 public:
-
   /// Convenient typedef
-  typedef QHash<QString,QString> AttributeType;
+  typedef QHash<QString, QString> AttributeType;
 
   /// Constructors
   typedef QObject Superclass;
@@ -52,7 +51,7 @@ public:
 
   /// Get MRML scene.
   /// By default, there is no scene.
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
   ///
   /// Create and add a node given its \a className to the scene associated
@@ -74,8 +73,9 @@ public:
 
   ///
   /// Convenient method allowing to create a new node and add it to the \a scene
-  static vtkMRMLNode* createNode(vtkMRMLScene* scene, const QString& className,
-    const AttributeType& attributes = AttributeType());
+  static vtkMRMLNode* createNode(vtkMRMLScene* scene,
+                                 const QString& className,
+                                 const AttributeType& attributes = AttributeType());
 
   ///
   /// Add attribute that will be passed to any new created node.
@@ -83,11 +83,11 @@ public:
   /// Note: If an attribute already exist, it's value will be overwritten.
   Q_INVOKABLE void addAttribute(const QString& attributeName, const QString& attributeValue);
   Q_INVOKABLE void removeAttribute(const QString& attributeName);
-  Q_INVOKABLE QString attribute(const QString& attributeName)const;
+  Q_INVOKABLE QString attribute(const QString& attributeName) const;
 
   /// Base name used to generate a name for create node.
   Q_INVOKABLE void setBaseName(const QString& className, const QString& baseName);
-  Q_INVOKABLE QString baseName(const QString& className)const;
+  Q_INVOKABLE QString baseName(const QString& className) const;
 
 public slots:
   ///

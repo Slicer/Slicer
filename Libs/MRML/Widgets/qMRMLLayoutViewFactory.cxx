@@ -19,7 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-//#include <QDomElement>
+// #include <QDomElement>
 #include <QDebug>
 
 // CTK includes
@@ -50,18 +50,19 @@
 class qMRMLLayoutViewFactoryPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLLayoutViewFactory);
+
 public:
   qMRMLLayoutViewFactoryPrivate(qMRMLLayoutViewFactory& obj);
   virtual void init();
 
-  vtkMRMLAbstractViewNode* viewNodeByName(const QString& viewName)const;
-  vtkMRMLAbstractViewNode* viewNodeByLayoutLabel(const QString& layoutLabel)const;
+  vtkMRMLAbstractViewNode* viewNodeByName(const QString& viewName) const;
+  vtkMRMLAbstractViewNode* viewNodeByLayoutLabel(const QString& layoutLabel) const;
 
-  vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement)const;
-  vtkMRMLLayoutLogic::ViewProperties propertiesFromXML(QDomElement viewElement)const;
-  vtkMRMLLayoutLogic::ViewProperty propertyFromXML(QDomElement propertyElement)const;
+  vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement) const;
+  vtkMRMLLayoutLogic::ViewProperties propertiesFromXML(QDomElement viewElement) const;
+  vtkMRMLLayoutLogic::ViewProperty propertyFromXML(QDomElement propertyElement) const;
 
-  QList<qMRMLWidget*> mrmlWidgets()const;
+  QList<qMRMLWidget*> mrmlWidgets() const;
 
 protected:
   qMRMLLayoutViewFactory* q_ptr;
@@ -90,10 +91,9 @@ void qMRMLLayoutViewFactoryPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
-::viewNodeByName(const QString& viewName)const
+vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate ::viewNodeByName(const QString& viewName) const
 {
-  foreach(vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
+  foreach (vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
   {
     if (viewName == QString(viewNode->GetName()))
     {
@@ -104,10 +104,9 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
-::viewNodeByLayoutLabel(const QString& layoutLabel)const
+vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate ::viewNodeByLayoutLabel(const QString& layoutLabel) const
 {
-  foreach(vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
+  foreach (vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
   {
     if (layoutLabel == QString(viewNode->GetLayoutLabel()))
     {
@@ -118,8 +117,7 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLLayoutLogic::ViewAttributes qMRMLLayoutViewFactoryPrivate
-::attributesFromXML(QDomElement viewElement)const
+vtkMRMLLayoutLogic::ViewAttributes qMRMLLayoutViewFactoryPrivate ::attributesFromXML(QDomElement viewElement) const
 {
   vtkMRMLLayoutLogic::ViewAttributes attributes;
   QDomNamedNodeMap elementAttributes = viewElement.attributes();
@@ -127,19 +125,16 @@ vtkMRMLLayoutLogic::ViewAttributes qMRMLLayoutViewFactoryPrivate
   for (int i = 0; i < attributeCount; ++i)
   {
     QDomNode attribute = elementAttributes.item(i);
-    attributes[attribute.nodeName().toStdString()] =
-      viewElement.attribute(attribute.nodeName()).toStdString();
+    attributes[attribute.nodeName().toStdString()] = viewElement.attribute(attribute.nodeName()).toStdString();
   }
   return attributes;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLLayoutLogic::ViewProperties qMRMLLayoutViewFactoryPrivate
-::propertiesFromXML(QDomElement viewElement)const
+vtkMRMLLayoutLogic::ViewProperties qMRMLLayoutViewFactoryPrivate ::propertiesFromXML(QDomElement viewElement) const
 {
   vtkMRMLLayoutLogic::ViewProperties properties;
-  for (QDomElement childElement = viewElement.firstChildElement();
-       !childElement.isNull();
+  for (QDomElement childElement = viewElement.firstChildElement(); !childElement.isNull();
        childElement = childElement.nextSiblingElement())
   {
     properties.push_back(this->propertyFromXML(childElement));
@@ -148,8 +143,7 @@ vtkMRMLLayoutLogic::ViewProperties qMRMLLayoutViewFactoryPrivate
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLLayoutLogic::ViewProperty qMRMLLayoutViewFactoryPrivate
-::propertyFromXML(QDomElement propertyElement)const
+vtkMRMLLayoutLogic::ViewProperty qMRMLLayoutViewFactoryPrivate ::propertyFromXML(QDomElement propertyElement) const
 {
   vtkMRMLLayoutLogic::ViewProperty property;
   QDomNamedNodeMap elementAttributes = propertyElement.attributes();
@@ -157,20 +151,17 @@ vtkMRMLLayoutLogic::ViewProperty qMRMLLayoutViewFactoryPrivate
   for (int i = 0; i < attributeCount; ++i)
   {
     QDomNode attribute = elementAttributes.item(i);
-    property[attribute.nodeName().toStdString()] =
-      propertyElement.attribute(attribute.nodeName()).toStdString();
+    property[attribute.nodeName().toStdString()] = propertyElement.attribute(attribute.nodeName()).toStdString();
   }
   property["value"] = propertyElement.text().toStdString();
   return property;
 }
 
-
 //------------------------------------------------------------------------------
-QList<qMRMLWidget*> qMRMLLayoutViewFactoryPrivate
-::mrmlWidgets()const
+QList<qMRMLWidget*> qMRMLLayoutViewFactoryPrivate ::mrmlWidgets() const
 {
   QList<qMRMLWidget*> res;
-  foreach(QWidget* viewWidget, this->Views.values())
+  foreach (QWidget* viewWidget, this->Views.values())
   {
     qMRMLWidget* mrmlWidget = qobject_cast<qMRMLWidget*>(viewWidget);
     if (mrmlWidget)
@@ -197,20 +188,20 @@ qMRMLLayoutViewFactory::qMRMLLayoutViewFactory(QObject* parentObject)
 qMRMLLayoutViewFactory::~qMRMLLayoutViewFactory()
 {
   Q_D(qMRMLLayoutViewFactory);
-  while(this->viewCount())
+  while (this->viewCount())
   {
     this->deleteView(d->Views.keys()[0]);
   }
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLLayoutViewFactory::viewClassName()const
+QString qMRMLLayoutViewFactory::viewClassName() const
 {
   return QString();
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLLayoutViewFactory::isElementSupported(QDomElement layoutElement)const
+bool qMRMLLayoutViewFactory::isElementSupported(QDomElement layoutElement) const
 {
   if (!this->Superclass::isElementSupported(layoutElement))
   {
@@ -221,13 +212,13 @@ bool qMRMLLayoutViewFactory::isElementSupported(QDomElement layoutElement)const
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLLayoutViewFactory::isViewNodeSupported(vtkMRMLAbstractViewNode* viewNode)const
+bool qMRMLLayoutViewFactory::isViewNodeSupported(vtkMRMLAbstractViewNode* viewNode) const
 {
   return viewNode && viewNode->IsA(this->viewClassName().toUtf8());
 }
 
 // --------------------------------------------------------------------------
-qMRMLLayoutManager* qMRMLLayoutViewFactory::layoutManager()const
+qMRMLLayoutManager* qMRMLLayoutViewFactory::layoutManager() const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->LayoutManager;
@@ -241,7 +232,7 @@ void qMRMLLayoutViewFactory::setLayoutManager(qMRMLLayoutManager* layoutManager)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLLayoutViewFactory::mrmlScene()const
+vtkMRMLScene* qMRMLLayoutViewFactory::mrmlScene() const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->MRMLScene;
@@ -256,18 +247,17 @@ void qMRMLLayoutViewFactory::setMRMLScene(vtkMRMLScene* scene)
   {
     return;
   }
-  while(this->viewCount())
+  while (this->viewCount())
   {
     this->deleteView(d->Views.keys()[0]);
   }
-  this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent,
-                      this, SLOT(onNodeAdded(vtkObject*,vtkObject*)));
+  this->qvtkReconnect(
+    d->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAdded(vtkObject*, vtkObject*)));
 
-  this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeRemovedEvent,
-                     this, SLOT(onNodeRemoved(vtkObject*,vtkObject*)));
+  this->qvtkReconnect(
+    d->MRMLScene, scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemoved(vtkObject*, vtkObject*)));
 
-  this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::EndBatchProcessEvent,
-                      this, SLOT(onSceneModified()));
+  this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT(onSceneModified()));
 
   d->MRMLScene = scene;
 
@@ -275,7 +265,7 @@ void qMRMLLayoutViewFactory::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutViewFactory::viewWidget(int id)const
+QWidget* qMRMLLayoutViewFactory::viewWidget(int id) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   if (id < 0 || id >= d->Views.size())
@@ -286,21 +276,21 @@ QWidget* qMRMLLayoutViewFactory::viewWidget(int id)const
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutViewFactory::viewWidget(vtkMRMLAbstractViewNode* node)const
+QWidget* qMRMLLayoutViewFactory::viewWidget(vtkMRMLAbstractViewNode* node) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->Views.value(node, 0);
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::viewNode(QWidget* widget)const
+vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::viewNode(QWidget* widget) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->Views.key(widget, 0);
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutViewFactory::viewWidget(const QString& name)const
+QWidget* qMRMLLayoutViewFactory::viewWidget(const QString& name) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   vtkMRMLAbstractViewNode* viewNode = d->viewNodeByName(name);
@@ -308,7 +298,7 @@ QWidget* qMRMLLayoutViewFactory::viewWidget(const QString& name)const
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutViewFactory::viewWidgetByLayoutLabel(const QString& layoutLabel)const
+QWidget* qMRMLLayoutViewFactory::viewWidgetByLayoutLabel(const QString& layoutLabel) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   vtkMRMLAbstractViewNode* viewNode = d->viewNodeByLayoutLabel(layoutLabel);
@@ -330,7 +320,7 @@ QStringList qMRMLLayoutViewFactory::viewNodeNames() const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLLayoutViewFactory::viewCount()const
+int qMRMLLayoutViewFactory::viewCount() const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->Views.size();
@@ -341,7 +331,7 @@ void qMRMLLayoutViewFactory::beginSetupLayout()
 {
   Q_D(qMRMLLayoutViewFactory);
   this->Superclass::beginSetupLayout();
-  foreach(vtkMRMLAbstractViewNode* viewNode, d->Views.keys())
+  foreach (vtkMRMLAbstractViewNode* viewNode, d->Views.keys())
   {
     viewNode->SetMappedInLayout(0);
   }
@@ -428,8 +418,7 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
   {
     this->setActiveViewNode(node);
   }
-  this->qvtkConnect(node, vtkCommand::ModifiedEvent,
-                    this, SLOT(onNodeModified(vtkObject*)));
+  this->qvtkConnect(node, vtkCommand::ModifiedEvent, this, SLOT(onNodeModified(vtkObject*)));
   emit viewCreated(widget);
 }
 
@@ -457,8 +446,7 @@ void qMRMLLayoutViewFactory::onSceneModified()
   d->MRMLScene->GetNodesByClass("vtkMRMLAbstractViewNode", viewNodes);
   for (unsigned int i = 0; i < viewNodes.size(); ++i)
   {
-    vtkMRMLAbstractViewNode* viewNode =
-      vtkMRMLAbstractViewNode::SafeDownCast(viewNodes[i]);
+    vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(viewNodes[i]);
     Q_ASSERT(viewNode);
     this->onViewNodeAdded(viewNode);
   }
@@ -476,8 +464,7 @@ void qMRMLLayoutViewFactory::deleteView(vtkMRMLAbstractViewNode* viewNode)
 {
   Q_D(qMRMLLayoutViewFactory);
 
-  this->qvtkDisconnect(viewNode, vtkCommand::ModifiedEvent,
-                       this, SLOT(onNodeModified(vtkObject*)));
+  this->qvtkDisconnect(viewNode, vtkCommand::ModifiedEvent, this, SLOT(onNodeModified(vtkObject*)));
 
   QWidget* widgetToDelete = this->viewWidget(viewNode);
 
@@ -514,14 +501,14 @@ void qMRMLLayoutViewFactory::setActiveViewNode(vtkMRMLAbstractViewNode* node)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::activeViewNode()const
+vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::activeViewNode() const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->ActiveViewNode;
 }
 
 // --------------------------------------------------------------------------
-vtkRenderer* qMRMLLayoutViewFactory::activeRenderer()const
+vtkRenderer* qMRMLLayoutViewFactory::activeRenderer() const
 {
   QWidget* activeViewWidget = this->viewWidget(this->activeViewNode());
   if (!activeViewWidget)
@@ -530,17 +517,15 @@ vtkRenderer* qMRMLLayoutViewFactory::activeRenderer()const
   }
   ctkVTKAbstractView* view = activeViewWidget->findChild<ctkVTKAbstractView*>();
   vtkRenderWindow* renderWindow = view ? view->renderWindow() : nullptr;
-  vtkRendererCollection* renderers =
-    renderWindow ? renderWindow->GetRenderers() : nullptr;
+  vtkRendererCollection* renderers = renderWindow ? renderWindow->GetRenderers() : nullptr;
   return renderers ? renderers->GetFirstRenderer() : nullptr;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::viewNodeFromXML(QDomElement viewElement)const
+vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::viewNodeFromXML(QDomElement viewElement) const
 {
   Q_D(const qMRMLLayoutViewFactory);
-  vtkMRMLLayoutLogic::ViewAttributes attributes =
-    d->attributesFromXML(viewElement);
+  vtkMRMLLayoutLogic::ViewAttributes attributes = d->attributesFromXML(viewElement);
   // convert Qt xml element into vtkMRMLLayoutLogic attributes
   vtkMRMLNode* viewNode = this->layoutManager()->layoutLogic()->GetViewFromAttributes(attributes);
   return vtkMRMLAbstractViewNode::SafeDownCast(viewNode);
@@ -573,14 +558,11 @@ QWidget* qMRMLLayoutViewFactory::createViewFromXML(QDomElement viewElement)
 }
 
 //------------------------------------------------------------------------------
-QList<vtkMRMLAbstractViewNode*> qMRMLLayoutViewFactory
-::viewNodesFromXML(QDomElement viewElement)const
+QList<vtkMRMLAbstractViewNode*> qMRMLLayoutViewFactory ::viewNodesFromXML(QDomElement viewElement) const
 {
   Q_D(const qMRMLLayoutViewFactory);
-  vtkMRMLLayoutLogic::ViewAttributes attributes =
-    d->attributesFromXML(viewElement);
-  vtkCollection* viewNodes =
-    this->layoutManager()->layoutLogic()->GetViewsFromAttributes(attributes);
+  vtkMRMLLayoutLogic::ViewAttributes attributes = d->attributesFromXML(viewElement);
+  vtkCollection* viewNodes = this->layoutManager()->layoutLogic()->GetViewsFromAttributes(attributes);
 
   QList<vtkMRMLAbstractViewNode*> res;
   for (vtkMRMLAbstractViewNode* node = nullptr;
@@ -599,7 +581,7 @@ QList<QWidget*> qMRMLLayoutViewFactory::createViewsFromXML(QDomElement viewEleme
   QList<vtkMRMLAbstractViewNode*> viewNodes = this->viewNodesFromXML(viewElement);
 
   QList<QWidget*> res;
-  foreach(vtkMRMLAbstractViewNode* viewNode, viewNodes)
+  foreach (vtkMRMLAbstractViewNode* viewNode, viewNodes)
   {
     res << this->viewWidget(viewNode);
     vtkMRMLLayoutLogic::ViewProperties properties = d->propertiesFromXML(viewElement);

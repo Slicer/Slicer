@@ -12,7 +12,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLLayoutLogicTest1(int , char * [] )
+int vtkMRMLLayoutLogicTest1(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -28,29 +28,23 @@ int vtkMRMLLayoutLogicTest1(int , char * [] )
               << ", no layout node:" << layoutNode << std::endl;
     return EXIT_FAILURE;
   }
-  layoutNode->SetViewArrangement(
-    vtkMRMLLayoutNode::SlicerLayoutConventionalView);
+  layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   vtkCollection* views = layoutLogic->GetViewNodes();
   if (views->GetNumberOfItems() != 4)
   {
-    std::cerr << __LINE__ << " Wrong number of views returned:"
-              << layoutLogic->GetViewNodes()->GetNumberOfItems() << std::endl;
+    std::cerr << __LINE__ << " Wrong number of views returned:" << layoutLogic->GetViewNodes()->GetNumberOfItems()
+              << std::endl;
     return EXIT_FAILURE;
   }
-  vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(
-    views->GetItemAsObject(0));
-  vtkMRMLSliceNode* redNode = vtkMRMLSliceNode::SafeDownCast(
-    views->GetItemAsObject(1));
-  vtkMRMLSliceNode* yellowNode = vtkMRMLSliceNode::SafeDownCast(
-    views->GetItemAsObject(2));
-  vtkMRMLSliceNode* greenNode = vtkMRMLSliceNode::SafeDownCast(
-    views->GetItemAsObject(3));
+  vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(views->GetItemAsObject(0));
+  vtkMRMLSliceNode* redNode = vtkMRMLSliceNode::SafeDownCast(views->GetItemAsObject(1));
+  vtkMRMLSliceNode* yellowNode = vtkMRMLSliceNode::SafeDownCast(views->GetItemAsObject(2));
+  vtkMRMLSliceNode* greenNode = vtkMRMLSliceNode::SafeDownCast(views->GetItemAsObject(3));
 
   if (!viewNode || !redNode || !yellowNode || !greenNode)
   {
-    std::cerr << __LINE__ << " Wrong nodes returned:"
-              << viewNode << " " << redNode << " "
-              << yellowNode << " " << greenNode << std::endl;
+    std::cerr << __LINE__ << " Wrong nodes returned:" << viewNode << " " << redNode << " " << yellowNode << " "
+              << greenNode << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -58,4 +52,3 @@ int vtkMRMLLayoutLogicTest1(int , char * [] )
 
   return EXIT_SUCCESS;
 }
-

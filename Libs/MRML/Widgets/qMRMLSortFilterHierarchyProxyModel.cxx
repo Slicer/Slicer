@@ -44,7 +44,7 @@ qMRMLSortFilterHierarchyProxyModelPrivate::qMRMLSortFilterHierarchyProxyModelPri
 // qMRMLSortFilterHierarchyProxyModel
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterHierarchyProxyModel::qMRMLSortFilterHierarchyProxyModel(QObject *vparent)
+qMRMLSortFilterHierarchyProxyModel::qMRMLSortFilterHierarchyProxyModel(QObject* vparent)
   : qMRMLSortFilterProxyModel(vparent)
   , d_ptr(new qMRMLSortFilterHierarchyProxyModelPrivate)
 {
@@ -54,10 +54,9 @@ qMRMLSortFilterHierarchyProxyModel::qMRMLSortFilterHierarchyProxyModel(QObject *
 qMRMLSortFilterHierarchyProxyModel::~qMRMLSortFilterHierarchyProxyModel() = default;
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterHierarchyProxyModel
-::filterAcceptsNode(vtkMRMLNode* node)const
+qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterHierarchyProxyModel ::filterAcceptsNode(vtkMRMLNode* node) const
 {
-  //Q_D(const qMRMLSortFilterHierarchyProxyModel);
+  // Q_D(const qMRMLSortFilterHierarchyProxyModel);
   AcceptType res = this->Superclass::filterAcceptsNode(node);
   if (res == Accept || res == AcceptButPotentiallyRejectable)
   {

@@ -23,16 +23,16 @@
 #include "qSlicerColorsModuleWidgetsPluginsExport.h"
 
 class Q_SLICER_QTMODULES_COLORS_WIDGETS_PLUGINS_EXPORT qMRMLColorLegendDisplayNodeWidgetPlugin
-  : public QObject, QDesignerCustomWidgetInterface
+  : public QObject
+  , QDesignerCustomWidgetInterface
 {
   Q_OBJECT
 
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
+
 public:
-
-
-  qMRMLColorLegendDisplayNodeWidgetPlugin(QObject * newParent = nullptr);
+  qMRMLColorLegendDisplayNodeWidgetPlugin(QObject* newParent = nullptr);
 
   // Don't reimplement this method.
   QString group() const override;
@@ -41,13 +41,12 @@ public:
   QString toolTip() const override;
   QString whatsThis() const override;
 
-  QWidget *createWidget(QWidget *newParent) override;
-  QString  domXml() const override;
-  QIcon    icon() const override;
-  QString  includeFile() const override;
-  bool     isContainer() const override;
-  QString  name() const override;
-
+  QWidget* createWidget(QWidget* newParent) override;
+  QString domXml() const override;
+  QIcon icon() const override;
+  QString includeFile() const override;
+  bool isContainer() const override;
+  QString name() const override;
 };
 
 #endif

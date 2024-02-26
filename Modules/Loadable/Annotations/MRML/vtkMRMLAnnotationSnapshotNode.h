@@ -15,11 +15,11 @@ class vtkImageData;
 class vtkStringArray;
 class vtkMRMLStorageNode;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLAnnotationNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLAnnotationNode
 {
 public:
-  static vtkMRMLAnnotationSnapshotNode *New();
-  vtkTypeMacro(vtkMRMLAnnotationSnapshotNode,vtkMRMLAnnotationNode);
+  static vtkMRMLAnnotationSnapshotNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationSnapshotNode, vtkMRMLAnnotationNode);
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -28,9 +28,9 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "AnnotationSnapshot";}
+  const char* GetNodeTagName() override { return "AnnotationSnapshot"; }
 
-  const char* GetIcon() override {return ":/Icons/ViewCamera.png";}
+  const char* GetIcon() override { return ":/Icons/ViewCamera.png"; }
 
   void SetSnapshotDescription(const vtkStdString& newDescription);
   vtkGetMacro(SnapshotDescription, vtkStdString);
@@ -39,7 +39,7 @@ public:
   void ReadXMLAttributes(const char** atts) override;
 
   /// The attached screenshot
-  virtual void SetScreenShot(vtkImageData* );
+  virtual void SetScreenShot(vtkImageData*);
   vtkGetObjectMacro(ScreenShot, vtkImageData);
 
   /// The ScaleFactor of the Screenshot
@@ -86,7 +86,6 @@ protected:
   int ScreenShotType;
 
   double ScaleFactor;
-
 };
 
 #endif

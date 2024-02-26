@@ -32,18 +32,16 @@ class vtkMRMLViewNode;
 ///
 /// A displayable manager class is responsible to represent a
 /// MRMLDisplayable node in a renderer.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractThreeDViewDisplayableManager :
-    public vtkMRMLAbstractDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractThreeDViewDisplayableManager
+  : public vtkMRMLAbstractDisplayableManager
 {
 public:
-
-  static vtkMRMLAbstractThreeDViewDisplayableManager *New();
+  static vtkMRMLAbstractThreeDViewDisplayableManager* New();
   void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkTypeMacro(vtkMRMLAbstractThreeDViewDisplayableManager, vtkMRMLAbstractDisplayableManager);
 
   /// Get MRML ViewNode
-  vtkMRMLViewNode * GetMRMLViewNode();
-
+  vtkMRMLViewNode* GetMRMLViewNode();
 
   /// Find display node managed by the displayable manager at a specified world RAS position.
   /// \return Non-zero in case a node is found at the position, 0 otherwise
@@ -53,19 +51,17 @@ public:
   virtual const char* GetPickedNodeID() { return nullptr; }
 
 protected:
-
   vtkMRMLAbstractThreeDViewDisplayableManager();
   ~vtkMRMLAbstractThreeDViewDisplayableManager() override;
 
   void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
   /// Could be overloaded in DisplayableManager subclass
-  virtual void OnMRMLViewNodeModifiedEvent(){}
+  virtual void OnMRMLViewNodeModifiedEvent() {}
 
   virtual void PassThroughInteractorStyleEvent(int eventid);
 
 private:
-
   vtkMRMLAbstractThreeDViewDisplayableManager(const vtkMRMLAbstractThreeDViewDisplayableManager&) = delete;
   void operator=(const vtkMRMLAbstractThreeDViewDisplayableManager&) = delete;
 };

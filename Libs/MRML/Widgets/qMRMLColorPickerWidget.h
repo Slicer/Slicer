@@ -43,15 +43,15 @@ class QMRML_WIDGETS_EXPORT qMRMLColorPickerWidget : public qMRMLWidget
   Q_OBJECT
   QVTK_OBJECT
 public:
-  qMRMLColorPickerWidget(QWidget *parent=nullptr);
+  qMRMLColorPickerWidget(QWidget* parent = nullptr);
   ~qMRMLColorPickerWidget() override;
 
   /// A color logic is needed to select the color default nodes.
   /// A default color logic is created.
   Q_INVOKABLE void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
-  Q_INVOKABLE vtkMRMLColorLogic* mrmlColorLogic()const;
+  Q_INVOKABLE vtkMRMLColorLogic* mrmlColorLogic() const;
 
-  Q_INVOKABLE vtkMRMLColorNode* currentColorNode()const;
+  Q_INVOKABLE vtkMRMLColorNode* currentColorNode() const;
 
   void setMRMLScene(vtkMRMLScene* scene) override;
   bool eventFilter(QObject* target, QEvent* event) override;

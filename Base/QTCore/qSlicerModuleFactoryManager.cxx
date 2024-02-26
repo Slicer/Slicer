@@ -33,8 +33,10 @@
 class qSlicerModuleFactoryManagerPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerModuleFactoryManager);
+
 protected:
   qSlicerModuleFactoryManager* const q_ptr;
+
 public:
   qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object);
 
@@ -45,8 +47,7 @@ public:
 
 //-----------------------------------------------------------------------------
 // qSlicerModuleFactoryManagerPrivate methods
-qSlicerModuleFactoryManagerPrivate
-::qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object)
+qSlicerModuleFactoryManagerPrivate ::qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object)
   : q_ptr(&object)
 {
   this->AppLogic = nullptr;
@@ -57,8 +58,9 @@ qSlicerModuleFactoryManagerPrivate
 // qSlicerModuleFactoryManager methods
 
 //-----------------------------------------------------------------------------
-qSlicerModuleFactoryManager::qSlicerModuleFactoryManager(QObject * newParent)
-  : Superclass(newParent), d_ptr(new qSlicerModuleFactoryManagerPrivate(*this))
+qSlicerModuleFactoryManager::qSlicerModuleFactoryManager(QObject* newParent)
+  : Superclass(newParent)
+  , d_ptr(new qSlicerModuleFactoryManagerPrivate(*this))
 {
 }
 
@@ -79,7 +81,7 @@ void qSlicerModuleFactoryManager::printAdditionalInfo()
 //-----------------------------------------------------------------------------
 int qSlicerModuleFactoryManager::loadModules()
 {
-  foreach(const QString& name, this->instantiatedModuleNames())
+  foreach (const QString& name, this->instantiatedModuleNames())
   {
     this->loadModule(name);
   }
@@ -91,13 +93,13 @@ int qSlicerModuleFactoryManager::loadModules()
 bool qSlicerModuleFactoryManager::loadModules(const QStringList& modules)
 {
   // Ensure requested modules are instantiated
-  foreach(const QString& moduleKey, modules)
+  foreach (const QString& moduleKey, modules)
   {
     this->instantiateModule(moduleKey);
   }
 
   // Load requested modules
-  foreach(const QString& moduleKey, modules)
+  foreach (const QString& moduleKey, modules)
   {
     if (!this->loadModule(moduleKey))
     {
@@ -119,9 +121,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
 {
   Q_D(qSlicerModuleFactoryManager);
 
-  if (dependee.isEmpty()
-      && !this->explicitModules().isEmpty()
-      && !this->explicitModules().contains(name))
+  if (dependee.isEmpty() && !this->explicitModules().isEmpty() && !this->explicitModules().contains(name))
   {
     return false;
   }
@@ -133,10 +133,9 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
   }
 
   // A module should be registered when attempting to load it
-  if (!this->isRegistered(name) ||
-      !this->isInstantiated(name))
+  if (!this->isRegistered(name) || !this->isInstantiated(name))
   {
-    //Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
+    // Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
     return false;
   }
 
@@ -161,14 +160,13 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
 
   // Load the modules the module depends on.
   // There is no cycle check, so be careful
-  foreach(const QString& dependency, instance->dependencies())
+  foreach (const QString& dependency, instance->dependencies())
   {
     // no-op if the module is already loaded
     bool dependencyLoaded = this->loadModule(dependency, name);
     if (!dependencyLoaded)
     {
-      qWarning() << "When loading module " << name << ", the dependency"
-                 << dependency << "failed to be loaded.";
+      qWarning() << "When loading module " << name << ", the dependency" << dependency << "failed to be loaded.";
       return false;
     }
   }
@@ -195,8 +193,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
   instance->setMRMLScene(d->MRMLScene);
 
   // Module should also be aware if current MRML scene has changed
-  this->connect(this,SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                instance, SLOT(setMRMLScene(vtkMRMLScene*)));
+  this->connect(this, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), instance, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   // Handle post-load initialization
   emit this->moduleLoaded(name);
@@ -205,14 +202,14 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerModuleFactoryManager::isLoaded(const QString& name)const
+bool qSlicerModuleFactoryManager::isLoaded(const QString& name) const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->LoadedModules.contains(name);
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerModuleFactoryManager::loadedModuleNames()const
+QStringList qSlicerModuleFactoryManager::loadedModuleNames() const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->LoadedModules;
@@ -226,7 +223,7 @@ void qSlicerModuleFactoryManager::unloadModules()
   std::reverse(modulesToUnload.begin(), modulesToUnload.end());
   emit this->modulesAboutToBeUnloaded(modulesToUnload);
   emit this->modulesAboutToBeUninstantiated(modulesToUnload);
-  foreach(const QString& name, modulesToUnload)
+  foreach (const QString& name, modulesToUnload)
   {
     this->unloadModule(name);
   }
@@ -277,28 +274,25 @@ void qSlicerModuleFactoryManager::uninstantiateModule(const QString& name)
 }
 
 //---------------------------------------------------------------------------
-qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::loadedModule(const QString& name)const
+qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::loadedModule(const QString& name) const
 {
   if (!this->isRegistered(name))
   {
     qDebug() << "The module" << name << "has not been registered.";
-    qDebug() << "The following modules have been registered:"
-             << this->registeredModuleNames();
+    qDebug() << "The following modules have been registered:" << this->registeredModuleNames();
     return nullptr;
   }
   if (!this->isInstantiated(name))
   {
     qDebug() << "The module" << name << "has been registered but not instantiated.";
-    qDebug() << "The following modules have been instantiated:"
-             << this->instantiatedModuleNames();
+    qDebug() << "The following modules have been instantiated:" << this->instantiatedModuleNames();
     return nullptr;
   }
 
   if (!this->isLoaded(name))
   {
-    qDebug()<< "The module" << name << "has not been loaded.";
-    qDebug() << "The following modules have been loaded:"
-             << this->loadedModuleNames();
+    qDebug() << "The module" << name << "has not been loaded.";
+    qDebug() << "The following modules have been loaded:" << this->loadedModuleNames();
     return nullptr;
   }
   return this->moduleInstance(name);
@@ -312,7 +306,7 @@ void qSlicerModuleFactoryManager::setAppLogic(vtkSlicerApplicationLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerApplicationLogic* qSlicerModuleFactoryManager::appLogic()const
+vtkSlicerApplicationLogic* qSlicerModuleFactoryManager::appLogic() const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->AppLogic;
@@ -335,7 +329,7 @@ QStringList qSlicerModuleFactoryManager::modulePaths(const QString& basePath)
 #endif
   subPaths << Slicer_QTLOADABLEMODULES_LIB_DIR;
 
-  foreach(const QString& subPath, subPaths)
+  foreach (const QString& subPath, subPaths)
   {
     QString candidatePath = QDir(basePath).filePath(subPath);
     if (QDir(candidatePath).exists())
@@ -355,7 +349,7 @@ void qSlicerModuleFactoryManager::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerModuleFactoryManager::mrmlScene()const
+vtkMRMLScene* qSlicerModuleFactoryManager::mrmlScene() const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->MRMLScene;

@@ -39,7 +39,7 @@ public:
 
   /// Returns true if the options have been set and if they are
   /// meaningful
-  bool isValid()const override;
+  bool isValid() const override;
 
   // Update GUI widgets based on properties.
   // Derived classes can override this method to set default

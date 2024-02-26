@@ -36,7 +36,7 @@
 
 // STD includes
 
-int qMRMLCheckableNodeComboBoxTest1( int argc, char * argv [] )
+int qMRMLCheckableNodeComboBoxTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -52,10 +52,10 @@ int qMRMLCheckableNodeComboBoxTest1( int argc, char * argv [] )
   if (addEnabled || removeEnabled || editEnabled)
   {
     std::cerr << __LINE__ << " - Incorrect state" << std::endl
-                          << " Expected => Add[0], Remove[0], Edit[0]" << std::endl
-                          << " Current => Add[" << addEnabled << "], "
-                          << "Remove[" << removeEnabled << "], "
-                          << "Edit[" << editEnabled << "]" << std::endl;
+              << " Expected => Add[0], Remove[0], Edit[0]" << std::endl
+              << " Current => Add[" << addEnabled << "], "
+              << "Remove[" << removeEnabled << "], "
+              << "Edit[" << editEnabled << "]" << std::endl;
     return EXIT_FAILURE;
   }
   nodeSelector.setNodeTypes(QStringList("vtkMRMLViewNode"));

@@ -54,14 +54,17 @@ class vtkMRMLSliceNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLSliceInformationWidgetPrivate: public QObject,
-                                   public Ui_qMRMLSliceInformationWidget
+class qMRMLSliceInformationWidgetPrivate
+  : public QObject
+  , public Ui_qMRMLSliceInformationWidget
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLSliceInformationWidget);
+
 protected:
   qMRMLSliceInformationWidget* const q_ptr;
+
 public:
   qMRMLSliceInformationWidgetPrivate(qMRMLSliceInformationWidget& object);
   ~qMRMLSliceInformationWidgetPrivate() override;
@@ -72,12 +75,9 @@ public slots:
   /// Update widget state using the associated MRML slice node
   void updateWidgetFromMRMLSliceNode();
 
-
-
 public:
-  vtkWeakPointer<vtkMRMLSliceNode>    MRMLSliceNode;
-  QButtonGroup*                       SliceSpacingModeGroup;
-
+  vtkWeakPointer<vtkMRMLSliceNode> MRMLSliceNode;
+  QButtonGroup* SliceSpacingModeGroup;
 };
 
 #endif

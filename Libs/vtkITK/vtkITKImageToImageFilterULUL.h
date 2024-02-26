@@ -22,20 +22,18 @@
 #include "itkVTKImageImport.h"
 #include "vtkITKUtility.h"
 
-
 class VTK_ITK_EXPORT vtkITKImageToImageFilterULUL : public vtkITKImageToImageFilter
 {
 public:
-  vtkTypeMacro(vtkITKImageToImageFilterULUL,vtkITKImageToImageFilter);
+  vtkTypeMacro(vtkITKImageToImageFilterULUL, vtkITKImageToImageFilter);
   static vtkITKImageToImageFilterULUL* New() { return 0; };
   void PrintSelf(ostream& os, vtkIndent indent)
   {
-    Superclass::PrintSelf ( os, indent );
+    Superclass::PrintSelf(os, indent);
     os << m_Filter << std::endl;
   };
 
 protected:
-
   /// To/from ITK
   typedef itk::Image<unsigned long, 3> InputImageType;
   typedef itk::Image<unsigned long, 3> OutputImageType;
@@ -45,10 +43,10 @@ protected:
   ImageImportType::Pointer itkImporter;
   ImageExportType::Pointer itkExporter;
 
-  typedef itk::ImageToImageFilter<InputImageType,OutputImageType> GenericFilterType;
+  typedef itk::ImageToImageFilter<InputImageType, OutputImageType> GenericFilterType;
   GenericFilterType::Pointer m_Filter;
 
-  vtkITKImageToImageFilterULUL ( GenericFilterType* filter )
+  vtkITKImageToImageFilterULUL(GenericFilterType* filter)
   {
     /// Need an import, export, and a ITK pipeline
     m_Filter = filter;
@@ -57,19 +55,17 @@ protected:
     ConnectPipelines(this->vtkExporter, this->itkImporter);
     ConnectPipelines(this->itkExporter, this->vtkImporter);
     /// Set up the filter pipeline
-    m_Filter->SetInput ( this->itkImporter->GetOutput() );
-    this->itkExporter->SetInput ( m_Filter->GetOutput() );
-    this->LinkITKProgressToVTKProgress ( m_Filter );
+    m_Filter->SetInput(this->itkImporter->GetOutput());
+    this->itkExporter->SetInput(m_Filter->GetOutput());
+    this->LinkITKProgressToVTKProgress(m_Filter);
     this->vtkCast->SetOutputScalarTypeToUnsignedLong();
   };
 
-  ~vtkITKImageToImageFilterULUL()
-  {
-  };
+  ~vtkITKImageToImageFilterULUL(){};
 
 private:
-  vtkITKImageToImageFilterULUL(const vtkITKImageToImageFilterULUL&);  /// Not implemented.
-  void operator=(const vtkITKImageToImageFilterULUL&);  /// Not implemented.
+  vtkITKImageToImageFilterULUL(const vtkITKImageToImageFilterULUL&); /// Not implemented.
+  void operator=(const vtkITKImageToImageFilterULUL&);               /// Not implemented.
 };
 
 #endif

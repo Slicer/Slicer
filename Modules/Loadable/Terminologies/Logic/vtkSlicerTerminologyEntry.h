@@ -36,7 +36,7 @@
 class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologyEntry : public vtkObject
 {
 public:
-  static vtkSlicerTerminologyEntry *New();
+  static vtkSlicerTerminologyEntry* New();
   vtkTypeMacro(vtkSlicerTerminologyEntry, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

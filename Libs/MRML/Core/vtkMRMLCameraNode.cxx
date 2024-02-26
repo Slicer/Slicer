@@ -86,17 +86,17 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
   if (this->GetAppliedTransform())
   {
     std::stringstream ss;
-    for (int row=0; row<4; row++)
+    for (int row = 0; row < 4; row++)
     {
-      for (int col=0; col<4; col++)
+      for (int col = 0; col < 4; col++)
       {
         ss << this->AppliedTransform->GetElement(row, col);
-        if (!(row==3 && col==3))
+        if (!(row == 3 && col == 3))
         {
           ss << " ";
         }
       }
-      if ( row != 3 )
+      if (row != 3)
       {
         ss << " ";
       }
@@ -134,8 +134,7 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
       // to link to the main viewer
       if (!this->GetActiveTag() && this->Scene)
       {
-        vtkMRMLViewNode* vnode = vtkMRMLViewNode::SafeDownCast(
-          this->Scene->GetFirstNodeByClass("vtkMRMLViewNode"));
+        vtkMRMLViewNode* vnode = vtkMRMLViewNode::SafeDownCast(this->Scene->GetFirstNodeByClass("vtkMRMLViewNode"));
         if (vnode)
         {
           this->SetActiveTag(vnode->GetID());
@@ -147,9 +146,9 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for (int row=0; row<4; row++)
+      for (int row = 0; row < 4; row++)
       {
-        for (int col=0; col<4; col++)
+        for (int col = 0; col < 4; col++)
         {
           ss >> val;
           this->GetAppliedTransform()->SetElement(row, col, val);
@@ -160,7 +159,6 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
 
   this->EndModify(disabledModify);
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -178,7 +176,7 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode* anode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLCameraNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLCameraNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -206,7 +204,7 @@ void vtkMRMLCameraNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 //----------------------------------------------------------------------------
 void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintVectorMacro(Position, double, 3);
@@ -218,7 +216,7 @@ void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(Interacting);
   vtkMRMLPrintEndMacro();
 
-  os << indent << "AppliedTransform: " ;
+  os << indent << "AppliedTransform: ";
   this->GetAppliedTransform()->PrintSelf(os, indent.GetNextIndent());
 }
 
@@ -230,10 +228,10 @@ void vtkMRMLCameraNode::SetAndObserveCamera(vtkCamera* camera)
     this->SetCamera(nullptr);
   }
   this->SetCamera(camera);
-  if ( this->Camera )
+  if (this->Camera)
   {
-    vtkEventBroker::GetInstance()->AddObservation (
-      this->Camera, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->AddObservation(
+      this->Camera, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
   }
 }
 
@@ -328,23 +326,18 @@ double vtkMRMLCameraNode::GetViewAngle()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject* caller,
-                                            unsigned long event,
-                                            void* callData )
+void vtkMRMLCameraNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->Camera != nullptr &&
-      this->Camera == vtkCamera::SafeDownCast(caller) &&
-      event == vtkCommand::ModifiedEvent)
+  if (this->Camera != nullptr && this->Camera == vtkCamera::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
   {
     this->Modified();
   }
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (this->Camera != nullptr &&
-      tnode == vtkMRMLTransformNode::SafeDownCast(caller) &&
-      event == vtkMRMLTransformableNode::TransformModifiedEvent)
+  if (this->Camera != nullptr && tnode == vtkMRMLTransformNode::SafeDownCast(caller)
+      && event == vtkMRMLTransformableNode::TransformModifiedEvent)
   {
 
     /*
@@ -377,22 +370,22 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject* caller,
     v[1] = this->Camera->GetPosition()[1];
     v[2] = this->Camera->GetPosition()[2];
     v[3] = 1;
-    deltaTransform->MultiplyPoint(v,v);
-    this->Camera->SetPosition(v[0],v[1],v[2]);
+    deltaTransform->MultiplyPoint(v, v);
+    this->Camera->SetPosition(v[0], v[1], v[2]);
     // focal point is point - include translation with 1 in homogeneous coordinate
     v[0] = this->Camera->GetFocalPoint()[0];
     v[1] = this->Camera->GetFocalPoint()[1];
     v[2] = this->Camera->GetFocalPoint()[2];
     v[3] = 1;
-    deltaTransform->MultiplyPoint(v,v);
-    this->Camera->SetFocalPoint(v[0],v[1],v[2]);
+    deltaTransform->MultiplyPoint(v, v);
+    this->Camera->SetFocalPoint(v[0], v[1], v[2]);
     // view up is vector - exclude translation with 0 in homogeneous coordinate
     v[0] = this->Camera->GetViewUp()[0];
     v[1] = this->Camera->GetViewUp()[1];
     v[2] = this->Camera->GetViewUp()[2];
     v[3] = 0;
-    deltaTransform->MultiplyPoint(v,v);
-    this->Camera->SetViewUp(v[0],v[1],v[2]);
+    deltaTransform->MultiplyPoint(v, v);
+    this->Camera->SetViewUp(v[0], v[1], v[2]);
 
     this->GetAppliedTransform()->DeepCopy(transformToWorld.GetPointer());
     this->Modified();
@@ -467,12 +460,11 @@ void vtkMRMLCameraNode::ResetClippingRange()
 void vtkMRMLCameraNode::RotateTo(Direction position)
 {
   double directionOfView[3];
-  vtkMath::Subtract(this->GetFocalPoint(), this->GetPosition(),
-                    directionOfView);
+  vtkMath::Subtract(this->GetFocalPoint(), this->GetPosition(), directionOfView);
   double norm = vtkMath::Norm(directionOfView);
 
-  double newDirectionOfView[3] = {0., 0., 0.};
-  double newViewUp[3] = {0., 0., 0.};
+  double newDirectionOfView[3] = { 0., 0., 0. };
+  double newViewUp[3] = { 0., 0., 0. };
   switch (position)
   {
     case Right:
@@ -539,11 +531,11 @@ void vtkMRMLCameraNode::RotateAround(RASAxis axis, double angle)
 void vtkMRMLCameraNode::TranslateAlong(ScreenAxis screenAxis, bool positive)
 {
   const double distance = this->Camera->GetDistance();
-  const double viewAngle = vtkMath::RadiansFromDegrees( this->Camera->GetViewAngle() );
-  const double height = tan( viewAngle / 2) * distance * 2.;
-  const double shift = (positive ? 1. : -1. ) * height / 6.;
-  double offset[3] = {0., 0., 0.};
-  switch(screenAxis)
+  const double viewAngle = vtkMath::RadiansFromDegrees(this->Camera->GetViewAngle());
+  const double height = tan(viewAngle / 2) * distance * 2.;
+  const double shift = (positive ? 1. : -1.) * height / 6.;
+  double offset[3] = { 0., 0., 0. };
+  switch (screenAxis)
   {
     case X:
     {
@@ -568,13 +560,9 @@ void vtkMRMLCameraNode::TranslateAlong(ScreenAxis screenAxis, bool positive)
   vtkMath::MultiplyScalar(offset, shift);
   int wasModifying = this->StartModify();
   const double* position = this->Camera->GetPosition();
-  this->SetPosition(position[0] + offset[X],
-                    position[1] + offset[Y],
-                    position[2] + offset[Z]);
+  this->SetPosition(position[0] + offset[X], position[1] + offset[Y], position[2] + offset[Z]);
   const double* focalPoint = this->Camera->GetFocalPoint();
-  this->SetFocalPoint(focalPoint[0] + offset[X],
-                      focalPoint[1] + offset[Y],
-                      focalPoint[2] + offset[Z]);
+  this->SetFocalPoint(focalPoint[0] + offset[X], focalPoint[1] + offset[Y], focalPoint[2] + offset[Z]);
 
   this->ResetClippingRange();
 
@@ -582,13 +570,10 @@ void vtkMRMLCameraNode::TranslateAlong(ScreenAxis screenAxis, bool positive)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLCameraNode::Reset(bool resetRotation,
-                              bool resetTranslation,
-                              bool resetDistance,
-                              vtkRenderer* renderer)
+void vtkMRMLCameraNode::Reset(bool resetRotation, bool resetTranslation, bool resetDistance, vtkRenderer* renderer)
 {
-  double bounds[6] = {-5.0, 5.0, -5.0, 5.0, -5.0, 5.0};
-  double center[3] = {0., 0., 0.};
+  double bounds[6] = { -5.0, 5.0, -5.0, 5.0, -5.0, 5.0 };
+  double center[3] = { 0., 0., 0. };
   double distance = 10.;
   if (renderer)
   {
@@ -599,10 +584,10 @@ void vtkMRMLCameraNode::Reset(bool resetRotation,
     const double w1 = bounds[1] - bounds[0];
     const double w2 = bounds[3] - bounds[2];
     const double w3 = bounds[5] - bounds[4];
-    double radius = w1*w1 + w2*w2 + w3*w3;
-    radius = (radius==0)?(1.0):(radius);
+    double radius = w1 * w1 + w2 * w2 + w3 * w3;
+    radius = (radius == 0) ? (1.0) : (radius);
     // compute the radius of the enclosing sphere
-    radius = sqrt(radius)*0.5;
+    radius = sqrt(radius) * 0.5;
     const double angle = vtkMath::RadiansFromDegrees(this->Camera->GetViewAngle());
     distance = radius / sin(angle / 2.);
   }
@@ -612,11 +597,11 @@ void vtkMRMLCameraNode::Reset(bool resetRotation,
     double position[3];
     this->Camera->GetPosition(position);
     vtkMath::Normalize(position); // not really needed
-    int i = position[0]*position[0] > position[1]*position[1] ? 0 : 1;
-    i = (position[i]*position[i] > position[2]*position[2]) ? i : 2;
-    RASAxis closestAxis = (i == 0) ? R :((i == 1) ? A : S);
-    int direction = position[i] > 0 ? 0: 1;
-    this->RotateTo(static_cast<Direction>(2 * closestAxis  + direction));
+    int i = position[0] * position[0] > position[1] * position[1] ? 0 : 1;
+    i = (position[i] * position[i] > position[2] * position[2]) ? i : 2;
+    RASAxis closestAxis = (i == 0) ? R : ((i == 1) ? A : S);
+    int direction = position[i] > 0 ? 0 : 1;
+    this->RotateTo(static_cast<Direction>(2 * closestAxis + direction));
   }
   if (resetTranslation)
   {

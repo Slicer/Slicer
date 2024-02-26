@@ -53,10 +53,10 @@ void checkFinalWidgetState(void* data)
   CTKCOMPARE(widget->minimumValue(), 0.00);
   CTKCOMPARE(widget->maximumValue(), 85.00);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLRangeWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLRangeWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -71,9 +71,8 @@ int qMRMLRangeWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // Test case 1
   qMRMLRangeWidget* widget = new qMRMLRangeWidget();
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLRangeWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    widget, xmlDirectory + "qMRMLRangeWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))
@@ -84,4 +83,3 @@ int qMRMLRangeWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

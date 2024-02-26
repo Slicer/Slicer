@@ -37,10 +37,18 @@
 bool qSlicerUtils::isExecutableName(const QString& name)
 {
   QStringList extensions;
-  extensions << ".bat" << ".com" << ".sh" << ".csh" << ".tcsh"
-             << ".pl" << ".py" << ".tcl" << ".m" << ".exe";
+  extensions << ".bat"
+             << ".com"
+             << ".sh"
+             << ".csh"
+             << ".tcsh"
+             << ".pl"
+             << ".py"
+             << ".tcl"
+             << ".m"
+             << ".exe";
 
-  foreach(const QString& extension, extensions)
+  foreach (const QString& extension, extensions)
   {
     if (name.endsWith(extension, Qt::CaseInsensitive))
     {
@@ -59,8 +67,7 @@ bool qSlicerUtils::isCLIExecutable(const QString& filePath)
   }
 
 #ifdef _WIN32
-  return ( filePath.endsWith(".exe", Qt::CaseInsensitive) ||
-           filePath.endsWith(".bat", Qt::CaseInsensitive) );
+  return (filePath.endsWith(".exe", Qt::CaseInsensitive) || filePath.endsWith(".bat", Qt::CaseInsensitive));
 #else
   return !QFileInfo(filePath).fileName().contains('.');
 #endif
@@ -74,9 +81,8 @@ bool qSlicerUtils::isCLIScriptedExecutable(const QString& filePath)
   QFile scriptFile(filePath);
   QTextStream scriptStream(&scriptFile);
 
-  if ( (filePath.endsWith(".py", Qt::CaseInsensitive)) &&
-       (scriptFile.open(QIODevice::ReadOnly))          &&
-       (scriptStream.readLine(2).startsWith("#!")) )
+  if ((filePath.endsWith(".py", Qt::CaseInsensitive)) && (scriptFile.open(QIODevice::ReadOnly))
+      && (scriptStream.readLine(2).startsWith("#!")))
   {
     return true;
   }
@@ -103,7 +109,7 @@ bool qSlicerUtils::isLoadableModule(const QString& filePath)
 bool qSlicerUtils::isTestingModule(qSlicerAbstractCoreModule* module)
 {
   const QStringList& categories = module->categories();
-  foreach(const QString & category, categories)
+  foreach (const QString& category, categories)
   {
     if (category.split('.').takeFirst() != "Testing")
     {
@@ -118,13 +124,17 @@ QString qSlicerUtils::searchTargetInIntDir(const QString& directory, const QStri
 {
 #ifdef _WIN32
   QStringList intDirs;
-  intDirs << "." << "Debug" << "RelWithDebInfo" << "Release" << "MinSizeRel";
+  intDirs << "."
+          << "Debug"
+          << "RelWithDebInfo"
+          << "Release"
+          << "MinSizeRel";
   QString intDir = directory + "/%2/" + target;
-  foreach(const QString& subdir, intDirs)
+  foreach (const QString& subdir, intDirs)
   {
     if (QFile::exists(intDir.arg(subdir)))
     {
-      return directory+"/"+subdir+"/";
+      return directory + "/" + subdir + "/";
     }
   }
   return QString();
@@ -207,9 +217,12 @@ bool qSlicerUtils::isPluginInstalled(const QString& filePath, const QString& app
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerUtils::isPluginBuiltIn(const QString& filePath, const QString& applicationHomeDir, const QString& applicationRevision)
+bool qSlicerUtils::isPluginBuiltIn(const QString& filePath,
+                                   const QString& applicationHomeDir,
+                                   const QString& applicationRevision)
 {
-  return vtkSlicerApplicationLogic::IsPluginBuiltIn(filePath.toStdString(), applicationHomeDir.toStdString(), applicationRevision.toStdString());
+  return vtkSlicerApplicationLogic::IsPluginBuiltIn(
+    filePath.toStdString(), applicationHomeDir.toStdString(), applicationRevision.toStdString());
 }
 
 //-----------------------------------------------------------------------------
@@ -220,9 +233,7 @@ QString qSlicerUtils::pathWithoutIntDir(const QString& path, const QString& subD
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerUtils::pathWithoutIntDir(const QString& path,
-                                        const QString& subDirWithoutIntDir,
-                                        QString& intDir)
+QString qSlicerUtils::pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir, QString& intDir)
 {
   QDir pathAsDir(path);
   if (!qSlicerUtils::pathEndsWith(path, subDirWithoutIntDir))
@@ -246,12 +257,12 @@ bool qSlicerUtils::pathEndsWith(const QString& inputPath, const QString& path)
 #else
   Qt::CaseSensitivity sensitivity = Qt::CaseSensitive;
 #endif
-  return QDir::cleanPath(QDir::fromNativeSeparators(inputPath)).
-      endsWith(QDir::cleanPath(QDir::fromNativeSeparators(path)), sensitivity);
+  return QDir::cleanPath(QDir::fromNativeSeparators(inputPath))
+    .endsWith(QDir::cleanPath(QDir::fromNativeSeparators(path)), sensitivity);
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerUtils::setPermissionsRecursively(const QString &path,
+bool qSlicerUtils::setPermissionsRecursively(const QString& path,
                                              QFile::Permissions directoryPermissions,
                                              QFile::Permissions filePermissions)
 {
@@ -261,18 +272,18 @@ bool qSlicerUtils::setPermissionsRecursively(const QString &path,
     return false;
   }
 
-  foreach(const QFileInfo &info, QDir(path).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
+  foreach (const QFileInfo& info, QDir(path).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
   {
     if (info.isDir())
     {
-      if (directoryPermissions & QFile::ExeOwner
-             || directoryPermissions & QFile::ExeGroup
-             || directoryPermissions & QFile::ExeOther)
+      if (directoryPermissions & QFile::ExeOwner || directoryPermissions & QFile::ExeGroup
+          || directoryPermissions & QFile::ExeOther)
       {
         // If executable bit is on /a/b/c/d, we should start with a, b, c, then d
         if (!QFile::setPermissions(info.filePath(), directoryPermissions))
         {
-          qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on directory" << info.filePath();
+          qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on directory"
+                      << info.filePath();
           return false;
         }
         if (!qSlicerUtils::setPermissionsRecursively(info.filePath(), directoryPermissions, filePermissions))
@@ -289,7 +300,8 @@ bool qSlicerUtils::setPermissionsRecursively(const QString &path,
         }
         if (!QFile::setPermissions(info.filePath(), directoryPermissions))
         {
-          qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on directory" << info.filePath();
+          qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on directory"
+                      << info.filePath();
           return false;
         }
       }
@@ -321,7 +333,7 @@ QString qSlicerUtils::replaceWikiUrlVersion(const QString& text, const QString& 
     // Given an URL matching the regular expression reported above, this second
     // expression will replace the first occurrence of "Documentation/<StringWithLetterOrNumberOrDot>/"
     // with "Documentation/<version>/"
-    QString updatedURL = rx.cap(0).replace(QRegExp("Documentation\\/[a-zA-Z0-9\\.]+"), "Documentation/" +version);
+    QString updatedURL = rx.cap(0).replace(QRegExp("Documentation\\/[a-zA-Z0-9\\.]+"), "Documentation/" + version);
     updatedText.replace(pos, rx.matchedLength(), updatedURL);
     pos += updatedURL.length();
   }
@@ -341,7 +353,9 @@ bool replaceFirst(QString& text, const QString& pattern, const QString& replacem
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text, const QString& hostname, const QString& version)
+QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text,
+                                                     const QString& hostname,
+                                                     const QString& version)
 {
   QString updatedText = text;
   QRegExp rx("http[s]?\\:\\/\\/[a-zA-Z0-9\\-\\._\\?\\,\\'\\/\\\\\\+&amp;%\\$#\\=~]*");
@@ -349,13 +363,13 @@ QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text, const 
   while ((pos = rx.indexIn(updatedText, pos)) != -1)
   {
     // Given an URL matching the regular expression reported above, this second
-    // expression will replace the first occurrence of "/<StringWithLetterOrNumberOrDot>/" or "/<StringWithLetterOrNumberOrDot>#"
-    // with "/<version>/" or "/<version>#".
+    // expression will replace the first occurrence of "/<StringWithLetterOrNumberOrDot>/" or
+    // "/<StringWithLetterOrNumberOrDot>#" with "/<version>/" or "/<version>#".
     QString foundURL = rx.cap(0);
     if (foundURL.contains(hostname)
-      && (replaceFirst(foundURL, "\\/[0-9\\.]+\\/|/latest\\/|/stable\\/", "/" + version + "/") // replace /5.0/
-      || replaceFirst(foundURL, "\\/v[0-9\\.]+\\/", "/" + version + "/")) // replace /v5.0/
-      )
+        && (replaceFirst(foundURL, "\\/[0-9\\.]+\\/|/latest\\/|/stable\\/", "/" + version + "/") // replace /5.0/
+            || replaceFirst(foundURL, "\\/v[0-9\\.]+\\/", "/" + version + "/"))                  // replace /v5.0/
+    )
     {
       updatedText.replace(pos, rx.matchedLength(), foundURL);
     }

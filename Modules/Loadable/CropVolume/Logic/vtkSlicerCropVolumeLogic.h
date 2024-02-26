@@ -17,7 +17,6 @@
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
-
 #ifndef __vtkSlicerCropVolumeLogic_h
 #define __vtkSlicerCropVolumeLogic_h
 
@@ -32,7 +31,6 @@ class vtkMatrix4x4;
 // CropVolumes includes
 #include "vtkSlicerCropVolumeModuleLogicExport.h"
 class vtkMRMLCropVolumeParametersNode;
-
 
 /// \class vtkSlicerCropVolumeLogic
 /// \brief Crop a volume to the specified region of interest.
@@ -61,13 +59,11 @@ class vtkMRMLCropVolumeParametersNode;
 /// * If interpolation is disabled: input volume node cannot be under non-linear transform
 ///   and ROI node must be aligned with the input volume
 ///
-class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic
-  : public vtkSlicerModuleLogic
+class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic : public vtkSlicerModuleLogic
 {
 public:
-
-  static vtkSlicerCropVolumeLogic *New();
-  vtkTypeMacro(vtkSlicerCropVolumeLogic,vtkSlicerModuleLogic);
+  static vtkSlicerCropVolumeLogic* New();
+  vtkTypeMacro(vtkSlicerCropVolumeLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Crop input volume using the specified ROI node.
@@ -75,21 +71,35 @@ public:
 
   /// Perform non-interpolated (voxel-based) cropping.
   /// If limitToInputExtent is set to true (default) then the extent can only be smaller than the input volume.
-  static int CropVoxelBased(vtkMRMLDisplayableNode* roi, vtkMRMLVolumeNode* inputVolume,
-    vtkMRMLVolumeNode* outputNode, bool limitToInputExtent=true, double fillValue=0.0);
+  static int CropVoxelBased(vtkMRMLDisplayableNode* roi,
+                            vtkMRMLVolumeNode* inputVolume,
+                            vtkMRMLVolumeNode* outputNode,
+                            bool limitToInputExtent = true,
+                            double fillValue = 0.0);
 
   /// Compute non-interpolated (voxel-based) cropping output volume geometry (without actually cropping the image).
   /// If limitToInputExtent is set to true (default) then the extent can only be smaller than the input volume.
-  static bool GetVoxelBasedCropOutputExtent(vtkMRMLDisplayableNode* roi, vtkMRMLVolumeNode* inputVolume,
-    int outputExtent[6], bool limitToInputExtent=false);
+  static bool GetVoxelBasedCropOutputExtent(vtkMRMLDisplayableNode* roi,
+                                            vtkMRMLVolumeNode* inputVolume,
+                                            int outputExtent[6],
+                                            bool limitToInputExtent = false);
 
   /// Perform interpolated cropping.
-  int CropInterpolated(vtkMRMLDisplayableNode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputNode,
-    bool isotropicResampling, double spacingScale, int interpolationMode, double fillValue);
+  int CropInterpolated(vtkMRMLDisplayableNode* roi,
+                       vtkMRMLVolumeNode* inputVolume,
+                       vtkMRMLVolumeNode* outputNode,
+                       bool isotropicResampling,
+                       double spacingScale,
+                       int interpolationMode,
+                       double fillValue);
 
   /// Computes output volume geometry for interpolated cropping (without actually cropping the image).
-  static bool GetInterpolatedCropOutputGeometry(vtkMRMLDisplayableNode* roi, vtkMRMLVolumeNode* inputVolume,
-    bool isotropicResampling, double spacingScale, int outputExtent[6], double outputSpacing[3]);
+  static bool GetInterpolatedCropOutputGeometry(vtkMRMLDisplayableNode* roi,
+                                                vtkMRMLVolumeNode* inputVolume,
+                                                bool isotropicResampling,
+                                                double spacingScale,
+                                                int outputExtent[6],
+                                                double outputSpacing[3]);
 
   /// Sets ROI to fit to input volume.
   /// If ROI is under a non-linear transform then the ROI transform will be reset to RAS.
@@ -114,4 +124,3 @@ private:
 };
 
 #endif
-

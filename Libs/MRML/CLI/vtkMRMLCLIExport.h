@@ -18,13 +18,13 @@
 #include <vtkMRMLCLIConfigure.h>
 
 #if defined(WIN32) && !defined(VTKMRMLCLI_STATIC)
-#if defined(MRMLCLI_EXPORTS)
-#define VTK_MRML_CLI_EXPORT __declspec( dllexport )
+# if defined(MRMLCLI_EXPORTS)
+#  define VTK_MRML_CLI_EXPORT __declspec(dllexport)
+# else
+#  define VTK_MRML_CLI_EXPORT __declspec(dllimport)
+# endif
 #else
-#define VTK_MRML_CLI_EXPORT __declspec( dllimport )
-#endif
-#else
-#define VTK_MRML_CLI_EXPORT
+# define VTK_MRML_CLI_EXPORT
 #endif
 
 #endif

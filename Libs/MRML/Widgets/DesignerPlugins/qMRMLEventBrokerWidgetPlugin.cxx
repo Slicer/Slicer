@@ -21,15 +21,14 @@
 #include "qMRMLEventBrokerWidgetPlugin.h"
 #include "qMRMLEventBrokerWidget.h"
 
-qMRMLEventBrokerWidgetPlugin::qMRMLEventBrokerWidgetPlugin(QObject *parentWidget)
+qMRMLEventBrokerWidgetPlugin::qMRMLEventBrokerWidgetPlugin(QObject* parentWidget)
   : QObject(parentWidget)
 {
 }
 
-QWidget *qMRMLEventBrokerWidgetPlugin::createWidget(QWidget *parentWidget)
+QWidget* qMRMLEventBrokerWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLEventBrokerWidget* newWidget =
-    new qMRMLEventBrokerWidget(parentWidget);
+  qMRMLEventBrokerWidget* newWidget = new qMRMLEventBrokerWidget(parentWidget);
   return newWidget;
 }
 
@@ -37,15 +36,15 @@ QString qMRMLEventBrokerWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLEventBrokerWidget\" \
           name=\"EventBrokerWidget\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>200</height>\n"
-          "  </rect>\n"
-          " </property>\n"
-          "</widget>\n";
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>200</height>\n"
+         "  </rect>\n"
+         " </property>\n"
+         "</widget>\n";
 }
 
 QIcon qMRMLEventBrokerWidgetPlugin::icon() const

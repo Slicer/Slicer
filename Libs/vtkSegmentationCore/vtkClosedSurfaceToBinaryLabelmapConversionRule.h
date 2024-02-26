@@ -32,8 +32,7 @@ class vtkPolyData;
 /// \brief Convert closed surface representation (vtkPolyData type) to binary
 ///   labelmap representation (vtkOrientedImageData type). The conversion algorithm
 ///   is based on image stencil.
-class vtkSegmentationCore_EXPORT vtkClosedSurfaceToBinaryLabelmapConversionRule
-  : public vtkSegmentationConverterRule
+class vtkSegmentationCore_EXPORT vtkClosedSurfaceToBinaryLabelmapConversionRule : public vtkSegmentationConverterRule
 {
 public:
   /// Conversion parameter: oversampling factor
@@ -41,9 +40,13 @@ public:
   /// are oversampled with the same value (value of 1 means no oversampling). If it has the value "A",
   /// then automatic oversampling is calculated.
   static const std::string GetOversamplingFactorParameterName() { return "Oversampling factor"; };
-  static const std::string GetCropToReferenceImageGeometryParameterName() { return "Crop to reference image geometry"; };
-  /// Determines if the output binary labelmaps should be reduced to as few shared labelmaps as possible after conversion.
-  /// A value of 1 means that the labelmaps will be collapsed, while a value of 0 means that they will not be collapsed.
+  static const std::string GetCropToReferenceImageGeometryParameterName()
+  {
+    return "Crop to reference image geometry";
+  };
+  /// Determines if the output binary labelmaps should be reduced to as few shared labelmaps as possible after
+  /// conversion. A value of 1 means that the labelmaps will be collapsed, while a value of 0 means that they will not
+  /// be collapsed.
   static const std::string GetCollapseLabelmapsParameterName() { return "Collapse labelmaps"; };
 
 public:
@@ -54,7 +57,7 @@ public:
   /// Constructs representation object from representation name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
   /// Note: Need to take ownership of the created object! For example using vtkSmartPointer<vtkDataObject>::Take
-  vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName)  override;
+  vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName) override;
 
   /// Constructs representation object from class name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
@@ -69,16 +72,23 @@ public:
   bool PostConvert(vtkSegmentation* segmentation) override;
 
   /// Get the cost of the conversion.
-  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
+  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr,
+                                 vtkDataObject* targetRepresentation = nullptr) override;
 
   /// Human-readable name of the converter rule
   const char* GetName() override { return "Closed surface to binary labelmap (simple image stencil)"; };
 
   /// Human-readable name of the source representation
-  const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
+  const char* GetSourceRepresentationName() override
+  {
+    return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName();
+  };
 
   /// Human-readable name of the target representation
-  const char* GetTargetRepresentationName() override { return vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(); };
+  const char* GetTargetRepresentationName() override
+  {
+    return vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName();
+  };
 
   vtkSetMacro(UseOutputImageDataGeometry, bool);
 
@@ -86,8 +96,8 @@ protected:
   /// Calculate actual geometry of the output labelmap volume by verifying that the reference image geometry
   /// encompasses the input surface model, and extending it to the proper directions if necessary.
   /// \param closedSurfacePolyData Input closed surface poly data to convert
-  /// \param geometryImageData Output image data containing output labelmap geometry. Memory is not allocated for voxel data.
-  /// \return Success flag indicating sane calculated extents
+  /// \param geometryImageData Output image data containing output labelmap geometry. Memory is not allocated for voxel
+  /// data. \return Success flag indicating sane calculated extents
   bool CalculateOutputGeometry(vtkPolyData* closedSurfacePolyData, vtkOrientedImageData* geometryImageData);
 
   /// Get default image geometry string in case of absence of parameter.
@@ -103,7 +113,7 @@ protected:
   /// because pre-calculating the geometry of the output image data is not trivial and should be done
   /// only when there is a specific reason to do that (such as doing the conversion for sub-volumes and
   /// then stitching them back together).
-  bool UseOutputImageDataGeometry{false};
+  bool UseOutputImageDataGeometry{ false };
 
 protected:
   vtkClosedSurfaceToBinaryLabelmapConversionRule();

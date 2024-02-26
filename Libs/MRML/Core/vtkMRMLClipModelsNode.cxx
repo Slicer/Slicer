@@ -101,7 +101,7 @@ void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
       int id = this->GetClippingMethodFromString(attValue);
       if (id < 0)
       {
-        vtkWarningMacro("Invalid Clipping Methods: "<<(attValue?attValue:"(none)"));
+        vtkWarningMacro("Invalid Clipping Methods: " << (attValue ? attValue : "(none)"));
       }
       else
       {
@@ -109,12 +109,11 @@ void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
       }
     }
   }
-    this->EndModify(disabledModify);
-
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLClipModelsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLClipModelsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -135,7 +134,7 @@ void vtkMRMLClipModelsNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true
 //----------------------------------------------------------------------------
 void vtkMRMLClipModelsNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "ClipType:        " << this->ClipType << "\n";
   os << indent << "YellowSliceClipState: " << this->YellowSliceClipState << "\n";
@@ -156,13 +155,12 @@ int vtkMRMLClipModelsNode::GetClippingMethodFromString(const char* name)
   {
     return (int)Straight;
   }
-  else if (!strcmp(name, "WholeCells")
-    || !strcmp(name, "Whole Cells"))  // for backward compatibility
+  else if (!strcmp(name, "WholeCells") || !strcmp(name, "Whole Cells")) // for backward compatibility
   {
     return (int)WholeCells;
   }
   else if (!strcmp(name, "WholeCellsWithBoundary")
-    || !strcmp(name, "Whole Cells With Boundary"))  // for backward compatibility
+           || !strcmp(name, "Whole Cells With Boundary")) // for backward compatibility
   {
     return (int)WholeCellsWithBoundary;
   }
@@ -173,14 +171,16 @@ int vtkMRMLClipModelsNode::GetClippingMethodFromString(const char* name)
 //-----------------------------------------------------------------------------
 const char* vtkMRMLClipModelsNode::GetClippingMethodAsString(ClippingMethodType id)
 {
- switch (id)
- {
-    case Straight: return "Straight";
-    case WholeCells: return "WholeCells";
-    case WholeCellsWithBoundary: return "WholeCellsWithBoundary";
+  switch (id)
+  {
+    case Straight:
+      return "Straight";
+    case WholeCells:
+      return "WholeCells";
+    case WholeCellsWithBoundary:
+      return "WholeCellsWithBoundary";
     default:
       // invalid id
       return "";
- }
+  }
 }
-

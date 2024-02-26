@@ -33,8 +33,7 @@
 class QSettings;
 class qSlicerSettingsDeveloperPanelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsDeveloperPanel
-  : public ctkSettingsPanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsDeveloperPanel : public ctkSettingsPanel
 {
   Q_OBJECT
 public:

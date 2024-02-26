@@ -134,7 +134,7 @@ vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
 
   this->PointPlacer = vtkSmartPointer<vtkFocalPlanePointPlacer>::New();
 
-  for (int i = 0; i<NumberOfControlPointTypes; i++)
+  for (int i = 0; i < NumberOfControlPointTypes; i++)
   {
     this->ControlPoints[i] = nullptr;
   }
@@ -145,7 +145,7 @@ vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation::~vtkSlicerMarkupsWidgetRepresentation()
 {
-  for (int i=0; i<NumberOfControlPointTypes; i++)
+  for (int i = 0; i < NumberOfControlPointTypes; i++)
   {
     delete this->ControlPoints[i];
     this->ControlPoints[i] = nullptr;
@@ -201,8 +201,9 @@ vtkMRMLMarkupsNode::ControlPoint* vtkSlicerMarkupsWidgetRepresentation::GetNthCo
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
-  const int displayPos[2], double closestWorldPos[3], int *idx)
+int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(const int displayPos[2],
+                                                                   double closestWorldPos[3],
+                                                                   int* idx)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
@@ -248,13 +249,12 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
 
   double wt2 = vtkMath::Distance2BetweenPoints(tmp1, tmp2);
 
-
   // Now loop through all lines and look for closest one within tolerance
-  double p3[4] = {0.0, 0.0, 0.0, 1.0};
-  double p4[4] = {0.0, 0.0, 0.0, 1.0};
+  double p3[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double p4[4] = { 0.0, 0.0, 0.0, 1.0 };
   vtkPoints* curvePointsWorld = this->GetMarkupsNode()->GetCurvePointsWorld();
   vtkIdType numberOfPoints = curvePointsWorld->GetNumberOfPoints();
-  for(vtkIdType i = 0; i < numberOfPoints; i++)
+  for (vtkIdType i = 0; i < numberOfPoints; i++)
   {
     curvePointsWorld->GetPoint(i, p3);
     if (i + 1 < numberOfPoints)
@@ -275,13 +275,13 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
     if (vtkLine::Intersection(p1, p2, p3, p4, u, v))
     {
       double p5[3], p6[3];
-      p5[0] = p1[0] + u*(p2[0]-p1[0]);
-      p5[1] = p1[1] + u*(p2[1]-p1[1]);
-      p5[2] = p1[2] + u*(p2[2]-p1[2]);
+      p5[0] = p1[0] + u * (p2[0] - p1[0]);
+      p5[1] = p1[1] + u * (p2[1] - p1[1]);
+      p5[2] = p1[2] + u * (p2[2] - p1[2]);
 
-      p6[0] = p3[0] + v*(p4[0]-p3[0]);
-      p6[1] = p3[1] + v*(p4[1]-p3[1]);
-      p6[2] = p3[2] + v*(p4[2]-p3[2]);
+      p6[0] = p3[0] + v * (p4[0] - p3[0]);
+      p6[1] = p3[1] + v * (p4[1] - p3[1]);
+      p6[2] = p3[2] + v * (p4[2] - p3[2]);
 
       double d = vtkMath::Distance2BetweenPoints(p5, p6);
 
@@ -320,9 +320,9 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
 
   if (closestDistance2 < VTK_DOUBLE_MAX)
   {
-    if (closestNode < markupsNode->GetNumberOfControlPoints() -1)
+    if (closestNode < markupsNode->GetNumberOfControlPoints() - 1)
     {
-      *idx = closestNode+1;
+      *idx = closestNode + 1;
       return 1;
     }
     else if (this->CurveClosed)
@@ -353,7 +353,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateCenterOfRotation()
     centerWorldPos[1] += p[1];
     centerWorldPos[2] += p[2];
   }
-  double inv_N = 1. / static_cast< double >(markupsNode->GetNumberOfControlPoints());
+  double inv_N = 1. / static_cast<double>(markupsNode->GetNumberOfControlPoints());
   centerWorldPos[0] *= inv_N;
   centerWorldPos[1] *= inv_N;
   centerWorldPos[2] *= inv_N;
@@ -362,7 +362,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateCenterOfRotation()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode *markupsDisplayNode)
+void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode* markupsDisplayNode)
 {
   if (this->MarkupsDisplayNode == markupsDisplayNode)
   {
@@ -380,13 +380,13 @@ void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkupsD
 }
 
 //----------------------------------------------------------------------
-vtkMRMLMarkupsDisplayNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsDisplayNode()
+vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsWidgetRepresentation::GetMarkupsDisplayNode()
 {
   return this->MarkupsDisplayNode;
 }
 
 //----------------------------------------------------------------------
-vtkMRMLMarkupsNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsNode()
+vtkMRMLMarkupsNode* vtkSlicerMarkupsWidgetRepresentation::GetMarkupsNode()
 {
   if (!this->MarkupsDisplayNode)
   {
@@ -396,24 +396,24 @@ vtkMRMLMarkupsNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsNode()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
+void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
   this->MarkupsNode = markupsNode;
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::PrintSelf(ostream& os,
-                                                      vtkIndent indent)
+void vtkSlicerMarkupsWidgetRepresentation::PrintSelf(ostream& os, vtkIndent indent)
 {
-  //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
+  // Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
   os << indent << "Point Placer: " << this->PointPlacer << "\n";
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::CanInteract(
-  vtkMRMLInteractionEventData* vtkNotUsed(interactionEventData),
-  int &foundComponentType, int &vtkNotUsed(foundComponentIndex), double &vtkNotUsed(closestDistance2))
+void vtkSlicerMarkupsWidgetRepresentation::CanInteract(vtkMRMLInteractionEventData* vtkNotUsed(interactionEventData),
+                                                       int& foundComponentType,
+                                                       int& vtkNotUsed(foundComponentIndex),
+                                                       double& vtkNotUsed(closestDistance2))
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
 }
@@ -458,7 +458,7 @@ void vtkSlicerMarkupsWidgetRepresentation::BuildLine(vtkPolyData* linePolyData, 
 
   double pos[3] = { 0.0 };
   vtkIdType index = 0;
-  line->InsertNextCell(numberOfLines+1);
+  line->InsertNextCell(numberOfLines + 1);
 
   for (int i = 0; i < numberOfControlPoints; i++)
   {
@@ -495,15 +495,15 @@ void vtkSlicerMarkupsWidgetRepresentation::BuildLine(vtkPolyData* linePolyData, 
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRML(
-  vtkMRMLNode* caller, unsigned long event, void* callData)
+void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData)
 {
   this->UpdateFromMRMLInternal(caller, event, callData);
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRMLInternal(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
+void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRMLInternal(vtkMRMLNode* vtkNotUsed(caller),
+                                                                  unsigned long event,
+                                                                  void* vtkNotUsed(callData))
 {
   if (!event || event == vtkMRMLTransformableNode::TransformModifiedEvent)
   {
@@ -540,7 +540,6 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRMLInternal(
     this->TextActor->SetInput("");
   }
 
-
   this->NeedToRenderOn(); // TODO: to improve performance, call this only if it is actually needed
 }
 
@@ -556,7 +555,7 @@ bool vtkSlicerMarkupsWidgetRepresentation::GetAllControlPointsVisible()
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
   {
     if (!(markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
-      && (markupsNode->GetNthControlPointVisibility(controlPointIndex))))
+          && (markupsNode->GetNthControlPointVisibility(controlPointIndex))))
     {
       return false;
     }
@@ -688,7 +687,8 @@ vtkPolyData* vtkSlicerMarkupsWidgetRepresentation::GetControlPointsPolyData(int 
 {
   if (controlPointType < 0 || controlPointType >= NumberOfControlPointTypes)
   {
-    vtkErrorMacro("vtkSlicerMarkupsWidgetRepresentation::GetControlPointsPolyData failed: invalid controlPointType: " << controlPointType);
+    vtkErrorMacro("vtkSlicerMarkupsWidgetRepresentation::GetControlPointsPolyData failed: invalid controlPointType: "
+                  << controlPointType);
     return nullptr;
   }
   return this->ControlPoints[controlPointType]->ControlPointsPolyData;
@@ -699,7 +699,9 @@ vtkPolyData* vtkSlicerMarkupsWidgetRepresentation::GetLabelControlPointsPolyData
 {
   if (controlPointType < 0 || controlPointType >= NumberOfControlPointTypes)
   {
-    vtkErrorMacro("vtkSlicerMarkupsWidgetRepresentation::GetLabelControlPointsPolyData failed: invalid controlPointType: " << controlPointType);
+    vtkErrorMacro(
+      "vtkSlicerMarkupsWidgetRepresentation::GetLabelControlPointsPolyData failed: invalid controlPointType: "
+      << controlPointType);
     return nullptr;
   }
   return this->ControlPoints[controlPointType]->LabelControlPointsPolyData;
@@ -710,7 +712,8 @@ vtkStringArray* vtkSlicerMarkupsWidgetRepresentation::GetLabels(int controlPoint
 {
   if (controlPointType < 0 || controlPointType >= NumberOfControlPointTypes)
   {
-    vtkErrorMacro("vtkSlicerMarkupsWidgetRepresentation::GetControlPointsPolyData failed: invalid controlPointType: " << controlPointType);
+    vtkErrorMacro("vtkSlicerMarkupsWidgetRepresentation::GetControlPointsPolyData failed: invalid controlPointType: "
+                  << controlPointType);
     return nullptr;
   }
   return this->ControlPoints[controlPointType]->Labels;
@@ -719,10 +722,8 @@ vtkStringArray* vtkSlicerMarkupsWidgetRepresentation::GetLabels(int controlPoint
 //-----------------------------------------------------------------------------
 bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
 {
-  if (!this->MarkupsDisplayNode
-    || !this->ViewNode
-    || !this->MarkupsDisplayNode->GetVisibility()
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
+  if (!this->MarkupsDisplayNode || !this->ViewNode || !this->MarkupsDisplayNode->GetVisibility()
+      || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
   {
     return false;
   }
@@ -757,14 +758,10 @@ bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::GetActors(vtkPropCollection* vtkNotUsed(pc))
-{
-}
+void vtkSlicerMarkupsWidgetRepresentation::GetActors(vtkPropCollection* vtkNotUsed(pc)) {}
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::ReleaseGraphicsResources(vtkWindow* vtkNotUsed(window))
-{
-}
+void vtkSlicerMarkupsWidgetRepresentation::ReleaseGraphicsResources(vtkWindow* vtkNotUsed(window)) {}
 
 //----------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation::RenderOverlay(vtkViewport* vtkNotUsed(viewport))
@@ -795,21 +792,36 @@ int vtkSlicerMarkupsWidgetRepresentation::GetGlyphTypeSourceFromDisplay(int glyp
 {
   switch (glyphTypeDisplay)
   {
-    case vtkMRMLMarkupsDisplayNode::GlyphTypeInvalid: return vtkMarkupsGlyphSource2D::GlyphNone;
-    case vtkMRMLMarkupsDisplayNode::StarBurst2D: return vtkMarkupsGlyphSource2D::GlyphStarBurst;
-    case vtkMRMLMarkupsDisplayNode::Cross2D: return vtkMarkupsGlyphSource2D::GlyphCross;
-    case vtkMRMLMarkupsDisplayNode::CrossDot2D: return vtkMarkupsGlyphSource2D::GlyphCrossDot;
-    case vtkMRMLMarkupsDisplayNode::ThickCross2D: return vtkMarkupsGlyphSource2D::GlyphThickCross;
-    case vtkMRMLMarkupsDisplayNode::Dash2D: return vtkMarkupsGlyphSource2D::GlyphDash;
-    case vtkMRMLMarkupsDisplayNode::Sphere3D: return vtkMarkupsGlyphSource2D::GlyphCircle;
-    case vtkMRMLMarkupsDisplayNode::Vertex2D: return vtkMarkupsGlyphSource2D::GlyphVertex;
-    case vtkMRMLMarkupsDisplayNode::Circle2D: return vtkMarkupsGlyphSource2D::GlyphCircle;
-    case vtkMRMLMarkupsDisplayNode::Triangle2D: return vtkMarkupsGlyphSource2D::GlyphTriangle;
-    case vtkMRMLMarkupsDisplayNode::Square2D: return vtkMarkupsGlyphSource2D::GlyphSquare;
-    case vtkMRMLMarkupsDisplayNode::Diamond2D: return vtkMarkupsGlyphSource2D::GlyphDiamond;
-    case vtkMRMLMarkupsDisplayNode::Arrow2D: return vtkMarkupsGlyphSource2D::GlyphArrow;
-    case vtkMRMLMarkupsDisplayNode::ThickArrow2D: return vtkMarkupsGlyphSource2D::GlyphThickArrow;
-    case vtkMRMLMarkupsDisplayNode::HookedArrow2D: return vtkMarkupsGlyphSource2D::GlyphHookedArrow;
+    case vtkMRMLMarkupsDisplayNode::GlyphTypeInvalid:
+      return vtkMarkupsGlyphSource2D::GlyphNone;
+    case vtkMRMLMarkupsDisplayNode::StarBurst2D:
+      return vtkMarkupsGlyphSource2D::GlyphStarBurst;
+    case vtkMRMLMarkupsDisplayNode::Cross2D:
+      return vtkMarkupsGlyphSource2D::GlyphCross;
+    case vtkMRMLMarkupsDisplayNode::CrossDot2D:
+      return vtkMarkupsGlyphSource2D::GlyphCrossDot;
+    case vtkMRMLMarkupsDisplayNode::ThickCross2D:
+      return vtkMarkupsGlyphSource2D::GlyphThickCross;
+    case vtkMRMLMarkupsDisplayNode::Dash2D:
+      return vtkMarkupsGlyphSource2D::GlyphDash;
+    case vtkMRMLMarkupsDisplayNode::Sphere3D:
+      return vtkMarkupsGlyphSource2D::GlyphCircle;
+    case vtkMRMLMarkupsDisplayNode::Vertex2D:
+      return vtkMarkupsGlyphSource2D::GlyphVertex;
+    case vtkMRMLMarkupsDisplayNode::Circle2D:
+      return vtkMarkupsGlyphSource2D::GlyphCircle;
+    case vtkMRMLMarkupsDisplayNode::Triangle2D:
+      return vtkMarkupsGlyphSource2D::GlyphTriangle;
+    case vtkMRMLMarkupsDisplayNode::Square2D:
+      return vtkMarkupsGlyphSource2D::GlyphSquare;
+    case vtkMRMLMarkupsDisplayNode::Diamond2D:
+      return vtkMarkupsGlyphSource2D::GlyphDiamond;
+    case vtkMRMLMarkupsDisplayNode::Arrow2D:
+      return vtkMarkupsGlyphSource2D::GlyphArrow;
+    case vtkMRMLMarkupsDisplayNode::ThickArrow2D:
+      return vtkMarkupsGlyphSource2D::GlyphThickArrow;
+    case vtkMRMLMarkupsDisplayNode::HookedArrow2D:
+      return vtkMarkupsGlyphSource2D::GlyphHookedArrow;
     default:
       return -1;
   }

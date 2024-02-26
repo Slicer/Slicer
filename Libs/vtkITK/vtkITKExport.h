@@ -18,13 +18,13 @@
 #include <vtkITKConfigure.h>
 
 #if defined(WIN32) && !defined(VTKITK_STATIC)
-#if defined(vtkITK_EXPORTS)
-#define VTK_ITK_EXPORT __declspec( dllexport )
+# if defined(vtkITK_EXPORTS)
+#  define VTK_ITK_EXPORT __declspec(dllexport)
+# else
+#  define VTK_ITK_EXPORT __declspec(dllimport)
+# endif
 #else
-#define VTK_ITK_EXPORT __declspec( dllimport )
-#endif
-#else
-#define VTK_ITK_EXPORT
+# define VTK_ITK_EXPORT
 #endif
 
 #endif

@@ -37,7 +37,7 @@
 
 // STD includes
 
-int qMRMLThreeDViewTest1(int argc, char * argv [] )
+int qMRMLThreeDViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -46,29 +46,26 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
   view.show();
 
   // test the list of displayable managers
-  QStringList expectedDisplayableManagerClassNames =
-    QStringList() << "vtkMRMLCameraDisplayableManager"
-                  << "vtkMRMLCrosshairDisplayableManager3D"
-                  << "vtkMRMLViewDisplayableManager"
-                  << "vtkMRMLModelDisplayableManager"
-                  << "vtkMRMLThreeDReformatDisplayableManager"
-                  << "vtkMRMLOrientationMarkerDisplayableManager"
-                  << "vtkMRMLRulerDisplayableManager";
+  QStringList expectedDisplayableManagerClassNames = QStringList() << "vtkMRMLCameraDisplayableManager"
+                                                                   << "vtkMRMLCrosshairDisplayableManager3D"
+                                                                   << "vtkMRMLViewDisplayableManager"
+                                                                   << "vtkMRMLModelDisplayableManager"
+                                                                   << "vtkMRMLThreeDReformatDisplayableManager"
+                                                                   << "vtkMRMLOrientationMarkerDisplayableManager"
+                                                                   << "vtkMRMLRulerDisplayableManager";
   vtkNew<vtkCollection> collection;
   view.getDisplayableManagers(collection.GetPointer());
   int numManagers = collection->GetNumberOfItems();
-  std::cout << "3D view has " << numManagers
-            << " displayable managers." << std::endl;
+  std::cout << "3D view has " << numManagers << " displayable managers." << std::endl;
   if (numManagers != expectedDisplayableManagerClassNames.size())
   {
-    std::cerr << "Incorrect number of displayable managers, expected "
-              << expectedDisplayableManagerClassNames.size()
+    std::cerr << "Incorrect number of displayable managers, expected " << expectedDisplayableManagerClassNames.size()
               << " but got " << numManagers << std::endl;
     return EXIT_FAILURE;
   }
   for (int i = 0; i < numManagers; ++i)
   {
-    vtkMRMLAbstractDisplayableManager *threeDViewDM =
+    vtkMRMLAbstractDisplayableManager* threeDViewDM =
       vtkMRMLAbstractDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
     if (threeDViewDM)
     {
@@ -89,4 +86,3 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
-

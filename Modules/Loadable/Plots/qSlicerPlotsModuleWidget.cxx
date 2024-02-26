@@ -38,7 +38,7 @@
 
 // MRMLWidgets includes
 #include <qMRMLUtils.h>
-//#include <qMRMLPlotModel.h>
+// #include <qMRMLPlotModel.h>
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
@@ -54,15 +54,17 @@
 #include <vtkPlot.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerPlotsModuleWidgetPrivate: public Ui_qSlicerPlotsModuleWidget
+class qSlicerPlotsModuleWidgetPrivate : public Ui_qSlicerPlotsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerPlotsModuleWidget);
+
 protected:
   qSlicerPlotsModuleWidget* const q_ptr;
+
 public:
   qSlicerPlotsModuleWidgetPrivate(qSlicerPlotsModuleWidget& object);
 
-  vtkSlicerPlotsLogic*      logic()const;
+  vtkSlicerPlotsLogic* logic() const;
 
   vtkWeakPointer<vtkMRMLPlotChartNode> MRMLPlotChartNode;
   vtkWeakPointer<vtkMRMLPlotSeriesNode> MRMLPlotSeriesNode;
@@ -76,7 +78,7 @@ qSlicerPlotsModuleWidgetPrivate::qSlicerPlotsModuleWidgetPrivate(qSlicerPlotsMod
   this->MRMLPlotSeriesNode = nullptr;
 }
 //-----------------------------------------------------------------------------
-vtkSlicerPlotsLogic* qSlicerPlotsModuleWidgetPrivate::logic()const
+vtkSlicerPlotsLogic* qSlicerPlotsModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerPlotsModuleWidget);
   return vtkSlicerPlotsLogic::SafeDownCast(q->logic());
@@ -112,8 +114,11 @@ void qSlicerPlotsModuleWidget::setup()
 
   this->connect(d->PlotChartNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(onNodeSelected(vtkMRMLNode*)));
 
-  this->connect(d->PlotSeriesNodeSelector, SIGNAL(nodeAddedByUser(vtkMRMLNode*)), SLOT(onSeriesNodeAddedByUser(vtkMRMLNode*)));
-  this->connect(d->PlotChartPropertiesWidget, SIGNAL(seriesNodeAddedByUser(vtkMRMLNode*)), SLOT(onSeriesNodeAddedByUser(vtkMRMLNode*)));
+  this->connect(
+    d->PlotSeriesNodeSelector, SIGNAL(nodeAddedByUser(vtkMRMLNode*)), SLOT(onSeriesNodeAddedByUser(vtkMRMLNode*)));
+  this->connect(d->PlotChartPropertiesWidget,
+                SIGNAL(seriesNodeAddedByUser(vtkMRMLNode*)),
+                SLOT(onSeriesNodeAddedByUser(vtkMRMLNode*)));
 
   this->connect(d->ShowChartButton, SIGNAL(clicked()), SLOT(onShowChartButtonClicked()));
 }
@@ -124,11 +129,12 @@ void qSlicerPlotsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   Q_D(qSlicerPlotsModuleWidget);
   vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(node);
 
-  this->qvtkReconnect(d->MRMLPlotChartNode, chartNode, vtkCommand::ModifiedEvent, this, SLOT(onMRMLPlotChartNodeModified(vtkObject*)));
+  this->qvtkReconnect(
+    d->MRMLPlotChartNode, chartNode, vtkCommand::ModifiedEvent, this, SLOT(onMRMLPlotChartNodeModified(vtkObject*)));
   d->MRMLPlotChartNode = chartNode;
 
   // Update GUI from the newly selected node
-  //this->onMRMLPlotChartNodeModified(d->MRMLPlotChartNode);
+  // this->onMRMLPlotChartNodeModified(d->MRMLPlotChartNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -166,7 +172,8 @@ void qSlicerPlotsModuleWidget::onMRMLPlotChartNodeModified(vtkObject* caller)
   else
     {
     d->LockPlotButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
-    d->LockPlotButton->setToolTip(QString("Click to lock this table to prevent modification of the values in the user interface"));
+    d->LockPlotButton->setToolTip(QString("Click to lock this table to prevent modification of the values in the user
+interface"));
     }
 
   if (d->MRMLPlotChartNode->GetGetUseColumnTitleAsColumnHeader() != d->LockFirstRowButton->isChecked())
@@ -196,8 +203,8 @@ void qSlicerPlotsModuleWidget::onLockPlotButtonClicked()
   }
 
   // toggle the lock
-  //int locked = d->MRMLPlotChartNode->GetLocked();
-  //d->MRMLPlotChartNode->SetLocked(!locked);
+  // int locked = d->MRMLPlotChartNode->GetLocked();
+  // d->MRMLPlotChartNode->SetLocked(!locked);
 }
 
 //-----------------------------------------------------------------------------
@@ -210,8 +217,8 @@ void qSlicerPlotsModuleWidget::setCurrentPlotNode(vtkMRMLNode* tableNode)
 
 //-----------------------------------------------------------
 bool qSlicerPlotsModuleWidget::setEditedNode(vtkMRMLNode* node,
-                                              QString role /* = QString()*/,
-                                              QString context /* = QString()*/)
+                                             QString role /* = QString()*/,
+                                             QString context /* = QString()*/)
 {
   Q_D(qSlicerPlotsModuleWidget);
   Q_UNUSED(role);
@@ -250,11 +257,10 @@ void qSlicerPlotsModuleWidget::onCopyPlotSeriesNodeClicked()
     return;
   }
 
-
-  vtkMRMLPlotSeriesNode *clonedSeriesNode = logic->CloneSeries(d->MRMLPlotSeriesNode, nullptr);
+  vtkMRMLPlotSeriesNode* clonedSeriesNode = logic->CloneSeries(d->MRMLPlotSeriesNode, nullptr);
 
   // Add the cloned node to the selected chart node
-  if (d->MRMLPlotChartNode!= nullptr)
+  if (d->MRMLPlotChartNode != nullptr)
   {
     d->MRMLPlotChartNode->AddAndObservePlotSeriesNodeID(clonedSeriesNode->GetID());
   }

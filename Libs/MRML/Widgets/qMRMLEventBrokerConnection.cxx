@@ -25,8 +25,7 @@
 #include <vtkEventBroker.h>
 
 //-----------------------------------------------------------------------------
-ctkVTKConnection* qMRMLConnectionFactory::createConnection(
-  ctkVTKObjectEventsObserver* parent)const
+ctkVTKConnection* qMRMLConnectionFactory::createConnection(ctkVTKObjectEventsObserver* parent) const
 {
   return new qMRMLEventBrokerConnection(parent);
 }
@@ -37,7 +36,6 @@ qMRMLEventBrokerConnection::qMRMLEventBrokerConnection(QObject* parent)
 {
 }
 
-
 //------------------------------------------------------------------------------
 qMRMLEventBrokerConnection::~qMRMLEventBrokerConnection()
 {
@@ -45,14 +43,18 @@ qMRMLEventBrokerConnection::~qMRMLEventBrokerConnection()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLEventBrokerConnection::addObserver(vtkObject* caller, unsigned long vtk_event,
-  vtkCallbackCommand* callback, float priority)
+void qMRMLEventBrokerConnection::addObserver(vtkObject* caller,
+                                             unsigned long vtk_event,
+                                             vtkCallbackCommand* callback,
+                                             float priority)
 {
   vtkEventBroker::GetInstance()->AddObservation(caller, vtk_event, nullptr, callback, priority);
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLEventBrokerConnection::removeObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback)
+void qMRMLEventBrokerConnection::removeObserver(vtkObject* caller,
+                                                unsigned long vtk_event,
+                                                vtkCallbackCommand* callback)
 {
   vtkEventBroker::GetInstance()->RemoveObservations(caller, vtk_event, nullptr, callback);
 }

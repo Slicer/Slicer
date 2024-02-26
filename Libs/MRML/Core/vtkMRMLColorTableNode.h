@@ -26,8 +26,8 @@
 class VTK_MRML_EXPORT vtkMRMLColorTableNode : public vtkMRMLColorNode
 {
 public:
-  static vtkMRMLColorTableNode *New();
-  vtkTypeMacro(vtkMRMLColorTableNode,vtkMRMLColorNode);
+  static vtkMRMLColorTableNode* New();
+  vtkTypeMacro(vtkMRMLColorTableNode, vtkMRMLColorNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -46,11 +46,11 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "ColorTable";}
+  const char* GetNodeTagName() override { return "ColorTable"; }
 
   /// Access lookup table object that stores table values.
   /// \sa SetAndObserveLookupTable()
@@ -58,20 +58,17 @@ public:
 
   /// Set lookup table object that this object will use.
   /// \sa GetLookupTable()
-  virtual void SetAndObserveLookupTable(vtkLookupTable *newLookupTable);
+  virtual void SetAndObserveLookupTable(vtkLookupTable* newLookupTable);
 
   /// \deprecated Kept only for backward compatibility.
   /// Use SetAndObserveLookupTable method instead.
   /// \sa SetAndObserveLookupTable()
-  virtual void SetLookupTable(vtkLookupTable* newLookupTable)
-  {
-    SetAndObserveLookupTable(newLookupTable);
-  }
+  virtual void SetLookupTable(vtkLookupTable* newLookupTable) { SetAndObserveLookupTable(newLookupTable); }
 
   ///
   /// Get/Set for Type
   void SetType(int type) override;
-  //GetType is defined in ColorTableNode class via macro.
+  // GetType is defined in ColorTableNode class via macro.
   void SetTypeToFullRainbow();
   void SetTypeToGrey();
   void SetTypeToIron();
@@ -109,8 +106,7 @@ public:
   void SetTypeToCoolTint2();
   void SetTypeToCoolTint3();
 
-
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   ///
   /// The list of valid table types
@@ -144,53 +140,53 @@ public:
   ///       complimentary to WarmSTint#
   enum
   {
-      FullRainbow = 0,
-      Grey = 1,
-      Iron = 2,
-      Rainbow = 3,
-      Ocean = 4,
-      Desert = 5,
-      InvGrey = 6,
-      ReverseRainbow = 7,
-      FMRI = 8,
-      FMRIPA = 9,
-      Labels = 10,
-      Obsolete = 11,
-      Random = 12,
-      Red = 15,
-      Green = 16,
-      Blue = 17,
-      Yellow = 18,
-      Cyan = 19,
-      Magenta = 20,
-      Warm1 = 21,
-      Warm2 = 22,
-      Warm3 = 23,
-      Cool1 = 24,
-      Cool2 = 25,
-      Cool3 = 26,
-      WarmShade1 = 27,
-      WarmShade2 = 28,
-      WarmShade3 = 29,
-      CoolShade1 = 30,
-      CoolShade2 = 31,
-      CoolShade3 = 32,
-      WarmTint1 = 33,
-      WarmTint2 = 34,
-      WarmTint3 = 35,
-      CoolTint1 = 36,
-      CoolTint2 = 37,
-      CoolTint3 = 38
+    FullRainbow = 0,
+    Grey = 1,
+    Iron = 2,
+    Rainbow = 3,
+    Ocean = 4,
+    Desert = 5,
+    InvGrey = 6,
+    ReverseRainbow = 7,
+    FMRI = 8,
+    FMRIPA = 9,
+    Labels = 10,
+    Obsolete = 11,
+    Random = 12,
+    Red = 15,
+    Green = 16,
+    Blue = 17,
+    Yellow = 18,
+    Cyan = 19,
+    Magenta = 20,
+    Warm1 = 21,
+    Warm2 = 22,
+    Warm3 = 23,
+    Cool1 = 24,
+    Cool2 = 25,
+    Cool3 = 26,
+    WarmShade1 = 27,
+    WarmShade2 = 28,
+    WarmShade3 = 29,
+    CoolShade1 = 30,
+    CoolShade2 = 31,
+    CoolShade3 = 32,
+    WarmTint1 = 33,
+    WarmTint2 = 34,
+    WarmTint3 = 35,
+    CoolTint1 = 36,
+    CoolTint2 = 37,
+    CoolTint3 = 38
   };
 
   ///
   /// Return the lowest and highest integers, for use in looping
-  int GetFirstType () override { return this->FullRainbow; };
-  int GetLastType () override { return this->CoolTint3; };
+  int GetFirstType() override { return this->FullRainbow; };
+  int GetLastType() override { return this->CoolTint3; };
 
   ///
   /// return a text string describing the color look up table type
-  const char * GetTypeAsString() override;
+  const char* GetTypeAsString() override;
 
   ///
   /// Set the size of the color table if it's a User table
@@ -245,8 +241,7 @@ protected:
 
   ///
   /// The look up table, constructed according to the Type
-  vtkLookupTable *LookupTable;
-
+  vtkLookupTable* LookupTable;
 };
 
 #endif

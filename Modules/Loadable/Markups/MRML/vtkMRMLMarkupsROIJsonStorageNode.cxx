@@ -35,22 +35,20 @@
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsROIJsonStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsROIJsonStorageNode::vtkMRMLMarkupsROIJsonStorageNode()
-{
-}
+vtkMRMLMarkupsROIJsonStorageNode::vtkMRMLMarkupsROIJsonStorageNode() {}
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsROIJsonStorageNode::~vtkMRMLMarkupsROIJsonStorageNode() = default;
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsROIJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLMarkupsROIJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLMarkupsROINode");
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
-  vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
+bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(vtkMRMLMarkupsJsonWriter* writer,
+                                                            vtkMRMLMarkupsNode* markupsNode)
 {
   if (!vtkMRMLMarkupsJsonStorageNode::WriteBasicProperties(writer, markupsNode))
   {
@@ -81,7 +79,7 @@ bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
   vtkMatrix4x4* objectToNodeMatrix = roiNode->GetObjectToNodeMatrix();
   for (int i = 0; i < 3; ++i)
   {
-    orientationMatrix[3 * i]     = objectToNodeMatrix->GetElement(i, 0);
+    orientationMatrix[3 * i] = objectToNodeMatrix->GetElement(i, 0);
     orientationMatrix[3 * i + 1] = objectToNodeMatrix->GetElement(i, 1);
     orientationMatrix[3 * i + 2] = objectToNodeMatrix->GetElement(i, 2);
   }
@@ -101,12 +99,14 @@ bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupsObject)
+bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode,
+                                                                      vtkMRMLMarkupsJsonElement* markupsObject)
 {
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
   if (!roiNode)
   {
-    vtkErrorWithObjectMacro(this, "vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue failed: invalid markupsNode");
+    vtkErrorWithObjectMacro(
+      this, "vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue failed: invalid markupsNode");
     return false;
   }
 
@@ -124,7 +124,9 @@ bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMar
   {
     if (!markupsObject->GetVectorProperty("center", center_Node))
     {
-      vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+      vtkErrorToMessageCollectionWithObjectMacro(
+        this,
+        this->GetUserMessages(),
         "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
         "File reading failed: center position must be a 3-element numeric array.");
       return false;
@@ -148,7 +150,9 @@ bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMar
   {
     if (!markupsObject->GetVectorProperty("orientation", orientationMatrix, 9))
     {
-      vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+      vtkErrorToMessageCollectionWithObjectMacro(
+        this,
+        this->GetUserMessages(),
         "vtkMRMLMarkupsJsonStorageNode::vtkInternal::UpdateMarkupsNodeFromJsonValue",
         "File reading failed: orientation 9-element numeric array.");
       return false;
@@ -165,9 +169,9 @@ bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMar
   vtkNew<vtkMatrix4x4> objectToNodeMatrix;
   for (int i = 0; i < 3; ++i)
   {
-    objectToNodeMatrix->SetElement(i, 0, orientationMatrix[3*i]);
-    objectToNodeMatrix->SetElement(i, 1, orientationMatrix[3*i + 1]);
-    objectToNodeMatrix->SetElement(i, 2, orientationMatrix[3*i + 2]);
+    objectToNodeMatrix->SetElement(i, 0, orientationMatrix[3 * i]);
+    objectToNodeMatrix->SetElement(i, 1, orientationMatrix[3 * i + 1]);
+    objectToNodeMatrix->SetElement(i, 2, orientationMatrix[3 * i + 2]);
     objectToNodeMatrix->SetElement(i, 3, center_Node[i]);
   }
   roiNode->GetObjectToNodeMatrix()->DeepCopy(objectToNodeMatrix);

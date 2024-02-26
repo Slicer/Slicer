@@ -22,14 +22,13 @@
 #include "qMRMLScalarInvariantComboBox.h"
 
 //------------------------------------------------------------------------------
-qMRMLScalarInvariantComboBoxPlugin
-::qMRMLScalarInvariantComboBoxPlugin(QObject* parentObject)
+qMRMLScalarInvariantComboBoxPlugin ::qMRMLScalarInvariantComboBoxPlugin(QObject* parentObject)
   : QObject(parentObject)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLScalarInvariantComboBoxPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLScalarInvariantComboBoxPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLScalarInvariantComboBox* newWidget = new qMRMLScalarInvariantComboBox(parentWidget);
   return newWidget;
@@ -40,7 +39,7 @@ QString qMRMLScalarInvariantComboBoxPlugin::domXml() const
 {
   return "<widget class=\"qMRMLScalarInvariantComboBox\" \
           name=\"MRMLScalarInvariantComboBox\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

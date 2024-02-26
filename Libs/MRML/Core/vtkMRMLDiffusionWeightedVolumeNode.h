@@ -33,16 +33,16 @@ class vtkImageExtractComponents;
 ///  to RAS.
 class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarVolumeNode
 {
-  public:
-  static vtkMRMLDiffusionWeightedVolumeNode *New();
-  vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeNode,vtkMRMLScalarVolumeNode);
+public:
+  static vtkMRMLDiffusionWeightedVolumeNode* New();
+  vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeNode, vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -50,11 +50,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "DiffusionWeightedVolume";}
+  const char* GetNodeTagName() override { return "DiffusionWeightedVolume"; }
 
   ///
   void SetNumberOfGradients(int val);
@@ -62,31 +62,37 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 
   ///
   void SetDiffusionGradient(int val, const double g[3]);
-  void SetDiffusionGradients(vtkDoubleArray *grad);
+  void SetDiffusionGradients(vtkDoubleArray* grad);
   double* GetDiffusionGradient(int val) VTK_SIZEHINT(3);
   void GetDiffusionGradient(int val, double g[3]);
-  vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
+  vtkGetObjectMacro(DiffusionGradients, vtkDoubleArray);
 
   ///
-  void SetBValue (int val, const double b);
-  void SetBValues (vtkDoubleArray *bValue);
+  void SetBValue(int val, const double b);
+  void SetBValues(vtkDoubleArray* bValue);
 /// Work around issue that GetBValue is defined as a macro in windows.h
 #ifdef GetBValue
-#undef GetBValue
+# undef GetBValue
 #endif
   double GetBValue(int val);
-  vtkGetObjectMacro(BValues,vtkDoubleArray);
+  vtkGetObjectMacro(BValues, vtkDoubleArray);
 
   ///  Set/Get measurement frame that relates the coordinate system where the
   /// tensor measurements are given with the RAS coordinate system
   void SetMeasurementFrameMatrix(const double mf[3][3]);
   void GetMeasurementFrameMatrix(double mf[3][3]);
-  void SetMeasurementFrameMatrix(const double xr, const double xa, const double xs,
-                           const double yr, const double ya, const double ys,
-                           const double zr, const double za, const double zs);
+  void SetMeasurementFrameMatrix(const double xr,
+                                 const double xa,
+                                 const double xs,
+                                 const double yr,
+                                 const double ya,
+                                 const double ys,
+                                 const double zr,
+                                 const double za,
+                                 const double zs);
 
-  void SetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
-  void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
+  void SetMeasurementFrameMatrix(vtkMatrix4x4* mat);
+  void GetMeasurementFrameMatrix(vtkMatrix4x4* mat);
 
   ///
   /// Associated display MRML node
@@ -110,13 +116,8 @@ protected:
 
   double MeasurementFrameMatrix[3][3];
 
-  vtkDoubleArray *DiffusionGradients;
-  vtkDoubleArray *BValues;
-
+  vtkDoubleArray* DiffusionGradients;
+  vtkDoubleArray* BValues;
 };
 
 #endif
-
-
-
-

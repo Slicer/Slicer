@@ -40,7 +40,7 @@ int vtkClosedSurfaceToFractionalLabelMapConversionTest1(int vtkNotUsed(argc), ch
 {
   // Register converter rules
   vtkSegmentationConverterFactory::GetInstance()->RegisterConverterRule(
-    vtkSmartPointer<vtkClosedSurfaceToFractionalLabelmapConversionRule>::New() );
+    vtkSmartPointer<vtkClosedSurfaceToFractionalLabelmapConversionRule>::New());
 
   // Generate sphere model
   vtkNew<vtkPolyData> spherePolyData;
@@ -49,8 +49,8 @@ int vtkClosedSurfaceToFractionalLabelMapConversionTest1(int vtkNotUsed(argc), ch
   // Create segment
   vtkNew<vtkSegment> sphereSegment;
   sphereSegment->SetName("sphere1");
-  sphereSegment->AddRepresentation(
-    vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), spherePolyData.GetPointer());
+  sphereSegment->AddRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(),
+                                   spherePolyData.GetPointer());
 
   // Image geometry used for conversion
   std::string serializedImageGeometry = "1; 0; 0; 20.7521629333496;"
@@ -61,20 +61,23 @@ int vtkClosedSurfaceToFractionalLabelMapConversionTest1(int vtkNotUsed(argc), ch
 
   // Create segmentation with segment
   vtkNew<vtkSegmentation> sphereSegmentation;
-  sphereSegmentation->SetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), serializedImageGeometry);
+  sphereSegmentation->SetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(),
+                                             serializedImageGeometry);
   sphereSegmentation->SetSourceRepresentationName(
     vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
   sphereSegmentation->AddSegment(sphereSegment.GetPointer());
 
-  sphereSegmentation->CreateRepresentation(vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName());
-  if (!sphereSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName()))
+  sphereSegmentation->CreateRepresentation(
+    vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName());
+  if (!sphereSegment->GetRepresentation(
+        vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName()))
   {
     std::cerr << __LINE__ << ": Failed to add fractional labelmap representation to segment!" << std::endl;
     return EXIT_FAILURE;
   }
 
   vtkOrientedImageData* fractionalLabelmap = vtkOrientedImageData::SafeDownCast(
-    sphereSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName()) );
+    sphereSegment->GetRepresentation(vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName()));
 
   vtkNew<vtkImageAccumulate> imageAccumulate;
   imageAccumulate->SetInputData(fractionalLabelmap);
@@ -84,8 +87,8 @@ int vtkClosedSurfaceToFractionalLabelMapConversionTest1(int vtkNotUsed(argc), ch
   int voxelCount = imageAccumulate->GetVoxelCount();
   if (voxelCount != expectedVoxelCount)
   {
-    std::cerr << __LINE__ << ": Fractional voxel count: " << +voxelCount <<
-      " does not match expected value: " << std::fixed << +expectedVoxelCount <<  "!" << std::endl;
+    std::cerr << __LINE__ << ": Fractional voxel count: " << +voxelCount
+              << " does not match expected value: " << std::fixed << +expectedVoxelCount << "!" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -93,17 +96,17 @@ int vtkClosedSurfaceToFractionalLabelMapConversionTest1(int vtkNotUsed(argc), ch
   int expectedMaxValue = FRACTIONAL_MAX;
   if (maxValue != expectedMaxValue)
   {
-    std::cerr << __LINE__ << ": Fractional max: " << +maxValue <<
-      " does not match expected value: " << std::fixed << +expectedMaxValue <<  "!" << std::endl;
+    std::cerr << __LINE__ << ": Fractional max: " << +maxValue << " does not match expected value: " << std::fixed
+              << +expectedMaxValue << "!" << std::endl;
     return EXIT_FAILURE;
   }
 
-  FRACTIONAL_DATA_TYPE  minValue = imageAccumulate->GetMin()[0];
+  FRACTIONAL_DATA_TYPE minValue = imageAccumulate->GetMin()[0];
   int expectedMinValue = FRACTIONAL_MIN;
   if (minValue != expectedMinValue)
   {
-    std::cerr << __LINE__ << ": Fractional min: " << +minValue <<
-      " does not match expected value: " << std::fixed << +expectedMinValue <<  "!" << std::endl;
+    std::cerr << __LINE__ << ": Fractional min: " << +minValue << " does not match expected value: " << std::fixed
+              << +expectedMinValue << "!" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -120,15 +123,15 @@ int vtkClosedSurfaceToFractionalLabelMapConversionTest1(int vtkNotUsed(argc), ch
   }
   else
   {
-    std::cerr << __LINE__ << ": Fractional datatype: " << std::fixed << VTK_FRACTIONAL_DATA_TYPE <<
-      " is not a supported datatype:!" << std::endl;
+    std::cerr << __LINE__ << ": Fractional datatype: " << std::fixed << VTK_FRACTIONAL_DATA_TYPE
+              << " is not a supported datatype:!" << std::endl;
     return EXIT_FAILURE;
   }
   double meanValue = imageAccumulate->GetMean()[0];
-  if ( std::abs(meanValue - expectedMeanValue) > 0.00001)
+  if (std::abs(meanValue - expectedMeanValue) > 0.00001)
   {
-    std::cerr << __LINE__ << ": Fractional mean: " << std::fixed << meanValue <<
-      " does not match expected value: " << std::fixed << expectedMeanValue <<  "!" << std::endl;
+    std::cerr << __LINE__ << ": Fractional mean: " << std::fixed << meanValue
+              << " does not match expected value: " << std::fixed << expectedMeanValue << "!" << std::endl;
     return EXIT_FAILURE;
   }
 

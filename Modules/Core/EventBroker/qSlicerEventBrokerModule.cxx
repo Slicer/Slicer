@@ -39,7 +39,7 @@ qSlicerEventBrokerModule::qSlicerEventBrokerModule(QObject* _parent)
 qSlicerEventBrokerModule::~qSlicerEventBrokerModule() = default;
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerEventBrokerModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerEventBrokerModule::createWidgetRepresentation()
 {
   return new qSlicerEventBrokerModuleWidget;
 }
@@ -51,13 +51,13 @@ vtkMRMLAbstractLogic* qSlicerEventBrokerModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerEventBrokerModule::categories()const
+QStringList qSlicerEventBrokerModule::categories() const
 {
   return QStringList() << qSlicerAbstractCoreModule::tr("Developer Tools");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerEventBrokerModule::helpText()const
+QString qSlicerEventBrokerModule::helpText() const
 {
   QString help = tr("Profiling tool for the developers.");
   help += this->defaultDocumentationLink();
@@ -65,16 +65,16 @@ QString qSlicerEventBrokerModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerEventBrokerModule::acknowledgementText()const
+QString qSlicerEventBrokerModule::acknowledgementText() const
 {
   QString acknowledgement = tr("This module was developed by Julien Finet, Kitware Inc. "
-      "This work was supported by NIH grant 3P41RR013218-12S1, "
-      "NA-MIC, NAC and Slicer community.");
+                               "This work was supported by NIH grant 3P41RR013218-12S1, "
+                               "NA-MIC, NAC and Slicer community.");
   return acknowledgement;
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerEventBrokerModule::contributors()const
+QStringList qSlicerEventBrokerModule::contributors() const
 {
   QStringList contributors;
   contributors << QString("Julien Finet (Kitware)");

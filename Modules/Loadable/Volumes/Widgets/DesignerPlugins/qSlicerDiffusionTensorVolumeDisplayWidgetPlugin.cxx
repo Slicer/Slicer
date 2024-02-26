@@ -19,48 +19,40 @@
 #include "qSlicerDiffusionTensorVolumeDisplayWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
-::qSlicerDiffusionTensorVolumeDisplayWidgetPlugin(QObject *_parent)
+qSlicerDiffusionTensorVolumeDisplayWidgetPlugin ::qSlicerDiffusionTensorVolumeDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerDiffusionTensorVolumeDisplayWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qSlicerDiffusionTensorVolumeDisplayWidget* _widget
-    = new qSlicerDiffusionTensorVolumeDisplayWidget(_parent);
+  qSlicerDiffusionTensorVolumeDisplayWidget* _widget = new qSlicerDiffusionTensorVolumeDisplayWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
-::domXml() const
+QString qSlicerDiffusionTensorVolumeDisplayWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qSlicerDiffusionTensorVolumeDisplayWidgetPlugin\" \
           name=\"VolumeDisplayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
-::includeFile() const
+QString qSlicerDiffusionTensorVolumeDisplayWidgetPlugin ::includeFile() const
 {
   return "qSlicerDiffusionTensorVolumeDisplayWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
-::isContainer() const
+bool qSlicerDiffusionTensorVolumeDisplayWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
-::name() const
+QString qSlicerDiffusionTensorVolumeDisplayWidgetPlugin ::name() const
 {
   return "qSlicerDiffusionTensorVolumeDisplayWidget";
 }

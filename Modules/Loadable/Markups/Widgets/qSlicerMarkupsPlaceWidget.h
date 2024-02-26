@@ -36,15 +36,17 @@ class vtkMRMLMarkupsNode;
 class qSlicerMarkupsPlaceWidgetPrivate;
 class QToolButton;
 
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
-qSlicerMarkupsPlaceWidget : public qSlicerWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qSlicerMarkupsPlaceWidget : public qSlicerWidget
 {
   Q_OBJECT
   Q_ENUMS(PlaceMultipleMarkupsType)
   Q_PROPERTY(bool buttonsVisible READ buttonsVisible WRITE setButtonsVisible)
-  Q_PROPERTY(bool deleteAllControlPointsOptionVisible READ deleteAllControlPointsOptionVisible WRITE setDeleteAllControlPointsOptionVisible)
-  Q_PROPERTY(bool unsetLastControlPointOptionVisible READ unsetLastControlPointOptionVisible WRITE setUnsetLastControlPointOptionVisible)
-  Q_PROPERTY(bool unsetAllControlPointsOptionVisible READ unsetAllControlPointsOptionVisible WRITE setUnsetAllControlPointsOptionVisible)
+  Q_PROPERTY(bool deleteAllControlPointsOptionVisible READ deleteAllControlPointsOptionVisible WRITE
+               setDeleteAllControlPointsOptionVisible)
+  Q_PROPERTY(bool unsetLastControlPointOptionVisible READ unsetLastControlPointOptionVisible WRITE
+               setUnsetLastControlPointOptionVisible)
+  Q_PROPERTY(bool unsetAllControlPointsOptionVisible READ unsetAllControlPointsOptionVisible WRITE
+               setUnsetAllControlPointsOptionVisible)
   Q_PROPERTY(PlaceMultipleMarkupsType placeMultipleMarkups READ placeMultipleMarkups WRITE setPlaceMultipleMarkups)
   Q_PROPERTY(QColor nodeColor READ nodeColor WRITE setNodeColor)
   Q_PROPERTY(QColor defaultNodeColor READ defaultNodeColor WRITE setDefaultNodeColor)
@@ -53,19 +55,20 @@ qSlicerMarkupsPlaceWidget : public qSlicerWidget
   Q_PROPERTY(bool placeModePersistency READ placeModePersistency WRITE setPlaceModePersistency)
 
   /// \deprecated Use deleteAllControlPointsOptionVisible instead.
-  Q_PROPERTY(bool deleteAllMarkupsOptionVisible READ deleteAllMarkupsOptionVisible WRITE setDeleteAllMarkupsOptionVisible)
+  Q_PROPERTY(
+    bool deleteAllMarkupsOptionVisible READ deleteAllMarkupsOptionVisible WRITE setDeleteAllMarkupsOptionVisible)
 
 public:
   typedef qSlicerWidget Superclass;
-  qSlicerMarkupsPlaceWidget(QWidget *parent=nullptr);
+  qSlicerMarkupsPlaceWidget(QWidget* parent = nullptr);
   ~qSlicerMarkupsPlaceWidget() override;
 
   enum PlaceMultipleMarkupsType
   {
     ShowPlaceMultipleMarkupsOption, // show a menu on the place button to place multiple markup points
     HidePlaceMultipleMarkupsOption, // don't allow to change persistency of place mode, just use current
-    ForcePlaceSingleMarkup, // always disable persistency when enabling place mode
-    ForcePlaceMultipleMarkups // always enable persistency when enabling place mode
+    ForcePlaceSingleMarkup,         // always disable persistency when enabling place mode
+    ForcePlaceMultipleMarkups       // always enable persistency when enabling place mode
   };
 
   /// Get the currently selected markups node.
@@ -75,8 +78,8 @@ public:
 
   /// Get interaction node.
   /// \sa setInteractionNode()
-  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
-  Q_INVOKABLE vtkMRMLSelectionNode* selectionNode()const;
+  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode() const;
+  Q_INVOKABLE vtkMRMLSelectionNode* selectionNode() const;
 
   /// Returns true if the current markups node is the active markups node in the scene.
   bool currentNodeActive() const;
@@ -124,10 +127,10 @@ public:
   /// \deprecated Use deleteAllControlPointsOptionVisible instead.
   bool deleteAllMarkupsOptionVisible() const
   {
-    qWarning("qSlicerMarkupsPlaceWidget::deleteAllMarkupsOptionVisible method is deprecated, please use deleteAllControlPointsOptionVisible instead");
+    qWarning("qSlicerMarkupsPlaceWidget::deleteAllMarkupsOptionVisible method is deprecated, please use "
+             "deleteAllControlPointsOptionVisible instead");
     return this->deleteAllControlPointsOptionVisible();
   };
-
 
 public slots:
 
@@ -136,7 +139,8 @@ public slots:
   /// Set the currently selected markups node.
   void setCurrentNode(vtkMRMLNode* currentNode);
 
-  /// Set the currently selected markups node to be the active markups node in the Slicer scene. Does not change place mode.
+  /// Set the currently selected markups node to be the active markups node in the Slicer scene. Does not change place
+  /// mode.
   void setCurrentNodeActive(bool active);
 
   /// Set interaction node used to update the widget.
@@ -194,20 +198,21 @@ public slots:
   /// \deprecated Use deleteLastPoint instead.
   void deleteLastMarkup()
   {
-  qWarning("qSlicerMarkupsPlaceWidget::deleteLastMarkup method is deprecated, please use deleteLastPoint instead");
-  this->deleteLastPoint();
+    qWarning("qSlicerMarkupsPlaceWidget::deleteLastMarkup method is deprecated, please use deleteLastPoint instead");
+    this->deleteLastPoint();
   };
   /// \deprecated Use deleteAllPoints instead.
   void deleteAllMarkups()
   {
-  qWarning("qSlicerMarkupsPlaceWidget::deleteAllMarkups method is deprecated, please use deleteAllPoints instead");
-  this->deleteAllPoints();
+    qWarning("qSlicerMarkupsPlaceWidget::deleteAllMarkups method is deprecated, please use deleteAllPoints instead");
+    this->deleteAllPoints();
   };
   /// \deprecated Use setDeleteAllControlPointsOptionVisible instead.
   void setDeleteAllMarkupsOptionVisible(bool visible)
   {
-  qWarning("qSlicerMarkupsPlaceWidget::setDeleteAllMarkupsOptionVisible method is deprecated, please use setDeleteAllControlPointsOptionVisible instead");
-  this->setDeleteAllControlPointsOptionVisible(visible);
+    qWarning("qSlicerMarkupsPlaceWidget::setDeleteAllMarkupsOptionVisible method is deprecated, please use "
+             "setDeleteAllControlPointsOptionVisible instead");
+    this->setDeleteAllControlPointsOptionVisible(visible);
   };
 
 protected slots:
@@ -247,7 +252,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerMarkupsPlaceWidget);
   Q_DISABLE_COPY(qSlicerMarkupsPlaceWidget);
-
 };
 
 #endif

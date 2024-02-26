@@ -19,48 +19,40 @@
 #include "qSlicerVolumeDisplayWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerVolumeDisplayWidgetPlugin
-::qSlicerVolumeDisplayWidgetPlugin(QObject *_parent)
+qSlicerVolumeDisplayWidgetPlugin ::qSlicerVolumeDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerVolumeDisplayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerVolumeDisplayWidgetPlugin ::createWidget(QWidget* _parent)
 {
-  qSlicerVolumeDisplayWidget* _widget
-    = new qSlicerVolumeDisplayWidget(_parent);
+  qSlicerVolumeDisplayWidget* _widget = new qSlicerVolumeDisplayWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerVolumeDisplayWidgetPlugin
-::domXml() const
+QString qSlicerVolumeDisplayWidgetPlugin ::domXml() const
 {
   return "<widget class=\"qSlicerVolumeDisplayWidget\" \
           name=\"VolumeDisplayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerVolumeDisplayWidgetPlugin
-::includeFile() const
+QString qSlicerVolumeDisplayWidgetPlugin ::includeFile() const
 {
   return "qSlicerVolumeDisplayWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerVolumeDisplayWidgetPlugin
-::isContainer() const
+bool qSlicerVolumeDisplayWidgetPlugin ::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerVolumeDisplayWidgetPlugin
-::name() const
+QString qSlicerVolumeDisplayWidgetPlugin ::name() const
 {
   return "qSlicerVolumeDisplayWidget";
 }

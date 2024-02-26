@@ -30,8 +30,8 @@
 #include <ModuleLogo.h>
 
 //-----------------------------------------------------------------------------
-qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(
-  const QString& newTempDirectory) : TempDirectory(newTempDirectory)
+qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(const QString& newTempDirectory)
+  : TempDirectory(newTempDirectory)
 {
 }
 
@@ -51,11 +51,9 @@ bool qSlicerCLILoadableModuleFactoryItem::load()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols(
-    void* libraryLoader, ModuleDescription& desc)
+void qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols(void* libraryLoader, ModuleDescription& desc)
 {
-  qSlicerCLILoadableModuleFactoryItem* item =
-      reinterpret_cast<qSlicerCLILoadableModuleFactoryItem*>(libraryLoader);
+  qSlicerCLILoadableModuleFactoryItem* item = reinterpret_cast<qSlicerCLILoadableModuleFactoryItem*>(libraryLoader);
   // Load library
   if (!item->Superclass::load())
   {
@@ -73,11 +71,10 @@ void qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols(
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLILoadableModuleFactoryItem::xmlModuleDescriptionFilePath()const
+QString qSlicerCLILoadableModuleFactoryItem::xmlModuleDescriptionFilePath() const
 {
   QFileInfo info = QFileInfo(this->path());
-  QString moduleName =
-      qSlicerUtils::extractModuleNameFromLibraryName(info.baseName());
+  QString moduleName = qSlicerUtils::extractModuleNameFromLibraryName(info.baseName());
   return QDir(info.path()).filePath(moduleName + ".xml");
 }
 
@@ -113,8 +110,8 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
       return nullptr;
     }
     // Set callback to allow lazy loading of target symbols.
-    module->moduleDescription().SetTargetCallback(
-          this, qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols);
+    module->moduleDescription().SetTargetCallback(this,
+                                                  qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols);
   }
   else
   {
@@ -146,11 +143,11 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 QString qSlicerCLILoadableModuleFactoryItem::resolveXMLModuleDescriptionSymbol()
 {
   // Resolves symbol
-  const char* xmlDescription = const_cast<const char *>(reinterpret_cast<char*>(
-    this->symbolAddress("XMLModuleDescription")));
+  const char* xmlDescription =
+    const_cast<const char*>(reinterpret_cast<char*>(this->symbolAddress("XMLModuleDescription")));
 
   // Retrieve
-  //if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
+  // if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
 
   if (!xmlDescription)
   {
@@ -167,8 +164,7 @@ bool qSlicerCLILoadableModuleFactoryItem::resolveSymbols(ModuleDescription& desc
   // Resolves symbol
   typedef int (*ModuleEntryPointType)(int argc, char* argv[]);
   ModuleEntryPointType moduleEntryPoint =
-    reinterpret_cast<ModuleEntryPointType>(
-      this->symbolAddress("ModuleEntryPoint"));
+    reinterpret_cast<ModuleEntryPointType>(this->symbolAddress("ModuleEntryPoint"));
 
   if (!moduleEntryPoint)
   {
@@ -192,8 +188,7 @@ bool qSlicerCLILoadableModuleFactoryItem::resolveSymbols(ModuleDescription& desc
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFactoryItem* item,
-                                                     ModuleLogo& logo)
+bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFactoryItem* item, ModuleLogo& logo)
 {
   if (!item)
   {
@@ -209,22 +204,23 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
   SymbolAddressType resolvedGetModuleLogoSymbol = item->symbolAddress("GetModuleLogo");
   SymbolAddressType resolvedModuleLogoImageSymbol = item->symbolAddress("ModuleLogoImage");
 
-  if(resolvedGetModuleLogoSymbol)
+  if (resolvedGetModuleLogoSymbol)
   {
-    typedef const char * (*ModuleLogoFunction)(
-          int* /*width*/, int* /*height*/, int* /*pixel_size*/, unsigned long * /*bufferLength*/);
-    ModuleLogoFunction logoFunction =
-        reinterpret_cast<ModuleLogoFunction>(resolvedGetModuleLogoSymbol);
+    typedef const char* (*ModuleLogoFunction)(
+      int* /*width*/, int* /*height*/, int* /*pixel_size*/, unsigned long* /*bufferLength*/);
+    ModuleLogoFunction logoFunction = reinterpret_cast<ModuleLogoFunction>(resolvedGetModuleLogoSymbol);
     logoImage = (*logoFunction)(&width, &height, &pixelSize, &bufferLength);
   }
-  else if(resolvedModuleLogoImageSymbol)
+  else if (resolvedModuleLogoImageSymbol)
   {
-    logoImage = reinterpret_cast<const char *>(resolvedModuleLogoImageSymbol);
+    logoImage = reinterpret_cast<const char*>(resolvedModuleLogoImageSymbol);
     QStringList expectedSymbols;
-    expectedSymbols << "ModuleLogoWidth" << "ModuleLogoHeight"
-                    << "ModuleLogoPixelSize" << "ModuleLogoLength";
+    expectedSymbols << "ModuleLogoWidth"
+                    << "ModuleLogoHeight"
+                    << "ModuleLogoPixelSize"
+                    << "ModuleLogoLength";
     QList<SymbolAddressType> resolvedSymbols;
-    foreach(const QString& symbol, expectedSymbols)
+    foreach (const QString& symbol, expectedSymbols)
     {
       SymbolAddressType resolvedSymbol = item->symbolAddress(symbol);
       if (resolvedSymbol)
@@ -238,14 +234,14 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
     }
     if (resolvedSymbols.count() == 4)
     {
-      width = *reinterpret_cast<int *>(resolvedSymbols.at(0));
-      height = *reinterpret_cast<int *>(resolvedSymbols.at(1));
-      pixelSize = *reinterpret_cast<int *>(resolvedSymbols.at(2));
-      bufferLength = *reinterpret_cast<unsigned long *>(resolvedSymbols.at(3));
+      width = *reinterpret_cast<int*>(resolvedSymbols.at(0));
+      height = *reinterpret_cast<int*>(resolvedSymbols.at(1));
+      pixelSize = *reinterpret_cast<int*>(resolvedSymbols.at(2));
+      bufferLength = *reinterpret_cast<unsigned long*>(resolvedSymbols.at(3));
     }
   }
 
-  if(resolvedGetModuleLogoSymbol || resolvedModuleLogoImageSymbol)
+  if (resolvedGetModuleLogoSymbol || resolvedModuleLogoImageSymbol)
   {
     logo.SetLogo(logoImage, width, height, pixelSize, bufferLength, 0);
     return true;
@@ -260,8 +256,10 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
 class qSlicerCLILoadableModuleFactoryPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerCLILoadableModuleFactory);
+
 protected:
   qSlicerCLILoadableModuleFactory* const q_ptr;
+
 public:
   typedef qSlicerCLILoadableModuleFactoryPrivate Self;
   qSlicerCLILoadableModuleFactoryPrivate(qSlicerCLILoadableModuleFactory& object);
@@ -284,7 +282,8 @@ void qSlicerCLILoadableModuleFactoryPrivate::init()
   Q_Q(qSlicerCLILoadableModuleFactory);
   // Set the list of required symbols for CmdLineLoadableModule,
   // if one of these symbols can't be resolved, the library won't be registered.
-  q->setSymbols(QStringList() << "XMLModuleDescription" << "ModuleEntryPoint");
+  q->setSymbols(QStringList() << "XMLModuleDescription"
+                              << "ModuleEntryPoint");
   this->TempDirectory = QDir::tempPath();
 }
 
@@ -310,15 +309,14 @@ void qSlicerCLILoadableModuleFactory::registerItems()
 }
 
 //-----------------------------------------------------------------------------
-ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLILoadableModuleFactory::
-createFactoryFileBasedItem()
+ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLILoadableModuleFactory::createFactoryFileBasedItem()
 {
   Q_D(qSlicerCLILoadableModuleFactory);
   return new qSlicerCLILoadableModuleFactoryItem(d->TempDirectory);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& fileName)const
+QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& fileName) const
 {
   return qSlicerUtils::extractModuleNameFromLibraryName(fileName);
 }
@@ -331,7 +329,7 @@ void qSlicerCLILoadableModuleFactory::setTempDirectory(const QString& newTempDir
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCLILoadableModuleFactory::isValidFile(const QFileInfo& file)const
+bool qSlicerCLILoadableModuleFactory::isValidFile(const QFileInfo& file) const
 {
   if (!Superclass::isValidFile(file))
   {

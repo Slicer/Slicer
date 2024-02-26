@@ -26,8 +26,8 @@
 class VTK_MRML_EXPORT vtkMRMLClipModelsNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLClipModelsNode *New();
-  vtkTypeMacro(vtkMRMLClipModelsNode,vtkMRMLNode);
+  static vtkMRMLClipModelsNode* New();
+  vtkTypeMacro(vtkMRMLClipModelsNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -50,7 +50,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "ClipModels";}
+  const char* GetNodeTagName() override { return "ClipModels"; }
 
   ///
   /// Indicates the type of clipping
@@ -60,8 +60,8 @@ public:
 
   enum
   {
-      ClipIntersection = 0,
-      ClipUnion = 1
+    ClipIntersection = 0,
+    ClipUnion = 1
   };
 
   ///
@@ -90,8 +90,8 @@ public:
   };
 
   ///
-  ///Indicates what clipping method should be used
-  ///Straight cut, whole cell extraction, or whole cell extraction with boundary cells
+  /// Indicates what clipping method should be used
+  /// Straight cut, whole cell extraction, or whole cell extraction with boundary cells
   enum ClippingMethodType
   {
     Straight = 0,
@@ -102,7 +102,7 @@ public:
   vtkGetMacro(ClippingMethod, ClippingMethodType);
   vtkSetMacro(ClippingMethod, ClippingMethodType);
 
-  //Convert between enum and string
+  // Convert between enum and string
   static int GetClippingMethodFromString(const char* name);
   static const char* GetClippingMethodAsString(ClippingMethodType id);
 
@@ -119,8 +119,6 @@ protected:
   int GreenSliceClipState;
 
   ClippingMethodType ClippingMethod;
-
-
 };
 
 #endif

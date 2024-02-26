@@ -29,8 +29,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 class VTK_MRML_EXPORT vtkCodedEntry : public vtkObject
 {
 public:
-
-  static vtkCodedEntry *New();
+  static vtkCodedEntry* New();
   vtkTypeMacro(vtkCodedEntry, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -65,7 +64,8 @@ public:
   /// Convenience function for setting code value, coding scheme, and code meaning with a single method call
   virtual void SetValueSchemeMeaning(const std::string& value, const std::string& scheme, const std::string& meaning);
 
-  /// Convenience function for setting code value, coding scheme, and code meaning with a single method call from a string vector
+  /// Convenience function for setting code value, coding scheme, and code meaning with a single method call from a
+  /// string vector
   virtual bool SetValueSchemeMeaning(const std::vector<std::string>& valueSchemeMeaning);
 
   /// Convenience function for getting code value, coding scheme, and code meaning as a string vector
@@ -94,9 +94,9 @@ protected:
   void operator=(const vtkCodedEntry&);
 
 protected:
-  char* CodeValue{nullptr};
-  char* CodingSchemeDesignator{nullptr};
-  char* CodeMeaning{nullptr};
+  char* CodeValue{ nullptr };
+  char* CodingSchemeDesignator{ nullptr };
+  char* CodeMeaning{ nullptr };
 };
 
 #endif

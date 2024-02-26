@@ -47,12 +47,14 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
 
   /// This property controls whether the root item (folder, an item for a data node, or the scene itself),
   /// if any is visible. When the root item is visible, it appears as a top-level item,
-  /// if it is hidden only its children are top-level items. It doesn't have any effect if \a rootItem() is invalid. Shown by default.
-  /// \sa setShowRootItem(), showRootItem(), setRootItem(), setRootIndex()
+  /// if it is hidden only its children are top-level items. It doesn't have any effect if \a rootItem() is invalid.
+  /// Shown by default. \sa setShowRootItem(), showRootItem(), setRootItem(), setRootIndex()
   Q_PROPERTY(bool showRootItem READ showRootItem WRITE setShowRootItem)
   /// Flag determining whether to highlight items referenced by DICOM. Storing DICOM references:
-  ///   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
-  ///   -> SH item instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
+  ///   Referenced SOP instance UIDs (in attribute named
+  ///   vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
+  ///   -> SH item instance UIDs (serialized string lists in subject hierarchy UID
+  ///   vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
   Q_PROPERTY(bool highlightReferencedItems READ highlightReferencedItems WRITE setHighlightReferencedItems)
   /// Flag determining whether context menu is enabled
   Q_PROPERTY(bool contextMenuEnabled READ contextMenuEnabled WRITE setContextMenuEnabled)
@@ -81,37 +83,42 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(QString noneDisplay READ noneDisplay WRITE setNoneDisplay)
 
   /// Filter to show only items that contain any of the given attributes with this name. Empty by default
-  Q_PROPERTY(QStringList includeItemAttributeNamesFilter READ includeItemAttributeNamesFilter WRITE setIncludeItemAttributeNamesFilter)
+  Q_PROPERTY(QStringList includeItemAttributeNamesFilter READ includeItemAttributeNamesFilter WRITE
+               setIncludeItemAttributeNamesFilter)
   /// Filter to show only items for data nodes that contain any of the given attributes with this name. Empty by default
-  Q_PROPERTY(QStringList includeNodeAttributeNamesFilter READ includeNodeAttributeNamesFilter WRITE setIncludeNodeAttributeNamesFilter)
+  Q_PROPERTY(QStringList includeNodeAttributeNamesFilter READ includeNodeAttributeNamesFilter WRITE
+               setIncludeNodeAttributeNamesFilter)
   /// Filter to hide items that contain any of the given attributes with this name. Empty by default
   /// Overrides \sa includeItemAttributeNamesFilter
-  Q_PROPERTY(QStringList excludeItemAttributeNamesFilter READ excludeItemAttributeNamesFilter WRITE setExcludeItemAttributeNamesFilter)
+  Q_PROPERTY(QStringList excludeItemAttributeNamesFilter READ excludeItemAttributeNamesFilter WRITE
+               setExcludeItemAttributeNamesFilter)
   /// Filter to hide items for data nodes that contain any of the given attributes with this name. Empty by default
   /// Overrides \sa includeNodeAttributeNamesFilter
-  Q_PROPERTY(QStringList excludeNodeAttributeNamesFilter READ excludeNodeAttributeNamesFilter WRITE setExcludeNodeAttributeNamesFilter)
+  Q_PROPERTY(QStringList excludeNodeAttributeNamesFilter READ excludeNodeAttributeNamesFilter WRITE
+               setExcludeNodeAttributeNamesFilter)
 
   /// Filter to show only items that contain an item attribute with this name. Empty by default.
   /// Sets and returns the first attribute in \sa includeItemAttributeNamesFilter.
-  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter() instead.
+  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter()
+  /// instead.
   Q_PROPERTY(QString attributeNameFilter READ attributeNameFilter WRITE setAttributeNameFilter)
-  /// Filter to show only items that contain any item attribute given in \sa includeItemAttributeNamesFilter with the value.
-  /// If empty, then existence of the attributes is enough to show.
-  /// Exact match is required. Empty by default.
-  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter() instead.
+  /// Filter to show only items that contain any item attribute given in \sa includeItemAttributeNamesFilter with the
+  /// value. If empty, then existence of the attributes is enough to show. Exact match is required. Empty by default.
+  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter()
+  /// instead.
   Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
 
 public:
   typedef QTreeView Superclass;
-  qMRMLSubjectHierarchyTreeView(QWidget *parent=nullptr);
+  qMRMLSubjectHierarchyTreeView(QWidget* parent = nullptr);
   ~qMRMLSubjectHierarchyTreeView() override;
 
 public:
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
-  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
+  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode() const;
 
   /// Get current (=selected) item. If there are multiple items selected, then the first one is returned
-  Q_INVOKABLE vtkIdType currentItem()const;
+  Q_INVOKABLE vtkIdType currentItem() const;
   /// Get current (=selected) items.
   QList<vtkIdType> currentItems();
   /// Get current (=selected) items.
@@ -119,27 +126,27 @@ public:
   Q_INVOKABLE void currentItems(vtkIdList* selectedItems);
 
   /// Convenience method to set current item by associated data node.
-  virtual vtkMRMLNode* currentNode()const;
+  virtual vtkMRMLNode* currentNode() const;
 
   /// Get root item of the tree
-  Q_INVOKABLE vtkIdType rootItem()const;
+  Q_INVOKABLE vtkIdType rootItem() const;
   /// Get root item visibility
-  bool showRootItem()const;
+  bool showRootItem() const;
 
   /// Get whether multi-selection is enabled
   bool multiSelection();
 
-  QStringList includeItemAttributeNamesFilter()const;
-  QStringList includeNodeAttributeNamesFilter()const;
-  QStringList excludeItemAttributeNamesFilter()const;
-  QStringList excludeNodeAttributeNamesFilter()const;
-  QString attributeValueFilter()const;
-  QString attributeNameFilter()const;
+  QStringList includeItemAttributeNamesFilter() const;
+  QStringList includeNodeAttributeNamesFilter() const;
+  QStringList excludeItemAttributeNamesFilter() const;
+  QStringList excludeNodeAttributeNamesFilter() const;
+  QString attributeValueFilter() const;
+  QString attributeNameFilter() const;
   /// Set attribute filter that allows showing only items that have the specified attribute and their parents.
   /// \param attributeName Name of the attribute by which the items are filtered
   /// \param attributeValue Value of the specified attribute that needs to match this given value in order
   ///   for it to be shown. If empty, then existence of the attribute is enough to show. Empty by default
-  Q_INVOKABLE void setAttributeFilter(const QString& attributeName, const QVariant& attributeValue=QVariant());
+  Q_INVOKABLE void setAttributeFilter(const QString& attributeName, const QVariant& attributeValue = QVariant());
   /// Remove item attribute filtering \sa setAttribute
   Q_INVOKABLE void removeAttributeFilter();
   /// Add single item attribute filter specifying attribute name, value, include/exclude, and class name
@@ -149,7 +156,9 @@ public:
   ///   - Include filter means that only the items are shown that match the filter.
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
-  Q_INVOKABLE void addItemAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true);
+  Q_INVOKABLE void addItemAttributeFilter(QString attributeName,
+                                          QVariant attributeValue = QString(),
+                                          bool include = true);
   /// Remove single item attribute filter specifying each attribute \sa addAttributeFilter
   Q_INVOKABLE void removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include);
   /// Remove all item attribute filters specifying a given attribute name and include flag
@@ -162,42 +171,48 @@ public:
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
   /// \param className Only filter attributes on a certain type. Empty by default (i.e. allow all classes)
-  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true, QString className=QString());
+  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName,
+                                          QVariant attributeValue = QString(),
+                                          bool include = true,
+                                          QString className = QString());
   /// Remove single node attribute filter specifying each attribute \sa addAttributeFilter
-  Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className);
+  Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName,
+                                             QVariant attributeValue,
+                                             bool include,
+                                             QString className);
   /// Remove all node attribute filters specifying a given attribute name and include flag
   Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, bool include);
 
-
   /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
-  void setLevelFilter(QStringList &levelFilter);
-  QStringList levelFilter()const;
+  void setLevelFilter(QStringList& levelFilter);
+  QStringList levelFilter() const;
 
-  /// Set name filter that allows showing only items containing a specified string (case-insensitive). Show all items if empty
-  void setNameFilter(QString &nameFilter);
-  QString nameFilter()const;
+  /// Set name filter that allows showing only items containing a specified string (case-insensitive). Show all items if
+  /// empty
+  void setNameFilter(QString& nameFilter);
+  QString nameFilter() const;
 
   /// Set node type filter that allows showing only data nodes of a certain type. Show all data nodes if empty
   void setNodeTypes(const QStringList& types);
-  QStringList nodeTypes()const;
+  QStringList nodeTypes() const;
 
   /// Set child node types filter that allows hiding certain data node subclasses that would otherwise be
   /// accepted by the data node type filter. Show all data nodes if empty
   void setHideChildNodeTypes(const QStringList& types);
-  QStringList hideChildNodeTypes()const;
+  QStringList hideChildNodeTypes() const;
 
-  Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel()const;
-  Q_INVOKABLE qMRMLSubjectHierarchyModel* model()const;
+  Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel() const;
+  Q_INVOKABLE qMRMLSubjectHierarchyModel* model() const;
 
   /// Determine the number of shown items
-  Q_INVOKABLE int displayedItemCount()const;
+  Q_INVOKABLE int displayedItemCount() const;
 
-  bool highlightReferencedItems()const;
-  bool contextMenuEnabled()const;
-  bool editMenuActionVisible()const;
-  bool selectRoleSubMenuVisible()const;
-  bool noneEnabled()const;
-  QString noneDisplay()const;
+  bool highlightReferencedItems() const;
+  bool contextMenuEnabled() const;
+  bool editMenuActionVisible() const;
+  bool selectRoleSubMenuVisible() const;
+  bool noneEnabled() const;
+  QString noneDisplay() const;
 
   /// Set visibility column visibility
   void setVisibilityColumnVisible(bool visible);
@@ -289,9 +304,9 @@ public slots:
   }
 
   /// Show hint to user about context menus
-  /// \param visibility True if visibility context menu hint is to be shown, false for general context menu. False by default
-  /// \return Flag indicating whether hint could be shown (i.e. there was an item in the tree is displayable)
-  bool showContextMenuHint(bool visibility=false);
+  /// \param visibility True if visibility context menu hint is to be shown, false for general context menu. False by
+  /// default \return Flag indicating whether hint could be shown (i.e. there was an item in the tree is displayable)
+  bool showContextMenuHint(bool visibility = false);
 
   void setHighlightReferencedItems(bool highlightOn);
   void setContextMenuEnabled(bool enabled);
@@ -316,21 +331,21 @@ signals:
   void currentItemModified(vtkIdType);
 
 protected slots:
-  virtual void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Updates subject hierarchy item expanded property when item is expanded
-  virtual void onItemExpanded(const QModelIndex &expandedItemIndex);
+  virtual void onItemExpanded(const QModelIndex& expandedItemIndex);
   /// Updates subject hierarchy item expanded property when item is collapsed
-  virtual void onItemCollapsed(const QModelIndex &collapsedItemIndex);
+  virtual void onItemCollapsed(const QModelIndex& collapsedItemIndex);
 
   /// Update root item to restore view
   /// (e.g. after tree was updated in the model from the subject hierarchy)
   virtual void updateRootItem();
 
   /// Propagate item modified event
-  virtual void onSubjectHierarchyItemModified(vtkObject *caller, void *callData);
+  virtual void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
   /// Propagate item transform modified event
-  virtual void onSubjectHierarchyItemTransformModified(vtkObject *caller, void *callData);
+  virtual void onSubjectHierarchyItemTransformModified(vtkObject* caller, void* callData);
 
   /// Called when scene close is started.
   virtual void onMRMLSceneStartClose(vtkObject* sceneObject);

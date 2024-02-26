@@ -46,22 +46,23 @@
 ///   - Base: Coordinate system computed from markup control point positions.
 ///     Origin of the coordinate system is in the first control point.
 ///     X coordinate system is the direction from the first control point to the second.
-///     Y coordinate system is orthogonal to the X coordinate system, in the plane specified by the first 3 control points.
-///     Z axis is the cross product of X and Y coordinate system.
-///   - Node: Coordinate system of the markup node. Coordinates of the control points are stored in this coordinate system.
+///     Y coordinate system is orthogonal to the X coordinate system, in the plane specified by the first 3 control
+///     points. Z axis is the cross product of X and Y coordinate system.
+///   - Node: Coordinate system of the markup node. Coordinates of the control points are stored in this coordinate
+///   system.
 ///   - World: Patient coordinate system (RAS). Transform between Node and World.
 ///     coordinate systems are defined by the parent transform of the node.
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneNode : public vtkMRMLMarkupsNode
+class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneNode : public vtkMRMLMarkupsNode
 {
 public:
-  static vtkMRMLMarkupsPlaneNode *New();
-  vtkTypeMacro(vtkMRMLMarkupsPlaneNode,vtkMRMLMarkupsNode);
+  static vtkMRMLMarkupsPlaneNode* New();
+  vtkTypeMacro(vtkMRMLMarkupsPlaneNode, vtkMRMLMarkupsNode);
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char* GetIcon() override {return ":/Icons/MarkupsPlane.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsPlaneMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsPlaneMouseModePlaceAdd.png";}
+  const char* GetIcon() override { return ":/Icons/MarkupsPlane.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsPlaneMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsPlaneMouseModePlaceAdd.png"; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -85,19 +86,19 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MarkupsPlane";}
+  const char* GetNodeTagName() override { return "MarkupsPlane"; }
 
   /// Get markup type internal name
-  const char* GetMarkupType() override {return "Plane";};
+  const char* GetMarkupType() override { return "Plane"; };
 
   // Get markup type GUI display name
-  const char* GetTypeDisplayName() override {return "Plane";};
+  const char* GetTypeDisplayName() override { return "Plane"; };
 
   /// Get markup short name
-  const char* GetDefaultNodeNamePrefix() override {return "P";};
+  const char* GetDefaultNodeNamePrefix() override { return "P"; };
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -217,17 +218,16 @@ public:
   virtual vtkMatrix4x4* GetBaseToNodeMatrix();
   //@}
 
-  /// 4x4 matrix specifying the relative (rotation/translation) of the plane from the base coordinate system defined by the markup points.
-  /// Default is the identity matrix.
+  /// 4x4 matrix specifying the relative (rotation/translation) of the plane from the base coordinate system defined by
+  /// the markup points. Default is the identity matrix.
   virtual vtkMatrix4x4* GetObjectToBaseMatrix();
 
   /// Get the closest position on the plane in world coordinates.
-  /// Returns the signed distance from the input point to the plane. Positive distance is in the direction of the plane normal,
-  /// and negative distance is in the opposite direction.
-  /// \param posWorld input position
-  /// \param closestPosWorld: output found closest position
-  /// \param infinitePlane if false, the closest position will be restricted to the plane bounds
-  /// \return Signed distance from the point to the plane. Positive distance is in the direction of the plane normal
+  /// Returns the signed distance from the input point to the plane. Positive distance is in the direction of the plane
+  /// normal, and negative distance is in the opposite direction. \param posWorld input position \param closestPosWorld:
+  /// output found closest position \param infinitePlane if false, the closest position will be restricted to the plane
+  /// bounds \return Signed distance from the point to the plane. Positive distance is in the direction of the plane
+  /// normal
   double GetClosestPointOnPlaneWorld(const double posWorld[3], double closestPosWorld[3], bool infinitePlane = true);
 
   /// Create default storage node or nullptr if does not have one
@@ -260,11 +260,19 @@ public:
 
   //@{
   /// Helper method for generating an orthogonal right handed matrix from axes.
-  /// Transform can optionally be specified to apply an additional transform on the vectors before generating the matrix.
+  /// Transform can optionally be specified to apply an additional transform on the vectors before generating the
+  /// matrix.
   static void GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix,
-    vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
-  static void GenerateOrthogonalMatrix(double xAxis[3], double yAxis[3], double zAxis[3], double origin[3],
-    vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
+                                       vtkMatrix4x4* outputMatrix,
+                                       vtkAbstractTransform* transform = nullptr,
+                                       bool applyScaling = true);
+  static void GenerateOrthogonalMatrix(double xAxis[3],
+                                       double yAxis[3],
+                                       double zAxis[3],
+                                       double origin[3],
+                                       vtkMatrix4x4* outputMatrix,
+                                       vtkAbstractTransform* transform = nullptr,
+                                       bool applyScaling = true);
   //@}
 
   /// Re-implemented to react to changes in internal matrices or control points.
@@ -277,7 +285,6 @@ public:
   //@}
 
 protected:
-
   vtkSetMacro(MaximumNumberOfControlPoints, int);
   vtkSetMacro(RequiredNumberOfControlPoints, int);
 
@@ -288,13 +295,22 @@ protected:
   void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode) override;
 
   /// Calculates the x y and z axis of the plane from the 3 input points.
-  void CalculateAxesFromPoints(const double point0[3], const double point1[3], const double point2[3], double x[3], double y[3], double z[3]);
+  void CalculateAxesFromPoints(const double point0[3],
+                               const double point1[3],
+                               const double point2[3],
+                               double x[3],
+                               double y[3],
+                               double z[3]);
 
   /// Calculates the axis-aligned bounds defined by the corners of the plane.
   void CalculatePlaneBounds(vtkPoints* cornerPoints, double bounds[6]);
 
   /// Calculates the axis-aligned bounds defined by the corners of the plane.
-  void CalculatePlaneCornerPoints(vtkPoints* points, double xAxis[3], double yAxis[3], double center[3], double size[2]);
+  void CalculatePlaneCornerPoints(vtkPoints* points,
+                                  double xAxis[3],
+                                  double yAxis[3],
+                                  double center[3],
+                                  double size[2]);
 
   /// Updates the plane based on plane type and control point position.
   virtual void UpdatePlaneFromControlPoints();
@@ -345,7 +361,7 @@ protected:
   /// Calculates the handle to world matrix based on the current control points
   void UpdateInteractionHandleToWorldMatrix() override;
 
-  friend class vtkSlicerPlaneWidget; // To directly access plane update functions
+  friend class vtkSlicerPlaneWidget;           // To directly access plane update functions
   friend class vtkSlicerPlaneRepresentation3D; // To directly access plane update functions
   friend class vtkSlicerPlaneRepresentation2D; // To directly access plane update functions
 };

@@ -33,7 +33,7 @@ namespace
 //
 // Description: Map from string description to SpatialOrientation
 void CreateOrientationMap(
-  std::map<std::string, itk::SpatialOrientation::ValidCoordinateOrientationFlags> & orientationMap)
+  std::map<std::string, itk::SpatialOrientation::ValidCoordinateOrientationFlags>& orientationMap)
 {
   orientationMap["Axial"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI;
   orientationMap["Coronal"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RSA;
@@ -91,44 +91,40 @@ void CreateOrientationMap(
 //
 // Description: A templated procedure to execute the algorithm
 template <class T>
-int DoIt( int argc, char * argv[], T )
+int DoIt(int argc, char* argv[], T)
 {
 
   PARSE_ARGS;
 
-  typedef    T PixelType;
+  typedef T PixelType;
 
-  typedef itk::Image<PixelType,  3> ImageType;
+  typedef itk::Image<PixelType, 3> ImageType;
 
-  typedef itk::ImageFileReader<ImageType>              ReaderType;
-  typedef itk::ImageFileWriter<ImageType>              WriterType;
+  typedef itk::ImageFileReader<ImageType> ReaderType;
+  typedef itk::ImageFileWriter<ImageType> WriterType;
   typedef itk::ChangeInformationImageFilter<ImageType> ChangeType;
 
-  typedef itk::OrientImageFilter<
-    ImageType, ImageType>  FilterType;
+  typedef itk::OrientImageFilter<ImageType, ImageType> FilterType;
 
   // Read the input volume
   typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 2",
-                                        CLPProcessInformation);
+  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume 2", CLPProcessInformation);
 
-  reader1->SetFileName( inputVolume1.c_str() );
+  reader1->SetFileName(inputVolume1.c_str());
   reader1->Update();
 
   // change the orientation of the volume
   typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter,
-                                       "Orient image",
-                                       CLPProcessInformation);
+  itk::PluginFilterWatcher watchFilter(filter, "Orient image", CLPProcessInformation);
 
   std::map<std::string, itk::SpatialOrientation::ValidCoordinateOrientationFlags> orientationMap;
   CreateOrientationMap(orientationMap);
-  std::map<std::string, itk::SpatialOrientation::ValidCoordinateOrientationFlags>::iterator o = orientationMap.find(
-      orientation);
+  std::map<std::string, itk::SpatialOrientation::ValidCoordinateOrientationFlags>::iterator o =
+    orientationMap.find(orientation);
 
-  filter->SetInput( reader1->GetOutput() );
+  filter->SetInput(reader1->GetOutput());
   filter->UseImageDirectionOn();
-  filter->SetDesiredCoordinateOrientation( o->second);
+  filter->SetDesiredCoordinateOrientation(o->second);
   filter->Update();
 
   // Compute a new origin for the volume such that the output aligns
@@ -141,33 +137,30 @@ int DoIt( int argc, char * argv[], T )
 
   // Now change the origin of the output volume
   typename ChangeType::Pointer change = ChangeType::New();
-  change->SetInput( filter->GetOutput() );
+  change->SetInput(filter->GetOutput());
   change->ChangeOriginOn();
   change->SetOutputOrigin(newOrigin);
   change->Update();
 
   typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer,
-                                       "Write Volume",
-                                       CLPProcessInformation);
-  writer->SetFileName( outputVolume.c_str() );
-  writer->SetInput( change->GetOutput() );
+  itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
+  writer->SetFileName(outputVolume.c_str());
+  writer->SetInput(change->GetOutput());
   writer->SetUseCompression(1);
   writer->Update();
   std::cout << "Input origin is: " << reader1->GetOutput()->GetOrigin() << std::endl;
-  std::cout << "Output origin is: " << change->GetOutput()->GetOrigin()
-            << std::endl;
+  std::cout << "Output origin is: " << change->GetOutput()->GetOrigin() << std::endl;
 
   return EXIT_SUCCESS;
 }
 
 } // end of anonymous namespace
 
-int main( int argc, char * argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
-  itk::ImageIOBase::IOPixelType     pixelType;
+  itk::ImageIOBase::IOPixelType pixelType;
   itk::ImageIOBase::IOComponentType componentType;
 
   try
@@ -175,37 +168,37 @@ int main( int argc, char * argv[] )
     itk::GetImageType(inputVolume1, pixelType, componentType);
 
     // this filter produces the image of the same type as the input
-    switch( componentType )
+    switch (componentType)
     {
       case itk::ImageIOBase::UCHAR:
-        return DoIt( argc, argv, static_cast<unsigned char>(0) );
+        return DoIt(argc, argv, static_cast<unsigned char>(0));
         break;
       case itk::ImageIOBase::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0) );
+        return DoIt(argc, argv, static_cast<char>(0));
         break;
       case itk::ImageIOBase::USHORT:
-        return DoIt( argc, argv, static_cast<unsigned short>(0) );
+        return DoIt(argc, argv, static_cast<unsigned short>(0));
         break;
       case itk::ImageIOBase::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0) );
+        return DoIt(argc, argv, static_cast<short>(0));
         break;
       case itk::ImageIOBase::UINT:
-        return DoIt( argc, argv, static_cast<unsigned int>(0) );
+        return DoIt(argc, argv, static_cast<unsigned int>(0));
         break;
       case itk::ImageIOBase::INT:
-        return DoIt( argc, argv, static_cast<int>(0) );
+        return DoIt(argc, argv, static_cast<int>(0));
         break;
       case itk::ImageIOBase::ULONG:
-        return DoIt( argc, argv, static_cast<unsigned long>(0) );
+        return DoIt(argc, argv, static_cast<unsigned long>(0));
         break;
       case itk::ImageIOBase::LONG:
-        return DoIt( argc, argv, static_cast<long>(0) );
+        return DoIt(argc, argv, static_cast<long>(0));
         break;
       case itk::ImageIOBase::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0) );
+        return DoIt(argc, argv, static_cast<float>(0));
         break;
       case itk::ImageIOBase::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0) );
+        return DoIt(argc, argv, static_cast<double>(0));
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:
@@ -213,7 +206,7 @@ int main( int argc, char * argv[] )
         break;
     }
   }
-  catch( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

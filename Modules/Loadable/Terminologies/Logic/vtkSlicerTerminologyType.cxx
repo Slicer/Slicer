@@ -27,7 +27,7 @@
 #include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------
-int vtkSlicerTerminologyType::INVALID_COLOR[3] = {127, 127, 127};
+int vtkSlicerTerminologyType::INVALID_COLOR[3] = { 127, 127, 127 };
 
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerTerminologyType);
@@ -71,18 +71,16 @@ void vtkSlicerTerminologyType::Initialize()
 //----------------------------------------------------------------------------
 void vtkSlicerTerminologyType::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
-  os << indent << "RecommendedDisplayRGBValue:   ("
-    << this->RecommendedDisplayRGBValue[0] << ","
-    << this->RecommendedDisplayRGBValue[1] << ","
-    << this->RecommendedDisplayRGBValue[2] << ")\n";
-  os << indent << "SlicerLabel:   " << (this->SlicerLabel?this->SlicerLabel:"NULL") << "\n";
-  os << indent << "SNOMEDCTConceptID:   " << (this->SNOMEDCTConceptID?this->SNOMEDCTConceptID:"NULL") << "\n";
-  os << indent << "UMLSConceptUID:   " << (this->UMLSConceptUID?this->UMLSConceptUID:"NULL") << "\n";
-  os << indent << "Cid:   " << (this->Cid?this->Cid:"NULL") << "\n";
-  os << indent << "ContextGroupName:   " << (this->ContextGroupName?this->ContextGroupName:"NULL") << "\n";
-  os << indent << "HasModifiers:   " << (this->HasModifiers?"true":"false") << "\n";
+  os << indent << "RecommendedDisplayRGBValue:   (" << this->RecommendedDisplayRGBValue[0] << ","
+     << this->RecommendedDisplayRGBValue[1] << "," << this->RecommendedDisplayRGBValue[2] << ")\n";
+  os << indent << "SlicerLabel:   " << (this->SlicerLabel ? this->SlicerLabel : "NULL") << "\n";
+  os << indent << "SNOMEDCTConceptID:   " << (this->SNOMEDCTConceptID ? this->SNOMEDCTConceptID : "NULL") << "\n";
+  os << indent << "UMLSConceptUID:   " << (this->UMLSConceptUID ? this->UMLSConceptUID : "NULL") << "\n";
+  os << indent << "Cid:   " << (this->Cid ? this->Cid : "NULL") << "\n";
+  os << indent << "ContextGroupName:   " << (this->ContextGroupName ? this->ContextGroupName : "NULL") << "\n";
+  os << indent << "HasModifiers:   " << (this->HasModifiers ? "true" : "false") << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -95,8 +93,7 @@ void vtkSlicerTerminologyType::Copy(vtkCodedEntry* aType)
 
   this->Superclass::Copy(aType);
 
-  vtkSlicerTerminologyType *aTerminologyType =
-      vtkSlicerTerminologyType::SafeDownCast(aType);
+  vtkSlicerTerminologyType* aTerminologyType = vtkSlicerTerminologyType::SafeDownCast(aType);
 
   this->SetRecommendedDisplayRGBValue(aTerminologyType->GetRecommendedDisplayRGBValue());
   this->SetSlicerLabel(aTerminologyType->GetSlicerLabel());

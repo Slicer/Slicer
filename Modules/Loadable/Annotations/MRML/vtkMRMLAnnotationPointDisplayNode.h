@@ -13,45 +13,42 @@
 #include "vtkMRMLAnnotationDisplayNode.h"
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNode : public vtkMRMLAnnotationDisplayNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
- public:
-  static vtkMRMLAnnotationPointDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLAnnotationPointDisplayNode,vtkMRMLAnnotationDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) override;
+public:
+  static vtkMRMLAnnotationPointDisplayNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationPointDisplayNode, vtkMRMLAnnotationDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Read node attributes from XML (MRML) file
-  void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  void WriteXML ( ostream& of, int indent ) override;
-
+  void WriteXML(ostream& of, int indent) override;
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode *node ) override;
+  void Copy(vtkMRMLNode* node) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  const char* GetNodeTagName() override {return "AnnotationPointDisplay";}
+  const char* GetNodeTagName() override { return "AnnotationPointDisplay"; }
 
   // Description:
   // Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Which kind of glyph should be used to display this fiducial?
   /// Vertex2D is supposed to start at 1
@@ -88,12 +85,12 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   /// Return a string representing the glyph type, set it from a string
   const char* GetGlyphTypeAsString();
   const char* GetGlyphTypeAsString(int g);
-  void SetGlyphTypeFromString(const char *glyphString);
+  void SetGlyphTypeFromString(const char* glyphString);
 
   /// Get/Set for Symbol scale
   ///  vtkSetMacro(GlyphScale,double);
   void SetGlyphScale(double scale);
-  vtkGetMacro(GlyphScale,double);
+  vtkGetMacro(GlyphScale, double);
 
   /// Create a backup of this node and attach it.
   void CreateBackup() override;
@@ -125,51 +122,45 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   ///\enum ProjectionFlag
   enum ProjectionFlag
   {
-  ProjectionUseFiducialColor = 0x02,
-  ProjectionOutlinedBehindSlicePlane = 0x04
+    ProjectionUseFiducialColor = 0x02,
+    ProjectionOutlinedBehindSlicePlane = 0x04
   };
 
- protected:
+protected:
   vtkMRMLAnnotationPointDisplayNode();
-  ~vtkMRMLAnnotationPointDisplayNode() override  = default;
-  vtkMRMLAnnotationPointDisplayNode( const vtkMRMLAnnotationPointDisplayNode& );
-  void operator= ( const vtkMRMLAnnotationPointDisplayNode& );
+  ~vtkMRMLAnnotationPointDisplayNode() override = default;
+  vtkMRMLAnnotationPointDisplayNode(const vtkMRMLAnnotationPointDisplayNode&);
+  void operator=(const vtkMRMLAnnotationPointDisplayNode&);
 
   double GlyphScale;
   int GlyphType;
-  static const char* GlyphTypesNames[GlyphMax+2];
+  static const char* GlyphTypesNames[GlyphMax + 2];
 };
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode
-::SliceProjectionUseFiducialColorOn()
+void vtkMRMLAnnotationPointDisplayNode ::SliceProjectionUseFiducialColorOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
+  this->SetSliceProjection(this->GetSliceProjection() | vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode
-::SliceProjectionUseFiducialColorOff()
+void vtkMRMLAnnotationPointDisplayNode ::SliceProjectionUseFiducialColorOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
+  this->SetSliceProjection(this->GetSliceProjection() & ~vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode
-::SliceProjectionOutlinedBehindSlicePlaneOn()
+void vtkMRMLAnnotationPointDisplayNode ::SliceProjectionOutlinedBehindSlicePlaneOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
+  this->SetSliceProjection(this->GetSliceProjection()
+                           | vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode
-::SliceProjectionOutlinedBehindSlicePlaneOff()
+void vtkMRMLAnnotationPointDisplayNode ::SliceProjectionOutlinedBehindSlicePlaneOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
+  this->SetSliceProjection(this->GetSliceProjection()
+                           & ~vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
 }
 
 #endif

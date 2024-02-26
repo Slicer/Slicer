@@ -36,7 +36,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionEventData : public vt
 {
 public:
   vtkTypeMacro(vtkMRMLInteractionEventData, vtkEventDataDevice3D);
-  static vtkMRMLInteractionEventData *New();
+  static vtkMRMLInteractionEventData* New();
 
   /// Extends vtkCommand events
   enum MRMLInteractionEvents
@@ -73,7 +73,7 @@ public:
   char GetKeyCode();
   void SetKeyRepeatCount(char v);
   int GetKeyRepeatCount();
-  void SetKeySym(const std::string &v);
+  void SetKeySym(const std::string& v);
   const std::string& GetKeySym();
 
   void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
@@ -158,10 +158,10 @@ protected:
   /// Name of interaction context. In case of the mouse, it is empty string
   std::string InteractionContextName;
 
-  bool Equivalent(const vtkEventData *e) const override;
+  bool Equivalent(const vtkEventData* e) const override;
 
   vtkMRMLInteractionEventData();
-  ~vtkMRMLInteractionEventData() override  = default;
+  ~vtkMRMLInteractionEventData() override = default;
 
 private:
   vtkMRMLInteractionEventData(const vtkMRMLInteractionEventData& c) = delete;

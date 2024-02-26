@@ -73,7 +73,6 @@ qSlicerDICOMLoadablePrivate::qSlicerDICOMLoadablePrivate()
 //-----------------------------------------------------------------------------
 qSlicerDICOMLoadablePrivate::~qSlicerDICOMLoadablePrivate() = default;
 
-
 //-----------------------------------------------------------------------------
 // qSlicerDICOMLoadable methods
 
@@ -131,12 +130,12 @@ void qSlicerDICOMLoadable::copyToVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadable
   vtkLoadable->SetSelected(d->Selected);
   vtkLoadable->SetConfidence(d->Confidence);
 
-  foreach(QString file, d->Files)
+  foreach (QString file, d->Files)
   {
     vtkLoadable->AddFile(file.toUtf8().constData());
   }
 
-  foreach(QString referencedInstanceUID, d->ReferencedInstanceUIDs)
+  foreach (QString referencedInstanceUID, d->ReferencedInstanceUIDs)
   {
     vtkLoadable->AddReferencedInstanceUID(referencedInstanceUID.toUtf8().constData());
   }

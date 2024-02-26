@@ -39,8 +39,7 @@ int removeRestoreEditAndRestore();
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneViewNodeRestoreSceneTest(int vtkNotUsed(argc),
-                                         char * vtkNotUsed(argv)[] )
+int vtkMRMLSceneViewNodeRestoreSceneTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   CHECK_EXIT_SUCCESS(restoreEditAndRestore());
   CHECK_EXIT_SUCCESS(removeRestoreEditAndRestore());
@@ -79,8 +78,8 @@ int restoreEditAndRestore()
 
   sceneViewNode->RestoreScene();
 
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
-    scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
+  vtkMRMLScalarVolumeNode* volumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
   volumeNode->SetAndObserveDisplayNodeID("vtkMRMLScalarVolumeDisplayNode2");
 
   sceneViewNode->RestoreScene();
@@ -89,7 +88,6 @@ int restoreEditAndRestore()
 
   return EXIT_SUCCESS;
 }
-
 
 //---------------------------------------------------------------------------
 int removeRestoreEditAndRestore()
@@ -102,8 +100,8 @@ int removeRestoreEditAndRestore()
 
   sceneViewNode->StoreScene();
 
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
-    scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
+  vtkMRMLScalarVolumeNode* volumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
   scene->RemoveNode(volumeNode);
 
   // TODO: We expect errors here because of https://github.com/Slicer/Slicer/issues/2816 is not resolved.
@@ -113,8 +111,8 @@ int removeRestoreEditAndRestore()
   sceneViewNode->RestoreScene();
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-  vtkMRMLScalarVolumeNode* restoredVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
-    scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
+  vtkMRMLScalarVolumeNode* restoredVolumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
   restoredVolumeNode->SetAndObserveDisplayNodeID("vtkMRMLScalarVolumeDisplayNode2");
 
   sceneViewNode->RestoreScene();

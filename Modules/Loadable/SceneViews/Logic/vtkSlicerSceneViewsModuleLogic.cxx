@@ -35,17 +35,17 @@ void vtkSlicerSceneViewsModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkDebugMacro("SetMRMLSceneInternal - listening to scene events");
 
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-//  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  //  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
   events->InsertNextValue(vtkMRMLScene::EndImportEvent);
   events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
-//  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeRestoredEvent);
+  //  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeRestoredEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 }
 
@@ -68,15 +68,10 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndRestore()
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* vtkNotUsed(node))
-{
-}
+void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* vtkNotUsed(node)) {}
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndClose()
-{
-}
-
+void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndClose() {}
 
 //-----------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::RegisterNodes()
@@ -96,13 +91,16 @@ void vtkSlicerSceneViewsModuleLogic::RegisterNodes()
 #endif
   viewNode->Delete();
 
-  vtkMRMLSceneViewStorageNode *storageNode = vtkMRMLSceneViewStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass ( storageNode );
+  vtkMRMLSceneViewStorageNode* storageNode = vtkMRMLSceneViewStorageNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(storageNode);
   storageNode->Delete();
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const char* description, int screenshotType, vtkImageData* screenshot)
+void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name,
+                                                     const char* description,
+                                                     int screenshotType,
+                                                     vtkImageData* screenshot)
 {
   if (!this->GetMRMLScene())
   {
@@ -139,19 +137,18 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
   copyScreenShot->DeepCopy(screenshot);
   newSceneViewNode->SetScreenShot(copyScreenShot.GetPointer());
   newSceneViewNode->StoreScene();
-  //newSceneViewNode->HideFromEditorsOff();
-  // mark it modified since read so that the screen shot will get saved to disk
+  // newSceneViewNode->HideFromEditorsOff();
+  //  mark it modified since read so that the screen shot will get saved to disk
 
   this->GetMRMLScene()->AddNode(newSceneViewNode.GetPointer());
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::
-         ModifySceneView(vtkStdString id,
-                         const char* name,
-                         const char* description,
-                         int vtkNotUsed(screenshotType),
-                         vtkImageData* screenshot)
+void vtkSlicerSceneViewsModuleLogic::ModifySceneView(vtkStdString id,
+                                                     const char* name,
+                                                     const char* description,
+                                                     int vtkNotUsed(screenshotType),
+                                                     vtkImageData* screenshot)
 {
   if (!this->GetMRMLScene())
   {
@@ -315,7 +312,7 @@ const char* vtkSlicerSceneViewsModuleLogic::MoveSceneViewDown(const char* vtkNot
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::RemoveSceneViewNode(vtkMRMLSceneViewNode *sceneViewNode)
+void vtkSlicerSceneViewsModuleLogic::RemoveSceneViewNode(vtkMRMLSceneViewNode* sceneViewNode)
 {
   if (!sceneViewNode)
   {

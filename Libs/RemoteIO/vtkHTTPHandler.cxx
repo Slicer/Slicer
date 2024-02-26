@@ -9,7 +9,7 @@
 #include <curl/curl.h>
 
 #if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+# pragma warning(disable : 4786)
 #endif
 
 //----------------------------------------------------------------------------
@@ -28,7 +28,8 @@ public:
 // vtkInternal methods
 
 //----------------------------------------------------------------------------
-vtkHTTPHandler::vtkInternal::vtkInternal(vtkHTTPHandler* external):External(external)
+vtkHTTPHandler::vtkInternal::vtkInternal(vtkHTTPHandler* external)
+  : External(external)
 {
   this->CurlHandle = nullptr;
   this->ForbidReuse = 0;
@@ -44,10 +45,10 @@ vtkHTTPHandler::vtkInternal::~vtkInternal()
 // vtkHTTPHandler methods
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro ( vtkHTTPHandler );
+vtkStandardNewMacro(vtkHTTPHandler);
 
 //----------------------------------------------------------------------------
-size_t read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
+size_t read_callback(void* ptr, size_t size, size_t nmemb, FILE* stream)
 {
   size_t retcode;
 
@@ -62,31 +63,30 @@ size_t read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
 }
 
 //----------------------------------------------------------------------------
-size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
+size_t write_callback(void* ptr, size_t size, size_t nmemb, void* stream)
 {
   if (stream == nullptr)
   {
     std::cerr << "write_callback: can't write, stream is null. size = " << size << std::endl;
     return 0;
   }
-  int written = fwrite(ptr, size, nmemb, (FILE *)stream);
+  int written = fwrite(ptr, size, nmemb, (FILE*)stream);
   return written;
 }
 
 //----------------------------------------------------------------------------
-size_t ProgressCallback(FILE* vtkNotUsed( outputFile ), double dltotal, double dlnow, double ultotal, double ulnow)
+size_t ProgressCallback(FILE* vtkNotUsed(outputFile), double dltotal, double dlnow, double ultotal, double ulnow)
 {
-  if(ultotal == 0)
+  if (ultotal == 0)
   {
-    if(dltotal > 0)
+    if (dltotal > 0)
     {
-      std::cout << "<filter-progress>" << dlnow/dltotal
-                << "</filter-progress>" << std::endl;
+      std::cout << "<filter-progress>" << dlnow / dltotal << "</filter-progress>" << std::endl;
     }
   }
   else
   {
-    std::cout << ulnow*100/ultotal << "%" << std::endl;
+    std::cout << ulnow * 100 / ultotal << "%" << std::endl;
   }
   return 0;
 }
@@ -106,33 +106,33 @@ vtkHTTPHandler::~vtkHTTPHandler()
 //----------------------------------------------------------------------------
 void vtkHTTPHandler::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf ( os, indent );
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-int vtkHTTPHandler::CanHandleURI ( const char *uri )
+int vtkHTTPHandler::CanHandleURI(const char* uri)
 {
   //--- What's the best way to determine whether this handler
   //--- speaks the correct protocol?
   //--- first guess is to look at the prefix up till the colon.
 
   std::string::size_type index;
-  std::string uriString (uri);
+  std::string uriString(uri);
   std::string prefix;
 
   //--- get all characters up to (and not including) the '://'
-  if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
+  if ((index = uriString.find("://", 0)) != std::string::npos)
   {
-    prefix = uriString.substr ( 0, index );
+    prefix = uriString.substr(0, index);
     //--- check to see if any bracketed characters are in
     //--- this part of the string.
-    if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )
+    if ((index = prefix.find("]:", 0)) != std::string::npos)
     {
       //--- if so, strip off the leading bracketed characters in case
       //--- we adopt the gwe "[filename.ext]:" prefix.
-      prefix = prefix.substr ( index+2 );
+      prefix = prefix.substr(index + 2);
     }
-    if ( !strcmp(prefix.c_str(), "http") || !strcmp(prefix.c_str(), "https"))
+    if (!strcmp(prefix.c_str(), "http") || !strcmp(prefix.c_str(), "https"))
     {
       vtkDebugMacro("vtkHTTPHandler: CanHandleURI: can handle this file: " << uriString.c_str());
       return (1);
@@ -140,9 +140,9 @@ int vtkHTTPHandler::CanHandleURI ( const char *uri )
   }
   else
   {
-    vtkDebugMacro ( "vtkHTTPHandler::CanHandleURI: unrecognized uri format: " << uriString.c_str() );
+    vtkDebugMacro("vtkHTTPHandler::CanHandleURI: unrecognized uri format: " << uriString.c_str());
   }
-  return ( 0 );
+  return (0);
 }
 
 //----------------------------------------------------------------------------
@@ -163,7 +163,7 @@ int vtkHTTPHandler::GetForbidReuse()
 }
 
 //----------------------------------------------------------------------------
-void vtkHTTPHandler::InitTransfer( )
+void vtkHTTPHandler::InitTransfer()
 {
   curl_global_init(CURL_GLOBAL_ALL);
   vtkDebugMacro("vtkHTTPHandler: InitTransfer: initialising CurlHandle");
@@ -175,15 +175,14 @@ void vtkHTTPHandler::InitTransfer( )
 }
 
 //----------------------------------------------------------------------------
-int vtkHTTPHandler::CloseTransfer( )
+int vtkHTTPHandler::CloseTransfer()
 {
   curl_easy_cleanup(this->Internal->CurlHandle);
   return EXIT_SUCCESS;
 }
 
-
 //----------------------------------------------------------------------------
-void vtkHTTPHandler::StageFileRead(const char * source, const char * destination)
+void vtkHTTPHandler::StageFileRead(const char* source, const char* destination)
 {
   if (source == nullptr || destination == nullptr)
   {
@@ -199,24 +198,23 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
     }
   this->LocalFile = new std::ofstream(destination, std::ios::binary);
   */
-  this->InitTransfer( );
+  this->InitTransfer();
 
-
-  if ( this->Internal->ForbidReuse )
+  if (this->Internal->ForbidReuse)
   {
     curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_FORBID_REUSE, 1);
   }
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_URL, source);
-//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_NOPROGRESS, false);
+  //  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
   // use the default curl write call back
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_WRITEFUNCTION, nullptr); // write_callback);
   this->LocalFile = fopen(destination, "wb");
   // output goes into LocalFile, must be  FILE*
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
-//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSDATA, nullptr);
-//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
+  //  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSDATA, nullptr);
+  //  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
 
   if (this->CaCertificatesPath)
   {
@@ -248,15 +246,15 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
   }
   else
   {
-    const char *stringError = curl_easy_strerror(retval);
+    const char* stringError = curl_easy_strerror(retval);
     vtkErrorMacro("StageFileRead: error running curl: " << stringError);
     //--- in case the permissions were not correct and that's
     //--- the reason the read command failed,
     //--- reset the 'remember check' in the permissions
     //--- prompter so that new login info  will be prompted.
-    if ( this->GetPermissionPrompter() != nullptr )
+    if (this->GetPermissionPrompter() != nullptr)
     {
-      this->GetPermissionPrompter()->SetRemember ( 0 );
+      this->GetPermissionPrompter()->SetRemember(0);
     }
   }
   this->CloseTransfer();
@@ -272,9 +270,8 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
   }
 }
 
-
 //----------------------------------------------------------------------------
-void vtkHTTPHandler::StageFileWrite(const char * source, const char * destination)
+void vtkHTTPHandler::StageFileWrite(const char* source, const char* destination)
 {
   //--- check these arguments...
   /*
@@ -288,16 +285,16 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
   */
   this->LocalFile = fopen(source, "r");
 
-  this->InitTransfer( );
+  this->InitTransfer();
 
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PUT, 1);
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_URL, destination);
-//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_NOPROGRESS, false);
+  //  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_READFUNCTION, read_callback);
   curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_READDATA, this->LocalFile);
-//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSDATA, nullptr);
-  //curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
+  //  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSDATA, nullptr);
+  // curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
   if (this->CaCertificatesPath)
   {
     curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_CAINFO, this->CaCertificatesPath);
@@ -309,23 +306,23 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
   }
   CURLcode retval = curl_easy_perform(this->Internal->CurlHandle);
 
-   if (retval == CURLE_OK)
-   {
+  if (retval == CURLE_OK)
+  {
     vtkDebugMacro("StageFileWrite: successful return from curl");
-   }
-   else
-   {
-    const char *stringError = curl_easy_strerror(retval);
+  }
+  else
+  {
+    const char* stringError = curl_easy_strerror(retval);
     vtkErrorMacro("StageFileWrite: error running curl: " << stringError);
     //--- in case the permissions were not correct and that's
     //--- the reason the read command failed,
     //--- reset the 'remember check' in the permissions
     //--- prompter so that new login info  will be prompted.
-    if ( this->GetPermissionPrompter() != nullptr )
+    if (this->GetPermissionPrompter() != nullptr)
     {
-      this->GetPermissionPrompter()->SetRemember ( 0 );
+      this->GetPermissionPrompter()->SetRemember(0);
     }
-   }
+  }
 
   this->CloseTransfer();
 

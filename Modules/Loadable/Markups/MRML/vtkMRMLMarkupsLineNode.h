@@ -32,17 +32,17 @@
 ///
 /// Markups is intended to be used for manual marking/editing of point positions.
 ///
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsLineNode : public vtkMRMLMarkupsNode
+class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsLineNode : public vtkMRMLMarkupsNode
 {
 public:
-  static vtkMRMLMarkupsLineNode *New();
-  vtkTypeMacro(vtkMRMLMarkupsLineNode,vtkMRMLMarkupsNode);
+  static vtkMRMLMarkupsLineNode* New();
+  vtkTypeMacro(vtkMRMLMarkupsLineNode, vtkMRMLMarkupsNode);
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char* GetIcon() override {return ":/Icons/MarkupsLine.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsLineMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsLineMouseModePlaceAdd.png";}
+  const char* GetIcon() override { return ":/Icons/MarkupsLine.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsLineMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsLineMouseModePlaceAdd.png"; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -50,19 +50,19 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MarkupsLine";}
+  const char* GetNodeTagName() override { return "MarkupsLine"; }
 
   /// Get markup type internal name
-  const char* GetMarkupType() override {return "Line";};
+  const char* GetMarkupType() override { return "Line"; };
 
   // Get markup type GUI display name
-  const char* GetTypeDisplayName() override {return "Line";};
+  const char* GetTypeDisplayName() override { return "Line"; };
 
   /// Get markup short name
-  const char* GetDefaultNodeNamePrefix() override {return "L";};
+  const char* GetDefaultNodeNamePrefix() override { return "L"; };
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;

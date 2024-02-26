@@ -28,7 +28,7 @@
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMeasurementLength : public vtkMRMLMeasurement
 {
 public:
-  static vtkMRMLMeasurementLength *New();
+  static vtkMRMLMeasurementLength* New();
   vtkTypeMacro(vtkMRMLMeasurementLength, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

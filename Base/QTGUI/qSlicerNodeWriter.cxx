@@ -71,27 +71,27 @@ qSlicerNodeWriter::qSlicerNodeWriter(const QString& description,
 qSlicerNodeWriter::~qSlicerNodeWriter() = default;
 
 //----------------------------------------------------------------------------
-QString qSlicerNodeWriter::description()const
+QString qSlicerNodeWriter::description() const
 {
   Q_D(const qSlicerNodeWriter);
   return d->Description;
 }
 
 //----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerNodeWriter::fileType()const
+qSlicerIO::IOFileType qSlicerNodeWriter::fileType() const
 {
   Q_D(const qSlicerNodeWriter);
   return d->FileType;
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerNodeWriter::canWriteObject(vtkObject* object)const
+bool qSlicerNodeWriter::canWriteObject(vtkObject* object) const
 {
   Q_D(const qSlicerNodeWriter);
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(object);
   if (node)
   {
-    foreach(QString className, d->NodeClassNames)
+    foreach (QString className, d->NodeClassNames)
     {
       if (node->IsA(className.toUtf8()))
       {
@@ -103,18 +103,17 @@ bool qSlicerNodeWriter::canWriteObject(vtkObject* object)const
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerNodeWriter::extensions(vtkObject* object)const
+QStringList qSlicerNodeWriter::extensions(vtkObject* object) const
 {
   QStringList supportedExtensions;
   vtkMRMLStorageNode* snode =
-      qSlicerCoreIOManager::createAndAddDefaultStorageNode(vtkMRMLStorableNode::SafeDownCast(object));
+    qSlicerCoreIOManager::createAndAddDefaultStorageNode(vtkMRMLStorableNode::SafeDownCast(object));
   if (snode)
   {
     const int formatCount = snode->GetSupportedWriteFileTypes()->GetNumberOfValues();
     for (int formatIt = 0; formatIt < formatCount; ++formatIt)
     {
-      vtkStdString format =
-        snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
+      vtkStdString format = snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
       supportedExtensions << QString::fromStdString(format);
     }
   }
@@ -128,8 +127,8 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 
   Q_ASSERT(!properties["nodeID"].toString().isEmpty());
 
-  vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(
-    this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
+  vtkMRMLStorableNode* node =
+    vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
   if (this->canWriteObjectConfidence(node) <= 0.0)
   {
     return false;
@@ -172,28 +171,28 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char *id)const
+vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char* id) const
 {
-  vtkMRMLNode *node = this->mrmlScene()->GetNodeByID(id);
+  vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id);
   if (node == nullptr)
   {
     // search in SceneView nodes
     std::string sID(id);
-    std::vector<vtkMRMLNode *> nodes;
+    std::vector<vtkMRMLNode*> nodes;
     this->mrmlScene()->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
-    std::vector<vtkMRMLNode *>::iterator it;
+    std::vector<vtkMRMLNode*>::iterator it;
 
     for (it = nodes.begin(); it != nodes.end(); it++)
     {
-      vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
+      vtkMRMLSceneViewNode* svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
       // skip "Master Scene View" since it contains the same nodes as the scene
-      if (svNode->GetName() && std::string(/*no tr*/"Master Scene View") == std::string(svNode->GetName()))
+      if (svNode->GetName() && std::string(/*no tr*/ "Master Scene View") == std::string(svNode->GetName()))
       {
         continue;
       }
-      std::vector<vtkMRMLNode *> snodes;
+      std::vector<vtkMRMLNode*> snodes;
       svNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
-      std::vector<vtkMRMLNode *>::iterator sit;
+      std::vector<vtkMRMLNode*>::iterator sit;
       for (sit = snodes.begin(); sit != snodes.end(); sit++)
       {
         vtkMRMLNode* snode = (*sit);
@@ -215,7 +214,7 @@ void qSlicerNodeWriter::setNodeClassNames(const QStringList& nodeClassNames)
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerNodeWriter::nodeClassNames()const
+QStringList qSlicerNodeWriter::nodeClassNames() const
 {
   Q_D(const qSlicerNodeWriter);
   return d->NodeClassNames;
@@ -229,13 +228,13 @@ void qSlicerNodeWriter::setSupportUseCompression(bool support)
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerNodeWriter::supportUseCompression()const
+bool qSlicerNodeWriter::supportUseCompression() const
 {
   Q_D(const qSlicerNodeWriter);
   return d->SupportUseCompression;
 }
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerNodeWriter::options()const
+qSlicerIOOptions* qSlicerNodeWriter::options() const
 {
   Q_D(const qSlicerNodeWriter);
   qSlicerNodeWriterOptionsWidget* options = new qSlicerNodeWriterOptionsWidget;

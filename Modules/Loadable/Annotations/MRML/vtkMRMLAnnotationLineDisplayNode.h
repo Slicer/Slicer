@@ -13,50 +13,47 @@
 #include "vtkMRMLAnnotationDisplayNode.h"
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode : public vtkMRMLAnnotationDisplayNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
- public:
-  static vtkMRMLAnnotationLineDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLAnnotationLineDisplayNode,vtkMRMLAnnotationDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) override;
+public:
+  static vtkMRMLAnnotationLineDisplayNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationLineDisplayNode, vtkMRMLAnnotationDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Read node attributes from XML (MRML) file
-  void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  void WriteXML ( ostream& of, int indent ) override;
-
+  void WriteXML(ostream& of, int indent) override;
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode *node ) override;
+  void Copy(vtkMRMLNode* node) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  const char* GetNodeTagName() override {return "AnnotationLineDisplay";}
+  const char* GetNodeTagName() override { return "AnnotationLineDisplay"; }
 
   // Description:
   // Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Get/Set for Symbol scale
   ///  vtkSetMacro(GlyphScale,double);
   void SetLineThickness(double thickness);
-  vtkGetMacro(LineThickness,double);
+  vtkGetMacro(LineThickness, double);
 
   /// Get/Set for LabelPosition
   vtkSetClampMacro(LabelPosition, double, 0.0, 1.0);
@@ -111,10 +108,10 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
   /// \enum ProjectionFlag
   enum ProjectionFlag
   {
-  ProjectionDashed = 0x02,
-  ProjectionColoredWhenParallel = 0x04,
-  ProjectionThickerOnTop = 0x08,
-  ProjectionUseRulerColor = 0x10
+    ProjectionDashed = 0x02,
+    ProjectionColoredWhenParallel = 0x04,
+    ProjectionThickerOnTop = 0x08,
+    ProjectionUseRulerColor = 0x10
   };
 
   /// Get/Set the thickness of the line under the plane
@@ -134,9 +131,9 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
 
 protected:
   vtkMRMLAnnotationLineDisplayNode();
-  ~vtkMRMLAnnotationLineDisplayNode() override  = default;
-  vtkMRMLAnnotationLineDisplayNode( const vtkMRMLAnnotationLineDisplayNode& );
-  void operator= ( const vtkMRMLAnnotationLineDisplayNode& );
+  ~vtkMRMLAnnotationLineDisplayNode() override = default;
+  vtkMRMLAnnotationLineDisplayNode(const vtkMRMLAnnotationLineDisplayNode&);
+  void operator=(const vtkMRMLAnnotationLineDisplayNode&);
 
   double LineThickness;
   double LabelPosition;
@@ -149,67 +146,53 @@ protected:
 };
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SliceProjectionDashedOn()
+void vtkMRMLAnnotationLineDisplayNode ::SliceProjectionDashedOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLAnnotationLineDisplayNode::ProjectionDashed);
+  this->SetSliceProjection(this->GetSliceProjection() | vtkMRMLAnnotationLineDisplayNode::ProjectionDashed);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SliceProjectionDashedOff()
+void vtkMRMLAnnotationLineDisplayNode ::SliceProjectionDashedOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionDashed);
+  this->SetSliceProjection(this->GetSliceProjection() & ~vtkMRMLAnnotationLineDisplayNode::ProjectionDashed);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SliceProjectionColoredWhenParallelOn()
+void vtkMRMLAnnotationLineDisplayNode ::SliceProjectionColoredWhenParallelOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
+  this->SetSliceProjection(this->GetSliceProjection()
+                           | vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SliceProjectionColoredWhenParallelOff()
+void vtkMRMLAnnotationLineDisplayNode ::SliceProjectionColoredWhenParallelOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
+  this->SetSliceProjection(this->GetSliceProjection()
+                           & ~vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SliceProjectionThickerOnTopOn()
+void vtkMRMLAnnotationLineDisplayNode ::SliceProjectionThickerOnTopOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop);
+  this->SetSliceProjection(this->GetSliceProjection() | vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SliceProjectionThickerOnTopOff()
+void vtkMRMLAnnotationLineDisplayNode ::SliceProjectionThickerOnTopOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop);
+  this->SetSliceProjection(this->GetSliceProjection() & ~vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SliceProjectionUseRulerColorOn()
+void vtkMRMLAnnotationLineDisplayNode ::SliceProjectionUseRulerColorOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
+  this->SetSliceProjection(this->GetSliceProjection() | vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SliceProjectionUseRulerColorOff()
+void vtkMRMLAnnotationLineDisplayNode ::SliceProjectionUseRulerColorOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
+  this->SetSliceProjection(this->GetSliceProjection() & ~vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
 }
 
 #endif

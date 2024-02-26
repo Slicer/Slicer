@@ -42,24 +42,23 @@ public:
   qSlicerCommandOptions();
   ~qSlicerCommandOptions() override = default;
 
-  bool noSplash()const;
+  bool noSplash() const;
 
-  bool disableToolTips()const;
+  bool disableToolTips() const;
 
-  bool noMainWindow()const;
+  bool noMainWindow() const;
 
-  bool showPythonConsole()const;
+  bool showPythonConsole() const;
 
   /// Deprecated, use showPythonConsole() instead.
-  bool showPythonInteractor()const;
+  bool showPythonInteractor() const;
 
-  bool enableQtTesting()const;
+  bool enableQtTesting() const;
 
-  bool exitAfterStartup()const;
+  bool exitAfterStartup() const;
 
 protected:
   void addArguments() override;
-
 };
 
 #endif

@@ -41,7 +41,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologiesReader::qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic, QObject* _parent)
+qSlicerTerminologiesReader::qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic,
+                                                       QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerTerminologiesReaderPrivate)
 {
@@ -59,32 +60,33 @@ void qSlicerTerminologiesReader::setTerminologiesLogic(vtkSlicerTerminologiesMod
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerTerminologiesModuleLogic* qSlicerTerminologiesReader::terminologiesLogic()const
+vtkSlicerTerminologiesModuleLogic* qSlicerTerminologiesReader::terminologiesLogic() const
 {
   Q_D(const qSlicerTerminologiesReader);
   return d->TerminologiesLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTerminologiesReader::description()const
+QString qSlicerTerminologiesReader::description() const
 {
   return "Terminology";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerTerminologiesReader::fileType()const
+qSlicerIO::IOFileType qSlicerTerminologiesReader::fileType() const
 {
   return QString("TerminologyFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTerminologiesReader::extensions()const
+QStringList qSlicerTerminologiesReader::extensions() const
 {
-  return QStringList() << "Terminology (*.term.json)" << "Terminology (*.json)";
+  return QStringList() << "Terminology (*.term.json)"
+                       << "Terminology (*.json)";
 }
 
 //----------------------------------------------------------------------------
-double qSlicerTerminologiesReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerTerminologiesReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 
@@ -106,7 +108,8 @@ double qSlicerTerminologiesReader::canLoadFileConfidence(const QString& fileName
         // or /segment-context-schema.json around position 200, read a bit further
         // to account for slight variations in the header.
         QString line = in.read(400);
-        bool looksLikeTerminology = line.contains("/anatomic-context-schema.json") || line.contains("/segment-context-schema.json");
+        bool looksLikeTerminology =
+          line.contains("/anatomic-context-schema.json") || line.contains("/segment-context-schema.json");
         confidence = (looksLikeTerminology ? 0.6 : 0.4);
       }
     }

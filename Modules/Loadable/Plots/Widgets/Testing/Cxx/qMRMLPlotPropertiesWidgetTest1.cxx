@@ -49,7 +49,7 @@
 #include <vtkTable.h>
 #include "qMRMLWidget.h"
 
-int qMRMLPlotPropertiesWidgetTest1( int argc, char * argv [] )
+int qMRMLPlotPropertiesWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -91,12 +91,14 @@ int qMRMLPlotPropertiesWidgetTest1( int argc, char * argv [] )
 
   // Create two plotSeriesNodes
 
-  vtkMRMLPlotSeriesNode* plotSeriesNode1 = vtkMRMLPlotSeriesNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLPlotSeriesNode", "My cosine"));
+  vtkMRMLPlotSeriesNode* plotSeriesNode1 =
+    vtkMRMLPlotSeriesNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLPlotSeriesNode", "My cosine"));
   plotSeriesNode1->SetAndObserveTableNodeID(tableNode->GetID());
   plotSeriesNode1->SetXColumnName(tableNode->GetColumnName(0));
   plotSeriesNode1->SetYColumnName(tableNode->GetColumnName(1));
 
-  vtkMRMLPlotSeriesNode* plotSeriesNode2 = vtkMRMLPlotSeriesNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLPlotSeriesNode", "My sine"));
+  vtkMRMLPlotSeriesNode* plotSeriesNode2 =
+    vtkMRMLPlotSeriesNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLPlotSeriesNode", "My sine"));
   plotSeriesNode2->SetAndObserveTableNodeID(tableNode->GetID());
   plotSeriesNode2->SetXColumnName(tableNode->GetColumnName(0));
   plotSeriesNode2->SetYColumnName(tableNode->GetColumnName(2));

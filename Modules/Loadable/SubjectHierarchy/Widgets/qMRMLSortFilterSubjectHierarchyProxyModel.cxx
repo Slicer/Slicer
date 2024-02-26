@@ -48,60 +48,68 @@ public:
 
   class AttributeFilter
   {
-    public:
-      AttributeFilter(QString attributeName)
-        : AttributeName(attributeName) { };
+  public:
+    AttributeFilter(QString attributeName)
+      : AttributeName(attributeName){};
 
-      AttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className=QString())
-        : AttributeName(attributeName), AttributeValue(attributeValue), Include(include), ClassName(className) { };
+    AttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className = QString())
+      : AttributeName(attributeName)
+      , AttributeValue(attributeValue)
+      , Include(include)
+      , ClassName(className){};
 
-      /// Name of the attribute to filter
-      QString AttributeName;
-      /// Value of the attribute to filter. Empty by default (i.e. allow any value)
-      QVariant AttributeValue{QString()};
-      /// Flag indicating whether this is an include filter or exclude filter.
-      /// - Include filter means that only the items are shown that match the filter.
-      /// - Exclude filter hides items that match the filter. Overrides include filters.
-      /// True by default (i.e. include filter).
-      bool Include{true};
-      /// Only filter attributes on a certain type. Empty by default (i.e. allow all classes).
-      /// Not used for item filters, only node filters.
-      QString ClassName{QString()};
+    /// Name of the attribute to filter
+    QString AttributeName;
+    /// Value of the attribute to filter. Empty by default (i.e. allow any value)
+    QVariant AttributeValue{ QString() };
+    /// Flag indicating whether this is an include filter or exclude filter.
+    /// - Include filter means that only the items are shown that match the filter.
+    /// - Exclude filter hides items that match the filter. Overrides include filters.
+    /// True by default (i.e. include filter).
+    bool Include{ true };
+    /// Only filter attributes on a certain type. Empty by default (i.e. allow all classes).
+    /// Not used for item filters, only node filters.
+    QString ClassName{ QString() };
   };
 
-    /// Find item attribute filter
-    /// \return List index if found, -1 otherwise.
-    int findItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include);
-    /// Find item attribute filters for an attribute name and include flag
-    /// \return List of list indices for the found filters. Empty list if not found
-    QList<int> findItemAttributeFilters(QString attributeName, bool include);
-    /// Find node attribute filter
-    /// \return List index if found, -1 otherwise.
-    int findNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className);
-    /// Find node attribute filters for an attribute name and include flag
-    /// \return List of list indices for the found filters. Empty list if not found
-    QList<int> findNodeAttributeFilters(QString attributeName, bool include);
-    /// Remove include or exclude filters from a given filter list
-    void removeFiltersByIncludeFlag(QList<AttributeFilter>& filterList, bool include);
-  private:
-    /// Find attribute filter in given filter list
-    /// \return List index if found, -1 otherwise.
-    int findAttributeFilter(QList<AttributeFilter> filterList, QString attributeName, QVariant attributeValue, bool include, QString className);
-    /// Find node attribute filters for an attribute name and include flag in given filter list
-    /// \param attributeName Attribute name that the found filters contain. If empty then all filters are considered
-    /// \param include Include/exclude flag for the found filters.
-    /// \return List of list indices for the found filters. Empty list if not found
-    QList<int> findAttributeFilters(QList<AttributeFilter> filterList, QString attributeName, bool include);
+  /// Find item attribute filter
+  /// \return List index if found, -1 otherwise.
+  int findItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include);
+  /// Find item attribute filters for an attribute name and include flag
+  /// \return List of list indices for the found filters. Empty list if not found
+  QList<int> findItemAttributeFilters(QString attributeName, bool include);
+  /// Find node attribute filter
+  /// \return List index if found, -1 otherwise.
+  int findNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className);
+  /// Find node attribute filters for an attribute name and include flag
+  /// \return List of list indices for the found filters. Empty list if not found
+  QList<int> findNodeAttributeFilters(QString attributeName, bool include);
+  /// Remove include or exclude filters from a given filter list
+  void removeFiltersByIncludeFlag(QList<AttributeFilter>& filterList, bool include);
 
-  public:
-    QString NameFilter;
-    QStringList LevelFilter;
-    QStringList NodeTypes;
-    QStringList HideChildNodeTypes;
-    vtkIdType HideItemsUnaffiliatedWithItemID;
-    bool ShowEmptyHierarchyItems;
-    QList<AttributeFilter> ItemAttributeFilters;
-    QList<AttributeFilter> NodeAttributeFilters;
+private:
+  /// Find attribute filter in given filter list
+  /// \return List index if found, -1 otherwise.
+  int findAttributeFilter(QList<AttributeFilter> filterList,
+                          QString attributeName,
+                          QVariant attributeValue,
+                          bool include,
+                          QString className);
+  /// Find node attribute filters for an attribute name and include flag in given filter list
+  /// \param attributeName Attribute name that the found filters contain. If empty then all filters are considered
+  /// \param include Include/exclude flag for the found filters.
+  /// \return List of list indices for the found filters. Empty list if not found
+  QList<int> findAttributeFilters(QList<AttributeFilter> filterList, QString attributeName, bool include);
+
+public:
+  QString NameFilter;
+  QStringList LevelFilter;
+  QStringList NodeTypes;
+  QStringList HideChildNodeTypes;
+  vtkIdType HideItemsUnaffiliatedWithItemID;
+  bool ShowEmptyHierarchyItems;
+  QList<AttributeFilter> ItemAttributeFilters;
+  QList<AttributeFilter> NodeAttributeFilters;
 };
 
 // -----------------------------------------------------------------------------
@@ -118,40 +126,48 @@ qMRMLSortFilterSubjectHierarchyProxyModelPrivate::qMRMLSortFilterSubjectHierarch
 }
 
 // -----------------------------------------------------------------------------
-int qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findItemAttributeFilter(
-  QString attributeName, QVariant attributeValue, bool include)
+int qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findItemAttributeFilter(QString attributeName,
+                                                                              QVariant attributeValue,
+                                                                              bool include)
 {
   return this->findAttributeFilter(this->ItemAttributeFilters, attributeName, attributeValue, include, QString());
 }
 
 // -----------------------------------------------------------------------------
-QList<int> qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findItemAttributeFilters(QString attributeName, bool include)
+QList<int> qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findItemAttributeFilters(QString attributeName,
+                                                                                      bool include)
 {
   return this->findAttributeFilters(this->ItemAttributeFilters, attributeName, include);
 }
 
 // -----------------------------------------------------------------------------
-int qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findNodeAttributeFilter(
-  QString attributeName, QVariant attributeValue, bool include, QString className)
+int qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findNodeAttributeFilter(QString attributeName,
+                                                                              QVariant attributeValue,
+                                                                              bool include,
+                                                                              QString className)
 {
   return this->findAttributeFilter(this->NodeAttributeFilters, attributeName, attributeValue, include, className);
 }
 
 // -----------------------------------------------------------------------------
-QList<int> qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findNodeAttributeFilters(QString attributeName, bool include)
+QList<int> qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findNodeAttributeFilters(QString attributeName,
+                                                                                      bool include)
 {
   return this->findAttributeFilters(this->NodeAttributeFilters, attributeName, include);
 }
 
 // -----------------------------------------------------------------------------
-int qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findAttributeFilter(
-  QList<AttributeFilter> filterList, QString attributeName, QVariant attributeValue, bool include, QString className)
+int qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findAttributeFilter(QList<AttributeFilter> filterList,
+                                                                          QString attributeName,
+                                                                          QVariant attributeValue,
+                                                                          bool include,
+                                                                          QString className)
 {
   int index = 0;
   foreach (AttributeFilter filter, filterList)
   {
-    if (filter.AttributeName == attributeName && filter.AttributeValue == attributeValue
-      && filter.Include == include && filter.ClassName == className)
+    if (filter.AttributeName == attributeName && filter.AttributeValue == attributeValue && filter.Include == include
+        && filter.ClassName == className)
     {
       return index;
     }
@@ -161,8 +177,9 @@ int qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findAttributeFilter(
 }
 
 // -----------------------------------------------------------------------------
-QList<int> qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findAttributeFilters(
-  QList<AttributeFilter> filterList, QString attributeName, bool include)
+QList<int> qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findAttributeFilters(QList<AttributeFilter> filterList,
+                                                                                  QString attributeName,
+                                                                                  bool include)
 {
   QList<int> foundIndices;
   int index = 0;
@@ -178,7 +195,8 @@ QList<int> qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findAttributeFilter
 }
 
 // -----------------------------------------------------------------------------
-void qMRMLSortFilterSubjectHierarchyProxyModelPrivate::removeFiltersByIncludeFlag(QList<AttributeFilter>& filterList, bool include)
+void qMRMLSortFilterSubjectHierarchyProxyModelPrivate::removeFiltersByIncludeFlag(QList<AttributeFilter>& filterList,
+                                                                                  bool include)
 {
   QList<int> foundIndices = this->findAttributeFilters(filterList, QString(), include);
   if (foundIndices.size() == 0)
@@ -204,9 +222,9 @@ CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QStringList, nodeTypes, N
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QStringList, hideChildNodeTypes, HideChildNodeTypes);
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyModel(QObject *vparent)
- : QSortFilterProxyModel(vparent)
- , d_ptr(new qMRMLSortFilterSubjectHierarchyProxyModelPrivate)
+qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyModel(QObject* vparent)
+  : QSortFilterProxyModel(vparent)
+  , d_ptr(new qMRMLSortFilterSubjectHierarchyProxyModelPrivate)
 {
   // For speed issue, we might want to disable the dynamic sorting however
   // when having source models using QStandardItemModel, drag&drop is handled
@@ -221,7 +239,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyM
 qMRMLSortFilterSubjectHierarchyProxyModel::~qMRMLSortFilterSubjectHierarchyProxyModel() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSortFilterSubjectHierarchyProxyModel::mrmlScene()const
+vtkMRMLScene* qMRMLSortFilterSubjectHierarchyProxyModel::mrmlScene() const
 {
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   if (!model)
@@ -232,7 +250,7 @@ vtkMRMLScene* qMRMLSortFilterSubjectHierarchyProxyModel::mrmlScene()const
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode* qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchyNode()const
+vtkMRMLSubjectHierarchyNode* qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchyNode() const
 {
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   if (!model)
@@ -255,8 +273,9 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setNameFilter(QString filter)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSortFilterSubjectHierarchyProxyModel::addItemAttributeFilter(
-  QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/)
+void qMRMLSortFilterSubjectHierarchyProxyModel::addItemAttributeFilter(QString attributeName,
+                                                                       QVariant attributeValue /*=QString()*/,
+                                                                       bool include /*=true*/)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
   if (d->findItemAttributeFilter(attributeName, attributeValue, include) >= 0)
@@ -270,7 +289,9 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::addItemAttributeFilter(
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSortFilterSubjectHierarchyProxyModel::removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include)
+void qMRMLSortFilterSubjectHierarchyProxyModel::removeItemAttributeFilter(QString attributeName,
+                                                                          QVariant attributeValue,
+                                                                          bool include)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
   int foundIndex = d->findItemAttributeFilter(attributeName, attributeValue, include);
@@ -305,8 +326,10 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::removeItemAttributeFilter(QStrin
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSortFilterSubjectHierarchyProxyModel::addNodeAttributeFilter(
-  QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/, QString className/*=QString()*/)
+void qMRMLSortFilterSubjectHierarchyProxyModel::addNodeAttributeFilter(QString attributeName,
+                                                                       QVariant attributeValue /*=QString()*/,
+                                                                       bool include /*=true*/,
+                                                                       QString className /*=QString()*/)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
   if (d->findNodeAttributeFilter(attributeName, attributeValue, include, className) >= 0)
@@ -314,13 +337,17 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::addNodeAttributeFilter(
     return;
   }
 
-  qMRMLSortFilterSubjectHierarchyProxyModelPrivate::AttributeFilter newFilter(attributeName, attributeValue, include, className);
+  qMRMLSortFilterSubjectHierarchyProxyModelPrivate::AttributeFilter newFilter(
+    attributeName, attributeValue, include, className);
   d->NodeAttributeFilters << newFilter;
   this->invalidateFilter();
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSortFilterSubjectHierarchyProxyModel::removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className)
+void qMRMLSortFilterSubjectHierarchyProxyModel::removeNodeAttributeFilter(QString attributeName,
+                                                                          QVariant attributeValue,
+                                                                          bool include,
+                                                                          QString className)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
   int foundIndex = d->findNodeAttributeFilter(attributeName, attributeValue, include, className);
@@ -368,7 +395,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setIncludeItemAttributeNamesFilt
 }
 
 //-----------------------------------------------------------------------------
-QStringList qMRMLSortFilterSubjectHierarchyProxyModel::includeItemAttributeNamesFilter()const
+QStringList qMRMLSortFilterSubjectHierarchyProxyModel::includeItemAttributeNamesFilter() const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
@@ -398,7 +425,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setIncludeNodeAttributeNamesFilt
 }
 
 //-----------------------------------------------------------------------------
-QStringList qMRMLSortFilterSubjectHierarchyProxyModel::includeNodeAttributeNamesFilter()const
+QStringList qMRMLSortFilterSubjectHierarchyProxyModel::includeNodeAttributeNamesFilter() const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
@@ -428,7 +455,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setExcludeItemAttributeNamesFilt
 }
 
 //-----------------------------------------------------------------------------
-QStringList qMRMLSortFilterSubjectHierarchyProxyModel::excludeItemAttributeNamesFilter()const
+QStringList qMRMLSortFilterSubjectHierarchyProxyModel::excludeItemAttributeNamesFilter() const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
@@ -458,7 +485,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setExcludeNodeAttributeNamesFilt
 }
 
 //-----------------------------------------------------------------------------
-QStringList qMRMLSortFilterSubjectHierarchyProxyModel::excludeNodeAttributeNamesFilter()const
+QStringList qMRMLSortFilterSubjectHierarchyProxyModel::excludeNodeAttributeNamesFilter() const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
@@ -489,7 +516,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeNameFilter(QString f
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSortFilterSubjectHierarchyProxyModel::attributeNameFilter()const
+QString qMRMLSortFilterSubjectHierarchyProxyModel::attributeNameFilter() const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
   if (d->ItemAttributeFilters.size() > 0)
@@ -505,7 +532,8 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeValueFilter(QString 
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
   if (d->ItemAttributeFilters.size() != 1)
   {
-    qCritical() << Q_FUNC_INFO << ": Attribute value filter must be set after setting name filter using attributeNameFilter";
+    qCritical() << Q_FUNC_INFO
+                << ": Attribute value filter must be set after setting name filter using attributeNameFilter";
     return;
   }
 
@@ -563,7 +591,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setHideChildNodeTypes(const QStr
 }
 
 //-----------------------------------------------------------------------------
-vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::hideItemsUnaffiliatedWithItemID()const
+vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::hideItemsUnaffiliatedWithItemID() const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
   return d->HideItemsUnaffiliatedWithItemID;
@@ -582,7 +610,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setHideItemsUnaffiliatedWithItem
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSortFilterSubjectHierarchyProxyModel::showEmptyHierarchyItems()const
+bool qMRMLSortFilterSubjectHierarchyProxyModel::showEmptyHierarchyItems() const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
   return d->ShowEmptyHierarchyItems;
@@ -601,28 +629,28 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setShowEmptyHierarchyItems(bool 
 }
 
 //-----------------------------------------------------------------------------
-QModelIndex qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchySceneIndex()const
+QModelIndex qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchySceneIndex() const
 {
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   return this->mapFromSource(sceneModel->subjectHierarchySceneIndex());
 }
 
 //-----------------------------------------------------------------------------
-vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchyItemFromIndex(const QModelIndex& index)const
+vtkIdType qMRMLSortFilterSubjectHierarchyProxyModel::subjectHierarchyItemFromIndex(const QModelIndex& index) const
 {
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
-  return sceneModel->subjectHierarchyItemFromIndex( this->mapToSource(index) );
+  return sceneModel->subjectHierarchyItemFromIndex(this->mapToSource(index));
 }
 
 //-----------------------------------------------------------------------------
-QModelIndex qMRMLSortFilterSubjectHierarchyProxyModel::indexFromSubjectHierarchyItem(vtkIdType itemID, int column)const
+QModelIndex qMRMLSortFilterSubjectHierarchyProxyModel::indexFromSubjectHierarchyItem(vtkIdType itemID, int column) const
 {
   qMRMLSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   return this->mapFromSource(sceneModel->indexFromSubjectHierarchyItem(itemID, column));
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSortFilterSubjectHierarchyProxyModel::acceptedItemCount(vtkIdType rootItemID/*=0*/)const
+int qMRMLSortFilterSubjectHierarchyProxyModel::acceptedItemCount(vtkIdType rootItemID /*=0*/) const
 {
   vtkMRMLSubjectHierarchyNode* shNode = this->subjectHierarchyNode();
   if (!shNode)
@@ -638,7 +666,7 @@ int qMRMLSortFilterSubjectHierarchyProxyModel::acceptedItemCount(vtkIdType rootI
   int itemCount = 0;
   std::vector<vtkIdType> childItemIDs;
   shNode->GetItemChildren(rootItemID, childItemIDs, true);
-  for (std::vector<vtkIdType>::iterator childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
+  for (std::vector<vtkIdType>::iterator childIt = childItemIDs.begin(); childIt != childItemIDs.end(); ++childIt)
   {
     if (this->filterAcceptsItem(*childIt) != Reject)
     {
@@ -649,7 +677,7 @@ int qMRMLSortFilterSubjectHierarchyProxyModel::acceptedItemCount(vtkIdType rootI
 }
 
 //-----------------------------------------------------------------------------
-QStandardItem* qMRMLSortFilterSubjectHierarchyProxyModel::sourceItem(const QModelIndex& sourceIndex)const
+QStandardItem* qMRMLSortFilterSubjectHierarchyProxyModel::sourceItem(const QModelIndex& sourceIndex) const
 {
   qMRMLSubjectHierarchyModel* model = qobject_cast<qMRMLSubjectHierarchyModel*>(this->sourceModel());
   if (!model)
@@ -660,7 +688,7 @@ QStandardItem* qMRMLSortFilterSubjectHierarchyProxyModel::sourceItem(const QMode
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const
+bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
   QStandardItem* parentItem = this->sourceItem(sourceParent);
   if (!parentItem)
@@ -670,7 +698,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
   QStandardItem* item = nullptr;
 
   // Sometimes the row is not complete (DnD), search for a non null item
-  for (int childIndex=0; childIndex < parentItem->columnCount(); ++childIndex)
+  for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
   {
     item = parentItem->child(sourceRow, childIndex);
     if (item)
@@ -689,7 +717,8 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsItem(
-  vtkIdType itemID, bool canAcceptIfAnyChildIsAccepted/*=true*/)const
+  vtkIdType itemID,
+  bool canAcceptIfAnyChildIsAccepted /*=true*/) const
 {
   Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
@@ -735,7 +764,8 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
     }
 
     // Filter by exclude attribute
-    if (dataNode->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str()))
+    if (dataNode->GetAttribute(
+          vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str()))
     {
       return Reject;
     }
@@ -796,7 +826,8 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
         // If class name is specified and the data node is not of the class then filter does not apply
         continue;
       }
-      nodeAttrIt = std::find(nodeAttributeNames.begin(), nodeAttributeNames.end(), filterIt->AttributeName.toUtf8().constData());
+      nodeAttrIt =
+        std::find(nodeAttributeNames.begin(), nodeAttributeNames.end(), filterIt->AttributeName.toUtf8().constData());
       if (nodeAttrIt == nodeAttributeNames.end())
       {
         // If filtered attribute name is not present in the data node then filter does not apply
@@ -829,7 +860,8 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
         // If class name is specified the data node is not of the class then filter does not apply
         continue;
       }
-      nodeAttrIt = std::find(nodeAttributeNames.begin(), nodeAttributeNames.end(), filterIt->AttributeName.toUtf8().constData());
+      nodeAttrIt =
+        std::find(nodeAttributeNames.begin(), nodeAttributeNames.end(), filterIt->AttributeName.toUtf8().constData());
       if (nodeAttrIt == nodeAttributeNames.end())
       {
         // If filtered attribute name is not present in the data node then filter does not apply
@@ -865,7 +897,8 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
   } // If data node
   else if (this->includeNodeAttributeNamesFilter().size() > 0)
   {
-    // If there is no data node but there is an active node attribute include filter, then do not show node-less item unless any child is shown
+    // If there is no data node but there is an active node attribute include filter, then do not show node-less item
+    // unless any child is shown
     if (canAcceptIfAnyChildIsAccepted)
     {
       // If level was requested but is different, then only show if any of its children are shown
@@ -1025,7 +1058,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
     bool isChildShown = false;
     std::vector<vtkIdType> childItemIDs;
     shNode->GetItemChildren(itemID, childItemIDs, true);
-    for (std::vector<vtkIdType>::iterator childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
+    for (std::vector<vtkIdType>::iterator childIt = childItemIDs.begin(); childIt != childItemIDs.end(); ++childIt)
     {
       if (this->filterAcceptsItem(*childIt) != Reject)
       {
@@ -1048,7 +1081,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
 }
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLSortFilterSubjectHierarchyProxyModel::flags(const QModelIndex & index)const
+Qt::ItemFlags qMRMLSortFilterSubjectHierarchyProxyModel::flags(const QModelIndex& index) const
 {
   vtkIdType itemID = this->subjectHierarchyItemFromIndex(index);
   if (!itemID)

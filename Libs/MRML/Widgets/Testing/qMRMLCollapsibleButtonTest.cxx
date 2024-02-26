@@ -38,19 +38,18 @@
 #include "vtkMRMLScene.h"
 
 // ----------------------------------------------------------------------------
-class qMRMLCollapsibleButtonTester: public QObject
+class qMRMLCollapsibleButtonTester : public QObject
 {
   Q_OBJECT
 private slots:
-  void testSetMRMLScene(); //Test setMRMLScene and propagation of qt signal
+  void testSetMRMLScene(); // Test setMRMLScene and propagation of qt signal
 };
-
 
 // ----------------------------------------------------------------------------
 void qMRMLCollapsibleButtonTester::testSetMRMLScene()
 {
   QScopedPointer<qMRMLCollapsibleButton> collapsibleButton(new qMRMLCollapsibleButton);
-  QSignalSpy registeredSignalSpy(collapsibleButton.data(), SIGNAL(mrmlSceneChanged(vtkMRMLScene* )));
+  QSignalSpy registeredSignalSpy(collapsibleButton.data(), SIGNAL(mrmlSceneChanged(vtkMRMLScene*)));
   vtkNew<vtkMRMLScene> scene;
 
   // Trigger the mrmlsceneChanged signal

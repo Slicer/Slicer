@@ -15,7 +15,7 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+# pragma warning(disable : 4786)
 #endif
 
 //
@@ -36,7 +36,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char * argv[], T )
+int DoIt(int argc, char* argv[], T)
 {
   PARSE_ARGS;
 
@@ -45,57 +45,53 @@ int DoIt( int argc, char * argv[], T )
   typedef T InputPixelType;
   typedef T OutputPixelType;
 
-  typedef itk::Image<InputPixelType,  Dimension> InputImageType;
+  typedef itk::Image<InputPixelType, Dimension> InputImageType;
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
   // readers/writers
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
+  typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
   // define the histogram matching
-  typedef itk::HistogramMatchingImageFilter<
-    InputImageType,
-    OutputImageType, InputPixelType>  FilterType;
+  typedef itk::HistogramMatchingImageFilter<InputImageType, OutputImageType, InputPixelType> FilterType;
 
   // Creation of Reader and Writer filters
   typename ReaderType::Pointer reader1 = ReaderType::New();
   typename ReaderType::Pointer reader2 = ReaderType::New();
-  typename WriterType::Pointer writer  = WriterType::New();
+  typename WriterType::Pointer writer = WriterType::New();
 
   // Create the filter
-  typename FilterType::Pointer  filter = FilterType::New();
-  itk::PluginFilterWatcher watcher(filter, "Match Histogram",
-                                   CLPProcessInformation);
+  typename FilterType::Pointer filter = FilterType::New();
+  itk::PluginFilterWatcher watcher(filter, "Match Histogram", CLPProcessInformation);
 
   // Setup the input and output files
-  reader1->SetFileName( inputVolume.c_str() );
-  reader2->SetFileName( referenceVolume.c_str() );
-  writer->SetFileName( outputVolume.c_str() );
+  reader1->SetFileName(inputVolume.c_str());
+  reader2->SetFileName(referenceVolume.c_str());
+  writer->SetFileName(outputVolume.c_str());
   writer->SetUseCompression(1);
 
   // Setup the filter
-  filter->SetInput( reader1->GetOutput() );
-  filter->SetReferenceImage( reader2->GetOutput() );
-  filter->SetNumberOfHistogramLevels( numberOfHistogramLevels );
-  filter->SetNumberOfMatchPoints( numberOfMatchPoints );
-  filter->SetThresholdAtMeanIntensity( thresholdAtMeanIntensity );
+  filter->SetInput(reader1->GetOutput());
+  filter->SetReferenceImage(reader2->GetOutput());
+  filter->SetNumberOfHistogramLevels(numberOfHistogramLevels);
+  filter->SetNumberOfMatchPoints(numberOfMatchPoints);
+  filter->SetThresholdAtMeanIntensity(thresholdAtMeanIntensity);
 
   // Write the output
-  writer->SetInput( filter->GetOutput() );
+  writer->SetInput(filter->GetOutput());
   writer->Update();
 
   return EXIT_SUCCESS;
-
 }
 
 } // end of anonymous namespace
 
-int main( int argc, char * argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;
 
-  itk::ImageIOBase::IOPixelType     pixelType;
+  itk::ImageIOBase::IOPixelType pixelType;
   itk::ImageIOBase::IOComponentType componentType;
 
   try
@@ -103,40 +99,40 @@ int main( int argc, char * argv[] )
     itk::GetImageType(inputVolume, pixelType, componentType);
 
     // This filter handles all types
-    switch( componentType )
+    switch (componentType)
     {
       case itk::ImageIOBase::UCHAR:
-        return DoIt<unsigned char>( argc, argv, static_cast<unsigned char>(0) );
+        return DoIt<unsigned char>(argc, argv, static_cast<unsigned char>(0));
         break;
       case itk::ImageIOBase::CHAR:
-        return DoIt<char>( argc, argv, static_cast<char>(0) );
+        return DoIt<char>(argc, argv, static_cast<char>(0));
         break;
       case itk::ImageIOBase::USHORT:
-        return DoIt<unsigned short>( argc, argv, static_cast<unsigned short>(0) );
+        return DoIt<unsigned short>(argc, argv, static_cast<unsigned short>(0));
         break;
       case itk::ImageIOBase::SHORT:
-        return DoIt<short>( argc, argv, static_cast<short>(0) );
+        return DoIt<short>(argc, argv, static_cast<short>(0));
         break;
       case itk::ImageIOBase::UINT:
-        return DoIt<unsigned int>( argc, argv, static_cast<unsigned int>(0) );
+        return DoIt<unsigned int>(argc, argv, static_cast<unsigned int>(0));
         break;
       case itk::ImageIOBase::INT:
-        return DoIt<int>( argc, argv, static_cast<int>(0) );
+        return DoIt<int>(argc, argv, static_cast<int>(0));
         break;
       case itk::ImageIOBase::ULONG:
-        return DoIt<unsigned long>( argc, argv, static_cast<unsigned long>(0) );
+        return DoIt<unsigned long>(argc, argv, static_cast<unsigned long>(0));
         break;
 /* A bug in ITK prevents this from working with ITK Review Statistics turned on. */
 #if defined USE_REVIEW_STATISTICS
       case itk::ImageIOBase::LONG:
-        return DoIt<long>( argc, argv, static_cast<long>(0) );
+        return DoIt<long>(argc, argv, static_cast<long>(0));
         break;
 #endif
       case itk::ImageIOBase::FLOAT:
-        return DoIt<float>( argc, argv, static_cast<float>(0) );
+        return DoIt<float>(argc, argv, static_cast<float>(0));
         break;
       case itk::ImageIOBase::DOUBLE:
-        return DoIt<double>( argc, argv, static_cast<double>(0) );
+        return DoIt<double>(argc, argv, static_cast<double>(0));
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:
@@ -145,7 +141,7 @@ int main( int argc, char * argv[] )
     }
   }
 
-  catch( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

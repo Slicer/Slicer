@@ -59,10 +59,10 @@ void checkFinalWidgetState(void* data)
 
   CTKCOMPARE(widget->currentIndex().row(), 49);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -86,9 +86,8 @@ int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
 
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLColorListViewEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    widget, xmlDirectory + "qMRMLColorListViewEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))
@@ -99,4 +98,3 @@ int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

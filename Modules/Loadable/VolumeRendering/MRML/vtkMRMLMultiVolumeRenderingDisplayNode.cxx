@@ -42,8 +42,8 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts
 {
   this->Superclass::ReadXMLAttributes(atts);
 
-  //vtkMRMLReadXMLBeginMacro(atts);
-  //vtkMRMLReadXMLEndMacro();
+  // vtkMRMLReadXMLBeginMacro(atts);
+  // vtkMRMLReadXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -51,15 +51,15 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   this->Superclass::WriteXML(of, nIndent);
 
-  //vtkMRMLWriteXMLBeginMacro(of);
-  //vtkMRMLWriteXMLEndMacro();
+  // vtkMRMLWriteXMLBeginMacro(of);
+  // vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLMultiVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
-  //vtkMRMLPrintBeginMacro(os, indent);
-  //vtkMRMLPrintEndMacro();
+  // vtkMRMLPrintBeginMacro(os, indent);
+  // vtkMRMLPrintEndMacro();
 }

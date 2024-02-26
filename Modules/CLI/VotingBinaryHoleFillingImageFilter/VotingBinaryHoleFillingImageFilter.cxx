@@ -33,31 +33,29 @@ namespace
 
 } // end of anonymous namespace
 
-int main( int argc, char * argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
-  typedef   short InputPixelType;
-  typedef   short OutputPixelType;
+  typedef short InputPixelType;
+  typedef short OutputPixelType;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
+  typedef itk::Image<InputPixelType, 3> InputImageType;
   typedef itk::Image<OutputPixelType, 3> OutputImageType;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
+  typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
 
-  reader->SetFileName( inputVolume.c_str() );
-  writer->SetFileName( outputVolume.c_str() );
+  reader->SetFileName(inputVolume.c_str());
+  writer->SetFileName(outputVolume.c_str());
 
-  typedef itk::VotingBinaryHoleFillingImageFilter<
-    InputImageType, OutputImageType>  FilterType;
+  typedef itk::VotingBinaryHoleFillingImageFilter<InputImageType, OutputImageType> FilterType;
 
-  FilterType::Pointer      filter = FilterType::New();
-  itk::PluginFilterWatcher watcher(filter, "Voting Binary Hole Filling",
-                                   CLPProcessInformation);
+  FilterType::Pointer filter = FilterType::New();
+  itk::PluginFilterWatcher watcher(filter, "Voting Binary Hole Filling", CLPProcessInformation);
 
   InputImageType::SizeType indexRadius;
 
@@ -65,14 +63,14 @@ int main( int argc, char * argv[] )
   indexRadius[1] = radius[1]; // radius along y
   indexRadius[2] = radius[2]; // radius along z
 
-  filter->SetRadius( indexRadius );
+  filter->SetRadius(indexRadius);
 
-  filter->SetBackgroundValue( background );
-  filter->SetForegroundValue( foreground );
-  filter->SetMajorityThreshold( majorityThreshold );
+  filter->SetBackgroundValue(background);
+  filter->SetForegroundValue(foreground);
+  filter->SetMajorityThreshold(majorityThreshold);
 
-  filter->SetInput( reader->GetOutput() );
-  writer->SetInput( filter->GetOutput() );
+  filter->SetInput(reader->GetOutput());
+  writer->SetInput(filter->GetOutput());
   writer->SetUseCompression(true);
   writer->Update();
 

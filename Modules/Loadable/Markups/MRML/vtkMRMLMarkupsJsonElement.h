@@ -106,7 +106,9 @@ public:
 
   /// Get property values from each item of an array.
   /// If no such property is found or it is not the right type then false is returned.
-  bool GetArrayItemsStringProperty(const char* arrayName, const char* propertyName, std::vector<std::string>& propertyValues);
+  bool GetArrayItemsStringProperty(const char* arrayName,
+                                   const char* propertyName,
+                                   std::vector<std::string>& propertyValues);
 
   /// Get an array element from a property.
   /// If no such property is found or it is not the right type then nullptr is returned.
@@ -156,7 +158,6 @@ protected:
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonReader : public vtkObject
 {
 public:
-
   static vtkMRMLMarkupsJsonReader* New();
   vtkTypeMacro(vtkMRMLMarkupsJsonReader, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -182,15 +183,13 @@ protected:
   vtkNew<vtkMRMLMessageCollection> UserMessages;
 };
 
-
 /// \brief Writes properties into a JSON file
 ///
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonWriter : public vtkObject
 {
 public:
-
-  static vtkMRMLMarkupsJsonWriter *New();
-  vtkTypeMacro(vtkMRMLMarkupsJsonWriter,vtkObject);
+  static vtkMRMLMarkupsJsonWriter* New();
+  vtkTypeMacro(vtkMRMLMarkupsJsonWriter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// This method must be called before writing any properties to the output file.
@@ -228,7 +227,7 @@ public:
   void WriteVectorProperty(const std::string& propertyName, double* v, int numberOfComponents = 3);
   void WriteMatrix4x4Property(const std::string& propertyName, double v[16], bool flipRasLps);
   void WriteDoubleArrayProperty(const char* propertyName, vtkDoubleArray* doubleArray);
-/// @}
+  /// @}
 
   /// Returns user-displayable messages that may contain details about any failed operation.
   vtkGetObjectMacro(UserMessages, vtkMRMLMessageCollection);

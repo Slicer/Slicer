@@ -32,14 +32,12 @@ class vtkMRMLNode;
 class vtkScalarBarWidget;
 class QAbstractButton;
 
-class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModuleWidget
-  : public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerColorsModuleWidget(QWidget *parent=nullptr);
+  qSlicerColorsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerColorsModuleWidget() override;
 
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
@@ -60,7 +58,7 @@ protected slots:
 
 protected:
   void setup() override;
-  void setMRMLScene(vtkMRMLScene *scene) override;
+  void setMRMLScene(vtkMRMLScene* scene) override;
 
 protected:
   QScopedPointer<qSlicerColorsModuleWidgetPrivate> d_ptr;

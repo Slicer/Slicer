@@ -77,10 +77,12 @@ static const double UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC = 0.020; // refresh o
 //-----------------------------------------------------------------------------
 class qSlicerMarkupsModulePrivate
 {
-QVTK_OBJECT
-Q_DECLARE_PUBLIC(qSlicerMarkupsModule);
+  QVTK_OBJECT
+  Q_DECLARE_PUBLIC(qSlicerMarkupsModule);
+
 protected:
   qSlicerMarkupsModule* const q_ptr;
+
 public:
   qSlicerMarkupsModulePrivate(qSlicerMarkupsModule& object);
 
@@ -92,7 +94,6 @@ public:
   bool MarkupsModuleOwnsToolBar{ true };
   bool AutoShowToolBar{ true };
   vtkWeakPointer<vtkMRMLMarkupsNode> MarkupsToShow;
-
 };
 
 //-----------------------------------------------------------------------------
@@ -147,7 +148,7 @@ void qSlicerMarkupsModulePrivate::addToolBar()
   mainWindow->addToolBarBreak();
   mainWindow->addToolBar(this->ToolBar);
   this->MarkupsModuleOwnsToolBar = false;
-  foreach(QMenu * toolBarMenu, mainWindow->findChildren<QMenu*>())
+  foreach (QMenu* toolBarMenu, mainWindow->findChildren<QMenu*>())
   {
     if (toolBarMenu->objectName() == QString("WindowToolBarsMenu"))
     {
@@ -174,7 +175,8 @@ void qSlicerMarkupsModulePrivate::addToolBar()
 
 //-----------------------------------------------------------------------------
 qSlicerMarkupsModule::qSlicerMarkupsModule(QObject* _parent)
-  : Superclass(_parent), d_ptr(new qSlicerMarkupsModulePrivate(*this))
+  : Superclass(_parent)
+  , d_ptr(new qSlicerMarkupsModulePrivate(*this))
 {
   Q_D(qSlicerMarkupsModule);
   /*
@@ -188,7 +190,7 @@ qSlicerMarkupsModule::qSlicerMarkupsModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerMarkupsModule::categories()const
+QStringList qSlicerMarkupsModule::categories() const
 {
   return QStringList() << "" << qSlicerAbstractCoreModule::tr("Informatics");
 }
@@ -197,23 +199,22 @@ QStringList qSlicerMarkupsModule::categories()const
 qSlicerMarkupsModule::~qSlicerMarkupsModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsModule::helpText()const
+QString qSlicerMarkupsModule::helpText() const
 {
-  QString help = tr(
-    "A module to create and manage markups in 2D and 3D."
-    " This module replaced the former Annotations module.");
+  QString help = tr("A module to create and manage markups in 2D and 3D."
+                    " This module replaced the former Annotations module.");
   help += this->defaultDocumentationLink();
   return help;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsModule::acknowledgementText()const
+QString qSlicerMarkupsModule::acknowledgementText() const
 {
   return tr("This work was supported by NAMIC, NAC, and the Slicer Community.");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerMarkupsModule::contributors()const
+QStringList qSlicerMarkupsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Nicole Aucoin (BWH)");
@@ -221,7 +222,7 @@ QStringList qSlicerMarkupsModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerMarkupsModule::icon()const
+QIcon qSlicerMarkupsModule::icon() const
 {
   return QIcon(":/Icons/Markups.png");
 }
@@ -232,7 +233,7 @@ void qSlicerMarkupsModule::setup()
   Q_D(qSlicerMarkupsModule);
   this->Superclass::setup();
 
-  vtkSlicerMarkupsLogic *logic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
+  vtkSlicerMarkupsLogic* logic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
   if (!logic)
   {
     qCritical() << Q_FUNC_INFO << ": cannot get Markups logic.";
@@ -240,8 +241,10 @@ void qSlicerMarkupsModule::setup()
   }
 
   // Register displayable managers (same displayable manager handles both slice and 3D views)
-  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLMarkupsDisplayableManager");
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLMarkupsDisplayableManager");
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLMarkupsDisplayableManager");
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLMarkupsDisplayableManager");
 
   // Register IO
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
@@ -317,8 +320,8 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
 
   if (settings.contains("Markups/SnapMode"))
   {
-    markupsDisplayNode->SetSnapMode(vtkMRMLMarkupsDisplayNode::GetSnapModeFromString(
-      settings.value("Markups/SnapMode").toString().toUtf8()));
+    markupsDisplayNode->SetSnapMode(
+      vtkMRMLMarkupsDisplayNode::GetSnapModeFromString(settings.value("Markups/SnapMode").toString().toUtf8()));
   }
   if (settings.contains("Markups/FillVisibility"))
   {
@@ -342,7 +345,8 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
   }
   if (settings.contains("Markups/GlyphType"))
   {
-    int glyphType = vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(settings.value("Markups/GlyphType").toString().toUtf8());
+    int glyphType =
+      vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(settings.value("Markups/GlyphType").toString().toUtf8());
     // If application settings is old then it may contain invalid GlyphType. In this case use Sphere3D glyph instead.
     if (glyphType == vtkMRMLMarkupsDisplayNode::GlyphTypeInvalid)
     {
@@ -369,11 +373,13 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
   }
   if (settings.contains("Markups/SliceProjectionUseFiducialColor"))
   {
-    markupsDisplayNode->SetSliceProjectionUseFiducialColor(settings.value("Markups/SliceProjectionUseFiducialColor").toBool());
+    markupsDisplayNode->SetSliceProjectionUseFiducialColor(
+      settings.value("Markups/SliceProjectionUseFiducialColor").toBool());
   }
   if (settings.contains("Markups/SliceProjectionOutlinedBehindSlicePlane"))
   {
-    markupsDisplayNode->SetSliceProjectionOutlinedBehindSlicePlane(settings.value("Markups/SliceProjectionOutlinedBehindSlicePlane").toBool());
+    markupsDisplayNode->SetSliceProjectionOutlinedBehindSlicePlane(
+      settings.value("Markups/SliceProjectionOutlinedBehindSlicePlane").toBool());
   }
   if (settings.contains("Markups/SliceProjectionColor"))
   {
@@ -385,7 +391,6 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
   {
     markupsDisplayNode->SetSliceProjectionOpacity(settings.value("Markups/SliceProjectionOpacity").toDouble());
   }
-
 
   if (settings.contains("Markups/CurveLineSizeMode"))
   {
@@ -430,8 +435,7 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
   if (settings.contains("Markups/TextProperty"))
   {
     vtkMRMLMarkupsDisplayNode::UpdateTextPropertyFromString(
-      settings.value("Markups/TextProperty").toString().toStdString(),
-      markupsDisplayNode->GetTextProperty());
+      settings.value("Markups/TextProperty").toString().toStdString(), markupsDisplayNode->GetTextProperty());
   }
 
   if (settings.contains("Markups/SelectedColor"))
@@ -460,7 +464,6 @@ void qSlicerMarkupsModule::readDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDispl
   {
     markupsDisplayNode->SetInteractionHandleScale(settings.value("Markups/InteractionHandleScale").toDouble());
   }
-
 }
 
 //-----------------------------------------------------------------------------
@@ -473,27 +476,32 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
   }
   QSettings settings;
 
-  settings.setValue("Markups/SnapMode", vtkMRMLMarkupsDisplayNode::GetSnapModeAsString(
-    markupsDisplayNode->GetSnapMode()));
+  settings.setValue("Markups/SnapMode",
+                    vtkMRMLMarkupsDisplayNode::GetSnapModeAsString(markupsDisplayNode->GetSnapMode()));
   settings.setValue("Markups/FillVisibility", markupsDisplayNode->GetFillVisibility());
   settings.setValue("Markups/OutlineVisibility", markupsDisplayNode->GetOutlineVisibility());
   settings.setValue("Markups/FillOpacity", markupsDisplayNode->GetFillOpacity());
   settings.setValue("Markups/OutlineOpacity", markupsDisplayNode->GetOutlineOpacity());
   settings.setValue("Markups/TextScale", markupsDisplayNode->GetTextScale());
 
-  settings.setValue("Markups/GlyphType", vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(markupsDisplayNode->GetGlyphType()));
+  settings.setValue("Markups/GlyphType",
+                    vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString(markupsDisplayNode->GetGlyphType()));
   settings.setValue("Markups/GlyphScale", markupsDisplayNode->GetGlyphScale());
   settings.setValue("Markups/GlyphSize", markupsDisplayNode->GetGlyphSize());
   settings.setValue("Markups/UseGlyphScale", markupsDisplayNode->GetUseGlyphScale());
 
   settings.setValue("Markups/SliceProjection", markupsDisplayNode->GetSliceProjection());
-  settings.setValue("Markups/SliceProjectionUseFiducialColor", markupsDisplayNode->GetSliceProjectionUseFiducialColor());
-  settings.setValue("Markups/SliceProjectionOutlinedBehindSlicePlane", markupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane());
+  settings.setValue("Markups/SliceProjectionUseFiducialColor",
+                    markupsDisplayNode->GetSliceProjectionUseFiducialColor());
+  settings.setValue("Markups/SliceProjectionOutlinedBehindSlicePlane",
+                    markupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane());
   double* color = markupsDisplayNode->GetSliceProjectionColor();
   settings.setValue("Markups/SliceProjectionColor", QColor::fromRgbF(color[0], color[1], color[2]));
   settings.setValue("Markups/SliceProjectionOpacity", markupsDisplayNode->GetSliceProjectionOpacity());
 
-  settings.setValue("Markups/CurveLineSizeMode", vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeAsString(markupsDisplayNode->GetCurveLineSizeMode()));
+  settings.setValue(
+    "Markups/CurveLineSizeMode",
+    vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeAsString(markupsDisplayNode->GetCurveLineSizeMode()));
   settings.setValue("Markups/LineThickness", markupsDisplayNode->GetLineThickness());
   settings.setValue("Markups/LineDiameter", markupsDisplayNode->GetLineDiameter());
 
@@ -505,8 +513,9 @@ void qSlicerMarkupsModule::writeDefaultMarkupsDisplaySettings(vtkMRMLMarkupsDisp
   settings.setValue("Markups/OccludedVisibility", markupsDisplayNode->GetOccludedVisibility());
   settings.setValue("Markups/OccludedOpacity", markupsDisplayNode->GetOccludedOpacity());
 
-  settings.setValue("Markups/TextProperty", QString::fromStdString(
-    vtkMRMLDisplayNode::GetTextPropertyAsString(markupsDisplayNode->GetTextProperty())));
+  settings.setValue(
+    "Markups/TextProperty",
+    QString::fromStdString(vtkMRMLDisplayNode::GetTextPropertyAsString(markupsDisplayNode->GetTextProperty())));
 
   color = markupsDisplayNode->GetSelectedColor();
   settings.setValue("Markups/SelectedColor", QColor::fromRgbF(color[0], color[1], color[2]));
@@ -558,9 +567,7 @@ bool qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
 {
   Q_UNUSED(markupsNode);
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  if (!app
-      || !app->moduleManager()
-      || !dynamic_cast<qSlicerMarkupsModule*>(app->moduleManager()->module("Markups")))
+  if (!app || !app->moduleManager() || !dynamic_cast<qSlicerMarkupsModule*>(app->moduleManager()->module("Markups")))
   {
     qCritical("Markups module is not available");
     return false;

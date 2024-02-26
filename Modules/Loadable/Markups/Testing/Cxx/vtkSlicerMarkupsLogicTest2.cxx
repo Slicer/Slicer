@@ -25,7 +25,7 @@
 #include <vtkNew.h>
 #include <vtkTestingOutputWindow.h>
 
-static void PrintLabels(vtkMRMLMarkupsNode *m)
+static void PrintLabels(vtkMRMLMarkupsNode* m)
 {
   if (!m)
   {
@@ -37,7 +37,7 @@ static void PrintLabels(vtkMRMLMarkupsNode *m)
   }
 }
 
-int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
+int vtkSlicerMarkupsLogicTest2(int argc, char* argv[])
 {
   std::string tempFolder = ".";
   if (argc > 1)
@@ -60,12 +60,14 @@ int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
   }
   if (logic1->MoveNthControlPointToNewListAtIndex(0, source, nullptr, 0))
   {
-    std::cerr << "MoveNthControlPointToNewListAtIndex: Failed to return false when passed null destination list" << std::endl;
+    std::cerr << "MoveNthControlPointToNewListAtIndex: Failed to return false when passed null destination list"
+              << std::endl;
     return EXIT_FAILURE;
   }
   if (logic1->MoveNthControlPointToNewListAtIndex(0, nullptr, dest, 0))
   {
-    std::cerr << "MoveNthControlPointToNewListAtIndex: Failed to return false when passed null source list" << std::endl;
+    std::cerr << "MoveNthControlPointToNewListAtIndex: Failed to return false when passed null source list"
+              << std::endl;
     return EXIT_FAILURE;
   }
   TESTING_OUTPUT_ASSERT_ERRORS_END();
@@ -74,29 +76,31 @@ int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   if (logic1->MoveNthControlPointToNewListAtIndex(0, source, dest, 0))
   {
-    std::cerr << "MoveNthControlPointToNewListAtIndex: Failed to return false when passed empty source and dest list" << std::endl;
+    std::cerr << "MoveNthControlPointToNewListAtIndex: Failed to return false when passed empty source and dest list"
+              << std::endl;
     return EXIT_FAILURE;
   }
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // dest list smaller than source list
   source->AddNControlPoints(1);
-  source->SetNthControlPointLabel(0,"S1");
-  source->SetNthControlPointDescription(0,"To be moved");
-  double x =  5.5;
+  source->SetNthControlPointLabel(0, "S1");
+  source->SetNthControlPointDescription(0, "To be moved");
+  double x = 5.5;
   double y = -1.2;
   double z = 10.6;
   source->SetNthControlPointPosition(0, x, y, z);
 
   if (!logic1->MoveNthControlPointToNewListAtIndex(0, source, dest, 0))
   {
-    std::cerr << "MoveNthControlPointToNewListAtIndex: Failed to move fid from list of size 1 to list of size 0" << std::endl;
+    std::cerr << "MoveNthControlPointToNewListAtIndex: Failed to move fid from list of size 1 to list of size 0"
+              << std::endl;
     return EXIT_FAILURE;
   }
   if (source->GetNumberOfControlPoints() != 0)
   {
     std::cerr << "MoveNthControlPointToNewListAtIndex: failed to move fiducial out of source list, list size = "
-              << source->GetNumberOfControlPoints()  << std::endl;
+              << source->GetNumberOfControlPoints() << std::endl;
     return EXIT_FAILURE;
   }
   if (dest->GetNumberOfControlPoints() != 1)
@@ -109,17 +113,13 @@ int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
   std::string movedDescription = dest->GetNthControlPointDescription(0);
   double movedPoint[3];
   dest->GetNthControlPointPosition(0, movedPoint);
-  if (movedLabel.compare("S1") != 0 ||
-      movedDescription.compare("To be moved") != 0 ||
-      movedPoint[0] != x ||
-      movedPoint[1] != y ||
-      movedPoint[2] != z)
+  if (movedLabel.compare("S1") != 0 || movedDescription.compare("To be moved") != 0 || movedPoint[0] != x
+      || movedPoint[1] != y || movedPoint[2] != z)
   {
-    std::cerr << "MoveNthControlPointToNewListAtIndex: moved fiducial doesn't match source, label = " << movedLabel.c_str()
-              << ", description = " << movedDescription.c_str()
-              << ", point = " << movedPoint[0] << ", " << movedPoint[1] << ", " << movedPoint[2]
-              << ". Expected 'S1', 'To be moved', " << x << ", " << y << ", " << z
-              << std::endl;
+    std::cerr << "MoveNthControlPointToNewListAtIndex: moved fiducial doesn't match source, label = "
+              << movedLabel.c_str() << ", description = " << movedDescription.c_str() << ", point = " << movedPoint[0]
+              << ", " << movedPoint[1] << ", " << movedPoint[2] << ". Expected 'S1', 'To be moved', " << x << ", " << y
+              << ", " << z << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -163,17 +163,16 @@ int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
   if (dest->GetNumberOfControlPoints() != destStartSize + 1)
   {
     std::cerr << "MoveNthControlPointToNewListAtIndex: "
-              << " destination list is wrong size, got "
-              << dest->GetNumberOfControlPoints() << " != "
-              << destStartSize + 1 << std::endl;
+              << " destination list is wrong size, got " << dest->GetNumberOfControlPoints()
+              << " != " << destStartSize + 1 << std::endl;
     return EXIT_FAILURE;
   }
   std::string newLabel = dest->GetNthControlPointLabel(2);
   if (newLabel.compare("S3") != 0)
   {
     std::cerr << "MoveNthControlPointToNewListAtIndex: "
-              << " after moving to index 2, new label "
-              << newLabel.c_str() << " != " << " 'S3'" << std::endl;
+              << " after moving to index 2, new label " << newLabel.c_str() << " != "
+              << " 'S3'" << std::endl;
     return EXIT_FAILURE;
   }
   // make sure that the next markup was moved down
@@ -181,8 +180,8 @@ int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
   if (newLabel.compare("D2") != 0)
   {
     std::cerr << "MoveNthControlPointToNewListAtIndex: "
-              << "after moving to index 2, new label at index 3 "
-              << newLabel.c_str() << " != " << " 'D2'" << std::endl;
+              << "after moving to index 2, new label at index 3 " << newLabel.c_str() << " != "
+              << " 'D2'" << std::endl;
     return EXIT_FAILURE;
   }
   // on the source list make sure that the next one was moved up
@@ -206,22 +205,25 @@ int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
   if (dest->GetNumberOfControlPoints() != destStartSize + 2)
   {
     std::cerr << "MoveNthControlPointToNewListAtIndex: "
-              << " destination list is wrong size, got "
-              << dest->GetNumberOfControlPoints() << " != "
-              << destStartSize + 2 << std::endl;
+              << " destination list is wrong size, got " << dest->GetNumberOfControlPoints()
+              << " != " << destStartSize + 2 << std::endl;
     return EXIT_FAILURE;
   }
   newLabel = dest->GetNthControlPointLabel(0);
   if (newLabel.compare("S4") != 0)
   {
-    std::cerr << "MoveNthControlPointToNewListAtIndex: after moving to index 0, new label '" << newLabel.c_str() << "' != " << " 'S4'" << std::endl;
+    std::cerr << "MoveNthControlPointToNewListAtIndex: after moving to index 0, new label '" << newLabel.c_str()
+              << "' != "
+              << " 'S4'" << std::endl;
     return EXIT_FAILURE;
   }
   // check that last one is expected D5
   newLabel = dest->GetNthControlPointLabel(7);
   if (newLabel.compare("D5") != 0)
   {
-    std::cerr << "MoveNthControlPointToNewListAtIndex: after moving to index 0, new label at index 7 '" << newLabel.c_str() << "' != " << " 'D5'" << std::endl;
+    std::cerr << "MoveNthControlPointToNewListAtIndex: after moving to index 0, new label at index 7 '"
+              << newLabel.c_str() << "' != "
+              << " 'D5'" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -237,16 +239,14 @@ int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
   PrintLabels(dest);
   if (source->GetNumberOfControlPoints() != 0)
   {
-    std::cerr << "Source list is not empty: size = "
-              << source->GetNumberOfControlPoints() << std::endl;
+    std::cerr << "Source list is not empty: size = " << source->GetNumberOfControlPoints() << std::endl;
     return EXIT_FAILURE;
   }
   if (dest->GetNumberOfControlPoints() != destStartSize + 3)
   {
     std::cerr << "MoveNthControlPointToNewListAtIndex: "
-              << "destination list is wrong size, got "
-              << dest->GetNumberOfControlPoints() << " != "
-              << destStartSize + 3 << std::endl;
+              << "destination list is wrong size, got " << dest->GetNumberOfControlPoints()
+              << " != " << destStartSize + 3 << std::endl;
     return EXIT_FAILURE;
   }
   // check that index 8 has the right label in dest
@@ -254,8 +254,8 @@ int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
   if (newLabel.compare("S2") != 0)
   {
     std::cerr << "MoveNthControlPointToNewListAtIndex: "
-              << "after moving to index 8, new label '"
-              << newLabel.c_str() << "' != " << " 'S2'" << std::endl;
+              << "after moving to index 8, new label '" << newLabel.c_str() << "' != "
+              << " 'S2'" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -289,14 +289,14 @@ int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
   }
   if (sourceSize != source->GetNumberOfControlPoints())
   {
-    std::cerr << "Failed to copy 0th markup to new list, source list expected size was "
-              << sourceSize << " but is now " << source->GetNumberOfControlPoints() << std::endl;
+    std::cerr << "Failed to copy 0th markup to new list, source list expected size was " << sourceSize << " but is now "
+              << source->GetNumberOfControlPoints() << std::endl;
     return EXIT_FAILURE;
   }
   if ((destSize + 1) != dest->GetNumberOfControlPoints())
   {
-    std::cerr << "Failed to copy 0th markup to new list, destination list expected size was "
-              << destSize << " but is now " << dest->GetNumberOfControlPoints() << std::endl;
+    std::cerr << "Failed to copy 0th markup to new list, destination list expected size was " << destSize
+              << " but is now " << dest->GetNumberOfControlPoints() << std::endl;
     return EXIT_FAILURE;
   }
   // cleanup

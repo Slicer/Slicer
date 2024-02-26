@@ -25,28 +25,28 @@ namespace itk
  */
 
 template <class TData, class TCoordRep = double>
-class DiffusionTensor3DNearestNeighborInterpolateFunction :
-  public DiffusionTensor3DInterpolateImageFunction<TData, TCoordRep>
+class DiffusionTensor3DNearestNeighborInterpolateFunction
+  : public DiffusionTensor3DInterpolateImageFunction<TData, TCoordRep>
 {
 public:
-  typedef TData                                               DataType;
+  typedef TData DataType;
   typedef DiffusionTensor3DNearestNeighborInterpolateFunction Self;
   typedef DiffusionTensor3DInterpolateImageFunction<DataType> Superclass;
-  typedef typename Superclass::TensorDataType                 TensorDataType;
-  typedef typename Superclass::DiffusionImageType             DiffusionImageType;
-  typedef typename Superclass::PointType                      PointType;
-  typedef SmartPointer<Self>                                  Pointer;
-  typedef SmartPointer<const Self>                            ConstPointer;
+  typedef typename Superclass::TensorDataType TensorDataType;
+  typedef typename Superclass::DiffusionImageType DiffusionImageType;
+  typedef typename Superclass::PointType PointType;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
   typedef ImageFunction<DiffusionImageType, DataType, double> ImageFunctionType;
-  typedef typename Superclass::ContinuousIndexType            ContinuousIndexType;
+  typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DNearestNeighborInterpolateFunction, DiffusionTensor3DInterpolateImageFunction);
 
-  itkNewMacro( Self );
+  itkNewMacro(Self);
   // /Evaluate the value of a tensor at a given position
-//  TensorDataType Evaluate( const PointType &point ) ;
-  TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const override;
+  //  TensorDataType Evaluate( const PointType &point ) ;
+  TensorDataType EvaluateAtContinuousIndex(const ContinuousIndexType& index) const override;
 
 protected:
 };
@@ -54,7 +54,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DNearestNeighborInterpolateFunction.txx"
+# include "itkDiffusionTensor3DNearestNeighborInterpolateFunction.txx"
 #endif
 
 #endif

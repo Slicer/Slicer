@@ -6,15 +6,13 @@
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 
 //------------------------------------------------------------------------------
-vtkMRMLAnnotationTextDisplayNode*
-vtkMRMLAnnotationTextDisplayNode::New()
+vtkMRMLAnnotationTextDisplayNode* vtkMRMLAnnotationTextDisplayNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLAnnotationTextDisplayNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationTextDisplayNode");
   if (ret)
   {
-      return (vtkMRMLAnnotationTextDisplayNode*) ret;
+    return (vtkMRMLAnnotationTextDisplayNode*)ret;
   }
   // If the factory was unable to create the object, then create it here.
   vtkMRMLAnnotationTextDisplayNode* result = new vtkMRMLAnnotationTextDisplayNode;
@@ -25,14 +23,12 @@ vtkMRMLAnnotationTextDisplayNode::New()
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode*
-vtkMRMLAnnotationTextDisplayNode::CreateNodeInstance()
+vtkMRMLNode* vtkMRMLAnnotationTextDisplayNode::CreateNodeInstance()
 {
-  vtkObject* ret = vtkObjectFactory::CreateInstance(
-      "vtkMRMLAnnotationTextDisplayNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLAnnotationTextDisplayNode");
   if (ret)
   {
-      return (vtkMRMLAnnotationTextDisplayNode*) ret;
+    return (vtkMRMLAnnotationTextDisplayNode*)ret;
   }
   // If the factory was unable to create the object, then create it here.
   vtkMRMLAnnotationTextDisplayNode* result = new vtkMRMLAnnotationTextDisplayNode;
@@ -61,8 +57,7 @@ vtkMRMLAnnotationTextDisplayNode::vtkMRMLAnnotationTextDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLAnnotationTextDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
 
@@ -70,7 +65,7 @@ vtkMRMLAnnotationTextDisplayNode::WriteXML(ostream& of, int nIndent)
 
   of << " textScale=\"" << this->TextScale << "\"";
   of << " useLineWrap=\"" << (this->UseLineWrap ? "true" : "false") << "\"";
-  of << " maxCharactersPerLine=\"" << this->MaxCharactersPerLine<< "\"";
+  of << " maxCharactersPerLine=\"" << this->MaxCharactersPerLine << "\"";
   of << " showBorder=\"" << (this->ShowBorder ? "true" : "false") << "\"";
   of << " showLeader=\"" << (this->ShowLeader ? "true" : "false") << "\"";
   of << " showArrowHead=\"" << (this->ShowArrowHead ? "true" : "false") << "\"";
@@ -82,8 +77,7 @@ vtkMRMLAnnotationTextDisplayNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
+void vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
 
@@ -104,7 +98,7 @@ vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strcmp(attName, "useLineWrap"))
     {
-      if (!strcmp(attValue,"true"))
+      if (!strcmp(attValue, "true"))
       {
         this->UseLineWrap = 1;
       }
@@ -121,7 +115,7 @@ vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strcmp(attName, "showBorder"))
     {
-      if (!strcmp(attValue,"true"))
+      if (!strcmp(attValue, "true"))
       {
         this->ShowBorder = 1;
       }
@@ -132,7 +126,7 @@ vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strcmp(attName, "showLeader"))
     {
-      if (!strcmp(attValue,"true"))
+      if (!strcmp(attValue, "true"))
       {
         this->ShowLeader = 1;
       }
@@ -143,7 +137,7 @@ vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strcmp(attName, "showArrowHead"))
     {
-      if (!strcmp(attValue,"true"))
+      if (!strcmp(attValue, "true"))
       {
         this->ShowArrowHead = 1;
       }
@@ -154,7 +148,7 @@ vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strcmp(attName, "useThreeDimensionalLeader"))
     {
-      if (!strcmp(attValue,"true"))
+      if (!strcmp(attValue, "true"))
       {
         this->UseThreeDimensionalLeader = 1;
       }
@@ -183,7 +177,7 @@ vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strcmp(attName, "attachEdgeOnly"))
     {
-      if (!strcmp(attValue,"true"))
+      if (!strcmp(attValue, "true"))
       {
         this->AttachEdgeOnly = 1;
       }
@@ -200,14 +194,12 @@ vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void
-vtkMRMLAnnotationTextDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAnnotationTextDisplayNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLAnnotationTextDisplayNode *node =
-      (vtkMRMLAnnotationTextDisplayNode *) anode;
+  vtkMRMLAnnotationTextDisplayNode* node = (vtkMRMLAnnotationTextDisplayNode*)anode;
 
   this->SetTextScale(node->TextScale);
   this->SetUseLineWrap(node->UseLineWrap);
@@ -225,8 +217,7 @@ vtkMRMLAnnotationTextDisplayNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAnnotationTextDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "Text scale: (";
@@ -243,47 +234,40 @@ vtkMRMLAnnotationTextDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "MaximumLeaderGlyphSize: " << this->MaximumLeaderGlyphSize << std::endl;
   os << indent << "Padding: " << this->Padding << std::endl;
   os << indent << "AttachEdgeOnly: " << (this->AttachEdgeOnly ? "true" : "false") << std::endl;
-
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayNode::ProcessMRMLEvents(vtkObject *caller,
-    unsigned long event, void *callData)
+void vtkMRMLAnnotationTextDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
 }
 
 //-----------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLAnnotationTextDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayNode::SetTextScale(double scale)
+void vtkMRMLAnnotationTextDisplayNode::SetTextScale(double scale)
 {
   if (this->TextScale == scale)
   {
     return;
   }
-  //vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting TextScale to " << scale);
+  // vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting TextScale to " << scale);
   this->TextScale = scale;
 
   this->Modified();
 }
-
-
 
 //----------------------------------------------------------------------------
 // Create a backup of this node and store it with the node.
 void vtkMRMLAnnotationTextDisplayNode::CreateBackup()
 {
 
-  vtkMRMLAnnotationTextDisplayNode * backupNode = vtkMRMLAnnotationTextDisplayNode::New();
+  vtkMRMLAnnotationTextDisplayNode* backupNode = vtkMRMLAnnotationTextDisplayNode::New();
 
   int oldMode = backupNode->GetDisableModifiedEvent();
   backupNode->DisableModifiedEventOn();
@@ -291,7 +275,6 @@ void vtkMRMLAnnotationTextDisplayNode::CreateBackup()
   backupNode->SetDisableModifiedEvent(oldMode);
 
   this->m_Backup = backupNode;
-
 }
 
 //----------------------------------------------------------------------------
@@ -308,7 +291,6 @@ void vtkMRMLAnnotationTextDisplayNode::RestoreBackup()
   {
     vtkErrorMacro("RestoreBackup - could not get the attached backup:" << this->GetID());
   }
-
 }
 
 //----------------------------------------------------------------------------
@@ -319,10 +301,9 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
   std::string wrappedText;
   size_t maxCharPerLine = (size_t)(this->GetMaxCharactersPerLine());
 
-
   if (inputText.find_first_of(' ') == std::string::npos)
   {
-    vtkDebugMacro("There are no spaces in the line '" << inputText.c_str() << "'" );
+    vtkDebugMacro("There are no spaces in the line '" << inputText.c_str() << "'");
     // there are no spaces in the line, so grab max chars at a time and line
     // break
     size_t currentChar = 0;
@@ -335,23 +316,24 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
       {
         wrappedText.push_back('\n');
       }
-      vtkDebugMacro("\tAppended a line '" << oneLine << "', currentChar = " << currentChar );
+      vtkDebugMacro("\tAppended a line '" << oneLine << "', currentChar = " << currentChar);
     }
     return wrappedText;
   }
   size_t spaceLeft = maxCharPerLine;
-  vtkDebugMacro("spaceLeft = " << spaceLeft );
-  char *line = (char *)(inputText.c_str());
-  char *ptr = strtok(line, " ");
+  vtkDebugMacro("spaceLeft = " << spaceLeft);
+  char* line = (char*)(inputText.c_str());
+  char* ptr = strtok(line, " ");
   while (ptr != nullptr)
   {
     size_t wordWidth = strlen(ptr);
-    vtkDebugMacro("ptr = '" << ptr << "', len = " << wordWidth << ", spaceLeft = " << spaceLeft << ", wrappedText is currently = \n'" << wrappedText.c_str() << "'" );
+    vtkDebugMacro("ptr = '" << ptr << "', len = " << wordWidth << ", spaceLeft = " << spaceLeft
+                            << ", wrappedText is currently = \n'" << wrappedText.c_str() << "'");
     // check if adding this word plus a space goes over the line limit
     if (wordWidth + 1 <= spaceLeft)
     {
       // add this word and a space
-      vtkDebugMacro("space to add this word '" << ptr << "' and a space" );
+      vtkDebugMacro("space to add this word '" << ptr << "' and a space");
       wrappedText.append(std::string(ptr));
       wrappedText.push_back(' ');
       spaceLeft = spaceLeft - (wordWidth + 1);
@@ -359,7 +341,7 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
     else if (wordWidth <= spaceLeft)
     {
       // room to add this word but no space
-      vtkDebugMacro("wordWidth " << wordWidth << " is less than space left " << spaceLeft << ", adding it" );
+      vtkDebugMacro("wordWidth " << wordWidth << " is less than space left " << spaceLeft << ", adding it");
       wrappedText.append(std::string(ptr));
       wrappedText.push_back('\n');
       spaceLeft = maxCharPerLine;
@@ -369,7 +351,7 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
       // start it on it's own line and break it up
       // remove any extra space from the line before
       size_t lastSpace = wrappedText.find_last_of(' ');
-      if (lastSpace == wrappedText.size()-1)
+      if (lastSpace == wrappedText.size() - 1)
       {
         wrappedText.erase(lastSpace);
       }
@@ -394,16 +376,16 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
           wrappedText.push_back(' ');
           spaceLeft--;
         }
-
       }
     }
     else
     {
       // insert a line break before this word
-      vtkDebugMacro("Adding a line break and this word and a space, width + 1 " << wordWidth + 1 << ", space left " << spaceLeft );
+      vtkDebugMacro("Adding a line break and this word and a space, width + 1 " << wordWidth + 1 << ", space left "
+                                                                                << spaceLeft);
       // remove any extra space from the line before
       size_t lastSpace = wrappedText.find_last_of(' ');
-      if (lastSpace == wrappedText.size()-1)
+      if (lastSpace == wrappedText.size() - 1)
       {
         wrappedText.erase(lastSpace);
       }
@@ -422,17 +404,17 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
   }
   // if the last thing on the line is a space or newline, remove it
   size_t lastLineFeed = wrappedText.find_last_of('\n');
-  vtkDebugMacro("\tlast line feed = " << lastLineFeed << ", text size = " <<  wrappedText.size() );
-  if (lastLineFeed == wrappedText.size()-1)
+  vtkDebugMacro("\tlast line feed = " << lastLineFeed << ", text size = " << wrappedText.size());
+  if (lastLineFeed == wrappedText.size() - 1)
   {
-    vtkDebugMacro("\tRemoving trailing newline" );
+    vtkDebugMacro("\tRemoving trailing newline");
     wrappedText.erase(lastLineFeed);
   }
   size_t lastSpace = wrappedText.find_last_of(' ');
-  vtkDebugMacro("\tlast space = " << lastSpace << ", text size =  " <<  wrappedText.size() );
-  if (lastSpace == wrappedText.size()-1)
+  vtkDebugMacro("\tlast space = " << lastSpace << ", text size =  " << wrappedText.size());
+  if (lastSpace == wrappedText.size() - 1)
   {
-    vtkDebugMacro("\tRemoving trailing space" );
+    vtkDebugMacro("\tRemoving trailing space");
     wrappedText.erase(lastSpace);
   }
 

@@ -41,7 +41,7 @@
 
 // STD includes
 
-int qMRMLNavigationViewTest1(int argc, char * argv [] )
+int qMRMLNavigationViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -74,11 +74,10 @@ int qMRMLNavigationViewTest1(int argc, char * argv [] )
   navigationView.show();
   threeDView.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
-
 
   return app.exec();
 }

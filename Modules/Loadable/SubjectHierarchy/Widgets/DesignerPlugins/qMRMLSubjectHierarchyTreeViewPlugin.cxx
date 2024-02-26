@@ -30,27 +30,26 @@ qMRMLSubjectHierarchyTreeViewPlugin::qMRMLSubjectHierarchyTreeViewPlugin(QObject
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSubjectHierarchyTreeViewPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSubjectHierarchyTreeViewPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSubjectHierarchyTreeView* pluginWidget =
-    new qMRMLSubjectHierarchyTreeView(parentWidget);
+  qMRMLSubjectHierarchyTreeView* pluginWidget = new qMRMLSubjectHierarchyTreeView(parentWidget);
   return pluginWidget;
 }
 
 //-----------------------------------------------------------------------------
 QString qMRMLSubjectHierarchyTreeViewPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSubjectHierarchyTreeView\" name=\"SubjectHierarchyTreeView\">\n"
-    "  <property name=\"levelFilter\"> <stringlist notr=\"true\"/> </property>\n"
-    "  <property name=\"nodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
-    "  <property name=\"hideChildNodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
-    "  <property name=\"includeItemAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
-    "  <property name=\"includeNodeAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
-    "  <property name=\"excludeItemAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
-    "  <property name=\"excludeNodeAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSubjectHierarchyTreeView\" name=\"SubjectHierarchyTreeView\">\n"
+         "  <property name=\"levelFilter\"> <stringlist notr=\"true\"/> </property>\n"
+         "  <property name=\"nodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
+         "  <property name=\"hideChildNodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
+         "  <property name=\"includeItemAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
+         "  <property name=\"includeNodeAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
+         "  <property name=\"excludeItemAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
+         "  <property name=\"excludeNodeAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 //-----------------------------------------------------------------------------

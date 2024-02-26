@@ -41,14 +41,12 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTransformsReader::qSlicerTransformsReader(
-  vtkSlicerTransformLogic* _transformLogic, QObject* _parent)
+qSlicerTransformsReader::qSlicerTransformsReader(vtkSlicerTransformLogic* _transformLogic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerTransformsReaderPrivate)
 {
   this->setTransformLogic(_transformLogic);
 }
-
 
 //-----------------------------------------------------------------------------
 qSlicerTransformsReader::~qSlicerTransformsReader() = default;
@@ -61,26 +59,26 @@ void qSlicerTransformsReader::setTransformLogic(vtkSlicerTransformLogic* newTran
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerTransformLogic* qSlicerTransformsReader::transformLogic()const
+vtkSlicerTransformLogic* qSlicerTransformsReader::transformLogic() const
 {
   Q_D(const qSlicerTransformsReader);
   return d->TransformLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTransformsReader::description()const
+QString qSlicerTransformsReader::description() const
 {
   return "Transform";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerTransformsReader::fileType()const
+qSlicerIO::IOFileType qSlicerTransformsReader::fileType() const
 {
   return QString("TransformFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTransformsReader::extensions()const
+QStringList qSlicerTransformsReader::extensions() const
 {
   return QStringList() << "Transform (*.h5 *.tfm *.mat *.nrrd *.nhdr *.mha *.mhd *.nii *.nii.gz *.txt *.hdf5 *.he5)";
 }
@@ -98,8 +96,8 @@ bool qSlicerTransformsReader::load(const IOProperties& properties)
   }
 
   this->userMessages()->ClearMessages();
-  vtkMRMLTransformNode* node = d->TransformLogic->AddTransform(
-    fileName.toUtf8(), this->mrmlScene(), this->userMessages());
+  vtkMRMLTransformNode* node =
+    d->TransformLogic->AddTransform(fileName.toUtf8(), this->mrmlScene(), this->userMessages());
   if (node)
   {
     this->setLoadedNodes(QStringList(QString(node->GetID())));

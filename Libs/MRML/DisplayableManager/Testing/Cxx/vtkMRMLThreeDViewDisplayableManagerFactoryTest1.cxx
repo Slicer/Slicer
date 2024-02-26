@@ -44,7 +44,7 @@ VTK_AUTOINIT(MRMLDisplayableManagerCxxTests)
 //----------------------------------------------------------------------------
 int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
-  vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
+  vtkMRMLThreeDViewDisplayableManagerFactory* factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   if (!factory)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with GetInstance() method" << std::endl;
@@ -62,16 +62,15 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   }
   if (factory != factoryUsingSmartPointer.GetPointer())
   {
-    std::cerr << "Line " << __LINE__
-        << " - Factory obtained using either GetInstance() or New() should be the same."
-        << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Factory obtained using either GetInstance() or New() should be the same."
+              << std::endl;
     return EXIT_FAILURE;
   }
 
   if (factory->GetRegisteredDisplayableManagerCount() != 0)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->GetRegisteredDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->GetRegisteredDisplayableManagerCount()"
+              << std::endl;
     std::cerr << "\tExpected: 0" << std::endl;
     std::cerr << "\tCurrent: " << factory->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
@@ -82,8 +81,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   bool isRegistrered = factory->IsDisplayableManagerRegistered("vtkMRMLINVALIDManager");
   if (isRegistrered)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
     std::cerr << "\tExpected: false" << std::endl;
     std::cerr << "\tCurrent: " << isRegistrered << std::endl;
     return EXIT_FAILURE;
@@ -92,8 +90,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   isRegistrered = factory->IsDisplayableManagerRegistered("vtkMRMLCameraDisplayableManager");
   if (isRegistrered)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
     std::cerr << "\tExpected: false" << std::endl;
     std::cerr << "\tCurrent: " << isRegistrered << std::endl;
     return EXIT_FAILURE;
@@ -104,8 +101,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   bool success = factory->RegisterDisplayableManager("vtkMRMLINVALIDManager");
   if (success)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->RegisterDisplayableManager()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->RegisterDisplayableManager()" << std::endl;
     std::cerr << "\tExpected: 0" << std::endl;
     std::cerr << "\tCurrent: " << success << std::endl;
     return EXIT_FAILURE;
@@ -113,8 +109,8 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   if (factory->GetRegisteredDisplayableManagerCount() != 0)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->GetRegisteredDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->GetRegisteredDisplayableManagerCount()"
+              << std::endl;
     std::cerr << "\tExpected: 0" << std::endl;
     std::cerr << "\tCurrent: " << factory->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
@@ -125,8 +121,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   success = factory->RegisterDisplayableManager("vtkMRMLCameraDisplayableManager");
   if (!success)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->RegisterDisplayableManager()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->RegisterDisplayableManager()" << std::endl;
     std::cerr << "\tExpected: 1" << std::endl;
     std::cerr << "\tCurrent: " << success << std::endl;
     return EXIT_FAILURE;
@@ -134,8 +129,8 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   if (factory->GetRegisteredDisplayableManagerCount() != 1)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->GetRegisteredDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->GetRegisteredDisplayableManagerCount()"
+              << std::endl;
     std::cerr << "\tExpected: 1" << std::endl;
     std::cerr << "\tCurrent: " << factory->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
@@ -145,8 +140,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   success = factory->RegisterDisplayableManager("vtkMRMLCameraDisplayableManager");
   if (success)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->RegisterDisplayableManager()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->RegisterDisplayableManager()" << std::endl;
     std::cerr << "\tExpected: 0" << std::endl;
     std::cerr << "\tCurrent: " << success << std::endl;
     return EXIT_FAILURE;
@@ -154,8 +148,8 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   if (factory->GetRegisteredDisplayableManagerCount() != 1)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->GetRegisteredDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->GetRegisteredDisplayableManagerCount()"
+              << std::endl;
     std::cerr << "\tExpected: 1" << std::endl;
     std::cerr << "\tCurrent: " << factory->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
@@ -166,8 +160,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   isRegistrered = factory->IsDisplayableManagerRegistered("vtkMRMLINVALIDManager");
   if (isRegistrered)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
     std::cerr << "\tExpected: false" << std::endl;
     std::cerr << "\tCurrent: " << isRegistrered << std::endl;
     return EXIT_FAILURE;
@@ -176,8 +169,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   isRegistrered = factory->IsDisplayableManagerRegistered("vtkMRMLCameraDisplayableManager");
   if (!isRegistrered)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
     std::cerr << "\tExpected: true" << std::endl;
     std::cerr << "\tCurrent: " << isRegistrered << std::endl;
     return EXIT_FAILURE;
@@ -200,7 +192,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   // MRML scene and ViewNode
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLViewNode> viewNode;
-  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode.GetPointer());
+  vtkMRMLNode* nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
   {
     std::cerr << "Line " << __LINE__ << " - Failed to add vtkMRMLViewNode" << std::endl;
@@ -209,21 +201,17 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   //----------------------------------------------------------------------------
   // Instantiate DisplayableManagerGroup
-  vtkMRMLDisplayableManagerGroup * group =
-      factory->InstantiateDisplayableManagers(rr.GetPointer());
+  vtkMRMLDisplayableManagerGroup* group = factory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!group)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with factory->InstantiateDisplayableManagers() method"
-        << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with factory->InstantiateDisplayableManagers() method" << std::endl;
     std::cerr << "\tgroup should NOT be NULL" << std::endl;
     return EXIT_FAILURE;
   }
 
   if (group->GetDisplayableManagerCount() != 1)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method group->GetDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method group->GetDisplayableManagerCount()" << std::endl;
     std::cerr << "\tExpected: 1" << std::endl;
     std::cerr << "\tCurrent: " << group->GetDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
@@ -236,16 +224,14 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   group = factory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!group)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with factory->InstantiateDisplayableManagers() method" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with factory->InstantiateDisplayableManagers() method" << std::endl;
     std::cerr << "\tgroup should NOT be NULL" << std::endl;
     return EXIT_FAILURE;
   }
 
   if (group->GetDisplayableManagerCount() != 1)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method group->GetDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method group->GetDisplayableManagerCount()" << std::endl;
     std::cerr << "\tExpected: 1" << std::endl;
     std::cerr << "\tCurrent: " << group->GetDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
@@ -257,8 +243,8 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   if (factory->GetRegisteredDisplayableManagerCount() != 2)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->GetRegisteredDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->GetRegisteredDisplayableManagerCount()"
+              << std::endl;
     std::cerr << "\tExpected: 2" << std::endl;
     std::cerr << "\tCurrent: " << factory->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
@@ -267,8 +253,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   // Check if the group contains the registered DisplayableManager
   if (group->GetDisplayableManagerCount() != 2)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method group->GetDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method group->GetDisplayableManagerCount()" << std::endl;
     std::cerr << "\tExpected: 2" << std::endl;
     std::cerr << "\tCurrent: " << group->GetDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
@@ -276,35 +261,29 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   //----------------------------------------------------------------------------
   // Attempt to get the Registered DisplayableManagers
-  vtkMRMLAbstractDisplayableManager * dm1 =
-      group->GetDisplayableManagerByClassName("vtkMRMLViewDisplayableManager");
+  vtkMRMLAbstractDisplayableManager* dm1 = group->GetDisplayableManagerByClassName("vtkMRMLViewDisplayableManager");
   if (!dm1)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;
     std::cerr << "\tdm1 should NOT be NULL" << std::endl;
     return EXIT_FAILURE;
   }
   if (!dm1->IsA("vtkMRMLViewDisplayableManager"))
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;
     std::cerr << "\tExpected: vtkMRMLViewDisplayableManager" << std::endl;
     std::cerr << "\tCurrent: " << dm1->GetClassName() << std::endl;
   }
 
-  vtkMRMLAbstractDisplayableManager * dm2 =
-      group->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager");
+  vtkMRMLAbstractDisplayableManager* dm2 = group->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager");
   if (!dm2)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;
     std::cerr << "\tdm2 should NOT be NULL" << std::endl;
   }
   else if (!dm2->IsA("vtkMRMLCameraDisplayableManager"))
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with group->GetDisplayableManagerByClassName() method" << std::endl;
     std::cerr << "\tExpected: vtkMRMLCameraDisplayableManager" << std::endl;
     std::cerr << "\tCurrent: " << dm2->GetClassName() << std::endl;
   }
@@ -315,8 +294,8 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   if (factory->GetRegisteredDisplayableManagerCount() != 1)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method factory->GetRegisteredDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method factory->GetRegisteredDisplayableManagerCount()"
+              << std::endl;
     std::cerr << "\tExpected: 1" << std::endl;
     std::cerr << "\tCurrent: " << factory->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
@@ -325,8 +304,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   // Check if the group has been updated
   if (group->GetDisplayableManagerCount() != 1)
   {
-    std::cerr << "Line " << __LINE__
-        << " - Problem with method group->GetDisplayableManagerCount()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with method group->GetDisplayableManagerCount()" << std::endl;
     std::cerr << "\tExpected: 1" << std::endl;
     std::cerr << "\tCurrent: " << group->GetDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;

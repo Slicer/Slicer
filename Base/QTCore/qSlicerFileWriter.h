@@ -27,8 +27,7 @@ class qSlicerFileWriterPrivate;
 
 class vtkObject;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileWriter
-  : public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileWriter : public qSlicerIO
 {
   Q_OBJECT
 public:
@@ -39,19 +38,19 @@ public:
   /// This method is kept for backward compatibility, writers should override
   /// canWriteObjectConfidence method instead of this method to indicate if they can
   /// write the object.
-  virtual bool canWriteObject(vtkObject* object)const;
+  virtual bool canWriteObject(vtkObject* object) const;
 
   /// Returns a positive number (>0) if the writer can write the object to file.
   /// The higher the returned value is the more confident the writer it is
   /// the most suitable class to write the object.
   /// By default, the method calls canWriteObject and if it returns true then
   /// it returns confidence value of 0.5.
-  virtual double canWriteObjectConfidence(vtkObject* object)const;
+  virtual double canWriteObjectConfidence(vtkObject* object) const;
 
   /// Return a list of the supported extensions for a particular object.
   /// Please read QFileDialog::nameFilters for the allowed formats
   /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
-  virtual QStringList extensions(vtkObject* object)const = 0;
+  virtual QStringList extensions(vtkObject* object) const = 0;
 
   /// Write the node identified by nodeID into the fileName file.
   /// Returns true on success
@@ -66,7 +65,7 @@ public:
   /// Return the list of saved nodes from writing the file(s) in write().
   /// Empty list if write() failed
   /// \sa setWrittenNodes(), write()
-  virtual QStringList writtenNodes()const;
+  virtual QStringList writtenNodes() const;
 
 protected:
   virtual void setWrittenNodes(const QStringList& nodes);

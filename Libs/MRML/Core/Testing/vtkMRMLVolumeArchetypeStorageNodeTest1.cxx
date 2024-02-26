@@ -20,7 +20,7 @@
 #include "vtkPointData.h"
 #include <vtksys/SystemTools.hxx>
 
-std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove=false)
+std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove = false)
 {
   std::string filename = tempDir + "/vtkMRMLVolumeArchetypeStorageNodeTest1_" + suffix + "." + fileExtension;
   // remove file if exists
@@ -32,16 +32,20 @@ std::string tempFilename(std::string tempDir, std::string suffix, std::string fi
 }
 
 //---------------------------------------------------------------------------
-int TestVoxelVectorType(const std::string& tempDir, const std::string& fileExtension,
-  bool canWriteUndefinedVector, bool canWriteSpatialVector, bool canWriteColorRGB, bool canWriteColorRGBA)
+int TestVoxelVectorType(const std::string& tempDir,
+                        const std::string& fileExtension,
+                        bool canWriteUndefinedVector,
+                        bool canWriteSpatialVector,
+                        bool canWriteColorRGB,
+                        bool canWriteColorRGBA)
 {
   // Check if voxel vector type is correctly saved and restored.
   std::cout << "TestVoxelVectorType: " << fileExtension << std::endl;
 
   vtkNew<vtkMRMLScene> scene;
 
-  vtkMRMLVectorVolumeNode* vectorVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(
-    scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode"));
+  vtkMRMLVectorVolumeNode* vectorVolumeNode =
+    vtkMRMLVectorVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode"));
   CHECK_NOT_NULL(vectorVolumeNode);
 
   // Add some image data
@@ -51,8 +55,8 @@ int TestVoxelVectorType(const std::string& tempDir, const std::string& fileExten
   imageData->GetPointData()->GetScalars()->Fill(12.5);
   vectorVolumeNode->SetAndObserveImageData(imageData);
 
-  vtkMRMLVolumeArchetypeStorageNode* storageNode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
-    scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  vtkMRMLVolumeArchetypeStorageNode* storageNode =
+    vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
   CHECK_NOT_NULL(storageNode);
   storageNode->SetSingleFile(true);
   vectorVolumeNode->SetAndObserveStorageNodeID(storageNode->GetID());
@@ -137,12 +141,12 @@ int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   // tested vector types ->                               undefined  spatial  RGB    RGBA
-  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "nrrd", true,      true,    true,  true));
-  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "mha",  true,      false,   false, false));
-  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "nii",  true,      false,   true,  true));
-  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "png",  false,     false,   true,  true));
-  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "tif",  false,     false,   true,  false));
-  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "jpg",  false,     false,   true,  false));
+  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "nrrd", true, true, true, true));
+  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "mha", true, false, false, false));
+  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "nii", true, false, true, true));
+  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "png", false, false, true, true));
+  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "tif", false, false, true, false));
+  CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "jpg", false, false, true, false));
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;

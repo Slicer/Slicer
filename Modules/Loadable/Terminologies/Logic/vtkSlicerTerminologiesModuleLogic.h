@@ -35,28 +35,25 @@ class vtkSlicerTerminologyEntry;
 class vtkSlicerTerminologyCategory;
 class vtkSlicerTerminologyType;
 
-class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologiesModuleLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologiesModuleLogic : public vtkSlicerModuleLogic
 {
 public:
-  static vtkSlicerTerminologiesModuleLogic *New();
+  static vtkSlicerTerminologiesModuleLogic* New();
   vtkTypeMacro(vtkSlicerTerminologiesModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Information needed to uniquely identify a terminology code
   class CodeIdentifier
   {
-    public:
-      CodeIdentifier()
-        { };
-      CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning)
-        : CodingSchemeDesignator(codingSchemeDesignator)
-        , CodeValue(codeValue)
-        , CodeMeaning(codeMeaning)
-        { };
-      std::string CodingSchemeDesignator;
-      std::string CodeValue;
-      std::string CodeMeaning; // Human readable name (not required for ID)
+  public:
+    CodeIdentifier(){};
+    CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning)
+      : CodingSchemeDesignator(codingSchemeDesignator)
+      , CodeValue(codeValue)
+      , CodeMeaning(codeMeaning){};
+    std::string CodingSchemeDesignator;
+    std::string CodeValue;
+    std::string CodeMeaning; // Human readable name (not required for ID)
   };
 
   /// Node attribute name for name auto generated
@@ -88,11 +85,11 @@ public:
   bool LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath);
 
   /// Get context names of loaded terminologies
-  void GetLoadedTerminologyNames(std::vector<std::string> &terminologyNames);
+  void GetLoadedTerminologyNames(std::vector<std::string>& terminologyNames);
   /// Python accessor variant of \sa GetLoadedTerminologyNames
   void GetLoadedTerminologyNames(vtkStringArray* terminologyNames);
   /// Get context names of loaded anatomic contexts
-  void GetLoadedAnatomicContextNames(std::vector<std::string> &anatomicContextNames);
+  void GetLoadedAnatomicContextNames(std::vector<std::string>& anatomicContextNames);
   /// Python accessor variant of \sa GetLoadedAnatomicContextNames
   void GetLoadedAnatomicContextNames(vtkStringArray* anatomicContextNames);
 
@@ -105,33 +102,47 @@ public:
   /// \param categories Output argument containing all the \sa vtkSlicerTerminologyCategory objects created
   ///   from the categories found in the given terminology
   /// \return Success flag
-  bool FindCategoriesInTerminology(std::string terminologyName, std::vector<CodeIdentifier>& categories, std::string search);
+  bool FindCategoriesInTerminology(std::string terminologyName,
+                                   std::vector<CodeIdentifier>& categories,
+                                   std::string search);
   /// Get a category with given name from a terminology
   /// \param category Output argument containing the details of the found category if any (if return value is true)
   /// \return Success flag
-  bool GetCategoryInTerminology(std::string terminologyName, CodeIdentifier categoryId, vtkSlicerTerminologyCategory* categoryObject);
+  bool GetCategoryInTerminology(std::string terminologyName,
+                                CodeIdentifier categoryId,
+                                vtkSlicerTerminologyCategory* categoryObject);
   /// Get number of categories in a terminology
   int GetNumberOfCategoriesInTerminology(std::string terminologyName);
   /// Get a category from a terminology by index.
   /// \param categoryIndex specifies which category to return
   /// \param category category is returned in this object
   /// \return Success flag
-  bool GetNthCategoryInTerminology(std::string terminologyName, int categoryIndex, vtkSlicerTerminologyCategory* category);
+  bool GetNthCategoryInTerminology(std::string terminologyName,
+                                   int categoryIndex,
+                                   vtkSlicerTerminologyCategory* category);
 
   /// Get terminology types from a terminology category as collection of \sa vtkSlicerTerminologyType container objects
   /// \param typeCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
   ///   from the types found in the given terminology category
   /// \return Success flag
-  bool GetTypesInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types);
+  bool GetTypesInTerminologyCategory(std::string terminologyName,
+                                     CodeIdentifier categoryId,
+                                     std::vector<CodeIdentifier>& types);
   /// Get all type names (codeMeaning) in a terminology category
   /// \param typeCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
   ///   from the types found in the given terminology category
   /// \return Success flag
-  bool FindTypesInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types, std::string search);
+  bool FindTypesInTerminologyCategory(std::string terminologyName,
+                                      CodeIdentifier categoryId,
+                                      std::vector<CodeIdentifier>& types,
+                                      std::string search);
   /// Get a type with given name from a terminology category
   /// \param type Output argument containing the details of the found type if any (if return value is true)
   /// \return Success flag
-  bool GetTypeInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, vtkSlicerTerminologyType* typeObject);
+  bool GetTypeInTerminologyCategory(std::string terminologyName,
+                                    CodeIdentifier categoryId,
+                                    CodeIdentifier typeId,
+                                    vtkSlicerTerminologyType* typeObject);
   /// Get number of types in the chosen category in a terminology
   int GetNumberOfTypesInTerminologyCategory(std::string terminologyName, vtkSlicerTerminologyCategory* category);
   /// Get a terminology type by index
@@ -140,20 +151,32 @@ public:
   /// \param typeIndex index of type to return
   /// \param typeObject output type
   /// \return Success flag
-  bool GetNthTypeInTerminologyCategory(std::string terminologyName, vtkSlicerTerminologyCategory* category, int typeIndex, vtkSlicerTerminologyType* type);
+  bool GetNthTypeInTerminologyCategory(std::string terminologyName,
+                                       vtkSlicerTerminologyCategory* category,
+                                       int typeIndex,
+                                       vtkSlicerTerminologyType* type);
 
-  /// Get terminology type modifiers from a terminology type as collection of \sa vtkSlicerTerminologyType container objects
-  /// \param typeModifierCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
+  /// Get terminology type modifiers from a terminology type as collection of \sa vtkSlicerTerminologyType container
+  /// objects \param typeModifierCollection Output argument containing all the \sa vtkSlicerTerminologyType objects
+  /// created
   ///   from the type modifiers found in the given terminology type
   /// \return Success flag
-  bool GetTypeModifiersInTerminologyType(std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, std::vector<CodeIdentifier>& typeModifiers);
+  bool GetTypeModifiersInTerminologyType(std::string terminologyName,
+                                         CodeIdentifier categoryId,
+                                         CodeIdentifier typeId,
+                                         std::vector<CodeIdentifier>& typeModifiers);
   /// Get a type modifier with given name from a terminology type
-  /// \param typeModifier Output argument containing the details of the found type modifier if any (if return value is true)
-  /// \return Success flag
+  /// \param typeModifier Output argument containing the details of the found type modifier if any (if return value is
+  /// true) \return Success flag
   bool GetTypeModifierInTerminologyType(std::string terminologyName,
-    CodeIdentifier categoryId, CodeIdentifier typeId, CodeIdentifier modifierId, vtkSlicerTerminologyType* typeModifier);
+                                        CodeIdentifier categoryId,
+                                        CodeIdentifier typeId,
+                                        CodeIdentifier modifierId,
+                                        vtkSlicerTerminologyType* typeModifier);
   /// Get number of type modifiers for the chosen category and type in a terminology
-  int GetNumberOfTypeModifiersInTerminologyType(std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type);
+  int GetNumberOfTypeModifiersInTerminologyType(std::string terminologyName,
+                                                vtkSlicerTerminologyCategory* category,
+                                                vtkSlicerTerminologyType* type);
   /// Get a terminology type by index
   /// \param terminologyName input terminology name
   /// \param category input category
@@ -161,7 +184,11 @@ public:
   /// \param typeModifierIndex index of type modifier to return
   /// \param typeModifier output type modifier
   /// \return Success flag
-  bool GetNthTypeModifierInTerminologyType(std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type, int typeModifierIndex, vtkSlicerTerminologyType* typeModifier);
+  bool GetNthTypeModifierInTerminologyType(std::string terminologyName,
+                                           vtkSlicerTerminologyCategory* category,
+                                           vtkSlicerTerminologyType* type,
+                                           int typeModifierIndex,
+                                           vtkSlicerTerminologyType* typeModifier);
 
   /// Get anatomic regions from an anatomic context as collection of \sa vtkSlicerTerminologyType container objects
   /// \param regionCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
@@ -170,29 +197,39 @@ public:
   bool GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions);
   /// Get all region names (codeMeaning) in an anatomic context
   /// \return Success flag
-  bool FindRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions, std::string search);
+  bool FindRegionsInAnatomicContext(std::string anatomicContextName,
+                                    std::vector<CodeIdentifier>& regions,
+                                    std::string search);
   /// Get a region with given name from an anatomic context
   /// \param region Output argument containing the details of the found region if any (if return value is true)
   /// \return Success flag
-  bool GetRegionInAnatomicContext(std::string anatomicContextName, CodeIdentifier regionId, vtkSlicerTerminologyType* regionObject);
+  bool GetRegionInAnatomicContext(std::string anatomicContextName,
+                                  CodeIdentifier regionId,
+                                  vtkSlicerTerminologyType* regionObject);
 
   /// Get region modifiers from an anatomic region as collection of \sa vtkSlicerTerminologyType container objects
   /// \param regionModifierCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
   ///   from the region modifiers found in the given anatomic region
   /// \return Success flag
-  bool GetRegionModifiersInAnatomicRegion(std::string anatomicContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers);
+  bool GetRegionModifiersInAnatomicRegion(std::string anatomicContextName,
+                                          CodeIdentifier regionId,
+                                          std::vector<CodeIdentifier>& regionModifiers);
   /// Get a region modifier with given name from an anatomic region
-  /// \param regionModifier Output argument containing the details of the found region modifier if any (if return value is true)
-  /// \return Success flag
+  /// \param regionModifier Output argument containing the details of the found region modifier if any (if return value
+  /// is true) \return Success flag
   bool GetRegionModifierInAnatomicRegion(std::string anatomicContextName,
-    CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier);
+                                         CodeIdentifier regionId,
+                                         CodeIdentifier modifierId,
+                                         vtkSlicerTerminologyType* regionModifier);
 
   /// Find terminology type or type modifier based on '3dSlicerLabel' attribute
   /// \param terminologyName Terminology context in which the attribute is looked for
   /// \param slicerLabel Attribute to look for
   /// \param entry Terminology entry populated if the attribute is found
   /// \return Flag indicating whether the attribute was found
-  bool FindTypeInTerminologyBy3dSlicerLabel(std::string terminologyName, std::string slicerLabel, vtkSlicerTerminologyEntry* entry);
+  bool FindTypeInTerminologyBy3dSlicerLabel(std::string terminologyName,
+                                            std::string slicerLabel,
+                                            vtkSlicerTerminologyEntry* entry);
 
   /// Convert terminology category object to code identifier
   static CodeIdentifier CodeIdentifierFromTerminologyCategory(vtkSlicerTerminologyCategory* category);
@@ -207,14 +244,23 @@ public:
   /// Assemble terminology string from terminology codes
   /// Note: The order of the attributes are inconsistent with the codes used in this class for compatibility reasons
   ///       (to vtkMRMLColorLogic::AddTermToTerminology)
-  static std::string SerializeTerminologyEntry(
-    std::string terminologyContextName,
-    std::string categoryValue, std::string categorySchemeDesignator, std::string categoryMeaning,
-    std::string typeValue, std::string typeSchemeDesignator, std::string typeMeaning,
-    std::string modifierValue, std::string modifierSchemeDesignator, std::string modifierMeaning,
-    std::string anatomicContextName,
-    std::string regionValue, std::string regionSchemeDesignator, std::string regionMeaning,
-    std::string regionModifierValue, std::string regionModifierSchemeDesignator, std::string regionModifierMeaning );
+  static std::string SerializeTerminologyEntry(std::string terminologyContextName,
+                                               std::string categoryValue,
+                                               std::string categorySchemeDesignator,
+                                               std::string categoryMeaning,
+                                               std::string typeValue,
+                                               std::string typeSchemeDesignator,
+                                               std::string typeMeaning,
+                                               std::string modifierValue,
+                                               std::string modifierSchemeDesignator,
+                                               std::string modifierMeaning,
+                                               std::string anatomicContextName,
+                                               std::string regionValue,
+                                               std::string regionSchemeDesignator,
+                                               std::string regionMeaning,
+                                               std::string regionModifierValue,
+                                               std::string regionModifierSchemeDesignator,
+                                               std::string regionModifierMeaning);
 
   /// Populate terminology entry VTK object based on serialized entry
   /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,
@@ -244,7 +290,7 @@ protected:
 
 protected:
   /// The path from which the json files are automatically loaded on startup
-  char* UserContextsPath{nullptr};
+  char* UserContextsPath{ nullptr };
 
 private:
   vtkSlicerTerminologiesModuleLogic(const vtkSlicerTerminologiesModuleLogic&) = delete;

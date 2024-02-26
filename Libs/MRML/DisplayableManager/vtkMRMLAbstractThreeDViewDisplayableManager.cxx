@@ -51,8 +51,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkInde
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractThreeDViewDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(
-    vtkObject* caller)
+void vtkMRMLAbstractThreeDViewDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
   assert(vtkMRMLViewNode::SafeDownCast(caller));
 #ifndef _DEBUG
@@ -62,7 +61,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::OnMRMLDisplayableNodeModifiedE
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLViewNode * vtkMRMLAbstractThreeDViewDisplayableManager::GetMRMLViewNode()
+vtkMRMLViewNode* vtkMRMLAbstractThreeDViewDisplayableManager::GetMRMLViewNode()
 {
   return vtkMRMLViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
 }
@@ -70,96 +69,95 @@ vtkMRMLViewNode * vtkMRMLAbstractThreeDViewDisplayableManager::GetMRMLViewNode()
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEvent(int eventid)
 {
-  vtkInteractorStyle3D* interactorStyle = vtkInteractorStyle3D::SafeDownCast(
-              this->GetInteractor()->GetInteractorStyle());
+  vtkInteractorStyle3D* interactorStyle =
+    vtkInteractorStyle3D::SafeDownCast(this->GetInteractor()->GetInteractorStyle());
 
   if (interactorStyle)
   {
 
-  switch(eventid)
-  {
-    case vtkCommand::ExposeEvent:
-      interactorStyle->OnExpose();
-      break;
+    switch (eventid)
+    {
+      case vtkCommand::ExposeEvent:
+        interactorStyle->OnExpose();
+        break;
 
-    case vtkCommand::ConfigureEvent:
-      interactorStyle->OnConfigure();
-      break;
+      case vtkCommand::ConfigureEvent:
+        interactorStyle->OnConfigure();
+        break;
 
-    case vtkCommand::EnterEvent:
-      interactorStyle->OnEnter();
-      break;
+      case vtkCommand::EnterEvent:
+        interactorStyle->OnEnter();
+        break;
 
-    case vtkCommand::LeaveEvent:
+      case vtkCommand::LeaveEvent:
         interactorStyle->OnLeave();
-      break;
+        break;
 
-    case vtkCommand::TimerEvent:
+      case vtkCommand::TimerEvent:
         interactorStyle->OnTimer();
-      break;
+        break;
 
-    case vtkCommand::MouseMoveEvent:
+      case vtkCommand::MouseMoveEvent:
         interactorStyle->OnMouseMove();
-      break;
+        break;
 
-    case vtkCommand::LeftButtonPressEvent:
+      case vtkCommand::LeftButtonPressEvent:
         interactorStyle->OnLeftButtonDown();
-      break;
+        break;
 
-    case vtkCommand::LeftButtonReleaseEvent:
+      case vtkCommand::LeftButtonReleaseEvent:
         interactorStyle->OnLeftButtonUp();
         break;
 
-    case vtkCommand::MiddleButtonPressEvent:
+      case vtkCommand::MiddleButtonPressEvent:
         interactorStyle->OnMiddleButtonDown();
-      break;
+        break;
 
-    case vtkCommand::MiddleButtonReleaseEvent:
+      case vtkCommand::MiddleButtonReleaseEvent:
         interactorStyle->OnMiddleButtonUp();
-      break;
+        break;
 
-    case vtkCommand::RightButtonPressEvent:
+      case vtkCommand::RightButtonPressEvent:
         interactorStyle->OnRightButtonDown();
-      break;
+        break;
 
-    case vtkCommand::RightButtonReleaseEvent:
+      case vtkCommand::RightButtonReleaseEvent:
         interactorStyle->OnRightButtonUp();
-      break;
+        break;
 
-    case vtkCommand::MouseWheelForwardEvent:
+      case vtkCommand::MouseWheelForwardEvent:
         interactorStyle->OnMouseWheelForward();
-      break;
+        break;
 
-    case vtkCommand::MouseWheelBackwardEvent:
+      case vtkCommand::MouseWheelBackwardEvent:
         interactorStyle->OnMouseWheelBackward();
-      break;
+        break;
 
-    case vtkCommand::KeyPressEvent:
+      case vtkCommand::KeyPressEvent:
         interactorStyle->OnKeyDown();
         interactorStyle->OnKeyPress();
-      break;
+        break;
 
-    case vtkCommand::KeyReleaseEvent:
+      case vtkCommand::KeyReleaseEvent:
         interactorStyle->OnKeyUp();
         interactorStyle->OnKeyRelease();
-      break;
+        break;
 
-    case vtkCommand::CharEvent:
+      case vtkCommand::CharEvent:
         interactorStyle->OnChar();
-      break;
+        break;
 
-    case vtkCommand::DeleteEvent:
-      interactorStyle->SetInteractor(nullptr);
-      break;
+      case vtkCommand::DeleteEvent:
+        interactorStyle->SetInteractor(nullptr);
+        break;
 
-    case vtkCommand::TDxMotionEvent:
-    case vtkCommand::TDxButtonPressEvent:
-    case vtkCommand::TDxButtonReleaseEvent:
-      interactorStyle->DelegateTDxEvent(eventid,nullptr);
-      break;
-  }
+      case vtkCommand::TDxMotionEvent:
+      case vtkCommand::TDxButtonPressEvent:
+      case vtkCommand::TDxButtonReleaseEvent:
+        interactorStyle->DelegateTDxEvent(eventid, nullptr);
+        break;
+    }
 
     return;
   }
 }
-

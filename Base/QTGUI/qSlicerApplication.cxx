@@ -34,10 +34,10 @@
 #include <QVBoxLayout>
 
 #if defined(Q_OS_WIN32)
-  #include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
+# include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
 #endif
 
-#include "vtkSlicerConfigure.h" // For Slicer_USE_*, Slicer_BUILD_*_SUPPORT
+#include "vtkSlicerConfigure.h"        // For Slicer_USE_*, Slicer_BUILD_*_SUPPORT
 #include <vtkSlicerVersionConfigure.h> // For Slicer_VERSION_FULL
 
 // CTK includes
@@ -54,12 +54,12 @@
 #endif
 #include <ctkSettings.h>
 #ifdef Slicer_USE_QtTesting
-#include <ctkQtTestingUtility.h>
-#include <ctkXMLEventObserver.h>
-#include <ctkXMLEventSource.h>
+# include <ctkQtTestingUtility.h>
+# include <ctkXMLEventObserver.h>
+# include <ctkXMLEventSource.h>
 #endif
 #ifdef Slicer_BUILD_DICOM_SUPPORT
-#include <ctkDICOMBrowser.h>
+# include <ctkDICOMBrowser.h>
 #endif
 #include <ctkToolTipTrapper.h>
 #include <ctkVTKErrorLogMessageHandler.h>
@@ -102,11 +102,11 @@
 
 // qMRML includes
 #ifdef Slicer_USE_QtTesting
-#include <qMRMLCheckableNodeComboBoxEventPlayer.h>
-#include <qMRMLNodeComboBoxEventPlayer.h>
-#include <qMRMLNodeComboBoxEventTranslator.h>
-#include <qMRMLTreeViewEventPlayer.h>
-#include <qMRMLTreeViewEventTranslator.h>
+# include <qMRMLCheckableNodeComboBoxEventPlayer.h>
+# include <qMRMLNodeComboBoxEventPlayer.h>
+# include <qMRMLNodeComboBoxEventTranslator.h>
+# include <qMRMLTreeViewEventPlayer.h>
+# include <qMRMLTreeViewEventTranslator.h>
 #endif
 
 // Logic includes
@@ -134,8 +134,8 @@ class ctkSlicerPythonConsoleCompleter : public ctkPythonConsoleCompleter
 {
 public:
   ctkSlicerPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager, qSlicerApplication* app)
-  : ctkPythonConsoleCompleter(pythonManager)
-  , Application(app)
+    : ctkPythonConsoleCompleter(pythonManager)
+    , Application(app)
   {
   }
 
@@ -155,7 +155,6 @@ public:
   }
 
 protected:
-
   bool setLoggingEnabled(bool enable)
   {
     if (!this->Application || !this->Application->errorLogModel())
@@ -170,23 +169,24 @@ protected:
     return !qtMessageHandler->blockSignals(!enable);
   }
 
-  qSlicerApplication* Application{nullptr};
+  qSlicerApplication* Application{ nullptr };
 };
 #endif
-
 
 //-----------------------------------------------------------------------------
 class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerApplication);
+
 protected:
   qSlicerApplication* const q_ptr;
+
 public:
   typedef qSlicerCoreApplicationPrivate Superclass;
 
   qSlicerApplicationPrivate(qSlicerApplication& object,
-                            qSlicerCommandOptions * commandOptions,
-                            qSlicerIOManager * ioManager);
+                            qSlicerCommandOptions* commandOptions,
+                            qSlicerIOManager* ioManager);
   ~qSlicerApplicationPrivate() override;
 
   /// Convenient method regrouping all initialization code
@@ -209,23 +209,22 @@ public:
   bool IsExtensionsManagerDialogOpen;
 #endif
 #ifdef Slicer_USE_QtTesting
-  ctkQtTestingUtility*    TestingUtility;
+  ctkQtTestingUtility* TestingUtility;
 #endif
 #ifdef Slicer_USE_PYTHONQT
   ctkErrorLogLevel::LogLevel PythonConsoleLogLevel;
 #endif
 };
 
-
 //-----------------------------------------------------------------------------
 // qSlicerApplicationPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerApplicationPrivate::qSlicerApplicationPrivate(
-    qSlicerApplication& object,
-    qSlicerCommandOptions * commandOptions,
-    qSlicerIOManager * ioManager)
-  : qSlicerCoreApplicationPrivate(object, commandOptions, ioManager), q_ptr(&object)
+qSlicerApplicationPrivate::qSlicerApplicationPrivate(qSlicerApplication& object,
+                                                     qSlicerCommandOptions* commandOptions,
+                                                     qSlicerIOManager* ioManager)
+  : qSlicerCoreApplicationPrivate(object, commandOptions, ioManager)
+  , q_ptr(&object)
 {
   this->ToolTipTrapper = nullptr;
   this->SettingsDialog = nullptr;
@@ -255,7 +254,7 @@ qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
   }
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  if(this->ExtensionsManagerDialog)
+  if (this->ExtensionsManagerDialog)
   {
     this->ExtensionsManagerDialog->setParent(nullptr);
     delete this->ExtensionsManagerDialog;
@@ -303,12 +302,11 @@ void qSlicerApplicationPrivate::init()
     ctkSlicerPythonConsoleCompleter* completer = new ctkSlicerPythonConsoleCompleter(*q->pythonManager(), q);
     q->pythonConsole()->setCompleter(completer);
     QStringList autocompletePreferenceList;
-    autocompletePreferenceList
-      << "slicer"
-      << "slicer.mrmlScene"
-      << "qt.QPushButton";
+    autocompletePreferenceList << "slicer"
+                               << "slicer.mrmlScene"
+                               << "qt.QPushButton";
     q->pythonConsole()->completer()->setAutocompletePreferenceList(autocompletePreferenceList);
-    foreach(QAction* action, q->pythonConsole()->actions())
+    foreach (QAction* action, q->pythonConsole()->actions())
     {
       if (action->shortcut() == QKeySequence("Ctrl+H"))
       {
@@ -332,10 +330,10 @@ void qSlicerApplicationPrivate::init()
   //----------------------------------------------------------------------------
   this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
   this->ErrorLogModel->setLogEntryGrouping(true);
-  this->ErrorLogModel->setTerminalOutputs(
-        this->CoreCommandOptions->disableTerminalOutputs() ?
-          ctkErrorLogTerminalOutput::None : ctkErrorLogTerminalOutput::All);
-#if defined (Q_OS_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
+  this->ErrorLogModel->setTerminalOutputs(this->CoreCommandOptions->disableTerminalOutputs()
+                                            ? ctkErrorLogTerminalOutput::None
+                                            : ctkErrorLogTerminalOutput::All);
+#if defined(Q_OS_WIN32) && !defined(Slicer_BUILD_WIN32_CONSOLE)
   // Must not register ctkErrorLogFDMessageHandler when building a window-based
   // (non-console) application because this handler would not
   // let the application to quit when the last window is closed.
@@ -351,13 +349,17 @@ void qSlicerApplicationPrivate::init()
 #ifdef Slicer_USE_PYTHONQT
   // Make ITK, VTK, Qt error messages show up in the Python console
   QSettings* userSettings = q->userSettings();
-  ctkErrorLogLevel::LogLevel level = ctkErrorLogLevel::logLevelFromString(userSettings->value("Python/ConsoleLogLevel").toString());
+  ctkErrorLogLevel::LogLevel level =
+    ctkErrorLogLevel::logLevelFromString(userSettings->value("Python/ConsoleLogLevel").toString());
   if (level >= 0)
   {
     q->setPythonConsoleLogLevel(level);
   }
-  QObject::connect(this->ErrorLogModel.data(), SIGNAL(entryAdded(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
-    q, SLOT(logToPythonConsole(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)));
+  QObject::connect(
+    this->ErrorLogModel.data(),
+    SIGNAL(entryAdded(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+    q,
+    SLOT(logToPythonConsole(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)));
 #endif
 
   q->setupFileLogging();
@@ -375,15 +377,13 @@ void qSlicerApplicationPrivate::init()
   qSlicerSettingsGeneralPanel* generalPanel = new qSlicerSettingsGeneralPanel;
   this->SettingsDialog->addPanel(qSlicerApplication::tr("General"), generalPanel);
 
-  qSlicerSettingsModulesPanel * settingsModulesPanel = new qSlicerSettingsModulesPanel;
+  qSlicerSettingsModulesPanel* settingsModulesPanel = new qSlicerSettingsModulesPanel;
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Modules"), settingsModulesPanel);
 
-  qSlicerSettingsStylesPanel* settingsStylesPanel =
-    new qSlicerSettingsStylesPanel(generalPanel);
+  qSlicerSettingsStylesPanel* settingsStylesPanel = new qSlicerSettingsStylesPanel(generalPanel);
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Appearance"), settingsStylesPanel);
 
-  qSlicerSettingsViewsPanel* settingsViewsPanel =
-    new qSlicerSettingsViewsPanel(generalPanel);
+  qSlicerSettingsViewsPanel* settingsViewsPanel = new qSlicerSettingsViewsPanel(generalPanel);
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Views"), settingsViewsPanel);
 
   qSlicerSettingsUserInformationPanel* settingsUserPanel = new qSlicerSettingsUserInformationPanel;
@@ -391,7 +391,7 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog->addPanel(qSlicerApplication::tr("User"), settingsUserPanel);
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  qSlicerSettingsExtensionsPanel * settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;
+  qSlicerSettingsExtensionsPanel* settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Extensions"), settingsExtensionsPanel);
 #endif
   qSlicerSettingsCachePanel* cachePanel = new qSlicerSettingsCachePanel;
@@ -399,8 +399,7 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Cache"), cachePanel);
 
 #ifdef Slicer_BUILD_I18N_SUPPORT
-  qSlicerSettingsInternationalizationPanel* qtInternationalizationPanel =
-      new qSlicerSettingsInternationalizationPanel;
+  qSlicerSettingsInternationalizationPanel* qtInternationalizationPanel = new qSlicerSettingsInternationalizationPanel;
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Internationalization"), qtInternationalizationPanel);
 #endif
 
@@ -414,32 +413,24 @@ void qSlicerApplicationPrivate::init()
   qSlicerSettingsDeveloperPanel* developerPanel = new qSlicerSettingsDeveloperPanel;
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Developer"), developerPanel);
 
-  QObject::connect(this->SettingsDialog, SIGNAL(restartRequested()),
-                   q, SLOT(restart()));
+  QObject::connect(this->SettingsDialog, SIGNAL(restartRequested()), q, SLOT(restart()));
 
   //----------------------------------------------------------------------------
   // Test Utility
   //----------------------------------------------------------------------------
 #ifdef Slicer_USE_QtTesting
   this->TestingUtility = new ctkQtTestingUtility(nullptr);
-  this->TestingUtility->addEventObserver(
-      "xml", new ctkXMLEventObserver(this->TestingUtility));
+  this->TestingUtility->addEventObserver("xml", new ctkXMLEventObserver(this->TestingUtility));
   ctkXMLEventSource* eventSource = new ctkXMLEventSource(this->TestingUtility);
-  eventSource->setRestoreSettingsAuto(
-      qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting));
+  eventSource->setRestoreSettingsAuto(qSlicerApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting));
   this->TestingUtility->addEventSource("xml", eventSource);
 
   // Translator and Player for MRML widget
-  this->TestingUtility->addPlayer(
-      new qMRMLCheckableNodeComboBoxEventPlayer());
-  this->TestingUtility->addPlayer(
-      new qMRMLNodeComboBoxEventPlayer());
-  this->TestingUtility->addTranslator(
-      new qMRMLNodeComboBoxEventTranslator());
-  this->TestingUtility->addPlayer(
-      new qMRMLTreeViewEventPlayer());
-  this->TestingUtility->addTranslator(
-      new qMRMLTreeViewEventTranslator());
+  this->TestingUtility->addPlayer(new qMRMLCheckableNodeComboBoxEventPlayer());
+  this->TestingUtility->addPlayer(new qMRMLNodeComboBoxEventPlayer());
+  this->TestingUtility->addTranslator(new qMRMLNodeComboBoxEventTranslator());
+  this->TestingUtility->addPlayer(new qMRMLTreeViewEventPlayer());
+  this->TestingUtility->addTranslator(new qMRMLTreeViewEventTranslator());
 
   // Player for the CLI Module || cannot be added for the moment ...
 #endif
@@ -474,7 +465,7 @@ CTK_SET_CPP(qSlicerApplication, ctkErrorLogLevel::LogLevel, setPythonConsoleLogL
 #endif
 
 //-----------------------------------------------------------------------------
-qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
+qSlicerApplication::qSlicerApplication(int& _argc, char** _argv)
   : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions, nullptr), _argc, _argv)
 {
   Q_D(qSlicerApplication);
@@ -511,27 +502,28 @@ qSlicerApplication* qSlicerApplication::application()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
+bool qSlicerApplication::notify(QObject* receiver, QEvent* event)
 {
   try
   {
     return QApplication::notify(receiver, event);
   }
-  catch( std::bad_alloc& exception )
+  catch (std::bad_alloc& exception)
   {
     QString errorMessage;
     errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
     errorMessage += tr("please save your work and restart.\n\n");
     errorMessage += tr("The application has run out of memory. ");
-    if (!QSysInfo::kernelType().compare(/*no tr*/"winnt"))
+    if (!QSysInfo::kernelType().compare(/*no tr*/ "winnt"))
     {
-      errorMessage += tr("Increasing virtual memory size in system settings or adding more RAM may fix this issue.\n\n");
+      errorMessage +=
+        tr("Increasing virtual memory size in system settings or adding more RAM may fix this issue.\n\n");
     }
-    else if (!QSysInfo::kernelType().compare(/*no tr*/"linux"))
+    else if (!QSysInfo::kernelType().compare(/*no tr*/ "linux"))
     {
       errorMessage += tr("Increasing swap size in system settings or adding more RAM may fix this issue.\n\n");
     }
-    else if (!QSysInfo::kernelType().compare(/*no tr*/"darwin"))
+    else if (!QSysInfo::kernelType().compare(/*no tr*/ "darwin"))
     {
       errorMessage += tr("Increasing free disk space or adding more RAM may fix this issue.\n\n");
     }
@@ -550,10 +542,10 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     }
     else
     {
-      QMessageBox::critical(this->mainWindow(),tr("Application Error"), errorMessage);
+      QMessageBox::critical(this->mainWindow(), tr("Application Error"), errorMessage);
     }
   }
-  catch( std::exception& exception )
+  catch (std::exception& exception)
   {
     QString errorMessage;
     errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
@@ -569,17 +561,16 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
     }
     else
     {
-      QMessageBox::critical(this->mainWindow(),tr("Application Error"), errorMessage);
+      QMessageBox::critical(this->mainWindow(), tr("Application Error"), errorMessage);
     }
   }
   return false;
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCommandOptions* qSlicerApplication::commandOptions()const
+qSlicerCommandOptions* qSlicerApplication::commandOptions() const
 {
-  qSlicerCommandOptions* _commandOptions =
-    dynamic_cast<qSlicerCommandOptions*>(this->coreCommandOptions());
+  qSlicerCommandOptions* _commandOptions = dynamic_cast<qSlicerCommandOptions*>(this->coreCommandOptions());
   Q_ASSERT(_commandOptions);
   return _commandOptions;
 }
@@ -632,10 +623,8 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
   d->LayoutManager = layoutManager;
   if (this->applicationLogic())
   {
-    this->applicationLogic()->SetSliceLogics(
-      d->LayoutManager? d->LayoutManager.data()->mrmlSliceLogics() : nullptr);
-    this->applicationLogic()->SetViewLogics(
-      d->LayoutManager? d->LayoutManager.data()->mrmlViewLogics() : nullptr);
+    this->applicationLogic()->SetSliceLogics(d->LayoutManager ? d->LayoutManager.data()->mrmlSliceLogics() : nullptr);
+    this->applicationLogic()->SetViewLogics(d->LayoutManager ? d->LayoutManager.data()->mrmlViewLogics() : nullptr);
     if (d->LayoutManager)
     {
       d->LayoutManager.data()->setMRMLColorLogic(this->applicationLogic()->GetColorLogic());
@@ -644,16 +633,16 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerLayoutManager* qSlicerApplication::layoutManager()const
+qSlicerLayoutManager* qSlicerApplication::layoutManager() const
 {
   Q_D(const qSlicerApplication);
   return d->LayoutManager.data();
 }
 
 //-----------------------------------------------------------------------------
-QMainWindow* qSlicerApplication::mainWindow()const
+QMainWindow* qSlicerApplication::mainWindow() const
 {
-  foreach(QWidget * widget, this->topLevelWidgets())
+  foreach (QWidget* widget, this->topLevelWidgets())
   {
     QMainWindow* window = qobject_cast<QMainWindow*>(widget);
     if (window)
@@ -709,8 +698,7 @@ void qSlicerApplication::onSlicerApplicationLogicModified()
 {
   if (this->layoutManager())
   {
-    this->layoutManager()->setMRMLColorLogic(
-      this->applicationLogic()->GetColorLogic());
+    this->layoutManager()->setMRMLColorLogic(this->applicationLogic()->GetColorLogic());
   }
 }
 
@@ -733,7 +721,7 @@ void qSlicerApplication::confirmRestart(QString reason)
   confirmDialog->setText(reason);
   confirmDialog->setIcon(QMessageBox::Question);
   confirmDialog->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-  confirmDialog->setDontShowAgainSettingsKey( "MainWindow/DontConfirmRestart" );
+  confirmDialog->setDontShowAgainSettingsKey("MainWindow/DontConfirmRestart");
   bool restartConfirmed = (confirmDialog->exec() == QMessageBox::Ok);
   confirmDialog->deleteLater();
 
@@ -744,7 +732,7 @@ void qSlicerApplication::confirmRestart(QString reason)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=nullptr*/)const
+QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence /*=nullptr*/) const
 {
   QString mostSuitableModuleName = "Data";
   double mostSuitableModuleConfidence = 0.0;
@@ -756,7 +744,7 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=n
 
   // Modules that support a parent class of the node
   QStringList classNames = this->allModuleAssociatedNodeTypes();
-  foreach(const QString& className, classNames)
+  foreach (const QString& className, classNames)
   {
     if (node->IsA(className.toUtf8()))
     {
@@ -764,7 +752,7 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=n
     }
   }
 
-  foreach(const QString& moduleName, moduleNames)
+  foreach (const QString& moduleName, moduleNames)
   {
     qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
     if (!module)
@@ -775,7 +763,8 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=n
     qSlicerAbstractModuleRepresentation* widget = module->widgetRepresentation();
     if (!widget)
     {
-      qWarning() << "Module " << moduleName << " associated with node class " << nodeClassName << " does not have widget";
+      qWarning() << "Module " << moduleName << " associated with node class " << nodeClassName
+                 << " does not have widget";
       continue;
     }
     double nodeEditableConfidence = widget->nodeEditable(node);
@@ -825,13 +814,13 @@ void qSlicerApplication::openNodeModule(vtkMRMLNode* node, QString role /*=QStri
 }
 
 // --------------------------------------------------------------------------
-ctkSettingsDialog* qSlicerApplication::settingsDialog()const
+ctkSettingsDialog* qSlicerApplication::settingsDialog() const
 {
   Q_D(const qSlicerApplication);
   return d->SettingsDialog;
 }
 
-void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QString()*/)
+void qSlicerApplication::openSettingsDialog(const QString& settingsPanel /*=QString()*/)
 {
   Q_D(qSlicerApplication);
 
@@ -851,10 +840,9 @@ void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QStri
     ctkSettingsPanel* settingsModulesPanel = d->SettingsDialog->panel(qSlicerApplication::tr("Modules"));
     if (settingsModulesPanel)
     {
-      QObject::connect(settingsModulesPanel, SIGNAL(favoriteModulesChanged()),
-        this->mainWindow(), SLOT(on_FavoriteModulesChanged()));
+      QObject::connect(
+        settingsModulesPanel, SIGNAL(favoriteModulesChanged()), this->mainWindow(), SLOT(on_FavoriteModulesChanged()));
     }
-
   }
 
   // Reload settings to apply any changes that have been made outside of the
@@ -897,12 +885,11 @@ void qSlicerApplication::openExtensionsManagerDialog()
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
-  if(!d->ExtensionsManagerDialog)
+  if (!d->ExtensionsManagerDialog)
   {
     d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(this->mainWindow());
   }
-  if (!d->ExtensionsManagerDialog->extensionsManagerModel() &&
-      this->mainWindow())
+  if (!d->ExtensionsManagerDialog->extensionsManagerModel() && this->mainWindow())
   {
     // The first time the dialog is open, resize it.
     d->ExtensionsManagerDialog->resize(this->mainWindow()->size());
@@ -960,8 +947,7 @@ int qSlicerApplication::numberOfRecentLogFilesToKeep()
   // Read number of log files to store value. If this value is missing,
   // then the group considered non-existent
   bool groupExists = false;
-  int numberOfFilesToKeep = userSettings->value(
-    "LogFiles/NumberOfFilesToKeep").toInt(&groupExists);
+  int numberOfFilesToKeep = userSettings->value("LogFiles/NumberOfFilesToKeep").toInt(&groupExists);
   if (!groupExists)
   {
     // Get default value from the ErrorLogModel if value is not set in settings
@@ -985,7 +971,8 @@ QStringList qSlicerApplication::recentLogFiles()
   for (int fileNumber = 0; fileNumber < numberOfFilesToKeep; ++fileNumber)
   {
     QString paddedFileNumber = QString("%1").arg(fileNumber, 3, 10, QChar('0')).toUpper();
-    QString filePath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(userSettings->value(paddedFileNumber, "").toString());
+    QString filePath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(
+      userSettings->value(paddedFileNumber, "").toString());
     if (!filePath.isEmpty())
     {
       logFilePaths.append(filePath);
@@ -996,7 +983,7 @@ QStringList qSlicerApplication::recentLogFiles()
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerApplication::currentLogFile()const
+QString qSlicerApplication::currentLogFile() const
 {
   Q_D(const qSlicerApplication);
   return d->ErrorLogModel->filePath();
@@ -1021,12 +1008,12 @@ void qSlicerApplication::setupFileLogging()
   // Egyptian Arabic (ar-EG) locale, Arabic numerals may be used.
   QLocale enUsLocale = QLocale(QLocale::English, QLocale::UnitedStates);
   QString currentLogFilePath = QString("%1/%2_%3_%4_%5_%6.log")
-    .arg(tempDir)
-    .arg(this->applicationName())
-    .arg(qSlicerApplication::application()->applicationVersion())
-    .arg(qSlicerApplication::application()->mainApplicationRevision())
-    .arg(enUsLocale.toString(QDateTime::currentDateTime(), "yyyyMMdd_hhmmss"))
-    .arg(QRandomGenerator::global()->generate() % 1000, 3, 10, QLatin1Char('0'));
+                                 .arg(tempDir)
+                                 .arg(this->applicationName())
+                                 .arg(qSlicerApplication::application()->applicationVersion())
+                                 .arg(qSlicerApplication::application()->mainApplicationRevision())
+                                 .arg(enUsLocale.toString(QDateTime::currentDateTime(), "yyyyMMdd_hhmmss"))
+                                 .arg(QRandomGenerator::global()->generate() % 1000, 3, 10, QLatin1Char('0'));
   logFilePaths.prepend(currentLogFilePath);
 
   // Save settings
@@ -1041,7 +1028,8 @@ void qSlicerApplication::setupFileLogging()
     if (fileNumber < numberOfFilesToKeep)
     {
       QString paddedFileNumber = QString("%1").arg(fileNumber, 3, 10, QChar('0')).toUpper();
-      userSettings->setValue(paddedFileNumber, qSlicerCoreApplication::application()->toSlicerHomeRelativePath(filePath));
+      userSettings->setValue(paddedFileNumber,
+                             qSlicerCoreApplication::application()->toSlicerHomeRelativePath(filePath));
     }
     // Otherwise delete file
     else
@@ -1062,23 +1050,19 @@ namespace
 // --------------------------------------------------------------------------
 struct qSlicerScopedTerminalOutputSettings
 {
-  qSlicerScopedTerminalOutputSettings(
-      ctkErrorLogAbstractModel* errorLogModel,
-      const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutputs):
-    ErrorLogModel(errorLogModel)
+  qSlicerScopedTerminalOutputSettings(ctkErrorLogAbstractModel* errorLogModel,
+                                      const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutputs)
+    : ErrorLogModel(errorLogModel)
   {
     this->Saved = errorLogModel->terminalOutputs();
     errorLogModel->setTerminalOutputs(terminalOutputs);
   }
-  ~qSlicerScopedTerminalOutputSettings()
-  {
-    this->ErrorLogModel->setTerminalOutputs(this->Saved);
-  }
+  ~qSlicerScopedTerminalOutputSettings() { this->ErrorLogModel->setTerminalOutputs(this->Saved); }
   ctkErrorLogAbstractModel* ErrorLogModel;
   ctkErrorLogTerminalOutput::TerminalOutputs Saved;
 };
 
-}
+} // namespace
 
 // --------------------------------------------------------------------------
 void qSlicerApplication::logApplicationInformation() const
@@ -1087,29 +1071,29 @@ void qSlicerApplication::logApplicationInformation() const
   // This helps in reproducing reported problems.
 
   qSlicerScopedTerminalOutputSettings currentTerminalOutputSettings(
-        this->errorLogModel(),
-        this->commandOptions()->displayApplicationInformation() ?
-          this->errorLogModel()->terminalOutputs() : ctkErrorLogTerminalOutput::None);
+    this->errorLogModel(),
+    this->commandOptions()->displayApplicationInformation() ? this->errorLogModel()->terminalOutputs()
+                                                            : ctkErrorLogTerminalOutput::None);
 
   QStringList titles = QStringList();
   titles << "Session start time "
-    << "Slicer version ";
+         << "Slicer version ";
   if (this->isCustomMainApplication())
   {
     titles << (QString(Slicer_MAIN_PROJECT_APPLICATION_NAME) + " version ");
   }
   titles << "Operating system "
-      << "Memory "
-      << "CPU "
-      << "VTK configuration "
-      << "Qt configuration "
-      << "Internationalization "
-      << "Developer mode "
-      << "Application path "
-      << "Additional module paths ";
+         << "Memory "
+         << "CPU "
+         << "VTK configuration "
+         << "Qt configuration "
+         << "Internationalization "
+         << "Developer mode "
+         << "Application path "
+         << "Additional module paths ";
 
   int titleWidth = 0;
-  foreach(const QString& title, titles)
+  foreach (const QString& title, titles)
   {
     if (title.length() > titleWidth)
     {
@@ -1140,16 +1124,16 @@ void qSlicerApplication::logApplicationInformation() const
 #else
          "release"
 #endif
-         );
+  );
 
   // Custom application version
   if (this->isCustomMainApplication())
   {
     qDebug("%s: %s (revision %s / %s)",
-      qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-      Slicer_MAIN_PROJECT_VERSION_FULL,
-      qPrintable(Slicer_MAIN_PROJECT_REVISION),
-      qPrintable(Slicer_MAIN_PROJECT_WC_REVISION));
+           qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+           Slicer_MAIN_PROJECT_VERSION_FULL,
+           qPrintable(Slicer_MAIN_PROJECT_REVISION),
+           qPrintable(Slicer_MAIN_PROJECT_WC_REVISION));
   }
 
   // Operating system
@@ -1160,12 +1144,12 @@ void qSlicerApplication::logApplicationInformation() const
 
 #ifdef Q_OS_WIN32
   qDebug() << qPrintable(QString("%0: %1 / %2 / (Build %3, Code Page %4) - %5")
-    .arg(titles.at(titleIndex++).leftJustified(titleWidth, '.'))
-    .arg(systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown")
-    .arg(systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown")
-    .arg(qSlicerApplication::windowsOSBuildNumber())
-    .arg(qSlicerApplication::windowsActiveCodePage())
-    .arg(systemInfo->Is64Bits() ? "64-bit" : "32-bit"));
+                           .arg(titles.at(titleIndex++).leftJustified(titleWidth, '.'))
+                           .arg(systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown")
+                           .arg(systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown")
+                           .arg(qSlicerApplication::windowsOSBuildNumber())
+                           .arg(qSlicerApplication::windowsActiveCodePage())
+                           .arg(systemInfo->Is64Bits() ? "64-bit" : "32-bit"));
 #else
   // Get name of the codec that Qt uses for current locale.
   // We log this value to diagnose character encoding issues.
@@ -1178,12 +1162,12 @@ void qSlicerApplication::logApplicationInformation() const
     localeCodecName = localeCodec->toUnicode(localeCodec->name());
   }
   qDebug("%s: %s / %s / %s / %s - %s",
-    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-    systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown",
-    systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown",
-    systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown",
-    qPrintable(localeCodecName),
-    systemInfo->Is64Bits() ? "64-bit" : "32-bit");
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+         systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown",
+         systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown",
+         systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown",
+         qPrintable(localeCodecName),
+         systemInfo->Is64Bits() ? "64-bit" : "32-bit");
 #endif
 
   // Memory
@@ -1195,30 +1179,30 @@ void qSlicerApplication::logApplicationInformation() const
   // total page file size is a better indication of actually available memory for the process.
   // The issue has been fixed in kwSys release at the end of 2014, therefore when VTK is upgraded then
   // this workaround may not be needed anymore.
-#if defined(_MSC_VER) && _MSC_VER < 1300
+# if defined(_MSC_VER) && _MSC_VER < 1300
   MEMORYSTATUS ms;
   ms.dwLength = sizeof(ms);
   GlobalMemoryStatus(&ms);
   unsigned long totalPhysicalBytes = ms.dwTotalPhys;
-  totalPhysicalMemoryMb = totalPhysicalBytes>>10>>10;
+  totalPhysicalMemoryMb = totalPhysicalBytes >> 10 >> 10;
   unsigned long totalVirtualBytes = ms.dwTotalPageFile;
-  totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
-#else
+  totalVirtualMemoryMb = totalVirtualBytes >> 10 >> 10;
+# else
   MEMORYSTATUSEX ms;
   ms.dwLength = sizeof(ms);
   if (GlobalMemoryStatusEx(&ms))
   {
     DWORDLONG totalPhysicalBytes = ms.ullTotalPhys;
-    totalPhysicalMemoryMb = totalPhysicalBytes>>10>>10;
+    totalPhysicalMemoryMb = totalPhysicalBytes >> 10 >> 10;
     DWORDLONG totalVirtualBytes = ms.ullTotalPageFile;
-    totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
+    totalVirtualMemoryMb = totalVirtualBytes >> 10 >> 10;
   }
-#endif
+# endif
 #endif
   qDebug() << qPrintable(QString("%0: %1 MB physical, %2 MB virtual")
-                         .arg(titles.at(titleIndex++).leftJustified(titleWidth, '.'))
-                         .arg(totalPhysicalMemoryMb)
-                         .arg(totalVirtualMemoryMb));
+                           .arg(titles.at(titleIndex++).leftJustified(titleWidth, '.'))
+                           .arg(totalPhysicalMemoryMb)
+                           .arg(totalVirtualMemoryMb));
 
   // CPU
   unsigned int numberOfPhysicalCPU = systemInfo->GetNumberOfPhysicalCPU();
@@ -1227,8 +1211,8 @@ void qSlicerApplication::logApplicationInformation() const
   // if hyperthreading is enabled (typically 0 is reported), therefore get it directly from the OS instead.
   SYSTEM_INFO info;
   info.dwNumberOfProcessors = 0;
-  GetSystemInfo (&info);
-  numberOfPhysicalCPU = (unsigned int) info.dwNumberOfProcessors;
+  GetSystemInfo(&info);
+  numberOfPhysicalCPU = (unsigned int)info.dwNumberOfProcessors;
 #endif
 
   unsigned int numberOfLogicalCPU = systemInfo->GetNumberOfLogicalCPU();
@@ -1237,38 +1221,46 @@ void qSlicerApplication::logApplicationInformation() const
          qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          systemInfo->GetVendorString() ? systemInfo->GetVendorString() : "unknown",
          systemInfo->GetModelName() ? systemInfo->GetModelName() : "unknown",
-         numberOfPhysicalCPU, numberOfLogicalCPU);
+         numberOfPhysicalCPU,
+         numberOfLogicalCPU);
 
   // VTK configuration
   qDebug("%s: %s rendering, %s threading",
-    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
 #ifdef Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND
-    "OpenGL2",
+         "OpenGL2",
 #else
-    "OpenGL",
+         "OpenGL",
 #endif
-    VTK_SMP_BACKEND);
+         VTK_SMP_BACKEND);
 
   // Qt configuration
   QString openGLProfileStr = "unknown";
   QSurfaceFormat surfaceFormat = QSurfaceFormat::defaultFormat();
   switch (surfaceFormat.profile())
   {
-    case QSurfaceFormat::NoProfile: openGLProfileStr = "no"; break;
-    case QSurfaceFormat::CoreProfile: openGLProfileStr = "core"; break;
-    case QSurfaceFormat::CompatibilityProfile: openGLProfileStr = "compatibility"; break;
+    case QSurfaceFormat::NoProfile:
+      openGLProfileStr = "no";
+      break;
+    case QSurfaceFormat::CoreProfile:
+      openGLProfileStr = "core";
+      break;
+    case QSurfaceFormat::CompatibilityProfile:
+      openGLProfileStr = "compatibility";
+      break;
   }
 
   qDebug("%s: version %s, %s, requested OpenGL %d.%d (%s profile)",
-    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-    QT_VERSION_STR,
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+         QT_VERSION_STR,
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
-    "with SSL",
+         "with SSL",
 #else
-    "no SSL",
+         "no SSL",
 #endif
-    surfaceFormat.majorVersion(), surfaceFormat.minorVersion(),
-    qPrintable(openGLProfileStr));
+         surfaceFormat.majorVersion(),
+         surfaceFormat.minorVersion(),
+         qPrintable(openGLProfileStr));
 
   QSettings settings;
 
@@ -1278,12 +1270,11 @@ void qSlicerApplication::logApplicationInformation() const
     qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled", true).toBool();
   QString language = qSlicerApplication::application()->userSettings()->value("language").toString();
   qDebug("%s: %s, language=%s",
-    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-    internationalizationEnabled ? "enabled" : "disabled",
-    qPrintable(language));
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+         internationalizationEnabled ? "enabled" : "disabled",
+         qPrintable(language));
 #else
-  qDebug("%s: not supported",
-    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')));
+  qDebug("%s: not supported", qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')));
 #endif
 
   // Developer mode enabled
@@ -1294,11 +1285,10 @@ void qSlicerApplication::logApplicationInformation() const
 
   // Additional module paths
   // These paths are not converted to absolute path, because the raw values are moreuseful for troubleshooting.
-  QStringList additionalModulePaths =
-      this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
+  QStringList additionalModulePaths = this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
 
   qSlicerModuleFactoryManager* moduleFactoryManager = this->moduleManager()->factoryManager();
-  foreach(const QString& extensionOrModulePath, this->commandOptions()->additionalModulePaths())
+  foreach (const QString& extensionOrModulePath, this->commandOptions()->additionalModulePaths())
   {
     QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
     if (!modulePaths.empty())
@@ -1312,13 +1302,12 @@ void qSlicerApplication::logApplicationInformation() const
   }
 
   qDebug("%s: %s",
-    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-    qPrintable(this->applicationDirPath()));
+         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+         qPrintable(this->applicationDirPath()));
 
   qDebug("%s: %s",
          qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
          additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1360,7 +1349,7 @@ ctkDICOMBrowser* qSlicerApplication::createDICOMBrowserForMainDatabase()
 #endif
 
 //------------------------------------------------------------------------------
-bool qSlicerApplication::launchDesigner(const QStringList& args/*=QStringList()*/)
+bool qSlicerApplication::launchDesigner(const QStringList& args /*=QStringList()*/)
 {
   QString designerExecutable = this->slicerHome() + "/bin/SlicerDesigner";
 #ifdef Q_OS_WIN32
@@ -1375,10 +1364,9 @@ bool qSlicerApplication::launchDesigner(const QStringList& args/*=QStringList()*
   return process.startDetached();
 }
 
-
 #ifdef Q_OS_WIN32
 
-typedef LONG NTSTATUS, * PNTSTATUS;
+typedef LONG NTSTATUS, *PNTSTATUS;
 typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 
 //------------------------------------------------------------------------------
@@ -1432,7 +1420,8 @@ void qSlicerApplication::editNode(vtkObject*, void* callData, unsigned long)
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerApplication::loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessagesInput/*=nullptr*/)
+bool qSlicerApplication::loadFiles(const QStringList& filePaths,
+                                   vtkMRMLMessageCollection* userMessagesInput /*=nullptr*/)
 {
   // Even if the caller does not need messages, we need the message list so that we can display
   // messages to the user.
@@ -1449,17 +1438,22 @@ bool qSlicerApplication::loadFiles(const QStringList& filePaths, vtkMRMLMessageC
 
 #ifdef Slicer_USE_PYTHONQT
 //---------------------------------------------------------------------------
-void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime, const QString& threadId,
-  ctkErrorLogLevel::LogLevel logLevel, const QString& origin, const ctkErrorLogContext& context, const QString& text)
+void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime,
+                                            const QString& threadId,
+                                            ctkErrorLogLevel::LogLevel logLevel,
+                                            const QString& origin,
+                                            const ctkErrorLogContext& context,
+                                            const QString& text)
 {
   Q_D(qSlicerApplication);
   Q_UNUSED(currentDateTime);
   Q_UNUSED(threadId);
   Q_UNUSED(context);
 
-  if (d->PythonConsoleLogLevel == ctkErrorLogLevel::None  // console logging disabled
-    || logLevel < d->PythonConsoleLogLevel  // these levels are not displayed
-    || origin == "Stream")  // Python stream output is already displayed in the console, other output streams should not appear
+  if (d->PythonConsoleLogLevel == ctkErrorLogLevel::None // console logging disabled
+      || logLevel < d->PythonConsoleLogLevel             // these levels are not displayed
+      || origin == "Stream") // Python stream output is already displayed in the console, other output streams should
+                             // not appear
   {
     return;
   }
@@ -1471,7 +1465,7 @@ void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime, co
   }
   QString prefixedText;
   QStringList lines = text.split('\n');
-  foreach(const QString & line, lines)
+  foreach (const QString& line, lines)
   {
     if (line.isEmpty())
     {

@@ -33,7 +33,7 @@
 //
 
 // Qt includes
-#include<QSignalMapper>
+#include <QSignalMapper>
 
 // qMRML includes
 #include "qMRMLSceneViewMenu.h"
@@ -53,8 +53,10 @@ class qMRMLSceneViewMenuPrivate : public QObject
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLSceneViewMenu);
+
 protected:
   qMRMLSceneViewMenu* const q_ptr;
+
 public:
   typedef QObject Superclass;
   qMRMLSceneViewMenuPrivate(qMRMLSceneViewMenu& object);
@@ -65,30 +67,28 @@ public:
 
 public slots:
 
-  void onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject * mrmlNode);
+  void onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject* mrmlNode);
 
   /// Add menu entry corresponding to \a sceneViewNode
-  void addMenuItem(vtkMRMLNode * sceneViewNode);
+  void addMenuItem(vtkMRMLNode* sceneViewNode);
 
-  void onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject * mrmlNode);
+  void onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject* mrmlNode);
 
   /// Remove menu entry corresponding to \a sceneViewNode
-  void removeMenuItem(vtkMRMLNode * sceneViewNode);
+  void removeMenuItem(vtkMRMLNode* sceneViewNode);
 
-  void onMRMLSceneViewNodeModified(vtkObject * mrmlNode);
+  void onMRMLSceneViewNodeModified(vtkObject* mrmlNode);
 
-  bool hasNoSceneViewItem()const;
+  bool hasNoSceneViewItem() const;
 
   void restoreSceneView(const QString& sceneViewNodeId);
   void deleteSceneView(const QString& sceneViewNodeId);
 
 public:
-  vtkSmartPointer<vtkMRMLScene>         MRMLScene;
-  QSignalMapper                         RestoreActionMapper;
-  QSignalMapper                         DeleteActionMapper;
-  QString                               NoSceneViewText;
-
+  vtkSmartPointer<vtkMRMLScene> MRMLScene;
+  QSignalMapper RestoreActionMapper;
+  QSignalMapper DeleteActionMapper;
+  QString NoSceneViewText;
 };
 
 #endif
-
