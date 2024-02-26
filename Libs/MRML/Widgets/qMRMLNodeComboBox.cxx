@@ -725,7 +725,7 @@ void qMRMLNodeComboBox::createNodeAs(const QString& nodeTypeName)
 {
     QString label = this->nodeTypeLabel(nodeTypeName);
     bool okPressed = false;
-    QString dialogTitle = tr("Create New %1").arg(label);
+    QString dialogTitle = createNew + label;
     QString defaultName = "";
     QString nodeName = this->getNameFromDialog(dialogTitle, defaultName, &okPressed);
 
@@ -744,7 +744,7 @@ void qMRMLNodeComboBox::createNodeAs(const QString& nodeTypeName)
 // --------------------------------------------------------------------------
 QString qMRMLNodeComboBox::getNameFromDialog(const QString& dialogTitle, const QString& defaultName = QString(), bool* ok = nullptr)
 {
-  QString newName = QInputDialog::getText(this, dialogTitle, "New name:", QLineEdit::Normal, defaultName, ok);
+  QString newName = QInputDialog::getText(this, dialogTitle, tr("New name:"), QLineEdit::Normal, defaultName, ok);
   return newName;
 }
 
