@@ -43,6 +43,15 @@
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
+// ----------------------------------------------------------------------------
+
+namespace
+{
+  const QString createNew = QObject::tr("Create new ");
+  const QString asSuffix = QObject::tr(" as...");
+  const QString renameTitlePrefix = QObject::tr("Rename ");
+}
+
 // --------------------------------------------------------------------------
 qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   : q_ptr(&object)
@@ -308,10 +317,10 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
       foreach (QString nodeType, q->nodeTypes())
       {
         QString label = q->nodeTypeLabel(nodeType);
-        extraItems.append(qMRMLNodeComboBox::tr("Create new ") + label);
+        extraItems.append(createNew + label);
         if (this->RenameEnabled)
         {
-          extraItems.append(qMRMLNodeComboBox::tr("Create new ") + label + qMRMLNodeComboBox::tr(" as..."));
+          extraItems.append(createNew + label + asSuffix);
         }
       }
     }
@@ -426,20 +435,42 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
   Q_D(qMRMLNodeComboBox);
   // FIXME: check the type of the item on a different role instead of the display role
   QString data = this->model()->data(index, Qt::DisplayRole).toString();
-  if (d->AddEnabled && data.startsWith(tr("Create new ")) && !data.endsWith(tr(" as...")))
+  if (data.startsWith(createNew))
   {
-    QString label = data.right(data.length()-tr("Create new ").length());
+    QString label = data.mid(createNew.length());
     QString nodeTypeName;
-    foreach (QString nodeType, this->nodeTypes())
+    bool createAs = data.endsWith(asSuffix);
+    for (const auto& nodeType : this->nodeTypes())
     {
       QString foundLabel = this->nodeTypeLabel(nodeType);
-      if (foundLabel==label)
+      if (createAs)
+      {
+        foundLabel += asSuffix;
+      }
+      if (foundLabel == label)
       {
         nodeTypeName = nodeType;
+        break;
       }
     }
-    d->ComboBox->hidePopup();
-    this->addNode(nodeTypeName);
+    if (!nodeTypeName.isEmpty())
+    {
+      d->ComboBox->hidePopup();
+      if (createAs)
+      {
+        // Here, use createNodeAs to handle node creation and naming.
+        this->createNodeAs(nodeTypeName);
+      }
+      else
+      {
+        vtkMRMLNode* newNode = this->addNode(nodeTypeName);
+        if (newNode != nullptr)
+        {
+          this->setCurrentNode(newNode);
+          emit this->nodeAddedByUser(newNode);
+        }
+      }
+    }
   }
   else if (d->RemoveEnabled && data.startsWith(tr("Delete current ")))
   {
@@ -454,24 +485,6 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
   else if (d->RenameEnabled && data.startsWith(tr("Rename current ")))
   {
     d->ComboBox->hidePopup();
-    this->renameCurrentNode();
-  }
-  else if (d->RenameEnabled && d->AddEnabled
-           && data.startsWith(tr("Create new ")) && data.endsWith(tr(" as...")))
-  {
-    // Get the node type label by stripping "Create new" and "as..." from left and right
-    QString label = data.mid(tr("Create new ").length(), data.length()-tr("Create new ").length()-tr(" as...").length());
-    QString nodeTypeName;
-    foreach (QString nodeType, this->nodeTypes())
-    {
-      QString foundLabel = this->nodeTypeLabel(nodeType);
-      if (foundLabel==label)
-      {
-        nodeTypeName = nodeType;
-      }
-    }
-    d->ComboBox->hidePopup();
-    this->addNode(nodeTypeName);
     this->renameCurrentNode();
   }
   else
@@ -695,16 +708,44 @@ void qMRMLNodeComboBox::renameCurrentNode()
     return;
   }
 
+  // Use the dialog method to get the new name from the user
   bool ok = false;
-  QString newName = QInputDialog::getText(
-    this, "Rename " + this->nodeTypeLabel(node->GetClassName()), "New name:",
-    QLineEdit::Normal, node->GetName(), &ok);
-  if (!ok)
+  QString currentName = node->GetName();
+  QString newName = getNameFromDialog(renameTitlePrefix + this->nodeTypeLabel(node->GetClassName()), currentName, &ok);
+
+  // Check if the user confirmed the action
+  if (ok && !newName.isEmpty())
   {
-    return;
+    node->SetName(newName.toUtf8());
+    emit currentNodeRenamed(newName);
   }
-  node->SetName(newName.toUtf8());
-  emit currentNodeRenamed(newName);
+}
+// --------------------------------------------------------------------------
+void qMRMLNodeComboBox::createNodeAs(const QString& nodeTypeName)
+{
+    QString label = this->nodeTypeLabel(nodeTypeName);
+    bool okPressed = false;
+    QString dialogTitle = createNew + label;
+    QString defaultName = "";
+    QString nodeName = this->getNameFromDialog(dialogTitle, defaultName, &okPressed);
+
+    if (okPressed && !nodeName.isEmpty())
+    {
+        vtkMRMLNode* newNode = this->addNode(nodeTypeName);
+        if (newNode != nullptr)
+        {
+            newNode->SetName(nodeName.toUtf8());
+            this->setCurrentNode(newNode);
+            emit this->nodeAddedByUser(newNode);
+        }
+    }
+}
+
+// --------------------------------------------------------------------------
+QString qMRMLNodeComboBox::getNameFromDialog(const QString& dialogTitle, const QString& defaultName = QString(), bool* ok = nullptr)
+{
+  QString newName = QInputDialog::getText(this, dialogTitle, tr("New name:"), QLineEdit::Normal, defaultName, ok);
+  return newName;
 }
 
 // --------------------------------------------------------------------------
@@ -988,10 +1029,10 @@ void qMRMLNodeComboBox::setAddEnabled(bool enable)
   {
     return;
   }
-  if (enable && d->hasPostItem(tr("Create new ")))
+  if (enable && d->hasPostItem(createNew))
   {
     qDebug() << "setAddEnabled: An action starting with name "
-             << tr("Create new ") << " already exists. "
+             << createNew << " already exists. "
                 "Not enabling this property.";
     return;
   }
@@ -1282,7 +1323,7 @@ void qMRMLNodeComboBox::addMenuAction(QAction *newAction)
     }
   }
   if ((d->AddEnabled
-       && newAction->text().startsWith(tr("Create new "))) ||
+       && newAction->text().startsWith(createNew)) ||
       (d->RemoveEnabled
        && newAction->text().startsWith(tr("Delete current "))) ||
       (d->EditEnabled
