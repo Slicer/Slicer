@@ -45,8 +45,8 @@ class qMRMLMarkupsCurveSettingsWidgetPrivate
 public:
   qMRMLMarkupsCurveSettingsWidgetPrivate(qMRMLMarkupsCurveSettingsWidget &widget);
 
-  static const char* getCurveTypeAsHumanReadableString(int curveType);
-  static const char* getCostFunctionAsHumanReadableString(int costFunction);
+  static std::string getCurveTypeAsHumanReadableString(int curveType);
+  static std::string getCostFunctionAsHumanReadableString(int costFunction);
 
   void setupUi(QWidget* widget);
 
@@ -78,13 +78,17 @@ void qMRMLMarkupsCurveSettingsWidgetPrivate::setupUi(qMRMLMarkupsCurveSettingsWi
   this->curveTypeComboBox->clear();
   for (int curveType = 0; curveType < vtkCurveGenerator::CURVE_TYPE_LAST; ++curveType)
   {
-    this->curveTypeComboBox->addItem(qMRMLMarkupsCurveSettingsWidgetPrivate::getCurveTypeAsHumanReadableString(curveType), curveType);
+    this->curveTypeComboBox->addItem(
+      qMRMLMarkupsCurveSettingsWidgetPrivate::getCurveTypeAsHumanReadableString(curveType).c_str(), curveType
+    );
   }
 
   this->costFunctionComboBox->clear();
   for (int costFunction = 0; costFunction < vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_LAST; ++costFunction)
   {
-    this->costFunctionComboBox->addItem(qMRMLMarkupsCurveSettingsWidgetPrivate::getCostFunctionAsHumanReadableString(costFunction), costFunction);
+    this->costFunctionComboBox->addItem(
+      qMRMLMarkupsCurveSettingsWidgetPrivate::getCostFunctionAsHumanReadableString(costFunction).c_str(), costFunction
+    );
   }
 
   this->editScalarFunctionDelay = new QTimer(q);
@@ -112,58 +116,58 @@ void qMRMLMarkupsCurveSettingsWidgetPrivate::setupUi(qMRMLMarkupsCurveSettingsWi
 }
 
 //------------------------------------------------------------------------------
-const char* qMRMLMarkupsCurveSettingsWidgetPrivate::getCurveTypeAsHumanReadableString(int curveType)
+std::string qMRMLMarkupsCurveSettingsWidgetPrivate::getCurveTypeAsHumanReadableString(int curveType)
 {
   switch (curveType)
   {
     case vtkCurveGenerator::CURVE_TYPE_LINEAR_SPLINE:
     {
-      return "Linear";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Linear").toStdString();
     }
     case vtkCurveGenerator::CURVE_TYPE_CARDINAL_SPLINE:
     {
-      return "Spline";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Spline").toStdString();
     }
     case vtkCurveGenerator::CURVE_TYPE_KOCHANEK_SPLINE:
     {
-      return "Kochanek spline";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Kochanek spline").toStdString();
     }
     case vtkCurveGenerator::CURVE_TYPE_POLYNOMIAL:
     {
-      return "Polynomial";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Polynomial").toStdString();
     }
     case vtkCurveGenerator::CURVE_TYPE_SHORTEST_DISTANCE_ON_SURFACE:
     {
-      return "Shortest distance on surface";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Shortest distance on surface").toStdString();
     }
     default:
     {
       vtkGenericWarningMacro("Unknown curve type: " << curveType);
-      return "Unknown";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Unknown").toStdString();
     }
   }
 }
 
 //------------------------------------------------------------------------------
-const char* qMRMLMarkupsCurveSettingsWidgetPrivate::getCostFunctionAsHumanReadableString(int costFunction)
+std::string qMRMLMarkupsCurveSettingsWidgetPrivate::getCostFunctionAsHumanReadableString(int costFunction)
 {
   switch (costFunction)
   {
     case vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE:
     {
-      return "Distance";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Distance").toStdString();
     }
     case vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_ADDITIVE:
     {
-      return "Additive";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Additive").toStdString();
     }
     case vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_MULTIPLICATIVE:
     {
-      return "Multiplicative";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Multiplicative").toStdString();
     }
     case vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_INVERSE_SQUARED:
     {
-      return "Inverse squared";
+      return qMRMLMarkupsCurveSettingsWidget::tr("Inverse squared").toStdString();
     }
     default:
     {
@@ -256,18 +260,18 @@ void qMRMLMarkupsCurveSettingsWidget::updateWidgetFromMRML()
   switch (costFunction)
   {
     case vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_ADDITIVE:
-      prefixString = "distance + ";
+      prefixString = tr("distance + ");
       break;
     case vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_MULTIPLICATIVE:
-      prefixString = "distance * ";
+      prefixString = tr("distance * ");
       break;
     case vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_INVERSE_SQUARED:
-      prefixString = "distance / (";
+      prefixString = tr("distance / (");
       suffixString = " ^ 2";
       break;
     default:
     case vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE:
-      prefixString = "distance";
+      prefixString = tr("distance");
       break;
   }
   d->scalarFunctionPrefixLabel->setText(prefixString);

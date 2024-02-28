@@ -116,7 +116,8 @@ void qMRMLMarkupsToolBarPrivate::addSetModuleButton(vtkSlicerMarkupsLogic* marku
 
   QPushButton* moduleButton = new QPushButton();
   moduleButton->setObjectName(QString(moduleName + " module shortcut"));
-  moduleButton->setToolTip("Open the " + moduleName + " module");
+  //: %1 is the module name
+  moduleButton->setToolTip(tr("Open the %1 module").arg(moduleName));
   QString iconName = ":/Icons/" + moduleName + ".png";
   moduleButton->setIcon(QIcon(iconName));
   QSignalMapper* mapper = new QSignalMapper(moduleButton);
@@ -433,7 +434,7 @@ void qMRMLMarkupsToolBar::initializeToolBarLayout()
   Q_D(qMRMLMarkupsToolBar);
 
   vtkSlicerMarkupsLogic* markupsLogic =
-    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic("Markups"));
+    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic(/*no tr*/"Markups"));
   if (!markupsLogic)
   {
     qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
@@ -450,7 +451,7 @@ void qMRMLMarkupsToolBar::initializeToolBarLayout()
 
   // Module shortcuts
   this->addSeparator();
-  d->addSetModuleButton(markupsLogic, "Markups");
+  d->addSetModuleButton(markupsLogic, /*no tr*/"Markups");
 
   // Add event observers for registration/unregistration of markups
   this->qvtkConnect(markupsLogic, vtkSlicerMarkupsLogic::MarkupRegistered,
@@ -468,7 +469,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
   Q_D(qMRMLMarkupsToolBar);
 
   vtkSlicerMarkupsLogic* markupsLogic =
-    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic("Markups"));
+    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic(/*no tr*/"Markups"));
   if (!markupsLogic)
   {
     qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
@@ -511,7 +512,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
   for (int index = this->layout()->count()-1; index >=0 ; index--)
   {
     QString buttonName = this->layout()->itemAt(index)->widget()->objectName();
-    if (!buttonName.startsWith("Create") || !buttonName.endsWith("PushButton"))
+    if (!buttonName.startsWith(/*no tr*/"Create") || !buttonName.endsWith(/*no tr*/"PushButton"))
     {
       // Not a markup create button, leave it as is
       continue;
@@ -544,7 +545,7 @@ void qMRMLMarkupsToolBar::onAddNewMarkupsNodeByClass(const QString& className)
   // Add new markups node to the scene
   vtkMRMLMarkupsNode* markupsNode = nullptr;
   vtkSlicerMarkupsLogic* markupsLogic =
-    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic("Markups"));
+    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic(/*no tr*/"Markups"));
   if (markupsLogic)
   {
     markupsNode = markupsLogic->AddNewMarkupsNode(className.toStdString());
