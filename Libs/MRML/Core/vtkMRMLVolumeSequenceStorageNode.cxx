@@ -51,28 +51,28 @@ vtkMRMLVolumeSequenceStorageNode::~vtkMRMLVolumeSequenceStorageNode() = default;
 int vtkMRMLVolumeSequenceStorageNode::ConvertVoxelVectorTypeMRMLToVTKITK(int mrmlType)
 {
   switch (mrmlType)
-    {
+  {
     case vtkMRMLVolumeNode::VoxelVectorTypeUndefined: return vtkITKImageSequenceWriter::VoxelVectorTypeUndefined;
     case vtkMRMLVolumeNode::VoxelVectorTypeSpatial: return vtkITKImageSequenceWriter::VoxelVectorTypeSpatial;
     case vtkMRMLVolumeNode::VoxelVectorTypeColorRGB: return vtkITKImageSequenceWriter::VoxelVectorTypeColorRGB;
     case vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA: return vtkITKImageSequenceWriter::VoxelVectorTypeColorRGBA;
     default:
       return vtkITKImageSequenceWriter::VoxelVectorTypeUndefined;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeSequenceStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(int vtkitkType)
 {
   switch (vtkitkType)
-    {
+  {
     case vtkITKImageSequenceWriter::VoxelVectorTypeUndefined: return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
     case vtkITKImageSequenceWriter::VoxelVectorTypeSpatial: return vtkMRMLVolumeNode::VoxelVectorTypeSpatial;
     case vtkITKImageSequenceWriter::VoxelVectorTypeColorRGB: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGB;
     case vtkITKImageSequenceWriter::VoxelVectorTypeColorRGBA: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA;
     default:
       return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -260,7 +260,7 @@ bool vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *re
     firstFrameVolumeScalarType = firstFrameVolume->GetImageData()->GetScalarType();
     firstFrameVolumeNumberOfComponents = firstFrameVolume->GetImageData()->GetNumberOfScalarComponents();
     firstFrameVolumeVoxelVectorType = firstFrameVolume->GetVoxelVectorType();
-    }
+  }
   vtkNew<vtkMatrix4x4> firstVolumeRasToIjk;
   firstFrameVolume->GetRASToIJKMatrix(firstVolumeRasToIjk.GetPointer());
 
@@ -294,7 +294,7 @@ bool vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *re
       currentFrameVolumeScalarType = currentFrameVolume->GetImageData()->GetScalarType();
       currentFrameVolumeNumberOfComponents = currentFrameVolume->GetImageData()->GetNumberOfScalarComponents();
       currentFrameVolumeVoxelVectorType = currentFrameVolume->GetVoxelVectorType();
-      }
+    }
     for (int i = 0; i < 6; i++)
     {
       if (firstFrameVolumeExtent[i] != currentFrameVolumeExtent[i])
@@ -359,7 +359,6 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       frameVolumeScalarType = frameVolume->GetImageData()->GetScalarType();
       frameVolumeNumberOfComponents = frameVolume->GetImageData()->GetNumberOfScalarComponents();
       frameVolumeVoxelVectorType = frameVolume->GetVoxelVectorType();
-      }
     }
   }
 
@@ -381,36 +380,36 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   // Setup writer
   for (int frameIndex=0; frameIndex<numberOfFrameVolumes; frameIndex++)
-    {
+  {
     vtkMRMLVolumeNode* frameVolume = vtkMRMLVolumeNode::SafeDownCast(volSequenceNode->GetNthDataNode(frameIndex));
     if (frameVolume==nullptr)
-      {
+    {
       vtkDebugMacro(<< "vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: Data node "<<frameIndex<<" is not a volume");
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only volume sequence can be written in this format."));
       return 0;
-      }
+    }
     vtkNew<vtkMatrix4x4> currentVolumeRasToIjk;
     frameVolume->GetRASToIJKMatrix(currentVolumeRasToIjk.GetPointer());
     if (!vtkAddonMathUtilities::MatrixAreEqual(currentVolumeRasToIjk, firstVolumeRasToIjk))
-      {
+    {
       vtkDebugMacro("vtkMRMLVolumeSequenceStorageNode::CanWriteFromReferenceNode: IJK to RAS matrix is not the same in all frames"
         << " (first frame: " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk)
         << ", frame " << frameIndex << ": " << vtkAddonMathUtilities::ToString(firstVolumeRasToIjk) << ")");
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Geometry of all volumes in the sequence must be the same."));
       return 0;
-      }
+    }
     int currentFrameVolumeDimensions[3] = {0};
     int currentFrameVolumeScalarType = VTK_VOID;
     if (frameVolume->GetImageData())
-      {
+    {
       frameVolume->GetImageData()->GetDimensions(currentFrameVolumeDimensions);
       currentFrameVolumeScalarType = frameVolume->GetImageData()->GetScalarType();
-      }
+    }
     if (currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
     || currentFrameVolumeDimensions[1] != frameVolumeDimensions[1]
     || currentFrameVolumeDimensions[2] != frameVolumeDimensions[2]
     || currentFrameVolumeScalarType != frameVolumeScalarType)
-      {
+    {
       vtkDebugMacro(<< "vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: Data node "<<frameIndex<<" size or scalar type mismatch ("
         << "got " << currentFrameVolumeDimensions[0]
           << "x" << currentFrameVolumeDimensions[1]
@@ -422,22 +421,22 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
           << " " <<vtkImageScalarTypeNameMacro(frameVolumeScalarType) );
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Size and scalar type of all volumes in the sequence must be the same."));
       return 0;
-     }
-    if (frameVolume->GetImageData())
-      {
-      writer->AddInputConnection(frameVolume->GetImageDataConnection());
-      }
     }
+    if (frameVolume->GetImageData())
+    {
+      writer->AddInputConnection(frameVolume->GetImageDataConnection());
+    }
+  }
 
   // Write image
   writer->Write();
   int writeFlag = 1;
   if (writer->GetErrorCode())
-    {
+  {
     vtkDebugMacro("ERROR writing NRRD file " << (writer->GetFileName() == nullptr ? "null" : writer->GetFileName()));
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Failed to write NRRD file."));
     writeFlag = 0;
-    }
+  }
 
   this->StageWriteData(refNode);
 

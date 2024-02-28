@@ -44,15 +44,8 @@ class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStora
 
   /// Write the data. Returns 1 on success, 0 otherwise.
   ///
-#ifdef NRRD_CHUNK_IO_AVAILABLE
   /// The nrrd file will be formatted such as:
-  /// "kinds: domain domain domain list"
-  /// This order is the optimal, best performance, choice for streaming
-  /// 3D+T data to a file using the Teem library.
-#else
-  /// The nrrd file will be formatted such as:
-  /// "kinds: list domain domain domain"
-#endif
+  /// "kinds: [component] domain domain domain list"
   int WriteDataInternal(vtkMRMLNode *refNode) override;
 
   ///
@@ -71,12 +64,7 @@ protected:
   /// but it has an early exit if the file to be read is incompatible.
   ///
   /// It is assumed that the nrrd file is formatted such as:
-  /// "kinds: list domain domain domain"
-#ifdef NRRD_CHUNK_IO_AVAILABLE
-  /// or
-  /// "kinds: domain domain domain list"
-#endif
-
+  /// "kinds: [component] domain domain domain list"
   int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Initialize all the supported write file types
