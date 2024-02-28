@@ -33,7 +33,7 @@ class VTK_ITK_EXPORT vtkITKImageSequenceWriter : public vtkImageAlgorithm
 {
 public:
   static vtkITKImageSequenceWriter *New();
-  vtkTypeMacro(vtkITKImageSequenceWriter,vtkImageAlgorithm);
+  vtkTypeMacro(vtkITKImageSequenceWriter, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum
@@ -52,9 +52,9 @@ public:
   void SetFileName(const char *);
 
   char* GetFileName()
-    {
+  {
     return FileName;
-    }
+  }
 
   ///
   /// Use compression if possible
@@ -73,15 +73,15 @@ public:
 
   /// Set orientation matrix
   void SetRasToIJKMatrix(vtkMatrix4x4* mat)
-    {
+  {
     RasToIJKMatrix = mat;
-    }
+  }
 
   /// Set orientation matrix
   void SetMeasurementFrameMatrix(vtkMatrix4x4* mat)
-    {
+  {
     MeasurementFrameMatrix = mat;
-    }
+  }
 
   /// Defines how to interpret voxel components
   vtkSetMacro(VoxelVectorType, int);
@@ -99,7 +99,7 @@ protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
 
 protected:
-  char *FileName;
+  char* FileName;
   vtkMatrix4x4* RasToIJKMatrix;
   vtkMatrix4x4* MeasurementFrameMatrix;
   int UseCompression;
