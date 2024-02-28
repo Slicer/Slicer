@@ -57,8 +57,17 @@ public:
   /// Use this calculated permutation for updating spacing widget from geometry and interpreting spacing input
   void ComputeSourceAxisIndexForInputAxis();
 
-  /// Resample labelmap representation the input segmentation node according to the current
+  /// Sets the computed reference image geometry into the input segmentation node
+  /// (in the ReferenceImageGeometry conversion parameter and node reference).
+  /// For example, reference geometry may be used for determining the geometry of the segmentation
+  /// when saving into file, to make the extents of the segmentation match the extents of the
+  /// segmented image (instead of making the segmentation just big enough to store all the segments).
+  bool SetReferenceImageGeometryInSegmentationNode();
+
+  /// Resample labelmap representation of the input segmentation node according to the current
   /// output geometry setting.
+  ///
+  /// \sa SetReferenceImageGeometryInSegmentationNode()
   bool ResampleLabelmapsInSegmentationNode();
 
   /// Oriented image data containing output geometry. This is what the class calculates from the inputs

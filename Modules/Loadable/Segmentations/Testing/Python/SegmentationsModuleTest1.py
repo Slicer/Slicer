@@ -34,6 +34,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
         self.TestSection_ImportExportSegment()
         self.TestSection_ImportExportSegment2()
         self.TestSection_SubjectHierarchy()
+        self.TestSection_SegmentGeometryLogic()
 
         logging.info("Test finished")
 
@@ -554,3 +555,69 @@ class SegmentationsModuleTest1(unittest.TestCase):
         slicer.mrmlScene.RemoveNode(self.inputSegmentationNode)
         self.assertEqual(shNode.GetItemName(segmentationShItemID), "")
         self.assertEqual(shNode.GetItemName(sphereItemID), "")
+
+    # ------------------------------------------------------------------------------
+    def TestSection_SegmentGeometryLogic(self):
+        # Test segment geometry logic
+        logging.info("Test section: Segment geometry logic")
+
+        # Use MRHead for testing
+        import SampleData
+        volumeNode = SampleData.downloadSample("MRHead")
+
+        # Convert MRHead to oriented image data
+        import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
+        orientedImageData = vtkSlicerSegmentationsModuleLogic.vtkSlicerSegmentationsModuleLogic.CreateOrientedImageDataFromVolumeNode(volumeNode)
+        orientedImageData.UnRegister(None)
+
+        # Create segmentation node with binary labelmap master and one segment with MRHead geometry
+        segmentationNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
+        segmentationNode.GetSegmentation().SetSourceRepresentationName(self.binaryLabelmapReprName)
+        geometryStr = slicer.vtkSegmentationConverter.SerializeImageGeometry(orientedImageData)
+        segmentationNode.GetSegmentation().SetConversionParameter(
+            slicer.vtkSegmentationConverter.GetReferenceImageGeometryParameterName(), geometryStr)
+
+        threshold = vtk.vtkImageThreshold()
+        threshold.SetInputData(orientedImageData)
+        threshold.ThresholdByUpper(16.0)
+        threshold.SetInValue(1)
+        threshold.SetOutValue(0)
+        threshold.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
+        threshold.Update()
+        segmentOrientedImageData = slicer.vtkOrientedImageData()
+        segmentOrientedImageData.DeepCopy(threshold.GetOutput())
+        mrImageToWorldMatrix = vtk.vtkMatrix4x4()
+        orientedImageData.GetImageToWorldMatrix(mrImageToWorldMatrix)
+        segmentOrientedImageData.SetImageToWorldMatrix(mrImageToWorldMatrix)
+        segment = slicer.vtkSegment()
+        segment.SetName("Brain")
+        segment.SetColor(0.0, 0.0, 1.0)
+        segment.AddRepresentation(self.binaryLabelmapReprName, segmentOrientedImageData)
+        segmentationNode.GetSegmentation().AddSegment(segment)
+
+        # Check resolution before resampling
+        geometryImageData = slicer.vtkOrientedImageData()
+        spacingComparisonDecimal = 3
+        segmentationNode.GetBinaryLabelmapRepresentation("Brain", geometryImageData)
+        actualSpacing = geometryImageData.GetSpacing()
+        expectedSpacing = [1, 1, 1.3]
+        import numpy as np
+        for i in range(3):
+            np.testing.assert_almost_equal(actualSpacing[i], expectedSpacing[i], decimal=3, err_msg=f"Spacing mismatch on axis {i} before resampling")
+
+        # Update geometry of internal binary labelmap representation in segmentation node
+        segmentationGeometryLogic = slicer.vtkSlicerSegmentationGeometryLogic()
+        segmentationGeometryLogic.SetInputSegmentationNode(segmentationNode)
+        segmentationGeometryLogic.SetSourceGeometryNode(volumeNode)
+        segmentationGeometryLogic.SetOversamplingFactor(2.0)
+        segmentationGeometryLogic.SetIsotropicSpacing(True)
+        segmentationGeometryLogic.CalculateOutputGeometry()
+        segmentationGeometryLogic.SetReferenceImageGeometryInSegmentationNode()
+        segmentationGeometryLogic.ResampleLabelmapsInSegmentationNode()
+
+        # Check resolution after resampling
+        segmentationNode.GetBinaryLabelmapRepresentation("Brain", geometryImageData)
+        actualSpacing = geometryImageData.GetSpacing()
+        expectedSpacing = [0.5, 0.5, 0.5]
+        for i in range(3):
+            np.testing.assert_almost_equal(actualSpacing[i], expectedSpacing[i], decimal=3, err_msg=f"Spacing mismatch on axis {i} after resampling")

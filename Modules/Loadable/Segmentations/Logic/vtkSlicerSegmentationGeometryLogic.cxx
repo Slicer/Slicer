@@ -151,26 +151,45 @@ void vtkSlicerSegmentationGeometryLogic::CalculatePaddedOutputGeometry()
     return;
   }
 
-  std::string segmentationGeometryString = this->InputSegmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry(
-    vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
-  vtkNew<vtkOrientedImageData> inputGeometryImageData;
-  vtkSegmentationConverter::DeserializeImageGeometry(segmentationGeometryString, inputGeometryImageData, false/*don't allocate*/);
-  vtkNew<vtkTransform> segmentationGeometryToReferenceGeometryTransform;
-  vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(inputGeometryImageData,
-    this->OutputGeometryImageData, segmentationGeometryToReferenceGeometryTransform);
-
-  int transformedSegmentationExtent[6] = { 0, -1, 0, -1, 0, -1 };
-  vtkOrientedImageDataResample::TransformExtent(inputGeometryImageData->GetExtent(),
-    segmentationGeometryToReferenceGeometryTransform, transformedSegmentationExtent);
-
   int outputGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
   this->OutputGeometryImageData->GetExtent(outputGeometryExtent);
 
-  for (int i = 0; i < 3; ++i)
+  std::string segmentationGeometryString = this->InputSegmentationNode->GetSegmentation()->DetermineCommonLabelmapGeometry(
+    vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+  if (!segmentationGeometryString.empty())
   {
-    outputGeometryExtent[2*i] = std::min(outputGeometryExtent[2*i], transformedSegmentationExtent[2*i]);
-    outputGeometryExtent[2*i+1] = std::max(outputGeometryExtent[2*i+1], transformedSegmentationExtent[2*i+1]);
+    // There are non-empty segments, expand the output extent to make sure they are fully included
+    vtkNew<vtkOrientedImageData> segmentationGeometryImageData;
+    vtkSegmentationConverter::DeserializeImageGeometry(segmentationGeometryString, segmentationGeometryImageData, false/*don't allocate*/);
+    vtkNew<vtkTransform> segmentationGeometryToReferenceGeometryTransform;
+    vtkOrientedImageDataResample::GetTransformBetweenOrientedImages(segmentationGeometryImageData,
+      this->OutputGeometryImageData, segmentationGeometryToReferenceGeometryTransform);
+
+    int transformedSegmentationExtent[6] = { 0, -1, 0, -1, 0, -1 };
+    vtkOrientedImageDataResample::TransformExtent(segmentationGeometryImageData->GetExtent(),
+      segmentationGeometryToReferenceGeometryTransform, transformedSegmentationExtent);
+
+    if (outputGeometryExtent[0] > outputGeometryExtent[1]
+      || outputGeometryExtent[2] > outputGeometryExtent[3]
+      || outputGeometryExtent[4] > outputGeometryExtent[5])
+    {
+      // Output geometry extent is empty, use the segmentation geometry
+      for (int i = 0; i < 6; ++i)
+      {
+        outputGeometryExtent[i] = transformedSegmentationExtent[i];
+      }
+    }
+    else
+    {
+      // Both the output and segmentation is non-empty, expand the output geometry to include all the segments
+      for (int i = 0; i < 3; ++i)
+      {
+        outputGeometryExtent[2 * i] = std::min(outputGeometryExtent[2 * i], transformedSegmentationExtent[2 * i]);
+        outputGeometryExtent[2 * i + 1] = std::max(outputGeometryExtent[2 * i + 1], transformedSegmentationExtent[2 * i + 1]);
+      }
+    }
   }
+
   this->OutputGeometryImageData->SetExtent(outputGeometryExtent);
 }
 
@@ -552,7 +571,6 @@ bool vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode()
   bool success = true;
 
   MRMLNodeModifyBlocker blocker(this->InputSegmentationNode);
-  vtkOrientedImageData* geometryImageData = this->GetOutputGeometryImageData();
   std::vector< std::string > segmentIDs;
   this->InputSegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
   for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
@@ -572,7 +590,7 @@ bool vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode()
 
     // Resample
     if (!vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage(
-      currentLabelmap, geometryImageData, currentLabelmap, false, this->PadOutputGeometry))
+      currentLabelmap, this->OutputGeometryImageData, currentLabelmap, false, this->PadOutputGeometry))
     {
       vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode: "
         << "Segment " << this->InputSegmentationNode->GetName() << "/" << currentSegmentID.c_str() << " failed to be resampled");
@@ -583,4 +601,38 @@ bool vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode()
 
   this->InputSegmentationNode->Modified();
   return success;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationGeometryLogic::SetReferenceImageGeometryInSegmentationNode()
+{
+  if (!this->InputSegmentationNode || !this->InputSegmentationNode->GetSegmentation())
+  {
+    vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::SetReferenceImageGeometryInSegmentationNode: invalid input segmentation node");
+    return false;
+  }
+
+  // Save reference geometry
+  std::string geometryString = vtkSegmentationConverter::SerializeImageGeometry(this->OutputGeometryImageData);
+  if (geometryString.empty())
+  {
+    vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::SetReferenceImageGeometryInSegmentationNode: invalid output geometry");
+    return false;
+  }
+  this->InputSegmentationNode->GetSegmentation()->SetConversionParameter(
+    vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), geometryString);
+
+  // Save reference geometry node - but only if it is not the segmentation node itself.
+  // This is shown in Segmentations module to give a hint about which node the current geometry is based on
+  // and may be used when exporting the segmentation.
+  if (this->SourceGeometryNode
+    && this->SourceGeometryNode->GetID()
+    && vtkMRMLSegmentationNode::SafeDownCast(this->SourceGeometryNode) != this->InputSegmentationNode)
+  {
+    this->InputSegmentationNode->SetNodeReferenceID(
+      vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(),
+      this->SourceGeometryNode->GetID());
+  }
+
+  return true;
 }

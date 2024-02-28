@@ -635,6 +635,30 @@ sourceSegmentId = segmentation.GetSegmentIdBySegmentName(sourceSegmentName)
 segmentation.CopySegmentFromSegmentation(segmentation, sourceSegmentId)
 ```
 
+### Resample segmentation to higher resolution
+
+This code snippet can be used to resample internal binary labelmap representation of a segmentation to allow segmenting finer details
+
+```python
+# Set inputs
+volumeNode = getNode("MRHead")
+segmentationNode = getNode("Segmentation")
+
+# The higher the oversampling factor is the finer resolution the segmentation will be,
+# at the cost of more memory usage and longer computation times.
+# Note that oversampling by a factor of 2 increases memory usage by a factor of 2 * 2 * 2 = 8.
+oversamplingFactor = 2.0
+
+# Make spacing value uniform for all axes.
+# It is useful for removing staircase artifacts in 3D reconstructions but may increase
+# memory usage and computation time.
+isotropicSpacing = True
+
+# Update geometry of internal binary labelmap representation in segmentation node
+segmentationGeometryLogic.SetReferenceImageGeometryInSegmentationNode()
+segmentationGeometryLogic.ResampleLabelmapsInSegmentationNode()
+```
+
 ### Quantifying segments
 
 #### Get volume of each segment
