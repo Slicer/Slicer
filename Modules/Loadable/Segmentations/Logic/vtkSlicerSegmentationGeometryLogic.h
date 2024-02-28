@@ -59,6 +59,9 @@ public:
 
   /// Sets the computed reference image geometry into the input segmentation node
   /// (in the ReferenceImageGeometry conversion parameter and node reference).
+  /// For example, reference geometry may be used for determining the geometry of the segmentation
+  /// when saving into file, to make the extents of the segmentation match the extents of the
+  /// segmented image (instead of making the segmentation just big enough to store all the segments).
   bool SetReferenceImageGeometryInSegmentationNode();
 
   /// Resample labelmap representation of the input segmentation node according to the current
