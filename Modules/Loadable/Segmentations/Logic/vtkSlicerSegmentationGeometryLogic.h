@@ -61,8 +61,10 @@ public:
   /// (in the ReferenceImageGeometry conversion parameter and node reference).
   bool SetReferenceImageGeometryInSegmentationNode();
 
-  /// Resample labelmap representation the input segmentation node according to the current
+  /// Resample labelmap representation of the input segmentation node according to the current
   /// output geometry setting.
+  ///
+  /// \sa SetReferenceImageGeometryInSegmentationNode()
   bool ResampleLabelmapsInSegmentationNode();
 
   /// Oriented image data containing output geometry. This is what the class calculates from the inputs
