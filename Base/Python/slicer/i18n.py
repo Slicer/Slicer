@@ -1,6 +1,7 @@
-import os
 import inspect
-
+import logging
+import os
+import re
 
 def translate(context, text):
     """Translate message to the current application language.
@@ -51,6 +52,32 @@ def tr(text):
       statusText = _("Idle") if idle else _("Running")
 
     """
+
+    def findBracedStrings(text):
+        """Get all placeholders (replacement fields) in the input format string text.
+
+        All placeholders delimited by curly braces are returned except the ones enclosed in
+        double-braces.
+
+        See https://docs.python.org/3/library/string.html#formatstrings
+        """
+        pattern = r"(?<!\{)\{([^\{\}]+)\}(?!\})"
+        matches = re.findall(pattern, text)
+        return matches
+
     filename = inspect.stack()[1][1]
     contextName = getContext(filename)
-    return translate(contextName, text)
+    translatedText = translate(contextName, text)
+
+    # Accept the translation only if all placeholders are present in the translated text to prevent runtime errors.
+    # For example:
+    #   text = "delete {count} files"
+    #   translatedText = "supprimer {compter} fichiers" (incorrect, because `count` should not have been translated)
+    # would fail at runtime with a KeyError when `_("delete {count} files").format(count=numberOfSomeItems)` is called,
+    # as after translation it turns into `"supprimer {compter} fichiers".format(count=numberOfSomeItems)`.
+    # The check prevents the runtime error: only a warning is logged and the incorrect translation is ignored.
+    if set(findBracedStrings(text)) != set(findBracedStrings(translatedText)):
+        logging.warning(f"In context '{contextName}', translation of '{text}' to '{translatedText}' is incorrect: placeholders do not match")
+        return text
+
+    return translatedText
