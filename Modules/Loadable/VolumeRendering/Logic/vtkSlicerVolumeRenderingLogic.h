@@ -292,9 +292,16 @@ public:
   /// If the optional icon image is specified then that will be used to
   /// in preset selector widgets. The icon is stored as a volume node
   /// in the preset scene.
+  /// \param preset input node that contains specification of the volume rendering preset.
+  ///   This node is not modified, but its content is copied into a new node in the preset scene.
+  /// \param icon specifies an icon image for the preset. If this icon is not specified then
+  ///   the image node referenced by the input preset node is used as icon (using
+  ///   vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole() node reference role).
+  ///   In either case a copy of the icon image is made and that is stored in the preset scene.
   /// \param appendToEnd controls if the preset is added before or after existing presets.
   /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()
-  void AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon = nullptr, bool appendToEnd=false);
+  /// \return Copy of the preset node that is added to the preset scene, nullptr on failure.
+  vtkMRMLVolumePropertyNode* AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon = nullptr, bool appendToEnd=false);
 
   /// Removes a preset and its associated icon (if specified) from the preset scene.
   /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()

@@ -25,6 +25,7 @@
 
 // MRML includes
 #include <vtkMRMLCoreTestingMacros.h>
+#include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLVolumeNode.h>
 
@@ -63,7 +64,7 @@ int testDefaultRenderingMethod(const std::string& moduleShareDirectory)
   CHECK_NULL(displayNode);
 
   vtkNew<vtkMRMLScene> scene;
-  logic->SetMRMLScene(scene.GetPointer());
+  logic->SetMRMLScene(scene);
   displayNode = logic->CreateVolumeRenderingDisplayNode();
   CHECK_NOT_NULL(displayNode);
   CHECK_BOOL(displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"), true);
@@ -84,25 +85,79 @@ int testPresets(const std::string& moduleShareDirectory)
   vtkNew<vtkSlicerVolumeRenderingLogic> logic;
   logic->SetModuleShareDirectory(moduleShareDirectory);
 
+  // Default presets
   CHECK_NOT_NULL(logic->GetPresetsScene());
   CHECK_NOT_NULL(logic->GetPresetByName("MR-Default"));
 
-  vtkNew<vtkMRMLVolumePropertyNode> newPreset;
-  newPreset->SetName("MyNewPreset");
-  CHECK_NULL(logic->GetPresetByName("MyNewPreset"));
-  logic->AddPreset(newPreset.GetPointer());
-  CHECK_NOT_NULL(logic->GetPresetByName("MyNewPreset"));
+  // Add new preset
+  {
+    CHECK_NULL(logic->GetPresetByName("MyNewPreset"));
+    vtkNew<vtkMRMLVolumePropertyNode> newPreset;
+    newPreset->SetName("MyNewPreset");
+    CHECK_NOT_NULL(logic->AddPreset(newPreset));
+    CHECK_NOT_NULL(logic->GetPresetByName("MyNewPreset"));
+  }
 
-  vtkNew<vtkImageData> iconImage;
-  vtkNew<vtkMRMLVolumePropertyNode> newPresetWithIcon;
-  newPresetWithIcon->SetName("MyNewPresetWithIcon");
-  logic->AddPreset(newPresetWithIcon.GetPointer(), iconImage.GetPointer());
-  vtkMRMLNode* newPresetWithIcon2 = logic->GetPresetByName("MyNewPresetWithIcon");
-  CHECK_NOT_NULL(newPresetWithIcon2);
-  vtkMRMLVolumeNode* iconNode = vtkMRMLVolumeNode::SafeDownCast(
-    newPresetWithIcon2->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
-  CHECK_NOT_NULL(iconNode);
-  CHECK_POINTER(iconNode->GetImageData(), iconImage.GetPointer());
+  // Add new preset with icon
+  {
+    vtkNew<vtkImageData> iconImage;
+    iconImage->SetDimensions(128, 128, 1);
+    iconImage->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
+    vtkNew<vtkMRMLVolumePropertyNode> newPresetWithIcon;
+    newPresetWithIcon->SetName("MyNewPresetWithIcon");
+    CHECK_NOT_NULL(logic->AddPreset(newPresetWithIcon, iconImage));
+    // Check the added preset
+    vtkMRMLNode* addedPresetWithIcon = logic->GetPresetByName("MyNewPresetWithIcon");
+    CHECK_NOT_NULL(addedPresetWithIcon);
+    vtkMRMLVolumeNode* iconNode = vtkMRMLVolumeNode::SafeDownCast(
+      addedPresetWithIcon->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
+    CHECK_NOT_NULL(iconNode);
+    CHECK_POINTER_DIFFERENT(iconNode->GetImageData(), iconImage);
+    // Check that the icon has the same content
+    int* dimensions = iconNode->GetImageData()->GetDimensions();
+    CHECK_INT(dimensions[0], 128);
+    CHECK_INT(dimensions[1], 128);
+    CHECK_INT(dimensions[2], 1);
+  }
+
+  // Add new preset with icon from a custom presets scene
+  {
+    // Create custom presets scene (it is normally read from a scene file)
+    vtkNew<vtkMRMLScene> customPresetsScene;
+    vtkNew<vtkMRMLVolumePropertyNode> newPresetWithIcon;
+    newPresetWithIcon->SetName("MyNewPresetWithIcon");
+    customPresetsScene->AddNode(newPresetWithIcon);
+    vtkNew<vtkMRMLScalarVolumeNode> iconNode;
+    vtkNew<vtkImageData> iconImage;
+    iconImage->SetDimensions(128, 128, 1);
+    iconImage->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
+    iconNode->SetAndObserveImageData(iconImage);
+    customPresetsScene->AddNode(iconNode);
+    newPresetWithIcon->SetNodeReferenceID(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole(), iconNode->GetID());
+
+    // Add the preset
+    CHECK_NOT_NULL(logic->AddPreset(newPresetWithIcon));
+    // Check hat the preset is added
+    vtkMRMLNode* addedPresetWithIcon = logic->GetPresetByName("MyNewPresetWithIcon");
+    CHECK_NOT_NULL(addedPresetWithIcon);
+    // Check that the input preset node is still in the input scene
+    CHECK_POINTER(newPresetWithIcon->GetScene(), customPresetsScene);
+
+    // Check if icon is added and it is a different instance with the same content
+    vtkMRMLVolumeNode* addedIconNode = vtkMRMLVolumeNode::SafeDownCast(
+      addedPresetWithIcon->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
+    // Check that the icon is valid
+    CHECK_NOT_NULL(addedIconNode);
+    CHECK_NOT_NULL(addedIconNode->GetImageData());
+    // Check that the icon has the same content
+    int* dimensions = addedIconNode->GetImageData()->GetDimensions();
+    CHECK_INT(dimensions[0], 128);
+    CHECK_INT(dimensions[1], 128);
+    CHECK_INT(dimensions[2], 1);
+    // Check that the icon is an independent copy (not the same instance as the input)
+    CHECK_POINTER_DIFFERENT(addedIconNode, iconNode);
+    CHECK_POINTER_DIFFERENT(addedIconNode->GetImageData(), iconImage);
+  }
 
   return EXIT_SUCCESS;
 }
