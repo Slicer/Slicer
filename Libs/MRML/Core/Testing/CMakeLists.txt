@@ -193,6 +193,7 @@ simple_test( vtkMRMLSegmentationStorageNodeTest1
   DATA{${INPUT}/ITKSnapSegmentation.nii.gz}
   DATA{${INPUT}/OldSlicerSegmentation.seg.nrrd}
   DATA{${INPUT}/SlicerSegmentation.seg.nrrd}
+  ${TEMP}
   )
 simple_test( vtkMRMLSelectionNodeTest1 )
 simple_test( vtkMRMLSliceCompositeNodeTest1 )
