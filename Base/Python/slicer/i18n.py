@@ -73,7 +73,7 @@ def tr(text):
     # For example:
     #   text = f"delete {count} files"
     #   translatedText = f"supprimer {compter} fichiers" (incorrect, because `count` should not have been translated)
-    # would fail at runtime with a KeyError when `_("{count} items will be deleted").format(count=numberOfSomeItems)` is called.
+    # would fail at runtime with a KeyError when `_("delete {count} files").format(count=numberOfSomeItems)` is called.
     # The check prevents the runtime error: only a warning is logged and the incorrect translation is ignored.
     if set(findBracedStrings(text)) != set(findBracedStrings(translatedText)):
         logging.warning(f"In context '{contextName}', translation of '{text}' to '{translatedText}' is incorrect: placeholders do not match")
