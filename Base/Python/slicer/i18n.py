@@ -54,7 +54,13 @@ def tr(text):
     """
 
     def findBracedStrings(text):
-        """Get all strings enclosed in braces, except when enclosed in double-braces."""
+"""Get all strings corresponding to f-string expressions.
+
+All expression delimited by curly braces are returned except the ones enclosed in
+double-braces.
+
+See https://docs.python.org/3/reference/lexical_analysis.html#f-strings.
+"""
         pattern = r"(?<!\{)\{([^\{\}]+)\}(?!\})"
         matches = re.findall(pattern, text)
         return matches
@@ -65,8 +71,8 @@ def tr(text):
 
     # Accept the translation only if all placeholders are present in the translated text to prevent runtime errors.
     # For example:
-    #   text = "{count} items will be deleted"
-    #   translatedText = "{compter} elements seront supprimes" (incorrect, because `count` should not have been translated)
+    #   text = f"{count} items will be deleted"
+    #   translatedText = f"{compter} éléments seront supprimés" (incorrect, because `count` should not have been translated)
     # would fail at runtime with a KeyError when `_("{count} items will be deleted").format(count=numberOfSomeItems)` is called.
     # The check prevents the runtime error, only a warning is logged and the incorrect translation is ignored.
     if set(findBracedStrings(text)) != set(findBracedStrings(translatedText)):
