@@ -10,6 +10,9 @@ The **[slicerio](https://pypi.org/project/slicerio/) Python package** can read .
 
 If segments do not overlap then the file has 3 spatial dimensions. Even if a single-slice image is segmented, the spatial dimension must be still 3 because that is required for specification origin, spacing, and axis directions in 3D space. If segments overlap then the file has one `list` dimension and 3 spatial dimensions. Each 3D volume in the list is referred to as a `layer`.
 
+If the image contains a single voxel then it has a special meaning: it means that no image data is available and the image geometry (origin, spacing, axis directions, extents) will be ignored. This special case is necessary because it is not possible to create a nrrd image file without any voxel data.
+Therefore, a segmentation without segments or with only empty segments is saved to file (e.g., to be used as a template for new segmentations) then it will be saved with an image data containing a single voxel.
+
 ### Metadata
 
 Additional metadata is stored in custom data fields (starting with `Segmentation_` or `SegmentN_` prefixes), which provide hints on how the segments should be displayed or what they contain.

@@ -574,6 +574,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
   vtkMatrix4x4* rasToFileIjk = nullptr;
   int imageExtentInFile[6] = { 0, -1, 0, -1, 0, -1 };
   int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  bool isExtentValid = false;
   int referenceImageExtentOffset[3] = { 0, 0, 0 };
 
   if (archetypeImageReader->CanReadFile(path.c_str()))
@@ -628,6 +629,29 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
       // Use the image extent as common geometry extent.
       vtkInfoMacro(<< KEY_SEGMENTATION_REFERENCE_IMAGE_EXTENT_OFFSET << " attribute was not found in NRRD segmentation file. Assume no offset.");
       imageData->GetExtent(commonGeometryExtent);
+    }
+
+    // Special case: extent = [0, 0, 0, 0, 0, 0] means there is no image data
+    isExtentValid = true;
+    if (imageExtentInFile[0] == 0
+      && imageExtentInFile[1] == 0
+      && imageExtentInFile[2] == 0
+      && imageExtentInFile[3] == 0
+      && imageExtentInFile[4] == 0
+      && imageExtentInFile[5] == 0)
+    {
+      imageExtentInFile[1] = -1;
+      imageExtentInFile[3] = -1;
+      imageExtentInFile[5] = -1;
+
+      commonGeometryExtent[0] = 0;
+      commonGeometryExtent[1] = -1;
+      commonGeometryExtent[2] = 0;
+      commonGeometryExtent[3] = -1;
+      commonGeometryExtent[4] = 0;
+      commonGeometryExtent[5] = -1;
+
+      isExtentValid = false;
     }
 
     // Read conversion parameters
@@ -713,7 +737,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     // Create binary labelmap volume
     vtkSmartPointer<vtkOrientedImageData> currentBinaryLabelmap = nullptr;
 
-    if (numberOfSegments == 0)
+    if (numberOfSegments == 0 && isExtentValid)
     {
       // No segment metadata. We are loading from a plain volume (not seg.nrrd).
 
@@ -1248,8 +1272,11 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
     std::string commonGeometryString = segmentation->DetermineCommonLabelmapGeometry(
       this->CropToMinimumExtent ?
         vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS : vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY);
-    vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, commonGeometryImage, true, scalarType, 1);
-    commonGeometryImage->GetExtent(commonGeometryExtent);
+    if (!commonGeometryString.empty())
+    {
+      vtkSegmentationConverter::DeserializeImageGeometry(commonGeometryString, commonGeometryImage, true, scalarType, 1);
+      commonGeometryImage->GetExtent(commonGeometryExtent);
+    }
   }
   if (commonGeometryExtent[0] > commonGeometryExtent[1]
     || commonGeometryExtent[2] > commonGeometryExtent[3]
