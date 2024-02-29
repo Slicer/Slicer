@@ -1,6 +1,7 @@
-import os
 import inspect
-
+import logging
+import os
+import re
 
 def translate(context, text):
     """Translate message to the current application language.
@@ -51,6 +52,25 @@ def tr(text):
       statusText = _("Idle") if idle else _("Running")
 
     """
+
+    def findBracedStrings(text):
+        """Get all strings enclosed in braces, except when enclosed in double-braces."""
+        pattern = r"(?<!\{)\{([^\{\}]+)\}(?!\})"
+        matches = re.findall(pattern, text)
+        return matches
+
     filename = inspect.stack()[1][1]
     contextName = getContext(filename)
-    return translate(contextName, text)
+    translatedText = translate(contextName, text)
+
+    # Accept the translation only if all placeholders are present in the translated text to prevent runtime errors.
+    # For example:
+    #   text = "{count} items will be deleted"
+    #   translatedText = "{compter} elements seront supprimes" (incorrect, because `count` should not have been translated)
+    # would fail at runtime with a KeyError when `_("{count} items will be deleted").format(count=numberOfSomeItems)` is called.
+    # The check prevents the runtime error, only a warning is logged and the incorrect translation is ignored.
+    if set(findBracedStrings(text)) != set(findBracedStrings(translatedText)):
+        logging.warning(f"In context '{contextName}', translation of '{text}' to '{translatedText}' is incorrect: placeholders do not match")
+        return text
+
+    return translatedText
