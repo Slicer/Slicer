@@ -35,6 +35,7 @@ class vtkMRMLScene;
 class vtkMRMLThreeDViewInteractorStyle;
 class vtkMRMLViewNode;
 class vtkCollection;
+class vtkSSAOPass;
 
 /// \brief 3D view for view nodes.
 /// For performance reasons, the view block refreshes when the scene is in
@@ -115,6 +116,10 @@ public:
   bool shadowsVisibility()const;
   double ambientShadowsSizeScale()const;
   double ambientShadowsVolumeOpacityThreshold()const;
+
+  /// Advanced option to directly access SSAO pass used to render the ambient shadows.
+  /// Intended for experimentation and troubleshooting only.
+  Q_INVOKABLE vtkSSAOPass* ssaoPass()const;
 
 public slots:
 

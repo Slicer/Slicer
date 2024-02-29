@@ -653,3 +653,10 @@ void qMRMLThreeDView::setAmbientShadowsVolumeOpacityThreshold(double opacityThre
 
   d->ShadowsRenderPass->SetVolumeOpacityThreshold(opacityThreshold);
 }
+
+//------------------------------------------------------------------------------
+vtkSSAOPass* qMRMLThreeDView::ssaoPass()const
+{
+  Q_D(const qMRMLThreeDView);
+  return d->ShadowsRenderPass;
+}
