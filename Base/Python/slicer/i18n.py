@@ -54,13 +54,13 @@ def tr(text):
     """
 
     def findBracedStrings(text):
-"""Get all strings corresponding to f-string expressions.
+        """Get all placeholders (replacement fields) in the input format string text.
 
-All expression delimited by curly braces are returned except the ones enclosed in
-double-braces.
+        All placeholders delimited by curly braces are returned except the ones enclosed in
+        double-braces.
 
-See https://docs.python.org/3/reference/lexical_analysis.html#f-strings.
-"""
+        See https://docs.python.org/3/library/string.html#formatstrings
+        """
         pattern = r"(?<!\{)\{([^\{\}]+)\}(?!\})"
         matches = re.findall(pattern, text)
         return matches
@@ -71,10 +71,10 @@ See https://docs.python.org/3/reference/lexical_analysis.html#f-strings.
 
     # Accept the translation only if all placeholders are present in the translated text to prevent runtime errors.
     # For example:
-    #   text = f"{count} items will be deleted"
-    #   translatedText = f"{compter} éléments seront supprimés" (incorrect, because `count` should not have been translated)
+    #   text = f"delete {count} files"
+    #   translatedText = f"supprimer {compter} fichiers" (incorrect, because `count` should not have been translated)
     # would fail at runtime with a KeyError when `_("{count} items will be deleted").format(count=numberOfSomeItems)` is called.
-    # The check prevents the runtime error, only a warning is logged and the incorrect translation is ignored.
+    # The check prevents the runtime error: only a warning is logged and the incorrect translation is ignored.
     if set(findBracedStrings(text)) != set(findBracedStrings(translatedText)):
         logging.warning(f"In context '{contextName}', translation of '{text}' to '{translatedText}' is incorrect: placeholders do not match")
         return text
