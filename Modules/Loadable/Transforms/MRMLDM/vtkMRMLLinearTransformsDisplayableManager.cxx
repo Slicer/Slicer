@@ -134,9 +134,13 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::UpdatePipelineFromD
     return;
   }
 
+  // Do not add add the interaction widget if the displayable manager is associated with a VR render
+  // window. The interaction renderer instantiated below is not supported in VR.
+
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
   bool visible = this->UseTransformNode(transformNode)
-              && this->UseDisplayNode(displayNode);
+              && this->UseDisplayNode(displayNode)
+              && !this->External->GetRenderer()->GetRenderWindow()->IsA("vtkVRRenderWindow");
 
   vtkSmartPointer<vtkMRMLTransformHandleWidget> widget;
   InteractionWidgetsCacheType::iterator pipelineIt;
@@ -480,6 +484,14 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::SetupRenderer()
   }
 
   vtkRenderWindow* renderWindow = renderer->GetRenderWindow();
+
+  // Do not add add the interaction widget if the displayable manager is associated with a VR render
+  // window. The interaction renderer instantiated below is not supported in VR.
+  if (renderWindow->IsA("vtkVRRenderWindow"))
+  {
+    return;
+  }
+
   if (renderWindow->GetNumberOfLayers() < RENDERER_LAYER + 1)
   {
     renderWindow->SetNumberOfLayers(RENDERER_LAYER + 1);
