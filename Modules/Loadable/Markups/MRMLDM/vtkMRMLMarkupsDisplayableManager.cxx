@@ -971,6 +971,14 @@ void vtkMRMLMarkupsDisplayableManager::Create()
 
   vtkRenderer* renderer = this->GetRenderer();
   vtkRenderWindow* renderWindow = renderer->GetRenderWindow();
+
+  // Do not add add the interaction widget if the displayable manager is associated with a VR render
+  // window. The interaction renderer instantiated below is not supported in VR.
+  if (renderWindow->IsA("vtkVRRenderWindow"))
+  {
+    return;
+  }
+
   if (renderWindow->GetNumberOfLayers() < INTERACTION_RENDERER_LAYER + 1)
   {
     renderWindow->SetNumberOfLayers(INTERACTION_RENDERER_LAYER + 1);

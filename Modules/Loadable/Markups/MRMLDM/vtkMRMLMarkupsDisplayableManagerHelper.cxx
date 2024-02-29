@@ -30,6 +30,8 @@
 #include <vtkObjectFactory.h>
 #include <vtkProperty.h>
 #include <vtkPickingManager.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSlicerMarkupsWidgetRepresentation.h>
 #include <vtkSlicerMarkupsWidget.h>
@@ -310,6 +312,14 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddInteractionWidget(vtkMRMLMarkups
   {
     return;
   }
+  // Do not add add the interaction widget if the displayable manager is associated with a VR render
+  // window. The interaction renderer instantiated in vtkMRMLMarkupsDisplayableManager::Create() is
+  // not supported in VR.
+  if (this->DisplayableManager->GetRenderer()->GetRenderWindow()->IsA("vtkVRRenderWindow"))
+  {
+    return;
+  }
+
   // Do not add the display node if displayNodeIt is already associated with a widget object.
   // This happens when a segmentation node already associated with a display node
   // is copied into an other (using vtkMRMLNode::Copy()) and is added to the scene afterward.
