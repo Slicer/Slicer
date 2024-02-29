@@ -155,5 +155,5 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
     vtksys::SystemTools::RemoveFile(emptySegmentationFilename);
   }
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
