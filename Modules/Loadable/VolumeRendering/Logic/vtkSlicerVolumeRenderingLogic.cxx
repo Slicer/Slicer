@@ -1416,12 +1416,13 @@ bool vtkSlicerVolumeRenderingLogic::IsDifferentFunction(vtkColorTransferFunction
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon/*=nullptr*/, bool appendToEnd/*=false*/)
+vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::AddPreset(
+  vtkMRMLVolumePropertyNode* preset, vtkImageData* icon/*=nullptr*/, bool appendToEnd/*=false*/)
 {
   if (preset == nullptr)
   {
     vtkErrorMacro("vtkSlicerVolumeRenderingLogic::AddPreset failed: preset is invalid");
-    return;
+    return nullptr;
   }
   if (icon == nullptr)
   {
@@ -1434,24 +1435,35 @@ void vtkSlicerVolumeRenderingLogic::AddPreset(vtkMRMLVolumePropertyNode* preset,
     }
   }
   vtkMRMLScene* presetScene = this->GetPresetsScene();
+  // Create a copy of the preset node because adding the node to the presetScene would remove the
+  // preset node from its current scene (where the icon volume is stored).
+  vtkNew<vtkMRMLVolumePropertyNode> presetToAdd;
+  presetToAdd->CopyContent(preset);
+  // Need to copy the node name explicitly, as CopyContent does not copy node name
+  presetToAdd->SetName(preset->GetName());
   if (icon != nullptr)
   {
+    // Create and independent copy of input icon
+    vtkNew<vtkImageData> iconCopy;
+    iconCopy->DeepCopy(icon);
     // vector volume is chosen because usually icons are RGB color images
     vtkNew<vtkMRMLVectorVolumeNode> iconNode;
-    iconNode->SetAndObserveImageData(icon);
+    iconNode->SetAndObserveImageData(iconCopy);
     vtkMRMLNode* addedIconNode = presetScene->AddNode(iconNode.GetPointer());
     // Need to set the node reference before adding the node to the scene to make sure the icon
     // is available immediately when the node is added (otherwise widgets may add the item without an icon)
-    preset->SetNodeReferenceID(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole(), addedIconNode->GetID());
+    presetToAdd->SetNodeReferenceID(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole(), addedIconNode->GetID());
   }
+  vtkMRMLNode* nodeAdded = nullptr;
   if (appendToEnd || presetScene->GetNumberOfNodes() == 0)
   {
-    presetScene->AddNode(preset);
+    nodeAdded = presetScene->AddNode(presetToAdd);
   }
   else
   {
-    presetScene->InsertBeforeNode(presetScene->GetNthNode(0), preset);
+    nodeAdded = presetScene->InsertBeforeNode(presetScene->GetNthNode(0), presetToAdd);
   }
+  return vtkMRMLVolumePropertyNode::SafeDownCast(nodeAdded);
 }
 
 //---------------------------------------------------------------------------
