@@ -16,6 +16,7 @@
 #define __vtkMRMLVolumeArchetypeStorageNode_h
 
 #include "vtkMRMLStorageNode.h"
+#include <QCoreApplication>
 
 class vtkImageData;
 class vtkITKArchetypeImageSeriesReader;
@@ -114,7 +115,7 @@ protected:
   int CenterImage;
   int SingleFile;
   int UseOrientationFromFile;
-
+  bool TIFFWarningShown;
 };
 
 #endif

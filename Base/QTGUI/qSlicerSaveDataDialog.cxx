@@ -807,6 +807,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     // file properties
     QFileInfo file = this->file(row);
     QString format = this->format(row);
+
     qSlicerIOOptions* options = this->options(row);
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(this->object(row));
     vtkMRMLStorableNode* const storableNode = vtkMRMLStorableNode::SafeDownCast(this->object(row));
