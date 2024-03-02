@@ -150,9 +150,19 @@ public:
 
   /// Set UID to the subject hierarchy item
   void SetItemUID(vtkIdType itemID, std::string uidName, std::string uidValue);
+  /// Remove UID from subject hierarchy item
+  /// \return True if UID was removed, false if item or UID is not found
+  bool RemoveItemUID(vtkIdType itemID, std::string uidName);
   /// Get a UID with a given name
   /// \return The UID value if exists, empty string if does not
   std::string GetItemUID(vtkIdType itemID, std::string uidName);
+  /// Get UID names for a subject hierarchy item
+  /// \return List of UID names
+  std::vector<std::string> GetItemUIDNames(vtkIdType itemID);
+  /// Determine if a given UID is present in an item.
+  /// Especially useful if need to determine whether a UID value is empty string or the UID is missing
+  /// \return True if UID exists, false if item or UID is not found
+  bool HasItemUID(vtkIdType itemID, std::string uidName);
 
   /// Add attribute to the subject hierarchy item
   void SetItemAttribute(vtkIdType itemID, std::string attributeName, std::string attributeValue);
