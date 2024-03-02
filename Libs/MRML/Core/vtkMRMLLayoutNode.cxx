@@ -224,16 +224,40 @@ bool vtkMRMLLayoutNode::SetLayoutDescription(int layout, const char* layoutDescr
     vtkDebugMacro( << "Layout " << layout << " has NOT been registered");
     return false;
   }
-  if (this->Layouts[layout] == layoutDescription)
+  std::string layoutDescriptionStr;
+  if (layoutDescription)
   {
+    layoutDescriptionStr = std::string(layoutDescription);
+  }
+  if (this->Layouts[layout] == layoutDescriptionStr)
+  {
+    // No change
     return true;
   }
-  this->Layouts[layout] = std::string(layoutDescription);
+  if (layoutDescriptionStr.empty())
+  {
+    this->Layouts.erase(layout);
+  }
+  else
+  {
+    this->Layouts[layout] = layoutDescriptionStr;
+  }
   int wasModifying = this->StartModify();
   this->UpdateCurrentLayoutDescription();
   this->Modified();
   this->EndModify(wasModifying);
   return true;
+}
+
+//----------------------------------------------------------------------------
+std::vector<int> vtkMRMLLayoutNode::GetLayoutIndices()
+{
+  std::vector<int> indices;
+  for (const auto& keyValuePair : this->Layouts)
+  {
+    indices.push_back(keyValuePair.first);
+  }
+  return indices;
 }
 
 //----------------------------------------------------------------------------
@@ -355,6 +379,18 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
   this->SetSelectedModule( node->GetSelectedModule() );
 
   this->EndModify(disabledModify);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutNode::CopyLayoutDescriptions(vtkMRMLLayoutNode* source)
+{
+  if (!source)
+  {
+    vtkErrorMacro("CopyLayoutDescriptions: Invalid source node");
+    return;
+  }
+  this->Layouts = source->Layouts;
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------

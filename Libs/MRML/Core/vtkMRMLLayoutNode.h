@@ -139,7 +139,11 @@ public:
   /// Modifies a layout description for integer identifier
   /// "layout". Returns false without making any modifications if the
   /// integer identifier "layout" has NOT already been added.
+  /// If layoutDescription is empty then the layout is removed.
   bool SetLayoutDescription(int layout, const char* layoutDescription);
+
+  /// Get list of all specified layout indices
+  std::vector<int> GetLayoutIndices();
 
   /// Query whether a layout exists with a specified integer identifier
   bool IsLayoutDescription(int layout);
@@ -147,6 +151,10 @@ public:
   /// Get the layout description associated with a specified integer
   /// identifier. The empty string is returned if the layout does not exist.
   std::string GetLayoutDescription(int layout);
+
+  /// Copy all layout descriptions from the specified layout node.
+  /// All the previous layout descriptions are replaced.
+  void CopyLayoutDescriptions(vtkMRMLLayoutNode* source);
 
   // Get the layout description currently displayed. Used
   // internally. This is XML description corresponding to the ivar
