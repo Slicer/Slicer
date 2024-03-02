@@ -260,7 +260,7 @@ for volumeNode in volumeNodes:
 To set all volume nodes to save uncompressed by default (add this to [slicerrc.py file](/user_guide/settings.md#application-startup-file) so it takes effect for the whole session):
 
 ```python
-#set the default volume storage to not compress by default
+# Set the default volume storage to not compress by default
 defaultVolumeStorageNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
 defaultVolumeStorageNode.SetUseCompression(0)
 slicer.mrmlScene.AddDefaultNode(defaultVolumeStorageNode)
@@ -270,11 +270,11 @@ logging.info("Volume nodes will be stored uncompressed by default")
 Same thing as above, but applied to all segmentations instead of volumes:
 
 ```python
-#set the default volume storage to not compress by default
-defaultVolumeStorageNode = slicer.vtkMRMLSegmentationStorageNode()
-defaultVolumeStorageNode.SetUseCompression(0)
-slicer.mrmlScene.AddDefaultNode(defaultVolumeStorageNode)
-logging.info("Segmentation nodes will be stored uncompressed
+# Set the default segmentation storage to not compress by default
+defaultSegmentationStorageNode = slicer.vtkMRMLSegmentationStorageNode()
+defaultSegmentationStorageNode.SetUseCompression(0)
+slicer.mrmlScene.AddDefaultNode(defaultSegmentationStorageNode)
+logging.info("Segmentation nodes will be stored uncompressed by default")
 ```
 
 ## Module selection
