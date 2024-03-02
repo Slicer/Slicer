@@ -776,13 +776,20 @@ int vtkMRMLScene::Connect(vtkMRMLMessageCollection* userMessagesInput/*=nullptr*
   vtkTimerLog* timer = vtkTimerLog::New();
   timer->StartTimer();
 #endif
+
   this->StartState(vtkMRMLScene::BatchProcessState);
   this->Clear(0);
   bool undoFlag = this->GetUndoFlag();
   int res = this->Import(userMessagesInput);
-
   this->EndState(vtkMRMLScene::BatchProcessState);
+
+  // In batch processing mode, vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy
+  // is not triggered. Now that batch processing is finished we call it to move all
+  // unresolved items under the scene item.
+  vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(this);
+
   this->SetUndoFlag(undoFlag);
+
 #ifdef MRMLSCENE_VERBOSE
   timer->StopTimer();
   std::cerr << "vtkMRMLScene::Connect():" << timer->GetElapsedTime() << "\n";
