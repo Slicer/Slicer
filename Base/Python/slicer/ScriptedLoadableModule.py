@@ -370,6 +370,7 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
     """
 
     def __init__(self, *args, **kwargs):
+        self.moduleTestNames = []
         super().__init__(*args, **kwargs)
 
         # See https://github.com/Slicer/Slicer/pull/6243#issuecomment-1061800718 for more information.
@@ -380,6 +381,8 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
         # takeScreenshot default parameters
         self.enableScreenshots = False
         self.screenshotScaleFactor = 1.0
+        if not self.moduleTestNames:
+            self.moduleTestNames = [method for method in dir(self) if "test" in method and callable(getattr(self, method))]
 
     def delayDisplay(self, message, requestedDelay=None, msec=None):
         """
@@ -470,6 +473,34 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
         annotationLogic = slicer.modules.annotations.logic()
         annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
 
+    def setUp(self):
+        """
+        Method called to prepare the test fixture. This is called immediately before calling the test method; other
+        than AssertionError or SkipTest, any exception raised by this method will be considered an error rather than
+        a test failure. The default implementation does nothing.
+        """
+        return
+
+    def tearDown(self):
+        """
+        Method called immediately after the test method has been called and the result recorded. This is called
+        even if the test method raised an exception, so the implementation in subclasses may need to be
+        particularly careful about checking internal state. Any exception, other than AssertionError or
+        SkipTest, raised by this method will be considered an additional error rather than a test failure
+        (thus increasing the total number of reported errors). This method will only be called if the setUp()
+        succeeds, regardless of the outcome of the test method. The default implementation does nothing.
+        """
+        return
+
     def runTest(self):
         """Run a default selection of tests here."""
-        logging.warning("No test is defined in " + self.__class__.__name__)
+        if len(self.moduleTestNames) == 0:
+            logging.warning("No test is defined in " + self.__class__.__name__)
+            return
+        self.setUpClass()
+        for test_name in self.moduleTestNames:
+            self.setUp()
+            logging.info(f"Running {test_name}")
+            getattr(self, test_name)()
+            self.tearDown()
+        self.tearDownClass()
