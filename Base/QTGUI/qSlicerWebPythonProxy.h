@@ -38,6 +38,22 @@ public:
   /// Constructor
   explicit qSlicerWebPythonProxy(QObject *parent = nullptr);
 
+  /// This enum maps to ctkAbstractPythonManager execution modes Py_eval_input,
+  /// Py_file_input and Py_single_input.
+  ///
+  /// \see https://docs.python.org/3/c-api/veryhigh.html#Py_eval_input
+  /// \see https://docs.python.org/3/c-api/veryhigh.html#Py_file_input
+  /// \see https://docs.python.org/3/c-api/veryhigh.html#Py_single_input
+  ///
+  /// \sa ctkAbstractPythonManager::ExecuteStringMode
+  enum EvalPythonMode
+    {
+    EvalInput = 0,
+    FileInput,
+    SingleInput
+    };
+  Q_ENUMS(EvalPythonMode);
+
 public slots:
 
   /// Convenient function to execute python code from
@@ -52,7 +68,7 @@ public slots:
   /// running python code from web pages.
   ///
   /// \sa qSlicerWebWidget::initializeWebEngineProfile
-  QString evalPython(const QString &python);
+  QString evalPython(const QString &python, int mode = FileInput);
 
 private:
   /// Keep track of user response to avoid going through ctk dialog to check
