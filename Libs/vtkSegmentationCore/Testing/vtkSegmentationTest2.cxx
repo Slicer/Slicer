@@ -228,13 +228,13 @@ bool TestSharedLabelmapCollapse()
   }
 
 
-   expectedResults =
-    {
+  expectedResults =
+  {
     0,
     imageCount2 - imageCount3,
     imageCount3,
     imageCount4,
-    };
+  };
   for (size_t i = 0; i < segments.size(); ++i)
   {
     vtkSegment* segment = segments[i];
@@ -315,6 +315,102 @@ bool TestSharedLabelmapCasting()
 }
 
 //----------------------------------------------------------------------------
+bool TestLabelmapFloatToIntegerConversion(int scalarType)
+{
+
+  int numberOfValues = 5;
+  double values[5] = { -2.0, -1.0, 0.0, 1.0, 2.0 };
+  int numberOfOffsets = 7;
+  double offsets[7] = { -0.3, -0.1, -0.01, 0.0, 0.01, 0.1, 0.3 };
+
+  vtkNew<vtkOrientedImageData> labelmap;
+  labelmap->SetDimensions(numberOfValues, numberOfOffsets, 1);
+  labelmap->AllocateScalars(scalarType, 1);
+  for (int i = 0; i < numberOfValues; ++i)
+  {
+    for (int j = 0; j < numberOfOffsets; ++j)
+    {
+      labelmap->SetScalarComponentFromDouble(i, j, 0, 0, values[i] + offsets[j]);
+    }
+  }
+
+  if (!vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(labelmap))
+  {
+    std::cerr << "Unable to convert labelmap of type: " << vtkImageScalarTypeNameMacro(labelmap->GetScalarType()) << " to integer type" << std::endl;
+    return false;
+  }
+
+  for (int i = 0; i < numberOfValues; ++i)
+  {
+    for (int j = 0; j < numberOfOffsets; ++j)
+    {
+      double value = labelmap->GetScalarComponentAsDouble(i, j, 0, 0);
+      double expectedValue = std::trunc(values[i] + offsets[j]); // Casting from float to integer we expect truncation
+      if (value != expectedValue)
+      {
+        std::cerr << "Invalid value at index " << i << ", " << j << std::endl;
+        std::cerr << "\tOriginal value:" << values[i] << std::endl;
+        std::cerr << "\tOffset:" << offsets[j] << std::endl;
+        std::cerr << "\tScalar value: " << value << std::endl;
+        std::cerr << "\Expected value: " << expectedValue << std::endl;
+        std::cerr << "\tOriginal type: " << vtkImageScalarTypeNameMacro(scalarType) << std::endl;
+        std::cerr << "\tInteger type: " << vtkImageScalarTypeNameMacro(labelmap->GetScalarType()) << std::endl;
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool TestLabelmapValidation()
+{
+  vtkNew<vtkOrientedImageData> labelmap;
+  labelmap->SetDimensions(1, 1, 1);
+
+  int ret = vtkOrientedImageDataResample::TYPE_ERROR;
+
+  labelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+  labelmap->SetScalarComponentFromDouble(0, 0, 0, 0, 0.0);
+  ret = vtkOrientedImageDataResample::IsImageScalarTypeValid(labelmap);
+  if (ret != vtkOrientedImageDataResample::TYPE_OK)
+  {
+    std::cerr << "Invalid return value " << ret << " should be " << vtkOrientedImageDataResample::TYPE_OK << std::endl;
+    return false;
+  }
+
+  labelmap->AllocateScalars(VTK_LONG, 1);
+  labelmap->SetScalarComponentFromDouble(0, 0, 0, 0, 0.0);
+  ret = vtkOrientedImageDataResample::IsImageScalarTypeValid(labelmap);
+    if (ret != vtkOrientedImageDataResample::TYPE_CONVERSION_NEEDED)
+  {
+    std::cerr << "Invalid return value " << ret << " should be " << vtkOrientedImageDataResample::TYPE_CONVERSION_NEEDED << std::endl;
+    return false;
+  }
+
+  labelmap->AllocateScalars(VTK_DOUBLE, 1);
+  labelmap->SetScalarComponentFromDouble(0, 0, 0, 0, VTK_DOUBLE_MAX);
+  ret = vtkOrientedImageDataResample::IsImageScalarTypeValid(labelmap);
+  if (ret != vtkOrientedImageDataResample::TYPE_CONVERSION_CLAMPING_NEEDED)
+  {
+    std::cerr << "Invalid return value " << ret << " should be " << vtkOrientedImageDataResample::TYPE_CONVERSION_CLAMPING_NEEDED << std::endl;
+    return false;
+  }
+
+  labelmap->AllocateScalars(VTK_FLOAT, 1);
+  labelmap->SetScalarComponentFromDouble(0, 0, 0, 0, 0.0);
+  ret = vtkOrientedImageDataResample::IsImageScalarTypeValid(labelmap);
+  if (ret != vtkOrientedImageDataResample::TYPE_CONVERSION_TRUNCATION_NEEDED)
+  {
+    std::cerr << "Invalid return value " << ret << " should be " << vtkOrientedImageDataResample::TYPE_CONVERSION_TRUNCATION_NEEDED << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
 int vtkSegmentationTest2(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   // Register converter rules
@@ -334,6 +430,21 @@ int vtkSegmentationTest2(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   }
 
   if (!TestSharedLabelmapCasting())
+  {
+    return EXIT_FAILURE;
+  }
+
+  if (!TestLabelmapFloatToIntegerConversion(VTK_FLOAT))
+  {
+    return EXIT_FAILURE;
+  }
+
+  if (!TestLabelmapFloatToIntegerConversion(VTK_DOUBLE))
+  {
+    return EXIT_FAILURE;
+  }
+
+  if (!TestLabelmapValidation())
   {
     return EXIT_FAILURE;
   }

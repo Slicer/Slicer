@@ -226,7 +226,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     }
 
     vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(
-      fileName.toUtf8().constData(), autoOpacities, name.toUtf8(), colorTableNode);
+      fileName.toUtf8().constData(), autoOpacities, name.toUtf8(), colorTableNode, this->userMessages());
     if (!node)
     {
       this->setLoadedNodes(QStringList());

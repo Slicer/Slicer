@@ -1835,9 +1835,130 @@ bool vtkOrientedImageDataResample::IsLabelInMask(
   return valueFound;
 }
 
+//----------------------------------------------------------------------------
+int vtkOrientedImageDataResample::IsImageScalarTypeValid(vtkImageData* image)
+{
+  if (!image)
+  {
+    vtkErrorWithObjectMacro(nullptr, "IsImageScalarTypeValid: Invalid input image");
+    return TYPE_ERROR;
+  }
+
+  int imageScalarType = image->GetScalarType();
+  switch (imageScalarType)
+  {
+    case VTK_UNSIGNED_CHAR:
+    case VTK_CHAR:
+    case VTK_UNSIGNED_SHORT:
+    case VTK_SHORT:
+    case VTK_UNSIGNED_INT:
+    case VTK_INT:
+      // Current type is valid
+      return TYPE_OK;
+    default:
+      break;
+  }
+
+  double scalarRange[2] = { 0.0, 0.0 };
+  image->GetScalarRange(scalarRange);
+  int smallestScalarType = vtkOrientedImageDataResample::GetSmallestIntegerTypeForSegmentationScalarRange(scalarRange);
+  if (imageScalarType == VTK_FLOAT || imageScalarType == VTK_DOUBLE)
+  {
+    // Floating point type will need to be converted to integer type.
+    // If no integer type can contain the full scalar range, clamping will be needed.
+    // Truncation will be needed if the values are not all integers.
+    return smallestScalarType >= 0 ? TYPE_CONVERSION_TRUNCATION_NEEDED : TYPE_CONVERSION_CLAMPING_NEEDED;
+  }
+
+  if (smallestScalarType < 0)
+  {
+    // No valid integer type can contain the scalar range. The result will need to be clamped to (unsigned) int.
+    return TYPE_CONVERSION_CLAMPING_NEEDED;
+  }
+
+  return TYPE_CONVERSION_NEEDED;
+}
 
 //----------------------------------------------------------------------------
-void vtkOrientedImageDataResample::CastImageForValue(vtkOrientedImageData* image, double value)
+int vtkOrientedImageDataResample::GetSmallestIntegerTypeForSegmentationScalarRange(double scalarRange[2])
+{
+  if (scalarRange[0] >= VTK_UNSIGNED_CHAR_MIN && scalarRange[1] <= VTK_UNSIGNED_CHAR_MAX)
+  {
+    return VTK_UNSIGNED_CHAR;
+  }
+  else if (scalarRange[0] >= VTK_CHAR_MIN && scalarRange[1] <= VTK_CHAR_MAX)
+  {
+    return VTK_CHAR;
+  }
+  else if (scalarRange[0] >= VTK_UNSIGNED_SHORT_MIN && scalarRange[1] <= VTK_UNSIGNED_SHORT_MAX)
+  {
+    return VTK_UNSIGNED_SHORT;
+  }
+  else if (scalarRange[0] >= VTK_SHORT_MIN && scalarRange[1] <= VTK_SHORT_MAX)
+  {
+    return VTK_SHORT;
+  }
+  else if (scalarRange[0] >= VTK_UNSIGNED_INT_MIN && scalarRange[1] <= VTK_UNSIGNED_INT_MAX)
+  {
+    return VTK_UNSIGNED_INT;
+  }
+  else if (scalarRange[0] >= VTK_INT_MIN && scalarRange[1] <= VTK_INT_MAX)
+  {
+    return VTK_INT;
+  }
+
+  // No valid integer type can contain the scalar range.
+  return -1;
+}
+
+//----------------------------------------------------------------------------
+bool vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(vtkImageData* image)
+{
+  if (!image)
+  {
+    vtkErrorWithObjectMacro(nullptr, "CastImageToSmallestIntegerType: Invalid input image");
+    return false;
+  }
+
+  double scalarRange[2] = { 0.0, 0.0 };
+  image->GetScalarRange(scalarRange);
+  return vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(image, scalarRange);
+}
+
+//----------------------------------------------------------------------------
+bool vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(vtkImageData* image, double scalarRange[2])
+{
+  if (!image)
+  {
+    vtkErrorWithObjectMacro(nullptr, "CastImageToSmallestIntegerType: Invalid input image");
+    return false;
+  }
+
+  int oldScalarType = image->GetScalarType();
+  int newScalarType = vtkOrientedImageDataResample::GetSmallestIntegerTypeForSegmentationScalarRange(scalarRange);
+  if (newScalarType == oldScalarType)
+  {
+    // No change needed.
+    return true;
+  }
+
+  if (newScalarType < 0)
+  {
+    // No valid integer type can contain the scalar range. Convert to (unsigned) int.
+    newScalarType = scalarRange[0] < 0 ? VTK_INT : VTK_UNSIGNED_INT;
+  }
+
+  vtkNew<vtkImageCast> imageCast;
+  imageCast->SetInputData(image);
+  imageCast->SetOutputScalarType(newScalarType);
+  imageCast->ClampOverflowOn();
+  imageCast->Update();
+  image->ShallowCopy(imageCast->GetOutput());
+  return true;
+}
+
+//----------------------------------------------------------------------------
+void vtkOrientedImageDataResample::CastImageForValue(vtkImageData* image, double value)
 {
   if (!image)
   {
@@ -1846,66 +1967,13 @@ void vtkOrientedImageDataResample::CastImageForValue(vtkOrientedImageData* image
 
   if (value >= image->GetScalarTypeMin() && value <= image->GetScalarTypeMax())
   {
-    // Scalar range can already contain value
+    // Scalar range can already contain the value.
+    // No change needed.
     return;
   }
 
-  vtkNew<vtkImageCast> imageCast;
-  imageCast->SetInputData(image);
-  int scalarType = image->GetScalarType();
-  bool typeIsSigned = false;
-  switch (scalarType)
-  {
-    case VTK_CHAR:
-      typeIsSigned = true;
-      break;
-    case VTK_SIGNED_CHAR:
-    case VTK_SHORT:
-    case VTK_INT:
-    case VTK_LONG:
-    case VTK_FLOAT:
-    case VTK_DOUBLE:
-      typeIsSigned = true;
-      break;
-    case VTK_UNSIGNED_CHAR:
-    case VTK_UNSIGNED_INT:
-    case VTK_UNSIGNED_SHORT:
-    case VTK_UNSIGNED_LONG:
-      typeIsSigned = false;
-      break;
-  }
-
-  if (typeIsSigned)
-  {
-    if (value > VTK_INT_MAX || value < VTK_INT_MIN)
-    {
-      scalarType = VTK_DOUBLE;
-    }
-    else if (value > VTK_SHORT_MAX || value < VTK_SHORT_MIN)
-    {
-      scalarType = VTK_INT;
-    }
-    else if (value > VTK_SIGNED_CHAR_MAX || value < VTK_SIGNED_CHAR_MIN)
-    {
-      scalarType = VTK_SHORT;
-    }
-  }
-  else
-  {
-    if (value > VTK_UNSIGNED_INT_MAX)
-    {
-      scalarType = VTK_DOUBLE;
-    }
-    else if (value > VTK_UNSIGNED_SHORT_MAX)
-    {
-      scalarType = VTK_UNSIGNED_INT;
-    }
-    else if (value > VTK_UNSIGNED_CHAR_MAX)
-    {
-      scalarType = VTK_UNSIGNED_SHORT;
-    }
-  }
-  imageCast->SetOutputScalarType(scalarType);
-  imageCast->Update();
-  image->vtkImageData::ShallowCopy(imageCast->GetOutput());
+  double scalarRange[2] = { 0.0, 0.0 };
+  scalarRange[0] = std::min(value, image->GetScalarTypeMin());
+  scalarRange[1] = std::max(value, image->GetScalarTypeMax());
+  vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(image, scalarRange);
 }

@@ -33,7 +33,7 @@ Care Ontario.
 #include "vtkFractionalLabelmapToClosedSurfaceConversionRule.h"
 #include "vtkClosedSurfaceToFractionalLabelmapConversionRule.h"
 
-int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
+int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
 {
   vtkNew<vtkMRMLSegmentationStorageNode> node1;
   vtkNew<vtkMRMLScene> scene;
@@ -43,9 +43,9 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char * argv[] )
   if (argc != 5)
   {
     std::cerr << "Line " << __LINE__
-              << " - Missing or extra parameters!\n"
-              << "Usage: " << argv[0] << " /path/to/ITKSnapSegmentation.nii.gz /path/to/OldSlicerSegmentation.seg.nrrd /path/to/SlicerSegmentation.seg.nrrd"
-              << std::endl;
+      << " - Missing or extra parameters!\n"
+      << "Usage: " << argv[0] << " /path/to/ITKSnapSegmentation.nii.gz /path/to/OldSlicerSegmentation.seg.nrrd /path/to/SlicerSegmentation.seg.nrrd"
+      << std::endl;
     return EXIT_FAILURE;
   }
 

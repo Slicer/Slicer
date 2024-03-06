@@ -77,7 +77,7 @@ public:
   /// \param colorTableNode Optional color node used to name the segments and set segment color.
   /// \return Loaded segmentation node
   vtkMRMLSegmentationNode* LoadSegmentationFromFile(const char* filename, bool autoOpacities = true, const char* nodeName=nullptr,
-    vtkMRMLColorTableNode* colorTableNode=nullptr);
+    vtkMRMLColorTableNode* colorTableNode=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Create labelmap volume MRML node from oriented image data.
   /// Creates a display node if a display node does not exist. Shifts image extent to start from zero.
@@ -215,7 +215,7 @@ public:
   /// The colors of the new segments are set from the color table corresponding to the labelmap volume.
   /// \param insertBeforeSegmentId New segments will be inserted before this segment.
   static bool ImportLabelmapToSegmentationNode(vtkMRMLLabelMapVolumeNode* labelmapNode,
-    vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId="");
+    vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId="", vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Import all labels from a labelmap image to a segmentation node, each label to a separate segment
   /// The colors of the new segments are randomly generated, unless terminology context is specified, in which case the terminology
@@ -224,25 +224,27 @@ public:
   /// (parent transform of the segmentation node is not used during import).
   /// \param baseSegmentName Prefix for the names of the new segments. Empty by default, in which case the prefix will be "Label"
   static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage,
-    vtkMRMLSegmentationNode* segmentationNode, std::string baseSegmentName="", std::string insertBeforeSegmentId="") ;
+    vtkMRMLSegmentationNode* segmentationNode, std::string baseSegmentName="", std::string insertBeforeSegmentId="",
+    vtkMRMLMessageCollection* userMessages=nullptr) ;
 
   /// Update segmentation from segments in a labelmap node.
   /// \param updatedSegmentIDs Defines how label values 1..N are mapped to segment IDs (0..N-1).
   static bool ImportLabelmapToSegmentationNode(vtkMRMLLabelMapVolumeNode* labelmapNode,
-    vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs);
+    vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Update segmentation from segments in a labelmap node.
   /// \param updatedSegmentIDs Defines how label values 1..N are mapped to segment IDs (0..N-1).
   static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage,
     vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs,
-    vtkGeneralTransform* labelmapToSegmentationTransform=nullptr );
+    vtkGeneralTransform* labelmapToSegmentationTransform=nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Import all labels from a labelmap node to a segmentation node, each label to a separate segment.
   /// Terminology and color is set to the segments based on the color table corresponding to the labelmap volume node.
   /// \param terminologyContextName Terminology context the entries of which are mapped to the labels imported from the labelmap node
   /// \param insertBeforeSegmentId New segments will be inserted before this segment.
   bool ImportLabelmapToSegmentationNodeWithTerminology(vtkMRMLLabelMapVolumeNode* labelmapNode,
-    vtkMRMLSegmentationNode* segmentationNode, std::string terminologyContextName, std::string insertBeforeSegmentId="");
+    vtkMRMLSegmentationNode* segmentationNode, std::string terminologyContextName, std::string insertBeforeSegmentId="",
+    vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Import model into the segmentation as a segment.
   static bool ImportModelToSegmentationNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId = "");

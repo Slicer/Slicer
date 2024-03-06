@@ -23,6 +23,7 @@
 #include "vtkSegmentation.h"
 
 #include "vtkOrientedImageData.h"
+#include "vtkOrientedImageDataResample.h"
 
 // VTK includes
 #include <vtkCompositeDataIterator.h>
@@ -156,6 +157,12 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
   if (!orientedBinaryLabelmap)
   {
     vtkErrorMacro("Convert: Source representation is not oriented image data");
+    return false;
+  }
+
+  if (vtkOrientedImageDataResample::IsImageScalarTypeValid(orientedBinaryLabelmap) != vtkOrientedImageDataResample::TYPE_OK)
+  {
+    vtkErrorMacro("Convert: Source representation scalar type is not a valid integer type");
     return false;
   }
 

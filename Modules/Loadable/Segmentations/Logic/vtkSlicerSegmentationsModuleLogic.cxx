@@ -71,6 +71,7 @@
 #include <vtkITKImageWriter.h>
 
 // MRML includes
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScene.h>
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
@@ -248,7 +249,8 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
 
 //-----------------------------------------------------------------------------
 vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFromFile(const char* fileName,
-  bool autoOpacities/*=true*/, const char* nodeName/*=nullptr*/, vtkMRMLColorTableNode* colorNode/*=nullptr*/)
+  bool autoOpacities/*=true*/, const char* nodeName/*=nullptr*/, vtkMRMLColorTableNode* colorNode/*=nullptr*/,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (this->GetMRMLScene() == nullptr || fileName == nullptr)
   {
@@ -261,7 +263,8 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFrom
   // Check to see which node can read this type of file
   if (!storageNode->SupportedFileType(fileName))
   {
-    vtkErrorMacro("LoadSegmentationFromFile: Segmentation storage node unable to load segmentation file.");
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerSegmentationsModuleLogic::LoadSegmentationFromFile",
+      "Segmentation storage node unable to load segmentation file. Unsupported file type.");
     return nullptr;
   }
 
@@ -292,9 +295,14 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::LoadSegmentationFrom
   // Read file
   vtkDebugMacro("LoadSegmentationFromFile: calling read on the storage node");
   int success = storageNode->ReadData(segmentationNode);
+  if (userMessages)
+  {
+    userMessages->AddMessages(storageNode->GetUserMessages());
+  }
   if (success != 1)
   {
-    vtkErrorMacro("LoadSegmentationFromFile: Error reading " << fileName);
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerSegmentationsModuleLogic::LoadSegmentationFromFile",
+      "Error reading " << fileName);
     this->GetMRMLScene()->RemoveNode(segmentationNode);
     return nullptr;
   }
@@ -1342,16 +1350,20 @@ bool vtkSlicerSegmentationsModuleLogic::ImportModelsToSegmentationNode(vtkIdType
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRMLLabelMapVolumeNode* labelmapNode,
-  vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId/*=""*/)
+  vtkMRMLSegmentationNode* segmentationNode, std::string insertBeforeSegmentId/*=""*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (!segmentationNode)
   {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid segmentation node");
+    vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Invalid segmentation node");
     return false;
   }
   if (!labelmapNode || !labelmapNode->GetImageData())
   {
-    vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Invalid labelmap volume node");
+    vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Invalid labelmap volume node");
     return false;
   }
 
@@ -1441,6 +1453,37 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
     padder->Update();
     labelOrientedImageData->ShallowCopy(padder->GetOutput());
 
+    int ret = vtkOrientedImageDataResample::IsImageScalarTypeValid(labelOrientedImageData);
+    switch (ret)
+    {
+      case vtkOrientedImageDataResample::TYPE_CONVERSION_TRUNCATION_NEEDED:
+        vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+          "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+          "Segmentation is a floating point scalar type and will be cast to an integer type. Voxel values may be truncated");
+        break;
+      case vtkOrientedImageDataResample::TYPE_CONVERSION_CLAMPING_NEEDED:
+        vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+          "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+          "Segmentation is outside the range of values that can be represented by supported integer types and will be clamped");
+        break;
+      case vtkOrientedImageDataResample::TYPE_ERROR:
+        vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+          "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+          "Failed to cast image to integer type.");
+        return false;
+      case vtkOrientedImageDataResample::TYPE_OK:
+      default:
+        break;
+    }
+    if (ret != vtkOrientedImageDataResample::TYPE_OK &&
+      !vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(labelOrientedImageData))
+    {
+      vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+        "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+        "Failed to cast image to a valid integer type");
+        return false;
+    }
+
     // Add oriented image data as binary labelmap representation
     segment->AddRepresentation(
       vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(),
@@ -1448,7 +1491,9 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
 
     if (!segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId))
     {
-      vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Failed to add segment to segmentation");
+      vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+        "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+        "Failed to add segment to segmentation");
       return false;
     }
   } // for each label
@@ -1458,17 +1503,55 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage,
-  vtkMRMLSegmentationNode* segmentationNode, std::string baseSegmentName/*=""*/, std::string insertBeforeSegmentId/*=""*/)
+  vtkMRMLSegmentationNode* segmentationNode, std::string baseSegmentName/*=""*/, std::string insertBeforeSegmentId/*=""*/,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (!segmentationNode)
   {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid segmentation node");
+    vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Invalid segmentation node");
     return false;
   }
   if (!labelmapImage)
   {
-    vtkErrorWithObjectMacro(labelmapImage, "ImportLabelmapToSegmentationNode: Invalid labelmap image");
+    vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Invalid labelmap image");
     return false;
+  }
+
+  vtkNew<vtkOrientedImageData> labelOrientedImageData;
+  labelOrientedImageData->ShallowCopy(labelmapImage);
+  int ret = vtkOrientedImageDataResample::IsImageScalarTypeValid(labelOrientedImageData);
+  switch (ret)
+  {
+  case vtkOrientedImageDataResample::TYPE_CONVERSION_TRUNCATION_NEEDED:
+    vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+        "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+        "Segmentation is a floating point scalar type and will be cast to an integer type. Voxel values may be truncated");
+      break;
+    case vtkOrientedImageDataResample::TYPE_CONVERSION_CLAMPING_NEEDED:
+      vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+        "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+        "Segmentation is outside the range of values that can be represented by supported integer types and will be clamped");
+      break;
+    case vtkOrientedImageDataResample::TYPE_ERROR:
+      vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+        "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+        "Failed to cast image to integer type.");
+      return false;
+    case vtkOrientedImageDataResample::TYPE_OK:
+    default:
+      break;
+  }
+  if (ret != vtkOrientedImageDataResample::TYPE_OK &&
+    !vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(labelOrientedImageData))
+  {
+    vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Failed to cast image to a valid integer type");
+      return false;
   }
 
   if (!segmentationNode->GetDisplayNode())
@@ -1481,24 +1564,22 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
   // Split labelmap node into per-label image data
 
   vtkNew<vtkIntArray> labelValues;
-  vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(labelValues.GetPointer(), labelmapImage);
+  vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(labelValues.GetPointer(), labelOrientedImageData);
 
   MRMLNodeModifyBlocker blocker(segmentationNode);
 
   // Clip to effective extent
   int labelOrientedImageDataEffectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };
-  vtkOrientedImageDataResample::CalculateEffectiveExtent(labelmapImage, labelOrientedImageDataEffectiveExtent);
+  vtkOrientedImageDataResample::CalculateEffectiveExtent(labelOrientedImageData, labelOrientedImageDataEffectiveExtent);
 
   vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
-  padder->SetInputData(labelmapImage);
+  padder->SetInputData(labelOrientedImageData);
   padder->SetOutputWholeExtent(labelOrientedImageDataEffectiveExtent);
   padder->Update();
-
-  vtkNew<vtkOrientedImageData> labelOrientedImageData;
   labelOrientedImageData->ShallowCopy(padder->GetOutput());
 
   vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  labelmapImage->GetImageToWorldMatrix(labelmapImageToWorldMatrix);
+  labelOrientedImageData->GetImageToWorldMatrix(labelmapImageToWorldMatrix);
   labelOrientedImageData->SetGeometryFromImageToWorldMatrix(labelmapImageToWorldMatrix);
 
   for (int labelIndex = 0; labelIndex < labelValues->GetNumberOfValues(); ++labelIndex)
@@ -1522,7 +1603,9 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
 
     if (!segmentationNode->GetSegmentation()->AddSegment(segment, "", insertBeforeSegmentId))
     {
-      vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Failed to add segment to segmentation");
+      vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+        "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+        "Failed to add segment to segmentation");
       return false;
     }
   } // for each label
@@ -1532,16 +1615,21 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
-  vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs)
+  vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (!segmentationNode || !segmentationNode->GetSegmentation())
   {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid segmentation node");
+    vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Invalid segmentation node");
     return false;
   }
   if (!labelmapNode || !labelmapNode->GetImageData())
   {
-    vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid labelmap volume node");
+    vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Invalid labelmap volume node");
     return false;
   }
 
@@ -1563,27 +1651,33 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
 
   return vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
     labelOrientedImageData, segmentationNode, updatedSegmentIDs,
-    labelmapToSegmentationTransform);
+    labelmapToSegmentationTransform, userMessages);
 }
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
   vtkOrientedImageData* labelmapImage, vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* updatedSegmentIDs,
-  vtkGeneralTransform* labelmapToSegmentationTransform /*=nullptr*/)
+  vtkGeneralTransform* labelmapToSegmentationTransform /*=nullptr*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   if (!segmentationNode || !segmentationNode->GetSegmentation())
   {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid segmentation node");
+    vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Invalid segmentation node");
     return false;
   }
   if (!labelmapImage)
   {
-    vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid labelmap volume");
+    vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Invalid labelmap volume");
     return false;
   }
   if (!updatedSegmentIDs)
   {
-    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: Invalid updatedSegmentIDs");
+    vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Invalid updatedSegmentIDs");
     return false;
   }
 
@@ -1591,7 +1685,8 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
   // (this should have been done by the UI classes, notifying the users about hazards of changing the source representation)
   if (segmentationNode->GetSegmentation()->GetSourceRepresentationName() != vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
   {
-    vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode:"
+    vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
       "Source representation of the target segmentation node "
       << (segmentationNode->GetName() ? segmentationNode->GetName() : "NULL") << " is not binary labelmap");
     return false;
@@ -1607,9 +1702,40 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
   labelmapImage->GetImageToWorldMatrix(labelmapIjkToRasMatrix);
 
   // Create oriented image data for label
-  vtkSmartPointer<vtkOrientedImageData> labelOrientedImageData = vtkSmartPointer<vtkOrientedImageData>::New();
+  vtkNew<vtkOrientedImageData> labelOrientedImageData;
   labelOrientedImageData->ShallowCopy(labelmapImage);
   labelOrientedImageData->SetGeometryFromImageToWorldMatrix(labelmapIjkToRasMatrix);
+
+  int ret = vtkOrientedImageDataResample::IsImageScalarTypeValid(labelOrientedImageData);
+  switch (ret)
+  {
+    case vtkOrientedImageDataResample::TYPE_CONVERSION_TRUNCATION_NEEDED:
+      vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+        "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+        "Segmentation is a floating point scalar type and will be cast to an integer type. Voxel values may be truncated");
+      break;
+    case vtkOrientedImageDataResample::TYPE_CONVERSION_CLAMPING_NEEDED:
+      vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+        "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+        "Segmentation is outside the range of values that can be represented by supported integer types and will be clamped");
+      break;
+    case vtkOrientedImageDataResample::TYPE_ERROR:
+      vtkWarningToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+        "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+        "Failed to cast image to integer type.");
+      return false;
+    case vtkOrientedImageDataResample::TYPE_OK:
+    default:
+      break;
+  }
+  if (ret != vtkOrientedImageDataResample::TYPE_OK &&
+    !vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(labelOrientedImageData))
+  {
+    vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
+      "Failed to cast image to a valid integer type");
+    return false;
+  }
 
   // Apply parent transforms if any
   if (labelmapToSegmentationTransform)
@@ -1633,7 +1759,8 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
       segment = newSegment;
       if (!segmentationNode->GetSegmentation()->AddSegment(newSegment, segmentId))
       {
-        vtkErrorWithObjectMacro(segmentationNode, "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode: "
+        vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+          "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode",
           "Could not add segment");
         return false;
       }
@@ -1653,15 +1780,18 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNodeWithTerminology(vtkMRMLLabelMapVolumeNode* labelmapNode,
-  vtkMRMLSegmentationNode* segmentationNode, std::string terminologyContextName, std::string insertBeforeSegmentId/*=""*/)
+  vtkMRMLSegmentationNode* segmentationNode, std::string terminologyContextName, std::string insertBeforeSegmentId/*=""*/,
+  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   MRMLNodeModifyBlocker blocker(segmentationNode);
 
   // Import labelmap to segmentation
-  if (! vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
-        labelmapNode, segmentationNode, insertBeforeSegmentId ) )
+  if (!vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
+        labelmapNode, segmentationNode, insertBeforeSegmentId, userMessages))
   {
-    vtkErrorMacro("ImportLabelmapToSegmentationNodeWithTerminology: Invalid labelmap volume");
+    vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
+      "vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNodeWithTerminology",
+      "Invalid labelmap volume");
     return false;
   }
 
