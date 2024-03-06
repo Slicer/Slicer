@@ -135,8 +135,6 @@ void qSlicerWebWidgetPrivate::init()
                    this, SLOT(onAppAboutToQuit()));
   this->verticalLayout->insertWidget(0, this->WebView);
 
-  this->WebView->installEventFilter(q);
-
   QObject::connect(this->WebView, SIGNAL(loadStarted()),
                    q, SLOT(onLoadStarted()));
 
@@ -429,8 +427,6 @@ void qSlicerWebWidget::printToPdf(const QString& filePath, const QPageLayout& pa
 // --------------------------------------------------------------------------
 void qSlicerWebWidget::initJavascript()
 {
-  Q_D(qSlicerWebWidget);
-  d->setDocumentWebkitHidden(!d->WebView->isVisible());
 }
 
 // --------------------------------------------------------------------------
@@ -495,20 +491,4 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
              << qPrintable(e.errorString());
   }
 #endif
-}
-
-// --------------------------------------------------------------------------
-bool qSlicerWebWidget::eventFilter(QObject* obj, QEvent* event)
-{
-  Q_D(qSlicerWebWidget);
-  Q_ASSERT(d->WebView == obj);
-  if (d->WebView == obj && !event->spontaneous() &&
-      (event->type() == QEvent::Show || event->type() == QEvent::Hide))
-  {
-    d->setDocumentWebkitHidden(!d->WebView->isVisible());
-    this->evalJS("if (typeof $ != 'undefined') {"
-                 "  $.event.trigger({type: 'webkitvisibilitychange'})"
-                 "} else { console.info('JQuery not loaded - Failed to trigger webkitvisibilitychange') }");
-  }
-  return QObject::eventFilter(obj, event);
 }
