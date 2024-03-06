@@ -183,10 +183,41 @@ public:
   static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
     int extent[6]=nullptr, int maskThreshold=0);
 
+  enum ImageTypeCheckResult
+  {
+    TYPE_OK,
+    TYPE_CONVERSION_NEEDED,
+    TYPE_CONVERSION_TRUNCATION_NEEDED,
+    TYPE_CONVERSION_CLAMPING_NEEDED,
+    TYPE_ERROR
+  };
+
+  /// Determine if the scalar type of the image is valid for representing segmentations.
+  /// \param image Image to validate
+  /// \return ImageTypeCheckResult value representing if the image scalar type is valid, and if not, what kind of conversion is needed.
+  /// \sa vtkImageData::GetScalarType()
+  static int IsImageScalarTypeValid(vtkImageData* image);
+
+  /// Determine the smallest integer type that can contain the specified scalar range.
+  /// \param scalarRange Range of the scalar values that should be representable by the image data type
+  /// \return Smallest integer type that can contain the specified scalar range. Possible values are VTK_UNSIGNED_CHAR, VTK_CHAR, VTK_UNSIGNED_SHORT, VTK_SHORT, VTK_UNSIGNED_INT, VTK_INT and -1 if no valid integer type can contain the scalar range.
+  static int GetSmallestIntegerTypeForSegmentationScalarRange(double scalarRange[2]);
+
+  /// Cast the data type of the image to the smallest possible size that can contain the currently stored values
+  /// \param image Image to cast.
+  /// \return True if the image cast was successful, false otherwise
+  static bool CastSegmentationToSmallestIntegerType(vtkImageData* image);
+
+  /// Cast the data type of the image to the smallest possible size that can contain the specified value
+  /// \param image Image to convert
+  /// \param scalarRange Range of the scalar values that should be representable by the image data type
+  /// \return True if the image cast was successful, false otherwise
+  static bool CastSegmentationToSmallestIntegerType(vtkImageData* image, double scalarRange[2]);
+
   /// Cast the data type of the image to be able to contain the specified value
   /// \param image Image to convert
   /// \param value Value that should be representable by the image data type
-  static void CastImageForValue(vtkOrientedImageData* image, double value);
+  static void CastImageForValue(vtkImageData* image, double value);
 
 protected:
   vtkOrientedImageDataResample();

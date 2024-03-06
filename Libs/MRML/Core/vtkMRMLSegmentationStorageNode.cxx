@@ -682,7 +682,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
   }
   else
   {
-    vtkDebugMacro("ReadBinaryLabelmapRepresentation: File is not using a supported format!");
+    vtkDebugMacro("ReadBinaryLabelmapRepresentation: File is not using a supported format");
     return 0;
   }
 
@@ -694,6 +694,33 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
   }
 
   // Read succeeded
+  int ret = vtkOrientedImageDataResample::IsImageScalarTypeValid(imageData);
+  switch (ret)
+  {
+    case vtkOrientedImageDataResample::TYPE_CONVERSION_TRUNCATION_NEEDED:
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+        "Segmentation is a floating point scalar type and will be cast to an integer type by truncation (rounding towards 0).");
+      break;
+    case vtkOrientedImageDataResample::TYPE_CONVERSION_CLAMPING_NEEDED:
+       vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+        "Segmentation is a floating point scalar type and are outside of the possible range of integer. Voxel values will be clamped to integer range.");
+      break;
+    case vtkOrientedImageDataResample::TYPE_ERROR:
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+        "Failed to cast image to integer type.");
+      return 0;
+    case vtkOrientedImageDataResample::TYPE_OK:
+    default:
+      break;
+  }
+  if (ret != vtkOrientedImageDataResample::TYPE_OK
+    && !vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(imageData))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+      "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
+      "Failed to cast image to integer type.");
+    return 0;
+  }
 
   int numberOfFrames = imageData->GetNumberOfScalarComponents();
 

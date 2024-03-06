@@ -23,9 +23,11 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkDataObject.h>
+#include <vtkImageData.h>
 
 // SegmentationCore includes
 #include "vtkSegmentationConverterRule.h"
+#include "vtkSegmentationConverter.h"
 
 //----------------------------------------------------------------------------
 // The segmentation converter rule manager singleton.
@@ -212,10 +214,18 @@ vtkDataObject* vtkSegmentationConverterFactory::ConstructRepresentationObjectByR
   for (RuleListType::iterator ruleIt = this->Rules.begin(); ruleIt != this->Rules.end(); ++ruleIt)
   {
     vtkDataObject* representationObject = (*ruleIt)->ConstructRepresentationObjectByRepresentation(representationName);
-    if (representationObject)
+    if (!representationObject)
     {
-      return representationObject;
+      continue;
     }
+
+    vtkImageData* imageData = vtkImageData::SafeDownCast(representationObject);
+    if (imageData && representationName == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())
+    {
+      // If we are creating a binary labelmap, we should ensure that it is using unsigned char by default.
+      imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+    }
+    return representationObject;
   }
 
   // None of the registered rules can instantiate this type
