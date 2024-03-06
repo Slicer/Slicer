@@ -268,9 +268,10 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   // Transform
   this->TransformMenu = new QMenu(q);
 
-  this->TransformInteractionInViewAction = new QAction(qMRMLSubjectHierarchyTreeView::tr("Interaction in 3D view"), this->TransformMenu);
+  this->TransformInteractionInViewAction = new QAction(qMRMLSubjectHierarchyTreeView::tr("Interaction"), this->TransformMenu);
   this->TransformInteractionInViewAction->setCheckable(true);
-  this->TransformInteractionInViewAction->setToolTip(qMRMLSubjectHierarchyTreeView::tr("Allow interactively modify the transform in 3D views"));
+  this->TransformInteractionInViewAction->setToolTip(
+    qMRMLSubjectHierarchyTreeView::tr("Allow the transform to be modified interactively in the 2D and 3D views"));
   this->TransformMenu->addAction(this->TransformInteractionInViewAction);
   QObject::connect(this->TransformInteractionInViewAction, SIGNAL(toggled(bool)), q, SLOT(onTransformInteractionInViewToggled(bool)));
 

@@ -115,14 +115,15 @@ public:
 protected slots:
   /// Invert selected transform
   void invert();
-  void invertCurrentItem();
 
   /// Set transform to identity (only available for linear transforms)
   void identity();
-  void identityCurrentItem();
 
-  void resetCenterOfTransformation();
-  void resetCenterOfTransformationCurrentItem();
+  ///  Reset the center of transformation
+  void resetCenterOfTransformationLocal();
+  void resetCenterOfTransformationWorld();
+  void resetCenterOfTransformationAllTransformedNodeBounds();
+  void resetCenterOfTransformationTransformedNodeBounds();
 
   /// Toggle interaction box
   void toggleInteractionBox(bool);

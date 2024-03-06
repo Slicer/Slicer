@@ -105,6 +105,7 @@ public slots:
   void updateTranslationComponentVisibility();
   void updateRotationComponentVisibility();
   void updateScalingComponentVisibility();
+  void updateInteractionHandleScale();
 
   void setColorTableNode(vtkMRMLNode* colorTableNode);
 

@@ -371,7 +371,8 @@ public:
   static const char* GetFixedNodeReferenceRole() { return "spatialRegistrationFixed"; };
 
   /// The transformation center (rotation/scaling) that is rotated/scaled around
-  vtkSetVector3Macro(CenterOfTransformation, double);
+  virtual void SetCenterOfTransformation(double x, double y, double z);
+  virtual void SetCenterOfTransformation(const double xyz[3]);
   vtkGetVector3Macro(CenterOfTransformation, double);
 
 protected:

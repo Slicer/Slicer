@@ -565,7 +565,7 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateHandleToWorldTransfo
 //----------------------------------------------------------------------
 double vtkSlicerMarkupsInteractionWidgetRepresentation::GetInteractionScalePercent()
 {
-  return this->GetDisplayNode()->GetGlyphScale() * 5.0;
+  return this->GetDisplayNode()->GetInteractionHandleScale() * 5.0;
 }
 
 //----------------------------------------------------------------------
@@ -594,22 +594,7 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::GetHandleVisibility(int ty
     return false;
   }
 
-  bool handleVisibility[4] = { false, false, false, false };
-  if (markupsComponentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle)
-  {
-    this->GetDisplayNode()->GetRotationHandleComponentVisibility(handleVisibility);
-  }
-  else if (markupsComponentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle)
-  {
-    this->GetDisplayNode()->GetScaleHandleComponentVisibility(handleVisibility);
-  }
-  else if (markupsComponentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle)
-  {
-    this->GetDisplayNode()->GetTranslationHandleComponentVisibility(handleVisibility);
-  }
-
   int visibilityIndex = index;
-  bool visibility = true;
   if (type == InteractionScaleHandle && vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode()))
   {
     switch (index)
@@ -649,12 +634,27 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::GetHandleVisibility(int ty
     }
   }
 
-  if (visibilityIndex >= 0 || visibilityIndex <= 3)
+  if (visibilityIndex < 0 || visibilityIndex > 3)
   {
-    visibility = handleVisibility[visibilityIndex];
+    // Index out of range.
+    return false;
   }
 
-  return visibility && Superclass::GetHandleVisibility(type, index);
+  bool handleVisibility[4] = { false, false, false, false };
+  if (markupsComponentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle)
+  {
+    this->GetDisplayNode()->GetRotationHandleComponentVisibility(handleVisibility);
+  }
+  else if (markupsComponentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle)
+  {
+    this->GetDisplayNode()->GetScaleHandleComponentVisibility(handleVisibility);
+  }
+  else if (markupsComponentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle)
+  {
+    this->GetDisplayNode()->GetTranslationHandleComponentVisibility(handleVisibility);
+  }
+
+  return handleVisibility[visibilityIndex] && Superclass::GetHandleVisibility(type, index);
 }
 
 //----------------------------------------------------------------------

@@ -1724,3 +1724,23 @@ void vtkMRMLTransformNode::CreateDefaultSequenceDisplayNodes()
 {
   // don't create display nodes for transforms by default
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::SetCenterOfTransformation(double x, double y, double z)
+{
+  vtkDebugMacro(<< " setting CenterOfTransformation to (" << x << "," << y << "," << z << ")");
+  if ((this->CenterOfTransformation[0] != x) || (this->CenterOfTransformation[1] != y) || (this->CenterOfTransformation[2] != z))
+  {
+    this->CenterOfTransformation[0] = x;
+    this->CenterOfTransformation[1] = y;
+    this->CenterOfTransformation[2] = z;
+    this->Modified();
+    this->TransformModified();
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::SetCenterOfTransformation(const double center[3])
+{
+  this->SetCenterOfTransformation(center[0], center[1], center[2]);
+}

@@ -72,6 +72,10 @@ protected slots:
   void copyTransform();
   void pasteTransform();
 
+  void updateCenterOfTransformationWidgets();
+  void onCenterOfTransformationChanged();
+  void resetCenterOfTransformation();
+
   void transformSelectedNodes();
   void untransformSelectedNodes();
   void hardenSelectedNodes();
