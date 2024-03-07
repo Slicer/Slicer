@@ -8,14 +8,20 @@ include_directories(
   )
 
 add_subdirectory(Logic)
-add_subdirectory(QTCore)
-add_subdirectory(QTGUI)
+
+if(Slicer_BUILD_GUI)
+  add_subdirectory(QTCore)
+  add_subdirectory(QTGUI)
+  if(Slicer_BUILD_CLI_SUPPORT)
+    add_subdirectory(QTCLI)
+  endif()
+endif()
+
 if(Slicer_BUILD_CLI_SUPPORT)
-  add_subdirectory(QTCLI)
   add_subdirectory(CLI)
 endif()
 
-if(Slicer_USE_PYTHONQT)
+if(VTK_WRAP_PYTHON)
   add_subdirectory(Python)
 endif()
 
