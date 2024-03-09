@@ -165,7 +165,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         islandCount = islandMath.GetNumberOfIslands()
         islandOrigCount = islandMath.GetOriginalNumberOfIslands()
         ignoredIslands = islandOrigCount - islandCount
-        logging.info("%d islands created (%d ignored)" % (islandCount, ignoredIslands))
+        logging.debug("%d islands created (%d ignored)" % (islandCount, ignoredIslands))
 
         baseSegmentName = "Label"
         selectedSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
