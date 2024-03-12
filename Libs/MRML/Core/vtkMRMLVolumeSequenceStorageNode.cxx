@@ -406,19 +406,19 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       currentFrameVolumeScalarType = frameVolume->GetImageData()->GetScalarType();
     }
     if (currentFrameVolumeDimensions[0] != frameVolumeDimensions[0]
-    || currentFrameVolumeDimensions[1] != frameVolumeDimensions[1]
-    || currentFrameVolumeDimensions[2] != frameVolumeDimensions[2]
-    || currentFrameVolumeScalarType != frameVolumeScalarType)
+      || currentFrameVolumeDimensions[1] != frameVolumeDimensions[1]
+      || currentFrameVolumeDimensions[2] != frameVolumeDimensions[2]
+      || currentFrameVolumeScalarType != frameVolumeScalarType)
     {
       vtkDebugMacro(<< "vtkMRMLVolumeSequenceStorageNode::WriteDataInternal: Data node "<<frameIndex<<" size or scalar type mismatch ("
         << "got " << currentFrameVolumeDimensions[0]
           << "x" << currentFrameVolumeDimensions[1]
-          << "x" <<currentFrameVolumeDimensions[2]
-          << " " <<vtkImageScalarTypeNameMacro(currentFrameVolumeScalarType) << ", "
+          << "x" << currentFrameVolumeDimensions[2]
+          << " " << vtkImageScalarTypeNameMacro(currentFrameVolumeScalarType) << ", "
         << "expected " << frameVolumeDimensions[0]
           << "x" << frameVolumeDimensions[1]
           << "x" << frameVolumeDimensions[2]
-          << " " <<vtkImageScalarTypeNameMacro(frameVolumeScalarType) );
+          << " " << vtkImageScalarTypeNameMacro(frameVolumeScalarType) );
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Size and scalar type of all volumes in the sequence must be the same."));
       return 0;
     }
