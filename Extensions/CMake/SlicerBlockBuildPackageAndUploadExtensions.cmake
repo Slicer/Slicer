@@ -66,14 +66,14 @@ foreach(file ${catalog_entry_files})
     message(WARNING "Failed to extract extension name associated with file: ${file}")
   else()
     list(APPEND EXTENSION_LIST ${EXTENSION_NAME})
-    set(EXTENSION_${EXTENSION_NAME}_DEPENDS ${EXTENSION_EXT_DEPENDS})
+    set(EXTENSION_${EXTENSION_NAME}_BUILD_DEPENDENCIES ${EXTENSION_EXT_BUILD_DEPENDENCIES})
     set(${EXTENSION_NAME}_BUILD_SUBDIRECTORY ${EXTENSION_FILE_BUILD_SUBDIRECTORY})
   endif()
 endforeach()
 
 # Sort extensions
 include(TopologicalSort)
-topological_sort(EXTENSION_LIST "EXTENSION_" "_DEPENDS")
+topological_sort(EXTENSION_LIST "EXTENSION_" "_BUILD_DEPENDENCIES")
 
 foreach(EXTENSION_NAME ${EXTENSION_LIST})
   # Set extension description filename using EXTENSION_NAME
@@ -99,8 +99,8 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
 
   # Set external project DEPENDS parameter
   set(EP_ARG_EXTENSION_DEPENDS)
-  if(NOT "${EXTENSION_EXT_DEPENDS}" STREQUAL "")
-    set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_EXT_DEPENDS})
+  if(NOT "${EXTENSION_EXT_BUILD_DEPENDENCIES}" STREQUAL "")
+    set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_EXT_BUILD_DEPENDENCIES})
   endif()
 
   #-----------------------------------------------------------------------------

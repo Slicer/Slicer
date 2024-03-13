@@ -251,7 +251,7 @@ It is named after the extension name (e.g `ExtensionName.json`) and may include 
 * - scm
   - Type of revision control system. Default to `git`.
   - N
-* - depends
+* - build_dependencies
   - List of extensions required to build this extension. For example: `["extensionA", "extensionB"]`.
   - N
 * - build_subdirectory

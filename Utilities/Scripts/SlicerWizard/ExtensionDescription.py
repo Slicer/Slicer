@@ -184,7 +184,7 @@ class ExtensionDescription:
         dictio = dict()
         dictio["scmurl"] = getattr(self, "scmurl")
         dictio["scmrevision"] = getattr(self, "scmrevision")
-        dictio["depends"] = getattr(self, "depends")
+        dictio["build_dependencies"] = getattr(self, "depends")
         dictio["build_subdirectory"] = getattr(self, "build_subdirectory")
         dictio["category"] = "Examples"
         dictio["enabled"] = getattr(self, "enabled")

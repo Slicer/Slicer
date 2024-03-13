@@ -1,7 +1,7 @@
 {
+  "build_dependencies": [],
   "build_subdirectory": ".",
   "category": "Examples",
-  "depends": [],
   "scm": "local",
   "scmrevision": "",
   "scmurl": "Testing/ScriptedSegmentEditorEffectExtensionTemplate"
