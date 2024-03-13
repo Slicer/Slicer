@@ -6,10 +6,11 @@
 # extension.
 #
 # The new target that will
-#  (1) build the standard 'package' target,
-#  (2) extract the list of generated packages from its standard output,
-#  (3) append the list of generated package filepaths to a file named PACKAGES.txt,
-#  (4) upload the first package.
+#  (1) configure the project and build the standard 'package' target,
+#  (2) extract metadata from the locally generated .s4ext file
+#  (3) extract the list of generated packages from its standard output,
+#  (4) append the list of generated package filepaths to a file named PACKAGES.txt,
+#  (5) upload the first package.
 #
 # The following variables are expected to be defined in the including scope:
 #  CMAKE_SOURCE_DIR
@@ -18,15 +19,19 @@
 #  Slicer_CMAKE_DIR
 #  Slicer_REVISION
 #  EXTENSION_NAME
-#  EXTENSION_CATEGORY
-#  EXTENSION_ICONURL
-#  EXTENSION_CONTRIBUTORS
-#  EXTENSION_DESCRIPTION
-#  EXTENSION_HOMEPAGE
-#  EXTENSION_SCREENSHOTURLS
-#  EXTENSION_ENABLED
 #  EXTENSION_OPERATING_SYSTEM
 #  EXTENSION_ARCHITECTURE
+#
+# The following variables are internally set by extracting corresponding values
+# from the locally generated "<extension_name>.s4ext" file:
+#  EXTENSION_EXT_CATEGORY
+#  EXTENSION_EXT_CONTRIBUTORS
+#  EXTENSION_EXT_DEPENDS
+#  EXTENSION_EXT_DESCRIPTION
+#  EXTENSION_EXT_HOMEPAGE
+#  EXTENSION_EXT_ICONURL
+#  EXTENSION_EXT_SCREENSHOTURLS
+#  EXTENSION_EXT_ENABLED
 #
 # The following variables can either be defined in the including scope or
 # as environment variables:
@@ -98,12 +103,6 @@ if(NOT PACKAGEUPLOAD)
     Slicer_REVISION
     EXTENSION_NAME
     EXTENSION_CATEGORY
-    EXTENSION_ICONURL
-    EXTENSION_CONTRIBUTORS
-    EXTENSION_DEPENDS
-    EXTENSION_DESCRIPTION
-    EXTENSION_HOMEPAGE
-    EXTENSION_SCREENSHOTURLS
     EXTENSION_ENABLED
     EXTENSION_OPERATING_SYSTEM
     EXTENSION_ARCHITECTURE
@@ -265,8 +264,30 @@ foreach(p ${package_list})
     set(package_uploaded 1)
     get_filename_component(package_name "${p}" NAME)
 
+    # Extract extension metadata from ".s4ext" file generated in the build
+    # directory based on the variables set in the extension CMakeLists.txt
+    include(SlicerFunctionExtractExtensionDescription)
+    slicerFunctionExtractExtensionDescription(
+      EXTENSION_FILE "${EXTENSION_BINARY_DIR}/${EXTENSION_NAME}.s4ext"
+      VAR_PREFIX EXTENSION)
+
+    # Sanity checks
+    set(expected_defined_vars
+      EXTENSION_EXT_DEPENDS
+      EXTENSION_EXT_DESCRIPTION
+      EXTENSION_EXT_ICONURL
+      EXTENSION_EXT_HOMEPAGE
+      EXTENSION_EXT_SCREENSHOTURLS
+      EXTENSION_EXT_CONTRIBUTORS
+      )
+    foreach(var ${expected_defined_vars})
+      if(NOT DEFINED ${var})
+        message(FATAL_ERROR "Variable ${var} is not defined !")
+      endif()
+    endforeach()
+
     # Convert to space separated list
-    list(JOIN EXTENSION_DEPENDS " " dependency)
+    list(JOIN EXTENSION_EXT_DEPENDS " " dependency)
 
     message("Uploading [${package_name}] to [${SLICER_EXTENSION_MANAGER_URL}]")
     get_filename_component(package_directory ${p} DIRECTORY)
@@ -287,12 +308,12 @@ foreach(p ${package_list})
             --revision "${EXTENSION_WC_REVISION}"
             --app_revision "${Slicer_REVISION}"
             --category "${EXTENSION_CATEGORY}"
-            --desc "${EXTENSION_DESCRIPTION}"
+            --desc "${EXTENSION_EXT_DESCRIPTION}"
             --dependency "${dependency}"
-            --icon_url "${EXTENSION_ICONURL}"
-            --homepage "${EXTENSION_HOMEPAGE}"
-            --screenshots "${EXTENSION_SCREENSHOTURLS}"
-            --contributors "${EXTENSION_CONTRIBUTORS}"
+            --icon_url "${EXTENSION_EXT_ICONURL}"
+            --homepage "${EXTENSION_EXT_HOMEPAGE}"
+            --screenshots "${EXTENSION_EXT_SCREENSHOTURLS}"
+            --contributors "${EXTENSION_EXT_CONTRIBUTORS}"
       RESULT_VARIABLE slicer_extension_manager_upload_status
       ERROR_FILE ${error_file}
       )

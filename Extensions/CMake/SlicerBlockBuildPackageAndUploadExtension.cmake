@@ -23,7 +23,6 @@ set(expected_defined_vars
   CDASH_PROJECT_NAME
   EXTENSION_BUILD_OPTIONS_STRING
   EXTENSION_BUILD_SUBDIRECTORY
-  EXTENSION_ENABLED
   EXTENSION_NAME
   EXTENSION_SOURCE_DIR
   EXTENSION_SUPERBUILD_BINARY_DIR
@@ -61,20 +60,6 @@ set(CMAKE_MODULE_PATH
 include(CMakeParseArguments)
 include(SlicerCTestUploadURL)
 include(UseSlicerMacros) # for slicer_setting_variable_message
-
-#-----------------------------------------------------------------------------
-set(optional_vars
-  EXTENSION_CATEGORY
-  EXTENSION_CONTRIBUTORS
-  EXTENSION_DESCRIPTION
-  EXTENSION_HOMEPAGE
-  EXTENSION_ICONURL
-  EXTENSION_SCREENSHOTURLS
-  EXTENSION_STATUS
-  )
-foreach(var ${optional_vars})
-  slicer_setting_variable_message(${var})
-endforeach()
 
 #-----------------------------------------------------------------------------
 # Set site name and force to lower case
@@ -152,7 +137,6 @@ CTEST_MODEL:STRING=${CTEST_MODEL}
 GIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
 Slicer_DIR:PATH=${Slicer_DIR}
 Slicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${Slicer_EXTENSIONS_TRACK_QUALIFIER}
-EXTENSION_DEPENDS:STRING=${EXTENSION_DEPENDS}
 ")
 
 if(APPLE)
