@@ -418,13 +418,23 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
   {
     vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
     smoother->SetInputData(processingResult);
-    smoother->SetNumberOfIterations(20); // based on VTK documentation ("Ten or twenty iterations is all the is usually necessary")
-    // This formula maps:
-    // 0.0  -> 1.0   (almost no smoothing)
-    // 0.25 -> 0.1   (average smoothing)
-    // 0.5  -> 0.01  (more smoothing)
-    // 1.0  -> 0.001 (very strong smoothing)
+
+    // Smoothing factor is a user-friendly linear scale that we need to maps to low-pass filter parameters.
+    // Default smoothing aims for removing blocky appearance (staircase artifacts) while avoiding shrinking.
+    // Typically a few ten iterations are sufficient, but stronger smoothing requires more iterations.
+    //
+    //   Smoothing factor                             Passband   Iterations
+    //
+    //     0.0  (almost no smoothing, blocky)      ->   1.0          20
+    //     0.25 (less smoothing, somewhat blocky)  ->   0.1          30
+    //     0.5  (default smoothing)                ->   0.01         40
+    //     0.75 (more smoothing, somewhat shrinks) ->   0.001        50
+    //     1.0  (very strong smoothing, shrinks)   ->   0.0001       60
+    //
     double passBand = pow(10.0, -4.0 * smoothingFactor);
+    int numberOfIterations = 20 + smoothingFactor * 40;
+
+    smoother->SetNumberOfIterations(numberOfIterations);
     smoother->SetPassBand(passBand);
     smoother->BoundarySmoothingOff();
     smoother->FeatureEdgeSmoothingOff();
