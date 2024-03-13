@@ -27,7 +27,7 @@ dashboard_set(CTEST_BUILD_FLAGS     "")               # Use multiple CPU cores t
 #dashboard_set(CMAKE_C_COMPILER      "/path/to/c/compiler")
 #dashboard_set(CMAKE_CXX_COMPILER    "/path/to/cxx/compiler")
 dashboard_set(CTEST_BUILD_CONFIGURATION "Release")
-dashboard_set(EXTENSIONS_BUILDSYSTEM_TESTING FALSE)   # If enabled, build <Slicer_SOURCE_DIR>/Extensions/*.s4ext
+dashboard_set(EXTENSIONS_BUILDSYSTEM_TESTING FALSE)   # If enabled, build <Slicer_SOURCE_DIR>/Extensions/*.json
 
 dashboard_set(QT_VERSION            "5.15.0")         # Used only to set the build name
 

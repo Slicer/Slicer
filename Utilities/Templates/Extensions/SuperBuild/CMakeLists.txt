@@ -5,7 +5,6 @@ project(TemplateKey)
 #-----------------------------------------------------------------------------
 # Extension meta-information
 set(EXTENSION_HOMEPAGE "https://www.slicer.org/wiki/Documentation/Nightly/Extensions/TemplateKey")
-set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_CONTRIBUTORS "John Doe (AnyWare Corp.)")
 set(EXTENSION_DESCRIPTION "This is an example of an extension using SuperBuild to build a dependent project named Foo")
 set(EXTENSION_ICONURL "https://www.example.com/Slicer/Extensions/TemplateKey.png")

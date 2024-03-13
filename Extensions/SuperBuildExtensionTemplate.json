@@ -1,0 +1,8 @@
+{
+  "build_subdirectory": "inner-build",
+  "category": "Examples",
+  "depends": [],
+  "scm": "local",
+  "scmrevision": "",
+  "scmurl": "Testing/SuperBuildExtensionTemplate"
+}
