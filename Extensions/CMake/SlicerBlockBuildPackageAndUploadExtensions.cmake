@@ -48,17 +48,17 @@ include(SlicerFunctionExtractExtensionDescription)
 include(SlicerBlockUploadExtensionPrerequisites) # Common to all extensions
 
 #-----------------------------------------------------------------------------
-# Collect extension description file (*.s4ext)
+# Collect extension description file (*.json)
 #-----------------------------------------------------------------------------
-file(GLOB s4extfiles "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.s4ext")
+file(GLOB catalog_entry_files "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.json")
 
 # Get the dependency information of each extension
 set(EXTENSION_LIST)
-foreach(file ${s4extfiles})
+foreach(file ${catalog_entry_files})
   message(STATUS "Extension:${file}")
 
   # Extract extension description info
-  slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
+  slicerFunctionExtractExtensionDescriptionFromJson(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
 
   # Extract file basename
   get_filename_component(EXTENSION_NAME ${file} NAME_WE)
@@ -66,7 +66,6 @@ foreach(file ${s4extfiles})
     message(WARNING "Failed to extract extension name associated with file: ${file}")
   else()
     list(APPEND EXTENSION_LIST ${EXTENSION_NAME})
-    string(REGEX REPLACE "^NA$" "" EXTENSION_EXT_DEPENDS "${EXTENSION_EXT_DEPENDS}")
     set(EXTENSION_${EXTENSION_NAME}_DEPENDS ${EXTENSION_EXT_DEPENDS})
     set(${EXTENSION_NAME}_BUILD_SUBDIRECTORY ${EXTENSION_FILE_BUILD_SUBDIRECTORY})
   endif()
@@ -78,10 +77,11 @@ topological_sort(EXTENSION_LIST "EXTENSION_" "_DEPENDS")
 
 foreach(EXTENSION_NAME ${EXTENSION_LIST})
   # Set extension description filename using EXTENSION_NAME
-  set(file ${Slicer_EXTENSION_DESCRIPTION_DIR}/${EXTENSION_NAME}.s4ext)
+  set(file ${Slicer_EXTENSION_DESCRIPTION_DIR}/${EXTENSION_NAME}.json)
 
-  # Extract extension description info
-  slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
+  # Extract extension catalog entry fields setting "EXTENSION_EXT_*" variables
+  # in the current scope.
+  slicerFunctionExtractExtensionDescriptionFromJson(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
 
   # Ensure extensions depending on this extension can lookup the corresponding
   # _DIR and _BUILD_SUBDIRECTORY variables.
@@ -180,6 +180,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
   if(NOT DEFINED CTEST_MODEL)
     set(CTEST_MODEL "Experimental")
   endif()
+  set(EXTENSION_CATALOG_ENTRY_FILE ${file})
   include(SlicerBlockUploadExtension)
   if(Slicer_UPLOAD_EXTENSIONS)
     set(wrapper_command ${EXTENSION_UPLOAD_WRAPPER_COMMAND})

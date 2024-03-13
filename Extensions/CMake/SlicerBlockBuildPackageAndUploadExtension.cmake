@@ -39,6 +39,7 @@ set(expected_defined_vars
   )
 if(RUN_CTEST_UPLOAD)
   list(APPEND expected_defined_vars
+    EXTENSION_CATALOG_ENTRY_FILE
     EXTENSION_ARCHITECTURE
     EXTENSION_BITNESS
     EXTENSION_OPERATING_SYSTEM
@@ -221,6 +222,11 @@ else()
     set(package_target "packageupload")
   endif()
   if(RUN_CTEST_PACKAGES)
+    get_filename_component(catalog_entry_filename ${EXTENSION_CATALOG_ENTRY_FILE} NAME)
+    file(COPY_FILE
+      ${EXTENSION_CATALOG_ENTRY_FILE}
+      ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}/${catalog_entry_filename}
+      )
     ctest_build(
       TARGET ${package_target}
       BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}

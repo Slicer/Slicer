@@ -27,9 +27,6 @@ class _ui_EditExtensionMetadataDialog:
         self.nameEdit = qt.QLineEdit()
         formLayout.addRow("Name:", self.nameEdit)
 
-        self.categoryEdit = qt.QLineEdit()
-        formLayout.addRow("Category:", self.categoryEdit)
-
         self.descriptionEdit = qt.QTextEdit()
         self.descriptionEdit.acceptRichText = False
         formLayout.addRow("Description:", self.descriptionEdit)
@@ -57,7 +54,6 @@ class _ui_EditExtensionMetadataDialog:
 # =============================================================================
 class EditExtensionMetadataDialog:
     project = _map_property(lambda self: self.ui.nameEdit, "text")
-    category = _map_property(lambda self: self.ui.categoryEdit, "text")
     description = _map_property(lambda self: self.ui.descriptionEdit, "plainText")
 
     # ---------------------------------------------------------------------------
