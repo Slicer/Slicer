@@ -107,7 +107,7 @@ endfunction()
 #  <var-prefix>_EXT_SCM - type of source repository ('git' or 'local', default is 'git')
 #  <var-prefix>_EXT_SCMURL - URL of the associated source repository
 #  <var-prefix>_EXT_SCMREVISION - REVISION associated with the source repository
-#  <var-prefix>_EXT_DEPENDS - list of build-time dependencies
+#  <var-prefix>_EXT_BUILD_DEPENDENCIES - list of Slicer extensions required at build-time
 #  <var-prefix>_EXT_CATEGORY - category
 #  <var-prefix>_EXT_ENABLED - indicate if the extension should be enabled after its installation (default is 1)
 #
@@ -144,12 +144,12 @@ function(slicerFunctionExtractExtensionDescriptionFromJson)
   set(Slicer_EXT_OPTIONAL_METADATA_NAMES
     "SCM"
     "BUILD_SUBDIRECTORY"
-    "DEPENDS"
+    "BUILD_DEPENDENCIES"
     "ENABLED"
     )
   set(SCM_DEFAULT "git")
   set(BUILD_SUBDIRECTORY_DEFAULT ".")
-  set(DEPENDS_DEFAULT "")
+  set(BUILD_DEPENDENCIES_DEFAULT "")
   set(ENABLED_DEFAULT "1")
 
   foreach(name IN LISTS Slicer_EXT_REQUIRED_METADATA_NAMES Slicer_EXT_OPTIONAL_METADATA_NAMES)
@@ -325,7 +325,7 @@ function(slicer_extract_extension_description_from_json_test)
     )
   set(optional
     SCM
-    DEPENDS
+    BUILD_DEPENDENCIES
     BUILD_SUBDIRECTORY
     ENABLED
     )
@@ -351,7 +351,7 @@ function(slicer_extract_extension_description_from_json_test)
   )
 
   set(expected_BUILD_SUBDIRECTORY ".")
-  set(expected_DEPENDS "")
+  set(expected_BUILD_DEPENDENCIES "")
   set(expected_ENABLED "1")
 
   foreach(name IN LISTS required)
@@ -362,9 +362,9 @@ function(slicer_extract_extension_description_from_json_test)
     endif()
   endforeach()
 
-  list(LENGTH foo_EXT_DEPENDS depends_count)
-  if(NOT depends_count EQUAL 0)
-    message(FATAL_ERROR "Problem with foo_EXT_DEPENDS")
+  list(LENGTH foo_EXT_BUILD_DEPENDENCIES build_dependencies_count)
+  if(NOT build_dependencies_count EQUAL 0)
+    message(FATAL_ERROR "Problem with foo_EXT_BUILD_DEPENDENCIES")
   endif()
 
 
@@ -374,7 +374,7 @@ function(slicer_extract_extension_description_from_json_test)
 "{
     \"build_subdirectory\": \"inner-build\",
     \"category\": \"${expected_CATEGORY}\",
-    \"depends\": [\"Foo\", \"Bar\"],
+    \"build_dependencies\": [\"Foo\", \"Bar\"],
     \"scmrevision\": \"${expected_SCMREVISION}\",
     \"scmurl\": \"${expected_SCMURL}\",
     \"enabled\": false
@@ -387,7 +387,7 @@ function(slicer_extract_extension_description_from_json_test)
   )
 
   set(expected_BUILD_SUBDIRECTORY "inner-build")
-  set(expected_DEPENDS Foo Bar)
+  set(expected_BUILD_DEPENDENCIES Foo Bar)
   set(expected_ENABLED "0")
 
   foreach(name IN LISTS required optional)
@@ -398,9 +398,9 @@ function(slicer_extract_extension_description_from_json_test)
     endif()
   endforeach()
 
-  list(LENGTH bar_EXT_DEPENDS depends_count)
-  if(NOT depends_count EQUAL 2)
-    message(FATAL_ERROR "Problem with bar_EXT_DEPENDS")
+  list(LENGTH bar_EXT_BUILD_DEPENDENCIES build_dependencies_count)
+  if(NOT build_dependencies_count EQUAL 2)
+    message(FATAL_ERROR "Problem with bar_EXT_BUILD_DEPENDENCIES")
   endif()
 
   message("SUCCESS")
