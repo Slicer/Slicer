@@ -2,6 +2,7 @@ import qt
 
 import slicer
 
+from slicer.i18n import tr as _
 
 # -----------------------------------------------------------------------------
 def _dialogIcon(icon):
@@ -40,8 +41,12 @@ class _ui_LoadModulesDialog:
         self.addToSearchPaths.checked = True
 
         self.enableDeveloperMode = qt.QCheckBox()
-        self.enableDeveloperMode.text = "Enable developer mode"
-        self.enableDeveloperMode.toolTip = "Sets the 'Developer mode' application option to enabled. Enabling developer mode is recommended while developing scripted modules, as it makes the Reload and Testing section displayed in the module user interface."
+        self.enableDeveloperMode.text = _("Enable developer mode")
+        self.enableDeveloperMode.toolTip = _("Sets the 'Developer mode' "
+            "application option to enabled. Enabling developer mode is "
+            "recommended while developing scripted modules, as it makes "
+            "the Reload and Testing section displayed in "
+            "the module user interface.")
         self.enableDeveloperMode.checked = True
         vLayout.addWidget(self.enableDeveloperMode)
 
@@ -81,9 +86,9 @@ class LoadModulesDialog:
             self.ui.addToSearchPaths.enabled = True
 
         if moduleCount == 1:
-            self.ui.addToSearchPaths.text = "Add selected module to 'Additional module paths'"
+            self.ui.addToSearchPaths.text = _("Add selected module to 'Additional module paths'")
         else:
-            self.ui.addToSearchPaths.text = "Add selected modules to 'Additional module paths'"
+            self.ui.addToSearchPaths.text = _("Add selected modules to 'Additional module paths'")
 
         # If developer mode is already enabled then don't even show the option
         developerModeAlreadyEnabled = slicer.util.settingsValue("Developer/DeveloperMode", False, converter=slicer.util.toBool)
@@ -108,17 +113,13 @@ class LoadModulesDialog:
             self._moduleItems[item] = module
 
         if len(modules) > 1:
-            self.ui.label.text = (
-                "The following modules can be loaded. "
-                "Would you like to load them now?")
+            self.ui.label.text = _("The following modules can be loaded. Would you like to load them now?")
 
         elif len(modules) == 1:
-            self.ui.label.text = (
-                "The following module can be loaded. "
-                "Would you like to load it now?")
+            self.ui.label.text = _("The following module can be loaded. Would you like to load it now?")
 
         else:
-            raise ValueError("At least one module must be provided")
+            raise ValueError(_("At least one module must be provided"))
 
         self.validate()
 

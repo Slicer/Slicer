@@ -68,7 +68,7 @@ vtkSlicerTerminologiesModuleLogic* qSlicerTerminologiesReader::terminologiesLogi
 //-----------------------------------------------------------------------------
 QString qSlicerTerminologiesReader::description()const
 {
-  return "Terminology";
+  return tr("Terminology");
 }
 
 //-----------------------------------------------------------------------------

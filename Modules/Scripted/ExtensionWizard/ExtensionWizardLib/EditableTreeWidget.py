@@ -1,5 +1,6 @@
 import qt
 
+from slicer.i18n import tr as _
 
 # -----------------------------------------------------------------------------
 def _makeAction(parent, text, icon=None, shortcut=None, slot=None):
@@ -27,7 +28,7 @@ def _newItemPlaceholderItem(parent):
     color.setAlphaF(0.5)
 
     item = qt.QTreeWidgetItem()
-    item.setText(0, "(New item)")
+    item.setText(0, _("(New item)"))
     item.setForeground(0, qt.QBrush(color))
 
     return item
@@ -48,17 +49,17 @@ class EditableTreeWidget(qt.QTreeWidget):
         self.addItem(_newItemPlaceholderItem(self), placeholder=True)
 
         # Set up context menu
-        self._shiftUpAction = _makeAction(self, text="Move &Up",
+        self._shiftUpAction = _makeAction(self, text=_("Move &Up"),
                                           icon="arrow-up",
                                           shortcut="ctrl+shift+up",
                                           slot=self.shiftSelectionUp)
 
-        self._shiftDownAction = _makeAction(self, text="Move &Down",
+        self._shiftDownAction = _makeAction(self, text=_("Move &Down"),
                                             icon="arrow-down",
                                             shortcut="ctrl+shift+down",
                                             slot=self.shiftSelectionDown)
 
-        self._deleteAction = _makeAction(self, text="&Delete", icon="edit-delete",
+        self._deleteAction = _makeAction(self, text=_("&Delete"), icon="edit-delete",
                                          shortcut="del", slot=self.deleteSelection)
 
         self.contextMenuPolicy = qt.Qt.ActionsContextMenu
@@ -126,7 +127,7 @@ class EditableTreeWidget(qt.QTreeWidget):
             # Remove placeholder effect from new item
             item.setData(0, qt.Qt.ForegroundRole, None)
             if column != 0:
-                item.setText(0, "Anonymous")
+                item.setText(0, _("Anonymous"))
 
             # Update actions so new item can be moved/deleted
             self.updateActions()

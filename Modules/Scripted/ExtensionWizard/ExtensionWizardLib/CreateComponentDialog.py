@@ -5,6 +5,8 @@ import qt
 
 import slicer
 
+from slicer.i18n import tr as _
+
 
 # =============================================================================
 #
@@ -18,18 +20,18 @@ class _ui_CreateComponentDialog:
         self.formLayout = qt.QFormLayout()
 
         self.componentName = qt.QLineEdit()
-        self.formLayout.addRow("Name:", self.componentName)
+        self.formLayout.addRow(_("Name:"), self.componentName)
 
         self.componentNameValidator = qt.QRegExpValidator(
             qt.QRegExp(r"^[a-zA-Z_][a-zA-Z0-9_]*$"))
         self.componentName.setValidator(self.componentNameValidator)
 
         self.componentType = qt.QComboBox()
-        self.formLayout.addRow("Type:", self.componentType)
+        self.formLayout.addRow(_("Type:"), self.componentType)
 
         self.destination = ctk.ctkPathLineEdit()
         self.destination.filters = ctk.ctkPathLineEdit.Dirs
-        self.formLayout.addRow("Destination:", self.destination)
+        self.formLayout.addRow(_("Destination:"), self.destination)
 
         self.vLayout.addLayout(self.formLayout)
         self.vLayout.addStretch(1)
@@ -60,15 +62,15 @@ class CreateComponentDialog:
     # ---------------------------------------------------------------------------
     def accept(self):
         if not len(self.componentName):
-            slicer.util.errorDisplay("%s name may not be empty." % self._typetc,
-                                     windowTitle="Cannot create %s" % self._typelc, parent=self.dialog)
+            slicer.util.errorDisplay(_("{type} name may not be empty.").format(type=self._typetc),
+                                     windowTitle=_("Cannot create {type}").format(type=self._typelc), parent=self.dialog)
             return
 
         if self.showDestination:
             dest = self.destination
             if not len(dest) or not os.path.exists(dest):
-                slicer.util.errorDisplay("Destination must be an existing directory.",
-                                         windowTitle="Cannot create %s" % self._typelc, parent=self.dialog)
+                slicer.util.errorDisplay(_("Destination must be an existing directory."),
+                                         windowTitle=_("Cannot create {type}").format(type=self._typelc), parent=self.dialog)
                 return
 
         self.dialog.accept()
