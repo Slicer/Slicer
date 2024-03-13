@@ -2,6 +2,7 @@ import qt
 
 import slicer
 
+from slicer.i18n import tr as _
 
 # =============================================================================
 #
@@ -18,12 +19,12 @@ class _ui_DirectoryListWidget:
 
         self.addPathButton = qt.QToolButton()
         self.addPathButton.icon = qt.QIcon.fromTheme("list-add")
-        self.addPathButton.text = "Add"
+        self.addPathButton.text = _("Add")
         layout.addWidget(self.addPathButton, 0, 1)
 
         self.removePathButton = qt.QToolButton()
         self.removePathButton.icon = qt.QIcon.fromTheme("list-remove")
-        self.removePathButton.text = "Remove"
+        self.removePathButton.text = _("Remove")
         layout.addWidget(self.removePathButton, 1, 1)
 
 
@@ -44,6 +45,6 @@ class DirectoryListWidget(qt.QWidget):
 
     # ---------------------------------------------------------------------------
     def addDirectory(self):
-        path = qt.QFileDialog.getExistingDirectory(self.window(), "Select folder")
+        path = qt.QFileDialog.getExistingDirectory(self.window(), _("Select folder"))
         if len(path):
             self.ui.pathList.addDirectory(path)
