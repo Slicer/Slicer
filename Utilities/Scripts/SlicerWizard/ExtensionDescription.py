@@ -29,7 +29,6 @@ class ExtensionDescription:
           Extension repository from which to create the description.
         :type repo:
           :class:`git.Repo <git:git.repo.base.Repo>`,
-          :class:`.Subversion.Repository` or ``None``.
         :param filepath:
           Path to an existing ``.s4ext`` to read.
         :type filepath:
@@ -71,7 +70,6 @@ class ExtensionDescription:
             # Handle git repositories
             if hasattr(repo, "remotes"):
                 remote = None
-                svnRemote = None
 
                 # Get SHA of HEAD (may not exist if no commit has been made yet!)
                 try:
@@ -88,28 +86,14 @@ class ExtensionDescription:
                         remote = repo.remotes[0]
 
                 if remote is None:
-                    # Try to get svn remote
-                    config = repo.config_reader()
-                    for s in config.sections():
-                        if s.startswith("svn-remote"):
-                            svnRemote = s[12:-1]
-                            break
-
-                    if svnRemote is None:
-                        # Do we have any remotes?
-                        if len(repo.remotes) == 0:
-                            setattr(self, "scm", "git")
-                            setattr(self, "scmurl", "NA")
-                            setattr(self, "scmrevision", sha)
-
-                        else:
-                            raise Exception("unable to determine repository's primary remote")
+                    # Do we have any remotes?
+                    if len(repo.remotes) == 0:
+                        setattr(self, "scm", "git")
+                        setattr(self, "scmurl", "NA")
+                        setattr(self, "scmrevision", sha)
 
                     else:
-                        si = self._gitSvnInfo(repo, svnRemote)
-                        setattr(self, "scm", "svn")
-                        setattr(self, "scmurl", si["URL"])
-                        setattr(self, "scmrevision", si["Revision"])
+                        raise Exception("unable to determine repository's primary remote")
 
                 else:
                     setattr(self, "scm", "git")
@@ -117,13 +101,6 @@ class ExtensionDescription:
                     setattr(self, "scmrevision", sha)
 
                 sourcedir = repo.working_tree_dir
-
-            # Handle svn repositories
-            elif hasattr(repo, "wc_root"):
-                setattr(self, "scm", "svn")
-                setattr(self, "scmurl", repo.url)
-                setattr(self, "scmrevision", repo.last_change_revision)
-                sourcedir = repo.wc_root
 
             # Handle local source directory
             elif hasattr(repo, "relative_directory"):
@@ -152,10 +129,6 @@ class ExtensionDescription:
             self._setProjectAttribute("iconurl", p)
             self._setProjectAttribute("screenshoturls", p)
 
-            if self.scm == "svn":
-                self._setProjectAttribute("svnusername", p, elideempty=True)
-                self._setProjectAttribute("svnpassword", p, elideempty=True)
-
     # ---------------------------------------------------------------------------
     def __repr__(self):
         return repr(self.__dict__)
@@ -168,16 +141,6 @@ class ExtensionDescription:
             return url.replace(":", "/").replace("git@", "https://")
 
         return url
-
-    # ---------------------------------------------------------------------------
-    @staticmethod
-    def _gitSvnInfo(repo, remote):
-        result = {}
-        for line in repo.git.svn("info", R=remote).split("\n"):
-            if len(line):
-                key, value = line.split(":", 1)
-                result[key] = value.strip()
-        return result
 
     # ---------------------------------------------------------------------------
     def _setProjectAttribute(self, name, project, default=None, required=False,

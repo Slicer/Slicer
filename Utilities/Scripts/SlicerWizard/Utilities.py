@@ -397,8 +397,7 @@ def getRepo(path, tool=None, create=False):
     :returns:
       The repository instance, or ``None`` if no such repository exists.
     :rtype:
-      :class:`git.Repo <git:git.repo.base.Repo>`, :class:`.Subversion.Repository`,
-      or ``None``.
+      :class:`git.Repo <git:git.repo.base.Repo>` or ``None``.
 
     This attempts to obtain a repository for the specified ``path``. If ``tool``
     is not ``None``, this will only look for a repository that is managed by the
@@ -415,8 +414,6 @@ def getRepo(path, tool=None, create=False):
     .. seealso:: :func:`.createEmptyRepo`
     """
 
-    from . import Subversion
-
     # Try to obtain git repository
     if haveGit() and tool in (None, "git"):
         try:
@@ -427,15 +424,6 @@ def getRepo(path, tool=None, create=False):
 
         except:
             logging.debug("%r is not a git repository" % path)
-
-    # Try to obtain subversion repository
-    if tool in (None, "svn"):
-        try:
-            repo = Subversion.Repository(path)
-            return repo
-
-        except:
-            logging.debug("%r is not a svn repository" % path)
 
     # Specified path is not a supported / allowed repository; create a repository
     # if requested, otherwise return None
@@ -510,8 +498,7 @@ def localRoot(repo):
     :param repo:
       Repository instance.
     :type repo:
-      :class:`git.Repo <git:git.repo.base.Repo>` or
-      :class:`.Subversion.Repository`.
+      :class:`git.Repo <git:git.repo.base.Repo>`.
 
     :return: Absolute path to the repository local root.
     :rtype: :class:`str`
@@ -538,8 +525,7 @@ def vcsPrivateDirectory(repo):
     :param repo:
       Repository instance.
     :type repo:
-      :class:`git.Repo <git:git.repo.base.Repo>` or
-      :class:`.Subversion.Repository`.
+      :class:`git.Repo <git:git.repo.base.Repo>`
 
     :return: Absolute path to the |VCS| private directory.
     :rtype: :class:`str`
@@ -548,13 +534,10 @@ def vcsPrivateDirectory(repo):
       :exc:`~exceptions.Exception` if the private directory cannot be determined.
 
     This returns the |VCS| private directory for a repository, e.g. the ``.git``
-    or ``.svn`` directory.
+    directory.
     """
 
     if hasattr(repo, "git_dir"):
         return repo.git_dir
-
-    if hasattr(repo, "svn_dir"):
-        return repo.svn_dir
 
     raise Exception("unable to determine repository local private directory")
