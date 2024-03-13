@@ -28,5 +28,9 @@ add_cmakescript_test(
   Extensions/CMake/SlicerFunctionExtractExtensionDescription.cmake)
 
 add_cmakescript_test(
+  slicer_extract_extension_description_from_json_test
+  Extensions/CMake/SlicerFunctionExtractExtensionDescription.cmake)
+
+add_cmakescript_test(
   slicer_generate_extension_description_test
   Extensions/CMake/SlicerFunctionGenerateExtensionDescription.cmake)
