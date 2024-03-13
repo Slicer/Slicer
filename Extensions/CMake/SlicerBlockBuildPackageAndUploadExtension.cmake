@@ -156,11 +156,11 @@ CMAKE_JOB_POOL_LINK:STRING=${CMAKE_JOB_POOL_LINK}")
 endif()
 
 # If needed, convert to a list
-list(LENGTH EXTENSION_DEPENDS _count)
+list(LENGTH EXTENSION_BUILD_DEPENDENCIES _count)
 if(_count EQUAL 1)
-  string(REPLACE " " ";" EXTENSION_DEPENDS ${EXTENSION_DEPENDS})
+  string(REPLACE " " ";" EXTENSION_BUILD_DEPENDENCIES ${EXTENSION_BUILD_DEPENDENCIES})
 endif()
-foreach(dep ${EXTENSION_DEPENDS})
+foreach(dep ${EXTENSION_BUILD_DEPENDENCIES})
   set(cmakecache_content "${cmakecache_content}
 ${dep}_BINARY_DIR:PATH=${${dep}_BINARY_DIR}
 ${dep}_BUILD_SUBDIRECTORY:STRING=${${dep}_BUILD_SUBDIRECTORY}
