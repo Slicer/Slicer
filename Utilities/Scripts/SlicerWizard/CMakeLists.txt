@@ -23,7 +23,6 @@ set(SlicerWizard_PYTHON_SCRIPTS
   ExtensionProject.py
   ExtensionWizard.py
   GithubHelper.py
-  Subversion.py
   TemplateManager.py
   Utilities.py
   WizardHelpFormatter.py
