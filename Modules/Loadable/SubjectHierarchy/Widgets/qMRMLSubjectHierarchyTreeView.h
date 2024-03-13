@@ -108,6 +108,9 @@ public:
 
 public:
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+
+  /// Return the subject hierarchy node found in the current MRML scene.
+  /// While the scene is closing, this method may return a null pointer.
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
 
   /// Get current (=selected) item. If there are multiple items selected, then the first one is returned
