@@ -112,7 +112,8 @@ bool vtkMRMLLinearTransformsDisplayableManager::vtkInternal::UseDisplayNode(vtkM
 {
   return displayNode
       && displayNode->GetScene()
-      && displayNode->GetEditorVisibility() && displayNode->GetEditorSliceIntersectionVisibility()
+      && displayNode->GetEditorVisibility()
+      && (this->GetAbstractViewNode()->IsA("vtkMRMLSliceNode") ? displayNode->GetEditorSliceIntersectionVisibility() : displayNode->GetEditorVisibility3D())
       && displayNode->IsDisplayableInView(this->GetAbstractViewNode()->GetID());
 }
 
@@ -479,7 +480,7 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::SetupRenderer()
   vtkRenderer* renderer = this->External->GetRenderer();
   if (renderer == nullptr)
   {
-    vtkErrorWithObjectMacro(this->External, "vtkMRMLLinearTransformsDisplayableManager3D::vtkInternal::SetupRenderer() failed: renderer is invalid");
+    vtkErrorWithObjectMacro(this->External, "vtkMRMLLinearTransformsDisplayableManager::vtkInternal::SetupRenderer() failed: renderer is invalid");
     return;
   }
 

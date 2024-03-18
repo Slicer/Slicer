@@ -151,6 +151,8 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   QObject::connect(this->scaleZSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateScalingComponentVisibility()));
   QObject::connect(this->scaleViewPlaneSliceCheckBox, SIGNAL(clicked()), q, SLOT(updateScalingComponentVisibility()));
 
+  QObject::connect(this->interactionHandleScaleSlider, SIGNAL(valueChanged(double)), q, SLOT(updateInteractionHandleScale()));
+
   this->InteractiveAdvancedOptions3DFrame->hide();
   this->InteractiveAdvancedOptionsSliceFrame->hide();
 
@@ -332,6 +334,10 @@ void qMRMLTransformDisplayNodeWidget
   wasBlocking = d->InteractionVisible2dCheckBox->blockSignals(true);
   d->InteractionVisible2dCheckBox->setChecked(d->TransformDisplayNode->GetEditorSliceIntersectionVisibility());
   d->InteractionVisible2dCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->interactionHandleScaleSlider->blockSignals(true);
+  d->interactionHandleScaleSlider->setValue(d->TransformDisplayNode->GetInteractionScalePercent());
+  d->interactionHandleScaleSlider->blockSignals(wasBlocking);
 
   this->updateInteraction3DWidgetsFromDisplayNode();
   this->updateInteractionSliceWidgetsFromDisplayNode();
@@ -1102,4 +1108,17 @@ void qMRMLTransformDisplayNodeWidget::updateScalingComponentVisibility()
   componentVisibility[2] = d->scaleZSliceCheckBox->isChecked();
   componentVisibility[3] = d->scaleViewPlaneSliceCheckBox->isChecked();
   d->TransformDisplayNode->SetScaleHandleComponentVisibilitySlice(componentVisibility);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLTransformDisplayNodeWidget::updateInteractionHandleScale()
+{
+  Q_D(qMRMLTransformDisplayNodeWidget);
+  if (!d->TransformDisplayNode)
+  {
+    return;
+  }
+
+  double scale = d->interactionHandleScaleSlider->value();
+  d->TransformDisplayNode->SetInteractionScalePercent(scale);
 }

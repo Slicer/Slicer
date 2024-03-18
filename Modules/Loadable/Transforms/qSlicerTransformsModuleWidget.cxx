@@ -49,9 +49,13 @@
 
 // VTK includes
 #include <vtkAddonMathUtilities.h>
+#include <vtkGeneralTransform.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
+
+static const int COORDINATE_COMBOBOX_INDEX_WORLD = 0;
+static const int COORDINATE_COMBOBOX_INDEX_LOCAL = 1;
 
 //-----------------------------------------------------------------------------
 class qSlicerTransformsModuleWidgetPrivate: public Ui_qSlicerTransformsModuleWidget
@@ -152,6 +156,21 @@ void qSlicerTransformsModuleWidget::setup()
   this->connect(d->SplitPushButton,
                 SIGNAL(clicked()),
                 SLOT(split()));
+
+  // Connect the center of transformation combobox
+  this->connect(d->CenterOfTransformationCoordinatesComboBox,
+                SIGNAL(currentIndexChanged(int)),
+                SLOT(updateCenterOfTransformationWidgets()));
+
+  // Connect the center of transformation spinboxes
+  this->connect(d->CenterOfTransformationCoordinatesWidget,
+                SIGNAL(coordinatesChanged(double*)),
+                SLOT(onCenterOfTransformationChanged()));
+
+  // Connect the reset center of transformation button
+  this->connect(d->ResetCenterOfTransformationButton,
+                SIGNAL(clicked()),
+                SLOT(resetCenterOfTransformation()));
 
   // Connect node selector with module itself
   this->connect(d->TransformNodeSelector,
@@ -317,6 +336,8 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   {
     d->DisplayCollapsibleButton->setCollapsed(true);
   }
+
+  this->updateCenterOfTransformationWidgets();
 }
 
 //-----------------------------------------------------------------------------
@@ -370,6 +391,39 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
   {
     d->SplitPushButton->setVisible(isCompositeTransform);
   }
+
+  this->updateCenterOfTransformationWidgets();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::updateCenterOfTransformationWidgets()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+
+  bool isLinearTransform = d->MRMLTransformNode && d->MRMLTransformNode->IsLinear();
+  d->CenterOfTransformationGroupBox->setEnabled(isLinearTransform);
+  if (isLinearTransform != d->CenterOfTransformationGroupBox->isVisible())
+  {
+    d->CenterOfTransformationGroupBox->setVisible(isLinearTransform);
+  }
+  if (!isLinearTransform)
+  {
+    return;
+  }
+
+  double centerOfTransformation[3] = { 0.0, 0.0, 0.0 };
+  d->MRMLTransformNode->GetCenterOfTransformation(centerOfTransformation);
+  if (d->CenterOfTransformationCoordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
+  {
+    vtkNew<vtkGeneralTransform> transform;
+    d->MRMLTransformNode->GetTransformToWorld(transform);
+    double coordinates_World[3] = { 0.0, 0.0, 0.0 };
+    transform->TransformPoint(centerOfTransformation, centerOfTransformation);
+  }
+
+  bool wasBlocked = d->CenterOfTransformationCoordinatesWidget->blockSignals(true);
+  d->CenterOfTransformationCoordinatesWidget->setCoordinates(centerOfTransformation);
+  d->CenterOfTransformationCoordinatesWidget->blockSignals(wasBlocked);
 }
 
 //-----------------------------------------------------------------------------
@@ -459,6 +513,51 @@ void qSlicerTransformsModuleWidget::pasteTransform()
   tempMatrix->SetElement(3, 2, 0.0);
   tempMatrix->SetElement(3, 3, 1.0);
   d->MRMLTransformNode->SetMatrixTransformToParent(tempMatrix.GetPointer());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::onCenterOfTransformationChanged()
+{
+  Q_D(const qSlicerTransformsModuleWidget);
+
+  if (d->MRMLTransformNode==nullptr)
+  {
+    return;
+  }
+
+  bool isLinearTransform = d->MRMLTransformNode && d->MRMLTransformNode->IsLinear();
+  if (!isLinearTransform)
+  {
+    return;
+  }
+
+  const double* coordinates = d->CenterOfTransformationCoordinatesWidget->coordinates();
+  if (d->CenterOfTransformationCoordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_LOCAL)
+  {
+    d->MRMLTransformNode->SetCenterOfTransformation(coordinates);
+  }
+  else
+  {
+    // World coordinates
+    vtkNew<vtkGeneralTransform> transform;
+    d->MRMLTransformNode->GetTransformFromWorld(transform);
+    double coordinates_Local[3] = { 0.0, 0.0, 0.0 };
+    transform->TransformPoint(coordinates, coordinates_Local);
+    d->MRMLTransformNode->SetCenterOfTransformation(coordinates_Local);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::resetCenterOfTransformation()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+
+  if (!d->MRMLTransformNode)
+  {
+    return;
+  }
+
+  d->MRMLTransformNode->SetCenterOfTransformation(0.0, 0.0, 0.0);
 }
 
 //-----------------------------------------------------------------------------
