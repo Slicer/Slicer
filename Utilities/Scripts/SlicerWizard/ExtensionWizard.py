@@ -41,7 +41,6 @@ def haveGit():
 
 from . import __version__, __version_info__
 
-from .ExtensionDescription import ExtensionDescription
 from .ExtensionProject import ExtensionProject
 from .TemplateManager import TemplateManager
 from .Utilities import *

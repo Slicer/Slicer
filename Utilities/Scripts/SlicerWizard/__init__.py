@@ -23,9 +23,6 @@ often performed when developing code and extensions for Slicer.
 * :mod:`.GithubHelper`:
   Helpers for interacting with github.
 
-* :mod:`.Subversion`:
-  Python API for simple interaction with Subversion.
-
 * :class:`.TemplateManager`:
   Template collection manager.
 

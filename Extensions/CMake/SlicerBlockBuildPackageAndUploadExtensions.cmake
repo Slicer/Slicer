@@ -108,12 +108,8 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
 
   # Set external project DEPENDS parameter
   set(EP_ARG_EXTENSION_DEPENDS)
-  if(Slicer_SOURCE_DIR)
-    set(EXTENSIONEP_ARG_EXTENSION_DEPENDS DEPENDS Slicer ${EXTENSION_DEPENDS})
-  else()
-    if(NOT "${EXTENSION_DEPENDS}" STREQUAL "")
-      set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_DEPENDS})
-    endif()
+  if(NOT "${EXTENSION_DEPENDS}" STREQUAL "")
+    set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_DEPENDS})
   endif()
 
   #-----------------------------------------------------------------------------

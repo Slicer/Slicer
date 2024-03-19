@@ -13,7 +13,7 @@ related to the building process in the [Slicer forum](https://discourse.slicer.o
 First, you need to install the tools that will be used for fetching the source
 code of Slicer, generating the project files, and building the project.
 
-- Git and Subversion for fetching the code and version control.
+- Git for fetching the code and version control.
 - GNU Compiler Collection (GCC) for code compilation.
 - CMake for configuration/generation of the project.
   - (Optional) CMake curses GUI to configure the project from the command line.
@@ -40,7 +40,7 @@ part of the *superbuild*:
 Install the development tools and the support libraries:
 
 ```console
-sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui \
+sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui cmake-qt-gui \
   qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
   qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
@@ -55,7 +55,7 @@ For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slic
 Install the development tools and the support libraries:
 
 ```console
-sudo apt update && sudo apt install git git-lfs subversion build-essential \
+sudo apt update && sudo apt install git git-lfs build-essential \
   qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
   qtbase5-private-dev libqt5x11extras5-dev libxt-dev
 ```
@@ -74,7 +74,7 @@ For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slic
 Install the development tools and the support libraries:
 
 ```console
-sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui \
+sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui cmake-qt-gui \
   qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
   qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
 ```
@@ -90,7 +90,7 @@ To use Qt 5.15.2, we recommend you download and install following [these instruc
 Install the development tools and the support libraries:
 
 ```console
-sudo apt update && sudo apt install git subversion build-essential cmake cmake-curses-gui cmake-qt-gui \
+sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui cmake-qt-gui \
   qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
   qtbase5-private-dev libqt5x11extras5-dev libxt-dev
 ```

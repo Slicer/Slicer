@@ -43,14 +43,6 @@ SlicerWizard Package
   :undoc-members:
   :show-inheritance:
 
-:mod:`Subversion` Module
-------------------------
-
-.. automodule:: SlicerWizard.Subversion
-  :members:
-  :undoc-members:
-  :show-inheritance:
-
 :class:`TemplateManager` Object
 -------------------------------
 
