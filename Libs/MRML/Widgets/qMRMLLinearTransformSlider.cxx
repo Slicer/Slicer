@@ -245,9 +245,29 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
   qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
     d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform.GetPointer());
 
+  double centerOfTransformation[3] = { 0.0, 0.0, 0.0 };
+  d->MRMLTransformNode->GetCenterOfTransformation(centerOfTransformation);
+
+  if (this->typeOfTransform() == ROTATION_LR
+   || this->typeOfTransform() == ROTATION_PA
+   || this->typeOfTransform() == ROTATION_IS)
+  {
+    // We only need to translate the center of the transformation to the origin when we are rotating
+     if (d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL)
+     {
+       // Transform the center of transformation to the parent coordinate system
+       transform->TransformPoint(centerOfTransformation, centerOfTransformation);
+       vtkMath::MultiplyScalar(centerOfTransformation, -1.0);
+     }
+     transform->Translate(centerOfTransformation);
+  }
+
   vtkMatrix4x4 * matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
-  if (!matrix) { return; }
+  if (!matrix)
+  {
+    return;
+  }
 
   bool transformChanged = false;
   const double rotationChangeTolerance = 0.00001;
@@ -335,6 +355,13 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
     }
   }
   d->OldPosition = _sliderPosition;
+
+  if (this->typeOfTransform() == ROTATION_LR
+    || this->typeOfTransform() == ROTATION_PA
+    || this->typeOfTransform() == ROTATION_IS)
+  {
+    transform->Translate(-centerOfTransformation[0], -centerOfTransformation[1], -centerOfTransformation[2]);
+  }
 
   if (transformChanged)
   {

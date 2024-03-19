@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>391</width>
+    <width>514</width>
     <height>1223</height>
    </rect>
   </property>
@@ -24,7 +24,16 @@
     <normaloff>:/Icons/Transforms.png</normaloff>:/Icons/Transforms.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -69,9 +78,6 @@
      </property>
      <property name="collapsedHeight">
       <number>14</number>
-     </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_8">
       <item>
@@ -267,6 +273,62 @@
         </item>
        </layout>
       </item>
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="CenterOfTransformationGroupBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="title">
+         <string>Center of transformation</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="1">
+          <widget class="QComboBox" name="CenterOfTransformationCoordinatesComboBox">
+           <item>
+            <property name="text">
+             <string>World</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Local</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Coordinates:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QPushButton" name="ResetCenterOfTransformationButton">
+           <property name="text">
+            <string>Reset</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <widget class="qMRMLCoordinatesWidget" name="CenterOfTransformationCoordinatesWidget">
+           <property name="quantity">
+            <string notr="true">length</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -302,11 +364,11 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
      <property name="text">
       <string>Apply transform</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
@@ -441,9 +503,6 @@
      <property name="checked">
       <bool>false</bool>
      </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
      <layout class="QFormLayout" name="formLayout_2">
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
@@ -575,6 +634,33 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCoordinatesWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkCoordinatesWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkMatrixWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkMatrixWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLCoordinatesWidget</class>
+   <extends>ctkCoordinatesWidget</extends>
+   <header>qMRMLCoordinatesWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLMatrixWidget</class>
    <extends>ctkMatrixWidget</extends>
    <header>qMRMLMatrixWidget.h</header>
@@ -617,23 +703,6 @@
    <class>qMRMLTransformInfoWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLTransformInfoWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkMatrixWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkMatrixWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
@@ -974,6 +1043,22 @@
     <hint type="destinationlabel">
      <x>461</x>
      <y>1512</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>CenterOfTransformationCoordinatesWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>611</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>256</x>
+     <y>724</y>
     </hint>
    </hints>
   </connection>

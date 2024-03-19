@@ -268,9 +268,10 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   // Transform
   this->TransformMenu = new QMenu(q);
 
-  this->TransformInteractionInViewAction = new QAction(qMRMLSubjectHierarchyTreeView::tr("Interaction in 3D view"), this->TransformMenu);
+  this->TransformInteractionInViewAction = new QAction(qMRMLSubjectHierarchyTreeView::tr("Interaction"), this->TransformMenu);
   this->TransformInteractionInViewAction->setCheckable(true);
-  this->TransformInteractionInViewAction->setToolTip(qMRMLSubjectHierarchyTreeView::tr("Allow interactively modify the transform in 3D views"));
+  this->TransformInteractionInViewAction->setToolTip(
+    qMRMLSubjectHierarchyTreeView::tr("Allow the transform to be modified interactively in the 2D and 3D views"));
   this->TransformMenu->addAction(this->TransformInteractionInViewAction);
   QObject::connect(this->TransformInteractionInViewAction, SIGNAL(toggled(bool)), q, SLOT(onTransformInteractionInViewToggled(bool)));
 
@@ -523,6 +524,11 @@ vtkMRMLTransformNode* qMRMLSubjectHierarchyTreeViewPrivate::appliedTransformToIt
 //------------------------------------------------------------------------------
 vtkMRMLTransformNode* qMRMLSubjectHierarchyTreeViewPrivate::firstAppliedTransformToSelectedItems()
 {
+  if (!this->SubjectHierarchyNode)
+  {
+    return nullptr;
+  }
+
   QList<vtkIdType> currentItemIDs = this->SelectedItems;
   foreach (vtkIdType itemID, currentItemIDs)
   {
@@ -2261,6 +2267,11 @@ vtkIdType qMRMLSubjectHierarchyTreeView::firstSelectedSubjectHierarchyItemInBran
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
 
+  if (!d->SubjectHierarchyNode)
+  {
+    return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  }
+
   // Check if item itself is selected
   if (d->SelectedItems.contains(itemID))
   {
@@ -2532,6 +2543,12 @@ void qMRMLSubjectHierarchyTreeView::onCustomContextMenu(const QPoint& point)
   if (!d->ContextMenuEnabled)
   {
     // Context menu not enabled, ignore the event
+    return;
+  }
+
+  if (!d->SubjectHierarchyNode)
+  {
+    // No subject hierarchy node, ignore the event
     return;
   }
 

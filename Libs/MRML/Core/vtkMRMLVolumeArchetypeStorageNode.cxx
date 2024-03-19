@@ -39,6 +39,7 @@ Version:   $Revision: 1.6 $
 #include <vtkDataArray.h>
 #include <vtkErrorCode.h>
 #include <vtkImageChangeInformation.h>
+#include <vtkImageFlip.h>
 #include <vtkMatrix3x3.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
@@ -281,6 +282,32 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode * storag
     }
   }
 }
+
+//----------------------------------------------------------------------------
+bool IsIJKCoordinateSystemLeftHanded(vtkMatrix4x4* rasToIjkMatrix)
+{
+  // Check if the determinant of the orientation matrix is less than 0.
+  vtkNew<vtkMatrix3x3> orientation;
+  vtkAddonMathUtilities::GetOrientationMatrix(rasToIjkMatrix, orientation);
+  return orientation->Determinant() < 0.;
+}
+
+//----------------------------------------------------------------------------
+void FlipIJKCoordinateSystemHandedness(vtkImageData* imageData, vtkMatrix4x4* rasToIjkMatrix)
+{
+  // Flip K Axis
+  vtkNew<vtkImageFlip> flip;
+  flip->SetFilteredAxes(2);
+  flip->SetInputData(imageData);
+  flip->Update();
+  imageData->ShallowCopy(flip->GetOutput());
+
+  // Flip K Direction
+  for (int i = 0; i < 3; i++)
+  {
+    rasToIjkMatrix->SetElement(i, 2, -rasToIjkMatrix->GetElement(i, 2));
+  }
+}
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
@@ -512,13 +539,21 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     << ". Number of components: " << outputImage->GetNumberOfScalarComponents()
     << ". Pixel type: " << vtkImageScalarTypeNameMacro(outputImage->GetScalarType()) << ".");
 
-  vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
-  if ( mat == nullptr )
+  vtkMatrix4x4* rasToIjkMatrix = reader->GetRasToIjkMatrix();
+  if (rasToIjkMatrix == nullptr)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
       "Reader returned nullptr RasToIjkMatrix");
   }
-  volNode->SetRASToIJKMatrix(mat);
+
+  // If volume is left-handed coordinates, modify it to right-handed coordinate
+  // to have support for every algorithms in 3D Slicer
+  if (IsIJKCoordinateSystemLeftHanded(rasToIjkMatrix))
+  {
+    FlipIJKCoordinateSystemHandedness(outputImage, rasToIjkMatrix);
+  }
+
+  volNode->SetRASToIJKMatrix(rasToIjkMatrix);
 
   if (volNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
   {

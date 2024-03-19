@@ -575,31 +575,38 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   {
     // If there is no items, find what message to show instead
     vtkMRMLSubjectHierarchyNode* shNode = d->TreeView->subjectHierarchyNode();
-    vtkIdType rootItem = d->TreeView->rootItem();
-    std::vector<vtkIdType> childItemIDs;
-    shNode->GetItemChildren(rootItem, childItemIDs, false);
-    if (childItemIDs.empty())
+    if (shNode)
     {
-      if (rootItem != shNode->GetSceneItemID())
+      vtkIdType rootItem = d->TreeView->rootItem();
+      std::vector<vtkIdType> childItemIDs;
+      shNode->GetItemChildren(rootItem, childItemIDs, false);
+      if (childItemIDs.empty())
       {
-        std::string rootName = shNode->GetItemName(rootItem);
-        QString label = QString("No items in branch: ") + QString::fromStdString(rootName);
-        d->NoItemLabel->setText(label);
+        if (rootItem != shNode->GetSceneItemID())
+        {
+          std::string rootName = shNode->GetItemName(rootItem);
+          QString label = QString("No items in branch: ") + QString::fromStdString(rootName);
+          d->NoItemLabel->setText(label);
+        }
+        else
+        {
+          d->NoItemLabel->setText("No items in scene");
+        }
       }
       else
       {
-        d->NoItemLabel->setText("No items in scene");
+        d->NoItemLabel->setText("No items accepted by current filters");
       }
     }
     else
     {
-      d->NoItemLabel->setText("No items accepted by current filters");
+      d->NoItemLabel->setText("No subject hierarchy");
     }
 
-      // Show no item label instead of tree view
-      d->NoItemLabel->show();
-      d->TreeView->hide();
-      popupHeight = d->NoItemLabel->sizeHint().height();
+    // Show no item label instead of tree view
+    d->NoItemLabel->show();
+    d->TreeView->hide();
+    popupHeight = d->NoItemLabel->sizeHint().height();
   }
   else
   {

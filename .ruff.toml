@@ -66,13 +66,11 @@ extend-ignore = [
   "F841",    # Local variable is assigned to but never used
 
   "G002",    # Logging statement uses `%`
+  "G010",    # `warn` is deprecated in favor of `warning`
 
   "ICN001",  # `numpy` should be imported as `np`
   "ISC002",  # Implicitly concatenated string literals over multiple lines
   "ISC003",  # Explicitly concatenated string should be implicitly concatenated
-
-  "PGH001",  # No builtin `eval()` allowed
-  "PGH002",  # `warn` is deprecated in favor of `warning`
 
   "PLR0912", # Too many branche
   "PLR0913", # Too many arguments in function definition
@@ -119,7 +117,7 @@ extend-ignore = [
 [lint.pydocstyle]
 convention = "pep257"
 
-[per-file-ignores]
+[lint.per-file-ignores]
 # Module imported but unused
 "Base/Python/mrml.py" = ["F401"]
 "Base/Python/slicer/logic.py" = ["F401"]

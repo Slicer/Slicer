@@ -584,24 +584,24 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
             info = statistics["MeasurementInfo"][key] if key in statistics["MeasurementInfo"] else {}
             if info:
                 # Units
-                if "units" in info and info["units"]:
+                if info.get("units"):
                     unitsTitle = info["units"]
 
                 # Column name
-                if "name" in info and info["name"]:
+                if info.get("name"):
                     name = info["name"]
                 else:
-                    if "DICOM.DerivationCode" in info and info["DICOM.DerivationCode"]:
+                    if info.get("DICOM.DerivationCode"):
                         entry = slicer.vtkCodedEntry()
                         entry.SetFromString(info["DICOM.DerivationCode"])
                         name = entry.GetCodeMeaning()
-                    elif "DICOM.QuantityCode" in info and info["DICOM.QuantityCode"]:
+                    elif info.get("DICOM.QuantityCode"):
                         entry = slicer.vtkCodedEntry()
                         entry.SetFromString(info["DICOM.QuantityCode"])
                         name = entry.GetCodeMeaning()
                     # Append unit to name (use unitsName if present, fall back to unitsTitle)
                     units = ""
-                    if "DICOM.UnitsCode" in info and info["DICOM.UnitsCode"]:
+                    if info.get("DICOM.UnitsCode"):
                         entry = slicer.vtkCodedEntry()
                         entry.SetFromString(info["DICOM.UnitsCode"])
                         units = entry.GetCodeValue()
@@ -613,7 +613,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
                         name += " " + units
 
                 # Column title (translatable)
-                if "title" in info and info["title"]:
+                if info.get("title"):
                     title = info["title"]
 
             elif key == SegmentStatisticsLogic.segmentColumnName:

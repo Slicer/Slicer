@@ -650,11 +650,11 @@ void qSlicerMarkupsModuleWidgetPrivate::setMRMLMarkupsNodeFromSelectionNode()
   // Select current markups node
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->selectionNodeActivePlaceNode());
 
-  if (!currentMarkupsNode && q->mrmlScene() && this->activeMarkupTreeView->subjectHierarchyNode())
+  vtkMRMLSubjectHierarchyNode* shNode = this->activeMarkupTreeView->subjectHierarchyNode();
+  if (!currentMarkupsNode && q->mrmlScene() && shNode)
   {
     // Active place node is not a markups node then switch to the last markups node.
     vtkCollection* nodes = q->mrmlScene()->GetNodes();
-    vtkMRMLSubjectHierarchyNode* shNode = this->activeMarkupTreeView->subjectHierarchyNode();
     for (int nodeIndex = nodes->GetNumberOfItems() - 1; nodeIndex >= 0; nodeIndex--)
     {
       vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(nodes->GetItemAsObject(nodeIndex));
@@ -904,12 +904,13 @@ void qSlicerMarkupsModuleWidget::enter()
   }
 
   // Add event observers to MarkupsNode
-  if (d->MarkupsNode)
+  vtkMRMLSubjectHierarchyNode* shNode = d->activeMarkupTreeView->subjectHierarchyNode();
+  if (d->MarkupsNode && shNode)
   {
     vtkMRMLMarkupsNode* markupsNode = d->MarkupsNode;
     d->MarkupsNode = nullptr; // this will force a reset
     this->setMRMLMarkupsNode(markupsNode);
-    vtkIdType itemID = d->activeMarkupTreeView->subjectHierarchyNode()->GetItemByDataNode(markupsNode);
+    vtkIdType itemID = shNode->GetItemByDataNode(markupsNode);
     QModelIndex itemIndex = d->activeMarkupTreeView->sortFilterProxyModel()->indexFromSubjectHierarchyItem(itemID);
     if(itemIndex.row()>=0)
     {
@@ -967,9 +968,11 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
   Q_D(qSlicerMarkupsModuleWidget);
 
   bool wasBlocked = d->activeMarkupTreeView->blockSignals(true);
-  if (d->MarkupsNode)
+
+  vtkMRMLSubjectHierarchyNode* shNode = d->activeMarkupTreeView->subjectHierarchyNode();
+  if (d->MarkupsNode && shNode)
   {
-    vtkIdType itemID = d->activeMarkupTreeView->subjectHierarchyNode()->GetItemByDataNode(d->MarkupsNode);
+    vtkIdType itemID = shNode->GetItemByDataNode(d->MarkupsNode);
     QModelIndex itemIndex = d->activeMarkupTreeView->sortFilterProxyModel()->indexFromSubjectHierarchyItem(itemID);
     if (itemIndex.row() >= 0)
     {

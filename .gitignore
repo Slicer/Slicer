@@ -3,6 +3,7 @@
 !.codespellignore
 !.gitattributes
 !.git-blame-ignore-revs
+!.github/
 !.pre-commit-config.yaml
 !.readthedocs.yaml
 !.ruff.toml
@@ -13,9 +14,6 @@
 
 # except for .gitignore
 !.gitignore
-
-# ... and .circleci
-!.circleci
 
 # Exclude Kdevelop4 files ...
 .kdev*
