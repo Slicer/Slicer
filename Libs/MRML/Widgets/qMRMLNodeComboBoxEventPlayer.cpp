@@ -80,4 +80,3 @@ bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject *Object,
   Error = true;
   return true;
 }
-

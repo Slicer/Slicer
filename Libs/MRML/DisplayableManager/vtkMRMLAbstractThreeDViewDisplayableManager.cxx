@@ -162,4 +162,3 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
     return;
   }
 }
-

@@ -38,4 +38,3 @@ slicer_add_python_unittest(
   SLICER_ARGS
     --disable-cli-modules
   )
-

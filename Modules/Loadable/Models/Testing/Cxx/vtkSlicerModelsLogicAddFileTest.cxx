@@ -134,4 +134,3 @@ int testAddModelWithPolyData(bool withPolyData)
 
   return EXIT_SUCCESS;
 }
-

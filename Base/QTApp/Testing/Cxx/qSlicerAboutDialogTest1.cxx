@@ -40,4 +40,3 @@ int qSlicerAboutDialogTest1(int argc, char * argv[] )
 
   return about.exec();
 }
-

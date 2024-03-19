@@ -553,5 +553,3 @@ vtkDataFileFormatHelper* vtkDataIOManager:: GetFileFormatHelper()
   }
   return this->FileFormatHelper;
 }
-
-

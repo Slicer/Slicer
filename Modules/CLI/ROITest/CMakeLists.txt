@@ -27,4 +27,3 @@ SEMMacroBuildCLI(
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   NO_INSTALL
   )
-

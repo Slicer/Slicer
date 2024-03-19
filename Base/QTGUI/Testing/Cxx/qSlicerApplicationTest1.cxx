@@ -79,4 +79,3 @@ int qSlicerApplicationTest1(int argc, char * argv[] )
 
   return app.exec();
 }
-

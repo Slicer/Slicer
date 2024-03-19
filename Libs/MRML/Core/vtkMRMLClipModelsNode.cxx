@@ -183,4 +183,3 @@ const char* vtkMRMLClipModelsNode::GetClippingMethodAsString(ClippingMethodType 
       return "";
  }
 }
-

@@ -123,4 +123,3 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
   }
   return app.exec();
 }
-

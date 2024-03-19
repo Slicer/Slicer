@@ -11,4 +11,3 @@ make Experimental
 
 # poor mans killall
 ps -ef | grep Xvfb | grep -v grep | awk '{print $2}' | xargs kill
-

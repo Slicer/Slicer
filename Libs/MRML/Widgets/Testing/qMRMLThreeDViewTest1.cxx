@@ -89,4 +89,3 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
-

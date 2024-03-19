@@ -503,4 +503,3 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 };
 
 #endif
-

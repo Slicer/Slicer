@@ -122,4 +122,3 @@ endif()
 
 set(Slicer_CXX_MODULE_TEST_TEMPLATES_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   CACHE INTERNAL "Path to cxx test templates directory.")
-

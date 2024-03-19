@@ -434,10 +434,3 @@ void vtkImageRectangularSource::ExecuteDataWithInformation(vtkDataObject *output
     }
   }
 }
-
-
-
-
-
-
-

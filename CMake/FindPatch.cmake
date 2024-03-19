@@ -66,4 +66,3 @@ unset(_doc)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Patch
                                   REQUIRED_VARS Patch_EXECUTABLE)
-

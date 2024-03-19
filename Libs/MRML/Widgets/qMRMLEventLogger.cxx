@@ -266,4 +266,3 @@ void qMRMLEventLogger::setConsoleOutputEnabled(bool enabled)
   Q_D(qMRMLEventLogger);
   d->ConsoleOutputEnabled = enabled;
 }
-

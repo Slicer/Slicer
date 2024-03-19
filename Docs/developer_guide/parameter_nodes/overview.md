@@ -63,4 +63,3 @@ Qt widgets can automatically be created for and bound to `parameterNodeWrapper`s
 See [GUI Connection](./gui_connection.md) for how to bind a `parameterNodeWrapper` to existing widgets (including directly in a `.ui` file).
 
 See [GUI Creation](./gui_creation.md) for how to generate widgets for `parameterNodeWrapper`s.
-

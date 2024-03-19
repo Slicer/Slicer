@@ -91,4 +91,3 @@ function(_slicer_is_module_enabled enabling_var_prefix module_name output_var)
   endif()
   set(${output_var} ${_build_module} PARENT_SCOPE)
 endfunction()
-

@@ -28,4 +28,3 @@ int vtkDataIOManagerLogicTest1(int , char * [] )
 
   return EXIT_SUCCESS;
 }
-

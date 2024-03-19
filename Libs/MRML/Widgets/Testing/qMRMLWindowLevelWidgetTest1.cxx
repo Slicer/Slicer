@@ -92,4 +92,3 @@ int qMRMLWindowLevelWidgetTest1(int argc, char * argv [] )
   }
   return app.exec();
 }
-

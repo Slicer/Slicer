@@ -91,6 +91,3 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
    col->Delete();
   return EXIT_SUCCESS;
 }
-
-
-

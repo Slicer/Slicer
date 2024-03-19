@@ -15,4 +15,3 @@ slicerMacroConfigureModuleCxxTestDriver(
 
 #-----------------------------------------------------------------------------
 simple_test(vtkSlicerColorLogicTest1)
-

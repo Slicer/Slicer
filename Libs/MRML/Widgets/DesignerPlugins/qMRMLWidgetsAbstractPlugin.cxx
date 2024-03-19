@@ -41,5 +41,3 @@ QString qMRMLWidgetsAbstractPlugin::whatsThis() const
 {
   return QString();
 }
-
-

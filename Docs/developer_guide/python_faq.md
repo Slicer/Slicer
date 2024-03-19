@@ -365,4 +365,3 @@ Since installing packages can have side effects on other extensions or the main 
 * ❌ Do not install any packages in the global scope (outside of all classes and functions) or in the module class constructor. This can significantly slow down application startup, and it may even prevent the module from loading.
 * ❌ Do not pin to a specific version of the package, as this may generate conflicts with other package versions, leading to unexpected environment modifications. Pinning dependencies should be considered only in the context of custom applications where the deployment environment is tightly controlled.
 :::
-

@@ -734,4 +734,3 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 
   return !retval;
 }
-

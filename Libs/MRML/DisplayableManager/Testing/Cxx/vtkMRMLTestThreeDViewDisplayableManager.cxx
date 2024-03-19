@@ -103,4 +103,3 @@ void vtkMRMLTestThreeDViewDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* 
   //std::cout << "vtkMRMLTestThreeDViewDisplayableManager - NodeAdded - "
   //          << (node ? node->GetName() : "None")<< std::endl;
 }
-

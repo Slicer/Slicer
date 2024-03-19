@@ -79,4 +79,3 @@ void vtkMRMLAnnotationFiducialNode::SetTextFromID()
   }
   this->SetFiducialLabel(textLabel.c_str());
 }
-

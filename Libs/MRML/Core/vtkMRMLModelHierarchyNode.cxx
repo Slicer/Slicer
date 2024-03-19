@@ -197,5 +197,3 @@ void vtkMRMLModelHierarchyNode:: GetChildrenModelNodes(vtkCollection *models)
     }// end if
   }// end for
 }
-
-

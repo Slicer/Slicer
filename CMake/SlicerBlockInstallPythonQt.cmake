@@ -21,4 +21,3 @@ elseif(UNIX)
     FILES "${PYTHONQT_INSTALL_LIB_DIR}/libPythonQt.so"
     COMPONENT Runtime)
 endif()
-

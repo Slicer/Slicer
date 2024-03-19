@@ -18,4 +18,3 @@ elseif(UNIX)
     FILES "${QtTesting_INSTALL_LIB_DIR}/libQtTesting.so"
     COMPONENT Runtime)
 endif()
-

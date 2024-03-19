@@ -18,4 +18,3 @@ slicerMacroConfigureModuleCxxTestDriver(
 
 #-----------------------------------------------------------------------------
 simple_test(vtkSlicerDataLogicAutoRemoveTest)
-

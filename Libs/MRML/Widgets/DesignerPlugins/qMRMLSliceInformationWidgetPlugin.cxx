@@ -45,4 +45,3 @@ QString qMRMLSliceInformationWidgetPlugin::name() const
 {
   return "qMRMLSliceInformationWidget";
 }
-

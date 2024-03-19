@@ -257,4 +257,3 @@ void vtkImageLabelCombine::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "OverwriteInput: " << this->OverwriteInput  << "\n";
 
 }
-

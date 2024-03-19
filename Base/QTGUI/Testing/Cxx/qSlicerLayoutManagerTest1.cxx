@@ -44,4 +44,3 @@ int qSlicerLayoutManagerTest1(int argc, char * argv[] )
   delete layoutManager;
   return EXIT_SUCCESS;
 }
-
