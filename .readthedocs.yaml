@@ -18,4 +18,4 @@ formats:
 
 python:
   install:
-  - requirements: requirements-docs.txt
+    - requirements: requirements-docs.txt
