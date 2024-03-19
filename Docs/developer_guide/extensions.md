@@ -262,6 +262,11 @@ It is named after the extension name (e.g `ExtensionName.json`) and may include 
   - N
 ```
 
+The full schema for the extension catalog entry file is below:
+
+```{jsonschema} ../../Schema/slicer-extension-catalog-entry-schema-v1.0.0.json
+```
+
 (extension-description-file)=
 ## Extension description file
 

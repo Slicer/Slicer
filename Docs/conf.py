@@ -39,6 +39,7 @@ extensions = [
     "sphinx_markdown_tables",
     "notfound.extension",  # Show a better 404 page when an invalid address is entered
     "sphinx_rtd_theme",
+    "sphinx-jsonschema",
 ]
 
 suppress_warnings = [
