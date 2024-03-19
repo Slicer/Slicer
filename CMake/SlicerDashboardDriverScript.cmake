@@ -661,4 +661,3 @@ if(SCRIPT_MODE STREQUAL "continuous" AND ${CTEST_CONTINUOUS_DURATION} GREATER 0)
 else()
   run_ctest()
 endif()
-

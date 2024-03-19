@@ -33,4 +33,3 @@
 <Volume id="vtkMRMLScalarVolumeNode4" name="slicerZstatOne"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode4" displayNodeRef="vtkMRMLVolumeDisplayNode4" transformNodeRef="vtkMRMLLinearTransformNode2" labelMap="0" ></Volume>
 
 </MRML>
-

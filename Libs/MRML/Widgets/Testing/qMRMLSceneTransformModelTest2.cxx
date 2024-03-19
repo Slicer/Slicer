@@ -76,4 +76,3 @@ int qMRMLSceneTransformModelTest2(int argc, char * argv [] )
   }
   return EXIT_SUCCESS;
 }
-

@@ -19,4 +19,3 @@
 #include "vtkSlicerBaseLogicExport.h"
 
 #endif
-

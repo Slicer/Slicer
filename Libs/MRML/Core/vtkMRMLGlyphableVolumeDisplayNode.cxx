@@ -227,5 +227,3 @@ void vtkMRMLGlyphableVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
   }
   return;
 }
-
-

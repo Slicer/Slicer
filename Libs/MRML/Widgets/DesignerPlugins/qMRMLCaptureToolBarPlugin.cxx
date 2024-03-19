@@ -65,4 +65,3 @@ QString qMRMLCaptureToolBarPlugin::name() const
 {
   return "qMRMLCaptureToolBar";
 }
-

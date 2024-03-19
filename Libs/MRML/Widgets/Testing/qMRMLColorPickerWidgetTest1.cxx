@@ -61,4 +61,3 @@ int qMRMLColorPickerWidgetTest1(int argc, char * argv [])
 
   return app.exec();
 }
-

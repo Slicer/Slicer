@@ -47,4 +47,3 @@ macro(SlicerMacroConfigureGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR
   endforeach()
 
 endmacro()
-

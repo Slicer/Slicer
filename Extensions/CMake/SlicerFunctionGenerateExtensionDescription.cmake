@@ -206,4 +206,3 @@ endfunction()
 if(TEST_slicer_generate_extension_description_test)
   slicer_generate_extension_description_test()
 endif()
-

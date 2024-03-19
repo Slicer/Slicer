@@ -75,4 +75,3 @@ int qMRMLSceneColorTableModelTest1(int argc, char * argv [])
 
   return app.exec();
 }
-

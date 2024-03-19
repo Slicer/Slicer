@@ -201,4 +201,3 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
   delete viewport2;
   return res;
 }
-

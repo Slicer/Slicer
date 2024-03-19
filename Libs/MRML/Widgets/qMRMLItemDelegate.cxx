@@ -275,4 +275,3 @@ bool qMRMLItemDelegate::eventFilter(QObject *object, QEvent *event)
   }
   return this->Superclass::eventFilter(object, event);
 }
-

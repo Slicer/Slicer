@@ -189,4 +189,3 @@ For some GUIs, extra annotations can be used to set other widget properties. Thi
 ## Custom connectors and reusable widgets
 
 To create custom widgets for parameter packs, see [Custom Widgets for Parameter Packs](./advanced/custom_widgets_for_parameter_packs.md)
-

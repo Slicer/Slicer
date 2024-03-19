@@ -48,4 +48,3 @@ QString qMRMLSliceControllerWidgetPlugin::name() const
 {
   return "qMRMLSliceControllerWidget";
 }
-

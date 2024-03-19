@@ -686,4 +686,3 @@ void vtkMRMLSliceLinkLogic::UpdateSliceNodeInteractionStatus(vtkMRMLSliceNode* s
     it->second.LastNormal[2] = sliceNode->GetSliceToRAS()->GetElement(2,2);
   }
 }
-

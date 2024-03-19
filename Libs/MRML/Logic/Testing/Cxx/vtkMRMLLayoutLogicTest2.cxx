@@ -138,4 +138,3 @@ int vtkMRMLLayoutLogicTest2(int , char * [] )
 
   return EXIT_SUCCESS;
 }
-

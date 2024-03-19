@@ -338,4 +338,3 @@ void qSlicerSettingsModulesPanel::onRemoveModulesAdditionalPathClicked()
   // Remove all selected
   d->AdditionalModulePathsView->removeSelectedDirectories();
 }
-

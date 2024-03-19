@@ -123,4 +123,3 @@ int qSlicerModulePanelTest2(int argc, char * argv[] )
 
   return app.exec();
 }
-

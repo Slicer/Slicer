@@ -295,5 +295,3 @@ int vtkUserTagTable::DeleteKeywordValuePair ( const char *keyword  )
   }
   return ( 0 );
 }
-
-

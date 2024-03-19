@@ -45,4 +45,3 @@ int qSlicerAbstractModuleTest1(int, char * [] )
 
   return EXIT_SUCCESS;
 }
-

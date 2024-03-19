@@ -76,4 +76,3 @@ void vtkMRMLSliceViewDisplayableManagerFactory::PrintSelf(ostream& os, vtkIndent
 }
 
 VTK_SINGLETON_CXX(vtkMRMLSliceViewDisplayableManagerFactory);
-

@@ -316,4 +316,3 @@ void qMRMLSliceInformationWidget::setPrescribedSliceSpacing(double spacing)
   spacingArray[2] = spacing;
   d->MRMLSliceNode->SetPrescribedSliceSpacing(spacingArray);
 }
-

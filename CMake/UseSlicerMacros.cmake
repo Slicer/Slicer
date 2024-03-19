@@ -163,4 +163,3 @@ endfunction()
 if(TEST_slicer_setting_variable_message_test)
   slicer_setting_variable_message_test()
 endif()
-

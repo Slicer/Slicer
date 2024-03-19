@@ -137,4 +137,3 @@ bool TestBatchRemoveDisplayNode()
   sliceNode->Modified();
   return true;
 }
-

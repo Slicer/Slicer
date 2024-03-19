@@ -298,4 +298,3 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
 
   return EXIT_SUCCESS;
 }
-

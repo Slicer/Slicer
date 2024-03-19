@@ -58,4 +58,3 @@ int vtkMRMLLayoutLogicTest1(int , char * [] )
 
   return EXIT_SUCCESS;
 }
-

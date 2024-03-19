@@ -210,4 +210,3 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
   }
   this->setEnabled(d->MRMLModelNode != nullptr);
 }
-

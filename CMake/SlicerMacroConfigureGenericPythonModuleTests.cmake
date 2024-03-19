@@ -33,4 +33,3 @@ macro(SlicerMacroConfigureGenericPythonModuleTests MODULENAMES TEST_SCRIPTS_OUTP
   endforeach()
 
 endmacro()
-

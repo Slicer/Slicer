@@ -171,4 +171,3 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
 
   return !retval;
 }
-

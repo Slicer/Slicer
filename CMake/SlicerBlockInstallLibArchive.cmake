@@ -13,4 +13,3 @@ else()
     STRIP
     )
 endif()
-

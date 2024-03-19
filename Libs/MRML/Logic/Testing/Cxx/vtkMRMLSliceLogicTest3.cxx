@@ -168,4 +168,3 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
-

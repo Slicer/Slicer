@@ -236,6 +236,3 @@ void vtkMRMLDiffusionImageVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->MaskNodeID ? this->MaskNodeID : "(none)") << "\n";
 
 }
-
-
-

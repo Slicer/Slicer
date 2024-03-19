@@ -91,4 +91,3 @@ see https://github.com/Slicer/Slicer/commits/main/CODE_OF_CONDUCT.md.
 [Mozilla CoC]: https://github.com/mozilla/diversity
 [FAQ]: https://www.contributor-covenant.org/faq
 [translations]: https://www.contributor-covenant.org/translations
-

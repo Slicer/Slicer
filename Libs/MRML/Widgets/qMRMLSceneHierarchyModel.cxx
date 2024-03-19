@@ -419,4 +419,3 @@ void qMRMLSceneHierarchyModel::observeNode(vtkMRMLNode* node)
   qvtkConnect(node, vtkMRMLNode::HierarchyModifiedEvent,
               this, SLOT(onMRMLNodeModified(vtkObject*)));
 }
-

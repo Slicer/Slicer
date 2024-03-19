@@ -48,4 +48,3 @@ macro(SlicerMacroGetCompilerName COMPILER_NAME_VAR)
   string(REPLACE "c++" "g++" DART_CXX_NAME ${DART_CXX_NAME})
   set(${COMPILER_NAME_VAR} ${DART_CXX_NAME})
 endmacro()
-

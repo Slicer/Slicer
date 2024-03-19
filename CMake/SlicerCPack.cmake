@@ -442,4 +442,3 @@ DeleteRegKey SHCTX \\\"SOFTWARE\\\\Classes\\\\${ext}\\\"
 endif()
 
 include(CPack)
-

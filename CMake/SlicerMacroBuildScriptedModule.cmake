@@ -121,4 +121,3 @@ macro(slicerMacroBuildScriptedModule)
   endif()
 
 endmacro()
-

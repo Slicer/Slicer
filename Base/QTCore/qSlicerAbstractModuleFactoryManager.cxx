@@ -554,4 +554,3 @@ void qSlicerAbstractModuleFactoryManager::setIsVerbose(bool flag)
   Q_D(qSlicerAbstractModuleFactoryManager);
   d->Verbose = flag;
 }
-

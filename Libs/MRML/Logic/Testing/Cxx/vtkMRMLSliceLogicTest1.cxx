@@ -71,4 +71,3 @@ int vtkMRMLSliceLogicTest1(int , char * [] )
   logic->Print(std::cout);
   return EXIT_SUCCESS;
 }
-

@@ -55,4 +55,3 @@ class qSlicer@MODULENAME@ModuleGenericTest(unittest.TestCase):
     if not slicer.app.commandOptions().noMainWindow :
       mainWindow = slicer.util.mainWindow()
       mainWindow.moduleSelector().selectModule(self.module.name)
-

@@ -144,4 +144,3 @@ void qSlicerSceneViewsModuleDialog::accept()
   }
   this->Superclass::accept();
 }
-

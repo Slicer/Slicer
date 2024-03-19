@@ -41,5 +41,3 @@ QString qSlicerQTGUIAbstractPlugin::whatsThis() const
 {
   return QString();
 }
-
-

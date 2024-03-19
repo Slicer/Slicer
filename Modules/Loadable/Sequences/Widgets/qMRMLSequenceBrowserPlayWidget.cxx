@@ -340,4 +340,3 @@ bool qMRMLSequenceBrowserPlayWidget::recordingControlsVisible() const
   Q_D(const qMRMLSequenceBrowserPlayWidget);
   return d->RecordingControlsVisible;
 }
-
