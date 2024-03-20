@@ -107,6 +107,12 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
                                                   " (see the 'exposure fiasco' - http://dclunie.blogspot.com/2008/11/dicom-exposure-attribute-fiasco.html).")
         parametersFormLayout.addRow("Fix invalid exposure tags", self.fixExposureFiascoCheckBox)
 
+        self.splitUltrasoundSeriesByInstanceNumberCheckBox = qt.QCheckBox()
+        self.splitUltrasoundSeriesByInstanceNumberCheckBox.checked = False
+        self.splitUltrasoundSeriesByInstanceNumberCheckBox.setToolTip(_("If checked, then ultrasound image series are split by instance number."
+                                                                        " Useful if many ultrasound acquisitions appear in the same series."))
+        parametersFormLayout.addRow("Split ultrasound series by instance number", self.splitUltrasoundSeriesByInstanceNumberCheckBox)
+
         characterSetLayout = qt.QHBoxLayout()
 
         self.specifyCharacterSetCheckBox = qt.QCheckBox()
@@ -174,6 +180,8 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
             self.logic.clearRules()
             if self.fixExposureFiascoCheckBox.checked:
                 self.logic.addRule("FixExposureFiasco")
+            if self.splitUltrasoundSeriesByInstanceNumberCheckBox.checked:
+                self.logic.addRule("SplitUltrasoundSeriesByInstanceNumber")
             if self.forceSamePatientNameIdInEachDirectoryCheckBox.checked:
                 self.logic.addRule("ForceSamePatientNameIdInEachDirectory")
             if self.forceSameSeriesInstanceUidInEachDirectoryCheckBox.checked:
@@ -597,6 +605,44 @@ class NormalizeFileNames(DICOMPatcherRule):
 
 
 #
+#
+#
+
+
+class SplitUltrasoundSeriesByInstanceNumber(DICOMPatcherRule):
+    def __init__(self, parameters=None):
+        super().__init__(parameters)
+        self.requiredTags = ["SOPClassUID", "SeriesInstanceUID", "SeriesNumber", "InstanceNumber"]
+        self.supportedSOPClassUIDs = [
+            "1.2.840.10008.5.1.4.1.1.3.1",  # Ultrasound Multiframe Image Storage
+            "1.2.840.10008.5.1.4.1.1.6.1",  # Ultrasound Image Storage
+        ]
+
+    def processStart(self, inputRootDir, outputRootDir):
+        self.seriesInstanceUidAndInstanceNumberToNewSeriesInstanceUidMap = {}
+
+    def processDataSet(self, ds):
+        import pydicom
+
+        # Return if this is not an ultrasound series or there is no instance number
+        for tag in self.requiredTags:
+            if not hasattr(ds, tag):
+                return
+        if ds.SOPClassUID not in self.supportedSOPClassUIDs:
+            return
+
+        # Get the new series instance UID for this series instance UID and instance number
+        seriesInstanceUidAndInstanceNumber = (ds.SeriesInstanceUID, ds.InstanceNumber)
+        if seriesInstanceUidAndInstanceNumber not in self.seriesInstanceUidAndInstanceNumberToNewSeriesInstanceUidMap:
+            self.seriesInstanceUidAndInstanceNumberToNewSeriesInstanceUidMap[seriesInstanceUidAndInstanceNumber] = pydicom.uid.generate_uid(None)
+
+        # Set the new series instance UID
+        ds.SeriesInstanceUID = self.seriesInstanceUidAndInstanceNumberToNewSeriesInstanceUidMap[seriesInstanceUidAndInstanceNumber]
+        # Generate new series number (otherwise it would be difficult to identify the series)
+        ds.SeriesNumber = ds.SeriesNumber * 1000 + ds.InstanceNumber
+
+
+#
 # DICOMPatcherLogic
 #
 
@@ -792,6 +838,7 @@ class DICOMPatcherTest(ScriptedLoadableModuleTest):
         logic.addRule("UseCharacterSet", {"CharacterSet": "cp1251"})
         logic.addRule("Anonymize")
         logic.addRule("NormalizeFileNames")
+        logic.addRule("SplitUltrasoundSeriesByInstanceNumber")
         logic.patchDicomDir(inputTestDir, outputTestDir)
 
         self.delayDisplay("Verify generated files")
