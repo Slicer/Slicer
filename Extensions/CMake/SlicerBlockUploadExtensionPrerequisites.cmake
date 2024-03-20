@@ -24,4 +24,3 @@ elseif(APPLE)
 elseif(UNIX)
   set(EXTENSION_OPERATING_SYSTEM "${Slicer_OS_LINUX_NAME}")
 endif()
-

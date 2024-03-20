@@ -30,4 +30,3 @@
   vtkDebugLeaks::SetExitError(true);
 
 #endif
-

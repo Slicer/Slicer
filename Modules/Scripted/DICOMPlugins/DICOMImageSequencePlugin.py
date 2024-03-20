@@ -25,8 +25,8 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
     loads frames as a single-slice-volume sequence (and not as a 3D volume),
     it accepts color images, and handles multiple instances within a series
     (e.g., multiple independent acquisitions and synchronized biplane acquisitions).
-    Limitation: ultrasound calibrated regions are not supported (each calibrated region
-    would need to be split out to its own volume sequence).
+    Limitation: on ultrasound images, only a single calibrated region is supported
+    (to support more, each calibrated region could be split out to its own volume sequence).
     """
 
     def __init__(self):
@@ -151,7 +151,25 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                     loadable.singleSequence = False  # put each instance in a separate sequence
                     loadable.files = [filePath]
                     loadable.name = name.strip()  # remove leading and trailing spaces, if any
-                    loadable.warning = _("Image spacing may need to be calibrated for accurate size measurements.")
+                    # Read image spacing from SequenceOfUltrasoundRegions
+                    loadable.spacingMmPerPixel = None
+                    if modality == "US":
+                        ds = dicom.read_file(filePath, stop_before_pixels=True)
+                        if hasattr(ds, "SequenceOfUltrasoundRegions"):
+                            if len(ds.SequenceOfUltrasoundRegions) == 1:
+                                region = ds.SequenceOfUltrasoundRegions[0]
+                                UNITS_CM = 3  # PhysicalDeltaX and PhysicalDeltaY are in cm
+                                TISSUE_2D = 1
+                                TISSUE = 1
+                                COLOR_FLOW = 2
+                                if (hasattr(region, "RegionSpatialFormat") and region.RegionSpatialFormat == TISSUE_2D
+                                    and hasattr(region, "RegionDataType") and (region.RegionDataType == TISSUE or region.RegionDataType == COLOR_FLOW)
+                                    and hasattr(region, "PhysicalDeltaX") and hasattr(region, "PhysicalDeltaY")
+                                    and hasattr(region, "PhysicalUnitsXDirection") and region.PhysicalUnitsXDirection == UNITS_CM
+                                    and hasattr(region, "PhysicalUnitsYDirection") and region.PhysicalUnitsYDirection == UNITS_CM):
+                                    loadable.spacingMmPerPixel = [region.PhysicalDeltaX * 10.0, region.PhysicalDeltaY * 10.0]
+
+                    loadable.warning = "" if hasattr(loadable, "spacingMmPerPixel") else _("Image spacing may need to be calibrated for accurate size measurements.")
                     loadable.tooltip = _("{modality} image sequence").format(modality=modality)
                     loadable.selected = True
                     # Confidence is slightly larger than default scalar volume plugin's (0.5)
@@ -268,7 +286,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         # Show sequence browser toolbar
         slicer.modules.sequences.showSequenceBrowser(outputSequenceBrowserNode)
 
-    def addSequenceFromImageData(self, imageData, tempFrameVolume, filePath, name, singleFileInLoadable):
+    def addSequenceFromImageData(self, imageData, tempFrameVolume, filePath, name, singleFileInLoadable, spacingMmPerPixel):
         # Rotate 180deg, otherwise the image would appear upside down
         ijkToRas = vtk.vtkMatrix4x4()
         ijkToRas.SetElement(0, 0, -1.0)
@@ -276,6 +294,10 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
         tempFrameVolume.SetIJKToRASMatrix(ijkToRas)
         # z axis is time
         [spacingX, spacingY, frameTimeMsec] = imageData.GetSpacing()
+        # Override spacing in image for ultrasound images
+        if spacingMmPerPixel:
+            spacingX = spacingMmPerPixel[0]
+            spacingY = spacingMmPerPixel[1]
         imageData.SetSpacing(1.0, 1.0, 1.0)
         tempFrameVolume.SetSpacing(spacingX, spacingY, 1.0)
         tempFrameVolume.SetAttribute("DICOM.instanceUIDs", slicer.dicomDatabase.instanceForFile(filePath))
@@ -372,8 +394,9 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                 outputSequenceNode.SetDataNodeAtValue(tempFrameVolume, str(instanceNumber))
             else:
                 # each file is a new sequence
+                spacingMmPerPixel = loadable.spacingMmPerPixel if hasattr(loadable, "spacingMmPerPixel") else None
                 outputSequenceNode, playbackRateFps = self.addSequenceFromImageData(
-                    imageData, tempFrameVolume, filePath, loadable.name, (len(loadable.files) == 1))
+                    imageData, tempFrameVolume, filePath, loadable.name, (len(loadable.files) == 1), spacingMmPerPixel)
                 outputSequenceNodes.append(outputSequenceNode)
 
         # Delete temporary volume node

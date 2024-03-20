@@ -62,4 +62,3 @@ if(NOT Slicer_USE_SYSTEM_${proj})
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
-

@@ -76,4 +76,3 @@ int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

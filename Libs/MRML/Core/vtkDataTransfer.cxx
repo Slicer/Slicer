@@ -65,6 +65,3 @@ void vtkDataTransfer::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Progress: " << this->GetProgress() << "\n";
   os << indent << "SizeOnDisk: " << this->GetSizeOnDisk() << "\n";
 }
-
-
-

@@ -553,4 +553,3 @@ void qMRMLUnitWidget
   d->EditableProperties = properties;
   d->updatePropertyWidgets();
 }
-

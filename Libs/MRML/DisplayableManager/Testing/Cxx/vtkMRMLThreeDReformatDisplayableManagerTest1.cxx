@@ -1079,4 +1079,3 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
 
   return !retval;
 }
-

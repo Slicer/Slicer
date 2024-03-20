@@ -45,4 +45,3 @@ install(
   DESTINATION ${Slicer_INSTALL_SHARE_DIR}/ParameterSets
   COMPONENT Runtime
   )
-

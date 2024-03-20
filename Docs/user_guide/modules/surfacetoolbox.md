@@ -134,8 +134,3 @@ Enable the extraction of the largest connected component.
 ## Acknowledgments
 
 Development was funded in part by NIH National Institute of Biomedical Imaging Bioengineering R01EB021391 (Shape Analysis Toolbox for Medical Image Computing Projects) and by the NSF National Science Foundation under Grant DBI-1759883 (An Integrated Platform for Retrieval, Visualization and Analysis of 3D Morphology From Digital Biological Collections).
-
-
-
-
-

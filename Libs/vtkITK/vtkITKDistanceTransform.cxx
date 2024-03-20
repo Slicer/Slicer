@@ -149,5 +149,3 @@ void vtkITKDistanceTransform::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "UseImageSpacing: " << UseImageSpacing << std::endl;
   os << indent << "SquaredDistance: " << SquaredDistance << std::endl;
 }
-
-

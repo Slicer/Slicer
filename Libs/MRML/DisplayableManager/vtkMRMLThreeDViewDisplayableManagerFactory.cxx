@@ -76,4 +76,3 @@ void vtkMRMLThreeDViewDisplayableManagerFactory::PrintSelf(ostream& os, vtkInden
 }
 
 VTK_SINGLETON_CXX(vtkMRMLThreeDViewDisplayableManagerFactory);
-

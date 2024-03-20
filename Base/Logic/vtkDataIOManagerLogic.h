@@ -73,4 +73,3 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
 };
 
 #endif
-

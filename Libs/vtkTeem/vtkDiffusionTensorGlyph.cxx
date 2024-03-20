@@ -823,4 +823,3 @@ vtkMTimeType vtkDiffusionTensorGlyph::GetMTime()
 
   return mTime;
 }
-

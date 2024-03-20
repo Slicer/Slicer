@@ -78,4 +78,3 @@ int qMRMLScalarInvariantComboBoxTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

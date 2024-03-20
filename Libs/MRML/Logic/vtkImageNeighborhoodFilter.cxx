@@ -160,4 +160,3 @@ void vtkImageNeighborhoodFilter::GetRelativeHoodExtent(int &hoodMin0,
 //    cout << "max: " << hoodMax0 << " " << hoodMax1
 //         << " " << hoodMax2 << endl;
 }
-

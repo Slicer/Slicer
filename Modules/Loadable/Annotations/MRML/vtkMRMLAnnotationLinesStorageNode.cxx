@@ -420,4 +420,3 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *
   vtkDebugMacro("WriteAnnotationDataInternal with stream: returning 1");
   return 1;
 }
-

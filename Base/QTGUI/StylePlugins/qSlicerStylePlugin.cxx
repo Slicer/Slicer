@@ -60,4 +60,3 @@ QStringList qSlicerStylePlugin::keys() const
 {
   return QStringList() << "Slicer" << "Light Slicer" << "Dark Slicer";
 }
-

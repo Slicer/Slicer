@@ -1,23 +1,42 @@
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: "v4.5.0"
-  hooks:
-  - id: check-added-large-files
-    args: ['--maxkb=1024']
-  - id: check-case-conflict
-  - id: check-merge-conflict
-  - id: check-symlinks
-  - id: trailing-whitespace
-    exclude: "\\.(svg|vtk|vtp)$"
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v4.5.0"
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-yaml
+      - id: debug-statements
+        exclude: "Base/QTGUI/Testing/Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py|Base/QTGUI/Testing/Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTest.py"
+      - id: end-of-file-fixer
+        exclude: "\\.(md5|svg|vtk|vtp)$|^Resources\\/[^\\/]+\\.h$|\\/ColorFiles\\/.+\\.txt$|Data\\/Input\\/.+$"
+      - id: mixed-line-ending
+        exclude: "\\.(svg|vtk|vtp)$"
+      - id: trailing-whitespace
+        exclude: "\\.(svg|vtk|vtp)$"
 
-- repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.3.3
-  hooks:
-    - id: ruff
-      args: ["--fix", "--show-fixes"]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.3
+    hooks:
+      - id: ruff
+        args: ["--fix", "--show-fixes"]
 
-- repo: https://github.com/asottile/pyupgrade
-  rev: v3.15.1
-  hooks:
-  - id: pyupgrade
-    args: [--py39-plus]
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.1
+    hooks:
+      - id: pyupgrade
+        args: [--py39-plus]
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v3.1.0"
+    hooks:
+      - id: prettier
+        types_or: [yaml]
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: "0.28.0"
+    hooks:
+      - id: check-dependabot
+      - id: check-github-workflows

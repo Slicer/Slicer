@@ -258,8 +258,3 @@ void vtkMRMLAnnotationPointDisplayNode::RestoreBackup()
   }
 
 }
-
-
-
-
-

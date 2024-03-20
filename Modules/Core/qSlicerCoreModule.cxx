@@ -43,4 +43,3 @@ qSlicerCoreModule::~qSlicerCoreModule() = default;
 void qSlicerCoreModule::setup()
 {
 }
-

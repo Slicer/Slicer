@@ -124,6 +124,3 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
 };
 
 #endif
-
-
-

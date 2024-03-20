@@ -130,4 +130,3 @@ macro(SlicerMacroBuildModuleWidgets)
     CACHE INTERNAL "Slicer Module widgets includes" FORCE)
 
 endmacro()
-

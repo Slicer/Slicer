@@ -345,4 +345,3 @@ sed -i 's/[ \t]*$//' "${DESTDIR}/Slicer.crt"
 rm -rf "${TEMPDIR}"
 
 # End /usr/sbin/make-ca.sh
-

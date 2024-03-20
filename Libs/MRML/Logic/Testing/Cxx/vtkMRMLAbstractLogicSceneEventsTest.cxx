@@ -421,4 +421,3 @@ int vtkMRMLAbstractLogicSceneEventsTest(
 
   return EXIT_SUCCESS;
 }
-

@@ -48,4 +48,3 @@ void qSlicerPersistentCookieJarTester::testDefaults()
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerPersistentCookieJarTest)
 #include "moc_qSlicerPersistentCookieJarTest.cxx"
-

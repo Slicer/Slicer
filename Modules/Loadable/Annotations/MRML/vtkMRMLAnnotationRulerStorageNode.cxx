@@ -389,4 +389,3 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *
 
   return 1;
 }
-

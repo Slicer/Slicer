@@ -62,4 +62,3 @@ if(Slicer_HAS_CONSOLE_IO_SUPPORT)
     PROPERTIES PASS_REGULAR_EXPRESSION "Session start time"
     )
 endif()
-

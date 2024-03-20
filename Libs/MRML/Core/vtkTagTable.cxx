@@ -488,6 +488,3 @@ void vtkTagTable::DeleteTag ( const char *attribute  )
   this->TagTable.erase( att );
   this->TagSelectionTable.erase (att );
 }
-
-
-

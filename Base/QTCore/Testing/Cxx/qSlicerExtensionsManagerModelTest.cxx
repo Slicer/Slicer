@@ -2075,4 +2075,3 @@ int qSlicerExtensionsManagerModelTest(int argc, char* argv[])
   return QTest::qExec(&tc, argc, argv);
 }
 #include "moc_qSlicerExtensionsManagerModelTest.cxx"
-

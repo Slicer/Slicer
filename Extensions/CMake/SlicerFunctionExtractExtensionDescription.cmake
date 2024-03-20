@@ -219,4 +219,3 @@ endfunction()
 if(TEST_slicer_extract_extension_description_test)
   slicer_extract_extension_description_test()
 endif()
-

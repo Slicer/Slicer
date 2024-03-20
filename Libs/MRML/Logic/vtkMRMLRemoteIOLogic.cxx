@@ -113,4 +113,3 @@ void vtkMRMLRemoteIOLogic::RemoveDataIOFromScene()
   this->GetMRMLScene()->SetURIHandlerCollection(nullptr);
   this->GetMRMLScene()->SetUserTagTable( nullptr );
 }
-

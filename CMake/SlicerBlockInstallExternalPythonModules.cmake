@@ -18,4 +18,3 @@ install(DIRECTORY ${CTK_DIR}/CTK-build/bin/Python/ctk ${CTK_DIR}/CTK-build/bin/P
   DESTINATION ${Slicer_INSTALL_BIN_DIR}/Python
   USE_SOURCE_PERMISSIONS
   COMPONENT Runtime)
-

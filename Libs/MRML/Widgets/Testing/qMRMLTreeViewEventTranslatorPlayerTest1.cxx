@@ -148,4 +148,3 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

@@ -538,4 +538,3 @@ QPair<double, double> qMRMLTransformSliders::extractMinMaxTranslationValue(
   minmax.second = minmax.second + pad * range;
   return minmax;
 }
-

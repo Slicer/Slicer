@@ -118,8 +118,3 @@ vtkMRMLAnnotationDisplayNode * vtkMRMLAnnotationDisplayNode::GetBackup()
   return this->m_Backup;
 
 }
-
-
-
-
-

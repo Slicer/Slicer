@@ -74,4 +74,3 @@ int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
   ctkColorDialog::getColor(Qt::red, nullptr, "", ctkColorDialog::ColorDialogOptions());
   return EXIT_SUCCESS;
 }
-

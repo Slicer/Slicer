@@ -93,4 +93,3 @@ function(SlicerReadApplicationProperties)
     set(${MY_PROPERTIES_VAR} ${properties} PARENT_SCOPE)
   endif()
 endfunction()
-

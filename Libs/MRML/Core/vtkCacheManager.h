@@ -185,4 +185,3 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 };
 
 #endif
-
