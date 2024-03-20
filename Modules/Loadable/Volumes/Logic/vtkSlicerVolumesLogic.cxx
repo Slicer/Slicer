@@ -20,6 +20,7 @@
 #include "vtkSlicerVolumesLogic.h"
 
 // MRML logic includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLColorLogic.h"
 #include "vtkDataIOManagerLogic.h"
 #include "vtkMRMLRemoteIOLogic.h"
@@ -1658,7 +1659,7 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
     }
     VolumeDisplayPreset presetObj;
     presetObj.id = preset["id"].GetString();
-    presetObj.name = preset["name"].GetString();
+    presetObj.name = vtkMRMLTr("VolumeDisplayPresets", preset["name"].GetString());
     presetObj.level = preset["level"].GetDouble();
     presetObj.window = preset["window"].GetDouble();
     presetObj.valid = true;
@@ -1682,7 +1683,7 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
     {
       if (preset["description"].IsString())
       {
-        presetObj.description = preset["description"].GetString();
+        presetObj.description = vtkMRMLTr("VolumeDisplayPresets", preset["description"].GetString());
       }
       else
       {
