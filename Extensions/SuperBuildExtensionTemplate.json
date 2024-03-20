@@ -2,7 +2,7 @@
   "build_dependencies": [],
   "build_subdirectory": "inner-build",
   "category": "Examples",
-  "scm": "local",
-  "scmrevision": "",
-  "scmurl": "Testing/SuperBuildExtensionTemplate"
+  "scm_type": "local",
+  "scm_revision": "",
+  "scm_url": "Testing/SuperBuildExtensionTemplate"
 }

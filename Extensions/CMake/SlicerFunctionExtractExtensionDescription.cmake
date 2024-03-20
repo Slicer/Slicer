@@ -104,9 +104,9 @@ endfunction()
 # is used to extract information associated with a given extension <file>.
 #
 # The function defines the following variables in the caller scope:
-#  <var-prefix>_EXT_SCM - type of source repository ('git' or 'local', default is 'git')
-#  <var-prefix>_EXT_SCMURL - URL of the associated source repository
-#  <var-prefix>_EXT_SCMREVISION - REVISION associated with the source repository
+#  <var-prefix>_EXT_SCM_TYPE - type of source repository ('git' or 'local', default is 'git')
+#  <var-prefix>_EXT_SCM_URL - URL of the associated source repository
+#  <var-prefix>_EXT_SCM_REVISION - REVISION associated with the source repository
 #  <var-prefix>_EXT_BUILD_DEPENDENCIES - list of Slicer extensions required at build-time
 #  <var-prefix>_EXT_CATEGORY - category
 #  <var-prefix>_EXT_ENABLED - indicate if the extension should be enabled after its installation (default is 1)
@@ -137,17 +137,17 @@ function(slicerFunctionExtractExtensionDescriptionFromJson)
   file(READ ${MY_EXTENSION_FILE} extension_file_content)
 
   set(Slicer_EXT_REQUIRED_METADATA_NAMES
-    "SCMURL"
-    "SCMREVISION"
+    "SCM_URL"
+    "SCM_REVISION"
     "CATEGORY"
     )
   set(Slicer_EXT_OPTIONAL_METADATA_NAMES
-    "SCM"
+    "SCM_TYPE"
     "BUILD_SUBDIRECTORY"
     "BUILD_DEPENDENCIES"
     "ENABLED"
     )
-  set(SCM_DEFAULT "git")
+  set(SCM_TYPE_DEFAULT "git")
   set(BUILD_SUBDIRECTORY_DEFAULT ".")
   set(BUILD_DEPENDENCIES_DEFAULT "")
   set(ENABLED_DEFAULT "1")
@@ -319,29 +319,29 @@ function(slicer_extract_extension_description_from_json_test)
 
   # Common properties
   set(required
-    SCMURL
-    SCMREVISION
+    SCM_URL
+    SCM_REVISION
     CATEGORY
     )
   set(optional
-    SCM
+    SCM_TYPE
     BUILD_DEPENDENCIES
     BUILD_SUBDIRECTORY
     ENABLED
     )
 
   set(expected_CATEGORY "Exporter")
-  set(expected_SCM "git")
-  set(expected_SCMREVISION "9d7341e978df954a2c875240290833d7528ef29c")
-  set(expected_SCMURL "https://github.com/jcfr/SlicerToKiwiExporter.git")
+  set(expected_SCM_TYPE "git")
+  set(expected_SCM_REVISION "9d7341e978df954a2c875240290833d7528ef29c")
+  set(expected_SCM_URL "https://github.com/jcfr/SlicerToKiwiExporter.git")
 
   # Extract extension description without depends
   set(test_s4ext ${CMAKE_CURRENT_BINARY_DIR}/slicer_extract_extension_description_without_depends_test.json)
   file(WRITE ${test_s4ext}
 "{
     \"category\": \"${expected_CATEGORY}\",
-    \"scmrevision\": \"${expected_SCMREVISION}\",
-    \"scmurl\": \"${expected_SCMURL}\"
+    \"scm_revision\": \"${expected_SCM_REVISION}\",
+    \"scm_url\": \"${expected_SCM_URL}\"
 }
 ")
 
@@ -375,8 +375,8 @@ function(slicer_extract_extension_description_from_json_test)
     \"build_subdirectory\": \"inner-build\",
     \"category\": \"${expected_CATEGORY}\",
     \"build_dependencies\": [\"Foo\", \"Bar\"],
-    \"scmrevision\": \"${expected_SCMREVISION}\",
-    \"scmurl\": \"${expected_SCMURL}\",
+    \"scm_revision\": \"${expected_SCM_REVISION}\",
+    \"scm_url\": \"${expected_SCM_URL}\",
     \"enabled\": false
 }
 ")
