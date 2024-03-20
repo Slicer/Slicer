@@ -1202,8 +1202,13 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
 {
   this->ViewScaleFactorMmPerPixel = 1.0;
   this->ScreenSizePixel = 1000.0;
-  if (!this->Renderer || !this->Renderer->GetActiveCamera())
+  if (!this->Renderer || !this->Renderer->GetActiveCamera() || !this->Renderer->GetRenderWindow())
   {
+    return;
+  }
+  if (!this->Renderer->GetRenderWindow()->GetGenericContext())
+  {
+    // Calling GetScreenSize() without a context set will cause a crash.
     return;
   }
 
