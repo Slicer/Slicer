@@ -242,13 +242,13 @@ It is named after the extension name (e.g `ExtensionName.json`) and may include 
 * - category
   - Extension category.
   - Y
-* - scmurl
+* - scm_url
   - Read-only url used to checkout the extension source code.
   - Y
-* - scmrevision
+* - scm_revision
   - Revision allowing to checkout the expected source code.
   - N
-* - scm
+* - scm_type
   - Type of revision control system. Default to `git`.
   - N
 * - build_dependencies
