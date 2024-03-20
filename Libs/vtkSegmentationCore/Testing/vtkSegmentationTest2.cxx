@@ -352,7 +352,7 @@ bool TestLabelmapFloatToIntegerConversion(int scalarType)
         std::cerr << "\tOriginal value:" << values[i] << std::endl;
         std::cerr << "\tOffset:" << offsets[j] << std::endl;
         std::cerr << "\tScalar value: " << value << std::endl;
-        std::cerr << "\Expected value: " << expectedValue << std::endl;
+        std::cerr << "\tExpected value: " << expectedValue << std::endl;
         std::cerr << "\tOriginal type: " << vtkImageScalarTypeNameMacro(scalarType) << std::endl;
         std::cerr << "\tInteger type: " << vtkImageScalarTypeNameMacro(labelmap->GetScalarType()) << std::endl;
         return false;
