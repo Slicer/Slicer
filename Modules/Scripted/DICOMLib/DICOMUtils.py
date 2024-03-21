@@ -613,10 +613,95 @@ class LoadDICOMFilesToDatabase:
 
 
 # ------------------------------------------------------------------------------
+def pixelArrayFromLoadable(loadable):
+    """Return an empty pixel array of the size needed to store the
+    files indicated by the filePaths.  Assumes they have been sorted
+    using getSortedImageFiles first.
+    Uses values from the dicomDatabase.
+    """
+    tags = {}
+    tags["rows"] = "0028,0010"
+    tags["columns"] = "0028,0011"
+    firstFile = loadable.files[0]
+    rows = int(loadable.dicomDatabase.fileValue(firstFile, tags["rows"]))
+    columns = int(loadable.dicomDatabase.fileValue(firstFile, tags["columns"]))
+    slices = len(loadable.files)
+    dtype = "int16" # always use short for the image
+    pixelArray = np.empty([slices, rows, columns], dtype=dtype)
+    return pixelArray
+
+
+# ------------------------------------------------------------------------------
+def ijkToRASFromLoadable(loadable):
+    """Return an IJKToRAS matrix based on the headers of the passed paths
+    using the values from the dicomDatabase
+    """
+    firstFile = loadable.files[0]
+    lastFile = loadable.files[-1]
+    tags = {}
+    tags["position"] = "0020,0032"
+    tags["orientation"] = "0020,0037"
+    tags["spacing"] = "0028,0030"
+    positionString = loadable.dicomDatabase.fileValue(firstFile, tags["position"])
+    orientationString = loadable.dicomDatabase.fileValue(firstFile, tags["orientation"])
+    spacingString = loadable.dicomDatabase.fileValue(firstFile, tags["spacing"])
+    if positionString == "" or orientationString == "" or spacingString == "":
+        logging.warning("Geometry information missing - defaulting to identity matrix")
+        ijkToRAS = slicer.util.vtkMatrixFromArray(np.eye(4))
+        return ijkToRAS
+    position = np.array(list(map(float, positionString.split("\\"))))
+    orientation = list(map(float, orientationString.split("\\")))
+    spacing = np.array(list(map(float, spacingString.split("\\"))))
+    rowOrientation = np.array(orientation[:3])
+    columnOrientation = np.array(orientation[3:])
+    # map from LPS to RAS
+    lpsToRAS = np.array([-1, -1, 1])
+    position *= lpsToRAS
+    rowOrientation *= lpsToRAS
+    columnOrientation *= lpsToRAS
+    # make ijkToRAS
+    rowVector = spacing[1] * rowOrientation  # dicom PixelSpacing is between rows first, then columns
+    columnVector = spacing[0] * columnOrientation
+    lastPositionString = slicer.dicomDatabase.fileValue(lastFile, tags["position"])
+    if lastPositionString == "":
+        logging.warning("Geometry information missing - defaulting to identity matrix")
+        ijkToRAS = slicer.util.vtkMatrixFromArray(np.eye(4))
+        return ijkToRAS
+    lastPosition = np.array(list(map(float, lastPositionString.split("\\"))))
+    lastPosition *= lpsToRAS
+    sliceSpacing = np.linalg.norm(lastPosition - position)
+    if len(loadable.files) > 1:
+        sliceSpacing /= (len(loadable.files)-1)
+    else:
+        sliceSpacing = 1
+    sliceVector = sliceSpacing * np.cross(rowOrientation, columnOrientation)
+    ijkToRASArray = np.eye(4)
+    ijkToRASArray[0][:3] = rowVector
+    ijkToRASArray[1][:3] = columnVector
+    ijkToRASArray[2][:3] = sliceVector
+    ijkToRASArray[3][:3] = position
+    ijkToRAS = slicer.util.vtkMatrixFromArray(ijkToRASArray.T)
+    return ijkToRAS
+
+# ------------------------------------------------------------------------------
+def refreshDICOMWidget():
+    """Refresh DICOM browser from database.
+    It is useful when the database is changed via a database object that is
+    different from the one stored in the DICOM browser. There may be multiple
+    database connection (through different database objects) in the same process.
+    """
+    try:
+        slicer.modules.DICOMInstance.browserWidget.dicomBrowser.dicomTableManager().updateTableViews()
+    except AttributeError:
+        logging.error("DICOM module or browser cannot be accessed")
+        return False
+    return True
+
+# ------------------------------------------------------------------------------
 # TODO: more consistency checks:
 # - is there gantry tilt?
 # - are the orientations the same for all slices?
-def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list[str], dict[str, str], str]:
+def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01, dicomDatabase=None) -> tuple[list[str], dict[str, str], str]:
     """Sort DICOM image files in increasing slice order (IS direction) corresponding to a series
 
     Use the first file to get the ImageOrientationPatient for the
@@ -632,6 +717,9 @@ def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list
     if len(filePaths) == 0:
         return filePaths, {}, warningText
 
+    if not dicomDatabase:
+        dicomDatabase = slicer.dicomDatabase
+
     # Define DICOM tags used in this function
     tags = {}
     tags["position"] = "0020,0032"
@@ -639,15 +727,15 @@ def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list
     tags["numberOfFrames"] = "0028,0008"
     tags["seriesUID"] = "0020,000E"
 
-    seriesUID = slicer.dicomDatabase.fileValue(filePaths[0], tags["seriesUID"])
+    seriesUID = dicomDatabase.fileValue(filePaths[0], tags["seriesUID"])
 
-    if slicer.dicomDatabase.fileValue(filePaths[0], tags["numberOfFrames"]) not in ["", "1"]:
+    if dicomDatabase.fileValue(filePaths[0], tags["numberOfFrames"]) not in ["", "1"]:
         warningText += "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution.\n"
 
     # Make sure first file contains valid geometry
     ref = {}
     for tag in [tags["position"], tags["orientation"]]:
-        value = slicer.dicomDatabase.fileValue(filePaths[0], tag)
+        value = dicomDatabase.fileValue(filePaths[0], tag)
         if not value or value == "":
             warningText += "Reference image in series does not contain geometry information. Please use caution.\n"
             return filePaths, {}, warningText
@@ -665,8 +753,8 @@ def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list
     sortList = []
     missingGeometry = False
     for file in filePaths:
-        positionStr = slicer.dicomDatabase.fileValue(file, tags["position"])
-        orientationStr = slicer.dicomDatabase.fileValue(file, tags["orientation"])
+        positionStr = dicomDatabase.fileValue(file, tags["position"])
+        orientationStr = dicomDatabase.fileValue(file, tags["orientation"])
         if not positionStr or positionStr == "" or not orientationStr or orientationStr == "":
             missingGeometry = True
             break
@@ -723,75 +811,6 @@ def getSortedImageFiles(filePaths: list[str], epsilon: float=0.01) -> tuple[list
 
     return files, distances, warningText
 
-# ------------------------------------------------------------------------------
-def pixelArrayFromFiles(filePaths):
-    """Return an empty pixel array of the size needed to store the
-    files indicated by the filePaths.  Assumes they have been sorted
-    using getSortedImageFiles first.
-    Uses values from the dicomDatabase.
-    """
-    tags = {}
-    tags["rows"] = "0028,0010"
-    tags["columns"] = "0028,0011"
-    firstFile = filePaths[0]
-    rows = int(slicer.dicomDatabase.fileValue(firstFile, tags["rows"]))
-    columns = int(slicer.dicomDatabase.fileValue(firstFile, tags["columns"]))
-    slices = len(filePaths)
-    dtype = "int16" # always use short for the image
-    pixelArray = np.empty([slices, rows, columns], dtype=dtype)
-    return pixelArray
-
-# ------------------------------------------------------------------------------
-def ijkToRASFromFiles(filePaths):
-    """Return an IJKToRAS matrix based on the headers of the passed paths
-    using the values from the dicomDatabase
-    """
-    firstFile = filePaths[0]
-    lastFile = filePaths[-1]
-    tags = {}
-    tags["position"] = "0020,0032"
-    tags["orientation"] = "0020,0037"
-    tags["spacing"] = "0028,0030"
-    positionString = slicer.dicomDatabase.fileValue(firstFile, tags["position"])
-    orientationString = slicer.dicomDatabase.fileValue(firstFile, tags["orientation"])
-    spacingString = slicer.dicomDatabase.fileValue(firstFile, tags["spacing"])
-    if positionString == "" or orientationString == "" or spacingString == "":
-        logging.warning("Geometry information missing - defaulting to identity matrix")
-        ijkToRAS = slicer.util.vtkMatrixFromArray(np.eye(4))
-        return ijkToRAS
-    position = np.array(list(map(float, positionString.split("\\"))))
-    orientation = list(map(float, orientationString.split("\\")))
-    spacing = np.array(list(map(float, spacingString.split("\\"))))
-    rowOrientation = np.array(orientation[:3])
-    columnOrientation = np.array(orientation[3:])
-    # map from LPS to RAS
-    lpsToRAS = np.array([-1, -1, 1])
-    position *= lpsToRAS
-    rowOrientation *= lpsToRAS
-    columnOrientation *= lpsToRAS
-    # make ijkToRAS
-    rowVector = spacing[1] * rowOrientation  # dicom PixelSpacing is between rows first, then columns
-    columnVector = spacing[0] * columnOrientation
-    lastPositionString = slicer.dicomDatabase.fileValue(lastFile, tags["position"])
-    if lastPositionString == "":
-        logging.warning("Geometry information missing - defaulting to identity matrix")
-        ijkToRAS = slicer.util.vtkMatrixFromArray(np.eye(4))
-        return ijkToRAS
-    lastPosition = np.array(list(map(float, lastPositionString.split("\\"))))
-    lastPosition *= lpsToRAS
-    sliceSpacing = np.linalg.norm(lastPosition - position)
-    if len(filePaths) > 1:
-        sliceSpacing /= (len(filePaths)-1)
-    else:
-        sliceSpacing = 1
-    sliceVector = sliceSpacing * np.cross(rowOrientation, columnOrientation)
-    ijkToRASArray = np.eye(4)
-    ijkToRASArray[0][:3] = rowVector
-    ijkToRASArray[1][:3] = columnVector
-    ijkToRASArray[2][:3] = sliceVector
-    ijkToRASArray[3][:3] = position
-    ijkToRAS = slicer.util.vtkMatrixFromArray(ijkToRASArray.T)
-    return ijkToRAS
 
 # ------------------------------------------------------------------------------
 def refreshDICOMWidget():

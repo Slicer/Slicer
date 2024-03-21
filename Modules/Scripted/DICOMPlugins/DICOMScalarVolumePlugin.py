@@ -354,7 +354,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         # then adjust confidence values based on warnings
         #
         for loadable in loadables:
-            loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(loadable.files, self.spacingEpsilon)
+            loadable.files, distances, loadable.warning = DICOMUtils.getSortedImageFiles(
+                        loadable.files, self.spacingEpsilon, dicomDatabase=loadable.dicomDatabase)
 
         loadablesBetterThanAllFiles = []
         if allFilesLoadable.warning != "":
@@ -597,8 +598,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             self._urlHandlerStartTime = time.time()
             urlHandler.startRequest(loadable.files)
             # then while the frames are loading calculate the ijkToRAS and pixel array
-            ijkToRAS = DICOMUtils.ijkToRASFromFiles(loadable.files)
-            pixelArray = DICOMUtils.pixelArrayFromFiles(loadable.files)
+            ijkToRAS = DICOMUtils.ijkToRASFromLoadable(loadable)
+            pixelArray = DICOMUtils.pixelArrayFromLoadable(loadable)
             volumeNode = slicer.util.addVolumeFromArray(pixelArray, ijkToRAS=ijkToRAS, name=loadable.name)
             volumeArray = slicer.util.arrayFromVolume(volumeNode)
             # fill with random data so user sees something
