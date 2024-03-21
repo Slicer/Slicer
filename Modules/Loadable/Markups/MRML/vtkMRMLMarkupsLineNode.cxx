@@ -16,6 +16,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
 #include "vtkMRMLMeasurementLength.h"
@@ -41,6 +42,9 @@ vtkMRMLMarkupsLineNode::vtkMRMLMarkupsLineNode()
 {
   this->MaximumNumberOfControlPoints = 2;
   this->RequiredNumberOfControlPoints = 2;
+
+  // Set markup type GUI display name
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsLineNode", "Line");
 
   // Setup measurements calculated for this markup type
   vtkNew<vtkMRMLMeasurementLength> lengthMeasurement;

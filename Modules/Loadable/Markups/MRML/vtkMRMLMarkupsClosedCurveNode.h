@@ -53,9 +53,6 @@ public:
   /// Get markup type internal name
   const char* GetMarkupType() override {return "ClosedCurve";};
 
-  // Get markup type GUI display name
-  const char* GetTypeDisplayName() override {return "Closed Curve";};
-
   /// Get markup short name
   const char* GetDefaultNodeNamePrefix() override {return "CC";};
 

@@ -16,6 +16,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsAngleNode.h"
 #include "vtkMRMLMeasurementAngle.h"
@@ -40,6 +41,9 @@ vtkMRMLMarkupsAngleNode::vtkMRMLMarkupsAngleNode()
   {
   this->MaximumNumberOfControlPoints = 3;
   this->RequiredNumberOfControlPoints = 3;
+
+  // Set markup type GUI display name
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsAngleNode", "Angle");
 
   // Setup measurements calculated for this markup type
   vtkNew<vtkMRMLMeasurementAngle> angleMeasurement;

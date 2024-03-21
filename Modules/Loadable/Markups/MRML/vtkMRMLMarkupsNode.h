@@ -151,6 +151,9 @@ public:
   /// Get markup short name
   virtual const char* GetDefaultNodeNamePrefix() {return "M";};
 
+  /// Get markup type GUI display name
+  virtual const char* GetTypeDisplayName() override {return this->TypeDisplayName.empty() ? "Markup" : this->TypeDisplayName.c_str();};
+
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;
 
@@ -1028,6 +1031,9 @@ protected:
   vtkCollection* Measurements;
 
   std::string PropertiesLabelText;
+
+  /// Store markup type GUI display name
+  std::string TypeDisplayName;
 
   /// Transform that moves the xyz unit vectors and origin of the interaction handles to local coordinates
   vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;

@@ -16,6 +16,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
 #include "vtkMRMLMarkupsFiducialStorageNode.h"
@@ -34,7 +35,11 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialNode);
 
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsFiducialNode::vtkMRMLMarkupsFiducialNode() = default;
+vtkMRMLMarkupsFiducialNode::vtkMRMLMarkupsFiducialNode()
+{
+  // Set markup type GUI display name
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsFiducialNode", "Point List");
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsFiducialNode::~vtkMRMLMarkupsFiducialNode() = default;
