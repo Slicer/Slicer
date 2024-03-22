@@ -159,7 +159,9 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
     ts_file_paths = glob.glob(ts_file_filter)
     create_new_component = False
     if not ts_file_paths:
-        logging.warning(f"No .ts files were found at {ts_file_filter}. A new translation source file will be created for {component} in en-US language.")
+        if not language:
+            language = "en-US"
+        logging.warning(f"No .ts files were found at {ts_file_filter}. A new translation source file will be created for {component} in {language} language.")
         create_new_component = True
 
     # Get list of translatable files based on file extension
@@ -228,7 +230,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
     # Run lupdate for each language
 
     if create_new_component:
-        ts_file_paths = [f"{translations_dir}/{component}_en-US.ts"]
+        ts_file_paths = [f"{translations_dir}/{component}_{language}.ts"]
 
     for ts_file_index, ts_file_path in enumerate(ts_file_paths):
         logging.debug(f"Updating {ts_file_path} ({ts_file_index+1}/{len(ts_file_paths)})")
@@ -249,7 +251,7 @@ def update_translations(component, source_code_dir, translations_dir, lupdate_pa
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=sys.stderr, cwd=source_code_dir)
         data, err = proc.communicate()
         if proc.returncode != 0:
-            raise RuntimeError(f"lupdate failed with exit code {proc.returncode}:\n\nCommand: {' '.join(command)}\n\n{data}\n\n{err}\n")
+            raise RuntimeError(f"lupdate failed with exit code {proc.returncode}:\n\nCommand: {' '.join(command)}\n\nData: {data}\n\nError: {err}\n")
 
         shutil.move(ts_file_path_in_source_tree, ts_file_path)
 
