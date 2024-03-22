@@ -50,6 +50,24 @@ public:
   /// Translate message with the current translator
   static std::string Translate(const char *context, const char *sourceText, const char *disambiguation = nullptr, int n = -1);
 
+  /// Replace placeholders in strings, following Qt internationalization conventions.
+  ///
+  /// Accepted placeholders in the input string: %1, %2, %3, ..., %9.
+  /// Use %% instead of a single % to prevent replacement. For example "some %%3 thing" will result in "some %3 thing"
+  /// (and will not be replaced by the third replacement string argument).
+  ///
+  /// Example usage:
+  /// @code
+  ///   std::string displayableText = vtkMRMLI18N::Format(
+  ///     vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Cannot read '%1' file as a volume of type '%2'."),
+  ///     filename.c_str(),
+  ///     volumeType.c_str());
+  /// @endcode
+  static std::string Format(const std::string& text,
+    const char* arg1 = nullptr, const char* arg2 = nullptr, const char* arg3 = nullptr,
+    const char* arg4 = nullptr, const char* arg5 = nullptr, const char* arg6 = nullptr,
+    const char* arg7 = nullptr, const char* arg8 = nullptr, const char* arg9 = nullptr);
+
   /// Set translator object. This class takes ownership of the translator
   /// and it releases it when the process quits.
   void SetTranslator(vtkMRMLTranslator* translator);
