@@ -57,9 +57,8 @@ qSlicerReformatModule::~qSlicerReformatModule() = default;
 //------------------------------------------------------------------------------
 QString qSlicerReformatModule::helpText()const
 {
-  QString help =
-      "The Transforms Reformat Widget Module creates "
-      "and edits the Slice Node transforms.<br>";
+  QString help = tr("The Transforms Reformat Widget Module creates"
+    " and edits the Slice Node transforms.") + QLatin1String("<br>");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -67,9 +66,7 @@ QString qSlicerReformatModule::helpText()const
 //------------------------------------------------------------------------------
 QString qSlicerReformatModule::acknowledgementText()const
 {
-  QString acknowledgement =
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.";
-  return acknowledgement;
+  return tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
 }
 
 //------------------------------------------------------------------------------

@@ -67,7 +67,7 @@ QIcon qSlicerPlotsModule::icon()const
 //-----------------------------------------------------------------------------
 QString qSlicerPlotsModule::helpText()const
 {
-  QString help = "The Plots module allows editing properties of plots.<br>";
+  QString help = tr("The Plots module allows editing properties of plots.") + QLatin1String("<br>");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -75,8 +75,8 @@ QString qSlicerPlotsModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerPlotsModule::acknowledgementText()const
 {
-  return "This module was originally developed by Davide Punzo, Kapteyn Astronomical Institute,"
-    "and was supported through the European Research Council grant nr. 291531.";
+  return tr("This module was originally developed by Davide Punzo, Kapteyn Astronomical Institute,"
+    " and was supported through the European Research Council grant nr. 291531.");
 }
 
 //-----------------------------------------------------------------------------
