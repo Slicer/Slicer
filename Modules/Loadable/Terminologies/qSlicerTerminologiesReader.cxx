@@ -12,7 +12,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Adam Rankin, PerkLab, Queen's University
+  This file was originally developed by  Adam Rankin, PerkLab, Queen's University
   and was supported through the Applied Cancer Research Unit program of Cancer Care
   Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
 
