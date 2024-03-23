@@ -86,7 +86,7 @@ vtkMRMLAbstractLogic* qSlicerTextsModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerTextsModule::helpText()const
 {
-  QString help = "A module to create, edit and manage text data in the scene.<br>";
+  QString help = tr("A module to create, edit and manage text data in the scene.") + QLatin1String("<br>");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -94,10 +94,9 @@ QString qSlicerTextsModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerTextsModule::acknowledgementText()const
 {
-  QString acknowledgement =
-    "This work was supported through CANARIE's Research Software Program, and Cancer Care Ontario.<br>"
-    "The Texts module was contributed by Kyle Sunderland and Andras Lasso (Perk Lab, Queen's University)";
-  return acknowledgement;
+  return tr("This work was supported through CANARIE's Research Software Program, and Cancer Care Ontario."
+    " The Texts module was contributed by Kyle Sunderland and Andras Lasso (Perk Lab, Queen's University)");
+
 }
 
 //-----------------------------------------------------------------------------
