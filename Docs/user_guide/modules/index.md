@@ -81,7 +81,6 @@ multivolumeexplorer.md
 ## Diffusion
 ```{toctree}
 :maxdepth: 1
-dmriinstall.md
 dwiconvert.md
 brainsdwicleanup.md
 ```
