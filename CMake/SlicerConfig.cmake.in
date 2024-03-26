@@ -441,6 +441,13 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES "@SlicerExecutionMode
 set(Slicer_CMAKE_CXX_COMPILER "@Slicer_CMAKE_CXX_COMPILER_CONFIG@")
 set(Slicer_CMAKE_C_COMPILER   "@Slicer_CMAKE_C_COMPILER_CONFIG@")
 
+# Use of gold linker
+set(Slicer_USE_GOLD_LINKER "@Slicer_USE_GOLD_LINKER@")
+set(Slicer_COMPILER_SUPPORTS_GOLD_LINKER "@Slicer_COMPILER_SUPPORTS_GOLD_LINKER@")
+set(CMAKE_EXE_LINKER_FLAGS "@CMAKE_EXE_LINKER_FLAGS@")
+set(CMAKE_EXE_MODULE_LINKER_FLAGS "@CMAKE_EXE_MODULE_LINKER_FLAGS@")
+set(CMAKE_EXE_SHARED_LINKER_FLAGS "@CMAKE_EXE_SHARED_LINKER_FLAGS@")
+
 # With the help of SuperBuild, Slicer has been configured with specific compiler
 #
 # Considering that, by default, Slicer and most of its dependent external projects are

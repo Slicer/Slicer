@@ -147,11 +147,72 @@ endif()
 if(UNIX AND NOT APPLE)
   include(SlicerLinkerAsNeededFlagCheck)
   if(Slicer_LINKER_NO_AS_NEEDED_FLAG_REQUIRED)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed"
-      CACHE STRING "Flags used by the linker"
-      FORCE)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed" CACHE STRING "Flags used by the linker" FORCE)
   endif()
 endif()
+
+#-----------------------------------------------------------------------------
+# Check and enable gold linker options
+#-----------------------------------------------------------------------------
+# This is an adaptation of the original snippet in SimpleITK:
+# https://raw.githubusercontent.com/SimpleITK/SimpleITK/master/CMake/sitkUseGoldLinker.cmake
+
+include(CheckCXXSourceCompiles)
+include(CMakePushCheckState)
+
+if(UNIX AND NOT APPLE)
+  message(STATUS "Checking if ld.gold linker is supported")
+
+  cmake_push_check_state()
+  set(CMAKE_REQUIRED_QUIET TRUE)
+  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -fuse-ld=gold")
+  check_cxx_source_compiles("int main() {return 0;}" Slicer_COMPILER_SUPPORTS_GOLD_LINKER)
+  cmake_pop_check_state()
+
+  set(_status "no")
+  if(Slicer_COMPILER_SUPPORTS_GOLD_LINKER)
+    set(_status "yes")
+  endif()
+  message(STATUS "Checking if ld.gold linker is supported - ${_status}")
+
+  if(Slicer_COMPILER_SUPPORTS_GOLD_LINKER)
+    option(Slicer_USE_GOLD_LINKER "Use ld.gold linker (decreases linking time if available)")
+    mark_as_advanced(Slicer_USE_GOLD_LINKER)
+    mark_as_superbuild(Slicer_USE_GOLD_LINKER)
+
+    set(_gold_linker_flag "")
+    if(Slicer_USE_GOLD_LINKER)
+      set(_gold_linker_flag "-fuse-ld=gold")
+    endif()
+  else()
+    set(Slicer_COMPILER_SUPPORTS_GOLD_LINKER OFF)
+  endif()
+endif()
+
+# Clean any previous occurrences of -fuse-ld=gold
+string(REPLACE "-fuse-ld=gold " "" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+string(REPLACE "-fuse-ld=gold " "" CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS}")
+string(REPLACE "-fuse-ld=gold " "" CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}")
+
+
+set(CMAKE_EXE_LINKER_FLAGS "${_gold_linker_flag} ${CMAKE_EXE_LINKER_FLAGS}"
+  CACHE STRING "Flags used by the linker during all build types."
+  FORCE)
+set(CMAKE_MODULE_LINKER_FLAGS "${_gold_linker_flag} ${CMAKE_MODULE_LINKER_FLAGS}"
+  CACHE STRING "Flags used by the linker during the creation of modules during during all build types."
+  FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS "${_gold_linker_flag} ${CMAKE_SHARED_LINKER_FLAGS}"
+  CACHE STRING "Flags used by the linker during the creation of shared libraries  during all build types."
+  FORCE)
+
+mark_as_superbuild(
+  VARS
+    CMAKE_EXE_LINKER_FLAGS:STRING
+    CMAKE_MODULE_LINKER_FLAGS:STRING
+    CMAKE_SHARED_LINKER_FLAGS:STRING
+  ALL_PROJECTS
+  )
+
 
 #-----------------------------------------------------------------------------
 # Slicer Build and Release type
