@@ -59,6 +59,7 @@ class QFrame;
 class QCheckBox;
 class QToolButton;
 class qMRMLSliceWidget;
+class qMRMLSliderWidget;
 class qMRMLSpinBox;
 class vtkActor2D;
 class vtkGlyph3D;
@@ -128,7 +129,6 @@ protected:
 
 public slots:
   void onDiameterUnitsClicked();
-  void onQuickDiameterButtonClicked();
   void onDiameterValueChanged(double);
 
 public:
@@ -177,9 +177,9 @@ public:
 
   QFrame* PaintOptionsFrame;
   QFrame* BrushDiameterFrame;
-  qMRMLSpinBox* BrushDiameterSpinBox;
-  ctkDoubleSlider* BrushDiameterSlider;
-  QToolButton* BrushDiameterRelativeToggle;
+  QFrame* BrushDiameterSizeFrame;
+  qMRMLSliderWidget* BrushDiameterSliderWidget;
+  QToolButton* BrushDiameterIsAbsoluteButton;
   QCheckBox* BrushSphereCheckbox;
   QCheckBox* EditIn3DViewsCheckbox;
   QCheckBox* ColorSmudgeCheckbox;
