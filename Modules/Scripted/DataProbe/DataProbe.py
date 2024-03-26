@@ -216,17 +216,11 @@ class DataProbeInfoWidget:
                 self.layerNames[layer].setText("")
                 self.layerIJKs[layer].setText("")
                 self.layerValues[layer].setText("")
-            self.imageLabel.hide()
-            self.viewerColor.hide()
-            self.viewInfo.hide()
-            self.viewerFrame.hide()
-            self.showImageFrame.show()
+                self.displayableManagerInfo.setText("S")
+            if not self.showImageBox.isChecked():
+                self.imageLabel.hide()
             return
 
-        self.viewerColor.show()
-        self.viewInfo.show()
-        self.viewerFrame.show()
-        self.showImageFrame.hide()
 
         # populate the widgets
         self.viewerColor.setText(" ")
@@ -275,10 +269,10 @@ class DataProbeInfoWidget:
             if infoString != "":
                 aggregatedDisplayableManagerInfo += infoString + "<br>"
         if aggregatedDisplayableManagerInfo != "":
+            aggregatedDisplayableManagerInfo = aggregatedDisplayableManagerInfo[:-4]  # Remove the last break
             self.displayableManagerInfo.text = "<html>" + aggregatedDisplayableManagerInfo + "</html>"
-            self.displayableManagerInfo.show()
         else:
-            self.displayableManagerInfo.hide()
+            self.displayableManagerInfo.text = "<html>S <b>None</b></html>"
 
         # set image
         if (not slicer.mrmlScene.IsBatchProcessing()) and sliceLogic and hasVolume and self.showImage:
@@ -474,6 +468,7 @@ class DataProbeInfoWidget:
             col += 1
             self.layerNames[layer] = qt.QLabel()
             layout.addWidget(self.layerNames[layer], row, col)
+            layout.setColumnStretch(col, 100)
             col += 1
             self.layerIJKs[layer] = qt.QLabel()
             layout.addWidget(self.layerIJKs[layer], row, col)
@@ -493,7 +488,7 @@ class DataProbeInfoWidget:
         self.displayableManagerInfo.wordWrap = True
         self.frame.layout().addWidget(self.displayableManagerInfo)
         # only show if not empty
-        self.displayableManagerInfo.hide()
+        self.displayableManagerInfo.text = "S"
 
         # goto module button
         self.goToModule = qt.QPushButton("->", self.frame)
@@ -512,7 +507,8 @@ class DataProbeInfoWidget:
         if value:
             self.imageLabel.show()
         else:
-            self.imageLabel.hide()
+            if not self.showImageBox.isChecked():
+                self.imageLabel.hide()
             pixmap = qt.QPixmap()
             self.imageLabel.setPixmap(pixmap)
 
