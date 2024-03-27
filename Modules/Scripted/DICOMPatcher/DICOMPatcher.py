@@ -113,6 +113,17 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
                                                                         " Useful if many ultrasound acquisitions appear in the same series."))
         parametersFormLayout.addRow("Split ultrasound series by instance number", self.splitUltrasoundSeriesByInstanceNumberCheckBox)
 
+        self.fixCompressedUltrasoundPhotometricInterpretationCheckBox = qt.QCheckBox()
+        self.fixCompressedUltrasoundPhotometricInterpretationCheckBox.checked = True
+        self.fixCompressedUltrasoundPhotometricInterpretationCheckBox.setToolTip(_(
+            "If checked, then photometric interpretation of JPEG-compressed ultrasound will be set to YBR_FULL_422."
+            " This is useful for fixing inconsistency in JPEG-compressed images that used RGB as photometric interpretation"
+            " due to ambiguity in the DICOM standard before CP156."
+            " See https://groups.google.com/g/comp.protocols.dicom/c/EPkbFOMBOhE"
+            " and https://dicom.nema.org/medical/dicom/Final/cp156_ft.pdf for more details."))
+        parametersFormLayout.addRow("Fix compressed ultrasound photometric interpretation", self.fixCompressedUltrasoundPhotometricInterpretationCheckBox)
+
+
         characterSetLayout = qt.QHBoxLayout()
 
         self.specifyCharacterSetCheckBox = qt.QCheckBox()
@@ -182,6 +193,8 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
                 self.logic.addRule("FixExposureFiasco")
             if self.splitUltrasoundSeriesByInstanceNumberCheckBox.checked:
                 self.logic.addRule("SplitUltrasoundSeriesByInstanceNumber")
+            if self.fixCompressedUltrasoundPhotometricInterpretationCheckBox.checked:
+                self.logic.addRule("FixCompressedUltrasoundPhotometricInterpretation")
             if self.forceSamePatientNameIdInEachDirectoryCheckBox.checked:
                 self.logic.addRule("ForceSamePatientNameIdInEachDirectory")
             if self.forceSameSeriesInstanceUidInEachDirectoryCheckBox.checked:
@@ -223,7 +236,7 @@ class DICOMPatcherRule:
     def addLog(self, text):
         logging.info(text)
         if self.logCallback:
-            self.logCallback(text)
+            self.logCallback("  " + text)
 
     def processStart(self, inputRootDir, outputRootDir):
         pass
@@ -640,6 +653,40 @@ class SplitUltrasoundSeriesByInstanceNumber(DICOMPatcherRule):
         ds.SeriesInstanceUID = self.seriesInstanceUidAndInstanceNumberToNewSeriesInstanceUidMap[seriesInstanceUidAndInstanceNumber]
         # Generate new series number (otherwise it would be difficult to identify the series)
         ds.SeriesNumber = ds.SeriesNumber * 1000 + ds.InstanceNumber
+
+
+#
+#
+#
+
+
+class FixCompressedUltrasoundPhotometricInterpretation(DICOMPatcherRule):
+    def __init__(self, parameters=None):
+        super().__init__(parameters)
+        self.requiredTags = ["SOPClassUID"]
+        self.supportedSOPClassUIDs = [
+            "1.2.840.10008.5.1.4.1.1.3.1",  # Ultrasound Multiframe Image Storage
+            "1.2.840.10008.5.1.4.1.1.6.1",  # Ultrasound Image Storage
+        ]
+
+    def processStart(self, inputRootDir, outputRootDir):
+        self.seriesInstanceUidAndInstanceNumberToNewSeriesInstanceUidMap = {}
+
+    def processDataSet(self, ds):
+        import pydicom
+
+        # Return if this is not an ultrasound series
+        for tag in self.requiredTags:
+            if not hasattr(ds, tag):
+                return
+        if ds.SOPClassUID not in self.supportedSOPClassUIDs:
+            return
+
+        # If the image is JPEG-compressed then
+        if ds.file_meta.TransferSyntaxUID == pydicom.uid.JPEGBaseline8Bit:
+            if ds.PhotometricInterpretation == "RGB":
+                self.addLog("Compressed JPEG image was found with RGB photometric interpretation. Changed it to YBR_FULL_422.")
+                ds.PhotometricInterpretation = "YBR_FULL_422"
 
 
 #
