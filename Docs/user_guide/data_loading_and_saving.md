@@ -127,6 +127,7 @@ Readers may support 2D, 3D, and 4D images of various types, such as scalar, vect
 - OpenIGTLink extension:
   - **PLUS toolkit configuration file** (.plus.xml): configuration file for real-time data acquisition from imaging and tracking devices and various sensors
 - Sandbox extension:
+  - - [**NumPy array**](https://numpy.org/devdocs/reference/generated/numpy.lib.format.html#npy-format) (.npy, .npz, reading only): read an array of 1 to 5 dimensions into an image. Axis order for 1D-3D: K, J, I; for 4D: K, J, I, component; for 5D: time, K, J, I, component.
   - **Topcon OCT image file** (.fda, reading only)
 
 ### Models
