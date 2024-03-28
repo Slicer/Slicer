@@ -206,11 +206,9 @@ adding a playback button using [this free service](https://addplaybuttontoimage.
 - Complete the [extension submission checklist](https://github.com/Slicer/ExtensionsIndex/blob/main/.github/PULL_REQUEST_TEMPLATE.md#todo-list-for-submitting-a-new-extension)) then submit it to the Slicer Extensions Index:
 - Submit the extension to the Extensions Index:
   - Fork ExtensionIndex repository on GitHub by clicking ''Fork'' button on the [Slicer Extensions Index](https://github.com/Slicer/ExtensionsIndex) page
-  - Create an [extension description (s4ext) file](#extension-description-file)
-    - If the extension was built then you can find the automatically generated extension description in the build folder
-    - If the extension was not built then create the extension description file manually, using a text editor
-  - Add your .s4ext file to your forked repository: it can be done using a git client or simply by clicking ''Upload files'' button
-    - To make the extension appear in the latest Slicer Preview Release: upload the file into the `master` branch.
+  - Create an [extension catalog entry file (json)](#extension-catalog-entry-file)
+  - Add your `.json` file to your forked repository: it can be done using a git client or simply by clicking ''Upload files'' button
+    - To make the extension appear in the latest Slicer Preview Release: upload the file into the `main` branch.
     - To make the extension appear in the latest Slicer Stable Release: upload the file into the branch corresponding to the stable release version, for example: `4.10`.
   - Create a pull request: by clicking ''Create pull request'' button
   - Follow the instructions in the pull request template
@@ -227,7 +225,54 @@ After installing an extension, the directories are added to revision-specific se
 - Folders containing modules bundled within an extension are added to Modules / AdditionalPaths. This ensures that libraries associated with modules are found.
 - Folders containing third-party dynamic libraries, Python libraries, etc. are added to LibraryPaths, Paths, PYTHONPATH, QT_PLUGIN_PATH. This ensures that libraries associated with modules can be successfully loaded.
 
+(extension-catalog-entry-file)=
+## Extension catalog entry file
+
+An extension catalog entry file is a JSON file describing how to build and package a Slicer extension.
+
+It is named after the extension name (e.g `ExtensionName.json`) and may include the following entries:
+
+
+```{list-table}
+:header-rows: 1
+
+* - Name
+  - Description
+  - Required
+* - category
+  - Extension category.
+  - Y
+* - scm_url
+  - Read-only url used to checkout the extension source code.
+  - Y
+* - scm_revision
+  - Revision allowing to checkout the expected source code.
+  - N
+* - scm_type
+  - Type of revision control system. Default to `git`.
+  - N
+* - build_dependencies
+  - List of extensions required to build this extension. For example: `["extensionA", "extensionB"]`.
+  - N
+* - build_subdirectory
+  - Name of the inner build directory in case of superbuild based extension. Default to `.`.
+  - N
+* - enabled
+  - Specify if the extension should be enabled after its installation. Valid values are `true` (default) = enabled; `false` = disabled.
+  - N
+```
+
+The full schema for the extension catalog entry file is below:
+
+```{jsonschema} ../../Schema/slicer-extension-catalog-entry-schema-v1.0.0.json
+```
+
+(extension-description-file)=
 ## Extension description file
+
+:::{warning}
+This file is used internally by [](#extensions-build-system) and it has been superseded by [](#extension-catalog-entry-file).
+:::
 
 An extension description file is a text file with `s4ext` extension allowing to specify metadata associated with an extensions.
 
@@ -323,7 +368,7 @@ Until August 2021, a Midas-based server at `https://slicer.kitware.com/midas3` w
 
 ## Extensions Index
 
-The ExtensionsIndex is a repository containing a list of [extension description files](#extension-description-file) `*.s4ext` used by the Slicer [Extensions build system](#extensions-build-system) to build, test, package and upload extensions on the [extensions server](#extensions-server).
+The ExtensionsIndex is a repository containing a list of [extension catalog entry files](#extension-catalog-entry-file) `*.json` used by the Slicer [Extensions build system](#extensions-build-system) to build, test, package and upload extensions on the [extensions server](#extensions-server).
 
 The ExtensionsIndex is hosted on GitHub: <https://github.com/Slicer/ExtensionsIndex>
 
@@ -331,6 +376,7 @@ Each branch of the repository contains extension description files that correspo
 
 Extension developers have to make sure that the extension description in each branch of the Extensions index is compatible with the corresponding Slicer version. Extension developers often create the same branches (`main`, `4.11`, `4.13`, ...) in their repository and they specify this branch name in the extensions descriptor file.
 
+(extensions-build-system)=
 ## Extensions build system
 
 The extensions build system allows to drive the build, test, packaging and upload of Slicer extensions.
@@ -616,7 +662,7 @@ endif()
 
 if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_NAME EmptyExtensionTemplate)
-  set(EXTENSION_HOMEPAGE "https://www.slicer.org/wiki/Documentation/Nightly/Extensions/EmptyExtensionTemplate")  set(EXTENSION_CATEGORY "Examples")
+  set(EXTENSION_HOMEPAGE "https://www.slicer.org/wiki/Documentation/Nightly/Extensions/EmptyExtensionTemplate")
   set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
   set(EXTENSION_DESCRIPTION "This is an example of extension bundling N module(s)")
   set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/EmptyExtensionTemplate/EmptyExtensionTemplate.png?revision=21746&view=co")
@@ -644,7 +690,7 @@ find_package(Slicer COMPONENTS ConfigurePrerequisites)
 
 project(EmptyExtensionTemplate)
 
-set(EXTENSION_HOMEPAGE "https://www.slicer.org/wiki/Documentation/Nightly/Extensions/EmptyExtensionTemplate")set(EXTENSION_CATEGORY "Examples")
+set(EXTENSION_HOMEPAGE "https://www.slicer.org/wiki/Documentation/Nightly/Extensions/EmptyExtensionTemplate")
 set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
 set(EXTENSION_DESCRIPTION "This is an example of empty extension")
 set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/EmptyExtensionTemplate/EmptyExtensionTemplate.png?revision=21746&view=co")

@@ -456,19 +456,16 @@ class ExtensionWizardWidget:
 
         dlg = EditExtensionMetadataDialog(self.parent.window())
         dlg.project = xp.project
-        dlg.category = xd.category
         dlg.description = xd.description
         dlg.contributors = xd.contributors
 
         if dlg.exec_() == qt.QDialog.Accepted:
             # Update cached metadata
-            xd.category = dlg.category
             xd.description = dlg.description
             xd.contributors = dlg.contributors
 
             # Write changes to extension project file (CMakeLists.txt)
             xp.project = dlg.project
-            xp.setValue("EXTENSION_CATEGORY", xd.category)
             xp.setValue("EXTENSION_DESCRIPTION", xd.description)
             xp.setValue("EXTENSION_CONTRIBUTORS", xd.contributors)
             xp.save()
