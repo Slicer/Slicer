@@ -13,6 +13,9 @@ import SlicerWizard.Utilities
 
 from ExtensionWizardLib import *
 
+from slicer.i18n import tr as _
+from slicer.i18n import translate
+
 
 # -----------------------------------------------------------------------------
 def _settingsList(settings, key, convertToAbsolutePaths=False):
@@ -41,17 +44,17 @@ def _settingsList(settings, key, convertToAbsolutePaths=False):
 class ExtensionWizard:
     # ---------------------------------------------------------------------------
     def __init__(self, parent):
-        parent.title = "Extension Wizard"
+        parent.title = _("Extension Wizard")
         parent.icon = qt.QIcon(":/Icons/Medium/ExtensionWizard.png")
-        parent.categories = ["Developer Tools"]
+        parent.categories = [translate("qSlicerAbstractCoreModule", "Developer Tools")]
         parent.dependencies = []
         parent.contributors = ["Matthew Woehlke (Kitware)"]
-        parent.helpText = """
+        parent.helpText = _("""
 This module provides tools to create and manage extensions from within Slicer.
-"""
-        parent.acknowledgementText = """
+""")
+        parent.acknowledgementText = _("""
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.
-"""
+""")
         self.parent = parent
 
         self.settingsPanel = SettingsPanel()
@@ -122,13 +125,13 @@ class ExtensionWizardWidget:
         # Tools Area
         #
         self.toolsCollapsibleButton = ctk.ctkCollapsibleButton()
-        self.toolsCollapsibleButton.text = "Extension Tools"
+        self.toolsCollapsibleButton.text = _("Extension Tools")
         self.layout.addWidget(self.toolsCollapsibleButton)
 
-        self.createExtensionButton = createToolButton("Create Extension")
+        self.createExtensionButton = createToolButton(_("Create Extension"))
         self.createExtensionButton.connect("clicked(bool)", self.createExtension)
 
-        self.selectExtensionButton = createToolButton("Select Extension")
+        self.selectExtensionButton = createToolButton(_("Select Extension"))
         self.selectExtensionButton.connect("clicked(bool)", self.selectExtension)
 
         toolsLayout = qt.QVBoxLayout(self.toolsCollapsibleButton)
@@ -139,7 +142,7 @@ class ExtensionWizardWidget:
         # Editor Area
         #
         self.editorCollapsibleButton = ctk.ctkCollapsibleButton()
-        self.editorCollapsibleButton.text = "Extension Editor"
+        self.editorCollapsibleButton.text = _("Extension Editor")
         self.editorCollapsibleButton.enabled = False
         self.editorCollapsibleButton.collapsed = True
         self.layout.addWidget(self.editorCollapsibleButton)
@@ -154,19 +157,19 @@ class ExtensionWizardWidget:
         self.extensionContentsView.sortingEnabled = True
         self.extensionContentsView.hideColumn(3)
 
-        self.createExtensionModuleButton = createToolButton("Add Module to Extension")
+        self.createExtensionModuleButton = createToolButton(_("Add Module to Extension"))
         self.createExtensionModuleButton.connect("clicked(bool)",
                                                  self.createExtensionModule)
 
-        self.editExtensionMetadataButton = createToolButton("Edit Extension Metadata")
+        self.editExtensionMetadataButton = createToolButton(_("Edit Extension Metadata"))
         self.editExtensionMetadataButton.connect("clicked(bool)",
                                                  self.editExtensionMetadata)
 
         editorLayout = qt.QFormLayout(self.editorCollapsibleButton)
-        editorLayout.addRow("Name:", self.extensionNameField)
-        editorLayout.addRow("Location:", self.extensionLocationField)
-        editorLayout.addRow("Repository:", self.extensionRepositoryField)
-        editorLayout.addRow("Contents:", self.extensionContentsView)
+        editorLayout.addRow(_("Name:"), self.extensionNameField)
+        editorLayout.addRow(_("Location:"), self.extensionLocationField)
+        editorLayout.addRow(_("Repository:"), self.extensionRepositoryField)
+        editorLayout.addRow(_("Contents:"), self.extensionContentsView)
         editorLayout.addRow(self.createExtensionModuleButton)
         editorLayout.addRow(self.editExtensionMetadataButton)
 
@@ -186,7 +189,7 @@ class ExtensionWizardWidget:
             try:
                 self.templateManager.addPath(builtinPath)
             except:
-                qt.qWarning("failed to add built-in template path %r" % builtinPath)
+                qt.qWarning(_("failed to add built-in template path %r") % builtinPath)
                 qt.qWarning(traceback.format_exc())
 
         # Read base template paths
@@ -195,7 +198,7 @@ class ExtensionWizardWidget:
             try:
                 self.templateManager.addPath(path)
             except:
-                qt.qWarning("failed to add template path %r" % path)
+                qt.qWarning(_("failed to add template path %r") % path)
                 qt.qWarning(traceback.format_exc())
 
         # Read per-category template paths
@@ -206,13 +209,13 @@ class ExtensionWizardWidget:
                     self.templateManager.addCategoryPath(c, path)
                 except:
                     mp = (c, path)
-                    qt.qWarning("failed to add template path %r for category %r" % mp)
+                    qt.qWarning(_("failed to add template path %r for category %r") % mp)
                     qt.qWarning(traceback.format_exc())
 
     # ---------------------------------------------------------------------------
     def createExtension(self):
-        dlg = CreateComponentDialog("extension", self.parent.window())
-        dlg.setTemplates(self.templateManager.templates("extensions"))
+        dlg = CreateComponentDialog(_("extension"), self.parent.window())
+        dlg.setTemplates(self.templateManager.templates(_("extensions")))
 
         while dlg.exec_() == qt.QDialog.Accepted:
             # If the selected destination is in a repository then use the root of that repository
@@ -240,12 +243,12 @@ class ExtensionWizardWidget:
                                       " directory containing CMakeLists.txt file at '%s'" % dlg.destination)
 
                 path = self.templateManager.copyTemplate(
-                    destination, "extensions",
+                    destination, _("extensions"),
                     dlg.componentType, dlg.componentName,
                     createInSubdirectory, requireEmptyDirectory)
 
             except:
-                if not slicer.util.confirmRetryCloseDisplay("An error occurred while trying to create the extension.",
+                if not slicer.util.confirmRetryCloseDisplay(_("An error occurred while trying to create the extension."),
                                                             parent=self.parent.window(), detailedText=traceback.format_exc()):
                     return
 
@@ -260,7 +263,7 @@ class ExtensionWizardWidget:
     def selectExtension(self, path=None):
         if path is None or isinstance(path, bool):
             path = qt.QFileDialog.getExistingDirectory(
-                self.parent.window(), "Select Extension...",
+                self.parent.window(), _("Select Extension..."),
                 self.extensionLocation)
 
         if not len(path):
@@ -286,7 +289,7 @@ class ExtensionWizardWidget:
             xp = SlicerWizard.ExtensionProject(path)
 
         except:
-            slicer.util.errorDisplay("Failed to open extension '%s'." % path, parent=self.parent.window(),
+            slicer.util.errorDisplay(_("Failed to open extension '%s'.") % path, parent=self.parent.window(),
                                      detailedText=traceback.format_exc(), standardButtons=qt.QMessageBox.Close)
             return False
 
@@ -298,13 +301,13 @@ class ExtensionWizardWidget:
         self.extensionNameField.text = xp.project
         self.extensionLocationField.text = path
 
-        if xd.scmurl == "NA":
+        if xd.scmurl == _("NA"):
             if repo is None:
-                repoText = "(none)"
-            elif hasattr(repo, "remotes"):
-                repoText = "(local git repository)"
+                repoText = _("(none)")
+            elif hasattr(repo, _("remotes")):
+                repoText = _("(local git repository)")
             else:
-                repoText = "(unknown local repository)"
+                repoText = _("(unknown local repository)")
 
             self.extensionRepositoryField.clear()
             self.extensionRepositoryField.placeholderText = repoText
@@ -336,7 +339,7 @@ class ExtensionWizardWidget:
             # Get list of modules in specified path
             modules = ModuleInfo.findModules(path, depth)
         elif modules is None:
-            raise RuntimeError("loadModules require 'path' or 'modules' input")
+            raise RuntimeError("loadModules require 'path' or _('modules') input")
 
         # Determine which modules in above are not already loaded
         factory = slicer.app.moduleManager().factoryManager()
@@ -355,7 +358,7 @@ class ExtensionWizardWidget:
                 # Add module(s) to permanent search paths, if requested
                 if dlg.addToSearchPaths:
                     settings = slicer.app.revisionUserSettings()
-                    rawSearchPaths = list(_settingsList(settings, "Modules/AdditionalPaths", convertToAbsolutePaths=True))
+                    rawSearchPaths = list(_settingsList(settings, _("Modules/AdditionalPaths"), convertToAbsolutePaths=True))
                     searchPaths = [qt.QDir(path) for path in rawSearchPaths]
                     modified = False
 
@@ -368,11 +371,11 @@ class ExtensionWizardWidget:
                             modified = True
 
                     if modified:
-                        settings.setValue("Modules/AdditionalPaths", slicer.app.toSlicerHomeRelativePaths(rawSearchPaths))
+                        settings.setValue(_("Modules/AdditionalPaths"), slicer.app.toSlicerHomeRelativePaths(rawSearchPaths))
 
                 # Enable developer mode (shows Reload&Test section, etc.), if requested
                 if dlg.enableDeveloperMode:
-                    qt.QSettings().setValue("Developer/DeveloperMode", "true")
+                    qt.QSettings().setValue(_("Developer/DeveloperMode"), _("true"))
 
                 # Register requested module(s)
                 failed = []
@@ -384,25 +387,25 @@ class ExtensionWizardWidget:
 
                 if len(failed):
                     if len(failed) > 1:
-                        text = "The following modules could not be registered:"
+                        text = _("The following modules could not be registered:")
                     else:
-                        text = "The '%s' module could not be registered:" % failed[0].key
+                        text = _("The '%s' module could not be registered:") % failed[0].key
 
                     failedFormat = "<ul><li>%(key)s<br/>(%(path)s)</li></ul>"
                     detailedInformation = "".join(
                         [failedFormat % m.__dict__ for m in failed])
 
-                    slicer.util.errorDisplay(text, parent=parent, windowTitle="Module loading failed",
+                    slicer.util.errorDisplay(text, parent=parent, windowTitle=_("Module loading failed"),
                                              standardButtons=qt.QMessageBox.Close, informativeText=detailedInformation)
 
                     return
 
                 # Instantiate and load requested module(s)
                 if not factory.loadModules([module.key for module in modulesToLoad]):
-                    text = ("The module factory manager reported an error. "
+                    text = _("The module factory manager reported an error. "
                             "One or more of the requested module(s) and/or "
                             "dependencies thereof may not have been loaded.")
-                    slicer.util.errorDisplay(text, parent=parent, windowTitle="Error loading module(s)",
+                    slicer.util.errorDisplay(text, parent=parent, windowTitle=_("Error loading module(s)"),
                                              standardButtons=qt.QMessageBox.Close)
 
     # ---------------------------------------------------------------------------
@@ -412,20 +415,20 @@ class ExtensionWizardWidget:
             # against that just in case...
             return
 
-        dlg = CreateComponentDialog("module", self.parent.window())
-        dlg.setTemplates(self.templateManager.templates("modules"),
-                         default="scripted")
+        dlg = CreateComponentDialog(_("module"), self.parent.window())
+        dlg.setTemplates(self.templateManager.templates(_("modules")),
+                         default=_("scripted"))
         dlg.showDestination = False
 
         while dlg.exec_() == qt.QDialog.Accepted:
             name = dlg.componentName
 
             try:
-                self.templateManager.copyTemplate(self.extensionLocation, "modules",
+                self.templateManager.copyTemplate(self.extensionLocation, _("modules"),
                                                   dlg.componentType, name)
 
             except:
-                if not slicer.util.confirmRetryCloseDisplay("An error occurred while trying to create the module.",
+                if not slicer.util.confirmRetryCloseDisplay(_("An error occurred while trying to create the module."),
                                                             parent=self.parent.window(),
                                                             detailedText=traceback.format_exc()):
                     return
@@ -437,12 +440,12 @@ class ExtensionWizardWidget:
                 self.extensionProject.save()
 
             except:
-                text = "An error occurred while adding the module to the extension."
-                detailedInformation = "The module has been created, but the extension" \
-                                      " CMakeLists.txt could not be updated. In order" \
-                                      " to include the module in the extension build," \
-                                      " you will need to update the extension" \
-                                      " CMakeLists.txt by hand."
+                text = _("An error occurred while adding the module to the extension.")
+                detailedInformation = _("The module has been created, but the extension" \
+                                        " CMakeLists.txt could not be updated. In order" \
+                                        " to include the module in the extension build," \
+                                        " you will need to update the extension" \
+                                        " CMakeLists.txt by hand.")
                 slicer.util.errorDisplay(text, parent=self.parent.window(), detailedText=traceback.format_exc(),
                                          standardButtons=qt.QMessageBox.Close, informativeText=detailedInformation)
 
@@ -492,8 +495,8 @@ class ExtensionWizardFileDialog:
 
     def __init__(self, qSlicerFileDialog):
         self.qSlicerFileDialog = qSlicerFileDialog
-        qSlicerFileDialog.fileType = "Python scripted modules"
-        qSlicerFileDialog.description = "Add Python scripted modules to the application"
+        qSlicerFileDialog.fileType = _("Python scripted modules")
+        qSlicerFileDialog.description = _("Add Python scripted modules to the application")
         qSlicerFileDialog.action = slicer.qSlicerFileDialog.Read
         self.foundModules = []
 
