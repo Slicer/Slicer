@@ -45,7 +45,7 @@ During registration of models containing surface meshes, only the boundaries can
 Manual and semi-automatic registration methods described above are applicable to model registration. The following modules are recommended for automatic registration:
 - [Segment registration (in SegmentRegistration extension)](https://github.com/SlicerRt/SegmentRegistration#segment-registration): this module can be used after importing a model to a segmentation node. See details in the section above.
 - [Model registration (in SlicerIGT extension)](https://github.com/SlicerIGT/SlicerIGT#model-registration): uses iterative closest points. this method tends to get stuck in a local optimum, therefore it is important to start it from a good initial position (e.g., computed using manual or semi-automatic registration).
-- [ALPACA automatic surface registration method in SlicerMorph extension](https://github.com/SlicerMorph/SlicerMorph/tree/master/Docs/ALPACA): more robust (can converge from farther initial registration error, has higher chance of finding global optimum) than iterative closest point based algorithms.
+- [FastModelAlign automatic surface registration method in SlicerMorph extension](https://github.com/SlicerMorph/Tutorials/tree/main/FastModelAlign): more robust (can converge from farther initial registration error, has higher chance of finding global optimum) than iterative closest point based algorithms. Allows rigid (with or without scaling) and affine registration of models.
 
 ## More information
 
