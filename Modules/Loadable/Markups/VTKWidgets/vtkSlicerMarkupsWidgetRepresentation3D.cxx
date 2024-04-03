@@ -1196,7 +1196,6 @@ double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(doub
   return viewScaleFactorMmPerPixel;
 }
 
-
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
 {
@@ -1206,9 +1205,10 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
   {
     return;
   }
-  if (!this->Renderer->GetRenderWindow()->GetGenericContext())
+
+  if (this->Renderer->GetRenderWindow()->GetNeverRendered())
   {
-    // Calling GetScreenSize() without a context set will cause a crash.
+    // In VR, calling GetScreenSize() without rendering can cause a crash.
     return;
   }
 
