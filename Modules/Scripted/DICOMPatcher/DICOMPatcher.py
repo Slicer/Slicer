@@ -130,7 +130,7 @@ class DICOMPatcherWidget(ScriptedLoadableModuleWidget):
         self.specifyCharacterSetCheckBox.checked = False
         self.specifyCharacterSetCheckBox.setToolTip(
             "If checked, then SpecificCharacterSet is set to the specified value in all DICOM files"
-            " where the character set is not specified already. It is recommended to enable this if patient name does not show up correctly.")
+            " where the character set is not UTF8 (ISO_IR 192) already. It is recommended to enable this if patient name does not show up correctly.")
         characterSetLayout.addWidget(self.specifyCharacterSetCheckBox)
 
         self.specifyCharacterSetLineEdit = qt.QLineEdit()
@@ -518,12 +518,21 @@ class UseCharacterSet(DICOMPatcherRule):
     """
 
     def processDataSet(self, ds):
-        if not self.parameters["CharacterSet"]:
+        characterSet = self.parameters.get("CharacterSet")
+        if not characterSet:
             raise RuntimeError("'CharacterSet' parameter must be specified")
-        if not hasattr(ds, "SpecificCharacterSet"):
-            ds.SpecificCharacterSet = self.parameters["CharacterSet"]
-            ds.decode()
-            ds.SpecificCharacterSet = "ISO_IR 192"
+
+        if hasattr(ds, "SpecificCharacterSet") and ds.SpecificCharacterSet == "ISO_IR 192":
+            # UTF8 is assumed to be correct (the software that created the instance
+            # is aware of UTF8), therefore character set is not modified
+            self.addLog("Character set is already UTF8 (ISO_IR 192), keep it as is.")
+            return
+
+        self.addLog(f"Set character set to {characterSet}.")
+        ds.SpecificCharacterSet = characterSet
+        ds.decode()
+        ds.SpecificCharacterSet = "ISO_IR 192"
+        slicer.ds = ds
 
 
 #
