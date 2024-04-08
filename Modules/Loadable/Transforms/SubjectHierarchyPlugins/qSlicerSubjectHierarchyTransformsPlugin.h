@@ -127,6 +127,7 @@ protected slots:
 
   /// Toggle interaction box
   void toggleInteractionBox(bool);
+  void toggleCurrentItemHandleTypeVisibility(bool);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyTransformsPluginPrivate> d_ptr;

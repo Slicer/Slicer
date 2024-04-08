@@ -215,7 +215,7 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::init()
 
   this->HandleVisibilityAction = new QAction(qSlicerSubjectHierarchyMarkupsPlugin::tr("Interaction options"));
   this->HandleVisibilityAction->setObjectName("HandleInteractionOptions");
-  q->setActionPosition(this->HandleVisibilityAction, interactionHandlesSection);
+  q->setActionPosition(this->HandleVisibilityAction, interactionHandlesSection, 0, 1);
   this->HandleVisibilityAction->setMenu(this->HandleVisibilityMenu);
 
   // Visibility menu
@@ -717,11 +717,13 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
   vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
   d->ToggleHandleInteractive->setVisible(displayNode != nullptr);
   d->HandleVisibilityAction->setVisible(displayNode != nullptr);
+  d->ToggleScaleHandleVisible->setVisible(displayNode->GetCanDisplayScaleHandles());
   if (displayNode)
   {
     d->ToggleHandleInteractive->setChecked(displayNode->GetHandlesInteractive());
     d->ToggleTranslateHandleVisible->setChecked(displayNode->GetTranslationHandleVisibility());
     d->ToggleRotateHandleVisible->setChecked(displayNode->GetRotationHandleVisibility());
+    d->ToggleScaleHandleVisible->setChecked(displayNode->GetScaleHandleVisibility());
     d->ToggleScaleHandleVisible->setChecked(displayNode->GetScaleHandleVisibility());
   }
 }
@@ -762,7 +764,8 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showVisibilityContextMenuActionsForIt
     vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
     d->ToggleCurrentItemHandleInteractive->setVisible(displayNode != nullptr);
     d->CurrentItemHandleVisibilityAction->setVisible(displayNode != nullptr);
-    d->ToggleCurrentItemScaleHandleVisible->setVisible(vtkMRMLMarkupsROIDisplayNode::SafeDownCast(displayNode) != nullptr);
+    d->ToggleCurrentItemScaleHandleVisible->setVisible(vtkMRMLMarkupsROIDisplayNode::SafeDownCast(displayNode) != nullptr
+      || vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(displayNode) != nullptr);
     if (displayNode)
     {
       d->ToggleCurrentItemHandleInteractive->setChecked(displayNode->GetHandlesInteractive());
@@ -1120,7 +1123,21 @@ void qSlicerSubjectHierarchyMarkupsPlugin::toggleCurrentItemHandleTypeVisibility
 {
   Q_D(qSlicerSubjectHierarchyMarkupsPlugin);
 
-  vtkMRMLMarkupsNode* markupsNode = d->markupsNodeFromViewContextMenuEventData();
+  vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
+  if (!shNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
+    return;
+  }
+
+  vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
+  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  {
+    qCritical() << Q_FUNC_INFO << ": Invalid current item";
+    return;
+  }
+
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   if (!markupsNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to get markups node";
