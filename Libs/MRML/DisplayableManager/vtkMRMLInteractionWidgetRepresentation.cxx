@@ -1132,7 +1132,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateTranslationHandleOrientation(
   double viewDirection_World[3] = { 0.0, 0.0, 0.0 };
   double viewDirection_Handle[3] = { 0.0, 0.0, 0.0 };
   double viewUp_World[3] = { 0.0, 1.0, 0.0 };
-  double viewUp_Handle[3] = { 0.0, 0.0, 0.0 };
+  double viewUp_Handle[3] = { 0.0, 1.0, 0.0 };
   if (this->GetSliceNode())
   {
     double viewUp[4] = { 0.0, 1.0, 0.0, 0.0 };
