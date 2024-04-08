@@ -10,7 +10,9 @@
 
 ## I want to report a problem
 
-If you are not sure if Slicer behaves incorrectly or you are not using it properly then [ask about it on the Slicer Forum](https://discourse.slicer.org/c/support) (in the `Support` category). If you are _sure_ that Slicer is not working as intended then [submit a bug report in the Slicer issue tracker](https://github.com/Slicer/Slicer/issues/new?assignees=&labels=type%3Abug&template=bug_report.md).
+We are constantly making fixes and improvements, therefore before you report any issues, check first if it is already fixed in the latest Slicer Preview Release.
+If you are not sure if Slicer behaves incorrectly or you are not using it properly then [ask about it on the Slicer Forum](https://discourse.slicer.org/c/support) (in the `Support` category).
+If you are _sure_ that Slicer is not working as intended then [submit a bug report in the Slicer issue tracker](https://github.com/Slicer/Slicer/issues/new?assignees=&labels=type%3Abug&template=bug_report.md).
 
 In your question/report provide all the information that is described in the [bug reporting template](https://github.com/Slicer/Slicer/blob/main/.github/ISSUE_TEMPLATE/bug_report.md#summary).
 
