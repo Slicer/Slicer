@@ -168,6 +168,17 @@ public:
   ///   from the regions found in the given anatomic context
   /// \return Success flag
   bool GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions);
+  /// Get number of anatomic regions in anatomic context.
+  /// Allows iterating through all anatomic regions in Python.
+  int GetNumberOfRegionsInAnatomicContext(std::string anatomicContextName);
+  /// Get anatomic region by index.
+  /// Allows iterating through all anatomic regions in Python.
+  /// \param anatomicContextName anatomic context name
+  /// \param regionIndex index of region to return, must be between 0 and GetNumberOfRegionsInAnatomicContext(...)-1
+  /// \param regionObject found anatomical region
+  /// \return Success flag
+  bool GetNthRegionInAnatomicContext(std::string anatomicContextName, int regionIndex, vtkSlicerTerminologyType* regionObject);
+
   /// Get all region names (codeMeaning) in an anatomic context
   /// \return Success flag
   bool FindRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions, std::string search);
@@ -186,6 +197,18 @@ public:
   /// \return Success flag
   bool GetRegionModifierInAnatomicRegion(std::string anatomicContextName,
     CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier);
+  /// Get number of anatomic regions in anatomic context.
+  /// Allows iterating through anatomic region modifiers in Python.
+  int GetNumberOfRegionModifierInAnatomicRegion(std::string anatomicContextName, vtkSlicerTerminologyType* regionObject);
+  /// Get anatomic region by index.
+  /// Allows iterating through anatomic region modifiers in Python.
+  /// \param anatomicContextName anatomic context name
+  /// \param regionObject anatomical region
+  /// \param regionModifierIndex index of region to return, must be between 0 and GetNumberOfRegionsInAnatomicContext(...)-1
+  /// \param regionModifier found region modifier object
+  /// \return Success flag
+  bool GetNthRegionModifierInAnatomicRegion(std::string anatomicContextName, vtkSlicerTerminologyType* regionObject,
+    int regionModifierIndex, vtkSlicerTerminologyType* regionModifier);
 
   /// Find terminology type or type modifier based on '3dSlicerLabel' attribute
   /// \param terminologyName Terminology context in which the attribute is looked for
