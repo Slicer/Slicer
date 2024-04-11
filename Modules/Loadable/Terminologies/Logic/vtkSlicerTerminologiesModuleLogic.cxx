@@ -1776,6 +1776,40 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionsInAnatomicContext(std::string 
 }
 
 //---------------------------------------------------------------------------
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionsInAnatomicContext(std::string anatomicContextName)
+{
+    std::vector<CodeIdentifier> regions;
+    if (!this->GetRegionsInAnatomicContext(anatomicContextName, regions))
+    {
+      return 0;
+    }
+    return regions.size();
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::GetNthRegionInAnatomicContext(std::string anatomicContextName, int regionIndex, vtkSlicerTerminologyType* regionObject)
+{
+  if (!regionObject)
+  {
+    vtkErrorMacro("GetNthRegionInAnatomicContext failed: regionObject is invalid)");
+    return false;
+  }
+  std::vector<CodeIdentifier> regions;
+  if (!this->GetRegionsInAnatomicContext(anatomicContextName, regions))
+  {
+    return false;
+  }
+  if (regionIndex < 0 || regionIndex >= regions.size())
+  {
+    vtkErrorMacro("GetNthRegionInAnatomicContext failed: region index of " << regionIndex << " is out of range"
+      << " (number of regions: " << regions.size() << ")");
+    return false;
+  }
+
+  return this->GetRegionInAnatomicContext(anatomicContextName, regions[regionIndex], regionObject);
+}
+
+//---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::FindRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions, std::string search)
 {
   regions.clear();
@@ -1899,6 +1933,50 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierInAnatomicRegion(std::s
 
   // Region modifier with specified name found
   return this->Internal->PopulateTerminologyTypeFromJson(regionModifierObject, regionModifier);
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInAnatomicRegion(
+  std::string anatomicContextName, vtkSlicerTerminologyType* regionObject)
+{
+  if (!regionObject)
+  {
+    vtkErrorMacro("GetNumberOfRegionModifierInAnatomicRegion failed: regionObject is invalid)");
+    return 0;
+  }
+  CodeIdentifier regionId(regionObject->GetCodingSchemeDesignator(), regionObject->GetCodeValue(), regionObject->GetCodeMeaning());
+  std::vector<CodeIdentifier> regionModifiers;
+  if (!this->GetRegionModifiersInAnatomicRegion(anatomicContextName, regionId, regionModifiers))
+  {
+    return 0;
+  }
+  return regionModifiers.size();
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInAnatomicRegion(
+  std::string anatomicContextName, vtkSlicerTerminologyType* regionObject, int regionModifierIndex, vtkSlicerTerminologyType* regionModifier)
+{
+  if (!regionObject)
+  {
+    vtkErrorMacro("GetNthRegionInAnatomicContext failed: regionObject is invalid)");
+    return false;
+  }
+  CodeIdentifier regionId(regionObject->GetCodingSchemeDesignator(), regionObject->GetCodeValue(), regionObject->GetCodeMeaning());
+  std::vector<CodeIdentifier> regionModifiers;
+  if (!this->GetRegionModifiersInAnatomicRegion(anatomicContextName, regionId, regionModifiers))
+  {
+    return false;
+  }
+
+  if (regionModifierIndex < 0 || regionModifierIndex >= regionModifiers.size())
+  {
+    vtkErrorMacro("GetNthRegionModifierInAnatomicRegion failed: regionModifier index of " << regionModifierIndex << " is out of range"
+      << " (number of regionModifiers: " << regionModifiers.size() << ")");
+    return false;
+  }
+  CodeIdentifier modifierId = regionModifiers[regionModifierIndex];
+  return this->GetRegionModifierInAnatomicRegion(anatomicContextName, regionId, modifierId, regionModifier);
 }
 
 //---------------------------------------------------------------------------
