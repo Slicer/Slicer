@@ -51,13 +51,12 @@ jobs:
           import sys
 
           for line in sys.stdin:
-              match = re.match(r"\[https://github.com/([^/]+/[^/]+)\] updating (v[\d.]+) -> (v[\d.]+)\.", line.strip())
+              match = re.match(r"\[https://github.com/([^/]+/[^/]+)\] updating (v[\d.]+) -> (v[\d.]+)", line.strip())
               if match:
                   repo_url = match.group(1)
                   old_version = match.group(2)
                   new_version = match.group(3)
-                  repo_name = repo_url.split('/')[-1]
-                  print(f"- [{repo_url}: {old_version} -> {new_version}](pre-commit/{repo_name}@{old_version}...{new_version})")
+                  print(f"- [{repo_url}: {old_version} -> {new_version}](https://github.com/{repo_url}/compare/{old_version}...{new_version})")
           EOF
 
       - name: Parse autoupdate output
