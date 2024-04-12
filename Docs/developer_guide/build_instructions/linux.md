@@ -56,8 +56,8 @@ Install the development tools and the support libraries:
 
 ```console
 sudo apt update && sudo apt install git git-lfs build-essential \
-  qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
-  qtbase5-private-dev libqt5x11extras5-dev libxt-dev
+  libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
+  qtscript5-dev libxt-dev
 ```
 
 Install CMake manually by downloading CMake 3.25.3 or higher from the [CMake website](https://cmake.org/download/)
@@ -76,7 +76,8 @@ Install the development tools and the support libraries:
 ```console
 sudo apt update && sudo apt install git build-essential \
   cmake cmake-curses-gui cmake-qt-gui \
-  qtbase5-dev qt5-qmake libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev
+  libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
+  qtbase5-dev qt5-qmake
 ```
 
 ### Ubuntu 21.10 (Impish Indri)
@@ -84,9 +85,10 @@ sudo apt update && sudo apt install git build-essential \
 Install the development tools and the support libraries:
 
 ```console
-sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui cmake-qt-gui \
-  qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
-  qtbase5-private-dev libqt5x11extras5-dev libxt-dev libssl-dev
+sudo apt update && sudo apt install git build-essential \
+  cmake cmake-curses-gui cmake-qt-gui \
+  libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
+  qtscript5-dev libxt-dev libssl-dev
 ```
 
 ### Ubuntu 20.04 (Focal Fossa)
@@ -100,9 +102,10 @@ To use Qt 5.15.2, we recommend you download and install following [these instruc
 Install the development tools and the support libraries:
 
 ```console
-sudo apt update && sudo apt install git build-essential cmake cmake-curses-gui cmake-qt-gui \
-  qt5-default qtmultimedia5-dev qttools5-dev libqt5xmlpatterns5-dev libqt5svg5-dev qtwebengine5-dev qtscript5-dev \
-  qtbase5-private-dev libqt5x11extras5-dev libxt-dev
+sudo apt update && sudo apt install git build-essential \
+  cmake cmake-curses-gui cmake-qt-gui \
+  libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
+  qtscript5-dev libxt-dev qt5-default
 ```
 
 ### ArchLinux
