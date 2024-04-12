@@ -57,7 +57,7 @@ Install the development tools and the support libraries:
 ```console
 sudo apt update && sudo apt install git git-lfs build-essential \
   libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
-  qtscript5-dev libxt-dev
+  libxt-dev
 ```
 
 Install CMake manually by downloading CMake 3.25.3 or higher from the [CMake website](https://cmake.org/download/)
@@ -88,7 +88,7 @@ Install the development tools and the support libraries:
 sudo apt update && sudo apt install git build-essential \
   cmake cmake-curses-gui cmake-qt-gui \
   libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
-  qtscript5-dev libxt-dev libssl-dev
+  libxt-dev libssl-dev
 ```
 
 ### Ubuntu 20.04 (Focal Fossa)
@@ -105,7 +105,7 @@ Install the development tools and the support libraries:
 sudo apt update && sudo apt install git build-essential \
   cmake cmake-curses-gui cmake-qt-gui \
   libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
-  qtscript5-dev libxt-dev qt5-default
+  libxt-dev qt5-default
 ```
 
 ### ArchLinux
