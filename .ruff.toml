@@ -26,6 +26,7 @@ select = [
 #  "SIM",         # flake8-simplify
   "UP",          # pyupgrade
   "YTT",         # flake8-2020
+  "NPY201",      # numpy2-deprecation
 ]
 extend-ignore = [
   "E402",    # Module level import not at top of file
