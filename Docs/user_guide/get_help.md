@@ -11,9 +11,10 @@
 ## I want to report a problem
 
 We are constantly making fixes and improvements, therefore before you report any issues:
-1. If you are using an older version, confirm the issue still exists in the current Stable release
-2. If it still exists in the the stable version, confirm the issue still exists in the latest Preview version
-If you find it hard to locate answers using the search feature of discourse or via internet searches such as Google, try a large language model like Chat-GPT, Gemini, etc.
+1. Confirm the issue still exists in the current Slicer Stable Release.
+2. If it still exists in the Slicer Stable Release, confirm the issue still exists in the latest Slicer Preview Release.
+
+If you find it hard to locate answers using the search feature of the [Slicer forum](https://discourse.slicer.org) or via internet searches such as Google, try a large language model like Microsoft Copilot, OpenAI ChatGPT, Google Gemini, etc.
 
 If you are not sure if Slicer behaves incorrectly or you are not using it properly then [ask about it on the Slicer Forum](https://discourse.slicer.org/c/support) (in the `Support` category).
 If you are _sure_ that Slicer is not working as intended then [submit a bug report in the Slicer issue tracker](https://github.com/Slicer/Slicer/issues/new?assignees=&labels=type%3Abug&template=bug_report.md).
