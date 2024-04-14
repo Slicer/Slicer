@@ -63,6 +63,12 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         self.selectionStartPosition = None
         self.selectionEndPosition = None
 
+        # Threshold range can be set by clicking in slice views. When the effect (or derived effects, such
+        # as Local Threshold) is used programmatically in a custom module then it may be desirable to show
+        # the threshold preview glow, but not let the user modify the preset threshold by view interactions.
+        # In such cases, enableViewInteractions can be set to False.
+        self.enableViewInteractions = True
+
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
 
@@ -737,6 +743,9 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         # will be notified. In all the other segment editor widgets the local histogram will not be updated.
         # The behavior could be made more deterministic by storing a preferred segment editor node in the selection node
         # and not using the same segment editor node in multiple segment editor widgets.
+
+        if not self.enableViewInteractions:
+            return abortEvent
 
         masterImageData = self.scriptedEffect.sourceVolumeImageData()
         if masterImageData is None:
