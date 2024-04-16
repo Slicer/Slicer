@@ -189,7 +189,7 @@ class ExtensionWizardWidget:
             try:
                 self.templateManager.addPath(builtinPath)
             except:
-                qt.qWarning(_("failed to add built-in template path %r") % builtinPath)
+                qt.qWarning(_("failed to add built-in template {path} %r") % builtinPath)
                 qt.qWarning(traceback.format_exc())
 
         # Read base template paths
@@ -198,7 +198,7 @@ class ExtensionWizardWidget:
             try:
                 self.templateManager.addPath(path)
             except:
-                qt.qWarning(_("failed to add template path %r") % path)
+                qt.qWarning(_("failed to add template {path} %r") % path)
                 qt.qWarning(traceback.format_exc())
 
         # Read per-category template paths
@@ -243,7 +243,7 @@ class ExtensionWizardWidget:
                                       " directory containing CMakeLists.txt file at '%s'" % dlg.destination)
 
                 path = self.templateManager.copyTemplate(
-                    destination, _("extensions"),
+                    destination, "extensions",
                     dlg.componentType, dlg.componentName,
                     createInSubdirectory, requireEmptyDirectory)
 
@@ -301,7 +301,7 @@ class ExtensionWizardWidget:
         self.extensionNameField.text = xp.project
         self.extensionLocationField.text = path
 
-        if xd.scmurl == _("NA"):
+        if xd.scmurl == "NA":
             if repo is None:
                 repoText = _("(none)")
             elif hasattr(repo, _("remotes")):
@@ -339,7 +339,7 @@ class ExtensionWizardWidget:
             # Get list of modules in specified path
             modules = ModuleInfo.findModules(path, depth)
         elif modules is None:
-            raise RuntimeError("loadModules require 'path' or _('modules') input")
+            raise RuntimeError("loadModules require 'path' or 'modules' input")
 
         # Determine which modules in above are not already loaded
         factory = slicer.app.moduleManager().factoryManager()
@@ -358,7 +358,7 @@ class ExtensionWizardWidget:
                 # Add module(s) to permanent search paths, if requested
                 if dlg.addToSearchPaths:
                     settings = slicer.app.revisionUserSettings()
-                    rawSearchPaths = list(_settingsList(settings, _("Modules/AdditionalPaths"), convertToAbsolutePaths=True))
+                    rawSearchPaths = list(_settingsList(settings, "Modules/AdditionalPaths", convertToAbsolutePaths=True))
                     searchPaths = [qt.QDir(path) for path in rawSearchPaths]
                     modified = False
 
@@ -371,11 +371,11 @@ class ExtensionWizardWidget:
                             modified = True
 
                     if modified:
-                        settings.setValue(_("Modules/AdditionalPaths"), slicer.app.toSlicerHomeRelativePaths(rawSearchPaths))
+                        settings.setValue("Modules/AdditionalPaths", slicer.app.toSlicerHomeRelativePaths(rawSearchPaths))
 
                 # Enable developer mode (shows Reload&Test section, etc.), if requested
                 if dlg.enableDeveloperMode:
-                    qt.QSettings().setValue(_("Developer/DeveloperMode"), _("true"))
+                    qt.QSettings().setValue("Developer/DeveloperMode", "true")
 
                 # Register requested module(s)
                 failed = []
@@ -389,7 +389,8 @@ class ExtensionWizardWidget:
                     if len(failed) > 1:
                         text = _("The following modules could not be registered:")
                     else:
-                        text = _("The '%s' module could not be registered:") % failed[0].key
+                        # text = _("The '%s' module could not be registered:") % failed[0].key
+                        text = _("The {ExtensionWizard} module could not be registered").format(ExtensionWizard=failed[0].key)
 
                     failedFormat = "<ul><li>%(key)s<br/>(%(path)s)</li></ul>"
                     detailedInformation = "".join(
@@ -481,7 +482,7 @@ class ExtensionWizardWidget:
 
 
 #
-# ExtentsionWizardFileDialog
+#  ExtentsionWizardFileDialog
 #
 class ExtensionWizardFileDialog:
     """This specially named class is detected by the scripted loadable
