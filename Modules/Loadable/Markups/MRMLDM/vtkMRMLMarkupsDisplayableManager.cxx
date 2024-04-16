@@ -972,24 +972,22 @@ void vtkMRMLMarkupsDisplayableManager::Create()
   vtkRenderer* renderer = this->GetRenderer();
   vtkRenderWindow* renderWindow = renderer->GetRenderWindow();
 
-  // Do not add add the interaction widget if the displayable manager is associated with a VR render
-  // window. The interaction renderer instantiated below is not supported in VR.
-  if (renderWindow->IsA("vtkVRRenderWindow"))
-  {
-    return;
-  }
-
   if (renderWindow->GetNumberOfLayers() < INTERACTION_RENDERER_LAYER + 1)
   {
     renderWindow->SetNumberOfLayers(INTERACTION_RENDERER_LAYER + 1);
   }
 
-  this->InteractionRenderer = vtkSmartPointer<vtkRenderer>::New();
+  this->InteractionRenderer = vtkSmartPointer<vtkRenderer>::Take(renderer->NewInstance());
   this->InteractionRenderer->UseDepthPeelingOn();
   this->InteractionRenderer->InteractiveOff();
   this->InteractionRenderer->SetActiveCamera(renderer->GetActiveCamera());
   this->InteractionRenderer->SetLayer(INTERACTION_RENDERER_LAYER);
   renderWindow->AddRenderer(this->InteractionRenderer);
+  for (auto interactionWidget : this->Helper->MarkupsDisplayNodesToInteractionWidgets)
+  {
+    // Update the renderer of any interaction widgets that were already created.
+    interactionWidget.second->SetRenderer(this->InteractionRenderer);
+  }
 
   this->SetUpdateFromMRMLRequested(true);
 }
@@ -1041,7 +1039,7 @@ vtkSlicerMarkupsInteractionWidget* vtkMRMLMarkupsDisplayableManager::CreateInter
     vtkSlicerMarkupsLogic::SafeDownCast(this->GetMRMLApplicationLogic()->GetModuleLogic("Markups"));
   if (!markupsLogic)
   {
-    vtkErrorMacro("CreateWidget: invalid Markups logic.");
+    vtkErrorMacro("CreateInteractionWidget: invalid Markups logic.");
     return nullptr;
   }
 
@@ -1051,11 +1049,13 @@ vtkSlicerMarkupsInteractionWidget* vtkMRMLMarkupsDisplayableManager::CreateInter
   vtkSlicerMarkupsInteractionWidget* widget = widgetForMarkup ? widgetForMarkup->CreateInstance() : nullptr;
   if (!widget)
   {
-    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager::CreateWidget failed: cannot instantiate widget for markup " << markupsNode->GetMarkupType());
+    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager::CreateInteractionWidget failed: cannot instantiate widget for markup " << markupsNode->GetMarkupType());
     return nullptr;
   }
-  widget->SetRenderer(this->InteractionRenderer);
+
+  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
   widget->SetMRMLApplicationLogic(this->GetMRMLApplicationLogic());
+  widget->CreateDefaultRepresentation(markupsDisplayNode, viewNode, this->InteractionRenderer);
   return widget;
 }
 

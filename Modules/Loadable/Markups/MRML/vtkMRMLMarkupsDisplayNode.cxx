@@ -136,7 +136,7 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   }
   this->RotationHandleComponentVisibility[3] = false; // Hide view plane rotation by default
 
-  this->CanDisplayScaleHandles = true;
+  this->CanDisplayScaleHandles = false;
 
   // Line color node
   vtkNew<vtkIntArray> events;

@@ -375,7 +375,7 @@ class SlicerRequestHandler(BaseRequestHandler):
                 value = line[colonIndex + 2 :]
                 fields[key] = value
 
-        if fields[b"type"] != b"short":
+        if fields[b"type"] not in [b"short", b"short int", b"signed short", b"signed short int", b"int16", b"int16_t"]:
             raise RuntimeError("Can only read short volumes")
         if fields[b"dimension"] != b"3":
             raise RuntimeError("Can only read 3D, 1 component volumes")

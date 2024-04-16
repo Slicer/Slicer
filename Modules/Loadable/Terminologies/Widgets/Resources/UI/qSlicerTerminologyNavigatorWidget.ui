@@ -127,7 +127,7 @@
          <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
         </property>
         <property name="defaultText">
-         <string>Select type modifier...</string>
+         <string>No type modifier</string>
         </property>
        </widget>
       </item>
@@ -240,7 +240,7 @@
             <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
            </property>
            <property name="defaultText">
-            <string>Select anatomic region modifier...</string>
+            <string>No region modifier</string>
            </property>
           </widget>
          </item>
