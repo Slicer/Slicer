@@ -90,8 +90,11 @@ function(slicerFunctionExtractExtensionDescription)
     string(REGEX REPLACE "[ \t\r\n]+$" "" str "${str}")
     set(ext_${upper_case_token} ${str})
 
+    # depends
     if(${token} STREQUAL "depends")
+      # Replace "NA"
       string(REGEX REPLACE "^NA$" "" ext_${upper_case_token} "${ext_${upper_case_token}}")
+      # Convert to list
       string(REPLACE " " ";" ext_${upper_case_token} "${ext_${upper_case_token}}")
     endif()
     set(${MY_VAR_PREFIX}_EXT_${upper_case_token} "${ext_${upper_case_token}}" PARENT_SCOPE)
@@ -224,7 +227,7 @@ function(slicer_extract_extension_description_test)
   set(expected_BUILD_SUBDIRECTORY ".")
   set(expected_CATEGORY "Exporter")
   set(expected_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware), Pat Marion (Kitware), Steve Pieper (Isomics), Atsushi Yamada (Shiga University of Medical Science)")
-  set(expected_DESCRIPTION "The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.")
+  set(expected_DESCRIPTION "The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.<br>This is a line of text.<br>And another one.")
   set(expected_ENABLED "1")
   set(expected_HOMEPAGE "https://www.slicer.org/w/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter")
   set(expected_ICONURL "https://www.slicer.org/w/images/6/64/SlicerToKiwiExporterLogo.png")
