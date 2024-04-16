@@ -35,7 +35,7 @@ iconurl https://www.slicer.org/w/images/6/64/SlicerToKiwiExporterLogo.png
 status Development
 
 # One line stating what the module does
-description The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.
+description The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.<br>This is a line of text.<br>And another one.
 
 # Space separated list of urls
 screenshoturls https://www.slicer.org/w/images/9/9e/SlicerToKiwiExporter_Kiwiviewer_8.PNG https://www.slicer.org/w/images/a/ab/SlicerToKiwiExporter_Kiwiviewer_9.PNG https://www.slicer.org/w/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png
