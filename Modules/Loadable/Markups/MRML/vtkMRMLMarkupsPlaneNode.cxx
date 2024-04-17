@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMarkupsPlaneDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
 #include "vtkMRMLMeasurementArea.h"
@@ -48,6 +49,12 @@ vtkMRMLMarkupsPlaneNode::vtkMRMLMarkupsPlaneNode()
 {
   this->RequiredNumberOfControlPoints = 1;
   this->MaximumNumberOfControlPoints = 1;
+
+  // Set markup type GUI display name
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsPlaneNode", "Plane");
+
+  // Set markup short name
+  this->DefaultNodeNamePrefix = vtkMRMLTr("vtkMRMLMarkupsPlaneNode", "P");
 
   this->ObjectToBaseMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   this->BaseToNodeMatrix = vtkSmartPointer<vtkMatrix4x4>::New();

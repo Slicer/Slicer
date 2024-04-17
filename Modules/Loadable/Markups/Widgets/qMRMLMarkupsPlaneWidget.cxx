@@ -38,7 +38,7 @@ public:
   qMRMLMarkupsPlaneWidgetPrivate(qMRMLMarkupsPlaneWidget& object);
   void setupUi(qMRMLMarkupsPlaneWidget* widget);
 
-  const char* getPlaneTypeName(int planeType);
+  QString planeTypeName(int planeType);
 
 protected:
   qMRMLMarkupsPlaneWidget* const q_ptr;
@@ -63,7 +63,7 @@ void qMRMLMarkupsPlaneWidgetPrivate::setupUi(qMRMLMarkupsPlaneWidget* widget)
   this->planeTypeComboBox->clear();
   for (int planeType = 0; planeType < vtkMRMLMarkupsPlaneNode::PlaneType_Last; ++planeType)
   {
-    this->planeTypeComboBox->addItem(this->getPlaneTypeName(planeType), planeType);
+    this->planeTypeComboBox->addItem(this->planeTypeName(planeType), planeType);
   }
 
   this->planeSizeModeComboBox->clear();
@@ -100,16 +100,16 @@ void qMRMLMarkupsPlaneWidgetPrivate::setupUi(qMRMLMarkupsPlaneWidget* widget)
 }
 
 // --------------------------------------------------------------------------
-const char* qMRMLMarkupsPlaneWidgetPrivate::getPlaneTypeName(int planeType)
+QString qMRMLMarkupsPlaneWidgetPrivate::planeTypeName(int planeType)
 {
   switch (planeType)
   {
     case vtkMRMLMarkupsPlaneNode::PlaneType3Points:
-      return "Three points";
+      return qMRMLMarkupsPlaneWidget::tr("Three points");
     case vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal:
-      return "Point normal";
+      return qMRMLMarkupsPlaneWidget::tr("Point normal");
     case vtkMRMLMarkupsPlaneNode::PlaneTypePlaneFit:
-      return "Plane fit";
+      return qMRMLMarkupsPlaneWidget::tr("Plane fit");
     default:
       break;
   }
