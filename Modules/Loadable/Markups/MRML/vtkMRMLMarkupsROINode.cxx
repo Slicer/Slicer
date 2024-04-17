@@ -21,6 +21,7 @@
 #include "vtkMRMLMarkupsROINode.h"
 
 // MRML includes
+#include <vtkMRMLI18N.h>
 #include <vtkMRMLMarkupsROIDisplayNode.h>
 #include <vtkMRMLMarkupsROIJsonStorageNode.h>
 #include "vtkMRMLMeasurementVolume.h"
@@ -57,6 +58,12 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsROINode);
 vtkMRMLMarkupsROINode::vtkMRMLMarkupsROINode()
 {
   this->PropertiesLabelText = "";
+
+  // Set markup type GUI display name
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsROINode", "ROI");
+
+  // Set markup short name
+  this->DefaultNodeNamePrefix = vtkMRMLTr("vtkMRMLMarkupsROINode", "R");
 
   this->RequiredNumberOfControlPoints = NUMBER_OF_BOX_CONTROL_POINTS;
   this->MaximumNumberOfControlPoints = -1;

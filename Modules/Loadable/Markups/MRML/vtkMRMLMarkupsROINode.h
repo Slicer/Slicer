@@ -76,12 +76,6 @@ public:
   /// Get markup type internal name
   const char* GetMarkupType() override {return "ROI";};
 
-  // Get markup type GUI display name
-  const char* GetTypeDisplayName() override {return "ROI";};
-
-  /// Get markup short name
-  const char* GetDefaultNodeNamePrefix() override {return "R";};
-
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsROINode);

@@ -20,6 +20,7 @@
 // MRML includes
 #include "vtkCurveGenerator.h"
 #include "vtkCurveMeasurementsCalculator.h"
+#include "vtkMRMLI18N.h"
 #include "vtkMRMLMeasurementArea.h"
 #include "vtkMRMLMessageCollection.h"
 
@@ -51,6 +52,12 @@ vtkMRMLMarkupsClosedCurveNode::vtkMRMLMarkupsClosedCurveNode()
   this->CurveClosed = true;
   this->CurveGenerator->SetCurveIsClosed(true);
   this->CurveMeasurementsCalculator->SetCurveIsClosed(true);
+
+  // Set markup type GUI display name
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsClosedCurveNode", "Closed Curve");
+
+  // Set markup short name
+  this->DefaultNodeNamePrefix = vtkMRMLTr("vtkMRMLMarkupsClosedCurveNode", "CC");
 
   // Setup measurements calculated for this markup type
   vtkNew<vtkMRMLMeasurementArea> areaMeasurement;
