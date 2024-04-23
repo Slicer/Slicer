@@ -436,6 +436,16 @@ myButton = qt.QPushButton("My custom button")
 sliceController.barLayout().addWidget(myButton)
 ```
 
+### Display a node in only some views
+This script displays an object that has a DisplayNode in a predefined set of views (here Red+, Green+ and Yellow+)
+```python
+sliceNodeRed_plus = slicer.app.layoutManager().sliceWidget("Red+").mrmlSliceNode()
+sliceNodeGreen_plus = slicer.app.layoutManager().sliceWidget("Green+").mrmlSliceNode()
+sliceNodeYellow_plus = slicer.app.layoutManager().sliceWidget("Yellow+").mrmlSliceNode()
+
+my_node.GetDisplayNode().SetViewNodeIDs([sliceNodeRed_plus.GetID(), sliceNodeGreen_plus.GetID(), sliceNodeYellow_plus.GetID()])
+```
+
 ### Get current mouse coordinates in a slice view
 
 You can get 3D (RAS) coordinates of the current mouse cursor from the crosshair singleton node as shown in the example below:
