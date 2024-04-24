@@ -14,23 +14,23 @@ from slicer.util import _executePythonModule
 
 
 def _pip(*args):
-    # todo update this to allow inspecting stdout, stderr
+    # TODO: update this to allow inspecting stdout, stderr
     _executePythonModule("pip", args)
 
 
 def _pip_install(*args):
     with tempfile.NamedTemporaryFile("r") as freport:
-        # todo constraints files
+        # TODO: constraints files
         _pip("install", "--dry-run", "--no-deps", "--report", freport.name, *args)
         report = json.load(freport)
 
-    # todo show slicer.util.confirmOkCancelDisplay with install summary
-    # todo inspect report to identify uninstalled or downgraded packages
+    # TODO: show slicer.util.confirmOkCancelDisplay with install summary
+    # TODO: inspect report to identify uninstalled or downgraded packages
     for entry in report["install"]:
         logging.info("installing {name}=={version} ({summary})".format_map(entry["metadata"]))
 
     if report["install"]:
-        # todo constraints files
+        # TODO: constraints files
         _pip("install", *args)
 
 
@@ -38,7 +38,7 @@ def _pip_uninstall(*args):
     _pip("uninstall", *args)
 
 
-# todo update ``slicer.util.pip_install`` to check ``ImportGroup.__groups`` and use constraints
+# TODO: update ``slicer.util.pip_install`` to check ``ImportGroup.__groups`` and use constraints
 
 
 class ImportGroup:
@@ -83,9 +83,9 @@ class ImportGroup:
         self.modules = {}
         self.need_install = requires is not None  # so that only the first invocation runs pip
 
-        # todo resolve ``requires`` here, not at installation. will simplify ``pip_check_install``.
+        # TODO: resolve ``requires`` here, not at installation. will simplify ``pip_check_install``.
 
-        # todo check which module called this, for better reporting.
+        # TODO: check which module called this, for better reporting.
 
         self.__groups.add(self)  # so that groups can use each other as constraints
 
@@ -99,6 +99,7 @@ class ImportGroup:
     def register(self, module: types.ModuleType):
         """Mark an import module as guarded by this import group."""
 
+        assert module.__spec__ is not None
         self.modules[module.__spec__.name] = module
 
     def lock(self):
@@ -118,7 +119,7 @@ class ImportGroup:
 
         for name, module in self.modules.items():
             if sys.modules[name] is module:
-                sys.modules[name] = None  # noqa: Explicitly prevent imports.
+                sys.modules[name] = None  # type: ignore Explicitly prevent imports.
 
     def unlock(self):
         """Unlock all modules in this group, enabling plain imports.
@@ -138,19 +139,24 @@ class ImportGroup:
         if not self.need_install:
             return
 
-        # todo companion file option if `pak` is empty.
+        # TODO: companion file option if `pak` is empty.
 
         # ``importlib.resources.files`` actually imports the package; we couldn't guarantee that the
         # dependencies are met. So instead make a dummy module from the real spec but do not execute
         # it. ``importlib.resources.files`` can use that dummy module to locate resources.
 
-        pak, _, path = self.requires.rpartition(":")
-        spec = importlib.util.find_spec(pak)
-        dummy = importlib.util.module_from_spec(spec)
-        resource = importlib.resources.files(dummy).joinpath(path)
+        if self.requires:
+            pak, _, path = self.requires.rpartition(":")
+            assert pak != ""  # TODO: use relative path
 
-        with importlib.resources.as_file(resource) as requires:
-            _pip_install("-r", str(requires))
+            spec = importlib.util.find_spec(pak)
+            assert spec is not None
+
+            dummy = importlib.util.module_from_spec(spec)
+            resource = importlib.resources.files(dummy).joinpath(path)
+
+            with importlib.resources.as_file(resource) as requires:
+                _pip_install("-r", str(requires))
 
         self.need_install = False
 
@@ -168,9 +174,10 @@ class VeryLazyModule(types.ModuleType):
     """
 
     def __getattr__(self, attr):
-        # todo make ``__getattr__``, ``__setattr__``, ``__delattr__`` forward to ``__real_module__``
+        # TODO: use ``__real_module__`` for ``__getattr__``, ``__setattr__``, ``__delattr__``.
         #  introduce a ``LazyLoadedModule`` class that implements ``__getattribute__`` instead?
         self.__class__ = types.ModuleType
+        assert self.__spec__ is not None
 
         group: "ImportGroup" = self.__spec__.loader_state
         group.unlock()
@@ -184,6 +191,7 @@ class VeryLazyModule(types.ModuleType):
 
 def real_module(module: types.ModuleType) -> types.ModuleType:
     """Get the real module object from a lazy proxy module, triggering resolution if necessary."""
+
     return getattr(module, "__real_module__", module)
 
 
@@ -193,10 +201,8 @@ class VeryLazyLoader(importlib.abc.Loader):
     This exec_module never fails - the real find_spec occurs on first attribute access.
     """
 
-    def create_module(self, spec):
-        return None  # default creation semantics
-
     def exec_module(self, module: types.ModuleType):
+        assert module.__spec__ is not None
         group: "ImportGroup" = module.__spec__.loader_state
 
         module.__class__ = VeryLazyModule
@@ -214,6 +220,9 @@ class VeryLazyFinder(importlib.abc.MetaPathFinder):
         self.group = group
 
     def find_spec(self, fullname, path, target=None):
+        _ = path
+        _ = target
+
         return importlib.machinery.ModuleSpec(
             name=fullname,
             loader=VeryLazyLoader(),
