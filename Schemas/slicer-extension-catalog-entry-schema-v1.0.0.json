@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://raw.githubusercontent.com/Slicer/Slicer/main/Schemas/slicer-extension-catalog-item-schema-v1.0.0.json#",
+  "$id": "https://raw.githubusercontent.com/Slicer/Slicer/main/Schemas/slicer-extension-catalog-entry-schema-v1.0.0.json#",
   "type": "object",
   "title": "3D Slicer extensions catalog entry schema",
   "description": "Schema for storing information about a 3D Slicer extension to allow it to be listed in the extension catalog.",

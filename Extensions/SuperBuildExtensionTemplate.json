@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/Slicer/Slicer/main/Schemas/slicer-extension-catalog-item-schema-v1.0.0.json#",
+  "$schema": "https://raw.githubusercontent.com/Slicer/Slicer/main/Schemas/slicer-extension-catalog-entry-schema-v1.0.0.json#",
   "build_dependencies": [],
   "build_subdirectory": "inner-build",
   "category": "Examples",
