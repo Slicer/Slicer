@@ -5,9 +5,9 @@
   "title": "3D Slicer extensions catalog entry schema",
   "description": "Schema for storing information about a 3D Slicer extension to allow it to be listed in the extension catalog.",
   "required": ["$schema", "category", "scm_url"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "properties": {
-    "@schema": {
+    "$schema": {
       "$id": "#schema",
       "type": "string",
       "title": "Schema",
