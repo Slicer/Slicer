@@ -449,6 +449,7 @@ viewNodeIDs = [
 ]
 
 displayableNode.GetDisplayNode().SetViewNodeIDs(viewNodeIDs)
+```
 
 ### Get current mouse coordinates in a slice view
 
