@@ -437,14 +437,18 @@ sliceController.barLayout().addWidget(myButton)
 ```
 
 ### Display a node in only some views
-This script displays an object that has a DisplayNode in a predefined set of views (here Red+, Green+ and Yellow+)
-```python
-sliceNodeRed_plus = slicer.app.layoutManager().sliceWidget("Red+").mrmlSliceNode()
-sliceNodeGreen_plus = slicer.app.layoutManager().sliceWidget("Green+").mrmlSliceNode()
-sliceNodeYellow_plus = slicer.app.layoutManager().sliceWidget("Yellow+").mrmlSliceNode()
 
-my_node.GetDisplayNode().SetViewNodeIDs([sliceNodeRed_plus.GetID(), sliceNodeGreen_plus.GetID(), sliceNodeYellow_plus.GetID()])
-```
+Show a displayable node in a predefined set of views. Here, show a markups line only in `Red+`, `Green+` and `Yellow+` views.
+
+```python
+displayableNode = getNode("L")
+
+viewNodeIDs = [
+  slicer.app.layoutManager().sliceWidget(viewName).mrmlSliceNode().GetID()
+  for viewName in ["Red+", "Green+", "Yellow+"]
+]
+
+displayableNode.GetDisplayNode().SetViewNodeIDs(viewNodeIDs)
 
 ### Get current mouse coordinates in a slice view
 
