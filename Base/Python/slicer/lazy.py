@@ -2,14 +2,19 @@ import importlib.abc
 import importlib.machinery
 import importlib.resources
 import importlib.util
+import inspect
 import json
 import logging
 import sys
 import tempfile
 import types
+import typing
 import weakref
 from typing import Optional
+from pathlib import Path
 
+import slicer
+from slicer.ScriptedLoadableModule import ScriptedLoadableModule
 from slicer.util import _executePythonModule
 
 
@@ -27,15 +32,24 @@ def _pip_install(*args):
     # TODO: show slicer.util.confirmOkCancelDisplay with install summary
     # TODO: inspect report to identify uninstalled or downgraded packages
     for entry in report["install"]:
-        logging.info("installing {name}=={version} ({summary})".format_map(entry["metadata"]))
+        if "summary" in entry["metadata"]:
+            logging.info("installing {name}=={version} ({summary})".format_map(entry["metadata"]))
+        else:
+            logging.info("installing {name}=={version}".format_map(entry["metadata"]))
 
     if report["install"]:
         # TODO: constraints files
         _pip("install", *args)
+        importlib.invalidate_caches()
 
 
 def _pip_uninstall(*args):
-    _pip("uninstall", *args)
+    _pip(
+        "uninstall",
+        "-y",  # TODO show slicer.util.confirmOkCancelDisplay with uninstall summary.
+        *args,
+    )
+    importlib.invalidate_caches()
 
 
 # TODO: update ``slicer.util.pip_install`` to check ``ImportGroup.__groups`` and use constraints
@@ -78,14 +92,41 @@ class ImportGroup:
             ``package``. See ``importlib.resources.files`` for details.
         """
 
-        self.requires = requires
+        # TODO: check which module called this, for better reporting.
+        calling_frame = inspect.stack()[1]
+        calling_module = inspect.getmodule(calling_frame)
+        module_name = calling_module.__name__
+
+        instance: typing.Optional[ScriptedLoadableModule] = getattr(
+            slicer.modules,
+            module_name + "Instance",
+            None,
+        )
+
+        caller_name = Path(calling_module.__file__).name
+        if instance:
+            caller_name = f"{caller_name} ({instance.parent.name})"
+
+        # ``importlib.resources.files`` actually imports the package; we couldn't guarantee that the
+        # dependencies are met. So instead make a dummy module from the real spec but do not execute
+        # it. ``importlib.resources.files`` can use that dummy module to locate resources.
+
+        if not requires:
+            self.requires = None
+        else:
+            pak, _, path = requires.rpartition(":")
+            if pak:
+                spec = importlib.util.find_spec(pak)
+                assert spec is not None
+                dummy = importlib.util.module_from_spec(spec)
+                self.requires = importlib.resources.files(dummy).joinpath(path)
+            else:
+                self.requires = Path(calling_module.__name__).parent.joinpath(path)
+
+        self.caller_name = caller_name
         self.finder = VeryLazyFinder(self)
         self.modules = {}
         self.need_install = requires is not None  # so that only the first invocation runs pip
-
-        # TODO: resolve ``requires`` here, not at installation. will simplify ``pip_check_install``.
-
-        # TODO: check which module called this, for better reporting.
 
         self.__groups.add(self)  # so that groups can use each other as constraints
 
@@ -119,7 +160,8 @@ class ImportGroup:
 
         for name, module in self.modules.items():
             if sys.modules[name] is module:
-                sys.modules[name] = None  # type: ignore Explicitly prevent imports.
+                # Explicitly halt imports
+                sys.modules[name] = None  # type: ignore # noqa: PGH003
 
     def unlock(self):
         """Unlock all modules in this group, enabling plain imports.
@@ -139,24 +181,13 @@ class ImportGroup:
         if not self.need_install:
             return
 
-        # TODO: companion file option if `pak` is empty.
+        if not self.requires:
+            return
 
-        # ``importlib.resources.files`` actually imports the package; we couldn't guarantee that the
-        # dependencies are met. So instead make a dummy module from the real spec but do not execute
-        # it. ``importlib.resources.files`` can use that dummy module to locate resources.
-
-        if self.requires:
-            pak, _, path = self.requires.rpartition(":")
-            assert pak != ""  # TODO: use relative path
-
-            spec = importlib.util.find_spec(pak)
-            assert spec is not None
-
-            dummy = importlib.util.module_from_spec(spec)
-            resource = importlib.resources.files(dummy).joinpath(path)
-
-            with importlib.resources.as_file(resource) as requires:
-                _pip_install("-r", str(requires))
+        # TODO: Show a summary to the user.
+        logging.info("resolving dependencies for %r", self.caller_name)
+        with importlib.resources.as_file(self.requires) as requires:
+            _pip_install("-r", str(requires))
 
         self.need_install = False
 

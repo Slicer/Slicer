@@ -18,6 +18,7 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/slicerqt
   slicer/testing
   slicer/util
+  slicer/lazy
   mrml
   vtkAddon
   vtkITK
