@@ -48,20 +48,24 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserPlayWidget
   /// has recording enabled.
   Q_PROPERTY(bool RecordingControlsVisible READ recordingControlsVisible WRITE setRecordingControlsVisible)
 
+  Q_PROPERTY(QString PlayPauseShortcut READ playPauseShortcut WRITE setPlayPauseShortcut)
+  Q_PROPERTY(QString PreviousFrameShortcut READ previousFrameShortcut WRITE setPreviousFrameShortcut)
+  Q_PROPERTY(QString NextFrameShortcut READ nextFrameShortcut WRITE setNextFrameShortcut)
+
 
 public:
   typedef qMRMLWidget Superclass;
   qMRMLSequenceBrowserPlayWidget(QWidget *newParent = 0);
   ~qMRMLSequenceBrowserPlayWidget() override;
 
-  /// Add a keyboard shortcut for play/pause button
-  void setPlayPauseShortcut(QString keySequence);
+  /// Get keyboard shortcut string for play/pause button
+  QString playPauseShortcut()const;
 
-  /// Add a keyboard shortcut for previous frame button
-  void setPreviousFrameShortcut(QString keySequence);
+  /// Get keyboard shortcut string for previous frame button
+  QString previousFrameShortcut()const;
 
-  /// Add a keyboard shortcut for next frame button
-  void setNextFrameShortcut(QString keySequence);
+  /// Get keyboard shortcut string for next frame button
+  QString nextFrameShortcut()const;
 
   /// Returns true if recording controls (record and snapshot buttons) are allowed to be shown.
   ///
@@ -77,6 +81,16 @@ public slots:
   void setPlaybackRateFps(double playbackRateFps);
   void setPlaybackLoopEnabled(bool loopEnabled);
   void setRecordingControlsVisible(bool show);
+
+  /// Add a keyboard shortcut for play/pause button
+  void setPlayPauseShortcut(QString keySequence);
+
+  /// Add a keyboard shortcut for previous frame button
+  void setPreviousFrameShortcut(QString keySequence);
+
+  /// Add a keyboard shortcut for next frame button
+  void setNextFrameShortcut(QString keySequence);
+
   void onVcrFirst();
   void onVcrPrevious();
   void onVcrNext();
