@@ -119,15 +119,18 @@ public:
   bool GetNthCategoryInTerminology(std::string terminologyName, int categoryIndex, vtkSlicerTerminologyCategory* category);
 
   /// Get terminology types from a terminology category as collection of \sa vtkSlicerTerminologyType container objects
-  /// \param typeCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
+  /// \param types Output argument containing all the \sa vtkSlicerTerminologyType objects created
   ///   from the types found in the given terminology category
   /// \return Success flag
   bool GetTypesInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types);
-  /// Get all type names (codeMeaning) in a terminology category
-  /// \param typeCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
+  /// Get terminology types from a terminology category as collection of \sa vtkSlicerTerminologyType container objects
+  /// \param types Output argument containing all the \sa type IDs in the category.
   ///   from the types found in the given terminology category
+  /// \param typeObjects Output argument containing all the \sa type objects in the category.. This is useful if type objects
+  ///   need to be retrieved for a large number of types, because it avoids the need to do a costly search in the json tree.
   /// \return Success flag
-  bool FindTypesInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types, std::string search);
+  bool FindTypesInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types, std::string search,
+    std::vector<vtkSmartPointer<vtkSlicerTerminologyType>>* typeObjects=nullptr);
   /// Get a type with given name from a terminology category
   /// \param type Output argument containing the details of the found type if any (if return value is true)
   /// \return Success flag

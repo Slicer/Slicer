@@ -1541,7 +1541,8 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypesInTerminologyCategory(std::strin
 
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::FindTypesInTerminologyCategory(
-  std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types, std::string search)
+  std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types, std::string search,
+  std::vector<vtkSmartPointer<vtkSlicerTerminologyType>> *typeObjects/*=nullptr*/)
 {
   types.clear();
 
@@ -1576,6 +1577,12 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypesInTerminologyCategory(
         {
           CodeIdentifier typeId(typeCodingSchemeDesignator.GetString(), typeCodeValue.GetString(), typeNameStr);
           types.push_back(typeId);
+          if (typeObjects)
+          {
+            vtkSmartPointer<vtkSlicerTerminologyType> typeObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
+            this->Internal->PopulateTerminologyTypeFromJson(type, typeObject);
+            typeObjects->push_back(typeObject);
+          }
         }
       }
       else
