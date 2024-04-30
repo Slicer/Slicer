@@ -34,13 +34,14 @@
 #include "vtkLoggingMacros.h"
 
 // VTK includes
+#include <vtkCollection.h>
+#include <vtkDirectory.h>
 #include <vtkNew.h>
-#include <vtkSmartPointer.h>
 #include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkVariant.h>
 #include <vtksys/SystemTools.hxx>
-#include <vtkDirectory.h>
 
 // STD includes
 #include <algorithm>
@@ -1656,8 +1657,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeInTerminologyCategory(
   rapidjson::Value& typeObject = this->Internal->GetTypeInTerminologyCategory(terminologyName, categoryId, typeId);
   if (typeObject.IsNull())
   {
-    vtkErrorMacro("GetTypeInTerminologyCategory: Failed to find type '" << typeId.CodeMeaning << "' in category '"
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    // Not found. This is not an error, as the type may not exist in the terminology and this method can be used to check for existence.
     return false;
   }
 
@@ -2438,4 +2438,123 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypeInTerminologyBy3dSlicerLabel(std
   }
 
   return false;
+}
+
+//-----------------------------------------------------------------------------
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames(
+  std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
+  std::string typeCodingSchemeDesignator, std::string typeCodeValue,
+  std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
+  std::vector<std::string> preferredTerminologyNames,
+  vtkCollection* foundEntries/*=nullptr*/)
+{
+  std::vector<std::string> foundTerminologyNames;
+  if (categoryCodingSchemeDesignator.empty() || categoryCodeValue.empty())
+  {
+    vtkErrorMacro("FindTerminologyEntries: Category is not specified");
+    return foundTerminologyNames;
+  }
+  CodeIdentifier categoryId(categoryCodingSchemeDesignator, categoryCodeValue);
+
+  if (typeCodingSchemeDesignator.empty() || typeCodeValue.empty())
+  {
+    vtkErrorMacro("FindTerminologyEntries: Type is not specified");
+    return foundTerminologyNames;
+  }
+  CodeIdentifier typeId(typeCodingSchemeDesignator, typeCodeValue);
+
+  if (preferredTerminologyNames.empty())
+  {
+    // Terminology names are not specified, so search in all available terminologies
+    this->GetLoadedTerminologyNames(preferredTerminologyNames);
+  }
+
+  // Find terminology entries in each preferred terminology
+  for (std::string terminologyName : preferredTerminologyNames)
+  {
+    vtkNew<vtkSlicerTerminologyType> typeObject;
+    if (!this->GetTypeInTerminologyCategory(terminologyName, categoryId, typeId, typeObject))
+    {
+      continue;
+    }
+    if (typeModifierCodingSchemeDesignator.empty() && typeModifierCodeValue.empty())
+    {
+      // Type without modifier
+      foundTerminologyNames.push_back(terminologyName);
+      if (foundEntries)
+      {
+        foundEntries->AddItem(typeObject);
+      }
+    }
+    else
+    {
+      // Type with a modifier
+      vtkNew<vtkSlicerTerminologyType> modifiedTypeObject;
+      if (this->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId,
+        CodeIdentifier(typeModifierCodingSchemeDesignator, typeModifierCodeValue), modifiedTypeObject))
+      {
+        foundTerminologyNames.push_back(terminologyName);
+        foundEntries->AddItem(typeObject);
+      }
+    }
+  }
+
+  return foundTerminologyNames;
+}
+
+//-----------------------------------------------------------------------------
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindAnatomicContextNames(
+  std::string anatomicRegionCodingSchemeDesignator, std::string anatomicRegionCodeValue,
+  std::string anatomicRegionModifierCodingSchemeDesignator, std::string anatomicRegionModifierCodeValue,
+  std::vector<std::string> preferredAnatomicContextNames,
+  vtkCollection* foundEntries/*=nullptr*/)
+{
+  std::vector<std::string> foundAnatomicContextNames;
+  if (anatomicRegionCodingSchemeDesignator.empty() || anatomicRegionCodeValue.empty())
+  {
+    vtkErrorMacro("FindAnatomicContextNames: anatomicRegion is not specified");
+    return foundAnatomicContextNames;
+  }
+  CodeIdentifier anatomicRegionId(anatomicRegionCodingSchemeDesignator, anatomicRegionCodeValue);
+
+  if (preferredAnatomicContextNames.empty())
+  {
+    // Anatomic context names are not specified, so search in all available terminologies
+    this->GetLoadedAnatomicContextNames(preferredAnatomicContextNames);
+  }
+
+  // Find terminology entries in each preferred anatomic context
+  for (std::string anatomicContextName : preferredAnatomicContextNames)
+  {
+    vtkNew<vtkSlicerTerminologyType> regionObject;
+    if (!this->GetRegionInAnatomicContext(anatomicContextName, anatomicRegionId, regionObject))
+    {
+      continue;
+    }
+    if (anatomicRegionModifierCodingSchemeDesignator.empty() && anatomicRegionModifierCodeValue.empty())
+    {
+      // Anatomic region without modifier
+      foundAnatomicContextNames.push_back(anatomicContextName);
+      if (foundEntries)
+      {
+        foundEntries->AddItem(regionObject);
+      }
+    }
+    else
+    {
+      // Anatomic region with a modifier
+      vtkNew<vtkSlicerTerminologyType> modifiedRegionObject;
+      if (this->GetRegionModifierInAnatomicRegion(anatomicContextName, anatomicRegionId,
+        CodeIdentifier(anatomicRegionModifierCodingSchemeDesignator, anatomicRegionModifierCodeValue), modifiedRegionObject))
+      {
+        foundAnatomicContextNames.push_back(anatomicContextName);
+        if (foundEntries)
+        {
+          foundEntries->AddItem(regionObject);
+        }
+      }
+    }
+  }
+
+  return foundAnatomicContextNames;
 }
