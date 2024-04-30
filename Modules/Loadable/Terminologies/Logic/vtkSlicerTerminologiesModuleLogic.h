@@ -49,7 +49,7 @@ public:
     public:
       CodeIdentifier()
         { };
-      CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning)
+      CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning=std::string())
         : CodingSchemeDesignator(codingSchemeDesignator)
         , CodeValue(codeValue)
         , CodeMeaning(codeMeaning)
@@ -106,6 +106,24 @@ public:
   ///   from the categories found in the given terminology
   /// \return Success flag
   bool FindCategoriesInTerminology(std::string terminologyName, std::vector<CodeIdentifier>& categories, std::string search);
+
+  /// Return collection of vtkSlicerTerminologyEntry objects designated by the given codes.
+  /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
+  std::vector<std::string> FindTerminologyNames(
+    std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
+    std::string typeCodingSchemeDesignator, std::string typeCodeValue,
+    std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
+    std::vector<std::string> preferredTerminologyNames,
+    vtkCollection* foundEntries=nullptr);
+
+  /// Return list of anatomic context names containing the specified anatomic region.
+  /// \param preferredAnatomicContextNames List of anatomic context names in order of preference. If an empty list is provided then all context are searched.
+  std::vector<std::string> FindAnatomicContextNames(
+    std::string anatomicRegionCodingSchemeDesignator, std::string anatomicRegionCodeValue,
+    std::string anatomicRegionModifierCodingSchemeDesignator, std::string anatomicRegionModifierCodeValue,
+    std::vector<std::string> preferredAnatomicContextNames,
+    vtkCollection* foundEntries=nullptr);
+
   /// Get a category with given name from a terminology
   /// \param category Output argument containing the details of the found category if any (if return value is true)
   /// \return Success flag
