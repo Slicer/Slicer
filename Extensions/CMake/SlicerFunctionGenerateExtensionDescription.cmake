@@ -71,6 +71,11 @@ function(slicerFunctionGenerateExtensionDescription)
     endif()
   endforeach()
 
+  # contributors: Remove newlines
+  string(REPLACE "\n" "" MY_EXTENSION_CONTRIBUTORS "${MY_EXTENSION_CONTRIBUTORS}")
+  # contributors: Strip contiguous spaces
+  string(REGEX REPLACE " +" " " MY_EXTENSION_CONTRIBUTORS "${MY_EXTENSION_CONTRIBUTORS}")
+
   # description: Replace newlines with "<br>"
   string(REPLACE "\n" "<br>" MY_EXTENSION_DESCRIPTION "${MY_EXTENSION_DESCRIPTION}")
 
@@ -143,7 +148,8 @@ function(slicer_generate_extension_description_test)
     EXTENSION_DESCRIPTION "The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.
 This is a line of text.<br>And another one."
     EXTENSION_CATEGORY "Exporter"
-    EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware), Pat Marion (Kitware), Steve Pieper (Isomics), Atsushi Yamada (Shiga University of Medical Science)"
+    EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware), Pat Marion (Kitware), \
+      Steve Pieper (Isomics), Atsushi Yamada (Shiga University of Medical Science)"
     EXTENSION_HOMEPAGE "https://www.slicer.org/w/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter"
     EXTENSION_ICONURL "https://www.slicer.org/w/images/6/64/SlicerToKiwiExporterLogo.png"
     EXTENSION_NAME "SlicerToKiwiExporter"
