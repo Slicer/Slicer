@@ -25,7 +25,7 @@ set(expected_defined_vars
   GIT_EXECUTABLE
   Slicer_CMAKE_DIR
   Slicer_MAIN_PROJECT_APPLICATION_NAME
-  ${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR
+  Slicer_MAIN_PROJECT_SOURCE_DIR
   Slicer_RELEASE_TYPE
   Slicer_VERSION_MAJOR
   Slicer_VERSION_MINOR
@@ -98,7 +98,7 @@ message(STATUS "Configuring Slicer revision [${Slicer_REVISION}]")
 #-----------------------------------------------------------------------------
 SlicerMacroExtractRepositoryInfo(
   VAR_PREFIX Slicer_MAIN_PROJECT
-  SOURCE_DIR ${${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR}
+  SOURCE_DIR ${Slicer_MAIN_PROJECT_SOURCE_DIR}
   )
 
 if(NOT "${Slicer_MAIN_PROJECT_FORCED_WC_LAST_CHANGED_DATE}" STREQUAL "")
