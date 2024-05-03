@@ -107,16 +107,16 @@ mark_as_superbuild(Slicer_DISCLAIMER_AT_STARTUP)
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} text of disclaimer at startup [${Slicer_DISCLAIMER_AT_STARTUP}]")
 
 #-----------------------------------------------------------------------------
-# Set Slicer_MAIN_PROJECT_SOURCE_DIR and <Slicer_MAIN_PROJECT_APPLICATION_NAME>_SOURCE_DIR
+# Set Slicer_MAIN_PROJECT_SOURCE_DIR
 #-----------------------------------------------------------------------------
 # Propagate source directory to support building Slicer-based application
 # that (1) includes Slicer as an external project or (2) add Slicer source
 # tree using 'add_subdirectory()'.
 # Source directory it then used in 'SlicerConfigureVersionHeaderTarget' module.
-if(NOT DEFINED ${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR)
-  set(${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+if(NOT DEFINED Slicer_MAIN_PROJECT_SOURCE_DIR)
+  set(Slicer_MAIN_PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 endif()
-mark_as_superbuild(${Slicer_MAIN_PROJECT_APPLICATION_NAME}_SOURCE_DIR)
+mark_as_superbuild(Slicer_MAIN_PROJECT_SOURCE_DIR)
 
 #-----------------------------------------------------------------------------
 # Set application bundle identifier for macOS
