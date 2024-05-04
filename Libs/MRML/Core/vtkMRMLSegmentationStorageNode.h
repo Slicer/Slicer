@@ -174,6 +174,8 @@ protected:
   static std::string GetSegmentColorAsString(vtkMRMLSegmentationNode* segmentationNode, const std::string& segmentId);
   static void GetSegmentColorFromString(double color[3], std::string colorString);
 
+  static void AddToExtent(int extent[6], int extentToAdd[6]);
+
 protected:
   bool CropToMinimumExtent{false};
 
