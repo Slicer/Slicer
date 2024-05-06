@@ -20,6 +20,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include <vtkAddonMathUtilities.h>
 
 // vtkITK includes
+#include "vtkITKImageSequenceReader.h"
 #include "vtkITKImageSequenceWriter.h"
 
 // VTK includes
@@ -30,7 +31,6 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkObjectFactory.h"
 #include "vtkStringArray.h"
 #include "vtkTeemNRRDReader.h"
-#include "vtkTeemNRRDWriter.h"
 
 // VTKsys includes
 #include "vtksys/SystemTools.hxx"
@@ -103,6 +103,19 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
+  vtkNew<vtkITKImageSequenceReader> reader;
+  reader->SetFileName(fullName.c_str());
+  reader->Read();
+
+
+
+
+
+
+
+
+
+  /*
   vtkNew<vtkTeemNRRDReader> reader;
   reader->SetFileName(fullName.c_str());
 
@@ -126,42 +139,39 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   // Read the header to see if the NRRD file corresponds to the MRML Node
   reader->UpdateInformation();
 
-  // Read index information and custom attributes
-  std::vector< std::string > indexValues;
-  typedef std::vector<std::string> KeyVector;
-  KeyVector keys = reader->GetHeaderKeysVector();
-  int frameAxis = 0;
-  std::string dataNodeClassName;
-  for (KeyVector::iterator kit = keys.begin(); kit != keys.end(); ++kit)
-  {
-    if (*kit == "axis 0 index type")
-    {
-      volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue(kit->c_str()));
-    }
-    else if (*kit == "axis 0 index values")
-    {
-      std::string indexValue;
-      for (std::istringstream indexValueList(reader->GetHeaderValue(kit->c_str()));
-        indexValueList >> indexValue;)
-      {
-        // Encode string to make sure there are no spaces in the serialized index value (space is used as separator)
-        indexValues.push_back(vtkMRMLNode::URLDecodeString(indexValue.c_str()));
-      }
-    }
-    else if (*kit == "DataNodeClassName")
-    {
-      dataNodeClassName = reader->GetHeaderValue(kit->c_str());
-    }
-    else
-    {
-      volSequenceNode->SetAttribute(kit->c_str(), reader->GetHeaderValue(kit->c_str()));
-    }
-  }
+  //// Read index information and custom attributes
+  //std::vector< std::string > indexValues;
+  //typedef std::vector<std::string> KeyVector;
+  //KeyVector keys = reader->GetHeaderKeysVector();
+  //int frameAxis = 0;
+  //for ( KeyVector::iterator kit = keys.begin(); kit != keys.end(); ++kit)
+  //{
+  //  if (*kit == "axis 0 index type")
+  //  {
+  //    volSequenceNode->SetIndexTypeFromString(reader->GetHeaderValue(kit->c_str()));
+  //  }
+  //  else if (*kit == "axis 0 index values")
+  //  {
+  //    std::string indexValue;
+  //    for (std::istringstream indexValueList(reader->GetHeaderValue(kit->c_str()));
+  //      indexValueList >> indexValue;)
+  //    {
+  //      // Encode string to make sure there are no spaces in the serialized index value (space is used as separator)
+  //      indexValues.push_back(vtkMRMLNode::URLDecodeString(indexValue.c_str()));
+  //    }
+  //  }
+  //  else
+  //  {
+  //    volSequenceNode->SetAttribute(kit->c_str(), reader->GetHeaderValue(kit->c_str()));
+  //  }
+  //}
 
-  const char* sequenceAxisLabel = reader->GetAxisLabel(frameAxis);
-  volSequenceNode->SetIndexName(sequenceAxisLabel ? sequenceAxisLabel : "frame");
-  const char* sequenceAxisUnit = reader->GetAxisUnit(frameAxis);
-  volSequenceNode->SetIndexUnit(sequenceAxisUnit ? sequenceAxisUnit : "");
+  const char* sequenceAxisLabel = "frame";
+  //const char* sequenceAxisLabel = reader->GetAxisLabel(frameAxis);
+  //volSequenceNode->SetIndexName(sequenceAxisLabel ? sequenceAxisLabel : "frame");
+  const char* sequenceAxisUnit = "";
+  //const char* sequenceAxisUnit = reader->GetAxisUnit(frameAxis);
+  //volSequenceNode->SetIndexUnit(sequenceAxisUnit ? sequenceAxisUnit : "");
 
   // Read and copy the data to sequence of volume nodes
   reader->Update();
@@ -229,6 +239,7 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   vtkDebugMacro(<< " vtkMRMLVolumeSequenceStorageNode::ReadDataInternal: sequence successfully read. ");
+  */
 
   // success
   return 1;
