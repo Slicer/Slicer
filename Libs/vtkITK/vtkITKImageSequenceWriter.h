@@ -46,9 +46,7 @@ public:
     };
 
   ///
-  /// Specify file name for the image file. You should specify either
-  /// a FileName or a FilePrefix. Use FilePrefix if the data is stored
-  /// in multiple files.
+  /// Specify file name for the image file.
   void SetFileName(const char *);
 
   char* GetFileName()

@@ -126,6 +126,7 @@ set(vtkITK_SRCS
   vtkITKIslandMath.cxx
   vtkITKImageMargin.cxx
   vtkITKMorphologicalContourInterpolator.cxx
+  vtkITKImageSequenceReader.cxx
   vtkITKImageSequenceWriter.cxx
   )
 
