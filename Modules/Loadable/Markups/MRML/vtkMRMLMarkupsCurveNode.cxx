@@ -789,7 +789,7 @@ bool vtkMRMLMarkupsCurveNode::GetSampledCurvePointsBetweenStartEndPointsWorld(vt
 vtkIdType vtkMRMLMarkupsCurveNode::GetClosestCurvePointIndexToPositionWorld(const double posWorld[3])
 {
   vtkPoints* points = this->GetCurvePointsWorld();
-  if (!points)
+  if (!points || points->GetNumberOfPoints() == 0)
   {
     return -1;
   }
