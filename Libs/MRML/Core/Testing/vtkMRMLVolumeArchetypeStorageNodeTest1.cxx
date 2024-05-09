@@ -204,7 +204,12 @@ int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "mha",  true,      false,   false, false));
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "nii",  true,      false,   true,  true));
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "png",  false,     false,   true,  true));
+
+  // Expect warning about TIFF file format not recommended
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "tif",  false,     false,   true,  false));
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
+
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "jpg",  false,     false,   true,  false));
   CHECK_EXIT_SUCCESS(TestFlipsLeftHandedVolumes(tempDir));
 
