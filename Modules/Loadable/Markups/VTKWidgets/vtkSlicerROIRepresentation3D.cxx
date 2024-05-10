@@ -447,7 +447,7 @@ void vtkSlicerROIRepresentation3D::CanInteractWithROI(
       }
     }
 
-    double pixelTolerance = this->PickingTolerance * this->ScreenScaleFactor;
+    double pixelTolerance = this->PickingTolerance * this->GetScreenScaleFactor();
     if (distance2Display < VTK_DOUBLE_MAX && distance2Display < pixelTolerance * pixelTolerance && distance2Display < closestDistance2)
     {
       closestDistance2 = distance2Display;

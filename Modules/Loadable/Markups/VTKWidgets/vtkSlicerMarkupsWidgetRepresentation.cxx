@@ -241,7 +241,7 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
   this->Renderer->DisplayToWorld();
   this->Renderer->GetWorldPoint(tmp2);
 
-  tmp1[0] = this->PickingTolerance * this->ScreenScaleFactor;
+  tmp1[0] = this->PickingTolerance * this->GetScreenScaleFactor();
   this->Renderer->SetDisplayPoint(tmp1);
   this->Renderer->DisplayToWorld();
   this->Renderer->GetWorldPoint(tmp1);

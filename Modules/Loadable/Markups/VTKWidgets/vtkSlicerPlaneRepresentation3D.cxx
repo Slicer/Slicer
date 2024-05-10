@@ -512,7 +512,7 @@ void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(
     this->Renderer->GetWorldPoint(closestPointWorld);
 
     double pixelTolerance = this->PlaneOutlineFilter->GetRadius() / 2.0 / this->GetViewScaleFactorAtPosition(closestPointWorld)
-      + this->PickingTolerance * this->ScreenScaleFactor;
+      + this->PickingTolerance * this->GetScreenScaleFactor();
     if (dist2Display < pixelTolerance * pixelTolerance && dist2Display < closestDistance2)
     {
       closestDistance2 = dist2Display;

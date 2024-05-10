@@ -380,7 +380,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     if (interactionEventData->IsDisplayPositionValid())
     {
       double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld, interactionEventData)
-        + this->PickingTolerance * this->ScreenScaleFactor;
+        + this->PickingTolerance * this->GetScreenScaleFactor();
       interactionEventData->WorldToDisplay(centerPosWorld, centerPosDisplay);
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
       if (dist2 < pixelTolerance * pixelTolerance)
@@ -461,7 +461,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     if (interactionEventData->IsDisplayPositionValid())
     {
       double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld, interactionEventData)
-        + this->PickingTolerance * this->ScreenScaleFactor;
+        + this->PickingTolerance * this->GetScreenScaleFactor();
       interactionEventData->WorldToDisplay(centerPosWorld, centerPosDisplay);
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
       if (dist2 < pixelTolerance * pixelTolerance && dist2 < closestDistance2)
@@ -582,7 +582,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode*
     controlPoints->TextProperty->SetColor(color);
     controlPoints->TextProperty->SetOpacity(opacity);
     controlPoints->TextProperty->SetFontSize(static_cast<int>(this->MarkupsDisplayNode->GetTextProperty()->GetFontSize()
-      * this->MarkupsDisplayNode->GetTextScale()));
+      * this->MarkupsDisplayNode->GetTextScale() * this->GetScreenScaleFactor() * 5.0));
     controlPoints->TextProperty->SetBackgroundOpacity(opacity * this->MarkupsDisplayNode->GetTextProperty()->GetBackgroundOpacity());
 
     controlPoints->OccludedProperty->SetColor(color);
@@ -855,7 +855,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
     {
       updateControlPointSize = true;
     }
-    newControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor
+    newControlPointSize = this->ScreenSizePixel * this->GetScreenScaleFactor()
       * this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
     // Only update the size if there is noticeable difference to avoid slight flickering
     // when the camera is moved
@@ -1231,7 +1231,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointSize()
 {
   if (this->MarkupsDisplayNode->GetUseGlyphScale())
   {
-    this->ControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor
+    this->ControlPointSize = this->ScreenSizePixel * this->GetScreenScaleFactor()
       * this->MarkupsDisplayNode->GetGlyphScale() / 100.0 * this->ViewScaleFactorMmPerPixel;
   }
   else
