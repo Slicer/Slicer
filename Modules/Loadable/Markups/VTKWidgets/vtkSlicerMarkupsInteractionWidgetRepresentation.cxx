@@ -559,6 +559,10 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateROIScaleHandles2D()
 void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateHandleToWorldTransform(vtkTransform* handleToWorldTransform)
 {
   handleToWorldTransform->Identity();
+  if (!this->GetMarkupsNode())
+  {
+    return;
+  }
   handleToWorldTransform->Concatenate(this->GetMarkupsNode()->GetInteractionHandleToWorldMatrix());
 }
 
