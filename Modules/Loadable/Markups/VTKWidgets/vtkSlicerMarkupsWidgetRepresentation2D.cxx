@@ -444,7 +444,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode*
     controlPoints->TextProperty->SetColor(color);
     controlPoints->TextProperty->SetOpacity(opacity);
     controlPoints->TextProperty->SetFontSize(static_cast<int>(this->MarkupsDisplayNode->GetTextProperty()->GetFontSize()
-      * this->MarkupsDisplayNode->GetTextScale()));
+      * this->MarkupsDisplayNode->GetTextScale() * this->GetScreenScaleFactor() * 5.0));
     controlPoints->TextProperty->SetBackgroundOpacity(opacity * this->MarkupsDisplayNode->GetTextProperty()->GetBackgroundOpacity());
 
     vtkMarkupsGlyphSource2D* glyphSource = this->GetControlPointsPipeline(controlPointType)->GlyphSource2D;
@@ -499,7 +499,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode*
   }
 
   // put the labels near the boundary of the glyph, slightly away from it (by half picking tolarance)
-  double labelsOffset = this->ControlPointSize * 0.5 + this->PickingTolerance * 0.5 * this->ScreenScaleFactor;
+  double labelsOffset = this->ControlPointSize * 0.5 + this->PickingTolerance * 0.5 * this->GetScreenScaleFactor();
   this->UpdateAllPointsAndLabelsFromMRML(labelsOffset);
 
   this->VisibilityOn();
@@ -1162,7 +1162,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateControlPointSize()
   if (this->MarkupsDisplayNode->GetUseGlyphScale())
   {
     // relative
-    this->ControlPointSize = this->ScreenSizePixel * this->ScreenScaleFactor * this->MarkupsDisplayNode->GetGlyphScale() / 100.0;
+    this->ControlPointSize = this->ScreenSizePixel * this->GetScreenScaleFactor() * this->MarkupsDisplayNode->GetGlyphScale() / 100.0;
   }
   else
   {
@@ -1174,7 +1174,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateControlPointSize()
 //----------------------------------------------------------------------
 double vtkSlicerMarkupsWidgetRepresentation2D::GetMaximumControlPointPickingDistance2()
 {
-  double maximumControlPointPickingDistance = this->ControlPointSize / 2.0 + this->PickingTolerance * this->ScreenScaleFactor;
+  double maximumControlPointPickingDistance = this->ControlPointSize / 2.0 + this->PickingTolerance * this->GetScreenScaleFactor();
   return maximumControlPointPickingDistance * maximumControlPointPickingDistance;
 }
 

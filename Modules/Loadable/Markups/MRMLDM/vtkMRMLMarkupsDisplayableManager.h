@@ -123,8 +123,8 @@ protected:
   /// Called after the corresponding MRML View container was modified
   void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
-  /// Handler for specific SliceView actions, iterate over the widgets in the helper
-  virtual void OnMRMLSliceNodeModifiedEvent();
+  /// Update all widgets in response to view node modification
+  virtual void OnMRMLViewNodeModifiedEvent(vtkMRMLAbstractViewNode* viewNode);
 
   /// Observe the interaction node.
   void AddObserversToInteractionNode();

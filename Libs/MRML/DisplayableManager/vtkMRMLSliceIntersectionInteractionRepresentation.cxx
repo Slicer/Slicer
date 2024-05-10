@@ -2585,7 +2585,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::TransformIntersectingSli
 //----------------------------------------------------------------------
 double vtkMRMLSliceIntersectionInteractionRepresentation::GetMaximumHandlePickingDistance2()
 {
-  double maximumHandlePickingDistance = this->InteractionSize / 2.0 + this->PickingTolerance * this->ScreenScaleFactor;
+  double maximumHandlePickingDistance = this->InteractionSize / 2.0 + this->PickingTolerance * this->GetScreenScaleFactor();
   return maximumHandlePickingDistance * maximumHandlePickingDistance;
 }
 
@@ -2723,7 +2723,7 @@ std::string vtkMRMLSliceIntersectionInteractionRepresentation::CanInteract(vtkMR
         if (interactionEventData->IsDisplayPositionValid())
         {
           double pixelTolerance = this->InteractionSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos)
-            + this->PickingTolerance * this->ScreenScaleFactor;
+            + this->PickingTolerance * this->GetScreenScaleFactor();
           this->Renderer->SetWorldPoint(handleWorldPos);
           this->Renderer->WorldToDisplay();
           this->Renderer->GetDisplayPoint(handleDisplayPos);

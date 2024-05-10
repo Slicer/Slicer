@@ -257,10 +257,8 @@ public:
   /// Get/Set markup point size relative to the window size.
   /// This value is only used in slice views and only if SliceUseGlyphScale is set to true.
   /// Diameter of the point is defined as percentage of "window size".
-  /// "Window size" is computed as diagonal size of the screen multiplied by ScreenScaleFactor.
-  /// Currently ScreenScaleFactor is set to to a fixed value of 0.2 (therefore glyph scale = 1.00
-  /// corresponds to 20% of the screen diagonal size), but this factor may be made configurable
-  /// in the future.
+  /// "Window size" is computed as diagonal size of the screen multiplied by ScreenScaleFactor
+  /// (stored in the view node).
   vtkSetMacro(GlyphScale,double);
   vtkGetMacro(GlyphScale,double);
 

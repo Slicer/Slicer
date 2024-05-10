@@ -389,7 +389,7 @@ void vtkSlicerPlaneRepresentation2D::CanInteractWithPlane(
   double closestPointDisplay[3] = { 0.0, 0.0, 0.0 };
   this->GetWorldToSliceCoordinates(closestPointWorld, closestPointDisplay);
 
-  double pixelTolerance = this->PickingTolerance * this->ScreenScaleFactor;
+  double pixelTolerance = this->PickingTolerance * this->GetScreenScaleFactor();
   const int* displayPosition = interactionEventData->GetDisplayPosition();
   double displayPosition3[3] = { static_cast<double>(displayPosition[0]), static_cast<double>(displayPosition[1]), 0.0 };
   double dist2Display = vtkMath::Distance2BetweenPoints(displayPosition3, closestPointDisplay);

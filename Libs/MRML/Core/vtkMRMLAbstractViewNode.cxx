@@ -96,6 +96,11 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
     vtkMRMLWriteXMLEnumMacro(rulerType, RulerType);
   }
   vtkMRMLWriteXMLEnumMacro(rulerColor, RulerColor);
+
+  // Do not write screenScaleFactor attribute, as we should not use the
+  // value that is in the scene but what the user has set in application settings.
+  // vtkMRMLWriteXMLFloatMacro(screenScaleFactor, ScreenScaleFactor);
+
   vtkMRMLWriteXMLEndMacro();
 
   of << " AxisLabels=\"";
@@ -142,6 +147,11 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(orientationMarkerSize, OrientationMarkerSize);
   vtkMRMLReadXMLEnumMacro(rulerType, RulerType);
   vtkMRMLReadXMLEnumMacro(rulerColor, RulerColor);
+
+  // Do not read screenScaleFactor attribute, as we should not use the
+  // value that is in the scene but what the user has set in application settings.
+  // vtkMRMLReadXMLFloatMacro(screenScaleFactor, ScreenScaleFactor);
+
   vtkMRMLReadXMLEndMacro();
 
   const char* attName;
@@ -227,6 +237,7 @@ void vtkMRMLAbstractViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
     vtkMRMLCopyEnumMacro(RulerType);
   }
   vtkMRMLCopyEnumMacro(RulerColor);
+  vtkMRMLCopyFloatMacro(ScreenScaleFactor);
   vtkMRMLCopyEndMacro();
 
   vtkMRMLAbstractViewNode *node = vtkMRMLAbstractViewNode::SafeDownCast(anode);
@@ -275,6 +286,7 @@ void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
     vtkMRMLPrintEnumMacro(RulerType);
   }
   vtkMRMLPrintEnumMacro(RulerColor);
+  vtkMRMLPrintFloatMacro(ScreenScaleFactor);
   vtkMRMLPrintEndMacro();
 
   os << indent << " AxisLabels: ";
