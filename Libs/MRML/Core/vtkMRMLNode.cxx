@@ -514,7 +514,7 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
   //write node references
   std::stringstream ssRef;
   NodeReferencesType::iterator it;
-  std::map< std::string, std::string>::iterator itName;
+
   for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
   {
     const std::string& referenceRole = it->first;
