@@ -47,6 +47,7 @@ Version:   $Revision: 1.6 $
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtksys/Directory.hxx>
+#include <vtkTransform.h>
 
 // STD includes
 #include <algorithm>
@@ -296,19 +297,26 @@ bool IsIJKCoordinateSystemLeftHanded(vtkMatrix4x4* rasToIjkMatrix)
 //----------------------------------------------------------------------------
 void FlipIJKCoordinateSystemHandedness(vtkImageData* imageData, vtkMatrix4x4* rasToIjkMatrix)
 {
-  // Flip K Axis
+  // Flip third image axis (K) direction
   vtkNew<vtkImageFlip> flip;
   flip->SetFilteredAxes(2);
   flip->SetInputData(imageData);
   flip->Update();
   imageData->ShallowCopy(flip->GetOutput());
 
-  // Flip K Direction
-  for (int i = 0; i < 3; i++)
+  // Update rasToIJK to reflect flip around the third axis and shift of the origin to the opposite corner.
+  vtkNew<vtkTransform> flipTransform;
+  int* imageDimensions = imageData->GetDimensions();
+  if (imageDimensions[2] > 1)
   {
-    rasToIjkMatrix->SetElement(i, 2, -rasToIjkMatrix->GetElement(i, 2));
+    // There are more than 1 slice in the image, move the origin to the opposite corner
+    flipTransform->Translate(0.0, 0.0, imageDimensions[2] - 1);
   }
+  flipTransform->Scale(1.0, 1.0, -1.0);
+  flipTransform->Concatenate(rasToIjkMatrix);
+  flipTransform->GetMatrix(rasToIjkMatrix);
 }
+
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
