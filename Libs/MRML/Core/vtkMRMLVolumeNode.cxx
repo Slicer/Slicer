@@ -22,6 +22,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLTransformNode.h"
 
 // VTK includes
+#include <vtkAddonMathUtilities.h>
 #include <vtkAlgorithmOutput.h>
 #include <vtkAppendPolyData.h>
 #include <vtkBoundingBox.h>
@@ -31,8 +32,10 @@ Version:   $Revision: 1.14 $
 #include <vtkHomogeneousTransform.h>
 #include <vtkImageData.h>
 #include <vtkImageDataGeometryFilter.h>
+#include <vtkImageFlip.h>
 #include <vtkImageReslice.h>
 #include <vtkMathUtilities.h>
+#include <vtkMatrix3x3.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
@@ -1345,4 +1348,59 @@ int vtkMRMLVolumeNode::GetVoxelVectorTypeFromString(const char* name)
   }
   // unknown name
   return -1;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLVolumeNode::IsIJKCoordinateSystemRightHanded(vtkMatrix4x4* ijkToRasMatrix)
+{
+  // Check if the determinant of the orientation matrix is less than 0.
+  vtkNew<vtkMatrix3x3> orientation;
+  vtkAddonMathUtilities::GetOrientationMatrix(ijkToRasMatrix, orientation);
+  return orientation->Determinant() >= 0.;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness(vtkImageData* imageData, vtkMatrix4x4* ijkToRasMatrix)
+{
+  if (ijkToRasMatrix == nullptr)
+  {
+    vtkGenericWarningMacro("vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness failed: ijkToRasMatrix is invalid");
+    return;
+  }
+  int imageDimensions[3] = { 0, 0, 0 };
+  if (imageData)
+  {
+    // Flip third image axis (K) direction
+    vtkNew<vtkImageFlip> flip;
+    flip->SetFilteredAxes(2);
+    flip->SetInputData(imageData);
+    flip->Update();
+    imageData->ShallowCopy(flip->GetOutput());
+    imageData->GetDimensions(imageDimensions);
+  }
+
+  // Update rasToIJK to reflect flip around the third axis and shift of the origin to the opposite corner.
+  vtkNew<vtkTransform> flipTransform;
+  flipTransform->Concatenate(ijkToRasMatrix);
+  if (imageDimensions[2] > 1)
+  {
+    // There are more than 1 slice in the image, move the origin to the opposite corner
+    flipTransform->Translate(0.0, 0.0, imageDimensions[2] - 1);
+  }
+  flipTransform->Scale(1.0, 1.0, -1.0);
+  flipTransform->GetMatrix(ijkToRasMatrix);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::SetIJKCoordinateSystemToRightHanded()
+{
+  vtkNew<vtkMatrix4x4> ijkToRAS;
+  this->GetIJKToRASMatrix(ijkToRAS);
+  if (vtkMRMLVolumeNode::IsIJKCoordinateSystemRightHanded(ijkToRAS))
+  {
+    // already right-handed
+    return;
+  }
+  vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness(this->GetImageData(), ijkToRAS);
+  this->SetIJKToRASMatrix(ijkToRAS);
 }
