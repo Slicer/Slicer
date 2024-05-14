@@ -30,14 +30,12 @@
 #
 # The following variables are internally set by extracting corresponding values
 # from the locally generated "<extension_name>.s4ext" file:
-#  EXTENSION_EXT_CATEGORY
 #  EXTENSION_EXT_CONTRIBUTORS
 #  EXTENSION_EXT_DEPENDS
 #  EXTENSION_EXT_DESCRIPTION
 #  EXTENSION_EXT_HOMEPAGE
 #  EXTENSION_EXT_ICONURL
 #  EXTENSION_EXT_SCREENSHOTURLS
-#  EXTENSION_EXT_ENABLED
 #
 # The following variables can either be defined in the including scope or
 # as environment variables:
@@ -108,8 +106,6 @@ if(NOT PACKAGEUPLOAD)
     CTEST_MODEL
     Slicer_REVISION
     EXTENSION_NAME
-    EXTENSION_CATEGORY
-    EXTENSION_ENABLED
     EXTENSION_OPERATING_SYSTEM
     EXTENSION_ARCHITECTURE
     )
