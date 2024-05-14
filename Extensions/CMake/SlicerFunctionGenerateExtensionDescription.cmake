@@ -172,15 +172,16 @@ This is a line of text.<br>And another one."
     #EXTENSION_DEPENDS
     #EXTENSION_ENABLED
     )
+  set(generated "${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext")
+  set(baseline "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_without_depends.s4ext")
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-      ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
-      ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_without_depends.s4ext
-    ERROR_VARIABLE error
+      ${generated}
+      ${baseline}
     RESULT_VARIABLE result
     )
   if(NOT result EQUAL 0)
-    message(FATAL_ERROR "${error}")
+    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${generated}]. Baseline [${baseline}]")
   endif()
 
   # Generate description file of an extension *with* dependencies
@@ -191,15 +192,16 @@ This is a line of text.<br>And another one."
     EXTENSION_DEPENDS "Foo Bar"
     EXTENSION_ENABLED 0
     )
+  set(generated "${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext")
+  set(baseline "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext")
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-      ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
-      ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext
-    ERROR_VARIABLE error
+      ${generated}
+      ${baseline}
     RESULT_VARIABLE result
     )
   if(NOT result EQUAL 0)
-    message(FATAL_ERROR "${error}")
+    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${generated}]. Baseline [${baseline}]")
   endif()
 
   # Generate description file of an extension *with* dependencies
@@ -211,15 +213,16 @@ This is a line of text.<br>And another one."
     EXTENSION_ENABLED 0
     EXTENSION_STATUS ""
     )
+  set(generated "${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext")
+  set(baseline "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext")
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-      ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
-      ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext
-    ERROR_VARIABLE error
+      ${generated}
+      ${baseline}
     RESULT_VARIABLE result
     )
   if(NOT result EQUAL 0)
-    message(FATAL_ERROR "${error}")
+    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${generated}]. Baseline [${baseline}]")
   endif()
 
   message("SUCCESS")
