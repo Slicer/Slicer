@@ -27,6 +27,7 @@
 # by the extension CMake build-system:
 #  EXTENSION_EXT_CATEGORY
 #  EXTENSION_EXT_ENABLED
+#  EXTENSION_EXT_TIER
 #
 # The following variables are internally set by extracting corresponding values
 # from the locally generated "<extension_name>.s4ext" file:
@@ -223,6 +224,7 @@ set(expected_defined_vars
   EXTENSION_EXT_CONTRIBUTORS
   # From ".json" file
   EXTENSION_EXT_CATEGORY
+  EXTENSION_EXT_TIER
   )
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
@@ -244,6 +246,7 @@ slicerFunctionGenerateExtensionDescription(
   EXTENSION_DEPENDS ${EXTENSION_EXT_DEPENDS}
   EXTENSION_ENABLED ${EXTENSION_EXT_ENABLED}
   EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_EXT_BUILD_SUBDIRECTORY}
+  EXTENSION_TIER ${EXTENSION_EXT_TIER}
   EXTENSION_WC_TYPE ${EXTENSION_WC_TYPE}
   EXTENSION_WC_REVISION ${EXTENSION_WC_REVISION}
   EXTENSION_WC_ROOT ${${EXTENSION_NAME}_WC_READONLY_ROOT}
@@ -360,6 +363,7 @@ foreach(p ${package_list})
             --homepage "${EXTENSION_EXT_HOMEPAGE}"
             --screenshots "${EXTENSION_EXT_SCREENSHOTURLS}"
             --contributors "${EXTENSION_EXT_CONTRIBUTORS}"
+            --tier "${EXTENSION_EXT_TIER}"
       RESULT_VARIABLE slicer_extension_manager_upload_status
       ERROR_FILE ${error_file}
       )

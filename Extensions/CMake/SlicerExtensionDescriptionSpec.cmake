@@ -124,6 +124,11 @@ _define_metadata("STATUS"
   0
   "")
 
+_define_metadata("TIER"
+  "Extension tier"
+  0
+  "1")
+
 set(Slicer_EXT_REQUIRED_METADATA_NAMES )
 set(Slicer_EXT_OPTIONAL_METADATA_NAMES )
 foreach(name IN LISTS Slicer_EXT_METADATA_NAMES)
@@ -164,7 +169,7 @@ function(slicer_extension_description_spec_defaults_test)
   list(LENGTH Slicer_EXT_REQUIRED_METADATA_NAMES required_metadata_count)
   list(LENGTH Slicer_EXT_OPTIONAL_METADATA_NAMES optional_metadata_count)
 
-  set(expected 13)
+  set(expected 14)
   set(actual ${metadata_count})
   if(NOT ${actual} EQUAL ${expected})
     message(FATAL_ERROR
@@ -178,7 +183,7 @@ function(slicer_extension_description_spec_defaults_test)
       "Problem with metadata_count. Expected: ${expected}, actual: ${actual}")
   endif()
 
-  set(expected 10)
+  set(expected 11)
   set(actual ${optional_metadata_count})
   if(NOT ${actual} EQUAL ${expected})
     message(FATAL_ERROR
@@ -202,6 +207,7 @@ function(slicer_extension_description_spec_defaults_test)
     SCREENSHOTURLS
     ENABLED
     STATUS
+    TIER
     )
   foreach(name IN LISTS required optional)
     foreach(varsuffix IN ITEMS "REQUIRED" "DEFAULT" "DESCRIPTION")
