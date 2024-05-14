@@ -162,7 +162,7 @@ function(slicerFunctionExtractExtensionDescriptionFromJson)
     if(${name} IN_LIST Slicer_EXT_OPTIONAL_METADATA_NAMES)
       string(JSON type ERROR_VARIABLE error TYPE "${extension_file_content}" "${token}")
       if(error)
-        set(${MY_VAR_PREFIX}_EXT_${upper_case_token} ${${upper_case_token}_DEFAULT} PARENT_SCOPE)
+        set(${MY_VAR_PREFIX}_EXT_${upper_case_token} "${${upper_case_token}_DEFAULT}" PARENT_SCOPE)
         continue()
       endif()
     else()
@@ -357,7 +357,7 @@ function(slicer_extract_extension_description_from_json_test)
   set(expected_BUILD_DEPENDENCIES "")
   set(expected_ENABLED "1")
 
-  foreach(name IN LISTS required)
+  foreach(name IN LISTS required optional)
     if(NOT foo_EXT_${name} STREQUAL "${expected_${name}}")
       message(FATAL_ERROR "Problem with foo_EXT_${name}
   Expected: [${expected_${name}}]
