@@ -1962,8 +1962,15 @@ bool qSlicerExtensionsManagerModel::installExtension(
 
     // Copy expected keys from archive description
     QStringList expectedKeys;
-    expectedKeys << /*no tr*/"category" << /*no tr*/"contributors" << /*no tr*/"description" << /*no tr*/"homepage"
-      << /*no tr*/"iconurl" << /*no tr*/"screenshots" << /*no tr*/"status" << /*no tr*/"updated";
+    expectedKeys
+        << /*no tr*/"category"
+        << /*no tr*/"contributors"
+        << /*no tr*/"description"
+        << /*no tr*/"homepage"
+        << /*no tr*/"iconurl"
+        << /*no tr*/"screenshots"
+        << /*no tr*/"status"
+        << /*no tr*/"updated";
 
     const ExtensionMetadataType::const_iterator notFound =
       extensionIndexMetadata.constEnd();
