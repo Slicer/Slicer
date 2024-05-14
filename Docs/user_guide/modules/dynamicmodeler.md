@@ -23,7 +23,7 @@ Click on the Apply button to run the tool once, or check the checkbox on the App
 ## Tools
 
 ### Plane cut
-Cut a plane into two separate meshes using any number of markup planes or slice views. The planes can be combined using union, intersection and difference boolean operation.
+Extracts a region of the surface by cutting it with one or more markup planes or slice view planes. The `Output model` contains what is on the negative side of the plane(s). If more than one plane is specified, the negative sides of the planes are combined using a union, intersection, or difference operation. The part of the `input model` that is not included in the `output model` is stored in the `complement output model`.
 #### Input nodes
 - `Model node`: The surface model to be cut.
 - `Plane node (repeatable)`: The planes used to cut the model.
@@ -31,8 +31,8 @@ Cut a plane into two separate meshes using any number of markup planes or slice 
 - `Cap surface`: If enabled, creates a closed surface by triangulating the clipped region.
 - `Operation type`: The method that will be used to combine multiple planes for cutting (union, intersection and difference boolean operations).
 #### Output nodes
-- `Clipped output model (positive side)`: Portion of the cut model that is on the same side of the plane as the normal.
-- `Clipped output model (negative side)`: Portion of the cut model that is on the opposite side of the plane as the normal.
+- `Output model (negative side)`: Portion of the cut model that is on the opposite side of the plane as the normal.
+- `Complement output model (positive side)`: Portion of the cut model that is on the same side of the plane as the normal.
 
 ### Curve cut
 Extracts a region from the surface that is enclosed by a markup curve.
