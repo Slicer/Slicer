@@ -785,8 +785,9 @@ bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayableNode* 
   {
     displayable |= this->IsModelDisplayable(node->GetNthDisplayNode(i));
     if (displayable)
-    {// Optimization: no need to search any further.
-      continue;
+    {
+      // Optimization: no need to search any further.
+      break;
     }
   }
   return displayable;
@@ -818,15 +819,12 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     return false;
   }
 
-  if (!this->IsModelDisplayable(modelNode))
-  {
-    return false;
-  }
   // If the node is already cached with an actor process only this one
   // If it was not visible and is still not visible do nothing
   int ndnodes = modelNode->GetNumberOfDisplayNodes();
   bool updateModel = false;
   bool updateMRML = false;
+  bool modelDisplayable = this->IsModelDisplayable(modelNode);
   for (int i=0; i<ndnodes; i++)
   {
     vtkMRMLDisplayNode *dnode = modelNode->GetNthDisplayNode(i);
@@ -836,7 +834,7 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
       updateMRML = true;
       break;
     }
-    bool visible =
+    bool visible = modelDisplayable &&
       (dnode->GetVisibility() == 1) && (dnode->GetVisibility3D() == 1) && this->IsModelDisplayable(dnode);
     bool hasActor =
       this->Internal->DisplayedActors.find(dnode->GetID()) != this->Internal->DisplayedActors.end();
