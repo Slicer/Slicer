@@ -51,7 +51,7 @@ jobs:
           import sys
 
           for line in sys.stdin:
-              match = re.match(r"\[https://github.com/([^/]+/[^/]+)\] updating (v[\d.]+) -> (v[\d.]+)", line.strip())
+              match = re.match(r"\[https://github.com/([^/]+/[^/]+)\] updating (v?[\d.]+) -> (v?[\d.]+)", line.strip())
               if match:
                   repo_url = match.group(1)
                   old_version = match.group(2)
