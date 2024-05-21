@@ -189,7 +189,7 @@ class ExtensionWizardWidget:
             try:
                 self.templateManager.addPath(builtinPath)
             except:
-                qt.qWarning(_("failed to add built-in template path %r") % builtinPath)
+                qt.qWarning(_("failed to add built-in template {path}").format(path=builtinPath))
                 qt.qWarning(traceback.format_exc())
 
         # Read base template paths
@@ -198,7 +198,7 @@ class ExtensionWizardWidget:
             try:
                 self.templateManager.addPath(path)
             except:
-                qt.qWarning(_("failed to add template path %r") % path)
+                qt.qWarning(_("failed to add template {path}").format(path=path)
                 qt.qWarning(traceback.format_exc())
 
         # Read per-category template paths
@@ -209,13 +209,13 @@ class ExtensionWizardWidget:
                     self.templateManager.addCategoryPath(c, path)
                 except:
                     mp = (c, path)
-                    qt.qWarning(_("failed to add template path %r for category %r") % mp)
+                    qt.qWarning(_("failed to add template {path} for {category}").format(path=mp))
                     qt.qWarning(traceback.format_exc())
 
     # ---------------------------------------------------------------------------
     def createExtension(self):
         dlg = CreateComponentDialog(_("extension"), self.parent.window())
-        dlg.setTemplates(self.templateManager.templates(_("extensions")))
+        dlg.setTemplates(self.templateManager.templates("extensions"))
 
         while dlg.exec_() == qt.QDialog.Accepted:
             # If the selected destination is in a repository then use the root of that repository
@@ -387,7 +387,7 @@ class ExtensionWizardWidget:
 
                 if len(failed):
                     if len(failed) > 1:
-                        text = _("The following modules could not be registered:")
+                        text = _("{count} modules could not be registered")
                     else:
                         text = _("The '%s' module could not be registered:") % failed[0].key
 
@@ -416,15 +416,15 @@ class ExtensionWizardWidget:
             return
 
         dlg = CreateComponentDialog(_("module"), self.parent.window())
-        dlg.setTemplates(self.templateManager.templates(_("modules")),
-                         default=_("scripted"))
+        dlg.setTemplates(self.templateManager.templates("modules"),
+                         default=_"scripted")
         dlg.showDestination = False
 
         while dlg.exec_() == qt.QDialog.Accepted:
             name = dlg.componentName
 
             try:
-                self.templateManager.copyTemplate(self.extensionLocation, _("modules"),
+                self.templateManager.copyTemplate(self.extensionLocation, "modules",
                                                   dlg.componentType, name)
 
             except:
