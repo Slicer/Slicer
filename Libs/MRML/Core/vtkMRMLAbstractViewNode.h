@@ -290,6 +290,16 @@ public:
   /// \returns layout node that this view belongs to.
   vtkMRMLLayoutNode* GetMaximizedState(bool& maximized, bool& canBeMaximized);
 
+  //@{
+  /// Get/set scaling factor of text and interactive elements in the viewer.
+  /// If the screen is physically larger then the user prefer a smaller screen scale factor.
+  /// When using a smaller screen or if the screen is farther or eyesight of the user is not perfect
+  /// then a larger screen scale factor may be preferable.
+  /// Setting of this value is still experimental and therefore the current value is not saved into the scene.
+  vtkGetMacro(ScreenScaleFactor, double);
+  vtkSetMacro(ScreenScaleFactor, double);
+  //@}
+
 protected:
   vtkMRMLAbstractViewNode();
   ~vtkMRMLAbstractViewNode() override;
@@ -339,6 +349,10 @@ protected:
   bool RulerEnabled{false};
   int RulerType{RulerTypeNone};
   int RulerColor{RulerColorWhite};
+
+  /// Default glyph scale used to be 3.0 (in Slicer-4.10 and earlier).
+  /// This display scale factor value produces similar appearance of markup points.
+  double ScreenScaleFactor{ 0.2 };
 
   ///
   /// Labels of coordinate system axes

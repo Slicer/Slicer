@@ -19,9 +19,9 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      - uses: actions/create-github-app-token@7bfa3a4717ef143a604ee0a99d859b8886a96d00 # v1.9.3
+      - uses: actions/create-github-app-token@a0de6af83968303c8c955486bf9739a57d23c7f1 # v1.10.0
         id: app-token
         with:
           app-id: ${{ vars.SLICER_APP_ID }}
@@ -51,7 +51,7 @@ jobs:
           import sys
 
           for line in sys.stdin:
-              match = re.match(r"\[https://github.com/([^/]+/[^/]+)\] updating (v[\d.]+) -> (v[\d.]+)", line.strip())
+              match = re.match(r"\[https://github.com/([^/]+/[^/]+)\] updating (v?[\d.]+) -> (v?[\d.]+)", line.strip())
               if match:
                   repo_url = match.group(1)
                   old_version = match.group(2)
@@ -70,7 +70,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
         shell: bash
 
-      - uses: peter-evans/create-pull-request@c55203cfde3e5c11a452d352b4393e68b85b4533 # v6.0.3
+      - uses: peter-evans/create-pull-request@6d6857d36972b65feb161a90e484f2984215f83e # v6.0.5
         with:
           token: ${{ steps.app-token.outputs.token }}
           commit-message: |

@@ -110,7 +110,7 @@ void qSlicerSimpleMarkupsWidget::setup()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  d->MarkupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->moduleLogic("Markups"));
+  d->MarkupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->moduleLogic(/*no tr*/"Markups"));
   if (!d->MarkupsLogic)
   {
     qCritical() << Q_FUNC_INFO << ": Markups module is not found, some markup manipulation features will not be available";

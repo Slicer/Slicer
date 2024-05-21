@@ -6,10 +6,11 @@
 # extension.
 #
 # The new target that will
-#  (1) build the standard 'package' target,
-#  (2) extract the list of generated packages from its standard output,
-#  (3) append the list of generated package filepaths to a file named PACKAGES.txt,
-#  (4) upload the first package.
+#  (1) configure the project and build the standard 'package' target,
+#  (2) extract metadata from the locally generated .s4ext file
+#  (3) extract the list of generated packages from its standard output,
+#  (4) append the list of generated package filepaths to a file named PACKAGES.txt,
+#  (5) upload the first package.
 #
 # The following variables are expected to be defined in the including scope:
 #  CMAKE_SOURCE_DIR
@@ -18,15 +19,23 @@
 #  Slicer_CMAKE_DIR
 #  Slicer_REVISION
 #  EXTENSION_NAME
-#  EXTENSION_CATEGORY
-#  EXTENSION_ICONURL
-#  EXTENSION_CONTRIBUTORS
-#  EXTENSION_DESCRIPTION
-#  EXTENSION_HOMEPAGE
-#  EXTENSION_SCREENSHOTURLS
-#  EXTENSION_ENABLED
 #  EXTENSION_OPERATING_SYSTEM
 #  EXTENSION_ARCHITECTURE
+#
+# The following variables are internally set by extracting corresponding values
+# from the catalog entry file "<extension_name>.json" copied into the build directory
+# by the extension CMake build-system:
+#  EXTENSION_EXT_CATEGORY
+#  EXTENSION_EXT_ENABLED
+#
+# The following variables are internally set by extracting corresponding values
+# from the locally generated "<extension_name>.s4ext" file:
+#  EXTENSION_EXT_CONTRIBUTORS
+#  EXTENSION_EXT_DEPENDS
+#  EXTENSION_EXT_DESCRIPTION
+#  EXTENSION_EXT_HOMEPAGE
+#  EXTENSION_EXT_ICONURL
+#  EXTENSION_EXT_SCREENSHOTURLS
 #
 # The following variables can either be defined in the including scope or
 # as environment variables:
@@ -97,14 +106,6 @@ if(NOT PACKAGEUPLOAD)
     CTEST_MODEL
     Slicer_REVISION
     EXTENSION_NAME
-    EXTENSION_CATEGORY
-    EXTENSION_ICONURL
-    EXTENSION_CONTRIBUTORS
-    EXTENSION_DEPENDS
-    EXTENSION_DESCRIPTION
-    EXTENSION_HOMEPAGE
-    EXTENSION_SCREENSHOTURLS
-    EXTENSION_ENABLED
     EXTENSION_OPERATING_SYSTEM
     EXTENSION_ARCHITECTURE
     )
@@ -186,6 +187,44 @@ foreach(var ${expected_defined_vars})
   endif()
 endforeach()
 
+set(CMAKE_MODULE_PATH
+  ${Slicer_CMAKE_DIR}
+  ${Slicer_CMAKE_DIR}/../Extensions/CMake
+  ${CMAKE_MODULE_PATH}
+  )
+
+#-----------------------------------------------------------------------------
+# Extract extension metadata from ".s4ext" file generated in the build
+# directory based on the variables set in the extension CMakeLists.txt
+include(SlicerFunctionExtractExtensionDescription)
+slicerFunctionExtractExtensionDescription(
+  EXTENSION_FILE "${EXTENSION_BINARY_DIR}/${EXTENSION_NAME}.s4ext"
+  VAR_PREFIX EXTENSION)
+
+# Extract metadata from the catalog extension entry file (".json") usually
+# copied into the build directory by the extension build-system.
+slicerFunctionExtractExtensionDescriptionFromJson(
+  EXTENSION_FILE "${EXTENSION_BINARY_DIR}/${EXTENSION_NAME}.json"
+  VAR_PREFIX EXTENSION)
+
+# Sanity checks
+set(expected_defined_vars
+  # From ".s4ext" file
+  EXTENSION_EXT_DEPENDS
+  EXTENSION_EXT_DESCRIPTION
+  EXTENSION_EXT_ICONURL
+  EXTENSION_EXT_HOMEPAGE
+  EXTENSION_EXT_SCREENSHOTURLS
+  EXTENSION_EXT_CONTRIBUTORS
+  # From ".json" file
+  EXTENSION_EXT_CATEGORY
+  )
+foreach(var ${expected_defined_vars})
+  if(NOT DEFINED ${var})
+    message(FATAL_ERROR "Variable ${var} is not defined !")
+  endif()
+endforeach()
+
 #-----------------------------------------------------------------------------
 # The following code will build the 'package' target, extract the list
 # of generated packages from its standard output and create a file PACKAGES.txt
@@ -241,8 +280,14 @@ endforeach()
 # The following code will read the list of created packages from PACKAGES.txt
 # file and upload the first one.
 
-# Current assumption: Exactly one extension package is expected. If this
-# even change. The following code would have to be updated.
+# Current assumption:
+# - Exactly one extension package is expected.
+# - Extension catalog entry file ("<extensionname>.json") is expected to be
+#   copied into the extension build directory (or inner build directory for
+#   SuperBuild extension).
+# - Extension metadata not already specified in the catalog entry file are read
+#   from "<extensionname>.s4ext" file generated in the extension build directory.
+# If this ever changes. The following code would have to be updated.
 
 file(STRINGS ${EXTENSION_BINARY_DIR}/PACKAGES.txt package_list)
 
@@ -250,12 +295,6 @@ list(LENGTH package_list package_count)
 if(package_count EQUAL 0)
   message(FATAL_ERROR "Extension package failed to be generated.")
 endif()
-
-set(CMAKE_MODULE_PATH
-  ${Slicer_CMAKE_DIR}
-  ${Slicer_CMAKE_DIR}/../Extensions/CMake
-  ${CMAKE_MODULE_PATH}
-  )
 
 set(package_uploaded 0)
 foreach(p ${package_list})
@@ -266,7 +305,7 @@ foreach(p ${package_list})
     get_filename_component(package_name "${p}" NAME)
 
     # Convert to space separated list
-    list(JOIN EXTENSION_DEPENDS " " dependency)
+    list(JOIN EXTENSION_EXT_DEPENDS " " dependency)
 
     message("Uploading [${package_name}] to [${SLICER_EXTENSION_MANAGER_URL}]")
     get_filename_component(package_directory ${p} DIRECTORY)
@@ -286,13 +325,13 @@ foreach(p ${package_list})
             --repo_url "${EXTENSION_WC_URL}"
             --revision "${EXTENSION_WC_REVISION}"
             --app_revision "${Slicer_REVISION}"
-            --category "${EXTENSION_CATEGORY}"
-            --desc "${EXTENSION_DESCRIPTION}"
+            --category "${EXTENSION_EXT_CATEGORY}"
+            --desc "${EXTENSION_EXT_DESCRIPTION}"
             --dependency "${dependency}"
-            --icon_url "${EXTENSION_ICONURL}"
-            --homepage "${EXTENSION_HOMEPAGE}"
-            --screenshots "${EXTENSION_SCREENSHOTURLS}"
-            --contributors "${EXTENSION_CONTRIBUTORS}"
+            --icon_url "${EXTENSION_EXT_ICONURL}"
+            --homepage "${EXTENSION_EXT_HOMEPAGE}"
+            --screenshots "${EXTENSION_EXT_SCREENSHOTURLS}"
+            --contributors "${EXTENSION_EXT_CONTRIBUTORS}"
       RESULT_VARIABLE slicer_extension_manager_upload_status
       ERROR_FILE ${error_file}
       )

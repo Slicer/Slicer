@@ -40,13 +40,13 @@ Version:   $Revision: 1.6 $
 #include <vtkDataArray.h>
 #include <vtkErrorCode.h>
 #include <vtkImageChangeInformation.h>
-#include <vtkImageFlip.h>
 #include <vtkMatrix3x3.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtksys/Directory.hxx>
+#include <vtkTransform.h>
 
 // STD includes
 #include <algorithm>
@@ -87,6 +87,7 @@ vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
   this->CenterImage = 0;
   this->SingleFile  = 0;
   this->UseOrientationFromFile = 1;
+  this->ForceRightHandedIJKCoordinateSystem = true;
   this->DefaultWriteFileExtension = "nrrd";
 }
 
@@ -102,11 +103,13 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
   ss << this->CenterImage;
   of << " centerImage=\"" << ss.str() << "\"";
   }
+  of << " forceRightHandedIJKCoordinateSystem=\"" << (this->ForceRightHandedIJKCoordinateSystem ? "true" : "false") << "\"";
   {
-  std::stringstream ss;
-  ss << this->UseOrientationFromFile;
-  of << " UseOrientationFromFile=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->UseOrientationFromFile;
+    of << " UseOrientationFromFile=\"" << ss.str() << "\"";
   }
+
   // SingleFile attribute is not written to file. GetNumberOfFileNames()
   // is used to determine if reader should read from single/multiple files.
 }
@@ -126,15 +129,23 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "centerImage"))
     {
+      int centerImage = 0;
       std::stringstream ss;
       ss << attValue;
-      ss >> this->CenterImage;
+      ss >> centerImage;
+      this->SetCenterImage(centerImage);
     }
     if (!strcmp(attName, "UseOrientationFromFile"))
     {
+      int useOrientationFromFile = 1;
       std::stringstream ss;
       ss << attValue;
-      ss >> this->UseOrientationFromFile;
+      ss >> useOrientationFromFile;
+      this->SetUseOrientationFromFile(useOrientationFromFile);
+    }
+    if (!strcmp(attName, "forceRightHandedIJKCoordinateSystem"))
+    {
+      this->SetForceRightHandedIJKCoordinateSystem(strcmp(attValue, "true") == 0);
     }
   }
 
@@ -160,6 +171,7 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
   this->SetCenterImage(node->CenterImage);
   this->SetSingleFile(node->SingleFile);
   this->SetUseOrientationFromFile(node->UseOrientationFromFile);
+  this->SetForceRightHandedIJKCoordinateSystem(node->ForceRightHandedIJKCoordinateSystem);
 
   this->EndModify(disabledModify);
 }
@@ -171,6 +183,7 @@ void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
   os << indent << "SingleFile:   " << this->SingleFile << "\n";
   os << indent << "UseOrientationFromFile:   " << this->UseOrientationFromFile << "\n";
+  os << indent << "ForceRightHandedIJKCoordinateSystem:   " << (this->ForceRightHandedIJKCoordinateSystem ? "true" : "false") << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -284,31 +297,6 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode * storag
   }
 }
 
-//----------------------------------------------------------------------------
-bool IsIJKCoordinateSystemLeftHanded(vtkMatrix4x4* rasToIjkMatrix)
-{
-  // Check if the determinant of the orientation matrix is less than 0.
-  vtkNew<vtkMatrix3x3> orientation;
-  vtkAddonMathUtilities::GetOrientationMatrix(rasToIjkMatrix, orientation);
-  return orientation->Determinant() < 0.;
-}
-
-//----------------------------------------------------------------------------
-void FlipIJKCoordinateSystemHandedness(vtkImageData* imageData, vtkMatrix4x4* rasToIjkMatrix)
-{
-  // Flip K Axis
-  vtkNew<vtkImageFlip> flip;
-  flip->SetFilteredAxes(2);
-  flip->SetInputData(imageData);
-  flip->Update();
-  imageData->ShallowCopy(flip->GetOutput());
-
-  // Flip K Direction
-  for (int i = 0; i < 3; i++)
-  {
-    rasToIjkMatrix->SetElement(i, 2, -rasToIjkMatrix->GetElement(i, 2));
-  }
-}
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
@@ -542,15 +530,14 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
       vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Image reader provided invalid RAS to IJK matrix"));
   }
+  volNode->SetRASToIJKMatrix(rasToIjkMatrix);
 
   // If volume is left-handed coordinates, modify it to right-handed coordinate
   // to have support for every algorithms in 3D Slicer
-  if (IsIJKCoordinateSystemLeftHanded(rasToIjkMatrix))
+  if (this->ForceRightHandedIJKCoordinateSystem)
   {
-    FlipIJKCoordinateSystemHandedness(outputImage, rasToIjkMatrix);
+    volNode->SetIJKCoordinateSystemToRightHanded();
   }
-
-  volNode->SetRASToIJKMatrix(rasToIjkMatrix);
 
   if (volNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
   {

@@ -1,7 +1,5 @@
-import glob
-import logging
+import json
 import os
-import re
 
 from .ExtensionProject import ExtensionProject
 
@@ -18,10 +16,6 @@ class ExtensionDescription:
     or the :meth:`.clear` method.
     """
 
-    _reParam = re.compile(r"([a-zA-Z][a-zA-Z0-9_]*)\s+(.+)")
-
-    DESCRIPTION_FILE_TEMPLATE = None
-
     # ---------------------------------------------------------------------------
     def __init__(self, repo=None, filepath=None, sourcedir=None, cmakefile="CMakeLists.txt"):
         """
@@ -30,7 +24,7 @@ class ExtensionDescription:
         :type repo:
           :class:`git.Repo <git:git.repo.base.Repo>`,
         :param filepath:
-          Path to an existing ``.s4ext`` to read.
+          Path to an existing ``.json`` to read.
         :type filepath:
           :class:`str` or ``None``.
         :param sourcedir:
@@ -51,7 +45,7 @@ class ExtensionDescription:
 
         The description may be created from a repository instance (in which case
         the description repository information will be populated), a path to the
-        extension source directory, or a path to an existing ``.s4ext`` file.
+        extension source directory, or a path to an existing ``.json`` file.
         No more than one of ``repo``, ``filepath`` or ``sourcedir`` may be given.
         If none are provided, the description will be incomplete.
         """
@@ -117,7 +111,6 @@ class ExtensionDescription:
         if sourcedir is not None:
             p = ExtensionProject(sourcedir, filename=cmakefile)
             self._setProjectAttribute("homepage", p, required=True)
-            self._setProjectAttribute("category", p, required=True)
             self._setProjectAttribute("description", p)
             self._setProjectAttribute("contributors", p)
 
@@ -171,38 +164,8 @@ class ExtensionDescription:
 
     # ---------------------------------------------------------------------------
     def _read(self, fp):
-        for line in fp:
-            m = self._reParam.match(line)
-            if m is not None:
-                setattr(self, m.group(1), m.group(2).strip())
-
-    # ---------------------------------------------------------------------------
-    def read(self, path):
-        """Read extension description from directory.
-
-        :param path: Directory containing extension description.
-        :type path: :class:`str`
-
-        :raises:
-          :exc:`~exceptions.IOError` if ``path`` does not contain exactly one
-          extension description file.
-
-        This attempts to read an extension description from the specified ``path``
-        which contains a single extension description (``.s4ext``) file (usually an
-        extension build directory).
-        """
-
-        self.clear()
-
-        descriptionFiles = glob.glob(os.path.join(path, "*.[Ss]4[Ee][Xx][Tt]"))
-        if len(descriptionFiles) < 1:
-            raise OSError("extension description file not found")
-
-        if len(descriptionFiles) > 1:
-            raise OSError("multiple extension description files found")
-
-        with open(descriptionFiles[0]) as fp:
-            self._read(fp)
+        for key, value in json.load(fp).items():
+            setattr(self, key, value)
 
     # ---------------------------------------------------------------------------
     @staticmethod
@@ -219,42 +182,15 @@ class ExtensionDescription:
     def _write(self, fp):
         # Creation of the map
         dictio = dict()
-        dictio["scm_type"] = getattr(self, "scm")
-        dictio["scm_url"] = getattr(self, "scmurl")
-        dictio["MY_EXTENSION_WC_REVISION"] = getattr(self, "scmrevision")
-        dictio["MY_EXTENSION_DEPENDS"] = getattr(self, "depends")
-        dictio["MY_EXTENSION_BUILD_SUBDIRECTORY"] = getattr(self, "build_subdirectory")
-        dictio["MY_EXTENSION_HOMEPAGE"] = getattr(self, "homepage")
-        dictio["MY_EXTENSION_CONTRIBUTORS"] = getattr(self, "contributors")
-        dictio["MY_EXTENSION_CATEGORY"] = getattr(self, "category")
-        dictio["MY_EXTENSION_ICONURL"] = getattr(self, "iconurl")
-        dictio["MY_EXTENSION_STATUS"] = getattr(self, "status")
-        dictio["MY_EXTENSION_DESCRIPTION"] = getattr(self, "description")
-        dictio["MY_EXTENSION_SCREENSHOTURLS"] = getattr(self, "screenshoturls")
-        dictio["MY_EXTENSION_ENABLED"] = getattr(self, "enabled")
+        dictio["scmurl"] = getattr(self, "scmurl")
+        dictio["scmrevision"] = getattr(self, "scmrevision")
+        dictio["build_dependencies"] = getattr(self, "depends")
+        dictio["build_subdirectory"] = getattr(self, "build_subdirectory")
+        dictio["category"] = "Examples"
+        dictio["enabled"] = getattr(self, "enabled")
 
-        if self.DESCRIPTION_FILE_TEMPLATE is not None:
-            extDescriptFile = open(self.DESCRIPTION_FILE_TEMPLATE)
-            for line in extDescriptFile.readlines():
-                if "${" in line:
-                    variables = self._findOccurences(line, "$")
-                    temp = line
-                    for variable in variables:
-                        if line[variable] == "$" and line[variable + 1] == "{":
-                            var = ""
-                            i = variable + 2
-                            while line[i] != "}":
-                                var += line[i]
-                                i += 1
-                            temp = temp.replace("${" + var + "}", dictio[var])
-                    fp.write(temp)
-                else:
-                    fp.write(line)
-        else:
-            logging.warning("failed to generate description file using template")
-            logging.warning("generating description file using fallback method")
-            for key in sorted(self.__dict__):
-                fp.write((f"{key} {getattr(self, key)}").strip() + "\n")
+        fp.write(json.dumps(dictio, sort_keys=True, indent=4))
+        fp.write("\n")
 
     # ---------------------------------------------------------------------------
     def write(self, out):
@@ -264,7 +200,7 @@ class ExtensionDescription:
         :type out: :class:`~io.IOBase` or :class:`str`
 
         This writes the extension description to the specified file path or stream
-        object. This is suitable for producing a ``.s4ext`` file from a description
+        object. This is suitable for producing a ``.json`` file from a description
         object.
         """
 

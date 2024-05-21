@@ -42,6 +42,7 @@ static const char* SliceDistanceEncodedProjectionColorNodeReferenceRole = "dista
 vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 {
   this->PassThrough = vtkPassThrough::New();
+  this->PassThrough->AllowNullInputOn();
   this->AssignAttribute = vtkAssignAttribute::New();
   this->ThresholdFilter = vtkThreshold::New();
   this->ThresholdFilter->SetLowerThreshold(0.0);

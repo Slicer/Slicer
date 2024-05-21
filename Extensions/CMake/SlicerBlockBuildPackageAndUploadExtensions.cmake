@@ -48,17 +48,17 @@ include(SlicerFunctionExtractExtensionDescription)
 include(SlicerBlockUploadExtensionPrerequisites) # Common to all extensions
 
 #-----------------------------------------------------------------------------
-# Collect extension description file (*.s4ext)
+# Collect extension description file (*.json)
 #-----------------------------------------------------------------------------
-file(GLOB s4extfiles "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.s4ext")
+file(GLOB catalog_entry_files "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.json")
 
 # Get the dependency information of each extension
 set(EXTENSION_LIST)
-foreach(file ${s4extfiles})
+foreach(file ${catalog_entry_files})
   message(STATUS "Extension:${file}")
 
   # Extract extension description info
-  slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
+  slicerFunctionExtractExtensionDescriptionFromJson(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
 
   # Extract file basename
   get_filename_component(EXTENSION_NAME ${file} NAME_WE)
@@ -66,31 +66,22 @@ foreach(file ${s4extfiles})
     message(WARNING "Failed to extract extension name associated with file: ${file}")
   else()
     list(APPEND EXTENSION_LIST ${EXTENSION_NAME})
-    string(REGEX REPLACE "^NA$" "" EXTENSION_EXT_DEPENDS "${EXTENSION_EXT_DEPENDS}")
-    set(EXTENSION_${EXTENSION_NAME}_DEPENDS ${EXTENSION_EXT_DEPENDS})
+    set(EXTENSION_${EXTENSION_NAME}_BUILD_DEPENDENCIES ${EXTENSION_EXT_BUILD_DEPENDENCIES})
     set(${EXTENSION_NAME}_BUILD_SUBDIRECTORY ${EXTENSION_FILE_BUILD_SUBDIRECTORY})
   endif()
 endforeach()
 
 # Sort extensions
 include(TopologicalSort)
-topological_sort(EXTENSION_LIST "EXTENSION_" "_DEPENDS")
+topological_sort(EXTENSION_LIST "EXTENSION_" "_BUILD_DEPENDENCIES")
 
 foreach(EXTENSION_NAME ${EXTENSION_LIST})
   # Set extension description filename using EXTENSION_NAME
-  set(file ${Slicer_EXTENSION_DESCRIPTION_DIR}/${EXTENSION_NAME}.s4ext)
+  set(file ${Slicer_EXTENSION_DESCRIPTION_DIR}/${EXTENSION_NAME}.json)
 
-  # Extract extension description info
-  slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
-  set(EXTENSION_CATEGORY ${EXTENSION_EXT_CATEGORY})
-  set(EXTENSION_STATUS ${EXTENSION_EXT_STATUS})
-  set(EXTENSION_ICONURL ${EXTENSION_EXT_ICONURL})
-  set(EXTENSION_CONTRIBUTORS ${EXTENSION_EXT_CONTRIBUTORS})
-  set(EXTENSION_DESCRIPTION ${EXTENSION_EXT_DESCRIPTION})
-  set(EXTENSION_HOMEPAGE ${EXTENSION_EXT_HOMEPAGE})
-  set(EXTENSION_SCREENSHOTURLS ${EXTENSION_EXT_SCREENSHOTURLS})
-  set(EXTENSION_ENABLED ${EXTENSION_EXT_ENABLED})
-  set(EXTENSION_DEPENDS ${EXTENSION_EXT_DEPENDS})
+  # Extract extension catalog entry fields setting "EXTENSION_EXT_*" variables
+  # in the current scope.
+  slicerFunctionExtractExtensionDescriptionFromJson(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
 
   # Ensure extensions depending on this extension can lookup the corresponding
   # _DIR and _BUILD_SUBDIRECTORY variables.
@@ -98,7 +89,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
   set(${EXTENSION_NAME}_BUILD_SUBDIRECTORY ${EXTENSION_EXT_BUILD_SUBDIRECTORY})
 
   message(STATUS "Configuring extension: ${EXTENSION_NAME}")
-  if("${EXTENSION_EXT_SCM}" STREQUAL "" AND "${EXTENSION_EXT_SCMURL}" STREQUAL "")
+  if("${EXTENSION_EXT_SCM_TYPE}" STREQUAL "" AND "${EXTENSION_EXT_SCM_URL}" STREQUAL "")
     message(WARNING "Failed to extract extension information associated to file: ${file}")
     continue()
   endif()
@@ -108,30 +99,30 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
 
   # Set external project DEPENDS parameter
   set(EP_ARG_EXTENSION_DEPENDS)
-  if(NOT "${EXTENSION_DEPENDS}" STREQUAL "")
-    set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_DEPENDS})
+  if(NOT "${EXTENSION_EXT_BUILD_DEPENDENCIES}" STREQUAL "")
+    set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_EXT_BUILD_DEPENDENCIES})
   endif()
 
   #-----------------------------------------------------------------------------
   # Configure extension source download wrapper script
   #-----------------------------------------------------------------------------
   set(ext_ep_options_repository)
-  set(ext_revision ${EXTENSION_EXT_SCMREVISION})
-  if("${EXTENSION_EXT_SCM}" STREQUAL "git")
+  set(ext_revision ${EXTENSION_EXT_SCM_REVISION})
+  if("${EXTENSION_EXT_SCM_TYPE}" STREQUAL "git")
     set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
     if("${ext_revision}" STREQUAL "")
       set(ext_revision "origin/main")
     endif()
     set(ext_ep_options_repository
-      GIT_REPOSITORY ${EXTENSION_EXT_SCMURL} GIT_TAG ${ext_revision})
-  elseif("${EXTENSION_EXT_SCM}" STREQUAL "local")
-    set(EXTENSION_SOURCE_DIR ${EXTENSION_EXT_SCMURL})
+      GIT_REPOSITORY ${EXTENSION_EXT_SCM_URL} GIT_TAG ${ext_revision})
+  elseif("${EXTENSION_EXT_SCM_TYPE}" STREQUAL "local")
+    set(EXTENSION_SOURCE_DIR ${EXTENSION_EXT_SCM_URL})
     if(NOT IS_ABSOLUTE ${EXTENSION_SOURCE_DIR})
       set(EXTENSION_SOURCE_DIR ${Slicer_LOCAL_EXTENSIONS_DIR}/${EXTENSION_SOURCE_DIR})
     endif()
     set(ext_ep_download_command DOWNLOAD_COMMAND "")
   else()
-    message(WARNING "Unknown type of SCM [${EXTENSION_EXT_SCM}] associated with extension named ${EXTENSION_NAME} - See file ${file}")
+    message(WARNING "Unknown type of SCM [${EXTENSION_EXT_SCM_TYPE}] associated with extension named ${EXTENSION_NAME} - See file ${file}")
     continue()
   endif()
   if(NOT "${ext_ep_options_repository}" STREQUAL "")
@@ -186,9 +177,11 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
   #-----------------------------------------------------------------------------
   set(EXTENSION_SUPERBUILD_BINARY_DIR ${${EXTENSION_NAME}_BINARY_DIR})
   set(EXTENSION_BUILD_SUBDIRECTORY ${${EXTENSION_NAME}_BUILD_SUBDIRECTORY})
+  set(EXTENSION_BUILD_DEPENDENCIES "${EXTENSION_EXT_BUILD_DEPENDENCIES}")
   if(NOT DEFINED CTEST_MODEL)
     set(CTEST_MODEL "Experimental")
   endif()
+  set(EXTENSION_CATALOG_ENTRY_FILE ${file})
   include(SlicerBlockUploadExtension)
   if(Slicer_UPLOAD_EXTENSIONS)
     set(wrapper_command ${EXTENSION_UPLOAD_WRAPPER_COMMAND})

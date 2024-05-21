@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://raw.githubusercontent.com/Slicer/Slicer/main/Schemas/slicer-extension-catalog-entry-schema-v1.0.0.json#",
+  "type": "object",
+  "title": "3D Slicer extensions catalog entry schema",
+  "description": "Schema for storing information about a 3D Slicer extension to allow it to be listed in the extension catalog.",
+  "required": ["$schema", "category", "scm_url"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "$id": "#schema",
+      "type": "string",
+      "title": "Schema",
+      "description": "URL of versioned schema."
+    },
+    "category": {
+      "$id": "#category",
+      "type": "string",
+      "title": "Category used to organize the extension in the extension catalog."
+    },
+    "scm_url": {
+      "$id": "#scm_url",
+      "type": "string",
+      "title": "Filename or URL of the repository."
+    },
+    "scm_revision": {
+      "$id": "#scm_revision",
+      "type": "string",
+      "title": "Hash, branch or tag name to identify the revision within the repository."
+    },
+    "scm_type": {
+      "$id": "#scm_type",
+      "type": "string",
+      "title": "Type of revision control system.",
+      "enum": ["git", "local"],
+      "default": "git"
+    },
+    "build_dependencies": {
+      "$id": "#build_dependencies",
+      "type": "array",
+      "title": "List of extensions required to build this extension.",
+      "additionalItems": false,
+      "items": { "type": "string" }
+    },
+    "build_subdirectory": {
+      "$id": "#build_subdirectory",
+      "type": "string",
+      "title": "Name of the inner build directory in case of superbuild based extension.",
+      "default": "."
+    },
+    "enabled": {
+      "$id": "#enabled",
+      "type": "boolean",
+      "title": "Specify if the extension should be enabled after its installation.",
+      "default": true
+    }
+  }
+}

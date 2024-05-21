@@ -21,6 +21,7 @@
 #include "vtkNew.h"
 #include "vtkPointData.h"
 #include <vtksys/SystemTools.hxx>
+#include <vtkTransform.h>
 
 std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove=false)
 {
@@ -141,45 +142,79 @@ int TestFlipsLeftHandedVolumes(const std::string& tempDir)
   imageData->AllocateScalars(VTK_FLOAT, 1);
   imageData->GetPointData()->GetScalars()->Fill(0);
 
+  // Fill the volume with non-uniform content
   for (int i = 0; i < n_i; i++)
   {
     for (int j = 0; j < n_j; j++)
     {
       for (int k = 0; k < n_k; k++)
       {
-        imageData->SetScalarComponentFromDouble(i, j, k, 0, k);
+        imageData->SetScalarComponentFromDouble(i, j, k, 0, i * 11 + j * 13 + k * 17);
       }
     }
   }
-  volumeNode->SetIJKToRASDirections(-1., 0., 0., 0., -1., 0., 0., 0., -1.);
 
-  const auto fileName = tempFilename(tempDir, "flipped_volume", "mha", true);
+  // Generate an arbitrary left-handed IJK to RAS transform
+  vtkNew<vtkTransform> ijkToRasTransform;
+  ijkToRasTransform->Translate(10.0, 20.0, -35.0);
+  ijkToRasTransform->RotateY(30.0);
+  ijkToRasTransform->RotateZ(45.0);
+  ijkToRasTransform->Scale(1.2, -0.3, 1.7); // left-handed due to single negative value
+  volumeNode->SetIJKToRASMatrix(ijkToRasTransform->GetMatrix());
+
+  // Verify that IJK coordinate system is left-handed
+  CHECK_BOOL(vtkMRMLVolumeNode::IsIJKCoordinateSystemRightHanded(ijkToRasTransform->GetMatrix()), false);
+
+  // Write the volume to a file and then read it
+  const auto fileName = tempFilename(tempDir, "left_handed_ijk_volume", "mha", true);
   auto storageNode =
     vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
   CHECK_NOT_NULL(storageNode);
   storageNode->SetSingleFile(true);
   volumeNode->SetAndObserveImageData(imageData);
   volumeNode->SetAndObserveStorageNodeID(storageNode->GetID());
-
-  // Check that when loading, the K axis is flipped
   storageNode->SetFileName(fileName.c_str());
   CHECK_BOOL(storageNode->WriteData(volumeNode), true);
-  CHECK_BOOL(storageNode->ReadData(volumeNode), true);
+  auto volumeNode2 = vtkMRMLScalarVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLScalarVolumeNode"));
+  CHECK_BOOL(storageNode->ReadData(volumeNode2), true);
 
-  vtkNew<vtkMatrix4x4> matrix;
-  volumeNode->GetIJKToRASDirectionMatrix(matrix);
+  // Check that in the saved and loaded image IJK is right-handed
+  vtkNew<vtkMatrix4x4> ijkToRas2;
+  volumeNode2->GetIJKToRASMatrix(ijkToRas2);
+  CHECK_BOOL(vtkMRMLVolumeNode::IsIJKCoordinateSystemRightHanded(ijkToRas2), true);
 
-  CHECK_DOUBLE(matrix->GetElement(0, 0), -1.);
-  CHECK_DOUBLE(matrix->GetElement(1, 1), -1.);
-  CHECK_DOUBLE(matrix->GetElement(2, 2), 1.);
-
+  // Check that the loaded volume has the same voxel values at the same physical locations
+  vtkNew<vtkMatrix4x4> rasToIjk2;
+  volumeNode2->GetRASToIJKMatrix(rasToIjk2);
   for (int i = 0; i < n_i; i++)
   {
     for (int j = 0; j < n_j; j++)
     {
       for (int k = 0; k < n_k; k++)
       {
-        CHECK_DOUBLE(volumeNode->GetImageData()->GetScalarComponentAsDouble(i, j, k, 0), n_k - k - 1.);
+        // Get IJK position in flipped volume at the same physical location
+        double ijk[4] = { static_cast<double>(i), static_cast<double>(j), static_cast<double>(k), 1 };
+        double ras[4] = { 0, 0, 0, 1 };
+        ijkToRasTransform->MultiplyPoint(ijk, ras);
+        double ijk2[4] = { 0, 0, 0, 1 };
+        rasToIjk2->MultiplyPoint(ras, ijk2);
+        double i2 = static_cast<int>(ijk2[0] + 0.5);
+        double j2 = static_cast<int>(ijk2[1] + 0.5);
+        double k2 = static_cast<int>(ijk2[2] + 0.5);
+        if (i != i2 || j != j2 || k != (volumeNode2->GetImageData()->GetDimensions()[2] - 1 - k2))
+        {
+          std::cerr << "IJK mismatch: volume[" << i << ", " << j << ", " << k << "] != volume2[" << i2 << ", " << j2 << ", " << k2 << "]" << std::endl;
+          return EXIT_FAILURE;
+        }
+        // Check voxel values
+        double voxelValue = volumeNode->GetImageData()->GetScalarComponentAsDouble(i, j, k, 0);
+        double voxelValue2 = volumeNode2->GetImageData()->GetScalarComponentAsDouble(i2, j2, k2, 0);
+        if (voxelValue != voxelValue2)
+        {
+          std::cerr << "Voxel value mismatch: volume[" << i << ", " << j << ", " << k << "]=" << voxelValue
+            << " != volume2[" << i2 << ", " << j2 << ", " << k2 << "]=" << voxelValue2 << std::endl;
+          return EXIT_FAILURE;
+        }
       }
     }
   }
@@ -204,7 +239,12 @@ int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "mha",  true,      false,   false, false));
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "nii",  true,      false,   true,  true));
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "png",  false,     false,   true,  true));
+
+  // Expect warning about TIFF file format not recommended
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "tif",  false,     false,   true,  false));
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
+
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "jpg",  false,     false,   true,  false));
   CHECK_EXIT_SUCCESS(TestFlipsLeftHandedVolumes(tempDir));
 

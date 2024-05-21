@@ -187,6 +187,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::RemoveAllWidgetsAndNodes()
   {
     this->RemoveObservations(*markupsIterator);
   }
+  this->MarkupsNodes.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -327,9 +328,23 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddInteractionWidget(vtkMRMLMarkups
   // There should not be a widget for the new node
   if (this->GetInteractionWidget(markupsDisplayNode) != nullptr)
   {
-    vtkErrorMacro("vtkMRMLMarkupsDisplayableManagerHelper: A widget is already associated to this node");
+    vtkErrorMacro("vtkMRMLMarkupsDisplayableManagerHelper: An interaction widget is already associated to this node");
     return;
   }
+
+  vtkMRMLNode* markupsNode = markupsDisplayNode->GetDisplayableNode();
+  if (!markupsNode)
+  {
+    // No markups node associated with the display node.
+    // Nothing to display.
+    // This is not an error, the widget will be created once both nodes are present
+    return;
+  }
+
+  // Prevent potential recursive calls during UpdateFromMRML call before the new widget is stored
+  // in MarkupsDisplayNodesToWidgets.
+  MRMLNodeModifyBlocker blocker(markupsNode);
+  MRMLNodeModifyBlocker displayNodeBlocker(markupsDisplayNode);
 
   vtkSlicerMarkupsInteractionWidget* newWidget = this->DisplayableManager->CreateInteractionWidget(markupsDisplayNode);
   if (!newWidget)
@@ -338,7 +353,6 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddInteractionWidget(vtkMRMLMarkups
     return;
   }
 
-  MRMLNodeModifyBlocker blocker(markupsDisplayNode);
   // record the mapping between node and widget in the helper
   this->MarkupsDisplayNodesToInteractionWidgets[markupsDisplayNode] = newWidget;
 
@@ -370,17 +384,23 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddWidget(vtkMRMLMarkupsDisplayNode
   // There should not be a widget for the new node
   if (this->GetWidget(markupsDisplayNode) != nullptr)
   {
-    vtkErrorMacro("vtkMRMLMarkupsDisplayableManager2D: A widget is already associated to this node");
+    vtkErrorMacro("vtkMRMLMarkupsDisplayableManagerHelper: A widget is already associated to this node");
     return;
   }
 
-  int wasModified = 0;
-  if (markupsDisplayNode->GetDisplayableNode())
+  vtkMRMLNode* markupsNode = markupsDisplayNode->GetDisplayableNode();
+  if (!markupsNode)
   {
-    // Prevent potential recursive calls during UpdateFromMRML call before the new widget is stored
-    // in MarkupsDisplayNodesToWidgets.
-    wasModified = markupsDisplayNode->GetDisplayableNode()->StartModify();
+    // No markups node associated with the display node.
+    // Nothing to display.
+    // This is not an error, the widget will be created once both nodes are present
+    return;
   }
+
+  // Prevent potential recursive calls during UpdateFromMRML call before the new widget is stored
+  // in MarkupsDisplayNodesToWidgets.
+  MRMLNodeModifyBlocker blocker(markupsNode);
+  MRMLNodeModifyBlocker displayNodeBlocker(markupsDisplayNode);
 
   vtkSlicerMarkupsWidget* newWidget = this->DisplayableManager->CreateWidget(markupsDisplayNode);
   if (!newWidget)
@@ -394,12 +414,6 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddWidget(vtkMRMLMarkupsDisplayNode
 
   // Build representation
   newWidget->UpdateFromMRML(markupsDisplayNode, 0); // no specific event triggers full rebuild
-
-  if (markupsDisplayNode->GetDisplayableNode())
-  {
-    markupsDisplayNode->GetDisplayableNode()->EndModify(wasModified);
-  }
-
   this->DisplayableManager->RequestRender();
 }
 

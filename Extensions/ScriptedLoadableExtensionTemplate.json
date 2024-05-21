@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Slicer/Slicer/main/Schemas/slicer-extension-catalog-entry-schema-v1.0.0.json#",
+  "build_dependencies": [],
+  "build_subdirectory": ".",
+  "category": "Examples",
+  "scm_type": "local",
+  "scm_revision": "",
+  "scm_url": "Testing/ScriptedLoadableExtensionTemplate"
+}

@@ -2,7 +2,7 @@ import SimpleITK as sitk
 
 import slicer
 
-__sitk__MRMLIDImageIO_Registered__ = False
+__sitk__MRMLIDImageIO_Missing_Reported__ = False
 
 
 def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className="vtkMRMLScalarVolumeNode"):
@@ -14,15 +14,24 @@ def PushVolumeToSlicer(sitkimage, targetNode=None, name=None, className="vtkMRML
       If an existing node is specified as targetNode then this value will not be used.
     """
 
-    EnsureRegistration()
-
     # Create new node if needed
     if not targetNode:
         targetNode = slicer.mrmlScene.AddNewNodeByClass(className, slicer.mrmlScene.GetUniqueNameByString(name))
         targetNode.CreateDefaultDisplayNodes()
 
-    myNodeFullITKAddress = GetSlicerITKReadWriteAddress(targetNode)
-    sitk.WriteImage(sitkimage, myNodeFullITKAddress)
+    useMRMLIDImageIO = IsMRMLIDImageIOAvailable()
+    if useMRMLIDImageIO:
+        # Use direct memory transfer
+        myNodeFullITKAddress = GetSlicerITKReadWriteAddress(targetNode)
+        sitk.WriteImage(sitkimage, myNodeFullITKAddress)
+    else:
+        # Use file transfer (less efficient, but works in all cases).
+        # Simple VTK/SimpleITK image conversion would not work, as coordinate system needs to be converted between LPS and RAS.
+        storageNode, tempFileName = _addDefaultStorageNode(targetNode)
+        sitk.WriteImage(sitkimage, tempFileName)
+        storageNode.ReadData(targetNode, True)
+        slicer.mrmlScene.RemoveNode(storageNode)
+        os.remove(tempFileName)
 
     return targetNode
 
@@ -31,9 +40,21 @@ def PullVolumeFromSlicer(nodeObjectOrName):
     """Given a slicer MRML image node or name, return the SimpleITK
     image object.
     """
-    EnsureRegistration()
-    myNodeFullITKAddress = GetSlicerITKReadWriteAddress(nodeObjectOrName)
-    sitkimage = sitk.ReadImage(myNodeFullITKAddress)
+    useMRMLIDImageIO = IsMRMLIDImageIOAvailable()
+    if useMRMLIDImageIO:
+        # Use direct memory transfer
+        myNodeFullITKAddress = GetSlicerITKReadWriteAddress(nodeObjectOrName)
+        sitkimage = sitk.ReadImage(myNodeFullITKAddress)
+    else:
+        # Use file transfer (less efficient, but works in all cases).
+        # Simple VTK/SimpleITK image conversion would not work, as coordinate system needs to be converted between LPS and RAS.
+        targetNode = nodeObjectOrName if isinstance(nodeObjectOrName, slicer.vtkMRMLNode) else slicer.util.getNode(nodeObjectOrName)
+        storageNode, tempFileName = _addDefaultStorageNode(targetNode)
+        storageNode.WriteData(targetNode)
+        sitkimage = sitk.ReadImage(tempFileName)
+        slicer.mrmlScene.RemoveNode(storageNode)
+        os.remove(tempFileName)
+
     return sitkimage
 
 
@@ -48,19 +69,36 @@ def GetSlicerITKReadWriteAddress(nodeObjectOrName):
     return myNodeFullITKAddress
 
 
-def EnsureRegistration():
-    """Make sure MRMLIDImageIO reader is registered."""
+def IsMRMLIDImageIOAvailable():
+    """Determine if MRMLIDImageIO (fast in-memory ITK image transfer) is available.
+    If not available then report the error (only once).
+    """
     if "MRMLIDImageIO" in sitk.ImageFileReader().GetRegisteredImageIOs():
-        # already registered
-        return
+        # MRMLIDImageIO is available
+        return True
 
-    # Probably this hack is not needed anymore, but it would require some work to verify this,
-    # so for now just leave this here:
-    # This is a complete hack, but attempting to read a dummy file with AddArchetypeVolume
-    # has a side effect of registering the MRMLIDImageIO file reader.
-    global __sitk__MRMLIDImageIO_Registered__
-    if __sitk__MRMLIDImageIO_Registered__:
-        return
-    vl = slicer.modules.volumes.logic()
-    volumeNode = vl.AddArchetypeVolume("_DUMMY_DOES_NOT_EXIST__", "invalidRead")
-    __sitk__MRMLIDImageIO_Registered__ = True
+    global __sitk__MRMLIDImageIO_Missing_Reported__
+    if not __sitk__MRMLIDImageIO_Missing_Reported__:
+        import logging
+        logging.error(
+            "MRMLIDImageIO is not available, SimpleITK image transfer speed will be slower."
+            " Probably an extension replaced SimpleITK version that was bundled with Slicer."
+            f" Current SimpleITK version: {sitk.__version__}")
+        __sitk__MRMLIDImageIO_Missing_Reported__ = True
+
+    return False
+
+
+def _addDefaultStorageNode(targetNode):
+    originalStorageNode = targetNode.GetStorageNode()
+    if originalStorageNode:
+        storageNode = slicer.mrmlScene.AddNewNodeByClass(originalStorageNode.GetClassName(), "__tmp__" + originalStorageNode.GetName())
+    else:
+        storageNode = targetNode.CreateDefaultStorageNode()
+        storageNode.UnRegister(None)
+        slicer.mrmlScene.AddNode(storageNode)
+    import os, uuid
+    tempFileName = os.path.join(slicer.app.temporaryPath, str(uuid.uuid1())) + ".nrrd"
+    storageNode.SetFileName(tempFileName)
+    storageNode.UseCompressionOff()
+    return storageNode, tempFileName

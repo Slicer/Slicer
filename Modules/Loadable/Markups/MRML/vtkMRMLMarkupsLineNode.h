@@ -55,12 +55,6 @@ public:
   /// Get markup type internal name
   const char* GetMarkupType() override {return "Line";};
 
-  // Get markup type GUI display name
-  const char* GetTypeDisplayName() override {return "Line";};
-
-  /// Get markup short name
-  const char* GetDefaultNodeNamePrefix() override {return "L";};
-
   /// Read node attributes from XML file
   void ReadXMLAttributes( const char** atts) override;
 

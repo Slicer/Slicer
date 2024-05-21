@@ -18,6 +18,7 @@
 #include "vtkMRMLMarkupsNode.h"
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkCurveGenerator.h"
 #include <vtkEventBroker.h>
 #include "vtkMRMLMarkupsDisplayNode.h"
@@ -530,6 +531,26 @@ void vtkMRMLMarkupsNode::SetLocked(int locked)
 
   this->Modified();
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::LockModifiedEvent);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLMarkupsNode::GetDefaultNodeNamePrefix()
+{
+  if(this->DefaultNodeNamePrefix.empty())
+  {
+    this->DefaultNodeNamePrefix = vtkMRMLTr("vtkMRMLMarkupsNode", "M");
+  }
+  return this->DefaultNodeNamePrefix.c_str();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLMarkupsNode::GetTypeDisplayName()
+{
+  if(this->TypeDisplayName.empty())
+  {
+    this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsNode", "Markup");
+  }
+  return this->TypeDisplayName.c_str();
 }
 
 //---------------------------------------------------------------------------

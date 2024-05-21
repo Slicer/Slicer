@@ -459,7 +459,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObj
     this->SliceNode = sliceNode;
 
     // now we call the handle for specific sliceNode actions
-    this->OnMRMLSliceNodeModifiedEvent();
+    this->OnMRMLViewNodeModifiedEvent(this->SliceNode);
 
     // and exit
     return;
@@ -468,14 +468,14 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObj
   vtkMRMLViewNode * viewNode = vtkMRMLViewNode::SafeDownCast(caller);
   if (viewNode)
   {
-    // the associated renderWindow is a 3D View
-    vtkDebugMacro("OnMRMLDisplayableNodeModifiedEvent: This displayableManager handles a ThreeD view.");
+    // Update all widgets (for example, to respond to ScreenScaleFactor changes)
+    this->OnMRMLViewNodeModifiedEvent(viewNode);
     return;
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayableManager::OnMRMLSliceNodeModifiedEvent()
+void vtkMRMLMarkupsDisplayableManager::OnMRMLViewNodeModifiedEvent(vtkMRMLAbstractViewNode* viewNode)
 {
   bool renderRequested = false;
 
@@ -486,7 +486,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSliceNodeModifiedEvent()
   {
     // we loop through all widgets
     vtkSlicerMarkupsWidget* widget = (it->second);
-    widget->UpdateFromMRML(this->SliceNode, vtkCommand::ModifiedEvent);
+    widget->UpdateFromMRML(viewNode, vtkCommand::ModifiedEvent);
     if (widget->GetNeedToRender())
     {
       renderRequested = true;
@@ -501,7 +501,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLSliceNodeModifiedEvent()
   {
     // we loop through all widgets
     vtkSlicerMarkupsInteractionWidget* interactionWidget = (interactionIt->second);
-    interactionWidget->UpdateFromMRML(this->SliceNode, vtkCommand::ModifiedEvent);
+    interactionWidget->UpdateFromMRML(viewNode, vtkCommand::ModifiedEvent);
     if (interactionWidget->GetNeedToRender())
     {
       renderRequested = true;

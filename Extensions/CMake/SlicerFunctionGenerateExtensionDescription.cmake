@@ -41,7 +41,6 @@ function(slicerFunctionGenerateExtensionDescription)
     EXTENSION_HOMEPAGE
     EXTENSION_ICONURL
     EXTENSION_NAME
-    EXTENSION_SCREENSHOTURLS
     EXTENSION_STATUS
     EXTENSION_WC_REVISION
     EXTENSION_WC_ROOT
@@ -52,6 +51,7 @@ function(slicerFunctionGenerateExtensionDescription)
     )
   set(multiValueArgs
     EXTENSION_DEPENDS
+    EXTENSION_SCREENSHOTURLS
     )
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -71,7 +71,24 @@ function(slicerFunctionGenerateExtensionDescription)
     endif()
   endforeach()
 
-  # Convert to space separated list
+  # contributors: Remove newlines
+  string(REPLACE "\n" "" MY_EXTENSION_CONTRIBUTORS "${MY_EXTENSION_CONTRIBUTORS}")
+  # contributors: Strip contiguous spaces
+  string(REGEX REPLACE " +" " " MY_EXTENSION_CONTRIBUTORS "${MY_EXTENSION_CONTRIBUTORS}")
+
+  # description: Replace newlines with "<br>"
+  string(REPLACE "\n" "<br>" MY_EXTENSION_DESCRIPTION "${MY_EXTENSION_DESCRIPTION}")
+
+  # screenshoturls: Remove newlines
+  string(REPLACE "\n" "" MY_EXTENSION_SCREENSHOTURLS "${MY_EXTENSION_SCREENSHOTURLS}")
+  # screenshoturls: Strip contiguous spaces
+  string(REGEX REPLACE " +" " " MY_EXTENSION_SCREENSHOTURLS "${MY_EXTENSION_SCREENSHOTURLS}")
+  # screenshoturls: Strip leading and trailing spaces
+  string(STRIP "${MY_EXTENSION_SCREENSHOTURLS}" MY_EXTENSION_SCREENSHOTURLS)
+  # screenshoturls: Convert to space separated list
+  list_to_string(" " "${MY_EXTENSION_SCREENSHOTURLS}" MY_EXTENSION_SCREENSHOTURLS)
+
+  # depends: Convert to space separated list
   list_to_string(" " "${MY_EXTENSION_DEPENDS}" MY_EXTENSION_DEPENDS)
 
   set(expected_existing_vars DESTINATION_DIR)
@@ -128,13 +145,17 @@ function(slicer_generate_extension_description_test)
 
   set(common_args
     DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}
-    EXTENSION_DESCRIPTION "The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file."
+    EXTENSION_DESCRIPTION "The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.
+This is a line of text.<br>And another one."
     EXTENSION_CATEGORY "Exporter"
-    EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware), Pat Marion (Kitware), Steve Pieper (Isomics), Atsushi Yamada (Shiga University of Medical Science)"
+    EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware), Pat Marion (Kitware), \
+      Steve Pieper (Isomics), Atsushi Yamada (Shiga University of Medical Science)"
     EXTENSION_HOMEPAGE "https://www.slicer.org/w/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter"
     EXTENSION_ICONURL "https://www.slicer.org/w/images/6/64/SlicerToKiwiExporterLogo.png"
     EXTENSION_NAME "SlicerToKiwiExporter"
-    EXTENSION_SCREENSHOTURLS "https://www.slicer.org/w/images/9/9e/SlicerToKiwiExporter_Kiwiviewer_8.PNG https://www.slicer.org/w/images/a/ab/SlicerToKiwiExporter_Kiwiviewer_9.PNG https://www.slicer.org/w/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png"
+    EXTENSION_SCREENSHOTURLS "https://www.slicer.org/w/images/9/9e/SlicerToKiwiExporter_Kiwiviewer_8.PNG \
+      https://www.slicer.org/w/images/a/ab/SlicerToKiwiExporter_Kiwiviewer_9.PNG"
+      "https://www.slicer.org/w/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png"
     EXTENSION_STATUS "Development"
     EXTENSION_WC_REVISION "9d7341e978df954a2c875240290833d7528ef29c"
     EXTENSION_WC_ROOT "https://github.com/jcfr/SlicerToKiwiExporter.git"
@@ -151,15 +172,16 @@ function(slicer_generate_extension_description_test)
     #EXTENSION_DEPENDS
     #EXTENSION_ENABLED
     )
+  set(generated "${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext")
+  set(baseline "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_without_depends.s4ext")
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-      ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
-      ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_without_depends.s4ext
-    ERROR_VARIABLE error
+      ${generated}
+      ${baseline}
     RESULT_VARIABLE result
     )
   if(NOT result EQUAL 0)
-    message(FATAL_ERROR "${error}")
+    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${generated}]. Baseline [${baseline}]")
   endif()
 
   # Generate description file of an extension *with* dependencies
@@ -170,15 +192,16 @@ function(slicer_generate_extension_description_test)
     EXTENSION_DEPENDS "Foo Bar"
     EXTENSION_ENABLED 0
     )
+  set(generated "${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext")
+  set(baseline "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext")
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-      ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
-      ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext
-    ERROR_VARIABLE error
+      ${generated}
+      ${baseline}
     RESULT_VARIABLE result
     )
   if(NOT result EQUAL 0)
-    message(FATAL_ERROR "${error}")
+    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${generated}]. Baseline [${baseline}]")
   endif()
 
   # Generate description file of an extension *with* dependencies
@@ -190,15 +213,16 @@ function(slicer_generate_extension_description_test)
     EXTENSION_ENABLED 0
     EXTENSION_STATUS ""
     )
+  set(generated "${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext")
+  set(baseline "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext")
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-      ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
-      ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext
-    ERROR_VARIABLE error
+      ${generated}
+      ${baseline}
     RESULT_VARIABLE result
     )
   if(NOT result EQUAL 0)
-    message(FATAL_ERROR "${error}")
+    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${generated}]. Baseline [${baseline}]")
   endif()
 
   message("SUCCESS")

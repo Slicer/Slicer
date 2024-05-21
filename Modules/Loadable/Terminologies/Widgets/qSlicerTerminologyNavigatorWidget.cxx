@@ -1227,47 +1227,49 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
   }
 
   // Get types in selected categories containing the search string. If no search string then add every type
-  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> types;
-  QMap<int, int> typeIndexToCategoryIndexMap;
-  int typeIndex = 0;
-  int categoryIndex = 0;
+  struct TypeInfo
+  {
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier id;
+    vtkSlicerTerminologyCategory* category;
+    QColor color;
+  };
+  std::vector<TypeInfo> types;
   std::string searchTerm(d->SearchBox_Type->text().toUtf8().constData());
-  std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
+  std::vector<vtkSmartPointer<vtkSlicerTerminologyType>>::iterator typeObjIt;
+  std::set<std::string> existingTypesSchemeValue;
   foreach (vtkSlicerTerminologyCategory* category, selectedCategories)
   {
     std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> typesInCategory;
+    std::vector<vtkSmartPointer<vtkSlicerTerminologyType>> typesObjectsInCategory;
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId = vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category);
+
     logic->FindTypesInTerminologyCategory(
       d->CurrentTerminologyName.toUtf8().constData(),
       vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category),
-      typesInCategory, searchTerm );
+      typesInCategory, searchTerm, &typesObjectsInCategory);
 
-    for (idIt=typesInCategory.begin(); idIt!=typesInCategory.end(); ++idIt)
+    std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
+    for (idIt=typesInCategory.begin(), typeObjIt=typesObjectsInCategory.begin(); idIt!=typesInCategory.end(); ++idIt, ++typeObjIt)
     {
       // Determine if type already exists in list
-      bool duplicate = false;
-      std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator typeIt;
-      for (typeIt=types.begin(); typeIt!=types.end(); ++typeIt)
+      std::string typesSchemeValue = idIt->CodeValue + idIt->CodingSchemeDesignator;
+      if (existingTypesSchemeValue.find(typesSchemeValue) != existingTypesSchemeValue.end())
       {
-        if ( !idIt->CodeValue.compare(typeIt->CodeValue)
-          && !idIt->CodingSchemeDesignator.compare(typeIt->CodingSchemeDesignator) )
-        {
-          duplicate = true;
-          break;
-        }
+        // duplicate
+        continue;
       }
-      if (!duplicate)
-      {
-        // Add type
-        types.push_back(*idIt);
 
-        // Store type-category relationship
-        typeIndexToCategoryIndexMap[typeIndex] = categoryIndex;
+      // Add type
+      TypeInfo typeInfo;
+      typeInfo.id = *idIt;
+      typeInfo.category = category;
+      typeInfo.color = d->recommendedColorForType(d->CurrentTerminologyName.toUtf8().constData(), category, *typeObjIt);
+      types.push_back(typeInfo);
 
-        typeIndex++;
-      }
+      // Store type-category relationship
+      existingTypesSchemeValue.insert(typesSchemeValue);
     }
 
-    ++categoryIndex;
   }
 
   QTableWidgetItem* selectedItem = nullptr;
@@ -1288,34 +1290,30 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
   }
 
   // Add type items to table
-  typeIndex = 0;
+  int typeIndex = 0;
   vtkNew<vtkSlicerTerminologyType> typeObject;
-  for (idIt=types.begin(); idIt!=types.end(); ++idIt, ++typeIndex)
+  std::vector<TypeInfo>::iterator typeIt;
+  for (typeIt=types.begin(); typeIt!=types.end(); ++typeIt, ++typeIndex)
   {
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifier addedTypeId = (*idIt);
+    const vtkSlicerTerminologiesModuleLogic::CodeIdentifier &addedTypeId = typeIt->id;
     QString addedTypeName(addedTypeId.CodeMeaning.c_str());
     QTableWidgetItem* addedTypeItem = new QTableWidgetItem(addedTypeName);
     addedTypeItem->setData(CodingSchemeDesignatorRole, QString(addedTypeId.CodingSchemeDesignator.c_str()));
     addedTypeItem->setData(CodeValueRole, QString(addedTypeId.CodeValue.c_str()));
     // Reference containing category so that it can be set when type is selected
-    vtkSlicerTerminologyCategory* category = selectedCategories[typeIndexToCategoryIndexMap[typeIndex]];
+    vtkSlicerTerminologyCategory* category = typeIt->category;
     addedTypeItem->setData(CategoryCodingSchemeDesignatorRole, QString(category->GetCodingSchemeDesignator()));
     addedTypeItem->setData(CategoryCodeValueRole, QString(category->GetCodeValue()));
     addedTypeItem->setData(CategoryCodeMeaningRole, QString(category->GetCodeMeaning()));
     QString tooltip = QString("Category: %1 (anatomy:%2)").arg(category->GetCodeMeaning()).arg(
       (category->GetShowAnatomy() ? "available" : "N/A") );
     addedTypeItem->setToolTip(tooltip);
-    // Set color preview (Note: does not show anything if colors are only stored in the type modifiers)
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId = vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category);
-    if (logic->GetTypeInTerminologyCategory(
-      d->CurrentTerminologyName.toUtf8().constData(), categoryId, addedTypeId, typeObject))
+
+    if (typeIt->color.isValid())
     {
-      QColor color = d->recommendedColorForType(d->CurrentTerminologyName.toUtf8().constData(), category, typeObject);
-      if (color.isValid())
-      {
-        addedTypeItem->setData(Qt::DecorationRole, color);
-      }
+      addedTypeItem->setData(Qt::DecorationRole, typeIt->color);
     }
+
     // Insert type item
     d->tableWidget_Type->setItem(typeIndex + noneTypeExists, 0, addedTypeItem);
 

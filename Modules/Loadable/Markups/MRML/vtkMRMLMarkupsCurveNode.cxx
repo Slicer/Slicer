@@ -18,6 +18,7 @@
 #include "vtkMRMLMarkupsCurveNode.h"
 
 // MRML includes
+#include "vtkMRMLI18N.h"
 #include "vtkCurveGenerator.h"
 #include "vtkCurveMeasurementsCalculator.h"
 #include "vtkEventBroker.h"
@@ -72,6 +73,12 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   // Set RequiredNumberOfControlPoints to a very high number to remain
   // in place mode after placing a curve point.
   this->RequiredNumberOfControlPoints = 1e6;
+
+  // Set markup type GUI display name
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsCurveNode", "Curve");
+
+  // Set markup short name
+  this->DefaultNodeNamePrefix = vtkMRMLTr("vtkMRMLMarkupsCurveNode", "OC");
 
   this->CleanFilter = vtkSmartPointer<vtkCleanPolyData>::New();
 
@@ -789,7 +796,7 @@ bool vtkMRMLMarkupsCurveNode::GetSampledCurvePointsBetweenStartEndPointsWorld(vt
 vtkIdType vtkMRMLMarkupsCurveNode::GetClosestCurvePointIndexToPositionWorld(const double posWorld[3])
 {
   vtkPoints* points = this->GetCurvePointsWorld();
-  if (!points)
+  if (!points || points->GetNumberOfPoints() == 0)
   {
     return -1;
   }

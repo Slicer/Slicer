@@ -21,9 +21,10 @@ set(expected_defined_vars
   CTEST_CMAKE_GENERATOR
   CTEST_DROP_SITE
   CDASH_PROJECT_NAME
+  EXTENSION_BUILD_DEPENDENCIES
   EXTENSION_BUILD_OPTIONS_STRING
   EXTENSION_BUILD_SUBDIRECTORY
-  EXTENSION_ENABLED
+  EXTENSION_CATALOG_ENTRY_FILE
   EXTENSION_NAME
   EXTENSION_SOURCE_DIR
   EXTENSION_SUPERBUILD_BINARY_DIR
@@ -61,20 +62,6 @@ set(CMAKE_MODULE_PATH
 include(CMakeParseArguments)
 include(SlicerCTestUploadURL)
 include(UseSlicerMacros) # for slicer_setting_variable_message
-
-#-----------------------------------------------------------------------------
-set(optional_vars
-  EXTENSION_CATEGORY
-  EXTENSION_CONTRIBUTORS
-  EXTENSION_DESCRIPTION
-  EXTENSION_HOMEPAGE
-  EXTENSION_ICONURL
-  EXTENSION_SCREENSHOTURLS
-  EXTENSION_STATUS
-  )
-foreach(var ${optional_vars})
-  slicer_setting_variable_message(${var})
-endforeach()
 
 #-----------------------------------------------------------------------------
 # Set site name and force to lower case
@@ -152,7 +139,6 @@ CTEST_MODEL:STRING=${CTEST_MODEL}
 GIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
 Slicer_DIR:PATH=${Slicer_DIR}
 Slicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${Slicer_EXTENSIONS_TRACK_QUALIFIER}
-EXTENSION_DEPENDS:STRING=${EXTENSION_DEPENDS}
 ")
 
 if(APPLE)
@@ -171,11 +157,11 @@ CMAKE_JOB_POOL_LINK:STRING=${CMAKE_JOB_POOL_LINK}")
 endif()
 
 # If needed, convert to a list
-list(LENGTH EXTENSION_DEPENDS _count)
+list(LENGTH EXTENSION_BUILD_DEPENDENCIES _count)
 if(_count EQUAL 1)
-  string(REPLACE " " ";" EXTENSION_DEPENDS ${EXTENSION_DEPENDS})
+  string(REPLACE " " ";" EXTENSION_BUILD_DEPENDENCIES ${EXTENSION_BUILD_DEPENDENCIES})
 endif()
-foreach(dep ${EXTENSION_DEPENDS})
+foreach(dep ${EXTENSION_BUILD_DEPENDENCIES})
   set(cmakecache_content "${cmakecache_content}
 ${dep}_BINARY_DIR:PATH=${${dep}_BINARY_DIR}
 ${dep}_BUILD_SUBDIRECTORY:STRING=${${dep}_BUILD_SUBDIRECTORY}
@@ -237,6 +223,11 @@ else()
     set(package_target "packageupload")
   endif()
   if(RUN_CTEST_PACKAGES)
+    get_filename_component(catalog_entry_filename ${EXTENSION_CATALOG_ENTRY_FILE} NAME)
+    file(COPY_FILE
+      ${EXTENSION_CATALOG_ENTRY_FILE}
+      ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}/${catalog_entry_filename}
+      )
     ctest_build(
       TARGET ${package_target}
       BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}

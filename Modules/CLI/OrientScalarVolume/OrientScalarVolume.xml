@@ -28,7 +28,7 @@
   </parameters>
   <parameters>
     <label>Orientation Parameters</label>
-    <description><![CDATA[Orientation of output]]></description>
+    <description><![CDATA[Orientation of output. Note that these orientation code use ITK convention: each letters refer to where each axis originates FROM. This is opposite of commonly used orientation conventions, for example to get image with image axes corresponding to LPS coordinate system axis directions, this parameter has to be set to RAI.]]></description>
     <string-enumeration>
       <name>orientation</name>
       <flag>o</flag>

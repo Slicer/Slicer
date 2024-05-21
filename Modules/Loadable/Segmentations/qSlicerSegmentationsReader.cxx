@@ -126,10 +126,11 @@ double qSlicerSegmentationsReader::canLoadFileConfidence(const QString& fileName
       {
         QTextStream in(&file);
         // Segmentation NRRD files contain ID for each segment (such as Segment0_ID:=...)
+        // or common segmentation information (such as Segmentation_ContainedRepresentations:=...).
         // around position 500, read a bit further to account for slight variations in the header.
         QString line = in.read(800);
         // If this appears in the file header then declare higher confidence value.
-        confidence = (line.contains("Segment0_ID:=") ? 0.6 : 0.4);
+        confidence = (line.contains("Segment0_ID:=") || line.contains("Segmentation_") ? 0.6 : 0.4);
       }
     }
   }

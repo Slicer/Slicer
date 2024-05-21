@@ -120,7 +120,7 @@ void vtkMRMLInteractionWidgetRepresentation::PrintSelf(ostream& os,
 //----------------------------------------------------------------------
 double vtkMRMLInteractionWidgetRepresentation::GetMaximumHandlePickingDistance2()
 {
-  double maximumHandlePickingDistance = this->InteractionSize / 10.0 + this->PickingTolerance * this->ScreenScaleFactor;
+  double maximumHandlePickingDistance = this->InteractionSize / 10.0 + this->PickingTolerance * this->GetScreenScaleFactor();
   return maximumHandlePickingDistance * maximumHandlePickingDistance;
 }
 
@@ -1995,7 +1995,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandleSize()
 {
   if (!this->GetInteractionSizeAbsolute())
   {
-    this->InteractionSize = this->ScreenSizePixel * this->ScreenScaleFactor
+    this->InteractionSize = this->ScreenSizePixel * this->GetScreenScaleFactor()
       * this->GetInteractionScalePercent() / 100.0 * this->ViewScaleFactorMmPerPixel;
   }
   else

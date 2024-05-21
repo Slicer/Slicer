@@ -436,6 +436,21 @@ myButton = qt.QPushButton("My custom button")
 sliceController.barLayout().addWidget(myButton)
 ```
 
+### Display a node in only some views
+
+Show a displayable node in a predefined set of views. Here, show a markups line only in `Red+`, `Green+` and `Yellow+` views.
+
+```python
+displayableNode = getNode("L")
+
+viewNodeIDs = [
+  slicer.app.layoutManager().sliceWidget(viewName).mrmlSliceNode().GetID()
+  for viewName in ["Red+", "Green+", "Yellow+"]
+]
+
+displayableNode.GetDisplayNode().SetViewNodeIDs(viewNodeIDs)
+```
+
 ### Get current mouse coordinates in a slice view
 
 You can get 3D (RAS) coordinates of the current mouse cursor from the crosshair singleton node as shown in the example below:

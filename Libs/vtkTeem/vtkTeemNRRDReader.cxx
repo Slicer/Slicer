@@ -216,6 +216,15 @@ int vtkTeemNRRDReader::CanReadFile(const char* filename)
   if (nrrdLoad(nrrdTemp, filename, nio) != 0)
   {
     supported = false;
+    // We have already checked the magic, so the file should be readable.
+    // If it is not readable then it is an error, which we should report
+    // to make troubleshooting easier.
+    char* err = biffGetDone(NRRD);
+    if (err)
+    {
+      vtkErrorMacro("CanReadFile failed: " << err);
+      free(err);
+    }
   }
   if (nrrdTypeBlock == nrrdTemp->type)
   {

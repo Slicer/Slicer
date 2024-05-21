@@ -293,7 +293,7 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::jumpToPoint(int controlPointIn
     return;
   }
 
-  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic(/*no tr*/"Markups"));
   if (!markupsLogic)
   {
     qCritical() << Q_FUNC_INFO << ": could not get the Markups module logic.";
@@ -348,7 +348,7 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(
     return 0.0;
   }
 
-  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic(/*no tr*/"Markups"));
   if (!markupsLogic)
   {
     qCritical() << Q_FUNC_INFO << ": could not get the Markups module logic.";
@@ -402,7 +402,7 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canOwnSubjectHierarchyItem(vtkIdTyp
     return 0.0;
   }
 
-  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic(/*no tr*/"Markups"));
   if (!markupsLogic)
   {
     qCritical() << Q_FUNC_INFO << ": could not get the Markups module logic.";
@@ -803,7 +803,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::renamePoint()
   QString oldName(markupsNode->GetNthControlPointLabel(componentIndex).c_str());
 
   bool ok = false;
-  QString newName = QInputDialog::getText(nullptr, QString("Rename ") + oldName, "New name:", QLineEdit::Normal, oldName, &ok);
+  QString newName = QInputDialog::getText(nullptr, tr("Rename %1").arg(oldName), tr("New name:"), QLineEdit::Normal, oldName, &ok);
   if (!ok)
   {
     return;
@@ -834,7 +834,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::refocusCamera()
   // Get point index
   int componentIndex = d->ViewContextMenuEventData["ComponentIndex"].toInt();
 
-  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic(/*no tr*/"Markups"));
   if (!markupsLogic)
   {
     qCritical() << Q_FUNC_INFO << ": could not get the Markups module logic.";
@@ -997,7 +997,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::editNodeTerminology()
     return;
   }
   vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
-    qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
+    qSlicerCoreApplication::application()->moduleLogic(/*no tr*/"Terminologies"));
   if (!terminologiesLogic)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to get Terminologies module logic";

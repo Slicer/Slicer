@@ -85,10 +85,6 @@ void qMRMLSequenceBrowserToolBarPrivate::init()
   q->addWidget(this->SequenceBrowserSeekWidget);
   q->addWidget(this->SequenceBrowserNodeSelector);
 
-  this->SequenceBrowserPlayWidget->setPlayPauseShortcut("Ctrl+Shift+Down");
-  this->SequenceBrowserPlayWidget->setPreviousFrameShortcut("Ctrl+Shift+Left");
-  this->SequenceBrowserPlayWidget->setNextFrameShortcut("Ctrl+Shift+Right");
-
   QObject::connect(this->SequenceBrowserNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     this->SequenceBrowserPlayWidget, SLOT(setMRMLSequenceBrowserNode(vtkMRMLNode*)) );
   QObject::connect(this->SequenceBrowserNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),

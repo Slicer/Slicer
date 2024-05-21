@@ -85,7 +85,6 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData *input, 
   // Initialize and check input
   //
   vtkPointData *pd = input->GetPointData();
-  pd=input->GetPointData();
   if (pd ==nullptr)
   {
     vtkErrorMacro(<<"PointData is NULL");
