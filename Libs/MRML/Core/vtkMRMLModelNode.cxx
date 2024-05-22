@@ -82,6 +82,7 @@ void vtkMRMLModelNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   {
     return;
   }
+  this->MeshType = node->MeshType;
   if (deepCopy)
   {
     if (node->GetMesh())
