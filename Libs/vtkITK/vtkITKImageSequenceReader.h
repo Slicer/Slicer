@@ -12,46 +12,54 @@
   limitations under the License.
 
   This file was originally developed by Csaba Pinter, Ebatinca, funded
-  by the grant GRT-00000485 of Children's Hospital of Philadeplhia, USA.
+  by the grant GRT-00000485 of Children's Hospital of Philadelphia, USA.
 
 ==========================================================================*/
 
 #ifndef __vtkITKImageSequenceReader_h
 #define __vtkITKImageSequenceReader_h
 
-#include "vtkImageAlgorithm.h"
+#include "vtkMedicalImageReader2.h"
 
 #include "vtkITK.h"
 
-class VTK_ITK_EXPORT vtkITKImageSequenceReader : public vtkImageAlgorithm
+class VTK_ITK_EXPORT vtkITKImageSequenceReader : public vtkMedicalImageReader2
 {
  public:
   static vtkITKImageSequenceReader *New();
-  vtkTypeMacro(vtkITKImageSequenceReader, vtkImageAlgorithm);
+  vtkTypeMacro(vtkITKImageSequenceReader, vtkMedicalImageReader2);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Specify file name for the image file.
-  void SetFileName(const char *);
-
-  char* GetFileName()
-  {
-    return FileName;
-  }
+  vtkSetStringMacro(FileName);
+  vtkGetStringMacro(FileName);
 
   ///
-  /// The main interface which triggers the reader to start.
-  void Read();
+  /// Current frame index that is extracted from the sequence image to the output port.
+  vtkSetMacro(CurrentFrameIndex, unsigned int);
+  vtkGetMacro(CurrentFrameIndex, unsigned int);
+
+  /// Get number of frames in recently read image. Set in first Update. Read only.
+  vtkSetMacro(NumberOfFrames, unsigned int);
+  vtkGetMacro(NumberOfFrames, unsigned int);
 
  protected:
   vtkITKImageSequenceReader();
   ~vtkITKImageSequenceReader() override;
 
-  //void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
-  //static void ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data);
+  //void ExecuteInformation() override;
+  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo) override;
 
 protected:
-  char* FileName;
+  /// File name for the image to read.
+  char* FileName{nullptr};
+
+  /// Current frame index that is extracted from the sequence image to the output port.
+  unsigned int CurrentFrameIndex{0};
+
+  /// Number of frames in recently read image. Set in first Update. Read only.
+  unsigned int NumberOfFrames{0};
 
 private:
   vtkITKImageSequenceReader(const vtkITKImageSequenceReader&) = delete;
