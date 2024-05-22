@@ -105,15 +105,35 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   vtkNew<vtkITKImageSequenceReader> reader;
   reader->SetFileName(fullName.c_str());
-  reader->Read();
+  reader->Update();  // Read first frame. This will also set NumberOfFrames
 
+  for (int frameIndex = 0; frameIndex < reader->GetNumberOfFrames(); ++frameIndex)
+  {
+    if (frameIndex > 0)
+    {
+      reader->SetCurrentFrameIndex(frameIndex);
+      reader->Update();
+    }
+    vtkImageData* frameImage = reader->GetOutput();
+    vtkNew<vtkMRMLVectorVolumeNode> frameVolume;
+    frameVolume->SetAndObserveImageData(frameImage);
+    //frameVolume->SetRASToIJKMatrix(reader->GetRasToIjkMatrix());  //TODO:!!!
 
+    std::ostringstream indexStr;
+    //if (static_cast<int>(indexValues.size()) > frameIndex)
+    //{
+    //  indexStr << indexValues[frameIndex] << std::ends;
+    //}
+    //else
+    //{
+      indexStr << frameIndex << std::ends;
+    //}
 
-
-
-
-
-
+    std::ostringstream nameStr;
+    nameStr << refNode->GetName() << "_" << std::setw(4) << std::setfill('0') << frameIndex << std::ends;
+    frameVolume->SetName( nameStr.str().c_str() );
+    volSequenceNode->SetDataNodeAtValue(frameVolume.GetPointer(), indexStr.str().c_str() );
+  }
 
   /*
   vtkNew<vtkTeemNRRDReader> reader;
