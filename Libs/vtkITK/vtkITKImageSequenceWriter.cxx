@@ -12,7 +12,7 @@
   limitations under the License.
 
   This file was originally developed by Csaba Pinter, Ebatinca, funded
-  by the grant GRT-00000485 of Children's Hospital of Philadeplhia, USA.
+  by the grant GRT-00000485 of Children's Hospital of Philadelphia, USA.
 
 ==========================================================================*/
 
