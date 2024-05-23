@@ -144,10 +144,16 @@ The supported representations are listed in the Representations section. Existin
 See Script repository's [Segmentations section](../../developer_guide/script_repository.md#segmentations) for examples.
 
 ### DICOM export
-- The source representation is used when exporting into DICOM, therefore you need to select a source volume, create binary labelmap representation and set it as master
-- DICOM Segmentation Object export if `QuantitativeReporting` extension is installed
-- Legacy DICOM RT structure set export is available if `SlicerRT` extension is installed. RT structure sets are not recommended for storing segmentations, as they cannot store arbitrarily complex 3D shapes.
-- Follow [these instructions](dicom.md#export-data-from-the-scene-to-dicom-database) for exporting data in DICOM format.
+
+- Make sure the source representation is `binary labelmap` (as the source representation is used when exporting into DICOM, and currently only binary labelmap representation is supported). The source representation can be set in `Segmentations` module, `Representations` section. If the yellow star (that designates the source representation) is in the `binary labelmap` row then the representation is already good, no further action is needed. If the yellow star is in another row then click `Make source` button in the `binary labelmap` row (if that button is not shown then click `Create` button first).
+- Make sure the necessary extensions are installed:
+  - `QuantitativeReporting` extension is required for exporting into DICOM Segmentation Object.
+  - `SlicerRT` extension is required for exporting into legacy DICOM RT Structure Set. RT Structure Sets are not recommended for storing segmentations, as they cannot store arbitrarily complex 3D shapes.
+- If the segmented image was not loaded from the DICOM database (for example, if the image was loaded from a NRRD or NIFTI file) then a DICOM image needs to be created in the database and the segmentation must be updated to reference this image (this is necessary because a DICOM requires a segmentation to be associated with a DICOM image) by following these steps:
+  - [export the source volume to DICOM](dicom.md#export-data-from-the-scene-to-dicom-database) (agree to create patient and study when asked)
+  - load the exported volume from the DICOM database
+  - in `Segment Editor` module, click `Specify geometry` button, choose the loaded volume as `Source geometry`, and click OK
+- Go to Data module, right-click on the segmentation, choose `Export to DICOM`, and follow [these instructions](dicom.md#export-data-from-the-scene-to-dicom-database).
 
 ## Panels and their use
 
