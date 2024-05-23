@@ -34,9 +34,9 @@ This module is for creating videos, image sequences, or lightbox image from 3D a
 ### Output
 
 - **Output type:**
-  - **image series:** Save screnshots as separate image files (in jpg or png file format).
+  - **image series:** Save screenshots as separate image files (in jpg or png file format).
   - **video:** Save animation as a compressed video file. Requires installation of [ffmpeg video encoder](#setting-up-ffmpeg).
-  - **lightbox image:** Save screnshots as separate jpg pr png files.
+  - **lightbox image:** Save screenshots as separate jpg pr png files.
 
     ![lightbox image](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_screencapture_lightbox.png)
 
