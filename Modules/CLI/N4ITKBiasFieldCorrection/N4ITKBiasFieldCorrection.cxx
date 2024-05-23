@@ -111,7 +111,7 @@ int main(int argc, char* * argv)
 
   if( !maskImage )
   {
-    std::cout << "Mask no read.  Creaing Otsu mask." << std::endl;
+    std::cout << "Mask no read.  Creating Otsu mask." << std::endl;
     typedef itk::OtsuThresholdImageFilter<ImageType, MaskImageType>
     ThresholderType;
     ThresholderType::Pointer otsu = ThresholderType::New();
