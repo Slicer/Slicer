@@ -567,29 +567,29 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     dims[1] = std::max(1, dims[1]);
 
     // set the plane corner point for use in a model
-    double inPt[4]={0,0,0,1};
-    double outPt[4];
-    double *outPt3 = outPt;
+    double inPoint[4]={0,0,0,1};
+    double outPoint[4];
+    double *outPoint3 = outPoint;
 
     // set the z position to be the active slice (from the lightbox)
-    inPt[2] = this->SliceNode->GetActiveSlice();
+    inPoint[2] = this->SliceNode->GetActiveSlice();
 
     vtkPlaneSource* plane = vtkPlaneSource::SafeDownCast(
       this->SliceModelNode->GetPolyDataConnection()->GetProducer());
 
     int wasModified = this->SliceModelNode->StartModify();
 
-    textureToRAS->MultiplyPoint(inPt, outPt);
-    plane->SetOrigin(outPt3);
+    textureToRAS->MultiplyPoint(inPoint, outPoint);
+    plane->SetOrigin(outPoint3);
 
-    inPt[0] = dims[0];
-    textureToRAS->MultiplyPoint(inPt, outPt);
-    plane->SetPoint1(outPt3);
+    inPoint[0] = dims[0];
+    textureToRAS->MultiplyPoint(inPoint, outPoint);
+    plane->SetPoint1(outPoint3);
 
-    inPt[0] = 0;
-    inPt[1] = dims[1];
-    textureToRAS->MultiplyPoint(inPt, outPt);
-    plane->SetPoint2(outPt3);
+    inPoint[0] = 0;
+    inPoint[1] = dims[1];
+    textureToRAS->MultiplyPoint(inPoint, outPoint);
+    plane->SetPoint2(outPoint3);
 
     this->SliceModelNode->EndModify(wasModified);
 
@@ -2086,28 +2086,28 @@ void vtkMRMLSliceLogic::SetSliceExtentsToSliceNode()
     int  dims[3];
 
     //
-    double inPt[4]={0,0,0,1};
-    double outPt0[4];
-    double outPt1[4];
-    double outPt2[4];
+    double inPoint[4]={0,0,0,1};
+    double outPoint0[4];
+    double outPoint1[4];
+    double outPoint2[4];
 
     // set the z position to be the active slice (from the lightbox)
-    inPt[2] = this->SliceNode->GetActiveSlice();
+    inPoint[2] = this->SliceNode->GetActiveSlice();
 
     // transform XYZ = (0,0,0)
-    xyToRAS->MultiplyPoint(inPt, outPt0);
+    xyToRAS->MultiplyPoint(inPoint, outPoint0);
 
     // transform XYZ = (1,0,0)
-    inPt[0] = 1;
-    xyToRAS->MultiplyPoint(inPt, outPt1);
+    inPoint[0] = 1;
+    xyToRAS->MultiplyPoint(inPoint, outPoint1);
 
     // transform XYZ = (0,1,0)
-    inPt[0] = 0;
-    inPt[1] = 1;
-    xyToRAS->MultiplyPoint(inPt, outPt2);
+    inPoint[0] = 0;
+    inPoint[1] = 1;
+    xyToRAS->MultiplyPoint(inPoint, outPoint2);
 
-    double xSpacing = sqrt(vtkMath::Distance2BetweenPoints(outPt0, outPt1));
-    double ySpacing = sqrt(vtkMath::Distance2BetweenPoints(outPt0, outPt2));
+    double xSpacing = sqrt(vtkMath::Distance2BetweenPoints(outPoint0, outPoint1));
+    double ySpacing = sqrt(vtkMath::Distance2BetweenPoints(outPoint0, outPoint2));
 
     dims[0] = extents[0]/xSpacing+1;
     dims[1] = extents[2]/ySpacing+1;
