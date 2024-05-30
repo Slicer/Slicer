@@ -551,8 +551,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       markupsNode->RemoveAllControlPoints();
     }
 
-    std::vector<char> lineBuff(vtkMRMLMarkupsFiducialStorageNode::GetMaximumLineLength());
-    char* line = &(lineBuff[0]);
+    std::string line;
 
     // save the valid lines in a vector, parse them once know the max id
     std::vector<std::string>lines;
@@ -565,7 +564,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
     while (fstr.good())
     {
-      fstr.getline(line, vtkMRMLMarkupsFiducialStorageNode::GetMaximumLineLength());
+      std::getline(fstr, line);
 
       // does it start with a #?
       if (line[0] == '#')
@@ -696,7 +695,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
           else
           {
             vtkDebugMacro("\n\n\n\nVersion = " << version << ", got a line: \n\"" << line << "\"");
-            this->SetPointFromString(markupsNode, markupsNode->GetNumberOfControlPoints(), line);
+            this->SetPointFromString(markupsNode, markupsNode->GetNumberOfControlPoints(), line.c_str());
 
             thisMarkupNumber++;
           } // point line

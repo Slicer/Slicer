@@ -1405,7 +1405,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
   // to happen after they have been set, so do it every event for now
   if ( this->SliceModelNode != nullptr )
   {
-    char description[256];
+    std::string description;
     std::stringstream ssD;
     if (this->SliceNode && this->SliceNode->GetID() )
     {
@@ -1416,8 +1416,8 @@ void vtkMRMLSliceLogic::CreateSliceModel()
       ssD << " CompositeID " << this->SliceCompositeNode->GetID();
     }
 
-    ssD.getline(description,256);
-    this->SliceModelNode->SetDescription(description);
+    std::getline(ssD, description);
+    this->SliceModelNode->SetDescription(description.c_str());
   }
 }
 

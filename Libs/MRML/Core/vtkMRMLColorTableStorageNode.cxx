@@ -91,20 +91,20 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
     colorNode->NamesInitialisedOff();
 
-    char line[1024];
+    std::string line;
     // save the valid lines in a vector, parse them once know the max id
     std::vector<std::string>lines;
     int maxID = 0;
     while (fstr.good())
     {
-      fstr.getline(line, 1024);
+      std::getline(fstr, line);
 
       // does it start with a #?
       if (line[0] == '#')
       {
         vtkDebugMacro("Comment line, skipping:\n\"" << line << "\"");
         // sanity check: does the procedural header match?
-        if (strncmp(line, "# Color procedural file", 23) == 0)
+        if (line.compare(0, 23, "# Color procedural file") == 0)
         {
           vtkErrorMacro("ReadDataInternal:\nfound a comment that this file "
                         << " is a procedural color file, returning:\n"

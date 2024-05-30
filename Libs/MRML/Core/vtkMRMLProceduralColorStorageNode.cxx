@@ -96,11 +96,11 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     colorNode->NamesInitialisedOff();
     ctf->RemoveAllPoints();
 
-    char line[1024];
+    std::string line;
 
     while (fstr.good())
     {
-      fstr.getline(line, 1024);
+      std::getline(fstr, line);
 
       // does it start with a #?
       if (line[0] == '#')

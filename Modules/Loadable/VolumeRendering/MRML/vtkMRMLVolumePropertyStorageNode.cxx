@@ -75,96 +75,86 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("Cannot open volume property file: " << fullName);
     return 0;
   }
-  char line[1024];
-  std::string sline;
+  std::string line;
 
-  ifs.getline(line, 1024);
-  sline = line;
-  if (!sline.empty())
+  std::getline(ifs, line);
+  if (!line.empty())
   {
     int value;
     std::stringstream ss;
-    ss << sline;
+    ss << line;
     ss >> value;
     vpNode->GetVolumeProperty()->SetInterpolationType(value);
   }
-  ifs.getline(line, 1024);
-  sline = line;
-  if (!sline.empty())
+  std::getline(ifs, line);
+  if (!line.empty())
   {
     int value;
     std::stringstream ss;
-    ss << sline;
+    ss << line;
     ss >> value;
     vpNode->GetVolumeProperty()->SetShade(value);
   }
-  ifs.getline(line, 1024);
-  sline = line;
-  if (!sline.empty())
+  std::getline(ifs, line);
+  if (!line.empty())
   {
     double value;
     std::stringstream ss;
-    ss << sline;
+    ss << line;
     ss >> value;
     vpNode->GetVolumeProperty()->SetDiffuse(value);
   }
-  ifs.getline(line, 1024);
-  sline = line;
-  if (!sline.empty())
+  std::getline(ifs, line);
+  if (!line.empty())
   {
     double value;
     std::stringstream ss;
-    ss << sline;
+    ss << line;
     ss >> value;
     vpNode->GetVolumeProperty()->SetAmbient(value);
   }
-  ifs.getline(line, 1024);
-  sline = line;
-  if (!sline.empty())
+  std::getline(ifs, line);
+  if (!line.empty())
   {
     double value;
     std::stringstream ss;
-    ss << sline;
+    ss << line;
     ss >> value;
     vpNode->GetVolumeProperty()->SetSpecular(value);
   }
-  ifs.getline(line, 1024);
-  sline = line;
-  if (!sline.empty())
+  std::getline(ifs, line);
+  if (!line.empty())
   {
     double value;
     std::stringstream ss;
-    ss << sline;
+    ss << line;
     ss >> value;
     vpNode->GetVolumeProperty()->SetSpecularPower(value);
   }
 
-  ifs.getline(line, 1024);
-  sline = line;
-  if (!sline.empty())
+  std::getline(ifs, line);
+  if (!line.empty())
   {
     vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
-    vpNode->GetPiecewiseFunctionFromString(sline, scalarOpacity),
+    vpNode->GetPiecewiseFunctionFromString(line, scalarOpacity),
     vpNode->SetScalarOpacity(scalarOpacity);
     scalarOpacity->Delete();
   }
 
-  ifs.getline(line, 1024);
-  sline = line;
-  if (!sline.empty())
+  std::getline(ifs, line);
+  if (!line.empty())
   {
     vtkPiecewiseFunction *gradientOpacity=vtkPiecewiseFunction::New();
-    vpNode->GetPiecewiseFunctionFromString(sline, gradientOpacity);
+    vpNode->GetPiecewiseFunctionFromString(line, gradientOpacity);
     vpNode->SetGradientOpacity(gradientOpacity);
     gradientOpacity->Delete();
   }
 
-  ifs.getline(line, 1024);
-  sline = line;
-  if (!sline.empty())
+  std::getline(ifs, line);
+  if (!line.empty())
   {
     vtkColorTransferFunction *colorTransfer=vtkColorTransferFunction::New();
-    vpNode->GetColorTransferFunctionFromString(sline, colorTransfer);
+    vpNode->GetColorTransferFunctionFromString(line, colorTransfer);
     vpNode->SetColor(colorTransfer);
     colorTransfer->Delete();
   }
