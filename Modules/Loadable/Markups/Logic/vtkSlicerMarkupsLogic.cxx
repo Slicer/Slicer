@@ -1874,7 +1874,8 @@ void vtkSlicerMarkupsLogic::RenameAllControlPointsFromCurrentFormat(vtkMRMLMarku
   // get the format string with the list name replaced
   std::string formatString = markupsNode->ReplaceListNameInControlPointLabelFormat();
   bool numberInFormat = false;
-  std::vector<char> buffVector(vtkMRMLMarkupsFiducialStorageNode::GetMaximumLineLength());
+  const int maxLineLength = 1024;
+  std::vector<char> buffVector(maxLineLength);
   char* buff = &(buffVector[0]);
   if (formatString.find("%d") != std::string::npos ||
       formatString.find("%g") != std::string::npos ||
@@ -1920,18 +1921,18 @@ void vtkSlicerMarkupsLogic::RenameAllControlPointsFromCurrentFormat(vtkMRMLMarku
         if (formatString.find("%d") != std::string::npos)
         {
           // integer
-          sprintf(buff,formatString.c_str(),atoi(oldNumber.c_str()));
+          snprintf(buff, maxLineLength, formatString.c_str(),atoi(oldNumber.c_str()));
         }
         else
         {
           // float
-          sprintf(buff,formatString.c_str(),atof(oldNumber.c_str()));
+          snprintf(buff, maxLineLength, formatString.c_str(),atof(oldNumber.c_str()));
         }
       }
       else
       {
         // no number found, use n
-        sprintf(buff,formatString.c_str(),n);
+        snprintf(buff, maxLineLength, formatString.c_str(),n);
       }
       markupsNode->SetNthControlPointLabel(n, std::string(buff));
     }

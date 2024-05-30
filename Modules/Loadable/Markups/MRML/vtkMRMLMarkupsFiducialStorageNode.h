@@ -74,6 +74,8 @@ public:
   std::string ConvertStringFromStorageFormat(std::string input);
 
   /// Buffer size for parsing files during read.
+  /// This method is deprecated, as it is not used anymore, and it will be removed
+  /// in future software versions.
   static int GetMaximumLineLength() { return 1024; }
 
 protected:
