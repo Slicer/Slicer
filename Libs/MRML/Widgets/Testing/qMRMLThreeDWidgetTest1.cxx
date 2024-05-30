@@ -48,23 +48,24 @@ int qMRMLThreeDWidgetTest1(int argc, char * argv [] )
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
-  qMRMLThreeDWidget widget;
-  widget.show();
 
   vtkNew<vtkMRMLScene> scene;
 
   // vtkMRMLAbstractDisplayableManager requires selection and interaction nodes
-  vtkNew<vtkMRMLSelectionNode> selectionNode;
-  scene->AddNode(selectionNode.GetPointer());
-  vtkNew<vtkMRMLInteractionNode> interactionNode;
-  scene->AddNode(interactionNode.GetPointer());
+  scene->AddNewNodeByClass("vtkMRMLSelectionNode");
+  scene->AddNewNodeByClass("vtkMRMLInteractionNode");
 
-  vtkNew<vtkMRMLViewNode> viewNode;
-  scene->AddNode(viewNode.GetPointer());
+  vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLViewNode"));
+  // This is required for the view to be connected to the camera displayable manager
+  viewNode->SetLayoutName("1");
+  // This label is displayed in the widget title bar
+  viewNode->SetLayoutLabel("3D");
 
-  widget.setViewLabel("View1");
-  widget.setMRMLScene(scene.GetPointer());
-  widget.setMRMLViewNode(viewNode.GetPointer());
+  qMRMLThreeDWidget widget;
+  widget.setMRMLScene(scene);
+  widget.setMRMLViewNode(viewNode);
+  widget.resize(600, 600);
+  widget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
   {
