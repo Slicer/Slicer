@@ -38,11 +38,13 @@ Version:   $Revision: 1.14 $
 #include <vtkMatrix3x3.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkTrivialProducer.h>
 
 #include <algorithm> // For std::min
+#include <array>
 #include <cassert>
 #include <vector>
 
@@ -1368,15 +1370,65 @@ void vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness(vtkImageData* imageDat
     return;
   }
   int imageDimensions[3] = { 0, 0, 0 };
-  if (imageData)
+  if (imageData && imageData->GetPointData())
   {
     // Flip third image axis (K) direction
-    vtkNew<vtkImageFlip> flip;
-    flip->SetFilteredAxes(2);
-    flip->SetInputData(imageData);
-    flip->Update();
-    imageData->ShallowCopy(flip->GetOutput());
-    imageData->GetDimensions(imageDimensions);
+
+    // In DTI data sets, data is stored in tensors (scalars is nullptr),
+    // but vtkImageFlip always works on the scalar data array, so we need to temporarily
+    // move the data array that contains the data to the scalar data array.
+    vtkPointData* pointData = imageData->GetPointData();
+    vtkDataArray* pointDataArray = nullptr;
+    int pointDataType = -1;
+    std::array<int, 4> candidatePointDataTypes
+      = { vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::VECTORS, vtkDataSetAttributes::NORMALS, vtkDataSetAttributes::TENSORS };
+    for (int candidatePointDataType : candidatePointDataTypes)
+    {
+      vtkDataArray* candidatePointDataArray = pointData->GetAttribute(candidatePointDataType);
+      if (candidatePointDataArray == nullptr)
+      {
+        continue;
+      }
+      // Found a valid data array
+      if (pointDataType == -1)
+      {
+        // There has not been any other data arrays
+        pointDataArray = candidatePointDataArray;
+        pointDataType = candidatePointDataType;
+      }
+      else
+      {
+        // There has been other data arrays, log a warning because we only flip the first one
+        vtkGenericWarningMacro("vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness: Multiple types of point data arrays were found,"
+          " only the " << vtkDataSetAttributes::GetAttributeTypeAsString(pointDataType) << " array will be flipped");
+      }
+    }
+
+    if (pointDataType != -1)
+    {
+      // There is data to process
+      vtkNew<vtkImageFlip> flip;
+      flip->SetFilteredAxes(2);
+      flip->SetInputData(imageData);
+      if (pointDataType != vtkDataSetAttributes::SCALARS)
+      {
+        // Temporarily move the data array to the scalar data array
+        // because vtkImageFlip always processes the scalar data array
+        vtkSmartPointer<vtkDataArray> dataArrayToFlip = pointDataArray;
+        imageData->GetPointData()->SetAttribute(nullptr, pointDataType);
+        pointData->SetScalars(dataArrayToFlip);
+      }
+      flip->Update();
+      imageData->ShallowCopy(flip->GetOutput());
+      if (pointDataType != vtkDataSetAttributes::SCALARS)
+      {
+        // Move the processed data array back to where it was
+        vtkSmartPointer<vtkDataArray> flippedDataArray = imageData->GetPointData()->GetScalars();
+        imageData->GetPointData()->SetScalars(nullptr);
+        imageData->GetPointData()->SetAttribute(flippedDataArray, pointDataType);
+      }
+      imageData->GetDimensions(imageDimensions);
+    }
   }
 
   // Update rasToIJK to reflect flip around the third axis and shift of the origin to the opposite corner.
