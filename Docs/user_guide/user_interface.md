@@ -245,6 +245,7 @@ view will not activate the view.
 | `Shift` + `Page Down` or `Shift` + `Keypad 3` | rotate to view from right side |
 | `Home` or `Keypad 7` | rotate to view from superior |
 | `Shift` + `Home` or `Shift` + `Keypad 7`| rotate to view from inferior |
+| `Ctrl` + `left-click` + `drag` | rotate view clockwise/counterclockwise |
 | `right-click` + `drag up/down` | zoom view in/out (`Alt` optional, useful during point placement) |
 | `Ctrl` + `mouse wheel` | zoom view in/out |
 | `Ctrl` + `b` | toggle tilt lock |
