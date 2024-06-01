@@ -147,9 +147,9 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [six]
   six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
   # [/six]
-  # [typing-extensions]
-  typing-extensions==4.8.0 --hash=sha256:8f92fc8806f9a6b641eaa5318da32b44d401efaac0f6678c9bc448ba3605faa0
-  # [/typing-extensions]
+  # [typing_extensions]
+  typing_extensions==4.8.0 --hash=sha256:8f92fc8806f9a6b641eaa5318da32b44d401efaac0f6678c9bc448ba3605faa0
+  # [/typing_extensions]
   # [PyGithub]
   PyGithub==2.2.0 --hash=sha256:41042ea53e4c372219db708c38d2ca1fd4fadab75475bac27d89d339596cfad1
   # [/PyGithub]

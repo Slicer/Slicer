@@ -46,7 +46,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [six]
   six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
   # [/six]
-  # [Pillow]
+  # [pillow]
   # Hashes correspond to the following packages:
   #  - pillow-10.2.0-cp39-cp39-macosx_10_10_x86_64.whl
   #  - pillow-10.2.0-cp39-cp39-macosx_11_0_arm64.whl
@@ -68,7 +68,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                  --hash=sha256:49d9ba1ed0ef3e061088cd1e7538a0759aab559e2e0a80a36f9fd9d8c0c21591 \
                  --hash=sha256:0304004f8067386b477d20a518b50f3fa658a28d44e4116970abfcd94fac34a8 \
                  --hash=sha256:0fb3e7fc88a14eacd303e90481ad983fd5b69c761e9e6ef94c983f91025da869
-  # [/Pillow]
+  # [/pillow]
   # [retrying]
   retrying==1.3.4 --hash=sha256:8cc4d43cb8e1125e0ff3344e9de678fefd85db3b750b81b2240dc0183af37b35
   # [/retrying]
