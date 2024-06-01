@@ -30,7 +30,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   certifi==2024.2.2 --hash=sha256:dc383c07b76109f368f6106eee2b593b04a011ea4d55f652c6ca24a754d1cdd1
   # [/certifi]
   # [idna]
-  idna==3.6 --hash=sha256:c05567e9c24a6b9faaa835c4821bad0590fbb9d5779e7caa6e1cc4978e7eb24f
+  idna==3.7 --hash=sha256:82fee1fc78add43492d3a1898bfa6d8a904cc97d8427f683ed8e798d07761aa0
   # [/idna]
   # [charset-normalizer]
   # Hashes correspond to the following packages:
@@ -57,7 +57,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   urllib3==2.2.1 --hash=sha256:450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d
   # [/urllib3]
   # [requests]
-  requests==2.31.0 --hash=sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f
+  requests==2.32.3 --hash=sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6
   # [/requests]
   ]===])
 
