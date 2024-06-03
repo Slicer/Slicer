@@ -12,9 +12,9 @@
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>
     <double>
-      <name>sigma</name>
-      <longflag>sigma</longflag>
-      <flag>s</flag>
+      <name>sigma</name><!-- This is the variable name in C++ source code. If unspecified, C++ variable name is taken from longflag. -->
+      <longflag>sigma</longflag><!-- Parameter name used in the command line interface. -->
+      <flag>s</flag> <!-- Shortened version of the parameter name used in the command line interface. If specified then longflag must be specified, too. -->
       <label>Sigma</label>
       <description><![CDATA[A double value (in units of mm) passed to the algorithm]]></description>
       <default>1.0</default>
