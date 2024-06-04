@@ -155,6 +155,12 @@ void qSlicerSettingsViewsPanelPrivate::init()
   q->registerProperty("Default3DView/AmbientShadowsVolumeOpacityThreshold", this->ThreeDAmbientShadowsVolumeOpacityThresholdSlider,
                       /*no tr*/"value", SIGNAL(valueChanged(double)),
                       qSlicerSettingsViewsPanel::tr("Ambient shadows volume opacity threshold"));
+  q->registerProperty("Default3DView/AmbientShadowsIntensityScale", this->ThreeDAmbientShadowsIntensityScaleSlider,
+                      /*no tr*/"value", SIGNAL(valueChanged(double)),
+                      qSlicerSettingsViewsPanel::tr("Ambient shadows intensity scale"));
+  q->registerProperty("Default3DView/AmbientShadowsIntensityShift", this->ThreeDAmbientShadowsIntensityShiftSlider,
+                      /*no tr*/"value", SIGNAL(valueChanged(double)),
+                      qSlicerSettingsViewsPanel::tr("Ambient shadows intensity shift"));
 }
 
 // --------------------------------------------------------------------------

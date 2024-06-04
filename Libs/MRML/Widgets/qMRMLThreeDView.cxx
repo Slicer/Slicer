@@ -214,6 +214,8 @@ void qMRMLThreeDViewPrivate::updateWidgetFromMRML()
   q->setShadowsVisibility(this->MRMLViewNode->GetShadowsVisibility());
   q->setAmbientShadowsSizeScale(this->MRMLViewNode->GetAmbientShadowsSizeScale());
   q->setAmbientShadowsVolumeOpacityThreshold(this->MRMLViewNode->GetAmbientShadowsVolumeOpacityThreshold());
+  q->setAmbientShadowsIntensityScale(this->MRMLViewNode->GetAmbientShadowsIntensityScale());
+  q->setAmbientShadowsIntensityShift(this->MRMLViewNode->GetAmbientShadowsIntensityShift());
 }
 
 // --------------------------------------------------------------------------
@@ -659,4 +661,32 @@ vtkSSAOPass* qMRMLThreeDView::ssaoPass()const
 {
   Q_D(const qMRMLThreeDView);
   return d->ShadowsRenderPass;
+}
+
+//------------------------------------------------------------------------------
+double qMRMLThreeDView::ambientShadowsIntensityScale()const
+{
+  Q_D(const qMRMLThreeDView);
+  return d->ShadowsRenderPass->GetIntensityScale();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLThreeDView::setAmbientShadowsIntensityScale(double intensityScale)
+{
+  Q_D(const qMRMLThreeDView);
+  d->ShadowsRenderPass->SetIntensityScale(intensityScale);
+}
+
+//------------------------------------------------------------------------------
+double qMRMLThreeDView::ambientShadowsIntensityShift()const
+{
+  Q_D(const qMRMLThreeDView);
+  return d->ShadowsRenderPass->GetIntensityShift();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLThreeDView::setAmbientShadowsIntensityShift(double intensityShift)
+{
+  Q_D(const qMRMLThreeDView);
+  d->ShadowsRenderPass->SetIntensityShift(intensityShift);
 }

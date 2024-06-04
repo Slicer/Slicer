@@ -321,6 +321,47 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupShadowsMenu()
   ambientShadowsVolumeOpacityThresholdMenu->addAction(ambientShadowsVolumeOpacityThresholdAction);
   this->ShadowsMenu->addMenu(ambientShadowsVolumeOpacityThresholdMenu);
 
+  // Intensity scale
+  QMenu* ambientShadowsIntensityScaleMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Intensity scale"), this->ShadowsButton);
+  ambientShadowsIntensityScaleMenu->setObjectName("ambienShadowsIntensityScale");
+  this->AmbientShadowsIntensityScaleSlider = new ctkSliderWidget(ambientShadowsIntensityScaleMenu);
+  this->AmbientShadowsIntensityScaleSlider->setToolTip(qMRMLThreeDViewControllerWidget::tr("Intensity of darkening by shadows."
+    " Larger value means more darkening. Default is 1."));
+  this->AmbientShadowsIntensityScaleSlider->setDecimals(2);
+  this->AmbientShadowsIntensityScaleSlider->setRange(0., 3.);
+  this->AmbientShadowsIntensityScaleSlider->setSingleStep(0.01);
+  this->AmbientShadowsIntensityScaleSlider->setPageStep(0.1);
+  this->AmbientShadowsIntensityScaleSlider->setValue(1.0);
+  QObject::connect(this->AmbientShadowsIntensityScaleSlider, SIGNAL(valueChanged(double)),
+    q, SLOT(setAmbientShadowsIntensityScale(double)));
+  this->connect(this->actionShadowsVisibility, SIGNAL(toggled(bool)),
+    this->AmbientShadowsIntensityScaleSlider, SLOT(setEnabled(bool)));
+  QWidgetAction* ambientShadowsIntensityScaleAction = new QWidgetAction(ambientShadowsIntensityScaleMenu);
+  ambientShadowsIntensityScaleAction->setDefaultWidget(this->AmbientShadowsIntensityScaleSlider);
+  ambientShadowsIntensityScaleMenu->addAction(ambientShadowsIntensityScaleAction);
+  this->ShadowsMenu->addMenu(ambientShadowsIntensityScaleMenu);
+
+  // Intensity shift
+  QMenu* ambientShadowsIntensityShiftMenu = new QMenu(qMRMLThreeDViewControllerWidget::tr("Intensity shift"), this->ShadowsButton);
+  ambientShadowsIntensityShiftMenu->setObjectName("ambienShadowsIntensityShift");
+  this->AmbientShadowsIntensityShiftSlider = new ctkSliderWidget(ambientShadowsIntensityShiftMenu);
+  this->AmbientShadowsIntensityShiftSlider->setToolTip(qMRMLThreeDViewControllerWidget::tr(
+    "Minimum amount of occlusion required for visible darkening by shadows."
+    " Larger value means more occlusion is needed to darkening. Default is 0."));
+  this->AmbientShadowsIntensityShiftSlider->setDecimals(2);
+  this->AmbientShadowsIntensityShiftSlider->setRange(0., 1.);
+  this->AmbientShadowsIntensityShiftSlider->setSingleStep(0.01);
+  this->AmbientShadowsIntensityShiftSlider->setPageStep(0.1);
+  this->AmbientShadowsIntensityShiftSlider->setValue(1.0);
+  QObject::connect(this->AmbientShadowsIntensityShiftSlider, SIGNAL(valueChanged(double)),
+    q, SLOT(setAmbientShadowsIntensityShift(double)));
+  this->connect(this->actionShadowsVisibility, SIGNAL(toggled(bool)),
+    this->AmbientShadowsIntensityShiftSlider, SLOT(setEnabled(bool)));
+  QWidgetAction* ambientShadowsIntensityShiftAction = new QWidgetAction(ambientShadowsIntensityShiftMenu);
+  ambientShadowsIntensityShiftAction->setDefaultWidget(this->AmbientShadowsIntensityShiftSlider);
+  ambientShadowsIntensityShiftMenu->addAction(ambientShadowsIntensityShiftAction);
+  this->ShadowsMenu->addMenu(ambientShadowsIntensityShiftMenu);
+
   this->ShadowsButton->setMenu(this->ShadowsMenu);
 }
 //---------------------------------------------------------------------------
@@ -583,6 +624,8 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
   d->actionShadowsVisibility->setChecked(viewNode->GetShadowsVisibility());
   d->AmbientShadowsSizeScaleSlider->setValue(viewNode->GetAmbientShadowsSizeScale());
   d->AmbientShadowsVolumeOpacityThresholdPercentSlider->setValue(viewNode->GetAmbientShadowsVolumeOpacityThreshold() * 100.0);
+  d->AmbientShadowsIntensityScaleSlider->setValue(viewNode->GetAmbientShadowsIntensityScale());
+  d->AmbientShadowsIntensityShiftSlider->setValue(viewNode->GetAmbientShadowsIntensityShift());
 }
 
 // --------------------------------------------------------------------------
@@ -1016,7 +1059,6 @@ void qMRMLThreeDViewControllerWidget::setAmbientShadowsSizeScale(double value)
   d->ViewLogic->EndViewNodeInteraction();
 }
 
-
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidget::setAmbientShadowsVolumeOpacityThresholdPercent(double opacityPercent)
 {
@@ -1028,5 +1070,33 @@ void qMRMLThreeDViewControllerWidget::setAmbientShadowsVolumeOpacityThresholdPer
 
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::AmbientShadowsVolumeOpacityThresholdFlag);
   this->mrmlThreeDViewNode()->SetAmbientShadowsVolumeOpacityThreshold(opacityPercent * 0.01);
+  d->ViewLogic->EndViewNodeInteraction();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setAmbientShadowsIntensityScale(double value)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!this->mrmlThreeDViewNode())
+  {
+    return;
+  }
+
+  d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::AmbientShadowsIntensityScaleFlag);
+  this->mrmlThreeDViewNode()->SetAmbientShadowsIntensityScale(value);
+  d->ViewLogic->EndViewNodeInteraction();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setAmbientShadowsIntensityShift(double value)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!this->mrmlThreeDViewNode())
+  {
+    return;
+  }
+
+  d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::AmbientShadowsIntensityShiftFlag);
+  this->mrmlThreeDViewNode()->SetAmbientShadowsIntensityShift(value);
   d->ViewLogic->EndViewNodeInteraction();
 }
