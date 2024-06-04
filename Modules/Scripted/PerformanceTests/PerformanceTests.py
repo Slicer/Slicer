@@ -3,6 +3,8 @@ import slicer
 
 from slicer.ScriptedLoadableModule import *
 
+from slicer.i18n import tr as _
+from slicer.i18n import translate
 
 #
 # PerformanceTests
@@ -12,16 +14,16 @@ from slicer.ScriptedLoadableModule import *
 class PerformanceTests(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        parent.title = "Performance Tests"
-        parent.categories = ["Testing.TestCases"]
+        parent.title = _("Performance Tests")
+        parent.categories = [translate("qSlicerAbstractCoreModule", "Testing.TestCases")]
         parent.contributors = ["Steve Pieper (Isomics)"]
-        parent.helpText = """
+        parent.helpText = _("""
     Module to run interactive performance tests on the core of slicer.
-    """
-        parent.acknowledgementText = """
+    """)
+        parent.acknowledgementText = _("""
     This file was based on work originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
 and others.  This work was partially funded by NIH grant 3P41RR013218-12S1.
-    """
+    """)
         self.parent = parent
 
 
@@ -34,10 +36,10 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
         tests = (
-            ("Get Sample Data", self.downloadMRHead),
-            ("Reslicing", self.reslicing),
-            ("Crosshair Jump", self.crosshairJump),
-            ("Memory Check", self.memoryCheck),
+            (_("Get Sample Data"), self.downloadMRHead),
+            (_("Reslicing"), self.reslicing),
+            (_("Crosshair Jump"), self.crosshairJump),
+            (_("Memory Check"), self.memoryCheck),
         )
 
         for test in tests:
@@ -48,7 +50,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
         self.log = qt.QTextEdit()
         self.log.readOnly = True
         self.layout.addWidget(self.log)
-        self.log.insertHtml("<p>Status: <i>Idle</i>\n")
+        self.log.insertHtml(_("<p>Status: <i>Idle</i>\n"))
         self.log.insertPlainText("\n")
         self.log.ensureCursorVisible()
 
@@ -58,15 +60,15 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
     def downloadMRHead(self):
         import SampleData
 
-        self.log.insertHtml("<b>Requesting downloading MRHead")
+        self.log.insertHtml(_("<b>Requesting downloading MRHead"))
         self.log.repaint()
         mrHeadVolume = SampleData.downloadSample("MRHead")
         if mrHeadVolume:
-            self.log.insertHtml("<i>finished.</i>\n")
+            self.log.insertHtml(_("<i>finished.</i>\n"))
             self.log.insertPlainText("\n")
             self.log.repaint()
         else:
-            self.log.insertHtml("<b>Download failed!</b>\n")
+            self.log.insertHtml(_("<b>Download failed!</b>\n"))
             self.log.insertPlainText("\n")
             self.log.repaint()
         self.log.ensureCursorVisible()
@@ -114,9 +116,9 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
                 sampleIndex += 1
         sliceNode.SetSliceOffset(startOffset)
 
-        resultTableName = slicer.mrmlScene.GetUniqueNameByString("Reslice performance")
+        resultTableName = slicer.mrmlScene.GetUniqueNameByString(_("Reslice performance"))
         resultTableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode", resultTableName)
-        slicer.util.updateTableFromArray(resultTableNode, renderingTimesSec, "Rendering time [s]")
+        slicer.util.updateTableFromArray(resultTableNode, renderingTimesSec, _("Rendering time [s]"))
 
         renderingTimeMean = np.mean(renderingTimesSec)
         renderingTimeStd = np.std(renderingTimesSec)
@@ -137,7 +139,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
         layoutManager = slicer.app.layoutManager()
         sliceViewNames = layoutManager.sliceViewNames()
         # Order of slice view names is random, prefer 'Red' slice to make results more predictable
-        firstSliceViewName = "Red" if "Red" in sliceViewNames else sliceViewNames[0]
+        firstSliceViewName = _("Red") if _("Red") in sliceViewNames else sliceViewNames[0]
         firstSliceWidget = layoutManager.sliceWidget(firstSliceViewName)
         elapsedTime = 0
         startPoint = (int(dims[0] * 0.3), int(dims[1] * 0.3))
@@ -188,7 +190,7 @@ class sliceLogicTest:
         self.sliceLogic = slicer.vtkMRMLSliceLayerLogic()
         self.sliceLogic.SetMRMLScene(slicer.mrmlScene)
         self.sliceNode = slicer.vtkMRMLSliceNode()
-        self.sliceNode.SetLayoutName("Black")
+        self.sliceNode.SetLayoutName(_("Black"))
         slicer.mrmlScene.AddNode(self.sliceNode)
         self.sliceLogic.SetSliceNode(self.sliceNode)
 
