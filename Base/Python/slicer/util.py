@@ -3852,7 +3852,39 @@ def logProcessOutput(proc):
     retcode = proc.returncode
     if retcode != 0:
         raise CalledProcessError(retcode, proc.args, output=proc.stdout, stderr=proc.stderr)
+        
+def log_invocation(func):
+        import os
+        import sqlite3
+        from datetime import datetime
+        def wrapper(*args, **kwargs):
+            call_info = {
+                'function': func.__name__,
+                'time': datetime.now().isoformat(),
+                'selected_module': selectedModule()
+            }
 
+             # Connect to the SQLite database
+            conn = sqlite3.connect('function_calls.db')
+            c = conn.cursor()
+
+            # Create the functions table if it doesn't exist
+            c.execute('''CREATE TABLE IF NOT EXISTS functions
+                        (module_name TEXT,
+                        function_name TEXT,
+                        time TEXT)''')
+
+            # Insert the function information into the functions table
+            c.execute("INSERT INTO functions VALUES (?, ?, ?)",
+                    (call_info['selected_module'], call_info['function'], call_info['time']))
+
+            # Commit the changes and close the connection
+            conn.commit()
+            print(f"The saving directory of the log is: {os.getcwd()}")
+            conn.close()
+
+            return func(*args, **kwargs)
+        return wrapper
 
 def _executePythonModule(module, args):
     """Execute a Python module as a script in Slicer's Python environment.
