@@ -21,6 +21,8 @@
 
 #include "vtkMedicalImageReader2.h"
 
+#include "vtkMatrix4x4.h"
+
 #include "vtkITK.h"
 
 class VTK_ITK_EXPORT vtkITKImageSequenceReader : public vtkMedicalImageReader2
@@ -44,6 +46,10 @@ class VTK_ITK_EXPORT vtkITKImageSequenceReader : public vtkMedicalImageReader2
   vtkSetMacro(NumberOfFrames, unsigned int);
   vtkGetMacro(NumberOfFrames, unsigned int);
 
+  /// Get RAS to IJK matrix. It is null until the first reading is done.
+  vtkSetObjectMacro(RasToIjkMatrix, vtkMatrix4x4);
+  vtkGetObjectMacro(RasToIjkMatrix, vtkMatrix4x4);
+
  protected:
   vtkITKImageSequenceReader();
   ~vtkITKImageSequenceReader() override;
@@ -60,6 +66,9 @@ protected:
 
   /// Number of frames in recently read image. Set in first Update. Read only.
   unsigned int NumberOfFrames{0};
+
+  /// RAS to IJK matrix
+  vtkMatrix4x4* RasToIjkMatrix{nullptr};
 
 private:
   vtkITKImageSequenceReader(const vtkITKImageSequenceReader&) = delete;
