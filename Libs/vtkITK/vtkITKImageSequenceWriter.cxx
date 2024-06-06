@@ -160,7 +160,7 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
     joinImageFilter->PushBackInput(itkImporter->GetOutput());
   }
 
-  // Set origin and spacing of the new dimension //TODO: Review
+  // Set origin and spacing of the new dimension
   joinImageFilter->SetOrigin(0.0);
   joinImageFilter->SetSpacing(1.0);
   joinImageFilter->Update();
@@ -247,7 +247,6 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkCollection *inputImage
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {
   // Fix 4 dimensions: 3 spatial + 1 sequence. The fifth dimension for the scalar components is in the pixel type
-  //TODO: Here we specify SPATIAL dimensions. How to have the writer have: component + 3 spatial + sequence (time/list)?
   ITKWriteVTKImage<TPixelType, 4>(self, inputImageCollection, fileName, rasToIjkMatrix, measurementFrameMatrix);
 }
 

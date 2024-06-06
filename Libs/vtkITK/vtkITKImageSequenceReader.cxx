@@ -40,7 +40,14 @@ vtkITKImageSequenceReader::vtkITKImageSequenceReader()
 }
 
 //----------------------------------------------------------------------------
-vtkITKImageSequenceReader::~vtkITKImageSequenceReader() = default;
+vtkITKImageSequenceReader::~vtkITKImageSequenceReader()
+{
+  if (RasToIjkMatrix)
+  {
+    this->RasToIjkMatrix->Delete();
+    this->RasToIjkMatrix = nullptr;
+  }
+}
 
 //----------------------------------------------------------------------------
 void vtkITKImageSequenceReader::PrintSelf(ostream& os, vtkIndent indent)
@@ -54,7 +61,6 @@ void vtkITKImageSequenceReader::PrintSelf(ostream& os, vtkIndent indent)
 template <class T>
 void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self, vtkImageData* data)
 {
-
   constexpr unsigned int ImageDimension = 4;  //TODO: Constant
   using PixelType = itk::RGBAPixel<unsigned short>;  //TODO: Scalar type is constant
   using ImageType = itk::Image<PixelType, ImageDimension>;
@@ -64,6 +70,38 @@ void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self, vtkImageData* da
   reader->SetFileName(self->GetFileName());
   reader->Update();
   ImageType::ConstPointer image = reader->GetOutput();
+
+  // Get origin and spacing from ITK image
+  ImageType::PointType itkOrigin = image->GetOrigin();
+  ImageType::SpacingType itkSpacing = image->GetSpacing();
+  double origin[3] = {itkOrigin[0], itkOrigin[1], itkOrigin[2]};
+  double spacing[3] = {itkSpacing[0], itkSpacing[1], itkSpacing[2]};
+  // Get directions from ITK image
+  ImageType::DirectionType itkDirections = image->GetDirection();
+  double directions[3][3] = { {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0} };
+  for (unsigned int col=0; col<3; col++)
+  {
+    for (unsigned int row=0; row<3; row++)
+    {
+      directions[row][col] = itkDirections[row][col];
+    }
+  }
+  // Make the pose matrix available in VTK
+  if (self->GetRasToIjkMatrix())
+  {
+    self->GetRasToIjkMatrix()->Delete();
+  }
+  vtkMatrix4x4* rasToIjkMatrix = vtkMatrix4x4::New();
+  rasToIjkMatrix->Identity();
+  for (int row=0; row<3; row++)
+  {
+    for (int col=0; col<3; col++)
+    {
+      rasToIjkMatrix->SetElement(row, col, spacing[col] * directions[row][col]);
+    }
+    rasToIjkMatrix->SetElement(row, 3, origin[row]);
+  }
+  self->SetRasToIjkMatrix(rasToIjkMatrix);
 
   // Extract requested frame from image
   using FrameImageType = itk::Image<PixelType, ImageDimension-1>;
