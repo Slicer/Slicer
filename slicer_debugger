@@ -1,0 +1,88 @@
+#!/bin/bash
+
+red="\e[1;31m"
+reset="\e[0m"
+green="\033[0;32m"
+
+# List files and directories in the directory
+files_list=$(ls)
+
+# Check file type
+ftype=$(file Slicer | grep -o "ELF 64-bit LSB executable")
+
+# Get disk usage
+disk_usage=$(du -h Slicer | awk '{print $1}')
+
+# Get SHA256 checksum
+sha256sum=$(sha256sum Slicer | cut -d" " -f1)
+
+# Get MD5 checksum
+md5sum=$(md5sum Slicer | cut -d" " -f1)
+
+# Get file signature
+sig=$(hexdump --canonical Slicer | head -1 | awk '{print $2, $3, $4, $5}') # 7f 45 4c 46
+
+# Define expected main files excluding slicer_debugger
+main_files="bin include lib libexec resources share Slicer slicer.org"
+main_files_sorted=$(echo $main_files | tr " " "\n" | sort | tr "\n" " ")
+
+# List files and directories excluding slicer_debugger and sort them
+files_list_sorted=$(ls | grep -v "slicer_debugger" | tr "\n" " " | tr " " "\n" | sort | tr "\n" " ")
+
+# Check if all main files are present
+if [ "$files_list_sorted" == "$main_files_sorted" ]; then
+    echo -e "Files in Directory are $green[ OK ]$reset"
+else
+    echo -e "Some directories are deleted or unavailable $red[ ERROR ]$reset"
+fi
+
+# Check file type
+if [ "$ftype" == "ELF 64-bit LSB executable" ]; then
+    echo -e "File Type is $green[ OK ]$reset"
+else
+    echo -e "File Type Not Valid $red[ ERROR ]$reset"
+fi
+
+# Check disk usage (you need to define the expected value)
+expected_disk_usage="10M"  # Set the expected disk usage value here
+if [ "$disk_usage" == "$expected_disk_usage" ]; then
+    echo -e "Disk usage is $green[ OK ]$reset"
+else
+    echo -e "Disk usage is not correct $red[ ERROR ]$reset"
+fi
+
+# Check SHA256 checksum
+expected_sha256sum="96cd3c8d154984e7925ff334bc1599646afbc22147d0c6ad55a8b2287bbd9e12"
+if [ "$sha256sum" == "$expected_sha256sum" ]; then
+    echo -e "sha256sum checked $green[ OK ]$reset"
+else
+    echo -e "sha256sum checked and got $red[ ERROR ]$reset"
+    echo -e "This File Hash is Not Valid $red[ DANGER ]$reset"
+fi
+
+# Check MD5 checksum
+expected_md5sum="4d9f459a9f4a8082df914f1802680f74"
+if [ "$md5sum" == "$expected_md5sum" ]; then
+    echo -e "md5sum checked $green[ OK ]$reset"
+else
+    echo -e "md5sum checked and got $red[ ERROR ]$reset"
+    echo -e "This File Hash is Not Valid $red[ DANGER ]$reset"
+fi
+
+# Check file signature
+if [ "$sig" == "7f 45 4c 46" ]; then
+    echo -e "File Signature checked $green[ OK ]$reset"
+else
+    echo -e "File Signature checked $red[ ERROR ]$reset"
+    echo -e "File Signature is Not ELF 64-bit"
+fi
+
+# Check the number of files in the directory excluding slicer_debugger
+num_files_in_dir=$(find . -type f ! -name "slicer_debugger" | wc -l)
+expected_num_files=8888  # Set the expected number of files here
+if [ "$num_files_in_dir" -eq "$expected_num_files" ]; then
+    echo -e "Number of files in Directory $green[ OK ]$reset"
+else
+    echo -e "The number of files in the specified path is not correct. $red[ ERROR ]$reset"
+fi
+
