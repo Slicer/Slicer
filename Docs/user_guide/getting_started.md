@@ -12,7 +12,7 @@ Slicer can also run on virtual machines and docker containers. For example, [3D 
 
 - Windows: Windows 10 or 11, with all recommended updates installed. Windows 10 Version 1903 (May 2019 Update) version or later is required for support of international characters (UTF-8) in filenames and text. Microsoft does not support Windows 8.1 and Windows 7 anymore and Slicer is not tested on these legacy operating system versions, but may still work.
 - macOS: macOS Big Sur (11) or later (both Intel and ARM based systems). Latest public release is recommended.
-- Linux: Ubuntu 18.04 or later<br>CentOS 7 or later. Latest LTS (Long-term-support) version is recommended.
+- Linux: Ubuntu 20.04 or later<br>Debian 10 or later<br>Fedora 35 or later<br>CentOS 7 or later. Latest LTS (Long-term-support) version is recommended.
 
 ### Recommended hardware configuration
 - Memory: more than 4GB (8 or more is recommended). As a general rule, have 10x more memory than the amount of data that you load.
@@ -85,11 +85,14 @@ brew uninstall slicer-preview       # to uninstall
 - Slicer is expected to work on the vast majority of desktop and server Linux distributions. The system is required to provide at least GLIBC 2.17 and GLIBCCC 3.4.19. For more details, read [here](https://www.python.org/dev/peps/pep-0599/#the-manylinux2014-policy).
 - Getting command-line arguments and process output containing non-ASCII characters requires the system to use a UTF-8 locale. If the system uses a different locale then the `export LANG="C.UTF-8"` command may be used before launching the application to switch to an acceptable locale.
 
-#### Debian / Ubuntu
-The following may be needed on fresh debian or ubuntu:
 
-    sudo apt-get install libpulse-dev libnss3 libglu1-mesa
-    sudo apt-get install --reinstall libxcb-xinerama0
+#### Ubuntu 24.04 (Noble Numbat)
+
+    sudo apt-get install libglu1-mesa libpulse-mainloop-glib0 libnss3 libasound2t64 qt5dxcb-plugin
+
+#### Ubuntu 22.04 (Jammy Jellyfish), 20.04 (Focal Fossa), Debian 12 (bookworm), Debian 11 (bullseye), Debian 10 (buster)
+
+    sudo apt-get install libglu1-mesa libpulse-mainloop-glib0 libnss3 libasound2 qt5dxcb-plugin libsm6
 
 :::{warning}
 
@@ -117,14 +120,18 @@ There are user-contributed packages on [AUR](https://aur.archlinux.org/)
 - [3dslicer](https://aur.archlinux.org/packages/3dslicer): you could build the package from the source using this `PKGBUILD` file, or just install it from an unofficial repository: [archlinuxcn repo](https://wiki.archlinux.org/title/Unofficial_user_repositories#archlinuxcn).
 - [3dslicer-git](https://aur.archlinux.org/packages/3dslicer-git): same as [3dslicer](https://aur.archlinux.org/packages/3dslicer) but using the latest source.
 
-#### Fedora
+#### Fedora 40, 39, 38, 37, 36, 35
+
 Install the dependencies:
 
-    sudo dnf install mesa-libGLU libnsl
+    sudo dnf install mesa-libGLU mesa-libGL libnsl libXrender pulseaudio-libs-glib2 nss libXcomposite libXdamage libXrandr ftgl libXcursor libXi libXtst alsa-lib qt5-qtx11extras
+
+:::{warning}
 
 The included libcrypto.so.1.1 in the Slicer installation is incompatible with the system libraries used by Fedora 35. The fix, until it is updated, is to move/remove the included libcrypto files:
 
-    $SLICER_ROOT/lib/Slicer-4.xx/libcrypto.*
+    $SLICER_ROOT/lib/Slicer-5.xx/libcrypto.*
+:::
 
 ## Using Slicer
 
