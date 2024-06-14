@@ -328,30 +328,36 @@ dicomQuery.callingAETitle = "SLICER"
 dicomQuery.calledAETitle = "ANYAE"
 dicomQuery.host = "dicomserver.co.uk"
 dicomQuery.port = 11112
-dicomQuery.preferCGET = True
 # Change filter parameters in the next line if
 # query does not find any series (try to use a different letter for "Name", such as "E")
 # or there are too many hits (try to make "Name" more specific, such as "An").
-dicomQuery.filters = {"Name":"A", "Modalities":"MR"}
+dicomQuery.setFilters({"Name":"A", "Modalities":"MR"})
 # temporary in-memory database for storing query results
 tempDb = ctk.ctkDICOMDatabase()
 tempDb.openDatabase("")
 dicomQuery.query(tempDb)
 
 # Retrieve
+# Enable useCGET to retrieve using the query's connection (using C-GET).
+# C-GET is simple, as it does not require configuring a DICOM receiver
+# but C-GET is rarely allowed in clinical PACS.
+# If useCGET is disabled then retrieve requests the PACS to send the data (using C-STORE)
+# to Slicer. Slicer's AE title must be configured in the PACS settings. Slicer must have its
+# DICOM receiver (C-STORE SCP) running.
+useCGET = True
 dicomRetrieve = ctk.ctkDICOMRetrieve()
 dicomRetrieve.callingAETitle = dicomQuery.callingAETitle
 dicomRetrieve.calledAETitle = dicomQuery.calledAETitle
 dicomRetrieve.host = dicomQuery.host
 dicomRetrieve.port = dicomQuery.port
-dicomRetrieve.setMoveDestinationAETitle("SLICER")
 dicomRetrieve.setDatabase(slicer.dicomDatabase)
 for study, series in dicomQuery.studyAndSeriesInstanceUIDQueried:
   print(f"ctkDICOMRetrieveTest: Retrieving {study} - {series}")
   slicer.app.processEvents()
-  if dicomQuery.preferCGET:
+  if useCGET:
     success = dicomRetrieve.getSeries(study, series)
   else:
+    dicomRetrieve.moveDestinationAETitle = dicomQuery.callingAETitle
     success = dicomRetrieve.moveSeries(study, series)
   print(f"  - {'success' if success else 'failed'}")
 
