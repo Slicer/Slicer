@@ -557,6 +557,66 @@ with open(outputFileName, "w") as outfile:
   json.dump(data, outfile)
 ```
 
+### Create markup plane JSON file - outside Slicer
+
+This code can be used in any Python environment to create a markup json file containing a simple plane.
+
+If you specify a plane by a single point (`"planeType": "pointNormal"`) then you only need to specify:
+- `plane position`: position of the one and only control point
+- `plane orientation`: `baseToNode` matrix. Note that a plane in mathematical sense is specified by a position and a normal, but if you want to display a plane then you need to specify its rotation around that normal. `baseToNode` contains the two axis of the plane and the plane normal. If you don't care about the rotation then you can choose an arbitrary orientation and use cross product with the normal vector to make it orthogonal to the normal vector. Translation component of baseToNode matrix is ignored (because position is set by the control point), so it can be set to `0.0, 0.0, 0.0`.
+- `plane bounds`: specifies how far the plane extends in 4 directions (-x, +x, -y, +y) from the plane position
+
+```python
+outputFileName = "path/to/MyPlane.mrk.json"
+center = [3.6764886856933536, -52.2593679682938, 41.715845278879044]
+normal = [-0.9552783445937983, 0.2957081066696218, 0.0]
+plane_bounds = [-50.0, 50.0, -50.0, 50.0]
+
+import numpy as np
+import json
+
+normal /= np.linalg.norm(normal)
+
+# Choose an arbitrary vector direction (x) that is not parallel to the normal
+axis1 = np.array([1, 0, 0])
+if np.linalg.norm(np.cross(normal, axis1)) < 0.1:
+  # Almost parallel to the x axis, use another direction (y)
+  axis1 = np.array([0, 1, 0])
+
+# Calculate a third axis of the plane coordinate system (orthogonal to the other two)
+axis2 = np.cross(normal, axis1)
+axis2 /= np.linalg.norm(axis2)
+
+# Get axis1 that is orthogonal to axis2 and normal
+axis1 = np.cross(axis2, normal)
+axis1 /= np.linalg.norm(axis1)
+
+# Construct the rotation-translation matrix baseToNode
+base_to_node_matrix = np.eye(4)
+base_to_node_matrix[0:3, 0] = axis1
+base_to_node_matrix[0:3, 1] = axis2
+base_to_node_matrix[0:3, 2] = normal
+
+data = {
+    "@schema": "https://raw.githubusercontent.com/slicer/slicer/master/Modules/Loadable/Markups/Resources/Schema/markups-schema-v1.0.3.json#",
+    "markups": [
+        {
+            "type": "Plane",
+            "coordinateSystem": "LPS",
+            "coordinateUnits": "mm",
+            "planeType": "pointNormal",
+            "sizeMode": "auto",
+            "baseToNode": list(base_to_node_matrix.reshape(16)),
+            "planeBounds": plane_bounds,
+            "controlPoints": [{ "id": "1", "position": center }]
+        }
+    ]
+}
+
+with open(outputFileName, "w") as outfile:
+  json.dump(data, outfile)
+```
+
 ### Fit slice plane to markup control points
 
 ```python
