@@ -587,7 +587,7 @@ if np.linalg.norm(np.cross(normal, axis1)) < 0.1:
 axis2 = np.cross(normal, axis1)
 axis2 /= np.linalg.norm(axis2)
 
-# Get axis1 that is othogonal to axis2 and normal
+# Get axis1 that is orthogonal to axis2 and normal
 axis1 = np.cross(axis2, normal)
 axis1 /= np.linalg.norm(axis1)
 
