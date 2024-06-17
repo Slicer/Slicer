@@ -112,16 +112,16 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
   {
     if (i < Dimension-1)
     {
-      inOrigin[i] =  ijkToRasMatrix->GetElement(3,i);
+      inOrigin[i] = ijkToRasMatrix->GetElement(3,i);
     }
-    outOrigin[i] =  ijkToRasMatrix->GetElement(3,i);
+    outOrigin[i] = ijkToRasMatrix->GetElement(3,i);
     for (int j=0; j<Dimension; j++)
     {
       if (i < Dimension-1 && j < Dimension-1)
       {
-        inDirection[j][i] =  ijkToLpsMatrix->GetElement(i,j);
+        inDirection[j][i] = ijkToLpsMatrix->GetElement(i,j);
       }
-      outDirection[j][i] =  ijkToLpsMatrix->GetElement(i,j);
+      outDirection[j][i] = ijkToLpsMatrix->GetElement(i,j);
     }
   }
 
