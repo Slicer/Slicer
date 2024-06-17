@@ -61,6 +61,7 @@ void vtkITKImageSequenceReader::PrintSelf(ostream& os, vtkIndent indent)
 template <class T>
 void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self, vtkImageData* data)
 {
+  // Read the entire image
   constexpr unsigned int ImageDimension = 4;  //TODO: Constant
   using PixelType = itk::RGBAPixel<unsigned short>;  //TODO: Scalar type is constant
   using ImageType = itk::Image<PixelType, ImageDimension>;
@@ -179,7 +180,7 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
   }
   catch (itk::ExceptionObject & e)
   {
-    vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
+    vtkErrorMacro(<< "Exception from vtkITK when reading image sequence: " << e << "\n");
     this->SetErrorCode(vtkErrorCode::FileFormatError);
     return;
   }
