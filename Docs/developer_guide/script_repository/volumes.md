@@ -250,6 +250,48 @@ def checkForNewVolumes():
 checkForNewVolumes()
 ```
 
+### Extract slice from volume
+
+This code snippet can extract arbitrarily oriented slice from a volume. The slice position, orientation, and size is specified by a markup plane node.
+
+```python
+# Inputs
+volumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")  # input 3D volume
+planeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLMarkupsPlaneNode")  # input markup plane
+spacing = [0.5, 0.5, 1.0]  # spacing of the extracted image slice
+
+# Create slice image node
+sliceImageNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
+sliceImageNode.CreateDefaultDisplayNodes()
+imageData = vtk.vtkImageData()
+sliceImageNode.SetAndObserveImageData(imageData)
+# Set image size
+sizeWorld = planeNode.GetSizeWorld()
+imageData.SetExtent(0, int(sizeWorld[0]/spacing[0]-1), 0, int(sizeWorld[1]/spacing[1]-1), 0, 0)
+imageData.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+# Set spacing
+sliceImageNode.SetSpacing(spacing)
+# Set directions
+import numpy as np
+ijkToRASDirections = np.eye(3)
+planeNode.GetAxesWorld(ijkToRASDirections[0:3, 0], ijkToRASDirections[0:3, 1], ijkToRASDirections[0:3, 2])
+sliceImageNode.SetIJKToRASDirections(ijkToRASDirections)
+# Set origin
+origin = np.array(planeNode.GetCenter()) - ijkToRASDirections[0:3, 0] * sizeWorld[0] / 2 - ijkToRASDirections[0:3, 1] * sizeWorld[1] / 2
+sliceImageNode.SetOrigin(origin)
+
+# Resample the volume to the slice image node
+referenceVolumeNode = sliceImageNode
+parameters = {
+    "inputVolume": volumeNode.GetID(),
+    "outputVolume": sliceImageNode.GetID(),
+    "referenceVolume": sliceImageNode.GetID(),
+    "interpolationType": "linear"
+}
+parameterNode = slicer.cli.run(slicer.modules.resamplescalarvectordwivolume, None, parameters, wait_for_completion=True, update_display=False)
+slicer.mrmlScene.RemoveNode(parameterNode)
+```
+
 ### Extract randomly oriented slabs of given shape from a volume
 
 Returns a numpy array of sliceCount random tiles.
