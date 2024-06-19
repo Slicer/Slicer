@@ -220,6 +220,19 @@ else()
 endif()
 
 #-----------------------------------------------------------------------------
+# Set Slicer_{C,CXX}_REQUIRED_FLAGS variables
+#-----------------------------------------------------------------------------
+mark_as_superbuild(
+  VARS
+  Slicer_USE_GOLD_LINKER:BOOL
+  Slicer_COMPILER_SUPPORTS_GOLD_LINKER:BOOL
+  CMAKE_EXE_LINKER_FLAGS:STRING
+  CMAKE_MODULE_LINKER_FLAGS:PATH
+  CMAKE_SHARED_LINKER_FLAGS:STRING
+  ALL_PROJECTS
+)
+
+#-----------------------------------------------------------------------------
 # Static or Shared library
 #------------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
