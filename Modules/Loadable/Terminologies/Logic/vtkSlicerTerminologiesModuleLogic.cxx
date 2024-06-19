@@ -33,6 +33,9 @@
 // Slicer includes
 #include "vtkLoggingMacros.h"
 
+// vtkSegmentationCore includes
+#include <vtkSegment.h>
+
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkDirectory.h>
@@ -2557,4 +2560,115 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindAnatomicContextN
   }
 
   return foundAnatomicContextNames;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::AreSegmentTerminologyEntriesEqual(vtkSegment* segment1, vtkSegment* segment2)
+{
+  if (!segment1 || !segment2)
+  {
+    vtkErrorMacro("AreSegmentTerminologyEntriesEqual: Invalid segment");
+    return false;
+  }
+
+  std::string terminologyEntry1;
+  segment1->GetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyEntry1);
+
+  std::string terminologyEntry2;
+  segment2->GetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyEntry2);
+
+  return this->AreTerminologyEntriesEqual(terminologyEntry1, terminologyEntry2);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::AreTerminologyEntriesEqual(std::string terminologyEntry1, std::string terminologyEntry2)
+{
+  if (terminologyEntry1.empty() && terminologyEntry2.empty())
+  {
+    return true;
+  }
+
+  vtkNew<vtkSlicerTerminologyEntry> entry1;
+  if (!this->DeserializeTerminologyEntry(terminologyEntry1, entry1))
+  {
+    if (!terminologyEntry1.empty())
+    {
+      vtkErrorMacro("AreTerminologyEntriesEqual: Failed to deserialize terminology entry");
+    }
+    return false;
+  }
+
+  vtkNew<vtkSlicerTerminologyEntry> entry2;
+  if (!this->DeserializeTerminologyEntry(terminologyEntry2, entry2))
+  {
+    if (!terminologyEntry2.empty())
+    {
+      vtkErrorMacro("AreTerminologyEntriesEqual: Failed to deserialize terminology entry");
+    }
+    return false;
+  }
+
+  return this->AreTerminologyEntriesEqual(entry1, entry2);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::AreTerminologyEntriesEqual(vtkSlicerTerminologyEntry* entry1, vtkSlicerTerminologyEntry* entry2)
+{
+  if (!entry1 || !entry2)
+  {
+    // Return true if both are nullptr, false if only one is nullptr
+    return entry1 == entry2;
+  }
+
+  return this->AreCodedEntriesEqual(entry1->GetCategoryObject(), entry2->GetCategoryObject())
+      && this->AreCodedEntriesEqual(entry1->GetTypeObject(), entry2->GetTypeObject())
+      && this->AreCodedEntriesEqual(entry1->GetTypeModifierObject(), entry2->GetTypeModifierObject())
+      && this->AreCodedEntriesEqual(entry1->GetAnatomicRegionObject(), entry2->GetAnatomicRegionObject())
+      && this->AreCodedEntriesEqual(entry1->GetAnatomicRegionModifierObject(), entry2->GetAnatomicRegionModifierObject());
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::AreCodedEntriesEqual(vtkCodedEntry* codedEntry1, vtkCodedEntry* codedEntry2)
+{
+  if (!codedEntry1 || !codedEntry2)
+  {
+    // Return true if both are nullptr, false if only one is nullptr
+    return codedEntry1 == codedEntry2;
+  }
+
+  const char* schemeDesignator1 = codedEntry1->GetCodingSchemeDesignator();
+  bool schemeDesignator1Empty = (schemeDesignator1 == nullptr || strlen(schemeDesignator1) == 0);
+  const char* schemeDesignator2 = codedEntry2->GetCodingSchemeDesignator();
+  bool schemeDesignator2Empty = (schemeDesignator2 == nullptr || strlen(schemeDesignator2) == 0);
+  if (!schemeDesignator1Empty && !schemeDesignator2Empty)
+  {
+    if (strcmp(schemeDesignator1, schemeDesignator2) != 0)
+    {
+      return false;
+    }
+  }
+  else if (!schemeDesignator1Empty || !schemeDesignator2Empty)
+  {
+    // One is nullptr/empty, the other is not
+    return false;
+  }
+
+  const char* codeValue1 = codedEntry1->GetCodeValue();
+  bool codeValue1Empty = (codeValue1 == nullptr || strlen(codeValue1) == 0);
+  const char* codeValue2 = codedEntry2->GetCodeValue();
+  bool codeValue2Empty = (codeValue2 == nullptr || strlen(codeValue2) == 0);
+  if (!codeValue1Empty && !codeValue2Empty)
+  {
+    if (strcmp(codeValue1, codeValue2) != 0)
+    {
+      return false;
+    }
+  }
+  else if (!codeValue1Empty || !codeValue2Empty)
+  {
+    // One is nullptr/empty, the other is not
+    return false;
+  }
+
+  return true;
 }

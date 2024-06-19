@@ -30,6 +30,8 @@
 
 #include <vtkVector.h>
 
+class vtkCodedEntry;
+class vtkSegment;
 class vtkStringArray;
 class vtkSlicerTerminologyEntry;
 class vtkSlicerTerminologyCategory;
@@ -268,6 +270,17 @@ public:
 
   /// Assemble human readable info string from a terminology entry, for example for tooltips
   static std::string GetInfoStringFromTerminologyEntry(vtkSlicerTerminologyEntry* entry);
+
+  ///@{
+  /// Compare two terminology entries for equality.
+  /// \return True if the entries are equal, false otherwise.
+  // These functions are not static because in the future conversion may involve translation tables.
+  // (that allows comparing of terms between different coding schemes)
+  bool AreSegmentTerminologyEntriesEqual(vtkSegment* segment1, vtkSegment* segment2);
+  bool AreTerminologyEntriesEqual(vtkSlicerTerminologyEntry* entry1, vtkSlicerTerminologyEntry* entry2);
+  bool AreTerminologyEntriesEqual(std::string terminologyEntry1, std::string terminologyEntry2);
+  bool AreCodedEntriesEqual(vtkCodedEntry* codedEntry1, vtkCodedEntry* codedEntry2);
+  ///@}
 
 public:
   vtkGetStringMacro(UserContextsPath);
