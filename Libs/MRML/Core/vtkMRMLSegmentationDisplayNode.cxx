@@ -91,6 +91,7 @@ void vtkMRMLSegmentationDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " Opacity3D=\"" << this->Opacity3D << "\"";
   of << " Opacity2DFill=\"" << this->Opacity2DFill << "\"";
   of << " Opacity2DOutline=\"" << this->Opacity2DOutline << "\"";
+  of << " RemoveUnusedDisplayProperties=\"" << (this->RemoveUnusedDisplayProperties ? "true" : "false") << "\"";
 
   this->UpdateSegmentList();
 
@@ -158,6 +159,10 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "Opacity2DOutline"))
     {
       this->Opacity2DOutline = vtkVariant(attValue).ToDouble();
+    }
+    else if (!strcmp(attName, "RemoveUnusedDisplayProperties"))
+    {
+      this->RemoveUnusedDisplayProperties = (strcmp(attValue, "true") ? false : true);
     }
     else if (!strcmp(attName, "SegmentationDisplayProperties"))
     {
@@ -245,6 +250,7 @@ void vtkMRMLSegmentationDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
   this->Opacity3D = node->Opacity3D;
   this->Opacity2DFill = node->Opacity2DFill;
   this->Opacity2DOutline = node->Opacity2DOutline;
+  this->RemoveUnusedDisplayProperties = node->RemoveUnusedDisplayProperties;
   this->SegmentationDisplayProperties = node->SegmentationDisplayProperties;
   // Reset segment list source to allow writing display properties to XML,
   // even if referenced segmentation node cannot be found (for example,
@@ -267,6 +273,7 @@ void vtkMRMLSegmentationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << " Opacity3D:   " << this->Opacity3D << "\n";
   os << indent << " Opacity2DFill:   " << this->Opacity2DFill << "\n";
   os << indent << " Opacity2DOutline:   " << this->Opacity2DOutline << "\n";
+  os << indent << " RemoveUnusedDisplayProperties:   " << (this->RemoveUnusedDisplayProperties ? "true" : "false") << "\n";
 
   this->UpdateSegmentList();
 
@@ -1208,7 +1215,13 @@ void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(vtkStringArray* segmen
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationDisplayNode::UpdateSegmentList(bool removeUnusedDisplayProperties /*=true*/)
+void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
+{
+  this->UpdateSegmentList(this->RemoveUnusedDisplayProperties);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationDisplayNode::UpdateSegmentList(bool removeUnusedDisplayProperties)
 {
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
   vtkSegmentation* segmentation = segmentationNode ? segmentationNode->GetSegmentation() : nullptr;
