@@ -66,10 +66,6 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         if settingsValue("DICOM/detailedLogging", False, converter=toBool):
             ctk.ctk.setDICOMLogLevel(ctk.ctkErrorLogLevel.Debug)
 
-        self.useExpertimentalVisualDICOMBrowser = settingsValue("DICOM/UseExpertimentalVisualDICOMBrowser", False, converter=toBool)
-        self.dicomVisualBrowser.visible = self.useExpertimentalVisualDICOMBrowser
-        self.dicomBrowser.visible = not self.useExpertimentalVisualDICOMBrowser
-
         self.browserPersistent = settingsValue("DICOM/BrowserPersistent", False, converter=toBool)
         self.advancedView = settingsValue("DICOM/advancedView", 0, converter=int)
         self.horizontalTables = settingsValue("DICOM/horizontalTables", 0, converter=int)
