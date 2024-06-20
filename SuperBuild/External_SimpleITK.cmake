@@ -165,7 +165,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" \"-m\" \"pi
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "4328a91affdc6067d7935c77b7d482a89e54575f"  # slicer-v2.3.1-2024-05-20-bc4449e
+    "441c59aafaa179214d60b77f61d0aa12fd32bdfd"  # slicer-v2.3.1-2024-05-20-bc4449e
     QUIET
     )
 
