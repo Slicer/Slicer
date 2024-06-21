@@ -123,6 +123,31 @@ set(ENV{LibraryPaths} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS  "-DCMAKE_CXX_VISIBILITY_PRESET:BOOL=default")
   endif()
 
+  if(CMAKE_VERSION VERSION_LESS "3.24")
+    # Support CMake < 3.24 by explicitly passing variables to workaround issue fixed
+    # in kitware/cmake@ece3bedbf (FindPython: fix error on multiple queries with different
+    # COMPONENTS)
+    # See https://gitlab.kitware.com/cmake/cmake/-/merge_requests/7410 for more details
+    if(Slicer_USE_SYSTEM_python)
+      find_package(PythonInterp ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED QUIET)
+      set(_python_version "${PYTHON_VERSION_STRING}")
+      set(_python_version_major "${PYTHON_VERSION_MAJOR}")
+      set(_python_version_minor "${PYTHON_VERSION_MINOR}")
+      set(_python_version_patch "${PYTHON_VERSION_PATCH}")
+    else()
+      set(_python_version "${Slicer_REQUIRED_PYTHON_VERSION}")
+      set(_python_version_major "${Slicer_REQUIRED_PYTHON_VERSION_MAJOR}")
+      set(_python_version_minor "${Slicer_REQUIRED_PYTHON_VERSION_MINOR}")
+      set(_python_version_patch "${Slicer_REQUIRED_PYTHON_VERSION_PATCH}")
+    endif()
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -D_Python_VERSION:STRING=${_python_version}
+      -D_Python_VERSION_MAJOR:STRING=${_python_version_major}
+      -D_Python_VERSION_MINOR:STRING=${_python_version_minor}
+      -D_Python_VERSION_PATCH:STRING=${_python_version_patch}
+    )
+  endif()
+
   # install step - the working path must be set to the location of the SimpleITK.py
   # file so that it will be picked up by distuils setup, and installed
   set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
@@ -140,7 +165,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" \"-m\" \"pi
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "1236005d4f501aa87457a2b2d8fb07790169dfd5"  # slicer-v2.3.1-2024-05-20-bc4449e
+    "4328a91affdc6067d7935c77b7d482a89e54575f"  # slicer-v2.3.1-2024-05-20-bc4449e
     QUIET
     )
 
@@ -189,9 +214,12 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" \"-m\" \"pi
       -DITK_DIR:PATH=${ITK_DIR}
       -DSimpleITK_USE_SYSTEM_SWIG:BOOL=ON
       -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
-      -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
-      -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
-      -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
+      -DPython_ROOT_DIR:PATH=${Python3_ROOT_DIR}
+      -DPython_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
+      -DPython_LIBRARY:FILEPATH=${Python3_LIBRARY}
+      -DPython_LIBRARY_DEBUG:FILEPATH=${Python3_LIBRARY_DEBUG}
+      -DPython_LIBRARY_RELEASE:FILEPATH=${Python3_LIBRARY_RELEASE}
+      -DPython_EXECUTABLE:FILEPATH=${Python3_EXECUTABLE}
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_DOXYGEN:BOOL=OFF
       -DWRAP_DEFAULT:BOOL=OFF
