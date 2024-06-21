@@ -481,7 +481,7 @@ void qSlicerTransformsModuleWidget::copyTransform()
   if (!linearTransform)
   {
     // Silent fail, no worries!
-    qWarning() << "Unable to cast parent transform as a vtkLinearTransform";
+    qWarning() << tr("Unable to cast parent transform as a vtkLinearTransform");
     return;
   }
 
@@ -503,7 +503,7 @@ void qSlicerTransformsModuleWidget::pasteTransform()
   bool success = vtkAddonMathUtilities::FromString(tempMatrix.GetPointer(), text);
   if (!success)
   {
-    qWarning() << "Cannot convert pasted string to matrix.";
+    qWarning() << tr("Cannot convert pasted string to matrix.");
     return;
   }
   // Homogeneous transformation matrix is expected to have (0,0,0,1)

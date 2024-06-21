@@ -81,7 +81,7 @@ bool qSlicerTextsReader::load(const IOProperties& properties)
   Q_D(qSlicerTextsReader);
   if (!properties.contains("fileName"))
   {
-    qCritical() << Q_FUNC_INFO << " did not receive fileName property";
+    qCritical() << Q_FUNC_INFO << tr(" did not receive fileName property");
     return false;
   }
   std::string fileName = properties["fileName"].toString().toStdString();
@@ -105,7 +105,7 @@ bool qSlicerTextsReader::load(const IOProperties& properties)
   int retval = storageNode->ReadData(textNode);
   if (retval != 1)
   {
-    qCritical() << Q_FUNC_INFO << "load: error reading " << fileName.c_str();
+    qCritical() << Q_FUNC_INFO << tr("load: error reading ") << fileName.c_str();
     this->mrmlScene()->RemoveNode(textNode);
     this->mrmlScene()->RemoveNode(storageNode);
     return false;

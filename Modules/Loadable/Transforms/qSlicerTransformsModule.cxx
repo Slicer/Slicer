@@ -76,7 +76,7 @@ QStringList qSlicerTransformsModule::categories() const
 QStringList qSlicerTransformsModule::dependencies() const
 {
   QStringList moduleDependencies;
-  moduleDependencies << "Units";
+  moduleDependencies << tr("Units");
   return moduleDependencies;
 }
 
@@ -95,7 +95,7 @@ vtkMRMLAbstractLogic* qSlicerTransformsModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerTransformsModule::helpText()const
 {
-  QString help = "The Transforms Module creates and edits transforms.<br>";
+  QString help = tr("The Transforms Module creates and edits transforms.<br>");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -104,7 +104,7 @@ QString qSlicerTransformsModule::helpText()const
 QString qSlicerTransformsModule::acknowledgementText()const
 {
   QString acknowledgement =
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.";
+    tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
   return acknowledgement;
 }
 
