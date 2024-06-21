@@ -246,7 +246,7 @@ void qSlicerPlotsModuleWidget::onCopyPlotSeriesNodeClicked()
   vtkSlicerPlotsLogic* logic = d->logic();
   if (!logic)
   {
-    qCritical() << Q_FUNC_INFO << "failed: plot logic is not set";
+    qCritical() << Q_FUNC_INFO << tr("failed: plot logic is not set");
     return;
   }
 
@@ -273,7 +273,7 @@ void qSlicerPlotsModuleWidget::onShowChartButtonClicked()
   vtkSlicerPlotsLogic* logic = d->logic();
   if (!logic)
   {
-    qCritical() << Q_FUNC_INFO << "failed: plot logic is not set";
+    qCritical() << Q_FUNC_INFO << tr("failed: plot logic is not set");
     return;
   }
 
