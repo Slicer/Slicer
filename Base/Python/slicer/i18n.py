@@ -3,6 +3,9 @@ import logging
 import os
 import re
 
+# Cache that stores context name computed from file paths to make translations faster
+FILEPATH_TO_CONTEXT = {}
+
 def translate(context, text):
     """Translate message to the current application language.
     This `translate(context, message)` function is recognized by Qt's lupdate tool.
@@ -25,6 +28,11 @@ def getContext(sourceFile):
     Most helper Python scripts in Slicer are Python packages (subfolders containing addition Python scripts and an `__init__.py` file)
     and their name is constructed as PythonPackageName.SourceFileName (for example, `SegmentEditorEffects.SegmentEditorDrawEffect`).
     """
+
+    # Cache context name to make translations faster
+    if sourceFile in FILEPATH_TO_CONTEXT:
+        return FILEPATH_TO_CONTEXT[sourceFile]
+
     if os.path.isfile(sourceFile):
         parentFolder = os.path.dirname(sourceFile)
         init_file_path = parentFolder + os.path.sep + "__init__.py"
@@ -32,11 +40,13 @@ def getContext(sourceFile):
         if os.path.isfile(init_file_path):
             context_name = os.path.basename(parentFolder)
             context_name += "." + os.path.basename(sourceFile).replace(".py", "")
-            return context_name
         else:
-            return os.path.basename(sourceFile).replace(".py", "")
+            context_name = os.path.basename(sourceFile).replace(".py", "")
     else:
-        return os.path.basename(sourceFile)
+        context_name = os.path.basename(sourceFile)
+
+    FILEPATH_TO_CONTEXT[sourceFile] = context_name
+    return context_name
 
 
 def tr(text):
@@ -65,7 +75,11 @@ def tr(text):
         matches = re.findall(pattern, text)
         return matches
 
-    filename = inspect.stack()[1][1]
+    # inspect.stack() would get all the frames, which can take more than 100ms, therefore we use lower level APIs
+    frame = inspect.currentframe()
+    frame.f_back  # go up in the stack one level
+    filename = inspect.getsourcefile(frame) or inspect.getfile(frame)
+
     contextName = getContext(filename)
     translatedText = translate(contextName, text)
 
