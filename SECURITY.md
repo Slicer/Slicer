@@ -4,15 +4,15 @@
 
 Developers of 3D Slicer assume that the application is used in a trusted environment, by trusted people, on trusted data.
 
-- No reporting. 3D Slicer does not send data to external servers without explicit user request. User requests include downloading sample data sets, extension packages, retrieve information on latest application and extensions updates.
-- No listening. 3D Slicer does not open any ports listening on the network without explicit user request. User requests include starting a DICOM receiver or enabling Slicer web API.
-- No code in data files. 3D Slicer does not store code in data files that is executed automatically when the file is opened. This makes it harder to run arbitrary code when data is read. Note that it does not offer protection against more advanced exploits such as hand crafting a file which uses buffer overflows to run malicious code.
+- **No reporting:** 3D Slicer does not send data to external servers without explicit user request. User requests include downloading sample data sets, extension packages, and retrieving information on the latest application and extensions updates.
+- **No listening:** 3D Slicer does not open any ports listening on the network without explicit user request. User requests include starting a DICOM receiver or enabling the Slicer web API.
+- **No code in data files:** 3D Slicer does not store code in data files that is executed automatically when the file is opened. This makes it harder to run arbitrary code when data is read. Note that it does not offer protection against more advanced exploits such as hand-crafting a file that uses buffer overflows to run malicious code.
 
 Slicer core developers do their best following these policies and request all extension developers to do the same. Please report if any of these guidelines are not followed by either Slicer core or extensions.
 
-## Pre-built binaries
+## Pre-built Binaries
 
-Binary packages for 3D Slicer and extensions available at https://www.slicer.org and https://extensions.slicer.org/ are built by [Kitware](https://www.kitware.com/) from publicly available source code and data. Efforts are made to prevent integrity of the packages during building and distribution from these servers, but if any user does not trust the company then [instructions are provided for building from source code](https://slicer.readthedocs.io/en/latest/developer_guide/build_instructions).
+Binary packages for 3D Slicer application and extensions available at https://download.slicer.org and https://extensions.slicer.org/ are built by [Kitware](https://www.kitware.com/) from publicly available source code and data. Efforts are made to ensure the integrity of the packages during building and distribution from these servers. If any user does not trust this process, then [instructions are provided for building from source code](https://slicer.readthedocs.io/en/latest/developer_guide/build_instructions).
 
 ## Reporting Security Issues
 
