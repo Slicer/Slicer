@@ -136,16 +136,14 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         if not scalarVolumeUnits:
             scalarVolumeUnits = self.createCodedEntry("", "", "")
 
-        info = dict()
-
         # @fedorov could not find any suitable DICOM quantity code for "number of voxels".
         # DCM has "Number of needles" etc., so probably "Number of voxels"
         # should be added too. Need to discuss with @dclunie. For now, a
         # QIICR private scheme placeholder.
         # @moselhy also could not find DICOM quantity code for "median"
 
-        info["voxel_count"] = \
-            self.createMeasurementInfo(name="Voxel count",
+        if key == "voxel_count":
+            return self.createMeasurementInfo(name="Voxel count",
                                        title=_("Voxel count"),
                                        description=_("Number of voxels. Computed from region of the binary labelmap representation of the segment"
                                                      " that overlaps with the input scalar volume."),
@@ -153,16 +151,16 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                                        quantityDicomCode=self.createCodedEntry("nvoxels", "99QIICR", "Number of voxels", True),
                                        unitsDicomCode=self.createCodedEntry("voxels", "UCUM", "voxels", True))
 
-        info["volume_mm3"] = \
-            self.createMeasurementInfo(name="Volume mm3",
+        elif key == "volume_mm3":
+            return self.createMeasurementInfo(name="Volume mm3",
                                        title=_("Volume"),
                                        description=_("Volume of the region of the binary labelmap representation that overlaps with the input scalar volume."),
                                        units=_("mm3"),
                                        quantityDicomCode=self.createCodedEntry("118565006", "SCT", "Volume", True),
                                        unitsDicomCode=self.createCodedEntry("mm3", "UCUM", "cubic millimeter", True))
 
-        info["volume_cm3"] = \
-            self.createMeasurementInfo(name="Volume cm3",
+        elif key == "volume_cm3":
+            return self.createMeasurementInfo(name="Volume cm3",
                                        title=_("Volume"),
                                        description=_("Volume of the region of the binary labelmap representation that overlaps with the input scalar volume."),
                                        units=_("cm3"),
@@ -170,36 +168,36 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                                        unitsDicomCode=self.createCodedEntry("cm3", "UCUM", "cubic centimeter", True),
                                        measurementMethodDicomCode=self.createCodedEntry("126030", "DCM", "Sum of segmented voxel volumes", True))
 
-        info["min"] = \
-            self.createMeasurementInfo(name="Minimum", title=_("Minimum"), description=_("Minimum input scalar volume voxel value within the segment."),
+        elif key == "min":
+            return self.createMeasurementInfo(name="Minimum", title=_("Minimum"), description=_("Minimum input scalar volume voxel value within the segment."),
                                        units=scalarVolumeUnits.GetCodeMeaning(),
                                        quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                        unitsDicomCode=scalarVolumeUnits.GetAsString(),
                                        derivationDicomCode=self.createCodedEntry("255605001", "SCT", "Minimum", True))
 
-        info["max"] = \
-            self.createMeasurementInfo(name="Maximum", title=_("Maximum"), description=_("Maximum input scalar volume voxel value within the segment."),
+        elif key == "max":
+            return self.createMeasurementInfo(name="Maximum", title=_("Maximum"), description=_("Maximum input scalar volume voxel value within the segment."),
                                        units=scalarVolumeUnits.GetCodeMeaning(),
                                        quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                        unitsDicomCode=scalarVolumeUnits.GetAsString(),
                                        derivationDicomCode=self.createCodedEntry("56851009", "SCT", "Maximum", True))
 
-        info["mean"] = \
-            self.createMeasurementInfo(name="Mean", title=_("Mean"), description=_("Mean input scalar volume voxel value within the segment."),
+        elif key == "mean":
+            return self.createMeasurementInfo(name="Mean", title=_("Mean"), description=_("Mean input scalar volume voxel value within the segment."),
                                        units=scalarVolumeUnits.GetCodeMeaning(),
                                        quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                        unitsDicomCode=scalarVolumeUnits.GetAsString(),
                                        derivationDicomCode=self.createCodedEntry("373098007", "SCT", "Mean", True))
 
-        info["median"] = \
-            self.createMeasurementInfo(name="Median", title=_("Median"), description=_("Median input scalar volume voxel value within the segment."),
+        elif key == "median":
+            return self.createMeasurementInfo(name="Median", title=_("Median"), description=_("Median input scalar volume voxel value within the segment."),
                                        units=scalarVolumeUnits.GetCodeMeaning(),
                                        quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                        unitsDicomCode=scalarVolumeUnits.GetAsString(),
                                        derivationDicomCode=self.createCodedEntry("median", "SCT", "Median", True))
 
-        info["stdev"] = \
-            self.createMeasurementInfo(name="Standard deviation",
+        elif key == "stdev":
+            return self.createMeasurementInfo(name="Standard deviation",
                                        title=_("Standard Deviation"),
                                        description=_("Standard deviation of input scalar volume voxel values within the segment."),
                                        units=scalarVolumeUnits.GetCodeMeaning(),
@@ -207,4 +205,4 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                                        unitsDicomCode=scalarVolumeUnits.GetAsString(),
                                        derivationDicomCode=self.createCodedEntry("386136009", "SCT", "Standard Deviation", True))
 
-        return info[key] if key in info else None
+        return None
