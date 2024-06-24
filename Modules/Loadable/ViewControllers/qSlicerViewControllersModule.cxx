@@ -184,6 +184,14 @@ void qSlicerViewControllersModule::readDefaultThreeDViewSettings(vtkMRMLViewNode
   {
     defaultViewNode->SetAmbientShadowsVolumeOpacityThreshold(settings.value("AmbientShadowsVolumeOpacityThreshold").toDouble());
   }
+  if (settings.contains("AmbientShadowsIntensityScale"))
+  {
+    defaultViewNode->SetAmbientShadowsIntensityScale(settings.value("AmbientShadowsIntensityScale").toDouble());
+  }
+  if (settings.contains("AmbientShadowsIntensityShift"))
+  {
+    defaultViewNode->SetAmbientShadowsIntensityShift(settings.value("AmbientShadowsIntensityShift").toDouble());
+  }
   readCommonViewSettings(defaultViewNode, settings);
 }
 
@@ -204,6 +212,8 @@ void qSlicerViewControllersModule::writeDefaultThreeDViewSettings(vtkMRMLViewNod
   settings.setValue("ShadowsVisibility", defaultViewNode->GetShadowsVisibility());
   settings.setValue("AmbientShadowsSizeScale", defaultViewNode->GetAmbientShadowsSizeScale());
   settings.setValue("AmbientShadowsVolumeOpacityThreshold", defaultViewNode->GetAmbientShadowsVolumeOpacityThreshold());
+  settings.setValue("AmbientShadowsIntensityScale", defaultViewNode->GetAmbientShadowsIntensityScale());
+  settings.setValue("AmbientShadowsIntensityShift", defaultViewNode->GetAmbientShadowsIntensityShift());
   writeCommonViewSettings(defaultViewNode, settings);
 }
 

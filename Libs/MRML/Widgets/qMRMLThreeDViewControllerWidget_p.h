@@ -75,8 +75,12 @@ public:
   QMenu* ShadowsMenu;
   QMenu* AmbientShadowsSizeScaleMenu;
   QMenu* AmbientShadowsVolumeOpacityThresholdMenu;
+  QMenu* AmbientShadowsIntensityScaleMenu;
+  QMenu* AmbientShadowsIntensityShiftMenu;
   ctkSliderWidget* AmbientShadowsSizeScaleSlider;
   ctkSliderWidget* AmbientShadowsVolumeOpacityThresholdPercentSlider;
+  ctkSliderWidget* AmbientShadowsIntensityScaleSlider;
+  ctkSliderWidget* AmbientShadowsIntensityShiftSlider;
 
   vtkSmartPointer<vtkMRMLViewLogic>   ViewLogic;
 

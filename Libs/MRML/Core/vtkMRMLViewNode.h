@@ -302,6 +302,8 @@ public:
     ShadowsVisibilityFlag,
     AmbientShadowsSizeScaleFlag,
     AmbientShadowsVolumeOpacityThresholdFlag,
+    AmbientShadowsIntensityScaleFlag,
+    AmbientShadowsIntensityShiftFlag,
   };
 
   ///
@@ -320,8 +322,8 @@ public:
 
   //@{
   /// Show shadows to improve depth perception.
-  /// Currently, only ambient shadows (screen-space ambient occlusion) method is supported and AmbientShadowsSizeScale and AmbientShadowsVolumeOpacityThreshold
-  /// parameters control its appearance.
+  /// Currently, only ambient shadows (screen-space ambient occlusion) method is supported and AmbientShadowsSizeScale, AmbientShadowsVolumeOpacityThreshold,
+  /// AmbientShadowsIntensityScale, and AmbientShadowsIntensityShift parameters control its appearance.
   vtkGetMacro(ShadowsVisibility, bool);
   vtkSetMacro(ShadowsVisibility, bool);
   vtkBooleanMacro(ShadowsVisibility, bool);
@@ -341,6 +343,24 @@ public:
   vtkGetMacro(AmbientShadowsVolumeOpacityThreshold, double);
   vtkSetMacro(AmbientShadowsVolumeOpacityThreshold, double);
   vtkBooleanMacro(AmbientShadowsVolumeOpacityThreshold, double);
+  //@}
+
+  //@{
+  /// Ambient shadows intensity scale.
+  /// Specifies the strength of darkening by to shadows.
+  /// Higher value means stronger darkening.
+  /// Default is 1.0.
+  vtkGetMacro(AmbientShadowsIntensityScale, double);
+  vtkSetMacro(AmbientShadowsIntensityScale, double);
+  //@}
+
+  //@{
+  /// Ambient shadows intensity shift.
+  /// Specifies the minimum level of occlusion that results in visible darkening.
+  /// Higher value means darkening only appear at stronger occlusions.
+  /// Default is 0.0.
+  vtkGetMacro(AmbientShadowsIntensityShift, double);
+  vtkSetMacro(AmbientShadowsIntensityShift, double);
   //@}
 
 protected:
@@ -426,6 +446,8 @@ protected:
   bool ShadowsVisibility{false};
   double AmbientShadowsSizeScale{0.3};
   double AmbientShadowsVolumeOpacityThreshold{0.25};
+  double AmbientShadowsIntensityScale{ 1.0 };
+  double AmbientShadowsIntensityShift{ 0.0 };
 
   int LinkedControl;
   int Interacting;

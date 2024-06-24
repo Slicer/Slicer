@@ -114,6 +114,8 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(shadowsVisibility, ShadowsVisibility);
   vtkMRMLWriteXMLFloatMacro(ambientShadowsSizeScale, AmbientShadowsSizeScale);
   vtkMRMLWriteXMLFloatMacro(ambientShadowsVolumeOpacityThreshold, AmbientShadowsVolumeOpacityThreshold);
+  vtkMRMLWriteXMLFloatMacro(ambientShadowsIntensityScale, AmbientShadowsIntensityScale);
+  vtkMRMLWriteXMLFloatMacro(ambientShadowsIntensityShift, AmbientShadowsIntensityShift);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -154,6 +156,8 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(shadowsVisibility, ShadowsVisibility);
   vtkMRMLReadXMLFloatMacro(ambientShadowsSizeScale, AmbientShadowsSizeScale);
   vtkMRMLReadXMLFloatMacro(ambientShadowsVolumeOpacityThreshold, AmbientShadowsVolumeOpacityThreshold);
+  vtkMRMLReadXMLFloatMacro(ambientShadowsIntensityScale, AmbientShadowsIntensityScale);
+  vtkMRMLReadXMLFloatMacro(ambientShadowsIntensityShift, AmbientShadowsIntensityShift);
   vtkMRMLReadXMLIntMacro(linkedControl, LinkedControl);
   vtkMRMLReadXMLEndMacro();
 
@@ -196,6 +200,8 @@ void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   vtkMRMLCopyBooleanMacro(ShadowsVisibility);
   vtkMRMLCopyFloatMacro(AmbientShadowsSizeScale);
   vtkMRMLCopyFloatMacro(AmbientShadowsVolumeOpacityThreshold);
+  vtkMRMLCopyFloatMacro(AmbientShadowsIntensityScale);
+  vtkMRMLCopyFloatMacro(AmbientShadowsIntensityShift);
   vtkMRMLCopyIntMacro(LinkedControl);
   vtkMRMLCopyEndMacro();
 }
@@ -236,6 +242,8 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(ShadowsVisibility);
   vtkMRMLPrintFloatMacro(AmbientShadowsSizeScale);
   vtkMRMLPrintFloatMacro(AmbientShadowsVolumeOpacityThreshold);
+  vtkMRMLPrintFloatMacro(AmbientShadowsIntensityScale);
+  vtkMRMLPrintFloatMacro(AmbientShadowsIntensityShift);
   vtkMRMLPrintIntMacro(LinkedControl);
   vtkMRMLPrintEndMacro();
 }
