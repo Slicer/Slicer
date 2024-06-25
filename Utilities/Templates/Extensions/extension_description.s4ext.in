@@ -34,6 +34,10 @@ iconurl ${MY_EXTENSION_ICONURL}
 #  - Is it just a test or something you stand behind?
 status ${MY_EXTENSION_STATUS}
 
+# Extension tier: 1, 3, or 5
+# See https://slicer.readthedocs.io/en/latest/developer_guide/extensions.html
+tier ${MY_EXTENSION_TIER}
+
 # One line stating what the module does
 description ${MY_EXTENSION_DESCRIPTION}
 
