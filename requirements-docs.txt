@@ -10,4 +10,5 @@ sphinx-jsonschema
 sphinx_markdown_tables>=0.0.17
 sphinx-notfound-page
 sphinx_rtd_theme>=0.5.2
-requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
+requests>=2.32.2 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=2.2.2 # not directly required, pinned by Snyk to avoid a vulnerability
