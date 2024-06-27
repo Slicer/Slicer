@@ -23,7 +23,7 @@
 #define __vtkSlicerUnitsLogic_h
 
 // Slicer includes
-#include "vtkMRMLAbstractLogic.h"
+#include "vtkSlicerModuleLogic.h"
 
 // MRML includes
 class vtkMRMLUnitNode;
@@ -40,12 +40,12 @@ class vtkMRMLUnitNode;
 /// the selection node every time a current unit is modified so the listeners
 /// can update themselves.
 class VTK_SLICER_UNITS_MODULE_LOGIC_EXPORT vtkSlicerUnitsLogic
-  : public vtkMRMLAbstractLogic
+  : public vtkSlicerModuleLogic
 {
 public:
   static vtkSlicerUnitsLogic *New();
   typedef vtkSlicerUnitsLogic Self;
-  vtkTypeMacro(vtkSlicerUnitsLogic, vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkSlicerUnitsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Add unit node to the scene.
