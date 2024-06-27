@@ -215,17 +215,7 @@ macro(slicerMacroBuildLoadableModule)
     ${QM_OUTPUT_FILES}
     )
 
-
-  # Add the external binaries as dependencies
-  if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
-    add_dependencies(${lib_name} ${lib_name}LightIcons)
-  endif()
-
-  if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
-    add_dependencies(${lib_name} ${lib_name}DarkIcons)
-  endif()
-
-  # Set loadable modules output path
+    # Set loadable modules output path
   set_target_properties(${lib_name} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
@@ -253,6 +243,21 @@ macro(slicerMacroBuildLoadableModule)
   endif()
   if(NOT "${LOADABLEMODULE_FOLDER}" STREQUAL "")
     set_target_properties(${lib_name} PROPERTIES FOLDER ${LOADABLEMODULE_FOLDER})
+  endif()
+
+  # Add the external binaries as dependencies
+  if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+    add_dependencies(${lib_name} ${lib_name}LightIcons)
+    if(NOT "${LOADABLEMODULE_FOLDER}" STREQUAL "")
+      set_target_properties(${lib_name}LightIcons PROPERTIES FOLDER ${LOADABLEMODULE_FOLDER})
+    endif()
+  endif()
+
+  if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+    add_dependencies(${lib_name} ${lib_name}DarkIcons)
+    if(NOT "${LOADABLEMODULE_FOLDER}" STREQUAL "")
+      set_target_properties(${lib_name}DarkIcons PROPERTIES FOLDER ${LOADABLEMODULE_FOLDER})
+    endif()
   endif()
 
   set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_TARGETS ${lib_name})
