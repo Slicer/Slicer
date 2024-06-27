@@ -26,9 +26,12 @@
 # include <QDir>
 # include <QVariant>
 #endif
+#include <QResource>
+#include <QSettings>
 
 // Slicer includes
 #include "qSlicerLoadableModule.h"
+#include <vtkSlicerModuleLogic.h>
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCoreApplication.h"
 # include "qSlicerCorePythonManager.h"
@@ -124,7 +127,35 @@ void qSlicerLoadableModule::setup()
   Q_D(qSlicerLoadableModule);
   // Q_ASSERT(d != 0);
 #endif
+  vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(this->logic());
 
+  // In some cases there are registered modules with no logic?
+  if (!moduleLogic)
+  {
+    return;
+  }
+
+  QSettings settingsApplication;
+  QSettings settingsRegistry("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", QSettings::NativeFormat);
+
+
+  std::string resourcePath = moduleLogic->GetModuleShareDirectory() + "/Icons/qSlicer" + this->name().toStdString() + "ModuleLightIcons.rcc";
+
+  if (settingsApplication.value("Styles/Style", "Slicer").toString() == "Dark Slicer")
+  {
+    resourcePath = moduleLogic->GetModuleShareDirectory() + "/Icons/qSlicer" + this->name().toStdString() + "ModuleDarkIcons.rcc";
+
+  }
+  else if (settingsApplication.value("Styles/Style", "Slicer").toString() == "Slicer")
+  {
+#ifdef Q_OS_WIN
+    if (settingsRegistry.value("AppsUseLightTheme") == 0)
+    {
+      resourcePath = moduleLogic->GetModuleShareDirectory() + "/Icons/qSlicer" + this->name().toStdString() + "ModuleDarkIcons.rcc";
+    }
+#endif
+  }
+  QResource::registerResource(resourcePath.c_str());
 }
 
 //-----------------------------------------------------------------------------

@@ -36,6 +36,8 @@ macro(slicerMacroBuildLoadableModule)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     RESOURCES
+    LIGHT_ICONS
+    DARK_ICONS
     )
   cmake_parse_arguments(LOADABLEMODULE
     "${options}"
@@ -139,6 +141,25 @@ macro(slicerMacroBuildLoadableModule)
     endif()
     QT5_ADD_RESOURCES(LOADABLEMODULE_QRC_SRCS ${Slicer_LOGOS_RESOURCE})
 
+
+    # Generate external resource binaries if available
+    if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+      set(LIGHT_ICONS_FILE ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons/${lib_name}LightIcons.rcc)
+      QT5_ADD_BINARY_RESOURCES(
+        ${lib_name}LightIcons ${LOADABLEMODULE_LIGHT_ICONS}
+        DESTINATION ${LIGHT_ICONS_FILE}
+        )
+
+    endif()
+
+    if(DEFINED LOADABLEMODULE_DARK_ICONS)
+      set(DARK_ICONS_FILE ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons/${lib_name}DarkIcons.rcc)
+      QT5_ADD_BINARY_RESOURCES(
+        ${lib_name}DarkIcons ${LOADABLEMODULE_DARK_ICONS}
+        DESTINATION ${DARK_ICONS_FILE}
+        )
+    endif()
+
   set_source_files_properties(
     ${LOADABLEMODULE_SRCS} # For now, let's prevent the module widget from being wrapped
     ${LOADABLEMODULE_UI_CXX}
@@ -196,7 +217,7 @@ macro(slicerMacroBuildLoadableModule)
     ${QM_OUTPUT_FILES}
     )
 
-  # Set loadable modules output path
+    # Set loadable modules output path
   set_target_properties(${lib_name} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
@@ -226,6 +247,21 @@ macro(slicerMacroBuildLoadableModule)
     set_target_properties(${lib_name} PROPERTIES FOLDER ${LOADABLEMODULE_FOLDER})
   endif()
 
+  # Add the external binaries as dependencies
+  if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+    add_dependencies(${lib_name} ${lib_name}LightIcons)
+    if(NOT "${LOADABLEMODULE_FOLDER}" STREQUAL "")
+      set_target_properties(${lib_name}LightIcons PROPERTIES FOLDER ${LOADABLEMODULE_FOLDER})
+    endif()
+  endif()
+
+  if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+    add_dependencies(${lib_name} ${lib_name}DarkIcons)
+    if(NOT "${LOADABLEMODULE_FOLDER}" STREQUAL "")
+      set_target_properties(${lib_name}DarkIcons PROPERTIES FOLDER ${LOADABLEMODULE_FOLDER})
+    endif()
+  endif()
+
   set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_TARGETS ${lib_name})
 
   # --------------------------------------------------------------------------
@@ -237,6 +273,17 @@ macro(slicerMacroBuildLoadableModule)
       LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
       ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
       )
+    if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+      install(
+      FILES ${LIGHT_ICONS_FILE}
+      DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons COMPONENT Runtime)
+    endif()
+    if(DEFINED LOADABLEMODULE_DARK_ICONS)
+      install(
+      FILES ${DARK_ICONS_FILE}
+      DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons COMPONENT Runtime)
+    endif()
+
   endif()
 
   # --------------------------------------------------------------------------
