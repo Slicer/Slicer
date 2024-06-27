@@ -38,9 +38,9 @@ public:
   static vtkMRMLMarkupsClosedCurveNode *New();
   vtkTypeMacro(vtkMRMLMarkupsClosedCurveNode, vtkMRMLMarkupsCurveNode);
 
-  const char* GetIcon() override {return ":/Icons/MarkupsClosedCurve.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsClosedCurveMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsClosedCurveMouseModePlaceAdd.png";}
+  const char* GetIcon() override {return ":/Icons/MarkupsAddClosedCurve.svg";}
+  const char* GetAddIcon() override {return ":/Icons/MarkupsAddClosedCurve.svg";}
+  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsAddClosedCurve.svg";}
 
   //--------------------------------------------------------------------------
   // MRMLNode methods

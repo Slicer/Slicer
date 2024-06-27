@@ -1,0 +1,13 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource prefix="/Icons">
+        <file alias="MarkupsAddAngle.svg">Icons/Light/MarkupsAddAngle.svg</file>
+        <file alias="MarkupsAddClosedCurve.svg">Icons/Light/MarkupsAddClosedCurve.svg</file>
+        <file alias="MarkupsAddLine.svg">Icons/Light/MarkupsAddLine.svg</file>
+        <file alias="MarkupsAddOpenCurve.svg">Icons/Light/MarkupsAddOpenCurve.svg</file>
+        <file alias="MarkupsAddPlane.svg">Icons/Light/MarkupsAddPlane.svg</file>
+        <file alias="MarkupsAddPoint.svg">Icons/Light/MarkupsAddPoint.svg</file>
+        <file alias="MarkupsAddPointList.svg">Icons/Light/MarkupsAddPointList.svg</file>
+        <file alias="MarkupsAddROI.svg">Icons/Light/MarkupsAddROI.svg</file>
+        <file alias="Markups.svg">Icons/Light/Markups.svg</file>
+  </qresource>
+</RCC>

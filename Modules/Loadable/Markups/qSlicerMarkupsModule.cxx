@@ -223,7 +223,7 @@ QStringList qSlicerMarkupsModule::contributors()const
 //-----------------------------------------------------------------------------
 QIcon qSlicerMarkupsModule::icon()const
 {
-  return QIcon(":/Icons/Markups.png");
+  return QIcon(":/Icons/Markups.svg");
 }
 
 //-----------------------------------------------------------------------------
