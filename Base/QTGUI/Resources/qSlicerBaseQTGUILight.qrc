@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/Icons">
+        <file alias="SlicerInvisible.svg">Icons/Light/SlicerInvisible.svg</file>
+        <file alias="SlicerVisible.svg">Icons/Light/SlicerVisible.svg</file>
+        <file alias="SlicerLoadData.svg">Icons/Light/SlicerLoadData.svg</file>
+        <file alias="SlicerSaveData.svg">Icons/Light/SlicerSaveData.svg</file>
+        <file alias="SlicerLock.svg">Icons/Light/SlicerLock.svg</file>
+        <file alias="SlicerUnlock.svg">Icons/Light/SlicerUnlock.svg</file>
+        <file alias="ModuleHistory.svg">Icons/Light/ModuleHistory.svg</file>
+    </qresource>
+</RCC>

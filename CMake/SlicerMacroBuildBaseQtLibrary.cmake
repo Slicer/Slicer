@@ -256,15 +256,15 @@ macro(SlicerMacroBuildBaseQtLibrary)
   )
 
   if(DEFINED SLICERQTBASELIB_LIGHT_ICONS)
-      install(
-      FILES ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}LightIcons.rcc
-      DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Icons COMPONENT Runtime)
-    endif()
-    if(DEFINED SLICERQTBASELIB_DARK_ICONS)
-      install(
-      FILES ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}DarkIcons.rcc
-      DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Icons COMPONENT Runtime)
-    endif()
+    install(
+    FILES ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}LightIcons.rcc
+    DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Icons COMPONENT Runtime)
+  endif()
+  if(DEFINED SLICERQTBASELIB_DARK_ICONS)
+    install(
+    FILES ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}DarkIcons.rcc
+    DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Icons COMPONENT Runtime)
+  endif()
 
   # --------------------------------------------------------------------------
   # Install headers
