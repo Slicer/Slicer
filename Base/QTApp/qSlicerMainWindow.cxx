@@ -41,6 +41,9 @@
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolButton>
+#include <QResource>
+#include <QSettings>
+
 
 // CTK includes
 #include <ctkErrorLogWidget.h>
@@ -86,6 +89,7 @@
 #include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLLogic.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -828,6 +832,31 @@ qSlicerMainWindow::qSlicerMainWindow(qSlicerMainWindowPrivate* pimpl,
   , d_ptr(pimpl)
 {
   // init() is called by derived class.
+
+
+  // Initialize library resources here
+  QSettings settingsApplication;
+  QSettings settingsRegistry("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", QSettings::NativeFormat);
+
+
+  std::string resourcePath = vtkMRMLLogic::GetApplicationShareDirectory() + "/Icons/qSlicerBaseQTGUILightIcons.rcc";
+
+  if (settingsApplication.value("Styles/Style", "Slicer").toString() == "Dark Slicer")
+  {
+    resourcePath = vtkMRMLLogic::GetApplicationShareDirectory() + "/Icons/qSlicerBaseQTGUIDarkIcons.rcc";
+
+  }
+  else if (settingsApplication.value("Styles/Style", "Slicer").toString() == "Slicer")
+  {
+#ifdef Q_OS_WIN
+    if (settingsRegistry.value("AppsUseLightTheme") == 0)
+    {
+      resourcePath = vtkMRMLLogic::GetApplicationShareDirectory() + "/Icons/qSlicerBaseQTGIUDarkIcons.rcc";
+    }
+#endif
+  }
+  QResource::registerResource(resourcePath.c_str());
+
 }
 
 //-----------------------------------------------------------------------------

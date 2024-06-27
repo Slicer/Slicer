@@ -91,9 +91,9 @@ qSlicerModuleSelectorToolBarPrivate::qSlicerModuleSelectorToolBarPrivate(qSlicer
 void qSlicerModuleSelectorToolBarPrivate::init()
 {
   Q_Q(qSlicerModuleSelectorToolBar);
-  QIcon previousIcon = q->style()->standardIcon(QStyle::SP_ArrowLeft);
-  QIcon nextIcon = q->style()->standardIcon(QStyle::SP_ArrowRight);
-  QIcon historyIcon(":Icons/ModuleHistory.png");
+  QIcon previousIcon(":Icons/ModulePrevious.svg");
+  QIcon nextIcon(":Icons/ModuleNext.svg");
+  QIcon historyIcon(":Icons/ModuleHistory.svg");
 
   // Modules Label
   q->addWidget(new QLabel(qSlicerModuleSelectorToolBar::tr("Modules:"), q));
@@ -105,7 +105,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
 
   // Module finder
   this->ModuleFinderButton = new QToolButton(q);
-  const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png"));
+  const QIcon searchIcon = QIcon::fromTheme("edit-find", QPixmap(":/Icons/ModuleSearch.svg"));
   QAction* ViewFindModuleAction = new QAction(searchIcon, qSlicerModuleSelectorToolBar::tr("Module Finder"));
   ViewFindModuleAction->setObjectName("ViewFindModuleAction");
   ViewFindModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Find module"));

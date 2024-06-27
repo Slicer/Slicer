@@ -320,8 +320,8 @@
   </action>
   <action name="FileLoadDataAction">
    <property name="icon">
-    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
+    <iconset>
+     <normaloff>:/Icons/SlicerLoadData.svg</normaloff>:/Icons/SlicerLoadData.svg</iconset>
    </property>
    <property name="text">
     <string>Load Data</string>
@@ -332,8 +332,8 @@
   </action>
   <action name="LoadDICOMAction">
    <property name="icon">
-    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerLoadDICOM.png</normaloff>:/Icons/Small/SlicerLoadDICOM.png</iconset>
+    <iconset>
+     <normaloff>:/Icons/DICOM.svg</normaloff>:/Icons/DICOM.svg</iconset>
    </property>
    <property name="text">
     <string>Load DICOM</string>
@@ -398,8 +398,8 @@
   </action>
   <action name="FileSaveSceneAction">
    <property name="icon">
-    <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
+    <iconset>
+     <normaloff>:/Icons/SlicerSaveData.svg</normaloff>:/Icons/SlicerSaveData.svg</iconset>
    </property>
    <property name="text">
     <string>Save Data</string>

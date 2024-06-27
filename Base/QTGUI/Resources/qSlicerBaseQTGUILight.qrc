@@ -7,5 +7,10 @@
         <file alias="SlicerLock.svg">Icons/Light/SlicerLock.svg</file>
         <file alias="SlicerUnlock.svg">Icons/Light/SlicerUnlock.svg</file>
         <file alias="ModuleHistory.svg">Icons/Light/ModuleHistory.svg</file>
+        <file alias="DICOM.svg">Icons/Light/DICOM.svg</file>
+        <file alias="ModuleNext.svg">Icons/Light/ModuleNext.svg</file>
+        <file alias="ModulePrevious.svg">Icons/Light/ModulePrevious.svg</file>
+        <file alias="ModuleSearch.svg">Icons/Light/ModuleSearch.svg</file>
+        <file alias="SelectModule.svg">Icons/Light/SelectModule.svg</file>
     </qresource>
 </RCC>
