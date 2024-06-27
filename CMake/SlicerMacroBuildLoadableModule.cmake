@@ -144,17 +144,19 @@ macro(slicerMacroBuildLoadableModule)
 
     # Generate external resource binaries if available
     if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+      set(LIGHT_ICONS_FILE ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons/${lib_name}LightIcons.rcc)
       QT5_ADD_BINARY_RESOURCES(
         ${lib_name}LightIcons ${LOADABLEMODULE_LIGHT_ICONS}
-        DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons/${lib_name}LightIcons.rcc
+        DESTINATION ${LIGHT_ICONS_FILE}
         )
 
     endif()
 
     if(DEFINED LOADABLEMODULE_DARK_ICONS)
+      set(DARK_ICONS_FILE ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons/${lib_name}DarkIcons.rcc)
       QT5_ADD_BINARY_RESOURCES(
         ${lib_name}DarkIcons ${LOADABLEMODULE_DARK_ICONS}
-        DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons/${lib_name}DarkIcons.rcc
+        DESTINATION ${DARK_ICONS_FILE}
         )
     endif()
 
@@ -271,6 +273,17 @@ macro(slicerMacroBuildLoadableModule)
       LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
       ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
       )
+    if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+      install(
+      FILES ${LIGHT_ICONS_FILE}
+      DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons COMPONENT Runtime)
+    endif()
+    if(DEFINED LOADABLEMODULE_DARK_ICONS)
+      install(
+      FILES ${DARK_ICONS_FILE}
+      DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons COMPONENT Runtime)
+    endif()
+
   endif()
 
   # --------------------------------------------------------------------------
