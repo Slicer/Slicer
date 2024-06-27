@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource prefix="/Icons">
+        <file alias="Volumes.svg">Icons/Dark/VolumesModule.svg</file>
+  </qresource>
+</RCC>

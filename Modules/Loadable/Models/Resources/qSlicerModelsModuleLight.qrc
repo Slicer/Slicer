@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource prefix="/Icons">
+        <file alias="Models.svg">Icons/Light/ModelsModule.svg</file>
+  </qresource>
+</RCC>

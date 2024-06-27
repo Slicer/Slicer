@@ -57,6 +57,14 @@ set(MODULE_RESOURCES
   Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
+set(DARK_ICON_RESOURCE
+	Resources/qSlicer${MODULE_NAME}ModuleDark.qrc
+)
+
+set(LIGHT_ICON_RESOURCE
+	Resources/qSlicer${MODULE_NAME}ModuleLight.qrc
+)
+
 #-----------------------------------------------------------------------------
 slicerMacroBuildLoadableModule(
   NAME ${MODULE_NAME}
@@ -67,6 +75,8 @@ slicerMacroBuildLoadableModule(
   UI_SRCS ${MODULE_UI_SRCS}
   TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
   RESOURCES ${MODULE_RESOURCES}
+  LIGHT_ICONS ${LIGHT_ICON_RESOURCE}
+  DARK_ICONS ${DARK_ICON_RESOURCE}
   WITH_GENERIC_TESTS
   )
 
