@@ -242,7 +242,7 @@
       <string>Layout</string>
      </property>
      <property name="icon">
-      <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+     <iconset>
        <normaloff>:/Icons/LayoutChooseView.png</normaloff>:/Icons/LayoutChooseView.png</iconset>
      </property>
      <addaction name="ViewLayoutConventionalAction"/>
@@ -619,8 +619,8 @@
   </action>
   <action name="ViewLayoutConventionalAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerConventionalView.svg</normaloff>:/Icons/SlicerConventionalView.svg</iconset>
    </property>
    <property name="text">
     <string>Conventional</string>
@@ -631,8 +631,8 @@
   </action>
   <action name="ViewLayoutFourUpAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutFourUpView.png</normaloff>:/Icons/LayoutFourUpView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerFourUpView.svg</normaloff>:/Icons/SlicerFourUpView.svg</iconset>
    </property>
    <property name="text">
     <string>Four-Up</string>
@@ -643,8 +643,8 @@
   </action>
   <action name="ViewLayoutDual3DAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutDual3DView.png</normaloff>:/Icons/LayoutDual3DView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerDual3DView.svg</normaloff>:/Icons/SlicerDual3DView.svg</iconset>
    </property>
    <property name="text">
     <string>Dual 3D</string>
@@ -655,8 +655,8 @@
   </action>
   <action name="ViewLayoutOneUp3DAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutOneUp3DView.png</normaloff>:/Icons/LayoutOneUp3DView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/Slicer3DOnlyView.svg</normaloff>:/Icons/Slicer3DOnlyView.svg</iconset>
    </property>
    <property name="text">
     <string>3D only</string>
@@ -667,8 +667,8 @@
   </action>
   <action name="ViewLayout3DTableAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/Layout3DTableView.png</normaloff>:/Icons/Layout3DTableView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/Slicer3DTableView.svg</normaloff>:/Icons/Slicer3DTableView.svg</iconset>
    </property>
    <property name="text">
     <string>3D Table</string>
@@ -679,8 +679,9 @@
   </action>
   <action name="ViewLayoutOneUpRedSliceAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutOneUpRedSliceView.png</normaloff>:/Icons/LayoutOneUpRedSliceView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerRedSliceOnlyView.svg</normaloff>:/Icons/SlicerRedSliceOnlyView.svg
+   </iconset>
    </property>
    <property name="text">
     <string>Red slice only</string>
@@ -691,8 +692,8 @@
   </action>
   <action name="ViewLayoutOneUpYellowSliceAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutOneUpYellowSliceView.png</normaloff>:/Icons/LayoutOneUpYellowSliceView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerYellowSliceOnlyView.svg</normaloff>:/Icons/SlicerYellowSliceOnlyView.svg</iconset>
    </property>
    <property name="text">
     <string>Yellow slice only</string>
@@ -703,8 +704,8 @@
   </action>
   <action name="ViewLayoutOneUpGreenSliceAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutOneUpGreenSliceView.png</normaloff>:/Icons/LayoutOneUpGreenSliceView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerGreenSliceOnlyView.svg</normaloff>:/Icons/SlicerGreenSliceOnlyView.svg</iconset>
    </property>
    <property name="text">
     <string>Green slice only</string>
@@ -715,8 +716,8 @@
   </action>
   <action name="ViewLayoutTabbed3DAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutTabbed3DView.png</normaloff>:/Icons/LayoutTabbed3DView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerTabbed3DView.svg</normaloff>:/Icons/SlicerTabbed3DView.svg</iconset>
    </property>
    <property name="text">
     <string>Tabbed 3D</string>
@@ -727,8 +728,8 @@
   </action>
   <action name="ViewLayoutTabbedSliceAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutTabbedSliceView.png</normaloff>:/Icons/LayoutTabbedSliceView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerTabbedSliceView.svg</normaloff>:/Icons/SlicerTabbedSliceView.svg</iconset>
    </property>
    <property name="text">
     <string>Tabbed slice</string>
@@ -739,8 +740,8 @@
   </action>
   <action name="ViewLayoutCompareAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareView.svg</normaloff>:/Icons/SlicerCompareView.svg</iconset>
    </property>
    <property name="text">
     <string>Compare</string>
@@ -751,8 +752,8 @@
   </action>
   <action name="ViewLayoutCompareWidescreenAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareWidescreenView.svg</normaloff>:/Icons/SlicerCompareWidescreenView.svg</iconset>
    </property>
    <property name="text">
     <string>Compare Widescreen</string>
@@ -766,8 +767,8 @@
   </action>
   <action name="ViewLayoutTwoOverTwoAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutTwoOverTwoView.png</normaloff>:/Icons/LayoutTwoOverTwoView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerTwoOverTwoSliceView.svg</normaloff>:/Icons/SlicerTwoOverTwoSliceView.svg</iconset>
    </property>
    <property name="text">
     <string>Two over two</string>
@@ -799,8 +800,8 @@
   </action>
   <action name="ViewLayoutConventionalWidescreenAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutConventionalWidescreenView.png</normaloff>:/Icons/LayoutConventionalWidescreenView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerConventionalWidescreenView.svg</normaloff>:/Icons/SlicerConventionalWidescreenView.svg</iconset>
    </property>
    <property name="text">
     <string>Conventional Widescreen</string>
@@ -808,8 +809,8 @@
   </action>
   <action name="ViewLayoutTriple3DAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutTriple3DView.png</normaloff>:/Icons/LayoutTriple3DView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerTriple3DView.svg</normaloff>:/Icons/SlicerTriple3DView.svg</iconset>
    </property>
    <property name="text">
     <string>Triple 3D</string>
@@ -817,8 +818,8 @@
   </action>
   <action name="ViewLayoutThreeOverThreeAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerThreeOverThreeSliceView.svg</normaloff>:/Icons/SlicerThreeOverThreeSliceView.svg</iconset>
    </property>
    <property name="text">
     <string>Three over three</string>
@@ -826,8 +827,8 @@
   </action>
   <action name="ViewLayoutFourOverFourAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutFourOverFourView.png</normaloff>:/Icons/LayoutFourOverFourView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerFourOverFourView.svg</normaloff>:/Icons/SlicerFourOverFourView.svg</iconset>
    </property>
    <property name="text">
     <string>Four over four</string>
@@ -835,8 +836,8 @@
   </action>
   <action name="ViewLayoutCompare_2_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareView.svg</normaloff>:/Icons/SlicerCompareView.svg</iconset>
    </property>
    <property name="text">
     <string>2 viewers</string>
@@ -844,8 +845,8 @@
   </action>
   <action name="ViewLayoutCompare_3_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareView.svg</normaloff>:/Icons/SlicerCompareView.svg</iconset>
    </property>
    <property name="text">
     <string>3 viewers</string>
@@ -853,8 +854,8 @@
   </action>
   <action name="ViewLayoutCompare_4_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareView.svg</normaloff>:/Icons/SlicerCompareView.svg</iconset>
    </property>
    <property name="text">
     <string>4 viewers</string>
@@ -862,8 +863,8 @@
   </action>
   <action name="ViewLayoutCompare_5_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareView.svg</normaloff>:/Icons/SlicerCompareView.svg</iconset>
    </property>
    <property name="text">
     <string>5 viewers</string>
@@ -871,8 +872,8 @@
   </action>
   <action name="ViewLayoutCompare_6_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareView.svg</normaloff>:/Icons/SlicerCompareView.svg</iconset>
    </property>
    <property name="text">
     <string>6 viewers</string>
@@ -880,8 +881,8 @@
   </action>
   <action name="ViewLayoutCompare_7_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareView.svg</normaloff>:/Icons/SlicerCompareView.svg</iconset>
    </property>
    <property name="text">
     <string>7 viewers</string>
@@ -889,8 +890,8 @@
   </action>
   <action name="ViewLayoutCompare_8_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareView.svg</normaloff>:/Icons/SlicerCompareView.svg</iconset>
    </property>
    <property name="text">
     <string>8 viewers</string>
@@ -898,8 +899,8 @@
   </action>
   <action name="ViewLayoutCompareWidescreen_2_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareWidescreenView.svg</normaloff>:/Icons/SlicerCompareWidescreenView.svg</iconset>
    </property>
    <property name="text">
     <string>2 viewers</string>
@@ -907,8 +908,8 @@
   </action>
   <action name="ViewLayoutCompareWidescreen_3_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareWidescreenView.svg</normaloff>:/Icons/SlicerCompareWidescreenView.svg</iconset>
    </property>
    <property name="text">
     <string>3 viewers</string>
@@ -916,8 +917,8 @@
   </action>
   <action name="ViewLayoutCompareWidescreen_4_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareWidescreenView.svg</normaloff>:/Icons/SlicerCompareWidescreenView.svg</iconset>
    </property>
    <property name="text">
     <string>4 viewers</string>
@@ -925,8 +926,8 @@
   </action>
   <action name="ViewLayoutCompareWidescreen_5_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareWidescreenView.svg</normaloff>:/Icons/SlicerCompareWidescreenView.svg</iconset>
    </property>
    <property name="text">
     <string>5 viewers</string>
@@ -934,8 +935,8 @@
   </action>
   <action name="ViewLayoutCompareWidescreen_6_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareWidescreenView.svg</normaloff>:/Icons/SlicerCompareWidescreenView.svg</iconset>
    </property>
    <property name="text">
     <string>6 viewers</string>
@@ -943,8 +944,8 @@
   </action>
   <action name="ViewLayoutCompareWidescreen_7_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareWidescreenView.svg</normaloff>:/Icons/SlicerCompareWidescreenView.svg</iconset>
    </property>
    <property name="text">
     <string>7 viewers</string>
@@ -952,8 +953,8 @@
   </action>
   <action name="ViewLayoutCompareWidescreen_8_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareWidescreenView.svg</normaloff>:/Icons/SlicerCompareWidescreenView.svg</iconset>
    </property>
    <property name="text">
     <string>8 viewers</string>
@@ -961,8 +962,8 @@
   </action>
   <action name="ViewLayoutCompareGridAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareGridView.svg</normaloff>:/Icons/SlicerCompareGridView.svg</iconset>
    </property>
    <property name="text">
     <string>Compare Grid</string>
@@ -970,8 +971,8 @@
   </action>
   <action name="ViewLayoutCompareGrid_2x2_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareGridView.svg</normaloff>:/Icons/SlicerCompareGridView.svg</iconset>
    </property>
    <property name="text">
     <string>2x2 viewers</string>
@@ -979,8 +980,8 @@
   </action>
   <action name="ViewLayoutCompareGrid_3x3_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareGridView.svg</normaloff>:/Icons/SlicerCompareGridView.svg</iconset>
    </property>
    <property name="text">
     <string>3x3 viewers</string>
@@ -988,8 +989,8 @@
   </action>
   <action name="ViewLayoutCompareGrid_4x4_viewersAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerCompareGridView.svg</normaloff>:/Icons/SlicerCompareGridView.svg</iconset>
    </property>
    <property name="text">
     <string>4x4 viewers</string>
@@ -1013,8 +1014,8 @@
   </action>
   <action name="ViewLayoutSideBySideAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutSideBySideView.png</normaloff>:/Icons/LayoutSideBySideView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerSideBySideSliceView.svg</normaloff>:/SlicerSideBySideSliceView.svg</iconset>
    </property>
    <property name="text">
     <string>Side by side</string>
@@ -1022,8 +1023,8 @@
   </action>
   <action name="ViewLayoutFourByThreeSliceAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutFourByThreeSliceView.png</normaloff>:/Icons/LayoutFourByThreeSliceView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerFourByThreeSliceView.svg</normaloff>:/Icons/SlicerFourByThreeSliceView.svg</iconset>
    </property>
    <property name="text">
     <string>Four by three slice</string>
@@ -1034,8 +1035,8 @@
   </action>
   <action name="ViewLayoutFourByTwoSliceAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutFourByTwoSliceView.png</normaloff>:/Icons/LayoutFourByTwoSliceView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerFourByTwoSliceView.svg</normaloff>:/Icons/SlicerFourByTwoSliceView.svg</iconset>
    </property>
    <property name="text">
     <string>Four by two slice</string>
@@ -1046,7 +1047,7 @@
   </action>
   <action name="ViewLayoutFiveByTwoSliceAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+   <iconset>
      <normaloff>:/Icons/LayoutFiveByTwoSliceView.png</normaloff>:/Icons/LayoutFiveByTwoSliceView.png</iconset>
    </property>
    <property name="text">
@@ -1058,8 +1059,8 @@
   </action>
   <action name="ViewLayoutThreeByThreeSliceAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutThreeByThreeSliceView.png</normaloff>:/Icons/LayoutThreeByThreeSliceView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerThreeByThreeSliceView.svg</normaloff>:/Icons/SlicerThreeByThreeSliceView.svg</iconset>
    </property>
    <property name="text">
     <string>Three by three slice</string>
@@ -1070,7 +1071,7 @@
   </action>
   <action name="ViewLayoutDualMonitorFourUpViewAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+   <iconset>
      <normaloff>:/Icons/LayoutDualMonitorFourUpView.png</normaloff>:/Icons/LayoutDualMonitorFourUpView.png</iconset>
    </property>
    <property name="text">
@@ -1082,8 +1083,8 @@
   </action>
   <action name="ViewLayoutOneUpPlotAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutOneUpQuantitativeView.png</normaloff>:/Icons/LayoutOneUpQuantitativeView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerPlotOnlyView.svg</normaloff>:/Icons/SlicerPlotOnlyView.svg</iconset>
    </property>
    <property name="text">
     <string>Plot only</string>
@@ -1097,8 +1098,8 @@
   </action>
   <action name="ViewLayoutFourUpPlotAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutFourUpQuantitativeView.png</normaloff>:/Icons/LayoutFourUpQuantitativeView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerFourUpQuantitativeView.svg</normaloff>:/Icons/SlicerFourUpQuantitativeView.svg</iconset>
    </property>
    <property name="text">
     <string>Four-Up Plot</string>
@@ -1112,8 +1113,8 @@
   </action>
   <action name="ViewLayoutConventionalPlotAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutConvetionalQuantitativeView.png</normaloff>:/Icons/LayoutConvetionalQuantitativeView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerConventionalPlotView.svg</normaloff>:/Icons/SlicerConventionalPlotView.svg</iconset>
    </property>
    <property name="text">
     <string>Conventional Plot</string>
@@ -1127,8 +1128,8 @@
   </action>
   <action name="ViewLayoutThreeOverThreePlotAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutThreeOverThreeQuantitativeView.png</normaloff>:/Icons/LayoutThreeOverThreeQuantitativeView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerThreeOverThreePlotView.svg</normaloff>:/Icons/SlicerThreeOverThreePlotView.svg</iconset>
    </property>
    <property name="text">
     <string>Three over three Plot</string>
@@ -1139,8 +1140,8 @@
   </action>
   <action name="ViewLayoutFourUpTableAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutFourUpTableView.png</normaloff>:/Icons/LayoutFourUpTableView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerFourUpTableView.svg</normaloff>:/Icons/SlicerFourUpTableView.svg</iconset>
    </property>
    <property name="text">
     <string>Four-Up Table</string>
@@ -1148,8 +1149,8 @@
   </action>
   <action name="ViewLayoutFourUpPlotTableAction">
    <property name="icon">
-    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutFourUpQuantitativeTableView.png</normaloff>:/Icons/LayoutFourUpQuantitativeTableView.png</iconset>
+   <iconset>
+     <normaloff>:/Icons/SlicerFourUpQuantitativeView.svg</normaloff>:/Icons/SlicerFourUpQuantitativeView.svg</iconset>
    </property>
    <property name="text">
     <string>Four-Up Quantitative</string>

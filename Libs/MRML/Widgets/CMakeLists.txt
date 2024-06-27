@@ -362,6 +362,14 @@ set(MRMLWidgets_QRC_SRCS
   Resources/qMRMLWidgets.qrc
   )
 
+set(MRMLWidgets_LIGHT_ICONS
+  Resources/qMRMLWidgetsLight.qrc
+  )
+
+set(MRMLWidgets_DARK_ICONS
+  Resources/qMRMLWidgetsDark.qrc
+  )
+
 if(Slicer_USE_QtTesting)
   list(APPEND MRMLWidgets_SRCS
     qMRMLCheckableNodeComboBoxEventPlayer.cpp
@@ -392,6 +400,16 @@ endif()
   QT5_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS} ${_moc_options})
   QT5_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})
   QT5_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})
+
+  set(lib_name ${PROJECT_NAME})
+  QT5_ADD_BINARY_RESOURCES(
+    ${lib_name}LightIcons ${MRMLWidgets_LIGHT_ICONS}
+    DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}LightIcons.rcc
+    )
+  QT5_ADD_BINARY_RESOURCES(
+    ${lib_name}DarkIcons ${MRMLWidgets_DARK_ICONS}
+    DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}DarkIcons.rcc
+    )
 
 source_group("Resources" FILES
   ${MRMLWidgets_UI_SRCS}
@@ -456,7 +474,7 @@ endif()
 # --------------------------------------------------------------------------
 # Build library
 # --------------------------------------------------------------------------
-set(lib_name ${PROJECT_NAME})
+
 set(targets_to_export ${lib_name})
 
 add_library(${lib_name}
@@ -491,6 +509,14 @@ endif()
 if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
   set_target_properties(${lib_name} PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
 endif()
+
+
+# Add the external binaries as dependencies
+add_dependencies(${lib_name} ${lib_name}LightIcons)
+set_target_properties(${lib_name}LightIcons PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+
+add_dependencies(${lib_name} ${lib_name}DarkIcons)
+set_target_properties(${lib_name}DarkIcons PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
 
 # --------------------------------------------------------------------------
 # PythonQt wrapping
@@ -532,6 +558,13 @@ install(TARGETS ${lib_name}
   LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
+
+install(
+  FILES ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}LightIcons.rcc
+  DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Icons COMPONENT Runtime)
+install(
+  FILES ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}DarkIcons.rcc
+  DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Icons COMPONENT Runtime)
 
 # --------------------------------------------------------------------------
 # Testing

@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/Icons">
+        <file alias="Slicer3DOnlyView.svg">Icons/Dark/Slicer3DOnlyView.svg</file>
+        <file alias="Slicer3DTableView.svg">Icons/Dark/Slicer3DTableView.svg</file>
+        <file alias="SlicerCompareGridView.svg">Icons/Dark/SlicerCompareGridView.svg</file>
+        <file alias="SlicerCompareView.svg">Icons/Dark/SlicerCompareView.svg</file>
+        <file alias="SlicerCompareWidescreenView.svg">Icons/Dark/SlicerCompareWidescreenView.svg</file>
+        <file alias="SlicerConventionalPlotView.svg">Icons/Dark/SlicerConventionalPlotView.svg</file>
+        <file alias="SlicerConventionalView.svg">Icons/Dark/SlicerConventionalView.svg</file>
+        <file alias="SlicerConventionalWidescreenView.svg">Icons/Dark/SlicerConventionalWidescreenView.svg</file>
+        <file alias="SlicerDual3DView.svg">Icons/Dark/SlicerDual3DView.svg</file>
+        <file alias="SlicerFourByThreeSliceView.svg">Icons/Dark/SlicerFourByThreeSliceView.svg</file>
+        <file alias="SlicerFourByTwoSliceView.svg">Icons/Dark/SlicerFourByTwoSliceView.svg</file>
+        <file alias="SlicerFourOverFourView.svg">Icons/Dark/SlicerFourOverFourView.svg</file>
+        <file alias="SlicerFourUpPlotView.svg">Icons/Dark/SlicerFourUpPlotView.svg</file>
+        <file alias="SlicerFourUpQuantitativeView.svg">Icons/Dark/SlicerFourUpQuantitativeView.svg</file>
+        <file alias="SlicerFourUpTableView.svg">Icons/Dark/SlicerFourUpTableView.svg</file>
+        <file alias="SlicerFourUpView.svg">Icons/Dark/SlicerFourUpView.svg</file>
+        <file alias="SlicerGreenSliceOnlyView.svg">Icons/Dark/SlicerGreenSliceOnlyView.svg</file>
+        <file alias="SlicerPlotOnlyView.svg">Icons/Dark/SlicerPlotOnlyView.svg</file>
+        <file alias="SlicerRedSliceOnlyView.svg">Icons/Dark/SlicerRedSliceOnlyView.svg</file>
+        <file alias="SlicerSideBySideSliceView.svg">Icons/Dark/SlicerSideBySideSliceView.svg</file>
+        <file alias="SlicerTabbed3DView.svg">Icons/Dark/SlicerTabbed3DView.svg</file>
+        <file alias="SlicerTabbedSliceView.svg">Icons/Dark/SlicerTabbedSliceView.svg</file>
+        <file alias="SlicerThreeByThreeSliceView.svg">Icons/Dark/SlicerThreeByThreeSliceView.svg</file>
+        <file alias="SlicerThreeOverThreePlotView.svg">Icons/Dark/SlicerThreeOverThreePlotView.svg</file>
+        <file alias="SlicerThreeOverThreeSliceView.svg">Icons/Dark/SlicerThreeOverThreeSliceView.svg</file>
+        <file alias="SlicerTriple3DView.svg">Icons/Dark/SlicerTriple3DView.svg</file>
+        <file alias="SlicerTwoOverTwoSliceView.svg">Icons/Dark/SlicerTwoOverTwoSliceView.svg</file>
+        <file alias="SlicerYellowSliceOnlyView.svg">Icons/Dark/SlicerYellowSliceOnlyView.svg</file>
+    </qresource>
+</RCC>
