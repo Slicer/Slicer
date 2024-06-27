@@ -67,6 +67,8 @@ macro(SlicerMacroBuildBaseQtLibrary)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     RESOURCES
+    LIGHT_ICONS
+    DARK_ICONS
     )
   cmake_parse_arguments(SLICERQTBASELIB
     "${options}"
@@ -147,6 +149,21 @@ macro(SlicerMacroBuildBaseQtLibrary)
 
     QT5_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc)
 
+    # Generate external resource binaries if available
+    if(DEFINED SLICERQTBASELIB_LIGHT_ICONS)
+      QT5_ADD_BINARY_RESOURCES(
+        ${lib_name}LightIcons ${SLICERQTBASELIB_LIGHT_ICONS}
+        DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}LightIcons.rcc
+        )
+    endif()
+
+    if(DEFINED SLICERQTBASELIB_DARK_ICONS)
+      QT5_ADD_BINARY_RESOURCES(
+        ${lib_name}DarkIcons ${SLICERQTBASELIB_DARK_ICONS}
+        DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}DarkIcons.rcc
+        )
+    endif()
+
   set_source_files_properties(
     ${SLICERQTBASELIB_UI_CXX}
     ${SLICERQTBASELIB_MOC_OUTPUT}
@@ -218,6 +235,17 @@ macro(SlicerMacroBuildBaseQtLibrary)
   # Folder
   set_target_properties(${lib_name} PROPERTIES FOLDER "Core-Base")
 
+  # Add the external binaries as dependencies
+  if(DEFINED SLICERQTBASELIB_LIGHT_ICONS)
+    add_dependencies(${lib_name} ${lib_name}LightIcons)
+    set_target_properties(${lib_name}LightIcons PROPERTIES FOLDER "Core-Base")
+  endif()
+
+  if(DEFINED SLICERQTBASELIB_DARK_ICONS)
+    add_dependencies(${lib_name} ${lib_name}DarkIcons)
+    set_target_properties(${lib_name}DarkIcons PROPERTIES FOLDER "Core-Base")
+  endif()
+
   #-----------------------------------------------------------------------------
   # Install library
   #-----------------------------------------------------------------------------
@@ -226,6 +254,17 @@ macro(SlicerMacroBuildBaseQtLibrary)
     LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
+
+  if(DEFINED SLICERQTBASELIB_LIGHT_ICONS)
+      install(
+      FILES ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}LightIcons.rcc
+      DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Icons COMPONENT Runtime)
+    endif()
+    if(DEFINED SLICERQTBASELIB_DARK_ICONS)
+      install(
+      FILES ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR}/Icons/${lib_name}DarkIcons.rcc
+      DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Icons COMPONENT Runtime)
+    endif()
 
   # --------------------------------------------------------------------------
   # Install headers
