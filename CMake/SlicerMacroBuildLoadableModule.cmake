@@ -36,6 +36,8 @@ macro(slicerMacroBuildLoadableModule)
     INCLUDE_DIRECTORIES
     TARGET_LIBRARIES
     RESOURCES
+    LIGHT_ICONS
+    DARK_ICONS
     )
   cmake_parse_arguments(LOADABLEMODULE
     "${options}"
@@ -139,6 +141,23 @@ macro(slicerMacroBuildLoadableModule)
     endif()
     QT5_ADD_RESOURCES(LOADABLEMODULE_QRC_SRCS ${Slicer_LOGOS_RESOURCE})
 
+
+    # Generate external resource binaries if available
+    if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+      QT5_ADD_BINARY_RESOURCES(
+        ${lib_name}LightIcons ${LOADABLEMODULE_LIGHT_ICONS}
+        DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons/${lib_name}LightIcons.rcc
+        )
+
+    endif()
+
+    if(DEFINED LOADABLEMODULE_DARK_ICONS)
+      QT5_ADD_BINARY_RESOURCES(
+        ${lib_name}DarkIcons ${LOADABLEMODULE_DARK_ICONS}
+        DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/Icons/${lib_name}DarkIcons.rcc
+        )
+    endif()
+
   set_source_files_properties(
     ${LOADABLEMODULE_SRCS} # For now, let's prevent the module widget from being wrapped
     ${LOADABLEMODULE_UI_CXX}
@@ -195,6 +214,16 @@ macro(slicerMacroBuildLoadableModule)
     ${LOADABLEMODULE_QRC_SRCS}
     ${QM_OUTPUT_FILES}
     )
+
+
+  # Add the external binaries as dependencies
+  if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+    add_dependencies(${lib_name} ${lib_name}LightIcons)
+  endif()
+
+  if(DEFINED LOADABLEMODULE_LIGHT_ICONS)
+    add_dependencies(${lib_name} ${lib_name}DarkIcons)
+  endif()
 
   # Set loadable modules output path
   set_target_properties(${lib_name} PROPERTIES
