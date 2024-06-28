@@ -62,6 +62,7 @@ public:
   Q_PROPERTY(bool filterBarVisible READ filterBarVisible WRITE setFilterBarVisible)
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
   Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled)
+  Q_PROPERTY(int segmentCount READ segmentCount)
 
   typedef qMRMLWidget Superclass;
   /// Constructor
@@ -117,9 +118,9 @@ public:
   Q_INVOKABLE bool statusShown(int status);
 
   /// Get the row for the specified segment ID
-  int rowForSegmentID(QString segmentID);
+  Q_INVOKABLE int rowForSegmentID(QString segmentID);
   /// Get the segment ID for the specified row
-  QString segmentIDForRow(int row);
+  Q_INVOKABLE QString segmentIDForRow(int row);
 
 public slots:
   /// Set segmentation MRML node
