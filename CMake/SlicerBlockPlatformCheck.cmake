@@ -38,7 +38,7 @@ if(Slicer_PLATFORM_CHECK)
     # and https://en.wikipedia.org/wiki/Microsoft_Visual_Studio#Version_history
     # 1910-1919 = VS 15.0 (v141 toolset) 1914 = VS 15.7
     # 1920-1929 = VS 16.0 (v142 toolset)
-    # 1930-1939 = VS 17.0 (v143 toolset)
+    # 1930-1949 = VS 17.0 (v143 toolset, see https://devblogs.microsoft.com/cppblog/msvc-toolset-minor-version-number-14-40-in-vs-2022-v17-10/)
     # VS 15.7 was announced to officially conform with the C++ standard of C++11, C++14 and C++17
     # https://devblogs.microsoft.com/cppblog/announcing-msvc-conforms-to-the-c-standard/
     if(NOT MSVC_VERSION VERSION_GREATER_EQUAL 1914)
