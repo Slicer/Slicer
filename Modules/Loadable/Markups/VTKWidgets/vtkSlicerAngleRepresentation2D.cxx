@@ -238,6 +238,14 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->LineActor->SetVisibility(numberOfDefinedControlPoints >= 2);
   this->ArcActor->SetVisibility(numberOfDefinedControlPoints == 3);
 
+  // Hide the actor if it doesn't intersect the current slice
+  this->LineSliceDistance->Update();
+  if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->LineSliceDistance->GetOutput()), this->LineSliceDistance->GetScalarArrayName()))
+  {
+    this->LineActor->SetVisibility(false);
+    this->ArcActor->SetVisibility(false);
+  }
+
   int controlPointType = Unselected;
   if (this->MarkupsDisplayNode->GetActiveComponentType() == vtkMRMLMarkupsDisplayNode::ComponentLine)
   {
