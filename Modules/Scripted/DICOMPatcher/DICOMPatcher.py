@@ -254,9 +254,6 @@ class DICOMPatcherRule:
         return filepath
 
 
-#
-#
-#
 
 
 class ForceSamePatientNameIdInEachDirectory(DICOMPatcherRule):
@@ -368,9 +365,6 @@ class GenerateMissingIDs(DICOMPatcherRule):
             ds.SeriesNumber = self.numberOfSeriesInStudyMap[ds.StudyInstanceUID]
 
 
-#
-#
-#
 
 
 class RemoveDICOMDIR(DICOMPatcherRule):
@@ -381,9 +375,6 @@ class RemoveDICOMDIR(DICOMPatcherRule):
         return True
 
 
-#
-#
-#
 
 
 class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
@@ -402,9 +393,6 @@ class FixPrivateMediaStorageSOPClassUID(DICOMPatcherRule):
             ds.SOPClassUID = CTImageStorageSOPClassUID
 
 
-#
-#
-#
 
 
 class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
@@ -485,9 +473,6 @@ class AddMissingSliceSpacingToMultiframe(DICOMPatcherRule):
             ds.PerFrameFunctionalGroupsSequence = perFrameFunctionalGroupsSequence
 
 
-#
-#
-#
 
 
 class FixExposureFiasco(DICOMPatcherRule):
@@ -506,9 +491,6 @@ class FixExposureFiasco(DICOMPatcherRule):
                 ds["00188151"] = pydicom.DataElement(tag="00188151", VR="DS", value=str(float(val) * 1000))
 
 
-#
-#
-#
 
 
 class UseCharacterSet(DICOMPatcherRule):
@@ -535,9 +517,6 @@ class UseCharacterSet(DICOMPatcherRule):
         slicer.ds = ds
 
 
-#
-#
-#
 
 
 class Anonymize(DICOMPatcherRule):
@@ -589,9 +568,6 @@ class Anonymize(DICOMPatcherRule):
         ds.SeriesInstanceUID = self.seriesUIDToRandomUIDMap[ds.SeriesInstanceUID]
 
 
-#
-#
-#
 
 
 class NormalizeFileNames(DICOMPatcherRule):
@@ -626,9 +602,6 @@ class NormalizeFileNames(DICOMPatcherRule):
         return filePath
 
 
-#
-#
-#
 
 
 class SplitUltrasoundSeriesByInstanceNumber(DICOMPatcherRule):
@@ -664,9 +637,6 @@ class SplitUltrasoundSeriesByInstanceNumber(DICOMPatcherRule):
         ds.SeriesNumber = ds.SeriesNumber * 1000 + ds.InstanceNumber
 
 
-#
-#
-#
 
 
 class FixCompressedUltrasoundPhotometricInterpretation(DICOMPatcherRule):
