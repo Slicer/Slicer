@@ -78,7 +78,7 @@ if (WIN32)
   elseif (NOT MSVC_VERSION VERSION_GREATER 1929)
     # VS2019 is expected to be binary compatible with VS2015
     set(tbb_vsdir vc14)
-  elseif (NOT MSVC_VERSION VERSION_GREATER 1939)
+  elseif (NOT MSVC_VERSION VERSION_GREATER 1949)
     # VS2022 is expected to be binary compatible with VS2015
     set(tbb_vsdir vc14)
   elseif (tbb_enabled)
