@@ -3127,9 +3127,9 @@ def createProgressDialog(parent=None, value=0, maximum=100, labelText="", window
     progressIndicator.value = value
     progressIndicator.windowTitle = windowTitle
     progressIndicator.labelText = labelText
-    for key, value in kwargs.items():
+    for key, argument in kwargs.items():
         if hasattr(progressIndicator, key):
-            setattr(progressIndicator, key, value)
+            setattr(progressIndicator, key, argument)
     return progressIndicator
 
 
