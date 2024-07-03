@@ -1,6 +1,11 @@
 target-version = "py39"
 line-length = 550
 
+extend-exclude = [
+  "Base/QTGUI/Testing/Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTest.py",
+  "Base/QTGUI/Testing/Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py",
+]
+
 [lint]
 select = [
 #  "ARG",         # flake8-unused-arguments
