@@ -87,7 +87,6 @@ class SliceAnnotations(VTKObservationMixin):
             "9-SlabReconstructionType": {"text": "", "category": "A"},
         })
 
-        #
         self.scene = slicer.mrmlScene
         self.sliceViews = {}
 
