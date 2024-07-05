@@ -75,7 +75,9 @@ vtkMRMLInteractionWidget::vtkMRMLInteractionWidget()
 
     // Update active interaction handle component
     this->SetEventTranslation(interactionHandleState, vtkCommand::MouseMoveEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+    this->SetEventTranslation(interactionHandleState, vtkCommand::MouseMoveEvent, vtkEvent::AltModifier, WidgetEventMouseMove);
     this->SetEventTranslation(interactionHandleState, vtkCommand::Move3DEvent, vtkEvent::NoModifier, WidgetEventMouseMove);
+    this->SetEventTranslation(interactionHandleState, vtkCommand::Move3DEvent, vtkEvent::AltModifier, WidgetEventMouseMove);
   }
 
   int interactionStates[4] =
