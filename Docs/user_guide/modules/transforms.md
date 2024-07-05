@@ -19,8 +19,9 @@ Supported transform types:
 
 Transform node can be created in multiple ways:
 - Method A: In Data module's Subject hierarchy tab, right-click on the "Transform" column and choose "Create new transform". This always creates a general "Transform".
-- Method B: In Data module's Transform hierarchy tab, right-click on an item and choose "Insert transform". This always creates a "Linear transform". Advantage of this method is that it is easy to build and overview hierarchy of transforms.
-- Method C: In Transforms module click on "Active transform" node selector and choose one of the "Create new..." options.
+- Method B: In Data module's Subject hierarchy tab, right-click on the "Visibility" column of any transformable node and choose "Interaction" to create a parent transform and display the interaction handles (See [Interaction section](transforms.md#interaction)). This always creates a general "Transform".
+- Method C: In Data module's Transform hierarchy tab, right-click on an item and choose "Insert transform". This always creates a "Linear transform". Advantage of this method is that it is easy to build and overview hierarchy of transforms.
+- Method D: In Transforms module click on "Active transform" node selector and choose one of the "Create new..." options.
 
 How to choose transform type: Create "Linear transform" if you only work with linear transforms, because certain modules only allow you to select this node type as input. In other cases, it is recommended to  create the general "Transform" node. Multiple transform node types exist because earlier Slicer could only store a simple transformation in a node. Now a transform node can contain any transformation type (linear, grid, bspline, thin-plate spline, or even composite transformation - an arbitrary sequence of any transformations), therefore transform node types only differ in their name. In some modules, node selectors only accept a certain transform node type, therefore it may be necessary to create that expected transform type, but in the long term it is expected that all modules will accept the general "Transform" node type.
 
@@ -29,7 +30,7 @@ How to choose transform type: Create "Linear transform" if you only work with li
 "Applying a transform" means setting parent transform to a node to translate, rotate, and/or warp it. If the parent transform is changed then the position or shape of the node is automatically updated. If the transform is removed then original (non-transformed) state of the node is restored.
 
 A transform can be applied to a node in multiple ways:
-- Method A: In Data module's Subject hierarchy tab, right-click on the "Transform" column and choose a transform (or "Create new transform"). The transform can be interactively edited in 3D views by right-click on "Transform" column and choosing "Interaction in 3D view". See this **[short demonstration video](https://youtu.be/bbikx7Edv4g)**.
+- Method A: In Data module's Subject hierarchy tab, right-click on the "Transform" column and choose a transform (or "Create new transform"). The transform can be interactively edited in 3D views by right-clicking on "Transform" column and choosing "Interaction".
 - Method B: In Data module's Transform hierarchy tab, drag the nodes under a transform.
 - Method C: In Transforms module's "Apply transform" section move nodes from the Transformable list to the Transformed list by selecting them and click the arrow button between them.
 
@@ -51,7 +52,7 @@ If non-linear transform is hardened on a volume then the volume is resampled usi
 - Split: a composite transform can be split to multiple transform nodes (so that each component is stored in a separate transform node) by clicking "Split" button in Transforms module's Edit section.
 - Change translation/rotation:
   - linear transforms can be edited using translation and rotation sliders Transforms module's Edit section. "Translation in global or local reference frame" button controls if translation is performed in the parent coordinate system or the rotated coordinate system.
-  - translation and rotation of a linear transform can be interactively edited in 3D by enabling "Visible in 3D view" in Transform's module Display / Interaction section. See this **[short demonstration video](https://youtu.be/bbikx7Edv4g)**.
+  - translation and rotation of a linear transform can be interactively edited in 3D by enabling "Visible in 3D view" in Transform's module Display / Interaction section. See [Interaction section](transforms.md#interaction).
 - Edit warping transform: to specify/edit a warping transform that translates a set of points to specified positions, you can use [semi-automatic registration methods](../registration.md#semi-automatic-registration)
 
 ### Compute transform
@@ -78,7 +79,39 @@ A quick way to import a linear transform from another software or from text file
 
 ### Visualize transform
 
-Transforms can be visualized in both 2D and 3D views, as glyphs representing the displacement vectors as arrows, cones, or spheres; regular grids that are deformed by the transform; or contours that represent lines or surfaces where the displacement magnitude has a specific value. See documentation of [Display section](transforms.md#display] for details.
+Transforms can be visualized in both 2D and 3D views, as glyphs representing the displacement vectors as arrows, cones, or spheres; regular grids that are deformed by the transform; or contours that represent lines or surfaces where the displacement magnitude has a specific value. See documentation of [Display section](transforms.md#display) for details. Linear transforms can also be interacted with using an interaction handle widget. See [Interaction section](transforms.md#interaction)
+
+### Interaction
+
+![Interaction handles in 2D and 3D views.](https://github.com/Slicer/Slicer/releases/download/docs-resources/interaction_handles_1.gif)
+
+#### Interaction keybinds
+
+For macOS, refer to [alternate macOS keybindings](../user_interface.md#alternate-macos-keybindings).
+
+| Handle | Key | Operation |
+| -------- | --------- | --------- |
+| Translation | `Left-click` | Translate along a specific axis, or parallel to the view plane |
+| Translation |  `Left-click` + `Alt` | Translate the center of transformation |
+| Rotation |  `Left-click` | Rotate around a specific axis, or parallel to the view plane |
+| Scale |  `Left-click` | Scale along a specific axis |
+| Scale |  `Left-click` + `Alt` | Uniform scale along a specific axis |
+| Translation |  `Left-click` + `Alt` | Translate the center of transformation |
+| Any | `Right-click` | Show context menu
+| Any | `Right-click` during interaction | Cancel and return to original state |
+| Any | `Escape` during interaction | Cancel and return to original state |
+
+#### Context menu
+
+![Context menu showing the following options when right-clicking on a transform node.](https://github.com/Slicer/Slicer/releases/download/docs-resources/interaction_context_menu_1.png)
+
+- Edit properties: Switch to the Transforms module and select the specified transform node.
+- Invert transform: Invert the transform matrix.
+- Reset transform to identity: Reset the transform matrix back to an identity transform.
+- Reset center of transformation:
+  - Transform origin: Reset the center of transformation to [0,0,0] in the local coordinate system.
+  - Transformed nodes: Reset the center of transformation to the bounds center of all nodes that are transformed.
+  - Individual nodes: Reset the center of transformation to the center of the bounds for a specific node.
 
 ## Panels and their use
 
@@ -103,34 +136,43 @@ It also displays displacement value at the current mouse pointer position (in sl
 - Identity: Resets transformation matrix to identity matrix.
 - Invert: Inverts the transformation matrix.
 - Split: Split a composite transform so that each of its component is stored in a separate transform node.
-- Copy: copy the homogeneous transformation matrix values to the clipboard. Values are separated by spaces, each line of the transform is in a separate line.
-- Paste: paste transformation matrix from clipboard. Values can be separated by spaces, commas, or semicolons, which allows copy/pasting numpy array from Python console or matrix from Matlab.
+- Copy: Copy the homogeneous transformation matrix values to the clipboard. Values are separated by spaces, each line of the transform is in a separate line.
+- Paste: Paste transformation matrix from clipboard. Values can be separated by spaces, commas, or semicolons, which allows copy/pasting numpy array from Python console or matrix from Matlab.
+- Center of transformation: The center of transformation of the selected transform. This is the position that the sliders will rotate around, and where the interaction handles are positioned. The center of transformation can be edited/displayed in world or local coordinates. Clicking the 'Reset' button will reset the center of transformation to the local coordinates [0,0,0].
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_edit.png)
+![Widget for editing linear transforms.](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_edit.png)
+
+![Widget for editing/displaying the center of transformation.](https://github.com/Slicer/Slicer/releases/download/docs-resources/center_of_transformation.png)
 
 ### Display
 
 This section allows visualization of how much and what direction of displacements specified by the transform.
 
-![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_display.png)
+#### Interaction
+
+![Display options widget for controlling interaction handle visibility.](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_display_interaction.png)
+
+The interaction section controls the visibility of interaction handles for manual positioning of transforms. Individual axes can be enabled/disabled separately for 3D and Slice views by clicking the "More options" button.
 
 #### Visualization modes
+
+![Transforms module section for controlling transform display options.](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_display_2024_03_26.png)
 
 1. Glyph mode
 
 Slice view:
-- arrow: the arrow shows the displacement vector at the arrow starting point, projected to the slice plane
-- cone: the cone shows the displacement vector at the cone centerpoint, projected to the slice plane
-- sphere: the circle diameter shows the displacement vector magnitude at the circle centerpoint
+- Arrow: the arrow shows the displacement vector at the arrow starting point, projected to the slice plane
+- Cone: the cone shows the displacement vector at the cone centerpoint, projected to the slice plane
+- Sphere: the circle diameter shows the displacement vector magnitude at the circle centerpoint
 
 | Glyph - arrow (slice view)   | Glyph - cone (slice view)   | Glyph - sphere (slice view)      |
 |------------------------------|-----------------------------|----------------------------------|
 | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_arrow_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_cone_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_sphere_2d.png)  |
 
 3D view:
-- arrow: the arrow shows the displacement vector at the arrow starting point
-- cone: the cone shows the displacement vector at the cone centerpoint
-- sphere: the sphere diameter shows the displacement vector magnitude at the circle centerpoint
+- Arrow: the arrow shows the displacement vector at the arrow starting point
+- Cone: the cone shows the displacement vector at the cone centerpoint
+- Sphere: the sphere diameter shows the displacement vector magnitude at the circle centerpoint
 
 | Glyph - arrow (3D view)   | Glyph - cone (3D view)   | Glyph - sphere (3D view)      |
 |------------------------------|-----------------------------|----------------------------------|
@@ -202,6 +244,7 @@ See examples and other developer information in [Developer guide](../../develope
 - Julien Finet (Kitware)
 - Andras Lasso (PerkLab, Queen's)
 - Franklin King (PerkLab, Queen's)
+- Kyle Sunderland (PerkLab, Queen's)
 
 ## Acknowledgements
 
