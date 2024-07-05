@@ -183,6 +183,15 @@ View Controllers module provides an alternate way of displaying these controller
 
 ## Mouse & Keyboard Shortcuts
 
+### Alternate macOS Keybindings
+
+When using shortcuts on macOS, replace the following keys with their corresponding macOS version.
+
+| Key | macOS Key |
+| -------- | --------- |
+| `Ctrl` | `Command` / `⌘` |
+| `Alt`  | `Option` / `⌥` / `Alt` |
+
 ### Generic shortcuts
 
 | Shortcut | Operation |
