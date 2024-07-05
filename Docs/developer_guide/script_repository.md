@@ -55,3 +55,6 @@ The Slicer source code has Python [scripted modules](https://github.com/Slicer/S
 
 ```{include} script_repository/batch.md
 ```
+
+```{include} script_repository/webserver.md
+```
