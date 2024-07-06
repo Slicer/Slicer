@@ -18,6 +18,8 @@ print(f"Open 'http://localhost:{logic.port}'")
 Hosting web content is a complex topic, with security implications.  Use this feature
 with caution.  It's best to use this only on a trusted network.
 
+:::
+
 ### Create a custom web server to handle request endpoints
 
 See the WebServerLib for more complete examples.
