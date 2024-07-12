@@ -30,37 +30,6 @@
 // vtkMRMLThreeDViewDisplayableManagerFactory methods
 
 //----------------------------------------------------------------------------
-// Up the reference count so it behaves like New
-vtkMRMLThreeDViewDisplayableManagerFactory* vtkMRMLThreeDViewDisplayableManagerFactory::New()
-{
-  vtkMRMLThreeDViewDisplayableManagerFactory* instance = Self::GetInstance();
-  instance->Register(nullptr);
-  return instance;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLThreeDViewDisplayableManagerFactory* vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()
-{
-  if(!Self::Instance)
-  {
-    // Try the factory first
-    Self::Instance = (vtkMRMLThreeDViewDisplayableManagerFactory*)
-                     vtkObjectFactory::CreateInstance("vtkMRMLThreeDViewDisplayableManagerFactory");
-
-    // if the factory did not provide one, then create it here
-    if(!Self::Instance)
-    {
-      Self::Instance = new vtkMRMLThreeDViewDisplayableManagerFactory;
-#ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
-      Self::Instance->InitializeObjectBase();
-#endif
-    }
-  }
-  // return the instance
-  return Self::Instance;
-}
-
-//----------------------------------------------------------------------------
 vtkMRMLThreeDViewDisplayableManagerFactory::
     vtkMRMLThreeDViewDisplayableManagerFactory():Superclass()
 {
