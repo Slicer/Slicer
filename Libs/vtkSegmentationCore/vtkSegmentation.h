@@ -37,10 +37,13 @@
 
 #include "vtkSegmentationCoreConfigure.h"
 
+#include <vtkSingleton.h>
+
 class vtkAbstractTransform;
 class vtkCallbackCommand;
 class vtkCollection;
 class vtkIntArray;
+class vtkMinimalStandardRandomSequence;
 class vtkSegmentationConversionPath;
 class vtkStringArray;
 
@@ -206,10 +209,14 @@ public:
   /// \return Success flag
   bool AddSegment(vtkSegment* segment, std::string segmentId = "", std::string insertBeforeSegmentId = "");
 
-  /// Generate unique segment ID. If argument is empty then a new ID will be generated in the form "Segment_",
-  /// where N is the number of segments. If argument is unique it is returned unchanged. If there is a segment
-  /// with the given name, then it is postfixed by a number to make it unique.
-  std::string GenerateUniqueSegmentID(std::string id);
+  /// Generate unique segment ID. If argument is empty then a new unique ID will be generated.
+  /// The unique generated ID is generated as a UUID derived UID
+  /// (See https://dicom.nema.org/medical/dicom/current/output/chtml/part05/sect_b.2.html).
+  /// If argument is unique it is returned unchanged. If there is a segment with the given ID,
+  /// then it is postfixed by a number to make it unique.
+  /// \param id Optional segment ID to use as base for generating a unique ID
+  /// \return Unique segment ID
+  std::string GenerateUniqueSegmentID(std::string id = "");
 
   /// Remove a segment by ID
   /// \param segmentId Identifier of the segment to remove from the segmentation
@@ -517,6 +524,12 @@ public:
   static void CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline,
     std::map<vtkDataObject*, vtkDataObject*>& cachedRepresentations);
 
+  vtkSetMacro(UUIDSegmentIDs, bool);
+  vtkGetMacro(UUIDSegmentIDs, bool);
+  vtkBooleanMacro(UUIDSegmentIDs, bool);
+
+  static vtkMinimalStandardRandomSequence* GetSegmentIDRandomSequenceInstance();
+
 protected:
   bool ConvertSegmentsUsingPath(std::vector<std::string> segmentIDs, vtkSegmentationConversionPath* path, bool overwriteExisting = false);
 
@@ -560,6 +573,22 @@ protected:
   /// are no longer in the segmentation are removed
   void UpdateSourceRepresentationObservers();
 
+  /// Generate a UUID derived UID.
+  /// The form is "2.25." + a UUID converted to an integer form.
+  static std::string GenerateUUIDDerivedUID();
+
+  /// Generate a random segment ID.
+  /// The form is "S_" + random alphanumeric characters.
+  /// \param suffixLength Length of the generated ID
+  static std::string GenerateRandomSegmentID(int suffixLength, std::string validCharacters="");
+
+  /// Generate unique segment name. If argument is empty then a new name will be generated in the form "Segment_N",
+  /// where N is the number of segments. If argument is unique it is returned unchanged. If there is a segment
+  /// with the given name, then it is postfixed by a number to make it unique.
+  /// \param baseName Optional segment name to use as base for generating a unique name
+  /// \return Unique segment name
+  std::string GenerateUniqueSegmentName(std::string base);
+
 protected:
   vtkSegmentation();
   ~vtkSegmentation() override;
@@ -600,6 +629,15 @@ protected:
 
   std::set<vtkSmartPointer<vtkDataObject> > SourceRepresentationCache;
 
+  bool UUIDSegmentIDs;
+
+  /// Singleton class managing vtkMinimalStandardRandomSequence used for randomizing segment IDs
+  friend class vtkSegmentationRandomSequenceInitialize;
+
+  /// Singleton management functions.
+  static void classInitialize();
+  static void classFinalize();
+
   friend class vtkMRMLSegmentationNode;
   friend class vtkSlicerSegmentationsModuleLogic;
   friend class vtkSegmentationModifier;
@@ -609,5 +647,7 @@ private:
   vtkSegmentation(const vtkSegmentation&) = delete;
   void operator=(const vtkSegmentation&) = delete;
 };
+
+VTK_SINGLETON_DECLARE_INITIALIZER(vtkSegmentationCore_EXPORT, vtkSegmentationRandomSequence);
 
 #endif

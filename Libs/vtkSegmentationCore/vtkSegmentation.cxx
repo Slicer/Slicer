@@ -36,10 +36,12 @@
 #include <vtkImageThreshold.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+#include <vtkMinimalStandardRandomSequence.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
+#include <vtkSingleton.h>
 #include <vtkStringArray.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -47,10 +49,31 @@
 
 // STD includes
 #include <algorithm>
+#include <chrono>
 #include <functional>
 #include <sstream>
 
+// GDCM includes
+#ifdef vtkSegmentationCore_USE_UUID
+#include <gdcmUUIDGenerator.h>
+#endif
+
 const int DEFAULT_LABEL_VALUE = 1;
+const int DEFAULT_SEGMENT_ID_LENGTH = 16;
+
+//----------------------------------------------------------------------------
+// The segment ID randomizer singleton instance class.
+// This MUST be default initialized to zero by the compiler and is
+// therefore not initialized here. The classInitialize and classFinalize methods handle this instance.
+class vtkSegmentationRandomSequence : public vtkMinimalStandardRandomSequence
+{
+public:
+  vtkSegmentationRandomSequence() = default;
+  ~vtkSegmentationRandomSequence() = default;
+  static vtkSegmentationRandomSequence* New();
+  VTK_SINGLETON_DECLARE(vtkSegmentationRandomSequence);
+  static vtkSegmentationRandomSequence* GetInstance();
+};
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSegmentation);
@@ -72,6 +95,12 @@ vtkSegmentation::vtkSegmentation()
   this->SegmentModifiedEnabled = true;
 
   this->SegmentIdAutogeneratorIndex = 0;
+
+#ifdef vtkSegmentationCore_USE_UUID
+  this->UUIDSegmentIDs = true;
+#else
+  this->UUIDSegmentIDs = false;
+#endif
 
   this->SetSourceRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
 }
@@ -271,9 +300,46 @@ bool vtkSegmentation::SetSegmentModifiedEnabled(bool enabled)
 }
 
 //---------------------------------------------------------------------------
-std::string vtkSegmentation::GenerateUniqueSegmentID(std::string id)
+std::string vtkSegmentation::GenerateUniqueSegmentName(std::string base)
 {
-  if (!id.empty() &&  this->Segments.find(id) == this->Segments.end())
+  if (base.empty())
+  {
+    base = "Segment";
+  }
+
+  // try to make it unique by attaching a postfix
+  std::string segmentName = base;
+  int nameIndex = 1;
+  while (true)
+  {
+    std::stringstream nameStream;
+    bool found = false;
+    nameStream << base << "_" << nameIndex;
+    for (auto segment : this->Segments)
+    {
+      if (segment.second->GetName() == nameStream.str())
+      {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found)
+    {
+      segmentName = nameStream.str();
+      break;
+    }
+
+    nameIndex++;
+  }
+
+  return segmentName;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkSegmentation::GenerateUniqueSegmentID(std::string id/*=""*/)
+{
+  if (!id.empty() && this->Segments.find(id) == this->Segments.end())
   {
     // the provided id is already unique
     return id;
@@ -281,8 +347,24 @@ std::string vtkSegmentation::GenerateUniqueSegmentID(std::string id)
 
   if (id.empty())
   {
-    // use a non-empty default prefix if no id is provided
-    id = "Segment";
+    std::string newSegmentID;
+    while (newSegmentID.empty() || this->Segments.find(newSegmentID) != this->Segments.end())
+    {
+      if (this->UUIDSegmentIDs)
+      {
+#ifdef vtkSegmentationCore_USE_UUID
+        newSegmentID = vtkSegmentation::GenerateUUIDDerivedUID();
+#else
+        vtkErrorMacro("GenerateUniqueSegmentID: UUID segment IDs are not supported in this build, using random segment IDs");
+#endif
+      }
+
+      if (newSegmentID.empty())
+      {
+        newSegmentID = vtkSegmentation::GenerateRandomSegmentID(DEFAULT_SEGMENT_ID_LENGTH);
+      }
+    }
+    return newSegmentID;
   }
 
   // try to make it unique by attaching a postfix
@@ -306,6 +388,97 @@ std::string vtkSegmentation::GenerateUniqueSegmentID(std::string id)
 
   // try to make it unique by modifying prefix
   return this->GenerateUniqueSegmentID(id + "_");
+}
+
+//---------------------------------------------------------------------------
+std::string ConvertHexadecimalStringToDecimalString(const std::string& hex)
+{
+  // Start with a vector containing a single zero.
+  std::vector<int> decimals(1, 0);
+  for (char rawDigit : hex)
+  {
+    int hexDigit = std::tolower(rawDigit);
+    int value = 0;
+    if (hexDigit >= '0' && hexDigit <= '9')
+    {
+      value = hexDigit - '0';
+    }
+    else if (hexDigit >= 'a' && hexDigit <= 'f')
+    {
+      value = hexDigit - 'a' + 10;
+    }
+    else
+    {
+      // Skip invalid characters such as '-'.
+      continue;
+    }
+
+    int carry = value;
+    for (size_t i = 0; i < decimals.size(); ++i)
+    {
+      int current = decimals[i] * 16 + carry;
+      decimals[i] = current % 10;
+      carry = current / 10;
+    }
+
+    while (carry > 0)
+    {
+      decimals.push_back(carry % 10);
+      carry /= 10;
+    }
+  }
+
+  // Convert integer vector back to string, working backwards.
+  std::stringstream resultSS;
+  for (auto it = decimals.rbegin(); it != decimals.rend(); ++it)
+  {
+    resultSS << char(*it + '0');
+  }
+
+  return resultSS.str();
+}
+
+//---------------------------------------------------------------------------
+std::string vtkSegmentation::GenerateUUIDDerivedUID()
+{
+#ifndef vtkSegmentationCore_USE_UUID
+  vtkErrorWithObjectMacro(nullptr, "GenerateUUIDDerivedUID: UUID segment IDs are not supported in this build");
+  return "";
+#else
+  std::stringstream uuidStream;
+  uuidStream << "2.25."; // UUID derived UID. See https://dicom.nema.org/medical/dicom/current/output/chtml/part05/sect_b.2.html.
+
+  gdcm::UUIDGenerator uuidGenerator;
+  const char* uuid = uuidGenerator.Generate();
+  // Can't store the result in an integer type since it is 128 bits long.
+  // Resulting string is maximum 39 characters long.
+  uuidStream << ConvertHexadecimalStringToDecimalString(uuid);
+  return uuidStream.str();
+#endif
+}
+
+//---------------------------------------------------------------------------
+std::string vtkSegmentation::GenerateRandomSegmentID(int suffixLength, std::string validCharacters/*=""*/)
+{
+  if (suffixLength <= 0)
+  {
+    vtkErrorWithObjectMacro(nullptr, "GenerateRandomSegmentID: Invalid suffix length, must be greater than 0");
+    return "";
+  }
+
+  if (validCharacters.empty())
+  {
+    validCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  }
+
+  vtkMinimalStandardRandomSequence* randomSequence = vtkSegmentation::GetSegmentIDRandomSequenceInstance();
+  std::string randomString = "S_";
+  for (int i = 0; i < suffixLength; ++i)
+  {
+    int index = static_cast<int>(std::floor(std::fmod(randomSequence->GetNextValue(), 1.0) * validCharacters.size()));
+    randomString += validCharacters[index];
+  }
+  return randomString;
 }
 
 //---------------------------------------------------------------------------
@@ -476,8 +649,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
       vtkErrorMacro("AddSegment: Unable to add segment without a key; neither key is given nor segment name is defined!");
       return false;
     }
-    key = segment->GetName();
-    key = this->GenerateUniqueSegmentID(key);
+    key = this->GenerateUniqueSegmentID();
   }
   this->Segments[key] = segment;
   if (insertBeforeSegmentId.empty())
@@ -760,8 +932,8 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
   for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
     /*upon deletion the increment is done already, so don't increment here*/)
   {
-      std::string t = *segmentIdIt;
-      std::vector<std::string>::iterator foundSegmentIdToMove = std::find(segmentIdsToMove.begin(), segmentIdsToMove.end(), t);
+    std::string t = *segmentIdIt;
+    std::vector<std::string>::iterator foundSegmentIdToMove = std::find(segmentIdsToMove.begin(), segmentIdsToMove.end(), t);
     if (foundSegmentIdToMove != segmentIdsToMove.end())
     {
       // this segment gets a new position, so remove it from current position
@@ -1808,14 +1980,14 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
   }
 
   // Segment ID will be segment name by default
-  segmentId = this->GenerateUniqueSegmentID(segmentId);
   if (!segmentName.empty())
   {
     segment->SetName(segmentName.c_str());
   }
   else
   {
-    segment->SetName(segmentId.c_str());
+    std::string name = this->GenerateUniqueSegmentName("Segment");
+    segment->SetName(name.c_str());
   }
 
   if (this->SourceRepresentationName == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName())
@@ -1841,6 +2013,7 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
   }
 
   // Add segment
+  segmentId = this->GenerateUniqueSegmentID(segmentId);
   if (!this->AddSegment(segment, segmentId))
   {
     return "";
@@ -2514,3 +2687,30 @@ void vtkSegmentation::CopySegment(vtkSegment* destination, vtkSegment* source, v
     }
   }
 }
+
+//----------------------------------------------------------------------------
+// Return the single instance of vtkMinimalStandardRandomSequence
+vtkMinimalStandardRandomSequence* vtkSegmentation::GetSegmentIDRandomSequenceInstance()
+{
+  return vtkSegmentationRandomSequence::GetInstance();
+}
+
+//----------------------------------------------------------------------------
+// Implementation of vtkSegmentationRandomSequenceInitialize class.
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+void vtkSegmentationRandomSequence::classInitialize()
+{
+  vtkSegmentationRandomSequence::Instance = vtkSegmentationRandomSequence::GetInstance();
+
+  // Get the current ms since the epoch
+  time_t currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+  int seed = currentTime % VTK_INT_MAX;
+  vtkSegmentationRandomSequence::Instance->SetSeed(seed);
+}
+
+//----------------------------------------------------------------------------
+VTK_SINGLETON_CLASS_FINALIZE_CXX(vtkSegmentationRandomSequence);
+VTK_SINGLETON_INITIALIZER_CXX(vtkSegmentationRandomSequence);
+VTK_SINGLETON_GETINSTANCE_CXX(vtkSegmentationRandomSequence);

@@ -211,7 +211,8 @@ class SegmentationsModuleTest2(unittest.TestCase):
         emptySegment.SetName("Segment_1")
         emptySegment.AddRepresentation(self.binaryLabelmapReprName, mergedLabelmap)
         self.segmentation.AddSegment(emptySegment)
-        self.segmentEditorNode.SetSelectedSegmentID("Segment_1")
+        segment1Id = self.segmentation.GetSegmentIdBySegment(emptySegment)
+        self.segmentEditorNode.SetSelectedSegmentID(segment1Id)
 
         startExtent = 0
         for size in islandSizes:

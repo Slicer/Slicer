@@ -8,6 +8,8 @@
 #define vtkSegmentationCore_STATIC
 #endif
 
+#cmakedefine vtkSegmentationCore_USE_UUID
+
 #if defined(WIN32) && !defined(vtkSegmentationCore_STATIC)
 #pragma warning ( disable : 4275 )
 

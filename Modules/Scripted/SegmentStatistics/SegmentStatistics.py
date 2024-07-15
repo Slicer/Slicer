@@ -802,7 +802,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
             sphereSource.SetCenter(segmentGeometry[1], segmentGeometry[2], segmentGeometry[3])
             sphereSource.Update()
             uniqueSegmentID = segmentationNode.GetSegmentation().GenerateUniqueSegmentID("Test")
-            segmentationNode.AddSegmentFromClosedSurfaceRepresentation(sphereSource.GetOutput(), uniqueSegmentID)
+            segmentationNode.AddSegmentFromClosedSurfaceRepresentation(sphereSource.GetOutput(), "", None, uniqueSegmentID)
 
         self.delayDisplay("Compute statistics")
 
@@ -859,7 +859,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
             sphereSource.Update()
             segment = vtkSegmentationCore.vtkSegment()
             uniqueSegmentID = segmentationNode.GetSegmentation().GenerateUniqueSegmentID("Test")
-            segmentationNode.AddSegmentFromClosedSurfaceRepresentation(sphereSource.GetOutput(), uniqueSegmentID)
+            segmentationNode.AddSegmentFromClosedSurfaceRepresentation(sphereSource.GetOutput(), "", None, uniqueSegmentID)
 
         # test calculating only measurements for selected segments
         self.delayDisplay("Test calculating only measurements for individual segments")
