@@ -4,6 +4,9 @@ project(vtkSegmentationCore)
 cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
 #-----------------------------------------------------------------------------
 
+option(${PROJECT_NAME}_USE_UUID "Use UUIDs for generating segment IDs. Requires gdcm library." ON)
+mark_as_advanced(${PROJECT_NAME}_USE_UUID)
+
 # --------------------------------------------------------------------------
 # Configure headers
 # --------------------------------------------------------------------------
@@ -97,6 +100,14 @@ set(vtkSegmentationCore_INCLUDE_DIRS
 set(vtkSegmentationCore_LIBS
   ${VTK_LIBRARIES}
   )
+
+if (${PROJECT_NAME}_USE_UUID)
+  # In order to use UUIDs for segment IDs, we need to link against the gdcmMSFF library
+  # for gdcm::UIDGenerator.
+  list(APPEND vtkSegmentationCore_LIBS
+    gdcmMSFF
+    )
+endif()
 
 include_directories( ${vtkSegmentationCore_INCLUDE_DIRS} )
 add_library(${PROJECT_NAME} ${vtkSegmentationCore_SRCS})

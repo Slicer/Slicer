@@ -803,7 +803,7 @@ void vtkMRMLSegmentationNode::SetReferenceImageGeometryParameterFromVolumeNode(v
 //---------------------------------------------------------------------------
 std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(vtkPolyData* polyData,
   std::string segmentName/* ="" */, double color[3] /* =nullptr */,
-  std::string vtkNotUsed(segmentId)/* ="" */)
+  std::string segmentId/* ="" */)
 {
   if (!this->Segmentation)
   {
@@ -820,7 +820,7 @@ std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(v
     newSegment->SetColor(color);
   }
   newSegment->AddRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), polyData);
-  if (!this->Segmentation->AddSegment(newSegment.GetPointer()))
+  if (!this->Segmentation->AddSegment(newSegment.GetPointer(), segmentId))
   {
     return "";
   }
@@ -830,7 +830,7 @@ std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(v
 //---------------------------------------------------------------------------
 std::string vtkMRMLSegmentationNode::AddSegmentFromBinaryLabelmapRepresentation(vtkOrientedImageData* imageData,
   std::string segmentName/* ="" */, double color[3] /* =nullptr */,
-  std::string vtkNotUsed(segmentId)/* ="" */)
+  std::string segmentId/* ="" */)
 {
   if (!this->Segmentation)
   {
@@ -847,7 +847,7 @@ std::string vtkMRMLSegmentationNode::AddSegmentFromBinaryLabelmapRepresentation(
     newSegment->SetColor(color);
   }
   newSegment->AddRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(), imageData);
-  if (!this->Segmentation->AddSegment(newSegment.GetPointer()))
+  if (!this->Segmentation->AddSegment(newSegment.GetPointer(), segmentId))
   {
     return "";
   }

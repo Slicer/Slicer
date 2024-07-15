@@ -168,7 +168,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
         self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3, 0, 0, 0), 5)
 
         # Remove segment from segmentation
-        self.inputSegmentationNode.GetSegmentation().RemoveSegment(self.sphereSegmentName)
+        self.inputSegmentationNode.GetSegmentation().RemoveSegment(sphereSegmentId)
         self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
 
     # ------------------------------------------------------------------------------
@@ -249,7 +249,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
         self.inputSegmentationNode.GetSegmentation().CreateRepresentation(self.binaryLabelmapReprName)
 
         # Copy segment to input segmentation
-        self.inputSegmentationNode.GetSegmentation().CopySegmentFromSegmentation(self.secondSegmentationNode.GetSegmentation(), self.sphereSegmentName)
+        sphereSegmentID = self.secondSegmentationNode.GetSegmentation().GetSegmentIdBySegment(self.sphereSegment)
+        self.inputSegmentationNode.GetSegmentation().CopySegmentFromSegmentation(self.secondSegmentationNode.GetSegmentation(), sphereSegmentID)
         self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 3)
 
         # Check merged labelmap
@@ -594,11 +595,11 @@ class SegmentationsModuleTest1(unittest.TestCase):
         segment.SetColor(0.0, 0.0, 1.0)
         segment.AddRepresentation(self.binaryLabelmapReprName, segmentOrientedImageData)
         segmentationNode.GetSegmentation().AddSegment(segment)
+        brainSegmentID = segmentationNode.GetSegmentation().GetSegmentIdBySegment(segment)
 
         # Check resolution before resampling
         geometryImageData = slicer.vtkOrientedImageData()
-        spacingComparisonDecimal = 3
-        segmentationNode.GetBinaryLabelmapRepresentation("Brain", geometryImageData)
+        segmentationNode.GetBinaryLabelmapRepresentation(brainSegmentID, geometryImageData)
         actualSpacing = geometryImageData.GetSpacing()
         expectedSpacing = [1, 1, 1.3]
         import numpy as np
@@ -616,7 +617,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
         segmentationGeometryLogic.ResampleLabelmapsInSegmentationNode()
 
         # Check resolution after resampling
-        segmentationNode.GetBinaryLabelmapRepresentation("Brain", geometryImageData)
+        segmentationNode.GetBinaryLabelmapRepresentation(brainSegmentID, geometryImageData)
         actualSpacing = geometryImageData.GetSpacing()
         expectedSpacing = [0.5, 0.5, 0.5]
         for i in range(3):
