@@ -42,6 +42,7 @@
 //  - Slicer_BUILD_DICOM_SUPPORT
 //  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //  - Slicer_BUILD_I18N_SUPPORT
+//  - Slicer_BUILD_USAGE_LOGGING_SUPPORT
 //  - Slicer_BUILD_WIN32_CONSOLE
 //  - Slicer_BUNDLE_LOCATION
 //  - Slicer_CLIMODULES_BIN_DIR
@@ -2395,4 +2396,23 @@ bool qSlicerCoreApplication::loadFiles(const QStringList& filePaths, vtkMRMLMess
 void qSlicerCoreApplication::openUrl(const QString& url)
 {
   emit urlReceived(url);
+}
+
+//------------------------------------------------------------------------------
+bool qSlicerCoreApplication::isUsageLoggingSupported() const
+{
+#ifdef Slicer_BUILD_USAGE_LOGGING_SUPPORT
+  return true;
+#else
+  return false;
+#endif
+}
+
+//------------------------------------------------------------------------------
+void qSlicerCoreApplication::logUsageEvent(const QString& component, const QString& event)
+{
+#ifdef Slicer_BUILD_USAGE_LOGGING_SUPPORT
+  Q_D(const qSlicerCoreApplication);
+  emit usageEventLogged(component, event);
+#endif
 }

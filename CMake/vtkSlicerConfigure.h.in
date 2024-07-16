@@ -71,6 +71,7 @@
 #cmakedefine Slicer_BUILD_DICOM_SUPPORT
 #cmakedefine Slicer_BUILD_DIFFUSION_SUPPORT
 #cmakedefine Slicer_BUILD_I18N_SUPPORT
+#cmakedefine Slicer_BUILD_USAGE_LOGGING_SUPPORT
 #cmakedefine Slicer_BUILD_MULTIMEDIA_SUPPORT
 #cmakedefine Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT
 #cmakedefine Slicer_BUILD_WEBENGINE_SUPPORT

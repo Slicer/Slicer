@@ -285,6 +285,9 @@ mark_as_superbuild(Slicer_BUILD_DIFFUSION_SUPPORT)
 option(Slicer_BUILD_I18N_SUPPORT "Build Slicer with Internationalization support" ON)
 mark_as_superbuild(Slicer_BUILD_I18N_SUPPORT)
 
+option(Slicer_BUILD_USAGE_LOGGING_SUPPORT "Build Slicer with support for software usage logging" ON)
+mark_as_superbuild(Slicer_BUILD_USAGE_LOGGING_SUPPORT)
+
 option(Slicer_BUILD_WEBENGINE_SUPPORT "Build Slicer with Qt WebEngine support" ON)
 mark_as_superbuild(Slicer_BUILD_WEBENGINE_SUPPORT)
 
