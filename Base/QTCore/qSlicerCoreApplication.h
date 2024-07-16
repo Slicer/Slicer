@@ -109,6 +109,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(int mainApplicationMajorVersion READ mainApplicationMajorVersion CONSTANT)
   Q_PROPERTY(int mainApplicationMinorVersion READ mainApplicationMinorVersion CONSTANT)
   Q_PROPERTY(int mainApplicationPatchVersion READ mainApplicationPatchVersion CONSTANT)
+  Q_PROPERTY(bool isUsageLoggingSupported READ isUsageLoggingSupported CONSTANT)
 
 public:
 
@@ -573,6 +574,36 @@ public:
   /// Leaves other paths unchanged.
   Q_INVOKABLE QStringList toSlicerHomeRelativePaths(const QStringList& path) const;
 
+  /// This method can be called by Slicer core or extensions to record a software usage event.
+  /// The application does just emits a 'usageEventLogged' signal and it is up to modules to
+  /// use this information, for example to compute software usage statistics.
+  ///
+  /// \param component is 'core' for events logged by Slicer core modules, and the extension name for
+  /// events logged by modules in that extension.
+  /// \param event is the name of the event.
+  /// The event name must be shorter than 50 characters to avoid potential performance degradation.
+  /// The event name must not contain any information about the user or any of the processed data to
+  /// alleviate any privacy concerns when handling software usage data. To make it easier to write
+  /// filtering expressions for processing of usage data, follow these conventions for naming events:
+  /// Use only use lowercase letters, numbers, and underscore and dot characters in event names. Do not use space character.
+  /// Dot character can be used as separator to organized in a hierarchical structure (following conventions
+  /// of logging category names in Qt - see https://doc.qt.io/qt-6/qloggingcategory.html#creating-category-objects).
+  /// For example: 'planning.model_created', 'planning.model_exported', 'segmentation.ct.total', 'segmentation.mr.knee').
+  ///
+  /// For example, an extension can report usage data like this:
+  /// - C++: <code>qSlicerCoreApplication::application()->logUsageEvent("SlicerRT", "dicom.export.sro")</code>
+  /// - Python: <code>slicer.app.logUsageEvent("TotalSegmentator", "segmentation.total")</code>
+  ///
+  /// If the application is built with usage logging disabled then calling this method has no effect.
+  ///
+  /// \sa isUsageLoggingSupported
+  Q_INVOKABLE void logUsageEvent(const QString& component, const QString& event);
+
+  /// Returns true if the application was built with support for usage logging
+  /// (Slicer_BUILD_USAGE_LOGGING_SUPPORT=ON).
+  /// If returns false then calling `logUsageEvent` method has no effect.
+  bool isUsageLoggingSupported() const;
+
 public slots:
 
   /// Restart the application with the arguments passed at startup time
@@ -669,6 +700,8 @@ signals:
   /// \sa requestInvokeEvent(), scheduleInvokeEvent()
   void invokeEventRequested(unsigned int delay, void* caller,
                             unsigned long event, void* callData);
+
+  void usageEventLogged(const QString& component, const QString& event);
 
 protected:
   qSlicerCoreApplication(qSlicerCoreApplicationPrivate* pimpl, int &argc, char **argv);
