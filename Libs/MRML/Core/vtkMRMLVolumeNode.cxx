@@ -1362,11 +1362,11 @@ bool vtkMRMLVolumeNode::IsIJKCoordinateSystemRightHanded(vtkMatrix4x4* ijkToRasM
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness(vtkImageData* imageData, vtkMatrix4x4* ijkToRasMatrix)
+void vtkMRMLVolumeNode::ReverseSliceOrder(vtkImageData* imageData, vtkMatrix4x4* ijkToRasMatrix)
 {
   if (ijkToRasMatrix == nullptr)
   {
-    vtkGenericWarningMacro("vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness failed: ijkToRasMatrix is invalid");
+    vtkGenericWarningMacro("vtkMRMLVolumeNode::ReverseSliceOrder failed: ijkToRasMatrix is invalid");
     return;
   }
   int imageDimensions[3] = { 0, 0, 0 };
@@ -1399,7 +1399,7 @@ void vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness(vtkImageData* imageDat
       else
       {
         // There has been other data arrays, log a warning because we only flip the first one
-        vtkGenericWarningMacro("vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness: Multiple types of point data arrays were found,"
+        vtkGenericWarningMacro("vtkMRMLVolumeNode::ReverseSliceOrder: Multiple types of point data arrays were found,"
           " only the " << vtkDataSetAttributes::GetAttributeTypeAsString(pointDataType) << " array will be flipped");
       }
     }
@@ -1453,6 +1453,6 @@ void vtkMRMLVolumeNode::SetIJKCoordinateSystemToRightHanded()
     // already right-handed
     return;
   }
-  vtkMRMLVolumeNode::FlipIJKCoordinateSystemHandedness(this->GetImageData(), ijkToRAS);
+  vtkMRMLVolumeNode::ReverseSliceOrder(this->GetImageData(), ijkToRAS);
   this->SetIJKToRASMatrix(ijkToRAS);
 }

@@ -483,12 +483,26 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             #
             self.addSeriesInSubjectHierarchy(loadable, volumeNode)
 
+            # File for each slice. Will be reversed if reading a left-handed volume.
+            fileList = loadable.files
+
+            ijkToRAS = vtk.vtkMatrix4x4()
+            volumeNode.GetIJKToRASMatrix(ijkToRAS)
+            if not slicer.vtkMRMLVolumeNode.IsIJKCoordinateSystemRightHanded(ijkToRAS):
+                # This volume is in left-handed coordinate system. Reorder the slices to make it right-handed
+                # to ensure all computational algorithms work well (e.g., avoid turning generated surfaces inside out).
+                logging.info(f"Reverse slice order to force volume '{volumeNode.GetName()}' ({volumeNode.GetID()}) to use right-handed IJK coordinate system")
+                slicer.vtkMRMLVolumeNode.ReverseSliceOrder(volumeNode.GetImageData(), ijkToRAS)
+                volumeNode.SetIJKToRASMatrix(ijkToRAS)
+                # Reorder the file list so that i-th slice corresponds to i-th DICOM.instanceUIDs attribute value
+                fileList = list(reversed(fileList))
+
             #
             # add list of DICOM instance UIDs to the volume node
             # corresponding to the loaded files
             #
             instanceUIDs = ""
-            for file in loadable.files:
+            for file in fileList:
                 uid = slicer.dicomDatabase.fileValue(file, self.tags["instanceUID"])
                 if uid == "":
                     uid = "Unknown"
@@ -499,7 +513,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # Choose a file in the middle of the series as representative frame,
             # because that is more likely to contain the object of interest than the first or last frame.
             # This is important for example for getting a relevant window/center value for the series.
-            file = loadable.files[int(len(loadable.files) / 2)]
+            file = fileList[int(len(fileList) / 2)]
 
             #
             # automatically select the volume to display
