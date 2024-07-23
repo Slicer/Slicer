@@ -52,6 +52,33 @@ public:
   virtual void GetVisibleSegmentsForPosition(double ras[3], vtkMRMLSegmentationDisplayNode* displayNode,
     vtkStringArray* segmentIDs, vtkDoubleArray* segmentValues = nullptr);
 
+  /// Specify that a segment is temporarily displayed with a custom renderer, so that this displayable manager should not display it.
+  /// Only one custom renderer can be added for a specific segment for each segmentation display node.
+  /// \return An integer tag that can be used for removing the custom renderer using RemoveCustomRenderer().
+  ///   If the returned tag value is 0 it means that this segment for this display node has already a custom renderer
+  ///   and no additional custom renderer is registered.
+  int AddCustomSegmentRenderer(const std::string& segmentationDisplayNodeID, const std::string& segmentID);
+
+  /// Remove custom renderer that was added using AddCustomSegmentRenderer()
+  /// \return true if there was a custom renderer with the specified tag.
+  bool RemoveCustomSegmentRenderer(int tag);
+
+  // Check if a custom segment renderer has been registered for a segment by AddCustomSegmentRenderer()
+  // \return The tag that can be used to remove the custom segment renderer. 0 is no custom renderer is set.
+  int GetCustomSegmentRendererTag(const std::string& segmentationDisplayNodeID, const std::string& segmentID);
+
+  // Check if a custom segment renderer has been registered for a segment by AddCustomSegmentRenderer()
+  // \return True if a custom renderer is set.
+  bool HasCustomSegmentRenderer(const std::string& segmentationDisplayNodeID, const std::string& segmentID);
+
+  // @{
+  /// Get information on custom segment renderers. Intended for troubleshooting.
+  int GetNumberOfCustomSegmentsRenderers();
+  int GetCustomSegmentRendererTag(int index);
+  std::string GetCustomSegmentRendererSegmentationDisplayNodeID(int index);
+  std::string GetCustomSegmentRendererSegmentID(int index);
+  // @}
+
 protected:
   void UnobserveMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
