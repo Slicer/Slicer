@@ -53,6 +53,14 @@ How to choose between plugins:
 - If primarily the closed surface representation of the segmentation is used (e.g., 3D visualization, 3D printing) then it may be more appropriate to use the `Closed surface` plugin to compute both the volume and surface of the segment. The values are computed from the closed surface representation of the segmentation that is shown in 3D views.
 - If the scalar volume input is set in the module then the `Scalar volume` plugin computes image intensity statistics for each segment. In this case, using values provided by the `Scalar volume` plugin makes sense. Surface and volume values are computed by the same method as in `Labelmap` plugin, the only difference is that the values are computed for only that part of the segments that overlap with the scalar volume.
 
+### How to get cross-sectional area of a segment along a certain axis?
+
+There are several modules in various extensions to compute cross-sectional areas in segmentations:
+- **in axial slices:** you can use the `Segment Cross-Section Area` module in [Sandbox](https://github.com/PerkLab/SlicerSandbox) extension.
+- **along a line in arbitrary direction:** you can use `SegmentGeometry` module in [SlicerBiomech](https://github.com/jmhuie/SlicerBiomech) extension.
+- **along a curve:** you can segment the region and use `Cross-section analysis` or `Stenosis measurement` modules in [VMTK](https://github.com/vmtk/SlicerExtension-VMTK) extension.
+- **in a single slice (either axial oblique):** you can use a closed curve markup (enable area measurement in `Measurements` section in `Markups` module).
+
 ## Related Modules
 
 - [Segmentations](segmentations.md) module allows changing conversion options, such as decimation and smoothing when converting from labelmap to closed surface representations, which are mainly for visualization, but can have an impact on some statistics such as volume and surface area.  The Segmentations module can also be used for exporting/importing segments to/from other nodes (models, labelmap volumes), and moving or copying segments between segmentation nodes.
