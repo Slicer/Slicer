@@ -25,6 +25,10 @@
 #include <vtkPlane.h>
 #include <vtkPointData.h>
 
+// MRML includes
+#include <vtkMRMLFolderDisplayNode.h>
+#include <vtkMRMLViewNode.h>
+
 // Markups MRML includes
 #include <vtkMRMLMarkupsPlaneDisplayNode.h>
 #include <vtkMRMLMarkupsPlaneNode.h>
@@ -137,9 +141,43 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::SetActiveComponentIndex(in
 //----------------------------------------------------------------------
 bool vtkSlicerMarkupsInteractionWidgetRepresentation::IsDisplayable()
 {
-  if (!this->GetDisplayNode() || !this->GetMarkupsNode())
+  vtkMRMLMarkupsDisplayNode* displayNode = this->GetDisplayNode();
+  if (!displayNode
+    || !this->GetMarkupsNode()
+    || !this->GetViewNode()
+    || !displayNode->GetVisibility()
+    || !displayNode->GetHandlesInteractive()
+    || !displayNode->IsDisplayableInView(this->GetViewNode()->GetID()))
   {
     return false;
+  }
+
+  if (vtkMRMLSliceNode::SafeDownCast(this->GetViewNode()))
+  {
+    if (!displayNode->GetVisibility2D())
+    {
+      return false;
+    }
+  }
+  else if (vtkMRMLViewNode::SafeDownCast(this->GetViewNode()))
+  {
+    if (!displayNode->GetVisibility3D())
+    {
+      return false;
+    }
+  }
+
+  // If parent folder visibility is set to false then the markups is not visible
+  if (displayNode->GetFolderDisplayOverrideAllowed())
+  {
+    vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+    // Visibility is applied regardless the fact whether there is override or not.
+    // Visibility of items defined by hierarchy is off if any of the ancestors is explicitly hidden.
+    // However, this does not apply on display nodes that do not allow overrides (FolderDisplayOverrideAllowed)
+    if (!vtkMRMLFolderDisplayNode::GetHierarchyVisibility(displayableNode))
+    {
+      return false;
+    }
   }
 
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
@@ -148,7 +186,7 @@ bool vtkSlicerMarkupsInteractionWidgetRepresentation::IsDisplayable()
     return false;
   }
 
-  return this->GetDisplayNode()->GetVisibility() && this->GetDisplayNode()->GetHandlesInteractive();
+  return true;
 }
 
 //----------------------------------------------------------------------
@@ -195,8 +233,6 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateInteractionPipeline(
     bool handleVisibility = displayNode->GetHandleVisibility(markupsComponentType);
     for (int i = 0; i < handlePolyData->GetNumberOfPoints(); ++i)
     {
-      //bool handleIndexVisibility = displayNode->GetHandleVisibility(markupsComponentType, i);
-      handleVisibility = true;
       visibilityArray->SetValue(i, handleVisibility);
     }
   }
