@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>442</width>
-    <height>513</height>
+    <width>419</width>
+    <height>507</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,6 +55,9 @@
          <property name="text">
           <string>Browsing</string>
          </property>
+         <property name="collapsedHeight">
+          <number>6</number>
+         </property>
          <layout class="QGridLayout" name="gridLayout">
           <item row="3" column="0" colspan="2">
            <widget class="qMRMLSequenceBrowserSeekWidget" name="sequenceBrowserSeekWidget"/>
@@ -69,6 +72,9 @@
         <widget class="ctkCollapsibleButton" name="SynchronizedBrowsingSection">
          <property name="text">
           <string>Synchronized nodes</string>
+         </property>
+         <property name="collapsedHeight">
+          <number>6</number>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
@@ -217,12 +223,6 @@
          <property name="enabled">
           <bool>true</bool>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>37</height>
-          </size>
-         </property>
          <property name="text">
           <string>Plotting</string>
          </property>
@@ -252,10 +252,16 @@
           <item row="1" column="0">
            <widget class="ctkVTKChartView" name="ChartView_iCharting">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
               <verstretch>1</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>160</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -272,6 +278,9 @@
          </property>
          <property name="collapsed">
           <bool>true</bool>
+         </property>
+         <property name="collapsedHeight">
+          <number>6</number>
          </property>
          <layout class="QFormLayout" name="formLayout_2">
           <property name="fieldGrowthPolicy">
@@ -448,6 +457,7 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLWidget</class>
