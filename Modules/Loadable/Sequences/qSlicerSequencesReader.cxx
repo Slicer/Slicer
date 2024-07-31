@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QTextStream>
 
 // Slicer includes
@@ -101,8 +102,8 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName)con
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 
-  // Confidence for .json file is 0.55 (5 characters in the file extension matched),
-  // for composite file extensions (.mrk.json) it would be 0.59.
+  // Confidence for .nrrd and .nhdr file is 0.55 (5 characters in the file extension matched),
+  // for composite file extensions (.seq.nhdr) it would be 0.59.
   // Therefore, confidence below 0.56 means that we got a generic file extension
   // that we need to inspect further.
   if (confidence > 0 && confidence < 0.56)
@@ -117,11 +118,39 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName)con
       if (file.open(QIODevice::ReadOnly | QIODevice::Text))
       {
         QTextStream in(&file);
-        // Markups json files contain a custom field specifying the index type as
-        // "axis 0 index type:=" or "axis 3 index type:=" around position 500,
-        // read a bit further to account for slight variations in the header.
+        // The dimension and kinds fields are usually found at around position 500, but we
+        // read a bit more just in case there are some extra fields.
         QString line = in.read(800);
-        bool looksLikeSequence = line.contains("axis 0 index type:=") || line.contains("axis 3 index type:=");
+
+        bool looksLikeSequence = false;
+
+        // Supported 4D NRRD files contain "dimension: 4" line.
+        // 2D+t and 3D+color+t files are not yet supported.
+        QRegularExpression dimensionRe("dimension:([^\\n]+)");
+        QRegularExpressionMatch dimensionMatch = dimensionRe.match(line);
+        if (dimensionMatch.hasMatch())
+        {
+          QString dimensionStr = dimensionMatch.captured(1);
+          bool ok = false;
+          int dimension = dimensionStr.toInt(&ok);
+          if (ok && dimension == 4)
+          {
+            // Supported 4D NRRD files "kinds" field contain "time" or "list" axis.
+            // We don't want to load 3D+color images or displacement field volumes.
+            // For example: "kinds: space space space list".
+            QRegularExpression kindsRe("kinds:([^\\n]+)");
+            QRegularExpressionMatch kindsMatch = kindsRe.match(line);
+            if (kindsMatch.hasMatch())
+            {
+              QString kindsStr = kindsMatch.captured(1);
+              if (kindsStr.contains("list") || kindsStr.contains("time"))
+              {
+                looksLikeSequence = true;
+              }
+            }
+          }
+        }
+
         confidence = (looksLikeSequence ? 0.6 : 0.4);
       }
     }

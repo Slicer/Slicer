@@ -417,9 +417,12 @@ protected:
   static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene,
     const char* layoutName);
 
-  ///
-  /// Helper to set Window/Level in any layer
-  void SetWindowLevel(double window, double level, int layer);
+  // @{
+  /// Helper to get/set Window/Level in any layer
+  void SetWindowLevel(int layer, double window, double level);
+  void GetWindowLevelAndRange(int layer, double& window, double& level,
+                                      double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+  // @}
 
   /// Helper to update input of blend filter from a set of layers.
   /// It minimizes changes to the imaging pipeline (does not remove and
