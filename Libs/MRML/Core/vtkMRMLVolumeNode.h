@@ -262,7 +262,7 @@ public:
 
   /// Switch the IJK coordinate system handedness between left-handed and right-handed
   /// by inverting the K axis direction. The physical location of voxels do not change.
-  static void FlipIJKCoordinateSystemHandedness(vtkImageData* imageData, vtkMatrix4x4* ijkToRasMatrix);
+  static void ReverseSliceOrder(vtkImageData* imageData, vtkMatrix4x4* ijkToRasMatrix);
 
 protected:
   vtkMRMLVolumeNode();
