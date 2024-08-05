@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
 # --------------------------------------------------------------------------
 # Options
 # --------------------------------------------------------------------------
-if(Slicer_USE_PYTHONQT AND VTK_WRAP_PYTHON)
+if(VTK_WRAP_PYTHON)
   set(MRMLDisplayableManager_USE_PYTHON ON)
 else()
   set(MRMLDisplayableManager_USE_PYTHON OFF)
@@ -20,6 +20,24 @@ endif()
 # --------------------------------------------------------------------------
 # Dependencies
 # --------------------------------------------------------------------------
+
+#
+# ITK
+#
+set(${PROJECT_NAME}_ITK_COMPONENTS
+  ITKCommon
+  )
+find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+if(ITK_VERSION VERSION_GREATER_EQUAL "5.3")
+  foreach(factory_uc IN ITEMS "IMAGEIO" "MESHIO" "TRANSFORMIO")
+    set(ITK_NO_${factory_uc}_FACTORY_REGISTER_MANAGER 1)
+  endforeach()
+else()
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+endif()
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
+include(${ITK_USE_FILE})
 
 #
 # VTK
@@ -166,6 +184,7 @@ add_library(${lib_name} ${srcs})
 
 set(libs
   ${VTK_LIBRARIES}
+  ${ITK_LIBRARIES}
   MRMLCore
   MRMLLogic
   )
@@ -253,13 +272,17 @@ if(MRMLDisplayableManager_USE_PYTHON)
     endif()
   endif()
 
-  add_subdirectory(Python)
+  if(Slicer_USE_PYTHONQT)
+    add_subdirectory(Python)
+  endif()
+
+  SlicerRegisterMRMLWheelTarget(${lib_name}Python)
 endif()
 
 # --------------------------------------------------------------------------
-# Testing
+# Testing (requires some of the examples, Qt and CTK)
 # --------------------------------------------------------------------------
-if(BUILD_TESTING)
+if(BUILD_TESTING AND Slicer_BUILD_GUI)
   add_subdirectory(Testing)
 endif()
 
