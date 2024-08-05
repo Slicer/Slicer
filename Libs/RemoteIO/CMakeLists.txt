@@ -103,6 +103,8 @@ if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
 endif()
 target_link_libraries(${lib_name} ${libs})
 
+target_precompile_headers(${lib_name} REUSE_FROM PrecompileVtkHeaders)
+
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
