@@ -135,8 +135,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
   int extent[6] = {0,-1,0,-1,0,-1};
   vtkImageData* data = vtkImageData::GetData(outputVector);
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
-  outInfo->Get
-    (vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), extent);
+  outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), extent);
   data->SetOrigin(0, 0, 0);
   data->SetSpacing(1, 1, 1);
   data->SetExtent(extent);
@@ -144,7 +143,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
   vtkNew<vtkFloatArray> tensors;
   tensors->SetName("ArchetypeReader");
 
-    // If there is only one file in the series, just use an image file reader
+  // If there is only one file in the series, just use an image file reader
   try
   {
     if (this->FileNames.size() == 1)

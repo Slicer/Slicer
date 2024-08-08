@@ -119,17 +119,16 @@ vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
     delete [] this->Archetype;
     this->Archetype = nullptr;
   }
- if (RasToIjkMatrix)
- {
-   this->RasToIjkMatrix->Delete();
-   this->RasToIjkMatrix = nullptr;
- }
+  if (RasToIjkMatrix)
+  {
+    this->RasToIjkMatrix->Delete();
+    this->RasToIjkMatrix = nullptr;
+  }
   if (MeasurementFrameMatrix)
   {
-   MeasurementFrameMatrix->Delete();
-   MeasurementFrameMatrix = nullptr;
+    MeasurementFrameMatrix->Delete();
+    MeasurementFrameMatrix = nullptr;
   }
-
 }
 
 //----------------------------------------------------------------------------
@@ -474,7 +473,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       }
       else
 #endif
-      if( !this->GetSingleFile() )
+      if (!this->GetSingleFile())
       { // not dicom
         // check the dimensions of the archetype - if there
         // is more then one slice, use only the archetype
@@ -667,9 +666,9 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       imageIO = imageReader->GetImageIO();
       if (imageIO.GetPointer() == nullptr)
       {
-          vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
-          this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
-          return 0;
+        vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
+        this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+        return 0;
       }
     }
     else
@@ -714,7 +713,6 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       extent[4] = region.GetIndex()[2];
       extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
       imageIO = seriesReader->GetImageIO();
-
     }
   }
   catch (itk::ExceptionObject& e)
@@ -1615,10 +1613,10 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
       || this->IndexArchetype >= this->IndexDiffusionGradientOrientation.size()
       || this->IndexArchetype >= this->IndexImageOrientationPatient.size())
   {
-      vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype "
-        << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
-      this->SetErrorCode(vtkErrorCode::FileFormatError);
-      return 0;
+    vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype "
+      << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
+    this->SetErrorCode(vtkErrorCode::FileFormatError);
+    return 0;
   }
 
 

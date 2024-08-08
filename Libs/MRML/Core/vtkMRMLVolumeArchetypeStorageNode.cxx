@@ -55,32 +55,6 @@ Version:   $Revision: 1.6 $
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLVolumeArchetypeStorageNode);
 
-int ConvertVoxelVectorTypeMRMLToVTKITK(int vtkitk)
-{
-  switch (vtkitk)
-  {
-    case vtkITKImageWriter::VoxelVectorTypeUndefined: return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
-    case vtkITKImageWriter::VoxelVectorTypeSpatial: return vtkMRMLVolumeNode::VoxelVectorTypeSpatial;
-    case vtkITKImageWriter::VoxelVectorTypeColorRGB: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGB;
-    case vtkITKImageWriter::VoxelVectorTypeColorRGBA: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA;
-    default:
-      return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
-  }
-}
-
-int ConvertVoxelVectorTypeVTKITKToMRML(int vtkitk)
-{
-  switch (vtkitk)
-  {
-    case vtkMRMLVolumeNode::VoxelVectorTypeUndefined: return vtkITKImageWriter::VoxelVectorTypeUndefined;
-    case vtkMRMLVolumeNode::VoxelVectorTypeSpatial: return vtkITKImageWriter::VoxelVectorTypeSpatial;
-    case vtkMRMLVolumeNode::VoxelVectorTypeColorRGB: return vtkITKImageWriter::VoxelVectorTypeColorRGB;
-    case vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA: return vtkITKImageWriter::VoxelVectorTypeColorRGBA;
-    default:
-      return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
-  }
-}
-
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
@@ -184,6 +158,34 @@ void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SingleFile:   " << this->SingleFile << "\n";
   os << indent << "UseOrientationFromFile:   " << this->UseOrientationFromFile << "\n";
   os << indent << "ForceRightHandedIJKCoordinateSystem:   " << (this->ForceRightHandedIJKCoordinateSystem ? "true" : "false") << "\n";
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeMRMLToVTKITK(int mrmlType)
+{
+  switch (mrmlType)
+  {
+    case vtkMRMLVolumeNode::VoxelVectorTypeUndefined: return vtkITKImageWriter::VoxelVectorTypeUndefined;
+    case vtkMRMLVolumeNode::VoxelVectorTypeSpatial: return vtkITKImageWriter::VoxelVectorTypeSpatial;
+    case vtkMRMLVolumeNode::VoxelVectorTypeColorRGB: return vtkITKImageWriter::VoxelVectorTypeColorRGB;
+    case vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA: return vtkITKImageWriter::VoxelVectorTypeColorRGBA;
+    default:
+      return vtkITKImageWriter::VoxelVectorTypeUndefined;
+  }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(int vtkitkType)
+{
+  switch (vtkitkType)
+  {
+    case vtkITKImageWriter::VoxelVectorTypeUndefined: return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
+    case vtkITKImageWriter::VoxelVectorTypeSpatial: return vtkMRMLVolumeNode::VoxelVectorTypeSpatial;
+    case vtkITKImageWriter::VoxelVectorTypeColorRGB: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGB;
+    case vtkITKImageWriter::VoxelVectorTypeColorRGBA: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA;
+    default:
+      return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -508,7 +510,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   outputImage->ShallowCopy(ici->GetOutput());
   volNode->SetAndObserveImageData(outputImage.GetPointer());
 
-  int voxelVectorType = ConvertVoxelVectorTypeVTKITKToMRML(reader->GetVoxelVectorType());
+  int voxelVectorType = this->ConvertVoxelVectorTypeVTKITKToMRML(reader->GetVoxelVectorType());
   volNode->SetVoxelVectorType(voxelVectorType);
 
   // If voxel values store spatial vectors then we need to convert from LPS to RAS
@@ -693,7 +695,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
     // Pass on voxel type to the writer
     int voxelVectorType = volNode->GetVoxelVectorType();
-    writer->SetVoxelVectorType(ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
+    writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
     // If voxel values store spatial vectors then we need to convert from LPS to RAS
     bool writeVoxelValuesAsLps = (
       voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial
@@ -902,7 +904,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
 
   // Pass on voxel type to the writer
   int voxelVectorType = volNode->GetVoxelVectorType();
-  writer->SetVoxelVectorType(ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
+  writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
   // If voxel values store spatial vectors then we need to convert from LPS to RAS
   bool writeVoxelValuesAsLps = (
     voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial
