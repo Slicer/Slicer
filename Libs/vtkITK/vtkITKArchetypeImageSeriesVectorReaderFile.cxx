@@ -90,15 +90,15 @@ void vtkITKExecuteDataFromFileVector(
 // are assumed to be the same as the file extent/order.
 void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {
-    if (!this->Superclass::Archetype)
-    {
-        vtkErrorMacro("An Archetype must be specified.");
-        this->SetErrorCode(vtkErrorCode::NoFileNameError);
-        return;
-    }
-    vtkImageData *data = this->AllocateOutputData(output, outInfo);
+  if (!this->Superclass::Archetype)
+  {
+    vtkErrorMacro("An Archetype must be specified.");
+    this->SetErrorCode(vtkErrorCode::NoFileNameError);
+    return;
+  }
+  vtkImageData *data = this->AllocateOutputData(output, outInfo);
 
-    // If there is only one file in the series, just use an image file reader
+  // If there is only one file in the series, just use an image file reader
   if (this->FileNames.size() == 1)
   {
     vtkDebugMacro("ImageSeriesVectorReaderFile: only one file: " << this->FileNames[0].c_str());
@@ -117,8 +117,8 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkD
       vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, vtkITKExecuteDataFromFileVector<VTK_TT>(this, data));
       vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, vtkITKExecuteDataFromFileVector<VTK_TT>(this, data));
     default:
-        vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType);
-        this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+      vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType);
+      this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
     }
 
     this->SetMetaDataScalarRangeToPointDataInfo(data);
@@ -131,7 +131,7 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkD
   }
 }
 
-
+//----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesVectorReaderFile::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
   itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject *>(obj));
