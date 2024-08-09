@@ -103,7 +103,7 @@ public:
   vtkSetMacro(FileNameSliceCount,int);
   vtkGetMacro(FileNameSliceCount,int);
 
-  ///  is the given file name a NRRD file?
+  /// Determine if the file can be read using ITK
   virtual int CanReadFile(const char* filename);
 
   ///
