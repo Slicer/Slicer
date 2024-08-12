@@ -182,7 +182,6 @@ int main( int argc, char * argv[] )
 
     writer->SetInput( paster->GetOutput() );
     writer->SetFileName( outputVolume.c_str() );
-    writer->SetUseCompression(true);
     writer->Update();
 
   }

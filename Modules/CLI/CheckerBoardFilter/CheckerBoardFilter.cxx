@@ -77,7 +77,6 @@ int DoIt( int argc, char * argv[], T )
   filter->SetInput2( resample->GetOutput() );
 
   writer->SetInput( filter->GetOutput() );
-  writer->SetUseCompression(1);
   writer->Update();
 
   return EXIT_SUCCESS;

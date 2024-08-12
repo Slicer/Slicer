@@ -115,7 +115,6 @@ int DoIt( int argc, char * argv[] )
                                        CLPProcessInformation);
   writer->SetFileName( OutputVolume.c_str() );
   writer->SetInput( lastFilter->GetOutput() );
-  writer->SetUseCompression(1);
   writer->Update();
 
   return EXIT_SUCCESS;
