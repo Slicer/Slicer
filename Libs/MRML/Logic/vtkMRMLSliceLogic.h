@@ -117,12 +117,12 @@ public:
   /// Helper to get the background layer Window/Level, intensity range and
   /// status of automatic Window/Level setting
   void GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                      double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+                                        double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
 
   ///
   /// Helper to get the background layer Window/Level and intensity range
   void GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                      double& rangeLow, double& rangeHigh);
+                                        double& rangeLow, double& rangeHigh);
 
   ///
   /// Helper to set the foreground layer Window/Level
@@ -132,12 +132,12 @@ public:
   /// Helper to get the foreground layer Window/Level, intensity range and
   /// status of automatic Window/Level setting
   void GetForegroundWindowLevelAndRange(double& window, double& level,
-                                      double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+                                        double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
 
   ///
   /// Helper to get the foreground layer Window/Level and intensity range
   void GetForegroundWindowLevelAndRange(double& window, double& level,
-                                      double& rangeLow, double& rangeHigh);
+                                        double& rangeLow, double& rangeHigh);
   ///
   /// Model slice plane
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
@@ -180,7 +180,7 @@ public:
 
   /// Reimplemented to avoid calling ProcessMRMLSceneEvents when we are adding the
   /// MRMLModelNode into the scene
-  virtual bool EnterMRMLCallback()const;
+  virtual bool EnterMRMLCallback() const;
 
   ///
   /// Manage and synchronize the SliceNode
@@ -222,8 +222,12 @@ public:
   void GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6], bool useVoxelCenter=false);
 
   ///
-  /// adjust the node's field of view to match the extent of current background volume
+  /// adjust the node's field of view to match the extent of the volume
   void FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int width, int height);
+
+  ///
+  /// adjust the node's field of view to match the extent of the volume
+  void FitSliceToVolumes(vtkCollection *volumeNodes, int width, int height);
 
   ///
   /// Get the size of the volume, transformed to RAS space
@@ -253,11 +257,10 @@ public:
 
   ///
   /// adjust the node's field of view to match the extent of current background volume
-  void FitSliceToBackground(int width, int height);
+  void FitSliceToBackground(int width = -1, int height = -1);
 
   ///
   /// adjust the node's field of view to match the extent of all volume layers
-  ///  (fits to first non-null layer)
   void FitSliceToAll(int width = -1, int height = -1);
 
   /// adjust the node's field of view to match the FOV
@@ -397,8 +400,8 @@ protected:
   ///
   /// process logic events
   void ProcessMRMLLogicsEvents(vtkObject * caller,
-                                       unsigned long event,
-                                       void * callData) override;
+                               unsigned long event,
+                               void * callData) override;
   void ProcessMRMLLogicsEvents();
 
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
@@ -425,7 +428,7 @@ protected:
   /// It minimizes changes to the imaging pipeline (does not remove and
   /// re-add an input if it is not changed) because rebuilding of the pipeline
   /// is a relatively expensive operation.
-  bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers);
+  bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers, bool clipToBackgroundVolume);
 
   /// Helper to update foreground opacity when adding/subtracting the background layer
   bool UpdateFractions(vtkImageMathematics* fraction, double opacity);
@@ -445,22 +448,22 @@ protected:
     return true;
   };
 
-  bool                        AddingSliceModelNodes;
+  bool                          AddingSliceModelNodes;
 
-  vtkMRMLSliceNode *          SliceNode;
-  vtkMRMLSliceCompositeNode * SliceCompositeNode;
-  vtkMRMLSliceLayerLogic *    BackgroundLayer;
-  vtkMRMLSliceLayerLogic *    ForegroundLayer;
-  vtkMRMLSliceLayerLogic *    LabelLayer;
+  vtkMRMLSliceNode*             SliceNode;
+  vtkMRMLSliceCompositeNode*    SliceCompositeNode;
+  vtkMRMLSliceLayerLogic*       BackgroundLayer;
+  vtkMRMLSliceLayerLogic*       ForegroundLayer;
+  vtkMRMLSliceLayerLogic*       LabelLayer;
 
-  BlendPipeline* Pipeline;
-  BlendPipeline* PipelineUVW;
-  vtkImageReslice * ExtractModelTexture;
-  vtkAlgorithmOutput *    ImageDataConnection;
+  BlendPipeline*                Pipeline;
+  BlendPipeline*                PipelineUVW;
+  vtkImageReslice*              ExtractModelTexture;
+  vtkAlgorithmOutput*           ImageDataConnection;
 
-  vtkMRMLModelNode *            SliceModelNode;
-  vtkMRMLModelDisplayNode *     SliceModelDisplayNode;
-  vtkMRMLLinearTransformNode *  SliceModelTransformNode;
+  vtkMRMLModelNode*             SliceModelNode;
+  vtkMRMLModelDisplayNode*      SliceModelDisplayNode;
+  vtkMRMLLinearTransformNode*   SliceModelTransformNode;
   double                        SliceSpacing[3];
 
 private:

@@ -242,6 +242,7 @@ public slots:
   void setCompositingToReverseAlphaBlend();
   void setCompositingToAdd();
   void setCompositingToSubtract();
+  void setClipToBackground(bool enabled);
   /// Slice spacing
   void setSliceSpacingMode(bool automatic);
   void setSliceSpacing(double spacing);
