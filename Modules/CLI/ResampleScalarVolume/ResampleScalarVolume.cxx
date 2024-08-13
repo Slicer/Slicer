@@ -222,7 +222,6 @@ int DoIt( int argc, char * argv[], T )
   typename FileWriterType::Pointer seriesWriter = FileWriterType::New();
   seriesWriter->SetInput( resampler->GetOutput() );
   seriesWriter->SetFileName( OutputVolume.c_str() );
-  seriesWriter->SetUseCompression(1);
   try
   {
     seriesWriter->Update();

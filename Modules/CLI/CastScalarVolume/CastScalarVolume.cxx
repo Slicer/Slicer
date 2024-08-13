@@ -60,7 +60,6 @@ int DoIt( int argc, char * argv[], Tin, Tout )
                                        CLPProcessInformation);
   writer->SetFileName( OutputVolume.c_str() );
   writer->SetInput( filter->GetOutput() );
-  writer->SetUseCompression(1);
   writer->Update();
   return EXIT_SUCCESS;
 }

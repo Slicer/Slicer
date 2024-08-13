@@ -114,7 +114,6 @@ DiffusionTensor3DWrite<TData>
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetInput( m_Input );
   writer->SetFileName( output );
-  writer->UseCompressionOn();
   writer->SetNumberOfWorkUnits(m_NumberOfThreads);
   try
   {

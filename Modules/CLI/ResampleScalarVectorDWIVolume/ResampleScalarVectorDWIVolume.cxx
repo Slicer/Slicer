@@ -1296,7 +1296,6 @@ int Rotate( parameters & list )
     typename WriterType::Pointer writer = WriterType::New();
     writer->SetInput( outputImage );
     writer->SetFileName( list.outputVolume.c_str() );
-    writer->UseCompressionOn();
     writer->Update();
   }
   catch( itk::ExceptionObject &exception )

@@ -52,7 +52,6 @@ int SaveIt(ImageType::Pointer img, const char* fname)
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( img );
   writer->SetFileName( fname );
-  writer->SetUseCompression(true);
   writer->Update();
 
   return EXIT_SUCCESS;
