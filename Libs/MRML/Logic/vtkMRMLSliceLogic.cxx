@@ -34,6 +34,7 @@
 #include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
+#include <vtkCollectionIterator.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageBlend.h>
@@ -104,9 +105,12 @@ struct BlendPipeline
     //   background > AddSubBackroundCast  /
     //
     //
-    //     ... AddSubOutputCast > AddSubExtractRGB \
-    //                                              > AddSubAppendRGBA > Blend
-    //             background > AddSubExtractAlpha /
+    //     ... AddSubOutputCast > AddSubExtractRGB       \
+    //
+    //         background > AddSubExtractBackgroundAlpha - > AddSubAppendRGBA > Blend
+    //
+    //         foreground > AddSubExtractForegroundAlpha /
+    //
     */
 
     this->AddSubForegroundCast->SetOutputScalarTypeToShort();
@@ -118,18 +122,23 @@ struct BlendPipeline
     this->AddSubMath->SetInputConnection(0, this->AddSubBackgroundCast->GetOutputPort());
     this->AddSubMath->SetInputConnection(1, this->ForegroundFractionMath->GetOutputPort());
     this->AddSubOutputCast->SetInputConnection(this->AddSubMath->GetOutputPort());
+    this->AddSubOutputCast->SetOutputScalarTypeToUnsignedChar();
+    this->AddSubOutputCast->ClampOverflowOn();
 
     this->AddSubExtractRGB->SetInputConnection(this->AddSubOutputCast->GetOutputPort());
     this->AddSubExtractRGB->SetComponents(0, 1, 2);
-    this->AddSubExtractAlpha->SetComponents(3);
-    this->AddSubAppendRGBA->AddInputConnection(this->AddSubExtractRGB->GetOutputPort());
-    this->AddSubAppendRGBA->AddInputConnection(this->AddSubExtractAlpha->GetOutputPort());
+    this->AddSubExtractBackgroundAlpha->SetComponents(3);
+    this->AddSubExtractForegroundAlpha->SetComponents(3);
 
-    this->AddSubOutputCast->SetOutputScalarTypeToUnsignedChar();
-    this->AddSubOutputCast->ClampOverflowOn();
+    this->BlendAlpha->AddInputConnection(this->AddSubExtractBackgroundAlpha->GetOutputPort());
+    this->BlendAlpha->AddInputConnection(this->AddSubExtractForegroundAlpha->GetOutputPort());
+
+    this->AddSubAppendRGBA->AddInputConnection(this->AddSubExtractRGB->GetOutputPort());
+    this->AddSubAppendRGBA->AddInputConnection(this->BlendAlpha->GetOutputPort());
   }
 
-  void AddLayers(std::deque<SliceLayerInfo>& layers, int sliceCompositing,
+  void AddLayers(std::deque<SliceLayerInfo>& layers,
+    int sliceCompositing, bool clipToBackgroundVolume,
     vtkAlgorithmOutput* backgroundImagePort,
     vtkAlgorithmOutput* foregroundImagePort, double foregroundOpacity,
     vtkAlgorithmOutput* labelImagePort, double labelOpacity)
@@ -169,7 +178,8 @@ struct BlendPipeline
     {
       this->AddSubForegroundCast->SetInputConnection(foregroundImagePort);
       this->AddSubBackgroundCast->SetInputConnection(backgroundImagePort);
-      this->AddSubExtractAlpha->SetInputConnection(backgroundImagePort);
+      this->AddSubExtractForegroundAlpha->SetInputConnection(foregroundImagePort);
+      this->AddSubExtractBackgroundAlpha->SetInputConnection(backgroundImagePort);
       if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
       {
         this->AddSubMath->SetOperationToAdd();
@@ -178,6 +188,19 @@ struct BlendPipeline
       {
         this->AddSubMath->SetOperationToSubtract();
       }
+      // If clip to background is disabled, blending occurs over the entire extent
+      // of all layers, not just within the background volume region.
+      if (!clipToBackgroundVolume)
+      {
+        this->BlendAlpha->SetOpacity(0, 0.5);
+        this->BlendAlpha->SetOpacity(1, 0.5);
+      }
+      else
+      {
+        this->BlendAlpha->SetOpacity(0, 1.);
+        this->BlendAlpha->SetOpacity(1, 0.);
+      }
+
       layers.emplace_back(this->AddSubAppendRGBA->GetOutputPort(), 1.0);
     }
 
@@ -193,7 +216,9 @@ struct BlendPipeline
   vtkNew<vtkImageMathematics> AddSubMath;
   vtkNew<vtkImageMathematics> ForegroundFractionMath;
   vtkNew<vtkImageExtractComponents> AddSubExtractRGB;
-  vtkNew<vtkImageExtractComponents> AddSubExtractAlpha;
+  vtkNew<vtkImageExtractComponents> AddSubExtractBackgroundAlpha;
+  vtkNew<vtkImageExtractComponents> AddSubExtractForegroundAlpha;
+  vtkNew<vtkImageBlend> BlendAlpha;
   vtkNew<vtkImageAppendComponents> AddSubAppendRGBA;
   vtkNew<vtkImageCast> AddSubOutputCast;
   vtkNew<vtkImageBlend> Blend;
@@ -917,7 +942,7 @@ void vtkMRMLSliceLogic::UpdateImageData ()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers)
+bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers, bool clipToBackgroundVolume)
 {
   const int blendPort = 0;
   vtkMTimeType oldBlendMTime = blend->GetMTime();
@@ -957,6 +982,17 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque
     {
       blend->SetOpacity(layerIndex, layerIt->Opacity);
     }
+  }
+
+  // Update blend mode: if clip to background is disabled, blending occurs over the entire extent
+  // of all layers, not just within the background volume region.
+  if (clipToBackgroundVolume)
+  {
+    blend->BlendAlphaOff();
+  }
+  else
+  {
+    blend->BlendAlphaOn();
   }
 
   bool modified = (blend->GetMTime() > oldBlendMTime);
@@ -1098,10 +1134,10 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     std::deque<SliceLayerInfo> layers;
     std::deque<SliceLayerInfo> layersUVW;
 
-    this->Pipeline->AddLayers(layers, this->SliceCompositeNode->GetCompositing(),
+    this->Pipeline->AddLayers(layers, this->SliceCompositeNode->GetCompositing(), this->SliceCompositeNode->GetClipToBackgroundVolume(),
       backgroundImagePort, foregroundImagePort, this->SliceCompositeNode->GetForegroundOpacity(),
       labelImagePort, this->SliceCompositeNode->GetLabelOpacity());
-    this->PipelineUVW->AddLayers(layersUVW, this->SliceCompositeNode->GetCompositing(),
+    this->PipelineUVW->AddLayers(layersUVW, this->SliceCompositeNode->GetCompositing(), this->SliceCompositeNode->GetClipToBackgroundVolume(),
       backgroundImagePortUVW, foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity(),
       labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity());
 
@@ -1115,11 +1151,11 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       modified = 1;
     }
 
-    if (this->UpdateBlendLayers(this->Pipeline->Blend.GetPointer(), layers))
+    if (this->UpdateBlendLayers(this->Pipeline->Blend.GetPointer(), layers, this->SliceCompositeNode->GetClipToBackgroundVolume()))
     {
       modified = 1;
     }
-    if (this->UpdateBlendLayers(this->PipelineUVW->Blend.GetPointer(), layersUVW))
+    if (this->UpdateBlendLayers(this->PipelineUVW->Blend.GetPointer(), layersUVW, this->SliceCompositeNode->GetClipToBackgroundVolume()))
     {
       modified = 1;
     }
@@ -1480,17 +1516,17 @@ void vtkMRMLSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double ra
 
 //----------------------------------------------------------------------------
 // Get the size of the volume, transformed to RAS space
-void vtkMRMLSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode, double sliceDimensions[3], double sliceCenter[3])
+void vtkMRMLSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode,
+  double sliceDimensions[3], double sliceCenter[3])
 {
   sliceCenter[0] = sliceDimensions[0] = 0.0;
   sliceCenter[1] = sliceDimensions[1] = 0.0;
   sliceCenter[2] = sliceDimensions[2] = 0.0;
 
   double sliceBounds[6];
-
   this->GetVolumeSliceBounds(volumeNode, sliceBounds);
 
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
     sliceDimensions[i] = sliceBounds[2*i+1] - sliceBounds[2*i];
     sliceCenter[i] = 0.5*(sliceBounds[2*i+1] + sliceBounds[2*i]);
@@ -1614,7 +1650,7 @@ double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
 void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int width, int height)
 {
   vtkImageData *volumeImage;
-  if ( !volumeNode || ! (volumeImage = volumeNode->GetImageData()) )
+  if (!volumeNode || !(volumeImage = volumeNode->GetImageData()))
   {
     return;
   }
@@ -1625,9 +1661,9 @@ void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int widt
   }
 
   double rasDimensions[3], rasCenter[3];
-  this->GetVolumeRASBox (volumeNode, rasDimensions, rasCenter);
+  this->GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
   double sliceDimensions[3], sliceCenter[3];
-  this->GetVolumeSliceDimensions (volumeNode, sliceDimensions, sliceCenter);
+  this->GetVolumeSliceDimensions(volumeNode, sliceDimensions, sliceCenter);
 
   double fitX, fitY, fitZ, displayX, displayY;
   displayX = fitX = fabs(sliceDimensions[0]);
@@ -1637,7 +1673,7 @@ void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int widt
 
   // fit fov to min dimension of window
   double pixelSize;
-  if ( height > width )
+  if (height > width)
   {
     pixelSize = fitX / (1.0 * width);
     fitY = pixelSize * height;
@@ -1649,14 +1685,14 @@ void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int widt
   }
 
   // if volume is still too big, shrink some more
-  if ( displayX > fitX )
+  if (displayX > fitX)
   {
-    fitY = fitY / ( fitX / (displayX * 1.0) );
+    fitY = fitY / (fitX / (displayX * 1.0));
     fitX = displayX;
   }
-  if ( displayY > fitY )
+  if (displayY > fitY)
   {
-    fitX = fitX / ( fitY / (displayY * 1.0) );
+    fitX = fitX / (fitY / (displayY * 1.0));
     fitY = displayY;
   }
 
@@ -1680,12 +1716,128 @@ void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int widt
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::FitSliceToVolumes(vtkCollection *volumeNodes, int width, int height)
+{
+  if (!this->SliceNode)
+  {
+    return;
+  }
+
+  if (volumeNodes->GetNumberOfItems() == 0)
+  {
+    return;
+  }
+
+  double rasCenter[3] = {0., 0., 0.};
+  double sliceBounds[6] = {0., 0., 0., 0., 0., 0.};
+  double sliceDimensions[3] = {0., 0., 0.};
+  double sliceSpacingZ = 0.;
+  int volumeCount = 0;
+
+  vtkSmartPointer<vtkCollectionIterator> iterator = vtkSmartPointer<vtkCollectionIterator>::New();
+  iterator->SetCollection(volumeNodes);
+
+  bool firstVolumeFound = false;
+  for (iterator->InitTraversal(); !iterator->IsDoneWithTraversal(); iterator->GoToNextItem())
+  {
+    vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(iterator->GetCurrentObject());
+    if (!volumeNode || !volumeNode->GetImageData())
+    {
+      continue;
+    }
+
+    double volumeRasDimensions[3], volumeRasCenter[3];
+    this->GetVolumeRASBox(volumeNode, volumeRasDimensions, volumeRasCenter);
+    double volumeSliceBounds[6];
+    this->GetVolumeSliceBounds(volumeNode, volumeSliceBounds);
+
+    // Accumulate the center coordinates
+    vtkMath::Add(rasCenter, volumeRasCenter, rasCenter);
+    volumeCount++;
+
+    // Track the slice dimensions
+    for (int i = 0; i < 3; i++)
+    {
+      sliceBounds[2*i] = std::min(sliceBounds[2*i], volumeSliceBounds[2*i]);
+      sliceBounds[2*i+1] = std::max(sliceBounds[2*i+1], volumeSliceBounds[2*i+1]);
+    }
+
+    // Set sliceSpacingZ for the first volume found
+    if (!firstVolumeFound)
+    {
+      sliceSpacingZ = this->GetVolumeSliceSpacing(volumeNode)[2];
+      firstVolumeFound = true;
+    }
+  }
+
+  // Calculate the barycenter of the centers
+  if (volumeCount > 0)
+  {
+    vtkMath::MultiplyScalar(rasCenter, 1.0 / volumeCount);
+  }
+
+  // Calculate the slice dimensions for all volumes
+  for (int i = 0; i < 3; i++)
+  {
+    sliceDimensions[i] = (sliceBounds[2*i+1] - sliceBounds[2*i]) * 1.05; // 5% margin
+  }
+
+  double fitX, fitY, fitZ, displayX, displayY;
+  displayX = fitX = fabs(sliceDimensions[0]);
+  displayY = fitY = fabs(sliceDimensions[1]);
+  fitZ = sliceSpacingZ * this->SliceNode->GetDimensions()[2];
+
+  // fit fov to min dimension of window
+  double pixelSize;
+  if (height > width)
+  {
+    pixelSize = fitX / (1.0 * width);
+    fitY = pixelSize * height;
+  }
+  else
+  {
+    pixelSize = fitY / (1.0 * height);
+    fitX = pixelSize * width;
+  }
+
+  // if volume is still too big, shrink some more
+  if (displayX > fitX)
+  {
+    fitY = fitY / (fitX / (displayX * 1.0));
+    fitX = displayX;
+  }
+  if (displayY > fitY)
+  {
+    fitX = fitX / (fitY / (displayY * 1.0));
+    fitY = displayY;
+  }
+
+  this->SliceNode->SetFieldOfView(fitX, fitY, fitZ);
+
+  //
+  // set the origin to be the center of the volume in RAS
+  //
+  vtkNew<vtkMatrix4x4> sliceToRAS;
+  sliceToRAS->DeepCopy(this->SliceNode->GetSliceToRAS());
+  sliceToRAS->SetElement(0, 3, rasCenter[0]);
+  sliceToRAS->SetElement(1, 3, rasCenter[1]);
+  sliceToRAS->SetElement(2, 3, rasCenter[2]);
+  this->SliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS.GetPointer());
+  this->SliceNode->SetSliceOrigin(0,0,0);
+  //sliceNode->SetSliceOffset(offset);
+
+  //TODO Fit UVW space
+  this->SnapSliceOffsetToIJK();
+  this->SliceNode->UpdateMatrices();
+}
+
+//----------------------------------------------------------------------------
 // Get the size of the volume, transformed to RAS space
 void vtkMRMLSliceLogic::GetBackgroundRASBox(double rasDimensions[3], double rasCenter[3])
 {
   vtkMRMLVolumeNode *backgroundNode = nullptr;
-  backgroundNode = this->GetLayerVolumeNode (0);
-  this->GetVolumeRASBox( backgroundNode, rasDimensions, rasCenter );
+  backgroundNode = this->GetLayerVolumeNode(0);
+  this->GetVolumeRASBox(backgroundNode, rasDimensions, rasCenter);
 }
 
 //----------------------------------------------------------------------------
@@ -1693,8 +1845,8 @@ void vtkMRMLSliceLogic::GetBackgroundRASBox(double rasDimensions[3], double rasC
 void vtkMRMLSliceLogic::GetBackgroundSliceDimensions(double sliceDimensions[3], double sliceCenter[3])
 {
   vtkMRMLVolumeNode *backgroundNode = nullptr;
-  backgroundNode = this->GetLayerVolumeNode (0);
-  this->GetVolumeSliceDimensions( backgroundNode, sliceDimensions, sliceCenter );
+  backgroundNode = this->GetLayerVolumeNode(0);
+  this->GetVolumeSliceDimensions(backgroundNode, sliceDimensions, sliceCenter);
 }
 
 //----------------------------------------------------------------------------
@@ -1702,15 +1854,15 @@ void vtkMRMLSliceLogic::GetBackgroundSliceDimensions(double sliceDimensions[3], 
 double *vtkMRMLSliceLogic::GetBackgroundSliceSpacing()
 {
   vtkMRMLVolumeNode *backgroundNode = nullptr;
-  backgroundNode = this->GetLayerVolumeNode (0);
-  return (this->GetVolumeSliceSpacing( backgroundNode ));
+  backgroundNode = this->GetLayerVolumeNode(0);
+  return (this->GetVolumeSliceSpacing(backgroundNode));
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::GetBackgroundSliceBounds(double sliceBounds[6])
 {
   vtkMRMLVolumeNode *backgroundNode = nullptr;
-  backgroundNode = this->GetLayerVolumeNode (0);
+  backgroundNode = this->GetLayerVolumeNode(0);
   this->GetVolumeSliceBounds(backgroundNode, sliceBounds);
 }
 
@@ -1718,9 +1870,24 @@ void vtkMRMLSliceLogic::GetBackgroundSliceBounds(double sliceBounds[6])
 // adjust the node's field of view to match the extent of current background volume
 void vtkMRMLSliceLogic::FitSliceToBackground(int width, int height)
 {
+  // Use SliceNode dimensions if width and height parameters are omitted
+  if (width < 0 || height < 0)
+  {
+    int* dimensions = this->SliceNode->GetDimensions();
+    width = dimensions ? dimensions[0] : -1;
+    height = dimensions ? dimensions[1] : -1;
+  }
+
+  if (width < 0 || height < 0)
+  {
+    vtkErrorMacro(<< __FUNCTION__ << "- Invalid size:" << width
+                  << "x" << height);
+    return;
+  }
+
   vtkMRMLVolumeNode *backgroundNode = nullptr;
-  backgroundNode = this->GetLayerVolumeNode (0);
-  this->FitSliceToVolume( backgroundNode, width, height );
+  backgroundNode = this->GetLayerVolumeNode(0);
+  this->FitSliceToVolume(backgroundNode, width, height);
 }
 
 //----------------------------------------------------------------------------
@@ -1742,16 +1909,17 @@ void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
     return;
   }
 
-  vtkMRMLVolumeNode *volumeNode;
-  for ( int layer=0; layer < 3; layer++ )
+  vtkNew<vtkCollection> volumeNodes;
+  for (int layer = 0; layer < 3; layer++)
   {
-    volumeNode = this->GetLayerVolumeNode (layer);
+    vtkMRMLVolumeNode *volumeNode = this->GetLayerVolumeNode(layer);
     if (volumeNode)
     {
-      this->FitSliceToVolume( volumeNode, width, height );
-      return;
+      volumeNodes->AddItem(volumeNode);
     }
   }
+
+  this->FitSliceToVolumes(volumeNodes, width, height);
 }
 
 //----------------------------------------------------------------------------

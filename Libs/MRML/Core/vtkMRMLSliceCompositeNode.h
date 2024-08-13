@@ -74,6 +74,12 @@ public:
   vtkSetMacro (Compositing, int);
 
   ///
+  /// Configures the behavior for blending layers.
+  /// The default value is true, indicating that the layers will be clipped to fit the background.
+  vtkGetMacro (ClipToBackgroundVolume, bool);
+  vtkSetMacro (ClipToBackgroundVolume, bool);
+
+  ///
   /// opacity of the Foreground for rendering over background
   /// TODO: make this an arbitrary list of layers
   /// TODO: make different composite types (checkerboard, etc)
@@ -211,6 +217,8 @@ protected:
   double ForegroundOpacity{ 0.0 };
 
   int Compositing{ Alpha };
+
+  bool ClipToBackgroundVolume{ true };
 
   // Show the label if there is one
   double LabelOpacity{ 1.0 };

@@ -6,15 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
-    <height>138</height>
+    <width>407</width>
+    <height>175</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Slice Controller</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -246,16 +255,16 @@
        <height>0</height>
       </size>
      </property>
-     <property name="editEnabled" stdset="0">
+     <property name="editEnabled">
       <bool>true</bool>
      </property>
-     <property name="multiSelection" stdset="0">
+     <property name="multiSelection">
       <bool>true</bool>
      </property>
-     <property name="horizontalLayout" stdset="0">
-      <bool>true</bool>
+     <property name="horizontalLayout">
+      <bool>false</bool>
      </property>
-     <property name="selectNodeUponCreation" stdset="0">
+     <property name="selectNodeUponCreation">
       <bool>true</bool>
      </property>
     </widget>
@@ -424,7 +433,16 @@
         <property name="spacing">
          <number>0</number>
         </property>
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -631,12 +649,12 @@
           <property name="toolTip">
            <string>Enable Thick Slab Reconstruction (TSR). TSR is used to merge contiguous slices within a certain range.</string>
           </property>
-          <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
-          </property>
           <property name="icon">
            <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/SlabReconstruction.png</normaloff>:/Icons/SlabReconstruction.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -1276,6 +1294,17 @@
     <string>Toggle segmentation visibility</string>
    </property>
   </action>
+  <action name="actionClipToBackground">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Clip to background</string>
+   </property>
+   <property name="toolTip">
+    <string>Control if the layers blending would clip the rendering to the background volume</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1794,6 +1823,16 @@
    <signal>toggled(bool)</signal>
    <receiver>EnableSlabReconstructionButton</receiver>
    <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
  </connections>
 </ui>

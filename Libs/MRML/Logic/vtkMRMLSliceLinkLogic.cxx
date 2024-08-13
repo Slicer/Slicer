@@ -506,20 +506,24 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
         }
       }
 
-        // Setting the slice spacing
-        if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
-          & vtkMRMLSliceNode::SliceSpacingFlag)
-        {
-          sNode->SetSliceSpacingMode( sliceNode->GetSliceSpacingMode() );
-          sNode->SetPrescribedSliceSpacing( sliceNode->GetPrescribedSliceSpacing() );
-        }
+      // Setting the slice spacing
+      if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+        & vtkMRMLSliceNode::SliceSpacingFlag)
+      {
+        sNode->SetSliceSpacingMode( sliceNode->GetSliceSpacingMode() );
+        sNode->SetPrescribedSliceSpacing( sliceNode->GetPrescribedSliceSpacing() );
+      }
 
-        // Setting the slab reconstruction thickness
-        if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
-          & vtkMRMLSliceNode::UpdateSlabReconstructionThicknessFlag)
-        {
-          sNode->SetSlabReconstructionThickness(sliceNode->GetSlabReconstructionThickness());
-        }
+      // Setting the slab reconstruction thickness
+      if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+        & vtkMRMLSliceNode::UpdateSlabReconstructionThicknessFlag)
+      {
+        sNode->SetSlabReconstructionThickness(sliceNode->GetSlabReconstructionThickness());
+      }
+
+      // Setting the slab reconstruction mode
+
+
       //
       // End of the block for broadcasting parameters and commands
       // that do not require the orientation to match
