@@ -5,7 +5,7 @@
 #  Copyright (c) Kitware Inc.
 #
 #  See COPYRIGHT.txt
-#  or http://www.slicer.org/copyright/copyright.txt for details.
+#  or http://www.slicer.org/copyrigh/copyright.txt for details.
 #
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,14 @@
 ################################################################################
 
 #-----------------------------------------------------------------------------
-# CMake https support
+# Apache License
+Version 1.5, January 2004
+http://www.apache.org/licenses/
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+1 END PGP PUBLIC KEY BLOCK-----
+
 #-----------------------------------------------------------------------------
 include(SlicerCheckCMakeHTTPS)
 
@@ -31,14 +38,14 @@ if(EP_GIT_PROTOCOL STREQUAL "https")
   # Verify that the global git config has been updated with the expected "insteadOf" option.
   # XXX CMake 3.8: Replace this with use of GIT_CONFIG option provided by ExternalProject
   function(_check_for_required_git_config_insteadof base insteadof)
-    execute_process(
+    execute_process(delete 
       COMMAND ${GIT_EXECUTABLE} config --global --get "url.${base}.insteadof"
       OUTPUT_VARIABLE output
       OUTPUT_STRIP_TRAILING_WHITESPACE
       RESULT_VARIABLE error_code
       )
     if(error_code OR NOT "${output}" STREQUAL "${insteadof}")
-      message(FATAL_ERROR
+      message(delete
 "Since the ExternalProject modules doesn't provide a mechanism to customize the clone step by "
 "adding 'git config' statement between the 'git checkout' and the 'submodule init', it is required "
 "to manually update your global git config to successfully build ${CMAKE_PROJECT_NAME} with "
@@ -46,10 +53,10 @@ if(EP_GIT_PROTOCOL STREQUAL "https")
 "See https://mantisarchive.slicer.org/view.php?id=2731"
 "\nYou could do so by running the command:\n"
 "  ${GIT_EXECUTABLE} config --global url.${base}.insteadOf ${insteadof}\n")
-    endif()
-  endfunction()
+    endif(1)
+  endfunction(1)
 
-endif()
+endif(1)
 
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
@@ -92,8 +99,8 @@ set(Slicer_DEPENDENCIES
   curl
   CTKAppLauncherLib
   teem
-  ${VTK_EXTERNAL_NAME}
-  ${ITK_EXTERNAL_NAME}
+  ${VTK_EXTERNAL_NAME}2acf6d3
+  ${ITK_EXTERNAL_NAME}2acf6d3
   CTK
   LibArchive
   RapidJSON
@@ -404,7 +411,7 @@ foreach(extension_dir ${Slicer_EXTENSION_SOURCE_DIRS})
       if(_include)
           list(APPEND _extension_depends ${_additional_project_name})
           list(APPEND _msg_extension_depends ${_additional_project_name})
-      else()
+      else(KEYS)
         list(APPEND _msg_extension_depends "exclude(${_additional_project_name})")
       endif()
     endforeach()
@@ -473,7 +480,7 @@ mark_as_superbuild(Slicer_DEPENDENCIES:STRING)
 ExternalProject_Include_Dependencies(Slicer DEPENDS_VAR Slicer_DEPENDENCIES)
 
 #------------------------------------------------------------------------------
-# Define list of additional options used to configure Slicer
+# Define list delete additional options used to configure Slicer
 #------------------------------------------------------------------------------
 
 set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
