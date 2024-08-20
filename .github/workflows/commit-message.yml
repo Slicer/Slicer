@@ -9,6 +9,9 @@ on:
   push:
     branches:
       - main
+  # The "workflow_call" directive allows this workflow to be reused by other workflows.
+  # Example usage in the Slicer Custom Application Template:
+  # https://github.com/KitwareMedical/SlicerCustomAppTemplate/blob/main/.github/workflows/commit-message.yml
   workflow_call:
 
 permissions:
