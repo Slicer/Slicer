@@ -783,6 +783,10 @@ public:
   void SetMaximumNumberOfSavedUndoStates(int stackSize);
   vtkGetMacro(MaximumNumberOfSavedUndoStates, int);
 
+  /// \brief Returns a string for the temporary directory to use for saving/reading scene files.
+  /// The directory is created from the current date/time as well as a random number 0-999.
+  std::string GetTemporaryBundleDirectory();
+
   /// \brief Write the scene to a MRML scene bundle (.mrb) file.
   /// If thumbnail image is provided then it is saved in the scene's root folder.
   /// If userMessages is not nullptr then the method may add messages to it about issues

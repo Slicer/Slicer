@@ -3858,6 +3858,20 @@ void vtkMRMLScene::TrimUndoStack()
 }
 
 //----------------------------------------------------------------------------
+std::string vtkMRMLScene::GetTemporaryBundleDirectory()
+{
+  std::stringstream ss;
+  ss << vtksys::SystemTools::GetCurrentDateTime("_tmp%Y%m%d");
+  const char validCharacters[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  int numberOfCharacters = sizeof(validCharacters) - 1;
+  for (int i = 0; i < 5; i++)
+  {
+    ss << validCharacters[rand() % numberOfCharacters];
+  }
+  return ss.str();
+}
+
+//----------------------------------------------------------------------------
 bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nullptr*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   //
@@ -3887,7 +3901,7 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
     tempBaseDir = mrbDir;
   }
   std::stringstream tempDirStr;
-  tempDirStr << tempBaseDir << "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleSaveTemp-%F_%H%M%S_") << (this->RandomGenerator() % 1000);
+  tempDirStr << tempBaseDir << "/" << this->GetTemporaryBundleDirectory();
   std::string tempDir = tempDirStr.str();
   vtkDebugMacro("Packing bundle to " << tempDir);
 
@@ -3967,7 +3981,7 @@ bool vtkMRMLScene::ReadFromMRB(const char* fullName, bool clear/*=false*/, vtkMR
     return false;
   }
   std::stringstream unpackDirStr;
-  unpackDirStr << tempBaseDir << "/" << vtksys::SystemTools::GetCurrentDateTime("__BundleLoadTemp-%F_%H%M%S_") << (this->RandomGenerator() % 1000);
+  unpackDirStr << tempBaseDir << "/" << this->GetTemporaryBundleDirectory();
   std::string unpackDir = unpackDirStr.str();
   vtkDebugMacro("Unpacking bundle to " << unpackDir);
 
