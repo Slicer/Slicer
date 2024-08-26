@@ -974,7 +974,7 @@ vtkMRMLInteractionWidgetRepresentation::InteractionPipeline::InteractionPipeline
   this->Mapper3D->SetResolveCoincidentTopologyToPolygonOffset();
 
   this->Property3D = vtkSmartPointer<vtkProperty>::New();
-  this->Property3D->SetPointSize(0.0);
+  this->Property3D->SetPointSize(1.e-6); // NOTE: The point size value must be greater than zero. Refer to vtkOpenGLState::vtkglPointSize(float).
   this->Property3D->SetLineWidth(2.0);
   this->Property3D->SetDiffuse(0.0);
   this->Property3D->SetAmbient(1.0);
@@ -1903,14 +1903,6 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateSlicePlaneFromSliceNode()
       this->Pipeline->WorldToSliceTransform->Scale(2.0 / dimensions[1], 2.0 / dimensions[1], 2.0 / dimensions[1]);
       this->Pipeline->WorldToSliceTransform->Translate(-1.0 * dimensions[0] / dimensions[1], -1.0, 0.0);
     }
-
-    double slicePlanePosition[3] = { 0.0, 0.0, 0.0 };
-    this->Pipeline->WorldToSliceTransform->TransformPoint(slicePlanePosition, slicePlanePosition);
-    this->Pipeline->WorldToSliceTransform->Translate(0.0, 0.0, -slicePlanePosition[2] - 10*this->WidgetScale);
-    slicePlanePosition[0] = 0.0;
-    slicePlanePosition[1] = 0.0;
-    slicePlanePosition[2] = this->WidgetScale;
-    this->Pipeline->WorldToSliceTransform->TransformPoint(slicePlanePosition, slicePlanePosition);
   }
 
   // Update slice plane (for distance computation)
