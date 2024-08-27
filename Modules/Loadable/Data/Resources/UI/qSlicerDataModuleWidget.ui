@@ -133,7 +133,7 @@
          <item>
           <widget class="QToolButton" name="HelpButton">
            <property name="styleSheet">
-            <string notr="true">border: none; hover: {border: 1px}; pressed: {border: 1px}</string>
+            <string notr="true">QToolButton {border: none; hover: {border: 1px}; pressed: {border: 1px}}</string>
            </property>
            <property name="text">
             <string/>
