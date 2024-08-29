@@ -77,7 +77,7 @@ def tr(text):
 
     # inspect.stack() would get all the frames, which can take more than 100ms, therefore we use lower level APIs
     frame = inspect.currentframe()
-    frame.f_back  # go up in the stack one level
+    frame = frame.f_back  # go up in the stack one level
     filename = inspect.getsourcefile(frame) or inspect.getfile(frame)
 
     contextName = getContext(filename)
