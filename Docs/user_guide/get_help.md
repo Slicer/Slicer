@@ -5,7 +5,7 @@
 ## I need help in using Slicer
 
 - You can start with typing your question into Google web search. There is a good chance that your question has been asked and answered before and all questions ever asked about Slicer are publicly available and indexed by Google. Most up-to-date information sources are the [Slicer forum](https://discourse.slicer.org) and [Slicer documentation on read-the-docs](https://slicer.readthedocs.io/). Google may find older discussions on former Slicer mailing lists and wiki pages, which may or may not be exactly accurate for the current version of Slicer, but may still provide useful hints.
-- Try your best to sort out the issue by reading [documentation](https://slicer.readthedocs.io), [portfolio of training materials](https://www.slicer.org/wiki/Documentation/Nightly/Training), and checking error logs (in application menu bar: View->Error log).
+- Try your best to sort out the issue by reading [documentation](https://slicer.readthedocs.io), [portfolio of training materials](https://training.slicer.org/), and checking error logs (in application menu bar: View->Error log).
 - If you are still unclear about what to do: [ask a question on the Slicer Forum](https://discourse.slicer.org). In addition to describing the specific question, it helps if you describe the context of your question (who you are, what you are working on, why it is important, what is the overall goal of your project). Knowing more about you and your project increases the chance that somebody volunteers to answer the question and you may get a more relevant answer.
 
 ## I want to report a problem
