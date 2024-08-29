@@ -189,15 +189,15 @@ All data in the scene can be saved at once using `File` menu -> `Save data`, or 
 For details about downloading extensions, see [Extensions Manager documentation](extensions_manager.md).
 Click [here](https://www.slicer.org/wiki/Documentation/Nightly/ModuleExtensionListing/Extensions_by_category) for a full list of extensions. The links on the page will provide documentation for each extension.
 
-Slicer is extensible. If you are interested in customizing or adding functionality to Slicer, click [here](https://www.slicer.org/wiki/Documentation/Nightly/Training#Tutorials_for_software_developers).
+Slicer is extensible. If you are interested in customizing or adding functionality to Slicer, click [here](https://training.slicer.org/#developer-tutorials).
 
 ### Tutorials
 
 You learn both basic concepts and highly specialized workflows from the numerous available step-by-step and video tutorials.
 
-Try the [Welcome Tutorial](https://www.slicer.org/wiki/Documentation/Nightly/Training#Slicer_Welcome_Tutorial) and the [Data Loading and 3D Visualization Tutorial](https://www.slicer.org/wiki/Documentation/Nightly/Training#Slicer4_Data_Loading_and_3D_Visualization) to learn the basics.
+Try the [Welcome Tutorial](https://training.slicer.org/#stc-gen-101-welcome-tutorial) and the [Data Loading and 3D Visualization Tutorial](https://training.slicer.org/#stc-vis-102-data-loading-and-3d-visualization) to learn the basics.
 
-For more tutorials, visit the [Tutorial page](https://www.slicer.org/wiki/Documentation/Nightly/Training).
+For more tutorials, visit the [Tutorial page](https://training.slicer.org/).
 
 ### User manual
 

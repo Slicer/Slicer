@@ -190,7 +190,7 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
 
 ## Tutorials
 
-- [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation)
+- [Segmentation tutorials](https://training.slicer.org/#segmentation-tutorials)
 
 ## Limitations
 
