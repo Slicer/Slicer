@@ -364,6 +364,141 @@ for study, series in dicomQuery.studyAndSeriesInstanceUIDQueried:
 slicer.dicomDatabase.updateDisplayedFields()
 ```
 
+### Query and retrieve data from a PACS using classic DIMSE DICOM networking with the (experimental) ctkDICOMVisualBrowser
+
+```python
+
+# Get visual browser instance
+visualBrowser = slicer.modules.dicom.widgetRepresentation().self().browserWidget.dicomVisualBrowser
+dicomDatabase = visualBrowser.dicomDatabase()
+
+# Disable query/retrieve for all existing servers
+for index in range (0, visualBrowser.serversCount()):
+  server = visualBrowser.server(index)
+  server.queryRetrieveEnabled = False
+
+# Add a new DICOM server
+server = ctk.ctkDICOMServer()
+server.connectionName = "test"
+server.callingAETitle = "SLICER"
+server.calledAETitle = "ANYAE"
+server.host = "dicomserver.co.uk"
+server.port = 104
+server.retrieveProtocol = ctk.ctkDICOMServer.CGET
+
+if visualBrowser.addServer(server) == -1:
+  raise RuntimeError("Failed to add server")
+
+# Set the filters for the query
+visualBrowser.filteringPatientID = "PAT020"
+#visualBrowser.filteringPatientName = "Name"
+#visualBrowser.filteringStudyDescription = "Study description"
+visualBrowser.filteringDate = ctk.ctkDICOMPatientItemWidget.LastYear
+#Date options:
+#Any,
+#Today,
+#Yesterday,
+#LastWeek,
+#LastMonth,
+#LastYear
+#visualBrowser.filteringSeriesDescription = "Series description"
+#visualBrowser.filteringModalities = ["CT", "MR"]
+
+# Run patient query.
+# NOTE: this will automatically also start query/retrieve jobs at study and series levels
+visualBrowser.onQueryRetrieveOptionToggled(True)
+visualBrowser.onQueryPatients()
+```
+
+### Query and retrieve data from a PACS using classic DIMSE DICOM networking with the (experimental) ctkDICOMScheduler (no UI needed)
+
+```python
+
+class Receiver(qt.QObject):
+  def __init__(self, scheduler):
+    super().__init__()
+    self.scheduler = scheduler
+    self.scheduler.progressJobDetail.connect(self.onProgressDetails)
+    self.scheduler.jobFinished.connect(self.onJobFinished)
+    self.scheduler.jobFailed.connect(self.onJobFailed)
+
+  def startQueryRetrieve(self, parameters):
+    self.scheduler.setFilters(parameters)
+    self.scheduler.queryPatients()
+
+  def onJobFinished(self, details):
+    for detail in details:
+      if detail.jobType() == ctk.ctkDICOMJobResponseSet.QueryPatients:
+        print ("Query patients success. Connection : ", detail.connectionName())
+      elif detail.jobType() == ctk.ctkDICOMJobResponseSet.QueryStudies:
+        patientID = detail.patientID()
+        print ("Query studies success for patientID: ", patientID, ". Connection : ", detail.connectionName())
+      elif detail.jobType() == ctk.ctkDICOMJobResponseSet.RetrieveStudy:
+        patientID = detail.patientID()
+        studyInstanceUID = detail.studyInstanceUID()
+        print ("Retrieve studies success for studyInstanceUID: ", studyInstanceUID, " (patientID: ",patientID, "). Connection : ", detail.connectionName())
+
+  def onJobFailed(self, details):
+    for detail in details:
+      if detail.jobType() == ctk.ctkDICOMJobResponseSet.QueryPatients:
+        print ("Query patients failed. Connection : ", detail.connectionName())
+      elif detail.jobType() == ctk.ctkDICOMJobResponseSet.QueryStudies:
+        patientID = detail.patientID()
+        print ("Query studies failed for patientID: ", patientID, ". Connection : ", detail.connectionName())
+      elif detail.jobType() == ctk.ctkDICOMJobResponseSet.RetrieveStudy:
+        patientID = detail.patientID()
+        studyInstanceUID = detail.studyInstanceUID()
+        print ("Retrieve studies failed for studyInstanceUID: ", studyInstanceUID, " (patientID: ", patientID, "). Connection : ", detail.connectionName())
+
+  def onProgressDetails(self, details):
+    for detail in details:
+      if detail.jobType() == ctk.ctkDICOMJobResponseSet.QueryPatients:
+        patientIDs = detail.queriedPatientIDs()
+        for patientID in patientIDs:
+          print ("Starting studies query for patient: ", patientID, ". Connection : ", detail.connectionName())
+          scheduler.queryStudies(patientID)
+      elif detail.jobType() == ctk.ctkDICOMJobResponseSet.QueryStudies:
+        studyInstanceUIDs = detail.queriedStudyInstanceUIDs()
+        for studyInstanceUID in studyInstanceUIDs:
+          patientItem = slicer.dicomDatabase.patientForStudy(studyInstanceUID)
+          patientID = slicer.dicomDatabase.fieldForPatient("PatientID", patientItem)
+          print ("Starting studies retrieve for studyInstanceUID: ", studyInstanceUID, " (patientID: ",patientID, "). Connection : ", detail.connectionName())
+          scheduler.retrieveStudy(patientID, studyInstanceUID)
+
+
+# Add a new DICOM server
+server = ctk.ctkDICOMServer()
+server.connectionName = "test"
+server.callingAETitle = "SLICER"
+server.calledAETitle = "ANYAE"
+server.host = "dicomserver.co.uk"
+server.port = 104
+server.retrieveProtocol = ctk.ctkDICOMServer.CGET
+
+scheduler = ctk.ctkDICOMScheduler()
+scheduler.setDicomDatabase(slicer.dicomDatabase)
+scheduler.addServer(server)
+
+receiver = Receiver(scheduler)
+
+# Set the filters for the query
+nDays = 325
+endDate = qt.QDate().currentDate()
+startDate = endDate.addDays(-nDays)
+parameters = {
+  "ID": "PAT020",
+  #"Name": "Name",
+  #"Study": "Study description",
+  #"Series": "Series description",
+  #"Modalities": ["CT", "MR"],
+  "StartDate": startDate.toString("yyyyMMdd"),
+  "EndDate": endDate.toString("yyyyMMdd")
+}
+
+receiver.startQueryRetrieve(parameters)
+
+```
+
 ### Send data to a PACS using classic DIMSE DICOM networking
 
 ```python
