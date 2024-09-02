@@ -376,8 +376,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                 loadable.selected = True
             else:
                 loadable.selected = False
-                if loadable.confidence > 0.45:
-                    loadable.confidence = 0.45
+                loadable.confidence = min(loadable.confidence, 0.45)
 
         return loadables
 

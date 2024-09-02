@@ -217,8 +217,7 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
     for series in loadablesBySeries:
         highestConfidenceValue = -1
         for loadable in loadablesBySeries[series]:
-            if loadable.confidence > highestConfidenceValue:
-                highestConfidenceValue = loadable.confidence
+            highestConfidenceValue = max(loadable.confidence, highestConfidenceValue)
         for loadable in loadablesBySeries[series]:
             loadable.selected = loadable.confidence == highestConfidenceValue
 
