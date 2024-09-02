@@ -881,8 +881,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             numberOfBins = maxNumberOfBins
         else:
             numberOfBins = int(scalarRange[1] - scalarRange[0]) + 1
-        if numberOfBins > maxNumberOfBins:
-            numberOfBins = maxNumberOfBins
+        numberOfBins = min(numberOfBins, maxNumberOfBins)
         binSpacing = (scalarRange[1] - scalarRange[0] + 1) / numberOfBins
 
         self.imageAccumulate.SetComponentExtent(0, numberOfBins - 1, 0, 0, 0, 0)

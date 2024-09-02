@@ -48,8 +48,7 @@ max_row_widths = {column_name: len(column_title) for (column_name, column_title)
 for row in table:
     for column_name in max_row_widths.keys():
         column_width = len(str(row[column_name]))
-        if column_width > max_row_widths[column_name]:
-            max_row_widths[column_name] = column_width
+        max_row_widths[column_name] = max(column_width, max_row_widths[column_name])
 
 # Update template with widths
 for column_name, column_width in max_row_widths.items():
