@@ -26,6 +26,7 @@
 #include "qMRMLUtils.h"
 
 // MRML includes
+#include <vtkCodedEntry.h>
 #include <vtkMRMLColorTableNode.h>
 
 // VTK includes
@@ -35,12 +36,6 @@ qMRMLColorModelPrivate::qMRMLColorModelPrivate(qMRMLColorModel& object)
   : q_ptr(&object)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
-  this->NoneEnabled = false;
-  this->ColorColumn = 0;
-  this->LabelColumn = 1;
-  this->OpacityColumn = 2;
-  this->CheckableColumn = -1;
-  this->IsUpdatingWidgetFromMRML = false;
 }
 
 //------------------------------------------------------------------------------
@@ -76,6 +71,11 @@ void qMRMLColorModelPrivate::init()
   {
     headerLabels[q->opacityColumn()] = qMRMLColorModel::tr("Opacity");
   }
+  if (q->terminologyColumn() != -1)
+  {
+    headerLabels[q->terminologyColumn()] = qMRMLColorModel::tr("Terminology");
+  }
+
   q->setHorizontalHeaderLabels(headerLabels);
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)),
@@ -97,6 +97,7 @@ int qMRMLColorModelPrivate::maxColumnId()const
   maxId = qMax(maxId, this->ColorColumn);
   maxId = qMax(maxId, this->LabelColumn);
   maxId = qMax(maxId, this->OpacityColumn);
+  maxId = qMax(maxId, this->TerminologyColumn);
   maxId = qMax(maxId, this->CheckableColumn);
   return maxId;
 }
@@ -220,6 +221,21 @@ void qMRMLColorModel::setOpacityColumn(int column)
 }
 
 //------------------------------------------------------------------------------
+int qMRMLColorModel::terminologyColumn()const
+{
+  Q_D(const qMRMLColorModel);
+  return d->TerminologyColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorModel::setTerminologyColumn(int column)
+{
+  Q_D(qMRMLColorModel);
+  d->TerminologyColumn = column;
+  d->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
 int qMRMLColorModel::checkableColumn()const
 {
   Q_D(const qMRMLColorModel);
@@ -255,14 +271,12 @@ int qMRMLColorModel::colorFromItem(QStandardItem* colorItem)const
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
 {
-  //Q_D(const qMRMLColorModel);
   if (color == -1)
   {
     return nullptr;
   }
   QModelIndexList indexes = this->match(this->index(0,0), qMRMLColorModel::ColorEntryRole,
-                                      color, 1,
-                                      Qt::MatchExactly | Qt::MatchRecursive);
+                                        color, 1, Qt::MatchExactly | Qt::MatchRecursive);
   while (indexes.size())
   {
     if (indexes[0].column() == column)
@@ -336,17 +350,15 @@ void qMRMLColorModel::updateNode()
     return;
   }
 
-  this->setRowCount(
-    d->MRMLColorNode->GetNumberOfColors() + (this->noneEnabled() ? 1 : 0));
+  this->setRowCount(d->MRMLColorNode->GetNumberOfColors() + (this->noneEnabled() ? 1 : 0));
 
   bool wasBlocked = this->blockSignals(true);
   int startIndex = (this->noneEnabled() ? 1 : 0);
   for (int color = 0; color < d->MRMLColorNode->GetNumberOfColors(); ++color)
   {
-    for (int j= 0; j < this->columnCount(); ++j)
+    for (int j = 0; j < this->columnCount(); ++j)
     {
-      QStandardItem* colorItem = this->invisibleRootItem()->child(
-        color + startIndex, j);
+      QStandardItem* colorItem = this->invisibleRootItem()->child(color + startIndex, j);
       if (!colorItem)
       {
         colorItem = new QStandardItem();
@@ -370,8 +382,8 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
   }
   item->setData(color, qMRMLColorModel::ColorEntryRole);
 
-  QString colorName = d->MRMLColorNode->GetNamesInitialised() ?
-    d->MRMLColorNode->GetColorName(color) : "";
+  QString colorName = d->MRMLColorNode->GetColorName(color);
+
   if (column == d->ColorColumn)
   {
     QPixmap pixmap;
@@ -407,6 +419,28 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
     double rgba[4] = { 0., 0., 0., 1. };
     d->MRMLColorNode->GetColor(color, rgba);
     item->setData(QString::number(rgba[3],'f',2), Qt::DisplayRole);
+  }
+  if (column == d->TerminologyColumn)
+  {
+    std::vector<vtkCodedEntry*> terminologyEntries
+    {
+      d->MRMLColorNode->GetTerminologyCategory(color),
+      d->MRMLColorNode->GetTerminologyType(color),
+      d->MRMLColorNode->GetTerminologyTypeModifier(color),
+      d->MRMLColorNode->GetTerminologyAnatomicRegion(color),
+      d->MRMLColorNode->GetTerminologyAnatomicRegionModifier(color)
+    };
+    QStringList terminologyStrList;
+    for (auto entry : terminologyEntries)
+    {
+      if (entry == nullptr)
+      {
+        continue;
+      }
+      terminologyStrList.append(QString::fromStdString(entry->GetAsPrintableString()));
+    }
+    item->setText(terminologyStrList.join(", "));
+    item->setToolTip(terminologyStrList.join("\n"));
   }
   if (column == d->CheckableColumn)
   {
