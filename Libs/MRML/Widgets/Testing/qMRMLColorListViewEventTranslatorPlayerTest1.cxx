@@ -83,7 +83,6 @@ int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   widget->setMRMLColorNode(colorTableNode.GetPointer());
 
-  colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
 
   etpWidget.addTestCase(widget,

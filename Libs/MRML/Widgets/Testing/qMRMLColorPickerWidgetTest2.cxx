@@ -56,8 +56,6 @@ int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
 
   colorPickerWidget.setMRMLScene(scene.GetPointer());
 
-  // for some reasons it generate a warning if the type is changed.
-  colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
 
   vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;

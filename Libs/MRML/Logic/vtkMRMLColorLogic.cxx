@@ -932,7 +932,6 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CopyNode(vtkMRMLColorNode* nodeToCopy,
   colorNode->SetTypeToUser();
   colorNode->SetAttribute("Category", "User Generated");
   colorNode->SetHideFromEditors(false);
-  colorNode->SetNamesInitialised(nodeToCopy->GetNamesInitialised());
   if (nodeToCopy->GetLookupTable())
   {
     double* range = nodeToCopy->GetLookupTable()->GetRange();
@@ -944,6 +943,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CopyNode(vtkMRMLColorNode* nodeToCopy,
     double color[4];
     nodeToCopy->GetColor(i, color);
     colorNode->SetColor(i, nodeToCopy->GetColorName(i), color[0], color[1], color[2], color[3]);
+    // TODO: copy properties
   }
   return colorNode;
 }
