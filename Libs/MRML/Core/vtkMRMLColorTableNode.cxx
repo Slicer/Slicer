@@ -72,28 +72,28 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
   int numColors;
   while (*atts != nullptr)
   {
-      attName = *(atts++);
-      attValue = *(atts++);
-      if (!strcmp(attName, "numcolors"))
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "numcolors"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> numColors;
+      vtkDebugMacro("Setting the look up table size to " << numColors << "\n");
+      this->SetNumberOfColors(numColors);
+      // init the table to black/opacity 0 with no name, just in case we're missing values
+      const char *noName = this->GetNoName();
+      if (!noName)
       {
-        std::stringstream ss;
-        ss << attValue;
-        ss >> numColors;
-        vtkDebugMacro("Setting the look up table size to " << numColors << "\n");
-        this->SetNumberOfColors(numColors);
-        // init the table to black/opacity 0 with no name, just in case we're missing values
-        const char *noName = this->GetNoName();
-        if (!noName)
-        {
-          noName = "(none)";
-        }
-        for (int i = 0; i < numColors; i++)
-        {
-          this->SetColor(i, noName, 0.0, 0.0, 0.0, 0.0);
-        }
+        noName = "(none)";
       }
-      else  if (!strcmp(attName, "colors"))
+      for (int i = 0; i < numColors; i++)
       {
+        this->SetColor(i, noName, 0.0, 0.0, 0.0, 0.0);
+      }
+    }
+    else  if (!strcmp(attName, "colors"))
+    {
       std::stringstream ss;
       for (int i = 0; i < this->LookupTable->GetNumberOfTableValues(); i++)
       {
@@ -128,22 +128,21 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
       // set the table range
       if ( this->LookupTable->GetNumberOfTableValues() > 0 )
       {
-          this->LookupTable->SetRange(0, 255);
+        this->LookupTable->SetRange(0, 255);
       }
-      this->NamesInitialisedOn();
-      }
-      else if (!strcmp(attName, "type"))
-      {
+    }
+    else if (!strcmp(attName, "type"))
+    {
       int type;
       std::stringstream ss;
       ss << attValue;
       ss >> type;
       this->SetType(type);
-      }
-      else
-      {
-          vtkDebugMacro ("Unknown attribute name " << attName << endl);
-      }
+    }
+    else
+    {
+      vtkDebugMacro ("Unknown attribute name " << attName << endl);
+    }
   }
   this->EndModify(disabledModify);
 }
@@ -1090,8 +1089,8 @@ void vtkMRMLColorTableNode::SetType(int type)
       // from Slicer2's Colors.xml
       this->GetLookupTable()->SetNumberOfTableValues(257);
       this->GetLookupTable()->SetTableRange(0,255);
-      this->Names.clear();
-      this->Names.resize(this->GetLookupTable()->GetNumberOfTableValues());
+      this->Properties.clear();
+      this->Properties.resize(this->GetLookupTable()->GetNumberOfTableValues());
 
       if (this->SetColorName(0, "Black") != 0)
       {
@@ -1186,14 +1185,6 @@ void vtkMRMLColorTableNode::SetType(int type)
           }
         }
       }
-      /*
-      this->SetColorName(300, "fMRI-neg");
-      this->GetLookupTable()->SetTableValue(300, 0.0, 0.8, 1.0, 1.0);
-
-      this->SetColorName(301, "fMRI-pos");
-      this->GetLookupTable()->SetTableValue(301, 1.0, 1.0, 0.0, 1.0);
-      */
-      this->NamesInitialisedOn();
       this->SetDescription("A legacy color table that contains some anatomical mapping");
     }
     else if (this->Type == this->Random)
@@ -1267,12 +1258,13 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
     // Initialize new elements (needed if color table is made larger).
     this->SetColors(numberOfTableValuesBefore, n - 1, this->GetNoName(), 0.0, 0.0, 0.0, 1.0);
   }
-  if (n > int(this->Names.size()))
+  if (n > int(this->Properties.size()))
   {
     // There are less names than colors (it may happen for example if a lookup table with many
     // elements is set). We initialize the color names to have one for each lookup table item.
-    std::string noNameStr = this->GetNoName() ? this->GetNoName() : "";
-    this->Names.resize(n, noNameStr);
+    PropertyType emptyProp;
+    emptyProp.Name = this->GetNoName() ? this->GetNoName() : "";
+    this->Properties.resize(n, emptyProp);
   }
 }
 
@@ -1376,10 +1368,11 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char *
     return 1;
   }
   vtkIdType numberOfValues = this->GetLookupTable()->GetNumberOfTableValues();
-  if (vtkIdType(this->Names.size()) < numberOfValues)
+  if (vtkIdType(this->Properties.size()) < numberOfValues)
   {
-    std::string noNameStr = this->GetNoName() ? this->GetNoName() : "";
-    this->Names.resize(numberOfValues, noNameStr);
+    PropertyType emptyProp;
+    emptyProp.Name = this->GetNoName() ? this->GetNoName() : "";
+    this->Properties.resize(numberOfValues, emptyProp);
   }
   if (firstEntry < 0 || firstEntry >= numberOfValues)
   {
@@ -1407,7 +1400,7 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char *
     *(rgba++) = static_cast<unsigned char>(g * 255.0 + 0.5);
     *(rgba++) = static_cast<unsigned char>(b * 255.0 + 0.5);
     *(rgba++) = static_cast<unsigned char>(a * 255.0 + 0.5);
-    this->Names[indx] = nameStr;
+    this->Properties[indx].Name = nameStr;
   }
   lut->BuildSpecialColors();
   lut->Modified();
@@ -1457,8 +1450,7 @@ bool vtkMRMLColorTableNode::GetColor(int entry, double color[4])
 //---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::ClearNames()
 {
-  this->Names.clear();
-  this->NamesInitialisedOff();
+  this->Properties.clear();
 }
 
 //---------------------------------------------------------------------------

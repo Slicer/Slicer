@@ -100,6 +100,9 @@ public:
   int opacityColumn()const;
   void setOpacityColumn(int column);
 
+  int terminologyColumn()const;
+  void setTerminologyColumn(int column);
+
   int checkableColumn()const;
   void setCheckableColumn(int column);
 

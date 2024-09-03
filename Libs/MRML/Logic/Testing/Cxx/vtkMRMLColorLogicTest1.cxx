@@ -201,7 +201,6 @@ bool TestCopy()
 
   vtkNew<vtkMRMLColorTableNode> originalNode;
   originalNode->SetTypeToFile();
-  originalNode->NamesInitialisedOff();
   originalNode->SetNumberOfColors(6);
   originalNode->GetLookupTable()->SetTableRange(0, 5);
   // Use NoName as color name to not list the "background" color in the color legend.
@@ -211,7 +210,6 @@ bool TestCopy()
   originalNode->SetColor(3, "three", 0.33, 0.0, 0.5, 0.5);
   originalNode->SetColor(4, "four", 0.75, 0.0, 1.0, 0.7);
   originalNode->SetColor(5, "five and done", 1.0, 1.0, 1.0, 1.0);
-  originalNode->NamesInitialisedOn();
 
   vtkMRMLColorTableNode *copiedNode = colorLogic->CopyNode(originalNode.GetPointer(), "Copied Generic");
   if (!copiedNode)
@@ -277,7 +275,6 @@ bool TestProceduralCopy()
 
   vtkNew<vtkMRMLProceduralColorNode> originalNode;
   originalNode->SetTypeToFile();
-  originalNode->NamesInitialisedOff();
   originalNode->SetAttribute("Category", "Continuous");
 
   vtkColorTransferFunction *func = originalNode->GetColorTransferFunction();
@@ -288,8 +285,6 @@ bool TestProceduralCopy()
   //  func->AdjustRange(-1.0, 1.0);
 
   originalNode->SetNamesFromColors();
-
-  originalNode->NamesInitialisedOn();
 
   vtkMRMLProceduralColorNode *copiedNode = colorLogic->CopyProceduralNode(originalNode.GetPointer(), "Copied Proc");
   if (!copiedNode)

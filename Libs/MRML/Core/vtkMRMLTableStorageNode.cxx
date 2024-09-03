@@ -28,14 +28,14 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
-#include <vtkObjectFactory.h>
+#include <vtkBitArray.h>
 #include <vtkDelimitedTextReader.h>
 #include <vtkDelimitedTextWriter.h>
 #include <vtkErrorSink.h>
-#include <vtkTable.h>
-#include <vtkStringArray.h>
-#include <vtkBitArray.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
+#include <vtkStringArray.h>
+#include <vtkTable.h>
 #include <vtksys/SystemTools.hxx>
 
 // STL includes
@@ -51,7 +51,7 @@
 // to read tables.
 // Using "\" as escape character does not even survive a roundtrip with
 // vtkDelimitedTextWriter and vtkDelimitedTextReader because the writer does not
-// convert "\" to escaped "\\", so we simply not use escape characters.
+// convert "\" to escaped "\\", so we simply do not use escape characters.
 // Since we assume UTF-8 everywhere, not using a special escape character
 // should not be an issue.
 class vtkNoEscapeDelimitedTextReader : public vtkDelimitedTextReader
@@ -169,7 +169,7 @@ int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
+  vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
   if (tableNode == nullptr)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::WriteData",
@@ -177,7 +177,19 @@ int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  if (!this->WriteTable(fullName, tableNode))
+  // Construct component name map for correct writing of multi-component columns
+  std::map<vtkIdType, std::vector<std::string>> componentNamesMap;
+  for (int i = 0; i < tableNode->GetTable()->GetNumberOfColumns(); ++i)
+  {
+    vtkAbstractArray* column = tableNode->GetTable()->GetColumn(i);
+    if (column->GetNumberOfComponents() > 1)
+    {
+      componentNamesMap[i] = vtkMRMLTableNode::GetComponentNamesFromArray(column);
+    }
+  }
+  // Write out table
+  if (!vtkMRMLTableStorageNode::WriteTable(fullName, tableNode->GetTable(),
+    this->GetFieldDelimiterCharacters(fullName), componentNamesMap))
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::WriteData",
       "Failed to write table node '" << refNode->GetID() << "' to file '" << fullName << "'.");
@@ -745,9 +757,10 @@ bool vtkMRMLTableStorageNode::ReadTable(std::string filename, vtkMRMLTableNode* 
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode* tableNode)
+bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkTable* table, std::string delimiter,
+  std::map<vtkIdType, std::vector<std::string>> componentNamesMap)
 {
-  vtkTable* originalTable = tableNode->GetTable();
+  vtkTable* originalTable = table;
 
   vtkNew<vtkTable> newTable;
   for (int i = 0; i < originalTable->GetNumberOfColumns(); ++i)
@@ -771,7 +784,7 @@ bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode*
         columnName = oldColumn->GetName();
       }
 
-      std::vector<std::string> componentNames = tableNode->GetComponentNames(columnName);
+      std::vector<std::string> componentNames = componentNamesMap[i];
       for (int componentIndex = 0; componentIndex < numberOfComponents; ++componentIndex)
       {
         std::string newColumnName = columnName;
@@ -794,8 +807,6 @@ bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode*
   vtkNew<vtkDelimitedTextWriter> writer;
   writer->SetFileName(filename.c_str());
   writer->SetInputData(newTable);
-
-  std::string delimiter = this->GetFieldDelimiterCharacters(filename);
   writer->SetFieldDelimiter(delimiter.c_str());
 
   // SetUseStringDelimiter(true) causes writing each value in double-quotes, which is not very nice,
@@ -811,15 +822,13 @@ bool vtkMRMLTableStorageNode::WriteTable(std::string filename, vtkMRMLTableNode*
   }
   catch (...)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::WriteTable",
-      "Failed to write file: '" << filename << "'.");
+    vtkErrorWithObjectMacro(table, "vtkMRMLTableStorageNode::WriteTable: Failed to write file: '" << filename << "'.");
     return false;
   }
   errorWarningObserver->DisplayMessages();
   if (errorWarningObserver->HasErrors())
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::WriteTable",
-      "Failed to write file: '" << filename << "'.");
+    vtkErrorWithObjectMacro(table, "vtkMRMLTableStorageNode::WriteTable: Failed to write file: '" << filename << "'.");
     return false;
   }
 
