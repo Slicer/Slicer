@@ -129,8 +129,16 @@ def createGuiConnector(widget, datatype) -> GuiConnector:
     for possibleConnectorType in _registeredGuiConnectors:
         if possibleConnectorType.canRepresent(widget, datatype):
             return possibleConnectorType.create(widget, datatype)
-    raise RuntimeError(f"Unable to create GUI connector from datatype '{datatype}' to widget type '{type(widget)}'")
 
+    # Get a list of all source files where GUI connectors are defined
+    import inspect
+    guiConnectorFilePaths = set()
+    for guiConnector in _registeredGuiConnectors:
+        guiConnectorFilePaths.add(inspect.getfile(guiConnector))
+
+    raise RuntimeError(f"Unable to create GUI connector from datatype '{datatype}' to widget type '{type(widget)}'."
+                        " To determine which data types can be connected to which widget types, please check 'canRepresent' methods in 'GuiConnector' classes"
+                       f" in these files: {', '.join(guiConnectorFilePaths)}")
 
 def parameterNodeGuiConnector(classtype=None):
     """Class decorator to register a new parameter node gui connector."""
