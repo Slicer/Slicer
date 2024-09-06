@@ -602,7 +602,33 @@ slicer.mrmlScene.RemoveNode(labelmapVolumeNode)
 
 You can use [slicerio](https://pypi.org/project/slicerio/) Python package (in any Python environment, not just within Slicer) to get information from segmentation (.seg.nrrd) files.
 
-For example, this code snippet extracts selected segments from a segmentation as a numpy array (`extracted_voxels`) and writes it into a nrrd file. This operation can be useful when creating training data for deep learning networks.
+For example, a common need when training AI tools is to assemble data sets from various sources, which use different label values for the same segments.
+If data sets are in .seg.nrrd format, then segment names or standard terminology can be used to identify segments and then assign label values consistently.
+
+#### Extract selected segments by standard terminology
+
+[Segments cannot be reliably identified using "name" (simple string label)](https://github.com/lassoan/slicerio/blob/main/UsingStandardTerminology.md). Instead, it is recommended to use a standard terminology. This code snippet extracts selected segments from a segmentation and writes the result into a nrrd file.
+
+```python
+# pip install slicerio
+
+import slicerio
+
+input_filename = "path/to/Segmentation.seg.nrrd"
+output_filename = "path/to/SegmentationExtracted.seg.nrrd"
+segments_to_labels = [
+   ({"category": ["SCT", "123037004", "Anatomical Structure"], "type": ["SCT", "113197003", "Ribs"]}, 1),
+   ({"category": ["SCT", "123037004", "Anatomical Structure"], "type": ["SCT", "39607008", "Lung"], "typeModifier": ["SCT", "24028007", "Right"]}, 3)
+   ]
+
+segmentation = slicerio.read_segmentation(input_filename)
+extracted_segmentation = slicerio.extract_segments(segmentation, segments_to_labels)
+slicerio.write_segmentation(output_filename, extracted_segmentation)
+```
+
+#### Extract selected segments by segment name
+
+This code snippet extracts selected segments from a segmentation by segment name and writes it into a nrrd file.
 
 ```python
 # pip install slicerio
