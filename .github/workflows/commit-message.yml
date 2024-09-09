@@ -9,10 +9,6 @@ on:
   push:
     branches:
       - main
-  # The "workflow_call" directive allows this workflow to be reused by other workflows.
-  # Example usage in the Slicer Custom Application Template:
-  # https://github.com/KitwareMedical/SlicerCustomAppTemplate/blob/main/.github/workflows/commit-message.yml
-  workflow_call:
 
 permissions:
   contents: read
@@ -20,25 +16,8 @@ permissions:
 
 jobs:
   check-commit-message:
-    name: Check Commit Message
     runs-on: ubuntu-latest
     steps:
-      - name: Check Commit Prefix
-        uses: gsactions/commit-message-checker@16fa2d5de096ae0d35626443bcd24f1e756cafee # v2.0.0
+      - uses: Slicer/slicer-check-commit-message-action@26db1d4a0580194025a00bff6f5c24a88c0efb9f # v1.0.0
         with:
-          pattern: "^(ENH|PERF|BUG|STYLE|DOC|COMP): ([A-Z])+"
-          flags: "gm"
-          excludeDescription: "true" # optional: this excludes the description body of a pull request
-          excludeTitle: "true" # optional: this excludes the title of a pull request
-          error: 'The first line has to start with a commit prefix, followed by a colon and space, and then followed by a message with a capital letter (e.g "ENH: Add support for awesome feature"). For more details on other requirements, see https://slicer.readthedocs.io/en/latest/developer_guide/style_guide.html#commits'
-          checkAllCommitMessages: "true" # optional: this checks all commits associated with a pull request
-          accessToken: ${{ secrets.GITHUB_TOKEN }} # github access token is only required if checkAllCommitMessages is true
-      - name: Check Line Length
-        uses: gsactions/commit-message-checker@16fa2d5de096ae0d35626443bcd24f1e756cafee # v2.0.0
-        with:
-          pattern: "^[^#].{1,78}$"
-          error: "The maximum line length of 78 characters is exceeded. For more details, see https://slicer.readthedocs.io/en/latest/developer_guide/style_guide.html#commits"
-          excludeDescription: "true" # optional: this excludes the description body of a pull request
-          excludeTitle: "true" # optional: this excludes the title of a pull request
-          checkAllCommitMessages: "true" # optional: this checks all commits associated with a pull request
-          accessToken: ${{ secrets.GITHUB_TOKEN }} # github access token is only required if checkAllCommitMessages is true
+          token: ${{ secrets.GITHUB_TOKEN }}
