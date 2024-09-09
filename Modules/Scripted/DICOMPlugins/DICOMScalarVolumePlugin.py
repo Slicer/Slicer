@@ -513,6 +513,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             # because that is more likely to contain the object of interest than the first or last frame.
             # This is important for example for getting a relevant window/center value for the series.
             file = fileList[int(len(fileList) / 2)]
+            uid = slicer.dicomDatabase.fileValue(file, self.tags["instanceUID"])
 
             #
             # automatically select the volume to display
@@ -531,17 +532,37 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             #   [2] https://github.com/Slicer/Slicer/blob/3bfa2fc2b310d41c09b7a9e8f8f6c4f43d3bd1e2/Libs/MRML/Core/vtkMRMLScalarVolumeDisplayNode.h#L172
             #
             try:
-                windowCenter = float(slicer.dicomDatabase.fileValue(file, self.tags["windowCenter"]))
-                windowWidth = float(slicer.dicomDatabase.fileValue(file, self.tags["windowWidth"]))
-                displayNode = volumeNode.GetDisplayNode()
+                displayNode = volumeNode.GetScalarVolumeDisplayNode()
                 if displayNode:
-                    logging.info("Window/level found in DICOM tags (center=" + str(windowCenter) + ", width=" + str(windowWidth) + ") has been applied to volume " + volumeNode.GetName())
-                    displayNode.AddWindowLevelPreset(windowWidth, windowCenter)
+                    # Retrieve the window center and window width values from the DICOM file
+                    windowCenterValues = slicer.dicomDatabase.fileValue(file, self.tags["windowCenter"])
+                    windowWidthValues = slicer.dicomDatabase.fileValue(file, self.tags["windowWidth"])
+
+                    # Split the values by the backslash character to handle multiple values
+                    windowCenterList = windowCenterValues.split("\\")
+                    windowWidthList = windowWidthValues.split("\\")
+
+                    # Ensure both lists have the same length
+                    if len(windowCenterList) != len(windowWidthList):
+                        raise ValueError("The number of window center values does not match the number of window width values")
+
+                    if len(windowCenterList) == 0:
+                        logging.debug(f"No window/level found for volume {volumeNode.GetName()} in DICOM tags of SOP instance {uid}.")
+
+                    # Iterate over the pairs and add window level presets
+                    for windowCenter, windowWidth in zip(windowCenterList, windowWidthList):
+                        # Convert the values to float
+                        windowCenter = float(windowCenter)
+                        windowWidth = float(windowWidth)
+
+                        # Add the window level preset to the display node
+                        displayNode.AddWindowLevelPreset(windowWidth, windowCenter)
+                        logging.debug(f"Window/level found in DICOM tags (center{windowCenter}, width={windowWidth}) has been applied to volume {volumeNode.GetName()} based on SOP instance {uid}.")
                     displayNode.SetWindowLevelFromPreset(0)
                 else:
                     logging.info("No display node: cannot use window/level found in DICOM tags")
-            except ValueError:
-                pass  # DICOM tags cannot be parsed to floating point numbers
+            except ValueError as e:
+                logging.error(f"Failed to parse window center/width values for volume {volumeNode.GetName()} SOP instance: {uid}. Details: {str(e)}")
 
             sopClassUID = slicer.dicomDatabase.fileValue(file, self.tags["sopClassUID"])
 
