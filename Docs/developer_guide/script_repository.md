@@ -38,6 +38,9 @@ The Slicer source code has Python [scripted modules](https://github.com/Slicer/S
 ```{include} script_repository/segmentations.md
 ```
 
+```{include} script_repository/registration.md
+```
+
 ```{include} script_repository/sequences.md
 ```
 
