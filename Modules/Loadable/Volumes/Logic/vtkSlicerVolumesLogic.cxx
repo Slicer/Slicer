@@ -1652,7 +1652,7 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
       vtkErrorMacro(<< errorPrefix << " Error reading preset " << presetIndex << ". Missing required property name, id, window, level, or color.");
       continue;
     }
-    if (!preset["name"].IsString() || !preset["id"].IsString() || !preset["window"].IsDouble() || !preset["level"].IsDouble())
+    if (!preset["name"].IsString() || !preset["id"].IsString() || !preset["window"].IsNumber() || !preset["level"].IsNumber())
     {
       vtkErrorMacro(<< errorPrefix << " Error reading preset " << presetIndex << ". Wrong type for property name, id, window, or level.");
       continue;
@@ -1663,7 +1663,7 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
     presetObj.level = preset["level"].GetDouble();
     presetObj.window = preset["window"].GetDouble();
     presetObj.valid = true;
-    if (!preset["name"].IsString() || !preset["id"].IsString() || !preset["window"].IsDouble() || !preset["level"].IsDouble() || !preset["color"].IsString())
+    if (!preset["name"].IsString() || !preset["id"].IsString() || !preset["window"].IsNumber() || !preset["level"].IsNumber() || !preset["color"].IsString())
     {
       vtkErrorMacro(<< errorPrefix << " Error reading preset " << presetIndex << ". Wrong type for property name, id, window, or level.");
       continue;

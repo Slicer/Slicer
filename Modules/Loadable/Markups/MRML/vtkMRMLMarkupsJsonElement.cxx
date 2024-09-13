@@ -71,7 +71,7 @@ bool vtkMRMLMarkupsJsonElement::vtkInternal::ReadVector(rapidjson::Value& item, 
   bool success = true;
   for (int i = 0; i < numberOfComponents; i++)
   {
-    if (!item[i].IsDouble())
+    if (!item[i].IsNumber())
     {
       success = false;
       continue;
@@ -142,7 +142,7 @@ bool vtkMRMLMarkupsJsonElement::GetDoubleProperty(const char* propertyName, doub
   {
     return false;
   }
-  if (!this->Internal->JsonValue[propertyName].IsDouble())
+  if (!this->Internal->JsonValue[propertyName].IsNumber())
   {
     return false;
   }
@@ -157,7 +157,7 @@ double vtkMRMLMarkupsJsonElement::GetDoubleProperty(const char* propertyName)
   {
     return 0.0;
   }
-  if (!this->Internal->JsonValue[propertyName].IsDouble())
+  if (!this->Internal->JsonValue[propertyName].IsNumber())
   {
     return 0.0;
   }
@@ -439,7 +439,7 @@ vtkDoubleArray* vtkMRMLMarkupsJsonElement::GetDoubleArrayProperty(const char* pr
     return nullptr;
   }
   rapidjson::Value& firstControlPointValue = arrayItem.GetArray()[0];
-  if (firstControlPointValue.IsDouble())
+  if (firstControlPointValue.IsNumber())
   {
     values->SetNumberOfValues(numberOfTuples);
     double* valuesPtr = values->GetPointer(0);
