@@ -70,7 +70,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
         shell: bash
 
-      - uses: peter-evans/create-pull-request@8867c4aba1b742c39f8d0ba35429c2dfa4b6cb20 # v7.0.1
+      - uses: peter-evans/create-pull-request@6cd32fd93684475c31847837f87bb135d40a2b79 # v7.0.3
         with:
           token: ${{ steps.app-token.outputs.token }}
           commit-message: |
