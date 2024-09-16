@@ -24,9 +24,16 @@ comment = """
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByUID(patientUID, messages=None, progressCallback=None):
+def loadPatientByUID(patientUID, messages=None, progressCallback=None, enabledPluginClassNames=None):
     """Load patient by patient UID from DICOM database.
-    Returns list of loaded node ids.
+    :param patientUID: UID of the patient in the database that will be loaded. Note that this is not a DICOM ID but an identifier
+                       created when the patient was added to the DICOM database.
+    :param messages: String list that will contain messages collected during DICOM examination and loading.
+    :param progressCallback: Callback function `progressCallback(pluginClassName, percentageCompleted)`
+                             that is repeatadly called during loading, if it returns True then loading is cancelled.
+    :param enabledPluginClassNames: List of DICOM plugin class names that are enabled for loading.
+                                    If set to `None` then default list is used (all plugins that are not explicitly disabled).
+    :return: List of loaded node ids.
 
     Example: load all data from a DICOM folder (using a temporary DICOM database)
 
@@ -78,7 +85,7 @@ def loadPatientByUID(patientUID, messages=None, progressCallback=None):
     if len(seriesUIDs) == 0:
         raise OSError("No series found in patient with DICOM database UID " + patientUIDstr)
 
-    return loadSeriesByUID(seriesUIDs, messages, progressCallback)
+    return loadSeriesByUID(seriesUIDs, messages, progressCallback, enabledPluginClassNames)
 
 
 # ------------------------------------------------------------------------------
@@ -96,14 +103,20 @@ def getDatabasePatientUIDByPatientName(name):
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByName(patientName, messages=None, progressCallback=None):
+def loadPatientByName(patientName, messages=None, progressCallback=None, enabledPluginClassNames=None):
     """Load patient by patient name from DICOM database.
-    Returns list of loaded node ids.
+    :param patientUID: Name of the patient to load.
+    :param messages: String list that will contain messages collected during DICOM examination and loading.
+    :param progressCallback: Callback function `progressCallback(pluginClassName, percentageCompleted)`
+                             that is repeatadly called during loading, if it returns True then loading is cancelled.
+    :param enabledPluginClassNames: List of DICOM plugin class names that are enabled for loading.
+                                    If set to `None` then default list is used (all plugins that are not explicitly disabled).
+    :return: List of loaded node ids.
     """
     patientUID = getDatabasePatientUIDByPatientName(patientName)
     if patientUID is None:
         raise OSError("Patient not found by name %s" % patientName)
-    return loadPatientByUID(patientUID, messages, progressCallback)
+    return loadPatientByUID(patientUID, messages, progressCallback, enabledPluginClassNames)
 
 
 # ------------------------------------------------------------------------------
@@ -132,35 +145,55 @@ def getDatabasePatientUIDByPatientID(patientID):
 
 
 # ------------------------------------------------------------------------------
-def loadPatientByPatientID(patientID, messages=None, progressCallback=None):
+def loadPatientByPatientID(patientID, messages=None, progressCallback=None, enabledPluginClassNames=None):
     """Load patient from DICOM database by DICOM PatientID.
-    Returns list of loaded node ids.
+    :param patientID: DICOM Patient ID of the patient to load.
+    :param messages: String list that will contain messages collected during DICOM examination and loading.
+    :param progressCallback: Callback function `progressCallback(pluginClassName, percentageCompleted)`
+                             that is repeatadly called during loading, if it returns True then loading is cancelled.
+    :param enabledPluginClassNames: List of DICOM plugin class names that are enabled for loading.
+                                    If set to `None` then default list is used (all plugins that are not explicitly disabled).
+    :return: List of loaded node ids.
     """
     patientUID = getDatabasePatientUIDByPatientID(patientID)
     if patientUID is None:
         raise OSError("Patient not found by PatientID %s" % patientID)
-    return loadPatientByUID(patientUID, messages, progressCallback)
+    return loadPatientByUID(patientUID, messages, progressCallback, enabledPluginClassNames)
 
 
 # ------------------------------------------------------------------------------
-def loadPatient(uid=None, name=None, patientID=None, messages=None, progressCallback=None):
-    """Load patient from DICOM database fr uid, name, or patient ID.
-    Returns list of loaded node ids.
+def loadPatient(uid=None, name=None, patientID=None, messages=None, progressCallback=None, enabledPluginClassNames=None):
+    """Load patient from DICOM database from either database uid, name, or DICOM ID.
+    :param uid: Patient ID in the database, if left as None then patient name or DICOM Patient ID will be used instead.
+    :param name: Patient name to load, if left as None then the DICOM Patient ID will be used instead.
+    :param patientID: DICOM Patient ID to load, must be specified if uid and name are not specified.
+    :param messages: String list that will contain messages collected during DICOM examination and loading.
+    :param progressCallback: Callback function `progressCallback(pluginClassName, percentageCompleted)`
+                             that is repeatadly called during loading, if it returns True then loading is cancelled.
+    :param enabledPluginClassNames: List of DICOM plugin class names that are enabled for loading.
+                                    If set to `None` then default list is used (all plugins that are not explicitly disabled).
+    :return: List of loaded node ids.
     """
     if uid is not None:
-        return loadPatientByUID(uid, messages, progressCallback)
+        return loadPatientByUID(uid, messages, progressCallback, enabledPluginClassNames)
     elif name is not None:
-        return loadPatientByName(name, messages, progressCallback)
+        return loadPatientByName(name, messages, progressCallback, enabledPluginClassNames)
     elif patientID is not None:
-        return loadPatientByPatientID(patientID, messages, progressCallback)
+        return loadPatientByPatientID(patientID, messages, progressCallback, enabledPluginClassNames)
 
     raise ValueError("One of the following arguments needs to be specified: uid, name, patientID")
 
 
 # ------------------------------------------------------------------------------
-def loadSeriesByUID(seriesUIDs, messages=None, progressCallback=None):
+def loadSeriesByUID(seriesUIDs, messages=None, progressCallback=None, enabledPluginClassNames=None):
     """Load multiple series by UID from DICOM database.
-    Returns list of loaded node ids.
+    :param seriesUIDs: Series instance UIDs of the DICOM data objects to load.
+    :param messages: String list that will contain messages collected during DICOM examination and loading.
+    :param progressCallback: Callback function `progressCallback(pluginClassName, percentageCompleted)`
+                             that is repeatadly called during loading, if it returns True then loading is cancelled.
+    :param enabledPluginClassNames: List of DICOM plugin class names that are enabled for loading.
+                                    If set to `None` then default list is used (all plugins that are not explicitly disabled).
+    :return: List of loaded node ids.
     """
     if not isinstance(seriesUIDs, list):
         raise ValueError("SeriesUIDs must contain a list")
@@ -179,6 +212,7 @@ def loadSeriesByUID(seriesUIDs, messages=None, progressCallback=None):
 
     loadablesByPlugin, _ = getLoadablesFromFileLists(
         fileLists,
+        enabledPluginClassNames,
         messages=messages,
         progressCallback=progressCallback,
     )
@@ -223,13 +257,18 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
 
 
 # ------------------------------------------------------------------------------
-def loadByInstanceUID(instanceUID, messages=None, progressCallback=None):
+def loadByInstanceUID(instanceUID, messages=None, progressCallback=None, enabledPluginClassNames=None):
     """Load with the most confident loadable that contains the instanceUID from DICOM database.
     This helps in the case where an instance is part of a series which may offer multiple
     loadables, such as when a series has multiple time points where
     each corresponds to a scalar volume and you only want to load the correct one.
-    Returns list of loaded node ids (typically one node).
-
+    :param seriesUIDs: Instance UID of the DICOM data objects to load.
+    :param messages: String list that will contain messages collected during DICOM examination and loading.
+    :param progressCallback: Callback function `progressCallback(pluginClassName, percentageCompleted)`
+                             that is repeatadly called during loading, if it returns True then loading is cancelled.
+    :param enabledPluginClassNames: List of DICOM plugin class names that are enabled for loading.
+                                    If set to `None` then default list is used (all plugins that are not explicitly disabled).
+    :return: List of loaded node ids (typically one node).
     For example:
       >>> uid = '1.3.6.1.4.1.14519.5.2.1.3098.5025.172915611048593327557054469973'
       >>> import DICOMLib
@@ -245,6 +284,7 @@ def loadByInstanceUID(instanceUID, messages=None, progressCallback=None):
     fileList = slicer.dicomDatabase.filesForSeries(seriesUID)
     loadablesByPlugin, _ = getLoadablesFromFileLists(
         [fileList],
+        enabledPluginClassNames,
         messages=messages,
         progressCallback=progressCallback,
     )
@@ -469,7 +509,7 @@ def loadSeriesWithVerification(
     messages=None,
     progressCallback=None,
 ):
-    """Load series by UID, and verify loadable selection and loaded nodes.
+    """Helper function for testing. Load series by UID, and verify loadable selection and loaded nodes.
 
     ``selectedPlugins`` example: { 'Scalar Volume':1, 'RT':2 }
     ``expectedLoadedNodes`` example: { 'vtkMRMLScalarVolumeNode':2, 'vtkMRMLSegmentationNode':1 }
@@ -735,6 +775,30 @@ def refreshDICOMWidget():
     return True
 
 
+def getDefaultPluginClassNames():
+    """Get class names of all available DICOM plugins that has not been disabled in application settings.
+    Application settings are editable in DICOMPluginSelector widget.
+    """
+
+    # Get list of disabled plugins from application settings
+    disabledPlugins = []
+    settings = qt.QSettings()
+    if settings.contains("DICOM/disabledPlugins/size"):
+        size = settings.beginReadArray("DICOM/disabledPlugins")
+        for i in range(size):
+            settings.setArrayIndex(i)
+            disabledPlugins.append(str(settings.allKeys()[0]))
+        settings.endArray()
+
+    enabledPluginClassNames = []
+    for pluginClass in slicer.modules.dicomPlugins:
+        if pluginClass not in disabledPlugins:
+            enabledPluginClassNames.append(pluginClass)
+
+    return enabledPluginClassNames
+
+
+# ------------------------------------------------------------------------------
 def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, progressCallback=None, pluginInstances=None):
     """Take list of file lists, return loadables by plugin dictionary"""
     detailedLogging = slicer.util.settingsValue("DICOM/detailedLogging", False, converter=slicer.util.toBool)
@@ -745,7 +809,7 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
         return loadablesByPlugin, loadEnabled
 
     if pluginClassNames is None:
-        pluginClassNames = list(slicer.modules.dicomPlugins.keys())
+        pluginClassNames = getDefaultPluginClassNames()
 
     if pluginInstances is None:
         pluginInstances = {}
@@ -778,6 +842,7 @@ def getLoadablesFromFileLists(fileLists, pluginClassNames=None, messages=None, p
     return loadablesByPlugin, loadEnabled
 
 
+# ------------------------------------------------------------------------------
 def loadLoadables(loadablesByPlugin, messages=None, progressCallback=None):
     """Load each DICOM loadable item.
     Returns loaded node IDs.
@@ -844,6 +909,7 @@ GLOBAL_DICOMWEB_USER_KEY = "GLOBAL_DICOMWEB_USER_KEY"
 GLOBAL_DICOMWEB_PASSWORD_KEY = "GLOBAL_DICOMWEB_PASSWORD_KEY"
 
 
+# ------------------------------------------------------------------------------
 def getGlobalDICOMAuth() -> Optional[requests.auth.HTTPBasicAuth]:
     """Get the global authentication settings for DICOM networking, if initialized."""
     user = slicer.util.settingsValue(GLOBAL_DICOMWEB_USER_KEY, "")
@@ -851,6 +917,7 @@ def getGlobalDICOMAuth() -> Optional[requests.auth.HTTPBasicAuth]:
     return requests.auth.HTTPBasicAuth(user, pwd) if user or pwd else None
 
 
+# ------------------------------------------------------------------------------
 def importFromDICOMWeb(
     dicomWebEndpoint,
     studyInstanceUID,
@@ -1023,6 +1090,7 @@ def importFromDICOMWeb(
     return seriesImported
 
 
+# ------------------------------------------------------------------------------
 def registerSlicerURLHandler():
     """
     Registers file associations and applicationName:// protocol (e.g., Slicer://)

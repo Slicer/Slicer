@@ -45,7 +45,10 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         VTKObservationMixin.__init__(self)
         qt.QWidget.__init__(self, slicer.util.mainWindow() if parent == "mainWindow" else parent)
 
-        self.pluginInstances = {}
+        # Allow customization of DICOM plugins
+        self.enabledPluginClassNames = None  # can be set to a list containing enabled DICOM plugin class names, or set to None for default set
+        self.pluginInstances = {}  # custom DICOM plugin instances can be added to override the default set
+
         self.fileLists = []
         self.extensionCheckPending = False
 
@@ -454,27 +457,6 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         loadablesByPlugin = {}
         loadEnabled = False
 
-        # Get selected plugins from application settings
-        # Settings are filled in DICOMWidget using DICOMPluginSelector
-        settings = qt.QSettings()
-        selectedPlugins = []
-        if settings.contains("DICOM/disabledPlugins/size"):
-            size = settings.beginReadArray("DICOM/disabledPlugins")
-            disabledPlugins = []
-
-            for i in range(size):
-                settings.setArrayIndex(i)
-                disabledPlugins.append(str(settings.allKeys()[0]))
-            settings.endArray()
-
-            for pluginClass in slicer.modules.dicomPlugins:
-                if pluginClass not in disabledPlugins:
-                    selectedPlugins.append(pluginClass)
-        else:
-            # All DICOM plugins would be enabled by default
-            for pluginClass in slicer.modules.dicomPlugins:
-                selectedPlugins.append(pluginClass)
-
         allFileCount = missingFileCount = 0
         for fileList in fileLists:
             for filePath in fileList:
@@ -499,7 +481,9 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
                 cancelled = progressDialog.wasCanceled
                 return cancelled
 
-            loadablesByPlugin, loadEnabled = DICOMLib.getLoadablesFromFileLists(fileLists, selectedPlugins, messages,
+            loadablesByPlugin, loadEnabled = DICOMLib.getLoadablesFromFileLists(fileLists,
+                                                                                self.enabledPluginClassNames,
+                                                                                messages,
                                                                                 lambda progressLabel, progressValue, progressDialog=progressDialog: progressCallback(progressDialog, progressLabel, progressValue),
                                                                                 self.pluginInstances)
 
