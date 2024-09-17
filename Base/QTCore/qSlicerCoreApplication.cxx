@@ -1139,43 +1139,50 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::handleCommandLineArguments()
+void qSlicerCoreApplication::handleURIArguments(const QStringList& fileNames)
 {
-  qSlicerCoreCommandOptions* options = this->coreCommandOptions();
-
   QStringList filesToLoad;
-  QStringList unparsedArguments = options->unparsedArguments();
-  if (unparsedArguments.length() > 0 &&
-      options->pythonScript().isEmpty() &&
-      options->extraPythonScript().isEmpty())
+
+  foreach(QString fileName, fileNames)
   {
-    foreach(QString fileName, unparsedArguments)
+    QUrl url = QUrl(fileName);
+    if (url.scheme().toLower() == this->applicationName().toLower()) // Scheme is case insensitive
     {
-      QUrl url = QUrl(fileName);
-      if (url.scheme().toLower() == this->applicationName().toLower()) // Scheme is case insensitive
-      {
-        qDebug() << "URL received via command-line: " << fileName;
-        emit urlReceived(fileName);
-        continue;
-      }
-
-      QFileInfo file(fileName);
-      if (file.exists())
-      {
-        qDebug() << "Local filepath received via command-line: " << fileName;
-        // Do not load immediately but just collect the files into a list and load at once
-        // so that all potential loading errors can be also reported at once.
-        filesToLoad << fileName;
-        continue;
-      }
-
-      qDebug() << "Ignore argument received via command-line (not a valid URL or existing local file): " << fileName;
+      qDebug() << "URL received via command-line: " << fileName;
+      emit urlReceived(fileName);
+      continue;
     }
+
+    QFileInfo file(fileName);
+    if (file.exists())
+    {
+      qDebug() << "Local filepath received via command-line: " << fileName;
+      // Do not load immediately but just collect the files into a list and load at once
+      // so that all potential loading errors can be also reported at once.
+      filesToLoad << fileName;
+      continue;
+    }
+
+    qDebug() << "Ignore argument received via command-line (not a valid URL or existing local file): " << fileName;
   }
 
   if (!filesToLoad.isEmpty())
   {
     this->loadFiles(filesToLoad);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::handleCommandLineArguments()
+{
+  qSlicerCoreCommandOptions* options = this->coreCommandOptions();
+
+  QStringList unparsedArguments = options->unparsedArguments();
+  if (unparsedArguments.length() > 0 &&
+      options->pythonScript().isEmpty() &&
+      options->extraPythonScript().isEmpty())
+  {
+    this->handleURIArguments(unparsedArguments);
   }
 
 #ifndef Slicer_USE_PYTHONQT
