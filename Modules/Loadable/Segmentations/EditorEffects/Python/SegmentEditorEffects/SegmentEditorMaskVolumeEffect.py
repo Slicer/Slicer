@@ -225,16 +225,20 @@ Fill inside and outside operation creates a binary labelmap volume as output, wi
         self.fillInsideLabel.setVisible(operationName == "FILL_INSIDE_AND_OUTSIDE")
         self.binaryMaskFillOutsideEdit.setVisible(operationName == "FILL_INSIDE_AND_OUTSIDE")
         self.fillOutsideLabel.setVisible(operationName == "FILL_INSIDE_AND_OUTSIDE")
+
+        # operationName is temporarily set to empty during scene close. If we change node types during this time then
+        # the node selector breaks, therefore it is important to only update the node selector if operationName is valid.
         if operationName in ["FILL_INSIDE", "FILL_OUTSIDE"]:
             if self.outputVolumeSelector.noneDisplay != _("(Create new Volume)"):
                 self.outputVolumeSelector.noneDisplay = _("(Create new Volume)")
                 self.outputVolumeSelector.nodeTypes = ["vtkMRMLScalarVolumeNode", "vtkMRMLLabelMapVolumeNode"]
-        else:
+        elif operationName == "FILL_INSIDE_AND_OUTSIDE":
             if self.outputVolumeSelector.noneDisplay != _("(Create new Labelmap Volume)"):
                 self.outputVolumeSelector.noneDisplay = _("(Create new Labelmap Volume)")
                 self.outputVolumeSelector.nodeTypes = ["vtkMRMLLabelMapVolumeNode", "vtkMRMLScalarVolumeNode"]
 
         self.inputVisibilityButton.setIcon(self.visibleIcon if self.isVolumeVisible(inputVolume) else self.invisibleIcon)
+
         self.outputVisibilityButton.setIcon(self.visibleIcon if self.isVolumeVisible(outputVolume) else self.invisibleIcon)
 
         self.updatingGUIFromMRML = False
