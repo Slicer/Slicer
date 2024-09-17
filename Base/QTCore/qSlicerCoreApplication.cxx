@@ -211,6 +211,7 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   this->RevisionUserSettings = nullptr;
   this->ReturnCode = qSlicerCoreApplication::ExitNotRequested;
   this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
+  this->URIArgumentHandlingEnabled = true;
   this->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(coreIOManager);
 #ifdef Slicer_BUILD_DICOM_SUPPORT
   this->DICOMDatabase = QSharedPointer<ctkDICOMDatabase>(new ctkDICOMDatabase);
@@ -1173,14 +1174,21 @@ void qSlicerCoreApplication::handleURIArguments(const QStringList& fileNames)
 }
 
 //-----------------------------------------------------------------------------
+CTK_GET_CPP(qSlicerCoreApplication, bool, isURIArgumentHandlingEnabled, URIArgumentHandlingEnabled);
+CTK_SET_CPP(qSlicerCoreApplication, bool, setURIArgumentHandlingEnabled, URIArgumentHandlingEnabled);
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplication::handleCommandLineArguments()
 {
+  Q_D(qSlicerCoreApplication);
+
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
 
   QStringList unparsedArguments = options->unparsedArguments();
   if (unparsedArguments.length() > 0 &&
       options->pythonScript().isEmpty() &&
-      options->extraPythonScript().isEmpty())
+      options->extraPythonScript().isEmpty() &&
+      d->URIArgumentHandlingEnabled)
   {
     this->handleURIArguments(unparsedArguments);
   }

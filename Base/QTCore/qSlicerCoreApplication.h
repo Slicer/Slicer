@@ -611,6 +611,17 @@ public:
   /// After processing the URLs, the remaining file paths are loaded using loadFiles().
   Q_INVOKABLE void handleURIArguments(const QStringList& fileNames);
 
+  ///@{
+  /// Set/Get if post-startup default handling of URI arguments is enabled.
+  ///
+  /// When enabled, the function `handleURIArguments()` will process command-line
+  /// arguments automatically post-startup.
+  ///
+  /// \sa handleURIArguments()
+  bool isURIArgumentHandlingEnabled() const;
+  void setURIArgumentHandlingEnabled(bool enabled);
+  ///}@
+
 public slots:
 
   /// Restart the application with the arguments passed at startup time
