@@ -1,5 +1,5 @@
 import SimpleITK as sitk
-
+import os
 import slicer
 
 __sitk__MRMLIDImageIO_Missing_Reported__ = False

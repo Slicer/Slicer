@@ -2,13 +2,21 @@ import slicer
 import sitkUtils as su
 
 import unittest
+import unittest.mock
 
 
 class SitkUtilsTests(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_SimpleITK_SlicerPushPull(self):
+    def test_SimpleITK_SlicerPushPullWithMRMLIDImageIO(self):
+        self._test_SimpleITK_SlicerPushPull()
+
+    def test_SimpleITK_SlicerPushPullWithoutMRMLIDImageIO(self):
+        with unittest.mock.patch.object(su, "IsMRMLIDImageIOAvailable", return_value=False):
+            self._test_SimpleITK_SlicerPushPull()
+
+    def _test_SimpleITK_SlicerPushPull(self):
         """Download the MRHead node"""
         import SampleData
 
