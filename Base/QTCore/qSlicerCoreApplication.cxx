@@ -1117,7 +1117,6 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
   if (options->ignoreRest())
   {
     qDebug() << "Ignored arguments:" << options->unparsedArguments();
-    return;
   }
 
   if (!options->settingsDisabled() && options->keepTemporarySettings())
