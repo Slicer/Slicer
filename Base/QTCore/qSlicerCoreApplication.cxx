@@ -1114,11 +1114,6 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     d->quickExit(EXIT_SUCCESS);
   }
 
-  if (options->ignoreRest())
-  {
-    qDebug() << "Ignored arguments:" << options->unparsedArguments();
-  }
-
   if (!options->settingsDisabled() && options->keepTemporarySettings())
   {
     this->showConsoleMessage("Argument '--keep-temporary-settings' requires "
