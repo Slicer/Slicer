@@ -458,19 +458,19 @@ void qMRMLTransformSliders::resetUnactiveSliders()
 {
   Q_D(qMRMLTransformSliders);
 
-  if (!d->ActiveSliders.contains(d->LRSlider))
+  if (!d->ActiveSliders.contains(d->LRSlider) && !d->LRSlider->isSettingValueFromSpinBox())
   {
     bool blocked = d->LRSlider->blockSignals(true);
     d->LRSlider->reset();
     d->LRSlider->blockSignals(blocked);
   }
-  if (!d->ActiveSliders.contains(d->PASlider))
+  if (!d->ActiveSliders.contains(d->PASlider) && !d->PASlider->isSettingValueFromSpinBox())
   {
     bool blocked = d->PASlider->blockSignals(true);
     d->PASlider->reset();
     d->PASlider->blockSignals(blocked);
   }
-  if (!d->ActiveSliders.contains(d->ISSlider))
+  if (!d->ActiveSliders.contains(d->ISSlider) && !d->ISSlider->isSettingValueFromSpinBox())
   {
     bool blocked = d->ISSlider->blockSignals(true);
     d->ISSlider->reset();
