@@ -12,6 +12,7 @@ plots
 selftests
 segmentations
 segmenteditor
+sequences
 transforms
 volumerendering
 volumes
