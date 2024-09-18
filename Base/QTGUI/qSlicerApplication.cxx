@@ -717,6 +717,14 @@ void qSlicerApplication::handleCommandLineArguments()
     this->errorLogModel()->disableAllMsgHandler();
   }
 
+  if (options->ignoreRest() || !options->unparsedArguments().isEmpty())
+  {
+    qSlicerScopedTerminalOutputSettings currentTerminalOutputSettings(
+      this->errorLogModel(), ctkErrorLogTerminalOutput::None);
+
+    qDebug() << "Ignored arguments:" << options->unparsedArguments();
+  }
+
   this->Superclass::handleCommandLineArguments();
 
   this->setToolTipsEnabled(!options->disableToolTips());
