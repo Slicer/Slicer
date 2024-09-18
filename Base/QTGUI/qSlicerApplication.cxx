@@ -174,6 +174,29 @@ protected:
 };
 #endif
 
+namespace
+{
+
+// --------------------------------------------------------------------------
+struct qSlicerScopedTerminalOutputSettings
+{
+  qSlicerScopedTerminalOutputSettings(
+      ctkErrorLogAbstractModel* errorLogModel,
+      const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutputs):
+    ErrorLogModel(errorLogModel)
+  {
+    this->Saved = errorLogModel->terminalOutputs();
+    errorLogModel->setTerminalOutputs(terminalOutputs);
+  }
+  ~qSlicerScopedTerminalOutputSettings()
+  {
+    this->ErrorLogModel->setTerminalOutputs(this->Saved);
+  }
+  ctkErrorLogAbstractModel* ErrorLogModel;
+  ctkErrorLogTerminalOutput::TerminalOutputs Saved;
+};
+
+}
 
 //-----------------------------------------------------------------------------
 class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
@@ -1054,30 +1077,6 @@ void qSlicerApplication::setupFileLogging()
 
   // Set current log file path
   d->ErrorLogModel->setFilePath(currentLogFilePath);
-}
-
-namespace
-{
-
-// --------------------------------------------------------------------------
-struct qSlicerScopedTerminalOutputSettings
-{
-  qSlicerScopedTerminalOutputSettings(
-      ctkErrorLogAbstractModel* errorLogModel,
-      const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutputs):
-    ErrorLogModel(errorLogModel)
-  {
-    this->Saved = errorLogModel->terminalOutputs();
-    errorLogModel->setTerminalOutputs(terminalOutputs);
-  }
-  ~qSlicerScopedTerminalOutputSettings()
-  {
-    this->ErrorLogModel->setTerminalOutputs(this->Saved);
-  }
-  ctkErrorLogAbstractModel* ErrorLogModel;
-  ctkErrorLogTerminalOutput::TerminalOutputs Saved;
-};
-
 }
 
 // --------------------------------------------------------------------------
