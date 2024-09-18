@@ -16,8 +16,8 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLVolumeSequenceStorageNode.h"
 
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLSequenceNode.h"
-#include "vtkMRMLVectorVolumeNode.h"
 
 #include "vtkTeemNRRDReader.h"
 #include "vtkTeemNRRDWriter.h"
@@ -104,7 +104,8 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   typedef std::vector<std::string> KeyVector;
   KeyVector keys = reader->GetHeaderKeysVector();
   int frameAxis = 0;
-  for ( KeyVector::iterator kit = keys.begin(); kit != keys.end(); ++kit)
+  std::string dataNodeClassName;
+  for (KeyVector::iterator kit = keys.begin(); kit != keys.end(); ++kit)
   {
 #ifdef NRRD_CHUNK_IO_AVAILABLE
     if (*kit == "axis 0 index type")
@@ -118,7 +119,7 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       frameAxis = 3;
     }
     else if (*kit == "axis 0 index values" || *kit == "axis 3 index values")
-      {
+    {
       std::string indexValue;
       for (std::istringstream indexValueList(reader->GetHeaderValue(kit->c_str()));
         indexValueList >> indexValue;)
@@ -141,6 +142,10 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
         indexValues.push_back(vtkMRMLNode::URLDecodeString(indexValue.c_str()));
       }
 #endif
+    }
+    else if (*kit == "DataNodeClassName")
+    {
+      dataNodeClassName = reader->GetHeaderValue(kit->c_str());
     }
     else
     {
@@ -214,7 +219,27 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     // Slicer expects normalized image position and spacing
     frameVoxels->SetOrigin(0, 0, 0);
     frameVoxels->SetSpacing(1, 1, 1);
-    vtkNew<vtkMRMLScalarVolumeNode> frameVolume;
+    vtkSmartPointer<vtkMRMLVolumeNode> frameVolume;
+    if (dataNodeClassName.empty())
+    {
+      dataNodeClassName = "vtkMRMLScalarVolumeNode";
+    }
+    if (this->GetScene())
+    {
+      frameVolume = vtkSmartPointer<vtkMRMLVolumeNode>::Take(vtkMRMLVolumeNode::SafeDownCast(this->GetScene()->CreateNodeByClass(dataNodeClassName.c_str())));
+    }
+    else
+    {
+      vtkWarningMacro("vtkMRMLVolumeSequenceStorageNode::ReadDataInternal: Scene is not set.");
+    }
+    if (frameVolume == nullptr)
+    {
+      if (dataNodeClassName != "vtkMRMLScalarVolumeNode")
+      {
+        vtkErrorMacro("Requested DataNodeClass is " << dataNodeClassName << " but volume sequence will be read into vtkMRMLScalarVolumeNode.");
+      }
+      frameVolume = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+    }
 #ifdef NRRD_CHUNK_IO_AVAILABLE
     frameVolume->SetAndObserveImageData(frameVoxels);
 #else
@@ -482,12 +507,12 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     writer->SetAttribute(axisValues, ssIndexValues.str());
   }
 
-  // pass down all MRML attributes to NRRD
+  // pass down all MRML attributes to NRRD, including "DataNodeClassName", which is used to determine the type of the data node
+  // when reading the sequence from file
   std::vector<std::string> attributeNames = volSequenceNode->GetAttributeNames();
-  std::vector<std::string>::iterator ait = attributeNames.begin();
-  for (; ait != attributeNames.end(); ++ait)
+  for (auto & attributeName : attributeNames)
   {
-    writer->SetAttribute((*ait), volSequenceNode->GetAttribute(ait->c_str()));
+    writer->SetAttribute(attributeName, volSequenceNode->GetAttribute(attributeName.c_str()));
   }
 
 #ifdef NRRD_CHUNK_IO_AVAILABLE

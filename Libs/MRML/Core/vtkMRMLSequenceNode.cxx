@@ -429,8 +429,9 @@ vtkMRMLNode* vtkMRMLSequenceNode::SetDataNodeAtValue(vtkMRMLNode* node, const st
   }
   this->IndexEntries[seqItemIndex].DataNode = newNode;
   this->IndexEntries[seqItemIndex].DataNodeID.clear();
-  // Save the sequence data node class namein a node attribute to allow easy access
-  // (e.g., for filtering on the GUI).
+  // Save the sequence data node class name in a node attribute to allow easy access
+  // (e.g., for filtering on the GUI). This attribute may be also saved to the sequence file
+  // to inform the reader what MRML node class to instantiate when reading the file.
   if (this->GetNumberOfDataNodes() <= 1)
   {
     this->SetAttribute("DataNodeClassName", this->GetDataNodeClassName().c_str());

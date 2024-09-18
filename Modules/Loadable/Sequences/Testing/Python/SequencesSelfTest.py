@@ -68,6 +68,8 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
 
         self.section_SetupPathsAndNames()
         self.section_ReplaySavedSequence()
+        self.section_SaveVolumeSequence("scalar")
+        self.section_SaveVolumeSequence("label")
         self.delayDisplay("Test passed")
 
     # ------------------------------------------------------------------------------
@@ -80,16 +82,40 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
         self.assertTrue(os.access(self.sequencesSelfTestDir, os.F_OK))
 
     # ------------------------------------------------------------------------------
-    def section_ReplaySavedSequence(self):
+    def _createSavedSceneFolder(self, savedSceneDir):
+        if not os.access(savedSceneDir, os.F_OK):
+            os.mkdir(savedSceneDir)
+        self.assertTrue(os.access(savedSceneDir, os.F_OK))
 
-        def clearSavedSceneFolder(savedSceneDir):
-            # Clear the output savedScene folder
-            for sceneFiles in ["SequencesSelfTest.mrml", "Data/CTPCardioSeq.seq.nrrd", "Data/CTPCardioSeq.nrrd", "Data"]:
-                try:
-                    os.remove(os.path.join(savedSceneDir, sceneFiles))
-                except OSError:
-                    pass
-            shutil.rmtree(savedSceneDir, True)
+    # ------------------------------------------------------------------------------
+    def _clearSavedSceneFolder(self, savedSceneDir):
+        # Clear the output savedScene folder
+        for sceneFiles in ["SequencesSelfTest.mrml", "Data/CTPCardioSeq.seq.nrrd", "Data/CTPCardioSeq.nrrd", "Data"]:
+            try:
+                os.remove(os.path.join(savedSceneDir, sceneFiles))
+            except OSError:
+                pass
+        shutil.rmtree(savedSceneDir, True)
+
+    # ------------------------------------------------------------------------------
+    def _saveAndLoadScene(self):
+        # Test saving and loading of sequence
+        savedSceneDir = os.path.join(self.sequencesSelfTestDir, "savedscene")
+        self._clearSavedSceneFolder(savedSceneDir)
+        self._createSavedSceneFolder(savedSceneDir)
+
+        self.delayDisplay("Test saving of sequence")
+        self.assertTrue(slicer.app.applicationLogic().SaveSceneToSlicerDataBundleDirectory(savedSceneDir, None))
+
+        self.delayDisplay("Test loading of sequence")
+        slicer.mrmlScene.Clear(0)
+        slicer.util.loadScene(os.path.join(savedSceneDir, "savedscene.mrml"))
+
+        # Remove temporary folder to not pollute the file system
+        self._clearSavedSceneFolder(savedSceneDir)
+
+    # ------------------------------------------------------------------------------
+    def section_ReplaySavedSequence(self):
 
         def checkSequenceItems(browserNode, sequenceNode):
             volumeNode = browserNode.GetProxyNode(sequenceNode)
@@ -126,22 +152,8 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
         lastSelectedItem = 12
         browserNode.SetSelectedItemNumber(lastSelectedItem)
 
-        # Test saving and loading of sequence
-        savedSceneDir = os.path.join(self.sequencesSelfTestDir, "savedscene")
-        clearSavedSceneFolder(savedSceneDir)
-
-        if not os.access(savedSceneDir, os.F_OK):
-            os.mkdir(savedSceneDir)
-        self.assertTrue(os.access(savedSceneDir, os.F_OK))
-
-        self.delayDisplay("Test saving of sequence")
-        self.assertTrue(slicer.app.applicationLogic().SaveSceneToSlicerDataBundleDirectory(savedSceneDir, None))
-
-        self.delayDisplay("Test loading of sequence")
-        slicer.mrmlScene.Clear(0)
-        slicer.util.loadScene(os.path.join(savedSceneDir, "savedscene.mrml"))
-        # Remove temporary folder to not pollute the file system
-        clearSavedSceneFolder(savedSceneDir)
+        # Save scene, clear scene, load scene from saved file
+        self._saveAndLoadScene()
 
         # Test selected item index
         self.assertEqual(browserNode.GetSelectedItemNumber(), lastSelectedItem)
@@ -152,3 +164,60 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
         sequenceNode = slicer.util.getFirstNodeByClassByName("vtkMRMLSequenceNode", "CTPCardioSeq")
         self.assertIsNotNone(sequenceNode)
         checkSequenceItems(browserNode, sequenceNode)
+
+    # ------------------------------------------------------------------------------
+    def section_SaveVolumeSequence(self, volumeType):
+
+        import numpy as np
+        randomGenerator = np.random.default_rng(12345)
+
+        # Test saving and loading of sequence with volume type "scalar" or "label"
+        slicer.mrmlScene.Clear(0)
+
+        # Create a sequence with 5 volumes
+        numberOfItems = 5
+        sequenceNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceNode", "sequence example") #Create sequence node
+        for i in range(numberOfItems):
+            if volumeType == "scalar":
+                # Create small sample with 4 categories
+                voxelArray = randomGenerator.integers(low=0, high=200, size=(25,25,25), dtype=np.int16)
+                volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode", f"volume_{i}")
+            elif volumeType == "label":
+                # Create small sample with 4 categories
+                voxelArray = randomGenerator.integers(low=0, high=4, size=(5,5,5), dtype=np.uint8)
+                volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode", f"labelmap_{i}")
+            else:
+                raise ValueError("Unknown volume type " + volumeType)
+            slicer.util.updateVolumeFromArray(volumeNode, voxelArray)
+            # Add labelmap to sequence
+            sequenceNode.SetDataNodeAtValue(volumeNode, str(i))
+
+        # Create sequence browser
+        browserNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSequenceBrowserNode", "browser example")
+        browserNode.SetAndObserveMasterSequenceNodeID(sequenceNode.GetID())
+
+        # Show proxy node
+        if volumeType == "scalar":
+            slicer.util.setSliceViewerLayers(background=browserNode.GetProxyNode(sequenceNode))
+        elif volumeType == "label":
+            slicer.util.setSliceViewerLayers(label=browserNode.GetProxyNode(sequenceNode))
+        slicer.modules.sequences.toolBar().setActiveBrowserNode(browserNode)
+        slicer.modules.sequences.setToolBarVisible(True)
+
+        # Save scene, clear scene, load scene from saved file
+        self._saveAndLoadScene()
+
+        # Test selected item index
+        self.delayDisplay("Test browsing of loaded sequence")
+        browserNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSequenceBrowserNode")
+        self.assertIsNotNone(browserNode)
+        sequenceNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSequenceNode")
+        self.assertIsNotNone(sequenceNode)
+        volumeNode = browserNode.GetProxyNode(sequenceNode)
+
+        if volumeType == "scalar":
+            self.assertEqual(volumeNode.GetClassName(), "vtkMRMLScalarVolumeNode")
+        elif volumeType == "label":
+            self.assertEqual(volumeNode.GetClassName(), "vtkMRMLLabelMapVolumeNode")
+
+        self.delayDisplay("Test passed for volume type " + volumeType)
