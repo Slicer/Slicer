@@ -21,7 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+      # Filter paths to determine whether to proceed with the build
+      - name: "Filter Paths"
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: changes
         with:
           filters: |
@@ -37,13 +39,15 @@ jobs:
               - "Testing/**"
               - "CMakeLists.txt"
 
+      # Build Slicer if relevant paths were changed
       - name: "Build Slicer"
         id: slicer-build
         if: steps.changes.outputs.paths-to-include == 'true'
         uses: ./.github/actions/slicer-build
 
+      # Upload the Slicer package artifact if the build was successful
       - name: "Upload Slicer package"
-        if: steps.changes.outputs.paths-to-include == 'true'
+        if: ${{ steps.slicer-build.outcome == 'success' }}
         uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
         with:
           name: slicer-package
