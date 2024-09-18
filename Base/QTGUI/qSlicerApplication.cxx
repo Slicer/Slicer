@@ -185,14 +185,23 @@ struct qSlicerScopedTerminalOutputSettings
       const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutputs):
     ErrorLogModel(errorLogModel)
   {
+    if (errorLogModel == nullptr)
+    {
+      qWarning() << Q_FUNC_INFO << " failed: errorLogModel is invalid";
+      return;
+    }
     this->Saved = errorLogModel->terminalOutputs();
     errorLogModel->setTerminalOutputs(terminalOutputs);
   }
   ~qSlicerScopedTerminalOutputSettings()
   {
+    if (this->ErrorLogModel == nullptr)
+    {
+      return;
+    }
     this->ErrorLogModel->setTerminalOutputs(this->Saved);
   }
-  ctkErrorLogAbstractModel* ErrorLogModel;
+  ctkErrorLogAbstractModel* ErrorLogModel{nullptr};
   ctkErrorLogTerminalOutput::TerminalOutputs Saved;
 };
 
