@@ -39,10 +39,40 @@ jobs:
               - "Testing/**"
               - "CMakeLists.txt"
 
-      # Build Slicer if relevant paths were changed
+      # Retrieve changes in SuperBuild-related files relative to the 'nightly-main' branch
+      - name: "Detect SuperBuild Changes"
+        uses: tj-actions/changed-files@48d8f15b2aaa3d255ca5af3eba4870f807ce6b3c # v45.0.2
+        id: superbuild-changes
+        with:
+          files: |
+            SuperBuild/External_*
+          base_sha: nightly-main
+
+      # List any SuperBuild files that were changed
+      - name: "List Changed SuperBuild Files"
+        if: steps.superbuild-changes.outputs.any_changed == 'true'
+        run: |
+          echo "Changed files:"
+          for file in ${ALL_CHANGED_FILES}; do
+            echo " $file"
+          done
+        env:
+          ALL_CHANGED_FILES: ${{ steps.superbuild-changes.outputs.all_changed_files }}
+
+      # Check prerequisites for the build
+      - name: "Check Prerequisites"
+        id: check-prereqisities
+        run: |
+          if [[ $SUPERBUILD_CHANGED == "true" ]]; then
+            echo "::warning ::Skipping Slicer build due to changes in SuperBuild files relative to 'nightly-main' branch."
+          fi
+        env:
+          SUPERBUILD_CHANGED: ${{ steps.superbuild-changes.outputs.any_changed }}
+
+      # Build Slicer if relevant paths were changed and no SuperBuild changes were detected
       - name: "Build Slicer"
         id: slicer-build
-        if: steps.changes.outputs.paths-to-include == 'true'
+        if: ${{ steps.changes.outputs.paths-to-include == 'true' && steps.superbuild-changes.outputs.any_changed == 'false' }}
         uses: ./.github/actions/slicer-build
 
       # Upload the Slicer package artifact if the build was successful
