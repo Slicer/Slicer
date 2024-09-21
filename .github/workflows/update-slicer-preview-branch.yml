@@ -1,0 +1,68 @@
+name: Update Preview Branch
+
+on:
+  schedule:
+    # Daily at 04:00 AM UTC (this corresponds to the time set in CTestConfig.cmake + 1 hour)
+    #
+    # This workflow is synchronized with the nightly builds on the Kitware-hosted dashboards,
+    # which are configured via crontab to trigger daily at 11:00 PM Eastern Time (ET). The conversion
+    # from ET to UTC depends on whether daylight saving time is in effect:
+    #
+    # - During the spring/summer months (typically March to November), Eastern Daylight Time (EDT),
+    #   which is UTC-04:00, is observed. Thus, 11:00 PM EDT corresponds to 03:00 AM UTC.
+    # - During the autumn/winter months (typically November to March), Eastern Standard Time (EST),
+    #   which is UTC-05:00, is observed. Thus, 11:00 PM EST corresponds to 04:00 AM UTC.
+    #
+    # The build jobs are configured to start via the crontab on the Kitware-hosted dashboards at
+    # 11:00 PM ET, and this workflow is scheduled to run daily at 04:00 AM UTC to ensure it executes
+    # after the nightly builds have started and completed their source checkout, regardless of daylight
+    # saving time.
+    #
+    # This is important because the preview branch should be updated to reflect the state of the
+    # repository as of the latest nightly build.
+    - cron: "0 4 * * *"
+  # Manual trigger
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update-slicer-preview-branch:
+    name: Update Slicer preview branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: "Convert dashboard start time from ET to UTC"
+        id: convert
+        run: |
+          time=$(TZ=":US/Eastern" date -d"23:00:00"  "+%H:%M:%S %z")
+          echo "time=$time" >> $GITHUB_OUTPUT
+
+      - name: "Retrieve preview branch SHA"
+        id: retrieve
+        run: |
+          git rev-parse "main@{${TIME}}"
+        env:
+          TIME: ${{ steps.convert.outputs.time }}
+
+      - uses: actions/create-github-app-token@5d869da34e18e7287c1daad50e0b8ea0f506ce69 # v1.11.0
+        id: app-token
+        with:
+          app-id: ${{ vars.SLICER_APP_ID }}
+          private-key: ${{ secrets.SLICER_APP_PRIVATE_KEY }}
+
+      - name: "Publish"
+        run: |
+          if [ -z "$SHA" ]; then
+            echo "::error ::Failed to retrieve SHA"
+            exit 1
+          fi
+          remote=https://${TOKEN}@github.com/${REPOSITORY}.git
+          git push $remote $SHA:${PREVIEW_BRANCH} --force
+        env:
+          SHA: ${{ steps.retrieve.outputs.sha }}
+          TOKEN: ${{ steps.app-token.outputs.token }}
+          REPOSITORY: ${{ github.repository }}
+          PREVIEW_BRANCH: nightly-main
