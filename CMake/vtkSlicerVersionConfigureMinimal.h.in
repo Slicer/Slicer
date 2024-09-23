@@ -41,6 +41,31 @@
 /// Patch version number of this project source and binaries.
 #define Slicer_VERSION_PATCH @Slicer_VERSION_PATCH@
 
+/// \def Slicer_VERSION_NUMBER_COMPUTE(major, minor, patch)
+/// \brief Macro that computes Slicer_VERSION_NUMBER from major, minor, and patch numbers.
+/// This can be used for comparing Slicer version in #if/#else directives.
+/// This is useful when implementing Slicer extensions that need to be compatible
+/// with multiple Slicer core versions.
+///
+/// Example:
+///
+/// #if Slicer_VERSION_NUMBER >= Slicer_VERSION_NUMBER_COMPUTE(5, 9, 0)
+///   ... code compatible with Slicer-5.9.0 and newer
+/// #else
+///   ... code compatible with older Slicer versions
+/// #endif
+///
+/// Available since Slicer-5.7.0.
+/// Implementation is based on VTK_VERSION_CHECK (inspired by QT_VERSION_CHECK).
+#define Slicer_VERSION_NUMBER_COMPUTE(major, minor, patch) (10000000000ULL * major + 100000000ULL * minor + patch)
+
+/// \def Slicer_VERSION_NUMBER
+/// \brief This number is can be used for Slicer version check macro in #if/#else directives.
+/// The number can be compared to a fixed version computed by Slicer_VERSION_NUMBER_COMPUTE(major, minor, patch).
+/// Available since Slicer-5.7.0.
+/// Implementation is based on VTK_VERSION_NUMBER (inspired by QT_VERSION).
+#define Slicer_VERSION_NUMBER Slicer_VERSION_NUMBER_COMPUTE(Slicer_VERSION_MAJOR, Slicer_VERSION_MINOR, Slicer_VERSION_PATCH)
+
 //-----------------------------------------------------------------------------
 /// \def Slicer_MAIN_PROJECT_VERSION_MAJOR
 #define Slicer_MAIN_PROJECT_VERSION_MAJOR @Slicer_MAIN_PROJECT_VERSION_MAJOR@
