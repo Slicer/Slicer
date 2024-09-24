@@ -30,8 +30,19 @@ public:
 
   static vtkMRMLTextStorageNode* New();
   vtkTypeMacro(vtkMRMLTextStorageNode, vtkMRMLStorageNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
+
+  /// Set node attributes from name/value pairs
+  void ReadXMLAttributes(const char** atts) override;
+
+  /// Write this node's information to a MRML file in XML format.
+  void WriteXML(ostream& of, int indent) override;
+
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLTextStorageNode);
 
   /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override { return "TextStorage"; };
@@ -43,8 +54,26 @@ public:
   bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override;
   int WriteDataInternal(vtkMRMLNode* refNode) override;
 
-  /// Return a default file extension for writing
+  /// Return a default file extension for writing.
+  /// It corresponds to the first format in the list of supported write file formats.
   const char* GetDefaultWriteFileExtension() override;
+
+  //@{
+  /// Get/Set file extensions that this storage node can read and write.
+  /// The first write file extension is also used as DefaultWriteFileExtension.
+  /// This feature is useful to allow using this storage node for storing text files
+  /// with any extension. For example, developers may want to save configuration files in .yaml format,
+  /// which extension is not recognized by default by this node. In that case, a custom file reader
+  /// can be added, which recognizes the .yaml file and instantiates a text storage node with custom
+  /// supported read/write file extensions.
+  /// If all file extensions are set to empty then the class default file extensions are used.
+  /// fileExtensions is a string list containing each supported file extension, without a leading "." character
+  /// (for example: ["yml", "yaml"]).
+  void SetSupportedReadFileExtensions(const std::vector<std::string> fileExtensions);
+  void SetSupportedWriteFileExtensions(const std::vector<std::string> fileExtensions);
+  std::vector<std::string> GetSupportedReadFileExtensions();
+  std::vector<std::string> GetSupportedWriteFileExtensions();
+  //@}
 
 protected:
   vtkMRMLTextStorageNode();
@@ -63,6 +92,10 @@ protected:
 
   /// Initialize all the supported write file types
   void InitializeSupportedWriteFileTypes() override;
+
+  // Customizable list of file extensions that this class can read/write
+  std::vector<std::string> SupportedReadFileExtensions;
+  std::vector<std::string> SupportedWriteFileExtensions;
 };
 
 #endif

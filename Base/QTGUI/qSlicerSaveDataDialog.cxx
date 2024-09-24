@@ -621,7 +621,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
     QString extension = QString::fromStdString(
       vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
     fileFormats->addItem(nameFilter, extension);
-    if (extension == currentExtension)
+    if (currentFormat < 0 && extension == currentExtension)
     {
       currentFormat = fileFormats->count() - 1;
     }
