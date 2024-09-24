@@ -1117,8 +1117,8 @@ void vtkMRMLStorageNode::SetDefaultWriteFileExtension(const char* ext)
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedWriteFileTypes->Reset();
-  this->SupportedWriteFileTypes->SetNumberOfTuples(0);
+  this->SupportedReadFileTypes->Reset();
+  this->SupportedReadFileTypes->SetNumberOfTuples(0);
 }
 
 //----------------------------------------------------------------------------

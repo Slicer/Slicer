@@ -1,5 +1,6 @@
 import logging
 import os
+import vtk
 
 import slicer
 from slicer.ScriptedLoadableModule import *
@@ -41,20 +42,22 @@ class SlicerScriptedFileReaderWriterTestFileReader:
     def extensions(self):
         return ["My file type (*.mft)"]
 
-    def canLoadFile(self, filePath):
+    def canLoadFileConfidence(self, filePath):
         # Only enable this reader in testing mode
         if not slicer.app.testingEnabled():
-            return False
+            return 0.0
 
         # Check first if loadable based on file extension
         if not self.parent.supportedNameFilters(filePath):
-            return False
+            return 0.0
 
         firstLine = ""
         with open(filePath) as f:
             firstLine = f.readline()
-        validFile = "magic" in firstLine
-        return validFile
+        fileLooksValid = "magic" in firstLine
+        # Default confidence is 0.5 + 0.01 * fileExtensionLength = 0.53,
+        # we return a higher value if we recognize this file
+        return 0.8 if fileLooksValid else 0.3
 
     def load(self, properties):
         try:
@@ -76,12 +79,29 @@ class SlicerScriptedFileReaderWriterTestFileReader:
             if firstLine != "magic":
                 raise ValueError("Cannot read file, it is expected to start with magic")
 
+            # Uncomment the next line to display a warning message to the user.
+            # self.parent.userMessages().AddMessage(vtk.vtkCommand.WarningEvent, "This is a warning message")
+
             # Load content into new node
             loadedNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode", baseName)
             loadedNode.SetText("".join(data[1:]))
 
-            # Uncomment the next line to display a warning message to the user.
-            # self.parent.userMessages().AddMessage(vtk.vtkCommand.WarningEvent, "This is a warning message")
+            # We always want to save this node in a separate file.
+            # Without this, by default short text nodes are saved in the scene file to reduce clutter.
+            loadedNode.SetForceCreateStorageNode(True)
+            # Add a node attribute to designate this as a particular type of text node.
+            # This allows filtering in node selectors and making the custom writer plugin chosen by default.
+            loadedNode.SetAttribute("MyFileCategory", "aaa")
+
+            # Set up a custom text storage node to support custom file extension (.mft)
+            # The writer plugin could handle custom file extension, but when the scene is loaded/saved
+            # without GUI (e.g., when writing to MRML Scene Bundle .mrb file) then it is important
+            # that the storage node supports the custom file extension (and uses it as default extension for writing).
+            loadedNode.AddDefaultStorageNode()
+            storageNode = loadedNode.GetStorageNode()
+            storageNode.SetSupportedReadFileExtensions(["mft"])
+            storageNode.SetSupportedWriteFileExtensions(["mft"])
+            storageNode.SetFileName(filePath)
 
         except Exception as e:
             import traceback
@@ -106,14 +126,22 @@ class SlicerScriptedFileReaderWriterTestFileWriter:
         return "MyFileType"
 
     def extensions(self, obj):
-        return ["My file type (*.mft)"]
+        return ["My file type (.mft)"]
 
-    def canWriteObject(self, obj):
+    def canWriteObjectConfidence(self, obj):
         # Only enable this writer in testing mode
         if not slicer.app.testingEnabled():
-            return False
+            return 0.0
 
-        return bool(obj.IsA("vtkMRMLTextNode"))
+        if not obj.IsA("vtkMRMLTextNode"):
+            return 0.0
+
+        # Select this custom reader by default by returning higher confidence than default
+        isMyFileType = obj.GetAttribute("MyFileCategory") == "aaa"
+        # Return larger than default confidence (0.8) if we recognize the file (from the attribute)
+        # and return with a lower-than default, but still non-zero confidence value to not use this file
+        # writer by default but let the user select it manually.
+        return 0.8 if isMyFileType else 0.3
 
     def write(self, properties):
         try:
@@ -167,6 +195,7 @@ class SlicerScriptedFileReaderWriterTestTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Testing node writer")
         slicer.mrmlScene.Clear()
         textNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
+        textNode.SetAttribute("MyFileCategory", "aaa")
         textNode.SetText(self.textInNode)
         self.assertTrue(slicer.util.saveNode(textNode, self.validFilename, {"fileType": "MyFileType"}))
 
