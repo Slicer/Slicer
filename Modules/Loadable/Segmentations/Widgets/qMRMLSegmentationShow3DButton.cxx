@@ -59,7 +59,6 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_SET_CPP(qMRMLSegmentationShow3DButton, bool, setLocked, Locked);
 CTK_GET_CPP(qMRMLSegmentationShow3DButton, bool, locked, Locked);
 
 //-----------------------------------------------------------------------------
@@ -486,4 +485,12 @@ void qMRMLSegmentationShow3DButton::onSurfaceSmoothingFactorChanged(double newSm
     }
     d->setSurfaceSmoothingFactor(newSmoothingFactor);
   }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSegmentationShow3DButton::setLocked(bool locked)
+{
+  Q_D(qMRMLSegmentationShow3DButton);
+  d->Locked = locked;
+  this->updateWidgetFromMRML();
 }
