@@ -1195,6 +1195,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
     d->MaskingGroupBox->setEnabled(false);
     d->EffectsOptionsFrame->setEnabled(false);
     d->SourceVolumeNodeComboBox->setEnabled(false);
+    d->Show3DButton->setLocked(true);
     return;
   }
   d->SegmentationNodeComboBox->setEnabled(true);
