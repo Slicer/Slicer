@@ -34,9 +34,16 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/create-github-app-token@5d869da34e18e7287c1daad50e0b8ea0f506ce69 # v1.11.0
+        id: app-token
+        with:
+          app-id: ${{ vars.SLICER_APP_ID }}
+          private-key: ${{ secrets.SLICER_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           ref: main
+          token: ${{ steps.app-token.outputs.token }}
           # The 'fetch-depth' option ensures that a sufficient number of commits are retrieved (250)
           # to allow the "git rev-parse" command used below to accurately reference a commit based
           # on time.
@@ -84,22 +91,13 @@ jobs:
         env:
           TIME: ${{ steps.convert.outputs.time }}
 
-      - uses: actions/create-github-app-token@5d869da34e18e7287c1daad50e0b8ea0f506ce69 # v1.11.0
-        id: app-token
-        with:
-          app-id: ${{ vars.SLICER_APP_ID }}
-          private-key: ${{ secrets.SLICER_APP_PRIVATE_KEY }}
-
       - name: "Publish"
         run: |
           if [ -z "$SHA" ]; then
             echo "::error ::Failed to retrieve SHA"
             exit 1
           fi
-          remote=https://${SLICERBOT_GITHUB_TOKEN}@github.com/${REPOSITORY}.git
-          git push $remote $SHA:refs/heads/${PREVIEW_BRANCH} --force
+          git push origin $SHA:refs/heads/${PREVIEW_BRANCH}
         env:
           SHA: ${{ steps.retrieve.outputs.sha }}
-          SLICERBOT_GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          REPOSITORY: ${{ github.repository }}
           PREVIEW_BRANCH: nightly-main
