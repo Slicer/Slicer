@@ -163,7 +163,10 @@ Surface or volumetric meshes.
 - [**ITK HDF transform**](https://www.itk.org/ItkSoftwareGuide.pdf) (.h5): For linear, b-spline, grid (displacement field), thin-plate spline, and composite transforms. Coordinate system: LPS.
 - [**ITK TXT transform**](https://www.itk.org/ItkSoftwareGuide.pdf) (.tfm, .txt): For linear, b-spline, and thin-plate spline, and composite transforms. Coordinate system: LPS.
 - [**Matlab MAT file**](https://www.itk.org/ItkSoftwareGuide.pdf) (.mat): For linear and b-spline transforms. Coordinate system: LPS.
-- **Displacement field** (.nrrd, .nhdr, .mha, .mhd, .nii, .nii.gz): For storing grid transform as a vector image, each voxel containing displacement vector. Coordinate system: LPS.
+- **Displacement field**: For storing grid transform as a vector image, each voxel containing displacement vector. Voxel values are in physical space (not in voxels).
+  - NRRD (.nrrd, .nhdr): Coordinate system: LPS. Metadata: `dimension: 4`, `sizes: 3 I J K`, `space directions: none (ix, iy, iz) (jx, jy, jz) (kx, ky, kz)`, `kinds: vector domain domain domain`
+  - MetaImage (.mha, .mhd): Coordinate system: LPS. Metadata: `NDims = 3`, `DimSize = I J K`, `ElementNumberOfChannels = 3`
+  - NIFTI (.nii, .nii.gz). Coordinate system: RAS. Metadata: Number of dimensions: 5. Dimensions: `[I, J, K, 1, 3]`. Intent code: `NIFTI_INTENT_DISPVECT (1006)`.
 - [SlicerRT extension](https://www.slicerrt.org/)
   - **Pinnacle DVF** (.dvf)
 
