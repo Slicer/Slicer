@@ -169,6 +169,12 @@ QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::visibilityContextMenuActi
 }
 
 //-----------------------------------------------------------------------------
+QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::transformContextMenuActions()const
+{
+  return QList<QAction*>();
+}
+
+//-----------------------------------------------------------------------------
 QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::viewContextMenuActions()const
 {
   return QList<QAction*>();
@@ -358,6 +364,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::hideAllContextMenuActions()const
   QList<QAction*> allActions;
   allActions << this->sceneContextMenuActions();
   allActions << this->itemContextMenuActions();
+  allActions << this->transformContextMenuActions();
   allActions << this->visibilityContextMenuActions();
   allActions << this->viewContextMenuActions();
 
