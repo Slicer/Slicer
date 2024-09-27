@@ -150,8 +150,12 @@ double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName)con
             }
           }
         }
-
-        confidence = (looksLikeSequence ? 0.6 : 0.4);
+        // If it looks like sequence then we need to set a confidence value that is larger than 0.55.
+        // However, if we get a 4D sequence it may be some other 4D data set, such as .seg.nrrd.
+        // We would not want a .seg.nrrd file to be recognized as sequence by default, so we need to set
+        // the confidence value to smaller than 0.59. Therefore, if it looks like a sequence then we
+        // use confidence of 0.58.
+        confidence = (looksLikeSequence ? 0.58 : 0.4);
       }
     }
   }
