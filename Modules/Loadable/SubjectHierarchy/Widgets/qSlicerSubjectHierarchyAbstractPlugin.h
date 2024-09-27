@@ -163,6 +163,15 @@ public:
   /// \param itemID Subject Hierarchy item to show the visibility context menu items for
   Q_INVOKABLE virtual void showVisibilityContextMenuActionsForItem(vtkIdType itemID) { Q_UNUSED(itemID); };
 
+  /// Get transform context menu item actions to add to tree view.
+  /// These item transform context menu actions can be shown in the
+  /// implementations of \sa showTransformContextMenuActionsForItem
+  Q_INVOKABLE virtual QList<QAction*> transformContextMenuActions() const;
+
+  /// Show transform context menu actions valid for a given subject hierarchy
+  /// item. \param itemID Subject Hierarchy item to show the transform context menu items for
+  Q_INVOKABLE virtual void showTransformContextMenuActionsForItem(vtkIdType itemID) { Q_UNUSED(itemID); };
+
   /// Get view context menu item actions that are available when right-clicking an object in the views.
   /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
   /// Note: The actions need object names set so that they can be included in the white list
