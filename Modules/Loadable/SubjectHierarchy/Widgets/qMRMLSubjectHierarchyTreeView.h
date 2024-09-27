@@ -346,11 +346,6 @@ protected slots:
 
   void onCustomContextMenu(const QPoint& point);
 
-  virtual void onTransformActionSelected();
-  virtual void onTransformInteractionInViewToggled(bool show);
-  virtual void onTransformEditProperties();
-  virtual void onCreateNewTransform();
-
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
