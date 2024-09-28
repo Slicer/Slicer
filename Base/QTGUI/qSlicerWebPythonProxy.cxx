@@ -31,24 +31,24 @@
 # include "qSlicerPythonManager.h"
 #endif
 #include "qSlicerWebPythonProxy.h"
+#include "qSlicerWebPythonProxy_p.h"
+
+//------------------------------------------------------------------------------
+qSlicerWebPythonProxyPrivate::~qSlicerWebPythonProxyPrivate() = default;
+
+CTK_GET_CPP(qSlicerWebPythonProxy, bool, verbose, Verbose);
+CTK_SET_CPP(qSlicerWebPythonProxy, bool, setVerbose, Verbose);
 
 // --------------------------------------------------------------------------
-qSlicerWebPythonProxy::qSlicerWebPythonProxy(QObject *parent)
-  : QObject(parent)
-{
-  this->pythonEvaluationAllowed = false;
-}
-
-// --------------------------------------------------------------------------
-bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
+bool qSlicerWebPythonProxyPrivate::isPythonEvaluationAllowed()
 {
 #ifdef Slicer_USE_PYTHONQT
-  if (this->pythonEvaluationAllowed)
+  if (this->PythonEvaluationAllowed)
   {
     return true;
   }
 
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app || qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
     return false;
@@ -56,11 +56,11 @@ bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
 
   ctkMessageBox* confirmationBox = new ctkMessageBox(qSlicerApplication::application()->mainWindow());
   confirmationBox->setAttribute(Qt::WA_DeleteOnClose);
-  confirmationBox->setWindowTitle(tr("Allow Python execution?"));
-  confirmationBox->setText(tr("Allow the web page to execute code using Slicer's python?"));
+  confirmationBox->setWindowTitle(qSlicerWebPythonProxy::tr("Allow Python execution?"));
+  confirmationBox->setText(qSlicerWebPythonProxy::tr("Allow the web page to execute code using Slicer's python?"));
 
-  confirmationBox->addButton(tr("Allow"), QMessageBox::AcceptRole);
-  confirmationBox->addButton(tr("Reject"), QMessageBox::RejectRole);
+  confirmationBox->addButton(qSlicerWebPythonProxy::tr("Allow"), QMessageBox::AcceptRole);
+  confirmationBox->addButton(qSlicerWebPythonProxy::tr("Reject"), QMessageBox::RejectRole);
 
   confirmationBox->setDontShowAgainVisible(true);
   confirmationBox->setDontShowAgainSettingsKey("WebEngine/AllowPythonExecution");
@@ -69,15 +69,33 @@ bool qSlicerWebPythonProxy::isPythonEvaluationAllowed()
 
   if (resultCode == QMessageBox::AcceptRole)
   {
-    this->pythonEvaluationAllowed = true;
+    this->PythonEvaluationAllowed = true;
   }
 #endif
-  return this->pythonEvaluationAllowed;
+  return this->PythonEvaluationAllowed;
 }
+
+//------------------------------------------------------------------------------
+qSlicerWebPythonProxy::qSlicerWebPythonProxy(QObject* parent)
+  : Superclass(parent)
+  , d_ptr(new qSlicerWebPythonProxyPrivate)
+{
+}
+
+//------------------------------------------------------------------------------
+qSlicerWebPythonProxy::qSlicerWebPythonProxy(qSlicerWebPythonProxyPrivate* pimpl)
+  : d_ptr(pimpl)
+{
+}
+
+//------------------------------------------------------------------------------
+qSlicerWebPythonProxy::~qSlicerWebPythonProxy() = default;
 
 // --------------------------------------------------------------------------
 QString qSlicerWebPythonProxy::evalPython(const QString &python, int mode)
 {
+  Q_D(qSlicerWebPythonProxy);
+
   ctkAbstractPythonManager::ExecuteStringMode executeStringMode{ctkAbstractPythonManager::FileInput};
   switch (mode)
   {
@@ -97,11 +115,14 @@ QString qSlicerWebPythonProxy::evalPython(const QString &python, int mode)
 
   QString result;
 #ifdef Slicer_USE_PYTHONQT
-  if (this->isPythonEvaluationAllowed())
+  if (d->isPythonEvaluationAllowed())
   {
     qSlicerPythonManager *pythonManager = qSlicerApplication::application()->pythonManager();
     result = pythonManager->executeString(python, executeStringMode).toString();
-    qDebug() << "Running " << python << " result is " << result;
+    if (this->verbose())
+    {
+      qDebug() << "Running " << python << " result is " << result;
+    }
   }
 #else
   Q_UNUSED(python);
