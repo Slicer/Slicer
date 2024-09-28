@@ -27,16 +27,20 @@
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
+class qSlicerWebPythonProxyPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebPythonProxy
   : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose)
 
 public:
+  typedef QObject Superclass;
 
   /// Constructor
   explicit qSlicerWebPythonProxy(QObject *parent = nullptr);
+  virtual ~qSlicerWebPythonProxy();
 
   /// This enum maps to ctkAbstractPythonManager execution modes Py_eval_input,
   /// Py_file_input and Py_single_input.
@@ -54,6 +58,10 @@ public:
     };
   Q_ENUMS(EvalPythonMode);
 
+  /// Enabled detailed logging during Python evaluation.
+  bool verbose() const;
+  void setVerbose(bool value);
+
 public slots:
 
   /// Convenient function to execute python code from
@@ -70,11 +78,13 @@ public slots:
   /// \sa qSlicerWebWidget::initializeWebEngineProfile
   QString evalPython(const QString &python, int mode = FileInput);
 
-private:
-  /// Keep track of user response to avoid going through ctk dialog to check
-  bool isPythonEvaluationAllowed();
-  bool pythonEvaluationAllowed;
+protected:
+  qSlicerWebPythonProxy(qSlicerWebPythonProxyPrivate* pimpl);
+  QScopedPointer<qSlicerWebPythonProxyPrivate> d_ptr;
 
+private:
+  Q_DECLARE_PRIVATE(qSlicerWebPythonProxy);
+  Q_DISABLE_COPY(qSlicerWebPythonProxy);
 };
 
 #endif
