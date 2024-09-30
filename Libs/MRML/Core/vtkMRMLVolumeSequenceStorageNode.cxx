@@ -15,6 +15,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSequenceNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
 
 // vtkAddon includes
 #include <vtkAddonMathUtilities.h>
