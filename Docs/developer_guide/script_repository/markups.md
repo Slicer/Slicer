@@ -376,6 +376,31 @@ for pointIndex in range(2):
     projectedLineNode.AddControlPoint(projectedPoint_World[0:3])
 ```
 
+### Measure distances of points from a plane
+
+Place a plane (`P`) and add points to point list (`F`) using Markups module in a view and then run the following code snippet to compute distances of the points from the plane.
+
+```python
+pointListNode = getNode('F')
+planeNode = getNode('P')
+
+# Get transformation that gets point coordinates relative to the plane
+planeToWorld = vtk.vtkMatrix4x4()
+planeNode.GetObjectToWorldMatrix(planeToWorld)
+worldToPlane = vtk.vtkMatrix4x4()
+vtk.vtkMatrix4x4.Invert(planeToWorld, worldToPlane)
+
+for pointIndex in range(pointListNode.GetNumberOfControlPoints()):
+    # Get point position in world coordinate system
+    point_World = [*pointListNode.GetNthControlPointPositionWorld(pointIndex), 1.0]
+    # Get point position in the plane coordinate system
+    point_Plane = worldToPlane.MultiplyPoint(point_World)
+    # Third axis in the plane coordinate system is the plane normal direction, therefore the third coordinate
+    # value is the distance from the plane
+    distanceFromPlane = abs(point_Plane[2])
+    print(f"Distance of point {pointListNode.GetNthControlPointLabel(pointIndex)} from plane: {distanceFromPlane:.2f}")
+```
+
 ### Measure distances of points from a line
 
 Draw a markups line (`L`) and drop markups point list (`F`) in a view and then run the following code snippet to compute distances of the points from the line.
