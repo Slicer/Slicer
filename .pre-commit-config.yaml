@@ -36,7 +36,7 @@ repos:
         types_or: [yaml]
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: "0.29.2"
+    rev: "0.29.3"
     hooks:
       - id: check-dependabot
       - id: check-github-workflows
