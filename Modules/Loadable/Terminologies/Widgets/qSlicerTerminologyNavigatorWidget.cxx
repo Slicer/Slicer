@@ -254,6 +254,8 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
     q, SLOT(onTerminologySelectionChanged(int)) );
   QObject::connect(this->tableWidget_Category, SIGNAL(itemSelectionChanged()),
     q, SLOT(onCategorySelectionChanged()) );
+  QObject::connect(this->pushButton_SelectAllCategories, SIGNAL(clicked()),
+    q, SLOT(onSelectAllCategoriesButtonClicked()) );
   QObject::connect(this->tableWidget_Type, SIGNAL(currentItemChanged(QTableWidgetItem*,QTableWidgetItem*)),
     q, SLOT(onTypeSelected(QTableWidgetItem*,QTableWidgetItem*)) );
   QObject::connect(this->tableWidget_Type, SIGNAL(cellDoubleClicked(int,int)),
@@ -1639,6 +1641,14 @@ void qSlicerTerminologyNavigatorWidget::onCategorySelectionChanged()
   {
     d->setNameFromCurrentTerminology();
   }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyNavigatorWidget::onSelectAllCategoriesButtonClicked()
+{
+  Q_D(qSlicerTerminologyNavigatorWidget);
+
+  d->tableWidget_Category->selectAll();
 }
 
 //-----------------------------------------------------------------------------

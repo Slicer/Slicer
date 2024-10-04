@@ -350,7 +350,7 @@
             <bool>false</bool>
            </property>
            <property name="selectionMode">
-            <enum>QAbstractItemView::MultiSelection</enum>
+            <enum>QAbstractItemView::ExtendedSelection</enum>
            </property>
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
@@ -368,6 +368,13 @@
             <bool>false</bool>
            </attribute>
            <column/>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_SelectAllCategories">
+           <property name="text">
+            <string>Select all</string>
+           </property>
           </widget>
          </item>
         </layout>
