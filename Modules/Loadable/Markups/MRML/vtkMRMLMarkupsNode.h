@@ -702,6 +702,12 @@ public:
   /// identifies the node and provides basic information.
   virtual std::string GetPropertiesLabelText();
 
+  /// Set axis labels to show for each axis of the interaction handler.
+  virtual void SetAxisLabels(const char* axisLabelX, const char* axisLabelY, const char* axisLabelZ);
+
+  /// Get axis labels to show for each axis of the interaction handler.
+  virtual void GetAxisLabels(std::string &axisLabelX, std::string &axisLabelY, std::string &axisLabelZ);
+
   /// Utility function to get unit node from scene
   vtkMRMLUnitNode* GetUnitNode(const char* quantity);
 
@@ -1045,6 +1051,9 @@ protected:
 
   /// Flag set from SetControlPointPositionsWorld that pauses update of measurements until the update is complete.
   bool IsUpdatingPoints{false};
+
+  /// Axis labels to show for each axis of the interaction handler. Elements of the array are labels for axes X, Y, and Z.
+  std::string AxisLabels[3];
 
   friend class qSlicerMarkupsModuleWidget; // To directly access measurements
 };
