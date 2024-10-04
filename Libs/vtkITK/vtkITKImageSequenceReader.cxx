@@ -30,6 +30,7 @@
 #include "itkExtractImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageToVTKImageFilter.h"
+#include "itkNrrdImageIO.h"
 
 vtkStandardNewMacro(vtkITKImageSequenceReader);
 
@@ -58,12 +59,11 @@ void vtkITKImageSequenceReader::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-template <class T>
+template <class TPixelType, int Dimension>
 void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self, vtkImageData* data)
 {
-  // Read the entire image
-  constexpr unsigned int ImageDimension = 4;  //TODO: Constant
-  using PixelType = itk::RGBAPixel<unsigned short>;  //TODO: Scalar type is constant
+  using PixelType = TPixelType;
+  constexpr unsigned int ImageDimension = Dimension;
   using ImageType = itk::Image<PixelType, ImageDimension>;
 
   using ReaderType = itk::ImageFileReader<ImageType>;
@@ -113,13 +113,13 @@ void vtkITKExecuteDataFromFile(vtkITKImageSequenceReader* self, vtkImageData* da
 
   ImageType::RegionType fullRegion = image->GetLargestPossibleRegion();
   ImageType::SizeType extractionSize = fullRegion.GetSize();
-  self->SetNumberOfFrames(extractionSize[3]);  //TODO: Constant dimension
+  self->SetNumberOfFrames(extractionSize[Dimension-1]);
 
-  extractionSize[3] = 0;  // Collapse sequence dimension when extracting frame  //TODO: Constant dimension
+  extractionSize[Dimension-1] = 0;  // Collapse sequence dimension when extracting frame
 
   ImageType::RegionType extractionRegion;
   ImageType::IndexType extractionIndex = extractionRegion.GetIndex();
-  extractionIndex[3] = self->GetCurrentFrameIndex();  //TODO: Constant dimension
+  extractionIndex[Dimension-1] = self->GetCurrentFrameIndex();
   extractionRegion.SetIndex(extractionIndex);
   extractionRegion.SetSize(extractionSize);
   extractImageFilter->SetDirectionCollapseToSubmatrix();
@@ -157,16 +157,68 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
 
   try
   {
-    //switch (this->OutputScalarType)
-    //{
-    //  vtkTemplateMacro(vtkITKExecuteDataFromFileDiffusionTensor3D<VTK_TT>(
-    //    this, tensors.GetPointer(), data));
-    //  default:
-    //    vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType);
-    //    this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
-    //}
+    // Read header to decide dimensions, pixel type, and scalar type
 
-    vtkITKExecuteDataFromFile<unsigned short>(this, data);
+    // Create an NRRD image IO object
+    using ImageIOType = itk::NrrdImageIO;
+    ImageIOType::Pointer imageIO = ImageIOType::New();
+    // Read metadata
+    if (!imageIO->CanReadFile(this->GetFileName()))
+    {
+      vtkErrorMacro("Cannot read the NRRD file: " << this->GetFileName());
+      this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
+      return;
+    }
+    imageIO->SetFileName(this->GetFileName());
+    imageIO->ReadImageInformation(); // Read only the header information
+    //// Print relevant metadata
+    //unsigned int dimension = imageIO->GetNumberOfDimensions();
+    //std::cerr << "Dimensions: " << dimension << std::endl;
+    //for (unsigned int i = 0; i < dimension; ++i)
+    //{
+    //  std::cerr << "Size of dimension " << i << ": " << imageIO->GetDimensions(i) << std::endl;
+    //}
+    //std::cerr << "Pixel Type: " << imageIO->GetPixelTypeAsString(imageIO->GetPixelType()) << std::endl;
+    //std::cerr << "Component Type: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()) << std::endl;
+
+    // Load image from file
+    switch (imageIO->GetNumberOfDimensions())
+    {
+    case 4:
+      switch (imageIO->GetPixelType())
+      {
+        case itk::CommonEnums::IOPixel::RGB:
+          if (imageIO->GetComponentType() != itk::ImageIOBase::IOComponentEnum::UCHAR)
+          {
+            vtkErrorMacro("Unexpected component type for RGB voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+            return;
+          }
+          vtkITKExecuteDataFromFile<itk::RGBPixel<unsigned char>, 4>(this, data);
+          break;
+        case itk::CommonEnums::IOPixel::RGBA:
+          if (imageIO->GetComponentType() != itk::ImageIOBase::IOComponentEnum::UCHAR)
+          {
+            vtkErrorMacro("Unexpected component type for RGBA voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+            return;
+          }
+          vtkITKExecuteDataFromFile<itk::RGBAPixel<unsigned char>, 4>(this, data);
+          break;
+        case itk::CommonEnums::IOPixel::VECTOR:
+          switch (imageIO->GetComponentType())
+          {
+          case itk::ImageIOBase::IOComponentEnum::USHORT:
+            vtkITKExecuteDataFromFile<itk::Vector<unsigned short>, 4>(this, data);
+            break;
+          case itk::ImageIOBase::IOComponentEnum::FLOAT:
+            vtkITKExecuteDataFromFile<itk::Vector<float>, 4>(this, data);
+            break;
+          }
+          break;
+      }
+      break;
+    }
   }
   catch (itk::InvalidArgumentError & e)
   {
