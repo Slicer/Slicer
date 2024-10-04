@@ -174,6 +174,7 @@ protected:
 protected slots:
   void onTerminologySelectionChanged(int);
   void onCategorySelectionChanged();
+  void onSelectAllCategoriesButtonClicked();
   void onTypeSelected(QTableWidgetItem*, QTableWidgetItem*);
   void onTypeCellDoubleClicked(int, int);
   void onTypeModifierSelectionChanged(int);
