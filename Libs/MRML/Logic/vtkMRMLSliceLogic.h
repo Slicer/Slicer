@@ -256,6 +256,10 @@ public:
   void RotateSliceToLowestVolumeAxes(bool forceSlicePlaneToSingleSlice = true);
 
   ///
+  /// adjust the node's field of view to match the extent of the first selected volume (background, foregorund, labelmap)
+  void FitSliceToFirst(int width = -1, int height = -1);
+
+  ///
   /// adjust the node's field of view to match the extent of current background volume
   void FitSliceToBackground(int width = -1, int height = -1);
 

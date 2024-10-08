@@ -2051,7 +2051,7 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::ResetFieldOfViewFlag);
   if (d->MRMLSliceCompositeNode->GetClipToBackgroundVolume())
   {
-    d->SliceLogic->FitSliceToBackground();
+    d->SliceLogic->FitSliceToFirst();
   }
   else
   {
