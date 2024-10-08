@@ -41,7 +41,7 @@
      <item>
       <widget class="QLabel" name="TransformNodeSelectorLabel">
        <property name="text">
-        <string>Active Transform:</string>
+        <string> Transform:</string>
        </property>
       </widget>
      </item>
@@ -420,7 +420,7 @@
         <item>
          <widget class="QToolButton" name="TransformToolButton">
           <property name="toolTip">
-           <string>Apply the active transform to the selected transformable nodes</string>
+           <string>Apply the selected transform to the selected transformable nodes</string>
           </property>
           <property name="text">
            <string>&gt;</string>
@@ -430,7 +430,7 @@
         <item>
          <widget class="QToolButton" name="UntransformToolButton">
           <property name="toolTip">
-           <string>Remove the active transform from the selected transformed nodes</string>
+           <string>Remove the selected transform from the selected transformed nodes</string>
           </property>
           <property name="text">
            <string>&lt;</string>
