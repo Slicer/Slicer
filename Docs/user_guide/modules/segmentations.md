@@ -163,7 +163,7 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
     - Set visibility and per-segment display settings, opacity, color, segment name
 - Display
     - Segmentations-wide display settings (not per-segment!): visibility, opacity (will be multiplied with per-segment opacity for display)
-    - Views: Individual views to show the active segmentation in
+    - Views: Individual views to show the selected segmentation in
     - Slice intersection thickness
     - Representation in 3D/2D views: The representation to be shown in the 3D and 2D views. Useful if there are multiple representations available, for example if we want to show the closed surface in the 3D view but the labelmap in the slice views
 - Representations
@@ -173,7 +173,7 @@ See Script repository's [Segmentations section](../../developer_guide/script_rep
         - Advanced conversion is possible (to use the non-default path or conversion parameters) by long-pressing the Create or Update button
         - Existing representations can be made master by clicking Make source. The source representation is used as source for conversions, it is the one that can be edited, and saved to disk
 - Copy/move (import/export)
-    - Left panel lists the segments in the active segmentation
+    - Left panel lists the segments in the selected segmentation
     - Right panel shows the external data container
     - The arrow buttons van be used to copy (with plus sign) or move (no plus sign) segments between the segmentation and the external node
     - New labelmap or model can be created by clicking the appropriate button on the top of the right panel

@@ -37,7 +37,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label_ActiveSegmentation">
        <property name="text">
-        <string> Active segmentation:</string>
+        <string> Segmentation:</string>
        </property>
       </widget>
      </item>

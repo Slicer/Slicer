@@ -21,7 +21,7 @@ Transform node can be created in multiple ways:
 - Method A: In Data module's Subject hierarchy tab, right-click on the "Transform" column and choose "Create new transform". This always creates a general "Transform".
 - Method B: In Data module's Subject hierarchy tab, right-click on the "Visibility" column of any transformable node and choose "Interaction" to create a parent transform and display the interaction handles (See [Interaction section](transforms.md#interaction)). This always creates a general "Transform".
 - Method C: In Data module's Transform hierarchy tab, right-click on an item and choose "Insert transform". This always creates a "Linear transform". Advantage of this method is that it is easy to build and overview hierarchy of transforms.
-- Method D: In Transforms module click on "Active transform" node selector and choose one of the "Create new..." options.
+- Method D: In Transforms module click on the "Transform" node selector and choose one of the "Create new..." options.
 
 How to choose transform type: Create "Linear transform" if you only work with linear transforms, because certain modules only allow you to select this node type as input. In other cases, it is recommended to  create the general "Transform" node. Multiple transform node types exist because earlier Slicer could only store a simple transformation in a node. Now a transform node can contain any transformation type (linear, grid, bspline, thin-plate spline, or even composite transformation - an arbitrary sequence of any transformations), therefore transform node types only differ in their name. In some modules, node selectors only accept a certain transform node type, therefore it may be necessary to create that expected transform type, but in the long term it is expected that all modules will accept the general "Transform" node type.
 
@@ -115,7 +115,7 @@ For macOS, refer to [alternate macOS keybindings](../user_interface.md#alternate
 
 ## Panels and their use
 
-Active Transform: Select the transform node to display, control and edit.
+Transform: Select the transform node to display, control and edit.
 
 ### Information
 
@@ -214,17 +214,17 @@ You can show both contours and grid or glyph representations by loading the same
 
 ### Apply transform
 
-Controls what nodes the currently selected "Active transform" is applied to.
+Controls what nodes the currently selected Transform is applied to.
 
-- Transformable: List the nodes in the scene that *do not* directly use the active transform node.
-- Transformed: List the nodes in the scene that use the active transform node.
-- Right arrow: Apply the active transform node to the selected nodes in Transformable list.
-- Left arrow: Remove the active transform node from the selected nodes in the Transformed list.
-- Harden transform: Harden active transform on the nodes selected in the Transformed list.
+- Transformable: List the nodes in the scene that *do not* directly use the selected transform node.
+- Transformed: List the nodes in the scene that use the selected transform node.
+- Right arrow: Apply the selected transform node to the selected nodes in Transformable list.
+- Left arrow: Remove the selected transform node from the selected nodes in the Transformed list.
+- Harden transform: Harden selected transform on the nodes selected in the Transformed list.
 
 ### Convert
 
-This section can sample the active transform on a grid (specified by the selected "Reference volume") and save it to a node. Depending on the type of selected "Output displacement field" node, slightly different information is exported:
+This section can sample the selected transform on a grid (specified by the selected "Reference volume") and save it to a node. Depending on the type of selected "Output displacement field" node, slightly different information is exported:
 - Scalar volume node : magnitude of displacement is saved as a scalar volume
 - Vector volume node: displacement vectors are saved as voxel values (in RAS coordinate system). When the vector volume is written to file, the image grid is saved in LPS coordinate system, but displacement values are still kept in RAS coordinate system.
 - Transform node: a grid transform is constructed. This can be used for creating an inverted displacement field that any ITK application can read. When the grid transform is written to file, both the image grid and displacement values are saved in LPS coordinate system.

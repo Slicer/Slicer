@@ -38,7 +38,7 @@
      <item>
       <widget class="QLabel" name="ActiveVolumeLabel">
        <property name="text">
-        <string>Active Volume: </string>
+        <string> Volume: </string>
        </property>
       </widget>
      </item>

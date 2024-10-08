@@ -83,7 +83,7 @@ Note: Consumer file formats, such as jpg, png, and tiff are not well suited for 
 
 ## Panels and their use
 
-- Active Volume: Select the volume to display and operate on.
+- Volume: Select the volume to display and operate on.
 - Volume Information: Information about the selected volume. Some fields can be edited to correctly describe the volume, for example, when loading incompletely specified image data such as a sequence of jpeg files. Use caution however, since changing properties such as Image Spacing will impact the physical accuracy of some calculations such as Label Statistics.
   - Image Dimensions: The number of pixels in "IJK" space - this is the way the data is arranged in memory. The IJK indices (displayed in the DataProbe) go from 0 to dimension-1 in each direction.
   - Image Spacing: The physical distance between pixel centers when mapped to patient space expressed in millimeters.
