@@ -682,6 +682,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         itk::ImageSeriesReader<ImageType>::New();
       seriesReader->SetFileNames(this->FileNames);
       seriesReader->SetImageIO(imageIO);
+      seriesReader->SetForceOrthogonalDirection(false);
       if (this->UseNativeCoordinateOrientation)
       {
         filter = seriesReader;
