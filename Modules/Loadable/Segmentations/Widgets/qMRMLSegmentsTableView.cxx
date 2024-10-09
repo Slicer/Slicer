@@ -63,6 +63,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QModelIndex>
+#include <QSettings>
 #include <QStringList>
 #include <QTimer>
 #include <QToolButton>
@@ -304,7 +305,16 @@ void qMRMLSegmentsTableViewPrivate::init()
   }
   QObject::connect(this->SortFilterModel, &qMRMLSortFilterSegmentsProxyModel::filterModified, q, &qMRMLSegmentsTableView::onSegmentsFilterModified);
 
-  // Set item delegate to handle color and opacity changes
+  // Set item delegate to handle color and opacity changes. Set item delegate for name editing as well if defined in settings.
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  if (settings->contains("Segmentations/SegmentNameTerminologyEdit"))
+  {
+    bool segmentNameTerminologyEdit = settings->value("Segmentations/SegmentNameTerminologyEdit").toBool();
+    if (segmentNameTerminologyEdit)
+    {
+      this->SegmentsTable->setItemDelegateForColumn(this->Model->nameColumn(), new qSlicerTerminologyItemDelegate(this->SegmentsTable));
+    }
+  }
   this->SegmentsTable->setItemDelegateForColumn(this->Model->colorColumn(), new qSlicerTerminologyItemDelegate(this->SegmentsTable));
   this->SegmentsTable->setItemDelegateForColumn(this->Model->opacityColumn(), new qMRMLItemDelegate(this->SegmentsTable));
   this->SegmentsTable->installEventFilter(q);
