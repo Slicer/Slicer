@@ -1123,9 +1123,14 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     }
   }
 
-  // Also need to run through any output nodes that will be
-  // communicated through the miniscene and add them to the miniscene
-  //
+  // Iterate through each node that needs to be reloaded and
+  // determine if it should be included in the mini-scene.
+  // For nodes such as transform nodes and model hierarchy nodes,
+  // add them to the mini-scene and map them accordingly.
+  // Handle specific cases like Markups nodes with .fcsv format
+  // and ensure proper storage node association.
+  // For SharedObjectModules, reschedule node events to be triggered
+  // in the main thread if the node is not part of the mini-scene.
   for (id2fn0 = nodesToReload.begin();
        id2fn0 != nodesToReload.end();
        ++id2fn0)
@@ -1179,6 +1184,26 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
           dablecp->SetAndObserveDisplayNodeID( d->GetID() );
         }
+      }
+    }
+    else if (nd->IsA("vtkMRMLMarkupsNode"))
+    {
+      // Markups storage node is a special case as we still support the old fcsv format
+      // for backward compatibility, which uses a non-default storage node.
+      std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension((*id2fn0).second) );
+
+      if (extension == ".fcsv")
+      {
+        vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nd);
+        vtkSmartPointer<vtkMRMLStorageNode> snode = storableNode->GetStorageNode();
+        if (snode == nullptr || !snode->IsA("vtkMRMLMarkupsFiducialStorageNode"))
+        {
+          snode = vtkMRMLStorageNode::SafeDownCast(
+                    this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialStorageNode"));
+          storableNode->SetAndObserveStorageNodeID(snode->GetID());
+        }
+        snode->SetFileName((*id2fn0).second.c_str());
+        storableNode->StorableModified();
       }
     }
     if (commandType == SharedObjectModule &&
