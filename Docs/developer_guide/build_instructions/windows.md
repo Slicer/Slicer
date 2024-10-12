@@ -27,7 +27,6 @@ Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK),
 **Other Visual Studio IDE and compiler toolset versions**
 
 - Visual Studio 2019 (v142) toolset is not tested anymore but probably still works.
-- Visual Studio 2017 (v141) toolset is not tested anymore but probably still works. Qt-5.15.2 requires v142 redistributables, so either these extra DLL files need to be added to the installation package or each user may need to install "Microsoft Visual C++ Redistributable" package.
 - Cygwin and Mingw: not tested and not recommended. Building with cygwin gcc not supported, but the cygwin shell environment can be used to run utilities such as git.
 
 :::
