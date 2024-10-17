@@ -57,18 +57,6 @@ void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
 }
 
-//----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::ObserveMRMLScene()
-{
-  if (this->GetMRMLScene() &&
-    this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLClipModelsNode") == nullptr)
-  {
-    // vtkMRMLClipModelsNode is a singleton
-    this->GetMRMLScene()->AddNode(vtkSmartPointer<vtkMRMLClipModelsNode>::New());
-  }
-  this->Superclass::ObserveMRMLScene();
-}
-
 //-----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
 {

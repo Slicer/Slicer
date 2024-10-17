@@ -94,6 +94,10 @@ protected slots:
   void onChartsExtentChanged();
   void onEffectiveRangeModified();
 
+  void setClippingEnabled(bool state);
+  void setSoftEdgeMm(double softEdgeMm);
+  void setMRMLClipNode(vtkMRMLNode* clipNode);
+
 protected:
   void setup() override;
 

@@ -147,6 +147,7 @@ set(MRMLCore_SRCS
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx
   vtkMRMLCameraNode.cxx
+  vtkMRMLClipNode.cxx
   vtkMRMLClipModelsNode.cxx
   vtkMRMLColorNode.cxx
   vtkMRMLColors.cxx
