@@ -139,6 +139,28 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::SetActiveComponentIndex(in
 }
 
 //----------------------------------------------------------------------
+void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateFromMRML(
+    vtkMRMLNode* caller, unsigned long event, void *callData)
+{
+  Superclass::UpdateFromMRML(caller, event, callData);
+
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(caller);
+  if (markupsNode == nullptr)
+  {
+    return;
+  }
+
+  // Update axis labels
+  std::string axisLabels[4] = {""};
+  markupsNode->GetAxisLabels(axisLabels[0], axisLabels[1], axisLabels[2]);
+  for (int i = 0; i < 4; ++i)
+  {
+    this->Pipeline->AxisLabelArray->SetValue(i, axisLabels[i].c_str());
+  }
+  this->Pipeline->AxisLabelActor->SetVisibility(!axisLabels[0].empty() || !axisLabels[1].empty() || !axisLabels[2].empty());
+}
+
+//----------------------------------------------------------------------
 bool vtkSlicerMarkupsInteractionWidgetRepresentation::IsDisplayable()
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetDisplayNode();
@@ -245,6 +267,24 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateInteractionPipeline(
   {
     this->UpdateROIScaleHandles();
   }
+
+  //TODO: This does not have an effect for some reason
+  //// Update text properties
+  //vtkTextProperty* markupsTextProperty = displayNode->GetTextProperty();
+  //for (int i = 0; i < 4; ++i)
+  //{
+  //  vtkSmartPointer<vtkTextProperty> axisLabelTextProperty = vtkSmartPointer<vtkTextProperty>::New();
+  //  axisLabelTextProperty->SetFontSize(markupsTextProperty->GetFontSize());
+  //  axisLabelTextProperty->SetBold(markupsTextProperty->GetBold());
+  //  axisLabelTextProperty->SetShadow(markupsTextProperty->GetShadow());
+  //  axisLabelTextProperty->SetFontFamily(markupsTextProperty->GetFontFamily());
+  //  if (i < this->GetNumberOfHandles(InteractionTranslationHandle))
+  //  {
+  //    HandleInfo handleInfo = this->GetHandleInfo(InteractionTranslationHandle, i);
+  //    axisLabelTextProperty->SetColor(handleInfo.Color);
+  //  }
+  //  this->Pipeline->AxisLabelMapper->SetLabelTextProperty(axisLabelTextProperty, i);
+  //}
 }
 
 //----------------------------------------------------------------------

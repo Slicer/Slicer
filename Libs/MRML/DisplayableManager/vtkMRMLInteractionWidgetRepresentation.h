@@ -55,6 +55,7 @@
 #include <vtkAppendPolyData.h>
 #include <vtkArrayCalculator.h>
 #include <vtkGlyph3D.h>
+#include <vtkLabeledDataMapper.h>
 #include <vtkLookupTable.h>
 #include <vtkPlane.h>
 #include <vtkPointPlacer.h>
@@ -222,6 +223,12 @@ protected:
     vtkSmartPointer<vtkPolyDataMapper>          Mapper3D;
     vtkSmartPointer<vtkProperty>                Property3D;
     vtkSmartPointer<vtkActor>                   Actor3D;
+
+    vtkNew<vtkTransformPolyDataFilter>          AxisLabelTransformFilter;
+    vtkNew<vtkTransform>                        AxisLabelTransform;
+    vtkNew<vtkLabeledDataMapper>                AxisLabelMapper;
+    vtkNew<vtkActor2D>                          AxisLabelActor;
+    vtkNew<vtkStringArray>                      AxisLabelArray;
 
     vtkSmartPointer<vtkTransform> WorldToSliceTransform;
     vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformFilter;
