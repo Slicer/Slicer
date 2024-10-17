@@ -32,6 +32,7 @@
 
 // MRMLWidgets includes
 #include "qMRMLCheckableNodeComboBoxPlugin.h"
+#include "qMRMLClipNodeDisplayWidgetPlugin.h"
 #include "qMRMLClipNodeWidgetPlugin.h"
 #include "qMRMLCollapsibleButtonPlugin.h"
 #include "qMRMLColorListViewPlugin.h"
@@ -93,6 +94,7 @@ public:
   {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLCheckableNodeComboBoxPlugin
+            << new qMRMLClipNodeDisplayWidgetPlugin
             << new qMRMLClipNodeWidgetPlugin
             << new qMRMLCollapsibleButtonPlugin
             << new qMRMLColorListViewPlugin

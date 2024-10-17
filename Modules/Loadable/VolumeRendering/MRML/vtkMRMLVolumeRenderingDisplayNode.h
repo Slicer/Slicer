@@ -88,6 +88,9 @@ public:
   vtkSetVector2Macro(WindowLevel, double);
   vtkGetVectorMacro(WindowLevel, double, 2);
 
+  vtkSetClampMacro(ClippingSoftEdgeMm, double, 0.0, VTK_DOUBLE_MAX);
+  vtkGetMacro(ClippingSoftEdgeMm, double);
+
 protected:
   vtkMRMLVolumeRenderingDisplayNode();
   ~vtkMRMLVolumeRenderingDisplayNode() override;
@@ -117,6 +120,8 @@ protected:
 
   /// Volume window & level
   double WindowLevel[2];
+
+  double ClippingSoftEdgeMm{ 0.0 };
 };
 
 #endif

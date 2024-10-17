@@ -38,6 +38,7 @@
 #include <vtkCubeSource.h>
 #include <vtkDoubleArray.h>
 #include <vtkGeneralTransform.h>
+#include <vtkImplicitFunctionCollection.h>
 #include <vtkImplicitSum.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
@@ -47,6 +48,9 @@
 #include <vtkPolyData.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+
+// vtkAddon includes
+#include<vtkImplicitInvertableBoolean.h>
 
 const int NUMBER_OF_BOX_CONTROL_POINTS = 2; // 2 points used for initial ROI definition, then removed
 const int NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS = -1; // Any number of points
@@ -86,10 +90,8 @@ vtkMRMLMarkupsROINode::vtkMRMLMarkupsROINode()
   volumeMeasurement->SetInputMRMLNode(this);
   this->Measurements->AddItem(volumeMeasurement);
 
-  this->ImplicitFunction = vtkSmartPointer<vtkImplicitSum>::New();
-  this->ImplicitFunction->SetTransform(vtkNew<vtkTransform>());
-  this->ImplicitFunctionWorld = vtkSmartPointer<vtkImplicitSum>::New();
-  this->ImplicitFunctionWorld->SetTransform(vtkNew<vtkTransform>());
+  this->ImplicitFunction = vtkSmartPointer<vtkImplicitInvertableBoolean>::New();
+  this->ImplicitFunctionWorld = vtkSmartPointer<vtkImplicitInvertableBoolean>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -765,41 +767,49 @@ void vtkMRMLMarkupsROINode::SetInsideOut(bool insideOut)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsROINode::UpdateImplicitFunction()
 {
-  vtkImplicitSum* sumFunction = vtkImplicitSum::SafeDownCast(this->ImplicitFunction);
-  vtkImplicitSum* sumFunctionWorld = vtkImplicitSum::SafeDownCast(this->ImplicitFunctionWorld);
-  if (!sumFunction || !sumFunctionWorld)
+  vtkImplicitInvertableBoolean* boolean = vtkImplicitInvertableBoolean::SafeDownCast(this->ImplicitFunctionWorld);
+  if (boolean)
   {
-    vtkErrorMacro("vtkMRMLMarkupsROINode::UpdateImplicitFunction: Invalid implicit function");
-    return;
+    auto functions = boolean->GetFunction();
+    while (functions->GetNumberOfItems() > 0)
+    {
+      auto function = vtkImplicitFunction::SafeDownCast(functions->GetItemAsObject(0));
+      boolean->RemoveFunction(function);
+    }
+
+    vtkNew<vtkPlanes> planes;
+    this->GetPlanes(planes, false);
+    boolean->SetOperationTypeToIntersection();
+    for (int i = 0; i < planes->GetNumberOfPlanes(); ++i)
+    {
+      vtkNew<vtkPlane> plane;
+      planes->GetPlane(i, plane);
+      boolean->AddFunction(plane);
+    }
+    boolean->SetInvert(this->InsideOut);
   }
 
-  sumFunction->RemoveAllFunctions();
-  sumFunctionWorld->RemoveAllFunctions();
+  vtkImplicitInvertableBoolean* booleanWorld = vtkImplicitInvertableBoolean::SafeDownCast(this->ImplicitFunctionWorld);
+  if (booleanWorld)
+  {
+    auto functions = booleanWorld->GetFunction();
+    while (functions->GetNumberOfItems() > 0)
+    {
+      auto function = vtkImplicitFunction::SafeDownCast(functions->GetItemAsObject(0));
+      booleanWorld->RemoveFunction(function);
+    }
 
-   if (this->ROIType == ROITypeBox || this->ROIType == ROITypeBoundingBox)
-   {
-    vtkNew<vtkBox> boxFunction;
-    boxFunction->SetBounds(
-      -this->Size[0] / 2.0, this->Size[0] / 2.0,
-      -this->Size[1] / 2.0, this->Size[1] / 2.0,
-      -this->Size[2] / 2.0, this->Size[2] / 2.0);
-
-    // By setting the function weight to -1.0, the sign of the box function is flipped,
-    // giving an "inside out" box.
-    double functionWeight = this->InsideOut ? -1.0 : 1.0;
-    sumFunction->AddFunction(boxFunction, functionWeight);
-    sumFunctionWorld->AddFunction(boxFunction, functionWeight);
-
-    vtkNew<vtkTransform> nodeToObject;
-    nodeToObject->SetMatrix(this->ObjectToNodeMatrix);
-    nodeToObject->Inverse();
-    this->ImplicitFunction->SetTransform(nodeToObject);
-
-    vtkNew<vtkTransform> worldToObject;
-    worldToObject->SetMatrix(this->ObjectToWorldMatrix);
-    worldToObject->Inverse();
-    this->ImplicitFunctionWorld->SetTransform(worldToObject);
-   }
+    vtkNew<vtkPlanes> planesWorld;
+    this->GetPlanesWorld(planesWorld, false);
+    booleanWorld->SetOperationTypeToIntersection();
+    for (int i = 0; i < planesWorld->GetNumberOfPlanes(); ++i)
+    {
+      vtkNew<vtkPlane> plane;
+      planesWorld->GetPlane(i, plane);
+      booleanWorld->AddFunction(plane);
+    }
+    booleanWorld->SetInvert(this->InsideOut);
+  }
 }
 
 //----------------------------------------------------------------------------

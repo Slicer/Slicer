@@ -23,6 +23,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLClipModelsNode.h"
+#include "vtkMRMLClipNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
@@ -171,6 +172,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelDisplayNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipModelsNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFolderDisplayNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROINode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROIListNode >::New() );
