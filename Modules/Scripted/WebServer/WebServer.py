@@ -418,7 +418,7 @@ class SlicerHTTPServer(HTTPServer):
                     self.logMessage("Warning, we don't speak %s", version)
                     return
 
-                methods = ["GET", "POST", "PUT", "DELETE"]
+                methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
                 if method not in methods:
                     self.logMessage("Warning, we only handle %s" % methods)
                     return
@@ -439,7 +439,7 @@ class SlicerHTTPServer(HTTPServer):
                         highestConfidence = confidence
 
                 httpStatus = "200 OK"
-                if highestConfidenceHandler is not None and highestConfidence > 0.0:
+                if highestConfidenceHandler is not None and highestConfidence > 0.0 and method != "OPTIONS":
                     try:
                         contentType, responseBody = highestConfidenceHandler.handleRequest(method=method, uri=uri, requestBody=requestBody)
                     except Exception as e:
@@ -469,6 +469,14 @@ class SlicerHTTPServer(HTTPServer):
                     self.response += b"Cache-Control: no-cache\r\n"
                     self.response += b"\r\n"
                     self.response += responseBody
+                elif method == "OPTIONS":
+                    self.response = b"HTTP/1.1 204 No Content\r\n"
+                    self.response += b"Connection: keep-alive\r\n"
+                    if self.enableCORS:
+                        self.response += b"Access-Control-Allow-Origin: *\r\n"
+                        self.response += b"Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT\r\n"
+                        self.response += b"Access-Control-Allow-Headers: Accept\r\n"
+                        self.response += b"Access-Control-Max-Age: 86400\r\n"
                 else:
                     self.response = b"HTTP/1.1 404 Not Found\r\n"
                     self.response += b"\r\n"
