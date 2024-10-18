@@ -58,6 +58,7 @@ public slots:
 protected slots:
   void setAutoOpacities(bool on);
   void setDefaultSurfaceSmoothing(bool on);
+  void setSegmentNameTerminologyEdit(bool on);
   void onEditDefaultTerminologyEntry();
   void setDefaultTerminologyEntry(QString);
   void updateDefaultSegmentationNodeFromWidget();
