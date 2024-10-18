@@ -22,6 +22,7 @@
 #include <vector>
 
 class vtkAlgorithmOutput;
+class vtkMRMLClipNode;
 class vtkDataSet;
 class vtkImageData;
 class vtkMRMLColorNode;
@@ -624,6 +625,11 @@ public:
   /// Update the style of a vtkTextProperty from a string.
   /// String format follows html-style CSS conventions.
   static void UpdateTextPropertyFromString(std::string inputString, vtkTextProperty* property);
+
+  /// Set the clip node ID of the display node.
+  virtual void SetAndObserveClipNodeID(const char* id);
+  virtual vtkMRMLClipNode* GetClipNode();
+  virtual const char* GetClipNodeReferenceRole() const;
 
 protected:
   vtkMRMLDisplayNode();

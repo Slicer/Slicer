@@ -26,10 +26,10 @@ Version:   $Revision: 1.2 $
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPlane.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkVector.h>
-
 
 // VNL includes
 #include <vnl/vnl_double_3.h>
@@ -126,6 +126,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->OrientationMarkerEnabled = true;
   this->RulerEnabled = true;
+
+  this->ImplicitFunction = vtkSmartPointer<vtkPlane>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -841,6 +843,13 @@ void vtkMRMLSliceNode::UpdateMatrices()
       this->UVWToRAS->DeepCopy(uvwToRAS.GetPointer());
       modified = true;
     }
+
+    this->ImplicitFunction->SetNormal(this->SliceToRAS->GetElement(0, 2),
+                                      this->SliceToRAS->GetElement(1, 2),
+                                      this->SliceToRAS->GetElement(2, 2));
+    this->ImplicitFunction->SetOrigin(this->SliceToRAS->GetElement(0, 3),
+                                      this->SliceToRAS->GetElement(1, 3),
+                                      this->SliceToRAS->GetElement(2, 3));
 
     if (modified)
     {
@@ -2084,4 +2093,10 @@ int vtkMRMLSliceNode::GetSlabReconstructionTypeFromString(const char* name)
   }
   // unknown name
   return -1;
+}
+
+//-----------------------------------------------------------
+vtkImplicitFunction* vtkMRMLSliceNode::GetImplicitFunctionWorld()
+{
+  return this->ImplicitFunction;
 }

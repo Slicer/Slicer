@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>340</width>
-    <height>870</height>
+    <width>360</width>
+    <height>909</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -874,7 +874,7 @@
   </customwidget>
   <customwidget>
    <class>qMRMLSegmentationShow3DButton</class>
-   <extends>QPushButton</extends>
+   <extends>ctkMenuButton</extends>
    <header>qMRMLSegmentationShow3DButton.h</header>
   </customwidget>
   <customwidget>
@@ -904,6 +904,11 @@
    <extends>QFrame</extends>
    <header>ctkExpandableWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkMenuButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkMenuButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkPushButton</class>
@@ -1040,6 +1045,22 @@
     <hint type="destinationlabel">
      <x>325</x>
      <y>741</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSegmentationsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>SegmentationDisplayNodeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>454</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>401</y>
     </hint>
    </hints>
   </connection>
