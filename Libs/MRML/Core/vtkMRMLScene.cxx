@@ -3708,9 +3708,9 @@ bool vtkMRMLScene::GetModifiedSinceRead(vtkCollection* modifiedNodes/*=nullptr*/
   for (this->Nodes->InitTraversal(it);
     (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it));)
   {
-    if (node->IsA("vtkMRMLAbstractViewNode"))
+    if (node->IsA("vtkMRMLAbstractViewNode") || node->IsA("vtkMRMLCameraNode"))
     {
-      // We do not consider view node changes as scene change,
+      // We do not consider view and camera node changes as scene change,
       // because view nodes may change because application window is resized, etc.
       continue;
     }
