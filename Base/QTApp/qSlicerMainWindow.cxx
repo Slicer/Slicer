@@ -641,27 +641,25 @@ void qSlicerMainWindowPrivate::writeRecentlyLoadedFiles(const QList<qSlicerIO::I
 bool qSlicerMainWindowPrivate::confirmCloseApplication()
 {
   Q_Q(qSlicerMainWindow);
-  vtkMRMLScene* scene = qSlicerApplication::application()->mrmlScene();
-  QString question;
-  if (scene->GetStorableNodesModifiedSinceRead())
-  {
-    question = qSlicerMainWindow::tr("Some data have been modified. Do you want to save them before exit?");
-  }
-  else if (scene->GetModifiedSinceRead())
-  {
-    question = qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?");
-  }
+
+  QString details;
+  bool sceneModified = isSceneContentModifiedSinceRead(details);
+
   bool close = false;
-  if (!question.isEmpty())
+  if (sceneModified)
   {
-    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning, qSlicerMainWindow::tr("Save before exit?"), question, QMessageBox::NoButton, q);
+    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning, qSlicerMainWindow::tr("Save before exit?"),
+      qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"), QMessageBox::NoButton, q);
     QAbstractButton* saveButton =
        messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
     QAbstractButton* exitButton =
        messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::ActionRole);
-    QAbstractButton* cancelButton =
-       messageBox->addButton(qSlicerMainWindow::tr("Cancel exit"), QMessageBox::RejectRole);
-    Q_UNUSED(cancelButton);
+    messageBox->addButton(qSlicerMainWindow::tr("Cancel exit"), QMessageBox::RejectRole);
+
+    if (!details.isEmpty())
+    {
+      messageBox->setDetailedText(details);
+    }
     messageBox->exec();
     if (messageBox->clickedButton() == saveButton)
     {
@@ -683,20 +681,61 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerMainWindowPrivate::isSceneContentModifiedSinceRead(QString& details)
+{
+  Q_Q(qSlicerMainWindow);
+  bool modifiedStorable = false;
+  bool modifiedScene = false;
+  details.clear();
+  vtkMRMLScene* scene = qSlicerApplication::application()->mrmlScene();
+  vtkNew<vtkCollection> modifiedStorableNodes;
+  vtkNew<vtkCollection> modifiedNodesInScene;
+  if (scene->GetStorableNodesModifiedSinceRead(modifiedStorableNodes))
+  {
+    for (int i = 0; i < modifiedStorableNodes->GetNumberOfItems(); i++)
+    {
+      vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(modifiedStorableNodes->GetItemAsObject(i));
+      if (node)
+      {
+        if (!modifiedStorable)
+        {
+          details += qSlicerMainWindow::tr("Modifications in data files:") + "\n";
+        }
+        modifiedStorable = true;
+        details += QString("- %1 (%2)\n").arg(node->GetName() ? node->GetName() : "unnamed").arg(node->GetID() ? node->GetID() : "unknown");
+      }
+    }
+  }
+  if (scene->GetModifiedSinceRead(modifiedNodesInScene))
+  {
+    for (int i = 0; i < modifiedNodesInScene->GetNumberOfItems(); i++)
+    {
+      vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(modifiedNodesInScene->GetItemAsObject(i));
+      if (node)
+      {
+        if (modifiedStorableNodes->IsItemPresent(node))
+        {
+          // modified storable nodes are already listed
+          continue;
+        }
+        if (!modifiedScene)
+        {
+          details += qSlicerMainWindow::tr("Modifications in the scene file:") + "\n";
+        }
+        modifiedScene = true;
+        details += QString("- %1 (%2)\n").arg(node->GetName() ? node->GetName() : "unnamed").arg(node->GetID() ? node->GetID() : "unknown");
+      }
+    }
+  }
+  return modifiedStorable || modifiedScene;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerMainWindowPrivate::confirmCloseScene()
 {
   Q_Q(qSlicerMainWindow);
-  vtkMRMLScene* scene = qSlicerApplication::application()->mrmlScene();
-  QString question;
-  if (scene->GetStorableNodesModifiedSinceRead())
-  {
-    question = qSlicerMainWindow::tr("Some data have been modified. Do you want to save them before closing the scene?");
-  }
-  else if (scene->GetModifiedSinceRead())
-  {
-    question = qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before closing the scene?");
-  }
-  else
+  QString details;
+  if (!isSceneContentModifiedSinceRead(details))
   {
     // no unsaved changes, no need to ask confirmation
     return true;
@@ -705,13 +744,18 @@ bool qSlicerMainWindowPrivate::confirmCloseScene()
   ctkMessageBox* confirmCloseMsgBox = new ctkMessageBox(q);
   confirmCloseMsgBox->setAttribute(Qt::WA_DeleteOnClose);
   confirmCloseMsgBox->setWindowTitle(qSlicerMainWindow::tr("Save before closing scene?"));
-  confirmCloseMsgBox->setText(question);
+  confirmCloseMsgBox->setText(qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"));
 
   // Use AcceptRole&RejectRole instead of Save&Discard because we would
   // like discard changes to be the default behavior.
   confirmCloseMsgBox->addButton(qSlicerMainWindow::tr("Close scene (discard modifications)"), QMessageBox::AcceptRole);
   confirmCloseMsgBox->addButton(qSlicerMainWindow::tr("Save scene"), QMessageBox::RejectRole);
   confirmCloseMsgBox->addButton(QMessageBox::Cancel);
+
+  if (!details.isEmpty())
+  {
+    confirmCloseMsgBox->setDetailedText(details);
+  }
 
   confirmCloseMsgBox->setDontShowAgainVisible(true);
   confirmCloseMsgBox->setDontShowAgainSettingsKey("MainWindow/DontConfirmSceneClose");
