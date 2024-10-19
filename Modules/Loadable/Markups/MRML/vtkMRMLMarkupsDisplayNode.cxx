@@ -632,7 +632,9 @@ void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int compon
   }
   this->ActiveComponents[context].Index = componentIndex;
   this->ActiveComponents[context].Type = componentType;
-  this->Modified();
+  // Let observers know about node modification, but do not change the modified timestamp, as this is transient event
+  // (we do not want the application to display a warning popup on scene close exit if the mouse has hovered over a control point)
+  this->InvokeCustomModifiedEvent(vtkCommand::ModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -785,7 +787,9 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
 
   if (activeComponentChanged)
   {
-    this->Modified();
+    // Let observers know about node modification, but do not change the modified timestamp, as this is transient event
+    // (we do not want the application to display a warning popup on scene close exit if the mouse has hovered over a control point)
+    this->InvokeCustomModifiedEvent(vtkCommand::ModifiedEvent);
   }
 
   return controlPointIndex;
