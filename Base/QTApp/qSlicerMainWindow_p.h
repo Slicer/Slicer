@@ -60,6 +60,7 @@ public:
   static QList<qSlicerIO::IOProperties> readRecentlyLoadedFiles();
   static void writeRecentlyLoadedFiles(const QList<qSlicerIO::IOProperties>& fileProperties);
 
+  virtual bool isSceneContentModifiedSinceRead(QString& details);
   virtual bool confirmCloseApplication();
   virtual bool confirmCloseScene();
 
