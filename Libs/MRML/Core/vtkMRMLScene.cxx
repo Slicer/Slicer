@@ -3744,6 +3744,12 @@ bool vtkMRMLScene
     if (!storableNode->GetHideFromEditors() &&
          storableNode->GetModifiedSinceRead())
     {
+      if (!storableNode->GetStorageNode() && storableNode->GetDefaultStorageNodeClassName().empty())
+      {
+        // The storable node does not have a storage node, but it does not need one (because content is stored in the scene
+        // (for example vtkMRMLTextNode containing short text).
+        continue;
+      }
       found = true;
       if (modifiedStorableNodes)
       {
