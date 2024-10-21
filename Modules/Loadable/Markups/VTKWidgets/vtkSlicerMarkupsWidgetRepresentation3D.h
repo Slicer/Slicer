@@ -94,8 +94,6 @@ protected:
   vtkSlicerMarkupsWidgetRepresentation3D();
   ~vtkSlicerMarkupsWidgetRepresentation3D() override;
 
-  double GetViewScaleFactorAtPosition(double positionWorld[3], vtkMRMLInteractionEventData* interactionEventData = nullptr);
-
   void UpdateViewScaleFactor() override;
 
   void UpdateControlPointSize() override;

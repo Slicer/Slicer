@@ -506,6 +506,32 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
         }
       }
 
+      // Broadcasting the visibility of slice edge in 3D
+      if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+        & vtkMRMLSliceNode::SliceEdgeVisibility3DFlag)
+      {
+        std::string layoutName(sliceNode->GetLayoutName() ? sliceNode->GetLayoutName() : "");
+        std::string lname(sNode->GetLayoutName() ? sNode->GetLayoutName() : "");
+        if (layoutName.find("Compare") == 0)
+        {
+          // Compare view, only broadcast to compare views
+          if (lname.find("Compare") == 0)
+          {
+            // Compare view, broadcast
+            sNode->SetSliceEdgeVisibility3D(sliceNode->GetSliceEdgeVisibility3D());
+          }
+        }
+        else
+        {
+          // Not a compare view, only broadcast to non compare views
+          if (lname.find("Compare") != 0)
+          {
+            // not a Compare view, broadcast
+            sNode->SetSliceEdgeVisibility3D(sliceNode->GetSliceEdgeVisibility3D());
+          }
+        }
+      }
+
       // Setting the slice spacing
       if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
         & vtkMRMLSliceNode::SliceSpacingFlag)

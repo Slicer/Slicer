@@ -116,6 +116,11 @@ void qSlicerSettingsViewsPanelPrivate::init()
   QObject::connect(this->SliceViewOrientationComboBox, SIGNAL(activated(int)),
     q, SLOT(sliceViewOrientationChangedByUser()));
 
+  q->registerProperty("DefaultSliceView/SliceEdgeVisibility3D", this->SliceEdgeVisibility3DCheckBox,
+    /*no tr*/"checked", SIGNAL(toggled(bool)),
+    qSlicerSettingsViewsPanel::tr("Slice edge visibility in 3D views"),
+    ctkSettingsPanel::OptionRequireRestart);
+
   q->registerProperty("Default3DView/BoxVisibility", this->ThreeDBoxVisibilityCheckBox,
                       /*no tr*/"checked", SIGNAL(toggled(bool)),
                       qSlicerSettingsViewsPanel::tr("3D view cube visibility"));

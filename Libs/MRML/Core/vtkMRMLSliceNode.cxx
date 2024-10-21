@@ -103,6 +103,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->WidgetNormalLockedToCamera = 0;
   this->UseLabelOutline = 0;
 
+  this->SliceEdgeVisibility3D = true;
+
   this->LayoutGridColumns = 1;
   this->LayoutGridRows = 1;
 
@@ -910,6 +912,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(widgetVisibility, WidgetVisible);
   vtkMRMLWriteXMLBooleanMacro(widgetOutlineVisibility, WidgetOutlineVisible);
   vtkMRMLWriteXMLBooleanMacro(useLabelOutline, UseLabelOutline);
+  vtkMRMLWriteXMLBooleanMacro(sliceEdgeVisibility3D, SliceEdgeVisibility3D);
   vtkMRMLWriteXMLIntMacro(sliceSpacingMode, SliceSpacingMode);
   vtkMRMLWriteXMLVectorMacro(prescribedSliceSpacing, PrescribedSliceSpacing, double, 3);
 
@@ -962,6 +965,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(widgetVisibility, WidgetVisible);
   vtkMRMLReadXMLBooleanMacro(widgetOutlineVisibility, WidgetOutlineVisible);
   vtkMRMLReadXMLBooleanMacro(useLabelOutline, UseLabelOutline);
+  vtkMRMLReadXMLBooleanMacro(sliceEdgeVisibility3D, SliceEdgeVisibility3D);
   vtkMRMLReadXMLStdStringMacro(orientation, Orientation);
   vtkMRMLReadXMLStringMacro(defaultOrientation, DefaultOrientation);
   vtkMRMLReadXMLStringMacro(orientationReference, OrientationReference);
@@ -1118,6 +1122,8 @@ void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   vtkMRMLCopyBooleanMacro(WidgetOutlineVisible);
   vtkMRMLCopyBooleanMacro(UseLabelOutline);
 
+  vtkMRMLCopyBooleanMacro(SliceEdgeVisibility3D);
+
   vtkMRMLCopyIntMacro(SliceResolutionMode);
 
   vtkMRMLCopyVectorMacro(FieldOfView, double, 3);
@@ -1192,6 +1198,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(WidgetVisible);
   vtkMRMLPrintBooleanMacro(WidgetOutlineVisible);
   vtkMRMLPrintBooleanMacro(UseLabelOutline);
+
+  vtkMRMLPrintBooleanMacro(SliceEdgeVisibility3D);
 
   os << indent << "Jump mode: ";
   if (this->JumpMode == CenteredJumpSlice)

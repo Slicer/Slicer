@@ -332,8 +332,6 @@ protected:
   virtual void SetupInteractionPipeline();
   InteractionPipeline* Pipeline;
 
-  double GetViewScaleFactorAtPosition(double positionWorld[3]);
-
 private:
   vtkMRMLInteractionWidgetRepresentation(const vtkMRMLInteractionWidgetRepresentation&) = delete;
   void operator=(const vtkMRMLInteractionWidgetRepresentation&) = delete;

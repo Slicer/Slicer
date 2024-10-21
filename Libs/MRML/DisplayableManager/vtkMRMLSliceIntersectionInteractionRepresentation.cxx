@@ -22,6 +22,7 @@
 
 #include <deque>
 
+#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLSliceDisplayNode.h"
@@ -2722,7 +2723,8 @@ std::string vtkMRMLSliceIntersectionInteractionRepresentation::CanInteract(vtkMR
 
         if (interactionEventData->IsDisplayPositionValid())
         {
-          double pixelTolerance = this->InteractionSize / 2.0 / this->GetViewScaleFactorAtPosition(handleWorldPos)
+          double pixelTolerance = this->InteractionSize / 2.0 / vtkMRMLAbstractThreeDViewDisplayableManager::
+            GetViewScaleFactorAtPosition(this->Renderer, handleWorldPos)
             + this->PickingTolerance * this->GetScreenScaleFactor();
           this->Renderer->SetWorldPoint(handleWorldPos);
           this->Renderer->WorldToDisplay();
@@ -2843,63 +2845,6 @@ vtkMRMLSliceIntersectionInteractionRepresentation::GetHandleInfoList(SliceInters
   }
 
   return handleInfoList;
-}
-
-//----------------------------------------------------------------------
-double vtkMRMLSliceIntersectionInteractionRepresentation::GetViewScaleFactorAtPosition(double positionWorld[3])
-{
-  double viewScaleFactorMmPerPixel = 1.0;
-  if (!this->Renderer || !this->Renderer->GetActiveCamera())
-  {
-    return viewScaleFactorMmPerPixel;
-  }
-
-  vtkCamera* cam = this->Renderer->GetActiveCamera();
-  if (cam->GetParallelProjection())
-  {
-    // Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
-    // Determine the available renderer size in pixels
-    double minX = 0;
-    double minY = 0;
-    this->Renderer->NormalizedDisplayToDisplay(minX, minY);
-    double maxX = 1;
-    double maxY = 1;
-    this->Renderer->NormalizedDisplayToDisplay(maxX, maxY);
-    int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
-    // Parallel scale: height of the viewport in world-coordinate distances.
-    // Larger numbers produce smaller images.
-    viewScaleFactorMmPerPixel = (cam->GetParallelScale() * 2.0) / double(rendererSizeInPixels[1]);
-  }
-  else
-  {
-    double cameraFP[4] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0 };
-
-    double cameraViewUp[3] = { 0 };
-    cam->GetViewUp(cameraViewUp);
-    vtkMath::Normalize(cameraViewUp);
-
-    // Get distance in pixels between two points at unit distance above and below the focal point
-    this->Renderer->SetWorldPoint(cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]);
-    this->Renderer->WorldToDisplay();
-    double topCenter[3] = { 0 };
-    this->Renderer->GetDisplayPoint(topCenter);
-    topCenter[2] = 0.0;
-    this->Renderer->SetWorldPoint(cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]);
-    this->Renderer->WorldToDisplay();
-    double bottomCenter[3] = { 0 };
-    this->Renderer->GetDisplayPoint(bottomCenter);
-    bottomCenter[2] = 0.0;
-    double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenter, bottomCenter));
-
-    // if render window is not initialized yet then distInPixels == 0.0,
-    // in that case just leave the default viewScaleFactorMmPerPixel
-    if (distInPixels > 1e-3)
-    {
-      // 2.0 = 2x length of viewUp vector in mm (because viewUp is unit vector)
-      viewScaleFactorMmPerPixel = 2.0 / distInPixels;
-    }
-  }
-  return viewScaleFactorMmPerPixel;
 }
 
 //----------------------------------------------------------------------
