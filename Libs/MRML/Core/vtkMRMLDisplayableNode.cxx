@@ -13,12 +13,10 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 
 // MRML includes
+#include "vtkMRMLClipNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLScene.h"
-
-// when change the display node, update the scalars
-//#include "vtkMRMLVolumeNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -39,7 +37,6 @@ vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLDisplayableNode::DisplayModifiedEvent);
-
   this->AddNodeReferenceRole(this->GetDisplayNodeReferenceRole(),
                              this->GetDisplayNodeReferenceMRMLAttributeName(),
                              events.GetPointer());
@@ -213,13 +210,11 @@ void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
   for (int i=0; i<numDisplayNodes; i++)
   {
     vtkMRMLDisplayNode *dnode = this->GetNthDisplayNode(i);
-    if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
-      event ==  vtkCommand::ModifiedEvent)
+    if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller))
     {
-      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, dnode);
+      this->InvokeCustomModifiedEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, dnode);
     }
   }
-  return;
 }
 
 //---------------------------------------------------------------------------

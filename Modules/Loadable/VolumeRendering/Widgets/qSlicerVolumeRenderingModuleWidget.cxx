@@ -176,6 +176,13 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->IgnoreVolumesThresholdCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setIgnoreVolumesThreshold(bool)));
 
+  QObject::connect(this->ClipNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   q, SLOT(setMRMLClipNode(vtkMRMLNode*)));
+  QObject::connect(this->ClippingCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setClippingEnabled(bool)));
+  QObject::connect(this->ClippingSoftEdgeSlider, SIGNAL(valueChanged(double)),
+                   q, SLOT(setSoftEdgeMm(double)));
+
   // Disable markups ROI widget by default
   this->MarkupsROIWidget->setVisible(false);
 
@@ -469,6 +476,24 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->SynchronizeScalarDisplayNodeButton->setChecked(follow);
   d->IgnoreVolumesThresholdCheckBox->setChecked(
     displayNode ? displayNode->GetIgnoreVolumeDisplayNodeThreshold() != 0 : false );
+
+  vtkMRMLClipNode* clipNode = displayNode ? displayNode->GetClipNode() : nullptr;
+
+  wasBlocking = d->ClipNodeSelector->blockSignals(true);
+  d->ClipNodeSelector->setCurrentNode(clipNode);
+  d->ClipNodeSelector->blockSignals(wasBlocking);
+
+  wasBlocking = d->MRMLClipNodeWidget->blockSignals(true);
+  d->MRMLClipNodeWidget->setMRMLClipNode(clipNode);
+  d->MRMLClipNodeWidget->blockSignals(wasBlocking);
+
+  wasBlocking = d->ClippingCheckBox->blockSignals(true);
+  d->ClippingCheckBox->setChecked(displayNode ? displayNode->GetClipping() : false);
+  d->ClippingCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->ClippingSoftEdgeSlider->blockSignals(true);
+  d->ClippingSoftEdgeSlider->setValue(displayNode ? displayNode->GetClippingSoftEdgeMm() : 0.0);
+  d->ClippingSoftEdgeSlider->blockSignals(wasBlocking);
 }
 
 // --------------------------------------------------------------------------
@@ -1011,4 +1036,39 @@ void qSlicerVolumeRenderingModuleWidget::onEffectiveRangeModified()
 
   // Update presets slider range
   d->PresetComboBox->updatePresetSliderRange();
+}
+
+//-----------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setMRMLClipNode(vtkMRMLNode* clipNode)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+  displayNode->SetAndObserveClipNodeID(clipNode ? clipNode->GetID() : nullptr);
+  d->MRMLClipNodeWidget->setMRMLClipNode(clipNode);
+}
+
+//-----------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setClippingEnabled(bool state)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+  displayNode->SetClipping(state);
+}
+
+//-----------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setSoftEdgeMm(double softEdgeMm)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+  displayNode->SetClippingSoftEdgeMm(softEdgeMm);
 }

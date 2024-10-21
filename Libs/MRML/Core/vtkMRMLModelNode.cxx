@@ -30,6 +30,7 @@ Version:   $Revision: 1.3 $
 #include <vtkEventForwarderCommand.h>
 #include <vtkFloatArray.h>
 #include <vtkGeneralTransform.h>
+#include <vtkImplicitPolyDataDistance.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -57,6 +58,8 @@ vtkMRMLModelNode::vtkMRMLModelNode()
   // for backward compatibility, we assume that if no
   // mesh were set, it is a polydata.
   this->MeshType = vtkMRMLModelNode::PolyDataMeshType;
+
+  this->ImplicitPolyDataDistanceWorld = nullptr;
 
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLModelNode::PolyDataModifiedEvent);
 }
@@ -123,6 +126,7 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
       this->MeshConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
   {
+    this->UpdateImplicitDistanceFunction();
     this->StorableModifiedTime.Modified();
     this->InvokeCustomModifiedEvent(vtkMRMLModelNode::MeshModifiedEvent, nullptr);
   }
@@ -195,6 +199,26 @@ void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet *mesh)
       this->SetUnstructuredGridConnection(tp->GetOutputPort());
     }
   }
+
+  this->UpdateImplicitDistanceFunction();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelNode::UpdateImplicitDistanceFunction()
+{
+  if (!this->ImplicitPolyDataDistanceWorld)
+  {
+    // Don't needed to set up the implicit as it hasn't been requested yet.
+    return;
+  }
+
+  vtkPointSet* mesh = this->GetMesh();
+  if (!mesh || mesh->GetNumberOfCells() == 0)
+  {
+    this->ImplicitPolyDataDistanceWorld->SetInput(nullptr);
+    return;
+  }
+  this->ImplicitPolyDataDistanceWorld->SetInput(vtkPolyData::SafeDownCast(mesh));
 }
 
 //----------------------------------------------------------------------------
@@ -992,4 +1016,15 @@ bool vtkMRMLModelNode::GetModifiedSinceRead()
 {
   return this->Superclass::GetModifiedSinceRead() ||
     (this->GetMesh() && this->GetMesh()->GetMTime() > this->GetStoredTime());
+}
+
+//---------------------------------------------------------------------------
+vtkImplicitFunction* vtkMRMLModelNode::GetImplicitFunctionWorld()
+{
+  if (!this->ImplicitPolyDataDistanceWorld)
+  {
+    this->ImplicitPolyDataDistanceWorld = vtkSmartPointer<vtkImplicitPolyDataDistance>::New();
+    this->UpdateImplicitDistanceFunction();
+  }
+  return this->ImplicitPolyDataDistanceWorld;
 }
