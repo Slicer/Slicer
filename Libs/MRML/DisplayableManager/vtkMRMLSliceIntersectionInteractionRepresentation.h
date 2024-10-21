@@ -185,8 +185,6 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionInteractionRepr
     /// scene length unit (typically millimeters).
     double InteractionSize{ 3.0 };
 
-    double GetViewScaleFactorAtPosition(double positionWorld[3]);
-
     vtkMRMLApplicationLogic* MRMLApplicationLogic;
 
     class vtkInternal;

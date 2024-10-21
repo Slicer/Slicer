@@ -81,10 +81,17 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   vtkSetMacro(SliceVisible, int);
 
   ///
+  /// Show colored slice edge in 3D views.
+  vtkGetMacro(SliceEdgeVisibility3D, bool);
+  vtkSetMacro(SliceEdgeVisibility3D, bool);
+  vtkBooleanMacro(SliceEdgeVisibility3D, bool);
+
+  ///
   /// The visibility of the slice plane widget in the 3DViewer.
   vtkGetMacro(WidgetVisible, int);
   vtkSetMacro(WidgetVisible, int);
 
+  ///
   /// The visibility of the slice plane widget outline in the 3DViewer.
   vtkGetMacro(WidgetOutlineVisible, int);
   vtkSetMacro(WidgetOutlineVisible, int);
@@ -469,6 +476,7 @@ public:
   ///    XYZOriginFlag - broadcast the XYZOrigin to all linked viewers
   ///    LabelOutlineFlag - broadcast outlining the labelmaps
   ///    SliceVisibleFlag = broadcast display of slice in 3D
+  ///    SliceEdgeVisibility3DFlag = broadcast display of slice edge in 3D
   ///    ResetOrientationFlag = broadcast a reset to default orientation to all linked viewers
   ///    UpdateSlabReconstructionThicknessFlag = broadcast updating the slab reconstruction thickness
   enum InteractionFlagType
@@ -482,10 +490,11 @@ public:
     XYZOriginFlag = 32,
     LabelOutlineFlag = 64,
     SliceVisibleFlag = 128,
-    SliceSpacingFlag = 256,
-    ResetOrientationFlag = 512,
-    RotateToBackgroundVolumePlaneFlag = 1024,
-    UpdateSlabReconstructionThicknessFlag = 2048,
+    SliceEdgeVisibility3DFlag = 256,
+    SliceSpacingFlag = 512,
+    ResetOrientationFlag = 1024,
+    RotateToBackgroundVolumePlaneFlag = 2048,
+    UpdateSlabReconstructionThicknessFlag = 4096,
   };
 
   /// Get/Set a flag indicating what parameters are being manipulated
@@ -580,6 +589,7 @@ protected:
   int WidgetOutlineVisible;
   int WidgetNormalLockedToCamera;
   int UseLabelOutline;
+  bool SliceEdgeVisibility3D;
 
   double FieldOfView[3];
   double XYZOrigin[3];

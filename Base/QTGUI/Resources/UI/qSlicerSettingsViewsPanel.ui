@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>469</width>
-    <height>593</height>
+    <width>360</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>449</width>
-        <height>573</height>
+        <width>340</width>
+        <height>500</height>
        </rect>
       </property>
       <property name="sizePolicy">
@@ -117,6 +117,23 @@
            <widget class="ctkComboBox" name="SliceViewOrientationComboBox">
             <property name="currentIndex">
              <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="SliceViewOrientationLabel_2">
+            <property name="text">
+             <string>Show slice edge in 3D:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="ctkCheckBox" name="SliceEdgeVisibility3DCheckBox">
+            <property name="toolTip">
+             <string>Show colored frame around the slice when displayed in 3D views.</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -304,20 +321,20 @@
            </widget>
           </item>
           <item row="7" column="1">
-           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsSizeScaleSlider">
+           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsSizeScaleSlider" native="true">
             <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="singleStep">
+            <property name="singleStep" stdset="0">
              <double>0.010000000000000</double>
             </property>
-            <property name="pageStep">
+            <property name="pageStep" stdset="0">
              <double>0.100000000000000</double>
             </property>
-            <property name="minimum">
+            <property name="minimum" stdset="0">
              <double>-3.000000000000000</double>
             </property>
-            <property name="maximum">
+            <property name="maximum" stdset="0">
              <double>3.000000000000000</double>
             </property>
            </widget>
@@ -333,26 +350,26 @@
            </widget>
           </item>
           <item row="8" column="1">
-           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsVolumeOpacityThresholdSlider">
+           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsVolumeOpacityThresholdSlider" native="true">
             <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="decimals">
+            <property name="decimals" stdset="0">
              <number>2</number>
             </property>
-            <property name="singleStep">
+            <property name="singleStep" stdset="0">
              <double>0.010000000000000</double>
             </property>
-            <property name="pageStep">
+            <property name="pageStep" stdset="0">
              <double>0.100000000000000</double>
             </property>
-            <property name="maximum">
+            <property name="maximum" stdset="0">
              <double>1.000000000000000</double>
             </property>
-            <property name="value">
+            <property name="value" stdset="0">
              <double>0.250000000000000</double>
             </property>
-            <property name="suffix">
+            <property name="suffix" stdset="0">
              <string/>
             </property>
            </widget>
@@ -368,23 +385,23 @@
            </widget>
           </item>
           <item row="10" column="1">
-           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsIntensityScaleSlider">
+           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsIntensityScaleSlider" native="true">
             <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="singleStep">
+            <property name="singleStep" stdset="0">
              <double>0.010000000000000</double>
             </property>
-            <property name="pageStep">
+            <property name="pageStep" stdset="0">
              <double>0.100000000000000</double>
             </property>
-            <property name="minimum">
+            <property name="minimum" stdset="0">
              <double>0.000000000000000</double>
             </property>
-            <property name="maximum">
+            <property name="maximum" stdset="0">
              <double>3.000000000000000</double>
             </property>
-            <property name="value">
+            <property name="value" stdset="0">
              <double>1.000000000000000</double>
             </property>
            </widget>
@@ -400,23 +417,23 @@
            </widget>
           </item>
           <item row="11" column="1">
-           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsIntensityShiftSlider">
+           <widget class="ctkSliderWidget" name="ThreeDAmbientShadowsIntensityShiftSlider" native="true">
             <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="singleStep">
+            <property name="singleStep" stdset="0">
              <double>0.010000000000000</double>
             </property>
-            <property name="pageStep">
+            <property name="pageStep" stdset="0">
              <double>0.100000000000000</double>
             </property>
-            <property name="minimum">
+            <property name="minimum" stdset="0">
              <double>0.000000000000000</double>
             </property>
-            <property name="maximum">
+            <property name="maximum" stdset="0">
              <double>1.000000000000000</double>
             </property>
-            <property name="value">
+            <property name="value" stdset="0">
              <double>0.000000000000000</double>
             </property>
            </widget>

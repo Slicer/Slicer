@@ -187,6 +187,8 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
 
   QObject::connect(this->actionShow_in_3D, SIGNAL(toggled(bool)),
                    q, SLOT(setSliceVisible(bool)));
+  QObject::connect(this->actionSliceEdgeVisibility3D, SIGNAL(triggered(bool)),
+                   q, SLOT(setSliceEdgeVisibility3D(bool)));
   QObject::connect(this->actionFit_to_window, SIGNAL(triggered()),
                    q, SLOT(fitSliceToBackground()));
   QObject::connect(this->actionRotate_to_volume_plane, SIGNAL(triggered()),
@@ -726,6 +728,9 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   originSliceModelAction->setDefaultWidget(originSliceModel);
   originSliceModelMenu->addAction(originSliceModelAction);
   this->SliceModelMenu->addMenu(originSliceModelMenu);
+
+  this->SliceModelMenu->addSeparator();
+  this->SliceModelMenu->addAction(this->actionSliceEdgeVisibility3D);
 }
 
 // --------------------------------------------------------------------------
@@ -1005,6 +1010,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   wasBlocked = this->SliceModelOriginYSpinBox->blockSignals(true);
   this->SliceModelOriginYSpinBox->setValue(UVWOrigin[1]);
   this->SliceModelOriginYSpinBox->blockSignals(wasBlocked);
+
+  this->actionSliceEdgeVisibility3D->setChecked(sliceNode->GetSliceEdgeVisibility3D());
 
   // OrientationMarker (check the selected option)
   QAction* action = qobject_cast<QAction*>(this->OrientationMarkerTypesMapper->mapping(sliceNode->GetOrientationMarkerType()));
@@ -2092,6 +2099,21 @@ void qMRMLSliceControllerWidget::setSliceVisible(bool visible)
 }
 
 //---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceEdgeVisibility3D(bool visible)
+{
+  Q_D(qMRMLSliceControllerWidget);
+
+  if (!this->mrmlSliceNode() || !d->MRMLSliceCompositeNode || !this->mrmlScene())
+  {
+    return;
+  }
+
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceEdgeVisibility3DFlag);
+  this->mrmlSliceNode()->SetSliceEdgeVisibility3D(visible);
+  d->SliceLogic->EndSliceNodeInteraction();
+}
+
+//---------------------------------------------------------------------------
 bool qMRMLSliceControllerWidget::isLinked()const
 {
   Q_D(const qMRMLSliceControllerWidget);
@@ -2635,6 +2657,7 @@ void qMRMLSliceControllerWidget::setSliceModelDimensionX(int dimension)
 {
   this->setSliceModelDimension(0,dimension);
 }
+
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceModelDimensionY(int dimension)
 {

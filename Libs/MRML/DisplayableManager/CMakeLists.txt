@@ -75,6 +75,7 @@ set(DisplayableManager_SRCS
   vtkMRMLModelDisplayableManager.cxx
   vtkMRMLViewDisplayableManager.cxx
   vtkMRMLThreeDReformatDisplayableManager.cxx
+  vtkMRMLThreeDSliceEdgeDisplayableManager.cxx
 
   # DisplayableManager associated with SliceView
   vtkMRMLCrosshairDisplayableManager.cxx
@@ -114,6 +115,7 @@ set(KIT_SRCS
   vtkMRMLCameraWidget.cxx
   vtkMRMLInteractionWidget.cxx
   vtkMRMLInteractionWidgetRepresentation.cxx
+  vtkMRMLSliceEdgeWidgetRepresentation.cxx
   vtkMRMLSliceIntersectionWidget.cxx
   vtkMRMLSliceIntersectionRepresentation2D.cxx
   vtkMRMLSliceIntersectionInteractionRepresentation.cxx

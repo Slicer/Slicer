@@ -244,6 +244,10 @@ void qSlicerViewControllersModule::readDefaultSliceViewSettings(vtkMRMLSliceNode
       vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(this->mrmlScene(), true);
     }
   }
+  if (settings.contains("SliceEdgeVisibility3D"))
+  {
+    defaultViewNode->SetSliceEdgeVisibility3D(settings.value("SliceEdgeVisibility3D").toBool());
+  }
   readCommonViewSettings(defaultViewNode, settings);
 }
 
@@ -267,6 +271,8 @@ void qSlicerViewControllersModule::writeDefaultSliceViewSettings(vtkMRMLSliceNod
     defaultSliceOrientation = "PatientRightIsScreenRight";
   }
   settings.setValue("Orientation", defaultSliceOrientation);
+
+  settings.setValue("SliceEdgeVisibility3D", bool(defaultViewNode->GetSliceEdgeVisibility3D()));
 
   writeCommonViewSettings(defaultViewNode, settings);
 }

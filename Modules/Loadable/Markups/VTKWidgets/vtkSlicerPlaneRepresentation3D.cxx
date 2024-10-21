@@ -42,6 +42,7 @@
 #include <vtkTubeFilter.h>
 
 // MRML includes
+#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLMarkupsPlaneDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
@@ -511,7 +512,8 @@ void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(
     this->Renderer->DisplayToWorld();
     this->Renderer->GetWorldPoint(closestPointWorld);
 
-    double pixelTolerance = this->PlaneOutlineFilter->GetRadius() / 2.0 / this->GetViewScaleFactorAtPosition(closestPointWorld)
+    double pixelTolerance = this->PlaneOutlineFilter->GetRadius() / 2.0 / vtkMRMLAbstractThreeDViewDisplayableManager::
+      GetViewScaleFactorAtPosition(this->Renderer, closestPointWorld)
       + this->PickingTolerance * this->GetScreenScaleFactor();
     if (dist2Display < pixelTolerance * pixelTolerance && dist2Display < closestDistance2)
     {

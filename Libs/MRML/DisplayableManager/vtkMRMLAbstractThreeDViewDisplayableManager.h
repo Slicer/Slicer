@@ -52,6 +52,10 @@ public:
   /// Get the MRML ID of the picked node, returns empty string if no pick
   virtual const char* GetPickedNodeID() { return nullptr; }
 
+  /// Get the view scale factor at a given position in world coordinates for a 3D view renderer.
+  static double GetViewScaleFactorAtPosition(vtkRenderer* renderer, double positionWorld[3],
+                                             vtkMRMLInteractionEventData* interactionEventData = nullptr);
+
 protected:
 
   vtkMRMLAbstractThreeDViewDisplayableManager();

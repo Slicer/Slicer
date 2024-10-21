@@ -188,6 +188,9 @@ public slots:
   /// Set slice visible.
   void setSliceVisible(bool visible);
 
+  /// Set slice edge visible.
+  void setSliceEdgeVisibility3D(bool visible);
+
   /// Link/Unlink the slice controls across all slice viewer
   void setSliceLink(bool linked);
 
