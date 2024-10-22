@@ -29,14 +29,6 @@ limitations under the License.
 #include <vtkStringArray.h>
 #include <vtksys/SystemTools.hxx>
 
-// Qt includes
-#include <QDateTime>
-#include <QDebug>
-#include <QDir>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QPixmap>
-
 static const char NODE_BASE_NAME_SEPARATOR[] = "-";
 
 //----------------------------------------------------------------------------
