@@ -24,11 +24,6 @@ set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
   ${ITK_LIBRARIES}
   )
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND MODULE_TARGET_LIBRARIES
-    qSlicerBaseQTCLI # For vtkSlicerCLIModuleLogic
-    )
-endif()
 
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(
