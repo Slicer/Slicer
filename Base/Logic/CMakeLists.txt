@@ -118,6 +118,7 @@ endif()
 set(SlicerBaseLogic_SRCS
   # Logic classes (data management and calculation)
   vtkSlicerApplicationLogic.cxx
+  vtkSlicerCLIModuleLogic.cxx
   vtkSlicerModuleLogic.cxx
   vtkSlicerTask.cxx
   vtkDataIOManagerLogic.cxx

@@ -29,7 +29,7 @@ class MRMLIDMap;
 // STL includes
 #include <string>
 
-#include "qSlicerBaseQTCLIExport.h"
+#include "vtkSlicerBaseLogic.h"
 
 /// \brief Logic for running CLI
 ///
@@ -37,7 +37,7 @@ class MRMLIDMap;
 /// using parameters of a \a vtkMRMLCommandLineModuleNode.
 /// While a CLI module logic can run any CLI node, the logic can uniquely be
 /// assigned a specific CLI by setting a DefaultModuleDescription.
-class Q_SLICER_BASE_QTCLI_EXPORT vtkSlicerCLIModuleLogic :
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerCLIModuleLogic :
   public vtkSlicerModuleLogic
 {
 public:
