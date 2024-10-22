@@ -8,12 +8,6 @@
 
 // Slicer includes
 #include "vtkSlicerApplicationLogic.h"
-// For:
-//  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-//  - Slicer_EXTENSIONS_DIRBASENAME
-//  - Slicer_ORGANIZATION_DOMAIN
-//  - Slicer_ORGANIZATION_NAME
-#include "vtkSlicerConfigure.h"
 #include "vtkSlicerTask.h"
 
 // MRML includes
@@ -657,7 +651,8 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
 //----------------------------------------------------------------------------
 bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath,
                                                  const std::string& applicationHomeDir,
-                                                 const std::string& slicerRevision)
+                                                 const std::string& slicerRevision,
+                                                 const std::string& extensionsDirBase)
 {
   if (filePath.empty())
   {
@@ -671,26 +666,28 @@ bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath,
   }
   std::string extensionPath = itksys::SystemTools::GetFilenamePath(filePath);
   bool isEmbedded = itksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
-#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+
   // Extensions may be stored in the application home directory (it is always the case on macOS and for Windows/Linux
   // if Slicer_BUILD_EXTENSIONMANAGER_SUPPORT is enabled), therefore we need to detect these folders as extensions:
   // - Windows/Linux: <applicationHomeDir>/<Slicer_ORGANIZATION_NAME/DOMAIN>/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
   // - macOS: <applicationName>.app/Contents/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
   // We just check for <Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision> folder name, as it is simple to do, and
   // it is specific enough.
-  if (isEmbedded && extensionPath.find(Slicer_EXTENSIONS_DIRBASENAME "-" + slicerRevision) != std::string::npos)
+  if (isEmbedded && !extensionsDirBase.empty() &&
+    extensionPath.find(extensionsDirBase + "-" + slicerRevision) != std::string::npos)
   {
     isEmbedded = false;
   }
-#else
-  (void)slicerRevision;
-#endif
+
   return isEmbedded;
 }
 
 //----------------------------------------------------------------------------
 bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
-                                                  const std::string& applicationHomeDir)
+                                                  const std::string& applicationHomeDir,
+                                                  const std::string& organisationDomain,
+                                                  const std::string& organisationName,
+                                                  const std::string& extensionsDirBase)
 {
   if (filePath.empty())
   {
@@ -714,25 +711,27 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
           std::string(applicationHomeDir).append("/CMakeCache.txt").c_str(), true);
     if (isAppBuildTree)
     {
-#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
       // Check if plugin is installed as an extension
+      if(!extensionsDirBase.empty() && !organisationDomain.empty())
       {
-      std::string extensionInstallDir = itksys::SystemTools::GetRealPath(
-            applicationHomeDir + "/" Slicer_ORGANIZATION_DOMAIN "/" Slicer_EXTENSIONS_DIRBASENAME);
-      if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
+        std::string extensionInstallDir = itksys::SystemTools::GetRealPath(
+          applicationHomeDir + "/" + organisationDomain + "/" + extensionsDirBase);
+        if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
+        {
+          return true;
+        }
+      }
+
+      if(!extensionsDirBase.empty() && !organisationName.empty())
       {
-        return true;
+        std::string extensionInstallDir = itksys::SystemTools::GetRealPath(
+          applicationHomeDir + "/" + organisationName + "/" + extensionsDirBase);
+        if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
+        {
+          return true;
+        }
       }
-      }
-      {
-      std::string extensionInstallDir = itksys::SystemTools::GetRealPath(
-            applicationHomeDir + "/" Slicer_ORGANIZATION_NAME "/" Slicer_EXTENSIONS_DIRBASENAME);
-      if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
-      {
-        return true;
-      }
-      }
-#endif
+
       return false;
     }
     else
@@ -762,7 +761,9 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
 
 //----------------------------------------------------------------------------
 bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
-  const std::string& applicationHomeDir, const std::string& slicerRevision)
+                                                const std::string& applicationHomeDir,
+                                                const std::string& slicerRevision,
+                                                const std::string& extensionsDirBase)
 {
   if (filePath.empty())
   {
@@ -784,20 +785,17 @@ bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
   bool isBuiltIn = itksys::SystemTools::StringStartsWith(
         canonicalPath.c_str(), canonicalApplicationHomeDir.c_str());
 
-#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   // Extensions may be stored in the application home directory (it is always the case on macOS and for Windows/Linux
   // if Slicer_BUILD_EXTENSIONMANAGER_SUPPORT is enabled), therefore we need to detect these folders as extensions:
   // - Windows/Linux: <applicationHomeDir>/<Slicer_ORGANIZATION_NAME/DOMAIN>/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
   // - macOS: <applicationName>.app/Contents/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>
   // We just check for <Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision> folder name, as it is simple to do, and
   // it is specific enough.
-  if (isBuiltIn && canonicalPath.find(Slicer_EXTENSIONS_DIRBASENAME "-" + slicerRevision) != std::string::npos)
+  if (isBuiltIn && !extensionsDirBase.empty() &&
+    canonicalPath.find(extensionsDirBase + "-" + slicerRevision) != std::string::npos)
   {
     isBuiltIn = false;
   }
-#else
-  (void)slicerRevision;
-#endif
 
   return  isBuiltIn;
 }
