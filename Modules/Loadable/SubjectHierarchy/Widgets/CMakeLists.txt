@@ -43,6 +43,8 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyFolderPlugin.h
   qSlicerSubjectHierarchyOpacityPlugin.cxx
   qSlicerSubjectHierarchyOpacityPlugin.h
+  qSlicerSubjectHierarchyTransformPlugin.cxx
+  qSlicerSubjectHierarchyTransformPlugin.h
   qSlicerSubjectHierarchyViewContextMenuPlugin.cxx
   qSlicerSubjectHierarchyViewContextMenuPlugin.h
   qSlicerSubjectHierarchyVisibilityPlugin.cxx
@@ -69,6 +71,7 @@ set(${KIT}_MOC_SRCS
   qSlicerSubjectHierarchyRegisterPlugin.h
   qSlicerSubjectHierarchyFolderPlugin.h
   qSlicerSubjectHierarchyOpacityPlugin.h
+  qSlicerSubjectHierarchyTransformPlugin.h
   qSlicerSubjectHierarchyViewContextMenuPlugin.h
   qSlicerSubjectHierarchyVisibilityPlugin.h
   qMRMLSubjectHierarchyTreeView.h
