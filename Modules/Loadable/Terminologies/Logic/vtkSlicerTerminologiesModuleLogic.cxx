@@ -497,8 +497,6 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifie
   rapidjson::Value& typeModifierArray = this->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
   if (typeModifierArray.IsNull())
   {
-    vtkGenericWarningMacro("GetTypeModifierInTerminologyType: Failed to find type modifier array for type '" << typeId.CodeMeaning << "' in category '"
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return JSON_EMPTY_VALUE;
   }
 
@@ -1523,13 +1521,6 @@ bool vtkSlicerTerminologiesModuleLogic::GetCategoryInTerminology(std::string ter
   rapidjson::Value& categoryObject = this->Internal->GetCategoryInTerminology(terminologyName, categoryId);
   if (categoryObject.IsNull())
   {
-    if (!categoryId.CodingSchemeDesignator.compare("SRT"))
-    {
-      // Do not report error if it is due to using an old scene with the SRT category codes instead of the SCT ones
-      // that replaced them on 2020.03.17 in Slicer@5ae556436.
-      return false;
-    }
-    vtkErrorMacro("GetCategoryInTerminology: Failed to find category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
   }
 
@@ -1604,7 +1595,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypesInTerminologyCategory(
 //---------------------------------------------------------------------------
 int vtkSlicerTerminologiesModuleLogic::GetNumberOfTypesInTerminologyCategory(std::string terminologyName, vtkSlicerTerminologyCategory* category)
 {
-  CodeIdentifier categoryId = this->CodeIdentifierFromTerminologyCategory(category);
+  CodeIdentifier categoryId = this->GetCodeIdentifierFromCodedEntry(category);
   rapidjson::Value& typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
   if (typeArray.IsNull())
   {
@@ -1619,7 +1610,7 @@ int vtkSlicerTerminologiesModuleLogic::GetNumberOfTypesInTerminologyCategory(std
 bool vtkSlicerTerminologiesModuleLogic::GetNthTypeInTerminologyCategory(std::string terminologyName, vtkSlicerTerminologyCategory* category,
   int typeIndex, vtkSlicerTerminologyType* type)
 {
-  CodeIdentifier categoryId = this->CodeIdentifierFromTerminologyCategory(category);
+  CodeIdentifier categoryId = this->GetCodeIdentifierFromCodedEntry(category);
   rapidjson::Value& typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
   if (typeArray.IsNull())
   {
@@ -1709,8 +1700,8 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeModifiersInTerminologyType(
 int vtkSlicerTerminologiesModuleLogic::GetNumberOfTypeModifiersInTerminologyType(
   std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type)
 {
-  CodeIdentifier categoryId = this->CodeIdentifierFromTerminologyCategory(category);
-  CodeIdentifier typeId = this->CodeIdentifierFromTerminologyType(type);
+  CodeIdentifier categoryId = this->GetCodeIdentifierFromCodedEntry(category);
+  CodeIdentifier typeId = this->GetCodeIdentifierFromCodedEntry(type);
   rapidjson::Value& typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
   if (typeModifierArray.IsNull())
   {
@@ -1726,8 +1717,8 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthTypeModifierInTerminologyType(
   std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type, int typeModifierIndex,
   vtkSlicerTerminologyType* typeModifier)
 {
-  CodeIdentifier categoryId = this->CodeIdentifierFromTerminologyCategory(category);
-  CodeIdentifier typeId = this->CodeIdentifierFromTerminologyType(type);
+  CodeIdentifier categoryId = this->GetCodeIdentifierFromCodedEntry(category);
+  CodeIdentifier typeId = this->GetCodeIdentifierFromCodedEntry(type);
   rapidjson::Value& typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
   if (typeModifierArray.IsNull())
   {
@@ -1990,30 +1981,16 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInAnatomicRegion(
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(vtkSlicerTerminologyCategory* category)
+vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(vtkCodedEntry* entry)
 {
-  if (!category)
+  if (!entry)
   {
     return CodeIdentifier("","","");
   }
   CodeIdentifier id(
-    (category->GetCodingSchemeDesignator()?category->GetCodingSchemeDesignator():""),
-    (category->GetCodeValue()?category->GetCodeValue():""),
-    (category->GetCodeMeaning()?category->GetCodeMeaning():"") );
-  return id;
-}
-
-//---------------------------------------------------------------------------
-vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(vtkSlicerTerminologyType* type)
-{
-  if (!type)
-  {
-    return CodeIdentifier("","","");
-  }
-  CodeIdentifier id(
-    (type->GetCodingSchemeDesignator()?type->GetCodingSchemeDesignator():""),
-    (type->GetCodeValue()?type->GetCodeValue():""),
-    (type->GetCodeMeaning()?type->GetCodeMeaning():"") );
+    (entry->GetCodingSchemeDesignator() ? entry->GetCodingSchemeDesignator():""),
+    (entry->GetCodeValue() ? entry->GetCodeValue():""),
+    (entry->GetCodeMeaning() ? entry->GetCodeMeaning():"") );
   return id;
 }
 
@@ -2144,19 +2121,9 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
     return false;
   }
   vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId(categoryIds[0], categoryIds[1], categoryIds[2]);
-  vtkSmartPointer<vtkSlicerTerminologyCategory> categoryObject = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
-  if ( !this->GetCategoryInTerminology(terminologyName, categoryId, categoryObject) )
-  {
-    if (!categoryIds[0].compare("SRT"))
-    {
-      // Do not report error if it is due to using an old scene with the SRT category codes instead of the SCT ones
-      // that replaced them on 2020.03.17 in Slicer@5ae556436.
-      return false;
-    }
-    vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Failed to get terminology category");
-    return false;
-  }
-  entry->GetCategoryObject()->Copy(categoryObject);
+  entry->GetCategoryObject()->SetCodingSchemeDesignator(categoryIds[0].c_str());
+  entry->GetCategoryObject()->SetCodeValue(categoryIds[1].c_str());
+  entry->GetCategoryObject()->SetCodeMeaning(categoryIds[2].c_str());
 
   // Type
   std::vector<std::string> typeIds = vtksys::SystemTools::SplitString(entryComponents[2], '^');
@@ -2166,29 +2133,18 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
     vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Invalid type component");
     return false;
   }
-  vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeId(typeIds[0], typeIds[1], typeIds[2]);
-  vtkSmartPointer<vtkSlicerTerminologyType> typeObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-  if (!this->GetTypeInTerminologyCategory(terminologyName, categoryId, typeId, typeObject) )
-  {
-    vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Failed to get terminology type");
-    return false;
-  }
-  entry->GetTypeObject()->Copy(typeObject);
+  entry->GetTypeObject()->SetCodingSchemeDesignator(typeIds[0].c_str());
+  entry->GetTypeObject()->SetCodeValue(typeIds[1].c_str());
+  entry->GetTypeObject()->SetCodeMeaning(typeIds[2].c_str());
 
   // Type modifier (optional)
   std::vector<std::string> typeModifierIds = vtksys::SystemTools::SplitString(entryComponents[3], '^');
+  entry->GetTypeModifierObject()->Initialize();
   if (typeModifierIds.size() == 3)
   {
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeModifierId(typeModifierIds[0], typeModifierIds[1], typeModifierIds[2]);
-    vtkSmartPointer<vtkSlicerTerminologyType> typeModifierObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-    if ( this->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId, typeModifierId, typeModifierObject) )
-    {
-      entry->GetTypeModifierObject()->Copy(typeModifierObject);
-    }
-    else
-    {
-      entry->GetTypeModifierObject()->Initialize();
-    }
+    entry->GetTypeModifierObject()->SetCodingSchemeDesignator(typeModifierIds[0].c_str());
+    entry->GetTypeModifierObject()->SetCodeValue(typeModifierIds[1].c_str());
+    entry->GetTypeModifierObject()->SetCodeMeaning(typeModifierIds[2].c_str());
   }
 
   // Anatomic context name (optional)
@@ -2197,33 +2153,125 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
 
   // Anatomic region (optional)
   std::vector<std::string> regionIds = vtksys::SystemTools::SplitString(entryComponents[5], '^');
-
+  entry->GetAnatomicRegionObject()->Initialize();
   if (regionIds.size() == 3)
   {
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionId(regionIds[0], regionIds[1], regionIds[2]);
-    vtkSmartPointer<vtkSlicerTerminologyType> regionObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-    if ( this->GetRegionInAnatomicContext(anatomicContextName, regionId, regionObject) )
-    {
-      entry->GetAnatomicRegionObject()->Copy(regionObject);
-    }
-    else
-    {
-      entry->GetAnatomicRegionObject()->Initialize();
-    }
+    entry->GetAnatomicRegionObject()->SetCodingSchemeDesignator(regionIds[0].c_str());
+    entry->GetAnatomicRegionObject()->SetCodeValue(regionIds[1].c_str());
+    entry->GetAnatomicRegionObject()->SetCodeMeaning(regionIds[2].c_str());
 
     // Anatomic region modifier (optional)
     std::vector<std::string> regionModifierIds = vtksys::SystemTools::SplitString(entryComponents[6], '^');
+    entry->GetAnatomicRegionModifierObject()->Initialize();
     if (regionModifierIds.size() == 3)
     {
-      vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionModifierId(regionModifierIds[0], regionModifierIds[1], regionModifierIds[2]);
-      vtkSmartPointer<vtkSlicerTerminologyType> regionModifierObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-      if ( this->GetRegionModifierInAnatomicRegion(anatomicContextName, regionId, regionModifierId, regionModifierObject ))
+      entry->GetAnatomicRegionModifierObject()->SetCodingSchemeDesignator(regionModifierIds[0].c_str());
+      entry->GetAnatomicRegionModifierObject()->SetCodeValue(regionModifierIds[1].c_str());
+      entry->GetAnatomicRegionModifierObject()->SetCodeMeaning(regionModifierIds[2].c_str());
+    }
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSlicerTerminologyEntry* entry)
+{
+  if (!entry)
+  {
+    return false;
+  }
+
+  if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject()
+    || !entry->GetAnatomicRegionObject() || !entry->GetAnatomicRegionModifierObject())
+  {
+    vtkErrorWithObjectMacro(entry, "UpdateEntryFromLoadedTerminologies: Invalid terminology entry given");
+    return false;
+  }
+
+  // Category, type, type modifier
+
+  CodeIdentifier categoryId = GetCodeIdentifierFromCodedEntry(entry->GetCategoryObject());
+  CodeIdentifier typeId = GetCodeIdentifierFromCodedEntry(entry->GetTypeObject());
+  if (categoryId.IsValid() && typeId.IsValid())
+  {
+    // Create list of preferred terminology names: the list starts with the entry's terminologyName
+    // followed by all the other loaded terminologies.
+    std::string terminologyName = entry->GetTerminologyContextName();
+    std::vector<std::string> preferredTerminologyNames;
+    this->GetLoadedTerminologyNames(preferredTerminologyNames);
+    std::vector<std::string>::iterator ptnIt = std::find(preferredTerminologyNames.begin(), preferredTerminologyNames.end(), terminologyName);
+    if (ptnIt != preferredTerminologyNames.end())
+    {
+      preferredTerminologyNames.erase(ptnIt);
+      preferredTerminologyNames.insert(preferredTerminologyNames.begin(), terminologyName);
+    }
+
+    // Look for the type in each terminology context
+    for (std::string terminologyName : preferredTerminologyNames)
+    {
+      vtkNew<vtkSlicerTerminologyCategory> categoryObject;
+      if (!this->GetCategoryInTerminology(terminologyName, categoryId, categoryObject))
       {
-        entry->GetAnatomicRegionModifierObject()->Copy(regionModifierObject);
+        continue;
       }
-      else
+      vtkNew<vtkSlicerTerminologyType> typeObject;
+      if (!this->GetTypeInTerminologyCategory(terminologyName, categoryId, typeId, typeObject))
       {
-        entry->GetAnatomicRegionModifierObject()->Initialize();
+        continue;
+      }
+      entry->SetTerminologyContextName(terminologyName.c_str());
+      entry->GetCategoryObject()->Copy(categoryObject);
+      entry->GetTypeObject()->Copy(typeObject);
+      CodeIdentifier typeModifierId = GetCodeIdentifierFromCodedEntry(entry->GetTypeModifierObject());
+      if (typeModifierId.IsValid())
+      {
+        // Type with a modifier
+        vtkNew<vtkSlicerTerminologyType> typeModifierObject;
+        if (this->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId, typeModifierId, typeModifierObject))
+        {
+          entry->GetTypeModifierObject()->Copy(typeModifierObject);
+        }
+      }
+    }
+  }
+
+  // Anatomic region, anatomic region modifier
+
+  CodeIdentifier regionId = GetCodeIdentifierFromCodedEntry(entry->GetAnatomicRegionObject());
+  if (regionId.IsValid())
+  {
+    // Create list of preferred anatomic context names: the list starts with the entry's anatomic context name
+    // followed by all the other loaded anatomic context names.
+    std::string anatomicContextName = entry->GetAnatomicContextName();
+    std::vector<std::string> preferredAnatomicContextNames;
+    this->GetLoadedAnatomicContextNames(preferredAnatomicContextNames);
+    std::vector<std::string>::iterator pacIt = std::find(preferredAnatomicContextNames.begin(), preferredAnatomicContextNames.end(), anatomicContextName);
+    if (pacIt != preferredAnatomicContextNames.end())
+    {
+      preferredAnatomicContextNames.erase(pacIt);
+      preferredAnatomicContextNames.insert(preferredAnatomicContextNames.begin(), anatomicContextName);
+    }
+
+    // Look for the type in each terminology context
+    for (std::string anatomicContextName : preferredAnatomicContextNames)
+    {
+      vtkNew<vtkSlicerTerminologyType> regionObject;
+      if (!this->GetRegionInAnatomicContext(anatomicContextName, regionId, regionObject))
+      {
+        continue;
+      }
+      entry->SetAnatomicContextName(anatomicContextName.c_str());
+      entry->GetAnatomicRegionObject()->Copy(regionObject);
+      CodeIdentifier regionModifierId = GetCodeIdentifierFromCodedEntry(entry->GetAnatomicRegionModifierObject());
+      if (regionModifierId.IsValid())
+      {
+        // Region with a modifier
+        vtkNew<vtkSlicerTerminologyType> regionModifierObject;
+        if (this->GetRegionModifierInAnatomicRegion(anatomicContextName, regionId, regionModifierId, regionModifierObject))
+        {
+          entry->GetAnatomicRegionModifierObject()->Copy(regionModifierObject);
+        }
       }
     }
   }

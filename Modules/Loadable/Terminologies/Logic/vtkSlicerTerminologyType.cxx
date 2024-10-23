@@ -95,8 +95,12 @@ void vtkSlicerTerminologyType::Copy(vtkCodedEntry* aType)
 
   this->Superclass::Copy(aType);
 
-  vtkSlicerTerminologyType *aTerminologyType =
-      vtkSlicerTerminologyType::SafeDownCast(aType);
+  vtkSlicerTerminologyType *aTerminologyType = vtkSlicerTerminologyType::SafeDownCast(aType);
+  if (!aTerminologyType)
+  {
+    vtkErrorMacro("Copy: Input type is not a vtkSlicerTerminologyType");
+    return;
+  }
 
   this->SetRecommendedDisplayRGBValue(aTerminologyType->GetRecommendedDisplayRGBValue());
   this->SetSlicerLabel(aTerminologyType->GetSlicerLabel());
