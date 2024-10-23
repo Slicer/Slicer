@@ -544,6 +544,8 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
     this->Pipeline->Append->RemoveAllInputs();
   }
 
+  vtkNew<vtkTransform> axisLabelTransform;
+
   HandleInfoList handleInfoList = this->GetHandleInfoList();
   for (HandleInfo handleInfo : handleInfoList)
   {
@@ -580,6 +582,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
 
     transform->Identity();
     vtkDoubleArray* orientationArray = vtkDoubleArray::SafeDownCast(handlePolyData->GetPointData()->GetArray("orientation"));
+    vtkNew<vtkMatrix4x4> orientationMatrix;
     if (orientationArray)
     {
       double orientation[9] = {
@@ -603,6 +606,18 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
     }
     transform->Scale(scale, scale, scale);
     transform->Translate(point[0], point[1], point[2]);
+
+    if (handleInfo.ComponentType == InteractionTranslationHandle && handleInfo.Index == 3)
+    {
+      axisLabelTransform->Identity();
+      axisLabelTransform->PostMultiply();
+      vtkNew<vtkMatrix4x4> inverseOrientationMatrix;
+      inverseOrientationMatrix->DeepCopy(orientationMatrix);
+      inverseOrientationMatrix->Invert();
+      axisLabelTransform->Concatenate(inverseOrientationMatrix);
+      axisLabelTransform->Scale(scale, scale, scale);
+      axisLabelTransform->Scale(1.12, 1.12, 1.12); // Make axis labels appear a bit further than the arrow head
+    }
 
     vtkSmartPointer<vtkPolyData> handleGlyphPolyData = nullptr;
     std::pair<int, int> handlePolyDataMapKey = std::make_pair(handleInfo.ComponentType, handleInfo.Index);
@@ -675,7 +690,30 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
     outlineGlyphColorArray->SetNumberOfTuples(handleOutlineGlyphPolyData->GetNumberOfPoints());
     outlineGlyphColorArray->Fill(handleColorIndex + 1);
     handleOutlineGlyphPolyData->GetPointData()->SetActiveScalars("colorIndex");
+
+  } // For all handles
+
+  // Set text property. Note: this is fixed, only the color changes. See vtkSlicerMarkupsInteractionWidgetRepresentation::UpdateInteractionPipeline
+  for (int index = 0; index < this->GetNumberOfHandles(InteractionTranslationHandle); ++index)
+  {
+    HandleInfo handleInfo = this->GetHandleInfo(InteractionTranslationHandle, index);
+    vtkSmartPointer<vtkTextProperty> textProperty = vtkSmartPointer<vtkTextProperty>::New();
+    textProperty->SetFontSize(28);
+    textProperty->SetBold(1);
+    textProperty->SetShadow(2);
+    textProperty->SetFontFamilyToArial();
+    textProperty->SetColor(handleInfo.Color);
+    this->Pipeline->AxisLabelMapper->SetLabelTextProperty(textProperty, index);
   }
+
+  // Set axis label transform
+  this->Pipeline->AxisLabelTransform->Identity();
+  if (this->GetSliceNode())
+  {
+    this->Pipeline->AxisLabelTransform->Concatenate(this->Pipeline->WorldToSliceTransform);
+  }
+  this->Pipeline->AxisLabelTransform->Concatenate(this->Pipeline->HandleToWorldTransform);
+  this->Pipeline->AxisLabelTransform->Concatenate(axisLabelTransform);
 }
 
 //----------------------------------------------------------------------
@@ -692,6 +730,10 @@ void vtkMRMLInteractionWidgetRepresentation::GetActors(vtkPropCollection* pc)
   {
     actor->GetActors(pc);
   }
+  if (this->Pipeline)
+  {
+    this->Pipeline->AxisLabelActor->GetActors(pc);
+  }
 }
 
 //----------------------------------------------------------------------
@@ -701,6 +743,10 @@ void vtkMRMLInteractionWidgetRepresentation::ReleaseGraphicsResources(vtkWindow*
   if (actor)
   {
     actor->ReleaseGraphicsResources(window);
+  }
+  if (this->Pipeline)
+  {
+    this->Pipeline->AxisLabelActor->ReleaseGraphicsResources(window);
   }
 }
 
@@ -712,6 +758,10 @@ int vtkMRMLInteractionWidgetRepresentation::RenderOverlay(vtkViewport* viewport)
   if (this->Pipeline && actor->GetVisibility())
   {
     count += actor->RenderOverlay(viewport);
+  }
+  if (this->Pipeline && this->Pipeline->AxisLabelActor->GetVisibility())
+  {
+    count += this->Pipeline->AxisLabelActor->RenderOverlay(viewport);
   }
   return count;
 }
@@ -739,6 +789,10 @@ int vtkMRMLInteractionWidgetRepresentation::RenderOpaqueGeometry(vtkViewport* vi
     count += actor->RenderOpaqueGeometry(viewport);
     this->Pipeline->HandleToWorldTransformFilter->Update();
   }
+  if (this->Pipeline->AxisLabelActor->GetVisibility())
+  {
+    count += this->Pipeline->AxisLabelActor->RenderOpaqueGeometry(viewport);
+  }
   return count;
 }
 
@@ -751,6 +805,11 @@ int vtkMRMLInteractionWidgetRepresentation::RenderTranslucentPolygonalGeometry(v
   {
     actor->SetPropertyKeys(this->GetPropertyKeys());
     count += actor->RenderTranslucentPolygonalGeometry(viewport);
+  }
+  if (this->Pipeline && this->Pipeline->AxisLabelActor->GetVisibility())
+  {
+    this->Pipeline->AxisLabelActor->SetPropertyKeys(this->GetPropertyKeys());
+    count += this->Pipeline->AxisLabelActor->RenderTranslucentPolygonalGeometry(viewport);
   }
   return count;
 }
@@ -1091,6 +1150,29 @@ void vtkMRMLInteractionWidgetRepresentation::CreateTranslationHandles()
   visibilityArray->SetNumberOfValues(this->Pipeline->TranslationHandlePoints->GetNumberOfPoints());
   visibilityArray->Fill(1);
   this->Pipeline->TranslationHandlePoints->GetPointData()->AddArray(visibilityArray);
+
+  vtkNew<vtkIntArray> typeArray; // Need for coloring the axis labels same as the handles
+  typeArray->SetName("type");
+  typeArray->SetNumberOfComponents(1);
+  typeArray->InsertNextTuple1(0);
+  typeArray->InsertNextTuple1(1);
+  typeArray->InsertNextTuple1(2);
+  typeArray->InsertNextTuple1(3);
+  this->Pipeline->TranslationHandlePoints->GetPointData()->AddArray(typeArray);
+
+  // Note: The array cannot be instantiated here and later accessed by GetArray because vtkStringArray
+  //       is not a subclass vtkDataArray and is casted to nullptr in vtkFieldData::GetArray
+  this->Pipeline->AxisLabelArray->SetName("label");
+  this->Pipeline->AxisLabelArray->SetNumberOfComponents(1);
+  this->Pipeline->AxisLabelArray->SetNumberOfValues(this->Pipeline->TranslationHandlePoints->GetNumberOfPoints());
+  this->Pipeline->TranslationHandlePoints->GetPointData()->AddArray(this->Pipeline->AxisLabelArray);
+
+  this->Pipeline->AxisLabelTransformFilter->SetInputData(this->Pipeline->TranslationHandlePoints);
+  this->Pipeline->AxisLabelTransformFilter->SetTransform(this->Pipeline->AxisLabelTransform);
+  this->Pipeline->AxisLabelMapper->SetInputConnection(this->Pipeline->AxisLabelTransformFilter->GetOutputPort());
+  this->Pipeline->AxisLabelMapper->SetLabelModeToLabelFieldData();
+  this->Pipeline->AxisLabelMapper->SetFieldDataName("label");
+  this->Pipeline->AxisLabelActor->SetMapper(this->Pipeline->AxisLabelMapper);
 }
 
 //----------------------------------------------------------------------
