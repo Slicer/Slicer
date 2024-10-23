@@ -185,6 +185,10 @@ protected:
   /// Source representation to target representation rule graph
   RepresentationToRepresentationToRuleMapType RulesGraph;
 
+  /// Stores conversion parameters that this software does not know.
+  /// We store these parameters here because the converter rules only store the parameters they know about.
+  vtkSmartPointer<vtkSegmentationConversionParameters> CustomConversionParameters;
+
 private:
   vtkSegmentationConverter(const vtkSegmentationConverter&) = delete;
   void operator=(const vtkSegmentationConverter&) = delete;

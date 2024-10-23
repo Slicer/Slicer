@@ -56,6 +56,10 @@ public:
         , CodeValue(codeValue)
         , CodeMeaning(codeMeaning)
         { };
+      bool IsValid() const
+      {
+        return !CodingSchemeDesignator.empty() && !CodeValue.empty();
+      };
       std::string CodingSchemeDesignator;
       std::string CodeValue;
       std::string CodeMeaning; // Human readable name (not required for ID)
@@ -240,10 +244,8 @@ public:
   /// \return Flag indicating whether the attribute was found
   bool FindTypeInTerminologyBy3dSlicerLabel(std::string terminologyName, std::string slicerLabel, vtkSlicerTerminologyEntry* entry);
 
-  /// Convert terminology category object to code identifier
-  static CodeIdentifier CodeIdentifierFromTerminologyCategory(vtkSlicerTerminologyCategory* category);
-  /// Convert terminology type object to code identifier
-  static CodeIdentifier CodeIdentifierFromTerminologyType(vtkSlicerTerminologyType* type);
+  /// Convert terminology category, type, etc. object to code identifier
+  static CodeIdentifier GetCodeIdentifierFromCodedEntry(vtkCodedEntry* entry);
 
   /// Convert terminology entry VTK object to string containing identifiers
   /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,
@@ -267,6 +269,11 @@ public:
   /// codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
   ///  \return Success flag
   bool DeserializeTerminologyEntry(std::string serializedEntry, vtkSlicerTerminologyEntry* entry);
+
+  /// Get metadata (such as recommended color) from loaded terminologies.
+  /// The entry will be first searched in the terminology context that is specified in the entry,
+  /// if not found then it is searched in all the other loaded terminology contexts.
+  bool UpdateEntryFromLoadedTerminologies(vtkSlicerTerminologyEntry* entry);
 
   /// Assemble human readable info string from a terminology entry, for example for tooltips
   static std::string GetInfoStringFromTerminologyEntry(vtkSlicerTerminologyEntry* entry);

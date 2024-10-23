@@ -49,6 +49,7 @@ vtkStandardNewMacro(vtkSegmentationConverter);
 vtkSegmentationConverter::vtkSegmentationConverter()
 {
   // Get default converter rules from factory
+  this->CustomConversionParameters = vtkSmartPointer<vtkSegmentationConversionParameters>::New();
   vtkSegmentationConverterFactory::GetInstance()->CopyConverterRules(this->ConverterRules);
   this->RebuildRulesGraph();
 }
@@ -60,12 +61,21 @@ vtkSegmentationConverter::~vtkSegmentationConverter() = default;
 void vtkSegmentationConverter::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-  os << indent << "Rules:\n";
-  int ruleIndex = 0;
-  for (auto rule : this->ConverterRules)
+  if (!this->ConverterRules.empty())
   {
-    os << indent.GetNextIndent() << "Rule[" << ruleIndex++ << "]:\n";
-    rule->PrintSelf(os, indent.GetNextIndent().GetNextIndent());
+    os << indent << "Rules:\n";
+    int ruleIndex = 0;
+    for (auto rule : this->ConverterRules)
+    {
+      os << indent.GetNextIndent() << "Rule[" << ruleIndex++ << "]:\n";
+      rule->PrintSelf(os, indent.GetNextIndent().GetNextIndent());
+    }
+
+  }
+  if (this->CustomConversionParameters->GetNumberOfParameters() > 0)
+  {
+    os << indent << "CustomConversionParameters:\n";
+    this->CustomConversionParameters->PrintSelf(os, indent.GetNextIndent());
   }
 }
 
@@ -87,6 +97,8 @@ void vtkSegmentationConverter::DeepCopy(vtkSegmentationConverter* aConverter)
         rule->ConversionParameters->GetValue(parameterIndex));
     }
   }
+
+  this->CustomConversionParameters->DeepCopy(aConverter->CustomConversionParameters);
 }
 
 //----------------------------------------------------------------------------
@@ -243,7 +255,8 @@ void vtkSegmentationConverter::SetConversionParameter(const std::string& name, c
     || value.find(SERIALIZATION_SEPARATOR) != std::string::npos || value.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos
     || description.find(SERIALIZATION_SEPARATOR) != std::string::npos || description.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos )
   {
-    vtkErrorMacro("SetConversionParameter: Conversion parameter '" << name << " name, value, or description contains a separator character so it cannot be set!");
+    vtkErrorMacro("SetConversionParameter: Conversion parameter '" << name
+      << " name, value, or description contains a separator character so it cannot be set");
     return;
   }
 
@@ -261,7 +274,9 @@ void vtkSegmentationConverter::SetConversionParameter(const std::string& name, c
 
   if (!parameterFound)
   {
-    vtkErrorMacro("SetConversionParameter: Conversion parameter '" << name << "' not found in converter rules!");
+    // Obsolete or not yet supported conversion parameter. The parameter is not used, but
+    // we preserve it so that no information is lost when a segmentation is loaded and then saved.
+    this->CustomConversionParameters->SetParameter(name, value, description);
   }
 }
 
@@ -276,8 +291,11 @@ std::string vtkSegmentationConverter::GetConversionParameter(const std::string& 
       return (*ruleIt)->GetConversionParameter(name);
     }
   }
-
-  vtkErrorMacro("GetConversionParameter: Conversion parameter '" << name << "' not found in converter rules!");
+  if (this->CustomConversionParameters->GetIndexFromName(name) >= 0)
+  {
+    return this->CustomConversionParameters->GetValue(name);
+  }
+  vtkErrorMacro("GetConversionParameter: Conversion parameter '" << name << "' is not found.");
   return "";
 }
 
@@ -292,8 +310,12 @@ std::string vtkSegmentationConverter::GetConversionParameterDescription(const st
       return (*ruleIt)->GetConversionParameterDescription(name);
     }
   }
+  if (this->CustomConversionParameters->GetIndexFromName(name) >= 0)
+  {
+    return this->CustomConversionParameters->GetDescription(name);
+  }
 
-  vtkErrorMacro("GetConversionParameterDescription: Conversion parameter '" << name << "' not found in converter rules!");
+  vtkErrorMacro("GetConversionParameterDescription: Conversion parameter '" << name << "' not found.");
   return "";
 }
 
@@ -484,6 +506,13 @@ void vtkSegmentationConverter::GetAllConversionParameters(
   vtkSegmentationConversionParameters* conversionParameters)
 {
   conversionParameters->RemoveAllParameters();
+  // Get all custom conversion parameters
+  int numberOfParameters = this->CustomConversionParameters->GetNumberOfParameters();
+  for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
+  {
+    conversionParameters->CopyParameter(this->CustomConversionParameters, parameterIndex);
+  }
+  // Get all conversion parameters from all rules
   for (ConverterRulesListType::iterator ruleIt = this->ConverterRules.begin(); ruleIt != this->ConverterRules.end(); ++ruleIt)
   {
     (*ruleIt)->GetRuleConversionParameters(conversionParameters);

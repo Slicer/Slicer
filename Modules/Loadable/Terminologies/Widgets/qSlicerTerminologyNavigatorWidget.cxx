@@ -496,8 +496,8 @@ QColor qSlicerTerminologyNavigatorWidgetPrivate::recommendedColorForType(
     return QColor();
   }
   std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> typeModifiers;
-  vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId = vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category);
-  vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeId = vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(type);
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId = vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(category);
+  vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeId = vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(type);
   logic->GetTypeModifiersInTerminologyType(terminologyName.c_str(), categoryId, typeId, typeModifiers);
   vtkNew<vtkSlicerTerminologyType> typeModifierObject;
   for (auto modifierId : typeModifiers)
@@ -1243,11 +1243,11 @@ void qSlicerTerminologyNavigatorWidget::populateTypeTable()
   {
     std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> typesInCategory;
     std::vector<vtkSmartPointer<vtkSlicerTerminologyType>> typesObjectsInCategory;
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId = vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category);
+    vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId = vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(category);
 
     logic->FindTypesInTerminologyCategory(
       d->CurrentTerminologyName.toUtf8().constData(),
-      vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(category),
+      vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(category),
       typesInCategory, searchTerm, &typesObjectsInCategory);
 
     std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier>::iterator idIt;
@@ -1378,8 +1378,8 @@ void qSlicerTerminologyNavigatorWidget::populateTypeModifierComboBox()
   std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> typeModifiers;
   logic->GetTypeModifiersInTerminologyType(
     d->CurrentTerminologyName.toUtf8().constData(),
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(d->CurrentCategoryObject),
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentTypeObject),
+    vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(d->CurrentCategoryObject),
+    vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(d->CurrentTypeObject),
     typeModifiers );
 
   int index = 1; // None modifier has index 0
@@ -1848,8 +1848,8 @@ void qSlicerTerminologyNavigatorWidget::onTypeModifierSelectionChanged(int index
       d->ComboBox_TypeModifier->itemText(index).toUtf8().constData() );
     if (!logic->GetTypeModifierInTerminologyType(
       d->CurrentTerminologyName.toUtf8().constData(),
-      vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(d->CurrentCategoryObject),
-      vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentTypeObject),
+      vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(d->CurrentCategoryObject),
+      vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(d->CurrentTypeObject),
       modifierId, modifier) )
     {
       qCritical() << Q_FUNC_INFO << ": Failed to find modifier '" << d->ComboBox_TypeModifier->itemText(index);
@@ -2155,7 +2155,7 @@ void qSlicerTerminologyNavigatorWidget::populateRegionModifierComboBox()
   std::vector<vtkSlicerTerminologiesModuleLogic::CodeIdentifier> regionModifiers;
   logic->GetRegionModifiersInAnatomicRegion(
     d->CurrentAnatomicContextName.toUtf8().constData(),
-    vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentRegionObject),
+    vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(d->CurrentRegionObject),
     regionModifiers );
 
   // Add "none" item
@@ -2412,7 +2412,7 @@ void qSlicerTerminologyNavigatorWidget::onRegionModifierSelectionChanged(int ind
       d->ComboBox_AnatomicRegionModifier->itemText(index).toUtf8().constData());
     if (!logic->GetRegionModifierInAnatomicRegion(
       d->CurrentAnatomicContextName.toUtf8().constData(),
-      vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(d->CurrentRegionObject),
+      vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(d->CurrentRegionObject),
       modifierId, modifier))
     {
       qCritical() << Q_FUNC_INFO << ": Failed to find modifier '" << d->ComboBox_AnatomicRegionModifier->itemText(index);
