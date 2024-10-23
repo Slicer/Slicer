@@ -130,6 +130,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_BUILD
   "SLICER_HOME=${Slicer_BINARY_DIR}" # See note below
+  "SLICER_SHARE_DIR=${Slicer_SHARE_DIR}" # See note below
   "ITK_AUTOLOAD_PATH=<APPLAUNCHER_SETTINGS_DIR>/${Slicer_ITKFACTORIES_DIR}/<CMAKE_CFG_INTDIR>"
   )
 if(Slicer_USE_PYTHONQT)
@@ -272,6 +273,7 @@ set(SLICER_ENVVARS_INSTALLED
   # SLICER_HOME might already be set on the machine, overwrite it because it
   # could have unwanted side effects
   "SLICER_HOME=<APPLAUNCHER_SETTINGS_DIR>/.."
+  "SLICER_SHARE_DIR=<APPLAUNCHER_SETTINGS_DIR>/../${Slicer_SHARE_DIR}"
   "ITK_AUTOLOAD_PATH=<APPLAUNCHER_SETTINGS_DIR>/../${Slicer_ITKFACTORIES_DIR}"
   )
 if(Slicer_USE_PYTHONQT)

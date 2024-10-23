@@ -164,12 +164,20 @@ std::string vtkMRMLLogic::GetApplicationHomeDirectory()
 //----------------------------------------------------------------------------
 std::string vtkMRMLLogic::GetApplicationShareDirectory()
 {
-  std::string applicationHome = vtkMRMLLogic::GetApplicationHomeDirectory();
   std::vector<std::string> filesVector;
   filesVector.emplace_back(""); // for relative path
-  filesVector.push_back(applicationHome);
-  filesVector.emplace_back(MRML_APPLICATION_SHARE_SUBDIR);
-  std::string applicationShare = vtksys::SystemTools::JoinPath(filesVector);
+  filesVector.emplace_back(vtkMRMLLogic::GetApplicationHomeDirectory());
 
-  return applicationShare;
+  const char* share_env = vtksys::SystemTools::GetEnv(MRML_APPLICATION_SHARE_SUBDIR_ENV);
+  if (share_env)
+  {
+      filesVector.emplace_back(share_env);
+  }
+  else
+  {
+      vtkWarningWithObjectMacro(nullptr, MRML_APPLICATION_SHARE_SUBDIR_ENV " is not defined.\n"
+          "Some resource files may not be loaded correctly!");
+  }
+
+  return vtksys::SystemTools::JoinPath(filesVector);
 }
