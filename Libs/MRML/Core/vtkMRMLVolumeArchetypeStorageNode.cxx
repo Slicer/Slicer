@@ -656,11 +656,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       }
     }
     // delete the temporary dir and all remaining contents
-#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0 && VTK_BUILD_VERSION >= 20210806)
     bool dirRemoved = vtksys::SystemTools::RemoveADirectory(moveFromDir.c_str()).IsSuccess();
-#else
-    bool dirRemoved = vtksys::SystemTools::RemoveADirectory(moveFromDir.c_str());
-#endif
     if (!dirRemoved)
     {
       vtkWarningMacro("Failed to remove temporary write directory " << moveFromDir);
@@ -939,11 +935,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
 
   // look through the new dir and populate the file list
   vtksys::Directory dir;
-#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0 && VTK_BUILD_VERSION >= 20210806)
   success = dir.Load(tempDir.c_str()).IsSuccess();
-#else
-  success = dir.Load(tempDir.c_str());
-#endif
   vtkDebugMacro("UpdateFileList: tempdir " << tempDir.c_str() << " has " << dir.GetNumberOfFiles() << " in it");
   if (!success)
   {
