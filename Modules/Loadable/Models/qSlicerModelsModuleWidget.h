@@ -58,7 +58,12 @@ public slots:
 
   void onClippingConfigurationButtonClicked();
   void onDisplayNodeChanged();
+  void onClipModelsNodeChanged(vtkMRMLNode*);
   void onClipSelectedModelToggled(bool);
+  void onClippingCapVisibilityToggled(bool);
+  void onClippingCapOpacityChanged(double);
+  void onClippingOutlineVisibilityToggled(bool);
+
   /// Create or get first color legend if group box is expanded
   void onColorLegendCollapsibleGroupBoxToggled(bool);
 

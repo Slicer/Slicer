@@ -22,55 +22,57 @@
 #define __qMRMLClipNodeWidget_h
 
 // Qt includes
-#include <QWidget>
+#include <qMRMLWidget.h>
 
 // CTK includes
 #include <ctkVTKObject.h>
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
-#include "vtkMRMLClipModelsNode.h"
+#include "vtkMRMLClipNode.h"
 
 class qMRMLClipNodeWidgetPrivate;
 class vtkMRMLNode;
-class vtkMRMLClipModelsNode;
 
-class QMRML_WIDGETS_EXPORT qMRMLClipNodeWidget : public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLClipNodeWidget : public qMRMLWidget
 {
   Q_OBJECT
-  QVTK_OBJECT
+    QVTK_OBJECT
 public:
-  qMRMLClipNodeWidget(QWidget *parent=nullptr);
+  qMRMLClipNodeWidget(QWidget* parent = nullptr);
   ~qMRMLClipNodeWidget() override;
 
-  vtkMRMLClipModelsNode* mrmlClipNode()const;
+  vtkMRMLClipNode* mrmlClipNode() const;
 
   int clipType()const;
-  int redSliceClipState()const;
-  int yellowSliceClipState()const;
-  int greenSliceClipState()const;
-  vtkMRMLClipModelsNode::ClippingMethodType clippingMethod()const;
-
   void setClipType(int);
-  void setRedSliceClipState(int);
-  void setYellowSliceClipState(int);
-  void setGreenSliceClipState(int);
-  void setClippingMethod(vtkMRMLClipModelsNode::ClippingMethodType);
+
+  int clipState(vtkMRMLNode* node) const;
+  int clipState(const char* nodeID) const;
+  void setClipState(vtkMRMLNode* node, int state);
+  void setClipState(const char* nodeID, int state);
 
 public slots:
   /// Set the clip node to represent
-  void setMRMLClipNode(vtkMRMLClipModelsNode *node);
+  void setMRMLClipNode(vtkMRMLClipNode* node);
   /// Utility function to be connected to signals/slots
-  void setMRMLClipNode(vtkMRMLNode *node);
+  void setMRMLClipNode(vtkMRMLNode* node);
 
 protected slots:
   void updateWidgetFromMRML();
+  void updateMRMLFromWidget();
+
+  // Update clipping node widget frame from node references.
+  void updateClippingNodeFrame();
+  // Update clipping node references from widget.
+  void updateClippingNodeFromWidget();
 
   void updateNodeClipType();
-  void updateNodeRedClipState();
-  void updateNodeYellowClipState();
-  void updateNodeGreenClipState();
-  void updateNodeClippingMethod();
+
+protected:
+
+  // Returns true if the frame widget needs to be updated to reflect the node references.
+  bool needToUpdateClippingNodeFrame() const;
 
 protected:
   QScopedPointer<qMRMLClipNodeWidgetPrivate> d_ptr;

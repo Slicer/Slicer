@@ -653,6 +653,12 @@ public:
   /// \sa XMLAttributeEncodeString()
   std::string XMLAttributeDecodeString(const std::string& inString);
 
+  /// \brief Encode a node reference property string (replaces special characters by code sequences)
+  std::string NodeReferencePropertyEncodeString(const std::string& inString);
+
+  /// \brief Decode a node reference property string.
+  std::string NodeReferencePropertyDecodeString(const std::string& inString);
+
   /// Get/Set for Selected
   vtkGetMacro(Selected, int);
   vtkSetMacro(Selected, int);
@@ -690,6 +696,42 @@ public:
   /// \brief Set a N-th reference from this node with specified
   /// \a referencedNodeID for a specific \a referenceRole.
   vtkMRMLNode* SetNthNodeReferenceID(const char* referenceRole, int n, const char* referencedNodeID);
+
+  ///@{
+  /// \brief Set the node reference property for a specific \a referenceRole.
+  void SetNodeReferenceProperty(const std::string& referenceRole, const std::string& propertyName, const std::string& value);
+  void SetNthNodeReferenceProperty(const std::string& referenceRole, int n, const std::string& propertyName, const std::string& value);
+  ///@}
+
+  ///@{
+  /// \brief Get the node reference property for a specific \a referenceRole.
+  std::string GetNodeReferenceProperty(const std::string& referenceRole, const std::string& propertyName);
+  std::string GetNthNodeReferenceProperty(const std::string& referenceRole, int n, const std::string& propertyName);
+  ///@}
+
+  ///@{
+  /// \brief Remove a node reference property for a specific \a referenceRole.
+  void RemoveNodeReferenceProperty(const std::string& referenceRole, const std::string& propertyName);
+  void RemoveNthNodeReferenceProperty(const std::string& referenceRole, int n, const std::string& propertyName);
+  ///@}
+
+  /// \brief Get the number of node reference properties for a specific \a referenceRole.
+  int GetNumberOfNodeReferenceProperties(const std::string& referenceRole);
+  int GetNumberOfNthNodeReferenceProperties(const std::string& referenceRole, int n);
+
+  /// \brief Get the name of the Nth node reference property for a specific \a referenceRole.
+  std::string GetNodeReferencePropertyName(const std::string& referenceRole, int propertyIndex);
+  std::string GetNthNodeReferencePropertyName(const std::string& referenceRole, int referenceIndex, int propertyIndex);
+
+  /// \brief Get the names of all node reference properties for a specific \a referenceRole.
+  std::vector<std::string> GetNodeReferencePropertyNames(const std::string& referenceRole);
+  std::vector<std::string> GetNthNodeReferencePropertyNames(const std::string& referenceRole, int n);
+
+  /// \brief Remove all node reference properties for a specific \a referenceRole.
+  void ClearNodeReferenceProperties(const std::string& referenceRole);
+
+  /// \brief Remove all node reference properties for a specific \a referenceRole and Nth node.
+  void ClearNthNodeReferenceProperties(const std::string& referenceRole, int n);
 
   /// \brief Set and observe a reference node from this node for a specific
   /// \a referenceRole.
@@ -770,6 +812,9 @@ public:
   ///
   /// \sa GetNthNodeReferenceID(int), GetNodeReference()
   const char *GetNodeReferenceID(const char* referenceRole);
+
+  typedef std::map<std::string, std::string> ReferencePropertiesType;
+  const ReferencePropertiesType* GetNthNodeReferenceProperties(const char* referenceRole, int n);
 
   /// \brief Get referenced MRML node for a specific \a referenceRole.
   ///
@@ -864,6 +909,21 @@ protected:
     void SetReferencedNode(vtkMRMLNode* node);
     vtkMRMLNode* GetReferencedNode() const;
 
+    /// \brief Set the properties of the reference.
+    bool SetProperty(const std::string& key, const std::string& value);
+
+    /// \brief Get the properties of the reference.
+    std::string GetProperty(const std::string& key) const;
+
+    /// \brief Remove a property from the reference.
+    bool RemoveProperty(const std::string& key);
+
+    /// \brief Remove all properties from the reference.
+    bool ClearProperties();
+
+    const ReferencePropertiesType* GetProperties() const { return &this->Properties; }
+    void SetProperties(const ReferencePropertiesType& properties) { this->Properties = properties; }
+
   protected:
     vtkMRMLNodeReference();
     ~vtkMRMLNodeReference() override;
@@ -888,6 +948,8 @@ protected:
     /// The undefined state is used to indicate if the value was specified explicitly
     /// (necessary to distinguish it from being explicitly disabled for implementation of reference groups).
     ContentModifiedObserveType ObserveContentModifiedEvents{ vtkMRMLNode::ContentModifiedObserveUndefined };
+
+    ReferencePropertiesType Properties;
   };
 
   vtkMRMLNode();

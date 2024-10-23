@@ -4,6 +4,7 @@ set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
   vtkMRMLCameraDisplayableManagerTest1.cxx
   vtkMRMLCameraWidgetTest1.cxx
+  vtkMRMLModelClipDisplayableManagerTest.cxx
   vtkMRMLModelDisplayableManagerTest.cxx
   vtkMRMLModelSliceDisplayableManagerTest.cxx
   vtkMRMLThreeDReformatDisplayableManagerTest1.cxx

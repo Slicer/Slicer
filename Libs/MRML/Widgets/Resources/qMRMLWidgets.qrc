@@ -99,6 +99,8 @@
         <file>Icons/YellowSpaceNegative.png</file>
         <file>Icons/GreenSpacePositive.png</file>
         <file>Icons/GreenSpaceNegative.png</file>
+        <file>Icons/GreySpacePositive.png</file>
+        <file>Icons/GreySpaceNegative.png</file>
         <file>Icons/column_add.png</file>
         <file>Icons/column_delete.png</file>
         <file>Icons/column_header_lock.png</file>

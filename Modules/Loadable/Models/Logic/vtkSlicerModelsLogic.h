@@ -100,10 +100,6 @@ protected:
   /// Reimplemented to observe the NodeRemovedEvent scene event.
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
-  /// Reimplemented to make sure the singleton vtkMRMLClipModelsNode is
-  /// instantiated.
-  void ObserveMRMLScene() override;
-
   void OnMRMLSceneEndImport() override;
 };
 
