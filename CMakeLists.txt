@@ -430,7 +430,7 @@ if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(9)$")
 endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
 
-set(Slicer_VTK_MINIMUM_SUPPORTED_VERSION "9.1")
+set(Slicer_VTK_MINIMUM_SUPPORTED_VERSION "9.2")
 
 #
 # SimpleITK has large internal libraries, which take an extremely long

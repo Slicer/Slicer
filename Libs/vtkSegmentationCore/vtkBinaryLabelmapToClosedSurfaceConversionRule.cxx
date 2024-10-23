@@ -29,7 +29,6 @@
 #include <vtkCompositeDataIterator.h>
 #include <vtkDecimatePro.h>
 #include <vtkDiscreteFlyingEdges3D.h>
-#include <vtkExtractSelectedThresholds.h>
 #include <vtkGeometryFilter.h>
 #include <vtkImageAccumulate.h>
 #include <vtkImageChangeInformation.h>
@@ -58,7 +57,6 @@
 #include <vtkSelection.h>
 #include <vtkSelectionNode.h>
 #include <vtkFloatArray.h>
-#include <vtkExtractSelectedIds.h>
 #include <vtkInformation.h>
 #include <vtkExtractSelection.h>
 #include <vtkSelectionSource.h>
