@@ -26,7 +26,6 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
-#include <QIcon>
 #include <QPainter>
 #include <QPixmap>
 #include <QStyle>
@@ -41,11 +40,9 @@ protected:
 public:
   qSlicerTerminologySelectorButtonPrivate(qSlicerTerminologySelectorButton& object);
   void init();
-  void computeIcon();
   QString text()const;
 
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;
-  QIcon Icon;
   mutable QSize CachedSizeHint;
 };
 
@@ -60,38 +57,7 @@ void qSlicerTerminologySelectorButtonPrivate::init()
 {
   Q_Q(qSlicerTerminologySelectorButton);
   q->setCheckable(true);
-  QObject::connect(q, SIGNAL(toggled(bool)),
-                   q, SLOT(onToggled(bool)));
-  this->computeIcon();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorButtonPrivate::computeIcon()
-{
-  Q_Q(qSlicerTerminologySelectorButton);
-
-  QColor iconColor;
-  if (this->TerminologyInfo.Color.isValid())
-  {
-    // If custom color was chosen then use that
-    iconColor = this->TerminologyInfo.Color;
-  }
-  else
-  {
-    // If recommended color is used then show that
-    iconColor = qSlicerTerminologyNavigatorWidget::recommendedColorFromTerminology(
-      this->TerminologyInfo.GetTerminologyEntry() );
-  }
-
-  int _iconSize = q->style()->pixelMetric(QStyle::PM_SmallIconSize);
-  QPixmap pix(_iconSize, _iconSize);
-  pix.fill(iconColor.isValid() ? q->palette().button().color() : Qt::transparent);
-  QPainter p(&pix);
-  p.setPen(QPen(Qt::gray));
-  p.setBrush(iconColor.isValid() ? iconColor : QBrush(Qt::NoBrush));
-  p.drawRect(2, 2, pix.width() - 5, pix.height() - 5);
-
-  this->Icon = QIcon(pix);
+  QObject::connect(q, SIGNAL(toggled(bool)), q, SLOT(onToggled(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -112,7 +78,6 @@ void qSlicerTerminologySelectorButton::changeTerminology()
   Q_D(qSlicerTerminologySelectorButton);
   if (qSlicerTerminologySelectorDialog::getTerminology(d->TerminologyInfo, this))
   {
-    d->computeIcon();
     this->update();
     emit terminologyChanged();
   }
@@ -148,7 +113,6 @@ void qSlicerTerminologySelectorButton::setTerminologyInfo(
 
   d->TerminologyInfo = terminologyInfo;
 
-  d->computeIcon();
   this->update();
 }
 
@@ -159,6 +123,6 @@ void qSlicerTerminologySelectorButton::paintEvent(QPaintEvent *)
   QStylePainter p(this);
   QStyleOptionButton option;
   this->initStyleOption(&option);
-  option.icon = d->Icon;
+  option.text = d->TerminologyInfo.Name;
   p.drawControl(QStyle::CE_PushButton, option);
 }

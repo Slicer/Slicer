@@ -39,7 +39,7 @@ class qSlicerTerminologySelectorDialogPrivate : public QDialog
 protected:
   qSlicerTerminologySelectorDialog* const q_ptr;
 public:
-  qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object);
+  qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object, QWidget* parent);
   ~qSlicerTerminologySelectorDialogPrivate() override;
 public:
   void init();
@@ -53,8 +53,9 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object)
-  : q_ptr(&object)
+qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object, QWidget* parent)
+  : QDialog(parent)
+  , q_ptr(&object)
 {
 }
 
@@ -103,7 +104,7 @@ void qSlicerTerminologySelectorDialogPrivate::init()
 //-----------------------------------------------------------------------------
 qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(QObject* parent)
   : QObject(parent)
-  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this))
+  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
 {
   Q_D(qSlicerTerminologySelectorDialog);
   d->init();
@@ -113,7 +114,7 @@ qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(QObject* pare
 qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent)
   : QObject(parent)
-  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this))
+  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
 {
   Q_D(qSlicerTerminologySelectorDialog);
   d->TerminologyInfo = initialTerminologyInfo;

@@ -37,23 +37,10 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="SurfaceSmoothingLabel">
      <property name="toolTip">
-      <string>Automatically set opacities of the segments when loading from file based on which contains which, so that no segment obscures another</string>
+      <string>Enable surface smoothing during binary labelmap to closed surface conversion in new segmentations. Smoothing improves appearance in 3D views and exported models but makes segment editing considerably slower.</string>
      </property>
      <property name="text">
       <string>Enable surface smoothing by default:</string>
@@ -74,13 +61,43 @@
     </widget>
    </item>
    <item row="2" column="0">
+    <widget class="QLabel" name="UseTerminologyLabel">
+     <property name="toolTip">
+      <string>If enabled, double-clicking the segment name or color in the segment tables opens the terminology selector. Otherwise the name and color can be simply edited. True by default.
+
+Note: This applies to segment tables in Segment Editor and Segmentations modules, but other modules may choose to use custom setting that is not controlled by this checkbox.</string>
+     </property>
+     <property name="text">
+      <string>Use standard terminology for segments:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="UseTerminologyCheckBox">
+     <property name="toolTip">
+      <string>If enabled, double-clicking the segment name or color in the segment tables opens the terminology selector. Otherwise the name and color can be simply edited. True by default.
+
+Note: This applies to segment tables in Segment Editor and Segmentations modules, but other modules may choose to use custom setting that is not controlled by this checkbox.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QLabel" name="label">
+     <property name="toolTip">
+      <string>This terminology will be used by default for new segments in an empty segmentation.</string>
+     </property>
      <property name="text">
       <string>Default terminology entry:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="ctkPushButton" name="EditDefaultTerminologyEntryPushButton">
      <property name="toolTip">
       <string>This terminology will be used by default for new segments in an empty segmentation.</string>
@@ -91,28 +108,51 @@
     </widget>
    </item>
    <item row="4" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="toolTip">
+      <string>Default mode of editing in areas of other segments.</string>
+     </property>
+     <property name="text">
+      <string>Default overwrite mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="ctkComboBox" name="DefaultOverwriteModeComboBox">
+     <property name="toolTip">
+      <string>Default mode of editing in areas of other segments.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
     <widget class="QLabel" name="label_2">
+     <property name="toolTip">
+      <string>This option controls what the application should do if the user edits a segment that is currently not visible. It is meant to prevent unintentional changes to hidden segments.</string>
+     </property>
      <property name="text">
       <string>Edit hidden segments: </string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="ctkComboBox" name="AllowEditingHiddenSegmentComboBox">
      <property name="toolTip">
       <string>This option controls what the application should do if the user edits a segment that is currently not visible. It is meant to prevent unintentional changes to hidden segments.</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Default overwrite mode:</string>
+   <item row="6" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="ctkComboBox" name="DefaultOverwriteModeComboBox"/>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
