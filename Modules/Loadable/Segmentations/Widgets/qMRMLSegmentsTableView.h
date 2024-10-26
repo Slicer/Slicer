@@ -63,6 +63,7 @@ public:
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
   Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled)
   Q_PROPERTY(int segmentCount READ segmentCount)
+  Q_PROPERTY(QString terminologySelectorSettingsKey READ terminologySelectorSettingsKey WRITE setTerminologySelectorSettingsKey)
 
   typedef qMRMLWidget Superclass;
   /// Constructor
@@ -113,6 +114,13 @@ public:
   /// The text used to filter the segments in the table
   /// \sa setTextFilter
   QString textFilter();
+  /// The settings key used to specify whether standard terminologies are used for name and color.
+  /// Default value is "Segmentations/SegmentsTableUseStandardTerminology".
+  /// Note: This applies to segment tables in Segment Editor and Segmentations modules, but other
+  /// modules may choose to use custom setting that is not controlled by this checkbox.
+  /// Empty value will result in using the simple (non-terminology) editors and inability to change it.
+  /// \sa setTerminologySelectorSettingsKey
+  QString terminologySelectorSettingsKey();
   // If the specified status should be shown in the table
   /// \sa setStatusShown
   Q_INVOKABLE bool statusShown(int status);
@@ -166,6 +174,9 @@ public slots:
   /// Set the text used to filter the segments in the table
   /// \sa textFilter
   void setTextFilter(QString textFilter);
+  /// Set the settings key used to specify whether standard terminologies are used for name and color.
+  /// \sa terminologySelectorSettingsKey
+  void setTerminologySelectorSettingsKey(QString settingsKey);
   /// Set if the specified status should be shown in the table
   /// \sa statusShown
   void setStatusShown(int status, bool shown);
@@ -197,6 +208,8 @@ protected slots:
 
   /// Handles clicks on a table cell (visibility + state)
   void onSegmentsTableClicked(const QModelIndex& modelIndex);
+  /// Handles clicks on a table cell (name + color change / terminology change)
+  void onSegmentsTableDoubleClicked(const QModelIndex& modelIndex);
 
   /// Handle MRML scene event
   void endProcessing();
@@ -213,6 +226,9 @@ protected slots:
   /// Signals to save/restore segment ID selection when the model is reset
   void modelAboutToBeReset();
   void modelReset();
+
+  /// Toggle using standard terminology for this segments table
+  void onUseTerminologyActionToggled(bool useTerminology);
 
 protected:
   /// Convenience function to set segment visibility options from event handlers

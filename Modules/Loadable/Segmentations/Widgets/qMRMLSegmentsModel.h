@@ -92,11 +92,11 @@ public:
 
   /// Returns the segment ID for the given index
   QString segmentIDFromIndex(const QModelIndex &index)const;
-  // Returns the segment ID for the given item
+  /// Returns the segment ID for the given item
   QString segmentIDFromItem(QStandardItem* item)const;
-  // Returns the index for the given segment ID
+  /// Returns the index for the given segment ID
   QModelIndex indexFromSegmentID(QString segmentID, int column=0)const;
-  // Returns the item for the given segment ID
+  /// Returns the item for the given segment ID
   QStandardItem* itemFromSegmentID(QString segmentID, int column=0)const;
 
   /// Return all the QModelIndexes (all the columns) for a given segment ID
