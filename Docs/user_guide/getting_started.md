@@ -16,7 +16,7 @@ Slicer can also run on virtual machines and docker containers. For example, [3D 
 
 ### Recommended hardware configuration
 - Memory: more than 4GB (8 or more is recommended). As a general rule, have 10x more memory than the amount of data that you load.
-- Display: a minimum resolution of 1024 by 768 (1280 by 1024 or better is recommended).
+- Display: a minimum resolution of 1366 by 768 (1920 by 1080 or higher is recommended).
 - Graphics: Dedicated graphics hardware (discrete GPU) memory is recommended for fast volume rendering.
 GPU: Graphics must support minimum OpenGL 3.2. Integrated graphics card is sufficient for basic visualization. Discrete graphics card (such as NVidia GPU) is recommended for interactive 3D volume rendering and fast rendering of complex scenes. GPU texture memory (VRAM) should be larger than your largest dataset (e.g., working with 2GB data, get VRAM > 4GB) and check that your images fit in maximum texture dimensions of your GPU hardware. Except rendering, most calculations are performed on CPU, therefore having a faster GPU will generally not impact the overall speed of the application.
 - Some computations in 3D Slicer are multi-threaded and will benefit from multi core, multi CPU configurations.
