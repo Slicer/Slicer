@@ -240,6 +240,7 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy/*=true*
     vtkSmartPointer<vtkMRMLMeasurement> measurement = this->GetMeasurement(sourceMeasurement->GetName().c_str());
     measurement = vtkSmartPointer<vtkMRMLMeasurement>::Take(sourceMeasurement->CreateInstance());
     measurement->Copy(sourceMeasurement);
+    measurement->SetInputMRMLNode(this);
     this->AddMeasurement(measurement);
   }
 }
