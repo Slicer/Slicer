@@ -12,7 +12,7 @@
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>
     <double>
-      <name>sigma</name>
+      <name>sigma</name><!-- This is the variable name in C++ source code. If unspecified, C++ variable name is taken from longflag. -->
       <longflag>sigma</longflag>
       <flag>s</flag>
       <label>Sigma</label>
@@ -20,14 +20,14 @@
       <default>1.0</default>
     </double>
     <image>
-      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
       <description><![CDATA[Input volume]]></description>
     </image>
     <image>
-      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
