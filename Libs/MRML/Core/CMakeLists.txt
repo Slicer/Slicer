@@ -143,7 +143,6 @@ set(MRMLCore_SRCS
   vtkMRMLI18N.h
   vtkMRMLMeasurement.cxx
   vtkMRMLStaticMeasurement.cxx
-  vtkMRMLLogic.cxx
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx
   vtkMRMLCameraNode.cxx
