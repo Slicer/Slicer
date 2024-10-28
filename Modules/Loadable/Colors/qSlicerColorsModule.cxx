@@ -102,14 +102,16 @@ void qSlicerColorsModule::setup()
     "vtkMRMLColorLegendDisplayableManager");
 
   qSlicerApplication * app = qSlicerApplication::application();
-  if (!app)
+  if (app != nullptr)
   {
     return;
   }
   vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::SafeDownCast(this->logic());
-  if (this->appLogic() != nullptr)
+  vtkSlicerApplicationLogic* appLogic = this->appLogic();
+  if (appLogic != nullptr)
   {
-    this->appLogic()->SetColorLogic(colorLogic);
+    colorLogic->SetMRMLApplicationLogic(appLogic);
+    appLogic->SetColorLogic(colorLogic);
   }
   app->coreIOManager()->registerIO(new qSlicerColorsReader(colorLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter("Colors", QString("ColorTableFile"),
