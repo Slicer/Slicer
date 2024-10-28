@@ -52,7 +52,11 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     # * Made file extensions explicit for CMake CMP0115
     #   https://github.com/DCMTK/dcmtk/commit/d090b6d7c65e52e01e436a2473dc8ba3f384efbb
     #
-    "0f9bf4d9e9a778c11fdddafca691b451c2b621bc" # patched-DCMTK-3.6.6_20210115
+    # * Fixes for CVE-2022-2119 and CVE-2022-2120 (https://github.com/commontk/DCMTK/pull/14)
+    #   https://github.com/DCMTK/dcmtk/commit/3e996a2749a9355c9b680fa464ecfd9ab9ff567f
+    #   https://github.com/DCMTK/dcmtk/commit/f06a867513524664a1b03dfcf812d8b60fdd02cc
+    #
+    "11972eaa4ecdbf3aab0f46eff78f33d7e2b16bfe" # patched-DCMTK-3.6.6_20210115
     QUIET
     )
 
