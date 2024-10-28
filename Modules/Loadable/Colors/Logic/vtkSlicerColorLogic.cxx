@@ -92,14 +92,6 @@ std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
   if (!app)
   {
     vtkErrorMacro("GetMRMLApplicationLogic() must not be null");
-    return;
-  }
-
-  const std::string& homeDir = app->GetHomeDirectory();
-  if(homeDir.empty())
-  {
-    vtkWarningMacro("HomeDirectory of vtkSlicerApplication is not defined.\n" \
-        "Default color files won't be loaded!");
     return {};
   }
 
@@ -111,6 +103,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
     return {};
   }
 
+  const std::string& homeDir = app->GetHomeDirectory();
 
   // build up the vector
   std::vector<std::string> filesVector;
