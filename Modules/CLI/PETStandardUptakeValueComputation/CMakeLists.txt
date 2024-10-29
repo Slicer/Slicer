@@ -41,8 +41,14 @@ set(${MODULE_NAME}_TARGET_LIBRARIES
   MRMLCore SlicerBaseLogic SlicerBaseCLI
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
-  ${DCMTK_LIBRARIES}
   )
+foreach(lib IN LISTS DCMTK_LIBRARIES)
+  if(TARGET "DCMTK::${lib}")
+    list(APPEND ${MODULE_NAME}_TARGET_LIBRARIES DCMTK::${lib})
+  else()
+    list(APPEND ${MODULE_NAME}_TARGET_LIBRARIES ${lib})
+  endif()
+endforeach()
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

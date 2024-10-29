@@ -195,8 +195,15 @@ set(KIT_target_libraries
   )
 
 if(Slicer_BUILD_DICOM_SUPPORT)
+  # Support namespaced DCMTK targets
+  foreach(lib IN LISTS DCMTK_LIBRARIES)
+    if(TARGET "DCMTK::${lib}")
+      list(APPEND KIT_target_libraries DCMTK::${lib})
+    else()
+      list(APPEND KIT_target_libraries ${lib})
+    endif()
+  endforeach()
   list(APPEND KIT_target_libraries
-    ${DCMTK_LIBRARIES}
     CTKDICOMCore
     )
 endif()
