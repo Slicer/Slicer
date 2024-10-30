@@ -41,7 +41,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "d1fb197927fd4178b5a24e0f0dba6f8d785a8f93" # patched-DCMTK-3.6.8_20241024
+    "ea07125078cd097245867a71d8fba8b36fd92878" # patched-DCMTK-3.6.8_20241024
     QUIET
     )
 
