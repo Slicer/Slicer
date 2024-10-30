@@ -37,6 +37,7 @@
 #include "vtkSlicerROIRepresentation3D.h"
 
 class vtkAppendPolyData;
+class vtkCleanPolyData;
 class vtkClipPolyData;
 class vtkContourTriangulator;
 class vtkCutter;
@@ -94,6 +95,7 @@ protected:
   vtkSmartPointer<vtkTransform>               ROIToWorldTransform;
   vtkSmartPointer<vtkTransformPolyDataFilter> ROIToWorldTransformFilter;
   vtkSmartPointer<vtkCutter>                  ROIOutlineCutter;
+  vtkSmartPointer<vtkCleanPolyData>           ROIOutlineCleaner;
   vtkSmartPointer<vtkTransformPolyDataFilter> ROIOutlineWorldToSliceTransformFilter;
   vtkSmartPointer<vtkContourTriangulator>     ROIIntersectionTriangulator;
 

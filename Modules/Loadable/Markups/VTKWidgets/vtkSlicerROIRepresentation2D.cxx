@@ -21,6 +21,7 @@
 // VTK includes
 #include <vtkActor2D.h>
 #include <vtkCellLocator.h>
+#include <vtkCleanPolyData.h>
 #include <vtkContourTriangulator.h>
 #include <vtkCubeSource.h>
 #include <vtkCutter.h>
@@ -68,8 +69,11 @@ vtkSlicerROIRepresentation2D::vtkSlicerROIRepresentation2D()
   this->ROIOutlineCutter->SetInputConnection(this->ROIToWorldTransformFilter->GetOutputPort());
   this->ROIOutlineCutter->SetCutFunction(this->SlicePlane);
 
+  this->ROIOutlineCleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+  this->ROIOutlineCleaner->SetInputConnection(this->ROIOutlineCutter->GetOutputPort());
+
   this->ROIOutlineWorldToSliceTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  this->ROIOutlineWorldToSliceTransformFilter->SetInputConnection(this->ROIOutlineCutter->GetOutputPort());
+  this->ROIOutlineWorldToSliceTransformFilter->SetInputConnection(this->ROIOutlineCleaner->GetOutputPort());
   this->ROIOutlineWorldToSliceTransformFilter->SetTransform(this->WorldToSliceTransform);
 
   this->ROIOutlineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
