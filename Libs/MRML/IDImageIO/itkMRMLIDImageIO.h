@@ -69,10 +69,6 @@ public:
    * file specified. */
   bool CanReadFile(const char*) override;
 
-  virtual bool CanUseOwnBuffer();
-  virtual void ReadUsingOwnBuffer();
-  virtual void * GetOwnBuffer();
-
   /** Set the spacing and dimension information for the set filename. */
   void ReadImageInformation() override;
 
