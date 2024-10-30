@@ -377,52 +377,6 @@ MRMLIDImageIO
 }
 
 //----------------------------------------------------------------------------
-// Read from the MRML scene
-bool
-MRMLIDImageIO
-::CanUseOwnBuffer()
-{
-  return true;
-}
-
-//----------------------------------------------------------------------------
-// Read from the MRML scene
-void
-MRMLIDImageIO
-::ReadUsingOwnBuffer()
-{
-  return;
-}
-
-//----------------------------------------------------------------------------
-// Read from the MRML scene
-void *
-MRMLIDImageIO
-::GetOwnBuffer()
-{
-  vtkMRMLVolumeNode *node;
-
-  node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
-  if (node)
-  {
-    // buffer is preallocated, memcpy the data
-    if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) == nullptr)
-    {
-      // Scalar, Diffusion Weighted, or Vector image
-      return node->GetImageData()->GetScalarPointer();
-    }
-    else
-    {
-      return node->GetImageData()->GetPointData()->GetTensors()->GetVoidPointer(0);
-    }
-  }
-
-  throw( "MRML Node does not contain image data." );
-
-  return static_cast< void * >( nullptr );
-}
-
-//----------------------------------------------------------------------------
 bool
 MRMLIDImageIO
 ::CanWriteFile(const char* filename)
