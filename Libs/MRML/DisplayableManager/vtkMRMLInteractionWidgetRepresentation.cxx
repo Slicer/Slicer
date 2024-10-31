@@ -81,6 +81,13 @@ vtkMRMLInteractionWidgetRepresentation::vtkMRMLInteractionWidgetRepresentation()
 
   this->AlwaysOnTop = true;
 
+  // Using the minimum value of -66000 creates a lot of rendering artifacts on the occluded objects, as all of the
+  // pixels in the occluded object will have the same depth buffer value (0.0).
+  // Using a default value of -25000 strikes a balance between rendering the occluded objects on top of other objects,
+  // while still providing enough leeway to ensure that occluded actors are rendered correctly relative to themselves
+  // and to other occluded actors.
+  this->AlwaysOnTopRelativeOffsetUnits = -25000.0;
+
   this->Pipeline = nullptr;
 
   this->SlicePlane = vtkSmartPointer<vtkPlane>::New();
@@ -971,7 +978,6 @@ vtkMRMLInteractionWidgetRepresentation::InteractionPipeline::InteractionPipeline
   this->Mapper3D->SetLookupTable(this->ColorTable);
   this->Mapper3D->ScalarVisibilityOn();
   this->Mapper3D->UseLookupTableScalarRangeOn();
-  this->Mapper3D->SetResolveCoincidentTopologyToPolygonOffset();
 
   this->Property3D = vtkSmartPointer<vtkProperty>::New();
   this->Property3D->SetPointSize(1.e-6); // NOTE: The point size value must be greater than zero. Refer to vtkOpenGLState::vtkglPointSize(float).
@@ -999,6 +1005,12 @@ vtkMRMLInteractionWidgetRepresentation::InteractionPipeline::~InteractionPipelin
 //----------------------------------------------------------------------
 void vtkMRMLInteractionWidgetRepresentation::InitializePipeline()
 {
+  if (vtkMapper::GetResolveCoincidentTopology() != VTK_RESOLVE_POLYGON_OFFSET)
+  {
+    vtkGenericWarningMacro("Unexpected resolve coincident topology value: " << vtkMapper::GetResolveCoincidentTopology());
+  }
+  this->UpdateRelativeCoincidentTopologyOffsets(this->Pipeline->Mapper3D);
+
   this->CreateRotationHandles();
   this->CreateTranslationHandles();
   this->CreateScaleHandles();
@@ -1903,6 +1915,12 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateSlicePlaneFromSliceNode()
       this->Pipeline->WorldToSliceTransform->Scale(2.0 / dimensions[1], 2.0 / dimensions[1], 2.0 / dimensions[1]);
       this->Pipeline->WorldToSliceTransform->Translate(-1.0 * dimensions[0] / dimensions[1], -1.0, 0.0);
     }
+
+    // Move the interaction handle to the slice plane to prevent it from being clipped.
+    double handleCenterPos_Slice[3] = { 0.0, 0.0, 0.0 };
+    this->Pipeline->HandleToWorldTransform->TransformPoint(handleCenterPos_Slice, handleCenterPos_Slice);
+    this->Pipeline->WorldToSliceTransform->TransformPoint(handleCenterPos_Slice, handleCenterPos_Slice);
+    this->Pipeline->WorldToSliceTransform->Translate(0.0, 0.0, -handleCenterPos_Slice[2]);
   }
 
   // Update slice plane (for distance computation)
