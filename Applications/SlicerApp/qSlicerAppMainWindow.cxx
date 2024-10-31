@@ -102,9 +102,9 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   helpBrowseTutorialsAction->setText(qSlicerAppMainWindow::tr("Browse Tutorials"));
   helpBrowseTutorialsAction->setToolTip(qSlicerAppMainWindow::tr("Raise the training pages in your favorite web browser"));
 
-  QAction* helpJoinUsOnTwitterAction = new QAction(mainWindow);
-  helpJoinUsOnTwitterAction->setObjectName("HelpJoinUsOnTwitterAction");
-  helpJoinUsOnTwitterAction->setText(qSlicerAppMainWindow::tr("Join Us on Twitter"));
+  QAction* helpJoinUsOnLinkedInAction = new QAction(mainWindow);
+  helpJoinUsOnLinkedInAction->setObjectName("HelpJoinUsOnLinkedInAction");
+  helpJoinUsOnLinkedInAction->setText(qSlicerAppMainWindow::tr("Join Us on LinkedIn"));
 
   QAction* helpSearchFeatureRequestsAction = new QAction(mainWindow);
   helpSearchFeatureRequestsAction->setObjectName("HelpSearchFeatureRequestsAction");
@@ -162,7 +162,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->HelpMenu->addAction(helpBrowseTutorialsAction);
   this->HelpMenu->addSeparator();
   this->HelpMenu->addAction(helpVisitSlicerForumAction);
-  this->HelpMenu->addAction(helpJoinUsOnTwitterAction);
+  this->HelpMenu->addAction(helpJoinUsOnLinkedInAction);
   this->HelpMenu->addAction(helpSearchFeatureRequestsAction);
   this->HelpMenu->addAction(helpReportBugOrFeatureRequestAction);
   this->HelpMenu->addSeparator();
@@ -275,9 +275,9 @@ void qSlicerAppMainWindow::on_HelpVisitSlicerForumAction_triggered()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerAppMainWindow::on_HelpJoinUsOnTwitterAction_triggered()
+void qSlicerAppMainWindow::on_HelpJoinUsOnLinkedInAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl("https://twitter.com/3dslicerapp"));
+  QDesktopServices::openUrl(QUrl("https://www.linkedin.com/feed/hashtag/?keywords=3dslicer"));
 }
 
 //---------------------------------------------------------------------------
