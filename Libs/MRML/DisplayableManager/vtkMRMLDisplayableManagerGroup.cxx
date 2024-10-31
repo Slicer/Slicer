@@ -34,6 +34,7 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkDebugLeaks.h>
+#include <vtkMapper.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -196,6 +197,11 @@ void vtkMRMLDisplayableManagerGroup::Initialize(vtkMRMLDisplayableManagerFactory
     vtkWarningMacro(<<"Initialize - renderer is NULL");
     return;
   }
+
+  // Set global ResolveCoincidentTopology flag to PolygonOffset.
+  // This ensures that actors that are set to be AlwaysOnTop will be rendered on top of other actors
+  // using PolygonOffset to resolve coincident topology.
+  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
 
   // A Group observes the factory and eventually instantiates new DisplayableManager
   // when they are registered in the factory

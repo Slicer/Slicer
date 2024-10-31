@@ -149,11 +149,11 @@ void vtkMRMLAbstractWidgetRepresentation::UpdateRelativeCoincidentTopologyOffset
 {
   if (this->AlwaysOnTop)
   {
-    // max value 65536 so we subtract 66000 to make sure we are
+    // max value 65536 so by default we subtract 66000 to make sure we are
     // zero or negative
-    mapper->SetRelativeCoincidentTopologyLineOffsetParameters(0, -66000);
-    mapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(0, -66000);
-    mapper->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
+    mapper->SetRelativeCoincidentTopologyLineOffsetParameters(this->AlwaysOnTopRelativeOffsetFactor, this->AlwaysOnTopRelativeOffsetUnits);
+    mapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(this->AlwaysOnTopRelativeOffsetFactor, this->AlwaysOnTopRelativeOffsetUnits);
+    mapper->SetRelativeCoincidentTopologyPointOffsetParameter(this->AlwaysOnTopRelativeOffsetUnits);
   }
   else
   {
