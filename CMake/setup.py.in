@@ -1,0 +1,69 @@
+from setuptools import Extension, setup
+from setuptools.command.build_ext import build_ext
+import os
+import sys
+
+setup(
+    name="Slicer",
+    version="1.0",
+    author='Slicer developers',
+    packages=[
+        'slicer',
+    ],
+    py_modules=[
+        'slicer',
+    ],
+    package_data={
+        'slicer': [
+            # Linux modules.
+            '*-linux-gnu.so',
+            # Unix shared libraries.
+            'lib*.so*',
+            # macOS modules.
+            '*-darwin.so',
+            # macOS shared libraries.
+            '.dylibs',
+            # Windows modules.
+            '*.pyd',
+            # Type information stubs
+            '*.pyi',
+            # Type information indicators
+            '*.typed',
+        ],
+    },
+    url='https://slicer.org',
+    download_url='https://slicer.org/download/',
+    license='BSD',
+    classifiers=[
+        "License :: OSI Approved :: BSD License",
+        "Programming Language :: Python",
+        "Programming Language :: C++",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Education",
+        "Intended Audience :: Healthcare Industry",
+        "Intended Audience :: Science/Research",
+        "Topic :: Multimedia :: Graphics",
+        "Topic :: Multimedia :: Graphics :: 3D Modeling",
+        "Topic :: Multimedia :: Graphics :: 3D Rendering",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Chemistry",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Scientific/Engineering :: Medical Science Apps.",
+        "Topic :: Scientific/Engineering :: Physics",
+        "Topic :: Scientific/Engineering :: Visualization",
+        "Topic :: Software Development :: Libraries",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX",
+        "Operating System :: Unix",
+        "Operating System :: MacOS"
+    ],
+    description='Slicer 3D',
+    long_description="Slicer 3D",
+    long_description_content_type='text/markdown',
+    install_requires=[
+        "vtk_slicer",
+        "itk"
+    ],
+    include_package_data=True,
+    zip_safe=False,
+)
