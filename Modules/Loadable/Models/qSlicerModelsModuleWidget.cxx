@@ -176,15 +176,17 @@ void qSlicerModelsModuleWidget::enter()
   // Connect SH item modified event so that widget state is updated when a display node is created
   // on the currently selected item (when color is set to a folder)
   vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
-  if (!shNode)
+  if (shNode)
+  {
+    qvtkConnect(shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
+      this, SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
+    qvtkConnect(shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
+      this, SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
+  }
+  else
   {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
-    return;
   }
-  qvtkConnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
-    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
-  qvtkConnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
-    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
 
   this->Superclass::enter();
 }
@@ -196,15 +198,17 @@ void qSlicerModelsModuleWidget::exit()
 
   // Disconnect SH node modified when module is not active
   vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
-  if (!shNode)
+  if (shNode)
+  {
+    qvtkDisconnect(shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
+      this, SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
+    qvtkDisconnect(shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
+      this, SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
+  }
+  else
   {
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
-    return;
   }
-  qvtkDisconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent,
-    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
-  qvtkDisconnect( shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
-    this, SLOT( onSubjectHierarchyItemModified(vtkObject*,void*) ) );
 
   this->Superclass::exit();
 }
