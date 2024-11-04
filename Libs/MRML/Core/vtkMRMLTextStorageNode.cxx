@@ -194,15 +194,23 @@ int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
   {
     if (!vtksys::SystemTools::RemoveFile(fullName.c_str()))
     {
-      vtkErrorMacro("WriteData: Could not overwrite existing file");
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTextStorageNode::WriteDataInternal",
+        "Text file '" << fullName.c_str() << "' could not be overwritten while trying to write (" << (this->ID ? this->ID : "(unknown)") << ").");
+      return 0;
     }
   }
 
   std::ofstream file;
   file.open(fullName);
+  if (!file.is_open())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTextStorageNode::WriteDataInternal",
+      "Text file '" << fullName.c_str() << "' could not be opened for writing while trying to write (" << (this->ID ? this->ID : "(unknown)") << ").");
+    return 0;
+  }
   file << textNode->GetText();
   this->StageWriteData(refNode);
-  return true;
+  return 1;
 }
 
 //----------------------------------------------------------------------------
