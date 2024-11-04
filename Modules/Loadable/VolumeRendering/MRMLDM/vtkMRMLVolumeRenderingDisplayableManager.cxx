@@ -1019,12 +1019,22 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   this->UpdatePipelineROIs(displayNode, pipeline);
 
   // Set volume property
-  vtkVolumeProperty* volumeProperty = displayNode->GetVolumePropertyNode() ? displayNode->GetVolumePropertyNode()->GetVolumeProperty() : nullptr;
+  vtkMRMLVolumePropertyNode* volumePropertyNode = displayNode->GetVolumePropertyNode();
+  vtkVolumeProperty* volumeProperty = volumePropertyNode ? volumePropertyNode->GetVolumeProperty() : nullptr;
   if (volumeProperty)
   {
     volumeProperty->SetIndependentComponents(independentComponents);
   }
-  pipeline->VolumeActor->SetProperty(volumeProperty);
+
+  if (volumePropertyNode)
+  {
+    volumePropertyNode->SetPropertyInVolumeNode(pipeline->VolumeActor);
+  }
+  else
+  {
+    pipeline->VolumeActor->SetProperty(nullptr);
+  }
+
   // vtkMultiVolume's GetProperty returns the volume property from the first volume actor, and that is used when assembling the
   // shader, so need to set the volume property to the the first volume actor (in this case dummy actor, see above TODO)
   if (this->MultiVolumeActor)
@@ -1032,7 +1042,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     double* multiVolumeBounds = this->MultiVolumeActor->GetBounds();
     if (multiVolumeBounds[0] < multiVolumeBounds[1]) // Prevent error that GetVolume throws if volume is null (TODO: need GetNumberOfVolumes)
     {
-      this->MultiVolumeActor->GetVolume(0)->SetProperty(volumeProperty);
+      if (volumePropertyNode)
+      {
+        volumePropertyNode->SetPropertyInVolumeNode(this->MultiVolumeActor->GetVolume(0));
+      }
+      else
+      {
+        this->MultiVolumeActor->GetVolume(0)->SetProperty(nullptr);
+      }
     }
   }
 
