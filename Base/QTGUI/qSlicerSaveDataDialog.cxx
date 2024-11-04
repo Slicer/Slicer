@@ -1287,7 +1287,7 @@ void qSlicerSaveDataDialogPrivate::updateStatusIconFromMessageCollection(int row
     {
       qWarning() << Q_FUNC_INFO << "Data save warning:" << messagesStr;
     }
-    else
+    else if (!messagesStr.isEmpty())
     {
       qDebug() << Q_FUNC_INFO << "Data save information:" << messagesStr;
     }

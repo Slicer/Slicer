@@ -1533,3 +1533,64 @@ int vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(const char* name)
   // unknown name
   return -1;
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLStorageNode::SetWriteState(int writeState)
+{
+  if (this->WriteState == writeState)
+  {
+    // no change
+    return;
+  }
+  bool changedSkippedNoDataState = ((this->GetWriteState() == SkippedNoData) != (writeState == SkippedNoData));
+  this->WriteState = writeState;
+
+  if (changedSkippedNoDataState)
+  {
+    // Data was not available and now is, or data was available and not anymore.
+    // This is an important change that has to be saved in the storage node.
+    this->Modified();
+  }
+  else
+  {
+    // Let observers know about node modification, but do not change the modified timestamp.
+    // If a storable node is written to file using this storage node then we do not want to
+    // mark the storage node as modified, because for example that would make the application
+    // believe that there are some unsaved changes in the scene.
+    this->InvokeCustomModifiedEvent(vtkCommand::ModifiedEvent);
+  }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLStorageNode::SetWriteFileFormat(const char* writeFileFormat)
+{
+  // Adapted from vtkSetStringBodyMacro, except does not call Modified() just invokes the Modified event in the end.
+  if (this->WriteFileFormat == nullptr && writeFileFormat == nullptr)
+  {
+    return;
+  }
+  if (this->WriteFileFormat && writeFileFormat && (!strcmp(this->WriteFileFormat, writeFileFormat)))
+  {
+    return;
+  }
+  delete[] this->WriteFileFormat;
+  if (writeFileFormat)
+  {
+    size_t n = strlen(writeFileFormat) + 1;
+    char* cp1 = new char[n];
+    const char* cp2 = (writeFileFormat);
+    this->WriteFileFormat = cp1;
+    do
+    {
+      *cp1++ = *cp2++;
+    } while (--n);
+  }
+  else
+  {
+    this->WriteFileFormat = nullptr;
+  }
+
+  // Let observers know about node modification, but do not change the modified timestamp, as this is transient event
+  // (we do not want the application to display a warning popup on scene close exit if write state was temporarily changed due to node write)
+  this->InvokeCustomModifiedEvent(vtkCommand::ModifiedEvent);
+}
