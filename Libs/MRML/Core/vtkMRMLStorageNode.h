@@ -134,6 +134,7 @@ public:
     SkippedNoData
   };
 
+  //@{
   /// Get/Set the state of reading
   vtkGetMacro(ReadState,int);
   vtkSetMacro(ReadState,int);
@@ -146,11 +147,13 @@ public:
   void SetReadStateSkippedNoData() { this->SetReadState(this->SkippedNoData); };
   const char *GetStateAsString(int state);
   const char *GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
+  //@}
 
-  ///
-  /// Get/Set the state of writing
+  //@{
+  /// Get/Set the state of writing.
+  /// This is a transient property (that is expected to change and is not considered as a node change that needs to be stored persistently).
   vtkGetMacro(WriteState,int);
-  vtkSetMacro(WriteState,int);
+  void SetWriteState(int writeState);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
   void SetWriteStateIdle() { this->SetWriteState(this->Idle); };
   void SetWriteStateScheduled() { this->SetWriteState(this->Scheduled); };
@@ -159,6 +162,7 @@ public:
   void SetWriteStateCancelled() { this->SetWriteState(this->Cancelled); };
   void SetWriteStateSkippedNoData() { this->SetWriteState(this->SkippedNoData); };
   const char *GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
+  //@}
 
   ///
   /// Get the file's absolute path from the file name and the mrml scene root
@@ -196,10 +200,12 @@ public:
   /// If extension is not specified for a type or .* is specified then .* will be returned.
   virtual void GetFileExtensionsFromFileTypes(vtkStringArray* inputFileTypes, vtkStringArray* outputFileExtensions);
 
-  ///
+  //@{
   /// Allow to set specific file format that this node will write output.
-  vtkSetStringMacro(WriteFileFormat);
+  /// This is a transient property (that is expected to change and is not a reason for saving the node again if modified).
+  virtual void SetWriteFileFormat(const char* writeFileFormat);
   vtkGetStringMacro(WriteFileFormat);
+  //@}
 
   ///
   /// Add in another file name to the list of file names
