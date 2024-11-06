@@ -26,11 +26,11 @@
 #include "vtkSlicerTerminologyEntry.h"
 
 // Qt includes
+#include <QDebug>
 #include <QDialog>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QDebug>
+#include <QVBoxLayout>
 
 //-----------------------------------------------------------------------------
 class qSlicerTerminologySelectorDialogPrivate : public QDialog
@@ -39,7 +39,7 @@ class qSlicerTerminologySelectorDialogPrivate : public QDialog
 protected:
   qSlicerTerminologySelectorDialog* const q_ptr;
 public:
-  qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object, QWidget* parent);
+  explicit qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object, QWidget* parent);
   ~qSlicerTerminologySelectorDialogPrivate() override;
 public:
   void init();
@@ -55,7 +55,7 @@ private:
 //-----------------------------------------------------------------------------
 qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object, QWidget* parent)
   : QDialog(parent)
-  , q_ptr(&object)
+  , q_ptr(&object) // parent is passed to the private object to allow centering on the parent instead of on the screen
 {
 }
 

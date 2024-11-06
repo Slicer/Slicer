@@ -60,6 +60,9 @@ signals:
   void terminologyChanged();
   void canceled();
 
+  /// Emitted when the user selects a custom name or color
+  void userSetCustomNameOrColor();
+
 protected slots:
   void onToggled(bool toggled=true);
 
