@@ -96,7 +96,7 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   q->registerProperty(/*no tr*/"Segmentations/DefaultSurfaceSmoothing", this->SurfaceSmoothingCheckBox,
                       "checked", SIGNAL(toggled(bool)),
                       qSlicerSegmentationsSettingsPanel::tr("Enable closed surface representation smoothing by default"), ctkSettingsPanel::OptionNone);
-  q->registerProperty(/*no tr*/"Segmentations/SegmentsTableUseStandardTerminology", this->UseTerminologyCheckBox,
+  q->registerProperty(/*no tr*/"Segmentations/UseTerminologySelector", this->UseTerminologyCheckBox,
                       "checked", SIGNAL(toggled(bool)),
                       qSlicerSegmentationsSettingsPanel::tr("Use standard terminology for segments"), ctkSettingsPanel::OptionNone);
   q->registerProperty(/*no tr*/"Segmentations/DefaultTerminologyEntry", q,

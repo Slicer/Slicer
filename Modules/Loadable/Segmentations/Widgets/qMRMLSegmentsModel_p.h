@@ -92,7 +92,7 @@ public:
   QIcon CompletedIcon;
 
   /// Segmentation node
-  vtkSmartPointer<vtkMRMLSegmentationNode> SegmentationNode{nullptr};
+  vtkSmartPointer<vtkMRMLSegmentationNode> SegmentationNode;
 };
 
 #endif

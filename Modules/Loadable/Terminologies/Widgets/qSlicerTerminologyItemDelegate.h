@@ -61,17 +61,22 @@ public:
 
   void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-  /// The settings key used to specify whether standard terminologies are used for name.
-  void setTerminologySelectorSettingsKey(QString settingsKey);
+  /// This method allow setting a callback function that takes a void* argument and returns bool
+  void setUseTerminologySelectorCallback(std::function<bool()> callback);
+
+  /// This can be used for asking the user if he wants to switch to using simple name&color selector
+  void setUserSetCustomNameOrColorCallback(std::function<bool()> callback);
 
 protected slots:
   void commitSenderData();
   void commitAndClose();
   void close();
+  void userSetCustomNameOrColor();
 
 protected:
   /// The settings key used to specify whether standard terminologies are used for name column.
-  QString TerminologySelectorSettingsKey;
+  std::function<bool()> UseTerminologySelectorCallback;
+  std::function<bool()> UserSetCustomNameOrColorCallback;
 };
 
 #endif
