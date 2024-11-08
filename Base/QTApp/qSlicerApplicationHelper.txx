@@ -128,7 +128,9 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
   {
     return;
   }
-  splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter);
+  QPalette palette = qSlicerApplication::application()->palette();
+  const QColor &color = palette.color(QPalette::WindowText);
+  splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter, color);
 }
 
 } // end of anonymous namespace
