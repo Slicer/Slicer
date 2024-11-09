@@ -11,7 +11,7 @@
 #
 
 function(slicer_check_cmake_https)
-  set(url "https://https://www.slicer.org")
+  set(url "https://www.slicer.org")
   set(dest "${CMAKE_CURRENT_BINARY_DIR}/slicer_check_cmake_https_output")
 
   set(msg "Checking if CMake supports https")
