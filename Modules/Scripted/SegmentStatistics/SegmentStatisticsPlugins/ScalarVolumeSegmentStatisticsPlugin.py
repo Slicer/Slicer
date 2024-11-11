@@ -13,12 +13,12 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         self.title = _("Scalar Volume")
         self.keys = [
             "voxel_count", "volume_mm3", "volume_cm3", "min", "max", "mean", "stdev",
-            "percentile_05", "percentile_10", "percentile_90", "percentile_95", "median"
+            "percentile_05", "percentile_10", "percentile_90", "percentile_95", "median",
         ]
         # skip 10th and 90th percentiles by default to keep the table compact
         self.defaultKeys = [
             "voxel_count", "volume_mm3", "volume_cm3", "min", "max", "mean", "stdev",
-            "percentile_05", "percentile_95", "median"
+            "percentile_05", "percentile_95", "median",
         ]
         # ... developer may add extra options to configure other parameters
 
