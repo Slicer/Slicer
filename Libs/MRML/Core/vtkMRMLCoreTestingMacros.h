@@ -361,6 +361,34 @@
   } \
   }
 
+// ----------------------------------------------------------------------------
+/// test a string variable on the object by calling Set/Get
+#define TEST_SET_GET_STD_STRING( object, variable ) \
+  { \
+  std::string originalString = object->Get##variable(); \
+  object->Set##variable( "testing with a const char");                  \
+  if( object->Get##variable() != "testing with a const char" ) \
+  {                                                                   \
+    std::cerr << "Error in Set/Get"#variable << " with a string literal" << std::endl; \
+    return EXIT_FAILURE;                                                \
+  }                                                                   \
+  std::string string1 = "testingIsGood"; \
+  object->Set##variable( string1 ); \
+  if( object->Get##variable() != string1 ) \
+  {   \
+    std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string1 << " but got " << object->Get##variable() << std::endl; \
+    return EXIT_FAILURE; \
+  } \
+  std::string string2 = "moreTestingIsBetter"; \
+  object->Set##variable( string2 ); \
+  if( object->Get##variable() != string2 ) \
+  {   \
+    std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string2 << " but got " << object->Get##variable() << std::endl; \
+    return EXIT_FAILURE; \
+  } \
+  object->Set##variable( originalString );  \
+  }
+
 #define EXERCISE_BASIC_OBJECT_METHODS( node )                                        \
   {                                                                                  \
   int result = vtkMRMLCoreTestingUtilities::ExerciseBasicObjectMethods(node);        \
