@@ -706,23 +706,22 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::CreateScaleHandles()
   if (planeNode || roiNode)
   {
     vtkNew<vtkPoints> points;
-    points->InsertNextPoint(distance, 0.0, 0.0); // X-axis +ve
-    points->InsertNextPoint(0.0, distance, 0.0); // Y-axis +ve
-    points->InsertNextPoint(0.0, 0.0, distance); // Z-axis +ve
-    points->InsertNextPoint(-distance, 0.0, 0.0); // X-axis -ve
-    points->InsertNextPoint(0.0, -distance, 0.0); // Y-axis -ve
-    points->InsertNextPoint(0.0, 0.0, -distance); // Z-axis -ve
-
     if (roiNode)
     {
-      points->InsertNextPoint(distance, distance, distance);
-      points->InsertNextPoint(distance, distance, -distance);
-      points->InsertNextPoint(distance, -distance, distance);
-      points->InsertNextPoint(distance, -distance, -distance);
-      points->InsertNextPoint(-distance, distance, distance);
-      points->InsertNextPoint(-distance, distance, -distance);
-      points->InsertNextPoint(-distance, -distance, distance);
-      points->InsertNextPoint(-distance, -distance, -distance);
+      points->InsertNextPoint(distance, 0.0, 0.0); // +ve X
+      points->InsertNextPoint(0.0, distance, 0.0); // +ve Y
+      points->InsertNextPoint(0.0, 0.0, distance); // +ve Z
+      points->InsertNextPoint(-distance, 0.0, 0.0); // -ve X
+      points->InsertNextPoint(0.0, -distance, 0.0); // -ve Y
+      points->InsertNextPoint(0.0, 0.0, -distance); // -ve Z
+      points->InsertNextPoint(distance, distance, distance); // +ve X, +ve Y, +ve Z
+      points->InsertNextPoint(distance, distance, -distance); // +ve X, +ve Y, -ve Z
+      points->InsertNextPoint(distance, -distance, distance); // +ve X, -ve Y, +ve Z
+      points->InsertNextPoint(distance, -distance, -distance); // +ve X, -ve Y, -ve Z
+      points->InsertNextPoint(-distance, distance, distance); // -ve X, +ve Y, +ve Z
+      points->InsertNextPoint(-distance, distance, -distance); // -ve X, +ve Y, -ve Z
+      points->InsertNextPoint(-distance, -distance, distance); // -ve X, -ve Y, +ve Z
+      points->InsertNextPoint(-distance, -distance, -distance); // -ve X, -ve Y, -ve Z
       if (this->GetSliceNode())
       {
         for (unsigned long i = vtkMRMLMarkupsROIDisplayNode::HandleLPEdge; i < vtkMRMLMarkupsROIDisplayNode::HandleROI_Last; ++i)
@@ -733,10 +732,14 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::CreateScaleHandles()
     }
     else if (planeNode)
     {
-      points->InsertNextPoint(distance, distance, 0.0);
-      points->InsertNextPoint(-distance, distance, 0.0);
-      points->InsertNextPoint(-distance, -distance, 0.0);
-      points->InsertNextPoint(distance, -distance, 0.0);
+      points->InsertNextPoint(distance, 0.0, 0.0); // +ve X
+      points->InsertNextPoint(0.0, distance, 0.0); // +ve Y
+      points->InsertNextPoint(-distance, 0.0, 0.0); // -ve X
+      points->InsertNextPoint(0.0, -distance, 0.0); // -ve Y
+      points->InsertNextPoint(distance, distance, 0.0); // +ve X, +ve Y
+      points->InsertNextPoint(-distance, distance, 0.0); // -ve X, +ve Y
+      points->InsertNextPoint(-distance, -distance, 0.0); // -ve X, -ve Y
+      points->InsertNextPoint(distance, -distance, 0.0);  // +ve X, -ve Y
     }
 
     this->Pipeline->ScaleHandlePoints->SetPoints(points);
@@ -941,6 +944,14 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::GetInteractionHandlePositi
   {
     return;
   }
+
+  if (handlePolyData->GetNumberOfPoints() <= index)
+  {
+    vtkErrorMacro("GetInteractionHandlePositionWorld: Type: " << type << " Invalid handle index: "
+      << index << " greater than the number of points: " << handlePolyData->GetNumberOfPoints());
+    return;
+  }
+
   handlePolyData->GetPoint(index, positionWorld);
   this->Pipeline->HandleToWorldTransform->TransformPoint(positionWorld, positionWorld);
 }
