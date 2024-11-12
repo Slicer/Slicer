@@ -129,7 +129,7 @@ public:
   //@}
 
   /// 4x4 matrix defining the object center and axis directions within the world coordinate system.
-  /// Users should avoid modifying this matrix.
+  /// The returned matrix must not be modified.
   vtkMatrix4x4* GetObjectToWorldMatrix()
   {
     return this->ObjectToWorldMatrix;
