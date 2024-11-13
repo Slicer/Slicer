@@ -31,6 +31,7 @@
 #include "vtkMRMLMarkupsNode.h"
 
 // VTK includes
+#include <vtkImplicitBoolean.h>
 #include <vtkImplicitFunction.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>

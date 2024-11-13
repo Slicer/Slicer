@@ -34,6 +34,7 @@
 
 class qMRMLSegmentationDisplayNodeWidgetPrivate;
 
+class vtkMRMLNode;
 class vtkMRMLSegmentationNode;
 class vtkMRMLSegmentationDisplayNode;
 class QItemSelection;
@@ -93,6 +94,10 @@ public slots:
   void onSegmentOpacitySliceFillChanged(double);
   void onSegmentOpacitySliceOutlineChanged(double);
   void onSegmentOpacity3DChanged(double);
+  void onEnableClippingChanged(int);
+  void onEnableCappingChanged(int);
+  void onCappingOpacityChanged(double);
+  void onClipNodeChanged(vtkMRMLNode*);
 
   /// Handles segment selection changes when connecting directly to a \sa qMRMLSegmentsTableView
   void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);

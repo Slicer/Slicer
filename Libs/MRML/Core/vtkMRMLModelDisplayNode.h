@@ -168,6 +168,20 @@ public:
   vtkSetVector3Macro(BackfaceColorHSVOffset, double);
   vtkGetVector3Macro(BackfaceColorHSVOffset, double);
 
+  vtkSetMacro(ClippingCapSurface, bool);
+  vtkGetMacro(ClippingCapSurface, bool);
+  vtkBooleanMacro(ClippingCapSurface, bool);
+
+  vtkSetMacro(ClippingOutline, bool);
+  vtkGetMacro(ClippingOutline, bool);
+  vtkBooleanMacro(ClippingOutline, bool);
+
+  vtkSetMacro(ClippingCapOpacity, double);
+  vtkGetMacro(ClippingCapOpacity, double);
+
+  vtkSetVector3Macro(ClippingCapColorHSVOffset, double);
+  vtkGetVector3Macro(ClippingCapColorHSVOffset, double);
+
 protected:
   vtkMRMLModelDisplayNode();
   ~vtkMRMLModelDisplayNode() override;
@@ -219,6 +233,11 @@ protected:
   double ThresholdRangeTemp[2];
 
   double BackfaceColorHSVOffset[3];
+
+  bool ClippingCapSurface{ false };
+  double ClippingCapOpacity{ 1.0 };
+  bool ClippingOutline{ false };
+  double ClippingCapColorHSVOffset[3];
 };
 
 #endif

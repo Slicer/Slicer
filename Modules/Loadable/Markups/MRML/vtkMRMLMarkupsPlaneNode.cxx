@@ -70,6 +70,8 @@ vtkMRMLMarkupsPlaneNode::vtkMRMLMarkupsPlaneNode()
   areaMeasurement->SetName("area");
   areaMeasurement->SetInputMRMLNode(this);
   this->Measurements->AddItem(areaMeasurement);
+
+  this->ImplicitPlaneWorld = vtkSmartPointer<vtkPlane>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -415,6 +417,8 @@ void vtkMRMLMarkupsPlaneNode::SetNormal(const double normal_Node[3])
   this->ApplyTransform(oldToNewNormalTransform);
 
   this->UpdateControlPointsFromPlane();
+  this->UpdateImplicitFunction();
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -546,6 +550,8 @@ void vtkMRMLMarkupsPlaneNode::SetOrigin(const double origin_Node[3])
   oldToNewOriginTransform->Translate(displacementVector_Node);
   this->ApplyTransform(oldToNewOriginTransform);
   this->UpdateControlPointsFromPlane();
+  this->UpdateImplicitFunction();
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -1853,4 +1859,23 @@ void vtkMRMLMarkupsPlaneNode::GenerateOrthogonalMatrix(double xAxis[3], double y
     outputMatrix->SetElement(i, 2, zAxisTransformed[i]);
     outputMatrix->SetElement(i, 3, originTransformed[i]);
   }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsPlaneNode::UpdateImplicitFunction()
+{
+  double origin[3] = { 0.0, 0.0, 0.0 };
+  this->GetCenterWorld(origin);
+  this->ImplicitPlaneWorld->SetOrigin(origin);
+
+  double normal[3] = { 0.0, 0.0, 0.0 };
+  this->GetNormalWorld(normal);
+  this->ImplicitPlaneWorld->SetNormal(normal);
+}
+
+//---------------------------------------------------------------------------
+vtkImplicitFunction* vtkMRMLMarkupsPlaneNode::GetImplicitFunctionWorld()
+{
+  this->UpdateImplicitFunction();
+  return this->ImplicitPlaneWorld;
 }

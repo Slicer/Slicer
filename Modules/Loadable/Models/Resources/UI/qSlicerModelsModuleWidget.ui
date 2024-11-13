@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
-    <height>796</height>
+    <width>403</width>
+    <height>943</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -184,54 +184,62 @@
     </widget>
    </item>
    <item>
-    <widget class="qMRMLNodeComboBox" name="ClipModelsNodeComboBox">
-     <property name="nodeTypes">
-      <stringlist notr="true">
-       <string>vtkMRMLClipModelsNode</string>
-      </stringlist>
-     </property>
-     <property name="showHidden">
-      <bool>true</bool>
-     </property>
-     <property name="addEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="removeEnabled">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="ctkCollapsibleButton" name="ClippingButton">
      <property name="text">
-      <string>Clipping Planes</string>
+      <string>Clipping</string>
      </property>
-     <property name="collapsed">
+     <property name="checked">
       <bool>true</bool>
      </property>
-     <layout class="QFormLayout" name="formLayout">
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QLabel" name="ClipSelectedModelLabel">
-        <property name="enabled">
-         <bool>false</bool>
+       <widget class="QLabel" name="ClipModelsNodeComboBoxLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
-         <string>Clip selected model:</string>
+         <string>Clip node:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="ClipSelectedModelCheckBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
+      <item row="2" column="0" colspan="3">
        <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="qMRMLNodeComboBox" name="ClipModelsNodeComboBox">
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLClipNode</string>
+         </stringlist>
+        </property>
+        <property name="showHidden">
+         <bool>true</bool>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="interactionNodeSingletonTag">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3">
+       <widget class="qMRMLClipNodeDisplayWidget" name="MRMLClipNodeDisplayWidget"/>
       </item>
      </layout>
     </widget>
@@ -252,6 +260,29 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkExpandableWidget</class>
+   <extends>QFrame</extends>
+   <header>ctkExpandableWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>ctkSearchBox.h</header>
+  </customwidget>
   <customwidget>
    <class>qMRMLClipNodeWidget</class>
    <extends>QWidget</extends>
@@ -297,47 +328,14 @@
    <header>qMRMLSubjectHierarchyTreeView.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
+   <class>qMRMLClipNodeDisplayWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLClipNodeDisplayWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkExpandableWidget</class>
-   <extends>QFrame</extends>
-   <header>ctkExpandableWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkSearchBox</class>
-   <extends>QLineEdit</extends>
-   <header>ctkSearchBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>qSlicerModelsModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ClipModelsNodeComboBox</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>492</x>
-     <y>588</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>465</x>
-     <y>740</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>qSlicerModelsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
@@ -351,22 +349,6 @@
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ClipModelsNodeComboBox</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>MRMLClipNodeWidget</receiver>
-   <slot>setMRMLClipNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>255</x>
-     <y>740</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>265</x>
-     <y>780</y>
     </hint>
    </hints>
   </connection>
@@ -431,6 +413,38 @@
     <hint type="destinationlabel">
      <x>194</x>
      <y>1032</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerModelsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ClipModelsNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>588</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>465</x>
+     <y>740</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerModelsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLClipNodeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>205</x>
+     <y>397</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>205</x>
+     <y>786</y>
     </hint>
    </hints>
   </connection>

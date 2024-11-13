@@ -22,6 +22,7 @@ class vtkMRMLTransformNode;
 
 // VTK includes
 class vtkAbstractTransform;
+class vtkImplicitFunction;
 class vtkMatrix4x4;
 
 /// \brief MRML node for representing a node with a transform.
@@ -113,6 +114,13 @@ public:
   /// Apply the associated transform to the transformable node. Return true
   /// on success, false otherwise.
   bool HardenTransform();
+
+  /// Get the implicit function that represents the transformable node in world coordinates.
+  /// This function is used for clipping and other operations that require the detection of inside/outside a transformable node.
+  /// Subclasses should override this method to provide the implicit function that represents the node.
+  /// The implicit function should be set by the node and should be in world coordinates, either by defining
+  /// the implicit function in world coordinates, or by applying a transform.
+  virtual vtkImplicitFunction* GetImplicitFunctionWorld() { return nullptr; };
 
 protected:
   vtkMRMLTransformableNode();

@@ -23,16 +23,18 @@
 
 // qMRML includes
 #include "qMRMLClipNodeWidget.h"
+#include "qMRMLNodeComboBox.h"
 #include "ui_qMRMLClipNodeWidget.h"
 
 // MRML includes
-#include <vtkMRMLClipModelsNode.h>
+#include <vtkMRMLClipNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-class qMRMLClipNodeWidgetPrivate: public Ui_qMRMLClipNodeWidget
+class qMRMLClipNodeWidgetPrivate : public Ui_qMRMLClipNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLClipNodeWidget);
 
@@ -43,8 +45,8 @@ public:
   qMRMLClipNodeWidgetPrivate(qMRMLClipNodeWidget& object);
   void init();
 
-  vtkSmartPointer<vtkMRMLClipModelsNode> MRMLClipNode;
-  bool                                   IsUpdatingWidgetFromMRML;
+  vtkWeakPointer<vtkMRMLClipNode> MRMLClipNode;
+  bool                            IsUpdatingWidgetFromMRML;
 };
 
 //------------------------------------------------------------------------------
@@ -64,54 +66,17 @@ void qMRMLClipNodeWidgetPrivate::init()
   clipTypeGroup->addButton(this->UnionRadioButton);
   clipTypeGroup->addButton(this->IntersectionRadioButton);
 
-  QButtonGroup* redSliceClipStateGroup = new QButtonGroup(q);
-  redSliceClipStateGroup->addButton(this->RedPositiveRadioButton);
-  redSliceClipStateGroup->addButton(this->RedNegativeRadioButton);
-
-  QButtonGroup* yellowSliceClipStateGroup = new QButtonGroup(q);
-  yellowSliceClipStateGroup->addButton(this->YellowPositiveRadioButton);
-  yellowSliceClipStateGroup->addButton(this->YellowNegativeRadioButton);
-
-  QButtonGroup* greenSliceClipStateGroup = new QButtonGroup(q);
-  greenSliceClipStateGroup->addButton(this->GreenPositiveRadioButton);
-  greenSliceClipStateGroup->addButton(this->GreenNegativeRadioButton);
-
   QObject::connect(this->UnionRadioButton, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeClipType()));
+    q, SLOT(updateNodeClipType()));
   QObject::connect(this->IntersectionRadioButton, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeClipType()));
+    q, SLOT(updateNodeClipType()));
 
-  QObject::connect(this->RedSliceClippingCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeRedClipState()));
-  QObject::connect(this->RedPositiveRadioButton, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeRedClipState()));
-  QObject::connect(this->RedNegativeRadioButton, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeRedClipState()));
-
-  QObject::connect(this->YellowSliceClippingCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeYellowClipState()));
-  QObject::connect(this->YellowPositiveRadioButton, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeYellowClipState()));
-  QObject::connect(this->YellowNegativeRadioButton, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeYellowClipState()));
-
-  QObject::connect(this->GreenSliceClippingCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeGreenClipState()));
-  QObject::connect(this->GreenPositiveRadioButton, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeGreenClipState()));
-  QObject::connect(this->GreenNegativeRadioButton, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeGreenClipState()));
-
-  QObject::connect(this->WholeCellClippingCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(updateNodeClippingMethod()));
-
-
-  q->setEnabled(this->MRMLClipNode.GetPointer() != nullptr);
+  q->setEnabled(this->MRMLClipNode != nullptr);
 }
 
 //------------------------------------------------------------------------------
-qMRMLClipNodeWidget::qMRMLClipNodeWidget(QWidget *_parent)
-  : QWidget(_parent)
+qMRMLClipNodeWidget::qMRMLClipNodeWidget(QWidget* _parent)
+  : qMRMLWidget(_parent)
   , d_ptr(new qMRMLClipNodeWidgetPrivate(*this))
 {
   Q_D(qMRMLClipNodeWidget);
@@ -122,7 +87,7 @@ qMRMLClipNodeWidget::qMRMLClipNodeWidget(QWidget *_parent)
 qMRMLClipNodeWidget::~qMRMLClipNodeWidget() = default;
 
 //------------------------------------------------------------------------------
-vtkMRMLClipModelsNode* qMRMLClipNodeWidget::mrmlClipNode()const
+vtkMRMLClipNode* qMRMLClipNodeWidget::mrmlClipNode()const
 {
   Q_D(const qMRMLClipNodeWidget);
   return d->MRMLClipNode;
@@ -131,15 +96,15 @@ vtkMRMLClipModelsNode* qMRMLClipNodeWidget::mrmlClipNode()const
 //------------------------------------------------------------------------------
 void qMRMLClipNodeWidget::setMRMLClipNode(vtkMRMLNode* node)
 {
-  this->setMRMLClipNode(vtkMRMLClipModelsNode::SafeDownCast(node));
+  this->setMRMLClipNode(vtkMRMLClipNode::SafeDownCast(node));
 }
 
 //------------------------------------------------------------------------------
-void qMRMLClipNodeWidget::setMRMLClipNode(vtkMRMLClipModelsNode* clipNode)
+void qMRMLClipNodeWidget::setMRMLClipNode(vtkMRMLClipNode* clipNode)
 {
   Q_D(qMRMLClipNodeWidget);
   qvtkReconnect(d->MRMLClipNode, clipNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
+    this, SLOT(updateWidgetFromMRML()));
   d->MRMLClipNode = clipNode;
   this->updateWidgetFromMRML();
 }
@@ -148,7 +113,7 @@ void qMRMLClipNodeWidget::setMRMLClipNode(vtkMRMLClipModelsNode* clipNode)
 void qMRMLClipNodeWidget::setClipType(int type)
 {
   Q_D(qMRMLClipNodeWidget);
-  if (!d->MRMLClipNode.GetPointer())
+  if (!d->MRMLClipNode)
   {
     return;
   }
@@ -156,189 +121,374 @@ void qMRMLClipNodeWidget::setClipType(int type)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLClipNodeWidget::clipType()const
+int qMRMLClipNodeWidget::clipType() const
 {
   Q_D(const qMRMLClipNodeWidget);
   return d->UnionRadioButton->isChecked() ?
-    vtkMRMLClipModelsNode::ClipUnion :
-    vtkMRMLClipModelsNode::ClipIntersection;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLClipNodeWidget::setRedSliceClipState(int state)
-{
-  Q_D(qMRMLClipNodeWidget);
-  if (!d->MRMLClipNode.GetPointer())
-  {
-    return;
-  }
-  d->MRMLClipNode->SetRedSliceClipState(state);
-}
-
-//------------------------------------------------------------------------------
-int qMRMLClipNodeWidget::redSliceClipState()const
-{
-  Q_D(const qMRMLClipNodeWidget);
-  return d->RedSliceClippingCheckBox->isChecked() ?
-    (d->RedPositiveRadioButton->isChecked() ?
-      vtkMRMLClipModelsNode::ClipPositiveSpace :
-      vtkMRMLClipModelsNode::ClipNegativeSpace) :
-    vtkMRMLClipModelsNode::ClipOff;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLClipNodeWidget::setYellowSliceClipState(int state)
-{
-  Q_D(qMRMLClipNodeWidget);
-  if (!d->MRMLClipNode.GetPointer())
-  {
-    return;
-  }
-  d->MRMLClipNode->SetYellowSliceClipState(state);
-}
-
-//------------------------------------------------------------------------------
-int qMRMLClipNodeWidget::yellowSliceClipState()const
-{
-  Q_D(const qMRMLClipNodeWidget);
-  return d->YellowSliceClippingCheckBox->isChecked() ?
-    (d->YellowPositiveRadioButton->isChecked() ?
-      vtkMRMLClipModelsNode::ClipPositiveSpace :
-      vtkMRMLClipModelsNode::ClipNegativeSpace) :
-    vtkMRMLClipModelsNode::ClipOff;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLClipNodeWidget::setGreenSliceClipState(int state)
-{
-  Q_D(qMRMLClipNodeWidget);
-  if (!d->MRMLClipNode.GetPointer())
-  {
-    return;
-  }
-  d->MRMLClipNode->SetGreenSliceClipState(state);
-}
-
-//------------------------------------------------------------------------------
-int qMRMLClipNodeWidget::greenSliceClipState()const
-{
-  Q_D(const qMRMLClipNodeWidget);
-  return d->GreenSliceClippingCheckBox->isChecked() ?
-    (d->GreenPositiveRadioButton->isChecked() ?
-      vtkMRMLClipModelsNode::ClipPositiveSpace :
-      vtkMRMLClipModelsNode::ClipNegativeSpace) :
-    vtkMRMLClipModelsNode::ClipOff;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLClipNodeWidget::setClippingMethod(vtkMRMLClipModelsNode::ClippingMethodType state)
-{
-  Q_D(qMRMLClipNodeWidget);
-  if (!d->MRMLClipNode.GetPointer())
-  {
-    return;
-  }
-  d->MRMLClipNode->SetClippingMethod(state);
-}
-
-//------------------------------------------------------------------------------
-vtkMRMLClipModelsNode::ClippingMethodType qMRMLClipNodeWidget::clippingMethod()const
-{
-  Q_D(const qMRMLClipNodeWidget);
-  return d->WholeCellClippingCheckBox->isChecked() ? vtkMRMLClipModelsNode::WholeCells : vtkMRMLClipModelsNode::Straight;
+    vtkMRMLClipNode::ClipUnion :
+    vtkMRMLClipNode::ClipIntersection;
 }
 
 //------------------------------------------------------------------------------
 void qMRMLClipNodeWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLClipNodeWidget);
-  this->setEnabled(d->MRMLClipNode.GetPointer() != nullptr);
-  if (d->MRMLClipNode.GetPointer() == nullptr)
+  if (d->IsUpdatingWidgetFromMRML)
   {
     return;
   }
+
+  this->setEnabled(d->MRMLClipNode);
+  if (!d->MRMLClipNode)
+  {
+    return;
+  }
+
   bool oldUpdating = d->IsUpdatingWidgetFromMRML;
   d->IsUpdatingWidgetFromMRML = true;
 
+  bool wasBlocking = d->UnionRadioButton->blockSignals(true);
   d->UnionRadioButton->setChecked(
-    d->MRMLClipNode->GetClipType() == vtkMRMLClipModelsNode::ClipUnion);
+    d->MRMLClipNode->GetClipType() == vtkMRMLClipNode::ClipUnion);
+  d->UnionRadioButton->blockSignals(wasBlocking);
+
+  wasBlocking = d->IntersectionRadioButton->blockSignals(true);
   d->IntersectionRadioButton->setChecked(
-    d->MRMLClipNode->GetClipType() == vtkMRMLClipModelsNode::ClipIntersection);
+    d->MRMLClipNode->GetClipType() == vtkMRMLClipNode::ClipIntersection);
+  d->IntersectionRadioButton->blockSignals(wasBlocking);
 
-  // Setting one checkbox might trigger a signal which result to action in an unstable state
-  // to be a valid state, all the checkboxes need to be set.
-  d->RedSliceClippingCheckBox->setChecked(
-    d->MRMLClipNode->GetRedSliceClipState() != vtkMRMLClipModelsNode::ClipOff);
-  d->RedPositiveRadioButton->setChecked(
-    d->MRMLClipNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipPositiveSpace);
-  d->RedNegativeRadioButton->setChecked(
-    d->MRMLClipNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipNegativeSpace);
+  bool needToUpdateReferences = this->needToUpdateClippingNodeFrame();
+  if (needToUpdateReferences)
+  {
+    this->updateClippingNodeFrame();
+  }
 
-  d->YellowSliceClippingCheckBox->setChecked(
-    d->MRMLClipNode->GetYellowSliceClipState() != vtkMRMLClipModelsNode::ClipOff);
-  d->YellowPositiveRadioButton->setChecked(
-    d->MRMLClipNode->GetYellowSliceClipState() == vtkMRMLClipModelsNode::ClipPositiveSpace);
-  d->YellowNegativeRadioButton->setChecked(
-    d->MRMLClipNode->GetYellowSliceClipState() == vtkMRMLClipModelsNode::ClipNegativeSpace);
+  QList<QButtonGroup*> clipButtonGroups = d->ClipNodeFrame->findChildren<QButtonGroup*>("ClipButtonGroup");
+  for (QButtonGroup* clipButtonGroup : clipButtonGroups)
+  {
+    std::map<QAbstractButton*, bool> buttonWasBlocking;
+    for (QAbstractButton* button : clipButtonGroup->buttons())
+    {
+      buttonWasBlocking[button] = button->blockSignals(true);
+    }
 
-  d->GreenSliceClippingCheckBox->setChecked(
-    d->MRMLClipNode->GetGreenSliceClipState() != vtkMRMLClipModelsNode::ClipOff);
-  d->GreenPositiveRadioButton->setChecked(
-    d->MRMLClipNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipPositiveSpace);
-  d->GreenNegativeRadioButton->setChecked(
-    d->MRMLClipNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipNegativeSpace);
+    int nodeIndex = clipButtonGroup->property("Index").toInt();
+    vtkMRMLNode* clippingNode = this->mrmlClipNode()->GetNthClippingNode(nodeIndex);
+    int clipState = d->MRMLClipNode->GetNthClippingNodeState(nodeIndex);
+    for (QAbstractButton* button : clipButtonGroup->buttons())
+    {
+      switch (clipState)
+      {
+      case vtkMRMLClipNode::ClipPositiveSpace:
+        button->setChecked(button->objectName() == "PositiveRadioButton");
+        break;
+      case vtkMRMLClipNode::ClipNegativeSpace:
+        button->setChecked(button->objectName() == "NegativeRadioButton");
+        break;
+      case vtkMRMLClipNode::ClipOff:
+        button->setChecked(button->objectName() == "OffRadioButton");
+        break;
+      default:
+        break;
+      }
+    }
 
-  d->WholeCellClippingCheckBox->setChecked(
-    d->MRMLClipNode->GetClippingMethod() != vtkMRMLClipModelsNode::Straight);
+    for (QAbstractButton* button : clipButtonGroup->buttons())
+    {
+      button->blockSignals(buttonWasBlocking[button]);
+    }
+  }
 
   d->IsUpdatingWidgetFromMRML = oldUpdating;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLClipNodeWidget::updateClippingNodeFrame()
+{
+  Q_D(qMRMLClipNodeWidget);
+  if (!d->MRMLClipNode)
+  {
+    return;
+  }
+
+  QStringList clipNodeClasses;
+  clipNodeClasses << "vtkMRMLSliceNode";
+  clipNodeClasses << "vtkMRMLMarkupsPlaneNode";
+  clipNodeClasses << "vtkMRMLMarkupsROINode";
+  clipNodeClasses << "vtkMRMLModelNode";
+
+  QLayoutItem* item;
+  while ((item = d->ClipNodeFrame->layout()->takeAt(0)))
+  {
+    QWidget* widget = item->widget();
+    widget->setParent(nullptr);
+    widget->setVisible(false);
+    widget->deleteLater();
+  }
+
+  for (int i = 0; i < d->MRMLClipNode->GetNumberOfClippingNodes() + 1; ++i)
+  {
+    vtkMRMLNode* clippingNode = nullptr;
+    if (i < d->MRMLClipNode->GetNumberOfClippingNodes())
+    {
+      clippingNode = d->MRMLClipNode->GetNthClippingNode(i);
+    }
+    qMRMLNodeComboBox* clipNodeSelector = new qMRMLNodeComboBox();
+    clipNodeSelector->setNoneEnabled(true);
+    clipNodeSelector->setAddEnabled(false);
+    clipNodeSelector->setMRMLScene(this->mrmlScene());
+    clipNodeSelector->setNodeTypes(clipNodeClasses);
+    clipNodeSelector->setCurrentNode(clippingNode);
+    QObject::connect(clipNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+      this, SLOT(updateClippingNodeFromWidget()));
+    clipNodeSelector->setProperty("NewSelector", QVariant(clippingNode == nullptr));
+
+    QHBoxLayout* clipNodeLayout = new QHBoxLayout();
+    clipNodeLayout->setContentsMargins(0, 0, 0, 0);
+
+    QWidget* clipNodeFrame = new QWidget();
+    clipNodeFrame->setLayout(clipNodeLayout);
+    clipNodeFrame->setContentsMargins(0, 0, 0, 0);
+    clipNodeFrame->layout()->addWidget(clipNodeSelector);
+
+    QList<QObject*> objectsList;
+
+    QButtonGroup* clipTypeGroup = new QButtonGroup(clipNodeFrame);
+    clipTypeGroup->setObjectName("ClipButtonGroup");
+    objectsList << clipTypeGroup;
+
+    QRadioButton* offClipButton = new QRadioButton();
+    offClipButton->setObjectName("OffRadioButton");
+    offClipButton->setText("Off");
+    clipTypeGroup->addButton(offClipButton);
+    clipNodeFrame->layout()->addWidget(offClipButton);
+    QObject::connect(offClipButton, SIGNAL(toggled(bool)),
+      this, SLOT(updateClippingNodeFromWidget()));
+    objectsList << offClipButton;
+
+    QRadioButton* positiveClipButton = new QRadioButton();
+    positiveClipButton->setObjectName("PositiveRadioButton");
+    positiveClipButton->setText("Positive");
+    positiveClipButton->setIcon(QIcon(":/Icons/GreySpacePositive.png"));
+    clipTypeGroup->addButton(positiveClipButton);
+    clipNodeFrame->layout()->addWidget(positiveClipButton);
+    QObject::connect(positiveClipButton, SIGNAL(toggled(bool)),
+      this, SLOT(updateClippingNodeFromWidget()));
+    objectsList << positiveClipButton;
+
+    QRadioButton* negativeClipButton = new QRadioButton();
+    negativeClipButton->setObjectName("NegativeRadioButton");
+    negativeClipButton->setText("Negative");
+    negativeClipButton->setIcon(QIcon(":/Icons/GreySpaceNegative.png"));
+    clipTypeGroup->addButton(negativeClipButton);
+    clipNodeFrame->layout()->addWidget(negativeClipButton);
+    QObject::connect(negativeClipButton, SIGNAL(toggled(bool)),
+      this, SLOT(updateClippingNodeFromWidget()));
+    objectsList << negativeClipButton;
+
+
+    for (QObject* object : objectsList)
+    {
+      QWidget* widget = qobject_cast<QWidget*>(object);
+      if (widget)
+      {
+        widget->setEnabled(clippingNode != nullptr);
+      }
+
+      if (clippingNode)
+      {
+        object->setProperty("ID", QVariant(clippingNode->GetID()));
+      }
+      object->setProperty("Index", QVariant(i));
+    }
+
+    d->ClipNodeFrame->layout()->addWidget(clipNodeFrame);
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLClipNodeWidget::updateMRMLFromWidget()
+{
+  Q_D(qMRMLClipNodeWidget);
+  if (d->IsUpdatingWidgetFromMRML)
+  {
+    return;
+  }
+
+  if (!d->MRMLClipNode)
+  {
+    return;
+  }
+
+  MRMLNodeModifyBlocker blocker(d->MRMLClipNode);
+  d->MRMLClipNode->SetClipType(this->clipType());
+  this->updateClippingNodeFromWidget();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLClipNodeWidget::updateClippingNodeFromWidget()
+{
+  Q_D(qMRMLClipNodeWidget);
+  if (!d->MRMLClipNode)
+  {
+    return;
+  }
+
+  MRMLNodeModifyBlocker blocker(d->MRMLClipNode);
+
+  if (this->needToUpdateClippingNodeFrame())
+  {
+    std::vector<vtkMRMLNode*> widgetClippingNodes;
+    QList<qMRMLNodeComboBox*> clipNodeComboBoxes = d->ClipNodeFrame->findChildren<qMRMLNodeComboBox*>();
+    for (qMRMLNodeComboBox* clipNodeComboBox : clipNodeComboBoxes)
+    {
+      vtkMRMLNode* clippingNode = clipNodeComboBox->currentNode();
+      if (!clippingNode)
+      {
+        continue;
+      }
+      widgetClippingNodes.push_back(clippingNode);
+    }
+
+    d->MRMLClipNode->RemoveAllClippingNodeIDs();
+    for (vtkMRMLNode* clippingNode : widgetClippingNodes)
+    {
+      d->MRMLClipNode->AddAndObserveClippingNodeID(clippingNode->GetID());
+    }
+  }
+
+  QList<QButtonGroup*> clipButtonGroups = d->ClipNodeFrame->findChildren<QButtonGroup*>("ClipButtonGroup");
+  for (QButtonGroup* clipButtonGroup : clipButtonGroups)
+  {
+    QAbstractButton* checkedButton = clipButtonGroup->checkedButton();
+    if (!checkedButton)
+    {
+      continue;
+    }
+
+    std::string clipNodeID = checkedButton->property("ID").toString().toStdString();
+    if (clipNodeID.empty())
+    {
+      continue;
+    }
+
+    int clipNodeIndex = checkedButton->property("Index").toInt();
+    vtkMRMLNode* clippingNode = this->mrmlClipNode()->GetNthClippingNode(clipNodeIndex);
+    if (!clippingNode)
+    {
+      continue;
+    }
+
+    int clipState = vtkMRMLClipNode::ClipPositiveSpace;
+    if (checkedButton->objectName() == "OffRadioButton")
+    {
+      clipState = vtkMRMLClipNode::ClipOff;
+    }
+    else if (checkedButton->objectName() == "PositiveRadioButton")
+    {
+      clipState = vtkMRMLClipNode::ClipPositiveSpace;
+    }
+    else if (checkedButton->objectName() == "NegativeRadioButton")
+    {
+      clipState = vtkMRMLClipNode::ClipNegativeSpace;
+    }
+    d->MRMLClipNode->SetNthClippingNodeState(clipNodeIndex, clipState);
+  }
+
+  this->updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLClipNodeWidget::needToUpdateClippingNodeFrame() const
+{
+  Q_D(const qMRMLClipNodeWidget);
+
+  std::vector<vtkMRMLNode*> currentClippingNodes;
+  for (int i = 0; i < d->MRMLClipNode->GetNumberOfClippingNodes(); ++i)
+  {
+    currentClippingNodes.push_back(d->MRMLClipNode->GetNthClippingNode(i));
+  }
+
+  QList<qMRMLNodeComboBox*> clipNodeComboBoxes = d->ClipNodeFrame->findChildren<qMRMLNodeComboBox*>();
+  if (clipNodeComboBoxes.size() == 0)
+  {
+    return true;
+  }
+
+  std::vector<vtkMRMLNode*> widgetClippingNodes;
+  for (qMRMLNodeComboBox* clipNodeComboBox : clipNodeComboBoxes)
+  {
+    vtkMRMLNode* clipNode = clipNodeComboBox->currentNode();
+    if (clipNodeComboBox->property("NewSelector").toBool())
+    {
+      if (clipNode)
+      {
+        // A node has been selected in the new node combobox.
+        return true;
+      }
+      continue;
+    }
+    widgetClippingNodes.push_back(clipNode);
+  }
+
+  bool needToUpdateReferences = widgetClippingNodes.size() != currentClippingNodes.size();
+  for (int i = 0; i < currentClippingNodes.size() && !needToUpdateReferences; ++i)
+  {
+    if (currentClippingNodes[i] != widgetClippingNodes[i])
+    {
+      needToUpdateReferences = true;
+    }
+  }
+
+  return needToUpdateReferences;
+}
+
+//------------------------------------------------------------------------------
+int qMRMLClipNodeWidget::clipState(vtkMRMLNode* node) const
+{
+  Q_D(const qMRMLClipNodeWidget);
+  if (!d->MRMLClipNode)
+  {
+    return vtkMRMLClipNode::ClipOff;
+  }
+  return d->MRMLClipNode->GetClippingNodeState(node);
+}
+
+//------------------------------------------------------------------------------
+int qMRMLClipNodeWidget::clipState(const char* nodeID) const
+{
+  Q_D(const qMRMLClipNodeWidget);
+  if (!d->MRMLClipNode)
+  {
+    return vtkMRMLClipNode::ClipOff;
+  }
+  return d->MRMLClipNode->GetClippingNodeState(nodeID);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLClipNodeWidget::setClipState(vtkMRMLNode* node, int state)
+{
+  Q_D(const qMRMLClipNodeWidget);
+  if (!d->MRMLClipNode)
+  {
+    return;
+  }
+  d->MRMLClipNode->SetClippingNodeState(node, state);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLClipNodeWidget::setClipState(const char* nodeID, int state)
+{
+  Q_D(const qMRMLClipNodeWidget);
+  if (!d->MRMLClipNode)
+  {
+    return;
+  }
+  d->MRMLClipNode->SetClippingNodeState(nodeID, state);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLClipNodeWidget::updateNodeClipType()
 {
   this->setClipType(this->clipType());
-}
-
-//------------------------------------------------------------------------------
-void qMRMLClipNodeWidget::updateNodeRedClipState()
-{
-  Q_D(const qMRMLClipNodeWidget);
-  if (d->IsUpdatingWidgetFromMRML)
-  {
-    return;
-  }
-  this->setRedSliceClipState(this->redSliceClipState());
-}
-
-//------------------------------------------------------------------------------
-void qMRMLClipNodeWidget::updateNodeYellowClipState()
-{
-  Q_D(const qMRMLClipNodeWidget);
-  if (d->IsUpdatingWidgetFromMRML)
-  {
-    return;
-  }
-  this->setYellowSliceClipState(this->yellowSliceClipState());
-}
-
-//------------------------------------------------------------------------------
-void qMRMLClipNodeWidget::updateNodeGreenClipState()
-{
-  Q_D(const qMRMLClipNodeWidget);
-  if (d->IsUpdatingWidgetFromMRML)
-  {
-    return;
-  }
-  this->setGreenSliceClipState(this->greenSliceClipState());
-}
-
-void qMRMLClipNodeWidget::updateNodeClippingMethod()
-{
-  Q_D(const qMRMLClipNodeWidget);
-  if (d->IsUpdatingWidgetFromMRML)
-  {
-    return;
-  }
-  this->setClippingMethod(this->clippingMethod());
 }

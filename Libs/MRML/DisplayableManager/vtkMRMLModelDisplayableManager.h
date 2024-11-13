@@ -16,7 +16,7 @@
 
 // MRML includes
 #include <vtkMRMLModelNode.h>
-class vtkMRMLClipModelsNode;
+class vtkMRMLClipNode;
 class vtkMRMLDisplayNode;
 class vtkMRMLDisplayableNode;
 class vtkMRMLTransformNode;
@@ -28,10 +28,12 @@ class vtkAlgorithm;
 class vtkCellPicker;
 class vtkLookupTable;
 class vtkMatrix4x4;
+class vtkMapper;
 class vtkPlane;
 class vtkPointPicker;
 class vtkProp3D;
 class vtkPropPicker;
+class vtkTransform;
 class vtkWorldPointPicker;
 
 /// \brief Manage display nodes with polydata in 3D views.
@@ -47,18 +49,14 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager
 {
 public:
   static vtkMRMLModelDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLModelDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLModelDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  /// Get/Set the ClipModels Node
-  vtkMRMLClipModelsNode* GetClipModelsNode();
-  void SetClipModelsNode(vtkMRMLClipModelsNode *snode);
-
   /// Return the current model actor corresponding to a give MRML ID
-  vtkProp3D *GetActorByID(const char *id);
+  vtkProp3D* GetActorByID(const char* id);
 
   /// Return the current node ID corresponding to a given vtkProp3D
-  const char *GetIDByActor(vtkProp3D *actor);
+  const char* GetIDByActor(vtkProp3D* actor);
 
   /// Get world point picker
   vtkWorldPointPicker* GetWorldPointPicker();
@@ -103,10 +101,6 @@ public:
   /// Set the picked point id, returns -1 if no pick
   void SetPickedPointID(vtkIdType newPointID);
 
-  void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix,
-                             int planeDirection,
-                             vtkPlane *plane);
-
   /// Return true if the node can be represented as a model
   bool IsModelDisplayable(vtkMRMLDisplayableNode* node)const;
   /// Return true if the display node is a model
@@ -130,7 +124,7 @@ protected:
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
   void OnInteractorStyleEvent(int eventId) override;
-  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Returns true if something visible in modelNode has changed and would
   /// require a refresh.
@@ -158,11 +152,20 @@ protected:
                                   vtkMRMLModelNode* model = nullptr);
 
   /// Returns not null if modified
-  int UpdateClipSlicesFromMRML();
-  vtkAlgorithm *CreateTransformedClipper(vtkMRMLTransformNode *tnode,
-                                         vtkMRMLModelNode::MeshTypeHint type);
+  vtkAlgorithm* GetClipper(vtkMRMLDisplayNode* dnode,
+                           vtkMRMLModelNode::MeshTypeHint type,
+                           vtkImplicitFunction* clipFunction,
+                           int clipMethod);
 
-  void RemoveDisplayedID(std::string &id);
+  void RemoveDisplayedID(const std::string& id);
+  void ClearDisplayMaps();
+
+  void UpdateMapperProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* displayNode,
+    vtkMapper* actor);
+  void UpdateActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* displayNode,
+    vtkActor* actor, double opacity);
+  void UpdateCapActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* displayNode,
+    vtkActor* capActor, double opacity);
 
 protected:
   vtkMRMLModelDisplayableManager();

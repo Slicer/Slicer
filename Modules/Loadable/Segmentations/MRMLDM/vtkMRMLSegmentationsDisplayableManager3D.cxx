@@ -27,16 +27,30 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLClipNode.h>
 #include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLScene.h>
-#include <vtkMRMLViewNode.h>
 #include <vtkMRMLTransformNode.h>
+#include <vtkMRMLViewNode.h>
+
+// vtkAddon includes
+#include <vtkCapPolyData.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkCellPicker.h>
+#include <vtkClipPolyData.h>
 #include <vtkDataSetAttributes.h>
+#include <vtkDoubleArray.h>
+#include <vtkExtractPolyDataGeometry.h>
+#include <vtkGeneralTransform.h>
+#include <vtkImplicitBoolean.h>
+#include <vtkLookupTable.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPlane.h>
+#include <vtkPlanes.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProp3DCollection.h>
@@ -44,11 +58,8 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
-#include <vtkCallbackCommand.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkGeneralTransform.h>
-#include <vtkCellPicker.h>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkMRMLSegmentationsDisplayableManager3D );
@@ -71,15 +82,36 @@ public:
       this->Actor->SetMapper(mapper.GetPointer());
       this->Actor->SetVisibility(false);
 
+      this->CapActor = vtkSmartPointer<vtkActor>::New();
+      vtkNew<vtkPolyDataMapper> capMapper;
+      capMapper->SetScalarVisibility(false); // ignore any scalars that an input mesh may contain
+      this->CapActor->SetMapper(capMapper.GetPointer());
+      this->CapActor->SetVisibility(false);
+
       this->NodeToWorldTransform = vtkSmartPointer<vtkGeneralTransform>::New();
       this->ModelWarper = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
       this->ModelWarper->SetTransform(this->NodeToWorldTransform);
+
+      this->Clipper = vtkSmartPointer<vtkClipPolyData>::New();
+      this->Clipper->SetInputConnection(this->ModelWarper->GetOutputPort());
+
+      this->ExtractPolyData = vtkSmartPointer<vtkExtractPolyDataGeometry>::New();
+      this->ExtractPolyData->SetInputConnection(this->ModelWarper->GetOutputPort());
+      this->ExtractPolyData->ExtractInsideOff();
+
+      this->Capper = vtkSmartPointer<vtkCapPolyData>::New();
+      this->Capper->SetInputConnection(this->ModelWarper->GetOutputPort());
+
       mapper->SetInputConnection(this->ModelWarper->GetOutputPort());
     }
 
     vtkSmartPointer<vtkActor> Actor;
+    vtkSmartPointer<vtkActor> CapActor;
     vtkSmartPointer<vtkGeneralTransform> NodeToWorldTransform;
     vtkSmartPointer<vtkTransformPolyDataFilter> ModelWarper;
+    vtkSmartPointer<vtkClipPolyData>            Clipper;
+    vtkSmartPointer<vtkExtractPolyDataGeometry> ExtractPolyData;
+    vtkSmartPointer<vtkCapPolyData>             Capper;
   };
 
   typedef std::map<std::string, const Pipeline*> PipelineMapType; // first: segment ID; second: display pipeline
@@ -293,6 +325,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::RemoveDisplayNode(vt
   {
     const Pipeline* pipeline = pipelineIt->second;
     this->External->GetRenderer()->RemoveActor(pipeline->Actor);
+    this->External->GetRenderer()->RemoveActor(pipeline->CapActor);
     delete pipeline;
   }
   this->DisplayPipelines.erase(pipelinesIter);
@@ -346,6 +379,7 @@ vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::CreateSegmentPipeline(
 
   // Add actor to Renderer and local cache
   this->External->GetRenderer()->AddActor( pipeline->Actor );
+  this->External->GetRenderer()->AddActor( pipeline->CapActor );
 
   return pipeline;
 }
@@ -430,6 +464,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
       ++pipelineIt;
       segmentPipelines.erase(erasedIt);
       this->External->GetRenderer()->RemoveActor(pipeline->Actor);
+      this->External->GetRenderer()->RemoveActor(pipeline->CapActor);
       delete pipeline;
     }
     else
@@ -485,6 +520,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     for (PipelineMapType::iterator pipelineIt=segmentPipelines.begin(); pipelineIt!=segmentPipelines.end(); ++pipelineIt)
     {
       pipelineIt->second->Actor->SetVisibility(false);
+      pipelineIt->second->CapActor->SetVisibility(false);
     }
     return;
   }
@@ -515,7 +551,29 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
     displayNode->GetSegmentDisplayProperties(pipelineIt->first, properties);
     bool segmentVisible = hierarchyVisibility && displayNodeVisible && properties.Visible && properties.Visible3D;
+    bool clipping = displayNode->GetClipping();
+    vtkMRMLClipNode* clipNode = displayNode->GetClipNode();
+    int numberOfClipNodes = clipNode ? clipNode->GetNumberOfClippingNodes() : 0;
+    if (clipping && clipNode)
+    {
+      bool allClippingOff = true;
+      for (int i = 0; i < numberOfClipNodes; ++i)
+      {
+        if (clipNode->GetNthClippingNodeState(i) != vtkMRMLClipNode::ClipOff)
+        {
+          allClippingOff = false;
+          break;
+        }
+      }
+      if (allClippingOff)
+      {
+        clipping = false;
+      }
+    }
+    bool capSurface = clipping && displayNode->GetClippingCapSurface();
+    bool clipOutline = clipping && displayNode->GetClippingOutline();
     pipeline->Actor->SetVisibility(segmentVisible);
+    pipeline->CapActor->SetVisibility(segmentVisible && (capSurface || clipOutline));
     if (!segmentVisible)
     {
       continue;
@@ -527,20 +585,42 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     if (!polyData || polyData->GetNumberOfPoints() == 0)
     {
       pipeline->Actor->SetVisibility(false);
+      pipeline->CapActor->SetVisibility(false);
       continue;
     }
 
     // Set node to world transform to identity by default
     // For all pipelines (pipeline per segment)
     vtkNew<vtkGeneralTransform> nodeToWorld;
-    this->GetNodeTransformToWorld(segmentationNode, nodeToWorld.GetPointer());
-    if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld.GetPointer(), pipeline->NodeToWorldTransform))
+    this->GetNodeTransformToWorld(segmentationNode, nodeToWorld);
+    if (!vtkMRMLTransformNode::AreTransformsEqual(nodeToWorld, pipeline->NodeToWorldTransform))
     {
       pipeline->NodeToWorldTransform->DeepCopy(nodeToWorld);
     }
     if (pipeline->ModelWarper->GetInputDataObject(0, 0) != polyData)
     {
       pipeline->ModelWarper->SetInputData(polyData);
+    }
+
+    if (clipNode && clipping)
+    {
+      vtkImplicitFunction* clipFunction = clipNode->GetImplicitFunctionWorld();
+      pipeline->Clipper->SetClipFunction(clipFunction);
+      pipeline->ExtractPolyData->SetImplicitFunction(clipFunction);
+      pipeline->Capper->SetClipFunction(clipFunction);
+      if (clipNode->GetClippingMethod() == vtkMRMLClipNode::Straight)
+      {
+        pipeline->Actor->GetMapper()->SetInputConnection(pipeline->Clipper->GetOutputPort());
+      }
+      else
+      {
+        pipeline->Actor->GetMapper()->SetInputConnection(pipeline->ExtractPolyData->GetOutputPort());
+      }
+      pipeline->CapActor->GetMapper()->SetInputConnection(pipeline->Capper->GetOutputPort());
+    }
+    else
+    {
+      pipeline->Actor->GetMapper()->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
     }
 
     // Get displayed color (if no override is defined then use the color from the segment)
@@ -554,39 +634,64 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
       displayNode->GetSegmentColor(pipelineIt->first, color);
     }
 
-    // Update pipeline actor
-    pipeline->Actor->GetProperty()->SetRepresentation(genericDisplayNode->GetRepresentation());
-    pipeline->Actor->GetProperty()->SetPointSize(genericDisplayNode->GetPointSize());
-    pipeline->Actor->GetProperty()->SetLineWidth(genericDisplayNode->GetLineWidth());
-    pipeline->Actor->GetProperty()->SetLighting(genericDisplayNode->GetLighting());
-    pipeline->Actor->GetProperty()->SetInterpolation(genericDisplayNode->GetInterpolation());
-    pipeline->Actor->GetProperty()->SetShading(genericDisplayNode->GetShading());
-    pipeline->Actor->GetProperty()->SetFrontfaceCulling(genericDisplayNode->GetFrontfaceCulling());
-    pipeline->Actor->GetProperty()->SetBackfaceCulling(genericDisplayNode->GetBackfaceCulling());
-
-    pipeline->Actor->GetProperty()->SetColor(color[0], color[1], color[2]);
-    pipeline->Actor->GetProperty()->SetOpacity(
-      hierarchyOpacity * properties.Opacity3D * displayNode->GetOpacity3D() * genericDisplayNode->GetOpacity());
-
     pipeline->Actor->SetPickable(segmentationNode->GetSelectable() && properties.Pickable);
+    pipeline->Actor->SetTexture(nullptr);
+    pipeline->CapActor->SetPickable(segmentationNode->GetSelectable() && properties.Pickable);
+    pipeline->CapActor->SetTexture(nullptr);
+
+    // Update pipeline actor
+    vtkProperty* actorProperty = pipeline->Actor->GetProperty();
+    actorProperty->SetRepresentation(genericDisplayNode->GetRepresentation());
+    actorProperty->SetPointSize(genericDisplayNode->GetPointSize());
+    actorProperty->SetLineWidth(genericDisplayNode->GetLineWidth());
+    actorProperty->SetLighting(genericDisplayNode->GetLighting());
+    actorProperty->SetInterpolation(genericDisplayNode->GetInterpolation());
+    actorProperty->SetShading(genericDisplayNode->GetShading());
+    actorProperty->SetFrontfaceCulling(genericDisplayNode->GetFrontfaceCulling());
+    actorProperty->SetBackfaceCulling(genericDisplayNode->GetBackfaceCulling());
+
+    actorProperty->SetColor(color[0], color[1], color[2]);
+
+    double opacity = hierarchyOpacity * properties.Opacity3D * displayNode->GetOpacity3D() * genericDisplayNode->GetOpacity();
+    actorProperty->SetOpacity(opacity);
+
     if (genericDisplayNode->GetSelected())
     {
-      pipeline->Actor->GetProperty()->SetAmbient(genericDisplayNode->GetSelectedAmbient());
-      pipeline->Actor->GetProperty()->SetSpecular(genericDisplayNode->GetSelectedSpecular());
+      actorProperty->SetAmbient(genericDisplayNode->GetSelectedAmbient());
+      actorProperty->SetSpecular(genericDisplayNode->GetSelectedSpecular());
     }
     else
     {
-      pipeline->Actor->GetProperty()->SetAmbient(genericDisplayNode->GetAmbient());
-      pipeline->Actor->GetProperty()->SetSpecular(genericDisplayNode->GetSpecular());
+      actorProperty->SetAmbient(genericDisplayNode->GetAmbient());
+      actorProperty->SetSpecular(genericDisplayNode->GetSpecular());
     }
-    pipeline->Actor->GetProperty()->SetDiffuse(genericDisplayNode->GetDiffuse());
-    pipeline->Actor->GetProperty()->SetSpecularPower(genericDisplayNode->GetPower());
-    pipeline->Actor->GetProperty()->SetMetallic(displayNode->GetMetallic());
-    pipeline->Actor->GetProperty()->SetRoughness(displayNode->GetRoughness());
-    pipeline->Actor->GetProperty()->SetEdgeVisibility(genericDisplayNode->GetEdgeVisibility());
-    pipeline->Actor->GetProperty()->SetEdgeColor(genericDisplayNode->GetEdgeColor());
+    actorProperty->SetDiffuse(genericDisplayNode->GetDiffuse());
+    actorProperty->SetSpecularPower(genericDisplayNode->GetPower());
+    actorProperty->SetMetallic(displayNode->GetMetallic());
+    actorProperty->SetRoughness(displayNode->GetRoughness());
+    actorProperty->SetEdgeVisibility(genericDisplayNode->GetEdgeVisibility());
+    actorProperty->SetEdgeColor(genericDisplayNode->GetEdgeColor());
 
-    pipeline->Actor->SetTexture(nullptr);
+    // Update cap actor display properties
+    pipeline->CapActor->GetProperty()->DeepCopy(actorProperty);
+
+    // Create a lookup table to map cell data to colors.
+    vtkNew<vtkLookupTable> lut;
+    lut->SetTableRange(VTK_LINE, VTK_POLY_LINE);
+    lut->SetNumberOfColors(1);
+    lut->Build();
+    lut->UseBelowRangeColorOn();
+    lut->UseAboveRangeColorOn();
+    lut->SetBelowRangeColor(color[0], color[1], color[2], capSurface ? opacity * displayNode->GetClippingCapOpacity() : 0.0);
+    lut->SetAboveRangeColor(color[0], color[1], color[2], capSurface ? opacity * displayNode->GetClippingCapOpacity() : 0.0);
+    lut->SetTableValue(0, 0.0, 0.0, 0.0, clipOutline ? opacity : 0.0);
+
+    vtkMapper* capMapper = pipeline->CapActor->GetMapper();
+    capMapper->SetScalarModeToUseCellData();
+    capMapper->UseLookupTableScalarRangeOn();
+    capMapper->SetColorModeToMapScalars();
+    capMapper->SetLookupTable(lut);
+    capMapper->SetScalarVisibility(true);
   }
 }
 
@@ -855,6 +960,18 @@ void vtkMRMLSegmentationsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject*
     {
       this->Internal->UpdateAllDisplayNodesForSegment(displayableNode);
       this->RequestRender();
+    }
+  }
+  else if (vtkMRMLClipNode::SafeDownCast(caller))
+  {
+    vtkMRMLClipNode* clipNode = vtkMRMLClipNode::SafeDownCast(caller);
+    for (auto displayNodeIt = this->Internal->DisplayPipelines.begin(); displayNodeIt != this->Internal->DisplayPipelines.end(); ++displayNodeIt)
+    {
+      if (displayNodeIt->first->GetClipNode() != clipNode)
+      {
+        continue;
+      }
+      this->Internal->UpdateDisplayNodePipeline(displayNodeIt->first, displayNodeIt->second);
     }
   }
   else

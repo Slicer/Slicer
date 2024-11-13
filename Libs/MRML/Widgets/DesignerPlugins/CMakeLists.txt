@@ -19,6 +19,8 @@ set(${KIT}_SRCS
   qMRMLCaptureToolBarPlugin.cxx
   qMRMLCheckableNodeComboBoxPlugin.cxx
   qMRMLCheckableNodeComboBoxPlugin.h
+  qMRMLClipNodeDisplayWidgetPlugin.cxx
+  qMRMLClipNodeDisplayWidgetPlugin.h
   qMRMLClipNodeWidgetPlugin.cxx
   qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.cxx
@@ -116,6 +118,7 @@ set(${KIT}_MOC_SRCS
 
   qMRMLCaptureToolBarPlugin.h
   qMRMLCheckableNodeComboBoxPlugin.h
+  qMRMLClipNodeDisplayWidgetPlugin.h
   qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.h
   qMRMLColorListViewPlugin.h

@@ -15,6 +15,7 @@ Version:   $Revision: 1.3 $
 // MRML includes
 #include "vtkEventBroker.h"
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLClipNode.h"
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLFolderDisplayNode.h"
@@ -110,6 +111,11 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
 
   this->ActiveScalarName = nullptr;
   this->ActiveAttributeLocation = vtkAssignAttribute::POINT_DATA;
+
+  vtkNew <vtkIntArray> clipNodeEvents;
+  clipNodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  clipNodeEvents->InsertNextValue(vtkMRMLClipNode::ClipNodeModifiedEvent);
+  this->AddNodeReferenceRole(this->GetClipNodeReferenceRole(), this->GetClipNodeReferenceRole(), clipNodeEvents);
 
   // add observer to process visualization pipeline
   vtkEventBroker::GetInstance()->AddObservation(
@@ -573,6 +579,12 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents( vtkObject *caller, unsigned long eve
       this->ColorNodeID != nullptr && cnode->GetID() != nullptr &&
       strcmp(this->ColorNodeID, cnode->GetID()) == 0 &&
       event ==  vtkCommand::ModifiedEvent)
+  {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
+  }
+
+  vtkMRMLClipNode* clipNode = vtkMRMLClipNode::SafeDownCast(caller);
+  if (clipNode)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
@@ -1234,4 +1246,22 @@ int vtkMRMLDisplayNode::GetShowModeFromString(const char* name)
   }
   // unknown name
   return -1;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayNode::SetAndObserveClipNodeID(const char* id)
+{
+  this->SetNthNodeReferenceID(this->GetClipNodeReferenceRole(), 0, id);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLClipNode* vtkMRMLDisplayNode::GetClipNode()
+{
+  return vtkMRMLClipNode::SafeDownCast(this->GetNthNodeReference(this->GetClipNodeReferenceRole(), 0));
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLDisplayNode::GetClipNodeReferenceRole() const
+{
+  return "ClipNode";
 }

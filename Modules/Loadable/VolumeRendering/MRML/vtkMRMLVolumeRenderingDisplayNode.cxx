@@ -92,6 +92,7 @@ void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLIntMacro(followVolumeDisplayNode, FollowVolumeDisplayNode);
   vtkMRMLReadXMLIntMacro(ignoreVolumeDisplayNodeThreshold, IgnoreVolumeDisplayNodeThreshold);
   vtkMRMLReadXMLIntMacro(useSingleVolumeProperty, UseSingleVolumeProperty);
+  vtkMRMLReadXMLFloatMacro(clippingSoftEdgeVoxels, ClippingSoftEdgeVoxels);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -107,6 +108,7 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLIntMacro(followVolumeDisplayNode, FollowVolumeDisplayNode);
   vtkMRMLWriteXMLIntMacro(ignoreVolumeDisplayNodeThreshold, IgnoreVolumeDisplayNodeThreshold);
   vtkMRMLWriteXMLIntMacro(useSingleVolumeProperty, UseSingleVolumeProperty);
+  vtkMRMLWriteXMLFloatMacro(clippingSoftEdgeVoxels, ClippingSoftEdgeVoxels);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -125,6 +127,7 @@ void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCopyIntMacro(FollowVolumeDisplayNode);
   vtkMRMLCopyIntMacro(IgnoreVolumeDisplayNodeThreshold);
   vtkMRMLCopyIntMacro(UseSingleVolumeProperty);
+  vtkMRMLCopyFloatMacro(ClippingSoftEdgeVoxels);
   vtkMRMLCopyEndMacro();
 
   this->EndModify(wasModifying);
@@ -142,6 +145,7 @@ void vtkMRMLVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(FollowVolumeDisplayNode);
   vtkMRMLPrintIntMacro(IgnoreVolumeDisplayNodeThreshold);
   vtkMRMLPrintIntMacro(UseSingleVolumeProperty);
+  vtkMRMLPrintFloatMacro(ClippingSoftEdgeVoxels);
   vtkMRMLPrintEndMacro();
 }
 

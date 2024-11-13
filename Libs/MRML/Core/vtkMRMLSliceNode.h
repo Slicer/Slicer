@@ -20,8 +20,10 @@
 class vtkMRMLVolumeNode;
 
 // VTK includes
+class vtkImplicitFunction;
 class vtkMatrix3x3;
 class vtkMatrix4x4;
+class vtkPlane;
 
 /// \brief MRML node for storing a slice through RAS space.
 ///
@@ -552,6 +554,8 @@ public:
   vtkSetMacro(SlabReconstructionOversamplingFactor, double);
   /// @}
 
+  virtual vtkImplicitFunction* GetImplicitFunctionWorld();
+
 protected:
   vtkMRMLSliceNode();
   ~vtkMRMLSliceNode() override;
@@ -614,6 +618,8 @@ protected:
   int IsUpdatingMatrices;
 
   std::vector< std::string > ThreeDViewIDs;
+
+  vtkSmartPointer<vtkPlane> ImplicitFunction;
 };
 
 //----------------------------------------------------------------------------
