@@ -24,6 +24,9 @@ class vtkCellArray;
 class vtkPoints;
 class vtkStringArray;
 
+// STD includes
+#include <string>
+
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
 {
 public:
@@ -81,7 +84,7 @@ public:
 
   int AddText(const char *newText,int selectedFlag, int visibleFlag);
   void SetText(int id, const char *newText,int selectedFlag, int visibleFlag);
-  vtkStdString GetText(int id);
+  std::string GetText(int id);
   int DeleteText(int id);
 
   int GetNumberOfTexts();

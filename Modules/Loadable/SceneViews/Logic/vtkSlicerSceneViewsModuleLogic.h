@@ -37,8 +37,8 @@ class vtkMRMLSceneViewNode;
 
 // VTK includes
 class vtkImageData;
-#include <vtkStdString.h>
 
+// STD includes
 #include <string>
 
 class VTK_SLICER_SCENEVIEWS_MODULE_LOGIC_EXPORT vtkSlicerSceneViewsModuleLogic :
@@ -60,13 +60,13 @@ public:
   void CreateSceneView(const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
 
   /// Modify an existing sceneView.
-  void ModifySceneView(vtkStdString id, const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
+  void ModifySceneView(std::string id, const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
 
   /// Return the name of an existing sceneView.
-  vtkStdString GetSceneViewName(const char* id);
+  std::string GetSceneViewName(const char* id);
 
   /// Return the description of an existing sceneView.
-  vtkStdString GetSceneViewDescription(const char* id);
+  std::string GetSceneViewDescription(const char* id);
 
   /// Return the screenshotType of an existing sceneView.
   int GetSceneViewScreenshotType(const char* id);

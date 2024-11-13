@@ -43,6 +43,7 @@
 #include <vtkWindowToImageFilter.h>
 
 // STD includes
+#include <string>
 
 #include "vtkMRMLCoreTestingMacros.h"
 
@@ -626,7 +627,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   // Save current scene
   vtkNew<vtkTesting> testHelper;
   testHelper->AddArguments(argc, const_cast<const char **>(argv));
-  vtkStdString savedScene = testHelper->GetTempDirectory();
+  std::string savedScene = testHelper->GetTempDirectory();
   savedScene += "/vtkMRMLCameraDisplayableManagerTest1_saved.mrml";
   scene->SetVersion("Slicer4.4.0"); // Force scene version to be the same as in the baseline scene file
   if (!scene->Commit(savedScene.c_str()))
@@ -636,7 +637,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   }
 
   // Compare saved scene with baseline
-  vtkStdString baselineScene = testHelper->GetDataRoot();
+  std::string baselineScene = testHelper->GetDataRoot();
   baselineScene += "/Data/vtkMRMLCameraDisplayableManagerTest1.mrml";
 
   // Read baseline scene into string
@@ -723,7 +724,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     windowToImageFilter->SetScale(1, 1); //set the resolution of the output image
     windowToImageFilter->Update();
 
-    vtkStdString screenshootFilename = testHelper->GetDataRoot();
+    std::string screenshootFilename = testHelper->GetDataRoot();
     screenshootFilename += "/Baseline/vtkMRMLCameraDisplayableManagerTest1.png";
     vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(screenshootFilename.c_str());

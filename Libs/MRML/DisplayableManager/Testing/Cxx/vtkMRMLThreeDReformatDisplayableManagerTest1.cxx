@@ -47,6 +47,7 @@
 #include <vtkWindowToImageFilter.h>
 
 // STD includes
+#include <string>
 
 #include "vtkMRMLCoreTestingMacros.h"
 
@@ -1064,7 +1065,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
     vtkNew<vtkTesting> testHelper;
     testHelper->AddArguments(argc, const_cast<const char **>(argv));
 
-    vtkStdString screenshootFilename = testHelper->GetDataRoot();
+    std::string screenshootFilename = testHelper->GetDataRoot();
     screenshootFilename += "/Baseline/vtkMRMLThreeDReformatDisplayableManagerTest1.png";
     vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(screenshootFilename.c_str());

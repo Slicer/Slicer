@@ -18,9 +18,11 @@
 #include "vtkMRMLStorableNode.h"
 
 // VTK includes
-#include <vtkStdString.h>
 class vtkCollection;
 class vtkImageData;
+
+// STD includes
+#include <string>
 
 class vtkMRMLStorageNode;
 class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
@@ -93,8 +95,8 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   void SetAbsentStorageFileNames();
 
   /// A description of this sceneView
-  void SetSceneViewDescription(const vtkStdString& newDescription);
-  vtkGetMacro(SceneViewDescription, vtkStdString);
+  void SetSceneViewDescription(const std::string& newDescription);
+  vtkGetMacro(SceneViewDescription, std::string);
 
   /// The attached screenshot of this sceneView
   virtual void SetScreenShot(vtkImageData* newScreenShot);
@@ -142,7 +144,7 @@ protected:
   vtkMRMLScene* SnapshotScene;
 
   /// The associated Description
-  vtkStdString SceneViewDescription;
+  std::string SceneViewDescription;
 
   /// The vtkImageData of the screenshot
   vtkImageData* ScreenShot;

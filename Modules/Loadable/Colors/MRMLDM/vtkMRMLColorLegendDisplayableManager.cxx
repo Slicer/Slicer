@@ -46,6 +46,7 @@
 #include <algorithm>
 #include <cstring>
 #include <numeric>
+#include <string>
 
 namespace
 {
@@ -510,7 +511,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
       size_t validIndex = it - validColorMask.begin();
       if (*it && i < numberOfValidColors)
       {
-        actor->GetLookupTable()->SetAnnotation(i++, vtkStdString(colorNode->GetColorName(validIndex)));
+        actor->GetLookupTable()->SetAnnotation(i++, std::string(colorNode->GetColorName(validIndex)));
       }
     }
     actor->SetUseAnnotationAsLabel(true);

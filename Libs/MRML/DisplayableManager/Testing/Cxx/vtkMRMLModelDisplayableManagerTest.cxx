@@ -47,6 +47,7 @@
 #include <vtkWindowToImageFilter.h>
 
 // STD includes
+#include <string>
 
 const char vtkMRMLModelDisplayableManagerTest1EventLog[] =
 "# StreamVersion 1\n";
@@ -156,7 +157,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
     vtkNew<vtkTesting> testHelper;
     testHelper->AddArguments(argc, const_cast<const char **>(argv));
 
-    vtkStdString screenshootFilename = testHelper->GetDataRoot();
+    std::string screenshootFilename = testHelper->GetDataRoot();
     screenshootFilename += "/Baseline/vtkMRMLCameraDisplayableManagerTest1.png";
     vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(screenshootFilename.c_str());

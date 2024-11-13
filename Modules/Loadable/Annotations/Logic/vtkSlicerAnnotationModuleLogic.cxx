@@ -200,7 +200,7 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   //---------------------------------------------------------------------------
   // Modify an existing annotation snapShot.
   //---------------------------------------------------------------------------
-  void vtkSlicerAnnotationModuleLogic::ModifySnapShot(vtkStdString id, const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot)
+  void vtkSlicerAnnotationModuleLogic::ModifySnapShot(std::string id, const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot)
   {
 
     if (!screenshot)
@@ -253,7 +253,7 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
 //---------------------------------------------------------------------------
 // Return the description of an existing Annotation snapShot node.
 //---------------------------------------------------------------------------
-vtkStdString vtkSlicerAnnotationModuleLogic::GetSnapShotName(const char* id)
+std::string vtkSlicerAnnotationModuleLogic::GetSnapShotName(const char* id)
 {
   if (!this->GetMRMLScene())
   {
@@ -284,7 +284,7 @@ vtkStdString vtkSlicerAnnotationModuleLogic::GetSnapShotName(const char* id)
 //---------------------------------------------------------------------------
 // Return the description of an existing Annotation snapShot node.
 //---------------------------------------------------------------------------
-vtkStdString vtkSlicerAnnotationModuleLogic::GetSnapShotDescription(const char* id)
+std::string vtkSlicerAnnotationModuleLogic::GetSnapShotDescription(const char* id)
 {
   if (!this->GetMRMLScene())
   {

@@ -39,6 +39,7 @@
 #include <vtkStringArray.h>
 
 // STD includes
+#include <string>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerTablesLogic);
@@ -99,7 +100,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
     vtkStringArray *tables = database->GetTables();
     for (int i=0; i<tables->GetNumberOfTuples(); i++)
     {
-      vtkStdString table = tables->GetValue(i);
+      std::string table = tables->GetValue(i);
 
       // Storage node
       vtkNew<vtkMRMLTableSQLiteStorageNode> tableStorageNode;

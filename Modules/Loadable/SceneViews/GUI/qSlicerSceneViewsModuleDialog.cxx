@@ -16,9 +16,9 @@
 
 // VTK includes
 #include <vtkImageData.h>
-#include <vtkStdString.h>
 
 // STD includes
+#include <string>
 #include <vector>
 
 //-----------------------------------------------------------------------------
@@ -68,13 +68,13 @@ void qSlicerSceneViewsModuleDialog::loadNode(const QString& nodeId)
   this->setData(QVariant(nodeId));
 
   // get the name..
-  vtkStdString name = this->m_Logic->GetSceneViewName(nodeId.toUtf8());
+  std::string name = this->m_Logic->GetSceneViewName(nodeId.toUtf8());
 
   // ..and set it in the GUI
   this->setNameEdit(QString::fromStdString(name));
 
   // get the description..
-  vtkStdString description = this->m_Logic->GetSceneViewDescription(nodeId.toUtf8());
+  std::string description = this->m_Logic->GetSceneViewDescription(nodeId.toUtf8());
 
   // ..and set it in the GUI
   this->setDescription(QString::fromStdString(description));
@@ -137,7 +137,7 @@ void qSlicerSceneViewsModuleDialog::accept()
   else
   {
     // this SceneView already exists
-    this->m_Logic->ModifySceneView(vtkStdString(this->data().toString().toUtf8()),nameBytes.data(),descriptionBytes.data()
+    this->m_Logic->ModifySceneView(std::string(this->data().toString().toUtf8()),nameBytes.data(),descriptionBytes.data()
                                    ,screenshotType,this->imageData());
     //QMessageBox::information(this, "3D Slicer SceneView updated",
     //             The SceneView was updated without changing the attached scene.");

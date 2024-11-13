@@ -69,7 +69,7 @@ void vtkMRMLSceneViewNode::WriteXML(ostream& of, int nIndent)
 
   of << " screenshotType=\"" << this->GetScreenShotType() << "\"";
 
-  vtkStdString description = this->GetSceneViewDescription();
+  std::string description = this->GetSceneViewDescription();
   vtksys::SystemTools::ReplaceString(description,"\n","<br>");
 
   of << " sceneViewDescription=\"" << this->XMLAttributeEncodeString(description) << "\"";
@@ -130,7 +130,7 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
     else if(!strcmp(attName, "sceneViewDescription"))
     {
       // can have spaces in the description, don't use stringstream
-      vtkStdString sceneViewDescription = vtkStdString(attValue);
+      std::string sceneViewDescription = std::string(attValue);
       vtksys::SystemTools::ReplaceString(sceneViewDescription,"[br]","\n");
       this->SetSceneViewDescription(sceneViewDescription);
     }
@@ -142,7 +142,7 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
   // TODO: don't do this if there is a storage node already, but the problem
   // is that the storage node will get set after, so GetStorageNode returns
   // null right now
-  vtkStdString screenCapturePath;
+  std::string screenCapturePath;
   if (this->GetScene() &&
       this->GetScene()->GetRootDirectory())
   {
@@ -155,7 +155,7 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
   screenCapturePath += "/";
   screenCapturePath += "ScreenCaptures/";
 
-  vtkStdString screenCaptureFilename;
+  std::string screenCaptureFilename;
   screenCaptureFilename += screenCapturePath;
   if (this->GetID())
   {
@@ -737,7 +737,7 @@ vtkMRMLStorageNode* vtkMRMLSceneViewNode::CreateDefaultStorageNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSceneViewNode::SetSceneViewDescription(const vtkStdString& newDescription)
+void vtkMRMLSceneViewNode::SetSceneViewDescription(const std::string& newDescription)
 {
   if (this->SceneViewDescription == newDescription)
   {

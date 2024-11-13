@@ -10,10 +10,13 @@
 #include "vtkMRMLAnnotationControlPointsNode.h"
 #include "vtkMRMLAnnotationNode.h"
 
-#include <vtkStdString.h>
+// VTK includes
 class vtkImageData;
 class vtkStringArray;
 class vtkMRMLStorageNode;
+
+// STD includes
+#include <string>
 
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLAnnotationNode
 {
@@ -32,8 +35,8 @@ public:
 
   const char* GetIcon() override {return ":/Icons/ViewCamera.png";}
 
-  void SetSnapshotDescription(const vtkStdString& newDescription);
-  vtkGetMacro(SnapshotDescription, vtkStdString);
+  void SetSnapshotDescription(const std::string& newDescription);
+  vtkGetMacro(SnapshotDescription, std::string);
 
   void WriteXML(ostream& of, int nIndent) override;
   void ReadXMLAttributes(const char** atts) override;
@@ -72,7 +75,7 @@ protected:
   void operator=(const vtkMRMLAnnotationSnapshotNode&);
 
   /// The associated Description
-  vtkStdString SnapshotDescription;
+  std::string SnapshotDescription;
 
   /// The vtkImageData of the screenshot
   vtkImageData* ScreenShot;

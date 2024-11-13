@@ -38,7 +38,6 @@
 #include <vtkMRMLStorageNode.h>
 
 // VTK includes
-#include <vtkStdString.h>
 #include <vtkStringArray.h>
 
 //----------------------------------------------------------------------------
