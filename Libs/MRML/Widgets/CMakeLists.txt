@@ -67,6 +67,8 @@ set(MRMLWidgets_SRCS
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.cxx
   qMRMLClipNodeWidget.h
+  qMRMLClipNodeDisplayWidget.cxx
+  qMRMLClipNodeDisplayWidget.h
   qMRMLCollapsibleButton.cxx
   qMRMLCollapsibleButton.h
   qMRMLColors.cxx
@@ -245,6 +247,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLCaptureToolBar.h
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h
+  qMRMLClipNodeDisplayWidget.h
   qMRMLCollapsibleButton.h
   qMRMLColorListView.h
   qMRMLColorPickerWidget.h
@@ -343,6 +346,7 @@ endif()
 # UI files
 set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLClipNodeWidget.ui
+  Resources/UI/qMRMLClipNodeDisplayWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLDisplayNodeWidget.ui
   Resources/UI/qMRMLEventLoggerWidget.ui

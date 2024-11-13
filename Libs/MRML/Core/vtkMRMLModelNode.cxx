@@ -30,6 +30,7 @@ Version:   $Revision: 1.3 $
 #include <vtkEventForwarderCommand.h>
 #include <vtkFloatArray.h>
 #include <vtkGeneralTransform.h>
+#include <vtkImplicitPolyDataDistance.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -57,6 +58,7 @@ vtkMRMLModelNode::vtkMRMLModelNode()
   // for backward compatibility, we assume that if no
   // mesh were set, it is a polydata.
   this->MeshType = vtkMRMLModelNode::PolyDataMeshType;
+
 
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLModelNode::PolyDataModifiedEvent);
 }
@@ -123,8 +125,13 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
       this->MeshConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
   {
+    this->UpdateImplicitDistanceFunction();
     this->StorableModifiedTime.Modified();
     this->InvokeCustomModifiedEvent(vtkMRMLModelNode::MeshModifiedEvent, nullptr);
+  }
+  else if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
+  {
+    this->UpdateImplicitDistanceFunction();
   }
 }
 
@@ -195,6 +202,39 @@ void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet *mesh)
       this->SetUnstructuredGridConnection(tp->GetOutputPort());
     }
   }
+
+  this->UpdateImplicitDistanceFunction();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelNode::UpdateImplicitDistanceFunction()
+{
+  if (!this->ImplicitPolyDataDistanceWorld)
+  {
+    // Don't needed to set up the implicit as it hasn't been requested yet.
+    return;
+  }
+
+  vtkPolyData* polyData = this->GetPolyData();
+  if (!polyData || polyData->GetNumberOfCells() == 0)
+  {
+    this->PolyDataLocalToWorldTransformFilter->SetInputDataObject(nullptr);
+    this->ImplicitPolyDataDistanceWorld->SetInput(nullptr);
+    return;
+  }
+
+  vtkSmartPointer<vtkGeneralTransform> localToWorldTransform = vtkGeneralTransform::SafeDownCast(
+    this->PolyDataLocalToWorldTransformFilter->GetTransform());
+  if (!localToWorldTransform)
+  {
+    localToWorldTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+    this->PolyDataLocalToWorldTransformFilter->SetTransform(localToWorldTransform);
+  }
+  vtkMRMLTransformNode::GetTransformBetweenNodes(this->GetParentTransformNode(), nullptr, localToWorldTransform);
+
+  this->PolyDataLocalToWorldTransformFilter->SetInputDataObject(polyData);
+  this->PolyDataLocalToWorldTransformFilter->Update();
+  this->ImplicitPolyDataDistanceWorld->SetInput(vtkPolyData::SafeDownCast(this->PolyDataLocalToWorldTransformFilter->GetOutput()));
 }
 
 //----------------------------------------------------------------------------
@@ -992,4 +1032,21 @@ bool vtkMRMLModelNode::GetModifiedSinceRead()
 {
   return this->Superclass::GetModifiedSinceRead() ||
     (this->GetMesh() && this->GetMesh()->GetMTime() > this->GetStoredTime());
+}
+
+//---------------------------------------------------------------------------
+vtkImplicitFunction* vtkMRMLModelNode::GetImplicitFunctionWorld()
+{
+
+  if (!this->PolyDataLocalToWorldTransformFilter)
+  {
+    this->PolyDataLocalToWorldTransformFilter = vtkSmartPointer<vtkTransformFilter>::New();
+  }
+
+  if (!this->ImplicitPolyDataDistanceWorld)
+  {
+    this->ImplicitPolyDataDistanceWorld = vtkSmartPointer<vtkImplicitPolyDataDistance>::New();
+    this->UpdateImplicitDistanceFunction();
+  }
+  return this->ImplicitPolyDataDistanceWorld;
 }

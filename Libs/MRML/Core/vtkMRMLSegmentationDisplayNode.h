@@ -165,7 +165,7 @@ public:
   /// If not specified then "vtkMRMLColorTableNodeFileGenericAnatomyColors.txt" is used.
   void SetSegmentColorGeneratorSourceColorNodeID(const char* colorNodeID);
   const char* GetSegmentColorGeneratorSourceColorNodeID();
-  ///@}
+  //@}
 
   /// Collect representation names that are stored as poly data
   void GetPolyDataRepresentationNames(std::set<std::string> &representationNames);
@@ -286,6 +286,27 @@ public:
   vtkBooleanMacro(RemoveUnusedDisplayProperties, bool);
   //@}
 
+  //@{
+  /// Get/set flag to cap clipped surface.
+  /// When enabled, the clipped surface will be capped.
+  vtkGetMacro(ClippingCapSurface, bool);
+  vtkSetMacro(ClippingCapSurface, bool);
+  vtkBooleanMacro(ClippingCapSurface, bool);
+  //@}
+
+  //@{
+  /// Get/set opacity of the clipping cap.
+  vtkGetMacro(ClippingCapOpacity, double);
+  vtkSetMacro(ClippingCapOpacity, double);
+  //@}
+
+  //@{
+  /// Get/set flag to show outline of the clipping region.
+  /// When enabled, the outline of the clipping region will be shown.
+  vtkGetMacro(ClippingOutline, bool);
+  vtkSetMacro(ClippingOutline, bool);
+  vtkBooleanMacro(ClippingOutline, bool);
+
 protected:
   /// Convenience function for getting all segment IDs.
   void GetSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly);
@@ -345,6 +366,10 @@ protected:
   double Opacity2DOutline{1.0};
 
   bool RemoveUnusedDisplayProperties{true};
+
+  bool ClippingCapSurface{ false };
+  double ClippingCapOpacity{ 1.0 };
+  bool ClippingOutline{ false };
 };
 
 #endif

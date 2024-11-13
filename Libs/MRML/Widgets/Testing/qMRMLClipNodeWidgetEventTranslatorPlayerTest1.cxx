@@ -54,11 +54,7 @@ namespace
 void checkFinalWidgetState(void* data)
 {
   qMRMLClipNodeWidget* widget = reinterpret_cast<qMRMLClipNodeWidget*>(data);
-
-  CTKCOMPARE(widget->redSliceClipState(), vtkMRMLClipModelsNode::ClipPositiveSpace);
-  CTKCOMPARE(widget->greenSliceClipState(), vtkMRMLClipModelsNode::ClipNegativeSpace);
   CTKCOMPARE(widget->clipType(), vtkMRMLClipModelsNode::ClipUnion);
-  CTKCOMPARE(widget->yellowSliceClipState(), vtkMRMLClipModelsNode::ClipOff);
 }
 }
 

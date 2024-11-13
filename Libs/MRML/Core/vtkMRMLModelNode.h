@@ -25,6 +25,7 @@ class vtkAlgorithmOutput;
 class vtkAssignAttributes;
 class vtkEventForwarderCommand;
 class vtkDataArray;
+class vtkImplicitPolyDataDistance;
 class vtkPointSet;
 class vtkPolyData;
 class vtkTransformFilter;
@@ -259,6 +260,8 @@ public:
   /// Return true if suitable scalar data was found and set to be displayed.
   bool ShowDefaultScalarData();
 
+  vtkImplicitFunction* GetImplicitFunctionWorld() override;
+
 protected:
   vtkMRMLModelNode();
   ~vtkMRMLModelNode() override;
@@ -289,10 +292,16 @@ protected:
   /// Can be reimplemented if you want to set a different mesh
   virtual void SetMeshToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode);
 
+  /// Updates the implicit function connection
+  void UpdateImplicitDistanceFunction();
+
   /// Data
   vtkAlgorithmOutput* MeshConnection;
   vtkEventForwarderCommand* DataEventForwarder;
   MeshTypeHint MeshType;
+
+  vtkSmartPointer<vtkTransformFilter> PolyDataLocalToWorldTransformFilter;
+  vtkSmartPointer<vtkImplicitPolyDataDistance> ImplicitPolyDataDistanceWorld;
 };
 
 #endif

@@ -31,6 +31,7 @@
 
 // VTK includes
 #include <vtkMatrix4x4.h>
+#include <vtkPlane.h>
 
 /// \brief MRML node to represent a plane markup
 /// Plane Markups nodes contain three control points.
@@ -312,6 +313,9 @@ protected:
   virtual void SetNormalPointRequired(bool);
   vtkGetMacro(NormalPointRequired, bool);
 
+  void UpdateImplicitFunction();
+  vtkImplicitFunction* GetImplicitFunctionWorld() override;
+
 protected:
   bool IsUpdatingControlPointsFromPlane{ false };
   bool IsUpdatingPlaneFromControlPoints{ false };
@@ -342,6 +346,8 @@ protected:
   friend class vtkSlicerPlaneWidget; // To directly access plane update functions
   friend class vtkSlicerPlaneRepresentation3D; // To directly access plane update functions
   friend class vtkSlicerPlaneRepresentation2D; // To directly access plane update functions
+
+  vtkSmartPointer<vtkPlane> ImplicitPlaneWorld;
 };
 
 #endif

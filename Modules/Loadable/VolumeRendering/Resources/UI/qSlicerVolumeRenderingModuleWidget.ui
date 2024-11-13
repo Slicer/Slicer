@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>456</width>
-    <height>691</height>
+    <width>415</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -263,6 +263,104 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+        <property name="title">
+         <string>Clipping</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="3" column="0" colspan="3">
+          <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="ClippingLabel">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Clipping:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="ClipNodeLabel">
+           <property name="text">
+            <string>Clip node:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QCheckBox" name="ClippingCheckBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="qMRMLNodeComboBox" name="ClipNodeSelector">
+           <property name="nodeTypes">
+            <stringlist notr="true">
+             <string>vtkMRMLClipNode</string>
+            </stringlist>
+           </property>
+           <property name="showHidden">
+            <bool>true</bool>
+           </property>
+           <property name="hideChildNodeTypes">
+            <stringlist notr="true"/>
+           </property>
+           <property name="noneEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="renameEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="interactionNodeSingletonTag">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="ClippingSoftEdgeLabel">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Soft edge:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="qMRMLSliderWidget" name="ClippingSoftEdgeSlider">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="singleStep">
+            <double>0.500000000000000</double>
+           </property>
+           <property name="pageStep">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="quantity">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -504,49 +602,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLCheckableNodeComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLCheckableNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLDisplayNodeViewComboBox</class>
-   <extends>qMRMLCheckableNodeComboBox</extends>
-   <header>qMRMLDisplayNodeViewComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLMarkupsROIWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLMarkupsROIWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLVolumePropertyNodeWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLVolumePropertyNodeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerVolumeRenderingPresetComboBox</class>
-   <extends>qSlicerWidget</extends>
-   <header>qSlicerVolumeRenderingPresetComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerGPUMemoryComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qSlicerGPUMemoryComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ctkCheckablePushButton</class>
    <extends>ctkPushButton</extends>
    <header>ctkCheckablePushButton.h</header>
@@ -582,6 +637,60 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLClipNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLClipNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLDisplayNodeViewComboBox</class>
+   <extends>qMRMLCheckableNodeComboBox</extends>
+   <header>qMRMLDisplayNodeViewComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSliderWidget</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLMarkupsROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLMarkupsROIWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLVolumePropertyNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLVolumePropertyNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerVolumeRenderingPresetComboBox</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerVolumeRenderingPresetComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerGPUMemoryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qSlicerGPUMemoryComboBox.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
@@ -842,6 +951,38 @@
     <hint type="destinationlabel">
      <x>105</x>
      <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerVolumeRenderingModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ClipNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>444</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerVolumeRenderingModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLClipNodeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>444</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>409</y>
     </hint>
    </hints>
   </connection>
