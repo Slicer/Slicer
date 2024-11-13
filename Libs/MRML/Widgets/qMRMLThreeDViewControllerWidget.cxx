@@ -848,7 +848,7 @@ void qMRMLThreeDViewControllerWidget::set3DAxisLabelVisible(bool visible)
     return;
   }
 
-  d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::BoxLabelVisibileFlag);
+  d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::BoxLabelVisibleFlag);
   this->mrmlThreeDViewNode()->SetAxisLabelsVisible(visible);
   d->ViewLogic->EndViewNodeInteraction();
 }
