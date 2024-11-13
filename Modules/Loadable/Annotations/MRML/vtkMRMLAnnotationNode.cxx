@@ -436,10 +436,10 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
     return;
   }
 
-  vtkStdString newString;
+  std::string newString;
   if (newText)
   {
-    newString = vtkStdString(newText);
+    newString = std::string(newText);
   }
 
   // check if the same as before
@@ -500,11 +500,11 @@ int vtkMRMLAnnotationNode::AddText(const char *newText,int selectedFlag, int vis
 }
 
 //-------------------------------------------------------------------------
-vtkStdString  vtkMRMLAnnotationNode::GetText(int n)
+std::string vtkMRMLAnnotationNode::GetText(int n)
 {
   if ((this->GetNumberOfTexts() <= n) || n < 0 )
   {
-      return vtkStdString();
+      return std::string();
   }
   return this->TextList->GetValue(n);
 }

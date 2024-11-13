@@ -35,7 +35,6 @@ Care Ontario.
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkObject.h>
-#include <vtkStdString.h>
 #include <vtkUnsignedCharArray.h>
 
 /// \brief MRML node for representing a single compressed video frame that can be decoded to an image representation

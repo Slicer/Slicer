@@ -12,9 +12,6 @@ class vtkMRMLAnnotationNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationTextDisplayNode;
 
-// VTK includes
-#include <vtkStdString.h>
-
 // STD includes
 #include <string>
 
@@ -40,13 +37,13 @@ public:
   void CreateSnapShot(const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot);
 
   /// Modify an existing snapShot.
-  void ModifySnapShot(vtkStdString id, const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot);
+  void ModifySnapShot(std::string id, const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot);
 
   /// Return the name of an existing annotation snapShot.
-  vtkStdString GetSnapShotName(const char* id);
+  std::string GetSnapShotName(const char* id);
 
   /// Return the description of an existing annotation snapShot.
-  vtkStdString GetSnapShotDescription(const char* id);
+  std::string GetSnapShotDescription(const char* id);
 
   /// Return the screenshotType of an existing annotation snapShot.
   int GetSnapShotScreenshotType(const char* id);

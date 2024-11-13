@@ -21,7 +21,6 @@ Version:   $Revision: 1.2 $
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkObjectFactory.h>
-#include <vtkStdString.h>
 
 static const char* UNIT_NODE_REFERENCE_ROLE = "unit/";
 static const char* ACTIVE_VOLUME_REFERENCE_ROLE = "ActiveVolume";

@@ -25,7 +25,6 @@ Version:   $Revision: 1.8 $
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkObjectFactory.h>
-#include <vtkStdString.h>
 
 // STD includes
 #include <sstream>

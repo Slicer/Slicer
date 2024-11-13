@@ -488,7 +488,7 @@ void vtkSlicerVolumesLogic::InitializeStorageNode(
       // it's a list of uris
       int numURIs = fileList->GetNumberOfValues();
       vtkDebugMacro("Have a list of " << numURIs << " uris that go along with the archetype");
-      vtkStdString thisURI;
+      std::string thisURI;
       storageNode->ResetURIList();
       for (int n = 0; n < numURIs; n++)
       {
@@ -504,7 +504,7 @@ void vtkSlicerVolumesLogic::InitializeStorageNode(
     {
       int numFiles = fileList->GetNumberOfValues();
       vtkDebugMacro("Have a list of " << numFiles << " files that go along with the archetype");
-      vtkStdString thisFileName;
+      std::string thisFileName;
       storageNode->ResetFileNameList();
       for (int n = 0; n < numFiles; n++)
       {

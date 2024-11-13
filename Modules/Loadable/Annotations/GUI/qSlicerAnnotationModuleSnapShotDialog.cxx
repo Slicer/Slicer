@@ -16,7 +16,9 @@
 
 // VTK includes
 #include <vtkImageData.h>
-#include <vtkStdString.h>
+
+// STD includes
+#include <string>
 
 //-----------------------------------------------------------------------------
 qSlicerAnnotationModuleSnapShotDialog
@@ -62,7 +64,7 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
   this->setData(QVariant(nodeId));
 
   // get the name..
-  vtkStdString name;
+  std::string name;
   if (this->m_Logic->GetMRMLScene()
     && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)
     && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName())
@@ -74,7 +76,7 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
   this->setNameEdit(QString::fromStdString(name));
 
   // get the description..
-  vtkStdString description = this->m_Logic->GetSnapShotDescription(nodeId);
+  std::string description = this->m_Logic->GetSnapShotDescription(nodeId);
   // ..and set it in the GUI
   this->setDescription(QString::fromStdString(description));
 
@@ -146,7 +148,7 @@ void qSlicerAnnotationModuleSnapShotDialog::accept()
   else
   {
     // this snapshot already exists
-    this->m_Logic->ModifySnapShot(vtkStdString(this->data().toString().toUtf8()),
+    this->m_Logic->ModifySnapShot(std::string(this->data().toString().toUtf8()),
                                   nameBytes.data(),
                                   descriptionBytes.data(),
                                   screenshotType,

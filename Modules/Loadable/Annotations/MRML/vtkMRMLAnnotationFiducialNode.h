@@ -4,9 +4,12 @@
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
 
-#include <vtkStdString.h>
+// VTK includes
 class vtkStringArray;
 class vtkMRMLStorageNode;
+
+// STD includes
+#include <string>
 
 /// \brief MRML node to represent a fiducial in the Annotations module - deprecated
 ///

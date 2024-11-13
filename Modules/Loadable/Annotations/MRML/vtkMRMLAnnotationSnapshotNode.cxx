@@ -41,7 +41,7 @@ void vtkMRMLAnnotationSnapshotNode::WriteXML(ostream& of, int nIndent)
 
   of << " screenshotType=\"" << this->GetScreenShotType() << "\"";
 
-  vtkStdString description = this->GetSnapshotDescription();
+  std::string description = this->GetSnapshotDescription();
   vtksys::SystemTools::ReplaceString(description,"\n","[br]");
 
   of << " snapshotDescription=\"" << description << "\"";
@@ -84,7 +84,7 @@ void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
     {
       std::stringstream ss;
       ss << attValue;
-      vtkStdString sceneViewDescription;
+      std::string sceneViewDescription;
       ss >> sceneViewDescription;
 
       vtksys::SystemTools::ReplaceString(sceneViewDescription,"[br]","\n");
@@ -109,7 +109,7 @@ vtkMRMLStorageNode* vtkMRMLAnnotationSnapshotNode::CreateDefaultStorageNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationSnapshotNode::SetSnapshotDescription(const vtkStdString& newDescription)
+void vtkMRMLAnnotationSnapshotNode::SetSnapshotDescription(const std::string& newDescription)
 {
   if (this->SnapshotDescription == newDescription)
   {

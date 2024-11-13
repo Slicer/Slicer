@@ -13,7 +13,6 @@
 #include <vtkSmartPointer.h>
 
 // STD includes
-#include <string>
 #include <iostream>
 #include <sstream>
 
@@ -129,7 +128,7 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
     newSceneViewNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("SceneView"));
   }
 
-  vtkStdString descriptionString = vtkStdString(description);
+  std::string descriptionString = std::string(description);
 
   newSceneViewNode->SetSceneViewDescription(descriptionString);
   newSceneViewNode->SetScreenShotType(screenshotType);
@@ -147,7 +146,7 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
 
 //---------------------------------------------------------------------------
 void vtkSlicerSceneViewsModuleLogic::
-         ModifySceneView(vtkStdString id,
+         ModifySceneView(std::string id,
                          const char* name,
                          const char* description,
                          int vtkNotUsed(screenshotType),
@@ -184,7 +183,7 @@ void vtkSlicerSceneViewsModuleLogic::
     viewNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("SceneView"));
   }
 
-  vtkStdString descriptionString = vtkStdString(description);
+  std::string descriptionString = std::string(description);
   viewNode->SetSceneViewDescription(descriptionString);
   // only the text is allowed to be modified, not the screen shot type nor the
   // screen shot image, so don't resave them
@@ -195,7 +194,7 @@ void vtkSlicerSceneViewsModuleLogic::
 }
 
 //---------------------------------------------------------------------------
-vtkStdString vtkSlicerSceneViewsModuleLogic::GetSceneViewName(const char* id)
+std::string vtkSlicerSceneViewsModuleLogic::GetSceneViewName(const char* id)
 {
   if (!this->GetMRMLScene())
   {
@@ -211,11 +210,11 @@ vtkStdString vtkSlicerSceneViewsModuleLogic::GetSceneViewName(const char* id)
     return nullptr;
   }
 
-  return vtkStdString(viewNode->GetName());
+  return std::string(viewNode->GetName());
 }
 
 //---------------------------------------------------------------------------
-vtkStdString vtkSlicerSceneViewsModuleLogic::GetSceneViewDescription(const char* id)
+std::string vtkSlicerSceneViewsModuleLogic::GetSceneViewDescription(const char* id)
 {
   if (!this->GetMRMLScene())
   {
