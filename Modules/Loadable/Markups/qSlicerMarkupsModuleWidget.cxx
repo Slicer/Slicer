@@ -1960,7 +1960,7 @@ void qSlicerMarkupsModuleWidget::onSelectionNodeActivePlaceNodeIDChanged()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onListVisibileInvisiblePushButtonClicked()
+void qSlicerMarkupsModuleWidget::onListVisibleInvisiblePushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)

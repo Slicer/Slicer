@@ -411,7 +411,7 @@ void vtkMRMLViewLinkLogic::BroadcastViewNodeEvent(vtkMRMLViewNode* viewNode)
       vNode->EndModify(wasModifying);
     }
     // Box labels visibility
-    else if (viewNode->GetInteractionFlags() == vtkMRMLViewNode::BoxLabelVisibileFlag)
+    else if (viewNode->GetInteractionFlags() == vtkMRMLViewNode::BoxLabelVisibleFlag)
     {
       vNode->SetAxisLabelsVisible(viewNode->GetAxisLabelsVisible());
     }
