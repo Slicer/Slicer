@@ -381,6 +381,22 @@ public:
   const vtkMRMLMessageCollection *GetUserMessages() const { return this->UserMessages; }
   vtkMRMLMessageCollection *GetUserMessages() { return this->UserMessages; }
 
+  //@{
+  /// Ensures that the file name (excluding the extension) is shorter than the maximum allowed length.
+  /// If the filename is shorter than the maximum allowed length then it is returned unchanged.
+  /// If the filename is longer than the maximum allowed length then the filename is shortened by using the following format:
+  /// [first 20 characters of the base name]_[4 character hash code].[extension]
+  /// The length of the prefix is the maximum allowed length minus the length of the hash code plus one for the added underscore.
+  /// The full base name of the file will be exactly maxFileNameLength characters long.
+  /// If maxFileNameLength is negative then the recommended file name length is used.
+  /// \sa GetRecommendedFileNameLength
+  std::string ClampFileName(const std::string& filename, int maxFileNameLength=-1, int hashLength = 4);
+  static std::string ClampFileNameExtension(const std::string& filename, int maxFileNameLength=-1, int hashLength = 4, int extensionLength=0);
+  //@}
+
+  /// Get the recommended maximum length of the file name.
+  static int GetRecommendedFileNameLength() { return 25; };
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode() override;

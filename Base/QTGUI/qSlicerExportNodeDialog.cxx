@@ -357,8 +357,10 @@ QString qSlicerExportNodeDialogPrivate::defaultFilename(vtkMRMLNode* node, QStri
     qCritical() << Q_FUNC_INFO << "failed: Core IO manager not found.";
     return QString();
   }
-  const QString safeNodeName = qSlicerCoreIOManager::forceFileNameValidCharacters(unsafeNodeName);
-  return forceFileNameExtension(safeNodeName, extension, node);
+
+  QString safeNodeName = qSlicerCoreIOManager::forceFileNameValidCharacters(unsafeNodeName);
+  safeNodeName = qSlicerCoreIOManager::forceFileNameMaxLengthExtension(safeNodeName, 0);
+  return qSlicerExportNodeDialogPrivate::forceFileNameExtension(safeNodeName, extension, node);
 }
 
 //-----------------------------------------------------------------------------
@@ -1101,7 +1103,9 @@ QString qSlicerExportNodeDialogPrivate::recommendedFilename(vtkMRMLStorableNode*
     extension = QString();
   }
 
-  return forceFileNameExtension(this->FilenameLineEdit->text(), extension, node);
+  // If the filename is too long, suggest a shorter one.
+  QString shortenedFilename = qSlicerCoreIOManager::forceFileNameMaxLengthExtension(this->FilenameLineEdit->text(), extension.length());
+  return qSlicerExportNodeDialogPrivate::forceFileNameExtension(shortenedFilename, extension, node);
 }
 
 //-----------------------------------------------------------------------------

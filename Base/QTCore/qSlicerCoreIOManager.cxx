@@ -482,8 +482,20 @@ QString qSlicerCoreIOManager::forceFileNameValidCharacters(const QString& filena
 
   // Remove leading and trailing spaces
   sanitizedFilename = sanitizedFilename.trimmed();
-
   return sanitizedFilename;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreIOManager::forceFileNameMaxLength(const QString& filename, int maxLength/*=-1*/)
+{
+  QString extension = this->extractKnownExtension(filename, nullptr);
+  return qSlicerCoreIOManager::forceFileNameMaxLengthExtension(filename, maxLength, extension.length());
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreIOManager::forceFileNameMaxLengthExtension(const QString& filename, int extensionLength, int maxLength/*=-1*/)
+{
+  return QString::fromStdString(vtkMRMLStorageNode::ClampFileNameExtension(filename.toStdString(), maxLength, 4, extensionLength));
 }
 
 //-----------------------------------------------------------------------------
