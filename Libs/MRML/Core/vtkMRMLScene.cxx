@@ -4565,6 +4565,7 @@ bool vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNo
     // Default storage node usually has empty file name (if Save dialog is not opened yet)
     // file name is encoded to handle : or / characters in the node names
     std::string fileBaseName = this->PercentEncode(std::string(storableNode->GetName()));
+    fileBaseName = storageNode->ClampFileName(fileBaseName);
     std::string extension = storageNode->GetDefaultWriteFileExtension();
     std::string storageFileName = fileBaseName + std::string(".") + extension;
     vtkDebugMacro("new file name = " << storageFileName.c_str());
