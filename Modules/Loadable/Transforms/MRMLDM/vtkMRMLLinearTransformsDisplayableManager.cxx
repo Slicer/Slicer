@@ -275,16 +275,19 @@ void vtkMRMLLinearTransformsDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode
     return;
   }
 
-  vtkMRMLTransformNode* transformNode = nullptr;
-  vtkMRMLTransformDisplayNode* displayNode = nullptr;
-  if (transformNode = vtkMRMLTransformNode::SafeDownCast(node))
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(node);
+  if (transformNode)
   {
     this->Internal->AddObservations(transformNode);
+    return;
   }
-  else if (displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node))
+
+  vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node);
+  if (displayNode)
   {
     this->Internal->UpdatePipelineFromDisplayNode(vtkMRMLTransformDisplayNode::SafeDownCast(node));
     this->RequestRender();
+    return;
   }
 }
 
@@ -298,19 +301,22 @@ void vtkMRMLLinearTransformsDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNo
     return;
   }
 
-  vtkMRMLTransformNode* transformNode = nullptr;
-  vtkMRMLTransformDisplayNode* displayNode = nullptr;
-
   bool modified = false;
-  if (transformNode = vtkMRMLTransformNode::SafeDownCast(node))
+
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(node);
+  if (transformNode)
   {
     this->Internal->RemoveObservations(transformNode);
     modified = true;
   }
-  else if (displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node))
+  else
   {
-    this->Internal->UpdatePipelineFromDisplayNode(displayNode);
-    modified = true;
+    vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node);
+    if (displayNode)
+    {
+      this->Internal->UpdatePipelineFromDisplayNode(displayNode);
+      modified = true;
+    }
   }
 
   if (modified)

@@ -130,7 +130,6 @@ double qSlicerTransformsReader::canLoadFileConfidence(const QString& fileName)co
       using ImageIOType = itk::NiftiImageIO;
       ImageIOType::Pointer niftiIO = ImageIOType::New();
       niftiIO->SetFileName(fileName.toStdString());
-      bool readSuccessful = false;
       try
       {
         niftiIO->ReadImageInformation();

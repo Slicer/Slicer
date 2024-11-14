@@ -417,7 +417,6 @@ void qSlicerTransformsModuleWidget::updateCenterOfTransformationWidgets()
   {
     vtkNew<vtkGeneralTransform> transform;
     d->MRMLTransformNode->GetTransformToWorld(transform);
-    double coordinates_World[3] = { 0.0, 0.0, 0.0 };
     transform->TransformPoint(centerOfTransformation, centerOfTransformation);
   }
 

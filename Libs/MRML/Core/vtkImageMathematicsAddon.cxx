@@ -152,8 +152,7 @@ void vtkImageMathematicsAddonExecute2(vtkImageMathematicsAddon* self, vtkImageDa
   unsigned long count = 0;
   unsigned long target;
   int op = self->GetOperation();
-  int divideByZeroToC = self->GetDivideByZeroToC();
-  double constantc = self->GetConstantC();
+
   double normalizeScalarRange[2] = { 0.0, 1.0 };
   self->GetRange(normalizeScalarRange);
   double normalizeMagnitude = normalizeScalarRange[1] - normalizeScalarRange[0];
@@ -170,6 +169,18 @@ void vtkImageMathematicsAddonExecute2(vtkImageMathematicsAddon* self, vtkImageDa
   inData->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
   outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
 
+  if (op != VTK_MULTIPLYBYSCALEDRANGE)
+  {
+    vtkErrorWithObjectMacro(self, << "Execute: Unknown operation: " << op);
+    return;
+  }
+
+  if (normalizeMagnitude == 0.0)
+  {
+    vtkErrorWithObjectMacro(self, << "Execute: normalizeScalarRange width is zero");
+    return;
+  }
+
   // Loop through output pixels
   for (idxZ = 0; idxZ <= maxZ; idxZ++)
   {
@@ -185,15 +196,7 @@ void vtkImageMathematicsAddonExecute2(vtkImageMathematicsAddon* self, vtkImageDa
       }
       for (idxR = 0; idxR < rowLength; idxR++)
       {
-        // Pixel operation
-        switch (op)
-        {
-        case VTK_MULTIPLYBYSCALEDRANGE:
-          *outPtr = *inPtr * static_cast<float>((*outPtr - normalizeScalarRange[0]) / normalizeMagnitude);
-          break;
-        default:
-          break;
-        }
+        *outPtr = *inPtr * static_cast<float>((*outPtr - normalizeScalarRange[0]) / normalizeMagnitude);
         outPtr++;
         inPtr++;
       }
