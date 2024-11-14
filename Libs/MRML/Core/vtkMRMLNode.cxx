@@ -2068,7 +2068,7 @@ bool vtkMRMLNode::vtkMRMLNodeReference::SetProperty(const std::string& key, cons
   bool modified = false;
   if (propertiesIt != this->Properties.end())
   {
-    if (propertiesIt->second != value);
+    if (propertiesIt->second != value)
     {
       modified = true;
       propertiesIt->second = value;
@@ -2160,7 +2160,7 @@ void vtkMRMLNode::SetNthNodeReferenceProperty(const std::string& referenceRole, 
   }
 
   NodeReferenceListType& references = this->NodeReferences[std::string(referenceRole)];
-  if (n < 0 || n >= references.size())
+  if (n < 0 || static_cast<size_t>(n) >= references.size())
   {
     return;
   }

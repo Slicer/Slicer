@@ -556,7 +556,7 @@ int vtkMRMLClipNode::GetClippingNodeState(const char* nodeID)
 int vtkMRMLClipNode::GetNthClippingNodeState(int n)
 {
   NodeReferenceListType references = this->NodeReferences[ClippingNodeReferenceRole];
-  if (references.size() <= n)
+  if (references.size() <= static_cast<size_t>(n))
   {
     return ClipOff;
   }
@@ -596,7 +596,7 @@ void vtkMRMLClipNode::SetClippingNodeState(const char* nodeID, int state)
 void vtkMRMLClipNode::SetNthClippingNodeState(int n, int state)
 {
   NodeReferenceListType references = this->NodeReferences[ClippingNodeReferenceRole];
-  if (references.size() <= n)
+  if (references.size() <= static_cast<size_t>(n))
   {
     return;
   }

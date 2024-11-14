@@ -50,6 +50,7 @@ public:
   /**
    * Evaluate boolean combinations of implicit function using current operator.
    */
+  using vtkImplicitBoolean::EvaluateFunction;
   double EvaluateFunction(double x[3]) override;
   //@}
 
