@@ -364,6 +364,16 @@ If unchecked, the exported dataset will be added to the DICOM database.</string>
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="PrintButton">
+       <property name="text">
+        <string>Print</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

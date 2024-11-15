@@ -82,6 +82,9 @@ protected slots:
   /// Call export series or entire scene based on radio button selection
   void onExport();
 
+  /// Print button, modify by onExport, Call PrintDialog
+  void onPrint();
+
   /// Handle save tags checkbox toggles
   void onSaveTagsCheckBoxToggled(bool);
 

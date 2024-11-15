@@ -44,15 +44,23 @@
 #include <QSettings>
 #include <QMessageBox>
 
+// Printer
+#include <QPrinter>
+#include <QPrintPreviewDialog>
+#include <QPainter>
+
 // PythonQt includes
 #include "PythonQt.h"
 
 // MRML includes
+#include <vtkImageData.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLScalarVolumeNode.h>
 
 // SlicerApp includes
 #include <qSlicerApplication.h>
 #include <qSlicerCorePythonManager.h>
+//#include <qSlicerAbstractCoreModule.h>
 
 // CTK includes
 // XXX Avoid  warning: "HAVE_XXXX" redefined
@@ -125,6 +133,8 @@ void qSlicerDICOMExportDialogPrivate::init()
     q, SLOT(onTagEdited()));
   connect(this->ExportButton, SIGNAL(clicked()),
     q, SLOT(onExport()));
+  connect(this->PrintButton, SIGNAL(clicked()),
+      q, SLOT(onPrint()));
   connect(this->SaveTagsCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(onSaveTagsCheckBoxToggled(bool)) );
   connect(this->ExportToFolderCheckBox, SIGNAL(toggled(bool)),
@@ -478,6 +488,160 @@ void qSlicerDICOMExportDialog::onExport()
     // Close the export dialog after successful export
     d->done(0);
   }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDICOMExportDialog::onPrint()
+{
+    Q_D(qSlicerDICOMExportDialog);
+
+    // Read all image for vtkMRMLNode
+    QList<QImage> imageList;
+    vtkMRMLSubjectHierarchyNode* shNode = d->SubjectHierarchyTreeView->subjectHierarchyNode();
+    vtkMRMLNode* node = shNode->GetItemDataNode(d->SubjectHierarchyTreeView->currentItem());
+    //vtkMRMLNode* node = d->Scene->GetFirstNodeByClass("vtkMRMLScalarVolumeNode");
+    if (node)
+    {
+        vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
+        if (volumeNode)
+        {
+            vtkImageData* imageData = volumeNode->GetImageData();
+            if (imageData)
+            {
+                double range[2];
+                imageData->GetScalarRange(range);
+                int scalarType = imageData->GetScalarType();
+                // qDebug() << "Scalar range: [" << range[0] << ", " << range[1] << "]" << scalarType;
+                // TODO:Temporary!, dicom piexl data have int and short? no uint
+                if (scalarType == VTK_INT) {
+                    int* scalarPointer = static_cast<int*>(imageData->GetScalarPointer());
+                    int extent[6];
+                    imageData->GetExtent(extent);
+                    int width = extent[1] - extent[0] + 1;
+                    int height = extent[3] - extent[2] + 1;
+                    int depth = extent[5] - extent[4] + 1;
+                    // qDebug() << width << height << depth;
+                    QImage qImage(width, height, QImage::Format_Grayscale8);
+                    for (int z = 0; z < depth; ++z) {
+                        QImage qImage(width, height, QImage::Format_Grayscale8);
+                        for (int y = 0; y < height; ++y)
+                        {
+                            for (int x = 0; x < width; ++x)
+                            {
+                                int value = scalarPointer[z * height * width + y * width + x];
+                                int normalizedValue = static_cast<int>((value - range[0]) * 255 / (range[1] - range[0]));
+                                qImage.bits()[y * qImage.bytesPerLine() + x] = static_cast<uchar>(normalizedValue);
+                            }
+                        }
+                        imageList.append(qImage);
+                    }
+                }
+                else if (scalarType == VTK_SHORT) {
+                    short* scalarPointer = static_cast<short*>(imageData->GetScalarPointer());
+                    int extent[6];
+                    imageData->GetExtent(extent);
+                    int width = extent[1] - extent[0] + 1;
+                    int height = extent[3] - extent[2] + 1;
+                    int depth = extent[5] - extent[4] + 1;
+                    // qDebug() << width << height << depth;
+                    for (int z = 0; z < depth; ++z) {
+                        QImage qImage(width, height, QImage::Format_Grayscale8);
+                        for (int y = 0; y < height; ++y)
+                        {
+                            for (int x = 0; x < width; ++x)
+                            {
+                                short value = scalarPointer[z * height * width + y * width + x];
+                                short normalizedValue = static_cast<short>((value - range[0]) * 255 / (range[1] - range[0]));
+                                qImage.bits()[y * qImage.bytesPerLine() + x] = static_cast<uchar>(normalizedValue);
+                            }
+                        }
+                        imageList.append(qImage);
+                    }
+                }
+            }
+        }
+    }
+    // qDebug() << "image num: " << imageList.size();
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setPageSize(QPrinter::A4);
+    printer.setOrientation(QPrinter::Landscape);
+    printer.setResolution(300);
+    QPrintPreviewDialog previewDialog(&printer);
+    previewDialog.resize(1000, 800);
+    previewDialog.setWindowTitle("Print");
+
+    connect(&previewDialog, &QPrintPreviewDialog::paintRequested, this, [&,imageList](QPrinter* this_printer) {
+        QPainter painter(this_printer);
+
+        // Print image
+        QRect pageRect = this_printer->pageRect();
+        int pageWidth = pageRect.width();
+        int pageHeight = pageRect.height();
+        qDebug() << pageWidth << pageHeight;
+        int imageWidth = pageWidth * 0.7;
+        int imageHeight = pageHeight * 1.0;
+        QRect imageRect(0, 0, imageWidth, imageHeight);
+
+        int numColumns = 5;
+        int numRows = 5;
+        int cellWidth = imageRect.width() / numColumns;
+        int cellHeight = imageRect.height() / numRows;
+
+        int imagesPerPage = numColumns * numRows;
+        int totalPages = (imageList.size() + imagesPerPage - 1) / imagesPerPage;
+
+        for (int page = 0; page < totalPages; ++page) {
+            int startIdx = page * imagesPerPage;
+            int endIdx = qMin((page + 1) * imagesPerPage, imageList.size());
+
+            for (int i = startIdx; i < endIdx; ++i) {
+                int row = (i - startIdx) / numColumns;
+                int col = (i - startIdx) % numColumns;
+
+                int x = imageRect.left() + col * cellWidth+2;
+                int y = imageRect.top() + row * cellHeight+2;
+
+                QRect imageCellRect(x, y, cellWidth, cellHeight);
+
+                QImage img = imageList[i];
+
+                painter.drawImage(imageCellRect, img);
+            }
+
+            // Print Text
+            int infoWidth = pageWidth * 0.3;
+            int infoX = imageWidth;
+            QRect infoRect(infoX, 0, infoWidth, pageHeight);
+
+            QFont font = painter.font();
+            font.setPointSize(10);
+            painter.setFont(font);
+
+            int margin = 20;
+            int textY = margin;
+
+            QString pageNumber = QString("Page:  %1 / %2 ").arg(page).arg(totalPages);
+            painter.drawText(infoX + margin, textY, infoWidth - margin * 2, 40, Qt::AlignLeft, pageNumber);
+
+            textY += 60;
+            painter.drawText(infoX + margin, textY, infoWidth - margin * 2, 40, Qt::AlignLeft, "Tags：");
+            textY += 60;
+
+            QMap<QString, QString> qmap = d->DICOMTagEditorWidget->exportables()[0]->tags();
+            for (auto it = qmap.cbegin(); it != qmap.cend(); ++it) {
+                painter.drawText(infoX + margin, textY, infoWidth - margin * 2, 40, Qt::AlignLeft, it.key() + ":" + it.value());
+                textY += 90;
+            }
+
+            if (page < totalPages - 1) {
+                this_printer->newPage();
+            }
+        }
+        painter.end();
+    });
+    previewDialog.exec();
+
 }
 
 //-----------------------------------------------------------------------------
