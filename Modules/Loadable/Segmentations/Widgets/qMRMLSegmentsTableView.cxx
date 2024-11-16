@@ -463,15 +463,15 @@ void qMRMLSegmentsTableView::onSegmentsTableClicked(const QModelIndex& modelInde
     return;
   }
 
-  vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toStdString());
   if (modelIndex.column() == d->Model->visibilityColumn())
   {
-    // Set all visibility types to segment referenced by button toggled
-    int visible = item->data(qMRMLSegmentsModel::VisibilityRole).toInt() != 0;
-    this->setSegmentVisibility(segmentId, visible, -1, -1, -1);
+    // Toggle segment visibility
+    bool visible = (item->data(qMRMLSegmentsModel::VisibilityRole).toInt() != 0);
+    this->setSegmentVisibility(segmentId, !visible, -1, -1, -1);
   }
   else if (modelIndex.column() == d->Model->statusColumn())
   {
+    vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toStdString());
     int status = vtkSlicerSegmentationsModuleLogic::GetSegmentStatus(segment);
     switch (status)
     {
