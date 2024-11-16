@@ -507,7 +507,13 @@ CTK_SET_CPP(qSlicerApplication, ctkErrorLogLevel::LogLevel, setPythonConsoleLogL
 
 //-----------------------------------------------------------------------------
 qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
-  : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions, nullptr), _argc, _argv)
+  : qSlicerApplication(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions, nullptr), _argc, _argv)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerApplication::qSlicerApplication(qSlicerApplicationPrivate *pimpl, int &_argc, char **_argv)
+  : Superclass(pimpl, _argc, _argv)
 {
   Q_D(qSlicerApplication);
   d->init();

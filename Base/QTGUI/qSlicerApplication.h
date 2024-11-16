@@ -264,6 +264,7 @@ protected slots:
 #endif
 
 protected:
+  qSlicerApplication(qSlicerApplicationPrivate *pimpl, int &_argc, char **_argv);
   /// Reimplemented from qSlicerCoreApplication
   void handlePreApplicationCommandLineArguments() override;
   void handleCommandLineArguments() override;
