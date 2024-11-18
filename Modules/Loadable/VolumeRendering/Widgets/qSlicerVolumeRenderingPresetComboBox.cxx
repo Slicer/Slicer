@@ -321,7 +321,7 @@ void qSlicerVolumeRenderingPresetComboBox::applyPreset(vtkMRMLNode* node)
     return;
   }
 
-  d->VolumePropertyNode->Copy(presetNode);
+  d->VolumePropertyNode->CopyContent(presetNode);
 
   this->resetOffset();
 }

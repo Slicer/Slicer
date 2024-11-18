@@ -30,7 +30,6 @@ int TestSaveAndRead(std::string filename, vtkMRMLScene* scene, vtkMatrix4x4* mat
   vtkMRMLTransformNode* writeTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTransformNode"));
   writeTransformNode->SetMatrixTransformToParent(matrix);
   writeTransformNode->SetCenterOfTransformation(centerOfTransformation);
-  scene->AddNode(writeTransformNode);
 
   writeTransformNode->AddDefaultStorageNode();
   vtkMRMLTransformStorageNode* writeStorageNode = vtkMRMLTransformStorageNode::SafeDownCast(writeTransformNode->GetStorageNode());
@@ -42,8 +41,7 @@ int TestSaveAndRead(std::string filename, vtkMRMLScene* scene, vtkMatrix4x4* mat
   writeStorageNode->SetFileName(filename.c_str());
   CHECK_INT(writeStorageNode->WriteData(writeTransformNode), 1);
 
-  vtkNew<vtkMRMLTransformNode> readTransformNode;
-  scene->AddNode(readTransformNode);
+  vtkMRMLTransformNode* readTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTransformNode"));
   readTransformNode->AddDefaultStorageNode();
   vtkMRMLTransformStorageNode* readStorageNode = vtkMRMLTransformStorageNode::SafeDownCast(readTransformNode->GetStorageNode());
   readStorageNode->SetFileName(filename.c_str());

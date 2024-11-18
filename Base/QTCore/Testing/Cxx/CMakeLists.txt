@@ -133,9 +133,13 @@ if(BUILD_TESTING)
 
   # Remark: qSlicerModuleFactoryManager class is tested within Applications/SlicerApp/Testing
 
+  #-----------------------------------------------------------------------------
+  # Temporary test directory for file writing
+  set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
+
   simple_test( qSlicerCoreApplicationTest1)
   set_property(TEST qSlicerCoreApplicationTest1 PROPERTY LABELS ${LIBRARY_NAME})
-  simple_test( qSlicerCoreIOManagerTest1 )
+  simple_test( qSlicerCoreIOManagerTest1 ${TEMP})
   set_property(TEST qSlicerCoreIOManagerTest1 PROPERTY LABELS ${LIBRARY_NAME})
   simple_test( qSlicerAbstractCoreModuleTest1 )
   simple_test( qSlicerLoadableModuleFactoryTest1 )

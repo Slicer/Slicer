@@ -134,6 +134,7 @@ public:
     SkippedNoData
   };
 
+  //@{
   /// Get/Set the state of reading
   vtkGetMacro(ReadState,int);
   vtkSetMacro(ReadState,int);
@@ -146,11 +147,13 @@ public:
   void SetReadStateSkippedNoData() { this->SetReadState(this->SkippedNoData); };
   const char *GetStateAsString(int state);
   const char *GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
+  //@}
 
-  ///
-  /// Get/Set the state of writing
+  //@{
+  /// Get/Set the state of writing.
+  /// This is a transient property (that is expected to change and is not considered as a node change that needs to be stored persistently).
   vtkGetMacro(WriteState,int);
-  vtkSetMacro(WriteState,int);
+  void SetWriteState(int writeState);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
   void SetWriteStateIdle() { this->SetWriteState(this->Idle); };
   void SetWriteStateScheduled() { this->SetWriteState(this->Scheduled); };
@@ -159,6 +162,7 @@ public:
   void SetWriteStateCancelled() { this->SetWriteState(this->Cancelled); };
   void SetWriteStateSkippedNoData() { this->SetWriteState(this->SkippedNoData); };
   const char *GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
+  //@}
 
   ///
   /// Get the file's absolute path from the file name and the mrml scene root
@@ -196,10 +200,12 @@ public:
   /// If extension is not specified for a type or .* is specified then .* will be returned.
   virtual void GetFileExtensionsFromFileTypes(vtkStringArray* inputFileTypes, vtkStringArray* outputFileExtensions);
 
-  ///
+  //@{
   /// Allow to set specific file format that this node will write output.
-  vtkSetStringMacro(WriteFileFormat);
+  /// This is a transient property (that is expected to change and is not a reason for saving the node again if modified).
+  virtual void SetWriteFileFormat(const char* writeFileFormat);
   vtkGetStringMacro(WriteFileFormat);
+  //@}
 
   ///
   /// Add in another file name to the list of file names
@@ -374,6 +380,22 @@ public:
 
   const vtkMRMLMessageCollection *GetUserMessages() const { return this->UserMessages; }
   vtkMRMLMessageCollection *GetUserMessages() { return this->UserMessages; }
+
+  //@{
+  /// Ensures that the file name (excluding the extension) is shorter than the maximum allowed length.
+  /// If the filename is shorter than the maximum allowed length then it is returned unchanged.
+  /// If the filename is longer than the maximum allowed length then the filename is shortened by using the following format:
+  /// [first 20 characters of the base name]_[4 character hash code].[extension]
+  /// The length of the prefix is the maximum allowed length minus the length of the hash code plus one for the added underscore.
+  /// The full base name of the file will be exactly maxFileNameLength characters long.
+  /// If maxFileNameLength is negative then the recommended file name length is used.
+  /// \sa GetRecommendedFileNameLength
+  std::string ClampFileName(const std::string& filename, int maxFileNameLength=-1, int hashLength = 4);
+  static std::string ClampFileNameExtension(const std::string& filename, int maxFileNameLength=-1, int hashLength = 4, int extensionLength=0);
+  //@}
+
+  /// Get the recommended maximum length of the file name.
+  static int GetRecommendedFileNameLength() { return 25; };
 
 protected:
   vtkMRMLStorageNode();

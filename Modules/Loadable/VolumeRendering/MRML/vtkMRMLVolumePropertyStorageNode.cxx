@@ -135,28 +135,25 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   std::getline(ifs, line);
   if (!line.empty())
   {
-    vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
+    vtkNew<vtkPiecewiseFunction> scalarOpacity;
     vpNode->GetPiecewiseFunctionFromString(line, scalarOpacity),
     vpNode->SetScalarOpacity(scalarOpacity);
-    scalarOpacity->Delete();
   }
 
   std::getline(ifs, line);
   if (!line.empty())
   {
-    vtkPiecewiseFunction *gradientOpacity=vtkPiecewiseFunction::New();
+    vtkNew<vtkPiecewiseFunction> gradientOpacity;
     vpNode->GetPiecewiseFunctionFromString(line, gradientOpacity);
     vpNode->SetGradientOpacity(gradientOpacity);
-    gradientOpacity->Delete();
   }
 
   std::getline(ifs, line);
   if (!line.empty())
   {
-    vtkColorTransferFunction *colorTransfer=vtkColorTransferFunction::New();
+    vtkNew<vtkColorTransferFunction> colorTransfer;
     vpNode->GetColorTransferFunctionFromString(line, colorTransfer);
     vpNode->SetColor(colorTransfer);
-    colorTransfer->Delete();
   }
   ifs.close();
 

@@ -447,12 +447,12 @@ void qMRMLThreeDView::resetFocalPoint()
 {
   Q_D(qMRMLThreeDView);
 
-  bool savedBoxVisibile = true;
+  bool savedBoxVisible = true;
   bool savedAxisLabelVisible = true;
   if (d->MRMLViewNode)
   {
     // Save current visibility state of Box and AxisLabel
-    savedBoxVisibile = d->MRMLViewNode->GetBoxVisible();
+    savedBoxVisible = d->MRMLViewNode->GetBoxVisible();
     savedAxisLabelVisible = d->MRMLViewNode->GetAxisLabelsVisible();
 
     int wasModifying = d->MRMLViewNode->StartModify();
@@ -479,7 +479,7 @@ void qMRMLThreeDView::resetFocalPoint()
   {
     // Restore visibility state
     int wasModifying = d->MRMLViewNode->StartModify();
-    d->MRMLViewNode->SetBoxVisible(savedBoxVisibile);
+    d->MRMLViewNode->SetBoxVisible(savedBoxVisible);
     d->MRMLViewNode->SetAxisLabelsVisible(savedAxisLabelVisible);
     d->MRMLViewNode->EndModify(wasModifying);
     // Inform the displayable manager that the view is reset, so it can

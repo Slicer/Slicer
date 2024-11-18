@@ -201,7 +201,7 @@ vtkSlicerMarkupsWidgetRepresentation3D::vtkSlicerMarkupsWidgetRepresentation3D()
   this->AccuratePicker = vtkSmartPointer<vtkCellPicker>::New();
   this->AccuratePicker->SetTolerance(.005);
 
-  // Using the minimum value of -65000 creates a lot of rendering artifacts on the occluded objects, as all of the
+  // Using the minimum value of -66000 creates a lot of rendering artifacts on the occluded objects, as all of the
   // pixels in the occluded object will have the same depth buffer value (0.0).
   // Using a default value of -25000 strikes a balance between rendering the occluded objects on top of other objects,
   // while still providing enough leeway to ensure that occluded actors are rendered correctly relative to themselves

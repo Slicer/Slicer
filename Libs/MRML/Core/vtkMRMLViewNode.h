@@ -290,7 +290,8 @@ public:
     RenderModeFlag,
     BoxVisibleFlag,
     BoxColorFlag,
-    BoxLabelVisibileFlag,
+    BoxLabelVisibleFlag,
+    BoxLabelVisibileFlag = BoxLabelVisibleFlag, ///< \deprecated Use BoxLabelVisibleFlag instead
     BackgroundColorFlag,
     StereoTypeFlag,
     OrientationMarkerTypeFlag,

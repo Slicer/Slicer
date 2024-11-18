@@ -11,8 +11,15 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         super().__init__()
         self.name = "Scalar Volume"
         self.title = _("Scalar Volume")
-        self.keys = ["voxel_count", "volume_mm3", "volume_cm3", "min", "max", "mean", "median", "stdev"]
-        self.defaultKeys = self.keys  # calculate all measurements by default
+        self.keys = [
+            "voxel_count", "volume_mm3", "volume_cm3", "min", "max", "mean", "stdev",
+            "percentile_05", "percentile_10", "percentile_90", "percentile_95", "median",
+        ]
+        # skip 10th and 90th percentiles by default to keep the table compact
+        self.defaultKeys = [
+            "voxel_count", "volume_mm3", "volume_cm3", "min", "max", "mean", "stdev",
+            "percentile_05", "percentile_95", "median",
+        ]
         # ... developer may add extra options to configure other parameters
 
     def computeStatistics(self, segmentID):
@@ -36,10 +43,12 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         stat.SetStencilData(stencil.GetOutput())
         stat.Update()
 
-        medians = vtk.vtkImageHistogramStatistics()
-        medians.SetInputData(grayscaleNode.GetImageData())
-        medians.SetStencilData(stencil.GetOutput())
-        medians.Update()
+        histogram = vtk.vtkImageHistogramStatistics()
+        histogram.SetInputData(grayscaleNode.GetImageData())
+        histogram.SetStencilData(stencil.GetOutput())
+        histogram.SetAutoRangePercentiles(5, 95)
+        histogram.SetAutoRangeExpansionFactors(0, 0)  # compute exact percentiles (do not add margin)
+        histogram.Update()
 
         # create statistics list
         stats = {}
@@ -59,7 +68,20 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
             if "stdev" in requestedKeys:
                 stats["stdev"] = stat.GetStandardDeviation()[0]
             if "median" in requestedKeys:
-                stats["median"] = medians.GetMedian()
+                stats["median"] = histogram.GetMedian()
+            if "percentile_05" or "percentile_95" in requestedKeys:
+                # percentiles for 5 and 95 are already computed
+                if "percentile_05" in requestedKeys:
+                    stats["percentile_05"] = histogram.GetAutoRange()[0]
+                if "percentile_95" in requestedKeys:
+                    stats["percentile_95"] = histogram.GetAutoRange()[1]
+            if "percentile_10" or "percentile_90" in requestedKeys:
+                histogram.SetAutoRangePercentiles(10, 90)
+                histogram.Update()
+                if "percentile_10" in requestedKeys:
+                    stats["percentile_10"] = histogram.GetAutoRange()[0]
+                if "percentile_90" in requestedKeys:
+                    stats["percentile_90"] = histogram.GetAutoRange()[1]
         return stats
 
     def getStencilForVolume(self, segmentationNode, segmentID, grayscaleNode):
@@ -189,13 +211,6 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                                        unitsDicomCode=scalarVolumeUnits.GetAsString(),
                                        derivationDicomCode=self.createCodedEntry("373098007", "SCT", "Mean", True))
 
-        elif key == "median":
-            return self.createMeasurementInfo(name="Median", title=_("Median"), description=_("Median input scalar volume voxel value within the segment."),
-                                       units=scalarVolumeUnits.GetCodeMeaning(),
-                                       quantityDicomCode=scalarVolumeQuantity.GetAsString(),
-                                       unitsDicomCode=scalarVolumeUnits.GetAsString(),
-                                       derivationDicomCode=self.createCodedEntry("median", "SCT", "Median", True))
-
         elif key == "stdev":
             return self.createMeasurementInfo(name="Standard deviation",
                                        title=_("Standard Deviation"),
@@ -204,5 +219,47 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
                                        quantityDicomCode=scalarVolumeQuantity.GetAsString(),
                                        unitsDicomCode=scalarVolumeUnits.GetAsString(),
                                        derivationDicomCode=self.createCodedEntry("386136009", "SCT", "Standard Deviation", True))
+
+        elif key == "percentile_05":
+            return self.createMeasurementInfo(name="Percentile 5",
+                                       title=_("Percentile 5"),
+                                       description=_("5th percentile of input scalar volume voxel values within the segment."),
+                                       units=scalarVolumeUnits.GetCodeMeaning(),
+                                       quantityDicomCode=scalarVolumeQuantity.GetAsString(),
+                                       unitsDicomCode=scalarVolumeUnits.GetAsString(),
+                                       derivationDicomCode=self.createCodedEntry("371888009", "SCT", "Fifth percentile", True))
+        elif key == "percentile_10":
+            return self.createMeasurementInfo(name="Percentile 10",
+                                       title=_("Percentile 10"),
+                                       description=_("10th percentile of input scalar volume voxel values within the segment."),
+                                       units=scalarVolumeUnits.GetCodeMeaning(),
+                                       quantityDicomCode=scalarVolumeQuantity.GetAsString(),
+                                       unitsDicomCode=scalarVolumeUnits.GetAsString(),
+                                       derivationDicomCode=self.createCodedEntry("371890005", "SCT", "Tenth percentile", True))
+        elif key == "percentile_90":
+            return self.createMeasurementInfo(name="Percentile 90",
+                                       title=_("Percentile 90"),
+                                       description=_("90th percentile of input scalar volume voxel values within the segment."),
+                                       units=scalarVolumeUnits.GetCodeMeaning(),
+                                       quantityDicomCode=scalarVolumeQuantity.GetAsString(),
+                                       unitsDicomCode=scalarVolumeUnits.GetAsString(),
+                                       derivationDicomCode=self.createCodedEntry("371887004", "SCT", "Ninetieth percentile", True))
+        elif key == "percentile_95":
+            return self.createMeasurementInfo(name="Percentile 95",
+                                       title=_("Percentile 95"),
+                                       description=_("95th percentile of input scalar volume voxel values within the segment."),
+                                       units=scalarVolumeUnits.GetCodeMeaning(),
+                                       quantityDicomCode=scalarVolumeQuantity.GetAsString(),
+                                       unitsDicomCode=scalarVolumeUnits.GetAsString(),
+                                       derivationDicomCode=self.createCodedEntry("371889001", "SCT", "Ninety-fifth percentile", True))
+
+        elif key == "median":
+            return self.createMeasurementInfo(name="Median",
+                                       title=_("Median"),
+                                       description=_("Median input scalar volume voxel value within the segment."),
+                                       units=scalarVolumeUnits.GetCodeMeaning(),
+                                       quantityDicomCode=scalarVolumeQuantity.GetAsString(),
+                                       unitsDicomCode=scalarVolumeUnits.GetAsString(),
+                                       derivationDicomCode=self.createCodedEntry("373099004", "SCT", "Median", True))
 
         return None

@@ -41,7 +41,7 @@ int vtkMRMLSceneViewNodeTest1(int , char * [] )
 
   node1->SetAbsentStorageFileNames();
 
-  TEST_SET_GET_STRING( node1.GetPointer(), SceneViewDescription);
+  TEST_SET_GET_STD_STRING( node1.GetPointer(), SceneViewDescription);
 
   node1->SetScreenShot(nullptr);
   vtkImageData *nullImage = node1->GetScreenShot();

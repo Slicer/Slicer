@@ -88,7 +88,6 @@ void vtkMRMLSequenceBrowserNode::SynchronizationProperties::FromString( std::str
     ss >> attValue;
     if (!attName.empty() && !attValue.empty())
     {
-      std::string subAttValue;
       if (!attName.compare("playback"))
       {
         this->Playback=(!attValue.compare("true"));

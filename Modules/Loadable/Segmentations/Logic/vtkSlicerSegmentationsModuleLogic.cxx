@@ -88,6 +88,7 @@
 
 // STD includes
 #include <sstream>
+#include <string>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerSegmentationsModuleLogic);
@@ -2459,7 +2460,7 @@ void vtkSlicerSegmentationsModuleLogic::GetLabelValuesFromColorNode(vtkMRMLSegme
   labelValues->SetNumberOfValues(segmentIds->GetNumberOfValues());
   for (int i = 0; i < segmentIds->GetNumberOfValues(); ++i)
   {
-    vtkStdString segmentId = segmentIds->GetValue(i);
+    std::string segmentId = segmentIds->GetValue(i);
     const char* segmentName = segmentationNode->GetSegmentation()->GetSegment(segmentId)->GetName();
     int labelValue = colorTableNode->GetColorIndexByName(segmentName);
     if (labelValue < 0)

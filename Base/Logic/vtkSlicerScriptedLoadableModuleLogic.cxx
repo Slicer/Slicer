@@ -29,7 +29,6 @@
 
 // VTK includes
 #include <vtkPythonUtil.h>
-#include <vtkStdString.h>
 
 // STD includes
 #include <cstdlib>

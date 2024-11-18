@@ -86,6 +86,7 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   // Default values
   this->AutoOpacitiesCheckBox->setChecked(true);
   this->SurfaceSmoothingCheckBox->setChecked(true);
+  this->UseTerminologyCheckBox->setChecked(true);
 
   // Register settings
   q->registerProperty(/*no tr*/"Segmentations/AutoOpacities", this->AutoOpacitiesCheckBox,
@@ -95,6 +96,9 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   q->registerProperty(/*no tr*/"Segmentations/DefaultSurfaceSmoothing", this->SurfaceSmoothingCheckBox,
                       "checked", SIGNAL(toggled(bool)),
                       qSlicerSegmentationsSettingsPanel::tr("Enable closed surface representation smoothing by default"), ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/"Segmentations/UseTerminologySelector", this->UseTerminologyCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      qSlicerSegmentationsSettingsPanel::tr("Use standard terminology for segments"), ctkSettingsPanel::OptionNone);
   q->registerProperty(/*no tr*/"Segmentations/DefaultTerminologyEntry", q,
                       "defaultTerminologyEntry", SIGNAL(defaultTerminologyEntryChanged(QString)),
                       qSlicerSegmentationsSettingsPanel::tr("Default terminology entry"), ctkSettingsPanel::OptionNone);
@@ -112,14 +116,11 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
     "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->AutoOpacitiesCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setAutoOpacities(bool)));
-  QObject::connect(this->SurfaceSmoothingCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setDefaultSurfaceSmoothing(bool)));
-  QObject::connect(this->EditDefaultTerminologyEntryPushButton, SIGNAL(clicked()),
-                   q, SLOT(onEditDefaultTerminologyEntry()));
-  QObject::connect(this->DefaultOverwriteModeComboBox, SIGNAL(currentIndexChanged(QString)),
-                   q, SLOT(setDefaultOverwriteMode(QString)));
+  QObject::connect(this->AutoOpacitiesCheckBox, SIGNAL(toggled(bool)), q, SLOT(setAutoOpacities(bool)));
+  QObject::connect(this->SurfaceSmoothingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDefaultSurfaceSmoothing(bool)));
+  QObject::connect(this->UseTerminologyCheckBox, SIGNAL(toggled(bool)), q, SLOT(setUseTerminology(bool)));
+  QObject::connect(this->EditDefaultTerminologyEntryPushButton, SIGNAL(clicked()), q, SLOT(onEditDefaultTerminologyEntry()));
+  QObject::connect(this->DefaultOverwriteModeComboBox, SIGNAL(currentIndexChanged(QString)), q, SLOT(setDefaultOverwriteMode(QString)));
 
   // Update default segmentation node from settings when startup completed.
   QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()),
@@ -172,6 +173,12 @@ void qSlicerSegmentationsSettingsPanel::setDefaultSurfaceSmoothing(bool on)
   {
     this->segmentationsLogic()->SetDefaultSurfaceSmoothingEnabled(on);
   }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSegmentationsSettingsPanel::setUseTerminology(bool on)
+{
+  Q_UNUSED(on);
 }
 
 // --------------------------------------------------------------------------

@@ -929,7 +929,7 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
         segStatLogic.showTable(resultsTableNode)
         columnHeaders = [resultsTableNode.GetColumnName(i) for i in range(resultsTableNode.GetNumberOfColumns())]
         self.assertEqual(columnHeaders, ["Segment", "Volume mm3 (LM)", "Voxel count", "Volume mm3 (SV)", "Volume cm3 (SV)",
-            "Minimum", "Maximum", "Mean", "Median", "Standard deviation", "Surface mm2", "Volume mm3 (CS)", "Volume cm3 (CS)"])
+            "Minimum", "Maximum", "Mean", "Standard deviation", "Percentile 5", "Percentile 95", "Median", "Surface mm2", "Volume mm3 (CS)", "Volume cm3 (CS)"])
 
         self.delayDisplay("Test re-enabling of individual measurements")
         segStatLogic.getParameterNode().SetParameter("LabelmapSegmentStatisticsPlugin.voxel_count.enabled", str(True))

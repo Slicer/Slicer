@@ -1670,15 +1670,15 @@ void qMRMLSliceControllerWidgetPrivate::onSegmentVisibilitySelectionChanged(QStr
       // the segment selector widget does not know about this segment yet, so do not update the MRML node from it
       continue;
     }
-    bool segmentVisibile = displayNode->GetSegmentVisibility(*segmentIDIt);
+    bool segmentVisible = displayNode->GetSegmentVisibility(*segmentIDIt);
     // Hide segment that is visible but its checkbox has been unchecked
-    if (segmentVisibile && !selectedSegmentIDs.contains(segmentID))
+    if (segmentVisible && !selectedSegmentIDs.contains(segmentID))
     {
       displayNode->SetSegmentVisibility(*segmentIDIt, false);
       return; // This event handler runs after each check/uncheck, so handling the first mismatch is enough
     }
     // Show segment that is not visible but its checkbox has been checked
-    else if (!segmentVisibile && selectedSegmentIDs.contains(segmentID))
+    else if (!segmentVisible && selectedSegmentIDs.contains(segmentID))
     {
       displayNode->SetSegmentVisibility(*segmentIDIt, true);
       return; // This event handler runs after each check/uncheck, so handling the first mismatch is enough

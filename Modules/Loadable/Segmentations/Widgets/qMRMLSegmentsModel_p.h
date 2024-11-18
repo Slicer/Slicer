@@ -74,14 +74,14 @@ public:
 
 public:
   vtkSmartPointer<vtkCallbackCommand> CallBack;
-  bool UpdatingItemFromSegment;
+  bool UpdatingItemFromSegment{false};
 
-  int NameColumn;
-  int VisibilityColumn;
-  int ColorColumn;
-  int OpacityColumn;
-  int StatusColumn;
-  int LayerColumn;
+  int NameColumn{-1};
+  int VisibilityColumn{-1};
+  int ColorColumn{-1};
+  int OpacityColumn{-1};
+  int StatusColumn{-1};
+  int LayerColumn{-1};
 
   QIcon VisibleIcon;
   QIcon HiddenIcon;

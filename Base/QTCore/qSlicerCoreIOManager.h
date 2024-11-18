@@ -109,6 +109,15 @@ public:
   /// Remove characters that are likely to cause problems in a filename
   Q_INVOKABLE static QString forceFileNameValidCharacters(const QString& filename);
 
+  /// Clamp the length of a filename to a maximum number of characters.
+  /// The file extension will be detected and excluded from the specified maximum length.
+  /// \sa qSlicerCoreIOManager::stripKnownExtension()
+  Q_INVOKABLE QString forceFileNameMaxLength(const QString& filename, int maxLength=-1);
+
+  /// Clamp the length of a filename to a maximum number of characters.
+  /// The length of the filename extension must also be specified so that it is not included in the shortened section.
+  Q_INVOKABLE static QString forceFileNameMaxLengthExtension(const QString& filename, int extensionLength, int maxLength=-1);
+
   /// If \a fileName ends with an extension that is associated with \a object,
   /// then return that extension. Otherwise return an empty string.
   /// If there are multiple candidates (such as for "something.seg.nrrd" both

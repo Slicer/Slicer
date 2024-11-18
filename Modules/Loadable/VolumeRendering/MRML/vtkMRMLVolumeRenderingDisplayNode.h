@@ -88,6 +88,14 @@ public:
   vtkSetVector2Macro(WindowLevel, double);
   vtkGetVectorMacro(WindowLevel, double, 2);
 
+  //@{
+  /// Get/Set the number of voxels to soften the edges when applying a clipping function.
+  /// This is useful to avoid aliasing artifacts when the clipping function is applied.
+  /// The default value is 0.0, which means that no softening is applied.
+  vtkSetClampMacro(ClippingSoftEdgeVoxels, double, 0.0, VTK_DOUBLE_MAX);
+  vtkGetMacro(ClippingSoftEdgeVoxels, double);
+  //@}
+
 protected:
   vtkMRMLVolumeRenderingDisplayNode();
   ~vtkMRMLVolumeRenderingDisplayNode() override;
@@ -117,6 +125,8 @@ protected:
 
   /// Volume window & level
   double WindowLevel[2];
+
+  double ClippingSoftEdgeVoxels{ 0.0 };
 };
 
 #endif

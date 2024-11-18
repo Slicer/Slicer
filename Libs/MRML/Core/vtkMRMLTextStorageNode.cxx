@@ -242,7 +242,7 @@ const char* vtkMRMLTextStorageNode::GetDefaultWriteFileExtension()
   vtkStringArray* fileTypes = this->GetSupportedWriteFileTypes();
   if (fileTypes && fileTypes->GetNumberOfValues() > 0)
   {
-    std::string fileExtension = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(fileTypes->GetValue(0));
+    std::string fileExtension = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(fileTypes->GetValue(0).c_str());
     if (!fileExtension.empty())
     {
       // Remove leading "."

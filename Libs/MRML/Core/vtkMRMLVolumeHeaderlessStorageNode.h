@@ -141,8 +141,6 @@ protected:
   int FileDimensions[3];
 
   int CenterImage;
-
-  char* WriteFileFormat;
 };
 
 #endif

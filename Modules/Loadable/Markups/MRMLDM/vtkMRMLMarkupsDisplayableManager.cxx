@@ -980,6 +980,8 @@ void vtkMRMLMarkupsDisplayableManager::Create()
   this->InteractionRenderer = vtkSmartPointer<vtkRenderer>::Take(renderer->NewInstance());
   this->InteractionRenderer->UseDepthPeelingOn();
   this->InteractionRenderer->InteractiveOff();
+  this->InteractionRenderer->PreserveDepthBufferOn();
+  this->InteractionRenderer->EraseOff();
   this->InteractionRenderer->SetActiveCamera(renderer->GetActiveCamera());
   this->InteractionRenderer->SetLayer(INTERACTION_RENDERER_LAYER);
   renderWindow->AddRenderer(this->InteractionRenderer);

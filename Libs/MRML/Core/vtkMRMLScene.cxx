@@ -23,6 +23,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLClipModelsNode.h"
+#include "vtkMRMLClipNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
@@ -171,6 +172,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelDisplayNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipModelsNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFolderDisplayNode >::New());
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROINode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROIListNode >::New() );
@@ -1334,19 +1336,16 @@ vtkMRMLNode* vtkMRMLScene::AddNode(vtkMRMLNode *n)
   {
     return nullptr;
   }
-#ifndef NDEBUG
-  // Since calling IsNodePresent is costly, a "developer hint" is printed only
-  // if build as debug. We can't exit here as the release would then be
-  // different from debug.
-  // The caller should make sure the node has not been added yet.
+
   if (this->IsNodePresent(n) != 0)
   {
     vtkErrorMacro("AddNode: Node " << n->GetClassName() << "/"
       << (n->GetName() ? n->GetName() : "(undefined)") << "/"
       << (n->GetID() ? n->GetID() : "(undefined)")
       << "[" << n << "]" << " already added");
+    return n;
   }
-#endif
+
   // We need to know if the node will be actually added to the scene before
   // it is effectively added to know if NodeAboutToBeAddedEvent needs to be
   // fired.
@@ -4566,6 +4565,7 @@ bool vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNo
     // Default storage node usually has empty file name (if Save dialog is not opened yet)
     // file name is encoded to handle : or / characters in the node names
     std::string fileBaseName = this->PercentEncode(std::string(storableNode->GetName()));
+    fileBaseName = storageNode->ClampFileName(fileBaseName);
     std::string extension = storageNode->GetDefaultWriteFileExtension();
     std::string storageFileName = fileBaseName + std::string(".") + extension;
     vtkDebugMacro("new file name = " << storageFileName.c_str());

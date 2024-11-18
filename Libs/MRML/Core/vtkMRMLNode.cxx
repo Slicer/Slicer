@@ -212,6 +212,11 @@ void vtkMRMLNode::CopyReferences(vtkMRMLNode* node)
           referencesAreEqual = false;
           break;
         }
+        if (sourceReference->GetProperties() != targetReference->GetProperties())
+        {
+          referencesAreEqual = false;
+          break;
+        }
       }
     }
   }
@@ -246,6 +251,7 @@ void vtkMRMLNode::CopyReferences(vtkMRMLNode* node)
       copiedReference->SetReferencingNode(this);
       copiedReference->SetStaticEvents(reference->GetStaticEvents());
       copiedReference->SetObserveContentModifiedEvents(reference->GetObserveContentModifiedEvents());
+      copiedReference->SetProperties(*reference->GetProperties());
       this->NodeReferences[std::string(referenceRole)].push_back(copiedReference.GetPointer());
     }
   }
@@ -343,10 +349,32 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
       }
       else
       {
+        int n = 0;
         for (std::vector< const char* >::iterator referencedNodeIdsIt=referencedNodeIds.begin(); referencedNodeIdsIt!=referencedNodeIds.end(); ++referencedNodeIdsIt)
         {
           const char * id = *referencedNodeIdsIt;
           os << " " << (id ? id : "(nullptr)");
+
+          // Add node properties to the reference
+          // The reference property immediately follows the corresponding reference and
+          // is in the form {key1=value1,key2=value2,...}
+          const vtkMRMLNode::ReferencePropertiesType* referenceProperties = this->GetNthNodeReferenceProperties(referenceRole.c_str(), n);
+          if (referenceProperties->size() > 0)
+          {
+            os << ": {";
+            for (auto referencePropertyIt = referenceProperties->begin();
+              referencePropertyIt != referenceProperties->end(); ++referencePropertyIt)
+            {
+              if (referencePropertyIt != referenceProperties->begin())
+              {
+                os << ", "; // separate properties by comma
+              }
+              os << referencePropertyIt->first << ": " << referencePropertyIt->second;
+            }
+            os << "}";
+          }
+
+          ++n;
         }
         os << "\n";
       }
@@ -387,6 +415,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
         int colonIndex = attribute.find(':');
         std::string name = attribute.substr(0, colonIndex);
         std::string value = attribute.substr(colonIndex + 1);
+
         // decode percent sign and semicolon (semicolon is a special character because it separates attributes)
         vtksys::SystemTools::ReplaceString(value, "%3B", ";");
         vtksys::SystemTools::ReplaceString(value, "%25", "%");
@@ -453,11 +482,52 @@ void vtkMRMLNode::ParseReferencesAttribute(const char *attValue, std::set<std::s
       std::stringstream ss(ids);
       while (!ss.eof())
       {
-        std::string id;
-        ss >> id;
-        if (!id.empty())
+        std::string value;
+        ss >> value;
+        if (value.empty())
         {
-          this->AddNodeReferenceID(role.c_str(), id.c_str());
+          continue;
+        }
+
+        // Node reference properties are stored in the value string after the node ID.
+        // The properties are stored in the form {key1=value1,key2=value2,...}
+        // Example: references="role1:id1 {key1=value1,key2=value2} id2 {key3=value3};role2:id3 id4 {key4=value4}"
+        // It is important that there is a space between the node ID and the properties so that it is recognized as a separate reference.
+        // If there is no space, then the node reference ID would be considered invalid. Since the property is separated by a space, it is
+        // considered an invalid node id and silently discarded by older versions of Slicer.
+        std::size_t referencePropertyStart = value.find_first_of('{');
+        std::size_t referencePropertyEnd = value.find_first_of('}');
+        if (referencePropertyStart != std::string::npos && referencePropertyEnd != std::string::npos)
+        {
+          // Current value string is the properties for the previous node reference.
+          std::string referenceProperties = value.substr(referencePropertyStart + 1, referencePropertyEnd - referencePropertyStart - 1);
+          if (referenceProperties.empty())
+          {
+            // No properties
+            continue;
+          }
+
+          // Separate the properties by comma
+          std::stringstream ssProperties(referenceProperties);
+          std::string property;
+          while (std::getline(ssProperties, property, ','))
+          {
+            std::size_t propertySeparator = property.find_first_of('=');
+            if (propertySeparator != std::string::npos)
+            {
+              std::string propertyKey = property.substr(0, propertySeparator);
+              propertyKey = this->NodeReferencePropertyDecodeString(propertyKey);
+              std::string propertyValue = property.substr(propertySeparator + 1);
+              propertyValue = this->NodeReferencePropertyDecodeString(propertyValue);
+              int index = this->GetNumberOfNodeReferences(role.c_str()) - 1;
+              this->SetNthNodeReferenceProperty(role.c_str(), index, propertyKey.c_str(), propertyValue.c_str());
+            }
+          }
+        }
+        else
+        {
+          // Current value string is the node ID for the current node reference.
+          this->AddNodeReferenceID(role.c_str(), value.c_str());
           references.insert(role);
         }
       }
@@ -540,7 +610,30 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
         referenceFound = true;
       }
       ssRef << id;
+
+      // Add node properties to the reference
+      const vtkMRMLNode::ReferencePropertiesType* referenceProperties = this->GetNthNodeReferenceProperties(referenceRole.c_str(), n);
+      if (referenceProperties->size() == 0)
+      {
+        continue;
+      }
+
+      ssRef << " {";
+      for (auto referencePropertyIt = referenceProperties->begin();
+        referencePropertyIt != referenceProperties->end(); ++referencePropertyIt)
+      {
+        if (referencePropertyIt != referenceProperties->begin())
+        {
+          ssRef << ",";
+        }
+
+        std::string encodedPropertyKey = this->NodeReferencePropertyEncodeString(referencePropertyIt->first.c_str());
+        std::string encodedPropertyValue = this->NodeReferencePropertyEncodeString(referencePropertyIt->second);
+        ssRef << encodedPropertyKey << "=" << encodedPropertyValue;
+      }
+      ssRef << "}";
     }
+
     if (referenceFound)
     {
       ssRef << ";";
@@ -1052,6 +1145,36 @@ std::string vtkMRMLNode::XMLAttributeDecodeString(const std::string& inString)
   vtksys::SystemTools::ReplaceString(outString, "&lt;", "<");
   vtksys::SystemTools::ReplaceString(outString, "&gt;", ">");
   vtksys::SystemTools::ReplaceString(outString, "&amp;", "&");
+  return outString;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::NodeReferencePropertyEncodeString(const std::string& inString)
+{
+  std::string outString = inString;
+  this->XMLAttributeEncodeString(outString.c_str());
+  vtksys::SystemTools::ReplaceString(outString, ":",  "%3A"); // Reference role
+  vtksys::SystemTools::ReplaceString(outString, ";",  "%3B"); // Reference separator
+  vtksys::SystemTools::ReplaceString(outString, "{",  "%7B"); // Start property
+  vtksys::SystemTools::ReplaceString(outString, "}",  "%7D"); // End property
+  vtksys::SystemTools::ReplaceString(outString, ",",  "%2C"); // Property separator
+  vtksys::SystemTools::ReplaceString(outString, "=",  "%3D"); // Property key-value separator
+  vtksys::SystemTools::ReplaceString(outString, " ",  "%20"); // Whitespace - reference node id separator
+  return outString;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::NodeReferencePropertyDecodeString(const std::string& inString)
+{
+  std::string outString = inString;
+  this->XMLAttributeDecodeString(outString.c_str());
+  vtksys::SystemTools::ReplaceString(outString, "%3A", ":");  // Reference role
+  vtksys::SystemTools::ReplaceString(outString, "%3B", ";");  // Reference separator
+  vtksys::SystemTools::ReplaceString(outString, "%7B", "{");  // Start property
+  vtksys::SystemTools::ReplaceString(outString, "%7D", "}");  // End property
+  vtksys::SystemTools::ReplaceString(outString, "%2C", ",");  // Property separator
+  vtksys::SystemTools::ReplaceString(outString, "%3D", "=");  // Property key-value separator
+  vtksys::SystemTools::ReplaceString(outString, "%20", " ");  // Whitespace - reference node id separator
   return outString;
 }
 
@@ -1936,6 +2059,278 @@ void vtkMRMLNode::vtkMRMLNodeReference::SetReferencedNode(vtkMRMLNode* node)
   }
   this->ReferencedNode = node;
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLNode::vtkMRMLNodeReference::SetProperty(const std::string& key, const std::string& value)
+{
+  const auto propertiesIt = this->Properties.find(key);
+  bool modified = false;
+  if (propertiesIt != this->Properties.end())
+  {
+    if (propertiesIt->second != value)
+    {
+      modified = true;
+      propertiesIt->second = value;
+    }
+  }
+  else
+  {
+    modified = true;
+    this->Properties[key] = value;
+  }
+
+  if (modified)
+  {
+    this->Modified();
+  }
+
+  return modified;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::vtkMRMLNodeReference::GetProperty(const std::string& key) const
+{
+  auto it = this->Properties.find(key);
+  if (it == this->Properties.end())
+  {
+    return "";
+  }
+  return it->second;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLNode::vtkMRMLNodeReference::RemoveProperty(const std::string& key)
+{
+  if (this->Properties.erase(key) > 0)
+  {
+    this->Modified();
+    return true;
+  }
+  return false;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLNode::vtkMRMLNodeReference::ClearProperties()
+{
+  if (this->Properties.size() == 0)
+  {
+    return false;
+  }
+  this->Properties.clear();
+  this->Modified();
+  return true;
+}
+
+//----------------------------------------------------------------------------
+const vtkMRMLNode::ReferencePropertiesType* vtkMRMLNode::GetNthNodeReferenceProperties(const char* referenceRole, int n)
+{
+  if (!referenceRole)
+  {
+    return nullptr;
+  }
+
+  NodeReferenceListType& references = this->NodeReferences[std::string(referenceRole)];
+  if (n >= static_cast<int>(references.size()))
+  {
+    return nullptr;
+  }
+
+  return references[n]->GetProperties();
+}
+
+//----------------------------------------------------------------------------
+const vtkMRMLNode::ReferencePropertiesType* vtkMRMLNode::GetNodeReferenceProperties(const char* referenceRole)
+{
+  return this->GetNthNodeReferenceProperties(referenceRole, 0);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::SetNodeReferenceProperty(const std::string& referenceRole, const std::string& propertyName, const std::string& value)
+{
+  this->SetNthNodeReferenceProperty(referenceRole, 0, propertyName, value);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::SetNthNodeReferenceProperty(const std::string& referenceRole, int n, const std::string& propertyName, const std::string& value)
+{
+  if (referenceRole.empty())
+  {
+    return;
+  }
+
+  NodeReferenceListType& references = this->NodeReferences[std::string(referenceRole)];
+  if (n < 0 || static_cast<size_t>(n) >= references.size())
+  {
+    return;
+  }
+
+  if (references[n]->SetProperty(propertyName, value))
+  {
+    this->Modified();
+  }
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::GetNodeReferenceProperty(const std::string& referenceRole, const std::string& propertyName)
+{
+  return this->GetNthNodeReferenceProperty(referenceRole, 0, propertyName);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::GetNthNodeReferenceProperty(const std::string& referenceRole, int n, const std::string& propertyName)
+{
+  if (referenceRole.empty())
+  {
+    return "";
+  }
+
+  NodeReferenceListType& references = this->NodeReferences[std::string(referenceRole)];
+  if (n >= static_cast<int>(references.size()))
+  {
+    return "";
+  }
+
+  return references[n]->GetProperty(propertyName);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::RemoveNodeReferenceProperty(const std::string& referenceRole, const std::string& propertyName)
+{
+  this->RemoveNthNodeReferenceProperty(referenceRole, 0, propertyName);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::RemoveNthNodeReferenceProperty(const std::string& referenceRole, int n, const std::string& propertyName)
+{
+  if (referenceRole.empty())
+  {
+    return;
+  }
+
+  NodeReferenceListType& references = this->NodeReferences[std::string(referenceRole)];
+  if (n >= static_cast<int>(references.size()))
+  {
+    return;
+  }
+
+  if (references[n]->RemoveProperty(propertyName))
+  {
+    this->Modified();
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::ClearNodeReferenceProperties(const std::string& referenceRole)
+{
+  if (referenceRole.empty())
+  {
+    return;
+  }
+
+  bool modified = false;
+  NodeReferenceListType& references = this->NodeReferences[std::string(referenceRole)];
+  for (NodeReferenceListType::iterator it = references.begin(); it != references.end(); ++it)
+  {
+    modified |= (*it)->ClearProperties();
+  }
+
+  if (modified)
+  {
+    this->Modified();
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::ClearNthNodeReferenceProperties(const std::string& referenceRole, int n)
+{
+  if (referenceRole.empty())
+  {
+    return;
+  }
+
+  NodeReferenceListType& references = this->NodeReferences[std::string(referenceRole)];
+  if (n >= static_cast<int>(references.size()))
+  {
+    return;
+  }
+
+  if (references[n]->ClearProperties())
+  {
+    this->Modified();
+  }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLNode::GetNumberOfNodeReferenceProperties(const std::string & referenceRole)
+{
+  return this->GetNumberOfNthNodeReferenceProperties(referenceRole, 0);
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLNode::GetNumberOfNthNodeReferenceProperties(const std::string& referenceRole, int n)
+{
+  if (referenceRole.empty())
+  {
+    return 0;
+  }
+
+  NodeReferenceListType& references = this->NodeReferences[std::string(referenceRole)];
+  if (n >= static_cast<int>(references.size()))
+  {
+    return 0;
+  }
+
+  return references[n]->GetProperties()->size();
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::GetNodeReferencePropertyName(const std::string& referenceRole, int propertyIndex)
+{
+  return this->GetNthNodeReferencePropertyName(referenceRole, 0, propertyIndex);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::GetNthNodeReferencePropertyName(const std::string& referenceRole, int referenceIndex, int propertyIndex)
+{
+  if (referenceRole.empty())
+  {
+    return "";
+  }
+
+  NodeReferenceListType& references = this->NodeReferences[referenceRole];
+  if (referenceIndex >= static_cast<int>(references.size()))
+  {
+    return "";
+  }
+
+  const vtkMRMLNode::ReferencePropertiesType* properties = references[referenceIndex]->GetProperties();
+  if (propertyIndex >= static_cast<int>(properties->size()))
+  {
+    return "";
+  }
+
+  vtkMRMLNode::ReferencePropertiesType::const_iterator it = properties->begin();
+  std::advance(it, propertyIndex);
+  return it->first;
+}
+
+//----------------------------------------------------------------------------
+std::vector<std::string> vtkMRMLNode::GetNodeReferencePropertyNames(const std::string& referenceRole)
+{
+  return this->GetNthNodeReferencePropertyNames(referenceRole, 0);
+}
+
+//----------------------------------------------------------------------------
+std::vector<std::string> vtkMRMLNode::GetNthNodeReferencePropertyNames(const std::string& referenceRole, int n)
+{
+  std::vector<std::string> propertyNames;
+  int numberOfProperties = this->GetNumberOfNthNodeReferenceProperties(referenceRole, n);
+  for (int i = 0; i < numberOfProperties; ++i)
+  {
+    propertyNames.push_back(this->GetNthNodeReferencePropertyName(referenceRole, n, i));
+  }
+  return propertyNames;
 }
 
 //----------------------------------------------------------------------------

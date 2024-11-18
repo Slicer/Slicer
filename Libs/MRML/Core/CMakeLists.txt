@@ -136,9 +136,12 @@ endif()
 set(MRMLCore_SRCS
   vtkArchive.cxx
   vtkArchive.h
+  vtkCapPolyData.cxx
   vtkCodedEntry.cxx
   vtkEventBroker.cxx
   vtkDataFileFormatHelper.cxx
+  vtkImageMathematicsAddon.cxx
+  vtkImplicitInvertableBoolean.cxx
   vtkMRMLI18N.cxx
   vtkMRMLI18N.h
   vtkMRMLMeasurement.cxx
@@ -147,6 +150,7 @@ set(MRMLCore_SRCS
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx
   vtkMRMLCameraNode.cxx
+  vtkMRMLClipNode.cxx
   vtkMRMLClipModelsNode.cxx
   vtkMRMLColorNode.cxx
   vtkMRMLColors.cxx

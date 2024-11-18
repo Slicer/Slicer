@@ -29,6 +29,7 @@
 #include "vtkMRMLMultiVolumeRenderingDisplayNode.h"
 
 // MRML includes
+#include <vtkMRMLClipNode.h>
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLFolderDisplayNode.h"
 #include "vtkMRMLScene.h"
@@ -42,14 +43,23 @@
 // VTK includes
 #include <vtkVersion.h> // must precede reference to VTK_MAJOR_VERSION
 #include "vtkAddonMathUtilities.h"
+#include <vtkCallbackCommand.h>
+#include <vtkClipVolume.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
 #include <vtkGPUVolumeRayCastMapper.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageChangeInformation.h>
+#include <vtkImageData.h>
+#include <vtkImageGaussianSmooth.h>
 #include <vtkImageLuminance.h>
+#include <vtkImageStencil.h>
+#include <vtkImageStencilData.h>
+#include <vtkImageMathematicsAddon.h>
+#include <vtkImplicitBoolean.h>
+#include <vtkImplicitFunctionCollection.h>
+#include <vtkImplicitFunctionToImageStencil.h>
 #include <vtkInteractorStyle.h>
 #include <vtkMatrix4x4.h>
 #include <vtkPlane.h>
@@ -105,6 +115,24 @@ public:
       // of the colors and appended to the volume before it is passed to the mapper.
       this->ComputeAlphaChannel = vtkSmartPointer<vtkImageLuminance>::New();
       this->MergeAlphaChannelToRGB = vtkSmartPointer<vtkImageAppendComponents>::New();
+      this->ClipVolume = vtkSmartPointer<vtkClipVolume>::New();
+
+      // In order to perform clipping, we convert the implicit function to a stencil with vtkImplicitFunctionToImageStencil,
+      // convert it to a stencil with vtkImageStencil, and generate a fuzzy mask image with vtkImageGaussianSmooth.
+      // The mask is then applied multiplied with the input volume to create the clipped volume.
+      // If clipping is not needed, this is bypassed and the volume is passed directly to the mapper.
+      this->ImplicitFunction = vtkSmartPointer<vtkImplicitBoolean>::New();
+      this->ImplicitFunctionToImageStencilFilter = vtkSmartPointer<vtkImplicitFunctionToImageStencil>::New();
+      this->ImplicitFunctionToImageStencilFilter->SetInput(this->ImplicitFunction);
+      this->StencilFilter = vtkSmartPointer<vtkImageStencil>::New();
+      this->StencilFilter->SetReverseStencil(true);
+      this->StencilFilter->SetStencilConnection(this->ImplicitFunctionToImageStencilFilter->GetOutputPort());
+      this->MaskImage = vtkSmartPointer<vtkImageData>::New();
+
+      this->Gaussian = vtkSmartPointer<vtkImageGaussianSmooth>::New();
+      this->Gaussian->SetInputConnection(this->StencilFilter->GetOutputPort());
+
+      this->ImageMathematics = vtkSmartPointer<vtkImageMathematicsAddon>::New();
     }
     virtual ~Pipeline()  = default;
 
@@ -114,6 +142,14 @@ public:
     bool IJKToWorldLinear{ true };
     vtkSmartPointer<vtkImageLuminance> ComputeAlphaChannel;
     vtkSmartPointer<vtkImageAppendComponents> MergeAlphaChannelToRGB;
+    vtkSmartPointer<vtkClipVolume> ClipVolume;
+
+    vtkSmartPointer<vtkImplicitFunctionToImageStencil> ImplicitFunctionToImageStencilFilter;
+    vtkSmartPointer<vtkImplicitBoolean>                ImplicitFunction;
+    vtkSmartPointer<vtkImageData>                      MaskImage;
+    vtkSmartPointer<vtkImageStencil>                   StencilFilter;
+    vtkSmartPointer<vtkImageGaussianSmooth>            Gaussian;
+    vtkSmartPointer<vtkImageMathematicsAddon>               ImageMathematics;
   };
 
   //-------------------------------------------------------------------------
@@ -818,14 +854,111 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   }
 
   vtkAlgorithmOutput* imageConnection = volumeNode->GetImageDataConnection();
+  if (displayNode->GetClipping())
+  {
+    vtkMRMLClipNode* clipNode = displayNode->GetClipNode();
+    if (clipNode)
+    {
+      vtkImplicitFunctionCollection* functions = pipeline->ImplicitFunction->GetFunction();
+      if (functions->GetNumberOfItems() > 0 && functions->GetItemAsObject(0) != clipNode->GetImplicitFunctionWorld())
+      {
+        functions->RemoveAllItems();
+        pipeline->ImplicitFunctionToImageStencilFilter->Modified();
+      }
+      if (functions->GetNumberOfItems() == 0)
+      {
+        functions->AddItem(clipNode->GetImplicitFunctionWorld());
+        pipeline->ImplicitFunctionToImageStencilFilter->Modified();
+      }
+
+      vtkNew<vtkMatrix4x4> ijkToRASMatrix;
+      volumeNode->GetIJKToRASMatrix(ijkToRASMatrix);
+
+      vtkNew<vtkTransform> newIJKToRASTransform;
+      newIJKToRASTransform->PostMultiply();
+      newIJKToRASTransform->Concatenate(ijkToRASMatrix);
+      if (volumeNode->GetParentTransformNode() && volumeNode->GetParentTransformNode()->IsTransformToWorldLinear())
+      {
+        vtkNew<vtkMatrix4x4> nodeToWorldMatrix;
+        volumeNode->GetParentTransformNode()->GetMatrixTransformToWorld(nodeToWorldMatrix);
+        newIJKToRASTransform->Concatenate(nodeToWorldMatrix);
+      }
+
+      vtkSmartPointer<vtkTransform> oldIJKToRASTransform = vtkTransform::SafeDownCast(pipeline->ImplicitFunction->GetTransform());
+      if (!oldIJKToRASTransform || !vtkAddonMathUtilities::MatrixAreEqual(newIJKToRASTransform->GetMatrix(), oldIJKToRASTransform->GetMatrix()))
+      {
+        pipeline->ImplicitFunction->SetTransform(newIJKToRASTransform);
+      }
+
+      double* inputScalarRange = volumeNode->GetImageData()->GetScalarRange();
+      pipeline->StencilFilter->SetBackgroundValue(0.0);
+      pipeline->ImplicitFunctionToImageStencilFilter->SetInformationInput(volumeNode->GetImageData());
+
+      double softEdgeVoxels = displayNode->GetClippingSoftEdgeVoxels();
+      if (softEdgeVoxels <= 0)
+      {
+        // Skip the soft edge filter if soft edge is disabled
+        pipeline->MaskImage->Initialize(); // free memory
+        pipeline->StencilFilter->SetInputConnection(imageConnection);
+        imageConnection = pipeline->StencilFilter->GetOutputPort();
+      }
+      else
+      {
+        vtkImageData* inputImage = volumeNode->GetImageData();
+        int* tempExtent = pipeline->MaskImage->GetExtent();
+        int* volumeExtent = inputImage->GetExtent();
+        if (tempExtent[0] != volumeExtent[0] || tempExtent[1] != volumeExtent[1]
+          || tempExtent[2] != volumeExtent[2] || tempExtent[3] != volumeExtent[3]
+          || tempExtent[4] != volumeExtent[4] || tempExtent[5] != volumeExtent[5]
+          || pipeline->MaskImage->GetScalarType() != inputImage->GetScalarType()
+          || pipeline->MaskImage->GetNumberOfScalarComponents() != inputImage->GetNumberOfScalarComponents())
+        {
+          pipeline->MaskImage->SetExtent(volumeExtent);
+          pipeline->MaskImage->AllocateScalars(inputImage->GetScalarType(), inputImage->GetNumberOfScalarComponents());
+        }
+
+        double* tempScalarRange = pipeline->MaskImage->GetScalarRange();
+        if (tempScalarRange[1] != inputScalarRange[1])
+        {
+          pipeline->MaskImage->GetPointData()->GetScalars()->Fill(inputScalarRange[1]);
+          pipeline->MaskImage->GetPointData()->GetScalars()->Modified();
+          pipeline->MaskImage->GetPointData()->Modified();
+          pipeline->MaskImage->Modified();
+          tempScalarRange = pipeline->MaskImage->GetScalarRange();
+        }
+
+        pipeline->StencilFilter->SetInputData(pipeline->MaskImage);
+
+        double standardDeviationPixel[3] = { 1.0, 1.0, 1.0 };
+        for (int i = 0; i < 3; i++)
+        {
+          standardDeviationPixel[i] = softEdgeVoxels;
+        }
+        pipeline->Gaussian->SetStandardDeviations(standardDeviationPixel);
+        pipeline->Gaussian->SetRadiusFactor(3.0);
+
+        pipeline->ImageMathematics->SetOperationToMultiplyByScaledRange();
+        pipeline->ImageMathematics->SetRange(0.0, tempScalarRange[1]);
+        if (pipeline->ImageMathematics->GetInputConnection(0, 0) != imageConnection)
+        {
+          pipeline->ImageMathematics->RemoveAllInputConnections(0);
+          pipeline->ImageMathematics->AddInputConnection(imageConnection);
+          pipeline->ImageMathematics->AddInputConnection(pipeline->Gaussian->GetOutputPort());
+          pipeline->ImageMathematics->Modified();
+        }
+        imageConnection = pipeline->ImageMathematics->GetOutputPort();
+      }
+    }
+  }
+
   vtkImageData* imageData = volumeNode->GetImageData();
   int numberOfChannels = (imageData == nullptr ? 1 : imageData->GetNumberOfScalarComponents());
   if (numberOfChannels == 3)
   {
     // RGB volume, generate alpha channel
-    pipeline->ComputeAlphaChannel->SetInputConnection(volumeNode->GetImageDataConnection());
+    pipeline->ComputeAlphaChannel->SetInputConnection(imageConnection);
     pipeline->MergeAlphaChannelToRGB->RemoveAllInputs();
-    pipeline->MergeAlphaChannelToRGB->AddInputConnection(volumeNode->GetImageDataConnection());
+    pipeline->MergeAlphaChannelToRGB->AddInputConnection(imageConnection);
     pipeline->MergeAlphaChannelToRGB->AddInputConnection(pipeline->ComputeAlphaChannel->GetOutputPort());
     imageConnection = pipeline->MergeAlphaChannelToRGB->GetOutputPort();
   }
@@ -1019,12 +1152,22 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   this->UpdatePipelineROIs(displayNode, pipeline);
 
   // Set volume property
-  vtkVolumeProperty* volumeProperty = displayNode->GetVolumePropertyNode() ? displayNode->GetVolumePropertyNode()->GetVolumeProperty() : nullptr;
+  vtkMRMLVolumePropertyNode* volumePropertyNode = displayNode->GetVolumePropertyNode();
+  vtkVolumeProperty* volumeProperty = volumePropertyNode ? volumePropertyNode->GetVolumeProperty() : nullptr;
   if (volumeProperty)
   {
     volumeProperty->SetIndependentComponents(independentComponents);
   }
-  pipeline->VolumeActor->SetProperty(volumeProperty);
+
+  if (volumePropertyNode)
+  {
+    volumePropertyNode->SetPropertyInVolumeNode(pipeline->VolumeActor);
+  }
+  else
+  {
+    pipeline->VolumeActor->SetProperty(nullptr);
+  }
+
   // vtkMultiVolume's GetProperty returns the volume property from the first volume actor, and that is used when assembling the
   // shader, so need to set the volume property to the the first volume actor (in this case dummy actor, see above TODO)
   if (this->MultiVolumeActor)
@@ -1032,7 +1175,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     double* multiVolumeBounds = this->MultiVolumeActor->GetBounds();
     if (multiVolumeBounds[0] < multiVolumeBounds[1]) // Prevent error that GetVolume throws if volume is null (TODO: need GetNumberOfVolumes)
     {
-      this->MultiVolumeActor->GetVolume(0)->SetProperty(volumeProperty);
+      if (volumePropertyNode)
+      {
+        volumePropertyNode->SetPropertyInVolumeNode(this->MultiVolumeActor->GetVolume(0));
+      }
+      else
+      {
+        this->MultiVolumeActor->GetVolume(0)->SetProperty(nullptr);
+      }
     }
   }
 

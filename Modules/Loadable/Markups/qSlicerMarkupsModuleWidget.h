@@ -162,7 +162,7 @@ public slots:
   void onCreateMarkupByClass(const QString& className);
 
   /// Toggle the markups node visibility flag
-  void onListVisibileInvisiblePushButtonClicked();
+  void onListVisibleInvisiblePushButtonClicked();
 
   /// Toggle the markups node locked flag
   void onListLockedUnlockedPushButtonClicked();

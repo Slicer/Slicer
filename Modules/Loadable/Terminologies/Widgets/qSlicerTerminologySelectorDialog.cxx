@@ -26,11 +26,11 @@
 #include "vtkSlicerTerminologyEntry.h"
 
 // Qt includes
+#include <QDebug>
 #include <QDialog>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QDebug>
+#include <QVBoxLayout>
 
 //-----------------------------------------------------------------------------
 class qSlicerTerminologySelectorDialogPrivate : public QDialog
@@ -39,7 +39,7 @@ class qSlicerTerminologySelectorDialogPrivate : public QDialog
 protected:
   qSlicerTerminologySelectorDialog* const q_ptr;
 public:
-  qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object);
+  explicit qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object, QWidget* parent);
   ~qSlicerTerminologySelectorDialogPrivate() override;
 public:
   void init();
@@ -53,8 +53,9 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object)
-  : q_ptr(&object)
+qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object, QWidget* parent)
+  : QDialog(parent)
+  , q_ptr(&object) // parent is passed to the private object to allow centering on the parent instead of on the screen
 {
 }
 
@@ -103,7 +104,7 @@ void qSlicerTerminologySelectorDialogPrivate::init()
 //-----------------------------------------------------------------------------
 qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(QObject* parent)
   : QObject(parent)
-  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this))
+  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
 {
   Q_D(qSlicerTerminologySelectorDialog);
   d->init();
@@ -113,7 +114,7 @@ qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(QObject* pare
 qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent)
   : QObject(parent)
-  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this))
+  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
 {
   Q_D(qSlicerTerminologySelectorDialog);
   d->TerminologyInfo = initialTerminologyInfo;

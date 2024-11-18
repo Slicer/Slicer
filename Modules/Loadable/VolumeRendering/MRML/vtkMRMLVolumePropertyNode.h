@@ -16,6 +16,7 @@
 class vtkColorTransferFunction;
 class vtkIntArray;
 class vtkPiecewiseFunction;
+class vtkVolume;
 class vtkVolumeProperty;
 
 // STD includes
@@ -163,8 +164,12 @@ public:
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
-  /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  bool GetModifiedSinceRead() override;
+  /// Use this method to set the volume property into a vtkVolume.
+  /// Using vtkVolume::SetProperty(vtkVolumeProperty*) directly would call Modified() on the volume property (due to a VTK bug),
+  /// which would make this node "modified since read". Therefore, the .vp file would be also suggested to be saved
+  /// (even though it is not actually modified).
+  /// This method sets the property in the volume with suppressing the effect of the superfluous modification events.
+  void SetPropertyInVolumeNode(vtkVolume* volume);
 
 protected:
   vtkMRMLVolumePropertyNode();
@@ -197,7 +202,12 @@ protected:
 
 protected:
   /// Events observed on the transfer functions
-  vtkIntArray* ObservedEvents;
+  vtkSmartPointer<vtkIntArray> ObservedEvents;
+
+  /// This flag is used for temporarily ignoring volume property changes.
+  /// This is needed because vtkVolume invokes Modification events on the volume property
+  /// when the property is set into the volume.
+  bool IgnoreVolumePropertyChanges{false};
 
   /// Main parameters for visualization
   vtkVolumeProperty* VolumeProperty{nullptr};
@@ -206,9 +216,6 @@ protected:
   /// Elements: {xMin, xMax}. Other axes not supported because the three transfer functions are
   /// independent value-wise, and they do not have third and fourth axes.
   double EffectiveRange[2]{0.0,-1.0};
-
-  /// Keep track of state of disable modified events
-  int DisabledModify{0};
 
 private:
   /// Caution: Not implemented

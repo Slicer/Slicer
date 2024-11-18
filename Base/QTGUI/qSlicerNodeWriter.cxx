@@ -38,8 +38,10 @@
 #include <vtkMRMLMessageCollection.h>
 
 // VTK includes
-#include <vtkStdString.h>
 #include <vtkStringArray.h>
+
+// STD includes
+#include <string>
 
 //-----------------------------------------------------------------------------
 class qSlicerNodeWriterPrivate
@@ -113,7 +115,7 @@ QStringList qSlicerNodeWriter::extensions(vtkObject* object)const
     const int formatCount = snode->GetSupportedWriteFileTypes()->GetNumberOfValues();
     for (int formatIt = 0; formatIt < formatCount; ++formatIt)
     {
-      vtkStdString format =
+      std::string format =
         snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
       supportedExtensions << QString::fromStdString(format);
     }

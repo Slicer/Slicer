@@ -34,6 +34,7 @@
 // STD includes
 #include <cstdlib>
 #include <list>
+#include <string>
 
 #include "vtkSlicerVolumesModuleLogicExport.h"
 

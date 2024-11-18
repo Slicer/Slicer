@@ -147,6 +147,8 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
         red = slicer.util.getNode(pattern="vtkMRMLSliceNode1")
         red.SetSliceVisible(1)
 
+        yellow = slicer.util.getNode(pattern="vtkMRMLSliceNode2")
+
         green = slicer.util.getNode(pattern="vtkMRMLSliceNode3")
         green.SetSliceVisible(1)
 
@@ -173,9 +175,9 @@ class Slicer4MinuteTest(ScriptedLoadableModuleTest):
         hemispheric_white_matter.GetDisplayNode().SetClipping(1)
 
         clip = slicer.util.getNode("ClipModelsParameters1")
-        clip.SetRedSliceClipState(0)
-        clip.SetYellowSliceClipState(0)
-        clip.SetGreenSliceClipState(2)
+        clip.SetClippingNodeState(red, slicer.vtkMRMLClipNode.ClipOff)
+        clip.SetClippingNodeState(yellow, slicer.vtkMRMLClipNode.ClipOff)
+        clip.SetClippingNodeState(green, slicer.vtkMRMLClipNode.ClipNegativeSpace)
 
         # Can we make this more than just a Smoke Test?
         self.delayDisplay("Optic chiasm should be visible. Front part of white matter should be clipped.")

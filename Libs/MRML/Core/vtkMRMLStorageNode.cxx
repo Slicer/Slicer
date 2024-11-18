@@ -25,6 +25,7 @@ Version:   $Revision: 1.1.1.1 $
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkCommand.h>
+#include <vtkMinimalStandardRandomSequence.h>
 #include <vtkNew.h>
 #include <vtkStringArray.h>
 #include <vtkURIHandler.h>
@@ -1532,4 +1533,120 @@ int vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(const char* name)
   }
   // unknown name
   return -1;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLStorageNode::SetWriteState(int writeState)
+{
+  if (this->WriteState == writeState)
+  {
+    // no change
+    return;
+  }
+  bool changedSkippedNoDataState = ((this->GetWriteState() == SkippedNoData) != (writeState == SkippedNoData));
+  this->WriteState = writeState;
+
+  if (changedSkippedNoDataState)
+  {
+    // Data was not available and now is, or data was available and not anymore.
+    // This is an important change that has to be saved in the storage node.
+    this->Modified();
+  }
+  else
+  {
+    // Let observers know about node modification, but do not change the modified timestamp.
+    // If a storable node is written to file using this storage node then we do not want to
+    // mark the storage node as modified, because for example that would make the application
+    // believe that there are some unsaved changes in the scene.
+    this->InvokeCustomModifiedEvent(vtkCommand::ModifiedEvent);
+  }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLStorageNode::SetWriteFileFormat(const char* writeFileFormat)
+{
+  // Adapted from vtkSetStringBodyMacro, except does not call Modified() just invokes the Modified event in the end.
+  if (this->WriteFileFormat == nullptr && writeFileFormat == nullptr)
+  {
+    return;
+  }
+  if (this->WriteFileFormat && writeFileFormat && (!strcmp(this->WriteFileFormat, writeFileFormat)))
+  {
+    return;
+  }
+  delete[] this->WriteFileFormat;
+  if (writeFileFormat)
+  {
+    size_t n = strlen(writeFileFormat) + 1;
+    char* cp1 = new char[n];
+    const char* cp2 = (writeFileFormat);
+    this->WriteFileFormat = cp1;
+    do
+    {
+      *cp1++ = *cp2++;
+    } while (--n);
+  }
+  else
+  {
+    this->WriteFileFormat = nullptr;
+  }
+
+  // Let observers know about node modification, but do not change the modified timestamp, as this is transient event
+  // (we do not want the application to display a warning popup on scene close exit if write state was temporarily changed due to node write)
+  this->InvokeCustomModifiedEvent(vtkCommand::ModifiedEvent);
+}
+
+//-----------------------------------------------------------------------------
+std::string vtkMRMLStorageNode::ClampFileName(const std::string& filename, int maxFileNameLength/*=-1*/, int hashLength/*=4*/)
+{
+  std::string baseName = this->GetFileNameWithoutExtension(filename.c_str());
+  std::string extension = this->GetSupportedFileExtension(filename.c_str());
+  return vtkMRMLStorageNode::ClampFileNameExtension(baseName, maxFileNameLength, hashLength, extension.length());
+}
+
+//-----------------------------------------------------------------------------
+std::string vtkMRMLStorageNode::ClampFileNameExtension(const std::string& filename, int maxFileNameLength/*=-1*/, int hashLength/*=4*/, int extensionLength/*=0*/)
+{
+  if (maxFileNameLength < 0)
+  {
+    // Use default limit
+    maxFileNameLength = vtkMRMLStorageNode::GetRecommendedFileNameLength();
+  }
+
+  // Remove extension
+  std::string baseName = filename.substr(0, filename.length() - extensionLength);
+  if (baseName.length() <= maxFileNameLength)
+  {
+    return filename;
+  }
+
+  // File is too long. Convert it into a shorter filename with the following format:
+  // <first 20 characters of the base name>_<4 character hash code>.<extension>
+  int prefixLength = maxFileNameLength - hashLength - 1; // 1 for the underscore
+  std::string prefix = baseName.substr(0, prefixLength);
+  int suffixLength = baseName.length() - prefixLength;
+  std::string suffix = baseName.substr(prefixLength, suffixLength);
+
+  std::stringstream truncatedFilenameSS;
+  truncatedFilenameSS << prefix << "_";
+
+  // Seed the random number generator with a hash of the suffix
+  std::hash<std::string> hashFunction;
+  size_t hashCodeSeed = hashFunction(suffix);
+
+  vtkNew<vtkMinimalStandardRandomSequence> randomSequence;
+  randomSequence->SetSeed(hashCodeSeed);
+
+  // Generate a random hash code from upper case letters and numbers
+  std::string hashChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  for (int i = 0; i < hashLength; ++i)
+  {
+    int index = static_cast<int>(std::floor(std::fmod(randomSequence->GetNextValue(), 1.0) * hashChars.size()));
+    truncatedFilenameSS << hashChars[index];
+  }
+
+  std::string extension = filename.substr(filename.length() - extensionLength);
+  truncatedFilenameSS << extension;
+
+  return truncatedFilenameSS.str();
 }

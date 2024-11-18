@@ -60,6 +60,10 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
   this->BackfaceColorHSVOffset[1] = -0.1;
   this->BackfaceColorHSVOffset[2] = 0.0;
 
+  this->ClippingCapColorHSVOffset[0] = +0.05;
+  this->ClippingCapColorHSVOffset[1] = -0.1;
+  this->ClippingCapColorHSVOffset[2] = -0.2;
+
   // the default behavior for models is to use the scalar range of the data
   // to reset the display scalar range, so use the Data flag
   this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
@@ -91,6 +95,10 @@ void vtkMRMLModelDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(ThresholdEnabled);
   vtkMRMLPrintVectorMacro(ThresholdRange, double, 2);
   vtkMRMLPrintVectorMacro(BackfaceColorHSVOffset, double, 3);
+  vtkMRMLPrintBooleanMacro(ClippingCapSurface);
+  vtkMRMLPrintFloatMacro(ClippingCapOpacity);
+  vtkMRMLPrintBooleanMacro(ClippingOutline);
+  vtkMRMLPrintVectorMacro(ClippingCapColorHSVOffset, double, 3);
   vtkMRMLPrintEndMacro();
 }
 
@@ -105,6 +113,10 @@ void vtkMRMLModelDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(thresholdEnabled, ThresholdEnabled);
   vtkMRMLWriteXMLVectorMacro(thresholdRange, ThresholdRange, double, 2);
   vtkMRMLWriteXMLVectorMacro(backfaceColorHSVOffset, BackfaceColorHSVOffset, double, 3);
+  vtkMRMLWriteXMLBooleanMacro(clippingCapSurface, ClippingCapSurface);
+  vtkMRMLWriteXMLFloatMacro(clippingCapOpacity, ClippingCapOpacity);
+  vtkMRMLWriteXMLBooleanMacro(clippingOutline, ClippingOutline);
+  vtkMRMLWriteXMLVectorMacro(clippingCapColorHSVOffset, ClippingCapColorHSVOffset, double, 3);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -119,6 +131,10 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLBooleanMacro(thresholdEnabled, ThresholdEnabled);
   vtkMRMLReadXMLVectorMacro(thresholdRange, ThresholdRange, double, 2);
   vtkMRMLReadXMLVectorMacro(backfaceColorHSVOffset, BackfaceColorHSVOffset, double, 3);
+  vtkMRMLReadXMLBooleanMacro(clippingCapSurface, ClippingCapSurface);
+  vtkMRMLReadXMLFloatMacro(clippingCapOpacity, ClippingCapOpacity);
+  vtkMRMLReadXMLBooleanMacro(clippingOutline, ClippingOutline);
+  vtkMRMLReadXMLVectorMacro(clippingCapColorHSVOffset, ClippingCapColorHSVOffset, double, 3);
   vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
@@ -141,6 +157,10 @@ void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   vtkMRMLCopyBooleanMacro(ThresholdEnabled);
   vtkMRMLCopyVectorMacro(ThresholdRange, double, 2);
   vtkMRMLCopyVectorMacro(BackfaceColorHSVOffset, double, 3);
+  vtkMRMLCopyBooleanMacro(ClippingCapSurface);
+  vtkMRMLCopyFloatMacro(ClippingCapOpacity);
+  vtkMRMLCopyBooleanMacro(ClippingOutline);
+  vtkMRMLCopyVectorMacro(ClippingCapColorHSVOffset, double, 3);
   vtkMRMLCopyEndMacro();
 }
 

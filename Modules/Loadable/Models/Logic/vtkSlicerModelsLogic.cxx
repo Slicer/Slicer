@@ -57,18 +57,6 @@ void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
 }
 
-//----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::ObserveMRMLScene()
-{
-  if (this->GetMRMLScene() &&
-    this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLClipModelsNode") == nullptr)
-  {
-    // vtkMRMLClipModelsNode is a singleton
-    this->GetMRMLScene()->AddNode(vtkSmartPointer<vtkMRMLClipModelsNode>::New());
-  }
-  this->Superclass::ObserveMRMLScene();
-}
-
 //-----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
 {
@@ -167,6 +155,48 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
     it != mhNodeIdToShItemIdMap.end(); ++it)
   {
     scene->RemoveNode(scene->GetNodeByID(it->first));
+  }
+
+  // Remove vtkMRMLClipModelsNode from the scene and convert them to vtkMRMLClipNode.
+  std::vector<vtkMRMLNode*> clipModelsNodes;
+  scene->GetNodesByClass("vtkMRMLClipModelsNode", clipModelsNodes);
+
+  std::vector<vtkMRMLNode*> modelDisplayNodes;
+  scene->GetNodesByClass("vtkMRMLModelDisplayNode", modelDisplayNodes);
+
+  for (vtkMRMLNode* node : clipModelsNodes)
+  {
+    vtkMRMLClipModelsNode* clipModelsNode = vtkMRMLClipModelsNode::SafeDownCast(node);
+    if (!clipModelsNode)
+    {
+      continue;
+    }
+
+    vtkSmartPointer<vtkMRMLClipNode> clipNode = vtkSmartPointer<vtkMRMLClipNode>::Take(
+      vtkMRMLClipNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLClipNode")));
+    clipNode->SetSingletonTag(clipModelsNode->GetSingletonTag());
+    clipModelsNode->SetSingletonOff();
+
+    // Copy all properties and node references from the clip models node to the clip node
+    scene->AddNode(clipNode);
+    clipNode->Copy(clipModelsNode);
+    clipNode->PrintSelf(std::cout, vtkIndent());
+    scene->RemoveNode(clipModelsNode);
+
+    // Update model display nodes to use the new clip node
+    for (vtkMRMLNode* displayNode : modelDisplayNodes)
+    {
+      vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+      if (!modelDisplayNode)
+      {
+        continue;
+      }
+
+      if (modelDisplayNode->GetClipping() && !modelDisplayNode->GetClipNode())
+      {
+        modelDisplayNode->SetAndObserveClipNodeID(clipNode->GetID());
+      }
+    }
   }
 }
 

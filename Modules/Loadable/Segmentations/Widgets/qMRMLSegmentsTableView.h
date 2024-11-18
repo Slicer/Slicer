@@ -63,6 +63,10 @@ public:
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
   Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled)
   Q_PROPERTY(int segmentCount READ segmentCount)
+  Q_PROPERTY(QString useTerminologySelectorSettingsKey READ useTerminologySelectorSettingsKey WRITE setUseTerminologySelectorSettingsKey)
+  Q_PROPERTY(bool useTerminologySelector READ useTerminologySelector WRITE setUseTerminologySelector)
+  Q_PROPERTY(bool terminologySelectorOptionVisible READ terminologySelectorOptionVisible WRITE setTerminologySelectorOptionVisible)
+  Q_PROPERTY(bool terminologySelectorAutoDisable READ terminologySelectorAutoDisable WRITE setTerminologySelectorAutoDisable)
 
   typedef qMRMLWidget Superclass;
   /// Constructor
@@ -113,6 +117,23 @@ public:
   /// The text used to filter the segments in the table
   /// \sa setTextFilter
   QString textFilter();
+
+  /// The settings key used to specify whether standard terminologies or simple selectors are used for choosing segment name and color.
+  /// Default value is "Segmentations/UseTerminologySelector".
+  /// If set to empty then the option will not be saved to and loaded from application settings.
+  /// \sa setUseTerminologySelectorSettingsKey
+  QString useTerminologySelectorSettingsKey()const;
+
+  /// Returns true if standard terminologies are used for choosing segment name and color.
+  /// If false then simple selectors are used.
+  bool useTerminologySelector()const;
+
+  /// Returns true if the user can choose between the standard terminologies selector or the simple selectors for segment name and color.
+  bool terminologySelectorOptionVisible()const;
+
+  /// Offer automatic disable of using standard terminologies selector if custom segment names or colors are used frequently.
+  bool terminologySelectorAutoDisable()const;
+
   // If the specified status should be shown in the table
   /// \sa setStatusShown
   Q_INVOKABLE bool statusShown(int status);
@@ -166,6 +187,16 @@ public slots:
   /// Set the text used to filter the segments in the table
   /// \sa textFilter
   void setTextFilter(QString textFilter);
+  /// Set the settings key used to specify whether standard terminologies are used for name and color.
+  /// \sa useTerminologySelectorSettingsKey
+  void setUseTerminologySelectorSettingsKey(QString settingsKey);
+  /// Set if standard terminologies are used for choosing segment name and color.
+  void setUseTerminologySelector(bool useTerminologySelector);
+  /// Set if the user can choose between the standard terminologies selector or the simple selectors for segment name and color.
+  void setTerminologySelectorOptionVisible(bool visible);
+  /// Offer automatic disable of using standard terminologies selector if custom segment names or colors are used frequently.
+  void setTerminologySelectorAutoDisable(bool autoDisable);
+
   /// Set if the specified status should be shown in the table
   /// \sa statusShown
   void setStatusShown(int status, bool shown);
@@ -197,6 +228,8 @@ protected slots:
 
   /// Handles clicks on a table cell (visibility + state)
   void onSegmentsTableClicked(const QModelIndex& modelIndex);
+  /// Handles clicks on a table cell (name + color change / terminology change)
+  void onSegmentsTableDoubleClicked(const QModelIndex& modelIndex);
 
   /// Handle MRML scene event
   void endProcessing();
@@ -214,6 +247,9 @@ protected slots:
   void modelAboutToBeReset();
   void modelReset();
 
+  /// Toggle using standard terminology for this segments table
+  void onUseTerminologyActionToggled(bool useTerminology);
+
 protected:
   /// Convenience function to set segment visibility options from event handlers
   /// \sa onVisibilityButtonToggled \sa onVisibility3DActionToggled \sa onVisibility2DFillActionToggled \sa onVisibility2DOutlineActionToggled
@@ -229,6 +265,8 @@ protected:
 
   /// Handle context menu events
   void contextMenuEvent(QContextMenuEvent* event) override;
+
+  bool userSetCustomNameOrColor();
 
 protected:
   QScopedPointer<qMRMLSegmentsTableViewPrivate> d_ptr;

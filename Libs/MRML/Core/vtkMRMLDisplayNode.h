@@ -22,6 +22,7 @@
 #include <vector>
 
 class vtkAlgorithmOutput;
+class vtkMRMLClipNode;
 class vtkDataSet;
 class vtkImageData;
 class vtkMRMLColorNode;
@@ -344,7 +345,7 @@ public:
   /// \sa SliceIntersectionThickness, SetSliceIntersectionThickness()
   vtkGetMacro(SliceIntersectionThickness, int);
 
-  ///@{
+  //@{
   /// Enable/disable rendering of cells facing the camera (frontface)
   /// or facing away from the camera (backface). By culling (excluding from rendering)
   /// rendering performance of very complex models may be improved and it may also
@@ -358,7 +359,7 @@ public:
   vtkSetMacro(BackfaceCulling, int);
   vtkGetMacro(BackfaceCulling, int);
   vtkBooleanMacro(BackfaceCulling, int);
-  ///@}
+  //@}
 
   /// Enable/Disable lighting of the display node.
   /// \sa Lighting, GetLighting(), LightingOn(),
@@ -624,6 +625,11 @@ public:
   /// Update the style of a vtkTextProperty from a string.
   /// String format follows html-style CSS conventions.
   static void UpdateTextPropertyFromString(std::string inputString, vtkTextProperty* property);
+
+  /// Set the clip node ID of the display node.
+  virtual void SetAndObserveClipNodeID(const char* id);
+  virtual vtkMRMLClipNode* GetClipNode();
+  virtual const char* GetClipNodeReferenceRole() const;
 
 protected:
   vtkMRMLDisplayNode();

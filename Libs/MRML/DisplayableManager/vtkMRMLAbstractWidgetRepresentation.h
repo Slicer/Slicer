@@ -124,6 +124,7 @@ public:
   vtkSetMacro(PickingTolerance, double);
   vtkGetMacro(PickingTolerance, double);
 
+  //@{
   /// Controls whether the widget should always appear on top
   /// of other actors in the scene. (In effect, this will disable OpenGL
   /// Depth buffer tests while rendering the widget).
@@ -131,6 +132,7 @@ public:
   vtkSetMacro(AlwaysOnTop, bool);
   vtkGetMacro(AlwaysOnTop, bool);
   vtkBooleanMacro(AlwaysOnTop, bool);
+  //@}
 
   //@{
   /**
@@ -144,6 +146,17 @@ public:
 
   /// Convenience method for getting screen scale factor from the associated view node.
   double GetScreenScaleFactor();
+
+  //@{
+  /**
+  * Always on top relative offset factor and units.
+  * \sa vtkMapper::SetRelativeCoincidentTopologyLineOffsetParameters().
+  */
+  vtkSetMacro(AlwaysOnTopRelativeOffsetFactor, double);
+  vtkGetMacro(AlwaysOnTopRelativeOffsetFactor, double);
+  vtkSetMacro(AlwaysOnTopRelativeOffsetUnits, double);
+  vtkGetMacro(AlwaysOnTopRelativeOffsetUnits, double);
+  //@}
 
  protected:
   vtkMRMLAbstractWidgetRepresentation();
@@ -177,6 +190,10 @@ public:
 
   /// Temporary variable to store GetBounds() result
   double Bounds[6];
+
+  /// Relative offset used for rendering occluded actors.
+  double AlwaysOnTopRelativeOffsetFactor{ 0.0 };
+  double AlwaysOnTopRelativeOffsetUnits{ -66000.0 };
 
 private:
   vtkMRMLAbstractWidgetRepresentation(const vtkMRMLAbstractWidgetRepresentation&) = delete;
