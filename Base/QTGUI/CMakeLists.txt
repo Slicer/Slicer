@@ -26,6 +26,7 @@ set(KIT_SRCS
   qSlicerActionsDialog.h
   qSlicerApplication.cxx
   qSlicerApplication.h
+  qSlicerApplication_p.h
   qSlicerCommandOptions.cxx
   qSlicerCommandOptions.h
   qSlicerDarkStyle.cxx
@@ -184,6 +185,7 @@ set(KIT_MOC_SRCS
   qSlicerAbstractModuleWidget.h
   qSlicerActionsDialog.h
   qSlicerApplication.h
+  qSlicerApplication_p.h
   qSlicerCommandOptions.h
   qSlicerDarkStyle.h
   qSlicerDataDialog.h
