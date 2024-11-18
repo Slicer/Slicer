@@ -6,8 +6,6 @@
 
 // Slicer includes
 #include "qSlicerCoreApplication_p.h"
-#include "qSlicerLayoutManager.h"
-#include "ctkSettingsDialog.h"
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 #include "qSlicerExtensionsManagerDialog.h"
