@@ -1518,7 +1518,7 @@ void vtkMRMLModelDisplayableManager::UpdateActorProperties(vtkMRMLModelNode* mod
   modelDisplayNode->GetBackfaceColorHSVOffset(offsetHsv);
 
   double colorHsv[3];
-  vtkMath::RGBToHSV(modelDisplayNode->GetColor(), colorHsv);
+  vtkMath::RGBToHSV(actorProperties->GetColor(), colorHsv);
   double colorRgb[3];
   colorHsv[0] += offsetHsv[0];
   // wrap around hue value
