@@ -22,20 +22,14 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
 
 #### Python
 
-- Follow the Slicer repository Flake8 configuration and run `python -m pre_commit run --all-files` to confirm compliance.
-- Text encoding: UTF-8 is preferred, Latin-1 is acceptable
-- Comparisons:
-  - To singletons (e.g. None): use 'is' or 'is not', never equality operations.
-  - To Booleans (True, False): don't ever compare with True or False (for further explanation, see PEP 8).
-- Prefix class definitions with two blank lines
-- Imports
-  - Grouped in order of scope/commonallity
-    - Standard library imports
-    - Related third party imports
-    - Local apps/library specific imports
-      - Slicer application imports and local/module imports may be grouped independently.
-  - One package per line (with or without multiple function/module/class imports from the package)
-- Naming conventions: when [PEP 8](https://www.python.org/dev/peps/pep-0008/#package-and-module-names) and Slicer naming conventions conflict, Slicer wins.
+Python code styling in Slicer is enforced by [`pre-commit`](https://github.com/pre-commit/pre-commit) which includes running [`ruff`](https://docs.astral.sh/ruff/) which is a wide array of rulesets from various python packages. Style issues can often be automatically fixed up, or at least suggested, by running `pre-commit` locally. To run pre-commit, use a shell to call out to python interpreter to run pre-commit.
+```PS
+# Install the pre-commit dependency
+python -m pip install pre-commit
+
+# Run pre-commit and fix up any issues
+python -m pre_commit run --all-files
+```
 
 #### C++
 
