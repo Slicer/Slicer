@@ -533,7 +533,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setSubjectHierarchyItemVisibility(vtk
   // If more than 10 item visibilities are changed, then enter in batch processing state
   vtkNew<vtkIdList> childItemsList;
   this->SubjectHierarchyNode->GetItemChildren(itemID, childItemsList, true);
-  bool batchProcessing = (childItemsList->GetNumberOfIds() > 10);
+  bool batchProcessing = (childItemsList->GetNumberOfIds() > 50);
   if (batchProcessing)
   {
     this->SubjectHierarchyNode->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
