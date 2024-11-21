@@ -13,12 +13,16 @@
 #include "qSlicerExtensionsManagerDialog.h"
 #endif
 
+
+// QTGUI includes
+#include "qSlicerBaseQTGUIExport.h"
+
 class qSlicerCommandOptions;
 class qSlicerIOManager;
 class ctkToolTipTrapper;
 
 //-----------------------------------------------------------------------------
-class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
 {
     Q_DECLARE_PUBLIC(qSlicerApplication);
 protected:

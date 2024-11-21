@@ -151,7 +151,7 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
     if(NOT EXISTS ${windeployqt})
       message(FATAL_ERROR "Failed to locate windeployqt executable: [${windeployqt}]")
     endif()
-    set(_args "--release --no-compiler-runtime --no-translations --no-plugins")
+    set(_args "--release --no-compiler-runtime --no-plugins")
 
     foreach(target IN LISTS QT_LIBRARIES)
       get_target_property(type ${target} TYPE)
