@@ -487,6 +487,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
                                                                                 lambda progressLabel, progressValue, progressDialog=progressDialog: progressCallback(progressDialog, progressLabel, progressValue),
                                                                                 self.pluginInstances)
 
+            progressDialog.setParent(None)
             progressDialog.close()
 
         if messages:
@@ -621,6 +622,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         qt.QApplication.restoreOverrideCursor()
 
+        progressDialog.setParent(None)
         progressDialog.close()
 
         if messages:
