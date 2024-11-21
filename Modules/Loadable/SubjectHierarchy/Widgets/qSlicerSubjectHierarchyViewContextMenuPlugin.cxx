@@ -30,6 +30,7 @@
 #include <QClipboard>
 #include <QDebug>
 #include <QVariant>
+#include <qboxlayout.h>
 
 // MRML includes
 #include <qMRMLSliceView.h>
@@ -42,6 +43,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <qMRMLThreeDViewControllerWidget.h>
+#include <qMRMLSliceControllerWidget.h>
 
 // Slicer includes
 #include <qSlicerApplication.h>
@@ -76,6 +78,7 @@ public:
   QAction* InteractionModePlaceAction = nullptr;
 
   QAction* MaximizeViewAction = nullptr;
+  QAction* FullScreenViewAction = nullptr;
   QAction* FitSliceViewAction = nullptr;
   QAction* RefocusAllCamerasAction = nullptr;
   QAction* CenterThreeDViewAction = nullptr;
@@ -96,6 +99,8 @@ public:
   vtkWeakPointer<vtkMRMLCameraWidget> CameraWidget;
 
   QVariantMap ViewContextMenuEventData;
+
+  QWidget* fullScreenWidget = nullptr;
 };
 
 //-----------------------------------------------------------------------------
@@ -177,13 +182,19 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
   QObject::connect(this->RefocusAllCamerasAction, SIGNAL(triggered()), q, SLOT(refocusAllCameras()));
 
-
   this->MaximizeViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Maximize view"), q);
   this->MaximizeViewAction->setObjectName("MaximizeViewAction");
   this->MaximizeViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show this view maximized in the view layout"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->MaximizeViewAction,
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
   QObject::connect(this->MaximizeViewAction, SIGNAL(triggered()), q, SLOT(maximizeView()));
+
+  this->FullScreenViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("FullScreen View"), q);
+  this->FullScreenViewAction->setObjectName("FullScreenViewAction");
+  this->FullScreenViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Copy the view to fullscreen outside of the layout"));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FullScreenViewAction,
+      qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
+  QObject::connect(this->FullScreenViewAction, SIGNAL(triggered()), q, SLOT(fullScreenView()));
 
   this->ToggleTiltLockAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Tilt lock"), q);
   this->ToggleTiltLockAction->setObjectName("TiltLockAction");
@@ -192,7 +203,7 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->ToggleTiltLockAction->setShortcut(QKeySequence(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Ctrl+b")));
   this->ToggleTiltLockAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ToggleTiltLockAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 5);
   QObject::connect(this->ToggleTiltLockAction, SIGNAL(triggered()), q, SLOT(toggleTiltLock()));
 
   this->ConfigureSliceViewAnnotationsAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Configure slice view annotations..."), q);
@@ -200,17 +211,17 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->ConfigureSliceViewAnnotationsAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Configures display of corner annotations"
                                                         " and color legend."));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 5);
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 6);
   QObject::connect(this->ConfigureSliceViewAnnotationsAction, SIGNAL(triggered()), q, SLOT(configureSliceViewAnnotationsAction()));
 
   this->CopyImageAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Copy image"), q);
   this->CopyImageAction->setObjectName("CopyImageAction");
   this->CopyImageAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Copy a screenshot of this view to the clipboard"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CopyImageAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 20); // set to 20 to make it the last item in the action group
+    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 21); // set to 20 to make it the last item in the action group
   QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
 
-  int sliceSection = qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 5; // set section to +5 to allow placing other sections above
+  int sliceSection = qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 6; // set section to +5 to allow placing other sections above
 
   // Slice intersections
   this->IntersectingSlicesVisibilityAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Slice intersections"), q);
@@ -232,7 +243,7 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   QObject::connect(this->IntersectingSlicesInteractiveAction, SIGNAL(triggered(bool)),
     q, SLOT(setIntersectingSlicesHandlesVisible(bool)));
 
-  int thickSlabSection = sliceSection + 5; // set section to +5 to allow placing other sections above
+  int thickSlabSection = sliceSection + 6; // set section to +5 to allow placing other sections above
 
   // Thick slab reconstruction
   this->EnableSlabReconstructionAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Thick slab reconstruction"), q);
@@ -286,6 +297,7 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
     << d->InteractionModeAdjustWindowLevelAction
     << d->InteractionModePlaceAction
     << d->MaximizeViewAction
+    << d->FullScreenViewAction
     << d->FitSliceViewAction
     << d->RefocusAllCamerasAction
     << d->CenterThreeDViewAction
@@ -369,6 +381,22 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
     {
       d->MaximizeViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Maximize view"));
     }
+  }
+  if (d->fullScreenWidget != nullptr)d->MaximizeViewAction->setVisible(false);
+
+  d->FullScreenViewAction->setVisible(canBeMaximized);
+  if (canBeMaximized)
+  {
+      d->FullScreenViewAction->setProperty("FullScreen", QVariant(!isMaximized));
+      if (isMaximized)
+      {
+          d->FullScreenViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Close FullScreen"));
+          if (d->fullScreenWidget == nullptr)d->FullScreenViewAction->setVisible(false);
+      }
+      else
+      {
+          d->FullScreenViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("FullScreen view"));
+      }
   }
 
   d->CopyImageAction->setVisible(true);
@@ -527,11 +555,76 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::maximizeView()
   if (maximizeView)
   {
     d->LayoutNode->AddMaximizedViewNode(d->ViewNode);
+    d->FullScreenViewAction->setVisible(false);
   }
   else
   {
     d->LayoutNode->RemoveMaximizedViewNode(d->ViewNode);
+    d->FullScreenViewAction->setVisible(true);
   }
+}
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyViewContextMenuPlugin::fullScreenView()
+{
+    Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
+    if (!d->LayoutNode)
+    {
+        return;
+    }
+    bool fullScreenView = d->FullScreenViewAction->property("FullScreen").toBool();
+    if (fullScreenView)
+    {
+        d->LayoutNode->AddMaximizedViewNode(d->ViewNode);
+
+        QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
+
+        qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(widget);
+        qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
+        if (sliceWidget)
+        {
+            qMRMLSliceControllerWidget* sliceController=sliceWidget->sliceController();
+            sliceController->hide();
+        }
+        else if (threeDWidget)
+        {
+            qMRMLThreeDViewControllerWidget* threeDWidgetController = threeDWidget->threeDController();
+            threeDWidgetController->hide();
+        }
+        if (!widget)
+        {
+            qWarning() << Q_FUNC_INFO << " failed: cannot get view widget from layout manager";
+            return;
+        }
+        d->fullScreenWidget = new QWidget();
+        QVBoxLayout* fullScreenWidgetLayout = new QVBoxLayout(d->fullScreenWidget);
+        fullScreenWidgetLayout->addWidget(widget);
+        d->fullScreenWidget->showFullScreen();
+    }
+    else
+    {
+        d->fullScreenWidget->close();
+        d->fullScreenWidget = nullptr;
+
+        QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
+        qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(widget);
+        qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
+        if (sliceWidget)
+        {
+            qMRMLSliceControllerWidget* sliceController = sliceWidget->sliceController();
+            sliceController->show();
+        }
+        else if (threeDWidget)
+        {
+            qMRMLThreeDViewControllerWidget* threeDWidgetController = threeDWidget->threeDController();
+            threeDWidgetController->show();
+        }
+        if (!widget)
+        {
+            qWarning() << Q_FUNC_INFO << " failed: cannot get view widget from layout manager";
+            return;
+        }
+        d->LayoutNode->RemoveMaximizedViewNode(d->ViewNode);// its helpful for restore to the original layout
+    }
 }
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyViewContextMenuPlugin::fitSliceView()

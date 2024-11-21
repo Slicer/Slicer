@@ -63,6 +63,7 @@ protected slots:
   void saveScreenshot();
   void configureSliceViewAnnotationsAction();
   void maximizeView();
+  void fullScreenView();
   void fitSliceView();
   void centerThreeDView();
   void refocusCamera();
