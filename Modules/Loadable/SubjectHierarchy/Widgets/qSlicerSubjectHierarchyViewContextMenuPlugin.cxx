@@ -297,7 +297,7 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
     << d->InteractionModeAdjustWindowLevelAction
     << d->InteractionModePlaceAction
     << d->MaximizeViewAction
-    << d->FullScreenViewAction
+    //<< d->FullScreenViewAction // Fullscreen feature is not stable, hide it
     << d->FitSliceViewAction
     << d->RefocusAllCamerasAction
     << d->CenterThreeDViewAction
