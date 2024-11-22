@@ -185,13 +185,13 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
         # Set the orientation to axial
         logic.StartSliceNodeInteraction(12)  # OrientationFlag & ResetFieldOfViewFlag
         compareNode.SetOrientation("Axial")
-        logic.FitSliceToAll()
+        logic.FitSliceToBackground()
         compareNode.UpdateMatrices()
         logic.EndSliceNodeInteraction()
 
         # Reset the field of view
         logic.StartSliceNodeInteraction(8)  # ResetFieldOfViewFlag
-        logic.FitSliceToAll()
+        logic.FitSliceToBackground()
         compareNode.UpdateMatrices()
         logic.EndSliceNodeInteraction()
         # Note: we validate on fov[1] when resetting the field of view (fov[0] can
@@ -209,7 +209,7 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
         # Changed the number of lightboxes
         ln.SetNumberOfCompareViewLightboxColumns(6)
         logic.StartSliceNodeInteraction(8)  # ResetFieldOfViewFlag
-        logic.FitSliceToAll()
+        logic.FitSliceToBackground()
         compareNode.UpdateMatrices()
         logic.EndSliceNodeInteraction()
 
@@ -275,7 +275,7 @@ class SliceLinkLogicTest(ScriptedLoadableModuleTest):
         # Change the orientation
         logic.StartSliceNodeInteraction(12)  # OrientationFlag & ResetFieldOfViewFlag
         compareNode.SetOrientation("Sagittal")
-        logic.FitSliceToAll()
+        logic.FitSliceToBackground()
         compareNode.UpdateMatrices()
         logic.EndSliceNodeInteraction()
         self.delayDisplay("Broadcasted a change in slice orientation to all Compare Views")

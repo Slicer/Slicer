@@ -2472,7 +2472,7 @@ void qMRMLSegmentEditorWidget::showSourceVolumeInSliceViewers(bool forceShowInBa
     }
     if (fitSlice)
     {
-      sliceLogic->FitSliceToAll(true);
+      sliceLogic->FitSliceToBackground(true);
     }
   }
 }

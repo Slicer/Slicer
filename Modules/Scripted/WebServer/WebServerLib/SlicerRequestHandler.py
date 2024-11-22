@@ -958,7 +958,7 @@ space origin: %%origin%%
             if orientation.lower() == "coronal":
                 sliceNode.SetOrientationToCoronal()
             if orientation.lower() != previousOrientation:
-                sliceLogic.FitSliceToAll()
+                sliceLogic.FitSliceToBackground()
 
         imageData = sliceLogic.GetBlend().Update(0)
         imageData = sliceLogic.GetBlend().GetOutputDataObject(0)

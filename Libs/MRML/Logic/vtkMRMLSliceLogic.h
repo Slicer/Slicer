@@ -260,7 +260,10 @@ public:
   void FitSliceToFirst(int width = -1, int height = -1);
 
   ///
-  /// adjust the node's field of view to match the extent of current background volume
+  /// Adjust the node's field of view to match the extent of the volume visible in the slice's background.
+  /// This is a more advanced version of FitSliceToAll, which takes into account that in case of
+  /// ClipToBackgroundVolume is enabled then all layers above the background volume
+  /// will be clipped to the background volume's extents.
   void FitSliceToBackground(int width = -1, int height = -1);
 
   ///

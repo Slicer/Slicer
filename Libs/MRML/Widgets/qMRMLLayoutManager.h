@@ -247,7 +247,7 @@ public slots:
   void resetThreeDViews();
 
   /// Reset focal view around volumes
-  /// \sa qMRMLSliceControllerWidget::fitSliceToBackground(), vtkMRMLSliceLogic::FitSliceToAll()
+  /// \sa qMRMLSliceControllerWidget::fitSliceToBackground(), vtkMRMLSliceLogic::FitSliceToBackground()
   void resetSliceViews();
 
   /// Calls setPauseRender(pause) on all slice and 3D views

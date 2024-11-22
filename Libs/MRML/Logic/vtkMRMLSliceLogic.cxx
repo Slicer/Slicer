@@ -1809,24 +1809,18 @@ void vtkMRMLSliceLogic::FitSliceToFirst(int width, int height)
 // adjust the node's field of view to match the extent of current background volume
 void vtkMRMLSliceLogic::FitSliceToBackground(int width, int height)
 {
-  // Use SliceNode dimensions if width and height parameters are omitted
-  if (width < 0 || height < 0)
+  if (!this->SliceCompositeNode)
   {
-    int* dimensions = this->SliceNode->GetDimensions();
-    width = dimensions ? dimensions[0] : -1;
-    height = dimensions ? dimensions[1] : -1;
-  }
-
-  if (width < 0 || height < 0)
-  {
-    vtkErrorMacro(<< __FUNCTION__ << "- Invalid size:" << width
-                  << "x" << height);
     return;
   }
-
-  vtkMRMLVolumeNode *backgroundNode = nullptr;
-  backgroundNode = this->GetLayerVolumeNode(0);
-  this->FitSliceToVolume(backgroundNode, width, height);
+  if (this->SliceCompositeNode->GetClipToBackgroundVolume())
+  {
+    this->FitSliceToFirst(width, height);
+  }
+  else
+  {
+    this->FitSliceToAll(width, height);
+  }
 }
 
 //----------------------------------------------------------------------------

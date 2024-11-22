@@ -202,7 +202,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         sliceLogic.StartSliceCompositeNodeInteraction(1)
         compositeNode.SetBackgroundVolumeID(baselineVolume.GetID())
         slicer.app.processEvents()
-        sliceLogic.FitSliceToAll()
+        sliceLogic.FitSliceToBackground()
         sliceLogic.EndSliceCompositeNodeInteraction()
         self.takeScreenshot("NeurosurgicalPlanning-Baseline", "Baseline in background")
 
@@ -221,7 +221,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(ScriptedLoadableModuleTes
         #
         lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
         slicer.app.processEvents()
-        sliceLogic.FitSliceToAll()
+        sliceLogic.FitSliceToBackground()
         self.takeScreenshot("NeurosurgicalPlanning-RedSliceOnly", "Set layout to Red Slice only")
 
         #

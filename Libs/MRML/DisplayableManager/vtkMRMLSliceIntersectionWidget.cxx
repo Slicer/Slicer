@@ -565,7 +565,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
     {
       this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
       this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::ResetFieldOfViewFlag);
-      this->SliceLogic->FitSliceToAll();
+      this->SliceLogic->FitSliceToBackground();
       this->GetSliceNode()->UpdateMatrices();
       this->SliceLogic->EndSliceNodeInteraction();
     }
