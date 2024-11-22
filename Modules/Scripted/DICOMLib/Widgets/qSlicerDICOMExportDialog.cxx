@@ -43,11 +43,13 @@
 #include <QTimer>
 #include <QSettings>
 #include <QMessageBox>
+#include <QUiLoader>
 
 // Printer
 #include <QPrinter>
 #include <QPrintPreviewDialog>
 #include <QPainter>
+#include <QPdfWriter>
 #include <qfontdatabase.h>
 
 // PythonQt includes
@@ -563,192 +565,94 @@ void qSlicerDICOMExportDialog::onPrint()
         }
     }
     // qDebug() << "image num: " << imageList.size();
-
-    QPrinter printer(QPrinter::HighResolution);
+    QPrinter printer(QPrinter::ScreenResolution);
     printer.setPageSize(QPrinter::A4);
     printer.setOrientation(QPrinter::Landscape);
-    printer.setResolution(300);
     QPrintPreviewDialog previewDialog(&printer);
-    previewDialog.resize(1000, 800);
+    /*qreal pixelRatio = qApp->devicePixelRatio();*/
+    previewDialog.resize(printer.width(), printer.height());
     previewDialog.setWindowTitle("Print");
 
     connect(&previewDialog, &QPrintPreviewDialog::paintRequested, this, [&,imageList](QPrinter* this_printer) {
         QPainter painter(this_printer);
+        QUiLoader loader;
+        QFile file(":Ui/Print.ui");
+        QWidget* print_widget = loader.load(&file);
 
-        int m_fontId1 = QFontDatabase::addApplicationFont(":/Fonts/SourceHanSans-Bold.ttf");
-        int m_fontId2 = QFontDatabase::addApplicationFont(":/Fonts/SourceHanSans-Regular.ttf");
-        QString m_font1 = QFontDatabase::applicationFontFamilies(m_fontId1).at(0);
-        QString m_font2 = QFontDatabase::applicationFontFamilies(m_fontId2).at(0);
         QMap<QString, QString> m_qmap = d->DICOMTagEditorWidget->exportables()[0]->tags();
 
-        QRect pageRect = this_printer->pageRect();
-        int pageWidth = pageRect.width();
-        int pageHeight = pageRect.height();
-        // Print 1st Page
-        {
-            int imageWidth = pageWidth * 0.7;
-            int imageHeight = pageHeight * 1.0;
-            QRect imageRect(0, 0, imageWidth, imageHeight);
+        print_widget->resize(this_printer->width(), this_printer->height());
+        file.close();
 
-            int numColumns = 5;
-            int numRows = 5;
-            int cellWidth = imageRect.width() / numColumns;
-            int cellHeight = imageRect.height() / numRows;
+        //double pixelRatio = qApp->devicePixelRatio();
+        //qDebug() << "-------->" << pixelRatio<<"--->"<< this_printer->width()<<this_printer->height();
+        //print_widget->resize(this_printer->width(), this_printer->height());
+        //widget->render(&painter);
+        //QPixmap pixmap(this_printer->width(), this_printer->height());
+        //print_widget->render(&pixmap);
+        //pixmap = pixmap.scaled(QSize(this_printer->width() * pixelRatio,
+        // /this_printer->height()* pixelRatio) , Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        //pixmap.setDevicePixelRatio(pixelRatio);
+        //qDebug() << "======>" << pixmap.size() << pixmap.size();
+        //painter.drawPixmap(0,0,pixmap);
 
-            for (int i = 0; i < numColumns* numRows; ++i) {
-                int row = i / numColumns;
-                int col = i % numColumns;
-                int x = imageRect.left() + col * cellWidth + 10;
-                int y = imageRect.top() + row * cellHeight + 10;
-                QRect imageCellRect(x, y, cellWidth, cellHeight);
-                QImage img = imageList[i];
-                painter.drawImage(imageCellRect, img);
-            }
+        // R G Y Page
+        // // 1st Page
+        print_widget->findChild<QWidget*>("widget_0");
+        print_widget->findChild<QWidget*>("widget_1")->hide();
 
-            // Print Text
-            int infoWidth = pageWidth * 0.3;
-            int infoX = imageWidth;
-            QRect infoRect(infoX, 0, infoWidth, pageHeight);
-            int margin = 20 + 50;
+        print_widget->findChild<QLabel*>("label")->setText(" ");
+        print_widget->findChild<QLabel*>("page_number")->setText(QString("Page %1 of %2").arg(1).arg(imageList.size()));
 
-            QFont font1(m_font1, 12);
-            font1.setBold(true);
-            font1.setItalic(true);
-            painter.setFont(font1);
+        print_widget->findChild<QLabel*>("lb_patient_name")->setText("PatientName: "+m_qmap.value("PatientName"));
+        print_widget->findChild<QLabel*>("lb_patient_id")->setText("PatientID: "+m_qmap.value("PatientID"));
+        print_widget->findChild<QLabel*>("lb_patient_age")->setText("PatientBirthDate: "+m_qmap.value("PatientBirthDate"));
+        print_widget->findChild<QLabel*>("lb_patient_sex")->setText("PatientSex: "+m_qmap.value("PatientSex"));
 
-            painter.drawText(infoX + margin + 20, 50, "Patient Information");
-            painter.drawText(infoX + margin + 20, 150 * 3, "CT scan information");
-            painter.drawText(infoX + margin + 20, 350 * 3, "Reformatted Study Information");
-            painter.drawText(infoX + margin + 20, 500 * 3, "General information");
+        print_widget->findChild<QLabel*>("lb_ct_11")->setText("ContentDate: "+m_qmap.value("ContentDate"));
+        print_widget->findChild<QLabel*>("lb_ct_12")->setText("SeriesDate: "+m_qmap.value("SeriesDate"));
+        print_widget->findChild<QLabel*>("lb_ct_21")->setText("ContentTime: "+m_qmap.value("ContentTime"));
+        print_widget->findChild<QLabel*>("lb_ct_22")->setText("SeriesNumber: "+m_qmap.value("SeriesNumber"));
+        print_widget->findChild<QLabel*>("lb_ct_31")->setText("SeriesDescription: "+m_qmap.value("SeriesDescription"));
+        print_widget->findChild<QLabel*>("lb_ct_32")->setText("FrameOfReferenceUID: "+m_qmap.value("FrameOfReferenceUID"));
+        print_widget->findChild<QLabel*>("lb_ct_41")->setText("SeriesInstanceUID: "+m_qmap.value("SeriesInstanceUID"));
+        print_widget->findChild<QLabel*>("lb_ct_42")->setText("Manufacturer: "+m_qmap.value("Manufacturer"));
+        print_widget->findChild<QLabel*>("lb_ct_51")->setText("Modality: "+m_qmap.value("Modality"));
+        print_widget->findChild<QLabel*>("lb_ct_52")->setText("SeriesTime: "+m_qmap.value("SeriesTime"));
+        print_widget->findChild<QLabel*>("lb_ct_61")->setText("Model: "+m_qmap.value("Model"));
 
-            painter.setPen(QPen(Qt::black, 10));
-            painter.drawLine(pageWidth * 0.7 + margin, 0, pageWidth * 0.7 + margin, pageHeight);
+        print_widget->findChild<QLabel*>("label_study11")->setText("StudyDate: "+m_qmap.value("StudyDate"));
+        print_widget->findChild<QLabel*>("label_study12")->setText("StudyDescription: "+m_qmap.value("StudyDescription"));
+        print_widget->findChild<QLabel*>("label_study21")->setText("StudyID: "+m_qmap.value("StudyID"));
+        print_widget->findChild<QLabel*>("label_study22")->setText("SeriesTime: "+m_qmap.value("SeriesTime"));
+        print_widget->findChild<QLabel*>("label_study31")->setText("StudyInstanceUID: "+m_qmap.value("StudyInstanceUID"));
+        print_widget->findChild<QLabel*>("label_study32")->setText("StudyTime: "+m_qmap.value("StudyTime"));
 
-            painter.setPen(QPen(Qt::black, 8));
-            painter.drawLine(infoX + margin, 150 * 3 - 60, infoX + infoWidth, 150 * 3 - 60);
-            painter.drawLine(infoX + margin, 350 * 3 - 60, infoX + infoWidth, 350 * 3 - 60);
-            painter.drawLine(infoX + margin, 500 * 3 - 60, infoX + infoWidth, 500 * 3 - 60);
+        int scale_size_h = this_printer->height() * 0.8;
+        print_widget->findChild<QLabel*>("label_img")->setPixmap(QPixmap::fromImage(imageList[0].scaled(scale_size_h, scale_size_h)));
+        print_widget->render(&painter);
+        this_printer->newPage();
 
-            QFont font2(m_font2, 10);
-            font2.setBold(false);
-            font2.setItalic(false);
-            painter.setFont(font2);
+        // other Pages
+        print_widget->findChild<QWidget*>("widget_1")->show();
+        print_widget->findChild<QWidget*>("widget_22")->hide();
+        print_widget->findChild<QLabel*>("lb_2_patient_name")->setText("PatientName: " + m_qmap.value("PatientName"));
+        print_widget->findChild<QLabel*>("lb_2_patient_id")->setText("PatientID: " + m_qmap.value("PatientID"));
+        print_widget->findChild<QLabel*>("lb_2_patient_age")->setText("PatientBirthDate: " + m_qmap.value("PatientBirthDate"));
+        print_widget->findChild<QLabel*>("lb_2_patient_sex")->setText("PatientSex: " + m_qmap.value("PatientSex"));
+        print_widget->findChild<QLabel*>("lb_2_gray_level")->setText("Depth: "+ QString::number(imageList[0].depth()));
+        print_widget->findChild<QLabel*>("lb_2_gray_width")->setText("Width: "+ QString::number(imageList[0].width()));
 
-            painter.drawText(infoX + margin + 25, 120, "PatientID:");
-            painter.drawText(infoX + margin + 25 + 300, 120, m_qmap.value("PatientID"));
-            painter.drawText(infoX + margin + 25, 180, "PatientName:");
-            painter.drawText(infoX + margin + 25 + 300, 180, m_qmap.value("PatientName"));
-            painter.drawText(infoX + margin + 25, 240, "PatientSex:");
-            painter.drawText(infoX + margin + 25 + 300, 240, m_qmap.value("PatientSex"));
-            painter.drawText(infoX + margin + 25, 300, "PatientBirthDate:");
-            painter.drawText(infoX + margin + 25 + 300, 300, m_qmap.value("PatientBirthDate"));
-            painter.drawText(infoX + margin + 25, 360, "PatientComments:");
-            painter.drawText(infoX + margin + 25 + 300, 360, m_qmap.value("PatientComments"));
-
-            int Y_set_ = 150 * 3 + 70;
-            painter.drawText(infoX + margin + 25, Y_set_, "ContentDate:");
-            painter.drawText(infoX + margin + 465, Y_set_, "SeriesDate:");
-            painter.drawText(infoX + margin + 25 + 200, Y_set_, m_qmap.value("ContentDate"));
-            painter.drawText(infoX + margin + 465 + 200, Y_set_, m_qmap.value("SeriesDate"));
-            Y_set_ += 60;
-            painter.drawText(infoX + margin + 25, Y_set_, "ContentTime:");
-            painter.drawText(infoX + margin + 465, Y_set_, "SeriesNumber:");
-            painter.drawText(infoX + margin + 25 + 200, Y_set_, m_qmap.value("ContentTime"));
-            painter.drawText(infoX + margin + 465 + 300, Y_set_, m_qmap.value("SeriesNumber"));
-            Y_set_ += 60;
-            painter.drawText(infoX + margin + 25, Y_set_, "SeriesDescription:");
-            painter.drawText(infoX + margin + 25 + 400, Y_set_, m_qmap.value("SeriesDescription"));
-            Y_set_ += 60;
-            painter.drawText(infoX + margin + 25, Y_set_, "FrameOfReferenceUID:");
-            painter.drawText(infoX + margin + 25 + 400, Y_set_, m_qmap.value("FrameOfReferenceUID"));
-            Y_set_ += 60;
-            painter.drawText(infoX + margin + 25, Y_set_, "SeriesInstanceUID:");
-            painter.drawText(infoX + margin + 25 + 400, Y_set_, m_qmap.value("SeriesInstanceUID"));
-            Y_set_ += 60;
-            painter.drawText(infoX + margin + 25, Y_set_, "Manufacturer:");
-            painter.drawText(infoX + margin + 25 + 400, Y_set_, m_qmap.value("Manufacturer"));
-            Y_set_ += 60;
-            painter.drawText(infoX + margin + 25, Y_set_, "Modality:");
-            painter.drawText(infoX + margin + 465, Y_set_, "SeriesTime:");
-            painter.drawText(infoX + margin + 25 + 200, Y_set_, m_qmap.value("Modality"));
-            painter.drawText(infoX + margin + 465 + 200, Y_set_, m_qmap.value("SeriesTime"));
-            Y_set_ += 60;
-            painter.drawText(infoX + margin + 25, Y_set_, "Model:");
-            painter.drawText(infoX + margin + 25 + 200, Y_set_, m_qmap.value("Model"));
-
-            int Y_set_new = 350 * 3 + 70;
-            painter.drawText(infoX + margin + 25, Y_set_new, "StudyDate:");
-            painter.drawText(infoX + margin + 25 + 300, Y_set_new, m_qmap.value("StudyDate"));
-            Y_set_new += 60;
-            painter.drawText(infoX + margin + 25, Y_set_new, "StudyDescription:");
-            painter.drawText(infoX + margin + 25 + 360, Y_set_new, m_qmap.value("StudyDescription"));
-            Y_set_new += 60;
-            painter.drawText(infoX + margin + 25, Y_set_new, "StudyID:");
-            painter.drawText(infoX + margin + 25 + 300, Y_set_new, m_qmap.value("StudyID"));
-            Y_set_new += 60;
-            painter.drawText(infoX + margin + 25, Y_set_new, "StudyInstanceUID:");
-            Y_set_new += 60;
-            painter.drawText(infoX + margin + 25 + 50, Y_set_new, m_qmap.value("StudyInstanceUID"));
-            Y_set_new += 60;
-            painter.drawText(infoX + margin + 25, Y_set_new, "StudyTime:");
-            painter.drawText(infoX + margin + 25 + 300, Y_set_new, m_qmap.value("StudyTime"));
-
-            painter.drawText(infoX + margin + 25, 500 * 3 + 70, "Remark:");
-
-            QPixmap mlogo(":LogoFull.png");
-            QString company = "Slicer Lung. DeepInsightData.";
-            int companyTextY = pageHeight - margin;
-            QRect logoRect(pageWidth - margin - painter.fontMetrics().horizontalAdvance(company) - 200, companyTextY, 233, 64);
-            painter.drawPixmap(logoRect, mlogo);
-            painter.drawText(pageWidth - margin - painter.fontMetrics().horizontalAdvance(company) + 50, companyTextY + 45, company);
-
+        int page_num = 1;
+        for (auto& i : imageList) {
+            print_widget->findChild<QLabel*>("page_number")->setText(QString("Page %1 of %2").arg(++page_num).arg(imageList.size()));
+            print_widget->findChild<QLabel*>("label_img")->setPixmap(QPixmap::fromImage(i.scaled(scale_size_h, scale_size_h)));
+            print_widget->render(&painter);
             this_printer->newPage();
         }
-        // Print Remaining Pages
-        {
-            int imagesPerPage = 5 * 7;
-            int remainingImages = imageList.size() - 25;
-            int remainingPages = (remainingImages + imagesPerPage - 1) / imagesPerPage;
-
-            for (int page = 1; page <= remainingPages; ++page) {
-                int startIdx = 25 + (page - 1) * imagesPerPage;
-                int endIdx = qMin(startIdx + imagesPerPage, imageList.size());
-
-                QRect textArea(0, 0, pageWidth, pageHeight * 0.05);
-                QFont font1(m_font1, 13);
-                font1.setBold(true);
-                painter.setFont(font1);
-                painter.drawText(textArea.adjusted(20, 20, -20, -20), Qt::AlignLeft, "PatientID:"+ m_qmap.value("PatientID")
-                    +"  PatientName:"+ m_qmap.value("PatientName"));
-                QString pageNumber = QString("Page %1 of %2").arg(page + 1).arg(remainingPages + 1);
-                painter.drawText(textArea.adjusted(20, 20, -20, -20), Qt::AlignRight, pageNumber);
-
-                QRect imageArea(0, pageHeight * 0.05, pageWidth, pageHeight * 0.95);
-                int cellWidth = imageArea.width() / 7;
-                int cellHeight = imageArea.height() / 5;
-
-                for (int i = startIdx; i < endIdx; ++i) {
-                    int row = (i - startIdx) / 7;
-                    int col = (i - startIdx) % 7;
-
-                    int x = imageArea.left() + col * cellWidth;
-                    int y = imageArea.top() + row * cellHeight;
-                    QRect imageRect(x, y, cellWidth, cellHeight);
-
-                    QImage img = imageList[i];
-                    painter.drawImage(imageRect, img);
-                }
-
-                if (page < remainingPages) {
-                    this_printer->newPage();
-                }
-            }
-        }
-
         painter.end();
     });
     previewDialog.exec();
-
 }
 
 //-----------------------------------------------------------------------------
