@@ -87,7 +87,7 @@ public:
   /// Perform the default behavior related to selecting a volume
   /// (in this case, making it the background for all SliceCompositeNodes)
   /// \sa vtkInternal::PropagateVolumeSelection()
-  /// \sa FitSliceToAll()
+  /// \sa FitSliceToBackground()
   /// \sa vtkMRMLSelectionNode::SetActiveVolumeID()
   /// \sa vtkMRMLSelectionNode::SetSecondaryVolumeID()
   /// \sa vtkMRMLSelectionNode::SetActiveLabelVolumeID()
@@ -95,21 +95,21 @@ public:
 
   /// Propagate only active background volume in the SelectionNode to slice composite
   /// nodes
-  /// \sa FitSliceToAll()
+  /// \sa FitSliceToBackground()
   /// \sa vtkMRMLSelectionNode::SetActiveVolumeID()
   /// \sa Layers::BackgroundLayer
   void PropagateBackgroundVolumeSelection(int fit = 1);
 
   /// Propagate only active foreground volume in the SelectionNode to slice composite
   /// nodes
-  /// \sa FitSliceToAll()
+  /// \sa FitSliceToBackground()
   /// \sa vtkMRMLSelectionNode::SetSecondaryVolumeID()
   /// \sa Layers::ForegroundLayer
   void PropagateForegroundVolumeSelection(int fit = 1);
 
   /// Propagate only active label volume in the SelectionNode to slice composite
   /// nodes
-  /// \sa FitSliceToAll()
+  /// \sa FitSliceToBackground()
   /// \sa vtkMRMLSelectionNode::SetActiveLabelVolumeID()
   /// \sa Layers::LabelLayer
   void PropagateLabelVolumeSelection(int fit = 1);
@@ -132,6 +132,15 @@ public:
   /// only those slices where propagate volume selection is allowed
   /// If resetOrientation is true then slice orientation can be modified during function call
   void FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed=false, bool resetOrientation=true);
+
+  /// Fit all the visible volumes into their views.
+  /// This is a more advanced version of FitSliceToAll, which takes into account that in case of
+  /// ClipToBackgroundVolume is enabled for the slice then all layers above the background volume
+  /// will be clipped to the background volume's extents.
+  /// If onlyIfPropagateVolumeSelectionAllowed is true then field of view will be reset on
+  /// only those slices where propagate volume selection is allowed
+  /// If resetOrientation is true then slice orientation can be modified during function call
+  void FitSliceToBackground(bool onlyIfPropagateVolumeSelectionAllowed=false, bool resetOrientation=true);
 
   /// Propagate selected table in the SelectionNode to table view nodes.
   void PropagateTableSelection();
@@ -301,6 +310,8 @@ protected:
   void SetInteractionNode(vtkMRMLInteractionNode* );
 
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+
+  void FitSliceToContent(bool all, bool onlyIfPropagateVolumeSelectionAllowed=false, bool resetOrientation=true);
 
   void OnMRMLSceneStartBatchProcess() override;
   void OnMRMLSceneEndBatchProcess() override;

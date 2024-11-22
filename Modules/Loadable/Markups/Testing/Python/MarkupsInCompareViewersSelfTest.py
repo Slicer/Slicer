@@ -147,7 +147,7 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
         compareLogic1.StartSliceCompositeNodeInteraction(1)
         compareCompositeNode1.SetBackgroundVolumeID(mrHeadVolume.GetID())
         compareLogic1.EndSliceCompositeNodeInteraction()
-        compareLogic1.FitSliceToAll()
+        compareLogic1.FitSliceToBackground()
         # make it visible in 3D
         compareLogic1.GetSliceNode().SetSliceVisible(1)
 
@@ -173,7 +173,7 @@ class MarkupsInCompareViewersSelfTestLogic(ScriptedLoadableModuleLogic):
 
         # switch to compare grid
         lm.setLayout(23)
-        compareLogic1.FitSliceToAll()
+        compareLogic1.FitSliceToBackground()
         slicer.util.delayDisplay("Switched to Compare grid")
 
         # switch back to conventional

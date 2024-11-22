@@ -581,7 +581,7 @@ def setSliceViewerLayers(background="keep-current", foreground="keep-current", l
             for i in range(sliceLogics.GetNumberOfItems()):
                 sliceLogic = sliceLogics.GetItemAsObject(i)
                 if sliceLogic:
-                    sliceLogic.FitSliceToAll()
+                    sliceLogic.FitSliceToBackground()
 
 
 def setToolbarsVisible(visible, ignore=None):

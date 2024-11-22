@@ -461,7 +461,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
         vtkMRMLSliceLogic* logic = this->GetMRMLApplicationLogic()->GetSliceLogic(sNode);
         if (logic)
         {
-          logic->FitSliceToAll();
+          logic->FitSliceToBackground();
           sNode->UpdateMatrices();
         }
       }

@@ -2049,15 +2049,7 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
   // This can be done by changing the interaction flag to
   // vtkMRMLSliceNode::FieldOfViewFlag
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::ResetFieldOfViewFlag);
-  if (d->MRMLSliceCompositeNode->GetClipToBackgroundVolume())
-  {
-    d->SliceLogic->FitSliceToFirst();
-  }
-  else
-  {
-    d->SliceLogic->FitSliceToAll();
-  }
-
+  d->SliceLogic->FitSliceToBackground();
   this->mrmlSliceNode()->UpdateMatrices();
   d->SliceLogic->EndSliceNodeInteraction();
 }
