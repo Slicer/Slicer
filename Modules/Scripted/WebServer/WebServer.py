@@ -1,7 +1,7 @@
 import logging
 import os
-import sys
 import socket
+import sys
 import urllib
 from http.server import HTTPServer
 from typing import Callable, Optional
@@ -14,7 +14,6 @@ from slicer.i18n import tr as _
 from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 from slicer.util import settingsValue, toBool
-
 from WebServerLib.BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
 
 logger = logging.getLogger(__name__)

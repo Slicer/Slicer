@@ -6,11 +6,8 @@ import vtk
 import vtk.util.numpy_support
 
 import slicer
+from DICOMLib import DICOMLoadable, DICOMPlugin
 from slicer.i18n import tr as _
-
-from DICOMLib import DICOMPlugin
-from DICOMLib import DICOMLoadable
-
 
 #
 # This is the plugin to handle translation of DICOM objects
@@ -281,7 +278,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         displacements = vtk.util.numpy_support.vtk_to_numpy(gridImage.GetPointData().GetScalars()).reshape(nshape)
 
         # Get displacements
-        from math import sin, cos
+        from math import cos, sin
 
         ijkToRas = vtk.vtkMatrix4x4()
         volumeNode.GetIJKToRASMatrix(ijkToRas)

@@ -1,5 +1,4 @@
 from . import ExtensionWizardResources as Resources
-
 from .CreateComponentDialog import CreateComponentDialog
 from .DirectoryListWidget import DirectoryListWidget
 from .EditableTreeWidget import EditableTreeWidget

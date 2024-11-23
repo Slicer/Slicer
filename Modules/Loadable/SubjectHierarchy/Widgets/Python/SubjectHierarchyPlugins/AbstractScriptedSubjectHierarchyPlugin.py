@@ -2,7 +2,6 @@ import logging
 
 import slicer
 
-
 #
 # Abstract class of python scripted subject hierarchy plugins
 #

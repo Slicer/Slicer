@@ -8,7 +8,6 @@ from DICOMLib import DICOMUtils
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
-
 #
 # JRC2013Vis
 #
@@ -195,8 +194,8 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase("tempDICOMDatbase")
 
             self.delayDisplay("Start Local DICOM Q/R SCP")
-            import subprocess
             import os
+            import subprocess
 
             configFilePath = dicomFilesDirectory + "/Dcmtk-db/dcmqrscp.cfg"
             processCurrentPath = dicomFilesDirectory + "/Dcmtk-db/"

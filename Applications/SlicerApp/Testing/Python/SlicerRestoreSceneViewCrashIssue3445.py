@@ -2,7 +2,6 @@ import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
-
 #
 # SlicerRestoreSceneViewCrashIssue3445
 #

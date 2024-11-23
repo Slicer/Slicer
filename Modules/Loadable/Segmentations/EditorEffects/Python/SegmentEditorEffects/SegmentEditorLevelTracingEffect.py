@@ -3,12 +3,11 @@ import os
 
 import qt
 import vtk
-import vtkITK
 
 import slicer
-from slicer.i18n import tr as _
-
+import vtkITK
 from SegmentEditorEffects import *
+from slicer.i18n import tr as _
 
 
 class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):

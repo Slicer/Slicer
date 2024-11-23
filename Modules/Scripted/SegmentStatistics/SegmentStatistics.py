@@ -5,11 +5,10 @@ import qt
 import vtk
 
 import slicer
-from slicer.ScriptedLoadableModule import *
+from SegmentStatisticsPlugins import *
 from slicer.i18n import tr as _
 from slicer.i18n import translate
-
-from SegmentStatisticsPlugins import *
+from slicer.ScriptedLoadableModule import *
 
 
 class SegmentStatistics(ScriptedLoadableModule):
@@ -835,8 +834,8 @@ class SegmentStatisticsTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Starting test_SegmentStatisticsPlugins")
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
         import SampleData
+        import vtkSegmentationCorePython as vtkSegmentationCore
         from SegmentStatistics import SegmentStatisticsLogic
 
         self.delayDisplay("Load source volume")

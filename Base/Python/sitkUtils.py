@@ -1,5 +1,7 @@
-import SimpleITK as sitk
 import os
+
+import SimpleITK as sitk
+
 import slicer
 
 __sitk__MRMLIDImageIO_Missing_Reported__ = False
@@ -97,7 +99,8 @@ def _addDefaultStorageNode(targetNode):
         storageNode = targetNode.CreateDefaultStorageNode()
         storageNode.UnRegister(None)
         slicer.mrmlScene.AddNode(storageNode)
-    import os, uuid
+    import os
+    import uuid
     tempFileName = os.path.join(slicer.app.temporaryPath, str(uuid.uuid1())) + ".nrrd"
     storageNode.SetFileName(tempFileName)
     storageNode.UseCompressionOff()

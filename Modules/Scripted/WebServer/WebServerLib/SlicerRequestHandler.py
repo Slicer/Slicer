@@ -6,12 +6,12 @@ Docs/user_guide/modules/webserver.md
 
 import json
 import logging
-import numpy
 import os
 import time
 import urllib
 from typing import Optional
 
+import numpy
 import qt
 import vtk.util.numpy_support
 

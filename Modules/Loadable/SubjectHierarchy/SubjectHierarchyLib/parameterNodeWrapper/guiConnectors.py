@@ -1,8 +1,8 @@
 from slicer import qMRMLSubjectHierarchyTreeView
 from slicer.parameterNodeWrapper import (
-    isNodeOrUnionOfNodes,
-    getNodeTypes,
     GuiConnector,
+    getNodeTypes,
+    isNodeOrUnionOfNodes,
     parameterNodeGuiConnector,
 )
 

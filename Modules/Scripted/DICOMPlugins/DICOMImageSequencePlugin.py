@@ -4,11 +4,8 @@ import pydicom as dicom
 import vtk
 
 import slicer
+from DICOMLib import DICOMLoadable, DICOMPlugin
 from slicer.i18n import tr as _
-
-from DICOMLib import DICOMPlugin
-from DICOMLib import DICOMLoadable
-
 
 #
 # This is the plugin to handle translation of DICOM objects

@@ -1,10 +1,10 @@
 import logging
 import os
-import requests
 from typing import Optional
 
 import ctk
 import qt
+import requests
 import vtk
 
 import slicer

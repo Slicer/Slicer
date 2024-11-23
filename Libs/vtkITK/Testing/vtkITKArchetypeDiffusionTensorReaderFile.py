@@ -2,11 +2,10 @@
 import unittest
 
 import numpy
+from vtk.util import numpy_support as ns
 
 import vtkITK
 import vtkTeem
-
-from vtk.util import numpy_support as ns
 
 """
 To run as test from slicer python console, replace the following with your source tree path and paste:

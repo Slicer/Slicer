@@ -1,7 +1,8 @@
-import unittest
-import slicer
 import os
 import shutil
+import unittest
+
+import slicer
 
 
 class SlicerUtilSaveTests(unittest.TestCase):

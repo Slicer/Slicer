@@ -3,9 +3,8 @@ import logging
 import qt
 
 import slicer
-from slicer.i18n import tr as _
-
 from AbstractScriptedSubjectHierarchyPlugin import *
+from slicer.i18n import tr as _
 
 
 class SegmentStatisticsSubjectHierarchyPlugin(AbstractScriptedSubjectHierarchyPlugin):

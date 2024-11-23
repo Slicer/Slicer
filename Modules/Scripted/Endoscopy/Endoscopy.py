@@ -16,7 +16,6 @@ from slicer.ScriptedLoadableModule import (
 )
 from slicer.util import VTKObservationMixin
 
-
 #
 # Endoscopy
 #

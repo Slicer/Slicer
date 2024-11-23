@@ -2,7 +2,6 @@ import os
 import re
 
 from . import CMakeParser
-
 from .Utilities import detectEncoding
 
 

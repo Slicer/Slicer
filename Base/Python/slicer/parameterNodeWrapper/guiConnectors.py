@@ -12,14 +12,12 @@ from typing import Union
 
 import ctk
 import qt
-import slicer
 
+import slicer
+from . import Default, validators
 from . import parameterPack as pack
-from . import validators
-from . import Default
 from .types import FloatRange
-from .util import (findFirstAnnotation, getNodeTypes, isNodeOrUnionOfNodes,
-                   splitAnnotations, unannotatedType)
+from .util import findFirstAnnotation, getNodeTypes, isNodeOrUnionOfNodes, splitAnnotations, unannotatedType
 
 __all__ = [
     "createGuiConnector",

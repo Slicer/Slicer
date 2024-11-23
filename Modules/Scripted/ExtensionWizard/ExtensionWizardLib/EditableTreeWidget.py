@@ -2,6 +2,7 @@ import qt
 
 from slicer.i18n import tr as _
 
+
 # -----------------------------------------------------------------------------
 def _makeAction(parent, text, icon=None, shortcut=None, slot=None):
     action = qt.QAction(text, parent)

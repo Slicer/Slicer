@@ -1,8 +1,12 @@
-import os
-import vtk, qt, ctk, slicer
 import logging
-from SegmentEditorEffects import *
+import os
 
+import ctk
+import qt
+import vtk
+
+import slicer
+from SegmentEditorEffects import *
 from slicer.i18n import tr as _
 
 

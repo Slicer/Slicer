@@ -1,6 +1,8 @@
 import unittest
-import slicer
+
 import vtk
+
+import slicer
 
 
 class testClass:

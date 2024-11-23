@@ -1,11 +1,8 @@
 import vtk
 
 import slicer
-
-from DICOMLib import DICOMPlugin
-from DICOMLib import DICOMLoadable
+from DICOMLib import DICOMLoadable, DICOMPlugin
 from slicer.i18n import tr as _
-
 
 #
 # This is the plugin for DICOM module
