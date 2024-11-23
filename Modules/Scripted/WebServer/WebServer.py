@@ -159,7 +159,6 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         self.logToGUI.connect("clicked()", self.updateCORSandLoggingFromGUI)
 
         self.updateCORSandLoggingFromGUI()
-        slicer.app.connect("startupCompleted()", self.startServer)
 
     def startServer(self):
         self.logic.requestHandlers = []
