@@ -205,9 +205,9 @@ class ExtensionProject:
             except EOFError:
                 pass
 
-            for name in prefinedVariables.keys():
+            for name, variable in prefinedVariables.items():
                 try:
-                    text = text.replace("${%s}" % name, prefinedVariables[name])
+                    text = text.replace("${%s}" % name, variable)
                 except KeyError:
                     continue
 

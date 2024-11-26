@@ -700,9 +700,9 @@ class SliceAnnotations(VTKObservationMixin):
             "0018,0080": "Repetition Time",
             "0018,0081": "Echo Time",
         }
-        for tag in tags.keys():
+        for tag, tag_value in tags.items():
             value = slicer.dicomDatabase.instanceValue(uid, tag)
-            p[tags[tag]] = value
+            p[tag_value] = value
 
         # Store DICOM tags in cache
         self.extractedDICOMValuesCache[uid] = p
