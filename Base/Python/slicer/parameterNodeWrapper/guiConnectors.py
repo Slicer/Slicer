@@ -250,7 +250,7 @@ class QSliderOrSpinBoxToIntConnector(GuiConnector):
         minimum = findFirstAnnotation(annotations, validators.Minimum)
         maximum = findFirstAnnotation(annotations, validators.Maximum)
 
-        isBounded = withinRange is not None or minimum is not None and maximum is not None
+        isBounded = withinRange is not None or (minimum is not None and maximum is not None)
 
         if isinstance(widget, qt.QSlider) and not isBounded:
             raise RuntimeError("Cannot have a connection to QSlider where the int type is unbounded.")
@@ -317,7 +317,7 @@ class QDoubleSpinBoxCtkSliderWidgetToFloatConnector(GuiConnector):
         minimum = findFirstAnnotation(annotations, validators.Minimum)
         maximum = findFirstAnnotation(annotations, validators.Maximum)
 
-        isBounded = withinRange is not None or minimum is not None and maximum is not None
+        isBounded = withinRange is not None or (minimum is not None and maximum is not None)
 
         if type(widget) in (ctk.ctkSliderWidget, slicer.qMRMLSliderWidget) and not isBounded:
             raise RuntimeError("Cannot have a connection to ctkSliderWidget where the float types is unbounded.")
