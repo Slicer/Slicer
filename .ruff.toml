@@ -107,6 +107,7 @@ extend-ignore = [
   "RUF010",  # Use explicit conversion flag
   "RUF012",  # Mutable class attributes should be annotated with typing.ClassVar
   "RUF013",  # PEP 484 prohibits implicit `Optional`
+  "RUF022",  # Unsorted under __all__
   "RUF100",  # Unused `noqa` directive (non-enabled: `F401`)
 
   "SIM108",  # Use ternary operator
