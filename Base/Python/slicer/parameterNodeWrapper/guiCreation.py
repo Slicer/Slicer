@@ -169,7 +169,7 @@ class FloatGuiCreator(GuiCreator):
         maximum = findFirstAnnotation(annotations, Maximum)
         withinRange = findFirstAnnotation(annotations, WithinRange)
 
-        if withinRange is not None or minimum is not None and maximum is not None:
+        if withinRange is not None or (minimum is not None and maximum is not None):
             # fully bounded, slider widget
             return ctk.ctkSliderWidget()
         else:
