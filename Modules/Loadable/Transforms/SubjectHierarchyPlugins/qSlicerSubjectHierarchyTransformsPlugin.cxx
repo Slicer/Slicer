@@ -848,24 +848,21 @@ void qSlicerSubjectHierarchyTransformsPlugin::showVisibilityContextMenuActionsFo
     vtkMRMLTransformDisplayNode* displayNode = transformNode ? vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode()) : nullptr;
 
     d->ToggleInteractionAction->setVisible(true);
-    bool wasBlocked = d->ToggleInteractionAction->blockSignals(true);
+
+    QSignalBlocker toggleInteractionBlocker(d->ToggleInteractionAction);
     d->ToggleInteractionAction->setChecked(displayNode ? displayNode->GetEditorVisibility() : false);
-    d->ToggleInteractionAction->blockSignals(wasBlocked);
 
     d->InteractionOptionsAction->setVisible(displayNode != nullptr);
     if (displayNode)
     {
-      wasBlocked = d->ToggleInteractionRotationVisibleAction->blockSignals(true);
+      QSignalBlocker toggleInteractionRotationVisibleBlocker(d->ToggleInteractionRotationVisibleAction);
       d->ToggleInteractionRotationVisibleAction->setChecked(displayNode->GetEditorRotationEnabled());
-      d->ToggleInteractionRotationVisibleAction->blockSignals(wasBlocked);
 
-      wasBlocked = d->ToggleInteractionTranslationVisibleAction->blockSignals(true);
+      QSignalBlocker toggleInteractionTranslationVisibleBlocker(d->ToggleInteractionTranslationVisibleAction);
       d->ToggleInteractionTranslationVisibleAction->setChecked(displayNode->GetEditorTranslationEnabled());
-      d->ToggleInteractionTranslationVisibleAction->blockSignals(wasBlocked);
 
-      wasBlocked = d->ToggleInteractionScaleVisibleAction->blockSignals(true);
+      QSignalBlocker toggleInteractionScaleVisibleBlocker(d->ToggleInteractionScaleVisibleAction);
       d->ToggleInteractionScaleVisibleAction->setChecked(displayNode->GetEditorScalingEnabled());
-      d->ToggleInteractionScaleVisibleAction->blockSignals(wasBlocked);
     }
   }
 }
@@ -919,11 +916,20 @@ void qSlicerSubjectHierarchyTransformsPlugin::showViewContextMenuActionsForItem(
   d->showResetCenterOfTransformationForTransformedNodesActions(transformNode);
 
   vtkMRMLTransformDisplayNode* displayNode = transformNode ? vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode()) : nullptr;
+
+  QSignalBlocker toggleInteractionBlocker(d->ToggleInteractionAction);
+  d->ToggleInteractionAction->setChecked(displayNode ? displayNode->GetEditorVisibility() : false);
+
   d->InteractionOptionsAction->setVisible(displayNode != nullptr);
   if (displayNode)
   {
+    QSignalBlocker toggleInteractionRotationVisibleBlocker(d->ToggleInteractionRotationVisibleAction);
     d->ToggleInteractionRotationVisibleAction->setChecked(displayNode->GetEditorRotationEnabled());
+
+    QSignalBlocker toggleInteractionTranslationVisibleBlocker(d->ToggleInteractionTranslationVisibleAction);
     d->ToggleInteractionTranslationVisibleAction->setChecked(displayNode->GetEditorTranslationEnabled());
+
+    QSignalBlocker toggleInteractionScaleVisibleBlocker(d->ToggleInteractionScaleVisibleAction);
     d->ToggleInteractionScaleVisibleAction->setChecked(displayNode->GetEditorScalingEnabled());
   }
 }
@@ -1077,29 +1083,30 @@ void qSlicerSubjectHierarchyTransformsPlugin::resetCenterOfTransformationTransfo
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyTransformsPlugin::toggleInteractionBox(bool visible)
 {
+  Q_D(qSlicerSubjectHierarchyTransformsPlugin);
+
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return;
   }
+
+  vtkMRMLTransformableNode* transformableNode = nullptr;
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
-  if (currentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  if (currentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
-    qCritical() << Q_FUNC_INFO << ": Invalid current item";
-    return;
+    transformableNode = vtkMRMLTransformableNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   }
 
-  vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(
-    shNode->GetItemDataNode(currentItemID));
-  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(
-    shNode->GetItemDataNode(currentItemID));
+
+  vtkMRMLTransformNode* transformNode = d->getTransformNodeForAction();
   if (!transformNode)
   {
     transformNode = transformableNode->GetParentTransformNode();
   }
 
-  if (!transformNode)
+  if (!transformNode && transformableNode)
   {
     std::stringstream transformNameSS;
     transformNameSS << "Interaction_" << transformableNode->GetName();
