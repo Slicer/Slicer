@@ -293,6 +293,14 @@ public:
   void ClearDisplayableNodes();
   bool IsSegmentVisibleInCurrentSlice(vtkMRMLSegmentationDisplayNode* displayNode, Pipeline* pipeline, const std::string &segmentID);
 
+  struct CustomSegmentRendererType
+  {
+    std::string SegmentationDisplayNodeID;
+    std::string SegmentID;
+  };
+  std::map<int, CustomSegmentRendererType> CustomSegmentRenderers;
+  int SegmentRendererTagCounter{ 0 };
+
 private:
   vtkSmartPointer<vtkMatrix4x4> SliceXYToRAS;
   vtkMRMLSegmentationsDisplayableManager2D* External;
@@ -792,11 +800,13 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
       displayNode->GetSegmentDisplayProperties(segmentID, properties);
 
+      bool segmentCustomDisplay = this->External->HasCustomSegmentRenderer(displayNode->GetID(), segmentID);
+
       double outlineOpacity = hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * genericDisplayNode->GetOpacity();
-      bool segmentOutlineVisible = hierarchyVisibility && displayNodeVisible && properties.Visible &&
+      bool segmentOutlineVisible = (!segmentCustomDisplay) && hierarchyVisibility && displayNodeVisible && properties.Visible &&
         properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
       double fillOpacity = hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill() * genericDisplayNode->GetOpacity();
-      bool segmentFillVisible = hierarchyVisibility && displayNodeVisible && properties.Visible &&
+      bool segmentFillVisible = (!segmentCustomDisplay) && hierarchyVisibility && displayNodeVisible && properties.Visible &&
         properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
 
       // Turn off image visibility when showing poly data
@@ -872,12 +882,14 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
         displayNode->GetSegmentDisplayProperties(segmentId, properties);
 
+        bool segmentCustomDisplay = this->External->HasCustomSegmentRenderer(displayNode->GetID(), segmentId);
+
         double outlineOpacity = properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity();
-        outlineVisible |= displayNodeVisible && properties.Visible
+        outlineVisible |= (!segmentCustomDisplay) && displayNodeVisible && properties.Visible
           && properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
 
         double fillOpacity = properties.Opacity2DFill * displayNode->GetOpacity2DFill() * displayNode->GetOpacity();
-        fillVisible |= displayNodeVisible && properties.Visible
+        fillVisible |= (!segmentCustomDisplay) && displayNodeVisible && properties.Visible
           && properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
 
         if (outlineVisible && fillVisible)
@@ -964,8 +976,10 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
         displayNode->GetSegmentDisplayProperties(segmentId, properties);
 
+        bool segmentCustomDisplay = this->External->HasCustomSegmentRenderer(displayNode->GetID(), segmentId);
+
         double outlineOpacity = hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * genericDisplayNode->GetOpacity();
-        bool segmentOutlineVisible = displayNodeVisible && properties.Visible
+        bool segmentOutlineVisible = (!segmentCustomDisplay) && displayNodeVisible && properties.Visible
           && properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
         if (!segmentOutlineVisible)
         {
@@ -973,7 +987,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         }
 
         double fillOpacity = hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill() * genericDisplayNode->GetOpacity();
-        bool segmentFillVisible = displayNodeVisible && properties.Visible
+        bool segmentFillVisible = (!segmentCustomDisplay) && displayNodeVisible && properties.Visible
           && properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
         if (!segmentFillVisible)
         {
@@ -1007,15 +1021,12 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
           pipeline->LookupTableFill->SetHueRange(hsv[0], hsv[0]);
           pipeline->LookupTableFill->SetSaturationRange(hsv[1], hsv[1]);
           pipeline->LookupTableFill->SetValueRange(hsv[2], hsv[2]);
-          pipeline->LookupTableFill->SetAlphaRange(0.0,
-            hierarchyOpacity* properties.Opacity2DFill* displayNode->GetOpacity2DFill()* genericDisplayNode->GetOpacity());
+          pipeline->LookupTableFill->SetAlphaRange(0.0, fillOpacity);
           pipeline->LookupTableFill->SetTableRange(minimumValue, maximumValue);
           pipeline->LookupTableFill->ForceBuild();
 
           pipeline->LookupTableOutline->SetTableValue(0,color[0], color[1], color[2], 0.0);
-          pipeline->LookupTableOutline->SetTableValue(1,
-            color[0], color[1], color[2],
-            hierarchyOpacity* properties.Opacity2DOutline* displayNode->GetOpacity2DOutline()* genericDisplayNode->GetOpacity());
+          pipeline->LookupTableOutline->SetTableValue(1, color[0], color[1], color[2], outlineOpacity);
           pipeline->LookupTableOutline->SetNumberOfTableValues(2);
           pipeline->LookupTableOutline->SetTableRange(0, 1);
         }
@@ -1764,4 +1775,110 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
       segmentValues->InsertNextValue(valueForSegment[*segmentIt]);
     }
   }
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLSegmentationsDisplayableManager2D::AddCustomSegmentRenderer(const std::string& displayNodeID, const std::string& segmentID)
+{
+  if (displayNodeID.empty())
+  {
+    vtkWarningMacro("vtkMRMLSegmentationsDisplayableManager2D::AddCustomSegmentRenderer failed: displayNodeID is empty");
+    return 0;
+  }
+  if (segmentID.empty())
+  {
+    vtkWarningMacro("vtkMRMLSegmentationsDisplayableManager2D::AddCustomSegmentRenderer failed: segmentID is empty");
+    return 0;
+  }
+  if (this->HasCustomSegmentRenderer(displayNodeID, segmentID))
+  {
+    vtkWarningMacro("vtkMRMLSegmentationsDisplayableManager2D::AddCustomSegmentRenderer failed: custom segment renderer is already set");
+    return 0;
+  }
+  vtkInternal::CustomSegmentRendererType customRenderer;
+  customRenderer.SegmentationDisplayNodeID = displayNodeID;
+  customRenderer.SegmentID = segmentID;
+  ++this->Internal->SegmentRendererTagCounter;
+  this->Internal->CustomSegmentRenderers[this->Internal->SegmentRendererTagCounter] = customRenderer;
+  this->SetUpdateFromMRMLRequested(true);
+  this->RequestRender();
+  return this->Internal->SegmentRendererTagCounter;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationsDisplayableManager2D::RemoveCustomSegmentRenderer(int tag)
+{
+  auto foundCustomSegmentRenderer = this->Internal->CustomSegmentRenderers.find(tag);
+  if (foundCustomSegmentRenderer == this->Internal->CustomSegmentRenderers.end())
+  {
+    vtkWarningMacro("vtkMRMLSegmentationsDisplayableManager2D::RemoveCustomSegmentRenderer failed: unknown tag (" << tag << ")");
+    return false;
+  }
+  this->Internal->CustomSegmentRenderers.erase(foundCustomSegmentRenderer);
+  this->SetUpdateFromMRMLRequested(true);
+  this->RequestRender();
+  return true;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLSegmentationsDisplayableManager2D::GetCustomSegmentRendererTag(const std::string& segmentationDisplayNodeID, const std::string& segmentID)
+{
+  for (auto customDisplaySegmentIt : this->Internal->CustomSegmentRenderers)
+  {
+    if (customDisplaySegmentIt.second.SegmentationDisplayNodeID == segmentationDisplayNodeID && customDisplaySegmentIt.second.SegmentID == segmentID)
+    {
+      // found the custom renderer
+      return customDisplaySegmentIt.first;
+    }
+  }
+  // not found
+  return 0;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLSegmentationsDisplayableManager2D::HasCustomSegmentRenderer(const std::string& segmentationDisplayNodeID, const std::string& segmentID)
+{
+  return this->GetCustomSegmentRendererTag(segmentationDisplayNodeID, segmentID) != 0;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLSegmentationsDisplayableManager2D::GetNumberOfCustomSegmentsRenderers()
+{
+  return this->Internal->CustomSegmentRenderers.size();
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLSegmentationsDisplayableManager2D::GetCustomSegmentRendererTag(int index)
+{
+  if (index < 0 || index >= this->Internal->CustomSegmentRenderers.size())
+  {
+    return 0;
+  }
+  auto it = this->Internal->CustomSegmentRenderers.begin();
+  std::advance(it, index);
+  return it->first;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLSegmentationsDisplayableManager2D::GetCustomSegmentRendererSegmentationDisplayNodeID(int index)
+{
+  if (index < 0 || index >= this->Internal->CustomSegmentRenderers.size())
+  {
+    return "";
+  }
+  auto it = this->Internal->CustomSegmentRenderers.begin();
+  std::advance(it, index);
+  return it->second.SegmentationDisplayNodeID;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLSegmentationsDisplayableManager2D::GetCustomSegmentRendererSegmentID(int index)
+{
+  if (index < 0 || index >= this->Internal->CustomSegmentRenderers.size())
+  {
+    return "";
+  }
+  auto it = this->Internal->CustomSegmentRenderers.begin();
+  std::advance(it, index);
+  return it->second.SegmentID;
 }

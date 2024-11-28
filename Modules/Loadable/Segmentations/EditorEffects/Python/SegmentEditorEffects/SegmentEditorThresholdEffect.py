@@ -25,8 +25,6 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         scriptedEffect.name = "Threshold"  # no tr (don't translate it because modules find effects by name)
         scriptedEffect.title = _("Threshold")
 
-        self.segment2DFillOpacity = None
-        self.segment2DOutlineOpacity = None
         self.previewedSegmentationDisplayNode = None
         self.previewedSegmentID = None
 
@@ -100,70 +98,9 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         # Stop preview pulse
         self.timer.stop()
 
-        self.restorePreviewedSegmentTransparency()
-
         # Clear preview pipeline
         self.clearPreviewDisplayPipelines()
         self.clearHistogramDisplay()
-
-
-    def updatePreviewedSegmentTransparency(self):
-        """Save current segment opacity and set it to zero
-        to temporarily hide the segment so that threshold preview
-        can be seen better.
-        It also restores opacity of previously previewed segment.
-        Call restorePreviewedSegmentTransparency() to restore original
-        opacity.
-        """
-        segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-        displayNode = segmentationNode.GetDisplayNode() if segmentationNode else None
-        segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
-
-        if (self.previewedSegmentationDisplayNode == displayNode) and (segmentID == self.previewedSegmentID):
-            # already previewing the current segment
-            return
-
-        # If an other segment was previewed before, restore that.
-        if self.previewedSegmentID:
-            self.restorePreviewedSegmentTransparency()
-
-        if not segmentID:
-            # No segment selected, no need to make any segment transparent
-            return
-
-        # To allow previewing results, temporarily change opacity of the edited segment by modifying the display node.
-        # There may be multiple segment editor widgets that edit the same segmentation display node, therefore
-        # before we modify it we need to check if it is not used by any other segment editor effect.
-        currentEffectHash = str(self.__hash__())
-        previewingEffectHash = displayNode.GetAttribute("SegmentEditor.PreviewingEffect")
-        if previewingEffectHash and (previewingEffectHash != currentEffectHash):
-            # Another effect is already using this display node for preview
-            return
-
-        # Indicate in the display node that other segment editor effects should not tart preview now
-        displayNode.SetAttribute("SegmentEditor.PreviewingEffect", currentEffectHash)
-
-        # Make current segment fully transparent
-        self.segment2DFillOpacity = displayNode.GetSegmentOpacity2DFill(segmentID)
-        self.segment2DOutlineOpacity = displayNode.GetSegmentOpacity2DOutline(segmentID)
-        self.previewedSegmentID = segmentID
-        self.previewedSegmentationDisplayNode = displayNode
-        displayNode.SetSegmentOpacity2DFill(segmentID, 0)
-        displayNode.SetSegmentOpacity2DOutline(segmentID, 0)
-
-    def restorePreviewedSegmentTransparency(self):
-        """Restore previewed segment's opacity that was temporarily
-        made transparent by calling updatePreviewedSegmentTransparency().
-        """
-        displayNode = self.previewedSegmentationDisplayNode
-        if not displayNode:
-            return
-        if self.previewedSegmentID:
-            displayNode.SetSegmentOpacity2DFill(self.previewedSegmentID, self.segment2DFillOpacity)
-            displayNode.SetSegmentOpacity2DOutline(self.previewedSegmentID, self.segment2DOutlineOpacity)
-        displayNode.RemoveAttribute("SegmentEditor.PreviewingEffect")
-        self.previewedSegmentationDisplayNode = None
-        self.previewedSegmentID = None
 
     def setupOptionsFrame(self):
         self.thresholdSliderLabel = qt.QLabel(_("Threshold Range:"))
@@ -648,7 +585,12 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     def clearPreviewDisplayPipelines(self):
         for sliceWidget, pipeline in self.previewPipelines.items():
             self.scriptedEffect.removeActor2D(sliceWidget, pipeline.actor)
+            segmentationDisplayableManager = sliceWidget.sliceView().displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D")
+            segmentationDisplayableManager.RemoveCustomSegmentRenderer(pipeline.customRendererTag)
+
         self.previewPipelines = {}
+        self.previewedSegmentationDisplayNode = None
+        self.previewedSegmentID = None
 
     def clearHistogramDisplay(self):
         if self.histogramPipeline is None:
@@ -670,8 +612,18 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
                 # No need to add pipeline in this widget
                 continue
 
-            sliceWidgetPipelinesToKeep.append(sliceWidget)
             pipeline = self.previewPipelines.get(sliceWidget)
+
+            # Check if a custom segment renderer is already registered for this segment by someone else (e.g., another segment editor widget)
+            segmentationDisplayableManager = sliceWidget.sliceView().displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D")
+            existingSegmentRendererTag = segmentationDisplayableManager.GetCustomSegmentRendererTag(
+                self.previewedSegmentationDisplayNode.GetID(), self.previewedSegmentID)
+            if existingSegmentRendererTag != 0:
+                if (not pipeline) or (pipeline.customRendererTag != existingSegmentRendererTag):
+                    # Another segment editor widget is already displaying this segment with a custom renderer
+                    continue
+
+            sliceWidgetPipelinesToKeep.append(sliceWidget)
             if pipeline:
                 # Pipeline is already present
                 continue
@@ -684,18 +636,31 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             pipeline = PreviewPipeline()
             self.previewPipelines[sliceWidget] = pipeline
             self.scriptedEffect.addActor2D(sliceWidget, pipeline.actor)
+            pipeline.customRendererTag = segmentationDisplayableManager.AddCustomSegmentRenderer(
+                self.previewedSegmentationDisplayNode.GetID(), self.previewedSegmentID)
 
         # Removed unused pipelines
         for sliceWidget, pipeline in self.previewPipelines.items():
             if sliceWidget in sliceWidgetPipelinesToKeep:
                 continue
             self.scriptedEffect.removeActor2D(sliceWidget, pipeline.actor)
+            segmentationDisplayableManager = sliceWidget.sliceView().displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D")
+            segmentationDisplayableManager.RemoveCustomSegmentRenderer(pipeline.customRendererTag)
             self.previewPipelines.pop(sliceWidget)
 
     def preview(self):
         # Make sure we keep the currently selected segment hidden
         # (the user may have changed selected segmentation or segment)
-        self.updatePreviewedSegmentTransparency()
+
+        segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+        displayNode = segmentationNode.GetDisplayNode() if segmentationNode else None
+        segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
+
+        if (self.previewedSegmentationDisplayNode != displayNode) or (segmentID != self.previewedSegmentID):
+            # Previewed segmentation or segment changed, remove any previous custom rendering of another previewed segment
+            self.clearPreviewDisplayPipelines()
+            self.previewedSegmentationDisplayNode = displayNode
+            self.previewedSegmentID = segmentID
 
         # Update preview display pipelines
         if self.previewedSegmentationDisplayNode and not self.previewPipelines:
@@ -1009,6 +974,9 @@ class PreviewPipeline:
         self.colorMapper.SetInputConnection(self.thresholdFilter.GetOutputPort())
         self.mapper.SetInputConnection(self.colorMapper.GetOutputPort())
 
+        # Custom renderer tag that is provided by the segmentation displayable manager
+        # when we add our custom segment renderer.
+        self.customRendererTag = 0
 
 ###
 #

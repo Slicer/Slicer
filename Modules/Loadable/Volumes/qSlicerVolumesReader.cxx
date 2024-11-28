@@ -202,7 +202,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
         }
         if (appLogic)
         {
-          appLogic->PropagateVolumeSelection(); // includes FitSliceToAll by default
+          appLogic->PropagateVolumeSelection(); // includes FitSliceToBackground by default
         }
       }
     }

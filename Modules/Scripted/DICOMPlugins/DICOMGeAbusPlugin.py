@@ -141,8 +141,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
         }
 
         fieldValues = {}
-        for fieldName in fieldsInfo:
-            fieldInfo = fieldsInfo[fieldName]
+        for fieldName, fieldInfo in fieldsInfo.items():
             if fieldInfo["private"]:
                 for privateCreator in self.privateCreators:
                     tag = self.findPrivateTag(ds, fieldInfo["group"], fieldInfo["element"], privateCreator)
@@ -154,8 +153,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
                 fieldValues[fieldName] = ds[tag].value
 
         # Make sure all mandatory fields are found
-        for fieldName in fieldsInfo:
-            fieldInfo = fieldsInfo[fieldName]
+        for fieldName, fieldInfo in fieldsInfo.items():
             if not fieldInfo["required"]:
                 continue
             if fieldName not in fieldValues:

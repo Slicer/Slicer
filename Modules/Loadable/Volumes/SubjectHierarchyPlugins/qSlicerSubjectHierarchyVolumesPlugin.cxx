@@ -695,7 +695,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
         }
         if (resetFov)
         {
-          sliceLogic->FitSliceToAll();
+          sliceLogic->FitSliceToBackground();
         }
       }
     }
@@ -1278,7 +1278,7 @@ bool qSlicerSubjectHierarchyVolumesPlugin::showItemInView(vtkIdType itemID, vtkM
     }
     if (d->resetFieldOfViewOnShow())
     {
-      sliceLogic->FitSliceToAll();
+      sliceLogic->FitSliceToBackground();
     }
     sliceLogic->EndSliceNodeInteraction();
   }

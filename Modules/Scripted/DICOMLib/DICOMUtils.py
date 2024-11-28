@@ -248,11 +248,11 @@ def selectHighestConfidenceLoadables(loadablesByPlugin):
     # of the data or subparts of it.  The user can either use
     # advanced mode to deselect, or simply delete the
     # unwanted interpretations.
-    for series in loadablesBySeries:
+    for _, loadables in loadablesBySeries.items():
         highestConfidenceValue = -1
-        for loadable in loadablesBySeries[series]:
+        for loadable in loadables:
             highestConfidenceValue = max(loadable.confidence, highestConfidenceValue)
-        for loadable in loadablesBySeries[series]:
+        for loadable in loadables:
             loadable.selected = loadable.confidence == highestConfidenceValue
 
 

@@ -23,8 +23,8 @@ class _CredentialToken:
     def __init__(self, text=None, **kwargs):
         # Set attributes from named arguments
         self._keys = set(kwargs.keys())
-        for k in kwargs:
-            setattr(self, k, kwargs[k])
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
         # Set attributes from input text (i.e. 'git credential fill' output)
         if text is not None:

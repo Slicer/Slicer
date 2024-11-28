@@ -153,7 +153,7 @@ void vtkMRMLApplicationLogic::vtkInternal::PropagateVolumeSelection(int layer, i
   }
   if (fit)
   {
-    this->External->FitSliceToAll(true);
+    this->External->FitSliceToBackground(true);
   }
 }
 //----------------------------------------------------------------------------
@@ -524,7 +524,7 @@ void vtkMRMLApplicationLogic::PropagatePlotChartSelection()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed /* =false */, bool resetOrientation /* =true */)
+void vtkMRMLApplicationLogic::FitSliceToContent(bool all, bool onlyIfPropagateVolumeSelectionAllowed /* =false */, bool resetOrientation /* =true */)
 {
   if (this->Internal->SliceLogics.GetPointer() == nullptr)
   {
@@ -554,9 +554,29 @@ void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionA
       sliceLogic->RotateSliceToLowestVolumeAxes(false);
     }
     int* dims = sliceNode->GetDimensions();
-    sliceLogic->FitSliceToAll(dims[0], dims[1]);
+    if (all)
+    {
+      sliceLogic->FitSliceToAll(dims[0], dims[1]);
+    }
+    else
+    {
+      sliceLogic->FitSliceToBackground(dims[0], dims[1]);
+    }
+
     sliceLogic->SnapSliceOffsetToIJK();
   }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::FitSliceToBackground(bool onlyIfPropagateVolumeSelectionAllowed /* =false */, bool resetOrientation /* =true */)
+{
+  this->FitSliceToContent(false, onlyIfPropagateVolumeSelectionAllowed, resetOrientation);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed /* =false */, bool resetOrientation /* =true */)
+{
+  this->FitSliceToContent(true, onlyIfPropagateVolumeSelectionAllowed, resetOrientation);
 }
 
 //----------------------------------------------------------------------------

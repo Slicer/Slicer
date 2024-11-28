@@ -280,7 +280,7 @@ class DICOMImageSequencePluginClass(DICOMPlugin):
                 selNode = appLogic.GetSelectionNode()
                 selNode.SetReferenceActiveVolumeID(proxyVolumeNode.GetID())
                 appLogic.PropagateVolumeSelection()
-                appLogic.FitSliceToAll()
+                appLogic.FitSliceToBackground()
                 slicer.modules.sequences.setToolBarActiveBrowserNode(outputSequenceBrowserNode)
 
         # Show sequence browser toolbar

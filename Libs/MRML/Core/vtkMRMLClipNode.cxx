@@ -39,7 +39,7 @@
 
 const char* vtkMRMLClipNode::ClippingNodeReferenceRole = "clipping";
 const char* vtkMRMLClipNode::ClippingNodeReferenceRef = "clippingRef";
-const char* vtkMRMLClipNode::ClippingNodeStatePropertyName = "clipingState";
+const char* vtkMRMLClipNode::ClippingNodeStatePropertyName = "clippingState";
 int DEFAULT_CLIPPING_STATE = vtkMRMLClipNode::ClipPositiveSpace;
 
 //------------------------------------------------------------------------------

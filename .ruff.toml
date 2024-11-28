@@ -81,7 +81,6 @@ extend-ignore = [
   "PLR0913", # Too many arguments in function definition
   "PLR0911", # Too many return statements
   "PLR0915", # Too many statements
-  "PLR1701", # Merge `isinstance` calls
   "PLR1711", # Useless `return` statement at end of function
   "PLR1714", # Consider merging multiple comparisons
   "PLR1722", # Use `sys.exit()` instead of `exit`
@@ -108,9 +107,11 @@ extend-ignore = [
   "RUF010",  # Use explicit conversion flag
   "RUF012",  # Mutable class attributes should be annotated with typing.ClassVar
   "RUF013",  # PEP 484 prohibits implicit `Optional`
+  "RUF022",  # Unsorted under __all__
   "RUF100",  # Unused `noqa` directive (non-enabled: `F401`)
 
   "SIM108",  # Use ternary operator
+  "SIM101",  # Duplicate isinstance call
   "SIM115",  # Use context handler for opening files
 
   "UP018",   # Unnecessary `int` call (rewrite as a literal)

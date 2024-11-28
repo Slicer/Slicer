@@ -295,9 +295,9 @@ def findChildren(widget=None, name="", text="", title="", className=""):
     parents = [widget]
     kwargs = {"name": name, "text": text, "title": title, "className": className}
     expected_matches = []
-    for kwarg in kwargs.keys():
-        if kwargs[kwarg]:
-            expected_matches.append(kwarg)
+    for kwarg_key, kwarg_value in kwargs.items():
+        if kwarg_value:
+            expected_matches.append(kwarg_key)
     while parents:
         p = parents.pop()
         # sometimes, p is null, f.e. when using --python-script or --python-code
@@ -581,7 +581,7 @@ def setSliceViewerLayers(background="keep-current", foreground="keep-current", l
             for i in range(sliceLogics.GetNumberOfItems()):
                 sliceLogic = sliceLogics.GetItemAsObject(i)
                 if sliceLogic:
-                    sliceLogic.FitSliceToAll()
+                    sliceLogic.FitSliceToBackground()
 
 
 def setToolbarsVisible(visible, ignore=None):
