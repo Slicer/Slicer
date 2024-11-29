@@ -35,6 +35,8 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologyItemDelegat
   Q_OBJECT
 
 public:
+  Q_PROPERTY(bool useDecorationRole READ useDecorationRole WRITE setUseDecorationRole)
+
   qSlicerTerminologyItemDelegate(QObject *parent = nullptr);
 
   enum TerminologyItemDataRole
@@ -67,6 +69,11 @@ public:
   /// This can be used for asking the user if he wants to switch to using simple name&color selector
   void setUserSetCustomNameOrColorCallback(std::function<bool()> callback);
 
+  bool useDecorationRole();
+
+public slots:
+  void setUseDecorationRole(bool useDecorationRole);
+
 protected slots:
   void commitSenderData();
   void commitAndClose();
@@ -77,6 +84,10 @@ protected:
   /// The settings key used to specify whether standard terminologies are used for name column.
   std::function<bool()> UseTerminologySelectorCallback;
   std::function<bool()> UserSetCustomNameOrColorCallback;
+
+  /// Flag indicating whether the delegate is set on a column that shows the color as decoration role.
+  /// E.g. the name column in Segment Editor does not show decoration, but the color column in Subject Hierarchy does.
+  bool UseDecorationRole{ true };
 };
 
 #endif
