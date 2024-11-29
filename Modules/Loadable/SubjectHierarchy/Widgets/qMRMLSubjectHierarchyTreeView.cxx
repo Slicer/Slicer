@@ -249,7 +249,6 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   // Set item delegate for color column
   this->TerminologyItemDelegate = new qSlicerTerminologyItemDelegate(q);
   this->TerminologyItemDelegate->setUseTerminologySelectorCallback([q]{ return q->useTerminologySelector(); });
-  //this->TerminologyItemDelegate->setUserSetCustomNameOrColorCallback([q] { return q->userSetCustomNameOrColor(); });
   q->setItemDelegateForColumn(this->Model->colorColumn(), this->TerminologyItemDelegate);
 
   q->setContextMenuPolicy(Qt::CustomContextMenu);

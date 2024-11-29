@@ -321,6 +321,7 @@ void qMRMLSegmentsTableViewPrivate::init()
 
   // Set item delegate to handle color and opacity changes
   this->TerminologyItemDelegate = new qSlicerTerminologyItemDelegate(this->SegmentsTable);
+  this->TerminologyItemDelegate->setUseDecorationRole(false);
   this->TerminologyItemDelegate->setUseTerminologySelectorCallback([q]{ return q->useTerminologySelector(); });
   this->TerminologyItemDelegate->setUserSetCustomNameOrColorCallback([q] { return q->userSetCustomNameOrColor(); });
   this->SegmentsTable->setItemDelegateForColumn(this->Model->nameColumn(), this->TerminologyItemDelegate);
