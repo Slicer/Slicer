@@ -67,37 +67,38 @@ void qSlicerSubjectHierarchySettingsPanelPrivate::init()
   this->PatientBirthDateTagCheckBox->setChecked(false);
   this->StudyIDTagCheckBox->setChecked(false);
   this->StudyDateTagCheckBox->setChecked(true);
+  this->UseTerminologyCheckBox->setChecked(true);
 
   // Register settings
-  q->registerProperty("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", this->AutoDeleteSubjectHierarchyChildrenEnabledCheckBox,
+  q->registerProperty(/*no tr*/"SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", this->AutoDeleteSubjectHierarchyChildrenEnabledCheckBox,
                       "checked", SIGNAL(toggled(bool)),
-                      "Enable/disable automatic subject hierarchy children deletion", ctkSettingsPanel::OptionNone);
+                      qSlicerSubjectHierarchySettingsPanel::tr("Enable/disable automatic subject hierarchy children deletion"), ctkSettingsPanel::OptionNone);
 
-  q->registerProperty("SubjectHierarchy/DisplayPatientIDInSubjectHierarchyItemName", this->PatientIDTagCheckBox,
+  q->registerProperty(/*no tr*/"SubjectHierarchy/DisplayPatientIDInSubjectHierarchyItemName", this->PatientIDTagCheckBox,
                       "checked", SIGNAL(toggled(bool)),
-                      "Include patient ID in the name of the patient item", ctkSettingsPanel::OptionNone);
-  q->registerProperty("SubjectHierarchy/DisplayPatientBirthDateInSubjectHierarchyItemName", this->PatientBirthDateTagCheckBox,
+                      qSlicerSubjectHierarchySettingsPanel::tr("Include patient ID in the name of the patient item"), ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/"SubjectHierarchy/DisplayPatientBirthDateInSubjectHierarchyItemName", this->PatientBirthDateTagCheckBox,
                       "checked", SIGNAL(toggled(bool)),
-                      "Include patient birth date in the name of the patient item", ctkSettingsPanel::OptionNone);
-  q->registerProperty("SubjectHierarchy/DisplayStudyIDInSubjectHierarchyItemName", this->StudyIDTagCheckBox,
+                      qSlicerSubjectHierarchySettingsPanel::tr("Include patient birth date in the name of the patient item"), ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/"SubjectHierarchy/DisplayStudyIDInSubjectHierarchyItemName", this->StudyIDTagCheckBox,
                       "checked", SIGNAL(toggled(bool)),
-                      "Include study ID in the name of the study item", ctkSettingsPanel::OptionNone);
-  q->registerProperty("SubjectHierarchy/DisplayStudyDateInSubjectHierarchyItemName", this->StudyDateTagCheckBox,
+                      qSlicerSubjectHierarchySettingsPanel::tr("Include study ID in the name of the study item"), ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/"SubjectHierarchy/DisplayStudyDateInSubjectHierarchyItemName", this->StudyDateTagCheckBox,
                       "checked", SIGNAL(toggled(bool)),
-                      "Include study date in the name of the study item", ctkSettingsPanel::OptionNone);
+                      qSlicerSubjectHierarchySettingsPanel::tr("Include study date in the name of the study item"), ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/"SubjectHierarchy/UseTerminologySelector", this->UseTerminologyCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      qSlicerSubjectHierarchySettingsPanel::tr("Use standard terminology for color selection"), ctkSettingsPanel::OptionNone);
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->AutoDeleteSubjectHierarchyChildrenEnabledCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setAutoDeleteSubjectHierarchyChildrenEnabled(bool)));
 
-  QObject::connect(this->PatientIDTagCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setDisplayPatientIDEnabled(bool)));
-  QObject::connect(this->PatientBirthDateTagCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setDisplayPatientBirthDateEnabled(bool)));
-  QObject::connect(this->StudyIDTagCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setDisplayStudyIDEnabled(bool)));
-  QObject::connect(this->StudyDateTagCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setDisplayStudyDateEnabled(bool)));
+  QObject::connect(this->PatientIDTagCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDisplayPatientIDEnabled(bool)));
+  QObject::connect(this->PatientBirthDateTagCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDisplayPatientBirthDateEnabled(bool)));
+  QObject::connect(this->StudyIDTagCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDisplayStudyIDEnabled(bool)));
+  QObject::connect(this->StudyDateTagCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDisplayStudyDateEnabled(bool)));
+  QObject::connect(this->UseTerminologyCheckBox, SIGNAL(toggled(bool)), q, SLOT(setUseTerminology(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -141,6 +142,12 @@ void qSlicerSubjectHierarchySettingsPanel::setDisplayStudyIDEnabled(bool on)
 
 // --------------------------------------------------------------------------
 void qSlicerSubjectHierarchySettingsPanel::setDisplayStudyDateEnabled(bool on)
+{
+  Q_UNUSED(on);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSubjectHierarchySettingsPanel::setUseTerminology(bool on)
 {
   Q_UNUSED(on);
 }
