@@ -56,6 +56,7 @@ protected slots:
   void setDisplayPatientBirthDateEnabled(bool on);
   void setDisplayStudyIDEnabled(bool on);
   void setDisplayStudyDateEnabled(bool on);
+  void setUseTerminology(bool on);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchySettingsPanelPrivate> d_ptr;

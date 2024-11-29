@@ -1643,6 +1643,6 @@ bool qMRMLSegmentsTableView::useTerminologySelector()const
   }
   else
   {
-    return QSettings().value(d->UseTerminologySelectorSettingsKey, false).toBool();
+    return QSettings().value(d->UseTerminologySelectorSettingsKey, true).toBool();
   }
 }
