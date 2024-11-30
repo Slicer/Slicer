@@ -89,7 +89,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::init()
   vtkNew<vtkMRMLSliceLogic> defaultLogic;
   defaultLogic->SetMRMLApplicationLogic(vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic());
   q->setSliceLogic(defaultLogic.GetPointer());
-  q->setFixedWidth(12);
+  q->setFixedWidth(4);
 }
 
 // --------------------------------------------------------------------------
