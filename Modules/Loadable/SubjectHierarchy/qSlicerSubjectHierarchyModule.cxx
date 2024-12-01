@@ -126,7 +126,7 @@ void qSlicerSubjectHierarchyModule::setup()
   {
     // Register settings panel
     qSlicerSubjectHierarchySettingsPanel* panel = new qSlicerSubjectHierarchySettingsPanel();
-    app->settingsDialog()->addPanel("Subject hierarchy", panel);
+    app->settingsDialog()->addPanel(tr("Subject hierarchy"), panel);
 
     // Explicitly import associated python library to trigger registration of plugins
 #ifdef Slicer_USE_PYTHONQT
