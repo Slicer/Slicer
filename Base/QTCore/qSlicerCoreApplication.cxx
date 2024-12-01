@@ -509,7 +509,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->ApplicationLocaleName = "zh_CN";
   this->ApplicationLocale = QLocale(this->ApplicationLocaleName);
 #ifdef Slicer_BUILD_I18N_SUPPORT
-  if (q->userSettings()->value("Internationalization/Enabled").toBool())
+  if (q->userSettings()->value("Internationalization/Enabled", true).toBool())
   {
     QString localeName = q->userSettings()->value("language", this->ApplicationLocaleName).toString();
     if (!localeName.isEmpty())
