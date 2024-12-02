@@ -33,6 +33,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QMessageBox>
+#include <QSettings>
 #include <QToolTip>
 
 // SubjectHierarchy includes
@@ -104,40 +105,42 @@ public:
   void updateColors();
 
 public:
-  qMRMLSubjectHierarchyModel* Model;
-  qMRMLSortFilterSubjectHierarchyProxyModel* SortFilterModel;
+  qMRMLSubjectHierarchyModel* Model{ nullptr };
+  qMRMLSortFilterSubjectHierarchyProxyModel* SortFilterModel{ nullptr };
 
-  bool ShowRootItem;
-  vtkIdType RootItemID;
+  qSlicerTerminologyItemDelegate* TerminologyItemDelegate{ nullptr };
 
-  bool ContextMenuEnabled;
-  bool EditActionVisible;
-  bool SelectRoleSubMenuVisible;
+  bool ShowRootItem{ false };
+  vtkIdType RootItemID{ vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID };
 
-  QMenu* NodeMenu;
-  QAction* RenameAction;
-  QAction* DeleteAction;
-  QAction* EditAction;
-  QAction* HideAction;
-  QAction* ShowAction;
-  QAction* ToggleVisibilityAction;
+  bool ContextMenuEnabled{ true };
+  bool EditActionVisible{ true };
+  bool SelectRoleSubMenuVisible{ false };
+
+  QMenu* NodeMenu{ nullptr };
+  QAction* RenameAction{ nullptr };
+  QAction* DeleteAction{ nullptr };
+  QAction* EditAction{ nullptr };
+  QAction* HideAction{ nullptr };
+  QAction* ShowAction{ nullptr };
+  QAction* ToggleVisibilityAction{ nullptr };
   QList<QAction*> SelectPluginActions;
-  QAction* SelectPluginAction;
-  QMenu* SelectPluginSubMenu;
-  QActionGroup* SelectPluginActionGroup;
-  QMenu* SceneMenu;
-  QMenu* VisibilityMenu;
-  QMenu* TransformMenu;
+  QAction* SelectPluginAction{ nullptr };
+  QMenu* SelectPluginSubMenu{ nullptr };
+  QActionGroup* SelectPluginActionGroup{ nullptr };
+  QMenu* SceneMenu{ nullptr };
+  QMenu* VisibilityMenu{ nullptr };
+  QMenu* TransformMenu{ nullptr };
   QStringList PluginAllowlist;
   QStringList PluginBlocklist;
 
   /// Subject hierarchy node
-  vtkWeakPointer<vtkMRMLSubjectHierarchyNode> SubjectHierarchyNode;
+  vtkWeakPointer<vtkMRMLSubjectHierarchyNode> SubjectHierarchyNode{ nullptr };
 
   /// Flag determining whether to highlight items referenced by DICOM. Storing DICOM references:
   ///   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
   ///   -> SH node instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
-  bool HighlightReferencedItems;
+  bool HighlightReferencedItems{ true };
 
   /// Cached list of selected items to return the current selection
   QList<vtkIdType> SelectedItems;
@@ -155,32 +158,16 @@ public:
   QColor DirectReferenceColor;
   QColor ReferencingColor;
   QColor TransformReferenceColor;
+
+  /// The settings key used to specify whether standard terminologies are used for name and color.
+  QString UseTerminologySelectorSettingsKey{ "SubjectHierarchy/UseTerminologySelector" };
+  /// Use terminology selector if UseTerminologySelectorSettingsKey is empty
+  bool NoSettingsUseTerminologySelector{ false };
 };
 
 //------------------------------------------------------------------------------
 qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRMLSubjectHierarchyTreeView& object)
   : q_ptr(&object)
-  , Model(nullptr)
-  , SortFilterModel(nullptr)
-  , ShowRootItem(false)
-  , RootItemID(vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-  , ContextMenuEnabled(true)
-  , EditActionVisible(true)
-  , SelectRoleSubMenuVisible(false)
-  , NodeMenu(nullptr)
-  , RenameAction(nullptr)
-  , DeleteAction(nullptr)
-  , EditAction(nullptr)
-  , HideAction(nullptr)
-  , ShowAction(nullptr)
-  , ToggleVisibilityAction(nullptr)
-  , SelectPluginAction(nullptr)
-  , SelectPluginSubMenu(nullptr)
-  , SelectPluginActionGroup(nullptr)
-  , SceneMenu(nullptr)
-  , VisibilityMenu(nullptr)
-  , SubjectHierarchyNode(nullptr)
-  , HighlightReferencedItems(true)
 {
 }
 
@@ -260,7 +247,9 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
   this->updateColors();
 
   // Set item delegate for color column
-  q->setItemDelegateForColumn(this->Model->colorColumn(), new qSlicerTerminologyItemDelegate(q));
+  this->TerminologyItemDelegate = new qSlicerTerminologyItemDelegate(q);
+  this->TerminologyItemDelegate->setUseTerminologySelectorCallback([q]{ return q->useTerminologySelector(); });
+  q->setItemDelegateForColumn(this->Model->colorColumn(), this->TerminologyItemDelegate);
 
   q->setContextMenuPolicy(Qt::CustomContextMenu);
   QObject::connect(q, SIGNAL(customContextMenuRequested(const QPoint&)), q, SLOT(onCustomContextMenu(const QPoint&)));
@@ -2427,4 +2416,26 @@ void qMRMLSubjectHierarchyTreeView::changeEvent(QEvent* e)
       break;
   }
   QTreeView::changeEvent(e);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setUseTerminologySelector(bool useTerminologySelector)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->NoSettingsUseTerminologySelector = useTerminologySelector;
+  QSettings().setValue(d->UseTerminologySelectorSettingsKey, useTerminologySelector);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::useTerminologySelector()const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  if (d->UseTerminologySelectorSettingsKey.isEmpty())
+  {
+    return d->NoSettingsUseTerminologySelector;
+  }
+  else
+  {
+    return QSettings().value(d->UseTerminologySelectorSettingsKey, true).toBool();
+  }
 }
