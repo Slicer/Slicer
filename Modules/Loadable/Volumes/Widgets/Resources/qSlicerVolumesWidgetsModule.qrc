@@ -8,5 +8,6 @@
     <file>Icons/WindowLevelPreset-Brain.png</file>
     <file>Icons/WindowLevelPreset-Lung.png</file>
     <file>Icons/WindowLevelPreset-DTI.png</file>
+    <file>Icons/WindowLevelPreset-CT-Mediastinum.png</file>
   </qresource>
 </RCC>
