@@ -2,29 +2,20 @@
     "@schema": "https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#",
     "volumeDisplayPresets": [
         {
-            "id": "CT_BONE",
-            "name": "CT-Bone",
-            "description": "Emphasize bone in a CT volume.",
-            "icon": ":/Icons/WindowLevelPreset-CT-bone.png",
-            "window": 1000.0,
-            "level": 400.0,
+            "id": "CT_LUNG",
+            "name": "CT-Lung",
+            "description": "View lung CT volume.",
+            "icon": ":/Icons/WindowLevelPreset-Lung.png",
+            "window": 1400.0,
+            "level": -500.0,
             "color": "vtkMRMLColorTableNodeGrey"
         },
         {
-            "id": "CT_AIR",
-            "name": "CT-Air",
-            "description": "Emphasize air in a CT volume.",
-            "icon": ":/Icons/WindowLevelPreset-CT-air.png",
-            "window": 1000.0,
-            "level": -426.0,
-            "color": "vtkMRMLColorTableNodeGrey"
-        },
-        {
-            "id": "CT_BRAIN",
-            "name": "CT-Brain",
-            "description": "View brain CT volume.",
-            "icon": ":/Icons/WindowLevelPreset-Brain.png",
-            "window": 100.0,
+            "id": "CT_MEDIASTINUM",
+            "name": "CT-Mediastinum",
+            "description": "View Mediastinum CT volume.",
+            "icon": ":/Icons/WindowLevelPreset-CT-Mediastinum.png",
+            "window": 350.0,
             "level": 50.0,
             "color": "vtkMRMLColorTableNodeGrey"
         },
@@ -38,12 +29,21 @@
             "color": "vtkMRMLColorTableNodeGrey"
         },
         {
-            "id": "CT_LUNG",
-            "name": "CT-Lung",
-            "description": "View lung CT volume.",
-            "icon": ":/Icons/WindowLevelPreset-Lung.png",
-            "window": 1400.0,
-            "level": -500.0,
+            "id": "CT_AIR",
+            "name": "CT-Air",
+            "description": "Emphasize air in a CT volume.",
+            "icon": ":/Icons/WindowLevelPreset-CT-air.png",
+            "window": 1000.0,
+            "level": -426.0,
+            "color": "vtkMRMLColorTableNodeGrey"
+        },
+        {
+            "id": "CT_BONE",
+            "name": "CT-Bone",
+            "description": "Emphasize bone in a CT volume.",
+            "icon": ":/Icons/WindowLevelPreset-CT-bone.png",
+            "window": 1000.0,
+            "level": 400.0,
             "color": "vtkMRMLColorTableNodeGrey"
         },
         {
