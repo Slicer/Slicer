@@ -75,7 +75,8 @@ public:
     LayerNone = -1,
     LayerBackground = 0,
     LayerForeground = 1,
-    LayerLabel = 2
+    LayerLabel = 2,
+    Layer_Last // must be last
   };
 
   ///
@@ -449,6 +450,11 @@ protected:
   /// Returns true if position is inside the selected layer volume.
   /// Use background flag to choose between foreground/background layer.
   bool IsEventInsideVolume(bool background, double worldPos[3]);
+
+  /// Get the first available volume (search order: background, foreground, label)
+  /// The method is not public because in the future we may want to change internal implementation details
+  /// (for example, we may ignore volumes without vtkImageData or those that have empty extent).
+  vtkMRMLVolumeNode* GetFirstVolumeNode();
 
   /// Deprecated. Returns true if the volume's window/level values are editable on the GUI.
   bool VolumeWindowLevelEditable(const char* vtkNotUsed(volumeNodeID))
