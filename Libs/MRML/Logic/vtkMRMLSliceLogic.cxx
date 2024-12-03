@@ -1802,7 +1802,10 @@ void vtkMRMLSliceLogic::FitSliceToFirst(int width, int height)
   {
     node = this->GetLayerVolumeNode(2);
   }
-  this->FitSliceToVolume(node, width, height);
+  if (node)
+  {
+    this->FitSliceToVolume(node, width, height);
+  }
 }
 
 //----------------------------------------------------------------------------
