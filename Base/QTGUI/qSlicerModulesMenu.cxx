@@ -559,15 +559,26 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
   QObject::connect(moduleAction, SIGNAL(triggered(bool)),
                    this, SLOT(onActionTriggered()));
 
-  foreach(const QString& category, module->categories())
+  QStringList invisibleModules = QStringList() << "qSlicerTransformsModule" << "qSlicerSceneViewsModule" << "qSlicerModelsModule";
+  QStringList visibleModuleNames = QStringList() << "EvoSeg" << "ImageFilters";
+  const QString& moduleTypeName = module->metaObject()->className();
+  if (!invisibleModules.contains(moduleTypeName))
   {
-    QMenu* menu = d->menu(this, category.split('.'), module->isBuiltIn());
-    if (!menu)
-    {
-      qWarning() << "Failed to add module" << module->name() << "to the menu" << category << "because this string is already used as module name.";
-      menu = this;
-    }
-    d->addModuleAction(menu, moduleAction, true, module->isBuiltIn());
+      const QString& moduleName = module->name();
+      foreach(const QString & category, module->categories())
+      {
+          if (category.isEmpty() || visibleModuleNames.contains(moduleName))
+          {
+              QMenu* menu = d->menu(this, category.split('.'), module->isBuiltIn());
+              if (!menu)
+              {
+                  qWarning() << "Failed to add module" << module->name() << "to the menu" << category << "because this string is already used as module name.";
+                  menu = this;
+              }
+              menu->setVisible(false);
+              d->addModuleAction(menu, moduleAction, true, module->isBuiltIn());
+          }
+      }
   }
 
   // Maybe the module was set current before it was added into the menu
