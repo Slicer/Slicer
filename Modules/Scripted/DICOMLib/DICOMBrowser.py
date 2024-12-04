@@ -150,7 +150,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         self.dicomVisualBrowser.visible = self.useExpertimentalVisualDICOMBrowser
         self.dicomBrowser.visible = not self.useExpertimentalVisualDICOMBrowser
-        self.loadableTableFrame.visible = not self.useExpertimentalVisualDICOMBrowser
+        self.loadableTableFrame.visible = (not self.useExpertimentalVisualDICOMBrowser) and self.advancedView
         self.actionButtonsFrame.visible = not self.useExpertimentalVisualDICOMBrowser
         if self.useExpertimentalVisualDICOMBrowser and self.dicomVisualBrowser.patientsTabWidget().count == 0:
             self.dicomVisualBrowser.onShowPatients()
@@ -487,6 +487,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
                                                                                 lambda progressLabel, progressValue, progressDialog=progressDialog: progressCallback(progressDialog, progressLabel, progressValue),
                                                                                 self.pluginInstances)
 
+            progressDialog.setParent(None)
             progressDialog.close()
 
         if messages:
@@ -621,6 +622,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         qt.QApplication.restoreOverrideCursor()
 
+        progressDialog.setParent(None)
         progressDialog.close()
 
         if messages:
