@@ -150,7 +150,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         self.dicomVisualBrowser.visible = self.useExpertimentalVisualDICOMBrowser
         self.dicomBrowser.visible = not self.useExpertimentalVisualDICOMBrowser
-        self.loadableTableFrame.visible = not self.useExpertimentalVisualDICOMBrowser
+        self.loadableTableFrame.visible = (not self.useExpertimentalVisualDICOMBrowser) and self.advancedView
         self.actionButtonsFrame.visible = not self.useExpertimentalVisualDICOMBrowser
         if self.useExpertimentalVisualDICOMBrowser and self.dicomVisualBrowser.patientsTabWidget().count == 0:
             self.dicomVisualBrowser.onShowPatients()
