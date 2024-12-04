@@ -1,7 +1,8 @@
 import vtk
+
 import slicer
-from slicer.i18n import tr as _
 from SegmentStatisticsPlugins import SegmentStatisticsPluginBase
+from slicer.i18n import tr as _
 
 
 class ClosedSurfaceSegmentStatisticsPlugin(SegmentStatisticsPluginBase):

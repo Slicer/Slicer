@@ -3,10 +3,9 @@ import re
 import qt
 
 import slicer
-
 from .EditableTreeWidget import EditableTreeWidget
-
 from slicer.i18n import tr as _
+
 
 # -----------------------------------------------------------------------------
 def _map_property(objfunc, name):
