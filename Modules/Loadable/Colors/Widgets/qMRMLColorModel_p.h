@@ -48,7 +48,7 @@ class vtkMRMLColorNode;
 //------------------------------------------------------------------------------
 // qMRMLColorModelPrivate
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLColorModelPrivate
+class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorModelPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLColorModel);
 protected:

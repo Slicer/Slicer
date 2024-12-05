@@ -228,23 +228,23 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
       "Missing 'Color_A' column in color table file: '" << fullFileName << "'.");
   }
 
-  vtkStringArray* categoryCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Category.CodingSchemeDesignator"));
-  vtkStringArray* categoryCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Category.CodeValue"));
-  vtkStringArray* categoryCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Category.CodeMeaning"));
+  vtkStringArray* categoryCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Category_CodingSchemeDesignator"));
+  vtkStringArray* categoryCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Category_CodeValue"));
+  vtkStringArray* categoryCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Category_CodeMeaning"));
 
-  vtkStringArray* typeCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Type.CodingSchemeDesignator"));
-  vtkStringArray* typeCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Type.CodeValue"));
-  vtkStringArray* typeCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Type.CodeMeaning"));
-  vtkStringArray* typeModifierCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("TypeModifier.CodingSchemeDesignator"));
-  vtkStringArray* typeModifierCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("TypeModifier.CodeValue"));
-  vtkStringArray* typeModifierCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("TypeModifier.CodeMeaning"));
+  vtkStringArray* typeCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Type_CodingSchemeDesignator"));
+  vtkStringArray* typeCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Type_CodeValue"));
+  vtkStringArray* typeCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Type_CodeMeaning"));
+  vtkStringArray* typeModifierCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("TypeModifier_CodingSchemeDesignator"));
+  vtkStringArray* typeModifierCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("TypeModifier_CodeValue"));
+  vtkStringArray* typeModifierCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("TypeModifier_CodeMeaning"));
 
-  vtkStringArray* anatomicRegionCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegion.CodingSchemeDesignator"));
-  vtkStringArray* anatomicRegionCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegion.CodeValue"));
-  vtkStringArray* anatomicRegionCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegion.CodeMeaning"));
-  vtkStringArray* anatomicRegionModifierCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegionModifier.CodingSchemeDesignator"));
-  vtkStringArray* anatomicRegionModifierCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegionModifier.CodeValue"));
-  vtkStringArray* anatomicRegionModifierCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegionModifier.CodeMeaning"));
+  vtkStringArray* anatomicRegionCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegion_CodingSchemeDesignator"));
+  vtkStringArray* anatomicRegionCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegion_CodeValue"));
+  vtkStringArray* anatomicRegionCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegion_CodeMeaning"));
+  vtkStringArray* anatomicRegionModifierCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegionModifier_CodingSchemeDesignator"));
+  vtkStringArray* anatomicRegionModifierCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegionModifier_CodeValue"));
+  vtkStringArray* anatomicRegionModifierCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegionModifier_CodeMeaning"));
 
   // clear out the table
   MRMLNodeModifyBlocker blocker(colorNode);
@@ -575,10 +575,6 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
   colorArray->SetName("Color");
   colorArray->SetNumberOfComponents(4); // RGBA
   colorArray->SetNumberOfTuples(numberOfColors);
-  colorArray->SetComponentName(0, "R"); //Needed?
-  colorArray->SetComponentName(1, "G");
-  colorArray->SetComponentName(2, "B");
-  colorArray->SetComponentName(3, "A");
   colorTable->AddColumn(colorArray);
   std::map<vtkIdType, std::vector<std::string>> componentNamesMap = {
     {colorTable->GetColumnIndex("Color"), {"R", "G", "B", "A"}} };
