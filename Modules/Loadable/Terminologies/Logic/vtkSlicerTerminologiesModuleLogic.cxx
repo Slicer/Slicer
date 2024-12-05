@@ -2073,6 +2073,7 @@ std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(
 }
 
 //-----------------------------------------------------------------------------
+//TODO: Use function from vtkMRMLColorNode
 bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string serializedEntry, vtkSlicerTerminologyEntry* entry)
 {
   if (!entry)
@@ -2105,13 +2106,8 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
     return false; // Empty category (none selection)
   }
 
-  // Terminology context name
-  if (entryComponents[0].empty())
-  {
-    return false;
-  }
   std::string terminologyName(entryComponents[0]);
-  entry->SetTerminologyContextName(terminologyName.empty()?nullptr:terminologyName.c_str());
+  entry->SetTerminologyContextName(terminologyName.empty() ? nullptr : terminologyName.c_str());
 
   // Category
   std::vector<std::string> categoryIds = vtksys::SystemTools::SplitString(entryComponents[1], '^');
@@ -2197,7 +2193,7 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
   {
     // Create list of preferred terminology names: the list starts with the entry's terminologyName
     // followed by all the other loaded terminologies.
-    std::string terminologyName = entry->GetTerminologyContextName();
+    std::string terminologyName = (entry->GetTerminologyContextName() ? entry->GetTerminologyContextName() : "");
     std::vector<std::string> preferredTerminologyNames;
     this->GetLoadedTerminologyNames(preferredTerminologyNames);
     std::vector<std::string>::iterator ptnIt = std::find(preferredTerminologyNames.begin(), preferredTerminologyNames.end(), terminologyName);
@@ -2243,7 +2239,7 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
   {
     // Create list of preferred anatomic context names: the list starts with the entry's anatomic context name
     // followed by all the other loaded anatomic context names.
-    std::string anatomicContextName = entry->GetAnatomicContextName();
+    std::string anatomicContextName = (entry->GetAnatomicContextName() ? entry->GetAnatomicContextName() : "");
     std::vector<std::string> preferredAnatomicContextNames;
     this->GetLoadedAnatomicContextNames(preferredAnatomicContextNames);
     std::vector<std::string>::iterator pacIt = std::find(preferredAnatomicContextNames.begin(), preferredAnatomicContextNames.end(), anatomicContextName);
