@@ -28,6 +28,7 @@
 
 // qMRML includes
 #include "qMRMLColorListView.h"
+#include "qMRMLWidget.h"
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
@@ -35,9 +36,6 @@
 
 // VTK includes
 #include <vtkNew.h>
-#include "qMRMLWidget.h"
-
-// STD includes
 
 int qMRMLColorListViewTest1(int argc, char * argv [])
 {

@@ -33,6 +33,9 @@
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 
+// Colors widgets includes
+#include "qSlicerColorTableTerminologyDelegate.h"
+
 //------------------------------------------------------------------------------
 class qMRMLColorTableViewPrivate
 {
@@ -67,9 +70,9 @@ void qMRMLColorTableViewPrivate::init()
   q->horizontalHeader()->setSectionResizeMode(colorModel->opacityColumn(), QHeaderView::ResizeToContents);
   q->horizontalHeader()->setSectionResizeMode(colorModel->labelColumn(), QHeaderView::Stretch);
   q->horizontalHeader()->setSectionResizeMode(colorModel->terminologyColumn(), QHeaderView::Stretch);
-  q->setColumnHidden(colorModel->terminologyColumn(), true); //TODO: Hide until fully functional
 
   q->setItemDelegate(new qMRMLItemDelegate(q));
+  q->setItemDelegateForColumn(colorModel->terminologyColumn(), new qSlicerColorTableTerminologyDelegate(q));
 }
 
 //------------------------------------------------------------------------------
