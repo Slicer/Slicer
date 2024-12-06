@@ -188,22 +188,38 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   void SetTracingOff () { this->Tracing = 0; }
 
   /// Return True if \a filePath is a descendant of \a applicationHomeDir.
-  /// \note On macOS extensions are installed in the "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>"
+  /// \note On macOS extensions are installed in the "<extensionsDirBase>-<slicerRevision>"
   /// folder being a sub directory of the application dir, an extra test is performed to make sure the
-  /// tested filePath doesn't belong to that "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>" folder.
+  /// tested filePath doesn't belong to that "<extensionsDirBase>-<slicerRevision>" folder.
   /// If this is the case, False will be returned.
-  static bool IsEmbeddedModule(const std::string& filePath, const std::string& applicationHomeDir,
-                               const std::string& slicerRevision);
+  /// If \a extensionsDirBase is empty, this function assumes that Slicer was build with
+  /// without extension manager support (Slicer_BUILD_EXTENSIONMANAGER_SUPPORT is OFF)
+  static bool IsEmbeddedModule(const std::string& filePath,
+                               const std::string& applicationHomeDir,
+                               const std::string& slicerRevision,
+                               const std::string& extensionsDirBase = "");
 
   /// Return \a true if the plugin identified with its \a filePath is loaded from an install tree.
   /// \warning Since internally the function looks for the existence of CMakeCache.txt, it will
   /// return an incorrect result if the plugin is installed in the build tree of
   /// an other project.
-  static bool IsPluginInstalled(const std::string& filePath, const std::string& applicationHomeDir);
+  /// \note If \a extensionsDirBase is empty, this function assumes that Slicer was build with
+  /// without extension manager support (Slicer_BUILD_EXTENSIONMANAGER_SUPPORT is OFF)
+  /// \note If \a organisationDomain or \a organisationName is empty, this function won't check
+  /// the associated directory!
+  static bool IsPluginInstalled(const std::string& filePath,
+                                const std::string& applicationHomeDir,
+                                const std::string& organisationDomain = "",
+                                const std::string& organisationName = "",
+                                const std::string& extensionsDirBase = "");
 
   /// Return \a true if the plugin identified with its \a filePath is a built-in Slicer module.
-  static bool IsPluginBuiltIn(const std::string& filePath, const std::string& applicationHomeDir,
-    const std::string& slicerRevision);
+  /// \note If \a extensionsDirBase is empty, this function assumes that Slicer was build with
+  /// without extension manager support (Slicer_BUILD_EXTENSIONMANAGER_SUPPORT is OFF)
+  static bool IsPluginBuiltIn(const std::string& filePath,
+                              const std::string& applicationHomeDir,
+                              const std::string& slicerRevision,
+                              const std::string& extensionsDirBase = "");
 
   /// Get share directory associated with \a moduleName located in \a filePath
   static std::string GetModuleShareDirectory(const std::string& moduleName, const std::string& filePath);
