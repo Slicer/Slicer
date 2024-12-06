@@ -561,10 +561,39 @@ void qSlicerDICOMExportDialog::onPrint()
                         imageList.append(qImage);
                     }
                 }
+                else if(scalarType == VTK_FLOAT){
+                    // CTLiver 数据重新get到了这个问题，可能需要总结一下imageData数据类型
+                    float* scalarPointer = static_cast<float*>(imageData->GetScalarPointer());
+                    int extent[6];
+                    imageData->GetExtent(extent);
+                    int width = extent[1] - extent[0] + 1;
+                    int height = extent[3] - extent[2] + 1;
+                    int depth = extent[5] - extent[4] + 1;
+                    // qDebug() << width << height << depth;
+                    QImage qImage(width, height, QImage::Format_Grayscale8);
+                    for (int z = 0; z < depth; ++z) {
+                        QImage qImage(width, height, QImage::Format_Grayscale8);
+                        for (int y = 0; y < height; ++y)
+                        {
+                            for (int x = 0; x < width; ++x)
+                            {
+                                float value = scalarPointer[z * height * width + y * width + x];
+                                float normalizedValue = static_cast<float>((value - range[0]) * 255 / (range[1] - range[0]));
+                                qImage.bits()[y * qImage.bytesPerLine() + x] = static_cast<uchar>(normalizedValue);
+                            }
+                        }
+                        imageList.append(qImage);
+                    }
+
+                }
+                else {
+                    qDebug() << "Cant Print";
+                    return;
+                }
             }
         }
     }
-    // qDebug() << "image num: " << imageList.size();
+    int size_list= imageList.size();
     QPrinter printer(QPrinter::ScreenResolution);
     printer.setPageSize(QPrinter::A4);
     printer.setOrientation(QPrinter::Landscape);
