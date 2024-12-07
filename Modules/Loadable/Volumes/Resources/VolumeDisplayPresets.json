@@ -45,24 +45,6 @@
             "window": 1000.0,
             "level": 400.0,
             "color": "vtkMRMLColorTableNodeGrey"
-        },
-        {
-            "id": "PET",
-            "name": "PET",
-            "description": "Preset for PET volume (uses rainbow color table).",
-            "icon": ":/Icons/WindowLevelPreset-PET.png",
-            "window": 10000.0,
-            "level": 6000.0,
-            "color": "vtkMRMLColorTableNodeRainbow"
-        },
-        {
-            "id": "DTI",
-            "name": "DTI",
-            "description": "Preset for DTI scalar volumes like FA (uses rainbow color table).",
-            "icon": ":/Icons/WindowLevelPreset-DTI.png",
-            "window": 1.0,
-            "level": 0.5,
-            "color": "vtkMRMLColorTableNodeRainbow"
         }
     ]
 }
