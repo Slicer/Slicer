@@ -123,6 +123,19 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
     }
   }
 
+  // TODO:warning!
+  // This fix is link about the commit:https://github.com/DeepInsightData/EvoSeg/commit/b788b93ace6763033fbb7c5a5a72f013c47e9f32
+  // If it supports exporting ".nii.gz", always set it as the first choice.
+  for (int i = 0; i < this->exportFormatComboBox->count(); ++i)
+  {
+      QString extension = this->exportFormatComboBox->itemData(i).toString();
+      if (extension == ".nii.gz")
+      {
+          suggestedFormatIndex = i;
+          break;
+      }
+  }
+
   // Prefer to use suggested extension found above, otherwise just leave a prompt for the user to select a format.
   if (suggestedFormatIndex != -1)
   {
