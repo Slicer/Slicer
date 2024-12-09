@@ -81,6 +81,8 @@
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMIndexer.h"
 #include "ctkVTKWidgetsUtils.h"
+#include <vtkImageShiftScale.h>
+#include <vtkExtractVOI.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerDICOMExportDialogPrivate : public Ui_qSlicerDICOMExportDialog, public QDialog
@@ -512,20 +514,54 @@ void qSlicerDICOMExportDialog::onPrint()
             vtkImageData* imageData = volumeNode->GetImageData();
             if (imageData)
             {
-                QImage qImage = ctk::vtkImageDataToQImage(imageData);
-                if (!qImage.isNull())
-                {
-                    imageList.append(qImage);
+                // If not copied, the modifications will affect the original data.
+                vtkSmartPointer<vtkImageData> ScaleImageData = vtkSmartPointer<vtkImageData>::New();
+                ScaleImageData->DeepCopy(imageData);
+                if (ScaleImageData->GetScalarType() != VTK_UNSIGNED_CHAR) {
+                    vtkSmartPointer<vtkImageShiftScale> shiftScale = vtkSmartPointer<vtkImageShiftScale>::New();
+                    shiftScale->SetInputData(ScaleImageData);
+
+                    double range[2];
+                    ScaleImageData->GetScalarRange(range);
+                    float scaleFactor = 255.0f / (range[1] - range[0]);
+                    float shiftValue = -range[0];
+
+                    shiftScale->SetScale(scaleFactor);
+                    shiftScale->SetShift(shiftValue);
+                    shiftScale->SetOutputScalarTypeToUnsignedChar();
+                    shiftScale->Update();
+
+                    ScaleImageData->ShallowCopy(shiftScale->GetOutput());
                 }
-                else 
+
+                int* dims = ScaleImageData->GetDimensions();
+                int width = dims[0];
+                int height = dims[1];
+                int depth = dims[2];
+
+                vtkExtractVOI* extractVOI = vtkExtractVOI::New();
+                extractVOI->SetInputData(ScaleImageData);
+                for (int i = 0; i < depth; ++i)
                 {
-                    qDebug() << "Cant Print";
-                    return;
+                    extractVOI->SetVOI(0, width - 1, 0, height - 1, i, i);
+                    extractVOI->Update();
+                    vtkImageData* slice = extractVOI->GetOutput();
+                    QImage qImage = ctk::vtkImageDataToQImage(slice);
+                    if (!qImage.isNull())
+                    {
+                        imageList.append(qImage);
+                    }
                 }
+                extractVOI->Delete();
             }
         }
     }
-    // qDebug() << "image num: " << imageList.size();
+    if(imageList.size()==0)
+    {
+        qDebug() << "Cannot Print";
+        return;
+    }
+
     QPrinter printer(QPrinter::ScreenResolution);
     printer.setPageSize(QPrinter::A4);
     printer.setOrientation(QPrinter::Landscape);
