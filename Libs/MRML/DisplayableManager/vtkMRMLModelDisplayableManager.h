@@ -160,11 +160,11 @@ protected:
   void RemoveDisplayedID(const std::string& id);
   void ClearDisplayMaps();
 
-  void UpdateMapperProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* displayNode,
+  void UpdateMapperProperties(vtkMRMLModelNode* modelNode, vtkMRMLDisplayNode* displayNode,
     vtkMapper* actor);
-  void UpdateActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* displayNode,
+  void UpdateActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* modelDisplayNode, vtkMRMLDisplayNode* displayNode,
     vtkActor* actor, double opacity);
-  void UpdateCapActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* displayNode,
+  void UpdateCapActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* modelDisplayNode, vtkMRMLDisplayNode* displayNode,
     vtkActor* capActor, double opacity);
 
 protected:

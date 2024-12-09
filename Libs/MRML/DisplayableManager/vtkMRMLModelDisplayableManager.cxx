@@ -1363,14 +1363,14 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 
     if (visible && actor)
     {
-      this->UpdateMapperProperties(vtkMRMLModelNode::SafeDownCast(model), modelDisplayNode, actor->GetMapper());
-      this->UpdateActorProperties(vtkMRMLModelNode::SafeDownCast(model), modelDisplayNode, actor, opacity);
+      this->UpdateMapperProperties(vtkMRMLModelNode::SafeDownCast(model), displayNode, actor->GetMapper());
+      this->UpdateActorProperties(vtkMRMLModelNode::SafeDownCast(model), modelDisplayNode, displayNode, actor, opacity);
     }
 
     if (capVisible && capActor)
     {
-      this->UpdateMapperProperties(vtkMRMLModelNode::SafeDownCast(model), modelDisplayNode, capActor->GetMapper());
-      this->UpdateCapActorProperties(vtkMRMLModelNode::SafeDownCast(model), modelDisplayNode, capActor, opacity);
+      this->UpdateMapperProperties(vtkMRMLModelNode::SafeDownCast(model), displayNode, capActor->GetMapper());
+      this->UpdateCapActorProperties(vtkMRMLModelNode::SafeDownCast(model), modelDisplayNode, displayNode, capActor, opacity);
     }
 
     if (imageActor)
@@ -1382,8 +1382,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::UpdateMapperProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* displayNode,
-  vtkMapper* mapper)
+void vtkMRMLModelDisplayableManager::UpdateMapperProperties(vtkMRMLModelNode* modelNode, vtkMRMLDisplayNode* displayNode, vtkMapper* mapper)
 {
   if (!mapper)
   {
@@ -1441,55 +1440,60 @@ void vtkMRMLModelDisplayableManager::UpdateMapperProperties(vtkMRMLModelNode* mo
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* modelDisplayNode,
-  vtkActor* actor, double opacity)
+  vtkMRMLDisplayNode* displayNode, vtkActor* actor, double opacity)
 {
   if (!modelNode || !modelDisplayNode || !actor)
   {
     return;
   }
 
+  if (!displayNode)
+  {
+    displayNode = modelDisplayNode;
+  }
+
   vtkProperty* actorProperties = actor->GetProperty();
-  actorProperties->SetRepresentation(modelDisplayNode->GetRepresentation());
-  actorProperties->SetPointSize(modelDisplayNode->GetPointSize());
-  actorProperties->SetLineWidth(modelDisplayNode->GetLineWidth());
-  actorProperties->SetLighting(modelDisplayNode->GetLighting());
-  actorProperties->SetInterpolation(modelDisplayNode->GetInterpolation());
-  actorProperties->SetShading(modelDisplayNode->GetShading());
-  actorProperties->SetFrontfaceCulling(modelDisplayNode->GetFrontfaceCulling());
-  actorProperties->SetBackfaceCulling(modelDisplayNode->GetBackfaceCulling());
+  actorProperties->SetRepresentation(displayNode->GetRepresentation());
+  actorProperties->SetPointSize(displayNode->GetPointSize());
+  actorProperties->SetLineWidth(displayNode->GetLineWidth());
+  actorProperties->SetLighting(displayNode->GetLighting());
+  actorProperties->SetInterpolation(displayNode->GetInterpolation());
+  actorProperties->SetShading(displayNode->GetShading());
+  actorProperties->SetFrontfaceCulling(displayNode->GetFrontfaceCulling());
+  actorProperties->SetBackfaceCulling(displayNode->GetBackfaceCulling());
 
   actor->SetPickable(modelNode->GetSelectable());
-  if (modelDisplayNode->GetSelected())
+  if (displayNode->GetSelected())
   {
-    actorProperties->SetColor(modelDisplayNode->GetSelectedColor());
-    actorProperties->SetAmbient(modelDisplayNode->GetSelectedAmbient());
-    actorProperties->SetSpecular(modelDisplayNode->GetSelectedSpecular());
+    actorProperties->SetColor(displayNode->GetSelectedColor());
+    actorProperties->SetAmbient(displayNode->GetSelectedAmbient());
+    actorProperties->SetSpecular(displayNode->GetSelectedSpecular());
   }
   else
   {
-    actorProperties->SetColor(modelDisplayNode->GetColor());
-    actorProperties->SetAmbient(modelDisplayNode->GetAmbient());
-    actorProperties->SetSpecular(modelDisplayNode->GetSpecular());
+    actorProperties->SetColor(displayNode->GetColor());
+    actorProperties->SetAmbient(displayNode->GetAmbient());
+    actorProperties->SetSpecular(displayNode->GetSpecular());
   }
   // Opacity will be the product of the opacities of the model and the overriding
   // hierarchy, in order to keep the relative opacities the same.
   actorProperties->SetOpacity(opacity);
-  actorProperties->SetDiffuse(modelDisplayNode->GetDiffuse());
-  actorProperties->SetSpecularPower(modelDisplayNode->GetPower());
-  actorProperties->SetMetallic(modelDisplayNode->GetMetallic());
-  actorProperties->SetRoughness(modelDisplayNode->GetRoughness());
-  actorProperties->SetEdgeVisibility(modelDisplayNode->GetEdgeVisibility());
-  actorProperties->SetEdgeColor(modelDisplayNode->GetEdgeColor());
+  actorProperties->SetDiffuse(displayNode->GetDiffuse());
+  actorProperties->SetSpecularPower(displayNode->GetPower());
+  actorProperties->SetMetallic(displayNode->GetMetallic());
+  actorProperties->SetRoughness(displayNode->GetRoughness());
+  actorProperties->SetEdgeVisibility(displayNode->GetEdgeVisibility());
+  actorProperties->SetEdgeColor(displayNode->GetEdgeColor());
 
-  if (modelDisplayNode->GetTextureImageDataConnection() != nullptr)
+  if (displayNode->GetTextureImageDataConnection() != nullptr)
   {
     if (actor->GetTexture() == nullptr)
     {
       vtkNew<vtkTexture> texture;
       actor->SetTexture(texture);
     }
-    actor->GetTexture()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
-    actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
+    actor->GetTexture()->SetInputConnection(displayNode->GetTextureImageDataConnection());
+    actor->GetTexture()->SetInterpolate(displayNode->GetInterpolateTexture());
     actorProperties->SetColor(1., 1., 1.);
 
     // Force actors to be treated as opaque. Otherwise, transparent
@@ -1538,9 +1542,14 @@ void vtkMRMLModelDisplayableManager::UpdateActorProperties(vtkMRMLModelNode* mod
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateCapActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* modelDisplayNode,
-  vtkActor* capActor, double opacity)
+  vtkMRMLDisplayNode* displayNode, vtkActor* capActor, double opacity)
 {
-  this->UpdateActorProperties(modelNode, modelDisplayNode, capActor, opacity);
+  if (!displayNode)
+  {
+    displayNode = modelDisplayNode;
+  }
+
+  this->UpdateActorProperties(modelNode, modelDisplayNode, displayNode, capActor, opacity);
 
   vtkSmartPointer<vtkProperty> capActorProperties = capActor->GetProperty();
   if (!capActorProperties)
