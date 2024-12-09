@@ -1417,7 +1417,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         writer.SetInputData(lightboxCanvas.GetOutput())
         writer.Write()
 
-        self.addLog(_("Lighbox image saved to file: {filename}").format(filename=outputLightboxImageFilePath))
+        self.addLog(_("Lightbox image saved to file: {filename}").format(filename=outputLightboxImageFilePath))
 
     def createVideo(self, frameRate, extraOptions, outputDir, imageFileNamePattern, videoFileName):
         self.addLog(_("Export to video..."))
