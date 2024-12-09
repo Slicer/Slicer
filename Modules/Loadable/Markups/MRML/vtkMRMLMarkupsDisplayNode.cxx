@@ -70,8 +70,8 @@ vtkMRMLMarkupsDisplayNode::vtkMRMLMarkupsDisplayNode()
   // markup display node settings
   this->TextScale = 3;
   this->GlyphType = vtkMRMLMarkupsDisplayNode::Sphere3D;
-  this->GlyphScale = 3.0; // relative to screen size
-  this->GlyphSize = 5.0;  // size in world coordinate system (mm)
+  this->GlyphScale = 1.5; // relative to screen size
+  this->GlyphSize = 1.0;  // size in world coordinate system (mm)
   this->UseGlyphScale = true; // relative size by default
 
   this->SnapMode = vtkMRMLMarkupsDisplayNode::SnapModeToVisibleSurface;
