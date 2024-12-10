@@ -1,9 +1,9 @@
 import logging
+
 import qt
 
-import slicer
-
 import DICOMLib
+import slicer
 
 
 class DICOMSendDialog(qt.QDialog):

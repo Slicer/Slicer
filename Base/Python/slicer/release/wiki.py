@@ -105,9 +105,10 @@ Example of update
 
 import argparse
 import logging
-import mwdoc
 import os
 import re
+
+import mwdoc
 
 log = logging.getLogger(__name__)
 
