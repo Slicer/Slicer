@@ -67,5 +67,6 @@ For more extensions related to segmentations, open the ["Segmentations" category
 ## Tutorials
 
 To get started, check out these pages:
-- [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation): step by step slide and video tutorials
+- [Tutorials](https://github.com/EBATINCA/SlicerTutorials/tree/main): repository of actively maintained tutorials
+- [Segmentation tutorials archive](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation): step by step slide and video tutorials
 - [Segment Editor module documentation](modules/segmenteditor.md): detailed description of Segment Editor user interface and effects
