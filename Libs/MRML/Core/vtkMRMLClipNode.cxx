@@ -583,10 +583,18 @@ void vtkMRMLClipNode::SetClippingNodeState(const char* nodeID, int state)
     return;
   }
 
+  MRMLNodeModifyBlocker blocker(this);
+
   int clipIndex = this->GetClippingNodeIndex(nodeID);
   if (clipIndex < 0)
   {
-    return;
+    // Clipping node hasn't been added as a reference yet.
+    if (state == vtkMRMLClipNode::ClipOff)
+    {
+      return;
+    }
+    this->AddAndObserveClippingNodeID(nodeID);
+    clipIndex = this->GetClippingNodeIndex(nodeID);
   }
 
   this->SetNthClippingNodeState(clipIndex, state);
@@ -615,4 +623,69 @@ void vtkMRMLClipNode::CopyReferences(vtkMRMLNode* node)
   Superclass::CopyReferences(node);
   this->UpdateImplicitFunction();
   this->InvokeCustomModifiedEvent(vtkMRMLClipNode::ClipNodeModifiedEvent, nullptr);
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLClipNode::GetSliceClipState(const char* nodeID)
+{
+  int nodeIndex = this->GetClippingNodeIndex(nodeID);
+  if (nodeIndex < 0)
+  {
+    return ClipOff;
+  }
+  return this->GetNthClippingNodeState(nodeIndex);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLClipNode::SetSliceClipState(const char* nodeID, int state)
+{
+  if (!this->HasClippingNodeID(nodeID))
+  {
+    this->AddAndObserveClippingNodeID(nodeID);
+  }
+
+  int nodeIndex = this->GetClippingNodeIndex(nodeID);
+  int oldState = this->GetNthClippingNodeState(nodeIndex);
+  if (state == oldState)
+  {
+    return;
+  }
+
+  this->SetNthClippingNodeState(nodeIndex, state);
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLClipNode::GetRedSliceClipState()
+{
+  return this->GetSliceClipState("vtkMRMLSliceNodeRed");
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLClipNode::SetRedSliceClipState(int state)
+{
+  this->SetSliceClipState("vtkMRMLSliceNodeRed", state);
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLClipNode::GetGreenSliceClipState()
+{
+  return this->GetSliceClipState("vtkMRMLSliceNodeGreen");
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLClipNode::SetGreenSliceClipState(int state)
+{
+  this->SetSliceClipState("vtkMRMLSliceNodeGreen", state);
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLClipNode::GetYellowSliceClipState()
+{
+  return this->GetSliceClipState("vtkMRMLSliceNodeYellow");
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLClipNode::SetYellowSliceClipState(int state)
+{
+  this->SetSliceClipState("vtkMRMLSliceNodeYellow", state);
 }

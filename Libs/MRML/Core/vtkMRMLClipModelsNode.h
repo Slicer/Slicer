@@ -49,32 +49,11 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "ClipModels"; }
 
-  //@{
-  /// Indicates if the Red slice clipping is Off, Positive space, or Negative space
-  int GetRedSliceClipState();
-  void SetRedSliceClipState(int);
-  //@}
-
-  //@{
-  /// Indicates if the Yellow slice clipping is Off, Positive space, or Negative space
-  int GetYellowSliceClipState();
-  void SetYellowSliceClipState(int);
-  //@}
-
-  //@{
-  /// Indicates if the Green slice clipping is Off, Positive space, or Negative space
-  int GetGreenSliceClipState();
-  void SetGreenSliceClipState(int);
-  //@}
-
 protected:
   vtkMRMLClipModelsNode();
   ~vtkMRMLClipModelsNode() override;
   vtkMRMLClipModelsNode(const vtkMRMLClipModelsNode&);
   void operator=(const vtkMRMLClipModelsNode&);
-
-  int GetSliceClipState(const char* nodeID);
-  void SetSliceClipState(const char* nodeID, int state);
 };
 
 #endif

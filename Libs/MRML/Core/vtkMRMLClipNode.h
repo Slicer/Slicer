@@ -114,6 +114,27 @@ public:
   void SetNthClippingNodeState(int n, int state);
   //@}
 
+  //@{
+  /// Indicates if the Red slice clipping is Off, Positive space, or Negative space
+  /// \deprecated Prefer SetClippingNodeState() and GetClippingNodeState()
+  int GetRedSliceClipState();
+  void SetRedSliceClipState(int);
+  //@}
+
+  //@{
+  /// Indicates if the Yellow slice clipping is Off, Positive space, or Negative space
+  /// \deprecated Prefer SetClippingNodeState() and GetClippingNodeState()
+  int GetYellowSliceClipState();
+  void SetYellowSliceClipState(int);
+  //@}
+
+  //@{
+  /// Indicates if the Green slice clipping is Off, Positive space, or Negative space
+  /// \deprecated Prefer SetClippingNodeState() and GetClippingNodeState()
+  int GetGreenSliceClipState();
+  void SetGreenSliceClipState(int);
+  //@}
+
   /// Get the node reference property name for the clipping node state.
   static const char* GetClippingNodeStatePropertyName();
 
@@ -210,6 +231,9 @@ protected:
 
   /// Update the implicit function based on the clipping nodes.
   void UpdateImplicitFunction();
+
+  int GetSliceClipState(const char* nodeID);
+  void SetSliceClipState(const char* nodeID, int state);
 
 protected:
   vtkMRMLClipNode();
