@@ -54,6 +54,9 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
   //@}
 
+  /// Update the representation from display node
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+
   int GetActiveComponentType() override;
   void SetActiveComponentType(int type) override;
   int GetActiveComponentIndex() override;
