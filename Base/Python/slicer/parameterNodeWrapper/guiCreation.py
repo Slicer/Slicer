@@ -12,19 +12,17 @@ import ctk
 import qt
 
 import slicer
-
-from .guiConnectors import SlicerPackParameterNamePropertyName
 from . import parameterPack as pack
+from . import wrapper
+from .guiConnectors import SlicerPackParameterNamePropertyName
 from .types import FloatRange
-from .validators import Choice, Maximum, Minimum, WithinRange
 from .util import (
     findFirstAnnotation,
     isNodeOrUnionOfNodes,
     splitAnnotations,
     unannotatedType,
 )
-from . import wrapper
-
+from .validators import Choice, Maximum, Minimum, WithinRange
 
 __all__ = [
     "GuiCreator",

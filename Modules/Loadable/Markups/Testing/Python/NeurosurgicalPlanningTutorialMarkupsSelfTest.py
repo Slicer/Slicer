@@ -7,7 +7,6 @@ import vtk
 import slicer
 from slicer.ScriptedLoadableModule import *
 
-
 #
 # NeurosurgicalPlanningTutorialMarkupsSelfTest
 #

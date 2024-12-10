@@ -4,7 +4,6 @@ import shutil
 import slicer
 from slicer.ScriptedLoadableModule import *
 
-
 #
 # SequencesSelfTest
 #
