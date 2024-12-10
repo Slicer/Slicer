@@ -145,9 +145,12 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
     set(download_extension_wrapper_script
       ${CMAKE_CURRENT_BINARY_DIR}/download_${proj}_wrapper_script.cmake)
     #message(STATUS "Configuring extension download wrapper script: ${download_extension_wrapper_script}")
+    # Note: command is a semicolon-separated string that cannot be used as COMMAND directly, because arguments may contain spaces
     file(WRITE ${download_extension_wrapper_script} "
+      set(command_list \"${command}\")
+      string(REPLACE \";\" \";\" list \${command_list})
       execute_process(
-        COMMAND ${command}
+        COMMAND \${command_list}
         WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\"
         RESULT_VARIABLE result
         ERROR_VARIABLE error
@@ -155,7 +158,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
       # Sanitize error string to prevent false positive by Visual Studio
       set(sanitized_error \"\${error}\")
       string(REPLACE \"error:\" \"error \" sanitized_error \"\${sanitized_error}\")
-      message(STATUS \"download_${proj}_wrapper_script: Ignoring result \${result}\")
+      message(STATUS \"download_${proj}_wrapper_script: Ignoring result '\${result}'\")
       if(NOT result EQUAL 0)
         message(STATUS \"Generating '${EXTENSION_SOURCE_DIR}/CMakeLists.txt'\")
         file(MAKE_DIRECTORY \"${EXTENSION_SOURCE_DIR}\")
@@ -205,15 +208,18 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
   set(build_output_file "${CMAKE_CURRENT_BINARY_DIR}/build_${proj}output.txt")
   set(build_error_file "${CMAKE_CURRENT_BINARY_DIR}/build_${proj}_error.txt")
   #message(STATUS "Configuring extension upload wrapper script: ${build_extension_wrapper_script}")
+  # Note: wrapper_command is a semicolon-separated string that cannot be used as COMMAND directly, because arguments may contain spaces
   file(WRITE ${build_extension_wrapper_script} "
+    set(wrapper_command_list \"${wrapper_command}\")
+    string(REPLACE \";\" \";\" list \${wrapper_command_list})
     execute_process(
-      COMMAND ${wrapper_command}
+      COMMAND \${wrapper_command_list}
       WORKING_DIR \"${EXTENSION_SUPERBUILD_BINARY_DIR}\"
       OUTPUT_FILE \"${build_output_file}\"
       ERROR_FILE \"${build_error_file}\"
       RESULT_VARIABLE result
       )
-    message(STATUS \"build_${proj}_wrapper_script: Ignoring result \${result}\")
+    message(STATUS \"build_${proj}_wrapper_script: Ignoring result '\${result}'\")
     message(STATUS \"build_${proj}_output_file: ${build_output_file}\")
     message(STATUS \"build_${proj}_error_file: ${build_error_file}\")
     ")
