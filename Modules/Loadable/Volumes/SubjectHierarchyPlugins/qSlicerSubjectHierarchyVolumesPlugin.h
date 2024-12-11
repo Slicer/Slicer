@@ -30,6 +30,7 @@
 
 // Slicer includes
 #include "vtkMRMLApplicationLogic.h"
+#include "qSlicerIO.h"
 
 // CTK includes
 #include <ctkVTKObject.h>
@@ -158,6 +159,9 @@ protected slots:
 
   /// Toggle color legend option for current volume item in a slice view
   void toggleVisibilityForCurrentItem(bool);
+
+  void checkPresetActionState();
+  void onNewFileLoaded(qSlicerIO::IOProperties properties);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumesPluginPrivate> d_ptr;
