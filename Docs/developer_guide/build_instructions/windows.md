@@ -18,7 +18,7 @@ Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK),
   - Enable `Desktop development with C++` and in installation details
   - Enable the `MSVC v143 - VS2022 C++ x64...` (Visual Studio 2022 v143 toolset with 64-bit support) component - in some distributions, this option is not enabled by default.
   - Enable the latest Windows10 SDK component - without this CMake might not find a compiler during configuration step.
-- [Qt5](https://www.qt.io/download-open-source): Download Qt universal installer and install Qt 5.15.2. In the Select Components tab of the universal installer, Qt version and its components can be selected by expanding the `Qt` category. Components required: `MSVC2019 64-bit`, `Qt WebEngine`. Installing `Sources` and `Qt Debug Information Files` are recommended for debugging (they allow stepping into Qt files with the debugger in debug-mode builds).
+- [Qt5](https://www.qt.io/download-open-source): Download the Qt universal installer and install Qt 5.15.2. In the Select Components tab of the universal installer, click Categories, select Archive, and click Filter to fetch older versions of Qt. Qt version 5.15.2 and its components can be selected by expanding the `Qt` category. Components required: `MSVC2019 64-bit`, `Qt WebEngine`. Installing `Sources` and `Qt Debug Information Files` are recommended for debugging (they allow stepping into Qt files with the debugger in debug-mode builds).
   - Note: These are all free, open-source components with LGPL license which allow free usage for any purpose, for any individuals or companies.
 - [NSIS](https://nsis.sourceforge.io/Download) (optional): Needed if packaging Slicer. Make sure you install the language packs.
 

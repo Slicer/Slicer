@@ -23,9 +23,12 @@
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
+#include <vtkMRMLInteractionEventData.h>
 
 // VTK includes
+#include <vtkCamera.h>
 #include <vtkObjectFactory.h>
+#include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyle3D.h>
 
@@ -161,4 +164,76 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
 
     return;
   }
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition(vtkRenderer* renderer,
+                                                                                 double positionWorld[3],
+                                                                                 vtkMRMLInteractionEventData* interactionEventData)
+{
+  double viewScaleFactorMmPerPixel = 1.0;
+  if (!renderer || !renderer->GetActiveCamera())
+  {
+    return viewScaleFactorMmPerPixel;
+  }
+
+  vtkCamera* cam = renderer->GetActiveCamera();
+  if (cam->GetParallelProjection())
+  {
+    // Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
+    // Determine the available renderer size in pixels
+    double minX = 0;
+    double minY = 0;
+    renderer->NormalizedDisplayToDisplay(minX, minY);
+    double maxX = 1;
+    double maxY = 1;
+    renderer->NormalizedDisplayToDisplay(maxX, maxY);
+    int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
+    // Parallel scale: height of the viewport in world-coordinate distances.
+    // Larger numbers produce smaller images.
+    viewScaleFactorMmPerPixel = (cam->GetParallelScale() * 2.0) / double(rendererSizeInPixels[1]);
+  }
+  else
+  {
+    const double cameraFP[] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0};
+    double cameraViewUp[3] = { 0 };
+    cam->GetViewUp(cameraViewUp);
+    vtkMath::Normalize(cameraViewUp);
+
+
+    //these should be const but that doesn't compile under VTK 8
+    double topCenterWorld[] = {cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]};
+    double bottomCenterWorld[] = {cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]};
+
+    double topCenterDisplay[4];
+    double bottomCenterDisplay[4];
+
+    // the WorldToDisplay in interactionEventData is faster if someone has already
+    // called it once
+    if (interactionEventData)
+    {
+      interactionEventData->WorldToDisplay(topCenterWorld, topCenterDisplay);
+      interactionEventData->WorldToDisplay(bottomCenterWorld, bottomCenterDisplay);
+    }
+    else
+    {
+      std::copy(std::begin(topCenterWorld), std::end(topCenterWorld), std::begin(topCenterDisplay));
+      renderer->WorldToDisplay(topCenterDisplay[0], topCenterDisplay[1], topCenterDisplay[2]);
+      topCenterDisplay[2] = 0.0;
+
+      std::copy(std::begin(bottomCenterWorld), std::end(bottomCenterWorld), std::begin(bottomCenterDisplay));
+      renderer->WorldToDisplay(bottomCenterDisplay[0], bottomCenterDisplay[1], bottomCenterDisplay[2]);
+      bottomCenterDisplay[2] = 0.0;
+    }
+
+    const double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenterDisplay, bottomCenterDisplay));
+    // if render window is not initialized yet then distInPixels == 0.0,
+    // in that case just leave the default viewScaleFactorMmPerPixel
+    if (distInPixels > 1e-3)
+    {
+      // 2.0 = 2x length of viewUp vector in mm (because viewUp is unit vector)
+      viewScaleFactorMmPerPixel = 2.0 / distInPixels;
+    }
+  }
+  return viewScaleFactorMmPerPixel;
 }

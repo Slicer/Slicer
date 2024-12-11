@@ -44,6 +44,7 @@
 #include "vtkTransformPolyDataFilter.h"
 
 // MRML includes
+#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLFolderDisplayNode.h>
 #include <vtkMRMLInteractionEventData.h>
@@ -379,7 +380,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     markupsNode->GetCenterOfRotationWorld(centerPosWorld);
     if (interactionEventData->IsDisplayPositionValid())
     {
-      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld, interactionEventData)
+      double pixelTolerance = this->ControlPointSize / 2.0 / vtkMRMLAbstractThreeDViewDisplayableManager::
+        GetViewScaleFactorAtPosition(this->Renderer, centerPosWorld, interactionEventData)
         + this->PickingTolerance * this->GetScreenScaleFactor();
       interactionEventData->WorldToDisplay(centerPosWorld, centerPosDisplay);
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
@@ -460,7 +462,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     }
     if (interactionEventData->IsDisplayPositionValid())
     {
-      double pixelTolerance = this->ControlPointSize / 2.0 / this->GetViewScaleFactorAtPosition(centerPosWorld, interactionEventData)
+      double pixelTolerance = this->ControlPointSize / 2.0 / vtkMRMLAbstractThreeDViewDisplayableManager::
+        GetViewScaleFactorAtPosition(this->Renderer, centerPosWorld, interactionEventData)
         + this->PickingTolerance * this->GetScreenScaleFactor();
       interactionEventData->WorldToDisplay(centerPosWorld, centerPosDisplay);
       double dist2 = vtkMath::Distance2BetweenPoints(centerPosDisplay, displayPosition3);
@@ -1127,76 +1130,6 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::AccuratePick(int x, int y, double p
 }
 
 //----------------------------------------------------------------------
-double vtkSlicerMarkupsWidgetRepresentation3D::GetViewScaleFactorAtPosition(double positionWorld[3], vtkMRMLInteractionEventData* interactionEventData)
-{
-  double viewScaleFactorMmPerPixel = 1.0;
-  if (!this->Renderer || !this->Renderer->GetActiveCamera())
-  {
-    return viewScaleFactorMmPerPixel;
-  }
-
-  vtkCamera * cam = this->Renderer->GetActiveCamera();
-  if (cam->GetParallelProjection())
-  {
-    // Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
-    // Determine the available renderer size in pixels
-    double minX = 0;
-    double minY = 0;
-    this->Renderer->NormalizedDisplayToDisplay(minX, minY);
-    double maxX = 1;
-    double maxY = 1;
-    this->Renderer->NormalizedDisplayToDisplay(maxX, maxY);
-    int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
-    // Parallel scale: height of the viewport in world-coordinate distances.
-    // Larger numbers produce smaller images.
-    viewScaleFactorMmPerPixel = (cam->GetParallelScale() * 2.0) / double(rendererSizeInPixels[1]);
-  }
-  else
-  {
-    const double cameraFP[] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0};
-    double cameraViewUp[3] = { 0 };
-    cam->GetViewUp(cameraViewUp);
-    vtkMath::Normalize(cameraViewUp);
-
-
-    //these should be const but that doesn't compile under VTK 8
-    double topCenterWorld[] = {cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]};
-    double bottomCenterWorld[] = {cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]};
-
-    double topCenterDisplay[4];
-    double bottomCenterDisplay[4];
-
-    // the WorldToDisplay in interactionEventData is faster if someone has already
-    // called it once
-    if (interactionEventData)
-    {
-      interactionEventData->WorldToDisplay(topCenterWorld, topCenterDisplay);
-      interactionEventData->WorldToDisplay(bottomCenterWorld, bottomCenterDisplay);
-    }
-    else
-    {
-      std::copy(std::begin(topCenterWorld), std::end(topCenterWorld), std::begin(topCenterDisplay));
-      this->Renderer->WorldToDisplay(topCenterDisplay[0], topCenterDisplay[1], topCenterDisplay[2]);
-      topCenterDisplay[2] = 0.0;
-
-      std::copy(std::begin(bottomCenterWorld), std::end(bottomCenterWorld), std::begin(bottomCenterDisplay));
-      this->Renderer->WorldToDisplay(bottomCenterDisplay[0], bottomCenterDisplay[1], bottomCenterDisplay[2]);
-      bottomCenterDisplay[2] = 0.0;
-    }
-
-    const double distInPixels = sqrt(vtkMath::Distance2BetweenPoints(topCenterDisplay, bottomCenterDisplay));
-    // if render window is not initialized yet then distInPixels == 0.0,
-    // in that case just leave the default viewScaleFactorMmPerPixel
-    if (distInPixels > 1e-3)
-    {
-      // 2.0 = 2x length of viewUp vector in mm (because viewUp is unit vector)
-      viewScaleFactorMmPerPixel = 2.0 / distInPixels;
-    }
-  }
-  return viewScaleFactorMmPerPixel;
-}
-
-//----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
 {
   this->ViewScaleFactorMmPerPixel = 1.0;
@@ -1223,7 +1156,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateViewScaleFactor()
 
   double cameraFP[3] = { 0.0 };
   this->Renderer->GetActiveCamera()->GetFocalPoint(cameraFP);
-  this->ViewScaleFactorMmPerPixel = this->GetViewScaleFactorAtPosition(cameraFP);
+  this->ViewScaleFactorMmPerPixel = vtkMRMLAbstractThreeDViewDisplayableManager::
+    GetViewScaleFactorAtPosition(this->Renderer, cameraFP);
 }
 
 //----------------------------------------------------------------------

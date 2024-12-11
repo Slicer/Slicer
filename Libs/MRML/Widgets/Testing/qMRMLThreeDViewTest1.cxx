@@ -53,7 +53,8 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
                   << "vtkMRMLModelDisplayableManager"
                   << "vtkMRMLThreeDReformatDisplayableManager"
                   << "vtkMRMLOrientationMarkerDisplayableManager"
-                  << "vtkMRMLRulerDisplayableManager";
+                  << "vtkMRMLRulerDisplayableManager"
+                  << "vtkMRMLThreeDSliceEdgeDisplayableManager";
   vtkNew<vtkCollection> collection;
   view.getDisplayableManagers(collection.GetPointer());
   int numManagers = collection->GetNumberOfItems();

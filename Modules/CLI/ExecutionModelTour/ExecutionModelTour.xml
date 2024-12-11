@@ -38,6 +38,7 @@
     <description><![CDATA[Variations on vector parameters]]></description>
     <float-vector>
       <name>floatVector</name>
+      <longflag>float_vector</longflag>
       <flag>f</flag>
       <description><![CDATA[A vector of floats]]></description>
       <label>Float Vector Parameter</label>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>407</width>
+    <width>422</width>
     <height>175</height>
    </rect>
   </property>
@@ -35,7 +35,7 @@
       <bool>false</bool>
      </property>
      <property name="popupMode">
-      <enum>QToolButton::MenuButtonPopup</enum>
+      <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
      </property>
      <property name="autoRaise">
       <bool>true</bool>
@@ -43,7 +43,7 @@
     </widget>
    </item>
    <item row="2" column="4">
-    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox">
+    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -59,24 +59,24 @@
      <property name="toolTip">
       <string>Select the label map</string>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist notr="true">
        <string>vtkMRMLLabelMapVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled">
+     <property name="noneEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="editEnabled">
+     <property name="editEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -103,7 +103,7 @@
       <string/>
      </property>
      <property name="popupMode">
-      <enum>QToolButton::MenuButtonPopup</enum>
+      <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
      </property>
      <property name="autoRaise">
       <bool>true</bool>
@@ -121,7 +121,7 @@
     </widget>
    </item>
    <item row="3" column="1" rowspan="2">
-    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider">
+    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -131,25 +131,25 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider">
+     <property name="popupSlider" stdset="0">
       <bool>false</bool>
      </property>
     </widget>
    </item>
    <item row="2" column="2">
-    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider">
+    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -159,19 +159,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
    <item row="3" column="4">
-    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox">
+    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -187,24 +187,24 @@
      <property name="toolTip">
       <string>Select the foreground</string>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist notr="true">
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled">
+     <property name="noneEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="editEnabled">
+     <property name="editEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -220,7 +220,7 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="ctkSliderWidget" name="SegmentationOpacitySlider">
+    <widget class="ctkSliderWidget" name="SegmentationOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -230,19 +230,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
    <item row="1" column="4">
-    <widget class="qMRMLSegmentSelectorWidget" name="SegmentSelectorWidget">
+    <widget class="qMRMLSegmentSelectorWidget" name="SegmentSelectorWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -255,22 +255,22 @@
        <height>0</height>
       </size>
      </property>
-     <property name="editEnabled">
+     <property name="editEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="multiSelection">
+     <property name="multiSelection" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="horizontalLayout">
+     <property name="horizontalLayout" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="selectNodeUponCreation">
+     <property name="selectNodeUponCreation" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
    </item>
    <item row="4" column="2">
-    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider">
+    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -280,19 +280,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" stdset="0">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep">
+     <property name="pageStep" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" stdset="0">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider">
+     <property name="popupSlider" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -303,7 +303,7 @@
       <bool>false</bool>
      </property>
      <property name="popupMode">
-      <enum>QToolButton::DelayedPopup</enum>
+      <enum>QToolButton::ToolButtonPopupMode::DelayedPopup</enum>
      </property>
      <property name="autoRaise">
       <bool>true</bool>
@@ -311,7 +311,7 @@
     </widget>
    </item>
    <item row="4" column="4">
-    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox">
+    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -327,24 +327,24 @@
      <property name="toolTip">
       <string>Select the background</string>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist notr="true">
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled">
+     <property name="noneEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="editEnabled">
+     <property name="editEnabled" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="renameEnabled">
+     <property name="renameEnabled" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -420,9 +420,9 @@
         </sizepolicy>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
-       <property name="mirrorOnExpand">
+       <property name="mirrorOnExpand" stdset="0">
         <bool>true</bool>
        </property>
       </widget>
@@ -481,7 +481,7 @@
            <bool>false</bool>
           </property>
           <property name="popupMode">
-           <enum>QToolButton::MenuButtonPopup</enum>
+           <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -506,7 +506,7 @@
            <string>Slice orientation (Axial, Sagittal, Coronal, Reformat).</string>
           </property>
           <property name="sizeAdjustPolicy">
-           <enum>QComboBox::AdjustToContents</enum>
+           <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
           </property>
           <item>
            <property name="text">
@@ -540,7 +540,7 @@
             <normaloff>:/Icons/LayoutLightboxView.png</normaloff>:/Icons/LayoutLightboxView.png</iconset>
           </property>
           <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
+           <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -572,7 +572,7 @@
             <normaloff>:/Icons/SlicesComposite.png</normaloff>:/Icons/SlicesComposite.png</iconset>
           </property>
           <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
+           <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -592,7 +592,7 @@
             <normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</iconset>
           </property>
           <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
+           <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -620,7 +620,7 @@
             <normaloff>:/Icons/OrientationMarker.png</normaloff>:/Icons/OrientationMarker.png</iconset>
           </property>
           <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
+           <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -637,7 +637,7 @@
             <normaloff>:/Icons/Ruler.png</normaloff>:/Icons/Ruler.png</iconset>
           </property>
           <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
+           <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -654,7 +654,7 @@
             <normaloff>:/Icons/SlabReconstruction.png</normaloff>:/Icons/SlabReconstruction.png</iconset>
           </property>
           <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
+           <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -671,7 +671,7 @@
             <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
           </property>
           <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
+           <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -679,20 +679,20 @@
          </widget>
         </item>
         <item>
-         <widget class="ctkDynamicSpacer" name="DynamicSpacer">
-          <property name="activeSizePolicy">
+         <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+          <property name="activeSizePolicy" stdset="0">
            <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="inactiveSizePolicy">
+          <property name="inactiveSizePolicy" stdset="0">
            <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="active">
+          <property name="active" stdset="0">
            <bool>true</bool>
           </property>
          </widget>
@@ -1305,6 +1305,25 @@
     <string>Control if the layers blending would clip the rendering to the background volume</string>
    </property>
   </action>
+  <action name="actionSliceEdgeVisibility3D">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/VisibleOff.png</normaloff>
+     <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show slice edge</string>
+   </property>
+   <property name="toolTip">
+    <string>Show slice edge in the 3D view</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1322,6 +1341,7 @@
    <class>qMRMLSegmentSelectorWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLSegmentSelectorWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkComboBox</class>
@@ -1351,6 +1371,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../qMRMLWidgets.qrc"/>
   <include location="../qMRMLWidgets.qrc"/>
  </resources>
  <connections>

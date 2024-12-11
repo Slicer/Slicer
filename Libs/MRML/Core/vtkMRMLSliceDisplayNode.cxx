@@ -79,7 +79,7 @@ void vtkMRMLSliceDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLBooleanMacro(intersectingSlicesRotationEnabled, IntersectingSlicesRotationEnabled);
   vtkMRMLWriteXMLIntMacro(intersectingSlicesInteractiveHandlesVisibilityMode, IntersectingSlicesInteractiveHandlesVisibilityMode);
   vtkMRMLWriteXMLIntMacro(intersectingSlicesIntersectionMode, IntersectingSlicesIntersectionMode);
-  vtkMRMLWriteXMLIntMacro(intersectingSlicesIntersectionMode, IntersectingSlicesLineThicknessMode);
+  vtkMRMLWriteXMLIntMacro(intersectingSlicesLineThicknessMode, IntersectingSlicesLineThicknessMode);
   vtkMRMLWriteXMLEndMacro();
 }
 
