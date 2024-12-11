@@ -43,15 +43,6 @@
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
-// ----------------------------------------------------------------------------
-
-namespace
-{
-const QString createNew = QObject::tr("Create new ");
-const QString asSuffix = QObject::tr(" as...");
-const QString renameTitlePrefix = QObject::tr("Rename ");
-} // namespace
-
 // --------------------------------------------------------------------------
 qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   : q_ptr(&object)
@@ -156,7 +147,8 @@ void qMRMLNodeComboBoxPrivate::setModel(QAbstractItemModel* model)
 {
   Q_Q(qMRMLNodeComboBox);
   if (model == nullptr)
-  { // it's invalid to set a null model to a combobox
+  {
+    // it's invalid to set a null model to a combobox
     return;
   }
   if (this->ComboBox->model() != model)
@@ -237,7 +229,8 @@ void qMRMLNodeComboBoxPrivate::updateDefaultText()
     {
       nodeType = nodeTypes[0];
     }
-    cb->setDefaultText(qMRMLNodeComboBox::tr("Select a ") + q->nodeTypeLabel(nodeType));
+    //: %1 refers to the node type label
+    cb->setDefaultText(qMRMLNodeComboBox::tr("Select a %1").arg(q->nodeTypeLabel(nodeType)));
   }
 }
 
@@ -275,6 +268,7 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
   Q_UNUSED(resetRootIndex);
 
   QStringList extraItems;
+  QStringList extraItemsData;
   if (q->mrmlScene())
   {
     // Action items are not updated when selection is changed, therefore use the actual
@@ -287,48 +281,54 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
     }
     QString label = q->nodeTypeLabel(nodeType);
 
-    if (this->AddEnabled       //
-        || this->RemoveEnabled //
-        || this->EditEnabled   //
-        || this->RenameEnabled //
-        || !this->UserMenuActions.empty())
+    if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled || this->RenameEnabled || !this->UserMenuActions.empty())
     {
       extraItems.append("separator");
+      extraItemsData.append("SEPARATOR");
     }
     if (this->RenameEnabled)
     {
-      extraItems.append(qMRMLNodeComboBox::tr("Rename current ") + label);
+      //: %1 refers to the node type label
+      extraItems.append(qMRMLNodeComboBox::tr("Rename current %1").arg(label));
+      extraItemsData.append("RENAME/" + label);
     }
     if (this->EditEnabled)
     {
-      extraItems.append(qMRMLNodeComboBox::tr("Edit current ") + label);
+      //: %1 refers to the node type label
+      extraItems.append(qMRMLNodeComboBox::tr("Edit current %1").arg(label));
+      extraItemsData.append("EDIT/" + label);
     }
     if (this->AddEnabled)
     {
       for (const QString& nodeType : q->nodeTypes())
       {
         QString label = q->nodeTypeLabel(nodeType);
-        extraItems.append(createNew + label);
+        extraItems.append(qMRMLNodeComboBox::tr("Create new %1").arg(label));
+        extraItemsData.append("CREATE/" + label);
         if (this->RenameEnabled)
         {
-          extraItems.append(createNew + label + asSuffix);
+          extraItems.append(qMRMLNodeComboBox::tr("Create new %1 as...").arg(label));
+          extraItemsData.append("CREATE_AS/" + label);
         }
       }
     }
     if (this->RemoveEnabled)
     {
-      extraItems.append(qMRMLNodeComboBox::tr("Delete current ") + label);
+      //: %1 refers to the node type label
+      extraItems.append(qMRMLNodeComboBox::tr("Delete current %1").arg(label));
+      extraItemsData.append("DELETE/" + label);
     }
     for (QAction* const action : this->UserMenuActions)
     {
       extraItems.append(action->text());
+      extraItemsData.append(action->data().isValid() ? action->data().toString() : action->text());
     }
   }
 
   // setPostItems inserts rows, which changes selection if selection was previously invalid (-1).
   // Since NoneDisplay is only shown if selection is -1, we save and restore the current index.
   int currentIndex = this->ComboBox->currentIndex();
-  this->MRMLSceneModel->setPostItems(extraItems, this->MRMLSceneModel->mrmlSceneItem());
+  this->MRMLSceneModel->setPostItems(extraItems, this->MRMLSceneModel->mrmlSceneItem(), extraItemsData);
   this->ComboBox->setCurrentIndex(currentIndex);
 
   QObject::connect(this->ComboBox->view(), SIGNAL(clicked(QModelIndex)), q, SLOT(activateExtraItem(QModelIndex)), Qt::UniqueConnection);
@@ -352,16 +352,14 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
 
   if (this->ComboBox->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, this->ComboBox))
   {
-    if (force //
-        || qobject_cast<qMRMLNodeComboBoxDelegate*>(this->ComboBox->itemDelegate()))
+    if (force || qobject_cast<qMRMLNodeComboBoxDelegate*>(this->ComboBox->itemDelegate()))
     {
       this->ComboBox->setItemDelegate(new qMRMLNodeComboBoxMenuDelegate(q->parent(), q->comboBox()));
     }
   }
   else
   {
-    if (force //
-        || qobject_cast<qMRMLNodeComboBoxMenuDelegate*>(this->ComboBox->itemDelegate()))
+    if (force || qobject_cast<qMRMLNodeComboBoxMenuDelegate*>(this->ComboBox->itemDelegate()))
     {
       this->ComboBox->setItemDelegate(new qMRMLNodeComboBoxDelegate(q->parent(), q->comboBox()));
     }
@@ -418,20 +416,20 @@ qMRMLNodeComboBox::~qMRMLNodeComboBox() = default;
 void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
 {
   Q_D(qMRMLNodeComboBox);
-  // FIXME: check the type of the item on a different role instead of the display role
-  QString data = this->model()->data(index, Qt::DisplayRole).toString();
-  if (data.startsWith(createNew))
+  QString data = this->model()->data(index, qMRMLSceneModel::ExtraItemsRole).toString();
+  if (data.startsWith("CREATE"))
   {
-    QString label = data.mid(createNew.length());
+    QStringList commandAndLabel = data.split('/');
+    QString label;
+    if (commandAndLabel.size() > 1)
+    {
+      label = commandAndLabel[1];
+    }
     QString nodeTypeName;
-    bool createAs = data.endsWith(asSuffix);
+    bool createAs = data.startsWith("CREATE_AS");
     for (const auto& nodeType : this->nodeTypes())
     {
       QString foundLabel = this->nodeTypeLabel(nodeType);
-      if (createAs)
-      {
-        foundLabel += asSuffix;
-      }
       if (foundLabel == label)
       {
         nodeTypeName = nodeType;
@@ -457,17 +455,17 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
       }
     }
   }
-  else if (d->RemoveEnabled && data.startsWith(tr("Delete current ")))
+  else if (d->RemoveEnabled && data.startsWith("DELETE"))
   {
     d->ComboBox->hidePopup();
     this->removeCurrentNode();
   }
-  else if (d->EditEnabled && data.startsWith(tr("Edit current ")))
+  else if (d->EditEnabled && data.startsWith("EDIT"))
   {
     d->ComboBox->hidePopup();
     this->editCurrentNode();
   }
-  else if (d->RenameEnabled && data.startsWith(tr("Rename current ")))
+  else if (d->RenameEnabled && data.startsWith("RENAME"))
   {
     d->ComboBox->hidePopup();
     this->renameCurrentNode();
@@ -477,7 +475,8 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
     // check for user added items
     for (QAction* const action : d->UserMenuActions)
     {
-      if (data.startsWith(action->text()))
+      QString actionData = action->data().isValid() ? action->data().toString() : action->text();
+      if (data.startsWith(actionData))
       {
         d->ComboBox->hidePopup();
         action->trigger();
@@ -677,7 +676,9 @@ void qMRMLNodeComboBox::renameCurrentNode()
   // Use the dialog method to get the new name from the user
   bool ok = false;
   QString currentName = node->GetName();
-  QString newName = getNameFromDialog(renameTitlePrefix + this->nodeTypeLabel(node->GetClassName()), currentName, &ok);
+  //: %1 refers to the node type label
+  QString dialogTitle = tr("Rename %1").arg(this->nodeTypeLabel(node->GetClassName()));
+  QString newName = getNameFromDialog(dialogTitle, currentName, &ok);
 
   // Check if the user confirmed the action
   if (ok && !newName.isEmpty())
@@ -691,7 +692,7 @@ void qMRMLNodeComboBox::createNodeAs(const QString& nodeTypeName)
 {
   QString label = this->nodeTypeLabel(nodeTypeName);
   bool okPressed = false;
-  QString dialogTitle = createNew + label;
+  QString dialogTitle = tr("Create new %1").arg(label);
   QString defaultName = "";
   QString nodeName = this->getNameFromDialog(dialogTitle, defaultName, &okPressed);
 
@@ -1008,10 +1009,10 @@ void qMRMLNodeComboBox::setAddEnabled(bool enable)
   {
     return;
   }
-  if (enable && d->hasPostItem(createNew))
+  if (enable && d->hasPostItem("CREATE"))
   {
-    qDebug() << "setAddEnabled: An action starting with name " << createNew
-             << " already exists. "
+    qDebug() << "setAddEnabled: An action starting with name "
+             << "'Create new' already exists. "
                 "Not enabling this property.";
     return;
   }
@@ -1034,10 +1035,10 @@ void qMRMLNodeComboBox::setRemoveEnabled(bool enable)
   {
     return;
   }
-  if (enable && d->hasPostItem(tr("Delete current ")))
+  if (enable && d->hasPostItem("DELETE"))
   {
-    qDebug() << "setRemoveEnabled: An action starting with name " << tr("Delete current ")
-             << " already exists. "
+    qDebug() << "setRemoveEnabled: An action starting with name "
+             << "'Delete current' already exists. "
                 "Not enabling this property.";
     return;
   }
@@ -1060,10 +1061,10 @@ void qMRMLNodeComboBox::setEditEnabled(bool enable)
   {
     return;
   }
-  if (enable && d->hasPostItem(tr("Edit current ")))
+  if (enable && d->hasPostItem("EDIT"))
   {
-    qDebug() << "setEditEnabled: An action starting with name " << tr("Edit current ")
-             << " already exists. "
+    qDebug() << "setEditEnabled: An action starting with name "
+             << "'Edit current' already exists. "
                 "Not enabling this property.";
     return;
   }
@@ -1086,10 +1087,10 @@ void qMRMLNodeComboBox::setRenameEnabled(bool enable)
   {
     return;
   }
-  if (enable && d->hasPostItem(tr("Rename current ")))
+  if (enable && d->hasPostItem("RENAME"))
   {
-    qDebug() << "setRenameEnabled: An action starting with name " << tr("Rename current ")
-             << " already exists. "
+    qDebug() << "setRenameEnabled: An action starting with name "
+             << "'Rename current' already exists. "
                 "Not enabling this property.";
     return;
   }
@@ -1294,10 +1295,11 @@ void qMRMLNodeComboBox::addMenuAction(QAction* newAction)
       return;
     }
   }
-  if ((d->AddEnabled && newAction->text().startsWith(createNew)) ||                //
-      (d->RemoveEnabled && newAction->text().startsWith(tr("Delete current "))) || //
-      (d->EditEnabled && newAction->text().startsWith(tr("Edit current "))) ||     //
-      (d->RenameEnabled && newAction->text().startsWith(tr("Rename current "))))
+  QString actionData = newAction->data().isValid() ? newAction->data().toString() : newAction->text();
+  if ((d->AddEnabled && actionData.startsWith("CREATE"))       //
+      || (d->RemoveEnabled && actionData.startsWith("DELETE")) //
+      || (d->EditEnabled && actionData.startsWith("EDIT"))     //
+      || (d->RenameEnabled && actionData.startsWith("RENAME")))
   {
     qDebug() << "addMenuAction: warning: the text on this action, " << newAction->text()
              << ", matches the start of an enabled default action text and "

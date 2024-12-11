@@ -312,6 +312,13 @@ void qSlicerSegmentationsModuleWidget::init()
   d->ImportExportTypeButtonGroup->addButton(d->radioButton_Labelmap);
   d->ImportExportTypeButtonGroup->addButton(d->radioButton_Model);
 
+  // Define node type labels
+  QString segmentationNodeLabel = tr("Segmentation");
+  d->MRMLNodeSelector_Segmentation->setNodeTypeLabel(segmentationNodeLabel, "vtkMRMLSegmentationNode");
+  d->MRMLNodeComboBox_OtherSegmentationOrRepresentationNode->setNodeTypeLabel(segmentationNodeLabel, "vtkMRMLSegmentationNode");
+  d->MRMLNodeComboBox_ExportLabelmapReferenceVolume->setNodeTypeLabel(tr("Volume"), "vtkMRMLVolumeNode");
+  d->ColorTableNodeSelector->setNodeTypeLabel(tr("Color Table"), "vtkMRMLColorTableNode");
+
   // Make connections
   connect(d->MRMLNodeSelector_Segmentation, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onSegmentationNodeChanged(vtkMRMLNode*)));
   connect(d->MRMLNodeSelector_Segmentation, SIGNAL(currentNodeChanged(vtkMRMLNode*)), d->SegmentsTableView, SLOT(setSegmentationNode(vtkMRMLNode*)));
