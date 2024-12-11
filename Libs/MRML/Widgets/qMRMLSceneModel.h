@@ -171,13 +171,15 @@ public:
 
   /// Extra items that are prepended to the node list
   /// Warning, setPreItems() resets the model, the currently selected item is lost
-  void setPreItems(const QStringList& extraItems, QStandardItem* parent);
+  void setPreItems(const QStringList& extraItems, QStandardItem* parent, const QStringList& extraItemsData = QStringList());
   QStringList preItems(QStandardItem* parent) const;
+  QStringList preItemsData(QStandardItem* parent) const;
 
   /// Extra items that are appended to the node list
   /// Warning, setPostItems() resets the model, the currently selected item is lost
-  void setPostItems(const QStringList& extraItems, QStandardItem* parent);
+  void setPostItems(const QStringList& extraItems, QStandardItem* parent, const QStringList& extraItemsData = QStringList());
   QStringList postItems(QStandardItem* parent) const;
+  QStringList postItemsData(QStandardItem* parent) const;
 
   /// Doesn't support drop actions, scene model subclasses can support drop
   /// actions though.

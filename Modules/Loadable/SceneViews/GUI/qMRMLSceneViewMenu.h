@@ -55,8 +55,6 @@ public:
   QString noSceneViewText() const;
   void setNoSceneViewText(const QString& newText);
 
-  void setSceneViewsLogic(vtkSlicerSceneViewsModuleLogic* logic);
-
 public slots:
 
   /// Set the MRML \a scene associated with the widget

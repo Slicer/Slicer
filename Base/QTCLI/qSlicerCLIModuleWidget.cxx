@@ -86,7 +86,7 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QString sourceLanguageTitle = QString(this->logic()->GetDefaultModuleDescription().GetTitle().c_str());
   this->MRMLCommandLineModuleNodeSelector->addAttribute("vtkMRMLCommandLineModuleNode", "CommandLineModule", sourceLanguageTitle);
 
-  this->MRMLCommandLineModuleNodeSelector->setNodeTypeLabel("Parameter set", "vtkMRMLCommandLineModuleNode");
+  this->MRMLCommandLineModuleNodeSelector->setNodeTypeLabel(tr("Parameter set"), "vtkMRMLCommandLineModuleNode");
 
   this->addParameterGroups();
 
