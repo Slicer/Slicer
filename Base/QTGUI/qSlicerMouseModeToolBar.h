@@ -60,6 +60,8 @@ public:
   /// \sa setInteractionNode()
   Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
 
+  Q_INVOKABLE QAction* presetModesAction() const;
+
 public slots:
 
   /// Set the application logic. It is used to retrieve the selection and

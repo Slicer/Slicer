@@ -34,6 +34,7 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerColorLogic.h"
 #include "qSlicerAbstractCoreModule.h"
+#include "qSlicerMouseModeToolBar.h"
 
 // MRML includes
 #include <vtkMRMLLabelMapVolumeNode.h>
@@ -61,6 +62,7 @@
 #include <QStandardItem>
 #include <QTimer>
 #include <QMenu>
+#include <QMainWindow>
 
 // CTK includes
 #include "ctkSignalMapper.h"
@@ -221,6 +223,13 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
   this->VolumeDisplayPresetAction->setMenu(this->PresetSubmenu);
   QObject::connect(presetModeActions, SIGNAL(triggered(QAction*)), this->PresetModeMapper, SLOT(map(QAction*)));
   QObject::connect(this->PresetModeMapper, SIGNAL(mapped(QString)), q, SLOT(setVolumePreset(QString)));
+
+  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  qSlicerMouseModeToolBar* mouseModeToolBar = dynamic_cast<qSlicerMouseModeToolBar*>(mainWindow->findChild<QToolBar*>("MouseModeToolBar"));
+  if (mouseModeToolBar)
+  {
+      mouseModeToolBar->presetModesAction()->setMenu(PresetSubmenu);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -292,7 +301,12 @@ QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::viewContextMenuActions()co
 void qSlicerSubjectHierarchyVolumesPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
 {
   Q_D(qSlicerSubjectHierarchyVolumesPlugin);
-
+  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  qSlicerMouseModeToolBar* mouseModeToolBar = dynamic_cast<qSlicerMouseModeToolBar*>(mainWindow->findChild<QToolBar*>("MouseModeToolBar"));
+  if (mouseModeToolBar)
+  {
+      mouseModeToolBar->presetModesAction()->setVisible(false);
+  }
   d->VolumeDisplayPresetAction->setVisible(false);
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
@@ -406,6 +420,10 @@ void qSlicerSubjectHierarchyVolumesPlugin::showViewContextMenuActionsForItem(vtk
   d->ShowColorLegendAction->setChecked(colorLegendIsVisible);
 
   d->VolumeDisplayPresetAction->setVisible(d->SelectedVolumeNode.GetPointer() != nullptr);
+  if (mouseModeToolBar)
+  {
+      mouseModeToolBar->presetModesAction()->setVisible(d->SelectedVolumeNode.GetPointer() != nullptr);
+  }
 }
 
 //----------------------------------------------------------------------------

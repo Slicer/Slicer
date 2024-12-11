@@ -240,16 +240,16 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   }
 
   QList<QAction*> toolBarActions;
-  toolBarActions << this->MainToolBar->toggleViewAction();
+  //toolBarActions << this->MainToolBar->toggleViewAction();
   //toolBarActions << this->UndoRedoToolBar->toggleViewAction();
-  toolBarActions << this->ModuleSelectorToolBar->toggleViewAction();
+  //toolBarActions << this->ModuleSelectorToolBar->toggleViewAction();
   toolBarActions << this->ModuleToolBar->toggleViewAction();
-  toolBarActions << this->ViewToolBar->toggleViewAction();
+  //toolBarActions << this->ViewToolBar->toggleViewAction();
   //toolBarActions << this->LayoutToolBar->toggleViewAction();
   toolBarActions << this->MouseModeToolBar->toggleViewAction();
   toolBarActions << this->CaptureToolBar->toggleViewAction();
   toolBarActions << this->ViewersToolBar->toggleViewAction();
-  toolBarActions << this->DialogToolBar->toggleViewAction();
+  //toolBarActions << this->DialogToolBar->toggleViewAction();
   this->WindowToolBarsMenu->addActions(toolBarActions);
 
   //----------------------------------------------------------------------------

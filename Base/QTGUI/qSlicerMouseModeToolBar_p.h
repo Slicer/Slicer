@@ -84,7 +84,6 @@ public:
   QCursor cursorFromIcon(QIcon& icon);
 
 public slots:
-
   void onMRMLSceneStartBatchProcess();
   void onMRMLSceneEndBatchProcess();
   void updateWidgetFromMRML();
@@ -126,6 +125,9 @@ public:
   QActionGroup* PlaceModesActionGroup;
 
   QString DefaultPlaceClassName;
+
+  QAction* PresetModesAction;
+  QMenu* PresetModesMenu;
 };
 
 #endif

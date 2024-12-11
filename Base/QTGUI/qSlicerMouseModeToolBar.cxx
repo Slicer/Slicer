@@ -183,6 +183,19 @@ void qSlicerMouseModeToolBarPrivate::init()
   QObject::connect(this->PlaceWidgetToolBarAction, SIGNAL(triggered()),
     q, SLOT(toggleMarkupsToolBar()));
   this->PlaceWidgetMenu->addAction(this->PlaceWidgetToolBarAction);
+
+  this->PresetModesMenu = new QMenu(qSlicerMouseModeToolBar::tr("Window/level presets"), q);
+  this->PresetModesMenu->setObjectName("PresetModesMenu");
+
+  this->PresetModesAction = new QAction(this);
+  this->PresetModesAction->setObjectName("PresetModesAction");
+  this->PresetModesAction->setToolTip(qSlicerMouseModeToolBar::tr("Window/level presets"));
+  this->PresetModesAction->setText(qSlicerMouseModeToolBar::tr("Window/level presets"));
+  this->PresetModesAction->setEnabled(true);
+  this->PresetModesAction->setIcon(QIcon(":/Icons/VolumePreset.png"));
+  this->PresetModesAction->setMenu(PresetModesMenu);
+  this->PresetModesAction->setCheckable(false);
+  q->addAction(this->PresetModesAction);
 }
 
 //---------------------------------------------------------------------------
@@ -316,6 +329,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
       break;
     }
   this->updateCursor();
+  this->PresetModesAction->setVisible(this->MRMLScene && this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLScalarVolumeNode") > 0);
 }
 
 //---------------------------------------------------------------------------
@@ -645,6 +659,13 @@ vtkMRMLInteractionNode* qSlicerMouseModeToolBar::interactionNode()const
 {
   Q_D(const qSlicerMouseModeToolBar);
   return d->InteractionNode;
+}
+
+//-----------------------------------------------------------------------------
+QAction* qSlicerMouseModeToolBar::presetModesAction() const
+{
+    Q_D(const qSlicerMouseModeToolBar);
+    return d->PresetModesAction;
 }
 
 //-----------------------------------------------------------------------------

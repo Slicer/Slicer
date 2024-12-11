@@ -28,6 +28,7 @@
         <file alias="MousePickMode.png">Icons/MousePickMode.png</file>
         <file alias="ModuleHistory.png">Icons/ModuleHistory.png</file>
         <file alias="MarkupsGenericMouseModePlace.png">Icons/MarkupsGenericMouseModePlace.png</file>
+        <file alias="VolumePreset.png">Icons/VolumePreset.png</file>
     </qresource>
     <qresource prefix="/Icons/Large">
         <file alias="SlicerVisible.png">Icons/Large/SlicerVisible.png</file>
