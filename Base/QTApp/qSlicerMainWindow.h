@@ -139,10 +139,13 @@ public slots:
   /// Refresh favorite modules toolbar from application settings
   virtual void on_FavoriteModulesChanged();
 
+  virtual void onFullscreen(bool fullscreen);
+
 signals:
   /// Emitted when the window is first shown to the user.
   /// \sa showEvent(QShowEvent *)
   void initialWindowShown();
+  void fullscreenRequested(bool fullscreen);
 
 protected slots:
   virtual void onModuleLoaded(const QString& moduleName);

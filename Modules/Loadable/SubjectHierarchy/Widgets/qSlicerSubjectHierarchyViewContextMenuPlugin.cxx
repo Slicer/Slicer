@@ -49,6 +49,7 @@
 #include <qSlicerApplication.h>
 #include <vtkSlicerApplicationLogic.h>
 #include <qSlicerLayoutManager.h>
+#include <qSlicerMainWindow.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -78,7 +79,7 @@ public:
   QAction* InteractionModePlaceAction = nullptr;
 
   QAction* MaximizeViewAction = nullptr;
-  QAction* FullScreenViewAction = nullptr;
+  QAction* FullscreenViewAction = nullptr;
   QAction* FitSliceViewAction = nullptr;
   QAction* RefocusAllCamerasAction = nullptr;
   QAction* CenterThreeDViewAction = nullptr;
@@ -99,8 +100,6 @@ public:
   vtkWeakPointer<vtkMRMLCameraWidget> CameraWidget;
 
   QVariantMap ViewContextMenuEventData;
-
-  QWidget* fullScreenWidget = nullptr;
 };
 
 //-----------------------------------------------------------------------------
@@ -189,12 +188,12 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
     qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
   QObject::connect(this->MaximizeViewAction, SIGNAL(triggered()), q, SLOT(maximizeView()));
 
-  this->FullScreenViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("FullScreen View"), q);
-  this->FullScreenViewAction->setObjectName("FullScreenViewAction");
-  this->FullScreenViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Copy the view to fullscreen outside of the layout"));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FullScreenViewAction,
+  this->FullscreenViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Fullscreen View"), q);
+  this->FullscreenViewAction->setObjectName("FullscreenViewAction");
+  this->FullscreenViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show this view in fullscreen mode"));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FullscreenViewAction,
       qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
-  QObject::connect(this->FullScreenViewAction, SIGNAL(triggered()), q, SLOT(fullScreenView()));
+  QObject::connect(this->FullscreenViewAction, SIGNAL(triggered()), q, SLOT(fullscreenView()));
 
   this->ToggleTiltLockAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Tilt lock"), q);
   this->ToggleTiltLockAction->setObjectName("TiltLockAction");
@@ -297,7 +296,7 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
     << d->InteractionModeAdjustWindowLevelAction
     << d->InteractionModePlaceAction
     << d->MaximizeViewAction
-    //<< d->FullScreenViewAction // Fullscreen feature is not stable, hide it
+    << d->FullscreenViewAction
     << d->FitSliceViewAction
     << d->RefocusAllCamerasAction
     << d->CenterThreeDViewAction
@@ -369,7 +368,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   bool isMaximized = false;
   bool canBeMaximized = false;
   d->LayoutNode = viewNode->GetMaximizedState(isMaximized, canBeMaximized);
-  d->MaximizeViewAction->setVisible(canBeMaximized);
+  d->MaximizeViewAction->setVisible(canBeMaximized && !qSlicerApplication::application()->mainWindow()->isFullScreen());
   if (canBeMaximized)
   {
     d->MaximizeViewAction->setProperty("maximize", QVariant(!isMaximized));
@@ -382,23 +381,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
       d->MaximizeViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Maximize view"));
     }
   }
-  if (d->fullScreenWidget != nullptr)d->MaximizeViewAction->setVisible(false);
-
-  d->FullScreenViewAction->setVisible(canBeMaximized);
-  if (canBeMaximized)
-  {
-      d->FullScreenViewAction->setProperty("FullScreen", QVariant(!isMaximized));
-      if (isMaximized)
-      {
-          d->FullScreenViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Close FullScreen"));
-          if (d->fullScreenWidget == nullptr)d->FullScreenViewAction->setVisible(false);
-      }
-      else
-      {
-          d->FullScreenViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("FullScreen view"));
-      }
-  }
-
+  d->FullscreenViewAction->setVisible(true);
   d->CopyImageAction->setVisible(true);
 
   // Cache nodes to have them available for the menu action execution.
@@ -555,76 +538,42 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::maximizeView()
   if (maximizeView)
   {
     d->LayoutNode->AddMaximizedViewNode(d->ViewNode);
-    d->FullScreenViewAction->setVisible(false);
   }
   else
   {
     d->LayoutNode->RemoveMaximizedViewNode(d->ViewNode);
-    d->FullScreenViewAction->setVisible(true);
   }
 }
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyViewContextMenuPlugin::fullScreenView()
+void qSlicerSubjectHierarchyViewContextMenuPlugin::fullscreenView()
 {
+    qSlicerMainWindow* mainWindow = qobject_cast<qSlicerMainWindow*>(qSlicerApplication::application()->mainWindow());
+    bool fullscreen = !mainWindow->isFullScreen();
+
     Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
-    if (!d->LayoutNode)
+    QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
+    qMRMLAbstractViewWidget* viewWidget = qobject_cast<qMRMLAbstractViewWidget*>(widget);
+    if (fullscreen)
     {
-        return;
-    }
-    bool fullScreenView = d->FullScreenViewAction->property("FullScreen").toBool();
-    if (fullScreenView)
-    {
-        d->LayoutNode->AddMaximizedViewNode(d->ViewNode);
-
-        QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
-
-        qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(widget);
-        qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
-        if (sliceWidget)
+        if (viewWidget && !viewWidget->isMaximized())
         {
-            qMRMLSliceControllerWidget* sliceController=sliceWidget->sliceController();
-            sliceController->hide();
+            d->LayoutNode->AddMaximizedViewNode(d->ViewNode);
         }
-        else if (threeDWidget)
-        {
-            qMRMLThreeDViewControllerWidget* threeDWidgetController = threeDWidget->threeDController();
-            threeDWidgetController->hide();
-        }
-        if (!widget)
-        {
-            qWarning() << Q_FUNC_INFO << " failed: cannot get view widget from layout manager";
-            return;
-        }
-        d->fullScreenWidget = new QWidget();
-        QVBoxLayout* fullScreenWidgetLayout = new QVBoxLayout(d->fullScreenWidget);
-        fullScreenWidgetLayout->addWidget(widget);
-        d->fullScreenWidget->showFullScreen();
+        widget->showFullScreen();
+        d->FullscreenViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show normal view"));
+        d->FullscreenViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show this view in normal mode"));
     }
     else
     {
-        d->fullScreenWidget->close();
-        d->fullScreenWidget = nullptr;
-
-        QWidget* widget = qSlicerApplication::application()->layoutManager()->viewWidget(d->ViewNode);
-        qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(widget);
-        qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(widget);
-        if (sliceWidget)
+        if (viewWidget && viewWidget->isMaximized())
         {
-            qMRMLSliceControllerWidget* sliceController = sliceWidget->sliceController();
-            sliceController->show();
+            d->LayoutNode->RemoveMaximizedViewNode(d->ViewNode);
         }
-        else if (threeDWidget)
-        {
-            qMRMLThreeDViewControllerWidget* threeDWidgetController = threeDWidget->threeDController();
-            threeDWidgetController->show();
-        }
-        if (!widget)
-        {
-            qWarning() << Q_FUNC_INFO << " failed: cannot get view widget from layout manager";
-            return;
-        }
-        d->LayoutNode->RemoveMaximizedViewNode(d->ViewNode);// its helpful for restore to the original layout
+        widget->showNormal();
+        d->FullscreenViewAction->setText(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Fullscreen View"));
+        d->FullscreenViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show this view in fullscreen mode"));
     }
+    emit mainWindow->fullscreenRequested(fullscreen);
 }
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyViewContextMenuPlugin::fitSliceView()

@@ -511,6 +511,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // to use the full width of the application window.
   q->setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   q->setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+
+  QObject::connect(q, SIGNAL(fullscreenRequested(bool)), q, SLOT(onFullscreen(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -556,6 +558,29 @@ void qSlicerMainWindowPrivate::updatePythonConsolePalette()
   pythonConsole->setStdinTextColor(palette.color(QPalette::Disabled, QPalette::WindowText));   // gray
   pythonConsole->setWelcomeTextColor(palette.color(QPalette::Disabled, QPalette::WindowText)); // gray
 #endif
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindowPrivate::showFullscreen(bool fullscreen)
+{
+    this->StatusBar->setVisible(!fullscreen);
+    this->ModulePanel->setVisible(!fullscreen);
+    Q_Q(qSlicerMainWindow);
+    if (fullscreen)
+    {
+        for (QToolBar* toolBar : q->findChildren<QToolBar*>())
+        {
+            toolBar->setVisible(false);
+        }
+        this->dockWidgetContents->setVisible(false);
+        q->showFullScreen();
+    }
+    else
+    {
+        this->dockWidgetContents->setVisible(true);
+        q->restoreToolbars();
+        q->showNormal();
+    }
 }
 
 
@@ -943,6 +968,13 @@ void qSlicerMainWindow::onUserViewedErrorLog()
 {
   Q_D(qSlicerMainWindow);
   d->setErrorLogIconHighlighted(false);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onFullscreen(bool fullscreen)
+{
+    Q_D(qSlicerMainWindow);
+    d->showFullscreen(fullscreen);
 }
 
 //---------------------------------------------------------------------------

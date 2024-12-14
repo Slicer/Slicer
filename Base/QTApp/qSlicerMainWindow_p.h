@@ -71,6 +71,8 @@ public:
   // Add module action to the favorite modules toolbar
   void addFavoriteModule(const QString& moduleName);
 
+  virtual void showFullscreen(bool fullscreen);
+
 #ifdef Slicer_USE_PYTHONQT
   QDockWidget*                    PythonConsoleDockWidget{nullptr};
   QAction*                        PythonConsoleToggleViewAction{nullptr};
