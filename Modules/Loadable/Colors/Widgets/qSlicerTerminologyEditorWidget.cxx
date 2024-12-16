@@ -18,9 +18,12 @@
 
 ==============================================================================*/
 
-// qMRML includes
+// Colors includes
 #include "qSlicerTerminologyEditorWidget.h"
 #include "ui_qSlicerTerminologyEditorWidget.h"
+
+// Terminologies includes
+#include "qSlicerTerminologySelectorDialog.h"
 
 //------------------------------------------------------------------------------
 class qSlicerTerminologyEditorWidgetPrivate : public Ui_qSlicerTerminologyEditorWidget
@@ -31,6 +34,10 @@ protected:
 public:
   qSlicerTerminologyEditorWidgetPrivate(qSlicerTerminologyEditorWidget& object);
   void init();
+
+  void updateGUIFromTerminologyInfo();
+
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;
 };
 
 //------------------------------------------------------------------------------
@@ -44,6 +51,35 @@ void qSlicerTerminologyEditorWidgetPrivate::init()
 {
   Q_Q(qSlicerTerminologyEditorWidget);
   this->setupUi(q);
+
+  QObject::connect(this->selectFromTerminologyButton, SIGNAL(clicked()), q, SLOT(onSelectFromTerminology()));
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTerminologyEditorWidgetPrivate::updateGUIFromTerminologyInfo()
+{
+  Q_Q(qSlicerTerminologyEditorWidget);
+
+  // Set terminology IDs on the GUI
+  this->categoryCodeMeaningLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetCategoryObject()->GetCodeMeaning());
+  this->categoryCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetCategoryObject()->GetCodeValue());
+  this->categoryCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetCategoryObject()->GetCodingSchemeDesignator());
+
+  this->typeCodeMeaningLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetTypeObject()->GetCodeMeaning());
+  this->typeCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetTypeObject()->GetCodeValue());
+  this->typeCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetTypeObject()->GetCodingSchemeDesignator());
+
+  this->typeModifierCodeMeaningLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->GetCodeMeaning());
+  this->typeModifierCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->GetCodeValue());
+  this->typeModifierCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->GetCodingSchemeDesignator());
+
+  this->anatomicRegionCodeMeaningLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->GetCodeMeaning());
+  this->anatomicRegionCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->GetCodeValue());
+  this->anatomicRegionCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->GetCodingSchemeDesignator());
+
+  this->anatomicRegionModifierCodeMeaningLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->GetCodeMeaning());
+  this->anatomicRegionModifierCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->GetCodeValue());
+  this->anatomicRegionModifierCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->GetCodingSchemeDesignator());
 }
 
 //------------------------------------------------------------------------------
@@ -62,65 +98,21 @@ qSlicerTerminologyEditorWidget::~qSlicerTerminologyEditorWidget() = default;
 void qSlicerTerminologyEditorWidget::terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorWidget);
-
-  terminologyInfo.GetTerminologyEntry()->GetCategoryObject()->SetCodeMeaning(
-    d->categoryCodeMeaningLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetCategoryObject()->SetCodeValue(
-    d->categoryCodeValueLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetCategoryObject()->SetCodingSchemeDesignator(
-    d->categoryCSDLineEdit->text().toUtf8().constData());
-
-  terminologyInfo.GetTerminologyEntry()->GetTypeObject()->SetCodeMeaning(
-    d->typeCodeMeaningLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetTypeObject()->SetCodeValue(
-    d->typeCodeValueLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetTypeObject()->SetCodingSchemeDesignator(
-    d->typeCSDLineEdit->text().toUtf8().constData());
-
-  terminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->SetCodeMeaning(
-    d->typeModifierCodeMeaningLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->SetCodeValue(
-    d->typeModifierCodeValueLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->SetCodingSchemeDesignator(
-    d->typeModifierCSDLineEdit->text().toUtf8().constData());
-
-  terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->SetCodeMeaning(
-    d->anatomicRegionCodeMeaningLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->SetCodeValue(
-    d->anatomicRegionCodeValueLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->SetCodingSchemeDesignator(
-    d->anatomicRegionCSDLineEdit->text().toUtf8().constData());
-
-  terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->SetCodeMeaning(
-    d->anatomicRegionModifierCodeMeaningLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->SetCodeValue(
-    d->anatomicRegionModifierCodeValueLineEdit->text().toUtf8().constData());
-  terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->SetCodingSchemeDesignator(
-    d->anatomicRegionModifierCSDLineEdit->text().toUtf8().constData());
+  terminologyInfo = d->TerminologyInfo;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyEditorWidget::setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorWidget);
+  d->TerminologyInfo = terminologyInfo;
+}
 
-  d->categoryCodeMeaningLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetCategoryObject()->GetCodeMeaning());
-  d->categoryCodeValueLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetCategoryObject()->GetCodeValue());
-  d->categoryCSDLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetCategoryObject()->GetCodingSchemeDesignator());
+//-----------------------------------------------------------------------------
+void qSlicerTerminologyEditorWidget::onSelectFromTerminology()
+{
+  Q_D(qSlicerTerminologyEditorWidget);
 
-  d->typeCodeMeaningLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetTypeObject()->GetCodeMeaning());
-  d->typeCodeValueLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetTypeObject()->GetCodeValue());
-  d->typeCSDLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetTypeObject()->GetCodingSchemeDesignator());
-
-  d->typeModifierCodeMeaningLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->GetCodeMeaning());
-  d->typeModifierCodeValueLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->GetCodeValue());
-  d->typeModifierCSDLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->GetCodingSchemeDesignator());
-
-  d->anatomicRegionCodeMeaningLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->GetCodeMeaning());
-  d->anatomicRegionCodeValueLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->GetCodeValue());
-  d->anatomicRegionCSDLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->GetCodingSchemeDesignator());
-
-  d->anatomicRegionModifierCodeMeaningLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->GetCodeMeaning());
-  d->anatomicRegionModifierCodeValueLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->GetCodeValue());
-  d->anatomicRegionModifierCSDLineEdit->setText(terminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->GetCodingSchemeDesignator());
+  qSlicerTerminologySelectorDialog::getTerminology(d->TerminologyInfo, this);
+  d->updateGUIFromTerminologyInfo();
 }

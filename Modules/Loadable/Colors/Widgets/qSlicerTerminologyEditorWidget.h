@@ -51,6 +51,8 @@ public slots:
 signals:
 
 protected slots:
+  /// Shows popup with terminology navigator when the select button is clicked.
+  void onSelectFromTerminology();
 
 protected:
   QScopedPointer<qSlicerTerminologyEditorWidgetPrivate> d_ptr;

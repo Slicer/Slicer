@@ -908,7 +908,9 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CopyNode(vtkMRMLColorNode* nodeToCopy,
     double color[4];
     nodeToCopy->GetColor(i, color);
     colorNode->SetColor(i, nodeToCopy->GetColorName(i), color[0], color[1], color[2], color[3]);
-    // TODO: copy properties
+    // Copy terminologies
+    std::string terminologyString = nodeToCopy->GetTerminologyAsString(i);
+    colorNode->SetTerminologyFromString(i, terminologyString);
   }
   return colorNode;
 }
