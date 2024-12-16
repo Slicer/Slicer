@@ -77,8 +77,14 @@ public:
   /// Python compatibility function for showing dialog (calls \a exec)
   Q_INVOKABLE bool execDialog() { return this->exec(); };
 
+  ///// Get whether name and color override section is visible
+  //bool overrideSectionVisible() const;
+
 protected slots:
   void setSaveButtonEnabled(bool);
+
+  ///// Show/hide name and color override section
+  //void setOverrideSectionVisible(bool);
 
 protected:
   QScopedPointer<qSlicerTerminologyEditorDialogPrivate> d_ptr;

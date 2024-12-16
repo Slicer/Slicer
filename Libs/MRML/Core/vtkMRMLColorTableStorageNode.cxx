@@ -12,23 +12,32 @@ Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
 
-// MRML include
+// MRML includes
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLI18N.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTableStorageNode.h"
+#include "vtkCodedEntry.h"
 
-// VTK include
+// VTK includes
 #include <vtkDelimitedTextReader.h>
 #include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
+#include <vtksys/SystemTools.hxx>
 #include <vtkTable.h>
 
-// STD include
+// STD includes
 #include <sstream>
+
+const std::vector<std::string> TERMINOLOGY_COLUMN_NAMES = {
+  "Category_CodingSchemeDesignator", "Category_CodeValue", "Category_CodeMeaning",
+  "Type_CodingSchemeDesignator", "Type_CodeValue", "Type_CodeMeaning",
+  "TypeModifier_CodingSchemeDesignator", "TypeModifier_CodeValue", "TypeModifier_CodeMeaning",
+  "AnatomicRegion_CodingSchemeDesignator", "AnatomicRegion_CodeValue", "AnatomicRegion_CodeMeaning",
+  "AnatomicRegionModifier_CodingSchemeDesignator", "AnatomicRegionModifier_CodeValue", "AnatomicRegionModifier_CodeMeaning" };
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLColorTableStorageNode);
@@ -228,24 +237,6 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
       "Missing 'Color_A' column in color table file: '" << fullFileName << "'.");
   }
 
-  vtkStringArray* categoryCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Category_CodingSchemeDesignator"));
-  vtkStringArray* categoryCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Category_CodeValue"));
-  vtkStringArray* categoryCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Category_CodeMeaning"));
-
-  vtkStringArray* typeCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Type_CodingSchemeDesignator"));
-  vtkStringArray* typeCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Type_CodeValue"));
-  vtkStringArray* typeCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Type_CodeMeaning"));
-  vtkStringArray* typeModifierCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("TypeModifier_CodingSchemeDesignator"));
-  vtkStringArray* typeModifierCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("TypeModifier_CodeValue"));
-  vtkStringArray* typeModifierCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("TypeModifier_CodeMeaning"));
-
-  vtkStringArray* anatomicRegionCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegion_CodingSchemeDesignator"));
-  vtkStringArray* anatomicRegionCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegion_CodeValue"));
-  vtkStringArray* anatomicRegionCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegion_CodeMeaning"));
-  vtkStringArray* anatomicRegionModifierCSColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegionModifier_CodingSchemeDesignator"));
-  vtkStringArray* anatomicRegionModifierCVColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegionModifier_CodeValue"));
-  vtkStringArray* anatomicRegionModifierCMColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("AnatomicRegionModifier_CodeMeaning"));
-
   // clear out the table
   MRMLNodeModifyBlocker blocker(colorNode);
 
@@ -253,8 +244,8 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   // It is important to only change type if it has not been set already
   // because otherwise "User" color node types would be always reverted to
   // read-only "File" type when the scene is saved and reloaded.
-  if (colorNode->GetType()<colorNode->GetFirstType()
-    || colorNode->GetType()>colorNode->GetLastType())
+  if ( colorNode->GetType() < colorNode->GetFirstType()
+    || colorNode->GetType() > colorNode->GetLastType() )
   {
     // no valid type has been set, set it to File
     colorNode->SetTypeToFile();
@@ -315,9 +306,19 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   // init the table to black/opacity 0 with no name, just in case we're missing values
   colorNode->SetColors(0, maxLabelValue, colorNode->GetNoName(), 0.0, 0.0, 0.0, 0.0);
 
+  // Define helper function for populating terminology entry IDs
+  auto GetIndexInEntryForIdType = [](std::string idType)
+  {
+    if (idType == "CodingSchemeDesignator") return 0;
+    else if (idType == "CodeValue") return 1;
+    else if (idType == "CodeMeaning") return 2;
+    vtkGenericWarningMacro("vtkMRMLColorTableStorageNode::ReadCsvFile::GetIndexInEntryForIdType: Invalid coded entry ID type" << idType);
+    return 0;
+  };
+
   // do a little sanity check, if never get an rgb bigger than 1.0, report
   // it as a possibly miswritten file
-  for (vtkIdType row = 0; row < numberOfTuples; ++row)
+  for (vtkIdType row=0; row < numberOfTuples; ++row)
   {
     if (validLabelValues[row] == this->MaximumColorID + 1)
     {
@@ -325,6 +326,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
       continue;
     }
 
+    // Set color
     bool allValid = true;
     double r = colorRColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
     double g = colorGColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
@@ -338,8 +340,8 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
           std::to_string(g).c_str(), std::to_string(b).c_str(), std::to_string(a).c_str(), std::to_string(row).c_str()));
       continue;
     }
-
     r /= 255.0; g /= 255.0; b /= 255.0; a /= 255.0;
+
     if (colorNode->SetColor(validLabelValues[row], nameColumn->GetValue(row).c_str(), r, g, b, a) == 0)
     {
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
@@ -349,7 +351,61 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
           std::to_string(numberOfTuples).c_str(), fullFileName.c_str()));
       return 0;
     }
-  }
+
+    // Set terminology to color table node
+    // The serialized string has the following components:
+    //   0: "terminologyContextName~"
+    //   1: "categorySchemeDesignator^categoryValue^categoryMeaning~"
+    //   2: "typeSchemeDesignator^typeValue^typeMeaning~
+    //   3: "modifierSchemeDesignator^modifierValue^modifierMeaning~"
+    //   4: "anatomicContextName~"
+    //   5: "regionSchemeDesignator^regionValue^regionMeaning~"
+    //   6: "regionModifierSchemeDesignator^regionModifierValue^regionModifierMeaning"
+    std::string terminologyContextName = colorNode->GetName(); //TODO: Terminology context name is not saved in the CSV table
+    std::vector<std::string> categoryComponents(3);
+    std::vector<std::string> typeComponents(3);
+    std::vector<std::string> typeModifierComponents(3);
+    std::string anatomicContextName = colorNode->GetName(); //TODO: Terminology context name is not saved in the CSV table
+    std::vector<std::string> anatomicRegionComponents(3);
+    std::vector<std::string> anatomicRegionModifierComponents(3);
+    for (const auto& columnName : TERMINOLOGY_COLUMN_NAMES)
+    {
+      vtkStringArray* column = vtkStringArray::SafeDownCast(table->GetColumnByName(columnName.c_str()));
+      std::vector<std::string> columnNameComponents;
+      vtksys::SystemTools::Split(columnName, columnNameComponents, '_');
+
+      if (columnNameComponents[0] == "Category")
+      {
+        categoryComponents[GetIndexInEntryForIdType(columnNameComponents[1])] = column->GetValue(row);
+      }
+      else if (columnNameComponents[0] == "Type")
+      {
+        typeComponents[GetIndexInEntryForIdType(columnNameComponents[1])] = column->GetValue(row);
+      }
+      else if (columnNameComponents[0] == "TypeModifier")
+      {
+        typeModifierComponents[GetIndexInEntryForIdType(columnNameComponents[1])] = column->GetValue(row);
+      }
+      else if (columnNameComponents[0] == "AnatomicRegion")
+      {
+        anatomicRegionComponents[GetIndexInEntryForIdType(columnNameComponents[1])] = column->GetValue(row);
+      }
+      else if (columnNameComponents[0] == "AnatomicRegionModifier")
+      {
+        anatomicRegionModifierComponents[GetIndexInEntryForIdType(columnNameComponents[1])] = column->GetValue(row);
+      }
+    } // For each terminology column name
+    std::vector<std::string> terminologyComponents {
+      terminologyContextName,
+      vtksys::SystemTools::Join(categoryComponents, "^"),
+      vtksys::SystemTools::Join(typeComponents, "^"),
+      vtksys::SystemTools::Join(typeModifierComponents, "^"),
+      anatomicContextName,
+      vtksys::SystemTools::Join(anatomicRegionComponents, "^"),
+      vtksys::SystemTools::Join(anatomicRegionModifierComponents, "^")
+    };
+    colorNode->SetTerminologyFromString(row, vtksys::SystemTools::Join(terminologyComponents, "~"));
+  } // For each row in the color table
 
   return 1;
 }
@@ -567,10 +623,12 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
   labelValueArray->SetName("LabelValue");
   labelValueArray->SetNumberOfTuples(numberOfColors);
   colorTable->AddColumn(labelValueArray);
+
   vtkNew<vtkStringArray> nameArray;
   nameArray->SetName("Name");
   nameArray->SetNumberOfTuples(numberOfColors);
   colorTable->AddColumn(nameArray);
+
   vtkNew<vtkIntArray> colorArray;
   colorArray->SetName("Color");
   colorArray->SetNumberOfComponents(4); // RGBA
@@ -578,22 +636,70 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
   colorTable->AddColumn(colorArray);
   std::map<vtkIdType, std::vector<std::string>> componentNamesMap = {
     {colorTable->GetColumnIndex("Color"), {"R", "G", "B", "A"}} };
+
+  typedef vtkCodedEntry* (vtkMRMLColorNode::*GetEntryFuncPtr)(int);
+  std::vector<GetEntryFuncPtr> terminologyGetEntryFuncVector = {
+    &vtkMRMLColorNode::GetTerminologyCategory, &vtkMRMLColorNode::GetTerminologyCategory, &vtkMRMLColorNode::GetTerminologyCategory,
+    &vtkMRMLColorNode::GetTerminologyType, &vtkMRMLColorNode::GetTerminologyType, &vtkMRMLColorNode::GetTerminologyType,
+    &vtkMRMLColorNode::GetTerminologyTypeModifier, &vtkMRMLColorNode::GetTerminologyTypeModifier, &vtkMRMLColorNode::GetTerminologyTypeModifier,
+    &vtkMRMLColorNode::GetTerminologyAnatomicRegion, &vtkMRMLColorNode::GetTerminologyAnatomicRegion, &vtkMRMLColorNode::GetTerminologyAnatomicRegion,
+    &vtkMRMLColorNode::GetTerminologyAnatomicRegionModifier, &vtkMRMLColorNode::GetTerminologyAnatomicRegionModifier,
+    &vtkMRMLColorNode::GetTerminologyAnatomicRegionModifier
+  };
+
+  std::vector<vtkStringArray*> terminologyArrays;
+  for (const auto& terminologyColumnName : TERMINOLOGY_COLUMN_NAMES)
+  {
+    vtkNew<vtkStringArray> terminologyArray;
+    terminologyArray->SetName(terminologyColumnName.c_str());
+    terminologyArray->SetNumberOfTuples(numberOfColors);
+    colorTable->AddColumn(terminologyArray);
+    terminologyArrays.push_back(terminologyArray);
+  }
+
+  // Set values for all colors in all column arrays
   unsigned int rowIndex = 0;
-  for (int i = 0; i < numberOfColors; i++)
+  for (int colorIdx = 0; colorIdx < numberOfColors; colorIdx++)
   {
     // Skip unnamed color
-    if (colorNode->GetNoName() && colorNode->GetColorName(i) &&
-        strcmp(colorNode->GetNoName(), colorNode->GetColorName(i)) == 0)
+    if (colorNode->GetNoName() && colorNode->GetColorName(colorIdx) &&
+        strcmp(colorNode->GetNoName(), colorNode->GetColorName(colorIdx)) == 0)
     {
       continue;
     }
 
     double rgba[4] = {0.0};
-    colorNode->GetLookupTable()->GetTableValue(i, rgba);
+    colorNode->GetLookupTable()->GetTableValue(colorIdx, rgba);
     double rgba255[4] = { rgba[0] * 255.0, rgba[1] * 255.0, rgba[2] * 255.0, rgba[3] * 255.0 };
-    labelValueArray->SetValue(rowIndex, i);
-    nameArray->SetValue(rowIndex, colorNode->GetColorName(i));
+    labelValueArray->SetValue(rowIndex, colorIdx);
+    nameArray->SetValue(rowIndex, colorNode->GetColorName(colorIdx));
     colorArray->SetTuple(rowIndex, rgba255);
+
+    for (int idx=0; idx<TERMINOLOGY_COLUMN_NAMES.size(); ++idx)
+    {
+      GetEntryFuncPtr getTerminologyEntry = terminologyGetEntryFuncVector[idx];
+      vtkCodedEntry* terminologyEntry = (colorNode->*getTerminologyEntry)(colorIdx);
+      if (terminologyEntry == nullptr)
+      {
+        terminologyArrays[idx]->SetValue(rowIndex, "");
+        continue;
+      }
+
+      std::string columnName(TERMINOLOGY_COLUMN_NAMES[idx]);
+      if (columnName.substr(columnName.size() - 11, 11) == "CodeMeaning")
+      {
+        terminologyArrays[idx]->SetValue(rowIndex, terminologyEntry->GetCodeMeaning());
+      }
+      else if (columnName.substr(columnName.size() - 9, 9) == "CodeValue")
+      {
+        terminologyArrays[idx]->SetValue(rowIndex, terminologyEntry->GetCodeValue());
+      }
+      else if (columnName.substr(columnName.size() - 22, 22) == "CodingSchemeDesignator")
+      {
+        terminologyArrays[idx]->SetValue(rowIndex, terminologyEntry->GetCodingSchemeDesignator());
+      }
+    }
+
     ++rowIndex;
   }
 

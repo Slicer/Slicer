@@ -157,7 +157,7 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
   this->SetNoName(node->NoName);
 
   // copy names
-  this->Properties = node->Properties;
+  this->Properties = node->Properties; //TODO: Probably does not work like this. But vtkMRMLColorLogic::CopyNode is used for copying
 
   this->EndModify(disabledModify);
 }
@@ -584,6 +584,9 @@ bool vtkMRMLColorNode::SetTerminologyFromString(int ind, std::string terminology
   }
 
   this->Properties[ind] = prop;
+
+  // Set attribute indicating that the color table contains terminology
+  this->SetAttribute(this->GetContainTerminologyAttributeName(), "true");
 
   return true;
 }
