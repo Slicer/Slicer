@@ -523,6 +523,12 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidget(vtkMRMLMarku
 }
 
 //---------------------------------------------------------------------------
+vtkSlicerMarkupsInteractionWidget* vtkMRMLMarkupsDisplayableManager::GetInteractionWidget(vtkMRMLMarkupsDisplayNode * node)
+{
+  return this->Helper->GetInteractionWidget(node);
+}
+
+//---------------------------------------------------------------------------
 /// Check if it is the correct displayableManager
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsDisplayableManager::IsCorrectDisplayableManager()

@@ -85,6 +85,9 @@ public:
   /// Get the widget of a node.
   vtkSlicerMarkupsWidget* GetWidget(vtkMRMLMarkupsDisplayNode * node);
 
+  /// Get the interaction widget of a node.
+  vtkSlicerMarkupsInteractionWidget* GetInteractionWidget(vtkMRMLMarkupsDisplayNode * node);
+
 protected:
 
   vtkMRMLMarkupsDisplayableManager();
