@@ -437,7 +437,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
       {
         continue;
       }
-      terminologyStrList.append(QString::fromStdString(entry->GetAsPrintableString()));
+      terminologyStrList.append(QString::fromUtf8(entry->GetCodeMeaning()));
     }
     item->setText(terminologyStrList.join(", "));
     item->setToolTip(terminologyStrList.join("\n"));

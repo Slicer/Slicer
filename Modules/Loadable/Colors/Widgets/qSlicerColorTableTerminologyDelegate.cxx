@@ -29,7 +29,6 @@
 
 // Colors includes
 #include "qSlicerTerminologyEditorButton.h"
-//#include "qSlicerTerminologyEditorWidget.h"
 
 // Slicer includes
 #include <qSlicerCoreApplication.h>
@@ -40,7 +39,7 @@
 #include "qMRMLItemDelegate.h"
 
 // MRML includes
-#include "vtkMRMLColorNode.h"
+#include "vtkMRMLColorTableNode.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -154,6 +153,14 @@ void qSlicerColorTableTerminologyDelegate::setModelData(QWidget* editor, QAbstra
   qSlicerTerminologyEditorButton* terminologyButton = qobject_cast<qSlicerTerminologyEditorButton*>(editor);
   terminologyButton->terminologyInfo(terminologyInfo);
 
+  // Set color
+  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(colorNode);
+  if (colorTableNode != nullptr)
+  {
+    colorTableNode->SetColor(colorIndex,
+      terminologyInfo.Color.redF(), terminologyInfo.Color.greenF(), terminologyInfo.Color.blueF(), 1.0);
+  }
+
   // Set empty terminology context name if not imported from loaded terminology context
   vtkSlicerTerminologyEntry* entry = terminologyInfo.GetTerminologyEntry();
   if (entry->GetTerminologyContextName() == nullptr)
@@ -162,6 +169,27 @@ void qSlicerColorTableTerminologyDelegate::setModelData(QWidget* editor, QAbstra
   }
 
   colorNode->SetTerminologyFromString(colorIndex, logic->SerializeTerminologyEntry(entry));
+
+  // Set text
+  std::vector<vtkCodedEntry*> terminologyEntries
+  {
+    colorNode->GetTerminologyCategory(colorIndex),
+    colorNode->GetTerminologyType(colorIndex),
+    colorNode->GetTerminologyTypeModifier(colorIndex),
+    colorNode->GetTerminologyAnatomicRegion(colorIndex),
+    colorNode->GetTerminologyAnatomicRegionModifier(colorIndex)
+  };
+  QStringList terminologyStrList;
+  for (auto entry : terminologyEntries)
+  {
+    if (entry == nullptr)
+    {
+      continue;
+    }
+    terminologyStrList.append(QString::fromUtf8(entry->GetCodeMeaning()));
+  }
+
+  model->setData(index, terminologyStrList.join(", "), Qt::DisplayRole);
 }
 
 //-----------------------------------------------------------------------------

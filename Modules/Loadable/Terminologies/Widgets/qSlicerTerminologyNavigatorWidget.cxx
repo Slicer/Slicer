@@ -316,6 +316,14 @@ void qSlicerTerminologyNavigatorWidgetPrivate::init()
   QObject::connect(this->pushButton_LoadAnatomicContext, SIGNAL(clicked()),
     q, SLOT(onLoadAnatomicContextClicked()) );
 
+  vtkSlicerTerminologiesModuleLogic* logic = this->terminologyLogic();
+  if (!logic)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to access terminology logic";
+    return;
+  }
+  // Load compatible color tables nodes as terminology contexts and anatomic contexts
+  logic->LoadCompatibleColorTables();
   // Populate terminology combobox with the loaded terminologies
   q->populateTerminologyComboBox();
   // Populate anatomic context combobox with the loaded anatomic contexts
