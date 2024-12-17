@@ -23,6 +23,7 @@
 
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
+#include "vtkMRMLAbstractVolumeResampler.h"
 #include "vtkMRMLColorLogic.h"
 #include "vtkMRMLLogic.h"
 #include "vtkMRMLMessageCollection.h"
@@ -97,6 +98,7 @@ public:
   std::string TemporaryPath;
   std::map<std::string, vtkWeakPointer<vtkMRMLAbstractLogic> > ModuleLogicMap;
   std::map<int, std::string> FontFileNames;
+  std::map<std::string, vtkSmartPointer<vtkMRMLAbstractVolumeResampler>> Resamplers;
 };
 
 //----------------------------------------------------------------------------
@@ -1284,4 +1286,46 @@ std::string vtkMRMLApplicationLogic::GetFontsDirectory()
   filesVector.emplace_back(FONTS_DIR);
   std::string fullPath = vtksys::SystemTools::JoinPath(filesVector);
   return fullPath;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::RegisterVolumeResampler(
+    const std::string& resamplerName, vtkMRMLAbstractVolumeResampler* resampler)
+{
+  if (resamplerName.empty())
+  {
+    vtkErrorMacro("RegisterVolumeResampler: invalid sampler name.");
+    return;
+  }
+  if (this->IsVolumeResamplerRegistered(resamplerName))
+  {
+    return;
+  }
+  this->Internal->Resamplers[resamplerName] = resampler;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::UnregisterVolumeResampler(const std::string& resamplerName)
+{
+  if (!this->IsVolumeResamplerRegistered(resamplerName))
+  {
+    return;
+  }
+  this->Internal->Resamplers.erase(resamplerName);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLApplicationLogic::IsVolumeResamplerRegistered(const std::string& resamplerName)
+{
+  return this->Internal->Resamplers.find(resamplerName) != this->Internal->Resamplers.end();
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLAbstractVolumeResampler* vtkMRMLApplicationLogic::GetVolumeResampler(const std::string& resamplerName)
+{
+  if (!this->IsVolumeResamplerRegistered(resamplerName))
+  {
+    return nullptr;
+  }
+  return this->Internal->Resamplers[resamplerName];
 }
