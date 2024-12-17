@@ -63,6 +63,7 @@ endif()
 # --------------------------------------------------------------------------
 set(MRMLLogic_SRCS
   vtkMRMLAbstractLogic.cxx
+  vtkMRMLAbstractVolumeResampler.cxx
   vtkMRMLApplicationLogic.cxx
   vtkMRMLColorLogic.cxx
   vtkMRMLDisplayableHierarchyLogic.cxx
