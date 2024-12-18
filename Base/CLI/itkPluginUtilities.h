@@ -3,7 +3,7 @@
 
 // ITK includes
 #include <itkContinuousIndex.h>
-#include <itkImage.h>
+#include <itkCommonEnums.h>
 #include <itkImageFileReader.h>
 #include <itkPluginFilterWatcher.h>
 
@@ -15,14 +15,14 @@ namespace itk
 {
   //-----------------------------------------------------------------------------
   /// Get the PixelType and ComponentType from fileName
-  void GetImageType (std::string fileName,
-                     ImageIOBase::IOPixelType &pixelType,
-                     ImageIOBase::IOComponentType &componentType)
+  void GetImageType(std::string fileName,
+                    IOPixelEnum &pixelType,
+                    IOComponentEnum &componentType)
   {
-      typedef itk::Image<unsigned char, 3> ImageType;
-      itk::ImageFileReader<ImageType>::Pointer imageReader =
-        itk::ImageFileReader<ImageType>::New();
-      imageReader->SetFileName(fileName.c_str());
+      using ImageType = itk::Image<unsigned char, 3>;
+      using ReaderType = itk::ImageFileReader<ImageType>;
+      ReaderType::Pointer imageReader = ReaderType::New();
+      imageReader->SetFileName(fileName);
       imageReader->UpdateOutputInformation();
 
       pixelType = imageReader->GetImageIO()->GetPixelType();
@@ -31,9 +31,9 @@ namespace itk
 
   //-----------------------------------------------------------------------------
   /// Get the PixelTypes and ComponentTypes from fileNames
-  void GetImageTypes (std::vector<std::string> fileNames,
-                      std::vector<ImageIOBase::IOPixelType> &pixelTypes,
-                      std::vector<ImageIOBase::IOComponentType> &componentTypes)
+  void GetImageTypes(std::vector<std::string> fileNames,
+                     std::vector<IOPixelEnum> &pixelTypes,
+                     std::vector<IOComponentEnum> &componentTypes)
   {
     pixelTypes.clear();
     componentTypes.clear();
@@ -41,12 +41,10 @@ namespace itk
     // For each file, find the pixel and component type
     for (std::vector<std::string>::size_type i = 0; i < fileNames.size(); i++)
     {
-      ImageIOBase::IOPixelType pixelType;
-      ImageIOBase::IOComponentType componentType;
+      IOPixelEnum pixelType;
+      IOComponentEnum componentType;
 
-      GetImageType (fileNames[i],
-                    pixelType,
-                    componentType);
+      GetImageType(fileNames[i], pixelType, componentType);
       pixelTypes.push_back(pixelType);
       componentTypes.push_back(componentType);
     }
