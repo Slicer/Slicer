@@ -235,7 +235,7 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
       std::string isEmbeddedExpectedAsStr(data.at(rowIdx).at(3));
       bool isEmbeddedExpected = (isEmbeddedExpectedAsStr == "1");
 
-      bool isEmbedded = vtkSlicerApplicationLogic::IsEmbeddedModule(filePath, applicationHomeDir, slicerRevision);
+      bool isEmbedded = vtkSlicerApplicationLogic::IsEmbeddedModule(filePath, applicationHomeDir, slicerRevision, Slicer_EXTENSIONS_DIRBASENAME);
       if (isEmbeddedExpected != isEmbedded)
       {
         std::cerr << "Line " << __LINE__ << " - Problem with isEmbedded ! - Row:" << rowIdx << "\n"
