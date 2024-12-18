@@ -93,8 +93,8 @@ bool VectorIsNul( std::vector<double> vec )
 
 // What pixeltype is the image
 void GetImageType( std::string fileName,
-                   itk::ImageIOBase::IOPixelType & pixelType,
-                   itk::ImageIOBase::IOComponentType & componentType )
+                   itk::IOPixelEnum & pixelType,
+                   itk::IOComponentEnum & componentType )
 {
   typedef itk::Image<unsigned char, 3> ImageType;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
@@ -1140,8 +1140,8 @@ int main( int argc, char * argv[] )
   itk::TransformFactory<ThinPlateSplineTransformFloatType>::RegisterTransform();
   itk::TransformFactory<ThinPlateSplineTransformDoubleType>::RegisterTransform();
 
-  itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
+  itk::IOPixelEnum     pixelType;
+  itk::IOComponentEnum componentType;
   // Check the input image pixel type
   GetImageType( inputVolume, pixelType, componentType );
 

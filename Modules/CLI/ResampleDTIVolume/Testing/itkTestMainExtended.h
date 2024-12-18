@@ -322,11 +322,11 @@ int RegressionTestImage(const char *testImageFilename,
   typedef itk::Image<unsigned char, ITK_TEST_DIMENSION_MAX>                  OutputType;
   typedef itk::Image<unsigned char, 2>                                       DiffOutputType;
 
-  itk::ImageIOBase::IOPixelType     pixelTypeBaseline;
-  itk::ImageIOBase::IOComponentType componentTypeBaseline;
+  itk::IOPixelEnum     pixelTypeBaseline;
+  itk::IOComponentEnum componentTypeBaseline;
   itk::GetImageType( baselineImageFilename, pixelTypeBaseline, componentTypeBaseline );
-  itk::ImageIOBase::IOPixelType     pixelTypeTestImage;
-  itk::ImageIOBase::IOComponentType componentTypeTestImage;
+  itk::IOPixelEnum     pixelTypeTestImage;
+  itk::IOComponentEnum componentTypeTestImage;
   itk::GetImageType( testImageFilename, pixelTypeTestImage, componentTypeTestImage );
   bool diffusion = false;
   // check if the voxels of the image are diffusion tensors
