@@ -248,7 +248,8 @@ void qMRMLNodeComboBoxPrivate::updateDefaultText()
     {
       nodeType = nodeTypes[0];
     }
-    cb->setDefaultText(qMRMLNodeComboBox::tr("Select a ") + q->nodeTypeLabel(nodeType));
+    //: %1 refers to the node type label
+    cb->setDefaultText(qMRMLNodeComboBox::tr("Select a %1").arg(q->nodeTypeLabel(nodeType)));
   }
 }
 
@@ -306,27 +307,30 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
     }
     if (this->RenameEnabled)
     {
-      extraItems.append(qMRMLNodeComboBox::tr("Rename current ")  + label);
+      //: %1 refers to the node type label
+      extraItems.append(qMRMLNodeComboBox::tr("Rename current %1").arg(label));
     }
     if (this->EditEnabled)
     {
-      extraItems.append(qMRMLNodeComboBox::tr("Edit current ")  + label);
+      //: %1 refers to the node type label
+      extraItems.append(qMRMLNodeComboBox::tr("Edit current %1").arg(label));
     }
     if (this->AddEnabled)
     {
       foreach (QString nodeType, q->nodeTypes())
       {
         QString label = q->nodeTypeLabel(nodeType);
-        extraItems.append(createNew + label);
+        extraItems.append(qMRMLNodeComboBox::tr("Create new %1").arg(label));
         if (this->RenameEnabled)
         {
-          extraItems.append(createNew + label + asSuffix);
+          extraItems.append(qMRMLNodeComboBox::tr("Create new %1 as...").arg(label));
         }
       }
     }
     if (this->RemoveEnabled)
     {
-      extraItems.append(qMRMLNodeComboBox::tr("Delete current ")  + label);
+      //: %1 refers to the node type label
+      extraItems.append(qMRMLNodeComboBox::tr("Delete current %1").arg(label));
     }
     foreach (QAction *action, this->UserMenuActions)
     {
@@ -472,7 +476,7 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
       }
     }
   }
-  else if (d->RemoveEnabled && data.startsWith(tr("Delete current ")))
+  else if (d->RemoveEnabled && data.startsWith(tr("Delete current "))) // tr to delete ?
   {
     d->ComboBox->hidePopup();
     this->removeCurrentNode();
@@ -725,7 +729,7 @@ void qMRMLNodeComboBox::createNodeAs(const QString& nodeTypeName)
 {
     QString label = this->nodeTypeLabel(nodeTypeName);
     bool okPressed = false;
-    QString dialogTitle = createNew + label;
+    QString dialogTitle = tr("Create new %1").arg(label);
     QString defaultName = "";
     QString nodeName = this->getNameFromDialog(dialogTitle, defaultName, &okPressed);
 
