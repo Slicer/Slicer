@@ -5,15 +5,11 @@ import os
 import ctk
 import qt
 
-import slicer
-from slicer.util import VTKObservationMixin
-from slicer.util import settingsValue, toBool
-
-from slicer.i18n import tr as _
-
 import DICOMLib
+import slicer
 from DICOMLib import DICOMUtils
-
+from slicer.i18n import tr as _
+from slicer.util import VTKObservationMixin, settingsValue, toBool
 
 #########################################################
 #
@@ -344,7 +340,9 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
         """
 
         # 1 - load json
-        import logging, os, json
+        import json
+        import logging
+        import os
 
         logging.info("Imported a DICOM directory, checking for extensions")
         modulePath = os.path.dirname(slicer.modules.dicom.path)

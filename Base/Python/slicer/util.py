@@ -66,6 +66,7 @@ def restart():
 
 def _readCMakeCache(var):
     import os
+
     from slicer import app
 
     prefix = var + ":"
@@ -157,7 +158,10 @@ def importClassesFromDirectory(directory, dest_module_name, type_info, filematch
     if cache_key in __import_classes_cache:
         return
 
-    import glob, os, re, fnmatch
+    import fnmatch
+    import glob
+    import os
+    import re
 
     re_filematch = re.compile(fnmatch.translate(filematch))
     for fname in glob.glob(os.path.join(directory, filematch)):
@@ -704,8 +708,9 @@ def loadNodeFromFile(filename, filetype=None, properties={}, returnNode=False):
       If returnNode is True then a status flag and loaded node are returned.
     :raises RuntimeError: in case of failure
     """
-    from slicer import app, vtkMRMLMessageCollection
     from vtk import vtkCollection
+
+    from slicer import app, vtkMRMLMessageCollection
 
     # We need to convert the path to string now, because Qt cannot convert a pathlib.Path object to string.
     properties["fileName"] = str(filename)
@@ -748,8 +753,9 @@ def loadNodesFromFile(filename, filetype=None, properties={}, returnNode=False):
     :return: loaded node(s) in an iterator object.
     :raises RuntimeError: in case of failure
     """
-    from slicer import app, vtkMRMLMessageCollection
     from vtk import vtkCollection
+
+    from slicer import app, vtkMRMLMessageCollection
 
     # We need to convert the path to string now, because Qt cannot convert a pathlib.Path object to string.
     properties["fileName"] = str(filename)
@@ -1413,7 +1419,10 @@ def reloadScriptedModule(moduleName):
     * Call ``setup()`` function
     * Update ``slicer.modules.<moduleName>Widget`` attribute
     """
-    import imp, sys, os
+    import imp
+    import os
+    import sys
+
     import slicer
 
     widgetName = moduleName + "Widget"
@@ -1574,7 +1583,10 @@ def getNodes(pattern="*", scene=None, useLists=False):
     returns only the last node with that name. If ``useLists=True``, it returns
     a dictionary of lists of nodes.
     """
-    import slicer, collections, fnmatch
+    import collections
+    import fnmatch
+
+    import slicer
 
     nodes = collections.OrderedDict()
     if scene is None:
@@ -1700,7 +1712,9 @@ def getSubjectHierarchyItemChildren(parentItem=None, recursive=False):
     :param bool recursive: Whether the query is recursive. False by default
     :return: List of child item IDs
     """
-    import slicer, vtk
+    import vtk
+
+    import slicer
 
     children = []
     shNode = slicer.mrmlScene.GetSubjectHierarchyNode()
@@ -1974,9 +1988,8 @@ def arrayFromVTKMatrix(vmatrix):
     To set VTK matrix from a numpy array, use :py:meth:`vtkMatrixFromArray` or
     :py:meth:`updateVTKMatrixFromArray`.
     """
-    from vtk import vtkMatrix4x4
-    from vtk import vtkMatrix3x3
     import numpy as np
+    from vtk import vtkMatrix3x3, vtkMatrix4x4
 
     if isinstance(vmatrix, vtkMatrix4x4):
         matrixSize = 4
@@ -1998,8 +2011,7 @@ def vtkMatrixFromArray(narray):
     The returned matrix is just a copy and so any modification in the array will not affect the output matrix.
     To set numpy array from VTK matrix, use :py:meth:`arrayFromVTKMatrix`.
     """
-    from vtk import vtkMatrix4x4
-    from vtk import vtkMatrix3x3
+    from vtk import vtkMatrix3x3, vtkMatrix4x4
 
     narrayshape = narray.shape
     if narrayshape == (4, 4):
@@ -2023,8 +2035,7 @@ def updateVTKMatrixFromArray(vmatrix, narray):
 
     To set numpy array from VTK matrix, use :py:meth:`arrayFromVTKMatrix`.
     """
-    from vtk import vtkMatrix4x4
-    from vtk import vtkMatrix3x3
+    from vtk import vtkMatrix3x3, vtkMatrix4x4
 
     if isinstance(vmatrix, vtkMatrix4x4):
         matrixSize = 4
@@ -2159,8 +2170,9 @@ def arrayFromSegmentBinaryLabelmap(segmentationNode, segmentId, referenceVolumeN
     To get voxels of a segment as a modifiable numpy array, you can use :py:meth:`arrayFromSegmentInternalBinaryLabelmap`.
     """
 
-    import slicer
     import vtk
+
+    import slicer
 
     # Get reference volume
     if not referenceVolumeNode:
@@ -2201,8 +2213,9 @@ def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, re
     """
 
     # Export segment as vtkImageData (via temporary labelmap volume node)
-    import slicer
     import vtk
+
+    import slicer
 
     # Get reference volume
     if not referenceVolumeNode:
@@ -2446,8 +2459,9 @@ def addVolumeFromArray(narray, ijkToRAS=None, name=None, nodeClassName=None):
       volumeNode = slicer.util.addVolumeFromArray(np.ones((30, 40, 50), 'int8') * 120,
         np.diag([0.2, 0.2, 0.5, 1.0]), nodeClassName="vtkMRMLLabelMapVolumeNode")
     """
-    import slicer
     from vtk import vtkMatrix4x4
+
+    import slicer
 
     if name is None:
         name = ""
@@ -2508,6 +2522,7 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
     """
     import numpy as np
     import vtk.util.numpy_support
+
     import slicer
 
     if tableNode is None:
@@ -2732,6 +2747,7 @@ def updateVolumeFromITKImage(volumeNode, itkImage, deepCopy=True):
     """
     import itk
     import vtk
+
     import vtkAddon
 
     # Convert ITK image to VTK image
@@ -2885,7 +2901,9 @@ def tempDirectory(key="__SlicerTemp__", tempDir=None, includeDateTime=True):
     .. note:: This directory is not automatically cleaned up.
     """
     # TODO: switch to QTemporaryDir in Qt5.
-    import qt, slicer
+    import qt
+
+    import slicer
 
     if not tempDir:
         tempDir = qt.QDir(slicer.app.temporaryPath)
@@ -2911,8 +2929,11 @@ def delayDisplay(message, autoCloseMsec=1000, parent=None, **kwargs):
 
     If ``autoCloseMsec >= 400`` then the window is closed after waiting for autoCloseMsec milliseconds
     """
-    import qt, slicer
     import logging
+
+    import qt
+
+    import slicer
 
     logging.info(message)
     if 0 <= autoCloseMsec < 400:
@@ -2948,7 +2969,9 @@ def infoDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kwa
     If there is no main window, or if the application is running in testing mode (``slicer.app.testingEnabled() == True``),
     then the text is only logged (at info level).
     """
-    import qt, logging
+    import logging
+
+    import qt
 
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     _messageDisplay(logging.INFO, text, None, parent=parent, windowTitle=windowTitle, mainWindowNeeded=True,
@@ -2961,7 +2984,9 @@ def warningDisplay(text, windowTitle=None, parent=None, standardButtons=None, **
     If there is no main window, or if the application is running in testing mode (``slicer.app.testingEnabled() == True``),
     then the text is only logged (at warning level).
     """
-    import qt, logging
+    import logging
+
+    import qt
 
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     _messageDisplay(logging.WARNING, text, None, parent=parent, windowTitle=windowTitle, mainWindowNeeded=True,
@@ -2974,7 +2999,9 @@ def errorDisplay(text, windowTitle=None, parent=None, standardButtons=None, **kw
     If there is no main window, or if the application is running in testing mode (``slicer.app.testingEnabled() == True``),
     then the text is only logged (at error level).
     """
-    import qt, logging
+    import logging
+
+    import qt
 
     standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
     _messageDisplay(logging.ERROR, text, None, parent=parent, windowTitle=windowTitle, mainWindowNeeded=True,
@@ -2987,7 +3014,11 @@ def confirmOkCancelDisplay(text, windowTitle=None, parent=None, **kwargs):
     When the application is running in testing mode (``slicer.app.testingEnabled() == True``),
     the popup is skipped and True ("Ok") is returned, with a message being logged to indicate this.
     """
-    import qt, slicer, logging
+    import logging
+
+    import qt
+
+    import slicer
 
     if not windowTitle:
         windowTitle = slicer.app.applicationName + " confirmation"
@@ -3002,7 +3033,11 @@ def confirmYesNoDisplay(text, windowTitle=None, parent=None, **kwargs):
     When the application is running in testing mode (``slicer.app.testingEnabled() == True``),
     the popup is skipped and True ("Yes") is returned, with a message being logged to indicate this.
     """
-    import qt, slicer, logging
+    import logging
+
+    import qt
+
+    import slicer
 
     if not windowTitle:
         windowTitle = slicer.app.applicationName + " confirmation"
@@ -3018,7 +3053,9 @@ def confirmRetryCloseDisplay(text, windowTitle=None, parent=None, **kwargs):
     When the application is running in testing mode (``slicer.app.testingEnabled() == True``),
     the popup is skipped and False ("Close") is returned, with a message being logged to indicate this.
     """
-    import qt, logging
+    import logging
+
+    import qt
     result = _messageDisplay(logging.ERROR, text, False, parent=parent, windowTitle=windowTitle,
                              icon=qt.QMessageBox.Critical, standardButtons=qt.QMessageBox.Retry | qt.QMessageBox.Close, **kwargs)
     return result == qt.QMessageBox.Retry
@@ -3044,7 +3081,9 @@ def _messageDisplay(logLevel, text, testingReturnValue, mainWindowNeeded=False, 
       - If the application is running in testing mode, then ``testingReturnValue`` is returned.
       - Otherwise, if ``mainWindowNeeded`` is True and there is no main window, then None is returned.
     """
-    import slicer, logging
+    import logging
+
+    import slicer
 
     logging.log(logLevel, text)
     logLevelString = logging.getLevelName(logLevel).lower()  # e.g. this is "error" when logLevel is logging.ERROR
@@ -3071,7 +3110,11 @@ def messageBox(text, parent=None, **kwargs):
     an auto-closing popup with a delay of 3s is shown using :func:`delayDisplay()` and ``qt.QMessageBox.Ok``
     is returned, with the text being logged to indicate this.
     """
-    import logging, qt, slicer
+    import logging
+
+    import qt
+
+    import slicer
 
     if slicer.app.testingEnabled():
         testingReturnValue = qt.QMessageBox.Ok
@@ -3203,7 +3246,9 @@ class WaitCursor:
         self.show = show
 
     def __enter__(self):
-        import qt, slicer
+        import qt
+
+        import slicer
 
         if self.show:
             qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
@@ -3236,6 +3281,7 @@ class MessageDialog:
 
         """
         import logging
+
         import slicer
 
         if logLevel is None:
@@ -3254,7 +3300,9 @@ class MessageDialog:
         logging.log(self.logLevel, self.message)
 
         if self.show:
-            import qt, slicer
+            import qt
+
+            import slicer
 
             self.box = qt.QMessageBox()
             self.box.setStandardButtons(qt.QMessageBox.NoButton)
@@ -3289,7 +3337,9 @@ def tryWithErrorDisplay(message=None, show=True, waitCursor=False):
     """
     try:
         if waitCursor:
-            import slicer, qt
+            import qt
+
+            import slicer
 
             slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
         yield
@@ -3419,8 +3469,8 @@ def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid
     If specified, the ``checksum`` is used to verify that the downloaded file is the expected one.
     It must be specified as ``<algo>:<digest>``. For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
     """
-    import os
     import logging
+    import os
 
     try:
         (algo, digest) = extractAlgoAndDigest(checksum)
@@ -3430,7 +3480,9 @@ def downloadFile(url, targetFilePath, checksum=None, reDownloadIfChecksumInvalid
     if not os.path.exists(targetFilePath) or os.stat(targetFilePath).st_size == 0:
         logging.info(f"Downloading from\n  {url}\nas file\n  {targetFilePath}\nIt may take a few minutes...")
         try:
-            import urllib.request, urllib.parse, urllib.error
+            import urllib.error
+            import urllib.parse
+            import urllib.request
 
             urllib.request.urlretrieve(url, targetFilePath)
         except Exception as e:
@@ -3476,8 +3528,9 @@ def extractArchive(archiveFilePath, outputDir, expectedNumberOfExtractedFiles=No
     If folder contains the same number of files as expected (if specified), then it will be
     assumed that unzipping has been successfully done earlier.
     """
-    import os
     import logging
+    import os
+
     from slicer import app
 
     if not os.path.exists(archiveFilePath):
@@ -3562,9 +3615,9 @@ def downloadAndExtractArchive(url, archiveFilePath, outputDir, \
     If specified, the ``checksum`` is used to verify that the downloaded file is the expected one.
     It must be specified as ``<algo>:<digest>``. For example, ``SHA256:cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93``.
     """
+    import logging
     import os
     import shutil
-    import logging
 
     maxNumberOfTrials = numberOfTrials
 
@@ -3795,8 +3848,8 @@ def launchConsoleProcess(args, useStartupEnvironment=True, updateEnvironment=Non
       slicer.util.logProcessOutput(proc)
 
     """
-    import subprocess
     import os
+    import subprocess
 
     if useStartupEnvironment:
         startupEnv = startupEnvironment()
@@ -3863,13 +3916,13 @@ def _executePythonModule(module, args):
     """
     # Determine pythonSlicerExecutablePath
     try:
-        from slicer import app  # noqa: F401
-
         # If we get to this line then import from "app" is succeeded,
         # which means that we run this function from Slicer Python interpreter.
         # PythonSlicer is added to PATH environment variable in Slicer
         # therefore shutil.which will be able to find it.
         import shutil
+
+        from slicer import app  # noqa: F401
 
         pythonSlicerExecutablePath = shutil.which("PythonSlicer")
         if not pythonSlicerExecutablePath:

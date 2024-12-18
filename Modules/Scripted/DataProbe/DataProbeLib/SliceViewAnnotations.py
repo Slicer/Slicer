@@ -4,10 +4,8 @@ import qt
 import vtk
 
 import slicer
-from slicer.util import settingsValue
-from slicer.util import VTKObservationMixin
-
 from . import DataProbeUtil
+from slicer.util import VTKObservationMixin, settingsValue
 
 
 class SliceAnnotations(VTKObservationMixin):

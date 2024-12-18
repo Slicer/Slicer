@@ -16,7 +16,6 @@ import sys
 
 from docutils import nodes, utils
 from docutils.parsers.rst import roles
-
 from sphinx.ext import autodoc
 
 # If extensions (or modules to document with autodoc) are in another directory,

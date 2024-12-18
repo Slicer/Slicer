@@ -1,18 +1,17 @@
 import pathlib
 import unittest
-from typing import Annotated, Union, Optional
+from typing import Annotated, Optional, Union
 
 import ctk
 import qt
 
 import slicer
-from slicer.parameterNodeWrapper import *
-
 from MRMLCorePython import (
-    vtkMRMLNode,
     vtkMRMLModelNode,
+    vtkMRMLNode,
     vtkMRMLScalarVolumeNode,
 )
+from slicer.parameterNodeWrapper import *
 
 
 def findChildWithProperty(widget, property, propertyValue):

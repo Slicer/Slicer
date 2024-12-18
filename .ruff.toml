@@ -17,6 +17,7 @@ select = [
   "D",           # pydocstyle
 #  "EXE",         # flake8-executable
 #  "G",           # flake8-logging-format
+  "I",           # isort
   "ICN",         # flake8-import-conventions
   "ISC",         # flake8-implicit-str-concat
   "NPY",         # NumPy specific rules
@@ -135,3 +136,32 @@ convention = "pep257"
 "Modules/*/__init__.py" = ["F401"]
 "Extensions/*/__init__.py" = ["F401"]
 "Utilities/*/__init__.py" = ["F401"]
+
+[lint.isort]
+length-sort = false  # alphabetically
+section-order = ["future", "standard-library", "first-party", "third-party", "local-folder"]
+known-local-folder = [
+  "AbstractScriptedSubjectHierarchyPlugin",
+  "DataProbeLib",
+  "DICOMLib",
+  "ExtensionWizardLib",
+  "MRML*",
+  "SampleData",
+  "SegmentEditorEffects",
+  "*SegmentEditor*",
+  "SegmentStatistics",
+  "SegmentStatisticsPlugins",
+  "slicer",
+  "SlicerBaseLogicPython",
+  "SlicerWizard",
+  "vtkAddon",
+  "vtkAddonPython",
+  "vtkITK",
+  "vtkITKPython",
+  "vtkSegmentationCore",
+  "vtkSegmentationCorePython",
+  "vtkTeem",
+  "vtkTeemPython",
+  "WebServerLib",
+]
+force-to-top = ["SegmentStatisticsPluginBase", "SliceViewAnnotations"]
