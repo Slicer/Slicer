@@ -388,8 +388,8 @@ int main(int argc, char* * argv)
     try
     {
 
-      itk::ImageIOBase::IOPixelType     pixelType;
-      itk::ImageIOBase::IOComponentType componentType;
+      itk::IOPixelEnum     pixelType;
+      itk::IOComponentEnum componentType;
 
       itk::GetImageType(inputImageName, pixelType, componentType);
 

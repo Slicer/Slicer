@@ -86,8 +86,8 @@ int main( int argc, char * argv[] )
 
   PARSE_ARGS;
 
-  itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
+  itk::IOPixelEnum     pixelType;
+  itk::IOComponentEnum componentType;
 
   try
   {
