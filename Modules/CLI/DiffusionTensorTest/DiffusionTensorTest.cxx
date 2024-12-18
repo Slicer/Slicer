@@ -21,8 +21,8 @@ int main( int argc, char * argv[] )
   reader->SetFileName( inputVolume.c_str() );
   reader->Update();
 
-  itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
+  itk::IOPixelEnum     pixelType;
+  itk::IOComponentEnum componentType;
 
   itk::GetImageType(inputVolume, pixelType, componentType);
   std::cout << "Plugin received PixelType: " << pixelType << std::endl;
