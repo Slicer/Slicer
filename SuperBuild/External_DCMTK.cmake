@@ -3,6 +3,13 @@ set(proj DCMTK)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
+if(DCMTK_WITH_OPENSSL)
+  if(NOT Slicer_USE_SYSTEM_${proj})
+    list(APPEND ${proj}_DEPENDENCIES OpenSSL)
+  else()
+    # XXX - Add a test checking if system DCMTK supports OpenSSL
+  endif()
+endif()
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -19,6 +26,25 @@ endif()
 
 if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+
+  if(DCMTK_WITH_OPENSSL)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+      -DOPENSSL_INCLUDE_DIR:PATH=${OPENSSL_INCLUDE_DIR}
+      )
+    if(UNIX)
+      list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+        -DOPENSSL_SSL_LIBRARY:STRING=${OPENSSL_SSL_LIBRARY}
+        -DOPENSSL_CRYPTO_LIBRARY:STRING=${OPENSSL_CRYPTO_LIBRARY}
+        )
+    elseif(WIN32)
+      list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+        -DLIB_EAY_DEBUG:FILEPATH=${LIB_EAY_DEBUG}
+        -DLIB_EAY_RELEASE:FILEPATH=${LIB_EAY_RELEASE}
+        -DSSL_EAY_DEBUG:FILEPATH=${SSL_EAY_DEBUG}
+        -DSSL_EAY_RELEASE:FILEPATH=${SSL_EAY_RELEASE}
+        )
+    endif()
+  endif()
 
   if(CTEST_USE_LAUNCHERS)
     set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
@@ -65,7 +91,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
       -DDCMTK_WITH_ZLIB:BOOL=OFF # see CTK github issue #25
-      -DDCMTK_WITH_OPENSSL:BOOL=OFF # see CTK github issue #25
+      -DDCMTK_WITH_OPENSSL:BOOL=${DCMTK_WITH_OPENSSL}
       -DDCMTK_WITH_PNG:BOOL=OFF # see CTK github issue #25
       -DDCMTK_WITH_TIFF:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_WITH_XML:BOOL=OFF  # see CTK github issue #25
