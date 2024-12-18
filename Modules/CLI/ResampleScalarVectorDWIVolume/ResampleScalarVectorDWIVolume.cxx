@@ -79,8 +79,8 @@ struct parameters
 
 // To check the image voxel type
 void GetImageType( std::string fileName,
-                   itk::ImageIOBase::IOPixelType & pixelType,
-                   itk::ImageIOBase::IOComponentType & componentType
+                   itk::IOPixelEnum & pixelType,
+                   itk::IOComponentEnum & componentType
                    )
 {
   typedef itk::Image<unsigned char, 3> ImageType;
@@ -1359,8 +1359,8 @@ int main( int argc, char * argv[] )
   itk::TransformFactory<ThinPlateSplineTransformFloatType>::RegisterTransform();
   itk::TransformFactory<ThinPlateSplineTransformDoubleType>::RegisterTransform();
 
-  itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
+  itk::IOPixelEnum     pixelType;
+  itk::IOComponentEnum componentType;
   GetImageType( list.inputVolume, pixelType, componentType );
 
   // templated over the input image voxel type
