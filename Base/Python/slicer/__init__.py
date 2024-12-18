@@ -217,6 +217,16 @@ if not standalone_python:
         print(detail)
 
 # -----------------------------------------------------------------------------
+# Import slicer
+from .vtkITKPython import *
+from .vtkTeemPython import *
+from .vtkSegmentationCorePython import *
+from .MRMLCorePython import *
+from .MRMLLogicPython import *
+from .MRMLDisplayableManagerPython import *
+from .MRMLCLIPython import *
+
+# -----------------------------------------------------------------------------
 # Cleanup: Removing things the user shouldn't have to see.
 
 del _createModule
