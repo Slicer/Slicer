@@ -1147,13 +1147,13 @@ int main( int argc, char * argv[] )
 
   switch( componentType )
   {
-    case itk::ImageIOBase::FLOAT:
+    case itk::IOComponentEnum::FLOAT:
       return Do<float>( list );
       break;
-    case itk::ImageIOBase::DOUBLE:
+    case itk::IOComponentEnum::DOUBLE:
       return Do<double>( list );
       break;
-    case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+    case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
     default:
       std::cerr << "unknown component type" << std::endl;
       break;
