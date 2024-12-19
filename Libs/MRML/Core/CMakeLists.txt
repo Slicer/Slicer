@@ -171,6 +171,8 @@ set(MRMLCore_SRCS
   vtkMRMLHierarchyStorageNode.cxx
   vtkMRMLI18N.cxx
   vtkMRMLI18N.h
+  vtkMRMLInteractionEventData.cxx
+  vtkMRMLInteractionEventData.h
   vtkMRMLInteractionNode.cxx
   vtkMRMLLabelMapVolumeDisplayNode.cxx
   vtkMRMLLabelMapVolumeNode.cxx
