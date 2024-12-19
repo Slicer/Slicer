@@ -51,7 +51,6 @@ fiducialregistration.md
 landmarkregistration.md
 performmetrictest.md
 reformat.md
-scriptedregistration.md
 ```
 
 ## Segmentation
