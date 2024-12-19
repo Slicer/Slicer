@@ -26,66 +26,65 @@
 // from colliding when module is used as shared object module.  Every
 // thing should be in an anonymous namespace except for the module
 // entry point, e.g. main()
-//
 namespace
 {
-
-//
-// Description: Map from string description to SpatialOrientation
+// Description: Map from string description to CoordinateOrientationCode
 void CreateOrientationMap(
-  std::map<std::string, itk::SpatialOrientation::ValidCoordinateOrientationFlags> & orientationMap)
+  std::map<std::string, itk::SpatialOrientationEnums::ValidCoordinateOrientations> & orientationMap)
 {
-  orientationMap["Axial"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI;
-  orientationMap["Coronal"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RSA;
-  orientationMap["Sagittal"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ASL;
-  orientationMap["RIP"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP;
-  orientationMap["LIP"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_LIP;
-  orientationMap["RSP"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RSP;
-  orientationMap["LSP"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_LSP;
-  orientationMap["RIA"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIA;
-  orientationMap["LIA"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_LIA;
-  orientationMap["RSA"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RSA;
-  orientationMap["LSA"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_LSA;
-  orientationMap["IRP"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_IRP;
-  orientationMap["ILP"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ILP;
-  orientationMap["SRP"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_SRP;
-  orientationMap["SLP"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_SLP;
-  orientationMap["IRA"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_IRA;
-  orientationMap["ILA"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ILA;
-  orientationMap["SRA"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_SRA;
-  orientationMap["SLA"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_SLA;
-  orientationMap["RPI"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RPI;
-  orientationMap["LPI"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_LPI;
-  orientationMap["RAI"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI;
-  orientationMap["LAI"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_LAI;
-  orientationMap["RPS"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RPS;
-  orientationMap["LPS"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_LPS;
-  orientationMap["RAS"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAS;
-  orientationMap["LAS"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_LAS;
-  orientationMap["PRI"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PRI;
-  orientationMap["PLI"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PLI;
-  orientationMap["ARI"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ARI;
-  orientationMap["ALI"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ALI;
-  orientationMap["PRS"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PRS;
-  orientationMap["PLS"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PLS;
-  orientationMap["ARS"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ARS;
-  orientationMap["ALS"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ALS;
-  orientationMap["IPR"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_IPR;
-  orientationMap["SPR"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_SPR;
-  orientationMap["IAR"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_IAR;
-  orientationMap["SAR"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_SAR;
-  orientationMap["IPL"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_IPL;
-  orientationMap["SPL"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_SPL;
-  orientationMap["IAL"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_IAL;
-  orientationMap["SAL"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_SAL;
-  orientationMap["PIR"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIR;
-  orientationMap["PSR"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PSR;
-  orientationMap["AIR"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_AIR;
-  orientationMap["ASR"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ASR;
-  orientationMap["PIL"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIL;
-  orientationMap["PSL"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PSL;
-  orientationMap["AIL"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_AIL;
-  orientationMap["ASL"] = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_ASL;
+  using CoordinateOrientationCode = itk::SpatialOrientationEnums::ValidCoordinateOrientations;
+
+  orientationMap["Axial"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RAI;
+  orientationMap["Coronal"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RSA;
+  orientationMap["Sagittal"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_ASL;
+  orientationMap["RIP"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RIP;
+  orientationMap["LIP"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_LIP;
+  orientationMap["RSP"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RSP;
+  orientationMap["LSP"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_LSP;
+  orientationMap["RIA"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RIA;
+  orientationMap["LIA"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_LIA;
+  orientationMap["RSA"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RSA;
+  orientationMap["LSA"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_LSA;
+  orientationMap["IRP"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_IRP;
+  orientationMap["ILP"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_ILP;
+  orientationMap["SRP"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_SRP;
+  orientationMap["SLP"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_SLP;
+  orientationMap["IRA"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_IRA;
+  orientationMap["ILA"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_ILA;
+  orientationMap["SRA"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_SRA;
+  orientationMap["SLA"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_SLA;
+  orientationMap["RPI"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RPI;
+  orientationMap["LPI"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_LPI;
+  orientationMap["RAI"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RAI;
+  orientationMap["LAI"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_LAI;
+  orientationMap["RPS"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RPS;
+  orientationMap["LPS"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_LPS;
+  orientationMap["RAS"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_RAS;
+  orientationMap["LAS"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_LAS;
+  orientationMap["PRI"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_PRI;
+  orientationMap["PLI"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_PLI;
+  orientationMap["ARI"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_ARI;
+  orientationMap["ALI"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_ALI;
+  orientationMap["PRS"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_PRS;
+  orientationMap["PLS"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_PLS;
+  orientationMap["ARS"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_ARS;
+  orientationMap["ALS"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_ALS;
+  orientationMap["IPR"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_IPR;
+  orientationMap["SPR"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_SPR;
+  orientationMap["IAR"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_IAR;
+  orientationMap["SAR"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_SAR;
+  orientationMap["IPL"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_IPL;
+  orientationMap["SPL"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_SPL;
+  orientationMap["IAL"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_IAL;
+  orientationMap["SAL"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_SAL;
+  orientationMap["PIR"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_PIR;
+  orientationMap["PSR"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_PSR;
+  orientationMap["AIR"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_AIR;
+  orientationMap["ASR"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_ASR;
+  orientationMap["PIL"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_PIL;
+  orientationMap["PSL"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_PSL;
+  orientationMap["AIL"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_AIL;
+  orientationMap["ASL"] = CoordinateOrientationCode::ITK_COORDINATE_ORIENTATION_ASL;
 }
 
 //
@@ -121,9 +120,9 @@ int DoIt( int argc, char * argv[], T )
                                        "Orient image",
                                        CLPProcessInformation);
 
-  std::map<std::string, itk::SpatialOrientation::ValidCoordinateOrientationFlags> orientationMap;
+  std::map<std::string, itk::SpatialOrientationEnums::ValidCoordinateOrientations> orientationMap;
   CreateOrientationMap(orientationMap);
-  std::map<std::string, itk::SpatialOrientation::ValidCoordinateOrientationFlags>::iterator o = orientationMap.find(
+  std::map<std::string, itk::SpatialOrientationEnums::ValidCoordinateOrientations>::iterator o = orientationMap.find(
       orientation);
 
   filter->SetInput( reader1->GetOutput() );
