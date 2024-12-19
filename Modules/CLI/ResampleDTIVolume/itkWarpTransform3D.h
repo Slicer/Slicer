@@ -50,15 +50,8 @@ public:
 
   OutputPointType TransformPoint( const InputPointType & inputPoint ) const override;
 
-  void ComputeJacobianWithRespectToParameters(const InputPointType  & p,
+  void ComputeJacobianWithRespectToParameters(const InputPointType & p,
       JacobianType & jacobian ) const override;
-
-  void ComputeJacobianWithRespectToPosition(
-    const InputPointType & itkNotUsed(x),
-    JacobianType & itkNotUsed(j) ) const override
-  {
-    itkExceptionMacro("ComputeJacobianWithRespectToPosition is not implemented for WarpTransform3D");
-  }
 
   void ComputeJacobianWithRespectToPosition(
     const InputPointType & itkNotUsed(x),

@@ -64,8 +64,7 @@ WarpTransform3D<FieldData>
   OutputPointType      transformedPoint;
   DeformationPixelType displacement;
 
-  itk::Index<3> index;
-  m_DeformationField->TransformPhysicalPointToIndex( inputPoint, index );
+  itk::Index<3> index = m_DeformationField->TransformPhysicalPointToIndex( inputPoint );
   if( !m_DeformationField->GetLargestPossibleRegion().IsInside( index ) )
   {
     return inputPoint;
@@ -85,8 +84,7 @@ WarpTransform3D<FieldData>
   ConstNeighborhoodIteratorType bit;
 
   itk::ImageRegion<3> region;
-  itk::Index<3>       start;
-  m_DeformationField->TransformPhysicalPointToIndex( inputPoint, start );
+  itk::Index<3>       start = m_DeformationField->TransformPhysicalPointToIndex( inputPoint );
   jacobian.SetSize( 3, 3 );
   if( !m_DeformationField->GetLargestPossibleRegion().IsInside( start ) )
   {
