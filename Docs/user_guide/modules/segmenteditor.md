@@ -32,7 +32,7 @@ The following keyboard shortcuts are active when you are in the Segment Editor m
 
 ## Tutorials
 
-- [Segmentation tutorials](https://www.slicer.org/wiki/Documentation/Nightly/Training#Segmentation)
+- [Segmentation tutorials](https://slicer.github.io/training.slicer.org/#segmentation-tutorials)
 
 ## Panels and their use
 
