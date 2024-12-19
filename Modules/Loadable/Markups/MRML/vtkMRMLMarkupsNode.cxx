@@ -3040,6 +3040,39 @@ std::string vtkMRMLMarkupsNode::GetPropertiesLabelText()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::SetAxisLabels(const char* axisLabelX, const char* axisLabelY, const char* axisLabelZ)
+{
+  bool modified = false;
+  if (axisLabelX && this->AxisLabels[0].compare(axisLabelX))
+  {
+    this->AxisLabels[0] = std::string(axisLabelX);
+    modified = true;
+  }
+  if (axisLabelY && this->AxisLabels[1].compare(axisLabelY))
+  {
+    this->AxisLabels[1] = std::string(axisLabelY);
+    modified = true;
+  }
+  if (axisLabelZ && this->AxisLabels[2].compare(axisLabelZ))
+  {
+    this->AxisLabels[2] = std::string(axisLabelZ);
+    modified = true;
+  }
+  if (modified)
+  {
+    this->Modified();
+  }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::GetAxisLabels(std::string &axisLabelX, std::string &axisLabelY, std::string &axisLabelZ)
+{
+  axisLabelX = this->AxisLabels[0];
+  axisLabelY = this->AxisLabels[1];
+  axisLabelZ = this->AxisLabels[2];
+}
+
+//---------------------------------------------------------------------------
 int vtkMRMLMarkupsNode::GetNthControlPointIndexByPositionStatus(int pointIndex, int positionStatus)
 {
   int foundControlPoints = 0;
