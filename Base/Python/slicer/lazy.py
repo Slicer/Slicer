@@ -18,6 +18,9 @@ from slicer.ScriptedLoadableModule import ScriptedLoadableModule
 from slicer.util import _executePythonModule
 
 
+__all__ = ["_pip_install", "_pip_uninstall", "ImportGroup"]
+
+
 def _pip(*args):
     # TODO: update this to allow inspecting stdout, stderr
     _executePythonModule("pip", args)
@@ -95,6 +98,9 @@ class ImportGroup:
         # TODO: check which module called this, for better reporting.
         calling_frame = inspect.stack()[1]
         calling_module = inspect.getmodule(calling_frame)
+        if not calling_module:
+            raise Exception("Unable to determine import location")
+
         module_name = calling_module.__name__
 
         instance: typing.Optional[ScriptedLoadableModule] = getattr(
