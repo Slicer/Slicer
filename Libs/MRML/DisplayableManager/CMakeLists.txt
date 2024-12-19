@@ -95,8 +95,6 @@ set(KIT_SRCS
   vtkMRMLDisplayableManagerGroup.cxx
   vtkMRMLDisplayableManagerFactory.cxx
 
-  vtkMRMLInteractionEventData.cxx
-
   # ThreeDView factory and DisplayableManager
   vtkMRMLAbstractThreeDViewDisplayableManager.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
