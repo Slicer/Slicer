@@ -22,7 +22,7 @@
 #include "vtkEventData.h"
 
 // MRML includes
-#include "vtkMRMLDisplayableManagerExport.h"
+#include "vtkMRMLExport.h"
 
 class vtkMRMLAbstractViewNode;
 class vtkRenderWindowInteractor;
@@ -32,7 +32,7 @@ class vtkCellPicker;
 /// Class for storing all relevant details of mouse and keyboard events.
 /// It stores additional information that is expensive to compute (such as 3D position)
 /// or not always easy to get (such as modifiers).
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionEventData : public vtkEventDataDevice3D
+class VTK_MRML_EXPORT vtkMRMLInteractionEventData : public vtkEventDataDevice3D
 {
 public:
   vtkTypeMacro(vtkMRMLInteractionEventData, vtkEventDataDevice3D);
