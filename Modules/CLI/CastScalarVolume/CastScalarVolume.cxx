@@ -71,8 +71,8 @@ int main( int argc, char * argv[] )
 
   PARSE_ARGS;
 
-  itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
+  itk::IOPixelEnum     pixelType;
+  itk::IOComponentEnum componentType;
 
   try
   {
@@ -81,7 +81,7 @@ int main( int argc, char * argv[] )
     // This filter handles all types on input
     switch( componentType )
     {
-      case itk::ImageIOBase::CHAR:
+      case itk::IOComponentEnum::CHAR:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<char>(0), static_cast<char>(0) );
@@ -128,7 +128,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::SHORT:
+      case itk::IOComponentEnum::SHORT:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<short>(0), static_cast<char>(0) );
@@ -175,7 +175,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::INT:
+      case itk::IOComponentEnum::INT:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<int>(0), static_cast<char>(0) );
@@ -222,7 +222,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::LONG:
+      case itk::IOComponentEnum::LONG:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<long>(0), static_cast<char>(0) );
@@ -269,7 +269,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::UCHAR:
+      case itk::IOComponentEnum::UCHAR:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<char>(0) );
@@ -316,7 +316,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::USHORT:
+      case itk::IOComponentEnum::USHORT:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<char>(0) );
@@ -363,7 +363,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::UINT:
+      case itk::IOComponentEnum::UINT:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<char>(0) );
@@ -410,7 +410,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::ULONG:
+      case itk::IOComponentEnum::ULONG:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<char>(0) );
@@ -457,7 +457,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::FLOAT:
+      case itk::IOComponentEnum::FLOAT:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<float>(0), static_cast<char>(0) );
@@ -504,7 +504,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::DOUBLE:
+      case itk::IOComponentEnum::DOUBLE:
         if( Type == std::string("Char") )
         {
           return DoIt( argc, argv, static_cast<double>(0), static_cast<char>(0) );
@@ -551,7 +551,7 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
         }
         break;
-      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
       default:
         std::cout << "Unknown component type " << componentType << std::endl;
         break;
