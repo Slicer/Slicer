@@ -3,7 +3,6 @@ import logging
 import slicer
 from slicer.ScriptedLoadableModule import *
 
-
 #
 # BRAINSFitRigidRegistrationCrashIssue4139
 #

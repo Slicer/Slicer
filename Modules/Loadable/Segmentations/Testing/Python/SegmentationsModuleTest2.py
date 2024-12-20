@@ -3,9 +3,9 @@ import os
 import unittest
 
 import vtk
-import vtkSegmentationCore
 
 import slicer
+import vtkSegmentationCore
 from slicer.util import TESTING_DATA_URL
 
 """
