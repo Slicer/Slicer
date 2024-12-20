@@ -149,17 +149,17 @@ html_theme_options = {
     "includehidden": False,
 }
 
-# -- Read the Docs Specific Configuration --
-# This is needed to show "Edit on GitHub" link on the top of each page.
-# See https://about.readthedocs.com/blog/2024/07/addons-by-default/
-# Define the canonical URL if you are using a custom domain on Read the Docs
-html_baseurl = os.environ.get("READTHEDOCS_CANONICAL_URL", "")
-# Tell Jinja2 templates the build is running on Read the Docs
-if os.environ.get("READTHEDOCS", "") == "True":
-    if "html_context" not in globals():
-        html_context = {}
-    html_context["READTHEDOCS"] = True
-# -- End of Read the Docs Specific Configuration --
+html_context = {
+    # Enable the "Edit in GitHub link within the header of each page.
+    "display_github": True,
+    # Set the following variables to generate the resulting github URL for each page.
+    # Format Template: https://{{ github_host|default("github.com") }}/{{ github_user }}/{{ github_repo }}
+    #   /blob/{{ github_version }}{{ conf_py_path }}{{ pagename }}{{ suffix }}
+    "github_user": "slicer",
+    "github_repo": "slicer",
+    "github_version": "main",
+    "conf_py_path": "/Docs/",
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
