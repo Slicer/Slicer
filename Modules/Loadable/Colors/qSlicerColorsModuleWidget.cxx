@@ -88,10 +88,8 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerColorsModuleWidgetPrivate::qSlicerColorsModuleWidgetPrivate(qSlicerColorsModuleWidget& object)
-  :
-  q_ptr(&object)
+  : q_ptr(&object)
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -140,6 +138,10 @@ void qSlicerColorsModuleWidget::setup()
   d->setupUi(this);
 
   d->CopyColorNodeButton->setIcon(QIcon(":Icons/SlicerCopyColor.png"));
+  d->AddColorTableNodeButton->setIcon(QIcon(":Icons/SlicerNewColor.png"));
+  d->AddNewColorButton->setIcon(QIcon(":Icons/Add.png"));
+  d->RemoveCurrentColorButton->setIcon(QIcon(":Icons/Remove.png"));
+  d->RemoveCurrentColorButton->setVisible(false); //TODO: Deleting single color table node entry not implemented yet
 
   connect(d->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onMRMLColorNodeChanged(vtkMRMLNode*)));
@@ -149,6 +151,12 @@ void qSlicerColorsModuleWidget::setup()
           this, SLOT(setLookupTableRange(double,double)));
   connect(d->CopyColorNodeButton, SIGNAL(clicked()),
           this, SLOT(copyCurrentColorNode()));
+  connect(d->AddColorTableNodeButton, SIGNAL(clicked()),
+          this, SLOT(addNewColorTableNode()));
+  connect(d->AddNewColorButton, SIGNAL(clicked()),
+          this, SLOT(addNewColorInCurrentNode()));
+  connect(d->RemoveCurrentColorButton, SIGNAL(clicked()),
+          this, SLOT(removeCurrentColorEntry()));
 
   double validBounds[4] = {VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, 0., 1.};
   d->ContinuousScalarsToColorsWidget->view()->setValidBounds(validBounds);
@@ -323,14 +331,11 @@ void qSlicerColorsModuleWidget::setLookupTableRange(double min, double max)
 void qSlicerColorsModuleWidget::copyCurrentColorNode()
 {
   Q_D(qSlicerColorsModuleWidget);
-  vtkMRMLColorNode* currentNode = vtkMRMLColorNode::SafeDownCast(
-    d->ColorTableComboBox->currentNode());
+  vtkMRMLColorNode* currentNode = vtkMRMLColorNode::SafeDownCast(d->ColorTableComboBox->currentNode());
   Q_ASSERT(currentNode);
   QString newColorName = QInputDialog::getText(
-    this, "Color node name",
-    "Please select a new name for the color node copy",
-    QLineEdit::Normal,
-    QString(currentNode->GetName()) + QString("Copy"));
+    this, "Color node name", "Please select a new name for the color node copy",
+    QLineEdit::Normal, QString(currentNode->GetName()) + QString("Copy"));
   if (newColorName.isEmpty())
   {
     return;
@@ -348,20 +353,65 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
   }
   else
   {
-    qWarning() << "CopyCurrentColorNode: current node not of a color node type "
+    qWarning() << Q_FUNC_INFO << "Current node not of a color node type "
                << "that can be copied. It's a " << currentNode->GetClassName()
                << ", not a procedural or color table node";
     return;
   }
   if (!this->mrmlScene()->AddNode(colorNode))
   {
-    qWarning() << "CopyCurrentColorNode: failed to add new node to scene";
+    qWarning() << Q_FUNC_INFO << "Failed to add new node to scene";
   }
   colorNode->Delete();
   if (colorNode->GetID())
   {
     d->ColorTableComboBox->setCurrentNode(colorNode);
   }
+}
+
+//-----------------------------------------------------------
+void qSlicerColorsModuleWidget::addNewColorTableNode()
+{
+  Q_D(qSlicerColorsModuleWidget);
+
+  // Create and add new empty color table node
+  vtkNew<vtkMRMLColorTableNode> newColorTableNode;
+  newColorTableNode->SetTypeToUser();
+  std::string nodeName = this->mrmlScene()->GenerateUniqueName("MyColorTable");
+  newColorTableNode->SetName(nodeName.c_str());
+  if (!this->mrmlScene()->AddNode(newColorTableNode))
+  {
+    qCritical() << Q_FUNC_INFO << "Failed to add new node to scene";
+  }
+
+  // Select new node in module
+  d->ColorTableComboBox->setCurrentNode(newColorTableNode);
+}
+
+//-----------------------------------------------------------
+void qSlicerColorsModuleWidget::addNewColorInCurrentNode()
+{
+  Q_D(qSlicerColorsModuleWidget);
+  vtkMRMLColorTableNode* currentNode = vtkMRMLColorTableNode::SafeDownCast(d->ColorTableComboBox->currentNode());
+  Q_ASSERT(currentNode);
+
+  // Add a color to the current (User type) color table, at the end
+  int newNumber = currentNode->GetNumberOfColors() + 1;
+  currentNode->SetNumberOfColors(newNumber);
+  currentNode->SetColor(newNumber - 1, currentNode->GetNoName(), 0.5, 0.5, 0.5);
+  // Update spinbox on GUI as well
+  QSignalBlocker blocker(d->NumberOfColorsSpinBox);
+  d->NumberOfColorsSpinBox->setValue(newNumber);
+}
+
+//-----------------------------------------------------------
+void qSlicerColorsModuleWidget::removeCurrentColorEntry()
+{
+  Q_D(qSlicerColorsModuleWidget);
+  vtkMRMLColorTableNode* currentNode = vtkMRMLColorTableNode::SafeDownCast(d->ColorTableComboBox->currentNode());
+  Q_ASSERT(currentNode);
+  //TODO: Color entry cannot currently be deleted. It can be set to "none", but the hide empty colors function
+  // does not work currently. Unfortunately the color table node does not support removing simgle entry either.
 }
 
 //-----------------------------------------------------------

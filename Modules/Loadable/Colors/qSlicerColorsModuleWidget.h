@@ -49,6 +49,9 @@ public slots:
   void updateNumberOfColors();
   void setLookupTableRange(double min, double max);
   void copyCurrentColorNode();
+  void addNewColorTableNode();
+  void addNewColorInCurrentNode();
+  void removeCurrentColorEntry();
   void onDisplayableNodeChanged(vtkMRMLNode*);
   void createColorLegend();
   void deleteColorLegend();
