@@ -106,6 +106,7 @@ void qSlicerTerminologyEditorWidget::setTerminologyInfo(qSlicerTerminologyNaviga
 {
   Q_D(qSlicerTerminologyEditorWidget);
   d->TerminologyInfo = terminologyInfo;
+  d->updateGUIFromTerminologyInfo();
 }
 
 //-----------------------------------------------------------------------------

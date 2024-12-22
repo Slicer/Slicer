@@ -2923,14 +2923,11 @@ bool vtkSlicerTerminologiesModuleLogic::LoadColorTable(vtkMRMLColorNode* colorNo
   } // For all terminology entries found in the color node
 
   // Add new terminology context with the color node name as context name
-  if (this->Internal->GetTerminologyRootByName(colorNode->GetName()).IsNull())
+  if (!this->Internal->GetTerminologyRootByName(colorNode->GetName()).IsNull())
   {
-    this->Internal->LoadedTerminologies[colorNode->GetName()] = termDoc;
+    delete this->Internal->LoadedTerminologies[colorNode->GetName()];
   }
-  else
-  {
-    vtkErrorMacro("LoadColorTable: Terminology context '" << colorNode->GetName() << "' already exists, not adding");
-  }
+  this->Internal->LoadedTerminologies[colorNode->GetName()] = termDoc;
 
   if (entriesWithAnatomicRegion.size() == 0)
   {
@@ -3014,14 +3011,11 @@ bool vtkSlicerTerminologiesModuleLogic::LoadColorTable(vtkMRMLColorNode* colorNo
   } // For all terminology entries containing anatomic region entries
 
   // Add new anatomic context with the color node name as context name
-  if (this->Internal->GetAnatomicContextRootByName(colorNode->GetName()).IsNull())
+  if (!this->Internal->GetAnatomicContextRootByName(colorNode->GetName()).IsNull())
   {
-    this->Internal->LoadedAnatomicContexts[colorNode->GetName()] = anatDoc;
+    delete this->Internal->LoadedAnatomicContexts[colorNode->GetName()];
   }
-  else
-  {
-    vtkErrorMacro("LoadColorTable: Anatomic context '" << colorNode->GetName() << "' already exists, not adding");
-  }
+  this->Internal->LoadedAnatomicContexts[colorNode->GetName()] = anatDoc;
 
   return true;
 }
