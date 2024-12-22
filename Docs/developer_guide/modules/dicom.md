@@ -1,6 +1,6 @@
 # DICOM (Digital Imaging and Communications in Medicine)
 
-Refer to the [Slicer User Guide DICOM Section](../user_guide/modules/dicom.md) for a comprehensive overview of the DICOM standard and related features in Slicer.
+Refer to the [Slicer User Guide DICOM Section](../../user_guide/modules/dicom.md) for a comprehensive overview of the DICOM standard and related features in Slicer.
 
 The overall DICOM Implementation in 3D Slicer consists of two main bodies of code embedded within the application.
 - [CTK](https://commontk.org) code is responsible for the implementation of the DICOM database and DIMSE networking layer. The CTK code is implemented in C++ and follows the Qt style.
