@@ -67,6 +67,10 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   QVTK_OBJECT
   Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
   Q_PROPERTY(bool sourceVolumeNodeSelectorVisible READ sourceVolumeNodeSelectorVisible WRITE setSourceVolumeNodeSelectorVisible)
+  Q_PROPERTY(bool maskingSectionVisible READ maskingSectionVisible WRITE setMaskingSectionVisible)
+  Q_PROPERTY(bool specifyGeometryButtonVisible READ specifyGeometryButtonVisible WRITE setSpecifyGeometryButtonVisible)
+  Q_PROPERTY(bool show3DButtonVisible READ show3DButtonVisible WRITE setShow3DButtonVisible)
+  Q_PROPERTY(bool addRemoveSegmentButtonsVisible READ addRemoveSegmentButtonsVisible WRITE setAddRemoveSegmentButtonsVisible)
   Q_PROPERTY(bool autoShowSourceVolumeNode READ autoShowSourceVolumeNode WRITE setAutoShowSourceVolumeNode)
   Q_PROPERTY(bool masterVolumeNodeSelectorVisible READ masterVolumeNodeSelectorVisible WRITE setMasterVolumeNodeSelectorVisible) // deprecated
   Q_PROPERTY(bool autoShowMasterVolumeNode READ autoShowMasterVolumeNode WRITE setAutoShowMasterVolumeNode) // deprecated
@@ -187,6 +191,18 @@ public:
     qWarning("qMRMLSegmentEditorWidget::autoShowMasterVolumeNode is deprecated, use autoShowSourceVolumeNode() method instead.");
     return this->autoShowSourceVolumeNode();
   };
+
+  /// Show/hide the masking section
+  bool maskingSectionVisible() const;
+
+  /// Show/hide the specify geometry button
+  bool specifyGeometryButtonVisible() const;
+
+  /// Show/hide the 3D button
+  bool show3DButtonVisible() const;
+
+  /// Show/hide the add/remove segment buttons
+  bool addRemoveSegmentButtonsVisible() const;
 
   /// Show/hide the switch to Segmentations module button
   bool switchToSegmentationsButtonVisible() const;
@@ -322,6 +338,18 @@ public slots:
   /// displayed in slice views when a new source volume is selected or layout is changed.
   /// Enabled by default.
   void setAutoShowSourceVolumeNode(bool);
+  /// Set masking section visible
+  /// If set to false then masking section always remains hidden.
+  void setMaskingSectionVisible(bool);
+  /// Show/hide the specify geometry button
+  /// If set to false then the button is always hidden.
+  void setSpecifyGeometryButtonVisible(bool);
+  /// Show/hide the 3D button
+  /// If set to false then the button is always hidden.
+  void setShow3DButtonVisible(bool);
+  /// Show/hide the add/remove segment buttons
+  /// If set to false then the buttons are always hidden.
+  void setAddRemoveSegmentButtonsVisible(bool);
   /// Show/hide the switch to Segmentations module button
   void setSwitchToSegmentationsButtonVisible(bool);
   /// Undo/redo enabled.
