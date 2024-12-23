@@ -130,7 +130,7 @@ class ScriptedLoadableModuleWidget:
         if moduleName == self.moduleName:
             self.cleanup()
 
-            if self.developerMode:
+            if self.developerMode and hasattr(self, "reloadTestMenuButton"):
                 settings = qt.QSettings()
                 settings.setValue(
                     f"{self.moduleName}/PreferredReloadAndTestAction",
@@ -251,7 +251,8 @@ class ScriptedLoadableModuleWidget:
         """Tests scripted module widget, can be used when reload and test doesn't work, calls
         :func:`ScriptedLoadableModuleTest.runTest()` passing ``kwargs``.
         """
-        self.reloadTestMenuButton.setDefaultAction(self.testAction)
+        if hasattr(self, "reloadTestMenuButton"):
+            self.reloadTestMenuButton.setDefaultAction(self.testAction)
         with slicer.util.tryWithErrorDisplay("Test failed."):
             test = slicer.selfTests[self.moduleName]
             test(msec=int(slicer.app.userSettings().value("Developer/SelfTestDisplayMessageDelay")), **kwargs)
@@ -260,7 +261,8 @@ class ScriptedLoadableModuleWidget:
         """Reload scripted module widget representation and call :func:`ScriptedLoadableModuleTest.runTest()`
         passing ``kwargs``.
         """
-        self.reloadTestMenuButton.setDefaultAction(self.reloadTestAction)
+        if hasattr(self, "reloadTestMenuButton"):
+            self.reloadTestMenuButton.setDefaultAction(self.reloadTestAction)
         with slicer.util.tryWithErrorDisplay("Reload and Test failed."):
             self.onReload()
             test = slicer.selfTests[self.moduleName]
