@@ -1598,6 +1598,14 @@ def getNode(pattern="*", index=0, scene=None):
     By default, ``pattern`` is a wildcard and it returns the first node
     associated with ``slicer.mrmlScene``.
 
+    This function is only intended for quick access to nodes for testing and troubleshooting, due to two important limitations.
+    1. Due to the filename pattern matching uses some special characters (`*?[]`) it may be difficult to use it for nodes
+      that have these characters in their names.
+    2. In a scene often several nodes have the same name and this function only returns the first one.
+
+    If a node name uses special characters, or if there are multiple nodes with the same name, then you can use the node ID as input
+    or use :py:meth:`getFirstNodeByClassByName` to get the first node of a specific class.
+
     :raises MRMLNodeNotFoundException: if no node is found
      that matches the specified pattern.
     """
