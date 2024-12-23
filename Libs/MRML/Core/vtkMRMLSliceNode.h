@@ -18,6 +18,7 @@
 // MRML includes
 #include "vtkMRMLAbstractViewNode.h"
 class vtkMRMLVolumeNode;
+class vtkMRMLTextNode;
 
 // VTK includes
 class vtkImplicitFunction;
@@ -564,6 +565,15 @@ public:
   /// @}
 
   virtual vtkImplicitFunction* GetImplicitFunctionWorld();
+
+  ///@{
+  /// Node reference role for text that is used in the slice view
+  const char* GetCornerAnnotationsTextNodeReferenceRole() { return "cornerText"; }
+  const char* GetCornerAnnotationsTextNodeReferenceMRMLAttributeName() { return "cornerTextRef"; }
+
+  void SetAndObserveCornerAnnotationsTextNode(vtkMRMLNode* textNode);
+  vtkMRMLTextNode* GetCornerAnnotationsTextNode();
+  ///}@
 
 protected:
   vtkMRMLSliceNode();

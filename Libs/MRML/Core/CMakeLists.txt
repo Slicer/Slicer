@@ -147,6 +147,7 @@ set(MRMLCore_SRCS
   vtkMRMLMeasurement.cxx
   vtkMRMLStaticMeasurement.cxx
   vtkMRMLLogic.cxx
+  vtkMRMLAbstractAnnotationPropertyValueProvider.cxx
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx
   vtkMRMLCameraNode.cxx
