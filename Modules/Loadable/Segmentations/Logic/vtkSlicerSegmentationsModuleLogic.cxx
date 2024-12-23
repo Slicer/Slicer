@@ -1205,12 +1205,16 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     colorTableNode->SetColor(labelValue, segmentName, color.GetX(), color.GetY(), color.GetZ());
   }
 
-  // Move exported labelmap node under same parent as segmentation
+  // Move exported labelmap node under same parent as segmentation if they are in the same scene
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(segmentationNode->GetScene());
   if (shNode)
   {
-    shNode->SetItemParent(shNode->GetItemByDataNode(labelmapNode),
-      shNode->GetItemParent(shNode->GetItemByDataNode(segmentationNode)) );
+    vtkIdType segmentationId = shNode->GetItemByDataNode(segmentationNode);
+    vtkIdType labelmapId = shNode->GetItemByDataNode(labelmapNode);
+    if (segmentationId && labelmapId)
+    {
+      shNode->SetItemParent(labelmapId, shNode->GetItemParent(segmentationId));
+    }
   }
   else
   {
