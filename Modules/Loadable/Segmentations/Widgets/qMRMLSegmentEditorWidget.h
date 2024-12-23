@@ -537,6 +537,8 @@ protected slots:
   void onImportExportActionClicked();
   /// Open Export to files dialog
   void onExportToFilesActionClicked();
+  /// Export segment color and terminology information to a new color table
+  void onExportToColorTableActionClicked();
 
   /// Update masking section on the UI
   void updateMaskingSection();
