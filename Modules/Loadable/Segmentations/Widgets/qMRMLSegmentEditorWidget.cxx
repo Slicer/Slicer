@@ -426,6 +426,9 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   QAction* exportToFileAction = new QAction(qMRMLSegmentEditorWidget::tr("Export to files..."), segmentationsButtonMenu);
   segmentationsButtonMenu->addAction(exportToFileAction);
   QObject::connect(exportToFileAction, SIGNAL(triggered()), q, SLOT(onExportToFilesActionClicked()));
+  QAction* exportToColorNodeAction = new QAction(qMRMLSegmentEditorWidget::tr("Export to color table"), segmentationsButtonMenu);
+  segmentationsButtonMenu->addAction(exportToColorNodeAction);
+  QObject::connect(exportToColorNodeAction, SIGNAL(triggered()), q, SLOT(onExportToColorTableActionClicked()));
 
   this->SwitchToSegmentationsButton->setMenu(segmentationsButtonMenu);
 
@@ -3520,6 +3523,34 @@ void qMRMLSegmentEditorWidget::onExportToFilesActionClicked()
 
   // Delete dialog when done
   exportDialog->deleteLater();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::onExportToColorTableActionClicked()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+
+  vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode ? d->ParameterSetNode->GetSegmentationNode() : nullptr;
+  if (!segmentationNode)
+  {
+    return;
+  }
+
+  vtkMRMLColorTableNode* newColorTable = vtkSlicerSegmentationsModuleLogic::CreateColorTableNodeForSegmentation(segmentationNode);
+  if (newColorTable == nullptr)
+  {
+    qCritical() << Q_FUNC_INFO << "Failed to create color table node for segmentation " << segmentationNode->GetName();
+    return;
+  }
+
+  // Export all segments to the new color table
+  std::vector<std::string> segmentIDs;
+  if (!vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(segmentationNode, segmentIDs, newColorTable))
+  {
+    qCritical() << Q_FUNC_INFO << "Failed to export color and terminology information from segmentation " << segmentationNode->GetName()
+      << " to color table " << newColorTable->GetName();
+    return;
+  }
 }
 
 //-----------------------------------------------------------------------------
