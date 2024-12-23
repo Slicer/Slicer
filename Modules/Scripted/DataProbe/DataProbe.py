@@ -9,7 +9,6 @@ from slicer.util import TESTING_DATA_URL
 from slicer.i18n import tr as _
 from slicer.i18n import translate
 
-import DataProbeLib
 
 
 #
@@ -403,7 +402,6 @@ class DataProbeInfoWidget:
         """
 
         # this method makes SliceView Annotation
-        self.sliceAnnotations = DataProbeLib.SliceAnnotations()
 
         # goto module button
         self.goToModule = qt.QPushButton("->", self.frame)
