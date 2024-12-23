@@ -12,6 +12,7 @@ set(qtmodules
   Terminologies
   SubjectHierarchy
   Colors # Colors depends on SubjectHierarchy
+  CornerText
   Annotations
   SceneViews
   Markups # Markups depends on SceneViews (for testing) and Annotations
