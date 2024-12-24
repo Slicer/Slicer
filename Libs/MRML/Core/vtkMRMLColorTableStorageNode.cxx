@@ -33,11 +33,11 @@ Version:   $Revision: 1.6 $
 #include <sstream>
 
 const std::vector<std::string> TERMINOLOGY_COLUMN_NAMES = {
-  "Category_CodingSchemeDesignator", "Category_CodeValue", "Category_CodeMeaning",
-  "Type_CodingSchemeDesignator", "Type_CodeValue", "Type_CodeMeaning",
-  "TypeModifier_CodingSchemeDesignator", "TypeModifier_CodeValue", "TypeModifier_CodeMeaning",
-  "AnatomicRegion_CodingSchemeDesignator", "AnatomicRegion_CodeValue", "AnatomicRegion_CodeMeaning",
-  "AnatomicRegionModifier_CodingSchemeDesignator", "AnatomicRegionModifier_CodeValue", "AnatomicRegionModifier_CodeMeaning" };
+  "Category_CodingScheme", "Category_CodeValue", "Category_CodeMeaning",
+  "Type_CodingScheme", "Type_CodeValue", "Type_CodeMeaning",
+  "TypeModifier_CodingScheme", "TypeModifier_CodeValue", "TypeModifier_CodeMeaning",
+  "Region_CodingScheme", "Region_CodeValue", "Region_CodeMeaning",
+  "RegionModifier_CodingScheme", "RegionModifier_CodeValue", "RegionModifier_CodeMeaning" };
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLColorTableStorageNode);
@@ -309,7 +309,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   // Define helper function for populating terminology entry IDs
   auto GetIndexInEntryForIdType = [](std::string idType)
   {
-    if (idType == "CodingSchemeDesignator") return 0;
+    if (idType == "CodingScheme") return 0;
     else if (idType == "CodeValue") return 1;
     else if (idType == "CodeMeaning") return 2;
     vtkGenericWarningMacro("vtkMRMLColorTableStorageNode::ReadCsvFile::GetIndexInEntryForIdType: Invalid coded entry ID type" << idType);
@@ -386,11 +386,11 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
       {
         typeModifierComponents[GetIndexInEntryForIdType(columnNameComponents[1])] = column->GetValue(row);
       }
-      else if (columnNameComponents[0] == "AnatomicRegion")
+      else if (columnNameComponents[0] == "Region")
       {
         anatomicRegionComponents[GetIndexInEntryForIdType(columnNameComponents[1])] = column->GetValue(row);
       }
-      else if (columnNameComponents[0] == "AnatomicRegionModifier")
+      else if (columnNameComponents[0] == "RegionModifier")
       {
         anatomicRegionModifierComponents[GetIndexInEntryForIdType(columnNameComponents[1])] = column->GetValue(row);
       }
@@ -550,7 +550,8 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
       size_t firstnottick = name.find_first_not_of("'");
       size_t lastnottick = name.find_last_not_of("'");
       std::string withoutTicks = name.substr(firstnottick, (lastnottick - firstnottick) + 1);
-      vtkDebugMacro("ReadDataInternal: Found ticks around name \"" << name << "\", using name without ticks instead:  \"" << withoutTicks << "\"");
+      vtkDebugMacro("ReadDataInternal: Single quotation marks around name \"" << name
+        << "\", using name without quotation marks instead:  \"" << withoutTicks << "\"");
       name = withoutTicks;
     }
     if (i < 10)
@@ -694,7 +695,7 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
       {
         terminologyArrays[idx]->SetValue(rowIndex, terminologyEntry->GetCodeValue());
       }
-      else if (columnName.substr(columnName.size() - 22, 22) == "CodingSchemeDesignator")
+      else if (columnName.substr(columnName.size() - 12, 12) == "CodingScheme")
       {
         terminologyArrays[idx]->SetValue(rowIndex, terminologyEntry->GetCodingSchemeDesignator());
       }
