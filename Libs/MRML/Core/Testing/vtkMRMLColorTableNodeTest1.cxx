@@ -59,7 +59,6 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
     colorNode->SetColor(0, "zero", 0.0, 0.0, 0.0, 1.0);
     colorNode->SetColor(1, "one", 1.0, 0.0, 0.0, 1.0);
     colorNode->SetColor(2, "two", 0.0, 1.0, 0.0, 1.0);
-    colorNode->NamesInitialisedOn();
 
     // add node to the scene
     vtkNew<vtkMRMLScene> scene;

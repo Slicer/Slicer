@@ -168,7 +168,20 @@ public:
   /// \param folderItemId Subject hierarchy folder item ID to export the segments to
   static bool ExportAllSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode, vtkIdType folderItemId);
 
-  /// Export multiple segments into a multi-label labelmap volume node
+  /// Create new color table node for segmentation node
+  /// \param segmentationNode Segmentation node from which the the color table node is created.
+  /// \return Newly created color table node (that will contain the segment color and terminology information in each color entry).
+  static vtkMRMLColorTableNode* CreateColorTableNodeForSegmentation(vtkMRMLSegmentationNode* segmentationNode);
+
+  /// Export multiple segments into an existing color table node.
+  /// \param segmentationNode Segmentation node from which the the segments are exported
+  /// \param segmentIds List of segment IDs to export
+  /// \param colorTableNode Color table node to export the segment color and terminology information to
+  /// \return Newly created color table node containing the segment color and terminology information in each color entry.
+  static bool ExportSegmentsToColorTableNode(
+    vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentID, vtkMRMLColorTableNode* colorTableNode);
+
+  /// Export multiple segments into a multi-label labelmap volume node.
   /// \param segmentationNode Segmentation node from which the the segments are exported
   /// \param segmentIds List of segment IDs to export
   /// \param labelmapNode Labelmap node to export the segments to

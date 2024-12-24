@@ -28,8 +28,8 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-// qMRML includes
-#include "qMRMLWidgetsExport.h"
+// Colors includes
+#include "qSlicerColorsModuleWidgetsExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLColorNode;
@@ -39,7 +39,7 @@ class QAction;
 class qMRMLColorModelPrivate;
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
+class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -74,15 +74,6 @@ public:
   qMRMLColorModel(QObject *parent=nullptr);
   ~qMRMLColorModel() override;
 
-  /// ColorRole is an invisible role that contains the true color (QColor) when
-  /// Qt::DecorationRole contains a pixmap of the color.
-  enum ItemDataRole{
-    ColorEntryRole = Qt::UserRole,
-    PointerRole,
-    ColorRole
-  };
-
-
   void setMRMLColorNode(vtkMRMLColorNode* node);
   vtkMRMLColorNode* mrmlColorNode()const;
 
@@ -99,6 +90,9 @@ public:
 
   int opacityColumn()const;
   void setOpacityColumn(int column);
+
+  int terminologyColumn()const;
+  void setTerminologyColumn(int column);
 
   int checkableColumn()const;
   void setCheckableColumn(int column);

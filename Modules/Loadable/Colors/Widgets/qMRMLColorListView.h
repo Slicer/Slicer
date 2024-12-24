@@ -24,8 +24,8 @@
 // Qt includes
 #include <QListView>
 
-// qMRML includes
-#include "qMRMLWidgetsExport.h"
+// Colors includes
+#include "qSlicerColorsModuleWidgetsExport.h"
 
 class QSortFilterProxyModel;
 class qMRMLColorListViewPrivate;
@@ -33,7 +33,7 @@ class qMRMLColorModel;
 class vtkMRMLColorNode;
 class vtkMRMLNode;
 
-class QMRML_WIDGETS_EXPORT qMRMLColorListView : public QListView
+class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorListView : public QListView
 {
   Q_OBJECT
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)

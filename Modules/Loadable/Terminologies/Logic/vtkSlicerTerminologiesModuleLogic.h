@@ -28,9 +28,8 @@
 
 #include "vtkSlicerTerminologiesModuleLogicExport.h"
 
-#include <vtkVector.h>
-
 class vtkCodedEntry;
+class vtkMRMLColorNode;
 class vtkSegment;
 class vtkStringArray;
 class vtkSlicerTerminologyEntry;
@@ -92,6 +91,11 @@ public:
   /// Load anatomic context dictionary from segmentation descriptor JSON file into \sa LoadedAnatomicContexts.
   /// See also \sa LoadTerminologyFromSegmentDescriptorFile
   bool LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath);
+
+  /// Load all color tables containing terminology as terminology contexts (and anatomic context if any).
+  void LoadCompatibleColorTables();
+  /// Load given color node as terminology context (and anatomic context if any).
+  bool LoadColorTable(vtkMRMLColorNode* colorNode);
 
   /// Get context names of loaded terminologies
   void GetLoadedTerminologyNames(std::vector<std::string> &terminologyNames);
@@ -253,6 +257,14 @@ public:
   static std::string SerializeTerminologyEntry(vtkSlicerTerminologyEntry* entry);
 
   /// Assemble terminology string from terminology codes
+  /// The serialized string will have the following format:
+  ///   "terminologyContextName~"
+  ///   "categorySchemeDesignator^categoryValue^categoryMeaning~"
+  ///   "typeSchemeDesignator^typeValue^typeMeaning~"
+  ///   "modifierSchemeDesignator^modifierValue^modifierMeaning~"
+  ///   "anatomicContextName~"
+  ///   "regionSchemeDesignator^regionValue^regionMeaning~"
+  ///   "regionModifierSchemeDesignator^regionModifierValue^regionModifierMeaning"
   /// Note: The order of the attributes are inconsistent with the codes used in this class for compatibility reasons
   ///       (to vtkMRMLColorLogic::AddTermToTerminology)
   static std::string SerializeTerminologyEntry(

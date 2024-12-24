@@ -294,12 +294,6 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
 
   d->ComboBox->clear();
 
-  if (!d->ColorNode->GetNamesInitialised())
-  {
-    qCritical() << "qMRMLLabelComboBox::updateWidgetFromMRML - ColorNode names are NOT initialized !";
-    return;
-  }
-
   if(d->NoneEnabled)
   {
     d->ComboBox->insertItem(0, "None");

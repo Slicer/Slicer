@@ -2,8 +2,7 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
-  Queen's University, Kingston, ON, Canada. All Rights Reserved.
+  Copyright (c) Seattle Children’s Hospital d/b/a Seattle Children’s Research Institute.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -14,34 +13,36 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Csaba Pinter, PerkLab, Queen's University
-  and was supported through the Applied Cancer Research Unit program of Cancer Care
-  Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
+  This file was originally developed by Csaba Pinter, EBATINCA, S.L.
+  and was funded by by Murat Maga (Seattle Children’s Research Institute).
 
 =========================================================================*/
 
-#ifndef __qSlicerTerminologySelectorButton_h
-#define __qSlicerTerminologySelectorButton_h
+#ifndef __qSlicerTerminologyEditorButton_h
+#define __qSlicerTerminologyEditorButton_h
 
 // Qt includes
 #include <QPushButton>
 
-// Terminologies includes
-#include "qSlicerTerminologiesModuleWidgetsExport.h"
+// Colors includes
+#include "qSlicerColorsModuleWidgetsExport.h"
 
+#include "qSlicerTerminologyEditorWidget.h"
+
+// Terminologies includes
 #include "qSlicerTerminologyNavigatorWidget.h"
 #include "vtkSlicerTerminologyEntry.h"
 
-class qSlicerTerminologySelectorButtonPrivate;
+class qSlicerTerminologyEditorButtonPrivate;
 
 /// \brief Button that opens terminology selector dialog
-class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorButton : public QPushButton
+class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qSlicerTerminologyEditorButton : public QPushButton
 {
   Q_OBJECT
 
 public:
-  explicit qSlicerTerminologySelectorButton(QWidget* parent=nullptr);
-  ~qSlicerTerminologySelectorButton() override;
+  explicit qSlicerTerminologyEditorButton(QWidget* parent=nullptr);
+  ~qSlicerTerminologyEditorButton() override;
 
 #ifndef __VTK_WRAP__
   /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object
@@ -71,10 +72,10 @@ protected slots:
 protected:
   void paintEvent(QPaintEvent* event) override;
 
-  QScopedPointer<qSlicerTerminologySelectorButtonPrivate> d_ptr;
+  QScopedPointer<qSlicerTerminologyEditorButtonPrivate> d_ptr;
 private :
-  Q_DECLARE_PRIVATE(qSlicerTerminologySelectorButton);
-  Q_DISABLE_COPY(qSlicerTerminologySelectorButton);
+  Q_DECLARE_PRIVATE(qSlicerTerminologyEditorButton);
+  Q_DISABLE_COPY(qSlicerTerminologyEditorButton);
 };
 
 #endif

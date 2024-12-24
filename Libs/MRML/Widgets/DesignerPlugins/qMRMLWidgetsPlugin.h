@@ -35,9 +35,7 @@
 #include "qMRMLClipNodeDisplayWidgetPlugin.h"
 #include "qMRMLClipNodeWidgetPlugin.h"
 #include "qMRMLCollapsibleButtonPlugin.h"
-#include "qMRMLColorListViewPlugin.h"
 #include "qMRMLColorTableComboBoxPlugin.h"
-#include "qMRMLColorTableViewPlugin.h"
 #include "qMRMLCoordinatesWidgetPlugin.h"
 #include "qMRMLDisplayNodeViewComboBoxPlugin.h"
 #include "qMRMLDisplayNodeWidgetPlugin.h"
@@ -97,10 +95,7 @@ public:
             << new qMRMLClipNodeDisplayWidgetPlugin
             << new qMRMLClipNodeWidgetPlugin
             << new qMRMLCollapsibleButtonPlugin
-            << new qMRMLColorListViewPlugin
             << new qMRMLColorTableComboBoxPlugin
-            << new qMRMLColorTableViewPlugin
-            << new qMRMLColorTableViewPlugin
             << new qMRMLCoordinatesWidgetPlugin
             << new qMRMLDisplayNodeViewComboBoxPlugin
             << new qMRMLDisplayNodeWidgetPlugin

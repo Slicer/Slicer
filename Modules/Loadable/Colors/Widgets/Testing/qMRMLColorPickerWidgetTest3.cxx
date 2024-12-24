@@ -20,18 +20,18 @@
 
 // Qt includes
 #include <QApplication>
-#include <QHBoxLayout>
 #include <QTimer>
 
 // Slicer includes
 #include "vtkSlicerConfigure.h"
 
 // qMRML includes
-#include "qMRMLColorListView.h"
+#include "qMRMLColorPickerWidget.h"
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLPETProceduralColorNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -39,47 +39,29 @@
 
 // STD includes
 
-int qMRMLColorListViewTest1(int argc, char * argv [])
+int qMRMLColorPickerWidgetTest3(int argc, char * argv [])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QWidget topLevel;
-  qMRMLColorListView ColorListView;
-  qMRMLColorListView ColorListView1;
-  qMRMLColorListView ColorListView2;
+  qMRMLColorPickerWidget colorPickerWidget;
 
-  QHBoxLayout* hboxLayout = new QHBoxLayout;
-  hboxLayout->addWidget(&ColorListView);
-  hboxLayout->addWidget(&ColorListView1);
-  hboxLayout->addWidget(&ColorListView2);
-  topLevel.setLayout(hboxLayout);
+  vtkNew<vtkMRMLScene> scene;
 
   vtkNew<vtkMRMLColorTableNode> colorTableNode;
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
+  scene->AddNode(colorTableNode.GetPointer());
 
-  ColorListView.setMRMLColorNode(colorTableNode.GetPointer());
-  if (ColorListView.mrmlColorNode() != colorTableNode.GetPointer())
-  {
-    std::cerr << "qMRMLColorListView::setMRMLColorNode() failed" << std::endl;
-    return EXIT_FAILURE;
-  }
-  // for some reasons it generate a warning if the type is changed.
-  colorTableNode->NamesInitialisedOff();
+  colorPickerWidget.setMRMLScene(scene.GetPointer());
+
   colorTableNode->SetTypeToCool1();
 
   vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;
   colorPETNode->SetTypeToRainbow();
-  ColorListView2.setMRMLColorNode(colorPETNode.GetPointer());
-  if (ColorListView2.mrmlColorNode() != colorPETNode.GetPointer())
-  {
-    std::cerr << "qMRMLColorListView::setMRMLColorNode() failed" << std::endl;
-    return EXIT_FAILURE;
-  }
-  colorPETNode->SetTypeToMIP();
+  scene->AddNode(colorPETNode.GetPointer());
 
-  topLevel.show();
+  colorPickerWidget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
   {

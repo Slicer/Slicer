@@ -111,10 +111,8 @@ void qSlicerColorsModule::setup()
   {
     this->appLogic()->SetColorLogic(colorLogic);
   }
-  app->coreIOManager()->registerIO(
-    new qSlicerColorsReader(colorLogic, this));
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter(
-    "Colors", QString("ColorTableFile"),
+  app->coreIOManager()->registerIO(new qSlicerColorsReader(colorLogic, this));
+  app->coreIOManager()->registerIO(new qSlicerNodeWriter("Colors", QString("ColorTableFile"),
     QStringList() << "vtkMRMLColorNode", true, this));
 
   QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(
@@ -151,7 +149,7 @@ void qSlicerColorsModule::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerColorsModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerColorsModule::createWidgetRepresentation()
 {
   return new qSlicerColorsModuleWidget;
 }
@@ -187,9 +185,7 @@ QString qSlicerColorsModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerColorsModule::acknowledgementText()const
 {
-  QString about =
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.";
-  return about;
+  return QString("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
 }
 
 //-----------------------------------------------------------------------------
@@ -200,13 +196,15 @@ QStringList qSlicerColorsModule::contributors()const
   moduleContributors << QString("Julien Finet (Kitware)");
   moduleContributors << QString("Ron Kikinis (SPL, BWH)");
   moduleContributors << QString("Mikhail Polkovnikov (IHEP)");
+  moduleContributors << QString("Csaba Pinter (EBATINCA)");
+  moduleContributors << QString("Andras Lasso (PerkLab, Queen's)");
   return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerColorsModule::isHidden()const
+QStringList qSlicerColorsModule::dependencies()const
 {
-  return false;
+  return QStringList() << "Terminologies";
 }
 
 //-----------------------------------------------------------------------------
