@@ -703,6 +703,8 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
     ++rowIndex;
   }
 
+  colorTable->SetNumberOfRows(rowIndex);
+
   return vtkMRMLTableStorageNode::WriteTable(fullFileName, colorTable,
     this->GetFieldDelimiterCharacters(fullFileName), componentNamesMap);
 }
