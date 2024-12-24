@@ -173,10 +173,28 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessInteractionEvent(vtkMRMLInteracti
 {
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   bool processedEvent = false;
+  vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
+  if (!markupsNode)
+  {
+    return false;
+  }
+
   switch (widgetEvent)
   {
     case WidgetEventJumpCursor:
       processedEvent = ProcessWidgetJumpCursor(eventData);
+      break;
+    case WidgetEventTranslateStart:
+    case WidgetEventScaleStart:
+    case WidgetEventRotateStart:
+      // Just invoke the custom event, the interaction will be handled by the superclass
+      markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointStartInteractionEvent);
+      break;
+    case WidgetEventTranslateEnd:
+    case WidgetEventScaleEnd:
+    case WidgetEventRotateEnd:
+      // Just invoke the custom event, the interaction will be handled by the superclass
+      markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointEndInteractionEvent);
       break;
     default:
       break;
