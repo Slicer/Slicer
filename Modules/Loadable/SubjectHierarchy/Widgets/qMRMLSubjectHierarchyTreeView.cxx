@@ -61,6 +61,7 @@
 
 // qMRML includes
 #include "qMRMLItemDelegate.h"
+#include "qMRMLNodeFactory.h"
 
 // VTK includes
 #include <vtkIdList.h>
@@ -94,7 +95,7 @@ public:
   void updateNodeMenuActions();
   void updateTransformMenuActions();
 
-  /// Get list of enabled plugins \sa PluginAllowlist \sa PluginBlocklist
+  /// Get list of enabled plugins \sa PluginAllowList \sa PluginBlockList
   QList<qSlicerSubjectHierarchyAbstractPlugin*> enabledPlugins();
 
   void setSubjectHierarchyItemVisibility(vtkIdType itemID, VisibilityAction visibilityAction);
@@ -115,9 +116,11 @@ public:
 
   bool ContextMenuEnabled{ true };
   bool EditActionVisible{ true };
+  bool AddNodeMenuActionVisible{ false };
   bool SelectRoleSubMenuVisible{ false };
 
   QMenu* NodeMenu{ nullptr };
+  QList<QAction*> AddNodeActions;
   QAction* RenameAction{ nullptr };
   QAction* DeleteAction{ nullptr };
   QAction* EditAction{ nullptr };
@@ -131,8 +134,8 @@ public:
   QMenu* SceneMenu{ nullptr };
   QMenu* VisibilityMenu{ nullptr };
   QMenu* TransformMenu{ nullptr };
-  QStringList PluginAllowlist;
-  QStringList PluginBlocklist;
+  QStringList PluginAllowList;
+  QStringList PluginBlockList;
 
   /// Subject hierarchy node
   vtkWeakPointer<vtkMRMLSubjectHierarchyNode> SubjectHierarchyNode{ nullptr };
@@ -163,6 +166,9 @@ public:
   QString UseTerminologySelectorSettingsKey{ "SubjectHierarchy/UseTerminologySelector" };
   /// Use terminology selector if UseTerminologySelectorSettingsKey is empty
   bool NoSettingsUseTerminologySelector{ false };
+
+  qMRMLNodeFactory* MRMLNodeFactory{ nullptr };
+  QHash<QString, QString> NodeTypeLabels;
 };
 
 //------------------------------------------------------------------------------
@@ -175,6 +181,8 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
 void qMRMLSubjectHierarchyTreeViewPrivate::init()
 {
   Q_Q(qMRMLSubjectHierarchyTreeView);
+
+  this->MRMLNodeFactory = new qMRMLNodeFactory(q);
 
   // Set up scene model and sort and proxy model
   this->Model = new qMRMLSubjectHierarchyModel(q);
@@ -333,6 +341,19 @@ void qMRMLSubjectHierarchyTreeViewPrivate::updateSceneMenuActions()
       sceneMenuActions.append(action);
     }
   }
+
+  this->AddNodeActions.clear();
+  QStringList nodeTypes = q->nodeTypes();
+  foreach(QString nodeType, q->nodeTypes())
+  {
+    QString label = q->nodeTypeLabel(nodeType);
+    QAction* addNodeAction = new QAction(qMRMLSubjectHierarchyTreeView::tr("Create new %1").arg(label), nullptr);
+    addNodeAction->setProperty("nodeType", nodeType);
+    QObject::connect(addNodeAction, SIGNAL(triggered()), q, SLOT(addNode()));
+    this->AddNodeActions.append(addNodeAction);
+    sceneMenuActions.append(addNodeAction);
+  }
+
   // Populate menu from actions
   qSlicerSubjectHierarchyPluginLogic::buildMenuFromActions(this->SceneMenu, sceneMenuActions);
 }
@@ -425,8 +446,8 @@ QList<qSlicerSubjectHierarchyAbstractPlugin*> qMRMLSubjectHierarchyTreeViewPriva
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
   {
     QString pluginName = plugin->name();
-    bool allowlisted = (this->PluginAllowlist.isEmpty() || this->PluginAllowlist.contains(pluginName));
-    bool blocklisted = (!this->PluginBlocklist.isEmpty() && this->PluginBlocklist.contains(pluginName));
+    bool allowlisted = (this->PluginAllowList.isEmpty() || this->PluginAllowList.contains(pluginName));
+    bool blocklisted = (!this->PluginBlockList.isEmpty() && this->PluginBlockList.contains(pluginName));
     if ((allowlisted && !blocklisted) || !pluginName.compare("Default"))
     {
       enabledPluginList << plugin;
@@ -552,6 +573,11 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setSubjectHierarchyItemVisibility(vtk
   this->SubjectHierarchyNode->ItemModified(itemID);
 }
 
+//------------------------------------------------------------------------------
+CTK_GET_CPP(qMRMLSubjectHierarchyTreeView, bool, addNodeMenuActionVisible, AddNodeMenuActionVisible);
+CTK_SET_CPP(qMRMLSubjectHierarchyTreeView, bool, setAddNodeMenuActionVisible, AddNodeMenuActionVisible);
+CTK_GET_CPP(qMRMLSubjectHierarchyTreeView, QStringList, pluginAllowList, PluginAllowList);
+CTK_GET_CPP(qMRMLSubjectHierarchyTreeView, QStringList, pluginBlockList, PluginBlockList);
 
 //------------------------------------------------------------------------------
 // qMRMLSubjectHierarchyTreeView
@@ -613,6 +639,8 @@ vtkMRMLScene* qMRMLSubjectHierarchyTreeView::mrmlScene()const
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
   if (this->mrmlScene() == scene)
   {
     return;
@@ -625,6 +653,11 @@ void qMRMLSubjectHierarchyTreeView::setMRMLScene(vtkMRMLScene* scene)
   qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onMRMLSceneEndClose(vtkObject*) ) );
   qvtkReconnect( scene, vtkMRMLScene::StartBatchProcessEvent, this, SLOT( onMRMLSceneStartBatchProcess(vtkObject*) ) );
   qvtkReconnect( scene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT( onMRMLSceneEndBatchProcess(vtkObject*) ) );
+
+  d->MRMLNodeFactory->setMRMLScene(scene);
+
+  // Scene menu may need update
+  d->updateMenuActions();
 }
 
 //------------------------------------------------------------------------------
@@ -1217,10 +1250,15 @@ QString qMRMLSubjectHierarchyTreeView::nameFilter()const
 //--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setNodeTypes(const QStringList& types)
 {
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
   this->sortFilterProxyModel()->setNodeTypes(types);
 
   // Reset root item, as it may have been corrupted, when tree became empty due to the filter
   this->updateRootItem();
+
+  // Scene menu may need update
+  d->updateMenuActions();
 }
 
 //--------------------------------------------------------------------------
@@ -1449,6 +1487,7 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
   // Emit current item changed signal
   emit currentItemChanged(selectedShItems[0]);
   emit currentItemsChanged(selectedShItems);
+  emit currentNodeChanged(this->currentNode());
 }
 
 //------------------------------------------------------------------------------
@@ -1521,6 +1560,13 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
   if (!itemID || itemID == d->SubjectHierarchyNode->GetSceneItemID())
   {
     currentItemID = d->SubjectHierarchyNode->GetSceneItemID();
+  }
+
+  // "Add new ..." node actions
+  bool addNodeActionsVisible = d->AddNodeMenuActionVisible && (!currentItemID || currentItemID == d->SubjectHierarchyNode->GetSceneItemID());
+  foreach(QAction * addNodeAction, d->AddNodeActions)
+  {
+    addNodeAction->setVisible(addNodeActionsVisible);
   }
 
   // Do not show certain actions for the scene or empty area
@@ -2012,24 +2058,24 @@ bool qMRMLSubjectHierarchyTreeView::multiSelection()
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::setPluginAllowlist(QStringList allowlist)
+void qMRMLSubjectHierarchyTreeView::setPluginAllowList(QStringList allowlist)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  d->PluginAllowlist = allowlist;
+  d->PluginAllowList = allowlist;
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::setPluginBlocklist(QStringList blocklist)
+void qMRMLSubjectHierarchyTreeView::setPluginBlockList(QStringList blocklist)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  d->PluginBlocklist = blocklist;
+  d->PluginBlockList = blocklist;
 }
 
 //--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::disablePlugin(QString plugin)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
-  d->PluginBlocklist << plugin;
+  d->PluginBlockList << plugin;
 }
 
 //-----------------------------------------------------------------------------
@@ -2438,4 +2484,120 @@ bool qMRMLSubjectHierarchyTreeView::useTerminologySelector()const
   {
     return QSettings().value(d->UseTerminologySelectorSettingsKey, true).toBool();
   }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setBaseName(const QString& baseName, const QString& nodeType /* ="" */)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (!nodeType.isEmpty())
+  {
+    d->MRMLNodeFactory->setBaseName(nodeType, baseName);
+    return;
+  }
+  // If no node type is defined then we set the base name for all already specified node types
+  QStringList nodeTypes = this->nodeTypes();
+  if (nodeTypes.isEmpty())
+  {
+    qWarning("qMRMLSubjectHierarchyTreeView::setBaseName failed: no node types have been set yet");
+    return;
+  }
+  foreach(QString aNodeType, nodeTypes)
+  {
+    d->MRMLNodeFactory->setBaseName(aNodeType, baseName);
+  }
+}
+
+//-----------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyTreeView::baseName(const QString& nodeType /* ="" */)const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  if (!nodeType.isEmpty())
+  {
+    return d->MRMLNodeFactory->baseName(nodeType);
+  }
+  // If nodeType is not specified then base name of the first node type is returned.
+  QStringList nodeClasses = this->nodeTypes();
+  if (nodeClasses.isEmpty())
+  {
+    qWarning("qMRMLSubjectHierarchyTreeView::baseName failed: no node types have been set yet");
+    return QString();
+  }
+  return d->MRMLNodeFactory->baseName(nodeClasses[0]);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setNodeTypeLabel(const QString& label, const QString& nodeType)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (nodeType.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << " failed: nodeType is invalid";
+    return;
+  }
+  if (label.isEmpty())
+  {
+    d->NodeTypeLabels.remove(nodeType);
+  }
+  else
+  {
+    d->NodeTypeLabels[nodeType] = label;
+  }
+}
+
+//-----------------------------------------------------------------------------
+QString qMRMLSubjectHierarchyTreeView::nodeTypeLabel(const QString& nodeType)const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  // If a label was explicitly specified then use that
+  if (d->NodeTypeLabels.contains(nodeType))
+  {
+    return d->NodeTypeLabels[nodeType];
+  }
+  // Otherwise use the node tag
+  if (this->mrmlScene())
+  {
+    QString label = QString::fromStdString(this->mrmlScene()->GetTypeDisplayNameByClassName(nodeType.toStdString()));
+    if (!label.isEmpty())
+    {
+      return label;
+    }
+  }
+  // Otherwise just label the node as "node"
+  return tr("node");
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::addNode()
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  QAction* action = qobject_cast<QAction*>(this->sender());
+  if (!action)
+  {
+    return;
+  }
+  QString nodeType = action->property("nodeType").toString();
+  this->addNode(nodeType);
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLNode* qMRMLSubjectHierarchyTreeView::addNode(QString nodeType)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  if (!this->nodeTypes().contains(nodeType))
+  {
+    qWarning("qMRMLSubjectHierarchyTreeView::addNode() attempted with node type %s, which is not among the allowed node types", qPrintable(nodeType));
+    return nullptr;
+  }
+  // Create the MRML node via the MRML Scene
+  vtkMRMLNode* newNode = d->MRMLNodeFactory->createNode(nodeType);
+  // The created node is appended at the bottom of the current list
+  if (newNode == nullptr)
+  {
+    qWarning("qMRMLSubjectHierarchyTreeView::addNode() failed with node type %s", qPrintable(nodeType));
+    return nullptr;
+  }
+  this->setCurrentNode(newNode);
+  emit this->nodeAddedByUser(newNode);
+  return newNode;
 }
