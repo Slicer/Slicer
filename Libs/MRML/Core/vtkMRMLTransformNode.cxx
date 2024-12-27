@@ -335,8 +335,8 @@ void vtkMRMLTransformNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*
 else
 {
   // shallow-copy
-  vtkSetAndObserveMRMLObjectMacro(this->TransformToParent, node->TransformToParent);
-  vtkSetAndObserveMRMLObjectMacro(this->TransformFromParent, node->TransformFromParent);
+  vtkSetAndObserveMRMLObjectMacroNoWarning(this->TransformToParent, node->TransformToParent);
+  vtkSetAndObserveMRMLObjectMacroNoWarning(this->TransformFromParent, node->TransformFromParent);
 }
 
   // copy the center of transformation

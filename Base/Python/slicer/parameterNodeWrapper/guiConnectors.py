@@ -420,9 +420,12 @@ class QComboBoxToEnumConnector(GuiConnector):
 
         self._labelToEnum = [(labelFunc(e), e) for e in underlyingType]
 
+        # We lose the selection when we clear out the items, so we need to save it
+        savedSelection = self.read()
         self._widget.clear()
         for label, _ in self._labelToEnum:
             self._widget.addItem(label)
+        self.write(savedSelection)
 
     def _connect(self):
         self._widget.currentIndexChanged.connect(self.changed)

@@ -226,6 +226,9 @@ public:
   bool UnorderedEffectsVisible;
   int EffectColumnCount;
 
+  bool MaskingSectionVisible{ true };
+  bool SpecifyGeometryButtonVisible{ true };
+
   /// List of registered effect instances
   QList<qSlicerSegmentEditorAbstractEffect*> RegisteredEffects;
 
@@ -296,6 +299,10 @@ public:
   QString DefaultTerminologyEntrySettingsKey;
   QString DefaultTerminologyEntry;
 };
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(qMRMLSegmentEditorWidget, bool, maskingSectionVisible, MaskingSectionVisible);
+CTK_GET_CPP(qMRMLSegmentEditorWidget, bool, specifyGeometryButtonVisible, SpecifyGeometryButtonVisible);
 
 //-----------------------------------------------------------------------------
 qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEditorWidget& object)
@@ -1696,7 +1703,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
     d->OptionsGroupBox->show();
     d->OptionsGroupBox->setTitle(activeEffect->title());
     d->EffectHelpBrowser->setCollapsibleText(activeEffect->helpText());
-    d->MaskingGroupBox->show();
+    d->MaskingGroupBox->setVisible(d->MaskingSectionVisible);
   }
   else
   {
@@ -3028,7 +3035,7 @@ void qMRMLSegmentEditorWidget::setSourceVolumeNodeSelectorVisible(bool visible)
   Q_D(qMRMLSegmentEditorWidget);
   d->SourceVolumeNodeComboBox->setVisible(visible);
   d->SourceVolumeNodeLabel->setVisible(visible);
-  d->SpecifyGeometryButton->setVisible(visible);
+  d->SpecifyGeometryButton->setVisible(visible && d->SpecifyGeometryButtonVisible);
 }
 
 //-----------------------------------------------------------------------------
@@ -3851,4 +3858,49 @@ bool qMRMLSegmentEditorWidget::jumpToSelectedSegmentEnabled()const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   return d->SegmentsTableView->jumpToSelectedSegmentEnabled();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setMaskingSectionVisible(bool visible)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->MaskingSectionVisible = visible;
+  this->updateEffectsSectionFromMRML();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setSpecifyGeometryButtonVisible(bool visible)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->SpecifyGeometryButtonVisible = visible;
+  d->SpecifyGeometryButton->setVisible(d->SourceVolumeNodeComboBox->isVisible() && d->SpecifyGeometryButtonVisible);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setShow3DButtonVisible(bool visible)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->Show3DButton->setVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLSegmentEditorWidget::show3DButtonVisible()const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->Show3DButton->isVisible();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setAddRemoveSegmentButtonsVisible(bool visible)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->AddSegmentButton->setVisible(visible);
+  d->RemoveSegmentButton->setVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLSegmentEditorWidget::addRemoveSegmentButtonsVisible()const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->AddSegmentButton->isVisible() && d->RemoveSegmentButton->isVisible();
 }
