@@ -19,8 +19,6 @@ set(${KIT}_SRCS
   qSlicerPresetComboBox.cxx
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
-  qSlicer${MODULE_NAME}ModuleWidget.cxx
-  qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}PropertiesWidget.cxx
   qSlicer${MODULE_NAME}PropertiesWidget.h
   qSlicer${MODULE_NAME}PresetComboBox.cxx
@@ -37,7 +35,6 @@ set(${KIT}_MOC_SRCS
   qSlicerMulti${MODULE_NAME}PropertiesWidget.h
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
-  qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}PropertiesWidget.h
   qSlicer${MODULE_NAME}PresetComboBox.h
   qMRMLVolumePropertyNodeWidget.h
@@ -49,7 +46,6 @@ set(${KIT}_UI_SRCS
   ../Resources/UI/qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.ui
   ../Resources/UI/qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.ui
   ../Resources/UI/qSlicerMulti${MODULE_NAME}PropertiesWidget.ui
-  ../Resources/UI/qSlicer${MODULE_NAME}ModuleWidget.ui
   ../Resources/UI/qSlicer${MODULE_NAME}PresetComboBox.ui
   )
 
@@ -59,7 +55,6 @@ set(${KIT}_RESOURCES
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleLogic
   vtkSlicer${MODULE_NAME}ModuleMRML
-  qSlicerMarkupsModuleWidgets
   )
 
 #-----------------------------------------------------------------------------
