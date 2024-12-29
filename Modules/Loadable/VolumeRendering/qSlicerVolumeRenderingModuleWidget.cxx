@@ -90,7 +90,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
 {
   this->Ui_qSlicerVolumeRenderingModuleWidget::setupUi(q);
 
-  QObject::connect(this->VolumeNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+  QObject::connect(this->VolumeNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(onCurrentMRMLVolumeNodeChanged(vtkMRMLNode*)));
   // Inputs
   QObject::connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)),
@@ -188,7 +188,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
 
   // Default values
   this->InputsCollapsibleButton->setCollapsed(true);
-  this->InputsCollapsibleButton->setEnabled(false);;
+  this->InputsCollapsibleButton->setEnabled(false);
   this->AdvancedCollapsibleButton->setCollapsed(true);
   this->AdvancedCollapsibleButton->setEnabled(false);
 
@@ -285,14 +285,14 @@ void qSlicerVolumeRenderingModuleWidget::setup()
 vtkMRMLVolumeNode* qSlicerVolumeRenderingModuleWidget::mrmlVolumeNode()const
 {
   Q_D(const qSlicerVolumeRenderingModuleWidget);
-  return vtkMRMLVolumeNode::SafeDownCast(d->VolumeNodeComboBox->currentNode());
+  return vtkMRMLVolumeNode::SafeDownCast(d->VolumeNodeSelector->currentNode());
 }
 
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
-  d->VolumeNodeComboBox->setCurrentNode(volumeNode);
+  d->VolumeNodeSelector->setCurrentNode(volumeNode);
 }
 
 // --------------------------------------------------------------------------
@@ -385,6 +385,7 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->VisibilityCheckBox->setChecked(displayNode ? displayNode->GetVisibility() : false);
 
   // Input section
+  d->InputsCollapsibleButton->setEnabled(displayNode != nullptr);
 
   // Volume property selector
   // Update shift slider range and set transfer function extents when volume property node is modified
@@ -683,7 +684,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
   volumeRenderingLogic->ChangeVolumeRenderingMethod(renderingClassName.toUtf8());
 
   // Perform necessary setup steps for the new display node for the current volume
-  this->onCurrentMRMLVolumeNodeChanged(d->VolumeNodeComboBox->currentNode());
+  this->onCurrentMRMLVolumeNodeChanged(d->VolumeNodeSelector->currentNode());
 }
 
 // --------------------------------------------------------------------------
@@ -900,7 +901,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node,
     {
       return false;
     }
-    d->VolumeNodeComboBox->setCurrentNode(displayableNode);
+    d->VolumeNodeSelector->setCurrentNode(displayableNode);
     return true;
   }
 
@@ -931,7 +932,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node,
       {
         return false;
       }
-      d->VolumeNodeComboBox->setCurrentNode(displayableNode);
+      d->VolumeNodeSelector->setCurrentNode(displayableNode);
       return true;
     }
   }
@@ -955,7 +956,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node,
     {
       return false;
     }
-    d->VolumeNodeComboBox->setCurrentNode(displayableNode);
+    d->VolumeNodeSelector->setCurrentNode(displayableNode);
     return true;
   }
 
