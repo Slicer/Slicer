@@ -30,6 +30,7 @@ Customized editions of Slicer can be generated without changing Slicer source co
 - `Slicer_QTLOADABLEMODULES_DISABLED`: Built-in Qt loadable modules that will be removed from the application. List contains module names, separated by semicolon character.
 - `Slicer_QTSCRIPTEDMODULES_DISABLED`: Built-in scripted loadable modules that will be removed from the application. List contains module names, separated by semicolon character.
 - `Slicer_USE_PYTHONQT_WITH_OPENSSL`: enable/disable building the application with SSL support (ON/OFF)
+- `Slicer_USE_DCMTK_WITH_OPENSSL`: enable/disable building DCMTK with SSL support (ON/OFF)
 - `Slicer_USE_SimpleITK`: enable/disable SimpleITK support (ON/OFF)
 - `Slicer_BUILD_SimpleFilters`: enable/disable building SimpleFilters. Requires SimpleITK. (ON/OFF)
 - `Slicer_EXTENSION_SOURCE_DIRS`: Defines additional extensions that will be included in the application package as built-in modules. Full paths of extension source directories has to be specified, separated by semicolons.

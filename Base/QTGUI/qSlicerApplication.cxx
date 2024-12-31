@@ -122,6 +122,11 @@
 #include <vtkNew.h>
 #include <vtkSMP.h> // For VTK_SMP_BACKEND
 
+// DCMTK includes
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+# include <dcmtk/dcmdata/dcuid.h> // For OFFIS_DCMTK_VERSION_*
+#endif
+
 #ifdef Slicer_USE_PYTHONQT
 
 // Custom Python completer that temporarily disables logging when reading list of attributes.
@@ -1119,6 +1124,9 @@ void qSlicerApplication::logApplicationInformation() const
       << "CPU "
       << "VTK configuration "
       << "Qt configuration "
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+      << "DCMTK configuration "
+#endif
       << "Internationalization "
       << "Developer mode "
       << "Application path "
@@ -1285,6 +1293,19 @@ void qSlicerApplication::logApplicationInformation() const
 #endif
     surfaceFormat.majorVersion(), surfaceFormat.minorVersion(),
     qPrintable(openGLProfileStr));
+
+  // DCMTK configuration
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+  qDebug("%s: version %s, %s",
+    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
+    OFFIS_DCMTK_VERSION_STRING,
+# ifdef Slicer_USE_DCMTK_WITH_OPENSSL
+    "with SSL"
+# else
+    "no SSL"
+# endif
+   );
+#endif
 
   QSettings settings;
 
