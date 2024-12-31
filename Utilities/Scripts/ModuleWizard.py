@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import sys
-import os
 import fnmatch
+import os
+import sys
 
 
 def findSource(dir):

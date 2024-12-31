@@ -3,9 +3,8 @@ import os
 import qt
 import vtk
 
-from slicer.i18n import tr as _
-
 from SegmentEditorEffects import *
+from slicer.i18n import tr as _
 
 
 class SegmentEditorFillBetweenSlicesEffect(AbstractScriptedSegmentEditorAutoCompleteEffect):

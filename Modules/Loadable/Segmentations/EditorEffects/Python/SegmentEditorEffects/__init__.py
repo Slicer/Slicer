@@ -1,8 +1,11 @@
+import importlib
+import logging
+import traceback
+
+from .AbstractScriptedSegmentEditorAutoCompleteEffect import *
 from .AbstractScriptedSegmentEditorEffect import *
 from .AbstractScriptedSegmentEditorLabelEffect import *
 from .AbstractScriptedSegmentEditorPaintEffect import *
-from .AbstractScriptedSegmentEditorAutoCompleteEffect import *
-
 from .SegmentEditorDrawEffect import *
 from .SegmentEditorFillBetweenSlicesEffect import *
 from .SegmentEditorGrowFromSeedsEffect import *
@@ -14,12 +17,7 @@ from .SegmentEditorMarginEffect import *
 from .SegmentEditorMaskVolumeEffect import *
 from .SegmentEditorSmoothingEffect import *
 from .SegmentEditorThresholdEffect import *
-
 from SegmentEditorEffects import *
-
-import logging
-import importlib
-import traceback
 
 editorEffectNames = [
     "SegmentEditorDrawEffect",
@@ -37,9 +35,10 @@ editorEffectNames = [
 
 
 def registerEffects():
-    import SegmentEditorEffects
-    import traceback
     import logging
+    import traceback
+
+    import SegmentEditorEffects
 
     effectsPath = SegmentEditorEffects.__path__[0].replace("\\", "/")
 

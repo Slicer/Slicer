@@ -1,6 +1,6 @@
-import slicer
 import os
 
+import slicer
 from slicer.ScriptedLoadableModule import *
 
 
