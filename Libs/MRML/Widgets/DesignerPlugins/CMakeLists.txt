@@ -25,12 +25,8 @@ set(${KIT}_SRCS
   qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.cxx
   qMRMLCollapsibleButtonPlugin.h
-  qMRMLColorListViewPlugin.cxx
-  qMRMLColorListViewPlugin.h
   qMRMLColorTableComboBoxPlugin.cxx
   qMRMLColorTableComboBoxPlugin.h
-  qMRMLColorTableViewPlugin.cxx
-  qMRMLColorTableViewPlugin.h
   qMRMLCoordinatesWidgetPlugin.cxx
   qMRMLCoordinatesWidgetPlugin.h
   qMRMLDisplayNodeViewComboBoxPlugin.cxx
@@ -121,9 +117,7 @@ set(${KIT}_MOC_SRCS
   qMRMLClipNodeDisplayWidgetPlugin.h
   qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.h
-  qMRMLColorListViewPlugin.h
   qMRMLColorTableComboBoxPlugin.h
-  qMRMLColorTableViewPlugin.h
   qMRMLCoordinatesWidgetPlugin.h
   qMRMLDisplayNodeViewComboBoxPlugin.h
   qMRMLDisplayNodeWidgetPlugin.h

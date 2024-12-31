@@ -20,57 +20,67 @@
 
 // Qt includes
 #include <QApplication>
+#include <QHBoxLayout>
 #include <QTimer>
 
 // Slicer includes
 #include "vtkSlicerConfigure.h"
 
-// CTK includes
-#include <ctkColorDialog.h>
-
 // qMRML includes
-#include "qMRMLColorPickerWidget.h"
+#include "qMRMLColorListView.h"
+#include "qMRMLWidget.h"
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLPETProceduralColorNode.h>
-#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>
-#include "qMRMLWidget.h"
 
-int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
+int qMRMLColorListViewTest1(int argc, char * argv [])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  qMRMLColorPickerWidget colorPickerWidget;
+  QWidget topLevel;
+  qMRMLColorListView ColorListView;
+  qMRMLColorListView ColorListView1;
+  qMRMLColorListView ColorListView2;
 
-  vtkNew<vtkMRMLScene> scene;
+  QHBoxLayout* hboxLayout = new QHBoxLayout;
+  hboxLayout->addWidget(&ColorListView);
+  hboxLayout->addWidget(&ColorListView1);
+  hboxLayout->addWidget(&ColorListView2);
+  topLevel.setLayout(hboxLayout);
 
   vtkNew<vtkMRMLColorTableNode> colorTableNode;
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
-  scene->AddNode(colorTableNode.GetPointer());
 
-  colorPickerWidget.setMRMLScene(scene.GetPointer());
-
-  // for some reasons it generate a warning if the type is changed.
-  colorTableNode->NamesInitialisedOff();
+  ColorListView.setMRMLColorNode(colorTableNode.GetPointer());
+  if (ColorListView.mrmlColorNode() != colorTableNode.GetPointer())
+  {
+    std::cerr << "qMRMLColorListView::setMRMLColorNode() failed" << std::endl;
+    return EXIT_FAILURE;
+  }
   colorTableNode->SetTypeToCool1();
 
   vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;
   colorPETNode->SetTypeToRainbow();
-  scene->AddNode(colorPETNode.GetPointer());
+  ColorListView2.setMRMLColorNode(colorPETNode.GetPointer());
+  if (ColorListView2.mrmlColorNode() != colorPETNode.GetPointer())
+  {
+    std::cerr << "qMRMLColorListView::setMRMLColorNode() failed" << std::endl;
+    return EXIT_FAILURE;
+  }
+  colorPETNode->SetTypeToMIP();
 
-  ctkColorDialog::addDefaultTab(&colorPickerWidget, "Extra", SIGNAL(colorSelected(QColor)));
+  topLevel.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
   {
-    // quits the getColor dialog event loop.
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
-  ctkColorDialog::getColor(Qt::red, nullptr, "", ctkColorDialog::ColorDialogOptions());
-  return EXIT_SUCCESS;
+
+  return app.exec();
 }
