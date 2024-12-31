@@ -228,7 +228,8 @@ class DICOM(ScriptedLoadableModule):
             logging.error("Failed to start DICOM listener. Process start failed.")
             return False
         slicer.dicomListener = dicomListener
-        logging.info("DICOM C-Store SCP service started at port " + str(slicer.dicomListener.port))
+        logging.info(f"DICOM C-Store SCP service started at port {slicer.dicomListener.port} "
+            f"{'with TLS' if dicomListener.tlsEnabled else 'without TLS'}")
 
     def stopListener(self):
         if hasattr(slicer, "dicomListener"):
@@ -849,7 +850,10 @@ class DICOMWidget(ScriptedLoadableModuleWidget):
                 port = str(slicer.dicomListener.port)
             else:
                 port = _("unknown")  #: used when port number is not defined
-            self.ui.listenerStateLabel.text = _("running at port %s") % port
+            if not slicer.dicomListener.tlsEnabled:
+                self.ui.listenerStateLabel.text = _("running at port %s") % port
+            else:
+                self.ui.listenerStateLabel.text = _("running at port %s with TLS") % port
             self.ui.toggleListener.checked = True
 
     def onListenerToAddFile(self):

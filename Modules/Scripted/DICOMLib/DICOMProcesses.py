@@ -145,13 +145,128 @@ class DICOMProcess:
             self.process = None
 
 
-class DICOMCommand(DICOMProcess):
+class DICOMProcessTLSMixin:
+    r"""Provides Transport Layer Security (TLS) support for DCMTK-based DICOM processes.
+
+    This mixin includes properties and methods to manage TLS-related configurations,
+    such as private keys, certificates, and Certificate Authority (CA) files. It
+    facilitates building arguments for starting DCMTK processes like ``storescp`` (server)
+    or ``storescu`` (client).
+
+    Since the TLS private key and certificate may vary per process, any class
+    leveraging this mixin **must** set :attr:`tlsSettingsKeyPrefix` before calling
+    :func:`tlsArguments`. For example, if the prefix is set to ``"Client"``, the
+    corresponding application settings entries would look like this::
+
+        [DICOM]
+        ...
+        ClientTLSPrivateKey=/path/to/mycert/key1
+        ClientTLSCertFile=/path/to/mycert/cert1
+        ...
+
+    If multiple CA certificates are needed, they can be specified in the
+    application settings under the DICOM group using a settings array named
+    `CACertFiles`. Example::
+
+        [DICOM]
+        ...
+        CACertFiles\1\path=/path/to/myca/cacert1.pem
+        CACertFiles\2\path=/path/to/myca/cacert2.pem
+        CACertFiles\size=2
+        ...
+    """
+
+    def __init__(self, *args, **kwargs):
+        self._tlsSettingsKeyPrefix = None
+        super().__init__(*args, **kwargs)
+
+    @property
+    def tlsSettingsKeyPrefix(self) -> str:
+        """Get the prefix used to look up TLS-related settings."""
+        return self._tlsSettingsKeyPrefix
+
+    @tlsSettingsKeyPrefix.setter
+    def tlsSettingsKeyPrefix(self, value: str):
+        """Set the prefix to look-up TLS-related settings."""
+        if not isinstance(value, str):
+            raise TypeError("tlsSettingsKeyPrefix must be a string")
+        self._tlsSettingsKeyPrefix = value
+
+    @property
+    def tlsPrivateKey(self) -> str:
+        """Retrieve the path to the private key for TLS.
+
+        :return: Path to the private key if :attr:`tlsSettingsKeyPrefix` is set, otherwise ``None``.
+        """
+        if self.tlsSettingsKeyPrefix:
+            return qt.QSettings().value(f"DICOM/{self.tlsSettingsKeyPrefix}TLSPrivateKey")
+        else:
+            return None
+
+    @property
+    def tlsCertFile(self) -> str:
+        """Retrieve the path to the TLS certificate file.
+
+        :return: Path to the certificate file if :attr:`tlsSettingsKeyPrefix` is set, otherwise ``None``.
+        """
+        if self.tlsSettingsKeyPrefix:
+            return qt.QSettings().value(f"DICOM/{self.tlsSettingsKeyPrefix}TLSCertFile")
+        else:
+            return None
+
+    @property
+    def tlsEnabled(self) -> bool:
+        """Determine if TLS is enabled based on the availability of a private key and certificate.
+
+        :return: ``True`` if both :attr:`tlsPrivateKey` and :attr:`tlsCertFile` are available, otherwise ``False``.
+        """
+        return self.tlsPrivateKey is not None and self.tlsCertFile is not None
+
+    @property
+    def caCertFiles(self) -> list[str]:
+        r"""Retrieve the list of Certificate Authority (CA) certificate file paths.
+
+        Reads the settings array `DICOM/CACertFiles` and returns the file paths.
+
+        .. hint::
+
+            Application settings should include entries like the following::
+
+              [DICOM]
+              ...
+              CACertFiles\1\path=/path/to/myca/cacert.pem
+              CACertFiles\size=1
+              ...
+        """
+        caCertFiles = []
+        settings = qt.QSettings()
+        numberOfCACertFiles = settings.beginReadArray("DICOM/CACertFiles")
+        for idx in range(numberOfCACertFiles):
+            settings.setArrayIndex(idx)
+            caCertFiles.append(settings.value("path"))
+        settings.endArray()
+        return caCertFiles
+
+    def tlsArguments(self) -> list[str]:
+        """Generate a list of arguments for enabling TLS in a DCMTK DICOM process.
+
+        Includes private key, certificate file, and optional CA certificate files.
+        """
+        args = []
+        if self.tlsEnabled:
+            args.extend(["+tls", self.tlsPrivateKey, self.tlsCertFile])
+        for caCertFile in self.caCertFiles:
+            args.extend(["--add-cert-file", caCertFile])
+        return args
+
+
+class DICOMCommand(DICOMProcess, DICOMProcessTLSMixin):
     """Run a generic dcmtk command and return the stdout"""
 
     def __init__(self, cmd: str, args: list[str]):
         super().__init__()
         self.executable = self.exeDir + "/" + cmd + self.exeExtension
-        self.args = args
+        self._args = args
 
     def start(self) -> qt.QByteArray:
         """
@@ -161,6 +276,7 @@ class DICOMCommand(DICOMProcess):
             from the DICOM process. \
             https://doc.qt.io/qt-5/qprocess.html#readAllStandardOutput
         """
+        self.args = self._args + self.tlsArguments()
         super().start(self.executable, self.args)
         logging.debug(("DICOM process running: ", self.executable, self.args))
         self.process.waitForFinished()
@@ -169,7 +285,7 @@ class DICOMCommand(DICOMProcess):
         return self._stdout
 
 
-class DICOMStoreSCPProcess(DICOMProcess):
+class DICOMStoreSCPProcess(DICOMProcess, DICOMProcessTLSMixin):
     """helper class to run dcmtk's storescp
     Code here depends only on python and DCMTK executables
     TODO: it might make sense to refactor this as a generic tool
@@ -180,6 +296,8 @@ class DICOMStoreSCPProcess(DICOMProcess):
 
     def __init__(self, incomingDataDir, incomingPort=None):
         super().__init__()
+
+        self.tlsSettingsKeyPrefix = "Storage"
 
         self.incomingDataDir = incomingDataDir
         if not os.path.exists(self.incomingDataDir):
@@ -216,6 +334,7 @@ class DICOMStoreSCPProcess(DICOMProcess):
                               % (self.dcmdumpExecutable, self.incomingDataDir)
         args = [str(self.port), "--accept-all", "--output-directory", self.incomingDataDir, "--exec-sync",
                 "--exec-on-reception", onReceptionCallback]
+        args += self.tlsArguments()
         logging.debug("Starting storescp process")
         super().start(self.storescpExecutable, args)
         self.process.connect("readyReadStandardOutput()", self.readFromStandardOutput)
@@ -477,7 +596,7 @@ class DICOMSender:
         self.progressCallback = progressCallback or self._defaultProgressCallback
         if self.protocol.upper() == "DIMSE" and auth:
             logging.warning(
-                f"Authentication is not currently supported for {self.protocol} protocol.",
+                f"HTTP-based authentication is only supported for DICOMweb protocol.",
             )
         self.auth = auth or getGlobalDICOMAuth()
 
@@ -566,6 +685,7 @@ class DICOMSender:
         # Execute SCU CLI program and wait for termination. Uses super().start() to access the
         # to initialize the background process and wait for completion of the transfer.
         storeCommand = DICOMCommand(STORESCU_COMMAND, args)
+        storeCommand.tlsSettingsKeyPrefix = "Client"
         storeCommand.start()
         return not (
             storeCommand.process.ExitStatus() == qt.QProcess.CrashExit
