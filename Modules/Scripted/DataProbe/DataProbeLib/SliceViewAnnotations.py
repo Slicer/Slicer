@@ -70,7 +70,7 @@ class SliceAnnotations(VTKObservationMixin):
             "4-Bg-SeriesDate": {"text": "", "category": "B"},
             "5-Fg-SeriesDate": {"text": "", "category": "B"},
             "6-Bg-SeriesTime": {"text": "", "category": "C"},
-            "7-Bg-SeriesTime": {"text": "", "category": "C"},
+            "7-Fg-SeriesTime": {"text": "", "category": "C"},
             "8-Bg-SeriesDescription": {"text": "", "category": "C"},
             "9-Fg-SeriesDescription": {"text": "", "category": "C"},
         })
