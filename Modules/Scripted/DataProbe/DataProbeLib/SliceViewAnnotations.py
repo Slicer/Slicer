@@ -77,7 +77,7 @@ class SliceAnnotations(VTKObservationMixin):
         # Top Right Corner Text
         self.cornerTexts.append({
             "1-Institution-Name": {"text": "", "category": "B"},
-            "2-Referring-Phisycian": {"text": "", "category": "B"},
+            "2-Referring-Physician": {"text": "", "category": "B"},
             "3-Manufacturer": {"text": "", "category": "C"},
             "4-Model": {"text": "", "category": "C"},
             "5-Patient-Position": {"text": "", "category": "A"},
@@ -585,7 +585,7 @@ class SliceAnnotations(VTKObservationMixin):
             # top right corner annotation would be hidden if view height is less than 260 pixels
             if self.topRight:
                 self.cornerTexts[3]["1-Institution-Name"]["text"] = dicomDic["Institution Name"]
-                self.cornerTexts[3]["2-Referring-Phisycian"]["text"] = dicomDic["Referring Physician Name"].replace("^", ", ")
+                self.cornerTexts[3]["2-Referring-Physician"]["text"] = dicomDic["Referring Physician Name"].replace("^", ", ")
                 self.cornerTexts[3]["3-Manufacturer"]["text"] = dicomDic["Manufacturer"]
                 self.cornerTexts[3]["4-Model"]["text"] = dicomDic["Model"]
                 self.cornerTexts[3]["5-Patient-Position"]["text"] = dicomDic["Patient Position"]
