@@ -43,6 +43,7 @@
 // MRML includes
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSubjectHierarchyNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
@@ -253,6 +254,56 @@ void qSlicerTransformsModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::enter()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+
+  // Connect SH item modified event so that widget state is updated when a display node is created
+  // on the currently selected item (when color is set to a folder)
+  vtkMRMLSubjectHierarchyNode* shNode = d->TransformNodeSelector->subjectHierarchyNode();
+  if (shNode)
+  {
+    qvtkConnect(shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
+      this, SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
+  }
+  else
+  {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+  }
+
+  this->Superclass::enter();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::exit()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+
+  // Disconnect SH node modified when module is not active
+  vtkMRMLSubjectHierarchyNode* shNode = d->TransformNodeSelector->subjectHierarchyNode();
+  if (shNode)
+  {
+    qvtkDisconnect(shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent,
+      this, SLOT(onSubjectHierarchyItemModified(vtkObject*, void*)));
+  }
+  else
+  {
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
+  }
+
+  this->Superclass::exit();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::onSubjectHierarchyItemModified(vtkObject* vtkNotUsed(caller), void* vtkNotUsed(callData))
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  // Refresh the display node section. This is necessary because it is possible that the display node did not exist yet
+  // when the TransformDisplayNodeWidget was set in the widget.
+  d->TransformDisplayNodeWidget->setMRMLTransformNode(d->MRMLTransformNode);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::onTranslateFirstButtonPressed(bool checked)
 {
   Q_D(qSlicerTransformsModuleWidget);
@@ -270,27 +321,44 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(node);
 
+  bool isTransform = (transformNode != nullptr);
   bool isLinearTransform = (transformNode!=nullptr && transformNode->IsLinear());
   bool isCompositeTransform = (transformNode!=nullptr && transformNode->IsComposite());
 
   // Enable/Disable CoordinateReference, identity, split buttons, MatrixViewGroupBox, and
   // Min/Max translation inputs
 
-  d->InvertPushButton->setEnabled(transformNode != nullptr);
+  d->InvertPushButton->setEnabled(isTransform);
+  d->TransformToolButton->setEnabled(isTransform);
+  d->UntransformToolButton->setEnabled(isTransform);
+  d->HardenToolButton->setEnabled(isTransform);
+  d->TransformableTreeView->setEnabled(isTransform);
+  d->TransformedTreeView->setEnabled(isTransform);
+  d->ConvertCollapsibleButton->setEnabled(isTransform);
 
   d->TranslateFirstToolButton->setEnabled(isLinearTransform);
   d->IdentityPushButton->setEnabled(isLinearTransform);
   d->MatrixViewGroupBox->setEnabled(isLinearTransform);
 
-  d->TranslateFirstToolButton->setVisible(isLinearTransform);
-  d->MatrixViewGroupBox->setVisible(isLinearTransform);
-  d->TranslationSliders->setVisible(isLinearTransform);
-  d->RotationSliders->setVisible(isLinearTransform);
-
-  d->CopyTransformToolButton->setVisible(isLinearTransform);
-  d->PasteTransformToolButton->setVisible(isLinearTransform);
+  // Do not show/hide the large matrix view group box when clicking on a folder or scene node
+  // to reduce the GUI layout jumping around.
+  if (isLinearTransform || (isTransform && !isLinearTransform))
+  {
+    d->MatrixViewGroupBox->setVisible(isLinearTransform);
+    d->TranslationSliders->setVisible(isLinearTransform);
+    d->RotationSliders->setVisible(isLinearTransform);
+    d->TranslateFirstToolButton->setVisible(isLinearTransform);
+    d->CopyTransformToolButton->setVisible(isLinearTransform);
+    d->PasteTransformToolButton->setVisible(isLinearTransform);
+  }
 
   d->SplitPushButton->setVisible(isCompositeTransform);
+
+  d->TranslationSliders->setMRMLTransformNode(transformNode);
+  d->RotationSliders->setMRMLTransformNode(transformNode);
+  d->MatrixWidget->setMRMLTransformNode(transformNode);
+  d->TransformDisplayNodeWidget->setMRMLTransformNode(transformNode);
+  d->TransformInfoWidget->setMRMLTransformNode(transformNode);
 
   QStringList nodeTypes;
   // If no transform node, it would show the entire scene, lets shown none

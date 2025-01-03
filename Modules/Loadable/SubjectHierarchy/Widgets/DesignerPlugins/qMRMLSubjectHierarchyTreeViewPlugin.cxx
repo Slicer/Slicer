@@ -49,6 +49,8 @@ QString qMRMLSubjectHierarchyTreeViewPlugin::domXml() const
     "  <property name=\"includeNodeAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
     "  <property name=\"excludeItemAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
     "  <property name=\"excludeNodeAttributeNamesFilter\"> <stringlist notr=\"true\"/> </property>\n"
+    "  <property name=\"pluginAllowList\"> <stringlist notr=\"true\"/> </property>\n"
+    "  <property name=\"pluginBlockList\"> <stringlist notr=\"true\"/> </property>\n"
     "</widget>\n"
     "</ui>\n";
 }

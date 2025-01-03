@@ -45,6 +45,8 @@ public:
   /// Reimplemented for internal reasons
   void setMRMLScene(vtkMRMLScene* scene) override;
 
+  void enter() override;
+  void exit() override;
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 public slots:
@@ -64,6 +66,10 @@ protected:
   void setup() override;
 
 protected slots:
+
+  /// Called when a subject hierarchy item is modified.
+  /// Updates current item selection to reflect changes in item (such as display node creation)
+  void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
 
   void onTranslateFirstButtonPressed(bool checked);
   void onNodeSelected(vtkMRMLNode* node);

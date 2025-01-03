@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>909</height>
+    <width>370</width>
+    <height>946</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,43 +30,99 @@
     <number>4</number>
    </property>
    <item>
+    <widget class="ctkExpandableWidget" name="ResizableFrame_2">
+     <property name="orientations">
+      <set>Qt::Vertical</set>
+     </property>
+     <property name="sizeGripInside">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_9">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="qMRMLSubjectHierarchyTreeView" name="MRMLNodeSelector_Segmentation">
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::InternalMove</enum>
+        </property>
+        <property name="indentation">
+         <number>12</number>
+        </property>
+        <property name="editMenuActionVisible">
+         <bool>false</bool>
+        </property>
+        <property name="addNodeMenuActionVisible">
+         <bool>true</bool>
+        </property>
+        <property name="multiSelection">
+         <bool>true</bool>
+        </property>
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLSegmentationNode</string>
+         </stringlist>
+        </property>
+        <property name="hideChildNodeTypes">
+         <stringlist notr="true"/>
+        </property>
+        <property name="idColumnVisible">
+         <bool>false</bool>
+        </property>
+        <property name="colorColumnVisible">
+         <bool>false</bool>
+        </property>
+        <property name="transformColumnVisible">
+         <bool>false</bool>
+        </property>
+        <property name="pluginAllowList">
+         <stringlist notr="true">
+          <string>Segmentations</string>
+          <string>Folder</string>
+          <string>Visibility</string>
+         </stringlist>
+        </property>
+        <property name="excludeItemAttributeNamesFilter">
+         <stringlist notr="true">
+          <string>segmentID</string>
+         </stringlist>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <layout class="QGridLayout" name="gridLayout_4">
      <property name="spacing">
       <number>4</number>
      </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_ActiveSegmentation">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_ReferenceVolumeName">
        <property name="text">
-        <string> Segmentation:</string>
+        <string/>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="0" column="0">
       <widget class="QLabel" name="label_ReferenceVolumeText">
        <property name="toolTip">
         <string>Node that was used for setting the segmentation geometry (origin, spacing, axis directions, and default extent)</string>
        </property>
        <property name="text">
         <string> Source geometry:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox_Segmentation">
-       <property name="nodeTypes">
-        <stringlist notr="true">
-         <string>vtkMRMLSegmentationNode</string>
-        </stringlist>
-       </property>
-       <property name="renameEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="label_ReferenceVolumeName">
-       <property name="text">
-        <string/>
        </property>
       </widget>
      </item>
@@ -878,6 +934,11 @@
    <header>qMRMLSegmentationShow3DButton.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLSubjectHierarchyTreeView</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLSubjectHierarchyTreeView.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLSubjectHierarchyComboBox</class>
    <extends>ctkComboBox</extends>
    <header>qMRMLSubjectHierarchyComboBox.h</header>
@@ -923,22 +984,6 @@
   <connection>
    <sender>qSlicerSegmentationsModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLNodeComboBox_Segmentation</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>230</x>
-     <y>3</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>234</x>
-     <y>12</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerSegmentationsModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLNodeComboBox_OtherSegmentationOrRepresentationNode</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
@@ -947,24 +992,8 @@
      <y>3</y>
     </hint>
     <hint type="destinationlabel">
-     <x>329</x>
-     <y>632</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>SegmentsTableView</sender>
-   <signal>selectionChanged(QItemSelection,QItemSelection)</signal>
-   <receiver>SegmentationDisplayNodeWidget</receiver>
-   <slot>onSegmentSelectionChanged(QItemSelection,QItemSelection)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>157</x>
-     <y>136</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>145</x>
-     <y>456</y>
+     <x>359</x>
+     <y>673</y>
     </hint>
    </hints>
   </connection>
@@ -979,8 +1008,8 @@
      <y>634</y>
     </hint>
     <hint type="destinationlabel">
-     <x>326</x>
-     <y>739</y>
+     <x>355</x>
+     <y>785</y>
     </hint>
    </hints>
   </connection>
@@ -995,8 +1024,56 @@
      <y>415</y>
     </hint>
     <hint type="destinationlabel">
-     <x>178</x>
-     <y>816</y>
+     <x>186</x>
+     <y>865</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSegmentationsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>SubjectHierarchyComboBox_ImportExport</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>3</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>324</x>
+     <y>758</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSegmentationsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ColorTableNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>169</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>787</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSegmentationsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>SegmentationDisplayNodeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>454</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>401</y>
     </hint>
    </hints>
   </connection>
@@ -1017,50 +1094,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerSegmentationsModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>SubjectHierarchyComboBox_ImportExport</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>262</x>
-     <y>3</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>275</x>
-     <y>708</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerSegmentationsModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ColorTableNodeSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>169</x>
-     <y>431</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>325</x>
-     <y>741</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerSegmentationsModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <sender>SegmentsTableView</sender>
+   <signal>selectionChanged(QItemSelection,QItemSelection)</signal>
    <receiver>SegmentationDisplayNodeWidget</receiver>
+   <slot>onSegmentSelectionChanged(QItemSelection,QItemSelection)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>276</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>145</x>
+     <y>456</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSegmentationsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeSelector_Segmentation</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>179</x>
-     <y>454</y>
+     <x>1</x>
+     <y>822</y>
     </hint>
     <hint type="destinationlabel">
-     <x>179</x>
-     <y>401</y>
+     <x>69</x>
+     <y>35</y>
     </hint>
    </hints>
   </connection>
