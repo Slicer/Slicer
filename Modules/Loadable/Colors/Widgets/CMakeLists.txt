@@ -14,9 +14,6 @@ set(${KIT}_SRCS
   qMRMLColorLegendDisplayNodeWidget.h
   qMRMLColorListView.cxx
   qMRMLColorListView.h
-  qMRMLColorModel.cxx
-  qMRMLColorModel.h
-  qMRMLColorModel_p.h
   qMRMLColorPickerWidget.cxx
   qMRMLColorPickerWidget.h
   qMRMLColorTableView.cxx
@@ -34,7 +31,6 @@ set(${KIT}_SRCS
 set(${KIT}_MOC_SRCS
   qMRMLColorLegendDisplayNodeWidget.h
   qMRMLColorListView.h
-  qMRMLColorModel.h
   qMRMLColorPickerWidget.h
   qMRMLColorTableView.h
   qSlicerColorTableTerminologyDelegate.h

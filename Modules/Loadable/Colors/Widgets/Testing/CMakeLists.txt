@@ -2,8 +2,6 @@ set(KIT ${PROJECT_NAME})
 
 set(TEST_SOURCES
   qMRMLColorListViewTest1.cxx
-  qMRMLColorModelTest.cxx
-  qMRMLColorModelTest1.cxx
   qMRMLColorPickerWidgetTest1.cxx
   qMRMLColorPickerWidgetTest2.cxx
   qMRMLColorPickerWidgetTest3.cxx
@@ -22,23 +20,14 @@ create_test_sourcelist(Tests ${KIT}CppTests.cxx
   ${TEST_SOURCES}
   )
 
-set(KIT_TEST_GENERATE_MOC_SRCS
-  qMRMLColorModelTest.cxx
-  )
-  set(_moc_options OPTIONS -DMRML_WIDGETS_HAVE_QT5)
-  QT5_WRAP_CPP(Tests_MOC_CXX ${_moc_options})
-  QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
-
-include_directories( ${CMAKE_CURRENT_BINARY_DIR})
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 ctk_add_executable_utf8(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX})
 target_link_libraries(${KIT}CxxTests ${KIT})
 
 #-----------------------------------------------------------------------------
 simple_test( qMRMLColorListViewTest1 )
-simple_test( qMRMLColorModelTest )
-simple_test( qMRMLColorModelTest1 )
 simple_test( qMRMLColorPickerWidgetTest1 )
 simple_test( qMRMLColorPickerWidgetTest2 )
 simple_test( qMRMLColorPickerWidgetTest3 )

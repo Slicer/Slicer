@@ -28,8 +28,8 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-// Colors includes
-#include "qSlicerColorsModuleWidgetsExport.h"
+// MRMLWidgets includes
+#include "qMRMLWidgetsExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLColorNode;
@@ -39,7 +39,7 @@ class QAction;
 class qMRMLColorModelPrivate;
 
 //------------------------------------------------------------------------------
-class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
+class QMRML_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -123,6 +123,9 @@ public:
   /// Overload the header data method for the vertical header
   /// so that can return the color index rather than the row
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+
+  /// Assemble human readable text in format ": , in , " from color in color node.
+  static QString terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex);
 
 protected slots:
   void onMRMLColorNodeModified(vtkObject* node);

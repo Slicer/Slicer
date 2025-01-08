@@ -660,7 +660,7 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
 
   // Set values for all colors in all column arrays
   unsigned int rowIndex = 0;
-  for (int colorIdx = 0; colorIdx < numberOfColors; colorIdx++)
+  for (unsigned int colorIdx = 0; colorIdx < numberOfColors; colorIdx++)
   {
     // Skip unnamed color
     if (colorNode->GetNoName() && colorNode->GetColorName(colorIdx) &&
@@ -676,7 +676,7 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
     nameArray->SetValue(rowIndex, colorNode->GetColorName(colorIdx));
     colorArray->SetTuple(rowIndex, rgba255);
 
-    for (int idx=0; idx<TERMINOLOGY_COLUMN_NAMES.size(); ++idx)
+    for (unsigned int idx=0; idx<TERMINOLOGY_COLUMN_NAMES.size(); ++idx)
     {
       GetEntryFuncPtr getTerminologyEntry = terminologyGetEntryFuncVector[idx];
       vtkCodedEntry* terminologyEntry = (colorNode->*getTerminologyEntry)(colorIdx);
@@ -729,7 +729,7 @@ int vtkMRMLColorTableStorageNode::WriteCtblFile(std::string fullFileName, vtkMRM
   {
     unsigned int numberOfColors = colorNode->GetLookupTable()->GetNumberOfTableValues();
     of << "# " << numberOfColors << " values" << endl;
-    for (int i = 0; i < numberOfColors; i++)
+    for (unsigned int i = 0; i < numberOfColors; i++)
     {
       // Skip unnamed color
       if (colorNode->GetNoName() && colorNode->GetColorName(i) &&
