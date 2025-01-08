@@ -29,8 +29,7 @@
 // MRML includes
 #include <vtkCodedEntry.h>
 #include <vtkMRMLColorTableNode.h>
-
-// VTK includes
+#include "vtkMRMLI18N.h"
 
 //------------------------------------------------------------------------------
 qMRMLColorModelPrivate::qMRMLColorModelPrivate(qMRMLColorModel& object)
@@ -78,9 +77,7 @@ void qMRMLColorModelPrivate::init()
   }
 
   q->setHorizontalHeaderLabels(headerLabels);
-  QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
-                   q, SLOT(onItemChanged(QStandardItem*)),
-                   Qt::UniqueConnection);
+  QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)), q, SLOT(onItemChanged(QStandardItem*)), Qt::UniqueConnection);
 }
 
 //------------------------------------------------------------------------------
@@ -422,25 +419,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
   }
   if (column == d->TerminologyColumn)
   {
-    std::vector<vtkCodedEntry*> terminologyEntries
-    {
-      d->MRMLColorNode->GetTerminologyCategory(color),
-      d->MRMLColorNode->GetTerminologyType(color),
-      d->MRMLColorNode->GetTerminologyTypeModifier(color),
-      d->MRMLColorNode->GetTerminologyAnatomicRegion(color),
-      d->MRMLColorNode->GetTerminologyAnatomicRegionModifier(color)
-    };
-    QStringList terminologyStrList;
-    for (auto entry : terminologyEntries)
-    {
-      if (entry == nullptr)
-      {
-        continue;
-      }
-      terminologyStrList.append(QString::fromUtf8(entry->GetCodeMeaning()));
-    }
-    item->setText(terminologyStrList.join(", "));
-    item->setToolTip(terminologyStrList.join("\n"));
+    item->setText(qMRMLColorModel::terminologyTextForColor(d->MRMLColorNode, color));
     item->setData(QVariant::fromValue(reinterpret_cast<long long>(d->MRMLColorNode.GetPointer())), qMRMLItemDelegate::PointerRole);
   }
   if (column == d->CheckableColumn)
@@ -528,4 +507,46 @@ QVariant qMRMLColorModel::headerData(int section, Qt::Orientation orientation, i
 
   return retval;
 
+}
+
+//------------------------------------------------------------------------------
+QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex)
+{
+  QString text;
+  if (colorNode == nullptr || colorIndex >= colorNode->GetNumberOfColors())
+  {
+    return text;
+  }
+
+  if ( colorNode->GetTerminologyCategory(colorIndex) == nullptr || colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() == nullptr
+    || colorNode->GetTerminologyType(colorIndex) == nullptr || colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() == nullptr)
+  {
+    text.append(vtkMRMLTr("qMRMLColorModel", "(none)").c_str());
+    return text;
+  }
+
+  // Add category and type
+  text.append(QString("%1: %2").arg(
+    colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning()).arg(colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning()));
+  // Add type modifier if any
+  if ( colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr
+    && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
+  {
+    text.append(QString(", %1 ").arg(colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning()));
+  }
+  // Add anatomic region if any
+  if ( colorNode->GetTerminologyAnatomicRegion(colorIndex) != nullptr
+    && colorNode->GetTerminologyAnatomicRegion(colorIndex)->GetCodeMeaning() != nullptr)
+  {
+    text.append(vtkMRMLTr("qMRMLColorModel", "in").c_str());
+    text.append(QString(" %1").arg(colorNode->GetTerminologyAnatomicRegion(colorIndex)->GetCodeMeaning()));
+  }
+  // Add anatomic region modifier if any
+  if ( colorNode->GetTerminologyAnatomicRegionModifier(colorIndex) != nullptr
+    && colorNode->GetTerminologyAnatomicRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
+  {
+    text.append(QString(", %1").arg(colorNode->GetTerminologyAnatomicRegionModifier(colorIndex)->GetCodeMeaning()));
+  }
+
+  return text;
 }

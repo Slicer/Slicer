@@ -71,6 +71,9 @@ set(MRMLWidgets_SRCS
   qMRMLClipNodeDisplayWidget.h
   qMRMLCollapsibleButton.cxx
   qMRMLCollapsibleButton.h
+  qMRMLColorModel.cxx
+  qMRMLColorModel.h
+  qMRMLColorModel_p.h
   qMRMLColors.cxx
   qMRMLColors.h
   qMRMLColorTableComboBox.cxx
@@ -241,6 +244,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLClipNodeWidget.h
   qMRMLClipNodeDisplayWidget.h
   qMRMLCollapsibleButton.h
+  qMRMLColorModel.h
   qMRMLColorTableComboBox.h
   qMRMLCoordinatesWidget.h
   qMRMLDisplayNodeViewComboBox.h

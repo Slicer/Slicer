@@ -34,6 +34,8 @@ set(TEST_SOURCES
   qMRMLCheckableNodeComboBoxTest1.cxx
   qMRMLClipNodeWidgetTest1.cxx
   qMRMLCollapsibleButtonTest.cxx
+  qMRMLColorModelTest.cxx
+  qMRMLColorModelTest1.cxx
   qMRMLDisplayNodeViewComboBoxTest.cxx
   qMRMLDisplayNodeWidgetTest1.cxx
   qMRMLLayoutManagerTest1.cxx
@@ -135,6 +137,7 @@ set(Tests_UtilityFiles
 set(KIT_TEST_GENERATE_MOC_SRCS
   qMRMLCheckableNodeComboBoxTest.cxx
   qMRMLCollapsibleButtonTest.cxx
+  qMRMLColorModelTest.cxx
   qMRMLDisplayNodeViewComboBoxTest.cxx
   qMRMLLabelComboBoxTest.cxx
   qMRMLLayoutManagerWithCustomFactoryTest.cxx
@@ -186,6 +189,8 @@ simple_test( qMRMLCheckableNodeComboBoxTest )
 simple_test( qMRMLCheckableNodeComboBoxTest1 )
 simple_test( qMRMLClipNodeWidgetTest1 )
 simple_test( qMRMLCollapsibleButtonTest)
+simple_test( qMRMLColorModelTest )
+simple_test( qMRMLColorModelTest1 )
 simple_test( qMRMLColorTableComboBoxTest1 )
 simple_test( qMRMLDisplayNodeViewComboBoxTest )
 simple_test( qMRMLDisplayNodeWidgetTest1 )

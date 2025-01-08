@@ -37,6 +37,7 @@
 
 // MRMLWidgets includes
 #include "qMRMLItemDelegate.h"
+#include "qMRMLColorModel.h"
 
 // MRML includes
 #include "vtkMRMLColorTableNode.h"
@@ -174,26 +175,7 @@ void qSlicerColorTableTerminologyDelegate::setModelData(QWidget* editor, QAbstra
 
   colorNode->SetTerminologyFromString(colorIndex, logic->SerializeTerminologyEntry(entry));
 
-  // Set text
-  std::vector<vtkCodedEntry*> terminologyEntries
-  {
-    colorNode->GetTerminologyCategory(colorIndex),
-    colorNode->GetTerminologyType(colorIndex),
-    colorNode->GetTerminologyTypeModifier(colorIndex),
-    colorNode->GetTerminologyAnatomicRegion(colorIndex),
-    colorNode->GetTerminologyAnatomicRegionModifier(colorIndex)
-  };
-  QStringList terminologyStrList;
-  for (auto entry : terminologyEntries)
-  {
-    if (entry == nullptr)
-    {
-      continue;
-    }
-    terminologyStrList.append(QString::fromUtf8(entry->GetCodeMeaning()));
-  }
-
-  model->setData(index, terminologyStrList.join(", "), Qt::DisplayRole);
+  model->setData(index, qMRMLColorModel::terminologyTextForColor(colorNode, colorIndex), Qt::DisplayRole);
 }
 
 //-----------------------------------------------------------------------------
