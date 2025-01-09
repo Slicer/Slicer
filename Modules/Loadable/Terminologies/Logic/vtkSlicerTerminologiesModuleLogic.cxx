@@ -2563,7 +2563,10 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames
         CodeIdentifier(typeModifierCodingSchemeDesignator, typeModifierCodeValue), modifiedTypeObject))
       {
         foundTerminologyNames.push_back(terminologyName);
-        foundEntries->AddItem(typeObject);
+        if (foundEntries)
+        {
+          foundEntries->AddItem(typeObject);
+        }
       }
     }
   }
@@ -2817,6 +2820,10 @@ bool vtkSlicerTerminologiesModuleLogic::LoadColorTable(vtkMRMLColorNode* colorNo
   nodeNameString.SetString(terminologyContextName.c_str(), terminologyContextName.length(), termAllocator);
   termDoc->AddMember("SegmentationCategoryTypeContextName", nodeNameString, termAllocator);
   termDoc->AddMember("@schema", "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/segment-context-schema.json#", termAllocator);
+  std::string colorNodeID(colorNode->GetID());
+  rapidjson::Value colorNodeIDString(rapidjson::kStringType);
+  colorNodeIDString.SetString(colorNodeID.c_str(), colorNodeID.length(), termAllocator);
+  termDoc->AddMember("ColorTableID", colorNodeIDString, termAllocator);
 
   rapidjson::Value segmentationCodesObject(rapidjson::kObjectType);
   termDoc->AddMember("SegmentationCodes", segmentationCodesObject, termAllocator);
@@ -3018,4 +3025,31 @@ bool vtkSlicerTerminologiesModuleLogic::LoadColorTable(vtkMRMLColorNode* colorNo
   this->Internal->LoadedAnatomicContexts[colorNode->GetName()] = anatDoc;
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerTerminologiesModuleLogic::IsTerminologyColorTable(std::string terminologyName)
+{
+  if (terminologyName.empty())
+  {
+    return nullptr;
+  }
+  rapidjson::Value& root = this->Internal->GetTerminologyRootByName(terminologyName);
+  if (root.IsNull())
+  {
+    vtkErrorMacro("IsTerminologyColorTable: Failed to find terminology root for context name '" << terminologyName << "'");
+    return nullptr;
+  }
+
+  if (!root.HasMember("ColorTableID"))
+  {
+    return nullptr;
+  }
+  rapidjson::Value& colorTableId = root["ColorTableID"];
+  if (colorTableId.IsNull())
+  {
+    return nullptr;
+  }
+
+  return colorTableId.GetString();
 }
