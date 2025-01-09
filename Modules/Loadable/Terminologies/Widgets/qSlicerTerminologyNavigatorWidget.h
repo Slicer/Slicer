@@ -184,6 +184,9 @@ protected slots:
   void onRegionModifierSelectionChanged(int);
   void onRegionSearchTextChanged(QString);
 
+  void onColorSelected(const QItemSelection& selected, const QItemSelection& deselected);
+  void onColorRowDoubleClicked(const QModelIndex &index);
+
   void onNameChanged(QString);
   void onResetNameClicked();
   void onColorChanged(QColor);
@@ -200,8 +203,10 @@ protected slots:
 signals:
   /// Emitted when selection becomes valid (true argument) or invalid (false argument)
   void selectionValidityChanged(bool);
-  /// Emitted when type is double clicked. It can be interpreted as having made a selection
+  /// Emitted when type is double clicked (in terminology mode). It can be interpreted as having made a selection
   void typeDoubleClicked();
+  /// Emitted when color is double clicked (in color mode). It can be interpreted as having made a selection
+  void colorDoubleClicked();
 
 protected:
   QScopedPointer<qSlicerTerminologyNavigatorWidgetPrivate> d_ptr;

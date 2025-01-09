@@ -134,6 +134,10 @@ public:
     std::vector<std::string> preferredAnatomicContextNames,
     vtkCollection* foundEntries=nullptr);
 
+  /// Determine if terminology is from a color table.
+  /// \return ID of the color table node if terminology comes from color table, else nullptr.
+  const char* IsTerminologyColorTable(std::string terminologyName);
+
   /// Get a category with given name from a terminology
   /// \param category Output argument containing the details of the found category if any (if return value is true)
   /// \return Success flag

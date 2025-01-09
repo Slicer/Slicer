@@ -86,7 +86,6 @@ void qSlicerTerminologyEditorDialogPrivate::init()
 
   this->SaveButton = new QPushButton("Save");
   this->SaveButton->setDefault(true);
-  //this->SaveButton->setEnabled(false); // Disabled until terminology selection becomes valid //TODO:
   buttonsLayout->addWidget(this->SaveButton, 2);
 
   this->CancelButton = new QPushButton("Cancel");
@@ -95,8 +94,6 @@ void qSlicerTerminologyEditorDialogPrivate::init()
   layout->addLayout(buttonsLayout);
 
   // Make connections
-  //connect(this->EditorWidget, SIGNAL(selectionValidityChanged(bool)), q, SLOT(setSaveButtonEnabled(bool))); //TODO:
-  connect(this->EditorWidget, SIGNAL(typeDoubleClicked()), this, SLOT(accept()));
   connect(this->SaveButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(this->CancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 }
@@ -166,7 +163,6 @@ bool qSlicerTerminologyEditorDialog::getTerminology(vtkSlicerTerminologyEntry* t
   terminologyInfo.GetTerminologyEntry()->Copy(terminologyEntry);
   // Open terminology dialog and store result
   qSlicerTerminologyEditorDialog dialog(terminologyInfo, parent);
-  //dialog.setOverrideSectionVisible(false);
   if (!dialog.exec())
   {
     return false;
@@ -190,17 +186,3 @@ void qSlicerTerminologyEditorDialog::setSaveButtonEnabled(bool enabled)
   Q_D(qSlicerTerminologyEditorDialog);
   d->SaveButton->setEnabled(enabled);
 }
-
-////-----------------------------------------------------------------------------
-//bool qSlicerTerminologyEditorDialog::overrideSectionVisible() const
-//{
-//  Q_D(const qSlicerTerminologySelectorDialog);
-//  return d->NavigatorWidget->overrideSectionVisible();
-//}
-//
-////-----------------------------------------------------------------------------
-//void qSlicerTerminologyEditorDialog::setOverrideSectionVisible(bool visible)
-//{
-//  Q_D(qSlicerTerminologySelectorDialog);
-//  d->NavigatorWidget->setOverrideSectionVisible(visible);
-//}
