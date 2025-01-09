@@ -1018,7 +1018,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode* dis
       }
     }
 
-    if (hasMesh && ait == this->Internal->DisplayedActors.end())
+    if (hasMesh && modelDisplayNode && ait == this->Internal->DisplayedActors.end())
     {
       this->GetRenderer()->AddViewProp(prop);
       this->Internal->DisplayedActors[modelDisplayNode->GetID()] = prop;
@@ -1033,7 +1033,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode* dis
         this->Internal->DisplayedClipState[modelDisplayNode->GetID()] = 0;
       }
     }
-    else
+    else if (modelDisplayNode)
     {
       if (clipper)
       {
@@ -1045,7 +1045,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode* dis
       }
     }
 
-    if (hasMesh && cait == this->Internal->DisplayedCapActors.end())
+    if (hasMesh && modelDisplayNode && cait == this->Internal->DisplayedCapActors.end())
     {
       this->GetRenderer()->AddViewProp(capProp);
       this->Internal->DisplayedCapActors[modelDisplayNode->GetID()] = capProp;
