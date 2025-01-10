@@ -269,6 +269,27 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
         if self.developerMode is False:
             self.setCategoryVisible(self.logic.developmentCategoryName, False)
 
+        customFrame = ctk.ctkCollapsibleGroupBox()
+        self.categoryLayout.addWidget(customFrame)
+        customFrame.title = _("Load data from URL")
+        customFrameLayout = qt.QHBoxLayout()
+        customFrame.setLayout(customFrameLayout)
+        self.customSampleLabel = qt.QLabel(_("URL:"))
+        customFrameLayout.addWidget(self.customSampleLabel)
+        self.customSampleName = qt.QLineEdit()
+        customFrameLayout.addWidget(self.customSampleName)
+        self.customDownloadButton = qt.QPushButton(_("Load"))
+        self.customDownloadButton.toolTip = _("Download the dataset from the given URL and import it into the scene")
+        self.customDownloadButton.default = True
+        customFrameLayout.addWidget(self.customDownloadButton)
+        self.showCustomDataFolderButton = qt.QPushButton(_("Show folder"))
+        self.showCustomDataFolderButton.toolTip = _("Show folder where custom data sets are downloaded ({path}).").format(path=slicer.app.cachePath)
+        customFrameLayout.addWidget(self.showCustomDataFolderButton)
+        customFrame.collapsed = True
+        self.customSampleName.connect("returnPressed()", self.onCustomDataDownload)
+        self.customDownloadButton.connect("clicked()", self.onCustomDataDownload)
+        self.showCustomDataFolderButton.connect("clicked()", self.onShowCustomDataFolder)
+
         self.log = qt.QTextEdit()
         self.log.readOnly = True
         self.layout.addWidget(self.log)
@@ -278,6 +299,12 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 
     def cleanup(self):
         SampleDataWidget.setCategoriesFromSampleDataSources(self.categoryLayout, {}, self.logic)
+
+    def onCustomDataDownload(self):
+        self.logic.downloadFromURL(self.customSampleName.text)
+
+    def onShowCustomDataFolder(self):
+        qt.QDesktopServices.openUrl(qt.QUrl("file:///" + slicer.app.cachePath, qt.QUrl.TolerantMode))
 
     @staticmethod
     def removeCategories(categoryLayout):
