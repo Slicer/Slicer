@@ -612,6 +612,59 @@ int vtkMRMLColorNode::GetColorIndexByName(const char *name)
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLColorNode::GetColorIndexByTerminology(const char* terminology, bool ignoreContextName/*=true*/)
+{
+  if (terminology == nullptr)
+  {
+    vtkErrorMacro("GetColorIndexByTerminology: need a valid terminology string as argument");
+    return -1;
+  }
+
+  // Utility function to get part of the terminology string without the terminology context
+  auto GetTerminologyNoContext = [](std::string fullTerminologyStr)
+  {
+    std::vector<std::string> entryComponents;
+    vtksys::SystemTools::Split(fullTerminologyStr, entryComponents, '~');
+    if (entryComponents.size() != 7)
+    {
+      return fullTerminologyStr; // Not a full terminology string, return the input
+    }
+    std::string terminologyNoContext;
+    for (int i=0; i<7; i++)
+    {
+      if (i != 0 && i != 4) // Skip context names
+      {
+        terminologyNoContext.append(entryComponents[i]);
+      }
+      terminologyNoContext.append("~");
+    }
+    return terminologyNoContext;
+  };
+
+  // Get terminology string to compare
+  std::string terminologyStr(terminology);
+  if (ignoreContextName)
+  {
+    terminologyStr = GetTerminologyNoContext(terminologyStr);
+  }
+
+  for (int colorIdx=0; colorIdx<this->GetNumberOfColors(); ++colorIdx)
+  {
+    std::string currentTerminologyStr = this->GetTerminologyAsString(colorIdx);
+    if (ignoreContextName)
+    {
+      currentTerminologyStr = GetTerminologyNoContext(currentTerminologyStr);
+    }
+    if (terminologyStr == currentTerminologyStr)
+    {
+      return colorIdx;
+    }
+  }
+
+  return -1; // Not found
+}
+
+//---------------------------------------------------------------------------
 std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *subst)
 {
   std::string name = std::string(this->GetColorName(ind));

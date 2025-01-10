@@ -51,6 +51,8 @@ public slots:
   void setMRMLColorNode(vtkMRMLColorNode* colorNode);
   /// Utility function to simply connect signals/slots with Qt Designer
   void setMRMLColorNode(vtkMRMLNode* colorNode);
+  /// Select row in table by color index
+  void selectColorByIndex(int colorIndex)const;
 
 protected:
   QScopedPointer<qMRMLSimpleColorTableViewPrivate> d_ptr;

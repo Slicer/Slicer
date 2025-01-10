@@ -404,7 +404,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
       vtksys::SystemTools::Join(anatomicRegionComponents, "^"),
       vtksys::SystemTools::Join(anatomicRegionModifierComponents, "^")
     };
-    colorNode->SetTerminologyFromString(row, vtksys::SystemTools::Join(terminologyComponents, "~"));
+    colorNode->SetTerminologyFromString(validLabelValues[row], vtksys::SystemTools::Join(terminologyComponents, "~"));
   } // For each row in the color table
 
   return 1;

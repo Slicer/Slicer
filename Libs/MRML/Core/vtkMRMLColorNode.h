@@ -120,7 +120,13 @@ public:
   /// Return the index associated with this color name, which can then be used
   /// to get the color. Returns -1 on failure.
   /// \sa GetColorName()
-  int GetColorIndexByName(const char *name);
+  int GetColorIndexByName(const char* name);
+
+  /// Return the index associated with this terminology entry to get the color. Returns -1 on failure.
+  /// \param terminologyStr The string representation of the searched terminology entry.
+  /// \param ignoreContextName Only consider the category, type, etc. coded entries if true,
+  ///   otherwise look for exact match in the terminology context name as well. True by default.
+  int GetColorIndexByTerminology(const char* terminologyStr, bool ignoreContextName=true);
 
   /// Get the 0'th based \a colorIndex'th name of this color, replacing all
   /// file name sensitive color name characters with safer character(s).

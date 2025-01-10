@@ -73,6 +73,7 @@
 // MRML includes
 #include <vtkEventBroker.h>
 #include <vtkMRMLColorTableNode.h>
+#include "vtkMRMLI18N.h"
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
 #include <vtkMRMLMessageCollection.h>
@@ -1067,9 +1068,11 @@ vtkMRMLColorTableNode* vtkSlicerSegmentationsModuleLogic::CreateColorTableNodeFo
   newColorTable->SetNumberOfColors(1);
   newColorTable->GetLookupTable()->SetRange(0, 0);
   newColorTable->GetLookupTable()->SetNumberOfTableValues(1);
-  // Use NoName as color name to not list the "background" color in the color legend.
-  newColorTable->SetColor(0, newColorTable->GetNoName(), 0.0, 0.0, 0.0, 0.0);
+  newColorTable->SetColor(0, vtkMRMLTr("vtkSlicerSegmentationsModuleLogic", "background").c_str(), 0.0, 0.0, 0.0, 0.0);
   segmentationNode->GetScene()->AddNode(newColorTable);
+  // Associate exported color table to the segmentation node
+  segmentationNode->SetLabelmapConversionColorTableNodeID(newColorTable->GetID());
+
   return newColorTable;
 }
 
@@ -1138,7 +1141,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(vtkMRMLSe
     }
     else
     {
-       vtkWarningWithObjectMacro(segmentationNode, "ExportSegmentsToColorTableNode: failed to get terminology tag from segment " << segmentName);
+      vtkWarningWithObjectMacro(segmentationNode, "ExportSegmentsToColorTableNode: failed to get terminology tag from segment " << segmentName);
     }
   }
 
