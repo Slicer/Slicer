@@ -2541,6 +2541,10 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames
   // Find terminology entries in each preferred terminology
   for (std::string terminologyName : preferredTerminologyNames)
   {
+    if (!this->IsTerminologyContextLoaded(terminologyName))
+    {
+      continue; // It is possible that some preferred terminologies are not loaded in this session
+    }
     vtkNew<vtkSlicerTerminologyType> typeObject;
     if (!this->GetTypeInTerminologyCategory(terminologyName, categoryId, typeId, typeObject))
     {
@@ -3025,6 +3029,17 @@ bool vtkSlicerTerminologiesModuleLogic::LoadColorTable(vtkMRMLColorNode* colorNo
   this->Internal->LoadedAnatomicContexts[colorNode->GetName()] = anatDoc;
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::IsTerminologyContextLoaded(std::string terminologyName)
+{
+  if (terminologyName.empty())
+  {
+    return false;
+  }
+  rapidjson::Value& root = this->Internal->GetTerminologyRootByName(terminologyName);
+  return !root.IsNull();
 }
 
 //---------------------------------------------------------------------------

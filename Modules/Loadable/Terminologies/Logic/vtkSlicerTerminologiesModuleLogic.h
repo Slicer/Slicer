@@ -134,6 +134,8 @@ public:
     std::vector<std::string> preferredAnatomicContextNames,
     vtkCollection* foundEntries=nullptr);
 
+  /// Determine if terminology with a given name is loaded.
+  bool IsTerminologyContextLoaded(std::string terminologyName);
   /// Determine if terminology is from a color table.
   /// \return ID of the color table node if terminology comes from color table, else nullptr.
   const char* IsTerminologyColorTable(std::string terminologyName);

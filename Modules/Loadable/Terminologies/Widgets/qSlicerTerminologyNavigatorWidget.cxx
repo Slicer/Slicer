@@ -632,7 +632,7 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
     }
   }
 
-    return nullptr;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -1021,6 +1021,26 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
 
         this->setCurrentAnatomicContext(lastAnatomicContextName);
       }
+    }
+  }
+
+  // Set selection in color table
+  const char* colorTableNodeID = logic->IsTerminologyColorTable(terminologyContextNameToSelect.toUtf8().constData());
+  if (colorTableNodeID != nullptr)
+  {
+    vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(
+      logic->GetMRMLScene()->GetNodeByID(colorTableNodeID));
+    if (colorNode == nullptr)
+    {
+      qCritical() << Q_FUNC_INFO << ": Failed to find color node by ID " << colorTableNodeID;
+      return returnValue;
+    }
+    vtkNew<vtkSlicerTerminologyEntry> entry;
+    this->terminologyEntry(entry);
+    int foundColor = colorNode->GetColorIndexByTerminology(logic->SerializeTerminologyEntry(entry).c_str());
+    if (foundColor >= 0)
+    {
+      d->ColorTableView->selectColorByIndex(foundColor);
     }
   }
 
@@ -1563,9 +1583,15 @@ void qSlicerTerminologyNavigatorWidget::onTerminologySelectionChanged(int index)
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
 
-  // Set current terminology
+  // Make selection in the other combobox as well
   ctkComboBox* visibleComboBox = (d->ComboBox_Terminology->isVisible() ?
     d->ComboBox_Terminology : d->ComboBox_Terminology_2);
+  ctkComboBox* invisibleComboBox = (!d->ComboBox_Terminology->isVisible() ?
+    d->ComboBox_Terminology : d->ComboBox_Terminology_2);
+  QSignalBlocker blocker(invisibleComboBox);
+  invisibleComboBox->setCurrentIndex(visibleComboBox->currentIndex());
+
+  // Set current terminology
   QString terminologyName = visibleComboBox->itemText(index);
   this->setCurrentTerminology(terminologyName);
 
@@ -1943,6 +1969,10 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
   // Set category and type
   d->CurrentCategoryObject->vtkCodedEntry::Copy(colorNode->GetTerminologyCategory(colorIndex));
   d->CurrentTypeObject->vtkCodedEntry::Copy(colorNode->GetTerminologyType(colorIndex));
+  double color[4] = {0.0};
+  colorNode->GetColor(colorIndex, color);
+  d->CurrentTypeObject->SetRecommendedDisplayRGBValue(
+    (unsigned char)(color[0] * 255.0), (unsigned char)(color[1] * 255.0), (unsigned char)(color[2] * 255.0));
   emit selectionValidityChanged(true);
 
   // Set optional information if any
@@ -1974,6 +2004,9 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
     d->resetCurrentRegionModifier();
   }
 
+  // Set name and color
+  d->setNameFromCurrentTerminology();
+  d->setRecommendedColorFromCurrentTerminology();
 }
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyNavigatorWidget::onColorRowDoubleClicked(const QModelIndex &index)

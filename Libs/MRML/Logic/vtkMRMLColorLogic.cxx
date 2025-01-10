@@ -186,8 +186,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
   }
   basicNode->Delete();
 
-   // remove the procedural color nodes (after the fs proc nodes as
-   // getting them by class)
+  // remove the procedural color nodes (after the fs proc nodes as getting them by class)
   std::vector<vtkMRMLNode *> procNodes;
   int numProcNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLProceduralColorNode", procNodes);
   for (int i = 0; i < numProcNodes; i++)
@@ -886,7 +885,6 @@ void vtkMRMLColorLogic::AddUserFileNodes()
   {
     this->AddUserFileNode(i);
   }
-
 }
 
 //----------------------------------------------------------------------------------------

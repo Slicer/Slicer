@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QHeaderView>
 #include <QSortFilterProxyModel>
 
@@ -116,4 +117,29 @@ vtkMRMLColorNode* qMRMLSimpleColorTableView::mrmlColorNode()const
   qMRMLColorModel* mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
   return mrmlModel->mrmlColorNode();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSimpleColorTableView::selectColorByIndex(int colorIndex)const
+{
+  QSortFilterProxyModel* sortFilterModel = this->sortFilterProxyModel();
+  qMRMLColorModel* colorModel = this->colorModel();
+  vtkMRMLColorNode* colorNode = this->mrmlColorNode();
+  if (colorNode == nullptr)
+  {
+    qCritical() << Q_FUNC_INFO << ": Invalid color node in table view";
+    return;
+  }
+
+  QModelIndexList foundIndices = colorModel->match(colorModel->index(0,0), qMRMLItemDelegate::ColorEntryRole,
+    colorIndex, 1, Qt::MatchExactly | Qt::MatchRecursive);
+  if (foundIndices.size() == 0)
+  {
+    qCritical() << Q_FUNC_INFO << ": Failed to find color model index by color index " << colorIndex
+      << " in color node " << colorNode->GetName();
+    return;
+  }
+
+  QModelIndex foundIndex = sortFilterModel->mapFromSource(foundIndices[0]);
+  this->selectionModel()->select(foundIndex, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 }
