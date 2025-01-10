@@ -676,6 +676,17 @@ class SampleDataLogic:
         for uri, fileName, nodeName, checksum, loadFile, loadFileType in zip(
             source.uris, source.fileNames, source.nodeNames, source.checksums, source.loadFiles, source.loadFileTypes):
 
+            if nodeName is None or fileName is None:
+                import urllib
+                import uuid
+                p = urllib.parse.urlparse(uri)
+                basename, ext = os.path.splitext(os.path.basename(p.path))
+                if nodeName is None:
+                    nodeName = basename
+                if fileName is None:
+                    # Generate a unique filename to avoid overwriting existing file with the same name
+                    fileName = f"{nodeName}-{uuid.uuid4().hex}{ext}"
+
             current_source = SampleDataSource(
                 uris=uri,
                 fileNames=fileName,
@@ -939,29 +950,33 @@ class SampleDataLogic:
         return filePath
 
     def loadScene(self, uri, fileProperties={}):
-        self.logMessage("<b>" + _("Requesting load {uri}").format(uri=uri) + "</b>")
-        fileProperties["fileName"] = uri
-        success = slicer.app.coreIOManager().loadNodes("SceneFile", fileProperties)
-        if not success:
-            self.logMessage("\t" + _("Load failed!"), logging.ERROR)
-            return False
-        self.logMessage("<b>" + _("Load finished") + "</b><p></p>")
-        return True
+        """Returns True is scene loading was successful, False if failed."""
+        loadedNode = self.loadNode(uri, None, "SceneFile", fileProperties)
+        success = loadedNode is not None
+        return success
 
     def loadNode(self, uri, name, fileType=None, fileProperties={}):
+        """Returns the first loaded node (or the scene if the reader did not provide a specific node) on success.
+        Returns None if failed.
+        """
         self.logMessage("<b>" + _("Requesting load {name} from {uri} ...").format(name=name, uri=uri) + "</b>")
 
         fileProperties["fileName"] = uri
-        fileProperties["name"] = name
+        if name:
+            fileProperties["name"] = name
         if not fileType:
             fileType = slicer.app.coreIOManager().fileType(fileProperties["fileName"])
         firstLoadedNode = None
         loadedNodes = vtk.vtkCollection()
         success = slicer.app.coreIOManager().loadNodes(fileType, fileProperties, loadedNodes)
-
-        if not success or loadedNodes.GetNumberOfItems() < 1:
-            self.logMessage("\t" + _("Load failed!"), logging.ERROR)
-            return None
+        if not success:
+            if loadedNodes.GetNumberOfItems() < 1:
+                self.logMessage("\t" + _("Load failed!"), logging.ERROR)
+                return None
+            else:
+                # Loading did not fail, because some nodes were loaded, proceed with a warning
+                self.logMessage(_("Error was reported while loading {count} nodes from {path}").format(
+                                count=loadedNodes.GetNumberOfItems(), path=uri), logging.WARNING)
 
         self.logMessage("<b>" + _("Load finished") + "</b><p></p>")
 
@@ -976,7 +991,13 @@ class SampleDataLogic:
             slicer.mrmlScene.RemoveNode(storageNode)
             loadedNode.SetAndObserveStorageNodeID(None)
 
-        return loadedNodes.GetItemAsObject(0)
+        firstLoadedNode = loadedNodes.GetItemAsObject(0)
+        if firstLoadedNode:
+            return firstLoadedNode
+        else:
+            # If a reader does not report loading of any specific node (it may happen for example with a scene reader)
+            # then return the scene to distinguish from a load error.
+            return slicer.mrmlScene
 
 
 class SampleDataTest(ScriptedLoadableModuleTest):
