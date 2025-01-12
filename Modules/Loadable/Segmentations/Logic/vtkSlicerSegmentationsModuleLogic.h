@@ -177,9 +177,11 @@ public:
   /// \param segmentationNode Segmentation node from which the the segments are exported
   /// \param segmentIds List of segment IDs to export
   /// \param colorTableNode Color table node to export the segment color and terminology information to
+  /// \param labelValues Mapping of segments to label values. Length must match the number of segments.
   /// \return Newly created color table node containing the segment color and terminology information in each color entry.
   static bool ExportSegmentsToColorTableNode(
-    vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentID, vtkMRMLColorTableNode* colorTableNode);
+    vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentID, vtkMRMLColorTableNode* colorTableNode,
+    vtkIntArray* labelValues=nullptr);
 
   /// Export multiple segments into a multi-label labelmap volume node.
   /// \param segmentationNode Segmentation node from which the the segments are exported
@@ -188,7 +190,9 @@ public:
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
   /// \param extentComputationMode If referenceVolumeNode is not specified then labelmap extents will be determined based on this value.
   ///   By default, the minimum necessary size is used. Set value to vtkSegmentation::EXTENT_REFERENCE_GEOMETRY to use reference geometry extent.
-  /// \param colorTableNode If specified then it is used for setting label values in the output labelmapNode (by matching segment name to color name).
+  /// \param colorTableNode If specified then it is used for setting label values in the output labelmapNode
+  ///   (by matching terminology or name of segment to color).
+  ///
   ///   RGB values in the colorTableNode are updated with corresponding segment colors.
   ///   New color table entries are added for each segment that had no corresponding entry in the table already.
   static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentIDs,

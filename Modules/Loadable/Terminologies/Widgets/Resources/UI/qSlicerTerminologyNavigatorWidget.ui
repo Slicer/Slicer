@@ -305,7 +305,7 @@
        </widget>
       </item>
       <item row="0" column="4" rowspan="4">
-       <widget class="QFrame" name="frame_AnatomicRegion">
+       <widget class="QFrame" name="frame_Region">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -334,17 +334,17 @@
             <number>4</number>
            </property>
            <item>
-            <widget class="ctkComboBox" name="ComboBox_AnatomicContext">
+            <widget class="ctkComboBox" name="ComboBox_RegionContext">
              <property name="sizeAdjustPolicy">
               <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
              </property>
              <property name="defaultText">
-              <string>Select anatomic region context...</string>
+              <string>Select region context...</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_LoadAnatomicContext">
+            <widget class="QPushButton" name="pushButton_LoadRegionContext">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -369,9 +369,9 @@
           </layout>
          </item>
          <item>
-          <widget class="ctkSearchBox" name="SearchBox_AnatomicRegion">
+          <widget class="ctkSearchBox" name="SearchBox_Region">
            <property name="placeholderText">
-            <string>Anatomic region...</string>
+            <string>Region...</string>
            </property>
            <property name="showSearchIcon">
             <bool>true</bool>
@@ -379,7 +379,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QTableWidget" name="tableWidget_AnatomicRegion">
+          <widget class="QTableWidget" name="tableWidget_Region">
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -408,7 +408,7 @@
           </widget>
          </item>
          <item>
-          <widget class="ctkComboBox" name="ComboBox_AnatomicRegionModifier">
+          <widget class="ctkComboBox" name="ComboBox_RegionModifier">
            <property name="sizeAdjustPolicy">
             <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
            </property>
@@ -431,7 +431,7 @@
        </widget>
       </item>
       <item row="0" column="3" rowspan="4">
-       <widget class="ctkExpandButton" name="AnatomicalRegionExpandButton">
+       <widget class="ctkExpandButton" name="RegionExpandButton">
         <property name="checked">
          <bool>true</bool>
         </property>
@@ -560,14 +560,14 @@
   <tabstop>SearchBox_Type</tabstop>
   <tabstop>tableWidget_Type</tabstop>
   <tabstop>ComboBox_TypeModifier</tabstop>
-  <tabstop>SearchBox_AnatomicRegion</tabstop>
-  <tabstop>tableWidget_AnatomicRegion</tabstop>
-  <tabstop>ComboBox_AnatomicRegionModifier</tabstop>
+  <tabstop>SearchBox_Region</tabstop>
+  <tabstop>tableWidget_Region</tabstop>
+  <tabstop>ComboBox_RegionModifier</tabstop>
   <tabstop>ComboBox_Terminology</tabstop>
   <tabstop>pushButton_LoadTerminology</tabstop>
-  <tabstop>AnatomicalRegionExpandButton</tabstop>
-  <tabstop>ComboBox_AnatomicContext</tabstop>
-  <tabstop>pushButton_LoadAnatomicContext</tabstop>
+  <tabstop>RegionExpandButton</tabstop>
+  <tabstop>ComboBox_RegionContext</tabstop>
+  <tabstop>pushButton_LoadRegionContext</tabstop>
   <tabstop>SearchBox_Category</tabstop>
   <tabstop>tableWidget_Category</tabstop>
   <tabstop>CategoryExpandButton</tabstop>
@@ -578,9 +578,9 @@
  </resources>
  <connections>
   <connection>
-   <sender>AnatomicalRegionExpandButton</sender>
+   <sender>RegionExpandButton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>frame_AnatomicRegion</receiver>
+   <receiver>frame_Region</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">

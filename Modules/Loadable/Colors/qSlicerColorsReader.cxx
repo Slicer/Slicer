@@ -81,7 +81,7 @@ qSlicerIO::IOFileType qSlicerColorsReader::fileType()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerColorsReader::extensions()const
 {
-  return QStringList() << "Color (*.txt *.ctbl *.cxml *.csv *.tsv)";
+  return QStringList() << "Color (*.csv *.tsv *.txt *.ctbl *.cxml)";
 }
 
 //----------------------------------------------------------------------------

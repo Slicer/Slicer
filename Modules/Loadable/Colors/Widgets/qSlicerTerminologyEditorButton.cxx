@@ -126,6 +126,6 @@ void qSlicerTerminologyEditorButton::paintEvent(QPaintEvent *)
   QStylePainter p(this);
   QStyleOptionButton option;
   this->initStyleOption(&option);
-  option.text = d->TerminologyInfo.Name; //TODO:
+  option.text = d->TerminologyInfo.Name;
   p.drawControl(QStyle::CE_PushButton, option);
 }

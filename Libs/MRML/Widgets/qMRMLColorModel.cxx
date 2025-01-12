@@ -534,18 +534,18 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
   {
     text.append(QString(", %1 ").arg(colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning()));
   }
-  // Add anatomic region if any
-  if ( colorNode->GetTerminologyAnatomicRegion(colorIndex) != nullptr
-    && colorNode->GetTerminologyAnatomicRegion(colorIndex)->GetCodeMeaning() != nullptr)
+  // Add region if any
+  if ( colorNode->GetTerminologyRegion(colorIndex) != nullptr
+    && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
   {
     text.append(vtkMRMLTr("qMRMLColorModel", "in").c_str());
-    text.append(QString(" %1").arg(colorNode->GetTerminologyAnatomicRegion(colorIndex)->GetCodeMeaning()));
+    text.append(QString(" %1").arg(colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning()));
   }
-  // Add anatomic region modifier if any
-  if ( colorNode->GetTerminologyAnatomicRegionModifier(colorIndex) != nullptr
-    && colorNode->GetTerminologyAnatomicRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
+  // Add region modifier if any
+  if ( colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr
+    && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
   {
-    text.append(QString(", %1").arg(colorNode->GetTerminologyAnatomicRegionModifier(colorIndex)->GetCodeMeaning()));
+    text.append(QString(", %1").arg(colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning()));
   }
 
   return text;

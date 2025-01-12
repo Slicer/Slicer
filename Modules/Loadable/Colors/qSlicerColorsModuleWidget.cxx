@@ -377,7 +377,7 @@ void qSlicerColorsModuleWidget::addNewColorTableNode()
   // Create and add new empty color table node
   vtkNew<vtkMRMLColorTableNode> newColorTableNode;
   newColorTableNode->SetTypeToUser();
-  std::string nodeName = this->mrmlScene()->GenerateUniqueName("MyColorTable");
+  std::string nodeName = this->mrmlScene()->GenerateUniqueName("NewColorTable");
   newColorTableNode->SetName(nodeName.c_str());
   if (!this->mrmlScene()->AddNode(newColorTableNode))
   {
@@ -398,7 +398,7 @@ void qSlicerColorsModuleWidget::addNewColorInCurrentNode()
   // Add a color to the current (User type) color table, at the end
   int newNumber = currentNode->GetNumberOfColors() + 1;
   currentNode->SetNumberOfColors(newNumber);
-  currentNode->SetColor(newNumber - 1, currentNode->GetNoName(), 0.5, 0.5, 0.5);
+  currentNode->SetColor(newNumber - 1, "", 0.5, 0.5, 0.5, 1.0, vtkMRMLColorNode::NameSourceUnknown);
   // Update spinbox on GUI as well
   QSignalBlocker blocker(d->NumberOfColorsSpinBox);
   d->NumberOfColorsSpinBox->setValue(newNumber);

@@ -41,7 +41,7 @@ pairs are separated from each other by the `|` character.
 
 ##### TerminologyEntry tag
 
- A frequently used key is `TerminologyEntry`, which defines what the segment contains using DICOM compliant terminology. Value stores 7 parts: `terminology context name`, `category`, `type`, `type modifier`, `anatomic context name`, `anatomic region`, and `anatomic region modifier`. Parts are separated from each other by `~` character. Five of these parts - `category`, `type`, `type modifier`, `anatomic region`, and `anatomic region modifier` are defined by a triplet of (`coding scheme designator`, `code value`, and `code meaning`). Components of the triplet are separated by `^` character.
+ A frequently used key is `TerminologyEntry`, which defines what the segment contains using DICOM compliant terminology. Value stores 7 parts: `terminology context name`, `category`, `type`, `type modifier`, `region context name`, `region`, and `region modifier`. Parts are separated from each other by `~` character. Five of these parts - `category`, `type`, `type modifier`, `region`, and `region modifier` are defined by a triplet of (`coding scheme designator`, `code value`, and `code meaning`). Components of the triplet are separated by `^` character.
 
 Example:
 
@@ -64,9 +64,9 @@ Interpretation:
 - `category`: `codingScheme`=`SCT` (Snomed Clinical Terms), `codeValue`=`49755003`, `codeMeaning`=`Morphologically Altered Structure`
 - `type`: `codingScheme`=`SCT`, `codeValue`=`4147007`, `codeMeaning`=`Mass`
 - `type modifier`: not specified
-- `anatomic context name`: `Anatomic codes - DICOM master list`
-- `anatomic region`: `codingScheme`=`SCT`, `codeValue`=`23451007`, `codeMeaning`=`Adrenal gland`
-- `anatomic region modifier`: `codingScheme`=`SCT`, `codeValue`=`24028007`, `codeMeaning`=`Right`
+- `region context name`: `Anatomic codes - DICOM master list`
+- `region`: `codingScheme`=`SCT`, `codeValue`=`23451007`, `codeMeaning`=`Adrenal gland`
+- `region modifier`: `codingScheme`=`SCT`, `codeValue`=`24028007`, `codeMeaning`=`Right`
 
 
 ## Segmentation surface file format (.seg.vtm)

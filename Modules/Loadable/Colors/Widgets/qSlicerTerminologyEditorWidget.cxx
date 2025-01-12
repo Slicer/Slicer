@@ -73,13 +73,13 @@ void qSlicerTerminologyEditorWidgetPrivate::updateGUIFromTerminologyInfo()
   this->typeModifierCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->GetCodeValue());
   this->typeModifierCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->GetCodingSchemeDesignator());
 
-  this->anatomicRegionCodeMeaningLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->GetCodeMeaning());
-  this->anatomicRegionCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->GetCodeValue());
-  this->anatomicRegionCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionObject()->GetCodingSchemeDesignator());
+  this->regionCodeMeaningLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetRegionObject()->GetCodeMeaning());
+  this->regionCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetRegionObject()->GetCodeValue());
+  this->regionCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetRegionObject()->GetCodingSchemeDesignator());
 
-  this->anatomicRegionModifierCodeMeaningLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->GetCodeMeaning());
-  this->anatomicRegionModifierCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->GetCodeValue());
-  this->anatomicRegionModifierCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetAnatomicRegionModifierObject()->GetCodingSchemeDesignator());
+  this->regionModifierCodeMeaningLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetRegionModifierObject()->GetCodeMeaning());
+  this->regionModifierCodeValueLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetRegionModifierObject()->GetCodeValue());
+  this->regionModifierCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetRegionModifierObject()->GetCodingSchemeDesignator());
 }
 
 //------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Seattle Children’s Hospital d/b/a Seattle Children’s Research Institute.
+  Copyright (c) Seattle Childrenï¿½s Hospital d/b/a Seattle Childrenï¿½s Research Institute.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -14,7 +14,7 @@
   limitations under the License.
 
   This file was originally developed by Csaba Pinter, EBATINCA, S.L.
-  and was funded by by Murat Maga (Seattle Children’s Research Institute).
+  and was funded by by Murat Maga (Seattle Childrenï¿½s Research Institute).
 
 ==============================================================================*/
 
@@ -48,7 +48,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologyNavigatorWi
   Q_OBJECT
   QVTK_OBJECT
 
-  Q_PROPERTY(bool anatomicRegionSectionVisible READ anatomicRegionSectionVisible WRITE setAnatomicRegionSectionVisible)
+  Q_PROPERTY(bool regionSectionVisible READ regionSectionVisible WRITE setRegionSectionVisible)
   Q_PROPERTY(bool overrideSectionVisible READ overrideSectionVisible WRITE setOverrideSectionVisible)
 
   /// Roles set to the items in the terminology tables uniquely identifying the entries
@@ -103,8 +103,8 @@ public:
   /// \return Success flag (e.g. fail if no type is specified in entry)
   Q_INVOKABLE bool setTerminologyEntry(vtkSlicerTerminologyEntry* entry);
 
-  /// Get whether anatomic region section are visible
-  bool anatomicRegionSectionVisible() const;
+  /// Get whether region section are visible
+  bool regionSectionVisible() const;
 
   /// Get whether name and color override section is visible
   bool overrideSectionVisible() const;
@@ -119,8 +119,8 @@ public:
   QColor recommendedColorFromCurrentTerminology();
 
 public slots:
-  /// Show/hide anatomic region section section
-  void setAnatomicRegionSectionVisible(bool);
+  /// Show/hide region section section
+  void setRegionSectionVisible(bool);
 
   /// Show/hide name and color override section
   void setOverrideSectionVisible(bool);
@@ -140,8 +140,8 @@ protected:
   /// Set current type modifier to widget
   /// \return Flag indicating whether the given modifier was found in the combobox
   bool setCurrentTypeModifier(vtkSlicerTerminologyType* modifier);
-  /// Set current anatomic context to widget
-  void setCurrentAnatomicContext(QString contextName);
+  /// Set current region context to widget
+  void setCurrentRegionContext(QString contextName);
   /// Set current region to widget
   /// \return Flag indicating whether the given region was found in the region table
   bool setCurrentRegion(vtkSlicerTerminologyType* region);
@@ -159,14 +159,14 @@ protected:
   /// Populate type modifier combobox based on current selection
   void populateTypeModifierComboBox();
 
-  /// Populate anatomic region context combobox based on current selection
-  void populateAnatomicContextComboBox();
-  /// Populate region table based on selected anatomic region context and type search term
+  /// Populate region context combobox based on current selection
+  void populateRegionContextComboBox();
+  /// Populate region table based on selected region context and type search term
   void populateRegionTable();
   /// Populate region modifier combobox based on current selection
   void populateRegionModifierComboBox();
 
-  /// Copy terminology or anatomic context file to user folder
+  /// Copy terminology or region context file to user folder
   void copyContextToUserDirectory(QString filePath);
 
 protected slots:
@@ -179,7 +179,7 @@ protected slots:
   void onCategorySearchTextChanged(QString);
   void onTypeSearchTextChanged(QString);
 
-  void onAnatomicContextSelectionChanged(int);
+  void onRegionContextSelectionChanged(int);
   void onRegionSelected(QTableWidgetItem*,QTableWidgetItem*);
   void onRegionModifierSelectionChanged(int);
   void onRegionSearchTextChanged(QString);
@@ -193,10 +193,10 @@ protected slots:
   void onResetColorClicked();
 
   void onLoadTerminologyClicked();
-  void onLoadAnatomicContextClicked();
+  void onLoadRegionContextClicked();
 
-  void anatomicalRegionExpandButtonUp();
-  void anatomicalRegionExpandButtonDown();
+  void regionExpandButtonUp();
+  void regionExpandButtonDown();
 
   void onLogicModified();
 
