@@ -61,7 +61,7 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Anatomic region:</string>
+        <string>Region:</string>
        </property>
       </widget>
      </item>
@@ -172,7 +172,7 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QLineEdit" name="anatomicRegionModifierCodeMeaningLineEdit">
+      <widget class="QLineEdit" name="regionModifierCodeMeaningLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>1</horstretch>
@@ -182,19 +182,19 @@
       </widget>
      </item>
      <item row="5" column="2">
-      <widget class="QLineEdit" name="anatomicRegionModifierCodeValueLineEdit"/>
+      <widget class="QLineEdit" name="regionModifierCodeValueLineEdit"/>
      </item>
      <item row="5" column="3">
-      <widget class="QLineEdit" name="anatomicRegionModifierCSDLineEdit"/>
+      <widget class="QLineEdit" name="regionModifierCSDLineEdit"/>
      </item>
      <item row="4" column="2">
-      <widget class="QLineEdit" name="anatomicRegionCodeValueLineEdit"/>
+      <widget class="QLineEdit" name="regionCodeValueLineEdit"/>
      </item>
      <item row="4" column="3">
-      <widget class="QLineEdit" name="anatomicRegionCSDLineEdit"/>
+      <widget class="QLineEdit" name="regionCSDLineEdit"/>
      </item>
      <item row="4" column="1">
-      <widget class="QLineEdit" name="anatomicRegionCodeMeaningLineEdit">
+      <widget class="QLineEdit" name="regionCodeMeaningLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>1</horstretch>

@@ -739,10 +739,11 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const ch
 void vtkMRMLColorLogic::AddLabelsNode()
 {
   vtkMRMLColorTableNode* labelsNode = this->CreateLabelsNode();
+  if (labelsNode)
   {
     this->GetMRMLScene()->AddNode(labelsNode);
+    labelsNode->Delete();
   }
-  labelsNode->Delete();
 }
 
 //----------------------------------------------------------------------------------------
@@ -776,10 +777,15 @@ void vtkMRMLColorLogic::AddPETNode(int type)
 {
   vtkDebugMacro("AddDefaultColorNodes: adding PET nodes");
   vtkMRMLPETProceduralColorNode *nodepcn = this->CreatePETColorNode(type);
+  if (nodepcn)
   {
     this->GetMRMLScene()->AddNode(nodepcn);
+    nodepcn->Delete();
   }
-  nodepcn->Delete();
+  else
+  {
+    vtkWarningMacro("AddPETNode failed with type " << type);
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -787,11 +793,15 @@ void vtkMRMLColorLogic::AddDGEMRICNode(int type)
 {
   vtkDebugMacro("AddDefaultColorNodes: adding dGEMRIC nodes");
   vtkMRMLdGEMRICProceduralColorNode *pcnode = this->CreatedGEMRICColorNode(type);
+  if (pcnode)
   {
     this->GetMRMLScene()->AddNode(pcnode);
+    pcnode->Delete();
   }
-  pcnode->Delete();
-}
+  else
+  {
+    vtkWarningMacro("AddDGEMRICNode failed with type " << type);
+  }}
 
 //----------------------------------------------------------------------------------------
 void vtkMRMLColorLogic::AddDefaultFileNode(int i)
@@ -817,12 +827,12 @@ void vtkMRMLColorLogic::AddUserFileNode(int i)
   {
     this->GetMRMLScene()->AddNode(ctnode);
     vtkDebugMacro("AddDefaultColorFiles: Read and added user file node: " <<  this->UserColorFiles[i].c_str());
+    ctnode->Delete();
   }
   else
   {
     vtkWarningMacro("Unable to read user color file " << this->UserColorFiles[i].c_str());
   }
-  ctnode->Delete();
 }
 
 //----------------------------------------------------------------------------------------

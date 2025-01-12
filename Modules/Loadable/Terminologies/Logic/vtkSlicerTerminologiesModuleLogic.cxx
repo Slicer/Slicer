@@ -55,8 +55,8 @@
 #include "rapidjson/filereadstream.h"
 
 static rapidjson::Value JSON_EMPTY_VALUE;
-static std::string ANATOMIC_CONTEXT_SCHEMA = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/anatomic-context-schema.json#";
-static std::string ANATOMIC_CONTEXT_SCHEMA_1 = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/schemas/anatomic-context-schema.json#";
+static std::string REGION_CONTEXT_SCHEMA = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/anatomic-context-schema.json#";
+static std::string REGION_CONTEXT_SCHEMA_1 = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/schemas/anatomic-context-schema.json#";
 static std::string TERMINOLOGY_CONTEXT_SCHEMA = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/segment-context-schema.json#";
 static std::string TERMINOLOGY_CONTEXT_SCHEMA_1 = "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/schemas/segment-context-schema.json#";
 
@@ -107,35 +107,35 @@ public:
   /// \return Null Json value on failure, the type Json object otherwise
   rapidjson::Value& GetTypeModifierInTerminologyType(std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, CodeIdentifier modifierId);
 
-  /// Get root Json value for the anatomic context with given name
-  rapidjson::Value& GetAnatomicContextRootByName(std::string anatomicContextName);
+  /// Get root Json value for the region context with given name
+  rapidjson::Value& GetRegionContextRootByName(std::string regionContextName);
 
-  /// Get region array Json value for a given anatomic context
+  /// Get region array Json value for a given region context
   /// \return Null Json value on failure, the array object otherwise
-  rapidjson::Value& GetRegionArrayInAnatomicContext(std::string anatomicContextName);
-  /// Get type Json object from an anatomic context with given region name
+  rapidjson::Value& GetRegionArrayInRegionContext(std::string regionContextName);
+  /// Get type Json object from an region context with given region name
   /// \return Null Json value on failure, the type Json object otherwise
-  rapidjson::Value& GetRegionInAnatomicContext(std::string anatomicContextName, CodeIdentifier regionId);
-  /// Populate \sa vtkSlicerTerminologyType from Json anatomic region
-  bool PopulateRegionFromJson(rapidjson::Value& anatomicRegionObject, vtkSlicerTerminologyType* region);
+  rapidjson::Value& GetRegionInRegionContext(std::string regionContextName, CodeIdentifier regionId);
+  /// Populate \sa vtkSlicerTerminologyType from Json region region
+  bool PopulateRegionFromJson(rapidjson::Value& regionObject, vtkSlicerTerminologyType* region);
 
-  /// Get region modifier array Json value for a given anatomic context and region
+  /// Get region modifier array Json value for a given region context and region
   /// \return Null Json value on failure, the array object otherwise
-  rapidjson::Value& GetRegionModifierArrayInRegion(std::string anatomicContextName, CodeIdentifier regionId);
-  /// Get type modifier Json object from an anatomic context and region with given modifier name
+  rapidjson::Value& GetRegionModifierArrayInRegion(std::string regionContextName, CodeIdentifier regionId);
+  /// Get type modifier Json object from an region context and region with given modifier name
   /// \return Null Json value on failure, the type Json object otherwise
-  rapidjson::Value& GetRegionModifierInRegion(std::string anatomicContextName, CodeIdentifier regionId, CodeIdentifier modifierId);
+  rapidjson::Value& GetRegionModifierInRegion(std::string regionContextName, CodeIdentifier regionId, CodeIdentifier modifierId);
 
   /// Convert a segmentation descriptor Json structure to a terminology context one
   /// \param descriptorDoc Input segmentation descriptor json document
   /// \param convertedDoc Output terminology context json document
   /// \return Success flag
   bool ConvertSegmentationDescriptorToTerminologyContext(rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName);
-  /// Convert a segmentation descriptor Json structure to an anatomic context one
+  /// Convert a segmentation descriptor Json structure to an region context one
   /// \param descriptorDoc Input segmentation descriptor json document
-  /// \param convertedDoc Output anatomic context json document
+  /// \param convertedDoc Output region context json document
   /// \return Success flag
-  bool ConvertSegmentationDescriptorToAnatomicContext(rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName);
+  bool ConvertSegmentationDescriptorToRegionContext(rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName);
   /// Copy basic identifier members from an identifier object into a Json object
   /// Note: Allocator specifies the owner of the created object, so it is important to set the allocator
   ///       of the document where the object will be added
@@ -163,8 +163,8 @@ public:
   /// Loaded terminologies. Key is the context name, value is the root item.
   TerminologyMap LoadedTerminologies;
 
-  /// Loaded anatomical region contexts. Key is the context name, value is the root item.
-  TerminologyMap LoadedAnatomicContexts;
+  /// Loaded region contexts. Key is the context name, value is the root item.
+  TerminologyMap LoadedRegionContexts;
 };
 
 //---------------------------------------------------------------------------
@@ -181,8 +181,8 @@ vtkSlicerTerminologiesModuleLogic::vtkInternal::~vtkInternal()
   {
     delete termIt->second;
   }
-  for (TerminologyMap::iterator anIt = this->LoadedAnatomicContexts.begin();
-    anIt != this->LoadedAnatomicContexts.end(); ++anIt)
+  for (TerminologyMap::iterator anIt = this->LoadedRegionContexts.begin();
+    anIt != this->LoadedRegionContexts.end(); ++anIt)
   {
     delete anIt->second;
   }
@@ -506,10 +506,10 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifie
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetAnatomicContextRootByName(std::string anatomicContextName)
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionContextRootByName(std::string regionContextName)
 {
-  TerminologyMap::iterator anIt = this->LoadedAnatomicContexts.find(anatomicContextName);
-  if (anIt != this->LoadedAnatomicContexts.end() && anIt->second != nullptr)
+  TerminologyMap::iterator anIt = this->LoadedRegionContexts.find(regionContextName);
+  if (anIt != this->LoadedRegionContexts.end() && anIt->second != nullptr)
   {
     return *(anIt->second);
   }
@@ -518,46 +518,46 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetAnatomicCon
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionArrayInAnatomicContext(std::string anatomicContextName)
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionArrayInRegionContext(std::string regionContextName)
 {
-  if (anatomicContextName.empty())
+  if (regionContextName.empty())
   {
     return JSON_EMPTY_VALUE;
   }
-  rapidjson::Value& root = this->GetAnatomicContextRootByName(anatomicContextName);
+  rapidjson::Value& root = this->GetRegionContextRootByName(regionContextName);
   if (root.IsNull())
   {
-    vtkGenericWarningMacro("GetRegionArrayInAnatomicContext: Failed to find anatomic context root for context name '" << anatomicContextName << "'");
+    vtkGenericWarningMacro("GetRegionArrayInRegionContext: Failed to find region context root for context name '" << regionContextName << "'");
     return JSON_EMPTY_VALUE;
   }
 
-  rapidjson::Value& anatomicCodes = root["AnatomicCodes"];
-  if (anatomicCodes.IsNull())
+  rapidjson::Value& regionCodes = root["AnatomicCodes"];
+  if (regionCodes.IsNull())
   {
-    vtkGenericWarningMacro("GetRegionArrayInAnatomicContext: Failed to find AnatomicCodes member in anatomic context '" << anatomicContextName << "'");
+    vtkGenericWarningMacro("GetRegionArrayInRegionContext: Failed to find AnatomicCodes member in region context '" << regionContextName << "'");
     return JSON_EMPTY_VALUE;
   }
-  rapidjson::Value& anatomicRegionArray = anatomicCodes["AnatomicRegion"];
-  if (!anatomicRegionArray.IsArray())
+  rapidjson::Value& regionArray = regionCodes["AnatomicRegion"];
+  if (!regionArray.IsArray())
   {
-    vtkGenericWarningMacro("GetRegionArrayInAnatomicContext: Failed to find AnatomicRegion array member in anatomic context '" << anatomicContextName << "'");
+    vtkGenericWarningMacro("GetRegionArrayInRegionContext: Failed to find AnatomicRegion array member in region context '" << regionContextName << "'");
     return JSON_EMPTY_VALUE;
   }
 
-  return anatomicRegionArray;
+  return regionArray;
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionInAnatomicContext(std::string anatomicContextName, CodeIdentifier regionId)
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionInRegionContext(std::string regionContextName, CodeIdentifier regionId)
 {
   if (regionId.CodingSchemeDesignator.empty() || regionId.CodeValue.empty())
   {
     return JSON_EMPTY_VALUE;
   }
-  rapidjson::Value& regionArray = this->GetRegionArrayInAnatomicContext(anatomicContextName);
+  rapidjson::Value& regionArray = this->GetRegionArrayInRegionContext(regionContextName);
   if (regionArray.IsNull())
   {
-    vtkGenericWarningMacro("GetRegionInAnatomicContext: Failed to find region array for anatomic context '" << anatomicContextName << "'");
+    vtkGenericWarningMacro("GetRegionInRegionContext: Failed to find region array for region context '" << regionContextName << "'");
     return JSON_EMPTY_VALUE;
   }
 
@@ -566,31 +566,31 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionInAna
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateRegionFromJson(rapidjson::Value& anatomicRegionObject, vtkSlicerTerminologyType* region)
+bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateRegionFromJson(rapidjson::Value& regionObject, vtkSlicerTerminologyType* region)
 {
-  return this->PopulateTerminologyTypeFromJson(anatomicRegionObject, region);
+  return this->PopulateTerminologyTypeFromJson(regionObject, region);
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierArrayInRegion(std::string anatomicContextName, CodeIdentifier regionId)
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierArrayInRegion(std::string regionContextName, CodeIdentifier regionId)
 {
   if (regionId.CodingSchemeDesignator.empty() || regionId.CodeValue.empty())
   {
     return JSON_EMPTY_VALUE;
   }
-  rapidjson::Value& regionObject = this->GetRegionInAnatomicContext(anatomicContextName, regionId);
+  rapidjson::Value& regionObject = this->GetRegionInRegionContext(regionContextName, regionId);
   if (regionObject.IsNull())
   {
-    vtkGenericWarningMacro("GetRegionModifierArrayInAnatomicRegion: Failed to find region '" <<
-      regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
+    vtkGenericWarningMacro("GetRegionModifierArrayInRegion: Failed to find region '" <<
+      regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
     return JSON_EMPTY_VALUE;
   }
 
   rapidjson::Value& regionModifierArray = regionObject["Modifier"];
   if (!regionModifierArray.IsArray())
   {
-    vtkGenericWarningMacro("GetRegionModifierArrayInAnatomicRegion: Failed to find Modifier array member in region '" <<
-      regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
+    vtkGenericWarningMacro("GetRegionModifierArrayInRegion: Failed to find Modifier array member in region '" <<
+      regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
     return JSON_EMPTY_VALUE;
   }
 
@@ -599,17 +599,17 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModif
 
 //---------------------------------------------------------------------------
 rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierInRegion(
-  std::string anatomicContextName, CodeIdentifier regionId, CodeIdentifier modifierId )
+  std::string regionContextName, CodeIdentifier regionId, CodeIdentifier modifierId )
 {
   if (modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
   {
     return JSON_EMPTY_VALUE;
   }
-  rapidjson::Value& regionModifierArray = this->GetRegionModifierArrayInRegion(anatomicContextName, regionId);
+  rapidjson::Value& regionModifierArray = this->GetRegionModifierArrayInRegion(regionContextName, regionId);
   if (regionModifierArray.IsNull())
   {
     vtkGenericWarningMacro("GetRegionModifierInRegion: Failed to find region modifier array for region '" <<
-      regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
+      regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
     return JSON_EMPTY_VALUE;
   }
 
@@ -838,7 +838,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToAnatomicContext(
+bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToRegionContext(
   rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName)
 {
   if (!descriptorDoc.IsObject() || contextName.empty())
@@ -850,26 +850,26 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
   rapidjson::Value& segmentAttributesArray = descriptorDoc["segmentAttributes"];
   if (!segmentAttributesArray.IsArray())
   {
-    vtkGenericWarningMacro("ConvertSegmentationDescriptorToAnatomicContext: Invalid segmentAttributes member");
+    vtkGenericWarningMacro("ConvertSegmentationDescriptorToRegionContext: Invalid segmentAttributes member");
     return false;
   }
 
   rapidjson::Document::AllocatorType& allocator = convertedDoc.GetAllocator();
 
   // Use terminology with context name if exists
-  rapidjson::Value anatomicCodes;
+  rapidjson::Value regionCodes;
   rapidjson::Value regionArray;
   if (convertedDoc.IsObject() && convertedDoc.HasMember("AnatomicCodes"))
   {
-    anatomicCodes = convertedDoc["AnatomicCodes"];
-    regionArray = anatomicCodes["AnatomicRegion"];
+    regionCodes = convertedDoc["AnatomicCodes"];
+    regionArray = regionCodes["AnatomicRegion"];
   }
   else
   {
-    // If anatomic context was not found in the map, then initialize it and its members
+    // If region context was not found in the map, then initialize it and its members
     convertedDoc.SetObject();
     convertedDoc.AddMember("AnatomicContextName", rapidjson::StringRef(contextName.c_str()), allocator);
-    anatomicCodes.SetObject();
+    regionCodes.SetObject();
     regionArray.SetArray();
   }
 
@@ -889,7 +889,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     segmentAttributes = segmentAttributes[0]; // Enter "innerList"
     if (!segmentAttributes.HasMember("AnatomicRegionSequence"))
     {
-      // Anatomic context is optional in the descriptor file
+      // Region context is optional in the descriptor file
       ++index;
       continue;
     }
@@ -915,7 +915,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
       regionModifierArray.SetArray();
     }
 
-    // Add modifier if specified in descriptor and does not yet exist in anatomic context
+    // Add modifier if specified in descriptor and does not yet exist in region context
     if (segmentAttributes.HasMember("AnatomicRegionModifierSequence"))
     {
       rapidjson::Value& segmentRegionModifier = segmentAttributes["AnatomicRegionModifierSequence"];
@@ -960,20 +960,20 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     ++index;
   }
 
-  // Set objects back to anatomic context Json object
+  // Set objects back to region context Json object
   if (entryAdded)
   {
-    if (anatomicCodes.HasMember("AnatomicRegion"))
+    if (regionCodes.HasMember("AnatomicRegion"))
     {
-      anatomicCodes.EraseMember("AnatomicRegion");
+      regionCodes.EraseMember("AnatomicRegion");
     }
-    anatomicCodes.AddMember("AnatomicRegion", regionArray, allocator);
+    regionCodes.AddMember("AnatomicRegion", regionArray, allocator);
 
     if (convertedDoc.HasMember("AnatomicCodes"))
     {
       convertedDoc.EraseMember("AnatomicCodes");
     }
-    convertedDoc.AddMember("AnatomicCodes", anatomicCodes, allocator);
+    convertedDoc.AddMember("AnatomicCodes", regionCodes, allocator);
 
     return true;
   }
@@ -1020,12 +1020,12 @@ void vtkSlicerTerminologiesModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newSc
 {
   Superclass::SetMRMLSceneInternal(newScene);
 
-  // Load default terminologies and anatomical contexts
+  // Load default terminologies and region contexts
   // Note: Do it here not in the constructor so that the module shared directory is properly initialized
   bool wasModifying = this->GetDisableModifiedEvent();
   this->SetDisableModifiedEvent(true);
   this->LoadDefaultTerminologies();
-  this->LoadDefaultAnatomicContexts();
+  this->LoadDefaultRegionContexts();
   this->LoadUserContexts();
   this->SetDisableModifiedEvent(wasModifying);
 }
@@ -1070,17 +1070,17 @@ bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath
       this->Internal->LoadedTerminologies, contextName, jsonRoot);
     vtkDebugMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   }
-  else if (!schema.compare(ANATOMIC_CONTEXT_SCHEMA) || !schema.compare(ANATOMIC_CONTEXT_SCHEMA_1))
+  else if (!schema.compare(REGION_CONTEXT_SCHEMA) || !schema.compare(REGION_CONTEXT_SCHEMA_1))
   {
-    // Store anatomic context
+    // Store region context
     std::string contextName = (*jsonRoot)["AnatomicContextName"].GetString();
     vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-      this->Internal->LoadedAnatomicContexts, contextName, jsonRoot);
-    vtkDebugMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
+      this->Internal->LoadedRegionContexts, contextName, jsonRoot);
+    vtkDebugMacro("Region context named '" << contextName << "' successfully loaded from file " << filePath);
   }
   else
   {
-    vtkErrorMacro("LoadContextFromFile: File " << filePath << " is neither a terminology nor anatomic context file according to its schema");
+    vtkErrorMacro("LoadContextFromFile: File " << filePath << " is neither a terminology nor region context file according to its schema");
     fclose(fp);
     delete jsonRoot;
     return false;
@@ -1209,64 +1209,64 @@ void vtkSlicerTerminologiesModuleLogic::LoadDefaultTerminologies()
 }
 
 //---------------------------------------------------------------------------
-std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::string filePath)
+std::string vtkSlicerTerminologiesModuleLogic::LoadRegionContextFromFile(std::string filePath)
 {
-  rapidjson::Document* anatomicContextRoot = new rapidjson::Document;
+  rapidjson::Document* regionContextRoot = new rapidjson::Document;
 
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
   {
-    vtkErrorMacro("LoadAnatomicContextFromFile: Failed to load anatomic context from file " << filePath);
-    delete anatomicContextRoot;
+    vtkErrorMacro("LoadRegionContextFromFile: Failed to load region context from file " << filePath);
+    delete regionContextRoot;
     return "";
   }
 
   char buffer[4096];
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
-  if (anatomicContextRoot->ParseStream(fs).HasParseError())
+  if (regionContextRoot->ParseStream(fs).HasParseError())
   {
-    vtkErrorMacro("LoadAnatomicContextFromFile: Failed to load anatomic context from file " << filePath);
+    vtkErrorMacro("LoadRegionContextFromFile: Failed to load region context from file " << filePath);
     fclose(fp);
-    delete anatomicContextRoot;
+    delete regionContextRoot;
     return "";
   }
 
   // Check schema
-  rapidjson::Value::MemberIterator schemaIt = anatomicContextRoot->FindMember("@schema");
-  if (schemaIt == anatomicContextRoot->MemberEnd())
+  rapidjson::Value::MemberIterator schemaIt = regionContextRoot->FindMember("@schema");
+  if (schemaIt == regionContextRoot->MemberEnd())
   {
-    vtkErrorMacro("LoadAnatomicContextFromFile: File " << filePath << " does not contain schema information");
+    vtkErrorMacro("LoadRegionContextFromFile: File " << filePath << " does not contain schema information");
     fclose(fp);
-    delete anatomicContextRoot;
+    delete regionContextRoot;
     return "";
   }
-  std::string schema = (*anatomicContextRoot)["@schema"].GetString();
-  if (schema.compare(ANATOMIC_CONTEXT_SCHEMA) && schema.compare(ANATOMIC_CONTEXT_SCHEMA_1))
+  std::string schema = (*regionContextRoot)["@schema"].GetString();
+  if (schema.compare(REGION_CONTEXT_SCHEMA) && schema.compare(REGION_CONTEXT_SCHEMA_1))
   {
-    vtkErrorMacro("LoadAnatomicContextFromFile: File " << filePath << " is not an anatomic context file according to its schema");
+    vtkErrorMacro("LoadRegionContextFromFile: File " << filePath << " is not an region context file according to its schema");
     fclose(fp);
-    delete anatomicContextRoot;
+    delete regionContextRoot;
     return "";
   }
 
-  // Store anatomic context
-  std::string contextName = (*anatomicContextRoot)["AnatomicContextName"].GetString();
+  // Store region context
+  std::string contextName = (*regionContextRoot)["AnatomicContextName"].GetString();
   vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-    this->Internal->LoadedAnatomicContexts, contextName, anatomicContextRoot);
+    this->Internal->LoadedRegionContexts, contextName, regionContextRoot);
 
-  vtkDebugMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
+  vtkDebugMacro("REgion context named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
   this->Modified();
   return contextName;
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath)
+bool vtkSlicerTerminologiesModuleLogic::LoadRegionContextFromSegmentDescriptorFile(std::string contextName, std::string filePath)
 {
   FILE *fp = fopen(filePath.c_str(), "r");
   if (!fp)
   {
-    vtkErrorMacro("LoadAnatomicContextFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
+    vtkErrorMacro("LoadRegionContextFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
     return false;
   }
 
@@ -1275,15 +1275,15 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
   if (descriptorDoc.ParseStream(fs).HasParseError())
   {
-    vtkErrorMacro("LoadAnatomicContextFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
+    vtkErrorMacro("LoadRegionContextFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
     fclose(fp);
     return false;
   }
 
-  // Convert the loaded descriptor json file into anatomic context json format
+  // Convert the loaded descriptor json file into region context json format
   rapidjson::Document* convertedDoc = nullptr;
-  vtkInternal::TerminologyMap::iterator anIt = this->Internal->LoadedAnatomicContexts.find(contextName);
-  if (anIt != this->Internal->LoadedAnatomicContexts.end() && anIt->second != nullptr)
+  vtkInternal::TerminologyMap::iterator anIt = this->Internal->LoadedRegionContexts.find(contextName);
+  if (anIt != this->Internal->LoadedRegionContexts.end() && anIt->second != nullptr)
   {
     convertedDoc = anIt->second;
   }
@@ -1292,53 +1292,32 @@ bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptor
     convertedDoc = new rapidjson::Document;
   }
 
-  bool success = this->Internal->ConvertSegmentationDescriptorToAnatomicContext(descriptorDoc, *convertedDoc, contextName);
+  bool success = this->Internal->ConvertSegmentationDescriptorToRegionContext(descriptorDoc, *convertedDoc, contextName);
   if (!success)
   {
-    // Anatomic context is optional in descriptor file
+    // Region context is optional in descriptor file
     fclose(fp);
     return false;
   }
 
-  // Store anatomic context
+  // Store region context
   vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-    this->Internal->LoadedAnatomicContexts, contextName, convertedDoc );
+    this->Internal->LoadedRegionContexts, contextName, convertedDoc );
 
-  vtkDebugMacro("Anatomic context named '" << contextName << "' successfully loaded from file " << filePath);
+  vtkDebugMacro("Region context named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
   this->Modified();
   return true;
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTerminologiesModuleLogic::LoadCompatibleColorTables()
-{
-  vtkMRMLScene* scene = this->GetMRMLScene();
-  if (scene == nullptr)
-  {
-    return;
-  }
-
-  for (int i=0; i<scene->GetNumberOfNodesByClass("vtkMRMLColorNode"); ++i)
-  {
-    vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLColorNode"));
-    const char* terminologyAttr = colorNode->GetAttribute(colorNode->GetContainTerminologyAttributeName());
-    if (terminologyAttr != nullptr && !strcmp(terminologyAttr, "true"))
-    {
-      // Load color table as terminology context and anatomic context if the attribute indicates that it contains terminology
-      this->LoadColorTable(colorNode);
-    }
-  }
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerTerminologiesModuleLogic::LoadDefaultAnatomicContexts()
+void vtkSlicerTerminologiesModuleLogic::LoadDefaultRegionContexts()
 {
   std::string success("");
-  success = this->LoadAnatomicContextFromFile(this->GetModuleShareDirectory() + "/AnatomicRegionAndModifier-DICOM-Master.term.json");
+  success = this->LoadRegionContextFromFile(this->GetModuleShareDirectory() + "/AnatomicRegionAndModifier-DICOM-Master.term.json");
   if (success.empty())
   {
-    vtkErrorMacro("LoadDefaultAnatomicContexts: Failed to load anatomical region context 'AnatomicRegionAndModifier-DICOM-Master'");
+    vtkErrorMacro("LoadDefaultRegionContexts: Failed to load region context 'AnatomicRegionAndModifier-DICOM-Master'");
   }
 }
 
@@ -1405,31 +1384,31 @@ void vtkSlicerTerminologiesModuleLogic::GetLoadedTerminologyNames(vtkStringArray
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTerminologiesModuleLogic::GetLoadedAnatomicContextNames(std::vector<std::string> &anatomicContextNames)
+void vtkSlicerTerminologiesModuleLogic::GetLoadedRegionContextNames(std::vector<std::string> &regionContextNames)
 {
-  anatomicContextNames.clear();
+  regionContextNames.clear();
 
   vtkSlicerTerminologiesModuleLogic::vtkInternal::TerminologyMap::iterator anIt;
-  for (anIt=this->Internal->LoadedAnatomicContexts.begin(); anIt!=this->Internal->LoadedAnatomicContexts.end(); ++anIt)
+  for (anIt=this->Internal->LoadedRegionContexts.begin(); anIt!=this->Internal->LoadedRegionContexts.end(); ++anIt)
   {
-    anatomicContextNames.push_back(anIt->first);
+    regionContextNames.push_back(anIt->first);
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTerminologiesModuleLogic::GetLoadedAnatomicContextNames(vtkStringArray* anatomicContextNames)
+void vtkSlicerTerminologiesModuleLogic::GetLoadedRegionContextNames(vtkStringArray* regionContextNames)
 {
-  if (!anatomicContextNames)
+  if (!regionContextNames)
   {
     return;
   }
-  anatomicContextNames->Initialize();
+  regionContextNames->Initialize();
 
-  std::vector<std::string> anatomicContextNamesVector;
-  this->GetLoadedAnatomicContextNames(anatomicContextNamesVector);
-  for (std::vector<std::string>::iterator anIt = anatomicContextNamesVector.begin(); anIt != anatomicContextNamesVector.end(); ++anIt)
+  std::vector<std::string> regionContextNamesVector;
+  this->GetLoadedRegionContextNames(regionContextNamesVector);
+  for (std::vector<std::string>::iterator anIt = regionContextNamesVector.begin(); anIt != regionContextNamesVector.end(); ++anIt)
   {
-    anatomicContextNames->InsertNextValue(anIt->c_str());
+    regionContextNames->InsertNextValue(anIt->c_str());
   }
 }
 
@@ -1793,16 +1772,16 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeModifierInTerminologyType(
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions)
+bool vtkSlicerTerminologiesModuleLogic::GetRegionsInRegionContext(std::string regionContextName, std::vector<CodeIdentifier>& regions)
 {
-  return this->FindRegionsInAnatomicContext(anatomicContextName, regions, "");
+  return this->FindRegionsInRegionContext(regionContextName, regions, "");
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionsInAnatomicContext(std::string anatomicContextName)
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionsInRegionContext(std::string regionContextName)
 {
     std::vector<CodeIdentifier> regions;
-    if (!this->GetRegionsInAnatomicContext(anatomicContextName, regions))
+    if (!this->GetRegionsInRegionContext(regionContextName, regions))
     {
       return 0;
     }
@@ -1810,37 +1789,37 @@ int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionsInAnatomicContext(std::
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetNthRegionInAnatomicContext(std::string anatomicContextName, int regionIndex, vtkSlicerTerminologyType* regionObject)
+bool vtkSlicerTerminologiesModuleLogic::GetNthRegionInRegionContext(std::string regionContextName, int regionIndex, vtkSlicerTerminologyType* regionObject)
 {
   if (!regionObject)
   {
-    vtkErrorMacro("GetNthRegionInAnatomicContext failed: regionObject is invalid)");
+    vtkErrorMacro("GetNthRegionInRegionContext failed: regionObject is invalid)");
     return false;
   }
   std::vector<CodeIdentifier> regions;
-  if (!this->GetRegionsInAnatomicContext(anatomicContextName, regions))
+  if (!this->GetRegionsInRegionContext(regionContextName, regions))
   {
     return false;
   }
   if (regionIndex < 0 || regionIndex >= regions.size())
   {
-    vtkErrorMacro("GetNthRegionInAnatomicContext failed: region index of " << regionIndex << " is out of range"
+    vtkErrorMacro("GetNthRegionInRegionContext failed: region index of " << regionIndex << " is out of range"
       << " (number of regions: " << regions.size() << ")");
     return false;
   }
 
-  return this->GetRegionInAnatomicContext(anatomicContextName, regions[regionIndex], regionObject);
+  return this->GetRegionInRegionContext(regionContextName, regions[regionIndex], regionObject);
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::FindRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions, std::string search)
+bool vtkSlicerTerminologiesModuleLogic::FindRegionsInRegionContext(std::string regionContextName, std::vector<CodeIdentifier>& regions, std::string search)
 {
   regions.clear();
 
-  rapidjson::Value& regionArray = this->Internal->GetRegionArrayInAnatomicContext(anatomicContextName);
+  rapidjson::Value& regionArray = this->Internal->GetRegionArrayInRegionContext(regionContextName);
   if (regionArray.IsNull())
   {
-    vtkErrorMacro("FindRegionsInAnatomicContext: Failed to find region array member in anatomic context '" << anatomicContextName << "'");
+    vtkErrorMacro("FindRegionsInRegionContext: Failed to find region array member in region context '" << regionContextName << "'");
     return false;
   }
 
@@ -1871,8 +1850,8 @@ bool vtkSlicerTerminologiesModuleLogic::FindRegionsInAnatomicContext(std::string
       }
       else
       {
-        vtkErrorMacro("FindRegionsInAnatomicContext: Invalid region '" << regionName.GetString()
-          << "' in anatomic context '" << anatomicContextName << "'");
+        vtkErrorMacro("FindRegionsInRegionContext: Invalid region '" << regionName.GetString()
+          << "' in region context '" << regionContextName << "'");
       }
     }
     ++index;
@@ -1882,17 +1861,17 @@ bool vtkSlicerTerminologiesModuleLogic::FindRegionsInAnatomicContext(std::string
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetRegionInAnatomicContext(std::string anatomicContextName, CodeIdentifier regionId, vtkSlicerTerminologyType* region)
+bool vtkSlicerTerminologiesModuleLogic::GetRegionInRegionContext(std::string regionContextName, CodeIdentifier regionId, vtkSlicerTerminologyType* region)
 {
   if (!region || regionId.CodingSchemeDesignator.empty() || regionId.CodeValue.empty())
   {
     return false;
   }
 
-  rapidjson::Value& regionObject = this->Internal->GetRegionInAnatomicContext(anatomicContextName, regionId);
+  rapidjson::Value& regionObject = this->Internal->GetRegionInRegionContext(regionContextName, regionId);
   if (regionObject.IsNull())
   {
-    vtkErrorMacro("GetRegionInAnatomicContext: Failed to find region '" << regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
+    vtkErrorMacro("GetRegionInRegionContext: Failed to find region '" << regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
     return false;
   }
 
@@ -1901,16 +1880,16 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionInAnatomicContext(std::string a
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInAnatomicRegion(
-  std::string anatomicContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers )
+bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInRegion(
+  std::string regionContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers )
 {
   regionModifiers.clear();
 
-  rapidjson::Value& regionModifierArray = this->Internal->GetRegionModifierArrayInRegion(anatomicContextName, regionId);
+  rapidjson::Value& regionModifierArray = this->Internal->GetRegionModifierArrayInRegion(regionContextName, regionId);
   if (regionModifierArray.IsNull())
   {
     vtkErrorMacro("GetRegionModifiersInRegion: Failed to find Region Modifier array member in region '"
-      << regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
+      << regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
     return false;
   }
 
@@ -1938,7 +1917,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInAnatomicRegion(
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierInAnatomicRegion(std::string anatomicContextName,
+bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierInRegion(std::string regionContextName,
     CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier)
 {
   if (!regionModifier || modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
@@ -1946,11 +1925,11 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierInAnatomicRegion(std::s
     return false;
   }
 
-  rapidjson::Value& regionModifierObject = this->Internal->GetRegionModifierInRegion(anatomicContextName, regionId, modifierId);
+  rapidjson::Value& regionModifierObject = this->Internal->GetRegionModifierInRegion(regionContextName, regionId, modifierId);
   if (regionModifierObject.IsNull())
   {
-    vtkErrorMacro("GetRegionModifierInAnatomicRegion: Failed to find region modifier '" << modifierId.CodeMeaning
-      << "' in region '" << regionId.CodeMeaning << "' in anatomic context '" << anatomicContextName << "'");
+    vtkErrorMacro("GetRegionModifierInRegion: Failed to find region modifier '" << modifierId.CodeMeaning
+      << "' in region '" << regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
     return false;
   }
 
@@ -1959,17 +1938,17 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierInAnatomicRegion(std::s
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInAnatomicRegion(
-  std::string anatomicContextName, vtkSlicerTerminologyType* regionObject)
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInRegion(
+  std::string regionContextName, vtkSlicerTerminologyType* regionObject)
 {
   if (!regionObject)
   {
-    vtkErrorMacro("GetNumberOfRegionModifierInAnatomicRegion failed: regionObject is invalid)");
+    vtkErrorMacro("GetNumberOfRegionModifierInRegion failed: regionObject is invalid)");
     return 0;
   }
   CodeIdentifier regionId(regionObject->GetCodingSchemeDesignator(), regionObject->GetCodeValue(), regionObject->GetCodeMeaning());
   std::vector<CodeIdentifier> regionModifiers;
-  if (!this->GetRegionModifiersInAnatomicRegion(anatomicContextName, regionId, regionModifiers))
+  if (!this->GetRegionModifiersInRegion(regionContextName, regionId, regionModifiers))
   {
     return 0;
   }
@@ -1977,29 +1956,29 @@ int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInAnatomicRegion
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInAnatomicRegion(
-  std::string anatomicContextName, vtkSlicerTerminologyType* regionObject, int regionModifierIndex, vtkSlicerTerminologyType* regionModifier)
+bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInRegion(
+  std::string regionContextName, vtkSlicerTerminologyType* regionObject, int regionModifierIndex, vtkSlicerTerminologyType* regionModifier)
 {
   if (!regionObject)
   {
-    vtkErrorMacro("GetNthRegionInAnatomicContext failed: regionObject is invalid)");
+    vtkErrorMacro("GetNthRegionInRegionContext failed: regionObject is invalid)");
     return false;
   }
   CodeIdentifier regionId(regionObject->GetCodingSchemeDesignator(), regionObject->GetCodeValue(), regionObject->GetCodeMeaning());
   std::vector<CodeIdentifier> regionModifiers;
-  if (!this->GetRegionModifiersInAnatomicRegion(anatomicContextName, regionId, regionModifiers))
+  if (!this->GetRegionModifiersInRegion(regionContextName, regionId, regionModifiers))
   {
     return false;
   }
 
   if (regionModifierIndex < 0 || regionModifierIndex >= regionModifiers.size())
   {
-    vtkErrorMacro("GetNthRegionModifierInAnatomicRegion failed: regionModifier index of " << regionModifierIndex << " is out of range"
+    vtkErrorMacro("GetNthRegionModifierInRegion failed: regionModifier index of " << regionModifierIndex << " is out of range"
       << " (number of regionModifiers: " << regionModifiers.size() << ")");
     return false;
   }
   CodeIdentifier modifierId = regionModifiers[regionModifierIndex];
-  return this->GetRegionModifierInAnatomicRegion(anatomicContextName, regionId, modifierId, regionModifier);
+  return this->GetRegionModifierInRegion(regionContextName, regionId, modifierId, regionModifier);
 }
 
 //---------------------------------------------------------------------------
@@ -2026,7 +2005,7 @@ std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(vtkSlic
   }
 
   // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,
-  // codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
+  // codeValue, codeMeaning triple), type, typeModifier, regionContextName, region, regionModifier
   std::string serializedEntry;
   serializedEntry += std::string(entry->GetTerminologyContextName()) + "~";
   serializedEntry +=
@@ -2052,21 +2031,21 @@ std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(vtkSlic
       ? entry->GetTypeModifierObject()->GetCodeMeaning() : "") + "~";
 
   serializedEntry +=
-    std::string(entry->GetAnatomicContextName() ? entry->GetAnatomicContextName() : "") + "~";
+    std::string(entry->GetRegionContextName() ? entry->GetRegionContextName() : "") + "~";
   serializedEntry +=
-    std::string(entry->GetAnatomicRegionObject() && entry->GetAnatomicRegionObject()->GetCodingSchemeDesignator()
-      ? entry->GetAnatomicRegionObject()->GetCodingSchemeDesignator() : "") + "^"
-    + std::string(entry->GetAnatomicRegionObject() && entry->GetAnatomicRegionObject()->GetCodeValue()
-      ? entry->GetAnatomicRegionObject()->GetCodeValue() : "") + "^"
-    + std::string(entry->GetAnatomicRegionObject() && entry->GetAnatomicRegionObject()->GetCodeMeaning()
-      ? entry->GetAnatomicRegionObject()->GetCodeMeaning() : "") + "~";
+    std::string(entry->GetRegionObject() && entry->GetRegionObject()->GetCodingSchemeDesignator()
+      ? entry->GetRegionObject()->GetCodingSchemeDesignator() : "") + "^"
+    + std::string(entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue()
+      ? entry->GetRegionObject()->GetCodeValue() : "") + "^"
+    + std::string(entry->GetRegionObject() && entry->GetRegionObject()->GetCodeMeaning()
+      ? entry->GetRegionObject()->GetCodeMeaning() : "") + "~";
   serializedEntry +=
-    std::string(entry->GetAnatomicRegionModifierObject() && entry->GetAnatomicRegionModifierObject()->GetCodingSchemeDesignator()
-      ? entry->GetAnatomicRegionModifierObject()->GetCodingSchemeDesignator() : "") + "^"
-    + std::string(entry->GetAnatomicRegionModifierObject() && entry->GetAnatomicRegionModifierObject()->GetCodeValue()
-      ? entry->GetAnatomicRegionModifierObject()->GetCodeValue() : "") + "^"
-    + std::string(entry->GetAnatomicRegionModifierObject() && entry->GetAnatomicRegionModifierObject()->GetCodeMeaning()
-      ? entry->GetAnatomicRegionModifierObject()->GetCodeMeaning() : "");
+    std::string(entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodingSchemeDesignator()
+      ? entry->GetRegionModifierObject()->GetCodingSchemeDesignator() : "") + "^"
+    + std::string(entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeValue()
+      ? entry->GetRegionModifierObject()->GetCodeValue() : "") + "^"
+    + std::string(entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeMeaning()
+      ? entry->GetRegionModifierObject()->GetCodeMeaning() : "");
 
   return serializedEntry;
 }
@@ -2077,7 +2056,7 @@ std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(
   std::string categoryValue, std::string categorySchemeDesignator, std::string categoryMeaning,
   std::string typeValue, std::string typeSchemeDesignator, std::string typeMeaning,
   std::string modifierValue, std::string modifierSchemeDesignator, std::string modifierMeaning,
-  std::string anatomicContextName,
+  std::string regionContextName,
   std::string regionValue, std::string regionSchemeDesignator, std::string regionMeaning,
   std::string regionModifierValue, std::string regionModifierSchemeDesignator, std::string regionModifierMeaning )
 {
@@ -2087,7 +2066,7 @@ std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(
   serializedEntry += typeSchemeDesignator + "^" + typeValue + "^" + typeMeaning + "~";
   serializedEntry += modifierSchemeDesignator + "^" + modifierValue + "^" + modifierMeaning + "~";
 
-  serializedEntry += anatomicContextName + "~";
+  serializedEntry += regionContextName + "~";
   serializedEntry += regionSchemeDesignator + "^" + regionValue + "^" + regionMeaning + "~";
   serializedEntry += regionModifierSchemeDesignator + "^" + regionModifierValue + "^" + regionModifierMeaning;
 
@@ -2106,17 +2085,17 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
 
   // Clear terminology entry object
   entry->SetTerminologyContextName(nullptr);
-  entry->SetAnatomicContextName(nullptr);
+  entry->SetRegionContextName(nullptr);
 
   if ( !entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject()
-    || !entry->GetAnatomicRegionObject() || !entry->GetAnatomicRegionModifierObject() )
+    || !entry->GetRegionObject() || !entry->GetRegionModifierObject() )
   {
     vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Invalid terminology entry given");
     return false;
   }
 
   // Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,
-  // codeValue, codeMeaning triple), type, typeModifier, anatomicContextName, anatomicRegion, anatomicRegionModifier
+  // codeValue, codeMeaning triple), type, typeModifier, regionContextName, region, regionModifier
   std::vector<std::string> entryComponents;
   vtksys::SystemTools::Split(serializedEntry, entryComponents, '~');
   if (entryComponents.size() != 7)
@@ -2165,27 +2144,27 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
     entry->GetTypeModifierObject()->SetCodeMeaning(typeModifierIds[2].c_str());
   }
 
-  // Anatomic context name (optional)
-  std::string anatomicContextName = entryComponents[4];
-  entry->SetAnatomicContextName(anatomicContextName.empty()?nullptr:anatomicContextName.c_str());
+  // Region context name (optional)
+  std::string regionContextName = entryComponents[4];
+  entry->SetRegionContextName(regionContextName.empty()?nullptr:regionContextName.c_str());
 
-  // Anatomic region (optional)
+  // Region (optional)
   std::vector<std::string> regionIds = vtksys::SystemTools::SplitString(entryComponents[5], '^');
-  entry->GetAnatomicRegionObject()->Initialize();
+  entry->GetRegionObject()->Initialize();
   if (regionIds.size() == 3)
   {
-    entry->GetAnatomicRegionObject()->SetCodingSchemeDesignator(regionIds[0].c_str());
-    entry->GetAnatomicRegionObject()->SetCodeValue(regionIds[1].c_str());
-    entry->GetAnatomicRegionObject()->SetCodeMeaning(regionIds[2].c_str());
+    entry->GetRegionObject()->SetCodingSchemeDesignator(regionIds[0].c_str());
+    entry->GetRegionObject()->SetCodeValue(regionIds[1].c_str());
+    entry->GetRegionObject()->SetCodeMeaning(regionIds[2].c_str());
 
-    // Anatomic region modifier (optional)
+    // Region modifier (optional)
     std::vector<std::string> regionModifierIds = vtksys::SystemTools::SplitString(entryComponents[6], '^');
-    entry->GetAnatomicRegionModifierObject()->Initialize();
+    entry->GetRegionModifierObject()->Initialize();
     if (regionModifierIds.size() == 3)
     {
-      entry->GetAnatomicRegionModifierObject()->SetCodingSchemeDesignator(regionModifierIds[0].c_str());
-      entry->GetAnatomicRegionModifierObject()->SetCodeValue(regionModifierIds[1].c_str());
-      entry->GetAnatomicRegionModifierObject()->SetCodeMeaning(regionModifierIds[2].c_str());
+      entry->GetRegionModifierObject()->SetCodingSchemeDesignator(regionModifierIds[0].c_str());
+      entry->GetRegionModifierObject()->SetCodeValue(regionModifierIds[1].c_str());
+      entry->GetRegionModifierObject()->SetCodeMeaning(regionModifierIds[2].c_str());
     }
   }
 
@@ -2201,7 +2180,7 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
   }
 
   if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject()
-    || !entry->GetAnatomicRegionObject() || !entry->GetAnatomicRegionModifierObject())
+    || !entry->GetRegionObject() || !entry->GetRegionModifierObject())
   {
     vtkErrorWithObjectMacro(entry, "UpdateEntryFromLoadedTerminologies: Invalid terminology entry given");
     return false;
@@ -2254,41 +2233,41 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
     }
   }
 
-  // Anatomic region, anatomic region modifier
+  // Region, region modifier
 
-  CodeIdentifier regionId = GetCodeIdentifierFromCodedEntry(entry->GetAnatomicRegionObject());
+  CodeIdentifier regionId = GetCodeIdentifierFromCodedEntry(entry->GetRegionObject());
   if (regionId.IsValid())
   {
-    // Create list of preferred anatomic context names: the list starts with the entry's anatomic context name
-    // followed by all the other loaded anatomic context names.
-    std::string anatomicContextName = (entry->GetAnatomicContextName() ? entry->GetAnatomicContextName() : "");
-    std::vector<std::string> preferredAnatomicContextNames;
-    this->GetLoadedAnatomicContextNames(preferredAnatomicContextNames);
-    std::vector<std::string>::iterator pacIt = std::find(preferredAnatomicContextNames.begin(), preferredAnatomicContextNames.end(), anatomicContextName);
-    if (pacIt != preferredAnatomicContextNames.end())
+    // Create list of preferred region context names: the list starts with the entry's region context name
+    // followed by all the other loaded region context names.
+    std::string regionContextName = (entry->GetRegionContextName() ? entry->GetRegionContextName() : "");
+    std::vector<std::string> preferredRegionContextNames;
+    this->GetLoadedRegionContextNames(preferredRegionContextNames);
+    std::vector<std::string>::iterator pacIt = std::find(preferredRegionContextNames.begin(), preferredRegionContextNames.end(), regionContextName);
+    if (pacIt != preferredRegionContextNames.end())
     {
-      preferredAnatomicContextNames.erase(pacIt);
-      preferredAnatomicContextNames.insert(preferredAnatomicContextNames.begin(), anatomicContextName);
+      preferredRegionContextNames.erase(pacIt);
+      preferredRegionContextNames.insert(preferredRegionContextNames.begin(), regionContextName);
     }
 
     // Look for the type in each terminology context
-    for (std::string anatomicContextName : preferredAnatomicContextNames)
+    for (std::string regionContextName : preferredRegionContextNames)
     {
       vtkNew<vtkSlicerTerminologyType> regionObject;
-      if (!this->GetRegionInAnatomicContext(anatomicContextName, regionId, regionObject))
+      if (!this->GetRegionInRegionContext(regionContextName, regionId, regionObject))
       {
         continue;
       }
-      entry->SetAnatomicContextName(anatomicContextName.c_str());
-      entry->GetAnatomicRegionObject()->Copy(regionObject);
-      CodeIdentifier regionModifierId = GetCodeIdentifierFromCodedEntry(entry->GetAnatomicRegionModifierObject());
+      entry->SetRegionContextName(regionContextName.c_str());
+      entry->GetRegionObject()->Copy(regionObject);
+      CodeIdentifier regionModifierId = GetCodeIdentifierFromCodedEntry(entry->GetRegionModifierObject());
       if (regionModifierId.IsValid())
       {
         // Region with a modifier
         vtkNew<vtkSlicerTerminologyType> regionModifierObject;
-        if (this->GetRegionModifierInAnatomicRegion(anatomicContextName, regionId, regionModifierId, regionModifierObject))
+        if (this->GetRegionModifierInRegion(regionContextName, regionId, regionModifierId, regionModifierObject))
         {
-          entry->GetAnatomicRegionModifierObject()->Copy(regionModifierObject);
+          entry->GetRegionModifierObject()->Copy(regionModifierObject);
         }
       }
     }
@@ -2334,16 +2313,16 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
     terminologyStr = terminologyStr + std::string("\n    Modifier: ") + std::string(entry->GetTypeModifierObject()->GetCodeMeaning());
   }
 
-  // If anatomic region is not selected, then do not show anatomic context name either
-  if ( entry->GetAnatomicContextName()
-    && entry->GetAnatomicRegionObject() && entry->GetAnatomicRegionObject()->GetCodeValue() )
+  // If region is not selected, then do not show region context name either
+  if ( entry->GetRegionContextName()
+    && entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue() )
   {
-    terminologyStr = terminologyStr + std::string("\n  Anatomic context: ") + std::string(entry->GetAnatomicContextName());
-    terminologyStr = terminologyStr + std::string("\n  Anatomic region: ") + std::string(entry->GetAnatomicRegionObject()->GetCodeMeaning());
+    terminologyStr = terminologyStr + std::string("\n  Region context: ") + std::string(entry->GetRegionContextName());
+    terminologyStr = terminologyStr + std::string("\n  Region: ") + std::string(entry->GetRegionObject()->GetCodeMeaning());
 
-    if (entry->GetAnatomicRegionModifierObject() && entry->GetAnatomicRegionModifierObject()->GetCodeValue())
+    if (entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeValue())
     {
-      terminologyStr = terminologyStr + std::string("\n    Modifier: ") + std::string(entry->GetAnatomicRegionModifierObject()->GetCodeMeaning());
+      terminologyStr = terminologyStr + std::string("\n    Modifier: ") + std::string(entry->GetRegionModifierObject()->GetCodeMeaning());
     }
   }
 
@@ -2579,38 +2558,38 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames
 }
 
 //-----------------------------------------------------------------------------
-std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindAnatomicContextNames(
-  std::string anatomicRegionCodingSchemeDesignator, std::string anatomicRegionCodeValue,
-  std::string anatomicRegionModifierCodingSchemeDesignator, std::string anatomicRegionModifierCodeValue,
-  std::vector<std::string> preferredAnatomicContextNames,
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindRegionContextNames(
+  std::string regionCodingSchemeDesignator, std::string regionCodeValue,
+  std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
+  std::vector<std::string> preferredRegionContextNames,
   vtkCollection* foundEntries/*=nullptr*/)
 {
-  std::vector<std::string> foundAnatomicContextNames;
-  if (anatomicRegionCodingSchemeDesignator.empty() || anatomicRegionCodeValue.empty())
+  std::vector<std::string> foundRegionContextNames;
+  if (regionCodingSchemeDesignator.empty() || regionCodeValue.empty())
   {
-    vtkErrorMacro("FindAnatomicContextNames: anatomicRegion is not specified");
-    return foundAnatomicContextNames;
+    vtkErrorMacro("FindRegionContextNames: region is not specified");
+    return foundRegionContextNames;
   }
-  CodeIdentifier anatomicRegionId(anatomicRegionCodingSchemeDesignator, anatomicRegionCodeValue);
+  CodeIdentifier regionId(regionCodingSchemeDesignator, regionCodeValue);
 
-  if (preferredAnatomicContextNames.empty())
+  if (preferredRegionContextNames.empty())
   {
-    // Anatomic context names are not specified, so search in all available terminologies
-    this->GetLoadedAnatomicContextNames(preferredAnatomicContextNames);
+    // Region context names are not specified, so search in all available terminologies
+    this->GetLoadedRegionContextNames(preferredRegionContextNames);
   }
 
-  // Find terminology entries in each preferred anatomic context
-  for (std::string anatomicContextName : preferredAnatomicContextNames)
+  // Find terminology entries in each preferred region context
+  for (std::string regionContextName : preferredRegionContextNames)
   {
     vtkNew<vtkSlicerTerminologyType> regionObject;
-    if (!this->GetRegionInAnatomicContext(anatomicContextName, anatomicRegionId, regionObject))
+    if (!this->GetRegionInRegionContext(regionContextName, regionId, regionObject))
     {
       continue;
     }
-    if (anatomicRegionModifierCodingSchemeDesignator.empty() && anatomicRegionModifierCodeValue.empty())
+    if (regionModifierCodingSchemeDesignator.empty() && regionModifierCodeValue.empty())
     {
-      // Anatomic region without modifier
-      foundAnatomicContextNames.push_back(anatomicContextName);
+      // Region without modifier
+      foundRegionContextNames.push_back(regionContextName);
       if (foundEntries)
       {
         foundEntries->AddItem(regionObject);
@@ -2618,12 +2597,12 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindAnatomicContextN
     }
     else
     {
-      // Anatomic region with a modifier
+      // Region with a modifier
       vtkNew<vtkSlicerTerminologyType> modifiedRegionObject;
-      if (this->GetRegionModifierInAnatomicRegion(anatomicContextName, anatomicRegionId,
-        CodeIdentifier(anatomicRegionModifierCodingSchemeDesignator, anatomicRegionModifierCodeValue), modifiedRegionObject))
+      if (this->GetRegionModifierInRegion(regionContextName, regionId,
+        CodeIdentifier(regionModifierCodingSchemeDesignator, regionModifierCodeValue), modifiedRegionObject))
       {
-        foundAnatomicContextNames.push_back(anatomicContextName);
+        foundRegionContextNames.push_back(regionContextName);
         if (foundEntries)
         {
           foundEntries->AddItem(regionObject);
@@ -2632,7 +2611,7 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindAnatomicContextN
     }
   }
 
-  return foundAnatomicContextNames;
+  return foundRegionContextNames;
 }
 
 //-----------------------------------------------------------------------------
@@ -2696,12 +2675,18 @@ bool vtkSlicerTerminologiesModuleLogic::AreTerminologyEntriesEqual(vtkSlicerTerm
   return this->AreCodedEntriesEqual(entry1->GetCategoryObject(), entry2->GetCategoryObject())
       && this->AreCodedEntriesEqual(entry1->GetTypeObject(), entry2->GetTypeObject())
       && this->AreCodedEntriesEqual(entry1->GetTypeModifierObject(), entry2->GetTypeModifierObject())
-      && this->AreCodedEntriesEqual(entry1->GetAnatomicRegionObject(), entry2->GetAnatomicRegionObject())
-      && this->AreCodedEntriesEqual(entry1->GetAnatomicRegionModifierObject(), entry2->GetAnatomicRegionModifierObject());
+      && this->AreCodedEntriesEqual(entry1->GetRegionObject(), entry2->GetRegionObject())
+      && this->AreCodedEntriesEqual(entry1->GetRegionModifierObject(), entry2->GetRegionModifierObject());
 }
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::AreCodedEntriesEqual(vtkCodedEntry* codedEntry1, vtkCodedEntry* codedEntry2)
+{
+  return vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(codedEntry1, codedEntry2);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(vtkCodedEntry* codedEntry1, vtkCodedEntry* codedEntry2)
 {
   if (!codedEntry1 || !codedEntry2)
   {
@@ -2746,291 +2731,6 @@ bool vtkSlicerTerminologiesModuleLogic::AreCodedEntriesEqual(vtkCodedEntry* code
   return true;
 }
 
-//-----------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::LoadColorTable(vtkMRMLColorNode* colorNode)
-{
-  if (colorNode == nullptr || colorNode->GetName() == nullptr)
-  {
-    vtkErrorMacro("LoadColorTable: Invalid color node given");
-    return false;
-  }
-
-  // Create terminology entries from each color
-  vtkNew<vtkCollection> terminologyEntries;
-  std::map<vtkSlicerTerminologyEntry*, std::vector<int> > entryToColorMap;
-  for (int idx=0; idx<colorNode->GetNumberOfColors(); ++idx)
-  {
-    std::string terminologyStr = colorNode->GetTerminologyAsString(idx);
-    if (terminologyStr.empty())
-    {
-      continue;
-    }
-    vtkNew<vtkSlicerTerminologyEntry> entry;
-    if (!this->DeserializeTerminologyEntry(terminologyStr, entry))
-    {
-      continue; // No terminology yet for the current color
-    }
-    terminologyEntries->AddItem(entry);
-
-    // Remember color for entry
-    double color[4] = {0.0};
-    colorNode->GetColor(idx, color);
-    std::vector<int> rgb { int(color[0] * 255.0), int(color[1] * 255.0), int(color[2] * 255.0) };
-    entryToColorMap[entry] = rgb;
-  }
-  if (terminologyEntries->GetNumberOfItems() == 0)
-  {
-    vtkErrorMacro("LoadColorTable: Failed to find terminology in color node " << colorNode->GetName());
-    return false; // No terminology found in color table
-  }
-
-  // Utility function to populate coded entry JSON object from Slicer terminology entry
-  auto PopulateEntry = [](vtkCodedEntry* codedEntry, rapidjson::Value& jsonObject, rapidjson::Document::AllocatorType& allocator)
-  {
-    std::string codeMeaning(codedEntry->GetCodeMeaning());
-    rapidjson::Value codeMeaningString(rapidjson::kStringType);
-    codeMeaningString.SetString(codedEntry->GetCodeMeaning(), codeMeaning.length(), allocator);
-    jsonObject.AddMember("CodeMeaning", codeMeaningString, allocator);
-
-    std::string codeValue(codedEntry->GetCodeValue());
-    rapidjson::Value codeValueString(rapidjson::kStringType);
-    codeValueString.SetString(codedEntry->GetCodeValue(), codeValue.length(), allocator);
-    jsonObject.AddMember("CodeValue", codeValueString, allocator);
-
-    std::string codingSchemeDesignator(codedEntry->GetCodingSchemeDesignator());
-    rapidjson::Value codingSchemeDesignatorString(rapidjson::kStringType);
-    codingSchemeDesignatorString.SetString(codedEntry->GetCodingSchemeDesignator(), codingSchemeDesignator.length(), allocator);
-    jsonObject.AddMember("CodingSchemeDesignator", codingSchemeDesignatorString, allocator);
-  };
-  // Utility function to add recommended RGB color to entry
-  auto AddColorToType = [](std::vector<int> rgbColor, rapidjson::Value& jsonObject, rapidjson::Document::AllocatorType& allocator)
-  {
-    rapidjson::Value colorArray(rapidjson::kArrayType);
-    for (auto comp : rgbColor)
-    {
-      colorArray.PushBack(comp, allocator);
-    }
-    jsonObject.AddMember("recommendedDisplayRGBValue", colorArray, allocator);
-  };
-
-  // Create new terminology context document
-  rapidjson::Document* termDoc = new rapidjson::Document;
-  rapidjson::Document::AllocatorType& termAllocator = termDoc->GetAllocator();
-  termDoc->SetObject(); // Create a root object
-
-  // Add members to the root object
-  std::string terminologyContextName(colorNode->GetName()); //TODO: No terminology (or anatomical) context in the entry
-  rapidjson::Value nodeNameString(rapidjson::kStringType);
-  nodeNameString.SetString(terminologyContextName.c_str(), terminologyContextName.length(), termAllocator);
-  termDoc->AddMember("SegmentationCategoryTypeContextName", nodeNameString, termAllocator);
-  termDoc->AddMember("@schema", "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/segment-context-schema.json#", termAllocator);
-  std::string colorNodeID(colorNode->GetID());
-  rapidjson::Value colorNodeIDString(rapidjson::kStringType);
-  colorNodeIDString.SetString(colorNodeID.c_str(), colorNodeID.length(), termAllocator);
-  termDoc->AddMember("ColorTableID", colorNodeIDString, termAllocator);
-
-  rapidjson::Value segmentationCodesObject(rapidjson::kObjectType);
-  termDoc->AddMember("SegmentationCodes", segmentationCodesObject, termAllocator);
-
-  rapidjson::Value categoriesArray(rapidjson::kArrayType);
-  (*termDoc)["SegmentationCodes"].AddMember("Category", categoriesArray, termAllocator);
-
-  // Collect category, type, etc. entries and construct terminology JSON content
-  std::vector<vtkSlicerTerminologyEntry*> entriesWithAnatomicRegion;
-  for (int entryIdx=0; entryIdx<terminologyEntries->GetNumberOfItems(); ++entryIdx)
-  {
-    vtkSlicerTerminologyEntry* entry = vtkSlicerTerminologyEntry::SafeDownCast(terminologyEntries->GetItemAsObject(entryIdx));
-
-    // Category
-    vtkSlicerTerminologyCategory* category = entry->GetCategoryObject();
-    if (category == nullptr)
-    {
-      continue; // Empty terminology entry
-    }
-    if (category->GetCodeMeaning() == nullptr || category->GetCodeValue() == nullptr || category->GetCodingSchemeDesignator() == nullptr)
-    {
-      vtkErrorMacro("LoadColorTable: Invalid category found in terminology entry.");
-      continue;
-    }
-    int foundCategoryIdx{-1};
-    rapidjson::Value& categoryObject = this->Internal->GetCodeInArray(
-      this->GetCodeIdentifierFromCodedEntry(category), (*termDoc)["SegmentationCodes"]["Category"], foundCategoryIdx);
-    if (categoryObject.IsNull())
-    {
-      // Create category if does not exist yet
-      categoryObject = rapidjson::Value(rapidjson::kObjectType);
-      PopulateEntry(category, categoryObject, termAllocator);
-
-      rapidjson::Value typesArray(rapidjson::kArrayType);
-      categoryObject.AddMember("Type", typesArray, termAllocator);
-
-      foundCategoryIdx = (*termDoc)["SegmentationCodes"]["Category"].Size();
-      // Note: When array.PushBack is being executed, array has already been moved into document, and becomes a null value type (array.IsNull() == true).
-      //   You cannot PushBack to a null value, so need to access the object from the root.
-      (*termDoc)["SegmentationCodes"]["Category"].PushBack(categoryObject, termAllocator);
-    }
-
-    // Type
-    vtkSlicerTerminologyType* type = entry->GetTypeObject();
-    if (type->GetCodeMeaning() == nullptr || type->GetCodeValue() == nullptr || type->GetCodingSchemeDesignator() == nullptr)
-    {
-      vtkErrorMacro("LoadColorTable: Invalid type found in terminology entry.");
-      continue;
-    }
-    int foundTypeIdx{-1};
-    rapidjson::Value& typeObject = this->Internal->GetCodeInArray(this->GetCodeIdentifierFromCodedEntry(type),
-      (*termDoc)["SegmentationCodes"]["Category"][foundCategoryIdx]["Type"], foundTypeIdx);
-    if (typeObject.IsNull())
-    {
-      // Create type if does not exist yet
-      typeObject = rapidjson::Value(rapidjson::kObjectType);
-      PopulateEntry(type, typeObject, termAllocator);
-      AddColorToType(entryToColorMap[entry], typeObject, termAllocator);
-
-      foundTypeIdx = (*termDoc)["SegmentationCodes"]["Category"][foundCategoryIdx]["Type"].Size();
-      (*termDoc)["SegmentationCodes"]["Category"][foundCategoryIdx]["Type"].PushBack(typeObject, termAllocator);
-    }
-
-    // Type modifier
-    vtkSlicerTerminologyType* typeModifier = entry->GetTypeModifierObject();
-    if (typeModifier != nullptr)
-    {
-      if (typeModifier->GetCodeMeaning() == nullptr || typeModifier->GetCodeValue() == nullptr || typeModifier->GetCodingSchemeDesignator() == nullptr)
-      {
-        continue;
-      }
-      int foundTypeModifierIdx{-1};
-      rapidjson::Value typeModifierObject(rapidjson::kNullType);
-      if ((*termDoc)["SegmentationCodes"]["Category"][foundCategoryIdx]["Type"][foundTypeIdx].HasMember("Modifier"))
-      {
-        typeModifierObject = this->Internal->GetCodeInArray(this->GetCodeIdentifierFromCodedEntry(typeModifier),
-          (*termDoc)["SegmentationCodes"]["Category"][foundCategoryIdx]["Type"][foundTypeIdx]["Modifier"], foundTypeIdx);
-      }
-      if (typeModifierObject.IsNull())
-      {
-        // Create type modifier if does not exist yet
-        typeModifierObject = rapidjson::Value(rapidjson::kObjectType);
-        PopulateEntry(typeModifier, typeModifierObject, termAllocator);
-        AddColorToType(entryToColorMap[entry], typeModifierObject, termAllocator);
-
-        // Create Modifier object if does not exist yet
-        if (!(*termDoc)["SegmentationCodes"]["Category"][foundCategoryIdx]["Type"][foundTypeIdx].HasMember("Modifier"))
-        {
-          rapidjson::Value typeModifiersArray(rapidjson::kArrayType);
-          (*termDoc)["SegmentationCodes"]["Category"][foundCategoryIdx]["Type"][foundTypeIdx].AddMember("Modifier", typeModifiersArray, termAllocator);
-        }
-
-        foundTypeIdx = (*termDoc)["SegmentationCodes"]["Category"][foundCategoryIdx]["Type"][foundTypeIdx]["Modifier"].Size();
-        (*termDoc)["SegmentationCodes"]["Category"][foundCategoryIdx]["Type"][foundTypeIdx]["Modifier"].PushBack(typeModifierObject, termAllocator);
-      }
-    }
-
-    // Collect terminology entries containing anatomic region entries
-    if ( entry->GetAnatomicRegionObject() && entry->GetAnatomicRegionObject()->GetCodeMeaning() != nullptr
-      && entry->GetAnatomicRegionObject()->GetCodeValue() != nullptr && entry->GetAnatomicRegionObject()->GetCodingSchemeDesignator() != nullptr )
-    {
-      entriesWithAnatomicRegion.push_back(entry);
-    }
-  } // For all terminology entries found in the color node
-
-  // Add new terminology context with the color node name as context name
-  if (!this->Internal->GetTerminologyRootByName(colorNode->GetName()).IsNull())
-  {
-    delete this->Internal->LoadedTerminologies[colorNode->GetName()];
-  }
-  this->Internal->LoadedTerminologies[colorNode->GetName()] = termDoc;
-
-  if (entriesWithAnatomicRegion.size() == 0)
-  {
-    return true; // No need to load anatomical contexts, we can return here with success
-  }
-
-  //
-  // Add anatomic region JSON as well if color node contains such entries
-  //
-  rapidjson::Document* anatDoc = new rapidjson::Document; // Create new anatomic context document
-  rapidjson::Document::AllocatorType& anatAllocator = anatDoc->GetAllocator();
-  anatDoc->SetObject(); // Create a root object
-
-  // Add members to the root object
-  std::string anatomicContextName(colorNode->GetName()); //TODO: No terminology (or anatomical) context in the entry
-  nodeNameString.SetString(anatomicContextName.c_str(), anatomicContextName.length(), anatAllocator);
-  anatDoc->AddMember("AnatomicContextName", nodeNameString, anatAllocator);
-  anatDoc->AddMember("@schema", "https://raw.githubusercontent.com/qiicr/dcmqi/master/doc/anatomic-context-schema.json#", anatAllocator);
-
-  rapidjson::Value anatomicCodesObject(rapidjson::kObjectType);
-  anatDoc->AddMember("AnatomicCodes", anatomicCodesObject, anatAllocator);
-
-  rapidjson::Value regionsArray(rapidjson::kArrayType);
-  (*anatDoc)["AnatomicCodes"].AddMember("AnatomicRegion", regionsArray, anatAllocator);
-
-  for (auto entry : entriesWithAnatomicRegion)
-  {
-    // Anatomic region
-    vtkSlicerTerminologyType* anatomicRegion = entry->GetAnatomicRegionObject();
-    if (anatomicRegion->GetCodeMeaning() == nullptr || anatomicRegion->GetCodeValue() == nullptr || anatomicRegion->GetCodingSchemeDesignator() == nullptr)
-    {
-      vtkErrorMacro("LoadColorTable: Invalid anatomic region found in terminology entry.");
-      continue;
-    }
-    int foundRegionIdx{-1};
-    rapidjson::Value& regionObject = this->Internal->GetCodeInArray(this->GetCodeIdentifierFromCodedEntry(anatomicRegion),
-      (*anatDoc)["AnatomicCodes"]["AnatomicRegion"], foundRegionIdx);
-    if (regionObject.IsNull())
-    {
-      // Create type if does not exist yet
-      regionObject = rapidjson::Value(rapidjson::kObjectType);
-      PopulateEntry(anatomicRegion, regionObject, anatAllocator);
-
-      foundRegionIdx = (*anatDoc)["AnatomicCodes"]["AnatomicRegion"].Size();
-      (*anatDoc)["AnatomicCodes"]["AnatomicRegion"].PushBack(regionObject, anatAllocator);
-    }
-
-    // Anatomic region modifier
-    vtkSlicerTerminologyType* regionModifier = entry->GetAnatomicRegionModifierObject();
-    if (regionModifier != nullptr)
-    {
-      if (regionModifier->GetCodeMeaning() == nullptr || regionModifier->GetCodeValue() == nullptr || regionModifier->GetCodingSchemeDesignator() == nullptr)
-      {
-        vtkErrorMacro("LoadColorTable: Invalid anatomic region modifier found in terminology entry.");
-        continue;
-      }
-      int foundRegionModifierIdx{-1};
-      rapidjson::Value regionModifierObject(rapidjson::kNullType);
-      if ((*anatDoc)["AnatomicCodes"]["AnatomicRegion"][foundRegionIdx].HasMember("Modifier"))
-      {
-        regionModifierObject = this->Internal->GetCodeInArray(this->GetCodeIdentifierFromCodedEntry(regionModifier),
-          (*anatDoc)["AnatomicCodes"]["AnatomicRegion"][foundRegionIdx]["Modifier"], foundRegionIdx);
-      }
-      if (regionModifierObject.IsNull())
-      {
-        // Create type modifier if does not exist yet
-        regionModifierObject = rapidjson::Value(rapidjson::kObjectType);
-        PopulateEntry(regionModifier, regionModifierObject, anatAllocator);
-
-        // Create Modifier object if does not exist yet
-        if (!(*anatDoc)["AnatomicCodes"]["AnatomicRegion"][foundRegionIdx].HasMember("Modifier"))
-        {
-          rapidjson::Value typeModifiersArray(rapidjson::kArrayType);
-          (*anatDoc)["AnatomicCodes"]["AnatomicRegion"][foundRegionIdx].AddMember("Modifier", typeModifiersArray, anatAllocator);
-        }
-
-        foundRegionIdx = (*anatDoc)["AnatomicCodes"]["AnatomicRegion"][foundRegionIdx]["Modifier"].Size();
-        (*anatDoc)["AnatomicCodes"]["AnatomicRegion"][foundRegionIdx]["Modifier"].PushBack(regionModifierObject, anatAllocator);
-      }
-    }
-  } // For all terminology entries containing anatomic region entries
-
-  // Add new anatomic context with the color node name as context name
-  if (!this->Internal->GetAnatomicContextRootByName(colorNode->GetName()).IsNull())
-  {
-    delete this->Internal->LoadedAnatomicContexts[colorNode->GetName()];
-  }
-  this->Internal->LoadedAnatomicContexts[colorNode->GetName()] = anatDoc;
-
-  return true;
-}
-
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::IsTerminologyContextLoaded(std::string terminologyName)
 {
@@ -3043,28 +2743,70 @@ bool vtkSlicerTerminologiesModuleLogic::IsTerminologyContextLoaded(std::string t
 }
 
 //---------------------------------------------------------------------------
-const char* vtkSlicerTerminologiesModuleLogic::IsTerminologyColorTable(std::string terminologyName)
+int vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(vtkMRMLColorNode* colorNode, const char* terminology, bool ignoreContextName/*=true*/)
 {
-  if (terminologyName.empty())
+  if (colorNode == nullptr)
   {
-    return nullptr;
+    vtkGenericWarningMacro("vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology: need a valid colorNode as argument");
+    return -1;
   }
-  rapidjson::Value& root = this->Internal->GetTerminologyRootByName(terminologyName);
-  if (root.IsNull())
+  if (terminology == nullptr)
   {
-    vtkErrorMacro("IsTerminologyColorTable: Failed to find terminology root for context name '" << terminologyName << "'");
-    return nullptr;
-  }
-
-  if (!root.HasMember("ColorTableID"))
-  {
-    return nullptr;
-  }
-  rapidjson::Value& colorTableId = root["ColorTableID"];
-  if (colorTableId.IsNull())
-  {
-    return nullptr;
+    vtkErrorWithObjectMacro(colorNode, "vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology: need a valid terminology string as argument");
+    return -1;
   }
 
-  return colorTableId.GetString();
+  vtkNew<vtkSlicerTerminologyEntry> entry1;
+  if (!vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(terminology, entry1))
+  {
+    if (strlen(terminology)>0)
+    {
+      vtkErrorWithObjectMacro(colorNode, "vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology: Failed to deserialize terminology entry");
+    }
+    return -1;
+  }
+
+  for (int colorIdx = 0; colorIdx < colorNode->GetNumberOfColors(); ++colorIdx)
+  {
+    if (!colorNode->GetColorDefined(colorIdx))
+    {
+      continue;
+    }
+    std::string currentTerminologyStr = colorNode->GetTerminologyAsString(colorIdx);
+    if (currentTerminologyStr.empty())
+    {
+      continue;
+    }
+    vtkNew<vtkSlicerTerminologyEntry> entry2;
+    if (!vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(currentTerminologyStr, entry2))
+    {
+      continue;
+    }
+
+    if (vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetCategoryObject(), entry2->GetCategoryObject())
+      && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetTypeObject(), entry2->GetTypeObject())
+      && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetTypeModifierObject(), entry2->GetTypeModifierObject())
+      && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetRegionObject(), entry2->GetRegionObject())
+      && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetRegionModifierObject(), entry2->GetRegionModifierObject()))
+    {
+      // found a match
+      if (!ignoreContextName)
+      {
+        // need to check context name as well
+        if (strcmp(entry1->GetTerminologyContextName(), entry2->GetTerminologyContextName()) != 0)
+        {
+          // Terminology context name does not match
+          continue;
+        }
+        if (entry1->GetRegionObject() && strcmp(entry1->GetRegionContextName(), entry2->GetRegionContextName()) != 0)
+        {
+          // Region context name does not match
+          continue;
+        }
+      }
+      return colorIdx;
+    }
+  }
+
+  return -1; // Not found
 }
