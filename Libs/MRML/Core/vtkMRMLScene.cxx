@@ -3869,9 +3869,10 @@ std::string vtkMRMLScene::GetTemporaryBundleDirectory()
   ss << vtksys::SystemTools::GetCurrentDateTime("_tmp%Y%m%d");
   const char validCharacters[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   int numberOfCharacters = sizeof(validCharacters) - 1;
+  std::uniform_int_distribution<int> distribution(0, numberOfCharacters);
   for (int i = 0; i < 5; i++)
   {
-    ss << validCharacters[rand() % numberOfCharacters];
+    ss << validCharacters[distribution(this->RandomGenerator)];
   }
   return ss.str();
 }
@@ -3912,12 +3913,14 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
 
   // make a subdirectory with the name the user has chosen
   std::string bundleDir = tempDir + "/" + mrbBaseName;
+  // trim whitespace from the right because a folder name cannot end with space (there can be a space before the ".")
+  bundleDir.erase(bundleDir.find_last_not_of(" ") + 1);
   if (vtksys::SystemTools::FileExists(bundleDir, false))
   {
     if (!vtksys::SystemTools::RemoveADirectory(bundleDir))
     {
       vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::WriteToMRB",
-        "Failed to write scene: could not clean temporary directory " << bundleDir);
+        "Failed to write scene: could not clean temporary directory '" << bundleDir << "'");
       return false;
     }
   }
@@ -3925,7 +3928,7 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   if (!vtksys::SystemTools::MakeDirectory(bundleDir))
   {
     vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::WriteToMRB",
-      "Failed to save " << filename << ": Could not create temporary directory " << bundleDir);
+      "Failed to save " << filename << ": Could not create temporary directory '" << bundleDir << "'");
     return false;
   }
 
@@ -3937,7 +3940,7 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   if (!retval)
   {
     vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::WriteToMRB",
-      "Failed to save " << filename << ": Failed to save scene to data bundle directory");
+      "Failed to save '" << filename << "': Failed to save scene to data bundle directory '" << bundleDir << "'");
     return false;
   }
 
@@ -3945,7 +3948,7 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   if (!vtkArchive::Zip(mrbFilePath.c_str(), bundleDir.c_str()))
   {
     vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::WriteToMRB",
-      "Failed to save " << filename << ": Could not compress bundle");
+      "Failed to save '" << filename << "': Could not compress bundle in directory '" << bundleDir << "'");
     return false;
   }
 
@@ -3955,7 +3958,7 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   if (!vtksys::SystemTools::RemoveADirectory(tempDir))
   {
     vtkWarningToMessageCollectionMacro(userMessages, "vtkMRMLScene::WriteToMRB",
-      "Error while saving " << filename << ": Could not clean temporary directory " << bundleDir);
+      "Error while saving " << filename << ": Could not clean temporary directory '" << bundleDir << "'");
   }
 
   vtkDebugMacro("Saved " << mrbFilePath);
@@ -3995,7 +3998,7 @@ bool vtkMRMLScene::ReadFromMRB(const char* fullName, bool clear/*=false*/, vtkMR
     if (!vtksys::SystemTools::RemoveADirectory(unpackDir.c_str()))
     {
       vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::ReadFromMRB",
-        "Cannot remove directory '" << unpackDir << "'."
+        "Could not remove temporary directory '" << unpackDir << "'."
         << " Check that remote cache directory that is specified in application setting is writable.");
       return false;
     }
@@ -4004,7 +4007,7 @@ bool vtkMRMLScene::ReadFromMRB(const char* fullName, bool clear/*=false*/, vtkMR
   if (!vtksys::SystemTools::MakeDirectory(unpackDir.c_str()))
   {
     vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::ReadFromMRB",
-      "Cannot create directory '" << unpackDir << "'."
+      "Could not create temporary directory '" << unpackDir << "'."
       << +" Check that remote cache directory that is specified in application setting is writable.");
     return false;
   }
@@ -4022,9 +4025,8 @@ bool vtkMRMLScene::ReadFromMRB(const char* fullName, bool clear/*=false*/, vtkMR
   }
   if (!vtksys::SystemTools::RemoveADirectory(unpackDir))
   {
-    vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::ReadFromMRB",
-      "vtkMRMLScene::ReadFromMRB failed: cannot remove directory '" << unpackDir << "'");
-    return false;
+    vtkWarningToMessageCollectionMacro(userMessages, "vtkMRMLScene::ReadFromMRB",
+      "vtkMRMLScene::ReadFromMRB failed to remove temporary directory '" << unpackDir << "' after reading the scene from it.");
   }
 
   vtkDebugMacro("Loaded bundle from " << unpackDir);
@@ -4190,7 +4192,7 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir,
     if (!vtksys::SystemTools::RemoveADirectory(rootDir.c_str()))
     {
       vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory",
-        "Save scene to data bundle directory failed: Error removing SDB scene directory " << rootDir.c_str() << ", cannot make a fresh archive.");
+        "Save scene to data bundle directory failed: Error removing SDB scene directory '" << rootDir.c_str() << "', cannot make a fresh archive.");
       return false;
     }
   }
