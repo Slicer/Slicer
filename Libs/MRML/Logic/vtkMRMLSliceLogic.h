@@ -93,24 +93,31 @@ public:
 
   /// @{
   /// The background slice layer
-  /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (BackgroundLayer, vtkMRMLSliceLayerLogic);
+  vtkMRMLSliceLayerLogic* GetBackgroundLayer();
   void SetBackgroundLayer (vtkMRMLSliceLayerLogic *BackgroundLayer);
   /// @}
 
   /// @{
   /// The foreground slice layer
-  /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (ForegroundLayer, vtkMRMLSliceLayerLogic);
+  vtkMRMLSliceLayerLogic* GetForegroundLayer();
   void SetForegroundLayer (vtkMRMLSliceLayerLogic *ForegroundLayer);
   /// @}
 
   /// @{
   /// The Label slice layer
-  /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (LabelLayer, vtkMRMLSliceLayerLogic);
+  vtkMRMLSliceLayerLogic* GetLabelLayer();
   void SetLabelLayer (vtkMRMLSliceLayerLogic *LabelLayer);
   /// @}
+
+  vtkMRMLSliceLayerLogic* GetNthLayer(int layerIndex);
+  void SetNthLayer(int layerIndex, vtkMRMLSliceLayerLogic *layer);
+
+  vtkAlgorithmOutput* GetNthLayerImageDataConnection(int layerIndex);
+  vtkAlgorithmOutput* GetNthLayerImageDataConnectionUVW(int layerIndex);
+
+  /// Get the volume node corresponding to layer
+  /// (0=background, 1=foreground, 2=label)
+  vtkMRMLVolumeNode* GetNthLayerVolumeNode(int layerIndex);
 
   /// Helper to set the background layer Window/Level
   void SetBackgroundWindowLevel(double window, double level);
@@ -181,8 +188,10 @@ public:
   /// Manage and synchronize the SliceCompositeNode
   void UpdateSliceCompositeNode();
 
+  /// \deprecated
   /// Get the volume node corresponding to layer
   /// (0=background, 1=foreground, 2=label)
+  /// \sa GetNthLayerVolumeNode
   vtkMRMLVolumeNode *GetLayerVolumeNode(int layer);
 
   /// Get the size of the volume, transformed to RAS space
@@ -395,6 +404,9 @@ protected:
   static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene,
     const char* layoutName);
 
+  /// Set volume associated with a layer
+  void SetNthLayerVolumeNode(int layerIndex, vtkMRMLVolumeNode* volumeNode);
+
   /// @{
   /// Helper to get/set Window/Level in any layer
   void SetWindowLevel(int layer, double window, double level);
@@ -434,13 +446,17 @@ protected:
     return true;
   };
 
+  typedef vtkSmartPointer<vtkMRMLSliceLayerLogic> LayerListItem;
+  typedef std::vector<LayerListItem> LayerList;
+  typedef std::vector<LayerListItem>::iterator LayerListIterator;
+  typedef std::vector<LayerListItem>::const_iterator LayerListConstIterator;
+
+  LayerList Layers;
+
   bool                          AddingSliceModelNodes;
 
   vtkMRMLSliceNode*             SliceNode;
   vtkMRMLSliceCompositeNode*    SliceCompositeNode;
-  vtkMRMLSliceLayerLogic*       BackgroundLayer;
-  vtkMRMLSliceLayerLogic*       ForegroundLayer;
-  vtkMRMLSliceLayerLogic*       LabelLayer;
 
   BlendPipeline*                Pipeline;
   BlendPipeline*                PipelineUVW;
