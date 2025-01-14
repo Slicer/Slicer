@@ -78,7 +78,7 @@ jobs:
       # Upload the Slicer package artifact if the build was successful
       - name: "Upload Slicer package"
         if: ${{ steps.slicer-build.outcome == 'success' }}
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: slicer-package
           path: ${{ github.workspace }}/${{ steps.slicer-build.outputs.package }}
