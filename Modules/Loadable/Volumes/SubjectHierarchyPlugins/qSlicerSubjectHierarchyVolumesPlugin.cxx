@@ -331,7 +331,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showViewContextMenuActionsForItem(vtk
   int volumeLayer = sliceLogic->GetEditableLayerAtWorldPosition(worldPos);
 
   // Cache nodes to have them available for the menu action execution.
-  d->SelectedVolumeNode = sliceLogic->GetLayerVolumeNode(volumeLayer);
+  d->SelectedVolumeNode = sliceLogic->GetNthLayerVolumeNode(volumeLayer);
 
   bool hasPrimaryDisplayNode = false;
   bool colorLegendIsVisible = false;
