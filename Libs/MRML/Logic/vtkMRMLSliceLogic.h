@@ -90,19 +90,34 @@ public:
   void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *SliceCompositeNode);
 
   /// The background slice layer
-  /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (BackgroundLayer, vtkMRMLSliceLayerLogic);
+  vtkMRMLSliceLayerLogic* GetBackgroundLayer();
   void SetBackgroundLayer (vtkMRMLSliceLayerLogic *BackgroundLayer);
 
   /// The foreground slice layer
-  /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (ForegroundLayer, vtkMRMLSliceLayerLogic);
+  vtkMRMLSliceLayerLogic* GetForegroundLayer();
   void SetForegroundLayer (vtkMRMLSliceLayerLogic *ForegroundLayer);
 
   /// The Label slice layer
-  /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (LabelLayer, vtkMRMLSliceLayerLogic);
+  vtkMRMLSliceLayerLogic* GetLabelLayer();
   void SetLabelLayer (vtkMRMLSliceLayerLogic *LabelLayer);
+
+  typedef vtkSmartPointer<vtkMRMLSliceLayerLogic> LayerListItem;
+  typedef std::vector<LayerListItem> LayerList;
+  typedef std::vector<LayerListItem>::iterator LayerListIterator;
+  typedef std::vector<LayerListItem>::const_iterator LayerListConstIterator;
+
+  vtkMRMLSliceLayerLogic* GetLayer(unsigned int layerIndex);
+  void SetLayer(unsigned int layerIndex, vtkMRMLSliceLayerLogic *layer);
+
+  vtkAlgorithmOutput* GetLayerImageDataConnection(unsigned int layerIndex);
+  vtkAlgorithmOutput* GetLayerImageDataConnectionUVW(unsigned int layerIndex);
+
+  /// Set volume associated with a layer
+  void SetLayerVolumeNode(int layerIndex, vtkMRMLVolumeNode* volumeNode);
+
+  /// Get the volume node corresponding to layer
+  /// (0=background, 1=foreground, 2=label)
+  vtkMRMLVolumeNode* GetLayerVolumeNode(int layerIndex);
 
   /// Helper to set the background layer Window/Level
   void SetBackgroundWindowLevel(double window, double level);
@@ -133,13 +148,13 @@ public:
 
   /// Model slice plane display properties.
   /// The method is deprecated, use SliceDisplayNode instead.
-  vtkGetObjectMacro(SliceModelDisplayNode, vtkMRMLModelDisplayNode);
+  vtkMRMLModelDisplayNode* GetSliceModelDisplayNode();
 
   /// Slice plane display properties
   vtkMRMLSliceDisplayNode* GetSliceDisplayNode();
 
   /// Model slice plane transform from xy to RAS
-  vtkGetObjectMacro(SliceModelTransformNode, vtkMRMLLinearTransformNode);
+  vtkMRMLLinearTransformNode* GetSliceModelTransformNode();
 
   /// The compositing filter
   /// TODO: this will eventually be generalized to a per-layer compositing function
@@ -153,6 +168,10 @@ public:
   /// the tail of the pipeline
   /// -- returns nullptr if none of the inputs exist
   vtkAlgorithmOutput *GetImageDataConnection();
+
+  /// Return True if at least one layer has an image data
+  /// \sa vtkMRMLSliceLayerLogic::GetImageDataConnection()
+  bool HasInputs();
 
   /// update the pipeline to reflect the current state of the nodes
   void UpdatePipeline();
@@ -173,10 +192,6 @@ public:
   /// Manage and synchronize the SliceCompositeNode
   void UpdateSliceCompositeNode();
 
-  /// Get the volume node corresponding to layer
-  /// (0=background, 1=foreground, 2=label)
-  vtkMRMLVolumeNode *GetLayerVolumeNode(int layer);
-
   /// Get the size of the volume, transformed to RAS space
   static void GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double rasDimensions[3], double rasCenter[3]);
 
@@ -188,6 +203,7 @@ public:
   ///   voxel relative to the current slice view
   double* GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode) VTK_SIZEHINT(3);
 
+  ///
   /// Get the min/max bounds of the volume
   /// - note these are not translated by the current slice offset so they can
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
@@ -423,13 +439,12 @@ protected:
     return true;
   };
 
+  LayerList Layers;
+
   bool                          AddingSliceModelNodes;
 
   vtkMRMLSliceNode*             SliceNode;
   vtkMRMLSliceCompositeNode*    SliceCompositeNode;
-  vtkMRMLSliceLayerLogic*       BackgroundLayer;
-  vtkMRMLSliceLayerLogic*       ForegroundLayer;
-  vtkMRMLSliceLayerLogic*       LabelLayer;
 
   BlendPipeline*                Pipeline;
   BlendPipeline*                PipelineUVW;
