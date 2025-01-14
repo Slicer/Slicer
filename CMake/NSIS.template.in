@@ -1,4 +1,7 @@
 ; CPack install script designed for a nmake build
+# -*- coding: utf-8 -*-
+
+!addplugindir "${NSISDIR}\Plugins\x86-unicode"
 
 ;--------------------------------
 ; You must define these values
@@ -6,6 +9,7 @@
   !define VERSION "@CPACK_PACKAGE_VERSION@"
   !define PATCH  "@CPACK_PACKAGE_VERSION_PATCH@"
   !define INST_DIR "@CPACK_TEMPORARY_DIRECTORY@"
+  !define VALID_PRODUCT_KEY "G4J8K-M3P2R-T1Y5E-C6B7D-N9A3L"
 
 ;--------------------------------
 ;Variables
@@ -19,6 +23,7 @@
   Var ADD_TO_PATH_CURRENT_USER
   Var INSTALL_DESKTOP
   Var IS_DEFAULT_INSTALLDIR
+  Var PRODUCT_KEY
 ;--------------------------------
 ;Include Modern UI
 
@@ -26,7 +31,11 @@
 
   ;Default installation folder
   InstallDir "@CPACK_NSIS_INSTALL_ROOT@\@CPACK_PACKAGE_INSTALL_DIRECTORY@"
-
+  
+  !include "nsDialogs.nsh"
+  !include "LogicLib.nsh"
+  !include "StrFunc.nsh"
+  !include "WinCore.nsh"
 ;--------------------------------
 ;General
 
@@ -544,6 +553,7 @@ FunctionEnd
   !insertmacro MUI_PAGE_WELCOME
 
   @CPACK_NSIS_LICENSE_PAGE@
+  Page custom ProductKeyPage ProductKeyPageLeave
   Page custom InstallOptionsPage
   !insertmacro MUI_PAGE_DIRECTORY
 
@@ -573,6 +583,12 @@ FunctionEnd
 
   !insertmacro MUI_LANGUAGE "English" ;first language is the default language
   !insertmacro MUI_LANGUAGE "SimpChinese"
+
+  ; Language strings
+  LangString PRODUCT_ACTIVATION_TITLE ${LANG_SIMPCHINESE} "产品激活"
+  LangString PRODUCT_KEY_PROMPT ${LANG_SIMPCHINESE} "请输入产品密钥："
+  LangString PRODUCT_KEY_LABEL ${LANG_SIMPCHINESE} "输入你的密钥:"
+  LangString PRODUCT_KEY_ERROR ${LANG_SIMPCHINESE} "密钥错误。请输入格式为xxxxx-xxxxx-xxxxx-xxxxx的密钥。"
 
 ;--------------------------------
 ;Reserve Files
@@ -697,10 +713,81 @@ SectionEnd
 
 ;--------------------------------
 ; Create custom pages
+Function ProductKeyPage
+  ; Get localized strings
+  Push $0
+  Push $1
+  
+  !insertmacro MUI_HEADER_TEXT $(PRODUCT_ACTIVATION_TITLE) $(PRODUCT_KEY_PROMPT)
+  
+  nsDialogs::Create 1018
+  Pop $0
+  ${If} $0 == error
+    Abort
+  ${EndIf}
+  
+  ${NSD_CreateLabel} 0 0 100% 12u $(PRODUCT_KEY_LABEL)
+  Pop $1
+  
+  ${NSD_CreateText} 0 13u 100% 12u ""
+  Pop $PRODUCT_KEY
+  
+  ; Support RTL languages if needed
+  ${If} $(^RTL) == 1
+    ${NSD_AddStyle} $PRODUCT_KEY ${ES_RIGHT}
+  ${EndIf}
+  
+  Pop $1
+  Pop $0
+  
+  nsDialogs::Show
+FunctionEnd
+
+Function ValidateProductKey
+  ${NSD_GetText} $PRODUCT_KEY $0
+
+  ; Convert input to uppercase for consistency
+  System::Call "user32::CharUpper(t r0)t.r0"
+  
+  ; Compare with predefined key from CMake
+  StrCmp $0 "${VALID_PRODUCT_KEY}" valid_key invalid_key
+  
+  invalid_key:
+    MessageBox MB_OK|MB_ICONEXCLAMATION $(PRODUCT_KEY_ERROR)
+    ${NSD_SetFocus} $PRODUCT_KEY
+    Push 0
+    Return
+    
+  valid_key:
+    Push 1
+    Return
+FunctionEnd
+
+Function ProductKeyPageLeave
+  Call ValidateProductKey
+  Pop $0
+  
+  ${If} $0 == 0
+    Abort ;
+  ${EndIf}
+  
+  ; Get multiple system identifiers for better uniqueness
+  ReadRegStr $1 HKLM "SOFTWARE\Microsoft\Cryptography" "MachineGuid"
+  ReadRegStr $4 HKLM "SYSTEM\CurrentControlSet\Control\SystemInformation" "ComputerHardwareId"
+  
+  ; Add salt to make it harder to reverse
+  StrCpy $2 "S3cur3S@lt$ProductKey$1$4"
+  
+  NsisCrypt::Hash "$2" "md5"
+  Pop $3
+
+  ; Store encrypted hash
+  WriteRegStr HKLM "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "ProductKey" "$3"
+FunctionEnd
+
 Function InstallOptionsPage
   !insertmacro MUI_HEADER_TEXT "Install Options" "Choose options for installing @CPACK_NSIS_PACKAGE_NAME@"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "NSIS.InstallOptions.ini"
-
 FunctionEnd
 
 ;--------------------------------
@@ -803,6 +890,7 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
   ; Remove the registry entries.
+  DeleteRegKey SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@\ProductKey"
   DeleteRegKey SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@"
 
   ; Removes all optional components
@@ -848,7 +936,8 @@ Section "Uninstall"
 
     StrCmp "$MUI_TEMP" "$SMPROGRAMS" secondStartMenuDeleteLoopDone secondStartMenuDeleteLoop
   secondStartMenuDeleteLoopDone:
-
+  
+  DeleteRegValue SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "ProductKey"
   DeleteRegKey /ifempty SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@"
 
   Push $INSTDIR\bin

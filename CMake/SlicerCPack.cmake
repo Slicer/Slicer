@@ -302,6 +302,9 @@ if(UNIX AND NOT APPLE AND "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   set(CPACK_STRIP_FILES 1)
 endif()
 
+set(${app_name}_CPACK_VALID_PRODUCT_KEY "G4J8K-M3P2R-T1Y5E-C6B7D-N9A3L")
+slicer_cpack_set("CPACK_VALID_PRODUCT_KEY")
+
 set(${app_name}_CPACK_PACKAGE_NAME ${app_name})
 slicer_cpack_set("CPACK_PACKAGE_NAME")
 
@@ -409,7 +412,6 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   slicer_cpack_set("CPACK_NSIS_MUI_ICON")
   slicer_verbose_set(CPACK_NSIS_INSTALLED_ICON_NAME "${app_name}.exe")
   slicer_verbose_set(CPACK_NSIS_MUI_FINISHPAGE_RUN "../${APPLICATION_NAME}.exe")
-
   # -------------------------------------------------------------------------
   # File extensions
   # -------------------------------------------------------------------------
