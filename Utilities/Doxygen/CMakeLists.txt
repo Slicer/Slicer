@@ -1,4 +1,4 @@
-find_package(Doxygen 1.8.4 QUIET)
+find_package(Doxygen 1.10.0 QUIET)
 
 if( DOXYGEN_FOUND )
   if( DOXYGEN_DOT_FOUND )
