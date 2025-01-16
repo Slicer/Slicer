@@ -51,6 +51,8 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMLoadable : public QObj
   Q_PROPERTY(QStringList files READ files WRITE setFiles)
   /// Is the object checked for loading by default
   Q_PROPERTY(bool selected READ selected WRITE setSelected)
+  /// Is the object loaded successfully
+  Q_PROPERTY(bool loadSuccess READ loadSuccess WRITE setLoadSuccess)
   /// Confidence - from 0 to 1 where 0 means low chance
   /// that the user actually wants to load their data this
   /// way up to 1, which means that the plugin is very confident
@@ -85,6 +87,9 @@ public:
 
   virtual double confidence()const;
   void setConfidence(const double newConfidence);
+
+  virtual bool loadSuccess()const;
+  void setLoadSuccess(const bool newLoadSuccess);
 
   virtual QStringList referencedInstanceUIDs()const;
   void setReferencedInstanceUIDs(const QStringList& newReferencedInstanceUIDs);
