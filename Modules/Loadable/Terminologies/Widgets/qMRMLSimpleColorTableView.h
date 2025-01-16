@@ -47,12 +47,15 @@ public:
   Q_INVOKABLE qMRMLColorModel* colorModel()const;
   Q_INVOKABLE QSortFilterProxyModel* sortFilterProxyModel()const;
 
+  Q_INVOKABLE int selectedColorIndex()const;
+
 public slots:
   void setMRMLColorNode(vtkMRMLColorNode* colorNode);
   /// Utility function to simply connect signals/slots with Qt Designer
   void setMRMLColorNode(vtkMRMLNode* colorNode);
-  /// Select row in table by color index
-  void selectColorByIndex(int colorIndex)const;
+  /// Select row in table by color index and scroll to it.
+  /// Returns true on success.
+  bool selectColorByIndex(int colorIndex);
 
 protected:
   QScopedPointer<qMRMLSimpleColorTableViewPrivate> d_ptr;

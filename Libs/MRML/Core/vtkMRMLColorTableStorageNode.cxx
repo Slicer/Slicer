@@ -304,7 +304,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
     colorNode->GetLookupTable()->SetTableRange(0, maxLabelValue);
   }
   // init the table to default, just in case we're missing values
-  colorNode->ClearColors(0, maxLabelValue);
+  colorNode->RemoveColors(0, maxLabelValue);
 
   // Define helper function for populating terminology entry IDs
   auto GetIndexInEntryForIdType = [](std::string idType)
@@ -497,7 +497,7 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
     colorNode->GetLookupTable()->SetTableRange(0, maxID);
   }
   // init the table to default, just in case we're missing values
-  colorNode->ClearColors(0, maxID);
+  colorNode->RemoveColors(0, maxID);
 
   // do a little sanity check, if never get an rgb bigger than 1.0, report
   // it as a possibly miswritten file
@@ -566,7 +566,7 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
     }
     // Space in name is replaced by underscores for storage, we restore the original name now
     std::replace(name.begin(), name.end(), '_', ' ');
-    colorNode->SetColorName(id, name.c_str(), vtkMRMLColorNode::NameSourceUnknown);
+    colorNode->SetColorName(id, name.c_str());
   }
   if (lines.size() > 0 && !biggerThanOne)
   {
