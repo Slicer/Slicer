@@ -125,50 +125,6 @@ public slots:
   /// Show/hide name and color override section
   void setOverrideSectionVisible(bool);
 
-protected:
-  /// Set current terminology to widget
-  void setCurrentTerminology(QString terminologyName);
-  /// Set current category to widget.
-  /// Only used when setting the category from a given entry to the widget!
-  /// \return Flag indicating whether the given category was found in the category table
-  bool setCurrentCategory(vtkSlicerTerminologyCategory* category);
-  /// Update widget UI based on the current category selection
-  void updateWidgetFromCurrentCategory();
-  /// Set current type to widget
-  /// \return Flag indicating whether the given type was found in the type table
-  bool setCurrentType(vtkSlicerTerminologyType* type);
-  /// Set current type modifier to widget
-  /// \return Flag indicating whether the given modifier was found in the combobox
-  bool setCurrentTypeModifier(vtkSlicerTerminologyType* modifier);
-  /// Set current region context to widget
-  void setCurrentRegionContext(QString contextName);
-  /// Set current region to widget
-  /// \return Flag indicating whether the given region was found in the region table
-  bool setCurrentRegion(vtkSlicerTerminologyType* region);
-  /// Set current region modifier to widget
-  /// \return Flag indicating whether the given modifier was found in the combobox
-  bool setCurrentRegionModifier(vtkSlicerTerminologyType* modifier);
-
-protected:
-  /// Populate terminology combobox based on current selection
-  void populateTerminologyComboBox();
-  /// Populate category table based on selected terminology and category search term
-  void populateCategoryTable();
-  /// Populate type table based on selected category and type search term
-  void populateTypeTable();
-  /// Populate type modifier combobox based on current selection
-  void populateTypeModifierComboBox();
-
-  /// Populate region context combobox based on current selection
-  void populateRegionContextComboBox();
-  /// Populate region table based on selected region context and type search term
-  void populateRegionTable();
-  /// Populate region modifier combobox based on current selection
-  void populateRegionModifierComboBox();
-
-  /// Copy terminology or region context file to user folder
-  void copyContextToUserDirectory(QString filePath);
-
 protected slots:
   void onTerminologySelectionChanged(int);
   void onCategorySelectionChanged();
@@ -195,10 +151,12 @@ protected slots:
   void onLoadTerminologyClicked();
   void onLoadRegionContextClicked();
 
-  void regionExpandButtonUp();
-  void regionExpandButtonDown();
+  void onRegionExpandButtonUp();
+  void onRegionExpandButtonDown();
 
   void onLogicModified();
+
+  void scrollToSelectedColorAfterLayout();
 
 signals:
   /// Emitted when selection becomes valid (true argument) or invalid (false argument)

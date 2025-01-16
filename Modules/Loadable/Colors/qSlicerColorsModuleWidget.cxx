@@ -195,6 +195,8 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
   vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(newColorNode);
   if (!colorNode)
   {
+    d->AddNewColorButton->setEnabled(false);
+    d->RemoveCurrentColorButton->setEnabled(false);
     d->NumberOfColorsSpinBox->setEnabled(false);
     d->NumberOfColorsSpinBox->setValue(0);
     d->LUTRangeWidget->setEnabled(false);
@@ -218,15 +220,19 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     d->ColorTableFrame->show();
     d->EditColorsCollapsibleButton->setText(tr("Discrete table"));
 
+    bool editable = (colorNode->GetType() == vtkMRMLColorTableNode::User);
+
     // number of colors
-    d->NumberOfColorsSpinBox->setEnabled(
-      colorNode->GetType() == vtkMRMLColorTableNode::User);
+    d->NumberOfColorsSpinBox->setEnabled(editable);
     d->NumberOfColorsSpinBox->setValue(colorNode->GetNumberOfColors());
     Q_ASSERT(d->NumberOfColorsSpinBox->value() == colorNode->GetNumberOfColors());
 
+    d->AddNewColorButton->setEnabled(editable);
+    d->RemoveCurrentColorButton->setEnabled(editable);
+
     // set the range and the input for the color widget depending on if it's a freesurfer node or a color table node
     double *range = nullptr;
-    d->LUTRangeWidget->setEnabled(colorNode->GetType() == vtkMRMLColorTableNode::User);
+    d->LUTRangeWidget->setEnabled(editable);
     if (colorTableNode && colorTableNode->GetLookupTable())
     {
       range = colorTableNode->GetLookupTable()->GetRange();
@@ -398,7 +404,7 @@ void qSlicerColorsModuleWidget::addNewColorInCurrentNode()
   // Add a color to the current (User type) color table, at the end
   int newNumber = currentNode->GetNumberOfColors() + 1;
   currentNode->SetNumberOfColors(newNumber);
-  currentNode->SetColor(newNumber - 1, "", 0.5, 0.5, 0.5, 1.0, vtkMRMLColorNode::NameSourceUnknown);
+  currentNode->SetColor(newNumber - 1, "", 0.5, 0.5, 0.5, 1.0);
   // Update spinbox on GUI as well
   QSignalBlocker blocker(d->NumberOfColorsSpinBox);
   d->NumberOfColorsSpinBox->setValue(newNumber);
@@ -410,8 +416,16 @@ void qSlicerColorsModuleWidget::removeCurrentColorEntry()
   Q_D(qSlicerColorsModuleWidget);
   vtkMRMLColorTableNode* currentNode = vtkMRMLColorTableNode::SafeDownCast(d->ColorTableComboBox->currentNode());
   Q_ASSERT(currentNode);
-  //TODO: Color entry cannot currently be deleted. It can be set to "none", but the hide empty colors function
-  // does not work currently. Unfortunately the color table node does not support removing simgle entry either.
+  int colorIndex = -1;
+  if (d->ColorTableFrame->isVisible())
+  {
+    // TODO: this does not provide correct index when "Hide empty colors" is enabled
+    colorIndex = d->ColorView->currentIndex().row();
+  }
+  if (colorIndex >= 0)
+  {
+    currentNode->RemoveColor(colorIndex);
+  }
 }
 
 //-----------------------------------------------------------

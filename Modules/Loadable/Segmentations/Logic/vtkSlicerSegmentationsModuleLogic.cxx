@@ -1130,7 +1130,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(vtkMRMLSe
   colorTableNode->GetLookupTable()->SetRange(0, numberOfColors - 1);
   colorTableNode->GetLookupTable()->SetNumberOfTableValues(numberOfColors);
   // Remove "background" from the color legend.
-  colorTableNode->SetColorDefined(0, false);
+  colorTableNode->RemoveColor(0);
 
   short colorIndex = 0;
   for (std::vector<std::string>::iterator segmentIt = exportedSegmentIDs.begin(); segmentIt != exportedSegmentIDs.end(); ++segmentIt, ++colorIndex)
@@ -1258,7 +1258,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
   // Copy segment colors to color table node
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(
     labelmapNode->GetDisplayNode()->GetColorNode() ); // Always valid, as it was created just above if was missing
-  vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(segmentationNode, segmentIDs, colorTableNode);
+  vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(segmentationNode, segmentIDs, colorTableNode, labelValues);
 
   // Move exported labelmap node under same parent as segmentation if they are in the same scene
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(segmentationNode->GetScene());

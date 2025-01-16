@@ -163,8 +163,12 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModel
     if (logic)
     {
       logic->DeserializeTerminologyEntry(terminologyString.toUtf8().constData(), terminologyEntry);
-      // Get default color and other metadata from loaded terminologies
-      logic->UpdateEntryFromLoadedTerminologies(terminologyEntry);
+      // Get default color and other metadata from loaded terminologies, but only for non-color nodes,
+      // because terminologies in color nodes are fully defined in the table, so we do not no need to look up additional metadata.
+      if (!logic->GetFirstCompatibleColorNodeByName(terminologyEntry->GetTerminologyContextName() ? terminologyEntry->GetTerminologyContextName() : ""))
+      {
+        logic->UpdateEntryFromLoadedTerminologies(terminologyEntry);
+      }
     }
 
     // Get metadata

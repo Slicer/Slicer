@@ -380,7 +380,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
   }
   item->setData(color, qMRMLItemDelegate::ColorEntryRole);
 
-  QString colorName = d->MRMLColorNode->GetColorName(color);
+  QString colorName = this->nameFromColor(color);
 
   if (column == d->ColorColumn)
   {
@@ -510,43 +510,116 @@ QVariant qMRMLColorModel::headerData(int section, Qt::Orientation orientation, i
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex)
+QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex, bool simplified/*=false*/)
 {
-  QString text;
   if (colorNode == nullptr || colorIndex >= colorNode->GetNumberOfColors())
   {
-    return text;
+    return QString();
   }
 
-  if ( colorNode->GetTerminologyCategory(colorIndex) == nullptr || colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() == nullptr
-    || colorNode->GetTerminologyType(colorIndex) == nullptr || colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() == nullptr)
+  // Get type (with modifier, if any)
+  QString type;
+  if (colorNode->GetTerminologyType(colorIndex) != nullptr
+    && colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() != nullptr)
   {
-    text.append(vtkMRMLTr("qMRMLColorModel", "(none)").c_str());
-    return text;
+    type = colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning();
+    QString typeModifier;
+    if (colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr
+      && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
+    {
+      typeModifier = colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning();
+    }
+    if (!typeModifier.isEmpty())
+    {
+      if (simplified)
+      {
+        //: For formatting of terminology entry with a modifier in simplified mode. %1 is structure name (e.g., "Kidney"), %2 is modifier (e.g., "Left")
+        type = tr("%2 %1").arg(type).arg(typeModifier);
+      }
+      else
+      {
+        //: For formatting of terminology entry with a modifier. %1 is structure name (e.g., "Kidney"), %2 is modifier (e.g., "Left")
+        type = tr("%1, %2").arg(type).arg(typeModifier);
+      }
+    }
   }
 
-  // Add category and type
-  text.append(QString("%1: %2").arg(
-    colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning()).arg(colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning()));
-  // Add type modifier if any
-  if ( colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr
-    && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
-  {
-    text.append(QString(", %1 ").arg(colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning()));
-  }
-  // Add region if any
+  // Get region (if any; with modifier, if any)
+  QString region;
   if ( colorNode->GetTerminologyRegion(colorIndex) != nullptr
     && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
   {
-    text.append(vtkMRMLTr("qMRMLColorModel", "in").c_str());
-    text.append(QString(" %1").arg(colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning()));
-  }
-  // Add region modifier if any
-  if ( colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr
-    && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
-  {
-    text.append(QString(", %1").arg(colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning()));
+    region = colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning();
+    QString regionModifier;
+    if (colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr
+      && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
+    {
+      regionModifier = colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning();
+    }
+    if (!regionModifier.isEmpty())
+    {
+      if (simplified)
+      {
+        //: For formatting of terminology entry name in simplified mode. %1 is region name (e.g., "Kidney"), %2 is region modifier (e.g., "Left")
+        region = tr("%2 %1").arg(type).arg(region).arg(regionModifier);
+      }
+      else
+      {
+        //: For formatting of terminology entry name. %1 is region name (e.g., "Kidney"), %2 is region modifier (e.g., "Left")
+        region = tr("%1, %2").arg(type).arg(region).arg(regionModifier);
+      }
+    }
   }
 
-  return text;
+  QString typeInRegion;
+  if (!type.isEmpty())
+  {
+    if (!region.isEmpty())
+    {
+      //: For formatting of terminology entry name. %1 is type name (e.g., "Mass"), %2 is region name (e.g., "Liver").
+      typeInRegion = tr("%1 in %2").arg(type).arg(region);
+    }
+    else
+    {
+      typeInRegion = type;
+    }
+  }
+  else
+  {
+    if (!region.isEmpty())
+    {
+      //: For formatting of terminology entry name. %1 is region name (e.g., "Liver").
+      typeInRegion = tr("Unknown in %1").arg(type).arg(region);
+    }
+  }
+
+  QString typeInRegionWithCategory;
+  QString category;
+  // Skip category in simplified mode
+  if (!simplified)
+  {
+    if (colorNode->GetTerminologyCategory(colorIndex) != nullptr
+      && colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() != nullptr)
+    {
+      category = colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning();
+    }
+  }
+  if (!category.isEmpty())
+  {
+    if (!typeInRegion.isEmpty())
+    {
+      //: For formatting of terminology entry name. %1 is category name (e.g., "Morphologically Altered Structure"), %2 is the type in region ("Mass in Liver")
+      typeInRegionWithCategory = tr("%1: %2").arg(category).arg(typeInRegion);
+    }
+    else
+    {
+      typeInRegionWithCategory = category;
+    }
+  }
+  else
+  {
+    typeInRegionWithCategory = typeInRegion;
+  }
+
+  return typeInRegionWithCategory;
 }

@@ -103,6 +103,12 @@ public:
   /// Python accessor variant of \sa GetLoadedRegionContextNames
   void GetLoadedRegionContextNames(vtkStringArray* regionContextNames);
 
+  /// Get list of color node IDs that contain terminology information.
+  std::vector<std::string> GetCompatibleColorNodeIDs();
+
+  /// Return the first compatible color node that has a matching name.
+  vtkMRMLColorNode* GetFirstCompatibleColorNodeByName(std::string name);
+
   /// Get terminology categories from a terminology as collection of \sa vtkSlicerTerminologyCategory container objects
   /// \param categories Output argument containing all the \sa vtkSlicerTerminologyCategory objects created
   ///   from the categories found in the given terminology
@@ -113,6 +119,15 @@ public:
   ///   from the categories found in the given terminology
   /// \return Success flag
   bool FindCategoriesInTerminology(std::string terminologyName, std::vector<CodeIdentifier>& categories, std::string search);
+
+  std::vector<std::string> FindColorNodes(
+    std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
+    std::string typeCodingSchemeDesignator, std::string typeCodeValue,
+    std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
+    std::string regionCodingSchemeDesignator, std::string regionCodeValue,
+    std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
+    std::vector<std::string> preferredColorNodeNames,
+    vtkIntArray* foundColorIndices=nullptr);
 
   /// Return collection of vtkSlicerTerminologyEntry objects designated by the given codes.
   /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.

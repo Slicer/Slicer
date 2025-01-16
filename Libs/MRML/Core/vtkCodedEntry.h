@@ -87,6 +87,8 @@ public:
   /// \return true on success
   bool SetFromString(const std::string& content);
 
+  static bool AreEqual(vtkCodedEntry* entry1, vtkCodedEntry* entry2);
+
 protected:
   vtkCodedEntry();
   ~vtkCodedEntry() override;

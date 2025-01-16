@@ -36,6 +36,7 @@ public:
   void init();
 
   void updateGUIFromTerminologyInfo();
+  void updateTerminologyFromGUI();
 
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;
 };
@@ -82,6 +83,32 @@ void qSlicerTerminologyEditorWidgetPrivate::updateGUIFromTerminologyInfo()
   this->regionModifierCSDLineEdit->setText(TerminologyInfo.GetTerminologyEntry()->GetRegionModifierObject()->GetCodingSchemeDesignator());
 }
 
+void qSlicerTerminologyEditorWidgetPrivate::updateTerminologyFromGUI()
+{
+  Q_Q(qSlicerTerminologyEditorWidget);
+
+  // Update terminology info from the GUI
+  TerminologyInfo.GetTerminologyEntry()->GetCategoryObject()->SetCodeMeaning(this->categoryCodeMeaningLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetCategoryObject()->SetCodeValue(this->categoryCodeValueLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetCategoryObject()->SetCodingSchemeDesignator(this->categoryCSDLineEdit->text().toStdString().c_str());
+
+  TerminologyInfo.GetTerminologyEntry()->GetTypeObject()->SetCodeMeaning(this->typeCodeMeaningLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetTypeObject()->SetCodeValue(this->typeCodeValueLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetTypeObject()->SetCodingSchemeDesignator(this->typeCSDLineEdit->text().toStdString().c_str());
+
+  TerminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->SetCodeMeaning(this->typeModifierCodeMeaningLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->SetCodeValue(this->typeModifierCodeValueLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetTypeModifierObject()->SetCodingSchemeDesignator(this->typeModifierCSDLineEdit->text().toStdString().c_str());
+
+  TerminologyInfo.GetTerminologyEntry()->GetRegionObject()->SetCodeMeaning(this->regionCodeMeaningLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetRegionObject()->SetCodeValue(this->regionCodeValueLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetRegionObject()->SetCodingSchemeDesignator(this->regionCSDLineEdit->text().toStdString().c_str());
+
+  TerminologyInfo.GetTerminologyEntry()->GetRegionModifierObject()->SetCodeMeaning(this->regionModifierCodeMeaningLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetRegionModifierObject()->SetCodeValue(this->regionModifierCodeValueLineEdit->text().toStdString().c_str());
+  TerminologyInfo.GetTerminologyEntry()->GetRegionModifierObject()->SetCodingSchemeDesignator(this->regionModifierCSDLineEdit->text().toStdString().c_str());
+}
+
 //------------------------------------------------------------------------------
 qSlicerTerminologyEditorWidget::qSlicerTerminologyEditorWidget(QWidget *_parent)
   : QWidget(_parent)
@@ -98,6 +125,7 @@ qSlicerTerminologyEditorWidget::~qSlicerTerminologyEditorWidget() = default;
 void qSlicerTerminologyEditorWidget::terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorWidget);
+  d->updateTerminologyFromGUI();
   terminologyInfo = d->TerminologyInfo;
 }
 
@@ -113,7 +141,7 @@ void qSlicerTerminologyEditorWidget::setTerminologyInfo(qSlicerTerminologyNaviga
 void qSlicerTerminologyEditorWidget::onSelectFromTerminology()
 {
   Q_D(qSlicerTerminologyEditorWidget);
-
+  d->updateTerminologyFromGUI();
   qSlicerTerminologySelectorDialog::getTerminology(d->TerminologyInfo, this);
   d->updateGUIFromTerminologyInfo();
 }

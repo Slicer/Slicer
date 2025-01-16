@@ -125,7 +125,7 @@ public:
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
   /// Assemble human readable text in format ": , in , " from color in color node.
-  static QString terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex);
+  static QString terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex, bool simplified=false);
 
 protected slots:
   void onMRMLColorNodeModified(vtkObject* node);

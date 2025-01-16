@@ -2190,6 +2190,7 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
 
   CodeIdentifier categoryId = GetCodeIdentifierFromCodedEntry(entry->GetCategoryObject());
   CodeIdentifier typeId = GetCodeIdentifierFromCodedEntry(entry->GetTypeObject());
+  CodeIdentifier typeModifierId = GetCodeIdentifierFromCodedEntry(entry->GetTypeModifierObject());
   if (categoryId.IsValid() && typeId.IsValid())
   {
     // Create list of preferred terminology names: the list starts with the entry's terminologyName
@@ -2217,18 +2218,28 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
       {
         continue;
       }
-      entry->SetTerminologyContextName(terminologyName.c_str());
-      entry->GetCategoryObject()->Copy(categoryObject);
-      entry->GetTypeObject()->Copy(typeObject);
-      CodeIdentifier typeModifierId = GetCodeIdentifierFromCodedEntry(entry->GetTypeModifierObject());
-      if (typeModifierId.IsValid())
+      bool found = false;
+      if (!typeModifierId.IsValid())
+      {
+        // Type without a modifier
+        found = true;
+      }
+      else
       {
         // Type with a modifier
         vtkNew<vtkSlicerTerminologyType> typeModifierObject;
         if (this->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId, typeModifierId, typeModifierObject))
         {
+          found = true;
           entry->GetTypeModifierObject()->Copy(typeModifierObject);
         }
+      }
+      if (found)
+      {
+        entry->SetTerminologyContextName(terminologyName.c_str());
+        entry->GetCategoryObject()->Copy(categoryObject);
+        entry->GetTypeObject()->Copy(typeObject);
+        break;
       }
     }
   }
@@ -2258,17 +2269,28 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
       {
         continue;
       }
-      entry->SetRegionContextName(regionContextName.c_str());
-      entry->GetRegionObject()->Copy(regionObject);
+      bool found = false;
       CodeIdentifier regionModifierId = GetCodeIdentifierFromCodedEntry(entry->GetRegionModifierObject());
-      if (regionModifierId.IsValid())
+      if (!regionModifierId.IsValid())
+      {
+        // Region without a modifier
+        found = true;
+      }
+      else
       {
         // Region with a modifier
         vtkNew<vtkSlicerTerminologyType> regionModifierObject;
         if (this->GetRegionModifierInRegion(regionContextName, regionId, regionModifierId, regionModifierObject))
         {
+          found = true;
           entry->GetRegionModifierObject()->Copy(regionModifierObject);
         }
+      }
+      if (found)
+      {
+        entry->SetRegionContextName(regionContextName.c_str());
+        entry->GetRegionObject()->Copy(regionObject);
+        break;
       }
     }
   }
@@ -2809,4 +2831,126 @@ int vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(vtkMRMLColorNo
   }
 
   return -1; // Not found
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::GetCompatibleColorNodeIDs()
+{
+  std::vector<std::string> compatibleColorNodeIDs;
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+  {
+    vtkErrorMacro("GetCompatibleColorNodeIDs: Invalid MRML scene");
+    return compatibleColorNodeIDs;
+  }
+  std::vector<vtkMRMLNode*> colorNodes;
+  scene->GetNodesByClass("vtkMRMLColorNode", colorNodes);
+  for (vtkMRMLNode* node : colorNodes)
+  {
+    vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(node);
+    if (colorNode && colorNode->GetContainsTerminology())
+    {
+      compatibleColorNodeIDs.push_back(colorNode->GetID());
+    }
+  }
+  return compatibleColorNodeIDs;
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLColorNode* vtkSlicerTerminologiesModuleLogic::GetFirstCompatibleColorNodeByName(std::string name)
+{
+  std::vector<std::string> compatibleColorNodeIDs;
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+  {
+    vtkErrorMacro("GetFirstCompatibleColorNodeByName: Invalid MRML scene");
+    return nullptr;
+  }
+  std::vector<vtkMRMLNode*> colorNodes;
+  scene->GetNodesByClass("vtkMRMLColorNode", colorNodes);
+  for (vtkMRMLNode* node : colorNodes)
+  {
+    vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(node);
+    if (colorNode && colorNode->GetContainsTerminology())
+    {
+      if (colorNode->GetName())
+      {
+        if (name == colorNode->GetName())
+        {
+          // found color node that has matching name
+          return colorNode;
+        }
+      }
+    }
+  }
+  return nullptr;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
+  std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
+  std::string typeCodingSchemeDesignator, std::string typeCodeValue,
+  std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
+  std::string regionCodingSchemeDesignator, std::string regionCodeValue,
+  std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
+  std::vector<std::string> preferredColorNodeNames,
+  vtkIntArray* foundColorIndices/*=nullptr*/)
+{
+  std::vector<std::string> foundColorNodeIDs;
+  // Find candidate color nodes
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+  {
+    vtkErrorMacro("FindColorTableNodes: Invalid MRML scene");
+    return foundColorNodeIDs;
+  }
+  std::vector<std::string> compatibleColorNodeIDs;
+  if (preferredColorNodeNames.empty())
+  {
+    compatibleColorNodeIDs = vtkSlicerTerminologiesModuleLogic::GetCompatibleColorNodeIDs();
+  }
+  else
+  {
+    for (const std::string& preferredColorNodeName : preferredColorNodeNames)
+    {
+      vtkSmartPointer<vtkCollection> preferredColorNodeCandidates = vtkSmartPointer<vtkCollection>::Take(
+        scene->GetNodesByClassByName("vtkMRMLColorNode", preferredColorNodeName.c_str()));
+      for (int i = 0; i < preferredColorNodeCandidates->GetNumberOfItems(); ++i)
+      {
+        vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(preferredColorNodeCandidates->GetItemAsObject(i));
+        if (colorNode && colorNode->GetContainsTerminology())
+        {
+          compatibleColorNodeIDs.push_back(colorNode->GetID());
+        }
+      }
+    }
+  }
+  // Check if we can find the item in the table
+  std::string terminologyStr = vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(
+    "", // terminologyContextName: we don't know it, so we set it to empty by default
+    categoryCodeValue, categoryCodingSchemeDesignator, "",
+    typeCodeValue, typeCodingSchemeDesignator, "",
+    typeModifierCodeValue, typeModifierCodingSchemeDesignator, "",
+    "", // regionContextName: we don't know it, so we set it to empty by default
+    regionCodeValue, regionCodingSchemeDesignator, "",
+    regionModifierCodeValue, regionModifierCodingSchemeDesignator, "");
+  for (std::string& compatibleColorNodeID : compatibleColorNodeIDs)
+  {
+    vtkMRMLColorNode* compatibleColorNode = vtkMRMLColorNode::SafeDownCast(scene->GetNodeByID(compatibleColorNodeID));
+    if (!compatibleColorNode)
+    {
+      continue;
+    }
+    int indexInColorTable = vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(
+      compatibleColorNode, terminologyStr.c_str(), true /*ignoreContextName*/);
+    if (indexInColorTable > -1)
+    {
+      foundColorNodeIDs.push_back(compatibleColorNodeID);
+      if (foundColorIndices)
+      {
+        foundColorIndices->InsertNextValue(indexInColorTable);
+      }
+    }
+  }
+  return foundColorNodeIDs;
 }

@@ -236,6 +236,24 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>categoryCodeMeaningLineEdit</tabstop>
+  <tabstop>categoryCodeValueLineEdit</tabstop>
+  <tabstop>categoryCSDLineEdit</tabstop>
+  <tabstop>typeCodeMeaningLineEdit</tabstop>
+  <tabstop>typeCodeValueLineEdit</tabstop>
+  <tabstop>typeCSDLineEdit</tabstop>
+  <tabstop>typeModifierCodeMeaningLineEdit</tabstop>
+  <tabstop>typeModifierCodeValueLineEdit</tabstop>
+  <tabstop>typeModifierCSDLineEdit</tabstop>
+  <tabstop>regionCodeMeaningLineEdit</tabstop>
+  <tabstop>regionCodeValueLineEdit</tabstop>
+  <tabstop>regionCSDLineEdit</tabstop>
+  <tabstop>regionModifierCodeMeaningLineEdit</tabstop>
+  <tabstop>regionModifierCodeValueLineEdit</tabstop>
+  <tabstop>regionModifierCSDLineEdit</tabstop>
+  <tabstop>selectFromTerminologyButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

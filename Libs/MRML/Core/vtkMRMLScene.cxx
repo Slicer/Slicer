@@ -3871,7 +3871,8 @@ std::string vtkMRMLScene::GetTemporaryBundleDirectory()
   std::uniform_int_distribution<int> distribution(0, numberOfCharacters);
   for (int i = 0; i < 5; i++)
   {
-    ss << validCharacters[distribution(this->RandomGenerator)];
+    // % added just in case the random generator creates numbers outside of the distribution (it seemed to happen)
+    ss << validCharacters[distribution(this->RandomGenerator) % numberOfCharacters];
   }
   return ss.str();
 }

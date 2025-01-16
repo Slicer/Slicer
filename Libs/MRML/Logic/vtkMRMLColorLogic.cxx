@@ -507,7 +507,6 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateRandomNode()
   }
   func->BuildFunctionFromTable(VTK_INT_MIN, VTK_INT_MAX, dimension, table);
   func->Build();
-  procNode->SetNamesFromColors();
 
   return procNode;
 }
@@ -527,8 +526,6 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateRedGreenBlueNode()
   func->AddRGBPoint(-6.0, 1.0, 0.0, 0.0);
   func->AddRGBPoint(0.0, 0.0, 1.0, 0.0);
   func->AddRGBPoint(6.0, 0.0, 0.0, 1.0);
-
-  procNode->SetNamesFromColors();
 
   return procNode;
 }
@@ -801,7 +798,8 @@ void vtkMRMLColorLogic::AddDGEMRICNode(int type)
   else
   {
     vtkWarningMacro("AddDGEMRICNode failed with type " << type);
-  }}
+  }
+}
 
 //----------------------------------------------------------------------------------------
 void vtkMRMLColorLogic::AddDefaultFileNode(int i)

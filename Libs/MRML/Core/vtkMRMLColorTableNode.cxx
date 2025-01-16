@@ -110,7 +110,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
         }
 
         std::replace(name.begin(), name.end(), '_', ' ');
-        if (this->SetColorName(index, name.c_str(), NameSetManually) != 0)
+        if (this->SetColorName(index, name.c_str()) != 0)
         {
           this->LookupTable->SetTableValue(index, r, g, b, a);
         }
@@ -613,7 +613,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A full rainbow of 256 colors, goes from red to red with all rainbow colors in between. Useful for colorful display of a label map");
   }
   else if (this->Type == this->Grey)
@@ -626,7 +625,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A grey scale ranging from black at 0 to white at 255. Useful for displaying MRI volumes.");
   }
   else if (this->Type == this->Red)
@@ -639,7 +637,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A red scale of 256 values. Useful for layering with Cyan");
   }
   else if (this->Type == this->Green)
@@ -652,7 +649,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A green scale of 256 values, useful for layering with Magenta");
   }
   else if (this->Type == this->Blue)
@@ -665,7 +661,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A blue scale of 256 values from black to pure blue, useful for layering with Yellow");
   }
   else if (this->Type == this->Yellow)
@@ -678,7 +673,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A yellow scale of 256 values, from black to pure yellow, useful for layering with blue (it's complementary, layering yields gray)");
   }
   else if (this->Type == this->Cyan)
@@ -691,7 +685,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A cyan ramp of 256 values, from black to cyan, complementary ramp to red, layering yields gray");
   }
   else if (this->Type == this->Magenta)
@@ -704,7 +697,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A magenta scale of 256 colors from black to magenta, complementary ramp to green, layering yields gray ");
   }
   else if (this->Type == this->WarmShade1)
@@ -717,7 +709,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from black to red, of 256 colors, ramp of warm colors with variation in value that's complementary to CoolShade1 ");
   }
   else if (this->Type == this->WarmShade2)
@@ -730,7 +721,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription(
       "A scale from black to yellow, through green, of 256 colors, ramp of warm colors with variation in value that's complementary to CoolShade2 ");
   }
@@ -744,7 +734,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from black to green, of 256 colors, ramp of warm colors with variation in value that's complementary to CoolShade3 ");
   }
   else if (this->Type == this->CoolShade1)
@@ -757,7 +746,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from black to cyan, 256 colors, ramp of cool colors with variation in value that is complementary to WarmShade1 ");
   }
   else if (this->Type == this->CoolShade2)
@@ -770,7 +758,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription(
       "A scale from black to blue through purple, 256 colors, ramp of cool colors with variation in value that is complementary to WarmShade2 ");
   }
@@ -784,7 +771,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from black to magenta, 256 colors, ramp of cool colors with variation in value that is complementary to WarmShade3");
   }
   else if (this->Type == this->WarmTint1)
@@ -797,7 +783,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from white to red, 256 colors, ramp of warm colors with variation in saturation that's complementary to CoolTint1");
   }
   else if (this->Type == this->WarmTint2)
@@ -810,7 +795,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from white to yellow, 256 colors, ramp of warm colors with variation in saturation that's complementary to CoolTint2");
   }
   else if (this->Type == this->WarmTint3)
@@ -823,7 +807,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from white to green, 256 colors, ramp of warm colors with variation in saturation that's complementary to CoolTint3");
   }
   else if (this->Type == this->CoolTint1)
@@ -836,7 +819,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from white to cyan, 256 colors, ramp of cool colors with variations in saturation that's complementary to WarmTint1");
   }
   else if (this->Type == this->CoolTint2)
@@ -849,7 +831,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from white to blue, 256 colors, ramp of cool colors with variations in saturation that's complementary to WarmTint2");
   }
   else if (this->Type == this->CoolTint3)
@@ -862,7 +843,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from white to magenta, 256 colors, ramp of cool colors with variations in saturation that's complementary to WarmTint3");
   }
   else if (this->Type == this->Warm1)
@@ -875,7 +855,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from yellow to red, of 256 colors, ramp of warm colors that's complementary to Cool1");
   }
   else if (this->Type == this->Warm2)
@@ -888,7 +867,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from green to yellow, 256 colors, ramp of warm colors that's complementary to Cool2");
   }
   else if (this->Type == this->Warm3)
@@ -901,7 +879,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from cyan to green, 256 colors, ramp of warm colors that's complementary to Cool3");
   }
   else if (this->Type == this->Cool1)
@@ -914,7 +891,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from blue to cyan, 256 colors, ramp of cool colors that's complementary to Warm1");
   }
   else if (this->Type == this->Cool2)
@@ -927,7 +903,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from magenta to blue, 256 colors, ramp of cool colors that's complementary to Warm2");
   }
   else if (this->Type == this->Cool3)
@@ -940,7 +915,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from red to magenta, ramp of cool colors that's complementary to Warm3");
   }
   else if (this->Type == this->Iron)
@@ -952,7 +926,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1,1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
-    this->SetNamesFromColors();
     this->SetDescription("A scale from red to  yellow, 157 colors, useful for ");
   }
 
@@ -964,7 +937,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1,1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
-    this->SetNamesFromColors();
     this->SetDescription("Goes from red to purple, passing through the colors of the rainbow in between. Useful for a colorful display of a label map");
   }
 
@@ -976,7 +948,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1,1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
-    this->SetNamesFromColors();
     this->SetDescription("A lighter blue scale of 256 values, useful for showing registration results.");
   }
   else if (this->Type == this->Desert)
@@ -987,7 +958,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1,1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
-    this->SetNamesFromColors();
     this->SetDescription("Red to yellow/orange scale, 256 colors, useful for ");
   }
 
@@ -999,7 +969,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1,0);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
-    this->SetNamesFromColors();
     this->SetDescription("A white to black scale, 256 colors, useful to highlight negative versions, or to flip intensities of signal values.");
   }
 
@@ -1011,7 +980,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1,1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
-    this->SetNamesFromColors();
     this->SetDescription("A colorful display option, 256 colors going from purple to red");
   }
 
@@ -1054,7 +1022,6 @@ void vtkMRMLColorTableNode::SetType(int type)
 
     pos->Delete();
     neg->Delete();
-    this->SetNamesFromColors();
     this->SetDescription("A combination of Ocean (0-22) and Desert (23-42), useful for displaying functional MRI volumes (highlights activation)");
   }
 
@@ -1068,7 +1035,6 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
-    this->SetNamesFromColors();
     this->SetDescription("A small fMRI positive activation scale going from red to yellow from 0-19, useful for displaying "
       "functional MRI volumes when don't need the blue of the fMRI scale.");
   }
@@ -1193,7 +1159,7 @@ void vtkMRMLColorTableNode::SetType(int type)
 
       this->GetLookupTable()->SetTableValue(i, r, g, b, 1.0);
     }
-    this->SetNamesFromColors();
+
     this->SetDescription(
       "A random selection of 256 rgb colors, useful to distinguish between a small number of labeled regions (especially outside of the brain)");
   }
@@ -1246,7 +1212,7 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
     MRMLNodeModifyBlocker blocker(this);
     this->GetLookupTable()->SetNumberOfTableValues(n);
     // Initialize new elements (needed if color table is made larger).
-    this->ClearColors(numberOfTableValuesBefore, n - 1);
+    this->RemoveColors(numberOfTableValuesBefore, n - 1);
   }
   if (n >= int(this->Properties.size()))
   {
@@ -1270,7 +1236,7 @@ int vtkMRMLColorTableNode::GetNumberOfColors()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorTableNode::AddColor(const char *name, double r, double g, double b, double a, NameSourceType nameSource/*=NameSourceUnknown*/)
+void vtkMRMLColorTableNode::AddColor(const char *name, double r, double g, double b, double a)
 {
  if (this->GetType() != this->User &&
      this->GetType() != this->File)
@@ -1279,12 +1245,11 @@ void vtkMRMLColorTableNode::AddColor(const char *name, double r, double g, doubl
       return;
  }
  this->LastAddedColor++;
- this->SetColor(this->LastAddedColor, name, r, g, b, a, nameSource);
+ this->SetColor(this->LastAddedColor, name, r, g, b, a);
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, double g, double b, double a,
-  NameSourceType nameSource/*=NameSourceUnknown*/)
+int vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, double g, double b, double a)
 {
   if (this->GetType() != this->User && this->GetType() != this->File)
   {
@@ -1299,7 +1264,7 @@ int vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, doubl
   }
 
   this->GetLookupTable()->SetTableValue(entry, r, g, b, a);
-  if (this->SetColorName(entry, name, nameSource) == 0)
+  if (this->SetColorName(entry, name) == 0)
   {
     vtkWarningMacro("SetColor: error setting color name " << name << " for entry " << entry);
     return 0;
@@ -1331,19 +1296,13 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, dou
   }
   this->GetLookupTable()->SetTableValue(entry, r, g, b, a);
 
-  if (this->GetColorNameSource(entry) == NameAutoGeneratedFromColor)
-  {
-    this->SetNameFromColor(entry);
-  }
-
   // trigger a modified event
   this->Modified();
   return 1;
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char *name, double r, double g, double b, double a,
-  NameSourceType nameSource/*=NameSourceUnknown*/)
+int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char *name, double r, double g, double b, double a)
 {
   if (this->GetType() != this->User && this->GetType() != this->File)
   {
@@ -1387,7 +1346,6 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char *
     *(rgba++) = static_cast<unsigned char>(b * 255.0 + 0.5);
     *(rgba++) = static_cast<unsigned char>(a * 255.0 + 0.5);
     this->Properties[indx].Name = nameStr;
-    this->Properties[indx].NameSource = nameSource;
   }
   lut->BuildSpecialColors();
   lut->Modified();
@@ -1397,11 +1355,11 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char *
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLColorTableNode::ClearColors(int firstEntry, int lastEntry)
+bool vtkMRMLColorTableNode::RemoveColors(int firstEntry, int lastEntry)
 {
   if (this->GetType() != this->User && this->GetType() != this->File)
   {
-    vtkErrorMacro("vtkMRMLColorTableNode::ClearColors: Cannot set a color if not a user defined color table, reset the type first to User or File");
+    vtkErrorMacro("vtkMRMLColorTableNode::RemoveColors: Cannot set a color if not a user defined color table, reset the type first to User or File");
     return false;
   }
   if (firstEntry > lastEntry)
@@ -1416,13 +1374,13 @@ bool vtkMRMLColorTableNode::ClearColors(int firstEntry, int lastEntry)
   }
   if (firstEntry < 0 || firstEntry >= numberOfValues)
   {
-    vtkErrorMacro("vtkMRMLColorTableNode::ClearColors: requested first entry "
+    vtkErrorMacro("vtkMRMLColorTableNode::RemoveColors: requested first entry "
       << firstEntry << " is out of table range: 0 - " << numberOfValues << ", call SetNumberOfColors");
     return false;
   }
   if (lastEntry < 0 || lastEntry >= numberOfValues)
   {
-    vtkErrorMacro("vtkMRMLColorTableNode::ClearColors: requested last entry "
+    vtkErrorMacro("vtkMRMLColorTableNode::RemoveColors: requested last entry "
       << lastEntry << " is out of table range: 0 - " << numberOfValues << ", call SetNumberOfColors");
     return false;
   }
@@ -1462,11 +1420,11 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLColorTableNode::ClearColor(int entry)
+bool vtkMRMLColorTableNode::RemoveColor(int entry)
 {
   if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
   {
-    vtkErrorMacro("vtkMRMLColorTableNode::ClearColor: requested entry " << entry << " is out of table range: 0 - "
+    vtkErrorMacro("vtkMRMLColorTableNode::RemoveColor: requested entry " << entry << " is out of table range: 0 - "
       << this->GetLookupTable()->GetNumberOfTableValues() - 1);
     return false;
   }
@@ -1475,6 +1433,7 @@ bool vtkMRMLColorTableNode::ClearColor(int entry)
   if (entry <= this->Properties.size())
   {
     this->Properties[entry].Clear();
+    this->Modified();
   }
   return true;
 }
