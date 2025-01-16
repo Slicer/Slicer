@@ -20,17 +20,14 @@
 ==============================================================================*/
 
 #include <vtkCodedEntry.h>
+#include "vtkMRMLJsonElement.h"
 #include "vtkMRMLMarkupsPlaneJsonStorageNode.h"
-#include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
 
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLMarkupsJsonElement.h"
 
-#include "vtkDoubleArray.h"
 #include "vtkObjectFactory.h"
-#include "vtkStringArray.h"
 #include <vtksys/SystemTools.hxx>
 
 //------------------------------------------------------------------------------
@@ -52,7 +49,7 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *ref
 
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteBasicProperties(
-  vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
+  vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
 {
   if (!vtkMRMLMarkupsJsonStorageNode::WriteBasicProperties(writer, markupsNode))
   {
@@ -133,7 +130,7 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteBasicProperties(
 
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(
-  vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupObject)
+  vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupObject)
 {
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode);
   if (!planeNode)
