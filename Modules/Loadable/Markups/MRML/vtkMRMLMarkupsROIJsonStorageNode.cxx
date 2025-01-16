@@ -20,15 +20,13 @@
 ==============================================================================*/
 
 #include <vtkCodedEntry.h>
+#include "vtkMRMLJsonElement.h"
 #include "vtkMRMLMarkupsROIJsonStorageNode.h"
-#include "vtkMRMLMarkupsJsonElement.h"
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkDoubleArray.h"
 #include "vtkObjectFactory.h"
-#include "vtkStringArray.h"
 #include <vtksys/SystemTools.hxx>
 
 //------------------------------------------------------------------------------
@@ -50,7 +48,7 @@ bool vtkMRMLMarkupsROIJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNo
 
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
-  vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
+  vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
 {
   if (!vtkMRMLMarkupsJsonStorageNode::WriteBasicProperties(writer, markupsNode))
   {
@@ -101,7 +99,7 @@ bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupsObject)
+bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupsObject)
 {
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
   if (!roiNode)
