@@ -29,6 +29,7 @@
 #include "qMRMLColorTableView.h"
 #include "qMRMLColorModel.h"
 #include "qMRMLItemDelegate.h"
+#include "qMRMLSortFilterColorProxyModel.h"
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
@@ -59,7 +60,7 @@ void qMRMLColorTableViewPrivate::init()
   Q_Q(qMRMLColorTableView);
 
   qMRMLColorModel* colorModel = new qMRMLColorModel(q);
-  QSortFilterProxyModel* sortFilterModel = new QSortFilterProxyModel(q);
+  qMRMLSortFilterColorProxyModel* sortFilterModel = new qMRMLSortFilterColorProxyModel(q);
   sortFilterModel->setFilterKeyColumn(colorModel->labelColumn());
   sortFilterModel->setSourceModel(colorModel);
   q->setModel(sortFilterModel);
@@ -94,9 +95,9 @@ qMRMLColorModel* qMRMLColorTableView::colorModel()const
 }
 
 //------------------------------------------------------------------------------
-QSortFilterProxyModel* qMRMLColorTableView::sortFilterProxyModel()const
+qMRMLSortFilterColorProxyModel* qMRMLColorTableView::sortFilterProxyModel()const
 {
-  return qobject_cast<QSortFilterProxyModel*>(this->model());
+  return qobject_cast<qMRMLSortFilterColorProxyModel*>(this->model());
 }
 
 //------------------------------------------------------------------------------
@@ -115,8 +116,7 @@ void qMRMLColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
   this->sortFilterProxyModel()->invalidate();
 
   this->setEditTriggers( (node && node->GetType() == vtkMRMLColorTableNode::User) ?
-      QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed :
-      QAbstractItemView::NoEditTriggers);
+    QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed : QAbstractItemView::NoEditTriggers);
 }
 
 //------------------------------------------------------------------------------
@@ -130,14 +130,7 @@ vtkMRMLColorNode* qMRMLColorTableView::mrmlColorNode()const
 //------------------------------------------------------------------------------
 void qMRMLColorTableView::setShowOnlyNamedColors(bool enable)
 {
-  if (enable)
-  {
-    this->sortFilterProxyModel()->setFilterRegExp(QRegExp("^(?!\\(none\\))"));
-  }
-  else
-  {
-    this->sortFilterProxyModel()->setFilterRegExp(QRegExp());
-  }
+  this->sortFilterProxyModel()->setShowEmptyColors(!enable);
 }
 
 //------------------------------------------------------------------------------

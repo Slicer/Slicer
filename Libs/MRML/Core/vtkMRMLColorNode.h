@@ -51,11 +51,9 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  ///
   /// Set node attributes
   void ReadXMLAttributes( const char** atts) override;
 
-  ///
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
@@ -63,23 +61,18 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLColorNode);
 
-  ///
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Color";};
 
-  ///
   /// Reset node attributes to the initial state as defined in the constructor.
   /// NOTE:   it preserves values several dynamic attributes that may be set by an application: type, name
   void Reset(vtkMRMLNode* defaultNode) override;
 
   ///
-  ///
   void UpdateScene(vtkMRMLScene *scene) override;
 
-  ///
   /// Set Type to type, then build colors and set names
   virtual void SetType(int type);
-  ///
   /// Get for Type
   vtkGetMacro(Type,int);
 
@@ -108,14 +101,9 @@ public:
   bool GetColorDefined(int ind);
 
   /// Get name of a color from its index (index is 0-based)
-  /// Return NoNameX if color is undefined.
-  /// Return empty string if index is out of range.
+  /// Return empty string if undefined or if index is out of range.
   /// \sa GetColorIndexByName()
   const char* GetColorName(int ind);
-  /// Returns true if the color name is defined.
-  /// Currently the name is considered to be defined if it is not empty and differs from NoName.
-  /// In the future, NoName will be deprecated and the name will be considered defined if it is not empty.
-  bool GetColorNameDefined(int ind);
 
   /// Return the index associated with this color name, which can then be used
   /// to get the color. Returns -1 on failure.
@@ -144,7 +132,6 @@ public:
   /// \return 1 on success, 0 on failure.
   int SetColorName(int ind, const char *name);
 
-  ///
   /// \deprecated SetColorNameWithSpaces
   /// The method is no longer needed and will be removed in the future.
   /// Set the name of the n-th entry, replacing the subst character by space.
@@ -183,11 +170,6 @@ public:
   /// Returns vtkMRMLColorNode::GetLookupTable() by default. You should
   /// the method if you want it to return something else in subclasses
   virtual vtkScalarsToColors* GetScalarsToColors();
-
-  /// Get/set the string used for an unnamed color "(none)" by default.
-  /// \sa SetColorName
-  vtkGetStringMacro(NoName);
-  vtkSetStringMacro(NoName);
 
   /// Set values in the names vector from the colors in the node
   /// It is not recommended to use this method, because it makes the name and color columns of the table
@@ -274,7 +256,6 @@ protected:
 
   bool GetProperty(int ind, PropertyType& prop);
 
-  ///
   /// Set values in the names vector from the colors in the node.
   virtual bool SetNameFromColor(int index);
 
@@ -282,13 +263,8 @@ protected:
   /// Valid values are in the enumerated list
   int Type;
 
-  ///
-  /// A vector of names for the color table elements
+  /// Vector of names and other properties for the color table elements
   std::vector<PropertyType> Properties;
-
-  ///
-  /// the string used for an unnamed color
-  char* NoName;
 };
 
 #endif
