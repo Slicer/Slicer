@@ -37,6 +37,7 @@
 #include "qMRMLThreeDWidget.h"
 #include "qMRMLSliceView.h"
 #include "qMRMLSliceWidget.h"
+#include "qMRMLSortFilterColorProxyModel.h"
 
 // qMRMLWidget Colors includes
 #include "qMRMLColorLegendDisplayNodeWidget.h"
@@ -418,8 +419,8 @@ void qSlicerColorsModuleWidget::removeCurrentColorEntry()
   int colorIndex = -1;
   if (d->ColorTableFrame->isVisible())
   {
-    // TODO: this does not provide correct index when "Hide empty colors" is enabled
-    colorIndex = d->ColorView->currentIndex().row();
+    QModelIndex colorModelIndex = d->ColorView->sortFilterProxyModel()->mapToSource(d->ColorView->currentIndex());
+    colorIndex = d->ColorView->colorModel()->colorFromIndex(colorModelIndex);
   }
   if (colorIndex >= 0)
   {
