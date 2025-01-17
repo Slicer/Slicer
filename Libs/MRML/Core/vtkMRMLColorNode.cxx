@@ -34,19 +34,11 @@ vtkMRMLColorNode::vtkMRMLColorNode()
 {
   this->Type = -1;
   this->HideFromEditors = 1;
-
-  this->NoName = nullptr;
-  this->SetNoName("(none)");
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLColorNode::~vtkMRMLColorNode()
 {
-  if (this->NoName)
-  {
-    delete [] this->NoName;
-    this->NoName = nullptr;
-  }
 }
 
 //----------------------------------------------------------------------------
@@ -126,7 +118,6 @@ void vtkMRMLColorNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
     // not using SetType, as that will basically recreate a new color node, very slow
     this->Type = node->Type;
   }
-  this->SetNoName(node->NoName);
 
   if (deepCopy)
   {
@@ -152,7 +143,6 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Name: " << (this->Name ? this->Name : "(none)") << "\n";
   os << indent << "Type: (" << this->GetTypeAsString() << ")\n";
-  os << indent << "NoName = " << (this->NoName ? this->NoName : "(not set)") <<  "\n";
 
   if (this->Properties.size() > 0)
   {
@@ -321,32 +311,9 @@ const char *vtkMRMLColorNode::GetColorName(int index)
   }
   if (!this->Properties[index].Defined)
   {
-    return this->NoName;
+    return "";
   }
   return this->Properties[index].Name.c_str();
-}
-
-//---------------------------------------------------------------------------
-bool vtkMRMLColorNode::GetColorNameDefined(int index)
-{
-  if (index < 0 || index >= (int)this->Properties.size())
-  {
-    vtkWarningMacro("GetColorNameDefined failed: index " << index << " out of range (0-" << (this->Properties.size() - 1));
-    return false;
-  }
-  const char* name = this->GetColorName(index);
-  if (name == nullptr)
-  {
-    return false;
-  }
-  // Return false if name equals NoName
-  // for improved backward compatibility with older extensions.
-  if (this->GetNoName() && strcmp(this->GetNoName(), name) == 0)
-  {
-    return false;
-  }
-  // return true if name is not empty
-  return strlen(name) > 0;
 }
 
 //---------------------------------------------------------------------------
@@ -659,9 +626,9 @@ int vtkMRMLColorNode::SetColorName(int ind, const char *name)
   bool colorDefined = true;
   if (name)
   {
-    // For improved backward compatibility with older extensions,
-    // if the color name is NoName name then the we consider the color undefined.
-    if (this->GetNoName() && strcmp(this->GetNoName(), name) == 0)
+    // For improved backward compatibility with older extensions, if the color name is
+    // "(none)" (default NoName previously) name then the we consider the color undefined.
+    if (strcmp("(none)", name) == 0 || strlen(name) == 0)
     {
       colorDefined = false;
     }

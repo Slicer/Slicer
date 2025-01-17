@@ -141,7 +141,6 @@ void qSlicerColorsModuleWidget::setup()
   d->AddColorTableNodeButton->setIcon(QIcon(":Icons/SlicerNewColor.png"));
   d->AddNewColorButton->setIcon(QIcon(":Icons/Add.png"));
   d->RemoveCurrentColorButton->setIcon(QIcon(":Icons/Remove.png"));
-  d->RemoveCurrentColorButton->setVisible(false); //TODO: Deleting single color table node entry not implemented yet
 
   connect(d->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onMRMLColorNodeChanged(vtkMRMLNode*)));

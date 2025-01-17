@@ -393,8 +393,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
       // the currently selected item doesn't get a decoration.
       // TODO: Cache the pixmap as it is expensive to compute and it is done
       // for ALL the colors of the node anytime a color is changed.
-      pixmap = qMRMLUtils::createColorPixmap(
-        qApp->style(), QColor::fromRgbF(rgba[0], rgba[1], rgba[2]));
+      pixmap = qMRMLUtils::createColorPixmap(qApp->style(), QColor::fromRgbF(rgba[0], rgba[1], rgba[2]));
       item->setData(pixmap, Qt::DecorationRole);
       item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), qMRMLItemDelegate::ColorRole);
     }
