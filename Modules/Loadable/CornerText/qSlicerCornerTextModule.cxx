@@ -17,6 +17,7 @@
 
 // Slicer includes
 #include "qSlicerApplication.h"
+#include "qSlicerCornerTextDICOMAnnotationPropertyValueProvider.h"
 #include "qSlicerLayoutManager.h"
 #include <vtkSlicerApplicationLogic.h>
 
@@ -207,6 +208,12 @@ void qSlicerCornerTextModule::setup()
   {
     QObject::connect(qSlicerApplication::application()->layoutManager(), SIGNAL(layoutChanged(int)), this, SLOT(onLayoutChanged(int)));
   }
+
+  // Register the DICOM property value provider
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+  vtkNew<qSlicerCornerTextDICOMAnnotationPropertyValueProvider> DICOMProvider;
+  this->appLogic()->GetCornerTextLogic()->RegisterPropertyValueProvider("DICOM", DICOMProvider);
+#endif
 }
 
 //-----------------------------------------------------------------------------

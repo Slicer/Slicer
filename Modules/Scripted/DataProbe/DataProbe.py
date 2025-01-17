@@ -401,8 +401,6 @@ class DataProbeInfoWidget:
         Data Probe frame (lower left of slicer main window by default)
         """
 
-        # this method makes SliceView Annotation
-
         # goto module button
         self.goToModule = qt.QPushButton("->", self.frame)
         self.goToModule.setToolTip(_("Go to the DataProbe module for more information and options"))
