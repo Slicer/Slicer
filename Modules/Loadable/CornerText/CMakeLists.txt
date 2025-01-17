@@ -24,6 +24,8 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.cxx
   qSlicer${MODULE_NAME}ModuleWidget.h
+  qSlicer${MODULE_NAME}DICOMAnnotationPropertyValueProvider.cxx
+  qSlicer${MODULE_NAME}DICOMAnnotationPropertyValueProvider.h
   )
 
 set(MODULE_MOC_SRCS
