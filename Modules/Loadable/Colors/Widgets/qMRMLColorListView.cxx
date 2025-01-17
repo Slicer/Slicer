@@ -53,7 +53,7 @@ void qMRMLColorListViewPrivate::init()
 
   qMRMLColorModel* colorModel = new qMRMLColorModel(q);
   colorModel->setLabelColumn(0);
-  QSortFilterProxyModel* sortFilterModel = new QSortFilterProxyModel(q);
+  qMRMLSortFilterColorProxyModel* sortFilterModel = new qMRMLSortFilterColorProxyModel(q);
   sortFilterModel->setSourceModel(colorModel);
   q->setModel(sortFilterModel);
 
