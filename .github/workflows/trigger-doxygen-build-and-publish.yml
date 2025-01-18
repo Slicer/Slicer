@@ -1,0 +1,88 @@
+name: Trigger Doxygen Build and Publish
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+
+  # Allows running this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      slicer_repository:
+        description: "Slicer Repository for which to build and publish the documentation"
+        default: Slicer/Slicer
+      slicer_ref:
+        description: "Slicer Branch or tag for which to build and publish the documentation"
+        default: main
+      preview:
+        description: "Publish at https://preview.apidocs.slicer.org"
+        default: false
+        type: boolean
+
+permissions:
+  # Needed to trigger workflow run
+  actions: write
+
+jobs:
+  doxygen-build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Collect Inputs
+        id: collect_inputs
+        run: |
+          echo "EVENT_NAME [$EVENT_NAME]"
+          if [[ "$EVENT_NAME" == "push" ]]; then
+            slicer_repository=${{ github.repository }}
+
+            github_ref=${{ github.ref }}
+            echo "github_ref [$github_ref]"
+            # Strip 'refs/heads/' or 'refs/tags/' from the start of the string
+            slicer_ref="${github_ref#refs/heads/}"
+            slicer_ref="${slicer_ref#refs/tags/}"
+
+            preview="false"
+
+          elif [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            slicer_repository=${{ github.event.inputs.slicer_repository }}
+            slicer_ref=${{ github.event.inputs.ref }}
+            preview=${{ github.event.inputs.preview }}
+
+          else
+            echo "::error ::Unsupported EVENT_NAME [$EVENT_NAME]"
+            exit 1
+          fi
+
+          echo "slicer_repository [$slicer_repository]"
+          echo "slicer_repository=$slicer_repository" >> $GITHUB_OUTPUT
+
+          echo "slicer_ref [$slicer_ref]"
+          echo "slicer_ref=$slicer_ref" >> $GITHUB_OUTPUT
+
+          echo "preview [$preview]"
+          echo "preview=$preview" >> $GITHUB_OUTPUT
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+
+      - uses: actions/create-github-app-token@c1a285145b9d317df6ced56c09f525b5c2b6f755 # v1.11.1
+        id: app-token
+        with:
+          app-id: ${{ vars.SLICER_APP_ID }}
+          private-key: ${{ secrets.SLICER_APP_PRIVATE_KEY }}
+          owner: Slicer
+          repositories: |
+            apidocs.slicer.org
+
+      - name: Trigger Workflow
+        run: |
+          gh workflow run doxygen-build-and-publish.yml \
+                      -f slicer_repository=$SLICER_REPOSITORY \
+                      -f slicer_ref=$SLICER_REF \
+                      -f preview=$PREVIEW \
+                      --repo "Slicer/apidocs.slicer.org"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          SLICER_REPOSITORY: ${{ steps.collect_inputs.outputs.slicer_repository }}
+          SLICER_REF: ${{ steps.collect_inputs.outputs.slicer_ref }}
+          PREVIEW: ${{ steps.collect_inputs.outputs.preview }}
