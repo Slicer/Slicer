@@ -40,6 +40,7 @@ vtkSlicerDICOMLoadable::vtkSlicerDICOMLoadable()
   this->Warning = nullptr;
   this->Selected = false;
   this->Confidence = 0.5;
+  this->LoadSuccess = false;
 
   this->Files = nullptr;
   vtkSmartPointer<vtkStringArray> files = vtkSmartPointer<vtkStringArray>::New();
@@ -76,6 +77,7 @@ void vtkSlicerDICOMLoadable::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Selected:   " << (this->Selected?"true":"false") << "\n";
   os << indent << "Confidence:   " << this->Confidence << "\n";
   os << indent << "ReferencedInstanceUIDs:   " << (this->ReferencedInstanceUIDs?"":"NULL") << "\n";
+  os << indent << "LoadSuccess:   " << (this->LoadSuccess?"true":"false") << "\n";
   if (this->ReferencedInstanceUIDs)
   {
     for (int fileIndex=0; fileIndex<this->ReferencedInstanceUIDs->GetNumberOfValues(); ++fileIndex)

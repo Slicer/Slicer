@@ -53,6 +53,10 @@ public:
   vtkSetMacro(Selected, bool);
   vtkBooleanMacro(Selected, bool);
 
+  vtkGetMacro(LoadSuccess, bool);
+  vtkSetMacro(LoadSuccess, bool);
+  vtkBooleanMacro(LoadSuccess, bool);
+
   vtkGetMacro(Confidence, double);
   vtkSetMacro(Confidence, double);
 
@@ -102,6 +106,9 @@ protected:
 
   /// List of UIDs for the DICOM instances that are referenced by this loadable
   vtkStringArray* ReferencedInstanceUIDs;
+
+  /// Flag shows that load was successful
+  bool LoadSuccess;
 };
 
 #endif
