@@ -559,8 +559,8 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
   QObject::connect(moduleAction, SIGNAL(triggered(bool)),
                    this, SLOT(onActionTriggered()));
 
-  QStringList invisibleModules = QStringList() << "qSlicerTransformsModule" << "qSlicerSceneViewsModule" << "qSlicerModelsModule";
-  QStringList visibleModuleNames = QStringList() << "EvoSeg";
+  QStringList invisibleModules = QStringList() << "qSlicerSceneViewsModule";
+  QStringList visibleModuleNames = QStringList() << "EvoSeg" << "SegmentStatistics";
   const QString& moduleTypeName = module->metaObject()->className();
   if (!invisibleModules.contains(moduleTypeName))
   {
