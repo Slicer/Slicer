@@ -74,7 +74,7 @@ public:
   /// \param filename Path and name of file containing segmentation (nrrd, vtm, etc.)
   /// \param autoOpacities Optional flag determining whether segment opacities are calculated automatically based on containment. True by default.
   /// \param nodeName Optional string to use for the segmentation node name.
-  /// \param colorTableNode Optional color node used to name the segments and set segment color.
+  /// \param colorTableNode Optional color node to set name, color, and terminology for segments.
   /// \return Loaded segmentation node
   vtkMRMLSegmentationNode* LoadSegmentationFromFile(const char* filename, bool autoOpacities = true, const char* nodeName=nullptr,
     vtkMRMLColorTableNode* colorTableNode=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
@@ -168,17 +168,18 @@ public:
   /// \param folderItemId Subject hierarchy folder item ID to export the segments to
   static bool ExportAllSegmentsToModels(vtkMRMLSegmentationNode* segmentationNode, vtkIdType folderItemId);
 
-  /// Create new color table node for segmentation node
+  /// Create new color table node for segmentation node.
+  /// Only in C++: The caller must take ownership of the returned object.
   /// \param segmentationNode Segmentation node from which the the color table node is created.
   /// \return Newly created color table node (that will contain the segment color and terminology information in each color entry).
-  static vtkMRMLColorTableNode* CreateColorTableNodeForSegmentation(vtkMRMLSegmentationNode* segmentationNode);
+  static VTK_NEWINSTANCE vtkMRMLColorTableNode* CreateColorTableNodeForSegmentation(vtkMRMLSegmentationNode* segmentationNode);
 
   /// Export multiple segments into an existing color table node.
-  /// \param segmentationNode Segmentation node from which the the segments are exported
-  /// \param segmentIds List of segment IDs to export
-  /// \param colorTableNode Color table node to export the segment color and terminology information to
+  /// \param segmentationNode Segmentation node from which the the segments are exported.
+  /// \param segmentIds List of segment IDs to export.
+  /// \param colorTableNode Output color table node that will store segment name, color, and terminology information.
   /// \param labelValues Mapping of segments to label values. Length must match the number of segments.
-  /// \return Newly created color table node containing the segment color and terminology information in each color entry.
+  /// \return True on success.
   static bool ExportSegmentsToColorTableNode(
     vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentID, vtkMRMLColorTableNode* colorTableNode,
     vtkIntArray* labelValues=nullptr);
@@ -190,11 +191,10 @@ public:
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
   /// \param extentComputationMode If referenceVolumeNode is not specified then labelmap extents will be determined based on this value.
   ///   By default, the minimum necessary size is used. Set value to vtkSegmentation::EXTENT_REFERENCE_GEOMETRY to use reference geometry extent.
-  /// \param colorTableNode If specified then it is used for setting label values in the output labelmapNode
-  ///   (by matching terminology or name of segment to color).
-  ///
-  ///   RGB values in the colorTableNode are updated with corresponding segment colors.
-  ///   New color table entries are added for each segment that had no corresponding entry in the table already.
+  /// \param colorTableNode Optional color table node used to set the exported label values for the segments.
+  ///   Segment names are matched based on terminology and if there is no match based on terminology then based on segment name.
+  ///   If a segment name is not found in the color node, then the first label value outside of the input color table range will be used.
+  ///   Segment color, name, and terminology stored in the color table of the exported labelmap are set from the segmentation.
   static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, const std::vector<std::string>& segmentIDs,
     vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr,
     int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, vtkMRMLColorTableNode* colorTableNode = nullptr);
@@ -206,6 +206,10 @@ public:
   /// \param referenceVolumeNode If specified, then the merged labelmap node will match the geometry of referenceVolumeNode
   /// \param extentComputationMode If referenceVolumeNode is not specified then labelmap extents will be determined based on this value.
   ///   By default, the minimum necessary size is used. Set value to vtkSegmentation::EXTENT_REFERENCE_GEOMETRY to use reference geometry extent.
+  /// \param colorTableNode Optional color table node used to set the exported label values for the segments.
+  ///   Segment names are matched based on terminology and if there is no match based on terminology then based on segment name.
+  ///   If a segment name is not found in the color node, then the first label value outside of the input color table range will be used.
+  ///   Segment color, name, and terminology stored in the color table of the exported labelmap are set from the segmentation.
   static bool ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIDs,
     vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode = nullptr,
     int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, vtkMRMLColorTableNode* colorTableNode = nullptr);
@@ -282,10 +286,12 @@ public:
     std::string fileFormat = "STL", bool lps = true, double sizeScale = 1.0, bool merge = false);
 
   /// Gets the label values for the current segment from the color node reference.
-  /// Label values found by matching color + segment name. If a segment name is not found in the table, then the label value returned for the segment
-  /// is the first label value outside the table range.
+  /// Label values found by matching terminology code.
+  /// If there is no match based on terminology then matching of the segment name to a color name will be attempted.
+  /// If there is still no match then a new label value generated for the segment. The label values are all outside of the range of the input color table
+  /// to avoid any ambiguities.
   /// \param segmentationNode Segmentation node that has the export color node reference.
-  /// \param colorTableNode Color table used to get the label values for the segments.
+  /// \param colorTableNode Input color table used to get the label values for the segments.
   /// \param segmentIds List of segment ids to get values for. The order of segmentIds dictates the order of the returned label values.
   /// \param labelValues Output label values from the color node. Length of the array will be the same as the number of segmentIds.
   static void GetLabelValuesFromColorNode(vtkMRMLSegmentationNode* segmentationNode, vtkMRMLColorTableNode* colorTableNode,
@@ -299,9 +305,9 @@ public:
   /// \param useCompression If compression should be applied to the output file.
   /// \param referenceVolumeNode If specified, then the saved segmentation will match the geometry of referenceVolumeNode
   /// \param extentComputationMode If referenceVolumeNode is not specified then the saved segmentation extents will be determined based on this value.
-  /// \param colorTableNode Optional color table node used to set the exported labelmap values for the segments.
-  ///   Segment names are matched to color names to determine the label values.
-  ///   If a segment name is not found in the color node, then the first unused value outside of the color table range will be used.
+  /// \param colorTableNode Optional color table node used to set the exported label values for the segments.
+  ///   Segment names are matched based on terminology and if there is no match based on terminology then based on segment name.
+  ///   If a segment name is not found in the color node, then the first label value outside of the input color table range will be used.
   static bool ExportSegmentsBinaryLabelmapRepresentationToFiles(std::string destinationFolder,
     vtkMRMLSegmentationNode* segmentationNode, vtkStringArray* segmentIds = nullptr, std::string extension = "nrrd", bool useCompression = false,
     vtkMRMLVolumeNode* referenceVolumeNode = nullptr, int extentComputationMode = vtkSegmentation::EXTENT_REFERENCE_GEOMETRY,

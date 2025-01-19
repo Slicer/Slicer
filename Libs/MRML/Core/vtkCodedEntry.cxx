@@ -223,3 +223,21 @@ bool vtkCodedEntry::AreEqual(vtkCodedEntry* entry1, vtkCodedEntry* entry2)
   }
   return true;
 }
+
+//----------------------------------------------------------------------------
+bool vtkCodedEntry::IsEmpty()
+{
+  if (this->CodeValue && strlen(this->CodeValue) > 0)
+  {
+    return false;
+  }
+  if (this->CodingSchemeDesignator && strlen(this->CodingSchemeDesignator) > 0)
+  {
+    return false;
+  }
+  if (this->CodeMeaning && strlen(this->CodeMeaning) > 0)
+  {
+    return false;
+  }
+  return true;
+}

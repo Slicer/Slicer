@@ -37,6 +37,9 @@ public:
   /// Reset state of object
   virtual void Initialize();
 
+  /// All fields are empty
+  virtual bool IsEmpty();
+
   /// Copy one type into another
   virtual void Copy(vtkCodedEntry* aEntry);
 

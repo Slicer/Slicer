@@ -2954,3 +2954,152 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
   }
   return foundColorNodeIDs;
 }
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::GetTerminologyEntry(vtkMRMLNode* node, vtkSlicerTerminologyEntry* entry)
+{
+  if (!node)
+  {
+    vtkGenericWarningMacro("GetTerminologyEntry: Invalid node");
+    return false;
+  }
+  if (!entry)
+  {
+    vtkGenericWarningMacro("GetTerminologyEntry: Invalid output entry");
+    return false;
+  }
+  const char* terminology = node->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAttributeName());
+  if (!terminology)
+  {
+    return false;
+  }
+  return vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(terminology, entry);
+}
+
+//---------------------------------------------------------------------------
+std::string vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAsString(vtkMRMLNode* node)
+{
+  if (!node)
+  {
+    vtkGenericWarningMacro("GetTerminologyEntryAsString: Invalid node");
+    return std::string();
+  }
+  const char* terminology = node->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAttributeName());
+  return terminology ? terminology : "";
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerTerminologiesModuleLogic::SetTerminologyEntryAsString(vtkMRMLNode* node, std::string entryStr)
+{
+  if (!node)
+  {
+    vtkGenericWarningMacro("SetTerminologyEntryAsString: Invalid node");
+    return;
+  }
+  if (entryStr.empty())
+  {
+    node->RemoveAttribute(vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAttributeName());
+  }
+  else
+  {
+    node->SetAttribute(vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAttributeName(), entryStr.c_str());
+  }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerTerminologiesModuleLogic::SetTerminologyEntry(vtkMRMLNode* node, vtkSlicerTerminologyEntry* entry)
+{
+  if (!node)
+  {
+    vtkGenericWarningMacro("SetTerminologyEntry: Invalid node");
+    return;
+  }
+  std::string terminologyStr;
+  if (entry)
+  {
+    terminologyStr = vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(entry);
+  }
+  if (terminologyStr.empty())
+  {
+    node->RemoveAttribute(vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAttributeName());
+  }
+  else
+  {
+    node->SetAttribute(vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAttributeName(), terminologyStr.c_str());
+  }
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntry(vtkMRMLNode* node, vtkSlicerTerminologyEntry* entry)
+{
+  if (!node)
+  {
+    vtkGenericWarningMacro("GetDefaultTerminologyEntry: Invalid node");
+    return false;
+  }
+  if (!entry)
+  {
+    vtkGenericWarningMacro("GetDefaultTerminologyEntry: Invalid output entry");
+    return false;
+  }
+  const char* terminology = node->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAttributeName());
+  if (!terminology)
+  {
+    return false;
+  }
+  return vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(terminology, entry);
+}
+
+//---------------------------------------------------------------------------
+std::string vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAsString(vtkMRMLNode* node)
+{
+  if (!node)
+  {
+    vtkGenericWarningMacro("GetDefaultTerminologyEntryAsString: Invalid node");
+    return std::string();
+  }
+  const char* terminology = node->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAttributeName());
+  return terminology ? terminology : "";
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntryAsString(vtkMRMLNode* node, std::string entryStr)
+{
+  if (!node)
+  {
+    vtkGenericWarningMacro("SetDefaultTerminologyEntryAsString: Invalid node");
+    return;
+  }
+  if (entryStr.empty())
+  {
+    node->RemoveAttribute(vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAttributeName());
+  }
+  else
+  {
+    node->SetAttribute(vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAttributeName(), entryStr.c_str());
+  }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntry(vtkMRMLNode* node, vtkSlicerTerminologyEntry* entry)
+{
+  if (!node)
+  {
+    vtkGenericWarningMacro("SetDefaultTerminologyEntry: Invalid node");
+    return;
+  }
+  std::string terminologyStr;
+  if (entry)
+  {
+    terminologyStr = vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(entry);
+  }
+  if (terminologyStr.empty())
+  {
+    node->RemoveAttribute(vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAttributeName());
+  }
+  else
+  {
+    node->SetAttribute(vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAttributeName(), terminologyStr.c_str());
+  }
+}

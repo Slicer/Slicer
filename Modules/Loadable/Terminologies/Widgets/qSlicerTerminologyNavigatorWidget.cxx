@@ -89,7 +89,7 @@ qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle::~TerminologyInfoBundle
     this->TerminologyEntry->Delete();
     this->TerminologyEntry = nullptr;
   }
-}
+  }
 
 //-----------------------------------------------------------------------------
 const qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle&
@@ -128,17 +128,6 @@ public:
 
   /// Get terminology module logic
   static vtkSlicerTerminologiesModuleLogic* terminologyLogic();
-
-  /// Reset current category name and container object
-  void resetCurrentCategory();
-  /// Reset current type name and container object
-  void resetCurrentType();
-  /// Reset current type modifier name and container object
-  void resetCurrentTypeModifier();
-  /// Reset current region name and container object
-  void resetCurrentRegion();
-  /// Reset current region modifier name and container object
-  void resetCurrentRegionModifier();
 
   /// Set name from current selection and set it to name text box
   void setNameFromCurrentTerminology();
@@ -390,36 +379,6 @@ vtkSlicerTerminologiesModuleLogic* qSlicerTerminologyNavigatorWidgetPrivate::ter
     qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";
   }
   return terminologiesLogic;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentCategory()
-{
-  this->CurrentCategoryObject = vtkSmartPointer<vtkSlicerTerminologyCategory>::New();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentType()
-{
-  this->CurrentTypeObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentTypeModifier()
-{
-  this->CurrentTypeModifierObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentRegion()
-{
-  this->CurrentRegionObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTerminologyNavigatorWidgetPrivate::resetCurrentRegionModifier()
-{
-  this->CurrentRegionModifierObject = vtkSmartPointer<vtkSlicerTerminologyType>::New();
 }
 
 //-----------------------------------------------------------------------------
@@ -1013,9 +972,9 @@ void qSlicerTerminologyNavigatorWidgetPrivate::setCurrentTerminology(QString ter
   }
 
   // Reset current category, type, and type modifier
-  this->resetCurrentCategory();
-  this->resetCurrentType();
-  this->resetCurrentTypeModifier();
+  this->CurrentCategoryObject->Initialize();
+  this->CurrentTypeObject->Initialize();
+  this->CurrentTypeModifierObject->Initialize();
 
   // Set current terminology
   this->CurrentTerminologyName = terminologyName;
@@ -1071,15 +1030,15 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::setCurrentCategory(vtkSlicerTermi
   Q_Q(qSlicerTerminologyNavigatorWidget);
 
   // Reset current type and type modifier
-  this->resetCurrentType();
-  this->resetCurrentTypeModifier();
+  this->CurrentTypeObject->Initialize();
+  this->CurrentTypeModifierObject->Initialize();
   // Reset region information as well
-  this->resetCurrentRegion();
-  this->resetCurrentRegionModifier();
+  this->CurrentRegionObject->Initialize();
+  this->CurrentRegionModifierObject->Initialize();
 
   if (!category)
   {
-    this->resetCurrentCategory();
+    this->CurrentCategoryObject->Initialize();
     qCritical() << Q_FUNC_INFO << ": Invalid category object set";
     return false;
   }
@@ -1153,12 +1112,12 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::setCurrentType(vtkSlicerTerminolo
   Q_Q(qSlicerTerminologyNavigatorWidget);
 
   // Reset current type modifier
-  this->resetCurrentTypeModifier();
+  this->CurrentTypeModifierObject->Initialize();
 
   // Null type means None selection
   if (!type)
   {
-    this->resetCurrentType();
+    this->CurrentTypeObject->Initialize();
     this->tableWidget_Type->blockSignals(true);
     this->tableWidget_Type->setCurrentCell(0, 0);
     this->tableWidget_Type->blockSignals(false);
@@ -1196,7 +1155,7 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::setCurrentTypeModifier(vtkSlicerT
 
   if (!modifier)
   {
-    this->resetCurrentTypeModifier();
+    this->CurrentTypeObject->Initialize();
     qCritical() << Q_FUNC_INFO << ": Invalid type modifier object set";
     return false;
   }
@@ -1416,8 +1375,8 @@ void qSlicerTerminologyNavigatorWidgetPrivate::setCurrentRegionContext(QString c
   Q_Q(qSlicerTerminologyNavigatorWidget);
 
   // Reset current region and region modifier
-  this->resetCurrentRegion();
-  this->resetCurrentRegionModifier();
+  this->CurrentRegionObject->Initialize();
+  this->CurrentRegionModifierObject->Initialize();
 
   // Set current region context
   this->CurrentRegionContextName = contextName;
@@ -1454,11 +1413,12 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::setCurrentRegion(vtkSlicerTermino
   Q_Q(qSlicerTerminologyNavigatorWidget);
 
   // Reset current region modifier
-  this->resetCurrentRegionModifier();
+  this->CurrentRegionModifierObject->Initialize();
 
   if (!region)
   {
-    this->resetCurrentRegion();
+    // Reset current type and type modifier
+    this->CurrentRegionObject->Initialize();
     qCritical() << Q_FUNC_INFO << ": Invalid region object set";
     return false;
   }
@@ -1466,7 +1426,8 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::setCurrentRegion(vtkSlicerTermino
   // Ignore selection if current category does not support anatomy (possible due to multi-selection)
   if (!this->CurrentCategoryObject)
   {
-    this->resetCurrentRegion();
+    // Reset current type and type modifier
+    this->CurrentRegionObject->Initialize();
     qCritical() << Q_FUNC_INFO << ": Missing current category";
     return false;
   }
@@ -1481,7 +1442,7 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::setCurrentRegion(vtkSlicerTermino
   // Reject region selection if current type's category does not support anatomy
   if (!this->CurrentCategoryObject->GetShowAnatomy())
   {
-    this->resetCurrentRegion();
+    this->CurrentRegionObject->Initialize();
     return false;
   }
 
@@ -1497,7 +1458,7 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::setCurrentRegion(vtkSlicerTermino
   // "None" is selected
   if (!region->GetCodeValue())
   {
-    this->resetCurrentRegion();
+    this->CurrentRegionObject->Initialize();
     this->tableWidget_Region->blockSignals(true);
     this->tableWidget_Region->setCurrentCell(0, 0);
     this->tableWidget_Region->blockSignals(false);
@@ -1522,7 +1483,7 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::setCurrentRegionModifier(vtkSlice
 
   if (!modifier)
   {
-    this->resetCurrentRegionModifier();
+    this->CurrentRegionModifierObject->Initialize();
     qCritical() << Q_FUNC_INFO << ": Invalid region modifier object set";
     return false;
   }
@@ -1750,15 +1711,15 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::findTerminology(
 
   // Get list of last terminology contexts selected by the user from application settings
   std::vector<std::string> preferredTerminologyNames;
-  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
-  if (settings->contains("Terminology/LastTerminologyContexts"))
-  {
-    QStringList lastTerminologyContextNames = settings->value("Terminology/LastTerminologyContexts").toStringList();
-    for (auto& name : lastTerminologyContextNames)
+    QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+    if (settings->contains("Terminology/LastTerminologyContexts"))
     {
-      preferredTerminologyNames.push_back(name.toUtf8().constData());
+      QStringList lastTerminologyContextNames = settings->value("Terminology/LastTerminologyContexts").toStringList();
+      for (auto& name : lastTerminologyContextNames)
+      {
+        preferredTerminologyNames.push_back(name.toUtf8().constData());
+      }
     }
-  }
   std::string categoryScheme;
   std::string categoryValue;
   vtkSlicerTerminologyCategory* categoryObject = entry->GetCategoryObject();
@@ -2182,13 +2143,13 @@ void qSlicerTerminologyNavigatorWidget::onCategorySelectionChanged()
   }
 
   // Reset current category because it will be set when the type is selected
-  d->resetCurrentCategory();
+  d->CurrentCategoryObject->Initialize();
   // Reset current type and type modifier
-  d->resetCurrentType();
-  d->resetCurrentTypeModifier();
+  d->CurrentTypeObject->Initialize();
+  d->CurrentTypeModifierObject->Initialize();
   // Reset region information as well
-  d->resetCurrentRegion();
-  d->resetCurrentRegionModifier();
+  d->CurrentRegionObject->Initialize();
+  d->CurrentRegionModifierObject->Initialize();
 
   // Get current category object
   vtkSlicerTerminologiesModuleLogic* logic = d->terminologyLogic();
@@ -2267,8 +2228,8 @@ void qSlicerTerminologyNavigatorWidget::onTypeSelected(QTableWidgetItem* current
 
   if (!currentItem)
   {
-    d->resetCurrentType();
-    d->resetCurrentTypeModifier();
+    d->CurrentTypeObject->Initialize();
+    d->CurrentTypeModifierObject->Initialize();
     return;
   }
 
@@ -2277,10 +2238,10 @@ void qSlicerTerminologyNavigatorWidget::onTypeSelected(QTableWidgetItem* current
   {
     // Do not reset category because it invalidates entry when setting terminology
     // programmatically using setTerminologyEntry
-    d->resetCurrentType();
-    d->resetCurrentTypeModifier();
-    d->resetCurrentRegion();
-    d->resetCurrentRegionModifier();
+    d->CurrentTypeObject->Initialize();
+    d->CurrentTypeModifierObject->Initialize();
+    d->CurrentRegionObject->Initialize();
+    d->CurrentRegionModifierObject->Initialize();
     return;
   }
 
@@ -2382,11 +2343,11 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
   }
 
   // Reset current terminology information
-  d->resetCurrentCategory();
-  d->resetCurrentType();
-  d->resetCurrentTypeModifier();
-  d->resetCurrentRegion();
-  d->resetCurrentRegionModifier();
+  d->CurrentCategoryObject->Initialize();
+  d->CurrentTypeObject->Initialize();
+  d->CurrentTypeModifierObject->Initialize();
+  d->CurrentRegionObject->Initialize();
+  d->CurrentRegionModifierObject->Initialize();
 
   // Set category and type
   d->CurrentCategoryObject->vtkCodedEntry::Copy(colorNode->GetTerminologyCategory(colorIndex));
@@ -2405,7 +2366,7 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
   }
   else
   {
-    d->resetCurrentTypeModifier();
+    d->CurrentTypeModifierObject->Initialize();
   }
   if ( colorNode->GetTerminologyRegion(colorIndex) != nullptr
     && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr )
@@ -2414,7 +2375,7 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
   }
   else
   {
-    d->resetCurrentRegion();
+    d->CurrentRegionObject->Initialize();
   }
   if ( colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr
     && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr )
@@ -2423,7 +2384,7 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
   }
   else
   {
-    d->resetCurrentRegionModifier();
+    d->CurrentRegionModifierObject->Initialize();
   }
 
   // Set name and color
@@ -2450,7 +2411,7 @@ void qSlicerTerminologyNavigatorWidget::onTypeModifierSelectionChanged(int index
   // Invalidate type modifier if there are no modifiers for the current type
   if (d->ComboBox_TypeModifier->count() == 0)
   {
-    d->resetCurrentTypeModifier();
+    d->CurrentTypeModifierObject->Initialize();
     return;
   }
 
@@ -2650,8 +2611,8 @@ void qSlicerTerminologyNavigatorWidget::onRegionSelected(QTableWidgetItem* curre
 
   if (!currentItem)
   {
-    d->resetCurrentRegion();
-    d->resetCurrentRegionModifier();
+    d->CurrentRegionObject->Initialize();
+    d->CurrentRegionModifierObject->Initialize();
     return;
   }
 
@@ -2751,10 +2712,10 @@ void qSlicerTerminologyNavigatorWidget::onLogicModified()
   Q_D(qSlicerTerminologyNavigatorWidget);
 
   d->populateTerminologyComboBox();
-  d->resetCurrentCategory();
+  d->CurrentCategoryObject->Initialize();
 
   d->populateRegionContextComboBox();
-  d->resetCurrentRegion();
+  d->CurrentRegionObject->Initialize();
 }
 
 //-----------------------------------------------------------------------------

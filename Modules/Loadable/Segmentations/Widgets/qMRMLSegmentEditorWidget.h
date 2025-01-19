@@ -268,6 +268,8 @@ public:
   /// If settings key is changed then the current default terminology entry is not written
   /// into application settings (as it would overwrite its current value in the settings,
   /// which is usually not the expected behavior).
+  /// This default can be overridden by default terminology entry specified for the
+  /// segmentation node using vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntry()
   void setDefaultTerminologyEntrySettingsKey(const QString& terminologyEntrySettingsKey);
   /// Get settings key that stores defaultTerminologyEntry.
   /// \sa setDefaultTerminologyEntrySettingsKey

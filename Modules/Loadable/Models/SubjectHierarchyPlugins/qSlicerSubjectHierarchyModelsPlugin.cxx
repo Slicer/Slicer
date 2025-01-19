@@ -253,8 +253,13 @@ void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID, QCol
   // Set terminology metadata
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::TerminologyRole))
   {
-    modelNode->SetAttribute(vtkSegment::GetTerminologyEntryTagName(),
-      terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString().toUtf8().constData() );
+    vtkSlicerTerminologiesModuleLogic::SetTerminologyEntryAsString(modelNode,
+      terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString().toStdString());
+  }
+  if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::DefaultTerminologyRole))
+  {
+    vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntryAsString(modelNode,
+      terminologyMetaData[qSlicerTerminologyItemDelegate::DefaultTerminologyRole].toString().toStdString());
   }
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::NameRole))
   {
@@ -331,8 +336,10 @@ QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID, QM
 
   // Get terminology metadata
   terminologyMetaData.clear();
-  terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole] =
-    modelNode->GetAttribute(vtkSegment::GetTerminologyEntryTagName());
+  terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole] = QString::fromStdString(
+    vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAsString(modelNode));
+  terminologyMetaData[qSlicerTerminologyItemDelegate::DefaultTerminologyRole] = QString::fromStdString(
+    vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAsString(modelNode));
   terminologyMetaData[qSlicerTerminologyItemDelegate::NameRole] = modelNode->GetName();
   // If auto generated flags are not initialized, then set them to the default
   // (color: on, name: off - this way color will be set from the selector but name will not)

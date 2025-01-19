@@ -155,14 +155,26 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModel
     vtkSlicerTerminologiesModuleLogic* logic = terminologiesLogic();
     terminologyButton->setProperty("changeDataOnSet", false);
 
-    // Get string list value from model index
-    QString terminologyString = index.model()->data(index, TerminologyRole).toString();
-
     // Convert string list to VTK terminology entry. Do not check success, as an empty terminology is also a valid starting point
     vtkNew<vtkSlicerTerminologyEntry> terminologyEntry;
+
     if (logic)
     {
-      logic->DeserializeTerminologyEntry(terminologyString.toUtf8().constData(), terminologyEntry);
+      // Get string list value from model index
+      QString terminologyString = index.model()->data(index, TerminologyRole).toString();
+      if (!terminologyString.isEmpty())
+      {
+        logic->DeserializeTerminologyEntry(terminologyString.toUtf8().constData(), terminologyEntry);
+      }
+      // Use default terminology if current terminology is not defined
+      if (terminologyEntry->IsEmpty())
+      {
+        terminologyString = index.model()->data(index, DefaultTerminologyRole).toString();
+        if (!terminologyString.isEmpty())
+        {
+          logic->DeserializeTerminologyEntry(terminologyString.toUtf8().constData(), terminologyEntry);
+        }
+      }
       // Get default color and other metadata from loaded terminologies, but only for non-color nodes,
       // because terminologies in color nodes are fully defined in the table, so we do not no need to look up additional metadata.
       if (!logic->GetFirstCompatibleColorNodeByName(terminologyEntry->GetTerminologyContextName() ? terminologyEntry->GetTerminologyContextName() : ""))

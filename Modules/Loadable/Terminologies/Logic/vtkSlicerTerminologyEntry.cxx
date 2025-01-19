@@ -74,6 +74,55 @@ vtkSlicerTerminologyEntry::~vtkSlicerTerminologyEntry()
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerTerminologyEntry::Initialize()
+{
+  this->SetTerminologyContextName(nullptr);
+
+  this->CategoryObject->Initialize();
+  this->TypeObject->Initialize();
+  this->TypeModifierObject->Initialize();
+
+  this->SetRegionContextName(nullptr);
+
+  this->RegionObject->Initialize();
+  this->RegionModifierObject->Initialize();
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerTerminologyEntry::IsEmpty()
+{
+  if (this->TerminologyContextName && strlen(this->TerminologyContextName) > 0)
+  {
+    return false;
+  }
+  if (!this->CategoryObject->IsEmpty())
+  {
+    return false;
+  }
+  if (!this->TypeObject->IsEmpty())
+  {
+    return false;
+  }
+  if (!this->TypeModifierObject->IsEmpty())
+  {
+    return false;
+  }
+  if (this->RegionContextName && strlen(this->RegionContextName) > 0)
+  {
+    return false;
+  }
+  if (!this->RegionObject->IsEmpty())
+  {
+    return false;
+  }
+  if (!this->RegionModifierObject->IsEmpty())
+  {
+    return false;
+  }
+  return true;
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);

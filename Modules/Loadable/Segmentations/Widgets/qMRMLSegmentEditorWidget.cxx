@@ -93,6 +93,10 @@
 #include <qMRMLThreeDWidget.h>
 #include <qMRMLThreeDView.h>
 
+// Terminologies includes
+#include <vtkSlicerTerminologyEntry.h>
+#include <vtkSlicerTerminologiesModuleLogic.h>
+
 // Qt includes
 #include <QAbstractItemView>
 #include <QAction>
@@ -2156,7 +2160,18 @@ void qMRMLSegmentEditorWidget::onAddSegment()
   vtkSegment* addedSegment = segmentationNode->GetSegmentation()->GetSegment(addedSegmentID);
   if (addedSegment)
   {
-    QString defaultTerminologyEntryStr = this->defaultTerminologyEntry();
+    QString defaultTerminologyEntryStr;
+    // Default terminology in the segmentation node has the highest priority
+    vtkNew<vtkSlicerTerminologyEntry> entry;
+    if (vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntry(segmentationNode, entry) && !entry->IsEmpty())
+    {
+      defaultTerminologyEntryStr = QString::fromStdString(vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(entry));
+    }
+    if (defaultTerminologyEntryStr.isEmpty())
+    {
+      defaultTerminologyEntryStr = this->defaultTerminologyEntry();
+    }
+
     if (!defaultTerminologyEntryStr.isEmpty())
     {
       addedSegment->SetTag(vtkSegment::GetTerminologyEntryTagName(), defaultTerminologyEntryStr.toUtf8().constData());
