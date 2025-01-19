@@ -42,9 +42,9 @@
 #include "vtkSlicerTerminologyEntry.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 

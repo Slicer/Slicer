@@ -28,7 +28,6 @@
 
 // Terminology includes
 #include "vtkSlicerTerminologiesModuleLogicExport.h"
-
 #include "vtkSlicerTerminologyCategory.h"
 #include "vtkSlicerTerminologyType.h"
 
@@ -56,6 +55,12 @@ public:
 
   vtkGetObjectMacro(RegionObject, vtkSlicerTerminologyType);
   vtkGetObjectMacro(RegionModifierObject, vtkSlicerTerminologyType);
+
+  /// Reset to initial state, setting all fields to empty.
+  void Initialize();
+
+  /// Returns true if all fields are empty.
+  bool IsEmpty();
 
 protected:
   vtkSetObjectMacro(CategoryObject, vtkSlicerTerminologyCategory);

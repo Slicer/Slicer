@@ -43,6 +43,8 @@ public:
   {
     /// Serialized terminology entry
     TerminologyRole = Qt::UserRole + 9,
+    /// Serialized default terminology entry, which is used to initialize the terminology selector if the segment has no terminology yet
+    DefaultTerminologyRole,
     /// Name of the segment (either custom or auto-generated)
     NameRole,
     /// Flag indicating whether the selected name is auto-generated form terminology
