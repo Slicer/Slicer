@@ -46,7 +46,7 @@ jobs:
 
           elif [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
             slicer_repository=${{ github.event.inputs.slicer_repository }}
-            slicer_ref=${{ github.event.inputs.ref }}
+            slicer_ref=${{ github.event.inputs.slicer_ref }}
             preview=${{ github.event.inputs.preview }}
 
           else
