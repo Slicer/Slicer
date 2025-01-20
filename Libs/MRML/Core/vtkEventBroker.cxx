@@ -153,8 +153,6 @@ void vtkEventBroker::DetachObservations()
 vtkObservation *vtkEventBroker::AddObservation (
   vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify, float priority)
 {
-  std::vector<vtkObject *>::iterator siter;
-
   vtkObservation *observation = vtkObservation::New();
   observation->SetEventBroker( this );
   this->SubjectMap[subject].insert( observation );
