@@ -404,7 +404,8 @@ void qSlicerColorsModuleWidget::addNewColorInCurrentNode()
   // Add a color to the current (User type) color table, at the end
   int newNumber = currentNode->GetNumberOfColors() + 1;
   currentNode->SetNumberOfColors(newNumber);
-  currentNode->SetColor(newNumber - 1, "", 0.5, 0.5, 0.5, 1.0);
+  //: This is the default name for a new color in a color table
+  currentNode->SetColor(newNumber - 1, tr("Unnamed").toStdString().c_str(), 0.5, 0.5, 0.5, 1.0);
   // Update spinbox on GUI as well
   QSignalBlocker blocker(d->NumberOfColorsSpinBox);
   d->NumberOfColorsSpinBox->setValue(newNumber);
