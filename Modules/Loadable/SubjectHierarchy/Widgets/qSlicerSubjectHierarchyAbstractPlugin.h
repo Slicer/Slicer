@@ -264,6 +264,15 @@ public:
   ///   another action. Valid range is -49.0 to 49.0 (non-integer values are allowed).
   Q_INVOKABLE static void setActionPosition(QAction* action, int section, int weight = 0, double weightAdjustment = 0.0);
 
+  // @{
+  /// Helper functions for getting/setting color in displayable data node.
+  /// It is useful for implementing getDisplayColor and setDisplayColor methods.
+  Q_INVOKABLE void setColorAndTerminologyToDisplayableNode(vtkIdType itemID, QColor color,
+    QMap<int, QVariant> terminologyMetaData, bool useSelectedColor, bool disableScalarVisibility);
+  Q_INVOKABLE QColor colorAndTerminologyFromDisplayableNode(vtkIdType itemID,
+    QMap<int, QVariant>& terminologyMetaData, bool useSelectedColor)const;
+  // @}
+
 signals:
   /// Signal requesting expanding of the subject hierarchy tree item belonging to an item
   void requestExpandItem(vtkIdType itemID);
