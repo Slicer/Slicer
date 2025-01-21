@@ -20,7 +20,6 @@
 
 // Markups MRML includes
 #include <vtkMRMLMarkupsROIDisplayNode.h>
-#include <vtkMRMLMarkupsROIJsonStorageNode.h>
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLMeasurementVolume.h"
 
