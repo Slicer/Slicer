@@ -28,9 +28,8 @@
 
 #include "vtkSlicerTerminologiesModuleLogicExport.h"
 
-#include <vtkVector.h>
-
 class vtkCodedEntry;
+class vtkMRMLColorNode;
 class vtkSegment;
 class vtkStringArray;
 class vtkSlicerTerminologyEntry;
@@ -93,6 +92,11 @@ public:
   /// See also \sa LoadTerminologyFromSegmentDescriptorFile
   bool LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath);
 
+  /// Load all color tables containing terminology as terminology contexts (and anatomic context if any).
+  void LoadCompatibleColorTables();
+  /// Load given color node as terminology context (and anatomic context if any).
+  bool LoadColorTable(vtkMRMLColorNode* colorNode);
+
   /// Get context names of loaded terminologies
   void GetLoadedTerminologyNames(std::vector<std::string> &terminologyNames);
   /// Python accessor variant of \sa GetLoadedTerminologyNames
@@ -129,6 +133,12 @@ public:
     std::string anatomicRegionModifierCodingSchemeDesignator, std::string anatomicRegionModifierCodeValue,
     std::vector<std::string> preferredAnatomicContextNames,
     vtkCollection* foundEntries=nullptr);
+
+  /// Determine if terminology with a given name is loaded.
+  bool IsTerminologyContextLoaded(std::string terminologyName);
+  /// Determine if terminology is from a color table.
+  /// \return ID of the color table node if terminology comes from color table, else nullptr.
+  const char* IsTerminologyColorTable(std::string terminologyName);
 
   /// Get a category with given name from a terminology
   /// \param category Output argument containing the details of the found category if any (if return value is true)
@@ -253,6 +263,14 @@ public:
   static std::string SerializeTerminologyEntry(vtkSlicerTerminologyEntry* entry);
 
   /// Assemble terminology string from terminology codes
+  /// The serialized string will have the following format:
+  ///   "terminologyContextName~"
+  ///   "categorySchemeDesignator^categoryValue^categoryMeaning~"
+  ///   "typeSchemeDesignator^typeValue^typeMeaning~"
+  ///   "modifierSchemeDesignator^modifierValue^modifierMeaning~"
+  ///   "anatomicContextName~"
+  ///   "regionSchemeDesignator^regionValue^regionMeaning~"
+  ///   "regionModifierSchemeDesignator^regionModifierValue^regionModifierMeaning"
   /// Note: The order of the attributes are inconsistent with the codes used in this class for compatibility reasons
   ///       (to vtkMRMLColorLogic::AddTermToTerminology)
   static std::string SerializeTerminologyEntry(

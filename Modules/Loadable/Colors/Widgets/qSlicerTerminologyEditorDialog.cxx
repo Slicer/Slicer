@@ -2,8 +2,7 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
-  Queen's University, Kingston, ON, Canada. All Rights Reserved.
+  Copyright (c) Seattle Children’s Hospital d/b/a Seattle Children’s Research Institute.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -14,15 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Csaba Pinter, PerkLab, Queen's University
-  and was supported through the Applied Cancer Research Unit program of Cancer Care
-  Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
+  This file was originally developed by Csaba Pinter, EBATINCA, S.L.
+  and was funded by by Murat Maga (Seattle Children’s Research Institute).
 
 ==============================================================================*/
 
-// Terminologies includes
-#include "qSlicerTerminologySelectorDialog.h"
+// Colors includes
+#include "qSlicerTerminologyEditorDialog.h"
+#include "qSlicerTerminologyEditorWidget.h"
 
+// Terminologies includes
+#include "qSlicerTerminologyNavigatorWidget.h"
 #include "vtkSlicerTerminologyEntry.h"
 
 // Qt includes
@@ -33,19 +34,19 @@
 #include <QVBoxLayout>
 
 //-----------------------------------------------------------------------------
-class qSlicerTerminologySelectorDialogPrivate : public QDialog
+class qSlicerTerminologyEditorDialogPrivate : public QDialog
 {
-  Q_DECLARE_PUBLIC(qSlicerTerminologySelectorDialog);
+  Q_DECLARE_PUBLIC(qSlicerTerminologyEditorDialog);
 protected:
-  qSlicerTerminologySelectorDialog* const q_ptr;
+  qSlicerTerminologyEditorDialog* const q_ptr;
 public:
-  explicit qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object, QWidget* parent);
-  ~qSlicerTerminologySelectorDialogPrivate() override;
+  explicit qSlicerTerminologyEditorDialogPrivate(qSlicerTerminologyEditorDialog& object, QWidget* parent);
+  ~qSlicerTerminologyEditorDialogPrivate() override;
 public:
   void init();
 private:
-  qSlicerTerminologyNavigatorWidget* NavigatorWidget{nullptr};
-  QPushButton* SelectButton{nullptr};
+  qSlicerTerminologyEditorWidget* EditorWidget{nullptr};
+  QPushButton* SaveButton{nullptr};
   QPushButton* CancelButton{nullptr};
 
   /// Terminology and other metadata (name, color, auto-generated flags) into which the selection is set
@@ -53,38 +54,39 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialogPrivate::qSlicerTerminologySelectorDialogPrivate(qSlicerTerminologySelectorDialog& object, QWidget* parent)
+qSlicerTerminologyEditorDialogPrivate::qSlicerTerminologyEditorDialogPrivate(qSlicerTerminologyEditorDialog& object, QWidget* parent)
   : QDialog(parent)
   , q_ptr(&object) // parent is passed to the private object to allow centering on the parent instead of on the screen
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialogPrivate::~qSlicerTerminologySelectorDialogPrivate() = default;
+qSlicerTerminologyEditorDialogPrivate::~qSlicerTerminologyEditorDialogPrivate() = default;
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorDialogPrivate::init()
+void qSlicerTerminologyEditorDialogPrivate::init()
 {
-  Q_Q(qSlicerTerminologySelectorDialog);
+  Q_Q(qSlicerTerminologyEditorDialog);
 
   // Set up UI
-  this->setWindowTitle("Terminology");
+  this->setWindowTitle("Edit terminology");
 
   QVBoxLayout* layout = new QVBoxLayout(this);
   layout->setSpacing(4);
   layout->setContentsMargins(0, 0, 0, 0);
 
-  this->NavigatorWidget = new qSlicerTerminologyNavigatorWidget();
-  layout->addWidget(this->NavigatorWidget);
+  this->EditorWidget = new qSlicerTerminologyEditorWidget();
+  layout->addWidget(this->EditorWidget);
 
   QHBoxLayout* buttonsLayout = new QHBoxLayout();
   buttonsLayout->setSpacing(4);
   buttonsLayout->setContentsMargins(4, 4, 4, 4);
 
-  this->SelectButton = new QPushButton("Select");
-  this->SelectButton->setDefault(true);
-  this->SelectButton->setEnabled(false); // Disabled until terminology selection becomes valid
-  buttonsLayout->addWidget(this->SelectButton, 2);
+  buttonsLayout->addSpacing(16);
+
+  this->SaveButton = new QPushButton("Save");
+  this->SaveButton->setDefault(true);
+  buttonsLayout->addWidget(this->SaveButton, 2);
 
   this->CancelButton = new QPushButton("Cancel");
   buttonsLayout->addWidget(this->CancelButton, 1);
@@ -92,47 +94,44 @@ void qSlicerTerminologySelectorDialogPrivate::init()
   layout->addLayout(buttonsLayout);
 
   // Make connections
-  connect(this->NavigatorWidget, SIGNAL(selectionValidityChanged(bool)), q, SLOT(setSelectButtonEnabled(bool)));
-  connect(this->NavigatorWidget, SIGNAL(typeDoubleClicked()), this, SLOT(accept()));
-  connect(this->NavigatorWidget, SIGNAL(colorDoubleClicked()), this, SLOT(accept()));
-  connect(this->SelectButton, SIGNAL(clicked()), this, SLOT(accept()));
+  connect(this->SaveButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(this->CancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerTerminologySelectorDialog methods
+// qSlicerTerminologyEditorDialog methods
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(QObject* parent)
+qSlicerTerminologyEditorDialog::qSlicerTerminologyEditorDialog(QObject* parent)
   : QObject(parent)
-  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
+  , d_ptr(new qSlicerTerminologyEditorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
 {
-  Q_D(qSlicerTerminologySelectorDialog);
+  Q_D(qSlicerTerminologyEditorDialog);
   d->init();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(
+qSlicerTerminologyEditorDialog::qSlicerTerminologyEditorDialog(
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent)
   : QObject(parent)
-  , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
+  , d_ptr(new qSlicerTerminologyEditorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
 {
-  Q_D(qSlicerTerminologySelectorDialog);
+  Q_D(qSlicerTerminologyEditorDialog);
   d->TerminologyInfo = initialTerminologyInfo;
 
   d->init();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologySelectorDialog::~qSlicerTerminologySelectorDialog() = default;
+qSlicerTerminologyEditorDialog::~qSlicerTerminologyEditorDialog() = default;
 
 //-----------------------------------------------------------------------------
-bool qSlicerTerminologySelectorDialog::exec()
+bool qSlicerTerminologyEditorDialog::exec()
 {
-  Q_D(qSlicerTerminologySelectorDialog);
+  Q_D(qSlicerTerminologyEditorDialog);
 
   // Initialize dialog
-  d->NavigatorWidget->setTerminologyInfo(d->TerminologyInfo);
+  d->EditorWidget->setTerminologyInfo(d->TerminologyInfo);
 
   // Show dialog
   bool result = false;
@@ -142,29 +141,28 @@ bool qSlicerTerminologySelectorDialog::exec()
   }
 
   // Save selection after clean exit
-  d->NavigatorWidget->terminologyInfo(d->TerminologyInfo);
+  d->EditorWidget->terminologyInfo(d->TerminologyInfo);
   return true;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTerminologySelectorDialog::getTerminology(
+bool qSlicerTerminologyEditorDialog::getTerminology(
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo, QObject* parent)
 {
   // Open terminology dialog and store result
-  qSlicerTerminologySelectorDialog dialog(terminologyInfo, parent);
+  qSlicerTerminologyEditorDialog dialog(terminologyInfo, parent);
   bool result = dialog.exec();
   dialog.terminologyInfo(terminologyInfo);
   return result;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry* terminologyEntry, QObject* parent)
+bool qSlicerTerminologyEditorDialog::getTerminology(vtkSlicerTerminologyEntry* terminologyEntry, QObject* parent)
 {
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle terminologyInfo;
   terminologyInfo.GetTerminologyEntry()->Copy(terminologyEntry);
   // Open terminology dialog and store result
-  qSlicerTerminologySelectorDialog dialog(terminologyInfo, parent);
-  dialog.setOverrideSectionVisible(false);
+  qSlicerTerminologyEditorDialog dialog(terminologyInfo, parent);
   if (!dialog.exec())
   {
     return false;
@@ -175,30 +173,16 @@ bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry*
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorDialog::terminologyInfo(
+void qSlicerTerminologyEditorDialog::terminologyInfo(
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
 {
-  Q_D(qSlicerTerminologySelectorDialog);
+  Q_D(qSlicerTerminologyEditorDialog);
   terminologyInfo = d->TerminologyInfo;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorDialog::setSelectButtonEnabled(bool enabled)
+void qSlicerTerminologyEditorDialog::setSaveButtonEnabled(bool enabled)
 {
-  Q_D(qSlicerTerminologySelectorDialog);
-  d->SelectButton->setEnabled(enabled);
-}
-
-//-----------------------------------------------------------------------------
-bool qSlicerTerminologySelectorDialog::overrideSectionVisible() const
-{
-  Q_D(const qSlicerTerminologySelectorDialog);
-  return d->NavigatorWidget->overrideSectionVisible();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorDialog::setOverrideSectionVisible(bool visible)
-{
-  Q_D(qSlicerTerminologySelectorDialog);
-  d->NavigatorWidget->setOverrideSectionVisible(visible);
+  Q_D(qSlicerTerminologyEditorDialog);
+  d->SaveButton->setEnabled(enabled);
 }

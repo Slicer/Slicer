@@ -1,4 +1,4 @@
-/*=========================================================================
+/*==============================================================================
 
   Program: 3D Slicer
 
@@ -13,30 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Benjamin LONG, Kitware Inc.
+  This file was originally developed by Julien Finet, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
-=========================================================================*/
+==============================================================================*/
 
 // Qt includes
-#include <QAction>
 #include <QApplication>
-#include <QDebug>
 #include <QHBoxLayout>
-#include <QStandardItemModel>
 #include <QTimer>
-#include <QTreeView>
 
 // Slicer includes
 #include "vtkSlicerConfigure.h"
 
-// CTK includes
-#include "ctkCallback.h"
-#include "ctkEventTranslatorPlayerWidget.h"
-#include "ctkQtTestingUtility.h"
-
 // qMRML includes
 #include "qMRMLColorTableView.h"
+
+// MRMLLogic includes
+#include <vtkMRMLColorLogic.h>
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
@@ -44,38 +38,15 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkSmartPointer.h>
 #include "qMRMLWidget.h"
 
-// STD includes
-#include <cstdlib>
-#include <iostream>
-
-namespace
-{
-//-----------------------------------------------------------------------------
-void checkFinalWidgetState(void* data)
-{
-  qMRMLColorTableView* widget = reinterpret_cast<qMRMLColorTableView*>(data);
-
-  Q_UNUSED(widget);
-}
-}
-
-//-----------------------------------------------------------------------------
-int qMRMLColorTableViewEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLColorTableViewTest1(int argc, char * argv [])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
-
-  // ------------------------
-  ctkEventTranslatorPlayerWidget etpWidget;
-  ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);
-  etpWidget.setTestUtility(testUtility);
-
-  // Test case 1
   QWidget topLevel;
   qMRMLColorTableView ColorTableView;
   qMRMLColorTableView ColorTableView1;
@@ -91,25 +62,39 @@ int qMRMLColorTableViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
 
   ColorTableView.setMRMLColorNode(colorTableNode.GetPointer());
-  // for some reasons it generate a warning if the type is changed.
-  colorTableNode->NamesInitialisedOff();
+  if (ColorTableView.mrmlColorNode() != colorTableNode.GetPointer())
+  {
+    std::cerr << "qMRMLColorTableView::setMRMLColorNode() failed" << std::endl;
+    return EXIT_FAILURE;
+  }
   colorTableNode->SetTypeToCool1();
 
   vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;
   colorPETNode->SetTypeToRainbow();
   ColorTableView2.setMRMLColorNode(colorPETNode.GetPointer());
+  if (ColorTableView2.mrmlColorNode() != colorPETNode.GetPointer())
+  {
+    std::cerr << "qMRMLColorTableView::setMRMLColorNode() failed" << std::endl;
+    return EXIT_FAILURE;
+  }
   colorPETNode->SetTypeToMIP();
 
-  etpWidget.addTestCase(&topLevel,
-                        xmlDirectory + "qMRMLColorTableViewEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  topLevel.show();
 
-  // ------------------------
-  if (!app.arguments().contains("-I"))
+  vtkSmartPointer<vtkMRMLColorTableNode> userNode
+    = vtkSmartPointer<vtkMRMLColorTableNode>::Take(
+      vtkMRMLColorLogic::CopyNode(colorTableNode.GetPointer(), "User"));
+
+
+  qMRMLColorTableView colorTableView;
+  colorTableView.setWindowTitle("Editable");
+  colorTableView.setMRMLColorNode(userNode);
+  colorTableView.show();
+
+  if (argc < 2 || QString(argv[1]) != "-I" )
   {
-    QTimer::singleShot(0, &etpWidget, SLOT(play()));
+    QTimer::singleShot(200, &app, SLOT(quit()));
   }
 
-  etpWidget.show();
   return app.exec();
 }
