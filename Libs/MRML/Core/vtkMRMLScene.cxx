@@ -175,73 +175,74 @@ vtkMRMLScene::vtkMRMLScene()
   //   creates nodes).
   //
 
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLScalarVolumeNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelStorageNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLBSplineTransformNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCameraNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLClipModelsNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLClipNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCrosshairNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDisplayableHierarchyNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLFolderDisplayNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLROINode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLGridTransformNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLHierarchyNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLHierarchyStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLInteractionNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLabelMapVolumeNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLayoutNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformSequenceStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelHierarchyNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLPlotChartNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLPlotSeriesNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLPlotViewNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLProceduralColorNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLProceduralColorStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLROIListNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSliceCompositeNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLROINode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLScalarVolumeNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLScriptedModuleNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSegmentationDisplayNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSegmentationNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSegmentationStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSelectionNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSequenceNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSequenceStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSliceCompositeNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSliceDisplayNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSliceNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLabelMapVolumeNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeNode>::New());
-#ifdef MRML_USE_vtkTeem
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionTensorVolumeNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLNRRDStorageNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVectorVolumeNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLStreamingVolumeNode>::New());
-#endif
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVectorVolumeDisplayNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeDisplayNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCameraNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLViewNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLayoutNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLHierarchyNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLHierarchyStorageNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDisplayableHierarchyNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelHierarchyNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSnapshotClipNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableStorageNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLProceduralColorNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLProceduralColorStorageNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformDisplayNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformStorageNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLGridTransformNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLBSplineTransformNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCrosshairNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLInteractionNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New()); // Increments next subject hierarchy item ID
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTableNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTableStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTableViewNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTextNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTextStorageNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLPlotSeriesNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLPlotChartNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLPlotViewNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New()); // Increments next subject hierarchy item ID
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSequenceNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLSequenceStorageNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformSequenceStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVectorVolumeDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLViewNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVolumeSequenceStorageNode>::New());
+
+#ifdef MRML_USE_vtkTeem
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionTensorVolumeNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLNRRDStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLStreamingVolumeNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVectorVolumeNode>::New());
+#endif
 
   this->RegisterAbstractNodeClass("vtkMRMLVolumeNode", "Volume");
 }
