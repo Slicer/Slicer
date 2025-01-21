@@ -66,6 +66,8 @@ set(KIT_SRCS
   qSlicerCLIModuleWidget_p.h
   qSlicerCLIProgressBar.cxx
   qSlicerCLIProgressBar.h
+  vtkMRMLScalarVectorDWIVolumeResampler.cxx
+  vtkMRMLScalarVectorDWIVolumeResampler.h
   )
 
 # Headers that should run through moc
