@@ -18,7 +18,7 @@
 #ifndef __vtkProjectMarkupsCurvePointsFilter_h
 #define __vtkProjectMarkupsCurvePointsFilter_h
 
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 
 #include <vtkInformation.h>
 #include <vtkPolyDataAlgorithm.h>
@@ -43,7 +43,7 @@ class vtkMRMLModelNode;
 /// actually along the curve defined by the curve node's control point positions world.
 ///
 /// This class is not meant to be a general purpose point projection filter.
-class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkProjectMarkupsCurvePointsFilter : public vtkPolyDataAlgorithm
+class VTK_MRML_EXPORT vtkProjectMarkupsCurvePointsFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkProjectMarkupsCurvePointsFilter, vtkPolyDataAlgorithm);

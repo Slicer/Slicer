@@ -139,6 +139,8 @@ set(MRMLCore_SRCS
   vtkCacheManager.cxx
   vtkCapPolyData.cxx
   vtkCodedEntry.cxx
+  vtkCurveMeasurementsCalculator.cxx
+  vtkCurveMeasurementsCalculator.h
   vtkDataFileFormatHelper.cxx
   vtkDataIOManager.cxx
   vtkDataTransfer.cxx
@@ -181,8 +183,42 @@ set(MRMLCore_SRCS
   vtkMRMLLinearTransformSequenceStorageNode.cxx
   vtkMRMLLinearTransformSequenceStorageNode.h
   vtkMRMLLogic.cxx
+  vtkMRMLMarkupsAngleNode.cxx
+  vtkMRMLMarkupsAngleNode.h
+  vtkMRMLMarkupsClosedCurveNode.cxx
+  vtkMRMLMarkupsClosedCurveNode.h
+  vtkMRMLMarkupsCurveNode.cxx
+  vtkMRMLMarkupsCurveNode.h
+  vtkMRMLMarkupsDisplayNode.cxx
+  vtkMRMLMarkupsDisplayNode.h
+  vtkMRMLMarkupsFiducialDisplayNode.cxx
+  vtkMRMLMarkupsFiducialDisplayNode.h
+  vtkMRMLMarkupsFiducialNode.cxx
+  vtkMRMLMarkupsFiducialNode.h
+  vtkMRMLMarkupsFiducialStorageNode.cxx
+  vtkMRMLMarkupsFiducialStorageNode.h
+  vtkMRMLMarkupsLineNode.cxx
+  vtkMRMLMarkupsLineNode.h
+  vtkMRMLMarkupsNode.cxx
+  vtkMRMLMarkupsNode.h
+  vtkMRMLMarkupsPlaneDisplayNode.cxx
+  vtkMRMLMarkupsPlaneDisplayNode.h
+  vtkMRMLMarkupsPlaneNode.cxx
+  vtkMRMLMarkupsPlaneNode.h
+  vtkMRMLMarkupsROIDisplayNode.cxx
+  vtkMRMLMarkupsROIDisplayNode.h
+  vtkMRMLMarkupsROINode.cxx
+  vtkMRMLMarkupsROINode.h
   vtkMRMLMarkupsStorageNode.cxx
   vtkMRMLMeasurement.cxx
+  vtkMRMLMeasurementAngle.cxx
+  vtkMRMLMeasurementAngle.h
+  vtkMRMLMeasurementArea.cxx
+  vtkMRMLMeasurementArea.h
+  vtkMRMLMeasurementLength.cxx
+  vtkMRMLMeasurementLength.h
+  vtkMRMLMeasurementVolume.cxx
+  vtkMRMLMeasurementVolume.h
   vtkMRMLMessageCollection.cxx
   vtkMRMLModelDisplayNode.cxx
   vtkMRMLModelHierarchyNode.cxx
@@ -252,6 +288,8 @@ set(MRMLCore_SRCS
   vtkObservation.cxx
   vtkObserverManager.cxx
   vtkPermissionPrompter.cxx
+  vtkProjectMarkupsCurvePointsFilter.cxx
+  vtkProjectMarkupsCurvePointsFilter.h
   vtkTagTable.cxx
   vtkTagTableCollection.cxx
   vtkURIHandler.cxx

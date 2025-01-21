@@ -40,6 +40,19 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLLinearTransformSequenceStorageNode.h"
+#include "vtkMRMLMarkupsAngleNode.h"
+#include "vtkMRMLMarkupsClosedCurveNode.h"
+#include "vtkMRMLMarkupsCurveNode.h"
+#include "vtkMRMLMarkupsDisplayNode.h"
+#include "vtkMRMLMarkupsFiducialDisplayNode.h"
+#include "vtkMRMLMarkupsFiducialNode.h"
+#include "vtkMRMLMarkupsFiducialStorageNode.h"
+#include "vtkMRMLMarkupsLineNode.h"
+#include "vtkMRMLMarkupsNode.h"
+#include "vtkMRMLMarkupsPlaneDisplayNode.h"
+#include "vtkMRMLMarkupsPlaneNode.h"
+#include "vtkMRMLMarkupsROIDisplayNode.h"
+#include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
@@ -197,6 +210,18 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLayoutNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLLinearTransformSequenceStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsAngleNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsClosedCurveNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsCurveNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsLineNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROIDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROINode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelDisplayNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelHierarchyNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLModelNode>::New());
@@ -244,6 +269,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVectorVolumeNode>::New());
 #endif
 
+  this->RegisterAbstractNodeClass("vtkMRMLMarkupsNode", "Markup");
   this->RegisterAbstractNodeClass("vtkMRMLVolumeNode", "Volume");
 }
 

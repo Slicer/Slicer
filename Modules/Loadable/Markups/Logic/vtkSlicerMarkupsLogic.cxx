@@ -25,16 +25,12 @@
 #include "vtkMRMLMarkupsClosedCurveNode.h"
 #include "vtkMRMLMarkupsCurveNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLMarkupsFiducialDisplayNode.h"
 #include "vtkMRMLMarkupsFiducialNode.h"
-#include "vtkMRMLMarkupsFiducialStorageNode.h"
 #include "vtkMRMLMarkupsJsonStorageNode.h"
 #include "vtkMRMLMarkupsLineNode.h"
 #include "vtkMRMLMarkupsNode.h"
-#include "vtkMRMLMarkupsPlaneDisplayNode.h"
 #include "vtkMRMLMarkupsPlaneJsonStorageNode.h"
 #include "vtkMRMLMarkupsPlaneNode.h"
-#include "vtkMRMLMarkupsROIDisplayNode.h"
 #include "vtkMRMLMarkupsROIJsonStorageNode.h"
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLTableStorageNode.h"
@@ -393,8 +389,6 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   }
 
   // Generic markups nodes
-  scene->RegisterAbstractNodeClass("vtkMRMLMarkupsNode", "Markup");
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsJsonStorageNode>::New());
 
   // NOTE: the order of registration determines the order of the create push buttons in the GUI
@@ -402,8 +396,6 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
   vtkNew<vtkSlicerPointsWidget> pointsWidget;
   this->RegisterMarkupsNode(fiducialNode, pointsWidget);
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialDisplayNode>::New());
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New());
 
   vtkNew<vtkMRMLMarkupsLineNode> lineNode;
   vtkNew<vtkSlicerLineWidget> lineWidget;
@@ -424,13 +416,11 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
   vtkNew<vtkMRMLMarkupsPlaneNode> planeNode;
   vtkNew<vtkSlicerPlaneWidget> planeWidget;
   this->RegisterMarkupsNode(planeNode, planeWidget);
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneDisplayNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsPlaneJsonStorageNode>::New());
 
   vtkNew<vtkMRMLMarkupsROINode> roiNode;
   vtkNew<vtkSlicerROIWidget> roiWidget;
   this->RegisterMarkupsNode(roiNode, roiWidget);
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROIDisplayNode>::New());
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsROIJsonStorageNode>::New());
 }
 

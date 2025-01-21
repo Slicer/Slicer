@@ -26,7 +26,7 @@
 #include "vtkMRMLModelNode.h"
 
 // Markups includes
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
@@ -53,7 +53,7 @@ class vtkPlanes;
 ///   - World: Patient coordinate system (RAS). Transform between Node and World
 ///     coordinate systems are defined by the parent transform of the node.
 ///
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsROINode : public vtkMRMLMarkupsNode
+class  VTK_MRML_EXPORT vtkMRMLMarkupsROINode : public vtkMRMLMarkupsNode
 {
 public:
   static vtkMRMLMarkupsROINode *New();

@@ -15,36 +15,36 @@
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLMeasurementAngle_h
-#define __vtkMRMLMeasurementAngle_h
+#ifndef __vtkMRMLMeasurementLength_h
+#define __vtkMRMLMeasurementLength_h
 
 // MRML includes
 #include "vtkMRMLMeasurement.h"
 
 // Markups includes
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 
-/// \brief Measurement class calculating angle
-class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMeasurementAngle : public vtkMRMLMeasurement
+/// \brief Measurement class calculating curve length
+class VTK_MRML_EXPORT vtkMRMLMeasurementLength : public vtkMRMLMeasurement
 {
 public:
-  static vtkMRMLMeasurementAngle *New();
-  vtkTypeMacro(vtkMRMLMeasurementAngle, vtkMRMLMeasurement);
+  static vtkMRMLMeasurementLength *New();
+  vtkTypeMacro(vtkMRMLMeasurementLength, vtkMRMLMeasurement);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Create a new instance of this measurement type.
   /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
-  vtkMRMLMeasurement* CreateInstance() const override { return vtkMRMLMeasurementAngle::New(); }
+  vtkMRMLMeasurement* CreateInstance() const override { return vtkMRMLMeasurementLength::New(); }
 
   /// Calculate length of \sa InputMRMLNode curve markup node and store the result internally
   void Compute() override;
 
 protected:
-  vtkMRMLMeasurementAngle();
-  ~vtkMRMLMeasurementAngle() override;
-  vtkMRMLMeasurementAngle(const vtkMRMLMeasurementAngle&);
-  void operator=(const vtkMRMLMeasurementAngle&);
+  vtkMRMLMeasurementLength();
+  ~vtkMRMLMeasurementLength() override;
+  vtkMRMLMeasurementLength(const vtkMRMLMeasurementLength&);
+  void operator=(const vtkMRMLMeasurementLength&);
 };
 
 #endif

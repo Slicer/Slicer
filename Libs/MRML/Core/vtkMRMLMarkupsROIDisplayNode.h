@@ -25,10 +25,10 @@
 #ifndef __vtkMRMLMarkupsROIDisplayNode_h
 #define __vtkMRMLMarkupsROIDisplayNode_h
 
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsROIDisplayNode : public vtkMRMLMarkupsDisplayNode
+class  VTK_MRML_EXPORT vtkMRMLMarkupsROIDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:
   static vtkMRMLMarkupsROIDisplayNode *New();

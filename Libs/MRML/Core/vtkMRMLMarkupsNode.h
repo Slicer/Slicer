@@ -25,7 +25,7 @@
 #include "vtkMRMLSelectionNode.h"
 
 // Markups includes
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 
 // VTK includes
 #include <vtkParallelTransportFrame.h>
@@ -73,7 +73,7 @@ class vtkPolyData;
 class vtkStringArray;
 class vtkTransformPolyDataFilter;
 
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
+class  VTK_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
 {
   /// Make the storage node a friend so that ReadDataInternal can set the ControlPoint ids
   friend class vtkMRMLMarkupsStorageNode;

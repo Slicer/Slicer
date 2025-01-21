@@ -24,13 +24,13 @@
 #ifndef __vtkMRMLMarkupsFiducialDisplayNode_h
 #define __vtkMRMLMarkupsFiducialDisplayNode_h
 
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 
 #include "vtkMRMLMarkupsDisplayNode.h"
 
 class vtkMRMLProceduralColorNode;
 
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsFiducialDisplayNode : public vtkMRMLMarkupsDisplayNode
+class  VTK_MRML_EXPORT vtkMRMLMarkupsFiducialDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:
   static vtkMRMLMarkupsFiducialDisplayNode *New();

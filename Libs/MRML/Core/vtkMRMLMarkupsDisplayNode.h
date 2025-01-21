@@ -24,7 +24,7 @@
 #ifndef __vtkMRMLMarkupsDisplayNode_h
 #define __vtkMRMLMarkupsDisplayNode_h
 
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
@@ -41,7 +41,7 @@
 class vtkMRMLInteractionEventData;
 class vtkMRMLProceduralColorNode;
 
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
+class  VTK_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   static vtkMRMLMarkupsDisplayNode *New();
