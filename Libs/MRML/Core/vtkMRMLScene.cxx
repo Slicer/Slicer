@@ -13,13 +13,11 @@ Version:   $Revision: 1.18 $
 =========================================================================auto=*/
 
 #include "vtkMRMLScene.h"
-#include "vtkMRMLParser.h"
 
+// MRML includes
 #include "vtkArchive.h"
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
-#include "vtkTagTable.h"
-
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLClipModelsNode.h"
@@ -35,12 +33,13 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeNode.h"
 #include "vtkMRMLLayoutNode.h"
-#include "vtkMRMLLinearTransformSequenceStorageNode.h"
 #include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLLinearTransformSequenceStorageNode.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLParser.h"
 #include "vtkMRMLPlotChartNode.h"
 #include "vtkMRMLPlotSeriesNode.h"
 #include "vtkMRMLPlotViewNode.h"
@@ -73,6 +72,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeSequenceStorageNode.h"
+#include "vtkTagTable.h"
 #include "vtkURIHandler.h"
 
 #ifdef MRML_USE_vtkTeem
@@ -93,9 +93,9 @@ Version:   $Revision: 1.18 $
 #include <vtkSmartPointer.h>
 
 // VTKSYS includes
+#include <vtksys/Glob.hxx>
 #include <vtksys/RegularExpression.hxx>
 #include <vtksys/SystemTools.hxx>
-#include <vtksys/Glob.hxx>
 
 // STD includes
 #include <algorithm>
