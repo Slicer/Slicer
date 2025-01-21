@@ -23,7 +23,7 @@
 #include "vtkMRMLModelNode.h"
 
 // Markups includes
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
 
@@ -85,7 +85,7 @@ class vtkTriangleFilter;
 ///                          |        +-----------------+                                                  |
 ///                          +-----------------------------------------------------------------------------+
 ///
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsCurveNode : public vtkMRMLMarkupsNode
+class  VTK_MRML_EXPORT vtkMRMLMarkupsCurveNode : public vtkMRMLMarkupsNode
 {
 public:
   static vtkMRMLMarkupsCurveNode *New();

@@ -22,7 +22,7 @@
 #include "vtkMRMLDisplayableNode.h"
 
 // Markups includes
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsCurveNode.h"
 
@@ -32,7 +32,7 @@
 ///
 /// Markups is intended to be used for manual marking/editing of point positions.
 ///
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsClosedCurveNode : public vtkMRMLMarkupsCurveNode
+class  VTK_MRML_EXPORT vtkMRMLMarkupsClosedCurveNode : public vtkMRMLMarkupsCurveNode
 {
 public:
   static vtkMRMLMarkupsClosedCurveNode *New();

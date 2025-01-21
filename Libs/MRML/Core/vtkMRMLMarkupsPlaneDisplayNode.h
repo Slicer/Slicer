@@ -27,9 +27,9 @@
 
 // Markups MRML includes
 #include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 
-class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsPlaneDisplayNode : public vtkMRMLMarkupsDisplayNode
+class  VTK_MRML_EXPORT vtkMRMLMarkupsPlaneDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:
   static vtkMRMLMarkupsPlaneDisplayNode* New();

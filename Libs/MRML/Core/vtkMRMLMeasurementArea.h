@@ -22,10 +22,10 @@
 #include "vtkMRMLMeasurement.h"
 
 // Markups includes
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 
 /// \brief Measurement class calculating area of a plane or enclosed by a closed curve
-class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMeasurementArea : public vtkMRMLMeasurement
+class VTK_MRML_EXPORT vtkMRMLMeasurementArea : public vtkMRMLMeasurement
 {
 public:
   static vtkMRMLMeasurementArea *New();

@@ -29,7 +29,7 @@
 #include <vtkMRMLMarkupsNode.h>
 
 // Export
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
+#include "vtkMRMLExport.h"
 
 class vtkCallbackCommand;
 
@@ -37,7 +37,7 @@ class vtkCallbackCommand;
 /// - Interpolate control point measurements into curve point data
 /// - Calculate per-curve-point curvature (disabled by default)
 /// - Calculate per-curve-point torsion (disabled by default)
-class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkCurveMeasurementsCalculator : public vtkPolyDataAlgorithm
+class VTK_MRML_EXPORT vtkCurveMeasurementsCalculator : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkCurveMeasurementsCalculator, vtkPolyDataAlgorithm);
