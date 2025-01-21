@@ -136,50 +136,58 @@ endif()
 set(MRMLCore_SRCS
   vtkArchive.cxx
   vtkArchive.h
+  vtkCacheManager.cxx
   vtkCapPolyData.cxx
   vtkCodedEntry.cxx
-  vtkEventBroker.cxx
   vtkDataFileFormatHelper.cxx
+  vtkDataIOManager.cxx
+  vtkDataTransfer.cxx
+  vtkEventBroker.cxx
   vtkImageMathematicsAddon.cxx
   vtkImplicitInvertableBoolean.cxx
-  vtkMRMLI18N.cxx
-  vtkMRMLI18N.h
-  vtkMRMLMeasurement.cxx
-  vtkMRMLStaticMeasurement.cxx
-  vtkMRMLLogic.cxx
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx
+  vtkMRMLBSplineTransformNode.cxx
   vtkMRMLCameraNode.cxx
-  vtkMRMLClipNode.cxx
   vtkMRMLClipModelsNode.cxx
+  vtkMRMLClipNode.cxx
   vtkMRMLColorNode.cxx
-  vtkMRMLColors.cxx
   vtkMRMLColorTableNode.cxx
   vtkMRMLColorTableStorageNode.cxx
+  vtkMRMLColors.cxx
   vtkMRMLCoreTestingUtilities.cxx
   vtkMRMLCrosshairNode.cxx
   vtkMRMLDiffusionTensorDisplayPropertiesNode.cxx
   vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx
   vtkMRMLDiffusionWeightedVolumeNode.cxx
   vtkMRMLDisplayNode.cxx
+  vtkMRMLDisplayableHierarchyNode.cxx
   vtkMRMLDisplayableNode.cxx
   vtkMRMLFolderDisplayNode.cxx
+  vtkMRMLGlyphableVolumeDisplayNode.cxx
+  vtkMRMLGlyphableVolumeSliceDisplayNode.cxx
+  vtkMRMLGridTransformNode.cxx
   vtkMRMLHierarchyNode.cxx
   vtkMRMLHierarchyStorageNode.cxx
-  vtkMRMLDisplayableHierarchyNode.cxx
+  vtkMRMLI18N.cxx
+  vtkMRMLI18N.h
   vtkMRMLInteractionNode.cxx
   vtkMRMLLabelMapVolumeDisplayNode.cxx
   vtkMRMLLabelMapVolumeNode.cxx
+  vtkMRMLLayoutNode.cxx
   vtkMRMLLinearTransformNode.cxx
   vtkMRMLLinearTransformSequenceStorageNode.cxx
   vtkMRMLLinearTransformSequenceStorageNode.h
+  vtkMRMLLogic.cxx
   vtkMRMLMarkupsStorageNode.cxx
+  vtkMRMLMeasurement.cxx
   vtkMRMLMessageCollection.cxx
   vtkMRMLModelDisplayNode.cxx
   vtkMRMLModelHierarchyNode.cxx
   vtkMRMLModelNode.cxx
   vtkMRMLModelStorageNode.cxx
   vtkMRMLNode.cxx
+  vtkMRMLPETProceduralColorNode.cxx
   vtkMRMLParser.cxx
   vtkMRMLPlotChartNode.cxx
   vtkMRMLPlotSeriesNode.cxx
@@ -195,37 +203,38 @@ set(MRMLCore_SRCS
   vtkMRMLSceneViewStorageNode.cxx
   vtkMRMLScriptedModuleNode.cxx
   vtkMRMLScriptedModuleNode.h
-  vtkMRMLSegmentationNode.cxx
-  vtkMRMLSegmentationNode.h
   vtkMRMLSegmentationDisplayNode.cxx
   vtkMRMLSegmentationDisplayNode.h
+  vtkMRMLSegmentationNode.cxx
+  vtkMRMLSegmentationNode.h
   vtkMRMLSegmentationStorageNode.cxx
   vtkMRMLSegmentationStorageNode.h
+  vtkMRMLSelectionNode.cxx
   vtkMRMLSequenceNode.cxx
   vtkMRMLSequenceNode.h
   vtkMRMLSequenceStorageNode.cxx
   vtkMRMLSequenceStorageNode.h
-  vtkMRMLSelectionNode.cxx
   vtkMRMLSliceCompositeNode.cxx
   vtkMRMLSliceDisplayNode.cxx
   vtkMRMLSliceNode.cxx
   vtkMRMLSnapshotClipNode.cxx
+  vtkMRMLStaticMeasurement.cxx
   vtkMRMLStorableNode.cxx
   vtkMRMLStorageNode.cxx
   vtkMRMLSubjectHierarchyConstants.h
-  vtkMRMLSubjectHierarchyNode.cxx
-  vtkMRMLSubjectHierarchyNode.h
   vtkMRMLSubjectHierarchyLegacyNode.cxx
   vtkMRMLSubjectHierarchyLegacyNode.h
+  vtkMRMLSubjectHierarchyNode.cxx
+  vtkMRMLSubjectHierarchyNode.h
   vtkMRMLTableNode.cxx
-  vtkMRMLTableStorageNode.cxx
   vtkMRMLTableSQLiteStorageNode.cxx
+  vtkMRMLTableStorageNode.cxx
   vtkMRMLTableViewNode.cxx
   vtkMRMLTextNode.cxx
   vtkMRMLTextStorageNode.cxx
+  vtkMRMLTransformDisplayNode.cxx
   vtkMRMLTransformNode.cxx
   vtkMRMLTransformStorageNode.cxx
-  vtkMRMLTransformDisplayNode.cxx
   vtkMRMLTransformableNode.cxx
   vtkMRMLTranslator.h
   vtkMRMLUnitNode.cxx
@@ -233,27 +242,17 @@ set(MRMLCore_SRCS
   vtkMRMLViewNode.cxx
   vtkMRMLVolumeArchetypeStorageNode.cxx
   vtkMRMLVolumeDisplayNode.cxx
-  vtkMRMLGlyphableVolumeDisplayNode.cxx
-  vtkMRMLGlyphableVolumeSliceDisplayNode.cxx
   vtkMRMLVolumeHeaderlessStorageNode.cxx
   vtkMRMLVolumeNode.cxx
   vtkMRMLVolumeSequenceStorageNode.cxx
   vtkMRMLVolumeSequenceStorageNode.h
+  vtkMRMLdGEMRICProceduralColorNode.cxx
   vtkObservation.cxx
   vtkObserverManager.cxx
-  vtkMRMLLayoutNode.cxx
-  # Classes for remote data handling:
-  vtkCacheManager.cxx
-  vtkDataIOManager.cxx
-  vtkDataTransfer.cxx
-  vtkMRMLBSplineTransformNode.cxx
-  vtkMRMLGridTransformNode.cxx
   vtkPermissionPrompter.cxx
-  vtkURIHandler.cxx
-  vtkTagTableCollection.cxx
   vtkTagTable.cxx
-  vtkMRMLdGEMRICProceduralColorNode.cxx
-  vtkMRMLPETProceduralColorNode.cxx
+  vtkTagTableCollection.cxx
+  vtkURIHandler.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )
@@ -266,9 +265,9 @@ if(MRML_USE_vtkTeem)
     vtkMRMLDiffusionTensorVolumeNode.cxx
     vtkMRMLDiffusionTensorVolumeSliceDisplayNode.cxx
     vtkMRMLNRRDStorageNode.cxx
+    vtkMRMLStreamingVolumeNode.cxx
     vtkMRMLTensorVolumeNode.cxx
     vtkMRMLVectorVolumeNode.cxx
-    vtkMRMLStreamingVolumeNode.cxx
     )
 endif()
 
@@ -280,12 +279,12 @@ set_source_files_properties(
 # Abstract/pure virtual classes
 
 set_source_files_properties(
-  vtkMRMLNode.cxx
-  vtkMRMLVolumeNode.cxx
-  vtkMRMLTransformNode.cxx
   vtkMRMLDisplayNode.cxx
   vtkMRMLDisplayableNode.cxx
+  vtkMRMLNode.cxx
+  vtkMRMLTransformNode.cxx
   vtkMRMLVolumeDisplayNode.cxx
+  vtkMRMLVolumeNode.cxx
   ABSTRACT
   )
 
