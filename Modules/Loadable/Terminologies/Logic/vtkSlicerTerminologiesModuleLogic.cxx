@@ -2104,7 +2104,8 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
   }
   if (!entryComponents[1].compare("^^"))
   {
-    return false; // Empty category (none selection)
+    // Empty category (none selection)
+    return false;
   }
 
   std::string terminologyName(entryComponents[0]);
@@ -2172,7 +2173,9 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSlicerTerminologyEntry* entry)
+bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSlicerTerminologyEntry* entry,
+  std::vector<std::string> preferredTerminologyNames,
+  std::vector<std::string> preferredRegionContextNames)
 {
   if (!entry)
   {
@@ -2196,8 +2199,10 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
     // Create list of preferred terminology names: the list starts with the entry's terminologyName
     // followed by all the other loaded terminologies.
     std::string terminologyName = (entry->GetTerminologyContextName() ? entry->GetTerminologyContextName() : "");
-    std::vector<std::string> preferredTerminologyNames;
-    this->GetLoadedTerminologyNames(preferredTerminologyNames);
+    if (preferredTerminologyNames.empty())
+    {
+      this->GetLoadedTerminologyNames(preferredTerminologyNames);
+    }
     std::vector<std::string>::iterator ptnIt = std::find(preferredTerminologyNames.begin(), preferredTerminologyNames.end(), terminologyName);
     if (ptnIt != preferredTerminologyNames.end())
     {
@@ -2252,8 +2257,10 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
     // Create list of preferred region context names: the list starts with the entry's region context name
     // followed by all the other loaded region context names.
     std::string regionContextName = (entry->GetRegionContextName() ? entry->GetRegionContextName() : "");
-    std::vector<std::string> preferredRegionContextNames;
-    this->GetLoadedRegionContextNames(preferredRegionContextNames);
+    if (preferredRegionContextNames.empty())
+    {
+      this->GetLoadedRegionContextNames(preferredRegionContextNames);
+    }
     std::vector<std::string>::iterator pacIt = std::find(preferredRegionContextNames.begin(), preferredRegionContextNames.end(), regionContextName);
     if (pacIt != preferredRegionContextNames.end())
     {
@@ -2511,13 +2518,192 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypeInTerminologyBy3dSlicerLabel(std
 }
 
 //-----------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
+  vtkSlicerTerminologyEntry* entry,
+  std::vector<std::string> preferredTerminologyNames,
+  std::string& foundTerminologyName,
+  std::string& foundColorNodeID,
+  int& foundColorIndex)
+{
+  if (!entry)
+  {
+    vtkErrorMacro("FindFirstColorNodeOrTerminology: Invalid terminology entry");
+    return false;
+  }
+  if (!entry->GetTerminologyContextName() &&
+    (!entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue()))
+  {
+    // neither context name nor category is specified, this is an empty terminology
+    return false;
+  }
+
+  // Add current terminology or color node name to the beginning of the preferred list
+  std::string currentTerminologyName = entry->GetTerminologyContextName() ? entry->GetTerminologyContextName() : "";
+  if (!currentTerminologyName.empty())
+  {
+    auto foundCurrentTerminologyNameIt = std::find(preferredTerminologyNames.begin(), preferredTerminologyNames.end(), currentTerminologyName);
+    if (foundCurrentTerminologyNameIt != preferredTerminologyNames.end())
+    {
+      // current terminology name is already in the preferred list, remove it so that we can insert it at the beginning
+      preferredTerminologyNames.erase(foundCurrentTerminologyNameIt);
+    }
+    preferredTerminologyNames.insert(preferredTerminologyNames.begin(), currentTerminologyName);
+  }
+
+  std::string categoryScheme;
+  std::string categoryValue;
+  vtkSlicerTerminologyCategory* categoryObject = entry->GetCategoryObject();
+  if (categoryObject)
+  {
+    categoryScheme = categoryObject->GetCodingSchemeDesignator();
+    categoryValue = categoryObject->GetCodeValue();
+  }
+  std::string typeScheme;
+  std::string typeValue;
+  vtkSlicerTerminologyType* typeObject = entry->GetTypeObject();
+  if (typeObject)
+  {
+    typeScheme = typeObject->GetCodingSchemeDesignator();
+    typeValue = typeObject->GetCodeValue();
+  }
+  std::string typeModifierScheme;
+  std::string typeModifierValue;
+  vtkSlicerTerminologyType* typeModifierObject = entry->GetTypeModifierObject();
+  if (typeModifierObject && typeModifierObject->GetCodingSchemeDesignator() && typeModifierObject->GetCodeValue())
+  {
+    typeModifierScheme = typeModifierObject->GetCodingSchemeDesignator();
+    typeModifierValue = typeModifierObject->GetCodeValue();
+  }
+  vtkSlicerTerminologyType* regionObject = entry->GetRegionObject();
+  std::string regionScheme;
+  std::string regionValue;
+  if (regionObject && regionObject->GetCodingSchemeDesignator() && regionObject->GetCodeValue())
+  {
+    regionScheme = regionObject->GetCodingSchemeDesignator();
+    regionValue = regionObject->GetCodeValue();
+  }
+  vtkSlicerTerminologyType* regionModifierObject = entry->GetRegionModifierObject();
+  std::string regionModifierScheme;
+  std::string regionModifierValue;
+  if (regionModifierObject && regionModifierObject->GetCodingSchemeDesignator() && regionModifierObject->GetCodeValue())
+  {
+    regionModifierScheme = regionModifierObject->GetCodingSchemeDesignator();
+    regionModifierValue = regionModifierObject->GetCodeValue();
+  }
+
+  return this->FindFirstColorNodeOrTerminology(
+    categoryScheme, categoryValue,
+    typeScheme, typeValue,
+    typeModifierScheme, typeModifierValue,
+    regionScheme, regionValue,
+    regionModifierScheme, regionModifierValue,
+    preferredTerminologyNames,
+    foundTerminologyName, foundColorNodeID, foundColorIndex);
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
+  std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
+  std::string typeCodingSchemeDesignator, std::string typeCodeValue,
+  std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
+  std::string regionCodingSchemeDesignator, std::string regionCodeValue,
+  std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
+  std::vector<std::string> preferredTerminologyNames,
+  std::string& foundTerminologyName,
+  std::string& foundColorNodeID,
+  int& foundColorIndex)
+{
+  std::vector<std::string> foundColorTableNodeIds;
+  vtkNew<vtkIntArray> foundColorIndices;
+  vtkNew<vtkIntArray> foundPreferredColorNodeIndices;
+  std::vector<std::string> foundTerminologyNames;
+  vtkNew<vtkIntArray> foundTerminologyIndices;
+
+  foundColorTableNodeIds = this->FindColorNodes(
+    categoryCodingSchemeDesignator, categoryCodeValue, typeCodingSchemeDesignator, typeCodeValue, typeModifierCodingSchemeDesignator, typeModifierCodeValue,
+    regionCodingSchemeDesignator, regionCodeValue, regionModifierCodingSchemeDesignator, regionModifierCodeValue,
+    preferredTerminologyNames, foundColorIndices, foundPreferredColorNodeIndices);
+  foundTerminologyNames = this->FindTerminologyNames(
+    categoryCodingSchemeDesignator, categoryCodeValue, typeCodingSchemeDesignator, typeCodeValue, typeModifierCodingSchemeDesignator, typeModifierCodeValue,
+    preferredTerminologyNames, nullptr, foundTerminologyIndices);
+
+  if (!preferredTerminologyNames.empty() && (foundColorTableNodeIds.empty() && foundTerminologyNames.empty()))
+  {
+    // Preferred terminologies do not contain the item, try to get first terminology containing it among all loaded contexts
+    foundColorTableNodeIds = this->FindColorNodes(
+      categoryCodingSchemeDesignator, categoryCodeValue, typeCodingSchemeDesignator, typeCodeValue, typeModifierCodingSchemeDesignator, typeModifierCodeValue,
+      regionCodingSchemeDesignator, regionCodeValue, regionModifierCodingSchemeDesignator, regionModifierCodeValue,
+      std::vector<std::string>(), foundColorIndices, foundPreferredColorNodeIndices);
+    foundTerminologyNames = this->FindTerminologyNames(
+      categoryCodingSchemeDesignator, categoryCodeValue, typeCodingSchemeDesignator, typeCodeValue, typeModifierCodingSchemeDesignator, typeModifierCodeValue,
+      std::vector<std::string>(), nullptr, foundTerminologyIndices);
+  }
+
+  if (!foundColorTableNodeIds.empty() && !foundTerminologyNames.empty())
+  {
+    // Both color node and terminology contain the item, select the one that is first in the preferred list
+    if (foundPreferredColorNodeIndices->GetNumberOfValues() > 0 && foundTerminologyIndices->GetNumberOfValues() > 0)
+    {
+      if (foundPreferredColorNodeIndices->GetValue(0) < foundTerminologyIndices->GetValue(0))
+      {
+        foundTerminologyNames.clear();
+      }
+      else
+      {
+        foundColorTableNodeIds.clear();
+      }
+    }
+  }
+
+  if (!foundTerminologyNames.empty())
+  {
+    foundColorNodeID.clear();
+    foundColorIndex = -1;
+    foundTerminologyName = foundTerminologyNames.front();
+    return true;
+  }
+  else if (!foundColorTableNodeIds.empty())
+  {
+    std::string firstColorNodeID = foundColorTableNodeIds.front();
+    if (this->GetMRMLScene())
+    {
+      vtkErrorMacro("FindFirstColorNodeOrTerminology failed: invalid scene");
+      return false;
+    }
+    vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(firstColorNodeID));
+    if (!colorNode)
+    {
+      vtkErrorMacro("FindFirstColorNodeOrTerminology failed: Failed to find color node by ID " << firstColorNodeID);
+      return false;
+    }
+    foundColorNodeID.clear();
+    foundColorIndex = -1;
+    foundTerminologyName = colorNode->GetName() ? colorNode->GetName() : "";
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+//-----------------------------------------------------------------------------
 std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames(
   std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
   std::string typeCodingSchemeDesignator, std::string typeCodeValue,
   std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
   std::vector<std::string> preferredTerminologyNames,
-  vtkCollection* foundEntries/*=nullptr*/)
+  vtkCollection* foundEntries/*=nullptr*/,
+  vtkIntArray* foundPreferredTerminologyNameIndices/*=nullptr*/)
 {
+  if (foundEntries)
+  {
+    foundEntries->RemoveAllItems();
+  }
+  if (foundPreferredTerminologyNameIndices)
+  {
+    foundPreferredTerminologyNameIndices->Reset();
+  }
   std::vector<std::string> foundTerminologyNames;
   if (categoryCodingSchemeDesignator.empty() || categoryCodeValue.empty())
   {
@@ -2540,8 +2726,11 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames
   }
 
   // Find terminology entries in each preferred terminology
+  int preferredTerminologyNameIndex = 0;
   for (std::string terminologyName : preferredTerminologyNames)
+  for (int preferredTerminologyNameIndex = 0; preferredTerminologyNameIndex < preferredTerminologyNames.size(); ++preferredTerminologyNameIndex)
   {
+    std::string terminologyName = preferredTerminologyNames[preferredTerminologyNameIndex];
     if (!this->IsTerminologyContextLoaded(terminologyName))
     {
       continue; // It is possible that some preferred terminologies are not loaded in this session
@@ -2571,6 +2760,10 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames
         if (foundEntries)
         {
           foundEntries->AddItem(typeObject);
+        }
+        if (foundPreferredTerminologyNameIndices)
+        {
+          foundPreferredTerminologyNameIndices->InsertNextValue(preferredTerminologyNameIndex);
         }
       }
     }
@@ -2781,10 +2974,6 @@ int vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(vtkMRMLColorNo
   vtkNew<vtkSlicerTerminologyEntry> entry1;
   if (!vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(terminology, entry1))
   {
-    if (strlen(terminology)>0)
-    {
-      vtkErrorWithObjectMacro(colorNode, "vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology: Failed to deserialize terminology entry");
-    }
     return -1;
   }
 
@@ -2894,8 +3083,18 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
   std::string regionCodingSchemeDesignator, std::string regionCodeValue,
   std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
   std::vector<std::string> preferredColorNodeNames,
-  vtkIntArray* foundColorIndices/*=nullptr*/)
+  vtkIntArray* foundColorIndices/*=nullptr*/,
+  vtkIntArray* foundPreferredColorNodeIndices/*=nullptr*/
+  )
 {
+  if (foundColorIndices)
+  {
+    foundColorIndices->Initialize();
+  }
+  if (foundPreferredColorNodeIndices)
+  {
+    foundPreferredColorNodeIndices->Initialize();
+  }
   std::vector<std::string> foundColorNodeIDs;
   // Find candidate color nodes
   vtkMRMLScene* scene = this->GetMRMLScene();
@@ -2949,6 +3148,19 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
       if (foundColorIndices)
       {
         foundColorIndices->InsertNextValue(indexInColorTable);
+      }
+      if (foundPreferredColorNodeIndices)
+      {
+        std::string colorNodeName = (compatibleColorNode->GetName() ? compatibleColorNode->GetName() : "");
+        auto foundPreferredColorNodeIDIt = std::find(preferredColorNodeNames.begin(), preferredColorNodeNames.end(), colorNodeName);
+        if (foundPreferredColorNodeIDIt != preferredColorNodeNames.end())
+        {
+          foundPreferredColorNodeIndices->InsertNextValue(std::distance(preferredColorNodeNames.begin(), foundPreferredColorNodeIDIt));
+        }
+        else
+        {
+          foundPreferredColorNodeIndices->InsertNextValue(-1);
+        }
       }
     }
   }

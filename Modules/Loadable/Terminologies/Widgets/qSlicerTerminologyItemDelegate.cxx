@@ -30,7 +30,7 @@
 #include "vtkSlicerTerminologyEntry.h"
 
 // Slicer includes
-#include <qSlicerCoreApplication.h>
+#include <qSlicerApplication.h>
 #include <qSlicerModuleManager.h>
 #include <qSlicerAbstractCoreModule.h>
 
@@ -43,6 +43,7 @@
 // Qt includes
 #include <QDebug>
 #include <QLineEdit>
+#include <QSettings>
 
 //-----------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic* terminologiesLogic()
@@ -179,7 +180,18 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModel
       // because terminologies in color nodes are fully defined in the table, so we do not no need to look up additional metadata.
       if (!logic->GetFirstCompatibleColorNodeByName(terminologyEntry->GetTerminologyContextName() ? terminologyEntry->GetTerminologyContextName() : ""))
       {
-        logic->UpdateEntryFromLoadedTerminologies(terminologyEntry);
+        std::vector<std::string> preferredTerminologyNames;
+        QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+        if (settings->contains("Terminology/LastTerminologyContexts"))
+        {
+          QStringList lastTerminologyContextNames = settings->value("Terminology/LastTerminologyContexts").toStringList();
+          for (auto& name : lastTerminologyContextNames)
+          {
+            preferredTerminologyNames.push_back(name.toStdString().c_str());
+          }
+        }
+        std::vector<std::string> preferredAnatomicalContextNames; // use default order for now
+        logic->UpdateEntryFromLoadedTerminologies(terminologyEntry, preferredTerminologyNames, preferredAnatomicalContextNames);
       }
     }
 

@@ -350,6 +350,8 @@ void qMRMLColorModel::updateNode()
 
   this->setRowCount(d->MRMLColorNode->GetNumberOfColors() + (this->noneEnabled() ? 1 : 0));
 
+  // TODO: this signal blocking would need to be removed to make the views update automatically
+  // but it leads to performance issues on large color tables and also clearing out of the color table.
   bool wasBlocked = this->blockSignals(true);
   int startIndex = (this->noneEnabled() ? 1 : 0);
   for (int color = 0; color < d->MRMLColorNode->GetNumberOfColors(); ++color)

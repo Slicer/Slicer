@@ -57,6 +57,9 @@ qMRMLSortFilterColorProxyModel::qMRMLSortFilterColorProxyModel(QObject *vparent)
  : QSortFilterProxyModel(vparent)
  , d_ptr(new qMRMLSortFilterColorProxyModelPrivate)
 {
+  // TODO: dynamic would be needed to make the model update automatically
+  // when the filter changes, but it may be slow on very large color tables
+  // this->setDynamicSortFilter(true);
 }
 
 //------------------------------------------------------------------------------

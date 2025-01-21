@@ -628,7 +628,7 @@ int vtkMRMLColorNode::SetColorName(int ind, const char *name)
   {
     // For improved backward compatibility with older extensions, if the color name is
     // "(none)" (default NoName previously) name then the we consider the color undefined.
-    if (strcmp("(none)", name) == 0 || strlen(name) == 0)
+    if (strcmp("(none)", name) == 0)
     {
       colorDefined = false;
     }
