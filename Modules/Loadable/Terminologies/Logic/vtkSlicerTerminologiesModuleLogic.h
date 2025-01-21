@@ -135,6 +135,10 @@ public:
   /// \return Success flag
   bool FindCategoriesInTerminology(std::string terminologyName, std::vector<CodeIdentifier>& categories, std::string search);
 
+  /// Return collection of color node IDs designated by the given codes.
+  /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
+  /// \param foundColorIndices if specified then it will contain the indices of the found colors in the color table.
+  /// \param foundPreferredColorNodeIndices if specified then it will contain the indices of the found color nodes in the preferredColorNodeNames list.
   std::vector<std::string> FindColorNodes(
     std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
     std::string typeCodingSchemeDesignator, std::string typeCodeValue,
@@ -142,16 +146,49 @@ public:
     std::string regionCodingSchemeDesignator, std::string regionCodeValue,
     std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
     std::vector<std::string> preferredColorNodeNames,
-    vtkIntArray* foundColorIndices=nullptr);
+    vtkIntArray* foundColorIndices=nullptr,
+    vtkIntArray* foundPreferredColorNodeIndices=nullptr);
 
   /// Return collection of vtkSlicerTerminologyEntry objects designated by the given codes.
   /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
+  /// \param foundEntries if specified then it will contain the found terminology entries.
+  /// \param foundPreferredColorNodeIndices if specified then it will contain the indices
+  ///   of the found terminologies in the in the preferredTerminologyNames list.
   std::vector<std::string> FindTerminologyNames(
     std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
     std::string typeCodingSchemeDesignator, std::string typeCodeValue,
     std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
     std::vector<std::string> preferredTerminologyNames,
-    vtkCollection* foundEntries=nullptr);
+    vtkCollection* foundEntries=nullptr,
+    vtkIntArray* foundPreferredTerminologyNameIndices =nullptr);
+
+  /// Find the best fitting color node or terminology
+  /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
+  /// \param foundTerminologyName found terminology name (color node name in case a color node was found)
+  /// \param foundColorNodeID found color node ID (empty if terminology was found)
+  /// \param foundColorIndex found color index in the color node (-1 if color was not found in the table)
+  bool FindFirstColorNodeOrTerminology(
+    vtkSlicerTerminologyEntry* entry,
+    std::vector<std::string> preferredTerminologyNames,
+    std::string& foundTerminologyName,
+    std::string& foundColorNodeID,
+    int& foundColorIndex);
+
+  /// Find the best fitting color node or terminology
+  /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
+  /// \param foundTerminologyName found terminology name (color node name in case a color node was found)
+  /// \param foundColorNodeID found color node ID (empty if terminology was found)
+  /// \param foundColorIndex found color index in the color node (-1 if color was not found in the table)
+  bool FindFirstColorNodeOrTerminology(
+    std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
+    std::string typeCodingSchemeDesignator, std::string typeCodeValue,
+    std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
+    std::string regionCodingSchemeDesignator, std::string regionCodeValue,
+    std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
+    std::vector<std::string> preferredTerminologyNames,
+    std::string& foundTerminologyName,
+    std::string &foundColorNodeID,
+    int& foundColorIndex);
 
   /// Return list of region context names containing the specified region.
   /// \param preferredRegionContextNames List of region context names in order of preference. If an empty list is provided then all context are searched.
@@ -312,7 +349,9 @@ public:
   /// Get metadata (such as recommended color) from loaded terminologies.
   /// The entry will be first searched in the terminology context that is specified in the entry,
   /// if not found then it is searched in all the other loaded terminology contexts.
-  bool UpdateEntryFromLoadedTerminologies(vtkSlicerTerminologyEntry* entry);
+  bool UpdateEntryFromLoadedTerminologies(vtkSlicerTerminologyEntry* entry,
+    std::vector<std::string> preferredTerminologyNames,
+    std::vector<std::string> preferredRegionContextNames);
 
   /// Assemble human readable info string from a terminology entry, for example for tooltips
   static std::string GetInfoStringFromTerminologyEntry(vtkSlicerTerminologyEntry* entry);

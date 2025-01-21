@@ -1039,7 +1039,6 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::setCurrentCategory(vtkSlicerTermi
   if (!category)
   {
     this->CurrentCategoryObject->Initialize();
-    qCritical() << Q_FUNC_INFO << ": Invalid category object set";
     return false;
   }
 
@@ -1697,117 +1696,36 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::findTerminology(
   {
     return false;
   }
-  // Select the first terminology item by default
-  terminologyNameToSelect = this->ComboBox_Terminology->itemText(0);
-  colorNodeIDToSelect = this->ComboBox_Terminology->itemData(0).toString();
-  colorIndexInColorTable = -1;
-
-  if (!entry->GetTerminologyContextName() &&
-    (!entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue()))
-  {
-    // empty item selected, use the default (first terminology)
-    return true;
-  }
 
   // Get list of last terminology contexts selected by the user from application settings
   std::vector<std::string> preferredTerminologyNames;
-    QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
-    if (settings->contains("Terminology/LastTerminologyContexts"))
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  if (settings->contains("Terminology/LastTerminologyContexts"))
+  {
+    QStringList lastTerminologyContextNames = settings->value("Terminology/LastTerminologyContexts").toStringList();
+    for (auto& name : lastTerminologyContextNames)
     {
-      QStringList lastTerminologyContextNames = settings->value("Terminology/LastTerminologyContexts").toStringList();
-      for (auto& name : lastTerminologyContextNames)
-      {
-        preferredTerminologyNames.push_back(name.toUtf8().constData());
-      }
-    }
-  std::string categoryScheme;
-  std::string categoryValue;
-  vtkSlicerTerminologyCategory* categoryObject = entry->GetCategoryObject();
-  if (categoryObject)
-  {
-    categoryScheme = categoryObject->GetCodingSchemeDesignator();
-    categoryValue = categoryObject->GetCodeValue();
-  }
-  std::string typeScheme;
-  std::string typeValue;
-  vtkSlicerTerminologyType* typeObject = entry->GetTypeObject();
-  if (typeObject)
-  {
-    typeScheme = typeObject->GetCodingSchemeDesignator();
-    typeValue = typeObject->GetCodeValue();
-  }
-  std::string typeModifierScheme;
-  std::string typeModifierValue;
-  vtkSlicerTerminologyType* typeModifierObject = entry->GetTypeModifierObject();
-  if (typeModifierObject && typeModifierObject->GetCodingSchemeDesignator() && typeModifierObject->GetCodeValue())
-  {
-    typeModifierScheme = typeModifierObject->GetCodingSchemeDesignator();
-    typeModifierValue = typeModifierObject->GetCodeValue();
-  }
-  vtkSlicerTerminologyType* regionObject = entry->GetRegionObject();
-  std::string regionScheme;
-  std::string regionValue;
-  if (regionObject && regionObject->GetCodingSchemeDesignator() && regionObject->GetCodeValue())
-  {
-    regionScheme = regionObject->GetCodingSchemeDesignator();
-    regionValue = regionObject->GetCodeValue();
-  }
-  vtkSlicerTerminologyType* regionModifierObject = entry->GetRegionModifierObject();
-  std::string regionModifierScheme;
-  std::string regionModifierValue;
-  if (regionModifierObject && regionModifierObject->GetCodingSchemeDesignator() && regionModifierObject->GetCodeValue())
-  {
-    regionModifierScheme = regionModifierObject->GetCodingSchemeDesignator();
-    regionModifierValue = regionModifierObject->GetCodeValue();
-  }
-
-  std::vector<std::string> foundColorTableNodeIds;
-  vtkNew<vtkIntArray> foundColorIndices;
-  std::vector<std::string> foundTerminologyNames;
-  foundColorTableNodeIds = logic->FindColorNodes(
-    categoryScheme, categoryValue, typeScheme, typeValue, typeModifierScheme, typeModifierValue,
-    regionScheme, regionValue, regionModifierScheme, regionModifierValue,
-    preferredTerminologyNames, foundColorIndices);
-  if (foundColorTableNodeIds.empty())
-  {
-    foundTerminologyNames = logic->FindTerminologyNames(
-      categoryScheme, categoryValue, typeScheme, typeValue, typeModifierScheme, typeModifierValue,
-      preferredTerminologyNames);
-  }
-  if (!preferredTerminologyNames.empty() && (foundColorTableNodeIds.empty() && foundTerminologyNames.empty()))
-  {
-    // Preferred terminologies do not contain the item, try to get first terminology containing it among all loaded contexts
-    foundColorTableNodeIds = logic->FindColorNodes(
-      categoryScheme, categoryValue, typeScheme, typeValue, typeModifierScheme, typeModifierValue,
-      regionScheme, regionValue, regionModifierScheme, regionModifierValue,
-      std::vector<std::string>(), foundColorIndices);
-
-    foundTerminologyNames = logic->FindTerminologyNames(
-      categoryScheme, categoryValue, typeScheme, typeValue, typeModifierScheme, typeModifierValue,
-      std::vector<std::string>());
-  }
-
-  if (!foundColorTableNodeIds.empty())
-  {
-    std::string firstColorNodeID = foundColorTableNodeIds.front();
-    vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(logic->GetMRMLScene()->GetNodeByID(firstColorNodeID));
-    if (!colorNode)
-    {
-      qCritical() << Q_FUNC_INFO << ": Failed to find color node by ID " << firstColorNodeID.c_str();
-      return false;
-    }
-    terminologyNameToSelect = QString::fromStdString(colorNode->GetName() ? colorNode->GetName() : "");
-    colorNodeIDToSelect = QString::fromStdString(firstColorNodeID);
-    if (foundColorIndices->GetNumberOfValues() > 0)
-    {
-      colorIndexInColorTable = foundColorIndices->GetValue(0);
+      preferredTerminologyNames.push_back(name.toStdString().c_str());
     }
   }
-  else if (!foundTerminologyNames.empty())
+
+  std::string foundColorNodeID;
+  int foundColorIndexInColorTable{ -1 };
+  std::string foundTerminologyName;
+  if (logic->FindFirstColorNodeOrTerminology(entry, preferredTerminologyNames, foundTerminologyName, foundColorNodeID, foundColorIndexInColorTable))
   {
-    terminologyNameToSelect = QString::fromStdString(foundTerminologyNames[0]);
-    colorNodeIDToSelect.clear();
+    terminologyNameToSelect = QString::fromStdString(foundTerminologyName);
+    colorNodeIDToSelect = QString::fromStdString(foundColorNodeID);
+    colorIndexInColorTable = foundColorIndexInColorTable;
   }
+  else
+  {
+    // Not found, select the first terminology item by default
+    terminologyNameToSelect = this->ComboBox_Terminology->itemText(0);
+    colorNodeIDToSelect = this->ComboBox_Terminology->itemData(0).toString();
+    colorIndexInColorTable = -1;
+  }
+
   return true;
 }
 
@@ -1844,35 +1762,17 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
 
     // Select category
     vtkSlicerTerminologyCategory* categoryObject = entry->GetCategoryObject();
-    if (!d->setCurrentCategory(categoryObject))
-    {
-      qCritical() << Q_FUNC_INFO << ": Failed to find category with name " << (categoryObject->GetCodeMeaning() ? categoryObject->GetCodeMeaning() : "NULL");
-      returnValue = false;
-    }
+    d->setCurrentCategory(categoryObject);
 
     // Select type
     vtkSlicerTerminologyType* typeObject = entry->GetTypeObject();
-    if (!typeObject)
-    {
-      qCritical() << Q_FUNC_INFO << ": No type object in terminology entry";
-      returnValue = false;
-    }
-    else if (!d->setCurrentType(typeObject))
-    {
-      qCritical() << Q_FUNC_INFO << ": Failed to find type with name " << (typeObject->GetCodeMeaning() ? typeObject->GetCodeMeaning() : "NULL");
-      returnValue = false;
-    }
+    d->setCurrentType(typeObject);
 
     // Select type modifier
     vtkSlicerTerminologyType* typeModifierObject = entry->GetTypeModifierObject();
     if (typeObject && typeObject->GetHasModifiers() && typeModifierObject && typeModifierObject->GetCodeValue())
     {
-      if (!d->setCurrentTypeModifier(typeModifierObject))
-      {
-        qCritical() << Q_FUNC_INFO << ": Failed to find type modifier with name"
-          << (typeModifierObject->GetCodeMeaning() ? typeModifierObject->GetCodeMeaning() : "NULL");
-        returnValue = false;
-      }
+      d->setCurrentTypeModifier(typeModifierObject);
     }
 
     // Set region context selection if category allows
@@ -1951,8 +1851,7 @@ bool qSlicerTerminologyNavigatorWidget::setTerminologyEntry(vtkSlicerTerminology
 QString qSlicerTerminologyNavigatorWidget::nameFromTerminology(vtkSlicerTerminologyEntry* entry)
 {
   QString name;
-  if ( !entry->GetTypeObject() || !entry->GetTypeObject()->GetCodeValue() ||
-       (entry->GetTypeObject()->GetHasModifiers() && !entry->GetTypeModifierObject()) )
+  if ( !entry->GetTypeObject() || entry->GetTypeObject()->IsEmpty())
   {
     // Incomplete terminology selection, name is empty
     return name;

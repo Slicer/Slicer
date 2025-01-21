@@ -66,6 +66,8 @@ void qMRMLColorTableViewPrivate::init()
   q->setModel(sortFilterModel);
 
   q->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  // TODO: resizing to contents can be extremely slow on large color tables
   q->horizontalHeader()->setStretchLastSection(false);
   q->horizontalHeader()->setSectionResizeMode(colorModel->colorColumn(), QHeaderView::ResizeToContents);
   q->horizontalHeader()->setSectionResizeMode(colorModel->opacityColumn(), QHeaderView::ResizeToContents);
