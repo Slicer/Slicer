@@ -37,7 +37,6 @@
 #include "vtkMRMLMarkupsROIDisplayNode.h"
 #include "vtkMRMLMarkupsROIJsonStorageNode.h"
 #include "vtkMRMLMarkupsROINode.h"
-#include "vtkMRMLMarkupsStorageNode.h"
 #include "vtkMRMLTableStorageNode.h"
 
 // Markups VTK widgets includes
@@ -57,7 +56,6 @@
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
-#include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSceneViewNode.h"
 #include <vtkMRMLSubjectHierarchyNode.h>
@@ -73,8 +71,6 @@
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
-#include "vtkMRMLAnnotationSnapshotNode.h"
-#include "vtkMRMLAnnotationSnapshotStorageNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 
 // vtkAddon includes
