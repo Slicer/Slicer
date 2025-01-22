@@ -19,9 +19,10 @@
 #include "vtkMRMLAbstractLogic.h"
 
 // STD includes
-#include <vector>
 #include <deque>
+#include <vector>
 
+// MRML includes
 class vtkMRMLDisplayNode;
 class vtkMRMLLinearTransformNode;
 class vtkMRMLModelDisplayNode;
@@ -32,17 +33,17 @@ class vtkMRMLSliceLayerLogic;
 class vtkMRMLSliceNode;
 class vtkMRMLVolumeNode;
 
+// VTK includes
 class vtkAlgorithmOutput;
 class vtkCollection;
 class vtkImageBlend;
-class vtkTransform;
 class vtkImageData;
 class vtkImageMathematics;
 class vtkImageReslice;
 class vtkTransform;
 
-struct SliceLayerInfo;
 struct BlendPipeline;
+struct SliceLayerInfo;
 
 /// \brief Slicer logic class for slice manipulation.
 ///

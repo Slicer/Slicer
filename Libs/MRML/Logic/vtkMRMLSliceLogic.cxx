@@ -14,8 +14,8 @@
 
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
-#include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceLayerLogic.h"
+#include "vtkMRMLSliceLogic.h"
 
 // MRML includes
 #include <vtkEventBroker.h>
