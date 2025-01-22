@@ -1401,13 +1401,13 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char *
   // Setting color values using the pointer returned by WritePointer()
   // works similarly to vtkLookupTable::SetTableValue().
   unsigned char* rgba = lut->WritePointer(firstEntry, lastEntry - firstEntry + 1);
-  for (int indx = firstEntry; indx <= lastEntry; indx++)
+  for (int index = firstEntry; index <= lastEntry; index++)
   {
     *(rgba++) = static_cast<unsigned char>(r * 255.0 + 0.5);
     *(rgba++) = static_cast<unsigned char>(g * 255.0 + 0.5);
     *(rgba++) = static_cast<unsigned char>(b * 255.0 + 0.5);
     *(rgba++) = static_cast<unsigned char>(a * 255.0 + 0.5);
-    this->Names[indx] = nameStr;
+    this->Names[index] = nameStr;
   }
   lut->BuildSpecialColors();
   lut->Modified();
