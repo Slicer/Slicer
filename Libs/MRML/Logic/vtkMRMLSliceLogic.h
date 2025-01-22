@@ -37,10 +37,8 @@ class vtkMRMLVolumeNode;
 class vtkAlgorithmOutput;
 class vtkCollection;
 class vtkImageBlend;
-class vtkImageData;
 class vtkImageMathematics;
 class vtkImageReslice;
-class vtkTransform;
 
 struct BlendPipeline;
 struct SliceLayerInfo;
