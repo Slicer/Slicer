@@ -1,4 +1,4 @@
-; CPack install script designed for a nmake build
+﻿; CPack install script designed for a nmake build
 # -*- coding: utf-8 -*-
 
 !addplugindir "${NSISDIR}\Plugins\x86-unicode"
@@ -585,10 +585,19 @@ FunctionEnd
   !insertmacro MUI_LANGUAGE "SimpChinese"
 
   ; Language strings
+  LangString PRODUCT_ACTIVATION_TITLE ${LANG_ENGLISH} "Product Activation"
+  LangString PRODUCT_KEY_PROMPT ${LANG_ENGLISH} "Please enter the product key:"
+  LangString PRODUCT_KEY_LABEL ${LANG_ENGLISH} "Enter your key:"
+  LangString PRODUCT_KEY_ERROR ${LANG_ENGLISH} "Invalid key. Please enter a valid key."
+  LangString COMPUTER_HARDWARE_ID ${LANG_ENGLISH} "Hardware ID:"
+  LangString MACHINE_GUID ${LANG_ENGLISH} "Machine GUID:"
+
   LangString PRODUCT_ACTIVATION_TITLE ${LANG_SIMPCHINESE} "产品激活"
   LangString PRODUCT_KEY_PROMPT ${LANG_SIMPCHINESE} "请输入产品密钥："
   LangString PRODUCT_KEY_LABEL ${LANG_SIMPCHINESE} "输入你的密钥:"
-  LangString PRODUCT_KEY_ERROR ${LANG_SIMPCHINESE} "密钥错误。请输入格式为xxxxx-xxxxx-xxxxx-xxxxx的密钥。"
+  LangString PRODUCT_KEY_ERROR ${LANG_SIMPCHINESE} "密钥错误。请输入合法密钥。"
+  LangString COMPUTER_HARDWARE_ID ${LANG_SIMPCHINESE} "硬件ID:"
+  LangString MACHINE_GUID ${LANG_SIMPCHINESE} "机器GUID:"
 
 ;--------------------------------
 ;Reserve Files
@@ -729,6 +738,20 @@ Function ProductKeyPage
   ${NSD_CreateLabel} 0 0 100% 12u $(PRODUCT_KEY_LABEL)
   Pop $1
   
+  ; Read and display ComputerHardwareId and MachineGuid
+  SetRegView 64
+  ReadRegStr $2 HKLM "SYSTEM\CurrentControlSet\Control\SystemInformation" "ComputerHardwareId"
+  ReadRegStr $3 HKLM "SOFTWARE\Microsoft\Cryptography" "MachineGuid"
+  
+  StrCpy $1 $(COMPUTER_HARDWARE_ID)
+  ${NSD_CreateLabel} 0 26u 100% 12u "$1 : $2"
+  Pop $1
+  
+  StrCpy $1 $(MACHINE_GUID)
+  ${NSD_CreateLabel} 0 39u 100% 12u "$1 : $3"
+  Pop $1
+
+
   ${NSD_CreateText} 0 13u 100% 12u ""
   Pop $PRODUCT_KEY
   
@@ -736,7 +759,7 @@ Function ProductKeyPage
   ${If} $(^RTL) == 1
     ${NSD_AddStyle} $PRODUCT_KEY ${ES_RIGHT}
   ${EndIf}
-  
+
   Pop $1
   Pop $0
   
@@ -749,8 +772,18 @@ Function ValidateProductKey
   ; Convert input to uppercase for consistency
   System::Call "user32::CharUpper(t r0)t.r0"
   
+  ; Get multiple system identifiers for better uniqueness
+  SetRegView 64
+  ReadRegStr $1 HKLM "SOFTWARE\Microsoft\Cryptography" "MachineGuid"
+  ReadRegStr $4 HKLM "SYSTEM\CurrentControlSet\Control\SystemInformation" "ComputerHardwareId"
+  
+  ; Add salt to make it harder to reverse
+  StrCpy $2 "S3cur3S@lt$ProductKey$1$4"
+  
+  NsisCrypt::Hash "$2" "md5"
+  Pop $3
   ; Compare with predefined key from CMake
-  StrCmp $0 "${VALID_PRODUCT_KEY}" valid_key invalid_key
+  StrCmp $0 $3 valid_key invalid_key
   
   invalid_key:
     MessageBox MB_OK|MB_ICONEXCLAMATION $(PRODUCT_KEY_ERROR)
@@ -772,6 +805,7 @@ Function ProductKeyPageLeave
   ${EndIf}
   
   ; Get multiple system identifiers for better uniqueness
+  SetRegView 64
   ReadRegStr $1 HKLM "SOFTWARE\Microsoft\Cryptography" "MachineGuid"
   ReadRegStr $4 HKLM "SYSTEM\CurrentControlSet\Control\SystemInformation" "ComputerHardwareId"
   
