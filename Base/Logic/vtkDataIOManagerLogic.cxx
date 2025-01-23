@@ -354,7 +354,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
        ( !(cm->GetEnableForceRedownload())) )
   {
     dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateTransferDone();
-    vtkDebugMacro("QueueRead: the destination file is there and we're not forceing redownload");
+    vtkDebugMacro("QueueRead: the destination file is there and we're not forcing redownload");
     return 1;
   }
 

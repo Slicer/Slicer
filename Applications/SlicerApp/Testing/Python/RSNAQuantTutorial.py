@@ -223,6 +223,7 @@ class RSNAQuantTutorialTest(ScriptedLoadableModuleTest):
 
         extractPath = SampleData.downloadFromURL(
             fileNames="dataset3_PETCT.zip",
+            loadFileTypes="ZipFile",
             uris=TESTING_DATA_URL + "SHA256/11e81af3462076f4ca371b632e03ed435240042915c2daf07f80059b3f78f88d",
             checksums="SHA256:11e81af3462076f4ca371b632e03ed435240042915c2daf07f80059b3f78f88d")[0]
 

@@ -37,26 +37,16 @@
 #include "vtkMRMLMarkupsROIDisplayNode.h"
 #include "vtkMRMLMarkupsROIJsonStorageNode.h"
 #include "vtkMRMLMarkupsROINode.h"
-#include "vtkMRMLMarkupsStorageNode.h"
 #include "vtkMRMLTableStorageNode.h"
 
-// Markups vtk widgets includes
+// Markups VTK widgets includes
 #include "vtkSlicerAngleWidget.h"
 #include "vtkSlicerCurveWidget.h"
 #include "vtkSlicerLineWidget.h"
+#include "vtkSlicerMarkupsInteractionWidget.h"
 #include "vtkSlicerPlaneWidget.h"
 #include "vtkSlicerPointsWidget.h"
 #include "vtkSlicerROIWidget.h"
-#include "vtkSlicerMarkupsInteractionWidget.h"
-
-// Annotation MRML includes
-#include "vtkMRMLAnnotationLineDisplayNode.h"
-#include "vtkMRMLAnnotationRulerNode.h"
-#include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLAnnotationFiducialNode.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLAnnotationHierarchyNode.h"
 
 // MRML includes
 #include "vtkMRMLCameraNode.h"
@@ -66,25 +56,22 @@
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
-#include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSceneViewNode.h"
 #include <vtkMRMLSubjectHierarchyNode.h>
 #include "vtkMRMLTableNode.h"
 
 // Annotation/MRML includes for legacy annotation file loading
-#include "vtkMRMLAnnotationRulerNode.h"
-#include "vtkMRMLAnnotationRulerStorageNode.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationFiducialsStorageNode.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLAnnotationLineDisplayNode.h"
+#include "vtkMRMLAnnotationLinesStorageNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationROINode.h"
-#include "vtkMRMLAnnotationSnapshotNode.h"
-#include "vtkMRMLAnnotationSnapshotStorageNode.h"
-#include "vtkMRMLAnnotationLinesStorageNode.h"
+#include "vtkMRMLAnnotationRulerNode.h"
+#include "vtkMRMLAnnotationRulerStorageNode.h"
+#include "vtkMRMLAnnotationTextDisplayNode.h"
 
 // vtkAddon includes
 #include "vtkAddonMathUtilities.h"

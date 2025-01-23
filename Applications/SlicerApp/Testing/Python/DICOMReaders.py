@@ -108,7 +108,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
                 import SampleData
 
                 dicomFilesDirectory = SampleData.downloadFromURL(
-                    fileNames=dataset["fileName"], uris=dataset["url"], checksums=dataset["checksum"])[0]
+                    fileNames=dataset["fileName"], loadFileTypes="ZipFile", uris=dataset["url"], checksums=dataset["checksum"])[0]
                 self.delayDisplay("Finished with download")
 
                 #
@@ -222,6 +222,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
 
         dicomFilesDirectory = SampleData.downloadFromURL(
             fileNames="deidentifiedMRHead-dcm-one-series.zip",
+            loadFileTypes="ZipFile",
             uris=TESTING_DATA_URL + "SHA256/899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928",
             checksums="SHA256:899f3f8617ca53bad7dca0b2908478319e708b48ff41dfa64b6bac1d76529928")[0]
         self.delayDisplay("Finished with download\n")

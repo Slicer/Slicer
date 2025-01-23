@@ -982,7 +982,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
       axmap[axi] = axi - (axi <= rangeAxisIdx[0]);
     }
     // The memory size of the input and output of nrrdAxesPermute is
-    // the same; the existing this->nrrd->data is re-used.
+    // the same; the existing this->nrrd->data is reused.
     if (nrrdCopy(ntmp, this->nrrd)
       || nrrdAxesPermute(this->nrrd, ntmp, axmap))
     {

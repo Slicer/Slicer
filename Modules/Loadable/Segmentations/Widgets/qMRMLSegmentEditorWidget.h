@@ -52,7 +52,7 @@ class qSlicerAbstractModuleWidget;
 
 /// \brief Qt widget for editing a segment from a segmentation using Editor effects.
 ///
-/// Widget for editing segmentations that can be re-used in any module.
+/// Widget for editing segmentations that can be reused in any module.
 ///
 /// IMPORTANT: The embedding module is responsible for setting the MRML scene and the
 ///   management of the \sa vtkMRMLSegmentEditorNode parameter set node.

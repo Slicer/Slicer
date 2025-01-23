@@ -101,7 +101,7 @@ class SlicerRestoreSceneViewCrashIssue3445Test(ScriptedLoadableModuleTest):
 
         filePath = SampleData.downloadFromURL(
             fileNames="BrainAtlas2012.mrb",
-            loadFiles=True,
+            loadFiles=False,
             uris=TESTING_DATA_URL + "SHA256/688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1",
             checksums="SHA256:688ebcc6f45989795be2bcdc6b8b5bfc461f1656d677ed3ddef8c313532687f1")[0]
 
