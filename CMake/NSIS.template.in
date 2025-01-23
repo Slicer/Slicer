@@ -743,15 +743,15 @@ Function ProductKeyPage
   ReadRegStr $2 HKLM "SOFTWARE\Microsoft\Cryptography" "MachineGuid"
   ReadRegStr $3 HKLM "SYSTEM\CurrentControlSet\Control\SystemInformation" "ComputerHardwareId"
   
-  ${NSD_CreateLabel} 0 39u 100% 12u "$(MACHINE_GUID)"
+  ${NSD_CreateLabel} 0 13u 100% 12u "$(MACHINE_GUID)"
   Pop $1
-  ${NSD_CreateText} 0 52u 100% 12u "$2"
+  ${NSD_CreateText} 0 26u 100% 12u "$2"
   Pop $1
   SendMessage $1 ${EM_SETREADONLY} 1 0 ; Make the text control read - only
 
-  ${NSD_CreateLabel} 0 13u 100% 12u "$(COMPUTER_HARDWARE_ID)"
+  ${NSD_CreateLabel} 0 39u 100% 12u "$(COMPUTER_HARDWARE_ID)"
   Pop $1
-  ${NSD_CreateText} 0 26u 100% 12u "$3"
+  ${NSD_CreateText} 0 52u 100% 12u "$3"
   Pop $1
   SendMessage $1 ${EM_SETREADONLY} 1 0 ; Make the text control read - only
 
