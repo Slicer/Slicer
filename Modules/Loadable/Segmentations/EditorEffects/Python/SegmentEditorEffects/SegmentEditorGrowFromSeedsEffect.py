@@ -45,7 +45,7 @@ class SegmentEditorGrowFromSeedsEffect(AbstractScriptedSegmentEditorAutoComplete
         Location, size, and shape of initial segments and content of source volume are taken into account.
         Final segment boundaries will be placed where source volume brightness changes abruptly. Instructions:<p>
         <ul style="margin: 0">
-        <li>Use Paint or other offects to draw seeds in each region that should belong to a separate segment.
+        <li>Use Paint or other effects to draw seeds in each region that should belong to a separate segment.
         Paint each seed with a different segment. Minimum two segments are required.
         <li>Click <dfn>Initialize</dfn> to compute preview of full segmentation.
         <li>Browse through image slices. If previewed segmentation result is not correct then switch to
