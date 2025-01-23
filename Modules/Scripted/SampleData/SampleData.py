@@ -1081,7 +1081,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         sceneMTime = slicer.mrmlScene.GetMTime()
         filePaths = logic.downloadFromSource(SampleDataSource(
             uris=TESTING_DATA_URL + "SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93",
-            fileNames="MR-head.nrrd"))
+            fileNames="MR-head.nrrd", loadFiles=False))
         self.assertEqual(len(filePaths), 1)
         self.assertTrue(os.path.exists(filePaths[0]))
         self.assertTrue(os.path.isfile(filePaths[0]))
@@ -1091,7 +1091,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         filePaths = logic.downloadFromSource(SampleDataSource(
             uris=[TESTING_DATA_URL + "SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93",
                   TESTING_DATA_URL + "SHA256/4507b664690840abb6cb9af2d919377ffc4ef75b167cb6fd0f747befdb12e38e"],
-            fileNames=["MR-head.nrrd", "CT-chest.nrrd"]))
+            fileNames=["MR-head.nrrd", "CT-chest.nrrd"],
+            loadFiles=[False, False]))
         self.assertEqual(len(filePaths), 2)
         self.assertTrue(os.path.exists(filePaths[0]))
         self.assertTrue(os.path.isfile(filePaths[0]))
@@ -1104,7 +1105,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         sceneMTime = slicer.mrmlScene.GetMTime()
         filePaths = logic.downloadFromSource(SampleDataSource(
             uris=TESTING_DATA_URL + "SHA256/b902f635ef2059cd3b4ba854c000b388e4a9e817a651f28be05c22511a317ec7",
-            fileNames="TinyPatient_Seg.zip"))
+            fileNames="TinyPatient_Seg.zip",
+            loadFileTypes="ZipFile"))
         self.assertEqual(len(filePaths), 1)
         self.assertTrue(os.path.exists(filePaths[0]))
         self.assertTrue(os.path.isdir(filePaths[0]))
@@ -1113,12 +1115,11 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     def test_downloadFromSource_loadMRBFile(self):
         logic = SampleDataLogic()
         sceneMTime = slicer.mrmlScene.GetMTime()
-        filePaths = logic.downloadFromSource(SampleDataSource(
+        nodes = logic.downloadFromSource(SampleDataSource(
             uris=TESTING_DATA_URL + "SHA256/5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8",
             loadFiles=True, fileNames="slicer4minute.mrb"))
-        self.assertEqual(len(filePaths), 1)
-        self.assertTrue(os.path.exists(filePaths[0]))
-        self.assertTrue(os.path.isfile(filePaths[0]))
+        self.assertEqual(len(nodes), 1)
+        self.assertIsInstance(nodes[0], slicer.vtkMRMLCameraNode)
         self.assertTrue(sceneMTime < slicer.mrmlScene.GetMTime())
 
     def test_downloadFromSource_loadMRMLFile(self):
@@ -1132,11 +1133,10 @@ class SampleDataTest(ScriptedLoadableModuleTest):
       """).strip())
         tempFile.close()
         sceneMTime = slicer.mrmlScene.GetMTime()
-        filePaths = logic.downloadFromSource(SampleDataSource(
+        nodes = logic.downloadFromSource(SampleDataSource(
             uris=self.path2uri(tempFile.fileName()), loadFiles=True, fileNames="scene.mrml"))
-        self.assertEqual(len(filePaths), 1)
-        self.assertTrue(os.path.exists(filePaths[0]))
-        self.assertTrue(os.path.isfile(filePaths[0]))
+        self.assertEqual(len(nodes), 1)
+        self.assertIsInstance(nodes[0], slicer.vtkMRMLScene)
         self.assertTrue(sceneMTime < slicer.mrmlScene.GetMTime())
 
     def test_downloadFromSource_downloadMRBFile(self):
@@ -1144,7 +1144,8 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         sceneMTime = slicer.mrmlScene.GetMTime()
         filePaths = logic.downloadFromSource(SampleDataSource(
             uris=TESTING_DATA_URL + "SHA256/5a1c78c3347f77970b1a29e718bfa10e5376214692d55a7320af94b9d8d592b8",
-            fileNames="slicer4minute.mrb"))
+            fileNames="slicer4minute.mrb",
+            loadFileTypes="SceneFile"))
         self.assertEqual(len(filePaths), 1)
         self.assertTrue(os.path.exists(filePaths[0]))
         self.assertTrue(os.path.isfile(filePaths[0]))
@@ -1162,7 +1163,7 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         tempFile.close()
         sceneMTime = slicer.mrmlScene.GetMTime()
         filePaths = logic.downloadFromSource(SampleDataSource(
-            uris=self.path2uri(tempFile.fileName()), fileNames="scene.mrml"))
+            uris=self.path2uri(tempFile.fileName()), fileNames="scene.mrml", loadFileTypes="SceneFile"))
         self.assertEqual(len(filePaths), 1)
         self.assertTrue(os.path.exists(filePaths[0]))
         self.assertTrue(os.path.isfile(filePaths[0]))
@@ -1179,12 +1180,14 @@ class SampleDataTest(ScriptedLoadableModuleTest):
     def test_downloadFromSource_loadNodeFromMultipleFiles(self):
         logic = SampleDataLogic()
         nodes = logic.downloadFromSource(SampleDataSource(
-            uris=[TESTING_DATA_URL + "SHA256/d785837276758ddd9d21d76a3694e7fd866505a05bc305793517774c117cb38d",
-                  TESTING_DATA_URL + "SHA256/67564aa42c7e2eec5c3fd68afb5a910e9eab837b61da780933716a3b922e50fe"],
-            fileNames=["DTIVolume.raw.gz", "DTIVolume.nhdr"],
-            nodeNames=[None, "DTIVolume"]))
-        self.assertEqual(len(nodes), 1)
-        self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("DTIVolume"))
+            uris=[TESTING_DATA_URL + "SHA256/bbfd8dd1914e9d7af09df3f6e254374064f6993a37552cc587581623a520a11f",
+                  TESTING_DATA_URL + "SHA256/33825585b01a506e532934581a7bddd9de9e7b898e24adfed5454ffc6dfe48ea"],
+            fileNames=["MRHeadResampled.raw.gz", "MRHeadResampled.nhdr"],
+            nodeNames=[None, "MRHeadResampled"],
+            loadFiles=[False, True]))
+        self.assertEqual(len(nodes), 2)
+        self.assertEqual(os.path.basename(nodes[0]), "MRHeadResampled.raw.gz")
+        self.assertEqual(nodes[1], slicer.mrmlScene.GetFirstNodeByName("MRHeadResampled"))
 
     def test_downloadFromSource_loadNodesWithLoadFileFalse(self):
         logic = SampleDataLogic()
