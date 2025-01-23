@@ -192,6 +192,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
 
         dicomFilesDirectory = SampleData.downloadFromURL(
             fileNames="dataset1_Thorax_Abdomen.zip",
+            loadFileTypes="ZipFile",
             uris=TESTING_DATA_URL + "SHA256/17a4199aad03a373dab27dc17e5bfcf84fc194d0a30975b4073e5b595d43a56a",
             checksums="SHA256:17a4199aad03a373dab27dc17e5bfcf84fc194d0a30975b4073e5b595d43a56a")[0]
 

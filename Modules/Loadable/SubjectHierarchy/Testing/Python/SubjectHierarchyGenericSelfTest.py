@@ -495,7 +495,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         sceneFile = SampleData.downloadFromURL(
             fileNames=self.attributeFilterTestSceneFileName,
             uris=self.attributeFilterTestSceneFileUrl,
-            # loadFiles=True,
+            loadFileTypes="SceneFile",
             checksums=self.attributeFilterTestSceneChecksum)[0]
         if not os.path.exists(sceneFile):
             logging.error("Failed to download attribute filter test scene to path " + str(sceneFile))

@@ -120,6 +120,7 @@ class ScenePerformanceLogic(ScriptedLoadableModuleLogic):
         import SampleData
         return SampleData.downloadFromURL(
             fileNames=downloadFileName,
+            loadFiles=False,
             uris=downloadURL,
             checksums=downloadFileChecksum)[0]
 
