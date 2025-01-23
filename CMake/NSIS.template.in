@@ -740,19 +740,26 @@ Function ProductKeyPage
   
   ; Read and display ComputerHardwareId and MachineGuid
   SetRegView 64
-  ReadRegStr $2 HKLM "SYSTEM\CurrentControlSet\Control\SystemInformation" "ComputerHardwareId"
-  ReadRegStr $3 HKLM "SOFTWARE\Microsoft\Cryptography" "MachineGuid"
+  ReadRegStr $2 HKLM "SOFTWARE\Microsoft\Cryptography" "MachineGuid"
+  ReadRegStr $3 HKLM "SYSTEM\CurrentControlSet\Control\SystemInformation" "ComputerHardwareId"
   
-  StrCpy $1 $(COMPUTER_HARDWARE_ID)
-  ${NSD_CreateLabel} 0 26u 100% 12u "$1 : $2"
+  ${NSD_CreateLabel} 0 39u 100% 12u "$(MACHINE_GUID)"
   Pop $1
-  
-  StrCpy $1 $(MACHINE_GUID)
-  ${NSD_CreateLabel} 0 39u 100% 12u "$1 : $3"
+  ${NSD_CreateText} 0 52u 100% 12u "$2"
   Pop $1
+  SendMessage $1 ${EM_SETREADONLY} 1 0 ; Make the text control read - only
 
+  ${NSD_CreateLabel} 0 13u 100% 12u "$(COMPUTER_HARDWARE_ID)"
+  Pop $1
+  ${NSD_CreateText} 0 26u 100% 12u "$3"
+  Pop $1
+  SendMessage $1 ${EM_SETREADONLY} 1 0 ; Make the text control read - only
 
-  ${NSD_CreateText} 0 13u 100% 12u ""
+  StrCpy $5 "S3cur3S@lt${VALID_PRODUCT_KEY}$2$3"
+  Crypto::HashData "MD5" "$5"
+  Pop $6
+
+  ${NSD_CreateText} 0 78u 100% 12u ""
   Pop $PRODUCT_KEY
   
   ; Support RTL languages if needed
@@ -778,9 +785,8 @@ Function ValidateProductKey
   ReadRegStr $4 HKLM "SYSTEM\CurrentControlSet\Control\SystemInformation" "ComputerHardwareId"
   
   ; Add salt to make it harder to reverse
-  StrCpy $2 "S3cur3S@lt$ProductKey$1$4"
-  
-  NsisCrypt::Hash "$2" "md5"
+  StrCpy $2 "S3cur3S@lt${VALID_PRODUCT_KEY}$1$4"
+  Crypto::HashData "MD5" "$2"
   Pop $3
   ; Compare with predefined key from CMake
   StrCmp $0 $3 valid_key invalid_key
@@ -810,9 +816,9 @@ Function ProductKeyPageLeave
   ReadRegStr $4 HKLM "SYSTEM\CurrentControlSet\Control\SystemInformation" "ComputerHardwareId"
   
   ; Add salt to make it harder to reverse
-  StrCpy $2 "S3cur3S@lt$ProductKey$1$4"
+  StrCpy $2 "S3cur3S@lt${VALID_PRODUCT_KEY}$1$4"
   
-  NsisCrypt::Hash "$2" "md5"
+  Crypto::HashData "MD5" "$2"
   Pop $3
 
   ; Store encrypted hash
