@@ -706,8 +706,11 @@ class SampleDataLogic:
             if nodeName is None or fileName is None:
                 import urllib
                 import uuid
-                p = urllib.parse.urlparse(uri)
-                basename, ext = os.path.splitext(os.path.basename(p.path))
+                if fileName is not None:
+                    basename, ext = os.path.splitext(os.path.basename(fileName))
+                else:
+                    p = urllib.parse.urlparse(uri)
+                    basename, ext = os.path.splitext(os.path.basename(p.path))
                 if nodeName is None:
                     nodeName = basename
                 if fileName is None:
@@ -1177,6 +1180,14 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         self.assertEqual(len(nodes), 1)
         self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MRHead"))
 
+    def test_downloadFromSource_loadNodeWithoutNodeName(self):
+        logic = SampleDataLogic()
+        nodes = logic.downloadFromSource(SampleDataSource(
+            uris=TESTING_DATA_URL + "MD5/39b01631b7b38232a220007230624c8e",
+            fileNames="MR-head.nrrd"))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MR-head"))
+
     def test_downloadFromSource_loadNodeFromMultipleFiles(self):
         logic = SampleDataLogic()
         nodes = logic.downloadFromSource(SampleDataSource(
@@ -1212,6 +1223,16 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         self.assertEqual(len(nodes), 2)
         self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MRHead"))
         self.assertEqual(nodes[1], slicer.mrmlScene.GetFirstNodeByName("CTChest"))
+
+    def test_downloadFromSource_loadNodesWithoutNodeNames(self):
+        logic = SampleDataLogic()
+        nodes = logic.downloadFromSource(SampleDataSource(
+            uris=[TESTING_DATA_URL + "SHA256/cc211f0dfd9a05ca3841ce1141b292898b2dd2d3f08286affadf823a7e58df93",
+                  TESTING_DATA_URL + "SHA256/4507b664690840abb6cb9af2d919377ffc4ef75b167cb6fd0f747befdb12e38e"],
+            fileNames=["MR-head.nrrd", "CT-chest.nrrd"]))
+        self.assertEqual(len(nodes), 2)
+        self.assertEqual(nodes[0], slicer.mrmlScene.GetFirstNodeByName("MR-head"))
+        self.assertEqual(nodes[1], slicer.mrmlScene.GetFirstNodeByName("CT-chest"))
 
     def test_sampleDataSourcesByCategory(self):
         self.assertTrue(len(SampleDataLogic.sampleDataSourcesByCategory()) > 0)
