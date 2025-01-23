@@ -101,6 +101,7 @@ class JRC2013VisWidget(ScriptedLoadableModuleWidget):
 
                 SampleData.downloadFromURL(
                     fileNames="Dcmtk-db.zip",
+                    loadFileTypes="ZipFile",
                     uris=TESTING_DATA_URL + "MD5/6bfb01cf5ffb8e3af9b1c0c9556f0c6b45f0ec40305a9539ed7a9f0dcfe378e3",
                     checksums="SHA256:6bfb01cf5ffb8e3af9b1c0c9556f0c6b45f0ec40305a9539ed7a9f0dcfe378e3")[0]
 
@@ -187,6 +188,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
 
         dicomFilesDirectory = SampleData.downloadFromURL(
             fileNames="Dcmtk-db.zip",
+            loadFileTypes="ZipFile",
             uris=TESTING_DATA_URL + "MD5/7a43d121a51a631ab0df02071e5ba6ed",
             checksums="MD5:7a43d121a51a631ab0df02071e5ba6ed")[0]
 
