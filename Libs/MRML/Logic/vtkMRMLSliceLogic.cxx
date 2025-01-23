@@ -14,14 +14,14 @@
 
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
-#include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceLayerLogic.h"
+#include "vtkMRMLSliceLogic.h"
 
 // MRML includes
 #include <vtkEventBroker.h>
 #include <vtkMRMLCrosshairNode.h>
-#include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
 #include <vtkMRMLGlyphableVolumeDisplayNode.h>
+#include <vtkMRMLGlyphableVolumeSliceDisplayNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
@@ -38,22 +38,17 @@
 #include <vtkGeneralTransform.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageBlend.h>
-#include <vtkImageResample.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkImageMathematics.h>
 #include <vtkImageReslice.h>
-#include <vtkImageThreshold.h>
-#include <vtkInformation.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPlaneSource.h>
-#include <vtkPolyDataCollection.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkTransform.h>
-#include <vtkVersion.h>
 
 // VTKAddon includes
 #include <vtkAddonMathUtilities.h>

@@ -213,7 +213,7 @@ ExternalProject_Execute(${proj} \"build\" make \${jflag} build_libs)
     # libraries.
     #
     # We found out that '/MD' was used by inspecting the the file 'ms/ntdll.mak'
-    # generated atfer configuring OpenSSL.
+    # generated after configuring OpenSSL.
     #
     # If you find mistake in this explanation, do not hesitate to submit a patch
     # to fix this text. Thanks.

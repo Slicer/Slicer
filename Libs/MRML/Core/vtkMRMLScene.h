@@ -17,11 +17,25 @@ Version:   $Revision: 1.18 $
 
 // MRML includes
 #include "vtkMRML.h"
+class vtkCacheManager;
+class vtkDataIOManager;
+class vtkMRMLMessageCollection;
+class vtkMRMLNode;
+class vtkMRMLSceneViewNode;
+class vtkMRMLStorableNode;
+class vtkMRMLStorageNode;
+class vtkMRMLSubjectHierarchyNode;
+class vtkTagTable;
+class vtkURIHandler;
 
 // VTK includes
 #include <vtkObject.h>
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
+class vtkCallbackCommand;
+class vtkCollection;
+class vtkGeneralTransform;
+class vtkImageData;
 
 // STD includes
 #include <list>
@@ -30,22 +44,6 @@ Version:   $Revision: 1.18 $
 #include <set>
 #include <string>
 #include <vector>
-
-class vtkCacheManager;
-class vtkDataIOManager;
-class vtkTagTable;
-
-class vtkCallbackCommand;
-class vtkCollection;
-class vtkGeneralTransform;
-class vtkImageData;
-class vtkURIHandler;
-class vtkMRMLMessageCollection;
-class vtkMRMLNode;
-class vtkMRMLSceneViewNode;
-class vtkMRMLSubjectHierarchyNode;
-class vtkMRMLStorableNode;
-class vtkMRMLStorageNode;
 
 /// \brief A set of MRML Nodes that supports serialization and undo/redo.
 ///

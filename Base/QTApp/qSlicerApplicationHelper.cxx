@@ -22,7 +22,11 @@
 
 // Qt includes
 #include <QFont>
+#include <QtGlobal> // For Q_OS_*, QT_VERSION
 #include <QLabel>
+#if defined(Q_OS_MACOS) && (QT_VERSION < QT_VERSION_CHECK(5, 15, 10))
+# include <QLoggingCategory>
+#endif
 #include <QSettings>
 #include <QSysInfo>
 #include <QThread>
@@ -89,6 +93,11 @@ qSlicerApplicationHelper::~qSlicerApplicationHelper() = default;
 void qSlicerApplicationHelper::preInitializeApplication(
     const char* argv0, ctkProxyStyle* style)
 {
+#if defined(Q_OS_MACOS) && (QT_VERSION < QT_VERSION_CHECK(5, 15, 10))
+  // See https://github.com/Slicer/Slicer/issues/7261
+  QLoggingCategory::setFilterRules("qt.qpa.fonts=false");
+#endif
+
   vtkLogger::SetStderrVerbosity(vtkLogger::VERBOSITY_OFF);
   itk::itkFactoryRegistration();
   qMRMLWidget::preInitializeApplication();
