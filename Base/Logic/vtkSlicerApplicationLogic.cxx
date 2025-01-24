@@ -63,8 +63,6 @@ vtkStandardNewMacro(vtkSlicerApplicationLogic);
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
-  this->ProcessingThreader = itk::PlatformMultiThreader::New();
-  this->ProcessingThreadId = -1;
   this->ProcessingThreadActive = false;
 
   this->ModifiedQueueActive = false;
@@ -85,20 +83,18 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 {
-  // Note that TerminateThread does not kill a thread, it only waits
+  // Note that we can not kill a thread safely. So we wait
   // for the thread to finish.  We need to signal the thread that we
   // want to terminate
-  if (this->ProcessingThreadId != -1 && this->ProcessingThreader)
+  if (this->ProcessingThread.joinable())
   {
     // Signal the processingThread that we are terminating.
     this->ProcessingThreadActiveLock.lock();
     this->ProcessingThreadActive = false;
     this->ProcessingThreadActiveLock.unlock();
 
-    // Wait for the thread to finish and clean up the state of the threader
-    this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
-
-    this->ProcessingThreadId = -1;
+    // Wait for the thread to finish
+    this->ProcessingThread.join();
   }
 
   delete this->InternalTaskQueue;
@@ -169,35 +165,25 @@ void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::CreateProcessingThread()
 {
-  if (this->ProcessingThreadId == -1)
+  if (!this->ProcessingThread.joinable())
   {
     this->ProcessingThreadActiveLock.lock();
     this->ProcessingThreadActive = true;
     this->ProcessingThreadActiveLock.unlock();
 
-    this->ProcessingThreadId
-      = this->ProcessingThreader
-      ->SpawnThread(vtkSlicerApplicationLogic::ProcessingThreaderCallback,
-                    this);
+    this->ProcessingThread = std::thread(vtkSlicerApplicationLogic::ProcessingThreaderCallback, this);
 
     // Start four network threads (TODO: make the number of threads a setting)
-    this->NetworkingThreadIDs.push_back ( this->ProcessingThreader
-          ->SpawnThread(vtkSlicerApplicationLogic::NetworkingThreaderCallback,
-                    this) );
+    NetworkingThreads.push_back(std::thread(vtkSlicerApplicationLogic::NetworkingThreaderCallback, this));
+
     /*
      * TODO: it looks like curl is not thread safe by default
      * - maybe there's a setting that cmcurl can have
      *   similar to the --enable-threading of the standard curl build
      *
-    this->NetworkingThreadIDs.push_back ( this->ProcessingThreader
-          ->SpawnThread(vtkSlicerApplicationLogic::NetworkingThreaderCallback,
-                    this) );
-    this->NetworkingThreadIDs.push_back ( this->ProcessingThreader
-          ->SpawnThread(vtkSlicerApplicationLogic::NetworkingThreaderCallback,
-                    this) );
-    this->NetworkingThreadIDs.push_back ( this->ProcessingThreader
-          ->SpawnThread(vtkSlicerApplicationLogic::NetworkingThreaderCallback,
-                    this) );
+    NetworkingThreads.push_back(std::thread(vtkSlicerApplicationLogic::NetworkingThreaderCallback, this));
+    NetworkingThreads.push_back(std::thread(vtkSlicerApplicationLogic::NetworkingThreaderCallback, this));
+    NetworkingThreads.push_back(std::thread(vtkSlicerApplicationLogic::NetworkingThreaderCallback, this));
     */
 
     // Setup the communication channel back to the main thread
@@ -221,7 +207,7 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::TerminateProcessingThread()
 {
-  if (this->ProcessingThreadId != -1)
+  if (this->ProcessingThread.joinable())
   {
     this->ModifiedQueueActiveLock.lock();
     this->ModifiedQueueActive = false;
@@ -239,18 +225,13 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
     this->ProcessingThreadActive = false;
     this->ProcessingThreadActiveLock.unlock();
 
-    this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
-    this->ProcessingThreadId = -1;
+    this->ProcessingThread.join();
 
-    std::vector<int>::const_iterator idIterator;
-    idIterator = this->NetworkingThreadIDs.begin();
-    while (idIterator != this->NetworkingThreadIDs.end())
+    for (auto& thread : this->NetworkingThreads)
     {
-      this->ProcessingThreader->TerminateThread( *idIterator );
-      ++idIterator;
+      thread.join();
     }
-    this->NetworkingThreadIDs.clear();
-
+    this->NetworkingThreads.clear();
   }
 }
 
@@ -258,7 +239,7 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
 itk::ITK_THREAD_RETURN_TYPE
 vtkSlicerApplicationLogic::ProcessingThreaderCallback(void* arg)
 {
-  vtkSlicerApplicationLogic* appLogic = (vtkSlicerApplicationLogic*)(((itk::PlatformMultiThreader::WorkUnitInfo*)(arg))->UserData);
+  vtkSlicerApplicationLogic* appLogic = static_cast<vtkSlicerApplicationLogic*>(arg);
   if (!appLogic)
   {
     vtkGenericWarningMacro("vtkSlicerApplicationLogic::ProcessingThreaderCallback failed: invalid appLogic");
@@ -323,7 +304,7 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
 itk::ITK_THREAD_RETURN_TYPE
 vtkSlicerApplicationLogic::NetworkingThreaderCallback(void* arg)
 {
-  vtkSlicerApplicationLogic* appLogic = (vtkSlicerApplicationLogic*)(((itk::PlatformMultiThreader::WorkUnitInfo*)(arg))->UserData);
+  vtkSlicerApplicationLogic* appLogic = static_cast<vtkSlicerApplicationLogic*>(arg);
   if (!appLogic)
   {
     vtkGenericWarningMacro("vtkSlicerApplicationLogic::NetworkingThreaderCallback failed: invalid appLogic");
