@@ -35,7 +35,6 @@ function(slicerFunctionGenerateExtensionDescription)
     DESTINATION_DIR
     EXTENSION_BUILD_SUBDIRECTORY
     EXTENSION_CATEGORY
-    EXTENSION_CONTRIBUTORS
     EXTENSION_DESCRIPTION
     EXTENSION_ENABLED
     EXTENSION_HOMEPAGE
@@ -50,6 +49,7 @@ function(slicerFunctionGenerateExtensionDescription)
     SLICER_WC_ROOT
     )
   set(multiValueArgs
+    EXTENSION_CONTRIBUTORS
     EXTENSION_DEPENDS
     EXTENSION_SCREENSHOTURLS
     )
@@ -74,6 +74,8 @@ function(slicerFunctionGenerateExtensionDescription)
   function(_convert_items_to_s4ext _items _separator _output_var)
     # Remove newlines
     string(REPLACE "\n" "" _items "${_items}")
+    # Strip leading and trailing spaces of each element
+    list(TRANSFORM _items STRIP)
     # Strip contiguous spaces
     string(REGEX REPLACE " +" " " _items "${_items}")
     # Strip leading and trailing spaces
@@ -84,10 +86,8 @@ function(slicerFunctionGenerateExtensionDescription)
     set(${_output_var} "${_items}" PARENT_SCOPE)
   endfunction()
 
-  # contributors: Remove newlines
-  string(REPLACE "\n" "" MY_EXTENSION_CONTRIBUTORS "${MY_EXTENSION_CONTRIBUTORS}")
-  # contributors: Strip contiguous spaces
-  string(REGEX REPLACE " +" " " MY_EXTENSION_CONTRIBUTORS "${MY_EXTENSION_CONTRIBUTORS}")
+  # contributors: Convert to comma separated list
+  _convert_items_to_s4ext("${MY_EXTENSION_CONTRIBUTORS}" ", " MY_EXTENSION_CONTRIBUTORS)
 
   # description: Replace newlines with "<br>"
   string(REPLACE "\n" "<br>" MY_EXTENSION_DESCRIPTION "${MY_EXTENSION_DESCRIPTION}")
@@ -195,6 +195,31 @@ This is a line of text.<br>And another one."
     )
 
   # Generate description file of an extension *without* dependencies
+  slicerFunctionGenerateExtensionDescription(
+    ${common_args}
+    #EXTENSION_BUILD_SUBDIRECTORY
+    #EXTENSION_DEPENDS
+    #EXTENSION_ENABLED
+    )
+  _check_generated_description_file(
+    GENERATED "${destination_dir}/SlicerToKiwiExporter.s4ext"
+    BASELINE "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_without_depends.s4ext"
+    )
+
+  # Generate description file of an extension *without* dependencies again
+  # and test that contributors can also be passed in as a list
+  set(contributors_list
+    "Jean-Christophe  Fillion-Robin (Kitware)"
+    "Pat Marion (Kitware), Steve Pieper (Isomics)  "
+    "  Atsushi Yamada \
+      (Shiga University of Medical Science)"
+    )
+  # replace the contributors arg string value with the list value
+  list(FIND common_args "EXTENSION_CONTRIBUTORS" contributors_args_idx)
+  math(EXPR contributors_val_idx "${contributors_args_idx}+1")
+  list(REMOVE_AT common_args ${contributors_val_idx})
+  list(INSERT common_args ${contributors_val_idx} ${contributors_list})
+  # regenerate the description
   slicerFunctionGenerateExtensionDescription(
     ${common_args}
     #EXTENSION_BUILD_SUBDIRECTORY
