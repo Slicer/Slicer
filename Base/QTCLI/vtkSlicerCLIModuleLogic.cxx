@@ -196,6 +196,7 @@ public:
   ModuleDescription DefaultModuleDescription;
   int DeleteTemporaryFiles;
   int AllowInMemoryTransfer;
+  int HideWindow;
 
   int RedirectModuleStreams;
 
@@ -310,6 +311,7 @@ vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
   this->Internal->DeleteTemporaryFiles = 1;
   this->Internal->AllowInMemoryTransfer = 1;
   this->Internal->RedirectModuleStreams = 1;
+  this->Internal->HideWindow = 1;
   this->Internal->RescheduleCallback =
     vtkSmartPointer<vtkSlicerCLIRescheduleCallback>::New();
   this->Internal->RescheduleCallback->SetCLIModuleLogic(this);
@@ -410,6 +412,22 @@ void vtkSlicerCLIModuleLogic::SetAllowInMemoryTransfer(int value)
 int vtkSlicerCLIModuleLogic::GetAllowInMemoryTransfer() const
 {
   return this->Internal->AllowInMemoryTransfer;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::SetHideWindow(int value)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting HideWindow to " << value);
+  if (this->Internal->HideWindow != value)
+  {
+    this->Internal->HideWindow = value;
+  }
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerCLIModuleLogic::GetHideWindow() const
+{
+  return this->Internal->HideWindow;
 }
 
 //----------------------------------------------------------------------------
@@ -1798,8 +1816,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     itksysProcess_SetCommand(process, command);
     itksysProcess_SetOption(process,
                             itksysProcess_Option_Detach, 0);
+    // This only affects the itksys process behavior on Windows.
     itksysProcess_SetOption(process,
-                            itksysProcess_Option_HideWindow, 1);
+                            itksysProcess_Option_HideWindow, this->GetHideWindow());
     // itksysProcess_SetTimeout(process, 5.0); // 5 seconds
 
     // execute the command
