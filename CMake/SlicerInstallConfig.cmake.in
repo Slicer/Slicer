@@ -25,7 +25,6 @@ set(Slicer_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 # Slicer options
 set(Slicer_USE_IGSTK "@Slicer_USE_IGSTK@")
 set(Slicer_USE_NAVITRACK "@Slicer_USE_NAVITRACK@")
-set(Slicer_USE_UV "@Slicer_USE_UV@")
 set(Slicer_USE_NUMPY "@Slicer_USE_NUMPY@")
 set(Slicer_USE_SCIPY "@Slicer_USE_SCIPY@")
 set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
