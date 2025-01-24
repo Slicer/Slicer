@@ -1,6 +1,5 @@
-from slicer import lazy
+from slicer.deps import lazy
 from pathlib import Path
-import unittest
 import unittest.mock
 
 lazy_import_packages = Path(__file__).parent.joinpath("lazy_import_packages")
