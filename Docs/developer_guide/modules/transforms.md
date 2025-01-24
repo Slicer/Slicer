@@ -19,7 +19,7 @@
 
 ## Events
 
-When a transform node is observed by a transformable node, [vtkMRMLTransformableNode::TransformModifiedEvent](https://apidocs.slicer.org/main/classvtkMRMLTransformableNode.html) is fired on the transformable node at observation time. Anytime a transform is modified, vtkCommand::ModifiedEvent is fired on the transform node and [vtkMRMLTransformableNode::TransformModifiedEvent](https://apidocs.slicer.org/main/classvtkMRMLTransformableNode.html) is fired on the transformable node.
+When a transform node is observed by a transformable node, [vtkMRMLTransformableNode::TransformModifiedEvent](https://apidocs.slicer.org/main/classvtkMRMLTransformableNode.html#a2614fa4d0c7c096d4782ceae75af0c82a4993bf6e23a6dfc138cb2efc1b9ce43b) is fired on the transformable node at observation time. Anytime a transform is modified, vtkCommand::ModifiedEvent is fired on the transform node and [vtkMRMLTransformableNode::TransformModifiedEvent](https://apidocs.slicer.org/main/classvtkMRMLTransformableNode.html#a2614fa4d0c7c096d4782ceae75af0c82a4993bf6e23a6dfc138cb2efc1b9ce43b) is fired on the transformable node.
 
 ## Examples
 
