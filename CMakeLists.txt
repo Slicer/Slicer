@@ -81,7 +81,7 @@ if(NOT DEFINED Slicer_VERSION_MAJOR)
   set(Slicer_VERSION_MAJOR "5")
 endif()
 if(NOT DEFINED Slicer_VERSION_MINOR)
-  set(Slicer_VERSION_MINOR "8")
+  set(Slicer_VERSION_MINOR "9")
 endif()
 if(NOT DEFINED Slicer_VERSION_PATCH)
   set(Slicer_VERSION_PATCH "0")
@@ -363,6 +363,8 @@ set(_commit_count_offsets
   # Allocate revisions for patch releases between v5.4.0 and v5.5.0
   "200"
   # Allocate revisions for patch releases between v5.6.0 and v5.7.0
+  "200"
+  # Allocate revisions for patch releases between v5.8.0 and v5.9.0
   "200"
   )
 list(JOIN _commit_count_offsets "+" _commit_count_offsets_expr)
