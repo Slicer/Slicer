@@ -20,6 +20,13 @@ __all__ = ["pip_install", "pip_uninstall", "GuardedImports"]
 
 ResourceAnchor = str  # type alias for resources anchors of the form ``package:path``.
 
+UV_ENV = {
+    'UV_PYTHON': sys.executable,
+    'UV_PYTHON_DOWNLOADS': 'never',
+    'UV_NO_PROGRESS': '',
+    'NO_COLOR': '',
+}
+
 
 class NamedRequirements(typing.NamedTuple):
     name: str
@@ -64,7 +71,6 @@ def pip_install(
     with ExitStack() as stack:
         command = [
             sys.executable, '-m', 'uv', 'pip', 'install',
-            '--color=never', '--no-progress',
         ]
 
         command += args
@@ -78,15 +84,14 @@ def pip_install(
             command += ['-r', path]
 
         logging.info("pip_install: %s", command)
-        proc = subprocess.run(command, capture_output=True, encoding='utf-8')
+        proc = subprocess.run(command, capture_output=True, encoding='utf-8', env=UV_ENV)
         print(proc.stdout)
         print(proc.stderr)
 
     # todo examine proc output.
 
     base_check_command = [
-        sys.executable, '-m', 'uv', 'pip', 'install',
-        '--color=never', '--no-progress', '--dry-run',
+        sys.executable, '-m', 'uv', 'pip', 'install', '--dry-run',
     ]
     base_check_command += args
 
@@ -103,7 +108,7 @@ def pip_install(
                 check_command += ['-r', path]
 
             logging.info('pip_install check: %s', command)
-            check = subprocess.run(check_command, capture_output=True, encoding='utf-8')
+            check = subprocess.run(check_command, capture_output=True, encoding='utf-8', env=UV_ENV)
 
             # todo examine check output
 
@@ -127,13 +132,12 @@ def pip_uninstall(
 
     command = [
         sys.executable, '-m', 'uv', 'pip', 'uninstall',
-        '--color=never', '--no-progress',
     ]
 
     command += args
 
     logging.info('pip_uninstall: %s', command)
-    proc = subprocess.run(command, capture_output=True, encoding='utf-8')
+    proc = subprocess.run(command, capture_output=True, encoding='utf-8', env=UV_ENV)
 
     # todo examine proc output.
 
