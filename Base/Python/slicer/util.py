@@ -2535,7 +2535,8 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
     if isinstance(columnNames, str):
         columnNames = [columnNames]
     for columnIndex, ncolumn in enumerate(ncolumns):
-        vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+        vtype = vtk.util.numpy_support.get_vtk_array_type(ncolumn.dtype)
+        vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(), deep=True, array_type=vtype)
         if (columnNames is not None) and (columnIndex < len(columnNames)):
             vcolumn.SetName(columnNames[columnIndex])
         tableNode.AddColumn(vcolumn)
