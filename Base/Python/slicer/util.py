@@ -2515,7 +2515,11 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
     :return: Updated ``vtkMRMLTableNode``.
     :raises ValueError: If the input ``narrays`` is not a recognized format.
 
-    All existing columns in the target table node are removed before adding new columns.
+    This function automatically detects the data type of each input array using
+    ``vtk.util.numpy_support.get_vtk_array_type`` and maps it to the corresponding VTK array type. As a
+    result, a broader range of numeric and complex data (e.g., int, float, and complex) is supported
+    without requiring manual conversions. All existing columns in the target table node are removed
+    before adding new columns.
 
     .. warning:: Data in the table node is stored by value (deep copy). Modifying the NumPy array after calling
         this function does not update the table node's data.
@@ -2548,7 +2552,8 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
     if isinstance(columnNames, str):
         columnNames = [columnNames]
     for columnIndex, ncolumn in enumerate(ncolumns):
-        vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+        vtype = vtk.util.numpy_support.get_vtk_array_type(ncolumn.dtype)
+        vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(), deep=True, array_type=vtype)
         if (columnNames is not None) and (columnIndex < len(columnNames)):
             vcolumn.SetName(columnNames[columnIndex])
         tableNode.AddColumn(vcolumn)
