@@ -261,50 +261,50 @@ MRMLIDImageIO
     int dataType = VTK_UNSIGNED_CHAR;
     if (this->GetNumberOfComponents() == 1)
     {
-      this->SetPixelType(SCALAR);
+      this->SetPixelType(CommonEnums::IOPixel::SCALAR);
       dataType = node->GetImageData()->GetScalarType();
     }
     else if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) != nullptr)
     {
       // tensor at each voxel
-      this->SetPixelType(DIFFUSIONTENSOR3D);
+      this->SetPixelType(CommonEnums::IOPixel::DIFFUSIONTENSOR3D);
       dataType = node->GetImageData()->GetPointData()->GetTensors()->GetDataType();
     }
     else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != nullptr)
     {
       // raw DWI
-      this->SetPixelType(VECTOR);
+      this->SetPixelType(CommonEnums::IOPixel::VECTOR);
       dataType = node->GetImageData()->GetScalarType();
     }
     else if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != nullptr)
     {
       // derived data from a diffusion weighted image, e.g. Q-ball
-      this->SetPixelType(VECTOR);
+      this->SetPixelType(CommonEnums::IOPixel::VECTOR);
       dataType = node->GetImageData()->GetPointData()->GetTensors()->GetDataType();
     }
     else
     {
       // everything else...
       // what should the mapping be for multi-component scalars?
-      this->SetPixelType(VECTOR);
+      this->SetPixelType(CommonEnums::IOPixel::VECTOR);
       dataType = node->GetImageData()->GetScalarType();
     }
-    IOComponentType componentType = UCHAR;
+    CommonEnums::IOComponent componentType = CommonEnums::IOComponent::UCHAR;
     // ComponentType
     switch (dataType)
     {
-      case VTK_FLOAT: componentType = FLOAT; break;
-      case VTK_DOUBLE: componentType = DOUBLE; break;
-      case VTK_INT: componentType = INT; break;
-      case VTK_UNSIGNED_INT: componentType = UINT; break;
-      case VTK_SHORT: componentType = SHORT; break;
-      case VTK_UNSIGNED_SHORT: componentType = USHORT; break;
-      case VTK_LONG: componentType = LONG; break;
-      case VTK_UNSIGNED_LONG: componentType = ULONG; break;
-      case VTK_CHAR: componentType = CHAR; break;
-      case VTK_UNSIGNED_CHAR: componentType = UCHAR; break;
+      case VTK_FLOAT: componentType = CommonEnums::IOComponent::FLOAT; break;
+      case VTK_DOUBLE: componentType = CommonEnums::IOComponent::DOUBLE; break;
+      case VTK_INT: componentType = CommonEnums::IOComponent::INT; break;
+      case VTK_UNSIGNED_INT: componentType = CommonEnums::IOComponent::UINT; break;
+      case VTK_SHORT: componentType = CommonEnums::IOComponent::SHORT; break;
+      case VTK_UNSIGNED_SHORT: componentType = CommonEnums::IOComponent::USHORT; break;
+      case VTK_LONG: componentType = CommonEnums::IOComponent::LONG; break;
+      case VTK_UNSIGNED_LONG: componentType = CommonEnums::IOComponent::ULONG; break;
+      case VTK_CHAR: componentType = CommonEnums::IOComponent::CHAR; break;
+      case VTK_UNSIGNED_CHAR: componentType = CommonEnums::IOComponent::UCHAR; break;
       default: itkWarningMacro("Unknown scalar type.");
-        componentType = UNKNOWNCOMPONENTTYPE;
+        componentType = CommonEnums::IOComponent::UNKNOWNCOMPONENTTYPE;
         break;
     }
     this->SetComponentType(componentType);
@@ -475,16 +475,16 @@ MRMLIDImageIO
   // ComponentType
   switch (this->GetComponentType())
   {
-  case FLOAT: *scalarType = VTK_FLOAT; break;
-  case DOUBLE: *scalarType = VTK_DOUBLE; break;
-  case INT: *scalarType = VTK_INT; break;
-  case UINT: *scalarType = VTK_UNSIGNED_INT; break;
-  case SHORT: *scalarType = VTK_SHORT; break;
-  case USHORT: *scalarType = VTK_UNSIGNED_SHORT; break;
-  case LONG: *scalarType = VTK_LONG; break;
-  case ULONG: *scalarType = VTK_UNSIGNED_LONG; break;
-  case CHAR: *scalarType = VTK_CHAR; break;
-  case UCHAR: *scalarType = VTK_UNSIGNED_CHAR; break;
+  case CommonEnums::IOComponent::FLOAT: *scalarType = VTK_FLOAT; break;
+  case CommonEnums::IOComponent::DOUBLE: *scalarType = VTK_DOUBLE; break;
+  case CommonEnums::IOComponent::INT: *scalarType = VTK_INT; break;
+  case CommonEnums::IOComponent::UINT: *scalarType = VTK_UNSIGNED_INT; break;
+  case CommonEnums::IOComponent::SHORT: *scalarType = VTK_SHORT; break;
+  case CommonEnums::IOComponent::USHORT: *scalarType = VTK_UNSIGNED_SHORT; break;
+  case CommonEnums::IOComponent::LONG: *scalarType = VTK_LONG; break;
+  case CommonEnums::IOComponent::ULONG: *scalarType = VTK_UNSIGNED_LONG; break;
+  case CommonEnums::IOComponent::CHAR: *scalarType = VTK_CHAR; break;
+  case CommonEnums::IOComponent::UCHAR: *scalarType = VTK_UNSIGNED_CHAR; break;
   default:
     // What should we do?
     itkWarningMacro("Unknown scalar type.");
