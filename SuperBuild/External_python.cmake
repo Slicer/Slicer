@@ -270,6 +270,46 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
         ExternalProject_Message(${proj} "${_msg} - no")
       endif()
     endif()
+
+    if(UNIX AND NOT APPLE)
+      if(NOT DEFINED PYTHON_CONFIGURE_MANYLINUX_MODULE)
+        set(PYTHON_CONFIGURE_MANYLINUX_MODULE ON)
+      endif()
+      set(PYTHON_MANYLINUX_MODULE_FILEPATH "${python_DIR}/${PYTHON_STDLIB_SUBDIR}/_manylinux.py")
+      set(_msg "Configure _manylinux module")
+      ExternalProject_Message(${proj} "${_msg}")
+      if(PYTHON_CONFIGURE_MANYLINUX_MODULE)
+        ExternalProject_Add_Step(${proj} configure_manylinux_module
+          COMMAND ${CMAKE_COMMAND}
+            -DPYTHON_CONFIGURE_MANYLINUX_MODULE:BOOL=${PYTHON_CONFIGURE_MANYLINUX_MODULE}
+            -DPYTHON_MANYLINUX_MODULE_FILEPATH:FILEPATH=${PYTHON_MANYLINUX_MODULE_FILEPATH}
+            -P ${Slicer_SOURCE_DIR}/SuperBuild/python_configure_manylinux_module.cmake
+          BYPRODUCTS ${PYTHON_MANYLINUX_MODULE_FILEPATH}
+          DEPENDEES install
+          )
+        ExternalProject_Message(${proj} "${_msg} - yes")
+      else()
+        ExternalProject_Message(${proj} "${_msg} - no")
+
+        # If configuration of _manylinux module is disabled, by default
+        # existing copy of the module will be removed so that installation
+        # of python packages is not inadverdently impacted.
+        if(NOT DEFINED PYTHON_REMOVE_MANYLINUX_MODULE_IF_EXISTS)
+          set(PYTHON_REMOVE_MANYLINUX_MODULE_IF_EXISTS ON)
+        endif()
+        set(_msg "Remove _manylinux module if already configured")
+        ExternalProject_Message(${proj} "${_msg}")
+        if(PYTHON_REMOVE_MANYLINUX_MODULE_IF_EXISTS)
+          ExternalProject_Add_Step(${proj} remove_manylinux_module
+            COMMAND ${CMAKE_COMMAND} -E remove -f ${PYTHON_MANYLINUX_MODULE_FILEPATH}
+            DEPENDEES install
+            )
+          ExternalProject_Message(${proj} "${_msg} - yes")
+        else()
+          ExternalProject_Message(${proj} "${_msg} - no")
+        endif()
+      endif()
+    endif()
   endif()
 
   if(NOT DEFINED PYTHON_VALGRIND_SUPPRESSIONS_FILE)
