@@ -5,7 +5,6 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/logic
   slicer/deps/__init__
   slicer/deps/lazy
-  slicer/deps/core/__init__
   slicer/parameterNodeWrapper/__init__
   slicer/parameterNodeWrapper/default
   slicer/parameterNodeWrapper/guiCreation
@@ -62,16 +61,7 @@ configure_file(
 list(APPEND Slicer_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/slicer/kits.py)
 
 set(Slicer_PYTHON_RESOURCES
-  slicer/deps/core/python-extension-manager-requirements-requirements.txt
-  slicer/deps/core/python-extension-manager-ssl-requirements-requirements.txt
-  slicer/deps/core/python-numpy-requirements.txt
-  slicer/deps/core/python-pip-requirements.txt
-  slicer/deps/core/python-pythonqt-requirements-requirements.txt
-  slicer/deps/core/python-requests-requirements-requirements.txt
-  slicer/deps/core/python-scipy-requirements.txt
-  slicer/deps/core/python-setuptools-requirements.txt
-  slicer/deps/core/python-uv-requirements.txt
-  slicer/deps/core/python-wheel-requirements.txt
+  slicer/deps/core-constraints.txt
   )
 
 if(Slicer_USE_SimpleITK)
