@@ -670,6 +670,38 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToR
 }
 
 //----------------------------------------------------------------------------
+namespace
+{
+
+//----------------------------------------------------------------------------
+// Checks that a vtkImageData has origin (0,0,0), spacing (1,1,1), and an identity direction matrix
+bool IsImageDataGeometryValid(vtkImageData* imageData)
+{
+  double spacing[3] = { 0.0 };
+  imageData->GetSpacing(spacing);
+  if (spacing[0] != 1.0 || spacing[1] != 1.0 || spacing[2] != 1.0)
+  {
+    return false;
+  }
+  double origin[3] = { 0.0 };
+  imageData->GetOrigin(origin);
+  if (origin[0] != 0.0 || origin[1] != 0.0 || origin[2] != 0.0)
+  {
+    return false;
+  }
+  vtkMatrix3x3* directionMatrix = imageData->GetDirectionMatrix();
+  vtkNew<vtkMatrix3x3> identityMatrix;
+  identityMatrix->Identity();
+  if (!vtkAddonMathUtilities::MatrixAreEqual(directionMatrix, identityMatrix, /* tolerance= */ 0.0))
+  {
+    return false;
+  }
+  return true;
+}
+
+} // end of anonymous namespace
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 {
   if (imageData == nullptr)
@@ -685,6 +717,16 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
   }
   else
   {
+    if (!IsImageDataGeometryValid(imageData))
+    {
+      vtkWarningMacro(
+        "SetAndObserveImageData: The vtkImageData associated with the Volume node "
+        << (this->GetID() != nullptr ? this->GetID() : "(unknown)")
+        << " does not meet the required properties:"
+        << " Origin must be (0,0,0), Spacing must be (1,1,1),"
+        << " and Direction must be an identity matrix."
+      );
+    }
     vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
       this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : nullptr);
     if (oldProducer && oldProducer->GetOutputDataObject(0) == imageData)
