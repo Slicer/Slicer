@@ -518,11 +518,11 @@ SetTransform( parameters & list,
   {
     if( !list.transformsOrder.compare( "input-to-output" ) )
     {
-      transformFile->GetTransformList()->pop_back();
+      transformFile->GetModifiableTransformList()->pop_back();
     }
     else
     {
-      transformFile->GetTransformList()->pop_front();
+      transformFile->GetModifiableTransformList()->pop_front();
     }
   }
   return tensorTransform;
