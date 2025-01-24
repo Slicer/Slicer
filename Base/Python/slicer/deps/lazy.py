@@ -25,6 +25,8 @@ UV_ENV = {
     'UV_PYTHON_DOWNLOADS': 'never',
     'UV_NO_PROGRESS': '',
     'NO_COLOR': '',
+    # todo 'UV_CACHE_DIR' ?
+    # todo 'UV_COMPILE_BYTECODE' ?
 }
 
 
