@@ -561,8 +561,14 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         message(STATUS "Packaging and uploading Slicer to packages server ...")
         set(package_list)
         if(run_ctest_with_packages)
+
+          set(package_target "package")
+          if(run_ctest_with_upload)
+            set(package_target "packageupload")
+          endif()
+
           ctest_build(
-            TARGET packageupload
+            TARGET ${package_target}
             BUILD ${slicer_build_dir}
             APPEND
             )
