@@ -25,12 +25,15 @@
 // MRML includes
 class vtkMRMLDisplayNode;
 class vtkMRMLLinearTransformNode;
+class vtkMRMLMarkupsCurveNode;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLModelNode;
+class vtkMRMLScalarVolumeNode;
 class vtkMRMLSliceCompositeNode;
 class vtkMRMLSliceDisplayNode;
 class vtkMRMLSliceLayerLogic;
 class vtkMRMLSliceNode;
+class vtkMRMLTransformNode;
 class vtkMRMLVolumeNode;
 
 // VTK includes
@@ -39,6 +42,8 @@ class vtkCollection;
 class vtkImageBlend;
 class vtkImageMathematics;
 class vtkImageReslice;
+class vtkMatrix4x4;
+class vtkPoints;
 
 struct BlendPipeline;
 struct SliceLayerInfo;
@@ -397,6 +402,34 @@ public:
   /// Returns false if the information cannot be determined.
   bool GetSliceOffsetRangeResolution(double range[2], double& resolution);
 
+  /// Initialize CurvePlanarReformation functionality
+  void CurvedPlanarReformationInit();
+
+  /// GetPointsProjectedToPlane for curved planar reformation
+  bool CurvedPlanarReformationGetPointsProjectedToPlane(vtkPoints *    pointsArrayIn,
+                                                        vtkMatrix4x4 * transformWorldToPlane,
+                                                        vtkPoints *    pointsArrayOut);
+
+  /// ComputeStraighteningTransform for curved planar reformation
+  bool CurvedPlanarReformationComputeStraighteningTransform(vtkMRMLTransformNode* transformToStraightenedNode,
+                                                            vtkMRMLMarkupsCurveNode* curveNode,
+                                                            const double sliceSizeMm[2],
+                                                            double outputSpacingMm,
+                                                            bool stretching = false,
+                                                            double rotationDeg = 0.0,
+                                                            vtkMRMLModelNode* reslicingPlanesModelNode = nullptr);
+
+  /// StraightenVolume for curved planar reformation
+  bool CurvedPlanarReformationStraightenVolume(vtkMRMLScalarVolumeNode* outputStraightenedVolume,
+                                               vtkMRMLScalarVolumeNode* volumeNode,
+                                               const double outputStraightenedVolumeSpacing[3],
+                                               vtkMRMLTransformNode* straighteningTransformNode);
+
+  /// ProjectVolume for curved planar reformation
+  bool CurvedPlanarReformationProjectVolume(vtkMRMLScalarVolumeNode* outputProjectedVolume,
+                                            vtkMRMLScalarVolumeNode* inputStraightenedVolume,
+                                            int projectionAxisIndex = 0);
+
 protected:
 
   vtkMRMLSliceLogic();
@@ -480,6 +513,8 @@ protected:
   vtkMRMLModelDisplayNode*      SliceModelDisplayNode;
   vtkMRMLLinearTransformNode*   SliceModelTransformNode;
   double                        SliceSpacing[3];
+
+  double                        CurvedPlanarReformationTransformSpacingFactor;
 
 private:
 
