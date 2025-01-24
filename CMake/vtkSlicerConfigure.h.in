@@ -36,6 +36,7 @@
 
 #cmakedefine Slicer_USE_IGSTK
 #cmakedefine Slicer_USE_NAVITRACK
+#cmakedefine Slicer_USE_UV
 #cmakedefine Slicer_USE_NUMPY
 #cmakedefine Slicer_USE_PYTHONQT
 #cmakedefine Slicer_USE_PYTHONQT_WITH_OPENSSL

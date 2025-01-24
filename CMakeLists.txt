@@ -397,6 +397,11 @@ CMAKE_DEPENDENT_OPTION(
 mark_as_superbuild(Slicer_USE_DCMTK_WITH_OPENSSL)
 
 CMAKE_DEPENDENT_OPTION(
+        Slicer_USE_UV "Build Slicer with uv" ON
+        "Slicer_USE_PYTHONQT" OFF)
+mark_as_superbuild(Slicer_USE_NUMPY)
+
+CMAKE_DEPENDENT_OPTION(
   Slicer_USE_NUMPY "Build Slicer with NumPy" ON
   "Slicer_USE_PYTHONQT" OFF)
 mark_as_superbuild(Slicer_USE_NUMPY)
