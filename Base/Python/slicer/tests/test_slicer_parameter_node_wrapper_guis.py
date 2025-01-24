@@ -267,6 +267,44 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         self.assertEqual(param.charlie, 0.1)
         self.assertEqual(widgetCharlie.value, 0.1)
 
+    def test_ctkColorPickerButtonToQColor(self):
+
+        @parameterNodeWrapper
+        class ParameterNodeWrapper:
+            alpha: qt.QColor
+            bravo: Annotated[qt.QColor, Default(qt.QColor("red"))]
+
+        colorPickerAlpha = ctk.ctkColorPickerButton()
+        colorPickerAlpha.deleteLater()
+        colorPickerBravo = ctk.ctkColorPickerButton()
+        colorPickerBravo.deleteLater()
+        param = ParameterNodeWrapper(newParameterNode())
+
+        # Phase 0 - connect parameterNode to GUI
+        mapping = {
+            "alpha": colorPickerAlpha,
+            "bravo": colorPickerBravo,
+        }
+        param.connectParametersToGui(mapping)
+        self.assertEqual(param.alpha, qt.QColor("#000000"))
+        self.assertEqual(colorPickerAlpha.color, qt.QColor("#000000"))
+        self.assertEqual(param.bravo, qt.QColor("red"))
+        self.assertEqual(colorPickerBravo.color, qt.QColor("red"))
+
+        # Phase 1 - write to GUI
+        colorPickerAlpha.color = qt.QColor("green")
+        self.assertEqual(param.alpha, qt.QColor("green"))
+        self.assertEqual(colorPickerAlpha.color, qt.QColor("green"))
+        self.assertEqual(param.bravo, qt.QColor("red"))
+        self.assertEqual(colorPickerBravo.color, qt.QColor("red"))
+
+        # Phase 2 - write to parameterNode
+        param.bravo = qt.QColor("blue")
+        self.assertEqual(param.alpha, qt.QColor("green"))
+        self.assertEqual(colorPickerAlpha.color, qt.QColor("green"))
+        self.assertEqual(param.bravo, qt.QColor("blue"))
+        self.assertEqual(colorPickerBravo.color, qt.QColor("blue"))
+
     def test_QDoubleSpinBoxToFloat(self):
         self.impl_CheckFloatWidgetToUnboundedFloatParam(qt.QDoubleSpinBox)
         self.impl_CheckFloatWidgetToBoundedFloatParam(qt.QDoubleSpinBox)
