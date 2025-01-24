@@ -1,17 +1,17 @@
 import importlib.abc
-import subprocess
 import importlib.machinery
 import importlib.resources
 import importlib.util
 import inspect
 import logging
 import shlex
+import subprocess
 import sys
 import types
 import typing
-from typing import Optional, Union
+from contextlib import AbstractContextManager, ExitStack
 from pathlib import Path
-from contextlib import ExitStack, AbstractContextManager
+from typing import Optional, Union
 
 import slicer
 from slicer.ScriptedLoadableModule import ScriptedLoadableModule
@@ -21,10 +21,10 @@ __all__ = ["pip_install", "pip_uninstall", "GuardedImports"]
 ResourceAnchor = str  # type alias for resources anchors of the form ``package:path``.
 
 UV_ENV = {
-    'UV_PYTHON': sys.executable,
-    'UV_PYTHON_DOWNLOADS': 'never',
-    'UV_NO_PROGRESS': '',
-    'NO_COLOR': '',
+    "UV_PYTHON": sys.executable,
+    "UV_PYTHON_DOWNLOADS": "never",
+    "UV_NO_PROGRESS": "",
+    "NO_COLOR": "",
     # todo 'UV_CACHE_DIR' ?
     # todo 'UV_COMPILE_BYTECODE' ?
 }
@@ -36,7 +36,7 @@ class NamedRequirements(typing.NamedTuple):
     caller: Optional[types.ModuleType]
 
     def as_file(self) -> AbstractContextManager[Path]:
-        package_name, _, path = self.requirements.rpartition(':')
+        package_name, _, path = self.requirements.rpartition(":")
 
         if not package_name:
             # A relative path. Use the caller as the resource root.
@@ -54,7 +54,7 @@ class NamedRequirements(typing.NamedTuple):
 
 
 _NAMED_REQUIREMENTS: list[NamedRequirements] = [
-    NamedRequirements('Slicer Core', 'slicer.deps:constraints.txt', None),
+    NamedRequirements("Slicer Core", "slicer.deps:constraints.txt", None),
 ]
 
 
@@ -68,32 +68,45 @@ def pip_install(
     elif isinstance(args, str):
         args = shlex.split(args)
     elif not isinstance(args, list):
-        raise ValueError('pip_install args must be a string or a list.')
+        raise ValueError("pip_install args must be a string or a list.")
+
+    # TODO: Show a summary (via --dry-run) to the user and get confirmation.
 
     with ExitStack() as stack:
         command = [
-            sys.executable, '-m', 'uv', 'pip', 'install',
+            sys.executable,
+            "-m",
+            "uv",
+            "pip",
+            "install",
         ]
 
         command += args
 
         for constraint in _NAMED_REQUIREMENTS:
             path = stack.enter_context(constraint.as_file())
-            command += ['-c', path]
+            command += ["-c", path]
 
         if requirements:
             path = stack.enter_context(constraint.as_file())
-            command += ['-r', path]
+            command += ["-r", path]
 
         logging.info("pip_install: %s", command)
-        proc = subprocess.run(command, capture_output=True, encoding='utf-8', env=UV_ENV)
-        print(proc.stdout)
-        print(proc.stderr)
+        proc = subprocess.run(command, capture_output=True, encoding="utf-8", env=UV_ENV)
 
-    # todo examine proc output.
+        # todo examine proc output.
+
+        # print(proc.stdout)
+        # print(proc.stderr)
+
 
     base_check_command = [
-        sys.executable, '-m', 'uv', 'pip', 'install', '--dry-run',
+        sys.executable,
+        "-m",
+        "uv",
+        "pip",
+        "install",
+        "--dry-run",
     ]
     base_check_command += args
 
@@ -103,19 +116,19 @@ def pip_install(
 
         with ExitStack() as stack:
             path = stack.enter_context(constraint.as_file())
-            check_command += ['-c', path]
+            check_command += ["-c", path]
 
             if requirements:
                 path = stack.enter_context(constraint.as_file())
-                check_command += ['-r', path]
+                check_command += ["-r", path]
 
-            logging.info('pip_install check: %s', command)
-            check = subprocess.run(check_command, capture_output=True, encoding='utf-8', env=UV_ENV)
+            logging.info("pip_install check: %s", command)
+            check = subprocess.run(check_command, capture_output=True, encoding="utf-8", env=UV_ENV)
 
             # todo examine check output
 
-            print(check.stdout)
-            print(check.stderr)
+            # print(check.stdout)
+            # print(check.stderr)
 
             # todo collect issues and show at once
 
@@ -130,21 +143,25 @@ def pip_uninstall(
     elif isinstance(args, str):
         args = shlex.split(args)
     elif not isinstance(args, list):
-        raise ValueError('pip_uninstall args must be a string or a list.')
+        raise ValueError("pip_uninstall args must be a string or a list.")
 
     command = [
-        sys.executable, '-m', 'uv', 'pip', 'uninstall',
+        sys.executable,
+        "-m",
+        "uv",
+        "pip",
+        "uninstall",
     ]
 
     command += args
 
-    logging.info('pip_uninstall: %s', command)
-    proc = subprocess.run(command, capture_output=True, encoding='utf-8', env=UV_ENV)
+    logging.info("pip_uninstall: %s", command)
+    proc = subprocess.run(command, capture_output=True, encoding="utf-8", env=UV_ENV)
 
     # todo examine proc output.
 
     # todo check if any extensions dependencies are broken?
-    #  if they're guarded this way they'd be reinstalled next time anyway.
+    #  If they're guarded they'd be reinstalled next time anyway, so maybe not needed.
 
     importlib.invalidate_caches()
 
@@ -280,7 +297,6 @@ class GuardedImports:
         if not self.requirements:
             return
 
-        # TODO: Show a summary to the user and get confirmation.
         pip_install(requirements=self.requirements)
 
         self.need_install = False
