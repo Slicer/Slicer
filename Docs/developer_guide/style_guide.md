@@ -232,7 +232,7 @@ The ITK, VTK, Qt, std::cout, std::cerr .. all appear in the error log and can ea
 
 ### In Qt-based classes
 
-For error messages, use [qCritical()](https://qt-project.org/doc/qt-4.8/qtglobal.html#qCritical):
+For error messages, use [qCritical()](https://doc.qt.io/qt-4.8/qtglobal.html#qCritical):
 
 ```
 if (somethingWrongHappened)
@@ -242,13 +242,13 @@ if (somethingWrongHappened)
   }
 ```
 
-For warnings, use [qWarning()](https://qt-project.org/doc/qt-4.8/qtglobal.html#qWarning):
+For warnings, use [qWarning()](https://doc.qt.io/qt-4.8/qtglobal.html#qWarning):
 
 ```
 qWarning() << "Be careful here, this is dangerous";
 ```
 
-For debug, use [qDebug()](https://qt-project.org/doc/qt-4.8/qtglobal.html#qDebug):
+For debug, use [qDebug()](https://doc.qt.io/qt-4.8/qtglobal.html#qDebug):
 
 ```
 qDebug() << "This variable has the value: "<< value;
