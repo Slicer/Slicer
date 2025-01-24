@@ -17,6 +17,7 @@
 
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
+#include "vtkMRMLAbstractVolumeResampler.h"
 
 // STD includes
 #include <deque>
@@ -26,11 +27,14 @@
 #include <vtkMRMLSliceCompositeNode.h>
 class vtkMRMLDisplayNode;
 class vtkMRMLLinearTransformNode;
+class vtkMRMLMarkupsCurveNode;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLModelNode;
+class vtkMRMLScalarVolumeNode;
 class vtkMRMLSliceDisplayNode;
 class vtkMRMLSliceLayerLogic;
 class vtkMRMLSliceNode;
+class vtkMRMLTransformNode;
 class vtkMRMLVolumeNode;
 
 // VTK includes
@@ -39,6 +43,8 @@ class vtkCollection;
 class vtkImageBlend;
 class vtkImageMathematics;
 class vtkImageReslice;
+class vtkMatrix4x4;
+class vtkPoints;
 
 struct BlendPipeline;
 struct SliceLayerInfo;
@@ -383,6 +389,92 @@ public:
   /// Returns false if the information cannot be determined.
   bool GetSliceOffsetRangeResolution(double range[2], double& resolution);
 
+  /// Projects input points onto a specified plane.
+  ///
+  /// \param pointsArrayIn Input points in world coordinates.
+  /// \param transformWorldToPlane Transformation matrix from world to plane coordinates.
+  /// \param pointsArrayOut Output points projected onto the plane.
+  ///
+  /// \return True if projection is successful, false if input parameters are null.
+  ///
+  /// This function transforms input points into the plane's coordinate system, where the plane's
+  /// normal aligns with the Z-axis. The projection is performed by setting the Z coordinate of
+  /// each point to zero, effectively flattening it onto the plane. The points are then transformed
+  /// back into world coordinates and stored in `pointsArrayOut`.
+  bool CurvedPlanarReformationGetPointsProjectedToPlane(vtkPoints* pointsArrayIn,
+                                                        vtkMatrix4x4* transformWorldToPlane,
+                                                        vtkPoints* pointsArrayOut);
+
+  /// Compute transform that straightens volume (useful for example for visualization of curved vessels)
+  ///
+  /// \param transformToStraightenedNode the computed transform
+  /// \param curveNode curve that defines the planar reformation
+  /// \param sliceSizeMm dimensions of slice that is produced
+  /// \param outputSpacingMm spacing to be used along the curve
+  /// \param stretching if True then stretching transform will be computed, otherwise straightening
+  /// \param rotationDeg number of degrees to rotate the output
+  /// \param reslicingPlanesModelNode
+  ///
+  /// \return True if the transform computation is successful, false if input parameters are null.
+  ///
+  /// \sa CurvedPlanarReformationGetPointsProjectedToPlane()
+  bool CurvedPlanarReformationComputeStraighteningTransform(vtkMRMLTransformNode* transformToStraightenedNode,
+                                                            vtkMRMLMarkupsCurveNode* curveNode,
+                                                            const double sliceSizeMm[2],
+                                                            double outputSpacingMm,
+                                                            bool stretching = false,
+                                                            double rotationDeg = 0.0,
+                                                            vtkMRMLModelNode* reslicingPlanesModelNode = nullptr);
+
+  /// Straighten volume for curved planar reformation
+  ///
+  /// \param outputStraightenedVolume result of straightening computation
+  /// \param volumeNode input volume to be straightened
+  /// \param outputStraightenedVolumeSpacing spacing in the output volume
+  /// \param straighteningTransformNode transform to be applied
+  ///
+  /// \return True if the volume computation is successful, false if input parameters are null.
+  ///
+  /// \sa vtkMRMLApplicationLogic::IsVolumeResamplerRegistered()
+  /// \sa ResampleVolume()
+  bool CurvedPlanarReformationStraightenVolume(vtkMRMLScalarVolumeNode* outputStraightenedVolume,
+                                               vtkMRMLScalarVolumeNode* volumeNode,
+                                               const double outputStraightenedVolumeSpacing[3],
+                                               vtkMRMLTransformNode* straighteningTransformNode);
+
+  /// Create panoramic volume by mean intensity projection along an axis of the straightened volume
+  ///
+  /// \param outputProjectedVolume resulting 2-dimensional projection
+  /// \param inputStraightenedVolume input volume to be projected
+  /// \param projectionAxisIndex axis to perform the projection on
+  ///
+  /// \return True if the projection volume computation is successful, false if input parameters are null.
+  bool CurvedPlanarReformationProjectVolume(vtkMRMLScalarVolumeNode* outputProjectedVolume,
+                                            vtkMRMLScalarVolumeNode* inputStraightenedVolume,
+                                            int projectionAxisIndex = 0);
+
+  /// Resample volume using the registered resampler.
+  ///
+  /// \param resamplerName the name as registered with vtkMRMLApplicationLogic
+  /// \param inputVolume the volume to be resampled
+  /// \param outputVolume the resulting volume
+  /// \param resamplingTransform the transform to apply
+  /// \param referenceVolume
+  /// \param interpolationType see enum in vtkMRMLAbstractVolumeResampler.h
+  /// \param resamplingParameters reserved for future use
+  ///
+  /// \return True if the volume resampling computation is successful, false if input parameters are null.
+  ///
+  /// \sa vtkMRMLApplicationLogic::GetVolumeResampler()
+  bool ResampleVolume(std::string& resamplerName,
+                      vtkMRMLVolumeNode* inputVolume,
+                      vtkMRMLVolumeNode* outputVolume,
+                      vtkMRMLTransformNode* resamplingTransform,
+                      vtkMRMLVolumeNode* referenceVolume = nullptr,
+                      int interpolationType = vtkMRMLAbstractVolumeResampler::InterpolationTypeLinear,
+                      const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters =
+                      vtkMRMLAbstractVolumeResampler::ResamplingParameters());
+
 protected:
 
   vtkMRMLSliceLogic();
@@ -478,6 +570,8 @@ protected:
   vtkMRMLModelDisplayNode*      SliceModelDisplayNode;
   vtkMRMLLinearTransformNode*   SliceModelTransformNode;
   double                        SliceSpacing[3];
+
+  double                        CurvedPlanarReformationTransformSpacingFactor{ 5.0 };
 
 private:
 
