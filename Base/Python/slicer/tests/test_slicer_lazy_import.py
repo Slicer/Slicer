@@ -20,7 +20,7 @@ class PipLogger:
 class PatchedPipTest(unittest.TestCase):
     @unittest.mock.patch("slicer.lazy._pip_install", new_callable=PipLogger)
     def test_simple_import(self, pip_install):
-        with lazy.ImportGroup("/requires"):
+        with lazy.GuardedImports("/requires"):
             import dummy
 
             try:

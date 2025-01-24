@@ -1,73 +1,161 @@
 import importlib.abc
+import subprocess
 import importlib.machinery
 import importlib.resources
 import importlib.util
 import inspect
-import json
 import logging
+import shlex
 import sys
-import tempfile
 import types
 import typing
-import weakref
-from typing import Optional
+from typing import Optional, Union
 from pathlib import Path
+from contextlib import ExitStack, AbstractContextManager
 
 import slicer
 from slicer.ScriptedLoadableModule import ScriptedLoadableModule
-from slicer.util import _executePythonModule
+
+__all__ = ["pip_install", "pip_uninstall", "GuardedImports"]
+
+ResourceAnchor = str  # type alias for resources anchors of the form ``package:path``.
 
 
-__all__ = ["_pip_install", "_pip_uninstall", "ImportGroup"]
+class NamedRequirements(typing.NamedTuple):
+    name: str
+    requirements: ResourceAnchor
+    caller: Optional[types.ModuleType]
 
+    def as_file(self) -> AbstractContextManager[Path]:
+        package_name, _, path = self.requirements.rpartition(':')
 
-def _pip(*args):
-    # TODO: update this to allow inspecting stdout, stderr
-    _executePythonModule("pip", args)
-
-
-def _pip_install(*args):
-    with tempfile.NamedTemporaryFile("r") as freport:
-        # TODO: constraints files
-        _pip("install", "--dry-run", "--no-deps", "--report", freport.name, *args)
-        report = json.load(freport)
-
-    # TODO: show slicer.util.confirmOkCancelDisplay with install summary
-    # TODO: inspect report to identify uninstalled or downgraded packages
-    for entry in report["install"]:
-        if "summary" in entry["metadata"]:
-            logging.info("installing {name}=={version} ({summary})".format_map(entry["metadata"]))
+        if not package_name:
+            # A relative path. Use the caller as the resource root.
+            resource = importlib.resources.files(self.caller).joinpath(path)
         else:
-            logging.info("installing {name}=={version}".format_map(entry["metadata"]))
+            # ``importlib.resources.files`` actually executes the module, but we can't yet guarantee that all
+            # dependencies are satisfied. So instead make a dummy module from the spec but do not execute it.
+            # Give that to ``importlib`` and we can find the right resource.
+            spec = importlib.util.find_spec(package_name)
+            assert spec is not None
+            dummy = importlib.util.module_from_spec(spec)
+            resource = importlib.resources.files(dummy).joinpath(path)
 
-    if report["install"]:
-        # TODO: constraints files
-        _pip("install", *args)
-        importlib.invalidate_caches()
+        return importlib.resources.as_file(resource)
 
 
-def _pip_uninstall(*args):
-    _pip(
-        "uninstall",
-        "-y",  # TODO show slicer.util.confirmOkCancelDisplay with uninstall summary.
-        *args,
-    )
+_NAMED_REQUIREMENTS: list[NamedRequirements] = [
+    NamedRequirements('Slicer Core', 'slicer.deps:constraints.txt', None),
+]
+
+
+def pip_install(
+    args: Optional[Union[str, list[str]]] = None,
+    *,
+    requirements: NamedRequirements,
+):
+    if args is None:
+        args = []
+    elif isinstance(args, str):
+        args = shlex.split(args)
+    elif not isinstance(args, list):
+        raise ValueError('pip_install args must be a string or a list.')
+
+    with ExitStack() as stack:
+        command = [
+            sys.executable, '-m', 'uv', 'pip', 'install',
+            '--color=never', '--no-progress',
+        ]
+
+        command += args
+
+        for constraint in _NAMED_REQUIREMENTS:
+            path = stack.enter_context(constraint.as_file())
+            command += ['-c', path]
+
+        if requirements:
+            path = stack.enter_context(constraint.as_file())
+            command += ['-r', path]
+
+        logging.info("pip_install: %s", command)
+        proc = subprocess.run(command, capture_output=True, encoding='utf-8')
+        print(proc.stdout)
+        print(proc.stderr)
+
+    # todo examine proc output.
+
+    base_check_command = [
+        sys.executable, '-m', 'uv', 'pip', 'install',
+        '--color=never', '--no-progress', '--dry-run',
+    ]
+    base_check_command += args
+
+    # if it failed because of a constraint:
+    for constraint in _NAMED_REQUIREMENTS:
+        check_command = base_check_command.copy()
+
+        with ExitStack() as stack:
+            path = stack.enter_context(constraint.as_file())
+            check_command += ['-c', path]
+
+            if requirements:
+                path = stack.enter_context(constraint.as_file())
+                check_command += ['-r', path]
+
+            logging.info('pip_install check: %s', command)
+            check = subprocess.run(check_command, capture_output=True, encoding='utf-8')
+
+            # todo examine check output
+
+            print(check.stdout)
+            print(check.stderr)
+
+            # todo collect issues and show at once
+
     importlib.invalidate_caches()
 
 
-# TODO: update ``slicer.util.pip_install`` to check ``ImportGroup.__groups`` and use constraints
+def pip_uninstall(
+    args: Union[str, list[str]] = None,
+):
+    if args is None:
+        return
+    elif isinstance(args, str):
+        args = shlex.split(args)
+    elif not isinstance(args, list):
+        raise ValueError('pip_uninstall args must be a string or a list.')
+
+    command = [
+        sys.executable, '-m', 'uv', 'pip', 'uninstall',
+        '--color=never', '--no-progress',
+    ]
+
+    command += args
+
+    logging.info('pip_uninstall: %s', command)
+    proc = subprocess.run(command, capture_output=True, encoding='utf-8')
+
+    # todo examine proc output.
+
+    # todo check if any extensions dependencies are broken?
+    #  if they're guarded this way they'd be reinstalled next time anyway.
+
+    importlib.invalidate_caches()
 
 
-class ImportGroup:
-    __groups = weakref.WeakSet()
+class GuardedImports:
+    requirements: Optional[NamedRequirements]
 
-    def __init__(self, requires: Optional[str]):
-        """Make all imports in this context manager lazy.
+    def __init__(self, requirements: Optional[ResourceAnchor], name: Optional[str] = None):
+        """
+        Guard imports in this context manager with the given requirements.txt resource.
 
         The real import of any module in this group does not occur until the first time an attribute
         is accessed::
 
-            with lazy.ImportGroup(None):
+            from slicer.deps import GuardedImports
+
+            with GuardedImports(None):
                 import json
                 import csv
 
@@ -76,11 +164,11 @@ class ImportGroup:
             json.load(...)
             #   ^ first attribute access triggers ``import json``
 
-        If ``requires`` is not ``None``, it is interpreted as an ``importlib.resources`` anchor path
-        to a ``requirements.txt`` file. If the dependencies in this file are not satisfied, they are
-        installed just before any module in the group is imported::
+        If ``requirements`` is not ``None``, it is interpreted as an ``importlib.resources`` anchor
+        to a ``requirements.txt`` file. If the dependencies in this file are not satisfied, they will
+        be installed just before any module in the group is used::
 
-            with lazy.ImportGroup("libCompute:requirements.txt"):
+            with GuardedImports("libCompute:requirements.txt"):
                 import libCompute
 
             ...
@@ -88,53 +176,49 @@ class ImportGroup:
             libCompute.apply(...)
             #         ^ first attribute access triggers ``pip install -r requirements.txt``
 
-        ``pip install`` is invoked at most once per ``ImportGroup``. ``import`` is triggered at most
-        once per module.
+        ``pip install`` is invoked at most once per ``GuardedImports`` context. ``__import__`` is invoked at
+        most once per module.
 
-        :param requires: A string of the form ``"package:path"`` that specifies resource ``path`` in
+        :param requirements: A string of the form ``"package:path"`` that specifies resource ``path`` in
             ``package``. See ``importlib.resources.files`` for details.
         """
 
-        # TODO: check which module called this, for better reporting.
+        # Handle relative anchors by referencing the module tha called us.
         calling_frame = inspect.stack()[1]
-        calling_module = inspect.getmodule(calling_frame)
-        if not calling_module:
+        self.caller = inspect.getmodule(calling_frame)
+        if not self.caller:
             raise Exception("Unable to determine import location")
 
-        module_name = calling_module.__name__
-
-        instance: typing.Optional[ScriptedLoadableModule] = getattr(
-            slicer.modules,
-            module_name + "Instance",
-            None,
-        )
-
-        caller_name = Path(calling_module.__file__).name
-        if instance:
-            caller_name = f"{caller_name} ({instance.parent.name})"
-
-        # ``importlib.resources.files`` actually imports the package; we couldn't guarantee that the
-        # dependencies are met. So instead make a dummy module from the real spec but do not execute
-        # it. ``importlib.resources.files`` can use that dummy module to locate resources.
-
-        if not requires:
-            self.requires = None
+        # Use the module that called us as a name if one is not provided.
+        if name is not None:
+            self.name = name
         else:
-            pak, _, path = requires.rpartition(":")
-            if pak:
-                spec = importlib.util.find_spec(pak)
-                assert spec is not None
-                dummy = importlib.util.module_from_spec(spec)
-                self.requires = importlib.resources.files(dummy).joinpath(path)
-            else:
-                self.requires = Path(calling_module.__name__).parent.joinpath(path)
+            instance: typing.Optional[ScriptedLoadableModule] = getattr(
+                slicer.modules,
+                self.caller.__name__ + "Instance",
+                None,
+            )
 
-        self.caller_name = caller_name
+            self.name = Path(self.caller.__file__).name
+            if instance:
+                self.name = f"{self.name} ({instance.parent.name})"
+
+        # self.requirements = requirements
+
         self.finder = VeryLazyFinder(self)
         self.modules = {}
-        self.need_install = requires is not None  # so that only the first invocation runs pip
+        self.need_install = requirements is not None  # so that only the first invocation runs pip
 
-        self.__groups.add(self)  # so that groups can use each other as constraints
+        # So that guards can use each other as constraints
+        if requirements is not None:
+            self.requirements = NamedRequirements(
+                self.name,
+                requirements,
+                self.caller,
+            )
+            _NAMED_REQUIREMENTS.append(self.requirements)
+        else:
+            self.requirements = None
 
     def __enter__(self):
         sys.meta_path.insert(0, self.finder)
@@ -187,13 +271,11 @@ class ImportGroup:
         if not self.need_install:
             return
 
-        if not self.requires:
+        if not self.requirements:
             return
 
-        # TODO: Show a summary to the user.
-        logging.info("resolving dependencies for %r", self.caller_name)
-        with importlib.resources.as_file(self.requires) as requires:
-            _pip_install("-r", str(requires))
+        # TODO: Show a summary to the user and get confirmation.
+        pip_install(requirements=self.requirements)
 
         self.need_install = False
 
@@ -202,25 +284,27 @@ class VeryLazyModule(types.ModuleType):
     """
     Defer real import to first attribute access.
 
-    A module with this type has not really been executed. On first attribute access:
+    A module with this type has not actually been executed yet. On first attribute access:
 
-    - Resolve dependencies
-    - Unlock the module name
-    - Import the module
-    - Update this proxy with the real module's contents.
+    * Resolve dependencies
+    * Unlock the module name
+    * Import the module
+    * Update this proxy with the real module's contents.
     """
 
     def __getattr__(self, attr):
-        # TODO: use ``__real_module__`` for ``__getattr__``, ``__setattr__``, ``__delattr__``.
-        #  introduce a ``LazyLoadedModule`` class that implements ``__getattribute__`` instead?
+        # TODO: Try to propagate sets and deletes to the real module. Maybe introduce a ``LazyLoadedModule``
+        #  class that implements ``__getattribute__`` instead?
         self.__class__ = types.ModuleType
         assert self.__spec__ is not None
 
-        group: "ImportGroup" = self.__spec__.loader_state
+        group: "GuardedImports" = self.__spec__.loader_state
         group.unlock()
         group.resolve()
 
         self.__real_module__ = importlib.import_module(self.__spec__.name)
+
+        # todo can I say ``self.__dict__ = self.__real_module__.__dict__``?
         self.__dict__.update(self.__real_module__.__dict__)
 
         return getattr(self, attr)
@@ -240,7 +324,7 @@ class VeryLazyLoader(importlib.abc.Loader):
 
     def exec_module(self, module: types.ModuleType):
         assert module.__spec__ is not None
-        group: "ImportGroup" = module.__spec__.loader_state
+        group: "GuardedImports" = module.__spec__.loader_state
 
         module.__class__ = VeryLazyModule
         group.register(module)

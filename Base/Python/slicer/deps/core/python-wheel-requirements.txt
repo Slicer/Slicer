@@ -1,4 +1,0 @@
-  # [wheel]
-  wheel==0.43.0 --hash=sha256:55c570405f142630c6b9f72fe09d9b67cf1477fcf543ae5b8dcb1f5b7377da81
-  # [/wheel]
-  

@@ -3896,7 +3896,11 @@ def _executePythonModule(module, args):
     logProcessOutput(proc)
 
 
-from slicer.deps import pip_install, pip_uninstall
+import slicer.deps
+
+pip_install = slicer.deps.pip_install
+pip_uninstall = slicer.deps.pip_uninstall
+
 
 def longPath(path):
     r"""Make long paths work on Windows, where the maximum path length is 260 characters.

@@ -1,3 +1,24 @@
+## python-extension-manager-requirements-requirements.txt
+  # [chardet]
+  chardet==5.2.0 --hash=sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970
+  # [/chardet]
+  # [CouchDB]
+  couchdb==1.2 --hash=sha256:13a28a1159c49f8346732e8724b9a4d65cba54bec017c4a7eeb1499fe88151d1
+  # [/CouchDB]
+  # [gitdb]
+  gitdb==4.0.11 --hash=sha256:81a3407ddd2ee8df444cbacea00e2d038e40150acfa3001696fe0dcf1d3adfa4
+  # [/gitdb]
+  # [smmap]
+  smmap==5.0.1 --hash=sha256:e6d8668fa5f93e706934a62d7b4db19c8d9eb8cf2adbb75ef1b675aa332b69da
+  # [/smmap]
+  # [GitPython]
+  GitPython==3.1.43 --hash=sha256:eec7ec56b92aad751f9912a73404bc02ba212a23adb2c7098ee668417051a1ff
+  # [/GitPython]
+  # [six]
+  six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
+  # [/six]
+  
+## python-extension-manager-ssl-requirements-requirements.txt
   # [cryptography]
   # Hashes correspond to the following packages:
   #  - cryptography-42.0.7-cp37-abi3-macosx_10_12_universal2.whl
@@ -119,4 +140,123 @@
   # [PyGithub]
   PyGithub==2.3.0 --hash=sha256:65b499728be3ce7b0cd2cd760da3b32f0f4d7bc55e5e0677617f90f6564e793e
   # [/PyGithub]
+  
+## python-numpy-requirements.txt
+  # [numpy]
+  # Hashes correspond to the following packages:
+  #  - numpy-1.26.4-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - numpy-1.26.4-cp39-cp39-macosx_11_0_arm64.whl
+  #  - numpy-1.26.4-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - numpy-1.26.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - numpy-1.26.4-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - numpy-1.26.4-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - numpy-1.26.4-cp39-cp39-win_amd64.whl
+  numpy==1.26.4 --hash=sha256:7349ab0fa0c429c82442a27a9673fc802ffdb7c7775fad780226cb234965e53c \
+                --hash=sha256:52b8b60467cd7dd1e9ed082188b4e6bb35aa5cdd01777621a1658910745b90be \
+                --hash=sha256:d5241e0a80d808d70546c697135da2c613f30e28251ff8307eb72ba696945764 \
+                --hash=sha256:f870204a840a60da0b12273ef34f7051e98c3b5961b61b0c2c1be6dfd64fbcd3 \
+                --hash=sha256:679b0076f67ecc0138fd2ede3a8fd196dddc2ad3254069bcb9faf9a79b1cebcd \
+                --hash=sha256:47711010ad8555514b434df65f7d7b076bb8261df1ca9bb78f53d3b2db02e95c \
+                --hash=sha256:3373d5d70a5fe74a2c1bb6d2cfd9609ecf686d47a2d7b1d37a8f3b6bf6003aea
+  # [/numpy]
+  
+## python-pip-requirements.txt
+  # [pip]
+  pip==24.0 --hash=sha256:ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc
+  # [/pip]
+  
+## python-pythonqt-requirements-requirements.txt
+  # [packaging]
+  packaging==24.0 --hash=sha256:2ddfb553fdf02fb784c234c7ba6ccc288296ceabec964ad2eae3777778130bc5
+  # [/packaging]
+  # [pyparsing]
+  pyparsing==3.1.2 --hash=sha256:f9db75911801ed778fe61bb643079ff86601aca99fcae6345aa67292038fb742
+  # [/pyparsing]
+  # [six]
+  six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
+  # [/six]
+  
+## python-requests-requirements-requirements.txt
+  # [certifi]
+  certifi==2024.2.2 --hash=sha256:dc383c07b76109f368f6106eee2b593b04a011ea4d55f652c6ca24a754d1cdd1
+  # [/certifi]
+  # [idna]
+  idna==3.7 --hash=sha256:82fee1fc78add43492d3a1898bfa6d8a904cc97d8427f683ed8e798d07761aa0
+  # [/idna]
+  # [charset-normalizer]
+  # Hashes correspond to the following packages:
+  #  - charset_normalizer-3.3.2-cp39-cp39-macosx_10_9_universal2.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-macosx_11_0_arm64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-win_amd64.whl
+  #  - charset_normalizer-3.3.2-py3-none-any.whl
+  charset-normalizer==3.3.2 --hash=sha256:c235ebd9baae02f1b77bcea61bce332cb4331dc3617d254df3323aa01ab47bd4 \
+                            --hash=sha256:5b4c145409bef602a690e7cfad0a15a55c13320ff7a3ad7ca59c13bb8ba4d45d \
+                            --hash=sha256:68d1f8a9e9e37c1223b656399be5d6b448dea850bed7d0f87a8311f1ff3dabb0 \
+                            --hash=sha256:22afcb9f253dac0696b5a4be4a1c0f8762f8239e21b99680099abd9b2b1b2269 \
+                            --hash=sha256:b261ccdec7821281dade748d088bb6e9b69e6d15b30652b74cbbac25e280b796 \
+                            --hash=sha256:d0eccceffcb53201b5bfebb52600a5fb483a20b61da9dbc885f8b103cbe7598c \
+                            --hash=sha256:ff8fa367d09b717b2a17a052544193ad76cd49979c805768879cb63d9ca50561 \
+                            --hash=sha256:b01b88d45a6fcb69667cd6d2f7a9aeb4bf53760d7fc536bf679ec94fe9f3ff3d \
+                            --hash=sha256:3e4d1f6587322d2788836a99c69062fbb091331ec940e02d12d179c1d53e25fc
+  # [/charset-normalizer]
+  # [urllib3]
+  urllib3==2.2.1 --hash=sha256:450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d
+  # [/urllib3]
+  # [requests]
+  requests==2.32.3 --hash=sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6
+  # [/requests]
+  
+## python-scipy-requirements.txt
+  # [scipy]
+  # Hashes correspond to the following packages:
+  #  - scipy-1.13.1-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - scipy-1.13.1-cp39-cp39-macosx_12_0_arm64.whl
+  #  - scipy-1.13.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - scipy-1.13.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - scipy-1.13.1-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - scipy-1.13.1-cp39-cp39-win_amd64.whl
+  scipy==1.13.1 --hash=sha256:436bbb42a94a8aeef855d755ce5a465479c721e9d684de76bf61a62e7c2b81d5 \
+                --hash=sha256:8335549ebbca860c52bf3d02f80784e91a004b71b059e3eea9678ba994796a24 \
+                --hash=sha256:d533654b7d221a6a97304ab63c41c96473ff04459e404b83275b60aa8f4b7004 \
+                --hash=sha256:637e98dcf185ba7f8e663e122ebf908c4702420477ae52a04f9908707456ba4d \
+                --hash=sha256:a014c2b3697bde71724244f63de2476925596c24285c7a637364761f8710891c \
+                --hash=sha256:392e4ec766654852c25ebad4f64e4e584cf19820b980bc04960bca0b0cd6eaa2
+  # [/scipy]
+  
+## python-setuptools-requirements.txt
+  # [setuptools]
+  setuptools==70.0.0 --hash=sha256:54faa7f2e8d2d11bcd2c07bed282eef1046b5c080d1c32add737d7b5817b1ad4
+  # [/setuptools]
+  
+## python-uv-requirements.txt
+  # [uv]
+  uv==0.5.24 \
+    --hash=sha256:13f4f1e36c2b566c19d6fefd09cca5a2a6e8b1cf2ffa16b670351d0eed0c7d4f \
+    --hash=sha256:188bacdbe39c7f76ad1999ce0dee0dfd2b79d248e121498bbaf94ba6089fb7ee \
+    --hash=sha256:1e933341300f107d228608af9cc23e08c3a386c0077181db23b4cd26535c64d7 \
+    --hash=sha256:421304f2b31799f9f926faa75add2b7bbf653e850b9f97c08cb74e5fb5e7f661 \
+    --hash=sha256:455d23e0f41577eb9edbdac8e41d37875cb2885758760acee96469084f31571c \
+    --hash=sha256:57b473602e7f3f356ba4d2cb5e2c6c7c691f21dbbffd7202c12fc9db29b7ad7a \
+    --hash=sha256:6640a2cb919cc04c0fb599d5630a579bacfa8166b928b7e49e3b71280f30f5d9 \
+    --hash=sha256:9059775b0c74a68799f3e665a08c429f527d3cdf61c15227992cfff75e31c327 \
+    --hash=sha256:a47acfda27654c212af6aeec0b8d12fc0150295b7e6afabbdc741a7eb39d898f \
+    --hash=sha256:ac8919fc145aeba090adce202e470c21f2df7dfcfa01ca67a9575d41adbf3de5 \
+    --hash=sha256:b7895b66a182bf5e5b88e470ab04beaf76361a64970db6058363293a18c9dd2a \
+    --hash=sha256:cfcabf26314411dde69c7a62e9757d5688aa475731c7a3b3749f389488121768 \
+    --hash=sha256:d36da9ab6291eaac151695247cdfb3049e6416d6c210c9890ffcda6d0aa6ad19 \
+    --hash=sha256:d3a9e63b098055830b58b47552ea4fc38c94a95b5f2de44a8d288ef5decce265 \
+    --hash=sha256:d7421d59c80bc805103f1030777f909904feab338620db5b5d81f9c10767304d \
+    --hash=sha256:ecb71bcada372274db34bd32f6a9214974b26b6cdc3145a26d07a710f2ea7f18 \
+    --hash=sha256:f2ccd95cecfcc9e106b9d8d154f6bfc59d8263952f72a720d0158f3b94dc69cb
+  # [/uv]
+  
+## python-wheel-requirements.txt
+  # [wheel]
+  wheel==0.43.0 --hash=sha256:55c570405f142630c6b9f72fe09d9b67cf1477fcf543ae5b8dcb1f5b7377da81
+  # [/wheel]
   

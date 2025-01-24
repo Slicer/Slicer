@@ -1,4 +1,0 @@
-  # [pip]
-  pip==24.0 --hash=sha256:ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc
-  # [/pip]
-  
