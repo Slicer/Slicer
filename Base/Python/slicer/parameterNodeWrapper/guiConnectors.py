@@ -706,6 +706,39 @@ class qMRMLNodeComboBoxToNodeConnector(GuiConnector):
         self._widget.setCurrentNode(value)
 
 
+@parameterNodeGuiConnector
+class ctkColorPickerButtonToQColorConnector(GuiConnector):
+    @staticmethod
+    def canRepresent(widget, datatype) -> bool:
+        return type(widget) == ctk.ctkColorPickerButton and unannotatedType(datatype) == qt.QColor
+
+    @staticmethod
+    def create(widget, datatype):
+        if ctkColorPickerButtonToQColorConnector.canRepresent(widget, datatype):
+            return ctkColorPickerButtonToQColorConnector(widget, datatype)
+        return None
+
+    def __init__(self, widget: ctk.ctkColorPickerButton, datatype):
+        super().__init__()
+        self._widget: ctk.ctkColorPickerButton = widget
+        self._type = unannotatedType(datatype)
+
+    def _connect(self):
+        self._widget.colorChanged.connect(self.changed)
+
+    def _disconnect(self):
+        self._widget.colorChanged.disconnect(self.changed)
+
+    def widget(self) -> ctk.ctkColorPickerButton:
+        return self._widget
+
+    def read(self) -> qt.QColor:
+        return self._widget.color
+
+    def write(self, value : qt.QColor) -> None:
+        self._widget.color = value
+
+
 SlicerPackParameterNamePropertyName = "SlicerPackParameterName"
 
 
