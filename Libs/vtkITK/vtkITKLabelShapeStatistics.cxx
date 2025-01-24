@@ -322,7 +322,7 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
         vtkDoubleArray* obbOriginArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxOrigin", 3);
         obbOriginArray->InsertTuple3(rowIndex, boundingBoxOrigin[0], boundingBoxOrigin[1], boundingBoxOrigin[2]);
 
-        typename ShapeLabelObjectType::OrientedBoundingBoxPointType boundingBoxSize = shapeObject->GetOrientedBoundingBoxSize();
+        typename ShapeLabelObjectType::OrientedBoundingBoxSizeType boundingBoxSize = shapeObject->GetOrientedBoundingBoxSize();
         std::vector<std::string> componentNames = { "x", "y", "z" };
         vtkDoubleArray* obbSizeArray = GetArray<vtkDoubleArray>(output, "OrientedBoundingBoxSize", 3, &componentNames);
         obbSizeArray->InsertTuple3(rowIndex, boundingBoxSize[0], boundingBoxSize[1], boundingBoxSize[2]);
