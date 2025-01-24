@@ -96,6 +96,10 @@ public:
   void SetAllowInMemoryTransfer(int value);
   int GetAllowInMemoryTransfer() const;
 
+  /// Control whether the CLI process window is hidden (Windows only, defaults to 1).
+  void SetHideWindow(int value);
+  int GetHideWindow() const;
+
   /// For debugging, control redirection of cout and cerr
   virtual void RedirectModuleStreamsOn();
   virtual void RedirectModuleStreamsOff();
