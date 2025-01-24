@@ -18,6 +18,7 @@
 #
 import lxml.etree as ET
 import os
+import re
 import sys
 from datetime import date
 
@@ -69,6 +70,49 @@ myst_heading_anchors = 6
 # Allow display (block) math with equation label syntax
 myst_dmath_allow_labels = True
 
+def extract_slicer_xy_version(slicer_src_dir):
+    """Given a Slicer source director, extract <major>.<minor> version
+    from top-level CMakeLists.txt
+    """
+    slicer_src_dir = os.path.abspath(slicer_src_dir)
+    expressions = {part: re.compile(r"set\(Slicer_VERSION_%s \"([0-9]+)\"\)" % part.upper())
+                   for part in ["major", "minor"]}
+    parts = {}
+    with open(slicer_src_dir + "/CMakeLists.txt") as fp:
+        for line in fp:
+            for part, expression in expressions.items():
+                m = expression.match(line.strip())
+                if m is not None:
+                    parts[part] = m.group(1)
+            if len(parts) == len(expressions):
+              break
+    return parts
+
+def _get_apidocs_doxygen_version():
+
+    slicer_repo_dir = os.path.dirname(os.path.dirname(__file__))
+    version_parts = extract_slicer_xy_version(slicer_repo_dir)
+    assert version_parts
+
+    # If the version is even, then link to the release documentation
+    if int(version_parts["minor"])//2 == 0:
+        return "v{major}.{minor}".format(**version_parts)
+    else:
+        return "main"
+
+slicerapidocs_url_scheme = "https://apidocs.slicer.org/" + _get_apidocs_doxygen_version() + "/{{path}}#{{fragment}}"
+
+# Add custom url scheme to dynamically link to the doxygen
+# documentation corresponding to the version of the current Slicer build.
+myst_url_schemes = {
+    "http":None,
+    "https":None,
+    "mailto":None,
+    "ftp":None,
+    "slicerapidocs":slicerapidocs_url_scheme,
+    }
+
+#
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
