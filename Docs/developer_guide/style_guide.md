@@ -88,7 +88,7 @@ Useful information about some coding style decisions: <https://google.github.io/
   - `vtkSlicer` not `vTKSlicer`
 - Words should be spelled out and not abbreviated
   - `GetWindow` not `GetWin`
-- File names must follow the [https://en.wikipedia.org/wiki/CamelCase Camel case] convention
+- File names must follow the [Camel case](https://en.wikipedia.org/wiki/CamelCase) convention
   - `TestMyFeature.cxx` not `Test-My_Feature.cxx`
 - Use US English words and spelling
   - "Millimeter" not "Millimetre"
@@ -110,7 +110,7 @@ Examples:
 When dealing with files names and path, use:
 - [kwsys::SystemTools](https://github.com/Kitware/VTK/blob/master/Utilities/KWSys/vtksys/SystemTools.hxx.in) in VTK classes
 - [QFileInfo](https://doc.qt.io/qt-5/qfileinfo.html)/[QDir](https://doc.qt.io/qt-5/qdir.html) in Qt classes
-- [https://docs.python.org/library/os.path.html os.path] in Python.
+- [os.path](https://docs.python.org/library/os.path.html) in Python.
 
 Instead of doing string manipulation manually:
 
@@ -232,7 +232,7 @@ The ITK, VTK, Qt, std::cout, std::cerr .. all appear in the error log and can ea
 
 ### In Qt-based classes
 
-For error messages, use [qCritical()](https://qt-project.org/doc/qt-4.8/qtglobal.html#qCritical):
+For error messages, use [qCritical()](https://doc.qt.io/qt-5/qtglobal.html#qCritical):
 
 ```
 if (somethingWrongHappened)
@@ -242,13 +242,13 @@ if (somethingWrongHappened)
   }
 ```
 
-For warnings, use [qWarning()](https://qt-project.org/doc/qt-4.8/qtglobal.html#qWarning):
+For warnings, use [qWarning()](https://doc.qt.io/qt-5/qtglobal.html#qWarning):
 
 ```
 qWarning() << "Be careful here, this is dangerous";
 ```
 
-For debug, use [qDebug()](https://qt-project.org/doc/qt-4.8/qtglobal.html#qDebug):
+For debug, use [qDebug()](https://doc.qt.io/qt-5/qtglobal.html#qDebug):
 
 ```
 qDebug() << "This variable has the value: "<< value;
@@ -364,8 +364,8 @@ See [r23377](https://github.com/Slicer/Slicer/commit/3e04040d2e960ec4cd294cb8404
 
 ### Resources
 
-- Read more on [https://chris.beams.io/posts/git-commit/ How to Write a Git Commit Message]
-- Discussion section of [https://git-scm.com/docs/git-commit git-commit(1)]
+- Read more on [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/)
+- Discussion section of [git-commit(1)](https://git-scm.com/docs/git-commit)
 
 ## UI Design Guidelines
 
