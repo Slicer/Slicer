@@ -360,6 +360,12 @@ void qSlicerApplicationPrivate::init()
 
   this->initStyle();
 
+  QIcon icon;
+  icon.addFile(":/Icons/Medium/DesktopIcon.png");
+  icon.addFile(":/Icons/Large/DesktopIcon.png");
+  icon.addFile(":/Icons/XLarge/DesktopIcon.png");
+  q->setWindowIcon(icon);
+
   this->ToolTipTrapper = new ctkToolTipTrapper(q);
   this->ToolTipTrapper->setToolTipsTrapped(false);
   this->ToolTipTrapper->setToolTipsWordWrapped(true);
