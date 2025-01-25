@@ -73,7 +73,7 @@ Recommended for fast prototyping and custom workflow development.
 Specifications:
 * Written in Python.
 * Full [Slicer API](api.md#python) is accessible.
-* Full access to the API of [MRML](mrml.md), [VTK](http://www.vtk.org), [Qt](https://doc.qt.io/), [ITK](https://itkpythonpackage.readthedocs.io) and [SimpleITK](http://www.itk.org/SimpleITKDoxygen/html/classes.html) since are Python wrapped.
+* Full access to the API of [MRML](mrml.md), [VTK](https://docs.vtk.org), [Qt](https://doc.qt.io/), [ITK](https://docs.itk.org/) and [SimpleITK](https://simpleitk.readthedocs.io/) since those are Python wrapped.
 
 :::{admonition} Getting started
 Download Slicer and create an initial skeleton using the [Extension Wizard](/user_guide/modules/extensionwizard.md#extension-wizard) adding a module of type `scripted`.

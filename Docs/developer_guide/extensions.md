@@ -716,7 +716,7 @@ Extensions integrating third party libraries should follow the [SuperBuild exten
 
 Each third party libraries will be configured and built using a dedicated `External_MyLib.cmake` file, the install location of binaries and libraries should be set to `Slicer_INSTALL_BIN_DIR` and `Slicer_INSTALL_LIB_DIR`.
 
-Also, starting with [Slicer r25959](http://viewvc.slicer.org/viewvc.cgi/Slicer4?view=revision&revision=25959), extension can package python modules and packages using `PYTHON_SITE_PACKAGES_SUBDIR` CMake variable to specify the install destination.
+Also, starting with [Slicer v4.8.0](https://github.com/Slicer/Slicer/releases/tag/v4.8.0) (introduced in [this commit](https://github.com/Slicer/Slicer/commit/b16753775e49bca14c456a4b45803e8fb9e97eab)), extension can package python modules and packages using `PYTHON_SITE_PACKAGES_SUBDIR` CMake variable to specify the install destination.
 
 These relative paths are the one that the extensions manager will consider when generating the launcher and application settings for a given extension.
 
