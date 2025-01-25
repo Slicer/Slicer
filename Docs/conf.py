@@ -70,47 +70,67 @@ myst_heading_anchors = 6
 # Allow display (block) math with equation label syntax
 myst_dmath_allow_labels = True
 
-def extract_slicer_xy_version(slicer_src_dir):
-    """Given a Slicer source director, extract <major>.<minor> version
-    from top-level CMakeLists.txt
+
+def _extract_slicer_xy_version(slicer_src_dir):
+    """
+    Given a Slicer source director, extract <major>.<minor> version
+    from top-level `CMakeLists.txt`.
+
+    Return a dictionary containing `major` and `minor` version components as strings
     """
     slicer_src_dir = os.path.abspath(slicer_src_dir)
-    expressions = {part: re.compile(r"set\(Slicer_VERSION_%s \"([0-9]+)\"\)" % part.upper())
-                   for part in ["major", "minor"]}
-    parts = {}
-    with open(slicer_src_dir + "/CMakeLists.txt") as fp:
-        for line in fp:
-            for part, expression in expressions.items():
-                m = expression.match(line.strip())
-                if m is not None:
-                    parts[part] = m.group(1)
-            if len(parts) == len(expressions):
-              break
-    return parts
+    version_patterns = {
+        part: re.compile(rf'set\(Slicer_VERSION_{part.upper()} "(\d+)"\)')
+        for part in ["major", "minor"]
+    }
+    version_parts = {}
+
+    # Parse the CMakeLists.txt file to extract version components.
+    cmakelists_path = os.path.join(slicer_src_dir, "CMakeLists.txt")
+    with open(cmakelists_path) as cmake_file:
+        for line in cmake_file:
+            for part, pattern in version_patterns.items():
+                match = pattern.match(line.strip())
+                if match is not None:
+                    version_parts[part] = match.group(1)
+            if len(version_parts) == len(version_patterns ):
+                break
+
+    if len(version_parts) != len(version_patterns):
+        raise ValueError(f"Failed to extract version from {cmakelists_path}")
+
+    return version_parts
+
 
 def _get_apidocs_doxygen_version():
+    """
+    Determine the Doxygen documentation version to use based on the Slicer version.
+
+    Return Doxygen version identifier (`v<major>.<minor>` for Stable, `main` for Preview)
+    """
 
     slicer_repo_dir = os.path.dirname(os.path.dirname(__file__))
-    version_parts = extract_slicer_xy_version(slicer_repo_dir)
-    assert version_parts
+    version_parts = _extract_slicer_xy_version(slicer_repo_dir)
 
-    # If the version is even, then link to the release documentation
-    if int(version_parts["minor"])//2 == 0:
-        return "v{major}.{minor}".format(**version_parts)
-    else:
-        return "main"
+    # Determine the documentation branch based on the minor version parity.
+    is_even = int(version_parts["minor"]) % 2 == 0
+    return "v{major}.{minor}".format(**version_parts) if is_even else "main"
 
+
+# Construct the custom URL scheme for Slicer Doxygen documentation links.
 slicerapidocs_url_scheme = "https://apidocs.slicer.org/" + _get_apidocs_doxygen_version() + "/{{path}}#{{fragment}}"
+print(f"Slicer API documentation URL scheme: {slicerapidocs_url_scheme}")
 
-# Add custom url scheme to dynamically link to the doxygen
-# documentation corresponding to the version of the current Slicer build.
+
+# Register custom URL schemes for Markdown processing.
+# These schemes allow linking to external and Slicer-specific resources dynamically.
 myst_url_schemes = {
-    "http":None,
-    "https":None,
-    "mailto":None,
-    "ftp":None,
-    "slicerapidocs":slicerapidocs_url_scheme,
-    }
+    "http": None,
+    "https": None,
+    "mailto": None,
+    "ftp": None,
+    "slicerapidocs": slicerapidocs_url_scheme,
+}
 
 #
 # Add any paths that contain templates here, relative to this directory.
