@@ -129,7 +129,7 @@ this should be used:
 n = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLinearTransformNode')
 ```
 
-Note: MRML scene's `CreateNodeByClass` creates a node with the default settings set in the scene for that node type (using [vtkMRMLScene::AddDefaultNode](https://apidocs.slicer.org/main/classvtkMRMLScene.html#ae302c5ed4aabb2910bc35dcc9aa2513f)).
+Note: MRML scene's `CreateNodeByClass` creates a node with the default settings set in the scene for that node type (using [vtkMRMLScene::AddDefaultNode](slicerapidocs:classvtkMRMLScene.html#ae302c5ed4aabb2910bc35dcc9aa2513f)).
 
 ## Working directory
 
