@@ -51,6 +51,20 @@ For more details, see the Slicer [CMakeLists.txt](https://github.com/Slicer/Slic
 
 :::
 
+### Ubuntu 24.04 (Noble Numbat)
+
+Install the development tools and the support libraries:
+
+```console
+sudo apt update && sudo apt install git git-lfs build-essential \
+  libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
+  libxt-dev
+```
+
+:::{note}
+The CMake version currently included in Ubuntu 24.04 is CMake 3.28.3 which is compatible with the current development version of Slicer. **Last time tested: 2025-05-27.**
+:::
+
 ### Ubuntu 23.04 (Lunar Lobster)
 
 Install the development tools and the support libraries:
