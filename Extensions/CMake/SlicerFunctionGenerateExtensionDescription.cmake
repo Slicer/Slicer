@@ -133,6 +133,27 @@ endfunction()
 # Testing
 ################################################################################
 
+function(_check_generated_description_file)
+  set(options
+    )
+  set(oneValueArgs
+    BASELINE
+    GENERATED
+    )
+  set(multiValueArgs
+    )
+  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
+      ${MY_GENERATED}
+      ${MY_BASELINE}
+    RESULT_VARIABLE result
+    )
+  if(NOT result EQUAL 0)
+    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${MY_GENERATED}]. Baseline [${MY_BASELINE}]")
+  endif()
+endfunction()
+
 #
 # cmake -DTEST_<testfunction>:BOOL=ON -P <this_script>.cmake
 #
@@ -143,8 +164,9 @@ function(slicer_generate_extension_description_test)
     set(Slicer_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../..)
   endif()
 
+  set(destination_dir ${CMAKE_CURRENT_BINARY_DIR})
   set(common_args
-    DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}
+    DESTINATION_DIR ${destination_dir}
     EXTENSION_DESCRIPTION "The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.
 This is a line of text.<br>And another one."
     EXTENSION_CATEGORY "Exporter"
@@ -172,17 +194,10 @@ This is a line of text.<br>And another one."
     #EXTENSION_DEPENDS
     #EXTENSION_ENABLED
     )
-  set(generated "${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext")
-  set(baseline "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_without_depends.s4ext")
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-      ${generated}
-      ${baseline}
-    RESULT_VARIABLE result
+  _check_generated_description_file(
+    GENERATED "${destination_dir}/SlicerToKiwiExporter.s4ext"
+    BASELINE "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_without_depends.s4ext"
     )
-  if(NOT result EQUAL 0)
-    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${generated}]. Baseline [${baseline}]")
-  endif()
 
   # Generate description file of an extension *with* dependencies
   # where EXTENSION_DEPENDS is a space separated string
@@ -192,17 +207,10 @@ This is a line of text.<br>And another one."
     EXTENSION_DEPENDS "Foo Bar"
     EXTENSION_ENABLED 0
     )
-  set(generated "${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext")
-  set(baseline "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext")
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-      ${generated}
-      ${baseline}
-    RESULT_VARIABLE result
+  _check_generated_description_file(
+    GENERATED "${destination_dir}/SlicerToKiwiExporter.s4ext"
+    BASELINE "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext"
     )
-  if(NOT result EQUAL 0)
-    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${generated}]. Baseline [${baseline}]")
-  endif()
 
   # Generate description file of an extension *with* dependencies
   # where EXTENSION_DEPENDS is a list
@@ -213,17 +221,10 @@ This is a line of text.<br>And another one."
     EXTENSION_ENABLED 0
     EXTENSION_STATUS ""
     )
-  set(generated "${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext")
-  set(baseline "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext")
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-      ${generated}
-      ${baseline}
-    RESULT_VARIABLE result
+  _check_generated_description_file(
+    GENERATED "${destination_dir}/SlicerToKiwiExporter.s4ext"
+    BASELINE "${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext"
     )
-  if(NOT result EQUAL 0)
-    message(FATAL_ERROR "The generated and baseline files are different but are expected to match. Generated [${generated}]. Baseline [${baseline}]")
-  endif()
 
   message("SUCCESS")
 endfunction()
