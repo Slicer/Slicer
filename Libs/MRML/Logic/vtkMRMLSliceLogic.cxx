@@ -1514,7 +1514,6 @@ bool vtkMRMLSliceLogic::CurvedPlanarReformationStraightenVolume(vtkMRMLScalarVol
   int interpolationType =
     (inputVolume->IsA("vtkMRMLLabelMapVolumeNode") ? vtkMRMLAbstractVolumeResampler::InterpolationTypeNearestNeighbor
                                                   : vtkMRMLAbstractVolumeResampler::InterpolationTypeBSpline);
-  int windowedSincFunction = vtkMRMLAbstractVolumeResampler::WindowedSincFunctionCosine;
   const vtkMRMLAbstractVolumeResampler::ResamplingParameters resamplingParameters;
 
   bool success = appLogic->ResampleVolume(volumeResamplerName,
@@ -1523,7 +1522,6 @@ bool vtkMRMLSliceLogic::CurvedPlanarReformationStraightenVolume(vtkMRMLScalarVol
                                           resamplingTransform,
                                           referenceVolume,
                                           interpolationType,
-                                          windowedSincFunction,
                                           resamplingParameters);
   if (!success)
   {

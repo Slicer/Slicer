@@ -319,7 +319,6 @@ public:
                       vtkMRMLTransformNode* resamplingTransform,
                       vtkMRMLVolumeNode* referenceVolume = nullptr,
                       int interpolationType = vtkMRMLAbstractVolumeResampler::InterpolationTypeLinear,
-                      int windowedSincFunction = vtkMRMLAbstractVolumeResampler::WindowedSincFunctionCosine,
                       const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters = vtkMRMLAbstractVolumeResampler::ResamplingParameters());
 
 protected:

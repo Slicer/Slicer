@@ -34,7 +34,6 @@ public:
                         vtkMRMLTransformNode* resamplingTransform,
                         vtkMRMLVolumeNode* referenceVolume,
                         int interpolationType,
-                        int windowedSincFunction,
                         const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameter) override;
 
 protected:

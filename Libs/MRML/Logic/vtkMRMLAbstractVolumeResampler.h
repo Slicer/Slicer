@@ -48,17 +48,6 @@ public:
     InterpolationType_Last // must be last
   };
 
-  enum
-  {
-    WindowedSincFunctionUndefined,
-    WindowedSincFunctionHamming,
-    WindowedSincFunctionCosine,
-    WindowedSincFunctionWelch,
-    WindowedSincFunctionLanczos,
-    WindowedSincFunctionBlackman,
-    WindowedSincFunction_Last // must be last
-  };
-
   typedef std::map<std::string, std::string> ResamplingParameters;
 
   virtual bool Resample(vtkMRMLVolumeNode* inputVolume,
@@ -66,7 +55,6 @@ public:
                         vtkMRMLTransformNode* resamplingTransform,
                         vtkMRMLVolumeNode* referenceVolume,
                         int interpolationType,
-                        int windowedSincFunction,
                         const ResamplingParameters& resamplingParameter) = 0;
 
   /// @{
