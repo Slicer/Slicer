@@ -670,6 +670,43 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToR
 }
 
 //----------------------------------------------------------------------------
+// Checks that a vtkImageData has origin (0,0,0), spacing (1,1,1), and an identity direction matrix
+bool imageDataHasIdentityAffine(vtkImageData *imageData)
+{
+  // Should we be using vtkMathUtilities::FuzzyCompare here?
+  // I am thinking no because we vtkImageData affine should be *exactly* identity
+  // (we don't want "slightly" undefined behavior from slicer).
+  double spacing[3];
+  imageData->GetSpacing(spacing);
+  if (spacing[0] != 1.0 || spacing[1] != 1.0 || spacing[2] != 1.0)
+  {
+    return false;
+  }
+  double origin[3];
+  imageData->GetOrigin(origin);
+  if (origin[0] != 0.0 || origin[1] != 0.0 || origin[2] != 0.0)
+  {
+    return false;
+  }
+  vtkMatrix3x3* directionMatrix = imageData->GetDirectionMatrix();
+  for (int i; i<3; ++i)
+  {
+    for (int j; j<3; ++j)
+    {
+      if (i==j && directionMatrix->GetElement(i,j)!=1.0)
+      {
+        return false;
+      }
+      if (i!=j && directionMatrix->GetElement(i,j)!=0.0)
+      {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 {
   if (imageData == nullptr)
@@ -685,6 +722,13 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
   }
   else
   {
+    if (!imageDataHasIdentityAffine(imageData))
+    {
+      vtkWarningMacro(
+        "For the underlying vtkImageData of a Volume node, the origin must be (0,0,0), "
+        << "spacing must be (1,1,1), and direction must be identity."
+      );
+    }
     vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
       this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : nullptr);
     if (oldProducer && oldProducer->GetOutputDataObject(0) == imageData)
