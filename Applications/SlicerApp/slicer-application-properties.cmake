@@ -20,6 +20,12 @@ set(DESCRIPTION_FILE
   ${Slicer_SOURCE_DIR}/README.md
   )
 
+set(INSTALLER_HEADER_FILE
+  "${CMAKE_CURRENT_LIST_DIR}/Resources/Installer/Header.bmp"
+  )
+set(INSTALLER_WELCOME_FILE
+  "${CMAKE_CURRENT_LIST_DIR}/Resources/Installer/WelcomeFinishPage.bmp"
+  )
 set(LAUNCHER_SPLASHSCREEN_FILE
   "${CMAKE_CURRENT_LIST_DIR}/Resources/Images/${APPLICATION_NAME}-SplashScreen.png"
   )

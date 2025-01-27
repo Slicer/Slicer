@@ -279,6 +279,8 @@ macro(slicerMacroBuildApplication)
 
     DEFAULT_SETTINGS_FILE
     SPLASHSCREEN_ENABLED
+    INSTALLER_HEADER_FILE
+    INSTALLER_WELCOME_FILE
     LAUNCHER_SPLASHSCREEN_FILE
     APPLE_ICON_FILE
     WIN_ICON_FILE
@@ -315,6 +317,8 @@ macro(slicerMacroBuildApplication)
   # Check expected variables
   set(expected_defined_vars
     NAME
+    INSTALLER_HEADER_FILE
+    INSTALLER_WELCOME_FILE
     APPLE_ICON_FILE
     WIN_ICON_FILE
     LICENSE_FILE
@@ -371,6 +375,8 @@ macro(slicerMacroBuildApplication)
   if(SLICERAPP_SPLASHSCREEN_ENABLED)
     _set_path_var(LAUNCHER_SPLASHSCREEN_FILE)
   endif()
+  _set_path_var(INSTALLER_HEADER_FILE)
+  _set_path_var(INSTALLER_WELCOME_FILE)
   _set_path_var(APPLE_ICON_FILE)
   _set_path_var(WIN_ICON_FILE)
   _set_path_var(LICENSE_FILE)
