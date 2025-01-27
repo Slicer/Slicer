@@ -3,7 +3,8 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
+#SPHINXBUILD   = sphinx-build
+SPHINXBUILD   = PythonSlicer -m sphinx
 SPHINXPROJ    = 3DSlicer
 SOURCEDIR     = .
 BUILDDIR      = _build
