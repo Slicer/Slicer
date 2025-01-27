@@ -1,10 +1,12 @@
-
 # Get root directory
 get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
 get_filename_component(_dir ${_filepath} PATH)
 if(APPLE)
   # "_dir" of the form "<qt_root_dir>/lib/QtCore.framework"
   set(qt_root_dir "${_dir}/../..")
+elseif(${_dir} MATCHES "x86_64-linux-gnu")
+  # "_dir" of the form "<qt_root_dir>/lib/x86_64-linux-gnu"
+  set(qt_root_dir "${_dir}/../../..")
 else()
   # "_dir" of the form "<qt_root_dir>/lib"
   set(qt_root_dir "${_dir}/..")
