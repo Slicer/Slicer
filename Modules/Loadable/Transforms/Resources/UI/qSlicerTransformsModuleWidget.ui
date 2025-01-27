@@ -37,30 +37,68 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="TransformNodeSelectorLabel">
-       <property name="text">
-        <string> Transform:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="qMRMLNodeComboBox" name="TransformNodeSelector">
-       <property name="nodeTypes">
-        <stringlist notr="true">
-         <string>vtkMRMLLinearTransformNode</string>
-         <string>vtkMRMLBSplineTransformNode</string>
-         <string>vtkMRMLGridTransformNode</string>
-         <string>vtkMRMLTransformNode</string>
-        </stringlist>
-       </property>
-       <property name="renameEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="ctkExpandableWidget" name="ResizableFrame">
+     <property name="orientations">
+      <set>Qt::Vertical</set>
+     </property>
+     <property name="sizeGripInside">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_9">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="qMRMLSubjectHierarchyTreeView" name="TransformNodeSelector">
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::InternalMove</enum>
+        </property>
+        <property name="indentation">
+         <number>12</number>
+        </property>
+        <property name="editMenuActionVisible">
+         <bool>false</bool>
+        </property>
+        <property name="addNodeMenuActionVisible">
+         <bool>true</bool>
+        </property>
+        <property name="multiSelection">
+         <bool>true</bool>
+        </property>
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLTransformNode</string>
+         </stringlist>
+        </property>
+        <property name="idColumnVisible">
+         <bool>false</bool>
+        </property>
+        <property name="colorColumnVisible">
+         <bool>false</bool>
+        </property>
+        <property name="pluginAllowList">
+         <stringlist notr="true">
+          <string>Transforms</string>
+          <string>Folder</string>
+          <string>Visibility</string>
+         </stringlist>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="ctkCollapsibleButton" name="InfoCollapsibleWidget">
@@ -634,28 +672,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkCoordinatesWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkCoordinatesWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkMatrixWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkMatrixWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLCoordinatesWidget</class>
    <extends>ctkCoordinatesWidget</extends>
    <header>qMRMLCoordinatesWidget.h</header>
@@ -681,6 +697,9 @@
    <class>qMRMLTreeView</class>
    <extends>QTreeView</extends>
    <header>qMRMLTreeView.h</header>
+   <slots>
+    <slot>setSceneModel(int)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>qMRMLWidget</class>
@@ -695,6 +714,11 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLSubjectHierarchyTreeView</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLSubjectHierarchyTreeView.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLTransformDisplayNodeWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLTransformDisplayNodeWidget.h</header>
@@ -704,10 +728,39 @@
    <extends>qMRMLWidget</extends>
    <header>qMRMLTransformInfoWidget.h</header>
   </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCoordinatesWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkCoordinatesWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkExpandableWidget</class>
+   <extends>QFrame</extends>
+   <header>ctkExpandableWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkMatrixWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkMatrixWidget.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../qSlicerTransformsModule.qrc"/>
   <include location="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
+  <include location="../../../Segmentations/Widgets/Resources/qSlicerSegmentationsModuleWidgets.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -722,7 +775,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>169</x>
-     <y>1206</y>
+     <y>1170</y>
     </hint>
    </hints>
   </connection>
@@ -737,72 +790,8 @@
      <y>501</y>
     </hint>
     <hint type="destinationlabel">
-     <x>380</x>
-     <y>1206</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerTransformsModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>TransformNodeSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>293</x>
-     <y>6</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>389</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>TranslationSliders</receiver>
-   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>336</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>163</x>
-     <y>315</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>RotationSliders</receiver>
-   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>389</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>341</x>
-     <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>MatrixWidget</receiver>
-   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>365</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>212</x>
-     <y>171</y>
+     <x>503</x>
+     <y>1170</y>
     </hint>
    </hints>
   </connection>
@@ -813,124 +802,12 @@
    <slot>resetUnactiveSliders()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>288</y>
+     <x>73</x>
+     <y>523</y>
     </hint>
     <hint type="destinationlabel">
-     <x>79</x>
-     <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>InvertPushButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>389</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>161</x>
-     <y>516</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>TransformToolButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>389</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>198</x>
-     <y>907</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>UntransformToolButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>389</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>198</x>
-     <y>1014</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>HardenToolButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>389</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>198</x>
-     <y>1014</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>TransformableTreeView</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>389</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>198</x>
-     <y>1014</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>TransformedTreeView</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>389</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>198</x>
-     <y>1014</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>TransformDisplayNodeWidget</receiver>
-   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>240</x>
-     <y>10</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>204</x>
-     <y>758</y>
+     <x>88</x>
+     <y>640</y>
     </hint>
    </hints>
   </connection>
@@ -951,22 +828,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>TransformInfoWidget</receiver>
-   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>240</x>
-     <y>10</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>222</x>
-     <y>59</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>qSlicerTransformsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TranslationSliders</receiver>
@@ -977,8 +838,8 @@
      <y>65</y>
     </hint>
     <hint type="destinationlabel">
-     <x>301</x>
-     <y>257</y>
+     <x>310</x>
+     <y>523</y>
     </hint>
    </hints>
   </connection>
@@ -993,8 +854,8 @@
      <y>611</y>
     </hint>
     <hint type="destinationlabel">
-     <x>195</x>
-     <y>59</y>
+     <x>204</x>
+     <y>215</y>
     </hint>
    </hints>
   </connection>
@@ -1009,8 +870,8 @@
      <y>816</y>
     </hint>
     <hint type="destinationlabel">
-     <x>594</x>
-     <y>1529</y>
+     <x>504</x>
+     <y>1209</y>
     </hint>
    </hints>
   </connection>
@@ -1025,24 +886,8 @@
      <y>816</y>
     </hint>
     <hint type="destinationlabel">
-     <x>594</x>
-     <y>1484</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>ConvertCollapsibleButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>552</x>
-     <y>17</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>461</x>
-     <y>1512</y>
+     <x>504</x>
+     <y>1206</y>
     </hint>
    </hints>
   </connection>
@@ -1057,8 +902,24 @@
      <y>611</y>
     </hint>
     <hint type="destinationlabel">
-     <x>256</x>
-     <y>724</y>
+     <x>276</x>
+     <y>699</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TransformNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>148</y>
     </hint>
    </hints>
   </connection>

@@ -58,6 +58,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool contextMenuEnabled READ contextMenuEnabled WRITE setContextMenuEnabled)
   /// This property controls whether the Edit properties context menu action is visible. Visible by default
   Q_PROPERTY(bool editMenuActionVisible READ editMenuActionVisible WRITE setEditMenuActionVisible)
+  /// This property controls whether the add node context menu of the scene is visible for node types specified in "nodeTypes" property.
+  Q_PROPERTY(bool addNodeMenuActionVisible READ addNodeMenuActionVisible WRITE setAddNodeMenuActionVisible)
   /// This property controls whether the Select role context menu sub-menu is visible. Visible by default
   Q_PROPERTY(bool selectRoleSubMenuVisible READ selectRoleSubMenuVisible WRITE setSelectRoleSubMenuVisible)
   /// Flag determining whether multiple items can be selected
@@ -71,6 +73,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(bool colorColumnVisible READ colorColumnVisible WRITE setColorColumnVisible)
   Q_PROPERTY(bool transformColumnVisible READ transformColumnVisible WRITE setTransformColumnVisible)
   Q_PROPERTY(bool descriptionColumnVisible READ descriptionColumnVisible WRITE setDescriptionColumnVisible)
+  Q_PROPERTY(QStringList pluginAllowList READ pluginAllowList WRITE setPluginAllowList)
+  Q_PROPERTY(QStringList pluginBlockList READ pluginBlockList WRITE setPluginBlockList)
 
   /// This property controls whether an extra item is added before any subject hierarchy item under
   /// the scene item for indicating 'None' selection.
@@ -132,6 +136,9 @@ public:
   /// Get root item visibility
   bool showRootItem()const;
 
+  /// Get whether the "Create node" actions are shown in the context menu of the scene
+  bool addNodeMenuActionVisible()const;
+
   /// Get whether multi-selection is enabled
   bool multiSelection();
 
@@ -187,6 +194,20 @@ public:
   void setNodeTypes(const QStringList& types);
   QStringList nodeTypes()const;
 
+  /// BaseName is the name used to generate a node name for all the new created
+  /// nodes.
+  /// If nodeType is not specified for setBaseName() then base name is set for all already defined node types.
+  /// If nodeType is not specified for baseName() then base name of the first node type is returned.
+  void setBaseName(const QString& baseName, const QString& nodeType = "");
+  QString baseName(const QString& nodeType = "")const;
+
+  /// NodeTypeLabel is the name displayed to the user as node type. By default the node's tag is used.
+  /// Configuration is useful for cases when a more specific type name is preferred (e.g., instead of
+  /// the generic "Create new SubjectHierarchy" option, a module can set up the widget to show
+  /// "Create new Measurements"). If label is set to empty then the default label is used.
+  Q_INVOKABLE void setNodeTypeLabel(const QString& label, const QString& nodeType);
+  Q_INVOKABLE QString nodeTypeLabel(const QString& nodeType)const;
+
   /// Set child node types filter that allows hiding certain data node subclasses that would otherwise be
   /// accepted by the data node type filter. Show all data nodes if empty
   void setHideChildNodeTypes(const QStringList& types);
@@ -225,6 +246,13 @@ public:
   /// If false then simple selectors are used.
   bool useTerminologySelector()const;
 
+  /// Get list of subject hierarchy plugins that are enabled.
+  /// An empty allowlist means all plugins are enabled. That is the default.
+  QStringList pluginAllowList()const;
+  /// Get list of subject hierarchy plugins that are disabled.
+  /// An empty blocklist means all plugins are enabled. That is the default.
+  QStringList pluginBlockList()const;
+
 public slots:
   /// Set MRML scene
   virtual void setMRMLScene(vtkMRMLScene* scene);
@@ -243,6 +271,9 @@ public slots:
   /// Set root item visibility
   void setShowRootItem(bool show);
 
+  /// Set whether to show the "Create node" actions in the context menu of the scene
+  void setAddNodeMenuActionVisible(bool show);
+
   /// Rename currently selected one item by popping up a dialog
   void renameCurrentItem();
   /// Delete selected subject hierarchy items and associated data nodes
@@ -255,6 +286,17 @@ public slots:
   void toggleVisibilityOfSelectedItems();
   /// Edit properties of current item
   virtual void editCurrentItem();
+
+  /// \brief Creates a node of the same type as in the "node types" property.
+  ///
+  /// Its name is generated using \a basename.
+  ///
+  /// \return The new node or nullptr if \a nodeType is not among the allowed
+  /// node types specified using setNodeTypes().
+  ///
+  /// \sa nodeTypes()
+  /// \sa baseName()
+  virtual vtkMRMLNode* addNode(QString nodeType);
 
   /// Handle expand item requests in the subject hierarchy tree. Expands branch
   virtual void expandItem(vtkIdType itemID);
@@ -276,11 +318,15 @@ public slots:
   /// Set list of subject hierarchy plugins that are enabled.
   /// \param allowlist List of allowed subject hierarchy plugin names.
   ///   An empty allowlist means all plugins are enabled. That is the default.
-  void setPluginAllowlist(QStringList allowlist);
+  void setPluginAllowList(QStringList allowlist);
+  /// Deprecated. Use setPluginAllowList instead.
+  void setPluginAllowlist(QStringList allowlist) { this->setPluginAllowList(allowlist); }
   /// Set list of subject hierarchy plugins that are disabled.
   /// \param blocklist List of blocked subject hierarchy plugin names.
   ///   An empty blocklist means all plugins are enabled. That is the default.
-  void setPluginBlocklist(QStringList blocklist);
+  void setPluginBlockList(QStringList blocklist);
+  /// Deprecated. Use setPluginBlockList instead.
+  void setPluginBlocklist(QStringList blocklist) { this->setPluginBlockList(blocklist); }
   /// Disable subject hierarchy plugin by adding it to the blocklist \sa setPluginBlocklist
   /// \param plugin Name of the plugin to disable
   void disablePlugin(QString plugin);
@@ -325,8 +371,12 @@ public slots:
 
 signals:
   void currentItemChanged(vtkIdType);
+  void currentNodeChanged(vtkMRMLNode*);
   void currentItemsChanged(QList<vtkIdType>);
   void currentItemModified(vtkIdType);
+
+  /// Signal emitted when \a node is added by the user
+  void nodeAddedByUser(vtkMRMLNode* node);
 
 protected slots:
   virtual void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
@@ -355,6 +405,8 @@ protected slots:
   virtual void onMRMLSceneEndBatchProcess(vtkObject* sceneObject);
 
   void onCustomContextMenu(const QPoint& point);
+
+  virtual void addNode();
 
 protected:
   /// Set the subject hierarchy node found in the given scene. Called only internally.

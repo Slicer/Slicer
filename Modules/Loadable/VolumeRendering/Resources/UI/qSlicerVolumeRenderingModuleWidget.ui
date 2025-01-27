@@ -6,17 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>415</width>
-    <height>689</height>
+    <width>375</width>
+    <height>775</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Volume Rendering</string>
   </property>
-  <layout class="QFormLayout" name="formLayout_2">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -29,57 +26,71 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="leftMargin">
-      <number>6</number>
+   <item>
+    <widget class="ctkExpandableWidget" name="ResizableFrame_2">
+     <property name="orientations">
+      <set>Qt::Vertical</set>
      </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="ctkCheckBox" name="VisibilityCheckBox">
-       <property name="text">
-        <string>Volume:</string>
-       </property>
-       <property name="indicatorIcon">
-        <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-         <normaloff>:/Icons/VisibleOn.png</normaloff>
-         <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
-       </property>
-       <property name="indicatorIconSize">
-        <size>
-         <width>21</width>
-         <height>21</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="1">
-    <widget class="qMRMLNodeComboBox" name="VolumeNodeComboBox">
-     <property name="nodeTypes">
-      <stringlist notr="true">
-       <string>vtkMRMLScalarVolumeNode</string>
-      </stringlist>
-     </property>
-     <property name="hideChildNodeTypes">
-      <stringlist notr="true">
-       <string>vtkMRMLDiffusionWeightedVolumeNode</string>
-       <string>vtkMRMLDiffusionTensorVolumeNode</string>
-       <string>vtkMRMLMultiVolumeNode</string>
-      </stringlist>
-     </property>
-     <property name="addEnabled">
+     <property name="sizeGripInside">
       <bool>false</bool>
      </property>
-     <property name="renameEnabled">
-      <bool>true</bool>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_10">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="qMRMLSubjectHierarchyTreeView" name="VolumeNodeSelector">
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::InternalMove</enum>
+        </property>
+        <property name="indentation">
+         <number>12</number>
+        </property>
+        <property name="editMenuActionVisible">
+         <bool>false</bool>
+        </property>
+        <property name="multiSelection">
+         <bool>true</bool>
+        </property>
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="idColumnVisible">
+         <bool>false</bool>
+        </property>
+        <property name="colorColumnVisible">
+         <bool>false</bool>
+        </property>
+        <property name="transformColumnVisible">
+         <bool>false</bool>
+        </property>
+        <property name="pluginAllowList">
+         <stringlist notr="true">
+          <string>Volumes</string>
+          <string>Folder</string>
+          <string>Visibility</string>
+         </stringlist>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item>
     <widget class="ctkCollapsibleButton" name="InputsCollapsibleButton">
      <property name="enabled">
       <bool>true</bool>
@@ -166,7 +177,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item>
     <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
      <property name="text">
       <string>Display</string>
@@ -190,7 +201,32 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item row="0" column="0" colspan="2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="CropLabel_2">
+        <property name="text">
+         <string>Visibility:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="ctkCheckBox" name="VisibilityCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="indicatorIcon">
+         <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+          <normaloff>:/Icons/VisibleOn.png</normaloff>
+          <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
+        </property>
+        <property name="indicatorIconSize">
+         <size>
+          <width>21</width>
+          <height>21</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
        <widget class="qSlicerVolumeRenderingPresetComboBox" name="PresetComboBox"/>
       </item>
       <item row="2" column="0">
@@ -364,7 +400,7 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item>
     <widget class="ctkCollapsibleButton" name="AdvancedCollapsibleButton">
      <property name="enabled">
       <bool>true</bool>
@@ -394,7 +430,7 @@
       <item>
        <widget class="QTabWidget" name="AdvancedTabWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="TechniquesTab">
          <attribute name="title">
@@ -598,9 +634,87 @@
      </layout>
     </widget>
    </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLClipNodeWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLClipNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLDisplayNodeViewComboBox</class>
+   <extends>qMRMLCheckableNodeComboBox</extends>
+   <header>qMRMLDisplayNodeViewComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSliderWidget</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLMarkupsROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLMarkupsROIWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSubjectHierarchyTreeView</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLSubjectHierarchyTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLVolumePropertyNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLVolumePropertyNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerVolumeRenderingPresetComboBox</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerVolumeRenderingPresetComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerGPUMemoryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qSlicerGPUMemoryComboBox.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>ctkCheckablePushButton</class>
    <extends>ctkPushButton</extends>
@@ -629,6 +743,12 @@
    <header>ctkExpandButton.h</header>
   </customwidget>
   <customwidget>
+   <class>ctkExpandableWidget</class>
+   <extends>QFrame</extends>
+   <header>ctkExpandableWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkPushButton</class>
    <extends>QPushButton</extends>
    <header>ctkPushButton.h</header>
@@ -637,60 +757,6 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLCheckableNodeComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLCheckableNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLClipNodeWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLClipNodeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLDisplayNodeViewComboBox</class>
-   <extends>qMRMLCheckableNodeComboBox</extends>
-   <header>qMRMLDisplayNodeViewComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLSliderWidget</class>
-   <extends>ctkSliderWidget</extends>
-   <header>qMRMLSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLMarkupsROIWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLMarkupsROIWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLVolumePropertyNodeWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLVolumePropertyNodeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerVolumeRenderingPresetComboBox</class>
-   <extends>qSlicerWidget</extends>
-   <header>qSlicerVolumeRenderingPresetComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerGPUMemoryComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qSlicerGPUMemoryComboBox.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
@@ -705,12 +771,12 @@
    <slot>setMRMLVolumePropertyNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>66</y>
+     <x>410</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
-     <x>105</x>
-     <y>305</y>
+     <x>111</x>
+     <y>674</y>
     </hint>
    </hints>
   </connection>
@@ -721,28 +787,12 @@
    <slot>setMRMLMarkupsNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>63</y>
+     <x>410</x>
+     <y>87</y>
     </hint>
     <hint type="destinationlabel">
-     <x>96</x>
-     <y>296</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>VolumeNodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>InputsCollapsibleButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>154</x>
-     <y>18</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>307</x>
-     <y>64</y>
+     <x>102</x>
+     <y>557</y>
     </hint>
    </hints>
   </connection>
@@ -757,8 +807,8 @@
      <y>260</y>
     </hint>
     <hint type="destinationlabel">
-     <x>446</x>
-     <y>69</y>
+     <x>410</x>
+     <y>97</y>
     </hint>
    </hints>
   </connection>
@@ -773,8 +823,8 @@
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
-     <x>446</x>
-     <y>63</y>
+     <x>410</x>
+     <y>87</y>
     </hint>
    </hints>
   </connection>
@@ -789,56 +839,8 @@
      <y>227</y>
     </hint>
     <hint type="destinationlabel">
-     <x>446</x>
-     <y>66</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerVolumeRenderingModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>VolumeNodeComboBox</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>332</x>
-     <y>228</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>332</x>
-     <y>19</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>VolumeNodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>AdvancedCollapsibleButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>233</x>
-     <y>13</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>240</x>
-     <y>526</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>VolumeNodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>ROICropCheckBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>268</x>
-     <y>15</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>188</x>
-     <y>185</y>
+     <x>410</x>
+     <y>92</y>
     </hint>
    </hints>
   </connection>
@@ -849,12 +851,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>66</y>
+     <x>410</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
-     <x>105</x>
-     <y>305</y>
+     <x>111</x>
+     <y>674</y>
     </hint>
    </hints>
   </connection>
@@ -865,28 +867,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>81</x>
-     <y>66</y>
+     <x>136</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
-     <x>24</x>
-     <y>125</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>VolumeNodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>ROICropDisplayCheckBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>268</x>
-     <y>15</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>319</x>
-     <y>187</y>
+     <x>28</x>
+     <y>202</y>
     </hint>
    </hints>
   </connection>
@@ -897,28 +883,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>63</y>
+     <x>410</x>
+     <y>87</y>
     </hint>
     <hint type="destinationlabel">
-     <x>450</x>
-     <y>189</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>VolumeNodeComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>VisibilityCheckBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>109</x>
-     <y>11</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>37</x>
-     <y>18</y>
+     <x>409</x>
+     <y>235</y>
     </hint>
    </hints>
   </connection>
@@ -929,12 +899,12 @@
    <slot>setChecked(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>105</x>
-     <y>305</y>
+     <x>112</x>
+     <y>379</y>
     </hint>
     <hint type="destinationlabel">
-     <x>105</x>
-     <y>305</y>
+     <x>112</x>
+     <y>379</y>
     </hint>
    </hints>
   </connection>
@@ -945,12 +915,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>105</x>
-     <y>305</y>
+     <x>407</x>
+     <y>379</y>
     </hint>
     <hint type="destinationlabel">
-     <x>105</x>
-     <y>305</y>
+     <x>313</x>
+     <y>376</y>
     </hint>
    </hints>
   </connection>
@@ -965,8 +935,8 @@
      <y>444</y>
     </hint>
     <hint type="destinationlabel">
-     <x>259</x>
-     <y>252</y>
+     <x>337</x>
+     <y>287</y>
     </hint>
    </hints>
   </connection>
@@ -981,8 +951,24 @@
      <y>444</y>
     </hint>
     <hint type="destinationlabel">
-     <x>227</x>
-     <y>409</y>
+     <x>242</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerVolumeRenderingModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>VolumeNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1</x>
+     <y>300</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>133</x>
+     <y>18</y>
     </hint>
    </hints>
   </connection>
