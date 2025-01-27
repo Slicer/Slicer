@@ -413,6 +413,34 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   slicer_cpack_set("CPACK_NSIS_MUI_ICON")
   slicer_verbose_set(CPACK_NSIS_INSTALLED_ICON_NAME "${app_name}.exe")
   slicer_verbose_set(CPACK_NSIS_MUI_FINISHPAGE_RUN "../${APPLICATION_NAME}.exe")
+  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.20")
+    set(CPACK_NSIS_BRANDING_TEXT " ")
+  elseif()
+    string(APPEND CPACK_NSIS_DEFINES "\n  BrandingText ' '\n")
+  endif()
+
+  # Header
+  if(EXISTS "${Slicer_CPACK_NSIS_INSTALLER_HEADER_FILE}")
+    string(REPLACE "/" "\\\\" _nsis_installer_file ${Slicer_CPACK_NSIS_INSTALLER_HEADER_FILE})
+    slicer_verbose_set(CPACK_NSIS_MUI_HEADERIMAGE "${_nsis_installer_file}")
+  endif()
+
+  # Welcome
+  if(EXISTS "${Slicer_CPACK_NSIS_INSTALLER_WELCOME_FILE}")
+    string(REPLACE "/" "\\\\" _nsis_installer_file ${Slicer_CPACK_NSIS_INSTALLER_WELCOME_FILE})
+    slicer_verbose_set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP "${_nsis_installer_file}")
+  endif()
+
+  # Unwelcome
+  if(EXISTS "${Slicer_CPACK_NSIS_INSTALLER_UNWELCOME_FILE}")
+    string(REPLACE "/" "\\\\" _nsis_installer_file ${Slicer_CPACK_NSIS_INSTALLER_UNWELCOME_FILE})
+    slicer_verbose_set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP "${_nsis_installer_file}")
+  endif()
+
+  set(CPACK_NSIS_WELCOME_TITLE "Welcome to the ${PACKAGE_APPLICATION_NAME} Setup Wizard")
+  set(CPACK_NSIS_WELCOME_TITLE_3LINES True)
+  set(CPACK_NSIS_FINISH_TITLE "Completed the ${PACKAGE_APPLICATION_NAME} Setup Wizard")
+  set(CPACK_NSIS_FINISH_TITLE_3LINES True)
 
   # -------------------------------------------------------------------------
   # File extensions

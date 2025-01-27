@@ -169,6 +169,39 @@ if(WIN32)
 endif()
 
 #-----------------------------------------------------------------------------
+# Installer branding
+#-----------------------------------------------------------------------------
+if(WIN32)
+
+  # Set the following variables:
+  # - Slicer_CPACK_NSIS_INSTALLER_HEADER_FILE
+  # - Slicer_CPACK_NSIS_INSTALLER_WELCOME_FILE
+  # - Slicer_CPACK_NSIS_INSTALLER_UNWELCOME_FILE
+
+  set(Slicer_CPACK_NSIS_INSTALLER_HEADER_FILE_DEFAULT "${Slicer_APPLICATIONS_DIR}/${Slicer_MAIN_PROJECT}/Resources/Installer/Header.bmp")
+  set(Slicer_CPACK_NSIS_INSTALLER_WELCOME_FILE_DEFAULT "${Slicer_APPLICATIONS_DIR}/${Slicer_MAIN_PROJECT}/Resources/Installer/WelcomeFinishPage.bmp")
+  set(Slicer_CPACK_NSIS_INSTALLER_UNWELCOME_FILE_DEFAULT "${Slicer_CPACK_NSIS_INSTALLER_WELCOME_FILE_DEFAULT}")
+
+  foreach(_page IN ITEMS
+      HEADER
+      WELCOME
+      UNWELCOME
+    )
+    set(_varname "Slicer_CPACK_NSIS_INSTALLER_${_page}_FILE")
+    if(NOT DEFINED ${_varname})
+      set(${_varname} ${${_varname}_DEFAULT} CACHE FILEPATH "NSIS installer ${_page} page")
+      mark_as_advanced(${_varname})
+    endif()
+    mark_as_superbuild(${_varname}:FILEPATH)
+    set(_filepath "${${_varname}}")
+    message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} NSIS installer ${_page} page [${_filepath}]")
+    if(NOT EXISTS "${_filepath}")
+      message(FATAL_ERROR "Variable ${_varname} is set to a nonexistent filepath [${_filepath}]")
+    endif()
+  endforeach()
+endif()
+
+#-----------------------------------------------------------------------------
 # Set Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
 #-----------------------------------------------------------------------------
 #
