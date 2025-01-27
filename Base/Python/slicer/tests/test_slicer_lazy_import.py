@@ -1,36 +1,76 @@
-from slicer.deps import lazy
-from pathlib import Path
+import sys
 import unittest.mock
+from pathlib import Path
 
-lazy_import_packages = Path(__file__).parent.joinpath("lazy_import_packages")
+import slicer.util
+from slicer.packaging import GuardedImports
+from slicer.packaging.installer import NamedRequirements
 
-dummy_1_0_0 = lazy_import_packages.joinpath("dummy-1-0-0").resolve().absolute()
-dummy_1_1_0 = lazy_import_packages.joinpath("dummy-1-1-0").resolve().absolute()
-dummy_2_0_0 = lazy_import_packages.joinpath("dummy-2-0-0").resolve().absolute()
+
+# lazy_import_packages = Path(__file__).parent.joinpath("lazy_import_packages")
+#
+# dummy_1_0_0 = lazy_import_packages.joinpath("dummy-1-0-0").resolve().absolute()
+# dummy_1_1_0 = lazy_import_packages.joinpath("dummy-1-1-0").resolve().absolute()
+# dummy_2_0_0 = lazy_import_packages.joinpath("dummy-2-0-0").resolve().absolute()
 
 
 class PipLogger:
     def __init__(self):
         self.commands = []
 
-    def __call__(self, *args):
-        self.commands.append(args)
+    def __call__(self, *args, **kwargs):
+        self.commands.append(dict(args=args, kwargs=kwargs))
 
 
 class PatchedPipTest(unittest.TestCase):
-    @unittest.mock.patch("slicer.lazy._pip_install", new_callable=PipLogger)
+    @unittest.mock.patch("slicer.packaging.installer.pip_install", new_callable=PipLogger)
     def test_simple_import(self, pip_install):
-        with lazy.GuardedImports("/requires"):
+        with GuardedImports("placeholder:requirements.txt"):
+            # This anchor is not real; we patched `pip_install` so it will never be resolved anyway.
             import dummy
 
-            try:
-                dummy.magic
-                raise AssertionError("Import should fail")
-            except (ImportError, AttributeError):
-                pass  # don't need contents for this test
+        try:
+            # The import resolution should occur here. We patched `pip_install`, so nothing will
+            # actually be installed. Thus the import error should occur at this point, and
+            # `pip_install` should be called once.
+            dummy.magic
+            raise AssertionError("Import should fail")
+        except (ImportError, AttributeError, AssertionError):
+            pass  # don't need contents for this test
 
         assert len(pip_install.commands) == 1
+        assert pip_install.commands[0]['kwargs']['requirements'].anchor == 'placeholder:requirements.txt'
 
+class RequirementsResolverTest(unittest.TestCase):
+    def test_core_constraints(self):
+        reqs = NamedRequirements(
+            "test_core_constraints",
+            "slicer.packaging:core-constraints.txt",
+            sys.modules[__name__],
+        )
+
+        # should work without failing.
+        with reqs.as_file() as f:
+            assert f.name == "core-constraints.txt"
+
+            with open(f) as fh:
+                content = fh.read()
+
+            assert "numpy" in content
+
+    def test_as_file(self):
+        reqs = NamedRequirements(
+            "test_as_path requirements",
+            "lazy_import_resources:requirements.txt",
+            sys.modules[__name__],
+        )
+
+        # should work without failing.
+        with reqs.as_file() as f:
+            assert f.name == "requirements.txt"
+
+
+# Todo test that pip_install correctly calls `uv pip install`
 
 # class LazyImportTest(unittest.TestCase):
 #     def setUp(self):

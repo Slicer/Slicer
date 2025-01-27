@@ -3896,10 +3896,10 @@ def _executePythonModule(module, args):
     logProcessOutput(proc)
 
 
-import slicer.deps
+import slicer.packaging
 
-pip_install = slicer.deps.pip_install
-pip_uninstall = slicer.deps.pip_uninstall
+pip_install = slicer.packaging.pip_install
+pip_uninstall = slicer.packaging.pip_uninstall
 
 
 def longPath(path):
