@@ -44,7 +44,6 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
                                                      vtkMRMLTransformNode* resamplingTransform,
                                                      vtkMRMLVolumeNode* referenceVolume,
                                                      int interpolationType,
-                                                     int windowedSincFunction,
                                                      const ResamplingParameters& resamplingParameter)
 {
   // A helper RAII class to ensure a vtkMRMLNode is removed from its scene
@@ -135,28 +134,6 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
     cmdNode->SetParameterAsString("interpolationType", "bs");
     break;
   case vtkMRMLAbstractVolumeResampler::InterpolationTypeUndefined:
-  default:
-    break;
-  }
-
-  switch (windowedSincFunction)
-  {
-  case vtkMRMLAbstractVolumeResampler::WindowedSincFunctionHamming:
-    cmdNode->SetParameterAsString("windowFunction", "h");
-    break;
-  case vtkMRMLAbstractVolumeResampler::WindowedSincFunctionCosine:
-    cmdNode->SetParameterAsString("windowFunction", "c");
-    break;
-  case vtkMRMLAbstractVolumeResampler::WindowedSincFunctionWelch:
-    cmdNode->SetParameterAsString("windowFunction", "w");
-    break;
-  case vtkMRMLAbstractVolumeResampler::WindowedSincFunctionLanczos:
-    cmdNode->SetParameterAsString("windowFunction", "l");
-    break;
-  case vtkMRMLAbstractVolumeResampler::WindowedSincFunctionBlackman:
-    cmdNode->SetParameterAsString("windowFunction", "b");
-    break;
-  case vtkMRMLAbstractVolumeResampler::WindowedSincFunctionUndefined:
   default:
     break;
   }

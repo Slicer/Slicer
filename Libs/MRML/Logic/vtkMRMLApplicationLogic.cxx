@@ -1338,7 +1338,6 @@ bool vtkMRMLApplicationLogic::ResampleVolume(std::string& resamplerName,
                                              vtkMRMLTransformNode* resamplingTransform,
                                              vtkMRMLVolumeNode* referenceVolume,
                                              int interpolationType,
-                                             int windowedSincFunction,
                                              const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters)
 {
   vtkMRMLAbstractVolumeResampler* resampler = this->GetVolumeResampler(resamplerName);
@@ -1353,6 +1352,5 @@ bool vtkMRMLApplicationLogic::ResampleVolume(std::string& resamplerName,
         resamplingTransform,
         referenceVolume,
         interpolationType,
-        windowedSincFunction,
         resamplingParameters);
 }
