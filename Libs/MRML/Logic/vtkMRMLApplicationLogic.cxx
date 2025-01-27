@@ -1330,27 +1330,3 @@ vtkMRMLAbstractVolumeResampler* vtkMRMLApplicationLogic::GetVolumeResampler(cons
   }
   return this->Internal->Resamplers[resamplerName];
 }
-
-//----------------------------------------------------------------------------
-bool vtkMRMLApplicationLogic::ResampleVolume(std::string& resamplerName,
-                                             vtkMRMLVolumeNode* inputVolume,
-                                             vtkMRMLVolumeNode* outputVolume,
-                                             vtkMRMLTransformNode* resamplingTransform,
-                                             vtkMRMLVolumeNode* referenceVolume,
-                                             int interpolationType,
-                                             const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters)
-{
-  vtkMRMLAbstractVolumeResampler* resampler = this->GetVolumeResampler(resamplerName);
-  if (!resampler)
-  {
-    vtkErrorMacro("ResampleVolume: resampler not registered " << resamplerName);
-    return false;
-  }
-  return resampler->Resample(
-        inputVolume,
-        outputVolume,
-        resamplingTransform,
-        referenceVolume,
-        interpolationType,
-        resamplingParameters);
-}
