@@ -71,6 +71,19 @@ function(slicerFunctionGenerateExtensionDescription)
     endif()
   endforeach()
 
+  function(_convert_items_to_s4ext _items _separator _output_var)
+    # Remove newlines
+    string(REPLACE "\n" "" _items "${_items}")
+    # Strip contiguous spaces
+    string(REGEX REPLACE " +" " " _items "${_items}")
+    # Strip leading and trailing spaces
+    string(STRIP "${_items}" _items)
+    # Convert to space separated list
+    list_to_string("${_separator}" "${_items}" _items)
+
+    set(${_output_var} "${_items}" PARENT_SCOPE)
+  endfunction()
+
   # contributors: Remove newlines
   string(REPLACE "\n" "" MY_EXTENSION_CONTRIBUTORS "${MY_EXTENSION_CONTRIBUTORS}")
   # contributors: Strip contiguous spaces
@@ -79,14 +92,8 @@ function(slicerFunctionGenerateExtensionDescription)
   # description: Replace newlines with "<br>"
   string(REPLACE "\n" "<br>" MY_EXTENSION_DESCRIPTION "${MY_EXTENSION_DESCRIPTION}")
 
-  # screenshoturls: Remove newlines
-  string(REPLACE "\n" "" MY_EXTENSION_SCREENSHOTURLS "${MY_EXTENSION_SCREENSHOTURLS}")
-  # screenshoturls: Strip contiguous spaces
-  string(REGEX REPLACE " +" " " MY_EXTENSION_SCREENSHOTURLS "${MY_EXTENSION_SCREENSHOTURLS}")
-  # screenshoturls: Strip leading and trailing spaces
-  string(STRIP "${MY_EXTENSION_SCREENSHOTURLS}" MY_EXTENSION_SCREENSHOTURLS)
   # screenshoturls: Convert to space separated list
-  list_to_string(" " "${MY_EXTENSION_SCREENSHOTURLS}" MY_EXTENSION_SCREENSHOTURLS)
+  _convert_items_to_s4ext("${MY_EXTENSION_SCREENSHOTURLS}" " " MY_EXTENSION_SCREENSHOTURLS)
 
   # depends: Convert to space separated list
   list_to_string(" " "${MY_EXTENSION_DEPENDS}" MY_EXTENSION_DEPENDS)
