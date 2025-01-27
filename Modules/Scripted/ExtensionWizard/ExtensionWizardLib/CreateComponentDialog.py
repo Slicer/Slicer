@@ -4,7 +4,6 @@ import ctk
 import qt
 
 import slicer
-
 from slicer.i18n import tr as _
 
 

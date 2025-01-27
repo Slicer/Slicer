@@ -5,15 +5,13 @@ import os
 import ctk
 import qt
 
-import slicer
-from slicer.util import settingsValue, toBool
-from slicer.ScriptedLoadableModule import *
-
 import DICOMLib
+import slicer
 from DICOMLib import DICOMUtils
 from slicer.i18n import tr as _
 from slicer.i18n import translate
-
+from slicer.ScriptedLoadableModule import *
+from slicer.util import settingsValue, toBool
 
 #
 # DICOM

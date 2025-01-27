@@ -7,22 +7,20 @@ import dataclasses
 import typing
 
 import slicer
-
-from .serializers import (
-    createSerializer,
-    parameterNodeSerializer,
-    Serializer,
-    ValidatedSerializer,
-)
 from .default import extractDefault
 from .parameterInfo import ParameterInfo
-from .validators import Validator, NotNone
+from .serializers import (
+    Serializer,
+    ValidatedSerializer,
+    createSerializer,
+    parameterNodeSerializer,
+)
 from .util import (
     splitAnnotations,
     splitPossiblyDottedName,
     unannotatedType,
 )
-
+from .validators import NotNone, Validator
 
 __all__ = [
     "isParameterPack",
