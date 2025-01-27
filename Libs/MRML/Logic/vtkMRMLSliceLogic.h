@@ -17,6 +17,7 @@
 
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
+#include "vtkMRMLAbstractVolumeResampler.h"
 
 // STD includes
 #include <deque>
@@ -25,12 +26,15 @@
 // MRML includes
 class vtkMRMLDisplayNode;
 class vtkMRMLLinearTransformNode;
+class vtkMRMLMarkupsCurveNode;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLModelNode;
+class vtkMRMLScalarVolumeNode;
 class vtkMRMLSliceCompositeNode;
 class vtkMRMLSliceDisplayNode;
 class vtkMRMLSliceLayerLogic;
 class vtkMRMLSliceNode;
+class vtkMRMLTransformNode;
 class vtkMRMLVolumeNode;
 
 // VTK includes
@@ -39,6 +43,8 @@ class vtkCollection;
 class vtkImageBlend;
 class vtkImageMathematics;
 class vtkImageReslice;
+class vtkMatrix4x4;
+class vtkPoints;
 
 struct BlendPipeline;
 struct SliceLayerInfo;
@@ -397,6 +403,43 @@ public:
   /// Returns false if the information cannot be determined.
   bool GetSliceOffsetRangeResolution(double range[2], double& resolution);
 
+  /// GetPointsProjectedToPlane for curved planar reformation
+  bool CurvedPlanarReformationGetPointsProjectedToPlane(vtkPoints *    pointsArrayIn,
+                                                        vtkMatrix4x4 * transformWorldToPlane,
+                                                        vtkPoints *    pointsArrayOut);
+
+  /// Compute straightened volume (useful for example for visualization of curved vessels)
+  bool CurvedPlanarReformationComputeStraighteningTransform(vtkMRMLTransformNode* transformToStraightenedNode,
+                                                            vtkMRMLMarkupsCurveNode* curveNode,
+                                                            const double sliceSizeMm[2],
+                                                            double outputSpacingMm,
+                                                            bool stretching = false,
+                                                            double rotationDeg = 0.0,
+                                                            vtkMRMLModelNode* reslicingPlanesModelNode = nullptr);
+
+  /// StraightenVolume for curved planar reformation
+  bool CurvedPlanarReformationStraightenVolume(vtkMRMLScalarVolumeNode* outputStraightenedVolume,
+                                               vtkMRMLScalarVolumeNode* volumeNode,
+                                               const double outputStraightenedVolumeSpacing[3],
+                                               vtkMRMLTransformNode* straighteningTransformNode);
+
+  /// Create panoramic volume by mean intensity projection along an axis of the straightened volume
+  bool CurvedPlanarReformationProjectVolume(vtkMRMLScalarVolumeNode* outputProjectedVolume,
+                                            vtkMRMLScalarVolumeNode* inputStraightenedVolume,
+                                            int projectionAxisIndex = 0);
+
+  /// Resample volume using the registered resampler.
+  /// \sa RegisterVolumeResampler()
+  /// \sa GetVolumeResampler()
+  bool ResampleVolume(std::string& resamplerName,
+                      vtkMRMLVolumeNode* inputVolume,
+                      vtkMRMLVolumeNode* outputVolume,
+                      vtkMRMLTransformNode* resamplingTransform,
+                      vtkMRMLVolumeNode* referenceVolume = nullptr,
+                      int interpolationType = vtkMRMLAbstractVolumeResampler::InterpolationTypeLinear,
+                      const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters =
+                      vtkMRMLAbstractVolumeResampler::ResamplingParameters());
+
 protected:
 
   vtkMRMLSliceLogic();
@@ -480,6 +523,8 @@ protected:
   vtkMRMLModelDisplayNode*      SliceModelDisplayNode;
   vtkMRMLLinearTransformNode*   SliceModelTransformNode;
   double                        SliceSpacing[3];
+
+  double                        CurvedPlanarReformationTransformSpacingFactor;
 
 private:
 
