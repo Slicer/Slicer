@@ -8,12 +8,16 @@ set(${proj}_DEPENDENCIES "")
 if(NOT Slicer_USE_SYSTEM_python)
   list(APPEND ${proj}_DEPENDENCIES
     bzip2
-    CTKAPPLAUNCHER
     LibFFI
     LZMA
     zlib
     sqlite
     )
+  if(Slicer_USE_CTKAPPLAUNCHER)
+    list(APPEND ${proj}_DEPENDENCIES
+      CTKAPPLAUNCHER
+      )
+  endif()
 endif()
 if(PYTHON_ENABLE_SSL)
   list(APPEND ${proj}_DEPENDENCIES OpenSSL)

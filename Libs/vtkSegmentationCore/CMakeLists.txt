@@ -182,12 +182,14 @@ if(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
       set_target_properties(${PROJECT_NAME}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()
   endif()
+
+  SlicerRegisterMRMLWheelTarget(${PROJECT_NAME}Python)
 endif()
 
 # --------------------------------------------------------------------------
-# Testing
+# Testing (requires some of the examples, Qt and CTK)
 # --------------------------------------------------------------------------
-if(BUILD_TESTING)
+if(BUILD_TESTING AND Slicer_BUILD_GUI)
   add_subdirectory(Testing)
 endif()
 

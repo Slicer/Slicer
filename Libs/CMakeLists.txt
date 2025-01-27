@@ -27,8 +27,8 @@ endif()
 
 list(APPEND dirs
   vtkTeem
-  vtkITK
   vtkSegmentationCore
+  vtkITK
   MRML/Core
   )
 if(Slicer_BUILD_CLI_SUPPORT)
@@ -42,9 +42,11 @@ list(APPEND dirs
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND dirs MRML/IDImageIO)
 endif()
+if(Slicer_BUILD_GUI)
 list(APPEND dirs
   MRML/Widgets
   )
+endif()
 
 #-----------------------------------------------------------------------------
 # Set library properties

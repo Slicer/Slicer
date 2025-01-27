@@ -16,6 +16,24 @@ endif()
 # --------------------------------------------------------------------------
 
 #
+# ITK
+#
+set(${PROJECT_NAME}_ITK_COMPONENTS
+  ITKCommon
+  )
+find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+if(ITK_VERSION VERSION_GREATER_EQUAL "5.3")
+  foreach(factory_uc IN ITEMS "IMAGEIO" "MESHIO" "TRANSFORMIO")
+    set(ITK_NO_${factory_uc}_FACTORY_REGISTER_MANAGER 1)
+  endforeach()
+else()
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+endif()
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
+include(${ITK_USE_FILE})
+
+#
 # VTK
 #
 if(Slicer_USE_PYTHONQT AND NOT VTK_WRAP_PYTHON)
@@ -94,6 +112,7 @@ set(libs
   MRMLCore
   vtkTeem
   RemoteIO
+  ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
   )
 
@@ -162,12 +181,14 @@ if(VTK_WRAP_PYTHON)
       set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()
   endif()
+
+  SlicerRegisterMRMLWheelTarget(${lib_name}Python)
 endif()
 
 # --------------------------------------------------------------------------
-# Testing
+# Testing (requires some of the examples, Qt and CTK)
 # --------------------------------------------------------------------------
-if(BUILD_TESTING)
+if(BUILD_TESTING AND Slicer_BUILD_GUI)
   add_subdirectory(Testing)
 endif()
 

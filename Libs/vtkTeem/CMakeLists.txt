@@ -29,6 +29,16 @@ set(${PROJECT_NAME}_ITK_COMPONENTS
   ITKVNL
   )
 find_package(ITK 5.0 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+if(ITK_VERSION VERSION_GREATER_EQUAL "5.3")
+  foreach(factory_uc IN ITEMS "IMAGEIO" "MESHIO" "TRANSFORMIO")
+    set(ITK_NO_${factory_uc}_FACTORY_REGISTER_MANAGER 1)
+  endforeach()
+else()
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+endif()
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
+include(${ITK_USE_FILE})
 
 #
 # Teem
@@ -85,8 +95,6 @@ set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
-include_directories(BEFORE ${include_dirs})
-
 # --------------------------------------------------------------------------
 # Build library
 # --------------------------------------------------------------------------
@@ -96,12 +104,12 @@ set(srcs ${vtkTeem_SRCS})
 add_library(${lib_name} ${srcs})
 
 set(libs
-  itkvnl
-  ITKCommon
   ${Teem_LIBRARIES}
   ${VTK_LIBRARIES}
+  ${ITK_LIBRARIES}
   )
-target_link_libraries(${lib_name} ${libs})
+target_include_directories(${lib_name} PUBLIC ${include_dirs})
+target_link_libraries(${lib_name} PUBLIC ${libs})
 
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
@@ -145,7 +153,7 @@ install(TARGETS ${lib_name}
 # --------------------------------------------------------------------------
 # Python Wrapping
 # --------------------------------------------------------------------------
-if(VTK_WRAP_PYTHON)
+if(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   include(vtkMacroKitPythonWrap)
 
   vtkMacroKitPythonWrap(
@@ -163,12 +171,14 @@ if(VTK_WRAP_PYTHON)
       set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()
   endif()
+
+  SlicerRegisterMRMLWheelTarget(${lib_name}Python)
 endif()
 
 # --------------------------------------------------------------------------
-# Testing (requires some of the examples)
+# Testing (requires some of the examples, Qt and CTK)
 # --------------------------------------------------------------------------
-if(BUILD_TESTING)
+if(BUILD_TESTING AND Slicer_BUILD_GUI)
   add_subdirectory(Testing)
 endif()
 

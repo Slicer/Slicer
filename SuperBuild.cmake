@@ -90,14 +90,15 @@ set(VTK_EXTERNAL_NAME VTK)
 
 set(Slicer_DEPENDENCIES
   curl
-  CTKAppLauncherLib
   teem
   ${VTK_EXTERNAL_NAME}
   ${ITK_EXTERNAL_NAME}
-  CTK
   LibArchive
   RapidJSON
   )
+if (Slicer_BUILD_GUI)
+  list(APPEND Slicer_DEPENDENCIES CTKAppLauncherLib CTK)
+endif()
 
 set(CURL_ENABLE_SSL ${Slicer_USE_PYTHONQT_WITH_OPENSSL})
 set(DCMTK_WITH_OPENSSL ${Slicer_USE_DCMTK_WITH_OPENSSL})

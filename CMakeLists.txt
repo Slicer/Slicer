@@ -190,24 +190,29 @@ mark_as_superbuild(GIT_EXECUTABLE)
 find_package(Patch REQUIRED)
 mark_as_superbuild(Patch_EXECUTABLE)
 
+option(Slicer_BUILD_GUI "Build with Qt user interface" ON)
+mark_as_superbuild(Slicer_BUILD_GUI)
+
 #-----------------------------------------------------------------------------
 # Qt requirements
 #-----------------------------------------------------------------------------
-if(NOT DEFINED Slicer_REQUIRED_QT_VERSION)
-  # Official builds and tests are performed with Qt-5.15 on all platforms,
-  # but since it is not easy to get latest Qt versions on Linux, the version
-  # requirement is relaxed on Linux so that it builds on Ubuntu-20.04.
-  # See https://github.com/Slicer/Slicer/issues/5804 for more details.
-  if(UNIX AND NOT APPLE)
-    # Linux
-    set(_required_qt_version "5.12")
-  else()
-    # Windows and macOS
-    set(_required_qt_version "5.15")
+if(Slicer_BUILD_GUI)
+  if (NOT DEFINED Slicer_REQUIRED_QT_VERSION)
+    # Official builds and tests are performed with Qt-5.15 on all platforms,
+    # but since it is not easy to get latest Qt versions on Linux, the version
+    # requirement is relaxed on Linux so that it builds on Ubuntu-20.04.
+    # See https://github.com/Slicer/Slicer/issues/5804 for more details.
+    if(UNIX AND NOT APPLE)
+      # Linux
+      set(_required_qt_version "5.12")
+    else()
+      # Windows and macOS
+      set(_required_qt_version "5.15")
+    endif()
+    set(Slicer_REQUIRED_QT_VERSION ${_required_qt_version} CACHE STRING "Minimum required Qt version" FORCE)
   endif()
-  set(Slicer_REQUIRED_QT_VERSION ${_required_qt_version} CACHE STRING "Minimum required Qt version" FORCE)
+  mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
 endif()
-mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
 
 #-----------------------------------------------------------------------------
 # Python requirements
@@ -297,6 +302,10 @@ mark_as_superbuild(Slicer_BUILD_QTLOADABLEMODULES)
 
 option(Slicer_USE_PYTHONQT "Integrate a Python-Qt interpreter into Slicer." ON)
 mark_as_superbuild(Slicer_USE_PYTHONQT)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_USE_PYTHONQT "Build Slicer CLI Plugins" ON
+  "Slicer_BUILD_GUI" OFF
+  )
 
 CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python Qt Modules" ON
@@ -317,16 +326,24 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_BUILD_CLI" OFF
   )
 
-option(Slicer_BUILD_QT_DESIGNER_PLUGINS "Build Qt designer plugins" ON)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_QT_DESIGNER_PLUGINS "Build Qt designer plugins" ON
+  "Slicer_BUILD_GUI" OFF)
 mark_as_superbuild(Slicer_BUILD_QT_DESIGNER_PLUGINS)
 
-option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extensions manager" ON)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extensions manager" ON
+  "Slicer_BUILD_GUI" OFF)
 mark_as_superbuild(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
 
-option(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT "Build Slicer with application update support" ON)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_APPLICATIONUPDATE_SUPPORT "Build Slicer with application update support" ON
+  "Slicer_BUILD_GUI" OFF)
 mark_as_superbuild(Slicer_BUILD_APPLICATIONUPDATE_SUPPORT)
 
-option(Slicer_BUILD_MULTIMEDIA_SUPPORT "Build Slicer with Multimedia support" ON)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_MULTIMEDIA_SUPPORT "Build Slicer with Multimedia support" ON
+  "Slicer_BUILD_GUI" OFF)
 mark_as_superbuild(Slicer_BUILD_MULTIMEDIA_SUPPORT)
 
 CMAKE_DEPENDENT_OPTION(Slicer_UPDATE_TRANSLATION "update translation" OFF "Slicer_BUILD_I18N_SUPPORT" OFF)
@@ -406,11 +423,16 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_USE_PYTHONQT;Slicer_USE_NUMPY" OFF)
 mark_as_superbuild(Slicer_USE_SCIPY)
 
-option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
+# CMAKE_DEPENDENT_OPTION(
+#   Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON
+#   "Slicer_BUILD_GUI" OFF)
+option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher" ON)
 mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 mark_as_superbuild(Slicer_USE_CTKAPPLAUNCHER)
 
-option(Slicer_USE_QtTesting    "Integrate QtTesting framework into Slicer." ON)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_USE_QtTesting "Integrate QtTesting framework into Slicer." ON
+  "Slicer_BUILD_GUI" OFF)
 mark_as_advanced(Slicer_USE_QtTesting)
 mark_as_superbuild(Slicer_USE_QtTesting)
 
@@ -601,11 +623,11 @@ message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
 # Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
 set(Slicer_VTK_COMPONENTS
+  CommonSystem
   FiltersExtraction
   FiltersFlowPaths
   FiltersGeometry
   FiltersParallel
-  GUISupportQtSQL
   IOExport
   IOImage
   IOLegacy
@@ -615,14 +637,21 @@ set(Slicer_VTK_COMPONENTS
   ImagingMorphological
   ImagingStatistics
   ImagingStencil
+  InfovisCore
   InteractionImage
   RenderingContext${Slicer_VTK_RENDERING_BACKEND}
-  RenderingQt
   RenderingVolume${Slicer_VTK_RENDERING_BACKEND}
   TestingRendering
-  ViewsQt
   zlib
+  eigen
   )
+if (Slicer_BUILD_GUI)
+  list(APPEND Slicer_VTK_COMPONENTS
+    GUISupportQtSQL
+    RenderingQt
+    ViewsQt
+    )
+endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_VTK_COMPONENTS
@@ -636,6 +665,7 @@ endif()
 # Module name should be specified as they appear in FindQt5.cmake.
 # For example, the module name associated with the variable QT_USE_QTXML is QTXML.
 # Note that the modules will be installed when packaging.
+if (Slicer_BUILD_GUI)
   set(Slicer_REQUIRED_QT_MODULES
     Core Widgets
     Network OpenGL
@@ -674,10 +704,10 @@ endif()
   if(Slicer_BUILD_I18N_SUPPORT)
     list(APPEND Slicer_REQUIRED_QT_MODULES LinguistTools) # no dll
   endif()
-  if(BUILD_TESTING)
+  if(BUILD_TESTING AND Slicer_BUILD_GUI)
     list(APPEND Slicer_REQUIRED_QT_MODULES Test)
   endif()
-list(APPEND Slicer_REQUIRED_QT_MODULES ${Slicer_ADDITIONAL_REQUIRED_QT_MODULES})
+  list(APPEND Slicer_REQUIRED_QT_MODULES ${Slicer_ADDITIONAL_REQUIRED_QT_MODULES})
 
   set(QT_LIBRARIES)
   foreach(lib IN LISTS Slicer_REQUIRED_QT_MODULES)
@@ -687,26 +717,26 @@ list(APPEND Slicer_REQUIRED_QT_MODULES ${Slicer_ADDITIONAL_REQUIRED_QT_MODULES})
     list(APPEND QT_LIBRARIES Qt5::${lib})
   endforeach()
 
-if(DEFINED Slicer_ADDITIONAL_REQUIRED_QT_MODULES)
-  mark_as_superbuild(Slicer_ADDITIONAL_REQUIRED_QT_MODULES:STRING)
-endif()
+  if(DEFINED Slicer_ADDITIONAL_REQUIRED_QT_MODULES)
+    mark_as_superbuild(Slicer_ADDITIONAL_REQUIRED_QT_MODULES:STRING)
+  endif()
 
-mark_as_superbuild(Slicer_USE_SYSTEM_QT:BOOL)
+  mark_as_superbuild(Slicer_USE_SYSTEM_QT:BOOL)
 
 #-----------------------------------------------------------------------------
 # Qt plugins (designer, imageformats, ...) relative directories
 #-----------------------------------------------------------------------------
-set(Slicer_QtPlugins_DIR "${CMAKE_INSTALL_LIBDIR}/QtPlugins")
-set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}")
+  set(Slicer_QtPlugins_DIR "${CMAKE_INSTALL_LIBDIR}/QtPlugins")
+  set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}")
 
 #-----------------------------------------------------------------------------
 # Qt
 #-----------------------------------------------------------------------------
-include(SlicerBlockFindQtAndCheckVersion)
+  include(SlicerBlockFindQtAndCheckVersion)
   mark_as_superbuild(VARS Qt5_DIR LABELS "FIND_PACKAGE")
 
-set(Slicer_HAVE_QT5 1)
-    set(Slicer_HAVE_WEBKIT_SUPPORT 0)
+  set(Slicer_HAVE_QT5 1)
+  set(Slicer_HAVE_WEBKIT_SUPPORT 0)
 
 #
 # If qmake or Qt5Config are associated with a system location, explicitly mark Qt as such. Doing so
@@ -736,8 +766,9 @@ set(Slicer_HAVE_QT5 1)
     endif()
   endforeach()
 
-# Always use QVTKOpenGLWidget (instead of QVTKWidget)
-set(Slicer_VTK_USE_QVTKOPENGLWIDGET 1)
+  # Always use QVTKOpenGLWidget (instead of QVTKWidget)
+  set(Slicer_VTK_USE_QVTKOPENGLWIDGET 1)
+endif()
 
 #-----------------------------------------------------------------------------
 # Testing
@@ -891,33 +922,37 @@ endif()
 find_package(VTK REQUIRED)
 set(VTK_LIBRARIES "")
 find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED)
-set(VTK_GUI_SUPPORT_QT_TARGET_NAME "VTK::GUISupportQt")
+if (Slicer_BUILD_GUI)
+  set(VTK_GUI_SUPPORT_QT_TARGET_NAME "VTK::GUISupportQt")
 
-if(NOT TARGET ${VTK_GUI_SUPPORT_QT_TARGET_NAME})
-  message(FATAL_ERROR "error: VTK was not configured to use Qt, you probably need "
-                    "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
-                    "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
+  if(NOT TARGET ${VTK_GUI_SUPPORT_QT_TARGET_NAME})
+    message(FATAL_ERROR "error: VTK was not configured to use Qt, you probably need "
+                      "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
+                      "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
+  endif()
 endif()
 set(VTK_RENDERING_BACKEND "${Slicer_VTK_RENDERING_BACKEND}")
 
 #-----------------------------------------------------------------------------
 # CTK
 #-----------------------------------------------------------------------------
-find_package(CTK REQUIRED)
-include(${CTK_USE_FILE})
+if(Slicer_BUILD_GUI)
+  find_package(CTK REQUIRED)
+  include(${CTK_USE_FILE})
 
-#-----------------------------------------------------------------------------
-# Update CMake module path
-#-----------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${CTK_CMAKE_DIR}
-  ${CMAKE_MODULE_PATH}
-  ${CTK_CMAKE_UTILITIES_DIR})
+  #-----------------------------------------------------------------------------
+  # Update CMake module path
+  #-----------------------------------------------------------------------------
+  set(CMAKE_MODULE_PATH
+    ${CTK_CMAKE_DIR}
+    ${CMAKE_MODULE_PATH}
+    ${CTK_CMAKE_UTILITIES_DIR})
 
-#-----------------------------------------------------------------------------
-# CMake Function(s) and Macro(s) from CTK
-#-----------------------------------------------------------------------------
-include(ctkFunctionAddExecutableUtf8)
+  #-----------------------------------------------------------------------------
+  # CMake Function(s) and Macro(s) from CTK
+  #-----------------------------------------------------------------------------
+  include(ctkFunctionAddExecutableUtf8)
+endif()
 
 #-----------------------------------------------------------------------------
 # Set Slicer_PYTHON_VERSION and Slicer_PYTHON_VERSION_DOT
@@ -1044,15 +1079,23 @@ include_directories(
   )
 
 #-----------------------------------------------------------------------------
+# Configure MRML wheel
+#-----------------------------------------------------------------------------
+
+include(SlicerMRMLWheel)
+
+#-----------------------------------------------------------------------------
 # Subdirectories
 #-----------------------------------------------------------------------------
 
 add_subdirectory(Libs)
 add_subdirectory(Base)
-add_subdirectory(Resources)
-add_subdirectory(Utilities/Scripts)
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  add_subdirectory(Utilities/Scripts/SlicerWizard)
+if (Slicer_BUILD_GUI)
+  add_subdirectory(Resources)
+  add_subdirectory(Utilities/Scripts)
+  if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+    add_subdirectory(Utilities/Scripts/SlicerWizard)
+  endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -1074,13 +1117,15 @@ set(Slicer_GUI_LIBRARY qSlicerBaseQTApp)
 #-----------------------------------------------------------------------------
 # Applications
 #-----------------------------------------------------------------------------
-add_subdirectory(Modules/Core)
-add_subdirectory(Base/QTApp)
-add_subdirectory(Modules)
-add_subdirectory(
-  ${Slicer_APPLICATIONS_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}/Applications
-  )
+if (Slicer_BUILD_GUI)
+  add_subdirectory(Modules/Core)
+  add_subdirectory(Base/QTApp)
+  add_subdirectory(Modules)
+  add_subdirectory(
+    ${Slicer_APPLICATIONS_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/Applications
+    )
+endif()
 
 #-----------------------------------------------------------------------------
 # Templates
@@ -1317,6 +1362,9 @@ if(Slicer_USE_PYTHONQT)
       )
   endif()
 endif()
+
+# Finalize MRML wheel
+SlicerBUILDMRMLWheel()
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as

@@ -27,7 +27,7 @@ if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPython.cmake)
 endif()
 
-if(NOT Slicer_USE_SYSTEM_QT)
+if(NOT Slicer_USE_SYSTEM_QT AND Slicer_BUILD_GUI)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtTools.cmake)
 
   set(SlicerBlockInstallQtPlugins_subdirectories
@@ -132,7 +132,7 @@ if(NOT "${CTK_DIR}" STREQUAL "" AND EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt"
 endif()
 
 if(NOT APPLE)
-  if(NOT Slicer_USE_SYSTEM_QT)
+  if(NOT Slicer_USE_SYSTEM_QT AND Slicer_BUILD_GUI)
     include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQt.cmake)
   endif()
   if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_DCMTK)
@@ -179,9 +179,11 @@ else()
   set(VTK_LIBRARY_DIRS "${VTK_DIR}/lib")
 
   # Get Qt root directory
-  get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
-  get_filename_component(_dir ${_filepath} PATH)
-  set(qt_root_dir "${_dir}/..")
+  if(Slicer_BUILD_GUI)
+    get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
+    get_filename_component(_dir ${_filepath} PATH)
+    set(qt_root_dir "${_dir}/..")
+  endif()
 
   #------------------------------------------------------------------------------
   # <ExtensionName>_FIXUP_BUNDLE_LIBRARY_DIRECTORIES
@@ -333,18 +335,20 @@ slicer_cpack_set("CPACK_PACKAGE_INSTALL_DIRECTORY")
 # The following global properties are defined in Applications/<main_application_name>/slicer-application-properties.cmake
 #
 
-get_property(${app_name}_CPACK_PACKAGE_DESCRIPTION_FILE GLOBAL PROPERTY ${app_name}_DESCRIPTION_FILE)
-slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_FILE")
+if(Slicer_BUILD_GUI)
+  get_property(${app_name}_CPACK_PACKAGE_DESCRIPTION_FILE GLOBAL PROPERTY ${app_name}_DESCRIPTION_FILE)
+  slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_FILE")
 
-get_property(${app_name}_CPACK_RESOURCE_FILE_LICENSE GLOBAL PROPERTY ${app_name}_LICENSE_FILE)
-slicer_cpack_set("CPACK_RESOURCE_FILE_LICENSE")
+  get_property(${app_name}_CPACK_RESOURCE_FILE_LICENSE GLOBAL PROPERTY ${app_name}_LICENSE_FILE)
+  slicer_cpack_set("CPACK_RESOURCE_FILE_LICENSE")
 
-get_property(${app_name}_CPACK_PACKAGE_DESCRIPTION_SUMMARY GLOBAL PROPERTY ${app_name}_DESCRIPTION_SUMMARY)
-slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_SUMMARY")
+  get_property(${app_name}_CPACK_PACKAGE_DESCRIPTION_SUMMARY GLOBAL PROPERTY ${app_name}_DESCRIPTION_SUMMARY)
+  slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_SUMMARY")
 
-get_property(${app_name}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${app_name}_APPLE_ICON_FILE)
-if(APPLE)
-  slicer_cpack_set("CPACK_PACKAGE_ICON")
+  get_property(${app_name}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${app_name}_APPLE_ICON_FILE)
+  if(APPLE)
+    slicer_cpack_set("CPACK_PACKAGE_ICON")
+  endif()
 endif()
 
 # -------------------------------------------------------------------------
@@ -403,12 +407,15 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   set(EXECUTABLE_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
   # Set application name used to create Start Menu shortcuts
   set(PACKAGE_APPLICATION_NAME "${APPLICATION_NAME} ${CPACK_PACKAGE_VERSION}")
-  slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${PACKAGE_APPLICATION_NAME}")
 
-  get_property(${app_name}_CPACK_NSIS_MUI_ICON GLOBAL PROPERTY ${app_name}_WIN_ICON_FILE)
-  slicer_cpack_set("CPACK_NSIS_MUI_ICON")
-  slicer_verbose_set(CPACK_NSIS_INSTALLED_ICON_NAME "${app_name}.exe")
-  slicer_verbose_set(CPACK_NSIS_MUI_FINISHPAGE_RUN "../${APPLICATION_NAME}.exe")
+  if(Slicer_BUILD_GUI)
+    slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${PACKAGE_APPLICATION_NAME}")
+
+    get_property(${app_name}_CPACK_NSIS_MUI_ICON GLOBAL PROPERTY ${app_name}_WIN_ICON_FILE)
+    slicer_cpack_set("CPACK_NSIS_MUI_ICON")
+    slicer_verbose_set(CPACK_NSIS_INSTALLED_ICON_NAME "${app_name}.exe")
+    slicer_verbose_set(CPACK_NSIS_MUI_FINISHPAGE_RUN "../${APPLICATION_NAME}.exe")
+  endif()
 
   # -------------------------------------------------------------------------
   # File extensions

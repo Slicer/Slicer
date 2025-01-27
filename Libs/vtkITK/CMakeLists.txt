@@ -34,23 +34,30 @@ set(${PROJECT_NAME}_ITK_COMPONENTS
   ITKCommon
   ITKConnectedComponents
   ITKDistanceMap
+  ITKIODCMTK
   ITKIOGDCM
   ITKIOGE
   ITKIOImageBase
+  ITKIOMeta
+  ITKIONIFTI
+  ITKIONRRD
   ITKImageCompose
   ITKImageFilterBase
   ITKImageFunction
   ITKImageGrid
   ITKLabelMap
+  ITKGDCM
   ITKPath
   ITKRegionGrowing
   ITKThresholding
   ITKVTK
+  ITKVtkGlue
   # Needed for ITKv5 so that SimpleFastMutexLock is an alias to std::mutex in ITKv5
   # once ITKv4 is not supported, then we can simply replace SimpleFastMutexLock with std::mutex
   # the use the DeprecatedLib allows building without many preprocessor conditionals
   # for ITKv5/ITKv4 differences.
   ITKDeprecated
+  MorphologicalContourInterpolation
   )
 find_package(ITK 5.0 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
 if(ITK_VERSION VERSION_GREATER_EQUAL "5.3")
@@ -226,12 +233,14 @@ if(VTK_WRAP_PYTHON)
       set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()
   endif()
+
+  SlicerRegisterMRMLWheelTarget(${lib_name}Python)
 endif()
 
 # --------------------------------------------------------------------------
-# Testing (requires some of the examples)
+# Testing (requires some of the examples, Qt and CTK)
 # --------------------------------------------------------------------------
-if(BUILD_TESTING)
+if(BUILD_TESTING AND Slicer_BUILD_GUI)
   add_subdirectory(Testing)
 endif()
 

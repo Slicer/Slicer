@@ -218,8 +218,8 @@ if(VTK_WRAP_PYTHON)
 endif()
 
 # --------------------------------------------------------------------------
-# Testing (requires some of the examples)
+# Testing (requires some of the examples, Qt and CTK)
 # --------------------------------------------------------------------------
-if(BUILD_TESTING)
+if(BUILD_TESTING AND Slicer_BUILD_GUI)
   add_subdirectory(Testing)
 endif()
