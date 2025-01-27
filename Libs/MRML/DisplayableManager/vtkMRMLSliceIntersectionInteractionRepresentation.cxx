@@ -25,6 +25,7 @@
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLOpenGLLineStippleMapper2D.h"
 #include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
@@ -141,7 +142,7 @@ class SliceIntersectionInteractionDisplayPipeline
       this->ThickSlabLine1FirstHalf = vtkSmartPointer<vtkLineSource>::New();
       this->ThickSlabLine1FirstHalf->SetResolution(THICK_SLAB_LINE_RESOLUTION);
       this->ThickSlabLine1FirstHalf->Update();
-      this->ThickSlabLine1FirstHalfMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine1FirstHalfMapper = vtkSmartPointer<vtkMRMLOpenGLLineStippleMapper2D>::New();
       this->ThickSlabLine1FirstHalfProperty = vtkSmartPointer<vtkProperty2D>::New();
       this->ThickSlabLine1FirstHalfActor = vtkSmartPointer<vtkActor2D>::New();
       this->ThickSlabLine1FirstHalfActor->SetVisibility(false); // invisible until slice node is set
@@ -153,7 +154,7 @@ class SliceIntersectionInteractionDisplayPipeline
       this->ThickSlabLine1SecondHalf = vtkSmartPointer<vtkLineSource>::New();
       this->ThickSlabLine1SecondHalf->SetResolution(THICK_SLAB_LINE_RESOLUTION);
       this->ThickSlabLine1SecondHalf->Update();
-      this->ThickSlabLine1SecondHalfMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine1SecondHalfMapper = vtkSmartPointer<vtkMRMLOpenGLLineStippleMapper2D>::New();
       this->ThickSlabLine1SecondHalfProperty = vtkSmartPointer<vtkProperty2D>::New();
       this->ThickSlabLine1SecondHalfActor = vtkSmartPointer<vtkActor2D>::New();
       this->ThickSlabLine1SecondHalfActor->SetVisibility(false); // invisible until slice node is set
@@ -165,7 +166,7 @@ class SliceIntersectionInteractionDisplayPipeline
       this->ThickSlabLine2FirstHalf = vtkSmartPointer<vtkLineSource>::New();
       this->ThickSlabLine2FirstHalf->SetResolution(THICK_SLAB_LINE_RESOLUTION);
       this->ThickSlabLine2FirstHalf->Update();
-      this->ThickSlabLine2FirstHalfMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine2FirstHalfMapper = vtkSmartPointer<vtkMRMLOpenGLLineStippleMapper2D>::New();
       this->ThickSlabLine2FirstHalfProperty = vtkSmartPointer<vtkProperty2D>::New();
       this->ThickSlabLine2FirstHalfActor = vtkSmartPointer<vtkActor2D>::New();
       this->ThickSlabLine2FirstHalfActor->SetVisibility(false); // invisible until slice node is set
@@ -177,7 +178,7 @@ class SliceIntersectionInteractionDisplayPipeline
       this->ThickSlabLine2SecondHalf = vtkSmartPointer<vtkLineSource>::New();
       this->ThickSlabLine2SecondHalf->SetResolution(THICK_SLAB_LINE_RESOLUTION);
       this->ThickSlabLine2SecondHalf->Update();
-      this->ThickSlabLine2SecondHalfMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      this->ThickSlabLine2SecondHalfMapper = vtkSmartPointer<vtkMRMLOpenGLLineStippleMapper2D>::New();
       this->ThickSlabLine2SecondHalfProperty = vtkSmartPointer<vtkProperty2D>::New();
       this->ThickSlabLine2SecondHalfActor = vtkSmartPointer<vtkActor2D>::New();
       this->ThickSlabLine2SecondHalfActor->SetVisibility(false); // invisible until slice node is set
