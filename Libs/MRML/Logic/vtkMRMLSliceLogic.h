@@ -402,15 +402,12 @@ public:
   /// Returns false if the information cannot be determined.
   bool GetSliceOffsetRangeResolution(double range[2], double& resolution);
 
-  /// Initialize CurvePlanarReformation functionality
-  void CurvedPlanarReformationInit();
-
   /// GetPointsProjectedToPlane for curved planar reformation
   bool CurvedPlanarReformationGetPointsProjectedToPlane(vtkPoints *    pointsArrayIn,
                                                         vtkMatrix4x4 * transformWorldToPlane,
                                                         vtkPoints *    pointsArrayOut);
 
-  /// ComputeStraighteningTransform for curved planar reformation
+  /// Compute straightened volume (useful for example for visualization of curved vessels)
   bool CurvedPlanarReformationComputeStraighteningTransform(vtkMRMLTransformNode* transformToStraightenedNode,
                                                             vtkMRMLMarkupsCurveNode* curveNode,
                                                             const double sliceSizeMm[2],
@@ -425,7 +422,7 @@ public:
                                                const double outputStraightenedVolumeSpacing[3],
                                                vtkMRMLTransformNode* straighteningTransformNode);
 
-  /// ProjectVolume for curved planar reformation
+  /// Create panoramic volume by mean intensity projection along an axis of the straightened volume
   bool CurvedPlanarReformationProjectVolume(vtkMRMLScalarVolumeNode* outputProjectedVolume,
                                             vtkMRMLScalarVolumeNode* inputStraightenedVolume,
                                             int projectionAxisIndex = 0);
