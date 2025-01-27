@@ -88,12 +88,10 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   //renderer->GetActiveCamera()->SetPosition(0,0,-500.);
 
   vtkNew<vtkMRMLAnnotationROINode> annotationROINode;
-  vtkNew<vtkMRMLMarkupsROINode> markupsROINode;
 
   // MRML scene
   vtkMRMLScene* scene = vtkMRMLScene::New();
   scene->RegisterNodeClass(annotationROINode);
-  scene->RegisterNodeClass(markupsROINode);
 
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
