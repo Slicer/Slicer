@@ -17,6 +17,7 @@
 
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
+#include "vtkMRMLAbstractVolumeResampler.h"
 
 // STD includes
 #include <deque>
@@ -426,6 +427,18 @@ public:
   bool CurvedPlanarReformationProjectVolume(vtkMRMLScalarVolumeNode* outputProjectedVolume,
                                             vtkMRMLScalarVolumeNode* inputStraightenedVolume,
                                             int projectionAxisIndex = 0);
+
+  /// Resample volume using the registered resampler.
+  /// \sa RegisterVolumeResampler()
+  /// \sa GetVolumeResampler()
+  bool ResampleVolume(std::string& resamplerName,
+                      vtkMRMLVolumeNode* inputVolume,
+                      vtkMRMLVolumeNode* outputVolume,
+                      vtkMRMLTransformNode* resamplingTransform,
+                      vtkMRMLVolumeNode* referenceVolume = nullptr,
+                      int interpolationType = vtkMRMLAbstractVolumeResampler::InterpolationTypeLinear,
+                      const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters =
+                      vtkMRMLAbstractVolumeResampler::ResamplingParameters());
 
 protected:
 

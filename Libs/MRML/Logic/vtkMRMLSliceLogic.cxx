@@ -1516,13 +1516,13 @@ bool vtkMRMLSliceLogic::CurvedPlanarReformationStraightenVolume(vtkMRMLScalarVol
                                                   : vtkMRMLAbstractVolumeResampler::InterpolationTypeBSpline);
   const vtkMRMLAbstractVolumeResampler::ResamplingParameters resamplingParameters;
 
-  bool success = appLogic->ResampleVolume(volumeResamplerName,
-                                          inputVolume,
-                                          outputVolume,
-                                          resamplingTransform,
-                                          referenceVolume,
-                                          interpolationType,
-                                          resamplingParameters);
+  bool success = this->ResampleVolume(volumeResamplerName,
+                                      inputVolume,
+                                      outputVolume,
+                                      resamplingTransform,
+                                      referenceVolume,
+                                      interpolationType,
+                                      resamplingParameters);
   if (!success)
   {
     vtkErrorMacro("CurvedPlanarReformationStraightenVolume failed: Failed to resample volume using " << volumeResamplerName);
@@ -3340,4 +3340,29 @@ vtkMRMLVolumeNode* vtkMRMLSliceLogic::GetFirstVolumeNode()
     }
   }
   return nullptr;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::ResampleVolume(std::string& resamplerName,
+                                       vtkMRMLVolumeNode* inputVolume,
+                                       vtkMRMLVolumeNode* outputVolume,
+                                       vtkMRMLTransformNode* resamplingTransform,
+                                       vtkMRMLVolumeNode* referenceVolume,
+                                       int interpolationType,
+                                       const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters)
+{
+  vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
+  vtkMRMLAbstractVolumeResampler* resampler = appLogic->GetVolumeResampler(resamplerName);
+  if (!resampler)
+  {
+    vtkErrorMacro("ResampleVolume: resampler not registered " << resamplerName);
+    return false;
+  }
+  return resampler->Resample(
+        inputVolume,
+        outputVolume,
+        resamplingTransform,
+        referenceVolume,
+        interpolationType,
+        resamplingParameters);
 }
