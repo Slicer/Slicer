@@ -120,6 +120,9 @@ public:
   /// Let the effect know that the interaction node is modified
   void interactionNodeModified(vtkMRMLInteractionNode* interactionNode) override;
 
+  /// Clean up resources, event observers, and Qt signal/slot connections before deletion.
+  void cleanup() override;
+
 public slots:
   /// Update user interface from parameter set node
   void updateGUIFromMRML() override;

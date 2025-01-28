@@ -192,6 +192,14 @@ public:
   /// Let the effect know that the interaction node is modified.
   /// Default behavior is to deactivate the effect if not in view mode.
   virtual void interactionNodeModified(vtkMRMLInteractionNode* interactionNode);
+  /// Clean up resources, event observers, and Qt signal/slot connections before deletion.
+  ///
+  /// This ensures proper object destruction, as active signal/slot connections
+  /// can prevent the object from being deleted. Subclasses should override this
+  /// method to handle additional cleanup as needed.
+  ///
+  /// For more details, see: https://github.com/Slicer/Slicer/issues/7392
+  Q_INVOKABLE virtual void cleanup() { };
 
 public slots:
   /// Update user interface from parameter set node
