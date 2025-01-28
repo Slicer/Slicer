@@ -363,8 +363,12 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   set(_nsis_install_root "${Slicer_CPACK_NSIS_INSTALL_ROOT}")
 
   # Use ManifestDPIAware to improve appearance of installer
-  string(APPEND CPACK_NSIS_DEFINES "\n  ;Use ManifestDPIAware to improve appearance of installer")
-  string(APPEND CPACK_NSIS_DEFINES "\n  ManifestDPIAware true\n")
+  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.18")
+    set(CPACK_NSIS_MANIFEST_DPI_AWARE True)
+  elseif()
+    string(APPEND CPACK_NSIS_DEFINES "\n  ;Use ManifestDPIAware to improve appearance of installer")
+    string(APPEND CPACK_NSIS_DEFINES "\n  ManifestDPIAware true\n")
+  endif()
 
   # Use ManifestLongPathAware to support packaging of application where an install prefix like the following
   # would lead to paths having their length beyond the 260 characters limit:
