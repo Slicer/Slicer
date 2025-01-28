@@ -69,6 +69,7 @@ public:
     InteractionNodeModifiedMethod,
     UpdateGUIFromMRMLMethod,
     UpdateMRMLFromGUIMethod,
+    CleanupMethod,
   };
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
@@ -99,6 +100,7 @@ qSlicerSegmentEditorScriptedEffectPrivate::qSlicerSegmentEditorScriptedEffectPri
   this->PythonCppAPI.declareMethod(Self::InteractionNodeModifiedMethod, "interactionNodeModified");
   this->PythonCppAPI.declareMethod(Self::UpdateGUIFromMRMLMethod, "updateGUIFromMRML");
   this->PythonCppAPI.declareMethod(Self::UpdateMRMLFromGUIMethod, "updateMRMLFromGUI");
+  this->PythonCppAPI.declareMethod(Self::CleanupMethod, "cleanup");
 }
 
 //-----------------------------------------------------------------------------
@@ -493,4 +495,17 @@ void qSlicerSegmentEditorScriptedEffect::updateMRMLFromGUI()
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
   d->PythonCppAPI.callMethod(d->UpdateMRMLFromGUIMethod);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorScriptedEffect::cleanup()
+{
+  // Base class implementation needs to be called before the effect-specific one
+  // Note: Left here as comment in case this class is used as template for adaptor
+  //  classes of effect base classes that have default implementation of this method
+  //  (such as LabelEffect, etc.)
+  //this->Superclass::cleanup();
+
+  Q_D(const qSlicerSegmentEditorScriptedEffect);
+  d->PythonCppAPI.callMethod(d->CleanupMethod);
 }

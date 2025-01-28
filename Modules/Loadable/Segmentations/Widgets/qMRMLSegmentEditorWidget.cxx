@@ -358,6 +358,7 @@ qMRMLSegmentEditorWidgetPrivate::~qMRMLSegmentEditorWidgetPrivate()
 
   foreach(qSlicerSegmentEditorAbstractEffect* effect, this->RegisteredEffects)
   {
+    effect->cleanup();
     delete effect;
   }
   this->RegisteredEffects.clear();

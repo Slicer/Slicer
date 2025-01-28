@@ -67,6 +67,15 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         # In such cases, enableViewInteractions can be set to False.
         self.enableViewInteractions = True
 
+    def cleanup(self):
+        # Disconnect the timer signal to allow proper garbage collection.
+        #
+        # This prevents lingering signal/slot connections from keeping
+        # the object alive. For more details, see the parent class
+        # cleanup() docstring or the following issue:
+        # https://github.com/Slicer/Slicer/issues/7392
+        self.timer.disconnect("timeout()", self.preview)
+
     def clone(self):
         import qSlicerSegmentationsEditorEffectsPythonQt as effects
 
