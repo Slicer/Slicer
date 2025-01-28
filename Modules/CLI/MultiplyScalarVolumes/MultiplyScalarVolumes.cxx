@@ -98,8 +98,8 @@ int main( int argc, char * argv[] )
 
   PARSE_ARGS;
 
-  itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
+  itk::IOPixelEnum     pixelType;
+  itk::IOComponentEnum componentType;
 
   try
   {
@@ -110,29 +110,29 @@ int main( int argc, char * argv[] )
 
     switch( componentType )
     {
-      case itk::ImageIOBase::UCHAR:
-      case itk::ImageIOBase::CHAR:
+      case itk::IOComponentEnum::UCHAR:
+      case itk::IOComponentEnum::CHAR:
         return DoIt( argc, argv, static_cast<char>(0) );
         break;
-      case itk::ImageIOBase::USHORT:
-      case itk::ImageIOBase::SHORT:
+      case itk::IOComponentEnum::USHORT:
+      case itk::IOComponentEnum::SHORT:
         return DoIt( argc, argv, static_cast<short>(0) );
         break;
-      case itk::ImageIOBase::UINT:
-      case itk::ImageIOBase::INT:
+      case itk::IOComponentEnum::UINT:
+      case itk::IOComponentEnum::INT:
         return DoIt( argc, argv, static_cast<int>(0) );
         break;
-      case itk::ImageIOBase::ULONG:
-      case itk::ImageIOBase::LONG:
+      case itk::IOComponentEnum::ULONG:
+      case itk::IOComponentEnum::LONG:
         return DoIt( argc, argv, static_cast<long>(0) );
         break;
-      case itk::ImageIOBase::FLOAT:
+      case itk::IOComponentEnum::FLOAT:
         return DoIt( argc, argv, static_cast<float>(0) );
         break;
-      case itk::ImageIOBase::DOUBLE:
+      case itk::IOComponentEnum::DOUBLE:
         return DoIt( argc, argv, static_cast<double>(0) );
         break;
-      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
       default:
         std::cout << "unknown component type" << std::endl;
         break;

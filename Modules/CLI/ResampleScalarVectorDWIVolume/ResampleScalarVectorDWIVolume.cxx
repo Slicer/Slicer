@@ -79,8 +79,8 @@ struct parameters
 
 // To check the image voxel type
 void GetImageType( std::string fileName,
-                   itk::ImageIOBase::IOPixelType & pixelType,
-                   itk::ImageIOBase::IOComponentType & componentType
+                   itk::IOPixelEnum & pixelType,
+                   itk::IOComponentEnum & componentType
                    )
 {
   typedef itk::Image<unsigned char, 3> ImageType;
@@ -388,11 +388,11 @@ SetTransform( parameters & list,
   {
     if( !list.transformsOrder.compare( "input-to-output" ) )
     {
-      transformFile->GetTransformList()->pop_back();
+      transformFile->GetModifiableTransformList()->pop_back();
     }
     else
     {
-      transformFile->GetTransformList()->pop_front();
+      transformFile->GetModifiableTransformList()->pop_front();
     }
   }
   return transform;
@@ -1359,44 +1359,44 @@ int main( int argc, char * argv[] )
   itk::TransformFactory<ThinPlateSplineTransformFloatType>::RegisterTransform();
   itk::TransformFactory<ThinPlateSplineTransformDoubleType>::RegisterTransform();
 
-  itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
+  itk::IOPixelEnum     pixelType;
+  itk::IOComponentEnum componentType;
   GetImageType( list.inputVolume, pixelType, componentType );
 
   // templated over the input image voxel type
   switch( componentType )
   {
-    case itk::ImageIOBase::UCHAR:
+    case itk::IOComponentEnum::UCHAR:
       return Rotate<unsigned char>( list );
       break;
-    case itk::ImageIOBase::CHAR:
+    case itk::IOComponentEnum::CHAR:
       return Rotate<char>( list );
       break;
-    case itk::ImageIOBase::USHORT:
+    case itk::IOComponentEnum::USHORT:
       return Rotate<unsigned short>( list );
       break;
-    case itk::ImageIOBase::SHORT:
+    case itk::IOComponentEnum::SHORT:
       return Rotate<short>( list );
       break;
-    case itk::ImageIOBase::UINT:
+    case itk::IOComponentEnum::UINT:
       return Rotate<unsigned int>( list );
       break;
-    case itk::ImageIOBase::INT:
+    case itk::IOComponentEnum::INT:
       return Rotate<int>( list );
       break;
-    case itk::ImageIOBase::ULONG:
+    case itk::IOComponentEnum::ULONG:
       return Rotate<unsigned long>( list );
       break;
-    case itk::ImageIOBase::LONG:
+    case itk::IOComponentEnum::LONG:
       return Rotate<long>( list );
       break;
-    case itk::ImageIOBase::FLOAT:
+    case itk::IOComponentEnum::FLOAT:
       return Rotate<float>( list );
       break;
-    case itk::ImageIOBase::DOUBLE:
+    case itk::IOComponentEnum::DOUBLE:
       return Rotate<double>( list );
       break;
-    case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+    case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
     default:
       std::cerr << "unknown component type" << std::endl;
       break;

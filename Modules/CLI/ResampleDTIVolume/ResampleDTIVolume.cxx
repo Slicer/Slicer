@@ -93,8 +93,8 @@ bool VectorIsNul( std::vector<double> vec )
 
 // What pixeltype is the image
 void GetImageType( std::string fileName,
-                   itk::ImageIOBase::IOPixelType & pixelType,
-                   itk::ImageIOBase::IOComponentType & componentType )
+                   itk::IOPixelEnum & pixelType,
+                   itk::IOComponentEnum & componentType )
 {
   typedef itk::Image<unsigned char, 3> ImageType;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
@@ -518,11 +518,11 @@ SetTransform( parameters & list,
   {
     if( !list.transformsOrder.compare( "input-to-output" ) )
     {
-      transformFile->GetTransformList()->pop_back();
+      transformFile->GetModifiableTransformList()->pop_back();
     }
     else
     {
-      transformFile->GetTransformList()->pop_front();
+      transformFile->GetModifiableTransformList()->pop_front();
     }
   }
   return tensorTransform;
@@ -1140,20 +1140,20 @@ int main( int argc, char * argv[] )
   itk::TransformFactory<ThinPlateSplineTransformFloatType>::RegisterTransform();
   itk::TransformFactory<ThinPlateSplineTransformDoubleType>::RegisterTransform();
 
-  itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
+  itk::IOPixelEnum     pixelType;
+  itk::IOComponentEnum componentType;
   // Check the input image pixel type
   GetImageType( inputVolume, pixelType, componentType );
 
   switch( componentType )
   {
-    case itk::ImageIOBase::FLOAT:
+    case itk::IOComponentEnum::FLOAT:
       return Do<float>( list );
       break;
-    case itk::ImageIOBase::DOUBLE:
+    case itk::IOComponentEnum::DOUBLE:
       return Do<double>( list );
       break;
-    case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+    case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
     default:
       std::cerr << "unknown component type" << std::endl;
       break;
