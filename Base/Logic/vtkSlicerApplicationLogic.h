@@ -226,10 +226,10 @@ protected:
   ~vtkSlicerApplicationLogic() override;
 
   /// Callback used by a std::thread to start a processing thread
-  static void ProcessingThreaderCallback( void * );
+  static void ProcessingThreaderCallback(vtkSlicerApplicationLogic* appLogic);
 
   /// Callback used by a std::thread to start a networking thread
-  static void NetworkingThreaderCallback( void * );
+  static void NetworkingThreaderCallback(vtkSlicerApplicationLogic* appLogic);
 
   /// Task processing loop that is run in the processing thread
   void ProcessProcessingTasks();

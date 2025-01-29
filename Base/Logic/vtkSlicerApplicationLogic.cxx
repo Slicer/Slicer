@@ -238,9 +238,8 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
 
 //----------------------------------------------------------------------------
 void
-vtkSlicerApplicationLogic::ProcessingThreaderCallback(void* arg)
+vtkSlicerApplicationLogic::ProcessingThreaderCallback(vtkSlicerApplicationLogic* appLogic)
 {
-  vtkSlicerApplicationLogic* appLogic = static_cast<vtkSlicerApplicationLogic*>(arg);
   if (!appLogic)
   {
     vtkGenericWarningMacro("vtkSlicerApplicationLogic::ProcessingThreaderCallback failed: invalid appLogic");
@@ -301,9 +300,8 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
 }
 
 void
-vtkSlicerApplicationLogic::NetworkingThreaderCallback(void* arg)
+vtkSlicerApplicationLogic::NetworkingThreaderCallback(vtkSlicerApplicationLogic* appLogic)
 {
-  vtkSlicerApplicationLogic* appLogic = static_cast<vtkSlicerApplicationLogic*>(arg);
   if (!appLogic)
   {
     vtkGenericWarningMacro("vtkSlicerApplicationLogic::NetworkingThreaderCallback failed: invalid appLogic");
