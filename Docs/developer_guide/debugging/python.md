@@ -33,10 +33,8 @@ if detailedProfiling:
     cp.disable()
     cp.dump_stats(profileFilePath)
     # Import visualization tool
-    try:
-      import snakeviz
-    except ImportError:
-      pip_install("snakeviz")
+    pip_install('snakeviz')
+    import snakeviz
     # Show profiling results in the web browser
     import shutil
     pythonSlicerExecutablePath = shutil.which("PythonSlicer")
