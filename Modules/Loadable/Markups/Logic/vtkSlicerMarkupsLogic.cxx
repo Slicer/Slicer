@@ -81,7 +81,6 @@
 
 // STD includes
 #include <cassert>
-#include <list>
 
 //----------------------------------------------------------------------------
 class vtkSlicerMarkupsLogic::vtkInternal

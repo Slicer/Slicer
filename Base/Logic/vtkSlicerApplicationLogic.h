@@ -28,7 +28,7 @@
 #include <vtkCollection.h>
 
 // ITK includes
-#include <itkPlatformMultiThreader.h>
+#include <itkThreadSupport.h> // For itk::ITK_THREAD_RETURN_TYPE
 
 // STL includes
 #include <mutex>

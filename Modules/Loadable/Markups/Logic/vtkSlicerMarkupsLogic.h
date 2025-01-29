@@ -51,6 +51,7 @@ class vtkPolyData;
 
 // STD includes
 #include <cstdlib>
+#include <list>
 #include <string>
 
 #include "vtkSlicerMarkupsModuleLogicExport.h"
