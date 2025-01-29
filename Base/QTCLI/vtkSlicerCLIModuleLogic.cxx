@@ -56,6 +56,7 @@
 #include <set>
 
 #ifdef _WIN32
+#include <Windows.h> // For GetCurrentProcessId
 #else
 #include <sys/types.h>
 #include <unistd.h>

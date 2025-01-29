@@ -35,6 +35,7 @@
 
 #if defined(Q_OS_WIN32)
   #include <QtPlatformHeaders\QWindowsWindowFunctions> // for setHasBorderInFullScreen
+  #include <Windows.h> // For MEMORYSTATUSEX and GlobalMemoryStatusEx
 #endif
 
 #include "vtkSlicerConfigure.h" // For Slicer_USE_*, Slicer_BUILD_*_SUPPORT
