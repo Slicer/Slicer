@@ -27,9 +27,6 @@
 // VTK includes
 #include <vtkCollection.h>
 
-// ITK includes
-#include <itkThreadSupport.h> // For itk::ITK_THREAD_RETURN_TYPE
-
 // STL includes
 #include <mutex>
 #include <thread>
@@ -229,10 +226,10 @@ protected:
   ~vtkSlicerApplicationLogic() override;
 
   /// Callback used by a std::thread to start a processing thread
-  static itk::ITK_THREAD_RETURN_TYPE ProcessingThreaderCallback( void * );
+  static void ProcessingThreaderCallback( void * );
 
   /// Callback used by a std::thread to start a networking thread
-  static itk::ITK_THREAD_RETURN_TYPE NetworkingThreaderCallback( void * );
+  static void NetworkingThreaderCallback( void * );
 
   /// Task processing loop that is run in the processing thread
   void ProcessProcessingTasks();

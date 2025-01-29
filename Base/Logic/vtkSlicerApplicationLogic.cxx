@@ -34,6 +34,7 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkThreads.h> // For VTK_USE_PTHREADS, VTK_USE_WIN32_THREADS
 
 // ITKSYS includes
 #include <itksys/SystemTools.hxx>
@@ -41,7 +42,7 @@
 // STD includes
 #include <algorithm>
 
-#ifdef ITK_USE_PTHREADS
+#ifdef VTK_USE_PTHREADS
 # include <unistd.h>
 # include <sys/time.h>
 # include <sys/resource.h>
@@ -236,22 +237,20 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
 }
 
 //----------------------------------------------------------------------------
-itk::ITK_THREAD_RETURN_TYPE
+void
 vtkSlicerApplicationLogic::ProcessingThreaderCallback(void* arg)
 {
   vtkSlicerApplicationLogic* appLogic = static_cast<vtkSlicerApplicationLogic*>(arg);
   if (!appLogic)
   {
     vtkGenericWarningMacro("vtkSlicerApplicationLogic::ProcessingThreaderCallback failed: invalid appLogic");
-    return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
+    return;
   }
 
   appLogic->SetCurrentThreadPriorityToBackground();
 
   // Start background processing tasks in this thread
   appLogic->ProcessProcessingTasks();
-
-  return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
 }
 
 //----------------------------------------------------------------------------
@@ -301,22 +300,20 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
   }
 }
 
-itk::ITK_THREAD_RETURN_TYPE
+void
 vtkSlicerApplicationLogic::NetworkingThreaderCallback(void* arg)
 {
   vtkSlicerApplicationLogic* appLogic = static_cast<vtkSlicerApplicationLogic*>(arg);
   if (!appLogic)
   {
     vtkGenericWarningMacro("vtkSlicerApplicationLogic::NetworkingThreaderCallback failed: invalid appLogic");
-    return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
+    return;
   }
 
   appLogic->SetCurrentThreadPriorityToBackground();
 
   // Start network communication tasks in this thread
   appLogic->ProcessNetworkingTasks();
-
-  return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
 }
 
 //----------------------------------------------------------------------------
@@ -983,7 +980,7 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
     }
   }
 
-#ifdef ITK_USE_WIN32_THREADS
+#ifdef VTK_USE_WIN32_THREADS
   // Adjust the priority of this thread
   bool ret = SetThreadPriority(GetCurrentThread(), isPriorityEnvSet ? processingThreadPriority : THREAD_PRIORITY_BELOW_NORMAL);
   if (!ret)
@@ -992,7 +989,7 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
   }
 #endif
 
-#ifdef ITK_USE_PTHREADS
+#ifdef VTK_USE_PTHREADS
   // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
   int which = PRIO_PROCESS;
   int priority = isPriorityEnvSet ? processingThreadPriority : 20;
