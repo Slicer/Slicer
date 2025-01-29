@@ -6,21 +6,30 @@ import inspect
 import sys
 import types
 import typing
-from pathlib import Path
-from typing import Optional
+import warnings
+from typing import Optional, Union
 
-from slicer.ScriptedLoadableModule import ScriptedLoadableModule
 import slicer
+from slicer.ScriptedLoadableModule import ScriptedLoadableModule
 
 from . import installer
 
 __all__ = ["GuardedImports", "real_module"]
 
+USE_REQUIREMENTS_AS_CONSTRAINTS = object()
 
 class GuardedImports:
-    requirements: Optional[installer.NamedRequirements]
+    constraints: Optional[installer.NamedRequirements]
 
-    def __init__(self, requirements: Optional[installer.ResourceAnchor], name: Optional[str] = None):
+    def __init__(
+            self,
+            requirements: Optional[installer.ResourceName],
+            constraints: Optional[installer.ResourceName] = USE_REQUIREMENTS_AS_CONSTRAINTS,
+            name: Optional[str] = None,
+            *,
+            extra_args: Optional[typing.Union[str, list[str]]] = None,
+            interactive: bool = True,
+    ):
         """
         Guard imports in this context manager with the given requirements.txt resource.
 
@@ -38,9 +47,9 @@ class GuardedImports:
             json.load(...)
             #   ^ first attribute access triggers ``import json``
 
-        If ``requirements`` is not ``None``, it is interpreted as an ``importlib.resources`` anchor
-        to a ``requirements.txt`` file. If the dependencies in this file are not satisfied, they will
-        be installed just before any module in the group is used::
+        If ``requirements`` is not ``None``, it is interpreted as an ``importlib.resources``
+        identifier of a ``requirements.txt`` file. If the dependencies in this file are
+        not satisfied, they will be installed just before any module in the group is used::
 
             with GuardedImports("libCompute:requirements.txt"):
                 import libCompute
@@ -57,140 +66,159 @@ class GuardedImports:
             ``package``. See ``importlib.resources.files`` for details.
         """
 
-        # Handle relative anchors by referencing the module tha called us.
-        calling_frame = inspect.stack()[1]
+        # Handle relative packages by referencing the module that called us.
+        calling_frame = inspect.currentframe().f_back
         self.caller = inspect.getmodule(calling_frame)
-        if not self.caller:
-            raise Exception("Unable to determine import location")
 
-        # Use the module that called us as a name if one is not provided.
+        calling_file = inspect.getfile(calling_frame)
+        if calling_file in ("<string>", "<console>", "<stdin>"):
+            calling_file = f"{calling_file} (interactive console or script)"
+
+        # Try to find a sensible name that should be presented to the user.
         if name is not None:
+            # If a name was provided, use that directly.
             self.name = name
-        else:
+        elif self.caller:
             instance: typing.Optional[ScriptedLoadableModule] = getattr(
                 slicer.modules,
                 self.caller.__name__ + "Instance",
                 None,
             )
 
-            self.name = Path(self.caller.__file__).name
             if instance:
-                self.name = f"{self.name} ({instance.parent.name})"
+                self.name = f"{instance.parent.name} {calling_file}"
+            else:
+                self.name = calling_file
+        else:
+            self.name = calling_file
 
-        # self.requirements = requirements
-
-        self.finder = VeryLazyFinder(self)
+        self.finder = LazyProxyFinder(self)
         self.modules = {}
-        self.need_install = requirements is not None  # so that only the first invocation runs pip
+        self.need_install = requirements is not None or extra_args # so that only the first invocation runs pip
+        self.extra_args = extra_args
+        self.interactive = interactive
+        if extra_args is not None:
+            warnings.warn(
+                f'GuardedImports {self.name} passed extra args. '
+                f'Prefer requirements.txt. {extra_args=!r}'
+            )
 
-        # So that guards can use each other as constraints
         if requirements is not None:
             self.requirements = installer.NamedRequirements(
                 self.name,
                 requirements,
                 self.caller,
             )
-            installer.register_constraints(self.requirements)
         else:
             self.requirements = None
 
+        # Register these constraints.
+        if constraints is USE_REQUIREMENTS_AS_CONSTRAINTS:
+            self.constraints = self.requirements
+        elif constraints is not None:
+            self.constraints = installer.NamedRequirements(
+                self.name,
+                constraints,
+                self.caller,
+            )
+        else:
+            self.constraints = None
+
+        if self.constraints is not None:
+            installer.register_constraints(self.constraints)
+
+        self.rejection = None
+
     def __enter__(self):
         sys.meta_path.insert(0, self.finder)
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.meta_path.remove(self.finder)
-        self.lock()
+        self.reset()
+
+    def reset(self):
+        for name in self.modules:
+            sys.modules.pop(name)
 
     def register(self, module: types.ModuleType):
         """Mark an import module as guarded by this import group."""
 
         assert module.__spec__ is not None
-        self.modules[module.__spec__.name] = module
+        name = module.__spec__.name
 
-    def lock(self):
-        """Lock all modules in this group, disabling plain imports until ``unlock`` is called.
-
-        Importing a module locked in this way raises ``ModuleNotFoundError``:
-
-            ModuleNotFoundError: import of ... halted; None in sys.modules
-
-        Note ``ModuleNotFoundError`` is a subtype of ``ImportError``.
-
-        This explicitly prevents using both lazy and plain imports for the same module. This catches
-        the case where a module is not available to a user's environment, but an extension developer
-        already installed it to their environment: the developer encounters an import error whenever
-        the user could.
-        """
-
-        for name, module in self.modules.items():
-            if sys.modules[name] is module:
-                # Explicitly halt imports
-                sys.modules[name] = None  # type: ignore # noqa: PGH003
-
-    def unlock(self):
-        """Unlock all modules in this group, enabling plain imports.
-
-        This enables lazily-imported packages containing plain imports to succeed, since the package
-        must be guarded by the lazy import. Plain local imports can also succeed, but only after the
-        import group is unlocked and the dependencies are guaranteed to be available.
-        """
-        for name in self.modules:
-            if name in sys.modules and sys.modules[name] is None:
-                # remove None entries for self.modules to allow bare imports.
-                del sys.modules[name]
+        self.modules[name] = module
 
     def resolve(self):
         """Resolve dependencies for this import group, installing them if necessary."""
 
+        if self.rejection is not None:
+            raise self.rejection
+
         if not self.need_install:
             return
 
-        if not self.requirements:
-            return
-
-        installer.pip_install(requirements=self.requirements)
+        try:
+            installer.pip_install(
+                self.extra_args,
+                requirements=self.requirements,
+                interactive=self.interactive,
+            )
+        except installer.PackageInstallAborted as rejection:
+            self.rejection = rejection
+            raise
 
         self.need_install = False
 
 
-class VeryLazyModule(types.ModuleType):
+class LazyProxyModule(types.ModuleType):
     """
     Defer real import to first attribute access.
 
     A module with this type has not actually been executed yet. On first attribute access:
 
     * Resolve dependencies
-    * Unlock the module name
     * Import the module
     * Update this proxy with the real module's contents.
     """
 
-    def __getattr__(self, attr):
-        # TODO: Try to propagate sets and deletes to the real module. Maybe introduce a ``LazyLoadedModule``
-        #  class that implements ``__getattribute__`` instead?
-        self.__class__ = types.ModuleType
-        assert self.__spec__ is not None
+    def __getattr__(self, item):
+        return getattr(real_module(self), item)
 
-        group: GuardedImports = self.__spec__.loader_state
-        group.unlock()
-        group.resolve()
+    def __setattr__(self, key, value):
+        setattr(real_module(self), key, value)
 
-        self.__real_module__ = importlib.import_module(self.__spec__.name)
+    def __delattr__(self, item):
+        delattr(real_module(self), item)
 
-        # todo can I say ``self.__dict__ = self.__real_module__.__dict__``?
-        self.__dict__.update(self.__real_module__.__dict__)
-
-        return getattr(self, attr)
+    def __dir__(self):
+        return dir(real_module(self))
 
 
-def real_module(module: types.ModuleType) -> types.ModuleType:
-    """Get the real module object from a lazy proxy module, triggering resolution if necessary."""
+def real_module(module: Union[types.ModuleType, LazyProxyModule]) -> types.ModuleType:
+    """Get the real module object from `LazyProxyModule`, triggering resolution if necessary."""
 
-    return getattr(module, "__real_module__", module)
+    if not isinstance(module, LazyProxyModule):
+        return module
+
+    real = module.__real_module__
+    if real is not None:
+        return real
+
+    guard: GuardedImports = module.__spec__.loader_state
+    guard.resolve()
+
+    real = importlib.import_module(module.__spec__.name)
+
+    # `LazyProxyModule.__setattr__` calls this function, so use `super` to avoid recursion.
+    super(LazyProxyModule, module).__setattr__('__real_module__', real)
+
+    return real
 
 
-class VeryLazyLoader(importlib.abc.Loader):
-    """Produce a dummy module for _all_ specs using ``VeryLazyModule``.
+class LazyProxyLoader(importlib.abc.Loader):
+    """
+    Produce a dummy module for _all_ specs using ``LazyProxyModule``.
 
     This exec_module never fails - the real find_spec occurs on first attribute access.
     """
@@ -199,18 +227,22 @@ class VeryLazyLoader(importlib.abc.Loader):
         assert module.__spec__ is not None
         group: GuardedImports = module.__spec__.loader_state
 
-        module.__class__ = VeryLazyModule
         group.register(module)
 
+        module.__real_module__ = None  # Critical for `real_module()` implementation.
 
-class VeryLazyFinder(importlib.abc.MetaPathFinder):
-    """Produce a dummy spec for _all_ modules using ``VeryLazyLoader`` and ``VeryLazyModule``.
+        module.__class__ = LazyProxyModule # This _must_ happen last.
+
+
+class LazyProxyFinder(importlib.abc.MetaPathFinder):
+    """
+    Produce a dummy spec for _all_ modules using ``LazyProxyLoader`` and ``LazyProxyModule``.
 
     This ``find_spec`` never fails - the real ``find_spec`` occurs on first attribute access.
     """
 
     def __init__(self, group):
-        self.loader = VeryLazyLoader()
+        self.loader = LazyProxyLoader()
         self.group = group
 
     def find_spec(self, fullname, path, target=None):
@@ -219,7 +251,7 @@ class VeryLazyFinder(importlib.abc.MetaPathFinder):
 
         return importlib.machinery.ModuleSpec(
             name=fullname,
-            loader=VeryLazyLoader(),
+            loader=LazyProxyLoader(),
             loader_state=self.group,
             is_package=True,
         )

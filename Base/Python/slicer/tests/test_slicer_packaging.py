@@ -7,11 +7,11 @@ from slicer.packaging import GuardedImports
 from slicer.packaging.installer import NamedRequirements
 
 
-# lazy_import_packages = Path(__file__).parent.joinpath("lazy_import_packages")
+# test_packages = Path(__file__).parent.joinpath("test_packages")
 #
-# dummy_1_0_0 = lazy_import_packages.joinpath("dummy-1-0-0").resolve().absolute()
-# dummy_1_1_0 = lazy_import_packages.joinpath("dummy-1-1-0").resolve().absolute()
-# dummy_2_0_0 = lazy_import_packages.joinpath("dummy-2-0-0").resolve().absolute()
+# dummy_1_0_0 = test_packages.joinpath("dummy-1-0-0").resolve().absolute()
+# dummy_1_1_0 = test_packages.joinpath("dummy-1-1-0").resolve().absolute()
+# dummy_2_0_0 = test_packages.joinpath("dummy-2-0-0").resolve().absolute()
 
 
 class PipLogger:
@@ -39,7 +39,7 @@ class PatchedPipTest(unittest.TestCase):
             pass  # don't need contents for this test
 
         assert len(pip_install.commands) == 1
-        assert pip_install.commands[0]['kwargs']['requirements'].anchor == 'placeholder:requirements.txt'
+        assert pip_install.commands[0]['kwargs']['requirements'].identifier == 'placeholder:requirements.txt'
 
 class RequirementsResolverTest(unittest.TestCase):
     def test_core_constraints(self):
@@ -60,8 +60,8 @@ class RequirementsResolverTest(unittest.TestCase):
 
     def test_as_file(self):
         reqs = NamedRequirements(
-            "test_as_path requirements",
-            "lazy_import_resources:requirements.txt",
+            "test_slicer_packaging (test_as_file)",
+            "test_resources:requirements.txt",
             sys.modules[__name__],
         )
 

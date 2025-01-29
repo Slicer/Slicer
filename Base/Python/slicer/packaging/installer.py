@@ -1,85 +1,218 @@
+import contextlib
 import importlib.resources
 import importlib.util
+import io
 import logging
 import shlex
 import subprocess
 import sys
+import textwrap
 import types
 import typing
 from contextlib import AbstractContextManager, ExitStack
 from pathlib import Path
 from typing import Optional, Union
 
-# Alias for importlib.resources anchors of the form ``package:path``. ``TypeAlias`` is not available
-# in Python 3.9.
-ResourceAnchor: type = str
+import slicer.util
+
+# Alias for identifiers of the form ``package:path``; given to ``importlib.resources``.
+# ``TypeAlias`` is not available in Python 3.9.
+ResourceName: type = str
 
 UV_ENV = {
     "UV_PYTHON": sys.executable,
-    # todo 'UV_SYSTEM_PYTHON' ?
+    "UV_SYSTEM_PYTHON": "true",  # This allows uv to modify `UV_PYTHON=sys.executable`.
     "UV_PYTHON_DOWNLOADS": "never",
-    "UV_NO_PROGRESS": "",
-    "NO_COLOR": "",
-    # todo 'UV_CACHE_DIR' ?
-    # todo 'UV_COMPILE_BYTECODE' ?
+    "UV_NO_PROGRESS": "true",
+    "NO_COLOR": "true",
+    # todo Should 'UV_CACHE_DIR' be somewhere in Slicer data? Probably not.
+    # todo Should 'UV_COMPILE_BYTECODE' be enabled? Probably not.
 }
 
 
 class NamedRequirements(typing.NamedTuple):
     name: str
-    anchor: ResourceAnchor
+    identifier: ResourceName
     caller: Optional[types.ModuleType]
 
     def as_file(self) -> AbstractContextManager[Path]:
-        package_name, _, path = self.anchor.rpartition(":")
+        package_name, _, path = self.identifier.rpartition(":")
 
-        # package_name = importlib.util.resolve_name(package_name, self.caller.__name__)
-
+        # An omitted package_name is a relative import for convenience.
         if not package_name:
-            # A relative path. Use the caller as the resource root.
-            resource = importlib.resources.files(self.caller).joinpath(path)
-        else:
-            # ``importlib.resources.files`` actually executes the module, but we can't yet guarantee that all
-            # dependencies are satisfied. So instead make a dummy module from the spec but do not execute it.
-            # Give that to ``importlib`` and we can find the right resource.
-            spec = importlib.util.find_spec(package_name)
-            assert spec is not None
-            dummy = importlib.util.module_from_spec(spec)
-            resource = importlib.resources.files(dummy).joinpath(path)
+            package_name = "."
+
+        # Resolve relative anchors if possible.
+        if self.caller:
+            package_name = importlib.util.resolve_name(package_name, self.caller.__name__)
+
+        # ``importlib.resources.files`` actually executes the module, but we can't yet guarantee that all
+        # dependencies are satisfied. So instead make a dummy module from the spec but do not execute it.
+        # Give that to ``importlib`` and we can find the right resource.
+        spec = importlib.util.find_spec(package_name)
+        dummy = importlib.util.module_from_spec(spec)
+        resource = importlib.resources.files(dummy).joinpath(path)
 
         return importlib.resources.as_file(resource)
 
 
-_NAMED_REQUIREMENTS: list[NamedRequirements] = []
-
-def register_constraints(requirements: NamedRequirements):
-    _NAMED_REQUIREMENTS.append(requirements)
+_NAMED_CONSTRAINTS: list[NamedRequirements] = []
 
 
-register_constraints( NamedRequirements("Slicer Core", "slicer.packaging:core-constraints.txt", None))
+def register_constraints(constraints: NamedRequirements):
+    _NAMED_CONSTRAINTS.append(constraints)
 
 
-def _invoke_uv_pip_install(args: list[str]):
+register_constraints(
+    NamedRequirements(
+        "Slicer Core",
+        "slicer.packaging:core-constraints.txt",
+        None,
+    ),
+)
+
+
+@contextlib.contextmanager
+def _constraints_arguments():
+    args = []
     with ExitStack() as stack:
-        command = [sys.executable, '-m', 'uv', 'pip', 'install']
-        command += args
-
-        for constraint in _NAMED_REQUIREMENTS:
+        for constraint in _NAMED_CONSTRAINTS:
             path = stack.enter_context(constraint.as_file())
-            command += ['-c', path]
+            args += ["-c", path]
 
-            test = subprocess.run(command + ['--dry-run'], capture_output=True, encoding='utf-8',
-                                  env=UV_ENV, check=True, )
+        yield args
 
-    # todo The goal here is to --dry-run the command, and if it fails, test each of
-    #  the _NAMED_REQUIREMENTS individually to find which module causes the conflict.
 
-    # it might be sufficient to just run the command without --dry-run and check the exit code.
+class PackageInstallAborted(Exception):
+    def __init__(self, command: list[str], dependee: str):
+        super().__init__(command, dependee)
+
+        self.command = command
+        self.dependee = dependee
+
+
+def _invoke_uv_pip_install(
+    args: list[str],
+    *,
+    interactive=True,
+    dependee: str = None,
+):
+    if not args:
+        return
+
+    if not dependee:
+        dependee = shlex.join(args)
+
+    base = [sys.executable, "-m", "uv", "pip", "install"] + args
+
+    with _constraints_arguments() as constraints:
+        test_command = base + constraints + ["--dry-run"]
+
+        with slicer.util.WaitCursor():
+            logging.debug("command: %r", test_command)
+            test = subprocess.run(
+                test_command,
+                capture_output=True,
+                encoding="utf-8",
+                env=UV_ENV,
+                check=False,
+            )
+
+        if test.stderr.startswith("error"):
+            logging.error(test.stderr)
+            assert test.returncode, "Command failed; it should have a nonzero returncode."
+            test.check_returncode()  # This must throw.
+
+        if "Would make no changes" in test.stderr:
+            return
+
+        # First line just contains python path; output that to logs only.
+        uv_target, _, summary = test.stderr.partition("\n")
+        summary = textwrap.dedent(summary)
+        logging.debug("uv: %s", uv_target)
+
+        if test.returncode:
+            violated_constraints = []
+            for constraint in _NAMED_CONSTRAINTS:
+                with constraint.as_file() as path:
+                    test_violation_command = base + ["-c", path] + ["--dry-run"]
+
+                    logging.debug("command: %r", test_violation_command)
+                    test_violation = subprocess.run(
+                        test_violation_command,
+                        capture_output=True,
+                        encoding="utf-8",
+                        env=UV_ENV,
+                        check=False,
+                    )
+
+                    if test_violation.returncode:
+                        violated_constraints.append(constraint)
+
+                        # Avoid encoding issues; be sure these appear correctly in logs.
+                        if test_violation.stdout and test_violation.stdout.strip():
+                            print(test_violation.stdout, file=sys.stdout)
+                        if test_violation.stderr and test_violation.stderr.strip():
+                            print(test_violation.stderr, file=sys.stderr)
+
+            # A bit more straightforward procedural way to assemble the message. The alternative is
+            # to build up lists of formatted strings, which seems harder to read.
+            message = io.StringIO()
+            with contextlib.redirect_stdout(message):
+                print(f"Cannot install packages for {dependee} because it would violate constraints:")
+                print()
+                for constraint in violated_constraints:
+                    print(f"* {constraint.name}")
+                print()
+                print(summary)
+
+            slicer.util.errorDisplay(
+                text=message.getvalue().strip(),
+                windowTitle="Packages cannot be installed.",
+            )
+            test.check_returncode()  # this must throw.
+
+        # Otherwise, fail-safe and ask for confirmation.
+        if interactive and not slicer.util.confirmOkCancelDisplay(
+            text="\n".join(
+                [
+                    f"Resolving dependencies for {dependee}.",
+                    summary,
+                ],
+            ),
+            windowTitle="Install dependencies?",
+        ):
+            raise PackageInstallAborted(args, dependee)
+
+        # Finally, we actually invoke uv pip install.
+        install_command = base + constraints
+        with slicer.util.WaitCursor():
+            logging.info("command: %r", install_command)
+            proc = subprocess.run(
+                install_command,
+                encoding="utf-8",
+                env=UV_ENV,
+                check=False,
+            )
+
+        # Avoid encoding issues; be sure these appear correctly in logs.
+        if proc.stdout and proc.stdout.strip():
+            print(proc.stdout, file=sys.stdout)
+        if proc.stderr and proc.stderr.strip():
+            print(proc.stderr, file=sys.stderr)
+
+        # It is a critical error if the dry-run passes but the true run fails. This likely
+        # indicates the build step of one of the packages failed, or some network/filesystem error.
+        proc.check_returncode()
+
+    importlib.invalidate_caches()
+
 
 def pip_install(
     args: Optional[Union[str, list[str]]] = None,
     *,
     requirements: NamedRequirements = None,
+    interactive=True,
 ):
     if args is None:
         args = []
@@ -88,68 +221,15 @@ def pip_install(
     elif not isinstance(args, list):
         raise ValueError("pip_install args must be a string or a list.")
 
-    # TODO: Show a summary (via --dry-run) to the user and get confirmation.
-
-    with ExitStack() as stack:
-        command = [
-            sys.executable,
-            "-m",
-            "uv",
-            "pip",
-            "install",
-        ]
-
-        command += args
-
-        for constraint in _NAMED_REQUIREMENTS:
-            path = stack.enter_context(constraint.as_file())
-            command += ["-c", path]
-
-        if requirements is not None:
-            path = stack.enter_context(constraint.as_file())
-            command += ["-r", path]
-
-        logging.info("pip_install: %s", command)
-        proc = subprocess.run(command, capture_output=True, encoding="utf-8", env=UV_ENV, check=False)
-
-        # todo examine proc output.
-
-        # print(proc.stdout)
-        # print(proc.stderr)
-
-    base_check_command = [
-        sys.executable,
-        "-m",
-        "uv",
-        "pip",
-        "install",
-        "--dry-run",
-    ]
-    base_check_command += args
-
-    # if it failed because of a constraint:
-    for constraint in _NAMED_REQUIREMENTS:
-        check_command = base_check_command.copy()
-
-        with ExitStack() as stack:
-            path = stack.enter_context(constraint.as_file())
-            check_command += ["-c", path]
-
-            if requirements is not None:
-                path = stack.enter_context(constraint.as_file())
-                check_command += ["-r", path]
-
-            logging.info("pip_install check: %s", command)
-            check = subprocess.run(check_command, capture_output=True, encoding="utf-8", env=UV_ENV, check=False)
-
-            # todo examine check output
-
-            # print(check.stdout)
-            # print(check.stderr)
-
-            # todo collect issues and show at once
-
-    importlib.invalidate_caches()
+    if requirements is not None:
+        with requirements.as_file() as path:
+            _invoke_uv_pip_install(
+                args + ["-r", path],
+                interactive=interactive,
+                dependee=requirements.name,
+            )
+    else:
+        _invoke_uv_pip_install(args, interactive=interactive)
 
 
 def pip_uninstall(
@@ -181,5 +261,3 @@ def pip_uninstall(
     #  If they're guarded they'd be reinstalled next time anyway, so maybe not needed.
 
     importlib.invalidate_caches()
-
-
