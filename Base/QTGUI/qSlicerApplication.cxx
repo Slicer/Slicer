@@ -1225,15 +1225,6 @@ void qSlicerApplication::logApplicationInformation() const
   // total page file size is a better indication of actually available memory for the process.
   // The issue has been fixed in kwSys release at the end of 2014, therefore when VTK is upgraded then
   // this workaround may not be needed anymore.
-#if defined(_MSC_VER) && _MSC_VER < 1300
-  MEMORYSTATUS ms;
-  ms.dwLength = sizeof(ms);
-  GlobalMemoryStatus(&ms);
-  unsigned long totalPhysicalBytes = ms.dwTotalPhys;
-  totalPhysicalMemoryMb = totalPhysicalBytes>>10>>10;
-  unsigned long totalVirtualBytes = ms.dwTotalPageFile;
-  totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
-#else
   MEMORYSTATUSEX ms;
   ms.dwLength = sizeof(ms);
   if (GlobalMemoryStatusEx(&ms))
@@ -1243,7 +1234,6 @@ void qSlicerApplication::logApplicationInformation() const
     DWORDLONG totalVirtualBytes = ms.ullTotalPageFile;
     totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
   }
-#endif
 #endif
   qDebug() << qPrintable(QString("%0: %1 MB physical, %2 MB virtual")
                          .arg(titles.at(titleIndex++).leftJustified(titleWidth, '.'))
