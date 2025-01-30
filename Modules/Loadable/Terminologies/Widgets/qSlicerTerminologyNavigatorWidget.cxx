@@ -1884,9 +1884,11 @@ QString qSlicerTerminologyNavigatorWidget::nameFromTerminology(vtkSlicerTerminol
     }
   }
 
-  if (entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue())
+  if ( entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue()
+    && strlen(entry->GetRegionObject()->GetCodeValue()) > 0 )
   {
-    if (entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeValue())
+    if ( entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeValue()
+      && strlen(entry->GetRegionModifierObject()->GetCodeValue()) > 0 )
     {
       //: For formatting of terminology entry name. %1 is type name (e.g., "Mass"), %2 is region name (e.g., "Kidney"), %2 is region modifier (e.g., "Left")
       name = tr("%1 in %2, %3")
