@@ -96,6 +96,10 @@ public:
   void SetAllowInMemoryTransfer(int value);
   int GetAllowInMemoryTransfer() const;
 
+  // Showing/Hiding windows associated with CLI executable.
+  void SetHideWindow(int value);
+  int GetHideWindow() const;
+
   /// For debugging, control redirection of cout and cerr
   virtual void RedirectModuleStreamsOn();
   virtual void RedirectModuleStreamsOff();
