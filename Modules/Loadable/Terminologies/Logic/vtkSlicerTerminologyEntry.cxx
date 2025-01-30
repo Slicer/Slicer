@@ -89,6 +89,22 @@ void vtkSlicerTerminologyEntry::Initialize()
 }
 
 //----------------------------------------------------------------------------
+bool vtkSlicerTerminologyEntry::IsValid()
+{
+  if ( this->CategoryObject == nullptr || this->CategoryObject->GetCodeMeaning() == nullptr
+    || this->CategoryObject->GetCodingSchemeDesignator() == nullptr || this->CategoryObject->GetCodeValue() == nullptr )
+  {
+    return false;
+  }
+  if ( this->TypeObject == nullptr || this->TypeObject->GetCodeMeaning() == nullptr
+    || this->TypeObject->GetCodingSchemeDesignator() == nullptr || this->TypeObject->GetCodeValue() == nullptr )
+  {
+    return false;
+  }
+  return true;
+}
+
+//----------------------------------------------------------------------------
 bool vtkSlicerTerminologyEntry::IsEmpty()
 {
   if (this->TerminologyContextName && strlen(this->TerminologyContextName) > 0)

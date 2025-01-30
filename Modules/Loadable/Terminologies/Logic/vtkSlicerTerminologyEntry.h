@@ -59,6 +59,10 @@ public:
   /// Reset to initial state, setting all fields to empty.
   void Initialize();
 
+  /// Returns true if the object contains a valid terminology entry,
+  /// i.e. valid category and type. Does not consider context name.
+  bool IsValid();
+
   /// Returns true if all fields are empty.
   bool IsEmpty();
 
