@@ -1,5 +1,6 @@
-import vtk
 import qt
+import vtk
+
 import slicer
 from slicer.i18n import tr as _
 

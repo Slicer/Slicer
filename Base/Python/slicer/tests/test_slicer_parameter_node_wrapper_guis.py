@@ -7,14 +7,12 @@ import ctk
 import qt
 
 import slicer
-
 from slicer import (
     qMRMLSubjectHierarchyTreeView,
     vtkMRMLModelNode,
     vtkMRMLScalarVolumeNode,
 )
 from slicer.parameterNodeWrapper import *
-
 
 # This is a copy-paste of what is in wrapper.py on purpose.
 # Using "SlicerParameterName" in the .ui files will not be able to go through the variable,
