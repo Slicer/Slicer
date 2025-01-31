@@ -921,10 +921,6 @@ public:
     return this->ReplaceListNameInControlPointLabelFormat();
   };
 
-  // Constants for attribute names
-  static const char* GetMovingInSliceViewAttributeName() { return "Markups.MovingInSliceView"; }
-  static const char* GetMovingMarkupIndexAttributeName() { return "Markups.MovingMarkupIndex"; }
-
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode() override;

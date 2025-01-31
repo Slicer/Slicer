@@ -744,15 +744,15 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
         layoutName = viewNode->GetLayoutName();
       }
     }
-    markupsNode->SetAttribute(vtkMRMLMarkupsNode::GetMovingInSliceViewAttributeName(), layoutName ? layoutName : "");
+    markupsNode->SetAttribute(vtkMRMLMarkupsDisplayNode::GetMovingInSliceViewAttributeName(), layoutName ? layoutName : "");
     std::ostringstream controlPointIndexStr;
     controlPointIndexStr << controlPointIndex;
-    markupsNode->SetAttribute(vtkMRMLMarkupsNode::GetMovingMarkupIndexAttributeName(), controlPointIndexStr.str().c_str());
+    markupsNode->SetAttribute(vtkMRMLMarkupsDisplayNode::GetMovingMarkupIndexAttributeName(), controlPointIndexStr.str().c_str());
   }
   else
   {
-    markupsNode->SetAttribute(vtkMRMLMarkupsNode::GetMovingInSliceViewAttributeName(), "");
-    markupsNode->SetAttribute(vtkMRMLMarkupsNode::GetMovingMarkupIndexAttributeName(), "");
+    markupsNode->SetAttribute(vtkMRMLMarkupsDisplayNode::GetMovingInSliceViewAttributeName(), "");
+    markupsNode->SetAttribute(vtkMRMLMarkupsDisplayNode::GetMovingMarkupIndexAttributeName(), "");
   }
   markupsNode->SetDisableModifiedEvent(wasDisabled);
 

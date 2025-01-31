@@ -144,6 +144,12 @@ public:
   /// \param context Name of the interaction context. By default it is empty string, meaning mouse
   int GetActiveControlPoint(std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
 
+  ///@{
+  /// Constants for attribute names
+  static const char* GetMovingInSliceViewAttributeName() { return "Markups.MovingInSliceView"; }
+  static const char* GetMovingMarkupIndexAttributeName() { return "Markups.MovingMarkupIndex"; }
+  ///@}
+
   /// Set the text scale of the associated text.
   vtkGetMacro(TextScale,double);
   vtkSetMacro(TextScale,double);
