@@ -376,7 +376,7 @@ class EndoscopyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.setPlaybackEnabled(False)
 
     def onInputCurveControlPointModified(self, *_unused):
-        if self.inputCurve.GetAttribute("Markups.MovingMarkupIndex"):
+        if self.inputCurve.GetAttribute(slicer.vtkMRMLMarkupsDisplayNode.GetMovingMarkupIndexAttributeName()):
             return
         self.logic.setControlPointsByResamplingAndInterpolationFromInputCurve(self.inputCurve)
 
