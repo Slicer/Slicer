@@ -63,3 +63,13 @@
     :undoc-members:
     :show-inheritance:
 ```
+
+## slicer.parameterNodeWrapper
+
+```{eval-rst}
+.. automodule:: slicer.parameterNodeWrapper
+    :members:
+    :undoc-members:
+    :imported-members:
+    :show-inheritance:
+```
