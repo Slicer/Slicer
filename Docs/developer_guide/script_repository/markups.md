@@ -513,7 +513,7 @@ Event management of Slicer-4.11 version is still subject to change. The example 
 ```python
 def onMarkupChanged(caller,event):
   markupsNode = caller
-  sliceView = markupsNode.GetAttribute("Markups.MovingInSliceView")
+  sliceView = markupsNode.GetAttribute(slicer.vtkMRMLMarkupsDisplayNode.GetMovingInSliceViewAttributeName())
   movingMarkupIndex = markupsNode.GetDisplayNode().GetActiveControlPoint()
   if movingMarkupIndex >= 0:
     pos = [0,0,0]
@@ -528,13 +528,13 @@ def onMarkupChanged(caller,event):
 
 def onMarkupStartInteraction(caller, event):
   markupsNode = caller
-  sliceView = markupsNode.GetAttribute("Markups.MovingInSliceView")
+  sliceView = markupsNode.GetAttribute(slicer.vtkMRMLMarkupsDisplayNode.GetMovingInSliceViewAttributeName())
   movingMarkupIndex = markupsNode.GetDisplayNode().GetActiveControlPoint()
   logging.info("Start interaction: point ID = {0}, slice view = {1}".format(movingMarkupIndex, sliceView))
 
 def onMarkupEndInteraction(caller, event):
   markupsNode = caller
-  sliceView = markupsNode.GetAttribute("Markups.MovingInSliceView")
+  sliceView = markupsNode.GetAttribute(slicer.vtkMRMLMarkupsDisplayNode.GetMovingInSliceViewAttributeName())
   movingMarkupIndex = markupsNode.GetDisplayNode().GetActiveControlPoint()
   logging.info("End interaction: point ID = {0}, slice view = {1}".format(movingMarkupIndex, sliceView))
 

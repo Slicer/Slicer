@@ -546,31 +546,31 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
             # Check include node attribute name filter
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
-            filteredObject.includeNodeAttributeNamesFilter = ["Markups.MovingInSliceView"]
+            filteredObject.includeNodeAttributeNamesFilter = [slicer.vtkMRMLMarkupsDisplayNode.GetMovingInSliceViewAttributeName()]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5 + expectedEmptyHierarchyItemCount)
             filteredObject.addNodeAttributeFilter("Sajt")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check attribute value filter
-            filteredObject.addNodeAttributeFilter("Markups.MovingMarkupIndex", 3)
+            filteredObject.addNodeAttributeFilter(slicer.vtkMRMLMarkupsDisplayNode.GetMovingMarkupIndexAttributeName(), 3)
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
-            filteredObject.addNodeAttributeFilter("Markups.MovingMarkupIndex", "3")
+            filteredObject.addNodeAttributeFilter(slicer.vtkMRMLMarkupsDisplayNode.GetMovingMarkupIndexAttributeName(), "3")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
             # Check exclude node attribute name filter (overrides include node attribute name filter)
-            filteredObject.excludeNodeAttributeNamesFilter = ["Markups.MovingInSliceView"]
+            filteredObject.excludeNodeAttributeNamesFilter = [slicer.vtkMRMLMarkupsDisplayNode.GetMovingInSliceViewAttributeName()]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4 + expectedEmptyHierarchyItemCount)
             filteredObject.excludeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check if exclude indeed overrides include node attribute name filter
-            filteredObject.includeNodeAttributeNamesFilter = ["Markups.MovingMarkupIndex"]
+            filteredObject.includeNodeAttributeNamesFilter = [slicer.vtkMRMLMarkupsDisplayNode.GetMovingMarkupIndexAttributeName()]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
-            filteredObject.excludeNodeAttributeNamesFilter = ["Markups.MovingInSliceView"]
+            filteredObject.excludeNodeAttributeNamesFilter = [slicer.vtkMRMLMarkupsDisplayNode.GetMovingInSliceViewAttributeName()]
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             filteredObject.excludeNodeAttributeNamesFilter = []
@@ -616,7 +616,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
 
             # Check attribute filtering with class name and attribute value
-            filteredObject.addNodeAttributeFilter("Markups.MovingMarkupIndex", 3, True, "vtkMRMLMarkupsCurveNode")
+            filteredObject.addNodeAttributeFilter(slicer.vtkMRMLMarkupsDisplayNode.GetMovingMarkupIndexAttributeName(), 3, True, "vtkMRMLMarkupsCurveNode")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 3 + expectedEmptyHierarchyItemCount)
             filteredObject.addNodeAttributeFilter("ParentAttribute", "", True, "vtkMRMLMarkupsAngleNode")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 5)
@@ -625,7 +625,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)
             # Check with empty attribute value
-            filteredObject.addNodeAttributeFilter("Markups.MovingMarkupIndex", "", True, "vtkMRMLMarkupsCurveNode")
+            filteredObject.addNodeAttributeFilter(slicer.vtkMRMLMarkupsDisplayNode.GetMovingMarkupIndexAttributeName(), "", True, "vtkMRMLMarkupsCurveNode")
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 4 + expectedEmptyHierarchyItemCount)
             filteredObject.includeNodeAttributeNamesFilter = []
             self.assertEqual(shProxyModel.acceptedItemCount(shNode.GetSceneItemID()), 9)

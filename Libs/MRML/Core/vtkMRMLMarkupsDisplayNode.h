@@ -144,6 +144,17 @@ public:
   /// \param context Name of the interaction context. By default it is empty string, meaning mouse
   int GetActiveControlPoint(std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
 
+  ///@{
+  /// Constants representing the context in which a Markups control point is being moved.
+  ///
+  /// - `Markups.MovingInSliceView` stores the layout name of the slice view where the control point is being manipulated.
+  /// - `Markups.MovingMarkupIndex` stores the index of the control point currently being moved.
+  ///
+  /// These attributes are used to track interactions with Markups nodes during user input events.
+  static const char* GetMovingInSliceViewAttributeName() { return "Markups.MovingInSliceView"; }
+  static const char* GetMovingMarkupIndexAttributeName() { return "Markups.MovingMarkupIndex"; }
+  ///@}
+
   /// Set the text scale of the associated text.
   vtkGetMacro(TextScale,double);
   vtkSetMacro(TextScale,double);
