@@ -123,7 +123,7 @@ def _invoke_uv_pip_install(
     if not dependee:
         dependee = shlex.join(args)
 
-    base = [sys.executable, "-m", "uv", "pip", "install"] + args
+    base = [sys.executable, "-m",  "pip", "install"] + args
 
     with _constraints_arguments() as constraints:
         test_command = base + constraints + ["--dry-run"]
@@ -265,7 +265,7 @@ def pip_uninstall(
     command = [
         sys.executable,
         "-m",
-        "uv",
+
         "pip",
         "uninstall",
     ]

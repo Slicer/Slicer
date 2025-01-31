@@ -4,7 +4,7 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/i18n
   slicer/logic
   slicer/packaging/__init__
-  slicer/packaging/guarded_imports
+  slicer/packaging/requirements
   slicer/packaging/installer
   slicer/parameterNodeWrapper/__init__
   slicer/parameterNodeWrapper/default
@@ -30,6 +30,7 @@ set(Slicer_PYTHON_SCRIPTS
 
 set(Slicer_PYTHON_RESOURCES
   slicer/packaging/core-constraints.txt
+  slicer/packaging/core-requirements.txt
   )
 
 set(Slicer_PYTHON_MODULES_CONFIG "
