@@ -63,3 +63,12 @@
     :undoc-members:
     :show-inheritance:
 ```
+
+## slicer.packaging
+
+```{eval-rst}
+.. automodule:: slicer.packaging
+    :members:
+    :undoc-members:
+    :show-inheritance:
+```
