@@ -41,7 +41,7 @@ Common environment variables passed to UV, to ensure only the correct Python env
 
 ResourceName: type = str
 """
-Alias for string resource identifiers of the form ``package:path``, for example
+Alias for string resource identifiers of the form ``'package:path'``, for example
 ``'slicer.packaging:core-constraints.txt'``.
 
 Note this _should_ be annotated ``TypeAlias``, but that is not available in Python 3.9.
@@ -117,7 +117,7 @@ register_constraints(
     FileIdentifier(
         "Slicer Core",
         "slicer.packaging:core-constraints.txt",
-    )
+    ),
 )
 
 
@@ -303,7 +303,7 @@ def pip_install(
       pip_install("--upgrade pandas")
       pip_install(requirements=FileIdentifier("Image Processing Pipeline", "requirements.txt"))
 
-    See https://slicer.readthedocs.io/en/latest/developer_guide/python_packaging.html
+    See `Manual Installation <https://slicer.readthedocs.io/en/latest/developer_guide/python_packaging.html#manual-installation>`_.
 
     :param args: Explicit arguments to ``uv pip install``. It can be either a single string or a
       list of command-line arguments. In general, passing all arguments as a single string is the
@@ -359,7 +359,7 @@ def pip_uninstall(
       pip_iuinstall("pandas scipy scikit-learn")
       pip_uninstall(["pandas", "scipy"])
 
-    See https://slicer.readthedocs.io/en/latest/developer_guide/python_packaging.html
+    See `Manual Installation <https://slicer.readthedocs.io/en/latest/developer_guide/python_packaging.html#manual-installation>`_.
 
     :param args: Explicit arguments to ``uv pip uninstall``. It can be either a single string or a
       list of command-line arguments. In general, passing all arguments as a single string is the
