@@ -8,8 +8,26 @@ set(${proj}_DEPENDENCIES "")
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(Slicer_USE_SYSTEM_${proj})
+  # When adding support for finding TBB on the system, make sure to set TBB_BIN_DIR and TBB_LIB_DIR
   message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported!")
 endif()
+
+# Sanity checks
+if(DEFINED TBB_DIR AND NOT EXISTS ${TBB_DIR})
+  message(FATAL_ERROR "TBB_DIR variable is defined but corresponds to nonexistent directory")
+endif()
+if(DEFINED TBB_BIN_DIR AND NOT EXISTS ${TBB_BIN_DIR})
+  message(FATAL_ERROR "TBB_BIN_DIR variable is defined but corresponds to nonexistent directory")
+endif()
+if(DEFINED TBB_LIB_DIR AND NOT EXISTS ${TBB_LIB_DIR})
+  message(FATAL_ERROR "TBB_LIB_DIR variable is defined but corresponds to nonexistent directory")
+endif()
+
+if((NOT DEFINED TBB_DIR
+    OR NOT DEFINED TBB_BIN_DIR
+    OR NOT DEFINED TBB_LIB_DIR
+    )
+    AND NOT Slicer_USE_SYSTEM_${proj})
 
   set(tbb_ver "2021.5.0")
   if (WIN32)
@@ -132,11 +150,6 @@ endif()
 
   set(TBB_BIN_DIR "${TBB_INSTALL_DIR}/${tbb_bindir}")
   set(TBB_LIB_DIR "${TBB_INSTALL_DIR}/${tbb_libdir}")
-  mark_as_superbuild(
-    VARS
-      TBB_BIN_DIR:PATH
-      TBB_LIB_DIR:PATH
-    )
 
   #-----------------------------------------------------------------------------
   ExternalProject_GenerateProjectDescription_Step(${proj}
@@ -154,6 +167,19 @@ endif()
     )
 
   set(TBB_DIR ${TBB_INSTALL_DIR}/lib/cmake/tbb)
+
+else()
+  # The project is provided using TBB_DIR, nevertheless since other project may depend on TBB,
+  # let's add an 'empty' one
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+endif()
+
+mark_as_superbuild(
+  VARS
+    TBB_BIN_DIR:PATH
+    TBB_LIB_DIR:PATH
+  )
+
 ExternalProject_Message(${proj} "TBB_DIR:${TBB_DIR}")
 mark_as_superbuild(
   VARS TBB_DIR:PATH
