@@ -1040,17 +1040,17 @@ bool vtkMRMLSliceLogic::CurvedPlanarReformationGetPointsProjectedToPlane(vtkPoin
 {
   if (pointsArrayIn == nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationGetPointsProjectedToPlane: pointsArrayIn not supplied");
+    vtkErrorMacro("CurvedPlanarReformationGetPointsProjectedToPlane: pointsArrayIn is nullptr");
     return false;
   }
   if (transformWorldToPlane == nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationGetPointsProjectedToPlane: transformWorldToPlane not supplied");
+    vtkErrorMacro("CurvedPlanarReformationGetPointsProjectedToPlane: transformWorldToPlane is nullptr");
     return false;
   }
   if (pointsArrayOut == nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationGetPointsProjectedToPlane: pointsArrayOut not supplied");
+    vtkErrorMacro("CurvedPlanarReformationGetPointsProjectedToPlane: pointsArrayOut is nullptr");
     return false;
   }
 
@@ -1112,19 +1112,14 @@ bool vtkMRMLSliceLogic::CurvedPlanarReformationComputeStraighteningTransform(
 
   if (transformToStraightenedNode == nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationComputeStraighteningTransform: transformToStraightenedNode not supplied");
+    vtkErrorMacro("CurvedPlanarReformationComputeStraighteningTransform: transformToStraightenedNode is nullptr");
     return false;
   }
   if (curveNode == nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationComputeStraighteningTransform: curveNode not supplied");
+    vtkErrorMacro("CurvedPlanarReformationComputeStraighteningTransform: curveNode is nullptr");
     return false;
   }
-
-  /*
-  Compute straightened volume (useful for example for visualization of curved vessels)
-  stretching: if True then stretching transform will be computed, otherwise straightening
-  */
 
   // Create a temporary resampled curve
   const double resamplingCurveSpacing = outputSpacingMm * this->CurvedPlanarReformationTransformSpacingFactor;
@@ -1453,17 +1448,17 @@ bool vtkMRMLSliceLogic::CurvedPlanarReformationStraightenVolume(vtkMRMLScalarVol
 {
   if (outputStraightenedVolume ==  nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationStraightenVolume: outputStraightenedVolume not supplied");
+    vtkErrorMacro("CurvedPlanarReformationStraightenVolume: outputStraightenedVolume is nullptr");
     return false;
   }
   if (inputVolume == nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationStraightenVolume: inputVolume not supplied");
+    vtkErrorMacro("CurvedPlanarReformationStraightenVolume: inputVolume is nullptr");
     return false;
   }
   if (straighteningTransformNode == nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationStraightenVolume: straighteningTransformNode not supplied");
+    vtkErrorMacro("CurvedPlanarReformationStraightenVolume: straighteningTransformNode is nullptr");
     return false;
   }
 
@@ -1567,12 +1562,12 @@ bool vtkMRMLSliceLogic::CurvedPlanarReformationProjectVolume(vtkMRMLScalarVolume
 {
   if (outputProjectedVolume == nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationProjectVolume: outputProjectedVolume not supplied");
+    vtkErrorMacro("CurvedPlanarReformationProjectVolume: outputProjectedVolume is nullptr");
     return false;
   }
   if (inputStraightenedVolume == nullptr)
   {
-    vtkErrorMacro("CurvedPlanarReformationProjectVolume: inputStraightenedVolume not supplied");
+    vtkErrorMacro("CurvedPlanarReformationProjectVolume: inputStraightenedVolume is nullptr");
     return false;
   }
   if ((projectionAxisIndex < 0) || (projectionAxisIndex >= 3))
