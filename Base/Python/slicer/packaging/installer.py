@@ -1,3 +1,5 @@
+"""Functions and classes related to installation and uninstallation of Python packages."""
+
 import contextlib
 import importlib.resources
 import importlib.util
@@ -23,10 +25,6 @@ __all__ = [
     "register_constraints",
 ]
 
-# Alias for identifiers of the form ``package:path``; given to ``importlib.resources``.
-# ``TypeAlias`` is not available in Python 3.9.
-ResourceName: type = str
-
 UV_ENV = {
     "UV_PYTHON": sys.executable,
     "UV_SYSTEM_PYTHON": "true",  # This allows uv to modify `UV_PYTHON=sys.executable`.
@@ -36,6 +34,18 @@ UV_ENV = {
     # todo Should 'UV_CACHE_DIR' be somewhere in Slicer data? Probably not.
     # todo Should 'UV_COMPILE_BYTECODE' be enabled? Probably not.
 }
+"""
+Common environment variables passed to UV, to ensure only the correct Python environment is used.
+"""
+
+
+ResourceName: type = str
+"""
+Alias for string resource identifiers of the form ``package:path``, for example
+``'slicer.packaging:core-constraints.txt'``.
+
+Note this _should_ be annotated ``TypeAlias``, but that is not available in Python 3.9.
+"""
 
 
 class FileIdentifier:
@@ -49,6 +59,17 @@ class FileIdentifier:
         identifier: ResourceName,
         caller: types.ModuleType = None,
     ):
+        """
+        A named identifier to a Python package resource file, used to access ``requirements.txt``
+        and ``constraints.txt`` in a portable manner, with a name and context for better reporting.
+
+        :param name: A name for this resource, to be presented to the user.
+        :param identifier: The identifier to this resource, in the format ``'package:file'``, for
+          example ``'slicer.packaging:core-constraints.txt'``.
+        :param caller: The module which depends upon this resource. If not given, this is assumed
+          to be the module that called this function.
+        """
+
         if caller is None:
             calling_frame = inspect.currentframe().f_back
             caller = inspect.getmodule(calling_frame)
@@ -78,9 +99,17 @@ class FileIdentifier:
 
 
 _NAMED_CONSTRAINTS: list[FileIdentifier] = []
+"""
+Container for all registered constraints. Do not modify directly, use ``register_constraints``.
+"""
 
 
 def register_constraints(constraints: FileIdentifier):
+    """
+    Add a constraints file to be applied to all subsequent ``pip_install`` usages. Call
+    ``register_constraints`` during Slicer startup, and never call ``pip_install`` during Slicer
+    startup. Together, this guarantees that no module can violate the constraints of another.
+    """
     _NAMED_CONSTRAINTS.append(constraints)
 
 
@@ -94,6 +123,7 @@ register_constraints(
 
 @contextlib.contextmanager
 def _constraints_arguments():
+    """Helper context manager to resolve all the _NAMED_CONSTRAINTS suitable for pip CLI."""
     args = []
     with ExitStack() as stack:
         for constraint in _NAMED_CONSTRAINTS:
@@ -104,6 +134,10 @@ def _constraints_arguments():
 
 
 class InstallationAbortedError(Exception):
+    """
+    Indicates that the pip_install command, as required by dependee, was canceled by the user.
+    """
+
     def __init__(self, command: list[str], dependee: str):
         super().__init__(command, dependee)
 
@@ -117,6 +151,14 @@ def _invoke_uv_pip_install(
     interactive=True,
     dependee: str = None,
 ):
+    """
+    A wrapper around the `uv pip install` process to isolate all the subprocesses. This is intended
+    to isolate all the various subprocess that run as part of this procedure. It also serves as a
+    single function to patch during unit testing, to ensure no changes are actually applied.
+
+    Consider pip_install the true interface for this functionality.
+    """
+
     if not args:
         return
 
@@ -152,6 +194,10 @@ def _invoke_uv_pip_install(
         logging.debug("uv: %s", uv_target)
 
         if test.returncode:
+            # If the dry run failed (and stderr did not start with "error") assume one of the
+            # constraints in _NAMED_CONSTRAINTS was violated. Run the same command against each
+            # constraint individually to identify which one(s) for better reporting.
+
             violated_constraints = []
             for constraint in _NAMED_CONSTRAINTS:
                 with constraint.as_file() as path:
@@ -234,6 +280,44 @@ def pip_install(
     requirements: FileIdentifier = None,
     interactive=True,
 ):
+    """
+    Pass ``args`` to ``python -m uv pip install``, subject to any constraints registered via
+    ``slicer.packaging.register_constraints`` or ``slicer.packaging.Requirements``.
+
+    First, ``--dry-run`` is used to identify which changes are necessary and validate that
+    constraints are satisfied; if they are, the user is prompted to confirm the changes before they
+    are actually applied. If the user rejects the changes, ``InstallationAbortedError`` is raised.
+
+    If the constraints are not satisfied, then a message listing the violated constraints is logged
+    and ``subprocess.CalledProcessError`` is raised.
+
+    If the dry run encounters an error (other than constraint violation), then
+    ``subprocess.CalledProcessError`` is raised.
+
+    If the installation encounters an error (typically a network or build error), then
+    ``subprocess.CalledProcessError`` is raised.
+
+    .. code-block:: python
+      pip_install("pandas scipy scikit-learn")
+      pip_install(["pandas~=2.2", "scipy"], interactive=False)
+      pip_install("--upgrade pandas")
+      pip_install(requirements=FileIdentifier("Image Processing Pipeline", "requirements.txt"))
+
+    See https://slicer.readthedocs.io/en/latest/developer_guide/python_packaging.html
+
+    :param args: Explicit arguments to ``uv pip install``. It can be either a single string or a
+      list of command-line arguments. In general, passing all arguments as a single string is the
+      simplest. The only case when using a list may be easier is when there are arguments that may
+      contain spaces, because each list item is automatically quoted (it is not necessary to put
+      quotes around each string argument that main contain spaces).
+    :param requirements: A ``FileIdentifier`` that points to a valid ``requirements.txt`` resource
+      file. If provided, the ``FileIdentifier.name`` is used in prompts to the user, and the file
+      is passed as ``-r requirements.txt``.
+    :param interactive: If False, install packages without prompting the user. The caller must
+      obtain user verification through other means first. In this case, the function will not raise
+      ``InstallationAbortedError``.
+    """
+
     if args is None:
         args = []
     elif isinstance(args, str):
@@ -255,6 +339,35 @@ def pip_install(
 def pip_uninstall(
     args: Union[str, list[str]] = None,
 ):
+    """
+    Pass ``args`` to ``python -m uv pip uninstall``.
+
+    First, ``--dry-run`` is used to identify which changes are necessary and validate that
+    constraints are satisfied; if they are, the user is prompted to confirm the changes before they
+    are actually applied. If the user rejects the changes, ``InstallationAbortedError`` is raised.
+
+    .. danger::
+      Do not use ``pip_uninstall``. Prefer ``pip_install`` with version specifiers if a package
+      downgrade is necessary.
+
+      It is not possible to apply constraints to ``pip_uninstall`` and so this function will almost
+      certainly break functionality. Use sparingly and with great care.
+
+    If uninstallation encounters an error, then ``subprocess.CalledProcessError`` is raised.
+
+    .. code-block:: python
+      pip_iuinstall("pandas scipy scikit-learn")
+      pip_uninstall(["pandas", "scipy"])
+
+    See https://slicer.readthedocs.io/en/latest/developer_guide/python_packaging.html
+
+    :param args: Explicit arguments to ``uv pip uninstall``. It can be either a single string or a
+      list of command-line arguments. In general, passing all arguments as a single string is the
+      simplest. The only case when using a list may be easier is when there are arguments that may
+      contain spaces, because each list item is automatically quoted (it is not necessary to put
+      quotes around each string argument that main contain spaces).
+    """
+
     if args is None:
         return
     elif isinstance(args, str):
