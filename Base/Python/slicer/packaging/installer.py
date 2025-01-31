@@ -1,6 +1,7 @@
 import contextlib
 import importlib.resources
 import importlib.util
+import inspect
 import io
 import logging
 import shlex
@@ -8,12 +9,19 @@ import subprocess
 import sys
 import textwrap
 import types
-import typing
 from contextlib import AbstractContextManager, ExitStack
 from pathlib import Path
 from typing import Optional, Union
 
 import slicer.util
+
+__all__ = [
+    "FileIdentifier",
+    "InstallationAbortedError",
+    "pip_install",
+    "pip_uninstall",
+    "register_constraints",
+]
 
 # Alias for identifiers of the form ``package:path``; given to ``importlib.resources``.
 # ``TypeAlias`` is not available in Python 3.9.
@@ -30,10 +38,24 @@ UV_ENV = {
 }
 
 
-class NamedRequirements(typing.NamedTuple):
+class FileIdentifier:
     name: str
     identifier: ResourceName
-    caller: Optional[types.ModuleType]
+    caller: types.ModuleType
+
+    def __init__(
+        self,
+        name: str,
+        identifier: ResourceName,
+        caller: types.ModuleType = None,
+    ):
+        if caller is None:
+            calling_frame = inspect.currentframe().f_back
+            caller = inspect.getmodule(calling_frame)
+
+        self.name = name
+        self.identifier = identifier
+        self.caller = caller
 
     def as_file(self) -> AbstractContextManager[Path]:
         package_name, _, path = self.identifier.rpartition(":")
@@ -42,9 +64,8 @@ class NamedRequirements(typing.NamedTuple):
         if not package_name:
             package_name = "."
 
-        # Resolve relative anchors if possible.
-        if self.caller:
-            package_name = importlib.util.resolve_name(package_name, self.caller.__name__)
+        # Resolve relative anchors
+        package_name = importlib.util.resolve_name(package_name, self.caller.__name__)
 
         # ``importlib.resources.files`` actually executes the module, but we can't yet guarantee that all
         # dependencies are satisfied. So instead make a dummy module from the spec but do not execute it.
@@ -56,19 +77,18 @@ class NamedRequirements(typing.NamedTuple):
         return importlib.resources.as_file(resource)
 
 
-_NAMED_CONSTRAINTS: list[NamedRequirements] = []
+_NAMED_CONSTRAINTS: list[FileIdentifier] = []
 
 
-def register_constraints(constraints: NamedRequirements):
+def register_constraints(constraints: FileIdentifier):
     _NAMED_CONSTRAINTS.append(constraints)
 
 
 register_constraints(
-    NamedRequirements(
+    FileIdentifier(
         "Slicer Core",
         "slicer.packaging:core-constraints.txt",
-        None,
-    ),
+    )
 )
 
 
@@ -83,7 +103,7 @@ def _constraints_arguments():
         yield args
 
 
-class PackageInstallAborted(Exception):
+class InstallationAbortedError(Exception):
     def __init__(self, command: list[str], dependee: str):
         super().__init__(command, dependee)
 
@@ -182,7 +202,7 @@ def _invoke_uv_pip_install(
             ),
             windowTitle="Install dependencies?",
         ):
-            raise PackageInstallAborted(args, dependee)
+            raise InstallationAbortedError(args, dependee)
 
         # Finally, we actually invoke uv pip install.
         install_command = base + constraints
@@ -211,7 +231,7 @@ def _invoke_uv_pip_install(
 def pip_install(
     args: Optional[Union[str, list[str]]] = None,
     *,
-    requirements: NamedRequirements = None,
+    requirements: FileIdentifier = None,
     interactive=True,
 ):
     if args is None:
@@ -255,7 +275,11 @@ def pip_uninstall(
     logging.info("pip_uninstall: %s", command)
     proc = subprocess.run(command, capture_output=True, encoding="utf-8", env=UV_ENV, check=False)
 
-    # todo examine proc output.
+    # Avoid encoding issues; be sure these appear correctly in logs.
+    if proc.stdout and proc.stdout.strip():
+        print(proc.stdout, file=sys.stdout)
+    if proc.stderr and proc.stderr.strip():
+        print(proc.stderr, file=sys.stderr)
 
     # todo check if any extensions dependencies are broken?
     #  If they're guarded they'd be reinstalled next time anyway, so maybe not needed.

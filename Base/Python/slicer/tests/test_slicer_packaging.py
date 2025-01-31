@@ -3,8 +3,8 @@ import unittest.mock
 from pathlib import Path
 
 import slicer.util
-from slicer.packaging import GuardedImports
-from slicer.packaging.installer import NamedRequirements
+from slicer.packaging import Requirements
+from slicer.packaging.installer import FileIdentifier
 
 
 # test_packages = Path(__file__).parent.joinpath("test_packages")
@@ -25,7 +25,7 @@ class PipLogger:
 class PatchedPipTest(unittest.TestCase):
     @unittest.mock.patch("slicer.packaging.installer.pip_install", new_callable=PipLogger)
     def test_simple_import(self, pip_install):
-        with GuardedImports("placeholder:requirements.txt"):
+        with Requirements("placeholder:requirements.txt"):
             # This anchor is not real; we patched `pip_install` so it will never be resolved anyway.
             import dummy
 
@@ -43,7 +43,7 @@ class PatchedPipTest(unittest.TestCase):
 
 class RequirementsResolverTest(unittest.TestCase):
     def test_core_constraints(self):
-        reqs = NamedRequirements(
+        reqs = FileIdentifier(
             "test_core_constraints",
             "slicer.packaging:core-constraints.txt",
             sys.modules[__name__],
@@ -59,7 +59,7 @@ class RequirementsResolverTest(unittest.TestCase):
             assert "numpy" in content
 
     def test_as_file(self):
-        reqs = NamedRequirements(
+        reqs = FileIdentifier(
             "test_slicer_packaging (test_as_file)",
             "test_resources:requirements.txt",
             sys.modules[__name__],

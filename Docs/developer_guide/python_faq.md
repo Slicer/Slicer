@@ -25,7 +25,7 @@ modules, are not available.
 :::
 
 :::{tip}
-To use additional packages, you can use the {func}`slicer.packaging.GuardedImports` context manager.
+To use additional packages, you can use the {func}`slicer.packaging.Requirements` context manager.
 You may also directly install packages with more control using the {func}`slicer.util.pip_install()`
 function. See [Managing Python Packages](/developer_guide/python_packages.md) for details.
 :::

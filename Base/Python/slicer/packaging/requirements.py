@@ -14,21 +14,22 @@ from slicer.ScriptedLoadableModule import ScriptedLoadableModule
 
 from . import installer
 
-__all__ = ["GuardedImports", "real_module"]
+__all__ = ["Requirements", "LazyProxyModule", "real_module"]
 
 USE_REQUIREMENTS_AS_CONSTRAINTS = object()
 
-class GuardedImports:
-    constraints: Optional[installer.NamedRequirements]
+
+class Requirements:
+    constraints: Optional[installer.FileIdentifier]
 
     def __init__(
-            self,
-            requirements: Optional[installer.ResourceName],
-            constraints: Optional[installer.ResourceName] = USE_REQUIREMENTS_AS_CONSTRAINTS,
-            name: Optional[str] = None,
-            *,
-            extra_args: Optional[typing.Union[str, list[str]]] = None,
-            interactive: bool = True,
+        self,
+        requirements: Optional[installer.ResourceName],
+        constraints: Optional[installer.ResourceName] = USE_REQUIREMENTS_AS_CONSTRAINTS,
+        name: Optional[str] = None,
+        *,
+        extra_args: Optional[typing.Union[str, list[str]]] = None,
+        interactive: bool = True,
     ):
         """
         Guard imports in this context manager with the given requirements.txt resource.
@@ -36,9 +37,9 @@ class GuardedImports:
         The real import of any module in this group does not occur until the first time an attribute
         is accessed::
 
-            from slicer.packaging import GuardedImports
+            from slicer.packaging import Requirements
 
-            with GuardedImports(None):
+            with Requirements(None):
                 import json
                 import csv
 
@@ -51,7 +52,7 @@ class GuardedImports:
         identifier of a ``requirements.txt`` file. If the dependencies in this file are
         not satisfied, they will be installed just before any module in the group is used::
 
-            with GuardedImports("libCompute:requirements.txt"):
+            with Requirements("libCompute:requirements.txt"):
                 import libCompute
 
             ...
@@ -59,7 +60,7 @@ class GuardedImports:
             libCompute.apply(...)
             #         ^ first attribute access triggers ``pip install -r requirements.txt``
 
-        ``pip install`` is invoked at most once per ``GuardedImports`` context. ``__import__`` is invoked at
+        ``pip install`` is invoked at most once per ``Requirements`` context. ``__import__`` is invoked at
         most once per module.
 
         :param requirements: A string of the form ``"package:path"`` that specifies resource ``path`` in
@@ -94,35 +95,34 @@ class GuardedImports:
 
         self.finder = LazyProxyFinder(self)
         self.modules = {}
-        self.need_install = requirements is not None or extra_args # so that only the first invocation runs pip
+        self.need_install = requirements is not None or extra_args  # so that only the first invocation runs pip
         self.extra_args = extra_args
         self.interactive = interactive
         if extra_args is not None:
-            warnings.warn(
-                f'GuardedImports {self.name} passed extra args. '
-                f'Prefer requirements.txt. {extra_args=!r}'
-            )
+            warnings.warn(f"Requirements {self.name} passed extra args. Prefer requirements.txt. {extra_args=!r}")
 
-        if requirements is not None:
-            self.requirements = installer.NamedRequirements(
+        self.requirements = (
+            None
+            if requirements is None
+            else installer.FileIdentifier(
                 self.name,
                 requirements,
                 self.caller,
             )
-        else:
-            self.requirements = None
+        )
 
-        # Register these constraints.
         if constraints is USE_REQUIREMENTS_AS_CONSTRAINTS:
             self.constraints = self.requirements
-        elif constraints is not None:
-            self.constraints = installer.NamedRequirements(
-                self.name,
-                constraints,
-                self.caller,
-            )
         else:
-            self.constraints = None
+            self.constraints = (
+                None
+                if constraints is None
+                else installer.FileIdentifier(
+                    self.name,
+                    constraints,
+                    self.caller,
+                )
+            )
 
         if self.constraints is not None:
             installer.register_constraints(self.constraints)
@@ -164,11 +164,16 @@ class GuardedImports:
                 requirements=self.requirements,
                 interactive=self.interactive,
             )
-        except installer.PackageInstallAborted as rejection:
+        except installer.InstallationAbortedError as rejection:
             self.rejection = rejection
             raise
 
         self.need_install = False
+
+    def reset_rejection(self):
+        if self.rejection is not None:
+            warnings.warn(f"The user already rejected {self.name} but this is being reset.")
+            self.rejection = None
 
 
 class LazyProxyModule(types.ModuleType):
@@ -205,13 +210,13 @@ def real_module(module: Union[types.ModuleType, LazyProxyModule]) -> types.Modul
     if real is not None:
         return real
 
-    guard: GuardedImports = module.__spec__.loader_state
+    guard: Requirements = module.__spec__.loader_state
     guard.resolve()
 
     real = importlib.import_module(module.__spec__.name)
 
     # `LazyProxyModule.__setattr__` calls this function, so use `super` to avoid recursion.
-    super(LazyProxyModule, module).__setattr__('__real_module__', real)
+    super(LazyProxyModule, module).__setattr__("__real_module__", real)
 
     return real
 
@@ -225,13 +230,13 @@ class LazyProxyLoader(importlib.abc.Loader):
 
     def exec_module(self, module: types.ModuleType):
         assert module.__spec__ is not None
-        group: GuardedImports = module.__spec__.loader_state
+        group: Requirements = module.__spec__.loader_state
 
         group.register(module)
 
         module.__real_module__ = None  # Critical for `real_module()` implementation.
 
-        module.__class__ = LazyProxyModule # This _must_ happen last.
+        module.__class__ = LazyProxyModule  # This _must_ happen last.
 
 
 class LazyProxyFinder(importlib.abc.MetaPathFinder):

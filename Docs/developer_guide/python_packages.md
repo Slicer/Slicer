@@ -31,7 +31,7 @@ are some best practices to adhere to:
 
 This is the preferred method of managing packages, as it automatically handles _most_ of the best
 practices described above. This requires extension developers to declare their dependencies in a
-`requirements.txt`, and the {func}`slicer.packaging.GuardedImports` mechanism guarantees that no
+`requirements.txt`, and the {func}`slicer.packaging.Requirements` mechanism guarantees that no
 module can violate the dependencies of another installed module.
 
 :::{tip}
@@ -94,7 +94,7 @@ the `MODULE_PYTHON_SCRIPTS` list, and add `libSample/requirements.txt` to the
 `MODULE_PYTHON_RESOURCES` list.
 
 Now, you can refer to `requirements.txt` by its identifier `libSample:requirements.txt` in a
-`GuardedImports` block.
+`Requirements` block.
 
 ### Populating `requirements.txt`
 
@@ -120,14 +120,14 @@ Be cautious with VCS dependencies. Always use `@` and a
 [separate constraints file](#separate-requirements-and-constraints).
 :::
 
-### Using `GuardedImports`
+### Using the `Requirements` context manager
 
-Add a guarded import at the top of your module file:
+Add a `with Requirements` block at the top of your module file:
 
 ```py
-from slicer.packaging import GuardedImports
+from slicer.packaging import Requirements
 
-with GuardedImports('libSample:requirements.txt'):
+with Requirements('libSample:requirements.txt'):
     import pandas as pd
 ```
 
@@ -153,9 +153,9 @@ the `import pandas as pd` statement.
 For example, you might have code like:
 
 ```py
-from slicer.packaging import GuardedImports
+from slicer.packaging import Requirements
 
-with GuardedImports('libSample:requirements.txt'):
+with Requirements('libSample:requirements.txt'):
     import pandas as pd
 
 
@@ -176,7 +176,7 @@ This means accessing attributes at the global level will trigger package install
 startup.
 
 ```py
-with GuardedImports('libSample:requirements.txt'):
+with Requirements('libSample:requirements.txt'):
     import pandas as pd
 
 df: pd.DataFrame
@@ -191,7 +191,7 @@ To support type annotations, avoid the issue with `from __future__ import annota
 ```python
 from __future__ import annotations
 
-with GuardedImports('libSample:requirements.txt'):
+with Requirements('libSample:requirements.txt'):
     import pandas as pd
 
 df: pd.DataFrame
@@ -199,7 +199,7 @@ df: pd.DataFrame
 ```
 
 Move any other such usages into your module's widget `setup` method, and possibly use
-[](#manual-guardedimports-resolution) for finer control of when the dependencies are resolved.
+[](#manual-Requirements-resolution) for finer control of when the dependencies are resolved.
 
 See [](#proxy-modules) for details on how this works.
 :::
@@ -211,7 +211,7 @@ necessary to declare requirements and constraints separately. For example, it is
 specify extras like `pandas[excel]` in constraints files.
 
 ```python
-with GuardedImports(
+with Requirements(
         requirements='libSample:requirements.txt',
         constraints='libSample:constraints.txt',
 ):
@@ -228,10 +228,10 @@ It is possible to include multiple import groups in a single file. If used with 
 reducing footprint if certain features are never used.
 
 ```python
-with GuardedImports('libSample:ml-requires.txt'):
+with Requirements('libSample:ml-requires.txt'):
     import torch
 
-with GuardedImports('libSample:images-requires.txt'):
+with Requirements('libSample:images-requires.txt'):
     import itk
 ```
 
@@ -239,13 +239,13 @@ with GuardedImports('libSample:images-requires.txt'):
 Do not import the same package from multiple import groups in the same file.
 
 It is possible to do this with `import as`, but not recommended. A better solution is
-[](#manual-guardedimports-resolution).
+[](#manual-Requirements-resolution).
 
 ```python
-with GuardedImports(...):
+with Requirements(...):
     import itk as itk_a
 
-with GuardedImports(...):
+with Requirements(...):
     import itk as itk_b
 ```
 
@@ -253,14 +253,14 @@ with GuardedImports(...):
 
 ### Proxy Modules
 
-`GuardedImports` produces _Lazy Proxy Modules_. Importing the proxy _does not_ import the actual
+`Requirements` produces _Lazy Proxy Modules_. Importing the proxy _does not_ import the actual
 module until the first time any module attributes (classes, functions, sub-modules, etc.) are
 accessed. At that point, any required packages are installed and the real module is imported.
 
 You can test if a module is `slicer.packaging.LazyProxyModule` via `isinstance`.
 
 ```python
-with GuardedImports(...):
+with Requirements(...):
     import itk
 
 print(itk)  # <module 'itk' (<LazyProxyLoader object at 0x737286a4cfd0>)>
@@ -274,7 +274,7 @@ instead _and a proxy will not be used_.
 ```python
 import itk  # Assume ITK is already installed.
 
-with GuardedImports(...):
+with Requirements(...):
     import itk
 
 print(itk)  # itk<module 'itk' from 'site-packages/itk/__init__.py'>
@@ -286,60 +286,63 @@ to obtain the
 backing module from the proxy module.
 
 ```python
-with GuardedImports(...):
+with Requirements(...):
     import itk
 
 print(itk)  # <module 'itk' (<LazyProxyLoader object at 0x7f9453a50790>)>
 print(real_module(itk))  # <module 'itk' from 'site-packages/itk/__init__.py'>
 ```
 
-To avoid breaking other modules which do not use the `GuardedImports` functionality, no `import`
-statements that occur outside a `with GuardedImports` block are never affected. In particular:
+To avoid breaking other modules which do not use the `Requirements` functionality, no `import`
+statements that occur outside a `with Requirements` block are never affected. In particular:
 _local imports cannot guarantee that the dependencies have been resolved._
 
 ```python
-with GuardedImports(...):
+with Requirements(...):
     import itk
 
 import itk  # ModuleNotFoundError: No module named 'itk'
 ```
 
-### Manual `GuardedImports` Resolution
+### Manual `Requirements` Resolution
 
-It is also possible use `GuardedImports` manually, without the context manager, and explicitly
+It is also possible use `Requirements` manually, without the context manager, and explicitly
 indicate when the dependencies should be resolved. Calling `resolve()` multiple times has no runtime
 penalty, so use it freely.
 
 ```python
-requirements = GuardedImports(...)
+requirements = Requirements(...)
 
 try:
     requirements.resolve()
     import itk
-except PackageInstallAborted:
+except InstallationAbortedError:
     ...  # handle rejection
 except CalledProcessError:
     ...  # handle installation failure
 ```
 
 If the user rejects installation the first time, that rejection is maintained and the user will not
-be prompted again.
+be prompted again. It is possible to undo this with `reset_rejection()`; then the next `resolve()`
+would show the prompt.
 
 You can mix manual resolution and automatic resolution.
 
 ```python
-with GuardedImports(...) as requirements:
+with Requirements(...) as requirements:
     import itk
 
 try:
     requirements.resolve()
-except (PackageInstallAborted, CalledProcessError):
-    ...
+except InstallationAbortedError:
+  ...  # handle rejection
+except CalledProcessError:
+  ...  # handle installation failure
 ```
 
 ### Prototyping with `extra_args`
 
-For convenience, `GuardedImports` supports an optional keyword-only argument `extra_args`, which
+For convenience, `Requirements` supports an optional keyword-only argument `extra_args`, which
 will be passed directly `pip_install`. By passing `None` as the resource identifier for
 `requirements`, it is possible to completely define the dependency group without any boilerplate:
 no Python package directory, no `requirements.txt`, and no `CMakeLists` modifications.
@@ -350,7 +353,7 @@ published extensions except in exceptional situations. There is no clear way to 
 when used in this way, so expect that other extensions may break your module if you do this.
 
 ```python
-with GuardedImports(None, extra_args='itk'):
+with Requirements(None, extra_args='itk'):
     import itk
 ```
 :::
@@ -386,36 +389,34 @@ certainly break functionality. Use sparingly and with great care.
 
 [specifiers]: https://packaging.python.org/en/latest/specifications/version-specifiers/
 
-### `NamedRequirements` and `register_constraints`
+### `FileIdentifier` and `register_constraints`
 
-`requirements.txt` and `constraints.txt` files are identified by a `NamedRequirements` object. This
+`requirements.txt` and `constraints.txt` files are identified by a `FileIdentifier` object. This
 contains:
 
 - A `name` for the requirements to be shown in prompts to the user. (Typically the Slicer module
   name)
 - A resource `identifier` of the form `'package:filename'`, used by `importlib.resources` to locate
   the file at runtime.
-- A `caller` module, used for automatic installation. __Pass `None` for this.__
 
-A `NamedRequirements` identifying a [Requirements File][requirements] may be passed to `pip_install`
-to show the name appropriately in prompts.
+A `FileIdentifier` identifying a [Requirements File][requirements] may be passed to `pip_install`.
 
 ```python
-pip_install(requirements=NamedRequirements(
+pip_install(requirements=FileIdentifier(
     'Sample Image Processing Pipeline',
     'libSample:requirements.txt',
-    None,
 ))
 ```
 
-A `NamedRequirements` identifying a [Constraints File][constraints] may be passed to
+A `FileIdentifier` identifying a [Constraints File][constraints] may be passed to
 `register_constraints` to enforce constraints in all subsequent `pip_install` usages. If an
 operation _would_ violate the constraint, the name is shown in the user prompt and error logs.
 
-`register_constraints` _should_ be called during Slicer startup.
+`register_constraints` _should_ be called during Slicer startup to ensure all subsequent
+`pip_install` will use the constraints file.
 
 ```python
-register_constraints(NamedRequirements(
+register_constraints(FileIdentifier(
     'Sample Image Processing Pipeline',
     'libSample:constraints.txt',
     None,
@@ -436,7 +437,7 @@ Be mindful of this and refer to [astral.sh/uv/pip/compatibility][pip-compat] for
 
 ### Confirmation Dialogs
 
-Any usage of `pip_install` or `GuardedImports` that would make changes to the Python environment,
+Any usage of `pip_install` or `Requirements` that would make changes to the Python environment,
 if user interaction is available, will show a confirmation to the user with a summary of changes.
 
 For example, `pip_install('-U flywheel')` might present to the user:
@@ -452,12 +453,12 @@ Would install 1 package
 ```
 
 If the user accepts these changes, they will be applied. If the user rejects them, a
-`PackageInstallAborted` exception is raised and may be handled.
+`InstallationAbortedError` is raised and may be handled.
 
 ### Constraints Resolution
 
-Any usage of `pip_install` or `GuardedImports` that would break the dependencies of another
-registered constraint (ie. Slicer Core or another `GuardedImports` block) will refuse to do so,
+Any usage of `pip_install` or `Requirements` that would break the dependencies of another
+registered constraint (ie. Slicer Core or another `Requirements` block) will refuse to do so,
 present a summary to the user, and add detailed messages to the logs.
 
 For example, `pip_install('numpy~=1.25.0')` might show:
