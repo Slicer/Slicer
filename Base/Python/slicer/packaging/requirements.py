@@ -1,3 +1,8 @@
+"""
+Classes and functions related to automatic installation of Python packages via the
+``Requirements`` context manager.
+"""
+
 import importlib.abc
 import importlib.machinery
 import importlib.resources
@@ -17,10 +22,58 @@ from . import installer
 __all__ = ["Requirements", "LazyProxyModule", "real_module"]
 
 USE_REQUIREMENTS_AS_CONSTRAINTS = object()
+"""
+Sentinel singleton value to indicate that the ``requirements.txt`` is a valid ``constraints.txt``.
+"""
 
 
 class Requirements:
+    """
+    Encapsulates a named group of dependencies which should be resolved together using
+    ``pip_install``.
+
+    Dependencies can be resolved explicitly with ``Requirements.resolve``, or the ``Requirements``
+    object can be used as a context manager to create proxy modules which automatically call
+    ``resolve`` the first time the module is actually used.
+
+    When used as an explicit dependency group::
+
+        from slicer.packaging import Requirements
+
+        group = Requirements('package:requirements.txt')
+
+        try:
+            group.resolve()
+
+            import dependency  # Cannot fail.
+        except InstallationAbortedError:
+            ...  # User canceled installation.
+        except CalledProcessError:
+            ...  # Installation failed.
+
+    When used as a context manager::
+
+        from slicer.packaging import Requirements
+
+        with Requirements('package:requirements.txt'):
+            import dependency
+
+        dependency.function()
+        #         ^ Resolution occurs here.
+
+    See `Automatic Installation <https://slicer.readthedocs.io/en/latest/developer_guide/python_packaging.html#manual-installation>`_.
+    """
+
+    caller: types.ModuleType
+    name: str
+    finder: "LazyProxyFinder"
+    modules: dict[str, types.ModuleType]
+    need_install: bool
+    extra_args: Optional[Union[str, list[str]]]
+    interactive: bool
+    requirements: Optional[installer.FileIdentifier]
     constraints: Optional[installer.FileIdentifier]
+    rejection: Optional[Exception]
 
     def __init__(
         self,
@@ -32,39 +85,25 @@ class Requirements:
         interactive: bool = True,
     ):
         """
-        Guard imports in this context manager with the given requirements.txt resource.
+        Create a named group of dependencies.
 
-        The real import of any module in this group does not occur until the first time an attribute
-        is accessed::
-
-            from slicer.packaging import Requirements
-
-            with Requirements(None):
-                import json
-                import csv
-
-            ...
-
-            json.load(...)
-            #   ^ first attribute access triggers ``import json``
-
-        If ``requirements`` is not ``None``, it is interpreted as an ``importlib.resources``
-        identifier of a ``requirements.txt`` file. If the dependencies in this file are
-        not satisfied, they will be installed just before any module in the group is used::
-
-            with Requirements("libCompute:requirements.txt"):
-                import libCompute
-
-            ...
-
-            libCompute.apply(...)
-            #         ^ first attribute access triggers ``pip install -r requirements.txt``
-
-        ``pip install`` is invoked at most once per ``Requirements`` context. ``__import__`` is invoked at
-        most once per module.
-
-        :param requirements: A string of the form ``"package:path"`` that specifies resource ``path`` in
-            ``package``. See ``importlib.resources.files`` for details.
+        :param requirements: An identifier to a ``requirements.txt`` Python package resource that
+          should be installed when this group is resolved, or ``None`` if this group has no
+          dependencies.
+        :param constraints: An identifier to a ``constraints.txt`` Python package resource that
+          should be applied to any other ``Requirements`` or ``pip_install`` usages, or ``None``
+          if this group has no dependencies. By default, the same ``requirements`` identifier is
+          used. Explicitly pass a separate ``constraints`` (or ``None``) if the ``requirements``
+          is not also a valid ``constraints.txt``.
+          See `Separate Requirements and Constraints <https://slicer.readthedocs.io/en/latest/developer_guide/python_packaging.html#separate-requirements-and-constraints>`_.
+        :param name: The name for this group of dependencies. Typically the calling module's name,
+          or the name of some feature set. For example ``"Annotations"`` or
+          ``"Image Processing Features""``
+        :param extra_args: Included for prototyping convenience only. Extra arguments passed
+          directly to ``pip_install``.
+        :param interactive: If False, install packages without prompting the user. The caller must
+          obtain user verification through other means before resolving this group. In this case,
+          resolution will not raise ``InstallationAbortedError``.
         """
 
         # Handle relative packages by referencing the module that called us.
