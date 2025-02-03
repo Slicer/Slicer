@@ -1345,7 +1345,7 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char *
     *(rgba++) = static_cast<unsigned char>(g * 255.0 + 0.5);
     *(rgba++) = static_cast<unsigned char>(b * 255.0 + 0.5);
     *(rgba++) = static_cast<unsigned char>(a * 255.0 + 0.5);
-    this->Properties[indx].Name = nameStr;
+    this->Properties[index].Name = nameStr;
   }
   lut->BuildSpecialColors();
   lut->Modified();
