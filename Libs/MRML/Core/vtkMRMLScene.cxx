@@ -22,7 +22,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLClipNode.h"
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCrosshairNode.h"
@@ -192,7 +191,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCameraNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLClipModelsNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLClipNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCrosshairNode>::New());
