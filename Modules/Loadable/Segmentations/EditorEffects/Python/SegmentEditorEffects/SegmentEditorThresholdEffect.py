@@ -1,5 +1,6 @@
 import logging
 import os
+import weakref
 
 import ctk
 import vtk
@@ -992,10 +993,17 @@ class PreviewPipeline:
 # Histogram threshold
 #
 class HistogramEventFilter(qt.QObject):
-    thresholdEffect = None
+
+    def __init__(self, *args, **kwargs):
+        qt.QObject.__init__(self, *args, **kwargs)
+        self.thresholdEffectWeakRef = None
+
+    @property
+    def thresholdEffect(self):
+        return self.thresholdEffectWeakRef() if self.thresholdEffectWeakRef else None
 
     def setThresholdEffect(self, thresholdEffect):
-        self.thresholdEffect = thresholdEffect
+        self.thresholdEffectWeakRef = weakref.ref(thresholdEffect)
 
     def eventFilter(self, object, event):
         if self.thresholdEffect is None:
