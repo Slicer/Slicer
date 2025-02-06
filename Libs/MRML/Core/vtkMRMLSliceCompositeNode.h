@@ -19,10 +19,11 @@
 
 class vtkMRMLModelNode;
 class vtkMRMLSliceDisplayNode;
+class vtkMRMLVolumeNode;
 
 /// \brief MRML node for storing a slice through RAS space.
 ///
-/// This node stores the information about how to composite two
+/// This node stores the information about how to composite N
 /// vtkMRMLVolumes into a single display image.
 class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 {
@@ -66,6 +67,21 @@ public:
   const char* GetLabelVolumeID();
   void SetLabelVolumeID(const char* id);
   void SetReferenceLabelVolumeID(const char *id) { this->SetLabelVolumeID(id); }
+
+  enum
+  {
+    LayerNone = -1,
+    LayerBackground = 0,
+    LayerForeground = 1,
+    LayerLabel = 2,
+    Layer_Last // must be last
+  };
+
+  vtkMRMLVolumeNode* GetLayerVolume(unsigned int layerIndex);
+  void SetLayerVolume(unsigned int layerIndex, vtkMRMLVolumeNode* volumeNode);
+
+  const char* GetLayerVolumeID(unsigned int layerIndex);
+  void SetLayerVolumeID(unsigned int layerIndex, const char* volumeNodeID);
 
   ///
   /// Compositing mode for foreground and background can be alpha

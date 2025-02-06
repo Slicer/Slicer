@@ -16,6 +16,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
@@ -32,6 +33,8 @@ static const char* ForegroundVolumeNodeReferenceRole = "foregroundVolume";
 static const char* ForegroundVolumeNodeReferenceMRMLAttributeName = "foregroundVolumeID";
 static const char* LabelVolumeNodeReferenceRole = "labelVolume";
 static const char* LabelVolumeNodeReferenceMRMLAttributeName = "labelVolumeID";
+
+static const char* LayerVolumeNodeReferenceRole = "layerVolume";
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSliceCompositeNode);
@@ -173,37 +176,100 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------
 void vtkMRMLSliceCompositeNode::SetBackgroundVolumeID(const char* id)
 {
-  this->SetNodeReferenceID(BackgroundVolumeNodeReferenceRole, id);
+  this->SetLayerVolumeID(vtkMRMLSliceCompositeNode::LayerBackground, id);
 }
 
 //-----------------------------------------------------------
 const char* vtkMRMLSliceCompositeNode::GetBackgroundVolumeID()
 {
-  return this->GetNodeReferenceID(BackgroundVolumeNodeReferenceRole);
+  return this->GetLayerVolumeID(vtkMRMLSliceCompositeNode::LayerBackground);
 }
 
 //-----------------------------------------------------------
 void vtkMRMLSliceCompositeNode::SetForegroundVolumeID(const char* id)
 {
-  this->SetNodeReferenceID(ForegroundVolumeNodeReferenceRole, id);
+  this->SetLayerVolumeID(vtkMRMLSliceCompositeNode::LayerForeground, id);
 }
 
 //-----------------------------------------------------------
 const char* vtkMRMLSliceCompositeNode::GetForegroundVolumeID()
 {
-  return this->GetNodeReferenceID(ForegroundVolumeNodeReferenceRole);
+  return this->GetLayerVolumeID(vtkMRMLSliceCompositeNode::LayerForeground);
 }
 
 //-----------------------------------------------------------
 void vtkMRMLSliceCompositeNode::SetLabelVolumeID(const char* id)
 {
-  this->SetNodeReferenceID(LabelVolumeNodeReferenceRole, id);
+  this->SetLayerVolumeID(vtkMRMLSliceCompositeNode::LayerLabel, id);
 }
 
 //-----------------------------------------------------------
 const char* vtkMRMLSliceCompositeNode::GetLabelVolumeID()
 {
-  return this->GetNodeReferenceID(LabelVolumeNodeReferenceRole);
+  return this->GetLayerVolumeID(vtkMRMLSliceCompositeNode::LayerLabel);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLVolumeNode* vtkMRMLSliceCompositeNode::GetLayerVolume(unsigned int layerIndex)
+{
+  if (layerIndex == vtkMRMLSliceCompositeNode::LayerBackground)
+  {
+    return vtkMRMLVolumeNode::SafeDownCast(this->GetNodeReference(BackgroundVolumeNodeReferenceRole));
+  }
+  else if (layerIndex == vtkMRMLSliceCompositeNode::LayerForeground)
+  {
+    return vtkMRMLVolumeNode::SafeDownCast(this->GetNodeReference(ForegroundVolumeNodeReferenceRole));
+  }
+  else if (layerIndex == vtkMRMLSliceCompositeNode::LayerLabel)
+  {
+    return vtkMRMLVolumeNode::SafeDownCast(this->GetNodeReference(LabelVolumeNodeReferenceRole));
+  }
+  else if (layerIndex >= vtkMRMLSliceCompositeNode::Layer_Last)
+  {
+    return vtkMRMLVolumeNode::SafeDownCast(
+          this->GetNthNodeReference(LayerVolumeNodeReferenceRole, layerIndex));
+  }
+  return nullptr;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetLayerVolume(unsigned int layerIndex, vtkMRMLVolumeNode* volumeNode)
+{
+  char * volumeNodeID = volumeNode != nullptr ? volumeNode->GetID() : nullptr;
+  this->SetLayerVolumeID(layerIndex, volumeNodeID);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSliceCompositeNode::GetLayerVolumeID(unsigned int layerIndex)
+{
+  vtkMRMLVolumeNode* volumeNode = this->GetLayerVolume(layerIndex);
+  if (volumeNode)
+    {
+    return volumeNode->GetID();
+    }
+  return 0;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::
+SetLayerVolumeID(unsigned int layerIndex, const char* volumeNodeID)
+{
+  if (layerIndex == vtkMRMLSliceCompositeNode::LayerBackground)
+  {
+    this->SetNodeReferenceID(BackgroundVolumeNodeReferenceRole, volumeNodeID);
+  }
+  else if (layerIndex == vtkMRMLSliceCompositeNode::LayerForeground)
+  {
+    this->SetNodeReferenceID(ForegroundVolumeNodeReferenceRole, volumeNodeID);
+  }
+  else if (layerIndex == vtkMRMLSliceCompositeNode::LayerLabel)
+  {
+    this->SetNodeReferenceID(LabelVolumeNodeReferenceRole, volumeNodeID);
+  }
+  else if (layerIndex >= vtkMRMLSliceCompositeNode::Layer_Last)
+  {
+    this->SetNthNodeReferenceID(LayerVolumeNodeReferenceRole, layerIndex, volumeNodeID);
+  }
 }
 
 //----------------------------------------------------------------------------
