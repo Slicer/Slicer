@@ -70,8 +70,8 @@ public:
   ///
   /// Compositing mode for foreground and background can be alpha
   /// blending, reverse alpha blending, addition, or subtraction
-  vtkGetMacro (Compositing, int);
-  vtkSetMacro (Compositing, int);
+  int GetCompositing();
+  void SetCompositing(int value);
 
   ///
   /// Configures the behavior for blending layers.

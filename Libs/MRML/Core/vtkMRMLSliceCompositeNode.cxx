@@ -206,6 +206,22 @@ const char* vtkMRMLSliceCompositeNode::GetLabelVolumeID()
   return this->GetNodeReferenceID(LabelVolumeNodeReferenceRole);
 }
 
+//----------------------------------------------------------------------------
+int vtkMRMLSliceCompositeNode::GetCompositing()
+{
+  return this->Compositing;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetCompositing(int value)
+{
+  if (this->Compositing != value)
+  {
+    this->Compositing = value;
+    this->Modified();
+  }
+}
+
 //-----------------------------------------------------------
 int vtkMRMLSliceCompositeNode::GetSliceIntersectionVisibility()
 {
