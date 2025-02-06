@@ -137,6 +137,12 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyBooleanMacro(ClipToBackgroundVolume);
   vtkMRMLCopyFloatMacro(ForegroundOpacity);
   vtkMRMLCopyFloatMacro(LabelOpacity);
+  for(unsigned int layerIndex = vtkMRMLSliceCompositeNode::LayerForeground;
+      layerIndex < vtkMRMLSliceCompositeNode::Layer_Last + static_cast<unsigned int>(node->GetNumberOfNodeReferences(LayerVolumeNodeReferenceRole));
+      ++layerIndex)
+  {
+    this->SetLayerOpacity(layerIndex, node->GetLayerOpacity(layerIndex));
+  }
   vtkMRMLCopyIntMacro(LinkedControl);
   vtkMRMLCopyIntMacro(HotLinkedControl);
   vtkMRMLCopyIntMacro(FiducialVisibility);
@@ -270,6 +276,54 @@ SetLayerVolumeID(unsigned int layerIndex, const char* volumeNodeID)
   {
     this->SetNthNodeReferenceID(LayerVolumeNodeReferenceRole, layerIndex, volumeNodeID);
   }
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLSliceCompositeNode::GetLayerOpacity(unsigned int layerIndex)
+{
+  if (layerIndex < this->LayerOpacities.size())
+    {
+    return this->LayerOpacities.at(layerIndex);
+    }
+  return 1.0;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetLayerOpacity(unsigned int layerIndex, double value)
+{
+  if (layerIndex >= this->LayerOpacities.size())
+    {
+    this->LayerOpacities.resize(layerIndex + 1);
+    }
+  if (this->LayerOpacities.at(layerIndex) != value)
+    {
+    this->LayerOpacities.at(layerIndex) = value;
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLSliceCompositeNode::GetForegroundOpacity()
+{
+  return this->GetLayerOpacity(vtkMRMLSliceCompositeNode::LayerForeground);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetForegroundOpacity(double value)
+{
+  this->SetLayerOpacity(vtkMRMLSliceCompositeNode::LayerForeground, value);
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLSliceCompositeNode::GetLabelOpacity()
+{
+  return this->GetLayerOpacity(vtkMRMLSliceCompositeNode::LayerLabel);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetLabelOpacity(double value)
+{
+  this->SetLayerOpacity(vtkMRMLSliceCompositeNode::LayerLabel, value);
 }
 
 //----------------------------------------------------------------------------
