@@ -23,11 +23,11 @@
 #include <vector>
 
 // MRML includes
+#include <vtkMRMLSliceCompositeNode.h>
 class vtkMRMLDisplayNode;
 class vtkMRMLLinearTransformNode;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLModelNode;
-class vtkMRMLSliceCompositeNode;
 class vtkMRMLSliceDisplayNode;
 class vtkMRMLSliceLayerLogic;
 class vtkMRMLSliceNode;
@@ -71,10 +71,10 @@ public:
 
   enum
   {
-    LayerNone = -1,
-    LayerBackground = 0,
-    LayerForeground = 1,
-    LayerLabel = 2,
+    LayerNone = vtkMRMLSliceCompositeNode::LayerNone,
+    LayerBackground = vtkMRMLSliceCompositeNode::LayerBackground,
+    LayerForeground = vtkMRMLSliceCompositeNode::LayerForeground,
+    LayerLabel = vtkMRMLSliceCompositeNode::LayerLabel,
     Layer_Last // must be last
   };
 
