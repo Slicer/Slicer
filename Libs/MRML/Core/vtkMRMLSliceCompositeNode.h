@@ -19,6 +19,7 @@
 
 class vtkMRMLModelNode;
 class vtkMRMLSliceDisplayNode;
+class vtkMRMLVolumeNode;
 
 /// \brief MRML node for storing a slice through RAS space.
 ///
@@ -48,6 +49,7 @@ public:
 
   /// @{
   /// the ID of a MRMLVolumeNode
+  /// \sa GetNthLayerVolumeID
   const char* GetBackgroundVolumeID();
   void SetBackgroundVolumeID(const char* id);
   void SetReferenceBackgroundVolumeID(const char *id) { this->SetBackgroundVolumeID(id); }
@@ -55,6 +57,7 @@ public:
 
   /// @{
   /// the ID of a MRMLVolumeNode
+  /// \sa GetNthLayerVolumeID
   const char* GetForegroundVolumeID();
   void SetForegroundVolumeID(const char* id);
   void SetReferenceForegroundVolumeID(const char *id) { this->SetForegroundVolumeID(id); }
@@ -62,9 +65,31 @@ public:
 
   /// @{
   /// the ID of a MRMLVolumeNode
+  /// \sa GetNthLayerVolumeID
   const char* GetLabelVolumeID();
   void SetLabelVolumeID(const char* id);
   void SetReferenceLabelVolumeID(const char *id) { this->SetLabelVolumeID(id); }
+  /// @}
+
+  enum
+  {
+    LayerNone = -1,
+    LayerBackground = 0,
+    LayerForeground = 1,
+    LayerLabel = 2,
+    Layer_Last // must be last
+  };
+
+  /// @{
+  /// \sa GetNthLayerVolumeID, SetNthLayerVolumeID
+  vtkMRMLVolumeNode* GetNthLayerVolume(int layerIndex);
+  void SetNthLayerVolume(int layerIndex, vtkMRMLVolumeNode* volumeNode);
+  /// @}
+
+  /// @{
+  /// \sa GetNthLayerVolume, SetNthLayerVolume
+  const char* GetNthLayerVolumeID(int layerIndex);
+  void SetNthLayerVolumeID(int layerIndex, const char* volumeNodeID);
   /// @}
 
   /// @{
