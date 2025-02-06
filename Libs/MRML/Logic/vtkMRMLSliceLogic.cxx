@@ -1102,16 +1102,8 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     // get the background and foreground image data from the layers
     // so we can use them as input to the image blend
 
-    const char *id;
-
     // Background
-    id = this->SliceCompositeNode->GetBackgroundVolumeID();
-    vtkMRMLVolumeNode *bgnode = nullptr;
-    if (id)
-    {
-      bgnode = vtkMRMLVolumeNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID(id));
-    }
-
+    vtkMRMLVolumeNode *bgnode = this->SliceCompositeNode->GetNthLayerVolume(vtkMRMLSliceLogic::LayerBackground);
     if (this->GetBackgroundLayer())
     {
       if ( this->GetBackgroundLayer()->GetVolumeNode() != bgnode )
@@ -1122,13 +1114,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     }
 
     // Foreground
-    id = this->SliceCompositeNode->GetForegroundVolumeID();
-    vtkMRMLVolumeNode *fgnode = nullptr;
-    if (id)
-    {
-      fgnode = vtkMRMLVolumeNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID(id));
-    }
-
+    vtkMRMLVolumeNode *fgnode = this->SliceCompositeNode->GetNthLayerVolume(vtkMRMLSliceLogic::LayerForeground);
     if (this->GetForegroundLayer())
     {
       if ( this->GetForegroundLayer()->GetVolumeNode() != fgnode )
@@ -1139,13 +1125,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     }
 
     // Label
-    id = this->SliceCompositeNode->GetLabelVolumeID();
-    vtkMRMLVolumeNode *lbnode = nullptr;
-    if (id)
-    {
-      lbnode = vtkMRMLVolumeNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID(id));
-    }
-
+    vtkMRMLVolumeNode *lbnode = this->SliceCompositeNode->GetNthLayerVolume(vtkMRMLSliceLogic::LayerLabel);
     if (this->GetLabelLayer())
     {
       if ( this->GetLabelLayer()->GetVolumeNode() != lbnode )
