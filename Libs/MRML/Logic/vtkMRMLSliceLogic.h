@@ -78,7 +78,6 @@ public:
     Layer_Last // must be last
   };
 
-  ///
   /// The MRML slice node for this slice logic
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode * newSliceNode);
@@ -86,92 +85,94 @@ public:
   /// Convenience function for adding a slice node and setting it in this logic
   vtkMRMLSliceNode* AddSliceNode(const char* layoutName);
 
-  ///
   /// The MRML slice node for this slice logic
   vtkGetObjectMacro (SliceCompositeNode, vtkMRMLSliceCompositeNode);
   void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *SliceCompositeNode);
 
-  ///
   /// The background slice layer
-  /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (BackgroundLayer, vtkMRMLSliceLayerLogic);
+  vtkMRMLSliceLayerLogic* GetBackgroundLayer();
   void SetBackgroundLayer (vtkMRMLSliceLayerLogic *BackgroundLayer);
 
-  ///
   /// The foreground slice layer
-  /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (ForegroundLayer, vtkMRMLSliceLayerLogic);
+  vtkMRMLSliceLayerLogic* GetForegroundLayer();
   void SetForegroundLayer (vtkMRMLSliceLayerLogic *ForegroundLayer);
 
-  ///
   /// The Label slice layer
-  /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (LabelLayer, vtkMRMLSliceLayerLogic);
+  vtkMRMLSliceLayerLogic* GetLabelLayer();
   void SetLabelLayer (vtkMRMLSliceLayerLogic *LabelLayer);
 
-  ///
+  typedef vtkSmartPointer<vtkMRMLSliceLayerLogic> LayerListItem;
+  typedef std::vector<LayerListItem> LayerList;
+  typedef std::vector<LayerListItem>::iterator LayerListIterator;
+  typedef std::vector<LayerListItem>::const_iterator LayerListConstIterator;
+
+  vtkMRMLSliceLayerLogic* GetLayer(unsigned int layerIndex);
+  void SetLayer(unsigned int layerIndex, vtkMRMLSliceLayerLogic *layer);
+
+  vtkAlgorithmOutput* GetLayerImageDataConnection(unsigned int layerIndex);
+  vtkAlgorithmOutput* GetLayerImageDataConnectionUVW(unsigned int layerIndex);
+
+  /// Set volume associated with a layer
+  void SetLayerVolumeNode(int layerIndex, vtkMRMLVolumeNode* volumeNode);
+
+  /// Get the volume node corresponding to layer
+  /// (0=background, 1=foreground, 2=label)
+  vtkMRMLVolumeNode* GetLayerVolumeNode(int layerIndex);
+
   /// Helper to set the background layer Window/Level
   void SetBackgroundWindowLevel(double window, double level);
 
-  ///
   /// Helper to get the background layer Window/Level, intensity range and
   /// status of automatic Window/Level setting
   void GetBackgroundWindowLevelAndRange(double& window, double& level,
                                         double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
 
-  ///
   /// Helper to get the background layer Window/Level and intensity range
   void GetBackgroundWindowLevelAndRange(double& window, double& level,
                                         double& rangeLow, double& rangeHigh);
 
-  ///
   /// Helper to set the foreground layer Window/Level
   void SetForegroundWindowLevel(double window, double level);
 
-  ///
   /// Helper to get the foreground layer Window/Level, intensity range and
   /// status of automatic Window/Level setting
   void GetForegroundWindowLevelAndRange(double& window, double& level,
                                         double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
 
-  ///
   /// Helper to get the foreground layer Window/Level and intensity range
   void GetForegroundWindowLevelAndRange(double& window, double& level,
                                         double& rangeLow, double& rangeHigh);
-  ///
+
   /// Model slice plane
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
 
-  ///
   /// Model slice plane display properties.
   /// The method is deprecated, use SliceDisplayNode instead.
-  vtkGetObjectMacro(SliceModelDisplayNode, vtkMRMLModelDisplayNode);
+  vtkMRMLModelDisplayNode* GetSliceModelDisplayNode();
 
-  ///
   /// Slice plane display properties
   vtkMRMLSliceDisplayNode* GetSliceDisplayNode();
 
-  ///
   /// Model slice plane transform from xy to RAS
-  vtkGetObjectMacro(SliceModelTransformNode, vtkMRMLLinearTransformNode);
+  vtkMRMLLinearTransformNode* GetSliceModelTransformNode();
 
-  ///
   /// The compositing filter
   /// TODO: this will eventually be generalized to a per-layer compositing function
   vtkImageBlend* GetBlend();
   vtkImageBlend* GetBlendUVW();
 
-  ///
   /// An image reslice instance to pull a single slice from the volume that
   /// represents the filmsheet display output
   vtkGetObjectMacro(ExtractModelTexture, vtkImageReslice);
 
-  ///
   /// the tail of the pipeline
   /// -- returns nullptr if none of the inputs exist
   vtkAlgorithmOutput *GetImageDataConnection();
 
-  ///
+  /// Return True if at least one layer has an image data
+  /// \sa vtkMRMLSliceLayerLogic::GetImageDataConnection()
+  bool HasInputs();
+
   /// update the pipeline to reflect the current state of the nodes
   void UpdatePipeline();
 
@@ -182,32 +183,21 @@ public:
   /// MRMLModelNode into the scene
   virtual bool EnterMRMLCallback() const;
 
-  ///
   /// Manage and synchronize the SliceNode
   void UpdateSliceNode();
 
-  ///
   /// Update slicer node given a layout name
   void UpdateSliceNodeFromLayout();
 
-  ///
   /// Manage and synchronize the SliceCompositeNode
   void UpdateSliceCompositeNode();
 
-  ///
-  /// Get the volume node corresponding to layer
-  /// (0=background, 1=foreground, 2=label)
-  vtkMRMLVolumeNode *GetLayerVolumeNode(int layer);
-
-  ///
   /// Get the size of the volume, transformed to RAS space
   static void GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double rasDimensions[3], double rasCenter[3]);
 
-  ///
   /// Get the size of the volume, transformed to slice space
   void GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode, double sliceDimensions[3], double sliceCenter[3]);
 
-  ///
   /// Get the spacing of the volume, transformed to slice space
   /// - to be used, for example, to set the slice increment for stepping a single
   ///   voxel relative to the current slice view
@@ -221,29 +211,23 @@ public:
   /// (otherwise then bounds of voxels centers are returned).
   void GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6], bool useVoxelCenter=false);
 
-  ///
   /// adjust the node's field of view to match the extent of the volume
   void FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int width, int height);
 
-  ///
   /// adjust the node's field of view to match the extent of the volume
   void FitSliceToVolumes(vtkCollection *volumeNodes, int width, int height);
 
-  ///
   /// Get the size of the volume, transformed to RAS space
   void GetBackgroundRASBox(double rasDimensions[3], double rasCenter[3]);
 
-  ///
   /// Get the size of the volume, transformed to slice space
   void GetBackgroundSliceDimensions(double sliceDimensions[3], double sliceCenter[3]);
 
-  ///
   /// Get the spacing of the volume, transformed to slice space
   /// - to be used, for example, to set the slice increment for stepping a single
   ///   voxel relative to the current slice view
   double* GetBackgroundSliceSpacing() VTK_SIZEHINT(3);
 
-  ///
   /// Get the min/max bounds of the volume
   /// - note these are not translated by the current slice offset so they can
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
@@ -255,18 +239,15 @@ public:
   /// of the volume has more than one slice then the slice view will be rotated to the closest orthogonal axis.
   void RotateSliceToLowestVolumeAxes(bool forceSlicePlaneToSingleSlice = true);
 
-  ///
   /// adjust the node's field of view to match the extent of the first selected volume (background, foregorund, labelmap)
   void FitSliceToFirst(int width = -1, int height = -1);
 
-  ///
   /// Adjust the node's field of view to match the extent of the volume visible in the slice's background.
   /// This is a more advanced version of FitSliceToAll, which takes into account that in case of
   /// ClipToBackgroundVolume is enabled then all layers above the background volume
   /// will be clipped to the background volume's extents.
   void FitSliceToBackground(int width = -1, int height = -1);
 
-  ///
   /// adjust the node's field of view to match the extent of all volume layers
   void FitSliceToAll(int width = -1, int height = -1);
 
@@ -281,7 +262,6 @@ public:
   /// time the lightbox configuration is changed.
   void ResizeSliceNode(double newWidth, double newHeight);
 
-  ///
   /// Get the spacing of the lowest volume layer (background, foreground, label),
   /// transformed to slice space
   /// - to be used, for example, to set the slice increment for stepping a single
@@ -289,7 +269,6 @@ public:
   /// - returns first non-null layer
   double* GetLowestVolumeSliceSpacing() VTK_SIZEHINT(3);
 
-  ///
   /// Get the min/max bounds of the lowest volume layer (background, foreground, label)
   /// - note these are not translated by the current slice offset so they can
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
@@ -298,16 +277,15 @@ public:
   /// (otherwise then bounds of voxels centers are returned).
   void GetLowestVolumeSliceBounds(double sliceBounds[6], bool useVoxelCenter=false);
 
-  ///
+  /// @{
   /// Get/Set the current distance from the origin to the slice plane
   double GetSliceOffset();
   void SetSliceOffset(double offset);
+  /// @}
 
-  ///
   /// Get the largest slice bounding box for all volumes in layers
   void GetSliceBounds(double sliceBounds[6]);
 
-  ///
   /// Set slice extents to all layers
   void SetSliceExtentsToSliceNode();
 
@@ -333,7 +311,6 @@ public:
   /// Indicate the slice offset value has completed its change
   void EndSliceOffsetInteraction();
 
-  ///
   /// Set the current distance so that it corresponds to the closest center of
   /// a voxel in IJK space (integer value)
   void SnapSliceOffsetToIJK();
@@ -359,12 +336,12 @@ public:
   /// SLICE_INDEX_NO_VOLUME=no volume is available
   int GetSliceIndexFromOffset(double sliceOffset);
 
-  ///
+  /// @{
   /// Make a slice model with the current configuration
   void CreateSliceModel();
   void DeleteSliceModel();
+  /// @}
 
-  ///
   /// Get  all slice displaynodes creating PolyData models like glyphs etc.
   std::vector< vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
   /// Return the associated slicerlayer nodes
@@ -404,7 +381,6 @@ protected:
 
   void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
 
-  ///
   /// process logic events
   void ProcessMRMLLogicsEvents(vtkObject * caller,
                                unsigned long event,
@@ -427,12 +403,12 @@ protected:
   static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene,
     const char* layoutName);
 
-  // @{
+  /// @{
   /// Helper to get/set Window/Level in any layer
   void SetWindowLevel(int layer, double window, double level);
   void GetWindowLevelAndRange(int layer, double& window, double& level,
                                       double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
-  // @}
+  /// @}
 
   /// Helper to update input of blend filter from a set of layers.
   /// It minimizes changes to the imaging pipeline (does not remove and
@@ -463,13 +439,12 @@ protected:
     return true;
   };
 
+  LayerList Layers;
+
   bool                          AddingSliceModelNodes;
 
   vtkMRMLSliceNode*             SliceNode;
   vtkMRMLSliceCompositeNode*    SliceCompositeNode;
-  vtkMRMLSliceLayerLogic*       BackgroundLayer;
-  vtkMRMLSliceLayerLogic*       ForegroundLayer;
-  vtkMRMLSliceLayerLogic*       LabelLayer;
 
   BlendPipeline*                Pipeline;
   BlendPipeline*                PipelineUVW;
