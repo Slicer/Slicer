@@ -4620,6 +4620,7 @@ bool vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNo
       // for saving to MRB all nodes will be written in their default format
       storageFileName = storageNode->GetFileNameWithoutExtension(storageFileName.c_str()) + defaultWriteExtension;
     }
+    storageFileName = storageNode->ClampFileName(storageFileName);
     vtkDebugMacro("updated file name = " << storageFileName.c_str());
     storageNode->SetFileName(storageFileName.c_str());
   }
