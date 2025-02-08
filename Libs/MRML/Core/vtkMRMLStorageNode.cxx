@@ -1599,9 +1599,8 @@ void vtkMRMLStorageNode::SetWriteFileFormat(const char* writeFileFormat)
 //-----------------------------------------------------------------------------
 std::string vtkMRMLStorageNode::ClampFileName(const std::string& filename, int maxFileNameLength/*=-1*/, int hashLength/*=4*/)
 {
-  std::string baseName = this->GetFileNameWithoutExtension(filename.c_str());
   std::string extension = this->GetSupportedFileExtension(filename.c_str());
-  return vtkMRMLStorageNode::ClampFileNameExtension(baseName, maxFileNameLength, hashLength, extension.length());
+  return vtkMRMLStorageNode::ClampFileNameExtension(filename, maxFileNameLength, hashLength, extension.length());
 }
 
 //-----------------------------------------------------------------------------
