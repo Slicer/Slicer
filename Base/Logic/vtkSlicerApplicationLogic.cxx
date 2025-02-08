@@ -98,6 +98,15 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
     this->ProcessingThread.join();
   }
 
+  for (auto& thread : this->NetworkingThreads)
+  {
+    if (thread.joinable())
+    {
+      thread.join();
+    }
+  }
+  this->NetworkingThreads.clear();
+
   delete this->InternalTaskQueue;
 
   this->ModifiedQueueLock.lock();
