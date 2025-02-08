@@ -103,6 +103,7 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
         # first, get the data - a zip file of dicom data
         #
         self.delayDisplay("Downloading")
+        originalDatabaseDirectory = None
         for dataset in referenceData:
             try:
                 import SampleData
@@ -196,7 +197,8 @@ class DICOMReadersTest(ScriptedLoadableModuleTest):
                 testPass = False
 
         self.delayDisplay("Restoring original database directory")
-        DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
+        if originalDatabaseDirectory:
+            DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
         slicer.util.selectModule("DICOMReaders")
 
         logging.info(loadingResult)
