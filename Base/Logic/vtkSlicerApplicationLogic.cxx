@@ -84,19 +84,8 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 {
-  // Note that we can not kill a thread safely. So we wait
-  // for the thread to finish.  We need to signal the thread that we
-  // want to terminate
-  if (this->ProcessingThread.joinable())
-  {
-    // Signal the processingThread that we are terminating.
-    this->ProcessingThreadActiveLock.lock();
-    this->ProcessingThreadActive = false;
-    this->ProcessingThreadActiveLock.unlock();
-
-    // Wait for the thread to finish
-    this->ProcessingThread.join();
-  }
+  // All processing must stop before the queue objects are deleted
+  this->TerminateProcessingThread();
 
   delete this->InternalTaskQueue;
 
