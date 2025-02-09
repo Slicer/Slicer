@@ -233,7 +233,7 @@ public:
   /// Get the implicit function that represents the ROI in node coordinates.
   vtkGetObjectMacro(ImplicitFunction, vtkImplicitFunction);
   /// Get the implicit function that represents the ROI in world coordinates.
-  vtkGetObjectMacro(ImplicitFunctionWorld, vtkImplicitFunction);
+  vtkImplicitFunction* GetImplicitFunctionWorld() override { return this->ImplicitFunctionWorld; }
 
   /// Create ROI box as surface mesh in the world coordinate system as a new vtkPolyData object.
   /// Only in C++: The caller must take ownership of the returned object.
