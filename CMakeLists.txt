@@ -716,8 +716,15 @@ set(Slicer_HAVE_QT5 1)
 #
 # See https://issues.slicer.org/view.php?id=3574
 #
+if(NOT DEFINED Slicer_USE_SYSTEM_QT)
   foreach(_path IN ITEMS
       "/usr/lib/"
+      "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/"
+      # The following line is a consequence of multiarch usr merge (https://wiki.debian.org/UsrMerge)
+      # /usr/lib will bye symlinked to /lib. In this case Qt5_DIR could be reported as
+      # /lib/${CMAKE_LIBRARY_ARCHITECTURE}/
+      "/lib/"
+      "/lib/${CMAKE_LIBRARY_ARCHITECTURE}/"
       "/usr/lib32/"
       "/usr/lib64/"
       "/usr/local/lib/"
@@ -730,12 +737,12 @@ set(Slicer_HAVE_QT5 1)
     if("${Qt5_DIR}" MATCHES "^${_path}")
       set(Slicer_USE_SYSTEM_QT ON)
       message(STATUS "")
-      message(STATUS "Forcing Slicer_USE_SYSTEM_QT to ON (Qt5_DIR [${Qt5_DIR}] associated with a system location: ${_path})")
+      message(STATUS "Initializing Slicer_USE_SYSTEM_QT to ON (Qt5_DIR [${Qt5_DIR}] associated with a system location: ${_path})")
       message(STATUS "")
       break()
     endif()
   endforeach()
-
+endif()
 # Always use QVTKOpenGLWidget (instead of QVTKWidget)
 set(Slicer_VTK_USE_QVTKOPENGLWIDGET 1)
 
