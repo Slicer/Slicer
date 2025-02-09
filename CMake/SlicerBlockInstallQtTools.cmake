@@ -1,4 +1,3 @@
-
 # Get root directory
 get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
 get_filename_component(_dir ${_filepath} PATH)
@@ -6,8 +5,13 @@ if(APPLE)
   # "_dir" of the form "<qt_root_dir>/lib/QtCore.framework"
   set(qt_root_dir "${_dir}/../..")
 else()
-  # "_dir" of the form "<qt_root_dir>/lib"
-  set(qt_root_dir "${_dir}/..")
+  if(DEFINED CMAKE_LIBRARY_ARCHITECTURE AND "${_dir}" MATCHES "${CMAKE_LIBRARY_ARCHITECTURE}$")
+    # "_dir" of the form "<qt_root_dir>/lib/<arch>" (e.g "<qt_root_dir>/lib/x86_64-linux-gnu")
+    set(qt_root_dir "${_dir}/../..")
+  else()
+    # "_dir" of the form "<qt_root_dir>/lib"
+    set(qt_root_dir "${_dir}/..")
+  endif()
 endif()
 
 # Sanity checks
