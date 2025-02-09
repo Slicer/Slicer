@@ -145,7 +145,7 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
     }
     if (!sceneVersionWarningMessages.isEmpty())
     {
-      sceneVersionWarningMessages.push_back(tr("The scene may not load correctly."));
+      sceneVersionWarningMessages << tr("The scene may not load correctly.");
       this->userMessages()->AddMessage(vtkCommand::WarningEvent, sceneVersionWarningMessages.join(" ").toStdString());
     }
   }
