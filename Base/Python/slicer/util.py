@@ -2500,13 +2500,19 @@ def arrayFromTableColumnModified(tableNode, columnName):
 def updateTableFromArray(tableNode, narrays, columnNames=None):
     """Set values in a table node from a NumPy array or an array-like object (list/tuple of NumPy arrays).
 
+    This function can handle:
+
+      - **Structured (record) array** with named fields. Each field becomes a separate column.
+        If ``columnNames`` is not provided, the field names in the dtype are used.
+      - **1D NumPy array**, which is added as a single column.
+      - **2D NumPy array**, where each column in the array is added as a separate column in the
+        table node (note that the array is transposed).
+      - **List/tuple** of 1D NumPy arrays, which are each added as separate columns.
+
     :param tableNode: The table node to be updated. If ``None``, a new ``vtkMRMLTableNode`` is
       created and added to the scene.
     :type tableNode: vtkMRMLTableNode or None
-    :param narrays: One of:
-        - A 1D NumPy array
-        - A 2D NumPy array (values will be transposed so each column becomes a table column)
-        - A list/tuple of 1D NumPy arrays
+    :param narrays: NumPy array or array-like object (structured array, 1D/2D array, or list/tuple of 1D arrays).
     :type narrays: np.ndarray, tuple, or list
     :param columnNames: Optional string or list of strings specifying names for the columns. If fewer
       names are provided than columns, only the specified columns are named;
@@ -2537,20 +2543,39 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
 
     if tableNode is None:
         tableNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
-    if isinstance(narrays, np.ndarray) and len(narrays.shape) == 1:
+
+    if isinstance(narrays, np.ndarray) and narrays.dtype.names:
+        # Structured array with named fields
+        fieldNames = narrays.dtype.names
+        if columnNames is None:
+            columnNames = list(fieldNames)
+        ncolumns = [narrays[fieldName] for fieldName in fieldNames]
+    elif isinstance(narrays, np.ndarray) and len(narrays.shape) == 1:
+        # Single 1D array
         ncolumns = [narrays]
     elif isinstance(narrays, np.ndarray) and len(narrays.shape) == 2:
+        # 2D array -> transpose so columns become separate arrays
         ncolumns = narrays.T
     elif isinstance(narrays, tuple) or isinstance(narrays, list):
+        # List or tuple of 1D arrays
         ncolumns = narrays
     else:
-        raise ValueError("Expected narrays is a numpy ndarray, or tuple or list of numpy ndarrays, got %s instead." % (str(type(narrays))))
+        # Unrecognized format
+        msg = (
+            "Expected a structured NumPy array (with named fields), "
+            "a 1D/2D NumPy array, or a list/tuple of 1D arrays; "
+            "got {object_type} instead.".format(object_type=type(narrays))
+        )
+        raise ValueError(msg)
+
     tableNode.RemoveAllColumns()
     # Convert single string to a single-element string list
     if columnNames is None:
         columnNames = []
     if isinstance(columnNames, str):
         columnNames = [columnNames]
+
+    # For each extracted column, convert to a VTK array and add to the table.
     for columnIndex, ncolumn in enumerate(ncolumns):
         vtype = vtk.util.numpy_support.get_vtk_array_type(ncolumn.dtype)
         vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(), deep=True, array_type=vtype)
