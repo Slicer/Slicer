@@ -2498,16 +2498,29 @@ def arrayFromTableColumnModified(tableNode, columnName):
 
 
 def updateTableFromArray(tableNode, narrays, columnNames=None):
-    """Set values in a table node from a numpy array.
+    """Set values in a table node from a NumPy array or an array-like object (list/tuple of NumPy arrays).
 
-    :param columnNames: may contain a string or list of strings that will be used as column name(s).
-    :raises ValueError: in case of failure
+    :param tableNode: The table node to be updated. If ``None``, a new ``vtkMRMLTableNode`` is
+      created and added to the scene.
+    :type tableNode: vtkMRMLTableNode or None
+    :param narrays: One of:
+        - A 1D NumPy array
+        - A 2D NumPy array (values will be transposed so each column becomes a table column)
+        - A list/tuple of 1D NumPy arrays
+    :type narrays: np.ndarray, tuple, or list
+    :param columnNames: Optional string or list of strings specifying names for the columns. If fewer
+      names are provided than columns, only the specified columns are named;
+      otherwise columns get default names. If ``None`` is passed, no column names are set.
+    :type columnNames: str, list of str, or None
+    :return: Updated ``vtkMRMLTableNode``.
+    :raises ValueError: If the input ``narrays`` is not a recognized format.
 
-    Values are copied, therefore if the numpy array  is modified after calling this method,
-    values in the table node will not change.
-    All previous content of the table is deleted.
+    All existing columns in the target table node are removed before adding new columns.
 
-    Example::
+    .. warning:: Data in the table node is stored by value (deep copy). Modifying the NumPy array after calling
+        this function does not update the table node's data.
+
+    .. code-block:: python
 
       import numpy as np
       histogram = np.histogram(arrayFromVolume(getNode('MRHead')))
