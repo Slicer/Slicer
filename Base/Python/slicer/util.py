@@ -2497,6 +2497,37 @@ def arrayFromTableColumnModified(tableNode, columnName):
     tableNode.GetTable().Modified()
 
 
+def _vtkArrayFromNumpyArray(narray, deep=False, arrayType=None):
+    """
+    Convert a NumPy array into a VTK-compatible array, with special handling for ``VTK_BIT`` arrays.
+
+    When ``arrayType`` is set to ``vtk.VTK_BIT``, this function works around an existing issue in
+    the built-in VTK helper ``vtk.util.numpy_support.numpy_to_vtk.numpy_to_vtk`` by manually packing
+    the bits. See https://gitlab.kitware.com/vtk/vtk/-/issues/19610
+    """
+    import numpy as np
+    import vtk.util.numpy_support
+
+    if arrayType == vtk.VTK_BIT:
+        # Workaround issue with built-in VTK function numpy_to_vtk.
+        # See https://gitlab.kitware.com/vtk/vtk/-/issues/19610
+        packedBits = np.packbits(narray)
+        resultArray = vtk.util.numpy_support.create_vtk_array(arrayType)
+        resultArray.SetNumberOfComponents(1)
+        shape = narray.shape
+        resultArray.SetNumberOfTuples(shape[0])
+        resultArray.SetVoidArray(packedBits, shape[0], 1)
+        # Since packedBits is a standalone object with no references from the caller.
+        # As such, it will drop out of this scope and cause memory issues if we
+        # do not deep copy its data.
+        copy = resultArray.NewInstance()
+        copy.DeepCopy(resultArray)
+        resultArray = copy
+        return resultArray
+
+    return vtk.util.numpy_support.numpy_to_vtk(narray, deep=deep, array_type=arrayType)
+
+
 def updateTableFromArray(tableNode, narrays, columnNames=None):
     """Set values in a table node from a NumPy array or an array-like object (list/tuple of NumPy arrays).
 
@@ -2577,8 +2608,12 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
 
     # For each extracted column, convert to a VTK array and add to the table.
     for columnIndex, ncolumn in enumerate(ncolumns):
-        vtype = vtk.util.numpy_support.get_vtk_array_type(ncolumn.dtype)
-        vcolumn = vtk.util.numpy_support.numpy_to_vtk(num_array=ncolumn.ravel(), deep=True, array_type=vtype)
+        vtype = None
+        if ncolumn.dtype == np.bool_:
+            vtype = vtk.VTK_BIT
+        if vtype is None:
+            vtype = vtk.util.numpy_support.get_vtk_array_type(ncolumn.dtype)
+        vcolumn = _vtkArrayFromNumpyArray(ncolumn.ravel(), deep=True, arrayType=vtype)
         if (columnNames is not None) and (columnIndex < len(columnNames)):
             vcolumn.SetName(columnNames[columnIndex])
         tableNode.AddColumn(vcolumn)

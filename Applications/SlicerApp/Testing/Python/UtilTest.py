@@ -284,6 +284,17 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         self.assertEqual(tableNode3.GetColumnName(1), "height")
         self.assertEqual(tableNode3.GetColumnType("height"), vtk.VTK_LONG_LONG)
 
+        self.delayDisplay("Test boolean array update")
+        tableNode4 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+        narray = np.array([True, False, True])
+        slicer.util.updateTableFromArray(tableNode4, narray)
+        self.assertEqual(tableNode4.GetNumberOfColumns(), 1)
+        self.assertEqual(tableNode4.GetNumberOfRows(), 3)
+        self.assertEqual(tableNode4.GetColumnType(tableNode4.GetColumnName(0)), vtk.VTK_BIT)
+        self.assertEqual(tableNode4.GetTable().GetValue(0, 0), 1)
+        self.assertEqual(tableNode4.GetTable().GetValue(1, 0), 0)
+        self.assertEqual(tableNode4.GetTable().GetValue(2, 0), 1)
+
         self.delayDisplay("Testing slicer.util.test_updateTableFromArray passed")
 
     def test_arrayFromModelPoints(self):
