@@ -2528,7 +2528,7 @@ def _vtkArrayFromNumpyArray(narray, deep=False, arrayType=None):
     return vtk.util.numpy_support.numpy_to_vtk(narray, deep=deep, array_type=arrayType)
 
 
-def updateTableFromArray(tableNode, narrays, columnNames=None):
+def updateTableFromArray(tableNode, narrays, columnNames=None, setBoolAsUchar=False):
     """Set values in a table node from a NumPy array or an array-like object (list/tuple of NumPy arrays).
 
     This function can handle:
@@ -2549,6 +2549,10 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
       names are provided than columns, only the specified columns are named;
       otherwise columns get default names. If ``None`` is passed, no column names are set.
     :type columnNames: str, list of str, or None
+    :param setBoolAsUchar: If ``True``, boolean arrays are converted to ``uint8`` for plotting compatibility.
+      This leverages the :func:`_vtkArrayFromNumpyArray` function's handling of ``VTK_BIT`` arrays.
+      Default is ``False``.
+    :type setBoolAsUchar: bool
     :return: Updated ``vtkMRMLTableNode``.
     :raises ValueError: If the input ``narrays`` is not a recognized format.
 
@@ -2610,7 +2614,13 @@ def updateTableFromArray(tableNode, narrays, columnNames=None):
     for columnIndex, ncolumn in enumerate(ncolumns):
         vtype = None
         if ncolumn.dtype == np.bool_:
-            vtype = vtk.VTK_BIT
+            if setBoolAsUchar:
+                # Convert boolean arrays to uint to ensure compatibility with VTK plotting infrastructure:
+                # vtkContext2D does not support vtkBitArray, and plotting calls that rely on
+                # vtkArrayDownCast<vtkFloatArray>() would fail with a bit array.
+                ncolumn = ncolumn.astype("uint8")
+            else:
+                vtype = vtk.VTK_BIT
         if vtype is None:
             vtype = vtk.util.numpy_support.get_vtk_array_type(ncolumn.dtype)
         vcolumn = _vtkArrayFromNumpyArray(ncolumn.ravel(), deep=True, arrayType=vtype)
@@ -3717,7 +3727,7 @@ class chdir:
         os.chdir(self._old_cwd.pop())
 
 
-def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes=None):
+def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes=None, plotBoolAsUchar=False):
     """Create a plot from a numpy array that contains two or more columns.
 
     :param narray: input numpy array containing data series in columns.
@@ -3730,6 +3740,9 @@ def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes
       Specified in a dictionary, with keys: 'chart', 'table', 'series'.
       Series contains a list of plot series nodes (one for each table column).
       The parameter is used both as an input and output.
+    :param plotBoolAsUchar: If ``True``, any boolean columns in the input array are automatically
+      converted to unsigned integer arrays. This avoids issues with plotting bit arrays (``vtkBitArray``),
+      which are not fully supported by VTK plotting. Defaults to ``False``.
     :return: plot chart node. Plot chart node provides access to chart properties and plot series nodes.
 
     Example 1: simple plot
@@ -3790,7 +3803,7 @@ def plot(narray, xColumnIndex=-1, columnNames=None, title=None, show=True, nodes
 
     if title is not None:
         tableNode.SetName(title + " table")
-    updateTableFromArray(tableNode, narray)
+    updateTableFromArray(tableNode, narray, setBoolAsUchar=plotBoolAsUchar)
     # Update column names
     numberOfColumns = tableNode.GetTable().GetNumberOfColumns()
     yColumnIndex = 0
