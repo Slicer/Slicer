@@ -153,7 +153,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
     ActivePlaceNodeClassNameChangedEvent,
     PlaceNodeClassNameListModifiedEvent,
     UnitModifiedEvent,
-    ActivePlaceNodePlacementValidEvent,
+    ActivePlaceNodePlacementValidEvent
   };
 
   /// Add a new valid placeNode class name to the list, with optional qt resource
@@ -219,7 +219,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Set whether point placement is valid for the active placement node
   void SetActivePlaceNodePlacementValid(bool valid);
   /// Returns true if additional points can be placed in the current placement node, false if
- /// the node has a locked number of points.
+  /// the node has a locked number of points.
   bool GetActivePlaceNodePlacementValid();
 
 protected:
